@@ -125,6 +125,14 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
             continue;
         }
 
+        // Pipeline: A | G | B
+        if trimmed.contains('|') {
+            let pipeline = parse_pipeline(trimmed, lines.current_span());
+            children.push(pipeline);
+            lines.advance();
+            continue;
+        }
+
         return Err(ParseError {
             message: format!("unexpected: {}", trimmed),
             span: Some(lines.current_span()),
@@ -276,6 +284,37 @@ fn parse_block_body(
         message: "unclosed block".into(),
         span: Some(open_span),
     })
+}
+
+/// Parse a pipeline: `@git(branch: "master") | HEAD | @git(branch: "test")`
+///
+/// Segments separated by `|`. Each segment is either:
+/// - `@name(params)` → DomainRef with DomainParam children
+/// - `@name` → DomainRef (leaf)
+/// - bare name → Ref
+fn parse_pipeline(text: &str, span: Span) -> Tree<AstNode> {
+    let segments: Vec<&str> = text.split('|').map(|s| s.trim()).collect();
+    let children: Vec<Tree<AstNode>> = segments
+        .iter()
+        .map(|seg| parse_pipeline_segment(seg, span))
+        .collect();
+    ast::ast_branch(Kind::Pipeline, "root", span, children)
+}
+
+fn parse_pipeline_segment(seg: &str, span: Span) -> Tree<AstNode> {
+    if seg.starts_with('@') {
+        // Domain ref, possibly with params: @git(branch: "master")
+        if let Some(paren_start) = seg.find('(') {
+            let name = &seg[..paren_start];
+            let params = seg[paren_start + 1..].trim_end_matches(')');
+            let param_child = ast::ast_leaf(Kind::DomainParam, params, span);
+            ast::ast_branch(Kind::DomainRef, name, span, vec![param_child])
+        } else {
+            ast::ast_leaf(Kind::DomainRef, seg, span)
+        }
+    } else {
+        ast::ast_leaf(Kind::Ref, seg, span)
+    }
 }
 
 #[cfg(test)]
@@ -535,6 +574,29 @@ mod tests {
     }
 
     // -- Pipeline: A | G | B --
+
+    #[test]
+    fn parse_pipeline_bare_domain() {
+        let source = "@fs | data | @json\n";
+        let tree = Parse.emit(source.to_string()).unwrap();
+        let pipeline = &tree.children()[0];
+        assert_eq!(pipeline.data().kind, Kind::Pipeline);
+        assert_eq!(pipeline.children().len(), 3);
+
+        let left = &pipeline.children()[0];
+        assert_eq!(left.data().kind, Kind::DomainRef);
+        assert_eq!(left.data().value, "@fs");
+        assert!(left.children().is_empty());
+
+        let mid = &pipeline.children()[1];
+        assert_eq!(mid.data().kind, Kind::Ref);
+        assert_eq!(mid.data().value, "data");
+
+        let right = &pipeline.children()[2];
+        assert_eq!(right.data().kind, Kind::DomainRef);
+        assert_eq!(right.data().value, "@json");
+        assert!(right.children().is_empty());
+    }
 
     #[test]
     fn parse_pipeline() {

@@ -32,6 +32,12 @@ pub enum Kind {
     TemplateRef,
     /// `@filesystem`
     DomainRef,
+    /// `@git(branch: "master") | HEAD | @git(branch: "test")`
+    Pipeline,
+    /// `branch: "master"` — key-value parameter on a domain ref
+    DomainParam,
+    /// `HEAD` — a bare reference in a pipeline
+    Ref,
 }
 
 impl Context for Conversation {
