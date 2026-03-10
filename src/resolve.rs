@@ -5,16 +5,15 @@
 //! Errors carry spans and did-you-mean hints.
 
 use std::collections::HashMap;
+use std::marker::PhantomData;
 
 use serde_json::Value;
 
 use crate::ast::{AstNode, Span};
 use crate::domain::conversation::Kind;
-use crate::domain::Domain;
+use crate::domain::{Addressable, Context, Domain};
 use crate::gradient::Gradient;
 use crate::tree::{self, Tree, Treelike};
-
-use crate::domain::filesystem::Folder;
 
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
@@ -37,12 +36,17 @@ pub struct ResolveError {
 }
 
 /// A resolved .conv file. Validated and ready to execute.
+///
+/// The type parameter `C` is the input domain's context.
+/// `Conversation<Filesystem>` executes against `Tree<Folder>`.
+/// `Conversation<Git>` executes against `Tree<GitNode>`.
 #[derive(Debug)]
-pub struct Conversation {
+pub struct Conversation<C: Context> {
     pub input: Domain,
     pub output: Domain,
     templates: HashMap<String, Template>,
     pub content: Tree<OutputNode>,
+    _context: PhantomData<C>,
 }
 
 #[derive(Debug)]
@@ -120,10 +124,10 @@ impl Default for Resolve {
     }
 }
 
-impl Gradient<Tree<AstNode>, Conversation> for Resolve {
+impl<C: Context> Gradient<Tree<AstNode>, Conversation<C>> for Resolve {
     type Error = ResolveError;
 
-    fn emit(&self, source: Tree<AstNode>) -> Result<Conversation, ResolveError> {
+    fn emit(&self, source: Tree<AstNode>) -> Result<Conversation<C>, ResolveError> {
         let children = source.children();
 
         // Extract domain from In node — defaults to Json
@@ -184,10 +188,11 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
             output: Domain::Json,
             templates,
             content,
+            _context: PhantomData,
         })
     }
 
-    fn absorb(&self, _source: Conversation) -> Result<Tree<AstNode>, ResolveError> {
+    fn absorb(&self, _source: Conversation<C>) -> Result<Tree<AstNode>, ResolveError> {
         Err(ResolveError {
             message: "un-resolve not yet implemented".into(),
             span: None,
@@ -286,7 +291,7 @@ fn resolve_output_nodes(
     Ok(nodes)
 }
 
-impl Conversation {
+impl<C: Context> Conversation<C> {
     /// Parse and resolve a `.conv` source string in one step.
     ///
     /// Chains Parse → Resolve. Errors from either phase
@@ -301,53 +306,77 @@ impl Conversation {
         })?;
         Resolve::new().emit(ast)
     }
+}
 
-    /// Execute the resolved program against a filesystem tree.
-    pub fn execute(&self, tree: &Tree<Folder>) -> Value {
-        let body = self.execute_body(&self.content, tree);
+/// Conversation IS a gradient: `Tree<C::Token> → Value`.
+///
+/// The resolved program transforms domain trees into JSON output.
+/// `emit` executes the program. `absorb` reconstructs the input (not yet implemented).
+impl<C: Context> Gradient<Tree<C::Token>, Value> for Conversation<C>
+where
+    C::Token: Addressable,
+{
+    type Error = ResolveError;
+
+    fn emit(&self, source: Tree<C::Token>) -> Result<Value, ResolveError> {
+        let body = emit_body(&self.content, &source, &self.templates);
         let mut map = serde_json::Map::new();
         map.insert(self.content.data().name().to_string(), body);
-        Value::Object(map)
+        Ok(Value::Object(map))
     }
 
-    fn execute_body(&self, content: &Tree<OutputNode>, tree: &Tree<Folder>) -> Value {
-        let mut map = serde_json::Map::new();
+    fn absorb(&self, _source: Value) -> Result<Tree<C::Token>, ResolveError> {
+        Err(ResolveError {
+            message: "absorb not yet implemented".into(),
+            span: None,
+            hints: vec![],
+        })
+    }
+}
 
-        for child in content.children() {
-            match child.data() {
-                OutputNode::Group { name } => {
-                    if let Some(folder_child) = find_child(tree, name) {
-                        map.insert(name.clone(), self.execute_body(child, folder_child));
-                    }
+fn emit_body<T: Addressable>(
+    content: &Tree<OutputNode>,
+    tree: &Tree<T>,
+    templates: &HashMap<String, Template>,
+) -> Value {
+    let mut map = serde_json::Map::new();
+
+    for child in content.children() {
+        match child.data() {
+            OutputNode::Group { name } => {
+                if let Some(domain_child) = find_child(tree, name) {
+                    map.insert(name.clone(), emit_body(child, domain_child, templates));
                 }
-                OutputNode::Select {
-                    output_name,
-                    folder_name,
-                    template_name,
-                } => {
-                    if let Some(folder) = find_child(tree, folder_name) {
-                        let template = &self.templates[template_name];
-                        let items: Vec<Value> = folder
-                            .children()
-                            .iter()
-                            .map(|f| apply_template(template, f))
-                            .collect();
-                        map.insert(output_name.clone(), Value::Array(items));
-                    }
+            }
+            OutputNode::Select {
+                output_name,
+                folder_name,
+                template_name,
+            } => {
+                if let Some(folder) = find_child(tree, folder_name) {
+                    let template = &templates[template_name];
+                    let items: Vec<Value> = folder
+                        .children()
+                        .iter()
+                        .map(|f| apply_template(template, f))
+                        .collect();
+                    map.insert(output_name.clone(), Value::Array(items));
                 }
             }
         }
-
-        Value::Object(map)
     }
+
+    Value::Object(map)
 }
 
-fn find_child<'a>(tree: &'a Tree<Folder>, name: &str) -> Option<&'a Tree<Folder>> {
-    tree.children().iter().find(|c| c.data().name == name)
+fn find_child<'a, T: Addressable>(tree: &'a Tree<T>, name: &str) -> Option<&'a Tree<T>> {
+    tree.children()
+        .iter()
+        .find(|c| c.data().node_name() == name)
 }
 
-fn apply_template(template: &Template, tree: &Tree<Folder>) -> Value {
-    let content = tree.data().content.as_deref().unwrap_or("");
+fn apply_template<T: Addressable>(template: &Template, tree: &Tree<T>) -> Value {
+    let content = tree.data().node_content().unwrap_or("");
     let (frontmatter, body) = parse_frontmatter(content);
 
     let mut map = serde_json::Map::new();
@@ -467,6 +496,7 @@ fn edit_distance(a: &str, b: &str) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::domain::filesystem::{Filesystem, Folder};
     use crate::gradient::Gradient;
     use crate::parse::Parse;
     use crate::tree;
@@ -498,6 +528,11 @@ mod tests {
         )
     }
 
+    /// Shorthand: resolve with Filesystem context.
+    fn resolve_fs(ast: Tree<AstNode>) -> Result<Conversation<Filesystem>, ResolveError> {
+        Resolve::new().emit(ast)
+    }
+
     // -- OutputNode::name --
 
     #[test]
@@ -522,7 +557,7 @@ mod tests {
         use crate::domain::Domain;
         let source = "in @filesystem\ntemplate $corpus {\n\tslug\n\texcerpt\n}\nout blog {\n\tpieces {\n\t\tdraft: 1draft { $corpus }\n\t}\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = Resolve::new().emit(ast).unwrap();
+        let resolved = resolve_fs(ast).unwrap();
         assert_eq!(resolved.input, Domain::Filesystem);
         assert_eq!(resolved.content.data().name(), "blog");
         assert!(resolved.templates.contains_key("$corpus"));
@@ -532,7 +567,7 @@ mod tests {
     fn resolve_extracts_template_fields() {
         let source = "in @filesystem\ntemplate $t {\n\tslug\n\theadlines: h2\n\thtml: article | @html\n}\nout r {\n\tx: f { $t }\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = Resolve::new().emit(ast).unwrap();
+        let resolved = resolve_fs(ast).unwrap();
         let tmpl = &resolved.templates["$t"];
         assert_eq!(tmpl.fields.len(), 3);
         assert_eq!(tmpl.fields[0].name, "slug");
@@ -550,7 +585,7 @@ mod tests {
     fn resolve_unknown_domain_errors() {
         let source = "in @filesytem\ntemplate $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let err = Resolve::new().emit(ast).unwrap_err();
+        let err = resolve_fs(ast).unwrap_err();
         assert!(err.message.contains("filesytem"), "{}", err);
         assert!(!err.hints.is_empty(), "should suggest @filesystem");
         assert!(err.hints[0].contains("filesystem"), "{}", err.hints[0]);
@@ -562,7 +597,7 @@ mod tests {
     fn resolve_unknown_template_errors() {
         let source = "in @filesystem\ntemplate $corpus {\n\tslug\n}\nout blog {\n\tpieces {\n\t\tdraft: 1draft { $coprus }\n\t}\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let err = Resolve::new().emit(ast).unwrap_err();
+        let err = resolve_fs(ast).unwrap_err();
         assert!(err.message.contains("coprus"), "{}", err);
         assert!(!err.hints.is_empty(), "should suggest $corpus");
     }
@@ -573,7 +608,7 @@ mod tests {
     fn resolve_missing_output_errors() {
         let source = "in @filesystem\ntemplate $t {\n\tname\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let err = Resolve::new().emit(ast).unwrap_err();
+        let err = resolve_fs(ast).unwrap_err();
         assert!(err.message.contains("output"), "{}", err);
     }
 
@@ -637,22 +672,30 @@ mod tests {
     // -- absorb --
 
     #[test]
-    fn absorb_not_yet_implemented() {
+    fn resolve_absorb_not_yet_implemented() {
         let source = "in @filesystem\ntemplate $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = Resolve::new().emit(ast).unwrap();
+        let resolved = resolve_fs(ast).unwrap();
         let err = Resolve::new().absorb(resolved).unwrap_err();
         assert!(err.message.contains("not yet implemented"));
+    }
+
+    #[test]
+    fn conversation_absorb_not_yet_implemented() {
+        let resolved =
+            Conversation::<Filesystem>::from_source("in @filesystem\nout r {\n\tx {}\n}\n")
+                .unwrap();
+        let err = resolved.absorb(Value::Null).unwrap_err();
+        assert!(err.message.contains("absorb not yet implemented"));
     }
 
     // -- Execute --
 
     #[test]
-    fn execute_produces_correct_output() {
+    fn emit_produces_correct_output() {
         let source =
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\n";
-        let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = Resolve::new().emit(ast).unwrap();
+        let resolved = resolve_fs(Parse.emit(source.to_string()).unwrap()).unwrap();
 
         let tree = dir_folder(
             "root",
@@ -664,26 +707,24 @@ mod tests {
                 )],
             )],
         );
-        let result = resolved.execute(&tree);
+        let result = resolved.emit(tree).unwrap();
         let items = result["root"]["items"].as_array().unwrap();
         assert_eq!(items[0]["slug"], "hello-world");
     }
 
     #[test]
-    fn execute_missing_child_skips() {
+    fn emit_missing_child_skips() {
         let source = "in @filesystem\ntemplate $t {\n\tname\n}\nout root {\n\tmissing {\n\t\titems: sub { $t }\n\t}\n}\n";
-        let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = Resolve::new().emit(ast).unwrap();
+        let resolved = resolve_fs(Parse.emit(source.to_string()).unwrap()).unwrap();
         let tree = dir_folder("root", vec![]);
-        let result = resolved.execute(&tree);
+        let result = resolved.emit(tree).unwrap();
         assert!(result["root"].as_object().unwrap().is_empty());
     }
 
     #[test]
-    fn execute_headlines_qualifier() {
+    fn emit_headlines_qualifier() {
         let source = "in @filesystem\ntemplate $t {\n\theadlines: h2\n}\nout root {\n\titems: sub { $t }\n}\n";
-        let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = Resolve::new().emit(ast).unwrap();
+        let resolved = resolve_fs(Parse.emit(source.to_string()).unwrap()).unwrap();
 
         let tree = dir_folder(
             "root",
@@ -692,7 +733,7 @@ mod tests {
                 vec![leaf_folder("post.md", "## First\n## Second\n")],
             )],
         );
-        let result = resolved.execute(&tree);
+        let result = resolved.emit(tree).unwrap();
         let headlines = result["root"]["items"][0]["headlines"].as_array().unwrap();
         assert_eq!(headlines.len(), 2);
         assert_eq!(headlines[0], "First");
@@ -700,11 +741,10 @@ mod tests {
     }
 
     #[test]
-    fn execute_unknown_qualifier_produces_null() {
+    fn emit_unknown_qualifier_produces_null() {
         let source =
             "in @filesystem\ntemplate $t {\n\tfield: unknown\n}\nout root {\n\titems: sub { $t }\n}\n";
-        let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = Resolve::new().emit(ast).unwrap();
+        let resolved = resolve_fs(Parse.emit(source.to_string()).unwrap()).unwrap();
 
         let tree = dir_folder(
             "root",
@@ -713,7 +753,7 @@ mod tests {
                 vec![leaf_folder("f.md", "---\nfield: val\n---\n")],
             )],
         );
-        let result = resolved.execute(&tree);
+        let result = resolved.emit(tree).unwrap();
         assert!(result["root"]["items"][0]["field"].is_null());
     }
 
@@ -725,17 +765,16 @@ mod tests {
         let resolve = Resolve::new().with_domain("html");
         let source = "in @html\nout r {\n\tx {}\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = resolve.emit(ast).unwrap();
+        let resolved: Conversation<Filesystem> = resolve.emit(ast).unwrap();
         assert_eq!(resolved.input, Domain::External("html".into()));
     }
 
     #[test]
     fn default_same_as_new() {
         use crate::domain::Domain;
-        let resolve = Resolve::default();
         let source = "in @filesystem\nout r {\n\tx {}\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = resolve.emit(ast).unwrap();
+        let resolved: Conversation<Filesystem> = Resolve::default().emit(ast).unwrap();
         assert_eq!(resolved.input, Domain::Filesystem);
     }
 
@@ -746,7 +785,8 @@ mod tests {
         let resolve = Resolve::new().with_domain("graphql");
         let source = "in @graphq\nout r {\n\tx {}\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let err = resolve.emit(ast).unwrap_err();
+        let result: Result<Conversation<Filesystem>, _> = resolve.emit(ast);
+        let err = result.unwrap_err();
         assert!(err.message.contains("graphq"), "{}", err);
         assert!(!err.hints.is_empty(), "should suggest @graphql");
         assert!(err.hints[0].contains("graphql"), "{}", err.hints[0]);
@@ -757,7 +797,7 @@ mod tests {
         use crate::domain::Domain;
         let source = "template $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = Resolve::new().emit(ast).unwrap();
+        let resolved = resolve_fs(ast).unwrap();
         assert_eq!(resolved.input, Domain::Json);
     }
 
@@ -766,31 +806,28 @@ mod tests {
         use crate::domain::Domain;
         let source =
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
-        let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = Resolve::new().emit(ast).unwrap();
+        let resolved = resolve_fs(Parse.emit(source.to_string()).unwrap()).unwrap();
         assert_eq!(resolved.input, Domain::Filesystem);
         assert_eq!(resolved.output, Domain::Json);
     }
 
-    // -- Execute: missing folder in select skips --
+    // -- Emit: missing folder in select skips --
 
     #[test]
-    fn execute_missing_folder_in_select_skips() {
+    fn emit_missing_folder_in_select_skips() {
         let source = "in @filesystem\ntemplate $t {\n\tname\n}\nout root {\n\titems: nonexistent { $t }\n}\n";
-        let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = Resolve::new().emit(ast).unwrap();
+        let resolved = resolve_fs(Parse.emit(source.to_string()).unwrap()).unwrap();
         let tree = dir_folder("root", vec![]);
-        let result = resolved.execute(&tree);
+        let result = resolved.emit(tree).unwrap();
         assert!(result["root"].as_object().unwrap().is_empty());
     }
 
-    // -- Execute: group with matching child --
+    // -- Emit: group with matching child --
 
     #[test]
-    fn execute_group_with_child() {
+    fn emit_group_with_child() {
         let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\tsub {\n\t\titems: data { $t }\n\t}\n}\n";
-        let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = Resolve::new().emit(ast).unwrap();
+        let resolved = resolve_fs(Parse.emit(source.to_string()).unwrap()).unwrap();
         let tree = dir_folder(
             "root",
             vec![dir_folder(
@@ -801,7 +838,7 @@ mod tests {
                 )],
             )],
         );
-        let result = resolved.execute(&tree);
+        let result = resolved.emit(tree).unwrap();
         let items = result["root"]["sub"]["items"].as_array().unwrap();
         assert_eq!(items[0]["slug"], "hi");
     }
@@ -809,11 +846,10 @@ mod tests {
     // -- Frontmatter: unclosed delimiter --
 
     #[test]
-    fn execute_frontmatter_unclosed_returns_empty() {
+    fn emit_frontmatter_unclosed_returns_empty() {
         let source =
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\n";
-        let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = Resolve::new().emit(ast).unwrap();
+        let resolved = resolve_fs(Parse.emit(source.to_string()).unwrap()).unwrap();
         let tree = dir_folder(
             "root",
             vec![dir_folder(
@@ -821,7 +857,7 @@ mod tests {
                 vec![leaf_folder("f.md", "---\nslug: test\nNo closing")],
             )],
         );
-        let result = resolved.execute(&tree);
+        let result = resolved.emit(tree).unwrap();
         // Unclosed frontmatter returns empty fields
         assert_eq!(result["root"]["items"][0]["slug"], "");
     }
@@ -864,7 +900,7 @@ mod tests {
                 ),
             ],
         );
-        let resolved = Resolve::new().emit(root).unwrap();
+        let resolved = resolve_fs(root).unwrap();
         // Only the Field child is extracted, DomainRef is ignored
         assert_eq!(resolved.templates["$t"].fields.len(), 1);
     }
@@ -890,7 +926,7 @@ mod tests {
                 ),
             ],
         );
-        let resolved = Resolve::new().emit(root).unwrap();
+        let resolved = resolve_fs(root).unwrap();
         // Only the Group child is extracted, In is ignored
         assert_eq!(resolved.content.children().len(), 1);
     }
@@ -938,7 +974,7 @@ mod tests {
                 ),
             ],
         );
-        let resolved = Resolve::new().emit(root).unwrap();
+        let resolved = resolve_fs(root).unwrap();
         let field = &resolved.templates["$t"].fields[0];
         assert_eq!(field.qualifier.as_deref(), Some("h2"));
         assert!(field.pipe.is_none());
@@ -949,9 +985,10 @@ mod tests {
     #[test]
     fn parse_then_resolve_composes() {
         use crate::domain::Domain;
-        let pipeline = Parse.compose(Resolve::new());
         let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
-        let resolved = pipeline.emit(source.to_string()).unwrap();
+        // Parse → Resolve composes via explicit chaining
+        let ast = Parse.emit(source.to_string()).unwrap();
+        let resolved = resolve_fs(ast).unwrap();
         assert_eq!(resolved.input, Domain::Filesystem);
     }
 
@@ -962,7 +999,7 @@ mod tests {
         use crate::domain::Domain;
         let source =
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
-        let resolved = Conversation::from_source(source).unwrap();
+        let resolved = Conversation::<Filesystem>::from_source(source).unwrap();
         assert_eq!(resolved.input, Domain::Filesystem);
         assert_eq!(resolved.content.data().name(), "blog");
         assert!(resolved.templates.contains_key("$t"));
@@ -970,13 +1007,14 @@ mod tests {
 
     #[test]
     fn from_source_propagates_parse_error() {
-        let err = Conversation::from_source("garbage\n").unwrap_err();
+        let err = Conversation::<Filesystem>::from_source("garbage\n").unwrap_err();
         assert!(err.message.contains("parse"), "{}", err);
     }
 
     #[test]
     fn from_source_propagates_resolve_error() {
-        let err = Conversation::from_source("in @bogus\nout r {\n\tx {}\n}\n").unwrap_err();
+        let err =
+            Conversation::<Filesystem>::from_source("in @bogus\nout r {\n\tx {}\n}\n").unwrap_err();
         assert!(err.message.contains("bogus"), "{}", err);
     }
 
@@ -1036,12 +1074,12 @@ mod tests {
     #[test]
     fn systemic_engineering_conv_produces_blog_index() {
         let conv_source = include_str!("../systemic.engineering.conv");
-        let resolved = Conversation::from_source(conv_source).expect("from_source");
+        let resolved = Conversation::<Filesystem>::from_source(conv_source).expect("from_source");
 
         let se_path = std::env::var("SYSTEMIC_ENGINEERING")
             .unwrap_or_else(|_| "/Users/alexwolf/dev/systemic.engineering".into());
         let tree = Folder::read_tree(&format!("{}/blog", se_path));
-        let result = resolved.execute(&tree);
+        let result = resolved.emit(tree).unwrap();
 
         // Output shape matches .conv declaration
         let pieces = &result["blog"]["pieces"];

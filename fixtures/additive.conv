@@ -1,0 +1,8 @@
+in Number as $a
+in Number as $b
+
+out {
+	simple: $a + $b
+	curried + $b
+	magic: +
+}

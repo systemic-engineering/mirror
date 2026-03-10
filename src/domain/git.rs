@@ -4,7 +4,7 @@
 //! commits contain trees, trees contain entries and blobs.
 //! The discriminant IS the data — each level carries different information.
 
-use super::Context;
+use super::{Addressable, Context};
 
 /// The git context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -28,6 +28,23 @@ pub enum GitNode {
     Blob { content: Vec<u8> },
 }
 
+impl Addressable for GitNode {
+    fn node_name(&self) -> &str {
+        match self {
+            GitNode::Ref { name, .. } => name,
+            GitNode::Commit { message, .. } => message,
+            GitNode::Entry { name } => name,
+            GitNode::Blob { .. } => "",
+        }
+    }
+    fn node_content(&self) -> Option<&str> {
+        match self {
+            GitNode::Blob { content } => std::str::from_utf8(content).ok(),
+            _ => None,
+        }
+    }
+}
+
 impl Context for Git {
     type Token = GitNode;
     type Keys = fragmentation::keys::PlainKeys;
@@ -40,13 +57,64 @@ impl Context for Git {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::Context;
+    use crate::domain::{Addressable, Context};
     use crate::tree::{self, Treelike};
     use fragmentation::ref_::Ref;
     use fragmentation::sha;
 
     fn test_ref(label: &str) -> Ref {
         Ref::new(sha::hash(label), label)
+    }
+
+    // -- Addressable --
+
+    #[test]
+    fn addressable_node_name() {
+        assert_eq!(
+            GitNode::Ref {
+                name: "main".into(),
+                target: "abc".into()
+            }
+            .node_name(),
+            "main"
+        );
+        assert_eq!(
+            GitNode::Commit {
+                message: "init".into(),
+                author: "a".into(),
+                email: "e".into()
+            }
+            .node_name(),
+            "init"
+        );
+        assert_eq!(GitNode::Entry { name: "src".into() }.node_name(), "src");
+        assert_eq!(
+            GitNode::Blob {
+                content: b"x".to_vec()
+            }
+            .node_name(),
+            ""
+        );
+    }
+
+    #[test]
+    fn addressable_node_content() {
+        assert_eq!(
+            GitNode::Blob {
+                content: b"hello".to_vec()
+            }
+            .node_content(),
+            Some("hello")
+        );
+        assert_eq!(GitNode::Entry { name: "src".into() }.node_content(), None);
+        // Invalid UTF-8 returns None
+        assert_eq!(
+            GitNode::Blob {
+                content: vec![0xFF, 0xFE]
+            }
+            .node_content(),
+            None
+        );
     }
 
     #[test]

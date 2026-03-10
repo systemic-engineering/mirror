@@ -57,6 +57,16 @@ pub trait Context: Clone + std::fmt::Debug + PartialEq + Eq {
     fn id() -> &'static str;
 }
 
+/// What a tree node must provide for conversation execution.
+///
+/// The conversation program navigates domain trees by name
+/// and extracts content from leaf nodes. This is the interface
+/// between the resolved program and the domain's tree structure.
+pub trait Addressable {
+    fn node_name(&self) -> &str;
+    fn node_content(&self) -> Option<&str>;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

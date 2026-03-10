@@ -10,7 +10,7 @@ pub mod witness;
 
 pub use domain::filesystem::{Filesystem, Folder};
 pub use domain::git::{Git, GitNode};
-pub use domain::{Context, Domain};
+pub use domain::{Addressable, Context, Domain};
 pub use gradient::{Composed, ComposedError, Fallback, Gradient, Inverted, Iso, When};
 pub use identity::{Actor, Identity};
 pub use optics::{NotFound, Prism, PrismAsTraversal, PrismGradient, Traversal, TraversalGradient};

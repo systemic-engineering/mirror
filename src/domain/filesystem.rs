@@ -1,9 +1,18 @@
-use super::Context;
+use super::{Addressable, Context};
 use crate::tree::{self, Tree};
 
 /// The filesystem context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Filesystem;
+
+impl Addressable for Folder {
+    fn node_name(&self) -> &str {
+        &self.name
+    }
+    fn node_content(&self) -> Option<&str> {
+        self.content.as_deref()
+    }
+}
 
 impl Context for Filesystem {
     type Token = Folder;
