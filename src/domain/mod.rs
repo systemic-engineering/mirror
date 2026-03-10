@@ -1,3 +1,4 @@
+pub mod conversation;
 pub mod filesystem;
 
 use std::borrow::Cow;

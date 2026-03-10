@@ -1,3 +1,4 @@
+pub mod ast;
 pub mod conv;
 pub mod domain;
 pub mod gradient;
