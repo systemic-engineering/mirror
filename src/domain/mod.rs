@@ -50,6 +50,8 @@ impl Domain {
 /// Crossing between domains is a Gradient.
 pub trait Context: Clone + std::fmt::Debug + PartialEq + Eq {
     type Token: Clone + std::fmt::Debug + PartialEq + Eq;
+    type Data: Clone + std::fmt::Debug;
+    type Keys: fragmentation::keys::Keys;
 
     fn id() -> &'static str;
 
@@ -71,6 +73,30 @@ mod tests {
             C::id()
         }
         requires_context::<Filesystem>();
+    }
+
+    #[test]
+    fn filesystem_data_is_folder() {
+        fn assert_data_type<C: Context<Data = filesystem::Folder>>() {}
+        assert_data_type::<Filesystem>();
+    }
+
+    #[test]
+    fn filesystem_keys_is_plain() {
+        fn assert_keys_type<C: Context<Keys = fragmentation::keys::PlainKeys>>() {}
+        assert_keys_type::<Filesystem>();
+    }
+
+    #[test]
+    fn conversation_data_is_ast_node() {
+        fn assert_data_type<C: Context<Data = crate::ast::AstNode>>() {}
+        assert_data_type::<conversation::Conversation>();
+    }
+
+    #[test]
+    fn conversation_keys_is_plain() {
+        fn assert_keys_type<C: Context<Keys = fragmentation::keys::PlainKeys>>() {}
+        assert_keys_type::<conversation::Conversation>();
     }
 
     #[test]
