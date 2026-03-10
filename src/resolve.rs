@@ -725,11 +725,22 @@ mod tests {
     }
 
     #[test]
-    fn resolve_missing_domain_errors() {
+    fn resolve_missing_in_defaults_to_json() {
+        use crate::domain::Domain;
         let source = "template $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let err = Resolve::new().emit(ast).unwrap_err();
-        assert!(err.message.contains("domain"), "{}", err);
+        let resolved = Resolve::new().emit(ast).unwrap();
+        assert_eq!(resolved.input, Domain::Json);
+    }
+
+    #[test]
+    fn resolve_output_domain_defaults_to_json() {
+        use crate::domain::Domain;
+        let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
+        let ast = Parse.emit(source.to_string()).unwrap();
+        let resolved = Resolve::new().emit(ast).unwrap();
+        assert_eq!(resolved.input, Domain::Filesystem);
+        assert_eq!(resolved.output_domain, Domain::Json);
     }
 
     // -- Execute: missing folder in select skips --
