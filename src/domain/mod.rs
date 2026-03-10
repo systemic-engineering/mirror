@@ -3,6 +3,42 @@ pub mod filesystem;
 
 use std::borrow::Cow;
 
+/// What `@` addresses. The domain a `.conv` file operates in.
+///
+/// Known domains resolve without registration.
+/// External domains require explicit registration via `Resolve::with_domain`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Domain {
+    Filesystem,
+    Json,
+    External(String),
+}
+
+impl Domain {
+    /// The string name this domain is addressed by.
+    pub fn id(&self) -> &str {
+        match self {
+            Domain::Filesystem => "filesystem",
+            Domain::Json => "json",
+            Domain::External(name) => name,
+        }
+    }
+
+    /// Resolve a name to a known domain variant. Returns None for unknown names.
+    pub fn from_name(name: &str) -> Option<Domain> {
+        match name {
+            "filesystem" => Some(Domain::Filesystem),
+            "json" => Some(Domain::Json),
+            _ => None,
+        }
+    }
+
+    /// The names of all known (built-in) domains.
+    pub fn known_names() -> &'static [&'static str] {
+        &["filesystem", "json"]
+    }
+}
+
 /// The tree's context. Defines the domain's token vocabulary.
 ///
 /// A Context names what nodes in a tree can mean.

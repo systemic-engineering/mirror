@@ -4,12 +4,13 @@
 //! Validates domain references, template references, output structure.
 //! Errors carry spans and did-you-mean hints.
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use serde_json::Value;
 
 use crate::ast::{AstNode, Span};
 use crate::domain::conversation::Token;
+use crate::domain::Domain;
 use crate::gradient::Gradient;
 use crate::tree::{Tree, Treelike};
 
@@ -17,11 +18,11 @@ use crate::domain::filesystem::Folder;
 
 /// The resolve gradient. AST → Conversation.
 ///
-/// Holds the set of known domain names.
-/// Default includes "filesystem".
+/// Known domains (Filesystem, Json) always resolve.
+/// External domains must be registered via `with_domain`.
 #[derive(Clone, Debug)]
 pub struct Resolve {
-    domains: HashSet<String>,
+    externals: Vec<String>,
 }
 
 /// What can go wrong during resolution.
@@ -35,8 +36,7 @@ pub struct ResolveError {
 /// A resolved .conv file. Validated and ready to execute.
 #[derive(Debug)]
 pub struct Conversation {
-    #[allow(dead_code)] // read in tests; used by future domain-aware execution
-    domain: String,
+    pub input: Domain,
     templates: HashMap<String, Template>,
     output_name: String,
     output: Vec<OutputNode>,
@@ -70,14 +70,35 @@ pub enum OutputNode {
 
 impl Resolve {
     pub fn new() -> Self {
-        let mut domains = HashSet::new();
-        domains.insert("filesystem".to_string());
-        Resolve { domains }
+        Resolve {
+            externals: Vec::new(),
+        }
     }
 
     pub fn with_domain(mut self, domain: &str) -> Self {
-        self.domains.insert(domain.to_string());
+        self.externals.push(domain.to_string());
         self
+    }
+
+    /// Resolve a domain name to a Domain variant.
+    /// Known domains always resolve. External domains must be registered.
+    fn resolve_domain(&self, name: &str) -> Option<Domain> {
+        if let Some(known) = Domain::from_name(name) {
+            return Some(known);
+        }
+        if self.externals.iter().any(|e| e == name) {
+            return Some(Domain::External(name.to_string()));
+        }
+        None
+    }
+
+    /// All domain names available for did_you_mean.
+    fn all_domain_names(&self) -> Vec<&str> {
+        let mut names: Vec<&str> = Domain::known_names().to_vec();
+        for ext in &self.externals {
+            names.push(ext.as_str());
+        }
+        names
     }
 }
 
@@ -95,23 +116,25 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
 
         // Extract domain from In node
         let in_node = children.iter().find(|c| c.data().kind == Token::In);
-        let domain = match in_node {
+        let input = match in_node {
             Some(node) => {
                 let raw = &node.data().value;
                 let name = raw.strip_prefix('@').unwrap_or(raw);
-                if !self.domains.contains(name) {
-                    let candidates: Vec<&str> = self.domains.iter().map(|s| s.as_str()).collect();
-                    let mut hints = Vec::new();
-                    if let Some(suggestion) = did_you_mean(name, &candidates) {
-                        hints.push(format!("did you mean @{}?", suggestion));
+                match self.resolve_domain(name) {
+                    Some(domain) => domain,
+                    None => {
+                        let candidates = self.all_domain_names();
+                        let mut hints = Vec::new();
+                        if let Some(suggestion) = did_you_mean(name, &candidates) {
+                            hints.push(format!("did you mean @{}?", suggestion));
+                        }
+                        return Err(ResolveError {
+                            message: format!("unknown domain @{}", name),
+                            span: Some(node.data().span),
+                            hints,
+                        });
                     }
-                    return Err(ResolveError {
-                        message: format!("unknown domain @{}", name),
-                        span: Some(node.data().span),
-                        hints,
-                    });
                 }
-                name.to_string()
             }
             None => {
                 return Err(ResolveError {
@@ -150,7 +173,7 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
         };
 
         Ok(Conversation {
-            domain,
+            input,
             templates,
             output_name,
             output,
@@ -689,6 +712,17 @@ mod tests {
     }
 
     // -- Error: missing domain declaration --
+
+    #[test]
+    fn resolve_unknown_domain_suggests_external() {
+        let resolve = Resolve::new().with_domain("graphql");
+        let source = "in @graphq\nout r {\n\tx {}\n}\n";
+        let ast = Parse.emit(source.to_string()).unwrap();
+        let err = resolve.emit(ast).unwrap_err();
+        assert!(err.message.contains("graphq"), "{}", err);
+        assert!(!err.hints.is_empty(), "should suggest @graphql");
+        assert!(err.hints[0].contains("graphql"), "{}", err.hints[0]);
+    }
 
     #[test]
     fn resolve_missing_domain_errors() {
