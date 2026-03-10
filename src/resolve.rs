@@ -12,9 +12,12 @@ use crate::ast::{AstNode, Span};
 use crate::domain::conversation::Token;
 use crate::domain::Domain;
 use crate::gradient::Gradient;
-use crate::tree::{Tree, Treelike};
+use crate::tree::{self, Tree, Treelike};
 
 use crate::domain::filesystem::Folder;
+
+use fragmentation::ref_::Ref;
+use fragmentation::sha;
 
 /// The resolve gradient. AST → Conversation.
 ///
@@ -65,6 +68,16 @@ pub enum OutputNode {
         folder_name: String,
         template_name: String,
     },
+}
+
+impl OutputNode {
+    /// The node's name — group name or select output name.
+    pub fn name(&self) -> &str {
+        match self {
+            OutputNode::Group { name } => name,
+            OutputNode::Select { output_name, .. } => output_name,
+        }
+    }
 }
 
 impl Resolve {
@@ -150,11 +163,12 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
 
         // Extract output
         let out_node = children.iter().find(|c| c.data().kind == Token::Out);
-        let (output_name, output) = match out_node {
+        let content = match out_node {
             Some(node) => {
                 let name = node.data().value.clone();
-                let output = resolve_output_nodes(node, &templates)?;
-                (name, output)
+                let output_children = resolve_output_nodes(node, &templates)?;
+                let ref_ = Ref::new(sha::hash(&name), &name);
+                tree::branch(ref_, OutputNode::Group { name }, output_children)
             }
             None => {
                 return Err(ResolveError {
@@ -169,8 +183,7 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
             input,
             output: Domain::Json,
             templates,
-            output_name,
-            body: output,
+            content,
         })
     }
 
@@ -219,16 +232,15 @@ fn resolve_template_fields(template_node: &Tree<AstNode>) -> Vec<Field> {
 fn resolve_output_nodes(
     node: &Tree<AstNode>,
     templates: &HashMap<String, Template>,
-) -> Result<Vec<OutputNode>, ResolveError> {
+) -> Result<Vec<Tree<OutputNode>>, ResolveError> {
     let mut nodes = Vec::new();
     for child in node.children() {
         match child.data().kind {
             Token::Group => {
                 let children = resolve_output_nodes(child, templates)?;
-                nodes.push(OutputNode::Group {
-                    name: child.data().value.clone(),
-                    children,
-                });
+                let name = child.data().value.clone();
+                let ref_ = Ref::new(sha::hash(&name), &name);
+                nodes.push(tree::branch(ref_, OutputNode::Group { name }, children));
             }
             Token::Select => {
                 let select_children = child.children();
@@ -257,11 +269,16 @@ fn resolve_output_nodes(
                     });
                 }
 
-                nodes.push(OutputNode::Select {
-                    output_name: child.data().value.clone(),
-                    folder_name,
-                    template_name,
-                });
+                let output_name = child.data().value.clone();
+                let ref_ = Ref::new(sha::hash(&output_name), &output_name);
+                nodes.push(tree::leaf(
+                    ref_,
+                    OutputNode::Select {
+                        output_name,
+                        folder_name,
+                        template_name,
+                    },
+                ));
             }
             _ => {}
         }
@@ -287,20 +304,20 @@ impl Conversation {
 
     /// Execute the resolved program against a filesystem tree.
     pub fn execute(&self, tree: &Tree<Folder>) -> Value {
-        let body = self.execute_body(&self.body, tree);
+        let body = self.execute_body(&self.content, tree);
         let mut map = serde_json::Map::new();
-        map.insert(self.output_name.clone(), body);
+        map.insert(self.content.data().name().to_string(), body);
         Value::Object(map)
     }
 
-    fn execute_body(&self, entries: &[OutputNode], tree: &Tree<Folder>) -> Value {
+    fn execute_body(&self, content: &Tree<OutputNode>, tree: &Tree<Folder>) -> Value {
         let mut map = serde_json::Map::new();
 
-        for entry in entries {
-            match entry {
-                OutputNode::Group { name, children } => {
-                    if let Some(child) = find_child(tree, name) {
-                        map.insert(name.clone(), self.execute_body(children, child));
+        for child in content.children() {
+            match child.data() {
+                OutputNode::Group { name } => {
+                    if let Some(folder_child) = find_child(tree, name) {
+                        map.insert(name.clone(), self.execute_body(child, folder_child));
                     }
                 }
                 OutputNode::Select {
@@ -313,7 +330,7 @@ impl Conversation {
                         let items: Vec<Value> = folder
                             .children()
                             .iter()
-                            .map(|child| apply_template(template, child))
+                            .map(|f| apply_template(template, f))
                             .collect();
                         map.insert(output_name.clone(), Value::Array(items));
                     }
@@ -481,6 +498,23 @@ mod tests {
         )
     }
 
+    // -- OutputNode::name --
+
+    #[test]
+    fn output_node_name() {
+        let group = OutputNode::Group {
+            name: "blog".into(),
+        };
+        assert_eq!(group.name(), "blog");
+
+        let select = OutputNode::Select {
+            output_name: "items".into(),
+            folder_name: "sub".into(),
+            template_name: "$t".into(),
+        };
+        assert_eq!(select.name(), "items");
+    }
+
     // -- Resolve valid conv --
 
     #[test]
@@ -490,11 +524,7 @@ mod tests {
         let ast = Parse.emit(source.to_string()).unwrap();
         let resolved = Resolve::new().emit(ast).unwrap();
         assert_eq!(resolved.input, Domain::Filesystem);
-        // Root of content tree carries the output name
-        match resolved.content.data() {
-            OutputNode::Group { name } => assert_eq!(name, "blog"),
-            _ => panic!("content root must be a Group"),
-        }
+        assert_eq!(resolved.content.data().name(), "blog");
         assert!(resolved.templates.contains_key("$corpus"));
     }
 
@@ -934,10 +964,7 @@ mod tests {
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
         let resolved = Conversation::from_source(source).unwrap();
         assert_eq!(resolved.input, Domain::Filesystem);
-        match resolved.content.data() {
-            OutputNode::Group { name } => assert_eq!(name, "blog"),
-            _ => panic!("content root must be a Group"),
-        }
+        assert_eq!(resolved.content.data().name(), "blog");
         assert!(resolved.templates.contains_key("$t"));
     }
 
