@@ -590,6 +590,46 @@ mod tests {
     }
 
     #[test]
+    fn parse_json_fixture() {
+        let source = include_str!("../fixtures/json.conv");
+        let tree = Parse.emit(source.to_string()).unwrap();
+        let out = &tree.children()[0];
+        assert_eq!(out.data().kind, Kind::Out);
+        assert_eq!(out.data().value, "@json");
+        assert!(out.is_shard());
+    }
+
+    #[test]
+    fn parse_parameterized_in() {
+        let source = "in @git(branch: \"main\")\n";
+        let tree = Parse.emit(source.to_string()).unwrap();
+        let in_node = &tree.children()[0];
+        assert_eq!(in_node.data().kind, Kind::In);
+        assert_eq!(in_node.data().value, "@git");
+        assert!(in_node.is_fractal());
+        assert_eq!(in_node.children()[0].data().kind, Kind::DomainParam);
+        assert_eq!(in_node.children()[0].data().value, "branch: \"main\"");
+    }
+
+    #[test]
+    fn parse_coverage_fixture() {
+        let source = include_str!("../fixtures/coverage-on-last-3-main-commits.conv");
+        let tree = Parse.emit(source.to_string()).unwrap();
+        let children = tree.children();
+        assert_eq!(children.len(), 2); // in + pipeline
+
+        let in_node = &children[0];
+        assert_eq!(in_node.data().kind, Kind::In);
+        assert_eq!(in_node.data().value, "@git");
+        assert_eq!(in_node.children()[0].data().kind, Kind::DomainParam);
+        assert_eq!(in_node.children()[0].data().value, "branch: \"main\"");
+
+        let pipeline = &children[1];
+        assert_eq!(pipeline.data().kind, Kind::Pipeline);
+        assert_eq!(pipeline.children().len(), 2);
+    }
+
+    #[test]
     fn parse_bare_out() {
         let source = "out @json\n";
         let tree = Parse.emit(source.to_string()).unwrap();
