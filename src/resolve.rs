@@ -70,11 +70,14 @@ pub enum OutputNode {
 
 impl Resolve {
     pub fn new() -> Self {
-        todo!()
+        let mut domains = HashSet::new();
+        domains.insert("filesystem".to_string());
+        Resolve { domains }
     }
 
     pub fn with_domain(mut self, domain: &str) -> Self {
-        todo!()
+        self.domains.insert(domain.to_string());
+        self
     }
 }
 
@@ -88,35 +91,328 @@ impl Gradient<Tree<AstNode>, Resolved> for Resolve {
     type Error = ResolveError;
 
     fn emit(&self, source: Tree<AstNode>) -> Result<Resolved, ResolveError> {
-        todo!()
+        let children = source.children();
+
+        // Extract domain from In node
+        let in_node = children.iter().find(|c| c.data().kind == Language::In);
+        let domain = match in_node {
+            Some(node) => {
+                let raw = &node.data().value;
+                let name = raw.strip_prefix('@').unwrap_or(raw);
+                if !self.domains.contains(name) {
+                    let candidates: Vec<&str> = self.domains.iter().map(|s| s.as_str()).collect();
+                    let mut hints = Vec::new();
+                    if let Some(suggestion) = did_you_mean(name, &candidates) {
+                        hints.push(format!("did you mean @{}?", suggestion));
+                    }
+                    return Err(ResolveError {
+                        message: format!("unknown domain @{}", name),
+                        span: Some(node.data().span),
+                        hints,
+                    });
+                }
+                name.to_string()
+            }
+            None => {
+                return Err(ResolveError {
+                    message: "missing domain declaration (in @domain)".into(),
+                    span: None,
+                    hints: vec![],
+                });
+            }
+        };
+
+        // Extract templates
+        let mut templates = HashMap::new();
+        for child in children {
+            if child.data().kind == Language::Template {
+                let name = child.data().value.clone();
+                let fields = resolve_template_fields(child);
+                templates.insert(name, ResolvedTemplate { fields });
+            }
+        }
+
+        // Extract output
+        let out_node = children.iter().find(|c| c.data().kind == Language::Out);
+        let (output_name, output) = match out_node {
+            Some(node) => {
+                let name = node.data().value.clone();
+                let output = resolve_output_nodes(node, &templates)?;
+                (name, output)
+            }
+            None => {
+                return Err(ResolveError {
+                    message: "missing output block".into(),
+                    span: None,
+                    hints: vec![],
+                });
+            }
+        };
+
+        Ok(Resolved {
+            domain,
+            templates,
+            output_name,
+            output,
+        })
     }
 
     fn absorb(&self, _source: Resolved) -> Result<Tree<AstNode>, ResolveError> {
-        todo!()
+        Err(ResolveError {
+            message: "un-resolve not yet implemented".into(),
+            span: None,
+            hints: vec![],
+        })
     }
+}
+
+fn resolve_template_fields(template_node: &Tree<AstNode>) -> Vec<ResolvedField> {
+    let mut fields = Vec::new();
+    for child in template_node.children() {
+        if child.data().kind == Language::Field {
+            if child.is_shard() {
+                // Bare field: no qualifier, no pipe
+                fields.push(ResolvedField {
+                    name: child.data().value.clone(),
+                    qualifier: None,
+                    pipe: None,
+                });
+            } else {
+                // Field with qualifier and/or pipe
+                let mut qualifier = None;
+                let mut pipe = None;
+                for sub in child.children() {
+                    match sub.data().kind {
+                        Language::Qualifier => qualifier = Some(sub.data().value.clone()),
+                        Language::Pipe => pipe = Some(sub.data().value.clone()),
+                        _ => {}
+                    }
+                }
+                fields.push(ResolvedField {
+                    name: child.data().value.clone(),
+                    qualifier,
+                    pipe,
+                });
+            }
+        }
+    }
+    fields
+}
+
+fn resolve_output_nodes(
+    node: &Tree<AstNode>,
+    templates: &HashMap<String, ResolvedTemplate>,
+) -> Result<Vec<OutputNode>, ResolveError> {
+    let mut nodes = Vec::new();
+    for child in node.children() {
+        match child.data().kind {
+            Language::Group => {
+                let children = resolve_output_nodes(child, templates)?;
+                nodes.push(OutputNode::Group {
+                    name: child.data().value.clone(),
+                    children,
+                });
+            }
+            Language::Select => {
+                let select_children = child.children();
+                let folder_name = select_children
+                    .iter()
+                    .find(|c| c.data().kind == Language::DomainRef)
+                    .map(|c| c.data().value.clone())
+                    .unwrap_or_default();
+                let template_name = select_children
+                    .iter()
+                    .find(|c| c.data().kind == Language::TemplateRef)
+                    .map(|c| c.data().value.clone())
+                    .unwrap_or_default();
+
+                // Validate template reference
+                if !templates.contains_key(&template_name) {
+                    let candidates: Vec<&str> = templates.keys().map(|s| s.as_str()).collect();
+                    let mut hints = Vec::new();
+                    if let Some(suggestion) = did_you_mean(&template_name, &candidates) {
+                        hints.push(format!("did you mean {}?", suggestion));
+                    }
+                    return Err(ResolveError {
+                        message: format!("unknown template {}", template_name),
+                        span: Some(child.data().span),
+                        hints,
+                    });
+                }
+
+                nodes.push(OutputNode::Select {
+                    output_name: child.data().value.clone(),
+                    folder_name,
+                    template_name,
+                });
+            }
+            _ => {}
+        }
+    }
+    Ok(nodes)
 }
 
 impl Resolved {
     /// Execute the resolved program against a filesystem tree.
     pub fn execute(&self, tree: &Tree<Folder>) -> Value {
-        todo!()
+        let body = self.execute_body(&self.output, tree);
+        let mut map = serde_json::Map::new();
+        map.insert(self.output_name.clone(), body);
+        Value::Object(map)
     }
+
+    fn execute_body(&self, entries: &[OutputNode], tree: &Tree<Folder>) -> Value {
+        let mut map = serde_json::Map::new();
+
+        for entry in entries {
+            match entry {
+                OutputNode::Group { name, children } => {
+                    if let Some(child) = find_child(tree, name) {
+                        map.insert(name.clone(), self.execute_body(children, child));
+                    }
+                }
+                OutputNode::Select {
+                    output_name,
+                    folder_name,
+                    template_name,
+                } => {
+                    if let Some(folder) = find_child(tree, folder_name) {
+                        let template = &self.templates[template_name];
+                        let items: Vec<Value> = folder
+                            .children()
+                            .iter()
+                            .map(|child| apply_template(template, child))
+                            .collect();
+                        map.insert(output_name.clone(), Value::Array(items));
+                    }
+                }
+            }
+        }
+
+        Value::Object(map)
+    }
+}
+
+fn find_child<'a>(tree: &'a Tree<Folder>, name: &str) -> Option<&'a Tree<Folder>> {
+    tree.children().iter().find(|c| c.data().name == name)
+}
+
+fn apply_template(template: &ResolvedTemplate, tree: &Tree<Folder>) -> Value {
+    let content = tree.data().content.as_deref().unwrap_or("");
+    let (frontmatter, body) = parse_frontmatter(content);
+
+    let mut map = serde_json::Map::new();
+    for field in &template.fields {
+        match &field.qualifier {
+            None => {
+                let value = lookup_frontmatter(&frontmatter, &field.name);
+                map.insert(field.name.clone(), Value::String(value));
+            }
+            Some(qual) if qual == "h2" => {
+                let headlines = extract_headlines(body, "## ");
+                map.insert(
+                    field.name.clone(),
+                    Value::Array(headlines.into_iter().map(Value::String).collect()),
+                );
+            }
+            Some(_) => {
+                map.insert(field.name.clone(), Value::Null);
+            }
+        }
+    }
+    Value::Object(map)
+}
+
+fn parse_frontmatter(content: &str) -> (HashMap<String, String>, &str) {
+    let mut frontmatter = HashMap::new();
+
+    if !content.starts_with("---") {
+        return (frontmatter, content);
+    }
+
+    let after_first = &content[3..];
+    if let Some(end_idx) = after_first.find("\n---") {
+        let fm_text = &after_first[..end_idx];
+        let body = &after_first[end_idx + 4..];
+        let body = body.strip_prefix('\n').unwrap_or(body);
+
+        for line in fm_text.lines() {
+            let line = line.trim();
+            if let Some((key, value)) = line.split_once(':') {
+                frontmatter.insert(key.trim().to_lowercase(), value.trim().to_string());
+            }
+        }
+
+        (frontmatter, body)
+    } else {
+        (frontmatter, content)
+    }
+}
+
+fn lookup_frontmatter(fm: &HashMap<String, String>, key: &str) -> String {
+    fm.get(&key.to_lowercase()).cloned().unwrap_or_default()
+}
+
+fn extract_headlines(content: &str, prefix: &str) -> Vec<String> {
+    content
+        .lines()
+        .filter(|line| line.starts_with(prefix))
+        .map(|line| line[prefix.len()..].trim().to_string())
+        .collect()
 }
 
 impl std::fmt::Display for ResolveError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        todo!()
+        let location = self
+            .span
+            .as_ref()
+            .map(|s| format!(" at {}..{}", s.start, s.end))
+            .unwrap_or_default();
+        write!(f, "resolve error{}: {}", location, self.message)?;
+        for hint in &self.hints {
+            write!(f, "\n  hint: {}", hint)?;
+        }
+        Ok(())
     }
 }
 
 impl std::error::Error for ResolveError {}
 
 fn did_you_mean<'a>(name: &str, candidates: &[&'a str]) -> Option<&'a str> {
-    todo!()
+    let threshold = (name.len() / 3).max(1) + 1;
+    candidates
+        .iter()
+        .map(|&c| (c, edit_distance(name, c)))
+        .filter(|(_, d)| *d <= threshold)
+        .min_by_key(|(_, d)| *d)
+        .map(|(c, _)| c)
 }
 
 fn edit_distance(a: &str, b: &str) -> usize {
-    todo!()
+    let a: Vec<char> = a.chars().collect();
+    let b: Vec<char> = b.chars().collect();
+    let m = a.len();
+    let n = b.len();
+
+    let mut dp = vec![vec![0usize; n + 1]; m + 1];
+
+    for (i, row) in dp.iter_mut().enumerate() {
+        row[0] = i;
+    }
+    for (j, cell) in dp[0].iter_mut().enumerate() {
+        *cell = j;
+    }
+
+    for i in 1..=m {
+        for j in 1..=n {
+            let cost = if a[i - 1] == b[j - 1] { 0 } else { 1 };
+            dp[i][j] = (dp[i - 1][j] + 1)
+                .min(dp[i][j - 1] + 1)
+                .min(dp[i - 1][j - 1] + cost);
+        }
+    }
+
+    dp[m][n]
 }
 
 #[cfg(test)]
