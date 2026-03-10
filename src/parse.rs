@@ -585,6 +585,16 @@ mod tests {
     }
 
     #[test]
+    fn parse_bare_out() {
+        let source = "out @json\n";
+        let tree = Parse.emit(source.to_string()).unwrap();
+        let out = &tree.children()[0];
+        assert_eq!(out.data().kind, Kind::Out);
+        assert_eq!(out.data().value, "@json");
+        assert!(out.is_shard());
+    }
+
+    #[test]
     fn parse_empty_source() {
         let source = "".to_string();
         let tree = Parse.emit(source).unwrap();
