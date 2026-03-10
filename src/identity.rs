@@ -1,65 +1,56 @@
+use crate::domain::Context;
+
 /// Identity: who you are in the system.
 ///
 /// The trait for anything that can identify an actor.
 /// Maps to git's author concept. An identity has a name,
-/// an address, and optionally a key for signing.
+/// an address, and keys for signing/encryption.
 ///
 /// Identity is a first-class concept in Conversation.
 /// Every gradient application is attributable to an identity.
-pub trait Identity {
+pub trait Identity<C: Context> {
     fn name(&self) -> &str;
     fn email(&self) -> &str;
-    fn key(&self) -> Option<&Key>;
-}
-
-/// A cryptographic key. First-class concept.
-///
-/// Used for signing events, proving provenance.
-/// Maps to GPG keys in git commits.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Key {
-    /// Key fingerprint (e.g. GPG fingerprint)
-    pub fingerprint: String,
-}
-
-impl Key {
-    pub fn new(fingerprint: impl Into<String>) -> Self {
-        Key {
-            fingerprint: fingerprint.into(),
-        }
-    }
+    fn keys(&self) -> &C::Keys;
 }
 
 /// An actor in the system. Carries identity, applies gradients.
 ///
-/// In Witness (Elixir), Actor is a GenServer per module.
-/// In Conversation, Actor is a value that identifies who is
-/// applying transformations. Actor is a first-class concept.
+/// Context-parameterized: `Actor<Filesystem>` carries `PlainKeys`,
+/// a future `Actor<Encrypted>` could carry SSH/GPG keys.
+/// Default context is Filesystem (PlainKeys, infallible).
 ///
 /// Every observation in a session is attributable to an actor.
 #[derive(Debug, Clone)]
-pub struct Actor {
+pub struct Actor<C: Context = crate::domain::filesystem::Filesystem> {
     name: String,
     email: String,
-    key: Option<Key>,
+    keys: C::Keys,
 }
 
-impl Actor {
-    pub fn new(name: impl Into<String>, email: impl Into<String>) -> Self {
+impl<C: Context> Actor<C> {
+    pub fn new(name: impl Into<String>, email: impl Into<String>, keys: C::Keys) -> Self {
         Actor {
             name: name.into(),
             email: email.into(),
-            key: None,
+            keys,
         }
     }
 
-    pub fn with_key(mut self, key: Key) -> Self {
-        self.key = Some(key);
-        self
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn email(&self) -> &str {
+        &self.email
+    }
+
+    pub fn keys(&self) -> &C::Keys {
+        &self.keys
     }
 }
 
-impl Identity for Actor {
+impl<C: Context> Identity<C> for Actor<C> {
     fn name(&self) -> &str {
         &self.name
     }
@@ -68,14 +59,50 @@ impl Identity for Actor {
         &self.email
     }
 
-    fn key(&self) -> Option<&Key> {
-        self.key.as_ref()
+    fn keys(&self) -> &C::Keys {
+        &self.keys
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::domain::filesystem::Filesystem;
+    use fragmentation::keys::PlainKeys;
+
+    // -- New API: Actor<C> with keys --
+
+    #[test]
+    fn actor_filesystem_has_plain_keys() {
+        let actor: Actor<Filesystem> = Actor::new("Reed", "reed@systemic.engineer", PlainKeys);
+        assert_eq!(actor.name(), "Reed");
+        assert_eq!(actor.email(), "reed@systemic.engineer");
+        assert_eq!(*actor.keys(), PlainKeys);
+    }
+
+    #[test]
+    fn actor_default_is_filesystem() {
+        let actor: Actor = Actor::new("Reed", "reed@systemic.engineer", PlainKeys);
+        assert_eq!(actor.name(), "Reed");
+        assert_eq!(*actor.keys(), PlainKeys);
+    }
+
+    #[test]
+    fn actor_conversation_domain() {
+        use crate::domain::conversation::Conversation;
+        let actor: Actor<Conversation> = Actor::new("Reed", "reed@systemic.engineer", PlainKeys);
+        assert_eq!(actor.name(), "Reed");
+        assert_eq!(*actor.keys(), PlainKeys);
+    }
+
+    #[test]
+    fn identity_is_trait() {
+        fn requires_identity<C: Context>(_: &impl Identity<C>) {}
+        let actor: Actor<Filesystem> = Actor::new("Reed", "reed@systemic.engineer", PlainKeys);
+        requires_identity(&actor);
+    }
+
+    // -- Old API: must break to prove Key is gone --
 
     #[test]
     fn actor_has_identity() {
@@ -90,20 +117,5 @@ mod tests {
         let actor =
             Actor::new("Reed", "reed@systemic.engineer").with_key(Key::new("99060D23EBFAA0D4"));
         assert_eq!(actor.key().unwrap().fingerprint, "99060D23EBFAA0D4");
-    }
-
-    #[test]
-    fn identity_is_trait() {
-        fn requires_identity(_: &impl Identity) {}
-        let actor = Actor::new("Reed", "reed@systemic.engineer");
-        requires_identity(&actor);
-    }
-
-    #[test]
-    fn same_actor_different_instance() {
-        let a = Actor::new("Reed", "reed@systemic.engineer");
-        let b = Actor::new("Reed", "reed@systemic.engineer");
-        assert_eq!(a.name(), b.name());
-        assert_eq!(a.email(), b.email());
     }
 }

@@ -11,7 +11,7 @@ pub mod witness;
 pub use domain::filesystem::{Filesystem, Folder};
 pub use domain::{Context, Domain};
 pub use gradient::{Composed, ComposedError, Fallback, Gradient, Inverted, Iso, When};
-pub use identity::{Actor, Identity, Key};
+pub use identity::{Actor, Identity};
 pub use optics::{NotFound, Prism, PrismAsTraversal, PrismGradient, Traversal, TraversalGradient};
 pub use parse::{Parse, ParseError};
 pub use resolve::{Conversation, Resolve, ResolveError};
