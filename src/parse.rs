@@ -209,13 +209,18 @@ fn parse_field(text: &str, span: Span) -> Tree<AstNode> {
 }
 
 fn parse_out(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
-    let name = header.split('{').next().unwrap().trim();
-    let start_span = lines.current_span();
-    lines.advance(); // consume out line
-
-    let (children, end_span) = parse_block_body(lines, start_span)?;
-    let span = start_span.merge(&end_span);
-    Ok(ast::ast_branch(Kind::Out, name, span, children))
+    let span = lines.current_span();
+    if let Some((name, _)) = header.split_once('{') {
+        let name = name.trim();
+        lines.advance();
+        let (children, end_span) = parse_block_body(lines, span)?;
+        let merged = span.merge(&end_span);
+        Ok(ast::ast_branch(Kind::Out, name, merged, children))
+    } else {
+        let name = header.trim();
+        lines.advance();
+        Ok(ast::ast_leaf(Kind::Out, name, span))
+    }
 }
 
 fn parse_block_body(
