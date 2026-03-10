@@ -3,15 +3,15 @@
 //! A .conv file parsed into a tree is a tree in this domain.
 //! The crate describes itself.
 
-use super::Domain;
+use super::Context;
 
-/// The conversation vocabulary.
+/// The conversation context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Conversation;
 
 /// What a conversation node can be.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Language {
+pub enum Token {
     /// `in @domain`
     In,
     /// `out name { ... }`
@@ -34,8 +34,8 @@ pub enum Language {
     DomainRef,
 }
 
-impl Domain for Conversation {
-    type Language = Language;
+impl Context for Conversation {
+    type Token = Token;
 
     fn id() -> &'static str {
         "conversation"
@@ -53,26 +53,23 @@ mod tests {
 
     #[test]
     fn conversation_local_names_from_debug() {
-        assert_eq!(Conversation::local_name(&Language::In), "In");
-        assert_eq!(Conversation::local_name(&Language::Out), "Out");
-        assert_eq!(Conversation::local_name(&Language::Template), "Template");
-        assert_eq!(Conversation::local_name(&Language::Field), "Field");
-        assert_eq!(Conversation::local_name(&Language::Qualifier), "Qualifier");
-        assert_eq!(Conversation::local_name(&Language::Pipe), "Pipe");
-        assert_eq!(Conversation::local_name(&Language::Group), "Group");
-        assert_eq!(Conversation::local_name(&Language::Select), "Select");
-        assert_eq!(
-            Conversation::local_name(&Language::TemplateRef),
-            "TemplateRef"
-        );
-        assert_eq!(Conversation::local_name(&Language::DomainRef), "DomainRef");
+        assert_eq!(Conversation::local_name(&Token::In), "In");
+        assert_eq!(Conversation::local_name(&Token::Out), "Out");
+        assert_eq!(Conversation::local_name(&Token::Template), "Template");
+        assert_eq!(Conversation::local_name(&Token::Field), "Field");
+        assert_eq!(Conversation::local_name(&Token::Qualifier), "Qualifier");
+        assert_eq!(Conversation::local_name(&Token::Pipe), "Pipe");
+        assert_eq!(Conversation::local_name(&Token::Group), "Group");
+        assert_eq!(Conversation::local_name(&Token::Select), "Select");
+        assert_eq!(Conversation::local_name(&Token::TemplateRef), "TemplateRef");
+        assert_eq!(Conversation::local_name(&Token::DomainRef), "DomainRef");
     }
 
     #[test]
-    fn conversation_is_domain() {
-        fn requires_domain<D: Domain>() -> &'static str {
-            D::id()
+    fn conversation_is_context() {
+        fn requires_context<C: Context>() -> &'static str {
+            C::id()
         }
-        assert_eq!(requires_domain::<Conversation>(), "conversation");
+        assert_eq!(requires_context::<Conversation>(), "conversation");
     }
 }

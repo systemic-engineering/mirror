@@ -9,7 +9,7 @@ pub mod tree;
 pub mod witness;
 
 pub use domain::filesystem::{Filesystem, Folder};
-pub use domain::Domain;
+pub use domain::Context;
 pub use gradient::{Composed, ComposedError, Fallback, Gradient, Inverted, Iso, When};
 pub use identity::{Actor, Identity, Key};
 pub use optics::{NotFound, Prism, PrismAsTraversal, PrismGradient, Traversal, TraversalGradient};

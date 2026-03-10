@@ -1,19 +1,19 @@
-use super::Domain;
+use super::Context;
 use crate::tree::{self, Tree};
 
-/// The filesystem vocabulary.
+/// The filesystem context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Filesystem;
 
 /// What a filesystem node can be.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Language {
+pub enum Token {
     Directory,
     File,
 }
 
-impl Domain for Filesystem {
-    type Language = Language;
+impl Context for Filesystem {
+    type Token = Token;
 
     fn id() -> &'static str {
         "filesystem"
@@ -82,8 +82,8 @@ mod tests {
 
     #[test]
     fn filesystem_local_names() {
-        assert_eq!(Filesystem::local_name(&Language::Directory), "Directory");
-        assert_eq!(Filesystem::local_name(&Language::File), "File");
+        assert_eq!(Filesystem::local_name(&Token::Directory), "Directory");
+        assert_eq!(Filesystem::local_name(&Token::File), "File");
     }
 
     #[test]

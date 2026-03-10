@@ -4,7 +4,7 @@
 //! Wrap in Witnessed to observe every parse through a Session.
 
 use crate::ast::{self, AstNode, Span};
-use crate::domain::conversation::Language;
+use crate::domain::conversation::Token;
 use crate::gradient::Gradient;
 use crate::tree::Tree;
 
@@ -108,7 +108,7 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
         if let Some(rest) = trimmed.strip_prefix("in ") {
             let span = lines.current_span();
             let value = rest.trim();
-            children.push(ast::ast_leaf(Language::In, value, span));
+            children.push(ast::ast_leaf(Token::In, value, span));
             lines.advance();
             continue;
         }
@@ -132,7 +132,7 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
     }
 
     Ok(ast::ast_branch(
-        Language::Group,
+        Token::Group,
         "root",
         root_span,
         children,
@@ -153,7 +153,7 @@ fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Pars
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Language::Template, name, span, fields));
+            return Ok(ast::ast_branch(Token::Template, name, span, fields));
         }
 
         if trimmed.is_empty() {
@@ -182,16 +182,16 @@ fn parse_field(text: &str, span: Span) -> Tree<AstNode> {
         let mut children = Vec::new();
 
         let qualifier = parts[0].trim();
-        children.push(ast::ast_leaf(Language::Qualifier, qualifier, span));
+        children.push(ast::ast_leaf(Token::Qualifier, qualifier, span));
 
         if parts.len() > 1 {
             let pipe_value = parts[1].trim();
-            children.push(ast::ast_leaf(Language::Pipe, pipe_value, span));
+            children.push(ast::ast_leaf(Token::Pipe, pipe_value, span));
         }
 
-        ast::ast_branch(Language::Field, name, span, children)
+        ast::ast_branch(Token::Field, name, span, children)
     } else {
-        ast::ast_leaf(Language::Field, text.trim(), span)
+        ast::ast_leaf(Token::Field, text.trim(), span)
     }
 }
 
@@ -202,7 +202,7 @@ fn parse_out(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseErro
 
     let (children, end_span) = parse_block_body(lines, start_span)?;
     let span = start_span.merge(&end_span);
-    Ok(ast::ast_branch(Language::Out, name, span, children))
+    Ok(ast::ast_branch(Token::Out, name, span, children))
 }
 
 fn parse_block_body(
@@ -234,11 +234,11 @@ fn parse_block_body(
                 let template_name = template_part.trim().trim_end_matches('}').trim();
 
                 let select_children = vec![
-                    ast::ast_leaf(Language::DomainRef, folder_name, span),
-                    ast::ast_leaf(Language::TemplateRef, template_name, span),
+                    ast::ast_leaf(Token::DomainRef, folder_name, span),
+                    ast::ast_leaf(Token::TemplateRef, template_name, span),
                 ];
                 children.push(ast::ast_branch(
-                    Language::Select,
+                    Token::Select,
                     output_part.trim(),
                     span,
                     select_children,
@@ -255,14 +255,14 @@ fn parse_block_body(
 
             if rest.trim() == "}" {
                 // Empty group: "name {}"
-                children.push(ast::ast_branch(Language::Group, name, span, vec![]));
+                children.push(ast::ast_branch(Token::Group, name, span, vec![]));
                 lines.advance();
             } else {
                 lines.advance();
                 let (group_children, end_span) = parse_block_body(lines, span)?;
                 let group_span = span.merge(&end_span);
                 children.push(ast::ast_branch(
-                    Language::Group,
+                    Token::Group,
                     name,
                     group_span,
                     group_children,
@@ -298,7 +298,7 @@ mod tests {
         let children = tree.children();
         let in_node = children
             .iter()
-            .find(|c| c.data().kind == Language::In)
+            .find(|c| c.data().kind == Token::In)
             .unwrap();
         assert!(in_node.is_shard());
         assert_eq!(in_node.data().value, "@filesystem");
@@ -313,12 +313,12 @@ mod tests {
         let children = tree.children();
         let tmpl = children
             .iter()
-            .find(|c| c.data().kind == Language::Template)
+            .find(|c| c.data().kind == Token::Template)
             .unwrap();
         assert!(tmpl.is_fractal());
         assert_eq!(tmpl.data().value, "$corpus");
         assert_eq!(tmpl.children().len(), 2);
-        assert_eq!(tmpl.children()[0].data().kind, Language::Field);
+        assert_eq!(tmpl.children()[0].data().kind, Token::Field);
         assert_eq!(tmpl.children()[0].data().value, "slug");
         assert_eq!(tmpl.children()[1].data().value, "excerpt");
     }
@@ -329,10 +329,10 @@ mod tests {
         let tree = Parse.emit(source).unwrap();
         let tmpl = &tree.children()[0];
         let field = &tmpl.children()[0];
-        assert_eq!(field.data().kind, Language::Field);
+        assert_eq!(field.data().kind, Token::Field);
         assert_eq!(field.data().value, "headlines");
         assert!(field.is_fractal());
-        assert_eq!(field.children()[0].data().kind, Language::Qualifier);
+        assert_eq!(field.children()[0].data().kind, Token::Qualifier);
         assert_eq!(field.children()[0].data().value, "h2");
     }
 
@@ -345,9 +345,9 @@ mod tests {
         assert_eq!(field.data().value, "html");
         assert!(field.is_fractal());
         let children = field.children();
-        assert_eq!(children[0].data().kind, Language::Qualifier);
+        assert_eq!(children[0].data().kind, Token::Qualifier);
         assert_eq!(children[0].data().value, "article");
-        assert_eq!(children[1].data().kind, Language::Pipe);
+        assert_eq!(children[1].data().kind, Token::Pipe);
         assert_eq!(children[1].data().value, "@html");
     }
 
@@ -360,19 +360,19 @@ mod tests {
         let out = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Language::Out)
+            .find(|c| c.data().kind == Token::Out)
             .unwrap();
         assert_eq!(out.data().value, "blog");
         let group = &out.children()[0];
-        assert_eq!(group.data().kind, Language::Group);
+        assert_eq!(group.data().kind, Token::Group);
         assert_eq!(group.data().value, "pieces");
         let select = &group.children()[0];
-        assert_eq!(select.data().kind, Language::Select);
+        assert_eq!(select.data().kind, Token::Select);
         assert_eq!(select.data().value, "draft");
         assert_eq!(select.children().len(), 2);
-        assert_eq!(select.children()[0].data().kind, Language::DomainRef);
+        assert_eq!(select.children()[0].data().kind, Token::DomainRef);
         assert_eq!(select.children()[0].data().value, "1draft");
-        assert_eq!(select.children()[1].data().kind, Language::TemplateRef);
+        assert_eq!(select.children()[1].data().kind, Token::TemplateRef);
         assert_eq!(select.children()[1].data().value, "$corpus");
     }
 
@@ -387,20 +387,20 @@ mod tests {
         let children = tree.children();
         let in_node = children
             .iter()
-            .find(|c| c.data().kind == Language::In)
+            .find(|c| c.data().kind == Token::In)
             .unwrap();
         assert_eq!(in_node.data().value, "@filesystem");
 
         let tmpl = children
             .iter()
-            .find(|c| c.data().kind == Language::Template)
+            .find(|c| c.data().kind == Token::Template)
             .unwrap();
         assert_eq!(tmpl.data().value, "$corpus");
         assert_eq!(tmpl.children().len(), 4); // slug, excerpt, headlines, html
 
         let out = children
             .iter()
-            .find(|c| c.data().kind == Language::Out)
+            .find(|c| c.data().kind == Token::Out)
             .unwrap();
         assert_eq!(out.data().value, "blog");
     }
@@ -442,7 +442,7 @@ mod tests {
         let in_node = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Language::In)
+            .find(|c| c.data().kind == Token::In)
             .unwrap();
         // "in @filesystem" starts at byte 0
         assert_eq!(in_node.data().span.start, 0);
@@ -487,7 +487,7 @@ mod tests {
         let tree = Parse.emit(source).unwrap();
         let out = &tree.children()[0];
         let group = &out.children()[0];
-        assert_eq!(group.data().kind, Language::Group);
+        assert_eq!(group.data().kind, Token::Group);
         assert_eq!(group.data().value, "empty");
         assert_eq!(group.children().len(), 0);
     }
