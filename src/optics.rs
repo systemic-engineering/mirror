@@ -104,7 +104,7 @@ impl<S, A, P: Prism<S, A>> Traversal<Vec<S>, A> for PrismAsTraversal<P> {
 mod tests {
     use super::*;
     use crate::gradient::Gradient;
-    use crate::witness::{Oid, Observation, Session, Witnessed};
+    use crate::witness::{Oid, Session, Witnessed};
     use sha2::{Digest, Sha256};
 
     // -- Test types --
