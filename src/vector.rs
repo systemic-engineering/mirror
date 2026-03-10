@@ -1,5 +1,32 @@
 //! Vector: directed edge between two Systems. IS a Gradient.
 
+use crate::domain::Context;
+use crate::gradient::Gradient;
+use crate::identity::System;
+
+/// A directed edge between two systems. Carries a gradient.
+///
+/// `Vector<Filesystem, Git, G>` is a gradient from the filesystem
+/// system to the git system, delegating to `G` for the actual
+/// transformation.
+pub struct Vector<A: Context, B: Context, G> {
+    pub left: System<A>,
+    pub right: System<B>,
+    pub gradient: G,
+}
+
+impl<A: Context, B: Context, S, T, G: Gradient<S, T>> Gradient<S, T> for Vector<A, B, G> {
+    type Error = G::Error;
+
+    fn emit(&self, source: S) -> Result<T, Self::Error> {
+        self.gradient.emit(source)
+    }
+
+    fn absorb(&self, source: T) -> Result<S, Self::Error> {
+        self.gradient.absorb(source)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::domain::filesystem::Filesystem;

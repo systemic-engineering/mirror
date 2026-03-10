@@ -17,5 +17,6 @@ pub use identity::{Identity, System};
 pub use optics::{NotFound, Prism, PrismAsTraversal, PrismGradient, Traversal, TraversalGradient};
 pub use parse::{Parse, ParseError};
 pub use resolve::{Conversation, Resolve, ResolveError};
+pub use vector::Vector;
 pub use tree::Tree;
 pub use witness::{Direction, Event, Observation, Oid, Session, Witnessed};
