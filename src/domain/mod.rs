@@ -132,4 +132,34 @@ mod tests {
         assert!(names.contains(&"filesystem"));
         assert!(names.contains(&"json"));
     }
+
+    // -- Git domain --
+
+    #[test]
+    fn git_token_is_git_node() {
+        fn assert_token<C: Context<Token = git::GitNode>>() {}
+        assert_token::<git::Git>();
+    }
+
+    #[test]
+    fn git_keys_is_plain() {
+        fn assert_keys<C: Context<Keys = fragmentation::keys::PlainKeys>>() {}
+        assert_keys::<git::Git>();
+    }
+
+    #[test]
+    fn domain_git_id() {
+        assert_eq!(Domain::Git.id(), "git");
+    }
+
+    #[test]
+    fn domain_from_name_git() {
+        assert_eq!(Domain::from_name("git"), Some(Domain::Git));
+    }
+
+    #[test]
+    fn domain_known_names_includes_git() {
+        let names = Domain::known_names();
+        assert!(names.contains(&"git"));
+    }
 }
