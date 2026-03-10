@@ -6,6 +6,7 @@ pub mod optics;
 pub mod parse;
 pub mod resolve;
 pub mod tree;
+pub mod vector;
 pub mod witness;
 
 pub use domain::filesystem::{Filesystem, Folder};
