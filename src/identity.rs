@@ -70,40 +70,38 @@ mod tests {
     use crate::domain::filesystem::Filesystem;
     use fragmentation::keys::PlainKeys;
 
-    // -- New API: Actor<C> with keys --
+    // -- System<C>: composable node --
 
     #[test]
-    fn actor_filesystem_has_plain_keys() {
-        let actor: Actor<Filesystem> = Actor::new("Reed", "reed@systemic.engineer", PlainKeys);
-        assert_eq!(actor.name(), "Reed");
-        assert_eq!(actor.email(), "reed@systemic.engineer");
-        assert_eq!(*actor.keys(), PlainKeys);
+    fn system_filesystem_has_plain_keys() {
+        let system: System<Filesystem> = System::new("Reed", PlainKeys);
+        assert_eq!(system.name(), "Reed");
+        assert_eq!(*system.keys(), PlainKeys);
     }
 
     #[test]
-    fn actor_default_is_filesystem() {
-        let actor: Actor = Actor::new("Reed", "reed@systemic.engineer", PlainKeys);
-        assert_eq!(actor.name(), "Reed");
-        assert_eq!(*actor.keys(), PlainKeys);
+    fn system_default_is_filesystem() {
+        let system: System = System::new("Reed", PlainKeys);
+        assert_eq!(system.name(), "Reed");
+        assert_eq!(*system.keys(), PlainKeys);
     }
 
     #[test]
-    fn actor_conversation_domain() {
+    fn system_conversation_domain() {
         use crate::domain::conversation::Conversation;
-        let actor: Actor<Conversation> = Actor::new("Reed", "reed@systemic.engineer", PlainKeys);
-        assert_eq!(actor.name(), "Reed");
-        assert_eq!(*actor.keys(), PlainKeys);
+        let system: System<Conversation> = System::new("Reed", PlainKeys);
+        assert_eq!(system.name(), "Reed");
+        assert_eq!(*system.keys(), PlainKeys);
     }
 
     #[test]
     fn identity_trait_methods() {
-        fn check<C: Context>(id: &impl Identity<C>) -> (&str, &str) {
-            (id.name(), id.email())
+        fn check<C: Context>(id: &impl Identity<C>) -> &str {
+            id.name()
         }
-        let actor: Actor<Filesystem> = Actor::new("Reed", "reed@systemic.engineer", PlainKeys);
-        let (name, email) = check(&actor);
+        let system: System<Filesystem> = System::new("Reed", PlainKeys);
+        let name = check(&system);
         assert_eq!(name, "Reed");
-        assert_eq!(email, "reed@systemic.engineer");
     }
 
     #[test]
@@ -111,7 +109,7 @@ mod tests {
         fn get_keys<C: Context>(id: &impl Identity<C>) -> &C::Keys {
             id.keys()
         }
-        let actor: Actor<Filesystem> = Actor::new("Reed", "reed@systemic.engineer", PlainKeys);
-        assert_eq!(*get_keys(&actor), PlainKeys);
+        let system: System<Filesystem> = System::new("Reed", PlainKeys);
+        assert_eq!(*get_keys(&system), PlainKeys);
     }
 }
