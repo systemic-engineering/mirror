@@ -11,12 +11,12 @@ pub mod witness;
 
 pub use domain::filesystem::{Filesystem, Folder};
 pub use domain::git::{Git, GitNode};
-pub use domain::{Addressable, Context, Domain};
+pub use domain::{Addressable, Context};
 pub use gradient::{Composed, ComposedError, Fallback, Gradient, Inverted, Iso, When};
 pub use identity::{Identity, System};
 pub use optics::{NotFound, Prism, PrismAsTraversal, PrismGradient, Traversal, TraversalGradient};
 pub use parse::{Parse, ParseError};
 pub use resolve::{Conversation, Resolve, ResolveError};
-pub use vector::Vector;
 pub use tree::Tree;
+pub use vector::Vector;
 pub use witness::{Direction, Event, Observation, Oid, Session, Witnessed};

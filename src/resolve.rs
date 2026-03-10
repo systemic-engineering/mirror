@@ -11,7 +11,7 @@ use serde_json::Value;
 
 use crate::ast::{AstNode, Span};
 use crate::domain::conversation::Kind;
-use crate::domain::{Addressable, Context, Domain};
+use crate::domain::{Addressable, Context};
 use crate::gradient::Gradient;
 use crate::tree::{self, Tree, Treelike};
 
@@ -42,8 +42,6 @@ pub struct ResolveError {
 /// `Conversation<Git>` executes against `Tree<GitNode>`.
 #[derive(Debug)]
 pub struct Conversation<C: Context> {
-    pub input: Domain,
-    pub output: Domain,
     templates: HashMap<String, Template>,
     pub content: Tree<OutputNode>,
     _context: PhantomData<C>,
@@ -554,11 +552,9 @@ mod tests {
 
     #[test]
     fn resolve_valid_conv() {
-        use crate::domain::Domain;
         let source = "in @filesystem\ntemplate $corpus {\n\tslug\n\texcerpt\n}\nout blog {\n\tpieces {\n\t\tdraft: 1draft { $corpus }\n\t}\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
         let resolved = resolve_fs(ast).unwrap();
-        assert_eq!(resolved.input, Domain::Filesystem);
         assert_eq!(resolved.content.data().name(), "blog");
         assert!(resolved.templates.contains_key("$corpus"));
     }
@@ -761,21 +757,17 @@ mod tests {
 
     #[test]
     fn with_domain_registers_external() {
-        use crate::domain::Domain;
         let resolve = Resolve::new().with_domain("html");
         let source = "in @html\nout r {\n\tx {}\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved: Conversation<Filesystem> = resolve.emit(ast).unwrap();
-        assert_eq!(resolved.input, Domain::External("html".into()));
+        let _resolved: Conversation<Filesystem> = resolve.emit(ast).unwrap();
     }
 
     #[test]
     fn default_same_as_new() {
-        use crate::domain::Domain;
         let source = "in @filesystem\nout r {\n\tx {}\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved: Conversation<Filesystem> = Resolve::default().emit(ast).unwrap();
-        assert_eq!(resolved.input, Domain::Filesystem);
+        let _resolved: Conversation<Filesystem> = Resolve::default().emit(ast).unwrap();
     }
 
     // -- Error: missing domain declaration --
@@ -793,22 +785,10 @@ mod tests {
     }
 
     #[test]
-    fn resolve_missing_in_defaults_to_json() {
-        use crate::domain::Domain;
+    fn resolve_missing_in_declaration_still_resolves() {
         let source = "template $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = resolve_fs(ast).unwrap();
-        assert_eq!(resolved.input, Domain::Json);
-    }
-
-    #[test]
-    fn resolve_output_domain_defaults_to_json() {
-        use crate::domain::Domain;
-        let source =
-            "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
-        let resolved = resolve_fs(Parse.emit(source.to_string()).unwrap()).unwrap();
-        assert_eq!(resolved.input, Domain::Filesystem);
-        assert_eq!(resolved.output, Domain::Json);
+        let _resolved = resolve_fs(ast).unwrap();
     }
 
     // -- Emit: missing folder in select skips --
@@ -984,23 +964,19 @@ mod tests {
 
     #[test]
     fn parse_then_resolve_composes() {
-        use crate::domain::Domain;
         let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
         // Parse → Resolve composes via explicit chaining
         let ast = Parse.emit(source.to_string()).unwrap();
-        let resolved = resolve_fs(ast).unwrap();
-        assert_eq!(resolved.input, Domain::Filesystem);
+        let _resolved = resolve_fs(ast).unwrap();
     }
 
     // -- Bridge: from_source --
 
     #[test]
     fn from_source_parses_and_resolves() {
-        use crate::domain::Domain;
         let source =
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
         let resolved = Conversation::<Filesystem>::from_source(source).unwrap();
-        assert_eq!(resolved.input, Domain::Filesystem);
         assert_eq!(resolved.content.data().name(), "blog");
         assert!(resolved.templates.contains_key("$t"));
     }
