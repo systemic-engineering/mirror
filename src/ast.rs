@@ -3,8 +3,7 @@
 //! The AST is `Tree<AstNode>`. A .conv file parsed is a tree
 //! in the conversation domain. Same type as everything else.
 
-use crate::domain::conversation::{Conversation, Token};
-use crate::domain::Context;
+use crate::domain::conversation::Kind;
 use crate::tree::{self, Tree};
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
@@ -33,13 +32,13 @@ impl Span {
 /// A node in the AST. Carries syntax kind, raw text, and source location.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct AstNode {
-    pub kind: Token,
+    pub kind: Kind,
     pub value: String,
     pub span: Span,
 }
 
 /// Build a leaf AST node. Ref is content-addressed from `kind:value`.
-pub fn ast_leaf(kind: Token, value: impl Into<String>, span: Span) -> Tree<AstNode> {
+pub fn ast_leaf(kind: Kind, value: impl Into<String>, span: Span) -> Tree<AstNode> {
     let value = value.into();
     let ref_ = ast_ref(&kind, &value);
     tree::leaf(ref_, AstNode { kind, value, span })
@@ -47,7 +46,7 @@ pub fn ast_leaf(kind: Token, value: impl Into<String>, span: Span) -> Tree<AstNo
 
 /// Build a branch AST node. Ref is content-addressed from `kind:value`.
 pub fn ast_branch(
-    kind: Token,
+    kind: Kind,
     value: impl Into<String>,
     span: Span,
     children: Vec<Tree<AstNode>>,
@@ -58,8 +57,8 @@ pub fn ast_branch(
 }
 
 /// Content-addressed ref from kind + value.
-fn ast_ref(kind: &Token, value: &str) -> Ref {
-    let label = format!("{}:{}", Conversation::local_name(kind), value);
+fn ast_ref(kind: &Kind, value: &str) -> Ref {
+    let label = format!("{:?}:{}", kind, value);
     Ref::new(sha::hash(&label), label)
 }
 
@@ -97,9 +96,9 @@ mod tests {
 
     #[test]
     fn ast_leaf_is_terminal() {
-        let node = ast_leaf(Token::Field, "slug", Span::new(0, 4));
+        let node = ast_leaf(Kind::Field, "slug", Span::new(0, 4));
         assert!(node.is_shard());
-        assert_eq!(node.data().kind, Token::Field);
+        assert_eq!(node.data().kind, Kind::Field);
         assert_eq!(node.data().value, "slug");
         assert_eq!(node.data().span, Span::new(0, 4));
     }
@@ -107,35 +106,35 @@ mod tests {
     #[test]
     fn ast_branch_has_children() {
         let children = vec![
-            ast_leaf(Token::Field, "slug", Span::new(10, 14)),
-            ast_leaf(Token::Field, "excerpt", Span::new(16, 23)),
+            ast_leaf(Kind::Field, "slug", Span::new(10, 14)),
+            ast_leaf(Kind::Field, "excerpt", Span::new(16, 23)),
         ];
-        let node = ast_branch(Token::Template, "$corpus", Span::new(0, 25), children);
+        let node = ast_branch(Kind::Template, "$corpus", Span::new(0, 25), children);
         assert!(node.is_fractal());
         assert_eq!(node.children().len(), 2);
-        assert_eq!(node.data().kind, Token::Template);
+        assert_eq!(node.data().kind, Kind::Template);
         assert_eq!(node.data().value, "$corpus");
     }
 
     #[test]
     fn ast_ref_is_content_addressed() {
-        let a = ast_leaf(Token::Field, "slug", Span::new(0, 4));
-        let b = ast_leaf(Token::Field, "slug", Span::new(100, 104));
+        let a = ast_leaf(Kind::Field, "slug", Span::new(0, 4));
+        let b = ast_leaf(Kind::Field, "slug", Span::new(100, 104));
         // Same kind + value = same ref, regardless of span
         assert_eq!(a.self_ref(), b.self_ref());
     }
 
     #[test]
     fn different_kind_different_ref() {
-        let a = ast_leaf(Token::Field, "html", Span::new(0, 4));
-        let b = ast_leaf(Token::Qualifier, "html", Span::new(0, 4));
+        let a = ast_leaf(Kind::Field, "html", Span::new(0, 4));
+        let b = ast_leaf(Kind::Qualifier, "html", Span::new(0, 4));
         assert_ne!(a.self_ref(), b.self_ref());
     }
 
     #[test]
     fn different_value_different_ref() {
-        let a = ast_leaf(Token::Field, "slug", Span::new(0, 4));
-        let b = ast_leaf(Token::Field, "excerpt", Span::new(0, 7));
+        let a = ast_leaf(Kind::Field, "slug", Span::new(0, 4));
+        let b = ast_leaf(Kind::Field, "excerpt", Span::new(0, 7));
         assert_ne!(a.self_ref(), b.self_ref());
     }
 }

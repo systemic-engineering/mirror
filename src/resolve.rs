@@ -9,7 +9,7 @@ use std::collections::HashMap;
 use serde_json::Value;
 
 use crate::ast::{AstNode, Span};
-use crate::domain::conversation::Token;
+use crate::domain::conversation::Kind;
 use crate::domain::Domain;
 use crate::gradient::Gradient;
 use crate::tree::{self, Tree, Treelike};
@@ -127,7 +127,7 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
         let children = source.children();
 
         // Extract domain from In node — defaults to Json
-        let in_node = children.iter().find(|c| c.data().kind == Token::In);
+        let in_node = children.iter().find(|c| c.data().kind == Kind::In);
         let input = match in_node {
             Some(node) => {
                 let raw = &node.data().value;
@@ -154,7 +154,7 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
         // Extract templates
         let mut templates = HashMap::new();
         for child in children {
-            if child.data().kind == Token::Template {
+            if child.data().kind == Kind::Template {
                 let name = child.data().value.clone();
                 let fields = resolve_template_fields(child);
                 templates.insert(name, Template { fields });
@@ -162,7 +162,7 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
         }
 
         // Extract output
-        let out_node = children.iter().find(|c| c.data().kind == Token::Out);
+        let out_node = children.iter().find(|c| c.data().kind == Kind::Out);
         let content = match out_node {
             Some(node) => {
                 let name = node.data().value.clone();
@@ -199,7 +199,7 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
 fn resolve_template_fields(template_node: &Tree<AstNode>) -> Vec<Field> {
     let mut fields = Vec::new();
     for child in template_node.children() {
-        if child.data().kind == Token::Field {
+        if child.data().kind == Kind::Field {
             if child.is_shard() {
                 // Bare field: no qualifier, no pipe
                 fields.push(Field {
@@ -213,8 +213,8 @@ fn resolve_template_fields(template_node: &Tree<AstNode>) -> Vec<Field> {
                 let mut pipe = None;
                 for sub in child.children() {
                     match sub.data().kind {
-                        Token::Qualifier => qualifier = Some(sub.data().value.clone()),
-                        Token::Pipe => pipe = Some(sub.data().value.clone()),
+                        Kind::Qualifier => qualifier = Some(sub.data().value.clone()),
+                        Kind::Pipe => pipe = Some(sub.data().value.clone()),
                         _ => {}
                     }
                 }
@@ -236,22 +236,22 @@ fn resolve_output_nodes(
     let mut nodes = Vec::new();
     for child in node.children() {
         match child.data().kind {
-            Token::Group => {
+            Kind::Group => {
                 let children = resolve_output_nodes(child, templates)?;
                 let name = child.data().value.clone();
                 let ref_ = Ref::new(sha::hash(&name), &name);
                 nodes.push(tree::branch(ref_, OutputNode::Group { name }, children));
             }
-            Token::Select => {
+            Kind::Select => {
                 let select_children = child.children();
                 let folder_name = select_children
                     .iter()
-                    .find(|c| c.data().kind == Token::DomainRef)
+                    .find(|c| c.data().kind == Kind::DomainRef)
                     .map(|c| c.data().value.clone())
                     .unwrap_or_default();
                 let template_name = select_children
                     .iter()
-                    .find(|c| c.data().kind == Token::TemplateRef)
+                    .find(|c| c.data().kind == Kind::TemplateRef)
                     .map(|c| c.data().value.clone())
                     .unwrap_or_default();
 
@@ -833,32 +833,32 @@ mod tests {
         use crate::ast;
         // Manually construct an AST with a non-field child in a template
         let root = ast::ast_branch(
-            Token::Group,
+            Kind::Group,
             "root",
             Span::new(0, 50),
             vec![
-                ast::ast_leaf(Token::In, "@filesystem", Span::new(0, 14)),
+                ast::ast_leaf(Kind::In, "@filesystem", Span::new(0, 14)),
                 ast::ast_branch(
-                    Token::Template,
+                    Kind::Template,
                     "$t",
                     Span::new(15, 35),
                     vec![
-                        ast::ast_leaf(Token::Field, "slug", Span::new(20, 24)),
+                        ast::ast_leaf(Kind::Field, "slug", Span::new(20, 24)),
                         // A DomainRef in a template — should be ignored
-                        ast::ast_leaf(Token::DomainRef, "@html", Span::new(25, 30)),
+                        ast::ast_leaf(Kind::DomainRef, "@html", Span::new(25, 30)),
                     ],
                 ),
                 ast::ast_branch(
-                    Token::Out,
+                    Kind::Out,
                     "r",
                     Span::new(36, 50),
                     vec![ast::ast_branch(
-                        Token::Select,
+                        Kind::Select,
                         "x",
                         Span::new(40, 48),
                         vec![
-                            ast::ast_leaf(Token::DomainRef, "f", Span::new(42, 43)),
-                            ast::ast_leaf(Token::TemplateRef, "$t", Span::new(44, 46)),
+                            ast::ast_leaf(Kind::DomainRef, "f", Span::new(42, 43)),
+                            ast::ast_leaf(Kind::TemplateRef, "$t", Span::new(44, 46)),
                         ],
                     )],
                 ),
@@ -874,18 +874,18 @@ mod tests {
         use crate::ast;
         // AST with an In node inside an Out block — should be ignored
         let root = ast::ast_branch(
-            Token::Group,
+            Kind::Group,
             "root",
             Span::new(0, 50),
             vec![
-                ast::ast_leaf(Token::In, "@filesystem", Span::new(0, 14)),
+                ast::ast_leaf(Kind::In, "@filesystem", Span::new(0, 14)),
                 ast::ast_branch(
-                    Token::Out,
+                    Kind::Out,
                     "r",
                     Span::new(15, 50),
                     vec![
-                        ast::ast_leaf(Token::In, "@html", Span::new(20, 25)),
-                        ast::ast_branch(Token::Group, "g", Span::new(26, 40), vec![]),
+                        ast::ast_leaf(Kind::In, "@html", Span::new(20, 25)),
+                        ast::ast_branch(Kind::Group, "g", Span::new(26, 40), vec![]),
                     ],
                 ),
             ],
@@ -902,37 +902,37 @@ mod tests {
         use crate::ast;
         // A Field branch where one child has kind Group — should be ignored
         let root = ast::ast_branch(
-            Token::Group,
+            Kind::Group,
             "root",
             Span::new(0, 80),
             vec![
-                ast::ast_leaf(Token::In, "@filesystem", Span::new(0, 14)),
+                ast::ast_leaf(Kind::In, "@filesystem", Span::new(0, 14)),
                 ast::ast_branch(
-                    Token::Template,
+                    Kind::Template,
                     "$t",
                     Span::new(15, 60),
                     vec![ast::ast_branch(
-                        Token::Field,
+                        Kind::Field,
                         "headlines",
                         Span::new(20, 40),
                         vec![
-                            ast::ast_leaf(Token::Qualifier, "h2", Span::new(25, 27)),
+                            ast::ast_leaf(Kind::Qualifier, "h2", Span::new(25, 27)),
                             // Group as a child of Field — unusual, should be skipped
-                            ast::ast_branch(Token::Group, "noise", Span::new(28, 35), vec![]),
+                            ast::ast_branch(Kind::Group, "noise", Span::new(28, 35), vec![]),
                         ],
                     )],
                 ),
                 ast::ast_branch(
-                    Token::Out,
+                    Kind::Out,
                     "r",
                     Span::new(61, 80),
                     vec![ast::ast_branch(
-                        Token::Select,
+                        Kind::Select,
                         "x",
                         Span::new(65, 78),
                         vec![
-                            ast::ast_leaf(Token::DomainRef, "f", Span::new(67, 68)),
-                            ast::ast_leaf(Token::TemplateRef, "$t", Span::new(69, 71)),
+                            ast::ast_leaf(Kind::DomainRef, "f", Span::new(67, 68)),
+                            ast::ast_leaf(Kind::TemplateRef, "$t", Span::new(69, 71)),
                         ],
                     )],
                 ),

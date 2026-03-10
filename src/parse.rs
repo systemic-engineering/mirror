@@ -4,7 +4,7 @@
 //! Wrap in Witnessed to observe every parse through a Session.
 
 use crate::ast::{self, AstNode, Span};
-use crate::domain::conversation::Token;
+use crate::domain::conversation::Kind;
 use crate::gradient::Gradient;
 use crate::tree::Tree;
 
@@ -108,7 +108,7 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
         if let Some(rest) = trimmed.strip_prefix("in ") {
             let span = lines.current_span();
             let value = rest.trim();
-            children.push(ast::ast_leaf(Token::In, value, span));
+            children.push(ast::ast_leaf(Kind::In, value, span));
             lines.advance();
             continue;
         }
@@ -131,7 +131,7 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
         });
     }
 
-    Ok(ast::ast_branch(Token::Group, "root", root_span, children))
+    Ok(ast::ast_branch(Kind::Group, "root", root_span, children))
 }
 
 fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
@@ -148,7 +148,7 @@ fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Pars
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Token::Template, name, span, fields));
+            return Ok(ast::ast_branch(Kind::Template, name, span, fields));
         }
 
         if trimmed.is_empty() {
@@ -177,16 +177,16 @@ fn parse_field(text: &str, span: Span) -> Tree<AstNode> {
         let mut children = Vec::new();
 
         let qualifier = parts[0].trim();
-        children.push(ast::ast_leaf(Token::Qualifier, qualifier, span));
+        children.push(ast::ast_leaf(Kind::Qualifier, qualifier, span));
 
         if parts.len() > 1 {
             let pipe_value = parts[1].trim();
-            children.push(ast::ast_leaf(Token::Pipe, pipe_value, span));
+            children.push(ast::ast_leaf(Kind::Pipe, pipe_value, span));
         }
 
-        ast::ast_branch(Token::Field, name, span, children)
+        ast::ast_branch(Kind::Field, name, span, children)
     } else {
-        ast::ast_leaf(Token::Field, text.trim(), span)
+        ast::ast_leaf(Kind::Field, text.trim(), span)
     }
 }
 
@@ -197,7 +197,7 @@ fn parse_out(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseErro
 
     let (children, end_span) = parse_block_body(lines, start_span)?;
     let span = start_span.merge(&end_span);
-    Ok(ast::ast_branch(Token::Out, name, span, children))
+    Ok(ast::ast_branch(Kind::Out, name, span, children))
 }
 
 fn parse_block_body(
@@ -229,11 +229,11 @@ fn parse_block_body(
                 let template_name = template_part.trim().trim_end_matches('}').trim();
 
                 let select_children = vec![
-                    ast::ast_leaf(Token::DomainRef, folder_name, span),
-                    ast::ast_leaf(Token::TemplateRef, template_name, span),
+                    ast::ast_leaf(Kind::DomainRef, folder_name, span),
+                    ast::ast_leaf(Kind::TemplateRef, template_name, span),
                 ];
                 children.push(ast::ast_branch(
-                    Token::Select,
+                    Kind::Select,
                     output_part.trim(),
                     span,
                     select_children,
@@ -250,14 +250,14 @@ fn parse_block_body(
 
             if rest.trim() == "}" {
                 // Empty group: "name {}"
-                children.push(ast::ast_branch(Token::Group, name, span, vec![]));
+                children.push(ast::ast_branch(Kind::Group, name, span, vec![]));
                 lines.advance();
             } else {
                 lines.advance();
                 let (group_children, end_span) = parse_block_body(lines, span)?;
                 let group_span = span.merge(&end_span);
                 children.push(ast::ast_branch(
-                    Token::Group,
+                    Kind::Group,
                     name,
                     group_span,
                     group_children,
@@ -291,10 +291,7 @@ mod tests {
         let source = "in @filesystem\n".to_string();
         let tree = Parse.emit(source).unwrap();
         let children = tree.children();
-        let in_node = children
-            .iter()
-            .find(|c| c.data().kind == Token::In)
-            .unwrap();
+        let in_node = children.iter().find(|c| c.data().kind == Kind::In).unwrap();
         assert!(in_node.is_shard());
         assert_eq!(in_node.data().value, "@filesystem");
     }
@@ -308,12 +305,12 @@ mod tests {
         let children = tree.children();
         let tmpl = children
             .iter()
-            .find(|c| c.data().kind == Token::Template)
+            .find(|c| c.data().kind == Kind::Template)
             .unwrap();
         assert!(tmpl.is_fractal());
         assert_eq!(tmpl.data().value, "$corpus");
         assert_eq!(tmpl.children().len(), 2);
-        assert_eq!(tmpl.children()[0].data().kind, Token::Field);
+        assert_eq!(tmpl.children()[0].data().kind, Kind::Field);
         assert_eq!(tmpl.children()[0].data().value, "slug");
         assert_eq!(tmpl.children()[1].data().value, "excerpt");
     }
@@ -324,10 +321,10 @@ mod tests {
         let tree = Parse.emit(source).unwrap();
         let tmpl = &tree.children()[0];
         let field = &tmpl.children()[0];
-        assert_eq!(field.data().kind, Token::Field);
+        assert_eq!(field.data().kind, Kind::Field);
         assert_eq!(field.data().value, "headlines");
         assert!(field.is_fractal());
-        assert_eq!(field.children()[0].data().kind, Token::Qualifier);
+        assert_eq!(field.children()[0].data().kind, Kind::Qualifier);
         assert_eq!(field.children()[0].data().value, "h2");
     }
 
@@ -340,9 +337,9 @@ mod tests {
         assert_eq!(field.data().value, "html");
         assert!(field.is_fractal());
         let children = field.children();
-        assert_eq!(children[0].data().kind, Token::Qualifier);
+        assert_eq!(children[0].data().kind, Kind::Qualifier);
         assert_eq!(children[0].data().value, "article");
-        assert_eq!(children[1].data().kind, Token::Pipe);
+        assert_eq!(children[1].data().kind, Kind::Pipe);
         assert_eq!(children[1].data().value, "@html");
     }
 
@@ -355,19 +352,19 @@ mod tests {
         let out = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Token::Out)
+            .find(|c| c.data().kind == Kind::Out)
             .unwrap();
         assert_eq!(out.data().value, "blog");
         let group = &out.children()[0];
-        assert_eq!(group.data().kind, Token::Group);
+        assert_eq!(group.data().kind, Kind::Group);
         assert_eq!(group.data().value, "pieces");
         let select = &group.children()[0];
-        assert_eq!(select.data().kind, Token::Select);
+        assert_eq!(select.data().kind, Kind::Select);
         assert_eq!(select.data().value, "draft");
         assert_eq!(select.children().len(), 2);
-        assert_eq!(select.children()[0].data().kind, Token::DomainRef);
+        assert_eq!(select.children()[0].data().kind, Kind::DomainRef);
         assert_eq!(select.children()[0].data().value, "1draft");
-        assert_eq!(select.children()[1].data().kind, Token::TemplateRef);
+        assert_eq!(select.children()[1].data().kind, Kind::TemplateRef);
         assert_eq!(select.children()[1].data().value, "$corpus");
     }
 
@@ -380,22 +377,19 @@ mod tests {
 
         // Root has children: In, Template, Out
         let children = tree.children();
-        let in_node = children
-            .iter()
-            .find(|c| c.data().kind == Token::In)
-            .unwrap();
+        let in_node = children.iter().find(|c| c.data().kind == Kind::In).unwrap();
         assert_eq!(in_node.data().value, "@filesystem");
 
         let tmpl = children
             .iter()
-            .find(|c| c.data().kind == Token::Template)
+            .find(|c| c.data().kind == Kind::Template)
             .unwrap();
         assert_eq!(tmpl.data().value, "$corpus");
         assert_eq!(tmpl.children().len(), 4); // slug, excerpt, headlines, html
 
         let out = children
             .iter()
-            .find(|c| c.data().kind == Token::Out)
+            .find(|c| c.data().kind == Kind::Out)
             .unwrap();
         assert_eq!(out.data().value, "blog");
     }
@@ -437,7 +431,7 @@ mod tests {
         let in_node = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Token::In)
+            .find(|c| c.data().kind == Kind::In)
             .unwrap();
         // "in @filesystem" starts at byte 0
         assert_eq!(in_node.data().span.start, 0);
@@ -482,7 +476,7 @@ mod tests {
         let tree = Parse.emit(source).unwrap();
         let out = &tree.children()[0];
         let group = &out.children()[0];
-        assert_eq!(group.data().kind, Token::Group);
+        assert_eq!(group.data().kind, Kind::Group);
         assert_eq!(group.data().value, "empty");
         assert_eq!(group.children().len(), 0);
     }

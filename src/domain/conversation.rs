@@ -11,7 +11,7 @@ pub struct Conversation;
 
 /// What a conversation node can be.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Token {
+pub enum Kind {
     /// `in @domain`
     In,
     /// `out name { ... }`
@@ -35,8 +35,7 @@ pub enum Token {
 }
 
 impl Context for Conversation {
-    type Token = Token;
-    type Data = crate::ast::AstNode;
+    type Token = crate::ast::AstNode;
     type Keys = fragmentation::keys::PlainKeys;
 
     fn id() -> &'static str {

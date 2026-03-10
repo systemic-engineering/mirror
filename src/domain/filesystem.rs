@@ -5,16 +5,8 @@ use crate::tree::{self, Tree};
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Filesystem;
 
-/// What a filesystem node can be.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Token {
-    Directory,
-    File,
-}
-
 impl Context for Filesystem {
-    type Token = Token;
-    type Data = Folder;
+    type Token = Folder;
     type Keys = fragmentation::keys::PlainKeys;
 
     fn id() -> &'static str {
@@ -26,7 +18,7 @@ impl Context for Filesystem {
 ///
 /// Branch = directory (has children, no content).
 /// Leaf = file (has content, no children).
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Folder {
     pub name: String,
     pub content: Option<String>,

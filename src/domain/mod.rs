@@ -1,8 +1,6 @@
 pub mod conversation;
 pub mod filesystem;
 
-use std::borrow::Cow;
-
 /// What `@` addresses. The domain a `.conv` file operates in.
 ///
 /// Known domains resolve without registration.
@@ -50,16 +48,9 @@ impl Domain {
 /// Crossing between domains is a Gradient.
 pub trait Context: Clone + std::fmt::Debug + PartialEq + Eq {
     type Token: Clone + std::fmt::Debug + PartialEq + Eq;
-    type Data: Clone + std::fmt::Debug;
     type Keys: fragmentation::keys::Keys;
 
     fn id() -> &'static str;
-
-    /// Human-readable name for a token variant.
-    /// Default: Debug name of the variant.
-    fn local_name(kind: &Self::Token) -> Cow<'static, str> {
-        format!("{:?}", kind).into()
-    }
 }
 
 #[cfg(test)]
