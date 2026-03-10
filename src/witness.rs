@@ -127,12 +127,7 @@ impl Session {
     /// Seal the session with a root commit.
     /// References all prior event SHAs. Returns the root SHA.
     pub fn seal(&self, message: impl Into<String>) -> String {
-        let event_shas: Vec<String> = self
-            .store
-            .borrow()
-            .iter()
-            .map(|e| e.sha.clone())
-            .collect();
+        let event_shas: Vec<String> = self.store.borrow().iter().map(|e| e.sha.clone()).collect();
         let data = event_shas.join(",").into_bytes();
         self.record(message, data)
     }

@@ -87,12 +87,9 @@ mod tests {
 
     #[test]
     fn actor_with_key() {
-        let actor = Actor::new("Reed", "reed@systemic.engineer")
-            .with_key(Key::new("99060D23EBFAA0D4"));
-        assert_eq!(
-            actor.key().unwrap().fingerprint,
-            "99060D23EBFAA0D4"
-        );
+        let actor =
+            Actor::new("Reed", "reed@systemic.engineer").with_key(Key::new("99060D23EBFAA0D4"));
+        assert_eq!(actor.key().unwrap().fingerprint, "99060D23EBFAA0D4");
     }
 
     #[test]

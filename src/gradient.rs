@@ -139,9 +139,7 @@ where
     type Error = F::Error;
 
     fn emit(&self, source: A) -> Result<B, F::Error> {
-        self.0
-            .emit(source.clone())
-            .or_else(|_| self.1.emit(source))
+        self.0.emit(source.clone()).or_else(|_| self.1.emit(source))
     }
 
     fn absorb(&self, source: B) -> Result<A, F::Error> {
