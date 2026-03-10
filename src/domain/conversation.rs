@@ -40,11 +40,22 @@ impl Domain for Conversation {
     type Language = Language;
 
     fn id() -> &'static str {
-        todo!()
+        "conversation"
     }
 
     fn local_name(kind: &Language) -> Cow<'static, str> {
-        todo!()
+        match kind {
+            Language::In => "in".into(),
+            Language::Out => "out".into(),
+            Language::Template => "template".into(),
+            Language::Field => "field".into(),
+            Language::Qualifier => "qualifier".into(),
+            Language::Pipe => "pipe".into(),
+            Language::Group => "group".into(),
+            Language::Select => "select".into(),
+            Language::TemplateRef => "template_ref".into(),
+            Language::DomainRef => "domain_ref".into(),
+        }
     }
 }
 

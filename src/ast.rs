@@ -3,7 +3,8 @@
 //! The AST is `Tree<AstNode>`. A .conv file parsed is a tree
 //! in the conversation domain. Same type as everything else.
 
-use crate::domain::conversation::Language;
+use crate::domain::conversation::{Conversation, Language};
+use crate::domain::Domain;
 use crate::tree::{self, Tree};
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
@@ -58,12 +59,8 @@ pub fn ast_branch(
 
 /// Content-addressed ref from kind + value.
 fn ast_ref(kind: &Language, value: &str) -> Ref {
-    let label = format!("{}:{}", kind_label(kind), value);
+    let label = format!("{}:{}", Conversation::local_name(kind), value);
     Ref::new(sha::hash(&label), label)
-}
-
-fn kind_label(kind: &Language) -> &'static str {
-    todo!()
 }
 
 #[cfg(test)]
