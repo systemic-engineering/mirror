@@ -1,0 +1,456 @@
+use std::cell::RefCell;
+
+use sha2::{Digest, Sha256};
+
+use crate::gradient::Gradient;
+
+/// Anything that can produce a content address.
+///
+/// The fundamental property of data in Conversation:
+/// same content = same OID. Trees get this from fragmentation.
+/// Events get this from their SHA. Everything is addressable.
+pub trait Oid {
+    fn oid(&self) -> String;
+}
+
+/// Direction of a gradient application.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Direction {
+    Emit,
+    Absorb,
+}
+
+/// An observation: what a gradient saw and produced.
+///
+/// Observations always go to a Session.
+/// That's what makes it a session.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Observation {
+    /// Content address of the input
+    pub input: String,
+    /// Content address of the output
+    pub output: String,
+    /// Name of the gradient that ran
+    pub gradient: String,
+    /// Direction: emit or absorb
+    pub direction: Direction,
+}
+
+/// Content-addressed event. The atom of observation.
+///
+/// Every observation becomes an event.
+/// Events chain through parent links — a session is a commit log.
+/// The session emits these. They are the record of the conversation.
+///
+/// Parametrized over data type, like Tree<E>. Default is raw bytes.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Event<E = Vec<u8>> {
+    /// Content address (SHA-256 of data + message + parent)
+    pub sha: String,
+    /// The event payload
+    pub data: E,
+    /// Annotation / signal kind
+    pub message: String,
+    /// Parent event SHA (chain link)
+    pub parent: Option<String>,
+}
+
+impl<E: AsRef<[u8]>> Event<E> {
+    pub fn new(data: E, message: impl Into<String>, parent: Option<String>) -> Self {
+        let message = message.into();
+        let sha = Self::compute_sha(data.as_ref(), &message, parent.as_deref());
+        Event {
+            sha,
+            data,
+            message,
+            parent,
+        }
+    }
+
+    fn compute_sha(data: &[u8], message: &str, parent: Option<&str>) -> String {
+        let mut hasher = Sha256::new();
+        hasher.update(data);
+        hasher.update(message.as_bytes());
+        if let Some(p) = parent {
+            hasher.update(p.as_bytes());
+        }
+        hex::encode(hasher.finalize())
+    }
+}
+
+impl<E> Oid for Event<E> {
+    fn oid(&self) -> String {
+        self.sha.clone()
+    }
+}
+
+/// A session. The witness.
+///
+/// Observations go in. Events come out.
+/// Observation is what brings forth a session.
+/// An actor on their own cannot produce events.
+///
+/// The session is the only witness. There is no trait —
+/// the session IS the concept.
+///
+/// Uses interior mutability: observations arrive through
+/// &self because Gradient::emit operates on shared references.
+#[derive(Debug)]
+pub struct Session {
+    pub name: String,
+    pub author: String,
+    store: RefCell<Vec<Event>>,
+    head: RefCell<Option<String>>,
+}
+
+impl Session {
+    pub fn new(name: impl Into<String>, author: impl Into<String>) -> Self {
+        Session {
+            name: name.into(),
+            author: author.into(),
+            store: RefCell::new(Vec::new()),
+            head: RefCell::new(None),
+        }
+    }
+
+    /// Receive an observation. Convert it to a content-addressed
+    /// event in the chain. This is how events are born.
+    pub fn observe(&self, observation: &Observation) {
+        let dir = match observation.direction {
+            Direction::Emit => "emit",
+            Direction::Absorb => "absorb",
+        };
+        let data = format!("{}:{}:{}", dir, observation.input, observation.output);
+        self.record(&observation.gradient, data.into_bytes());
+    }
+
+    /// Seal the session with a root commit.
+    /// References all prior event SHAs. Returns the root SHA.
+    pub fn seal(&self, message: impl Into<String>) -> String {
+        let event_shas: Vec<String> = self
+            .store
+            .borrow()
+            .iter()
+            .map(|e| e.sha.clone())
+            .collect();
+        let data = event_shas.join(",").into_bytes();
+        self.record(message, data)
+    }
+
+    pub fn head(&self) -> Option<String> {
+        self.head.borrow().clone()
+    }
+
+    /// The events this session has emitted.
+    pub fn events(&self) -> Vec<Event> {
+        self.store.borrow().clone()
+    }
+
+    pub fn len(&self) -> usize {
+        self.store.borrow().len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.store.borrow().is_empty()
+    }
+
+    // -- Private: the only way to produce events is through observe or seal --
+
+    fn record(&self, message: impl Into<String>, data: Vec<u8>) -> String {
+        let event = Event::new(data, message, self.head.borrow().clone());
+        let sha = event.sha.clone();
+        *self.head.borrow_mut() = Some(sha.clone());
+        self.store.borrow_mut().push(event);
+        sha
+    }
+}
+
+/// Witnessed gradient. Wraps any gradient, records to a session.
+///
+/// When a gradient is Witnessed, every emit and absorb
+/// produces an Observation sent to the Session.
+/// Zero-cost when the gradient isn't wrapped.
+pub struct Witnessed<'a, G> {
+    pub gradient: G,
+    pub session: &'a Session,
+    pub name: String,
+}
+
+impl<'a, G> Witnessed<'a, G> {
+    pub fn new(gradient: G, session: &'a Session, name: impl Into<String>) -> Self {
+        Witnessed {
+            gradient,
+            session,
+            name: name.into(),
+        }
+    }
+}
+
+impl<A, B, G> Gradient<A, B> for Witnessed<'_, G>
+where
+    A: Oid,
+    B: Oid,
+    G: Gradient<A, B>,
+{
+    type Error = G::Error;
+
+    fn emit(&self, source: A) -> Result<B, Self::Error> {
+        let input_oid = source.oid();
+        let result = self.gradient.emit(source)?;
+        let output_oid = result.oid();
+        self.session.observe(&Observation {
+            input: input_oid,
+            output: output_oid,
+            gradient: self.name.clone(),
+            direction: Direction::Emit,
+        });
+        Ok(result)
+    }
+
+    fn absorb(&self, source: B) -> Result<A, Self::Error> {
+        let input_oid = source.oid();
+        let result = self.gradient.absorb(source)?;
+        let output_oid = result.oid();
+        self.session.observe(&Observation {
+            input: input_oid,
+            output: output_oid,
+            gradient: self.name.clone(),
+            direction: Direction::Absorb,
+        });
+        Ok(result)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::gradient::Gradient;
+
+    // -- Oid impls for test types --
+
+    impl Oid for i32 {
+        fn oid(&self) -> String {
+            let mut hasher = Sha256::new();
+            hasher.update(self.to_le_bytes());
+            hex::encode(hasher.finalize())
+        }
+    }
+
+    // -- Test gradient --
+
+    struct Double;
+    impl Gradient<i32, i32> for Double {
+        type Error = ();
+        fn emit(&self, source: i32) -> Result<i32, ()> {
+            Ok(source * 2)
+        }
+        fn absorb(&self, source: i32) -> Result<i32, ()> {
+            Ok(source / 2)
+        }
+    }
+
+    // -- Event tests --
+
+    #[test]
+    fn event_is_content_addressed() {
+        let a = Event::new(b"hello".to_vec(), "test", None);
+        let b = Event::new(b"hello".to_vec(), "test", None);
+        assert_eq!(a.sha, b.sha);
+    }
+
+    #[test]
+    fn different_content_different_sha() {
+        let a = Event::new(b"hello".to_vec(), "test", None);
+        let b = Event::new(b"world".to_vec(), "test", None);
+        assert_ne!(a.sha, b.sha);
+    }
+
+    #[test]
+    fn event_oid_is_sha() {
+        let e = Event::new(b"hello".to_vec(), "test", None);
+        assert_eq!(e.oid(), e.sha);
+    }
+
+    #[test]
+    fn event_parent_changes_sha() {
+        let a = Event::new(b"hello".to_vec(), "test", None);
+        let b = Event::new(b"hello".to_vec(), "test", Some("parent".into()));
+        assert_ne!(a.sha, b.sha);
+    }
+
+    // -- Session tests --
+
+    #[test]
+    fn session_starts_empty() {
+        let s = Session::new("test", "reed");
+        assert!(s.is_empty());
+        assert_eq!(s.head(), None);
+    }
+
+    #[test]
+    fn session_head_tracks_latest() {
+        let s = Session::new("test", "reed");
+        let g = Witnessed::new(Double, &s, "double");
+        g.emit(3).unwrap();
+
+        assert!(s.head().is_some());
+    }
+
+    #[test]
+    fn session_seal_produces_root() {
+        let s = Session::new("test", "reed");
+        let g = Witnessed::new(Double, &s, "double");
+        g.emit(3).unwrap();
+
+        let root = s.seal("@seal");
+        assert_eq!(s.head().as_deref(), Some(root.as_str()));
+        assert_eq!(s.len(), 2); // observation + root
+    }
+
+    #[test]
+    fn session_seal_references_all_events() {
+        let s = Session::new("test", "reed");
+        let g = Witnessed::new(Double, &s, "double");
+        g.emit(3).unwrap();
+        g.emit(5).unwrap();
+        s.seal("@seal");
+
+        let events = s.events();
+        let root = events.last().unwrap();
+        let root_data = String::from_utf8(root.data.clone()).unwrap();
+        // Root contains the SHAs of all prior events
+        assert!(root_data.contains(&events[0].sha));
+        assert!(root_data.contains(&events[1].sha));
+    }
+
+    // -- The session IS the witness --
+
+    #[test]
+    fn observation_brings_forth_events() {
+        let session = Session::new("test", "reed");
+        let g = Witnessed::new(Double, &session, "double");
+
+        let result = g.emit(3).unwrap();
+        assert_eq!(result, 6);
+
+        assert_eq!(session.len(), 1);
+    }
+
+    #[test]
+    fn observations_chain_as_events() {
+        let session = Session::new("test", "reed");
+        let g = Witnessed::new(Double, &session, "double");
+
+        g.emit(3).unwrap();
+        g.emit(5).unwrap();
+
+        let events = session.events();
+        assert_eq!(events.len(), 2);
+        assert_eq!(events[0].parent, None);
+        assert_eq!(events[1].parent, Some(events[0].sha.clone()));
+    }
+
+    #[test]
+    fn event_carries_gradient_name() {
+        let session = Session::new("test", "reed");
+        let g = Witnessed::new(Double, &session, "double");
+        g.emit(3).unwrap();
+
+        let events = session.events();
+        assert_eq!(events[0].message, "double");
+    }
+
+    #[test]
+    fn event_carries_observation_data() {
+        let session = Session::new("test", "reed");
+        let g = Witnessed::new(Double, &session, "double");
+        g.emit(3).unwrap();
+
+        let events = session.events();
+        let data = String::from_utf8(events[0].data.clone()).unwrap();
+        assert!(data.starts_with("emit:"));
+        assert!(data.contains(&3i32.oid()));
+        assert!(data.contains(&6i32.oid()));
+    }
+
+    #[test]
+    fn absorb_observed() {
+        let session = Session::new("test", "reed");
+        let g = Witnessed::new(Double, &session, "double");
+        g.absorb(6).unwrap();
+
+        let events = session.events();
+        let data = String::from_utf8(events[0].data.clone()).unwrap();
+        assert!(data.starts_with("absorb:"));
+    }
+
+    // Shared test stub: always fails. One type = one monomorphization.
+    struct Fails;
+    impl Gradient<i32, i32> for Fails {
+        type Error = ();
+        fn emit(&self, _: i32) -> Result<i32, ()> {
+            Err(())
+        }
+        fn absorb(&self, _: i32) -> Result<i32, ()> {
+            Err(())
+        }
+    }
+
+    #[test]
+    fn error_produces_no_event() {
+        let session = Session::new("test", "reed");
+        let g = Witnessed::new(Fails, &session, "fails");
+
+        assert!(g.emit(1).is_err());
+        assert!(g.absorb(1).is_err());
+        assert!(session.is_empty());
+    }
+
+    // -- Composition traces through the session --
+
+    #[test]
+    fn composition_traces_through_session() {
+        let session = Session::new("test", "reed");
+        let g1 = Witnessed::new(Double, &session, "first");
+        let g2 = Witnessed::new(Double, &session, "second");
+
+        let mid = g1.emit(3).unwrap();
+        let _result = g2.emit(mid).unwrap();
+
+        let events = session.events();
+        assert_eq!(events.len(), 2);
+        assert_eq!(events[0].message, "first");
+        assert_eq!(events[1].message, "second");
+        assert_eq!(events[1].parent, Some(events[0].sha.clone()));
+    }
+
+    #[test]
+    fn seals_after_observations() {
+        let session = Session::new("test", "reed");
+        let g = Witnessed::new(Double, &session, "double");
+
+        g.emit(3).unwrap();
+        g.emit(5).unwrap();
+        let root = session.seal("@done");
+
+        assert_eq!(session.len(), 3); // 2 observations + root
+        assert_eq!(session.head().as_deref(), Some(root.as_str()));
+    }
+
+    // -- Second-order observation --
+
+    #[test]
+    fn same_observation_different_event() {
+        let session = Session::new("test", "reed");
+        let g = Witnessed::new(Double, &session, "double");
+
+        g.emit(3).unwrap();
+        g.emit(3).unwrap();
+
+        let events = session.events();
+        // Same observation data (first order)
+        assert_eq!(events[0].data, events[1].data);
+        // Different event SHA (second order — position in the chain)
+        assert_ne!(events[0].sha, events[1].sha);
+    }
+}

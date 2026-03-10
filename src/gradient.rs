@@ -244,6 +244,34 @@ mod tests {
         }
     }
 
+    // Shared test stub: always fails. One type = one monomorphization.
+    #[derive(Clone)]
+    struct Fails;
+    impl Gradient<i32, i32> for Fails {
+        type Error = ();
+        fn emit(&self, _: i32) -> Result<i32, ()> {
+            Err(())
+        }
+        fn absorb(&self, _: i32) -> Result<i32, ()> {
+            Err(())
+        }
+    }
+
+    struct FlipSign;
+    impl Gradient<i32, i32> for FlipSign {
+        type Error = Infallible;
+        fn emit(&self, source: i32) -> Result<i32, Infallible> {
+            Ok(-source)
+        }
+        fn absorb(&self, source: i32) -> Result<i32, Infallible> {
+            Ok(-source)
+        }
+    }
+
+    fn requires_iso<A, B>(_: impl Iso<A, B>) {}
+
+    // -- Identity --
+
     #[test]
     fn identity_emit_returns_input() {
         let g: Identity<i32> = Identity::new();
@@ -263,11 +291,21 @@ mod tests {
     }
 
     #[test]
+    fn identity_default() {
+        let g: Identity<i32> = Identity::default();
+        assert_eq!(g.emit(42), Ok(42));
+    }
+
+    // -- Inverted --
+
+    #[test]
     fn invert_swaps_directions() {
         let inv = Double.invert();
         assert_eq!(inv.emit(6), Ok(3));
         assert_eq!(inv.absorb(3), Ok(6));
     }
+
+    // -- Composed --
 
     #[test]
     fn compose_chains_emit() {
@@ -280,6 +318,8 @@ mod tests {
         let g = Double.compose(Stringify);
         assert_eq!(g.absorb("6".to_string()), Ok(3));
     }
+
+    // -- Vec pipeline --
 
     #[test]
     fn vec_emit_applies_in_order() {
@@ -300,90 +340,63 @@ mod tests {
         assert_eq!(gs.absorb(5), Ok(5));
     }
 
+    // -- When (same instance tests both branches, both directions) --
+
     #[test]
-    fn when_emit_applies_when_true() {
+    fn when_applies_when_true() {
         let g = When {
             predicate: |x: &i32| *x > 0,
             gradient: Double,
         };
         assert_eq!(g.emit(3), Ok(6));
+        assert_eq!(g.emit(-1), Ok(-1));
+        assert_eq!(g.absorb(6), Ok(3));
+        assert_eq!(g.absorb(-1), Ok(-1));
     }
 
-    #[test]
-    fn when_emit_passes_through_when_false() {
-        let g = When {
-            predicate: |x: &i32| *x > 0,
-            gradient: Double,
-        };
-        assert_eq!(g.emit(-1), Ok(-1));
-    }
+    // -- Fallback (shared Fails type) --
 
     #[test]
     fn fallback_uses_first_when_ok() {
-        #[derive(Clone)]
-        struct Fails;
-        impl Gradient<i32, i32> for Fails {
-            type Error = ();
-            fn emit(&self, _: i32) -> Result<i32, ()> {
-                Err(())
-            }
-            fn absorb(&self, _: i32) -> Result<i32, ()> {
-                Err(())
-            }
-        }
-
         let g = Fallback(Double, Fails);
         assert_eq!(g.emit(3), Ok(6));
+        assert_eq!(g.absorb(6), Ok(3));
     }
 
     #[test]
     fn fallback_uses_second_when_first_fails() {
-        #[derive(Clone)]
-        struct Fails;
-        impl Gradient<i32, i32> for Fails {
-            type Error = ();
-            fn emit(&self, _: i32) -> Result<i32, ()> {
-                Err(())
-            }
-            fn absorb(&self, _: i32) -> Result<i32, ()> {
-                Err(())
-            }
-        }
-
         let g = Fallback(Fails, Double);
         assert_eq!(g.emit(3), Ok(6));
+        assert_eq!(g.absorb(6), Ok(3));
     }
 
-    struct FlipSign;
-    impl Gradient<i32, i32> for FlipSign {
-        type Error = Infallible;
-        fn emit(&self, source: i32) -> Result<i32, Infallible> {
-            Ok(-source)
-        }
-        fn absorb(&self, source: i32) -> Result<i32, Infallible> {
-            Ok(-source)
-        }
-    }
-
-    fn requires_iso<A, B>(_: impl Iso<A, B>) {}
+    // -- Iso --
 
     #[test]
     fn infallible_gradient_is_iso() {
         requires_iso(FlipSign);
+        assert_eq!(FlipSign.emit(5), Ok(-5));
+        assert_eq!(FlipSign.absorb(-5), Ok(5));
     }
+
+    // -- Roundtrip --
 
     #[test]
     fn roundtrip_returns_original() {
         assert_eq!(Double.roundtrip(4), Ok(4));
     }
 
+    // -- Option --
+
     #[test]
-    fn some_emit_applies_gradient() {
+    fn some_applies_gradient() {
         assert_eq!(Some(Double).emit(3), Ok(6));
+        assert_eq!(Some(Double).absorb(6), Ok(3));
     }
 
     #[test]
-    fn none_emit_is_identity() {
+    fn none_is_identity() {
         assert_eq!(None::<Double>.emit(3), Ok(3));
+        assert_eq!(None::<Double>.absorb(3), Ok(3));
     }
 }
