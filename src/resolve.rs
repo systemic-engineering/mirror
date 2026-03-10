@@ -253,6 +253,14 @@ fn resolve_output_nodes(
 }
 
 impl Resolved {
+    /// Parse and resolve a `.conv` source string in one step.
+    ///
+    /// Chains Parse → Resolve. Errors from either phase
+    /// are unified into ResolveError.
+    pub fn from_source(_source: &str) -> Result<Self, ResolveError> {
+        todo!()
+    }
+
     /// Execute the resolved program against a filesystem tree.
     pub fn execute(&self, tree: &Tree<Folder>) -> Value {
         let body = self.execute_body(&self.output, tree);
@@ -860,5 +868,58 @@ mod tests {
         let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
         let resolved = pipeline.emit(source.to_string()).unwrap();
         assert_eq!(resolved.domain, "filesystem");
+    }
+
+    // -- Bridge: from_source --
+
+    #[test]
+    fn from_source_parses_and_resolves() {
+        let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
+        let resolved = Resolved::from_source(source).unwrap();
+        assert_eq!(resolved.domain, "filesystem");
+        assert_eq!(resolved.output_name, "blog");
+        assert!(resolved.templates.contains_key("$t"));
+    }
+
+    #[test]
+    fn from_source_propagates_parse_error() {
+        let err = Resolved::from_source("garbage\n").unwrap_err();
+        assert!(err.message.contains("parse"), "{}", err);
+    }
+
+    #[test]
+    fn from_source_propagates_resolve_error() {
+        let err = Resolved::from_source("in @bogus\nout r {\n\tx {}\n}\n").unwrap_err();
+        assert!(err.message.contains("bogus"), "{}", err);
+    }
+
+    // -- Litmus: new pipeline matches old pipeline --
+
+    #[test]
+    fn new_pipeline_matches_old_pipeline() {
+        use crate::conv::Conv;
+
+        let conv_source = include_str!("../systemic.engineering.conv");
+
+        // Old pipeline
+        let conv = Conv::parse(conv_source).expect("Conv::parse");
+
+        // New pipeline
+        let resolved = Resolved::from_source(conv_source).expect("Resolved::from_source");
+
+        // Same filesystem
+        let se_path = std::env::var("SYSTEMIC_ENGINEERING")
+            .unwrap_or_else(|_| "/Users/alexwolf/dev/systemic.engineering".into());
+        let tree = Folder::read_tree(&format!("{}/blog", se_path));
+
+        // Execute both
+        let old_result = conv.execute(&tree);
+        let new_result = resolved.execute(&tree);
+
+        // Must be identical
+        assert_eq!(
+            old_result, new_result,
+            "new pipeline must produce identical output to old pipeline"
+        );
     }
 }
