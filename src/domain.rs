@@ -31,11 +31,14 @@ impl Domain for Filesystem {
     type Language = FsKind;
 
     fn id() -> &'static str {
-        todo!()
+        "filesystem"
     }
 
-    fn local_name(_kind: &FsKind) -> Cow<'static, str> {
-        todo!()
+    fn local_name(kind: &FsKind) -> Cow<'static, str> {
+        match kind {
+            FsKind::Directory => "dir".into(),
+            FsKind::File => "file".into(),
+        }
     }
 }
 

@@ -386,27 +386,33 @@ mod tests {
     fn parse_error_unexpected_line() {
         let result = Conv::parse("garbage");
         assert!(result.is_err());
-        assert!(result.err().unwrap().to_string().contains("unexpected line"));
+        assert!(result
+            .err()
+            .unwrap()
+            .to_string()
+            .contains("unexpected line"));
     }
 
     #[test]
     fn parse_error_no_output() {
         let result = Conv::parse("in Tree<Folder>\ntemplate $t {\n\tname\n}\n");
         assert!(result.is_err());
-        assert!(result.err().unwrap().to_string().contains("no output block"));
+        assert!(result
+            .err()
+            .unwrap()
+            .to_string()
+            .contains("no output block"));
     }
 
     #[test]
     fn parse_error_unclosed_output() {
         let result = Conv::parse("out root {\n\tpieces {\n");
         assert!(result.is_err());
-        assert!(
-            result
-                .err()
-                .unwrap()
-                .to_string()
-                .contains("unclosed output block")
-        );
+        assert!(result
+            .err()
+            .unwrap()
+            .to_string()
+            .contains("unclosed output block"));
     }
 
     #[test]
@@ -414,26 +420,22 @@ mod tests {
         // A colon line without { falls through to the group/error parser
         let result = Conv::parse("out root {\n\tlabel: value\n}\n");
         assert!(result.is_err());
-        assert!(
-            result
-                .err()
-                .unwrap()
-                .to_string()
-                .contains("unexpected output line")
-        );
+        assert!(result
+            .err()
+            .unwrap()
+            .to_string()
+            .contains("unexpected output line"));
     }
 
     #[test]
     fn parse_error_unexpected_output_line() {
         let result = Conv::parse("out root {\n\tnobraces\n}\n");
         assert!(result.is_err());
-        assert!(
-            result
-                .err()
-                .unwrap()
-                .to_string()
-                .contains("unexpected output line")
-        );
+        assert!(result
+            .err()
+            .unwrap()
+            .to_string()
+            .contains("unexpected output line"));
     }
 
     #[test]
