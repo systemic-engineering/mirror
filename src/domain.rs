@@ -22,22 +22,22 @@ pub struct Filesystem;
 
 /// What a filesystem node can be.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum FsKind {
+pub enum FsLanguage {
     Directory,
     File,
 }
 
 impl Domain for Filesystem {
-    type Language = FsKind;
+    type Language = FsLanguage;
 
     fn id() -> &'static str {
         "filesystem"
     }
 
-    fn local_name(kind: &FsKind) -> Cow<'static, str> {
+    fn local_name(kind: &FsLanguage) -> Cow<'static, str> {
         match kind {
-            FsKind::Directory => "dir".into(),
-            FsKind::File => "file".into(),
+            FsLanguage::Directory => "dir".into(),
+            FsLanguage::File => "file".into(),
         }
     }
 }
@@ -65,7 +65,7 @@ mod tests {
 
     #[test]
     fn filesystem_local_names() {
-        assert_eq!(Filesystem::local_name(&FsKind::Directory), "dir");
-        assert_eq!(Filesystem::local_name(&FsKind::File), "file");
+        assert_eq!(Filesystem::local_name(&FsLanguage::Directory), "dir");
+        assert_eq!(Filesystem::local_name(&FsLanguage::File), "file");
     }
 }
