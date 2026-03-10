@@ -39,8 +39,7 @@ pub struct Conversation {
     pub input: Domain,
     pub output: Domain,
     templates: HashMap<String, Template>,
-    output_name: String,
-    body: Vec<OutputNode>,
+    pub content: Tree<OutputNode>,
 }
 
 #[derive(Debug)]
@@ -60,7 +59,6 @@ pub struct Field {
 pub enum OutputNode {
     Group {
         name: String,
-        children: Vec<OutputNode>,
     },
     Select {
         output_name: String,
@@ -492,7 +490,11 @@ mod tests {
         let ast = Parse.emit(source.to_string()).unwrap();
         let resolved = Resolve::new().emit(ast).unwrap();
         assert_eq!(resolved.input, Domain::Filesystem);
-        assert_eq!(resolved.output_name, "blog");
+        // Root of content tree carries the output name
+        match resolved.content.data() {
+            OutputNode::Group { name } => assert_eq!(name, "blog"),
+            _ => panic!("content root must be a Group"),
+        }
         assert!(resolved.templates.contains_key("$corpus"));
     }
 
@@ -860,7 +862,7 @@ mod tests {
         );
         let resolved = Resolve::new().emit(root).unwrap();
         // Only the Group child is extracted, In is ignored
-        assert_eq!(resolved.body.len(), 1);
+        assert_eq!(resolved.content.children().len(), 1);
     }
 
     // -- Template field with only qualifier, no pipe (branch form) --
@@ -932,7 +934,10 @@ mod tests {
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
         let resolved = Conversation::from_source(source).unwrap();
         assert_eq!(resolved.input, Domain::Filesystem);
-        assert_eq!(resolved.output_name, "blog");
+        match resolved.content.data() {
+            OutputNode::Group { name } => assert_eq!(name, "blog"),
+            _ => panic!("content root must be a Group"),
+        }
         assert!(resolved.templates.contains_key("$t"));
     }
 
