@@ -533,4 +533,33 @@ mod tests {
         let err = Parse.emit(source).unwrap_err();
         assert!(err.message.contains("unexpected output line"), "{}", err);
     }
+
+    // -- Pipeline: A | G | B --
+
+    #[test]
+    fn parse_pipeline() {
+        let source = "@git(branch: \"master\") | HEAD | @git(branch: \"test\")\n";
+        let tree = Parse.emit(source.to_string()).unwrap();
+        let pipeline = &tree.children()[0];
+        assert_eq!(pipeline.data().kind, Kind::Pipeline);
+        assert_eq!(pipeline.children().len(), 3);
+
+        let left = &pipeline.children()[0];
+        assert_eq!(left.data().kind, Kind::DomainRef);
+        assert_eq!(left.data().value, "@git");
+        assert_eq!(left.children().len(), 1);
+        assert_eq!(left.children()[0].data().kind, Kind::DomainParam);
+        assert_eq!(left.children()[0].data().value, "branch: \"master\"");
+
+        let mid = &pipeline.children()[1];
+        assert_eq!(mid.data().kind, Kind::Ref);
+        assert_eq!(mid.data().value, "HEAD");
+
+        let right = &pipeline.children()[2];
+        assert_eq!(right.data().kind, Kind::DomainRef);
+        assert_eq!(right.data().value, "@git");
+        assert_eq!(right.children().len(), 1);
+        assert_eq!(right.children()[0].data().kind, Kind::DomainParam);
+        assert_eq!(right.children()[0].data().value, "branch: \"test\"");
+    }
 }
