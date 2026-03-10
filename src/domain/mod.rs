@@ -76,9 +76,9 @@ mod tests {
     }
 
     #[test]
-    fn filesystem_data_is_folder() {
-        fn assert_data_type<C: Context<Data = filesystem::Folder>>() {}
-        assert_data_type::<Filesystem>();
+    fn filesystem_token_is_folder() {
+        fn assert_token<C: Context<Token = filesystem::Folder>>() {}
+        assert_token::<Filesystem>();
     }
 
     #[test]
@@ -88,27 +88,15 @@ mod tests {
     }
 
     #[test]
-    fn conversation_data_is_ast_node() {
-        fn assert_data_type<C: Context<Data = crate::ast::AstNode>>() {}
-        assert_data_type::<conversation::Conversation>();
+    fn conversation_token_is_ast_node() {
+        fn assert_token<C: Context<Token = crate::ast::AstNode>>() {}
+        assert_token::<conversation::Conversation>();
     }
 
     #[test]
     fn conversation_keys_is_plain() {
         fn assert_keys_type<C: Context<Keys = fragmentation::keys::PlainKeys>>() {}
         assert_keys_type::<conversation::Conversation>();
-    }
-
-    #[test]
-    fn default_local_name_uses_debug() {
-        assert_eq!(
-            Filesystem::local_name(&filesystem::Token::Directory),
-            "Directory"
-        );
-        assert_eq!(
-            conversation::Conversation::local_name(&conversation::Token::TemplateRef),
-            "TemplateRef"
-        );
     }
 
     // -- Domain enum --

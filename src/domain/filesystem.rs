@@ -83,12 +83,6 @@ mod tests {
     }
 
     #[test]
-    fn filesystem_local_names() {
-        assert_eq!(Filesystem::local_name(&Token::Directory), "Directory");
-        assert_eq!(Filesystem::local_name(&Token::File), "File");
-    }
-
-    #[test]
     fn folder_read_tree_builds_structure() {
         let dir = tempfile::tempdir().unwrap();
         let sub = dir.path().join("child");

@@ -54,20 +54,6 @@ mod tests {
     }
 
     #[test]
-    fn conversation_local_names_from_debug() {
-        assert_eq!(Conversation::local_name(&Token::In), "In");
-        assert_eq!(Conversation::local_name(&Token::Out), "Out");
-        assert_eq!(Conversation::local_name(&Token::Template), "Template");
-        assert_eq!(Conversation::local_name(&Token::Field), "Field");
-        assert_eq!(Conversation::local_name(&Token::Qualifier), "Qualifier");
-        assert_eq!(Conversation::local_name(&Token::Pipe), "Pipe");
-        assert_eq!(Conversation::local_name(&Token::Group), "Group");
-        assert_eq!(Conversation::local_name(&Token::Select), "Select");
-        assert_eq!(Conversation::local_name(&Token::TemplateRef), "TemplateRef");
-        assert_eq!(Conversation::local_name(&Token::DomainRef), "DomainRef");
-    }
-
-    #[test]
     fn conversation_is_context() {
         fn requires_context<C: Context>() -> &'static str {
             C::id()
