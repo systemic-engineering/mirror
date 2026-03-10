@@ -576,6 +576,15 @@ mod tests {
     // -- Pipeline: A | G | B --
 
     #[test]
+    fn parse_commit_from_main_to_test_fixture() {
+        let source = include_str!("../fixtures/commit-from-main-to-test.conv");
+        let tree = Parse.emit(source.to_string()).unwrap();
+        let pipeline = &tree.children()[0];
+        assert_eq!(pipeline.data().kind, Kind::Pipeline);
+        assert_eq!(pipeline.children().len(), 3);
+    }
+
+    #[test]
     fn parse_pipeline_bare_domain() {
         let source = "@fs | data | @json\n";
         let tree = Parse.emit(source.to_string()).unwrap();
