@@ -585,6 +585,44 @@ mod tests {
     }
 
     #[test]
+    fn parse_aliased_in() {
+        let source = "in @number as $a\n";
+        let tree = Parse.emit(source.to_string()).unwrap();
+        let in_node = &tree.children()[0];
+        assert_eq!(in_node.data().kind, Kind::In);
+        assert_eq!(in_node.data().value, "@number");
+        assert!(in_node.is_fractal());
+        assert_eq!(in_node.children()[0].data().kind, Kind::Alias);
+        assert_eq!(in_node.children()[0].data().value, "$a");
+    }
+
+    #[test]
+    fn parse_anonymous_out_with_exprs() {
+        let source = "out {\n\tsimple: $a + $b\n\tcurried + $b\n\tmagic: +\n}\n";
+        let tree = Parse.emit(source.to_string()).unwrap();
+        let out = &tree.children()[0];
+        assert_eq!(out.data().kind, Kind::Out);
+        assert_eq!(out.data().value, "");
+        assert_eq!(out.children().len(), 3);
+
+        let simple = &out.children()[0];
+        assert_eq!(simple.data().kind, Kind::Field);
+        assert_eq!(simple.data().value, "simple");
+        assert_eq!(simple.children()[0].data().kind, Kind::Expr);
+        assert_eq!(simple.children()[0].data().value, "$a + $b");
+
+        let curried = &out.children()[1];
+        assert_eq!(curried.data().kind, Kind::Expr);
+        assert_eq!(curried.data().value, "curried + $b");
+
+        let magic = &out.children()[2];
+        assert_eq!(magic.data().kind, Kind::Field);
+        assert_eq!(magic.data().value, "magic");
+        assert_eq!(magic.children()[0].data().kind, Kind::Expr);
+        assert_eq!(magic.children()[0].data().value, "+");
+    }
+
+    #[test]
     fn parse_pipeline_bare_domain() {
         let source = "@fs | data | @json\n";
         let tree = Parse.emit(source.to_string()).unwrap();
