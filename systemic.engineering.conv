@@ -1,0 +1,23 @@
+in Tree<Folder>
+
+template $corpus {
+	slug
+	excerpt
+	headlines: h2
+}
+
+# Expected output in JSON
+# { "blog": {
+#     "pieces": {
+#       "draft": [{"slug": "..", "excerpt": "..", "headlines": [..]}],
+#       "archived": [..],
+#       "published": [..]
+#  }}}
+out blog {
+	pieces {
+		draft: 1draft { $corpus }
+		published: 3published { $corpus }
+		archived: 4archived { $corpus }
+	}
+}
+  

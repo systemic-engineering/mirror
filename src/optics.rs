@@ -225,10 +225,7 @@ mod tests {
     #[test]
     fn traverse_extracts_matching() {
         let t = AllSomes;
-        assert_eq!(
-            t.traverse(&vec![Some(1), None, Some(3)]),
-            vec![1, 3]
-        );
+        assert_eq!(t.traverse(&vec![Some(1), None, Some(3)]), vec![1, 3]);
     }
 
     #[test]
@@ -280,11 +277,7 @@ mod tests {
     #[test]
     fn prism_as_traversal_extracts_matches() {
         let t = PrismAsTraversal(CircleRadius);
-        let source = vec![
-            Shape::Circle(1.0),
-            Shape::Square(2.0),
-            Shape::Circle(3.0),
-        ];
+        let source = vec![Shape::Circle(1.0), Shape::Square(2.0), Shape::Circle(3.0)];
         assert_eq!(t.traverse(&source), vec![1.0, 3.0]);
     }
 
@@ -292,25 +285,17 @@ mod tests {
     fn prism_as_traversal_empty_on_no_match() {
         let t = PrismAsTraversal(CircleRadius);
         let source = vec![Shape::Square(1.0), Shape::Square(2.0)];
-        assert_eq!(t.traverse(&source), vec![]);
+        assert_eq!(t.traverse(&source), Vec::<f64>::new());
     }
 
     #[test]
     fn prism_as_traversal_rebuild_replaces_matches() {
         let t = PrismAsTraversal(CircleRadius);
-        let source = vec![
-            Shape::Circle(1.0),
-            Shape::Square(2.0),
-            Shape::Circle(3.0),
-        ];
+        let source = vec![Shape::Circle(1.0), Shape::Square(2.0), Shape::Circle(3.0)];
         let rebuilt = t.rebuild(source, vec![10.0, 30.0]);
         assert_eq!(
             rebuilt,
-            vec![
-                Shape::Circle(10.0),
-                Shape::Square(2.0),
-                Shape::Circle(30.0),
-            ]
+            vec![Shape::Circle(10.0), Shape::Square(2.0), Shape::Circle(30.0),]
         );
     }
 
@@ -328,30 +313,19 @@ mod tests {
         let t = PrismAsTraversal(CircleRadius);
         let source = vec![Shape::Circle(1.0), Shape::Circle(2.0)];
         let rebuilt = t.rebuild(source, vec![10.0]);
-        assert_eq!(
-            rebuilt,
-            vec![Shape::Circle(10.0), Shape::Circle(2.0)]
-        );
+        assert_eq!(rebuilt, vec![Shape::Circle(10.0), Shape::Circle(2.0)]);
     }
 
     #[test]
     fn prism_as_traversal_as_gradient() {
         let g = TraversalGradient(PrismAsTraversal(CircleRadius));
-        let source = vec![
-            Shape::Circle(1.0),
-            Shape::Square(2.0),
-            Shape::Circle(3.0),
-        ];
+        let source = vec![Shape::Circle(1.0), Shape::Square(2.0), Shape::Circle(3.0)];
         let (s, radii) = g.emit(source).unwrap();
         assert_eq!(radii, vec![1.0, 3.0]);
         let rebuilt = g.absorb((s, vec![10.0, 30.0])).unwrap();
         assert_eq!(
             rebuilt,
-            vec![
-                Shape::Circle(10.0),
-                Shape::Square(2.0),
-                Shape::Circle(30.0),
-            ]
+            vec![Shape::Circle(10.0), Shape::Square(2.0), Shape::Circle(30.0),]
         );
     }
 
