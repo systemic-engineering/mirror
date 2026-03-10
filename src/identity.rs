@@ -2,37 +2,33 @@ use crate::domain::Context;
 
 /// Identity: who you are in the system.
 ///
-/// The trait for anything that can identify an actor.
-/// Maps to git's author concept. An identity has a name,
-/// an address, and keys for signing/encryption.
+/// The trait for anything that can identify a system node.
+/// An identity has a name and keys for signing/encryption.
 ///
 /// Identity is a first-class concept in Conversation.
 /// Every gradient application is attributable to an identity.
 pub trait Identity<C: Context> {
     fn name(&self) -> &str;
-    fn email(&self) -> &str;
     fn keys(&self) -> &C::Keys;
 }
 
-/// An actor in the system. Carries identity, applies gradients.
+/// A composable node in the system. Carries identity, applies gradients.
 ///
-/// Context-parameterized: `Actor<Filesystem>` carries `PlainKeys`,
-/// a future `Actor<Encrypted>` could carry SSH/GPG keys.
+/// Context-parameterized: `System<Filesystem>` carries `PlainKeys`,
+/// a future `System<Encrypted>` could carry SSH/GPG keys.
 /// Default context is Filesystem (PlainKeys, infallible).
 ///
-/// Every observation in a session is attributable to an actor.
+/// Every observation in a session is attributable to a system.
 #[derive(Debug, Clone)]
-pub struct Actor<C: Context = crate::domain::filesystem::Filesystem> {
+pub struct System<C: Context = crate::domain::filesystem::Filesystem> {
     name: String,
-    email: String,
     keys: C::Keys,
 }
 
-impl<C: Context> Actor<C> {
-    pub fn new(name: impl Into<String>, email: impl Into<String>, keys: C::Keys) -> Self {
-        Actor {
+impl<C: Context> System<C> {
+    pub fn new(name: impl Into<String>, keys: C::Keys) -> Self {
+        System {
             name: name.into(),
-            email: email.into(),
             keys,
         }
     }
@@ -41,22 +37,14 @@ impl<C: Context> Actor<C> {
         &self.name
     }
 
-    pub fn email(&self) -> &str {
-        &self.email
-    }
-
     pub fn keys(&self) -> &C::Keys {
         &self.keys
     }
 }
 
-impl<C: Context> Identity<C> for Actor<C> {
+impl<C: Context> Identity<C> for System<C> {
     fn name(&self) -> &str {
         &self.name
-    }
-
-    fn email(&self) -> &str {
-        &self.email
     }
 
     fn keys(&self) -> &C::Keys {
