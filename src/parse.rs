@@ -131,12 +131,7 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
         });
     }
 
-    Ok(ast::ast_branch(
-        Token::Group,
-        "root",
-        root_span,
-        children,
-    ))
+    Ok(ast::ast_branch(Token::Group, "root", root_span, children))
 }
 
 fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {

@@ -468,10 +468,11 @@ mod tests {
 
     #[test]
     fn resolve_valid_conv() {
+        use crate::domain::Domain;
         let source = "in @filesystem\ntemplate $corpus {\n\tslug\n\texcerpt\n}\nout blog {\n\tpieces {\n\t\tdraft: 1draft { $corpus }\n\t}\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
         let resolved = Resolve::new().emit(ast).unwrap();
-        assert_eq!(resolved.domain, "filesystem");
+        assert_eq!(resolved.input, Domain::Filesystem);
         assert_eq!(resolved.output_name, "blog");
         assert!(resolved.templates.contains_key("$corpus"));
     }
@@ -668,21 +669,23 @@ mod tests {
     // -- with_domain + Default --
 
     #[test]
-    fn with_domain_registers_custom() {
+    fn with_domain_registers_external() {
+        use crate::domain::Domain;
         let resolve = Resolve::new().with_domain("html");
         let source = "in @html\nout r {\n\tx {}\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
         let resolved = resolve.emit(ast).unwrap();
-        assert_eq!(resolved.domain, "html");
+        assert_eq!(resolved.input, Domain::External("html".into()));
     }
 
     #[test]
     fn default_same_as_new() {
+        use crate::domain::Domain;
         let resolve = Resolve::default();
         let source = "in @filesystem\nout r {\n\tx {}\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
         let resolved = resolve.emit(ast).unwrap();
-        assert_eq!(resolved.domain, "filesystem");
+        assert_eq!(resolved.input, Domain::Filesystem);
     }
 
     // -- Error: missing domain declaration --
@@ -871,20 +874,22 @@ mod tests {
 
     #[test]
     fn parse_then_resolve_composes() {
+        use crate::domain::Domain;
         let pipeline = Parse.compose(Resolve::new());
         let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
         let resolved = pipeline.emit(source.to_string()).unwrap();
-        assert_eq!(resolved.domain, "filesystem");
+        assert_eq!(resolved.input, Domain::Filesystem);
     }
 
     // -- Bridge: from_source --
 
     #[test]
     fn from_source_parses_and_resolves() {
+        use crate::domain::Domain;
         let source =
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
         let resolved = Conversation::from_source(source).unwrap();
-        assert_eq!(resolved.domain, "filesystem");
+        assert_eq!(resolved.input, Domain::Filesystem);
         assert_eq!(resolved.output_name, "blog");
         assert!(resolved.templates.contains_key("$t"));
     }

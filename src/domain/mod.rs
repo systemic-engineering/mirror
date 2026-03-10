@@ -48,4 +48,47 @@ mod tests {
             "TemplateRef"
         );
     }
+
+    // -- Domain enum --
+
+    #[test]
+    fn domain_filesystem_id() {
+        assert_eq!(Domain::Filesystem.id(), "filesystem");
+    }
+
+    #[test]
+    fn domain_json_id() {
+        assert_eq!(Domain::Json.id(), "json");
+    }
+
+    #[test]
+    fn domain_external_id() {
+        assert_eq!(Domain::External("html".into()).id(), "html");
+    }
+
+    #[test]
+    fn domain_from_str_known() {
+        assert_eq!(Domain::from_name("filesystem"), Some(Domain::Filesystem));
+        assert_eq!(Domain::from_name("json"), Some(Domain::Json));
+    }
+
+    #[test]
+    fn domain_from_str_unknown() {
+        assert_eq!(Domain::from_name("html"), None);
+    }
+
+    #[test]
+    fn domain_eq() {
+        assert_eq!(Domain::Filesystem, Domain::Filesystem);
+        assert_eq!(Domain::External("x".into()), Domain::External("x".into()));
+        assert_ne!(Domain::Filesystem, Domain::Json);
+        assert_ne!(Domain::External("a".into()), Domain::External("b".into()));
+    }
+
+    #[test]
+    fn domain_known_names() {
+        let names = Domain::known_names();
+        assert!(names.contains(&"filesystem"));
+        assert!(names.contains(&"json"));
+    }
 }
