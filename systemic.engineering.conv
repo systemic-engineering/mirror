@@ -1,15 +1,21 @@
-in Tree<Folder>
+# @filesystem is a named domain
+in @filesystem
+
+# Later extensions
+# use Folder from @filesystem
+# use { Folder, File } from @filesystem
 
 template $corpus {
 	slug
 	excerpt
 	headlines: h2
+	html: article | @html
 }
 
 # Expected output in JSON
 # { "blog": {
 #     "pieces": {
-#       "draft": [{"slug": "..", "excerpt": "..", "headlines": [..]}],
+#       "draft": [{"slug": "..", "excerpt": "..", "headlines": [..], html: "<article .."}],
 #       "archived": [..],
 #       "published": [..]
 #  }}}
