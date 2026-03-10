@@ -94,21 +94,18 @@ impl Resolve {
         self
     }
 
-    /// Resolve a domain name to a Domain variant.
-    /// Known domains always resolve. External domains must be registered.
-    fn resolve_domain(&self, name: &str) -> Option<Domain> {
-        if let Some(known) = Domain::from_name(name) {
-            return Some(known);
-        }
-        if self.externals.iter().any(|e| e == name) {
-            return Some(Domain::External(name.to_string()));
-        }
-        None
+    /// Known domain names. C::id() already carries the identity;
+    /// this list is only for validating `in @...` declarations.
+    const KNOWN_DOMAINS: &'static [&'static str] = &["filesystem", "json", "git"];
+
+    /// Is this domain name known or registered?
+    fn is_known_domain(&self, name: &str) -> bool {
+        Self::KNOWN_DOMAINS.contains(&name) || self.externals.iter().any(|e| e == name)
     }
 
     /// All domain names available for did_you_mean.
     fn all_domain_names(&self) -> Vec<&str> {
-        let mut names: Vec<&str> = Domain::known_names().to_vec();
+        let mut names: Vec<&str> = Self::KNOWN_DOMAINS.to_vec();
         for ext in &self.externals {
             names.push(ext.as_str());
         }
@@ -128,30 +125,24 @@ impl<C: Context> Gradient<Tree<AstNode>, Conversation<C>> for Resolve {
     fn emit(&self, source: Tree<AstNode>) -> Result<Conversation<C>, ResolveError> {
         let children = source.children();
 
-        // Extract domain from In node — defaults to Json
+        // Validate domain declaration if present
         let in_node = children.iter().find(|c| c.data().kind == Kind::In);
-        let input = match in_node {
-            Some(node) => {
-                let raw = &node.data().value;
-                let name = raw.strip_prefix('@').unwrap_or(raw);
-                match self.resolve_domain(name) {
-                    Some(domain) => domain,
-                    None => {
-                        let candidates = self.all_domain_names();
-                        let mut hints = Vec::new();
-                        if let Some(suggestion) = did_you_mean(name, &candidates) {
-                            hints.push(format!("did you mean @{}?", suggestion));
-                        }
-                        return Err(ResolveError {
-                            message: format!("unknown domain @{}", name),
-                            span: Some(node.data().span),
-                            hints,
-                        });
-                    }
+        if let Some(node) = in_node {
+            let raw = &node.data().value;
+            let name = raw.strip_prefix('@').unwrap_or(raw);
+            if !self.is_known_domain(name) {
+                let candidates = self.all_domain_names();
+                let mut hints = Vec::new();
+                if let Some(suggestion) = did_you_mean(name, &candidates) {
+                    hints.push(format!("did you mean @{}?", suggestion));
                 }
+                return Err(ResolveError {
+                    message: format!("unknown domain @{}", name),
+                    span: Some(node.data().span),
+                    hints,
+                });
             }
-            None => Domain::Json,
-        };
+        }
 
         // Extract templates
         let mut templates = HashMap::new();
@@ -182,8 +173,6 @@ impl<C: Context> Gradient<Tree<AstNode>, Conversation<C>> for Resolve {
         };
 
         Ok(Conversation {
-            input,
-            output: Domain::Json,
             templates,
             content,
             _context: PhantomData,
