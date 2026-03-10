@@ -37,10 +37,10 @@ pub struct ResolveError {
 #[derive(Debug)]
 pub struct Conversation {
     pub input: Domain,
-    pub output_domain: Domain,
+    pub output: Domain,
     templates: HashMap<String, Template>,
     output_name: String,
-    output: Vec<OutputNode>,
+    body: Vec<OutputNode>,
 }
 
 #[derive(Debug)]
@@ -169,10 +169,10 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
 
         Ok(Conversation {
             input,
-            output_domain: Domain::Json,
+            output: Domain::Json,
             templates,
             output_name,
-            output,
+            body: output,
         })
     }
 
@@ -289,7 +289,7 @@ impl Conversation {
 
     /// Execute the resolved program against a filesystem tree.
     pub fn execute(&self, tree: &Tree<Folder>) -> Value {
-        let body = self.execute_body(&self.output, tree);
+        let body = self.execute_body(&self.body, tree);
         let mut map = serde_json::Map::new();
         map.insert(self.output_name.clone(), body);
         Value::Object(map)
@@ -737,7 +737,7 @@ mod tests {
         let ast = Parse.emit(source.to_string()).unwrap();
         let resolved = Resolve::new().emit(ast).unwrap();
         assert_eq!(resolved.input, Domain::Filesystem);
-        assert_eq!(resolved.output_domain, Domain::Json);
+        assert_eq!(resolved.output, Domain::Json);
     }
 
     // -- Execute: missing folder in select skips --
@@ -860,7 +860,7 @@ mod tests {
         );
         let resolved = Resolve::new().emit(root).unwrap();
         // Only the Group child is extracted, In is ignored
-        assert_eq!(resolved.output.len(), 1);
+        assert_eq!(resolved.body.len(), 1);
     }
 
     // -- Template field with only qualifier, no pipe (branch form) --
