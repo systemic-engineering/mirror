@@ -14,6 +14,8 @@ pub enum Token {
 
 impl Context for Filesystem {
     type Token = Token;
+    type Data = Folder;
+    type Keys = fragmentation::keys::PlainKeys;
 
     fn id() -> &'static str {
         "filesystem"
