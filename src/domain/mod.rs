@@ -16,7 +16,12 @@ pub trait Domain: Clone + std::fmt::Debug + PartialEq + Eq {
     type Language: Clone + std::fmt::Debug + PartialEq + Eq;
 
     fn id() -> &'static str;
-    fn local_name(kind: &Self::Language) -> Cow<'static, str>;
+
+    /// Human-readable name for a language variant.
+    /// Default: Debug name of the variant.
+    fn local_name(kind: &Self::Language) -> Cow<'static, str> {
+        format!("{:?}", kind).into()
+    }
 }
 
 #[cfg(test)]
@@ -30,5 +35,15 @@ mod tests {
             D::id()
         }
         requires_domain::<Filesystem>();
+    }
+
+    #[test]
+    fn default_local_name_uses_debug() {
+        use conversation::Conversation;
+        // Conversation doesn't override local_name — it uses the default
+        assert_eq!(
+            Conversation::local_name(&conversation::Language::TemplateRef),
+            "TemplateRef"
+        );
     }
 }

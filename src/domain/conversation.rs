@@ -3,8 +3,6 @@
 //! A .conv file parsed into a tree is a tree in this domain.
 //! The crate describes itself.
 
-use std::borrow::Cow;
-
 use super::Domain;
 
 /// The conversation vocabulary.
@@ -42,21 +40,6 @@ impl Domain for Conversation {
     fn id() -> &'static str {
         "conversation"
     }
-
-    fn local_name(kind: &Language) -> Cow<'static, str> {
-        match kind {
-            Language::In => "in".into(),
-            Language::Out => "out".into(),
-            Language::Template => "template".into(),
-            Language::Field => "field".into(),
-            Language::Qualifier => "qualifier".into(),
-            Language::Pipe => "pipe".into(),
-            Language::Group => "group".into(),
-            Language::Select => "select".into(),
-            Language::TemplateRef => "template_ref".into(),
-            Language::DomainRef => "domain_ref".into(),
-        }
-    }
 }
 
 #[cfg(test)]
@@ -69,20 +52,20 @@ mod tests {
     }
 
     #[test]
-    fn conversation_local_names() {
-        assert_eq!(Conversation::local_name(&Language::In), "in");
-        assert_eq!(Conversation::local_name(&Language::Out), "out");
-        assert_eq!(Conversation::local_name(&Language::Template), "template");
-        assert_eq!(Conversation::local_name(&Language::Field), "field");
-        assert_eq!(Conversation::local_name(&Language::Qualifier), "qualifier");
-        assert_eq!(Conversation::local_name(&Language::Pipe), "pipe");
-        assert_eq!(Conversation::local_name(&Language::Group), "group");
-        assert_eq!(Conversation::local_name(&Language::Select), "select");
+    fn conversation_local_names_from_debug() {
+        assert_eq!(Conversation::local_name(&Language::In), "In");
+        assert_eq!(Conversation::local_name(&Language::Out), "Out");
+        assert_eq!(Conversation::local_name(&Language::Template), "Template");
+        assert_eq!(Conversation::local_name(&Language::Field), "Field");
+        assert_eq!(Conversation::local_name(&Language::Qualifier), "Qualifier");
+        assert_eq!(Conversation::local_name(&Language::Pipe), "Pipe");
+        assert_eq!(Conversation::local_name(&Language::Group), "Group");
+        assert_eq!(Conversation::local_name(&Language::Select), "Select");
         assert_eq!(
             Conversation::local_name(&Language::TemplateRef),
-            "template_ref"
+            "TemplateRef"
         );
-        assert_eq!(Conversation::local_name(&Language::DomainRef), "domain_ref");
+        assert_eq!(Conversation::local_name(&Language::DomainRef), "DomainRef");
     }
 
     #[test]
