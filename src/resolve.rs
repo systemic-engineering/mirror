@@ -980,6 +980,57 @@ mod tests {
         assert!(err.message.contains("bogus"), "{}", err);
     }
 
+    // -- Litmus: @git domain proves Conversation is a Gradient --
+
+    #[test]
+    fn git_conv_emits_against_git_tree() {
+        use crate::domain::git::{Git, GitNode};
+
+        // A .conv that declares @git input domain
+        let source = "in @git\ntemplate $t {\n\tname\n}\nout repo {\n\trefs: heads { $t }\n}\n";
+        let resolved = Conversation::<Git>::from_source(source).unwrap();
+
+        // Build a synthetic Tree<GitNode> — a ref pointing to a commit
+        let blob = tree::leaf(
+            test_ref("README.md"),
+            GitNode::Blob {
+                content: b"# Hello".to_vec(),
+            },
+        );
+        let entry = tree::branch(
+            test_ref("src"),
+            GitNode::Entry { name: "src".into() },
+            vec![blob],
+        );
+        let commit = tree::branch(
+            test_ref("abc123"),
+            GitNode::Commit {
+                message: "init".into(),
+                author: "Reed".into(),
+                email: "reed@systemic.engineer".into(),
+            },
+            vec![entry],
+        );
+        let ref_node = tree::branch(
+            test_ref("heads"),
+            GitNode::Ref {
+                name: "main".into(),
+                target: "abc123".into(),
+            },
+            vec![commit],
+        );
+        let root = tree::branch(
+            test_ref("repo"),
+            GitNode::Entry {
+                name: "repo".into(),
+            },
+            vec![ref_node],
+        );
+
+        // Conversation IS a gradient: Tree<C::Token> → Value
+        let _result = resolved.emit(root).unwrap();
+    }
+
     // -- Litmus: real .conv against real filesystem --
 
     #[test]
