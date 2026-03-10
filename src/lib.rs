@@ -4,6 +4,7 @@ pub mod domain;
 pub mod gradient;
 pub mod identity;
 pub mod optics;
+pub mod parse;
 pub mod tree;
 pub mod witness;
 
