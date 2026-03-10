@@ -96,26 +96,22 @@ mod tests {
     }
 
     #[test]
-    fn identity_is_trait() {
-        fn requires_identity<C: Context>(_: &impl Identity<C>) {}
+    fn identity_trait_methods() {
+        fn check<C: Context>(id: &impl Identity<C>) -> (&str, &str) {
+            (id.name(), id.email())
+        }
         let actor: Actor<Filesystem> = Actor::new("Reed", "reed@systemic.engineer", PlainKeys);
-        requires_identity(&actor);
-    }
-
-    // -- Old API: must break to prove Key is gone --
-
-    #[test]
-    fn actor_has_identity() {
-        let actor = Actor::new("Reed", "reed@systemic.engineer");
-        assert_eq!(actor.name(), "Reed");
-        assert_eq!(actor.email(), "reed@systemic.engineer");
-        assert_eq!(actor.key(), None);
+        let (name, email) = check(&actor);
+        assert_eq!(name, "Reed");
+        assert_eq!(email, "reed@systemic.engineer");
     }
 
     #[test]
-    fn actor_with_key() {
-        let actor =
-            Actor::new("Reed", "reed@systemic.engineer").with_key(Key::new("99060D23EBFAA0D4"));
-        assert_eq!(actor.key().unwrap().fingerprint, "99060D23EBFAA0D4");
+    fn identity_trait_keys() {
+        fn get_keys<C: Context>(id: &impl Identity<C>) -> &C::Keys {
+            id.keys()
+        }
+        let actor: Actor<Filesystem> = Actor::new("Reed", "reed@systemic.engineer", PlainKeys);
+        assert_eq!(*get_keys(&actor), PlainKeys);
     }
 }
