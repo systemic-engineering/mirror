@@ -13,7 +13,7 @@ use crate::domain::conversation::Language;
 use crate::gradient::Gradient;
 use crate::tree::{Tree, Treelike};
 
-use crate::conv::Folder;
+use crate::domain::filesystem::Folder;
 
 /// The resolve gradient. AST → Resolved.
 ///
@@ -901,33 +901,40 @@ mod tests {
         assert!(err.message.contains("bogus"), "{}", err);
     }
 
-    // -- Litmus: new pipeline matches old pipeline --
+    // -- Litmus: real .conv against real filesystem --
 
     #[test]
-    fn new_pipeline_matches_old_pipeline() {
-        use crate::conv::Conv;
-
+    fn systemic_engineering_conv_produces_blog_index() {
         let conv_source = include_str!("../systemic.engineering.conv");
+        let resolved = Resolved::from_source(conv_source).expect("from_source");
 
-        // Old pipeline
-        let conv = Conv::parse(conv_source).expect("Conv::parse");
-
-        // New pipeline
-        let resolved = Resolved::from_source(conv_source).expect("Resolved::from_source");
-
-        // Same filesystem
         let se_path = std::env::var("SYSTEMIC_ENGINEERING")
             .unwrap_or_else(|_| "/Users/alexwolf/dev/systemic.engineering".into());
         let tree = Folder::read_tree(&format!("{}/blog", se_path));
+        let result = resolved.execute(&tree);
 
-        // Execute both
-        let old_result = conv.execute(&tree);
-        let new_result = resolved.execute(&tree);
+        // Output shape matches .conv declaration
+        let pieces = &result["blog"]["pieces"];
 
-        // Must be identical
-        assert_eq!(
-            old_result, new_result,
-            "new pipeline must produce identical output to old pipeline"
-        );
+        let drafts = pieces["draft"].as_array().expect("draft is array");
+        assert!(!drafts.is_empty(), "should have draft pieces");
+
+        let published = pieces["published"].as_array().expect("published is array");
+        assert!(!published.is_empty(), "should have published pieces");
+
+        let archived = pieces["archived"].as_array().expect("archived is array");
+        assert!(!archived.is_empty(), "should have archived pieces");
+
+        for entry in published {
+            assert!(entry["slug"].is_string(), "slug should be string");
+            assert!(entry["headlines"].is_array(), "headlines should be array");
+        }
+
+        let consciousness = published
+            .iter()
+            .find(|p| p["slug"] == "written-by-ai-consciousness")
+            .expect("consciousness piece should exist in published");
+        assert!(!consciousness["excerpt"].as_str().unwrap().is_empty());
+        assert!(!consciousness["headlines"].as_array().unwrap().is_empty());
     }
 }
