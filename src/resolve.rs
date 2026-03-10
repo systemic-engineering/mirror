@@ -257,8 +257,15 @@ impl Resolved {
     ///
     /// Chains Parse → Resolve. Errors from either phase
     /// are unified into ResolveError.
-    pub fn from_source(_source: &str) -> Result<Self, ResolveError> {
-        todo!()
+    pub fn from_source(source: &str) -> Result<Self, ResolveError> {
+        use crate::parse::Parse;
+
+        let ast = Parse.emit(source.to_string()).map_err(|e| ResolveError {
+            message: format!("parse: {}", e.message),
+            span: e.span,
+            hints: vec![],
+        })?;
+        Resolve::new().emit(ast)
     }
 
     /// Execute the resolved program against a filesystem tree.
@@ -874,7 +881,8 @@ mod tests {
 
     #[test]
     fn from_source_parses_and_resolves() {
-        let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
+        let source =
+            "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
         let resolved = Resolved::from_source(source).unwrap();
         assert_eq!(resolved.domain, "filesystem");
         assert_eq!(resolved.output_name, "blog");
