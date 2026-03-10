@@ -4,6 +4,39 @@
 //! commits contain trees, trees contain entries and blobs.
 //! The discriminant IS the data — each level carries different information.
 
+use super::Context;
+
+/// The git context.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct Git;
+
+/// A node in a git tree. Heterogeneous — each variant carries
+/// different data for its level in the repository structure.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum GitNode {
+    /// A named reference pointing to a commit.
+    Ref { name: String, target: String },
+    /// A commit with message and author.
+    Commit {
+        message: String,
+        author: String,
+        email: String,
+    },
+    /// A tree entry (directory-like).
+    Entry { name: String },
+    /// Raw content.
+    Blob { content: Vec<u8> },
+}
+
+impl Context for Git {
+    type Token = GitNode;
+    type Keys = fragmentation::keys::PlainKeys;
+
+    fn id() -> &'static str {
+        "git"
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -35,12 +68,14 @@ mod tests {
             name: "main".into(),
             target: "abc123".into(),
         };
-        if let GitNode::Ref { name, target } = &node {
-            assert_eq!(name, "main");
-            assert_eq!(target, "abc123");
-        } else {
-            panic!("expected Ref");
-        }
+        assert_eq!(
+            node,
+            GitNode::Ref {
+                name: "main".into(),
+                target: "abc123".into()
+            }
+        );
+        assert_eq!(node.clone(), node);
     }
 
     #[test]
@@ -50,30 +85,20 @@ mod tests {
             author: "Reed".into(),
             email: "reed@systemic.engineer".into(),
         };
-        if let GitNode::Commit {
-            message,
-            author,
-            email,
-        } = &node
-        {
-            assert_eq!(message, "initial");
-            assert_eq!(author, "Reed");
-            assert_eq!(email, "reed@systemic.engineer");
-        } else {
-            panic!("expected Commit");
-        }
+        assert_eq!(
+            node,
+            GitNode::Commit {
+                message: "initial".into(),
+                author: "Reed".into(),
+                email: "reed@systemic.engineer".into()
+            }
+        );
     }
 
     #[test]
     fn git_node_entry_variant() {
-        let node = GitNode::Entry {
-            name: "src".into(),
-        };
-        if let GitNode::Entry { name } = &node {
-            assert_eq!(name, "src");
-        } else {
-            panic!("expected Entry");
-        }
+        let node = GitNode::Entry { name: "src".into() };
+        assert_eq!(node, GitNode::Entry { name: "src".into() });
     }
 
     #[test]
@@ -81,11 +106,12 @@ mod tests {
         let node = GitNode::Blob {
             content: b"hello".to_vec(),
         };
-        if let GitNode::Blob { content } = &node {
-            assert_eq!(content, b"hello");
-        } else {
-            panic!("expected Blob");
-        }
+        assert_eq!(
+            node,
+            GitNode::Blob {
+                content: b"hello".to_vec()
+            }
+        );
     }
 
     #[test]
@@ -100,9 +126,7 @@ mod tests {
         );
         let entry = tree::branch(
             test_ref("src"),
-            GitNode::Entry {
-                name: "src".into(),
-            },
+            GitNode::Entry { name: "src".into() },
             vec![blob],
         );
         let commit = tree::branch(

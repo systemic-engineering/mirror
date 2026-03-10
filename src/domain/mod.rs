@@ -1,5 +1,6 @@
 pub mod conversation;
 pub mod filesystem;
+pub mod git;
 
 /// What `@` addresses. The domain a `.conv` file operates in.
 ///
@@ -9,6 +10,7 @@ pub mod filesystem;
 pub enum Domain {
     Filesystem,
     Json,
+    Git,
     External(String),
 }
 
@@ -18,6 +20,7 @@ impl Domain {
         match self {
             Domain::Filesystem => "filesystem",
             Domain::Json => "json",
+            Domain::Git => "git",
             Domain::External(name) => name,
         }
     }
@@ -27,13 +30,14 @@ impl Domain {
         match name {
             "filesystem" => Some(Domain::Filesystem),
             "json" => Some(Domain::Json),
+            "git" => Some(Domain::Git),
             _ => None,
         }
     }
 
     /// The names of all known (built-in) domains.
     pub fn known_names() -> &'static [&'static str] {
-        &["filesystem", "json"]
+        &["filesystem", "json", "git"]
     }
 }
 
