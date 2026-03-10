@@ -39,10 +39,13 @@ mod tests {
 
     #[test]
     fn default_local_name_uses_debug() {
-        use conversation::Conversation;
-        // Conversation doesn't override local_name — it uses the default
+        // Neither domain overrides local_name — both use the default
         assert_eq!(
-            Conversation::local_name(&conversation::Language::TemplateRef),
+            Filesystem::local_name(&filesystem::Language::Directory),
+            "Directory"
+        );
+        assert_eq!(
+            conversation::Conversation::local_name(&conversation::Language::TemplateRef),
             "TemplateRef"
         );
     }

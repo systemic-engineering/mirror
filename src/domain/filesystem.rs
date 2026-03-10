@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use super::Domain;
 
 /// The filesystem vocabulary.
@@ -19,13 +17,6 @@ impl Domain for Filesystem {
     fn id() -> &'static str {
         "filesystem"
     }
-
-    fn local_name(kind: &Language) -> Cow<'static, str> {
-        match kind {
-            Language::Directory => "dir".into(),
-            Language::File => "file".into(),
-        }
-    }
 }
 
 #[cfg(test)]
@@ -39,7 +30,7 @@ mod tests {
 
     #[test]
     fn filesystem_local_names() {
-        assert_eq!(Filesystem::local_name(&Language::Directory), "dir");
-        assert_eq!(Filesystem::local_name(&Language::File), "file");
+        assert_eq!(Filesystem::local_name(&Language::Directory), "Directory");
+        assert_eq!(Filesystem::local_name(&Language::File), "File");
     }
 }
