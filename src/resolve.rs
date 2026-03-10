@@ -37,6 +37,7 @@ pub struct ResolveError {
 #[derive(Debug)]
 pub struct Conversation {
     pub input: Domain,
+    pub output_domain: Domain,
     templates: HashMap<String, Template>,
     output_name: String,
     output: Vec<OutputNode>,
@@ -114,7 +115,7 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
     fn emit(&self, source: Tree<AstNode>) -> Result<Conversation, ResolveError> {
         let children = source.children();
 
-        // Extract domain from In node
+        // Extract domain from In node — defaults to Json
         let in_node = children.iter().find(|c| c.data().kind == Token::In);
         let input = match in_node {
             Some(node) => {
@@ -136,13 +137,7 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
                     }
                 }
             }
-            None => {
-                return Err(ResolveError {
-                    message: "missing domain declaration (in @domain)".into(),
-                    span: None,
-                    hints: vec![],
-                });
-            }
+            None => Domain::Json,
         };
 
         // Extract templates
@@ -174,6 +169,7 @@ impl Gradient<Tree<AstNode>, Conversation> for Resolve {
 
         Ok(Conversation {
             input,
+            output_domain: Domain::Json,
             templates,
             output_name,
             output,
@@ -736,7 +732,8 @@ mod tests {
     #[test]
     fn resolve_output_domain_defaults_to_json() {
         use crate::domain::Domain;
-        let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
+        let source =
+            "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
         let ast = Parse.emit(source.to_string()).unwrap();
         let resolved = Resolve::new().emit(ast).unwrap();
         assert_eq!(resolved.input, Domain::Filesystem);
