@@ -110,7 +110,12 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
             let rest = rest.trim();
             if let Some((domain, alias)) = rest.split_once(" as ") {
                 let alias_child = ast::ast_leaf(Kind::Alias, alias.trim(), span);
-                children.push(ast::ast_branch(Kind::In, domain.trim(), span, vec![alias_child]));
+                children.push(ast::ast_branch(
+                    Kind::In,
+                    domain.trim(),
+                    span,
+                    vec![alias_child],
+                ));
             } else {
                 children.push(ast::ast_leaf(Kind::In, rest, span));
             }
@@ -607,6 +612,27 @@ mod tests {
         let pipeline = &tree.children()[0];
         assert_eq!(pipeline.data().kind, Kind::Pipeline);
         assert_eq!(pipeline.children().len(), 3);
+    }
+
+    #[test]
+    fn parse_additive_fixture() {
+        let source = include_str!("../fixtures/additive.conv");
+        let tree = Parse.emit(source.to_string()).unwrap();
+        let children = tree.children();
+        assert_eq!(children.len(), 3); // two ins + one out
+
+        assert_eq!(children[0].data().kind, Kind::In);
+        assert_eq!(children[0].data().value, "@number");
+        assert_eq!(children[0].children()[0].data().value, "$a");
+
+        assert_eq!(children[1].data().kind, Kind::In);
+        assert_eq!(children[1].data().value, "@number");
+        assert_eq!(children[1].children()[0].data().value, "$b");
+
+        let out = &children[2];
+        assert_eq!(out.data().kind, Kind::Out);
+        assert_eq!(out.data().value, "");
+        assert_eq!(out.children().len(), 3);
     }
 
     #[test]

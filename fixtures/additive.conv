@@ -1,5 +1,5 @@
-in Number as $a
-in Number as $b
+in @number as $a
+in @number as $b
 
 out {
 	simple: $a + $b
