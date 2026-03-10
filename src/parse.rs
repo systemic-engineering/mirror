@@ -108,16 +108,34 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
         if let Some(rest) = trimmed.strip_prefix("in ") {
             let span = lines.current_span();
             let rest = rest.trim();
-            if let Some((domain, alias)) = rest.split_once(" as ") {
-                let alias_child = ast::ast_leaf(Kind::Alias, alias.trim(), span);
-                children.push(ast::ast_branch(
-                    Kind::In,
-                    domain.trim(),
-                    span,
-                    vec![alias_child],
-                ));
+
+            // Split alias: "in @domain as $name" or "in @domain(params) as $name"
+            let (domain_part, alias) = match rest.split_once(" as ") {
+                Some((d, a)) => (d.trim(), Some(a.trim())),
+                None => (rest, None),
+            };
+
+            // Parse domain: @name(params) or @name or bare
+            let (value, param) = if let Some(paren) = domain_part.find('(') {
+                let name = &domain_part[..paren];
+                let params = domain_part[paren + 1..].trim_end_matches(')');
+                (name, Some(params))
             } else {
-                children.push(ast::ast_leaf(Kind::In, rest, span));
+                (domain_part, None)
+            };
+
+            let mut in_children = Vec::new();
+            if let Some(p) = param {
+                in_children.push(ast::ast_leaf(Kind::DomainParam, p, span));
+            }
+            if let Some(a) = alias {
+                in_children.push(ast::ast_leaf(Kind::Alias, a, span));
+            }
+
+            if in_children.is_empty() {
+                children.push(ast::ast_leaf(Kind::In, value, span));
+            } else {
+                children.push(ast::ast_branch(Kind::In, value, span, in_children));
             }
             lines.advance();
             continue;
