@@ -107,8 +107,13 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
 
         if let Some(rest) = trimmed.strip_prefix("in ") {
             let span = lines.current_span();
-            let value = rest.trim();
-            children.push(ast::ast_leaf(Kind::In, value, span));
+            let rest = rest.trim();
+            if let Some((domain, alias)) = rest.split_once(" as ") {
+                let alias_child = ast::ast_leaf(Kind::Alias, alias.trim(), span);
+                children.push(ast::ast_branch(Kind::In, domain.trim(), span, vec![alias_child]));
+            } else {
+                children.push(ast::ast_leaf(Kind::In, rest, span));
+            }
             lines.advance();
             continue;
         }
@@ -229,6 +234,7 @@ fn parse_block_body(
         }
 
         // Select: "name: folder { $template }"
+        // Field expression: "name: expr"
         if let Some((output_part, rest)) = trimmed.split_once(':') {
             let rest = rest.trim();
             if let Some((folder, template_part)) = rest.split_once('{') {
@@ -249,6 +255,18 @@ fn parse_block_body(
                 lines.advance();
                 continue;
             }
+
+            // Field with expression value: "name: expr"
+            let span = lines.current_span();
+            let expr_child = ast::ast_leaf(Kind::Expr, rest, span);
+            children.push(ast::ast_branch(
+                Kind::Field,
+                output_part.trim(),
+                span,
+                vec![expr_child],
+            ));
+            lines.advance();
+            continue;
         }
 
         // Group: "name {"
@@ -274,10 +292,10 @@ fn parse_block_body(
             continue;
         }
 
-        return Err(ParseError {
-            message: format!("unexpected output line: {}", trimmed),
-            span: Some(lines.current_span()),
-        });
+        // Bare expression
+        let span = lines.current_span();
+        children.push(ast::ast_leaf(Kind::Expr, trimmed, span));
+        lines.advance();
     }
 
     Err(ParseError {
@@ -528,10 +546,13 @@ mod tests {
     }
 
     #[test]
-    fn parse_error_unexpected_output_line() {
+    fn parse_bare_expr_in_output() {
         let source = "out root {\n\tnonsense\n}\n".to_string();
-        let err = Parse.emit(source).unwrap_err();
-        assert!(err.message.contains("unexpected output line"), "{}", err);
+        let tree = Parse.emit(source).unwrap();
+        let out = &tree.children()[0];
+        let expr = &out.children()[0];
+        assert_eq!(expr.data().kind, Kind::Expr);
+        assert_eq!(expr.data().value, "nonsense");
     }
 
     #[test]
@@ -566,11 +587,15 @@ mod tests {
     }
 
     #[test]
-    fn parse_colon_without_brace_in_output() {
-        // "label: value" without { should be an unexpected output line
+    fn parse_field_expr_in_output() {
         let source = "out root {\n\tlabel: value\n}\n".to_string();
-        let err = Parse.emit(source).unwrap_err();
-        assert!(err.message.contains("unexpected output line"), "{}", err);
+        let tree = Parse.emit(source).unwrap();
+        let out = &tree.children()[0];
+        let field = &out.children()[0];
+        assert_eq!(field.data().kind, Kind::Field);
+        assert_eq!(field.data().value, "label");
+        assert_eq!(field.children()[0].data().kind, Kind::Expr);
+        assert_eq!(field.children()[0].data().value, "value");
     }
 
     // -- Pipeline: A | G | B --

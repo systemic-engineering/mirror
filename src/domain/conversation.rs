@@ -38,6 +38,10 @@ pub enum Kind {
     DomainParam,
     /// `HEAD` — a bare reference in a pipeline
     Ref,
+    /// `$a` in `in @number as $a` — binding alias
+    Alias,
+    /// `$a + $b` — expression in output block
+    Expr,
 }
 
 impl Context for Conversation {
