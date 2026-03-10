@@ -14,6 +14,6 @@ pub use gradient::{Composed, ComposedError, Fallback, Gradient, Inverted, Iso, W
 pub use identity::{Actor, Identity, Key};
 pub use optics::{NotFound, Prism, PrismAsTraversal, PrismGradient, Traversal, TraversalGradient};
 pub use parse::{Parse, ParseError};
-pub use resolve::{Resolve, ResolveError, Resolved};
+pub use resolve::{Conversation, Resolve, ResolveError};
 pub use tree::Tree;
 pub use witness::{Direction, Event, Observation, Oid, Session, Witnessed};

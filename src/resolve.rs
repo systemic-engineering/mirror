@@ -15,7 +15,7 @@ use crate::tree::{Tree, Treelike};
 
 use crate::domain::filesystem::Folder;
 
-/// The resolve gradient. AST → Resolved.
+/// The resolve gradient. AST → Conversation.
 ///
 /// Holds the set of known domain names.
 /// Default includes "filesystem".
@@ -34,21 +34,21 @@ pub struct ResolveError {
 
 /// A resolved .conv file. Validated and ready to execute.
 #[derive(Debug)]
-pub struct Resolved {
+pub struct Conversation {
     #[allow(dead_code)] // read in tests; used by future domain-aware execution
     domain: String,
-    templates: HashMap<String, ResolvedTemplate>,
+    templates: HashMap<String, Template>,
     output_name: String,
     output: Vec<OutputNode>,
 }
 
 #[derive(Debug)]
-pub struct ResolvedTemplate {
-    fields: Vec<ResolvedField>,
+pub struct Template {
+    fields: Vec<Field>,
 }
 
 #[derive(Debug)]
-pub struct ResolvedField {
+pub struct Field {
     name: String,
     qualifier: Option<String>,
     #[allow(dead_code)] // read in tests; used by future pipe execution
@@ -87,10 +87,10 @@ impl Default for Resolve {
     }
 }
 
-impl Gradient<Tree<AstNode>, Resolved> for Resolve {
+impl Gradient<Tree<AstNode>, Conversation> for Resolve {
     type Error = ResolveError;
 
-    fn emit(&self, source: Tree<AstNode>) -> Result<Resolved, ResolveError> {
+    fn emit(&self, source: Tree<AstNode>) -> Result<Conversation, ResolveError> {
         let children = source.children();
 
         // Extract domain from In node
@@ -128,7 +128,7 @@ impl Gradient<Tree<AstNode>, Resolved> for Resolve {
             if child.data().kind == Language::Template {
                 let name = child.data().value.clone();
                 let fields = resolve_template_fields(child);
-                templates.insert(name, ResolvedTemplate { fields });
+                templates.insert(name, Template { fields });
             }
         }
 
@@ -149,7 +149,7 @@ impl Gradient<Tree<AstNode>, Resolved> for Resolve {
             }
         };
 
-        Ok(Resolved {
+        Ok(Conversation {
             domain,
             templates,
             output_name,
@@ -157,7 +157,7 @@ impl Gradient<Tree<AstNode>, Resolved> for Resolve {
         })
     }
 
-    fn absorb(&self, _source: Resolved) -> Result<Tree<AstNode>, ResolveError> {
+    fn absorb(&self, _source: Conversation) -> Result<Tree<AstNode>, ResolveError> {
         Err(ResolveError {
             message: "un-resolve not yet implemented".into(),
             span: None,
@@ -166,13 +166,13 @@ impl Gradient<Tree<AstNode>, Resolved> for Resolve {
     }
 }
 
-fn resolve_template_fields(template_node: &Tree<AstNode>) -> Vec<ResolvedField> {
+fn resolve_template_fields(template_node: &Tree<AstNode>) -> Vec<Field> {
     let mut fields = Vec::new();
     for child in template_node.children() {
         if child.data().kind == Language::Field {
             if child.is_shard() {
                 // Bare field: no qualifier, no pipe
-                fields.push(ResolvedField {
+                fields.push(Field {
                     name: child.data().value.clone(),
                     qualifier: None,
                     pipe: None,
@@ -188,7 +188,7 @@ fn resolve_template_fields(template_node: &Tree<AstNode>) -> Vec<ResolvedField> 
                         _ => {}
                     }
                 }
-                fields.push(ResolvedField {
+                fields.push(Field {
                     name: child.data().value.clone(),
                     qualifier,
                     pipe,
@@ -201,7 +201,7 @@ fn resolve_template_fields(template_node: &Tree<AstNode>) -> Vec<ResolvedField> 
 
 fn resolve_output_nodes(
     node: &Tree<AstNode>,
-    templates: &HashMap<String, ResolvedTemplate>,
+    templates: &HashMap<String, Template>,
 ) -> Result<Vec<OutputNode>, ResolveError> {
     let mut nodes = Vec::new();
     for child in node.children() {
@@ -252,7 +252,7 @@ fn resolve_output_nodes(
     Ok(nodes)
 }
 
-impl Resolved {
+impl Conversation {
     /// Parse and resolve a `.conv` source string in one step.
     ///
     /// Chains Parse → Resolve. Errors from either phase
@@ -312,7 +312,7 @@ fn find_child<'a>(tree: &'a Tree<Folder>, name: &str) -> Option<&'a Tree<Folder>
     tree.children().iter().find(|c| c.data().name == name)
 }
 
-fn apply_template(template: &ResolvedTemplate, tree: &Tree<Folder>) -> Value {
+fn apply_template(template: &Template, tree: &Tree<Folder>) -> Value {
     let content = tree.data().content.as_deref().unwrap_or("");
     let (frontmatter, body) = parse_frontmatter(content);
 
@@ -883,7 +883,7 @@ mod tests {
     fn from_source_parses_and_resolves() {
         let source =
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
-        let resolved = Resolved::from_source(source).unwrap();
+        let resolved = Conversation::from_source(source).unwrap();
         assert_eq!(resolved.domain, "filesystem");
         assert_eq!(resolved.output_name, "blog");
         assert!(resolved.templates.contains_key("$t"));
@@ -891,13 +891,13 @@ mod tests {
 
     #[test]
     fn from_source_propagates_parse_error() {
-        let err = Resolved::from_source("garbage\n").unwrap_err();
+        let err = Conversation::from_source("garbage\n").unwrap_err();
         assert!(err.message.contains("parse"), "{}", err);
     }
 
     #[test]
     fn from_source_propagates_resolve_error() {
-        let err = Resolved::from_source("in @bogus\nout r {\n\tx {}\n}\n").unwrap_err();
+        let err = Conversation::from_source("in @bogus\nout r {\n\tx {}\n}\n").unwrap_err();
         assert!(err.message.contains("bogus"), "{}", err);
     }
 
@@ -906,7 +906,7 @@ mod tests {
     #[test]
     fn systemic_engineering_conv_produces_blog_index() {
         let conv_source = include_str!("../systemic.engineering.conv");
-        let resolved = Resolved::from_source(conv_source).expect("from_source");
+        let resolved = Conversation::from_source(conv_source).expect("from_source");
 
         let se_path = std::env::var("SYSTEMIC_ENGINEERING")
             .unwrap_or_else(|_| "/Users/alexwolf/dev/systemic.engineering".into());
