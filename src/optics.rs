@@ -69,6 +69,30 @@ where
     }
 }
 
+/// Select elements matching a predicate.
+///
+/// `preview`: if predicate matches, return the element. Else None.
+/// `review`: identity — the matched element IS the element.
+///
+/// Composes with existing adapters:
+/// - `PrismGradient(SelectPrism(f))` → Gradient that succeeds/fails on predicate
+/// - `PrismAsTraversal(SelectPrism(f))` → Traversal selecting all matches from Vec
+pub struct SelectPrism<F>(pub F);
+
+impl<S: Clone, F: Fn(&S) -> bool> Prism<S, S> for SelectPrism<F> {
+    fn preview(&self, source: &S) -> Option<S> {
+        if (self.0)(source) {
+            Some(source.clone())
+        } else {
+            None
+        }
+    }
+
+    fn review(&self, focus: S) -> S {
+        focus
+    }
+}
+
 /// Lifts a `Prism<S, A>` to a `Traversal<Vec<S>, A>`.
 ///
 /// `traverse` extracts every element where the prism matches.
