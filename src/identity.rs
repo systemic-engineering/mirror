@@ -52,23 +52,35 @@ pub struct Signed<S> {
     pub signer: Name,
 }
 
-/// A named node in the system.
-#[derive(Debug, Clone)]
-pub struct System<C: Context = crate::domain::filesystem::Filesystem> {
-    name: String,
-    _context: std::marker::PhantomData<C>,
+/// Anything with identity in a context.
+pub trait System<C: Context> {
+    type Identity: Identity;
+
+    fn identity(&self) -> &Self::Identity;
 }
 
-impl<C: Context> System<C> {
-    pub fn new(name: impl Into<String>) -> Self {
-        System {
-            name: name.into(),
-            _context: std::marker::PhantomData,
-        }
+/// Leaf node: a named identity in one context.
+#[derive(Debug, Clone)]
+pub struct Node<I: Identity, C: Context> {
+    pub id: I,
+    context: C,
+}
+
+impl<I: Identity, C: Context> Node<I, C> {
+    pub fn new(id: I, context: C) -> Self {
+        Node { id, context }
     }
 
-    pub fn name(&self) -> &str {
-        &self.name
+    pub fn context(&self) -> &C {
+        &self.context
+    }
+}
+
+impl<I: Identity, C: Context> System<C> for Node<I, C> {
+    type Identity = I;
+
+    fn identity(&self) -> &I {
+        &self.id
     }
 }
 
@@ -111,25 +123,31 @@ pub(crate) mod tests {
         }
     }
 
-    // -- System --
+    // -- Node + System trait --
 
     #[test]
-    fn system_carries_name() {
-        let system: System<Filesystem> = System::new("Reed");
-        assert_eq!(system.name(), "Reed");
+    fn node_carries_identity() {
+        let node = Node::new(TestIdentity::new("Reed", None), Filesystem);
+        assert_eq!(node.identity().name().as_ref(), "Reed");
     }
 
     #[test]
-    fn system_default_is_filesystem() {
-        let system: System = System::new("Reed");
-        assert_eq!(system.name(), "Reed");
+    fn node_implements_system() {
+        fn assert_is_system<C: Context>(_: &impl System<C>) {}
+        let node = Node::new(TestIdentity::new("Reed", None), Filesystem);
+        assert_is_system::<Filesystem>(&node);
+        assert_eq!(node.identity().name().as_ref(), "Reed");
     }
 
     #[test]
-    fn system_conversation_domain() {
-        use crate::domain::conversation::Conversation;
-        let system: System<Conversation> = System::new("Reed");
-        assert_eq!(system.name(), "Reed");
+    fn node_in_different_contexts() {
+        use crate::domain::git::Git;
+        let fs_node = Node::new(TestIdentity::new("fs", None), Filesystem);
+        let git_node = Node::new(TestIdentity::new("git", None), Git);
+        assert_eq!(fs_node.identity().name().as_ref(), "fs");
+        assert_eq!(git_node.identity().name().as_ref(), "git");
+        assert_eq!(*fs_node.context(), Filesystem);
+        assert_eq!(*git_node.context(), Git);
     }
 
     // -- Name --
