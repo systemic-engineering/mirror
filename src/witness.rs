@@ -50,6 +50,98 @@ pub trait ContentAddressed {
     fn content_oid(&self) -> Oid;
 }
 
+// ---------------------------------------------------------------------------
+// Trace — the self-similar witness tree.
+// ---------------------------------------------------------------------------
+
+/// The trace of a gradient application. Self-similar — it's trees.
+///
+/// Leaf: a single transformation step. One gradient, one result.
+/// Branch: a composed transformation. Children are the sub-traces.
+///
+/// Every node carries a result AND an Oid. Both success and failure
+/// are witnessed. Both are content-addressed.
+#[derive(Clone, Debug, PartialEq)]
+pub enum Trace<T, E> {
+    Leaf {
+        result: Result<T, E>,
+        oid: Oid,
+    },
+    Branch {
+        result: Result<T, E>,
+        oid: Oid,
+        children: Vec<Trace<T, E>>,
+    },
+}
+
+impl<T, E> Trace<T, E> {
+    /// Create a leaf trace.
+    pub fn leaf(result: Result<T, E>, oid: Oid) -> Self {
+        Trace::Leaf { result, oid }
+    }
+
+    /// Create a branch trace with children.
+    pub fn branch(result: Result<T, E>, oid: Oid, children: Vec<Trace<T, E>>) -> Self {
+        Trace::Branch {
+            result,
+            oid,
+            children,
+        }
+    }
+
+    /// The result of the transformation.
+    pub fn result(&self) -> &Result<T, E> {
+        match self {
+            Trace::Leaf { result, .. } => result,
+            Trace::Branch { result, .. } => result,
+        }
+    }
+
+    /// The content address of this trace node.
+    pub fn oid(&self) -> &Oid {
+        match self {
+            Trace::Leaf { oid, .. } => oid,
+            Trace::Branch { oid, .. } => oid,
+        }
+    }
+
+    /// The children of this trace (empty for Leaf).
+    pub fn children(&self) -> &[Trace<T, E>] {
+        match self {
+            Trace::Leaf { .. } => &[],
+            Trace::Branch { children, .. } => children,
+        }
+    }
+
+    /// Is this a leaf node?
+    pub fn is_leaf(&self) -> bool {
+        matches!(self, Trace::Leaf { .. })
+    }
+
+    /// Is this a branch node?
+    pub fn is_branch(&self) -> bool {
+        matches!(self, Trace::Branch { .. })
+    }
+
+    /// Is the result Ok?
+    pub fn is_ok(&self) -> bool {
+        self.result().is_ok()
+    }
+
+    /// Is the result Err?
+    pub fn is_err(&self) -> bool {
+        self.result().is_err()
+    }
+
+    /// Consume the trace, returning just the Result.
+    pub fn into_result(self) -> Result<T, E> {
+        match self {
+            Trace::Leaf { result, .. } => result,
+            Trace::Branch { result, .. } => result,
+        }
+    }
+}
+
 /// Direction of a gradient application.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Direction {
@@ -319,6 +411,73 @@ mod tests {
         let a = Event::new(b"hello".to_vec(), "test", None);
         let b = Event::new(b"world".to_vec(), "test", None);
         assert_ne!(a.content_oid(), b.content_oid());
+    }
+
+    // -- Trace --
+
+    #[test]
+    fn trace_leaf_construction() {
+        let t: Trace<i32, ()> = Trace::leaf(Ok(42), Oid::new("abc"));
+        assert!(t.is_leaf());
+        assert!(!t.is_branch());
+        assert_eq!(t.result(), &Ok(42));
+        assert_eq!(t.oid(), &Oid::new("abc"));
+        assert!(t.children().is_empty());
+    }
+
+    #[test]
+    fn trace_branch_construction() {
+        let child = Trace::leaf(Ok(21), Oid::new("child1"));
+        let t: Trace<i32, ()> = Trace::branch(
+            Ok(42),
+            Oid::new("root"),
+            vec![child],
+        );
+        assert!(t.is_branch());
+        assert!(!t.is_leaf());
+        assert_eq!(t.result(), &Ok(42));
+        assert_eq!(t.oid(), &Oid::new("root"));
+        assert_eq!(t.children().len(), 1);
+    }
+
+    #[test]
+    fn trace_is_self_similar() {
+        let leaf1 = Trace::leaf(Ok(1), Oid::new("a"));
+        let leaf2 = Trace::leaf(Ok(2), Oid::new("b"));
+        let inner = Trace::branch(Ok(3), Oid::new("inner"), vec![leaf1, leaf2]);
+        let outer: Trace<i32, ()> = Trace::branch(
+            Ok(6),
+            Oid::new("outer"),
+            vec![inner],
+        );
+        assert_eq!(outer.children().len(), 1);
+        assert!(outer.children()[0].is_branch());
+        assert_eq!(outer.children()[0].children().len(), 2);
+    }
+
+    #[test]
+    fn trace_err_is_witnessed() {
+        let t: Trace<i32, &str> = Trace::leaf(Err("failed"), Oid::new("err-oid"));
+        assert!(t.is_err());
+        assert!(!t.is_ok());
+        assert_eq!(t.result(), &Err("failed"));
+        assert_eq!(t.oid(), &Oid::new("err-oid"));
+    }
+
+    #[test]
+    fn trace_into_result() {
+        let t: Trace<i32, ()> = Trace::leaf(Ok(42), Oid::new("abc"));
+        assert_eq!(t.into_result(), Ok(42));
+
+        let t: Trace<i32, ()> = Trace::branch(Ok(99), Oid::new("root"), vec![]);
+        assert_eq!(t.into_result(), Ok(99));
+    }
+
+    #[test]
+    fn trace_clone_eq() {
+        let a: Trace<i32, ()> = Trace::leaf(Ok(42), Oid::new("abc"));
+        let b = a.clone();
+        assert_eq!(a, b);
     }
 
     // -- LegacyOid impls for test types --

@@ -22,5 +22,5 @@ pub use resolve::{Conversation, Resolve, ResolveError};
 pub use tree::Tree;
 pub use vector::Vector;
 pub use witness::{
-    ContentAddressed, Direction, Event, LegacyOid, Observation, Oid, Session, Witnessed,
+    ContentAddressed, Direction, Event, LegacyOid, Observation, Oid, Session, Trace, Witnessed,
 };
