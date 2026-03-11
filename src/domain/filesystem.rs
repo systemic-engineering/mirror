@@ -8,6 +8,19 @@ use crate::witness::{ContentAddressed, Oid};
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Filesystem;
 
+impl fragmentation::encoding::Encode for Folder {
+    fn encode(&self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(b"folder:");
+        bytes.extend_from_slice(self.name.as_bytes());
+        if let Some(content) = &self.content {
+            bytes.extend_from_slice(b":");
+            bytes.extend_from_slice(content.as_bytes());
+        }
+        bytes
+    }
+}
+
 impl ContentAddressed for Folder {
     fn content_oid(&self) -> Oid {
         let mut hasher = Sha256::new();
@@ -178,5 +191,29 @@ mod tests {
 
         // Restore permissions for cleanup
         std::fs::set_permissions(&restricted, std::fs::Permissions::from_mode(0o755)).unwrap();
+    }
+
+    // -- Encode --
+
+    #[test]
+    fn folder_encode_with_content() {
+        use fragmentation::encoding::Encode;
+        let f = Folder {
+            name: "test".into(),
+            content: Some("hello".into()),
+        };
+        let bytes = f.encode();
+        assert_eq!(bytes, b"folder:test:hello");
+    }
+
+    #[test]
+    fn folder_encode_without_content() {
+        use fragmentation::encoding::Encode;
+        let f = Folder {
+            name: "dir".into(),
+            content: None,
+        };
+        let bytes = f.encode();
+        assert_eq!(bytes, b"folder:dir");
     }
 }

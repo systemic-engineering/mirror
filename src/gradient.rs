@@ -1,28 +1,25 @@
 use std::convert::Infallible;
 use std::marker::PhantomData;
 
+use crate::witness::{ContentAddressed, Oid, Trace};
+
 /// A gradient between two domains.
 ///
-/// `emit` transforms `A → B`. `absorb` transforms `B → A`.
-/// Both are fallible — transformations can fail.
+/// `trace` transforms `A → B`, returning a `Trace` that witnesses
+/// the transformation. Every output is content-addressed.
 ///
-/// The implementing type carries the strategy: configuration,
-/// context, or state the transformation needs.
-pub trait Gradient<A, B> {
+/// Bidirectional gradients implement the trait twice:
+/// `Gradient<A, B>` and `Gradient<B, A>`.
+pub trait Gradient<A, B: ContentAddressed> {
     type Error;
 
-    fn emit(&self, source: A) -> Result<B, Self::Error>;
-    fn absorb(&self, source: B) -> Result<A, Self::Error>;
+    fn trace(&self, source: A) -> Trace<B, Self::Error>;
 
-    fn compose<C, G: Gradient<B, C>>(self, other: G) -> Composed<Self, G, B>
+    fn compose<C: ContentAddressed, G: Gradient<B, C>>(self, other: G) -> Composed<Self, G, B>
     where
         Self: Sized,
     {
         Composed(self, other, PhantomData)
-    }
-
-    fn roundtrip(&self, source: A) -> Result<A, Self::Error> {
-        self.emit(source).and_then(|b| self.absorb(b))
     }
 }
 
@@ -44,15 +41,12 @@ impl<A> Default for Identity<A> {
     }
 }
 
-impl<A> Gradient<A, A> for Identity<A> {
+impl<A: ContentAddressed> Gradient<A, A> for Identity<A> {
     type Error = Infallible;
 
-    fn emit(&self, source: A) -> Result<A, Infallible> {
-        Ok(source)
-    }
-
-    fn absorb(&self, source: A) -> Result<A, Infallible> {
-        Ok(source)
+    fn trace(&self, source: A) -> Trace<A, Infallible> {
+        let oid = source.content_oid();
+        Trace::leaf(Ok(source), oid)
     }
 }
 
@@ -70,23 +64,30 @@ pub enum ComposedError<E1, E2> {
 
 impl<A, C, Mid, F, G> Gradient<A, C> for Composed<F, G, Mid>
 where
+    C: ContentAddressed,
+    Mid: ContentAddressed,
     F: Gradient<A, Mid>,
     G: Gradient<Mid, C>,
 {
     type Error = ComposedError<F::Error, G::Error>;
 
-    fn emit(&self, source: A) -> Result<C, Self::Error> {
-        self.0
-            .emit(source)
-            .map_err(ComposedError::First)
-            .and_then(|mid| self.1.emit(mid).map_err(ComposedError::Second))
-    }
-
-    fn absorb(&self, source: C) -> Result<A, Self::Error> {
-        self.1
-            .absorb(source)
-            .map_err(ComposedError::Second)
-            .and_then(|mid| self.0.absorb(mid).map_err(ComposedError::First))
+    fn trace(&self, source: A) -> Trace<C, Self::Error> {
+        let first = self.0.trace(source);
+        let first_oid = first.oid().clone();
+        match first.into_result() {
+            Err(e) => Trace::leaf(Err(ComposedError::First(e)), first_oid),
+            Ok(mid) => {
+                let second = self.1.trace(mid);
+                let second_oid = second.oid().clone();
+                match second.into_result() {
+                    Ok(c) => {
+                        let oid = c.content_oid();
+                        Trace::leaf(Ok(c), oid)
+                    }
+                    Err(e) => Trace::leaf(Err(ComposedError::Second(e)), second_oid),
+                }
+            }
+        }
     }
 }
 
@@ -94,9 +95,9 @@ where
 // Iso — total gradient. Never fails in either direction.
 // ---------------------------------------------------------------------------
 
-pub trait Iso<A, B>: Gradient<A, B, Error = Infallible> {}
+pub trait Iso<A, B: ContentAddressed>: Gradient<A, B, Error = Infallible> {}
 
-impl<A, B, G: Gradient<A, B, Error = Infallible>> Iso<A, B> for G {}
+impl<A, B: ContentAddressed, G: Gradient<A, B, Error = Infallible>> Iso<A, B> for G {}
 
 // ---------------------------------------------------------------------------
 // Fallback — try F first; if it fails, try G.
@@ -107,20 +108,19 @@ pub struct Fallback<F, G>(pub F, pub G);
 impl<A, B, F, G> Gradient<A, B> for Fallback<F, G>
 where
     A: Clone,
-    B: Clone,
+    B: ContentAddressed + Clone,
     F: Gradient<A, B>,
     G: Gradient<A, B, Error = F::Error>,
 {
     type Error = F::Error;
 
-    fn emit(&self, source: A) -> Result<B, F::Error> {
-        self.0.emit(source.clone()).or_else(|_| self.1.emit(source))
-    }
-
-    fn absorb(&self, source: B) -> Result<A, F::Error> {
-        self.0
-            .absorb(source.clone())
-            .or_else(|_| self.1.absorb(source))
+    fn trace(&self, source: A) -> Trace<B, F::Error> {
+        let first = self.0.trace(source.clone());
+        if first.is_ok() {
+            first
+        } else {
+            self.1.trace(source)
+        }
     }
 }
 
@@ -133,39 +133,39 @@ pub struct When<G, P> {
     pub gradient: G,
 }
 
-impl<A, G: Gradient<A, A>, P: Fn(&A) -> bool> Gradient<A, A> for When<G, P> {
+impl<A: ContentAddressed, G: Gradient<A, A>, P: Fn(&A) -> bool> Gradient<A, A> for When<G, P> {
     type Error = G::Error;
 
-    fn emit(&self, source: A) -> Result<A, G::Error> {
+    fn trace(&self, source: A) -> Trace<A, G::Error> {
         if (self.predicate)(&source) {
-            self.gradient.emit(source)
+            self.gradient.trace(source)
         } else {
-            Ok(source)
-        }
-    }
-
-    fn absorb(&self, source: A) -> Result<A, G::Error> {
-        if (self.predicate)(&source) {
-            self.gradient.absorb(source)
-        } else {
-            Ok(source)
+            let oid = source.content_oid();
+            Trace::leaf(Ok(source), oid)
         }
     }
 }
 
 // ---------------------------------------------------------------------------
-// Vec<G> — ordered pipeline. Emit left-to-right. Absorb right-to-left.
+// Vec<G> — ordered pipeline. Trace left-to-right.
 // ---------------------------------------------------------------------------
 
-impl<A, G: Gradient<A, A>> Gradient<A, A> for Vec<G> {
+impl<A: ContentAddressed, G: Gradient<A, A>> Gradient<A, A> for Vec<G> {
     type Error = G::Error;
 
-    fn emit(&self, source: A) -> Result<A, G::Error> {
-        self.iter().try_fold(source, |acc, g| g.emit(acc))
-    }
-
-    fn absorb(&self, source: A) -> Result<A, G::Error> {
-        self.iter().rev().try_fold(source, |acc, g| g.absorb(acc))
+    fn trace(&self, source: A) -> Trace<A, G::Error> {
+        let mut current = source;
+        for g in self.iter() {
+            let t = g.trace(current);
+            match t.into_result() {
+                Ok(next) => current = next,
+                Err(e) => {
+                    return Trace::leaf(Err(e), Oid::new("error"));
+                }
+            }
+        }
+        let oid = current.content_oid();
+        Trace::leaf(Ok(current), oid)
     }
 }
 
@@ -173,20 +173,16 @@ impl<A, G: Gradient<A, A>> Gradient<A, A> for Vec<G> {
 // Option<G> — optional gradient. None behaves as Identity.
 // ---------------------------------------------------------------------------
 
-impl<A, G: Gradient<A, A>> Gradient<A, A> for Option<G> {
+impl<A: ContentAddressed, G: Gradient<A, A>> Gradient<A, A> for Option<G> {
     type Error = G::Error;
 
-    fn emit(&self, source: A) -> Result<A, G::Error> {
+    fn trace(&self, source: A) -> Trace<A, G::Error> {
         match self {
-            Some(g) => g.emit(source),
-            None => Ok(source),
-        }
-    }
-
-    fn absorb(&self, source: A) -> Result<A, G::Error> {
-        match self {
-            Some(g) => g.absorb(source),
-            None => Ok(source),
+            Some(g) => g.trace(source),
+            None => {
+                let oid = source.content_oid();
+                Trace::leaf(Ok(source), oid)
+            }
         }
     }
 }
@@ -194,117 +190,126 @@ impl<A, G: Gradient<A, A>> Gradient<A, A> for Option<G> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    // -- Test gradients --
 
     struct Double;
     impl Gradient<i32, i32> for Double {
         type Error = ();
-        fn emit(&self, source: i32) -> Result<i32, ()> {
-            Ok(source * 2)
-        }
-        fn absorb(&self, source: i32) -> Result<i32, ()> {
-            Ok(source / 2)
+        fn trace(&self, source: i32) -> Trace<i32, ()> {
+            let result = source * 2;
+            Trace::leaf(Ok(result), result.content_oid())
         }
     }
 
-    struct Stringify;
-    impl Gradient<i32, String> for Stringify {
+    // Succeeds on positive, fails on non-positive. Single type so
+    // combinators that branch on Ok/Err share one monomorphization.
+    struct DoublePositive;
+    impl Gradient<i32, i32> for DoublePositive {
         type Error = ();
-        fn emit(&self, source: i32) -> Result<String, ()> {
-            Ok(source.to_string())
-        }
-        fn absorb(&self, source: String) -> Result<i32, ()> {
-            source.parse().map_err(|_| ())
+        fn trace(&self, source: i32) -> Trace<i32, ()> {
+            if source > 0 {
+                let result = source * 2;
+                Trace::leaf(Ok(result), result.content_oid())
+            } else {
+                Trace::leaf(Err(()), Oid::new("error"))
+            }
         }
     }
 
-    // Shared test stub: always fails. One type = one monomorphization.
-    #[derive(Clone)]
-    struct Fails;
-    impl Gradient<i32, i32> for Fails {
+    // Stringifies positive, fails on non-positive. Paired with DoublePositive
+    // for Composed tests: input 3 → Ok→Ok, input -1 → Err, input 100 → Ok→Err.
+    struct StringifyPositive;
+    impl Gradient<i32, String> for StringifyPositive {
         type Error = ();
-        fn emit(&self, _: i32) -> Result<i32, ()> {
-            Err(())
-        }
-        fn absorb(&self, _: i32) -> Result<i32, ()> {
-            Err(())
+        fn trace(&self, source: i32) -> Trace<String, ()> {
+            if source < 10 {
+                let result = source.to_string();
+                let oid = result.content_oid();
+                Trace::leaf(Ok(result), oid)
+            } else {
+                Trace::leaf(Err(()), Oid::new("error"))
+            }
         }
     }
 
     struct FlipSign;
     impl Gradient<i32, i32> for FlipSign {
         type Error = Infallible;
-        fn emit(&self, source: i32) -> Result<i32, Infallible> {
-            Ok(-source)
-        }
-        fn absorb(&self, source: i32) -> Result<i32, Infallible> {
-            Ok(-source)
+        fn trace(&self, source: i32) -> Trace<i32, Infallible> {
+            let result = -source;
+            Trace::leaf(Ok(result), result.content_oid())
         }
     }
 
-    fn requires_iso<A, B>(_: impl Iso<A, B>) {}
+    fn requires_iso<A, B: ContentAddressed>(_: impl Iso<A, B>) {}
 
     // -- Identity --
 
     #[test]
-    fn identity_emit_returns_input() {
+    fn identity_trace_returns_input() {
         let g: Identity<i32> = Identity::new();
-        assert_eq!(g.emit(42), Ok(42));
-    }
-
-    #[test]
-    fn identity_absorb_returns_input() {
-        let g: Identity<i32> = Identity::new();
-        assert_eq!(g.absorb(42), Ok(42));
-    }
-
-    #[test]
-    fn identity_roundtrip() {
-        let g: Identity<i32> = Identity::new();
-        assert_eq!(g.roundtrip(7), Ok(7));
+        let t = g.trace(42);
+        assert_eq!(t.into_result(), Ok(42));
     }
 
     #[test]
     fn identity_default() {
         let g: Identity<i32> = Identity::default();
-        assert_eq!(g.emit(42), Ok(42));
+        assert_eq!(g.trace(42).into_result(), Ok(42));
     }
 
     // -- Composed --
+    // All compose tests share Composed<DoublePositive, StringifyPositive, i32>
+    // → single monomorphization, all branches covered.
 
     #[test]
-    fn compose_chains_emit() {
-        let g = Double.compose(Stringify);
-        assert_eq!(g.emit(3), Ok("6".to_string()));
+    fn compose_chains_trace() {
+        let g = DoublePositive.compose(StringifyPositive);
+        // 3 → DoublePositive: Ok(6) → StringifyPositive: Ok("6")
+        assert_eq!(g.trace(3).into_result(), Ok("6".to_string()));
     }
 
     #[test]
-    fn compose_chains_absorb() {
-        let g = Double.compose(Stringify);
-        assert_eq!(g.absorb("6".to_string()), Ok(3));
+    fn compose_first_error() {
+        let g = DoublePositive.compose(StringifyPositive);
+        // -1 → DoublePositive: Err
+        let t = g.trace(-1);
+        assert!(t.is_err());
+        assert_eq!(t.into_result(), Err(ComposedError::First(())));
+    }
+
+    #[test]
+    fn compose_second_error() {
+        let g = DoublePositive.compose(StringifyPositive);
+        // 100 → DoublePositive: Ok(200) → StringifyPositive: Err (200 >= 10)
+        let t = g.trace(100);
+        assert!(t.is_err());
+        assert_eq!(t.into_result(), Err(ComposedError::Second(())));
     }
 
     // -- Vec pipeline --
 
     #[test]
-    fn vec_emit_applies_in_order() {
-        let gs: Vec<Double> = vec![Double, Double];
-        assert_eq!(gs.emit(3), Ok(12));
+    fn vec_trace_applies_in_order() {
+        let gs: Vec<DoublePositive> = vec![DoublePositive, DoublePositive];
+        assert_eq!(gs.trace(3).into_result(), Ok(12));
     }
 
     #[test]
-    fn vec_absorb_applies_in_reverse() {
-        let gs: Vec<Double> = vec![Double, Double];
-        assert_eq!(gs.absorb(12), Ok(3));
+    fn vec_error_stops_pipeline() {
+        let gs: Vec<DoublePositive> = vec![DoublePositive];
+        let t = gs.trace(-1);
+        assert!(t.is_err());
+        assert_eq!(t.into_result(), Err(()));
     }
 
     #[test]
     fn vec_empty_is_identity() {
-        let gs: Vec<Double> = vec![];
-        assert_eq!(gs.emit(5), Ok(5));
-        assert_eq!(gs.absorb(5), Ok(5));
+        let gs: Vec<DoublePositive> = vec![];
+        assert_eq!(gs.trace(5).into_result(), Ok(5));
     }
 
-    // -- When (same instance tests both branches, both directions) --
+    // -- When --
 
     #[test]
     fn when_applies_when_true() {
@@ -312,26 +317,25 @@ mod tests {
             predicate: |x: &i32| *x > 0,
             gradient: Double,
         };
-        assert_eq!(g.emit(3), Ok(6));
-        assert_eq!(g.emit(-1), Ok(-1));
-        assert_eq!(g.absorb(6), Ok(3));
-        assert_eq!(g.absorb(-1), Ok(-1));
+        assert_eq!(g.trace(3).into_result(), Ok(6));
+        assert_eq!(g.trace(-1).into_result(), Ok(-1));
     }
 
-    // -- Fallback (shared Fails type) --
+    // -- Fallback --
+    // Both tests share Fallback<DoublePositive, Double> → single monomorphization.
 
     #[test]
     fn fallback_uses_first_when_ok() {
-        let g = Fallback(Double, Fails);
-        assert_eq!(g.emit(3), Ok(6));
-        assert_eq!(g.absorb(6), Ok(3));
+        let g = Fallback(DoublePositive, Double);
+        // 3 → DoublePositive succeeds (6) → returns first
+        assert_eq!(g.trace(3).into_result(), Ok(6));
     }
 
     #[test]
     fn fallback_uses_second_when_first_fails() {
-        let g = Fallback(Fails, Double);
-        assert_eq!(g.emit(3), Ok(6));
-        assert_eq!(g.absorb(6), Ok(3));
+        let g = Fallback(DoublePositive, Double);
+        // -1 → DoublePositive fails → Double(-1) = -2
+        assert_eq!(g.trace(-1).into_result(), Ok(-2));
     }
 
     // -- Iso --
@@ -339,28 +343,34 @@ mod tests {
     #[test]
     fn infallible_gradient_is_iso() {
         requires_iso(FlipSign);
-        assert_eq!(FlipSign.emit(5), Ok(-5));
-        assert_eq!(FlipSign.absorb(-5), Ok(5));
-    }
-
-    // -- Roundtrip --
-
-    #[test]
-    fn roundtrip_returns_original() {
-        assert_eq!(Double.roundtrip(4), Ok(4));
+        assert_eq!(FlipSign.trace(5).into_result(), Ok(-5));
     }
 
     // -- Option --
 
     #[test]
     fn some_applies_gradient() {
-        assert_eq!(Some(Double).emit(3), Ok(6));
-        assert_eq!(Some(Double).absorb(6), Ok(3));
+        assert_eq!(Some(Double).trace(3).into_result(), Ok(6));
     }
 
     #[test]
     fn none_is_identity() {
-        assert_eq!(None::<Double>.emit(3), Ok(3));
-        assert_eq!(None::<Double>.absorb(3), Ok(3));
+        assert_eq!(None::<Double>.trace(3).into_result(), Ok(3));
+    }
+
+    // -- Trace structure --
+
+    #[test]
+    fn trace_carries_oid() {
+        let t = Double.trace(3);
+        assert!(t.is_ok());
+        assert_eq!(t.oid(), &6i32.content_oid());
+    }
+
+    #[test]
+    fn error_trace_carries_oid() {
+        let t = DoublePositive.trace(-1);
+        assert!(t.is_err());
+        assert_eq!(t.oid(), &Oid::new("error"));
     }
 }

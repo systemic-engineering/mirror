@@ -1,6 +1,7 @@
 //! Vector: directed edge between two endpoints. IS a Gradient.
 
 use crate::gradient::Gradient;
+use crate::witness::{ContentAddressed, Trace};
 
 /// A directed edge between two endpoints. Carries a gradient.
 ///
@@ -12,15 +13,11 @@ pub struct Vector<L, R, G> {
     pub gradient: G,
 }
 
-impl<L, R, S, T, G: Gradient<S, T>> Gradient<S, T> for Vector<L, R, G> {
+impl<L, R, S, T: ContentAddressed, G: Gradient<S, T>> Gradient<S, T> for Vector<L, R, G> {
     type Error = G::Error;
 
-    fn emit(&self, source: S) -> Result<T, Self::Error> {
-        self.gradient.emit(source)
-    }
-
-    fn absorb(&self, source: T) -> Result<S, Self::Error> {
-        self.gradient.absorb(source)
+    fn trace(&self, source: S) -> Trace<T, Self::Error> {
+        self.gradient.trace(source)
     }
 }
 
@@ -50,24 +47,13 @@ mod tests {
     }
 
     #[test]
-    fn vector_is_gradient_emit() {
+    fn vector_is_gradient_trace() {
         let v = Vector {
             left: Node::new(test_id("a"), Filesystem),
             right: Node::new(test_id("b"), Git),
             gradient: gradient::Identity::<String>::new(),
         };
-        let result = v.emit("hello".to_string()).unwrap();
+        let result = v.trace("hello".to_string()).into_result().unwrap();
         assert_eq!(result, "hello");
-    }
-
-    #[test]
-    fn vector_is_gradient_absorb() {
-        let v = Vector {
-            left: Node::new(test_id("a"), Filesystem),
-            right: Node::new(test_id("b"), Git),
-            gradient: gradient::Identity::<String>::new(),
-        };
-        let result = v.absorb("world".to_string()).unwrap();
-        assert_eq!(result, "world");
     }
 }

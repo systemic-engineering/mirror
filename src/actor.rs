@@ -6,6 +6,7 @@
 use crate::domain::Context;
 use crate::gradient::Gradient;
 use crate::identity::{Identity, Signal, System};
+use crate::witness::{Oid, Trace};
 
 /// An actor always exists in two contexts.
 ///
@@ -15,8 +16,7 @@ use crate::identity::{Identity, Signal, System};
 ///
 /// Actor implements `System<Native>` — you are a system where you come from.
 /// Actor implements `Gradient<Signal<Native>, Signal<Mask>>` — the gradient
-/// goes from native to mask. `emit` is code-switching. `absorb` is
-/// translating back.
+/// goes from native to mask. `trace` is code-switching.
 pub struct Actor<I: Identity, Native: Context, Mask: Context> {
     id: I,
     native: Native,
@@ -68,12 +68,8 @@ where
 {
     type Error = ActorError;
 
-    fn emit(&self, _source: Signal<N>) -> Result<Signal<M>, Self::Error> {
-        Err(ActorError)
-    }
-
-    fn absorb(&self, _source: Signal<M>) -> Result<Signal<N>, Self::Error> {
-        Err(ActorError)
+    fn trace(&self, _source: Signal<N>) -> Trace<Signal<M>, Self::Error> {
+        Trace::leaf(Err(ActorError), Oid::new("error"))
     }
 }
 
@@ -117,7 +113,7 @@ mod tests {
     // -- Gradient --
 
     #[test]
-    fn actor_gradient_emit_returns_placeholder_error() {
+    fn actor_gradient_trace_returns_placeholder_error() {
         use crate::domain::filesystem::Folder;
         let actor = Actor::new(test_id("Reed"), Filesystem, Git);
         let signal = Signal {
@@ -126,25 +122,12 @@ mod tests {
                 content: None,
             },
         };
-        let result = actor.emit(signal);
+        let result = actor.trace(signal);
         assert!(result.is_err());
         assert_eq!(
-            format!("{}", result.unwrap_err()),
+            format!("{}", result.into_result().unwrap_err()),
             "actor gradient not yet implemented"
         );
-    }
-
-    #[test]
-    fn actor_gradient_absorb_returns_placeholder_error() {
-        use crate::domain::git::GitNode;
-        let actor = Actor::new(test_id("Reed"), Filesystem, Git);
-        let signal = Signal {
-            token: GitNode::Entry {
-                name: "test".into(),
-            },
-        };
-        let result = actor.absorb(signal);
-        assert!(result.is_err());
     }
 
     // -- Actor in Vector --

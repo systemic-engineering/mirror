@@ -11,6 +11,12 @@ use crate::witness::{ContentAddressed, Oid};
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
 
+impl fragmentation::encoding::Encode for AstNode {
+    fn encode(&self) -> Vec<u8> {
+        format!("{:?}:{}", self.kind, self.value).into_bytes()
+    }
+}
+
 impl ContentAddressed for AstNode {
     fn content_oid(&self) -> Oid {
         let mut hasher = Sha256::new();

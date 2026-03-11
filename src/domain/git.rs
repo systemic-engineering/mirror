@@ -31,6 +31,25 @@ pub enum GitNode {
     Blob { content: Vec<u8> },
 }
 
+impl fragmentation::encoding::Encode for GitNode {
+    fn encode(&self) -> Vec<u8> {
+        match self {
+            GitNode::Ref { name, target } => format!("ref:{}:{}", name, target).into_bytes(),
+            GitNode::Commit {
+                message,
+                author,
+                email,
+            } => format!("commit:{}:{}:{}", message, author, email).into_bytes(),
+            GitNode::Entry { name } => format!("entry:{}", name).into_bytes(),
+            GitNode::Blob { content } => {
+                let mut bytes = b"blob:".to_vec();
+                bytes.extend_from_slice(content);
+                bytes
+            }
+        }
+    }
+}
+
 impl ContentAddressed for GitNode {
     fn content_oid(&self) -> Oid {
         let mut hasher = Sha256::new();
@@ -274,6 +293,45 @@ mod tests {
                 content: b"hello".to_vec()
             }
         );
+    }
+
+    // -- Encode --
+
+    #[test]
+    fn git_node_encode_ref() {
+        use fragmentation::encoding::Encode;
+        let node = GitNode::Ref {
+            name: "main".into(),
+            target: "abc".into(),
+        };
+        assert_eq!(node.encode(), b"ref:main:abc");
+    }
+
+    #[test]
+    fn git_node_encode_commit() {
+        use fragmentation::encoding::Encode;
+        let node = GitNode::Commit {
+            message: "init".into(),
+            author: "Reed".into(),
+            email: "reed@systemic.engineer".into(),
+        };
+        assert_eq!(node.encode(), b"commit:init:Reed:reed@systemic.engineer");
+    }
+
+    #[test]
+    fn git_node_encode_entry() {
+        use fragmentation::encoding::Encode;
+        let node = GitNode::Entry { name: "src".into() };
+        assert_eq!(node.encode(), b"entry:src");
+    }
+
+    #[test]
+    fn git_node_encode_blob() {
+        use fragmentation::encoding::Encode;
+        let node = GitNode::Blob {
+            content: b"hello".to_vec(),
+        };
+        assert_eq!(node.encode(), b"blob:hello");
     }
 
     #[test]

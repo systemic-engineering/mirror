@@ -1,6 +1,7 @@
 use std::convert::Infallible;
 
 use crate::gradient::Gradient;
+use crate::witness::{ContentAddressed, Oid, Trace};
 
 /// Focus optionally into a structure.
 ///
@@ -21,20 +22,21 @@ pub struct NotFound;
 
 /// Wraps a `Prism` as a `Gradient<S, A>`.
 ///
-/// emit = preview (partial — fails with NotFound).
-/// absorb = review (total — always succeeds).
+/// trace = preview (partial — fails with NotFound).
 /// The asymmetry is structural: looking is uncertain, constructing is total.
 pub struct PrismGradient<P>(pub P);
 
-impl<S, A, P: Prism<S, A>> Gradient<S, A> for PrismGradient<P> {
+impl<S, A: ContentAddressed, P: Prism<S, A>> Gradient<S, A> for PrismGradient<P> {
     type Error = NotFound;
 
-    fn emit(&self, source: S) -> Result<A, NotFound> {
-        self.0.preview(&source).ok_or(NotFound)
-    }
-
-    fn absorb(&self, source: A) -> Result<S, NotFound> {
-        Ok(self.0.review(source))
+    fn trace(&self, source: S) -> Trace<A, NotFound> {
+        match self.0.preview(&source) {
+            Some(a) => {
+                let oid = a.content_oid();
+                Trace::leaf(Ok(a), oid)
+            }
+            None => Trace::leaf(Err(NotFound), Oid::new("not-found")),
+        }
     }
 }
 
@@ -49,21 +51,21 @@ pub trait Traversal<S, A> {
 
 /// Wraps a `Traversal` as a `Gradient<S, (S, Vec<A>)>`.
 ///
-/// emit returns the original S alongside extracted values —
-/// absorb needs both to know where to put the new values.
-/// Both directions infallible.
+/// trace returns the original S alongside extracted values.
+/// Infallible — traversal always succeeds.
 pub struct TraversalGradient<T>(pub T);
 
-impl<S, A, T: Traversal<S, A>> Gradient<S, (S, Vec<A>)> for TraversalGradient<T> {
+impl<S, A, T: Traversal<S, A>> Gradient<S, (S, Vec<A>)> for TraversalGradient<T>
+where
+    (S, Vec<A>): ContentAddressed,
+{
     type Error = Infallible;
 
-    fn emit(&self, source: S) -> Result<(S, Vec<A>), Infallible> {
+    fn trace(&self, source: S) -> Trace<(S, Vec<A>), Infallible> {
         let items = self.0.traverse(&source);
-        Ok((source, items))
-    }
-
-    fn absorb(&self, (source, items): (S, Vec<A>)) -> Result<S, Infallible> {
-        Ok(self.0.rebuild(source, items))
+        let result = (source, items);
+        let oid = result.content_oid();
+        Trace::leaf(Ok(result), oid)
     }
 }
 
@@ -104,10 +106,7 @@ impl<S, A, P: Prism<S, A>> Traversal<Vec<S>, A> for PrismAsTraversal<P> {
 mod tests {
     use super::*;
     use crate::gradient::Gradient;
-    use crate::witness::{LegacyOid, Session, Witnessed};
     use sha2::{Digest, Sha256};
-
-    // -- Test types --
 
     #[derive(Debug, Clone, PartialEq)]
     enum Shape {
@@ -115,8 +114,8 @@ mod tests {
         Square(f64),
     }
 
-    impl LegacyOid for Shape {
-        fn oid(&self) -> String {
+    impl ContentAddressed for Shape {
+        fn content_oid(&self) -> Oid {
             let mut hasher = Sha256::new();
             match self {
                 Shape::Circle(r) => {
@@ -128,15 +127,7 @@ mod tests {
                     hasher.update(s.to_le_bytes());
                 }
             }
-            hex::encode(hasher.finalize())
-        }
-    }
-
-    impl LegacyOid for f64 {
-        fn oid(&self) -> String {
-            let mut hasher = Sha256::new();
-            hasher.update(self.to_le_bytes());
-            hex::encode(hasher.finalize())
+            Oid::new(hex::encode(hasher.finalize()))
         }
     }
 
@@ -181,21 +172,15 @@ mod tests {
     // -- PrismGradient tests --
 
     #[test]
-    fn prism_gradient_emit_succeeds_on_match() {
+    fn prism_gradient_trace_succeeds_on_match() {
         let g = PrismGradient(CircleRadius);
-        assert_eq!(g.emit(Shape::Circle(3.0)), Ok(3.0));
+        assert_eq!(g.trace(Shape::Circle(3.0)).into_result(), Ok(3.0));
     }
 
     #[test]
-    fn prism_gradient_emit_fails_on_no_match() {
+    fn prism_gradient_trace_fails_on_no_match() {
         let g = PrismGradient(CircleRadius);
-        assert_eq!(g.emit(Shape::Square(3.0)), Err(NotFound));
-    }
-
-    #[test]
-    fn prism_gradient_absorb_always_succeeds() {
-        let g = PrismGradient(CircleRadius);
-        assert_eq!(g.absorb(4.0), Ok(Shape::Circle(4.0)));
+        assert_eq!(g.trace(Shape::Square(3.0)).into_result(), Err(NotFound));
     }
 
     // -- Traversal tests --
@@ -247,28 +232,20 @@ mod tests {
     // -- TraversalGradient tests --
 
     #[test]
-    fn traversal_gradient_emit_extracts_with_source() {
+    fn traversal_gradient_trace_extracts_with_source() {
         let g = TraversalGradient(AllSomes);
         let source = vec![Some(1), None, Some(3)];
-        let (s, items) = g.emit(source.clone()).unwrap();
+        let (s, items) = g.trace(source.clone()).into_result().unwrap();
         assert_eq!(s, source);
         assert_eq!(items, vec![1, 3]);
-    }
-
-    #[test]
-    fn traversal_gradient_absorb_rebuilds() {
-        let g = TraversalGradient(AllSomes);
-        let source = vec![Some(1), None, Some(3)];
-        let rebuilt = g.absorb((source, vec![10, 30])).unwrap();
-        assert_eq!(rebuilt, vec![Some(10), None, Some(30)]);
     }
 
     #[test]
     fn traversal_gradient_roundtrip() {
         let g = TraversalGradient(AllSomes);
         let source = vec![Some(1), None, Some(3)];
-        let (s, items) = g.emit(source).unwrap();
-        let rebuilt = g.absorb((s, items)).unwrap();
+        let (s, items) = g.trace(source).into_result().unwrap();
+        let rebuilt = AllSomes.rebuild(s, items);
         assert_eq!(rebuilt, vec![Some(1), None, Some(3)]);
     }
 
@@ -320,36 +297,7 @@ mod tests {
     fn prism_as_traversal_as_gradient() {
         let g = TraversalGradient(PrismAsTraversal(CircleRadius));
         let source = vec![Shape::Circle(1.0), Shape::Square(2.0), Shape::Circle(3.0)];
-        let (s, radii) = g.emit(source).unwrap();
+        let (_, radii) = g.trace(source).into_result().unwrap();
         assert_eq!(radii, vec![1.0, 3.0]);
-        let rebuilt = g.absorb((s, vec![10.0, 30.0])).unwrap();
-        assert_eq!(
-            rebuilt,
-            vec![Shape::Circle(10.0), Shape::Square(2.0), Shape::Circle(30.0),]
-        );
-    }
-
-    // -- Witnessed integration --
-
-    #[test]
-    fn prism_gradient_witnessed_records_observation() {
-        let session = Session::new("test", "reed");
-        let g = Witnessed::new(PrismGradient(CircleRadius), &session, "circle-focus");
-
-        let result = g.emit(Shape::Circle(3.0)).unwrap();
-        assert_eq!(result, 3.0);
-        assert_eq!(session.len(), 1);
-
-        let events = session.events();
-        assert_eq!(events[0].message, "circle-focus");
-    }
-
-    #[test]
-    fn prism_gradient_witnessed_no_event_on_not_found() {
-        let session = Session::new("test", "reed");
-        let g = Witnessed::new(PrismGradient(CircleRadius), &session, "circle-focus");
-
-        assert!(g.emit(Shape::Square(3.0)).is_err());
-        assert!(session.is_empty());
     }
 }
