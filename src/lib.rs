@@ -14,7 +14,7 @@ pub use actor::Actor;
 pub use domain::filesystem::{Filesystem, Folder};
 pub use domain::git::{Git, GitNode};
 pub use domain::{Addressable, Context};
-pub use gradient::{Composed, ComposedError, Fallback, Gradient, Inverted, Iso, When};
+pub use gradient::{Composed, ComposedError, Fallback, Gradient, Iso, When};
 pub use identity::{Email, Identity, Name, Node, Signal, Signature, Signed, System};
 pub use optics::{NotFound, Prism, PrismAsTraversal, PrismGradient, Traversal, TraversalGradient};
 pub use parse::{Parse, ParseError};

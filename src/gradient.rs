@@ -14,13 +14,6 @@ pub trait Gradient<A, B> {
     fn emit(&self, source: A) -> Result<B, Self::Error>;
     fn absorb(&self, source: B) -> Result<A, Self::Error>;
 
-    fn invert(self) -> Inverted<Self>
-    where
-        Self: Sized,
-    {
-        Inverted(self)
-    }
-
     fn compose<C, G: Gradient<B, C>>(self, other: G) -> Composed<Self, G, B>
     where
         Self: Sized,
@@ -60,24 +53,6 @@ impl<A> Gradient<A, A> for Identity<A> {
 
     fn absorb(&self, source: A) -> Result<A, Infallible> {
         Ok(source)
-    }
-}
-
-// ---------------------------------------------------------------------------
-// Inverted — swaps emit and absorb. The dagger.
-// ---------------------------------------------------------------------------
-
-pub struct Inverted<G>(pub G);
-
-impl<A, B, G: Gradient<A, B>> Gradient<B, A> for Inverted<G> {
-    type Error = G::Error;
-
-    fn emit(&self, source: B) -> Result<A, Self::Error> {
-        self.0.absorb(source)
-    }
-
-    fn absorb(&self, source: A) -> Result<B, Self::Error> {
-        self.0.emit(source)
     }
 }
 
@@ -292,15 +267,6 @@ mod tests {
     fn identity_default() {
         let g: Identity<i32> = Identity::default();
         assert_eq!(g.emit(42), Ok(42));
-    }
-
-    // -- Inverted --
-
-    #[test]
-    fn invert_swaps_directions() {
-        let inv = Double.invert();
-        assert_eq!(inv.emit(6), Ok(3));
-        assert_eq!(inv.absorb(3), Ok(6));
     }
 
     // -- Composed --
