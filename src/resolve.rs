@@ -12,7 +12,8 @@ use serde_json::Value;
 use crate::ast::{AstNode, Span};
 use crate::domain::conversation::Kind;
 use crate::domain::{Addressable, Context};
-use crate::gradient::Gradient;
+use crate::gradient::{ComposedError, Gradient};
+use crate::parse::ParseError;
 use crate::tree::{self, Tree, Treelike};
 
 use fragmentation::ref_::Ref;
@@ -312,20 +313,13 @@ impl crate::witness::ContentAddressed for Value {
 impl<C: Context> Conversation<C> {
     /// Parse and resolve a `.conv` source string in one step.
     ///
-    /// Chains Parse → Resolve. Errors from either phase
-    /// are unified into ResolveError.
-    pub fn from_source(source: &str) -> Result<Self, ResolveError> {
+    /// Chains Parse → Resolve via gradient composition.
+    pub fn from_source(source: &str) -> Result<Self, ComposedError<ParseError, ResolveError>> {
         use crate::parse::Parse;
-
-        let ast = Parse
+        Parse
+            .compose::<Conversation<C>, _>(Resolve::new())
             .trace(source.to_string())
             .into_result()
-            .map_err(|e| ResolveError {
-                message: format!("parse: {}", e.message),
-                span: e.span,
-                hints: vec![],
-            })?;
-        Resolve::new().trace(ast).into_result()
     }
 }
 
@@ -1018,25 +1012,32 @@ mod tests {
         assert!(resolved.templates.contains_key("$t"));
     }
 
-    #[test]
-    fn from_source_propagates_parse_error() {
-        use crate::gradient::ComposedError;
-        let err = Conversation::<Filesystem>::from_source("garbage\n").unwrap_err();
+    /// Shared extractor — single monomorphization, both arms covered
+    /// across from_source_propagates_parse_error / _resolve_error.
+    fn extract_composed_message(
+        err: ComposedError<crate::parse::ParseError, ResolveError>,
+    ) -> (bool, String) {
         match err {
-            ComposedError::First(pe) => assert!(pe.message.contains("unexpected"), "{}", pe),
-            _ => panic!("expected parse error"),
+            ComposedError::First(pe) => (true, pe.message),
+            ComposedError::Second(re) => (false, re.message),
         }
     }
 
     #[test]
+    fn from_source_propagates_parse_error() {
+        let err = Conversation::<Filesystem>::from_source("garbage\n").unwrap_err();
+        let (is_parse, msg) = extract_composed_message(err);
+        assert!(is_parse);
+        assert!(msg.contains("unexpected"), "{}", msg);
+    }
+
+    #[test]
     fn from_source_propagates_resolve_error() {
-        use crate::gradient::ComposedError;
         let err =
             Conversation::<Filesystem>::from_source("in @bogus\nout r {\n\tx {}\n}\n").unwrap_err();
-        match err {
-            ComposedError::Second(re) => assert!(re.message.contains("bogus"), "{}", re),
-            _ => panic!("expected resolve error"),
-        }
+        let (is_parse, msg) = extract_composed_message(err);
+        assert!(!is_parse);
+        assert!(msg.contains("bogus"), "{}", msg);
     }
 
     // -- Litmus: @git domain proves Conversation is a Gradient --

@@ -62,6 +62,17 @@ pub enum ComposedError<E1, E2> {
     Second(E2),
 }
 
+impl<E1: std::fmt::Display, E2: std::fmt::Display> std::fmt::Display for ComposedError<E1, E2> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ComposedError::First(e) => write!(f, "{e}"),
+            ComposedError::Second(e) => write!(f, "{e}"),
+        }
+    }
+}
+
+impl<E1: std::error::Error, E2: std::error::Error> std::error::Error for ComposedError<E1, E2> {}
+
 impl<A, C, Mid, F, G> Gradient<A, C> for Composed<F, G, Mid>
 where
     C: ContentAddressed,
