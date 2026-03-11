@@ -4,13 +4,50 @@ use sha2::{Digest, Sha256};
 
 use crate::gradient::Gradient;
 
+/// Legacy content-addressing trait. Being replaced by ContentAddressed + Oid value type.
+pub trait LegacyOid {
+    fn oid(&self) -> String;
+}
+
+// ---------------------------------------------------------------------------
+// Oid — value type. The content address itself.
+// ---------------------------------------------------------------------------
+
+/// A content address. Value type — wraps the hash.
+///
+/// Same content = same Oid. That's the whole idea.
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct Oid(String);
+
+impl Oid {
+    pub fn new(hash: impl Into<String>) -> Self {
+        Oid(hash.into())
+    }
+}
+
+impl AsRef<str> for Oid {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+
+impl std::fmt::Display for Oid {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+// ---------------------------------------------------------------------------
+// ContentAddressed — anything that can produce a content address.
+// ---------------------------------------------------------------------------
+
 /// Anything that can produce a content address.
 ///
 /// The fundamental property of data in Conversation:
-/// same content = same OID. Trees get this from fragmentation.
+/// same content = same Oid. Trees get this from fragmentation.
 /// Events get this from their SHA. Everything is addressable.
-pub trait Oid {
-    fn oid(&self) -> String;
+pub trait ContentAddressed {
+    fn content_oid(&self) -> Oid;
 }
 
 /// Direction of a gradient application.
@@ -78,9 +115,15 @@ impl<E: AsRef<[u8]>> Event<E> {
     }
 }
 
-impl<E> Oid for Event<E> {
+impl<E> LegacyOid for Event<E> {
     fn oid(&self) -> String {
         self.sha.clone()
+    }
+}
+
+impl<E> ContentAddressed for Event<E> {
+    fn content_oid(&self) -> Oid {
+        Oid::new(&self.sha)
     }
 }
 
@@ -183,8 +226,8 @@ impl<'a, G> Witnessed<'a, G> {
 
 impl<A, B, G> Gradient<A, B> for Witnessed<'_, G>
 where
-    A: Oid,
-    B: Oid,
+    A: LegacyOid,
+    B: LegacyOid,
     G: Gradient<A, B>,
 {
     type Error = G::Error;
@@ -221,9 +264,66 @@ mod tests {
     use super::*;
     use crate::gradient::Gradient;
 
-    // -- Oid impls for test types --
+    // -- Oid value type --
 
-    impl Oid for i32 {
+    #[test]
+    fn oid_wraps_hash() {
+        let oid = Oid::new("abc123");
+        assert_eq!(oid.as_ref(), "abc123");
+    }
+
+    #[test]
+    fn oid_display() {
+        let oid = Oid::new("abc123");
+        assert_eq!(format!("{}", oid), "abc123");
+    }
+
+    #[test]
+    fn oid_equality() {
+        let a = Oid::new("abc123");
+        let b = Oid::new("abc123");
+        let c = Oid::new("def456");
+        assert_eq!(a, b);
+        assert_ne!(a, c);
+    }
+
+    #[test]
+    fn oid_clone_hash() {
+        use std::collections::HashSet;
+        let a = Oid::new("abc123");
+        let b = a.clone();
+        assert_eq!(a, b);
+        let mut set = HashSet::new();
+        set.insert(a);
+        assert!(set.contains(&b));
+    }
+
+    // -- ContentAddressed --
+
+    #[test]
+    fn event_content_oid_matches_sha() {
+        let e = Event::new(b"hello".to_vec(), "test", None);
+        let oid = e.content_oid();
+        assert_eq!(oid.as_ref(), &e.sha);
+    }
+
+    #[test]
+    fn same_event_same_content_oid() {
+        let a = Event::new(b"hello".to_vec(), "test", None);
+        let b = Event::new(b"hello".to_vec(), "test", None);
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn different_event_different_content_oid() {
+        let a = Event::new(b"hello".to_vec(), "test", None);
+        let b = Event::new(b"world".to_vec(), "test", None);
+        assert_ne!(a.content_oid(), b.content_oid());
+    }
+
+    // -- LegacyOid impls for test types --
+
+    impl LegacyOid for i32 {
         fn oid(&self) -> String {
             let mut hasher = Sha256::new();
             hasher.update(self.to_le_bytes());

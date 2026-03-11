@@ -104,7 +104,7 @@ impl<S, A, P: Prism<S, A>> Traversal<Vec<S>, A> for PrismAsTraversal<P> {
 mod tests {
     use super::*;
     use crate::gradient::Gradient;
-    use crate::witness::{Oid, Session, Witnessed};
+    use crate::witness::{LegacyOid, Session, Witnessed};
     use sha2::{Digest, Sha256};
 
     // -- Test types --
@@ -115,7 +115,7 @@ mod tests {
         Square(f64),
     }
 
-    impl Oid for Shape {
+    impl LegacyOid for Shape {
         fn oid(&self) -> String {
             let mut hasher = Sha256::new();
             match self {
@@ -132,7 +132,7 @@ mod tests {
         }
     }
 
-    impl Oid for f64 {
+    impl LegacyOid for f64 {
         fn oid(&self) -> String {
             let mut hasher = Sha256::new();
             hasher.update(self.to_le_bytes());

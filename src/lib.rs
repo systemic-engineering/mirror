@@ -21,4 +21,6 @@ pub use parse::{Parse, ParseError};
 pub use resolve::{Conversation, Resolve, ResolveError};
 pub use tree::Tree;
 pub use vector::Vector;
-pub use witness::{Direction, Event, Observation, Oid, Session, Witnessed};
+pub use witness::{
+    ContentAddressed, Direction, Event, LegacyOid, Observation, Oid, Session, Witnessed,
+};
