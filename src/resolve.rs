@@ -775,8 +775,7 @@ mod tests {
     fn default_same_as_new() {
         let source = "in @filesystem\nout r {\n\tx {}\n}\n";
         let ast = Parse.trace(source.to_string()).unwrap();
-        let _resolved: Conversation<Filesystem> =
-            Resolve::default().trace(ast).unwrap();
+        let _resolved: Conversation<Filesystem> = Resolve::default().trace(ast).unwrap();
     }
 
     // -- Error: missing domain declaration --

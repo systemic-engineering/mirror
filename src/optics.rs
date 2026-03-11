@@ -300,4 +300,73 @@ mod tests {
         let (_, radii) = g.trace(source).unwrap();
         assert_eq!(radii, vec![1.0, 3.0]);
     }
+
+    // -- SelectPrism tests --
+
+    fn is_circle(shape: &Shape) -> bool {
+        matches!(shape, Shape::Circle(_))
+    }
+
+    #[test]
+    fn select_prism_preview_matches() {
+        let p = SelectPrism(is_circle);
+        assert_eq!(p.preview(&Shape::Circle(3.0)), Some(Shape::Circle(3.0)));
+    }
+
+    #[test]
+    fn select_prism_preview_rejects() {
+        let p = SelectPrism(is_circle);
+        assert_eq!(p.preview(&Shape::Square(3.0)), None);
+    }
+
+    #[test]
+    fn select_prism_review_is_identity() {
+        let p = SelectPrism(is_circle);
+        assert_eq!(p.review(Shape::Circle(5.0)), Shape::Circle(5.0));
+    }
+
+    #[test]
+    fn select_prism_law_review_preview_roundtrip() {
+        let p = SelectPrism(is_circle);
+        let a = Shape::Circle(3.0);
+        assert_eq!(p.preview(&p.review(a.clone())), Some(a));
+    }
+
+    // -- SelectPrism composition tests --
+
+    #[test]
+    fn select_as_traversal_extracts() {
+        let t = PrismAsTraversal(SelectPrism(is_circle));
+        let source = vec![Shape::Circle(1.0), Shape::Square(2.0), Shape::Circle(3.0)];
+        assert_eq!(
+            t.traverse(&source),
+            vec![Shape::Circle(1.0), Shape::Circle(3.0)]
+        );
+    }
+
+    #[test]
+    fn select_as_traversal_rebuild() {
+        let t = PrismAsTraversal(SelectPrism(is_circle));
+        let source = vec![Shape::Circle(1.0), Shape::Square(2.0), Shape::Circle(3.0)];
+        let rebuilt = t.rebuild(source, vec![Shape::Circle(10.0), Shape::Circle(30.0)]);
+        assert_eq!(
+            rebuilt,
+            vec![Shape::Circle(10.0), Shape::Square(2.0), Shape::Circle(30.0)]
+        );
+    }
+
+    #[test]
+    fn select_as_gradient_hit() {
+        let g = PrismGradient(SelectPrism(is_circle));
+        assert_eq!(
+            g.trace(Shape::Circle(3.0)).into_result(),
+            Ok(Shape::Circle(3.0))
+        );
+    }
+
+    #[test]
+    fn select_as_gradient_miss() {
+        let g = PrismGradient(SelectPrism(is_circle));
+        assert_eq!(g.trace(Shape::Square(3.0)).into_result(), Err(NotFound));
+    }
 }
