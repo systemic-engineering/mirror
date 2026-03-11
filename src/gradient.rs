@@ -358,6 +358,20 @@ mod tests {
         assert_eq!(None::<Double>.trace(3).into_result(), Ok(3));
     }
 
+    // -- ComposedError Display --
+
+    #[test]
+    fn composed_error_display_first() {
+        let e: ComposedError<String, String> = ComposedError::First("boom".into());
+        assert_eq!(format!("{e}"), "boom");
+    }
+
+    #[test]
+    fn composed_error_display_second() {
+        let e: ComposedError<String, String> = ComposedError::Second("crash".into());
+        assert_eq!(format!("{e}"), "crash");
+    }
+
     // -- Trace structure --
 
     #[test]

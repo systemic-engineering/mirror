@@ -1020,15 +1020,23 @@ mod tests {
 
     #[test]
     fn from_source_propagates_parse_error() {
+        use crate::gradient::ComposedError;
         let err = Conversation::<Filesystem>::from_source("garbage\n").unwrap_err();
-        assert!(err.message.contains("parse"), "{}", err);
+        match err {
+            ComposedError::First(pe) => assert!(pe.message.contains("unexpected"), "{}", pe),
+            _ => panic!("expected parse error"),
+        }
     }
 
     #[test]
     fn from_source_propagates_resolve_error() {
+        use crate::gradient::ComposedError;
         let err =
             Conversation::<Filesystem>::from_source("in @bogus\nout r {\n\tx {}\n}\n").unwrap_err();
-        assert!(err.message.contains("bogus"), "{}", err);
+        match err {
+            ComposedError::Second(re) => assert!(re.message.contains("bogus"), "{}", re),
+            _ => panic!("expected resolve error"),
+        }
     }
 
     // -- Litmus: @git domain proves Conversation is a Gradient --
