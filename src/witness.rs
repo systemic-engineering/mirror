@@ -142,6 +142,18 @@ impl<T, E> Trace<T, E> {
     }
 }
 
+// ---------------------------------------------------------------------------
+// ContentAddressed impls for standard types.
+// ---------------------------------------------------------------------------
+
+impl ContentAddressed for String {
+    fn content_oid(&self) -> Oid {
+        let mut hasher = Sha256::new();
+        hasher.update(self.as_bytes());
+        Oid::new(hex::encode(hasher.finalize()))
+    }
+}
+
 /// Direction of a gradient application.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Direction {
@@ -470,6 +482,22 @@ mod tests {
         let a: Trace<i32, ()> = Trace::leaf(Ok(42), Oid::new("abc"));
         let b = a.clone();
         assert_eq!(a, b);
+    }
+
+    // -- String ContentAddressed --
+
+    #[test]
+    fn string_content_addressed() {
+        let a = "hello".to_string();
+        let b = "hello".to_string();
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn string_different_content_different_oid() {
+        let a = "hello".to_string();
+        let b = "world".to_string();
+        assert_ne!(a.content_oid(), b.content_oid());
     }
 
     // -- LegacyOid impls for test types --

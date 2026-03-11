@@ -47,6 +47,12 @@ pub struct Signal<C: Context> {
     pub token: C::Token,
 }
 
+impl<C: Context> crate::witness::ContentAddressed for Signal<C> {
+    fn content_oid(&self) -> crate::witness::Oid {
+        self.token.content_oid()
+    }
+}
+
 /// Cryptographic proof of identity.
 pub struct Signature<I: Identity> {
     pub signer: I,
@@ -218,6 +224,25 @@ pub(crate) mod tests {
             },
         };
         assert_eq!(signal.token.name, "test");
+    }
+
+    // -- Signal ContentAddressed --
+
+    #[test]
+    fn signal_content_addressed() {
+        use crate::domain::filesystem::Folder;
+        use crate::witness::ContentAddressed;
+        let signal: Signal<Filesystem> = Signal {
+            token: Folder {
+                name: "test".into(),
+                content: Some("hello".into()),
+            },
+        };
+        let folder = Folder {
+            name: "test".into(),
+            content: Some("hello".into()),
+        };
+        assert_eq!(signal.content_oid(), folder.content_oid());
     }
 
     // -- Signature --

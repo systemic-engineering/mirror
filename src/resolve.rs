@@ -278,6 +278,31 @@ fn resolve_output_nodes(
     Ok(nodes)
 }
 
+impl<C: Context> crate::witness::ContentAddressed for Conversation<C> {
+    fn content_oid(&self) -> crate::witness::Oid {
+        use sha2::{Digest, Sha256};
+
+        let mut hasher = Sha256::new();
+        hasher.update(b"conversation:");
+        hasher.update(self.content.data().name().as_bytes());
+        let mut keys: Vec<_> = self.templates.keys().collect();
+        keys.sort();
+        for key in keys {
+            hasher.update(key.as_bytes());
+        }
+        crate::witness::Oid::new(hex::encode(hasher.finalize()))
+    }
+}
+
+impl crate::witness::ContentAddressed for Value {
+    fn content_oid(&self) -> crate::witness::Oid {
+        use sha2::{Digest, Sha256};
+        let mut hasher = Sha256::new();
+        hasher.update(self.to_string().as_bytes());
+        crate::witness::Oid::new(hex::encode(hasher.finalize()))
+    }
+}
+
 impl<C: Context> Conversation<C> {
     /// Parse and resolve a `.conv` source string in one step.
     ///
@@ -947,6 +972,29 @@ mod tests {
         let field = &resolved.templates["$t"].fields[0];
         assert_eq!(field.qualifier.as_deref(), Some("h2"));
         assert!(field.pipe.is_none());
+    }
+
+    // -- ContentAddressed --
+
+    #[test]
+    fn conversation_content_addressed() {
+        use crate::witness::ContentAddressed;
+        let source =
+            "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
+        let a = Conversation::<Filesystem>::from_source(source).unwrap();
+        let b = Conversation::<Filesystem>::from_source(source).unwrap();
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn value_content_addressed() {
+        use crate::witness::ContentAddressed;
+        let a = Value::String("hello".into());
+        let b = Value::String("hello".into());
+        assert_eq!(a.content_oid(), b.content_oid());
+
+        let c = Value::String("world".into());
+        assert_ne!(a.content_oid(), c.content_oid());
     }
 
     // -- Composition: Parse → Resolve --
