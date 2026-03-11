@@ -42,6 +42,7 @@ pub trait Identity: Clone + std::fmt::Debug {
 }
 
 /// Typed communication within a context.
+#[derive(Debug)]
 pub struct Signal<C: Context> {
     pub token: C::Token,
 }

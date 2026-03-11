@@ -10,6 +10,7 @@ pub mod tree;
 pub mod vector;
 pub mod witness;
 
+pub use actor::Actor;
 pub use domain::filesystem::{Filesystem, Folder};
 pub use domain::git::{Git, GitNode};
 pub use domain::{Addressable, Context};
