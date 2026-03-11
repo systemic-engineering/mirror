@@ -46,7 +46,6 @@ pub enum Kind {
 
 impl Context for Conversation {
     type Token = crate::ast::AstNode;
-    type Keys = fragmentation::keys::PlainKeys;
 
     fn id() -> &'static str {
         "conversation"

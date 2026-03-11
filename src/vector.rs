@@ -33,14 +33,13 @@ mod tests {
     use crate::domain::git::Git;
     use crate::gradient::{self, Gradient};
     use crate::identity::System;
-    use fragmentation::keys::PlainKeys;
 
     use super::Vector;
 
     #[test]
     fn vector_holds_two_systems() {
-        let left: System<Filesystem> = System::new("fs-node", PlainKeys);
-        let right: System<Git> = System::new("git-node", PlainKeys);
+        let left: System<Filesystem> = System::new("fs-node");
+        let right: System<Git> = System::new("git-node");
         let g = gradient::Identity::<String>::new();
         let v = Vector {
             left,
@@ -54,8 +53,8 @@ mod tests {
     #[test]
     fn vector_is_gradient_emit() {
         let v = Vector {
-            left: System::<Filesystem>::new("a", PlainKeys),
-            right: System::<Git>::new("b", PlainKeys),
+            left: System::<Filesystem>::new("a"),
+            right: System::<Git>::new("b"),
             gradient: gradient::Identity::<String>::new(),
         };
         let result = v.emit("hello".to_string()).unwrap();
@@ -65,8 +64,8 @@ mod tests {
     #[test]
     fn vector_is_gradient_absorb() {
         let v = Vector {
-            left: System::<Filesystem>::new("a", PlainKeys),
-            right: System::<Git>::new("b", PlainKeys),
+            left: System::<Filesystem>::new("a"),
+            right: System::<Git>::new("b"),
             gradient: gradient::Identity::<String>::new(),
         };
         let result = v.absorb("world".to_string()).unwrap();

@@ -13,7 +13,6 @@ pub mod git;
 /// Crossing between domains is a Gradient.
 pub trait Context: Clone + std::fmt::Debug + PartialEq + Eq {
     type Token: Clone + std::fmt::Debug + PartialEq + Eq;
-    type Keys: fragmentation::keys::Keys;
 
     fn id() -> &'static str;
 }
@@ -48,21 +47,9 @@ mod tests {
     }
 
     #[test]
-    fn filesystem_keys_is_plain() {
-        fn assert_keys_type<C: Context<Keys = fragmentation::keys::PlainKeys>>() {}
-        assert_keys_type::<Filesystem>();
-    }
-
-    #[test]
     fn conversation_token_is_ast_node() {
         fn assert_token<C: Context<Token = crate::ast::AstNode>>() {}
         assert_token::<conversation::Conversation>();
-    }
-
-    #[test]
-    fn conversation_keys_is_plain() {
-        fn assert_keys_type<C: Context<Keys = fragmentation::keys::PlainKeys>>() {}
-        assert_keys_type::<conversation::Conversation>();
     }
 
     // -- Git domain --
@@ -71,11 +58,5 @@ mod tests {
     fn git_token_is_git_node() {
         fn assert_token<C: Context<Token = git::GitNode>>() {}
         assert_token::<git::Git>();
-    }
-
-    #[test]
-    fn git_keys_is_plain() {
-        fn assert_keys<C: Context<Keys = fragmentation::keys::PlainKeys>>() {}
-        assert_keys::<git::Git>();
     }
 }

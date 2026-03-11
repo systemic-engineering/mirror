@@ -16,7 +16,6 @@ impl Addressable for Folder {
 
 impl Context for Filesystem {
     type Token = Folder;
-    type Keys = fragmentation::keys::PlainKeys;
 
     fn id() -> &'static str {
         "filesystem"

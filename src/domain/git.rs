@@ -47,7 +47,6 @@ impl Addressable for GitNode {
 
 impl Context for Git {
     type Token = GitNode;
-    type Keys = fragmentation::keys::PlainKeys;
 
     fn id() -> &'static str {
         "git"
