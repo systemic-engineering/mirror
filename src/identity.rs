@@ -1,13 +1,36 @@
 use crate::domain::Context;
-use std::marker::PhantomData;
 
 /// A name. Value type.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Name(String);
 
+impl Name {
+    pub fn new(name: impl Into<String>) -> Self {
+        Name(name.into())
+    }
+}
+
+impl AsRef<str> for Name {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+
 /// An email address. Value type.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Email(String);
+
+impl Email {
+    pub fn new(email: impl Into<String>) -> Self {
+        Email(email.into())
+    }
+}
+
+impl AsRef<str> for Email {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
 
 /// Who you are, regardless of context.
 pub trait Identity: Clone + std::fmt::Debug {
@@ -60,10 +83,43 @@ impl<C: Context> System<C> {
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use super::*;
     use crate::domain::filesystem::Filesystem;
     use fragmentation::keys::PlainKeys;
+
+    #[derive(Clone, Debug)]
+    pub(crate) struct TestIdentity {
+        name: Name,
+        email: Option<Email>,
+        keys: PlainKeys,
+    }
+
+    impl TestIdentity {
+        pub(crate) fn new(name: &str, email: Option<&str>) -> Self {
+            TestIdentity {
+                name: Name::new(name),
+                email: email.map(Email::new),
+                keys: PlainKeys,
+            }
+        }
+    }
+
+    impl Identity for TestIdentity {
+        type Keys = PlainKeys;
+
+        fn name(&self) -> &Name {
+            &self.name
+        }
+
+        fn email(&self) -> Option<&Email> {
+            self.email.as_ref()
+        }
+
+        fn keys(&self) -> &PlainKeys {
+            &self.keys
+        }
+    }
 
     // -- System (existing) --
 
