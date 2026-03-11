@@ -47,10 +47,16 @@ pub struct Signal<C: Context> {
     pub token: C::Token,
 }
 
+/// Cryptographic proof of identity.
+pub struct Signature<I: Identity> {
+    pub signer: I,
+    pub signature: Vec<u8>,
+}
+
 /// A signal with identity provenance.
-pub struct Signed<S> {
-    pub inner: S,
-    pub signer: Name,
+pub struct Signed<I: Identity, C: Context> {
+    pub signature: Signature<I>,
+    pub signal: Signal<C>,
 }
 
 /// Anything with identity in a context.
@@ -214,15 +220,37 @@ pub(crate) mod tests {
         assert_eq!(signal.token.name, "test");
     }
 
+    // -- Signature --
+
+    #[test]
+    fn signature_carries_identity_and_bytes() {
+        let sig = Signature {
+            signer: TestIdentity::new("Reed", None),
+            signature: vec![0xDE, 0xAD],
+        };
+        assert_eq!(sig.signer.name().as_ref(), "Reed");
+        assert_eq!(sig.signature, vec![0xDE, 0xAD]);
+    }
+
     // -- Signed --
 
     #[test]
-    fn signed_wraps_with_signer() {
-        let signed = Signed {
-            inner: "hello",
-            signer: Name::new("Reed"),
+    fn signed_carries_signature_and_signal() {
+        use crate::domain::filesystem::Folder;
+        let signed: Signed<TestIdentity, Filesystem> = Signed {
+            signature: Signature {
+                signer: TestIdentity::new("Reed", None),
+                signature: vec![0xCA, 0xFE],
+            },
+            signal: Signal {
+                token: Folder {
+                    name: "test".into(),
+                    content: None,
+                },
+            },
         };
-        assert_eq!(signed.inner, "hello");
-        assert_eq!(signed.signer.as_ref(), "Reed");
+        assert_eq!(signed.signature.signer.name().as_ref(), "Reed");
+        assert_eq!(signed.signature.signature, vec![0xCA, 0xFE]);
+        assert_eq!(signed.signal.token.name, "test");
     }
 }
