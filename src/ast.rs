@@ -3,10 +3,21 @@
 //! The AST is `Tree<AstNode>`. A .conv file parsed is a tree
 //! in the conversation domain. Same type as everything else.
 
+use sha2::{Digest, Sha256};
+
 use crate::domain::conversation::Kind;
 use crate::tree::{self, Tree};
+use crate::witness::{ContentAddressed, Oid};
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
+
+impl ContentAddressed for AstNode {
+    fn content_oid(&self) -> Oid {
+        let mut hasher = Sha256::new();
+        hasher.update(format!("{:?}:{}", self.kind, self.value).as_bytes());
+        Oid::new(hex::encode(hasher.finalize()))
+    }
+}
 
 /// Byte offset range in source. Every AST node carries one.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -66,6 +77,39 @@ fn ast_ref(kind: &Kind, value: &str) -> Ref {
 mod tests {
     use super::*;
     use fragmentation::fragment::Fragmentable;
+
+    // -- ContentAddressed --
+
+    #[test]
+    fn ast_node_content_addressed() {
+        let a = AstNode {
+            kind: Kind::Field,
+            value: "slug".into(),
+            span: Span::new(0, 4),
+        };
+        let b = AstNode {
+            kind: Kind::Field,
+            value: "slug".into(),
+            span: Span::new(100, 104),
+        };
+        // Same kind + value = same OID, regardless of span
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn ast_node_different_kind_different_oid() {
+        let a = AstNode {
+            kind: Kind::Field,
+            value: "html".into(),
+            span: Span::new(0, 4),
+        };
+        let b = AstNode {
+            kind: Kind::Qualifier,
+            value: "html".into(),
+            span: Span::new(0, 4),
+        };
+        assert_ne!(a.content_oid(), b.content_oid());
+    }
 
     // -- Span tests --
 

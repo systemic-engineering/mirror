@@ -12,7 +12,7 @@ pub mod git;
 /// The context makes a tree interpretable.
 /// Crossing between domains is a Gradient.
 pub trait Context: Clone + std::fmt::Debug + PartialEq + Eq {
-    type Token: Clone + std::fmt::Debug + PartialEq + Eq;
+    type Token: Clone + std::fmt::Debug + PartialEq + Eq + crate::witness::ContentAddressed;
 
     fn id() -> &'static str;
 }

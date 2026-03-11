@@ -4,7 +4,10 @@
 //! commits contain trees, trees contain entries and blobs.
 //! The discriminant IS the data — each level carries different information.
 
+use sha2::{Digest, Sha256};
+
 use super::{Addressable, Context};
+use crate::witness::{ContentAddressed, Oid};
 
 /// The git context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -26,6 +29,41 @@ pub enum GitNode {
     Entry { name: String },
     /// Raw content.
     Blob { content: Vec<u8> },
+}
+
+impl ContentAddressed for GitNode {
+    fn content_oid(&self) -> Oid {
+        let mut hasher = Sha256::new();
+        match self {
+            GitNode::Ref { name, target } => {
+                hasher.update(b"ref:");
+                hasher.update(name.as_bytes());
+                hasher.update(b":");
+                hasher.update(target.as_bytes());
+            }
+            GitNode::Commit {
+                message,
+                author,
+                email,
+            } => {
+                hasher.update(b"commit:");
+                hasher.update(message.as_bytes());
+                hasher.update(b":");
+                hasher.update(author.as_bytes());
+                hasher.update(b":");
+                hasher.update(email.as_bytes());
+            }
+            GitNode::Entry { name } => {
+                hasher.update(b"entry:");
+                hasher.update(name.as_bytes());
+            }
+            GitNode::Blob { content } => {
+                hasher.update(b"blob:");
+                hasher.update(content);
+            }
+        }
+        Oid::new(hex::encode(hasher.finalize()))
+    }
 }
 
 impl Addressable for GitNode {
@@ -63,6 +101,63 @@ mod tests {
 
     fn test_ref(label: &str) -> Ref {
         Ref::new(sha::hash(label), label)
+    }
+
+    // -- ContentAddressed --
+
+    #[test]
+    fn git_node_content_addressed() {
+        let a = GitNode::Entry { name: "src".into() };
+        let b = GitNode::Entry { name: "src".into() };
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn git_node_ref_content_addressed() {
+        let a = GitNode::Ref {
+            name: "main".into(),
+            target: "abc".into(),
+        };
+        let b = GitNode::Ref {
+            name: "main".into(),
+            target: "abc".into(),
+        };
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn git_node_commit_content_addressed() {
+        let a = GitNode::Commit {
+            message: "init".into(),
+            author: "Reed".into(),
+            email: "reed@systemic.engineer".into(),
+        };
+        let b = GitNode::Commit {
+            message: "init".into(),
+            author: "Reed".into(),
+            email: "reed@systemic.engineer".into(),
+        };
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn git_node_blob_content_addressed() {
+        let a = GitNode::Blob {
+            content: b"hello".to_vec(),
+        };
+        let b = GitNode::Blob {
+            content: b"hello".to_vec(),
+        };
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn git_node_different_variant_different_oid() {
+        let a = GitNode::Entry { name: "src".into() };
+        let b = GitNode::Blob {
+            content: b"src".to_vec(),
+        };
+        assert_ne!(a.content_oid(), b.content_oid());
     }
 
     // -- Addressable --

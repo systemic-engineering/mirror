@@ -1,9 +1,25 @@
+use sha2::{Digest, Sha256};
+
 use super::{Addressable, Context};
 use crate::tree::{self, Tree};
+use crate::witness::{ContentAddressed, Oid};
 
 /// The filesystem context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Filesystem;
+
+impl ContentAddressed for Folder {
+    fn content_oid(&self) -> Oid {
+        let mut hasher = Sha256::new();
+        hasher.update(b"folder:");
+        hasher.update(self.name.as_bytes());
+        if let Some(content) = &self.content {
+            hasher.update(b":");
+            hasher.update(content.as_bytes());
+        }
+        Oid::new(hex::encode(hasher.finalize()))
+    }
+}
 
 impl Addressable for Folder {
     fn node_name(&self) -> &str {
@@ -76,6 +92,45 @@ impl Folder {
 mod tests {
     use super::*;
     use crate::tree::Treelike;
+
+    #[test]
+    fn folder_content_addressed() {
+        let a = Folder {
+            name: "test".into(),
+            content: Some("hello".into()),
+        };
+        let b = Folder {
+            name: "test".into(),
+            content: Some("hello".into()),
+        };
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn folder_different_content_different_oid() {
+        let a = Folder {
+            name: "test".into(),
+            content: Some("hello".into()),
+        };
+        let b = Folder {
+            name: "test".into(),
+            content: Some("world".into()),
+        };
+        assert_ne!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn folder_dir_vs_file_different_oid() {
+        let dir = Folder {
+            name: "test".into(),
+            content: None,
+        };
+        let file = Folder {
+            name: "test".into(),
+            content: Some("".into()),
+        };
+        assert_ne!(dir.content_oid(), file.content_oid());
+    }
 
     #[test]
     fn filesystem_id() {

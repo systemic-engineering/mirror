@@ -428,11 +428,7 @@ mod tests {
     #[test]
     fn trace_branch_construction() {
         let child = Trace::leaf(Ok(21), Oid::new("child1"));
-        let t: Trace<i32, ()> = Trace::branch(
-            Ok(42),
-            Oid::new("root"),
-            vec![child],
-        );
+        let t: Trace<i32, ()> = Trace::branch(Ok(42), Oid::new("root"), vec![child]);
         assert!(t.is_branch());
         assert!(!t.is_leaf());
         assert_eq!(t.result(), &Ok(42));
@@ -445,11 +441,7 @@ mod tests {
         let leaf1 = Trace::leaf(Ok(1), Oid::new("a"));
         let leaf2 = Trace::leaf(Ok(2), Oid::new("b"));
         let inner = Trace::branch(Ok(3), Oid::new("inner"), vec![leaf1, leaf2]);
-        let outer: Trace<i32, ()> = Trace::branch(
-            Ok(6),
-            Oid::new("outer"),
-            vec![inner],
-        );
+        let outer: Trace<i32, ()> = Trace::branch(Ok(6), Oid::new("outer"), vec![inner]);
         assert_eq!(outer.children().len(), 1);
         assert!(outer.children()[0].is_branch());
         assert_eq!(outer.children()[0].children().len(), 2);
