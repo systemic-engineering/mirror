@@ -1,3 +1,4 @@
+pub mod actor;
 pub mod ast;
 pub mod domain;
 pub mod gradient;
