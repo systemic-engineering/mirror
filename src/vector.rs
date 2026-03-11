@@ -53,7 +53,7 @@ mod tests {
             right: Node::new(test_id("b"), Git),
             gradient: gradient::Identity::<String>::new(),
         };
-        let result = v.trace("hello".to_string()).into_result().unwrap();
+        let result = v.trace("hello".to_string()).unwrap();
         assert_eq!(result, "hello");
     }
 }

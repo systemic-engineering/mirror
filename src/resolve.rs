@@ -573,8 +573,8 @@ mod tests {
     #[test]
     fn resolve_valid_conv() {
         let source = "in @filesystem\ntemplate $corpus {\n\tslug\n\texcerpt\n}\nout blog {\n\tpieces {\n\t\tdraft: 1draft { $corpus }\n\t}\n}\n";
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
-        let resolved = resolve_fs(ast).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let resolved = resolve_fs(ast).unwrap();
         assert_eq!(resolved.content.data().name(), "blog");
         assert!(resolved.templates.contains_key("$corpus"));
     }
@@ -582,8 +582,8 @@ mod tests {
     #[test]
     fn resolve_extracts_template_fields() {
         let source = "in @filesystem\ntemplate $t {\n\tslug\n\theadlines: h2\n\thtml: article | @html\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
-        let resolved = resolve_fs(ast).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let resolved = resolve_fs(ast).unwrap();
         let tmpl = &resolved.templates["$t"];
         assert_eq!(tmpl.fields.len(), 3);
         assert_eq!(tmpl.fields[0].name, "slug");
@@ -600,7 +600,7 @@ mod tests {
     #[test]
     fn resolve_unknown_domain_errors() {
         let source = "in @filesytem\ntemplate $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let err = resolve_fs(ast).into_result().unwrap_err();
         assert!(err.message.contains("filesytem"), "{}", err);
         assert!(!err.hints.is_empty(), "should suggest @filesystem");
@@ -612,7 +612,7 @@ mod tests {
     #[test]
     fn resolve_unknown_template_errors() {
         let source = "in @filesystem\ntemplate $corpus {\n\tslug\n}\nout blog {\n\tpieces {\n\t\tdraft: 1draft { $coprus }\n\t}\n}\n";
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let err = resolve_fs(ast).into_result().unwrap_err();
         assert!(err.message.contains("coprus"), "{}", err);
         assert!(!err.hints.is_empty(), "should suggest $corpus");
@@ -623,7 +623,7 @@ mod tests {
     #[test]
     fn resolve_missing_output_errors() {
         let source = "in @filesystem\ntemplate $t {\n\tname\n}\n";
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let err = resolve_fs(ast).into_result().unwrap_err();
         assert!(err.message.contains("output"), "{}", err);
     }
@@ -691,7 +691,9 @@ mod tests {
     fn emit_produces_correct_output() {
         let source =
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\n";
-        let resolved = resolve_fs(Parse.trace(source.to_string()).into_result().unwrap()).into_result().unwrap();
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
+            .into_result()
+            .unwrap();
 
         let tree = dir_folder(
             "root",
@@ -703,7 +705,7 @@ mod tests {
                 )],
             )],
         );
-        let result = resolved.trace(tree).into_result().unwrap();
+        let result = resolved.trace(tree).unwrap();
         let items = result["root"]["items"].as_array().unwrap();
         assert_eq!(items[0]["slug"], "hello-world");
     }
@@ -711,16 +713,20 @@ mod tests {
     #[test]
     fn emit_missing_child_skips() {
         let source = "in @filesystem\ntemplate $t {\n\tname\n}\nout root {\n\tmissing {\n\t\titems: sub { $t }\n\t}\n}\n";
-        let resolved = resolve_fs(Parse.trace(source.to_string()).into_result().unwrap()).into_result().unwrap();
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
+            .into_result()
+            .unwrap();
         let tree = dir_folder("root", vec![]);
-        let result = resolved.trace(tree).into_result().unwrap();
+        let result = resolved.trace(tree).unwrap();
         assert!(result["root"].as_object().unwrap().is_empty());
     }
 
     #[test]
     fn emit_headlines_qualifier() {
         let source = "in @filesystem\ntemplate $t {\n\theadlines: h2\n}\nout root {\n\titems: sub { $t }\n}\n";
-        let resolved = resolve_fs(Parse.trace(source.to_string()).into_result().unwrap()).into_result().unwrap();
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
+            .into_result()
+            .unwrap();
 
         let tree = dir_folder(
             "root",
@@ -729,7 +735,7 @@ mod tests {
                 vec![leaf_folder("post.md", "## First\n## Second\n")],
             )],
         );
-        let result = resolved.trace(tree).into_result().unwrap();
+        let result = resolved.trace(tree).unwrap();
         let headlines = result["root"]["items"][0]["headlines"].as_array().unwrap();
         assert_eq!(headlines.len(), 2);
         assert_eq!(headlines[0], "First");
@@ -740,7 +746,9 @@ mod tests {
     fn emit_unknown_qualifier_produces_null() {
         let source =
             "in @filesystem\ntemplate $t {\n\tfield: unknown\n}\nout root {\n\titems: sub { $t }\n}\n";
-        let resolved = resolve_fs(Parse.trace(source.to_string()).into_result().unwrap()).into_result().unwrap();
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
+            .into_result()
+            .unwrap();
 
         let tree = dir_folder(
             "root",
@@ -749,7 +757,7 @@ mod tests {
                 vec![leaf_folder("f.md", "---\nfield: val\n---\n")],
             )],
         );
-        let result = resolved.trace(tree).into_result().unwrap();
+        let result = resolved.trace(tree).unwrap();
         assert!(result["root"]["items"][0]["field"].is_null());
     }
 
@@ -759,15 +767,16 @@ mod tests {
     fn with_domain_registers_external() {
         let resolve = Resolve::new().with_domain("html");
         let source = "in @html\nout r {\n\tx {}\n}\n";
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
-        let _resolved: Conversation<Filesystem> = resolve.trace(ast).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let _resolved: Conversation<Filesystem> = resolve.trace(ast).unwrap();
     }
 
     #[test]
     fn default_same_as_new() {
         let source = "in @filesystem\nout r {\n\tx {}\n}\n";
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
-        let _resolved: Conversation<Filesystem> = Resolve::default().trace(ast).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let _resolved: Conversation<Filesystem> =
+            Resolve::default().trace(ast).unwrap();
     }
 
     // -- Error: missing domain declaration --
@@ -776,7 +785,7 @@ mod tests {
     fn resolve_unknown_domain_suggests_external() {
         let resolve = Resolve::new().with_domain("graphql");
         let source = "in @graphq\nout r {\n\tx {}\n}\n";
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let result: Result<Conversation<Filesystem>, _> = resolve.trace(ast).into_result();
         let err = result.unwrap_err();
         assert!(err.message.contains("graphq"), "{}", err);
@@ -787,8 +796,8 @@ mod tests {
     #[test]
     fn resolve_missing_in_declaration_still_resolves() {
         let source = "template $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
-        let _resolved = resolve_fs(ast).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let _resolved = resolve_fs(ast).unwrap();
     }
 
     // -- Emit: missing folder in select skips --
@@ -796,9 +805,11 @@ mod tests {
     #[test]
     fn emit_missing_folder_in_select_skips() {
         let source = "in @filesystem\ntemplate $t {\n\tname\n}\nout root {\n\titems: nonexistent { $t }\n}\n";
-        let resolved = resolve_fs(Parse.trace(source.to_string()).into_result().unwrap()).into_result().unwrap();
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
+            .into_result()
+            .unwrap();
         let tree = dir_folder("root", vec![]);
-        let result = resolved.trace(tree).into_result().unwrap();
+        let result = resolved.trace(tree).unwrap();
         assert!(result["root"].as_object().unwrap().is_empty());
     }
 
@@ -807,7 +818,9 @@ mod tests {
     #[test]
     fn emit_group_with_child() {
         let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\tsub {\n\t\titems: data { $t }\n\t}\n}\n";
-        let resolved = resolve_fs(Parse.trace(source.to_string()).into_result().unwrap()).into_result().unwrap();
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
+            .into_result()
+            .unwrap();
         let tree = dir_folder(
             "root",
             vec![dir_folder(
@@ -818,7 +831,7 @@ mod tests {
                 )],
             )],
         );
-        let result = resolved.trace(tree).into_result().unwrap();
+        let result = resolved.trace(tree).unwrap();
         let items = result["root"]["sub"]["items"].as_array().unwrap();
         assert_eq!(items[0]["slug"], "hi");
     }
@@ -829,7 +842,9 @@ mod tests {
     fn emit_frontmatter_unclosed_returns_empty() {
         let source =
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\n";
-        let resolved = resolve_fs(Parse.trace(source.to_string()).into_result().unwrap()).into_result().unwrap();
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
+            .into_result()
+            .unwrap();
         let tree = dir_folder(
             "root",
             vec![dir_folder(
@@ -837,7 +852,7 @@ mod tests {
                 vec![leaf_folder("f.md", "---\nslug: test\nNo closing")],
             )],
         );
-        let result = resolved.trace(tree).into_result().unwrap();
+        let result = resolved.trace(tree).unwrap();
         // Unclosed frontmatter returns empty fields
         assert_eq!(result["root"]["items"][0]["slug"], "");
     }
@@ -880,7 +895,7 @@ mod tests {
                 ),
             ],
         );
-        let resolved = resolve_fs(root).into_result().unwrap();
+        let resolved = resolve_fs(root).unwrap();
         // Only the Field child is extracted, DomainRef is ignored
         assert_eq!(resolved.templates["$t"].fields.len(), 1);
     }
@@ -906,7 +921,7 @@ mod tests {
                 ),
             ],
         );
-        let resolved = resolve_fs(root).into_result().unwrap();
+        let resolved = resolve_fs(root).unwrap();
         // Only the Group child is extracted, In is ignored
         assert_eq!(resolved.content.children().len(), 1);
     }
@@ -954,7 +969,7 @@ mod tests {
                 ),
             ],
         );
-        let resolved = resolve_fs(root).into_result().unwrap();
+        let resolved = resolve_fs(root).unwrap();
         let field = &resolved.templates["$t"].fields[0];
         assert_eq!(field.qualifier.as_deref(), Some("h2"));
         assert!(field.pipe.is_none());
@@ -989,8 +1004,8 @@ mod tests {
     fn parse_then_resolve_composes() {
         let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
         // Parse → Resolve composes via explicit chaining
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
-        let _resolved = resolve_fs(ast).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let _resolved = resolve_fs(ast).unwrap();
     }
 
     // -- Bridge: from_source --
@@ -1065,7 +1080,7 @@ mod tests {
         );
 
         // Conversation IS a gradient: Tree<C::Token> → Value
-        let _result = resolved.trace(root).into_result().unwrap();
+        let _result = resolved.trace(root).unwrap();
     }
 
     // -- Litmus: real .conv against real filesystem --
@@ -1078,7 +1093,7 @@ mod tests {
         let se_path = std::env::var("SYSTEMIC_ENGINEERING")
             .unwrap_or_else(|_| "/Users/alexwolf/dev/systemic.engineering".into());
         let tree = Folder::read_tree(&format!("{}/blog", se_path));
-        let result = resolved.trace(tree).into_result().unwrap();
+        let result = resolved.trace(tree).unwrap();
 
         // Output shape matches .conv declaration
         let pieces = &result["blog"]["pieces"];

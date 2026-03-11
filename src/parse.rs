@@ -375,7 +375,7 @@ mod tests {
     #[test]
     fn parse_in_domain() {
         let source = "in @filesystem\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         let children = tree.children();
         let in_node = children.iter().find(|c| c.data().kind == Kind::In).unwrap();
         assert!(in_node.is_shard());
@@ -387,7 +387,7 @@ mod tests {
     #[test]
     fn parse_template_with_fields() {
         let source = "template $corpus {\n\tslug\n\texcerpt\n}\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         let children = tree.children();
         let tmpl = children
             .iter()
@@ -404,7 +404,7 @@ mod tests {
     #[test]
     fn parse_field_with_qualifier() {
         let source = "template $t {\n\theadlines: h2\n}\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         let tmpl = &tree.children()[0];
         let field = &tmpl.children()[0];
         assert_eq!(field.data().kind, Kind::Field);
@@ -417,7 +417,7 @@ mod tests {
     #[test]
     fn parse_field_with_pipe() {
         let source = "template $t {\n\thtml: article | @html\n}\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         let tmpl = &tree.children()[0];
         let field = &tmpl.children()[0];
         assert_eq!(field.data().value, "html");
@@ -434,7 +434,7 @@ mod tests {
     #[test]
     fn parse_out_with_group_and_selects() {
         let source = "out blog {\n\tpieces {\n\t\tdraft: 1draft { $corpus }\n\t}\n}\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         let out = tree
             .children()
             .iter()
@@ -459,7 +459,7 @@ mod tests {
     #[test]
     fn parse_full_conv_file() {
         let source = include_str!("../systemic.engineering.conv").to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
 
         // Root has children: In, Template, Out
         let children = tree.children();
@@ -486,7 +486,7 @@ mod tests {
     fn parse_without_output_succeeds() {
         // Parser is syntax only. Missing output is a resolver concern.
         let source = "in @filesystem\ntemplate $t {\n\tname\n}\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         assert!(!tree.children().is_empty());
     }
 
@@ -513,7 +513,7 @@ mod tests {
     #[test]
     fn parse_spans_track_byte_offsets() {
         let source = "in @filesystem\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         let in_node = tree
             .children()
             .iter()
@@ -549,7 +549,7 @@ mod tests {
     #[test]
     fn parse_empty_group() {
         let source = "out root {\n\tempty {}\n}\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         let out = &tree.children()[0];
         let group = &out.children()[0];
         assert_eq!(group.data().kind, Kind::Group);
@@ -567,7 +567,7 @@ mod tests {
     #[test]
     fn parse_bare_expr_in_output() {
         let source = "out root {\n\tnonsense\n}\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         let out = &tree.children()[0];
         let expr = &out.children()[0];
         assert_eq!(expr.data().kind, Kind::Expr);
@@ -577,7 +577,7 @@ mod tests {
     #[test]
     fn parse_blank_lines_and_comments_skipped() {
         let source = "# comment\n\n# another\nin @fs\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         assert_eq!(tree.children().len(), 1);
         assert_eq!(tree.children()[0].data().value, "@fs");
     }
@@ -585,7 +585,7 @@ mod tests {
     #[test]
     fn parse_template_with_blank_lines() {
         let source = "template $t {\n\n\tslug\n\n\texcerpt\n}\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         let tmpl = &tree.children()[0];
         assert_eq!(tmpl.children().len(), 2);
     }
@@ -593,7 +593,7 @@ mod tests {
     #[test]
     fn parse_out_with_blank_lines() {
         let source = "out r {\n\n\tg {\n\n\t\tx: f { $t }\n\n\t}\n\n}\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         let out = &tree.children()[0];
         assert_eq!(out.children().len(), 1);
     }
@@ -601,7 +601,7 @@ mod tests {
     #[test]
     fn parse_json_fixture() {
         let source = include_str!("../fixtures/json.conv");
-        let tree = Parse.trace(source.to_string()).into_result().unwrap();
+        let tree = Parse.trace(source.to_string()).unwrap();
         let out = &tree.children()[0];
         assert_eq!(out.data().kind, Kind::Out);
         assert_eq!(out.data().value, "@json");
@@ -611,7 +611,7 @@ mod tests {
     #[test]
     fn parse_parameterized_in() {
         let source = "in @git(branch: \"main\")\n";
-        let tree = Parse.trace(source.to_string()).into_result().unwrap();
+        let tree = Parse.trace(source.to_string()).unwrap();
         let in_node = &tree.children()[0];
         assert_eq!(in_node.data().kind, Kind::In);
         assert_eq!(in_node.data().value, "@git");
@@ -623,7 +623,7 @@ mod tests {
     #[test]
     fn parse_coverage_fixture() {
         let source = include_str!("../fixtures/coverage-on-last-3-main-commits.conv");
-        let tree = Parse.trace(source.to_string()).into_result().unwrap();
+        let tree = Parse.trace(source.to_string()).unwrap();
         let children = tree.children();
         assert_eq!(children.len(), 2); // in + pipeline
 
@@ -641,7 +641,7 @@ mod tests {
     #[test]
     fn parse_bare_out() {
         let source = "out @json\n";
-        let tree = Parse.trace(source.to_string()).into_result().unwrap();
+        let tree = Parse.trace(source.to_string()).unwrap();
         let out = &tree.children()[0];
         assert_eq!(out.data().kind, Kind::Out);
         assert_eq!(out.data().value, "@json");
@@ -651,14 +651,14 @@ mod tests {
     #[test]
     fn parse_empty_source() {
         let source = "".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         assert_eq!(tree.children().len(), 0);
     }
 
     #[test]
     fn parse_field_expr_in_output() {
         let source = "out root {\n\tlabel: value\n}\n".to_string();
-        let tree = Parse.trace(source).into_result().unwrap();
+        let tree = Parse.trace(source).unwrap();
         let out = &tree.children()[0];
         let field = &out.children()[0];
         assert_eq!(field.data().kind, Kind::Field);
@@ -672,7 +672,7 @@ mod tests {
     #[test]
     fn parse_commit_from_main_to_test_fixture() {
         let source = include_str!("../fixtures/commit-from-main-to-test.conv");
-        let tree = Parse.trace(source.to_string()).into_result().unwrap();
+        let tree = Parse.trace(source.to_string()).unwrap();
         let pipeline = &tree.children()[0];
         assert_eq!(pipeline.data().kind, Kind::Pipeline);
         assert_eq!(pipeline.children().len(), 3);
@@ -681,7 +681,7 @@ mod tests {
     #[test]
     fn parse_additive_fixture() {
         let source = include_str!("../fixtures/additive.conv");
-        let tree = Parse.trace(source.to_string()).into_result().unwrap();
+        let tree = Parse.trace(source.to_string()).unwrap();
         let children = tree.children();
         assert_eq!(children.len(), 3); // two ins + one out
 
@@ -702,7 +702,7 @@ mod tests {
     #[test]
     fn parse_aliased_in() {
         let source = "in @number as $a\n";
-        let tree = Parse.trace(source.to_string()).into_result().unwrap();
+        let tree = Parse.trace(source.to_string()).unwrap();
         let in_node = &tree.children()[0];
         assert_eq!(in_node.data().kind, Kind::In);
         assert_eq!(in_node.data().value, "@number");
@@ -714,7 +714,7 @@ mod tests {
     #[test]
     fn parse_anonymous_out_with_exprs() {
         let source = "out {\n\tsimple: $a + $b\n\tcurried + $b\n\tmagic: +\n}\n";
-        let tree = Parse.trace(source.to_string()).into_result().unwrap();
+        let tree = Parse.trace(source.to_string()).unwrap();
         let out = &tree.children()[0];
         assert_eq!(out.data().kind, Kind::Out);
         assert_eq!(out.data().value, "");
@@ -740,7 +740,7 @@ mod tests {
     #[test]
     fn parse_pipeline_bare_domain() {
         let source = "@fs | data | @json\n";
-        let tree = Parse.trace(source.to_string()).into_result().unwrap();
+        let tree = Parse.trace(source.to_string()).unwrap();
         let pipeline = &tree.children()[0];
         assert_eq!(pipeline.data().kind, Kind::Pipeline);
         assert_eq!(pipeline.children().len(), 3);
@@ -763,7 +763,7 @@ mod tests {
     #[test]
     fn parse_pipeline() {
         let source = "@git(branch: \"master\") | HEAD | @git(branch: \"test\")\n";
-        let tree = Parse.trace(source.to_string()).into_result().unwrap();
+        let tree = Parse.trace(source.to_string()).unwrap();
         let pipeline = &tree.children()[0];
         assert_eq!(pipeline.data().kind, Kind::Pipeline);
         assert_eq!(pipeline.children().len(), 3);

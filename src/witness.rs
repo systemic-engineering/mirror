@@ -133,6 +133,17 @@ impl<T, E> Trace<T, E> {
             Trace::Branch { result, .. } => result,
         }
     }
+
+    /// Consume the trace, returning the value or panicking on error.
+    pub fn unwrap(self) -> T
+    where
+        E: std::fmt::Debug,
+    {
+        match self.into_result() {
+            Ok(v) => v,
+            Err(e) => panic!("called `Trace::unwrap()` on an Err value: {:?}", e),
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -420,6 +431,19 @@ mod tests {
 
         let t: Trace<i32, ()> = Trace::branch(Ok(99), Oid::new("root"), vec![]);
         assert_eq!(t.into_result(), Ok(99));
+    }
+
+    #[test]
+    fn trace_unwrap_returns_value() {
+        let t: Trace<i32, &str> = Trace::leaf(Ok(42), Oid::new("abc"));
+        assert_eq!(t.unwrap(), 42);
+    }
+
+    #[test]
+    #[should_panic(expected = "called `Trace::unwrap()` on an Err")]
+    fn trace_unwrap_panics_on_err() {
+        let t: Trace<i32, &str> = Trace::leaf(Err("boom"), Oid::new("err"));
+        t.unwrap();
     }
 
     #[test]

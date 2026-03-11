@@ -235,7 +235,7 @@ mod tests {
     fn traversal_gradient_trace_extracts_with_source() {
         let g = TraversalGradient(AllSomes);
         let source = vec![Some(1), None, Some(3)];
-        let (s, items) = g.trace(source.clone()).into_result().unwrap();
+        let (s, items) = g.trace(source.clone()).unwrap();
         assert_eq!(s, source);
         assert_eq!(items, vec![1, 3]);
     }
@@ -244,7 +244,7 @@ mod tests {
     fn traversal_gradient_roundtrip() {
         let g = TraversalGradient(AllSomes);
         let source = vec![Some(1), None, Some(3)];
-        let (s, items) = g.trace(source).into_result().unwrap();
+        let (s, items) = g.trace(source).unwrap();
         let rebuilt = AllSomes.rebuild(s, items);
         assert_eq!(rebuilt, vec![Some(1), None, Some(3)]);
     }
@@ -297,7 +297,7 @@ mod tests {
     fn prism_as_traversal_as_gradient() {
         let g = TraversalGradient(PrismAsTraversal(CircleRadius));
         let source = vec![Shape::Circle(1.0), Shape::Square(2.0), Shape::Circle(3.0)];
-        let (_, radii) = g.trace(source).into_result().unwrap();
+        let (_, radii) = g.trace(source).unwrap();
         assert_eq!(radii, vec![1.0, 3.0]);
     }
 }
