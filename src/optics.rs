@@ -393,4 +393,23 @@ mod tests {
         let g = PrismGradient(SelectPrism(is_circle));
         assert_eq!(g.trace(Shape::Square(3.0)).into_result(), Err(NotFound));
     }
+
+    // -- rewrite tests --
+
+    #[test]
+    fn rewrite_replaces_matching_elements() {
+        let source = vec![Shape::Circle(1.0), Shape::Square(2.0), Shape::Circle(3.0)];
+        let result = rewrite(source, is_circle, |_| Shape::Square(0.0));
+        assert_eq!(
+            result,
+            vec![Shape::Square(0.0), Shape::Square(2.0), Shape::Square(0.0)]
+        );
+    }
+
+    #[test]
+    fn rewrite_preserves_non_matching() {
+        let source = vec![Shape::Square(1.0), Shape::Square(2.0)];
+        let result = rewrite(source, is_circle, |_| Shape::Circle(0.0));
+        assert_eq!(result, source);
+    }
 }
