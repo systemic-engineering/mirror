@@ -998,7 +998,10 @@ mod tests {
 
     #[test]
     fn parse_when_no_operator_propagates_parse_error() {
-        let err = Parse.trace("when active\n".to_string()).into_result().unwrap_err();
+        let err = Parse
+            .trace("when active\n".to_string())
+            .into_result()
+            .unwrap_err();
         assert!(err.message.contains("active"), "{}", err.message);
     }
 
