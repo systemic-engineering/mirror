@@ -850,6 +850,15 @@ mod tests {
         assert_eq!(result["root"]["items"][0]["slug"], "");
     }
 
+    // -- Resolver ignores when clauses --
+
+    #[test]
+    fn resolve_with_when_clause_succeeds() {
+        let source = "in @filesystem\nwhen error.rate > 0.1\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let _resolved = resolve_fs(ast).unwrap();
+    }
+
     // -- Resolve ignores unknown AST children --
 
     #[test]

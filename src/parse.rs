@@ -149,6 +149,13 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
             continue;
         }
 
+        if let Some(rest) = trimmed.strip_prefix("when ") {
+            let when_node = parse_when(rest, lines.current_span());
+            children.push(when_node);
+            lines.advance();
+            continue;
+        }
+
         if let Some(rest) = trimmed.strip_prefix("template ") {
             let tmpl = parse_template(rest, &mut lines)?;
             children.push(tmpl);
@@ -389,6 +396,26 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
     }
 
     ast::ast_branch(Kind::Use, "use", span, children)
+}
+
+/// Parse a when predicate: `error.rate > 0.1`, `status == "active"`, etc.
+///
+/// Operator detection: two-char operators before single-char to avoid false matches.
+/// Structure: When(op) with Path (left) and Literal (right) as children.
+fn parse_when(rest: &str, span: Span) -> Tree<AstNode> {
+    let ops = [">=", "<=", "!=", "==", ">", "<"];
+    for op in ops {
+        if let Some(idx) = rest.find(op) {
+            let path = rest[..idx].trim();
+            let literal = rest[idx + op.len()..].trim();
+            let children = vec![
+                ast::ast_leaf(Kind::Path, path, span),
+                ast::ast_leaf(Kind::Literal, literal, span),
+            ];
+            return ast::ast_branch(Kind::When, op, span, children);
+        }
+    }
+    ast::ast_leaf(Kind::When, rest.trim(), span)
 }
 
 /// Parse a pipeline: `@git(branch: "master") | HEAD | @git(branch: "test")`
@@ -942,6 +969,27 @@ mod tests {
             .find(|c| c.data().kind == Kind::When)
             .unwrap();
         assert_eq!(when_node.data().value, ">");
+    }
+
+    #[test]
+    fn parse_bare_field_with_pipe() {
+        // "slug | @sha" in a template: bare field (no colon) with a pipe
+        let source = "template $t {\n\tslug | @sha\n}\n".to_string();
+        let tree = Parse.trace(source).unwrap();
+        let tmpl = &tree.children()[0];
+        let field = &tmpl.children()[0];
+        assert_eq!(field.data().kind, Kind::Field);
+        assert_eq!(field.data().value, "slug");
+        assert!(field.is_fractal());
+        assert_eq!(field.children()[0].data().kind, Kind::Pipe);
+        assert_eq!(field.children()[0].data().value, "@sha");
+    }
+
+    #[test]
+    fn parse_when_no_operator() {
+        let node = parse_when("active", Span::new(0, 6));
+        assert_eq!(node.data().kind, Kind::When);
+        assert_eq!(node.data().value, "active");
     }
 
     #[test]
