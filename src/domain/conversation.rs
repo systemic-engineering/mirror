@@ -44,12 +44,23 @@ pub enum Kind {
     Expr,
     /// `use $name from @domain` — import statement
     Use,
-    /// `when error.rate > 0.1` — guard clause
-    When,
+    /// `when error.rate > 0.1` — guard clause; the Op IS the comparison
+    When(Op),
     /// `error.rate` — dot-separated path (Conversation space navigation)
     Path,
     /// `0.1`, `"health"`, `true` — literal value in a predicate
     Literal,
+}
+
+/// Comparison operator in a `when` guard clause.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Op {
+    Gt,  // >
+    Lt,  // <
+    Gte, // >=
+    Lte, // <=
+    Eq,  // ==
+    Ne,  // !=
 }
 
 impl Context for Conversation {
