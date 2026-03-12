@@ -142,6 +142,13 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
             continue;
         }
 
+        if let Some(rest) = trimmed.strip_prefix("use ") {
+            let use_node = parse_use(rest, lines.current_span());
+            children.push(use_node);
+            lines.advance();
+            continue;
+        }
+
         if let Some(rest) = trimmed.strip_prefix("template ") {
             let tmpl = parse_template(rest, &mut lines)?;
             children.push(tmpl);
@@ -221,6 +228,12 @@ fn parse_field(text: &str, span: Span) -> Tree<AstNode> {
             children.push(ast::ast_leaf(Kind::Pipe, pipe_value, span));
         }
 
+        ast::ast_branch(Kind::Field, name, span, children)
+    } else if let Some((name, pipe)) = text.split_once('|') {
+        // Bare field with pipe: "slug | @sha"
+        let name = name.trim();
+        let pipe_value = pipe.trim();
+        let children = vec![ast::ast_leaf(Kind::Pipe, pipe_value, span)];
         ast::ast_branch(Kind::Field, name, span, children)
     } else {
         ast::ast_leaf(Kind::Field, text.trim(), span)
@@ -331,6 +344,51 @@ fn parse_block_body(
         message: "unclosed block".into(),
         span: Some(open_span),
     })
+}
+
+/// Parse a use statement.
+///
+/// Forms:
+/// - `$name from @domain`           → single import
+/// - `{ $a, $b } from @domain`      → destructured
+/// - `$name from @domain sha: ABC`  → locked
+fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
+    let mut children = Vec::new();
+
+    // Split on " from " to get names part and source part
+    let (names_part, source_part) = match rest.split_once(" from ") {
+        Some((n, s)) => (n.trim(), s.trim()),
+        None => (rest, ""),
+    };
+
+    // Parse names: either `{ $a, $b }` or `$name`
+    if names_part.starts_with('{') {
+        let inner = names_part.trim_start_matches('{').trim_end_matches('}');
+        for name in inner.split(',') {
+            let name = name.trim();
+            if !name.is_empty() {
+                children.push(ast::ast_leaf(Kind::TemplateRef, name, span));
+            }
+        }
+    } else {
+        children.push(ast::ast_leaf(Kind::TemplateRef, names_part, span));
+    }
+
+    // Parse source: `@domain` possibly followed by `sha: ABC`
+    let (domain, sha_param) = match source_part.split_once(" sha: ") {
+        Some((d, s)) => (d.trim(), Some(format!("sha: {}", s.trim()))),
+        None => (source_part, None),
+    };
+
+    if !domain.is_empty() {
+        children.push(ast::ast_leaf(Kind::DomainRef, domain, span));
+    }
+
+    if let Some(param) = sha_param {
+        children.push(ast::ast_leaf(Kind::DomainParam, param, span));
+    }
+
+    ast::ast_branch(Kind::Use, "use", span, children)
 }
 
 /// Parse a pipeline: `@git(branch: "master") | HEAD | @git(branch: "test")`
@@ -735,6 +793,155 @@ mod tests {
         assert_eq!(magic.data().value, "magic");
         assert_eq!(magic.children()[0].data().kind, Kind::Expr);
         assert_eq!(magic.children()[0].data().value, "+");
+    }
+
+    // -- Parse `use` imports --
+
+    #[test]
+    fn parse_use_single() {
+        let source = "use $corpus from @shared\n".to_string();
+        let tree = Parse.trace(source).unwrap();
+        let children = tree.children();
+        let use_node = children
+            .iter()
+            .find(|c| c.data().kind == Kind::Use)
+            .unwrap();
+        assert!(use_node.is_fractal());
+        assert_eq!(use_node.data().value, "use");
+        let use_children = use_node.children();
+        assert_eq!(use_children.len(), 2);
+        assert_eq!(use_children[0].data().kind, Kind::TemplateRef);
+        assert_eq!(use_children[0].data().value, "$corpus");
+        assert_eq!(use_children[1].data().kind, Kind::DomainRef);
+        assert_eq!(use_children[1].data().value, "@shared");
+    }
+
+    #[test]
+    fn parse_use_destructured() {
+        let source = "use { $a, $b } from @other\n".to_string();
+        let tree = Parse.trace(source).unwrap();
+        let use_node = tree
+            .children()
+            .iter()
+            .find(|c| c.data().kind == Kind::Use)
+            .unwrap();
+        let use_children = use_node.children();
+        assert_eq!(use_children.len(), 3); // $a, $b, @other
+        assert_eq!(use_children[0].data().kind, Kind::TemplateRef);
+        assert_eq!(use_children[0].data().value, "$a");
+        assert_eq!(use_children[1].data().kind, Kind::TemplateRef);
+        assert_eq!(use_children[1].data().value, "$b");
+        assert_eq!(use_children[2].data().kind, Kind::DomainRef);
+        assert_eq!(use_children[2].data().value, "@other");
+    }
+
+    #[test]
+    fn parse_use_with_sha_lock() {
+        let source = "use $garden from @garden@systemic.engineering sha: ABC123\n".to_string();
+        let tree = Parse.trace(source).unwrap();
+        let use_node = tree
+            .children()
+            .iter()
+            .find(|c| c.data().kind == Kind::Use)
+            .unwrap();
+        let use_children = use_node.children();
+        // $garden, @garden@systemic.engineering, sha param
+        assert_eq!(use_children[0].data().kind, Kind::TemplateRef);
+        assert_eq!(use_children[0].data().value, "$garden");
+        assert_eq!(use_children[1].data().kind, Kind::DomainRef);
+        assert_eq!(use_children[1].data().value, "@garden@systemic.engineering");
+        assert_eq!(use_children[2].data().kind, Kind::DomainParam);
+        assert_eq!(use_children[2].data().value, "sha: ABC123");
+    }
+
+    #[test]
+    fn parse_use_without_from() {
+        // Malformed: no "from" keyword — still parses, just has no domain ref
+        let source = "use $orphan\n".to_string();
+        let tree = Parse.trace(source).unwrap();
+        let use_node = tree
+            .children()
+            .iter()
+            .find(|c| c.data().kind == Kind::Use)
+            .unwrap();
+        let use_children = use_node.children();
+        assert_eq!(use_children.len(), 1);
+        assert_eq!(use_children[0].data().kind, Kind::TemplateRef);
+        assert_eq!(use_children[0].data().value, "$orphan");
+    }
+
+    #[test]
+    fn parse_use_appears_before_template() {
+        let source =
+            "use $t from @shared\ntemplate $local {\n\tslug\n}\nout r {\n\tx: f { $local }\n}\n"
+                .to_string();
+        let tree = Parse.trace(source).unwrap();
+        let children = tree.children();
+        assert_eq!(children[0].data().kind, Kind::Use);
+        assert_eq!(children[1].data().kind, Kind::Template);
+        assert_eq!(children[2].data().kind, Kind::Out);
+    }
+
+    // -- Parse `when` predicates --
+
+    #[test]
+    fn parse_when_greater_than() {
+        let node = parse_when("error.rate > 0.1", Span::new(0, 20));
+        assert_eq!(node.data().kind, Kind::When);
+        assert_eq!(node.data().value, ">");
+        assert_eq!(node.children()[0].data().kind, Kind::Path);
+        assert_eq!(node.children()[0].data().value, "error.rate");
+        assert_eq!(node.children()[1].data().kind, Kind::Literal);
+        assert_eq!(node.children()[1].data().value, "0.1");
+    }
+
+    #[test]
+    fn parse_when_equals() {
+        let node = parse_when("status == \"active\"", Span::new(0, 20));
+        assert_eq!(node.data().kind, Kind::When);
+        assert_eq!(node.data().value, "==");
+        assert_eq!(node.children()[0].data().value, "status");
+        assert_eq!(node.children()[1].data().value, "\"active\"");
+    }
+
+    #[test]
+    fn parse_when_less_equal() {
+        let node = parse_when("count <= 10", Span::new(0, 15));
+        assert_eq!(node.data().kind, Kind::When);
+        assert_eq!(node.data().value, "<=");
+        assert_eq!(node.children()[0].data().value, "count");
+        assert_eq!(node.children()[1].data().value, "10");
+    }
+
+    #[test]
+    fn parse_when_not_equal() {
+        let node = parse_when("mode != \"debug\"", Span::new(0, 20));
+        assert_eq!(node.data().kind, Kind::When);
+        assert_eq!(node.data().value, "!=");
+        assert_eq!(node.children()[0].data().value, "mode");
+        assert_eq!(node.children()[1].data().value, "\"debug\"");
+    }
+
+    #[test]
+    fn parse_when_dotted_path() {
+        let node = parse_when("error.rate.current > 0.5", Span::new(0, 25));
+        assert_eq!(node.data().kind, Kind::When);
+        assert_eq!(node.data().value, ">");
+        assert_eq!(node.children()[0].data().kind, Kind::Path);
+        assert_eq!(node.children()[0].data().value, "error.rate.current");
+        assert_eq!(node.children()[1].data().value, "0.5");
+    }
+
+    #[test]
+    fn parse_when_appears_between_in_and_out() {
+        let source = "in @datadog\nwhen error.rate > 0.1\nout r {\n\tx {}\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let children = tree.children();
+        let when_node = children
+            .iter()
+            .find(|c| c.data().kind == Kind::When)
+            .unwrap();
+        assert_eq!(when_node.data().value, ">");
     }
 
     #[test]

@@ -42,6 +42,14 @@ pub enum Kind {
     Alias,
     /// `$a + $b` — expression in output block
     Expr,
+    /// `use $name from @domain` — import statement
+    Use,
+    /// `when error.rate > 0.1` — guard clause
+    When,
+    /// `error.rate` — dot-separated path (Conversation space navigation)
+    Path,
+    /// `0.1`, `"health"`, `true` — literal value in a predicate
+    Literal,
 }
 
 impl Context for Conversation {
