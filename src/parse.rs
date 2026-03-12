@@ -4,7 +4,7 @@
 //! Wrap in Witnessed to observe every parse through a Session.
 
 use crate::ast::{self, AstNode, Span};
-use crate::domain::conversation::Kind;
+use crate::domain::conversation::{Kind, Op};
 use crate::gradient::Gradient;
 use crate::tree::Tree;
 use crate::witness::Trace;
@@ -150,7 +150,7 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
         }
 
         if let Some(rest) = trimmed.strip_prefix("when ") {
-            let when_node = parse_when(rest, lines.current_span());
+            let when_node = parse_when(rest, lines.current_span())?;
             children.push(when_node);
             lines.advance();
             continue;
@@ -401,21 +401,31 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
 /// Parse a when predicate: `error.rate > 0.1`, `status == "active"`, etc.
 ///
 /// Operator detection: two-char operators before single-char to avoid false matches.
-/// Structure: When(op) with Path (left) and Literal (right) as children.
-fn parse_when(rest: &str, span: Span) -> Tree<AstNode> {
-    let ops = [">=", "<=", "!=", "==", ">", "<"];
-    for op in ops {
-        if let Some(idx) = rest.find(op) {
+/// Structure: When(Op) with Path (left) and Literal (right) as children.
+fn parse_when(rest: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+    let ops: &[(&str, Op)] = &[
+        (">=", Op::Gte),
+        ("<=", Op::Lte),
+        ("!=", Op::Ne),
+        ("==", Op::Eq),
+        (">", Op::Gt),
+        ("<", Op::Lt),
+    ];
+    for (sym, op) in ops {
+        if let Some(idx) = rest.find(sym) {
             let path = rest[..idx].trim();
-            let literal = rest[idx + op.len()..].trim();
+            let literal = rest[idx + sym.len()..].trim();
             let children = vec![
                 ast::ast_leaf(Kind::Path, path, span),
                 ast::ast_leaf(Kind::Literal, literal, span),
             ];
-            return ast::ast_branch(Kind::When, op, span, children);
+            return Ok(ast::ast_branch(Kind::When(op.clone()), "", span, children));
         }
     }
-    ast::ast_leaf(Kind::When, rest.trim(), span)
+    Err(ParseError {
+        message: format!("when: no comparison operator in: {}", rest),
+        span: Some(span),
+    })
 }
 
 /// Parse a pipeline: `@git(branch: "master") | HEAD | @git(branch: "test")`
@@ -913,9 +923,8 @@ mod tests {
 
     #[test]
     fn parse_when_greater_than() {
-        let node = parse_when("error.rate > 0.1", Span::new(0, 20));
-        assert_eq!(node.data().kind, Kind::When);
-        assert_eq!(node.data().value, ">");
+        let node = parse_when("error.rate > 0.1", Span::new(0, 20)).unwrap();
+        assert_eq!(node.data().kind, Kind::When(Op::Gt));
         assert_eq!(node.children()[0].data().kind, Kind::Path);
         assert_eq!(node.children()[0].data().value, "error.rate");
         assert_eq!(node.children()[1].data().kind, Kind::Literal);
@@ -924,36 +933,32 @@ mod tests {
 
     #[test]
     fn parse_when_equals() {
-        let node = parse_when("status == \"active\"", Span::new(0, 20));
-        assert_eq!(node.data().kind, Kind::When);
-        assert_eq!(node.data().value, "==");
+        let node = parse_when("status == \"active\"", Span::new(0, 20)).unwrap();
+        assert_eq!(node.data().kind, Kind::When(Op::Eq));
         assert_eq!(node.children()[0].data().value, "status");
         assert_eq!(node.children()[1].data().value, "\"active\"");
     }
 
     #[test]
     fn parse_when_less_equal() {
-        let node = parse_when("count <= 10", Span::new(0, 15));
-        assert_eq!(node.data().kind, Kind::When);
-        assert_eq!(node.data().value, "<=");
+        let node = parse_when("count <= 10", Span::new(0, 15)).unwrap();
+        assert_eq!(node.data().kind, Kind::When(Op::Lte));
         assert_eq!(node.children()[0].data().value, "count");
         assert_eq!(node.children()[1].data().value, "10");
     }
 
     #[test]
     fn parse_when_not_equal() {
-        let node = parse_when("mode != \"debug\"", Span::new(0, 20));
-        assert_eq!(node.data().kind, Kind::When);
-        assert_eq!(node.data().value, "!=");
+        let node = parse_when("mode != \"debug\"", Span::new(0, 20)).unwrap();
+        assert_eq!(node.data().kind, Kind::When(Op::Ne));
         assert_eq!(node.children()[0].data().value, "mode");
         assert_eq!(node.children()[1].data().value, "\"debug\"");
     }
 
     #[test]
     fn parse_when_dotted_path() {
-        let node = parse_when("error.rate.current > 0.5", Span::new(0, 25));
-        assert_eq!(node.data().kind, Kind::When);
-        assert_eq!(node.data().value, ">");
+        let node = parse_when("error.rate.current > 0.5", Span::new(0, 25)).unwrap();
+        assert_eq!(node.data().kind, Kind::When(Op::Gt));
         assert_eq!(node.children()[0].data().kind, Kind::Path);
         assert_eq!(node.children()[0].data().value, "error.rate.current");
         assert_eq!(node.children()[1].data().value, "0.5");
@@ -966,9 +971,9 @@ mod tests {
         let children = tree.children();
         let when_node = children
             .iter()
-            .find(|c| c.data().kind == Kind::When)
+            .find(|c| matches!(c.data().kind, Kind::When(_)))
             .unwrap();
-        assert_eq!(when_node.data().value, ">");
+        assert_eq!(when_node.data().kind, Kind::When(Op::Gt));
     }
 
     #[test]
@@ -986,10 +991,15 @@ mod tests {
     }
 
     #[test]
-    fn parse_when_no_operator() {
-        let node = parse_when("active", Span::new(0, 6));
-        assert_eq!(node.data().kind, Kind::When);
-        assert_eq!(node.data().value, "active");
+    fn parse_when_no_operator_errors() {
+        let err = parse_when("active", Span::new(0, 6)).unwrap_err();
+        assert!(err.message.contains("active"), "{}", err.message);
+    }
+
+    #[test]
+    fn parse_when_no_operator_propagates_parse_error() {
+        let err = Parse.trace("when active\n".to_string()).into_result().unwrap_err();
+        assert!(err.message.contains("active"), "{}", err.message);
     }
 
     #[test]
