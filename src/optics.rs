@@ -126,6 +126,22 @@ impl<S, A, P: Prism<S, A>> Traversal<Vec<S>, A> for PrismAsTraversal<P> {
     }
 }
 
+/// Rewrite elements matching a predicate.
+///
+/// Composes `PrismAsTraversal(SelectPrism(predicate))`:
+/// traverse selects matching elements, `f` transforms each,
+/// rebuild puts them back. Non-matching elements pass through unchanged.
+pub fn rewrite<S: Clone>(
+    source: Vec<S>,
+    predicate: impl Fn(&S) -> bool,
+    f: impl FnMut(S) -> S,
+) -> Vec<S> {
+    let optic = PrismAsTraversal(SelectPrism(predicate));
+    let matched = optic.traverse(&source);
+    let modified: Vec<S> = matched.into_iter().map(f).collect();
+    optic.rebuild(source, modified)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -410,6 +426,6 @@ mod tests {
     fn rewrite_preserves_non_matching() {
         let source = vec![Shape::Square(1.0), Shape::Square(2.0)];
         let result = rewrite(source, is_circle, |_| Shape::Circle(0.0));
-        assert_eq!(result, source);
+        assert_eq!(result, vec![Shape::Square(1.0), Shape::Square(2.0)]);
     }
 }
