@@ -156,6 +156,12 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
             continue;
         }
 
+        if let Some(rest) = trimmed.strip_prefix("case ") {
+            let case_node = parse_case(rest, &mut lines)?;
+            children.push(case_node);
+            continue;
+        }
+
         if let Some(rest) = trimmed.strip_prefix("template ") {
             let tmpl = parse_template(rest, &mut lines)?;
             children.push(tmpl);
@@ -424,6 +430,94 @@ fn parse_when(rest: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
     }
     Err(ParseError {
         message: format!("when: no comparison operator in: {}", rest),
+        span: Some(span),
+    })
+}
+
+/// Parse a case block: `error.rate {\n  > 0.1 -> alert\n  _ -> pass\n}`
+///
+/// Header has already been stripped of `case `. Contains subject + `{`.
+/// Arms parsed line-by-line inside the block.
+fn parse_case(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+    let subject = header.split('{').next().unwrap().trim();
+    let start_span = lines.current_span();
+    lines.advance(); // consume case line
+
+    let mut arms = Vec::new();
+
+    while let Some(line) = lines.peek() {
+        let trimmed = line.trim();
+
+        if trimmed == "}" {
+            let end_span = lines.current_span();
+            lines.advance();
+            let span = start_span.merge(&end_span);
+            return Ok(ast::ast_branch(Kind::Case, subject, span, arms));
+        }
+
+        if trimmed.is_empty() {
+            lines.advance();
+            continue;
+        }
+
+        let arm = parse_arm(trimmed, lines.current_span())?;
+        arms.push(arm);
+        lines.advance();
+    }
+
+    Err(ParseError {
+        message: "unclosed case block".into(),
+        span: Some(start_span),
+    })
+}
+
+/// Parse a single case arm: `> 0.1 -> alert` or `_ -> pass`.
+///
+/// Split on ` -> ` to separate pattern from body.
+/// Pattern is either `_` (Wild) or an operator + literal (Cmp).
+fn parse_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+    let (pattern_str, body_str) = match text.split_once(" -> ") {
+        Some((p, b)) => (p.trim(), b.trim()),
+        None => {
+            return Err(ParseError {
+                message: format!("arm: missing ' -> ' in: {}", text),
+                span: Some(span),
+            })
+        }
+    };
+
+    let body = ast::ast_leaf(Kind::Expr, body_str, span);
+
+    let pattern = if pattern_str == "_" {
+        ast::ast_leaf(Kind::Wild, "", span)
+    } else {
+        parse_cmp(pattern_str, span)?
+    };
+
+    Ok(ast::ast_branch(Kind::Arm, "", span, vec![pattern, body]))
+}
+
+/// Parse a comparison pattern: `> 0.1`, `>= 3`, `== "active"`, etc.
+///
+/// Operator detection: two-char operators before single-char to avoid false matches.
+/// The operator must be a prefix of the pattern text.
+fn parse_cmp(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+    let ops: &[(&str, Op)] = &[
+        (">=", Op::Gte),
+        ("<=", Op::Lte),
+        ("!=", Op::Ne),
+        ("==", Op::Eq),
+        (">", Op::Gt),
+        ("<", Op::Lt),
+    ];
+    for (sym, op) in ops {
+        if let Some(rest) = text.strip_prefix(sym) {
+            let literal = rest.trim();
+            return Ok(ast::ast_leaf(Kind::Cmp(op.clone()), literal, span));
+        }
+    }
+    Err(ParseError {
+        message: format!("arm: no comparison operator in: {}", text),
         span: Some(span),
     })
 }
@@ -1085,7 +1179,8 @@ mod tests {
 
     #[test]
     fn parse_case_multiple_arms() {
-        let source = "case error.rate {\n  > 0.1 -> critical\n  > 0.05 -> warning\n  _ -> pass\n}\n";
+        let source =
+            "case error.rate {\n  > 0.1 -> critical\n  > 0.05 -> warning\n  _ -> pass\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let case_node = &tree.children()[0];
         assert_eq!(case_node.data().kind, Kind::Case);
@@ -1113,17 +1208,36 @@ mod tests {
         let tree = Parse.trace(source.to_string()).unwrap();
         let case_node = &tree.children()[0];
         assert_eq!(case_node.children().len(), 6);
-        assert_eq!(case_node.children()[0].children()[0].data().kind, Kind::Cmp(Op::Gt));
-        assert_eq!(case_node.children()[1].children()[0].data().kind, Kind::Cmp(Op::Lt));
-        assert_eq!(case_node.children()[2].children()[0].data().kind, Kind::Cmp(Op::Gte));
-        assert_eq!(case_node.children()[3].children()[0].data().kind, Kind::Cmp(Op::Lte));
-        assert_eq!(case_node.children()[4].children()[0].data().kind, Kind::Cmp(Op::Eq));
-        assert_eq!(case_node.children()[5].children()[0].data().kind, Kind::Cmp(Op::Ne));
+        assert_eq!(
+            case_node.children()[0].children()[0].data().kind,
+            Kind::Cmp(Op::Gt)
+        );
+        assert_eq!(
+            case_node.children()[1].children()[0].data().kind,
+            Kind::Cmp(Op::Lt)
+        );
+        assert_eq!(
+            case_node.children()[2].children()[0].data().kind,
+            Kind::Cmp(Op::Gte)
+        );
+        assert_eq!(
+            case_node.children()[3].children()[0].data().kind,
+            Kind::Cmp(Op::Lte)
+        );
+        assert_eq!(
+            case_node.children()[4].children()[0].data().kind,
+            Kind::Cmp(Op::Eq)
+        );
+        assert_eq!(
+            case_node.children()[5].children()[0].data().kind,
+            Kind::Cmp(Op::Ne)
+        );
     }
 
     #[test]
     fn parse_case_appears_in_source() {
-        let source = "in @datadog\ncase error.rate {\n  > 0.1 -> alert\n  _ -> pass\n}\nout @json\n";
+        let source =
+            "in @datadog\ncase error.rate {\n  > 0.1 -> alert\n  _ -> pass\n}\nout @json\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let children = tree.children();
         assert_eq!(children[0].data().kind, Kind::In);
@@ -1135,21 +1249,41 @@ mod tests {
     fn parse_case_error_no_arrow() {
         let source = "case x {\n  > 1 oops\n}\n";
         let err = Parse.trace(source.to_string()).into_result().unwrap_err();
-        assert!(err.message.contains("->"), "expected mention of '->': {}", err.message);
+        assert!(
+            err.message.contains("->"),
+            "expected mention of '->': {}",
+            err.message
+        );
     }
 
     #[test]
     fn parse_case_error_no_operator() {
         let source = "case x {\n  1 -> a\n}\n";
         let err = Parse.trace(source.to_string()).into_result().unwrap_err();
-        assert!(err.message.contains("operator") || err.message.contains("1"),
-            "expected mention of operator: {}", err.message);
+        assert!(
+            err.message.contains("operator") || err.message.contains("1"),
+            "expected mention of operator: {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_case_with_blank_lines() {
+        let source = "case x {\n\n  > 1 -> a\n\n  _ -> b\n\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let case_node = &tree.children()[0];
+        assert_eq!(case_node.data().kind, Kind::Case);
+        assert_eq!(case_node.children().len(), 2);
     }
 
     #[test]
     fn parse_case_error_unclosed() {
         let source = "case x {\n  > 1 -> a\n";
         let err = Parse.trace(source.to_string()).into_result().unwrap_err();
-        assert!(err.message.contains("unclosed"), "expected 'unclosed': {}", err.message);
+        assert!(
+            err.message.contains("unclosed"),
+            "expected 'unclosed': {}",
+            err.message
+        );
     }
 }
