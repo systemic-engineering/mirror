@@ -50,9 +50,17 @@ pub enum Kind {
     Path,
     /// `0.1`, `"health"`, `true` — literal value in a predicate
     Literal,
+    /// `case error.rate { ... }` — multi-arm dispatch. value = subject path.
+    Case,
+    /// One arm in a case block. Children: [pattern, Expr].
+    Arm,
+    /// `> 0.1`, `== "active"` — comparison pattern in a case arm. value = literal.
+    Cmp(Op),
+    /// `_` — wildcard pattern. Matches anything.
+    Wild,
 }
 
-/// Comparison operator in a `when` guard clause.
+/// Comparison operator — shared by `When` guards and `Cmp` case arm patterns.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Op {
     Gt,  // >

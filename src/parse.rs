@@ -1054,4 +1054,102 @@ mod tests {
         assert_eq!(right.children()[0].data().kind, Kind::DomainParam);
         assert_eq!(right.children()[0].data().value, "branch: \"test\"");
     }
+
+    // -- Parse `case` dispatch --
+
+    #[test]
+    fn parse_case_single_arm() {
+        let node = parse_case("x {", &mut Lines::new("x {\n  > 1 -> a\n}\n")).unwrap();
+        assert_eq!(node.data().kind, Kind::Case);
+        assert_eq!(node.data().value, "x");
+        assert_eq!(node.children().len(), 1);
+        let arm = &node.children()[0];
+        assert_eq!(arm.data().kind, Kind::Arm);
+        assert_eq!(arm.children().len(), 2);
+        assert_eq!(arm.children()[0].data().kind, Kind::Cmp(Op::Gt));
+        assert_eq!(arm.children()[0].data().value, "1");
+        assert_eq!(arm.children()[1].data().kind, Kind::Expr);
+        assert_eq!(arm.children()[1].data().value, "a");
+    }
+
+    #[test]
+    fn parse_case_wildcard_arm() {
+        let node = parse_case("x {", &mut Lines::new("x {\n  _ -> b\n}\n")).unwrap();
+        assert_eq!(node.children().len(), 1);
+        let arm = &node.children()[0];
+        assert_eq!(arm.data().kind, Kind::Arm);
+        assert_eq!(arm.children()[0].data().kind, Kind::Wild);
+        assert_eq!(arm.children()[1].data().kind, Kind::Expr);
+        assert_eq!(arm.children()[1].data().value, "b");
+    }
+
+    #[test]
+    fn parse_case_multiple_arms() {
+        let source = "case error.rate {\n  > 0.1 -> critical\n  > 0.05 -> warning\n  _ -> pass\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let case_node = &tree.children()[0];
+        assert_eq!(case_node.data().kind, Kind::Case);
+        assert_eq!(case_node.data().value, "error.rate");
+        assert_eq!(case_node.children().len(), 3);
+
+        let arm0 = &case_node.children()[0];
+        assert_eq!(arm0.children()[0].data().kind, Kind::Cmp(Op::Gt));
+        assert_eq!(arm0.children()[0].data().value, "0.1");
+        assert_eq!(arm0.children()[1].data().value, "critical");
+
+        let arm1 = &case_node.children()[1];
+        assert_eq!(arm1.children()[0].data().kind, Kind::Cmp(Op::Gt));
+        assert_eq!(arm1.children()[0].data().value, "0.05");
+        assert_eq!(arm1.children()[1].data().value, "warning");
+
+        let arm2 = &case_node.children()[2];
+        assert_eq!(arm2.children()[0].data().kind, Kind::Wild);
+        assert_eq!(arm2.children()[1].data().value, "pass");
+    }
+
+    #[test]
+    fn parse_case_all_cmp_ops() {
+        let source = "case x {\n  > 1 -> a\n  < 2 -> b\n  >= 3 -> c\n  <= 4 -> d\n  == 5 -> e\n  != 6 -> f\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let case_node = &tree.children()[0];
+        assert_eq!(case_node.children().len(), 6);
+        assert_eq!(case_node.children()[0].children()[0].data().kind, Kind::Cmp(Op::Gt));
+        assert_eq!(case_node.children()[1].children()[0].data().kind, Kind::Cmp(Op::Lt));
+        assert_eq!(case_node.children()[2].children()[0].data().kind, Kind::Cmp(Op::Gte));
+        assert_eq!(case_node.children()[3].children()[0].data().kind, Kind::Cmp(Op::Lte));
+        assert_eq!(case_node.children()[4].children()[0].data().kind, Kind::Cmp(Op::Eq));
+        assert_eq!(case_node.children()[5].children()[0].data().kind, Kind::Cmp(Op::Ne));
+    }
+
+    #[test]
+    fn parse_case_appears_in_source() {
+        let source = "in @datadog\ncase error.rate {\n  > 0.1 -> alert\n  _ -> pass\n}\nout @json\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let children = tree.children();
+        assert_eq!(children[0].data().kind, Kind::In);
+        assert_eq!(children[1].data().kind, Kind::Case);
+        assert_eq!(children[2].data().kind, Kind::Out);
+    }
+
+    #[test]
+    fn parse_case_error_no_arrow() {
+        let source = "case x {\n  > 1 oops\n}\n";
+        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
+        assert!(err.message.contains("->"), "expected mention of '->': {}", err.message);
+    }
+
+    #[test]
+    fn parse_case_error_no_operator() {
+        let source = "case x {\n  1 -> a\n}\n";
+        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
+        assert!(err.message.contains("operator") || err.message.contains("1"),
+            "expected mention of operator: {}", err.message);
+    }
+
+    #[test]
+    fn parse_case_error_unclosed() {
+        let source = "case x {\n  > 1 -> a\n";
+        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
+        assert!(err.message.contains("unclosed"), "expected 'unclosed': {}", err.message);
+    }
 }
