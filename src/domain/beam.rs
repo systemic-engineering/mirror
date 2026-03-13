@@ -44,9 +44,7 @@ impl fragmentation::encoding::Encode for BeamNode {
                 name,
                 desired_state,
             } => format!("process:{}:{}", name, desired_state).into_bytes(),
-            BeamNode::Supervision { strategy } => {
-                format!("supervision:{}", strategy).into_bytes()
-            }
+            BeamNode::Supervision { strategy } => format!("supervision:{}", strategy).into_bytes(),
             BeamNode::Module { name } => format!("module:{}", name).into_bytes(),
         }
     }
