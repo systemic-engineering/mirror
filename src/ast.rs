@@ -7,7 +7,7 @@ use sha2::{Digest, Sha256};
 
 use crate::domain::conversation::Kind;
 use crate::tree::{self, Tree};
-use crate::witness::{ContentAddressed, Oid};
+use crate::trace::{ContentAddressed, Oid};
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
 

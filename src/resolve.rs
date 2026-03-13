@@ -1,6 +1,6 @@
-//! Resolve gradient. AST → validated program.
+//! Resolve traceable. AST → validated program.
 //!
-//! The resolver IS a gradient: trace resolves.
+//! The resolver IS a traceable: trace resolves.
 //! Validates domain references, template references, output structure.
 //! Errors carry spans and did-you-mean hints.
 
@@ -11,15 +11,15 @@ use serde_json::Value;
 
 use crate::ast::{AstNode, Span};
 use crate::domain::conversation::Kind;
-use crate::domain::{Addressable, Context};
-use crate::gradient::{ComposedError, Gradient};
+use crate::domain::{Addressable, Scene};
+use crate::traceable::{ComposedError, Traceable};
 use crate::parse::ParseError;
 use crate::tree::{self, Tree, Treelike};
 
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
 
-/// The resolve gradient. AST → Conversation.
+/// The resolve traceable. AST → Conversation.
 ///
 /// Known domains (Filesystem, Json) always resolve.
 /// External domains must be registered via `with_domain`.
@@ -42,7 +42,7 @@ pub struct ResolveError {
 /// `Conversation<Filesystem>` executes against `Tree<Folder>`.
 /// `Conversation<Git>` executes against `Tree<GitNode>`.
 #[derive(Debug)]
-pub struct Conversation<C: Context> {
+pub struct Conversation<C: Scene> {
     templates: HashMap<String, Template>,
     pub content: Tree<OutputNode>,
     _context: PhantomData<C>,
@@ -120,22 +120,22 @@ impl Default for Resolve {
     }
 }
 
-impl<C: Context> Gradient<Tree<AstNode>, Conversation<C>> for Resolve {
+impl<C: Scene> Traceable<Tree<AstNode>, Conversation<C>> for Resolve {
     type Error = ResolveError;
 
-    fn trace(&self, source: Tree<AstNode>) -> crate::witness::Trace<Conversation<C>, ResolveError> {
-        use crate::witness::{ContentAddressed, Oid, Trace};
+    fn trace(&self, source: Tree<AstNode>) -> crate::trace::Trace<Conversation<C>, ResolveError> {
+        use crate::trace::{ContentAddressed, Trace, TraceOid};
         match resolve_ast(self, source) {
             Ok(conv) => {
                 let oid = conv.content_oid();
-                Trace::leaf(Ok(conv), oid)
+                Trace::success(conv, oid.into(), None)
             }
-            Err(e) => Trace::leaf(Err(e), Oid::new("error")),
+            Err(e) => Trace::failure(e, TraceOid::new("error"), None),
         }
     }
 }
 
-fn resolve_ast<C: Context>(
+fn resolve_ast<C: Scene>(
     resolve: &Resolve,
     source: Tree<AstNode>,
 ) -> Result<Conversation<C>, ResolveError> {
@@ -285,8 +285,8 @@ fn resolve_output_nodes(
     Ok(nodes)
 }
 
-impl<C: Context> crate::witness::ContentAddressed for Conversation<C> {
-    fn content_oid(&self) -> crate::witness::Oid {
+impl<C: Scene> crate::trace::ContentAddressed for Conversation<C> {
+    fn content_oid(&self) -> crate::trace::Oid {
         use sha2::{Digest, Sha256};
 
         let mut hasher = Sha256::new();
@@ -297,23 +297,14 @@ impl<C: Context> crate::witness::ContentAddressed for Conversation<C> {
         for key in keys {
             hasher.update(key.as_bytes());
         }
-        crate::witness::Oid::new(hex::encode(hasher.finalize()))
+        crate::trace::Oid::new(hex::encode(hasher.finalize()))
     }
 }
 
-impl crate::witness::ContentAddressed for Value {
-    fn content_oid(&self) -> crate::witness::Oid {
-        use sha2::{Digest, Sha256};
-        let mut hasher = Sha256::new();
-        hasher.update(self.to_string().as_bytes());
-        crate::witness::Oid::new(hex::encode(hasher.finalize()))
-    }
-}
-
-impl<C: Context> Conversation<C> {
+impl<C: Scene> Conversation<C> {
     /// Parse and resolve a `.conv` source string in one step.
     ///
-    /// Chains Parse → Resolve via gradient composition.
+    /// Chains Parse → Resolve via traceable composition.
     pub fn from_source(source: &str) -> Result<Self, ComposedError<ParseError, ResolveError>> {
         use crate::parse::Parse;
         Parse
@@ -323,24 +314,24 @@ impl<C: Context> Conversation<C> {
     }
 }
 
-/// Conversation IS a gradient: `Tree<C::Token> → Value`.
+/// Conversation IS a traceable: `Tree<C::Token> → Value`.
 ///
 /// The resolved program transforms domain trees into JSON output.
 /// `trace` executes the program against a domain tree.
-impl<C: Context> Gradient<Tree<C::Token>, Value> for Conversation<C>
+impl<C: Scene> Traceable<Tree<C::Token>, Value> for Conversation<C>
 where
     C::Token: Addressable + fragmentation::encoding::Encode,
 {
     type Error = ResolveError;
 
-    fn trace(&self, source: Tree<C::Token>) -> crate::witness::Trace<Value, ResolveError> {
-        use crate::witness::{ContentAddressed, Trace};
+    fn trace(&self, source: Tree<C::Token>) -> crate::trace::Trace<Value, ResolveError> {
+        use crate::trace::{ContentAddressed, Trace};
         let body = emit_body(&self.content, &source, &self.templates);
         let mut map = serde_json::Map::new();
         map.insert(self.content.data().name().to_string(), body);
         let result = Value::Object(map);
         let oid = result.content_oid();
-        Trace::leaf(Ok(result), oid)
+        Trace::success(result, oid.into(), None)
     }
 }
 
@@ -507,7 +498,7 @@ fn edit_distance(a: &str, b: &str) -> usize {
 mod tests {
     use super::*;
     use crate::domain::filesystem::{Filesystem, Folder};
-    use crate::gradient::Gradient;
+    use crate::traceable::Traceable;
     use crate::parse::Parse;
     use crate::tree;
     use fragmentation::ref_::Ref;
@@ -541,7 +532,7 @@ mod tests {
     /// Shorthand: resolve with Filesystem context.
     fn resolve_fs(
         ast: Tree<AstNode>,
-    ) -> crate::witness::Trace<Conversation<Filesystem>, ResolveError> {
+    ) -> crate::trace::Trace<Conversation<Filesystem>, ResolveError> {
         Resolve::new().trace(ast)
     }
 
@@ -981,7 +972,7 @@ mod tests {
 
     #[test]
     fn conversation_content_addressed() {
-        use crate::witness::ContentAddressed;
+        use crate::trace::ContentAddressed;
         let source =
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
         let a = Conversation::<Filesystem>::from_source(source).unwrap();
@@ -991,7 +982,7 @@ mod tests {
 
     #[test]
     fn value_content_addressed() {
-        use crate::witness::ContentAddressed;
+        use crate::trace::ContentAddressed;
         let a = Value::String("hello".into());
         let b = Value::String("hello".into());
         assert_eq!(a.content_oid(), b.content_oid());
@@ -1049,7 +1040,7 @@ mod tests {
         assert!(msg.contains("bogus"), "{}", msg);
     }
 
-    // -- Litmus: @git domain proves Conversation is a Gradient --
+    // -- Litmus: @git domain proves Conversation is a Traceable --
 
     #[test]
     fn git_conv_emits_against_git_tree() {
@@ -1096,7 +1087,7 @@ mod tests {
             vec![ref_node],
         );
 
-        // Conversation IS a gradient: Tree<C::Token> → Value
+        // Conversation IS a traceable: Tree<C::Token> → Value
         let _result = resolved.trace(root).unwrap();
     }
 

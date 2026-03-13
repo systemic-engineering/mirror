@@ -1,4 +1,4 @@
-//! conversation — gradients over trees.
+//! conversation — traceables over trees.
 //!
 //! A unix tool. Reads a .conv spec, reads a domain tree, writes JSON.
 //!
@@ -17,7 +17,7 @@ use std::io::{self, BufRead, Write};
 use std::process;
 
 use conversation::domain::filesystem::{Filesystem, Folder};
-use conversation::gradient::Gradient;
+use conversation::traceable::Traceable;
 use conversation::resolve::Conversation;
 
 fn main() {

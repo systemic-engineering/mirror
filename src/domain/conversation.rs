@@ -3,7 +3,7 @@
 //! A .conv file parsed into a tree is a tree in this domain.
 //! The crate describes itself.
 
-use super::Context;
+use super::Scene;
 
 /// The conversation context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -71,7 +71,7 @@ pub enum Op {
     Ne,  // !=
 }
 
-impl Context for Conversation {
+impl Scene for Conversation {
     type Token = crate::ast::AstNode;
 
     fn id() -> &'static str {
@@ -89,10 +89,10 @@ mod tests {
     }
 
     #[test]
-    fn conversation_is_context() {
-        fn requires_context<C: Context>() -> &'static str {
+    fn conversation_is_scene() {
+        fn requires_scene<C: Scene>() -> &'static str {
             C::id()
         }
-        assert_eq!(requires_context::<Conversation>(), "conversation");
+        assert_eq!(requires_scene::<Conversation>(), "conversation");
     }
 }

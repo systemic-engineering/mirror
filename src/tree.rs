@@ -28,17 +28,10 @@ pub use fragmentation::fragment::Fragmentable as Treelike;
 /// Re-export content addressing.
 pub use fragmentation::fragment::content_oid;
 
-use crate::witness::{ContentAddressed, Oid};
-
-impl<E: fragmentation::encoding::Encode> ContentAddressed for Tree<E> {
-    fn content_oid(&self) -> Oid {
-        Oid::new(content_oid(self))
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::trace::ContentAddressed;
     use fragmentation::ref_::Ref;
     use fragmentation::sha;
 

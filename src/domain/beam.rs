@@ -4,12 +4,12 @@
 //! The conversation describes what the BEAM *should* look like.
 //! The Gleam runtime converges toward the specification.
 //!
-//! The conversation IS the gradient: current BEAM → desired BEAM.
+//! The conversation IS the traceable: current BEAM → desired BEAM.
 
 use sha2::{Digest, Sha256};
 
-use super::{Addressable, Context};
-use crate::witness::{ContentAddressed, Oid};
+use super::{Addressable, Scene};
+use crate::trace::{ContentAddressed, Oid};
 
 /// The BEAM context — desired state specification.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -29,7 +29,7 @@ pub enum BeamNode {
     Module { name: String },
 }
 
-impl Context for Beam {
+impl Scene for Beam {
     type Token = BeamNode;
 
     fn id() -> &'static str {
@@ -96,11 +96,11 @@ impl Addressable for BeamNode {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::{Addressable, Context};
-    use crate::witness::ContentAddressed;
+    use crate::domain::{Addressable, Scene};
+    use crate::trace::ContentAddressed;
     use fragmentation::encoding::Encode;
 
-    // -- Context --
+    // -- Beam --
 
     #[test]
     fn beam_id() {
@@ -108,11 +108,11 @@ mod tests {
     }
 
     #[test]
-    fn beam_is_context() {
-        fn requires_context<C: Context>() -> &'static str {
+    fn beam_is_scene() {
+        fn requires_scene<C: Scene>() -> &'static str {
             C::id()
         }
-        assert_eq!(requires_context::<Beam>(), "beam");
+        assert_eq!(requires_scene::<Beam>(), "beam");
     }
 
     // -- ContentAddressed --

@@ -1,27 +1,34 @@
-pub mod actor;
 pub mod ast;
 pub mod domain;
-pub mod gradient;
-pub mod identity;
-pub mod optics;
+pub mod filter;
 pub mod parse;
 pub mod resolve;
 pub mod tree;
-pub mod vector;
-pub mod witness;
 
-pub use actor::Actor;
+// Re-export story modules as crate-level modules.
+// This lets internal code use `crate::trace::ContentAddressed` etc.
+pub use story::actor;
+pub use story::beat;
+pub use story::identity;
+pub use story::traceable;
+pub use story::optics;
+pub use story::scene;
+pub use story::trace;
+
+// Re-export story types at the crate root (story vocabulary).
+pub use story::actor::Actor;
+pub use story::beat::Beat;
+pub use story::identity::{Email, Identity, Name, Node, Signal, Signature, Signed, System};
+pub use story::traceable::{Composed, ComposedError, Fallback, Iso, Traceable, When};
+pub use story::optics::{
+    rewrite, NotFound, Prism, PrismAsTraversal, TracingPrism, SelectPrism, Traversal,
+    TracingTraversal,
+};
+pub use story::scene::{Addressable, Scene};
+pub use story::trace::{ContentAddressed, Event, Oid, Session, Trace, TraceOid};
+
 pub use domain::filesystem::{Filesystem, Folder};
 pub use domain::git::{Git, GitNode};
-pub use domain::{Addressable, Context};
-pub use gradient::{Composed, ComposedError, Fallback, Gradient, Iso, When};
-pub use identity::{Email, Identity, Name, Node, Signal, Signature, Signed, System};
-pub use optics::{
-    rewrite, NotFound, Prism, PrismAsTraversal, PrismGradient, SelectPrism, Traversal,
-    TraversalGradient,
-};
 pub use parse::{Parse, ParseError};
 pub use resolve::{Conversation, Resolve, ResolveError};
 pub use tree::Tree;
-pub use vector::Vector;
-pub use witness::{ContentAddressed, Event, Oid, Session, Trace};

@@ -6,8 +6,8 @@
 
 use sha2::{Digest, Sha256};
 
-use super::{Addressable, Context};
-use crate::witness::{ContentAddressed, Oid};
+use super::{Addressable, Scene};
+use crate::trace::{ContentAddressed, Oid};
 
 /// The git context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -102,7 +102,7 @@ impl Addressable for GitNode {
     }
 }
 
-impl Context for Git {
+impl Scene for Git {
     type Token = GitNode;
 
     fn id() -> &'static str {
@@ -113,7 +113,7 @@ impl Context for Git {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::{Addressable, Context};
+    use crate::domain::{Addressable, Scene};
     use crate::tree::{self, Treelike};
     use fragmentation::ref_::Ref;
     use fragmentation::sha;
@@ -236,11 +236,11 @@ mod tests {
     }
 
     #[test]
-    fn git_is_context() {
-        fn requires_context<C: Context>() -> &'static str {
+    fn git_is_scene() {
+        fn requires_scene<C: Scene>() -> &'static str {
             C::id()
         }
-        assert_eq!(requires_context::<Git>(), "git");
+        assert_eq!(requires_scene::<Git>(), "git");
     }
 
     #[test]

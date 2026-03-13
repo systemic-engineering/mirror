@@ -1,15 +1,15 @@
-//! Parser gradient. Source text → AST tree.
+//! Parser traceable. Source text → AST tree.
 //!
-//! The parser IS a gradient: emit parses, absorb unparses.
+//! The parser IS a traceable: emit parses, absorb unparses.
 //! Wrap in Witnessed to observe every parse through a Session.
 
 use crate::ast::{self, AstNode, Span};
 use crate::domain::conversation::{Kind, Op};
-use crate::gradient::Gradient;
+use crate::traceable::Traceable;
 use crate::tree::Tree;
-use crate::witness::Trace;
+use crate::trace::Trace;
 
-/// The parse gradient. Source → AST.
+/// The parse traceable. Source → AST.
 #[derive(Clone, Debug, Default)]
 pub struct Parse;
 
@@ -35,17 +35,17 @@ impl std::fmt::Display for ParseError {
 
 impl std::error::Error for ParseError {}
 
-impl Gradient<String, Tree<AstNode>> for Parse {
+impl Traceable<String, Tree<AstNode>> for Parse {
     type Error = ParseError;
 
     fn trace(&self, source: String) -> Trace<Tree<AstNode>, ParseError> {
-        use crate::witness::ContentAddressed;
+        use crate::trace::ContentAddressed;
         match parse_source(&source) {
             Ok(tree) => {
                 let oid = tree.content_oid();
-                Trace::leaf(Ok(tree), oid)
+                Trace::success(tree, oid.into(), None)
             }
-            Err(e) => Trace::leaf(Err(e), crate::witness::Oid::new("error")),
+            Err(e) => Trace::failure(e, crate::trace::TraceOid::new("error"), None),
         }
     }
 }
@@ -556,7 +556,7 @@ fn parse_pipeline_segment(seg: &str, span: Span) -> Tree<AstNode> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::gradient::Gradient;
+    use crate::traceable::Traceable;
     use fragmentation::fragment::Fragmentable;
 
     // -- Parse `in @domain` --
