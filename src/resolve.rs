@@ -12,12 +12,15 @@ use serde_json::Value;
 use crate::ast::{AstNode, Span};
 use crate::domain::conversation::Kind;
 use crate::domain::{Addressable, Scene};
-use crate::traceable::{ComposedError, Traceable};
 use crate::parse::ParseError;
+use crate::traceable::{ComposedError, Traceable};
 use crate::tree::{self, Tree, Treelike};
 
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
+
+story::domain_oid!(/// Content address for resolved conversations.
+pub ConversationOid);
 
 /// The resolve traceable. AST → Conversation.
 ///
@@ -286,7 +289,8 @@ fn resolve_output_nodes(
 }
 
 impl<C: Scene> crate::trace::ContentAddressed for Conversation<C> {
-    fn content_oid(&self) -> crate::trace::Oid {
+    type Oid = ConversationOid;
+    fn content_oid(&self) -> ConversationOid {
         use sha2::{Digest, Sha256};
 
         let mut hasher = Sha256::new();
@@ -297,7 +301,7 @@ impl<C: Scene> crate::trace::ContentAddressed for Conversation<C> {
         for key in keys {
             hasher.update(key.as_bytes());
         }
-        crate::trace::Oid::new(hex::encode(hasher.finalize()))
+        ConversationOid::new(hex::encode(hasher.finalize()))
     }
 }
 
@@ -498,8 +502,8 @@ fn edit_distance(a: &str, b: &str) -> usize {
 mod tests {
     use super::*;
     use crate::domain::filesystem::{Filesystem, Folder};
-    use crate::traceable::Traceable;
     use crate::parse::Parse;
+    use crate::traceable::Traceable;
     use crate::tree;
     use fragmentation::ref_::Ref;
     use fragmentation::sha;

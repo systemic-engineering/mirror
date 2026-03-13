@@ -7,7 +7,10 @@
 use sha2::{Digest, Sha256};
 
 use super::{Addressable, Scene};
-use crate::trace::{ContentAddressed, Oid};
+use crate::trace::ContentAddressed;
+
+story::domain_oid!(/// Content address for git nodes.
+pub GitOid);
 
 /// The git context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -51,7 +54,8 @@ impl fragmentation::encoding::Encode for GitNode {
 }
 
 impl ContentAddressed for GitNode {
-    fn content_oid(&self) -> Oid {
+    type Oid = GitOid;
+    fn content_oid(&self) -> GitOid {
         let mut hasher = Sha256::new();
         match self {
             GitNode::Ref { name, target } => {
@@ -81,7 +85,7 @@ impl ContentAddressed for GitNode {
                 hasher.update(content);
             }
         }
-        Oid::new(hex::encode(hasher.finalize()))
+        GitOid::new(hex::encode(hasher.finalize()))
     }
 }
 

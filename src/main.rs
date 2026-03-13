@@ -17,8 +17,8 @@ use std::io::{self, BufRead, Write};
 use std::process;
 
 use conversation::domain::filesystem::{Filesystem, Folder};
-use conversation::traceable::Traceable;
 use conversation::resolve::Conversation;
+use conversation::traceable::Traceable;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();

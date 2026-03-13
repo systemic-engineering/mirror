@@ -9,7 +9,10 @@
 use sha2::{Digest, Sha256};
 
 use super::{Addressable, Scene};
-use crate::trace::{ContentAddressed, Oid};
+use crate::trace::ContentAddressed;
+
+story::domain_oid!(/// Content address for BEAM nodes.
+pub BeamOid);
 
 /// The BEAM context — desired state specification.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -51,7 +54,8 @@ impl fragmentation::encoding::Encode for BeamNode {
 }
 
 impl ContentAddressed for BeamNode {
-    fn content_oid(&self) -> Oid {
+    type Oid = BeamOid;
+    fn content_oid(&self) -> BeamOid {
         let mut hasher = Sha256::new();
         match self {
             BeamNode::Process {
@@ -72,7 +76,7 @@ impl ContentAddressed for BeamNode {
                 hasher.update(name.as_bytes());
             }
         }
-        Oid::new(hex::encode(hasher.finalize()))
+        BeamOid::new(hex::encode(hasher.finalize()))
     }
 }
 

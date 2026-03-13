@@ -1,8 +1,11 @@
 use sha2::{Digest, Sha256};
 
 use super::{Addressable, Scene};
+use crate::trace::ContentAddressed;
 use crate::tree::{self, Tree};
-use crate::trace::{ContentAddressed, Oid};
+
+story::domain_oid!(/// Content address for filesystem nodes.
+pub FolderOid);
 
 /// The filesystem context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -22,7 +25,8 @@ impl fragmentation::encoding::Encode for Folder {
 }
 
 impl ContentAddressed for Folder {
-    fn content_oid(&self) -> Oid {
+    type Oid = FolderOid;
+    fn content_oid(&self) -> FolderOid {
         let mut hasher = Sha256::new();
         hasher.update(b"folder:");
         hasher.update(self.name.as_bytes());
@@ -30,7 +34,7 @@ impl ContentAddressed for Folder {
             hasher.update(b":");
             hasher.update(content.as_bytes());
         }
-        Oid::new(hex::encode(hasher.finalize()))
+        FolderOid::new(hex::encode(hasher.finalize()))
     }
 }
 

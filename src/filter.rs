@@ -15,9 +15,9 @@ use std::path::PathBuf;
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
-use crate::traceable::Traceable;
 use crate::resolve::ResolveError;
 use crate::trace::{ContentAddressed, Trace};
+use crate::traceable::Traceable;
 
 // ---------------------------------------------------------------------------
 // Sha — content hash as pipeline operator

@@ -6,10 +6,13 @@
 use sha2::{Digest, Sha256};
 
 use crate::domain::conversation::Kind;
+use crate::trace::ContentAddressed;
 use crate::tree::{self, Tree};
-use crate::trace::{ContentAddressed, Oid};
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
+
+story::domain_oid!(/// Content address for AST nodes.
+pub AstOid);
 
 impl fragmentation::encoding::Encode for AstNode {
     fn encode(&self) -> Vec<u8> {
@@ -18,10 +21,11 @@ impl fragmentation::encoding::Encode for AstNode {
 }
 
 impl ContentAddressed for AstNode {
-    fn content_oid(&self) -> Oid {
+    type Oid = AstOid;
+    fn content_oid(&self) -> AstOid {
         let mut hasher = Sha256::new();
         hasher.update(format!("{:?}:{}", self.kind, self.value).as_bytes());
-        Oid::new(hex::encode(hasher.finalize()))
+        AstOid::new(hex::encode(hasher.finalize()))
     }
 }
 
