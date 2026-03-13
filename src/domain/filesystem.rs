@@ -1,6 +1,6 @@
 use sha2::{Digest, Sha256};
 
-use super::{Addressable, Scene};
+use super::{Addressable, Setting};
 use crate::trace::ContentAddressed;
 use crate::tree::{self, Tree};
 
@@ -47,7 +47,7 @@ impl Addressable for Folder {
     }
 }
 
-impl Scene for Filesystem {
+impl Setting for Filesystem {
     type Token = Folder;
 
     fn id() -> &'static str {

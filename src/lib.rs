@@ -11,7 +11,7 @@ pub use story::actor;
 pub use story::beat;
 pub use story::identity;
 pub use story::optics;
-pub use story::scene;
+pub use story::setting;
 pub use story::trace;
 pub use story::traceable;
 
@@ -23,7 +23,7 @@ pub use story::optics::{
     rewrite, NotFound, Prism, PrismAsTraversal, SelectPrism, TracingPrism, TracingTraversal,
     Traversal,
 };
-pub use story::scene::{Addressable, Scene};
+pub use story::setting::{Addressable, Setting};
 pub use story::trace::{ContentAddressed, Event, EventOid, Oid, Session, Trace, TraceOid};
 pub use story::traceable::{Composed, ComposedError, Fallback, Iso, Traceable, When};
 

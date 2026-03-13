@@ -8,7 +8,7 @@
 
 use sha2::{Digest, Sha256};
 
-use super::{Addressable, Scene};
+use super::{Addressable, Setting};
 use crate::trace::ContentAddressed;
 
 story::domain_oid!(/// Content address for BEAM nodes.
@@ -32,7 +32,7 @@ pub enum BeamNode {
     Module { name: String },
 }
 
-impl Scene for Beam {
+impl Setting for Beam {
     type Token = BeamNode;
 
     fn id() -> &'static str {
@@ -100,7 +100,7 @@ impl Addressable for BeamNode {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::{Addressable, Scene};
+    use crate::domain::{Addressable, Setting};
     use crate::trace::ContentAddressed;
     use fragmentation::encoding::Encode;
 
@@ -113,7 +113,7 @@ mod tests {
 
     #[test]
     fn beam_is_scene() {
-        fn requires_scene<C: Scene>() -> &'static str {
+        fn requires_scene<C: Setting>() -> &'static str {
             C::id()
         }
         assert_eq!(requires_scene::<Beam>(), "beam");

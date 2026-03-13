@@ -11,7 +11,7 @@ use serde_json::Value;
 
 use crate::ast::{AstNode, Span};
 use crate::domain::conversation::Kind;
-use crate::domain::{Addressable, Scene};
+use crate::domain::{Addressable, Setting};
 use crate::parse::ParseError;
 use crate::traceable::{ComposedError, Traceable};
 use crate::tree::{self, Tree, Treelike};
@@ -45,7 +45,7 @@ pub struct ResolveError {
 /// `Conversation<Filesystem>` executes against `Tree<Folder>`.
 /// `Conversation<Git>` executes against `Tree<GitNode>`.
 #[derive(Debug)]
-pub struct Conversation<C: Scene> {
+pub struct Conversation<C: Setting> {
     templates: HashMap<String, Template>,
     pub content: Tree<OutputNode>,
     _context: PhantomData<C>,
@@ -123,7 +123,7 @@ impl Default for Resolve {
     }
 }
 
-impl<C: Scene> Traceable<Tree<AstNode>, Conversation<C>> for Resolve {
+impl<C: Setting> Traceable<Tree<AstNode>, Conversation<C>> for Resolve {
     type Error = ResolveError;
 
     fn trace(&self, source: Tree<AstNode>) -> crate::trace::Trace<Conversation<C>, ResolveError> {
@@ -138,7 +138,7 @@ impl<C: Scene> Traceable<Tree<AstNode>, Conversation<C>> for Resolve {
     }
 }
 
-fn resolve_ast<C: Scene>(
+fn resolve_ast<C: Setting>(
     resolve: &Resolve,
     source: Tree<AstNode>,
 ) -> Result<Conversation<C>, ResolveError> {
@@ -288,7 +288,7 @@ fn resolve_output_nodes(
     Ok(nodes)
 }
 
-impl<C: Scene> crate::trace::ContentAddressed for Conversation<C> {
+impl<C: Setting> crate::trace::ContentAddressed for Conversation<C> {
     type Oid = ConversationOid;
     fn content_oid(&self) -> ConversationOid {
         use sha2::{Digest, Sha256};
@@ -305,7 +305,7 @@ impl<C: Scene> crate::trace::ContentAddressed for Conversation<C> {
     }
 }
 
-impl<C: Scene> Conversation<C> {
+impl<C: Setting> Conversation<C> {
     /// Parse and resolve a `.conv` source string in one step.
     ///
     /// Chains Parse → Resolve via traceable composition.
@@ -322,7 +322,7 @@ impl<C: Scene> Conversation<C> {
 ///
 /// The resolved program transforms domain trees into JSON output.
 /// `trace` executes the program against a domain tree.
-impl<C: Scene> Traceable<Tree<C::Token>, Value> for Conversation<C>
+impl<C: Setting> Traceable<Tree<C::Token>, Value> for Conversation<C>
 where
     C::Token: Addressable + fragmentation::encoding::Encode,
 {

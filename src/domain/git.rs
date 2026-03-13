@@ -6,7 +6,7 @@
 
 use sha2::{Digest, Sha256};
 
-use super::{Addressable, Scene};
+use super::{Addressable, Setting};
 use crate::trace::ContentAddressed;
 
 story::domain_oid!(/// Content address for git nodes.
@@ -106,7 +106,7 @@ impl Addressable for GitNode {
     }
 }
 
-impl Scene for Git {
+impl Setting for Git {
     type Token = GitNode;
 
     fn id() -> &'static str {
@@ -117,7 +117,7 @@ impl Scene for Git {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::{Addressable, Scene};
+    use crate::domain::{Addressable, Setting};
     use crate::tree::{self, Treelike};
     use fragmentation::ref_::Ref;
     use fragmentation::sha;
@@ -241,7 +241,7 @@ mod tests {
 
     #[test]
     fn git_is_scene() {
-        fn requires_scene<C: Scene>() -> &'static str {
+        fn requires_scene<C: Setting>() -> &'static str {
             C::id()
         }
         assert_eq!(requires_scene::<Git>(), "git");
