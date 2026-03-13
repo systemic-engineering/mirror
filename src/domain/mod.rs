@@ -60,4 +60,12 @@ mod tests {
         fn assert_token<C: Context<Token = git::GitNode>>() {}
         assert_token::<git::Git>();
     }
+
+    // -- BEAM domain --
+
+    #[test]
+    fn beam_token_is_beam_node() {
+        fn assert_token<C: Context<Token = beam::BeamNode>>() {}
+        assert_token::<beam::Beam>();
+    }
 }

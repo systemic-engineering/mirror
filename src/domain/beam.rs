@@ -6,7 +6,10 @@
 //!
 //! The conversation IS the gradient: current BEAM → desired BEAM.
 
-use super::Context;
+use sha2::{Digest, Sha256};
+
+use super::{Addressable, Context};
+use crate::witness::{ContentAddressed, Oid};
 
 /// The BEAM context — desired state specification.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -24,6 +27,72 @@ pub enum BeamNode {
     Supervision { strategy: String },
     /// A module that should be loaded/available.
     Module { name: String },
+}
+
+impl Context for Beam {
+    type Token = BeamNode;
+
+    fn id() -> &'static str {
+        "beam"
+    }
+}
+
+impl fragmentation::encoding::Encode for BeamNode {
+    fn encode(&self) -> Vec<u8> {
+        match self {
+            BeamNode::Process {
+                name,
+                desired_state,
+            } => format!("process:{}:{}", name, desired_state).into_bytes(),
+            BeamNode::Supervision { strategy } => {
+                format!("supervision:{}", strategy).into_bytes()
+            }
+            BeamNode::Module { name } => format!("module:{}", name).into_bytes(),
+        }
+    }
+}
+
+impl ContentAddressed for BeamNode {
+    fn content_oid(&self) -> Oid {
+        let mut hasher = Sha256::new();
+        match self {
+            BeamNode::Process {
+                name,
+                desired_state,
+            } => {
+                hasher.update(b"process:");
+                hasher.update(name.as_bytes());
+                hasher.update(b":");
+                hasher.update(desired_state.as_bytes());
+            }
+            BeamNode::Supervision { strategy } => {
+                hasher.update(b"supervision:");
+                hasher.update(strategy.as_bytes());
+            }
+            BeamNode::Module { name } => {
+                hasher.update(b"module:");
+                hasher.update(name.as_bytes());
+            }
+        }
+        Oid::new(hex::encode(hasher.finalize()))
+    }
+}
+
+impl Addressable for BeamNode {
+    fn node_name(&self) -> &str {
+        match self {
+            BeamNode::Process { name, .. } => name,
+            BeamNode::Supervision { strategy } => strategy,
+            BeamNode::Module { name } => name,
+        }
+    }
+
+    fn node_content(&self) -> Option<&str> {
+        match self {
+            BeamNode::Process { desired_state, .. } => Some(desired_state),
+            _ => None,
+        }
+    }
 }
 
 #[cfg(test)]
