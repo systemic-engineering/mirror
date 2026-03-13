@@ -1,3 +1,4 @@
+pub mod beam;
 pub mod conversation;
 pub mod filesystem;
 pub mod git;
