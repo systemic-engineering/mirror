@@ -1,4 +1,4 @@
-//! conversation — traceables over trees.
+//! conversation — stories over trees.
 //!
 //! A unix tool. Reads a .conv spec, reads a domain tree, writes JSON.
 //!
@@ -18,7 +18,7 @@ use std::process;
 
 use conversation::domain::filesystem::{Filesystem, Folder};
 use conversation::resolve::Conversation;
-use conversation::narrate::Story;
+use conversation::Story;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -68,7 +68,7 @@ fn run(source: &str, input_path: &str) {
         }
     };
     let tree = Folder::read_tree(input_path);
-    let value = resolved.narrate(tree).into_result().unwrap();
+    let value = resolved.record(tree).into_result().unwrap();
     let json = serde_json::to_string_pretty(&value).unwrap();
     let stdout = io::stdout();
     let mut out = stdout.lock();
@@ -114,7 +114,7 @@ fn shell(path: &str) {
 
         let tree = Folder::read_tree(path);
 
-        let value = resolved.narrate(tree).into_result().unwrap();
+        let value = resolved.record(tree).into_result().unwrap();
         let json = serde_json::to_string_pretty(&value).unwrap();
         println!("{}", json);
     }

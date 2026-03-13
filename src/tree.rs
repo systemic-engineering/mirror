@@ -31,7 +31,7 @@ pub use fragmentation::fragment::content_oid;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::narrative::ContentAddressed;
+    use crate::ContentAddressed;
     use fragmentation::ref_::Ref;
     use fragmentation::sha;
 

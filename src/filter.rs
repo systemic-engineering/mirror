@@ -15,9 +15,9 @@ use std::path::PathBuf;
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
+use crate::Story;
+use crate::{ContentAddressed, Cut};
 use crate::resolve::ResolveError;
-use crate::narrative::{ContentAddressed, Narrative};
-use crate::narrate::Story;
 
 // ---------------------------------------------------------------------------
 // Sha — content hash as pipeline operator
@@ -30,13 +30,13 @@ pub struct Sha;
 impl Story<Value, Value> for Sha {
     type Error = std::convert::Infallible;
 
-    fn narrate(&self, source: Value) -> Narrative<Value, Self::Error> {
+    fn record(&self, source: Value) -> Cut<Value, Self::Error> {
         let mut hasher = Sha256::new();
         hasher.update(source.to_string().as_bytes());
         let hash = hex::encode(hasher.finalize());
         let result = Value::String(hash);
         let oid = result.content_oid();
-        Narrative::success(result, oid.into(), None)
+        Cut::success(result, oid.into(), None)
     }
 }
 
@@ -50,8 +50,8 @@ pub struct Hash;
 impl Story<Value, Value> for Hash {
     type Error = std::convert::Infallible;
 
-    fn narrate(&self, source: Value) -> Narrative<Value, Self::Error> {
-        Sha.narrate(source)
+    fn record(&self, source: Value) -> Cut<Value, Self::Error> {
+        Sha.record(source)
     }
 }
 
@@ -140,7 +140,7 @@ impl SignFilter {
 impl Story<Value, Value> for SignFilter {
     type Error = std::convert::Infallible;
 
-    fn narrate(&self, source: Value) -> Narrative<Value, Self::Error> {
+    fn record(&self, source: Value) -> Cut<Value, Self::Error> {
         let source_oid = source.content_oid();
         let mut envelope = serde_json::Map::new();
         envelope.insert("signer".into(), Value::String(self.signer.clone()));
@@ -152,7 +152,7 @@ impl Story<Value, Value> for SignFilter {
         envelope.insert("oid".into(), Value::String(source_oid.as_ref().to_string()));
         let result = Value::Object(envelope);
         let oid = result.content_oid();
-        Narrative::success(result, oid.into(), None)
+        Cut::success(result, oid.into(), None)
     }
 }
 
@@ -359,7 +359,7 @@ fn age_encrypt(recipient_key: &str, plaintext: &[u8]) -> Result<String, String> 
 impl Story<Value, Value> for EncryptFilter {
     type Error = ResolveError;
 
-    fn narrate(&self, source: Value) -> Narrative<Value, Self::Error> {
+    fn record(&self, source: Value) -> Cut<Value, Self::Error> {
         let source_oid = source.content_oid();
         let plaintext = source.to_string();
 
@@ -370,7 +370,7 @@ impl Story<Value, Value> for EncryptFilter {
                 envelope.insert("oid".into(), Value::String(source_oid.as_ref().to_string()));
                 let result = Value::Object(envelope);
                 let oid = result.content_oid();
-                Narrative::success(result, oid.into(), None)
+                Cut::success(result, oid.into(), None)
             }
             Err(msg) => {
                 let err = ResolveError {
@@ -378,7 +378,7 @@ impl Story<Value, Value> for EncryptFilter {
                     span: None,
                     hints: vec![],
                 };
-                Narrative::failure(err, source_oid.into(), None)
+                Cut::failure(err, source_oid.into(), None)
             }
         }
     }
@@ -398,8 +398,8 @@ pub fn apply_filter(raw: &str, value: Value) -> Result<Value, ResolveError> {
         None => (raw, None),
     };
     match name {
-        "sha" => Ok(Sha.narrate(value).into_result().unwrap()),
-        "hash" => Ok(Hash.narrate(value).into_result().unwrap()),
+        "sha" => Ok(Sha.record(value).into_result().unwrap()),
+        "hash" => Ok(Hash.record(value).into_result().unwrap()),
         "sign" => {
             let filter = SignFilter::from_env().ok_or_else(|| ResolveError {
                 message: "no signing keys found (set CONVERSATION_KEYS or add keys to ~/.ssh)"
@@ -407,11 +407,11 @@ pub fn apply_filter(raw: &str, value: Value) -> Result<Value, ResolveError> {
                 span: None,
                 hints: vec!["CONVERSATION_KEYS=/path/to/keys".into()],
             })?;
-            Ok(filter.narrate(value).into_result().unwrap())
+            Ok(filter.record(value).into_result().unwrap())
         }
         "encrypt" => {
             let filter = EncryptFilter::from_params(params)?;
-            filter.narrate(value).into_result()
+            filter.record(value).into_result()
         }
         _ => Err(ResolveError {
             message: format!("unknown filter @{}", name),
@@ -430,7 +430,7 @@ mod tests {
     #[test]
     fn sha_hashes_string_value() {
         let input = Value::String("hello".into());
-        let result = Sha.narrate(input).unwrap();
+        let result = Sha.record(input).unwrap();
         // SHA-256 of the JSON string representation: "\"hello\""
         let mut hasher = Sha256::new();
         hasher.update(b"\"hello\"");
@@ -443,7 +443,7 @@ mod tests {
         let mut map = serde_json::Map::new();
         map.insert("key".into(), Value::String("value".into()));
         let input = Value::Object(map);
-        let result = Sha.narrate(input).unwrap();
+        let result = Sha.record(input).unwrap();
         assert!(result.is_string());
         assert_eq!(result.as_str().unwrap().len(), 64); // hex SHA-256
     }
@@ -452,14 +452,14 @@ mod tests {
     fn sha_same_input_same_output() {
         let a = Value::String("deterministic".into());
         let b = Value::String("deterministic".into());
-        assert_eq!(Sha.narrate(a).unwrap(), Sha.narrate(b).unwrap());
+        assert_eq!(Sha.record(a).unwrap(), Sha.record(b).unwrap());
     }
 
     #[test]
     fn sha_matches_content_addressed() {
         let input = Value::String("hello".into());
         let oid = input.content_oid();
-        let hash = Sha.narrate(input).unwrap();
+        let hash = Sha.record(input).unwrap();
         assert_eq!(hash.as_str().unwrap(), oid.as_ref());
     }
 
@@ -468,8 +468,8 @@ mod tests {
     #[test]
     fn hash_defaults_to_sha() {
         let input = Value::String("test".into());
-        let sha_result = Sha.narrate(input.clone()).unwrap();
-        let hash_result = Hash.narrate(input).unwrap();
+        let sha_result = Sha.record(input.clone()).unwrap();
+        let hash_result = Hash.record(input).unwrap();
         assert_eq!(sha_result, hash_result);
     }
 
@@ -479,7 +479,7 @@ mod tests {
     fn sign_wraps_value() {
         let filter = SignFilter::new("Reed", vec![0xDE, 0xAD]);
         let input = Value::String("hello".into());
-        let result = filter.narrate(input.clone()).unwrap();
+        let result = filter.record(input.clone()).unwrap();
 
         assert!(result.is_object());
         assert_eq!(result["signer"], "Reed");
@@ -493,8 +493,8 @@ mod tests {
         let reed = SignFilter::new("Reed", vec![0xDE, 0xAD]);
         let alex = SignFilter::new("Alex", vec![0xCA, 0xFE]);
         let input = Value::String("same".into());
-        let reed_result = reed.narrate(input.clone()).unwrap();
-        let alex_result = alex.narrate(input).unwrap();
+        let reed_result = reed.record(input.clone()).unwrap();
+        let alex_result = alex.record(input).unwrap();
         assert_ne!(reed_result, alex_result);
     }
 
@@ -502,7 +502,7 @@ mod tests {
     fn sign_preserves_original_value() {
         let filter = SignFilter::new("Reed", vec![0xDE, 0xAD]);
         let input = Value::String("preserved".into());
-        let result = filter.narrate(input.clone()).unwrap();
+        let result = filter.record(input.clone()).unwrap();
         assert_eq!(result["value"], input);
     }
 
@@ -512,21 +512,21 @@ mod tests {
     fn apply_filter_sha() {
         let input = Value::String("test".into());
         let result = apply_filter("sha", input.clone()).unwrap();
-        assert_eq!(result, Sha.narrate(input).unwrap());
+        assert_eq!(result, Sha.record(input).unwrap());
     }
 
     #[test]
     fn apply_filter_hash() {
         let input = Value::String("test".into());
         let result = apply_filter("hash", input.clone()).unwrap();
-        assert_eq!(result, Hash.narrate(input).unwrap());
+        assert_eq!(result, Hash.record(input).unwrap());
     }
 
     #[test]
     fn apply_filter_strips_at_prefix() {
         let input = Value::String("test".into());
         let result = apply_filter("@sha", input.clone()).unwrap();
-        assert_eq!(result, Sha.narrate(input).unwrap());
+        assert_eq!(result, Sha.record(input).unwrap());
     }
 
     #[test]
@@ -731,7 +731,7 @@ mod tests {
     fn encrypt_produces_envelope() {
         let filter = EncryptFilter::new(TEST_SSH_PUB);
         let input = Value::String("hello".into());
-        let result = filter.narrate(input).into_result().unwrap();
+        let result = filter.record(input).into_result().unwrap();
         assert!(result.is_object());
         assert!(result["encrypted"].is_string());
         assert!(result["oid"].is_string());
@@ -742,7 +742,7 @@ mod tests {
         let filter = EncryptFilter::new(TEST_SSH_PUB);
         let input = Value::String("hello".into());
         let oid = input.content_oid();
-        let result = filter.narrate(input).into_result().unwrap();
+        let result = filter.record(input).into_result().unwrap();
         assert_eq!(result["oid"].as_str().unwrap(), oid.as_ref());
     }
 
@@ -750,11 +750,11 @@ mod tests {
     fn encrypt_different_input_different_output() {
         let filter = EncryptFilter::new(TEST_SSH_PUB);
         let a = filter
-            .narrate(Value::String("alpha".into()))
+            .record(Value::String("alpha".into()))
             .into_result()
             .unwrap();
         let b = filter
-            .narrate(Value::String("beta".into()))
+            .record(Value::String("beta".into()))
             .into_result()
             .unwrap();
         assert_ne!(a["oid"], b["oid"]);
@@ -764,7 +764,7 @@ mod tests {
     fn encrypt_invalid_key_errors() {
         let filter = EncryptFilter::new("not-a-key");
         let input = Value::String("hello".into());
-        let err = filter.narrate(input).into_result().unwrap_err();
+        let err = filter.record(input).into_result().unwrap_err();
         assert!(err.message.contains("invalid SSH public key"));
     }
 

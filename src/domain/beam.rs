@@ -9,7 +9,7 @@
 use sha2::{Digest, Sha256};
 
 use super::{Addressable, Setting};
-use crate::narrative::ContentAddressed;
+use crate::ContentAddressed;
 
 story::domain_oid!(/// Content address for BEAM nodes.
 pub BeamOid);
@@ -101,7 +101,7 @@ impl Addressable for BeamNode {
 mod tests {
     use super::*;
     use crate::domain::{Addressable, Setting};
-    use crate::narrative::ContentAddressed;
+    use crate::ContentAddressed;
     use fragmentation::encoding::Encode;
 
     // -- Beam --
