@@ -36,14 +36,23 @@ fn main() {
             shell(path);
         }
         "-e" => {
-            if args.len() < 3 { eprintln!("usage: conversation -e '<expr>' [path]"); process::exit(1); }
+            if args.len() < 3 {
+                eprintln!("usage: conversation -e '<expr>' [path]");
+                process::exit(1);
+            }
             let source = format!("out {}\n", &args[2]);
             let path = args.get(3).map(|s| s.as_str()).unwrap_or(".");
             run(&source, path);
         }
         _ => {
             let conv_path = &args[1];
-            let source = match std::fs::read_to_string(conv_path) { Ok(s) => s, Err(e) => { eprintln!("conversation: {}: {}", conv_path, e); process::exit(1); } };
+            let source = match std::fs::read_to_string(conv_path) {
+                Ok(s) => s,
+                Err(e) => {
+                    eprintln!("conversation: {}: {}", conv_path, e);
+                    process::exit(1);
+                }
+            };
             let path = args.get(2).map(|s| s.as_str()).unwrap_or(".");
             run(&source, path);
         }
@@ -51,7 +60,13 @@ fn main() {
 }
 
 fn run(source: &str, input_path: &str) {
-    let resolved = match Conversation::<Filesystem>::from_source(source) { Ok(c) => c, Err(e) => { eprintln!("conversation: {}", e); process::exit(1) } };
+    let resolved = match Conversation::<Filesystem>::from_source(source) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("conversation: {}", e);
+            process::exit(1)
+        }
+    };
     let tree = Folder::read_tree(input_path);
     let value = resolved.trace(tree).into_result().unwrap();
     let json = serde_json::to_string_pretty(&value).unwrap();
@@ -73,17 +88,28 @@ fn shell(path: &str) {
         let _ = write!(stdout, "conversation> ");
         let _ = stdout.flush();
 
-        let line = match line { Ok(l) => l, Err(e) => { eprintln!("conversation: read error: {}", e); break; } };
+        let line = match line {
+            Ok(l) => l,
+            Err(e) => {
+                eprintln!("conversation: read error: {}", e);
+                break;
+            }
+        };
 
         let line = line.trim().to_string();
-        if line.is_empty() { continue; }
+        if line.is_empty() {
+            continue;
+        }
 
         // Build a .conv source from the expression
         let source = format!("out {}\n", line);
 
         let resolved = match Conversation::<Filesystem>::from_source(&source) {
             Ok(conv) => conv,
-            Err(e) => { eprintln!("  error: {}", e); continue; }
+            Err(e) => {
+                eprintln!("  error: {}", e);
+                continue;
+            }
         };
 
         let tree = Folder::read_tree(path);

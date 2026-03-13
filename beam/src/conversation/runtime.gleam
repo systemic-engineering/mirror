@@ -6,6 +6,7 @@
 import conversation/protocol.{
   type Arm, type Op, type Pattern, type Spec, Cmp, DesiredState, Pass, Wildcard,
 }
+import gleam/list
 
 /// What needs to change to reach desired state.
 pub type Delta {
@@ -21,6 +22,7 @@ pub type Delta {
 pub fn converge(spec: Spec) -> List(Delta) {
   case spec {
     protocol.Case(_, arms) -> dispatch(arms)
+    protocol.Branch(arms) -> branch_dispatch(arms)
     protocol.When(op, _path, literal, then) -> guard(op, literal, then)
     DesiredState(process, state) -> [StartProcess(process, state)]
     Pass -> []
@@ -37,6 +39,17 @@ fn dispatch(arms: List(Arm)) -> List(Delta) {
         False -> dispatch(rest)
       }
   }
+}
+
+/// Try all arms. Collect deltas from every arm that matches.
+fn branch_dispatch(arms: List(Arm)) -> List(Delta) {
+  list.flat_map(arms, fn(arm) {
+    let protocol.Arm(pattern, body) = arm
+    case matches(pattern) {
+      True -> converge(body)
+      False -> []
+    }
+  })
 }
 
 /// Check if a pattern matches. Stub: wildcards always match,

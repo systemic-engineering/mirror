@@ -1,5 +1,6 @@
 import conversation/protocol.{
-  Arm, Case, Cmp, DesiredState, Eq, Gt, Gte, Lt, Lte, Ne, Pass, When, Wildcard,
+  Arm, Branch, Case, Cmp, DesiredState, Eq, Gt, Gte, Lt, Lte, Ne, Pass, When,
+  Wildcard,
 }
 import conversation/runtime.{StartProcess, converge}
 import gleeunit
@@ -44,6 +45,44 @@ pub fn when_guard_applies_test() {
 pub fn empty_case_produces_no_deltas_test() {
   let spec = Case("x", [])
   converge(spec) |> should.equal([])
+}
+
+// -- Branch — all matching arms fire --
+
+pub fn branch_empty_test() {
+  let spec = Branch([])
+  converge(spec) |> should.equal([])
+}
+
+pub fn branch_single_wildcard_fires_test() {
+  let spec = Branch([Arm(Wildcard, DesiredState("p", "s"))])
+  converge(spec) |> should.equal([StartProcess("p", "s")])
+}
+
+pub fn branch_all_wildcards_fire_test() {
+  // Unlike Case (first wins), Branch fires ALL matching arms
+  let spec =
+    Branch([
+      Arm(Wildcard, DesiredState("a", "x")),
+      Arm(Wildcard, DesiredState("b", "y")),
+    ])
+  converge(spec) |> should.equal([StartProcess("a", "x"), StartProcess("b", "y")])
+}
+
+pub fn branch_cmp_no_match_skipped_test() {
+  // Cmp stubs to False — arm skipped, no deltas
+  let spec = Branch([Arm(Cmp(Gt, "0.1"), DesiredState("a", "high"))])
+  converge(spec) |> should.equal([])
+}
+
+pub fn branch_collects_matching_skips_nonmatching_test() {
+  // Cmp falls through, wildcard fires — only wildcard produces a delta
+  let spec =
+    Branch([
+      Arm(Cmp(Gt, "0.1"), DesiredState("a", "high")),
+      Arm(Wildcard, DesiredState("b", "low")),
+    ])
+  converge(spec) |> should.equal([StartProcess("b", "low")])
 }
 
 // -- All Op variants construct --

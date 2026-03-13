@@ -5,8 +5,10 @@
 
 /// What a conversation specifies as desired BEAM state.
 pub type Spec {
-  /// Multi-arm dispatch. Subject = what to evaluate. Arms = desired states.
+  /// Multi-arm dispatch. Subject = what to evaluate. First match wins.
   Case(subject: String, arms: List(Arm))
+  /// Multi-arm dispatch. ALL matching arms fire. Produces deltas from each.
+  Branch(arms: List(Arm))
   /// Guard clause. If predicate holds, apply the inner spec.
   When(op: Op, path: String, literal: String, then: Spec)
   /// Desired process state. The runtime converges toward this.
