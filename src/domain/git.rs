@@ -7,7 +7,7 @@
 use sha2::{Digest, Sha256};
 
 use super::{Addressable, Setting};
-use crate::trace::ContentAddressed;
+use crate::narrative::ContentAddressed;
 
 story::domain_oid!(/// Content address for git nodes.
 pub GitOid);

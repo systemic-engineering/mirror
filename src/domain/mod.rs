@@ -27,7 +27,7 @@ mod tests {
     #[test]
     fn conversation_token_is_ast_node() {
         fn assert_token<C: Setting<Token = crate::ast::AstNode>>() {}
-        assert_token::<conversation::Conversation>();
+        assert_token::<conversation::Script>();
     }
 
     // -- Git domain --

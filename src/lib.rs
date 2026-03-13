@@ -6,26 +6,26 @@ pub mod resolve;
 pub mod tree;
 
 // Re-export story modules as crate-level modules.
-// This lets internal code use `crate::trace::ContentAddressed` etc.
+// This lets internal code use `crate::narrative::ContentAddressed` etc.
 pub use story::actor;
 pub use story::beat;
 pub use story::identity;
 pub use story::optics;
 pub use story::setting;
-pub use story::trace;
-pub use story::traceable;
+pub use story::narrative;
+pub use story::narrate;
 
 // Re-export story types at the crate root (story vocabulary).
 pub use story::actor::Actor;
 pub use story::beat::Beat;
 pub use story::identity::{Email, Identity, Name, Node, Signal, Signature, Signed, System};
 pub use story::optics::{
-    rewrite, NotFound, Prism, PrismAsTraversal, SelectPrism, TracingPrism, TracingTraversal,
+    rewrite, NotFound, Prism, PrismAsTraversal, SelectPrism, NarratingPrism, NarratingTraversal,
     Traversal,
 };
 pub use story::setting::{Addressable, Setting};
-pub use story::trace::{ContentAddressed, Event, EventOid, Oid, Session, Trace, TraceOid};
-pub use story::traceable::{Composed, ComposedError, Fallback, Iso, Traceable, When};
+pub use story::narrative::{ContentAddressed, Event, EventOid, Oid, Session, Narrative, NarrativeOid};
+pub use story::narrate::{Composed, ComposedError, Fallback, Iso, Story, When};
 
 pub use domain::beam::BeamOid;
 pub use domain::filesystem::{Filesystem, Folder, FolderOid};

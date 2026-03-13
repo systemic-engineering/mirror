@@ -7,7 +7,7 @@ use super::Setting;
 
 /// The conversation context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct Conversation;
+pub struct Script;
 
 /// What a conversation node can be.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -46,7 +46,7 @@ pub enum Kind {
     Use,
     /// `when error.rate > 0.1` — guard clause; the Op IS the comparison
     When(Op),
-    /// `error.rate` — dot-separated path (Conversation space navigation)
+    /// `error.rate` — dot-separated path (Script space navigation)
     Path,
     /// `0.1`, `"health"`, `true` — literal value in a predicate
     Literal,
@@ -71,7 +71,7 @@ pub enum Op {
     Ne,  // !=
 }
 
-impl Setting for Conversation {
+impl Setting for Script {
     type Token = crate::ast::AstNode;
 
     fn id() -> &'static str {
@@ -85,7 +85,7 @@ mod tests {
 
     #[test]
     fn conversation_id() {
-        assert_eq!(Conversation::id(), "conversation");
+        assert_eq!(Script::id(), "conversation");
     }
 
     #[test]
@@ -93,6 +93,6 @@ mod tests {
         fn requires_scene<C: Setting>() -> &'static str {
             C::id()
         }
-        assert_eq!(requires_scene::<Conversation>(), "conversation");
+        assert_eq!(requires_scene::<Script>(), "conversation");
     }
 }

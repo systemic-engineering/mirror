@@ -1,7 +1,7 @@
 use sha2::{Digest, Sha256};
 
 use super::{Addressable, Setting};
-use crate::trace::ContentAddressed;
+use crate::narrative::ContentAddressed;
 use crate::tree::{self, Tree};
 
 story::domain_oid!(/// Content address for filesystem nodes.
