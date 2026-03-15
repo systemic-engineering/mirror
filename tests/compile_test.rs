@@ -61,3 +61,24 @@ fn eaf_committed_as_child_of_transformation() {
     assert!(matches!(eaf_commit, Commit::Child { .. }));
     assert_ne!(transform_commit.sha(), eaf_commit.sha());
 }
+
+fn branch_conv_source() -> &'static str {
+    "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\nbranch(.action) {\n  \"hold\" => ..\n  \"exit\" => exit\n}\n"
+}
+
+/// EAF emission handles branch nodes.
+#[test]
+fn emit_eaf_with_branch() {
+    let resolved = Conversation::<Filesystem>::from_source(branch_conv_source()).unwrap();
+    let eaf_bytes = compile::emit_eaf(&resolved.content);
+    assert!(!eaf_bytes.is_empty());
+    assert_eq!(eaf_bytes[0], 131);
+}
+
+/// Branch EAF is deterministic.
+#[test]
+fn emit_eaf_branch_deterministic() {
+    let a = Conversation::<Filesystem>::from_source(branch_conv_source()).unwrap();
+    let b = Conversation::<Filesystem>::from_source(branch_conv_source()).unwrap();
+    assert_eq!(compile::emit_eaf(&a.content), compile::emit_eaf(&b.content));
+}

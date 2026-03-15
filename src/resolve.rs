@@ -64,6 +64,33 @@ pub struct Field {
     pipe: Option<String>,
 }
 
+/// A pattern in a branch arm.
+#[derive(Clone, Debug)]
+pub enum BranchPattern {
+    /// Exact string match: `"hold"`
+    Literal(String),
+    /// Wildcard: `_`
+    Wild,
+}
+
+/// An action in a branch arm.
+#[derive(Clone, Debug)]
+pub enum BranchAction {
+    /// Passthrough: `..`
+    Pass,
+    /// Terminate: `exit`
+    Exit,
+    /// Arbitrary expression
+    Expr(String),
+}
+
+/// A single arm in a branch dispatch.
+#[derive(Clone, Debug)]
+pub struct BranchArm {
+    pub pattern: BranchPattern,
+    pub action: BranchAction,
+}
+
 #[derive(Clone, Debug)]
 pub enum OutputNode {
     Group {
@@ -73,6 +100,10 @@ pub enum OutputNode {
         output_name: String,
         folder_name: String,
         template_name: String,
+    },
+    Branch {
+        query: String,
+        arms: Vec<BranchArm>,
     },
 }
 
@@ -1141,5 +1172,76 @@ mod tests {
             .expect("consciousness piece should exist in published");
         assert!(!consciousness["excerpt"].as_str().unwrap().is_empty());
         assert!(!consciousness["headlines"].as_array().unwrap().is_empty());
+    }
+
+    // -- branch resolution --
+
+    #[test]
+    fn resolve_branch_produces_output_node() {
+        let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\nbranch(.action) {\n  \"hold\" => ..\n  \"exit\" => exit\n}\n";
+        let conv = Conversation::<Filesystem>::from_source(source).unwrap();
+        // Branch should be present in the conversation's output tree or as a separate structure
+        // For now, verify parsing + resolution doesn't fail
+        assert!(!conv.content.data().name().is_empty());
+    }
+
+    #[test]
+    fn resolve_branch_node_has_arms() {
+        use crate::tree::Treelike;
+
+        let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\nbranch(.action) {\n  \"hold\" => ..\n  \"exit\" => exit\n}\n";
+        let conv = Conversation::<Filesystem>::from_source(source).unwrap();
+
+        // Find the Branch node in the tree
+        fn find_branch(tree: &Tree<OutputNode>) -> Option<&OutputNode> {
+            match tree.data() {
+                OutputNode::Branch { .. } => Some(tree.data()),
+                _ => tree.children().iter().find_map(find_branch),
+            }
+        }
+
+        let branch = find_branch(&conv.content).expect("should have a Branch node");
+        match branch {
+            OutputNode::Branch { query, arms } => {
+                assert_eq!(query, ".action");
+                assert_eq!(arms.len(), 2);
+                assert!(matches!(&arms[0].pattern, BranchPattern::Literal(s) if s == "hold"));
+                assert!(matches!(&arms[0].action, BranchAction::Pass));
+                assert!(matches!(&arms[1].pattern, BranchPattern::Literal(s) if s == "exit"));
+                assert!(matches!(&arms[1].action, BranchAction::Exit));
+            }
+            _ => panic!("expected Branch"),
+        }
+    }
+
+    #[test]
+    fn output_node_branch_name() {
+        let node = OutputNode::Branch {
+            query: ".action".into(),
+            arms: vec![],
+        };
+        assert_eq!(node.name(), "branch");
+    }
+
+    #[test]
+    fn output_node_branch_encode() {
+        use fragmentation::encoding::Encode;
+        let node = OutputNode::Branch {
+            query: ".action".into(),
+            arms: vec![
+                BranchArm {
+                    pattern: BranchPattern::Literal("hold".into()),
+                    action: BranchAction::Pass,
+                },
+                BranchArm {
+                    pattern: BranchPattern::Wild,
+                    action: BranchAction::Exit,
+                },
+            ],
+        };
+        let encoded = node.encode();
+        let s = String::from_utf8(encoded).unwrap();
+        assert!(s.contains("branch"));
+        assert!(s.contains(".action"));
     }
 }
