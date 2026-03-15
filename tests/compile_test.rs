@@ -1,5 +1,10 @@
+use std::collections::HashMap;
+
 use conversation::compile;
-use conversation::{Conversation, Filesystem, OutputNode, Repo};
+use conversation::Story;
+use conversation::{
+    Conversation, Filesystem, Namespace, OutputNode, Repo, Resolve, Template, TemplateProvider,
+};
 use fragmentation::commit::{Commit, Draft, Parent};
 use fragmentation::encoding;
 use fragmentation::witnessed::Committer;
@@ -91,4 +96,50 @@ fn emit_eaf_branch_wild_and_expr() {
     let eaf_bytes = compile::emit_eaf(&resolved.content);
     assert!(!eaf_bytes.is_empty());
     assert_eq!(eaf_bytes[0], 131);
+}
+
+// -- Integration: imported templates compile to EAF --
+
+/// Full pipeline: parse with `use` import → resolve → compile to EAF.
+#[test]
+fn compile_with_imported_template() {
+    // Set up namespace with a shared template
+    let mut templates = HashMap::new();
+    templates.insert("$shared".to_string(), Template::with_fields(&["slug"]));
+    let mut ns = Namespace::new();
+    ns.register("shared", TemplateProvider::Inline(templates));
+    let resolve = Resolve::new().with_namespace(ns);
+
+    // .conv source that imports from @shared and uses both local + imported
+    let source = "use $shared from @shared\ntemplate $local {\n\ttitle\n}\nout articles {\n\tdrafts: blog { $shared }\n\tpages: static { $local }\n}\n";
+    let ast = conversation::Parse.record(source.to_string()).unwrap();
+    let conv: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+
+    // Imported template flows through to Select nodes
+    let eaf_bytes = compile::emit_eaf(&conv.content);
+    assert!(!eaf_bytes.is_empty());
+    assert_eq!(eaf_bytes[0], 131, "valid ETF");
+}
+
+/// Same import produces the same OID (content-addressed).
+#[test]
+fn compile_imported_template_content_addressed() {
+    use conversation::ContentAddressed;
+
+    let mut templates = HashMap::new();
+    templates.insert("$t".to_string(), Template::with_fields(&["slug"]));
+
+    let make_conv = || {
+        let mut ns = Namespace::new();
+        ns.register("shared", TemplateProvider::Inline(templates.clone()));
+        let resolve = Resolve::new().with_namespace(ns);
+        let source = "use $t from @shared\nout r {\n\tx: f { $t }\n}\n";
+        let ast = conversation::Parse.record(source.to_string()).unwrap();
+        let conv: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+        conv
+    };
+
+    let a = make_conv();
+    let b = make_conv();
+    assert_eq!(a.content_oid(), b.content_oid());
 }

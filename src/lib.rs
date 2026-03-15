@@ -30,7 +30,10 @@ pub use domain::beam::BeamOid;
 pub use domain::filesystem::{Filesystem, Folder, FolderOid};
 pub use domain::git::{Git, GitNode, GitOid};
 pub use parse::{Parse, ParseError};
-pub use resolve::{Conversation, ConversationOid, OutputNode, Resolve, ResolveError};
+pub use resolve::{
+    Conversation, ConversationOid, Namespace, OutputNode, Resolve, ResolveError, Template,
+    TemplateProvider,
+};
 pub use tree::Tree;
 
 // Re-export fragmentation's in-memory repo for downstream use.

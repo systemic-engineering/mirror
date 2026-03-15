@@ -372,6 +372,60 @@ fn parse_block_body(
     })
 }
 
+/// Parse the source expression of a `use` statement into origin + path segments.
+///
+/// - `@domain`          → [DomainRef]
+/// - `@domain/sub/path` → [DomainRef, Path, Path]
+/// - `$HOME/shared`     → [Home, Path]
+/// - `$SELF/templates`  → [Self_, Path]
+/// - `./templates`      → [Self_, Path]  (desugar)
+fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>) {
+    // Desugar ./ to $SELF/
+    let source = if let Some(rest) = source.strip_prefix("./") {
+        children.push(ast::ast_leaf(Kind::Self_, "$SELF", span));
+        for seg in rest.split('/').filter(|s| !s.is_empty()) {
+            children.push(ast::ast_leaf(Kind::Path, seg, span));
+        }
+        return;
+    } else {
+        source
+    };
+
+    // Check for $HOME/ or $SELF/ prefix
+    if let Some(rest) = source.strip_prefix("$HOME/") {
+        children.push(ast::ast_leaf(Kind::Home, "$HOME", span));
+        for seg in rest.split('/').filter(|s| !s.is_empty()) {
+            children.push(ast::ast_leaf(Kind::Path, seg, span));
+        }
+        return;
+    }
+    if let Some(rest) = source.strip_prefix("$SELF/") {
+        children.push(ast::ast_leaf(Kind::Self_, "$SELF", span));
+        for seg in rest.split('/').filter(|s| !s.is_empty()) {
+            children.push(ast::ast_leaf(Kind::Path, seg, span));
+        }
+        return;
+    }
+
+    // Check for @domain with optional /path segments
+    if source.starts_with('@') {
+        if let Some(slash_idx) = source.find('/') {
+            let domain = &source[..slash_idx];
+            children.push(ast::ast_leaf(Kind::DomainRef, domain, span));
+            let rest = &source[slash_idx + 1..];
+            for seg in rest.split('/').filter(|s| !s.is_empty()) {
+                children.push(ast::ast_leaf(Kind::Path, seg, span));
+            }
+        } else {
+            children.push(ast::ast_leaf(Kind::DomainRef, source, span));
+        }
+        return;
+    }
+
+    // Bare source (no prefix) — treat as DomainRef
+    children.push(ast::ast_leaf(Kind::DomainRef, source, span));
+}
+
 /// Parse a use statement.
 ///
 /// Forms:
@@ -400,14 +454,14 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
         children.push(ast::ast_leaf(Kind::TemplateRef, names_part, span));
     }
 
-    // Parse source: `@domain` possibly followed by `sha: ABC`
-    let (domain, sha_param) = match source_part.split_once(" sha: ") {
+    // Parse source: path expression possibly followed by `sha: ABC`
+    let (source_expr, sha_param) = match source_part.split_once(" sha: ") {
         Some((d, s)) => (d.trim(), Some(format!("sha: {}", s.trim()))),
         None => (source_part, None),
     };
 
-    if !domain.is_empty() {
-        children.push(ast::ast_leaf(Kind::DomainRef, domain, span));
+    if !source_expr.is_empty() {
+        parse_use_source(source_expr, span, &mut children);
     }
 
     if let Some(param) = sha_param {
@@ -1137,6 +1191,125 @@ mod tests {
         assert_eq!(children[0].data().kind, Kind::Use);
         assert_eq!(children[1].data().kind, Kind::Template);
         assert_eq!(children[2].data().kind, Kind::Out);
+    }
+
+    // -- Parse `use` with path expressions --
+
+    #[test]
+    fn parse_use_home_path() {
+        let source = "use $t from $HOME/shared\n".to_string();
+        let tree = Parse.record(source).unwrap();
+        let use_node = tree
+            .children()
+            .iter()
+            .find(|c| c.data().kind == Kind::Use)
+            .unwrap();
+        let ch = use_node.children();
+        // [TemplateRef($t), Home, Path(shared)]
+        assert_eq!(ch.len(), 3);
+        assert_eq!(ch[0].data().kind, Kind::TemplateRef);
+        assert_eq!(ch[0].data().value, "$t");
+        assert_eq!(ch[1].data().kind, Kind::Home);
+        assert_eq!(ch[2].data().kind, Kind::Path);
+        assert_eq!(ch[2].data().value, "shared");
+    }
+
+    #[test]
+    fn parse_use_self_path() {
+        let source = "use $t from $SELF/templates\n".to_string();
+        let tree = Parse.record(source).unwrap();
+        let use_node = tree
+            .children()
+            .iter()
+            .find(|c| c.data().kind == Kind::Use)
+            .unwrap();
+        let ch = use_node.children();
+        // [TemplateRef($t), Self_, Path(templates)]
+        assert_eq!(ch.len(), 3);
+        assert_eq!(ch[0].data().kind, Kind::TemplateRef);
+        assert_eq!(ch[0].data().value, "$t");
+        assert_eq!(ch[1].data().kind, Kind::Self_);
+        assert_eq!(ch[2].data().kind, Kind::Path);
+        assert_eq!(ch[2].data().value, "templates");
+    }
+
+    #[test]
+    fn parse_use_dot_slash() {
+        let source = "use $t from ./templates\n".to_string();
+        let tree = Parse.record(source).unwrap();
+        let use_node = tree
+            .children()
+            .iter()
+            .find(|c| c.data().kind == Kind::Use)
+            .unwrap();
+        let ch = use_node.children();
+        // ./templates desugars to Self_ + Path(templates)
+        assert_eq!(ch.len(), 3);
+        assert_eq!(ch[0].data().kind, Kind::TemplateRef);
+        assert_eq!(ch[0].data().value, "$t");
+        assert_eq!(ch[1].data().kind, Kind::Self_);
+        assert_eq!(ch[2].data().kind, Kind::Path);
+        assert_eq!(ch[2].data().value, "templates");
+    }
+
+    #[test]
+    fn parse_use_namespace_path() {
+        let source = "use $t from @X/sub\n".to_string();
+        let tree = Parse.record(source).unwrap();
+        let use_node = tree
+            .children()
+            .iter()
+            .find(|c| c.data().kind == Kind::Use)
+            .unwrap();
+        let ch = use_node.children();
+        // [TemplateRef($t), DomainRef(@X), Path(sub)]
+        assert_eq!(ch.len(), 3);
+        assert_eq!(ch[0].data().kind, Kind::TemplateRef);
+        assert_eq!(ch[0].data().value, "$t");
+        assert_eq!(ch[1].data().kind, Kind::DomainRef);
+        assert_eq!(ch[1].data().value, "@X");
+        assert_eq!(ch[2].data().kind, Kind::Path);
+        assert_eq!(ch[2].data().value, "sub");
+    }
+
+    #[test]
+    fn parse_use_deep_path() {
+        let source = "use $t from $HOME/a/b/c\n".to_string();
+        let tree = Parse.record(source).unwrap();
+        let use_node = tree
+            .children()
+            .iter()
+            .find(|c| c.data().kind == Kind::Use)
+            .unwrap();
+        let ch = use_node.children();
+        // [TemplateRef($t), Home, Path(a), Path(b), Path(c)]
+        assert_eq!(ch.len(), 5);
+        assert_eq!(ch[0].data().kind, Kind::TemplateRef);
+        assert_eq!(ch[1].data().kind, Kind::Home);
+        assert_eq!(ch[2].data().kind, Kind::Path);
+        assert_eq!(ch[2].data().value, "a");
+        assert_eq!(ch[3].data().kind, Kind::Path);
+        assert_eq!(ch[3].data().value, "b");
+        assert_eq!(ch[4].data().kind, Kind::Path);
+        assert_eq!(ch[4].data().value, "c");
+    }
+
+    #[test]
+    fn parse_use_bare_source() {
+        let source = "use $t from bare_name\n".to_string();
+        let tree = Parse.record(source).unwrap();
+        let use_node = tree
+            .children()
+            .iter()
+            .find(|c| c.data().kind == Kind::Use)
+            .unwrap();
+        let ch = use_node.children();
+        // [TemplateRef($t), DomainRef(bare_name)]
+        assert_eq!(ch.len(), 2);
+        assert_eq!(ch[0].data().kind, Kind::TemplateRef);
+        assert_eq!(ch[0].data().value, "$t");
+        assert_eq!(ch[1].data().kind, Kind::DomainRef);
+        assert_eq!(ch[1].data().value, "bare_name");
     }
 
     // -- Parse `when` predicates --

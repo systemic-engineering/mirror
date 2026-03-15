@@ -22,13 +22,69 @@ use fragmentation::sha;
 story::domain_oid!(/// Content address for resolved conversations.
 pub ConversationOid);
 
+/// What a namespace module provides when resolved.
+#[derive(Clone, Debug)]
+pub enum TemplateProvider {
+    /// Inline templates (defined in the same .conv file or injected).
+    Inline(HashMap<String, Template>),
+    /// Reference to another .conv file (future: lazy resolution).
+    External(String),
+}
+
+/// A namespace maps module names to template providers.
+///
+/// In single-node mode, `@X` resolves to `namespace.modules["X"]`.
+/// The `@` is the security boundary — control what `@` resolves to = control the sandbox.
+#[derive(Clone, Debug)]
+pub struct Namespace {
+    modules: HashMap<String, TemplateProvider>,
+}
+
+impl Namespace {
+    pub fn new() -> Self {
+        Namespace {
+            modules: HashMap::new(),
+        }
+    }
+
+    /// Register a module with inline templates.
+    pub fn register(&mut self, name: &str, provider: TemplateProvider) {
+        self.modules.insert(name.to_string(), provider);
+    }
+
+    /// Check if a module is registered.
+    pub fn contains(&self, name: &str) -> bool {
+        self.modules.contains_key(name)
+    }
+
+    /// All module names for did-you-mean hints.
+    pub fn module_names(&self) -> Vec<&str> {
+        self.modules.keys().map(|s| s.as_str()).collect()
+    }
+
+    /// Look up a module's inline templates.
+    pub fn get_templates(&self, name: &str) -> Option<&HashMap<String, Template>> {
+        match self.modules.get(name)? {
+            TemplateProvider::Inline(map) => Some(map),
+            TemplateProvider::External(_) => None,
+        }
+    }
+}
+
+impl Default for Namespace {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// The resolve traceable. AST → Conversation.
 ///
-/// Known domains (Filesystem, Json) always resolve.
-/// External domains must be registered via `with_domain`.
+/// Known domains (Filesystem, Json, Git) and namespace modules resolve.
+/// External domains must be registered via `with_domain` or `with_namespace`.
 #[derive(Clone, Debug)]
 pub struct Resolve {
     externals: Vec<String>,
+    namespace: Namespace,
 }
 
 /// What can go wrong during resolution.
@@ -51,12 +107,28 @@ pub struct Conversation<C: Setting> {
     _context: PhantomData<C>,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Template {
     fields: Vec<Field>,
 }
 
-#[derive(Debug)]
+impl Template {
+    /// Create a template with the given field names (no qualifiers or pipes).
+    pub fn with_fields(names: &[&str]) -> Self {
+        Template {
+            fields: names
+                .iter()
+                .map(|name| Field {
+                    name: name.to_string(),
+                    qualifier: None,
+                    pipe: None,
+                })
+                .collect(),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct Field {
     name: String,
     qualifier: Option<String>,
@@ -153,11 +225,18 @@ impl Resolve {
     pub fn new() -> Self {
         Resolve {
             externals: Vec::new(),
+            namespace: Namespace::new(),
         }
     }
 
     pub fn with_domain(mut self, domain: &str) -> Self {
         self.externals.push(domain.to_string());
+        self
+    }
+
+    /// Register a full namespace for import resolution.
+    pub fn with_namespace(mut self, namespace: Namespace) -> Self {
+        self.namespace = namespace;
         self
     }
 
@@ -167,7 +246,9 @@ impl Resolve {
 
     /// Is this domain name known or registered?
     fn is_known_domain(&self, name: &str) -> bool {
-        Self::KNOWN_DOMAINS.contains(&name) || self.externals.iter().any(|e| e == name)
+        Self::KNOWN_DOMAINS.contains(&name)
+            || self.externals.iter().any(|e| e == name)
+            || self.namespace.contains(name)
     }
 
     /// All domain names available for did_you_mean.
@@ -176,6 +257,7 @@ impl Resolve {
         for ext in &self.externals {
             names.push(ext.as_str());
         }
+        names.extend(self.namespace.module_names());
         names
     }
 }
@@ -183,6 +265,92 @@ impl Resolve {
 impl Default for Resolve {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl Resolve {
+    /// Resolve templates from a Use node's namespace path.
+    ///
+    /// Walks the Use node's children to find the source module,
+    /// then extracts the named templates into the provided map.
+    #[allow(dead_code)]
+    fn resolve_use(
+        &self,
+        use_node: &Tree<AstNode>,
+        templates: &mut HashMap<String, Template>,
+    ) -> Result<(), ResolveError> {
+        let children = use_node.children();
+
+        // Collect template names to import
+        let template_names: Vec<String> = children
+            .iter()
+            .filter(|c| c.data().kind == Kind::TemplateRef)
+            .map(|c| c.data().value.clone())
+            .collect();
+
+        // Find the source: DomainRef or Home/Self_ node
+        let domain_ref = children.iter().find(|c| c.data().kind == Kind::DomainRef);
+
+        let module_name = if let Some(domain) = domain_ref {
+            let raw = &domain.data().value;
+            raw.strip_prefix('@').unwrap_or(raw).to_string()
+        } else {
+            // $HOME or $SELF paths — future: tree navigation
+            // For now, these need a namespace module registered
+            return Ok(());
+        };
+
+        // Look up module in namespace
+        let ns_templates = self.namespace.get_templates(&module_name);
+        match ns_templates {
+            Some(provider_templates) => {
+                for name in &template_names {
+                    if let Some(tmpl) = provider_templates.get(name) {
+                        if templates.contains_key(name) {
+                            return Err(ResolveError {
+                                message: format!(
+                                    "imported template {} conflicts with local definition",
+                                    name
+                                ),
+                                span: Some(use_node.data().span),
+                                hints: vec![],
+                            });
+                        }
+                        templates.insert(name.clone(), tmpl.clone());
+                    } else {
+                        let candidates: Vec<&str> =
+                            provider_templates.keys().map(|s| s.as_str()).collect();
+                        let mut hints = Vec::new();
+                        if let Some(suggestion) = did_you_mean(name, &candidates) {
+                            hints.push(format!("did you mean {}?", suggestion));
+                        }
+                        return Err(ResolveError {
+                            message: format!("template {} not found in @{}", name, module_name),
+                            span: Some(use_node.data().span),
+                            hints,
+                        });
+                    }
+                }
+            }
+            None => {
+                if !self.is_known_domain(&module_name) {
+                    let candidates = self.all_domain_names();
+                    let mut hints = Vec::new();
+                    if let Some(suggestion) = did_you_mean(&module_name, &candidates) {
+                        hints.push(format!("did you mean @{}?", suggestion));
+                    }
+                    return Err(ResolveError {
+                        message: format!("unknown source @{}", module_name),
+                        span: Some(use_node.data().span),
+                        hints,
+                    });
+                }
+                // Known domain but not in namespace — no templates to import
+                // (future: external file resolution)
+            }
+        }
+
+        Ok(())
     }
 }
 
@@ -226,7 +394,7 @@ fn resolve_ast<C: Setting>(
         }
     }
 
-    // Extract templates
+    // Extract local templates
     let mut templates = HashMap::new();
     for child in children {
         if child.data().kind == Kind::Template {
@@ -235,6 +403,8 @@ fn resolve_ast<C: Setting>(
             templates.insert(name, Template { fields });
         }
     }
+
+    // TODO: Resolve use imports — merge external templates into local map
 
     // Extract output
     let out_node = children.iter().find(|c| c.data().kind == Kind::Out);
@@ -1418,5 +1588,246 @@ mod tests {
         let result = conv.record(tree).unwrap();
         // Branch node doesn't add to JSON output — just verify no panic
         assert!(result.is_object());
+    }
+
+    // -- Namespace + Use resolution --
+
+    fn make_namespace_with_template(module: &str, tmpl_name: &str) -> Namespace {
+        let mut templates = HashMap::new();
+        templates.insert(
+            tmpl_name.to_string(),
+            Template {
+                fields: vec![Field {
+                    name: "slug".into(),
+                    qualifier: None,
+                    pipe: None,
+                }],
+            },
+        );
+        let mut ns = Namespace::new();
+        ns.register(module, TemplateProvider::Inline(templates));
+        ns
+    }
+
+    #[test]
+    fn resolve_use_imports_template() {
+        let ns = make_namespace_with_template("shared", "$t");
+        let resolve = Resolve::new().with_namespace(ns);
+        let source = "use $t from @shared\nout r {\n\tx: f { $t }\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let conv: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+        // The imported template should be available
+        assert!(
+            conv.templates.contains_key("$t"),
+            "imported template $t should be in templates"
+        );
+    }
+
+    #[test]
+    fn resolve_use_unknown_source() {
+        let resolve = Resolve::new();
+        let source = "use $t from @missing\nout r {\n\tx {}\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let err = result.unwrap_err();
+        assert!(
+            err.message.contains("missing"),
+            "should mention missing source: {}",
+            err
+        );
+    }
+
+    #[test]
+    fn resolve_use_missing_template() {
+        let ns = make_namespace_with_template("shared", "$other");
+        let resolve = Resolve::new().with_namespace(ns);
+        let source = "use $t from @shared\nout r {\n\tx {}\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let err = result.unwrap_err();
+        assert!(
+            err.message.contains("$t") && err.message.contains("not found"),
+            "should say template not found: {}",
+            err
+        );
+    }
+
+    #[test]
+    fn resolve_use_destructured() {
+        let mut templates = HashMap::new();
+        templates.insert(
+            "$a".to_string(),
+            Template {
+                fields: vec![Field {
+                    name: "x".into(),
+                    qualifier: None,
+                    pipe: None,
+                }],
+            },
+        );
+        templates.insert(
+            "$b".to_string(),
+            Template {
+                fields: vec![Field {
+                    name: "y".into(),
+                    qualifier: None,
+                    pipe: None,
+                }],
+            },
+        );
+        let mut ns = Namespace::new();
+        ns.register("shared", TemplateProvider::Inline(templates));
+        let resolve = Resolve::new().with_namespace(ns);
+        let source = "use { $a, $b } from @shared\nout r {\n\tx: f { $a }\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let conv: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+        assert!(conv.templates.contains_key("$a"), "should import $a");
+        assert!(conv.templates.contains_key("$b"), "should import $b");
+    }
+
+    #[test]
+    fn resolve_use_overrides_local_errors() {
+        let ns = make_namespace_with_template("shared", "$t");
+        let resolve = Resolve::new().with_namespace(ns);
+        // Both local template $t AND use $t from @shared — should error
+        let source = "use $t from @shared\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let err = result.unwrap_err();
+        assert!(
+            err.message.contains("conflicts"),
+            "should mention conflict: {}",
+            err
+        );
+    }
+
+    #[test]
+    fn resolve_namespace_replaces_known_domains() {
+        // in @filesystem should still validate even with namespace
+        let ns = make_namespace_with_template("shared", "$t");
+        let resolve = Resolve::new().with_namespace(ns);
+        let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let _: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+    }
+
+    #[test]
+    fn resolve_with_domain_registers_module() {
+        // with_domain("custom") → in @custom validates
+        let resolve = Resolve::new().with_domain("custom");
+        let source = "in @custom\nout r {\n\tx {}\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let _: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+    }
+
+    #[test]
+    fn resolve_in_validates_via_namespace() {
+        // Register filesystem in namespace instead of relying on KNOWN_DOMAINS
+        let mut ns = Namespace::new();
+        ns.register("custom_domain", TemplateProvider::Inline(HashMap::new()));
+        let resolve = Resolve::new().with_namespace(ns);
+        let source = "in @custom_domain\nout r {\n\tx {}\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let _: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+    }
+
+    #[test]
+    fn resolve_in_unknown_via_namespace() {
+        let mut ns = Namespace::new();
+        ns.register("shared", TemplateProvider::Inline(HashMap::new()));
+        let resolve = Resolve::new().with_namespace(ns);
+        let source = "in @share\nout r {\n\tx {}\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let err = result.unwrap_err();
+        assert!(err.message.contains("share"), "{}", err);
+        assert!(
+            !err.hints.is_empty(),
+            "should suggest @shared from namespace"
+        );
+        assert!(err.hints[0].contains("shared"), "{}", err.hints[0]);
+    }
+
+    #[test]
+    fn resolve_use_home_path_noop() {
+        // $HOME path without DomainRef → early return Ok (no resolution yet)
+        let resolve = Resolve::new();
+        let source = "use $t from $HOME/shared\nout r {\n\tx {}\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        // No error — $HOME use silently returns Ok for now
+        let _: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+    }
+
+    #[test]
+    fn resolve_use_missing_template_did_you_mean() {
+        // Close misspelling triggers did-you-mean hint
+        let mut templates = HashMap::new();
+        templates.insert("$corpus".to_string(), Template::with_fields(&["slug"]));
+        let mut ns = Namespace::new();
+        ns.register("shared", TemplateProvider::Inline(templates));
+        let resolve = Resolve::new().with_namespace(ns);
+        let source = "use $corpu from @shared\nout r {\n\tx {}\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let err = result.unwrap_err();
+        assert!(err.message.contains("$corpu"), "{}", err);
+        assert!(err.message.contains("not found"), "{}", err);
+        assert!(!err.hints.is_empty(), "should have did-you-mean hint");
+        assert!(err.hints[0].contains("$corpus"), "{}", err.hints[0]);
+    }
+
+    #[test]
+    fn resolve_use_unknown_source_did_you_mean() {
+        // Close misspelling of namespace module triggers did-you-mean
+        let ns = make_namespace_with_template("shared", "$t");
+        let resolve = Resolve::new().with_namespace(ns);
+        let source = "use $t from @share\nout r {\n\tx {}\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let err = result.unwrap_err();
+        assert!(err.message.contains("share"), "{}", err);
+        assert!(!err.hints.is_empty(), "should have did-you-mean hint");
+        assert!(err.hints[0].contains("shared"), "{}", err.hints[0]);
+    }
+
+    #[test]
+    fn resolve_use_known_domain_no_templates() {
+        // Use from a known domain (filesystem) that has no templates in namespace
+        // → no error, just no templates imported
+        let resolve = Resolve::new();
+        let source =
+            "in @filesystem\nuse $t from @filesystem\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        // Should succeed — @filesystem is known but has no templates to import
+        let _: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+    }
+
+    #[test]
+    fn namespace_default() {
+        let ns = Namespace::default();
+        assert!(ns.module_names().is_empty());
+    }
+
+    #[test]
+    fn namespace_contains_and_names() {
+        let ns = make_namespace_with_template("shared", "$t");
+        assert!(ns.contains("shared"));
+        assert!(!ns.contains("other"));
+        assert!(ns.module_names().contains(&"shared"));
+    }
+
+    #[test]
+    fn namespace_get_templates_external_returns_none() {
+        let mut ns = Namespace::new();
+        ns.register("ext", TemplateProvider::External("file.conv".into()));
+        assert!(ns.get_templates("ext").is_none());
+    }
+
+    #[test]
+    fn template_provider_clone() {
+        let provider = TemplateProvider::Inline(HashMap::new());
+        let _cloned = provider.clone();
+        let ext = TemplateProvider::External("path".into());
+        let _cloned_ext = ext.clone();
     }
 }

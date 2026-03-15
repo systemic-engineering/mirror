@@ -44,6 +44,10 @@ pub enum Kind {
     Expr,
     /// `use $name from @domain` — import statement
     Use,
+    /// `$HOME` — root node reference (tree root)
+    Home,
+    /// `$SELF` — current node reference (where you are in the tree)
+    Self_,
     /// `when error.rate > 0.1` — guard clause; the Op IS the comparison
     When(Op),
     /// `error.rate` — dot-separated path (Script space navigation)
