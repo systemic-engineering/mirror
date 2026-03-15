@@ -161,6 +161,13 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
             continue;
         }
 
+        // branch(.path) { ... } — standalone
+        if trimmed.starts_with("branch(") {
+            let branch_node = parse_branch(trimmed, &mut lines)?;
+            children.push(branch_node);
+            continue;
+        }
+
         if let Some(rest) = trimmed.strip_prefix("template ") {
             let tmpl = parse_template(rest, &mut lines)?;
             children.push(tmpl);
@@ -170,6 +177,13 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
         if let Some(rest) = trimmed.strip_prefix("out ") {
             let out = parse_out(rest, &mut lines)?;
             children.push(out);
+            continue;
+        }
+
+        // Pipeline ending in branch: @json | branch(.path) { ... }
+        if trimmed.contains("| branch(") {
+            let pipeline_node = parse_pipeline_with_branch(trimmed, &mut lines)?;
+            children.push(pipeline_node);
             continue;
         }
 
@@ -519,6 +533,119 @@ fn parse_cmp(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
         message: format!("arm: no comparison operator in: {}", text),
         span: Some(span),
     })
+}
+
+/// Parse a branch block: `branch(.action) {\n  "hold" => ..\n  "exit" => exit\n}`
+///
+/// Header is the full first line (e.g. `branch(.action) {`).
+/// Arms parsed line-by-line. Patterns are string literals or `_` (Wild).
+fn parse_branch(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+    // Extract query path from branch(.action) {
+    let after_branch = header.strip_prefix("branch(").unwrap();
+    let paren_end = after_branch.find(')').ok_or_else(|| ParseError {
+        message: "branch: missing closing ')'".into(),
+        span: Some(lines.current_span()),
+    })?;
+    let query = &after_branch[..paren_end];
+    let start_span = lines.current_span();
+    lines.advance(); // consume branch line
+
+    let mut arms = Vec::new();
+
+    while let Some(line) = lines.peek() {
+        let trimmed = line.trim();
+
+        if trimmed == "}" {
+            let end_span = lines.current_span();
+            lines.advance();
+            let span = start_span.merge(&end_span);
+            return Ok(ast::ast_branch(Kind::Branch, query, span, arms));
+        }
+
+        if trimmed.is_empty() {
+            lines.advance();
+            continue;
+        }
+
+        let arm = parse_branch_arm(trimmed, lines.current_span())?;
+        arms.push(arm);
+        lines.advance();
+    }
+
+    Err(ParseError {
+        message: "unclosed branch block".into(),
+        span: Some(start_span),
+    })
+}
+
+/// Parse a single branch arm: `"hold" => ..` or `_ => exit`.
+///
+/// Split on ` => ` to separate pattern from action.
+fn parse_branch_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+    let (pattern_str, action_str) = match text.split_once(" => ") {
+        Some((p, a)) => (p.trim(), a.trim()),
+        None => {
+            return Err(ParseError {
+                message: format!("branch arm: missing ' => ' in: {}", text),
+                span: Some(span),
+            })
+        }
+    };
+
+    let action = ast::ast_leaf(Kind::Expr, action_str, span);
+
+    let pattern = if pattern_str == "_" {
+        ast::ast_leaf(Kind::Wild, "", span)
+    } else if pattern_str.starts_with('"') && pattern_str.ends_with('"') {
+        // Strip quotes from string literal
+        let inner = &pattern_str[1..pattern_str.len() - 1];
+        ast::ast_leaf(Kind::Literal, inner, span)
+    } else {
+        return Err(ParseError {
+            message: format!(
+                "branch arm: pattern must be a quoted string or '_', got: {}",
+                pattern_str
+            ),
+            span: Some(span),
+        });
+    };
+
+    Ok(ast::ast_branch(Kind::Arm, "", span, vec![pattern, action]))
+}
+
+/// Parse a pipeline that ends with a branch block:
+/// `@json | branch(.action) {\n  "hold" => ..\n}\n`
+///
+/// Splits at `| branch(`, parses prefix as pipeline segments,
+/// then parses the branch block. Returns a Pipeline wrapping both.
+fn parse_pipeline_with_branch(
+    header: &str,
+    lines: &mut Lines,
+) -> Result<Tree<AstNode>, ParseError> {
+    let span = lines.current_span();
+    let split_idx = header.find("| branch(").unwrap();
+    let prefix = header[..split_idx].trim();
+    let branch_part = header[split_idx + 2..].trim(); // skip "| "
+
+    // Parse prefix segments
+    let prefix_segments: Vec<Tree<AstNode>> = prefix
+        .split('|')
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty())
+        .map(|seg| parse_pipeline_segment(seg, span))
+        .collect();
+
+    // Parse the branch block
+    let branch_node = parse_branch(branch_part, lines)?;
+
+    let mut pipeline_children = prefix_segments;
+    pipeline_children.push(branch_node);
+    Ok(ast::ast_branch(
+        Kind::Pipeline,
+        "root",
+        span,
+        pipeline_children,
+    ))
 }
 
 /// Parse a pipeline: `@git(branch: "master") | HEAD | @git(branch: "test")`
@@ -1381,6 +1508,28 @@ mod tests {
         assert!(
             err.message.contains("=>"),
             "expected mention of '=>': {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_branch_error_missing_paren() {
+        let source = "branch(.x {\n  \"a\" => ..\n}\n";
+        let err = Parse.record(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains(")") || err.message.contains("paren"),
+            "expected paren error: {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_branch_error_invalid_pattern() {
+        let source = "branch(.x) {\n  bare => ..\n}\n";
+        let err = Parse.record(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("quoted string") || err.message.contains("pattern"),
+            "expected pattern error: {}",
             err.message
         );
     }
