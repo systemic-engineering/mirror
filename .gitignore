@@ -3,3 +3,4 @@ target/
 .nix-cargo/
 erl_crash.dump
 target/llvm-cov/
+.worktrees/

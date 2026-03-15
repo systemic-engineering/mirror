@@ -31,6 +31,7 @@ pub use fragmentation::fragment::content_oid;
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ContentAddressed;
     use fragmentation::ref_::Ref;
     use fragmentation::sha;
 
@@ -71,6 +72,20 @@ mod tests {
         assert!(root.is_fractal());
         assert!(root.children()[0].is_fractal());
         assert!(root.children()[0].children()[0].is_shard());
+    }
+
+    #[test]
+    fn tree_content_addressed() {
+        let a: Tree<String> = leaf(test_ref("x"), "same".into());
+        let b: Tree<String> = leaf(test_ref("y"), "same".into());
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn tree_different_content_different_oid() {
+        let a: Tree<String> = leaf(test_ref("x"), "hello".into());
+        let b: Tree<String> = leaf(test_ref("x"), "world".into());
+        assert_ne!(a.content_oid(), b.content_oid());
     }
 
     #[test]

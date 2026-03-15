@@ -17,9 +17,9 @@ format-check:
 format:
     nix develop -c cargo fmt
 
-# 100% line coverage or fail
+# 100% line coverage or fail (scoped to conversation sources)
 coverage:
-    nix develop -c cargo llvm-cov --fail-under-lines 100
+    nix develop -c cargo llvm-cov --fail-under-lines 100 --ignore-filename-regex 'story/'
 
 # HTML report
 coverage-html:

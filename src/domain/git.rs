@@ -4,7 +4,13 @@
 //! commits contain trees, trees contain entries and blobs.
 //! The discriminant IS the data — each level carries different information.
 
-use super::Context;
+use sha2::{Digest, Sha256};
+
+use super::{Addressable, Setting};
+use crate::ContentAddressed;
+
+story::domain_oid!(/// Content address for git nodes.
+pub GitOid);
 
 /// The git context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -28,9 +34,80 @@ pub enum GitNode {
     Blob { content: Vec<u8> },
 }
 
-impl Context for Git {
+impl fragmentation::encoding::Encode for GitNode {
+    fn encode(&self) -> Vec<u8> {
+        match self {
+            GitNode::Ref { name, target } => format!("ref:{}:{}", name, target).into_bytes(),
+            GitNode::Commit {
+                message,
+                author,
+                email,
+            } => format!("commit:{}:{}:{}", message, author, email).into_bytes(),
+            GitNode::Entry { name } => format!("entry:{}", name).into_bytes(),
+            GitNode::Blob { content } => {
+                let mut bytes = b"blob:".to_vec();
+                bytes.extend_from_slice(content);
+                bytes
+            }
+        }
+    }
+}
+
+impl ContentAddressed for GitNode {
+    type Oid = GitOid;
+    fn content_oid(&self) -> GitOid {
+        let mut hasher = Sha256::new();
+        match self {
+            GitNode::Ref { name, target } => {
+                hasher.update(b"ref:");
+                hasher.update(name.as_bytes());
+                hasher.update(b":");
+                hasher.update(target.as_bytes());
+            }
+            GitNode::Commit {
+                message,
+                author,
+                email,
+            } => {
+                hasher.update(b"commit:");
+                hasher.update(message.as_bytes());
+                hasher.update(b":");
+                hasher.update(author.as_bytes());
+                hasher.update(b":");
+                hasher.update(email.as_bytes());
+            }
+            GitNode::Entry { name } => {
+                hasher.update(b"entry:");
+                hasher.update(name.as_bytes());
+            }
+            GitNode::Blob { content } => {
+                hasher.update(b"blob:");
+                hasher.update(content);
+            }
+        }
+        GitOid::new(hex::encode(hasher.finalize()))
+    }
+}
+
+impl Addressable for GitNode {
+    fn node_name(&self) -> &str {
+        match self {
+            GitNode::Ref { name, .. } => name,
+            GitNode::Commit { message, .. } => message,
+            GitNode::Entry { name } => name,
+            GitNode::Blob { .. } => "",
+        }
+    }
+    fn node_content(&self) -> Option<&str> {
+        match self {
+            GitNode::Blob { content } => std::str::from_utf8(content).ok(),
+            _ => None,
+        }
+    }
+}
+
+impl Setting for Git {
     type Token = GitNode;
-    type Keys = fragmentation::keys::PlainKeys;
 
     fn id() -> &'static str {
         "git"
@@ -40,7 +117,7 @@ impl Context for Git {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::Context;
+    use crate::domain::{Addressable, Setting};
     use crate::tree::{self, Treelike};
     use fragmentation::ref_::Ref;
     use fragmentation::sha;
@@ -49,17 +126,125 @@ mod tests {
         Ref::new(sha::hash(label), label)
     }
 
+    // -- ContentAddressed --
+
+    #[test]
+    fn git_node_content_addressed() {
+        let a = GitNode::Entry { name: "src".into() };
+        let b = GitNode::Entry { name: "src".into() };
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn git_node_ref_content_addressed() {
+        let a = GitNode::Ref {
+            name: "main".into(),
+            target: "abc".into(),
+        };
+        let b = GitNode::Ref {
+            name: "main".into(),
+            target: "abc".into(),
+        };
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn git_node_commit_content_addressed() {
+        let a = GitNode::Commit {
+            message: "init".into(),
+            author: "Reed".into(),
+            email: "reed@systemic.engineer".into(),
+        };
+        let b = GitNode::Commit {
+            message: "init".into(),
+            author: "Reed".into(),
+            email: "reed@systemic.engineer".into(),
+        };
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn git_node_blob_content_addressed() {
+        let a = GitNode::Blob {
+            content: b"hello".to_vec(),
+        };
+        let b = GitNode::Blob {
+            content: b"hello".to_vec(),
+        };
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn git_node_different_variant_different_oid() {
+        let a = GitNode::Entry { name: "src".into() };
+        let b = GitNode::Blob {
+            content: b"src".to_vec(),
+        };
+        assert_ne!(a.content_oid(), b.content_oid());
+    }
+
+    // -- Addressable --
+
+    #[test]
+    fn addressable_node_name() {
+        assert_eq!(
+            GitNode::Ref {
+                name: "main".into(),
+                target: "abc".into()
+            }
+            .node_name(),
+            "main"
+        );
+        assert_eq!(
+            GitNode::Commit {
+                message: "init".into(),
+                author: "a".into(),
+                email: "e".into()
+            }
+            .node_name(),
+            "init"
+        );
+        assert_eq!(GitNode::Entry { name: "src".into() }.node_name(), "src");
+        assert_eq!(
+            GitNode::Blob {
+                content: b"x".to_vec()
+            }
+            .node_name(),
+            ""
+        );
+    }
+
+    #[test]
+    fn addressable_node_content() {
+        assert_eq!(
+            GitNode::Blob {
+                content: b"hello".to_vec()
+            }
+            .node_content(),
+            Some("hello")
+        );
+        assert_eq!(GitNode::Entry { name: "src".into() }.node_content(), None);
+        // Invalid UTF-8 returns None
+        assert_eq!(
+            GitNode::Blob {
+                content: vec![0xFF, 0xFE]
+            }
+            .node_content(),
+            None
+        );
+    }
+
     #[test]
     fn git_id() {
         assert_eq!(Git::id(), "git");
     }
 
     #[test]
-    fn git_is_context() {
-        fn requires_context<C: Context>() -> &'static str {
+    fn git_is_scene() {
+        fn requires_scene<C: Setting>() -> &'static str {
             C::id()
         }
-        assert_eq!(requires_context::<Git>(), "git");
+        assert_eq!(requires_scene::<Git>(), "git");
     }
 
     #[test]
@@ -112,6 +297,45 @@ mod tests {
                 content: b"hello".to_vec()
             }
         );
+    }
+
+    // -- Encode --
+
+    #[test]
+    fn git_node_encode_ref() {
+        use fragmentation::encoding::Encode;
+        let node = GitNode::Ref {
+            name: "main".into(),
+            target: "abc".into(),
+        };
+        assert_eq!(node.encode(), b"ref:main:abc");
+    }
+
+    #[test]
+    fn git_node_encode_commit() {
+        use fragmentation::encoding::Encode;
+        let node = GitNode::Commit {
+            message: "init".into(),
+            author: "Reed".into(),
+            email: "reed@systemic.engineer".into(),
+        };
+        assert_eq!(node.encode(), b"commit:init:Reed:reed@systemic.engineer");
+    }
+
+    #[test]
+    fn git_node_encode_entry() {
+        use fragmentation::encoding::Encode;
+        let node = GitNode::Entry { name: "src".into() };
+        assert_eq!(node.encode(), b"entry:src");
+    }
+
+    #[test]
+    fn git_node_encode_blob() {
+        use fragmentation::encoding::Encode;
+        let node = GitNode::Blob {
+            content: b"hello".to_vec(),
+        };
+        assert_eq!(node.encode(), b"blob:hello");
     }
 
     #[test]

@@ -1,13 +1,54 @@
-use super::Context;
+use sha2::{Digest, Sha256};
+
+use super::{Addressable, Setting};
 use crate::tree::{self, Tree};
+use crate::ContentAddressed;
+
+story::domain_oid!(/// Content address for filesystem nodes.
+pub FolderOid);
 
 /// The filesystem context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Filesystem;
 
-impl Context for Filesystem {
+impl fragmentation::encoding::Encode for Folder {
+    fn encode(&self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(b"folder:");
+        bytes.extend_from_slice(self.name.as_bytes());
+        if let Some(content) = &self.content {
+            bytes.extend_from_slice(b":");
+            bytes.extend_from_slice(content.as_bytes());
+        }
+        bytes
+    }
+}
+
+impl ContentAddressed for Folder {
+    type Oid = FolderOid;
+    fn content_oid(&self) -> FolderOid {
+        let mut hasher = Sha256::new();
+        hasher.update(b"folder:");
+        hasher.update(self.name.as_bytes());
+        if let Some(content) = &self.content {
+            hasher.update(b":");
+            hasher.update(content.as_bytes());
+        }
+        FolderOid::new(hex::encode(hasher.finalize()))
+    }
+}
+
+impl Addressable for Folder {
+    fn node_name(&self) -> &str {
+        &self.name
+    }
+    fn node_content(&self) -> Option<&str> {
+        self.content.as_deref()
+    }
+}
+
+impl Setting for Filesystem {
     type Token = Folder;
-    type Keys = fragmentation::keys::PlainKeys;
 
     fn id() -> &'static str {
         "filesystem"
@@ -70,6 +111,45 @@ mod tests {
     use crate::tree::Treelike;
 
     #[test]
+    fn folder_content_addressed() {
+        let a = Folder {
+            name: "test".into(),
+            content: Some("hello".into()),
+        };
+        let b = Folder {
+            name: "test".into(),
+            content: Some("hello".into()),
+        };
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn folder_different_content_different_oid() {
+        let a = Folder {
+            name: "test".into(),
+            content: Some("hello".into()),
+        };
+        let b = Folder {
+            name: "test".into(),
+            content: Some("world".into()),
+        };
+        assert_ne!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn folder_dir_vs_file_different_oid() {
+        let dir = Folder {
+            name: "test".into(),
+            content: None,
+        };
+        let file = Folder {
+            name: "test".into(),
+            content: Some("".into()),
+        };
+        assert_ne!(dir.content_oid(), file.content_oid());
+    }
+
+    #[test]
     fn filesystem_id() {
         assert_eq!(Filesystem::id(), "filesystem");
     }
@@ -115,5 +195,29 @@ mod tests {
 
         // Restore permissions for cleanup
         std::fs::set_permissions(&restricted, std::fs::Permissions::from_mode(0o755)).unwrap();
+    }
+
+    // -- Encode --
+
+    #[test]
+    fn folder_encode_with_content() {
+        use fragmentation::encoding::Encode;
+        let f = Folder {
+            name: "test".into(),
+            content: Some("hello".into()),
+        };
+        let bytes = f.encode();
+        assert_eq!(bytes, b"folder:test:hello");
+    }
+
+    #[test]
+    fn folder_encode_without_content() {
+        use fragmentation::encoding::Encode;
+        let f = Folder {
+            name: "dir".into(),
+            content: None,
+        };
+        let bytes = f.encode();
+        assert_eq!(bytes, b"folder:dir");
     }
 }

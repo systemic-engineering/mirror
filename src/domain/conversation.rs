@@ -3,11 +3,11 @@
 //! A .conv file parsed into a tree is a tree in this domain.
 //! The crate describes itself.
 
-use super::Context;
+use super::Setting;
 
 /// The conversation context.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct Conversation;
+pub struct Script;
 
 /// What a conversation node can be.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -32,11 +32,53 @@ pub enum Kind {
     TemplateRef,
     /// `@filesystem`
     DomainRef,
+    /// `@git(branch: "master") | HEAD | @git(branch: "test")`
+    Pipeline,
+    /// `branch: "master"` — key-value parameter on a domain ref
+    DomainParam,
+    /// `HEAD` — a bare reference in a pipeline
+    Ref,
+    /// `$a` in `in @number as $a` — binding alias
+    Alias,
+    /// `$a + $b` — expression in output block
+    Expr,
+    /// `use $name from @domain` — import statement
+    Use,
+    /// `$HOME` — root node reference (tree root)
+    Home,
+    /// `$SELF` — current node reference (where you are in the tree)
+    Self_,
+    /// `when error.rate > 0.1` — guard clause; the Op IS the comparison
+    When(Op),
+    /// `error.rate` — dot-separated path (Script space navigation)
+    Path,
+    /// `0.1`, `"health"`, `true` — literal value in a predicate
+    Literal,
+    /// `case error.rate { ... }` — multi-arm dispatch. value = subject path.
+    Case,
+    /// One arm in a case block. Children: [pattern, Expr].
+    Arm,
+    /// `> 0.1`, `== "active"` — comparison pattern in a case arm. value = literal.
+    Cmp(Op),
+    /// `_` — wildcard pattern. Matches anything.
+    Wild,
+    /// `branch(.path) { "value" => action }` — value dispatch on a path.
+    Branch,
 }
 
-impl Context for Conversation {
+/// Comparison operator — shared by `When` guards and `Cmp` case arm patterns.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Op {
+    Gt,  // >
+    Lt,  // <
+    Gte, // >=
+    Lte, // <=
+    Eq,  // ==
+    Ne,  // !=
+}
+
+impl Setting for Script {
     type Token = crate::ast::AstNode;
-    type Keys = fragmentation::keys::PlainKeys;
 
     fn id() -> &'static str {
         "conversation"
@@ -49,14 +91,14 @@ mod tests {
 
     #[test]
     fn conversation_id() {
-        assert_eq!(Conversation::id(), "conversation");
+        assert_eq!(Script::id(), "conversation");
     }
 
     #[test]
-    fn conversation_is_context() {
-        fn requires_context<C: Context>() -> &'static str {
+    fn conversation_is_scene() {
+        fn requires_scene<C: Setting>() -> &'static str {
             C::id()
         }
-        assert_eq!(requires_context::<Conversation>(), "conversation");
+        assert_eq!(requires_scene::<Script>(), "conversation");
     }
 }
