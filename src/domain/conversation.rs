@@ -58,6 +58,8 @@ pub enum Kind {
     Cmp(Op),
     /// `_` — wildcard pattern. Matches anything.
     Wild,
+    /// `branch(.path) { "value" => action }` — value dispatch on a path.
+    Branch,
 }
 
 /// Comparison operator — shared by `When` guards and `Cmp` case arm patterns.

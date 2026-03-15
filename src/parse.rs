@@ -1285,4 +1285,114 @@ mod tests {
             err.message
         );
     }
+
+    // -- Parse `branch(.path) { ... }` — value dispatch --
+
+    #[test]
+    fn parse_branch_single_arm() {
+        let source = "branch(.action) {\n  \"hold\" => ..\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let branch = &tree.children()[0];
+        assert_eq!(branch.data().kind, Kind::Branch);
+        assert_eq!(branch.data().value, ".action");
+        assert_eq!(branch.children().len(), 1);
+        let arm = &branch.children()[0];
+        assert_eq!(arm.data().kind, Kind::Arm);
+        assert_eq!(arm.children()[0].data().kind, Kind::Literal);
+        assert_eq!(arm.children()[0].data().value, "hold");
+        assert_eq!(arm.children()[1].data().kind, Kind::Expr);
+        assert_eq!(arm.children()[1].data().value, "..");
+    }
+
+    #[test]
+    fn parse_branch_multiple_arms() {
+        let source = "branch(.action) {\n  \"hold\" => ..\n  \"exit\" => exit\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let branch = &tree.children()[0];
+        assert_eq!(branch.data().kind, Kind::Branch);
+        assert_eq!(branch.data().value, ".action");
+        assert_eq!(branch.children().len(), 2);
+
+        let arm0 = &branch.children()[0];
+        assert_eq!(arm0.children()[0].data().kind, Kind::Literal);
+        assert_eq!(arm0.children()[0].data().value, "hold");
+        assert_eq!(arm0.children()[1].data().value, "..");
+
+        let arm1 = &branch.children()[1];
+        assert_eq!(arm1.children()[0].data().kind, Kind::Literal);
+        assert_eq!(arm1.children()[0].data().value, "exit");
+        assert_eq!(arm1.children()[1].data().value, "exit");
+    }
+
+    #[test]
+    fn parse_branch_wildcard_arm() {
+        let source = "branch(.status) {\n  \"ok\" => ..\n  _ => exit\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let branch = &tree.children()[0];
+        assert_eq!(branch.data().kind, Kind::Branch);
+        assert_eq!(branch.children().len(), 2);
+        let wild_arm = &branch.children()[1];
+        assert_eq!(wild_arm.children()[0].data().kind, Kind::Wild);
+        assert_eq!(wild_arm.children()[1].data().value, "exit");
+    }
+
+    #[test]
+    fn parse_branch_in_pipeline() {
+        let source = "@json | branch(.action) {\n  \"hold\" => ..\n  \"exit\" => exit\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let pipeline = &tree.children()[0];
+        assert_eq!(pipeline.data().kind, Kind::Pipeline);
+        assert_eq!(pipeline.children().len(), 2);
+
+        let domain = &pipeline.children()[0];
+        assert_eq!(domain.data().kind, Kind::DomainRef);
+        assert_eq!(domain.data().value, "@json");
+
+        let branch = &pipeline.children()[1];
+        assert_eq!(branch.data().kind, Kind::Branch);
+        assert_eq!(branch.data().value, ".action");
+        assert_eq!(branch.children().len(), 2);
+    }
+
+    #[test]
+    fn parse_branch_with_blank_lines() {
+        let source = "branch(.x) {\n\n  \"a\" => ..\n\n  \"b\" => exit\n\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let branch = &tree.children()[0];
+        assert_eq!(branch.data().kind, Kind::Branch);
+        assert_eq!(branch.children().len(), 2);
+    }
+
+    #[test]
+    fn parse_branch_error_unclosed() {
+        let source = "branch(.x) {\n  \"a\" => ..\n";
+        let err = Parse.record(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("unclosed"),
+            "expected 'unclosed': {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_branch_error_no_arrow() {
+        let source = "branch(.x) {\n  \"a\" oops\n}\n";
+        let err = Parse.record(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("=>"),
+            "expected mention of '=>': {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_branch_appears_in_source() {
+        let source =
+            "in @json\nbranch(.action) {\n  \"hold\" => ..\n  \"exit\" => exit\n}\nout @json\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let children = tree.children();
+        assert_eq!(children[0].data().kind, Kind::In);
+        assert_eq!(children[1].data().kind, Kind::Branch);
+        assert_eq!(children[2].data().kind, Kind::Out);
+    }
 }
