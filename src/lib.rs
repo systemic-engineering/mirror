@@ -1,4 +1,5 @@
 pub mod ast;
+pub mod compile;
 pub mod domain;
 pub mod filter;
 pub mod parse;

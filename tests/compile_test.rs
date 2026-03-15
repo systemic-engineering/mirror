@@ -29,10 +29,7 @@ fn emit_eaf_produces_valid_etf() {
 fn emit_eaf_deterministic() {
     let a = Conversation::<Filesystem>::from_source(test_conv_source()).unwrap();
     let b = Conversation::<Filesystem>::from_source(test_conv_source()).unwrap();
-    assert_eq!(
-        compile::emit_eaf(&a.content),
-        compile::emit_eaf(&b.content),
-    );
+    assert_eq!(compile::emit_eaf(&a.content), compile::emit_eaf(&b.content),);
 }
 
 /// EAF bytes committed as child of the transformation commit.
@@ -54,8 +51,11 @@ fn eaf_committed_as_child_of_transformation() {
     let eaf_fractal = encoding::encode(&hex::encode(&eaf_bytes));
     let mut eaf_repo = Repo::<String>::new();
     let parent = Parent(transform_commit.sha().clone());
-    let eaf_commit = Draft::new("compiled: root.eaf", eaf_fractal, parent)
-        .commit(&mut eaf_repo, committer, "1234567891 +0000");
+    let eaf_commit = Draft::new("compiled: root.eaf", eaf_fractal, parent).commit(
+        &mut eaf_repo,
+        committer,
+        "1234567891 +0000",
+    );
 
     assert!(matches!(transform_commit, Commit::Root { .. }));
     assert!(matches!(eaf_commit, Commit::Child { .. }));
