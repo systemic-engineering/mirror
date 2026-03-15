@@ -273,7 +273,6 @@ impl Resolve {
     ///
     /// Walks the Use node's children to find the source module,
     /// then extracts the named templates into the provided map.
-    #[allow(dead_code)]
     fn resolve_use(
         &self,
         use_node: &Tree<AstNode>,
@@ -404,7 +403,12 @@ fn resolve_ast<C: Setting>(
         }
     }
 
-    // TODO: Resolve use imports — merge external templates into local map
+    // Resolve use imports — merge external templates into local map
+    for child in children {
+        if child.data().kind == Kind::Use {
+            resolve.resolve_use(child, &mut templates)?;
+        }
+    }
 
     // Extract output
     let out_node = children.iter().find(|c| c.data().kind == Kind::Out);
