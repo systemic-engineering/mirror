@@ -180,6 +180,12 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
             continue;
         }
 
+        if let Some(rest) = trimmed.strip_prefix("grammar ") {
+            let grammar_node = parse_grammar(rest, &mut lines)?;
+            children.push(grammar_node);
+            continue;
+        }
+
         // Pipeline ending in branch: @json | branch(.path) { ... }
         if trimmed.contains("| branch(") {
             let pipeline_node = parse_pipeline_with_branch(trimmed, &mut lines)?;
@@ -731,6 +737,123 @@ fn parse_pipeline_segment(seg: &str, span: Span) -> Tree<AstNode> {
     } else {
         ast::ast_leaf(Kind::Ref, seg, span)
     }
+}
+
+/// Parse a grammar block: `@name {\n  type = ...\n  type op = ...\n}\n`
+///
+/// Header has already been stripped of `grammar `. Contains `@name {`.
+/// Type definitions and continuation lines parsed inside the block.
+fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+    let start_span = lines.current_span();
+
+    // Extract @name and verify opening brace
+    let (name, rest) = match header.split_once('{') {
+        Some((n, r)) => (n.trim(), r),
+        None => {
+            return Err(ParseError {
+                message: format!("grammar: expected '{{' in: grammar {}", header),
+                span: Some(start_span),
+            })
+        }
+    };
+
+    // Check for single-line empty grammar: `grammar @name {}`
+    if rest.trim() == "}" {
+        lines.advance();
+        return Ok(ast::ast_branch(Kind::Grammar, name, start_span, vec![]));
+    }
+
+    lines.advance(); // consume grammar header line
+
+    let mut type_defs: Vec<Tree<AstNode>> = Vec::new();
+    // Accumulate variants for the current type def (name, span, variants)
+    let mut current: Option<(String, Span, Vec<Tree<AstNode>>)> = None;
+
+    while let Some(line) = lines.peek() {
+        let trimmed = line.trim();
+
+        if trimmed == "}" {
+            // Flush any pending type def
+            if let Some((type_name, type_span, variants)) = current.take() {
+                type_defs.push(ast::ast_branch(Kind::TypeDef, &*type_name, type_span, variants));
+            }
+            let end_span = lines.current_span();
+            lines.advance();
+            let span = start_span.merge(&end_span);
+            return Ok(ast::ast_branch(Kind::Grammar, name, span, type_defs));
+        }
+
+        if trimmed.is_empty() || trimmed.starts_with('#') {
+            lines.advance();
+            continue;
+        }
+
+        // Continuation line: starts with `|`
+        if trimmed.starts_with('|') {
+            if let Some((_, _, ref mut variants)) = current {
+                let span = lines.current_span();
+                variants.append(&mut parse_variants(trimmed, span));
+            }
+            lines.advance();
+            continue;
+        }
+
+        if let Some(rest) = trimmed.strip_prefix("type ") {
+            // Flush previous type def
+            if let Some((type_name, type_span, variants)) = current.take() {
+                type_defs.push(ast::ast_branch(Kind::TypeDef, &*type_name, type_span, variants));
+            }
+            let span = lines.current_span();
+            let (type_name, variants) = parse_type_def_parts(rest, span);
+            current = Some((type_name, span, variants));
+            lines.advance();
+            continue;
+        }
+
+        lines.advance();
+    }
+
+    Err(ParseError {
+        message: "unclosed grammar block".into(),
+        span: Some(start_span),
+    })
+}
+
+/// Parse a type definition into name + initial variants.
+///
+/// `= a | b | c` → name="" variants=[a,b,c]
+/// `op = gt | lt` → name="op" variants=[gt,lt]
+fn parse_type_def_parts(rest: &str, span: Span) -> (String, Vec<Tree<AstNode>>) {
+    let (name, variants_text) = match rest.split_once('=') {
+        Some((n, v)) => (n.trim(), v.trim()),
+        None => ("", rest.trim()),
+    };
+
+    let variants = parse_variants(variants_text, span);
+    (name.to_string(), variants)
+}
+
+/// Parse variants from a `|`-separated list.
+///
+/// Each segment is either:
+/// - `name(param)` → Variant with TypeRef child
+/// - `name` → Variant leaf
+/// - empty → skipped (from leading `|` on continuation lines)
+fn parse_variants(text: &str, span: Span) -> Vec<Tree<AstNode>> {
+    text.split('|')
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty())
+        .map(|seg| {
+            if let Some(paren) = seg.find('(') {
+                let name = seg[..paren].trim();
+                let param = seg[paren + 1..].trim_end_matches(')').trim();
+                let type_ref = ast::ast_leaf(Kind::TypeRef, param, span);
+                ast::ast_branch(Kind::Variant, name, span, vec![type_ref])
+            } else {
+                ast::ast_leaf(Kind::Variant, seg, span)
+            }
+        })
+        .collect()
 }
 
 #[cfg(test)]
@@ -1731,6 +1854,16 @@ mod tests {
     }
 
     #[test]
+    fn parse_grammar_empty_single_line() {
+        let source = "grammar @test {}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().value, "@test");
+        assert_eq!(grammar.children().len(), 0);
+    }
+
+    #[test]
     fn parse_grammar_single_type() {
         let source = "grammar @test {\n  type = a | b | c\n}\n";
         let tree = Parse.record(source.to_string()).unwrap();
@@ -1821,6 +1954,28 @@ mod tests {
         let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 1);
         assert_eq!(grammar.children()[0].data().kind, Kind::TypeDef);
+    }
+
+    #[test]
+    fn parse_grammar_skips_unknown_lines() {
+        let source = "grammar @test {\n  unknown line\n  type = a\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.children().len(), 1);
+        assert_eq!(grammar.children()[0].data().kind, Kind::TypeDef);
+    }
+
+    #[test]
+    fn parse_grammar_type_without_equals() {
+        let source = "grammar @test {\n  type a | b | c\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.children().len(), 1);
+        let typedef = &grammar.children()[0];
+        assert_eq!(typedef.data().kind, Kind::TypeDef);
+        assert_eq!(typedef.data().value, "");
+        // Without '=', the whole rest is parsed as variant list
+        assert_eq!(typedef.children().len(), 3);
     }
 
     #[test]
