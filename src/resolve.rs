@@ -116,6 +116,24 @@ impl fragmentation::encoding::Encode for OutputNode {
                 folder_name,
                 template_name,
             } => format!("select:{}:{}:{}", output_name, folder_name, template_name).into_bytes(),
+            OutputNode::Branch { query, arms } => {
+                let arm_strs: Vec<String> = arms
+                    .iter()
+                    .map(|a| {
+                        let pat = match &a.pattern {
+                            BranchPattern::Literal(s) => format!("\"{}\"", s),
+                            BranchPattern::Wild => "_".into(),
+                        };
+                        let act = match &a.action {
+                            BranchAction::Pass => "..".into(),
+                            BranchAction::Exit => "exit".into(),
+                            BranchAction::Expr(e) => e.clone(),
+                        };
+                        format!("{} => {}", pat, act)
+                    })
+                    .collect();
+                format!("branch:{}:{}", query, arm_strs.join(",")).into_bytes()
+            }
         }
     }
 }
@@ -126,6 +144,7 @@ impl OutputNode {
         match self {
             OutputNode::Group { name } => name,
             OutputNode::Select { output_name, .. } => output_name,
+            OutputNode::Branch { .. } => "branch",
         }
     }
 }
@@ -219,10 +238,19 @@ fn resolve_ast<C: Setting>(
 
     // Extract output
     let out_node = children.iter().find(|c| c.data().kind == Kind::Out);
+
+    // Collect top-level branch nodes
+    let branch_nodes: Vec<Tree<OutputNode>> = children
+        .iter()
+        .filter(|c| c.data().kind == Kind::Branch)
+        .map(resolve_branch_node)
+        .collect();
+
     let content = match out_node {
         Some(node) => {
             let name = node.data().value.clone();
-            let output_children = resolve_output_nodes(node, &templates)?;
+            let mut output_children = resolve_output_nodes(node, &templates)?;
+            output_children.extend(branch_nodes);
             let ref_ = Ref::new(sha::hash(&name), &name);
             tree::branch(ref_, OutputNode::Group { name }, output_children)
         }
@@ -332,6 +360,43 @@ fn resolve_output_nodes(
     Ok(nodes)
 }
 
+/// Convert an AST Branch node to an OutputNode::Branch tree node.
+///
+/// AST structure: Branch(".action") → [Arm → [Literal/Wild, Expr], ...]
+fn resolve_branch_node(node: &Tree<AstNode>) -> Tree<OutputNode> {
+    let query = node.data().value.clone();
+    let mut arms = Vec::new();
+
+    for arm_node in node.children() {
+        if arm_node.data().kind != Kind::Arm {
+            continue;
+        }
+        let arm_children = arm_node.children();
+        if arm_children.len() < 2 {
+            continue;
+        }
+
+        let pattern = match &arm_children[0].data().kind {
+            Kind::Literal => BranchPattern::Literal(arm_children[0].data().value.clone()),
+            Kind::Wild => BranchPattern::Wild,
+            _ => continue,
+        };
+
+        let action_str = &arm_children[1].data().value;
+        let action = match action_str.as_str() {
+            ".." => BranchAction::Pass,
+            "exit" => BranchAction::Exit,
+            other => BranchAction::Expr(other.to_string()),
+        };
+
+        arms.push(BranchArm { pattern, action });
+    }
+
+    let label = format!("branch:{}", query);
+    let ref_ = Ref::new(sha::hash(&label), &label);
+    tree::leaf(ref_, OutputNode::Branch { query, arms })
+}
+
 impl<C: Setting> crate::ContentAddressed for Conversation<C> {
     type Oid = ConversationOid;
     fn content_oid(&self) -> ConversationOid {
@@ -412,6 +477,7 @@ fn emit_body<T: Addressable>(
                     map.insert(output_name.clone(), Value::Array(items));
                 }
             }
+            OutputNode::Branch { .. } => {} // spec node — no JSON emission
         }
     }
 
@@ -580,6 +646,29 @@ mod tests {
     /// Shorthand: resolve with Filesystem context.
     fn resolve_fs(ast: Tree<AstNode>) -> crate::Cut<Conversation<Filesystem>, ResolveError> {
         Resolve::new().record(ast)
+    }
+
+    fn find_branch(tree: &Tree<OutputNode>) -> Option<&OutputNode> {
+        match tree.data() {
+            OutputNode::Branch { .. } => Some(tree.data()),
+            _ => tree.children().iter().find_map(find_branch),
+        }
+    }
+
+    fn expect_branch(node: &OutputNode) -> (&str, &Vec<BranchArm>) {
+        match node {
+            OutputNode::Branch { query, arms } => (query.as_str(), arms),
+            _ => panic!("expected Branch"),
+        }
+    }
+
+    #[test]
+    #[should_panic(expected = "expected Branch")]
+    fn expect_branch_panics_on_non_branch() {
+        let node = OutputNode::Group {
+            name: "test".into(),
+        };
+        expect_branch(&node);
     }
 
     // -- OutputNode::name --
@@ -1187,31 +1276,17 @@ mod tests {
 
     #[test]
     fn resolve_branch_node_has_arms() {
-        use crate::tree::Treelike;
-
         let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\nbranch(.action) {\n  \"hold\" => ..\n  \"exit\" => exit\n}\n";
         let conv = Conversation::<Filesystem>::from_source(source).unwrap();
 
-        // Find the Branch node in the tree
-        fn find_branch(tree: &Tree<OutputNode>) -> Option<&OutputNode> {
-            match tree.data() {
-                OutputNode::Branch { .. } => Some(tree.data()),
-                _ => tree.children().iter().find_map(find_branch),
-            }
-        }
-
         let branch = find_branch(&conv.content).expect("should have a Branch node");
-        match branch {
-            OutputNode::Branch { query, arms } => {
-                assert_eq!(query, ".action");
-                assert_eq!(arms.len(), 2);
-                assert!(matches!(&arms[0].pattern, BranchPattern::Literal(s) if s == "hold"));
-                assert!(matches!(&arms[0].action, BranchAction::Pass));
-                assert!(matches!(&arms[1].pattern, BranchPattern::Literal(s) if s == "exit"));
-                assert!(matches!(&arms[1].action, BranchAction::Exit));
-            }
-            _ => panic!("expected Branch"),
-        }
+        let (query, arms) = expect_branch(branch);
+        assert_eq!(query, ".action");
+        assert_eq!(arms.len(), 2);
+        assert!(matches!(&arms[0].pattern, BranchPattern::Literal(s) if s == "hold"));
+        assert!(matches!(&arms[0].action, BranchAction::Pass));
+        assert!(matches!(&arms[1].pattern, BranchPattern::Literal(s) if s == "exit"));
+        assert!(matches!(&arms[1].action, BranchAction::Exit));
     }
 
     #[test]
@@ -1226,7 +1301,26 @@ mod tests {
     #[test]
     fn output_node_branch_encode() {
         use fragmentation::encoding::Encode;
-        let node = OutputNode::Branch {
+
+        // Exercise all three Encode arms in one test to avoid
+        // codegen-unit monomorphization coverage gaps.
+        let group = OutputNode::Group {
+            name: "root".into(),
+        };
+        assert!(String::from_utf8(group.encode())
+            .unwrap()
+            .contains("group:root"));
+
+        let select = OutputNode::Select {
+            output_name: "items".into(),
+            folder_name: "sub".into(),
+            template_name: "$t".into(),
+        };
+        assert!(String::from_utf8(select.encode())
+            .unwrap()
+            .contains("select:items:sub:$t"));
+
+        let branch = OutputNode::Branch {
             query: ".action".into(),
             arms: vec![
                 BranchArm {
@@ -1237,11 +1331,92 @@ mod tests {
                     pattern: BranchPattern::Wild,
                     action: BranchAction::Exit,
                 },
+                BranchArm {
+                    pattern: BranchPattern::Literal("custom".into()),
+                    action: BranchAction::Expr("handle".into()),
+                },
             ],
         };
-        let encoded = node.encode();
+        let encoded = branch.encode();
         let s = String::from_utf8(encoded).unwrap();
         assert!(s.contains("branch"));
         assert!(s.contains(".action"));
+        assert!(s.contains("_ => exit"));
+        assert!(s.contains("handle"));
+    }
+
+    #[test]
+    fn resolve_branch_with_wild_and_expr() {
+        let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\nbranch(.status) {\n  \"ok\" => ..\n  \"custom\" => handle\n  _ => exit\n}\n";
+        let conv = Conversation::<Filesystem>::from_source(source).unwrap();
+
+        let branch = find_branch(&conv.content).expect("should have a Branch node");
+        let (query, arms) = expect_branch(branch);
+        assert_eq!(query, ".status");
+        assert_eq!(arms.len(), 3);
+        assert!(matches!(&arms[0].pattern, BranchPattern::Literal(s) if s == "ok"));
+        assert!(matches!(&arms[0].action, BranchAction::Pass));
+        assert!(matches!(&arms[1].pattern, BranchPattern::Literal(s) if s == "custom"));
+        assert!(matches!(&arms[1].action, BranchAction::Expr(e) if e == "handle"));
+        assert!(matches!(&arms[2].pattern, BranchPattern::Wild));
+        assert!(matches!(&arms[2].action, BranchAction::Exit));
+    }
+
+    #[test]
+    fn resolve_branch_skips_non_arm_children() {
+        use crate::ast::{self, Span};
+
+        // Build a Branch AST node with a non-Arm child (should be skipped)
+        let span = Span::new(0, 10);
+        let non_arm = ast::ast_leaf(Kind::Expr, "junk", span);
+        let branch_ast = ast::ast_branch(Kind::Branch, ".x", span, vec![non_arm]);
+        let result = resolve_branch_node(&branch_ast);
+        let (_, arms) = expect_branch(result.data());
+        assert!(arms.is_empty());
+    }
+
+    #[test]
+    fn resolve_branch_skips_short_arm() {
+        use crate::ast::{self, Span};
+
+        // Arm with only one child (too short — needs pattern + action)
+        let span = Span::new(0, 10);
+        let pattern_only = ast::ast_leaf(Kind::Literal, "x", span);
+        let short_arm = ast::ast_branch(Kind::Arm, "", span, vec![pattern_only]);
+        let branch_ast = ast::ast_branch(Kind::Branch, ".x", span, vec![short_arm]);
+        let result = resolve_branch_node(&branch_ast);
+        let (_, arms) = expect_branch(result.data());
+        assert!(arms.is_empty());
+    }
+
+    #[test]
+    fn resolve_branch_skips_unknown_pattern_kind() {
+        use crate::ast::{self, Span};
+
+        // Arm with an Expr pattern (not Literal or Wild — should be skipped)
+        let span = Span::new(0, 10);
+        let bad_pattern = ast::ast_leaf(Kind::Expr, "nope", span);
+        let action = ast::ast_leaf(Kind::Expr, "..", span);
+        let arm = ast::ast_branch(Kind::Arm, "", span, vec![bad_pattern, action]);
+        let branch_ast = ast::ast_branch(Kind::Branch, ".x", span, vec![arm]);
+        let result = resolve_branch_node(&branch_ast);
+        let (_, arms) = expect_branch(result.data());
+        assert!(arms.is_empty());
+    }
+
+    #[test]
+    fn emit_body_with_branch_produces_output() {
+        let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\nbranch(.action) {\n  \"hold\" => ..\n}\n";
+        let conv = Conversation::<Filesystem>::from_source(source).unwrap();
+        let tree = dir_folder(
+            "root",
+            vec![dir_folder(
+                "sub",
+                vec![leaf_folder("post.md", "---\nslug: hello\n---\nContent")],
+            )],
+        );
+        let result = conv.record(tree).unwrap();
+        // Branch node doesn't add to JSON output — just verify no panic
+        assert!(result.is_object());
     }
 }

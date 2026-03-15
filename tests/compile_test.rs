@@ -82,3 +82,13 @@ fn emit_eaf_branch_deterministic() {
     let b = Conversation::<Filesystem>::from_source(branch_conv_source()).unwrap();
     assert_eq!(compile::emit_eaf(&a.content), compile::emit_eaf(&b.content));
 }
+
+/// EAF handles branch with wildcard and expr actions.
+#[test]
+fn emit_eaf_branch_wild_and_expr() {
+    let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\nbranch(.status) {\n  \"ok\" => ..\n  \"custom\" => handle\n  _ => exit\n}\n";
+    let resolved = Conversation::<Filesystem>::from_source(source).unwrap();
+    let eaf_bytes = compile::emit_eaf(&resolved.content);
+    assert!(!eaf_bytes.is_empty());
+    assert_eq!(eaf_bytes[0], 131);
+}

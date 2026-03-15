@@ -5,7 +5,7 @@
 
 use eetf::{Atom, FixInteger, List, Term, Tuple};
 
-use crate::resolve::OutputNode;
+use crate::resolve::{BranchAction, BranchPattern, OutputNode};
 use crate::tree::{Tree, Treelike};
 
 /// Emit Erlang Abstract Format from a transformation tree.
@@ -97,7 +97,51 @@ fn emit_body_expr(tree: &Tree<OutputNode>, line: i32) -> Term {
                 ]),
             ])
         }
+        OutputNode::Branch {
+            ref query,
+            ref arms,
+        } => {
+            // {tuple, Line, [{atom, Line, branch}, {bin, Line, Query}, ConsArms]}
+            let arm_terms: Vec<Term> = arms
+                .iter()
+                .enumerate()
+                .map(|(i, arm)| emit_branch_arm(arm, line + i as i32 + 1))
+                .collect();
+            eaf_tuple(vec![
+                eaf_atom("tuple"),
+                eaf_int(line),
+                eaf_list(vec![
+                    eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("branch")]),
+                    eaf_bin(line, query),
+                    eaf_cons_list(&arm_terms, line),
+                ]),
+            ])
+        }
     }
+}
+
+/// Emit EAF for a single branch arm.
+///
+/// `{tuple, Line, [{atom, Line, PatternType}, {bin, ...}, {atom, Line, Action}]}`
+fn emit_branch_arm(arm: &crate::resolve::BranchArm, line: i32) -> Term {
+    let (pat_atom, pat_value) = match &arm.pattern {
+        BranchPattern::Literal(s) => ("literal", s.as_str()),
+        BranchPattern::Wild => ("wild", ""),
+    };
+    let action_atom = match &arm.action {
+        BranchAction::Pass => "pass",
+        BranchAction::Exit => "exit",
+        BranchAction::Expr(e) => e.as_str(),
+    };
+    eaf_tuple(vec![
+        eaf_atom("tuple"),
+        eaf_int(line),
+        eaf_list(vec![
+            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(pat_atom)]),
+            eaf_bin(line, pat_value),
+            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(action_atom)]),
+        ]),
+    ])
 }
 
 /// EAF binary literal: `<<"text">>`.
