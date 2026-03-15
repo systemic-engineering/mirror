@@ -1,0 +1,10 @@
+grammar @conversation {
+  type = in | out | template | field | qualifier | pipe
+       | group | select | template-ref | domain-ref
+       | pipeline | domain-param | ref | alias | expr
+       | use | home | self | path | literal
+       | case | arm | wild | branch
+       | when(op) | cmp(op)
+
+  type op = gt | lt | gte | lte | eq | ne
+}

@@ -1717,4 +1717,202 @@ mod tests {
         assert_eq!(children[1].data().kind, Kind::Branch);
         assert_eq!(children[2].data().kind, Kind::Out);
     }
+
+    // -- Parse `grammar @name { ... }` — vocabulary declaration --
+
+    #[test]
+    fn parse_grammar_empty() {
+        let source = "grammar @test {\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().value, "@test");
+        assert_eq!(grammar.children().len(), 0);
+    }
+
+    #[test]
+    fn parse_grammar_single_type() {
+        let source = "grammar @test {\n  type = a | b | c\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().value, "@test");
+        assert_eq!(grammar.children().len(), 1);
+
+        let typedef = &grammar.children()[0];
+        assert_eq!(typedef.data().kind, Kind::TypeDef);
+        assert_eq!(typedef.data().value, "");
+        assert_eq!(typedef.children().len(), 3);
+        assert_eq!(typedef.children()[0].data().kind, Kind::Variant);
+        assert_eq!(typedef.children()[0].data().value, "a");
+        assert_eq!(typedef.children()[1].data().value, "b");
+        assert_eq!(typedef.children()[2].data().value, "c");
+    }
+
+    #[test]
+    fn parse_grammar_named_type() {
+        let source = "grammar @test {\n  type op = gt | lt\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let typedef = &grammar.children()[0];
+        assert_eq!(typedef.data().kind, Kind::TypeDef);
+        assert_eq!(typedef.data().value, "op");
+        assert_eq!(typedef.children().len(), 2);
+        assert_eq!(typedef.children()[0].data().value, "gt");
+        assert_eq!(typedef.children()[1].data().value, "lt");
+    }
+
+    #[test]
+    fn parse_grammar_parameterized() {
+        let source = "grammar @test {\n  type = when(op) | plain\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let typedef = &grammar.children()[0];
+        assert_eq!(typedef.children().len(), 2);
+
+        let when_variant = &typedef.children()[0];
+        assert_eq!(when_variant.data().kind, Kind::Variant);
+        assert_eq!(when_variant.data().value, "when");
+        assert_eq!(when_variant.children().len(), 1);
+        assert_eq!(when_variant.children()[0].data().kind, Kind::TypeRef);
+        assert_eq!(when_variant.children()[0].data().value, "op");
+
+        let plain = &typedef.children()[1];
+        assert_eq!(plain.data().kind, Kind::Variant);
+        assert_eq!(plain.data().value, "plain");
+        assert_eq!(plain.children().len(), 0);
+    }
+
+    #[test]
+    fn parse_grammar_continuation() {
+        let source = "grammar @test {\n  type = a | b\n       | c | d\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let typedef = &grammar.children()[0];
+        assert_eq!(typedef.children().len(), 4);
+        assert_eq!(typedef.children()[0].data().value, "a");
+        assert_eq!(typedef.children()[1].data().value, "b");
+        assert_eq!(typedef.children()[2].data().value, "c");
+        assert_eq!(typedef.children()[3].data().value, "d");
+    }
+
+    #[test]
+    fn parse_grammar_multiple_types() {
+        let source = "grammar @test {\n  type = a | when(op)\n\n  type op = gt | lt\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.children().len(), 2);
+
+        let root_type = &grammar.children()[0];
+        assert_eq!(root_type.data().kind, Kind::TypeDef);
+        assert_eq!(root_type.data().value, "");
+        assert_eq!(root_type.children().len(), 2);
+
+        let sub_type = &grammar.children()[1];
+        assert_eq!(sub_type.data().kind, Kind::TypeDef);
+        assert_eq!(sub_type.data().value, "op");
+        assert_eq!(sub_type.children().len(), 2);
+    }
+
+    #[test]
+    fn parse_grammar_comments_blanks() {
+        let source = "grammar @test {\n  # a comment\n\n  type = x\n  # another\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.children().len(), 1);
+        assert_eq!(grammar.children()[0].data().kind, Kind::TypeDef);
+    }
+
+    #[test]
+    fn parse_grammar_in_source() {
+        let source = "in @test\ngrammar @test {\n  type = a\n}\nout @json\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let children = tree.children();
+        assert_eq!(children[0].data().kind, Kind::In);
+        assert_eq!(children[1].data().kind, Kind::Grammar);
+        assert_eq!(children[2].data().kind, Kind::Out);
+    }
+
+    #[test]
+    fn parse_grammar_conversation_litmus() {
+        let source = "\
+grammar @conversation {
+  type = in | out | template | field | qualifier | pipe
+       | group | select | template-ref | domain-ref
+       | pipeline | domain-param | ref | alias | expr
+       | use | home | self | path | literal
+       | case | arm | wild | branch
+       | when(op) | cmp(op)
+
+  type op = gt | lt | gte | lte | eq | ne
+}
+";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().value, "@conversation");
+        assert_eq!(grammar.children().len(), 2);
+
+        let root_type = &grammar.children()[0];
+        assert_eq!(root_type.data().kind, Kind::TypeDef);
+        assert_eq!(root_type.data().value, "");
+        // 24 simple + 2 parameterized = 26 variants
+        assert_eq!(root_type.children().len(), 26);
+
+        // Check parameterized variants
+        let when_v = root_type
+            .children()
+            .iter()
+            .find(|c| c.data().value == "when")
+            .unwrap();
+        assert_eq!(when_v.children().len(), 1);
+        assert_eq!(when_v.children()[0].data().kind, Kind::TypeRef);
+        assert_eq!(when_v.children()[0].data().value, "op");
+
+        let cmp_v = root_type
+            .children()
+            .iter()
+            .find(|c| c.data().value == "cmp")
+            .unwrap();
+        assert_eq!(cmp_v.children().len(), 1);
+        assert_eq!(cmp_v.children()[0].data().kind, Kind::TypeRef);
+        assert_eq!(cmp_v.children()[0].data().value, "op");
+
+        let op_type = &grammar.children()[1];
+        assert_eq!(op_type.data().kind, Kind::TypeDef);
+        assert_eq!(op_type.data().value, "op");
+        assert_eq!(op_type.children().len(), 6);
+    }
+
+    #[test]
+    fn parse_grammar_error_unclosed() {
+        let source = "grammar @test {\n  type = a\n";
+        let err = Parse.record(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("unclosed"),
+            "expected 'unclosed': {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_grammar_error_no_brace() {
+        let source = "grammar @test\n";
+        let err = Parse.record(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("{"),
+            "expected mention of '{{': {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_grammar_fixture() {
+        let source = include_str!("../fixtures/grammar.conv");
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().value, "@conversation");
+        assert_eq!(grammar.children().len(), 2);
+    }
 }

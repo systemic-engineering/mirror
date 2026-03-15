@@ -1834,4 +1834,13 @@ mod tests {
         let ext = TemplateProvider::External("path".into());
         let _cloned_ext = ext.clone();
     }
+
+    // -- Grammar passthrough --
+
+    #[test]
+    fn resolve_with_grammar_passthrough() {
+        let source = "in @filesystem\ngrammar @conversation {\n  type = in | out\n}\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let _resolved = resolve_fs(ast).unwrap();
+    }
 }

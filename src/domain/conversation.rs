@@ -64,6 +64,14 @@ pub enum Kind {
     Wild,
     /// `branch(.path) { "value" => action }` — value dispatch on a path.
     Branch,
+    /// `grammar @name { ... }` — vocabulary declaration block.
+    Grammar,
+    /// `type = A | B` or `type op = ...` — type definition inside a grammar block.
+    TypeDef,
+    /// Each `| arm` in a type definition — a single vocabulary entry.
+    Variant,
+    /// `op` in `when(op)` — reference to another declared type.
+    TypeRef,
 }
 
 /// Comparison operator — shared by `When` guards and `Cmp` case arm patterns.
@@ -133,6 +141,10 @@ impl Kind {
             Kind::Cmp(Op::Lte) => "cmp/lte",
             Kind::Cmp(Op::Eq) => "cmp/eq",
             Kind::Cmp(Op::Ne) => "cmp/ne",
+            Kind::Grammar => "grammar",
+            Kind::TypeDef => "type-def",
+            Kind::Variant => "variant",
+            Kind::TypeRef => "type-ref",
         }
     }
 }
@@ -378,5 +390,27 @@ mod tests {
     #[test]
     fn kind_local_name_cmp_ne() {
         assert_eq!(Kind::Cmp(Op::Ne).local_name(), "cmp/ne");
+    }
+
+    // -- Kind::local_name: grammar vocabulary --
+
+    #[test]
+    fn kind_local_name_grammar() {
+        assert_eq!(Kind::Grammar.local_name(), "grammar");
+    }
+
+    #[test]
+    fn kind_local_name_type_def() {
+        assert_eq!(Kind::TypeDef.local_name(), "type-def");
+    }
+
+    #[test]
+    fn kind_local_name_variant() {
+        assert_eq!(Kind::Variant.local_name(), "variant");
+    }
+
+    #[test]
+    fn kind_local_name_type_ref() {
+        assert_eq!(Kind::TypeRef.local_name(), "type-ref");
     }
 }
