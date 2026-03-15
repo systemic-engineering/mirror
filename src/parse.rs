@@ -775,7 +775,12 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
         if trimmed == "}" {
             // Flush any pending type def
             if let Some((type_name, type_span, variants)) = current.take() {
-                type_defs.push(ast::ast_branch(Kind::TypeDef, &*type_name, type_span, variants));
+                type_defs.push(ast::ast_branch(
+                    Kind::TypeDef,
+                    &*type_name,
+                    type_span,
+                    variants,
+                ));
             }
             let end_span = lines.current_span();
             lines.advance();
@@ -801,7 +806,12 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
         if let Some(rest) = trimmed.strip_prefix("type ") {
             // Flush previous type def
             if let Some((type_name, type_span, variants)) = current.take() {
-                type_defs.push(ast::ast_branch(Kind::TypeDef, &*type_name, type_span, variants));
+                type_defs.push(ast::ast_branch(
+                    Kind::TypeDef,
+                    &*type_name,
+                    type_span,
+                    variants,
+                ));
             }
             let span = lines.current_span();
             let (type_name, variants) = parse_type_def_parts(rest, span);
