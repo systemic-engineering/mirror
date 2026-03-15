@@ -4,9 +4,9 @@
 
 use crate::ast::{self, AstNode, Span};
 use crate::domain::conversation::{Kind, Op};
-use crate::Story;
-use crate::Cut;
 use crate::tree::Tree;
+use crate::Cut;
+use crate::Story;
 
 /// The parse traceable. Source → AST.
 #[derive(Clone, Debug, Default)]

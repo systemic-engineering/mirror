@@ -12,9 +12,9 @@ use serde_json::Value;
 use crate::ast::{AstNode, Span};
 use crate::domain::conversation::Kind;
 use crate::domain::{Addressable, Setting};
-use crate::{ComposedError, Story};
 use crate::parse::ParseError;
 use crate::tree::{self, Tree, Treelike};
+use crate::{ComposedError, Story};
 
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
@@ -126,10 +126,7 @@ impl Default for Resolve {
 impl<C: Setting> Story<Tree<AstNode>, Conversation<C>> for Resolve {
     type Error = ResolveError;
 
-    fn record(
-        &self,
-        source: Tree<AstNode>,
-    ) -> crate::Cut<Conversation<C>, ResolveError> {
+    fn record(&self, source: Tree<AstNode>) -> crate::Cut<Conversation<C>, ResolveError> {
         use crate::{ContentAddressed, Cut, CutOid};
         match resolve_ast(self, source) {
             Ok(conv) => {
@@ -505,9 +502,9 @@ fn edit_distance(a: &str, b: &str) -> usize {
 mod tests {
     use super::*;
     use crate::domain::filesystem::{Filesystem, Folder};
-    use crate::Story;
     use crate::parse::Parse;
     use crate::tree;
+    use crate::Story;
     use fragmentation::ref_::Ref;
     use fragmentation::sha;
 
@@ -537,9 +534,7 @@ mod tests {
     }
 
     /// Shorthand: resolve with Filesystem context.
-    fn resolve_fs(
-        ast: Tree<AstNode>,
-    ) -> crate::Cut<Conversation<Filesystem>, ResolveError> {
+    fn resolve_fs(ast: Tree<AstNode>) -> crate::Cut<Conversation<Filesystem>, ResolveError> {
         Resolve::new().record(ast)
     }
 

@@ -6,8 +6,8 @@
 use sha2::{Digest, Sha256};
 
 use crate::domain::conversation::Kind;
-use crate::ContentAddressed;
 use crate::tree::{self, Tree};
+use crate::ContentAddressed;
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
 

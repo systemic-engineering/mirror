@@ -1,8 +1,8 @@
 use sha2::{Digest, Sha256};
 
 use super::{Addressable, Setting};
-use crate::ContentAddressed;
 use crate::tree::{self, Tree};
+use crate::ContentAddressed;
 
 story::domain_oid!(/// Content address for filesystem nodes.
 pub FolderOid);
