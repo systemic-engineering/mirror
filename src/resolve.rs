@@ -64,7 +64,7 @@ pub struct Field {
     pipe: Option<String>,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum OutputNode {
     Group {
         name: String,
@@ -74,6 +74,19 @@ pub enum OutputNode {
         folder_name: String,
         template_name: String,
     },
+}
+
+impl fragmentation::encoding::Encode for OutputNode {
+    fn encode(&self) -> Vec<u8> {
+        match self {
+            OutputNode::Group { name } => format!("group:{}", name).into_bytes(),
+            OutputNode::Select {
+                output_name,
+                folder_name,
+                template_name,
+            } => format!("select:{}:{}:{}", output_name, folder_name, template_name).into_bytes(),
+        }
+    }
 }
 
 impl OutputNode {

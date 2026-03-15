@@ -153,8 +153,11 @@ fn transformation_tree_committed() {
     let oid = content_oid(transformation);
 
     let mut repo = Repo::<OutputNode>::new();
-    let commit = Draft::root("transformation: root { items: sub { $t } }", transformation.clone())
-        .commit(&mut repo, test_committer(), TEST_TIMESTAMP);
+    let commit = Draft::root(
+        "transformation: root { items: sub { $t } }",
+        transformation.clone(),
+    )
+    .commit(&mut repo, test_committer(), TEST_TIMESTAMP);
 
     assert!(matches!(commit, Commit::Root { .. }));
     assert!(!oid.is_empty());
