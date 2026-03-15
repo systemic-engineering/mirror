@@ -77,6 +77,66 @@ pub enum Op {
     Ne,  // !=
 }
 
+impl Op {
+    /// CSS-addressable name for this operator.
+    pub fn local_name(&self) -> &'static str {
+        match self {
+            Op::Gt => "gt",
+            Op::Lt => "lt",
+            Op::Gte => "gte",
+            Op::Lte => "lte",
+            Op::Eq => "eq",
+            Op::Ne => "ne",
+        }
+    }
+}
+
+impl Kind {
+    /// CSS-addressable name for this AST node kind.
+    ///
+    /// Source of truth for gestalt's `Domain::local_name`. Gestalt delegates here.
+    pub fn local_name(&self) -> &'static str {
+        match self {
+            Kind::In => "in",
+            Kind::Out => "out",
+            Kind::Template => "template",
+            Kind::Field => "field",
+            Kind::Qualifier => "qualifier",
+            Kind::Pipe => "pipe",
+            Kind::Group => "group",
+            Kind::Select => "select",
+            Kind::TemplateRef => "template-ref",
+            Kind::DomainRef => "domain-ref",
+            Kind::Pipeline => "pipeline",
+            Kind::DomainParam => "domain-param",
+            Kind::Ref => "ref",
+            Kind::Alias => "alias",
+            Kind::Expr => "expr",
+            Kind::Use => "use",
+            Kind::Home => "home",
+            Kind::Self_ => "self",
+            Kind::Path => "path",
+            Kind::Literal => "literal",
+            Kind::Case => "case",
+            Kind::Arm => "arm",
+            Kind::Wild => "wild",
+            Kind::Branch => "branch",
+            Kind::When(Op::Gt) => "when/gt",
+            Kind::When(Op::Lt) => "when/lt",
+            Kind::When(Op::Gte) => "when/gte",
+            Kind::When(Op::Lte) => "when/lte",
+            Kind::When(Op::Eq) => "when/eq",
+            Kind::When(Op::Ne) => "when/ne",
+            Kind::Cmp(Op::Gt) => "cmp/gt",
+            Kind::Cmp(Op::Lt) => "cmp/lt",
+            Kind::Cmp(Op::Gte) => "cmp/gte",
+            Kind::Cmp(Op::Lte) => "cmp/lte",
+            Kind::Cmp(Op::Eq) => "cmp/eq",
+            Kind::Cmp(Op::Ne) => "cmp/ne",
+        }
+    }
+}
+
 impl Setting for Script {
     type Token = crate::ast::AstNode;
 
