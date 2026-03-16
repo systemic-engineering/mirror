@@ -10,7 +10,8 @@ pub mod tree;
 
 // Re-export kernel types at the crate root.
 pub use kernel::{
-    Addressable, Composed, ComposedError, ContentAddressed, Oid, Setting, Trace, TraceOid, Vector,
+    Addressable, Composed, ComposedError, ContentAddressed, Latent, Oid, Setting, Trace, TraceOid,
+    Vector,
 };
 
 pub use domain::filesystem::{Filesystem, Folder, FolderOid};

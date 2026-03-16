@@ -2,6 +2,8 @@
 //!
 //! Everything conversation needs to transform, compose, and address.
 
+use std::cell::RefCell;
+use std::collections::HashMap;
 use std::marker::PhantomData;
 
 use sha2::{Digest, Sha256};
@@ -333,6 +335,44 @@ where
 }
 
 // ---------------------------------------------------------------------------
+// Latent — deferred + cached vector evaluation
+// ---------------------------------------------------------------------------
+
+pub struct Latent<V, B, E> {
+    inner: V,
+    cache: RefCell<HashMap<String, Trace<B, E>>>,
+}
+
+impl<V, B: ContentAddressed, E> Latent<V, B, E> {
+    pub fn new(inner: V) -> Self {
+        Latent {
+            inner,
+            cache: RefCell::new(HashMap::new()),
+        }
+    }
+}
+
+impl<A, B, V> Vector<A, B> for Latent<V, B, V::Error>
+where
+    A: ContentAddressed,
+    B: ContentAddressed + Clone,
+    V: Vector<A, B>,
+    V::Error: Clone,
+{
+    type Error = V::Error;
+
+    fn trace(&self, source: A) -> Trace<B, Self::Error> {
+        let key = source.content_oid().as_ref().to_string();
+        if let Some(cached) = self.cache.borrow().get(&key) {
+            return cached.clone();
+        }
+        let result = self.inner.trace(source);
+        self.cache.borrow_mut().insert(key, result.clone());
+        result
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Setting — domain context
 // ---------------------------------------------------------------------------
 
@@ -355,6 +395,8 @@ pub trait Addressable {
 mod tests {
     use super::*;
     use fragmentation::fragment::Fractal;
+    use std::cell::Cell;
+    use std::rc::Rc;
 
     // -- Oid --
 
@@ -617,5 +659,74 @@ mod tests {
             oid.as_ref(),
             "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
         );
+    }
+
+    // -- Latent --
+    // Single monomorphization: Latent<TrackedFailIf42, i32, String>
+    // TrackedFailIf42 counts invocations and can succeed or fail.
+
+    struct TrackedFailIf42(Rc<Cell<usize>>);
+
+    impl Vector<i32, i32> for TrackedFailIf42 {
+        type Error = String;
+        fn trace(&self, source: i32) -> Trace<i32, String> {
+            self.0.set(self.0.get() + 1);
+            if source == 42 {
+                Trace::failure("is 42".into(), TraceOid::new("err"), None)
+            } else {
+                Trace::success(source, TraceOid::new(format!("{}", source)), None)
+            }
+        }
+    }
+
+    fn tracked() -> (Latent<TrackedFailIf42, i32, String>, Rc<Cell<usize>>) {
+        let counter = Rc::new(Cell::new(0));
+        (Latent::new(TrackedFailIf42(counter.clone())), counter)
+    }
+
+    #[test]
+    fn latent_cache_miss() {
+        let (latent, counter) = tracked();
+        let t = latent.trace(5);
+        assert_eq!(counter.get(), 1);
+        assert_eq!(t.unwrap(), 5);
+    }
+
+    #[test]
+    fn latent_cache_hit() {
+        let (latent, counter) = tracked();
+        let _ = latent.trace(5);
+        let t = latent.trace(5);
+        assert_eq!(counter.get(), 1); // NOT 2 — cached
+        assert_eq!(t.unwrap(), 5);
+    }
+
+    #[test]
+    fn latent_different_inputs() {
+        let (latent, counter) = tracked();
+        latent.trace(5);
+        latent.trace(10);
+        assert_eq!(counter.get(), 2);
+    }
+
+    #[test]
+    fn latent_caches_failure() {
+        let (latent, counter) = tracked();
+        let t1 = latent.trace(42);
+        let t2 = latent.trace(42);
+        assert_eq!(counter.get(), 1); // NOT 2 — cached
+        assert!(t1.is_err());
+        assert!(t2.is_err());
+    }
+
+    #[test]
+    fn latent_compose() {
+        let (l1, c1) = tracked();
+        let (l2, c2) = tracked();
+        let composed = l1.compose(l2);
+        let t = composed.trace(5);
+        assert_eq!(t.unwrap(), 5);
+        assert_eq!(c1.get(), 1);
+        assert_eq!(c2.get(), 1);
     }
 }
