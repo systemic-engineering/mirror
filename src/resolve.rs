@@ -405,8 +405,7 @@ fn resolve_ast<C: Setting>(
     for child in children {
         if child.data().kind == Kind::Template {
             let name = child.data().value.clone();
-            let fields = resolve_template_fields(child);
-            templates.insert(name, Template { params: Vec::new(), fields });
+            templates.insert(name, resolve_template(child));
         }
     }
 
@@ -451,37 +450,46 @@ fn resolve_ast<C: Setting>(
     })
 }
 
-fn resolve_template_fields(template_node: &Tree<AstNode>) -> Vec<Field> {
+fn resolve_template(template_node: &Tree<AstNode>) -> Template {
+    let mut params = Vec::new();
     let mut fields = Vec::new();
     for child in template_node.children() {
-        if child.data().kind == Kind::Field {
-            if child.is_shard() {
-                // Bare field: no qualifier, no pipe
-                fields.push(Field {
+        match child.data().kind {
+            Kind::Param => {
+                params.push(Param {
                     name: child.data().value.clone(),
-                    qualifier: None,
-                    pipe: None,
-                });
-            } else {
-                // Field with qualifier and/or pipe
-                let mut qualifier = None;
-                let mut pipe = None;
-                for sub in child.children() {
-                    match sub.data().kind {
-                        Kind::Qualifier => qualifier = Some(sub.data().value.clone()),
-                        Kind::Pipe => pipe = Some(sub.data().value.clone()),
-                        _ => {}
-                    }
-                }
-                fields.push(Field {
-                    name: child.data().value.clone(),
-                    qualifier,
-                    pipe,
                 });
             }
+            Kind::Field => {
+                if child.is_shard() {
+                    // Bare field: no qualifier, no pipe
+                    fields.push(Field {
+                        name: child.data().value.clone(),
+                        qualifier: None,
+                        pipe: None,
+                    });
+                } else {
+                    // Field with qualifier and/or pipe
+                    let mut qualifier = None;
+                    let mut pipe = None;
+                    for sub in child.children() {
+                        match sub.data().kind {
+                            Kind::Qualifier => qualifier = Some(sub.data().value.clone()),
+                            Kind::Pipe => pipe = Some(sub.data().value.clone()),
+                            _ => {}
+                        }
+                    }
+                    fields.push(Field {
+                        name: child.data().value.clone(),
+                        qualifier,
+                        pipe,
+                    });
+                }
+            }
+            _ => {}
         }
     }
-    fields
+    Template { params, fields }
 }
 
 fn resolve_output_nodes(
