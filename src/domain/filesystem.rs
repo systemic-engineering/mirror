@@ -108,8 +108,6 @@ impl Folder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::tree::Treelike;
-
     #[test]
     fn folder_content_addressed() {
         let a = Folder {

@@ -13,7 +13,7 @@ use crate::ast::{AstNode, Span};
 use crate::domain::conversation::Kind;
 use crate::domain::{Addressable, Setting};
 use crate::parse::ParseError;
-use crate::tree::{self, Tree, Treelike};
+use crate::tree::{self, Tree};
 use crate::{ComposedError, Vector};
 
 use fragmentation::ref_::Ref;
@@ -632,7 +632,7 @@ impl<C: Setting> Conversation<C> {
 /// `trace` executes the program against a domain tree.
 impl<C: Setting> Vector<Tree<C::Token>, Value> for Conversation<C>
 where
-    C::Token: Addressable + fragmentation::encoding::Encode,
+    C::Token: Addressable,
 {
     type Error = ResolveError;
 

@@ -1,8 +1,8 @@
 use conversation::tree;
-use conversation::{Conversation, Filesystem, Folder, OutputNode, Repo, Store, Vector};
+use conversation::{Conversation, Filesystem, Folder, OutputNode, Repo, Store, Tree, Vector};
 use fragmentation::commit::{Commit, Draft};
 use fragmentation::encoding;
-use fragmentation::fragment::content_oid;
+use fragmentation::fragment::{content_oid, Fractal};
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
 use fragmentation::witnessed::Committer;
@@ -63,7 +63,7 @@ fn conversation_output_committed() {
     let json = serde_json::to_string_pretty(&result).unwrap();
 
     let fractal = encoding::encode(&json);
-    let mut store = Store::<String>::new();
+    let mut store = Store::<Fractal<String>>::new();
     let commit = Draft::root("conversation output", fractal).commit(
         &mut store,
         test_committer(),
@@ -88,7 +88,7 @@ fn committed_output_content_addressed() {
     let fractal1 = encoding::encode(&json1);
     let fractal2 = encoding::encode(&json2);
 
-    let mut store = Store::<String>::new();
+    let mut store = Store::<Fractal<String>>::new();
     let oid1 = store.write_tree(&fractal1);
     let oid2 = store.write_tree(&fractal2);
 
@@ -99,7 +99,7 @@ fn committed_output_content_addressed() {
 #[test]
 fn commit_chain_from_pipeline() {
     let resolved = Conversation::<Filesystem>::from_source(test_conv_source()).unwrap();
-    let mut store = Store::<String>::new();
+    let mut store = Store::<Fractal<String>>::new();
     let committer = test_committer();
 
     // First execution
@@ -152,7 +152,7 @@ fn transformation_tree_committed() {
     let transformation: &conversation::Tree<OutputNode> = &resolved.content;
     let oid = content_oid(transformation);
 
-    let mut store = Store::<OutputNode>::new();
+    let mut store = Store::<Tree<OutputNode>>::new();
     let commit = Draft::root(
         "transformation: root { items: sub { $t } }",
         transformation.clone(),

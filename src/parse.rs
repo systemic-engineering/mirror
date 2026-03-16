@@ -963,7 +963,6 @@ fn parse_variants(text: &str, span: Span) -> Vec<Tree<AstNode>> {
 mod tests {
     use super::*;
     use crate::Vector;
-    use fragmentation::fragment::Fragmentable;
 
     // -- Parse `in @domain` --
 
