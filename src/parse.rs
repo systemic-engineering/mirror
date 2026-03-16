@@ -211,11 +211,21 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
 }
 
 fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
-    let name = header.split('{').next().unwrap().trim();
+    let before_brace = header.split('{').next().unwrap().trim();
     let start_span = lines.current_span();
     lines.advance(); // consume template line
 
-    let mut fields = Vec::new();
+    // Check for param list: $name(params) vs $name
+    let (name, mut children) = if let Some(paren) = before_brace.find('(') {
+        let name = before_brace[..paren].trim();
+        let inner = &before_brace[paren + 1..];
+        let closing = inner.rfind(')').unwrap_or(inner.len());
+        let param_text = inner[..closing].trim();
+        let params = parse_param_list(param_text, start_span)?;
+        (name, params)
+    } else {
+        (before_brace, Vec::new())
+    };
 
     while let Some(line) = lines.peek() {
         let trimmed = line.trim();
@@ -224,7 +234,7 @@ fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Pars
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Kind::Template, name, span, fields));
+            return Ok(ast::ast_branch(Kind::Template, name, span, children));
         }
 
         if trimmed.is_empty() {
@@ -233,7 +243,7 @@ fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Pars
         }
 
         let field = parse_field(trimmed, lines.current_span());
-        fields.push(field);
+        children.push(field);
         lines.advance();
     }
 
@@ -241,6 +251,89 @@ fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Pars
         message: "unclosed template block".into(),
         span: Some(start_span),
     })
+}
+
+fn parse_param_list(text: &str, span: Span) -> Result<Vec<Tree<AstNode>>, ParseError> {
+    // Split on commas respecting paren nesting
+    let mut segments = Vec::new();
+    let mut depth = 0;
+    let mut start = 0;
+
+    for (i, c) in text.char_indices() {
+        match c {
+            '(' => depth += 1,
+            ')' => depth -= 1,
+            ',' if depth == 0 => {
+                segments.push(&text[start..i]);
+                start = i + 1;
+            }
+            _ => {}
+        }
+    }
+    segments.push(&text[start..]);
+
+    segments
+        .iter()
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty())
+        .map(|s| parse_param(s, span))
+        .collect()
+}
+
+fn parse_param(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+    // Check for "name: expr" — but only if left side doesn't start with @ or $
+    if let Some((left, right)) = text.split_once(':') {
+        let left = left.trim();
+        if !left.starts_with('@') && !left.starts_with('$') {
+            let expr = right.trim();
+            let child = parse_param_expr(expr, span);
+            return Ok(ast::ast_branch(Kind::Param, left, span, vec![child]));
+        }
+    }
+
+    // Infer name from expression
+    let name = infer_name(text, span)?;
+    let child = parse_param_expr(text, span);
+    Ok(ast::ast_branch(Kind::Param, &name, span, vec![child]))
+}
+
+fn infer_name(text: &str, span: Span) -> Result<String, ParseError> {
+    if text.contains('|') {
+        return Err(ParseError {
+            message: format!("pipeline param must be explicitly named: {}", text),
+            span: Some(span),
+        });
+    }
+
+    if let Some(without_at) = text.strip_prefix('@') {
+        if without_at.contains('.') {
+            return Err(ParseError {
+                message: format!("dotted path param must be explicitly named: {}", text),
+                span: Some(span),
+            });
+        }
+        let name = if let Some(paren) = without_at.find('(') {
+            &without_at[..paren]
+        } else {
+            without_at
+        };
+        return Ok(name.to_string());
+    }
+
+    Err(ParseError {
+        message: format!("cannot infer name for param: {}", text),
+        span: Some(span),
+    })
+}
+
+fn parse_param_expr(text: &str, span: Span) -> Tree<AstNode> {
+    if text.contains('|') {
+        parse_pipeline(text, span)
+    } else if text.starts_with('@') && text[1..].contains('.') {
+        ast::ast_leaf(Kind::Path, text, span)
+    } else {
+        parse_pipeline_segment(text, span)
+    }
 }
 
 fn parse_field(text: &str, span: Span) -> Tree<AstNode> {
@@ -2006,7 +2099,7 @@ grammar @conversation {
        | group | select | template-ref | domain-ref
        | pipeline | domain-param | ref | alias | expr
        | use | home | self | path | literal
-       | case | arm | wild | branch
+       | case | arm | wild | branch | param
        | when(op) | cmp(op)
 
   type op = gt | lt | gte | lte | eq | ne
@@ -2021,8 +2114,8 @@ grammar @conversation {
         let root_type = &grammar.children()[0];
         assert_eq!(root_type.data().kind, Kind::TypeDef);
         assert_eq!(root_type.data().value, "");
-        // 24 simple + 2 parameterized = 26 variants
-        assert_eq!(root_type.children().len(), 26);
+        // 25 simple + 2 parameterized = 27 variants
+        assert_eq!(root_type.children().len(), 27);
 
         // Check parameterized variants
         let when_v = root_type
@@ -2079,5 +2172,165 @@ grammar @conversation {
         assert_eq!(grammar.data().kind, Kind::Grammar);
         assert_eq!(grammar.data().value, "@conversation");
         assert_eq!(grammar.children().len(), 2);
+    }
+
+    // -- Parse parameterized templates --
+
+    #[test]
+    fn parse_template_single_domain_param() {
+        let source = "template $t(@json) {\n  slug\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        assert_eq!(tmpl.data().kind, Kind::Template);
+        assert_eq!(tmpl.data().value, "$t");
+        assert_eq!(tmpl.children().len(), 2); // Param + Field
+        let param = &tmpl.children()[0];
+        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().value, "json"); // inferred name
+        assert_eq!(param.children().len(), 1);
+        assert_eq!(param.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(param.children()[0].data().value, "@json");
+        let field = &tmpl.children()[1];
+        assert_eq!(field.data().kind, Kind::Field);
+        assert_eq!(field.data().value, "slug");
+    }
+
+    #[test]
+    fn parse_template_named_param() {
+        let source = "template $t(data: @json) {\n  slug\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        assert_eq!(tmpl.children().len(), 2); // Param + Field
+        let param = &tmpl.children()[0];
+        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().value, "data"); // explicit name
+        assert_eq!(param.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(param.children()[0].data().value, "@json");
+    }
+
+    #[test]
+    fn parse_template_multiple_params() {
+        let source = "template $t(@json, @csv) {\n  slug\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        assert_eq!(tmpl.children().len(), 3); // 2 Params + 1 Field
+        assert_eq!(tmpl.children()[0].data().kind, Kind::Param);
+        assert_eq!(tmpl.children()[0].data().value, "json");
+        assert_eq!(tmpl.children()[1].data().kind, Kind::Param);
+        assert_eq!(tmpl.children()[1].data().value, "csv");
+        assert_eq!(tmpl.children()[2].data().kind, Kind::Field);
+    }
+
+    #[test]
+    fn parse_template_pipeline_param_named() {
+        let source = "template $t(authors: @csv | select(.author)) {\n  slug\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        let param = &tmpl.children()[0];
+        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().value, "authors");
+        assert_eq!(param.children()[0].data().kind, Kind::Pipeline);
+        let pipeline = &param.children()[0];
+        assert_eq!(pipeline.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(pipeline.children()[0].data().value, "@csv");
+        assert_eq!(pipeline.children()[1].data().kind, Kind::Ref);
+        assert_eq!(pipeline.children()[1].data().value, "select(.author)");
+    }
+
+    #[test]
+    fn parse_template_dotted_param_named() {
+        let source = "template $t(lines: @json.type.Array) {\n  slug\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        let param = &tmpl.children()[0];
+        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().value, "lines");
+        assert_eq!(param.children()[0].data().kind, Kind::Path);
+        assert_eq!(param.children()[0].data().value, "@json.type.Array");
+    }
+
+    #[test]
+    fn parse_template_domain_param_with_domain_params() {
+        let source = "template $t(@git(branch: \"main\")) {\n  slug\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        let param = &tmpl.children()[0];
+        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().value, "git"); // inferred: @git(branch: "main") → "git"
+        assert_eq!(param.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(param.children()[0].data().value, "@git");
+        assert_eq!(
+            param.children()[0].children()[0].data().kind,
+            Kind::DomainParam
+        );
+    }
+
+    #[test]
+    fn parse_template_params_and_fields_order() {
+        let source = "template $t(@json, @csv) {\n  slug\n  title\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        // Params come first, then fields
+        assert_eq!(tmpl.children()[0].data().kind, Kind::Param);
+        assert_eq!(tmpl.children()[1].data().kind, Kind::Param);
+        assert_eq!(tmpl.children()[2].data().kind, Kind::Field);
+        assert_eq!(tmpl.children()[3].data().kind, Kind::Field);
+    }
+
+    #[test]
+    fn parse_template_no_params_unchanged() {
+        // Backward compat: template without params still works
+        let source = "template $t {\n  slug\n  title\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        assert_eq!(tmpl.data().value, "$t");
+        assert_eq!(tmpl.children().len(), 2);
+        assert_eq!(tmpl.children()[0].data().kind, Kind::Field);
+        assert_eq!(tmpl.children()[1].data().kind, Kind::Field);
+    }
+
+    #[test]
+    fn parse_template_error_unnamed_pipeline() {
+        let source = "template $t(@csv | select(.author)) {\n  slug\n}\n";
+        let err = Parse.record(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("must be explicitly named"),
+            "expected naming error: {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_template_error_unnamed_dotted() {
+        let source = "template $t(@json.type.Array) {\n  slug\n}\n";
+        let err = Parse.record(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("must be explicitly named"),
+            "expected naming error: {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_template_error_unnamed_bare() {
+        let source = "template $t(foo) {\n  slug\n}\n";
+        let err = Parse.record(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("cannot infer name"),
+            "expected inference error: {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_template_error_in_multi_param() {
+        // Error in second param of a comma-separated list (exercises ? in comma branch)
+        let source = "template $t(@json, @csv | transform) {\n  slug\n}\n";
+        let err = Parse.record(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("must be explicitly named"),
+            "expected naming error: {}",
+            err.message
+        );
     }
 }

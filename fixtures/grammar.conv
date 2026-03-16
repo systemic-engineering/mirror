@@ -3,7 +3,7 @@ grammar @conversation {
        | group | select | template-ref | domain-ref
        | pipeline | domain-param | ref | alias | expr
        | use | home | self | path | literal
-       | case | arm | wild | branch
+       | case | arm | wild | branch | param
        | when(op) | cmp(op)
 
   type op = gt | lt | gte | lte | eq | ne

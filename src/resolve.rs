@@ -108,7 +108,13 @@ pub struct Conversation<C: Setting> {
 }
 
 #[derive(Clone, Debug)]
+pub struct Param {
+    pub name: String,
+}
+
+#[derive(Clone, Debug)]
 pub struct Template {
+    pub params: Vec<Param>,
     fields: Vec<Field>,
 }
 
@@ -116,6 +122,7 @@ impl Template {
     /// Create a template with the given field names (no qualifiers or pipes).
     pub fn with_fields(names: &[&str]) -> Self {
         Template {
+            params: Vec::new(),
             fields: names
                 .iter()
                 .map(|name| Field {
@@ -398,8 +405,7 @@ fn resolve_ast<C: Setting>(
     for child in children {
         if child.data().kind == Kind::Template {
             let name = child.data().value.clone();
-            let fields = resolve_template_fields(child);
-            templates.insert(name, Template { fields });
+            templates.insert(name, resolve_template(child));
         }
     }
 
@@ -444,37 +450,46 @@ fn resolve_ast<C: Setting>(
     })
 }
 
-fn resolve_template_fields(template_node: &Tree<AstNode>) -> Vec<Field> {
+fn resolve_template(template_node: &Tree<AstNode>) -> Template {
+    let mut params = Vec::new();
     let mut fields = Vec::new();
     for child in template_node.children() {
-        if child.data().kind == Kind::Field {
-            if child.is_shard() {
-                // Bare field: no qualifier, no pipe
-                fields.push(Field {
+        match child.data().kind {
+            Kind::Param => {
+                params.push(Param {
                     name: child.data().value.clone(),
-                    qualifier: None,
-                    pipe: None,
-                });
-            } else {
-                // Field with qualifier and/or pipe
-                let mut qualifier = None;
-                let mut pipe = None;
-                for sub in child.children() {
-                    match sub.data().kind {
-                        Kind::Qualifier => qualifier = Some(sub.data().value.clone()),
-                        Kind::Pipe => pipe = Some(sub.data().value.clone()),
-                        _ => {}
-                    }
-                }
-                fields.push(Field {
-                    name: child.data().value.clone(),
-                    qualifier,
-                    pipe,
                 });
             }
+            Kind::Field => {
+                if child.is_shard() {
+                    // Bare field: no qualifier, no pipe
+                    fields.push(Field {
+                        name: child.data().value.clone(),
+                        qualifier: None,
+                        pipe: None,
+                    });
+                } else {
+                    // Field with qualifier and/or pipe
+                    let mut qualifier = None;
+                    let mut pipe = None;
+                    for sub in child.children() {
+                        match sub.data().kind {
+                            Kind::Qualifier => qualifier = Some(sub.data().value.clone()),
+                            Kind::Pipe => pipe = Some(sub.data().value.clone()),
+                            _ => {}
+                        }
+                    }
+                    fields.push(Field {
+                        name: child.data().value.clone(),
+                        qualifier,
+                        pipe,
+                    });
+                }
+            }
+            _ => {}
         }
     }
-    fields
+    Template { params, fields }
 }
 
 fn resolve_output_nodes(
@@ -1601,6 +1616,7 @@ mod tests {
         templates.insert(
             tmpl_name.to_string(),
             Template {
+                params: Vec::new(),
                 fields: vec![Field {
                     name: "slug".into(),
                     qualifier: None,
@@ -1662,6 +1678,7 @@ mod tests {
         templates.insert(
             "$a".to_string(),
             Template {
+                params: Vec::new(),
                 fields: vec![Field {
                     name: "x".into(),
                     qualifier: None,
@@ -1672,6 +1689,7 @@ mod tests {
         templates.insert(
             "$b".to_string(),
             Template {
+                params: Vec::new(),
                 fields: vec![Field {
                     name: "y".into(),
                     qualifier: None,
@@ -1842,5 +1860,29 @@ mod tests {
         let source = "in @filesystem\ngrammar @conversation {\n  type = in | out\n}\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
         let ast = Parse.record(source.to_string()).unwrap();
         let _resolved = resolve_fs(ast).unwrap();
+    }
+
+    // -- Parameterized templates --
+
+    #[test]
+    fn resolve_template_with_params() {
+        let source = "in @filesystem\ntemplate $t(@json, data: @csv) {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let conv = resolve_fs(ast).unwrap();
+        let tmpl = &conv.templates["$t"];
+        assert_eq!(tmpl.params.len(), 2);
+        assert_eq!(tmpl.params[0].name, "json");
+        assert_eq!(tmpl.params[1].name, "data");
+        assert_eq!(tmpl.fields.len(), 1);
+    }
+
+    #[test]
+    fn resolve_template_without_params_compat() {
+        let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let conv = resolve_fs(ast).unwrap();
+        let tmpl = &conv.templates["$t"];
+        assert!(tmpl.params.is_empty());
+        assert_eq!(tmpl.fields.len(), 1);
     }
 }
