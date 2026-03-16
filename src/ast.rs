@@ -229,6 +229,29 @@ mod tests {
     }
 
     #[test]
+    fn ast_node_structural_kind_helpers() {
+        let decl = AstNode {
+            kind: Kind::Decl,
+            name: "in".into(),
+            value: "@filesystem".into(),
+            span: Span::new(0, 14),
+        };
+        assert!(decl.is_decl("in"));
+        assert!(!decl.is_atom("in"));
+        assert!(!decl.is_ref("in"));
+        assert!(!decl.is_form("in"));
+
+        let atom = AstNode {
+            kind: Kind::Atom,
+            name: "field".into(),
+            value: "slug".into(),
+            span: Span::new(0, 4),
+        };
+        assert!(atom.is_atom("field"));
+        assert!(!atom.is_decl("field"));
+    }
+
+    #[test]
     fn ast_ref_is_content_addressed() {
         let a = ast_leaf(Kind::Field, "field", "slug", Span::new(0, 4));
         let b = ast_leaf(Kind::Field, "field", "slug", Span::new(100, 104));
