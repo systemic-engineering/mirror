@@ -1,5 +1,5 @@
 use conversation::tree;
-use conversation::{Conversation, Filesystem, Folder, OutputNode, Repo, Story};
+use conversation::{Conversation, Filesystem, Folder, OutputNode, Repo, Vector};
 use fragmentation::commit::{Commit, Draft};
 use fragmentation::encoding;
 use fragmentation::fragment::content_oid;
@@ -59,7 +59,7 @@ const TEST_TIMESTAMP: &str = "1234567890 +0000";
 #[test]
 fn conversation_output_committed() {
     let resolved = Conversation::<Filesystem>::from_source(test_conv_source()).unwrap();
-    let result = resolved.record(test_domain_tree()).unwrap();
+    let result = resolved.trace(test_domain_tree()).unwrap();
     let json = serde_json::to_string_pretty(&result).unwrap();
 
     let fractal = encoding::encode(&json);
@@ -79,8 +79,8 @@ fn conversation_output_committed() {
 #[test]
 fn committed_output_content_addressed() {
     let resolved = Conversation::<Filesystem>::from_source(test_conv_source()).unwrap();
-    let result1 = resolved.record(test_domain_tree()).unwrap();
-    let result2 = resolved.record(test_domain_tree()).unwrap();
+    let result1 = resolved.trace(test_domain_tree()).unwrap();
+    let result2 = resolved.trace(test_domain_tree()).unwrap();
 
     let json1 = serde_json::to_string_pretty(&result1).unwrap();
     let json2 = serde_json::to_string_pretty(&result2).unwrap();
@@ -103,7 +103,7 @@ fn commit_chain_from_pipeline() {
     let committer = test_committer();
 
     // First execution
-    let result1 = resolved.record(test_domain_tree()).unwrap();
+    let result1 = resolved.trace(test_domain_tree()).unwrap();
     let json1 = serde_json::to_string_pretty(&result1).unwrap();
     let c1 = Draft::root("first pipeline run", encoding::encode(&json1)).commit(
         &mut repo,
@@ -122,7 +122,7 @@ fn commit_chain_from_pipeline() {
             )],
         )],
     );
-    let result2 = resolved.record(tree2).unwrap();
+    let result2 = resolved.trace(tree2).unwrap();
     let json2 = serde_json::to_string_pretty(&result2).unwrap();
     let c2 = c1
         .child("second pipeline run", encoding::encode(&json2))

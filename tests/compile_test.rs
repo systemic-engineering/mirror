@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use conversation::compile;
-use conversation::Story;
+use conversation::Vector;
 use conversation::{
     Conversation, Filesystem, Namespace, OutputNode, Repo, Resolve, Template, TemplateProvider,
 };
@@ -112,8 +112,8 @@ fn compile_with_imported_template() {
 
     // .conv source that imports from @shared and uses both local + imported
     let source = "use $shared from @shared\ntemplate $local {\n\ttitle\n}\nout articles {\n\tdrafts: blog { $shared }\n\tpages: static { $local }\n}\n";
-    let ast = conversation::Parse.record(source.to_string()).unwrap();
-    let conv: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+    let ast = conversation::Parse.trace(source.to_string()).unwrap();
+    let conv: Conversation<Filesystem> = resolve.trace(ast).into_result().unwrap();
 
     // Imported template flows through to Select nodes
     let eaf_bytes = compile::emit_eaf(&conv.content);
@@ -134,8 +134,8 @@ fn compile_imported_template_content_addressed() {
         ns.register("shared", TemplateProvider::Inline(templates.clone()));
         let resolve = Resolve::new().with_namespace(ns);
         let source = "use $t from @shared\nout r {\n\tx: f { $t }\n}\n";
-        let ast = conversation::Parse.record(source.to_string()).unwrap();
-        let conv: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+        let ast = conversation::Parse.trace(source.to_string()).unwrap();
+        let conv: Conversation<Filesystem> = resolve.trace(ast).into_result().unwrap();
         conv
     };
 

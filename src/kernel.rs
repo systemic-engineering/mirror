@@ -1,7 +1,6 @@
-//! The kernel. Content-addressed transformations, inlined from story.
+//! The kernel. Content-addressed vector algebra.
 //!
 //! Everything conversation needs to transform, compose, and address.
-//! ~255 lines that replace 5249 lines of story dependency.
 
 use std::marker::PhantomData;
 
@@ -33,15 +32,15 @@ impl std::fmt::Display for Oid {
 }
 
 // ---------------------------------------------------------------------------
-// CutOid — cut-specific content address
+// TraceOid — trace-specific content address
 // ---------------------------------------------------------------------------
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub struct CutOid(Oid);
+pub struct TraceOid(Oid);
 
-impl CutOid {
+impl TraceOid {
     pub fn new(hash: impl Into<String>) -> Self {
-        CutOid(Oid::new(hash))
+        TraceOid(Oid::new(hash))
     }
 
     pub fn as_oid(&self) -> &Oid {
@@ -49,19 +48,19 @@ impl CutOid {
     }
 }
 
-impl From<Oid> for CutOid {
+impl From<Oid> for TraceOid {
     fn from(oid: Oid) -> Self {
-        CutOid(oid)
+        TraceOid(oid)
     }
 }
 
-impl AsRef<str> for CutOid {
+impl AsRef<str> for TraceOid {
     fn as_ref(&self) -> &str {
         self.0.as_ref()
     }
 }
 
-impl std::fmt::Display for CutOid {
+impl std::fmt::Display for TraceOid {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
     }
@@ -79,7 +78,7 @@ pub trait ContentAddressed {
         + std::fmt::Debug
         + std::fmt::Display
         + AsRef<str>
-        + Into<CutOid>;
+        + Into<TraceOid>;
     fn content_oid(&self) -> Self::Oid;
 }
 
@@ -106,9 +105,9 @@ macro_rules! domain_oid {
             }
         }
 
-        impl From<$name> for $crate::CutOid {
+        impl From<$name> for $crate::TraceOid {
             fn from(oid: $name) -> Self {
-                $crate::CutOid::from(oid.0)
+                $crate::TraceOid::from(oid.0)
             }
         }
 
@@ -127,38 +126,38 @@ macro_rules! domain_oid {
 }
 
 // ---------------------------------------------------------------------------
-// Cut — transformation result with content address
+// Trace — origin, destination, payload
 // ---------------------------------------------------------------------------
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Cut<T, E> {
+pub struct Trace<T, E> {
     result: Result<T, E>,
-    oid: CutOid,
-    parent: Option<CutOid>,
+    oid: TraceOid,
+    parent: Option<TraceOid>,
 }
 
-impl<T, E> Cut<T, E> {
-    pub fn success(value: T, oid: CutOid, parent: Option<CutOid>) -> Self {
-        Cut {
+impl<T, E> Trace<T, E> {
+    pub fn success(value: T, oid: TraceOid, parent: Option<TraceOid>) -> Self {
+        Trace {
             result: Ok(value),
             oid,
             parent,
         }
     }
 
-    pub fn failure(error: E, oid: CutOid, parent: Option<CutOid>) -> Self {
-        Cut {
+    pub fn failure(error: E, oid: TraceOid, parent: Option<TraceOid>) -> Self {
+        Trace {
             result: Err(error),
             oid,
             parent,
         }
     }
 
-    pub fn oid(&self) -> &CutOid {
+    pub fn oid(&self) -> &TraceOid {
         &self.oid
     }
 
-    pub fn parent(&self) -> Option<&CutOid> {
+    pub fn parent(&self) -> Option<&TraceOid> {
         self.parent.as_ref()
     }
 
@@ -268,15 +267,15 @@ impl ContentAddressed for serde_json::Value {
 }
 
 // ---------------------------------------------------------------------------
-// Story — transformation contract
+// Vector — transformation between content-addressed spaces
 // ---------------------------------------------------------------------------
 
-pub trait Story<A, B: ContentAddressed> {
+pub trait Vector<A, B: ContentAddressed> {
     type Error;
 
-    fn record(&self, source: A) -> Cut<B, Self::Error>;
+    fn trace(&self, source: A) -> Trace<B, Self::Error>;
 
-    fn compose<C: ContentAddressed, G: Story<B, C>>(self, other: G) -> Composed<Self, G, B>
+    fn compose<C: ContentAddressed, G: Vector<B, C>>(self, other: G) -> Composed<Self, G, B>
     where
         Self: Sized,
     {
@@ -285,7 +284,7 @@ pub trait Story<A, B: ContentAddressed> {
 }
 
 // ---------------------------------------------------------------------------
-// Composed — story pipeline
+// Composed — vector pipeline
 // ---------------------------------------------------------------------------
 
 pub struct Composed<F, G, Mid>(pub F, pub G, PhantomData<Mid>);
@@ -307,26 +306,26 @@ impl<E1: std::fmt::Display, E2: std::fmt::Display> std::fmt::Display for Compose
 
 impl<E1: std::error::Error, E2: std::error::Error> std::error::Error for ComposedError<E1, E2> {}
 
-impl<A, C, Mid, F, G> Story<A, C> for Composed<F, G, Mid>
+impl<A, C, Mid, F, G> Vector<A, C> for Composed<F, G, Mid>
 where
     C: ContentAddressed,
     Mid: ContentAddressed,
-    F: Story<A, Mid>,
-    G: Story<Mid, C>,
+    F: Vector<A, Mid>,
+    G: Vector<Mid, C>,
 {
     type Error = ComposedError<F::Error, G::Error>;
 
-    fn record(&self, source: A) -> Cut<C, Self::Error> {
-        let first = self.0.record(source);
+    fn trace(&self, source: A) -> Trace<C, Self::Error> {
+        let first = self.0.trace(source);
         let first_oid = first.oid().clone();
         match first.into_result() {
-            Err(e) => Cut::failure(ComposedError::First(e), first_oid, None),
+            Err(e) => Trace::failure(ComposedError::First(e), first_oid, None),
             Ok(mid) => {
-                let second = self.1.record(mid);
+                let second = self.1.trace(mid);
                 let second_oid = second.oid().clone();
                 match second.into_result() {
-                    Ok(value) => Cut::success(value, second_oid, Some(first_oid)),
-                    Err(e) => Cut::failure(ComposedError::Second(e), second_oid, Some(first_oid)),
+                    Ok(value) => Trace::success(value, second_oid, Some(first_oid)),
+                    Err(e) => Trace::failure(ComposedError::Second(e), second_oid, Some(first_oid)),
                 }
             }
         }
@@ -389,68 +388,69 @@ mod tests {
         assert_eq!(a, b);
     }
 
-    // -- CutOid --
+    // -- TraceOid --
 
     #[test]
-    fn cut_oid_construction_and_display() {
-        let oid = CutOid::new("abc");
+    fn trace_oid_construction_and_display() {
+        let oid = TraceOid::new("abc");
         assert_eq!(oid.to_string(), "abc");
         assert_eq!(oid.as_ref(), "abc");
     }
 
     #[test]
-    fn cut_oid_from_oid() {
+    fn trace_oid_from_oid() {
         let oid = Oid::new("hash");
-        let cut_oid = CutOid::from(oid.clone());
-        assert_eq!(cut_oid.as_oid(), &oid);
+        let trace_oid = TraceOid::from(oid.clone());
+        assert_eq!(trace_oid.as_oid(), &oid);
     }
 
     #[test]
-    fn cut_oid_equality() {
-        let a = CutOid::new("same");
-        let b = CutOid::new("same");
+    fn trace_oid_equality() {
+        let a = TraceOid::new("same");
+        let b = TraceOid::new("same");
         assert_eq!(a, b);
     }
 
     #[test]
-    fn cut_oid_clone() {
-        let a = CutOid::new("x");
+    fn trace_oid_clone() {
+        let a = TraceOid::new("x");
         let b = a.clone();
         assert_eq!(a, b);
     }
 
-    // -- Cut --
+    // -- Trace --
 
     #[test]
-    fn cut_success() {
-        let cut: Cut<String, String> = Cut::success("hello".into(), CutOid::new("oid"), None);
-        assert!(cut.is_ok());
-        assert!(!cut.is_err());
-        assert_eq!(cut.oid(), &CutOid::new("oid"));
-        assert_eq!(cut.parent(), None);
-        assert_eq!(cut.unwrap(), "hello");
+    fn trace_success() {
+        let t: Trace<String, String> = Trace::success("hello".into(), TraceOid::new("oid"), None);
+        assert!(t.is_ok());
+        assert!(!t.is_err());
+        assert_eq!(t.oid(), &TraceOid::new("oid"));
+        assert_eq!(t.parent(), None);
+        assert_eq!(t.unwrap(), "hello");
     }
 
     #[test]
-    fn cut_failure() {
-        let cut: Cut<String, String> = Cut::failure("boom".into(), CutOid::new("err"), None);
-        assert!(cut.is_err());
-        assert!(!cut.is_ok());
-        assert_eq!(cut.into_result(), Err("boom".into()));
+    fn trace_failure() {
+        let t: Trace<String, String> = Trace::failure("boom".into(), TraceOid::new("err"), None);
+        assert!(t.is_err());
+        assert!(!t.is_ok());
+        assert_eq!(t.into_result(), Err("boom".into()));
     }
 
     #[test]
-    fn cut_with_parent() {
-        let parent = CutOid::new("parent");
-        let cut: Cut<i32, String> = Cut::success(42, CutOid::new("child"), Some(parent.clone()));
-        assert_eq!(cut.parent(), Some(&parent));
+    fn trace_with_parent() {
+        let parent = TraceOid::new("parent");
+        let t: Trace<i32, String> =
+            Trace::success(42, TraceOid::new("child"), Some(parent.clone()));
+        assert_eq!(t.parent(), Some(&parent));
     }
 
     #[test]
     #[should_panic]
-    fn cut_unwrap_panics_on_error() {
-        let cut: Cut<String, String> = Cut::failure("boom".into(), CutOid::new("err"), None);
-        cut.unwrap();
+    fn trace_unwrap_panics_on_error() {
+        let t: Trace<String, String> = Trace::failure("boom".into(), TraceOid::new("err"), None);
+        t.unwrap();
     }
 
     // -- ContentAddressed impls --
@@ -527,20 +527,20 @@ mod tests {
         assert_ne!(a.content_oid(), c.content_oid());
     }
 
-    // -- Story + Composed --
+    // -- Vector + Composed --
     // Single monomorphization: Composed<FailIf42, FailAbove100, i32>
-    // Both steps can fail, so all 4 branches of Composed::record() are reachable.
+    // Both steps can fail, so all 4 branches of Composed::trace() are reachable.
 
     #[derive(Clone)]
     struct FailIf42;
 
-    impl Story<i32, i32> for FailIf42 {
+    impl Vector<i32, i32> for FailIf42 {
         type Error = String;
-        fn record(&self, source: i32) -> Cut<i32, String> {
+        fn trace(&self, source: i32) -> Trace<i32, String> {
             if source == 42 {
-                Cut::failure("is 42".into(), CutOid::new("err"), None)
+                Trace::failure("is 42".into(), TraceOid::new("err"), None)
             } else {
-                Cut::success(source, CutOid::new(format!("{}", source)), None)
+                Trace::success(source, TraceOid::new(format!("{}", source)), None)
             }
         }
     }
@@ -548,13 +548,13 @@ mod tests {
     #[derive(Clone)]
     struct FailAbove100;
 
-    impl Story<i32, i32> for FailAbove100 {
+    impl Vector<i32, i32> for FailAbove100 {
         type Error = String;
-        fn record(&self, source: i32) -> Cut<i32, String> {
+        fn trace(&self, source: i32) -> Trace<i32, String> {
             if source > 100 {
-                Cut::failure("too big".into(), CutOid::new("err"), None)
+                Trace::failure("too big".into(), TraceOid::new("err"), None)
             } else {
-                Cut::success(source, CutOid::new(format!("{}", source)), None)
+                Trace::success(source, TraceOid::new(format!("{}", source)), None)
             }
         }
     }
@@ -564,28 +564,28 @@ mod tests {
     }
 
     #[test]
-    fn story_compose_chain() {
-        assert_eq!(pipeline().record(5).unwrap(), 5);
+    fn vector_compose_chain() {
+        assert_eq!(pipeline().trace(5).unwrap(), 5);
     }
 
     #[test]
-    fn story_compose_parent_link() {
-        let cut = pipeline().record(5);
-        assert!(cut.parent().is_some());
+    fn vector_compose_parent_link() {
+        let t = pipeline().trace(5);
+        assert!(t.parent().is_some());
     }
 
     #[test]
     fn composed_first_error() {
-        let cut = pipeline().record(42); // FailIf42 rejects
-        assert!(cut.is_err());
-        assert!(matches!(cut.into_result(), Err(ComposedError::First(_))));
+        let t = pipeline().trace(42); // FailIf42 rejects
+        assert!(t.is_err());
+        assert!(matches!(t.into_result(), Err(ComposedError::First(_))));
     }
 
     #[test]
     fn composed_second_error() {
-        let cut = pipeline().record(200); // FailIf42 passes, FailAbove100 rejects
-        assert!(cut.is_err());
-        assert!(matches!(cut.into_result(), Err(ComposedError::Second(_))));
+        let t = pipeline().trace(200); // FailIf42 passes, FailAbove100 rejects
+        assert!(t.is_err());
+        assert!(matches!(t.into_result(), Err(ComposedError::Second(_))));
     }
 
     #[test]
