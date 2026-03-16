@@ -669,26 +669,59 @@ mod tests {
     }
 
     // -- Latent --
-    // Single monomorphization: Latent<TrackedFailIf42, i32, String>
-    // TrackedFailIf42 counts invocations and can succeed or fail.
+    // Latent caches Vector results in a Repo. Trees all the way down.
 
-    struct TrackedFailIf42(Rc<Cell<usize>>);
+    use crate::tree::{self, Tree};
+    use fragmentation::ref_::Ref;
+    use fragmentation::repo::Repo;
+    use fragmentation::sha;
+    use fragmentation::store::Store;
 
-    impl Vector<i32, i32> for TrackedFailIf42 {
+    fn tree_leaf(source: i32) -> Tree<String> {
+        let data = format!("data-{}", source);
+        let ref_ = Ref::new(sha::hash(&data), &data);
+        tree::leaf(ref_, data)
+    }
+
+    struct TrackedTreeVector(Rc<Cell<usize>>);
+
+    impl Vector<i32, Tree<String>> for TrackedTreeVector {
         type Error = String;
-        fn trace(&self, source: i32) -> Trace<i32, String> {
+        fn trace(&self, source: i32) -> Trace<Tree<String>, String> {
             self.0.set(self.0.get() + 1);
             if source == 42 {
                 Trace::failure("is 42".into(), TraceOid::new("err"), None)
             } else {
-                Trace::success(source, TraceOid::new(format!("{}", source)), None)
+                let node = tree_leaf(source);
+                let oid = node.content_oid();
+                Trace::success(node, oid.into(), None)
             }
         }
     }
 
-    fn tracked() -> (Latent<TrackedFailIf42, i32, String>, Rc<Cell<usize>>) {
+    struct TrackedTreeAbove100(Rc<Cell<usize>>);
+
+    impl Vector<Tree<String>, Tree<String>> for TrackedTreeAbove100 {
+        type Error = String;
+        fn trace(&self, source: Tree<String>) -> Trace<Tree<String>, String> {
+            self.0.set(self.0.get() + 1);
+            let data = source.data();
+            if data.ends_with("-above100") {
+                Trace::failure("too big".into(), TraceOid::new("err"), None)
+            } else {
+                let oid = source.content_oid();
+                Trace::success(source, oid.into(), None)
+            }
+        }
+    }
+
+    fn tracked() -> (Latent<TrackedTreeVector, Store<Tree<String>>>, Rc<Cell<usize>>) {
         let counter = Rc::new(Cell::new(0));
-        (Latent::new(TrackedFailIf42(counter.clone())), counter)
+        let store = Store::<Tree<String>>::new();
+        (
+            Latent::new(TrackedTreeVector(counter.clone()), store),
+            counter,
+        )
     }
 
     #[test]
@@ -696,7 +729,7 @@ mod tests {
         let (latent, counter) = tracked();
         let t = latent.trace(5);
         assert_eq!(counter.get(), 1);
-        assert_eq!(t.unwrap(), 5);
+        assert_eq!(t.unwrap(), tree_leaf(5));
     }
 
     #[test]
@@ -704,8 +737,8 @@ mod tests {
         let (latent, counter) = tracked();
         let _ = latent.trace(5);
         let t = latent.trace(5);
-        assert_eq!(counter.get(), 1); // NOT 2 — cached
-        assert_eq!(t.unwrap(), 5);
+        assert_eq!(counter.get(), 1); // NOT 2 — cached via Repo
+        assert_eq!(t.unwrap(), tree_leaf(5));
     }
 
     #[test]
@@ -717,23 +750,41 @@ mod tests {
     }
 
     #[test]
-    fn latent_caches_failure() {
+    fn latent_recomputes_failure() {
         let (latent, counter) = tracked();
         let t1 = latent.trace(42);
         let t2 = latent.trace(42);
-        assert_eq!(counter.get(), 1); // NOT 2 — cached
+        assert_eq!(counter.get(), 2); // Failures not cached — recomputed
         assert!(t1.is_err());
         assert!(t2.is_err());
     }
 
     #[test]
     fn latent_compose() {
-        let (l1, c1) = tracked();
-        let (l2, c2) = tracked();
+        let c1 = Rc::new(Cell::new(0));
+        let c2 = Rc::new(Cell::new(0));
+        let s1 = Store::<Tree<String>>::new();
+        let s2 = Store::<Tree<String>>::new();
+        let l1 = Latent::new(TrackedTreeVector(c1.clone()), s1);
+        let l2 = Latent::new(TrackedTreeAbove100(c2.clone()), s2);
         let composed = l1.compose(l2);
         let t = composed.trace(5);
-        assert_eq!(t.unwrap(), 5);
+        assert_eq!(t.unwrap(), tree_leaf(5));
         assert_eq!(c1.get(), 1);
         assert_eq!(c2.get(), 1);
+    }
+
+    #[test]
+    fn latent_result_in_repo() {
+        let counter = Rc::new(Cell::new(0));
+        let store = Store::<Tree<String>>::new();
+        let latent = Latent::new(TrackedTreeVector(counter.clone()), store);
+        latent.trace(5);
+        // Result stored in repo — ref maps input OID to output tree
+        let key = 5i32.content_oid().as_ref().to_string();
+        let sha = latent.repo.borrow().resolve_ref(&key);
+        assert!(sha.is_some());
+        let node = latent.repo.borrow().read_tree(&sha.unwrap().0);
+        assert_eq!(node, Some(tree_leaf(5)));
     }
 }
