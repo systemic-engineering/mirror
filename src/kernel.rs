@@ -2,6 +2,8 @@
 //!
 //! Everything conversation needs to transform, compose, and address.
 
+use std::cell::RefCell;
+use std::collections::HashMap;
 use std::marker::PhantomData;
 
 use sha2::{Digest, Sha256};
@@ -329,6 +331,44 @@ where
                 }
             }
         }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Latent — deferred + cached vector evaluation
+// ---------------------------------------------------------------------------
+
+pub struct Latent<V, B, E> {
+    inner: V,
+    cache: RefCell<HashMap<String, Trace<B, E>>>,
+}
+
+impl<V, B: ContentAddressed, E> Latent<V, B, E> {
+    pub fn new(inner: V) -> Self {
+        Latent {
+            inner,
+            cache: RefCell::new(HashMap::new()),
+        }
+    }
+}
+
+impl<A, B, V> Vector<A, B> for Latent<V, B, V::Error>
+where
+    A: ContentAddressed,
+    B: ContentAddressed + Clone,
+    V: Vector<A, B>,
+    V::Error: Clone,
+{
+    type Error = V::Error;
+
+    fn trace(&self, source: A) -> Trace<B, Self::Error> {
+        let key = source.content_oid().as_ref().to_string();
+        if let Some(cached) = self.cache.borrow().get(&key) {
+            return cached.clone();
+        }
+        let result = self.inner.trace(source);
+        self.cache.borrow_mut().insert(key, result.clone());
+        result
     }
 }
 
