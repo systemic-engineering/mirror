@@ -3,7 +3,7 @@
 //! The parser IS a story: it records a transformation from source to tree.
 
 use crate::ast::{self, AstNode, Span};
-use crate::domain::conversation::{Kind, Op};
+use crate::domain::conversation::Kind;
 use crate::tree::Tree;
 use crate::Trace;
 use crate::Vector;
@@ -126,16 +126,16 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
 
             let mut in_children = Vec::new();
             if let Some(p) = param {
-                in_children.push(ast::ast_leaf(Kind::DomainParam, p, span));
+                in_children.push(ast::ast_leaf(Kind::Ref, "domain-param", p, span));
             }
             if let Some(a) = alias {
-                in_children.push(ast::ast_leaf(Kind::Alias, a, span));
+                in_children.push(ast::ast_leaf(Kind::Ref, "alias", a, span));
             }
 
             if in_children.is_empty() {
-                children.push(ast::ast_leaf(Kind::In, value, span));
+                children.push(ast::ast_leaf(Kind::Decl, "in", value, span));
             } else {
-                children.push(ast::ast_branch(Kind::In, value, span, in_children));
+                children.push(ast::ast_branch(Kind::Decl, "in", value, span, in_children));
             }
             lines.advance();
             continue;
@@ -207,7 +207,13 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
         });
     }
 
-    Ok(ast::ast_branch(Kind::Group, "root", root_span, children))
+    Ok(ast::ast_branch(
+        Kind::Form,
+        "group",
+        "root",
+        root_span,
+        children,
+    ))
 }
 
 fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
@@ -234,7 +240,13 @@ fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Pars
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Kind::Template, name, span, children));
+            return Ok(ast::ast_branch(
+                Kind::Decl,
+                "template",
+                name,
+                span,
+                children,
+            ));
         }
 
         if trimmed.is_empty() {
@@ -287,14 +299,26 @@ fn parse_param(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
         if !left.starts_with('@') && !left.starts_with('$') {
             let expr = right.trim();
             let child = parse_param_expr(expr, span);
-            return Ok(ast::ast_branch(Kind::Param, left, span, vec![child]));
+            return Ok(ast::ast_branch(
+                Kind::Atom,
+                "param",
+                left,
+                span,
+                vec![child],
+            ));
         }
     }
 
     // Infer name from expression
     let name = infer_name(text, span)?;
     let child = parse_param_expr(text, span);
-    Ok(ast::ast_branch(Kind::Param, &name, span, vec![child]))
+    Ok(ast::ast_branch(
+        Kind::Atom,
+        "param",
+        &name,
+        span,
+        vec![child],
+    ))
 }
 
 fn infer_name(text: &str, span: Span) -> Result<String, ParseError> {
@@ -330,7 +354,7 @@ fn parse_param_expr(text: &str, span: Span) -> Tree<AstNode> {
     if text.contains('|') {
         parse_pipeline(text, span)
     } else if text.starts_with('@') && text[1..].contains('.') {
-        ast::ast_leaf(Kind::Path, text, span)
+        ast::ast_leaf(Kind::Atom, "path", text, span)
     } else {
         parse_pipeline_segment(text, span)
     }
@@ -346,22 +370,22 @@ fn parse_field(text: &str, span: Span) -> Tree<AstNode> {
         let mut children = Vec::new();
 
         let qualifier = parts[0].trim();
-        children.push(ast::ast_leaf(Kind::Qualifier, qualifier, span));
+        children.push(ast::ast_leaf(Kind::Atom, "qualifier", qualifier, span));
 
         if parts.len() > 1 {
             let pipe_value = parts[1].trim();
-            children.push(ast::ast_leaf(Kind::Pipe, pipe_value, span));
+            children.push(ast::ast_leaf(Kind::Atom, "pipe", pipe_value, span));
         }
 
-        ast::ast_branch(Kind::Field, name, span, children)
+        ast::ast_branch(Kind::Atom, "field", name, span, children)
     } else if let Some((name, pipe)) = text.split_once('|') {
         // Bare field with pipe: "slug | @sha"
         let name = name.trim();
         let pipe_value = pipe.trim();
-        let children = vec![ast::ast_leaf(Kind::Pipe, pipe_value, span)];
-        ast::ast_branch(Kind::Field, name, span, children)
+        let children = vec![ast::ast_leaf(Kind::Atom, "pipe", pipe_value, span)];
+        ast::ast_branch(Kind::Atom, "field", name, span, children)
     } else {
-        ast::ast_leaf(Kind::Field, text.trim(), span)
+        ast::ast_leaf(Kind::Atom, "field", text.trim(), span)
     }
 }
 
@@ -372,11 +396,11 @@ fn parse_out(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseErro
         lines.advance();
         let (children, end_span) = parse_block_body(lines, span)?;
         let merged = span.merge(&end_span);
-        Ok(ast::ast_branch(Kind::Out, name, merged, children))
+        Ok(ast::ast_branch(Kind::Decl, "out", name, merged, children))
     } else {
         let name = header.trim();
         lines.advance();
-        Ok(ast::ast_leaf(Kind::Out, name, span))
+        Ok(ast::ast_leaf(Kind::Decl, "out", name, span))
     }
 }
 
@@ -410,11 +434,12 @@ fn parse_block_body(
                 let template_name = template_part.trim().trim_end_matches('}').trim();
 
                 let select_children = vec![
-                    ast::ast_leaf(Kind::DomainRef, folder_name, span),
-                    ast::ast_leaf(Kind::TemplateRef, template_name, span),
+                    ast::ast_leaf(Kind::Ref, "domain-ref", folder_name, span),
+                    ast::ast_leaf(Kind::Ref, "template-ref", template_name, span),
                 ];
                 children.push(ast::ast_branch(
-                    Kind::Select,
+                    Kind::Form,
+                    "select",
                     output_part.trim(),
                     span,
                     select_children,
@@ -425,9 +450,10 @@ fn parse_block_body(
 
             // Field with expression value: "name: expr"
             let span = lines.current_span();
-            let expr_child = ast::ast_leaf(Kind::Expr, rest, span);
+            let expr_child = ast::ast_leaf(Kind::Atom, "expr", rest, span);
             children.push(ast::ast_branch(
-                Kind::Field,
+                Kind::Atom,
+                "field",
                 output_part.trim(),
                 span,
                 vec![expr_child],
@@ -443,14 +469,15 @@ fn parse_block_body(
 
             if rest.trim() == "}" {
                 // Empty group: "name {}"
-                children.push(ast::ast_branch(Kind::Group, name, span, vec![]));
+                children.push(ast::ast_branch(Kind::Form, "group", name, span, vec![]));
                 lines.advance();
             } else {
                 lines.advance();
                 let (group_children, end_span) = parse_block_body(lines, span)?;
                 let group_span = span.merge(&end_span);
                 children.push(ast::ast_branch(
-                    Kind::Group,
+                    Kind::Form,
+                    "group",
                     name,
                     group_span,
                     group_children,
@@ -461,7 +488,7 @@ fn parse_block_body(
 
         // Bare expression
         let span = lines.current_span();
-        children.push(ast::ast_leaf(Kind::Expr, trimmed, span));
+        children.push(ast::ast_leaf(Kind::Atom, "expr", trimmed, span));
         lines.advance();
     }
 
@@ -481,9 +508,9 @@ fn parse_block_body(
 fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>) {
     // Desugar ./ to $SELF/
     let source = if let Some(rest) = source.strip_prefix("./") {
-        children.push(ast::ast_leaf(Kind::Self_, "$SELF", span));
+        children.push(ast::ast_leaf(Kind::Ref, "self", "$SELF", span));
         for seg in rest.split('/').filter(|s| !s.is_empty()) {
-            children.push(ast::ast_leaf(Kind::Path, seg, span));
+            children.push(ast::ast_leaf(Kind::Atom, "path", seg, span));
         }
         return;
     } else {
@@ -492,16 +519,16 @@ fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>)
 
     // Check for $HOME/ or $SELF/ prefix
     if let Some(rest) = source.strip_prefix("$HOME/") {
-        children.push(ast::ast_leaf(Kind::Home, "$HOME", span));
+        children.push(ast::ast_leaf(Kind::Ref, "home", "$HOME", span));
         for seg in rest.split('/').filter(|s| !s.is_empty()) {
-            children.push(ast::ast_leaf(Kind::Path, seg, span));
+            children.push(ast::ast_leaf(Kind::Atom, "path", seg, span));
         }
         return;
     }
     if let Some(rest) = source.strip_prefix("$SELF/") {
-        children.push(ast::ast_leaf(Kind::Self_, "$SELF", span));
+        children.push(ast::ast_leaf(Kind::Ref, "self", "$SELF", span));
         for seg in rest.split('/').filter(|s| !s.is_empty()) {
-            children.push(ast::ast_leaf(Kind::Path, seg, span));
+            children.push(ast::ast_leaf(Kind::Atom, "path", seg, span));
         }
         return;
     }
@@ -510,19 +537,19 @@ fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>)
     if source.starts_with('@') {
         if let Some(slash_idx) = source.find('/') {
             let domain = &source[..slash_idx];
-            children.push(ast::ast_leaf(Kind::DomainRef, domain, span));
+            children.push(ast::ast_leaf(Kind::Ref, "domain-ref", domain, span));
             let rest = &source[slash_idx + 1..];
             for seg in rest.split('/').filter(|s| !s.is_empty()) {
-                children.push(ast::ast_leaf(Kind::Path, seg, span));
+                children.push(ast::ast_leaf(Kind::Atom, "path", seg, span));
             }
         } else {
-            children.push(ast::ast_leaf(Kind::DomainRef, source, span));
+            children.push(ast::ast_leaf(Kind::Ref, "domain-ref", source, span));
         }
         return;
     }
 
     // Bare source (no prefix) — treat as DomainRef
-    children.push(ast::ast_leaf(Kind::DomainRef, source, span));
+    children.push(ast::ast_leaf(Kind::Ref, "domain-ref", source, span));
 }
 
 /// Parse a use statement.
@@ -546,11 +573,11 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
         for name in inner.split(',') {
             let name = name.trim();
             if !name.is_empty() {
-                children.push(ast::ast_leaf(Kind::TemplateRef, name, span));
+                children.push(ast::ast_leaf(Kind::Ref, "template-ref", name, span));
             }
         }
     } else {
-        children.push(ast::ast_leaf(Kind::TemplateRef, names_part, span));
+        children.push(ast::ast_leaf(Kind::Ref, "template-ref", names_part, span));
     }
 
     // Parse source: path expression possibly followed by `sha: ABC`
@@ -564,34 +591,35 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
     }
 
     if let Some(param) = sha_param {
-        children.push(ast::ast_leaf(Kind::DomainParam, param, span));
+        children.push(ast::ast_leaf(Kind::Ref, "domain-param", param, span));
     }
 
-    ast::ast_branch(Kind::Use, "use", span, children)
+    ast::ast_branch(Kind::Decl, "use", "use", span, children)
 }
 
 /// Parse a when predicate: `error.rate > 0.1`, `status == "active"`, etc.
 ///
 /// Operator detection: two-char operators before single-char to avoid false matches.
-/// Structure: When(Op) with Path (left) and Literal (right) as children.
+/// Structure: Decl("when/{op}") with Path (left) and Literal (right) as children.
 fn parse_when(rest: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
-    let ops: &[(&str, Op)] = &[
-        (">=", Op::Gte),
-        ("<=", Op::Lte),
-        ("!=", Op::Ne),
-        ("==", Op::Eq),
-        (">", Op::Gt),
-        ("<", Op::Lt),
+    let ops: &[(&str, &str)] = &[
+        (">=", "gte"),
+        ("<=", "lte"),
+        ("!=", "ne"),
+        ("==", "eq"),
+        (">", "gt"),
+        ("<", "lt"),
     ];
-    for (sym, op) in ops {
+    for (sym, op_name) in ops {
         if let Some(idx) = rest.find(sym) {
             let path = rest[..idx].trim();
             let literal = rest[idx + sym.len()..].trim();
             let children = vec![
-                ast::ast_leaf(Kind::Path, path, span),
-                ast::ast_leaf(Kind::Literal, literal, span),
+                ast::ast_leaf(Kind::Atom, "path", path, span),
+                ast::ast_leaf(Kind::Atom, "literal", literal, span),
             ];
-            return Ok(ast::ast_branch(Kind::When(op.clone()), "", span, children));
+            let name = format!("when/{}", op_name);
+            return Ok(ast::ast_branch(Kind::Decl, name, "", span, children));
         }
     }
     Err(ParseError {
@@ -618,7 +646,7 @@ fn parse_case(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseErr
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Kind::Case, subject, span, arms));
+            return Ok(ast::ast_branch(Kind::Decl, "case", subject, span, arms));
         }
 
         if trimmed.is_empty() {
@@ -652,15 +680,21 @@ fn parse_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
         }
     };
 
-    let body = ast::ast_leaf(Kind::Expr, body_str, span);
+    let body = ast::ast_leaf(Kind::Atom, "expr", body_str, span);
 
     let pattern = if pattern_str == "_" {
-        ast::ast_leaf(Kind::Wild, "", span)
+        ast::ast_leaf(Kind::Atom, "wild", "", span)
     } else {
         parse_cmp(pattern_str, span)?
     };
 
-    Ok(ast::ast_branch(Kind::Arm, "", span, vec![pattern, body]))
+    Ok(ast::ast_branch(
+        Kind::Form,
+        "arm",
+        "",
+        span,
+        vec![pattern, body],
+    ))
 }
 
 /// Parse a comparison pattern: `> 0.1`, `>= 3`, `== "active"`, etc.
@@ -668,18 +702,19 @@ fn parse_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
 /// Operator detection: two-char operators before single-char to avoid false matches.
 /// The operator must be a prefix of the pattern text.
 fn parse_cmp(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
-    let ops: &[(&str, Op)] = &[
-        (">=", Op::Gte),
-        ("<=", Op::Lte),
-        ("!=", Op::Ne),
-        ("==", Op::Eq),
-        (">", Op::Gt),
-        ("<", Op::Lt),
+    let ops: &[(&str, &str)] = &[
+        (">=", "gte"),
+        ("<=", "lte"),
+        ("!=", "ne"),
+        ("==", "eq"),
+        (">", "gt"),
+        ("<", "lt"),
     ];
-    for (sym, op) in ops {
+    for (sym, op_name) in ops {
         if let Some(rest) = text.strip_prefix(sym) {
             let literal = rest.trim();
-            return Ok(ast::ast_leaf(Kind::Cmp(op.clone()), literal, span));
+            let name = format!("cmp/{}", op_name);
+            return Ok(ast::ast_leaf(Kind::Atom, name, literal, span));
         }
     }
     Err(ParseError {
@@ -712,7 +747,7 @@ fn parse_branch(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseE
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Kind::Branch, query, span, arms));
+            return Ok(ast::ast_branch(Kind::Decl, "branch", query, span, arms));
         }
 
         if trimmed.is_empty() {
@@ -745,14 +780,14 @@ fn parse_branch_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError>
         }
     };
 
-    let action = ast::ast_leaf(Kind::Expr, action_str, span);
+    let action = ast::ast_leaf(Kind::Atom, "expr", action_str, span);
 
     let pattern = if pattern_str == "_" {
-        ast::ast_leaf(Kind::Wild, "", span)
+        ast::ast_leaf(Kind::Atom, "wild", "", span)
     } else if pattern_str.starts_with('"') && pattern_str.ends_with('"') {
         // Strip quotes from string literal
         let inner = &pattern_str[1..pattern_str.len() - 1];
-        ast::ast_leaf(Kind::Literal, inner, span)
+        ast::ast_leaf(Kind::Atom, "literal", inner, span)
     } else {
         return Err(ParseError {
             message: format!(
@@ -763,7 +798,13 @@ fn parse_branch_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError>
         });
     };
 
-    Ok(ast::ast_branch(Kind::Arm, "", span, vec![pattern, action]))
+    Ok(ast::ast_branch(
+        Kind::Form,
+        "arm",
+        "",
+        span,
+        vec![pattern, action],
+    ))
 }
 
 /// Parse a pipeline that ends with a branch block:
@@ -794,7 +835,8 @@ fn parse_pipeline_with_branch(
     let mut pipeline_children = prefix_segments;
     pipeline_children.push(branch_node);
     Ok(ast::ast_branch(
-        Kind::Pipeline,
+        Kind::Form,
+        "pipeline",
         "root",
         span,
         pipeline_children,
@@ -813,7 +855,7 @@ fn parse_pipeline(text: &str, span: Span) -> Tree<AstNode> {
         .iter()
         .map(|seg| parse_pipeline_segment(seg, span))
         .collect();
-    ast::ast_branch(Kind::Pipeline, "root", span, children)
+    ast::ast_branch(Kind::Form, "pipeline", "root", span, children)
 }
 
 fn parse_pipeline_segment(seg: &str, span: Span) -> Tree<AstNode> {
@@ -822,13 +864,13 @@ fn parse_pipeline_segment(seg: &str, span: Span) -> Tree<AstNode> {
         if let Some(paren_start) = seg.find('(') {
             let name = &seg[..paren_start];
             let params = seg[paren_start + 1..].trim_end_matches(')');
-            let param_child = ast::ast_leaf(Kind::DomainParam, params, span);
-            ast::ast_branch(Kind::DomainRef, name, span, vec![param_child])
+            let param_child = ast::ast_leaf(Kind::Ref, "domain-param", params, span);
+            ast::ast_branch(Kind::Ref, "domain-ref", name, span, vec![param_child])
         } else {
-            ast::ast_leaf(Kind::DomainRef, seg, span)
+            ast::ast_leaf(Kind::Ref, "domain-ref", seg, span)
         }
     } else {
-        ast::ast_leaf(Kind::Ref, seg, span)
+        ast::ast_leaf(Kind::Ref, "ref", seg, span)
     }
 }
 
@@ -853,7 +895,13 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
     // Check for single-line empty grammar: `grammar @name {}`
     if rest.trim() == "}" {
         lines.advance();
-        return Ok(ast::ast_branch(Kind::Grammar, name, start_span, vec![]));
+        return Ok(ast::ast_branch(
+            Kind::Decl,
+            "grammar",
+            name,
+            start_span,
+            vec![],
+        ));
     }
 
     lines.advance(); // consume grammar header line
@@ -869,7 +917,8 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
             // Flush any pending type def
             if let Some((type_name, type_span, variants)) = current.take() {
                 type_defs.push(ast::ast_branch(
-                    Kind::TypeDef,
+                    Kind::Form,
+                    "type-def",
                     &*type_name,
                     type_span,
                     variants,
@@ -878,7 +927,13 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Kind::Grammar, name, span, type_defs));
+            return Ok(ast::ast_branch(
+                Kind::Decl,
+                "grammar",
+                name,
+                span,
+                type_defs,
+            ));
         }
 
         if trimmed.is_empty() || trimmed.starts_with('#') {
@@ -900,7 +955,8 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
             // Flush previous type def
             if let Some((type_name, type_span, variants)) = current.take() {
                 type_defs.push(ast::ast_branch(
-                    Kind::TypeDef,
+                    Kind::Form,
+                    "type-def",
                     &*type_name,
                     type_span,
                     variants,
@@ -950,10 +1006,10 @@ fn parse_variants(text: &str, span: Span) -> Vec<Tree<AstNode>> {
             if let Some(paren) = seg.find('(') {
                 let name = seg[..paren].trim();
                 let param = seg[paren + 1..].trim_end_matches(')').trim();
-                let type_ref = ast::ast_leaf(Kind::TypeRef, param, span);
-                ast::ast_branch(Kind::Variant, name, span, vec![type_ref])
+                let type_ref = ast::ast_leaf(Kind::Ref, "type-ref", param, span);
+                ast::ast_branch(Kind::Form, "variant", name, span, vec![type_ref])
             } else {
-                ast::ast_leaf(Kind::Variant, seg, span)
+                ast::ast_leaf(Kind::Form, "variant", seg, span)
             }
         })
         .collect()
@@ -971,7 +1027,10 @@ mod tests {
         let source = "in @filesystem\n".to_string();
         let tree = Parse.trace(source).unwrap();
         let children = tree.children();
-        let in_node = children.iter().find(|c| c.data().kind == Kind::In).unwrap();
+        let in_node = children
+            .iter()
+            .find(|c| c.data().kind == Kind::Decl)
+            .unwrap();
         assert!(in_node.is_shard());
         assert_eq!(in_node.data().value, "@filesystem");
     }
@@ -985,12 +1044,12 @@ mod tests {
         let children = tree.children();
         let tmpl = children
             .iter()
-            .find(|c| c.data().kind == Kind::Template)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         assert!(tmpl.is_fractal());
         assert_eq!(tmpl.data().value, "$corpus");
         assert_eq!(tmpl.children().len(), 2);
-        assert_eq!(tmpl.children()[0].data().kind, Kind::Field);
+        assert_eq!(tmpl.children()[0].data().kind, Kind::Atom);
         assert_eq!(tmpl.children()[0].data().value, "slug");
         assert_eq!(tmpl.children()[1].data().value, "excerpt");
     }
@@ -1001,10 +1060,10 @@ mod tests {
         let tree = Parse.trace(source).unwrap();
         let tmpl = &tree.children()[0];
         let field = &tmpl.children()[0];
-        assert_eq!(field.data().kind, Kind::Field);
+        assert_eq!(field.data().kind, Kind::Atom);
         assert_eq!(field.data().value, "headlines");
         assert!(field.is_fractal());
-        assert_eq!(field.children()[0].data().kind, Kind::Qualifier);
+        assert_eq!(field.children()[0].data().kind, Kind::Atom);
         assert_eq!(field.children()[0].data().value, "h2");
     }
 
@@ -1017,9 +1076,9 @@ mod tests {
         assert_eq!(field.data().value, "html");
         assert!(field.is_fractal());
         let children = field.children();
-        assert_eq!(children[0].data().kind, Kind::Qualifier);
+        assert_eq!(children[0].data().kind, Kind::Atom);
         assert_eq!(children[0].data().value, "article");
-        assert_eq!(children[1].data().kind, Kind::Pipe);
+        assert_eq!(children[1].data().kind, Kind::Atom);
         assert_eq!(children[1].data().value, "@html");
     }
 
@@ -1032,19 +1091,19 @@ mod tests {
         let out = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::Out)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         assert_eq!(out.data().value, "blog");
         let group = &out.children()[0];
-        assert_eq!(group.data().kind, Kind::Group);
+        assert_eq!(group.data().kind, Kind::Form);
         assert_eq!(group.data().value, "pieces");
         let select = &group.children()[0];
-        assert_eq!(select.data().kind, Kind::Select);
+        assert_eq!(select.data().kind, Kind::Form);
         assert_eq!(select.data().value, "draft");
         assert_eq!(select.children().len(), 2);
-        assert_eq!(select.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(select.children()[0].data().kind, Kind::Ref);
         assert_eq!(select.children()[0].data().value, "1draft");
-        assert_eq!(select.children()[1].data().kind, Kind::TemplateRef);
+        assert_eq!(select.children()[1].data().kind, Kind::Ref);
         assert_eq!(select.children()[1].data().value, "$corpus");
     }
 
@@ -1057,20 +1116,17 @@ mod tests {
 
         // Root has children: In, Template, Out
         let children = tree.children();
-        let in_node = children.iter().find(|c| c.data().kind == Kind::In).unwrap();
+        let in_node = children.iter().find(|c| c.data().is_decl("in")).unwrap();
         assert_eq!(in_node.data().value, "@filesystem");
 
         let tmpl = children
             .iter()
-            .find(|c| c.data().kind == Kind::Template)
+            .find(|c| c.data().is_decl("template"))
             .unwrap();
         assert_eq!(tmpl.data().value, "$corpus");
         assert_eq!(tmpl.children().len(), 4); // slug, excerpt, headlines, html
 
-        let out = children
-            .iter()
-            .find(|c| c.data().kind == Kind::Out)
-            .unwrap();
+        let out = children.iter().find(|c| c.data().is_decl("out")).unwrap();
         assert_eq!(out.data().value, "blog");
     }
 
@@ -1111,7 +1167,7 @@ mod tests {
         let in_node = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::In)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         // "in @filesystem" starts at byte 0
         assert_eq!(in_node.data().span.start, 0);
@@ -1146,7 +1202,7 @@ mod tests {
         let tree = Parse.trace(source).unwrap();
         let out = &tree.children()[0];
         let group = &out.children()[0];
-        assert_eq!(group.data().kind, Kind::Group);
+        assert_eq!(group.data().kind, Kind::Form);
         assert_eq!(group.data().value, "empty");
         assert_eq!(group.children().len(), 0);
     }
@@ -1164,7 +1220,7 @@ mod tests {
         let tree = Parse.trace(source).unwrap();
         let out = &tree.children()[0];
         let expr = &out.children()[0];
-        assert_eq!(expr.data().kind, Kind::Expr);
+        assert_eq!(expr.data().kind, Kind::Atom);
         assert_eq!(expr.data().value, "nonsense");
     }
 
@@ -1197,7 +1253,7 @@ mod tests {
         let source = include_str!("../fixtures/json.conv");
         let tree = Parse.trace(source.to_string()).unwrap();
         let out = &tree.children()[0];
-        assert_eq!(out.data().kind, Kind::Out);
+        assert_eq!(out.data().kind, Kind::Decl);
         assert_eq!(out.data().value, "@json");
         assert!(out.is_shard());
     }
@@ -1207,10 +1263,10 @@ mod tests {
         let source = "in @git(branch: \"main\")\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let in_node = &tree.children()[0];
-        assert_eq!(in_node.data().kind, Kind::In);
+        assert_eq!(in_node.data().kind, Kind::Decl);
         assert_eq!(in_node.data().value, "@git");
         assert!(in_node.is_fractal());
-        assert_eq!(in_node.children()[0].data().kind, Kind::DomainParam);
+        assert_eq!(in_node.children()[0].data().kind, Kind::Ref);
         assert_eq!(in_node.children()[0].data().value, "branch: \"main\"");
     }
 
@@ -1222,13 +1278,13 @@ mod tests {
         assert_eq!(children.len(), 2); // in + pipeline
 
         let in_node = &children[0];
-        assert_eq!(in_node.data().kind, Kind::In);
+        assert_eq!(in_node.data().kind, Kind::Decl);
         assert_eq!(in_node.data().value, "@git");
-        assert_eq!(in_node.children()[0].data().kind, Kind::DomainParam);
+        assert_eq!(in_node.children()[0].data().kind, Kind::Ref);
         assert_eq!(in_node.children()[0].data().value, "branch: \"main\"");
 
         let pipeline = &children[1];
-        assert_eq!(pipeline.data().kind, Kind::Pipeline);
+        assert_eq!(pipeline.data().kind, Kind::Form);
         assert_eq!(pipeline.children().len(), 2);
     }
 
@@ -1237,7 +1293,7 @@ mod tests {
         let source = "out @json\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let out = &tree.children()[0];
-        assert_eq!(out.data().kind, Kind::Out);
+        assert_eq!(out.data().kind, Kind::Decl);
         assert_eq!(out.data().value, "@json");
         assert!(out.is_shard());
     }
@@ -1255,9 +1311,9 @@ mod tests {
         let tree = Parse.trace(source).unwrap();
         let out = &tree.children()[0];
         let field = &out.children()[0];
-        assert_eq!(field.data().kind, Kind::Field);
+        assert_eq!(field.data().kind, Kind::Atom);
         assert_eq!(field.data().value, "label");
-        assert_eq!(field.children()[0].data().kind, Kind::Expr);
+        assert_eq!(field.children()[0].data().kind, Kind::Atom);
         assert_eq!(field.children()[0].data().value, "value");
     }
 
@@ -1268,7 +1324,7 @@ mod tests {
         let source = include_str!("../fixtures/commit-from-main-to-test.conv");
         let tree = Parse.trace(source.to_string()).unwrap();
         let pipeline = &tree.children()[0];
-        assert_eq!(pipeline.data().kind, Kind::Pipeline);
+        assert_eq!(pipeline.data().kind, Kind::Form);
         assert_eq!(pipeline.children().len(), 3);
     }
 
@@ -1279,16 +1335,16 @@ mod tests {
         let children = tree.children();
         assert_eq!(children.len(), 3); // two ins + one out
 
-        assert_eq!(children[0].data().kind, Kind::In);
+        assert_eq!(children[0].data().kind, Kind::Decl);
         assert_eq!(children[0].data().value, "@number");
         assert_eq!(children[0].children()[0].data().value, "$a");
 
-        assert_eq!(children[1].data().kind, Kind::In);
+        assert_eq!(children[1].data().kind, Kind::Decl);
         assert_eq!(children[1].data().value, "@number");
         assert_eq!(children[1].children()[0].data().value, "$b");
 
         let out = &children[2];
-        assert_eq!(out.data().kind, Kind::Out);
+        assert_eq!(out.data().kind, Kind::Decl);
         assert_eq!(out.data().value, "");
         assert_eq!(out.children().len(), 3);
     }
@@ -1298,10 +1354,10 @@ mod tests {
         let source = "in @number as $a\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let in_node = &tree.children()[0];
-        assert_eq!(in_node.data().kind, Kind::In);
+        assert_eq!(in_node.data().kind, Kind::Decl);
         assert_eq!(in_node.data().value, "@number");
         assert!(in_node.is_fractal());
-        assert_eq!(in_node.children()[0].data().kind, Kind::Alias);
+        assert_eq!(in_node.children()[0].data().kind, Kind::Ref);
         assert_eq!(in_node.children()[0].data().value, "$a");
     }
 
@@ -1310,24 +1366,24 @@ mod tests {
         let source = "out {\n\tsimple: $a + $b\n\tcurried + $b\n\tmagic: +\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let out = &tree.children()[0];
-        assert_eq!(out.data().kind, Kind::Out);
+        assert_eq!(out.data().kind, Kind::Decl);
         assert_eq!(out.data().value, "");
         assert_eq!(out.children().len(), 3);
 
         let simple = &out.children()[0];
-        assert_eq!(simple.data().kind, Kind::Field);
+        assert_eq!(simple.data().kind, Kind::Atom);
         assert_eq!(simple.data().value, "simple");
-        assert_eq!(simple.children()[0].data().kind, Kind::Expr);
+        assert_eq!(simple.children()[0].data().kind, Kind::Atom);
         assert_eq!(simple.children()[0].data().value, "$a + $b");
 
         let curried = &out.children()[1];
-        assert_eq!(curried.data().kind, Kind::Expr);
+        assert_eq!(curried.data().kind, Kind::Atom);
         assert_eq!(curried.data().value, "curried + $b");
 
         let magic = &out.children()[2];
-        assert_eq!(magic.data().kind, Kind::Field);
+        assert_eq!(magic.data().kind, Kind::Atom);
         assert_eq!(magic.data().value, "magic");
-        assert_eq!(magic.children()[0].data().kind, Kind::Expr);
+        assert_eq!(magic.children()[0].data().kind, Kind::Atom);
         assert_eq!(magic.children()[0].data().value, "+");
     }
 
@@ -1340,15 +1396,15 @@ mod tests {
         let children = tree.children();
         let use_node = children
             .iter()
-            .find(|c| c.data().kind == Kind::Use)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         assert!(use_node.is_fractal());
         assert_eq!(use_node.data().value, "use");
         let use_children = use_node.children();
         assert_eq!(use_children.len(), 2);
-        assert_eq!(use_children[0].data().kind, Kind::TemplateRef);
+        assert_eq!(use_children[0].data().kind, Kind::Ref);
         assert_eq!(use_children[0].data().value, "$corpus");
-        assert_eq!(use_children[1].data().kind, Kind::DomainRef);
+        assert_eq!(use_children[1].data().kind, Kind::Ref);
         assert_eq!(use_children[1].data().value, "@shared");
     }
 
@@ -1359,15 +1415,15 @@ mod tests {
         let use_node = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::Use)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         let use_children = use_node.children();
         assert_eq!(use_children.len(), 3); // $a, $b, @other
-        assert_eq!(use_children[0].data().kind, Kind::TemplateRef);
+        assert_eq!(use_children[0].data().kind, Kind::Ref);
         assert_eq!(use_children[0].data().value, "$a");
-        assert_eq!(use_children[1].data().kind, Kind::TemplateRef);
+        assert_eq!(use_children[1].data().kind, Kind::Ref);
         assert_eq!(use_children[1].data().value, "$b");
-        assert_eq!(use_children[2].data().kind, Kind::DomainRef);
+        assert_eq!(use_children[2].data().kind, Kind::Ref);
         assert_eq!(use_children[2].data().value, "@other");
     }
 
@@ -1378,15 +1434,15 @@ mod tests {
         let use_node = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::Use)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         let use_children = use_node.children();
         // $garden, @garden@systemic.engineering, sha param
-        assert_eq!(use_children[0].data().kind, Kind::TemplateRef);
+        assert_eq!(use_children[0].data().kind, Kind::Ref);
         assert_eq!(use_children[0].data().value, "$garden");
-        assert_eq!(use_children[1].data().kind, Kind::DomainRef);
+        assert_eq!(use_children[1].data().kind, Kind::Ref);
         assert_eq!(use_children[1].data().value, "@garden@systemic.engineering");
-        assert_eq!(use_children[2].data().kind, Kind::DomainParam);
+        assert_eq!(use_children[2].data().kind, Kind::Ref);
         assert_eq!(use_children[2].data().value, "sha: ABC123");
     }
 
@@ -1398,11 +1454,11 @@ mod tests {
         let use_node = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::Use)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         let use_children = use_node.children();
         assert_eq!(use_children.len(), 1);
-        assert_eq!(use_children[0].data().kind, Kind::TemplateRef);
+        assert_eq!(use_children[0].data().kind, Kind::Ref);
         assert_eq!(use_children[0].data().value, "$orphan");
     }
 
@@ -1413,9 +1469,9 @@ mod tests {
                 .to_string();
         let tree = Parse.trace(source).unwrap();
         let children = tree.children();
-        assert_eq!(children[0].data().kind, Kind::Use);
-        assert_eq!(children[1].data().kind, Kind::Template);
-        assert_eq!(children[2].data().kind, Kind::Out);
+        assert_eq!(children[0].data().kind, Kind::Decl);
+        assert_eq!(children[1].data().kind, Kind::Decl);
+        assert_eq!(children[2].data().kind, Kind::Decl);
     }
 
     // -- Parse `use` with path expressions --
@@ -1427,15 +1483,15 @@ mod tests {
         let use_node = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::Use)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         let ch = use_node.children();
         // [TemplateRef($t), Home, Path(shared)]
         assert_eq!(ch.len(), 3);
-        assert_eq!(ch[0].data().kind, Kind::TemplateRef);
+        assert_eq!(ch[0].data().kind, Kind::Ref);
         assert_eq!(ch[0].data().value, "$t");
-        assert_eq!(ch[1].data().kind, Kind::Home);
-        assert_eq!(ch[2].data().kind, Kind::Path);
+        assert_eq!(ch[1].data().kind, Kind::Ref);
+        assert_eq!(ch[2].data().kind, Kind::Atom);
         assert_eq!(ch[2].data().value, "shared");
     }
 
@@ -1446,15 +1502,15 @@ mod tests {
         let use_node = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::Use)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         let ch = use_node.children();
         // [TemplateRef($t), Self_, Path(templates)]
         assert_eq!(ch.len(), 3);
-        assert_eq!(ch[0].data().kind, Kind::TemplateRef);
+        assert_eq!(ch[0].data().kind, Kind::Ref);
         assert_eq!(ch[0].data().value, "$t");
-        assert_eq!(ch[1].data().kind, Kind::Self_);
-        assert_eq!(ch[2].data().kind, Kind::Path);
+        assert_eq!(ch[1].data().kind, Kind::Ref);
+        assert_eq!(ch[2].data().kind, Kind::Atom);
         assert_eq!(ch[2].data().value, "templates");
     }
 
@@ -1465,15 +1521,15 @@ mod tests {
         let use_node = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::Use)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         let ch = use_node.children();
         // ./templates desugars to Self_ + Path(templates)
         assert_eq!(ch.len(), 3);
-        assert_eq!(ch[0].data().kind, Kind::TemplateRef);
+        assert_eq!(ch[0].data().kind, Kind::Ref);
         assert_eq!(ch[0].data().value, "$t");
-        assert_eq!(ch[1].data().kind, Kind::Self_);
-        assert_eq!(ch[2].data().kind, Kind::Path);
+        assert_eq!(ch[1].data().kind, Kind::Ref);
+        assert_eq!(ch[2].data().kind, Kind::Atom);
         assert_eq!(ch[2].data().value, "templates");
     }
 
@@ -1484,16 +1540,16 @@ mod tests {
         let use_node = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::Use)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         let ch = use_node.children();
         // [TemplateRef($t), DomainRef(@X), Path(sub)]
         assert_eq!(ch.len(), 3);
-        assert_eq!(ch[0].data().kind, Kind::TemplateRef);
+        assert_eq!(ch[0].data().kind, Kind::Ref);
         assert_eq!(ch[0].data().value, "$t");
-        assert_eq!(ch[1].data().kind, Kind::DomainRef);
+        assert_eq!(ch[1].data().kind, Kind::Ref);
         assert_eq!(ch[1].data().value, "@X");
-        assert_eq!(ch[2].data().kind, Kind::Path);
+        assert_eq!(ch[2].data().kind, Kind::Atom);
         assert_eq!(ch[2].data().value, "sub");
     }
 
@@ -1504,18 +1560,18 @@ mod tests {
         let use_node = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::Use)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         let ch = use_node.children();
         // [TemplateRef($t), Home, Path(a), Path(b), Path(c)]
         assert_eq!(ch.len(), 5);
-        assert_eq!(ch[0].data().kind, Kind::TemplateRef);
-        assert_eq!(ch[1].data().kind, Kind::Home);
-        assert_eq!(ch[2].data().kind, Kind::Path);
+        assert_eq!(ch[0].data().kind, Kind::Ref);
+        assert_eq!(ch[1].data().kind, Kind::Ref);
+        assert_eq!(ch[2].data().kind, Kind::Atom);
         assert_eq!(ch[2].data().value, "a");
-        assert_eq!(ch[3].data().kind, Kind::Path);
+        assert_eq!(ch[3].data().kind, Kind::Atom);
         assert_eq!(ch[3].data().value, "b");
-        assert_eq!(ch[4].data().kind, Kind::Path);
+        assert_eq!(ch[4].data().kind, Kind::Atom);
         assert_eq!(ch[4].data().value, "c");
     }
 
@@ -1526,14 +1582,14 @@ mod tests {
         let use_node = tree
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::Use)
+            .find(|c| c.data().kind == Kind::Decl)
             .unwrap();
         let ch = use_node.children();
         // [TemplateRef($t), DomainRef(bare_name)]
         assert_eq!(ch.len(), 2);
-        assert_eq!(ch[0].data().kind, Kind::TemplateRef);
+        assert_eq!(ch[0].data().kind, Kind::Ref);
         assert_eq!(ch[0].data().value, "$t");
-        assert_eq!(ch[1].data().kind, Kind::DomainRef);
+        assert_eq!(ch[1].data().kind, Kind::Ref);
         assert_eq!(ch[1].data().value, "bare_name");
     }
 
@@ -1542,17 +1598,17 @@ mod tests {
     #[test]
     fn parse_when_greater_than() {
         let node = parse_when("error.rate > 0.1", Span::new(0, 20)).unwrap();
-        assert_eq!(node.data().kind, Kind::When(Op::Gt));
-        assert_eq!(node.children()[0].data().kind, Kind::Path);
+        assert!(node.data().is_decl("when/gt"));
+        assert!(node.children()[0].data().is_atom("path"));
         assert_eq!(node.children()[0].data().value, "error.rate");
-        assert_eq!(node.children()[1].data().kind, Kind::Literal);
+        assert!(node.children()[1].data().is_atom("literal"));
         assert_eq!(node.children()[1].data().value, "0.1");
     }
 
     #[test]
     fn parse_when_equals() {
         let node = parse_when("status == \"active\"", Span::new(0, 20)).unwrap();
-        assert_eq!(node.data().kind, Kind::When(Op::Eq));
+        assert!(node.data().is_decl("when/eq"));
         assert_eq!(node.children()[0].data().value, "status");
         assert_eq!(node.children()[1].data().value, "\"active\"");
     }
@@ -1560,7 +1616,7 @@ mod tests {
     #[test]
     fn parse_when_less_equal() {
         let node = parse_when("count <= 10", Span::new(0, 15)).unwrap();
-        assert_eq!(node.data().kind, Kind::When(Op::Lte));
+        assert!(node.data().is_decl("when/lte"));
         assert_eq!(node.children()[0].data().value, "count");
         assert_eq!(node.children()[1].data().value, "10");
     }
@@ -1568,7 +1624,7 @@ mod tests {
     #[test]
     fn parse_when_not_equal() {
         let node = parse_when("mode != \"debug\"", Span::new(0, 20)).unwrap();
-        assert_eq!(node.data().kind, Kind::When(Op::Ne));
+        assert!(node.data().is_decl("when/ne"));
         assert_eq!(node.children()[0].data().value, "mode");
         assert_eq!(node.children()[1].data().value, "\"debug\"");
     }
@@ -1576,8 +1632,8 @@ mod tests {
     #[test]
     fn parse_when_dotted_path() {
         let node = parse_when("error.rate.current > 0.5", Span::new(0, 25)).unwrap();
-        assert_eq!(node.data().kind, Kind::When(Op::Gt));
-        assert_eq!(node.children()[0].data().kind, Kind::Path);
+        assert!(node.data().is_decl("when/gt"));
+        assert!(node.children()[0].data().is_atom("path"));
         assert_eq!(node.children()[0].data().value, "error.rate.current");
         assert_eq!(node.children()[1].data().value, "0.5");
     }
@@ -1589,9 +1645,9 @@ mod tests {
         let children = tree.children();
         let when_node = children
             .iter()
-            .find(|c| matches!(c.data().kind, Kind::When(_)))
+            .find(|c| c.data().name.starts_with("when/"))
             .unwrap();
-        assert_eq!(when_node.data().kind, Kind::When(Op::Gt));
+        assert!(when_node.data().is_decl("when/gt"));
     }
 
     #[test]
@@ -1601,10 +1657,10 @@ mod tests {
         let tree = Parse.trace(source).unwrap();
         let tmpl = &tree.children()[0];
         let field = &tmpl.children()[0];
-        assert_eq!(field.data().kind, Kind::Field);
+        assert_eq!(field.data().kind, Kind::Atom);
         assert_eq!(field.data().value, "slug");
         assert!(field.is_fractal());
-        assert_eq!(field.children()[0].data().kind, Kind::Pipe);
+        assert_eq!(field.children()[0].data().kind, Kind::Atom);
         assert_eq!(field.children()[0].data().value, "@sha");
     }
 
@@ -1628,11 +1684,11 @@ mod tests {
         let source = "@fs | data | @json\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let pipeline = &tree.children()[0];
-        assert_eq!(pipeline.data().kind, Kind::Pipeline);
+        assert_eq!(pipeline.data().kind, Kind::Form);
         assert_eq!(pipeline.children().len(), 3);
 
         let left = &pipeline.children()[0];
-        assert_eq!(left.data().kind, Kind::DomainRef);
+        assert_eq!(left.data().kind, Kind::Ref);
         assert_eq!(left.data().value, "@fs");
         assert!(left.children().is_empty());
 
@@ -1641,7 +1697,7 @@ mod tests {
         assert_eq!(mid.data().value, "data");
 
         let right = &pipeline.children()[2];
-        assert_eq!(right.data().kind, Kind::DomainRef);
+        assert_eq!(right.data().kind, Kind::Ref);
         assert_eq!(right.data().value, "@json");
         assert!(right.children().is_empty());
     }
@@ -1651,14 +1707,14 @@ mod tests {
         let source = "@git(branch: \"master\") | HEAD | @git(branch: \"test\")\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let pipeline = &tree.children()[0];
-        assert_eq!(pipeline.data().kind, Kind::Pipeline);
+        assert_eq!(pipeline.data().kind, Kind::Form);
         assert_eq!(pipeline.children().len(), 3);
 
         let left = &pipeline.children()[0];
-        assert_eq!(left.data().kind, Kind::DomainRef);
+        assert_eq!(left.data().kind, Kind::Ref);
         assert_eq!(left.data().value, "@git");
         assert_eq!(left.children().len(), 1);
-        assert_eq!(left.children()[0].data().kind, Kind::DomainParam);
+        assert_eq!(left.children()[0].data().kind, Kind::Ref);
         assert_eq!(left.children()[0].data().value, "branch: \"master\"");
 
         let mid = &pipeline.children()[1];
@@ -1666,10 +1722,10 @@ mod tests {
         assert_eq!(mid.data().value, "HEAD");
 
         let right = &pipeline.children()[2];
-        assert_eq!(right.data().kind, Kind::DomainRef);
+        assert_eq!(right.data().kind, Kind::Ref);
         assert_eq!(right.data().value, "@git");
         assert_eq!(right.children().len(), 1);
-        assert_eq!(right.children()[0].data().kind, Kind::DomainParam);
+        assert_eq!(right.children()[0].data().kind, Kind::Ref);
         assert_eq!(right.children()[0].data().value, "branch: \"test\"");
     }
 
@@ -1678,15 +1734,15 @@ mod tests {
     #[test]
     fn parse_case_single_arm() {
         let node = parse_case("x {", &mut Lines::new("x {\n  > 1 -> a\n}\n")).unwrap();
-        assert_eq!(node.data().kind, Kind::Case);
+        assert!(node.data().is_decl("case"));
         assert_eq!(node.data().value, "x");
         assert_eq!(node.children().len(), 1);
         let arm = &node.children()[0];
-        assert_eq!(arm.data().kind, Kind::Arm);
+        assert!(arm.data().is_form("arm"));
         assert_eq!(arm.children().len(), 2);
-        assert_eq!(arm.children()[0].data().kind, Kind::Cmp(Op::Gt));
+        assert!(arm.children()[0].data().is_atom("cmp/gt"));
         assert_eq!(arm.children()[0].data().value, "1");
-        assert_eq!(arm.children()[1].data().kind, Kind::Expr);
+        assert!(arm.children()[1].data().is_atom("expr"));
         assert_eq!(arm.children()[1].data().value, "a");
     }
 
@@ -1695,9 +1751,9 @@ mod tests {
         let node = parse_case("x {", &mut Lines::new("x {\n  _ -> b\n}\n")).unwrap();
         assert_eq!(node.children().len(), 1);
         let arm = &node.children()[0];
-        assert_eq!(arm.data().kind, Kind::Arm);
-        assert_eq!(arm.children()[0].data().kind, Kind::Wild);
-        assert_eq!(arm.children()[1].data().kind, Kind::Expr);
+        assert!(arm.data().is_form("arm"));
+        assert!(arm.children()[0].data().is_atom("wild"));
+        assert!(arm.children()[1].data().is_atom("expr"));
         assert_eq!(arm.children()[1].data().value, "b");
     }
 
@@ -1707,22 +1763,22 @@ mod tests {
             "case error.rate {\n  > 0.1 -> critical\n  > 0.05 -> warning\n  _ -> pass\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let case_node = &tree.children()[0];
-        assert_eq!(case_node.data().kind, Kind::Case);
+        assert!(case_node.data().is_decl("case"));
         assert_eq!(case_node.data().value, "error.rate");
         assert_eq!(case_node.children().len(), 3);
 
         let arm0 = &case_node.children()[0];
-        assert_eq!(arm0.children()[0].data().kind, Kind::Cmp(Op::Gt));
+        assert!(arm0.children()[0].data().is_atom("cmp/gt"));
         assert_eq!(arm0.children()[0].data().value, "0.1");
         assert_eq!(arm0.children()[1].data().value, "critical");
 
         let arm1 = &case_node.children()[1];
-        assert_eq!(arm1.children()[0].data().kind, Kind::Cmp(Op::Gt));
+        assert!(arm1.children()[0].data().is_atom("cmp/gt"));
         assert_eq!(arm1.children()[0].data().value, "0.05");
         assert_eq!(arm1.children()[1].data().value, "warning");
 
         let arm2 = &case_node.children()[2];
-        assert_eq!(arm2.children()[0].data().kind, Kind::Wild);
+        assert!(arm2.children()[0].data().is_atom("wild"));
         assert_eq!(arm2.children()[1].data().value, "pass");
     }
 
@@ -1732,30 +1788,24 @@ mod tests {
         let tree = Parse.trace(source.to_string()).unwrap();
         let case_node = &tree.children()[0];
         assert_eq!(case_node.children().len(), 6);
-        assert_eq!(
-            case_node.children()[0].children()[0].data().kind,
-            Kind::Cmp(Op::Gt)
-        );
-        assert_eq!(
-            case_node.children()[1].children()[0].data().kind,
-            Kind::Cmp(Op::Lt)
-        );
-        assert_eq!(
-            case_node.children()[2].children()[0].data().kind,
-            Kind::Cmp(Op::Gte)
-        );
-        assert_eq!(
-            case_node.children()[3].children()[0].data().kind,
-            Kind::Cmp(Op::Lte)
-        );
-        assert_eq!(
-            case_node.children()[4].children()[0].data().kind,
-            Kind::Cmp(Op::Eq)
-        );
-        assert_eq!(
-            case_node.children()[5].children()[0].data().kind,
-            Kind::Cmp(Op::Ne)
-        );
+        assert!(case_node.children()[0].children()[0]
+            .data()
+            .is_atom("cmp/gt"));
+        assert!(case_node.children()[1].children()[0]
+            .data()
+            .is_atom("cmp/lt"));
+        assert!(case_node.children()[2].children()[0]
+            .data()
+            .is_atom("cmp/gte"));
+        assert!(case_node.children()[3].children()[0]
+            .data()
+            .is_atom("cmp/lte"));
+        assert!(case_node.children()[4].children()[0]
+            .data()
+            .is_atom("cmp/eq"));
+        assert!(case_node.children()[5].children()[0]
+            .data()
+            .is_atom("cmp/ne"));
     }
 
     #[test]
@@ -1764,9 +1814,9 @@ mod tests {
             "in @datadog\ncase error.rate {\n  > 0.1 -> alert\n  _ -> pass\n}\nout @json\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let children = tree.children();
-        assert_eq!(children[0].data().kind, Kind::In);
-        assert_eq!(children[1].data().kind, Kind::Case);
-        assert_eq!(children[2].data().kind, Kind::Out);
+        assert!(children[0].data().is_decl("in"));
+        assert!(children[1].data().is_decl("case"));
+        assert!(children[2].data().is_decl("out"));
     }
 
     #[test]
@@ -1796,7 +1846,7 @@ mod tests {
         let source = "case x {\n\n  > 1 -> a\n\n  _ -> b\n\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let case_node = &tree.children()[0];
-        assert_eq!(case_node.data().kind, Kind::Case);
+        assert_eq!(case_node.data().kind, Kind::Decl);
         assert_eq!(case_node.children().len(), 2);
     }
 
@@ -1818,14 +1868,14 @@ mod tests {
         let source = "branch(.action) {\n  \"hold\" => ..\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let branch = &tree.children()[0];
-        assert_eq!(branch.data().kind, Kind::Branch);
+        assert_eq!(branch.data().kind, Kind::Decl);
         assert_eq!(branch.data().value, ".action");
         assert_eq!(branch.children().len(), 1);
         let arm = &branch.children()[0];
-        assert_eq!(arm.data().kind, Kind::Arm);
-        assert_eq!(arm.children()[0].data().kind, Kind::Literal);
+        assert_eq!(arm.data().kind, Kind::Form);
+        assert_eq!(arm.children()[0].data().kind, Kind::Atom);
         assert_eq!(arm.children()[0].data().value, "hold");
-        assert_eq!(arm.children()[1].data().kind, Kind::Expr);
+        assert_eq!(arm.children()[1].data().kind, Kind::Atom);
         assert_eq!(arm.children()[1].data().value, "..");
     }
 
@@ -1834,17 +1884,17 @@ mod tests {
         let source = "branch(.action) {\n  \"hold\" => ..\n  \"exit\" => exit\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let branch = &tree.children()[0];
-        assert_eq!(branch.data().kind, Kind::Branch);
+        assert_eq!(branch.data().kind, Kind::Decl);
         assert_eq!(branch.data().value, ".action");
         assert_eq!(branch.children().len(), 2);
 
         let arm0 = &branch.children()[0];
-        assert_eq!(arm0.children()[0].data().kind, Kind::Literal);
+        assert_eq!(arm0.children()[0].data().kind, Kind::Atom);
         assert_eq!(arm0.children()[0].data().value, "hold");
         assert_eq!(arm0.children()[1].data().value, "..");
 
         let arm1 = &branch.children()[1];
-        assert_eq!(arm1.children()[0].data().kind, Kind::Literal);
+        assert_eq!(arm1.children()[0].data().kind, Kind::Atom);
         assert_eq!(arm1.children()[0].data().value, "exit");
         assert_eq!(arm1.children()[1].data().value, "exit");
     }
@@ -1854,10 +1904,10 @@ mod tests {
         let source = "branch(.status) {\n  \"ok\" => ..\n  _ => exit\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let branch = &tree.children()[0];
-        assert_eq!(branch.data().kind, Kind::Branch);
+        assert_eq!(branch.data().kind, Kind::Decl);
         assert_eq!(branch.children().len(), 2);
         let wild_arm = &branch.children()[1];
-        assert_eq!(wild_arm.children()[0].data().kind, Kind::Wild);
+        assert_eq!(wild_arm.children()[0].data().kind, Kind::Atom);
         assert_eq!(wild_arm.children()[1].data().value, "exit");
     }
 
@@ -1866,15 +1916,15 @@ mod tests {
         let source = "@json | branch(.action) {\n  \"hold\" => ..\n  \"exit\" => exit\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let pipeline = &tree.children()[0];
-        assert_eq!(pipeline.data().kind, Kind::Pipeline);
+        assert_eq!(pipeline.data().kind, Kind::Form);
         assert_eq!(pipeline.children().len(), 2);
 
         let domain = &pipeline.children()[0];
-        assert_eq!(domain.data().kind, Kind::DomainRef);
+        assert_eq!(domain.data().kind, Kind::Ref);
         assert_eq!(domain.data().value, "@json");
 
         let branch = &pipeline.children()[1];
-        assert_eq!(branch.data().kind, Kind::Branch);
+        assert_eq!(branch.data().kind, Kind::Decl);
         assert_eq!(branch.data().value, ".action");
         assert_eq!(branch.children().len(), 2);
     }
@@ -1884,7 +1934,7 @@ mod tests {
         let source = "branch(.x) {\n\n  \"a\" => ..\n\n  \"b\" => exit\n\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let branch = &tree.children()[0];
-        assert_eq!(branch.data().kind, Kind::Branch);
+        assert_eq!(branch.data().kind, Kind::Decl);
         assert_eq!(branch.children().len(), 2);
     }
 
@@ -1938,9 +1988,9 @@ mod tests {
             "in @json\nbranch(.action) {\n  \"hold\" => ..\n  \"exit\" => exit\n}\nout @json\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let children = tree.children();
-        assert_eq!(children[0].data().kind, Kind::In);
-        assert_eq!(children[1].data().kind, Kind::Branch);
-        assert_eq!(children[2].data().kind, Kind::Out);
+        assert_eq!(children[0].data().kind, Kind::Decl);
+        assert_eq!(children[1].data().kind, Kind::Decl);
+        assert_eq!(children[2].data().kind, Kind::Decl);
     }
 
     // -- Parse `grammar @name { ... }` — vocabulary declaration --
@@ -1950,7 +2000,7 @@ mod tests {
         let source = "grammar @test {\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().kind, Kind::Decl);
         assert_eq!(grammar.data().value, "@test");
         assert_eq!(grammar.children().len(), 0);
     }
@@ -1960,7 +2010,7 @@ mod tests {
         let source = "grammar @test {}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().kind, Kind::Decl);
         assert_eq!(grammar.data().value, "@test");
         assert_eq!(grammar.children().len(), 0);
     }
@@ -1970,15 +2020,15 @@ mod tests {
         let source = "grammar @test {\n  type = a | b | c\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().kind, Kind::Decl);
         assert_eq!(grammar.data().value, "@test");
         assert_eq!(grammar.children().len(), 1);
 
         let typedef = &grammar.children()[0];
-        assert_eq!(typedef.data().kind, Kind::TypeDef);
+        assert_eq!(typedef.data().kind, Kind::Form);
         assert_eq!(typedef.data().value, "");
         assert_eq!(typedef.children().len(), 3);
-        assert_eq!(typedef.children()[0].data().kind, Kind::Variant);
+        assert_eq!(typedef.children()[0].data().kind, Kind::Form);
         assert_eq!(typedef.children()[0].data().value, "a");
         assert_eq!(typedef.children()[1].data().value, "b");
         assert_eq!(typedef.children()[2].data().value, "c");
@@ -1990,7 +2040,7 @@ mod tests {
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         let typedef = &grammar.children()[0];
-        assert_eq!(typedef.data().kind, Kind::TypeDef);
+        assert_eq!(typedef.data().kind, Kind::Form);
         assert_eq!(typedef.data().value, "op");
         assert_eq!(typedef.children().len(), 2);
         assert_eq!(typedef.children()[0].data().value, "gt");
@@ -2006,14 +2056,14 @@ mod tests {
         assert_eq!(typedef.children().len(), 2);
 
         let when_variant = &typedef.children()[0];
-        assert_eq!(when_variant.data().kind, Kind::Variant);
+        assert_eq!(when_variant.data().kind, Kind::Form);
         assert_eq!(when_variant.data().value, "when");
         assert_eq!(when_variant.children().len(), 1);
-        assert_eq!(when_variant.children()[0].data().kind, Kind::TypeRef);
+        assert_eq!(when_variant.children()[0].data().kind, Kind::Ref);
         assert_eq!(when_variant.children()[0].data().value, "op");
 
         let plain = &typedef.children()[1];
-        assert_eq!(plain.data().kind, Kind::Variant);
+        assert_eq!(plain.data().kind, Kind::Form);
         assert_eq!(plain.data().value, "plain");
         assert_eq!(plain.children().len(), 0);
     }
@@ -2039,12 +2089,12 @@ mod tests {
         assert_eq!(grammar.children().len(), 2);
 
         let root_type = &grammar.children()[0];
-        assert_eq!(root_type.data().kind, Kind::TypeDef);
+        assert_eq!(root_type.data().kind, Kind::Form);
         assert_eq!(root_type.data().value, "");
         assert_eq!(root_type.children().len(), 2);
 
         let sub_type = &grammar.children()[1];
-        assert_eq!(sub_type.data().kind, Kind::TypeDef);
+        assert_eq!(sub_type.data().kind, Kind::Form);
         assert_eq!(sub_type.data().value, "op");
         assert_eq!(sub_type.children().len(), 2);
     }
@@ -2055,7 +2105,7 @@ mod tests {
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 1);
-        assert_eq!(grammar.children()[0].data().kind, Kind::TypeDef);
+        assert_eq!(grammar.children()[0].data().kind, Kind::Form);
     }
 
     #[test]
@@ -2064,7 +2114,7 @@ mod tests {
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 1);
-        assert_eq!(grammar.children()[0].data().kind, Kind::TypeDef);
+        assert_eq!(grammar.children()[0].data().kind, Kind::Form);
     }
 
     #[test]
@@ -2074,7 +2124,7 @@ mod tests {
         let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 1);
         let typedef = &grammar.children()[0];
-        assert_eq!(typedef.data().kind, Kind::TypeDef);
+        assert_eq!(typedef.data().kind, Kind::Form);
         assert_eq!(typedef.data().value, "");
         // Without '=', the whole rest is parsed as variant list
         assert_eq!(typedef.children().len(), 3);
@@ -2085,9 +2135,9 @@ mod tests {
         let source = "in @test\ngrammar @test {\n  type = a\n}\nout @json\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let children = tree.children();
-        assert_eq!(children[0].data().kind, Kind::In);
-        assert_eq!(children[1].data().kind, Kind::Grammar);
-        assert_eq!(children[2].data().kind, Kind::Out);
+        assert_eq!(children[0].data().kind, Kind::Decl);
+        assert_eq!(children[1].data().kind, Kind::Decl);
+        assert_eq!(children[2].data().kind, Kind::Decl);
     }
 
     #[test]
@@ -2106,12 +2156,12 @@ grammar @conversation {
 ";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().kind, Kind::Decl);
         assert_eq!(grammar.data().value, "@conversation");
         assert_eq!(grammar.children().len(), 2);
 
         let root_type = &grammar.children()[0];
-        assert_eq!(root_type.data().kind, Kind::TypeDef);
+        assert_eq!(root_type.data().kind, Kind::Form);
         assert_eq!(root_type.data().value, "");
         // 25 simple + 2 parameterized = 27 variants
         assert_eq!(root_type.children().len(), 27);
@@ -2123,7 +2173,7 @@ grammar @conversation {
             .find(|c| c.data().value == "when")
             .unwrap();
         assert_eq!(when_v.children().len(), 1);
-        assert_eq!(when_v.children()[0].data().kind, Kind::TypeRef);
+        assert_eq!(when_v.children()[0].data().kind, Kind::Ref);
         assert_eq!(when_v.children()[0].data().value, "op");
 
         let cmp_v = root_type
@@ -2132,11 +2182,11 @@ grammar @conversation {
             .find(|c| c.data().value == "cmp")
             .unwrap();
         assert_eq!(cmp_v.children().len(), 1);
-        assert_eq!(cmp_v.children()[0].data().kind, Kind::TypeRef);
+        assert_eq!(cmp_v.children()[0].data().kind, Kind::Ref);
         assert_eq!(cmp_v.children()[0].data().value, "op");
 
         let op_type = &grammar.children()[1];
-        assert_eq!(op_type.data().kind, Kind::TypeDef);
+        assert_eq!(op_type.data().kind, Kind::Form);
         assert_eq!(op_type.data().value, "op");
         assert_eq!(op_type.children().len(), 6);
     }
@@ -2168,7 +2218,7 @@ grammar @conversation {
         let source = include_str!("../main.conv");
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().kind, Kind::Decl);
         assert_eq!(grammar.data().value, "@conversation");
         assert_eq!(grammar.children().len(), 2);
     }
@@ -2182,44 +2232,44 @@ grammar @conversation {
 
         // Grammar: @mail with 3 type defs
         let grammar = &children[0];
-        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().kind, Kind::Decl);
         assert_eq!(grammar.data().value, "@mail");
         assert_eq!(grammar.children().len(), 3);
 
         // Root type: 4 variants (message | thread | attachment | address)
         let root_type = &grammar.children()[0];
-        assert_eq!(root_type.data().kind, Kind::TypeDef);
+        assert_eq!(root_type.data().kind, Kind::Form);
         assert_eq!(root_type.data().value, "");
         assert_eq!(root_type.children().len(), 4);
 
         // Header type: 10 variants
         let header_type = &grammar.children()[1];
-        assert_eq!(header_type.data().kind, Kind::TypeDef);
+        assert_eq!(header_type.data().kind, Kind::Form);
         assert_eq!(header_type.data().value, "header");
         assert_eq!(header_type.children().len(), 10);
 
         // Flag type: 5 variants
         let flag_type = &grammar.children()[2];
-        assert_eq!(flag_type.data().kind, Kind::TypeDef);
+        assert_eq!(flag_type.data().kind, Kind::Form);
         assert_eq!(flag_type.data().value, "flag");
         assert_eq!(flag_type.children().len(), 5);
 
         // Template: $message with 1 param + 6 fields = 7 children
         let template = &children[1];
-        assert_eq!(template.data().kind, Kind::Template);
+        assert_eq!(template.data().kind, Kind::Decl);
         assert_eq!(template.data().value, "$message");
         assert_eq!(template.children().len(), 7); // 1 param + 6 fields
 
         // First child is the @imap param
         let param = &template.children()[0];
-        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().kind, Kind::Atom);
         assert_eq!(param.data().value, "imap");
-        assert_eq!(param.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(param.children()[0].data().kind, Kind::Ref);
         assert_eq!(param.children()[0].data().value, "@imap");
 
         // Remaining 6 are fields
         for field in &template.children()[1..] {
-            assert_eq!(field.data().kind, Kind::Field);
+            assert_eq!(field.data().kind, Kind::Atom);
         }
     }
 
@@ -2230,17 +2280,17 @@ grammar @conversation {
         let source = "template $t(@json) {\n  slug\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let tmpl = &tree.children()[0];
-        assert_eq!(tmpl.data().kind, Kind::Template);
+        assert_eq!(tmpl.data().kind, Kind::Decl);
         assert_eq!(tmpl.data().value, "$t");
         assert_eq!(tmpl.children().len(), 2); // Param + Field
         let param = &tmpl.children()[0];
-        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().kind, Kind::Atom);
         assert_eq!(param.data().value, "json"); // inferred name
         assert_eq!(param.children().len(), 1);
-        assert_eq!(param.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(param.children()[0].data().kind, Kind::Ref);
         assert_eq!(param.children()[0].data().value, "@json");
         let field = &tmpl.children()[1];
-        assert_eq!(field.data().kind, Kind::Field);
+        assert_eq!(field.data().kind, Kind::Atom);
         assert_eq!(field.data().value, "slug");
     }
 
@@ -2251,9 +2301,9 @@ grammar @conversation {
         let tmpl = &tree.children()[0];
         assert_eq!(tmpl.children().len(), 2); // Param + Field
         let param = &tmpl.children()[0];
-        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().kind, Kind::Atom);
         assert_eq!(param.data().value, "data"); // explicit name
-        assert_eq!(param.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(param.children()[0].data().kind, Kind::Ref);
         assert_eq!(param.children()[0].data().value, "@json");
     }
 
@@ -2263,11 +2313,11 @@ grammar @conversation {
         let tree = Parse.trace(source.to_string()).unwrap();
         let tmpl = &tree.children()[0];
         assert_eq!(tmpl.children().len(), 3); // 2 Params + 1 Field
-        assert_eq!(tmpl.children()[0].data().kind, Kind::Param);
+        assert_eq!(tmpl.children()[0].data().kind, Kind::Atom);
         assert_eq!(tmpl.children()[0].data().value, "json");
-        assert_eq!(tmpl.children()[1].data().kind, Kind::Param);
+        assert_eq!(tmpl.children()[1].data().kind, Kind::Atom);
         assert_eq!(tmpl.children()[1].data().value, "csv");
-        assert_eq!(tmpl.children()[2].data().kind, Kind::Field);
+        assert_eq!(tmpl.children()[2].data().kind, Kind::Atom);
     }
 
     #[test]
@@ -2276,11 +2326,11 @@ grammar @conversation {
         let tree = Parse.trace(source.to_string()).unwrap();
         let tmpl = &tree.children()[0];
         let param = &tmpl.children()[0];
-        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().kind, Kind::Atom);
         assert_eq!(param.data().value, "authors");
-        assert_eq!(param.children()[0].data().kind, Kind::Pipeline);
+        assert_eq!(param.children()[0].data().kind, Kind::Form);
         let pipeline = &param.children()[0];
-        assert_eq!(pipeline.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(pipeline.children()[0].data().kind, Kind::Ref);
         assert_eq!(pipeline.children()[0].data().value, "@csv");
         assert_eq!(pipeline.children()[1].data().kind, Kind::Ref);
         assert_eq!(pipeline.children()[1].data().value, "select(.author)");
@@ -2292,9 +2342,9 @@ grammar @conversation {
         let tree = Parse.trace(source.to_string()).unwrap();
         let tmpl = &tree.children()[0];
         let param = &tmpl.children()[0];
-        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().kind, Kind::Atom);
         assert_eq!(param.data().value, "lines");
-        assert_eq!(param.children()[0].data().kind, Kind::Path);
+        assert_eq!(param.children()[0].data().kind, Kind::Atom);
         assert_eq!(param.children()[0].data().value, "@json.type.Array");
     }
 
@@ -2304,14 +2354,11 @@ grammar @conversation {
         let tree = Parse.trace(source.to_string()).unwrap();
         let tmpl = &tree.children()[0];
         let param = &tmpl.children()[0];
-        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().kind, Kind::Atom);
         assert_eq!(param.data().value, "git"); // inferred: @git(branch: "main") → "git"
-        assert_eq!(param.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(param.children()[0].data().kind, Kind::Ref);
         assert_eq!(param.children()[0].data().value, "@git");
-        assert_eq!(
-            param.children()[0].children()[0].data().kind,
-            Kind::DomainParam
-        );
+        assert_eq!(param.children()[0].children()[0].data().kind, Kind::Ref);
     }
 
     #[test]
@@ -2320,10 +2367,10 @@ grammar @conversation {
         let tree = Parse.trace(source.to_string()).unwrap();
         let tmpl = &tree.children()[0];
         // Params come first, then fields
-        assert_eq!(tmpl.children()[0].data().kind, Kind::Param);
-        assert_eq!(tmpl.children()[1].data().kind, Kind::Param);
-        assert_eq!(tmpl.children()[2].data().kind, Kind::Field);
-        assert_eq!(tmpl.children()[3].data().kind, Kind::Field);
+        assert_eq!(tmpl.children()[0].data().kind, Kind::Atom);
+        assert_eq!(tmpl.children()[1].data().kind, Kind::Atom);
+        assert_eq!(tmpl.children()[2].data().kind, Kind::Atom);
+        assert_eq!(tmpl.children()[3].data().kind, Kind::Atom);
     }
 
     #[test]
@@ -2334,8 +2381,8 @@ grammar @conversation {
         let tmpl = &tree.children()[0];
         assert_eq!(tmpl.data().value, "$t");
         assert_eq!(tmpl.children().len(), 2);
-        assert_eq!(tmpl.children()[0].data().kind, Kind::Field);
-        assert_eq!(tmpl.children()[1].data().kind, Kind::Field);
+        assert_eq!(tmpl.children()[0].data().kind, Kind::Atom);
+        assert_eq!(tmpl.children()[1].data().kind, Kind::Atom);
     }
 
     #[test]
@@ -2390,12 +2437,12 @@ grammar @conversation {
         let source = include_str!("../conv/beam.conv");
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().kind, Kind::Decl);
         assert_eq!(grammar.data().value, "@beam");
         assert_eq!(grammar.children().len(), 1); // 1 type def
 
         let root_type = &grammar.children()[0];
-        assert_eq!(root_type.data().kind, Kind::TypeDef);
+        assert_eq!(root_type.data().kind, Kind::Form);
         assert_eq!(root_type.data().value, "");
         assert_eq!(root_type.children().len(), 3); // process | supervision | module
     }
@@ -2405,12 +2452,12 @@ grammar @conversation {
         let source = include_str!("../conv/git.conv");
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().kind, Kind::Decl);
         assert_eq!(grammar.data().value, "@git");
         assert_eq!(grammar.children().len(), 1); // 1 type def
 
         let root_type = &grammar.children()[0];
-        assert_eq!(root_type.data().kind, Kind::TypeDef);
+        assert_eq!(root_type.data().kind, Kind::Form);
         assert_eq!(root_type.data().value, "");
         assert_eq!(root_type.children().len(), 4); // ref | commit | entry | blob
     }

@@ -10,7 +10,6 @@ use std::marker::PhantomData;
 use serde_json::Value;
 
 use crate::ast::{AstNode, Span};
-use crate::domain::conversation::Kind;
 use crate::domain::{Addressable, Setting};
 use crate::parse::ParseError;
 use crate::tree::{self, Tree};
@@ -52,21 +51,21 @@ impl TypeRegistry {
         let mut params: HashMap<(String, String), String> = HashMap::new();
 
         for typedef in grammar_node.children() {
-            if typedef.data().kind != Kind::TypeDef {
+            if !typedef.data().is_form("type-def") {
                 continue;
             }
             let type_name = typedef.data().value.clone();
             let mut variants = HashSet::new();
 
             for variant in typedef.children() {
-                if variant.data().kind != Kind::Variant {
+                if !variant.data().is_form("variant") {
                     continue;
                 }
                 let variant_name = variant.data().value.clone();
 
                 // Check for TypeRef children (parameterized variants)
                 for child in variant.children() {
-                    if child.data().kind == Kind::TypeRef {
+                    if child.data().is_ref("type-ref") {
                         params.insert(
                             (type_name.clone(), variant_name.clone()),
                             child.data().value.clone(),
@@ -407,12 +406,12 @@ impl Resolve {
         // Collect template names to import
         let template_names: Vec<String> = children
             .iter()
-            .filter(|c| c.data().kind == Kind::TemplateRef)
+            .filter(|c| c.data().is_ref("template-ref"))
             .map(|c| c.data().value.clone())
             .collect();
 
         // Find the source: DomainRef or Home/Self_ node
-        let domain_ref = children.iter().find(|c| c.data().kind == Kind::DomainRef);
+        let domain_ref = children.iter().find(|c| c.data().is_ref("domain-ref"));
 
         let module_name = if let Some(domain) = domain_ref {
             let raw = &domain.data().value;
@@ -502,7 +501,7 @@ fn resolve_ast<C: Setting>(
     let mut _registries: Vec<TypeRegistry> = Vec::new();
     let mut grammar_domains: Vec<String> = Vec::new();
     for child in children {
-        if child.data().kind == Kind::Grammar {
+        if child.data().is_decl("grammar") {
             let registry = TypeRegistry::compile(child)?;
             grammar_domains.push(registry.domain.clone());
             _registries.push(registry);
@@ -510,7 +509,7 @@ fn resolve_ast<C: Setting>(
     }
 
     // Validate domain declaration if present
-    let in_node = children.iter().find(|c| c.data().kind == Kind::In);
+    let in_node = children.iter().find(|c| c.data().is_decl("in"));
     if let Some(node) = in_node {
         let raw = &node.data().value;
         let name = raw.strip_prefix('@').unwrap_or(raw);
@@ -531,7 +530,7 @@ fn resolve_ast<C: Setting>(
     // Extract local templates
     let mut templates = HashMap::new();
     for child in children {
-        if child.data().kind == Kind::Template {
+        if child.data().is_decl("template") {
             let name = child.data().value.clone();
             templates.insert(name, resolve_template(child));
         }
@@ -539,18 +538,18 @@ fn resolve_ast<C: Setting>(
 
     // Resolve use imports — merge external templates into local map
     for child in children {
-        if child.data().kind == Kind::Use {
+        if child.data().is_decl("use") {
             resolve.resolve_use(child, &mut templates)?;
         }
     }
 
     // Extract output
-    let out_node = children.iter().find(|c| c.data().kind == Kind::Out);
+    let out_node = children.iter().find(|c| c.data().is_decl("out"));
 
     // Collect top-level branch nodes
     let branch_nodes: Vec<Tree<OutputNode>> = children
         .iter()
-        .filter(|c| c.data().kind == Kind::Branch)
+        .filter(|c| c.data().is_decl("branch"))
         .map(resolve_branch_node)
         .collect();
 
@@ -582,39 +581,36 @@ fn resolve_template(template_node: &Tree<AstNode>) -> Template {
     let mut params = Vec::new();
     let mut fields = Vec::new();
     for child in template_node.children() {
-        match child.data().kind {
-            Kind::Param => {
-                params.push(Param {
-                    name: child.data().value.clone(),
+        let d = child.data();
+        if d.is_atom("param") {
+            params.push(Param {
+                name: d.value.clone(),
+            });
+        } else if d.is_atom("field") {
+            if child.is_shard() {
+                // Bare field: no qualifier, no pipe
+                fields.push(Field {
+                    name: d.value.clone(),
+                    qualifier: None,
+                    pipe: None,
+                });
+            } else {
+                // Field with qualifier and/or pipe
+                let mut qualifier = None;
+                let mut pipe = None;
+                for sub in child.children() {
+                    if sub.data().is_atom("qualifier") {
+                        qualifier = Some(sub.data().value.clone());
+                    } else if sub.data().is_atom("pipe") {
+                        pipe = Some(sub.data().value.clone());
+                    }
+                }
+                fields.push(Field {
+                    name: d.value.clone(),
+                    qualifier,
+                    pipe,
                 });
             }
-            Kind::Field => {
-                if child.is_shard() {
-                    // Bare field: no qualifier, no pipe
-                    fields.push(Field {
-                        name: child.data().value.clone(),
-                        qualifier: None,
-                        pipe: None,
-                    });
-                } else {
-                    // Field with qualifier and/or pipe
-                    let mut qualifier = None;
-                    let mut pipe = None;
-                    for sub in child.children() {
-                        match sub.data().kind {
-                            Kind::Qualifier => qualifier = Some(sub.data().value.clone()),
-                            Kind::Pipe => pipe = Some(sub.data().value.clone()),
-                            _ => {}
-                        }
-                    }
-                    fields.push(Field {
-                        name: child.data().value.clone(),
-                        qualifier,
-                        pipe,
-                    });
-                }
-            }
-            _ => {}
         }
     }
     Template { params, fields }
@@ -626,52 +622,49 @@ fn resolve_output_nodes(
 ) -> Result<Vec<Tree<OutputNode>>, ResolveError> {
     let mut nodes = Vec::new();
     for child in node.children() {
-        match child.data().kind {
-            Kind::Group => {
-                let children = resolve_output_nodes(child, templates)?;
-                let name = child.data().value.clone();
-                let ref_ = Ref::new(sha::hash(&name), &name);
-                nodes.push(tree::branch(ref_, OutputNode::Group { name }, children));
-            }
-            Kind::Select => {
-                let select_children = child.children();
-                let folder_name = select_children
-                    .iter()
-                    .find(|c| c.data().kind == Kind::DomainRef)
-                    .map(|c| c.data().value.clone())
-                    .unwrap_or_default();
-                let template_name = select_children
-                    .iter()
-                    .find(|c| c.data().kind == Kind::TemplateRef)
-                    .map(|c| c.data().value.clone())
-                    .unwrap_or_default();
+        let d = child.data();
+        if d.is_form("group") {
+            let children = resolve_output_nodes(child, templates)?;
+            let name = d.value.clone();
+            let ref_ = Ref::new(sha::hash(&name), &name);
+            nodes.push(tree::branch(ref_, OutputNode::Group { name }, children));
+        } else if d.is_form("select") {
+            let select_children = child.children();
+            let folder_name = select_children
+                .iter()
+                .find(|c| c.data().is_ref("domain-ref"))
+                .map(|c| c.data().value.clone())
+                .unwrap_or_default();
+            let template_name = select_children
+                .iter()
+                .find(|c| c.data().is_ref("template-ref"))
+                .map(|c| c.data().value.clone())
+                .unwrap_or_default();
 
-                // Validate template reference
-                if !templates.contains_key(&template_name) {
-                    let candidates: Vec<&str> = templates.keys().map(|s| s.as_str()).collect();
-                    let mut hints = Vec::new();
-                    if let Some(suggestion) = did_you_mean(&template_name, &candidates) {
-                        hints.push(format!("did you mean {}?", suggestion));
-                    }
-                    return Err(ResolveError {
-                        message: format!("unknown template {}", template_name),
-                        span: Some(child.data().span),
-                        hints,
-                    });
+            // Validate template reference
+            if !templates.contains_key(&template_name) {
+                let candidates: Vec<&str> = templates.keys().map(|s| s.as_str()).collect();
+                let mut hints = Vec::new();
+                if let Some(suggestion) = did_you_mean(&template_name, &candidates) {
+                    hints.push(format!("did you mean {}?", suggestion));
                 }
-
-                let output_name = child.data().value.clone();
-                let ref_ = Ref::new(sha::hash(&output_name), &output_name);
-                nodes.push(tree::leaf(
-                    ref_,
-                    OutputNode::Select {
-                        output_name,
-                        folder_name,
-                        template_name,
-                    },
-                ));
+                return Err(ResolveError {
+                    message: format!("unknown template {}", template_name),
+                    span: Some(d.span),
+                    hints,
+                });
             }
-            _ => {}
+
+            let output_name = d.value.clone();
+            let ref_ = Ref::new(sha::hash(&output_name), &output_name);
+            nodes.push(tree::leaf(
+                ref_,
+                OutputNode::Select {
+                    output_name,
+                    folder_name,
+                    template_name,
+                },
+            ));
         }
     }
     Ok(nodes)
@@ -685,7 +678,7 @@ fn resolve_branch_node(node: &Tree<AstNode>) -> Tree<OutputNode> {
     let mut arms = Vec::new();
 
     for arm_node in node.children() {
-        if arm_node.data().kind != Kind::Arm {
+        if !arm_node.data().is_form("arm") {
             continue;
         }
         let arm_children = arm_node.children();
@@ -693,10 +686,13 @@ fn resolve_branch_node(node: &Tree<AstNode>) -> Tree<OutputNode> {
             continue;
         }
 
-        let pattern = match &arm_children[0].data().kind {
-            Kind::Literal => BranchPattern::Literal(arm_children[0].data().value.clone()),
-            Kind::Wild => BranchPattern::Wild,
-            _ => continue,
+        let pattern_data = arm_children[0].data();
+        let pattern = if pattern_data.is_atom("literal") {
+            BranchPattern::Literal(pattern_data.value.clone())
+        } else if pattern_data.is_atom("wild") {
+            BranchPattern::Wild
+        } else {
+            continue;
         };
 
         let action_str = &arm_children[1].data().value;
@@ -928,6 +924,7 @@ fn edit_distance(a: &str, b: &str) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::domain::conversation::Kind;
     use crate::domain::filesystem::{Filesystem, Folder};
     use crate::parse::Parse;
     use crate::tree;
@@ -1309,32 +1306,36 @@ mod tests {
         use crate::ast;
         // Manually construct an AST with a non-field child in a template
         let root = ast::ast_branch(
-            Kind::Group,
+            Kind::Form,
+            "group",
             "root",
             Span::new(0, 50),
             vec![
-                ast::ast_leaf(Kind::In, "@filesystem", Span::new(0, 14)),
+                ast::ast_leaf(Kind::Decl, "in", "@filesystem", Span::new(0, 14)),
                 ast::ast_branch(
-                    Kind::Template,
+                    Kind::Decl,
+                    "template",
                     "$t",
                     Span::new(15, 35),
                     vec![
-                        ast::ast_leaf(Kind::Field, "slug", Span::new(20, 24)),
+                        ast::ast_leaf(Kind::Atom, "field", "slug", Span::new(20, 24)),
                         // A DomainRef in a template — should be ignored
-                        ast::ast_leaf(Kind::DomainRef, "@html", Span::new(25, 30)),
+                        ast::ast_leaf(Kind::Ref, "domain-ref", "@html", Span::new(25, 30)),
                     ],
                 ),
                 ast::ast_branch(
-                    Kind::Out,
+                    Kind::Decl,
+                    "out",
                     "r",
                     Span::new(36, 50),
                     vec![ast::ast_branch(
-                        Kind::Select,
+                        Kind::Form,
+                        "select",
                         "x",
                         Span::new(40, 48),
                         vec![
-                            ast::ast_leaf(Kind::DomainRef, "f", Span::new(42, 43)),
-                            ast::ast_leaf(Kind::TemplateRef, "$t", Span::new(44, 46)),
+                            ast::ast_leaf(Kind::Ref, "domain-ref", "f", Span::new(42, 43)),
+                            ast::ast_leaf(Kind::Ref, "template-ref", "$t", Span::new(44, 46)),
                         ],
                     )],
                 ),
@@ -1350,18 +1351,20 @@ mod tests {
         use crate::ast;
         // AST with an In node inside an Out block — should be ignored
         let root = ast::ast_branch(
-            Kind::Group,
+            Kind::Form,
+            "group",
             "root",
             Span::new(0, 50),
             vec![
-                ast::ast_leaf(Kind::In, "@filesystem", Span::new(0, 14)),
+                ast::ast_leaf(Kind::Decl, "in", "@filesystem", Span::new(0, 14)),
                 ast::ast_branch(
-                    Kind::Out,
+                    Kind::Decl,
+                    "out",
                     "r",
                     Span::new(15, 50),
                     vec![
-                        ast::ast_leaf(Kind::In, "@html", Span::new(20, 25)),
-                        ast::ast_branch(Kind::Group, "g", Span::new(26, 40), vec![]),
+                        ast::ast_leaf(Kind::Decl, "in", "@html", Span::new(20, 25)),
+                        ast::ast_branch(Kind::Form, "group", "g", Span::new(26, 40), vec![]),
                     ],
                 ),
             ],
@@ -1378,37 +1381,48 @@ mod tests {
         use crate::ast;
         // A Field branch where one child has kind Group — should be ignored
         let root = ast::ast_branch(
-            Kind::Group,
+            Kind::Form,
+            "group",
             "root",
             Span::new(0, 80),
             vec![
-                ast::ast_leaf(Kind::In, "@filesystem", Span::new(0, 14)),
+                ast::ast_leaf(Kind::Decl, "in", "@filesystem", Span::new(0, 14)),
                 ast::ast_branch(
-                    Kind::Template,
+                    Kind::Decl,
+                    "template",
                     "$t",
                     Span::new(15, 60),
                     vec![ast::ast_branch(
-                        Kind::Field,
+                        Kind::Atom,
+                        "field",
                         "headlines",
                         Span::new(20, 40),
                         vec![
-                            ast::ast_leaf(Kind::Qualifier, "h2", Span::new(25, 27)),
+                            ast::ast_leaf(Kind::Atom, "qualifier", "h2", Span::new(25, 27)),
                             // Group as a child of Field — unusual, should be skipped
-                            ast::ast_branch(Kind::Group, "noise", Span::new(28, 35), vec![]),
+                            ast::ast_branch(
+                                Kind::Form,
+                                "group",
+                                "noise",
+                                Span::new(28, 35),
+                                vec![],
+                            ),
                         ],
                     )],
                 ),
                 ast::ast_branch(
-                    Kind::Out,
+                    Kind::Decl,
+                    "out",
                     "r",
                     Span::new(61, 80),
                     vec![ast::ast_branch(
-                        Kind::Select,
+                        Kind::Form,
+                        "select",
                         "x",
                         Span::new(65, 78),
                         vec![
-                            ast::ast_leaf(Kind::DomainRef, "f", Span::new(67, 68)),
-                            ast::ast_leaf(Kind::TemplateRef, "$t", Span::new(69, 71)),
+                            ast::ast_leaf(Kind::Ref, "domain-ref", "f", Span::new(67, 68)),
+                            ast::ast_leaf(Kind::Ref, "template-ref", "$t", Span::new(69, 71)),
                         ],
                     )],
                 ),
@@ -1650,8 +1664,8 @@ mod tests {
 
         // Build a Branch AST node with a non-Arm child (should be skipped)
         let span = Span::new(0, 10);
-        let non_arm = ast::ast_leaf(Kind::Expr, "junk", span);
-        let branch_ast = ast::ast_branch(Kind::Branch, ".x", span, vec![non_arm]);
+        let non_arm = ast::ast_leaf(Kind::Atom, "expr", "junk", span);
+        let branch_ast = ast::ast_branch(Kind::Decl, "branch", ".x", span, vec![non_arm]);
         let result = resolve_branch_node(&branch_ast);
         let (_, arms) = expect_branch(result.data());
         assert!(arms.is_empty());
@@ -1663,9 +1677,9 @@ mod tests {
 
         // Arm with only one child (too short — needs pattern + action)
         let span = Span::new(0, 10);
-        let pattern_only = ast::ast_leaf(Kind::Literal, "x", span);
-        let short_arm = ast::ast_branch(Kind::Arm, "", span, vec![pattern_only]);
-        let branch_ast = ast::ast_branch(Kind::Branch, ".x", span, vec![short_arm]);
+        let pattern_only = ast::ast_leaf(Kind::Atom, "literal", "x", span);
+        let short_arm = ast::ast_branch(Kind::Form, "arm", "", span, vec![pattern_only]);
+        let branch_ast = ast::ast_branch(Kind::Decl, "branch", ".x", span, vec![short_arm]);
         let result = resolve_branch_node(&branch_ast);
         let (_, arms) = expect_branch(result.data());
         assert!(arms.is_empty());
@@ -1677,10 +1691,10 @@ mod tests {
 
         // Arm with an Expr pattern (not Literal or Wild — should be skipped)
         let span = Span::new(0, 10);
-        let bad_pattern = ast::ast_leaf(Kind::Expr, "nope", span);
-        let action = ast::ast_leaf(Kind::Expr, "..", span);
-        let arm = ast::ast_branch(Kind::Arm, "", span, vec![bad_pattern, action]);
-        let branch_ast = ast::ast_branch(Kind::Branch, ".x", span, vec![arm]);
+        let bad_pattern = ast::ast_leaf(Kind::Atom, "expr", "nope", span);
+        let action = ast::ast_leaf(Kind::Atom, "expr", "..", span);
+        let arm = ast::ast_branch(Kind::Form, "arm", "", span, vec![bad_pattern, action]);
+        let branch_ast = ast::ast_branch(Kind::Decl, "branch", ".x", span, vec![arm]);
         let result = resolve_branch_node(&branch_ast);
         let (_, arms) = expect_branch(result.data());
         assert!(arms.is_empty());
@@ -1987,7 +2001,7 @@ mod tests {
         let grammar = ast
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::Grammar)
+            .find(|c| c.data().is_decl("grammar"))
             .expect("source must contain a grammar block");
         TypeRegistry::compile(grammar).unwrap()
     }
@@ -2032,7 +2046,7 @@ mod tests {
         let grammar = ast
             .children()
             .iter()
-            .find(|c| c.data().kind == Kind::Grammar)
+            .find(|c| c.data().is_decl("grammar"))
             .expect("grammar");
         let err = TypeRegistry::compile(grammar).unwrap_err();
         assert!(
@@ -2054,10 +2068,16 @@ mod tests {
         use crate::ast::{self, Span};
         // Grammar node with a non-TypeDef child (Field) — should be skipped
         let span = Span::new(0, 50);
-        let stray_child = ast::ast_leaf(Kind::Field, "noise", span);
-        let variant = ast::ast_leaf(Kind::Variant, "a", span);
-        let typedef = ast::ast_branch(Kind::TypeDef, "", span, vec![variant]);
-        let grammar = ast::ast_branch(Kind::Grammar, "@test", span, vec![stray_child, typedef]);
+        let stray_child = ast::ast_leaf(Kind::Atom, "field", "noise", span);
+        let variant = ast::ast_leaf(Kind::Form, "variant", "a", span);
+        let typedef = ast::ast_branch(Kind::Form, "type-def", "", span, vec![variant]);
+        let grammar = ast::ast_branch(
+            Kind::Decl,
+            "grammar",
+            "@test",
+            span,
+            vec![stray_child, typedef],
+        );
         let reg = TypeRegistry::compile(&grammar).unwrap();
         assert!(reg.has_variant("", "a"));
     }
@@ -2067,10 +2087,10 @@ mod tests {
         use crate::ast::{self, Span};
         // TypeDef with a non-Variant child (Field) — should be skipped
         let span = Span::new(0, 50);
-        let stray = ast::ast_leaf(Kind::Field, "noise", span);
-        let variant = ast::ast_leaf(Kind::Variant, "a", span);
-        let typedef = ast::ast_branch(Kind::TypeDef, "", span, vec![stray, variant]);
-        let grammar = ast::ast_branch(Kind::Grammar, "@test", span, vec![typedef]);
+        let stray = ast::ast_leaf(Kind::Atom, "field", "noise", span);
+        let variant = ast::ast_leaf(Kind::Form, "variant", "a", span);
+        let typedef = ast::ast_branch(Kind::Form, "type-def", "", span, vec![stray, variant]);
+        let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![typedef]);
         let reg = TypeRegistry::compile(&grammar).unwrap();
         assert!(reg.has_variant("", "a"));
         // Only 1 variant, not 2
@@ -2155,7 +2175,7 @@ mod tests {
         let grammars: Vec<_> = ast
             .children()
             .iter()
-            .filter(|c| c.data().kind == Kind::Grammar)
+            .filter(|c| c.data().is_decl("grammar"))
             .collect();
         assert_eq!(grammars.len(), 2);
 
