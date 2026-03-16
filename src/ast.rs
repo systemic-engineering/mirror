@@ -169,6 +169,12 @@ mod tests {
     }
 
     #[test]
+    fn ast_node_has_name() {
+        let node = ast_leaf(Kind::Field, "slug", Span::new(0, 4));
+        assert_eq!(node.data().name, "field");
+    }
+
+    #[test]
     fn ast_ref_is_content_addressed() {
         let a = ast_leaf(Kind::Field, "slug", Span::new(0, 4));
         let b = ast_leaf(Kind::Field, "slug", Span::new(100, 104));
