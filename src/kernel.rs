@@ -3,9 +3,11 @@
 //! Everything conversation needs to transform, compose, and address.
 
 use std::cell::RefCell;
-use std::collections::HashMap;
 use std::marker::PhantomData;
 
+use fragmentation::fragment::Fragmentable;
+use fragmentation::repo::Repo;
+use fragmentation::sha::Sha;
 use sha2::{Digest, Sha256};
 
 // ---------------------------------------------------------------------------
@@ -342,39 +344,51 @@ where
 }
 
 // ---------------------------------------------------------------------------
-// Latent — deferred + cached vector evaluation
+// Latent — cached vector evaluation, backed by a Repo
 // ---------------------------------------------------------------------------
 
-pub struct Latent<V, B, E> {
+pub struct Latent<V, R> {
     inner: V,
-    cache: RefCell<HashMap<String, Trace<B, E>>>,
+    pub(crate) repo: RefCell<R>,
 }
 
-impl<V, B: ContentAddressed, E> Latent<V, B, E> {
-    pub fn new(inner: V) -> Self {
+impl<V, R> Latent<V, R> {
+    pub fn new(inner: V, repo: R) -> Self {
         Latent {
             inner,
-            cache: RefCell::new(HashMap::new()),
+            repo: RefCell::new(repo),
         }
     }
 }
 
-impl<A, B, V> Vector<A, B> for Latent<V, B, V::Error>
+impl<A, B, V, R> Vector<A, B> for Latent<V, R>
 where
     A: ContentAddressed,
-    B: ContentAddressed + Clone,
+    B: Fragmentable + ContentAddressed + Clone,
     V: Vector<A, B>,
     V::Error: Clone,
+    R: Repo<Node = B>,
 {
     type Error = V::Error;
 
     fn trace(&self, source: A) -> Trace<B, Self::Error> {
         let key = source.content_oid().as_ref().to_string();
-        if let Some(cached) = self.cache.borrow().get(&key) {
-            return cached.clone();
+
+        // Lookup: ref → tree
+        if let Some(sha) = self.repo.borrow().resolve_ref(&key) {
+            if let Some(node) = self.repo.borrow().read_tree(&sha.0) {
+                let oid = fragmentation::fragment::content_oid(&node);
+                return Trace::success(node, TraceOid::new(oid), None);
+            }
         }
+
+        // Miss: compute, store, return
         let result = self.inner.trace(source);
-        self.cache.borrow_mut().insert(key, result.clone());
+        let cloned = result.clone();
+        if let Ok(node) = cloned.into_result() {
+            let oid = self.repo.borrow_mut().write_tree(&node);
+            self.repo.borrow_mut().update_ref(&key, Sha(oid));
+        }
         result
     }
 }
@@ -673,7 +687,6 @@ mod tests {
 
     use crate::tree::{self, Tree};
     use fragmentation::ref_::Ref;
-    use fragmentation::repo::Repo;
     use fragmentation::sha;
     use fragmentation::store::Store;
 
@@ -706,7 +719,11 @@ mod tests {
         fn trace(&self, source: Tree<String>) -> Trace<Tree<String>, String> {
             self.0.set(self.0.get() + 1);
             let data = source.data();
-            if data.ends_with("-above100") {
+            let n: i32 = data
+                .strip_prefix("data-")
+                .and_then(|s| s.parse().ok())
+                .unwrap_or(0);
+            if n > 100 {
                 Trace::failure("too big".into(), TraceOid::new("err"), None)
             } else {
                 let oid = source.content_oid();
@@ -715,7 +732,10 @@ mod tests {
         }
     }
 
-    fn tracked() -> (Latent<TrackedTreeVector, Store<Tree<String>>>, Rc<Cell<usize>>) {
+    fn tracked() -> (
+        Latent<TrackedTreeVector, Store<Tree<String>>>,
+        Rc<Cell<usize>>,
+    ) {
         let counter = Rc::new(Cell::new(0));
         let store = Store::<Tree<String>>::new();
         (
@@ -772,6 +792,34 @@ mod tests {
         assert_eq!(t.unwrap(), tree_leaf(5));
         assert_eq!(c1.get(), 1);
         assert_eq!(c2.get(), 1);
+    }
+
+    #[test]
+    fn latent_compose_second_error() {
+        let c1 = Rc::new(Cell::new(0));
+        let c2 = Rc::new(Cell::new(0));
+        let s1 = Store::<Tree<String>>::new();
+        let s2 = Store::<Tree<String>>::new();
+        let l1 = Latent::new(TrackedTreeVector(c1.clone()), s1);
+        let l2 = Latent::new(TrackedTreeAbove100(c2.clone()), s2);
+        let composed = l1.compose(l2);
+        let t = composed.trace(200); // first passes, second rejects >100
+        assert!(t.is_err());
+    }
+
+    #[test]
+    fn latent_stale_ref_recomputes() {
+        let counter = Rc::new(Cell::new(0));
+        let mut store = Store::<Tree<String>>::new();
+        // Plant a stale ref: ref exists but tree OID doesn't
+        store.update_ref(
+            &5i32.content_oid().as_ref().to_string(),
+            Sha("nonexistent_oid".into()),
+        );
+        let latent = Latent::new(TrackedTreeVector(counter.clone()), store);
+        let t = latent.trace(5);
+        assert_eq!(counter.get(), 1); // Had to compute — stale ref
+        assert_eq!(t.unwrap(), tree_leaf(5));
     }
 
     #[test]
