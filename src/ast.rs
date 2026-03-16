@@ -50,10 +50,11 @@ impl Span {
     }
 }
 
-/// A node in the AST. Carries syntax kind, raw text, and source location.
+/// A node in the AST. Carries syntax kind, semantic name, raw text, and source location.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct AstNode {
     pub kind: Kind,
+    pub name: String,
     pub value: String,
     pub span: Span,
 }
@@ -61,8 +62,9 @@ pub struct AstNode {
 /// Build a leaf AST node. Ref is content-addressed from `kind:value`.
 pub fn ast_leaf(kind: Kind, value: impl Into<String>, span: Span) -> Tree<AstNode> {
     let value = value.into();
+    let name = kind.local_name().to_string();
     let ref_ = ast_ref(&kind, &value);
-    tree::leaf(ref_, AstNode { kind, value, span })
+    tree::leaf(ref_, AstNode { kind, name, value, span })
 }
 
 /// Build a branch AST node. Ref is content-addressed from `kind:value`.
@@ -73,8 +75,9 @@ pub fn ast_branch(
     children: Vec<Tree<AstNode>>,
 ) -> Tree<AstNode> {
     let value = value.into();
+    let name = kind.local_name().to_string();
     let ref_ = ast_ref(&kind, &value);
-    tree::branch(ref_, AstNode { kind, value, span }, children)
+    tree::branch(ref_, AstNode { kind, name, value, span }, children)
 }
 
 /// Content-addressed ref from kind + value.
@@ -92,11 +95,13 @@ mod tests {
     fn ast_node_content_addressed() {
         let a = AstNode {
             kind: Kind::Field,
+            name: "field".into(),
             value: "slug".into(),
             span: Span::new(0, 4),
         };
         let b = AstNode {
             kind: Kind::Field,
+            name: "field".into(),
             value: "slug".into(),
             span: Span::new(100, 104),
         };
@@ -108,11 +113,13 @@ mod tests {
     fn ast_node_different_kind_different_oid() {
         let a = AstNode {
             kind: Kind::Field,
+            name: "field".into(),
             value: "html".into(),
             span: Span::new(0, 4),
         };
         let b = AstNode {
             kind: Kind::Qualifier,
+            name: "qualifier".into(),
             value: "html".into(),
             span: Span::new(0, 4),
         };
