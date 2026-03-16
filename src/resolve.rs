@@ -497,14 +497,12 @@ fn resolve_ast<C: Setting>(
 ) -> Result<Conversation<C>, ResolveError> {
     let children = source.children();
 
-    // Pass 1: compile grammar blocks into type registries
-    let mut _registries: Vec<TypeRegistry> = Vec::new();
+    // Pass 1: compile grammar blocks (validates type references)
     let mut grammar_domains: Vec<String> = Vec::new();
     for child in children {
         if child.data().is_decl("grammar") {
             let registry = TypeRegistry::compile(child)?;
-            grammar_domains.push(registry.domain.clone());
-            _registries.push(registry);
+            grammar_domains.push(registry.domain);
         }
     }
 
