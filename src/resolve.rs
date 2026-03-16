@@ -1338,7 +1338,12 @@ mod tests {
                         Span::new(40, 48),
                         vec![
                             ast::ast_leaf(Kind::DomainRef, "domain-ref", "f", Span::new(42, 43)),
-                            ast::ast_leaf(Kind::TemplateRef, "template-ref", "$t", Span::new(44, 46)),
+                            ast::ast_leaf(
+                                Kind::TemplateRef,
+                                "template-ref",
+                                "$t",
+                                Span::new(44, 46),
+                            ),
                         ],
                     )],
                 ),
@@ -1403,7 +1408,13 @@ mod tests {
                         vec![
                             ast::ast_leaf(Kind::Qualifier, "qualifier", "h2", Span::new(25, 27)),
                             // Group as a child of Field — unusual, should be skipped
-                            ast::ast_branch(Kind::Group, "group", "noise", Span::new(28, 35), vec![]),
+                            ast::ast_branch(
+                                Kind::Group,
+                                "group",
+                                "noise",
+                                Span::new(28, 35),
+                                vec![],
+                            ),
                         ],
                     )],
                 ),
@@ -1419,7 +1430,12 @@ mod tests {
                         Span::new(65, 78),
                         vec![
                             ast::ast_leaf(Kind::DomainRef, "domain-ref", "f", Span::new(67, 68)),
-                            ast::ast_leaf(Kind::TemplateRef, "template-ref", "$t", Span::new(69, 71)),
+                            ast::ast_leaf(
+                                Kind::TemplateRef,
+                                "template-ref",
+                                "$t",
+                                Span::new(69, 71),
+                            ),
                         ],
                     )],
                 ),
@@ -2068,7 +2084,13 @@ mod tests {
         let stray_child = ast::ast_leaf(Kind::Field, "field", "noise", span);
         let variant = ast::ast_leaf(Kind::Variant, "variant", "a", span);
         let typedef = ast::ast_branch(Kind::TypeDef, "type-def", "", span, vec![variant]);
-        let grammar = ast::ast_branch(Kind::Grammar, "grammar", "@test", span, vec![stray_child, typedef]);
+        let grammar = ast::ast_branch(
+            Kind::Grammar,
+            "grammar",
+            "@test",
+            span,
+            vec![stray_child, typedef],
+        );
         let reg = TypeRegistry::compile(&grammar).unwrap();
         assert!(reg.has_variant("", "a"));
     }

@@ -149,6 +149,24 @@ mod tests {
         assert_ne!(a.content_oid(), b.content_oid());
     }
 
+    #[test]
+    fn content_address_includes_name() {
+        // Same kind + value but different name → different OID
+        let a = AstNode {
+            kind: Kind::Field,
+            name: "field".into(),
+            value: "x".into(),
+            span: Span::new(0, 1),
+        };
+        let b = AstNode {
+            kind: Kind::Field,
+            name: "custom".into(),
+            value: "x".into(),
+            span: Span::new(0, 1),
+        };
+        assert_ne!(a.content_oid(), b.content_oid());
+    }
+
     // -- Span tests --
 
     #[test]
@@ -191,7 +209,13 @@ mod tests {
             ast_leaf(Kind::Field, "field", "slug", Span::new(10, 14)),
             ast_leaf(Kind::Field, "field", "excerpt", Span::new(16, 23)),
         ];
-        let node = ast_branch(Kind::Template, "template", "$corpus", Span::new(0, 25), children);
+        let node = ast_branch(
+            Kind::Template,
+            "template",
+            "$corpus",
+            Span::new(0, 25),
+            children,
+        );
         assert!(node.is_fractal());
         assert_eq!(node.children().len(), 2);
         assert_eq!(node.data().kind, Kind::Template);

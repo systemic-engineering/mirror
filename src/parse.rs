@@ -207,7 +207,13 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
         });
     }
 
-    Ok(ast::ast_branch(Kind::Group, "group", "root", root_span, children))
+    Ok(ast::ast_branch(
+        Kind::Group,
+        "group",
+        "root",
+        root_span,
+        children,
+    ))
 }
 
 fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
@@ -234,7 +240,13 @@ fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Pars
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Kind::Template, "template", name, span, children));
+            return Ok(ast::ast_branch(
+                Kind::Template,
+                "template",
+                name,
+                span,
+                children,
+            ));
         }
 
         if trimmed.is_empty() {
@@ -287,14 +299,26 @@ fn parse_param(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
         if !left.starts_with('@') && !left.starts_with('$') {
             let expr = right.trim();
             let child = parse_param_expr(expr, span);
-            return Ok(ast::ast_branch(Kind::Param, "param", left, span, vec![child]));
+            return Ok(ast::ast_branch(
+                Kind::Param,
+                "param",
+                left,
+                span,
+                vec![child],
+            ));
         }
     }
 
     // Infer name from expression
     let name = infer_name(text, span)?;
     let child = parse_param_expr(text, span);
-    Ok(ast::ast_branch(Kind::Param, "param", &name, span, vec![child]))
+    Ok(ast::ast_branch(
+        Kind::Param,
+        "param",
+        &name,
+        span,
+        vec![child],
+    ))
 }
 
 fn infer_name(text: &str, span: Span) -> Result<String, ParseError> {
@@ -553,7 +577,12 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
             }
         }
     } else {
-        children.push(ast::ast_leaf(Kind::TemplateRef, "template-ref", names_part, span));
+        children.push(ast::ast_leaf(
+            Kind::TemplateRef,
+            "template-ref",
+            names_part,
+            span,
+        ));
     }
 
     // Parse source: path expression possibly followed by `sha: ABC`
@@ -567,7 +596,12 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
     }
 
     if let Some(param) = sha_param {
-        children.push(ast::ast_leaf(Kind::DomainParam, "domain-param", param, span));
+        children.push(ast::ast_leaf(
+            Kind::DomainParam,
+            "domain-param",
+            param,
+            span,
+        ));
     }
 
     ast::ast_branch(Kind::Use, "use", "use", span, children)
@@ -595,7 +629,13 @@ fn parse_when(rest: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
                 ast::ast_leaf(Kind::Literal, "literal", literal, span),
             ];
             let name = format!("when/{}", op.local_name());
-            return Ok(ast::ast_branch(Kind::When(op.clone()), name, "", span, children));
+            return Ok(ast::ast_branch(
+                Kind::When(op.clone()),
+                name,
+                "",
+                span,
+                children,
+            ));
         }
     }
     Err(ParseError {
@@ -664,7 +704,13 @@ fn parse_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
         parse_cmp(pattern_str, span)?
     };
 
-    Ok(ast::ast_branch(Kind::Arm, "arm", "", span, vec![pattern, body]))
+    Ok(ast::ast_branch(
+        Kind::Arm,
+        "arm",
+        "",
+        span,
+        vec![pattern, body],
+    ))
 }
 
 /// Parse a comparison pattern: `> 0.1`, `>= 3`, `== "active"`, etc.
@@ -768,7 +814,13 @@ fn parse_branch_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError>
         });
     };
 
-    Ok(ast::ast_branch(Kind::Arm, "arm", "", span, vec![pattern, action]))
+    Ok(ast::ast_branch(
+        Kind::Arm,
+        "arm",
+        "",
+        span,
+        vec![pattern, action],
+    ))
 }
 
 /// Parse a pipeline that ends with a branch block:
@@ -859,7 +911,13 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
     // Check for single-line empty grammar: `grammar @name {}`
     if rest.trim() == "}" {
         lines.advance();
-        return Ok(ast::ast_branch(Kind::Grammar, "grammar", name, start_span, vec![]));
+        return Ok(ast::ast_branch(
+            Kind::Grammar,
+            "grammar",
+            name,
+            start_span,
+            vec![],
+        ));
     }
 
     lines.advance(); // consume grammar header line
@@ -885,7 +943,13 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Kind::Grammar, "grammar", name, span, type_defs));
+            return Ok(ast::ast_branch(
+                Kind::Grammar,
+                "grammar",
+                name,
+                span,
+                type_defs,
+            ));
         }
 
         if trimmed.is_empty() || trimmed.starts_with('#') {
