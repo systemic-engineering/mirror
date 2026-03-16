@@ -2166,7 +2166,7 @@ grammar @conversation {
 
     #[test]
     fn parse_grammar_fixture() {
-        let source = include_str!("../fixtures/grammar.conv");
+        let source = include_str!("../main.conv");
         let tree = Parse.record(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.data().kind, Kind::Grammar);
