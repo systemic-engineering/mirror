@@ -19,7 +19,7 @@ use crate::{ComposedError, Story};
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
 
-story::domain_oid!(/// Content address for resolved conversations.
+domain_oid!(/// Content address for resolved conversations.
 pub ConversationOid);
 
 /// What a namespace module provides when resolved.

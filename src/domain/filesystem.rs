@@ -4,7 +4,7 @@ use super::{Addressable, Setting};
 use crate::tree::{self, Tree};
 use crate::ContentAddressed;
 
-story::domain_oid!(/// Content address for filesystem nodes.
+domain_oid!(/// Content address for filesystem nodes.
 pub FolderOid);
 
 /// The filesystem context.
