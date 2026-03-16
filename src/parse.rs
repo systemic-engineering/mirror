@@ -2080,4 +2080,138 @@ grammar @conversation {
         assert_eq!(grammar.data().value, "@conversation");
         assert_eq!(grammar.children().len(), 2);
     }
+
+    // -- Parse parameterized templates --
+
+    #[test]
+    fn parse_template_single_domain_param() {
+        let source = "template $t(@json) {\n  slug\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        assert_eq!(tmpl.data().kind, Kind::Template);
+        assert_eq!(tmpl.data().value, "$t");
+        assert_eq!(tmpl.children().len(), 2); // Param + Field
+        let param = &tmpl.children()[0];
+        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().value, "json"); // inferred name
+        assert_eq!(param.children().len(), 1);
+        assert_eq!(param.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(param.children()[0].data().value, "@json");
+        let field = &tmpl.children()[1];
+        assert_eq!(field.data().kind, Kind::Field);
+        assert_eq!(field.data().value, "slug");
+    }
+
+    #[test]
+    fn parse_template_named_param() {
+        let source = "template $t(data: @json) {\n  slug\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        assert_eq!(tmpl.children().len(), 2); // Param + Field
+        let param = &tmpl.children()[0];
+        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().value, "data"); // explicit name
+        assert_eq!(param.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(param.children()[0].data().value, "@json");
+    }
+
+    #[test]
+    fn parse_template_multiple_params() {
+        let source = "template $t(@json, @csv) {\n  slug\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        assert_eq!(tmpl.children().len(), 3); // 2 Params + 1 Field
+        assert_eq!(tmpl.children()[0].data().kind, Kind::Param);
+        assert_eq!(tmpl.children()[0].data().value, "json");
+        assert_eq!(tmpl.children()[1].data().kind, Kind::Param);
+        assert_eq!(tmpl.children()[1].data().value, "csv");
+        assert_eq!(tmpl.children()[2].data().kind, Kind::Field);
+    }
+
+    #[test]
+    fn parse_template_pipeline_param_named() {
+        let source = "template $t(authors: @csv | select(.author)) {\n  slug\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        let param = &tmpl.children()[0];
+        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().value, "authors");
+        assert_eq!(param.children()[0].data().kind, Kind::Pipeline);
+        let pipeline = &param.children()[0];
+        assert_eq!(pipeline.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(pipeline.children()[0].data().value, "@csv");
+        assert_eq!(pipeline.children()[1].data().kind, Kind::Ref);
+        assert_eq!(pipeline.children()[1].data().value, "select(.author)");
+    }
+
+    #[test]
+    fn parse_template_dotted_param_named() {
+        let source = "template $t(lines: @json.type.Array) {\n  slug\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        let param = &tmpl.children()[0];
+        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().value, "lines");
+        assert_eq!(param.children()[0].data().kind, Kind::Path);
+        assert_eq!(param.children()[0].data().value, "@json.type.Array");
+    }
+
+    #[test]
+    fn parse_template_domain_param_with_domain_params() {
+        let source = "template $t(@git(branch: \"main\")) {\n  slug\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        let param = &tmpl.children()[0];
+        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().value, "git"); // inferred: @git(branch: "main") → "git"
+        assert_eq!(param.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(param.children()[0].data().value, "@git");
+        assert_eq!(param.children()[0].children()[0].data().kind, Kind::DomainParam);
+    }
+
+    #[test]
+    fn parse_template_params_and_fields_order() {
+        let source = "template $t(@json, @csv) {\n  slug\n  title\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        // Params come first, then fields
+        assert_eq!(tmpl.children()[0].data().kind, Kind::Param);
+        assert_eq!(tmpl.children()[1].data().kind, Kind::Param);
+        assert_eq!(tmpl.children()[2].data().kind, Kind::Field);
+        assert_eq!(tmpl.children()[3].data().kind, Kind::Field);
+    }
+
+    #[test]
+    fn parse_template_no_params_unchanged() {
+        // Backward compat: template without params still works
+        let source = "template $t {\n  slug\n  title\n}\n";
+        let tree = Parse.record(source.to_string()).unwrap();
+        let tmpl = &tree.children()[0];
+        assert_eq!(tmpl.data().value, "$t");
+        assert_eq!(tmpl.children().len(), 2);
+        assert_eq!(tmpl.children()[0].data().kind, Kind::Field);
+        assert_eq!(tmpl.children()[1].data().kind, Kind::Field);
+    }
+
+    #[test]
+    fn parse_template_error_unnamed_pipeline() {
+        let source = "template $t(@csv | select(.author)) {\n  slug\n}\n";
+        let err = Parse.record(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("must be explicitly named"),
+            "expected naming error: {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_template_error_unnamed_dotted() {
+        let source = "template $t(@json.type.Array) {\n  slug\n}\n";
+        let err = Parse.record(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("must be explicitly named"),
+            "expected naming error: {}",
+            err.message
+        );
+    }
 }

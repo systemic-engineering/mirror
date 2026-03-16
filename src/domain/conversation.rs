@@ -72,6 +72,8 @@ pub enum Kind {
     Variant,
     /// `op` in `when(op)` — reference to another declared type.
     TypeRef,
+    /// Named parameter in template definition: `template $t(@json, key: @expr) { }`
+    Param,
 }
 
 /// Comparison operator — shared by `When` guards and `Cmp` case arm patterns.
@@ -145,6 +147,7 @@ impl Kind {
             Kind::TypeDef => "type-def",
             Kind::Variant => "variant",
             Kind::TypeRef => "type-ref",
+            Kind::Param => "param",
         }
     }
 }
@@ -412,5 +415,10 @@ mod tests {
     #[test]
     fn kind_local_name_type_ref() {
         assert_eq!(Kind::TypeRef.local_name(), "type-ref");
+    }
+
+    #[test]
+    fn kind_local_name_param() {
+        assert_eq!(Kind::Param.local_name(), "param");
     }
 }
