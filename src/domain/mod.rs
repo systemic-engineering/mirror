@@ -1,7 +1,5 @@
-pub mod beam;
 pub mod conversation;
 pub mod filesystem;
-pub mod git;
 
 pub use story::setting::{Addressable, Setting};
 
@@ -28,21 +26,5 @@ mod tests {
     fn conversation_token_is_ast_node() {
         fn assert_token<C: Setting<Token = crate::ast::AstNode>>() {}
         assert_token::<conversation::Script>();
-    }
-
-    // -- Git domain --
-
-    #[test]
-    fn git_token_is_git_node() {
-        fn assert_token<C: Setting<Token = git::GitNode>>() {}
-        assert_token::<git::Git>();
-    }
-
-    // -- BEAM domain --
-
-    #[test]
-    fn beam_token_is_beam_node() {
-        fn assert_token<C: Setting<Token = beam::BeamNode>>() {}
-        assert_token::<beam::Beam>();
     }
 }

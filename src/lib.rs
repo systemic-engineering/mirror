@@ -26,9 +26,7 @@ pub use story::{
     Composed, ComposedError, ContentAddressed, Cut, CutOid, Fallback, Iso, Oid, Story, When,
 };
 
-pub use domain::beam::BeamOid;
 pub use domain::filesystem::{Filesystem, Folder, FolderOid};
-pub use domain::git::{Git, GitNode, GitOid};
 pub use parse::{Parse, ParseError};
 pub use resolve::{
     Conversation, ConversationOid, Namespace, OutputNode, Resolve, ResolveError, Template,
