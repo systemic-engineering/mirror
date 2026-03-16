@@ -2383,4 +2383,80 @@ grammar @conversation {
             err.message
         );
     }
+
+    // -- Grammar parse tests for stdlib domains --
+
+    #[test]
+    fn parse_beam_conv() {
+        let source = include_str!("../conv/beam.conv");
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().value, "@beam");
+        assert_eq!(grammar.children().len(), 1); // 1 type def
+
+        let root_type = &grammar.children()[0];
+        assert_eq!(root_type.data().kind, Kind::TypeDef);
+        assert_eq!(root_type.data().value, "");
+        assert_eq!(root_type.children().len(), 3); // process | supervision | module
+    }
+
+    #[test]
+    fn parse_git_conv() {
+        let source = include_str!("../conv/git.conv");
+        let tree = Parse.record(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().value, "@git");
+        assert_eq!(grammar.children().len(), 1); // 1 type def
+
+        let root_type = &grammar.children()[0];
+        assert_eq!(root_type.data().kind, Kind::TypeDef);
+        assert_eq!(root_type.data().value, "");
+        assert_eq!(root_type.children().len(), 4); // ref | commit | entry | blob
+    }
+
+    // -- Content addressing tests for stdlib grammars --
+
+    #[test]
+    fn beam_grammar_content_addressed() {
+        use crate::tree::content_oid;
+        let source = "grammar @beam {\n  type = process | supervision | module\n}\n";
+        let a = Parse.record(source.to_string()).unwrap();
+        let b = Parse.record(source.to_string()).unwrap();
+        assert_eq!(content_oid(&a), content_oid(&b));
+    }
+
+    #[test]
+    fn beam_grammar_different_source_different_oid() {
+        use crate::tree::content_oid;
+        let a = Parse
+            .record("grammar @beam {\n  type = process | supervision | module\n}\n".to_string())
+            .unwrap();
+        let b = Parse
+            .record("grammar @beam {\n  type = process | supervision\n}\n".to_string())
+            .unwrap();
+        assert_ne!(content_oid(&a), content_oid(&b));
+    }
+
+    #[test]
+    fn git_grammar_content_addressed() {
+        use crate::tree::content_oid;
+        let source = "grammar @git {\n  type = ref | commit | entry | blob\n}\n";
+        let a = Parse.record(source.to_string()).unwrap();
+        let b = Parse.record(source.to_string()).unwrap();
+        assert_eq!(content_oid(&a), content_oid(&b));
+    }
+
+    #[test]
+    fn git_grammar_different_source_different_oid() {
+        use crate::tree::content_oid;
+        let a = Parse
+            .record("grammar @git {\n  type = ref | commit | entry | blob\n}\n".to_string())
+            .unwrap();
+        let b = Parse
+            .record("grammar @git {\n  type = ref | commit | entry\n}\n".to_string())
+            .unwrap();
+        assert_ne!(content_oid(&a), content_oid(&b));
+    }
 }
