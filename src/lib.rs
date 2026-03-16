@@ -2,6 +2,7 @@ pub mod ast;
 pub mod compile;
 pub mod domain;
 pub mod filter;
+pub mod kernel;
 pub mod parse;
 pub mod resolve;
 pub mod tree;
