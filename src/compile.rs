@@ -6,7 +6,7 @@
 use eetf::{Atom, FixInteger, List, Term, Tuple};
 
 use crate::resolve::{BranchAction, BranchPattern, OutputNode};
-use crate::tree::{Tree, Treelike};
+use crate::tree::Tree;
 
 /// Emit Erlang Abstract Format from a transformation tree.
 ///

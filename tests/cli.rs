@@ -24,6 +24,7 @@ fn missing_file_exits_1() {
 }
 
 #[test]
+#[cfg_attr(not(feature = "slow"), ignore = "needs --features slow")]
 fn systemic_engineering_conv_produces_json() {
     let se_path = std::env::var("SYSTEMIC_ENGINEERING")
         .unwrap_or_else(|_| "/Users/alexwolf/dev/systemic.engineering".into());

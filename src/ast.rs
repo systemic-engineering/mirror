@@ -86,8 +86,6 @@ fn ast_ref(kind: &Kind, value: &str) -> Ref {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use fragmentation::fragment::Fragmentable;
-
     // -- ContentAddressed --
 
     #[test]

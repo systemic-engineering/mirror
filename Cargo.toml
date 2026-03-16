@@ -8,6 +8,7 @@ description = "Traceables over trees"
 [features]
 default = []
 git = ["fragmentation/git"]
+slow = []
 
 [dependencies]
 fragmentation = { path = "../fragmentation" }
