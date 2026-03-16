@@ -16,7 +16,7 @@ pub AstOid);
 
 impl fragmentation::encoding::Encode for AstNode {
     fn encode(&self) -> Vec<u8> {
-        format!("{:?}:{}", self.kind, self.value).into_bytes()
+        format!("{:?}:{}:{}", self.kind, self.name, self.value).into_bytes()
     }
 }
 
@@ -24,7 +24,7 @@ impl ContentAddressed for AstNode {
     type Oid = AstOid;
     fn content_oid(&self) -> AstOid {
         let mut hasher = Sha256::new();
-        hasher.update(format!("{:?}:{}", self.kind, self.value).as_bytes());
+        hasher.update(format!("{:?}:{}:{}", self.kind, self.name, self.value).as_bytes());
         AstOid::new(hex::encode(hasher.finalize()))
     }
 }
@@ -59,7 +59,7 @@ pub struct AstNode {
     pub span: Span,
 }
 
-/// Build a leaf AST node. Ref is content-addressed from `kind:value`.
+/// Build a leaf AST node. Ref is content-addressed from `kind:name:value`.
 pub fn ast_leaf(
     kind: Kind,
     name: impl Into<String>,
@@ -68,7 +68,7 @@ pub fn ast_leaf(
 ) -> Tree<AstNode> {
     let name = name.into();
     let value = value.into();
-    let ref_ = ast_ref(&kind, &value);
+    let ref_ = ast_ref(&kind, &name, &value);
     tree::leaf(
         ref_,
         AstNode {
@@ -80,7 +80,7 @@ pub fn ast_leaf(
     )
 }
 
-/// Build a branch AST node. Ref is content-addressed from `kind:value`.
+/// Build a branch AST node. Ref is content-addressed from `kind:name:value`.
 pub fn ast_branch(
     kind: Kind,
     name: impl Into<String>,
@@ -90,7 +90,7 @@ pub fn ast_branch(
 ) -> Tree<AstNode> {
     let name = name.into();
     let value = value.into();
-    let ref_ = ast_ref(&kind, &value);
+    let ref_ = ast_ref(&kind, &name, &value);
     tree::branch(
         ref_,
         AstNode {
@@ -103,9 +103,9 @@ pub fn ast_branch(
     )
 }
 
-/// Content-addressed ref from kind + value.
-fn ast_ref(kind: &Kind, value: &str) -> Ref {
-    let label = format!("{:?}:{}", kind, value);
+/// Content-addressed ref from kind + name + value.
+fn ast_ref(kind: &Kind, name: &str, value: &str) -> Ref {
+    let label = format!("{:?}:{}:{}", kind, name, value);
     Ref::new(sha::hash(&label), label)
 }
 
