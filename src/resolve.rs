@@ -381,12 +381,22 @@ fn resolve_ast<C: Setting>(
 ) -> Result<Conversation<C>, ResolveError> {
     let children = source.children();
 
+    // Pre-scan: grammar blocks register their domain names
+    let mut grammars: Vec<String> = Vec::new();
+    for child in children {
+        if child.data().kind == Kind::Grammar {
+            let raw = &child.data().value;
+            let name = raw.strip_prefix('@').unwrap_or(raw);
+            grammars.push(name.to_string());
+        }
+    }
+
     // Validate domain declaration if present
     let in_node = children.iter().find(|c| c.data().kind == Kind::In);
     if let Some(node) = in_node {
         let raw = &node.data().value;
         let name = raw.strip_prefix('@').unwrap_or(raw);
-        if !resolve.is_known_domain(name) {
+        if !resolve.is_known_domain(name) && !grammars.iter().any(|g| g == name) {
             let candidates = resolve.all_domain_names();
             let mut hints = Vec::new();
             if let Some(suggestion) = did_you_mean(name, &candidates) {
@@ -1364,55 +1374,57 @@ mod tests {
         assert!(msg.contains("bogus"), "{}", msg);
     }
 
-    // -- Litmus: @git domain proves Conversation is a Story --
+    // -- Litmus: test-only domain proves Conversation<C> is generic --
 
     #[test]
-    fn git_conv_emits_against_git_tree() {
-        use crate::domain::git::{Git, GitNode};
+    fn conversation_generic_over_settings() {
+        use test_domain::{TestDomain, TestToken};
 
-        // A .conv that declares @git input domain
-        let source = "in @git\ntemplate $t {\n\tname\n}\nout repo {\n\trefs: heads { $t }\n}\n";
-        let resolved = Conversation::<Git>::from_source(source).unwrap();
+        // Grammar declaration registers @test as a known domain
+        let source = "grammar @test {\n  type = item | collection\n}\nin @test\ntemplate $t {\n\tname\n}\nout root {\n\titems: data { $t }\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let resolved: Conversation<TestDomain> = Resolve::new().record(ast).unwrap();
 
-        // Build a synthetic Tree<GitNode> — a ref pointing to a commit
-        let blob = tree::leaf(
-            test_ref("README.md"),
-            GitNode::Blob {
-                content: b"# Hello".to_vec(),
+        let item = tree::leaf(
+            test_ref("item-1"),
+            TestToken {
+                name: "item-1".into(),
+                content: Some("hello".into()),
             },
         );
-        let entry = tree::branch(
-            test_ref("src"),
-            GitNode::Entry { name: "src".into() },
-            vec![blob],
-        );
-        let commit = tree::branch(
-            test_ref("abc123"),
-            GitNode::Commit {
-                message: "init".into(),
-                author: "Reed".into(),
-                email: "reed@systemic.engineer".into(),
+        let data = tree::branch(
+            test_ref("data"),
+            TestToken {
+                name: "data".into(),
+                content: None,
             },
-            vec![entry],
-        );
-        let ref_node = tree::branch(
-            test_ref("heads"),
-            GitNode::Ref {
-                name: "main".into(),
-                target: "abc123".into(),
-            },
-            vec![commit],
+            vec![item],
         );
         let root = tree::branch(
-            test_ref("repo"),
-            GitNode::Entry {
-                name: "repo".into(),
+            test_ref("root"),
+            TestToken {
+                name: "root".into(),
+                content: None,
             },
-            vec![ref_node],
+            vec![data],
         );
 
-        // Conversation IS a traceable: Tree<C::Token> → Value
         let _result = resolved.record(root).unwrap();
+
+        // Exercise trait impls for coverage — monomorphized code must be called
+        use crate::ContentAddressed;
+        use fragmentation::encoding::Encode;
+        assert_eq!(TestDomain::id(), "test");
+        let with = TestToken {
+            name: "a".into(),
+            content: Some("b".into()),
+        };
+        let without = TestToken {
+            name: "a".into(),
+            content: None,
+        };
+        assert_ne!(with.content_oid(), without.content_oid());
+        assert_ne!(with.encode(), without.encode());
     }
 
     // -- Litmus: real .conv against real filesystem --
@@ -1884,5 +1896,64 @@ mod tests {
         let tmpl = &conv.templates["$t"];
         assert!(tmpl.params.is_empty());
         assert_eq!(tmpl.fields.len(), 1);
+    }
+
+    /// Test-only domain for proving Conversation<C> polymorphism.
+    mod test_domain {
+        use crate::domain::{Addressable, Setting};
+        use crate::ContentAddressed;
+        use sha2::{Digest, Sha256};
+
+        #[derive(Clone, Debug, Default, PartialEq, Eq)]
+        pub struct TestDomain;
+
+        #[derive(Clone, Debug, PartialEq, Eq)]
+        pub struct TestToken {
+            pub name: String,
+            pub content: Option<String>,
+        }
+
+        impl Setting for TestDomain {
+            type Token = TestToken;
+
+            fn id() -> &'static str {
+                "test"
+            }
+        }
+
+        impl ContentAddressed for TestToken {
+            type Oid = crate::Oid;
+            fn content_oid(&self) -> crate::Oid {
+                let mut hasher = Sha256::new();
+                hasher.update(b"test-token:");
+                hasher.update(self.name.as_bytes());
+                if let Some(c) = &self.content {
+                    hasher.update(b":");
+                    hasher.update(c.as_bytes());
+                }
+                crate::Oid::new(hex::encode(hasher.finalize()))
+            }
+        }
+
+        impl Addressable for TestToken {
+            fn node_name(&self) -> &str {
+                &self.name
+            }
+
+            fn node_content(&self) -> Option<&str> {
+                self.content.as_deref()
+            }
+        }
+
+        impl fragmentation::encoding::Encode for TestToken {
+            fn encode(&self) -> Vec<u8> {
+                let mut bytes = self.name.as_bytes().to_vec();
+                if let Some(c) = &self.content {
+                    bytes.push(b':');
+                    bytes.extend_from_slice(c.as_bytes());
+                }
+                bytes
+            }
+        }
     }
 }
