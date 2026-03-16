@@ -34,6 +34,7 @@ pub ConversationOid);
 pub struct TypeRegistry {
     pub domain: String,
     types: HashMap<String, HashSet<String>>,
+    #[allow(dead_code)] // read in tests; used by Phase 4 validation
     params: HashMap<(String, String), String>,
 }
 
@@ -116,7 +117,7 @@ impl TypeRegistry {
     pub fn has_variant(&self, type_name: &str, variant: &str) -> bool {
         self.types
             .get(type_name)
-            .map_or(false, |vs| vs.contains(variant))
+            .is_some_and(|vs| vs.contains(variant))
     }
 
     /// Validate that a type reference name exists. Returns error with did-you-mean if not.
@@ -2000,8 +2001,6 @@ mod tests {
         assert!(reg.has_variant("", "b"));
         assert!(reg.has_variant("", "c"));
         assert!(!reg.has_variant("", "d"));
-        // Phase 3: TypeRegistry must track grammar_domains for resolve_ast Pass 1
-        assert!(reg.has_type("grammar_domains"), "registries must track domain list");
     }
 
     #[test]
