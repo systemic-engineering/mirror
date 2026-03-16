@@ -1415,6 +1415,42 @@ mod tests {
         let _result = resolved.record(root).unwrap();
     }
 
+    // -- Litmus: test-only domain proves Conversation<C> is generic --
+
+    #[test]
+    fn conversation_generic_over_settings() {
+        use test_domain::{TestDomain, TestToken};
+
+        let source = "in @test\ntemplate $t {\n\tname\n}\nout root {\n\titems { $t }\n}\n";
+        let resolved = Conversation::<TestDomain>::from_source(source).unwrap();
+
+        let item = tree::leaf(
+            test_ref("item-1"),
+            TestToken {
+                name: "item-1".into(),
+                content: None,
+            },
+        );
+        let items = tree::branch(
+            test_ref("items"),
+            TestToken {
+                name: "items".into(),
+                content: None,
+            },
+            vec![item],
+        );
+        let root = tree::branch(
+            test_ref("root"),
+            TestToken {
+                name: "root".into(),
+                content: None,
+            },
+            vec![items],
+        );
+
+        let _result = resolved.record(root).unwrap();
+    }
+
     // -- Litmus: real .conv against real filesystem --
 
     #[test]
