@@ -381,12 +381,22 @@ fn resolve_ast<C: Setting>(
 ) -> Result<Conversation<C>, ResolveError> {
     let children = source.children();
 
+    // Pre-scan: grammar blocks register their domain names
+    let mut grammars: Vec<String> = Vec::new();
+    for child in children {
+        if child.data().kind == Kind::Grammar {
+            let raw = &child.data().value;
+            let name = raw.strip_prefix('@').unwrap_or(raw);
+            grammars.push(name.to_string());
+        }
+    }
+
     // Validate domain declaration if present
     let in_node = children.iter().find(|c| c.data().kind == Kind::In);
     if let Some(node) = in_node {
         let raw = &node.data().value;
         let name = raw.strip_prefix('@').unwrap_or(raw);
-        if !resolve.is_known_domain(name) {
+        if !resolve.is_known_domain(name) && !grammars.iter().any(|g| g == name) {
             let candidates = resolve.all_domain_names();
             let mut hints = Vec::new();
             if let Some(suggestion) = did_you_mean(name, &candidates) {
@@ -1421,20 +1431,22 @@ mod tests {
     fn conversation_generic_over_settings() {
         use test_domain::{TestDomain, TestToken};
 
-        let source = "in @test\ntemplate $t {\n\tname\n}\nout root {\n\titems { $t }\n}\n";
-        let resolved = Conversation::<TestDomain>::from_source(source).unwrap();
+        // Grammar declaration registers @test as a known domain
+        let source = "grammar @test {\n  type = item | collection\n}\nin @test\ntemplate $t {\n\tname\n}\nout root {\n\titems: data { $t }\n}\n";
+        let ast = Parse.record(source.to_string()).unwrap();
+        let resolved: Conversation<TestDomain> = Resolve::new().record(ast).unwrap();
 
         let item = tree::leaf(
             test_ref("item-1"),
             TestToken {
                 name: "item-1".into(),
-                content: None,
+                content: Some("hello".into()),
             },
         );
-        let items = tree::branch(
-            test_ref("items"),
+        let data = tree::branch(
+            test_ref("data"),
             TestToken {
-                name: "items".into(),
+                name: "data".into(),
                 content: None,
             },
             vec![item],
@@ -1445,10 +1457,19 @@ mod tests {
                 name: "root".into(),
                 content: None,
             },
-            vec![items],
+            vec![data],
         );
 
         let _result = resolved.record(root).unwrap();
+
+        // Exercise trait impls for coverage — monomorphized code must be called
+        use crate::ContentAddressed;
+        use fragmentation::encoding::Encode;
+        assert_eq!(TestDomain::id(), "test");
+        let with = TestToken { name: "a".into(), content: Some("b".into()) };
+        let without = TestToken { name: "a".into(), content: None };
+        assert_ne!(with.content_oid(), without.content_oid());
+        assert_ne!(with.encode(), without.encode());
     }
 
     // -- Litmus: real .conv against real filesystem --
@@ -1920,5 +1941,64 @@ mod tests {
         let tmpl = &conv.templates["$t"];
         assert!(tmpl.params.is_empty());
         assert_eq!(tmpl.fields.len(), 1);
+    }
+
+    /// Test-only domain for proving Conversation<C> polymorphism.
+    mod test_domain {
+        use crate::domain::{Addressable, Setting};
+        use crate::ContentAddressed;
+        use sha2::{Digest, Sha256};
+
+        #[derive(Clone, Debug, Default, PartialEq, Eq)]
+        pub struct TestDomain;
+
+        #[derive(Clone, Debug, PartialEq, Eq)]
+        pub struct TestToken {
+            pub name: String,
+            pub content: Option<String>,
+        }
+
+        impl Setting for TestDomain {
+            type Token = TestToken;
+
+            fn id() -> &'static str {
+                "test"
+            }
+        }
+
+        impl ContentAddressed for TestToken {
+            type Oid = crate::Oid;
+            fn content_oid(&self) -> crate::Oid {
+                let mut hasher = Sha256::new();
+                hasher.update(b"test-token:");
+                hasher.update(self.name.as_bytes());
+                if let Some(c) = &self.content {
+                    hasher.update(b":");
+                    hasher.update(c.as_bytes());
+                }
+                crate::Oid::new(hex::encode(hasher.finalize()))
+            }
+        }
+
+        impl Addressable for TestToken {
+            fn node_name(&self) -> &str {
+                &self.name
+            }
+
+            fn node_content(&self) -> Option<&str> {
+                self.content.as_deref()
+            }
+        }
+
+        impl fragmentation::encoding::Encode for TestToken {
+            fn encode(&self) -> Vec<u8> {
+                let mut bytes = self.name.as_bytes().to_vec();
+                if let Some(c) = &self.content {
+                    bytes.push(b':');
+                    bytes.extend_from_slice(c.as_bytes());
+                }
+                bytes
+            }
+        }
     }
 }
