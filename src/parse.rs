@@ -2166,12 +2166,62 @@ grammar @conversation {
 
     #[test]
     fn parse_grammar_fixture() {
-        let source = include_str!("../fixtures/grammar.conv");
+        let source = include_str!("../main.conv");
         let tree = Parse.record(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.data().kind, Kind::Grammar);
         assert_eq!(grammar.data().value, "@conversation");
         assert_eq!(grammar.children().len(), 2);
+    }
+
+    #[test]
+    fn parse_mail_conv() {
+        let source = include_str!("../conv/mail.conv");
+        let tree = Parse.record(source.to_string()).unwrap();
+        let children = tree.children();
+        assert_eq!(children.len(), 2); // grammar + template
+
+        // Grammar: @mail with 3 type defs
+        let grammar = &children[0];
+        assert_eq!(grammar.data().kind, Kind::Grammar);
+        assert_eq!(grammar.data().value, "@mail");
+        assert_eq!(grammar.children().len(), 3);
+
+        // Root type: 4 variants (message | thread | attachment | address)
+        let root_type = &grammar.children()[0];
+        assert_eq!(root_type.data().kind, Kind::TypeDef);
+        assert_eq!(root_type.data().value, "");
+        assert_eq!(root_type.children().len(), 4);
+
+        // Header type: 10 variants
+        let header_type = &grammar.children()[1];
+        assert_eq!(header_type.data().kind, Kind::TypeDef);
+        assert_eq!(header_type.data().value, "header");
+        assert_eq!(header_type.children().len(), 10);
+
+        // Flag type: 5 variants
+        let flag_type = &grammar.children()[2];
+        assert_eq!(flag_type.data().kind, Kind::TypeDef);
+        assert_eq!(flag_type.data().value, "flag");
+        assert_eq!(flag_type.children().len(), 5);
+
+        // Template: $message with 1 param + 6 fields = 7 children
+        let template = &children[1];
+        assert_eq!(template.data().kind, Kind::Template);
+        assert_eq!(template.data().value, "$message");
+        assert_eq!(template.children().len(), 7); // 1 param + 6 fields
+
+        // First child is the @imap param
+        let param = &template.children()[0];
+        assert_eq!(param.data().kind, Kind::Param);
+        assert_eq!(param.data().value, "imap");
+        assert_eq!(param.children()[0].data().kind, Kind::DomainRef);
+        assert_eq!(param.children()[0].data().value, "@imap");
+
+        // Remaining 6 are fields
+        for field in &template.children()[1..] {
+            assert_eq!(field.data().kind, Kind::Field);
+        }
     }
 
     // -- Parse parameterized templates --

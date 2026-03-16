@@ -1,0 +1,18 @@
+grammar @mail {
+  type = message | thread | attachment | address
+
+  type header = from | to | cc | bcc | subject
+              | date | reply-to | message-id
+              | in-reply-to | references
+
+  type flag = seen | flagged | draft | answered | deleted
+}
+
+template $message(@imap) {
+  message-id
+  from: address
+  to: address
+  subject
+  date
+  body: article
+}
