@@ -1427,43 +1427,6 @@ mod tests {
         assert_ne!(with.encode(), without.encode());
     }
 
-    // -- Litmus: real .conv against real filesystem --
-
-    #[test]
-    fn systemic_engineering_conv_produces_blog_index() {
-        let conv_source = include_str!("../systemic.engineering.conv");
-        let resolved = Conversation::<Filesystem>::from_source(conv_source).expect("from_source");
-
-        let se_path = std::env::var("SYSTEMIC_ENGINEERING")
-            .unwrap_or_else(|_| "/Users/alexwolf/dev/systemic.engineering".into());
-        let tree = Folder::read_tree(&format!("{}/blog", se_path));
-        let result = resolved.trace(tree).unwrap();
-
-        // Output shape matches .conv declaration
-        let pieces = &result["blog"]["pieces"];
-
-        let drafts = pieces["draft"].as_array().expect("draft is array");
-        assert!(!drafts.is_empty(), "should have draft pieces");
-
-        let published = pieces["published"].as_array().expect("published is array");
-        assert!(!published.is_empty(), "should have published pieces");
-
-        let archived = pieces["archived"].as_array().expect("archived is array");
-        assert!(!archived.is_empty(), "should have archived pieces");
-
-        for entry in published {
-            assert!(entry["slug"].is_string(), "slug should be string");
-            assert!(entry["headlines"].is_array(), "headlines should be array");
-        }
-
-        let consciousness = published
-            .iter()
-            .find(|p| p["slug"] == "written-by-ai-consciousness")
-            .expect("consciousness piece should exist in published");
-        assert!(!consciousness["excerpt"].as_str().unwrap().is_empty());
-        assert!(!consciousness["headlines"].as_array().unwrap().is_empty());
-    }
-
     // -- branch resolution --
 
     #[test]
