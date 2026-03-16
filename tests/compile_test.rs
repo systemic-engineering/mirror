@@ -3,7 +3,8 @@ use std::collections::HashMap;
 use conversation::compile;
 use conversation::Vector;
 use conversation::{
-    Conversation, Filesystem, Namespace, OutputNode, Repo, Resolve, Template, TemplateProvider,
+    Conversation, Filesystem, Namespace, OutputNode, Store, Resolve, Template,
+    TemplateProvider,
 };
 use fragmentation::commit::{Commit, Draft, Parent};
 use fragmentation::encoding;
@@ -29,7 +30,7 @@ fn emit_eaf_produces_valid_etf() {
     assert_eq!(eaf_bytes[0], 131);
 }
 
-/// Same transformation tree → same EAF bytes.
+/// Same transformation tree -> same EAF bytes.
 #[test]
 fn emit_eaf_deterministic() {
     let a = Conversation::<Filesystem>::from_source(test_conv_source()).unwrap();
@@ -44,20 +45,20 @@ fn eaf_committed_as_child_of_transformation() {
     let committer = test_committer();
 
     // First commit: the transformation tree (author witness)
-    let mut transform_repo = Repo::<OutputNode>::new();
+    let mut transform_store = Store::<OutputNode>::new();
     let transform_commit = Draft::root(
         "transformation: root { items: sub { $t } }",
         resolved.content.clone(),
     )
-    .commit(&mut transform_repo, committer.clone(), TEST_TIMESTAMP);
+    .commit(&mut transform_store, committer.clone(), TEST_TIMESTAMP);
 
     // Second commit: the EAF (compiler witness), child of transformation
     let eaf_bytes = compile::emit_eaf(&resolved.content);
     let eaf_fractal = encoding::encode(&hex::encode(&eaf_bytes));
-    let mut eaf_repo = Repo::<String>::new();
+    let mut eaf_store = Store::<String>::new();
     let parent = Parent(transform_commit.sha().clone());
     let eaf_commit = Draft::new("compiled: root.eaf", eaf_fractal, parent).commit(
-        &mut eaf_repo,
+        &mut eaf_store,
         committer,
         "1234567891 +0000",
     );
@@ -100,7 +101,7 @@ fn emit_eaf_branch_wild_and_expr() {
 
 // -- Integration: imported templates compile to EAF --
 
-/// Full pipeline: parse with `use` import → resolve → compile to EAF.
+/// Full pipeline: parse with `use` import -> resolve -> compile to EAF.
 #[test]
 fn compile_with_imported_template() {
     // Set up namespace with a shared template

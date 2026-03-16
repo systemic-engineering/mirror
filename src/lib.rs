@@ -22,5 +22,6 @@ pub use resolve::{
 };
 pub use tree::Tree;
 
-// Re-export fragmentation's in-memory repo for downstream use.
+// Re-export fragmentation's Repo trait and Store implementation.
 pub use fragmentation::repo::Repo;
+pub use fragmentation::store::Store;

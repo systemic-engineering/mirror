@@ -1,5 +1,5 @@
 use conversation::tree;
-use conversation::{Conversation, Filesystem, Folder, OutputNode, Repo, Vector};
+use conversation::{Conversation, Filesystem, Folder, OutputNode, Repo, Store, Vector};
 use fragmentation::commit::{Commit, Draft};
 use fragmentation::encoding;
 use fragmentation::fragment::content_oid;
@@ -55,7 +55,7 @@ fn test_committer() -> Committer {
 
 const TEST_TIMESTAMP: &str = "1234567890 +0000";
 
-/// Parse+resolve+execute a .conv file, commit the output tree to a Repo.
+/// Parse+resolve+execute a .conv file, commit the output tree to a Store.
 #[test]
 fn conversation_output_committed() {
     let resolved = Conversation::<Filesystem>::from_source(test_conv_source()).unwrap();
@@ -63,19 +63,19 @@ fn conversation_output_committed() {
     let json = serde_json::to_string_pretty(&result).unwrap();
 
     let fractal = encoding::encode(&json);
-    let mut repo = Repo::<String>::new();
+    let mut store = Store::<String>::new();
     let commit = Draft::root("conversation output", fractal).commit(
-        &mut repo,
+        &mut store,
         test_committer(),
         TEST_TIMESTAMP,
     );
 
     assert!(matches!(commit, Commit::Root { .. }));
     assert!(!commit.sha().0.is_empty());
-    assert!(repo.get_commit(commit.sha()).is_some());
+    assert!(store.read_commit(commit.sha()).is_some());
 }
 
-/// Same input → same tree OID in Repo.
+/// Same input -> same tree OID in Store.
 #[test]
 fn committed_output_content_addressed() {
     let resolved = Conversation::<Filesystem>::from_source(test_conv_source()).unwrap();
@@ -88,9 +88,9 @@ fn committed_output_content_addressed() {
     let fractal1 = encoding::encode(&json1);
     let fractal2 = encoding::encode(&json2);
 
-    let mut repo = Repo::<String>::new();
-    let oid1 = repo.write_tree(&fractal1);
-    let oid2 = repo.write_tree(&fractal2);
+    let mut store = Store::<String>::new();
+    let oid1 = store.write_tree(&fractal1);
+    let oid2 = store.write_tree(&fractal2);
 
     assert_eq!(oid1, oid2);
 }
@@ -99,14 +99,14 @@ fn committed_output_content_addressed() {
 #[test]
 fn commit_chain_from_pipeline() {
     let resolved = Conversation::<Filesystem>::from_source(test_conv_source()).unwrap();
-    let mut repo = Repo::<String>::new();
+    let mut store = Store::<String>::new();
     let committer = test_committer();
 
     // First execution
     let result1 = resolved.trace(test_domain_tree()).unwrap();
     let json1 = serde_json::to_string_pretty(&result1).unwrap();
     let c1 = Draft::root("first pipeline run", encoding::encode(&json1)).commit(
-        &mut repo,
+        &mut store,
         committer.clone(),
         "1000000000 +0000",
     );
@@ -126,14 +126,14 @@ fn commit_chain_from_pipeline() {
     let json2 = serde_json::to_string_pretty(&result2).unwrap();
     let c2 = c1
         .child("second pipeline run", encoding::encode(&json2))
-        .commit(&mut repo, committer, "1000000001 +0000");
+        .commit(&mut store, committer, "1000000001 +0000");
 
     assert!(matches!(
-        repo.get_commit(c1.sha()),
+        store.read_commit(c1.sha()),
         Some(Commit::Root { .. })
     ));
     assert!(matches!(
-        repo.get_commit(c2.sha()),
+        store.read_commit(c2.sha()),
         Some(Commit::Child { .. })
     ));
     assert_ne!(c1.sha(), c2.sha());
@@ -152,19 +152,19 @@ fn transformation_tree_committed() {
     let transformation: &conversation::Tree<OutputNode> = &resolved.content;
     let oid = content_oid(transformation);
 
-    let mut repo = Repo::<OutputNode>::new();
+    let mut store = Store::<OutputNode>::new();
     let commit = Draft::root(
         "transformation: root { items: sub { $t } }",
         transformation.clone(),
     )
-    .commit(&mut repo, test_committer(), TEST_TIMESTAMP);
+    .commit(&mut store, test_committer(), TEST_TIMESTAMP);
 
     assert!(matches!(commit, Commit::Root { .. }));
     assert!(!oid.is_empty());
-    assert!(repo.get_commit(commit.sha()).is_some());
+    assert!(store.read_commit(commit.sha()).is_some());
 }
 
-/// Same .conv source → same transformation OID. The transformation is deterministic.
+/// Same .conv source -> same transformation OID. The transformation is deterministic.
 #[test]
 fn transformation_tree_deterministic() {
     let a = Conversation::<Filesystem>::from_source(test_conv_source()).unwrap();
@@ -173,7 +173,7 @@ fn transformation_tree_deterministic() {
     assert_eq!(content_oid(&a.content), content_oid(&b.content));
 }
 
-/// Different .conv sources → different transformation OIDs.
+/// Different .conv sources -> different transformation OIDs.
 #[test]
 fn transformation_tree_different_sources_different_oid() {
     let source_a = test_conv_source();
