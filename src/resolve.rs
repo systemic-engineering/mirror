@@ -83,10 +83,7 @@ impl TypeRegistry {
         for ((parent_type, variant_name), ref_type) in &params {
             if !types.contains_key(ref_type) {
                 let declared: Vec<&str> = types.keys().map(|s| s.as_str()).collect();
-                let mut hints = Vec::new();
-                if let Some(suggestion) = did_you_mean(ref_type, &declared) {
-                    hints.push(format!("did you mean \"{}\"?", suggestion));
-                }
+                let hints = hint_did_you_mean(ref_type, &declared, |s| format!("did you mean \"{}\"?", s));
                 return Err(ResolveError {
                     message: format!(
                         "unknown type reference \"{}\" in grammar @{} (variant \"{}\" in type \"{}\")",
@@ -125,10 +122,7 @@ impl TypeRegistry {
             Ok(())
         } else {
             let declared: Vec<&str> = self.types.keys().map(|s| s.as_str()).collect();
-            let mut hints = Vec::new();
-            if let Some(suggestion) = did_you_mean(ref_name, &declared) {
-                hints.push(format!("did you mean \"{}\"?", suggestion));
-            }
+            let hints = hint_did_you_mean(ref_name, &declared, |s| format!("did you mean \"{}\"?", s));
             Err(ResolveError {
                 message: format!("unknown type \"{}\" in grammar @{}", ref_name, self.domain),
                 span: None,
@@ -151,16 +145,14 @@ pub enum TemplateProvider {
 ///
 /// In single-node mode, `@X` resolves to `namespace.modules["X"]`.
 /// The `@` is the security boundary — control what `@` resolves to = control the sandbox.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Namespace {
     modules: HashMap<String, TemplateProvider>,
 }
 
 impl Namespace {
     pub fn new() -> Self {
-        Namespace {
-            modules: HashMap::new(),
-        }
+        Self::default()
     }
 
     /// Register a module with inline templates.
@@ -187,17 +179,11 @@ impl Namespace {
     }
 }
 
-impl Default for Namespace {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 /// The resolve traceable. AST → Conversation.
 ///
 /// Known domains (Filesystem, Json, Git) and namespace modules resolve.
 /// External domains must be registered via `with_domain` or `with_namespace`.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Resolve {
     externals: Vec<String>,
     namespace: Namespace,
@@ -346,10 +332,7 @@ impl OutputNode {
 
 impl Resolve {
     pub fn new() -> Self {
-        Resolve {
-            externals: Vec::new(),
-            namespace: Namespace::new(),
-        }
+        Self::default()
     }
 
     pub fn with_domain(mut self, domain: &str) -> Self {
@@ -377,17 +360,9 @@ impl Resolve {
     /// All domain names available for did_you_mean.
     fn all_domain_names(&self) -> Vec<&str> {
         let mut names: Vec<&str> = Self::KNOWN_DOMAINS.to_vec();
-        for ext in &self.externals {
-            names.push(ext.as_str());
-        }
+        names.extend(self.externals.iter().map(|e| e.as_str()));
         names.extend(self.namespace.module_names());
         names
-    }
-}
-
-impl Default for Resolve {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
@@ -442,10 +417,7 @@ impl Resolve {
                     } else {
                         let candidates: Vec<&str> =
                             provider_templates.keys().map(|s| s.as_str()).collect();
-                        let mut hints = Vec::new();
-                        if let Some(suggestion) = did_you_mean(name, &candidates) {
-                            hints.push(format!("did you mean {}?", suggestion));
-                        }
+                        let hints = hint_did_you_mean(name, &candidates, |s| format!("did you mean {}?", s));
                         return Err(ResolveError {
                             message: format!("template {} not found in @{}", name, module_name),
                             span: Some(use_node.data().span),
@@ -457,10 +429,7 @@ impl Resolve {
             None => {
                 if !self.is_known_domain(&module_name) {
                     let candidates = self.all_domain_names();
-                    let mut hints = Vec::new();
-                    if let Some(suggestion) = did_you_mean(&module_name, &candidates) {
-                        hints.push(format!("did you mean @{}?", suggestion));
-                    }
+                    let hints = hint_did_you_mean(&module_name, &candidates, |s| format!("did you mean @{}?", s));
                     return Err(ResolveError {
                         message: format!("unknown source @{}", module_name),
                         span: Some(use_node.data().span),
@@ -513,10 +482,7 @@ fn resolve_ast<C: Setting>(
         let name = raw.strip_prefix('@').unwrap_or(raw);
         if !resolve.is_known_domain(name) && !grammar_domains.iter().any(|g| g == name) {
             let candidates = resolve.all_domain_names();
-            let mut hints = Vec::new();
-            if let Some(suggestion) = did_you_mean(name, &candidates) {
-                hints.push(format!("did you mean @{}?", suggestion));
-            }
+            let hints = hint_did_you_mean(name, &candidates, |s| format!("did you mean @{}?", s));
             return Err(ResolveError {
                 message: format!("unknown domain @{}", name),
                 span: Some(node.data().span),
@@ -585,30 +551,20 @@ fn resolve_template(template_node: &Tree<AstNode>) -> Template {
                 name: d.value.clone(),
             });
         } else if d.is_atom("field") {
-            if child.is_shard() {
-                // Bare field: no qualifier, no pipe
-                fields.push(Field {
-                    name: d.value.clone(),
-                    qualifier: None,
-                    pipe: None,
-                });
-            } else {
-                // Field with qualifier and/or pipe
-                let mut qualifier = None;
-                let mut pipe = None;
-                for sub in child.children() {
-                    if sub.data().is_atom("qualifier") {
-                        qualifier = Some(sub.data().value.clone());
-                    } else if sub.data().is_atom("pipe") {
-                        pipe = Some(sub.data().value.clone());
-                    }
+            let mut qualifier = None;
+            let mut pipe = None;
+            for sub in child.children() {
+                if sub.data().is_atom("qualifier") {
+                    qualifier = Some(sub.data().value.clone());
+                } else if sub.data().is_atom("pipe") {
+                    pipe = Some(sub.data().value.clone());
                 }
-                fields.push(Field {
-                    name: d.value.clone(),
-                    qualifier,
-                    pipe,
-                });
             }
+            fields.push(Field {
+                name: d.value.clone(),
+                qualifier,
+                pipe,
+            });
         }
     }
     Template { params, fields }
@@ -642,10 +598,7 @@ fn resolve_output_nodes(
             // Validate template reference
             if !templates.contains_key(&template_name) {
                 let candidates: Vec<&str> = templates.keys().map(|s| s.as_str()).collect();
-                let mut hints = Vec::new();
-                if let Some(suggestion) = did_you_mean(&template_name, &candidates) {
-                    hints.push(format!("did you mean {}?", suggestion));
-                }
+                let hints = hint_did_you_mean(&template_name, &candidates, |s| format!("did you mean {}?", s));
                 return Err(ResolveError {
                     message: format!("unknown template {}", template_name),
                     span: Some(d.span),
@@ -890,6 +843,10 @@ fn did_you_mean<'a>(name: &str, candidates: &[&'a str]) -> Option<&'a str> {
         .filter(|(_, d)| *d <= threshold)
         .min_by_key(|(_, d)| *d)
         .map(|(c, _)| c)
+}
+
+fn hint_did_you_mean(name: &str, candidates: &[&str], fmt: impl FnOnce(&str) -> String) -> Vec<String> {
+    did_you_mean(name, candidates).map(fmt).into_iter().collect()
 }
 
 fn edit_distance(a: &str, b: &str) -> usize {

@@ -122,18 +122,10 @@ impl SignFilter {
     /// cryptographic signing (GPG/SSH). `@sign` currently uses the public
     /// key as a structural witness, not a cryptographic signature.
     pub fn from_env() -> Option<Self> {
-        // Direct public key file override
         if let Ok(pub_path) = std::env::var("CONVERSATION_KEYS_PUBLIC") {
             return Self::from_pub_file(std::path::Path::new(&pub_path));
         }
-
-        // Keys directory
-        let keys_dir = std::env::var("CONVERSATION_KEYS").unwrap_or_else(|_| {
-            std::env::var("HOME")
-                .map(|h| format!("{}/.ssh", h))
-                .unwrap_or_else(|_| "~/.ssh".into())
-        });
-        Self::from_keys_dir(std::path::Path::new(&keys_dir))
+        Self::from_keys_dir(std::path::Path::new(&resolve_keys_dir()))
     }
 }
 

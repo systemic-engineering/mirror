@@ -524,13 +524,11 @@ fn push_path_segments(rest: &str, span: Span, children: &mut Vec<Tree<AstNode>>)
 /// - `./templates`      → [Self_, Path]  (desugar)
 fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>) {
     // Desugar ./ to $SELF/
-    let source = if let Some(rest) = source.strip_prefix("./") {
+    if let Some(rest) = source.strip_prefix("./") {
         children.push(ast::ast_leaf(Kind::Ref, "self", "$SELF", span));
         push_path_segments(rest, span, children);
         return;
-    } else {
-        source
-    };
+    }
 
     // Check for $HOME/ or $SELF/ prefix
     if let Some(rest) = source.strip_prefix("$HOME/") {
@@ -544,19 +542,16 @@ fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>)
         return;
     }
 
-    // Check for @domain with optional /path segments
+    // Check for @domain/path — split into DomainRef + Path segments
     if source.starts_with('@') {
         if let Some(slash_idx) = source.find('/') {
-            let domain = &source[..slash_idx];
-            children.push(ast::ast_leaf(Kind::Ref, "domain-ref", domain, span));
+            children.push(ast::ast_leaf(Kind::Ref, "domain-ref", &source[..slash_idx], span));
             push_path_segments(&source[slash_idx + 1..], span, children);
-        } else {
-            children.push(ast::ast_leaf(Kind::Ref, "domain-ref", source, span));
+            return;
         }
-        return;
     }
 
-    // Bare source (no prefix) — treat as DomainRef
+    // Bare source or @domain without path — treat as DomainRef
     children.push(ast::ast_leaf(Kind::Ref, "domain-ref", source, span));
 }
 
