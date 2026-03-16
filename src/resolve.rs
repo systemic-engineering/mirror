@@ -1310,31 +1310,35 @@ mod tests {
         // Manually construct an AST with a non-field child in a template
         let root = ast::ast_branch(
             Kind::Group,
+            "group",
             "root",
             Span::new(0, 50),
             vec![
-                ast::ast_leaf(Kind::In, "@filesystem", Span::new(0, 14)),
+                ast::ast_leaf(Kind::In, "in", "@filesystem", Span::new(0, 14)),
                 ast::ast_branch(
                     Kind::Template,
+                    "template",
                     "$t",
                     Span::new(15, 35),
                     vec![
-                        ast::ast_leaf(Kind::Field, "slug", Span::new(20, 24)),
+                        ast::ast_leaf(Kind::Field, "field", "slug", Span::new(20, 24)),
                         // A DomainRef in a template — should be ignored
-                        ast::ast_leaf(Kind::DomainRef, "@html", Span::new(25, 30)),
+                        ast::ast_leaf(Kind::DomainRef, "domain-ref", "@html", Span::new(25, 30)),
                     ],
                 ),
                 ast::ast_branch(
                     Kind::Out,
+                    "out",
                     "r",
                     Span::new(36, 50),
                     vec![ast::ast_branch(
                         Kind::Select,
+                        "select",
                         "x",
                         Span::new(40, 48),
                         vec![
-                            ast::ast_leaf(Kind::DomainRef, "f", Span::new(42, 43)),
-                            ast::ast_leaf(Kind::TemplateRef, "$t", Span::new(44, 46)),
+                            ast::ast_leaf(Kind::DomainRef, "domain-ref", "f", Span::new(42, 43)),
+                            ast::ast_leaf(Kind::TemplateRef, "template-ref", "$t", Span::new(44, 46)),
                         ],
                     )],
                 ),
@@ -1351,17 +1355,19 @@ mod tests {
         // AST with an In node inside an Out block — should be ignored
         let root = ast::ast_branch(
             Kind::Group,
+            "group",
             "root",
             Span::new(0, 50),
             vec![
-                ast::ast_leaf(Kind::In, "@filesystem", Span::new(0, 14)),
+                ast::ast_leaf(Kind::In, "in", "@filesystem", Span::new(0, 14)),
                 ast::ast_branch(
                     Kind::Out,
+                    "out",
                     "r",
                     Span::new(15, 50),
                     vec![
-                        ast::ast_leaf(Kind::In, "@html", Span::new(20, 25)),
-                        ast::ast_branch(Kind::Group, "g", Span::new(26, 40), vec![]),
+                        ast::ast_leaf(Kind::In, "in", "@html", Span::new(20, 25)),
+                        ast::ast_branch(Kind::Group, "group", "g", Span::new(26, 40), vec![]),
                     ],
                 ),
             ],
@@ -1379,36 +1385,41 @@ mod tests {
         // A Field branch where one child has kind Group — should be ignored
         let root = ast::ast_branch(
             Kind::Group,
+            "group",
             "root",
             Span::new(0, 80),
             vec![
-                ast::ast_leaf(Kind::In, "@filesystem", Span::new(0, 14)),
+                ast::ast_leaf(Kind::In, "in", "@filesystem", Span::new(0, 14)),
                 ast::ast_branch(
                     Kind::Template,
+                    "template",
                     "$t",
                     Span::new(15, 60),
                     vec![ast::ast_branch(
                         Kind::Field,
+                        "field",
                         "headlines",
                         Span::new(20, 40),
                         vec![
-                            ast::ast_leaf(Kind::Qualifier, "h2", Span::new(25, 27)),
+                            ast::ast_leaf(Kind::Qualifier, "qualifier", "h2", Span::new(25, 27)),
                             // Group as a child of Field — unusual, should be skipped
-                            ast::ast_branch(Kind::Group, "noise", Span::new(28, 35), vec![]),
+                            ast::ast_branch(Kind::Group, "group", "noise", Span::new(28, 35), vec![]),
                         ],
                     )],
                 ),
                 ast::ast_branch(
                     Kind::Out,
+                    "out",
                     "r",
                     Span::new(61, 80),
                     vec![ast::ast_branch(
                         Kind::Select,
+                        "select",
                         "x",
                         Span::new(65, 78),
                         vec![
-                            ast::ast_leaf(Kind::DomainRef, "f", Span::new(67, 68)),
-                            ast::ast_leaf(Kind::TemplateRef, "$t", Span::new(69, 71)),
+                            ast::ast_leaf(Kind::DomainRef, "domain-ref", "f", Span::new(67, 68)),
+                            ast::ast_leaf(Kind::TemplateRef, "template-ref", "$t", Span::new(69, 71)),
                         ],
                     )],
                 ),
@@ -1650,8 +1661,8 @@ mod tests {
 
         // Build a Branch AST node with a non-Arm child (should be skipped)
         let span = Span::new(0, 10);
-        let non_arm = ast::ast_leaf(Kind::Expr, "junk", span);
-        let branch_ast = ast::ast_branch(Kind::Branch, ".x", span, vec![non_arm]);
+        let non_arm = ast::ast_leaf(Kind::Expr, "expr", "junk", span);
+        let branch_ast = ast::ast_branch(Kind::Branch, "branch", ".x", span, vec![non_arm]);
         let result = resolve_branch_node(&branch_ast);
         let (_, arms) = expect_branch(result.data());
         assert!(arms.is_empty());
@@ -1663,9 +1674,9 @@ mod tests {
 
         // Arm with only one child (too short — needs pattern + action)
         let span = Span::new(0, 10);
-        let pattern_only = ast::ast_leaf(Kind::Literal, "x", span);
-        let short_arm = ast::ast_branch(Kind::Arm, "", span, vec![pattern_only]);
-        let branch_ast = ast::ast_branch(Kind::Branch, ".x", span, vec![short_arm]);
+        let pattern_only = ast::ast_leaf(Kind::Literal, "literal", "x", span);
+        let short_arm = ast::ast_branch(Kind::Arm, "arm", "", span, vec![pattern_only]);
+        let branch_ast = ast::ast_branch(Kind::Branch, "branch", ".x", span, vec![short_arm]);
         let result = resolve_branch_node(&branch_ast);
         let (_, arms) = expect_branch(result.data());
         assert!(arms.is_empty());
@@ -1677,10 +1688,10 @@ mod tests {
 
         // Arm with an Expr pattern (not Literal or Wild — should be skipped)
         let span = Span::new(0, 10);
-        let bad_pattern = ast::ast_leaf(Kind::Expr, "nope", span);
-        let action = ast::ast_leaf(Kind::Expr, "..", span);
-        let arm = ast::ast_branch(Kind::Arm, "", span, vec![bad_pattern, action]);
-        let branch_ast = ast::ast_branch(Kind::Branch, ".x", span, vec![arm]);
+        let bad_pattern = ast::ast_leaf(Kind::Expr, "expr", "nope", span);
+        let action = ast::ast_leaf(Kind::Expr, "expr", "..", span);
+        let arm = ast::ast_branch(Kind::Arm, "arm", "", span, vec![bad_pattern, action]);
+        let branch_ast = ast::ast_branch(Kind::Branch, "branch", ".x", span, vec![arm]);
         let result = resolve_branch_node(&branch_ast);
         let (_, arms) = expect_branch(result.data());
         assert!(arms.is_empty());
@@ -2054,10 +2065,10 @@ mod tests {
         use crate::ast::{self, Span};
         // Grammar node with a non-TypeDef child (Field) — should be skipped
         let span = Span::new(0, 50);
-        let stray_child = ast::ast_leaf(Kind::Field, "noise", span);
-        let variant = ast::ast_leaf(Kind::Variant, "a", span);
-        let typedef = ast::ast_branch(Kind::TypeDef, "", span, vec![variant]);
-        let grammar = ast::ast_branch(Kind::Grammar, "@test", span, vec![stray_child, typedef]);
+        let stray_child = ast::ast_leaf(Kind::Field, "field", "noise", span);
+        let variant = ast::ast_leaf(Kind::Variant, "variant", "a", span);
+        let typedef = ast::ast_branch(Kind::TypeDef, "type-def", "", span, vec![variant]);
+        let grammar = ast::ast_branch(Kind::Grammar, "grammar", "@test", span, vec![stray_child, typedef]);
         let reg = TypeRegistry::compile(&grammar).unwrap();
         assert!(reg.has_variant("", "a"));
     }
@@ -2067,10 +2078,10 @@ mod tests {
         use crate::ast::{self, Span};
         // TypeDef with a non-Variant child (Field) — should be skipped
         let span = Span::new(0, 50);
-        let stray = ast::ast_leaf(Kind::Field, "noise", span);
-        let variant = ast::ast_leaf(Kind::Variant, "a", span);
-        let typedef = ast::ast_branch(Kind::TypeDef, "", span, vec![stray, variant]);
-        let grammar = ast::ast_branch(Kind::Grammar, "@test", span, vec![typedef]);
+        let stray = ast::ast_leaf(Kind::Field, "field", "noise", span);
+        let variant = ast::ast_leaf(Kind::Variant, "variant", "a", span);
+        let typedef = ast::ast_branch(Kind::TypeDef, "type-def", "", span, vec![stray, variant]);
+        let grammar = ast::ast_branch(Kind::Grammar, "grammar", "@test", span, vec![typedef]);
         let reg = TypeRegistry::compile(&grammar).unwrap();
         assert!(reg.has_variant("", "a"));
         // Only 1 variant, not 2

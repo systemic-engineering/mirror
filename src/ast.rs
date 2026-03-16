@@ -178,7 +178,7 @@ mod tests {
 
     #[test]
     fn ast_leaf_is_terminal() {
-        let node = ast_leaf(Kind::Field, "slug", Span::new(0, 4));
+        let node = ast_leaf(Kind::Field, "field", "slug", Span::new(0, 4));
         assert!(node.is_shard());
         assert_eq!(node.data().kind, Kind::Field);
         assert_eq!(node.data().value, "slug");
@@ -188,10 +188,10 @@ mod tests {
     #[test]
     fn ast_branch_has_children() {
         let children = vec![
-            ast_leaf(Kind::Field, "slug", Span::new(10, 14)),
-            ast_leaf(Kind::Field, "excerpt", Span::new(16, 23)),
+            ast_leaf(Kind::Field, "field", "slug", Span::new(10, 14)),
+            ast_leaf(Kind::Field, "field", "excerpt", Span::new(16, 23)),
         ];
-        let node = ast_branch(Kind::Template, "$corpus", Span::new(0, 25), children);
+        let node = ast_branch(Kind::Template, "template", "$corpus", Span::new(0, 25), children);
         assert!(node.is_fractal());
         assert_eq!(node.children().len(), 2);
         assert_eq!(node.data().kind, Kind::Template);
@@ -200,29 +200,29 @@ mod tests {
 
     #[test]
     fn ast_node_has_name() {
-        let node = ast_leaf(Kind::Field, "slug", Span::new(0, 4));
+        let node = ast_leaf(Kind::Field, "field", "slug", Span::new(0, 4));
         assert_eq!(node.data().name, "field");
     }
 
     #[test]
     fn ast_ref_is_content_addressed() {
-        let a = ast_leaf(Kind::Field, "slug", Span::new(0, 4));
-        let b = ast_leaf(Kind::Field, "slug", Span::new(100, 104));
+        let a = ast_leaf(Kind::Field, "field", "slug", Span::new(0, 4));
+        let b = ast_leaf(Kind::Field, "field", "slug", Span::new(100, 104));
         // Same kind + value = same ref, regardless of span
         assert_eq!(a.self_ref(), b.self_ref());
     }
 
     #[test]
     fn different_kind_different_ref() {
-        let a = ast_leaf(Kind::Field, "html", Span::new(0, 4));
-        let b = ast_leaf(Kind::Qualifier, "html", Span::new(0, 4));
+        let a = ast_leaf(Kind::Field, "field", "html", Span::new(0, 4));
+        let b = ast_leaf(Kind::Qualifier, "qualifier", "html", Span::new(0, 4));
         assert_ne!(a.self_ref(), b.self_ref());
     }
 
     #[test]
     fn different_value_different_ref() {
-        let a = ast_leaf(Kind::Field, "slug", Span::new(0, 4));
-        let b = ast_leaf(Kind::Field, "excerpt", Span::new(0, 7));
+        let a = ast_leaf(Kind::Field, "field", "slug", Span::new(0, 4));
+        let b = ast_leaf(Kind::Field, "field", "excerpt", Span::new(0, 7));
         assert_ne!(a.self_ref(), b.self_ref());
     }
 }

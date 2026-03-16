@@ -126,16 +126,16 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
 
             let mut in_children = Vec::new();
             if let Some(p) = param {
-                in_children.push(ast::ast_leaf(Kind::DomainParam, p, span));
+                in_children.push(ast::ast_leaf(Kind::DomainParam, "domain-param", p, span));
             }
             if let Some(a) = alias {
-                in_children.push(ast::ast_leaf(Kind::Alias, a, span));
+                in_children.push(ast::ast_leaf(Kind::Alias, "alias", a, span));
             }
 
             if in_children.is_empty() {
-                children.push(ast::ast_leaf(Kind::In, value, span));
+                children.push(ast::ast_leaf(Kind::In, "in", value, span));
             } else {
-                children.push(ast::ast_branch(Kind::In, value, span, in_children));
+                children.push(ast::ast_branch(Kind::In, "in", value, span, in_children));
             }
             lines.advance();
             continue;
@@ -207,7 +207,7 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
         });
     }
 
-    Ok(ast::ast_branch(Kind::Group, "root", root_span, children))
+    Ok(ast::ast_branch(Kind::Group, "group", "root", root_span, children))
 }
 
 fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
@@ -234,7 +234,7 @@ fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Pars
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Kind::Template, name, span, children));
+            return Ok(ast::ast_branch(Kind::Template, "template", name, span, children));
         }
 
         if trimmed.is_empty() {
@@ -287,14 +287,14 @@ fn parse_param(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
         if !left.starts_with('@') && !left.starts_with('$') {
             let expr = right.trim();
             let child = parse_param_expr(expr, span);
-            return Ok(ast::ast_branch(Kind::Param, left, span, vec![child]));
+            return Ok(ast::ast_branch(Kind::Param, "param", left, span, vec![child]));
         }
     }
 
     // Infer name from expression
     let name = infer_name(text, span)?;
     let child = parse_param_expr(text, span);
-    Ok(ast::ast_branch(Kind::Param, &name, span, vec![child]))
+    Ok(ast::ast_branch(Kind::Param, "param", &name, span, vec![child]))
 }
 
 fn infer_name(text: &str, span: Span) -> Result<String, ParseError> {
@@ -330,7 +330,7 @@ fn parse_param_expr(text: &str, span: Span) -> Tree<AstNode> {
     if text.contains('|') {
         parse_pipeline(text, span)
     } else if text.starts_with('@') && text[1..].contains('.') {
-        ast::ast_leaf(Kind::Path, text, span)
+        ast::ast_leaf(Kind::Path, "path", text, span)
     } else {
         parse_pipeline_segment(text, span)
     }
@@ -346,22 +346,22 @@ fn parse_field(text: &str, span: Span) -> Tree<AstNode> {
         let mut children = Vec::new();
 
         let qualifier = parts[0].trim();
-        children.push(ast::ast_leaf(Kind::Qualifier, qualifier, span));
+        children.push(ast::ast_leaf(Kind::Qualifier, "qualifier", qualifier, span));
 
         if parts.len() > 1 {
             let pipe_value = parts[1].trim();
-            children.push(ast::ast_leaf(Kind::Pipe, pipe_value, span));
+            children.push(ast::ast_leaf(Kind::Pipe, "pipe", pipe_value, span));
         }
 
-        ast::ast_branch(Kind::Field, name, span, children)
+        ast::ast_branch(Kind::Field, "field", name, span, children)
     } else if let Some((name, pipe)) = text.split_once('|') {
         // Bare field with pipe: "slug | @sha"
         let name = name.trim();
         let pipe_value = pipe.trim();
-        let children = vec![ast::ast_leaf(Kind::Pipe, pipe_value, span)];
-        ast::ast_branch(Kind::Field, name, span, children)
+        let children = vec![ast::ast_leaf(Kind::Pipe, "pipe", pipe_value, span)];
+        ast::ast_branch(Kind::Field, "field", name, span, children)
     } else {
-        ast::ast_leaf(Kind::Field, text.trim(), span)
+        ast::ast_leaf(Kind::Field, "field", text.trim(), span)
     }
 }
 
@@ -372,11 +372,11 @@ fn parse_out(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseErro
         lines.advance();
         let (children, end_span) = parse_block_body(lines, span)?;
         let merged = span.merge(&end_span);
-        Ok(ast::ast_branch(Kind::Out, name, merged, children))
+        Ok(ast::ast_branch(Kind::Out, "out", name, merged, children))
     } else {
         let name = header.trim();
         lines.advance();
-        Ok(ast::ast_leaf(Kind::Out, name, span))
+        Ok(ast::ast_leaf(Kind::Out, "out", name, span))
     }
 }
 
@@ -410,11 +410,12 @@ fn parse_block_body(
                 let template_name = template_part.trim().trim_end_matches('}').trim();
 
                 let select_children = vec![
-                    ast::ast_leaf(Kind::DomainRef, folder_name, span),
-                    ast::ast_leaf(Kind::TemplateRef, template_name, span),
+                    ast::ast_leaf(Kind::DomainRef, "domain-ref", folder_name, span),
+                    ast::ast_leaf(Kind::TemplateRef, "template-ref", template_name, span),
                 ];
                 children.push(ast::ast_branch(
                     Kind::Select,
+                    "select",
                     output_part.trim(),
                     span,
                     select_children,
@@ -425,9 +426,10 @@ fn parse_block_body(
 
             // Field with expression value: "name: expr"
             let span = lines.current_span();
-            let expr_child = ast::ast_leaf(Kind::Expr, rest, span);
+            let expr_child = ast::ast_leaf(Kind::Expr, "expr", rest, span);
             children.push(ast::ast_branch(
                 Kind::Field,
+                "field",
                 output_part.trim(),
                 span,
                 vec![expr_child],
@@ -443,7 +445,7 @@ fn parse_block_body(
 
             if rest.trim() == "}" {
                 // Empty group: "name {}"
-                children.push(ast::ast_branch(Kind::Group, name, span, vec![]));
+                children.push(ast::ast_branch(Kind::Group, "group", name, span, vec![]));
                 lines.advance();
             } else {
                 lines.advance();
@@ -451,6 +453,7 @@ fn parse_block_body(
                 let group_span = span.merge(&end_span);
                 children.push(ast::ast_branch(
                     Kind::Group,
+                    "group",
                     name,
                     group_span,
                     group_children,
@@ -461,7 +464,7 @@ fn parse_block_body(
 
         // Bare expression
         let span = lines.current_span();
-        children.push(ast::ast_leaf(Kind::Expr, trimmed, span));
+        children.push(ast::ast_leaf(Kind::Expr, "expr", trimmed, span));
         lines.advance();
     }
 
@@ -481,9 +484,9 @@ fn parse_block_body(
 fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>) {
     // Desugar ./ to $SELF/
     let source = if let Some(rest) = source.strip_prefix("./") {
-        children.push(ast::ast_leaf(Kind::Self_, "$SELF", span));
+        children.push(ast::ast_leaf(Kind::Self_, "self", "$SELF", span));
         for seg in rest.split('/').filter(|s| !s.is_empty()) {
-            children.push(ast::ast_leaf(Kind::Path, seg, span));
+            children.push(ast::ast_leaf(Kind::Path, "path", seg, span));
         }
         return;
     } else {
@@ -492,16 +495,16 @@ fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>)
 
     // Check for $HOME/ or $SELF/ prefix
     if let Some(rest) = source.strip_prefix("$HOME/") {
-        children.push(ast::ast_leaf(Kind::Home, "$HOME", span));
+        children.push(ast::ast_leaf(Kind::Home, "home", "$HOME", span));
         for seg in rest.split('/').filter(|s| !s.is_empty()) {
-            children.push(ast::ast_leaf(Kind::Path, seg, span));
+            children.push(ast::ast_leaf(Kind::Path, "path", seg, span));
         }
         return;
     }
     if let Some(rest) = source.strip_prefix("$SELF/") {
-        children.push(ast::ast_leaf(Kind::Self_, "$SELF", span));
+        children.push(ast::ast_leaf(Kind::Self_, "self", "$SELF", span));
         for seg in rest.split('/').filter(|s| !s.is_empty()) {
-            children.push(ast::ast_leaf(Kind::Path, seg, span));
+            children.push(ast::ast_leaf(Kind::Path, "path", seg, span));
         }
         return;
     }
@@ -510,19 +513,19 @@ fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>)
     if source.starts_with('@') {
         if let Some(slash_idx) = source.find('/') {
             let domain = &source[..slash_idx];
-            children.push(ast::ast_leaf(Kind::DomainRef, domain, span));
+            children.push(ast::ast_leaf(Kind::DomainRef, "domain-ref", domain, span));
             let rest = &source[slash_idx + 1..];
             for seg in rest.split('/').filter(|s| !s.is_empty()) {
-                children.push(ast::ast_leaf(Kind::Path, seg, span));
+                children.push(ast::ast_leaf(Kind::Path, "path", seg, span));
             }
         } else {
-            children.push(ast::ast_leaf(Kind::DomainRef, source, span));
+            children.push(ast::ast_leaf(Kind::DomainRef, "domain-ref", source, span));
         }
         return;
     }
 
     // Bare source (no prefix) — treat as DomainRef
-    children.push(ast::ast_leaf(Kind::DomainRef, source, span));
+    children.push(ast::ast_leaf(Kind::DomainRef, "domain-ref", source, span));
 }
 
 /// Parse a use statement.
@@ -546,11 +549,11 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
         for name in inner.split(',') {
             let name = name.trim();
             if !name.is_empty() {
-                children.push(ast::ast_leaf(Kind::TemplateRef, name, span));
+                children.push(ast::ast_leaf(Kind::TemplateRef, "template-ref", name, span));
             }
         }
     } else {
-        children.push(ast::ast_leaf(Kind::TemplateRef, names_part, span));
+        children.push(ast::ast_leaf(Kind::TemplateRef, "template-ref", names_part, span));
     }
 
     // Parse source: path expression possibly followed by `sha: ABC`
@@ -564,10 +567,10 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
     }
 
     if let Some(param) = sha_param {
-        children.push(ast::ast_leaf(Kind::DomainParam, param, span));
+        children.push(ast::ast_leaf(Kind::DomainParam, "domain-param", param, span));
     }
 
-    ast::ast_branch(Kind::Use, "use", span, children)
+    ast::ast_branch(Kind::Use, "use", "use", span, children)
 }
 
 /// Parse a when predicate: `error.rate > 0.1`, `status == "active"`, etc.
@@ -588,10 +591,11 @@ fn parse_when(rest: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
             let path = rest[..idx].trim();
             let literal = rest[idx + sym.len()..].trim();
             let children = vec![
-                ast::ast_leaf(Kind::Path, path, span),
-                ast::ast_leaf(Kind::Literal, literal, span),
+                ast::ast_leaf(Kind::Path, "path", path, span),
+                ast::ast_leaf(Kind::Literal, "literal", literal, span),
             ];
-            return Ok(ast::ast_branch(Kind::When(op.clone()), "", span, children));
+            let name = format!("when/{}", op.local_name());
+            return Ok(ast::ast_branch(Kind::When(op.clone()), name, "", span, children));
         }
     }
     Err(ParseError {
@@ -618,7 +622,7 @@ fn parse_case(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseErr
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Kind::Case, subject, span, arms));
+            return Ok(ast::ast_branch(Kind::Case, "case", subject, span, arms));
         }
 
         if trimmed.is_empty() {
@@ -652,15 +656,15 @@ fn parse_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
         }
     };
 
-    let body = ast::ast_leaf(Kind::Expr, body_str, span);
+    let body = ast::ast_leaf(Kind::Expr, "expr", body_str, span);
 
     let pattern = if pattern_str == "_" {
-        ast::ast_leaf(Kind::Wild, "", span)
+        ast::ast_leaf(Kind::Wild, "wild", "", span)
     } else {
         parse_cmp(pattern_str, span)?
     };
 
-    Ok(ast::ast_branch(Kind::Arm, "", span, vec![pattern, body]))
+    Ok(ast::ast_branch(Kind::Arm, "arm", "", span, vec![pattern, body]))
 }
 
 /// Parse a comparison pattern: `> 0.1`, `>= 3`, `== "active"`, etc.
@@ -679,7 +683,8 @@ fn parse_cmp(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
     for (sym, op) in ops {
         if let Some(rest) = text.strip_prefix(sym) {
             let literal = rest.trim();
-            return Ok(ast::ast_leaf(Kind::Cmp(op.clone()), literal, span));
+            let name = format!("cmp/{}", op.local_name());
+            return Ok(ast::ast_leaf(Kind::Cmp(op.clone()), name, literal, span));
         }
     }
     Err(ParseError {
@@ -712,7 +717,7 @@ fn parse_branch(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseE
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Kind::Branch, query, span, arms));
+            return Ok(ast::ast_branch(Kind::Branch, "branch", query, span, arms));
         }
 
         if trimmed.is_empty() {
@@ -745,14 +750,14 @@ fn parse_branch_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError>
         }
     };
 
-    let action = ast::ast_leaf(Kind::Expr, action_str, span);
+    let action = ast::ast_leaf(Kind::Expr, "expr", action_str, span);
 
     let pattern = if pattern_str == "_" {
-        ast::ast_leaf(Kind::Wild, "", span)
+        ast::ast_leaf(Kind::Wild, "wild", "", span)
     } else if pattern_str.starts_with('"') && pattern_str.ends_with('"') {
         // Strip quotes from string literal
         let inner = &pattern_str[1..pattern_str.len() - 1];
-        ast::ast_leaf(Kind::Literal, inner, span)
+        ast::ast_leaf(Kind::Literal, "literal", inner, span)
     } else {
         return Err(ParseError {
             message: format!(
@@ -763,7 +768,7 @@ fn parse_branch_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError>
         });
     };
 
-    Ok(ast::ast_branch(Kind::Arm, "", span, vec![pattern, action]))
+    Ok(ast::ast_branch(Kind::Arm, "arm", "", span, vec![pattern, action]))
 }
 
 /// Parse a pipeline that ends with a branch block:
@@ -795,6 +800,7 @@ fn parse_pipeline_with_branch(
     pipeline_children.push(branch_node);
     Ok(ast::ast_branch(
         Kind::Pipeline,
+        "pipeline",
         "root",
         span,
         pipeline_children,
@@ -813,7 +819,7 @@ fn parse_pipeline(text: &str, span: Span) -> Tree<AstNode> {
         .iter()
         .map(|seg| parse_pipeline_segment(seg, span))
         .collect();
-    ast::ast_branch(Kind::Pipeline, "root", span, children)
+    ast::ast_branch(Kind::Pipeline, "pipeline", "root", span, children)
 }
 
 fn parse_pipeline_segment(seg: &str, span: Span) -> Tree<AstNode> {
@@ -822,13 +828,13 @@ fn parse_pipeline_segment(seg: &str, span: Span) -> Tree<AstNode> {
         if let Some(paren_start) = seg.find('(') {
             let name = &seg[..paren_start];
             let params = seg[paren_start + 1..].trim_end_matches(')');
-            let param_child = ast::ast_leaf(Kind::DomainParam, params, span);
-            ast::ast_branch(Kind::DomainRef, name, span, vec![param_child])
+            let param_child = ast::ast_leaf(Kind::DomainParam, "domain-param", params, span);
+            ast::ast_branch(Kind::DomainRef, "domain-ref", name, span, vec![param_child])
         } else {
-            ast::ast_leaf(Kind::DomainRef, seg, span)
+            ast::ast_leaf(Kind::DomainRef, "domain-ref", seg, span)
         }
     } else {
-        ast::ast_leaf(Kind::Ref, seg, span)
+        ast::ast_leaf(Kind::Ref, "ref", seg, span)
     }
 }
 
@@ -853,7 +859,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
     // Check for single-line empty grammar: `grammar @name {}`
     if rest.trim() == "}" {
         lines.advance();
-        return Ok(ast::ast_branch(Kind::Grammar, name, start_span, vec![]));
+        return Ok(ast::ast_branch(Kind::Grammar, "grammar", name, start_span, vec![]));
     }
 
     lines.advance(); // consume grammar header line
@@ -870,6 +876,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
             if let Some((type_name, type_span, variants)) = current.take() {
                 type_defs.push(ast::ast_branch(
                     Kind::TypeDef,
+                    "type-def",
                     &*type_name,
                     type_span,
                     variants,
@@ -878,7 +885,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Kind::Grammar, name, span, type_defs));
+            return Ok(ast::ast_branch(Kind::Grammar, "grammar", name, span, type_defs));
         }
 
         if trimmed.is_empty() || trimmed.starts_with('#') {
@@ -901,6 +908,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
             if let Some((type_name, type_span, variants)) = current.take() {
                 type_defs.push(ast::ast_branch(
                     Kind::TypeDef,
+                    "type-def",
                     &*type_name,
                     type_span,
                     variants,
@@ -950,10 +958,10 @@ fn parse_variants(text: &str, span: Span) -> Vec<Tree<AstNode>> {
             if let Some(paren) = seg.find('(') {
                 let name = seg[..paren].trim();
                 let param = seg[paren + 1..].trim_end_matches(')').trim();
-                let type_ref = ast::ast_leaf(Kind::TypeRef, param, span);
-                ast::ast_branch(Kind::Variant, name, span, vec![type_ref])
+                let type_ref = ast::ast_leaf(Kind::TypeRef, "type-ref", param, span);
+                ast::ast_branch(Kind::Variant, "variant", name, span, vec![type_ref])
             } else {
-                ast::ast_leaf(Kind::Variant, seg, span)
+                ast::ast_leaf(Kind::Variant, "variant", seg, span)
             }
         })
         .collect()
