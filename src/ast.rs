@@ -8,15 +8,16 @@ use sha2::{Digest, Sha256};
 use crate::domain::conversation::Kind;
 use crate::tree::{self, Tree};
 use crate::ContentAddressed;
+use fragmentation::encoding::Encode;
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
 
 domain_oid!(/// Content address for AST nodes.
 pub AstOid);
 
-impl fragmentation::encoding::Encode for AstNode {
+impl Encode for AstNode {
     fn encode(&self) -> Vec<u8> {
-        format!("{:?}:{}:{}", self.kind, self.name, self.value).into_bytes()
+        self.label().into_bytes()
     }
 }
 
@@ -24,7 +25,7 @@ impl ContentAddressed for AstNode {
     type Oid = AstOid;
     fn content_oid(&self) -> AstOid {
         let mut hasher = Sha256::new();
-        hasher.update(format!("{:?}:{}:{}", self.kind, self.name, self.value).as_bytes());
+        hasher.update(self.label().as_bytes());
         AstOid::new(hex::encode(hasher.finalize()))
     }
 }
@@ -60,6 +61,12 @@ pub struct AstNode {
 }
 
 impl AstNode {
+    /// Canonical identity string: `Kind:name:value`. Single source of truth
+    /// for content addressing (Encode, ContentAddressed) and tree refs.
+    fn label(&self) -> String {
+        format!("{:?}:{}:{}", self.kind, self.name, self.value)
+    }
+
     pub fn is_decl(&self, name: &str) -> bool {
         self.kind == Kind::Decl && self.name == name
     }
@@ -74,6 +81,12 @@ impl AstNode {
     }
 }
 
+/// Content-addressed ref from an AstNode's label.
+fn node_ref(node: &AstNode) -> Ref {
+    let label = node.label();
+    Ref::new(sha::hash(&label), &label)
+}
+
 /// Build a leaf AST node. Ref is content-addressed from `kind:name:value`.
 pub fn ast_leaf(
     kind: Kind,
@@ -81,18 +94,14 @@ pub fn ast_leaf(
     value: impl Into<String>,
     span: Span,
 ) -> Tree<AstNode> {
-    let name = name.into();
-    let value = value.into();
-    let ref_ = ast_ref(&kind, &name, &value);
-    tree::leaf(
-        ref_,
-        AstNode {
-            kind,
-            name,
-            value,
-            span,
-        },
-    )
+    let node = AstNode {
+        kind,
+        name: name.into(),
+        value: value.into(),
+        span,
+    };
+    let ref_ = node_ref(&node);
+    tree::leaf(ref_, node)
 }
 
 /// Build a branch AST node. Ref is content-addressed from `kind:name:value`.
@@ -103,25 +112,14 @@ pub fn ast_branch(
     span: Span,
     children: Vec<Tree<AstNode>>,
 ) -> Tree<AstNode> {
-    let name = name.into();
-    let value = value.into();
-    let ref_ = ast_ref(&kind, &name, &value);
-    tree::branch(
-        ref_,
-        AstNode {
-            kind,
-            name,
-            value,
-            span,
-        },
-        children,
-    )
-}
-
-/// Content-addressed ref from kind + name + value.
-fn ast_ref(kind: &Kind, name: &str, value: &str) -> Ref {
-    let label = format!("{:?}:{}:{}", kind, name, value);
-    Ref::new(sha::hash(&label), label)
+    let node = AstNode {
+        kind,
+        name: name.into(),
+        value: value.into(),
+        span,
+    };
+    let ref_ = node_ref(&node);
+    tree::branch(ref_, node, children)
 }
 
 #[cfg(test)]

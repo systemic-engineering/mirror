@@ -8,6 +8,17 @@ use crate::tree::Tree;
 use crate::Trace;
 use crate::Vector;
 
+/// Comparison operators shared by `when` predicates and `case` arm patterns.
+/// Two-char operators listed first to avoid false prefix matches.
+const CMP_OPS: &[(&str, &str)] = &[
+    (">=", "gte"),
+    ("<=", "lte"),
+    ("!=", "ne"),
+    ("==", "eq"),
+    (">", "gt"),
+    ("<", "lt"),
+];
+
 /// The parse traceable. Source → AST.
 #[derive(Clone, Debug, Default)]
 pub struct Parse;
@@ -498,6 +509,12 @@ fn parse_block_body(
     })
 }
 
+fn push_path_segments(rest: &str, span: Span, children: &mut Vec<Tree<AstNode>>) {
+    for seg in rest.split('/').filter(|s| !s.is_empty()) {
+        children.push(ast::ast_leaf(Kind::Atom, "path", seg, span));
+    }
+}
+
 /// Parse the source expression of a `use` statement into origin + path segments.
 ///
 /// - `@domain`          → [DomainRef]
@@ -507,48 +524,39 @@ fn parse_block_body(
 /// - `./templates`      → [Self_, Path]  (desugar)
 fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>) {
     // Desugar ./ to $SELF/
-    let source = if let Some(rest) = source.strip_prefix("./") {
+    if let Some(rest) = source.strip_prefix("./") {
         children.push(ast::ast_leaf(Kind::Ref, "self", "$SELF", span));
-        for seg in rest.split('/').filter(|s| !s.is_empty()) {
-            children.push(ast::ast_leaf(Kind::Atom, "path", seg, span));
-        }
+        push_path_segments(rest, span, children);
         return;
-    } else {
-        source
-    };
+    }
 
     // Check for $HOME/ or $SELF/ prefix
     if let Some(rest) = source.strip_prefix("$HOME/") {
         children.push(ast::ast_leaf(Kind::Ref, "home", "$HOME", span));
-        for seg in rest.split('/').filter(|s| !s.is_empty()) {
-            children.push(ast::ast_leaf(Kind::Atom, "path", seg, span));
-        }
+        push_path_segments(rest, span, children);
         return;
     }
     if let Some(rest) = source.strip_prefix("$SELF/") {
         children.push(ast::ast_leaf(Kind::Ref, "self", "$SELF", span));
-        for seg in rest.split('/').filter(|s| !s.is_empty()) {
-            children.push(ast::ast_leaf(Kind::Atom, "path", seg, span));
-        }
+        push_path_segments(rest, span, children);
         return;
     }
 
-    // Check for @domain with optional /path segments
+    // Check for @domain/path — split into DomainRef + Path segments
     if source.starts_with('@') {
         if let Some(slash_idx) = source.find('/') {
-            let domain = &source[..slash_idx];
-            children.push(ast::ast_leaf(Kind::Ref, "domain-ref", domain, span));
-            let rest = &source[slash_idx + 1..];
-            for seg in rest.split('/').filter(|s| !s.is_empty()) {
-                children.push(ast::ast_leaf(Kind::Atom, "path", seg, span));
-            }
-        } else {
-            children.push(ast::ast_leaf(Kind::Ref, "domain-ref", source, span));
+            children.push(ast::ast_leaf(
+                Kind::Ref,
+                "domain-ref",
+                &source[..slash_idx],
+                span,
+            ));
+            push_path_segments(&source[slash_idx + 1..], span, children);
+            return;
         }
-        return;
     }
 
-    // Bare source (no prefix) — treat as DomainRef
+    // Bare source or @domain without path — treat as DomainRef
     children.push(ast::ast_leaf(Kind::Ref, "domain-ref", source, span));
 }
 
@@ -602,15 +610,7 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
 /// Operator detection: two-char operators before single-char to avoid false matches.
 /// Structure: Decl("when/{op}") with Path (left) and Literal (right) as children.
 fn parse_when(rest: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
-    let ops: &[(&str, &str)] = &[
-        (">=", "gte"),
-        ("<=", "lte"),
-        ("!=", "ne"),
-        ("==", "eq"),
-        (">", "gt"),
-        ("<", "lt"),
-    ];
-    for (sym, op_name) in ops {
+    for (sym, op_name) in CMP_OPS {
         if let Some(idx) = rest.find(sym) {
             let path = rest[..idx].trim();
             let literal = rest[idx + sym.len()..].trim();
@@ -702,15 +702,7 @@ fn parse_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
 /// Operator detection: two-char operators before single-char to avoid false matches.
 /// The operator must be a prefix of the pattern text.
 fn parse_cmp(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
-    let ops: &[(&str, &str)] = &[
-        (">=", "gte"),
-        ("<=", "lte"),
-        ("!=", "ne"),
-        ("==", "eq"),
-        (">", "gt"),
-        ("<", "lt"),
-    ];
-    for (sym, op_name) in ops {
+    for (sym, op_name) in CMP_OPS {
         if let Some(rest) = text.strip_prefix(sym) {
             let literal = rest.trim();
             let name = format!("cmp/{}", op_name);

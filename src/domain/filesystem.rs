@@ -3,6 +3,7 @@ use sha2::{Digest, Sha256};
 use super::{Addressable, Setting};
 use crate::tree::{self, Tree};
 use crate::ContentAddressed;
+use fragmentation::encoding::Encode;
 
 domain_oid!(/// Content address for filesystem nodes.
 pub FolderOid);
@@ -11,7 +12,7 @@ pub FolderOid);
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Filesystem;
 
-impl fragmentation::encoding::Encode for Folder {
+impl Encode for Folder {
     fn encode(&self) -> Vec<u8> {
         let mut bytes = Vec::new();
         bytes.extend_from_slice(b"folder:");
@@ -28,12 +29,7 @@ impl ContentAddressed for Folder {
     type Oid = FolderOid;
     fn content_oid(&self) -> FolderOid {
         let mut hasher = Sha256::new();
-        hasher.update(b"folder:");
-        hasher.update(self.name.as_bytes());
-        if let Some(content) = &self.content {
-            hasher.update(b":");
-            hasher.update(content.as_bytes());
-        }
+        hasher.update(self.encode());
         FolderOid::new(hex::encode(hasher.finalize()))
     }
 }
