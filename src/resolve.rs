@@ -1335,12 +1335,7 @@ mod tests {
                         Span::new(40, 48),
                         vec![
                             ast::ast_leaf(Kind::Ref, "domain-ref", "f", Span::new(42, 43)),
-                            ast::ast_leaf(
-                                Kind::Ref,
-                                "template-ref",
-                                "$t",
-                                Span::new(44, 46),
-                            ),
+                            ast::ast_leaf(Kind::Ref, "template-ref", "$t", Span::new(44, 46)),
                         ],
                     )],
                 ),
@@ -1427,12 +1422,7 @@ mod tests {
                         Span::new(65, 78),
                         vec![
                             ast::ast_leaf(Kind::Ref, "domain-ref", "f", Span::new(67, 68)),
-                            ast::ast_leaf(
-                                Kind::Ref,
-                                "template-ref",
-                                "$t",
-                                Span::new(69, 71),
-                            ),
+                            ast::ast_leaf(Kind::Ref, "template-ref", "$t", Span::new(69, 71)),
                         ],
                     )],
                 ),

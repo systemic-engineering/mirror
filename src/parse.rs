@@ -577,12 +577,7 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
             }
         }
     } else {
-        children.push(ast::ast_leaf(
-            Kind::Ref,
-            "template-ref",
-            names_part,
-            span,
-        ));
+        children.push(ast::ast_leaf(Kind::Ref, "template-ref", names_part, span));
     }
 
     // Parse source: path expression possibly followed by `sha: ABC`
@@ -596,12 +591,7 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
     }
 
     if let Some(param) = sha_param {
-        children.push(ast::ast_leaf(
-            Kind::Ref,
-            "domain-param",
-            param,
-            span,
-        ));
+        children.push(ast::ast_leaf(Kind::Ref, "domain-param", param, span));
     }
 
     ast::ast_branch(Kind::Decl, "use", "use", span, children)
@@ -1037,7 +1027,10 @@ mod tests {
         let source = "in @filesystem\n".to_string();
         let tree = Parse.trace(source).unwrap();
         let children = tree.children();
-        let in_node = children.iter().find(|c| c.data().kind == Kind::Decl).unwrap();
+        let in_node = children
+            .iter()
+            .find(|c| c.data().kind == Kind::Decl)
+            .unwrap();
         assert!(in_node.is_shard());
         assert_eq!(in_node.data().value, "@filesystem");
     }
@@ -1133,10 +1126,7 @@ mod tests {
         assert_eq!(tmpl.data().value, "$corpus");
         assert_eq!(tmpl.children().len(), 4); // slug, excerpt, headlines, html
 
-        let out = children
-            .iter()
-            .find(|c| c.data().is_decl("out"))
-            .unwrap();
+        let out = children.iter().find(|c| c.data().is_decl("out")).unwrap();
         assert_eq!(out.data().value, "blog");
     }
 
@@ -1798,12 +1788,24 @@ mod tests {
         let tree = Parse.trace(source.to_string()).unwrap();
         let case_node = &tree.children()[0];
         assert_eq!(case_node.children().len(), 6);
-        assert!(case_node.children()[0].children()[0].data().is_atom("cmp/gt"));
-        assert!(case_node.children()[1].children()[0].data().is_atom("cmp/lt"));
-        assert!(case_node.children()[2].children()[0].data().is_atom("cmp/gte"));
-        assert!(case_node.children()[3].children()[0].data().is_atom("cmp/lte"));
-        assert!(case_node.children()[4].children()[0].data().is_atom("cmp/eq"));
-        assert!(case_node.children()[5].children()[0].data().is_atom("cmp/ne"));
+        assert!(case_node.children()[0].children()[0]
+            .data()
+            .is_atom("cmp/gt"));
+        assert!(case_node.children()[1].children()[0]
+            .data()
+            .is_atom("cmp/lt"));
+        assert!(case_node.children()[2].children()[0]
+            .data()
+            .is_atom("cmp/gte"));
+        assert!(case_node.children()[3].children()[0]
+            .data()
+            .is_atom("cmp/lte"));
+        assert!(case_node.children()[4].children()[0]
+            .data()
+            .is_atom("cmp/eq"));
+        assert!(case_node.children()[5].children()[0]
+            .data()
+            .is_atom("cmp/ne"));
     }
 
     #[test]
@@ -2356,10 +2358,7 @@ grammar @conversation {
         assert_eq!(param.data().value, "git"); // inferred: @git(branch: "main") → "git"
         assert_eq!(param.children()[0].data().kind, Kind::Ref);
         assert_eq!(param.children()[0].data().value, "@git");
-        assert_eq!(
-            param.children()[0].children()[0].data().kind,
-            Kind::Ref
-        );
+        assert_eq!(param.children()[0].children()[0].data().kind, Kind::Ref);
     }
 
     #[test]
