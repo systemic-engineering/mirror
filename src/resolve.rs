@@ -14,7 +14,7 @@ use crate::domain::conversation::Kind;
 use crate::domain::{Addressable, Setting};
 use crate::parse::ParseError;
 use crate::tree::{self, Tree, Treelike};
-use crate::{ComposedError, Story};
+use crate::{ComposedError, Vector};
 
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
@@ -360,17 +360,17 @@ impl Resolve {
     }
 }
 
-impl<C: Setting> Story<Tree<AstNode>, Conversation<C>> for Resolve {
+impl<C: Setting> Vector<Tree<AstNode>, Conversation<C>> for Resolve {
     type Error = ResolveError;
 
-    fn record(&self, source: Tree<AstNode>) -> crate::Cut<Conversation<C>, ResolveError> {
-        use crate::{ContentAddressed, Cut, CutOid};
+    fn trace(&self, source: Tree<AstNode>) -> crate::Trace<Conversation<C>, ResolveError> {
+        use crate::{ContentAddressed, Trace, TraceOid};
         match resolve_ast(self, source) {
             Ok(conv) => {
                 let oid = conv.content_oid();
-                Cut::success(conv, oid.into(), None)
+                Trace::success(conv, oid.into(), None)
             }
-            Err(e) => Cut::failure(e, CutOid::new("error"), None),
+            Err(e) => Trace::failure(e, TraceOid::new("error"), None),
         }
     }
 }
@@ -621,7 +621,7 @@ impl<C: Setting> Conversation<C> {
         use crate::parse::Parse;
         Parse
             .compose::<Conversation<C>, _>(Resolve::new())
-            .record(source.to_string())
+            .trace(source.to_string())
             .into_result()
     }
 }
@@ -630,20 +630,20 @@ impl<C: Setting> Conversation<C> {
 ///
 /// The resolved program transforms domain trees into JSON output.
 /// `trace` executes the program against a domain tree.
-impl<C: Setting> Story<Tree<C::Token>, Value> for Conversation<C>
+impl<C: Setting> Vector<Tree<C::Token>, Value> for Conversation<C>
 where
     C::Token: Addressable + fragmentation::encoding::Encode,
 {
     type Error = ResolveError;
 
-    fn record(&self, source: Tree<C::Token>) -> crate::Cut<Value, ResolveError> {
-        use crate::{ContentAddressed, Cut};
+    fn trace(&self, source: Tree<C::Token>) -> crate::Trace<Value, ResolveError> {
+        use crate::{ContentAddressed, Trace};
         let body = emit_body(&self.content, &source, &self.templates);
         let mut map = serde_json::Map::new();
         map.insert(self.content.data().name().to_string(), body);
         let result = Value::Object(map);
         let oid = result.content_oid();
-        Cut::success(result, oid.into(), None)
+        Trace::success(result, oid.into(), None)
     }
 }
 
@@ -813,7 +813,7 @@ mod tests {
     use crate::domain::filesystem::{Filesystem, Folder};
     use crate::parse::Parse;
     use crate::tree;
-    use crate::Story;
+    use crate::Vector;
     use fragmentation::ref_::Ref;
     use fragmentation::sha;
 
@@ -843,8 +843,8 @@ mod tests {
     }
 
     /// Shorthand: resolve with Filesystem context.
-    fn resolve_fs(ast: Tree<AstNode>) -> crate::Cut<Conversation<Filesystem>, ResolveError> {
-        Resolve::new().record(ast)
+    fn resolve_fs(ast: Tree<AstNode>) -> crate::Trace<Conversation<Filesystem>, ResolveError> {
+        Resolve::new().trace(ast)
     }
 
     fn find_branch(tree: &Tree<OutputNode>) -> Option<&OutputNode> {
@@ -892,7 +892,7 @@ mod tests {
     #[test]
     fn resolve_valid_conv() {
         let source = "in @filesystem\ntemplate $corpus {\n\tslug\n\texcerpt\n}\nout blog {\n\tpieces {\n\t\tdraft: 1draft { $corpus }\n\t}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let resolved = resolve_fs(ast).unwrap();
         assert_eq!(resolved.content.data().name(), "blog");
         assert!(resolved.templates.contains_key("$corpus"));
@@ -901,7 +901,7 @@ mod tests {
     #[test]
     fn resolve_extracts_template_fields() {
         let source = "in @filesystem\ntemplate $t {\n\tslug\n\theadlines: h2\n\thtml: article | @html\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let resolved = resolve_fs(ast).unwrap();
         let tmpl = &resolved.templates["$t"];
         assert_eq!(tmpl.fields.len(), 3);
@@ -919,7 +919,7 @@ mod tests {
     #[test]
     fn resolve_unknown_domain_errors() {
         let source = "in @filesytem\ntemplate $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let err = resolve_fs(ast).into_result().unwrap_err();
         assert!(err.message.contains("filesytem"), "{}", err);
         assert!(!err.hints.is_empty(), "should suggest @filesystem");
@@ -931,7 +931,7 @@ mod tests {
     #[test]
     fn resolve_unknown_template_errors() {
         let source = "in @filesystem\ntemplate $corpus {\n\tslug\n}\nout blog {\n\tpieces {\n\t\tdraft: 1draft { $coprus }\n\t}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let err = resolve_fs(ast).into_result().unwrap_err();
         assert!(err.message.contains("coprus"), "{}", err);
         assert!(!err.hints.is_empty(), "should suggest $corpus");
@@ -942,7 +942,7 @@ mod tests {
     #[test]
     fn resolve_missing_output_errors() {
         let source = "in @filesystem\ntemplate $t {\n\tname\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let err = resolve_fs(ast).into_result().unwrap_err();
         assert!(err.message.contains("output"), "{}", err);
     }
@@ -1010,7 +1010,7 @@ mod tests {
     fn emit_produces_correct_output() {
         let source =
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\n";
-        let resolved = resolve_fs(Parse.record(source.to_string()).unwrap())
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
             .into_result()
             .unwrap();
 
@@ -1024,7 +1024,7 @@ mod tests {
                 )],
             )],
         );
-        let result = resolved.record(tree).unwrap();
+        let result = resolved.trace(tree).unwrap();
         let items = result["root"]["items"].as_array().unwrap();
         assert_eq!(items[0]["slug"], "hello-world");
     }
@@ -1032,18 +1032,18 @@ mod tests {
     #[test]
     fn emit_missing_child_skips() {
         let source = "in @filesystem\ntemplate $t {\n\tname\n}\nout root {\n\tmissing {\n\t\titems: sub { $t }\n\t}\n}\n";
-        let resolved = resolve_fs(Parse.record(source.to_string()).unwrap())
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
             .into_result()
             .unwrap();
         let tree = dir_folder("root", vec![]);
-        let result = resolved.record(tree).unwrap();
+        let result = resolved.trace(tree).unwrap();
         assert!(result["root"].as_object().unwrap().is_empty());
     }
 
     #[test]
     fn emit_headlines_qualifier() {
         let source = "in @filesystem\ntemplate $t {\n\theadlines: h2\n}\nout root {\n\titems: sub { $t }\n}\n";
-        let resolved = resolve_fs(Parse.record(source.to_string()).unwrap())
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
             .into_result()
             .unwrap();
 
@@ -1054,7 +1054,7 @@ mod tests {
                 vec![leaf_folder("post.md", "## First\n## Second\n")],
             )],
         );
-        let result = resolved.record(tree).unwrap();
+        let result = resolved.trace(tree).unwrap();
         let headlines = result["root"]["items"][0]["headlines"].as_array().unwrap();
         assert_eq!(headlines.len(), 2);
         assert_eq!(headlines[0], "First");
@@ -1065,7 +1065,7 @@ mod tests {
     fn emit_unknown_qualifier_produces_null() {
         let source =
             "in @filesystem\ntemplate $t {\n\tfield: unknown\n}\nout root {\n\titems: sub { $t }\n}\n";
-        let resolved = resolve_fs(Parse.record(source.to_string()).unwrap())
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
             .into_result()
             .unwrap();
 
@@ -1076,7 +1076,7 @@ mod tests {
                 vec![leaf_folder("f.md", "---\nfield: val\n---\n")],
             )],
         );
-        let result = resolved.record(tree).unwrap();
+        let result = resolved.trace(tree).unwrap();
         assert!(result["root"]["items"][0]["field"].is_null());
     }
 
@@ -1086,15 +1086,15 @@ mod tests {
     fn with_domain_registers_external() {
         let resolve = Resolve::new().with_domain("html");
         let source = "in @html\nout r {\n\tx {}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let _resolved: Conversation<Filesystem> = resolve.record(ast).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let _resolved: Conversation<Filesystem> = resolve.trace(ast).unwrap();
     }
 
     #[test]
     fn default_same_as_new() {
         let source = "in @filesystem\nout r {\n\tx {}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let _resolved: Conversation<Filesystem> = Resolve::default().record(ast).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let _resolved: Conversation<Filesystem> = Resolve::default().trace(ast).unwrap();
     }
 
     // -- Error: missing domain declaration --
@@ -1103,8 +1103,8 @@ mod tests {
     fn resolve_unknown_domain_suggests_external() {
         let resolve = Resolve::new().with_domain("graphql");
         let source = "in @graphq\nout r {\n\tx {}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.trace(ast).into_result();
         let err = result.unwrap_err();
         assert!(err.message.contains("graphq"), "{}", err);
         assert!(!err.hints.is_empty(), "should suggest @graphql");
@@ -1114,7 +1114,7 @@ mod tests {
     #[test]
     fn resolve_missing_in_declaration_still_resolves() {
         let source = "template $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let _resolved = resolve_fs(ast).unwrap();
     }
 
@@ -1123,11 +1123,11 @@ mod tests {
     #[test]
     fn emit_missing_folder_in_select_skips() {
         let source = "in @filesystem\ntemplate $t {\n\tname\n}\nout root {\n\titems: nonexistent { $t }\n}\n";
-        let resolved = resolve_fs(Parse.record(source.to_string()).unwrap())
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
             .into_result()
             .unwrap();
         let tree = dir_folder("root", vec![]);
-        let result = resolved.record(tree).unwrap();
+        let result = resolved.trace(tree).unwrap();
         assert!(result["root"].as_object().unwrap().is_empty());
     }
 
@@ -1136,7 +1136,7 @@ mod tests {
     #[test]
     fn emit_group_with_child() {
         let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\tsub {\n\t\titems: data { $t }\n\t}\n}\n";
-        let resolved = resolve_fs(Parse.record(source.to_string()).unwrap())
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
             .into_result()
             .unwrap();
         let tree = dir_folder(
@@ -1149,7 +1149,7 @@ mod tests {
                 )],
             )],
         );
-        let result = resolved.record(tree).unwrap();
+        let result = resolved.trace(tree).unwrap();
         let items = result["root"]["sub"]["items"].as_array().unwrap();
         assert_eq!(items[0]["slug"], "hi");
     }
@@ -1160,7 +1160,7 @@ mod tests {
     fn emit_frontmatter_unclosed_returns_empty() {
         let source =
             "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\n";
-        let resolved = resolve_fs(Parse.record(source.to_string()).unwrap())
+        let resolved = resolve_fs(Parse.trace(source.to_string()).unwrap())
             .into_result()
             .unwrap();
         let tree = dir_folder(
@@ -1170,7 +1170,7 @@ mod tests {
                 vec![leaf_folder("f.md", "---\nslug: test\nNo closing")],
             )],
         );
-        let result = resolved.record(tree).unwrap();
+        let result = resolved.trace(tree).unwrap();
         // Unclosed frontmatter returns empty fields
         assert_eq!(result["root"]["items"][0]["slug"], "");
     }
@@ -1180,7 +1180,7 @@ mod tests {
     #[test]
     fn resolve_with_when_clause_succeeds() {
         let source = "in @filesystem\nwhen error.rate > 0.1\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let _resolved = resolve_fs(ast).unwrap();
     }
 
@@ -1331,7 +1331,7 @@ mod tests {
     fn parse_then_resolve_composes() {
         let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
         // Parse → Resolve composes via explicit chaining
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let _resolved = resolve_fs(ast).unwrap();
     }
 
@@ -1382,8 +1382,8 @@ mod tests {
 
         // Grammar declaration registers @test as a known domain
         let source = "grammar @test {\n  type = item | collection\n}\nin @test\ntemplate $t {\n\tname\n}\nout root {\n\titems: data { $t }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let resolved: Conversation<TestDomain> = Resolve::new().record(ast).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let resolved: Conversation<TestDomain> = Resolve::new().trace(ast).unwrap();
 
         let item = tree::leaf(
             test_ref("item-1"),
@@ -1409,7 +1409,7 @@ mod tests {
             vec![data],
         );
 
-        let _result = resolved.record(root).unwrap();
+        let _result = resolved.trace(root).unwrap();
 
         // Exercise trait impls for coverage — monomorphized code must be called
         use crate::ContentAddressed;
@@ -1437,7 +1437,7 @@ mod tests {
         let se_path = std::env::var("SYSTEMIC_ENGINEERING")
             .unwrap_or_else(|_| "/Users/alexwolf/dev/systemic.engineering".into());
         let tree = Folder::read_tree(&format!("{}/blog", se_path));
-        let result = resolved.record(tree).unwrap();
+        let result = resolved.trace(tree).unwrap();
 
         // Output shape matches .conv declaration
         let pieces = &result["blog"]["pieces"];
@@ -1616,7 +1616,7 @@ mod tests {
                 vec![leaf_folder("post.md", "---\nslug: hello\n---\nContent")],
             )],
         );
-        let result = conv.record(tree).unwrap();
+        let result = conv.trace(tree).unwrap();
         // Branch node doesn't add to JSON output — just verify no panic
         assert!(result.is_object());
     }
@@ -1646,8 +1646,8 @@ mod tests {
         let ns = make_namespace_with_template("shared", "$t");
         let resolve = Resolve::new().with_namespace(ns);
         let source = "use $t from @shared\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let conv: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let conv: Conversation<Filesystem> = resolve.trace(ast).into_result().unwrap();
         // The imported template should be available
         assert!(
             conv.templates.contains_key("$t"),
@@ -1659,8 +1659,8 @@ mod tests {
     fn resolve_use_unknown_source() {
         let resolve = Resolve::new();
         let source = "use $t from @missing\nout r {\n\tx {}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.trace(ast).into_result();
         let err = result.unwrap_err();
         assert!(
             err.message.contains("missing"),
@@ -1674,8 +1674,8 @@ mod tests {
         let ns = make_namespace_with_template("shared", "$other");
         let resolve = Resolve::new().with_namespace(ns);
         let source = "use $t from @shared\nout r {\n\tx {}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.trace(ast).into_result();
         let err = result.unwrap_err();
         assert!(
             err.message.contains("$t") && err.message.contains("not found"),
@@ -1713,8 +1713,8 @@ mod tests {
         ns.register("shared", TemplateProvider::Inline(templates));
         let resolve = Resolve::new().with_namespace(ns);
         let source = "use { $a, $b } from @shared\nout r {\n\tx: f { $a }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let conv: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let conv: Conversation<Filesystem> = resolve.trace(ast).into_result().unwrap();
         assert!(conv.templates.contains_key("$a"), "should import $a");
         assert!(conv.templates.contains_key("$b"), "should import $b");
     }
@@ -1725,8 +1725,8 @@ mod tests {
         let resolve = Resolve::new().with_namespace(ns);
         // Both local template $t AND use $t from @shared — should error
         let source = "use $t from @shared\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.trace(ast).into_result();
         let err = result.unwrap_err();
         assert!(
             err.message.contains("conflicts"),
@@ -1741,8 +1741,8 @@ mod tests {
         let ns = make_namespace_with_template("shared", "$t");
         let resolve = Resolve::new().with_namespace(ns);
         let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let _: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let _: Conversation<Filesystem> = resolve.trace(ast).into_result().unwrap();
     }
 
     #[test]
@@ -1750,8 +1750,8 @@ mod tests {
         // with_domain("custom") → in @custom validates
         let resolve = Resolve::new().with_domain("custom");
         let source = "in @custom\nout r {\n\tx {}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let _: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let _: Conversation<Filesystem> = resolve.trace(ast).into_result().unwrap();
     }
 
     #[test]
@@ -1761,8 +1761,8 @@ mod tests {
         ns.register("custom_domain", TemplateProvider::Inline(HashMap::new()));
         let resolve = Resolve::new().with_namespace(ns);
         let source = "in @custom_domain\nout r {\n\tx {}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let _: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let _: Conversation<Filesystem> = resolve.trace(ast).into_result().unwrap();
     }
 
     #[test]
@@ -1771,8 +1771,8 @@ mod tests {
         ns.register("shared", TemplateProvider::Inline(HashMap::new()));
         let resolve = Resolve::new().with_namespace(ns);
         let source = "in @share\nout r {\n\tx {}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.trace(ast).into_result();
         let err = result.unwrap_err();
         assert!(err.message.contains("share"), "{}", err);
         assert!(
@@ -1787,9 +1787,9 @@ mod tests {
         // $HOME path without DomainRef → early return Ok (no resolution yet)
         let resolve = Resolve::new();
         let source = "use $t from $HOME/shared\nout r {\n\tx {}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         // No error — $HOME use silently returns Ok for now
-        let _: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+        let _: Conversation<Filesystem> = resolve.trace(ast).into_result().unwrap();
     }
 
     #[test]
@@ -1801,8 +1801,8 @@ mod tests {
         ns.register("shared", TemplateProvider::Inline(templates));
         let resolve = Resolve::new().with_namespace(ns);
         let source = "use $corpu from @shared\nout r {\n\tx {}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.trace(ast).into_result();
         let err = result.unwrap_err();
         assert!(err.message.contains("$corpu"), "{}", err);
         assert!(err.message.contains("not found"), "{}", err);
@@ -1816,8 +1816,8 @@ mod tests {
         let ns = make_namespace_with_template("shared", "$t");
         let resolve = Resolve::new().with_namespace(ns);
         let source = "use $t from @share\nout r {\n\tx {}\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
-        let result: Result<Conversation<Filesystem>, _> = resolve.record(ast).into_result();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let result: Result<Conversation<Filesystem>, _> = resolve.trace(ast).into_result();
         let err = result.unwrap_err();
         assert!(err.message.contains("share"), "{}", err);
         assert!(!err.hints.is_empty(), "should have did-you-mean hint");
@@ -1831,9 +1831,9 @@ mod tests {
         let resolve = Resolve::new();
         let source =
             "in @filesystem\nuse $t from @filesystem\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         // Should succeed — @filesystem is known but has no templates to import
-        let _: Conversation<Filesystem> = resolve.record(ast).into_result().unwrap();
+        let _: Conversation<Filesystem> = resolve.trace(ast).into_result().unwrap();
     }
 
     #[test]
@@ -1870,7 +1870,7 @@ mod tests {
     #[test]
     fn resolve_with_grammar_passthrough() {
         let source = "in @filesystem\ngrammar @conversation {\n  type = in | out\n}\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let _resolved = resolve_fs(ast).unwrap();
     }
 
@@ -1879,7 +1879,7 @@ mod tests {
     #[test]
     fn resolve_template_with_params() {
         let source = "in @filesystem\ntemplate $t(@json, data: @csv) {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let conv = resolve_fs(ast).unwrap();
         let tmpl = &conv.templates["$t"];
         assert_eq!(tmpl.params.len(), 2);
@@ -1891,7 +1891,7 @@ mod tests {
     #[test]
     fn resolve_template_without_params_compat() {
         let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout r {\n\tx: f { $t }\n}\n";
-        let ast = Parse.record(source.to_string()).unwrap();
+        let ast = Parse.trace(source.to_string()).unwrap();
         let conv = resolve_fs(ast).unwrap();
         let tmpl = &conv.templates["$t"];
         assert!(tmpl.params.is_empty());
