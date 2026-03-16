@@ -94,4 +94,30 @@ mod tests {
         let b: Tree<String> = leaf(test_ref("y"), "same".into());
         assert_eq!(content_oid(&a), content_oid(&b));
     }
+
+    /// Tree is its own enum (Leaf/Branch), not a Fractal alias.
+    /// Pattern matching on Tree::Leaf/Tree::Branch must work.
+    #[test]
+    fn tree_is_own_enum() {
+        let l: Tree<String> = leaf(test_ref("a"), "data".into());
+        assert!(matches!(l, Tree::Leaf { .. }));
+
+        let b: Tree<String> = branch(test_ref("b"), "root".into(), vec![l]);
+        assert!(matches!(b, Tree::Branch { .. }));
+    }
+
+    /// Tree works with Store — it's a first-class Fragmentable.
+    #[test]
+    fn tree_works_with_store() {
+        use fragmentation::store::Store;
+
+        let t: Tree<String> = branch(
+            test_ref("root"),
+            "parent".into(),
+            vec![leaf(test_ref("a"), "child".into())],
+        );
+        let mut store = Store::<Tree<String>>::new();
+        let oid = store.write_tree(&t);
+        assert_eq!(store.read_tree(&oid), Some(t));
+    }
 }
