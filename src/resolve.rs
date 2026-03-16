@@ -4,7 +4,7 @@
 //! Validates domain references, template references, output structure.
 //! Errors carry spans and did-you-mean hints.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::marker::PhantomData;
 
 use serde_json::Value;
@@ -21,6 +21,123 @@ use fragmentation::sha;
 
 domain_oid!(/// Content address for resolved conversations.
 pub ConversationOid);
+
+/// Compiled grammar. Maps type names to valid variants.
+///
+/// ```text
+/// grammar @conversation { type = in | out | ...  type op = gt | lt | ... }
+/// ```
+/// yields:
+///   `""` → `{"in", "out", "template", ...}`    (anonymous/default type)
+///   `"op"` → `{"gt", "lt", "gte", "lte", ...}` (named type)
+#[derive(Clone, Debug)]
+pub struct TypeRegistry {
+    pub domain: String,
+    types: HashMap<String, HashSet<String>>,
+    #[allow(dead_code)] // read in tests; used by Phase 4 validation
+    params: HashMap<(String, String), String>,
+}
+
+impl TypeRegistry {
+    /// Compile a Grammar AST node into a validated TypeRegistry.
+    ///
+    /// Walks the Grammar's TypeDef children, extracts type names and variant
+    /// names, records parameterized variant references, then validates that
+    /// every TypeRef points to a declared type name.
+    pub fn compile(grammar_node: &Tree<AstNode>) -> Result<TypeRegistry, ResolveError> {
+        let raw = &grammar_node.data().value;
+        let domain = raw.strip_prefix('@').unwrap_or(raw).to_string();
+
+        let mut types: HashMap<String, HashSet<String>> = HashMap::new();
+        let mut params: HashMap<(String, String), String> = HashMap::new();
+
+        for typedef in grammar_node.children() {
+            if typedef.data().kind != Kind::TypeDef {
+                continue;
+            }
+            let type_name = typedef.data().value.clone();
+            let mut variants = HashSet::new();
+
+            for variant in typedef.children() {
+                if variant.data().kind != Kind::Variant {
+                    continue;
+                }
+                let variant_name = variant.data().value.clone();
+
+                // Check for TypeRef children (parameterized variants)
+                for child in variant.children() {
+                    if child.data().kind == Kind::TypeRef {
+                        params.insert(
+                            (type_name.clone(), variant_name.clone()),
+                            child.data().value.clone(),
+                        );
+                    }
+                }
+
+                variants.insert(variant_name);
+            }
+
+            types.insert(type_name, variants);
+        }
+
+        // Validate: every TypeRef must reference a declared type name
+        for ((parent_type, variant_name), ref_type) in &params {
+            if !types.contains_key(ref_type) {
+                let declared: Vec<&str> = types.keys().map(|s| s.as_str()).collect();
+                let mut hints = Vec::new();
+                if let Some(suggestion) = did_you_mean(ref_type, &declared) {
+                    hints.push(format!("did you mean \"{}\"?", suggestion));
+                }
+                return Err(ResolveError {
+                    message: format!(
+                        "unknown type reference \"{}\" in grammar @{} (variant \"{}\" in type \"{}\")",
+                        ref_type, domain,
+                        variant_name,
+                        if parent_type.is_empty() { "<default>" } else { parent_type },
+                    ),
+                    span: Some(grammar_node.data().span),
+                    hints,
+                });
+            }
+        }
+
+        Ok(TypeRegistry {
+            domain,
+            types,
+            params,
+        })
+    }
+
+    /// Check if a named type exists in this registry.
+    pub fn has_type(&self, name: &str) -> bool {
+        self.types.contains_key(name)
+    }
+
+    /// Check if a variant exists under a given type name.
+    pub fn has_variant(&self, type_name: &str, variant: &str) -> bool {
+        self.types
+            .get(type_name)
+            .is_some_and(|vs| vs.contains(variant))
+    }
+
+    /// Validate that a type reference name exists. Returns error with did-you-mean if not.
+    pub fn validate_type_ref(&self, ref_name: &str) -> Result<(), ResolveError> {
+        if self.types.contains_key(ref_name) {
+            Ok(())
+        } else {
+            let declared: Vec<&str> = self.types.keys().map(|s| s.as_str()).collect();
+            let mut hints = Vec::new();
+            if let Some(suggestion) = did_you_mean(ref_name, &declared) {
+                hints.push(format!("did you mean \"{}\"?", suggestion));
+            }
+            Err(ResolveError {
+                message: format!("unknown type \"{}\" in grammar @{}", ref_name, self.domain),
+                span: None,
+                hints,
+            })
+        }
+    }
+}
 
 /// What a namespace module provides when resolved.
 #[derive(Clone, Debug)]
@@ -381,13 +498,14 @@ fn resolve_ast<C: Setting>(
 ) -> Result<Conversation<C>, ResolveError> {
     let children = source.children();
 
-    // Pre-scan: grammar blocks register their domain names
-    let mut grammars: Vec<String> = Vec::new();
+    // Pass 1: compile grammar blocks into type registries
+    let mut _registries: Vec<TypeRegistry> = Vec::new();
+    let mut grammar_domains: Vec<String> = Vec::new();
     for child in children {
         if child.data().kind == Kind::Grammar {
-            let raw = &child.data().value;
-            let name = raw.strip_prefix('@').unwrap_or(raw);
-            grammars.push(name.to_string());
+            let registry = TypeRegistry::compile(child)?;
+            grammar_domains.push(registry.domain.clone());
+            _registries.push(registry);
         }
     }
 
@@ -396,7 +514,7 @@ fn resolve_ast<C: Setting>(
     if let Some(node) = in_node {
         let raw = &node.data().value;
         let name = raw.strip_prefix('@').unwrap_or(raw);
-        if !resolve.is_known_domain(name) && !grammars.iter().any(|g| g == name) {
+        if !resolve.is_known_domain(name) && !grammar_domains.iter().any(|g| g == name) {
             let candidates = resolve.all_domain_names();
             let mut hints = Vec::new();
             if let Some(suggestion) = did_you_mean(name, &candidates) {
@@ -1859,6 +1977,194 @@ mod tests {
         let tmpl = &conv.templates["$t"];
         assert!(tmpl.params.is_empty());
         assert_eq!(tmpl.fields.len(), 1);
+    }
+
+    // -- TypeRegistry --
+
+    /// Parse a grammar source and compile its TypeRegistry.
+    fn compile_grammar(source: &str) -> TypeRegistry {
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().kind == Kind::Grammar)
+            .expect("source must contain a grammar block");
+        TypeRegistry::compile(grammar).unwrap()
+    }
+
+    #[test]
+    fn type_registry_compile_anonymous_type() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b | c\n}\n");
+        assert_eq!(reg.domain, "test");
+        assert!(reg.has_type(""));
+        assert!(reg.has_variant("", "a"));
+        assert!(reg.has_variant("", "b"));
+        assert!(reg.has_variant("", "c"));
+        assert!(!reg.has_variant("", "d"));
+    }
+
+    #[test]
+    fn type_registry_compile_named_type() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
+        assert!(reg.has_type("op"));
+        assert!(reg.has_variant("op", "gt"));
+        assert!(reg.has_variant("op", "lt"));
+        assert!(!reg.has_variant("op", "eq"));
+    }
+
+    #[test]
+    fn type_registry_compile_parameterized_variant() {
+        let reg =
+            compile_grammar("grammar @test {\n  type = plain | when(op)\n  type op = gt | lt\n}\n");
+        assert!(reg.has_variant("", "when"));
+        assert!(reg.has_variant("", "plain"));
+        // The param reference should be recorded
+        assert!(reg
+            .params
+            .contains_key(&("".to_string(), "when".to_string())));
+        assert_eq!(reg.params[&("".to_string(), "when".to_string())], "op");
+    }
+
+    #[test]
+    fn type_registry_compile_invalid_type_ref() {
+        let source = "grammar @test {\n  type = when(ops)\n  type op = gt | lt\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().kind == Kind::Grammar)
+            .expect("grammar");
+        let err = TypeRegistry::compile(grammar).unwrap_err();
+        assert!(
+            err.message.contains("ops"),
+            "should mention bad ref: {}",
+            err
+        );
+        assert!(
+            err.message.contains("@test"),
+            "should mention domain: {}",
+            err
+        );
+        assert!(!err.hints.is_empty(), "should suggest 'op'");
+        assert!(err.hints[0].contains("op"), "{}", err.hints[0]);
+    }
+
+    #[test]
+    fn type_registry_compile_skips_non_typedef_children() {
+        use crate::ast::{self, Span};
+        // Grammar node with a non-TypeDef child (Field) — should be skipped
+        let span = Span::new(0, 50);
+        let stray_child = ast::ast_leaf(Kind::Field, "noise", span);
+        let variant = ast::ast_leaf(Kind::Variant, "a", span);
+        let typedef = ast::ast_branch(Kind::TypeDef, "", span, vec![variant]);
+        let grammar = ast::ast_branch(Kind::Grammar, "@test", span, vec![stray_child, typedef]);
+        let reg = TypeRegistry::compile(&grammar).unwrap();
+        assert!(reg.has_variant("", "a"));
+    }
+
+    #[test]
+    fn type_registry_compile_skips_non_variant_children() {
+        use crate::ast::{self, Span};
+        // TypeDef with a non-Variant child (Field) — should be skipped
+        let span = Span::new(0, 50);
+        let stray = ast::ast_leaf(Kind::Field, "noise", span);
+        let variant = ast::ast_leaf(Kind::Variant, "a", span);
+        let typedef = ast::ast_branch(Kind::TypeDef, "", span, vec![stray, variant]);
+        let grammar = ast::ast_branch(Kind::Grammar, "@test", span, vec![typedef]);
+        let reg = TypeRegistry::compile(&grammar).unwrap();
+        assert!(reg.has_variant("", "a"));
+        // Only 1 variant, not 2
+        assert_eq!(reg.types[""].len(), 1);
+    }
+
+    #[test]
+    fn type_registry_compile_empty_grammar() {
+        let reg = compile_grammar("grammar @empty {}\n");
+        assert_eq!(reg.domain, "empty");
+        assert!(!reg.has_type(""));
+    }
+
+    #[test]
+    fn type_registry_validate_type_ref_ok() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
+        assert!(reg.validate_type_ref("op").is_ok());
+        assert!(reg.validate_type_ref("").is_ok());
+    }
+
+    #[test]
+    fn type_registry_validate_type_ref_error() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
+        let err = reg.validate_type_ref("ops").unwrap_err();
+        assert!(err.message.contains("ops"), "{}", err);
+        assert!(!err.hints.is_empty());
+        assert!(err.hints[0].contains("op"), "{}", err.hints[0]);
+    }
+
+    #[test]
+    fn type_registry_has_type_false_for_missing() {
+        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
+        assert!(!reg.has_type("missing"));
+    }
+
+    #[test]
+    fn type_registry_has_variant_false_for_missing_type() {
+        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
+        assert!(!reg.has_variant("missing", "a"));
+    }
+
+    #[test]
+    fn type_registry_compile_main_conv() {
+        // Compile the actual main.conv grammar — the self-describing vocabulary
+        let main_conv = include_str!("../main.conv");
+        let reg = compile_grammar(main_conv);
+        assert_eq!(reg.domain, "conversation");
+        // Verify the anonymous type has the expected vocabulary
+        assert!(reg.has_variant("", "in"));
+        assert!(reg.has_variant("", "out"));
+        assert!(reg.has_variant("", "template"));
+        assert!(reg.has_variant("", "when"));
+        assert!(reg.has_variant("", "cmp"));
+        // Named type 'op' should exist
+        assert!(reg.has_type("op"));
+        assert!(reg.has_variant("op", "gt"));
+        assert!(reg.has_variant("op", "ne"));
+        // Parameterized variants reference 'op'
+        assert_eq!(reg.params[&("".to_string(), "when".to_string())], "op");
+        assert_eq!(reg.params[&("".to_string(), "cmp".to_string())], "op");
+    }
+
+    #[test]
+    fn resolve_catches_bad_grammar_type_ref() {
+        // A .conv source with a bad TypeRef should fail during resolution
+        let source = "grammar @test {\n  type = when(ops)\n  type op = gt | lt\n}\nin @test\nout r {\n\tx {}\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let result = resolve_fs(ast).into_result();
+        let err = result.unwrap_err();
+        assert!(
+            err.message.contains("ops"),
+            "should mention bad ref 'ops': {}",
+            err
+        );
+        assert!(!err.hints.is_empty(), "should suggest 'op'");
+    }
+
+    #[test]
+    fn type_registry_multi_grammar() {
+        let source = "grammar @first {\n  type = a | b\n}\ngrammar @second {\n  type = x | y\n}\nin @first\nout r {\n\tx {}\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammars: Vec<_> = ast
+            .children()
+            .iter()
+            .filter(|c| c.data().kind == Kind::Grammar)
+            .collect();
+        assert_eq!(grammars.len(), 2);
+
+        let reg1 = TypeRegistry::compile(grammars[0]).unwrap();
+        let reg2 = TypeRegistry::compile(grammars[1]).unwrap();
+        assert_eq!(reg1.domain, "first");
+        assert_eq!(reg2.domain, "second");
+        assert!(reg1.has_variant("", "a"));
+        assert!(reg2.has_variant("", "x"));
     }
 
     /// Test-only domain for proving Conversation<C> polymorphism.
