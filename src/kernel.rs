@@ -326,9 +326,7 @@ where
                 let second_oid = second.oid().clone();
                 match second.into_result() {
                     Ok(value) => Cut::success(value, second_oid, Some(first_oid)),
-                    Err(e) => {
-                        Cut::failure(ComposedError::Second(e), second_oid, Some(first_oid))
-                    }
+                    Err(e) => Cut::failure(ComposedError::Second(e), second_oid, Some(first_oid)),
                 }
             }
         }
@@ -598,8 +596,16 @@ mod tests {
         assert_eq!(format!("{}", second), "resolve failed");
     }
 
-    // -- domain_oid! tested via AstOid/ConversationOid/FolderOid --
-    // -- Full macro test returns post-refactor when $crate::* = kernel::* --
+    // -- domain_oid! coverage: exercise From<Oid>, AsRef, Display --
+
+    #[test]
+    fn domain_oid_full_coverage() {
+        use crate::ast::AstOid;
+        let base = Oid::new("abc");
+        let ast = AstOid::from(base); // From<Oid>
+        assert_eq!(ast.as_ref(), "abc"); // AsRef<str>
+        assert_eq!(ast.to_string(), "abc"); // Display
+    }
 
     // -- Sentinel: SHA-256 hex pinning --
 
@@ -612,5 +618,4 @@ mod tests {
             "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
         );
     }
-
 }

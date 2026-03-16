@@ -11,7 +11,7 @@ use crate::ContentAddressed;
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
 
-story::domain_oid!(/// Content address for AST nodes.
+domain_oid!(/// Content address for AST nodes.
 pub AstOid);
 
 impl fragmentation::encoding::Encode for AstNode {

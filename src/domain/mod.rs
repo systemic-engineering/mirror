@@ -1,7 +1,7 @@
 pub mod conversation;
 pub mod filesystem;
 
-pub use story::setting::{Addressable, Setting};
+pub use crate::kernel::{Addressable, Setting};
 
 #[cfg(test)]
 mod tests {
