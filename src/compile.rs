@@ -70,11 +70,14 @@ fn emit_body_expr(tree: &Tree<OutputNode>, line: i32) -> Term {
                 .map(|(i, c)| emit_body_expr(c, line + i as i32 + 1))
                 .collect();
             // {tuple, Line, [{atom, Line, group}, {bin, Line, ...}, ConsChildren]}
-            eaf_tuple_expr(line, vec![
-                eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("group")]),
-                eaf_bin(line, name),
-                eaf_cons_list(&children, line),
-            ])
+            eaf_tuple_expr(
+                line,
+                vec![
+                    eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("group")]),
+                    eaf_bin(line, name),
+                    eaf_cons_list(&children, line),
+                ],
+            )
         }
         OutputNode::Select {
             ref output_name,
@@ -82,12 +85,15 @@ fn emit_body_expr(tree: &Tree<OutputNode>, line: i32) -> Term {
             ref template_name,
         } => {
             // {tuple, Line, [{atom, Line, select}, {bin, ...}, {bin, ...}, {bin, ...}]}
-            eaf_tuple_expr(line, vec![
-                eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("select")]),
-                eaf_bin(line, output_name),
-                eaf_bin(line, folder_name),
-                eaf_bin(line, template_name),
-            ])
+            eaf_tuple_expr(
+                line,
+                vec![
+                    eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("select")]),
+                    eaf_bin(line, output_name),
+                    eaf_bin(line, folder_name),
+                    eaf_bin(line, template_name),
+                ],
+            )
         }
         OutputNode::Branch {
             ref query,
@@ -99,11 +105,14 @@ fn emit_body_expr(tree: &Tree<OutputNode>, line: i32) -> Term {
                 .enumerate()
                 .map(|(i, arm)| emit_branch_arm(arm, line + i as i32 + 1))
                 .collect();
-            eaf_tuple_expr(line, vec![
-                eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("branch")]),
-                eaf_bin(line, query),
-                eaf_cons_list(&arm_terms, line),
-            ])
+            eaf_tuple_expr(
+                line,
+                vec![
+                    eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("branch")]),
+                    eaf_bin(line, query),
+                    eaf_cons_list(&arm_terms, line),
+                ],
+            )
         }
     }
 }
@@ -121,11 +130,14 @@ fn emit_branch_arm(arm: &crate::resolve::BranchArm, line: i32) -> Term {
         BranchAction::Exit => "exit",
         BranchAction::Expr(e) => e.as_str(),
     };
-    eaf_tuple_expr(line, vec![
-        eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(pat_atom)]),
-        eaf_bin(line, pat_value),
-        eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(action_atom)]),
-    ])
+    eaf_tuple_expr(
+        line,
+        vec![
+            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(pat_atom)]),
+            eaf_bin(line, pat_value),
+            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(action_atom)]),
+        ],
+    )
 }
 
 /// EAF binary literal: `<<"text">>`.

@@ -545,7 +545,12 @@ fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>)
     // Check for @domain/path — split into DomainRef + Path segments
     if source.starts_with('@') {
         if let Some(slash_idx) = source.find('/') {
-            children.push(ast::ast_leaf(Kind::Ref, "domain-ref", &source[..slash_idx], span));
+            children.push(ast::ast_leaf(
+                Kind::Ref,
+                "domain-ref",
+                &source[..slash_idx],
+                span,
+            ));
             push_path_segments(&source[slash_idx + 1..], span, children);
             return;
         }

@@ -83,7 +83,8 @@ impl TypeRegistry {
         for ((parent_type, variant_name), ref_type) in &params {
             if !types.contains_key(ref_type) {
                 let declared: Vec<&str> = types.keys().map(|s| s.as_str()).collect();
-                let hints = hint_did_you_mean(ref_type, &declared, |s| format!("did you mean \"{}\"?", s));
+                let hints =
+                    hint_did_you_mean(ref_type, &declared, |s| format!("did you mean \"{}\"?", s));
                 return Err(ResolveError {
                     message: format!(
                         "unknown type reference \"{}\" in grammar @{} (variant \"{}\" in type \"{}\")",
@@ -122,7 +123,8 @@ impl TypeRegistry {
             Ok(())
         } else {
             let declared: Vec<&str> = self.types.keys().map(|s| s.as_str()).collect();
-            let hints = hint_did_you_mean(ref_name, &declared, |s| format!("did you mean \"{}\"?", s));
+            let hints =
+                hint_did_you_mean(ref_name, &declared, |s| format!("did you mean \"{}\"?", s));
             Err(ResolveError {
                 message: format!("unknown type \"{}\" in grammar @{}", ref_name, self.domain),
                 span: None,
@@ -417,7 +419,9 @@ impl Resolve {
                     } else {
                         let candidates: Vec<&str> =
                             provider_templates.keys().map(|s| s.as_str()).collect();
-                        let hints = hint_did_you_mean(name, &candidates, |s| format!("did you mean {}?", s));
+                        let hints = hint_did_you_mean(name, &candidates, |s| {
+                            format!("did you mean {}?", s)
+                        });
                         return Err(ResolveError {
                             message: format!("template {} not found in @{}", name, module_name),
                             span: Some(use_node.data().span),
@@ -429,7 +433,9 @@ impl Resolve {
             None => {
                 if !self.is_known_domain(&module_name) {
                     let candidates = self.all_domain_names();
-                    let hints = hint_did_you_mean(&module_name, &candidates, |s| format!("did you mean @{}?", s));
+                    let hints = hint_did_you_mean(&module_name, &candidates, |s| {
+                        format!("did you mean @{}?", s)
+                    });
                     return Err(ResolveError {
                         message: format!("unknown source @{}", module_name),
                         span: Some(use_node.data().span),
@@ -598,7 +604,9 @@ fn resolve_output_nodes(
             // Validate template reference
             if !templates.contains_key(&template_name) {
                 let candidates: Vec<&str> = templates.keys().map(|s| s.as_str()).collect();
-                let hints = hint_did_you_mean(&template_name, &candidates, |s| format!("did you mean {}?", s));
+                let hints = hint_did_you_mean(&template_name, &candidates, |s| {
+                    format!("did you mean {}?", s)
+                });
                 return Err(ResolveError {
                     message: format!("unknown template {}", template_name),
                     span: Some(d.span),
@@ -845,8 +853,15 @@ fn did_you_mean<'a>(name: &str, candidates: &[&'a str]) -> Option<&'a str> {
         .map(|(c, _)| c)
 }
 
-fn hint_did_you_mean(name: &str, candidates: &[&str], fmt: impl FnOnce(&str) -> String) -> Vec<String> {
-    did_you_mean(name, candidates).map(fmt).into_iter().collect()
+fn hint_did_you_mean(
+    name: &str,
+    candidates: &[&str],
+    fmt: impl FnOnce(&str) -> String,
+) -> Vec<String> {
+    did_you_mean(name, candidates)
+        .map(fmt)
+        .into_iter()
+        .collect()
 }
 
 fn edit_distance(a: &str, b: &str) -> usize {
