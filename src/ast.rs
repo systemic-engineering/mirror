@@ -59,6 +59,21 @@ pub struct AstNode {
     pub span: Span,
 }
 
+impl AstNode {
+    pub fn is_decl(&self, name: &str) -> bool {
+        self.kind == Kind::Decl && self.name == name
+    }
+    pub fn is_atom(&self, name: &str) -> bool {
+        self.kind == Kind::Atom && self.name == name
+    }
+    pub fn is_ref(&self, name: &str) -> bool {
+        self.kind == Kind::Ref && self.name == name
+    }
+    pub fn is_form(&self, name: &str) -> bool {
+        self.kind == Kind::Form && self.name == name
+    }
+}
+
 /// Build a leaf AST node. Ref is content-addressed from `kind:name:value`.
 pub fn ast_leaf(
     kind: Kind,
@@ -117,13 +132,13 @@ mod tests {
     #[test]
     fn ast_node_content_addressed() {
         let a = AstNode {
-            kind: Kind::Field,
+            kind: Kind::Atom,
             name: "field".into(),
             value: "slug".into(),
             span: Span::new(0, 4),
         };
         let b = AstNode {
-            kind: Kind::Field,
+            kind: Kind::Atom,
             name: "field".into(),
             value: "slug".into(),
             span: Span::new(100, 104),
@@ -135,13 +150,13 @@ mod tests {
     #[test]
     fn ast_node_different_kind_different_oid() {
         let a = AstNode {
-            kind: Kind::Field,
+            kind: Kind::Atom,
             name: "field".into(),
             value: "html".into(),
             span: Span::new(0, 4),
         };
         let b = AstNode {
-            kind: Kind::Qualifier,
+            kind: Kind::Atom,
             name: "qualifier".into(),
             value: "html".into(),
             span: Span::new(0, 4),
@@ -153,13 +168,13 @@ mod tests {
     fn content_address_includes_name() {
         // Same kind + value but different name → different OID
         let a = AstNode {
-            kind: Kind::Field,
+            kind: Kind::Atom,
             name: "field".into(),
             value: "x".into(),
             span: Span::new(0, 1),
         };
         let b = AstNode {
-            kind: Kind::Field,
+            kind: Kind::Atom,
             name: "custom".into(),
             value: "x".into(),
             span: Span::new(0, 1),
@@ -196,9 +211,9 @@ mod tests {
 
     #[test]
     fn ast_leaf_is_terminal() {
-        let node = ast_leaf(Kind::Field, "field", "slug", Span::new(0, 4));
+        let node = ast_leaf(Kind::Atom, "field", "slug", Span::new(0, 4));
         assert!(node.is_shard());
-        assert_eq!(node.data().kind, Kind::Field);
+        assert_eq!(node.data().kind, Kind::Atom);
         assert_eq!(node.data().value, "slug");
         assert_eq!(node.data().span, Span::new(0, 4));
     }
@@ -206,11 +221,11 @@ mod tests {
     #[test]
     fn ast_branch_has_children() {
         let children = vec![
-            ast_leaf(Kind::Field, "field", "slug", Span::new(10, 14)),
-            ast_leaf(Kind::Field, "field", "excerpt", Span::new(16, 23)),
+            ast_leaf(Kind::Atom, "field", "slug", Span::new(10, 14)),
+            ast_leaf(Kind::Atom, "field", "excerpt", Span::new(16, 23)),
         ];
         let node = ast_branch(
-            Kind::Template,
+            Kind::Decl,
             "template",
             "$corpus",
             Span::new(0, 25),
@@ -218,13 +233,13 @@ mod tests {
         );
         assert!(node.is_fractal());
         assert_eq!(node.children().len(), 2);
-        assert_eq!(node.data().kind, Kind::Template);
+        assert_eq!(node.data().kind, Kind::Decl);
         assert_eq!(node.data().value, "$corpus");
     }
 
     #[test]
     fn ast_node_has_name() {
-        let node = ast_leaf(Kind::Field, "field", "slug", Span::new(0, 4));
+        let node = ast_leaf(Kind::Atom, "field", "slug", Span::new(0, 4));
         assert_eq!(node.data().name, "field");
     }
 
@@ -253,23 +268,23 @@ mod tests {
 
     #[test]
     fn ast_ref_is_content_addressed() {
-        let a = ast_leaf(Kind::Field, "field", "slug", Span::new(0, 4));
-        let b = ast_leaf(Kind::Field, "field", "slug", Span::new(100, 104));
+        let a = ast_leaf(Kind::Atom, "field", "slug", Span::new(0, 4));
+        let b = ast_leaf(Kind::Atom, "field", "slug", Span::new(100, 104));
         // Same kind + value = same ref, regardless of span
         assert_eq!(a.self_ref(), b.self_ref());
     }
 
     #[test]
     fn different_kind_different_ref() {
-        let a = ast_leaf(Kind::Field, "field", "html", Span::new(0, 4));
-        let b = ast_leaf(Kind::Qualifier, "qualifier", "html", Span::new(0, 4));
+        let a = ast_leaf(Kind::Atom, "field", "html", Span::new(0, 4));
+        let b = ast_leaf(Kind::Atom, "qualifier", "html", Span::new(0, 4));
         assert_ne!(a.self_ref(), b.self_ref());
     }
 
     #[test]
     fn different_value_different_ref() {
-        let a = ast_leaf(Kind::Field, "field", "slug", Span::new(0, 4));
-        let b = ast_leaf(Kind::Field, "field", "excerpt", Span::new(0, 7));
+        let a = ast_leaf(Kind::Atom, "field", "slug", Span::new(0, 4));
+        let b = ast_leaf(Kind::Atom, "field", "excerpt", Span::new(0, 7));
         assert_ne!(a.self_ref(), b.self_ref());
     }
 }
