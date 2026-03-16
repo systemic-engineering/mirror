@@ -60,24 +60,47 @@ pub struct AstNode {
 }
 
 /// Build a leaf AST node. Ref is content-addressed from `kind:value`.
-pub fn ast_leaf(kind: Kind, value: impl Into<String>, span: Span) -> Tree<AstNode> {
+pub fn ast_leaf(
+    kind: Kind,
+    name: impl Into<String>,
+    value: impl Into<String>,
+    span: Span,
+) -> Tree<AstNode> {
+    let name = name.into();
     let value = value.into();
-    let name = kind.local_name().to_string();
     let ref_ = ast_ref(&kind, &value);
-    tree::leaf(ref_, AstNode { kind, name, value, span })
+    tree::leaf(
+        ref_,
+        AstNode {
+            kind,
+            name,
+            value,
+            span,
+        },
+    )
 }
 
 /// Build a branch AST node. Ref is content-addressed from `kind:value`.
 pub fn ast_branch(
     kind: Kind,
+    name: impl Into<String>,
     value: impl Into<String>,
     span: Span,
     children: Vec<Tree<AstNode>>,
 ) -> Tree<AstNode> {
+    let name = name.into();
     let value = value.into();
-    let name = kind.local_name().to_string();
     let ref_ = ast_ref(&kind, &value);
-    tree::branch(ref_, AstNode { kind, name, value, span }, children)
+    tree::branch(
+        ref_,
+        AstNode {
+            kind,
+            name,
+            value,
+            span,
+        },
+        children,
+    )
 }
 
 /// Content-addressed ref from kind + value.
