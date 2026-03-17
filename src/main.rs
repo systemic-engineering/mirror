@@ -17,7 +17,8 @@ use std::io::{self, BufRead, Write};
 use std::process;
 
 use conversation::domain::filesystem::{Filesystem, Folder};
-use conversation::resolve::Conversation;
+use conversation::packages::PackageRegistry;
+use conversation::resolve::{Conversation, Resolve};
 use conversation::Vector;
 
 fn main() {
@@ -30,10 +31,12 @@ fn main() {
         process::exit(1);
     }
 
+    let resolve = load_packages();
+
     match args[1].as_str() {
         "shell" => {
             let path = args.get(2).map(|s| s.as_str()).unwrap_or(".");
-            shell(path);
+            shell(path, &resolve);
         }
         "-e" => {
             if args.len() < 3 {
@@ -42,7 +45,7 @@ fn main() {
             }
             let source = format!("out {}\n", &args[2]);
             let path = args.get(3).map(|s| s.as_str()).unwrap_or(".");
-            run(&source, path);
+            run(&source, path, &resolve);
         }
         _ => {
             let conv_path = &args[1];
@@ -54,13 +57,35 @@ fn main() {
                 }
             };
             let path = args.get(2).map(|s| s.as_str()).unwrap_or(".");
-            run(&source, path);
+            run(&source, path, &resolve);
         }
     }
 }
 
-fn run(source: &str, input_path: &str) {
-    let resolved = match Conversation::<Filesystem>::from_source(source) {
+/// Discover packages from CONVERSATION_PACKAGES or ~/.conversation.
+fn load_packages() -> Resolve {
+    let packages_dir = PackageRegistry::packages_dir();
+    if !packages_dir.exists() {
+        return Resolve::new();
+    }
+    let registry = match PackageRegistry::discover(&packages_dir) {
+        Ok(r) => r,
+        Err(e) => {
+            eprintln!("conversation: packages: {}", e);
+            return Resolve::new();
+        }
+    };
+    match registry.to_namespace() {
+        Ok(namespace) => Resolve::new().with_namespace(namespace),
+        Err(e) => {
+            eprintln!("conversation: packages: {}", e);
+            Resolve::new()
+        }
+    }
+}
+
+fn run(source: &str, input_path: &str, resolve: &Resolve) {
+    let resolved = match Conversation::<Filesystem>::from_source_with(source, resolve.clone()) {
         Ok(c) => c,
         Err(e) => {
             eprintln!("conversation: {}", e);
@@ -76,7 +101,7 @@ fn run(source: &str, input_path: &str) {
     let _ = out.write_all(b"\n");
 }
 
-fn shell(path: &str) {
+fn shell(path: &str, resolve: &Resolve) {
     let stdin = io::stdin();
     let reader = stdin.lock();
     let mut stdout = io::stdout();
@@ -104,7 +129,8 @@ fn shell(path: &str) {
         // Build a .conv source from the expression
         let source = format!("out {}\n", line);
 
-        let resolved = match Conversation::<Filesystem>::from_source(&source) {
+        let resolved = match Conversation::<Filesystem>::from_source_with(&source, resolve.clone())
+        {
             Ok(conv) => conv,
             Err(e) => {
                 eprintln!("  error: {}", e);

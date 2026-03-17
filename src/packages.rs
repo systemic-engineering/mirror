@@ -439,18 +439,14 @@ mod tests {
     }
 
     #[test]
-    fn packages_dir_default() {
-        // Clear env to test default
-        std::env::remove_var("CONVERSATION_PACKAGES");
-        let dir = PackageRegistry::packages_dir();
-        assert!(dir.ends_with(".conversation"));
-    }
-
-    #[test]
-    fn packages_dir_env_override() {
+    fn packages_dir_default_and_env_override() {
+        // Combined to avoid race condition — both tests mutate CONVERSATION_PACKAGES.
         std::env::set_var("CONVERSATION_PACKAGES", "/custom/path");
         let dir = PackageRegistry::packages_dir();
         assert_eq!(dir, PathBuf::from("/custom/path"));
+
         std::env::remove_var("CONVERSATION_PACKAGES");
+        let dir = PackageRegistry::packages_dir();
+        assert!(dir.ends_with(".conversation"));
     }
 }
