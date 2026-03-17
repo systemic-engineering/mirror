@@ -150,6 +150,7 @@ pub enum TemplateProvider {
 #[derive(Clone, Debug, Default)]
 pub struct Namespace {
     modules: HashMap<String, TemplateProvider>,
+    grammar_registry: HashMap<String, TypeRegistry>,
 }
 
 impl Namespace {
@@ -160,6 +161,16 @@ impl Namespace {
     /// Register a module with inline templates.
     pub fn register(&mut self, name: &str, provider: TemplateProvider) {
         self.modules.insert(name.to_string(), provider);
+    }
+
+    /// Register a compiled grammar for a domain.
+    pub fn register_grammar(&mut self, domain: &str, registry: TypeRegistry) {
+        self.grammar_registry.insert(domain.to_string(), registry);
+    }
+
+    /// Access registered grammars.
+    pub fn grammars(&self) -> &HashMap<String, TypeRegistry> {
+        &self.grammar_registry
     }
 
     /// Check if a module is registered.
