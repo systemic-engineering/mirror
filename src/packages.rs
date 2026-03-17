@@ -7,7 +7,7 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use crate::resolve::{Namespace, TypeRegistry};
+use crate::resolve::{resolve_template, Namespace, TemplateProvider, TypeRegistry};
 
 /// A discovered package.
 #[derive(Clone, Debug)]
@@ -25,15 +25,61 @@ pub struct PackageRegistry {
 
 impl PackageRegistry {
     /// Discover packages from a directory.
-    pub fn discover(_root: &Path) -> Result<Self, String> {
-        Ok(PackageRegistry {
-            packages: HashMap::new(),
-        })
+    ///
+    /// Walks `root` recursively (following symlinks). Two patterns match:
+    ///   - `@name` files (no extension): strip `@`, domain = "name"
+    ///   - `name.conv` inside `name/` or `@name/`: domain = "name"
+    ///
+    /// First-found wins on duplicates.
+    pub fn discover(root: &Path) -> Result<Self, String> {
+        let mut packages = HashMap::new();
+        walk_dir(root, &mut packages)?;
+        Ok(PackageRegistry { packages })
     }
 
     /// Convert to a Namespace for the resolver.
+    ///
+    /// Parses each package's source, compiles grammars, extracts templates,
+    /// and registers everything so `use @name` and `in @name` resolve.
     pub fn to_namespace(&self) -> Result<Namespace, String> {
-        Ok(Namespace::new())
+        use crate::parse::Parse;
+        use crate::Vector;
+
+        let mut namespace = Namespace::new();
+
+        for (name, package) in &self.packages {
+            // Strip test section (below ---) before parsing.
+            let spec = strip_tests(&package.source);
+
+            let ast = Parse
+                .trace(spec.to_string())
+                .into_result()
+                .map_err(|e| format!("@{}: {}", name, e.message))?;
+
+            // Extract grammars
+            for child in ast.children() {
+                if child.data().is_decl("grammar") {
+                    let registry = TypeRegistry::compile(child)
+                        .map_err(|e| format!("@{}: {}", name, e.message))?;
+                    let domain = registry.domain.clone();
+                    namespace.register_grammar(&domain, registry);
+                }
+            }
+
+            // Extract templates
+            let mut templates = HashMap::new();
+            for child in ast.children() {
+                if child.data().is_decl("template") {
+                    let tmpl_name = child.data().value.clone();
+                    templates.insert(tmpl_name, resolve_template(child));
+                }
+            }
+
+            // Register module (even if no templates, so is_known_domain works)
+            namespace.register(name, TemplateProvider::Inline(templates));
+        }
+
+        Ok(namespace)
     }
 
     /// Number of discovered packages.
@@ -56,6 +102,85 @@ impl PackageRegistry {
     }
 }
 
+/// Walk a directory recursively, following symlinks.
+fn walk_dir(dir: &Path, packages: &mut HashMap<String, Package>) -> Result<(), String> {
+    let entries = std::fs::read_dir(dir).map_err(|e| format!("{}: {}", dir.display(), e))?;
+
+    for entry in entries.flatten() {
+        let path = entry.path();
+
+        // Follow symlinks for type detection
+        let metadata = match std::fs::metadata(&path) {
+            Ok(m) => m,
+            Err(_) => continue, // broken symlink or unreadable — skip
+        };
+
+        if metadata.is_dir() {
+            walk_dir(&path, packages)?;
+        } else if let Some(pkg) = try_file_package(&path) {
+            packages.entry(pkg.name.clone()).or_insert(pkg);
+        } else if let Some(pkg) = try_dir_package(&path) {
+            packages.entry(pkg.name.clone()).or_insert(pkg);
+        }
+    }
+
+    Ok(())
+}
+
+/// Try to match a file as `@name` (no extension) package.
+fn try_file_package(path: &Path) -> Option<Package> {
+    let file_name = path.file_name()?.to_str()?;
+    if file_name.starts_with('@') && path.extension().is_none() {
+        let name = file_name.strip_prefix('@')?.to_string();
+        let source = std::fs::read_to_string(path).ok()?;
+        Some(Package {
+            name,
+            source,
+            path: path.to_path_buf(),
+        })
+    } else {
+        None
+    }
+}
+
+/// Try to match `name.conv` inside `name/` or `@name/` directory.
+fn try_dir_package(path: &Path) -> Option<Package> {
+    let ext = path.extension()?.to_str()?;
+    if ext != "conv" {
+        return None;
+    }
+    let stem = path.file_stem()?.to_str()?;
+    let parent = path.parent()?;
+    let parent_name = parent.file_name()?.to_str()?;
+    let dir_name = parent_name.strip_prefix('@').unwrap_or(parent_name);
+    if stem == dir_name {
+        let source = std::fs::read_to_string(path).ok()?;
+        Some(Package {
+            name: stem.to_string(),
+            source,
+            path: path.to_path_buf(),
+        })
+    } else {
+        None
+    }
+}
+
+/// Strip test section (everything after `\n---\n`) from source.
+fn strip_tests(source: &str) -> &str {
+    if let Some(pos) = source.find("\n---\n") {
+        &source[..pos]
+    } else if let Some(pos) = source.find("\n---") {
+        let rest = &source[pos + 4..];
+        if rest.is_empty() || rest.chars().all(char::is_whitespace) {
+            &source[..pos]
+        } else {
+            source
+        }
+    } else {
+        source
+    }
+}
+
 fn dirs_home() -> PathBuf {
     std::env::var("HOME")
         .map(PathBuf::from)
@@ -73,6 +198,7 @@ mod tests {
         let dir = TempDir::new().unwrap();
         let registry = PackageRegistry::discover(dir.path()).unwrap();
         assert_eq!(registry.len(), 0);
+        assert!(registry.is_empty());
     }
 
     #[test]
@@ -213,6 +339,103 @@ mod tests {
         let namespace = registry.to_namespace().unwrap();
         let templates = namespace.get_templates("mail").unwrap();
         assert!(templates.contains_key("$message"));
+    }
+
+    #[test]
+    fn to_namespace_strips_test_section() {
+        let dir = TempDir::new().unwrap();
+        fs::write(
+            dir.path().join("@beam"),
+            "grammar @beam {\n  type = process\n}\n\n---\n\ntest \"t\" {\n  @beam has process\n}\n",
+        )
+        .unwrap();
+        let registry = PackageRegistry::discover(dir.path()).unwrap();
+        // Should not error — test section is stripped before parsing
+        let namespace = registry.to_namespace().unwrap();
+        assert!(namespace.contains("beam"));
+    }
+
+    #[test]
+    fn strip_tests_preserves_source_without_separator() {
+        assert_eq!(
+            strip_tests("grammar @x { type = a }"),
+            "grammar @x { type = a }"
+        );
+    }
+
+    #[test]
+    fn strip_tests_removes_test_section() {
+        let source = "grammar @x { type = a }\n---\ntest { }";
+        assert_eq!(strip_tests(source), "grammar @x { type = a }");
+    }
+
+    #[test]
+    fn strip_tests_handles_trailing_separator() {
+        let source = "grammar @x { type = a }\n---";
+        assert_eq!(strip_tests(source), "grammar @x { type = a }");
+    }
+
+    #[test]
+    fn strip_tests_handles_trailing_separator_with_whitespace() {
+        let source = "grammar @x { type = a }\n---  \n";
+        assert_eq!(strip_tests(source), "grammar @x { type = a }");
+    }
+
+    #[test]
+    fn strip_tests_preserves_dashes_followed_by_text() {
+        // \n--- followed by non-whitespace — not a separator
+        let source = "grammar @x { type = a }\n---not a separator";
+        assert_eq!(strip_tests(source), source);
+    }
+
+    #[test]
+    fn discover_skips_broken_symlinks() {
+        let dir = TempDir::new().unwrap();
+        // Also add a valid package to prove discovery continues past the broken link
+        fs::write(
+            dir.path().join("@beam"),
+            "grammar @beam {\n  type = process\n}\n",
+        )
+        .unwrap();
+        #[cfg(unix)]
+        std::os::unix::fs::symlink("/nonexistent/target", dir.path().join("broken")).unwrap();
+        #[cfg(not(unix))]
+        return;
+        let registry = PackageRegistry::discover(dir.path()).unwrap();
+        assert_eq!(registry.len(), 1);
+        assert!(registry.packages.contains_key("beam"));
+    }
+
+    #[test]
+    fn to_namespace_parse_error() {
+        let dir = TempDir::new().unwrap();
+        // "unexpected:" line triggers ParseError in parse_source
+        fs::write(dir.path().join("@bad"), ">>> not valid conv\n").unwrap();
+        let registry = PackageRegistry::discover(dir.path()).unwrap();
+        let result = registry.to_namespace();
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("@bad"));
+    }
+
+    #[test]
+    fn to_namespace_grammar_compile_error() {
+        let dir = TempDir::new().unwrap();
+        // Parameterized variant referencing a non-existent type → TypeRegistry error
+        fs::write(
+            dir.path().join("@bad"),
+            "grammar @bad {\n  type = thing(missing)\n}\n",
+        )
+        .unwrap();
+        let registry = PackageRegistry::discover(dir.path()).unwrap();
+        let result = registry.to_namespace();
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("@bad"));
+    }
+
+    #[test]
+    fn discover_nonexistent_dir() {
+        let result = PackageRegistry::discover(Path::new("/nonexistent/path/12345"));
+        assert!(result.is_err());
     }
 
     #[test]

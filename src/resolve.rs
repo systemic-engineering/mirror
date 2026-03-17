@@ -558,7 +558,7 @@ fn resolve_ast<C: Setting>(
     })
 }
 
-fn resolve_template(template_node: &Tree<AstNode>) -> Template {
+pub(crate) fn resolve_template(template_node: &Tree<AstNode>) -> Template {
     let mut params = Vec::new();
     let mut fields = Vec::new();
     for child in template_node.children() {
