@@ -150,6 +150,7 @@ pub enum TemplateProvider {
 #[derive(Clone, Debug, Default)]
 pub struct Namespace {
     modules: HashMap<String, TemplateProvider>,
+    grammar_registry: HashMap<String, TypeRegistry>,
 }
 
 impl Namespace {
@@ -160,6 +161,16 @@ impl Namespace {
     /// Register a module with inline templates.
     pub fn register(&mut self, name: &str, provider: TemplateProvider) {
         self.modules.insert(name.to_string(), provider);
+    }
+
+    /// Register a compiled grammar for a domain.
+    pub fn register_grammar(&mut self, domain: &str, registry: TypeRegistry) {
+        self.grammar_registry.insert(domain.to_string(), registry);
+    }
+
+    /// Access registered grammars.
+    pub fn grammars(&self) -> &HashMap<String, TypeRegistry> {
+        &self.grammar_registry
     }
 
     /// Check if a module is registered.
@@ -547,7 +558,7 @@ fn resolve_ast<C: Setting>(
     })
 }
 
-fn resolve_template(template_node: &Tree<AstNode>) -> Template {
+pub(crate) fn resolve_template(template_node: &Tree<AstNode>) -> Template {
     let mut params = Vec::new();
     let mut fields = Vec::new();
     for child in template_node.children() {
@@ -691,9 +702,17 @@ impl<C: Setting> Conversation<C> {
     ///
     /// Chains Parse → Resolve via traceable composition.
     pub fn from_source(source: &str) -> Result<Self, ComposedError<ParseError, ResolveError>> {
+        Self::from_source_with(source, Resolve::new())
+    }
+
+    /// Parse and resolve with a custom Resolve (e.g. carrying a Namespace).
+    pub fn from_source_with(
+        source: &str,
+        resolve: Resolve,
+    ) -> Result<Self, ComposedError<ParseError, ResolveError>> {
         use crate::parse::Parse;
         Parse
-            .compose::<Conversation<C>, _>(Resolve::new())
+            .compose::<Conversation<C>, _>(resolve)
             .trace(source.to_string())
             .into_result()
     }
@@ -2214,5 +2233,73 @@ mod tests {
                 bytes
             }
         }
+    }
+
+    // -- from_source_with --
+
+    /// Build a namespace with a grammar and module registered.
+    fn namespace_with_grammar(source: &str, name: &str) -> Namespace {
+        let mut namespace = Namespace::new();
+        let ast = Parse.trace(source.to_string()).unwrap();
+        for child in ast.children() {
+            if child.data().is_decl("grammar") {
+                let registry = TypeRegistry::compile(child).unwrap();
+                let domain = registry.domain.clone();
+                namespace.register_grammar(&domain, registry);
+            }
+        }
+        // Extract templates from the source too
+        let mut templates = HashMap::new();
+        for child in ast.children() {
+            if child.data().is_decl("template") {
+                let tmpl_name = child.data().value.clone();
+                templates.insert(tmpl_name, resolve_template(child));
+            }
+        }
+        namespace.register(name, TemplateProvider::Inline(templates));
+        namespace
+    }
+
+    #[test]
+    fn from_source_with_namespace_domain() {
+        // A source that uses `in @beam` should resolve when beam is in the namespace
+        let namespace = namespace_with_grammar(
+            "grammar @beam {\n  type = process | supervision | module\n}\n",
+            "beam",
+        );
+        let resolve = Resolve::new().with_namespace(namespace);
+
+        let source = "in @beam\ntemplate $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
+        let conv = Conversation::<test_domain::TestDomain>::from_source_with(source, resolve);
+        assert!(conv.is_ok(), "expected Ok, got: {:?}", conv.err());
+    }
+
+    #[test]
+    fn from_source_with_imported_templates() {
+        // Namespace provides templates that can be imported with `use $corpus from @blog`
+        let namespace = namespace_with_grammar(
+            "grammar @blog {\n  type = post\n}\ntemplate $corpus {\n\tslug\n}\n",
+            "blog",
+        );
+        let resolve = Resolve::new().with_namespace(namespace);
+
+        let source = "in @filesystem\nuse $corpus from @blog\nout r {\n\tx: f { $corpus }\n}\n";
+        let conv = Conversation::<Filesystem>::from_source_with(source, resolve);
+        assert!(conv.is_ok(), "expected Ok, got: {:?}", conv.err());
+        let conv = conv.unwrap();
+        assert!(conv.templates.contains_key("$corpus"));
+    }
+
+    #[test]
+    fn from_source_with_namespace_grammars_merge() {
+        // Grammars from namespace should be available for domain validation
+        // A source with `in @beam` should NOT error when beam is a namespace grammar
+        let namespace = namespace_with_grammar("grammar @beam {\n  type = process\n}\n", "beam");
+        let resolve = Resolve::new().with_namespace(namespace);
+
+        // Without namespace, this would fail with "unknown domain @beam"
+        let source = "in @beam\ntemplate $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
+        let conv = Conversation::<test_domain::TestDomain>::from_source_with(source, resolve);
+        assert!(conv.is_ok(), "expected Ok, got: {:?}", conv.err());
     }
 }
