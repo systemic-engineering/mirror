@@ -99,6 +99,7 @@ fn fixture_json_conv_produces_output() {
 }
 
 #[test]
+#[cfg_attr(not(feature = "slow"), ignore = "needs --features slow")]
 fn shell_evaluates_piped_expressions() {
     let mut child = conversation_bin()
         .arg("shell")
@@ -130,6 +131,43 @@ fn shell_evaluates_piped_expressions() {
 }
 
 #[test]
+fn file_with_invalid_source_exits_1() {
+    let output = conversation_bin()
+        .arg("fixtures/invalid.conv")
+        .arg(".")
+        .output()
+        .unwrap();
+    assert!(!output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("conversation:"),
+        "expected error: {}",
+        stderr
+    );
+}
+
+#[test]
+fn shell_exits_cleanly_on_eof() {
+    let mut child = conversation_bin()
+        .arg("shell")
+        .arg(".")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    drop(child.stdin.take());
+    let output = child.wait_with_output().unwrap();
+    assert!(output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("conversation shell"),
+        "expected banner: {}",
+        stderr
+    );
+}
+
+#[test]
 fn e_flag_missing_expression_exits_1() {
     let output = conversation_bin().arg("-e").output().unwrap();
     assert!(!output.status.success());
@@ -156,6 +194,7 @@ fn e_flag_invalid_expression_exits_1() {
 }
 
 #[test]
+#[cfg_attr(not(feature = "slow"), ignore = "needs --features slow")]
 fn shell_breaks_on_read_error() {
     // Invalid UTF-8 bytes cause io::Lines to return Err — shell breaks cleanly
     let mut child = conversation_bin()
@@ -186,6 +225,7 @@ fn shell_breaks_on_read_error() {
 }
 
 #[test]
+#[cfg_attr(not(feature = "slow"), ignore = "needs --features slow")]
 fn shell_skips_empty_lines() {
     let mut child = conversation_bin()
         .arg("shell")
@@ -214,6 +254,7 @@ fn shell_skips_empty_lines() {
 }
 
 #[test]
+#[cfg_attr(not(feature = "slow"), ignore = "needs --features slow")]
 fn shell_reports_errors_and_continues() {
     let mut child = conversation_bin()
         .arg("shell")
@@ -247,4 +288,69 @@ fn shell_reports_errors_and_continues() {
         "should still produce output for valid expression: {}",
         stdout
     );
+}
+
+// -- test subcommand --
+
+#[test]
+fn test_subcommand_missing_file_arg() {
+    let output = conversation_bin().arg("test").output().unwrap();
+    assert!(!output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("usage:"));
+}
+
+#[test]
+fn test_subcommand_missing_file() {
+    let output = conversation_bin()
+        .arg("test")
+        .arg("nonexistent.conv")
+        .output()
+        .unwrap();
+    assert!(!output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("No such file"));
+}
+
+#[test]
+fn test_subcommand_passing() {
+    let output = conversation_bin()
+        .arg("test")
+        .arg("fixtures/test_passing.conv")
+        .arg(".")
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("assertions passed"));
+}
+
+#[test]
+fn test_subcommand_failing() {
+    let output = conversation_bin()
+        .arg("test")
+        .arg("fixtures/test_failing.conv")
+        .arg(".")
+        .output()
+        .unwrap();
+    assert!(!output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("failed"));
+}
+
+#[test]
+fn test_subcommand_no_separator() {
+    let output = conversation_bin()
+        .arg("test")
+        .arg("fixtures/json.conv")
+        .arg(".")
+        .output()
+        .unwrap();
+    assert!(!output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("no test section"));
 }

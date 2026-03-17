@@ -208,6 +208,7 @@ pub struct ResolveError {
 pub struct Conversation<C: Setting> {
     templates: HashMap<String, Template>,
     pub content: Tree<OutputNode>,
+    pub grammars: HashMap<String, TypeRegistry>,
     _context: PhantomData<C>,
 }
 
@@ -474,10 +475,12 @@ fn resolve_ast<C: Setting>(
 
     // Pass 1: compile grammar blocks (validates type references)
     let mut grammar_domains: Vec<String> = Vec::new();
+    let mut grammars: HashMap<String, TypeRegistry> = HashMap::new();
     for child in children {
         if child.data().is_decl("grammar") {
             let registry = TypeRegistry::compile(child)?;
-            grammar_domains.push(registry.domain);
+            grammar_domains.push(registry.domain.clone());
+            grammars.insert(registry.domain.clone(), registry);
         }
     }
 
@@ -543,6 +546,7 @@ fn resolve_ast<C: Setting>(
     Ok(Conversation {
         templates,
         content,
+        grammars,
         _context: PhantomData,
     })
 }

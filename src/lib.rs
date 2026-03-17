@@ -7,6 +7,7 @@ pub mod filter;
 pub mod parse;
 pub mod resolve;
 pub mod shell;
+pub mod test;
 pub mod tree;
 
 #[cfg(feature = "git")]

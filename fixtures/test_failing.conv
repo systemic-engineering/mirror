@@ -1,0 +1,15 @@
+grammar @fixture {
+  type = a
+}
+
+in @fixture
+
+out fixture {
+  items {}
+}
+
+---
+
+test "missing variant" {
+  @fixture has b
+}

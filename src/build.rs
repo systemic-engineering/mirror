@@ -15,7 +15,32 @@ use crate::resolve::Conversation;
 /// The compiled EAF blob is stored under `<module_name>.eaf` in a git tree,
 /// and `refs/fragmentation/build/<branch>` is updated to point at that tree.
 pub fn build(source: &str, repo_path: &str) -> Result<String, String> {
-    todo!("build not yet implemented")
+    // 1. Parse + resolve
+    let conversation: Conversation<Filesystem> =
+        Conversation::from_source(source).map_err(|e| format!("{}", e))?;
+
+    // 2. Emit EAF (ETF-encoded Erlang Abstract Format)
+    let eaf_bytes = compile::emit_eaf(&conversation.content);
+
+    // 3. Store in git
+    let module_name = conversation.content.data().name();
+    store_git(&eaf_bytes, module_name, repo_path).map_err(|e| format!("git: {}", e))
+}
+
+/// Store EAF bytes as a git blob inside a tree and update the build ref.
+fn store_git(eaf_bytes: &[u8], module_name: &str, repo_path: &str) -> Result<String, git2::Error> {
+    let repo = git2::Repository::discover(repo_path)?;
+
+    let blob_oid = repo.blob(eaf_bytes)?;
+    let mut builder = repo.treebuilder(None)?;
+    builder.insert(format!("{}.eaf", module_name), blob_oid, 0o100644)?;
+    let tree_oid = builder.write()?;
+
+    let branch = current_branch(&repo);
+    let ref_name = format!("refs/fragmentation/build/{}", branch);
+    repo.reference(&ref_name, tree_oid, true, "conversation build")?;
+
+    Ok(tree_oid.to_string())
 }
 
 fn current_branch(repo: &git2::Repository) -> String {
@@ -43,7 +68,8 @@ mod tests {
                 .unwrap();
         }
 
-        let source = "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
+        let source =
+            "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
         let oid = build(source, dir.path().to_str().unwrap()).expect("build should succeed");
 
         // OID should be a valid hex SHA
@@ -51,17 +77,16 @@ mod tests {
         assert!(oid.chars().all(|c| c.is_ascii_hexdigit()));
 
         // The ref should exist
-        let ref_name = format!(
-            "refs/fragmentation/build/{}",
-            current_branch(&repo)
-        );
+        let ref_name = format!("refs/fragmentation/build/{}", current_branch(&repo));
         let reference = repo.find_reference(&ref_name).expect("ref should exist");
         let target = reference.target().expect("ref should have target");
         assert_eq!(target.to_string(), oid);
 
         // The tree should contain a .eaf entry
         let tree = repo.find_tree(target).expect("should be a tree");
-        let entry = tree.get_name("blog.eaf").expect("should have blog.eaf entry");
+        let entry = tree
+            .get_name("blog.eaf")
+            .expect("should have blog.eaf entry");
         assert_eq!(entry.filemode(), 0o100644);
     }
 
@@ -72,6 +97,21 @@ mod tests {
 
         let result = build("garbage\n", dir.path().to_str().unwrap());
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn build_bad_repo_returns_git_error() {
+        let dir = tempfile::tempdir().unwrap();
+        // dir is NOT a git repo → discover fails → git error path
+        let source =
+            "in @filesystem\ntemplate $t {\n\tslug\n}\nout blog {\n\titems: sub { $t }\n}\n";
+        let result = build(source, dir.path().to_str().unwrap());
+        let err = result.unwrap_err();
+        assert!(
+            err.starts_with("git: "),
+            "error should be git-prefixed: {}",
+            err
+        );
     }
 
     #[test]
