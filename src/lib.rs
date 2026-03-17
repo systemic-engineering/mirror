@@ -6,7 +6,11 @@ pub mod domain;
 pub mod filter;
 pub mod parse;
 pub mod resolve;
+pub mod shell;
 pub mod tree;
+
+#[cfg(feature = "git")]
+pub mod build;
 
 // Re-export kernel types at the crate root.
 pub use kernel::{

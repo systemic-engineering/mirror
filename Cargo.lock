@@ -282,6 +282,7 @@ dependencies = [
  "base64 0.22.1",
  "eetf",
  "fragmentation",
+ "git2",
  "hex",
  "serde_json",
  "sha2",
