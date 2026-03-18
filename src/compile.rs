@@ -218,7 +218,11 @@ fn emit_act_function(module: &str, act_name: &str, line: i32) -> Term {
         eaf_tuple(vec![
             eaf_atom("remote"),
             eaf_int(line),
-            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("gen_server")]),
+            eaf_tuple(vec![
+                eaf_atom("atom"),
+                eaf_int(line),
+                eaf_atom("gen_server"),
+            ]),
             eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("call")]),
         ]),
         // Args: [ModuleAtom, DispatchTuple]
