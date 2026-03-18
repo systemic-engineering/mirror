@@ -1,107 +1,31 @@
-use fragmentation::encoding::Encode;
-use fragmentation::fragment::Fragmentable;
+//! Tree<E> is a type alias for Prism<E>.
+//!
+//! This module preserves backwards compatibility during the Prism migration.
+//! `leaf()` → `shard()`, `branch()` → `fractal()`, `Tree::Leaf` → `Prism::Shard`,
+//! `Tree::Branch` → `Prism::Fractal`.
+
 use fragmentation::ref_::Ref;
 
-/// The primitive. Content-addressed, self-similar, arbitrary-depth.
-/// Turtles all the way down: your children are yourself.
-///
-/// A tree is either:
-/// - a **leaf**: terminal, carries data, stops
-/// - a **branch**: carries data, contains child trees
-///
-/// Every tree is content-addressed. Same content = same ref.
-/// Git-compatible: leaves produce blob OIDs, branches produce tree OIDs.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Tree<E = Vec<u8>> {
-    /// Terminal: carries data, no children.
-    Leaf { ref_: Ref, data: E },
-    /// Self-similar: carries data, contains child trees.
-    Branch {
-        ref_: Ref,
-        data: E,
-        children: Vec<Tree<E>>,
-    },
-}
+use crate::prism::Prism;
 
-impl<E> Tree<E> {
-    /// The node's ref.
-    pub fn self_ref(&self) -> &Ref {
-        match self {
-            Tree::Leaf { ref_, .. } => ref_,
-            Tree::Branch { ref_, .. } => ref_,
-        }
-    }
-
-    /// The node's data.
-    pub fn data(&self) -> &E {
-        match self {
-            Tree::Leaf { data, .. } => data,
-            Tree::Branch { data, .. } => data,
-        }
-    }
-
-    /// The node's children. Empty for leaves.
-    pub fn children(&self) -> &[Tree<E>] {
-        match self {
-            Tree::Leaf { .. } => &[],
-            Tree::Branch { children, .. } => children,
-        }
-    }
-
-    /// True if this is a leaf (terminal, no children).
-    pub fn is_shard(&self) -> bool {
-        matches!(self, Tree::Leaf { .. })
-    }
-
-    /// True if this is a branch (has children).
-    pub fn is_fractal(&self) -> bool {
-        matches!(self, Tree::Branch { .. })
-    }
-}
-
-impl<E: Encode> Fragmentable for Tree<E> {
-    type Data = E;
-
-    fn self_ref(&self) -> &Ref {
-        self.self_ref()
-    }
-
-    fn data(&self) -> &E {
-        self.data()
-    }
-
-    fn children(&self) -> &[Tree<E>] {
-        self.children()
-    }
-
-    fn is_shard(&self) -> bool {
-        self.is_shard()
-    }
-
-    fn is_fractal(&self) -> bool {
-        self.is_fractal()
-    }
-}
-
-/// A leaf. Terminal node, carries data, no children.
-pub fn leaf<E>(ref_: Ref, data: E) -> Tree<E> {
-    Tree::Leaf { ref_, data }
-}
-
-/// A branch. Carries data, contains child trees.
-pub fn branch<E>(ref_: Ref, data: E, children: Vec<Tree<E>>) -> Tree<E> {
-    Tree::Branch {
-        ref_,
-        data,
-        children,
-    }
-}
+/// Tree<E> is now a type alias for Prism<E>.
+pub type Tree<E = Vec<u8>> = Prism<E>;
 
 /// Re-export the tree interface.
 pub use fragmentation::fragment::Fragmentable as Treelike;
 
 /// Re-export content addressing.
 pub use fragmentation::fragment::content_oid;
+
+/// A leaf. Terminal node — delegates to prism::shard().
+pub fn leaf<E>(ref_: Ref, data: E) -> Tree<E> {
+    crate::prism::shard(ref_, data)
+}
+
+/// A branch. Carries data, contains children — delegates to prism::fractal().
+pub fn branch<E>(ref_: Ref, data: E, children: Vec<Tree<E>>) -> Tree<E> {
+    crate::prism::fractal(ref_, data, children)
+}
 
 #[cfg(test)]
 mod tests {
@@ -169,15 +93,14 @@ mod tests {
         assert_eq!(content_oid(&a), content_oid(&b));
     }
 
-    /// Tree is its own enum (Leaf/Branch), not a Fractal alias.
-    /// Pattern matching on Tree::Leaf/Tree::Branch must work.
+    /// Leaf maps to Prism::Shard, Branch maps to Prism::Fractal.
     #[test]
-    fn tree_is_own_enum() {
+    fn tree_alias_maps_to_prism_variants() {
         let l: Tree<String> = leaf(test_ref("a"), "data".into());
-        assert!(matches!(l, Tree::Leaf { .. }));
+        assert!(matches!(l, Prism::Shard { .. }));
 
         let b: Tree<String> = branch(test_ref("b"), "root".into(), vec![l]);
-        assert!(matches!(b, Tree::Branch { .. }));
+        assert!(matches!(b, Prism::Fractal { .. }));
     }
 
     /// Tree works with Store — it's a first-class Fragmentable.

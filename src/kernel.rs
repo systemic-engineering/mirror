@@ -261,13 +261,6 @@ impl<E: fragmentation::encoding::Encode> ContentAddressed for fragmentation::fra
     }
 }
 
-impl<E: fragmentation::encoding::Encode> ContentAddressed for crate::tree::Tree<E> {
-    type Oid = Oid;
-    fn content_oid(&self) -> Oid {
-        Oid::new(fragmentation::fragment::content_oid(self))
-    }
-}
-
 impl<V: fragmentation::encoding::Encode> ContentAddressed for crate::prism::Prism<V> {
     type Oid = Oid;
     fn content_oid(&self) -> Oid {
