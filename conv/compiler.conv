@@ -1,0 +1,11 @@
+grammar @compiler {
+  type = target | artifact | request | result
+
+  type target = gleam | elixir | rust | fortran | eaf
+
+  type artifact = source | bytecode | oid | blob
+
+  type status = ok | error | pending
+
+  type modifier = abstract | extends
+}
