@@ -179,10 +179,11 @@ pub fn emit_actor_module(registry: &TypeRegistry) -> Vec<u8> {
 
     // One function per act:
     // {function, Line, Name, 1, [{clause, Line, [Args], [], [Body]}]}
-    // Body = gen_server:call(ModuleName, {ActName, Args})
+    // Body = local dispatch + cross-actor calls
     let mut line = 3i32;
     for name in &act_names {
-        forms.push(emit_act_function(module_name, name, line));
+        let calls = registry.action_calls(name);
+        forms.push(emit_act_function(module_name, name, calls, line));
         line += 1;
     }
 
@@ -194,45 +195,36 @@ pub fn emit_actor_module(registry: &TypeRegistry) -> Vec<u8> {
 
 /// Emit a single act dispatch function.
 ///
+/// Without cross-actor calls:
 /// ```erlang
 /// name(Args) -> gen_server:call('module', {name, Args}).
 /// ```
-fn emit_act_function(module: &str, act_name: &str, line: i32) -> Term {
+///
+/// With cross-actor calls:
+/// ```erlang
+/// commit(Args) ->
+///     gen_server:call('integration', {commit, Args}),
+///     gen_server:call('filesystem', {write, Args}).
+/// ```
+fn emit_act_function(
+    module: &str,
+    act_name: &str,
+    calls: &[(String, String, Vec<String>)],
+    line: i32,
+) -> Term {
     // The argument variable: {var, Line, 'Args'}
     let args_var = eaf_tuple(vec![eaf_atom("var"), eaf_int(line), eaf_atom("Args")]);
 
-    // The dispatch tuple: {ActName, Args}
-    let dispatch_tuple = eaf_tuple_expr(
-        line,
-        vec![
-            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(act_name)]),
-            args_var.clone(),
-        ],
-    );
+    // Local dispatch: gen_server:call(Module, {ActName, Args})
+    let local_call = emit_gen_server_call(module, act_name, &args_var, line);
 
-    // gen_server:call(Module, {ActName, Args})
-    let call_expr = eaf_tuple(vec![
-        eaf_atom("call"),
-        eaf_int(line),
-        // Remote: {remote, Line, {atom, Line, gen_server}, {atom, Line, call}}
-        eaf_tuple(vec![
-            eaf_atom("remote"),
-            eaf_int(line),
-            eaf_tuple(vec![
-                eaf_atom("atom"),
-                eaf_int(line),
-                eaf_atom("gen_server"),
-            ]),
-            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("call")]),
-        ]),
-        // Args: [ModuleAtom, DispatchTuple]
-        eaf_list(vec![
-            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(module)]),
-            dispatch_tuple,
-        ]),
-    ]);
+    // Build body: local dispatch + cross-actor calls
+    let mut body = vec![local_call];
+    for (domain, action, _args) in calls {
+        body.push(emit_gen_server_call(domain, action, &args_var, line));
+    }
 
-    // {function, Line, Name, 1, [{clause, Line, [ArgsVar], [], [CallExpr]}]}
+    // {function, Line, Name, 1, [{clause, Line, [ArgsVar], [], [Body...]}]}
     eaf_tuple(vec![
         eaf_atom("function"),
         eaf_int(line),
@@ -243,8 +235,38 @@ fn emit_act_function(module: &str, act_name: &str, line: i32) -> Term {
             eaf_int(line),
             eaf_list(vec![args_var]),
             eaf_list(vec![]), // no guards
-            eaf_list(vec![call_expr]),
+            eaf_list(body),
         ])]),
+    ])
+}
+
+/// Emit `gen_server:call('module', {action, Args})`.
+fn emit_gen_server_call(module: &str, action: &str, args_var: &Term, line: i32) -> Term {
+    let dispatch_tuple = eaf_tuple_expr(
+        line,
+        vec![
+            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(action)]),
+            args_var.clone(),
+        ],
+    );
+
+    eaf_tuple(vec![
+        eaf_atom("call"),
+        eaf_int(line),
+        eaf_tuple(vec![
+            eaf_atom("remote"),
+            eaf_int(line),
+            eaf_tuple(vec![
+                eaf_atom("atom"),
+                eaf_int(line),
+                eaf_atom("gen_server"),
+            ]),
+            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("call")]),
+        ]),
+        eaf_list(vec![
+            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(module)]),
+            dispatch_tuple,
+        ]),
     ])
 }
 
