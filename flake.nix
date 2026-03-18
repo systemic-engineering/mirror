@@ -19,6 +19,8 @@
           buildInputs = [
             pkgs.git pkgs.just pkgs.jq
             pkgs.openssl pkgs.zlib
+            pkgs.erlang
+            pkgs.gfortran
           ] ++ rust.rustTools
             ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
             pkgs.libiconv
