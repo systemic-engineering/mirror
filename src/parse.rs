@@ -951,6 +951,22 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
             continue;
         }
 
+        if let Some(rest) = trimmed.strip_prefix("act ") {
+            // Flush any pending type def
+            if let Some((type_name, type_span, variants)) = current.take() {
+                type_defs.push(ast::ast_branch(
+                    Kind::Form,
+                    "type-def",
+                    &*type_name,
+                    type_span,
+                    variants,
+                ));
+            }
+            let span = lines.current_span();
+            type_defs.push(parse_act_def(rest, span, lines)?);
+            continue;
+        }
+
         if let Some(rest) = trimmed.strip_prefix("type ") {
             // Flush previous type def
             if let Some((type_name, type_span, variants)) = current.take() {
@@ -1013,6 +1029,76 @@ fn parse_variants(text: &str, span: Span) -> Vec<Tree<AstNode>> {
             }
         })
         .collect()
+}
+
+/// Parse an act definition block inside a grammar.
+///
+/// `send { from: address\n  to: address }` → Form("act-def", "send") with field children
+/// `noop {}` → Form("act-def", "noop") with no children
+fn parse_act_def(header: &str, span: Span, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+    let (name, rest) = match header.split_once('{') {
+        Some((n, r)) => (n.trim(), r.trim()),
+        None => {
+            return Err(ParseError {
+                message: format!("act: expected '{{' in: act {}", header),
+                span: Some(span),
+            })
+        }
+    };
+
+    // Single-line empty: `act noop {}`
+    if rest == "}" {
+        lines.advance();
+        return Ok(ast::ast_branch(Kind::Form, "act-def", name, span, vec![]));
+    }
+
+    lines.advance(); // consume the act header line
+
+    let mut fields: Vec<Tree<AstNode>> = Vec::new();
+
+    while let Some(line) = lines.peek() {
+        let trimmed = line.trim();
+
+        if trimmed == "}" {
+            let end_span = lines.current_span();
+            lines.advance();
+            return Ok(ast::ast_branch(
+                Kind::Form,
+                "act-def",
+                name,
+                span.merge(&end_span),
+                fields,
+            ));
+        }
+
+        if trimmed.is_empty() || trimmed.starts_with('#') {
+            lines.advance();
+            continue;
+        }
+
+        let field_span = lines.current_span();
+        if let Some((fname, ftype)) = trimmed.split_once(':') {
+            let fname = fname.trim();
+            let ftype = ftype.trim();
+            let type_ref = ast::ast_leaf(Kind::Ref, "type-ref", ftype, field_span);
+            fields.push(ast::ast_branch(
+                Kind::Atom,
+                "field",
+                fname,
+                field_span,
+                vec![type_ref],
+            ));
+        } else {
+            fields.push(ast::ast_leaf(Kind::Atom, "field", trimmed, field_span));
+        }
+
+        lines.advance();
+    }
+
+    Err(ParseError {
+        message: "unclosed act block".into(),
+        span: Some(span),
+    })
 }
 
 #[cfg(test)]
@@ -2303,6 +2389,17 @@ grammar @conversation {
     }
 
     #[test]
+    fn parse_grammar_act_comments_blanks() {
+        let source = "grammar @test {\n  act send {\n    # a comment\n\n    from: address\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let act = &grammar.children()[0];
+        assert_eq!(act.data().name, "act-def");
+        assert_eq!(act.children().len(), 1); // only the field, comments/blanks skipped
+        assert_eq!(act.children()[0].data().value, "from");
+    }
+
+    #[test]
     fn parse_grammar_act_error_no_brace() {
         let source = "grammar @test {\n  act send\n}\n";
         let err = Parse.trace(source.to_string()).into_result().unwrap_err();
@@ -2652,14 +2749,8 @@ grammar @conversation {
     fn parse_annotate_with_in_and_grammar() {
         let source = "grammar @color {\n  type = red | green | blue\n}\nannotate(@gleam)\n";
         let tree = Parse.trace(source.to_string()).unwrap();
-        let has_grammar = tree
-            .children()
-            .iter()
-            .any(|c| c.data().is_decl("grammar"));
-        let has_annotate = tree
-            .children()
-            .iter()
-            .any(|c| c.data().is_decl("annotate"));
+        let has_grammar = tree.children().iter().any(|c| c.data().is_decl("grammar"));
+        let has_annotate = tree.children().iter().any(|c| c.data().is_decl("annotate"));
         assert!(has_grammar);
         assert!(has_annotate);
     }
