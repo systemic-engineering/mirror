@@ -103,6 +103,91 @@ impl<'a> Lines<'a> {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Keyword dispatch table
+// ---------------------------------------------------------------------------
+
+type KeywordHandler = fn(&str, &mut Lines) -> Result<Prism<AstNode>, ParseError>;
+
+/// Keyword → handler table. Checked in order; first prefix match wins.
+/// Each handler receives the rest of the line after stripping the keyword
+/// prefix and is responsible for consuming all lines it needs (including
+/// calling `lines.advance()` for single-line keywords).
+const KEYWORD_TABLE: &[(&str, KeywordHandler)] = &[
+    ("in ", parse_in_keyword),
+    ("use ", parse_use_keyword),
+    ("when ", parse_when_keyword),
+    ("case ", parse_case),
+    ("template ", parse_template),
+    ("out ", parse_out),
+    ("grammar ", parse_grammar),
+];
+
+/// Try to dispatch a line via the keyword table.
+/// Returns `Ok(Some(node))` on match, `Ok(None)` if no keyword matched.
+fn dispatch_keyword(
+    trimmed: &str,
+    lines: &mut Lines,
+) -> Result<Option<Prism<AstNode>>, ParseError> {
+    for &(prefix, handler) in KEYWORD_TABLE {
+        if let Some(rest) = trimmed.strip_prefix(prefix) {
+            return Ok(Some(handler(rest, lines)?));
+        }
+    }
+    Ok(None)
+}
+
+/// `in @domain` / `in @domain(params)` / `in @domain as $name`
+fn parse_in_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+    let span = lines.current_span();
+    let rest = rest.trim();
+
+    // Split alias: "in @domain as $name" or "in @domain(params) as $name"
+    let (domain_part, alias) = match rest.split_once(" as ") {
+        Some((d, a)) => (d.trim(), Some(a.trim())),
+        None => (rest, None),
+    };
+
+    // Parse domain: @name(params) or @name or bare
+    let (value, param) = if let Some(paren) = domain_part.find('(') {
+        let name = &domain_part[..paren];
+        let params = domain_part[paren + 1..].trim_end_matches(')');
+        (name, Some(params))
+    } else {
+        (domain_part, None)
+    };
+
+    let mut in_children = Vec::new();
+    if let Some(p) = param {
+        in_children.push(ast::ast_leaf(Kind::Ref, "domain-param", p, span));
+    }
+    if let Some(a) = alias {
+        in_children.push(ast::ast_leaf(Kind::Ref, "alias", a, span));
+    }
+
+    let node = if in_children.is_empty() {
+        ast::ast_leaf(Kind::Decl, "in", value, span)
+    } else {
+        ast::ast_branch(Kind::Decl, "in", value, span, in_children)
+    };
+    lines.advance();
+    Ok(node)
+}
+
+/// `use ...` — single-line, wraps parse_use.
+fn parse_use_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+    let node = parse_use(rest, lines.current_span());
+    lines.advance();
+    Ok(node)
+}
+
+/// `when ...` — single-line, wraps parse_when.
+fn parse_when_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+    let node = parse_when(rest, lines.current_span())?;
+    lines.advance();
+    Ok(node)
+}
+
 fn parse_source(source: &str) -> Result<Prism<AstNode>, ParseError> {
     let mut lines = Lines::new(source);
     let mut children = Vec::new();
@@ -116,87 +201,19 @@ fn parse_source(source: &str) -> Result<Prism<AstNode>, ParseError> {
             continue;
         }
 
-        if let Some(rest) = trimmed.strip_prefix("in ") {
-            let span = lines.current_span();
-            let rest = rest.trim();
-
-            // Split alias: "in @domain as $name" or "in @domain(params) as $name"
-            let (domain_part, alias) = match rest.split_once(" as ") {
-                Some((d, a)) => (d.trim(), Some(a.trim())),
-                None => (rest, None),
-            };
-
-            // Parse domain: @name(params) or @name or bare
-            let (value, param) = if let Some(paren) = domain_part.find('(') {
-                let name = &domain_part[..paren];
-                let params = domain_part[paren + 1..].trim_end_matches(')');
-                (name, Some(params))
-            } else {
-                (domain_part, None)
-            };
-
-            let mut in_children = Vec::new();
-            if let Some(p) = param {
-                in_children.push(ast::ast_leaf(Kind::Ref, "domain-param", p, span));
-            }
-            if let Some(a) = alias {
-                in_children.push(ast::ast_leaf(Kind::Ref, "alias", a, span));
-            }
-
-            if in_children.is_empty() {
-                children.push(ast::ast_leaf(Kind::Decl, "in", value, span));
-            } else {
-                children.push(ast::ast_branch(Kind::Decl, "in", value, span, in_children));
-            }
-            lines.advance();
+        // Keyword dispatch
+        if let Some(node) = dispatch_keyword(trimmed, &mut lines)? {
+            children.push(node);
             continue;
         }
 
-        if let Some(rest) = trimmed.strip_prefix("use ") {
-            let use_node = parse_use(rest, lines.current_span());
-            children.push(use_node);
-            lines.advance();
-            continue;
-        }
-
-        if let Some(rest) = trimmed.strip_prefix("when ") {
-            let when_node = parse_when(rest, lines.current_span())?;
-            children.push(when_node);
-            lines.advance();
-            continue;
-        }
-
-        if let Some(rest) = trimmed.strip_prefix("case ") {
-            let case_node = parse_case(rest, &mut lines)?;
-            children.push(case_node);
-            continue;
-        }
-
-        // branch(.path) { ... } — standalone
+        // branch(.path) { ... } — special syntax (not keyword + space)
         if trimmed.starts_with("branch(") {
-            let branch_node = parse_branch(trimmed, &mut lines)?;
-            children.push(branch_node);
+            children.push(parse_branch(trimmed, &mut lines)?);
             continue;
         }
 
-        if let Some(rest) = trimmed.strip_prefix("template ") {
-            let tmpl = parse_template(rest, &mut lines)?;
-            children.push(tmpl);
-            continue;
-        }
-
-        if let Some(rest) = trimmed.strip_prefix("out ") {
-            let out = parse_out(rest, &mut lines)?;
-            children.push(out);
-            continue;
-        }
-
-        if let Some(rest) = trimmed.strip_prefix("grammar ") {
-            let grammar_node = parse_grammar(rest, &mut lines)?;
-            children.push(grammar_node);
-            continue;
-        }
-
+        // annotate(...) — special syntax
         if trimmed.starts_with("annotate(") && trimmed.ends_with(')') {
             let span = lines.current_span();
             let inner = &trimmed["annotate(".len()..trimmed.len() - 1];
@@ -207,15 +224,13 @@ fn parse_source(source: &str) -> Result<Prism<AstNode>, ParseError> {
 
         // Pipeline ending in branch: @json | branch(.path) { ... }
         if trimmed.contains("| branch(") {
-            let pipeline_node = parse_pipeline_with_branch(trimmed, &mut lines)?;
-            children.push(pipeline_node);
+            children.push(parse_pipeline_with_branch(trimmed, &mut lines)?);
             continue;
         }
 
         // Pipeline: A | G | B
         if trimmed.contains('|') {
-            let pipeline = parse_pipeline(trimmed, lines.current_span());
-            children.push(pipeline);
+            children.push(parse_pipeline(trimmed, lines.current_span()));
             lines.advance();
             continue;
         }
@@ -2796,5 +2811,36 @@ grammar @conversation {
         let has_annotate = tree.children().iter().any(|c| c.data().is_decl("annotate"));
         assert!(has_grammar);
         assert!(has_annotate);
+    }
+
+    // -- Keyword dispatch table --
+
+    #[test]
+    fn dispatch_known_keyword() {
+        let source = "in @filesystem\n";
+        let mut lines = Lines::new(source);
+        let trimmed = lines.peek().unwrap().trim();
+        let result = dispatch_keyword(trimmed, &mut lines).unwrap();
+        assert!(result.is_some());
+        assert!(result.unwrap().data().is_decl("in"));
+    }
+
+    #[test]
+    fn dispatch_returns_none_for_unknown() {
+        let source = "xyzzy 42\n";
+        let mut lines = Lines::new(source);
+        let trimmed = lines.peek().unwrap().trim();
+        let result = dispatch_keyword(trimmed, &mut lines).unwrap();
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn dispatch_advances_single_line_keywords() {
+        let source = "when .x == 1\nnext line\n";
+        let mut lines = Lines::new(source);
+        let trimmed = lines.peek().unwrap().trim();
+        let _ = dispatch_keyword(trimmed, &mut lines).unwrap();
+        // Single-line keyword should advance past the keyword line
+        assert_eq!(lines.peek(), Some("next line"));
     }
 }

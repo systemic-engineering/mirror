@@ -5,8 +5,8 @@
 
 use eetf::{Atom, FixInteger, List, Term, Tuple};
 
-use crate::resolve::{BranchAction, BranchPattern, OutputNode};
 use crate::prism::Prism;
+use crate::resolve::{BranchAction, BranchPattern, OutputNode};
 
 /// Emit Erlang Abstract Format from a transformation tree.
 ///

@@ -18,11 +18,11 @@ pub use kernel::{
 
 pub use domain::filesystem::{Filesystem, Folder, FolderOid};
 pub use parse::{Parse, ParseError};
+pub use prism::Prism;
 pub use resolve::{
     Conversation, ConversationOid, Namespace, OutputNode, Resolve, ResolveError, Template,
     TemplateProvider,
 };
-pub use prism::Prism;
 
 // Re-export fragmentation's Repo trait and Store implementation.
 pub use fragmentation::repo::Repo;
