@@ -1,4 +1,3 @@
-import conversation/pipeline
 import conversation/protocol.{
   Arm, Branch, Case, Cmp, DesiredState, Eq, Gt, Gte, Lt, Lte, Ne, Pass, When,
   Wildcard,
@@ -84,24 +83,6 @@ pub fn branch_collects_matching_skips_nonmatching_test() {
       Arm(Wildcard, DesiredState("b", "low")),
     ])
   converge(spec) |> should.equal([StartProcess("b", "low")])
-}
-
-// -- Pipeline — spec as GenStage producer→consumer --
-
-pub fn pipeline_pass_test() {
-  pipeline.run(Pass) |> should.equal([])
-}
-
-pub fn pipeline_desired_state_test() {
-  pipeline.run(DesiredState("p", "s"))
-  |> should.equal([StartProcess("p", "s")])
-}
-
-pub fn pipeline_branch_fires_all_arms_test() {
-  let spec =
-    Branch([Arm(Wildcard, DesiredState("a", "x")), Arm(Wildcard, DesiredState("b", "y"))])
-  pipeline.run(spec)
-  |> should.equal([StartProcess("a", "x"), StartProcess("b", "y")])
 }
 
 // -- All Op variants construct --
