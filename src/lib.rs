@@ -23,7 +23,7 @@ pub use parse::{Parse, ParseError};
 pub use prism::Prism;
 pub use resolve::{
     Conversation, ConversationOid, Namespace, OutputNode, Resolve, ResolveError, Template,
-    TemplateProvider,
+    TemplateProvider, TypeRegistry,
 };
 
 // Re-export fragmentation's Repo trait and Store implementation.
