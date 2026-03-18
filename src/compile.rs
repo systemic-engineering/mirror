@@ -6,7 +6,7 @@
 use eetf::{Atom, FixInteger, List, Term, Tuple};
 
 use crate::prism::Prism;
-use crate::resolve::{BranchAction, BranchPattern, OutputNode};
+use crate::resolve::{BranchAction, BranchPattern, OutputNode, TypeRegistry};
 
 /// Emit Erlang Abstract Format from a transformation tree.
 ///
@@ -138,6 +138,110 @@ fn emit_branch_arm(arm: &crate::resolve::BranchArm, line: i32) -> Term {
             eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(action_atom)]),
         ],
     )
+}
+
+/// Emit an actor dispatch module from a grammar's TypeRegistry.
+///
+/// Each act declared in the grammar becomes an exported function that
+/// dispatches to the registered actor process via gen_server:call.
+///
+/// For `grammar @compiler { action compile { source: target } }`:
+/// ```erlang
+/// -module('@compiler').
+/// -export([compile/1]).
+/// compile(Args) -> gen_server:call('@compiler', {compile, Args}).
+/// ```
+pub fn emit_actor_module(registry: &TypeRegistry) -> Vec<u8> {
+    let module_name = &registry.domain;
+    let act_names = registry.act_names();
+
+    let mut forms = Vec::new();
+
+    // {attribute, 1, module, ModuleName}
+    forms.push(eaf_tuple(vec![
+        eaf_atom("attribute"),
+        eaf_int(1),
+        eaf_atom("module"),
+        eaf_atom(module_name),
+    ]));
+
+    // {attribute, 2, export, [{act1, 1}, {act2, 1}, ...]}
+    let exports: Vec<Term> = act_names
+        .iter()
+        .map(|name| eaf_tuple(vec![eaf_atom(name), eaf_int(1)]))
+        .collect();
+    forms.push(eaf_tuple(vec![
+        eaf_atom("attribute"),
+        eaf_int(2),
+        eaf_atom("export"),
+        eaf_list(exports),
+    ]));
+
+    // One function per act:
+    // {function, Line, Name, 1, [{clause, Line, [Args], [], [Body]}]}
+    // Body = gen_server:call(ModuleName, {ActName, Args})
+    let mut line = 3i32;
+    for name in &act_names {
+        forms.push(emit_act_function(module_name, name, line));
+        line += 1;
+    }
+
+    let term = Term::from(List::from(forms));
+    let mut buf = Vec::new();
+    term.encode(&mut buf).expect("ETF encoding should not fail");
+    buf
+}
+
+/// Emit a single act dispatch function.
+///
+/// ```erlang
+/// name(Args) -> gen_server:call('module', {name, Args}).
+/// ```
+fn emit_act_function(module: &str, act_name: &str, line: i32) -> Term {
+    // The argument variable: {var, Line, 'Args'}
+    let args_var = eaf_tuple(vec![eaf_atom("var"), eaf_int(line), eaf_atom("Args")]);
+
+    // The dispatch tuple: {ActName, Args}
+    let dispatch_tuple = eaf_tuple_expr(
+        line,
+        vec![
+            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(act_name)]),
+            args_var.clone(),
+        ],
+    );
+
+    // gen_server:call(Module, {ActName, Args})
+    let call_expr = eaf_tuple(vec![
+        eaf_atom("call"),
+        eaf_int(line),
+        // Remote: {remote, Line, {atom, Line, gen_server}, {atom, Line, call}}
+        eaf_tuple(vec![
+            eaf_atom("remote"),
+            eaf_int(line),
+            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("gen_server")]),
+            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("call")]),
+        ]),
+        // Args: [ModuleAtom, DispatchTuple]
+        eaf_list(vec![
+            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(module)]),
+            dispatch_tuple,
+        ]),
+    ]);
+
+    // {function, Line, Name, 1, [{clause, Line, [ArgsVar], [], [CallExpr]}]}
+    eaf_tuple(vec![
+        eaf_atom("function"),
+        eaf_int(line),
+        eaf_atom(act_name),
+        eaf_int(1),
+        eaf_list(vec![eaf_tuple(vec![
+            eaf_atom("clause"),
+            eaf_int(line),
+            eaf_list(vec![args_var]),
+            eaf_list(vec![]), // no guards
+            eaf_list(vec![call_expr]),
+        ])]),
+    ])
 }
 
 /// EAF binary literal: `<<"text">>`.

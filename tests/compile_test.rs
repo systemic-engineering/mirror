@@ -149,13 +149,11 @@ fn compile_imported_template_content_addressed() {
 // -- Act dispatch: grammar → actor module --
 
 fn compile_grammar(source: &str) -> conversation::TypeRegistry {
-    let ast = conversation::Parse
-        .trace(source.to_string())
-        .unwrap();
+    let ast = conversation::Parse.trace(source.to_string()).unwrap();
     let grammar_node = ast
         .children()
         .iter()
-        .find(|c| c.data().is_form("grammar"))
+        .find(|c| c.data().is_decl("grammar"))
         .expect("source should contain a grammar block");
     conversation::TypeRegistry::compile(grammar_node).unwrap()
 }
@@ -164,7 +162,7 @@ fn compile_grammar(source: &str) -> conversation::TypeRegistry {
 #[test]
 fn emit_actor_module_produces_valid_etf() {
     let registry = compile_grammar(
-        "grammar @compiler {\n  type = target\n  type target = eaf | beam\n  action compile { source: target }\n}\n",
+        "grammar @compiler {\n  type = target\n  type target = eaf | beam\n  action compile {\n    source: target\n  }\n}\n",
     );
     let eaf_bytes = compile::emit_actor_module(&registry);
     assert!(!eaf_bytes.is_empty());
@@ -176,10 +174,10 @@ fn emit_actor_module_produces_valid_etf() {
 #[test]
 fn emit_actor_module_deterministic() {
     let a = compile_grammar(
-        "grammar @compiler {\n  type = target\n  type target = eaf\n  action compile { source: target }\n}\n",
+        "grammar @compiler {\n  type = target\n  type target = eaf\n  action compile {\n    source: target\n  }\n}\n",
     );
     let b = compile_grammar(
-        "grammar @compiler {\n  type = target\n  type target = eaf\n  action compile { source: target }\n}\n",
+        "grammar @compiler {\n  type = target\n  type target = eaf\n  action compile {\n    source: target\n  }\n}\n",
     );
     assert_eq!(
         compile::emit_actor_module(&a),
@@ -191,7 +189,7 @@ fn emit_actor_module_deterministic() {
 #[test]
 fn emit_actor_module_exports_acts() {
     let registry = compile_grammar(
-        "grammar @mail {\n  type = address\n  action send { to: address }\n  action reply { to: address }\n}\n",
+        "grammar @mail {\n  type = address\n  action send {\n    to: address\n  }\n  action reply {\n    to: address\n  }\n}\n",
     );
     let eaf_bytes = compile::emit_actor_module(&registry);
     assert!(!eaf_bytes.is_empty());
@@ -203,9 +201,7 @@ fn emit_actor_module_exports_acts() {
 /// Act dispatch: grammar with no acts produces a module with no exports.
 #[test]
 fn emit_actor_module_no_acts() {
-    let registry = compile_grammar(
-        "grammar @empty {\n  type = a | b\n}\n",
-    );
+    let registry = compile_grammar("grammar @empty {\n  type = a | b\n}\n");
     let eaf_bytes = compile::emit_actor_module(&registry);
     assert!(!eaf_bytes.is_empty());
     assert_eq!(eaf_bytes[0], 131);
