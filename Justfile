@@ -31,17 +31,20 @@ coverage-html:
 pre-commit: check
 pre-push: check
 
-# Build the Rustler NIF and place it in beam/priv/ for gleam test to pick up.
+# Build the Rust static library + C NIF wrapper.
 build-nif:
-    nix develop -c cargo build -p conversation_nif --release
-    mkdir -p beam/priv
-    cp target/release/libconversation_nif.dylib beam/priv/conversation_nif.so 2>/dev/null || \
-    cp target/release/libconversation_nif.so    beam/priv/conversation_nif.so
+    nix develop -c cargo build --release
+    nix develop -c make -C beam/native conv-nif
 
 # Build the Fortran prism NIF.
 build-prism-nif:
+    nix develop -c make -C beam/native prism-nif
+
+# Build all NIFs.
+build-all-nifs:
+    nix develop -c cargo build --release
     nix develop -c make -C beam/native
 
 # Build all NIFs then run gleam tests.
-beam-test: build-nif build-prism-nif
+beam-test: build-all-nifs
     PATH={{ERLANG_BIN}}:$PATH {{GLEAM}} test --directory beam

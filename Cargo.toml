@@ -1,9 +1,15 @@
+[workspace]
+members = ["."]
+
 [package]
 name = "conversation"
 version = "0.1.0"
 edition = "2021"
 license-file = "LICENSE.md"
 description = "Traceables over trees"
+
+[lib]
+crate-type = ["lib", "staticlib"]
 
 [features]
 default = []

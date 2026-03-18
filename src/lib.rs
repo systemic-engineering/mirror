@@ -3,6 +3,7 @@ pub mod kernel;
 pub mod ast;
 pub mod compile;
 pub mod domain;
+pub mod ffi;
 pub mod filter;
 pub mod packages;
 pub mod parse;
