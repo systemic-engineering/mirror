@@ -5,8 +5,8 @@
 
 use crate::ast::{self, AstNode, Span};
 use crate::domain::conversation::Kind;
-use crate::resolve::TypeRegistry;
 use crate::prism::Prism;
+use crate::resolve::TypeRegistry;
 
 /// A single derivation from a grammar type.
 #[derive(Clone, Debug)]

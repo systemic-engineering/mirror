@@ -8,8 +8,8 @@ use std::collections::{HashMap, HashSet};
 
 use crate::generate::{self, Derivation};
 use crate::parse::{self, HasAssertion, PropertyCheck, TestDirective};
-use crate::resolve::{GenerateProvider, Namespace, TypeRegistry};
 use crate::prism;
+use crate::resolve::{GenerateProvider, Namespace, TypeRegistry};
 
 /// Outcome of a property check.
 #[derive(Clone, Debug, PartialEq, Eq)]

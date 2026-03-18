@@ -279,7 +279,9 @@ fn compiler_grammar_types_available_via_namespace() {
 
     let registry = PackageRegistry::discover(dir.path()).unwrap();
     let namespace = registry.to_namespace().unwrap();
-    let compiler_reg = namespace.grammar("compiler").expect("compiler grammar registered");
+    let compiler_reg = namespace
+        .grammar("compiler")
+        .expect("compiler grammar registered");
     assert!(compiler_reg.has_variant("target", "eaf"));
     assert!(compiler_reg.has_action("compile"));
 }
