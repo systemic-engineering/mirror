@@ -2737,6 +2737,53 @@ grammar @conversation {
     }
 
     #[test]
+    fn parse_grammar_action_call() {
+        let source = "grammar @test {\n  action commit {\n    source: source\n    @filesystem.write(source)\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().value, "commit");
+        assert_eq!(action.children().len(), 2); // field + action-call
+
+        let call = &action.children()[1];
+        assert_eq!(call.data().kind, Kind::Ref);
+        assert_eq!(call.data().name, "action-call");
+        assert_eq!(call.data().value, "@filesystem.write");
+        assert_eq!(call.children().len(), 1); // one argument
+        assert_eq!(call.children()[0].data().value, "source");
+    }
+
+    #[test]
+    fn parse_grammar_action_call_multiple_args() {
+        let source = "grammar @test {\n  action send {\n    from: address\n    to: address\n    @mail.deliver(from, to)\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let action = &grammar.children()[0];
+        assert_eq!(action.children().len(), 3); // 2 fields + 1 action-call
+
+        let call = &action.children()[2];
+        assert_eq!(call.data().name, "action-call");
+        assert_eq!(call.data().value, "@mail.deliver");
+        assert_eq!(call.children().len(), 2);
+        assert_eq!(call.children()[0].data().value, "from");
+        assert_eq!(call.children()[1].data().value, "to");
+    }
+
+    #[test]
+    fn parse_grammar_action_call_no_args() {
+        let source = "grammar @test {\n  action ping {\n    @health.check()\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let action = &grammar.children()[0];
+        assert_eq!(action.children().len(), 1);
+
+        let call = &action.children()[0];
+        assert_eq!(call.data().name, "action-call");
+        assert_eq!(call.data().value, "@health.check");
+        assert_eq!(call.children().len(), 0);
+    }
+
+    #[test]
     fn parse_grammar_action_error_no_brace() {
         let source = "grammar @test {\n  action send\n}\n";
         let err = Parse.trace(source.to_string()).into_result().unwrap_err();

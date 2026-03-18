@@ -2433,6 +2433,28 @@ mod tests {
     }
 
     #[test]
+    fn type_registry_compile_action_calls() {
+        let reg = compile_grammar(
+            "grammar @test {\n  type source = a | b\n  action commit {\n    source: source\n    @filesystem.write(source)\n  }\n}\n",
+        );
+        assert!(reg.has_action("commit"));
+        let calls = reg.action_calls("commit");
+        assert_eq!(calls.len(), 1);
+        assert_eq!(calls[0].0, "filesystem"); // target domain
+        assert_eq!(calls[0].1, "write"); // target action
+        assert_eq!(calls[0].2, vec!["source"]); // args
+    }
+
+    #[test]
+    fn type_registry_compile_action_calls_empty() {
+        let reg = compile_grammar(
+            "grammar @test {\n  action send {\n    to: address\n  }\n}\n",
+        );
+        let calls = reg.action_calls("send");
+        assert!(calls.is_empty());
+    }
+
+    #[test]
     fn type_registry_has_action_false_for_missing() {
         let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
         assert!(!reg.has_action("missing"));

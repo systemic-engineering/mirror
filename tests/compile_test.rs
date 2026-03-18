@@ -206,3 +206,14 @@ fn emit_actor_module_no_acts() {
     assert!(!eaf_bytes.is_empty());
     assert_eq!(eaf_bytes[0], 131);
 }
+
+/// Act dispatch: action with cross-actor call compiles to valid ETF.
+#[test]
+fn emit_actor_module_with_action_call() {
+    let registry = compile_grammar(
+        "grammar @integration {\n  type source = edge | branch\n  action commit {\n    source: source\n    @filesystem.write(source)\n  }\n}\n",
+    );
+    let eaf_bytes = compile::emit_actor_module(&registry);
+    assert!(!eaf_bytes.is_empty());
+    assert_eq!(eaf_bytes[0], 131);
+}
