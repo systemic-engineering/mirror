@@ -2390,7 +2390,8 @@ grammar @conversation {
 
     #[test]
     fn parse_grammar_act_comments_blanks() {
-        let source = "grammar @test {\n  act send {\n    # a comment\n\n    from: address\n  }\n}\n";
+        let source =
+            "grammar @test {\n  act send {\n    # a comment\n\n    from: address\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         let act = &grammar.children()[0];

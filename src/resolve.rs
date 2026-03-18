@@ -35,6 +35,7 @@ pub struct TypeRegistry {
     types: HashMap<String, HashSet<String>>,
     #[allow(dead_code)] // read in tests; used by Phase 4 validation
     params: HashMap<(String, String), String>,
+    acts: HashMap<String, Vec<(String, Option<String>)>>,
 }
 
 impl TypeRegistry {
@@ -102,6 +103,7 @@ impl TypeRegistry {
             domain,
             types,
             params,
+            acts: HashMap::new(),
         })
     }
 
@@ -131,6 +133,16 @@ impl TypeRegistry {
                 hints,
             })
         }
+    }
+
+    /// Check if a named act exists in this registry.
+    pub fn has_act(&self, name: &str) -> bool {
+        self.acts.contains_key(name)
+    }
+
+    /// Get the fields of a named act: (field_name, optional_type_ref).
+    pub fn act_fields(&self, name: &str) -> Option<&[(String, Option<String>)]> {
+        self.acts.get(name).map(|v| v.as_slice())
     }
 }
 
@@ -2121,6 +2133,71 @@ mod tests {
         assert!(!reg.has_variant("missing", "a"));
     }
 
+    // -- TypeRegistry: act compilation --
+
+    #[test]
+    fn type_registry_compile_act() {
+        let reg = compile_grammar(
+            "grammar @test {\n  type address = email | uri\n  act send {\n    to: address\n  }\n}\n",
+        );
+        assert!(reg.has_act("send"));
+        let fields = reg.act_fields("send").unwrap();
+        assert_eq!(fields.len(), 1);
+        assert_eq!(fields[0].0, "to");
+        assert_eq!(fields[0].1, Some("address".to_string()));
+    }
+
+    #[test]
+    fn type_registry_compile_act_untyped_field() {
+        let reg = compile_grammar(
+            "grammar @test {\n  act send {\n    subject\n  }\n}\n",
+        );
+        assert!(reg.has_act("send"));
+        let fields = reg.act_fields("send").unwrap();
+        assert_eq!(fields.len(), 1);
+        assert_eq!(fields[0].0, "subject");
+        assert_eq!(fields[0].1, None);
+    }
+
+    #[test]
+    fn type_registry_compile_act_invalid_type_ref() {
+        let source = "grammar @test {\n  type address = email | uri\n  act send {\n    to: addres\n  }\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .expect("grammar");
+        let err = TypeRegistry::compile(grammar).unwrap_err();
+        assert!(
+            err.message.contains("addres"),
+            "should mention bad ref: {}",
+            err
+        );
+        assert!(!err.hints.is_empty(), "should suggest 'address'");
+        assert!(err.hints[0].contains("address"), "{}", err.hints[0]);
+    }
+
+    #[test]
+    fn type_registry_compile_act_empty() {
+        let reg = compile_grammar("grammar @test {\n  act noop {}\n}\n");
+        assert!(reg.has_act("noop"));
+        let fields = reg.act_fields("noop").unwrap();
+        assert!(fields.is_empty());
+    }
+
+    #[test]
+    fn type_registry_has_act_false_for_missing() {
+        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
+        assert!(!reg.has_act("missing"));
+    }
+
+    #[test]
+    fn type_registry_act_fields_none_for_missing() {
+        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
+        assert!(reg.act_fields("missing").is_none());
+    }
+
     #[test]
     fn type_registry_compile_main_conv() {
         // Compile the actual main.conv grammar — the self-describing vocabulary
@@ -2301,5 +2378,48 @@ mod tests {
         let source = "in @beam\ntemplate $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
         let conv = Conversation::<test_domain::TestDomain>::from_source_with(source, resolve);
         assert!(conv.is_ok(), "expected Ok, got: {:?}", conv.err());
+    }
+
+    // -- Bootstrap --
+
+    #[test]
+    fn bootstrap_abstract_grammar_compiles() {
+        let source = include_str!("../bootstrap.conv");
+        let reg = compile_grammar(source);
+        assert_eq!(reg.domain, "abstract");
+        assert!(reg.has_type(""));
+        assert!(reg.has_variant("", "grammar"));
+        assert!(reg.has_variant("", "type"));
+        assert!(reg.has_variant("", "variant"));
+        assert!(reg.has_variant("", "template"));
+    }
+
+    #[test]
+    fn bootstrap_two_pass_chain() {
+        // Pass 1: bootstrap.conv → @abstract registered in namespace
+        let bootstrap_src = include_str!("../bootstrap.conv");
+        let namespace = namespace_with_grammar(bootstrap_src, "abstract");
+
+        // Pass 2: compiler.conv parses successfully against that namespace
+        let compiler_src = include_str!("../conv/compiler.conv");
+        let ast = Parse.trace(compiler_src.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .expect("compiler.conv must have a grammar block");
+        let reg = TypeRegistry::compile(grammar).unwrap();
+
+        // @compiler grammar has the expected types
+        assert_eq!(reg.domain, "compiler");
+        assert!(reg.has_variant("", "target"));
+        assert!(reg.has_variant("", "artifact"));
+        assert!(reg.has_variant("target", "gleam"));
+        assert!(reg.has_variant("target", "elixir"));
+        assert!(reg.has_variant("modifier", "abstract"));
+        assert!(reg.has_variant("modifier", "extends"));
+
+        // @abstract is registered — the chain is live
+        assert!(namespace.grammars().contains_key("abstract"));
     }
 }
