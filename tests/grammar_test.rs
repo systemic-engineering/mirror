@@ -37,7 +37,7 @@ grammar @compiler {
 
   type status = ok | error | pending
 
-  act compile {
+  action compile {
     source: artifact
     target: target
   }
@@ -66,17 +66,17 @@ grammar @mail {
 
   type dns = spf | dkim | dmarc | mta-sts | dane
 
-  act send {
+  action send {
     from: address
     to: address
     subject
     body: article
   }
-  act reply {
+  action reply {
     in-reply-to: message-id
     body: article
   }
-  act forward {
+  action forward {
     message: message-id
     to: address
   }
@@ -137,7 +137,7 @@ fn compiler_grammar_compiles() {
 }
 
 #[test]
-fn compiler_grammar_has_act_compile() {
+fn compiler_grammar_has_action_compile() {
     let ast = Parse.trace(COMPILER_GRAMMAR.to_string()).unwrap();
     let grammar = ast
         .children()
@@ -145,8 +145,8 @@ fn compiler_grammar_has_act_compile() {
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
     let reg = conversation::resolve::TypeRegistry::compile(grammar).unwrap();
-    assert!(reg.has_act("compile"));
-    let fields = reg.act_fields("compile").unwrap();
+    assert!(reg.has_action("compile"));
+    let fields = reg.action_fields("compile").unwrap();
     assert_eq!(fields.len(), 2);
     assert_eq!(fields[0].0, "source");
     assert_eq!(fields[0].1, Some("artifact".to_string()));
@@ -196,7 +196,7 @@ fn mail_grammar_compiles_full_type_hierarchy() {
 }
 
 #[test]
-fn mail_grammar_has_three_acts() {
+fn mail_grammar_has_three_actions() {
     let ast = Parse.trace(MAIL_GRAMMAR.to_string()).unwrap();
     let grammar = ast
         .children()
@@ -205,9 +205,9 @@ fn mail_grammar_has_three_acts() {
         .unwrap();
     let reg = conversation::resolve::TypeRegistry::compile(grammar).unwrap();
 
-    // act send
-    assert!(reg.has_act("send"));
-    let send = reg.act_fields("send").unwrap();
+    // action send
+    assert!(reg.has_action("send"));
+    let send = reg.action_fields("send").unwrap();
     assert_eq!(send.len(), 4);
     assert_eq!(send[0].0, "from");
     assert_eq!(send[0].1, Some("address".to_string()));
@@ -217,16 +217,16 @@ fn mail_grammar_has_three_acts() {
     assert_eq!(send[3].0, "body");
     assert_eq!(send[3].1, Some("article".to_string()));
 
-    // act reply
-    assert!(reg.has_act("reply"));
-    let reply = reg.act_fields("reply").unwrap();
+    // action reply
+    assert!(reg.has_action("reply"));
+    let reply = reg.action_fields("reply").unwrap();
     assert_eq!(reply.len(), 2);
     assert_eq!(reply[0].0, "in-reply-to");
     assert_eq!(reply[0].1, Some("message-id".to_string()));
 
-    // act forward
-    assert!(reg.has_act("forward"));
-    let forward = reg.act_fields("forward").unwrap();
+    // action forward
+    assert!(reg.has_action("forward"));
+    let forward = reg.action_fields("forward").unwrap();
     assert_eq!(forward.len(), 2);
     assert_eq!(forward[0].0, "message");
     assert_eq!(forward[1].0, "to");
@@ -284,7 +284,7 @@ fn compiler_grammar_types_available_via_namespace() {
 
     let compiler_reg = &grammars["compiler"];
     assert!(compiler_reg.has_variant("target", "eaf"));
-    assert!(compiler_reg.has_act("compile"));
+    assert!(compiler_reg.has_action("compile"));
 }
 
 // ---------------------------------------------------------------------------

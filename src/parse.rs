@@ -945,7 +945,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
             continue;
         }
 
-        if let Some(rest) = trimmed.strip_prefix("act ") {
+        if let Some(rest) = trimmed.strip_prefix("action ") {
             // Flush any pending type def
             if let Some((type_name, type_span, variants)) = current.take() {
                 defs.push(ast::ast_branch(
@@ -957,7 +957,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
                 ));
             }
             let span = lines.current_span();
-            defs.push(parse_act_def(rest, span, lines)?);
+            defs.push(parse_action_def(rest, span, lines)?);
             continue;
         }
 
@@ -1025,28 +1025,38 @@ fn parse_variants(text: &str, span: Span) -> Vec<Tree<AstNode>> {
         .collect()
 }
 
-/// Parse an act definition block inside a grammar.
+/// Parse an action definition block inside a grammar.
 ///
-/// `send { from: address\n  to: address }` → Form("act-def", "send") with field children
-/// `noop {}` → Form("act-def", "noop") with no children
-fn parse_act_def(header: &str, span: Span, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+/// `send { from: address\n  to: address }` → Form("action-def", "send") with field children
+/// `noop {}` → Form("action-def", "noop") with no children
+fn parse_action_def(
+    header: &str,
+    span: Span,
+    lines: &mut Lines,
+) -> Result<Tree<AstNode>, ParseError> {
     let (name, rest) = match header.split_once('{') {
         Some((n, r)) => (n.trim(), r.trim()),
         None => {
             return Err(ParseError {
-                message: format!("act: expected '{{' in: act {}", header),
+                message: format!("action: expected '{{' in: action {}", header),
                 span: Some(span),
             })
         }
     };
 
-    // Single-line empty: `act noop {}`
+    // Single-line empty: `action noop {}`
     if rest == "}" {
         lines.advance();
-        return Ok(ast::ast_branch(Kind::Form, "act-def", name, span, vec![]));
+        return Ok(ast::ast_branch(
+            Kind::Form,
+            "action-def",
+            name,
+            span,
+            vec![],
+        ));
     }
 
-    lines.advance(); // consume the act header line
+    lines.advance(); // consume the action header line
 
     let mut fields: Vec<Tree<AstNode>> = Vec::new();
 
@@ -1058,7 +1068,7 @@ fn parse_act_def(header: &str, span: Span, lines: &mut Lines) -> Result<Tree<Ast
             lines.advance();
             return Ok(ast::ast_branch(
                 Kind::Form,
-                "act-def",
+                "action-def",
                 name,
                 span.merge(&end_span),
                 fields,
@@ -1090,7 +1100,7 @@ fn parse_act_def(header: &str, span: Span, lines: &mut Lines) -> Result<Tree<Ast
     }
 
     Err(ParseError {
-        message: "unclosed act block".into(),
+        message: "unclosed action block".into(),
         span: Some(span),
     })
 }
@@ -2293,22 +2303,23 @@ grammar @conversation {
         );
     }
 
-    // -- Parse `act` in grammar blocks --
+    // -- Parse `action` in grammar blocks --
 
     #[test]
-    fn parse_grammar_act_single() {
-        let source = "grammar @test {\n  act send {\n    from: address\n    to: address\n  }\n}\n";
+    fn parse_grammar_action_single() {
+        let source =
+            "grammar @test {\n  action send {\n    from: address\n    to: address\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 1);
 
-        let act = &grammar.children()[0];
-        assert_eq!(act.data().kind, Kind::Form);
-        assert_eq!(act.data().name, "act-def");
-        assert_eq!(act.data().value, "send");
-        assert_eq!(act.children().len(), 2);
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().kind, Kind::Form);
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.data().value, "send");
+        assert_eq!(action.children().len(), 2);
 
-        let from = &act.children()[0];
+        let from = &action.children()[0];
         assert_eq!(from.data().kind, Kind::Atom);
         assert_eq!(from.data().name, "field");
         assert_eq!(from.data().value, "from");
@@ -2317,7 +2328,7 @@ grammar @conversation {
         assert_eq!(from.children()[0].data().name, "type-ref");
         assert_eq!(from.children()[0].data().value, "address");
 
-        let to = &act.children()[1];
+        let to = &action.children()[1];
         assert_eq!(to.data().kind, Kind::Atom);
         assert_eq!(to.data().name, "field");
         assert_eq!(to.data().value, "to");
@@ -2325,16 +2336,16 @@ grammar @conversation {
     }
 
     #[test]
-    fn parse_grammar_act_untyped_field() {
-        let source = "grammar @test {\n  act send {\n    subject\n  }\n}\n";
+    fn parse_grammar_action_untyped_field() {
+        let source = "grammar @test {\n  action send {\n    subject\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        let act = &grammar.children()[0];
-        assert_eq!(act.data().name, "act-def");
-        assert_eq!(act.data().value, "send");
-        assert_eq!(act.children().len(), 1);
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.data().value, "send");
+        assert_eq!(action.children().len(), 1);
 
-        let field = &act.children()[0];
+        let field = &action.children()[0];
         assert_eq!(field.data().kind, Kind::Atom);
         assert_eq!(field.data().name, "field");
         assert_eq!(field.data().value, "subject");
@@ -2342,38 +2353,38 @@ grammar @conversation {
     }
 
     #[test]
-    fn parse_grammar_act_empty() {
-        let source = "grammar @test {\n  act noop {}\n}\n";
+    fn parse_grammar_action_empty() {
+        let source = "grammar @test {\n  action noop {}\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 1);
 
-        let act = &grammar.children()[0];
-        assert_eq!(act.data().kind, Kind::Form);
-        assert_eq!(act.data().name, "act-def");
-        assert_eq!(act.data().value, "noop");
-        assert_eq!(act.children().len(), 0);
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().kind, Kind::Form);
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.data().value, "noop");
+        assert_eq!(action.children().len(), 0);
     }
 
     #[test]
-    fn parse_grammar_mixed_types_and_acts() {
-        let source = "grammar @test {\n  type = a | b\n  act send {\n    to: address\n  }\n  type address = email | uri\n}\n";
+    fn parse_grammar_mixed_types_and_actions() {
+        let source = "grammar @test {\n  type = a | b\n  action send {\n    to: address\n  }\n  type address = email | uri\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        // grammar has 3 children: type-def, act-def, type-def
+        // grammar has 3 children: type-def, action-def, type-def
         assert_eq!(grammar.children().len(), 3);
 
         assert_eq!(grammar.children()[0].data().name, "type-def");
         assert_eq!(grammar.children()[0].data().value, "");
-        assert_eq!(grammar.children()[1].data().name, "act-def");
+        assert_eq!(grammar.children()[1].data().name, "action-def");
         assert_eq!(grammar.children()[1].data().value, "send");
         assert_eq!(grammar.children()[2].data().name, "type-def");
         assert_eq!(grammar.children()[2].data().value, "address");
     }
 
     #[test]
-    fn parse_grammar_act_error_unclosed() {
-        let source = "grammar @test {\n  act send {\n    from: address\n";
+    fn parse_grammar_action_error_unclosed() {
+        let source = "grammar @test {\n  action send {\n    from: address\n";
         let err = Parse.trace(source.to_string()).into_result().unwrap_err();
         assert!(
             err.message.contains("unclosed"),
@@ -2383,20 +2394,20 @@ grammar @conversation {
     }
 
     #[test]
-    fn parse_grammar_act_comments_blanks() {
+    fn parse_grammar_action_comments_blanks() {
         let source =
-            "grammar @test {\n  act send {\n    # a comment\n\n    from: address\n  }\n}\n";
+            "grammar @test {\n  action send {\n    # a comment\n\n    from: address\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        let act = &grammar.children()[0];
-        assert_eq!(act.data().name, "act-def");
-        assert_eq!(act.children().len(), 1); // only the field, comments/blanks skipped
-        assert_eq!(act.children()[0].data().value, "from");
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.children().len(), 1); // only the field, comments/blanks skipped
+        assert_eq!(action.children()[0].data().value, "from");
     }
 
     #[test]
-    fn parse_grammar_act_error_no_brace() {
-        let source = "grammar @test {\n  act send\n}\n";
+    fn parse_grammar_action_error_no_brace() {
+        let source = "grammar @test {\n  action send\n}\n";
         let err = Parse.trace(source.to_string()).into_result().unwrap_err();
         assert!(
             err.message.contains("{"),
@@ -2422,7 +2433,7 @@ grammar @conversation {
         let children = tree.children();
         assert_eq!(children.len(), 2); // grammar + template
 
-        // Grammar: @mail with 6 type-defs + 3 act-defs = 9 children
+        // Grammar: @mail with 6 type-defs + 3 action-defs = 9 children
         let grammar = &children[0];
         assert_eq!(grammar.data().kind, Kind::Decl);
         assert_eq!(grammar.data().value, "@mail");
@@ -2465,23 +2476,23 @@ grammar @conversation {
         assert_eq!(dns_type.data().value, "dns");
         assert_eq!(dns_type.children().len(), 5);
 
-        // Act: send (4 fields, 2 typed + 2 untyped)
-        let act_send = &grammar.children()[6];
-        assert_eq!(act_send.data().name, "act-def");
-        assert_eq!(act_send.data().value, "send");
-        assert_eq!(act_send.children().len(), 4);
+        // Action: send (4 fields, 2 typed + 2 untyped)
+        let action_send = &grammar.children()[6];
+        assert_eq!(action_send.data().name, "action-def");
+        assert_eq!(action_send.data().value, "send");
+        assert_eq!(action_send.children().len(), 4);
 
-        // Act: reply (2 fields)
-        let act_reply = &grammar.children()[7];
-        assert_eq!(act_reply.data().name, "act-def");
-        assert_eq!(act_reply.data().value, "reply");
-        assert_eq!(act_reply.children().len(), 2);
+        // Action: reply (2 fields)
+        let action_reply = &grammar.children()[7];
+        assert_eq!(action_reply.data().name, "action-def");
+        assert_eq!(action_reply.data().value, "reply");
+        assert_eq!(action_reply.children().len(), 2);
 
-        // Act: forward (2 fields)
-        let act_forward = &grammar.children()[8];
-        assert_eq!(act_forward.data().name, "act-def");
-        assert_eq!(act_forward.data().value, "forward");
-        assert_eq!(act_forward.children().len(), 2);
+        // Action: forward (2 fields)
+        let action_forward = &grammar.children()[8];
+        assert_eq!(action_forward.data().name, "action-def");
+        assert_eq!(action_forward.data().value, "forward");
+        assert_eq!(action_forward.children().len(), 2);
 
         // Template: $message with 1 param + 6 fields = 7 children
         let template = &children[1];

@@ -76,7 +76,7 @@ impl TypeRegistry {
                 }
 
                 types.insert(type_name, variants);
-            } else if child.data().is_form("act-def") {
+            } else if child.data().is_form("action-def") {
                 let act_name = child.data().value.clone();
                 let mut fields = Vec::new();
 
@@ -178,13 +178,13 @@ impl TypeRegistry {
         }
     }
 
-    /// Check if a named act exists in this registry.
-    pub fn has_act(&self, name: &str) -> bool {
+    /// Check if a named action exists in this registry.
+    pub fn has_action(&self, name: &str) -> bool {
         self.acts.contains_key(name)
     }
 
-    /// Get the fields of a named act: (field_name, optional_type_ref).
-    pub fn act_fields(&self, name: &str) -> Option<&[(String, Option<String>)]> {
+    /// Get the fields of a named action: (field_name, optional_type_ref).
+    pub fn action_fields(&self, name: &str) -> Option<&[(String, Option<String>)]> {
         self.acts.get(name).map(|v| v.as_slice())
     }
 }
@@ -2196,78 +2196,79 @@ mod tests {
         assert!(!reg.has_variant("missing", "a"));
     }
 
-    // -- TypeRegistry: act compilation --
+    // -- TypeRegistry: action compilation --
 
     #[test]
-    fn type_registry_compile_act() {
+    fn type_registry_compile_action() {
         let reg = compile_grammar(
-            "grammar @test {\n  type address = email | uri\n  act send {\n    to: address\n  }\n}\n",
+            "grammar @test {\n  type address = email | uri\n  action send {\n    to: address\n  }\n}\n",
         );
-        assert!(reg.has_act("send"));
-        let fields = reg.act_fields("send").unwrap();
+        assert!(reg.has_action("send"));
+        let fields = reg.action_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].0, "to");
         assert_eq!(fields[0].1, Some("address".to_string()));
     }
 
     #[test]
-    fn type_registry_compile_act_untyped_field() {
-        let reg = compile_grammar("grammar @test {\n  act send {\n    subject\n  }\n}\n");
-        assert!(reg.has_act("send"));
-        let fields = reg.act_fields("send").unwrap();
+    fn type_registry_compile_action_untyped_field() {
+        let reg = compile_grammar("grammar @test {\n  action send {\n    subject\n  }\n}\n");
+        assert!(reg.has_action("send"));
+        let fields = reg.action_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].0, "subject");
         assert_eq!(fields[0].1, None);
     }
 
     #[test]
-    fn type_registry_compile_act_unvalidated_type_ref() {
-        // Act field type-refs are semantic annotations — not validated against type names.
+    fn type_registry_compile_action_unvalidated_type_ref() {
+        // Action field type-refs are semantic annotations — not validated against type names.
         // This mirrors real usage: garden's @mail uses `from: address` where `address`
         // is a variant, and `body: article` which is undeclared.
         let reg = compile_grammar(
-            "grammar @test {\n  type address = email | uri\n  act send {\n    to: addres\n    body: article\n  }\n}\n",
+            "grammar @test {\n  type address = email | uri\n  action send {\n    to: addres\n    body: article\n  }\n}\n",
         );
-        assert!(reg.has_act("send"));
-        let fields = reg.act_fields("send").unwrap();
+        assert!(reg.has_action("send"));
+        let fields = reg.action_fields("send").unwrap();
         assert_eq!(fields[0], ("to".into(), Some("addres".into())));
         assert_eq!(fields[1], ("body".into(), Some("article".into())));
     }
 
     #[test]
-    fn type_registry_compile_act_empty() {
-        let reg = compile_grammar("grammar @test {\n  act noop {}\n}\n");
-        assert!(reg.has_act("noop"));
-        let fields = reg.act_fields("noop").unwrap();
+    fn type_registry_compile_action_empty() {
+        let reg = compile_grammar("grammar @test {\n  action noop {}\n}\n");
+        assert!(reg.has_action("noop"));
+        let fields = reg.action_fields("noop").unwrap();
         assert!(fields.is_empty());
     }
 
     #[test]
-    fn type_registry_compile_act_skips_non_field_children() {
+    fn type_registry_compile_action_skips_non_field_children() {
         use crate::ast::{self, Span};
-        // Act-def with a non-field child — should be skipped
+        // Action-def with a non-field child — should be skipped
         let span = Span::new(0, 50);
         let stray = ast::ast_leaf(Kind::Ref, "type-ref", "noise", span);
         let field = ast::ast_leaf(Kind::Atom, "field", "to", span);
-        let actdef = ast::ast_branch(Kind::Form, "act-def", "send", span, vec![stray, field]);
-        let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![actdef]);
+        let actiondef =
+            ast::ast_branch(Kind::Form, "action-def", "send", span, vec![stray, field]);
+        let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![actiondef]);
         let reg = TypeRegistry::compile(&grammar).unwrap();
-        assert!(reg.has_act("send"));
-        let fields = reg.act_fields("send").unwrap();
+        assert!(reg.has_action("send"));
+        let fields = reg.action_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].0, "to");
     }
 
     #[test]
-    fn type_registry_has_act_false_for_missing() {
+    fn type_registry_has_action_false_for_missing() {
         let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
-        assert!(!reg.has_act("missing"));
+        assert!(!reg.has_action("missing"));
     }
 
     #[test]
-    fn type_registry_act_fields_none_for_missing() {
+    fn type_registry_action_fields_none_for_missing() {
         let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
-        assert!(reg.act_fields("missing").is_none());
+        assert!(reg.action_fields("missing").is_none());
     }
 
     #[test]
@@ -2282,15 +2283,15 @@ mod tests {
         assert!(reg.has_variant("protocol", "jmap"));
         assert!(reg.has_variant("server", "stalwart"));
         assert!(reg.has_variant("dns", "dkim"));
-        // Acts
-        assert!(reg.has_act("send"));
-        assert!(reg.has_act("reply"));
-        assert!(reg.has_act("forward"));
-        let send = reg.act_fields("send").unwrap();
+        // Actions
+        assert!(reg.has_action("send"));
+        assert!(reg.has_action("reply"));
+        assert!(reg.has_action("forward"));
+        let send = reg.action_fields("send").unwrap();
         assert_eq!(send.len(), 4);
         assert_eq!(send[0], ("from".into(), Some("address".into())));
         assert_eq!(send[2], ("subject".into(), None));
-        let forward = reg.act_fields("forward").unwrap();
+        let forward = reg.action_fields("forward").unwrap();
         assert_eq!(forward.len(), 2);
         assert_eq!(forward[0], ("message".into(), Some("message-id".into())));
     }
@@ -2515,7 +2516,7 @@ mod tests {
         assert!(reg.has_variant("target", "elixir"));
         assert!(reg.has_variant("status", "ok"));
         assert!(reg.has_variant("status", "error"));
-        assert!(reg.has_act("compile"));
+        assert!(reg.has_action("compile"));
 
         // @abstract is registered — the chain is live
         assert!(namespace.grammars().contains_key("abstract"));

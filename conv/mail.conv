@@ -13,17 +13,17 @@ grammar @mail {
 
   type dns = spf | dkim | dmarc | mta-sts | dane
 
-  act send {
+  action send {
     from: address
     to: address
     subject
     body: article
   }
-  act reply {
+  action reply {
     in-reply-to: message-id
     body: article
   }
-  act forward {
+  action forward {
     message: message-id
     to: address
   }
