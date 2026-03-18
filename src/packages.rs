@@ -373,9 +373,11 @@ mod tests {
         let registry = PackageRegistry::discover(dir.path()).unwrap();
         let namespace = registry.to_namespace().unwrap();
         assert!(namespace.contains("beam"));
-        let grammars = namespace.grammars();
-        assert!(grammars.contains_key("beam"));
-        assert!(grammars["beam"].has_variant("", "process"));
+        assert!(namespace.has_grammar("beam"));
+        assert!(namespace
+            .grammar("beam")
+            .unwrap()
+            .has_variant("", "process"));
     }
 
     #[test]

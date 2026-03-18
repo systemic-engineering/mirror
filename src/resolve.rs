@@ -15,8 +15,11 @@ use crate::parse::ParseError;
 use crate::tree::{self, Tree};
 use crate::{ComposedError, Vector};
 
+use fragmentation::fragment::{self, Fragmentable};
 use fragmentation::ref_::Ref;
-use fragmentation::sha;
+use fragmentation::repo::Repo;
+use fragmentation::sha::{self, Sha};
+use fragmentation::store::Store;
 
 domain_oid!(/// Content address for resolved conversations.
 pub ConversationOid);
@@ -31,6 +34,8 @@ pub ConversationOid);
 ///   `"op"` → `{"gt", "lt", "gte", "lte", ...}` (named type)
 #[derive(Clone, Debug)]
 pub struct TypeRegistry {
+    ref_: Ref,
+    encoded: Vec<u8>,
     pub domain: String,
     types: HashMap<String, HashSet<String>>,
     #[allow(dead_code)] // read in tests; used by Phase 4 validation
@@ -122,12 +127,7 @@ impl TypeRegistry {
         // Unlike parameterized variants (which MUST reference a declared type name),
         // act fields can reference variants, external types, or undeclared names.
 
-        Ok(TypeRegistry {
-            domain,
-            types,
-            params,
-            acts,
-        })
+        Ok(Self::finalize(domain, types, params, acts))
     }
 
     /// Build a "unknown type reference" error with did-you-mean hints.
@@ -232,12 +232,89 @@ impl TypeRegistry {
             (type_name.to_string(), variant.to_string()),
             param_ref.to_string(),
         );
+        Self::finalize(domain.to_string(), types, params, HashMap::new())
+    }
+
+    /// Build a finalized TypeRegistry from raw data.
+    /// Computes the canonical encoding and content address.
+    fn finalize(
+        domain: String,
+        types: HashMap<String, HashSet<String>>,
+        params: HashMap<(String, String), String>,
+        acts: HashMap<String, Vec<(String, Option<String>)>>,
+    ) -> Self {
+        let encoded = Self::encode_canonical(&domain, &types, &params, &acts);
+        let sha = Sha(fragment::blob_oid_bytes(&encoded));
+        let ref_ = Ref::new(sha, format!("grammar/{}", domain));
         TypeRegistry {
-            domain: domain.to_string(),
+            ref_,
+            encoded,
+            domain,
             types,
             params,
-            acts: HashMap::new(),
+            acts,
         }
+    }
+
+    /// Deterministic encoding of grammar data.
+    /// Sorted keys ensure same grammar → same bytes → same OID.
+    fn encode_canonical(
+        domain: &str,
+        types: &HashMap<String, HashSet<String>>,
+        params: &HashMap<(String, String), String>,
+        acts: &HashMap<String, Vec<(String, Option<String>)>>,
+    ) -> Vec<u8> {
+        let mut lines = Vec::new();
+        lines.push(domain.to_string());
+
+        // Types: sorted by name, variants sorted
+        let mut type_keys: Vec<&String> = types.keys().collect();
+        type_keys.sort();
+        for name in type_keys {
+            let mut variants: Vec<&String> = types[name].iter().collect();
+            variants.sort();
+            let vs: Vec<&str> = variants.iter().map(|s| s.as_str()).collect();
+            lines.push(format!("type:{}={}", name, vs.join(",")));
+        }
+
+        // Params: sorted by (type, variant)
+        let mut param_keys: Vec<&(String, String)> = params.keys().collect();
+        param_keys.sort();
+        for key in param_keys {
+            lines.push(format!("param:{},{}={}", key.0, key.1, params[key]));
+        }
+
+        // Acts: sorted by name, fields in order
+        let mut act_keys: Vec<&String> = acts.keys().collect();
+        act_keys.sort();
+        for name in act_keys {
+            let fields: Vec<String> = acts[name]
+                .iter()
+                .map(|(f, t)| match t {
+                    Some(tr) => format!("{}:{}", f, tr),
+                    None => f.clone(),
+                })
+                .collect();
+            lines.push(format!("act:{}={}", name, fields.join(",")));
+        }
+
+        lines.join("\n").into_bytes()
+    }
+}
+
+impl Fragmentable for TypeRegistry {
+    type Data = Vec<u8>;
+
+    fn self_ref(&self) -> &Ref {
+        &self.ref_
+    }
+
+    fn data(&self) -> &Vec<u8> {
+        &self.encoded
+    }
+
+    fn children(&self) -> &[Self] {
+        &[]
     }
 }
 
@@ -268,7 +345,7 @@ pub enum GenerateProvider {
 #[derive(Clone, Debug, Default)]
 pub struct Namespace {
     modules: HashMap<String, TemplateProvider>,
-    grammar_registry: HashMap<String, TypeRegistry>,
+    grammar_store: Store<TypeRegistry>,
     generate_overrides: HashMap<String, GenerateProvider>,
 }
 
@@ -284,12 +361,33 @@ impl Namespace {
 
     /// Register a compiled grammar for a domain.
     pub fn register_grammar(&mut self, domain: &str, registry: TypeRegistry) {
-        self.grammar_registry.insert(domain.to_string(), registry);
+        let ref_name = format!("grammar/{}", domain);
+        self.grammar_store.write_tree(&registry);
+        let sha = registry.self_ref().sha.clone();
+        self.grammar_store.update_ref(&ref_name, sha);
     }
 
-    /// Access registered grammars.
-    pub fn grammars(&self) -> &HashMap<String, TypeRegistry> {
-        &self.grammar_registry
+    /// Look up a grammar by domain name.
+    pub fn grammar(&self, domain: &str) -> Option<TypeRegistry> {
+        let ref_name = format!("grammar/{}", domain);
+        let sha = self.grammar_store.resolve_ref(&ref_name)?;
+        self.grammar_store.read_tree(&sha.0)
+    }
+
+    /// Check if a grammar is registered for a domain.
+    pub fn has_grammar(&self, domain: &str) -> bool {
+        let ref_name = format!("grammar/{}", domain);
+        self.grammar_store.resolve_ref(&ref_name).is_some()
+    }
+
+    /// All registered grammar domain names.
+    pub fn grammar_domains(&self) -> Vec<String> {
+        self.grammar_store
+            .ref_names()
+            .iter()
+            .filter_map(|name| name.strip_prefix("grammar/"))
+            .map(|s| s.to_string())
+            .collect()
     }
 
     /// Register a generate override for a domain.
@@ -2594,7 +2692,7 @@ mod tests {
         assert!(reg.has_act("compile"));
 
         // @abstract is registered — the chain is live
-        assert!(namespace.grammars().contains_key("abstract"));
+        assert!(namespace.has_grammar("abstract"));
     }
 
     // -- TypeRegistry accessors --
@@ -2639,5 +2737,68 @@ mod tests {
     fn type_registry_act_names_empty() {
         let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
         assert!(reg.act_names().is_empty());
+    }
+
+    // -- Fragmentable --
+
+    #[test]
+    fn type_registry_same_grammar_same_oid() {
+        let reg1 = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
+        let reg2 = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
+        assert_eq!(fragment::content_oid(&reg1), fragment::content_oid(&reg2),);
+    }
+
+    #[test]
+    fn type_registry_different_grammar_different_oid() {
+        let reg1 = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let reg2 = compile_grammar("grammar @test {\n  type = a | c\n}\n");
+        assert_ne!(fragment::content_oid(&reg1), fragment::content_oid(&reg2),);
+    }
+
+    #[test]
+    fn type_registry_different_domain_different_oid() {
+        let reg1 = compile_grammar("grammar @foo {\n  type = a\n}\n");
+        let reg2 = compile_grammar("grammar @bar {\n  type = a\n}\n");
+        assert_ne!(fragment::content_oid(&reg1), fragment::content_oid(&reg2),);
+    }
+
+    #[test]
+    fn type_registry_is_shard() {
+        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
+        assert!(reg.is_shard());
+        assert!(!reg.is_fractal());
+        assert!(reg.children().is_empty());
+    }
+
+    #[test]
+    fn type_registry_self_ref_label() {
+        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
+        assert_eq!(reg.self_ref().label, "grammar/test");
+    }
+
+    use fragmentation::repo::Repo;
+    use fragmentation::store::Store;
+
+    #[test]
+    fn type_registry_store_round_trip() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let mut store = Store::<TypeRegistry>::new();
+        let oid = store.write_tree(&reg);
+        let read_back = store.read_tree(&oid).unwrap();
+        assert_eq!(read_back.domain, reg.domain);
+        assert_eq!(
+            fragment::content_oid(&read_back),
+            fragment::content_oid(&reg)
+        );
+    }
+
+    #[test]
+    fn type_registry_store_dedup() {
+        let reg1 = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let reg2 = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let mut store = Store::<TypeRegistry>::new();
+        store.write_tree(&reg1);
+        store.write_tree(&reg2);
+        assert_eq!(store.object_count(), 1);
     }
 }

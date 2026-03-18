@@ -81,13 +81,9 @@ fn check_uniqueness(oids: &[(String, String)]) -> Verdict {
 }
 
 /// Check a static `test` block: verify that grammars have the expected variants.
-fn check_test(
-    name: &str,
-    assertions: &[HasAssertion],
-    grammars: &HashMap<String, TypeRegistry>,
-) -> PropertyResult {
+fn check_test(name: &str, assertions: &[HasAssertion], namespace: &Namespace) -> PropertyResult {
     for a in assertions {
-        let registry = match grammars.get(&a.domain) {
+        let registry = match namespace.grammar(&a.domain) {
             Some(r) => r,
             None => {
                 return PropertyResult {
@@ -160,12 +156,12 @@ fn derive_with_provider(registry: &TypeRegistry, provider: &GenerateProvider) ->
 fn check_property_block_with_overrides(
     name: &str,
     checks: &[PropertyCheck],
-    grammars: &HashMap<String, TypeRegistry>,
+    namespace: &Namespace,
     overrides: &HashMap<String, GenerateProvider>,
 ) -> Vec<PropertyResult> {
     let mut results = Vec::new();
     for check in checks {
-        let registry = match grammars.get(&check.domain) {
+        let registry = match namespace.grammar(&check.domain) {
             Some(r) => r,
             None => {
                 results.push(PropertyResult {
@@ -190,7 +186,7 @@ fn check_property_block_with_overrides(
         let provider = overrides
             .get(&check.domain)
             .unwrap_or(&GenerateProvider::Derived);
-        let derivations = derive_with_provider(registry, provider);
+        let derivations = derive_with_provider(&registry, provider);
         let count = derivations.len();
         let verdict = prop_fn(&derivations);
         results.push(PropertyResult {
@@ -207,7 +203,6 @@ pub fn check_all(namespace: &Namespace, test_section: &str) -> Result<Vec<Proper
     let directives = parse::parse_test_section(test_section)
         .map_err(|e| format!("test section parse error: {}", e))?;
 
-    let grammars = namespace.grammars();
     let mut results = Vec::new();
 
     // First pass: collect generate overrides
@@ -223,10 +218,10 @@ pub fn check_all(namespace: &Namespace, test_section: &str) -> Result<Vec<Proper
     }
 
     // Merge namespace-level overrides (test section overrides take priority)
-    for domain in grammars.keys() {
-        let ns_provider = namespace.generate_provider(domain);
-        if !matches!(ns_provider, GenerateProvider::Derived) && !overrides.contains_key(domain) {
-            overrides.insert(domain.clone(), ns_provider.clone());
+    for domain in namespace.grammar_domains() {
+        let ns_provider = namespace.generate_provider(&domain);
+        if !matches!(ns_provider, GenerateProvider::Derived) && !overrides.contains_key(&domain) {
+            overrides.insert(domain, ns_provider.clone());
         }
     }
 
@@ -234,11 +229,11 @@ pub fn check_all(namespace: &Namespace, test_section: &str) -> Result<Vec<Proper
     for directive in &directives {
         match directive {
             TestDirective::Test { name, assertions } => {
-                results.push(check_test(name, assertions, grammars));
+                results.push(check_test(name, assertions, namespace));
             }
             TestDirective::Property { name, checks } => {
                 results.extend(check_property_block_with_overrides(
-                    name, checks, grammars, &overrides,
+                    name, checks, namespace, &overrides,
                 ));
             }
             TestDirective::Generate { .. } => {} // already collected
