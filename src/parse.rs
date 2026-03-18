@@ -197,6 +197,14 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
             continue;
         }
 
+        if trimmed.starts_with("annotate(") && trimmed.ends_with(')') {
+            let span = lines.current_span();
+            let inner = &trimmed["annotate(".len()..trimmed.len() - 1];
+            children.push(ast::ast_leaf(Kind::Decl, "annotate", inner.trim(), span));
+            lines.advance();
+            continue;
+        }
+
         // Pipeline ending in branch: @json | branch(.path) { ... }
         if trimmed.contains("| branch(") {
             let pipeline_node = parse_pipeline_with_branch(trimmed, &mut lines)?;
@@ -2205,6 +2213,106 @@ grammar @conversation {
         );
     }
 
+    // -- Parse `act` in grammar blocks --
+
+    #[test]
+    fn parse_grammar_act_single() {
+        let source = "grammar @test {\n  act send {\n    from: address\n    to: address\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.children().len(), 1);
+
+        let act = &grammar.children()[0];
+        assert_eq!(act.data().kind, Kind::Form);
+        assert_eq!(act.data().name, "act-def");
+        assert_eq!(act.data().value, "send");
+        assert_eq!(act.children().len(), 2);
+
+        let from = &act.children()[0];
+        assert_eq!(from.data().kind, Kind::Atom);
+        assert_eq!(from.data().name, "field");
+        assert_eq!(from.data().value, "from");
+        assert_eq!(from.children().len(), 1);
+        assert_eq!(from.children()[0].data().kind, Kind::Ref);
+        assert_eq!(from.children()[0].data().name, "type-ref");
+        assert_eq!(from.children()[0].data().value, "address");
+
+        let to = &act.children()[1];
+        assert_eq!(to.data().kind, Kind::Atom);
+        assert_eq!(to.data().name, "field");
+        assert_eq!(to.data().value, "to");
+        assert_eq!(to.children()[0].data().value, "address");
+    }
+
+    #[test]
+    fn parse_grammar_act_untyped_field() {
+        let source = "grammar @test {\n  act send {\n    subject\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let act = &grammar.children()[0];
+        assert_eq!(act.data().name, "act-def");
+        assert_eq!(act.data().value, "send");
+        assert_eq!(act.children().len(), 1);
+
+        let field = &act.children()[0];
+        assert_eq!(field.data().kind, Kind::Atom);
+        assert_eq!(field.data().name, "field");
+        assert_eq!(field.data().value, "subject");
+        assert!(field.is_shard()); // no children — untyped
+    }
+
+    #[test]
+    fn parse_grammar_act_empty() {
+        let source = "grammar @test {\n  act noop {}\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.children().len(), 1);
+
+        let act = &grammar.children()[0];
+        assert_eq!(act.data().kind, Kind::Form);
+        assert_eq!(act.data().name, "act-def");
+        assert_eq!(act.data().value, "noop");
+        assert_eq!(act.children().len(), 0);
+    }
+
+    #[test]
+    fn parse_grammar_mixed_types_and_acts() {
+        let source = "grammar @test {\n  type = a | b\n  act send {\n    to: address\n  }\n  type address = email | uri\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        // grammar has 3 children: type-def, act-def, type-def
+        assert_eq!(grammar.children().len(), 3);
+
+        assert_eq!(grammar.children()[0].data().name, "type-def");
+        assert_eq!(grammar.children()[0].data().value, "");
+        assert_eq!(grammar.children()[1].data().name, "act-def");
+        assert_eq!(grammar.children()[1].data().value, "send");
+        assert_eq!(grammar.children()[2].data().name, "type-def");
+        assert_eq!(grammar.children()[2].data().value, "address");
+    }
+
+    #[test]
+    fn parse_grammar_act_error_unclosed() {
+        let source = "grammar @test {\n  act send {\n    from: address\n";
+        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("unclosed"),
+            "expected 'unclosed': {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_grammar_act_error_no_brace() {
+        let source = "grammar @test {\n  act send\n}\n";
+        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("{"),
+            "expected mention of '{{': {}",
+            err.message
+        );
+    }
+
     #[test]
     fn parse_grammar_fixture() {
         let source = include_str!("../main.conv");
@@ -2496,5 +2604,63 @@ grammar @conversation {
             .trace("grammar @git {\n  type = ref | commit | entry\n}\n".to_string())
             .unwrap();
         assert_ne!(content_oid(&a), content_oid(&b));
+    }
+
+    // -- Parse `annotate(@target)` --
+
+    #[test]
+    fn parse_annotate_gleam() {
+        let source = "annotate(@gleam)\n".to_string();
+        let tree = Parse.trace(source).unwrap();
+        let node = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("annotate"))
+            .expect("annotate node");
+        assert!(node.is_shard());
+        assert_eq!(node.data().value, "@gleam");
+    }
+
+    #[test]
+    fn parse_annotate_elixir() {
+        let source = "annotate(@elixir)\n".to_string();
+        let tree = Parse.trace(source).unwrap();
+        let node = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("annotate"))
+            .unwrap();
+        assert_eq!(node.data().value, "@elixir");
+    }
+
+    #[test]
+    fn parse_annotate_multiple_targets() {
+        let source = "annotate(@gleam)\nannotate(@elixir)\nannotate(@fortran)\n".to_string();
+        let tree = Parse.trace(source).unwrap();
+        let annotations: Vec<_> = tree
+            .children()
+            .iter()
+            .filter(|c| c.data().is_decl("annotate"))
+            .collect();
+        assert_eq!(annotations.len(), 3);
+        assert_eq!(annotations[0].data().value, "@gleam");
+        assert_eq!(annotations[1].data().value, "@elixir");
+        assert_eq!(annotations[2].data().value, "@fortran");
+    }
+
+    #[test]
+    fn parse_annotate_with_in_and_grammar() {
+        let source = "grammar @color {\n  type = red | green | blue\n}\nannotate(@gleam)\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let has_grammar = tree
+            .children()
+            .iter()
+            .any(|c| c.data().is_decl("grammar"));
+        let has_annotate = tree
+            .children()
+            .iter()
+            .any(|c| c.data().is_decl("annotate"));
+        assert!(has_grammar);
+        assert!(has_annotate);
     }
 }
