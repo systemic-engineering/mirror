@@ -31,10 +31,10 @@ fn main() {
         process::exit(1);
     }
 
-    let resolve = load_packages();
-
     match args[1].as_str() {
         "shell" => {
+            let self_dir = std::env::current_dir().unwrap_or(std::path::PathBuf::from("."));
+            let resolve = load_packages(&self_dir);
             let path = args.get(2).map(|s| s.as_str()).unwrap_or(".");
             shell(path, &resolve);
         }
@@ -43,6 +43,8 @@ fn main() {
                 eprintln!("usage: conversation -e '<expr>' [path]");
                 process::exit(1);
             }
+            let self_dir = std::env::current_dir().unwrap_or(std::path::PathBuf::from("."));
+            let resolve = load_packages(&self_dir);
             let source = format!("out {}\n", &args[2]);
             let path = args.get(3).map(|s| s.as_str()).unwrap_or(".");
             run(&source, path, &resolve);
@@ -56,27 +58,31 @@ fn main() {
                     process::exit(1);
                 }
             };
+            let self_dir = std::path::Path::new(conv_path)
+                .parent()
+                .unwrap_or(std::path::Path::new("."))
+                .to_path_buf();
+            let resolve = load_packages(&self_dir);
             let path = args.get(2).map(|s| s.as_str()).unwrap_or(".");
             run(&source, path, &resolve);
         }
     }
 }
 
-/// Discover packages from CONVERSATION_PACKAGES or ~/.conversation.
-fn load_packages() -> Resolve {
-    let packages_dir = PackageRegistry::packages_dir();
-    if !packages_dir.exists() {
+/// Discover packages from priority-ordered roots relative to `self_dir`.
+fn load_packages(self_dir: &std::path::Path) -> Resolve {
+    let roots = PackageRegistry::package_roots(self_dir);
+    if roots.is_empty() {
         return Resolve::new();
     }
-    let registry = match PackageRegistry::discover(&packages_dir) {
-        Ok(r) => r,
-        Err(e) => {
-            eprintln!("conversation: packages: {}", e);
-            return Resolve::new();
-        }
-    };
-    match registry.to_namespace() {
-        Ok(namespace) => Resolve::new().with_namespace(namespace),
+    match PackageRegistry::discover_ordered(&roots) {
+        Ok(r) => match r.to_namespace() {
+            Ok(ns) => Resolve::new().with_namespace(ns),
+            Err(e) => {
+                eprintln!("conversation: packages: {}", e);
+                Resolve::new()
+            }
+        },
         Err(e) => {
             eprintln!("conversation: packages: {}", e);
             Resolve::new()

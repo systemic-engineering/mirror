@@ -1,3 +1,5 @@
+in @actor
+
 grammar @compiler {
   type = target | artifact | request | result
 
@@ -7,5 +9,8 @@ grammar @compiler {
 
   type status = ok | error | pending
 
-  type modifier = abstract | extends
+  act compile {
+    source: artifact
+    target: target
+  }
 }

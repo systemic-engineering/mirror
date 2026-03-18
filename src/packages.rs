@@ -37,6 +37,51 @@ impl PackageRegistry {
         Ok(PackageRegistry { packages })
     }
 
+    /// Discover packages from ordered roots; first root wins on name collision.
+    ///
+    /// Walks each root in order. Because `walk_dir` uses `entry().or_insert()`,
+    /// inserting into a shared map across roots gives first-root-wins naturally.
+    pub fn discover_ordered(roots: &[PathBuf]) -> Result<Self, String> {
+        let mut packages = HashMap::new();
+        for root in roots {
+            walk_dir(root, &mut packages)?;
+        }
+        Ok(PackageRegistry { packages })
+    }
+
+    /// Priority-ordered lookup roots for `self_dir`.
+    ///
+    /// Returns the six candidate roots in priority order, filtered to only
+    /// those that exist on disk:
+    ///
+    /// ```text
+    /// 1. $SELF/private
+    /// 2. $SELF/protected
+    /// 3. $SELF/public
+    /// 4. $HOME/private      ($HOME = $CONVERSATION_PACKAGES or ~/.conversation)
+    /// 5. $HOME/protected
+    /// 6. $HOME/public
+    /// ```
+    pub fn package_roots(self_dir: &Path) -> Vec<PathBuf> {
+        let home = if let Ok(dir) = std::env::var("CONVERSATION_PACKAGES") {
+            PathBuf::from(dir)
+        } else {
+            dirs_home().join(".conversation")
+        };
+
+        [
+            self_dir.join("private"),
+            self_dir.join("protected"),
+            self_dir.join("public"),
+            home.join("private"),
+            home.join("protected"),
+            home.join("public"),
+        ]
+        .into_iter()
+        .filter(|p| p.exists())
+        .collect()
+    }
+
     /// Convert to a Namespace for the resolver.
     ///
     /// Parses each package's source, compiles grammars, extracts templates,
@@ -436,6 +481,67 @@ mod tests {
     fn discover_nonexistent_dir() {
         let result = PackageRegistry::discover(Path::new("/nonexistent/path/12345"));
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn discover_ordered_first_root_wins() {
+        let root1 = TempDir::new().unwrap();
+        let root2 = TempDir::new().unwrap();
+        fs::write(root1.path().join("@pkg"), "grammar @pkg {\n  type = a\n}\n").unwrap();
+        fs::write(root2.path().join("@pkg"), "grammar @pkg {\n  type = b\n}\n").unwrap();
+        let roots = vec![root1.path().to_path_buf(), root2.path().to_path_buf()];
+        let registry = PackageRegistry::discover_ordered(&roots).unwrap();
+        assert_eq!(registry.len(), 1);
+        assert!(registry.packages["pkg"].source.contains("type = a"));
+    }
+
+    #[test]
+    fn discover_ordered_private_beats_public() {
+        let base = TempDir::new().unwrap();
+        let private_dir = base.path().join("private");
+        let public_dir = base.path().join("public");
+        fs::create_dir(&private_dir).unwrap();
+        fs::create_dir(&public_dir).unwrap();
+        fs::write(
+            private_dir.join("@pkg"),
+            "grammar @pkg {\n  type = private\n}\n",
+        )
+        .unwrap();
+        fs::write(
+            public_dir.join("@pkg"),
+            "grammar @pkg {\n  type = public\n}\n",
+        )
+        .unwrap();
+        let roots = vec![private_dir, public_dir];
+        let registry = PackageRegistry::discover_ordered(&roots).unwrap();
+        assert_eq!(registry.len(), 1);
+        assert!(registry.packages["pkg"].source.contains("type = private"));
+    }
+
+    #[test]
+    fn package_roots_includes_self_before_home() {
+        let self_dir = TempDir::new().unwrap();
+        let home_dir = TempDir::new().unwrap();
+        fs::create_dir(self_dir.path().join("private")).unwrap();
+        fs::create_dir(home_dir.path().join("private")).unwrap();
+        std::env::set_var("CONVERSATION_PACKAGES", home_dir.path());
+        let roots = PackageRegistry::package_roots(self_dir.path());
+        std::env::remove_var("CONVERSATION_PACKAGES");
+        let self_private = self_dir.path().join("private");
+        let home_private = home_dir.path().join("private");
+        let self_idx = roots.iter().position(|p| p == &self_private).unwrap();
+        let home_idx = roots.iter().position(|p| p == &home_private).unwrap();
+        assert!(self_idx < home_idx);
+    }
+
+    #[test]
+    fn package_roots_filters_nonexistent() {
+        let self_dir = TempDir::new().unwrap();
+        // No subdirs created — all six roots are nonexistent
+        std::env::set_var("CONVERSATION_PACKAGES", "/nonexistent/path/zzzz12345");
+        let roots = PackageRegistry::package_roots(self_dir.path());
+        std::env::remove_var("CONVERSATION_PACKAGES");
+        assert!(roots.is_empty());
     }
 
     #[test]

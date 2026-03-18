@@ -1,5 +1,19 @@
+import conversation/compiler
 import conversation/runtime
 import conversation/protocol.{Arm, Case, Cmp, DesiredState, Gt, Pass, Wildcard}
+
+pub type Artifact =
+  compiler.Artifact
+
+pub type Target =
+  compiler.Target
+
+pub type CompilerMessage =
+  compiler.Message
+
+pub fn start_compiler() {
+  compiler.start()
+}
 
 pub fn main() {
   // Example: case dispatch with wildcard fallback

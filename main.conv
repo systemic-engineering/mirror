@@ -5,6 +5,8 @@ grammar @conversation {
        | use | home | self | path | literal
        | case | arm | wild | branch | param
        | when(op) | cmp(op)
+       | grammar | type-def | variant | type-ref
+       | act | annotate
 
   type op = gt | lt | gte | lte | eq | ne
 }

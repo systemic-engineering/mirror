@@ -216,8 +216,11 @@ fn shell_skips_empty_lines() {
 #[test]
 fn loads_packages_from_env() {
     let dir = tempfile::TempDir::new().unwrap();
+    // Packages live in a tier subdirectory (private/protected/public)
+    let private_dir = dir.path().join("private");
+    std::fs::create_dir(&private_dir).unwrap();
     std::fs::write(
-        dir.path().join("@beam"),
+        private_dir.join("@beam"),
         "grammar @beam {\n  type = process | module\n}\n",
     )
     .unwrap();
@@ -239,13 +242,12 @@ fn loads_packages_from_env() {
 
 #[test]
 fn bad_packages_dir_falls_back() {
-    // CONVERSATION_PACKAGES points to a file, not a directory — discover fails gracefully
+    // "private" exists as a file (not a dir) — walk_dir fails, falls back gracefully
     let dir = tempfile::TempDir::new().unwrap();
-    let file = dir.path().join("not_a_dir");
-    std::fs::write(&file, "content").unwrap();
+    std::fs::write(dir.path().join("private"), "content").unwrap();
 
     let output = conversation_bin()
-        .env("CONVERSATION_PACKAGES", &file)
+        .env("CONVERSATION_PACKAGES", dir.path())
         .arg("-e")
         .arg("@json")
         .arg(".")
@@ -264,8 +266,10 @@ fn bad_packages_dir_falls_back() {
 #[test]
 fn bad_package_source_falls_back() {
     let dir = tempfile::TempDir::new().unwrap();
-    // Invalid .conv source that fails to parse → to_namespace returns Err
-    std::fs::write(dir.path().join("@bad"), ">>> invalid\n").unwrap();
+    // Invalid .conv source inside a tier dir — to_namespace returns Err
+    let private_dir = dir.path().join("private");
+    std::fs::create_dir(&private_dir).unwrap();
+    std::fs::write(private_dir.join("@bad"), ">>> invalid\n").unwrap();
 
     let output = conversation_bin()
         .env("CONVERSATION_PACKAGES", dir.path())

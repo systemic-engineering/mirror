@@ -2513,8 +2513,9 @@ mod tests {
         assert!(reg.has_variant("", "artifact"));
         assert!(reg.has_variant("target", "gleam"));
         assert!(reg.has_variant("target", "elixir"));
-        assert!(reg.has_variant("modifier", "abstract"));
-        assert!(reg.has_variant("modifier", "extends"));
+        assert!(reg.has_variant("status", "ok"));
+        assert!(reg.has_variant("status", "error"));
+        assert!(reg.has_act("compile"));
 
         // @abstract is registered — the chain is live
         assert!(namespace.grammars().contains_key("abstract"));
