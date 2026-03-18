@@ -213,13 +213,27 @@ fn parse_source(source: &str) -> Result<Prism<AstNode>, ParseError> {
             continue;
         }
 
-        // annotate(...) — special syntax
-        if trimmed.starts_with("annotate(") && trimmed.ends_with(')') {
+        // annotate(@domain) — inline (leaf) or block (branch with children)
+        if trimmed.starts_with("annotate(") {
             let span = lines.current_span();
-            let inner = &trimmed["annotate(".len()..trimmed.len() - 1];
-            children.push(ast::ast_leaf(Kind::Decl, "annotate", inner.trim(), span));
-            lines.advance();
+            children.push(parse_annotate(trimmed, span, &mut lines)?);
             continue;
+        }
+
+        // --- separator: sugar for annotate(@test) { ... EOF }
+        if trimmed == "---" {
+            let span = lines.current_span();
+            lines.advance();
+            let remaining = collect_remaining(&mut lines);
+            let test_children = parse_test_ast(&remaining, span)?;
+            children.push(ast::ast_branch(
+                Kind::Decl,
+                "annotate",
+                "@test",
+                span,
+                test_children,
+            ));
+            break;
         }
 
         // Pipeline ending in branch: @json | branch(.path) { ... }
@@ -1164,6 +1178,125 @@ fn parse_action_call(trimmed: &str, span: Span) -> Option<Prism<AstNode>> {
         span,
         arg_nodes,
     ))
+}
+
+/// Parse `annotate(@domain)` — inline leaf or `annotate(@domain) { ... }` block.
+fn parse_annotate(
+    trimmed: &str,
+    span: Span,
+    lines: &mut Lines,
+) -> Result<Prism<AstNode>, ParseError> {
+    let inner_start = "annotate(".len();
+
+    // Block form: annotate(@domain) { ... }
+    if let Some(paren_end) = trimmed.find(") {") {
+        let domain = trimmed[inner_start..paren_end].trim();
+        lines.advance();
+
+        let mut body_lines = Vec::new();
+        while let Some(line) = lines.peek() {
+            let t = line.trim();
+            if t == "}" {
+                lines.advance();
+                break;
+            }
+            body_lines.push(line.to_string());
+            lines.advance();
+        }
+
+        let body = body_lines.join("\n");
+        let children = parse_test_ast(&body, span)?;
+        return Ok(ast::ast_branch(
+            Kind::Decl,
+            "annotate",
+            domain,
+            span,
+            children,
+        ));
+    }
+
+    // Inline form: annotate(@domain)
+    if trimmed.ends_with(')') {
+        let domain = trimmed[inner_start..trimmed.len() - 1].trim();
+        lines.advance();
+        return Ok(ast::ast_leaf(Kind::Decl, "annotate", domain, span));
+    }
+
+    Err(ParseError {
+        message: format!("invalid annotate syntax: {}", trimmed),
+        span: Some(span),
+    })
+}
+
+/// Collect all remaining lines from the iterator into a single string.
+fn collect_remaining(lines: &mut Lines) -> String {
+    let mut parts = Vec::new();
+    while let Some(line) = lines.peek() {
+        parts.push(line.to_string());
+        lines.advance();
+    }
+    parts.join("\n")
+}
+
+/// Parse test section content into AST nodes.
+///
+/// Recognizes `test "name" { ... }`, `property "name" { ... }`,
+/// and `generate @domain { ... }` directives.
+fn parse_test_ast(source: &str, span: Span) -> Result<Vec<Prism<AstNode>>, ParseError> {
+    let mut children = Vec::new();
+    let mut lines = source.lines().peekable();
+
+    while let Some(line) = lines.next() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() || trimmed.starts_with('#') {
+            continue;
+        }
+
+        if let Some(rest) = trimmed.strip_prefix("test ") {
+            let (name, body) = parse_directive_block(rest, &mut lines)?;
+            let assertions = split_to_leaves(&body, "assertion", span);
+            children.push(ast::ast_branch(
+                Kind::Form,
+                "test",
+                &name,
+                span,
+                assertions,
+            ));
+        } else if let Some(rest) = trimmed.strip_prefix("property ") {
+            let (name, body) = parse_directive_block(rest, &mut lines)?;
+            let checks = split_to_leaves(&body, "check", span);
+            children.push(ast::ast_branch(
+                Kind::Form,
+                "property",
+                &name,
+                span,
+                checks,
+            ));
+        } else if let Some(rest) = trimmed.strip_prefix("generate ") {
+            let (domain, body) = parse_generate_block(rest, &mut lines)?;
+            let overrides = split_to_leaves(&body, "override", span);
+            let domain_val = format!("@{}", domain);
+            children.push(ast::ast_branch(
+                Kind::Form,
+                "generate",
+                &domain_val,
+                span,
+                overrides,
+            ));
+        }
+        // Unknown lines silently skipped
+    }
+
+    Ok(children)
+}
+
+/// Split semicolon-joined body text into leaf AST nodes.
+fn split_to_leaves(body: &str, name: &str, span: Span) -> Vec<Prism<AstNode>> {
+    body.split(';')
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty())
+        .map(|s| ast::ast_leaf(Kind::Atom, name, s, span))
+        .collect()
 }
 
 // -- Test section DSL --
@@ -3340,6 +3473,63 @@ grammar @conversation {
             .unwrap();
         assert_eq!(annotate.data().value, "@test");
         assert!(annotate.children().is_empty());
+    }
+
+    #[test]
+    fn parse_separator_mixed_directives() {
+        let source = "grammar @g {\n  type = a\n}\n---\ntest \"t\" { @g has a }\ngenerate @g {\n  type = x\n}\nproperty \"p\" { @g preserves shannon_equivalence }\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let annotate = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("annotate"))
+            .unwrap();
+        assert_eq!(annotate.children().len(), 3);
+        assert_eq!(annotate.children()[0].data().name, "test");
+        assert_eq!(annotate.children()[1].data().name, "generate");
+        assert_eq!(annotate.children()[2].data().name, "property");
+    }
+
+    #[test]
+    fn parse_annotate_invalid_syntax() {
+        let source = "annotate(@test {\n";
+        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("annotate"),
+            "expected annotate error: {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_separator_with_comments_and_unknown() {
+        let source =
+            "grammar @g {\n  type = a\n}\n---\n# comment\n\nunknown line\ntest \"check\" { @g has a }\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let annotate = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("annotate"))
+            .unwrap();
+        // unknown line is silently skipped
+        assert_eq!(annotate.children().len(), 1);
+    }
+
+    #[test]
+    fn parse_separator_generate_directive() {
+        let source = "grammar @g {\n  type = a\n}\n---\ngenerate @g {\n  type = x | y\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let annotate = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("annotate"))
+            .unwrap();
+        let gen = &annotate.children()[0];
+        assert_eq!(gen.data().name, "generate");
+        assert_eq!(gen.data().value, "@g");
+        assert_eq!(gen.children().len(), 1);
+        assert_eq!(gen.children()[0].data().name, "override");
+        assert_eq!(gen.children()[0].data().value, "type = x | y");
     }
 
     // -- Test section DSL --
