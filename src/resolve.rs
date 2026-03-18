@@ -41,6 +41,7 @@ pub struct TypeRegistry {
     #[allow(dead_code)] // read in tests; used by Phase 4 validation
     params: HashMap<(String, String), String>,
     acts: HashMap<String, Vec<(String, Option<String>)>>,
+    calls: HashMap<String, Vec<(String, String, Vec<String>)>>,
 }
 
 impl TypeRegistry {
@@ -56,6 +57,7 @@ impl TypeRegistry {
         let mut types: HashMap<String, HashSet<String>> = HashMap::new();
         let mut params: HashMap<(String, String), String> = HashMap::new();
         let mut acts: HashMap<String, Vec<(String, Option<String>)>> = HashMap::new();
+        let mut calls: HashMap<String, Vec<(String, String, Vec<String>)>> = HashMap::new();
 
         for child in grammar_node.children() {
             if child.data().is_form("type-def") {
@@ -84,21 +86,40 @@ impl TypeRegistry {
             } else if child.data().is_form("action-def") {
                 let act_name = child.data().value.clone();
                 let mut fields = Vec::new();
+                let mut act_calls = Vec::new();
 
-                for field in child.children() {
-                    if !field.data().is_atom("field") {
-                        continue;
+                for item in child.children() {
+                    if item.data().is_atom("field") {
+                        let field_name = item.data().value.clone();
+                        let type_ref = item
+                            .children()
+                            .iter()
+                            .find(|c| c.data().is_ref("type-ref"))
+                            .map(|c| c.data().value.clone());
+                        fields.push((field_name, type_ref));
+                    } else if item.data().is_ref("action-call") {
+                        // @domain.action → split into domain + action
+                        let target = &item.data().value;
+                        let target = target.strip_prefix('@').unwrap_or(target);
+                        if let Some((domain, action)) = target.split_once('.') {
+                            let args: Vec<String> = item
+                                .children()
+                                .iter()
+                                .map(|c| c.data().value.clone())
+                                .collect();
+                            act_calls.push((
+                                domain.to_string(),
+                                action.to_string(),
+                                args,
+                            ));
+                        }
                     }
-                    let field_name = field.data().value.clone();
-                    let type_ref = field
-                        .children()
-                        .iter()
-                        .find(|c| c.data().is_ref("type-ref"))
-                        .map(|c| c.data().value.clone());
-                    fields.push((field_name, type_ref));
                 }
 
-                acts.insert(act_name, fields);
+                acts.insert(act_name.clone(), fields);
+                if !act_calls.is_empty() {
+                    calls.insert(act_name, act_calls);
+                }
             }
         }
 
@@ -127,7 +148,7 @@ impl TypeRegistry {
         // Unlike parameterized variants (which MUST reference a declared type name),
         // act fields can reference variants, external types, or undeclared names.
 
-        Ok(Self::finalize(domain, types, params, acts))
+        Ok(Self::finalize(domain, types, params, acts, calls))
     }
 
     /// Build a "unknown type reference" error with did-you-mean hints.
@@ -212,6 +233,14 @@ impl TypeRegistry {
         self.acts.keys().map(|s| s.as_str()).collect()
     }
 
+    /// Get the cross-actor calls for a named action: (domain, action, args).
+    pub fn action_calls(&self, name: &str) -> &[(String, String, Vec<String>)] {
+        self.calls
+            .get(name)
+            .map(|v| v.as_slice())
+            .unwrap_or(&[])
+    }
+
     /// Test-only: build a registry with a parameterized variant whose type ref
     /// is NOT declared. This bypasses compile-time validation to exercise the
     /// `None => continue` defensive path in `generate::derive_type`.
@@ -232,7 +261,7 @@ impl TypeRegistry {
             (type_name.to_string(), variant.to_string()),
             param_ref.to_string(),
         );
-        Self::finalize(domain.to_string(), types, params, HashMap::new())
+        Self::finalize(domain.to_string(), types, params, HashMap::new(), HashMap::new())
     }
 
     /// Build a finalized TypeRegistry from raw data.
@@ -242,6 +271,7 @@ impl TypeRegistry {
         types: HashMap<String, HashSet<String>>,
         params: HashMap<(String, String), String>,
         acts: HashMap<String, Vec<(String, Option<String>)>>,
+        calls: HashMap<String, Vec<(String, String, Vec<String>)>>,
     ) -> Self {
         let encoded = Self::encode_canonical(&domain, &types, &params, &acts);
         let sha = Sha(fragment::blob_oid_bytes(&encoded));
@@ -253,6 +283,7 @@ impl TypeRegistry {
             types,
             params,
             acts,
+            calls,
         }
     }
 
@@ -2433,6 +2464,19 @@ mod tests {
     }
 
     #[test]
+    fn type_registry_compile_action_call_no_dot_skipped() {
+        use crate::ast::{self, Span};
+        // Manually construct an action-call node with no dot (defensive path)
+        let span = Span::new(0, 50);
+        let call = ast::ast_leaf(Kind::Ref, "action-call", "nodot", span);
+        let actiondef = ast::ast_branch(Kind::Form, "action-def", "ping", span, vec![call]);
+        let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![actiondef]);
+        let reg = TypeRegistry::compile(&grammar).unwrap();
+        assert!(reg.has_action("ping"));
+        assert!(reg.action_calls("ping").is_empty());
+    }
+
+    #[test]
     fn type_registry_compile_action_calls() {
         let reg = compile_grammar(
             "grammar @test {\n  type source = a | b\n  action commit {\n    source: source\n    @filesystem.write(source)\n  }\n}\n",
@@ -2447,9 +2491,7 @@ mod tests {
 
     #[test]
     fn type_registry_compile_action_calls_empty() {
-        let reg = compile_grammar(
-            "grammar @test {\n  action send {\n    to: address\n  }\n}\n",
-        );
+        let reg = compile_grammar("grammar @test {\n  action send {\n    to: address\n  }\n}\n");
         let calls = reg.action_calls("send");
         assert!(calls.is_empty());
     }

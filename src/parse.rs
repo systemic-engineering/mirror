@@ -1096,6 +1096,16 @@ fn parse_action_def(
         }
 
         let field_span = lines.current_span();
+
+        // Action call: @domain.action(args...)
+        if trimmed.starts_with('@') {
+            if let Some(call_node) = parse_action_call(trimmed, field_span) {
+                fields.push(call_node);
+                lines.advance();
+                continue;
+            }
+        }
+
         if let Some((fname, ftype)) = trimmed.split_once(':') {
             let fname = fname.trim();
             let ftype = ftype.trim();
@@ -1118,6 +1128,42 @@ fn parse_action_def(
         message: "unclosed action block".into(),
         span: Some(span),
     })
+}
+
+/// Parse `@domain.action(arg1, arg2)` into a Ref("action-call") node.
+///
+/// Returns None if the line doesn't match the pattern (falls through to field parsing).
+fn parse_action_call(trimmed: &str, span: Span) -> Option<Prism<AstNode>> {
+    // Find the '(' that separates target from arguments
+    let paren_pos = trimmed.find('(')?;
+    let target = &trimmed[..paren_pos]; // "@domain.action"
+
+    // Must contain a dot separating domain from action name
+    if !target.contains('.') {
+        return None;
+    }
+
+    // Extract args between parens
+    let rest = &trimmed[paren_pos + 1..];
+    let close = rest.find(')')?;
+    let args_str = rest[..close].trim();
+
+    let arg_nodes: Vec<Prism<AstNode>> = if args_str.is_empty() {
+        vec![]
+    } else {
+        args_str
+            .split(',')
+            .map(|a| ast::ast_leaf(Kind::Ref, "arg-ref", a.trim(), span))
+            .collect()
+    };
+
+    Some(ast::ast_branch(
+        Kind::Ref,
+        "action-call",
+        target,
+        span,
+        arg_nodes,
+    ))
 }
 
 // -- Test section DSL --
@@ -2781,6 +2827,31 @@ grammar @conversation {
         assert_eq!(call.data().name, "action-call");
         assert_eq!(call.data().value, "@health.check");
         assert_eq!(call.children().len(), 0);
+    }
+
+    #[test]
+    fn parse_grammar_action_call_no_dot_falls_through() {
+        // @nodot(x) has parens but no dot — falls through to field
+        let source =
+            "grammar @test {\n  action ping {\n    @nodot(x)\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let action = &grammar.children()[0];
+        // Parsed as untyped field, not action-call
+        assert_eq!(action.children().len(), 1);
+        assert_eq!(action.children()[0].data().name, "field");
+    }
+
+    #[test]
+    fn parse_grammar_action_call_no_parens_falls_through() {
+        // @domain.action without parens — falls through to field
+        let source =
+            "grammar @test {\n  action ping {\n    @domain.action\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let action = &grammar.children()[0];
+        assert_eq!(action.children().len(), 1);
+        assert_eq!(action.children()[0].data().name, "field");
     }
 
     #[test]
