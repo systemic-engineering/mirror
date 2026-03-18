@@ -217,3 +217,24 @@ fn emit_actor_module_with_action_call() {
     assert!(!eaf_bytes.is_empty());
     assert_eq!(eaf_bytes[0], 131);
 }
+
+/// Cross-actor call emits gen_server:call to the target domain.
+#[test]
+fn emit_actor_module_cross_actor_call_in_body() {
+    use std::io::Cursor;
+
+    let registry = compile_grammar(
+        "grammar @integration {\n  type source = edge | branch\n  action commit {\n    source: source\n    @filesystem.write(source)\n  }\n}\n",
+    );
+    let eaf_bytes = compile::emit_actor_module(&registry);
+
+    // Decode ETF and search for the filesystem atom in the forms
+    let term = eetf::Term::decode(Cursor::new(&eaf_bytes)).unwrap();
+    let forms_str = format!("{:?}", term);
+    // The body should contain a call to '@filesystem' for the cross-actor dispatch
+    assert!(
+        forms_str.contains("filesystem"),
+        "expected 'filesystem' in EAF body: {}",
+        forms_str
+    );
+}

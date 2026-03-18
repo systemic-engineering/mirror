@@ -107,11 +107,7 @@ impl TypeRegistry {
                                 .iter()
                                 .map(|c| c.data().value.clone())
                                 .collect();
-                            act_calls.push((
-                                domain.to_string(),
-                                action.to_string(),
-                                args,
-                            ));
+                            act_calls.push((domain.to_string(), action.to_string(), args));
                         }
                     }
                 }
@@ -235,10 +231,7 @@ impl TypeRegistry {
 
     /// Get the cross-actor calls for a named action: (domain, action, args).
     pub fn action_calls(&self, name: &str) -> &[(String, String, Vec<String>)] {
-        self.calls
-            .get(name)
-            .map(|v| v.as_slice())
-            .unwrap_or(&[])
+        self.calls.get(name).map(|v| v.as_slice()).unwrap_or(&[])
     }
 
     /// Test-only: build a registry with a parameterized variant whose type ref
@@ -261,7 +254,13 @@ impl TypeRegistry {
             (type_name.to_string(), variant.to_string()),
             param_ref.to_string(),
         );
-        Self::finalize(domain.to_string(), types, params, HashMap::new(), HashMap::new())
+        Self::finalize(
+            domain.to_string(),
+            types,
+            params,
+            HashMap::new(),
+            HashMap::new(),
+        )
     }
 
     /// Build a finalized TypeRegistry from raw data.

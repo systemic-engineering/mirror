@@ -2832,8 +2832,7 @@ grammar @conversation {
     #[test]
     fn parse_grammar_action_call_no_dot_falls_through() {
         // @nodot(x) has parens but no dot — falls through to field
-        let source =
-            "grammar @test {\n  action ping {\n    @nodot(x)\n  }\n}\n";
+        let source = "grammar @test {\n  action ping {\n    @nodot(x)\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
@@ -2845,8 +2844,7 @@ grammar @conversation {
     #[test]
     fn parse_grammar_action_call_no_parens_falls_through() {
         // @domain.action without parens — falls through to field
-        let source =
-            "grammar @test {\n  action ping {\n    @domain.action\n  }\n}\n";
+        let source = "grammar @test {\n  action ping {\n    @domain.action\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
