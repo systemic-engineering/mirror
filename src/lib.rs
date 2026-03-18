@@ -7,6 +7,7 @@ pub mod ffi;
 pub mod filter;
 pub mod packages;
 pub mod parse;
+pub mod prism;
 pub mod resolve;
 pub mod tree;
 

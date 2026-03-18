@@ -2249,8 +2249,7 @@ mod tests {
         let span = Span::new(0, 50);
         let stray = ast::ast_leaf(Kind::Ref, "type-ref", "noise", span);
         let field = ast::ast_leaf(Kind::Atom, "field", "to", span);
-        let actiondef =
-            ast::ast_branch(Kind::Form, "action-def", "send", span, vec![stray, field]);
+        let actiondef = ast::ast_branch(Kind::Form, "action-def", "send", span, vec![stray, field]);
         let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![actiondef]);
         let reg = TypeRegistry::compile(&grammar).unwrap();
         assert!(reg.has_action("send"));
