@@ -80,6 +80,32 @@ impl TypeRegistry {
             types.insert(type_name, variants);
         }
 
+        // Process act-def children
+        let mut acts: HashMap<String, Vec<(String, Option<String>)>> = HashMap::new();
+
+        for actdef in grammar_node.children() {
+            if !actdef.data().is_form("act-def") {
+                continue;
+            }
+            let act_name = actdef.data().value.clone();
+            let mut fields = Vec::new();
+
+            for field in actdef.children() {
+                if !field.data().is_atom("field") {
+                    continue;
+                }
+                let field_name = field.data().value.clone();
+                let type_ref = field
+                    .children()
+                    .iter()
+                    .find(|c| c.data().is_ref("type-ref"))
+                    .map(|c| c.data().value.clone());
+                fields.push((field_name, type_ref));
+            }
+
+            acts.insert(act_name, fields);
+        }
+
         // Validate: every TypeRef must reference a declared type name
         for ((parent_type, variant_name), ref_type) in &params {
             if !types.contains_key(ref_type) {
@@ -99,11 +125,33 @@ impl TypeRegistry {
             }
         }
 
+        // Validate: act field TypeRefs must reference declared type names
+        for (act_name, fields) in &acts {
+            for (field_name, type_ref) in fields {
+                if let Some(ref_type) = type_ref {
+                    if !types.contains_key(ref_type) {
+                        let declared: Vec<&str> = types.keys().map(|s| s.as_str()).collect();
+                        let hints = hint_did_you_mean(ref_type, &declared, |s| {
+                            format!("did you mean \"{}\"?", s)
+                        });
+                        return Err(ResolveError {
+                            message: format!(
+                                "unknown type reference \"{}\" in grammar @{} (field \"{}\" in act \"{}\")",
+                                ref_type, domain, field_name, act_name,
+                            ),
+                            span: Some(grammar_node.data().span),
+                            hints,
+                        });
+                    }
+                }
+            }
+        }
+
         Ok(TypeRegistry {
             domain,
             types,
             params,
-            acts: HashMap::new(),
+            acts,
         })
     }
 
@@ -2149,9 +2197,7 @@ mod tests {
 
     #[test]
     fn type_registry_compile_act_untyped_field() {
-        let reg = compile_grammar(
-            "grammar @test {\n  act send {\n    subject\n  }\n}\n",
-        );
+        let reg = compile_grammar("grammar @test {\n  act send {\n    subject\n  }\n}\n");
         assert!(reg.has_act("send"));
         let fields = reg.act_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
@@ -2161,7 +2207,8 @@ mod tests {
 
     #[test]
     fn type_registry_compile_act_invalid_type_ref() {
-        let source = "grammar @test {\n  type address = email | uri\n  act send {\n    to: addres\n  }\n}\n";
+        let source =
+            "grammar @test {\n  type address = email | uri\n  act send {\n    to: addres\n  }\n}\n";
         let ast = Parse.trace(source.to_string()).unwrap();
         let grammar = ast
             .children()
@@ -2184,6 +2231,22 @@ mod tests {
         assert!(reg.has_act("noop"));
         let fields = reg.act_fields("noop").unwrap();
         assert!(fields.is_empty());
+    }
+
+    #[test]
+    fn type_registry_compile_act_skips_non_field_children() {
+        use crate::ast::{self, Span};
+        // Act-def with a non-field child — should be skipped
+        let span = Span::new(0, 50);
+        let stray = ast::ast_leaf(Kind::Ref, "type-ref", "noise", span);
+        let field = ast::ast_leaf(Kind::Atom, "field", "to", span);
+        let actdef = ast::ast_branch(Kind::Form, "act-def", "send", span, vec![stray, field]);
+        let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![actdef]);
+        let reg = TypeRegistry::compile(&grammar).unwrap();
+        assert!(reg.has_act("send"));
+        let fields = reg.act_fields("send").unwrap();
+        assert_eq!(fields.len(), 1);
+        assert_eq!(fields[0].0, "to");
     }
 
     #[test]
