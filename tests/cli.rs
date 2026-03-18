@@ -289,6 +289,72 @@ fn bad_package_source_falls_back() {
 }
 
 #[test]
+fn test_subcommand_runs_property_tests() {
+    let dir = tempfile::TempDir::new().unwrap();
+    // Grammar package in tier dir
+    let private_dir = dir.path().join("private");
+    std::fs::create_dir(&private_dir).unwrap();
+    std::fs::write(
+        private_dir.join("@x"),
+        "grammar @x {\n  type = a | b\n}\n",
+    )
+    .unwrap();
+
+    // .conv file with test section
+    let conv_file = dir.path().join("test.conv");
+    std::fs::write(
+        &conv_file,
+        "grammar @t {\n  type = a | b\n}\n---\ntest \"types\" {\n  @t has a\n  @t has b\n}\n",
+    )
+    .unwrap();
+
+    let output = conversation_bin()
+        .env("CONVERSATION_PACKAGES", dir.path())
+        .arg("test")
+        .arg(conv_file.to_str().unwrap())
+        .output()
+        .unwrap();
+
+    assert!(
+        output.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("PASS") || stdout.contains("pass") || stdout.contains("ok"),
+        "expected pass indication: {}",
+        stdout
+    );
+}
+
+#[test]
+fn test_subcommand_reports_failures() {
+    let dir = tempfile::TempDir::new().unwrap();
+    let conv_file = dir.path().join("fail.conv");
+    std::fs::write(
+        &conv_file,
+        "grammar @f {\n  type = a\n}\n---\ntest \"missing\" {\n  @f has nonexistent\n}\n",
+    )
+    .unwrap();
+
+    let output = conversation_bin()
+        .arg("test")
+        .arg(conv_file.to_str().unwrap())
+        .output()
+        .unwrap();
+
+    // Should exit with non-zero on test failure
+    assert!(
+        !output.status.success(),
+        "should fail when tests fail, stdout: {}, stderr: {}",
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
+}
+
+#[test]
 fn shell_reports_errors_and_continues() {
     let mut child = conversation_bin()
         .arg("shell")
