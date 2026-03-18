@@ -4,7 +4,9 @@
 //! callable from C NIF wrappers.
 //! Uses write-to-buffer pattern — no heap allocation crosses the FFI boundary.
 
+use crate::compile;
 use crate::parse::Parse;
+use crate::resolve::TypeRegistry;
 use crate::ContentAddressed;
 use crate::Vector;
 
@@ -74,17 +76,63 @@ pub unsafe extern "C" fn conv_parse(
 /// - `out_len` must be a valid pointer.
 #[no_mangle]
 pub unsafe extern "C" fn conv_compile_grammar(
-    _src_ptr: *const u8,
-    _src_len: usize,
+    src_ptr: *const u8,
+    src_len: usize,
     out_ptr: *mut u8,
     out_cap: usize,
     out_len: *mut usize,
 ) -> i32 {
-    let msg = b"not yet implemented";
-    let n = msg.len().min(out_cap);
-    std::ptr::copy_nonoverlapping(msg.as_ptr(), out_ptr, n);
+    let source = match std::str::from_utf8(std::slice::from_raw_parts(src_ptr, src_len)) {
+        Ok(s) => s,
+        Err(_) => {
+            let msg = b"invalid UTF-8 input";
+            let n = msg.len().min(out_cap);
+            std::ptr::copy_nonoverlapping(msg.as_ptr(), out_ptr, n);
+            *out_len = n;
+            return -1;
+        }
+    };
+
+    let ast = match Parse.trace(source.to_string()).into_result() {
+        Ok(tree) => tree,
+        Err(err) => {
+            let msg = err.to_string();
+            let msg_bytes = msg.as_bytes();
+            let n = msg_bytes.len().min(out_cap);
+            std::ptr::copy_nonoverlapping(msg_bytes.as_ptr(), out_ptr, n);
+            *out_len = n;
+            return -1;
+        }
+    };
+
+    let grammar_node = match ast.children().iter().find(|c| c.data().is_decl("grammar")) {
+        Some(node) => node,
+        None => {
+            let msg = b"no grammar block found";
+            let n = msg.len().min(out_cap);
+            std::ptr::copy_nonoverlapping(msg.as_ptr(), out_ptr, n);
+            *out_len = n;
+            return -1;
+        }
+    };
+
+    let registry = match TypeRegistry::compile(grammar_node) {
+        Ok(r) => r,
+        Err(err) => {
+            let msg = err.to_string();
+            let msg_bytes = msg.as_bytes();
+            let n = msg_bytes.len().min(out_cap);
+            std::ptr::copy_nonoverlapping(msg_bytes.as_ptr(), out_ptr, n);
+            *out_len = n;
+            return -1;
+        }
+    };
+
+    let etf_bytes = compile::emit_actor_module(&registry);
+    let n = etf_bytes.len().min(out_cap);
+    std::ptr::copy_nonoverlapping(etf_bytes.as_ptr(), out_ptr, n);
     *out_len = n;
-    -1
+    0
 }
 
 #[cfg(test)]
