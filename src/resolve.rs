@@ -50,102 +50,77 @@ impl TypeRegistry {
 
         let mut types: HashMap<String, HashSet<String>> = HashMap::new();
         let mut params: HashMap<(String, String), String> = HashMap::new();
-
-        for typedef in grammar_node.children() {
-            if !typedef.data().is_form("type-def") {
-                continue;
-            }
-            let type_name = typedef.data().value.clone();
-            let mut variants = HashSet::new();
-
-            for variant in typedef.children() {
-                if !variant.data().is_form("variant") {
-                    continue;
-                }
-                let variant_name = variant.data().value.clone();
-
-                // Check for TypeRef children (parameterized variants)
-                for child in variant.children() {
-                    if child.data().is_ref("type-ref") {
-                        params.insert(
-                            (type_name.clone(), variant_name.clone()),
-                            child.data().value.clone(),
-                        );
-                    }
-                }
-
-                variants.insert(variant_name);
-            }
-
-            types.insert(type_name, variants);
-        }
-
-        // Process act-def children
         let mut acts: HashMap<String, Vec<(String, Option<String>)>> = HashMap::new();
 
-        for actdef in grammar_node.children() {
-            if !actdef.data().is_form("act-def") {
-                continue;
-            }
-            let act_name = actdef.data().value.clone();
-            let mut fields = Vec::new();
+        for child in grammar_node.children() {
+            if child.data().is_form("type-def") {
+                let type_name = child.data().value.clone();
+                let mut variants = HashSet::new();
 
-            for field in actdef.children() {
-                if !field.data().is_atom("field") {
-                    continue;
+                for variant in child.children() {
+                    if !variant.data().is_form("variant") {
+                        continue;
+                    }
+                    let variant_name = variant.data().value.clone();
+
+                    for sub in variant.children() {
+                        if sub.data().is_ref("type-ref") {
+                            params.insert(
+                                (type_name.clone(), variant_name.clone()),
+                                sub.data().value.clone(),
+                            );
+                        }
+                    }
+
+                    variants.insert(variant_name);
                 }
-                let field_name = field.data().value.clone();
-                let type_ref = field
-                    .children()
-                    .iter()
-                    .find(|c| c.data().is_ref("type-ref"))
-                    .map(|c| c.data().value.clone());
-                fields.push((field_name, type_ref));
-            }
 
-            acts.insert(act_name, fields);
+                types.insert(type_name, variants);
+            } else if child.data().is_form("act-def") {
+                let act_name = child.data().value.clone();
+                let mut fields = Vec::new();
+
+                for field in child.children() {
+                    if !field.data().is_atom("field") {
+                        continue;
+                    }
+                    let field_name = field.data().value.clone();
+                    let type_ref = field
+                        .children()
+                        .iter()
+                        .find(|c| c.data().is_ref("type-ref"))
+                        .map(|c| c.data().value.clone());
+                    fields.push((field_name, type_ref));
+                }
+
+                acts.insert(act_name, fields);
+            }
         }
 
         // Validate: every TypeRef must reference a declared type name
+        let span = grammar_node.data().span;
         for ((parent_type, variant_name), ref_type) in &params {
             if !types.contains_key(ref_type) {
-                let declared: Vec<&str> = types.keys().map(|s| s.as_str()).collect();
-                let hints =
-                    hint_did_you_mean(ref_type, &declared, |s| format!("did you mean \"{}\"?", s));
-                return Err(ResolveError {
-                    message: format!(
-                        "unknown type reference \"{}\" in grammar @{} (variant \"{}\" in type \"{}\")",
-                        ref_type, domain,
+                return Err(Self::bad_type_ref(
+                    ref_type,
+                    &types,
+                    &domain,
+                    format!(
+                        "variant \"{}\" in type \"{}\"",
                         variant_name,
-                        if parent_type.is_empty() { "<default>" } else { parent_type },
+                        if parent_type.is_empty() {
+                            "<default>"
+                        } else {
+                            parent_type
+                        },
                     ),
-                    span: Some(grammar_node.data().span),
-                    hints,
-                });
+                    span,
+                ));
             }
         }
-
-        // Validate: act field TypeRefs must reference declared type names
-        for (act_name, fields) in &acts {
-            for (field_name, type_ref) in fields {
-                if let Some(ref_type) = type_ref {
-                    if !types.contains_key(ref_type) {
-                        let declared: Vec<&str> = types.keys().map(|s| s.as_str()).collect();
-                        let hints = hint_did_you_mean(ref_type, &declared, |s| {
-                            format!("did you mean \"{}\"?", s)
-                        });
-                        return Err(ResolveError {
-                            message: format!(
-                                "unknown type reference \"{}\" in grammar @{} (field \"{}\" in act \"{}\")",
-                                ref_type, domain, field_name, act_name,
-                            ),
-                            span: Some(grammar_node.data().span),
-                            hints,
-                        });
-                    }
-                }
-            }
-        }
+        // Act field type-refs are semantic annotations, not validated references.
+        // Unlike parameterized variants (which MUST reference a declared type name),
+        // act fields can reference variants, external types, or undeclared names.
 
         Ok(TypeRegistry {
             domain,
@@ -153,6 +128,26 @@ impl TypeRegistry {
             params,
             acts,
         })
+    }
+
+    /// Build a "unknown type reference" error with did-you-mean hints.
+    fn bad_type_ref(
+        ref_type: &str,
+        types: &HashMap<String, HashSet<String>>,
+        domain: &str,
+        context: String,
+        span: crate::ast::Span,
+    ) -> ResolveError {
+        let declared: Vec<&str> = types.keys().map(|s| s.as_str()).collect();
+        let hints = hint_did_you_mean(ref_type, &declared, |s| format!("did you mean \"{}\"?", s));
+        ResolveError {
+            message: format!(
+                "unknown type reference \"{}\" in grammar @{} ({})",
+                ref_type, domain, context,
+            ),
+            span: Some(span),
+            hints,
+        }
     }
 
     /// Check if a named type exists in this registry.
@@ -2113,6 +2108,26 @@ mod tests {
     }
 
     #[test]
+    fn type_registry_compile_invalid_named_type_ref() {
+        // Bad ref in a NAMED type (exercises the else branch in the error message)
+        let source =
+            "grammar @test {\n  type color = red(shades)\n  type shade = light | dark\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .expect("grammar");
+        let err = TypeRegistry::compile(grammar).unwrap_err();
+        assert!(err.message.contains("shades"), "{}", err);
+        assert!(
+            err.message.contains("color"),
+            "should mention parent type: {}",
+            err
+        );
+    }
+
+    #[test]
     fn type_registry_compile_skips_non_typedef_children() {
         use crate::ast::{self, Span};
         // Grammar node with a non-TypeDef child (Field) — should be skipped
@@ -2206,23 +2221,17 @@ mod tests {
     }
 
     #[test]
-    fn type_registry_compile_act_invalid_type_ref() {
-        let source =
-            "grammar @test {\n  type address = email | uri\n  act send {\n    to: addres\n  }\n}\n";
-        let ast = Parse.trace(source.to_string()).unwrap();
-        let grammar = ast
-            .children()
-            .iter()
-            .find(|c| c.data().is_decl("grammar"))
-            .expect("grammar");
-        let err = TypeRegistry::compile(grammar).unwrap_err();
-        assert!(
-            err.message.contains("addres"),
-            "should mention bad ref: {}",
-            err
+    fn type_registry_compile_act_unvalidated_type_ref() {
+        // Act field type-refs are semantic annotations — not validated against type names.
+        // This mirrors real usage: garden's @mail uses `from: address` where `address`
+        // is a variant, and `body: article` which is undeclared.
+        let reg = compile_grammar(
+            "grammar @test {\n  type address = email | uri\n  act send {\n    to: addres\n    body: article\n  }\n}\n",
         );
-        assert!(!err.hints.is_empty(), "should suggest 'address'");
-        assert!(err.hints[0].contains("address"), "{}", err.hints[0]);
+        assert!(reg.has_act("send"));
+        let fields = reg.act_fields("send").unwrap();
+        assert_eq!(fields[0], ("to".into(), Some("addres".into())));
+        assert_eq!(fields[1], ("body".into(), Some("article".into())));
     }
 
     #[test]
@@ -2259,6 +2268,31 @@ mod tests {
     fn type_registry_act_fields_none_for_missing() {
         let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
         assert!(reg.act_fields("missing").is_none());
+    }
+
+    #[test]
+    fn type_registry_compile_mail_conv() {
+        let reg = compile_grammar(include_str!("../conv/mail.conv"));
+        assert_eq!(reg.domain, "mail");
+        // Types
+        assert!(reg.has_variant("", "message"));
+        assert!(reg.has_variant("", "server"));
+        assert!(reg.has_variant("header", "from"));
+        assert!(reg.has_variant("flag", "seen"));
+        assert!(reg.has_variant("protocol", "jmap"));
+        assert!(reg.has_variant("server", "stalwart"));
+        assert!(reg.has_variant("dns", "dkim"));
+        // Acts
+        assert!(reg.has_act("send"));
+        assert!(reg.has_act("reply"));
+        assert!(reg.has_act("forward"));
+        let send = reg.act_fields("send").unwrap();
+        assert_eq!(send.len(), 4);
+        assert_eq!(send[0], ("from".into(), Some("address".into())));
+        assert_eq!(send[2], ("subject".into(), None));
+        let forward = reg.act_fields("forward").unwrap();
+        assert_eq!(forward.len(), 2);
+        assert_eq!(forward[0], ("message".into(), Some("message-id".into())));
     }
 
     #[test]

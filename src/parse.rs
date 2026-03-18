@@ -906,7 +906,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
 
     lines.advance(); // consume grammar header line
 
-    let mut type_defs: Vec<Tree<AstNode>> = Vec::new();
+    let mut defs: Vec<Tree<AstNode>> = Vec::new();
     // Accumulate variants for the current type def (name, span, variants)
     let mut current: Option<(String, Span, Vec<Tree<AstNode>>)> = None;
 
@@ -916,7 +916,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
         if trimmed == "}" {
             // Flush any pending type def
             if let Some((type_name, type_span, variants)) = current.take() {
-                type_defs.push(ast::ast_branch(
+                defs.push(ast::ast_branch(
                     Kind::Form,
                     "type-def",
                     &*type_name,
@@ -927,13 +927,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(
-                Kind::Decl,
-                "grammar",
-                name,
-                span,
-                type_defs,
-            ));
+            return Ok(ast::ast_branch(Kind::Decl, "grammar", name, span, defs));
         }
 
         if trimmed.is_empty() || trimmed.starts_with('#') {
@@ -954,7 +948,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
         if let Some(rest) = trimmed.strip_prefix("act ") {
             // Flush any pending type def
             if let Some((type_name, type_span, variants)) = current.take() {
-                type_defs.push(ast::ast_branch(
+                defs.push(ast::ast_branch(
                     Kind::Form,
                     "type-def",
                     &*type_name,
@@ -963,14 +957,14 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
                 ));
             }
             let span = lines.current_span();
-            type_defs.push(parse_act_def(rest, span, lines)?);
+            defs.push(parse_act_def(rest, span, lines)?);
             continue;
         }
 
         if let Some(rest) = trimmed.strip_prefix("type ") {
             // Flush previous type def
             if let Some((type_name, type_span, variants)) = current.take() {
-                type_defs.push(ast::ast_branch(
+                defs.push(ast::ast_branch(
                     Kind::Form,
                     "type-def",
                     &*type_name,
@@ -2428,29 +2422,66 @@ grammar @conversation {
         let children = tree.children();
         assert_eq!(children.len(), 2); // grammar + template
 
-        // Grammar: @mail with 3 type defs
+        // Grammar: @mail with 6 type-defs + 3 act-defs = 9 children
         let grammar = &children[0];
         assert_eq!(grammar.data().kind, Kind::Decl);
         assert_eq!(grammar.data().value, "@mail");
-        assert_eq!(grammar.children().len(), 3);
+        assert_eq!(grammar.children().len(), 9);
 
-        // Root type: 4 variants (message | thread | attachment | address)
+        // Root type: 5 variants (message | thread | attachment | address | server)
         let root_type = &grammar.children()[0];
         assert_eq!(root_type.data().kind, Kind::Form);
+        assert_eq!(root_type.data().name, "type-def");
         assert_eq!(root_type.data().value, "");
-        assert_eq!(root_type.children().len(), 4);
+        assert_eq!(root_type.children().len(), 5);
 
         // Header type: 10 variants
         let header_type = &grammar.children()[1];
-        assert_eq!(header_type.data().kind, Kind::Form);
+        assert_eq!(header_type.data().name, "type-def");
         assert_eq!(header_type.data().value, "header");
         assert_eq!(header_type.children().len(), 10);
 
         // Flag type: 5 variants
         let flag_type = &grammar.children()[2];
-        assert_eq!(flag_type.data().kind, Kind::Form);
+        assert_eq!(flag_type.data().name, "type-def");
         assert_eq!(flag_type.data().value, "flag");
         assert_eq!(flag_type.children().len(), 5);
+
+        // Protocol type: 3 variants (smtp | imap | jmap)
+        let protocol_type = &grammar.children()[3];
+        assert_eq!(protocol_type.data().name, "type-def");
+        assert_eq!(protocol_type.data().value, "protocol");
+        assert_eq!(protocol_type.children().len(), 3);
+
+        // Server type: 3 variants (stalwart | maddy | mailbox)
+        let server_type = &grammar.children()[4];
+        assert_eq!(server_type.data().name, "type-def");
+        assert_eq!(server_type.data().value, "server");
+        assert_eq!(server_type.children().len(), 3);
+
+        // DNS type: 5 variants (spf | dkim | dmarc | mta-sts | dane)
+        let dns_type = &grammar.children()[5];
+        assert_eq!(dns_type.data().name, "type-def");
+        assert_eq!(dns_type.data().value, "dns");
+        assert_eq!(dns_type.children().len(), 5);
+
+        // Act: send (4 fields, 2 typed + 2 untyped)
+        let act_send = &grammar.children()[6];
+        assert_eq!(act_send.data().name, "act-def");
+        assert_eq!(act_send.data().value, "send");
+        assert_eq!(act_send.children().len(), 4);
+
+        // Act: reply (2 fields)
+        let act_reply = &grammar.children()[7];
+        assert_eq!(act_reply.data().name, "act-def");
+        assert_eq!(act_reply.data().value, "reply");
+        assert_eq!(act_reply.children().len(), 2);
+
+        // Act: forward (2 fields)
+        let act_forward = &grammar.children()[8];
+        assert_eq!(act_forward.data().name, "act-def");
+        assert_eq!(act_forward.data().value, "forward");
+        assert_eq!(act_forward.children().len(), 2);
 
         // Template: $message with 1 param + 6 fields = 7 children
         let template = &children[1];
