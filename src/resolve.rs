@@ -618,6 +618,11 @@ impl Resolve {
         self
     }
 
+    /// Access the namespace for property testing.
+    pub fn namespace(&self) -> &Namespace {
+        &self.namespace
+    }
+
     /// Known domain names. C::id() already carries the identity;
     /// this list is only for validating `in @...` declarations.
     const KNOWN_DOMAINS: &'static [&'static str] = &["filesystem", "json", "git"];

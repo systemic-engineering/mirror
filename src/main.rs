@@ -17,9 +17,10 @@ use std::io::{self, BufRead, Write};
 use std::process;
 
 use conversation::domain::filesystem::{Filesystem, Folder};
-use conversation::packages::PackageRegistry;
-use conversation::resolve::{Conversation, Resolve};
-use conversation::Vector;
+use conversation::packages::{self, PackageRegistry};
+use conversation::property;
+use conversation::resolve::{Conversation, Resolve, TypeRegistry};
+use conversation::{Parse, Vector};
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -32,6 +33,26 @@ fn main() {
     }
 
     match args[1].as_str() {
+        "test" => {
+            if args.len() < 3 {
+                eprintln!("usage: conversation test <file.conv>");
+                process::exit(1);
+            }
+            let conv_path = &args[2];
+            let source = match std::fs::read_to_string(conv_path) {
+                Ok(s) => s,
+                Err(e) => {
+                    eprintln!("conversation: {}: {}", conv_path, e);
+                    process::exit(1);
+                }
+            };
+            let self_dir = std::path::Path::new(conv_path)
+                .parent()
+                .unwrap_or(std::path::Path::new("."))
+                .to_path_buf();
+            let resolve = load_packages(&self_dir);
+            run_tests(&source, &resolve);
+        }
         "shell" => {
             let self_dir = std::env::current_dir().unwrap_or(std::path::PathBuf::from("."));
             let resolve = load_packages(&self_dir);
@@ -87,6 +108,61 @@ fn load_packages(self_dir: &std::path::Path) -> Resolve {
             eprintln!("conversation: packages: {}", e);
             Resolve::new()
         }
+    }
+}
+
+fn run_tests(source: &str, resolve: &Resolve) {
+    let (_, test_section) = packages::split_test_section(source);
+    let test_text = match test_section {
+        Some(t) => t,
+        None => {
+            println!("no test section found");
+            return;
+        }
+    };
+
+    // Build namespace: start with packages, then add the file's own grammars.
+    let mut namespace = resolve.namespace().clone();
+    if let Ok(ast) = Parse.trace(source.to_string()).into_result() {
+        for child in ast.children() {
+            if child.data().is_decl("grammar") {
+                if let Ok(registry) = TypeRegistry::compile(child) {
+                    let domain = registry.domain.clone();
+                    namespace.register_grammar(&domain, registry);
+                }
+            }
+        }
+    }
+    let results = match property::check_all(&namespace, test_text) {
+        Ok(r) => r,
+        Err(e) => {
+            eprintln!("conversation: test: {}", e);
+            process::exit(1);
+        }
+    };
+
+    let mut failed = 0;
+    for result in &results {
+        match &result.verdict {
+            property::Verdict::Pass => {
+                println!("PASS {}", result.name);
+            }
+            property::Verdict::Fail(msg) => {
+                println!("FAIL {}", result.name);
+                println!("     {}", msg);
+                failed += 1;
+            }
+        }
+    }
+
+    if results.is_empty() {
+        println!("no tests");
+    } else {
+        println!("\n{} tests, {} passed, {} failed", results.len(), results.len() - failed, failed);
+    }
+
+    if failed > 0 {
+        process::exit(1);
     }
 }
 

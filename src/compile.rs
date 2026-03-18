@@ -5,6 +5,7 @@
 
 use eetf::{Atom, FixInteger, List, Term, Tuple};
 
+use crate::ast::AstNode;
 use crate::prism::Prism;
 use crate::resolve::{BranchAction, BranchPattern, OutputNode, TypeRegistry};
 
@@ -321,4 +322,88 @@ fn eaf_list(elements: Vec<Term>) -> Term {
 /// `{tuple, Line, [Elements...]}` — an abstract-format tuple expression.
 fn eaf_tuple_expr(line: i32, elements: Vec<Term>) -> Term {
     eaf_tuple(vec![eaf_atom("tuple"), eaf_int(line), eaf_list(elements)])
+}
+
+/// Emit a test module from an `annotate(@test)` subtree.
+///
+/// Produces an Erlang module the BEAM can load:
+/// ```erlang
+/// -module('@test_domain').
+/// -export([tests/0]).
+/// tests() ->
+///   [{test, <<"name">>, [<<"assertion1">>, ...]},
+///    {property, <<"name">>, [<<"check1">>, ...]}].
+/// ```
+pub fn emit_test_module(domain: &str, annotate: &Prism<AstNode>) -> Vec<u8> {
+    let module_name = format!("@test_{}", domain);
+
+    let mut forms = Vec::new();
+
+    // {attribute, 1, module, ModuleName}
+    forms.push(eaf_tuple(vec![
+        eaf_atom("attribute"),
+        eaf_int(1),
+        eaf_atom("module"),
+        eaf_atom(&module_name),
+    ]));
+
+    // {attribute, 2, export, [{tests, 0}]}
+    forms.push(eaf_tuple(vec![
+        eaf_atom("attribute"),
+        eaf_int(2),
+        eaf_atom("export"),
+        eaf_list(vec![eaf_tuple(vec![eaf_atom("tests"), eaf_int(0)])]),
+    ]));
+
+    // Build the tests/0 body: a list of test descriptors
+    let descriptors: Vec<Term> = annotate
+        .children()
+        .iter()
+        .enumerate()
+        .map(|(i, child)| emit_test_descriptor(child, 4 + i as i32))
+        .collect();
+
+    // {function, 3, tests, 0, [{clause, 3, [], [], [Body]}]}
+    forms.push(eaf_tuple(vec![
+        eaf_atom("function"),
+        eaf_int(3),
+        eaf_atom("tests"),
+        eaf_int(0),
+        eaf_list(vec![eaf_tuple(vec![
+            eaf_atom("clause"),
+            eaf_int(3),
+            eaf_list(vec![]),
+            eaf_list(vec![]),
+            eaf_list(vec![eaf_cons_list(&descriptors, 3)]),
+        ])]),
+    ]));
+
+    let term = Term::from(List::from(forms));
+    let mut buf = Vec::new();
+    term.encode(&mut buf).expect("ETF encoding should not fail");
+    buf
+}
+
+/// Emit a single test descriptor from a Form child of annotate(@test).
+///
+/// `{tuple, Line, [{atom, Line, test}, {bin, Line, Name}, ConsAssertions]}`
+fn emit_test_descriptor(child: &Prism<AstNode>, line: i32) -> Term {
+    let data = child.data();
+    let kind_atom = &data.name; // "test", "property", or "generate"
+    let name = &data.value;
+
+    let leaf_terms: Vec<Term> = child
+        .children()
+        .iter()
+        .map(|leaf| eaf_bin(line, &leaf.data().value))
+        .collect();
+
+    eaf_tuple_expr(
+        line,
+        vec![
+            eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(kind_atom)]),
+            eaf_bin(line, name),
+            eaf_cons_list(&leaf_terms, line),
+        ],
+    )
 }

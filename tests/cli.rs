@@ -294,11 +294,7 @@ fn test_subcommand_runs_property_tests() {
     // Grammar package in tier dir
     let private_dir = dir.path().join("private");
     std::fs::create_dir(&private_dir).unwrap();
-    std::fs::write(
-        private_dir.join("@x"),
-        "grammar @x {\n  type = a | b\n}\n",
-    )
-    .unwrap();
+    std::fs::write(private_dir.join("@x"), "grammar @x {\n  type = a | b\n}\n").unwrap();
 
     // .conv file with test section
     let conv_file = dir.path().join("test.conv");
@@ -327,6 +323,103 @@ fn test_subcommand_runs_property_tests() {
         "expected pass indication: {}",
         stdout
     );
+}
+
+#[test]
+fn test_subcommand_missing_arg() {
+    let output = conversation_bin().arg("test").output().unwrap();
+    assert!(!output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("usage:"));
+}
+
+#[test]
+fn test_subcommand_missing_file() {
+    let output = conversation_bin()
+        .arg("test")
+        .arg("nonexistent.conv")
+        .output()
+        .unwrap();
+    assert!(!output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("No such file"));
+}
+
+#[test]
+fn test_subcommand_bad_test_section() {
+    // Unclosed test block → parse_test_section error → check_all returns Err
+    let dir = tempfile::TempDir::new().unwrap();
+    let conv_file = dir.path().join("bad_test.conv");
+    std::fs::write(
+        &conv_file,
+        "grammar @g {\n  type = a\n}\n---\ntest \"unclosed {\n  @g has a\n",
+    )
+    .unwrap();
+
+    let output = conversation_bin()
+        .arg("test")
+        .arg(conv_file.to_str().unwrap())
+        .output()
+        .unwrap();
+    assert!(!output.status.success());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("test:"),
+        "expected test error: {}",
+        stderr
+    );
+}
+
+#[test]
+fn test_subcommand_parse_error_still_runs_tests() {
+    // Source has invalid spec but valid test section — still runs tests
+    let dir = tempfile::TempDir::new().unwrap();
+    let conv_file = dir.path().join("bad.conv");
+    std::fs::write(
+        &conv_file,
+        ">>> invalid\n---\ntest \"t\" {\n  @g has a\n}\n",
+    )
+    .unwrap();
+
+    let output = conversation_bin()
+        .arg("test")
+        .arg(conv_file.to_str().unwrap())
+        .output()
+        .unwrap();
+    // Grammar won't be found but tests still execute
+    assert!(!output.status.success()); // test fails (unknown domain)
+}
+
+#[test]
+fn test_subcommand_empty_test_section() {
+    let dir = tempfile::TempDir::new().unwrap();
+    let conv_file = dir.path().join("empty.conv");
+    std::fs::write(&conv_file, "grammar @g {\n  type = a\n}\n---\n# only comments\n").unwrap();
+
+    let output = conversation_bin()
+        .arg("test")
+        .arg(conv_file.to_str().unwrap())
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("no tests"), "expected 'no tests': {}", stdout);
+}
+
+#[test]
+fn test_subcommand_no_test_section() {
+    let dir = tempfile::TempDir::new().unwrap();
+    let conv_file = dir.path().join("nope.conv");
+    std::fs::write(&conv_file, "grammar @g {\n  type = a\n}\n").unwrap();
+
+    let output = conversation_bin()
+        .arg("test")
+        .arg(conv_file.to_str().unwrap())
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("no test section"));
 }
 
 #[test]

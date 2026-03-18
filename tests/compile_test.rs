@@ -244,7 +244,8 @@ fn emit_actor_module_cross_actor_call_in_body() {
 /// emit_test_module produces valid ETF from an annotate(@test) subtree.
 #[test]
 fn emit_test_module_produces_valid_etf() {
-    let source = "grammar @g {\n  type = a | b\n}\n---\ntest \"types\" {\n  @g has a\n  @g has b\n}\n";
+    let source =
+        "grammar @g {\n  type = a | b\n}\n---\ntest \"types\" {\n  @g has a\n  @g has b\n}\n";
     let ast = conversation::Parse.trace(source.to_string()).unwrap();
     // Find the annotate(@test) child
     let annotate = ast
@@ -263,8 +264,16 @@ fn emit_test_module_deterministic() {
     let source = "grammar @g {\n  type = a\n}\n---\ntest \"t\" {\n  @g has a\n}\n";
     let ast_a = conversation::Parse.trace(source.to_string()).unwrap();
     let ast_b = conversation::Parse.trace(source.to_string()).unwrap();
-    let ann_a = ast_a.children().iter().find(|c| c.data().is_decl("annotate")).unwrap();
-    let ann_b = ast_b.children().iter().find(|c| c.data().is_decl("annotate")).unwrap();
+    let ann_a = ast_a
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("annotate"))
+        .unwrap();
+    let ann_b = ast_b
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("annotate"))
+        .unwrap();
     assert_eq!(
         compile::emit_test_module("g", ann_a),
         compile::emit_test_module("g", ann_b),
@@ -278,12 +287,20 @@ fn emit_test_module_encodes_test_names() {
 
     let source = "grammar @g {\n  type = x\n}\n---\ntest \"my test\" {\n  @g has x\n}\n";
     let ast = conversation::Parse.trace(source.to_string()).unwrap();
-    let annotate = ast.children().iter().find(|c| c.data().is_decl("annotate")).unwrap();
+    let annotate = ast
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("annotate"))
+        .unwrap();
     let eaf_bytes = compile::emit_test_module("g", annotate);
 
     let term = eetf::Term::decode(Cursor::new(&eaf_bytes)).unwrap();
     let forms_str = format!("{:?}", term);
-    assert!(forms_str.contains("test"), "expected 'test' atom in EAF: {}", forms_str);
+    assert!(
+        forms_str.contains("test"),
+        "expected 'test' atom in EAF: {}",
+        forms_str
+    );
 }
 
 /// emit_test_module handles property directives.
@@ -291,7 +308,11 @@ fn emit_test_module_encodes_test_names() {
 fn emit_test_module_handles_property() {
     let source = "grammar @g {\n  type = a\n}\n---\nproperty \"shannon\" {\n  @g preserves shannon_equivalence\n}\n";
     let ast = conversation::Parse.trace(source.to_string()).unwrap();
-    let annotate = ast.children().iter().find(|c| c.data().is_decl("annotate")).unwrap();
+    let annotate = ast
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("annotate"))
+        .unwrap();
     let eaf_bytes = compile::emit_test_module("g", annotate);
     assert!(!eaf_bytes.is_empty());
     assert_eq!(eaf_bytes[0], 131);
