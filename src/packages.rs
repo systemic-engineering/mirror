@@ -93,11 +93,8 @@ impl PackageRegistry {
         let mut namespace = Namespace::new();
 
         for (name, package) in &self.packages {
-            // Strip test section (below ---) before parsing.
-            let spec = strip_tests(&package.source);
-
             let ast = Parse
-                .trace(spec.to_string())
+                .trace(package.source.clone())
                 .into_result()
                 .map_err(|e| format!("@{}: {}", name, e.message))?;
 
@@ -225,11 +222,6 @@ pub fn split_test_section(source: &str) -> (&str, Option<&str>) {
     } else {
         (source, None)
     }
-}
-
-/// Strip test section (everything after `\n---\n`) from source.
-fn strip_tests(source: &str) -> &str {
-    split_test_section(source).0
 }
 
 fn dirs_home() -> PathBuf {
@@ -409,39 +401,6 @@ mod tests {
     }
 
     #[test]
-    fn strip_tests_preserves_source_without_separator() {
-        assert_eq!(
-            strip_tests("grammar @x { type = a }"),
-            "grammar @x { type = a }"
-        );
-    }
-
-    #[test]
-    fn strip_tests_removes_test_section() {
-        let source = "grammar @x { type = a }\n---\ntest { }";
-        assert_eq!(strip_tests(source), "grammar @x { type = a }");
-    }
-
-    #[test]
-    fn strip_tests_handles_trailing_separator() {
-        let source = "grammar @x { type = a }\n---";
-        assert_eq!(strip_tests(source), "grammar @x { type = a }");
-    }
-
-    #[test]
-    fn strip_tests_handles_trailing_separator_with_whitespace() {
-        let source = "grammar @x { type = a }\n---  \n";
-        assert_eq!(strip_tests(source), "grammar @x { type = a }");
-    }
-
-    #[test]
-    fn strip_tests_preserves_dashes_followed_by_text() {
-        // \n--- followed by non-whitespace — not a separator
-        let source = "grammar @x { type = a }\n---not a separator";
-        assert_eq!(strip_tests(source), source);
-    }
-
-    #[test]
     fn discover_skips_broken_symlinks() {
         let dir = TempDir::new().unwrap();
         // Also add a valid package to prove discovery continues past the broken link
@@ -592,6 +551,14 @@ mod tests {
     fn split_trailing_separator_whitespace() {
         let (spec, test) = split_test_section("grammar @x { type = a }\n---  \n");
         assert_eq!(spec, "grammar @x { type = a }");
+        assert!(test.is_none());
+    }
+
+    #[test]
+    fn split_dashes_followed_by_text_not_separator() {
+        let source = "grammar @x { type = a }\n---not a separator";
+        let (spec, test) = split_test_section(source);
+        assert_eq!(spec, source);
         assert!(test.is_none());
     }
 }

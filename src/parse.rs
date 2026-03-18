@@ -1255,23 +1255,11 @@ fn parse_test_ast(source: &str, span: Span) -> Result<Vec<Prism<AstNode>>, Parse
         if let Some(rest) = trimmed.strip_prefix("test ") {
             let (name, body) = parse_directive_block(rest, &mut lines)?;
             let assertions = split_to_leaves(&body, "assertion", span);
-            children.push(ast::ast_branch(
-                Kind::Form,
-                "test",
-                &name,
-                span,
-                assertions,
-            ));
+            children.push(ast::ast_branch(Kind::Form, "test", &name, span, assertions));
         } else if let Some(rest) = trimmed.strip_prefix("property ") {
             let (name, body) = parse_directive_block(rest, &mut lines)?;
             let checks = split_to_leaves(&body, "check", span);
-            children.push(ast::ast_branch(
-                Kind::Form,
-                "property",
-                &name,
-                span,
-                checks,
-            ));
+            children.push(ast::ast_branch(Kind::Form, "property", &name, span, checks));
         } else if let Some(rest) = trimmed.strip_prefix("generate ") {
             let (domain, body) = parse_generate_block(rest, &mut lines)?;
             let overrides = split_to_leaves(&body, "override", span);
