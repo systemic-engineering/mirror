@@ -268,6 +268,13 @@ impl<E: fragmentation::encoding::Encode> ContentAddressed for crate::tree::Tree<
     }
 }
 
+impl<V: fragmentation::encoding::Encode> ContentAddressed for crate::prism::Prism<V> {
+    type Oid = Oid;
+    fn content_oid(&self) -> Oid {
+        Oid::new(fragmentation::fragment::content_oid(self))
+    }
+}
+
 impl ContentAddressed for serde_json::Value {
     type Oid = Oid;
     fn content_oid(&self) -> Oid {

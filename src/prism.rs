@@ -38,6 +38,124 @@ pub enum Prism<V> {
     },
 }
 
+impl<V> Prism<V> {
+    /// The node's ref.
+    pub fn self_ref(&self) -> &Ref {
+        match self {
+            Prism::Shard { ref_, .. }
+            | Prism::Fractal { ref_, .. }
+            | Prism::Lens { ref_, .. }
+            | Prism::Optics { ref_, .. } => ref_,
+        }
+    }
+
+    /// The node's data.
+    pub fn data(&self) -> &V {
+        match self {
+            Prism::Shard { data, .. }
+            | Prism::Fractal { data, .. }
+            | Prism::Lens { data, .. }
+            | Prism::Optics { data, .. } => data,
+        }
+    }
+
+    /// The node's children. Empty for shards and lenses.
+    pub fn children(&self) -> &[Prism<V>] {
+        match self {
+            Prism::Shard { .. } | Prism::Lens { .. } => &[],
+            Prism::Fractal { children, .. } | Prism::Optics { children, .. } => children,
+        }
+    }
+
+    /// True if this is a shard (terminal, no children, no targets).
+    pub fn is_shard(&self) -> bool {
+        matches!(self, Prism::Shard { .. })
+    }
+
+    /// True if this is a fractal (has children, no targets).
+    pub fn is_fractal(&self) -> bool {
+        matches!(self, Prism::Fractal { .. })
+    }
+
+    /// True if this is a lens (has targets, no children).
+    pub fn is_lens(&self) -> bool {
+        matches!(self, Prism::Lens { .. })
+    }
+
+    /// The node's targets. Empty for shards and fractals.
+    pub fn targets(&self) -> &[Sha] {
+        match self {
+            Prism::Shard { .. } | Prism::Fractal { .. } => &[],
+            Prism::Lens { targets, .. } | Prism::Optics { targets, .. } => targets,
+        }
+    }
+}
+
+impl<V: Encode> Fragmentable for Prism<V> {
+    type Data = V;
+
+    fn self_ref(&self) -> &Ref {
+        self.self_ref()
+    }
+
+    fn data(&self) -> &V {
+        self.data()
+    }
+
+    fn children(&self) -> &[Prism<V>] {
+        self.children()
+    }
+
+    fn is_shard(&self) -> bool {
+        self.is_shard()
+    }
+
+    fn is_fractal(&self) -> bool {
+        self.is_fractal()
+    }
+
+    fn is_lens(&self) -> bool {
+        self.is_lens()
+    }
+
+    fn targets(&self) -> &[Sha] {
+        self.targets()
+    }
+}
+
+/// A shard. Terminal node, carries data, no children, no targets.
+pub fn shard<V>(ref_: Ref, data: V) -> Prism<V> {
+    Prism::Shard { ref_, data }
+}
+
+/// A fractal. Carries data, contains child prisms.
+pub fn fractal<V>(ref_: Ref, data: V, children: Vec<Prism<V>>) -> Prism<V> {
+    Prism::Fractal {
+        ref_,
+        data,
+        children,
+    }
+}
+
+/// A lens. Carries data, references external trees by OID.
+pub fn lens<V>(ref_: Ref, data: V, targets: Vec<Sha>) -> Prism<V> {
+    Prism::Lens {
+        ref_,
+        data,
+        targets,
+    }
+}
+
+/// Optics. Carries data, has both children and external references.
+pub fn optics<V>(ref_: Ref, data: V, targets: Vec<Sha>, children: Vec<Prism<V>>) -> Prism<V> {
+    Prism::Optics {
+        ref_,
+        data,
+        targets,
+        children,
+    }
+}
+
 /// Re-export the tree interface.
 pub use fragmentation::fragment::Fragmentable as Treelike;
 
@@ -83,8 +201,12 @@ mod tests {
     fn optics_constructor() {
         let child = shard(test_ref("c"), "child".into());
         let target = Sha("abc123".into());
-        let p: Prism<String> =
-            optics(test_ref("o"), "data".into(), vec![target.clone()], vec![child]);
+        let p: Prism<String> = optics(
+            test_ref("o"),
+            "data".into(),
+            vec![target.clone()],
+            vec![child],
+        );
         assert!(matches!(p, Prism::Optics { .. }));
         assert_eq!(p.children().len(), 1);
         assert_eq!(p.targets(), &[target]);
@@ -129,8 +251,7 @@ mod tests {
         let r = test_ref("o");
         let child = shard(test_ref("c"), "child".into());
         let target = Sha("abc".into());
-        let p: Prism<String> =
-            optics(r.clone(), "data".into(), vec![target.clone()], vec![child]);
+        let p: Prism<String> = optics(r.clone(), "data".into(), vec![target.clone()], vec![child]);
         assert_eq!(p.self_ref(), &r);
         assert_eq!(p.data(), "data");
         assert_eq!(p.children().len(), 1);
@@ -149,8 +270,11 @@ mod tests {
 
     #[test]
     fn fractal_is_fractal() {
-        let p: Prism<String> =
-            fractal(test_ref("r"), "data".into(), vec![shard(test_ref("c"), "c".into())]);
+        let p: Prism<String> = fractal(
+            test_ref("r"),
+            "data".into(),
+            vec![shard(test_ref("c"), "c".into())],
+        );
         assert!(!p.is_shard());
         assert!(p.is_fractal());
         assert!(!p.is_lens());
@@ -262,11 +386,21 @@ mod tests {
 
     // -- Fragmentable trait coverage --
 
-    fn assert_fragmentable<F: Treelike>(f: &F, expect_shard: bool, child_count: usize) {
+    fn assert_fragmentable<F: Treelike>(
+        f: &F,
+        expect_shard: bool,
+        expect_fractal: bool,
+        expect_lens: bool,
+        child_count: usize,
+        target_count: usize,
+    ) {
         assert_eq!(Treelike::is_shard(f), expect_shard);
+        assert_eq!(Treelike::is_fractal(f), expect_fractal);
+        assert_eq!(Treelike::is_lens(f), expect_lens);
         let _ = Treelike::self_ref(f);
         let _ = Treelike::data(f);
         assert_eq!(Treelike::children(f).len(), child_count);
+        assert_eq!(Treelike::targets(f).len(), target_count);
     }
 
     #[test]
@@ -281,10 +415,11 @@ mod tests {
             vec![shard(test_ref("oc"), "oc".into())],
         );
 
-        assert_fragmentable(&child, true, 0);
-        assert_fragmentable(&parent, false, 1);
-        assert_fragmentable(&l, false, 0);
-        assert_fragmentable(&o, false, 1);
+        //                          shard  fractal lens  children targets
+        assert_fragmentable(&child, true, false, false, 0, 0);
+        assert_fragmentable(&parent, false, true, false, 1, 0);
+        assert_fragmentable(&l, false, false, true, 0, 1);
+        assert_fragmentable(&o, false, false, false, 1, 1);
 
         // content_oid through Fragmentable
         assert_eq!(content_oid(&parent), content_oid(&parent));
@@ -296,10 +431,8 @@ mod tests {
 
     #[test]
     fn lens_oid_includes_targets() {
-        let a: Prism<String> =
-            lens(test_ref("l"), "data".into(), vec![Sha("target1".into())]);
-        let b: Prism<String> =
-            lens(test_ref("l"), "data".into(), vec![Sha("target2".into())]);
+        let a: Prism<String> = lens(test_ref("l"), "data".into(), vec![Sha("target1".into())]);
+        let b: Prism<String> = lens(test_ref("l"), "data".into(), vec![Sha("target2".into())]);
         // Different targets → different OID
         assert_ne!(a.content_oid(), b.content_oid());
     }
