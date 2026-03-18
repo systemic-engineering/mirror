@@ -1,5 +1,5 @@
-use conversation::tree;
-use conversation::{Conversation, Filesystem, Folder, OutputNode, Repo, Store, Tree, Vector};
+use conversation::prism;
+use conversation::{Conversation, Filesystem, Folder, OutputNode, Prism, Repo, Store, Vector};
 use fragmentation::commit::{Commit, Draft};
 use fragmentation::encoding;
 use fragmentation::fragment::{content_oid, Fractal};
@@ -11,8 +11,8 @@ fn test_ref(label: &str) -> Ref {
     Ref::new(sha::hash(label), label)
 }
 
-fn leaf_folder(name: &str, content: &str) -> conversation::Tree<Folder> {
-    tree::leaf(
+fn leaf_folder(name: &str, content: &str) -> Prism<Folder> {
+    prism::shard(
         test_ref(name),
         Folder {
             name: name.into(),
@@ -21,8 +21,8 @@ fn leaf_folder(name: &str, content: &str) -> conversation::Tree<Folder> {
     )
 }
 
-fn dir_folder(name: &str, children: Vec<conversation::Tree<Folder>>) -> conversation::Tree<Folder> {
-    tree::branch(
+fn dir_folder(name: &str, children: Vec<Prism<Folder>>) -> Prism<Folder> {
+    prism::fractal(
         test_ref(name),
         Folder {
             name: name.into(),
@@ -36,7 +36,7 @@ fn test_conv_source() -> &'static str {
     "in @filesystem\ntemplate $t {\n\tslug\n}\nout root {\n\titems: sub { $t }\n}\n"
 }
 
-fn test_domain_tree() -> conversation::Tree<Folder> {
+fn test_domain_tree() -> Prism<Folder> {
     dir_folder(
         "root",
         vec![dir_folder(
@@ -149,10 +149,10 @@ fn transformation_tree_committed() {
     let resolved = Conversation::<Filesystem>::from_source(test_conv_source()).unwrap();
 
     // The transformation IS the content tree — Groups and Selects, not JSON output
-    let transformation: &conversation::Tree<OutputNode> = &resolved.content;
+    let transformation: &Prism<OutputNode> = &resolved.content;
     let oid = content_oid(transformation);
 
-    let mut store = Store::<Tree<OutputNode>>::new();
+    let mut store = Store::<Prism<OutputNode>>::new();
     let commit = Draft::root(
         "transformation: root { items: sub { $t } }",
         transformation.clone(),

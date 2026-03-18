@@ -340,33 +340,6 @@ mod tests {
         assert_eq!(content_oid(&a), content_oid(&b));
     }
 
-    // -- OID stability sentinels: Prism ↔ Tree --
-
-    #[test]
-    fn oid_stability_shard_equals_leaf() {
-        use crate::tree;
-        let data = "sentinel-data".to_string();
-        let prism_node: Prism<String> = shard(test_ref("x"), data.clone());
-        let tree_node: crate::tree::Tree<String> = tree::leaf(test_ref("y"), data);
-        assert_eq!(prism_node.content_oid(), tree_node.content_oid());
-    }
-
-    #[test]
-    fn oid_stability_fractal_equals_branch() {
-        use crate::tree;
-        let child_data = "child-data".to_string();
-        let parent_data = "parent-data".to_string();
-
-        let prism_child: Prism<String> = shard(test_ref("c1"), child_data.clone());
-        let prism_parent: Prism<String> =
-            fractal(test_ref("p1"), parent_data.clone(), vec![prism_child]);
-
-        let tree_child = tree::leaf(test_ref("c2"), child_data);
-        let tree_parent = tree::branch(test_ref("p2"), parent_data, vec![tree_child]);
-
-        assert_eq!(prism_parent.content_oid(), tree_parent.content_oid());
-    }
-
     // -- Store integration --
 
     #[test]

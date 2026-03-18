@@ -4,7 +4,7 @@
 
 use crate::ast::{self, AstNode, Span};
 use crate::domain::conversation::Kind;
-use crate::tree::Tree;
+use crate::prism::Prism;
 use crate::Trace;
 use crate::Vector;
 
@@ -45,10 +45,10 @@ impl std::fmt::Display for ParseError {
 
 impl std::error::Error for ParseError {}
 
-impl Vector<String, Tree<AstNode>> for Parse {
+impl Vector<String, Prism<AstNode>> for Parse {
     type Error = ParseError;
 
-    fn trace(&self, source: String) -> Trace<Tree<AstNode>, ParseError> {
+    fn trace(&self, source: String) -> Trace<Prism<AstNode>, ParseError> {
         use crate::ContentAddressed;
         match parse_source(&source) {
             Ok(tree) => {
@@ -103,7 +103,7 @@ impl<'a> Lines<'a> {
     }
 }
 
-fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
+fn parse_source(source: &str) -> Result<Prism<AstNode>, ParseError> {
     let mut lines = Lines::new(source);
     let mut children = Vec::new();
     let root_span = Span::new(0, source.len() as u32);
@@ -235,7 +235,7 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
     ))
 }
 
-fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+fn parse_template(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     let before_brace = header.split('{').next().unwrap().trim();
     let start_span = lines.current_span();
     lines.advance(); // consume template line
@@ -284,7 +284,7 @@ fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Pars
     })
 }
 
-fn parse_param_list(text: &str, span: Span) -> Result<Vec<Tree<AstNode>>, ParseError> {
+fn parse_param_list(text: &str, span: Span) -> Result<Vec<Prism<AstNode>>, ParseError> {
     // Split on commas respecting paren nesting
     let mut segments = Vec::new();
     let mut depth = 0;
@@ -311,7 +311,7 @@ fn parse_param_list(text: &str, span: Span) -> Result<Vec<Tree<AstNode>>, ParseE
         .collect()
 }
 
-fn parse_param(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+fn parse_param(text: &str, span: Span) -> Result<Prism<AstNode>, ParseError> {
     // Check for "name: expr" — but only if left side doesn't start with @ or $
     if let Some((left, right)) = text.split_once(':') {
         let left = left.trim();
@@ -369,7 +369,7 @@ fn infer_name(text: &str, span: Span) -> Result<String, ParseError> {
     })
 }
 
-fn parse_param_expr(text: &str, span: Span) -> Tree<AstNode> {
+fn parse_param_expr(text: &str, span: Span) -> Prism<AstNode> {
     if text.contains('|') {
         parse_pipeline(text, span)
     } else if text.starts_with('@') && text[1..].contains('.') {
@@ -379,7 +379,7 @@ fn parse_param_expr(text: &str, span: Span) -> Tree<AstNode> {
     }
 }
 
-fn parse_field(text: &str, span: Span) -> Tree<AstNode> {
+fn parse_field(text: &str, span: Span) -> Prism<AstNode> {
     if let Some((name, rest)) = text.split_once(':') {
         let name = name.trim();
         let rest = rest.trim();
@@ -408,7 +408,7 @@ fn parse_field(text: &str, span: Span) -> Tree<AstNode> {
     }
 }
 
-fn parse_out(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+fn parse_out(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     let span = lines.current_span();
     if let Some((name, _)) = header.split_once('{') {
         let name = name.trim();
@@ -426,7 +426,7 @@ fn parse_out(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseErro
 fn parse_block_body(
     lines: &mut Lines,
     open_span: Span,
-) -> Result<(Vec<Tree<AstNode>>, Span), ParseError> {
+) -> Result<(Vec<Prism<AstNode>>, Span), ParseError> {
     let mut children = Vec::new();
 
     while let Some(line) = lines.peek() {
@@ -517,7 +517,7 @@ fn parse_block_body(
     })
 }
 
-fn push_path_segments(rest: &str, span: Span, children: &mut Vec<Tree<AstNode>>) {
+fn push_path_segments(rest: &str, span: Span, children: &mut Vec<Prism<AstNode>>) {
     for seg in rest.split('/').filter(|s| !s.is_empty()) {
         children.push(ast::ast_leaf(Kind::Atom, "path", seg, span));
     }
@@ -530,7 +530,7 @@ fn push_path_segments(rest: &str, span: Span, children: &mut Vec<Tree<AstNode>>)
 /// - `$HOME/shared`     → [Home, Path]
 /// - `$SELF/templates`  → [Self_, Path]
 /// - `./templates`      → [Self_, Path]  (desugar)
-fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>) {
+fn parse_use_source(source: &str, span: Span, children: &mut Vec<Prism<AstNode>>) {
     // Desugar ./ to $SELF/
     if let Some(rest) = source.strip_prefix("./") {
         children.push(ast::ast_leaf(Kind::Ref, "self", "$SELF", span));
@@ -574,7 +574,7 @@ fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>)
 /// - `$name from @domain`           → single import
 /// - `{ $a, $b } from @domain`      → destructured
 /// - `$name from @domain sha: ABC`  → locked
-fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
+fn parse_use(rest: &str, span: Span) -> Prism<AstNode> {
     let mut children = Vec::new();
 
     // Split on " from " to get names part and source part
@@ -617,7 +617,7 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
 ///
 /// Operator detection: two-char operators before single-char to avoid false matches.
 /// Structure: Decl("when/{op}") with Path (left) and Literal (right) as children.
-fn parse_when(rest: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+fn parse_when(rest: &str, span: Span) -> Result<Prism<AstNode>, ParseError> {
     for (sym, op_name) in CMP_OPS {
         if let Some(idx) = rest.find(sym) {
             let path = rest[..idx].trim();
@@ -640,7 +640,7 @@ fn parse_when(rest: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
 ///
 /// Header has already been stripped of `case `. Contains subject + `{`.
 /// Arms parsed line-by-line inside the block.
-fn parse_case(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+fn parse_case(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     let subject = header.split('{').next().unwrap().trim();
     let start_span = lines.current_span();
     lines.advance(); // consume case line
@@ -677,7 +677,7 @@ fn parse_case(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseErr
 ///
 /// Split on ` -> ` to separate pattern from body.
 /// Pattern is either `_` (Wild) or an operator + literal (Cmp).
-fn parse_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+fn parse_arm(text: &str, span: Span) -> Result<Prism<AstNode>, ParseError> {
     let (pattern_str, body_str) = match text.split_once(" -> ") {
         Some((p, b)) => (p.trim(), b.trim()),
         None => {
@@ -709,7 +709,7 @@ fn parse_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
 ///
 /// Operator detection: two-char operators before single-char to avoid false matches.
 /// The operator must be a prefix of the pattern text.
-fn parse_cmp(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+fn parse_cmp(text: &str, span: Span) -> Result<Prism<AstNode>, ParseError> {
     for (sym, op_name) in CMP_OPS {
         if let Some(rest) = text.strip_prefix(sym) {
             let literal = rest.trim();
@@ -727,7 +727,7 @@ fn parse_cmp(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
 ///
 /// Header is the full first line (e.g. `branch(.action) {`).
 /// Arms parsed line-by-line. Patterns are string literals or `_` (Wild).
-fn parse_branch(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+fn parse_branch(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     // Extract query path from branch(.action) {
     let after_branch = header.strip_prefix("branch(").unwrap();
     let paren_end = after_branch.find(')').ok_or_else(|| ParseError {
@@ -769,7 +769,7 @@ fn parse_branch(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseE
 /// Parse a single branch arm: `"hold" => ..` or `_ => exit`.
 ///
 /// Split on ` => ` to separate pattern from action.
-fn parse_branch_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+fn parse_branch_arm(text: &str, span: Span) -> Result<Prism<AstNode>, ParseError> {
     let (pattern_str, action_str) = match text.split_once(" => ") {
         Some((p, a)) => (p.trim(), a.trim()),
         None => {
@@ -815,14 +815,14 @@ fn parse_branch_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError>
 fn parse_pipeline_with_branch(
     header: &str,
     lines: &mut Lines,
-) -> Result<Tree<AstNode>, ParseError> {
+) -> Result<Prism<AstNode>, ParseError> {
     let span = lines.current_span();
     let split_idx = header.find("| branch(").unwrap();
     let prefix = header[..split_idx].trim();
     let branch_part = header[split_idx + 2..].trim(); // skip "| "
 
     // Parse prefix segments
-    let prefix_segments: Vec<Tree<AstNode>> = prefix
+    let prefix_segments: Vec<Prism<AstNode>> = prefix
         .split('|')
         .map(|s| s.trim())
         .filter(|s| !s.is_empty())
@@ -849,16 +849,16 @@ fn parse_pipeline_with_branch(
 /// - `@name(params)` → DomainRef with DomainParam children
 /// - `@name` → DomainRef (leaf)
 /// - bare name → Ref
-fn parse_pipeline(text: &str, span: Span) -> Tree<AstNode> {
+fn parse_pipeline(text: &str, span: Span) -> Prism<AstNode> {
     let segments: Vec<&str> = text.split('|').map(|s| s.trim()).collect();
-    let children: Vec<Tree<AstNode>> = segments
+    let children: Vec<Prism<AstNode>> = segments
         .iter()
         .map(|seg| parse_pipeline_segment(seg, span))
         .collect();
     ast::ast_branch(Kind::Form, "pipeline", "root", span, children)
 }
 
-fn parse_pipeline_segment(seg: &str, span: Span) -> Tree<AstNode> {
+fn parse_pipeline_segment(seg: &str, span: Span) -> Prism<AstNode> {
     if seg.starts_with('@') {
         // Domain ref, possibly with params: @git(branch: "master")
         if let Some(paren_start) = seg.find('(') {
@@ -878,7 +878,7 @@ fn parse_pipeline_segment(seg: &str, span: Span) -> Tree<AstNode> {
 ///
 /// Header has already been stripped of `grammar `. Contains `@name {`.
 /// Type definitions and continuation lines parsed inside the block.
-fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     let start_span = lines.current_span();
 
     // Extract @name and verify opening brace
@@ -906,9 +906,9 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
 
     lines.advance(); // consume grammar header line
 
-    let mut defs: Vec<Tree<AstNode>> = Vec::new();
+    let mut defs: Vec<Prism<AstNode>> = Vec::new();
     // Accumulate variants for the current type def (name, span, variants)
-    let mut current: Option<(String, Span, Vec<Tree<AstNode>>)> = None;
+    let mut current: Option<(String, Span, Vec<Prism<AstNode>>)> = None;
 
     while let Some(line) = lines.peek() {
         let trimmed = line.trim();
@@ -992,7 +992,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
 ///
 /// `= a | b | c` → name="" variants=[a,b,c]
 /// `op = gt | lt` → name="op" variants=[gt,lt]
-fn parse_type_def_parts(rest: &str, span: Span) -> (String, Vec<Tree<AstNode>>) {
+fn parse_type_def_parts(rest: &str, span: Span) -> (String, Vec<Prism<AstNode>>) {
     let (name, variants_text) = match rest.split_once('=') {
         Some((n, v)) => (n.trim(), v.trim()),
         None => ("", rest.trim()),
@@ -1008,7 +1008,7 @@ fn parse_type_def_parts(rest: &str, span: Span) -> (String, Vec<Tree<AstNode>>) 
 /// - `name(param)` → Variant with TypeRef child
 /// - `name` → Variant leaf
 /// - empty → skipped (from leading `|` on continuation lines)
-fn parse_variants(text: &str, span: Span) -> Vec<Tree<AstNode>> {
+fn parse_variants(text: &str, span: Span) -> Vec<Prism<AstNode>> {
     text.split('|')
         .map(|s| s.trim())
         .filter(|s| !s.is_empty())
@@ -1033,7 +1033,7 @@ fn parse_action_def(
     header: &str,
     span: Span,
     lines: &mut Lines,
-) -> Result<Tree<AstNode>, ParseError> {
+) -> Result<Prism<AstNode>, ParseError> {
     let (name, rest) = match header.split_once('{') {
         Some((n, r)) => (n.trim(), r.trim()),
         None => {
@@ -1058,7 +1058,7 @@ fn parse_action_def(
 
     lines.advance(); // consume the action header line
 
-    let mut fields: Vec<Tree<AstNode>> = Vec::new();
+    let mut fields: Vec<Prism<AstNode>> = Vec::new();
 
     while let Some(line) = lines.peek() {
         let trimmed = line.trim();
@@ -2706,7 +2706,7 @@ grammar @conversation {
 
     #[test]
     fn beam_grammar_content_addressed() {
-        use crate::tree::content_oid;
+        use crate::prism::content_oid;
         let source = "grammar @beam {\n  type = process | supervision | module\n}\n";
         let a = Parse.trace(source.to_string()).unwrap();
         let b = Parse.trace(source.to_string()).unwrap();
@@ -2715,7 +2715,7 @@ grammar @conversation {
 
     #[test]
     fn beam_grammar_different_source_different_oid() {
-        use crate::tree::content_oid;
+        use crate::prism::content_oid;
         let a = Parse
             .trace("grammar @beam {\n  type = process | supervision | module\n}\n".to_string())
             .unwrap();
@@ -2727,7 +2727,7 @@ grammar @conversation {
 
     #[test]
     fn git_grammar_content_addressed() {
-        use crate::tree::content_oid;
+        use crate::prism::content_oid;
         let source = "grammar @git {\n  type = ref | commit | entry | blob\n}\n";
         let a = Parse.trace(source.to_string()).unwrap();
         let b = Parse.trace(source.to_string()).unwrap();
@@ -2736,7 +2736,7 @@ grammar @conversation {
 
     #[test]
     fn git_grammar_different_source_different_oid() {
-        use crate::tree::content_oid;
+        use crate::prism::content_oid;
         let a = Parse
             .trace("grammar @git {\n  type = ref | commit | entry | blob\n}\n".to_string())
             .unwrap();

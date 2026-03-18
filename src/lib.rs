@@ -9,7 +9,6 @@ pub mod packages;
 pub mod parse;
 pub mod prism;
 pub mod resolve;
-pub mod tree;
 
 // Re-export kernel types at the crate root.
 pub use kernel::{
@@ -23,7 +22,7 @@ pub use resolve::{
     Conversation, ConversationOid, Namespace, OutputNode, Resolve, ResolveError, Template,
     TemplateProvider,
 };
-pub use tree::Tree;
+pub use prism::Prism;
 
 // Re-export fragmentation's Repo trait and Store implementation.
 pub use fragmentation::repo::Repo;

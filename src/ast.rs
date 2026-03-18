@@ -1,12 +1,12 @@
 //! AST primitives. Span + AstNode.
 //!
-//! The AST is `Tree<AstNode>`. A .conv file parsed is a tree
+//! The AST is `Prism<AstNode>`. A .conv file parsed is a tree
 //! in the conversation domain. Same type as everything else.
 
 use sha2::{Digest, Sha256};
 
 use crate::domain::conversation::Kind;
-use crate::tree::{self, Tree};
+use crate::prism::{self, Prism};
 use crate::ContentAddressed;
 use fragmentation::encoding::Encode;
 use fragmentation::ref_::Ref;
@@ -93,7 +93,7 @@ pub fn ast_leaf(
     name: impl Into<String>,
     value: impl Into<String>,
     span: Span,
-) -> Tree<AstNode> {
+) -> Prism<AstNode> {
     let node = AstNode {
         kind,
         name: name.into(),
@@ -101,7 +101,7 @@ pub fn ast_leaf(
         span,
     };
     let ref_ = node_ref(&node);
-    tree::leaf(ref_, node)
+    prism::shard(ref_, node)
 }
 
 /// Build a branch AST node. Ref is content-addressed from `kind:name:value`.
@@ -110,8 +110,8 @@ pub fn ast_branch(
     name: impl Into<String>,
     value: impl Into<String>,
     span: Span,
-    children: Vec<Tree<AstNode>>,
-) -> Tree<AstNode> {
+    children: Vec<Prism<AstNode>>,
+) -> Prism<AstNode> {
     let node = AstNode {
         kind,
         name: name.into(),
@@ -119,7 +119,7 @@ pub fn ast_branch(
         span,
     };
     let ref_ = node_ref(&node);
-    tree::branch(ref_, node, children)
+    prism::fractal(ref_, node, children)
 }
 
 #[cfg(test)]

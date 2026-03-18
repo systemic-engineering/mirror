@@ -1,7 +1,7 @@
 use sha2::{Digest, Sha256};
 
 use super::{Addressable, Setting};
-use crate::tree::{self, Tree};
+use crate::prism::{self, Prism};
 use crate::ContentAddressed;
 use fragmentation::encoding::Encode;
 
@@ -62,10 +62,10 @@ pub struct Folder {
 }
 
 impl Folder {
-    /// Build a `Tree<Folder>` from a filesystem path.
+    /// Build a `Prism<Folder>` from a filesystem path.
     ///
     /// Directories become branches, files become leaves.
-    pub fn read_tree(path: &str) -> Tree<Folder> {
+    pub fn read_tree(path: &str) -> Prism<Folder> {
         use fragmentation::ref_::Ref;
         use fragmentation::sha;
 
@@ -76,7 +76,7 @@ impl Folder {
             .unwrap_or_default();
 
         if p.is_dir() {
-            let mut children: Vec<Tree<Folder>> = Vec::new();
+            let mut children: Vec<Prism<Folder>> = Vec::new();
             if let Ok(entries) = std::fs::read_dir(p) {
                 let mut entries: Vec<_> = entries.filter_map(|e| e.ok()).collect();
                 entries.sort_by_key(|e| e.file_name());
@@ -85,7 +85,7 @@ impl Folder {
                 }
             }
             let ref_ = Ref::new(sha::hash(&name), &name);
-            tree::branch(
+            prism::fractal(
                 ref_,
                 Folder {
                     name,
@@ -96,7 +96,7 @@ impl Folder {
         } else {
             let content = std::fs::read_to_string(p).ok();
             let ref_ = Ref::new(sha::hash(&name), &name);
-            tree::leaf(ref_, Folder { name, content })
+            prism::shard(ref_, Folder { name, content })
         }
     }
 }

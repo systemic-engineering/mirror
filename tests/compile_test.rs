@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use conversation::compile;
 use conversation::Vector;
 use conversation::{
-    Conversation, Filesystem, Namespace, OutputNode, Resolve, Store, Template, TemplateProvider,
-    Tree,
+    Conversation, Filesystem, Namespace, OutputNode, Prism, Resolve, Store, Template,
+    TemplateProvider,
 };
 use fragmentation::commit::{Commit, Draft, Parent};
 use fragmentation::encoding;
@@ -46,7 +46,7 @@ fn eaf_committed_as_child_of_transformation() {
     let committer = test_committer();
 
     // First commit: the transformation tree (author witness)
-    let mut transform_store = Store::<Tree<OutputNode>>::new();
+    let mut transform_store = Store::<Prism<OutputNode>>::new();
     let transform_commit = Draft::root(
         "transformation: root { items: sub { $t } }",
         resolved.content.clone(),
