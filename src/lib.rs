@@ -5,8 +5,10 @@ pub mod compile;
 pub mod domain;
 pub mod ffi;
 pub mod filter;
+pub mod generate;
 pub mod packages;
 pub mod parse;
+pub mod property;
 pub mod resolve;
 pub mod tree;
 

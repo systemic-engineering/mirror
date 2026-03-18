@@ -187,6 +187,58 @@ impl TypeRegistry {
     pub fn act_fields(&self, name: &str) -> Option<&[(String, Option<String>)]> {
         self.acts.get(name).map(|v| v.as_slice())
     }
+
+    /// All type names declared in this grammar.
+    pub fn type_names(&self) -> Vec<&str> {
+        self.types.keys().map(|s| s.as_str()).collect()
+    }
+
+    /// All variants for a named type. Returns None if the type doesn't exist.
+    pub fn variants(&self, type_name: &str) -> Option<Vec<&str>> {
+        self.types
+            .get(type_name)
+            .map(|vs| vs.iter().map(|s| s.as_str()).collect())
+    }
+
+    /// The parameter type reference for a parameterized variant, if any.
+    pub fn variant_param(&self, type_name: &str, variant: &str) -> Option<&str> {
+        self.params
+            .get(&(type_name.to_string(), variant.to_string()))
+            .map(|s| s.as_str())
+    }
+
+    /// All act names declared in this grammar.
+    pub fn act_names(&self) -> Vec<&str> {
+        self.acts.keys().map(|s| s.as_str()).collect()
+    }
+
+    /// Test-only: build a registry with a parameterized variant whose type ref
+    /// is NOT declared. This bypasses compile-time validation to exercise the
+    /// `None => continue` defensive path in `generate::derive_type`.
+    #[cfg(test)]
+    pub(crate) fn with_dangling_param(
+        domain: &str,
+        type_name: &str,
+        variant: &str,
+        param_ref: &str,
+    ) -> Self {
+        let mut types = HashMap::new();
+        let mut variants = HashSet::new();
+        variants.insert(variant.to_string());
+        types.insert(type_name.to_string(), variants);
+        // param points to a type that does NOT exist in `types`
+        let mut params = HashMap::new();
+        params.insert(
+            (type_name.to_string(), variant.to_string()),
+            param_ref.to_string(),
+        );
+        TypeRegistry {
+            domain: domain.to_string(),
+            types,
+            params,
+            acts: HashMap::new(),
+        }
+    }
 }
 
 /// What a namespace module provides when resolved.
@@ -198,6 +250,17 @@ pub enum TemplateProvider {
     External(String),
 }
 
+/// How to generate derivations for a domain.
+#[derive(Clone, Debug, PartialEq)]
+pub enum GenerateProvider {
+    /// Default: walk grammar types (the Rust generator).
+    /// This IS `@compiler.generate` — the parent implementation.
+    Derived,
+    /// Override: custom derivation from a generate block.
+    /// Carries (type_name, variants) pairs that replace the grammar's types.
+    Override(Vec<(String, Vec<String>)>),
+}
+
 /// A namespace maps module names to template providers.
 ///
 /// In single-node mode, `@X` resolves to `namespace.modules["X"]`.
@@ -206,6 +269,7 @@ pub enum TemplateProvider {
 pub struct Namespace {
     modules: HashMap<String, TemplateProvider>,
     grammar_registry: HashMap<String, TypeRegistry>,
+    generate_overrides: HashMap<String, GenerateProvider>,
 }
 
 impl Namespace {
@@ -226,6 +290,18 @@ impl Namespace {
     /// Access registered grammars.
     pub fn grammars(&self) -> &HashMap<String, TypeRegistry> {
         &self.grammar_registry
+    }
+
+    /// Register a generate override for a domain.
+    pub fn register_generate(&mut self, domain: &str, provider: GenerateProvider) {
+        self.generate_overrides.insert(domain.to_string(), provider);
+    }
+
+    /// Get the generate provider for a domain.
+    pub fn generate_provider(&self, domain: &str) -> &GenerateProvider {
+        self.generate_overrides
+            .get(domain)
+            .unwrap_or(&GenerateProvider::Derived)
     }
 
     /// Check if a module is registered.
@@ -2519,5 +2595,49 @@ mod tests {
 
         // @abstract is registered — the chain is live
         assert!(namespace.grammars().contains_key("abstract"));
+    }
+
+    // -- TypeRegistry accessors --
+
+    #[test]
+    fn type_registry_type_names() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
+        let mut names = reg.type_names();
+        names.sort();
+        assert_eq!(names, vec!["", "op"]);
+    }
+
+    #[test]
+    fn type_registry_variants() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b | c\n}\n");
+        let mut variants = reg.variants("").unwrap();
+        variants.sort();
+        assert_eq!(variants, vec!["a", "b", "c"]);
+        assert!(reg.variants("missing").is_none());
+    }
+
+    #[test]
+    fn type_registry_variant_param() {
+        let reg =
+            compile_grammar("grammar @test {\n  type = plain | when(op)\n  type op = gt | lt\n}\n");
+        assert_eq!(reg.variant_param("", "when"), Some("op"));
+        assert!(reg.variant_param("", "plain").is_none());
+        assert!(reg.variant_param("missing", "x").is_none());
+    }
+
+    #[test]
+    fn type_registry_act_names() {
+        let reg = compile_grammar(
+            "grammar @test {\n  type = a\n  act compile {\n    source: a\n  }\n  act run {\n    target\n  }\n}\n",
+        );
+        let mut names = reg.act_names();
+        names.sort();
+        assert_eq!(names, vec!["compile", "run"]);
+    }
+
+    #[test]
+    fn type_registry_act_names_empty() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        assert!(reg.act_names().is_empty());
     }
 }

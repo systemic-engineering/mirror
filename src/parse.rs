@@ -1095,10 +1095,326 @@ fn parse_act_def(header: &str, span: Span, lines: &mut Lines) -> Result<Tree<Ast
     })
 }
 
+// -- Test section DSL --
+
+/// A parsed directive from a test section (below `---`).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum TestDirective {
+    /// `test "name" { @domain has variant; ... }`
+    Test {
+        name: String,
+        assertions: Vec<HasAssertion>,
+    },
+    /// `property "name" { @domain preserves property_name }`
+    Property {
+        name: String,
+        checks: Vec<PropertyCheck>,
+    },
+    /// `generate @domain { type = custom_variant; ... }`
+    Generate {
+        domain: String,
+        overrides: Vec<(String, Vec<String>)>,
+    },
+}
+
+/// `@domain has variant` or `@domain.type has variant`
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct HasAssertion {
+    pub domain: String,
+    pub type_name: Option<String>,
+    pub variant: String,
+}
+
+/// `@domain preserves property_name`
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PropertyCheck {
+    pub domain: String,
+    pub property: String,
+}
+
+/// Parse a test section into directives.
+pub fn parse_test_section(source: &str) -> Result<Vec<TestDirective>, ParseError> {
+    let mut directives = Vec::new();
+    let mut lines = source.lines().peekable();
+
+    while let Some(line) = lines.next() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() || trimmed.starts_with('#') {
+            continue;
+        }
+
+        if let Some(rest) = trimmed.strip_prefix("test ") {
+            let (name, body) = parse_directive_block(rest, &mut lines)?;
+            let assertions = parse_has_assertions(&body)?;
+            directives.push(TestDirective::Test { name, assertions });
+        } else if let Some(rest) = trimmed.strip_prefix("property ") {
+            let (name, body) = parse_directive_block(rest, &mut lines)?;
+            let checks = parse_property_checks(&body)?;
+            directives.push(TestDirective::Property { name, checks });
+        } else if let Some(rest) = trimmed.strip_prefix("generate ") {
+            let (domain, body) = parse_generate_block(rest, &mut lines)?;
+            let overrides = parse_generate_overrides(&body)?;
+            directives.push(TestDirective::Generate { domain, overrides });
+        }
+        // Unknown lines are silently skipped (comments, blank, etc.)
+    }
+
+    Ok(directives)
+}
+
+/// Parse `"name" { ... }` — extracts the quoted name and brace-delimited body.
+fn parse_directive_block(
+    header: &str,
+    lines: &mut std::iter::Peekable<std::str::Lines<'_>>,
+) -> Result<(String, String), ParseError> {
+    let header = header.trim();
+
+    // Extract quoted name
+    let name = if let Some(stripped) = header.strip_prefix('"') {
+        let end = stripped.find('"').ok_or_else(|| ParseError {
+            message: "unclosed quote in directive name".into(),
+            span: None,
+        })?;
+        stripped[..end].to_string()
+    } else {
+        return Err(ParseError {
+            message: "directive name must be quoted".into(),
+            span: None,
+        });
+    };
+
+    // Find opening brace — must be on same line as name
+    let after_name = &header[name.len() + 2..].trim();
+    let mut body = String::new();
+
+    if let Some(rest) = after_name.strip_prefix('{') {
+        if let Some(end) = rest.find('}') {
+            body.push_str(rest[..end].trim());
+            return Ok((name, body));
+        }
+        body.push_str(rest.trim());
+    }
+
+    // Multi-line: read until closing brace
+    for line in lines.by_ref() {
+        let trimmed = line.trim();
+        if trimmed == "}" || trimmed.ends_with('}') {
+            let before = trimmed.strip_suffix('}').unwrap_or("").trim();
+            if !before.is_empty() {
+                if !body.is_empty() {
+                    body.push(';');
+                }
+                body.push_str(before);
+            }
+            return Ok((name, body));
+        }
+        if !trimmed.is_empty() {
+            if !body.is_empty() {
+                body.push(';');
+            }
+            body.push_str(trimmed);
+        }
+    }
+
+    Err(ParseError {
+        message: format!("unclosed block for \"{}\"", name),
+        span: None,
+    })
+}
+
+/// Parse `@domain { ... }` for generate blocks.
+fn parse_generate_block(
+    header: &str,
+    lines: &mut std::iter::Peekable<std::str::Lines<'_>>,
+) -> Result<(String, String), ParseError> {
+    let header = header.trim();
+    let domain_end = header
+        .find(|c: char| c == '{' || c.is_whitespace())
+        .unwrap_or(header.len());
+    let raw_domain = header[..domain_end].trim();
+    let domain = raw_domain
+        .strip_prefix('@')
+        .unwrap_or(raw_domain)
+        .to_string();
+
+    let rest = header[domain_end..].trim();
+    let mut body = String::new();
+
+    if let Some(inline) = rest.strip_prefix('{') {
+        if let Some(end) = inline.find('}') {
+            body.push_str(inline[..end].trim());
+            return Ok((domain, body));
+        }
+        body.push_str(inline.trim());
+    }
+
+    for line in lines.by_ref() {
+        let trimmed = line.trim();
+        if trimmed == "}" || trimmed.ends_with('}') {
+            let before = trimmed.strip_suffix('}').unwrap_or("").trim();
+            if !before.is_empty() {
+                if !body.is_empty() {
+                    body.push(';');
+                }
+                body.push_str(before);
+            }
+            return Ok((domain, body));
+        }
+        if !trimmed.is_empty() {
+            if !body.is_empty() {
+                body.push(';');
+            }
+            body.push_str(trimmed);
+        }
+    }
+
+    Err(ParseError {
+        message: format!("unclosed generate block for @{}", domain),
+        span: None,
+    })
+}
+
+/// Parse `@domain has variant; @domain.type has variant` assertions.
+fn parse_has_assertions(body: &str) -> Result<Vec<HasAssertion>, ParseError> {
+    let mut assertions = Vec::new();
+    for stmt in body.split(';') {
+        let stmt = stmt.trim();
+        if stmt.is_empty() {
+            continue;
+        }
+        let parts: Vec<&str> = stmt.splitn(3, ' ').collect();
+        if parts.len() < 3 || parts[1] != "has" {
+            return Err(ParseError {
+                message: format!("expected `@domain has variant`, got: {}", stmt),
+                span: None,
+            });
+        }
+        let target = parts[0].strip_prefix('@').unwrap_or(parts[0]);
+        let (domain, type_name) = if let Some((d, t)) = target.split_once('.') {
+            (d.to_string(), Some(t.to_string()))
+        } else {
+            (target.to_string(), None)
+        };
+        assertions.push(HasAssertion {
+            domain,
+            type_name,
+            variant: parts[2].to_string(),
+        });
+    }
+    Ok(assertions)
+}
+
+/// Parse `@domain preserves property_name` checks.
+fn parse_property_checks(body: &str) -> Result<Vec<PropertyCheck>, ParseError> {
+    let mut checks = Vec::new();
+    for stmt in body.split(';') {
+        let stmt = stmt.trim();
+        if stmt.is_empty() {
+            continue;
+        }
+        let parts: Vec<&str> = stmt.splitn(3, ' ').collect();
+        if parts.len() < 3 || parts[1] != "preserves" {
+            return Err(ParseError {
+                message: format!("expected `@domain preserves property`, got: {}", stmt),
+                span: None,
+            });
+        }
+        let domain = parts[0].strip_prefix('@').unwrap_or(parts[0]).to_string();
+        checks.push(PropertyCheck {
+            domain,
+            property: parts[2].to_string(),
+        });
+    }
+    Ok(checks)
+}
+
+/// Parse `type = custom_variant; type op = custom` overrides.
+fn parse_generate_overrides(body: &str) -> Result<Vec<(String, Vec<String>)>, ParseError> {
+    let mut overrides = Vec::new();
+    for stmt in body.split(';') {
+        let stmt = stmt.trim();
+        if stmt.is_empty() {
+            continue;
+        }
+        let rest = stmt.strip_prefix("type").ok_or_else(|| ParseError {
+            message: format!("expected `type = variant | ...`, got: {}", stmt),
+            span: None,
+        })?;
+        let rest = rest.trim();
+        let (type_name, variants_str) = if let Some((name, vs)) = rest.split_once('=') {
+            (name.trim().to_string(), vs)
+        } else {
+            return Err(ParseError {
+                message: format!("missing `=` in generate override: {}", stmt),
+                span: None,
+            });
+        };
+        let variants: Vec<String> = variants_str
+            .split('|')
+            .map(|v| v.trim().to_string())
+            .filter(|v| !v.is_empty())
+            .collect();
+        overrides.push((type_name, variants));
+    }
+    Ok(overrides)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::Vector;
+
+    /// Test helpers to extract TestDirective variants.
+    impl TestDirective {
+        fn as_test(&self) -> (&str, &[HasAssertion]) {
+            match self {
+                TestDirective::Test { name, assertions } => (name, assertions),
+                _ => panic!("expected Test, got {:?}", self),
+            }
+        }
+        fn as_property(&self) -> (&str, &[PropertyCheck]) {
+            match self {
+                TestDirective::Property { name, checks } => (name, checks),
+                _ => panic!("expected Property, got {:?}", self),
+            }
+        }
+        fn as_generate(&self) -> (&str, &[(String, Vec<String>)]) {
+            match self {
+                TestDirective::Generate { domain, overrides } => (domain, overrides),
+                _ => panic!("expected Generate, got {:?}", self),
+            }
+        }
+    }
+
+    #[test]
+    #[should_panic(expected = "expected Test")]
+    fn as_test_panics_on_wrong_variant() {
+        let d = TestDirective::Property {
+            name: "x".into(),
+            checks: vec![],
+        };
+        d.as_test();
+    }
+
+    #[test]
+    #[should_panic(expected = "expected Property")]
+    fn as_property_panics_on_wrong_variant() {
+        let d = TestDirective::Test {
+            name: "x".into(),
+            assertions: vec![],
+        };
+        d.as_property();
+    }
+
+    #[test]
+    #[should_panic(expected = "expected Generate")]
+    fn as_generate_panics_on_wrong_variant() {
+        let d = TestDirective::Test {
+            name: "x".into(),
+            assertions: vec![],
+        };
+        d.as_generate();
+    }
 
     // -- Parse `in @domain` --
 
@@ -2785,5 +3101,308 @@ grammar @conversation {
         let has_annotate = tree.children().iter().any(|c| c.data().is_decl("annotate"));
         assert!(has_grammar);
         assert!(has_annotate);
+    }
+
+    // -- Test section DSL --
+
+    #[test]
+    fn parse_test_section_test_inline() {
+        let source = "test \"basic\" { @beam has process; @beam has module }";
+        let directives = parse_test_section(source).unwrap();
+        assert_eq!(directives.len(), 1);
+        let (name, assertions) = directives[0].as_test();
+        assert_eq!(name, "basic");
+        assert_eq!(assertions.len(), 2);
+        assert_eq!(assertions[0].domain, "beam");
+        assert_eq!(assertions[0].variant, "process");
+        assert_eq!(assertions[1].variant, "module");
+    }
+
+    #[test]
+    fn parse_test_section_test_multiline() {
+        let source = "test \"multi\" {\n  @beam has process\n  @beam has module\n}\n";
+        let directives = parse_test_section(source).unwrap();
+        assert_eq!(directives.len(), 1);
+        let (name, assertions) = directives[0].as_test();
+        assert_eq!(name, "multi");
+        assert_eq!(assertions.len(), 2);
+    }
+
+    #[test]
+    fn parse_test_section_typed_assertion() {
+        let source = "test \"typed\" { @beam.target has gleam }";
+        let directives = parse_test_section(source).unwrap();
+        let (_, assertions) = directives[0].as_test();
+        assert_eq!(assertions[0].domain, "beam");
+        assert_eq!(assertions[0].type_name, Some("target".to_string()));
+        assert_eq!(assertions[0].variant, "gleam");
+    }
+
+    #[test]
+    fn parse_test_section_property() {
+        let source = "property \"shannon\" { @beam preserves shannon_equivalence }";
+        let directives = parse_test_section(source).unwrap();
+        assert_eq!(directives.len(), 1);
+        let (name, checks) = directives[0].as_property();
+        assert_eq!(name, "shannon");
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].domain, "beam");
+        assert_eq!(checks[0].property, "shannon_equivalence");
+    }
+
+    #[test]
+    fn parse_test_section_property_multiline() {
+        let source = "property \"multi\" {\n  @beam preserves shannon_equivalence\n  @git preserves shannon_equivalence\n}\n";
+        let directives = parse_test_section(source).unwrap();
+        let (_, checks) = directives[0].as_property();
+        assert_eq!(checks.len(), 2);
+        assert_eq!(checks[0].domain, "beam");
+        assert_eq!(checks[1].domain, "git");
+    }
+
+    #[test]
+    fn parse_test_section_generate() {
+        let source = "generate @beam { type = custom_a | custom_b }";
+        let directives = parse_test_section(source).unwrap();
+        assert_eq!(directives.len(), 1);
+        let (domain, overrides) = directives[0].as_generate();
+        assert_eq!(domain, "beam");
+        assert_eq!(overrides.len(), 1);
+        assert_eq!(overrides[0].0, "");
+        assert_eq!(overrides[0].1, vec!["custom_a", "custom_b"]);
+    }
+
+    #[test]
+    fn parse_test_section_generate_named_type() {
+        let source = "generate @test {\n  type op = custom_gt\n}\n";
+        let directives = parse_test_section(source).unwrap();
+        let (_, overrides) = directives[0].as_generate();
+        assert_eq!(overrides[0].0, "op");
+        assert_eq!(overrides[0].1, vec!["custom_gt"]);
+    }
+
+    #[test]
+    fn parse_test_section_multiple_directives() {
+        let source =
+            "test \"a\" { @x has y }\nproperty \"b\" { @x preserves shannon_equivalence }\n";
+        let directives = parse_test_section(source).unwrap();
+        assert_eq!(directives.len(), 2);
+        assert!(matches!(&directives[0], TestDirective::Test { .. }));
+        assert!(matches!(&directives[1], TestDirective::Property { .. }));
+    }
+
+    #[test]
+    fn parse_test_section_skips_comments_and_blanks() {
+        let source = "# comment\n\ntest \"a\" { @x has y }\n\n# another\n";
+        let directives = parse_test_section(source).unwrap();
+        assert_eq!(directives.len(), 1);
+    }
+
+    #[test]
+    fn parse_test_section_empty() {
+        let directives = parse_test_section("").unwrap();
+        assert!(directives.is_empty());
+    }
+
+    #[test]
+    fn parse_test_section_unclosed_block() {
+        let source = "test \"broken\" {\n  @x has y\n";
+        let err = parse_test_section(source).unwrap_err();
+        assert!(err.message.contains("unclosed"));
+    }
+
+    #[test]
+    fn parse_test_section_bad_assertion() {
+        let source = "test \"bad\" { @x missing y }";
+        let err = parse_test_section(source).unwrap_err();
+        assert!(err.message.contains("@domain has variant"));
+    }
+
+    #[test]
+    fn parse_test_section_bad_property() {
+        let source = "property \"bad\" { @x violates stuff }";
+        let err = parse_test_section(source).unwrap_err();
+        assert!(err.message.contains("@domain preserves property"));
+    }
+
+    // -- Error paths: parse_directive_block --
+
+    #[test]
+    fn parse_directive_block_blank_line_in_body() {
+        // Blank line inside a multi-line directive block should be skipped
+        let source = "test \"blank\" {\n  @beam has process\n\n  @beam has module\n}\n";
+        let directives = parse_test_section(source).unwrap();
+        let (_, assertions) = directives[0].as_test();
+        assert_eq!(assertions.len(), 2);
+    }
+
+    #[test]
+    fn parse_directive_block_unclosed_quote() {
+        let source = "test \"broken {\n  @x has y\n}\n";
+        let err = parse_test_section(source).unwrap_err();
+        assert!(err.message.contains("unclosed quote"));
+    }
+
+    #[test]
+    fn parse_directive_block_unquoted_name() {
+        let source = "test broken { @x has y }";
+        let err = parse_test_section(source).unwrap_err();
+        assert!(err.message.contains("must be quoted"));
+    }
+
+    #[test]
+    fn parse_directive_block_multiline_with_opening_brace_content() {
+        // Opening brace on same line as name, body spans multiple lines
+        let source = "test \"inline\" { @beam has process\n  @beam has module\n}\n";
+        let directives = parse_test_section(source).unwrap();
+        assert_eq!(directives.len(), 1);
+        let (_, assertions) = directives[0].as_test();
+        assert_eq!(assertions.len(), 2);
+    }
+
+    #[test]
+    fn parse_directive_block_content_before_closing_brace() {
+        // Body content on the same line as closing brace: `@beam has x }`
+        let source = "test \"inline\" {\n  @beam has process\n  @beam has module}\n";
+        let directives = parse_test_section(source).unwrap();
+        let (_, assertions) = directives[0].as_test();
+        assert_eq!(assertions.len(), 2);
+    }
+
+    // -- Error paths: parse_generate_block --
+
+    #[test]
+    fn parse_generate_block_multiline_with_opening_brace_content() {
+        // Opening brace on same line, body spans multiple lines
+        let source = "generate @test { type = a\n  type op = b\n}\n";
+        let directives = parse_test_section(source).unwrap();
+        let (_, overrides) = directives[0].as_generate();
+        assert_eq!(overrides.len(), 2);
+    }
+
+    #[test]
+    fn parse_generate_block_content_before_closing_brace() {
+        // Content on same line as closing brace
+        let source = "generate @test {\n  type = a\n  type op = b}\n";
+        let directives = parse_test_section(source).unwrap();
+        let (_, overrides) = directives[0].as_generate();
+        assert_eq!(overrides.len(), 2);
+    }
+
+    #[test]
+    fn parse_generate_block_unclosed() {
+        let source = "generate @test {\n  type = a\n";
+        let err = parse_test_section(source).unwrap_err();
+        assert!(err.message.contains("unclosed generate block"));
+    }
+
+    #[test]
+    fn parse_generate_block_multiline_body() {
+        // Multiple lines in generate block body
+        let source = "generate @test {\n  type = x\n  type op = y\n}\n";
+        let directives = parse_test_section(source).unwrap();
+        let (_, overrides) = directives[0].as_generate();
+        assert_eq!(overrides.len(), 2);
+    }
+
+    #[test]
+    fn parse_generate_block_blank_line_in_body() {
+        // Blank line inside a multi-line generate block should be skipped
+        let source = "generate @test {\n  type = x\n\n  type op = y\n}\n";
+        let directives = parse_test_section(source).unwrap();
+        let (_, overrides) = directives[0].as_generate();
+        assert_eq!(overrides.len(), 2);
+    }
+
+    // -- Error paths: parse_has_assertions, parse_property_checks, parse_generate_overrides --
+
+    #[test]
+    fn parse_has_assertions_trailing_semicolon() {
+        // Trailing semicolon produces empty stmt -> continue
+        let source = "test \"trail\" { @x has y; }";
+        let directives = parse_test_section(source).unwrap();
+        let (_, assertions) = directives[0].as_test();
+        assert_eq!(assertions.len(), 1);
+    }
+
+    #[test]
+    fn parse_property_checks_trailing_semicolon() {
+        let source = "property \"trail\" { @x preserves shannon_equivalence; }";
+        let directives = parse_test_section(source).unwrap();
+        let (_, checks) = directives[0].as_property();
+        assert_eq!(checks.len(), 1);
+    }
+
+    #[test]
+    fn parse_generate_overrides_trailing_semicolon() {
+        let source = "generate @test { type = a; }";
+        let directives = parse_test_section(source).unwrap();
+        let (_, overrides) = directives[0].as_generate();
+        assert_eq!(overrides.len(), 1);
+    }
+
+    #[test]
+    fn parse_generate_override_non_type_line() {
+        let source = "generate @test { nonsense = a }";
+        let err = parse_test_section(source).unwrap_err();
+        assert!(err.message.contains("expected `type = variant | ...`"));
+    }
+
+    #[test]
+    fn parse_generate_override_missing_equals() {
+        let source = "generate @test { type no_equals }";
+        let err = parse_test_section(source).unwrap_err();
+        assert!(err.message.contains("missing `=`"));
+    }
+
+    // -- Unknown directive line (line 1158: fall-through) --
+
+    #[test]
+    fn parse_test_section_unknown_directive_skipped() {
+        let source = "unknown_directive stuff\ntest \"a\" { @x has y }\n";
+        let directives = parse_test_section(source).unwrap();
+        assert_eq!(directives.len(), 1);
+    }
+
+    #[test]
+    fn parse_test_section_brace_on_header_multiline() {
+        // Opening brace on header line, content on next lines
+        let source = "test \"inline-start\" {\n  @x has y\n}\n";
+        let directives = parse_test_section(source).unwrap();
+        assert_eq!(directives.len(), 1);
+        let (_, assertions) = directives[0].as_test();
+        assert_eq!(assertions.len(), 1);
+    }
+
+    #[test]
+    fn parse_test_section_brace_on_next_line() {
+        // No brace on header line — body starts on next line (false branch of starts_with('{'))
+        let source = "test \"deferred\"\n  @x has y\n}\n";
+        let directives = parse_test_section(source).unwrap();
+        assert_eq!(directives.len(), 1);
+        let (name, assertions) = directives[0].as_test();
+        assert_eq!(name, "deferred");
+        assert_eq!(assertions.len(), 1);
+    }
+
+    #[test]
+    fn parse_test_section_generate_brace_on_header_multiline() {
+        // Opening brace on header line for generate, content on next lines
+        let source = "generate @test {\n  type = custom\n}\n";
+        let directives = parse_test_section(source).unwrap();
+        assert_eq!(directives.len(), 1);
+        let (_, overrides) = directives[0].as_generate();
+        assert_eq!(overrides[0].1, vec!["custom"]);
+    }
+
+    #[test]
+    fn parse_test_section_generate_brace_on_next_line() {
+        // No brace on header line for generate (false branch of starts_with('{'))
+        let source = "generate @test\n  type = custom\n}\n";
+        let directives = parse_test_section(source).unwrap();
+        assert_eq!(directives.len(), 1);
+        let (domain, overrides) = directives[0].as_generate();
+        assert_eq!(domain, "test");
+        assert_eq!(overrides[0].1, vec!["custom"]);
     }
 }

@@ -210,20 +210,26 @@ fn try_dir_package(path: &Path) -> Option<Package> {
     }
 }
 
-/// Strip test section (everything after `\n---\n`) from source.
-fn strip_tests(source: &str) -> &str {
+/// Split source into spec and optional test section (everything after `\n---\n`).
+pub fn split_test_section(source: &str) -> (&str, Option<&str>) {
     if let Some(pos) = source.find("\n---\n") {
-        &source[..pos]
+        let test_part = &source[pos + 5..];
+        (&source[..pos], Some(test_part))
     } else if let Some(pos) = source.find("\n---") {
         let rest = &source[pos + 4..];
         if rest.is_empty() || rest.chars().all(char::is_whitespace) {
-            &source[..pos]
+            (&source[..pos], None)
         } else {
-            source
+            (source, None)
         }
     } else {
-        source
+        (source, None)
     }
+}
+
+/// Strip test section (everything after `\n---\n`) from source.
+fn strip_tests(source: &str) -> &str {
+    split_test_section(source).0
 }
 
 fn dirs_home() -> PathBuf {
@@ -554,5 +560,36 @@ mod tests {
         std::env::remove_var("CONVERSATION_PACKAGES");
         let dir = PackageRegistry::packages_dir();
         assert!(dir.ends_with(".conversation"));
+    }
+
+    // -- split_test_section --
+
+    #[test]
+    fn split_no_separator() {
+        let (spec, test) = split_test_section("grammar @x { type = a }");
+        assert_eq!(spec, "grammar @x { type = a }");
+        assert!(test.is_none());
+    }
+
+    #[test]
+    fn split_with_test_section() {
+        let source = "grammar @x { type = a }\n---\ntest \"t\" { @x has a }";
+        let (spec, test) = split_test_section(source);
+        assert_eq!(spec, "grammar @x { type = a }");
+        assert_eq!(test.unwrap(), "test \"t\" { @x has a }");
+    }
+
+    #[test]
+    fn split_trailing_separator() {
+        let (spec, test) = split_test_section("grammar @x { type = a }\n---");
+        assert_eq!(spec, "grammar @x { type = a }");
+        assert!(test.is_none());
+    }
+
+    #[test]
+    fn split_trailing_separator_whitespace() {
+        let (spec, test) = split_test_section("grammar @x { type = a }\n---  \n");
+        assert_eq!(spec, "grammar @x { type = a }");
+        assert!(test.is_none());
     }
 }
