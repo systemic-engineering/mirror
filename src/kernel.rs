@@ -261,7 +261,7 @@ impl<E: fragmentation::encoding::Encode> ContentAddressed for fragmentation::fra
     }
 }
 
-impl<E: fragmentation::encoding::Encode> ContentAddressed for crate::tree::Tree<E> {
+impl<V: fragmentation::encoding::Encode> ContentAddressed for crate::prism::Prism<V> {
     type Oid = Oid;
     fn content_oid(&self) -> Oid {
         Oid::new(fragmentation::fragment::content_oid(self))
@@ -685,27 +685,27 @@ mod tests {
     // -- Latent --
     // Latent caches Vector results in a Repo. Trees all the way down.
 
-    use crate::tree::{self, Tree};
+    use crate::prism::{self, Prism};
     use fragmentation::ref_::Ref;
     use fragmentation::sha;
     use fragmentation::store::Store;
 
-    fn tree_leaf(source: i32) -> Tree<String> {
+    fn prism_shard(source: i32) -> Prism<String> {
         let data = format!("data-{}", source);
         let ref_ = Ref::new(sha::hash(&data), &data);
-        tree::leaf(ref_, data)
+        prism::shard(ref_, data)
     }
 
     struct TrackedTreeVector(Rc<Cell<usize>>);
 
-    impl Vector<i32, Tree<String>> for TrackedTreeVector {
+    impl Vector<i32, Prism<String>> for TrackedTreeVector {
         type Error = String;
-        fn trace(&self, source: i32) -> Trace<Tree<String>, String> {
+        fn trace(&self, source: i32) -> Trace<Prism<String>, String> {
             self.0.set(self.0.get() + 1);
             if source == 42 {
                 Trace::failure("is 42".into(), TraceOid::new("err"), None)
             } else {
-                let node = tree_leaf(source);
+                let node = prism_shard(source);
                 let oid = node.content_oid();
                 Trace::success(node, oid.into(), None)
             }
@@ -714,9 +714,9 @@ mod tests {
 
     struct TrackedTreeAbove100(Rc<Cell<usize>>);
 
-    impl Vector<Tree<String>, Tree<String>> for TrackedTreeAbove100 {
+    impl Vector<Prism<String>, Prism<String>> for TrackedTreeAbove100 {
         type Error = String;
-        fn trace(&self, source: Tree<String>) -> Trace<Tree<String>, String> {
+        fn trace(&self, source: Prism<String>) -> Trace<Prism<String>, String> {
             self.0.set(self.0.get() + 1);
             let data = source.data();
             let n: i32 = data
@@ -733,11 +733,11 @@ mod tests {
     }
 
     fn tracked() -> (
-        Latent<TrackedTreeVector, Store<Tree<String>>>,
+        Latent<TrackedTreeVector, Store<Prism<String>>>,
         Rc<Cell<usize>>,
     ) {
         let counter = Rc::new(Cell::new(0));
-        let store = Store::<Tree<String>>::new();
+        let store = Store::<Prism<String>>::new();
         (
             Latent::new(TrackedTreeVector(counter.clone()), store),
             counter,
@@ -749,7 +749,7 @@ mod tests {
         let (latent, counter) = tracked();
         let t = latent.trace(5);
         assert_eq!(counter.get(), 1);
-        assert_eq!(t.unwrap(), tree_leaf(5));
+        assert_eq!(t.unwrap(), prism_shard(5));
     }
 
     #[test]
@@ -758,7 +758,7 @@ mod tests {
         let _ = latent.trace(5);
         let t = latent.trace(5);
         assert_eq!(counter.get(), 1); // NOT 2 — cached via Repo
-        assert_eq!(t.unwrap(), tree_leaf(5));
+        assert_eq!(t.unwrap(), prism_shard(5));
     }
 
     #[test]
@@ -783,13 +783,13 @@ mod tests {
     fn latent_compose() {
         let c1 = Rc::new(Cell::new(0));
         let c2 = Rc::new(Cell::new(0));
-        let s1 = Store::<Tree<String>>::new();
-        let s2 = Store::<Tree<String>>::new();
+        let s1 = Store::<Prism<String>>::new();
+        let s2 = Store::<Prism<String>>::new();
         let l1 = Latent::new(TrackedTreeVector(c1.clone()), s1);
         let l2 = Latent::new(TrackedTreeAbove100(c2.clone()), s2);
         let composed = l1.compose(l2);
         let t = composed.trace(5);
-        assert_eq!(t.unwrap(), tree_leaf(5));
+        assert_eq!(t.unwrap(), prism_shard(5));
         assert_eq!(c1.get(), 1);
         assert_eq!(c2.get(), 1);
     }
@@ -798,8 +798,8 @@ mod tests {
     fn latent_compose_second_error() {
         let c1 = Rc::new(Cell::new(0));
         let c2 = Rc::new(Cell::new(0));
-        let s1 = Store::<Tree<String>>::new();
-        let s2 = Store::<Tree<String>>::new();
+        let s1 = Store::<Prism<String>>::new();
+        let s2 = Store::<Prism<String>>::new();
         let l1 = Latent::new(TrackedTreeVector(c1.clone()), s1);
         let l2 = Latent::new(TrackedTreeAbove100(c2.clone()), s2);
         let composed = l1.compose(l2);
@@ -810,7 +810,7 @@ mod tests {
     #[test]
     fn latent_stale_ref_recomputes() {
         let counter = Rc::new(Cell::new(0));
-        let mut store = Store::<Tree<String>>::new();
+        let mut store = Store::<Prism<String>>::new();
         // Plant a stale ref: ref exists but tree OID doesn't
         store.update_ref(
             &5i32.content_oid().as_ref().to_string(),
@@ -819,13 +819,13 @@ mod tests {
         let latent = Latent::new(TrackedTreeVector(counter.clone()), store);
         let t = latent.trace(5);
         assert_eq!(counter.get(), 1); // Had to compute — stale ref
-        assert_eq!(t.unwrap(), tree_leaf(5));
+        assert_eq!(t.unwrap(), prism_shard(5));
     }
 
     #[test]
     fn latent_result_in_repo() {
         let counter = Rc::new(Cell::new(0));
-        let store = Store::<Tree<String>>::new();
+        let store = Store::<Prism<String>>::new();
         let latent = Latent::new(TrackedTreeVector(counter.clone()), store);
         latent.trace(5);
         // Result stored in repo — ref maps input OID to output tree
@@ -833,6 +833,6 @@ mod tests {
         let sha = latent.repo.borrow().resolve_ref(&key);
         assert!(sha.is_some());
         let node = latent.repo.borrow().read_tree(&sha.unwrap().0);
-        assert_eq!(node, Some(tree_leaf(5)));
+        assert_eq!(node, Some(prism_shard(5)));
     }
 }

@@ -4,7 +4,7 @@
 
 use crate::ast::{self, AstNode, Span};
 use crate::domain::conversation::Kind;
-use crate::tree::Tree;
+use crate::prism::Prism;
 use crate::Trace;
 use crate::Vector;
 
@@ -45,10 +45,10 @@ impl std::fmt::Display for ParseError {
 
 impl std::error::Error for ParseError {}
 
-impl Vector<String, Tree<AstNode>> for Parse {
+impl Vector<String, Prism<AstNode>> for Parse {
     type Error = ParseError;
 
-    fn trace(&self, source: String) -> Trace<Tree<AstNode>, ParseError> {
+    fn trace(&self, source: String) -> Trace<Prism<AstNode>, ParseError> {
         use crate::ContentAddressed;
         match parse_source(&source) {
             Ok(tree) => {
@@ -103,7 +103,92 @@ impl<'a> Lines<'a> {
     }
 }
 
-fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
+// ---------------------------------------------------------------------------
+// Keyword dispatch table
+// ---------------------------------------------------------------------------
+
+type KeywordHandler = fn(&str, &mut Lines) -> Result<Prism<AstNode>, ParseError>;
+
+/// Keyword → handler table. Checked in order; first prefix match wins.
+/// Each handler receives the rest of the line after stripping the keyword
+/// prefix and is responsible for consuming all lines it needs (including
+/// calling `lines.advance()` for single-line keywords).
+const KEYWORD_TABLE: &[(&str, KeywordHandler)] = &[
+    ("in ", parse_in_keyword),
+    ("use ", parse_use_keyword),
+    ("when ", parse_when_keyword),
+    ("case ", parse_case),
+    ("template ", parse_template),
+    ("out ", parse_out),
+    ("grammar ", parse_grammar),
+];
+
+/// Try to dispatch a line via the keyword table.
+/// Returns `Ok(Some(node))` on match, `Ok(None)` if no keyword matched.
+fn dispatch_keyword(
+    trimmed: &str,
+    lines: &mut Lines,
+) -> Result<Option<Prism<AstNode>>, ParseError> {
+    for &(prefix, handler) in KEYWORD_TABLE {
+        if let Some(rest) = trimmed.strip_prefix(prefix) {
+            return Ok(Some(handler(rest, lines)?));
+        }
+    }
+    Ok(None)
+}
+
+/// `in @domain` / `in @domain(params)` / `in @domain as $name`
+fn parse_in_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+    let span = lines.current_span();
+    let rest = rest.trim();
+
+    // Split alias: "in @domain as $name" or "in @domain(params) as $name"
+    let (domain_part, alias) = match rest.split_once(" as ") {
+        Some((d, a)) => (d.trim(), Some(a.trim())),
+        None => (rest, None),
+    };
+
+    // Parse domain: @name(params) or @name or bare
+    let (value, param) = if let Some(paren) = domain_part.find('(') {
+        let name = &domain_part[..paren];
+        let params = domain_part[paren + 1..].trim_end_matches(')');
+        (name, Some(params))
+    } else {
+        (domain_part, None)
+    };
+
+    let mut in_children = Vec::new();
+    if let Some(p) = param {
+        in_children.push(ast::ast_leaf(Kind::Ref, "domain-param", p, span));
+    }
+    if let Some(a) = alias {
+        in_children.push(ast::ast_leaf(Kind::Ref, "alias", a, span));
+    }
+
+    let node = if in_children.is_empty() {
+        ast::ast_leaf(Kind::Decl, "in", value, span)
+    } else {
+        ast::ast_branch(Kind::Decl, "in", value, span, in_children)
+    };
+    lines.advance();
+    Ok(node)
+}
+
+/// `use ...` — single-line, wraps parse_use.
+fn parse_use_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+    let node = parse_use(rest, lines.current_span());
+    lines.advance();
+    Ok(node)
+}
+
+/// `when ...` — single-line, wraps parse_when.
+fn parse_when_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+    let node = parse_when(rest, lines.current_span())?;
+    lines.advance();
+    Ok(node)
+}
+
+fn parse_source(source: &str) -> Result<Prism<AstNode>, ParseError> {
     let mut lines = Lines::new(source);
     let mut children = Vec::new();
     let root_span = Span::new(0, source.len() as u32);
@@ -116,87 +201,19 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
             continue;
         }
 
-        if let Some(rest) = trimmed.strip_prefix("in ") {
-            let span = lines.current_span();
-            let rest = rest.trim();
-
-            // Split alias: "in @domain as $name" or "in @domain(params) as $name"
-            let (domain_part, alias) = match rest.split_once(" as ") {
-                Some((d, a)) => (d.trim(), Some(a.trim())),
-                None => (rest, None),
-            };
-
-            // Parse domain: @name(params) or @name or bare
-            let (value, param) = if let Some(paren) = domain_part.find('(') {
-                let name = &domain_part[..paren];
-                let params = domain_part[paren + 1..].trim_end_matches(')');
-                (name, Some(params))
-            } else {
-                (domain_part, None)
-            };
-
-            let mut in_children = Vec::new();
-            if let Some(p) = param {
-                in_children.push(ast::ast_leaf(Kind::Ref, "domain-param", p, span));
-            }
-            if let Some(a) = alias {
-                in_children.push(ast::ast_leaf(Kind::Ref, "alias", a, span));
-            }
-
-            if in_children.is_empty() {
-                children.push(ast::ast_leaf(Kind::Decl, "in", value, span));
-            } else {
-                children.push(ast::ast_branch(Kind::Decl, "in", value, span, in_children));
-            }
-            lines.advance();
+        // Keyword dispatch
+        if let Some(node) = dispatch_keyword(trimmed, &mut lines)? {
+            children.push(node);
             continue;
         }
 
-        if let Some(rest) = trimmed.strip_prefix("use ") {
-            let use_node = parse_use(rest, lines.current_span());
-            children.push(use_node);
-            lines.advance();
-            continue;
-        }
-
-        if let Some(rest) = trimmed.strip_prefix("when ") {
-            let when_node = parse_when(rest, lines.current_span())?;
-            children.push(when_node);
-            lines.advance();
-            continue;
-        }
-
-        if let Some(rest) = trimmed.strip_prefix("case ") {
-            let case_node = parse_case(rest, &mut lines)?;
-            children.push(case_node);
-            continue;
-        }
-
-        // branch(.path) { ... } — standalone
+        // branch(.path) { ... } — special syntax (not keyword + space)
         if trimmed.starts_with("branch(") {
-            let branch_node = parse_branch(trimmed, &mut lines)?;
-            children.push(branch_node);
+            children.push(parse_branch(trimmed, &mut lines)?);
             continue;
         }
 
-        if let Some(rest) = trimmed.strip_prefix("template ") {
-            let tmpl = parse_template(rest, &mut lines)?;
-            children.push(tmpl);
-            continue;
-        }
-
-        if let Some(rest) = trimmed.strip_prefix("out ") {
-            let out = parse_out(rest, &mut lines)?;
-            children.push(out);
-            continue;
-        }
-
-        if let Some(rest) = trimmed.strip_prefix("grammar ") {
-            let grammar_node = parse_grammar(rest, &mut lines)?;
-            children.push(grammar_node);
-            continue;
-        }
-
+        // annotate(...) — special syntax
         if trimmed.starts_with("annotate(") && trimmed.ends_with(')') {
             let span = lines.current_span();
             let inner = &trimmed["annotate(".len()..trimmed.len() - 1];
@@ -207,15 +224,13 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
 
         // Pipeline ending in branch: @json | branch(.path) { ... }
         if trimmed.contains("| branch(") {
-            let pipeline_node = parse_pipeline_with_branch(trimmed, &mut lines)?;
-            children.push(pipeline_node);
+            children.push(parse_pipeline_with_branch(trimmed, &mut lines)?);
             continue;
         }
 
         // Pipeline: A | G | B
         if trimmed.contains('|') {
-            let pipeline = parse_pipeline(trimmed, lines.current_span());
-            children.push(pipeline);
+            children.push(parse_pipeline(trimmed, lines.current_span()));
             lines.advance();
             continue;
         }
@@ -235,7 +250,7 @@ fn parse_source(source: &str) -> Result<Tree<AstNode>, ParseError> {
     ))
 }
 
-fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+fn parse_template(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     let before_brace = header.split('{').next().unwrap().trim();
     let start_span = lines.current_span();
     lines.advance(); // consume template line
@@ -284,7 +299,7 @@ fn parse_template(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Pars
     })
 }
 
-fn parse_param_list(text: &str, span: Span) -> Result<Vec<Tree<AstNode>>, ParseError> {
+fn parse_param_list(text: &str, span: Span) -> Result<Vec<Prism<AstNode>>, ParseError> {
     // Split on commas respecting paren nesting
     let mut segments = Vec::new();
     let mut depth = 0;
@@ -311,7 +326,7 @@ fn parse_param_list(text: &str, span: Span) -> Result<Vec<Tree<AstNode>>, ParseE
         .collect()
 }
 
-fn parse_param(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+fn parse_param(text: &str, span: Span) -> Result<Prism<AstNode>, ParseError> {
     // Check for "name: expr" — but only if left side doesn't start with @ or $
     if let Some((left, right)) = text.split_once(':') {
         let left = left.trim();
@@ -369,7 +384,7 @@ fn infer_name(text: &str, span: Span) -> Result<String, ParseError> {
     })
 }
 
-fn parse_param_expr(text: &str, span: Span) -> Tree<AstNode> {
+fn parse_param_expr(text: &str, span: Span) -> Prism<AstNode> {
     if text.contains('|') {
         parse_pipeline(text, span)
     } else if text.starts_with('@') && text[1..].contains('.') {
@@ -379,7 +394,7 @@ fn parse_param_expr(text: &str, span: Span) -> Tree<AstNode> {
     }
 }
 
-fn parse_field(text: &str, span: Span) -> Tree<AstNode> {
+fn parse_field(text: &str, span: Span) -> Prism<AstNode> {
     if let Some((name, rest)) = text.split_once(':') {
         let name = name.trim();
         let rest = rest.trim();
@@ -408,7 +423,7 @@ fn parse_field(text: &str, span: Span) -> Tree<AstNode> {
     }
 }
 
-fn parse_out(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+fn parse_out(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     let span = lines.current_span();
     if let Some((name, _)) = header.split_once('{') {
         let name = name.trim();
@@ -426,7 +441,7 @@ fn parse_out(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseErro
 fn parse_block_body(
     lines: &mut Lines,
     open_span: Span,
-) -> Result<(Vec<Tree<AstNode>>, Span), ParseError> {
+) -> Result<(Vec<Prism<AstNode>>, Span), ParseError> {
     let mut children = Vec::new();
 
     while let Some(line) = lines.peek() {
@@ -517,7 +532,7 @@ fn parse_block_body(
     })
 }
 
-fn push_path_segments(rest: &str, span: Span, children: &mut Vec<Tree<AstNode>>) {
+fn push_path_segments(rest: &str, span: Span, children: &mut Vec<Prism<AstNode>>) {
     for seg in rest.split('/').filter(|s| !s.is_empty()) {
         children.push(ast::ast_leaf(Kind::Atom, "path", seg, span));
     }
@@ -530,7 +545,7 @@ fn push_path_segments(rest: &str, span: Span, children: &mut Vec<Tree<AstNode>>)
 /// - `$HOME/shared`     → [Home, Path]
 /// - `$SELF/templates`  → [Self_, Path]
 /// - `./templates`      → [Self_, Path]  (desugar)
-fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>) {
+fn parse_use_source(source: &str, span: Span, children: &mut Vec<Prism<AstNode>>) {
     // Desugar ./ to $SELF/
     if let Some(rest) = source.strip_prefix("./") {
         children.push(ast::ast_leaf(Kind::Ref, "self", "$SELF", span));
@@ -574,7 +589,7 @@ fn parse_use_source(source: &str, span: Span, children: &mut Vec<Tree<AstNode>>)
 /// - `$name from @domain`           → single import
 /// - `{ $a, $b } from @domain`      → destructured
 /// - `$name from @domain sha: ABC`  → locked
-fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
+fn parse_use(rest: &str, span: Span) -> Prism<AstNode> {
     let mut children = Vec::new();
 
     // Split on " from " to get names part and source part
@@ -617,7 +632,7 @@ fn parse_use(rest: &str, span: Span) -> Tree<AstNode> {
 ///
 /// Operator detection: two-char operators before single-char to avoid false matches.
 /// Structure: Decl("when/{op}") with Path (left) and Literal (right) as children.
-fn parse_when(rest: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+fn parse_when(rest: &str, span: Span) -> Result<Prism<AstNode>, ParseError> {
     for (sym, op_name) in CMP_OPS {
         if let Some(idx) = rest.find(sym) {
             let path = rest[..idx].trim();
@@ -640,7 +655,7 @@ fn parse_when(rest: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
 ///
 /// Header has already been stripped of `case `. Contains subject + `{`.
 /// Arms parsed line-by-line inside the block.
-fn parse_case(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+fn parse_case(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     let subject = header.split('{').next().unwrap().trim();
     let start_span = lines.current_span();
     lines.advance(); // consume case line
@@ -677,7 +692,7 @@ fn parse_case(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseErr
 ///
 /// Split on ` -> ` to separate pattern from body.
 /// Pattern is either `_` (Wild) or an operator + literal (Cmp).
-fn parse_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+fn parse_arm(text: &str, span: Span) -> Result<Prism<AstNode>, ParseError> {
     let (pattern_str, body_str) = match text.split_once(" -> ") {
         Some((p, b)) => (p.trim(), b.trim()),
         None => {
@@ -709,7 +724,7 @@ fn parse_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
 ///
 /// Operator detection: two-char operators before single-char to avoid false matches.
 /// The operator must be a prefix of the pattern text.
-fn parse_cmp(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+fn parse_cmp(text: &str, span: Span) -> Result<Prism<AstNode>, ParseError> {
     for (sym, op_name) in CMP_OPS {
         if let Some(rest) = text.strip_prefix(sym) {
             let literal = rest.trim();
@@ -727,7 +742,7 @@ fn parse_cmp(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
 ///
 /// Header is the full first line (e.g. `branch(.action) {`).
 /// Arms parsed line-by-line. Patterns are string literals or `_` (Wild).
-fn parse_branch(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+fn parse_branch(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     // Extract query path from branch(.action) {
     let after_branch = header.strip_prefix("branch(").unwrap();
     let paren_end = after_branch.find(')').ok_or_else(|| ParseError {
@@ -769,7 +784,7 @@ fn parse_branch(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseE
 /// Parse a single branch arm: `"hold" => ..` or `_ => exit`.
 ///
 /// Split on ` => ` to separate pattern from action.
-fn parse_branch_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError> {
+fn parse_branch_arm(text: &str, span: Span) -> Result<Prism<AstNode>, ParseError> {
     let (pattern_str, action_str) = match text.split_once(" => ") {
         Some((p, a)) => (p.trim(), a.trim()),
         None => {
@@ -815,14 +830,14 @@ fn parse_branch_arm(text: &str, span: Span) -> Result<Tree<AstNode>, ParseError>
 fn parse_pipeline_with_branch(
     header: &str,
     lines: &mut Lines,
-) -> Result<Tree<AstNode>, ParseError> {
+) -> Result<Prism<AstNode>, ParseError> {
     let span = lines.current_span();
     let split_idx = header.find("| branch(").unwrap();
     let prefix = header[..split_idx].trim();
     let branch_part = header[split_idx + 2..].trim(); // skip "| "
 
     // Parse prefix segments
-    let prefix_segments: Vec<Tree<AstNode>> = prefix
+    let prefix_segments: Vec<Prism<AstNode>> = prefix
         .split('|')
         .map(|s| s.trim())
         .filter(|s| !s.is_empty())
@@ -849,16 +864,16 @@ fn parse_pipeline_with_branch(
 /// - `@name(params)` → DomainRef with DomainParam children
 /// - `@name` → DomainRef (leaf)
 /// - bare name → Ref
-fn parse_pipeline(text: &str, span: Span) -> Tree<AstNode> {
+fn parse_pipeline(text: &str, span: Span) -> Prism<AstNode> {
     let segments: Vec<&str> = text.split('|').map(|s| s.trim()).collect();
-    let children: Vec<Tree<AstNode>> = segments
+    let children: Vec<Prism<AstNode>> = segments
         .iter()
         .map(|seg| parse_pipeline_segment(seg, span))
         .collect();
     ast::ast_branch(Kind::Form, "pipeline", "root", span, children)
 }
 
-fn parse_pipeline_segment(seg: &str, span: Span) -> Tree<AstNode> {
+fn parse_pipeline_segment(seg: &str, span: Span) -> Prism<AstNode> {
     if seg.starts_with('@') {
         // Domain ref, possibly with params: @git(branch: "master")
         if let Some(paren_start) = seg.find('(') {
@@ -878,7 +893,7 @@ fn parse_pipeline_segment(seg: &str, span: Span) -> Tree<AstNode> {
 ///
 /// Header has already been stripped of `grammar `. Contains `@name {`.
 /// Type definitions and continuation lines parsed inside the block.
-fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     let start_span = lines.current_span();
 
     // Extract @name and verify opening brace
@@ -906,9 +921,9 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
 
     lines.advance(); // consume grammar header line
 
-    let mut defs: Vec<Tree<AstNode>> = Vec::new();
+    let mut defs: Vec<Prism<AstNode>> = Vec::new();
     // Accumulate variants for the current type def (name, span, variants)
-    let mut current: Option<(String, Span, Vec<Tree<AstNode>>)> = None;
+    let mut current: Option<(String, Span, Vec<Prism<AstNode>>)> = None;
 
     while let Some(line) = lines.peek() {
         let trimmed = line.trim();
@@ -945,7 +960,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
             continue;
         }
 
-        if let Some(rest) = trimmed.strip_prefix("act ") {
+        if let Some(rest) = trimmed.strip_prefix("action ") {
             // Flush any pending type def
             if let Some((type_name, type_span, variants)) = current.take() {
                 defs.push(ast::ast_branch(
@@ -957,7 +972,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
                 ));
             }
             let span = lines.current_span();
-            defs.push(parse_act_def(rest, span, lines)?);
+            defs.push(parse_action_def(rest, span, lines)?);
             continue;
         }
 
@@ -992,7 +1007,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Tree<AstNode>, Parse
 ///
 /// `= a | b | c` → name="" variants=[a,b,c]
 /// `op = gt | lt` → name="op" variants=[gt,lt]
-fn parse_type_def_parts(rest: &str, span: Span) -> (String, Vec<Tree<AstNode>>) {
+fn parse_type_def_parts(rest: &str, span: Span) -> (String, Vec<Prism<AstNode>>) {
     let (name, variants_text) = match rest.split_once('=') {
         Some((n, v)) => (n.trim(), v.trim()),
         None => ("", rest.trim()),
@@ -1008,7 +1023,7 @@ fn parse_type_def_parts(rest: &str, span: Span) -> (String, Vec<Tree<AstNode>>) 
 /// - `name(param)` → Variant with TypeRef child
 /// - `name` → Variant leaf
 /// - empty → skipped (from leading `|` on continuation lines)
-fn parse_variants(text: &str, span: Span) -> Vec<Tree<AstNode>> {
+fn parse_variants(text: &str, span: Span) -> Vec<Prism<AstNode>> {
     text.split('|')
         .map(|s| s.trim())
         .filter(|s| !s.is_empty())
@@ -1025,30 +1040,40 @@ fn parse_variants(text: &str, span: Span) -> Vec<Tree<AstNode>> {
         .collect()
 }
 
-/// Parse an act definition block inside a grammar.
+/// Parse an action definition block inside a grammar.
 ///
-/// `send { from: address\n  to: address }` → Form("act-def", "send") with field children
-/// `noop {}` → Form("act-def", "noop") with no children
-fn parse_act_def(header: &str, span: Span, lines: &mut Lines) -> Result<Tree<AstNode>, ParseError> {
+/// `send { from: address\n  to: address }` → Form("action-def", "send") with field children
+/// `noop {}` → Form("action-def", "noop") with no children
+fn parse_action_def(
+    header: &str,
+    span: Span,
+    lines: &mut Lines,
+) -> Result<Prism<AstNode>, ParseError> {
     let (name, rest) = match header.split_once('{') {
         Some((n, r)) => (n.trim(), r.trim()),
         None => {
             return Err(ParseError {
-                message: format!("act: expected '{{' in: act {}", header),
+                message: format!("action: expected '{{' in: action {}", header),
                 span: Some(span),
             })
         }
     };
 
-    // Single-line empty: `act noop {}`
+    // Single-line empty: `action noop {}`
     if rest == "}" {
         lines.advance();
-        return Ok(ast::ast_branch(Kind::Form, "act-def", name, span, vec![]));
+        return Ok(ast::ast_branch(
+            Kind::Form,
+            "action-def",
+            name,
+            span,
+            vec![],
+        ));
     }
 
-    lines.advance(); // consume the act header line
+    lines.advance(); // consume the action header line
 
-    let mut fields: Vec<Tree<AstNode>> = Vec::new();
+    let mut fields: Vec<Prism<AstNode>> = Vec::new();
 
     while let Some(line) = lines.peek() {
         let trimmed = line.trim();
@@ -1058,7 +1083,7 @@ fn parse_act_def(header: &str, span: Span, lines: &mut Lines) -> Result<Tree<Ast
             lines.advance();
             return Ok(ast::ast_branch(
                 Kind::Form,
-                "act-def",
+                "action-def",
                 name,
                 span.merge(&end_span),
                 fields,
@@ -1090,7 +1115,7 @@ fn parse_act_def(header: &str, span: Span, lines: &mut Lines) -> Result<Tree<Ast
     }
 
     Err(ParseError {
-        message: "unclosed act block".into(),
+        message: "unclosed action block".into(),
         span: Some(span),
     })
 }
@@ -2609,22 +2634,23 @@ grammar @conversation {
         );
     }
 
-    // -- Parse `act` in grammar blocks --
+    // -- Parse `action` in grammar blocks --
 
     #[test]
-    fn parse_grammar_act_single() {
-        let source = "grammar @test {\n  act send {\n    from: address\n    to: address\n  }\n}\n";
+    fn parse_grammar_action_single() {
+        let source =
+            "grammar @test {\n  action send {\n    from: address\n    to: address\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 1);
 
-        let act = &grammar.children()[0];
-        assert_eq!(act.data().kind, Kind::Form);
-        assert_eq!(act.data().name, "act-def");
-        assert_eq!(act.data().value, "send");
-        assert_eq!(act.children().len(), 2);
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().kind, Kind::Form);
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.data().value, "send");
+        assert_eq!(action.children().len(), 2);
 
-        let from = &act.children()[0];
+        let from = &action.children()[0];
         assert_eq!(from.data().kind, Kind::Atom);
         assert_eq!(from.data().name, "field");
         assert_eq!(from.data().value, "from");
@@ -2633,7 +2659,7 @@ grammar @conversation {
         assert_eq!(from.children()[0].data().name, "type-ref");
         assert_eq!(from.children()[0].data().value, "address");
 
-        let to = &act.children()[1];
+        let to = &action.children()[1];
         assert_eq!(to.data().kind, Kind::Atom);
         assert_eq!(to.data().name, "field");
         assert_eq!(to.data().value, "to");
@@ -2641,16 +2667,16 @@ grammar @conversation {
     }
 
     #[test]
-    fn parse_grammar_act_untyped_field() {
-        let source = "grammar @test {\n  act send {\n    subject\n  }\n}\n";
+    fn parse_grammar_action_untyped_field() {
+        let source = "grammar @test {\n  action send {\n    subject\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        let act = &grammar.children()[0];
-        assert_eq!(act.data().name, "act-def");
-        assert_eq!(act.data().value, "send");
-        assert_eq!(act.children().len(), 1);
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.data().value, "send");
+        assert_eq!(action.children().len(), 1);
 
-        let field = &act.children()[0];
+        let field = &action.children()[0];
         assert_eq!(field.data().kind, Kind::Atom);
         assert_eq!(field.data().name, "field");
         assert_eq!(field.data().value, "subject");
@@ -2658,38 +2684,38 @@ grammar @conversation {
     }
 
     #[test]
-    fn parse_grammar_act_empty() {
-        let source = "grammar @test {\n  act noop {}\n}\n";
+    fn parse_grammar_action_empty() {
+        let source = "grammar @test {\n  action noop {}\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 1);
 
-        let act = &grammar.children()[0];
-        assert_eq!(act.data().kind, Kind::Form);
-        assert_eq!(act.data().name, "act-def");
-        assert_eq!(act.data().value, "noop");
-        assert_eq!(act.children().len(), 0);
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().kind, Kind::Form);
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.data().value, "noop");
+        assert_eq!(action.children().len(), 0);
     }
 
     #[test]
-    fn parse_grammar_mixed_types_and_acts() {
-        let source = "grammar @test {\n  type = a | b\n  act send {\n    to: address\n  }\n  type address = email | uri\n}\n";
+    fn parse_grammar_mixed_types_and_actions() {
+        let source = "grammar @test {\n  type = a | b\n  action send {\n    to: address\n  }\n  type address = email | uri\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        // grammar has 3 children: type-def, act-def, type-def
+        // grammar has 3 children: type-def, action-def, type-def
         assert_eq!(grammar.children().len(), 3);
 
         assert_eq!(grammar.children()[0].data().name, "type-def");
         assert_eq!(grammar.children()[0].data().value, "");
-        assert_eq!(grammar.children()[1].data().name, "act-def");
+        assert_eq!(grammar.children()[1].data().name, "action-def");
         assert_eq!(grammar.children()[1].data().value, "send");
         assert_eq!(grammar.children()[2].data().name, "type-def");
         assert_eq!(grammar.children()[2].data().value, "address");
     }
 
     #[test]
-    fn parse_grammar_act_error_unclosed() {
-        let source = "grammar @test {\n  act send {\n    from: address\n";
+    fn parse_grammar_action_error_unclosed() {
+        let source = "grammar @test {\n  action send {\n    from: address\n";
         let err = Parse.trace(source.to_string()).into_result().unwrap_err();
         assert!(
             err.message.contains("unclosed"),
@@ -2699,20 +2725,20 @@ grammar @conversation {
     }
 
     #[test]
-    fn parse_grammar_act_comments_blanks() {
+    fn parse_grammar_action_comments_blanks() {
         let source =
-            "grammar @test {\n  act send {\n    # a comment\n\n    from: address\n  }\n}\n";
+            "grammar @test {\n  action send {\n    # a comment\n\n    from: address\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        let act = &grammar.children()[0];
-        assert_eq!(act.data().name, "act-def");
-        assert_eq!(act.children().len(), 1); // only the field, comments/blanks skipped
-        assert_eq!(act.children()[0].data().value, "from");
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.children().len(), 1); // only the field, comments/blanks skipped
+        assert_eq!(action.children()[0].data().value, "from");
     }
 
     #[test]
-    fn parse_grammar_act_error_no_brace() {
-        let source = "grammar @test {\n  act send\n}\n";
+    fn parse_grammar_action_error_no_brace() {
+        let source = "grammar @test {\n  action send\n}\n";
         let err = Parse.trace(source.to_string()).into_result().unwrap_err();
         assert!(
             err.message.contains("{"),
@@ -2738,7 +2764,7 @@ grammar @conversation {
         let children = tree.children();
         assert_eq!(children.len(), 2); // grammar + template
 
-        // Grammar: @mail with 6 type-defs + 3 act-defs = 9 children
+        // Grammar: @mail with 6 type-defs + 3 action-defs = 9 children
         let grammar = &children[0];
         assert_eq!(grammar.data().kind, Kind::Decl);
         assert_eq!(grammar.data().value, "@mail");
@@ -2781,23 +2807,23 @@ grammar @conversation {
         assert_eq!(dns_type.data().value, "dns");
         assert_eq!(dns_type.children().len(), 5);
 
-        // Act: send (4 fields, 2 typed + 2 untyped)
-        let act_send = &grammar.children()[6];
-        assert_eq!(act_send.data().name, "act-def");
-        assert_eq!(act_send.data().value, "send");
-        assert_eq!(act_send.children().len(), 4);
+        // Action: send (4 fields, 2 typed + 2 untyped)
+        let action_send = &grammar.children()[6];
+        assert_eq!(action_send.data().name, "action-def");
+        assert_eq!(action_send.data().value, "send");
+        assert_eq!(action_send.children().len(), 4);
 
-        // Act: reply (2 fields)
-        let act_reply = &grammar.children()[7];
-        assert_eq!(act_reply.data().name, "act-def");
-        assert_eq!(act_reply.data().value, "reply");
-        assert_eq!(act_reply.children().len(), 2);
+        // Action: reply (2 fields)
+        let action_reply = &grammar.children()[7];
+        assert_eq!(action_reply.data().name, "action-def");
+        assert_eq!(action_reply.data().value, "reply");
+        assert_eq!(action_reply.children().len(), 2);
 
-        // Act: forward (2 fields)
-        let act_forward = &grammar.children()[8];
-        assert_eq!(act_forward.data().name, "act-def");
-        assert_eq!(act_forward.data().value, "forward");
-        assert_eq!(act_forward.children().len(), 2);
+        // Action: forward (2 fields)
+        let action_forward = &grammar.children()[8];
+        assert_eq!(action_forward.data().name, "action-def");
+        assert_eq!(action_forward.data().value, "forward");
+        assert_eq!(action_forward.children().len(), 2);
 
         // Template: $message with 1 param + 6 fields = 7 children
         let template = &children[1];
@@ -3011,7 +3037,7 @@ grammar @conversation {
 
     #[test]
     fn beam_grammar_content_addressed() {
-        use crate::tree::content_oid;
+        use crate::prism::content_oid;
         let source = "grammar @beam {\n  type = process | supervision | module\n}\n";
         let a = Parse.trace(source.to_string()).unwrap();
         let b = Parse.trace(source.to_string()).unwrap();
@@ -3020,7 +3046,7 @@ grammar @conversation {
 
     #[test]
     fn beam_grammar_different_source_different_oid() {
-        use crate::tree::content_oid;
+        use crate::prism::content_oid;
         let a = Parse
             .trace("grammar @beam {\n  type = process | supervision | module\n}\n".to_string())
             .unwrap();
@@ -3032,7 +3058,7 @@ grammar @conversation {
 
     #[test]
     fn git_grammar_content_addressed() {
-        use crate::tree::content_oid;
+        use crate::prism::content_oid;
         let source = "grammar @git {\n  type = ref | commit | entry | blob\n}\n";
         let a = Parse.trace(source.to_string()).unwrap();
         let b = Parse.trace(source.to_string()).unwrap();
@@ -3041,7 +3067,7 @@ grammar @conversation {
 
     #[test]
     fn git_grammar_different_source_different_oid() {
-        use crate::tree::content_oid;
+        use crate::prism::content_oid;
         let a = Parse
             .trace("grammar @git {\n  type = ref | commit | entry | blob\n}\n".to_string())
             .unwrap();
@@ -3404,5 +3430,36 @@ grammar @conversation {
         let (domain, overrides) = directives[0].as_generate();
         assert_eq!(domain, "test");
         assert_eq!(overrides[0].1, vec!["custom"]);
+    }
+
+    // -- Keyword dispatch table --
+
+    #[test]
+    fn dispatch_known_keyword() {
+        let source = "in @filesystem\n";
+        let mut lines = Lines::new(source);
+        let trimmed = lines.peek().unwrap().trim();
+        let result = dispatch_keyword(trimmed, &mut lines).unwrap();
+        assert!(result.is_some());
+        assert!(result.unwrap().data().is_decl("in"));
+    }
+
+    #[test]
+    fn dispatch_returns_none_for_unknown() {
+        let source = "xyzzy 42\n";
+        let mut lines = Lines::new(source);
+        let trimmed = lines.peek().unwrap().trim();
+        let result = dispatch_keyword(trimmed, &mut lines).unwrap();
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn dispatch_advances_single_line_keywords() {
+        let source = "when .x == 1\nnext line\n";
+        let mut lines = Lines::new(source);
+        let trimmed = lines.peek().unwrap().trim();
+        let _ = dispatch_keyword(trimmed, &mut lines).unwrap();
+        // Single-line keyword should advance past the keyword line
+        assert_eq!(lines.peek(), Some("next line"));
     }
 }

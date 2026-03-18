@@ -12,7 +12,7 @@ use serde_json::Value;
 use crate::ast::{AstNode, Span};
 use crate::domain::{Addressable, Setting};
 use crate::parse::ParseError;
-use crate::tree::{self, Tree};
+use crate::prism::{self, Prism};
 use crate::{ComposedError, Vector};
 
 use fragmentation::fragment::{self, Fragmentable};
@@ -49,7 +49,7 @@ impl TypeRegistry {
     /// Walks the Grammar's TypeDef children, extracts type names and variant
     /// names, records parameterized variant references, then validates that
     /// every TypeRef points to a declared type name.
-    pub fn compile(grammar_node: &Tree<AstNode>) -> Result<TypeRegistry, ResolveError> {
+    pub fn compile(grammar_node: &Prism<AstNode>) -> Result<TypeRegistry, ResolveError> {
         let raw = &grammar_node.data().value;
         let domain = raw.strip_prefix('@').unwrap_or(raw).to_string();
 
@@ -81,7 +81,7 @@ impl TypeRegistry {
                 }
 
                 types.insert(type_name, variants);
-            } else if child.data().is_form("act-def") {
+            } else if child.data().is_form("action-def") {
                 let act_name = child.data().value.clone();
                 let mut fields = Vec::new();
 
@@ -178,13 +178,13 @@ impl TypeRegistry {
         }
     }
 
-    /// Check if a named act exists in this registry.
-    pub fn has_act(&self, name: &str) -> bool {
+    /// Check if a named action exists in this registry.
+    pub fn has_action(&self, name: &str) -> bool {
         self.acts.contains_key(name)
     }
 
-    /// Get the fields of a named act: (field_name, optional_type_ref).
-    pub fn act_fields(&self, name: &str) -> Option<&[(String, Option<String>)]> {
+    /// Get the fields of a named action: (field_name, optional_type_ref).
+    pub fn action_fields(&self, name: &str) -> Option<&[(String, Option<String>)]> {
         self.acts.get(name).map(|v| v.as_slice())
     }
 
@@ -442,12 +442,12 @@ pub struct ResolveError {
 /// A resolved .conv file. Validated and ready to execute.
 ///
 /// The type parameter `C` is the input domain's context.
-/// `Conversation<Filesystem>` executes against `Tree<Folder>`.
-/// `Conversation<Git>` executes against `Tree<GitNode>`.
+/// `Conversation<Filesystem>` executes against `Prism<Folder>`.
+/// `Conversation<Git>` executes against `Prism<GitNode>`.
 #[derive(Debug)]
 pub struct Conversation<C: Setting> {
     templates: HashMap<String, Template>,
-    pub content: Tree<OutputNode>,
+    pub content: Prism<OutputNode>,
     _context: PhantomData<C>,
 }
 
@@ -615,7 +615,7 @@ impl Resolve {
     /// then extracts the named templates into the provided map.
     fn resolve_use(
         &self,
-        use_node: &Tree<AstNode>,
+        use_node: &Prism<AstNode>,
         templates: &mut HashMap<String, Template>,
     ) -> Result<(), ResolveError> {
         let children = use_node.children();
@@ -691,10 +691,10 @@ impl Resolve {
     }
 }
 
-impl<C: Setting> Vector<Tree<AstNode>, Conversation<C>> for Resolve {
+impl<C: Setting> Vector<Prism<AstNode>, Conversation<C>> for Resolve {
     type Error = ResolveError;
 
-    fn trace(&self, source: Tree<AstNode>) -> crate::Trace<Conversation<C>, ResolveError> {
+    fn trace(&self, source: Prism<AstNode>) -> crate::Trace<Conversation<C>, ResolveError> {
         use crate::{ContentAddressed, Trace, TraceOid};
         match resolve_ast(self, source) {
             Ok(conv) => {
@@ -708,7 +708,7 @@ impl<C: Setting> Vector<Tree<AstNode>, Conversation<C>> for Resolve {
 
 fn resolve_ast<C: Setting>(
     resolve: &Resolve,
-    source: Tree<AstNode>,
+    source: Prism<AstNode>,
 ) -> Result<Conversation<C>, ResolveError> {
     let children = source.children();
 
@@ -757,7 +757,7 @@ fn resolve_ast<C: Setting>(
     let out_node = children.iter().find(|c| c.data().is_decl("out"));
 
     // Collect top-level branch nodes
-    let branch_nodes: Vec<Tree<OutputNode>> = children
+    let branch_nodes: Vec<Prism<OutputNode>> = children
         .iter()
         .filter(|c| c.data().is_decl("branch"))
         .map(resolve_branch_node)
@@ -769,7 +769,7 @@ fn resolve_ast<C: Setting>(
             let mut output_children = resolve_output_nodes(node, &templates)?;
             output_children.extend(branch_nodes);
             let ref_ = Ref::new(sha::hash(&name), &name);
-            tree::branch(ref_, OutputNode::Group { name }, output_children)
+            prism::fractal(ref_, OutputNode::Group { name }, output_children)
         }
         None => {
             return Err(ResolveError {
@@ -787,7 +787,7 @@ fn resolve_ast<C: Setting>(
     })
 }
 
-pub(crate) fn resolve_template(template_node: &Tree<AstNode>) -> Template {
+pub(crate) fn resolve_template(template_node: &Prism<AstNode>) -> Template {
     let mut params = Vec::new();
     let mut fields = Vec::new();
     for child in template_node.children() {
@@ -817,9 +817,9 @@ pub(crate) fn resolve_template(template_node: &Tree<AstNode>) -> Template {
 }
 
 fn resolve_output_nodes(
-    node: &Tree<AstNode>,
+    node: &Prism<AstNode>,
     templates: &HashMap<String, Template>,
-) -> Result<Vec<Tree<OutputNode>>, ResolveError> {
+) -> Result<Vec<Prism<OutputNode>>, ResolveError> {
     let mut nodes = Vec::new();
     for child in node.children() {
         let d = child.data();
@@ -827,7 +827,7 @@ fn resolve_output_nodes(
             let children = resolve_output_nodes(child, templates)?;
             let name = d.value.clone();
             let ref_ = Ref::new(sha::hash(&name), &name);
-            nodes.push(tree::branch(ref_, OutputNode::Group { name }, children));
+            nodes.push(prism::fractal(ref_, OutputNode::Group { name }, children));
         } else if d.is_form("select") {
             let select_children = child.children();
             let folder_name = select_children
@@ -856,7 +856,7 @@ fn resolve_output_nodes(
 
             let output_name = d.value.clone();
             let ref_ = Ref::new(sha::hash(&output_name), &output_name);
-            nodes.push(tree::leaf(
+            nodes.push(prism::shard(
                 ref_,
                 OutputNode::Select {
                     output_name,
@@ -872,7 +872,7 @@ fn resolve_output_nodes(
 /// Convert an AST Branch node to an OutputNode::Branch tree node.
 ///
 /// AST structure: Branch(".action") → [Arm → [Literal/Wild, Expr], ...]
-fn resolve_branch_node(node: &Tree<AstNode>) -> Tree<OutputNode> {
+fn resolve_branch_node(node: &Prism<AstNode>) -> Prism<OutputNode> {
     let query = node.data().value.clone();
     let mut arms = Vec::new();
 
@@ -906,7 +906,7 @@ fn resolve_branch_node(node: &Tree<AstNode>) -> Tree<OutputNode> {
 
     let label = format!("branch:{}", query);
     let ref_ = Ref::new(sha::hash(&label), &label);
-    tree::leaf(ref_, OutputNode::Branch { query, arms })
+    prism::shard(ref_, OutputNode::Branch { query, arms })
 }
 
 impl<C: Setting> crate::ContentAddressed for Conversation<C> {
@@ -947,17 +947,17 @@ impl<C: Setting> Conversation<C> {
     }
 }
 
-/// Conversation IS a traceable: `Tree<C::Token> → Value`.
+/// Conversation IS a traceable: `Prism<C::Token> → Value`.
 ///
 /// The resolved program transforms domain trees into JSON output.
 /// `trace` executes the program against a domain tree.
-impl<C: Setting> Vector<Tree<C::Token>, Value> for Conversation<C>
+impl<C: Setting> Vector<Prism<C::Token>, Value> for Conversation<C>
 where
     C::Token: Addressable,
 {
     type Error = ResolveError;
 
-    fn trace(&self, source: Tree<C::Token>) -> crate::Trace<Value, ResolveError> {
+    fn trace(&self, source: Prism<C::Token>) -> crate::Trace<Value, ResolveError> {
         use crate::{ContentAddressed, Trace};
         let body = emit_body(&self.content, &source, &self.templates);
         let mut map = serde_json::Map::new();
@@ -969,8 +969,8 @@ where
 }
 
 fn emit_body<T: Addressable>(
-    content: &Tree<OutputNode>,
-    tree: &Tree<T>,
+    content: &Prism<OutputNode>,
+    tree: &Prism<T>,
     templates: &HashMap<String, Template>,
 ) -> Value {
     let mut map = serde_json::Map::new();
@@ -1004,13 +1004,13 @@ fn emit_body<T: Addressable>(
     Value::Object(map)
 }
 
-fn find_child<'a, T: Addressable>(tree: &'a Tree<T>, name: &str) -> Option<&'a Tree<T>> {
+fn find_child<'a, T: Addressable>(tree: &'a Prism<T>, name: &str) -> Option<&'a Prism<T>> {
     tree.children()
         .iter()
         .find(|c| c.data().node_name() == name)
 }
 
-fn apply_template<T: Addressable>(template: &Template, tree: &Tree<T>) -> Value {
+fn apply_template<T: Addressable>(template: &Template, tree: &Prism<T>) -> Value {
     let content = tree.data().node_content().unwrap_or("");
     let (frontmatter, body) = parse_frontmatter(content);
 
@@ -1145,7 +1145,7 @@ mod tests {
     use crate::domain::conversation::Kind;
     use crate::domain::filesystem::{Filesystem, Folder};
     use crate::parse::Parse;
-    use crate::tree;
+    use crate::prism;
     use crate::Vector;
     use fragmentation::ref_::Ref;
     use fragmentation::sha;
@@ -1154,8 +1154,8 @@ mod tests {
         Ref::new(sha::hash(label), label)
     }
 
-    fn leaf_folder(name: &str, content: &str) -> Tree<Folder> {
-        tree::leaf(
+    fn leaf_folder(name: &str, content: &str) -> Prism<Folder> {
+        prism::shard(
             test_ref(name),
             Folder {
                 name: name.into(),
@@ -1164,8 +1164,8 @@ mod tests {
         )
     }
 
-    fn dir_folder(name: &str, children: Vec<Tree<Folder>>) -> Tree<Folder> {
-        tree::branch(
+    fn dir_folder(name: &str, children: Vec<Prism<Folder>>) -> Prism<Folder> {
+        prism::fractal(
             test_ref(name),
             Folder {
                 name: name.into(),
@@ -1176,11 +1176,11 @@ mod tests {
     }
 
     /// Shorthand: resolve with Filesystem context.
-    fn resolve_fs(ast: Tree<AstNode>) -> crate::Trace<Conversation<Filesystem>, ResolveError> {
+    fn resolve_fs(ast: Prism<AstNode>) -> crate::Trace<Conversation<Filesystem>, ResolveError> {
         Resolve::new().trace(ast)
     }
 
-    fn find_branch(tree: &Tree<OutputNode>) -> Option<&OutputNode> {
+    fn find_branch(tree: &Prism<OutputNode>) -> Option<&OutputNode> {
         match tree.data() {
             OutputNode::Branch { .. } => Some(tree.data()),
             _ => tree.children().iter().find_map(find_branch),
@@ -1735,14 +1735,14 @@ mod tests {
         let ast = Parse.trace(source.to_string()).unwrap();
         let resolved: Conversation<TestDomain> = Resolve::new().trace(ast).unwrap();
 
-        let item = tree::leaf(
+        let item = prism::shard(
             test_ref("item-1"),
             TestToken {
                 name: "item-1".into(),
                 content: Some("hello".into()),
             },
         );
-        let data = tree::branch(
+        let data = prism::fractal(
             test_ref("data"),
             TestToken {
                 name: "data".into(),
@@ -1750,7 +1750,7 @@ mod tests {
             },
             vec![item],
         );
-        let root = tree::branch(
+        let root = prism::fractal(
             test_ref("root"),
             TestToken {
                 name: "root".into(),
@@ -2370,78 +2370,78 @@ mod tests {
         assert!(!reg.has_variant("missing", "a"));
     }
 
-    // -- TypeRegistry: act compilation --
+    // -- TypeRegistry: action compilation --
 
     #[test]
-    fn type_registry_compile_act() {
+    fn type_registry_compile_action() {
         let reg = compile_grammar(
-            "grammar @test {\n  type address = email | uri\n  act send {\n    to: address\n  }\n}\n",
+            "grammar @test {\n  type address = email | uri\n  action send {\n    to: address\n  }\n}\n",
         );
-        assert!(reg.has_act("send"));
-        let fields = reg.act_fields("send").unwrap();
+        assert!(reg.has_action("send"));
+        let fields = reg.action_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].0, "to");
         assert_eq!(fields[0].1, Some("address".to_string()));
     }
 
     #[test]
-    fn type_registry_compile_act_untyped_field() {
-        let reg = compile_grammar("grammar @test {\n  act send {\n    subject\n  }\n}\n");
-        assert!(reg.has_act("send"));
-        let fields = reg.act_fields("send").unwrap();
+    fn type_registry_compile_action_untyped_field() {
+        let reg = compile_grammar("grammar @test {\n  action send {\n    subject\n  }\n}\n");
+        assert!(reg.has_action("send"));
+        let fields = reg.action_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].0, "subject");
         assert_eq!(fields[0].1, None);
     }
 
     #[test]
-    fn type_registry_compile_act_unvalidated_type_ref() {
-        // Act field type-refs are semantic annotations — not validated against type names.
+    fn type_registry_compile_action_unvalidated_type_ref() {
+        // Action field type-refs are semantic annotations — not validated against type names.
         // This mirrors real usage: garden's @mail uses `from: address` where `address`
         // is a variant, and `body: article` which is undeclared.
         let reg = compile_grammar(
-            "grammar @test {\n  type address = email | uri\n  act send {\n    to: addres\n    body: article\n  }\n}\n",
+            "grammar @test {\n  type address = email | uri\n  action send {\n    to: addres\n    body: article\n  }\n}\n",
         );
-        assert!(reg.has_act("send"));
-        let fields = reg.act_fields("send").unwrap();
+        assert!(reg.has_action("send"));
+        let fields = reg.action_fields("send").unwrap();
         assert_eq!(fields[0], ("to".into(), Some("addres".into())));
         assert_eq!(fields[1], ("body".into(), Some("article".into())));
     }
 
     #[test]
-    fn type_registry_compile_act_empty() {
-        let reg = compile_grammar("grammar @test {\n  act noop {}\n}\n");
-        assert!(reg.has_act("noop"));
-        let fields = reg.act_fields("noop").unwrap();
+    fn type_registry_compile_action_empty() {
+        let reg = compile_grammar("grammar @test {\n  action noop {}\n}\n");
+        assert!(reg.has_action("noop"));
+        let fields = reg.action_fields("noop").unwrap();
         assert!(fields.is_empty());
     }
 
     #[test]
-    fn type_registry_compile_act_skips_non_field_children() {
+    fn type_registry_compile_action_skips_non_field_children() {
         use crate::ast::{self, Span};
-        // Act-def with a non-field child — should be skipped
+        // Action-def with a non-field child — should be skipped
         let span = Span::new(0, 50);
         let stray = ast::ast_leaf(Kind::Ref, "type-ref", "noise", span);
         let field = ast::ast_leaf(Kind::Atom, "field", "to", span);
-        let actdef = ast::ast_branch(Kind::Form, "act-def", "send", span, vec![stray, field]);
-        let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![actdef]);
+        let actiondef = ast::ast_branch(Kind::Form, "action-def", "send", span, vec![stray, field]);
+        let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![actiondef]);
         let reg = TypeRegistry::compile(&grammar).unwrap();
-        assert!(reg.has_act("send"));
-        let fields = reg.act_fields("send").unwrap();
+        assert!(reg.has_action("send"));
+        let fields = reg.action_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].0, "to");
     }
 
     #[test]
-    fn type_registry_has_act_false_for_missing() {
+    fn type_registry_has_action_false_for_missing() {
         let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
-        assert!(!reg.has_act("missing"));
+        assert!(!reg.has_action("missing"));
     }
 
     #[test]
-    fn type_registry_act_fields_none_for_missing() {
+    fn type_registry_action_fields_none_for_missing() {
         let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
-        assert!(reg.act_fields("missing").is_none());
+        assert!(reg.action_fields("missing").is_none());
     }
 
     #[test]
@@ -2456,15 +2456,15 @@ mod tests {
         assert!(reg.has_variant("protocol", "jmap"));
         assert!(reg.has_variant("server", "stalwart"));
         assert!(reg.has_variant("dns", "dkim"));
-        // Acts
-        assert!(reg.has_act("send"));
-        assert!(reg.has_act("reply"));
-        assert!(reg.has_act("forward"));
-        let send = reg.act_fields("send").unwrap();
+        // Actions
+        assert!(reg.has_action("send"));
+        assert!(reg.has_action("reply"));
+        assert!(reg.has_action("forward"));
+        let send = reg.action_fields("send").unwrap();
         assert_eq!(send.len(), 4);
         assert_eq!(send[0], ("from".into(), Some("address".into())));
         assert_eq!(send[2], ("subject".into(), None));
-        let forward = reg.act_fields("forward").unwrap();
+        let forward = reg.action_fields("forward").unwrap();
         assert_eq!(forward.len(), 2);
         assert_eq!(forward[0], ("message".into(), Some("message-id".into())));
     }
@@ -2689,7 +2689,7 @@ mod tests {
         assert!(reg.has_variant("target", "elixir"));
         assert!(reg.has_variant("status", "ok"));
         assert!(reg.has_variant("status", "error"));
-        assert!(reg.has_act("compile"));
+        assert!(reg.has_action("compile"));
 
         // @abstract is registered — the chain is live
         assert!(namespace.has_grammar("abstract"));
@@ -2726,7 +2726,7 @@ mod tests {
     #[test]
     fn type_registry_act_names() {
         let reg = compile_grammar(
-            "grammar @test {\n  type = a\n  act compile {\n    source: a\n  }\n  act run {\n    target\n  }\n}\n",
+            "grammar @test {\n  type = a\n  action compile {\n    source: a\n  }\n  action run {\n    target\n  }\n}\n",
         );
         let mut names = reg.act_names();
         names.sort();

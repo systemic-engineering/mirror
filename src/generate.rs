@@ -6,14 +6,14 @@
 use crate::ast::{self, AstNode, Span};
 use crate::domain::conversation::Kind;
 use crate::resolve::TypeRegistry;
-use crate::tree::Tree;
+use crate::prism::Prism;
 
 /// A single derivation from a grammar type.
 #[derive(Clone, Debug)]
 pub struct Derivation {
     pub type_name: String,
     pub variant: String,
-    pub tree: Tree<AstNode>,
+    pub tree: Prism<AstNode>,
 }
 
 /// Synthetic span for generated trees. Not from source — zero-width.
@@ -85,8 +85,8 @@ pub fn derive_all(registry: &TypeRegistry) -> Vec<Derivation> {
     let mut act_names = registry.act_names();
     act_names.sort();
     for act_name in act_names {
-        let fields = registry.act_fields(act_name).unwrap_or(&[]);
-        let children: Vec<Tree<AstNode>> = fields
+        let fields = registry.action_fields(act_name).unwrap_or(&[]);
+        let children: Vec<Prism<AstNode>> = fields
             .iter()
             .map(|(name, type_ref)| {
                 let value = type_ref.as_deref().unwrap_or("");
@@ -187,7 +187,7 @@ mod tests {
     #[test]
     fn derive_all_includes_acts() {
         let reg = compile_grammar(
-            "grammar @test {\n  type = a\n  act send {\n    to\n    subject\n  }\n}\n",
+            "grammar @test {\n  type = a\n  action send {\n    to\n    subject\n  }\n}\n",
         );
         let all = derive_all(&reg);
         // 1 type variant + 1 act = 2
@@ -201,7 +201,7 @@ mod tests {
     #[test]
     fn derive_all_act_with_typed_field() {
         let reg = compile_grammar(
-            "grammar @test {\n  type address = email | uri\n  act send {\n    to: address\n  }\n}\n",
+            "grammar @test {\n  type address = email | uri\n  action send {\n    to: address\n  }\n}\n",
         );
         let all = derive_all(&reg);
         let act = all.iter().find(|d| d.type_name == "act:send").unwrap();

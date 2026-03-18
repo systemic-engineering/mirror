@@ -5,15 +5,15 @@
 
 use eetf::{Atom, FixInteger, List, Term, Tuple};
 
+use crate::prism::Prism;
 use crate::resolve::{BranchAction, BranchPattern, OutputNode};
-use crate::tree::Tree;
 
 /// Emit Erlang Abstract Format from a transformation tree.
 ///
 /// Returns ETF-encoded bytes (starting with version byte 131).
 /// The encoded forms represent a valid Erlang module that
 /// `compile:forms/1` can compile to bytecode.
-pub fn emit_eaf(tree: &Tree<OutputNode>) -> Vec<u8> {
+pub fn emit_eaf(tree: &Prism<OutputNode>) -> Vec<u8> {
     let module_name = tree.data().name();
     let forms = build_forms(module_name, tree);
     let term = Term::from(List::from(forms));
@@ -23,7 +23,7 @@ pub fn emit_eaf(tree: &Tree<OutputNode>) -> Vec<u8> {
 }
 
 /// Build the three forms: module attribute, export attribute, tree/0 function.
-fn build_forms(module_name: &str, tree: &Tree<OutputNode>) -> Vec<Term> {
+fn build_forms(module_name: &str, tree: &Prism<OutputNode>) -> Vec<Term> {
     vec![
         // {attribute, 1, module, ModuleName}
         eaf_tuple(vec![
@@ -60,7 +60,7 @@ fn build_forms(module_name: &str, tree: &Tree<OutputNode>) -> Vec<Term> {
 ///
 /// Group → `{group, <<"name">>, [children...]}`
 /// Select → `{select, <<"output">>, <<"folder">>, <<"template">>}`
-fn emit_body_expr(tree: &Tree<OutputNode>, line: i32) -> Term {
+fn emit_body_expr(tree: &Prism<OutputNode>, line: i32) -> Term {
     match tree.data() {
         OutputNode::Group { ref name } => {
             let children: Vec<Term> = tree

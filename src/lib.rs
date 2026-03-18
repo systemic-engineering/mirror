@@ -8,9 +8,9 @@ pub mod filter;
 pub mod generate;
 pub mod packages;
 pub mod parse;
+pub mod prism;
 pub mod property;
 pub mod resolve;
-pub mod tree;
 
 // Re-export kernel types at the crate root.
 pub use kernel::{
@@ -20,11 +20,11 @@ pub use kernel::{
 
 pub use domain::filesystem::{Filesystem, Folder, FolderOid};
 pub use parse::{Parse, ParseError};
+pub use prism::Prism;
 pub use resolve::{
     Conversation, ConversationOid, Namespace, OutputNode, Resolve, ResolveError, Template,
     TemplateProvider,
 };
-pub use tree::Tree;
 
 // Re-export fragmentation's Repo trait and Store implementation.
 pub use fragmentation::repo::Repo;

@@ -9,7 +9,7 @@ use std::collections::{HashMap, HashSet};
 use crate::generate::{self, Derivation};
 use crate::parse::{self, HasAssertion, PropertyCheck, TestDirective};
 use crate::resolve::{GenerateProvider, Namespace, TypeRegistry};
-use crate::tree;
+use crate::prism;
 
 /// Outcome of a property check.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -51,7 +51,7 @@ pub fn shannon_equivalence(derivations: &[Derivation]) -> Verdict {
     // by construction. The check_determinism utility verifies this contract in tests.
     let oids: Vec<(String, String)> = derivations
         .iter()
-        .map(|d| (d.variant.clone(), tree::content_oid(&d.tree)))
+        .map(|d| (d.variant.clone(), prism::content_oid(&d.tree)))
         .collect();
 
     // Uniqueness: all OIDs must be distinct
@@ -317,7 +317,7 @@ mod tests {
     #[test]
     fn shannon_with_acts_passes() {
         let reg = compile_grammar(
-            "grammar @test {\n  type = a\n  act send {\n    to\n    subject\n  }\n}\n",
+            "grammar @test {\n  type = a\n  action send {\n    to\n    subject\n  }\n}\n",
         );
         let derivations = generate::derive_all(&reg);
         assert_eq!(shannon_equivalence(&derivations), Verdict::Pass);
