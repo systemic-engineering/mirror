@@ -3245,6 +3245,103 @@ grammar @conversation {
         assert!(has_annotate);
     }
 
+    // -- Annotate block form + --- sugar --
+
+    #[test]
+    fn parse_annotate_block() {
+        let source = "annotate(@test) {\n  test \"types\" { @beam has process }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let annotate = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("annotate"))
+            .expect("annotate node");
+        assert_eq!(annotate.data().value, "@test");
+        assert!(!annotate.children().is_empty());
+        let test_node = &annotate.children()[0];
+        assert_eq!(test_node.data().kind, Kind::Form);
+        assert_eq!(test_node.data().name, "test");
+        assert_eq!(test_node.data().value, "types");
+        assert_eq!(test_node.children().len(), 1);
+        assert_eq!(test_node.children()[0].data().name, "assertion");
+        assert_eq!(test_node.children()[0].data().value, "@beam has process");
+    }
+
+    #[test]
+    fn parse_separator_as_annotate_test() {
+        let source = "grammar @g {\n  type = a\n}\n---\ntest \"check\" { @g has a }\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let annotate = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("annotate"))
+            .expect("--- should produce annotate(@test)");
+        assert_eq!(annotate.data().value, "@test");
+        assert!(!annotate.children().is_empty());
+        let test_node = &annotate.children()[0];
+        assert_eq!(test_node.data().name, "test");
+        assert_eq!(test_node.data().value, "check");
+    }
+
+    #[test]
+    fn parse_separator_multiple_tests() {
+        let source = "grammar @g {\n  type = a | b\n}\n---\ntest \"first\" { @g has a }\ntest \"second\" { @g has b }\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let annotate = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("annotate"))
+            .unwrap();
+        assert_eq!(annotate.children().len(), 2);
+        assert_eq!(annotate.children()[0].data().value, "first");
+        assert_eq!(annotate.children()[1].data().value, "second");
+    }
+
+    #[test]
+    fn parse_separator_property_directive() {
+        let source = "grammar @g {\n  type = a\n}\n---\nproperty \"shannon\" { @g preserves shannon_equivalence }\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let annotate = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("annotate"))
+            .unwrap();
+        let prop = &annotate.children()[0];
+        assert_eq!(prop.data().name, "property");
+        assert_eq!(prop.data().value, "shannon");
+        assert_eq!(prop.children().len(), 1);
+        assert_eq!(
+            prop.children()[0].data().value,
+            "@g preserves shannon_equivalence"
+        );
+    }
+
+    #[test]
+    fn parse_annotate_block_empty() {
+        let source = "annotate(@ci) {\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let annotate = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("annotate"))
+            .unwrap();
+        assert_eq!(annotate.data().value, "@ci");
+        assert!(annotate.children().is_empty());
+    }
+
+    #[test]
+    fn parse_separator_empty() {
+        let source = "grammar @g {\n  type = a\n}\n---\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let annotate = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("annotate"))
+            .unwrap();
+        assert_eq!(annotate.data().value, "@test");
+        assert!(annotate.children().is_empty());
+    }
+
     // -- Test section DSL --
 
     #[test]
