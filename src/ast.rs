@@ -3,11 +3,9 @@
 //! The AST is `Prism<AstNode>`. A .conv file parsed is a tree
 //! in the conversation domain. Same type as everything else.
 
-use sha2::{Digest, Sha256};
-
 use crate::domain::conversation::Kind;
 use crate::prism::{self, Prism};
-use crate::ContentAddressed;
+use crate::{ContentAddressed, Oid};
 use fragmentation::encoding::Encode;
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
@@ -24,9 +22,7 @@ impl Encode for AstNode {
 impl ContentAddressed for AstNode {
     type Oid = AstOid;
     fn content_oid(&self) -> AstOid {
-        let mut hasher = Sha256::new();
-        hasher.update(self.label().as_bytes());
-        AstOid::new(hex::encode(hasher.finalize()))
+        AstOid::from(Oid::hash(self.label().as_bytes()))
     }
 }
 

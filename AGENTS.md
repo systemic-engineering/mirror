@@ -1,6 +1,35 @@
 # conversation — Agent Notes
 
-Design principles and hard lessons for working in this codebase.
+Ground rules. Hard lessons. Architectural boundaries.
+
+---
+
+## The boundary
+
+The Rust parser is done. It parses `.conv` source into `Prism<AstNode>` and
+commits it to the in-memory Repo. What crosses the threshold is an OID. That's it.
+
+Everything after parse belongs to the BEAM.
+
+**Do not extend Rust to handle:**
+- Package discovery or resolution
+- Grammar compilation or type validation beyond parsing
+- Namespace building
+- Actor spawning or lifecycle
+- Garden compatibility fixes
+
+These are BEAM concerns. The modules `resolve.rs`, `packages.rs`, `compile.rs`,
+and `property.rs` exist but are being superseded. Do not add features to them.
+
+**The single Rust FFI function that matters:** `conv_parse` in `ffi.rs`.
+It parses `.conv` source, commits the Prism to `.git/refs/conversation/&lt;branch&gt;`
+as `conversation@systemic.engineering`, and returns the OID.
+
+**The BEAM side** (`beam/`) is Gleam. It receives the OID.
+`@conversation` extends `@compiler`. The `@compiler` actor already exists
+(`beam/src/conversation/compiler.gleam`) — signs and witnesses via `Trace`.
+
+Each garden package that declares `in @actor` becomes a spawned actor.
 
 ---
 

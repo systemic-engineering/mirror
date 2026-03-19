@@ -93,6 +93,7 @@ impl<V> Prism<V> {
 
 impl<V: Encode> Fragmentable for Prism<V> {
     type Data = V;
+    type Hash = Sha;
 
     fn self_ref(&self) -> &Ref {
         self.self_ref()

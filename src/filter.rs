@@ -4,8 +4,8 @@
 //! Filters compose in pipelines: `slug | @sha`, `article | @html | @sign`.
 //!
 //! Four filters:
-//! - `@sha` — SHA-256 of the JSON string representation
-//! - `@hash` — broader hashing (SHA-256 default)
+//! - `@sha` — SHA-512 of the JSON string representation
+//! - `@hash` — broader hashing (SHA-512 default)
 //! - `@sign` — wraps value in a signed envelope
 //! - `@encrypt` — encrypts value with age (SSH key support)
 
@@ -13,17 +13,15 @@ use std::io::Write;
 use std::path::PathBuf;
 
 use serde_json::Value;
-use sha2::{Digest, Sha256};
 
 use crate::resolve::ResolveError;
-use crate::Vector;
-use crate::{ContentAddressed, Trace};
+use crate::{ContentAddressed, Oid, Trace, Vector};
 
 // ---------------------------------------------------------------------------
 // Sha — content hash as pipeline operator
 // ---------------------------------------------------------------------------
 
-/// SHA-256 of the Value's JSON string representation.
+/// SHA-512 of the Value's JSON string representation.
 /// Same hash as `ContentAddressed for Value`, surfaced as a filter.
 pub struct Sha;
 
@@ -31,20 +29,18 @@ impl Vector<Value, Value> for Sha {
     type Error = std::convert::Infallible;
 
     fn trace(&self, source: Value) -> Trace<Value, Self::Error> {
-        let mut hasher = Sha256::new();
-        hasher.update(source.to_string().as_bytes());
-        let hash = hex::encode(hasher.finalize());
-        let result = Value::String(hash);
+        let hash = Oid::hash(source.to_string().as_bytes());
+        let result = Value::String(hash.as_ref().to_string());
         let oid = result.content_oid();
         Trace::success(result, oid.into(), None)
     }
 }
 
 // ---------------------------------------------------------------------------
-// Hash — broader hashing (SHA-256 default, future: configurable)
+// Hash — broader hashing (SHA-512 default, future: configurable)
 // ---------------------------------------------------------------------------
 
-/// Hash filter. SHA-256 for MVP.
+/// Hash filter. SHA-512.
 pub struct Hash;
 
 impl Vector<Value, Value> for Hash {
@@ -423,11 +419,9 @@ mod tests {
     fn sha_hashes_string_value() {
         let input = Value::String("hello".into());
         let result = Sha.trace(input).unwrap();
-        // SHA-256 of the JSON string representation: "\"hello\""
-        let mut hasher = Sha256::new();
-        hasher.update(b"\"hello\"");
-        let expected = hex::encode(hasher.finalize());
-        assert_eq!(result, Value::String(expected));
+        // SHA-512 of the JSON string representation: "\"hello\""
+        let expected = crate::Oid::hash(b"\"hello\"");
+        assert_eq!(result, Value::String(expected.as_ref().to_string()));
     }
 
     #[test]
@@ -437,7 +431,7 @@ mod tests {
         let input = Value::Object(map);
         let result = Sha.trace(input).unwrap();
         assert!(result.is_string());
-        assert_eq!(result.as_str().unwrap().len(), 64); // hex SHA-256
+        assert_eq!(result.as_str().unwrap().len(), 128); // hex SHA-512
     }
 
     #[test]

@@ -3039,7 +3039,8 @@ grammar @conversation {
     #[test]
     fn parse_grammar_act_flushes_pending_type() {
         // type def before act — pending type flushed before action
-        let source = "grammar @test {\n  type = a | b\n  act enact(effect) {\n    target: path\n  }\n}\n";
+        let source =
+            "grammar @test {\n  type = a | b\n  act enact(effect) {\n    target: path\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         // Should have type-def followed by action-def
@@ -3063,8 +3064,12 @@ grammar @conversation {
     fn parse_grammar_fixture() {
         let source = include_str!("../main.conv");
         let tree = Parse.trace(source.to_string()).unwrap();
-        let grammar = &tree.children()[0];
-        assert_eq!(grammar.data().kind, Kind::Decl);
+        // main.conv: in @sha512 as @oid, in @git(...), grammar @conversation { ... }
+        let grammar = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .expect("grammar block");
         assert_eq!(grammar.data().value, "@conversation");
         assert_eq!(grammar.children().len(), 2);
     }

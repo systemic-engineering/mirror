@@ -334,6 +334,7 @@ impl TypeRegistry {
 
 impl Fragmentable for TypeRegistry {
     type Data = Vec<u8>;
+    type Hash = Sha;
 
     fn self_ref(&self) -> &Ref {
         &self.ref_
@@ -947,17 +948,15 @@ fn resolve_branch_node(node: &Prism<AstNode>) -> Prism<OutputNode> {
 impl<C: Setting> crate::ContentAddressed for Conversation<C> {
     type Oid = ConversationOid;
     fn content_oid(&self) -> ConversationOid {
-        use sha2::{Digest, Sha256};
-
-        let mut hasher = Sha256::new();
-        hasher.update(b"conversation:");
-        hasher.update(self.content.data().name().as_bytes());
+        let mut h = crate::Oid::hasher();
+        h.update(b"conversation:");
+        h.update(self.content.data().name().as_bytes());
         let mut keys: Vec<_> = self.templates.keys().collect();
         keys.sort();
         for key in keys {
-            hasher.update(key.as_bytes());
+            h.update(key.as_bytes());
         }
-        ConversationOid::new(hex::encode(hasher.finalize()))
+        ConversationOid::from(h.finalize())
     }
 }
 
@@ -2596,8 +2595,6 @@ mod tests {
     mod test_domain {
         use crate::domain::{Addressable, Setting};
         use crate::ContentAddressed;
-        use sha2::{Digest, Sha256};
-
         #[derive(Clone, Debug, Default, PartialEq, Eq)]
         pub struct TestDomain;
 
@@ -2618,14 +2615,14 @@ mod tests {
         impl ContentAddressed for TestToken {
             type Oid = crate::Oid;
             fn content_oid(&self) -> crate::Oid {
-                let mut hasher = Sha256::new();
-                hasher.update(b"test-token:");
-                hasher.update(self.name.as_bytes());
+                let mut h = crate::Oid::hasher();
+                h.update(b"test-token:");
+                h.update(self.name.as_bytes());
                 if let Some(c) = &self.content {
-                    hasher.update(b":");
-                    hasher.update(c.as_bytes());
+                    h.update(b":");
+                    h.update(c.as_bytes());
                 }
-                crate::Oid::new(hex::encode(hasher.finalize()))
+                h.finalize()
             }
         }
 

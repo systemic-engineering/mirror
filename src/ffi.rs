@@ -10,6 +10,57 @@ use crate::resolve::TypeRegistry;
 use crate::ContentAddressed;
 use crate::Vector;
 
+/// Parse .conv source → content OID string.
+fn parse_to_oid(source: &str) -> Result<String, String> {
+    match Parse.trace(source.to_string()).into_result() {
+        Ok(tree) => {
+            #[cfg(feature = "git")]
+            let oid = match commit_prism(&tree) {
+                Ok(commit_oid) => commit_oid,
+                Err(_) => tree.content_oid().as_ref().to_string(),
+            };
+            #[cfg(not(feature = "git"))]
+            let oid = tree.content_oid().as_ref().to_string();
+            Ok(oid)
+        }
+        Err(err) => Err(err.to_string()),
+    }
+}
+
+/// Compile .conv grammar source → ETF bytes for actor dispatch module.
+fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
+    let ast = Parse
+        .trace(source.to_string())
+        .into_result()
+        .map_err(|e| e.to_string())?;
+
+    let grammar_node = ast
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("grammar"))
+        .ok_or_else(|| "no grammar block found".to_string())?;
+
+    let registry = TypeRegistry::compile(grammar_node).map_err(|e| e.to_string())?;
+    Ok(compile::emit_actor_module(&registry))
+}
+
+/// Write FFI result to output buffer. Returns 0 on success, -1 on error.
+unsafe fn write_ffi_result(
+    result: Result<&[u8], &[u8]>,
+    out_ptr: *mut u8,
+    out_cap: usize,
+    out_len: *mut usize,
+) -> i32 {
+    let (bytes, code) = match result {
+        Ok(b) => (b, 0),
+        Err(b) => (b, -1),
+    };
+    let n = bytes.len().min(out_cap);
+    std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_ptr, n);
+    *out_len = n;
+    code
+}
+
 /// Parse a .conv source string and return its content OID.
 ///
 /// On success: returns 0, writes OID hex to `out_ptr` (up to `out_cap` bytes),
@@ -31,32 +82,11 @@ pub unsafe extern "C" fn conv_parse(
 ) -> i32 {
     let source = match std::str::from_utf8(std::slice::from_raw_parts(src_ptr, src_len)) {
         Ok(s) => s,
-        Err(_) => {
-            let msg = b"invalid UTF-8 input";
-            let n = msg.len().min(out_cap);
-            std::ptr::copy_nonoverlapping(msg.as_ptr(), out_ptr, n);
-            *out_len = n;
-            return -1;
-        }
+        Err(_) => return write_ffi_result(Err(b"invalid UTF-8 input"), out_ptr, out_cap, out_len),
     };
-
-    match Parse.trace(source.to_string()).into_result() {
-        Ok(tree) => {
-            let oid = tree.content_oid();
-            let oid_str = oid.as_ref().as_bytes();
-            let n = oid_str.len().min(out_cap);
-            std::ptr::copy_nonoverlapping(oid_str.as_ptr(), out_ptr, n);
-            *out_len = n;
-            0
-        }
-        Err(err) => {
-            let msg = err.to_string();
-            let msg_bytes = msg.as_bytes();
-            let n = msg_bytes.len().min(out_cap);
-            std::ptr::copy_nonoverlapping(msg_bytes.as_ptr(), out_ptr, n);
-            *out_len = n;
-            -1
-        }
+    match parse_to_oid(source) {
+        Ok(ref oid) => write_ffi_result(Ok(oid.as_bytes()), out_ptr, out_cap, out_len),
+        Err(ref msg) => write_ffi_result(Err(msg.as_bytes()), out_ptr, out_cap, out_len),
     }
 }
 
@@ -84,55 +114,152 @@ pub unsafe extern "C" fn conv_compile_grammar(
 ) -> i32 {
     let source = match std::str::from_utf8(std::slice::from_raw_parts(src_ptr, src_len)) {
         Ok(s) => s,
-        Err(_) => {
-            let msg = b"invalid UTF-8 input";
-            let n = msg.len().min(out_cap);
-            std::ptr::copy_nonoverlapping(msg.as_ptr(), out_ptr, n);
-            *out_len = n;
-            return -1;
+        Err(_) => return write_ffi_result(Err(b"invalid UTF-8 input"), out_ptr, out_cap, out_len),
+    };
+    match compile_grammar_to_etf(source) {
+        Ok(ref etf) => write_ffi_result(Ok(etf), out_ptr, out_cap, out_len),
+        Err(ref msg) => write_ffi_result(Err(msg.as_bytes()), out_ptr, out_cap, out_len),
+    }
+}
+
+/// Write a Prism tree to git objects. Returns the root tree OID.
+///
+/// Maps Prism variants to git objects following fragmentation conventions:
+/// - Shard → blob (data bytes)
+/// - Fractal → tree with `.data` blob + numbered children
+/// - Lens → tree with `.data` blob + `.lens` blob (target OIDs)
+/// - Optics → tree with `.data` blob + `.lens` blob + numbered children
+#[cfg(feature = "git")]
+fn write_prism_tree(
+    repo: &git2::Repository,
+    tree: &crate::prism::Prism<crate::ast::AstNode>,
+) -> Result<git2::Oid, git2::Error> {
+    use fragmentation::encoding::Encode;
+
+    let data_bytes = tree.data().encode();
+
+    if tree.is_shard() {
+        return repo.blob(&data_bytes);
+    }
+
+    let mut builder = repo.treebuilder(None)?;
+    let data_oid = repo.blob(&data_bytes)?;
+    builder.insert(".data", data_oid, 0o100644)?;
+
+    // Lens targets
+    if tree.is_lens() || !tree.targets().is_empty() {
+        let lens_content: String = tree
+            .targets()
+            .iter()
+            .map(|sha| sha.0.as_str())
+            .collect::<Vec<&str>>()
+            .join("\n");
+        let lens_oid = repo.blob(lens_content.as_bytes())?;
+        builder.insert(".lens", lens_oid, 0o100644)?;
+    }
+
+    // Children
+    for (i, child) in tree.children().iter().enumerate() {
+        let child_oid = write_prism_tree(repo, child)?;
+        let mode = if child.is_shard() { 0o100644 } else { 0o040000 };
+        builder.insert(format!("{:04}", i), child_oid, mode)?;
+    }
+
+    builder.write()
+}
+
+/// Deterministic Ed25519 signing key for conversation commits.
+/// sha256("conversation") → 32-byte seed → Ed25519 keypair.
+/// Same pattern as @compiler actor in Gleam (sha256("compiler") → keypair).
+#[cfg(feature = "git")]
+fn conversation_key() -> Result<ssh_key::PrivateKey, String> {
+    use sha2::{Digest, Sha256};
+    use ssh_key::private::{Ed25519Keypair, KeypairData};
+
+    let seed: [u8; 32] = Sha256::digest(b"conversation").into();
+    let keypair = Ed25519Keypair::from_seed(&seed);
+    let key_data = KeypairData::Ed25519(keypair);
+    ssh_key::PrivateKey::new(key_data, "conversation@systemic.engineering")
+        .map_err(|e| format!("key: {}", e))
+}
+
+/// Sign a commit buffer with the conversation SSH key.
+/// Returns PEM-encoded SSH signature suitable for git.
+#[cfg(feature = "git")]
+fn sign_commit(commit_content: &[u8]) -> Result<String, String> {
+    let key = conversation_key()?;
+    let sig = key
+        .sign("git", ssh_key::HashAlg::Sha512, commit_content)
+        .map_err(|e| format!("sign: {}", e))?;
+    let pem = sig
+        .to_pem(ssh_key::LineEnding::LF)
+        .map_err(|e| format!("pem: {}", e))?;
+    Ok(pem)
+}
+
+/// Commit a parsed Prism to a git repository.
+///
+/// Writes the Prism tree to git objects, creates an SSH-signed commit
+/// authored by `conversation@systemic.engineering`, and updates
+/// `refs/conversation/<branch>`. Returns the commit OID hex string.
+#[cfg(feature = "git")]
+fn commit_prism_to_repo(
+    repo: &git2::Repository,
+    tree: &crate::prism::Prism<crate::ast::AstNode>,
+) -> Result<String, String> {
+    let head = repo.head().map_err(|e| format!("HEAD: {}", e))?;
+    let branch = head
+        .shorthand()
+        .ok_or_else(|| "HEAD: not a branch".to_string())?
+        .to_string();
+
+    let tree_oid = write_prism_tree(repo, tree).map_err(|e| format!("write tree: {}", e))?;
+    let git_tree = repo
+        .find_tree(tree_oid)
+        .map_err(|e| format!("find tree: {}", e))?;
+
+    let sig = git2::Signature::now("conversation", "conversation@systemic.engineering")
+        .map_err(|e| format!("signature: {}", e))?;
+
+    // Find parent commit on refs/conversation/<branch> if it exists
+    let ref_name = format!("refs/conversation/{}", branch);
+    let parent_commit;
+    let parents: Vec<&git2::Commit> = match repo.find_reference(&ref_name) {
+        Ok(r) => {
+            let oid = r.target().ok_or_else(|| "ref: no target".to_string())?;
+            parent_commit = repo
+                .find_commit(oid)
+                .map_err(|e| format!("parent commit: {}", e))?;
+            vec![&parent_commit]
         }
+        Err(_) => vec![],
     };
 
-    let ast = match Parse.trace(source.to_string()).into_result() {
-        Ok(tree) => tree,
-        Err(err) => {
-            let msg = err.to_string();
-            let msg_bytes = msg.as_bytes();
-            let n = msg_bytes.len().min(out_cap);
-            std::ptr::copy_nonoverlapping(msg_bytes.as_ptr(), out_ptr, n);
-            *out_len = n;
-            return -1;
-        }
-    };
+    // Build commit content, sign it, write signed commit
+    let commit_buf = repo
+        .commit_create_buffer(&sig, &sig, "prism", &git_tree, &parents)
+        .map_err(|e| format!("commit buffer: {}", e))?;
+    let commit_content =
+        std::str::from_utf8(&commit_buf).map_err(|e| format!("commit content: {}", e))?;
 
-    let grammar_node = match ast.children().iter().find(|c| c.data().is_decl("grammar")) {
-        Some(node) => node,
-        None => {
-            let msg = b"no grammar block found";
-            let n = msg.len().min(out_cap);
-            std::ptr::copy_nonoverlapping(msg.as_ptr(), out_ptr, n);
-            *out_len = n;
-            return -1;
-        }
-    };
+    let signature = sign_commit(commit_buf.as_ref())?;
 
-    let registry = match TypeRegistry::compile(grammar_node) {
-        Ok(r) => r,
-        Err(err) => {
-            let msg = err.to_string();
-            let msg_bytes = msg.as_bytes();
-            let n = msg_bytes.len().min(out_cap);
-            std::ptr::copy_nonoverlapping(msg_bytes.as_ptr(), out_ptr, n);
-            *out_len = n;
-            return -1;
-        }
-    };
+    let commit_oid = repo
+        .commit_signed(commit_content, &signature, Some("gpgsig"))
+        .map_err(|e| format!("signed commit: {}", e))?;
 
-    let etf_bytes = compile::emit_actor_module(&registry);
-    let n = etf_bytes.len().min(out_cap);
-    std::ptr::copy_nonoverlapping(etf_bytes.as_ptr(), out_ptr, n);
-    *out_len = n;
-    0
+    // Update the ref to point to the new commit
+    repo.reference(&ref_name, commit_oid, true, "conversation: prism commit")
+        .map_err(|e| format!("update ref: {}", e))?;
+
+    Ok(commit_oid.to_string())
+}
+
+/// Discover the git repo from cwd and commit.
+#[cfg(feature = "git")]
+fn commit_prism(tree: &crate::prism::Prism<crate::ast::AstNode>) -> Result<String, String> {
+    let repo = git2::Repository::discover(".").map_err(|e| format!("git repo: {}", e))?;
+    commit_prism_to_repo(&repo, tree)
 }
 
 #[cfg(test)]
@@ -140,33 +267,128 @@ mod tests {
     use super::*;
 
     #[test]
-    fn ffi_parse_success() {
-        let source = b"grammar @test {\n  type = a | b\n}\n";
-        let mut buf = [0u8; 256];
-        let mut len: usize = 0;
-
-        let rc = unsafe {
-            conv_parse(
-                source.as_ptr(),
-                source.len(),
-                buf.as_mut_ptr(),
-                buf.len(),
-                &mut len,
-            )
-        };
-
-        assert_eq!(rc, 0);
-        assert!(len > 0);
-        let oid = std::str::from_utf8(&buf[..len]).unwrap();
+    fn parse_success() {
+        let oid = parse_to_oid("grammar @test {\n  type = a | b\n}\n").unwrap();
         assert!(!oid.is_empty());
     }
 
     #[test]
-    fn ffi_parse_error() {
+    fn parse_error() {
+        let err = parse_to_oid("@@@invalid").unwrap_err();
+        assert!(!err.is_empty());
+    }
+
+    #[test]
+    fn parse_deterministic() {
+        let a = parse_to_oid("grammar @test {\n  type = a | b\n}\n").unwrap();
+        let b = parse_to_oid("grammar @test {\n  type = a | b\n}\n").unwrap();
+        assert_eq!(a, b);
+    }
+
+    #[test]
+    fn compile_grammar_success() {
+        let etf = compile_grammar_to_etf(
+            "grammar @compiler {\n  type = target\n  type target = eaf | beam\n  action compile {\n    source: target\n  }\n}\n",
+        )
+        .unwrap();
+        assert!(!etf.is_empty());
+        assert_eq!(etf[0], 131); // ETF version byte
+    }
+
+    #[test]
+    fn compile_grammar_parse_error() {
+        let err = compile_grammar_to_etf("!!! not valid conv syntax").unwrap_err();
+        assert!(!err.is_empty());
+    }
+
+    #[test]
+    fn compile_grammar_type_ref_error() {
+        let err =
+            compile_grammar_to_etf("grammar @test {\n  type = when(nonexistent)\n}\n").unwrap_err();
+        assert!(err.contains("unknown type"));
+    }
+
+    #[test]
+    fn compile_grammar_no_grammar_block() {
+        let err = compile_grammar_to_etf("in @filesystem\ntemplate $t {\n\tslug\n}\n").unwrap_err();
+        assert!(err.contains("grammar"));
+    }
+
+    #[test]
+    fn compile_grammar_deterministic() {
+        let a = compile_grammar_to_etf(
+            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+        )
+        .unwrap();
+        let b = compile_grammar_to_etf(
+            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+        )
+        .unwrap();
+        assert_eq!(a, b);
+    }
+
+    // -- FFI wrappers: exercise unsafe boundary + UTF-8 rejection --
+
+    #[test]
+    fn ffi_conv_parse_roundtrip() {
+        let source = b"grammar @test {\n  type = a | b\n}\n";
+        let mut buf = [0u8; 256];
+        let mut len: usize = 0;
+        let rc = unsafe {
+            conv_parse(
+                source.as_ptr(),
+                source.len(),
+                buf.as_mut_ptr(),
+                buf.len(),
+                &mut len,
+            )
+        };
+        assert_eq!(rc, 0);
+        assert!(len > 0);
+    }
+
+    #[test]
+    fn ffi_conv_parse_invalid_utf8() {
+        let source: &[u8] = &[0xFF, 0xFE, 0x00];
+        let mut buf = [0u8; 256];
+        let mut len: usize = 0;
+        let rc = unsafe {
+            conv_parse(
+                source.as_ptr(),
+                source.len(),
+                buf.as_mut_ptr(),
+                buf.len(),
+                &mut len,
+            )
+        };
+        assert_eq!(rc, -1);
+        let msg = std::str::from_utf8(&buf[..len]).unwrap();
+        assert!(msg.contains("UTF-8"));
+    }
+
+    #[test]
+    fn ffi_conv_compile_grammar_roundtrip() {
+        let source = b"grammar @test {\n  type = a | b\n}\n";
+        let mut buf = [0u8; 4096];
+        let mut len: usize = 0;
+        let rc = unsafe {
+            conv_compile_grammar(
+                source.as_ptr(),
+                source.len(),
+                buf.as_mut_ptr(),
+                buf.len(),
+                &mut len,
+            )
+        };
+        assert_eq!(rc, 0);
+        assert!(len > 0);
+    }
+
+    #[test]
+    fn ffi_conv_parse_error() {
         let source = b"@@@invalid";
         let mut buf = [0u8; 256];
         let mut len: usize = 0;
-
         let rc = unsafe {
             conv_parse(
                 source.as_ptr(),
@@ -176,135 +398,15 @@ mod tests {
                 &mut len,
             )
         };
-
         assert_eq!(rc, -1);
         assert!(len > 0);
     }
 
     #[test]
-    fn ffi_parse_invalid_utf8() {
-        let source: &[u8] = &[0xFF, 0xFE, 0x00];
-        let mut buf = [0u8; 256];
-        let mut len: usize = 0;
-
-        let rc = unsafe {
-            conv_parse(
-                source.as_ptr(),
-                source.len(),
-                buf.as_mut_ptr(),
-                buf.len(),
-                &mut len,
-            )
-        };
-
-        assert_eq!(rc, -1);
-        assert!(len > 0);
-        let msg = std::str::from_utf8(&buf[..len]).unwrap();
-        assert!(msg.contains("UTF-8"));
-    }
-
-    #[test]
-    fn ffi_parse_deterministic() {
-        let source = b"grammar @test {\n  type = a | b\n}\n";
-        let mut buf1 = [0u8; 256];
-        let mut len1: usize = 0;
-        let mut buf2 = [0u8; 256];
-        let mut len2: usize = 0;
-
-        unsafe {
-            conv_parse(
-                source.as_ptr(),
-                source.len(),
-                buf1.as_mut_ptr(),
-                256,
-                &mut len1,
-            );
-            conv_parse(
-                source.as_ptr(),
-                source.len(),
-                buf2.as_mut_ptr(),
-                256,
-                &mut len2,
-            );
-        }
-
-        assert_eq!(len1, len2);
-        assert_eq!(&buf1[..len1], &buf2[..len2]);
-    }
-
-    // -- conv_compile_grammar FFI --
-
-    #[test]
-    fn ffi_compile_grammar_success() {
-        let source = b"grammar @compiler {\n  type = target\n  type target = eaf | beam\n  action compile {\n    source: target\n  }\n}\n";
-        let mut buf = [0u8; 4096];
-        let mut len: usize = 0;
-
-        let rc = unsafe {
-            conv_compile_grammar(
-                source.as_ptr(),
-                source.len(),
-                buf.as_mut_ptr(),
-                buf.len(),
-                &mut len,
-            )
-        };
-
-        assert_eq!(rc, 0);
-        assert!(len > 0);
-        // ETF always starts with version byte 131
-        assert_eq!(buf[0], 131);
-    }
-
-    #[test]
-    fn ffi_compile_grammar_parse_error() {
-        let source = b"!!! not valid conv syntax";
-        let mut buf = [0u8; 4096];
-        let mut len: usize = 0;
-
-        let rc = unsafe {
-            conv_compile_grammar(
-                source.as_ptr(),
-                source.len(),
-                buf.as_mut_ptr(),
-                buf.len(),
-                &mut len,
-            )
-        };
-
-        assert_eq!(rc, -1);
-        assert!(len > 0);
-    }
-
-    #[test]
-    fn ffi_compile_grammar_type_ref_error() {
-        // Parameterized variant referencing an undeclared type
-        let source = b"grammar @test {\n  type = when(nonexistent)\n}\n";
-        let mut buf = [0u8; 4096];
-        let mut len: usize = 0;
-
-        let rc = unsafe {
-            conv_compile_grammar(
-                source.as_ptr(),
-                source.len(),
-                buf.as_mut_ptr(),
-                buf.len(),
-                &mut len,
-            )
-        };
-
-        assert_eq!(rc, -1);
-        assert!(len > 0);
-        let msg = std::str::from_utf8(&buf[..len]).unwrap();
-        assert!(msg.contains("unknown type"));
-    }
-
-    #[test]
-    fn ffi_compile_grammar_no_grammar_block() {
+    fn ffi_conv_compile_grammar_error() {
         let source = b"in @filesystem\ntemplate $t {\n\tslug\n}\n";
         let mut buf = [0u8; 4096];
         let mut len: usize = 0;
-
         let rc = unsafe {
             conv_compile_grammar(
                 source.as_ptr(),
@@ -314,19 +416,15 @@ mod tests {
                 &mut len,
             )
         };
-
         assert_eq!(rc, -1);
         assert!(len > 0);
-        let msg = std::str::from_utf8(&buf[..len]).unwrap();
-        assert!(msg.contains("grammar"));
     }
 
     #[test]
-    fn ffi_compile_grammar_invalid_utf8() {
+    fn ffi_conv_compile_grammar_invalid_utf8() {
         let source: &[u8] = &[0xFF, 0xFE, 0x00];
         let mut buf = [0u8; 4096];
         let mut len: usize = 0;
-
         let rc = unsafe {
             conv_compile_grammar(
                 source.as_ptr(),
@@ -336,39 +434,94 @@ mod tests {
                 &mut len,
             )
         };
-
         assert_eq!(rc, -1);
-        assert!(len > 0);
         let msg = std::str::from_utf8(&buf[..len]).unwrap();
         assert!(msg.contains("UTF-8"));
     }
 
-    #[test]
-    fn ffi_compile_grammar_deterministic() {
-        let source = b"grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n";
-        let mut buf1 = [0u8; 4096];
-        let mut len1: usize = 0;
-        let mut buf2 = [0u8; 4096];
-        let mut len2: usize = 0;
+    // -- git commit tests --
 
-        unsafe {
-            conv_compile_grammar(
-                source.as_ptr(),
-                source.len(),
-                buf1.as_mut_ptr(),
-                buf1.len(),
-                &mut len1,
-            );
-            conv_compile_grammar(
-                source.as_ptr(),
-                source.len(),
-                buf2.as_mut_ptr(),
-                buf2.len(),
-                &mut len2,
-            );
+    #[cfg(feature = "git")]
+    mod git_tests {
+        use super::*;
+
+        fn init_repo_with_branch() -> (tempfile::TempDir, git2::Repository) {
+            let dir = tempfile::tempdir().unwrap();
+            let repo = git2::Repository::init(dir.path()).unwrap();
+
+            // Create an initial commit so HEAD points to a branch.
+            {
+                let sig = git2::Signature::now("test", "test@test").unwrap();
+                let tree_oid = repo.treebuilder(None).unwrap().write().unwrap();
+                let tree = repo.find_tree(tree_oid).unwrap();
+                repo.commit(Some("HEAD"), &sig, &sig, "init", &tree, &[])
+                    .unwrap();
+            }
+
+            (dir, repo)
         }
 
-        assert_eq!(len1, len2);
-        assert_eq!(&buf1[..len1], &buf2[..len2]);
+        #[test]
+        fn commit_prism_creates_signed_ref() {
+            let (_dir, repo) = init_repo_with_branch();
+
+            let source = "grammar @test {\n  type = a | b\n}\n";
+            let tree = Parse.trace(source.to_string()).into_result().unwrap();
+            let oid_str = commit_prism_to_repo(&repo, &tree).unwrap();
+            assert!(!oid_str.is_empty());
+
+            // Verify the ref exists
+            let reference = repo.find_reference("refs/conversation/main").unwrap();
+            let commit_oid = reference.target().unwrap();
+            assert_eq!(commit_oid.to_string(), oid_str);
+
+            // Verify commit metadata
+            let commit = repo.find_commit(commit_oid).unwrap();
+            assert_eq!(commit.author().name(), Some("conversation"));
+            assert_eq!(
+                commit.author().email(),
+                Some("conversation@systemic.engineering")
+            );
+            assert_eq!(commit.message(), Some("prism"));
+
+            // Verify SSH signature exists
+            let (sig_bytes, _) = repo.extract_signature(&commit_oid, None).unwrap();
+            let sig_str = std::str::from_utf8(&sig_bytes).unwrap();
+            assert!(sig_str.contains("BEGIN SSH SIGNATURE"));
+        }
+
+        #[test]
+        fn commit_prism_chains_parents() {
+            let (_dir, repo) = init_repo_with_branch();
+
+            let source1 = "grammar @a {\n  type = x\n}\n";
+            let tree1 = Parse.trace(source1.to_string()).into_result().unwrap();
+            let oid1 = commit_prism_to_repo(&repo, &tree1).unwrap();
+
+            let source2 = "grammar @b {\n  type = y\n}\n";
+            let tree2 = Parse.trace(source2.to_string()).into_result().unwrap();
+            let oid2 = commit_prism_to_repo(&repo, &tree2).unwrap();
+
+            assert_ne!(oid1, oid2);
+
+            // Second commit should have first as parent
+            let commit2 = repo
+                .find_commit(git2::Oid::from_str(&oid2).unwrap())
+                .unwrap();
+            assert_eq!(commit2.parent_id(0).unwrap().to_string(), oid1);
+        }
+
+        #[test]
+        fn write_prism_tree_roundtrip() {
+            let (_dir, repo) = init_repo_with_branch();
+
+            let source = "grammar @test {\n  type = a | b\n}\n";
+            let tree = Parse.trace(source.to_string()).into_result().unwrap();
+            let oid = write_prism_tree(&repo, &tree).unwrap();
+
+            // The OID should be a valid git object
+            let obj = repo.find_object(oid, None).unwrap();
+            assert!(obj.kind() == Some(git2::ObjectType::Tree));
+        }
     }
 }

@@ -1,3 +1,6 @@
+in @sha512 as @oid           # 2^512 address space — permanent for this universe
+in @git(namespace: "conversation")  # grounded in the conversation git namespace
+
 grammar @conversation {
   type = in | out | template | field | qualifier | pipe
        | group | select | template-ref | domain-ref

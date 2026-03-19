@@ -7,11 +7,11 @@ use std::marker::PhantomData;
 
 use fragmentation::fragment::Fragmentable;
 use fragmentation::repo::Repo;
-use fragmentation::sha::Sha;
-use sha2::{Digest, Sha256};
+use fragmentation::sha::HashAlg;
+use sha2::{Digest, Sha512};
 
 // ---------------------------------------------------------------------------
-// Oid — content address value type
+// Oid — SHA-512 content address. `in @sha512 as @oid`.
 // ---------------------------------------------------------------------------
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -20,6 +20,18 @@ pub struct Oid(String);
 impl Oid {
     pub fn new(hash: impl Into<String>) -> Self {
         Oid(hash.into())
+    }
+
+    /// One-shot SHA-512 hash → Oid.
+    pub fn hash(data: &[u8]) -> Self {
+        let mut h = Sha512::new();
+        h.update(data);
+        Oid(hex::encode(h.finalize()))
+    }
+
+    /// Incremental hasher for multi-part content addresses.
+    pub fn hasher() -> OidHasher {
+        OidHasher(Sha512::new())
     }
 }
 
@@ -32,6 +44,19 @@ impl AsRef<str> for Oid {
 impl std::fmt::Display for Oid {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
+    }
+}
+
+/// Incremental SHA-512 hasher for building content addresses.
+pub struct OidHasher(Sha512);
+
+impl OidHasher {
+    pub fn update(&mut self, data: &[u8]) {
+        self.0.update(data);
+    }
+
+    pub fn finalize(self) -> Oid {
+        Oid(hex::encode(self.0.finalize()))
     }
 }
 
@@ -192,65 +217,59 @@ impl<T, E> Trace<T, E> {
 impl ContentAddressed for String {
     type Oid = Oid;
     fn content_oid(&self) -> Oid {
-        let mut hasher = Sha256::new();
-        hasher.update(self.as_bytes());
-        Oid::new(hex::encode(hasher.finalize()))
+        Oid::hash(self.as_bytes())
     }
 }
 
 impl<A: ContentAddressed> ContentAddressed for Vec<A> {
     type Oid = Oid;
     fn content_oid(&self) -> Oid {
-        let mut hasher = Sha256::new();
+        let mut h = Oid::hasher();
         for item in self {
-            hasher.update(item.content_oid().as_ref().as_bytes());
+            h.update(item.content_oid().as_ref().as_bytes());
         }
-        Oid::new(hex::encode(hasher.finalize()))
+        h.finalize()
     }
 }
 
 impl<A: ContentAddressed> ContentAddressed for Option<A> {
     type Oid = Oid;
     fn content_oid(&self) -> Oid {
-        let mut hasher = Sha256::new();
+        let mut h = Oid::hasher();
         match self {
             Some(inner) => {
-                hasher.update(b"some:");
-                hasher.update(inner.content_oid().as_ref().as_bytes());
+                h.update(b"some:");
+                h.update(inner.content_oid().as_ref().as_bytes());
             }
             None => {
-                hasher.update(b"none");
+                h.update(b"none");
             }
         }
-        Oid::new(hex::encode(hasher.finalize()))
+        h.finalize()
     }
 }
 
 impl<A: ContentAddressed, B: ContentAddressed> ContentAddressed for (A, B) {
     type Oid = Oid;
     fn content_oid(&self) -> Oid {
-        let mut hasher = Sha256::new();
-        hasher.update(self.0.content_oid().as_ref().as_bytes());
-        hasher.update(self.1.content_oid().as_ref().as_bytes());
-        Oid::new(hex::encode(hasher.finalize()))
+        let mut h = Oid::hasher();
+        h.update(self.0.content_oid().as_ref().as_bytes());
+        h.update(self.1.content_oid().as_ref().as_bytes());
+        h.finalize()
     }
 }
 
 impl ContentAddressed for i32 {
     type Oid = Oid;
     fn content_oid(&self) -> Oid {
-        let mut hasher = Sha256::new();
-        hasher.update(self.to_le_bytes());
-        Oid::new(hex::encode(hasher.finalize()))
+        Oid::hash(&self.to_le_bytes())
     }
 }
 
 impl ContentAddressed for f64 {
     type Oid = Oid;
     fn content_oid(&self) -> Oid {
-        let mut hasher = Sha256::new();
-        hasher.update(self.to_le_bytes());
-        Oid::new(hex::encode(hasher.finalize()))
+        Oid::hash(&self.to_le_bytes())
     }
 }
 
@@ -271,9 +290,7 @@ impl<V: fragmentation::encoding::Encode> ContentAddressed for crate::prism::Pris
 impl ContentAddressed for serde_json::Value {
     type Oid = Oid;
     fn content_oid(&self) -> Oid {
-        let mut hasher = Sha256::new();
-        hasher.update(self.to_string().as_bytes());
-        Oid::new(hex::encode(hasher.finalize()))
+        Oid::hash(self.to_string().as_bytes())
     }
 }
 
@@ -376,7 +393,7 @@ where
 
         // Lookup: ref → tree
         if let Some(sha) = self.repo.borrow().resolve_ref(&key) {
-            if let Some(node) = self.repo.borrow().read_tree(&sha.0) {
+            if let Some(node) = self.repo.borrow().read_tree(sha.as_str()) {
                 let oid = fragmentation::fragment::content_oid(&node);
                 return Trace::success(node, TraceOid::new(oid), None);
             }
@@ -387,7 +404,9 @@ where
         let cloned = result.clone();
         if let Ok(node) = cloned.into_result() {
             let oid = self.repo.borrow_mut().write_tree(&node);
-            self.repo.borrow_mut().update_ref(&key, Sha(oid));
+            self.repo
+                .borrow_mut()
+                .update_ref(&key, R::Hash::from_hex(oid));
         }
         result
     }
@@ -416,6 +435,7 @@ pub trait Addressable {
 mod tests {
     use super::*;
     use fragmentation::fragment::Fractal;
+    use fragmentation::sha::Sha;
     use std::cell::Cell;
     use std::rc::Rc;
 
@@ -668,17 +688,19 @@ mod tests {
         let ast = AstOid::from(base); // From<Oid>
         assert_eq!(ast.as_ref(), "abc"); // AsRef<str>
         assert_eq!(ast.to_string(), "abc"); // Display
+        let direct = AstOid::new("def"); // domain_oid!::new()
+        assert_eq!(direct.as_ref(), "def");
     }
 
-    // -- Sentinel: SHA-256 hex pinning --
+    // -- Sentinel: SHA-512 hex pinning --
 
     #[test]
-    fn sha256_hex_sentinel() {
+    fn sha512_hex_sentinel() {
         // Pin the exact hash for "hello" to detect algorithm drift
         let oid = "hello".to_string().content_oid();
         assert_eq!(
             oid.as_ref(),
-            "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+            "9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca72323c3d99ba5c11d7c7acc6e14b8c5da0c4663475c2e5c3adef46f73bcdec043"
         );
     }
 

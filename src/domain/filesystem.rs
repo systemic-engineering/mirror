@@ -1,8 +1,6 @@
-use sha2::{Digest, Sha256};
-
 use super::{Addressable, Setting};
 use crate::prism::{self, Prism};
-use crate::ContentAddressed;
+use crate::{ContentAddressed, Oid};
 use fragmentation::encoding::Encode;
 
 domain_oid!(/// Content address for filesystem nodes.
@@ -28,9 +26,7 @@ impl Encode for Folder {
 impl ContentAddressed for Folder {
     type Oid = FolderOid;
     fn content_oid(&self) -> FolderOid {
-        let mut hasher = Sha256::new();
-        hasher.update(self.encode());
-        FolderOid::new(hex::encode(hasher.finalize()))
+        FolderOid::from(Oid::hash(&self.encode()))
     }
 }
 
