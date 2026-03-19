@@ -363,11 +363,7 @@ fn test_subcommand_bad_test_section() {
         .unwrap();
     assert!(!output.status.success());
     let stderr = String::from_utf8_lossy(&output.stderr);
-    assert!(
-        stderr.contains("test:"),
-        "expected test error: {}",
-        stderr
-    );
+    assert!(stderr.contains("test:"), "expected test error: {}", stderr);
 }
 
 #[test]
@@ -394,7 +390,11 @@ fn test_subcommand_parse_error_still_runs_tests() {
 fn test_subcommand_empty_test_section() {
     let dir = tempfile::TempDir::new().unwrap();
     let conv_file = dir.path().join("empty.conv");
-    std::fs::write(&conv_file, "grammar @g {\n  type = a\n}\n---\n# only comments\n").unwrap();
+    std::fs::write(
+        &conv_file,
+        "grammar @g {\n  type = a\n}\n---\n# only comments\n",
+    )
+    .unwrap();
 
     let output = conversation_bin()
         .arg("test")
@@ -403,7 +403,11 @@ fn test_subcommand_empty_test_section() {
         .unwrap();
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(stdout.contains("no tests"), "expected 'no tests': {}", stdout);
+    assert!(
+        stdout.contains("no tests"),
+        "expected 'no tests': {}",
+        stdout
+    );
 }
 
 #[test]

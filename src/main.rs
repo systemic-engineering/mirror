@@ -158,7 +158,12 @@ fn run_tests(source: &str, resolve: &Resolve) {
     if results.is_empty() {
         println!("no tests");
     } else {
-        println!("\n{} tests, {} passed, {} failed", results.len(), results.len() - failed, failed);
+        println!(
+            "\n{} tests, {} passed, {} failed",
+            results.len(),
+            results.len() - failed,
+            failed
+        );
     }
 
     if failed > 0 {

@@ -990,6 +990,32 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
             continue;
         }
 
+        // Legacy `act name(params) {` keyword: treat as `action name {`.
+        if let Some(act_rest) = trimmed.strip_prefix("act ") {
+            if act_rest.contains('{') {
+                // Flush any pending type def
+                if let Some((type_name, type_span, variants)) = current.take() {
+                    defs.push(ast::ast_branch(
+                        Kind::Form,
+                        "type-def",
+                        &*type_name,
+                        type_span,
+                        variants,
+                    ));
+                }
+                // Strip optional params: `enact(effect) {` → `enact {`
+                let action_header = if let Some(paren) = act_rest.find('(') {
+                    let name = act_rest[..paren].trim();
+                    format!("{} {{", name)
+                } else {
+                    act_rest.to_string()
+                };
+                let span = lines.current_span();
+                defs.push(parse_action_def(&action_header, span, lines)?);
+                continue;
+            }
+        }
+
         if let Some(rest) = trimmed.strip_prefix("type ") {
             // Flush previous type def
             if let Some((type_name, type_span, variants)) = current.take() {
@@ -2971,6 +2997,55 @@ grammar @conversation {
         let action = &grammar.children()[0];
         assert_eq!(action.children().len(), 1);
         assert_eq!(action.children()[0].data().name, "field");
+    }
+
+    // -- Legacy `act` keyword --
+
+    #[test]
+    fn parse_grammar_act_with_params() {
+        // act enact(effect) { ... } parsed as action "enact"
+        let source = "grammar @test {\n  act enact(effect) {\n    target: path\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.children().len(), 1);
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.data().value, "enact");
+    }
+
+    #[test]
+    fn parse_grammar_act_without_params() {
+        // act enact { ... } without parens — falls into else branch
+        let source = "grammar @test {\n  act enact {\n    target: path\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.children().len(), 1);
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.data().value, "enact");
+    }
+
+    #[test]
+    fn parse_grammar_act_without_brace_skipped() {
+        // act without { on the line — falls through to unknown-line handler
+        let source = "grammar @test {\n  act enact\n  type = a\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        // Only the type-def should be present; the act line is skipped
+        assert_eq!(grammar.children().len(), 1);
+        assert_eq!(grammar.children()[0].data().name, "type-def");
+    }
+
+    #[test]
+    fn parse_grammar_act_flushes_pending_type() {
+        // type def before act — pending type flushed before action
+        let source = "grammar @test {\n  type = a | b\n  act enact(effect) {\n    target: path\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        // Should have type-def followed by action-def
+        assert_eq!(grammar.children().len(), 2);
+        assert_eq!(grammar.children()[0].data().name, "type-def");
+        assert_eq!(grammar.children()[1].data().name, "action-def");
     }
 
     #[test]
