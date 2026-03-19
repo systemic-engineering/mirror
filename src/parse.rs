@@ -472,6 +472,30 @@ fn parse_block_body(
             continue;
         }
 
+        // Type definition: "type = ..." or "type name = ..."
+        if let Some(rest) = trimmed.strip_prefix("type ") {
+            let span = lines.current_span();
+            let (type_name, variants) = parse_type_def_parts(rest, span);
+            children.push(ast::ast_branch(
+                Kind::Form,
+                "type-def",
+                &type_name,
+                span,
+                variants,
+            ));
+            lines.advance();
+            continue;
+        }
+
+        // Template: "template name(params) { ... }"
+        if trimmed.starts_with("template ") {
+            children.push(parse_template(
+                trimmed.strip_prefix("template ").unwrap(),
+                lines,
+            )?);
+            continue;
+        }
+
         // Select: "name: folder { $template }"
         // Field expression: "name: expr"
         if let Some((output_part, rest)) = trimmed.split_once(':') {
@@ -3064,14 +3088,15 @@ grammar @conversation {
     fn parse_grammar_fixture() {
         let source = include_str!("../main.conv");
         let tree = Parse.trace(source.to_string()).unwrap();
-        // main.conv: in @sha512 as @oid, in @git(...), grammar @conversation { ... }
-        let grammar = tree
+        // main.conv: in @sha512 as @oid, in @git(...), out @grammar { type = ..., template ... }
+        let out = tree
             .children()
             .iter()
-            .find(|c| c.data().is_decl("grammar"))
-            .expect("grammar block");
-        assert_eq!(grammar.data().value, "@conversation");
-        assert_eq!(grammar.children().len(), 2);
+            .find(|c| c.data().is_decl("out"))
+            .expect("out @grammar block");
+        assert_eq!(out.data().value, "@grammar");
+        // type-def + template
+        assert_eq!(out.children().len(), 2);
     }
 
     #[test]
@@ -3932,5 +3957,101 @@ grammar @conversation {
         let _ = dispatch_keyword(trimmed, &mut lines).unwrap();
         // Single-line keyword should advance past the keyword line
         assert_eq!(lines.peek(), Some("next line"));
+    }
+
+    // -- out block body: type + template keyword dispatch --
+
+    #[test]
+    fn parse_out_block_with_type_def() {
+        let source = "out @grammar {\n  type = grammar | type\n}\n";
+        let tree = parse_source(source).unwrap();
+        let out = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("out"))
+            .expect("expected out @grammar block");
+        assert_eq!(out.data().value, "@grammar");
+
+        // Should contain a type-def child
+        let type_def = out
+            .children()
+            .iter()
+            .find(|c| c.data().is_form("type-def"))
+            .expect("expected type-def inside out block");
+        assert_eq!(type_def.data().value, "");
+
+        // Two variants: grammar, type
+        assert_eq!(type_def.children().len(), 2);
+        assert_eq!(type_def.children()[0].data().value, "grammar");
+        assert_eq!(type_def.children()[1].data().value, "type");
+    }
+
+    #[test]
+    fn parse_out_block_with_template() {
+        let source =
+            "out @grammar {\n  template grammar(name: @oid) {\n    out @prism { .. }\n  }\n}\n";
+        let tree = parse_source(source).unwrap();
+        let out = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("out"))
+            .expect("expected out @grammar block");
+
+        // Should contain a template child
+        let tmpl = out
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("template"))
+            .expect("expected template inside out block");
+        assert_eq!(tmpl.data().value, "grammar");
+    }
+
+    #[test]
+    fn parse_out_block_template_unclosed_error() {
+        // An unclosed template inside a block body triggers parse_template error
+        // propagation through parse_block_body's `?` operator.
+        let source = "out @grammar {\n  template bad() {\n";
+        assert!(parse_source(source).is_err());
+    }
+
+    #[test]
+    fn parse_main_conv_full() {
+        let source = "\
+in @sha512 as @oid
+in @git(namespace: \"conversation\")
+
+out @grammar {
+  type = grammar | type
+
+  template grammar(name: @oid) {
+    out @prism { .. }
+  }
+}
+";
+        let tree = parse_source(source).unwrap();
+
+        // Two `in` declarations + one `out`
+        let ins: Vec<_> = tree
+            .children()
+            .iter()
+            .filter(|c| c.data().is_decl("in"))
+            .collect();
+        assert_eq!(ins.len(), 2);
+
+        let out = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("out"))
+            .expect("expected out @grammar block");
+
+        // out block should have type-def + template
+        assert!(
+            out.children().iter().any(|c| c.data().is_form("type-def")),
+            "expected type-def child"
+        );
+        assert!(
+            out.children().iter().any(|c| c.data().is_decl("template")),
+            "expected template child"
+        );
     }
 }

@@ -5,26 +5,42 @@
 //! Uses write-to-buffer pattern — no heap allocation crosses the FFI boundary.
 
 use crate::compile;
+use crate::matrix;
 use crate::parse::Parse;
 use crate::resolve::TypeRegistry;
 use crate::ContentAddressed;
 use crate::Vector;
 
 /// Parse .conv source → content OID string.
+///
+/// Pipeline: source → parse → Prism → extract vocabulary → encode matrix.
+/// In production with the `git` feature, commits the matrix to
+/// `refs/conversation/<branch>` and returns the commit OID.
+/// Without `git` (or in tests), returns the content-addressed OID.
+///
+/// The git commit path is gated on `not(test)` — tests that need git
+/// integration exercise `commit_matrix_to_repo` directly with isolated
+/// temp repos. `Repository::discover(".")` from a test runner would
+/// find the real repo and race on shared refs.
 fn parse_to_oid(source: &str) -> Result<String, String> {
-    match Parse.trace(source.to_string()).into_result() {
-        Ok(tree) => {
-            #[cfg(feature = "git")]
-            let oid = match commit_prism(&tree) {
-                Ok(commit_oid) => commit_oid,
-                Err(_) => tree.content_oid().as_ref().to_string(),
-            };
-            #[cfg(not(feature = "git"))]
-            let oid = tree.content_oid().as_ref().to_string();
-            Ok(oid)
-        }
-        Err(err) => Err(err.to_string()),
-    }
+    let tree = Parse
+        .trace(source.to_string())
+        .into_result()
+        .map_err(|e| e.to_string())?;
+
+    let vocabulary = matrix::extract_vocabulary(&tree);
+    let _matrix = matrix::encode(&tree, &vocabulary);
+
+    #[cfg(all(feature = "git", not(test)))]
+    let oid = match commit_matrix(&_matrix) {
+        Ok(commit_oid) => commit_oid,
+        Err(_) => tree.content_oid().as_ref().to_string(),
+    };
+
+    #[cfg(any(not(feature = "git"), test))]
+    let oid = tree.content_oid().as_ref().to_string();
+
+    Ok(oid)
 }
 
 /// Compile .conv grammar source → ETF bytes for actor dispatch module.
@@ -72,7 +88,7 @@ unsafe fn write_ffi_result(
 /// - `src_ptr` must point to `src_len` valid UTF-8 bytes.
 /// - `out_ptr` must point to a buffer of at least `out_cap` bytes.
 /// - `out_len` must be a valid pointer.
-#[no_mangle]
+#[cfg_attr(not(test), no_mangle)]
 pub unsafe extern "C" fn conv_parse(
     src_ptr: *const u8,
     src_len: usize,
@@ -104,7 +120,7 @@ pub unsafe extern "C" fn conv_parse(
 /// - `src_ptr` must point to `src_len` valid UTF-8 bytes.
 /// - `out_ptr` must point to a buffer of at least `out_cap` bytes.
 /// - `out_len` must be a valid pointer.
-#[no_mangle]
+#[cfg_attr(not(test), no_mangle)]
 pub unsafe extern "C" fn conv_compile_grammar(
     src_ptr: *const u8,
     src_len: usize,
@@ -129,7 +145,7 @@ pub unsafe extern "C" fn conv_compile_grammar(
 /// - Fractal → tree with `.data` blob + numbered children
 /// - Lens → tree with `.data` blob + `.lens` blob (target OIDs)
 /// - Optics → tree with `.data` blob + `.lens` blob + numbered children
-#[cfg(feature = "git")]
+#[cfg(all(feature = "git", test))]
 fn write_prism_tree(
     repo: &git2::Repository,
     tree: &crate::prism::Prism<crate::ast::AstNode>,
@@ -202,7 +218,7 @@ fn sign_commit(commit_content: &[u8]) -> Result<String, String> {
 /// Writes the Prism tree to git objects, creates an SSH-signed commit
 /// authored by `conversation@systemic.engineering`, and updates
 /// `refs/conversation/<branch>`. Returns the commit OID hex string.
-#[cfg(feature = "git")]
+#[cfg(all(feature = "git", test))]
 fn commit_prism_to_repo(
     repo: &git2::Repository,
     tree: &crate::prism::Prism<crate::ast::AstNode>,
@@ -255,11 +271,86 @@ fn commit_prism_to_repo(
     Ok(commit_oid.to_string())
 }
 
-/// Discover the git repo from cwd and commit.
-#[cfg(feature = "git")]
+/// Discover the git repo from cwd and commit the Prism tree.
+#[cfg(all(feature = "git", test))]
 fn commit_prism(tree: &crate::prism::Prism<crate::ast::AstNode>) -> Result<String, String> {
     let repo = git2::Repository::discover(".").map_err(|e| format!("git repo: {}", e))?;
     commit_prism_to_repo(&repo, tree)
+}
+
+/// Commit a matrix to a git repository.
+///
+/// Writes the matrix bytes as a blob, wraps it in a tree with a `.matrix` entry,
+/// creates an SSH-signed commit authored by `conversation@systemic.engineering`,
+/// and updates `refs/conversation/<branch>`. Returns the commit OID hex string.
+#[cfg(feature = "git")]
+fn commit_matrix_to_repo(repo: &git2::Repository, mat: &matrix::Matrix) -> Result<String, String> {
+    let head = repo.head().map_err(|e| format!("HEAD: {}", e))?;
+    let branch = head
+        .shorthand()
+        .ok_or_else(|| "HEAD: not a branch".to_string())?
+        .to_string();
+
+    // Write matrix bytes as a blob
+    let matrix_bytes = mat.to_bytes();
+    let blob_oid = repo
+        .blob(&matrix_bytes)
+        .map_err(|e| format!("write blob: {}", e))?;
+
+    // Wrap in a tree with a `.matrix` entry
+    let mut builder = repo
+        .treebuilder(None)
+        .map_err(|e| format!("treebuilder: {}", e))?;
+    builder
+        .insert(".matrix", blob_oid, 0o100644)
+        .map_err(|e| format!("insert .matrix: {}", e))?;
+    let tree_oid = builder.write().map_err(|e| format!("write tree: {}", e))?;
+    let git_tree = repo
+        .find_tree(tree_oid)
+        .map_err(|e| format!("find tree: {}", e))?;
+
+    let sig = git2::Signature::now("conversation", "conversation@systemic.engineering")
+        .map_err(|e| format!("signature: {}", e))?;
+
+    // Find parent commit on refs/conversation/<branch> if it exists
+    let ref_name = format!("refs/conversation/{}", branch);
+    let parent_commit;
+    let parents: Vec<&git2::Commit> = match repo.find_reference(&ref_name) {
+        Ok(r) => {
+            let oid = r.target().ok_or_else(|| "ref: no target".to_string())?;
+            parent_commit = repo
+                .find_commit(oid)
+                .map_err(|e| format!("parent commit: {}", e))?;
+            vec![&parent_commit]
+        }
+        Err(_) => vec![],
+    };
+
+    // Build commit content, sign it, write signed commit
+    let commit_buf = repo
+        .commit_create_buffer(&sig, &sig, "matrix", &git_tree, &parents)
+        .map_err(|e| format!("commit buffer: {}", e))?;
+    let commit_content =
+        std::str::from_utf8(&commit_buf).map_err(|e| format!("commit content: {}", e))?;
+
+    let signature = sign_commit(commit_buf.as_ref())?;
+
+    let commit_oid = repo
+        .commit_signed(commit_content, &signature, Some("gpgsig"))
+        .map_err(|e| format!("signed commit: {}", e))?;
+
+    // Update the ref to point to the new commit
+    repo.reference(&ref_name, commit_oid, true, "conversation: matrix commit")
+        .map_err(|e| format!("update ref: {}", e))?;
+
+    Ok(commit_oid.to_string())
+}
+
+/// Discover the git repo from cwd and commit matrix.
+#[cfg(feature = "git")]
+fn commit_matrix(mat: &matrix::Matrix) -> Result<String, String> {
+    let repo = git2::Repository::discover(".").map_err(|e| format!("git repo: {}", e))?;
+    commit_matrix_to_repo(&repo, mat)
 }
 
 #[cfg(test)]
@@ -449,13 +540,15 @@ mod tests {
             let dir = tempfile::tempdir().unwrap();
             let repo = git2::Repository::init(dir.path()).unwrap();
 
-            // Create an initial commit so HEAD points to a branch.
+            // Create an initial commit on an explicit "main" branch so HEAD
+            // has a deterministic shorthand regardless of git config.
             {
                 let sig = git2::Signature::now("test", "test@test").unwrap();
                 let tree_oid = repo.treebuilder(None).unwrap().write().unwrap();
                 let tree = repo.find_tree(tree_oid).unwrap();
-                repo.commit(Some("HEAD"), &sig, &sig, "init", &tree, &[])
+                repo.commit(Some("refs/heads/main"), &sig, &sig, "init", &tree, &[])
                     .unwrap();
+                repo.set_head("refs/heads/main").unwrap();
             }
 
             (dir, repo)
@@ -522,6 +615,65 @@ mod tests {
             // The OID should be a valid git object
             let obj = repo.find_object(oid, None).unwrap();
             assert!(obj.kind() == Some(git2::ObjectType::Tree));
+        }
+
+        #[test]
+        fn commit_matrix_creates_signed_ref() {
+            let (_dir, repo) = init_repo_with_branch();
+
+            let mat = matrix::Matrix::identity(2);
+            let oid_str = commit_matrix_to_repo(&repo, &mat).unwrap();
+            assert!(!oid_str.is_empty());
+
+            // Verify the ref exists
+            let reference = repo.find_reference("refs/conversation/main").unwrap();
+            let commit_oid = reference.target().unwrap();
+            assert_eq!(commit_oid.to_string(), oid_str);
+
+            // Verify commit metadata
+            let commit = repo.find_commit(commit_oid).unwrap();
+            assert_eq!(commit.author().name(), Some("conversation"));
+            assert_eq!(
+                commit.author().email(),
+                Some("conversation@systemic.engineering")
+            );
+            assert_eq!(commit.message(), Some("matrix"));
+
+            // Verify SSH signature exists
+            let (sig_bytes, _) = repo.extract_signature(&commit_oid, None).unwrap();
+            let sig_str = std::str::from_utf8(&sig_bytes).unwrap();
+            assert!(sig_str.contains("BEGIN SSH SIGNATURE"));
+
+            // Verify the tree contains a .matrix blob
+            let tree = commit.tree().unwrap();
+            let entry = tree.get_name(".matrix").unwrap();
+            assert_eq!(entry.kind(), Some(git2::ObjectType::Blob));
+
+            // Verify the blob contents are valid matrix bytes
+            let blob = repo.find_blob(entry.id()).unwrap();
+            let roundtrip = matrix::Matrix::from_bytes(blob.content()).unwrap();
+            assert_eq!(roundtrip.n, 2);
+            assert!((roundtrip.get(0, 0) - 1.0).abs() < 1e-12);
+        }
+
+        #[test]
+        fn commit_matrix_chains_parents() {
+            let (_dir, repo) = init_repo_with_branch();
+
+            let m1 = matrix::Matrix::identity(2);
+            let oid1 = commit_matrix_to_repo(&repo, &m1).unwrap();
+
+            let mut m2 = matrix::Matrix::zeros(2);
+            m2.set(0, 0, 1.0);
+            let oid2 = commit_matrix_to_repo(&repo, &m2).unwrap();
+
+            assert_ne!(oid1, oid2);
+
+            // Second commit should have first as parent
+            let commit2 = repo
+                .find_commit(git2::Oid::from_str(&oid2).unwrap())
+                .unwrap();
+            assert_eq!(commit2.parent_id(0).unwrap().to_string(), oid1);
         }
     }
 }

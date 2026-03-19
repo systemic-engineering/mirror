@@ -2538,23 +2538,29 @@ mod tests {
 
     #[test]
     fn type_registry_compile_main_conv() {
-        // Compile the actual main.conv grammar — the self-describing vocabulary
+        // main.conv now uses `out @grammar { type = grammar | type }` — no top-level grammar block.
+        // Verify the file parses and the type-def is accessible from the out block.
         let main_conv = include_str!("../main.conv");
-        let reg = compile_grammar(main_conv);
-        assert_eq!(reg.domain, "conversation");
-        // Verify the anonymous type has the expected vocabulary
-        assert!(reg.has_variant("", "in"));
-        assert!(reg.has_variant("", "out"));
-        assert!(reg.has_variant("", "template"));
-        assert!(reg.has_variant("", "when"));
-        assert!(reg.has_variant("", "cmp"));
-        // Named type 'op' should exist
-        assert!(reg.has_type("op"));
-        assert!(reg.has_variant("op", "gt"));
-        assert!(reg.has_variant("op", "ne"));
-        // Parameterized variants reference 'op'
-        assert_eq!(reg.params[&("".to_string(), "when".to_string())], "op");
-        assert_eq!(reg.params[&("".to_string(), "cmp".to_string())], "op");
+        let ast = Parse.trace(main_conv.to_string()).unwrap();
+        let out = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("out"))
+            .expect("main.conv must contain an out block");
+        assert_eq!(out.data().value, "@grammar");
+
+        // Extract type vocabulary from the type-def child
+        let type_def = out
+            .children()
+            .iter()
+            .find(|c| c.data().is_form("type-def"))
+            .expect("out @grammar must contain a type-def");
+        let variants: Vec<&str> = type_def
+            .children()
+            .iter()
+            .map(|c| c.data().value.as_str())
+            .collect();
+        assert_eq!(variants, vec!["grammar", "type"]);
     }
 
     #[test]

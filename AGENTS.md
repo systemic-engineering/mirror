@@ -6,10 +6,13 @@ Ground rules. Hard lessons. Architectural boundaries.
 
 ## The boundary
 
-The Rust parser is done. It parses `.conv` source into `Prism<AstNode>` and
-commits it to the in-memory Repo. What crosses the threshold is an OID. That's it.
+Rust owns the full pipeline from source to committed matrix. It parses `.conv`
+source into `Prism<AstNode>`, extracts the type vocabulary, encodes it as an n×n
+projection matrix via Fortran (`beam/native/prism.f90` linked statically), and
+commits the matrix to `.git/refs/conversation/<branch>` as
+`conversation@systemic.engineering`. What crosses the threshold is an OID. That's it.
 
-Everything after parse belongs to the BEAM.
+Everything after the committed matrix belongs to the BEAM.
 
 **Do not extend Rust to handle:**
 - Package discovery or resolution
@@ -21,13 +24,16 @@ Everything after parse belongs to the BEAM.
 These are BEAM concerns. The modules `resolve.rs`, `packages.rs`, `compile.rs`,
 and `property.rs` exist but are being superseded. Do not add features to them.
 
-**The single Rust FFI function that matters:** `conv_parse` in `ffi.rs`.
-It parses `.conv` source, commits the Prism to `.git/refs/conversation/&lt;branch&gt;`
-as `conversation@systemic.engineering`, and returns the OID.
+**The Rust FFI function that matters:** `conv_parse` in `ffi.rs`.
+It parses `.conv` source, encodes the Prism as a matrix, commits it to
+`.git/refs/conversation/<branch>`, and returns the OID. The matrix encoding
+lives in `matrix.rs` — Fortran FFI wrappers, vocabulary extraction, and
+Prism→Matrix projection.
 
-**The BEAM side** (`beam/`) is Gleam. It receives the OID.
-`@conversation` extends `@compiler`. The `@compiler` actor already exists
-(`beam/src/conversation/compiler.gleam`) — signs and witnesses via `Trace`.
+**The BEAM side** (`beam/`) is Gleam. It receives the OID and loads the
+committed matrix. `@conversation` extends `@compiler`. The `@compiler` actor
+already exists (`beam/src/conversation/compiler.gleam`) — signs and witnesses
+via `Trace`.
 
 Each garden package that declares `in @actor` becomes a spawned actor.
 

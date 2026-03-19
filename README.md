@@ -8,28 +8,21 @@ The Rust parser produces a `Prism<AstNode>`. The BEAM runtime converges toward i
 ## Architecture
 
 ```
-main.conv ──→ [Rust] ──→ Prism (projection matrix)
-                              │
-                    git commit to .git/refs/conversation/<branch>
-                    author: conversation@systemic.engineering
-                              │
-                             OID ──→ [BEAM]
-                              │
-                    [Fortran NIF] ← matmul, preview, review, modify, compose
+main.conv → [Rust: parse] → Prism → [Fortran: matmul] → Matrix → [git commit] → OID → [BEAM]
 ```
 
-**Rust** (`src/`): Parses `.conv` source into a `Prism<AstNode>` (projection matrix),
-generates the Fortran wiring + NIF bridge for matrix operations, commits the Prism
-to `.git/refs/conversation/<branch>` as `conversation@systemic.engineering`, and
-hands the OID to the BEAM. The branch is a Lens in the Prism pointing to HEAD.
+**Rust** (`src/`): Parses `.conv` source into a `Prism<AstNode>`, extracts the type
+vocabulary, encodes it as an n×n projection matrix via Fortran, and commits the matrix
+to `.git/refs/conversation/<branch>` as `conversation@systemic.engineering`. The OID
+crosses the FFI threshold to the BEAM. The branch is a Lens in the Prism pointing to HEAD.
 
-**Fortran**: Basic linear algebra on the Prism. The matrix never leaves its native
-representation — no ETF, no JSON, no lossy intermediate format. Rust generates the
-`.f90` and the NIF glue.
+**Fortran** (`beam/native/prism.f90`): Basic linear algebra on the projection matrix —
+preview, review, modify, compose. Linked statically into the Rust binary via `build.rs`.
+The matrix never leaves its native representation — no ETF, no JSON, no lossy intermediate.
 
-**BEAM** (`beam/`): Gleam. Receives the OID. Operates on the Prism through the
-Fortran NIF. Owns resolution, compilation, package discovery, and actor lifecycle.
-The `@conversation` actor extends `@compiler`.
+**BEAM** (`beam/`): Gleam. Receives the OID. Loads the committed matrix. Owns resolution,
+compilation, package discovery, and actor lifecycle. The `@conversation` actor extends
+`@compiler`.
 
 ### Rust modules
 
@@ -39,7 +32,8 @@ The `@conversation` actor extends `@compiler`.
 | `ast.rs` | AstNode, Kind enum — the AST types |
 | `parse.rs` | `.conv` source → `Prism<AstNode>` |
 | `prism.rs` | Content-addressed tree structure |
-| `ffi.rs` | `conv_parse` — the FFI entry point |
+| `matrix.rs` | Fortran FFI, vocabulary extraction, Prism→Matrix encoding |
+| `ffi.rs` | `conv_parse` — the FFI entry point, matrix commit pipeline |
 | `domain/` | Domain implementations (filesystem) |
 | `filter.rs` | Tree filtering |
 | `generate.rs` | Tree generation |

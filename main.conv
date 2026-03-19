@@ -1,15 +1,10 @@
-in @sha512 as @oid           # 2^512 address space — permanent for this universe
-in @git(namespace: "conversation")  # grounded in the conversation git namespace
+in @sha512 as @oid
+in @git(namespace: "conversation")
 
-grammar @conversation {
-  type = in | out | template | field | qualifier | pipe
-       | group | select | template-ref | domain-ref
-       | pipeline | domain-param | ref | alias | expr
-       | use | home | self | path | literal
-       | case | arm | wild | branch | param
-       | when(op) | cmp(op)
-       | grammar | type-def | variant | type-ref
-       | action | annotate
+out @grammar {
+  type = grammar | type
 
-  type op = gt | lt | gte | lte | eq | ne
+  template grammar(name: @oid) {
+    out @prism { .. }
+  }
 }
