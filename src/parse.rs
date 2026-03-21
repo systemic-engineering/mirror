@@ -907,11 +907,28 @@ fn parse_pipeline_segment(seg: &str, span: Span) -> Prism<AstNode> {
 ///
 /// Header has already been stripped of `grammar `. Contains `@name {`.
 /// Type definitions and continuation lines parsed inside the block.
+/// Parse `@name extends @a, @b` from the grammar header (before `{`).
+///
+/// Returns `(name, extends_domains)` where extends_domains is empty if no
+/// `extends` clause is present.
+fn parse_extends_clause(name_and_extends: &str) -> (&str, Vec<&str>) {
+    if let Some((name, extends_part)) = name_and_extends.split_once(" extends ") {
+        let domains: Vec<&str> = extends_part
+            .split(',')
+            .map(|s| s.trim())
+            .filter(|s| !s.is_empty())
+            .collect();
+        (name.trim(), domains)
+    } else {
+        (name_and_extends, vec![])
+    }
+}
+
 fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     let start_span = lines.current_span();
 
     // Extract @name and verify opening brace
-    let (name, rest) = match header.split_once('{') {
+    let (name_part, rest) = match header.split_once('{') {
         Some((n, r)) => (n.trim(), r),
         None => {
             return Err(ParseError {
@@ -921,6 +938,15 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
         }
     };
 
+    // Parse optional extends clause from header
+    let (name, extends_domains) = parse_extends_clause(name_part);
+
+    // Build extends children as Ref nodes
+    let extends_children: Vec<Prism<AstNode>> = extends_domains
+        .iter()
+        .map(|domain| ast::ast_leaf(Kind::Ref, "extends", *domain, start_span))
+        .collect();
+
     // Check for single-line empty grammar: `grammar @name {}`
     if rest.trim() == "}" {
         lines.advance();
@@ -929,7 +955,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
             "grammar",
             name,
             start_span,
-            vec![],
+            extends_children,
         ));
     }
 
@@ -956,7 +982,9 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
             let end_span = lines.current_span();
             lines.advance();
             let span = start_span.merge(&end_span);
-            return Ok(ast::ast_branch(Kind::Decl, "grammar", name, span, defs));
+            let mut all_children = extends_children;
+            all_children.append(&mut defs);
+            return Ok(ast::ast_branch(Kind::Decl, "grammar", name, span, all_children));
         }
 
         if trimmed.is_empty() || trimmed.starts_with('#') {

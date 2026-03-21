@@ -4,6 +4,7 @@
 //! callable from C NIF wrappers.
 //! Uses write-to-buffer pattern — no heap allocation crosses the FFI boundary.
 
+use crate::domain::conversation::Kind;
 use crate::compile;
 use crate::parse::Parse;
 use crate::resolve::TypeRegistry;
@@ -41,7 +42,26 @@ fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
         .ok_or_else(|| "no grammar block found".to_string())?;
 
     let registry = TypeRegistry::compile(grammar_node).map_err(|e| e.to_string())?;
-    Ok(compile::emit_actor_module(&registry))
+
+    // Collect lenses from `in @domain` siblings, filtering self-references
+    let domain_name = registry.domain.clone();
+    let lenses: Vec<String> = ast
+        .children()
+        .iter()
+        .filter(|c| c.data().is_decl("in"))
+        .map(|c| c.data().value.trim_start_matches('@').to_string())
+        .filter(|d| *d != domain_name)
+        .collect();
+
+    // Collect extends from grammar children (Ref nodes with name "extends")
+    let extends: Vec<String> = grammar_node
+        .children()
+        .iter()
+        .filter(|c| c.data().kind == Kind::Ref && c.data().name == "extends")
+        .map(|c| c.data().value.trim_start_matches('@').to_string())
+        .collect();
+
+    Ok(compile::emit_actor_module(&registry, &lenses, &extends))
 }
 
 /// Write FFI result to output buffer. Returns 0 on success, -1 on error.

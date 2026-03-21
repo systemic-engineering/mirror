@@ -164,7 +164,7 @@ fn emit_actor_module_produces_valid_etf() {
     let registry = compile_grammar(
         "grammar @compiler {\n  type = target\n  type target = eaf | beam\n  action compile {\n    source: target\n  }\n}\n",
     );
-    let eaf_bytes = compile::emit_actor_module(&registry);
+    let eaf_bytes = compile::emit_actor_module(&registry, &[], &[]);
     assert!(!eaf_bytes.is_empty());
     // ETF always starts with version byte 131
     assert_eq!(eaf_bytes[0], 131);
@@ -180,8 +180,8 @@ fn emit_actor_module_deterministic() {
         "grammar @compiler {\n  type = target\n  type target = eaf\n  action compile {\n    source: target\n  }\n}\n",
     );
     assert_eq!(
-        compile::emit_actor_module(&a),
-        compile::emit_actor_module(&b),
+        compile::emit_actor_module(&a, &[], &[]),
+        compile::emit_actor_module(&b, &[], &[]),
     );
 }
 
@@ -191,7 +191,7 @@ fn emit_actor_module_exports_acts() {
     let registry = compile_grammar(
         "grammar @mail {\n  type = address\n  action send {\n    to: address\n  }\n  action reply {\n    to: address\n  }\n}\n",
     );
-    let eaf_bytes = compile::emit_actor_module(&registry);
+    let eaf_bytes = compile::emit_actor_module(&registry, &[], &[]);
     assert!(!eaf_bytes.is_empty());
     assert_eq!(eaf_bytes[0], 131);
     // decode and check: module should export send/1 and reply/1
@@ -202,7 +202,7 @@ fn emit_actor_module_exports_acts() {
 #[test]
 fn emit_actor_module_no_acts() {
     let registry = compile_grammar("grammar @empty {\n  type = a | b\n}\n");
-    let eaf_bytes = compile::emit_actor_module(&registry);
+    let eaf_bytes = compile::emit_actor_module(&registry, &[], &[]);
     assert!(!eaf_bytes.is_empty());
     assert_eq!(eaf_bytes[0], 131);
 }
@@ -213,7 +213,7 @@ fn emit_actor_module_with_action_call() {
     let registry = compile_grammar(
         "grammar @integration {\n  type source = edge | branch\n  action commit {\n    source: source\n    @filesystem.write(source)\n  }\n}\n",
     );
-    let eaf_bytes = compile::emit_actor_module(&registry);
+    let eaf_bytes = compile::emit_actor_module(&registry, &[], &[]);
     assert!(!eaf_bytes.is_empty());
     assert_eq!(eaf_bytes[0], 131);
 }
@@ -226,7 +226,7 @@ fn emit_actor_module_cross_actor_call_in_body() {
     let registry = compile_grammar(
         "grammar @integration {\n  type source = edge | branch\n  action commit {\n    source: source\n    @filesystem.write(source)\n  }\n}\n",
     );
-    let eaf_bytes = compile::emit_actor_module(&registry);
+    let eaf_bytes = compile::emit_actor_module(&registry, &[], &[]);
 
     // Decode ETF and search for the filesystem atom in the forms
     let term = eetf::Term::decode(Cursor::new(&eaf_bytes)).unwrap();

@@ -152,25 +152,27 @@ fn emit_branch_arm(arm: &crate::resolve::BranchArm, line: i32) -> Term {
 /// -export([compile/1]).
 /// compile(Args) -> gen_server:call('@compiler', {compile, Args}).
 /// ```
-pub fn emit_actor_module(registry: &TypeRegistry) -> Vec<u8> {
-    let module_name = &registry.domain;
+pub fn emit_actor_module(registry: &TypeRegistry, lenses: &[String], extends: &[String]) -> Vec<u8> {
+    let beam_module = format!("conv_{}", registry.domain);
     let act_names = registry.act_names();
 
     let mut forms = Vec::new();
 
-    // {attribute, 1, module, ModuleName}
+    // {attribute, 1, module, conv_Domain}
     forms.push(eaf_tuple(vec![
         eaf_atom("attribute"),
         eaf_int(1),
         eaf_atom("module"),
-        eaf_atom(module_name),
+        eaf_atom(&beam_module),
     ]));
 
-    // {attribute, 2, export, [{act1, 1}, {act2, 1}, ...]}
-    let exports: Vec<Term> = act_names
+    // {attribute, 2, export, [{act1, 1}, ..., {lenses, 0}, {extends, 0}]}
+    let mut exports: Vec<Term> = act_names
         .iter()
         .map(|name| eaf_tuple(vec![eaf_atom(name), eaf_int(1)]))
         .collect();
+    exports.push(eaf_tuple(vec![eaf_atom("lenses"), eaf_int(0)]));
+    exports.push(eaf_tuple(vec![eaf_atom("extends"), eaf_int(0)]));
     forms.push(eaf_tuple(vec![
         eaf_atom("attribute"),
         eaf_int(2),
@@ -184,9 +186,16 @@ pub fn emit_actor_module(registry: &TypeRegistry) -> Vec<u8> {
     let mut line = 3i32;
     for name in &act_names {
         let calls = registry.action_calls(name);
-        forms.push(emit_act_function(module_name, name, calls, line));
+        forms.push(emit_act_function(&registry.domain, name, calls, line));
         line += 1;
     }
+
+    // lenses/0 → [<<"domain1">>, <<"domain2">>, ...]
+    forms.push(emit_string_list_function("lenses", lenses, line));
+    line += 1;
+
+    // extends/0 → [<<"parent1">>, <<"parent2">>, ...]
+    forms.push(emit_string_list_function("extends", extends, line));
 
     let term = Term::from(List::from(forms));
     let mut buf = Vec::new();
@@ -268,6 +277,30 @@ fn emit_gen_server_call(module: &str, action: &str, args_var: &Term, line: i32) 
             eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom(module)]),
             dispatch_tuple,
         ]),
+    ])
+}
+
+/// Emit a zero-arity function returning a list of binaries.
+///
+/// ```erlang
+/// name() -> [<<"a">>, <<"b">>].
+/// ```
+fn emit_string_list_function(name: &str, values: &[String], line: i32) -> Term {
+    let elements: Vec<Term> = values.iter().map(|v| eaf_bin(line, v)).collect();
+    let body = eaf_cons_list(&elements, line);
+
+    eaf_tuple(vec![
+        eaf_atom("function"),
+        eaf_int(line),
+        eaf_atom(name),
+        eaf_int(0),
+        eaf_list(vec![eaf_tuple(vec![
+            eaf_atom("clause"),
+            eaf_int(line),
+            eaf_list(vec![]),  // no args
+            eaf_list(vec![]),  // no guards
+            eaf_list(vec![body]),
+        ])]),
     ])
 }
 
