@@ -676,4 +676,45 @@ mod tests {
             assert_eq!(commit2.parent_id(0).unwrap().to_string(), oid1);
         }
     }
+
+    #[test]
+    fn compile_grammar_includes_extends() {
+        let etf = compile_grammar_to_etf(
+            "grammar @fox extends @smash, @controller {\n  type = move | attack\n}\n",
+        )
+        .unwrap();
+
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let forms_str = format!("{:?}", term);
+        assert!(
+            forms_str.contains("extends"),
+            "expected 'extends' export in EAF: {}",
+            forms_str,
+        );
+        let smash_bytes: Vec<u8> = "smash".bytes().collect();
+        assert!(
+            forms_str.contains(&format!("{:?}", smash_bytes)),
+            "expected 'smash' extends bytes in EAF: {}",
+            forms_str,
+        );
+        let controller_bytes: Vec<u8> = "controller".bytes().collect();
+        assert!(
+            forms_str.contains(&format!("{:?}", controller_bytes)),
+            "expected 'controller' extends bytes in EAF: {}",
+            forms_str,
+        );
+    }
+
+    #[test]
+    fn compile_grammar_no_extends_when_absent() {
+        let etf = compile_grammar_to_etf("grammar @test {\n  type = a | b\n}\n").unwrap();
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let forms_str = format!("{:?}", term);
+        // extends/0 should still exist but return empty list
+        assert!(
+            forms_str.contains("extends"),
+            "expected 'extends' export even when empty: {}",
+            forms_str,
+        );
+    }
 }

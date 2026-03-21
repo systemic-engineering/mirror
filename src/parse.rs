@@ -4054,4 +4054,79 @@ out @grammar {
             "expected template child"
         );
     }
+
+    // -- Grammar extends --
+
+    #[test]
+    fn parse_grammar_extends_single() {
+        let source = "grammar @fox extends @smash {\n  type = move | attack\n}\n";
+        let tree = parse_source(source).unwrap();
+        let grammar = &tree.children()[0];
+        assert!(grammar.data().is_decl("grammar"));
+        assert_eq!(grammar.data().value, "@fox");
+
+        // Should have extends children
+        let extends: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_ref("extends"))
+            .collect();
+        assert_eq!(extends.len(), 1);
+        assert_eq!(extends[0].data().value, "@smash");
+
+        // Types still parsed
+        let type_defs: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_form("type-def"))
+            .collect();
+        assert_eq!(type_defs.len(), 1);
+    }
+
+    #[test]
+    fn parse_grammar_extends_multiple() {
+        let source = "grammar @fox extends @smash, @controller {\n  type = move | attack\n}\n";
+        let tree = parse_source(source).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.data().value, "@fox");
+
+        let extends: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_ref("extends"))
+            .collect();
+        assert_eq!(extends.len(), 2);
+        assert_eq!(extends[0].data().value, "@smash");
+        assert_eq!(extends[1].data().value, "@controller");
+    }
+
+    #[test]
+    fn parse_grammar_extends_empty_body() {
+        let source = "grammar @fox extends @smash {}\n";
+        let tree = parse_source(source).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.data().value, "@fox");
+
+        let extends: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_ref("extends"))
+            .collect();
+        assert_eq!(extends.len(), 1);
+        assert_eq!(extends[0].data().value, "@smash");
+    }
+
+    #[test]
+    fn parse_grammar_no_extends_has_no_extends_children() {
+        let source = "grammar @test {\n  type = a | b\n}\n";
+        let tree = parse_source(source).unwrap();
+        let grammar = &tree.children()[0];
+
+        let extends: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_ref("extends"))
+            .collect();
+        assert_eq!(extends.len(), 0);
+    }
 }
