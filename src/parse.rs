@@ -1074,6 +1074,24 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
             continue;
         }
 
+        // Construct definition: `name(params) = path` or `name = path`
+        // Detected by `=` with a path-like RHS (contains `/` or starts with `.`).
+        if let Some(construct) = parse_construct_def(trimmed, lines.current_span()) {
+            // Flush any pending type def
+            if let Some((type_name, type_span, variants)) = current.take() {
+                defs.push(ast::ast_branch(
+                    Kind::Form,
+                    "type-def",
+                    &*type_name,
+                    type_span,
+                    variants,
+                ));
+            }
+            defs.push(construct);
+            lines.advance();
+            continue;
+        }
+
         lines.advance();
     }
 
@@ -1081,6 +1099,52 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
         message: "unclosed grammar block".into(),
         span: Some(start_span),
     })
+}
+
+/// Parse a construct definition: `name(params) = path` or `name = path`.
+///
+/// Returns `Some(Form("construct-def", name))` with param and path children,
+/// or `None` if the line doesn't match the construct-def pattern.
+/// A construct-def is distinguished from a type-def by the RHS containing
+/// `/` or starting with `.` (a file path, not a variant list).
+fn parse_construct_def(line: &str, span: Span) -> Option<Prism<AstNode>> {
+    let (lhs, rhs) = line.split_once('=')?;
+    let rhs = rhs.trim();
+
+    // RHS must look like a path (contains `/` or starts with `.`)
+    if !rhs.contains('/') && !rhs.starts_with('.') {
+        return None;
+    }
+
+    let lhs = lhs.trim();
+
+    // Extract name and optional params: `name(p1, p2)` or just `name`
+    let (name, params) = if let Some(paren) = lhs.find('(') {
+        let name = lhs[..paren].trim();
+        let params_str = lhs[paren + 1..].trim_end_matches(')');
+        let params: Vec<&str> = params_str
+            .split(',')
+            .map(|s| s.trim())
+            .filter(|s| !s.is_empty())
+            .collect();
+        (name, params)
+    } else {
+        (lhs, vec![])
+    };
+
+    let mut children = Vec::new();
+    for &param in &params {
+        children.push(ast::ast_leaf(Kind::Ref, "param", param, span));
+    }
+    children.push(ast::ast_leaf(Kind::Atom, "path", rhs, span));
+
+    Some(ast::ast_branch(
+        Kind::Form,
+        "construct-def",
+        name,
+        span,
+        children,
+    ))
 }
 
 /// Split a grammar header's name from an optional `extends` clause.
@@ -4345,5 +4409,20 @@ out @grammar {
         assert_eq!(params.len(), 2);
         assert_eq!(params[0].data().value, "@source");
         assert_eq!(params[1].data().value, "@target");
+    }
+
+    #[test]
+    fn parse_grammar_non_path_assignment_not_construct_def() {
+        // `x = y` where y doesn't look like a path → skipped, not a construct-def
+        let source = "grammar @test {\n  type = a\n  alias = something\n}\n";
+        let tree = parse_source(source).unwrap();
+        let grammar = &tree.children()[0];
+
+        let constructs: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_form("construct-def"))
+            .collect();
+        assert_eq!(constructs.len(), 0);
     }
 }
