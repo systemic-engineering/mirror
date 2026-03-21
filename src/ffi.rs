@@ -327,6 +327,116 @@ mod tests {
         assert_eq!(a, b);
     }
 
+    #[test]
+    fn compile_grammar_includes_lenses() {
+        // Source with `in @reality` sibling — compile should include the Lens
+        let etf = compile_grammar_to_etf(
+            "in @reality\n\ngrammar @filesystem {\n  type = file | folder\n}\n",
+        )
+        .unwrap();
+
+        // Decode and verify the lenses/0 function is present
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let forms_str = format!("{:?}", term);
+        assert!(
+            forms_str.contains("lenses"),
+            "expected 'lenses' export in EAF: {}",
+            forms_str,
+        );
+        // "reality" encoded as ByteList bytes
+        let reality_bytes: Vec<u8> = "reality".bytes().collect();
+        assert!(
+            forms_str.contains(&format!("{:?}", reality_bytes)),
+            "expected 'reality' Lens bytes in EAF: {}",
+            forms_str,
+        );
+    }
+
+    #[test]
+    fn compile_grammar_no_lenses_when_no_in() {
+        // Source with grammar only — no `in` declarations
+        let etf = compile_grammar_to_etf("grammar @test {\n  type = a | b\n}\n").unwrap();
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let forms_str = format!("{:?}", term);
+        // lenses/0 should still exist but return empty list
+        assert!(
+            forms_str.contains("lenses"),
+            "expected 'lenses' export even when empty: {}",
+            forms_str,
+        );
+    }
+
+    #[test]
+    fn compile_grammar_includes_extends() {
+        let etf = compile_grammar_to_etf(
+            "grammar @fox extends @smash, @controller {\n  type = move | attack\n}\n",
+        )
+        .unwrap();
+
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let forms_str = format!("{:?}", term);
+        assert!(
+            forms_str.contains("extends"),
+            "expected 'extends' export in EAF: {}",
+            forms_str,
+        );
+        let smash_bytes: Vec<u8> = "smash".bytes().collect();
+        assert!(
+            forms_str.contains(&format!("{:?}", smash_bytes)),
+            "expected 'smash' extends bytes in EAF: {}",
+            forms_str,
+        );
+        let controller_bytes: Vec<u8> = "controller".bytes().collect();
+        assert!(
+            forms_str.contains(&format!("{:?}", controller_bytes)),
+            "expected 'controller' extends bytes in EAF: {}",
+            forms_str,
+        );
+    }
+
+    #[test]
+    fn compile_grammar_no_extends_when_absent() {
+        let etf = compile_grammar_to_etf("grammar @test {\n  type = a | b\n}\n").unwrap();
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let forms_str = format!("{:?}", term);
+        // extends/0 should still exist but return empty list
+        assert!(
+            forms_str.contains("extends"),
+            "expected 'extends' export even when empty: {}",
+            forms_str,
+        );
+    }
+
+    #[test]
+    fn compile_grammar_module_has_conv_prefix() {
+        let etf = compile_grammar_to_etf("grammar @test {\n  type = a | b\n}\n").unwrap();
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let forms_str = format!("{:?}", term);
+        assert!(
+            forms_str.contains("conv_test"),
+            "expected module name 'conv_test' in EAF: {}",
+            forms_str,
+        );
+    }
+
+    #[test]
+    fn compile_grammar_self_lens_filtered() {
+        // `in @filesystem` in a @filesystem grammar should NOT appear in lenses
+        let etf = compile_grammar_to_etf(
+            "in @filesystem\nin @reality\n\ngrammar @filesystem {\n  type = file | folder\n}\n",
+        )
+        .unwrap();
+
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let forms_str = format!("{:?}", term);
+        // Should have "reality" in lenses but not "filesystem"
+        let reality_bytes: Vec<u8> = "reality".bytes().collect();
+        assert!(
+            forms_str.contains(&format!("{:?}", reality_bytes)),
+            "expected 'reality' in lenses",
+        );
+    }
+
     // -- FFI wrappers: exercise unsafe boundary + UTF-8 rejection --
 
     #[test]

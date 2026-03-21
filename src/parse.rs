@@ -3061,6 +3061,68 @@ grammar @conversation {
     }
 
     #[test]
+    fn parse_grammar_extends() {
+        let source = "grammar @fox extends @smash, @controller {\n  type = move | attack\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .expect("grammar block");
+        assert_eq!(grammar.data().value, "@fox");
+
+        // Should have extends children as Ref nodes
+        let extends: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().kind == Kind::Ref && c.data().name == "extends")
+            .collect();
+        assert_eq!(extends.len(), 2, "expected 2 extends refs");
+        assert_eq!(extends[0].data().value, "@smash");
+        assert_eq!(extends[1].data().value, "@controller");
+    }
+
+    #[test]
+    fn parse_grammar_extends_single() {
+        let source = "grammar @cat extends @animal {\n  type = purr\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .expect("grammar block");
+        assert_eq!(grammar.data().value, "@cat");
+
+        let extends: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().kind == Kind::Ref && c.data().name == "extends")
+            .collect();
+        assert_eq!(extends.len(), 1, "expected 1 extends ref");
+        assert_eq!(extends[0].data().value, "@animal");
+    }
+
+    #[test]
+    fn parse_grammar_no_extends() {
+        // Existing grammars without extends should still work and have no extends children
+        let source = "grammar @plain {\n  type = a | b\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .expect("grammar block");
+        assert_eq!(grammar.data().value, "@plain");
+
+        let extends: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().kind == Kind::Ref && c.data().name == "extends")
+            .collect();
+        assert_eq!(extends.len(), 0, "expected no extends refs");
+    }
+
+    #[test]
     fn parse_grammar_fixture() {
         let source = include_str!("../main.conv");
         let tree = Parse.trace(source.to_string()).unwrap();
