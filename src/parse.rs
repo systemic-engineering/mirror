@@ -4252,4 +4252,98 @@ out @grammar {
             .collect();
         assert_eq!(extends.len(), 0);
     }
+
+    // -- Construct definitions: name(params) = path --
+
+    #[test]
+    fn parse_grammar_construct_def() {
+        let source = "grammar @conversation {\n  type = grammar | type\n  extends(@domain) = @SELF/extends.erl\n}\n";
+        let tree = parse_source(source).unwrap();
+        let grammar = &tree.children()[0];
+        assert_eq!(grammar.data().value, "@conversation");
+
+        let constructs: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_form("construct-def"))
+            .collect();
+        assert_eq!(constructs.len(), 1);
+
+        let ext = &constructs[0];
+        assert_eq!(ext.data().value, "extends");
+
+        // Should have param child
+        let params: Vec<_> = ext
+            .children()
+            .iter()
+            .filter(|c| c.data().is_ref("param"))
+            .collect();
+        assert_eq!(params.len(), 1);
+        assert_eq!(params[0].data().value, "@domain");
+
+        // Should have path child
+        let paths: Vec<_> = ext
+            .children()
+            .iter()
+            .filter(|c| c.data().is_atom("path"))
+            .collect();
+        assert_eq!(paths.len(), 1);
+        assert_eq!(paths[0].data().value, "@SELF/extends.erl");
+    }
+
+    #[test]
+    fn parse_grammar_construct_def_no_params() {
+        let source = "grammar @test {\n  type = a\n  foo = ./foo.erl\n}\n";
+        let tree = parse_source(source).unwrap();
+        let grammar = &tree.children()[0];
+
+        let constructs: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_form("construct-def"))
+            .collect();
+        assert_eq!(constructs.len(), 1);
+        assert_eq!(constructs[0].data().value, "foo");
+
+        // No param children
+        let params: Vec<_> = constructs[0]
+            .children()
+            .iter()
+            .filter(|c| c.data().is_ref("param"))
+            .collect();
+        assert_eq!(params.len(), 0);
+
+        // Path child
+        let paths: Vec<_> = constructs[0]
+            .children()
+            .iter()
+            .filter(|c| c.data().is_atom("path"))
+            .collect();
+        assert_eq!(paths.len(), 1);
+        assert_eq!(paths[0].data().value, "./foo.erl");
+    }
+
+    #[test]
+    fn parse_grammar_construct_def_multiple_params() {
+        let source = "grammar @test {\n  translate(@source, @target) = @SELF/translate.erl\n}\n";
+        let tree = parse_source(source).unwrap();
+        let grammar = &tree.children()[0];
+
+        let constructs: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_form("construct-def"))
+            .collect();
+        assert_eq!(constructs.len(), 1);
+        assert_eq!(constructs[0].data().value, "translate");
+
+        let params: Vec<_> = constructs[0]
+            .children()
+            .iter()
+            .filter(|c| c.data().is_ref("param"))
+            .collect();
+        assert_eq!(params.len(), 2);
+        assert_eq!(params[0].data().value, "@source");
+        assert_eq!(params[1].data().value, "@target");
+    }
 }
