@@ -120,6 +120,7 @@ const KEYWORD_TABLE: &[(&str, KeywordHandler)] = &[
     ("case ", parse_case),
     ("template ", parse_template),
     ("out ", parse_out),
+    ("abstract grammar ", parse_grammar),
     ("grammar ", parse_grammar),
 ];
 
@@ -140,7 +141,11 @@ fn dispatch_keyword(
 /// `in @domain` / `in @domain(params)` / `in @domain as $name`
 fn parse_in_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     let span = lines.current_span();
-    let rest = rest.trim();
+    // Strip trailing comment: `in @domain  # comment` → `@domain`
+    let rest = match rest.find('#') {
+        Some(i) => rest[..i].trim(),
+        None => rest.trim(),
+    };
 
     // Split alias: "in @domain as $name" or "in @domain(params) as $name"
     let (domain_part, alias) = match rest.split_once(" as ") {
@@ -929,13 +934,15 @@ fn parse_pipeline_segment(seg: &str, span: Span) -> Prism<AstNode> {
 
 /// Parse a grammar block: `@name {\n  type = ...\n  type op = ...\n}\n`
 ///
+/// Also handles extends: `@name extends @parent1, @parent2 { ... }`
+///
 /// Header has already been stripped of `grammar `. Contains `@name {`.
 /// Type definitions and continuation lines parsed inside the block.
 fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     let start_span = lines.current_span();
 
     // Extract @name and verify opening brace
-    let (name, rest) = match header.split_once('{') {
+    let (name_and_extends, rest) = match header.split_once('{') {
         Some((n, r)) => (n.trim(), r),
         None => {
             return Err(ParseError {
@@ -945,6 +952,15 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
         }
     };
 
+    // Split name from extends clause: `@fox extends @smash, @controller`
+    let (name, extends_domains) = parse_extends_clause(name_and_extends);
+
+    // Build extends children as Ref("extends", "@domain") nodes
+    let extends_children: Vec<Prism<AstNode>> = extends_domains
+        .iter()
+        .map(|&domain| ast::ast_leaf(Kind::Ref, "extends", domain, start_span))
+        .collect();
+
     // Check for single-line empty grammar: `grammar @name {}`
     if rest.trim() == "}" {
         lines.advance();
@@ -953,13 +969,13 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
             "grammar",
             name,
             start_span,
-            vec![],
+            extends_children,
         ));
     }
 
     lines.advance(); // consume grammar header line
 
-    let mut defs: Vec<Prism<AstNode>> = Vec::new();
+    let mut defs: Vec<Prism<AstNode>> = extends_children;
     // Accumulate variants for the current type def (name, span, variants)
     let mut current: Option<(String, Span, Vec<Prism<AstNode>>)> = None;
 
@@ -1065,6 +1081,23 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
         message: "unclosed grammar block".into(),
         span: Some(start_span),
     })
+}
+
+/// Split a grammar header's name from an optional `extends` clause.
+///
+/// `@fox extends @smash, @controller` → ("@fox", ["@smash", "@controller"])
+/// `@test` → ("@test", [])
+fn parse_extends_clause(name_and_extends: &str) -> (&str, Vec<&str>) {
+    if let Some((name, extends_part)) = name_and_extends.split_once(" extends ") {
+        let domains: Vec<&str> = extends_part
+            .split(',')
+            .map(|s| s.trim())
+            .filter(|s| !s.is_empty())
+            .collect();
+        (name.trim(), domains)
+    } else {
+        (name_and_extends, vec![])
+    }
 }
 
 /// Parse a type definition into name + initial variants.
@@ -1374,6 +1407,23 @@ pub struct PropertyCheck {
     pub property: String,
 }
 
+/// Split source into spec and optional test section (everything after `\n---\n`).
+pub fn split_test_section(source: &str) -> (&str, Option<&str>) {
+    if let Some(pos) = source.find("\n---\n") {
+        let test_part = &source[pos + 5..];
+        (&source[..pos], Some(test_part))
+    } else if let Some(pos) = source.find("\n---") {
+        let rest = &source[pos + 4..];
+        if rest.is_empty() || rest.chars().all(char::is_whitespace) {
+            (&source[..pos], None)
+        } else {
+            (source, None)
+        }
+    } else {
+        (source, None)
+    }
+}
+
 /// Parse a test section into directives.
 pub fn parse_test_section(source: &str) -> Result<Vec<TestDirective>, ParseError> {
     let mut directives = Vec::new();
@@ -1671,6 +1721,19 @@ mod tests {
             .unwrap();
         assert!(in_node.is_shard());
         assert_eq!(in_node.data().value, "@filesystem");
+    }
+
+    #[test]
+    fn parse_in_strips_comment() {
+        let source = "in @ca   # every enactment is witnessed\n".to_string();
+        let tree = Parse.trace(source).unwrap();
+        let in_node = tree
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("in"))
+            .unwrap()
+            .clone();
+        assert_eq!(in_node.data().value, "@ca");
     }
 
     // -- Parse `template $name { fields }` --
@@ -2849,6 +2912,27 @@ grammar @conversation {
             "expected mention of '{{': {}",
             err.message
         );
+    }
+
+    // -- Abstract grammar --
+
+    #[test]
+    fn parse_abstract_grammar() {
+        let source =
+            "abstract grammar @reality {\n  type = effect | target\n  abstract act enact(effect)\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        assert!(grammar.data().is_decl("grammar"));
+        assert_eq!(grammar.data().value, "@reality");
+        // Type defs parsed, abstract act skipped (unknown line)
+        let type_defs: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_form("type-def"))
+            .collect();
+        assert_eq!(type_defs.len(), 1);
+        assert_eq!(type_defs[0].data().value, "");
+        assert_eq!(type_defs[0].children().len(), 2); // effect, target
     }
 
     // -- Parse `action` in grammar blocks --
@@ -4053,6 +4137,45 @@ out @grammar {
             out.children().iter().any(|c| c.data().is_decl("template")),
             "expected template child"
         );
+    }
+
+    // -- split_test_section --
+
+    #[test]
+    fn split_no_separator() {
+        let (spec, test) = split_test_section("grammar @x { type = a }");
+        assert_eq!(spec, "grammar @x { type = a }");
+        assert!(test.is_none());
+    }
+
+    #[test]
+    fn split_with_test_section() {
+        let source = "grammar @x { type = a }\n---\ntest \"t\" { @x has a }";
+        let (spec, test) = split_test_section(source);
+        assert_eq!(spec, "grammar @x { type = a }");
+        assert_eq!(test.unwrap(), "test \"t\" { @x has a }");
+    }
+
+    #[test]
+    fn split_trailing_separator() {
+        let (spec, test) = split_test_section("grammar @x { type = a }\n---");
+        assert_eq!(spec, "grammar @x { type = a }");
+        assert!(test.is_none());
+    }
+
+    #[test]
+    fn split_trailing_separator_whitespace() {
+        let (spec, test) = split_test_section("grammar @x { type = a }\n---  \n");
+        assert_eq!(spec, "grammar @x { type = a }");
+        assert!(test.is_none());
+    }
+
+    #[test]
+    fn split_dashes_followed_by_text_not_separator() {
+        let source = "grammar @x { type = a }\n---not a separator";
+        let (spec, test) = split_test_section(source);
+        assert_eq!(spec, source);
+        assert!(test.is_none());
     }
 
     // -- Grammar extends --

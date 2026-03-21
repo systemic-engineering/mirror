@@ -152,25 +152,34 @@ fn emit_branch_arm(arm: &crate::resolve::BranchArm, line: i32) -> Term {
 /// -export([compile/1]).
 /// compile(Args) -> gen_server:call('@compiler', {compile, Args}).
 /// ```
-pub fn emit_actor_module(registry: &TypeRegistry) -> Vec<u8> {
-    let module_name = &registry.domain;
+pub fn emit_actor_module(
+    registry: &TypeRegistry,
+    lenses: &[String],
+    extends: &[String],
+) -> Vec<u8> {
+    let domain = &registry.domain;
+    let beam_module = format!("conv_{}", domain);
     let act_names = registry.act_names();
 
     let mut forms = Vec::new();
 
-    // {attribute, 1, module, ModuleName}
+    // {attribute, 1, module, conv_<domain>}
+    // Prefixed to avoid collisions with BEAM built-in modules (e.g., 'erlang').
+    // gen_server dispatch still targets the raw domain atom.
     forms.push(eaf_tuple(vec![
         eaf_atom("attribute"),
         eaf_int(1),
         eaf_atom("module"),
-        eaf_atom(module_name),
+        eaf_atom(&beam_module),
     ]));
 
-    // {attribute, 2, export, [{act1, 1}, {act2, 1}, ...]}
-    let exports: Vec<Term> = act_names
+    // {attribute, 2, export, [{act1, 1}, ..., {lenses, 0}, {extends, 0}]}
+    let mut exports: Vec<Term> = act_names
         .iter()
         .map(|name| eaf_tuple(vec![eaf_atom(name), eaf_int(1)]))
         .collect();
+    exports.push(eaf_tuple(vec![eaf_atom("lenses"), eaf_int(0)]));
+    exports.push(eaf_tuple(vec![eaf_atom("extends"), eaf_int(0)]));
     forms.push(eaf_tuple(vec![
         eaf_atom("attribute"),
         eaf_int(2),
@@ -184,9 +193,42 @@ pub fn emit_actor_module(registry: &TypeRegistry) -> Vec<u8> {
     let mut line = 3i32;
     for name in &act_names {
         let calls = registry.action_calls(name);
-        forms.push(emit_act_function(module_name, name, calls, line));
+        forms.push(emit_act_function(domain, name, calls, line));
         line += 1;
     }
+
+    // lenses/0 → [<<"domain1">>, <<"domain2">>, ...]
+    let lens_terms: Vec<Term> = lenses.iter().map(|d| eaf_bin(line, d)).collect();
+    forms.push(eaf_tuple(vec![
+        eaf_atom("function"),
+        eaf_int(line),
+        eaf_atom("lenses"),
+        eaf_int(0),
+        eaf_list(vec![eaf_tuple(vec![
+            eaf_atom("clause"),
+            eaf_int(line),
+            eaf_list(vec![]),
+            eaf_list(vec![]),
+            eaf_list(vec![eaf_cons_list(&lens_terms, line)]),
+        ])]),
+    ]));
+    line += 1;
+
+    // extends/0 → [<<"parent1">>, <<"parent2">>, ...]
+    let extends_terms: Vec<Term> = extends.iter().map(|d| eaf_bin(line, d)).collect();
+    forms.push(eaf_tuple(vec![
+        eaf_atom("function"),
+        eaf_int(line),
+        eaf_atom("extends"),
+        eaf_int(0),
+        eaf_list(vec![eaf_tuple(vec![
+            eaf_atom("clause"),
+            eaf_int(line),
+            eaf_list(vec![]),
+            eaf_list(vec![]),
+            eaf_list(vec![eaf_cons_list(&extends_terms, line)]),
+        ])]),
+    ]));
 
     let term = Term::from(List::from(forms));
     let mut buf = Vec::new();

@@ -22,7 +22,7 @@ use crate::Vector;
 /// integration exercise `commit_matrix_to_repo` directly with isolated
 /// temp repos. `Repository::discover(".")` from a test runner would
 /// find the real repo and race on shared refs.
-fn parse_to_oid(source: &str) -> Result<String, String> {
+pub fn parse_to_oid(source: &str) -> Result<String, String> {
     let tree = Parse
         .trace(source.to_string())
         .into_result()
@@ -44,6 +44,9 @@ fn parse_to_oid(source: &str) -> Result<String, String> {
 }
 
 /// Compile .conv grammar source → ETF bytes for actor dispatch module.
+///
+/// Collects `in @x` declarations as Lenses — structural dependencies that
+/// tell the compiled module where it lives in the domain graph.
 fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
     let ast = Parse
         .trace(source.to_string())
@@ -56,8 +59,43 @@ fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
         .find(|c| c.data().is_decl("grammar"))
         .ok_or_else(|| "no grammar block found".to_string())?;
 
+    // Collect `in @x` declarations as Lens dependencies.
+    // Self-references (in @domain where domain == grammar domain) are filtered out.
+    let grammar_domain = grammar_node
+        .data()
+        .value
+        .strip_prefix('@')
+        .unwrap_or(&grammar_node.data().value);
+    let lenses: Vec<String> = ast
+        .children()
+        .iter()
+        .filter(|c| c.data().is_decl("in"))
+        .map(|c| {
+            c.data()
+                .value
+                .strip_prefix('@')
+                .unwrap_or(&c.data().value)
+                .to_string()
+        })
+        .filter(|d| d != grammar_domain)
+        .collect();
+
+    // Collect `extends @domain` children from the grammar node.
+    let extends: Vec<String> = grammar_node
+        .children()
+        .iter()
+        .filter(|c| c.data().is_ref("extends"))
+        .map(|c| {
+            c.data()
+                .value
+                .strip_prefix('@')
+                .unwrap_or(&c.data().value)
+                .to_string()
+        })
+        .collect();
+
     let registry = TypeRegistry::compile(grammar_node).map_err(|e| e.to_string())?;
-    Ok(compile::emit_actor_module(&registry))
+    Ok(compile::emit_actor_module(&registry, &lenses, &extends))
 }
 
 /// Write FFI result to output buffer. Returns 0 on success, -1 on error.
@@ -297,6 +335,24 @@ fn commit_matrix_to_repo(repo: &git2::Repository, mat: &matrix::Matrix) -> Resul
         .blob(&matrix_bytes)
         .map_err(|e| format!("write blob: {}", e))?;
 
+    // Existence check: if the latest commit already has an identical .matrix
+    // blob, return the existing commit OID. Git is content-addressed — same
+    // bytes → same blob OID — so this is deterministic.
+    let ref_name = format!("refs/conversation/{}", branch);
+    if let Ok(r) = repo.find_reference(&ref_name) {
+        if let Some(target) = r.target() {
+            if let Ok(commit) = repo.find_commit(target) {
+                if let Ok(tree) = commit.tree() {
+                    if let Some(entry) = tree.get_name(".matrix") {
+                        if entry.id() == blob_oid {
+                            return Ok(target.to_string());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // Wrap in a tree with a `.matrix` entry
     let mut builder = repo
         .treebuilder(None)
@@ -313,7 +369,6 @@ fn commit_matrix_to_repo(repo: &git2::Repository, mat: &matrix::Matrix) -> Resul
         .map_err(|e| format!("signature: {}", e))?;
 
     // Find parent commit on refs/conversation/<branch> if it exists
-    let ref_name = format!("refs/conversation/{}", branch);
     let parent_commit;
     let parents: Vec<&git2::Commit> = match repo.find_reference(&ref_name) {
         Ok(r) => {
@@ -416,6 +471,86 @@ mod tests {
         )
         .unwrap();
         assert_eq!(a, b);
+    }
+
+    #[test]
+    fn compile_grammar_includes_lenses() {
+        // Source with `in @reality` sibling — compile should include the Lens
+        let etf = compile_grammar_to_etf(
+            "grammar @filesystem {\n  type = file | folder\n}\n\nin @filesystem\nin @reality\n",
+        )
+        .unwrap();
+
+        // Decode and verify the lenses/0 function is present
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let forms_str = format!("{:?}", term);
+        assert!(
+            forms_str.contains("lenses"),
+            "expected 'lenses' export in EAF: {}",
+            forms_str,
+        );
+        // "reality" encoded as ByteList bytes
+        let reality_bytes: Vec<u8> = "reality".bytes().collect();
+        assert!(
+            forms_str.contains(&format!("{:?}", reality_bytes)),
+            "expected 'reality' Lens bytes in EAF: {}",
+            forms_str,
+        );
+    }
+
+    #[test]
+    fn compile_grammar_no_lenses_when_no_in() {
+        // Source with grammar only — no `in` declarations
+        let etf = compile_grammar_to_etf("grammar @test {\n  type = a | b\n}\n").unwrap();
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let forms_str = format!("{:?}", term);
+        // lenses/0 should still exist but return empty list
+        assert!(
+            forms_str.contains("lenses"),
+            "expected 'lenses' export even when empty: {}",
+            forms_str,
+        );
+    }
+
+    #[test]
+    fn compile_grammar_includes_extends() {
+        let etf = compile_grammar_to_etf(
+            "grammar @fox extends @smash, @controller {\n  type = move | attack\n}\n",
+        )
+        .unwrap();
+
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let forms_str = format!("{:?}", term);
+        assert!(
+            forms_str.contains("extends"),
+            "expected 'extends' export in EAF: {}",
+            forms_str,
+        );
+        let smash_bytes: Vec<u8> = "smash".bytes().collect();
+        assert!(
+            forms_str.contains(&format!("{:?}", smash_bytes)),
+            "expected 'smash' extends bytes in EAF: {}",
+            forms_str,
+        );
+        let controller_bytes: Vec<u8> = "controller".bytes().collect();
+        assert!(
+            forms_str.contains(&format!("{:?}", controller_bytes)),
+            "expected 'controller' extends bytes in EAF: {}",
+            forms_str,
+        );
+    }
+
+    #[test]
+    fn compile_grammar_no_extends_when_absent() {
+        let etf = compile_grammar_to_etf("grammar @test {\n  type = a | b\n}\n").unwrap();
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let forms_str = format!("{:?}", term);
+        // extends/0 should still exist but return empty list
+        assert!(
+            forms_str.contains("extends"),
+            "expected 'extends' export even when empty: {}",
+            forms_str,
+        );
     }
 
     // -- FFI wrappers: exercise unsafe boundary + UTF-8 rejection --
@@ -675,46 +810,43 @@ mod tests {
                 .unwrap();
             assert_eq!(commit2.parent_id(0).unwrap().to_string(), oid1);
         }
-    }
 
-    #[test]
-    fn compile_grammar_includes_extends() {
-        let etf = compile_grammar_to_etf(
-            "grammar @fox extends @smash, @controller {\n  type = move | attack\n}\n",
-        )
-        .unwrap();
+        #[test]
+        fn commit_matrix_idempotent() {
+            let (_dir, repo) = init_repo_with_branch();
 
-        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
-        let forms_str = format!("{:?}", term);
-        assert!(
-            forms_str.contains("extends"),
-            "expected 'extends' export in EAF: {}",
-            forms_str,
-        );
-        let smash_bytes: Vec<u8> = "smash".bytes().collect();
-        assert!(
-            forms_str.contains(&format!("{:?}", smash_bytes)),
-            "expected 'smash' extends bytes in EAF: {}",
-            forms_str,
-        );
-        let controller_bytes: Vec<u8> = "controller".bytes().collect();
-        assert!(
-            forms_str.contains(&format!("{:?}", controller_bytes)),
-            "expected 'controller' extends bytes in EAF: {}",
-            forms_str,
-        );
-    }
+            let mat = matrix::Matrix::identity(3);
+            let oid1 = commit_matrix_to_repo(&repo, &mat).unwrap();
+            let oid2 = commit_matrix_to_repo(&repo, &mat).unwrap();
 
-    #[test]
-    fn compile_grammar_no_extends_when_absent() {
-        let etf = compile_grammar_to_etf("grammar @test {\n  type = a | b\n}\n").unwrap();
-        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
-        let forms_str = format!("{:?}", term);
-        // extends/0 should still exist but return empty list
-        assert!(
-            forms_str.contains("extends"),
-            "expected 'extends' export even when empty: {}",
-            forms_str,
-        );
+            // Same matrix → same commit OID (no new commit created)
+            assert_eq!(oid1, oid2);
+
+            // Only one commit on refs/conversation/main (not two)
+            let reference = repo.find_reference("refs/conversation/main").unwrap();
+            let commit = repo.find_commit(reference.target().unwrap()).unwrap();
+            assert_eq!(commit.parent_count(), 0);
+        }
+
+        #[test]
+        fn commit_matrix_different_creates_new() {
+            let (_dir, repo) = init_repo_with_branch();
+
+            let m1 = matrix::Matrix::identity(3);
+            let oid1 = commit_matrix_to_repo(&repo, &m1).unwrap();
+
+            let mut m2 = matrix::Matrix::zeros(3);
+            m2.set(1, 1, 42.0);
+            let oid2 = commit_matrix_to_repo(&repo, &m2).unwrap();
+
+            // Different matrix → different commit
+            assert_ne!(oid1, oid2);
+
+            // Parent chain intact
+            let commit2 = repo
+                .find_commit(git2::Oid::from_str(&oid2).unwrap())
+                .unwrap();
+            assert_eq!(commit2.parent_id(0).unwrap().to_string(), oid1);
+        }
     }
 }
