@@ -1,18 +1,17 @@
-//! C-FFI surface for the conversation crate.
+//! FFI surface for the conversation crate.
 //!
-//! Exposes `conv_parse` and `conv_compile_grammar` as `extern "C"` functions
-//! callable from C NIF wrappers.
-//! Uses write-to-buffer pattern — no heap allocation crosses the FFI boundary.
+//! Public functions for NIF wrappers (Rustler) and internal use.
+//! `parse_to_oid` and `compile_grammar_to_etf` are the two core operations.
 
-use crate::domain::conversation::Kind;
 use crate::compile;
+use crate::domain::conversation::Kind;
 use crate::parse::Parse;
 use crate::resolve::TypeRegistry;
 use crate::ContentAddressed;
 use crate::Vector;
 
 /// Parse .conv source → content OID string.
-fn parse_to_oid(source: &str) -> Result<String, String> {
+pub fn parse_to_oid(source: &str) -> Result<String, String> {
     match Parse.trace(source.to_string()).into_result() {
         Ok(tree) => {
             #[cfg(feature = "git")]
@@ -29,7 +28,7 @@ fn parse_to_oid(source: &str) -> Result<String, String> {
 }
 
 /// Compile .conv grammar source → ETF bytes for actor dispatch module.
-fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
+pub fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
     let ast = Parse
         .trace(source.to_string())
         .into_result()
@@ -62,84 +61,6 @@ fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
         .collect();
 
     Ok(compile::emit_actor_module(&registry, &lenses, &extends))
-}
-
-/// Write FFI result to output buffer. Returns 0 on success, -1 on error.
-unsafe fn write_ffi_result(
-    result: Result<&[u8], &[u8]>,
-    out_ptr: *mut u8,
-    out_cap: usize,
-    out_len: *mut usize,
-) -> i32 {
-    let (bytes, code) = match result {
-        Ok(b) => (b, 0),
-        Err(b) => (b, -1),
-    };
-    let n = bytes.len().min(out_cap);
-    std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_ptr, n);
-    *out_len = n;
-    code
-}
-
-/// Parse a .conv source string and return its content OID.
-///
-/// On success: returns 0, writes OID hex to `out_ptr` (up to `out_cap` bytes),
-///             sets `*out_len` to the number of bytes written.
-/// On error:   returns -1, writes error message to `out_ptr`, sets `*out_len`.
-///
-/// # Safety
-///
-/// - `src_ptr` must point to `src_len` valid UTF-8 bytes.
-/// - `out_ptr` must point to a buffer of at least `out_cap` bytes.
-/// - `out_len` must be a valid pointer.
-#[no_mangle]
-pub unsafe extern "C" fn conv_parse(
-    src_ptr: *const u8,
-    src_len: usize,
-    out_ptr: *mut u8,
-    out_cap: usize,
-    out_len: *mut usize,
-) -> i32 {
-    let source = match std::str::from_utf8(std::slice::from_raw_parts(src_ptr, src_len)) {
-        Ok(s) => s,
-        Err(_) => return write_ffi_result(Err(b"invalid UTF-8 input"), out_ptr, out_cap, out_len),
-    };
-    match parse_to_oid(source) {
-        Ok(ref oid) => write_ffi_result(Ok(oid.as_bytes()), out_ptr, out_cap, out_len),
-        Err(ref msg) => write_ffi_result(Err(msg.as_bytes()), out_ptr, out_cap, out_len),
-    }
-}
-
-/// Compile a grammar block from .conv source into an actor dispatch module.
-///
-/// Parses the source, finds the first grammar block, compiles it via
-/// TypeRegistry, then emits ETF-encoded EAF bytes for the actor module.
-///
-/// On success: returns 0, writes ETF bytes to `out_ptr` (up to `out_cap`),
-///             sets `*out_len` to the number of bytes written.
-/// On error:   returns -1, writes error message to `out_ptr`, sets `*out_len`.
-///
-/// # Safety
-///
-/// - `src_ptr` must point to `src_len` valid UTF-8 bytes.
-/// - `out_ptr` must point to a buffer of at least `out_cap` bytes.
-/// - `out_len` must be a valid pointer.
-#[no_mangle]
-pub unsafe extern "C" fn conv_compile_grammar(
-    src_ptr: *const u8,
-    src_len: usize,
-    out_ptr: *mut u8,
-    out_cap: usize,
-    out_len: *mut usize,
-) -> i32 {
-    let source = match std::str::from_utf8(std::slice::from_raw_parts(src_ptr, src_len)) {
-        Ok(s) => s,
-        Err(_) => return write_ffi_result(Err(b"invalid UTF-8 input"), out_ptr, out_cap, out_len),
-    };
-    match compile_grammar_to_etf(source) {
-        Ok(ref etf) => write_ffi_result(Ok(etf), out_ptr, out_cap, out_len),
-        Err(ref msg) => write_ffi_result(Err(msg.as_bytes()), out_ptr, out_cap, out_len),
-    }
 }
 
 /// Write a Prism tree to git objects. Returns the root tree OID.
@@ -455,118 +376,6 @@ mod tests {
             forms_str.contains(&format!("{:?}", reality_bytes)),
             "expected 'reality' in lenses",
         );
-    }
-
-    // -- FFI wrappers: exercise unsafe boundary + UTF-8 rejection --
-
-    #[test]
-    fn ffi_conv_parse_roundtrip() {
-        let source = b"grammar @test {\n  type = a | b\n}\n";
-        let mut buf = [0u8; 256];
-        let mut len: usize = 0;
-        let rc = unsafe {
-            conv_parse(
-                source.as_ptr(),
-                source.len(),
-                buf.as_mut_ptr(),
-                buf.len(),
-                &mut len,
-            )
-        };
-        assert_eq!(rc, 0);
-        assert!(len > 0);
-    }
-
-    #[test]
-    fn ffi_conv_parse_invalid_utf8() {
-        let source: &[u8] = &[0xFF, 0xFE, 0x00];
-        let mut buf = [0u8; 256];
-        let mut len: usize = 0;
-        let rc = unsafe {
-            conv_parse(
-                source.as_ptr(),
-                source.len(),
-                buf.as_mut_ptr(),
-                buf.len(),
-                &mut len,
-            )
-        };
-        assert_eq!(rc, -1);
-        let msg = std::str::from_utf8(&buf[..len]).unwrap();
-        assert!(msg.contains("UTF-8"));
-    }
-
-    #[test]
-    fn ffi_conv_compile_grammar_roundtrip() {
-        let source = b"grammar @test {\n  type = a | b\n}\n";
-        let mut buf = [0u8; 4096];
-        let mut len: usize = 0;
-        let rc = unsafe {
-            conv_compile_grammar(
-                source.as_ptr(),
-                source.len(),
-                buf.as_mut_ptr(),
-                buf.len(),
-                &mut len,
-            )
-        };
-        assert_eq!(rc, 0);
-        assert!(len > 0);
-    }
-
-    #[test]
-    fn ffi_conv_parse_error() {
-        let source = b"@@@invalid";
-        let mut buf = [0u8; 256];
-        let mut len: usize = 0;
-        let rc = unsafe {
-            conv_parse(
-                source.as_ptr(),
-                source.len(),
-                buf.as_mut_ptr(),
-                buf.len(),
-                &mut len,
-            )
-        };
-        assert_eq!(rc, -1);
-        assert!(len > 0);
-    }
-
-    #[test]
-    fn ffi_conv_compile_grammar_error() {
-        let source = b"in @filesystem\ntemplate $t {\n\tslug\n}\n";
-        let mut buf = [0u8; 4096];
-        let mut len: usize = 0;
-        let rc = unsafe {
-            conv_compile_grammar(
-                source.as_ptr(),
-                source.len(),
-                buf.as_mut_ptr(),
-                buf.len(),
-                &mut len,
-            )
-        };
-        assert_eq!(rc, -1);
-        assert!(len > 0);
-    }
-
-    #[test]
-    fn ffi_conv_compile_grammar_invalid_utf8() {
-        let source: &[u8] = &[0xFF, 0xFE, 0x00];
-        let mut buf = [0u8; 4096];
-        let mut len: usize = 0;
-        let rc = unsafe {
-            conv_compile_grammar(
-                source.as_ptr(),
-                source.len(),
-                buf.as_mut_ptr(),
-                buf.len(),
-                &mut len,
-            )
-        };
-        assert_eq!(rc, -1);
-        let msg = std::str::from_utf8(&buf[..len]).unwrap();
-        assert!(msg.contains("UTF-8"));
     }
 
     // -- git commit tests --

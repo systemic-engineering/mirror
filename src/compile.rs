@@ -152,7 +152,11 @@ fn emit_branch_arm(arm: &crate::resolve::BranchArm, line: i32) -> Term {
 /// -export([compile/1]).
 /// compile(Args) -> gen_server:call('@compiler', {compile, Args}).
 /// ```
-pub fn emit_actor_module(registry: &TypeRegistry, lenses: &[String], extends: &[String]) -> Vec<u8> {
+pub fn emit_actor_module(
+    registry: &TypeRegistry,
+    lenses: &[String],
+    extends: &[String],
+) -> Vec<u8> {
     let beam_module = format!("conv_{}", registry.domain);
     let act_names = registry.act_names();
 
@@ -297,8 +301,8 @@ fn emit_string_list_function(name: &str, values: &[String], line: i32) -> Term {
         eaf_list(vec![eaf_tuple(vec![
             eaf_atom("clause"),
             eaf_int(line),
-            eaf_list(vec![]),  // no args
-            eaf_list(vec![]),  // no guards
+            eaf_list(vec![]), // no args
+            eaf_list(vec![]), // no guards
             eaf_list(vec![body]),
         ])]),
     ])

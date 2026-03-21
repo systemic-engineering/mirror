@@ -1,5 +1,5 @@
 [workspace]
-members = ["."]
+members = [".", "beam/native/conversation_nif"]
 
 [package]
 name = "conversation"
@@ -9,7 +9,7 @@ license-file = "LICENSE.md"
 description = "Traceables over trees"
 
 [lib]
-crate-type = ["lib", "staticlib"]
+crate-type = ["lib"]
 
 [features]
 default = []

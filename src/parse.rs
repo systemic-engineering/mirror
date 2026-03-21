@@ -984,7 +984,13 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
             let span = start_span.merge(&end_span);
             let mut all_children = extends_children;
             all_children.append(&mut defs);
-            return Ok(ast::ast_branch(Kind::Decl, "grammar", name, span, all_children));
+            return Ok(ast::ast_branch(
+                Kind::Decl,
+                "grammar",
+                name,
+                span,
+                all_children,
+            ));
         }
 
         if trimmed.is_empty() || trimmed.starts_with('#') {
