@@ -142,7 +142,7 @@ fn handle_message(state: State, msg: Message) -> actor.Next(State, Message) {
 
 /// SHA-512 hash, first 32 bytes — Ed25519 seed for the cairn pattern.
 fn domain_seed(name: BitArray) -> BitArray {
-  let <<seed:bytes-size(32), _rest:bytes>> = do_sha512(name)
+  let assert <<seed:bytes-size(32), _rest:bytes>> = do_sha512(name)
   seed
 }
 
