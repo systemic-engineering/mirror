@@ -1,12 +1,16 @@
 -module(conversation_sup).
 -behaviour(supervisor).
 
-%% Supervisor for domain servers.
+%% DEPRECATED: Use conversation/supervisor.gleam + conversation/garden.gleam instead.
 %%
-%% simple_one_for_one: each domain server is a child started dynamically
-%% via start_domain/1. If a domain server crashes, the supervisor restarts
-%% it — the domain atom re-registers and the compiled module's
-%% gen_server:call routes work again.
+%% This Erlang supervisor is retained for backwards compatibility with the
+%% imperative boot path (compiler.start() + boot.boot_from_files()).
+%% New code should use the supervised boot path:
+%%   conv_sup.start(compiler_name, garden_name) + boot.supervised_boot_from_files()
+%%
+%% Original: simple_one_for_one supervisor for domain servers.
+%% Each domain server is a child started dynamically via start_domain/1.
+%% If a domain server crashes, the supervisor restarts it.
 
 -export([start_link/0, start_domain/1, init/1]).
 
