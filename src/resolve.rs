@@ -2719,45 +2719,39 @@ mod tests {
     // -- Bootstrap --
 
     #[test]
-    fn bootstrap_abstract_grammar_compiles() {
+    fn bootstrap_compiler_grammar_compiles() {
         let source = include_str!("../bootstrap.conv");
         let reg = compile_grammar(source);
-        assert_eq!(reg.domain, "abstract");
+        assert_eq!(reg.domain, "compiler");
         assert!(reg.has_type(""));
         assert!(reg.has_variant("", "grammar"));
         assert!(reg.has_variant("", "type"));
-        assert!(reg.has_variant("", "variant"));
-        assert!(reg.has_variant("", "template"));
+        assert!(reg.has_action("compile"));
     }
 
     #[test]
     fn bootstrap_two_pass_chain() {
-        // Pass 1: bootstrap.conv → @abstract registered in namespace
+        // Pass 1: bootstrap.conv → @compiler registered in namespace
         let bootstrap_src = include_str!("../bootstrap.conv");
-        let namespace = namespace_with_grammar(bootstrap_src, "abstract");
+        let namespace = namespace_with_grammar(bootstrap_src, "compiler");
 
-        // Pass 2: compiler.conv parses successfully against that namespace
-        let compiler_src = include_str!("../conv/compiler.conv");
-        let ast = Parse.trace(compiler_src.to_string()).unwrap();
+        // Pass 2: a grammar with `in @compiler` resolves against that namespace
+        let child_src = "in @compiler\n\ngrammar @build {\n  type = artifact | target\n}\n";
+        let ast = Parse.trace(child_src.to_string()).unwrap();
         let grammar = ast
             .children()
             .iter()
             .find(|c| c.data().is_decl("grammar"))
-            .expect("compiler.conv must have a grammar block");
+            .expect("child grammar must have a grammar block");
         let reg = TypeRegistry::compile(grammar).unwrap();
 
-        // @compiler grammar has the expected types
-        assert_eq!(reg.domain, "compiler");
-        assert!(reg.has_variant("", "target"));
+        // @build grammar has the expected types
+        assert_eq!(reg.domain, "build");
         assert!(reg.has_variant("", "artifact"));
-        assert!(reg.has_variant("target", "gleam"));
-        assert!(reg.has_variant("target", "elixir"));
-        assert!(reg.has_variant("status", "ok"));
-        assert!(reg.has_variant("status", "error"));
-        assert!(reg.has_action("compile"));
+        assert!(reg.has_variant("", "target"));
 
-        // @abstract is registered — the chain is live
-        assert!(namespace.has_grammar("abstract"));
+        // @compiler is registered — the chain is live
+        assert!(namespace.has_grammar("compiler"));
     }
 
     // -- TypeRegistry accessors --

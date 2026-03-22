@@ -1,3 +1,7 @@
-grammar @abstract {
-  type = grammar | type | variant | template
+grammar @compiler {
+  type = grammar | type
+
+  action compile {
+    source: grammar
+  }
 }
