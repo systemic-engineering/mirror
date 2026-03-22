@@ -1,12 +1,3 @@
----
-slug: license
-title: The systemic.engineering License
-status: published
-visibility: public
-version: "1.0"
-effective_date: "2026-03-01"
----
-
 # The systemic.engineering License
 
 **Version 1.0**
