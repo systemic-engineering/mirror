@@ -39,27 +39,59 @@ The `@conversation` actor extends `@compiler`.
 | `ast.rs` | AstNode, Kind enum — the AST types |
 | `parse.rs` | `.conv` source → `Prism<AstNode>` |
 | `prism.rs` | Content-addressed tree structure |
-| `ffi.rs` | `conv_parse` — the FFI entry point |
+| `ffi.rs` | `conv_parse`, `conv_compile_grammar` — FFI entry points |
+| `compile.rs` | EAF emission — grammar → BEAM module bytecode |
 | `domain/` | Domain implementations (filesystem) |
-| `filter.rs` | Tree filtering |
-| `generate.rs` | Tree generation |
+| `filter.rs` | Tree filtering (hash, sign, encrypt) |
+| `generate.rs` | Type derivation from grammar registries |
 
 Modules being superseded by BEAM (do not extend):
-`resolve.rs`, `packages.rs`, `compile.rs`, `property.rs`
+`resolve.rs`, `packages.rs`, `property.rs`
 
 ### BEAM modules (`beam/src/conversation/`)
 
 | Module | Purpose |
 |--------|---------|
+| `compiler.gleam` | @compiler actor — compiles grammars, loads BEAM modules |
+| `supervisor.gleam` | Static supervisor — @compiler + garden (RestForOne) |
+| `garden.gleam` | Factory supervisor — domain server lifecycle |
+| `boot.gleam` | Boot orchestration — imperative and supervised paths |
+| `domain.gleam` | FFI bindings to domain_server.erl |
+| `loader.gleam` | BEAM module loading (ETF → forms → binary) |
+| `trace.gleam` | Witnessed, signed records |
 | `oid.gleam` | Content-addressed identity (SHA-256) |
 | `key.gleam` | Ed25519 actor identity |
-| `trace.gleam` | Witnessed, signed records |
 | `ref.gleam` | Scoped content-addressed references |
 | `prism.gleam` | Projection matrix (Fortran NIF) |
 | `nif.gleam` | Bridge to Rust parser |
-| `compiler.gleam` | @compiler actor |
 | `protocol.gleam` | Spec types — desired BEAM state |
 | `runtime.gleam` | Convergence engine — delta computation |
+
+### Supervision
+
+```
+conversation_supervisor (static_supervisor, RestForOne)
+├── @compiler              — compiles grammars, loads BEAM modules, returns traces
+└── garden (factory_sup)   — dynamic domain server lifecycle
+```
+
+**@compiler** starts first. Compiles `.conv` source → calls Rust NIF → loads BEAM
+module → returns `Trace(CompiledDomain)`. In supervised mode, does not start domain
+servers directly.
+
+**garden** starts second. Factory supervisor that manages domain servers as dynamic
+children. When a grammar is compiled, `garden.start_domain(name, domain)` starts
+its GenServer under the factory. If a domain server crashes, the garden restarts it.
+
+**RestForOne**: if @compiler crashes, the garden and all domain servers restart
+(clean slate). If a single domain server crashes, the factory restarts just that one.
+
+Two boot paths:
+- **Imperative** (`boot.boot_from_files`): starts its own supervisor + @compiler,
+  compiles grammars, starts domain servers inline. For standalone use.
+- **Supervised** (`boot.supervised_boot_from_files`): compiles through an
+  already-running named @compiler, starts domains through the garden. For embedding
+  in a larger supervision tree.
 
 ### Packages
 
@@ -77,16 +109,20 @@ The entry point. Parsed by Rust into the Prism that crosses the FFI threshold.
 ## Building
 
 ```sh
-# Rust parser
-nix develop -c cargo build
+# Everything (Rust lint + test + coverage + Gleam tests)
+just check
 
-# BEAM runtime
-cd beam && gleam build
+# Rust only
+nix develop -c cargo test
+nix develop -c cargo llvm-cov --package conversation --fail-under-lines 100
 
-# Tests
-nix develop -c cargo test                                    # Rust
-nix develop -c cargo llvm-cov --lib --fail-under-lines 100   # coverage
-cd beam && gleam test                                         # Gleam
+# BEAM only
+just beam-test
+
+# Individual commands
+nix develop -c cargo build                    # Rust parser
+cd beam && gleam build                         # Gleam modules
+cd beam && gleam test                          # Gleam tests
 ```
 
 ## License

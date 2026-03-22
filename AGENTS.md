@@ -21,13 +21,17 @@ Everything after parse belongs to the BEAM.
 These are BEAM concerns. The modules `resolve.rs`, `packages.rs`, `compile.rs`,
 and `property.rs` exist but are being superseded. Do not add features to them.
 
-**The single Rust FFI function that matters:** `conv_parse` in `ffi.rs`.
-It parses `.conv` source, commits the Prism to `.git/refs/conversation/&lt;branch&gt;`
-as `conversation@systemic.engineering`, and returns the OID.
+**Two Rust FFI functions cross the boundary** (in `ffi.rs`):
+- `conv_parse` — parses `.conv` source, commits the Prism, returns OID
+- `conv_compile_grammar` — parses + compiles to EAF (ETF bytes for BEAM module)
 
 **The BEAM side** (`beam/`) is Gleam. It receives the OID.
-`@conversation` extends `@compiler`. The `@compiler` actor already exists
-(`beam/src/conversation/compiler.gleam`) — signs and witnesses via `Trace`.
+`@conversation` extends `@compiler`. The `@compiler` actor
+(`beam/src/conversation/compiler.gleam`) signs and witnesses via `Trace`.
+
+Supervision lives in Gleam — `supervisor.gleam` (static, RestForOne) manages
+@compiler + `garden.gleam` (factory supervisor for domain servers). The old
+`conversation_sup.erl` is deprecated.
 
 Each garden package that declares `in @actor` becomes a spawned actor.
 

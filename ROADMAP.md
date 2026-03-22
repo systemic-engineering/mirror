@@ -39,36 +39,52 @@ domain.
 ## Three Roles
 
 **@compiler** — owns `action compile`. Receives `.conv` source, calls the
-Rust NIF to produce ETF, loads the BEAM module, starts the domain server.
-Returns a witnessed trace. Identity: `sha256("compiler")` → Ed25519 keypair.
+Rust NIF to produce ETF, loads the BEAM module. Returns a witnessed trace.
+Identity: `sha256("compiler")` → Ed25519 keypair.
+
+In supervised mode (`start_named`), the compiler is pure — it compiles and
+loads modules but does not start domain servers. The garden handles lifecycle.
+
+In standalone mode (`start`), the compiler starts its own domain supervisor
+and starts domain servers after compilation. This is the backwards-compatible
+imperative path.
 
 **Domain server** — GenServer registered as the domain atom. Receives
 `{action, Args}` calls, dispatches to the compiled module's exported
 functions. The `exec` primitive does `apply/3` — that's where grammar
 meets reality.
 
-**Supervisor** — `conversation_sup`. Restarts crashed domain servers with
-`transient` strategy. A domain that crashes comes back. A domain that shuts
-down stays down.
+**Supervision** — two layers:
+
+- `conversation/supervisor.gleam`: static supervisor (RestForOne) managing
+  @compiler + garden. If @compiler crashes, garden + all domains restart.
+- `conversation/garden.gleam`: factory supervisor managing domain servers
+  dynamically. If one domain crashes, only that domain restarts.
+
+The old `conversation_sup.erl` (Erlang `simple_one_for_one`) is deprecated.
+New code should use the Gleam supervision modules.
 
 ---
 
 ## Actor Registration
 
-The @compiler actor starts via `compiler.start()`. This:
+The @compiler actor starts via `compiler.start()` (standalone) or
+`compiler.start_named(name)` (supervised).
+
+Standalone path — `compiler.start()`:
 
 1. Starts the domain supervisor (idempotent)
 2. Derives the compiler's Ed25519 keypair from `sha256("compiler")`
 3. Starts the OTP actor with that identity
+4. On `CompileGrammar`: compiles, loads, starts domain server, returns trace
 
-When `CompileGrammar(source, reply)` arrives:
+Supervised path — `compiler.start_named(name)`:
 
-1. Content-address the source → `source_oid`
-2. Call `nif.compile_grammar(source)` → ETF bytes
-3. Extract the domain name from the grammar block
-4. `loader.load_etf_module(etf)` → compile forms → load binary
-5. `domain.start_supervised(domain_name)` if not already running
-6. Sign and return `Trace(CompiledDomain)`
+1. Derives the compiler's Ed25519 keypair from `sha256("compiler")`
+2. Starts the OTP actor with that identity, registered under `name`
+3. On `CompileGrammar`: compiles, loads, returns trace (no domain lifecycle)
+
+Domain servers are started separately via `garden.start_domain(name, domain)`.
 
 Compiled modules get the `conv_` prefix — `@erlang` compiles to
 `conv_erlang`, avoiding BEAM sticky module collisions. The domain server
@@ -119,17 +135,31 @@ Two root types. One action. Everything else extends from this.
 
 ## Boot Sequence
 
-The boot module (`boot.gleam`) orchestrates startup:
+Two paths. Same compilation loop, different lifecycle management.
+
+### Imperative (standalone)
+
+`boot.boot_from_files(paths)`:
 
 1. Start the domain supervisor
 2. Start the @compiler actor
 3. Compile each grammar source through @compiler
 4. For each compiled domain, query `lenses/0` and `extends/0`
-5. Return `BootResult` with compiler subject + booted domains
+5. Domain servers started inline during compilation
+6. Return `BootResult` with compiler subject + booted domains
 
-`boot_from_files(paths)` reads `.conv` files from disk (garden paths)
-and feeds them through the same pipeline. The garden is the filesystem
-projection of the grammar space.
+### Supervised (embedded)
+
+`boot.supervised_boot_from_files(compiler_subject, garden_name, paths)`:
+
+1. @compiler and garden are already running (started by a parent supervisor)
+2. Compile each grammar source through the named @compiler
+3. Start each domain server through `garden.start_domain(name, domain)`
+4. Return `List(BootedDomain)` with domain names, lenses, and extends
+
+The supervised path is used by Reed and any actor that embeds the conversation
+supervision tree inside its own tree. The imperative path is for CLI and
+standalone use.
 
 After boot, `imports_resolved(result)` and `extends_resolved(result)`
 verify that all lens dependencies and inheritance chains are satisfied.
@@ -137,4 +167,13 @@ A grammar that imports `@phantom` will boot but report unresolved imports.
 
 ---
 
-*Session 2026-03-21. Alex + Reed. Matrix Resurrections playing in the background.*
+## Test Surface
+
+- 488 Rust tests, 100% line coverage
+- 89 Gleam tests (compiler, boot, domain, garden, supervisor)
+- 22 CLI integration tests
+- Pre-commit hook enforces all gates
+
+---
+
+*Session 2026-03-22. Alex + Reed.*
