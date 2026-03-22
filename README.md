@@ -1,5 +1,12 @@
 # conversation
 
+> **Pre-v0.1** — This project is in active development. APIs, file formats,
+> and architecture may change without notice. Not yet suitable for production use.
+
+![Coverage](https://img.shields.io/badge/coverage-100%25_lines-brightgreen)
+![Tests](https://img.shields.io/badge/tests-599_passing-brightgreen)
+![License](https://img.shields.io/badge/license-systemic.engineering-blue)
+
 Stories over trees.
 
 A typed transformation pipeline language. `.conv` files describe desired state.
