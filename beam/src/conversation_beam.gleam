@@ -2,11 +2,8 @@ import conversation/compiler
 import conversation/runtime
 import conversation/protocol.{Arm, Case, Cmp, DesiredState, Gt, Pass, Wildcard}
 
-pub type Artifact =
-  compiler.Artifact
-
-pub type Target =
-  compiler.Target
+pub type CompiledDomain =
+  compiler.CompiledDomain
 
 pub type CompilerMessage =
   compiler.Message

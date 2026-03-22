@@ -1,15 +1,16 @@
 //// Compiler — @compiler actor.
 ////
-//// The @compiler receives compilation requests and produces witnessed
-//// Trace(Artifact) results. Compilation targets are defined by garden
-//// packages (@fortran, @elixir, @gleam, @rust) which inherit from
-//// @compiler via `in @compiler`.
+//// The @compiler receives .conv source, compiles the grammar block via
+//// the Rust NIF, loads the compiled module onto the BEAM, and starts a
+//// supervised domain server. Returns a witnessed Trace(CompiledDomain).
 ////
-//// Current state: actor infrastructure ready, codegen routes through
-//// Rust NIF (compile.rs → EAF). Gleam codegen modules superseded by
-//// garden .conv packages.
+//// Identity is deterministic: sha256("compiler") → Ed25519 keypair.
 
+import conversation/domain
+import conversation/grammar
 import conversation/key
+import conversation/loader
+import conversation/nif
 import conversation/oid
 import conversation/ref.{type ScopedOid}
 import conversation/trace.{type Trace}
@@ -17,26 +18,16 @@ import gleam/erlang/process.{type Subject}
 import gleam/option.{None}
 import gleam/otp/actor
 
-/// Compile target — the language to emit.
-pub type Target {
-  Gleam
-  Elixir
-  Erlang
-  Fortran
-  Eaf
-}
-
-/// A compiled artifact produced by the @compiler actor.
-pub type Artifact {
-  Source(target: Target, source: String, oid: oid.Oid)
+/// A compiled domain grammar.
+pub type CompiledDomain {
+  CompiledDomain(domain: String, source_oid: oid.Oid, module: String)
 }
 
 /// Messages the @compiler actor accepts.
 pub type Message {
-  Compile(
+  CompileGrammar(
     source: String,
-    target: Target,
-    reply: Subject(Result(Trace(Artifact), String)),
+    reply: Subject(Result(Trace(CompiledDomain), String)),
   )
   Shutdown
 }
@@ -52,7 +43,11 @@ pub fn public_key() -> key.Key {
 }
 
 /// Start the @compiler actor.
+/// Also starts the domain supervisor if not already running.
 pub fn start() -> actor.StartResult(Subject(Message)) {
+  // Ensure the domain supervisor is running so compiled grammars
+  // can start supervised domain servers.
+  let _ = domain.start_supervisor()
   let kp = key.from_seed(do_sha256(<<"compiler":utf8>>))
   let actor_oid = key.oid(key.public_key(kp))
   let state = State(kp: kp, actor_oid: actor_oid)
@@ -63,11 +58,37 @@ pub fn start() -> actor.StartResult(Subject(Message)) {
 
 fn handle_message(state: State, msg: Message) -> actor.Next(State, Message) {
   case msg {
-    Compile(source, target, reply) -> {
+    CompileGrammar(source, reply) -> {
       let source_oid = oid.from_bytes(<<source:utf8>>)
-      let artifact = Source(target: target, source: source, oid: source_oid)
-      let t = trace.new(state.actor_oid, state.kp, artifact, None)
-      process.send(reply, Ok(t))
+      case nif.compile_grammar(source) {
+        Ok(etf) -> {
+          let domain_name = case grammar.from_source(source) {
+            Ok(g) -> grammar.domain(g)
+            Error(_) -> "unknown"
+          }
+          case loader.load_etf_module(etf) {
+            Ok(module) -> {
+              case domain.is_running(domain_name) {
+                False -> {
+                  let _ = domain.start_supervised(domain_name)
+                  Nil
+                }
+                True -> Nil
+              }
+              let compiled =
+                CompiledDomain(
+                  domain: domain_name,
+                  source_oid: source_oid,
+                  module: module,
+                )
+              let t = trace.new(state.actor_oid, state.kp, compiled, None)
+              process.send(reply, Ok(t))
+            }
+            Error(e) -> process.send(reply, Error(e))
+          }
+        }
+        Error(e) -> process.send(reply, Error(e))
+      }
       actor.continue(state)
     }
     Shutdown -> actor.stop()
