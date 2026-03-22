@@ -110,14 +110,15 @@ fn write_prism_tree(
 }
 
 /// Deterministic Ed25519 signing key for conversation commits.
-/// sha256("conversation") → 32-byte seed → Ed25519 keypair.
-/// Same pattern as @compiler actor in Gleam (sha256("compiler") → keypair).
+/// sha512("conversation") → first 32 bytes → Ed25519 seed → keypair.
+/// Same pattern as @compiler actor in Gleam (sha512("compiler") → keypair).
 #[cfg(feature = "git")]
 fn conversation_key() -> Result<ssh_key::PrivateKey, String> {
-    use sha2::{Digest, Sha256};
+    use sha2::{Digest, Sha512};
     use ssh_key::private::{Ed25519Keypair, KeypairData};
 
-    let seed: [u8; 32] = Sha256::digest(b"conversation").into();
+    let hash = Sha512::digest(b"conversation");
+    let seed: [u8; 32] = hash[..32].try_into().expect("SHA-512 produces 64 bytes");
     let keypair = Ed25519Keypair::from_seed(&seed);
     let key_data = KeypairData::Ed25519(keypair);
     ssh_key::PrivateKey::new(key_data, "conversation@systemic.engineering")

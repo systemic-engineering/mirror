@@ -5,7 +5,7 @@
 //// When the compiled module's action functions call
 //// gen_server:call(Domain, {Action, Args}), this server receives them.
 ////
-//// Identity follows the cairn pattern: sha256(domain) → Ed25519 keypair.
+//// Identity follows the cairn pattern: sha512(domain) → Ed25519 keypair.
 
 import gleam/dynamic.{type Dynamic}
 

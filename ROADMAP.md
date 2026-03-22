@@ -40,7 +40,7 @@ domain.
 
 **@compiler** — owns `action compile`. Receives `.conv` source, calls the
 Rust NIF to produce ETF, loads the BEAM module. Returns a witnessed trace.
-Identity: `sha256("compiler")` → Ed25519 keypair.
+Identity: `sha512("compiler")` → first 32 bytes → Ed25519 keypair.
 
 In supervised mode (`start_named`), the compiler is pure — it compiles and
 loads modules but does not start domain servers. The garden handles lifecycle.
@@ -74,13 +74,13 @@ The @compiler actor starts via `compiler.start()` (standalone) or
 Standalone path — `compiler.start()`:
 
 1. Starts the domain supervisor (idempotent)
-2. Derives the compiler's Ed25519 keypair from `sha256("compiler")`
+2. Derives the compiler's Ed25519 keypair from `sha512("compiler")` (first 32 bytes → seed)
 3. Starts the OTP actor with that identity
 4. On `CompileGrammar`: compiles, loads, starts domain server, returns trace
 
 Supervised path — `compiler.start_named(name)`:
 
-1. Derives the compiler's Ed25519 keypair from `sha256("compiler")`
+1. Derives the compiler's Ed25519 keypair from `sha512("compiler")` (first 32 bytes → seed)
 2. Starts the OTP actor with that identity, registered under `name`
 3. On `CompileGrammar`: compiles, loads, returns trace (no domain lifecycle)
 
@@ -97,7 +97,7 @@ still registers as the raw domain atom for action dispatch.
 Every domain has a deterministic identity derived from its name:
 
 ```
-sha256(domain_name) → seed → Ed25519 keypair → Oid
+sha512(domain_name) → first 32 bytes → Ed25519 seed → keypair → Oid
 ```
 
 This is the cairn pattern. The identity is the name. The name is the
