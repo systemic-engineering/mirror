@@ -46,4 +46,4 @@ build-all-nifs: build-nif build-prism-nif
 
 # Build all NIFs then run gleam tests.
 beam-test: build-all-nifs
-    PATH={{ERLANG_BIN}}:$PATH {{GLEAM}} test --directory beam
+    cd beam && PATH={{ERLANG_BIN}}:$PATH {{GLEAM}} test
