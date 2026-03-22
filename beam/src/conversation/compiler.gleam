@@ -4,7 +4,7 @@
 //// the Rust NIF, loads the compiled module onto the BEAM, and returns a
 //// witnessed Trace(CompiledDomain).
 ////
-//// Identity is deterministic: sha256("compiler") → Ed25519 keypair.
+//// Identity is deterministic: sha512("compiler") → Ed25519 keypair.
 ////
 //// Two start modes:
 //// - start()       — imperative path. Starts domain supervisor, manages
@@ -48,7 +48,7 @@ type State {
 
 /// The @compiler actor's deterministic public key.
 pub fn public_key() -> key.Key {
-  key.from_seed(do_sha256(<<"compiler":utf8>>))
+  key.from_seed(domain_seed(<<"compiler":utf8>>))
   |> key.public_key
 }
 
@@ -74,7 +74,7 @@ pub fn start_named(
 }
 
 fn do_start(manage_domains: Bool) -> actor.StartResult(Subject(Message)) {
-  let kp = key.from_seed(do_sha256(<<"compiler":utf8>>))
+  let kp = key.from_seed(domain_seed(<<"compiler":utf8>>))
   let actor_oid = key.oid(key.public_key(kp))
   let state =
     State(kp: kp, actor_oid: actor_oid, manage_domains: manage_domains)
@@ -86,7 +86,7 @@ fn do_start(manage_domains: Bool) -> actor.StartResult(Subject(Message)) {
 fn do_start_named(
   name: process.Name(Message),
 ) -> actor.StartResult(Subject(Message)) {
-  let kp = key.from_seed(do_sha256(<<"compiler":utf8>>))
+  let kp = key.from_seed(domain_seed(<<"compiler":utf8>>))
   let actor_oid = key.oid(key.public_key(kp))
   let state = State(kp: kp, actor_oid: actor_oid, manage_domains: False)
   actor.new(state)
@@ -140,5 +140,11 @@ fn handle_message(state: State, msg: Message) -> actor.Next(State, Message) {
   }
 }
 
-@external(erlang, "crypto_ffi", "sha256")
-fn do_sha256(data: BitArray) -> BitArray
+/// SHA-512 hash, first 32 bytes — Ed25519 seed for the cairn pattern.
+fn domain_seed(name: BitArray) -> BitArray {
+  let <<seed:bytes-size(32), _rest:bytes>> = do_sha512(name)
+  seed
+}
+
+@external(erlang, "crypto_ffi", "sha512")
+fn do_sha512(data: BitArray) -> BitArray
