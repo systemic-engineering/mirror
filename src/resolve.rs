@@ -51,6 +51,10 @@ pub struct TypeRegistry {
     acts: HashMap<String, Vec<(String, Option<String>)>>,
     calls: HashMap<String, Vec<(String, String, Vec<String>)>>,
     visibility: HashMap<String, Visibility>,
+    /// Runtime target per action (e.g. "erlang"). Absent = @conversation default.
+    runtime: HashMap<String, String>,
+    /// Raw inline body per action (only for non-@conversation runtimes).
+    inline_bodies: HashMap<String, String>,
 }
 
 impl TypeRegistry {
@@ -68,6 +72,8 @@ impl TypeRegistry {
         let mut acts: HashMap<String, Vec<(String, Option<String>)>> = HashMap::new();
         let mut calls: HashMap<String, Vec<(String, String, Vec<String>)>> = HashMap::new();
         let mut visibility: HashMap<String, Visibility> = HashMap::new();
+        let mut runtime: HashMap<String, String> = HashMap::new();
+        let mut inline_bodies: HashMap<String, String> = HashMap::new();
 
         for child in grammar_node.children() {
             if child.data().is_form("type-def") {
@@ -98,6 +104,8 @@ impl TypeRegistry {
                 let mut fields = Vec::new();
                 let mut act_calls = Vec::new();
                 let mut vis = Visibility::Protected;
+                let mut runtime_target: Option<String> = None;
+                let mut raw_body: Option<String> = None;
 
                 for item in child.children() {
                     if item.data().is_atom("visibility") {
@@ -106,6 +114,16 @@ impl TypeRegistry {
                             "private" => Visibility::Private,
                             _ => Visibility::Protected,
                         };
+                    } else if item.data().is_decl("in") {
+                        let rt = item
+                            .data()
+                            .value
+                            .strip_prefix('@')
+                            .unwrap_or(&item.data().value)
+                            .to_string();
+                        runtime_target = Some(rt);
+                    } else if item.data().is_atom("inline-body") {
+                        raw_body = Some(item.data().value.clone());
                     } else if item.data().is_atom("field") {
                         let field_name = item.data().value.clone();
                         let type_ref = item
@@ -132,7 +150,13 @@ impl TypeRegistry {
                 visibility.insert(act_name.clone(), vis);
                 acts.insert(act_name.clone(), fields);
                 if !act_calls.is_empty() {
-                    calls.insert(act_name, act_calls);
+                    calls.insert(act_name.clone(), act_calls);
+                }
+                if let Some(rt) = runtime_target {
+                    runtime.insert(act_name.clone(), rt);
+                }
+                if let Some(body) = raw_body {
+                    inline_bodies.insert(act_name, body);
                 }
             }
         }
@@ -163,7 +187,14 @@ impl TypeRegistry {
         // act fields can reference variants, external types, or undeclared names.
 
         Ok(Self::finalize(
-            domain, types, params, acts, calls, visibility,
+            domain,
+            types,
+            params,
+            acts,
+            calls,
+            visibility,
+            runtime,
+            inline_bodies,
         ))
     }
 
@@ -267,6 +298,18 @@ impl TypeRegistry {
             .unwrap_or(Visibility::Protected)
     }
 
+    /// Get the runtime target for a named action (e.g. "erlang").
+    /// Returns None for default @conversation actions.
+    pub fn action_runtime(&self, name: &str) -> Option<&str> {
+        self.runtime.get(name).map(|s| s.as_str())
+    }
+
+    /// Get the raw inline body for a named action.
+    /// Only present for non-@conversation runtimes.
+    pub fn action_inline_body(&self, name: &str) -> Option<&str> {
+        self.inline_bodies.get(name).map(|s| s.as_str())
+    }
+
     /// Test-only: build a registry with a parameterized variant whose type ref
     /// is NOT declared. This bypasses compile-time validation to exercise the
     /// `None => continue` defensive path in `generate::derive_type`.
@@ -294,11 +337,14 @@ impl TypeRegistry {
             HashMap::new(),
             HashMap::new(),
             HashMap::new(),
+            HashMap::new(),
+            HashMap::new(),
         )
     }
 
     /// Build a finalized TypeRegistry from raw data.
     /// Computes the canonical encoding and content address.
+    #[allow(clippy::too_many_arguments)]
     fn finalize(
         domain: String,
         types: HashMap<String, HashSet<String>>,
@@ -306,8 +352,11 @@ impl TypeRegistry {
         acts: HashMap<String, Vec<(String, Option<String>)>>,
         calls: HashMap<String, Vec<(String, String, Vec<String>)>>,
         visibility: HashMap<String, Visibility>,
+        runtime: HashMap<String, String>,
+        inline_bodies: HashMap<String, String>,
     ) -> Self {
-        let encoded = Self::encode_canonical(&domain, &types, &params, &acts);
+        let encoded =
+            Self::encode_canonical(&domain, &types, &params, &acts, &runtime, &inline_bodies);
         let sha = Sha(fragment::blob_oid_bytes(&encoded));
         let ref_ = Ref::new(sha, format!("grammar/{}", domain));
         TypeRegistry {
@@ -319,6 +368,8 @@ impl TypeRegistry {
             acts,
             calls,
             visibility,
+            runtime,
+            inline_bodies,
         }
     }
 
@@ -329,6 +380,8 @@ impl TypeRegistry {
         types: &HashMap<String, HashSet<String>>,
         params: &HashMap<(String, String), String>,
         acts: &HashMap<String, Vec<(String, Option<String>)>>,
+        runtime: &HashMap<String, String>,
+        inline_bodies: &HashMap<String, String>,
     ) -> Vec<u8> {
         let mut lines = Vec::new();
         lines.push(domain.to_string());
@@ -362,6 +415,20 @@ impl TypeRegistry {
                 })
                 .collect();
             lines.push(format!("act:{}={}", name, fields.join(",")));
+        }
+
+        // Runtime targets: sorted by action name
+        let mut rt_keys: Vec<&String> = runtime.keys().collect();
+        rt_keys.sort();
+        for name in rt_keys {
+            lines.push(format!("runtime:{}={}", name, runtime[name]));
+        }
+
+        // Inline bodies: sorted by action name
+        let mut body_keys: Vec<&String> = inline_bodies.keys().collect();
+        body_keys.sort();
+        for name in body_keys {
+            lines.push(format!("body:{}={}", name, inline_bodies[name]));
         }
 
         lines.join("\n").into_bytes()
@@ -2539,9 +2606,7 @@ mod tests {
 
     #[test]
     fn type_registry_compile_action_runtime() {
-        let reg = compile_grammar(
-            "grammar @test {\n  action foo in @erlang {\n    ok\n  }\n}\n",
-        );
+        let reg = compile_grammar("grammar @test {\n  action foo in @erlang {\n    ok\n  }\n}\n");
         assert!(reg.has_action("foo"));
         assert_eq!(reg.action_runtime("foo"), Some("erlang"));
         assert!(reg.action_inline_body("foo").unwrap().contains("ok"));
@@ -2549,8 +2614,7 @@ mod tests {
 
     #[test]
     fn type_registry_compile_action_no_runtime() {
-        let reg =
-            compile_grammar("grammar @test {\n  action send {\n    to: address\n  }\n}\n");
+        let reg = compile_grammar("grammar @test {\n  action send {\n    to: address\n  }\n}\n");
         assert_eq!(reg.action_runtime("send"), None);
         assert_eq!(reg.action_inline_body("send"), None);
     }
