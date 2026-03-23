@@ -7,7 +7,7 @@ use eetf::{Atom, FixInteger, List, Term, Tuple};
 
 use crate::ast::AstNode;
 use crate::prism::Prism;
-use crate::resolve::{BranchAction, BranchPattern, OutputNode, TypeRegistry};
+use crate::resolve::{BranchAction, BranchPattern, OutputNode, TypeRegistry, Visibility};
 
 /// Emit Erlang Abstract Format from a transformation tree.
 ///
@@ -170,13 +170,16 @@ pub fn emit_actor_module(
         eaf_atom(&beam_module),
     ]));
 
-    // {attribute, 2, export, [{act1, 1}, ..., {lenses, 0}, {extends, 0}]}
+    // {attribute, 2, export, [{act1, 1}, ..., {lenses, 0}, {extends, 0}, {visibility, 0}]}
+    // Private actions are NOT exported.
     let mut exports: Vec<Term> = act_names
         .iter()
+        .filter(|name| registry.action_visibility(name) != Visibility::Private)
         .map(|name| eaf_tuple(vec![eaf_atom(name), eaf_int(1)]))
         .collect();
     exports.push(eaf_tuple(vec![eaf_atom("lenses"), eaf_int(0)]));
     exports.push(eaf_tuple(vec![eaf_atom("extends"), eaf_int(0)]));
+    exports.push(eaf_tuple(vec![eaf_atom("visibility"), eaf_int(0)]));
     forms.push(eaf_tuple(vec![
         eaf_atom("attribute"),
         eaf_int(2),
@@ -185,12 +188,15 @@ pub fn emit_actor_module(
     ]));
 
     // One function per act:
-    // {function, Line, Name, 1, [{clause, Line, [Args], [], [Body]}]}
-    // Body = local dispatch + cross-actor calls
+    // Body depends on visibility:
+    //   public    → {ok, Args} (direct return, no gen_server)
+    //   protected → gen_server:call('module', {action, Args})
+    //   private   → gen_server:call('module', {action, Args}) (same body, not exported)
     let mut line = 3i32;
     for name in &act_names {
+        let vis = registry.action_visibility(name);
         let calls = registry.action_calls(name);
-        forms.push(emit_act_function(&registry.domain, name, calls, line));
+        forms.push(emit_act_function(&registry.domain, name, &vis, calls, line));
         line += 1;
     }
 
@@ -200,6 +206,10 @@ pub fn emit_actor_module(
 
     // extends/0 → [<<"parent1">>, <<"parent2">>, ...]
     forms.push(emit_string_list_function("extends", extends, line));
+    line += 1;
+
+    // visibility/0 → [{<<"action">>, <<"public">>}, ...]
+    forms.push(emit_visibility_function(registry, line));
 
     let term = Term::from(List::from(forms));
     let mut buf = Vec::new();
@@ -209,31 +219,40 @@ pub fn emit_actor_module(
 
 /// Emit a single act dispatch function.
 ///
-/// Without cross-actor calls:
-/// ```erlang
-/// name(Args) -> gen_server:call('module', {name, Args}).
-/// ```
+/// Visibility determines the body:
+/// - **Public**: `name(Args) -> {ok, Args}.` (direct return, no gen_server)
+/// - **Protected**: `name(Args) -> gen_server:call('module', {name, Args}).`
+/// - **Private**: same body as protected (but not exported from module)
 ///
-/// With cross-actor calls:
-/// ```erlang
-/// commit(Args) ->
-///     gen_server:call('integration', {commit, Args}),
-///     gen_server:call('filesystem', {write, Args}).
-/// ```
+/// Cross-actor calls always use gen_server:call regardless of visibility.
 fn emit_act_function(
     module: &str,
     act_name: &str,
+    visibility: &Visibility,
     calls: &[(String, String, Vec<String>)],
     line: i32,
 ) -> Term {
     // The argument variable: {var, Line, 'Args'}
     let args_var = eaf_tuple(vec![eaf_atom("var"), eaf_int(line), eaf_atom("Args")]);
 
-    // Local dispatch: gen_server:call(Module, {ActName, Args})
-    let local_call = emit_gen_server_call(module, act_name, &args_var, line);
+    let mut body = match visibility {
+        Visibility::Public => {
+            // Public: return {ok, Args} directly — no gen_server round-trip
+            vec![eaf_tuple_expr(
+                line,
+                vec![
+                    eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("ok")]),
+                    args_var.clone(),
+                ],
+            )]
+        }
+        Visibility::Protected | Visibility::Private => {
+            // Protected/Private: dispatch through gen_server:call
+            vec![emit_gen_server_call(module, act_name, &args_var, line)]
+        }
+    };
 
-    // Build body: local dispatch + cross-actor calls
-    let mut body = vec![local_call];
+    // Cross-actor calls always go through gen_server:call
     for (domain, action, _args) in calls {
         body.push(emit_gen_server_call(domain, action, &args_var, line));
     }
@@ -250,6 +269,40 @@ fn emit_act_function(
             eaf_list(vec![args_var]),
             eaf_list(vec![]), // no guards
             eaf_list(body),
+        ])]),
+    ])
+}
+
+/// Emit `visibility/0` function: returns a list of `{<<"action">>, <<"vis">>}` tuples.
+fn emit_visibility_function(registry: &TypeRegistry, line: i32) -> Term {
+    let pairs: Vec<Term> = registry
+        .act_names()
+        .iter()
+        .map(|name| {
+            let vis = match registry.action_visibility(name) {
+                Visibility::Public => "public",
+                Visibility::Protected => "protected",
+                Visibility::Private => "private",
+            };
+            eaf_tuple_expr(line, vec![eaf_bin(line, name), eaf_bin(line, vis)])
+        })
+        .collect();
+
+    eaf_tuple(vec![
+        eaf_atom("function"),
+        eaf_int(line),
+        eaf_atom("visibility"),
+        eaf_int(0),
+        eaf_list(vec![eaf_tuple(vec![
+            eaf_atom("clause"),
+            eaf_int(line),
+            eaf_list(vec![]),
+            eaf_list(vec![]),
+            eaf_list(vec![if pairs.is_empty() {
+                eaf_tuple(vec![eaf_atom("nil"), eaf_int(line)])
+            } else {
+                eaf_cons_list(&pairs, line)
+            }]),
         ])]),
     ])
 }

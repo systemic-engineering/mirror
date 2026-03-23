@@ -924,6 +924,22 @@ fn parse_extends_clause(name_and_extends: &str) -> (&str, Vec<&str>) {
     }
 }
 
+/// Extract visibility modifier from an action line.
+/// Returns `(rest_of_line, visibility)` if it matches, or `None`.
+fn parse_action_visibility(line: &str) -> Option<(&str, &str)> {
+    if let Some(rest) = line.strip_prefix("public action ") {
+        Some((rest, "public"))
+    } else if let Some(rest) = line.strip_prefix("protected action ") {
+        Some((rest, "protected"))
+    } else if let Some(rest) = line.strip_prefix("private action ") {
+        Some((rest, "private"))
+    } else if let Some(rest) = line.strip_prefix("action ") {
+        Some((rest, "protected"))
+    } else {
+        None
+    }
+}
+
 fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
     let start_span = lines.current_span();
 
@@ -1008,7 +1024,8 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
             continue;
         }
 
-        if let Some(rest) = trimmed.strip_prefix("action ") {
+        // Action with visibility modifier: `public action read {`, etc.
+        if let Some((rest, visibility)) = parse_action_visibility(trimmed) {
             // Flush any pending type def
             if let Some((type_name, type_span, variants)) = current.take() {
                 defs.push(ast::ast_branch(
@@ -1020,7 +1037,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
                 ));
             }
             let span = lines.current_span();
-            defs.push(parse_action_def(rest, span, lines)?);
+            defs.push(parse_action_def(rest, visibility, span, lines)?);
             continue;
         }
 
@@ -1045,7 +1062,7 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
                     act_rest.to_string()
                 };
                 let span = lines.current_span();
-                defs.push(parse_action_def(&action_header, span, lines)?);
+                defs.push(parse_action_def(&action_header, "protected", span, lines)?);
                 continue;
             }
         }
@@ -1118,8 +1135,12 @@ fn parse_variants(text: &str, span: Span) -> Vec<Prism<AstNode>> {
 ///
 /// `send { from: address\n  to: address }` → Form("action-def", "send") with field children
 /// `noop {}` → Form("action-def", "noop") with no children
+///
+/// The visibility parameter becomes an `Atom("visibility", vis)` child node,
+/// inserted as the first child of the action-def Form.
 fn parse_action_def(
     header: &str,
+    visibility: &str,
     span: Span,
     lines: &mut Lines,
 ) -> Result<Prism<AstNode>, ParseError> {
@@ -1133,6 +1154,8 @@ fn parse_action_def(
         }
     };
 
+    let vis_node = ast::ast_leaf(Kind::Atom, "visibility", visibility, span);
+
     // Single-line empty: `action noop {}`
     if rest == "}" {
         lines.advance();
@@ -1141,13 +1164,13 @@ fn parse_action_def(
             "action-def",
             name,
             span,
-            vec![],
+            vec![vis_node],
         ));
     }
 
     lines.advance(); // consume the action header line
 
-    let mut fields: Vec<Prism<AstNode>> = Vec::new();
+    let mut fields: Vec<Prism<AstNode>> = vec![vis_node];
 
     while let Some(line) = lines.peek() {
         let trimmed = line.trim();
@@ -2875,9 +2898,12 @@ grammar @conversation {
         assert_eq!(action.data().kind, Kind::Form);
         assert_eq!(action.data().name, "action-def");
         assert_eq!(action.data().value, "send");
-        assert_eq!(action.children().len(), 2);
+        assert_eq!(action.children().len(), 3);
 
-        let from = &action.children()[0];
+        assert_eq!(action.children()[0].data().name, "visibility");
+        assert_eq!(action.children()[0].data().value, "protected");
+
+        let from = &action.children()[1];
         assert_eq!(from.data().kind, Kind::Atom);
         assert_eq!(from.data().name, "field");
         assert_eq!(from.data().value, "from");
@@ -2886,7 +2912,7 @@ grammar @conversation {
         assert_eq!(from.children()[0].data().name, "type-ref");
         assert_eq!(from.children()[0].data().value, "address");
 
-        let to = &action.children()[1];
+        let to = &action.children()[2];
         assert_eq!(to.data().kind, Kind::Atom);
         assert_eq!(to.data().name, "field");
         assert_eq!(to.data().value, "to");
@@ -2901,9 +2927,9 @@ grammar @conversation {
         let action = &grammar.children()[0];
         assert_eq!(action.data().name, "action-def");
         assert_eq!(action.data().value, "send");
-        assert_eq!(action.children().len(), 1);
+        assert_eq!(action.children().len(), 2);
 
-        let field = &action.children()[0];
+        let field = &action.children()[1];
         assert_eq!(field.data().kind, Kind::Atom);
         assert_eq!(field.data().name, "field");
         assert_eq!(field.data().value, "subject");
@@ -2921,7 +2947,8 @@ grammar @conversation {
         assert_eq!(action.data().kind, Kind::Form);
         assert_eq!(action.data().name, "action-def");
         assert_eq!(action.data().value, "noop");
-        assert_eq!(action.children().len(), 0);
+        assert_eq!(action.children().len(), 1);
+        assert_eq!(action.children()[0].data().name, "visibility");
     }
 
     #[test]
@@ -2959,8 +2986,8 @@ grammar @conversation {
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
         assert_eq!(action.data().name, "action-def");
-        assert_eq!(action.children().len(), 1); // only the field, comments/blanks skipped
-        assert_eq!(action.children()[0].data().value, "from");
+        assert_eq!(action.children().len(), 2); // visibility + field, comments/blanks skipped
+        assert_eq!(action.children()[1].data().value, "from");
     }
 
     #[test]
@@ -2970,9 +2997,9 @@ grammar @conversation {
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
         assert_eq!(action.data().value, "commit");
-        assert_eq!(action.children().len(), 2); // field + action-call
+        assert_eq!(action.children().len(), 3); // visibility + field + action-call
 
-        let call = &action.children()[1];
+        let call = &action.children()[2];
         assert_eq!(call.data().kind, Kind::Ref);
         assert_eq!(call.data().name, "action-call");
         assert_eq!(call.data().value, "@filesystem.write");
@@ -2986,9 +3013,9 @@ grammar @conversation {
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
-        assert_eq!(action.children().len(), 3); // 2 fields + 1 action-call
+        assert_eq!(action.children().len(), 4); // visibility + 2 fields + 1 action-call
 
-        let call = &action.children()[2];
+        let call = &action.children()[3];
         assert_eq!(call.data().name, "action-call");
         assert_eq!(call.data().value, "@mail.deliver");
         assert_eq!(call.children().len(), 2);
@@ -3002,9 +3029,9 @@ grammar @conversation {
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
-        assert_eq!(action.children().len(), 1);
+        assert_eq!(action.children().len(), 2);
 
-        let call = &action.children()[0];
+        let call = &action.children()[1];
         assert_eq!(call.data().name, "action-call");
         assert_eq!(call.data().value, "@health.check");
         assert_eq!(call.children().len(), 0);
@@ -3018,8 +3045,8 @@ grammar @conversation {
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
         // Parsed as untyped field, not action-call
-        assert_eq!(action.children().len(), 1);
-        assert_eq!(action.children()[0].data().name, "field");
+        assert_eq!(action.children().len(), 2);
+        assert_eq!(action.children()[1].data().name, "field");
     }
 
     #[test]
@@ -3029,8 +3056,8 @@ grammar @conversation {
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
-        assert_eq!(action.children().len(), 1);
-        assert_eq!(action.children()[0].data().name, "field");
+        assert_eq!(action.children().len(), 2);
+        assert_eq!(action.children()[1].data().name, "field");
     }
 
     // -- Legacy `act` keyword --
@@ -3224,19 +3251,19 @@ grammar @conversation {
         let action_send = &grammar.children()[6];
         assert_eq!(action_send.data().name, "action-def");
         assert_eq!(action_send.data().value, "send");
-        assert_eq!(action_send.children().len(), 4);
+        assert_eq!(action_send.children().len(), 5);
 
         // Action: reply (2 fields)
         let action_reply = &grammar.children()[7];
         assert_eq!(action_reply.data().name, "action-def");
         assert_eq!(action_reply.data().value, "reply");
-        assert_eq!(action_reply.children().len(), 2);
+        assert_eq!(action_reply.children().len(), 3);
 
         // Action: forward (2 fields)
         let action_forward = &grammar.children()[8];
         assert_eq!(action_forward.data().name, "action-def");
         assert_eq!(action_forward.data().value, "forward");
-        assert_eq!(action_forward.children().len(), 2);
+        assert_eq!(action_forward.children().len(), 3);
 
         // Template: $message with 1 param + 6 fields = 7 children
         let template = &children[1];

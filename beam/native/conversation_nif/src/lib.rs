@@ -38,4 +38,28 @@ fn compile_grammar<'a>(env: Env<'a>, source: String) -> (Atom, rustler::Term<'a>
     }
 }
 
+/// Compile with phase OIDs for traced compilation chain.
+///
+/// Returns `{ok, {Binary, ParseOid, ResolveOid, CompileOid}}` or `{error, ErrorString}`.
+/// Each OID is a hex-encoded SHA-512 content address for that compilation phase.
+#[rustler::nif(schedule = "DirtyCpu")]
+fn compile_grammar_traced<'a>(env: Env<'a>, source: String) -> (Atom, rustler::Term<'a>) {
+    match conversation::ffi::compile_grammar_with_phases(&source) {
+        Ok(result) => {
+            let mut binary = NewBinary::new(env, result.etf.len());
+            binary.as_mut_slice().copy_from_slice(&result.etf);
+            let etf_term = Binary::from(binary).to_term(env);
+            let inner = (
+                etf_term,
+                result.parse_oid,
+                result.resolve_oid,
+                result.compile_oid,
+            )
+                .encode(env);
+            (atoms::ok(), inner)
+        }
+        Err(e) => (atoms::error(), e.encode(env)),
+    }
+}
+
 rustler::init!("conversation_nif");

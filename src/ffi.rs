@@ -27,12 +27,26 @@ pub fn parse_to_oid(source: &str) -> Result<String, String> {
     }
 }
 
-/// Compile .conv grammar source → ETF bytes for actor dispatch module.
-pub fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
+/// Result of grammar compilation with per-phase content OIDs.
+pub struct CompileResult {
+    /// ETF-encoded BEAM module bytes.
+    pub etf: Vec<u8>,
+    /// Content OID of the parsed AST.
+    pub parse_oid: String,
+    /// Content OID of the resolved TypeRegistry.
+    pub resolve_oid: String,
+    /// Content OID of the compiled EAF bytes.
+    pub compile_oid: String,
+}
+
+/// Compile with per-phase OIDs for traced compilation chain.
+pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String> {
     let ast = Parse
         .trace(source.to_string())
         .into_result()
         .map_err(|e| e.to_string())?;
+
+    let parse_oid = ast.content_oid().as_ref().to_string();
 
     let grammar_node = ast
         .children()
@@ -41,8 +55,8 @@ pub fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
         .ok_or_else(|| "no grammar block found".to_string())?;
 
     let registry = TypeRegistry::compile(grammar_node).map_err(|e| e.to_string())?;
+    let resolve_oid = crate::Oid::hash(registry.encoded()).as_ref().to_string();
 
-    // Collect lenses from `in @domain` siblings, filtering self-references
     let domain_name = registry.domain.clone();
     let lenses: Vec<String> = ast
         .children()
@@ -52,7 +66,6 @@ pub fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
         .filter(|d| *d != domain_name)
         .collect();
 
-    // Collect extends from grammar children (Ref nodes with name "extends")
     let extends: Vec<String> = grammar_node
         .children()
         .iter()
@@ -60,7 +73,20 @@ pub fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
         .map(|c| c.data().value.trim_start_matches('@').to_string())
         .collect();
 
-    Ok(compile::emit_actor_module(&registry, &lenses, &extends))
+    let etf = compile::emit_actor_module(&registry, &lenses, &extends);
+    let compile_oid = crate::Oid::hash(&etf).as_ref().to_string();
+
+    Ok(CompileResult {
+        etf,
+        parse_oid,
+        resolve_oid,
+        compile_oid,
+    })
+}
+
+/// Compile .conv grammar source → ETF bytes for actor dispatch module.
+pub fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
+    compile_grammar_with_phases(source).map(|r| r.etf)
 }
 
 /// Write a Prism tree to git objects. Returns the root tree OID.
@@ -207,6 +233,37 @@ fn commit_prism(tree: &crate::prism::Prism<crate::ast::AstNode>) -> Result<Strin
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn compile_result_has_phase_oids() {
+        let result = compile_grammar_with_phases(
+            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+        )
+        .unwrap();
+        assert!(!result.etf.is_empty());
+        assert_eq!(result.etf[0], 131); // ETF version byte
+        assert!(!result.parse_oid.is_empty());
+        assert!(!result.resolve_oid.is_empty());
+        assert!(!result.compile_oid.is_empty());
+        // All OIDs should be different (different content at each phase)
+        assert_ne!(result.parse_oid, result.resolve_oid);
+        assert_ne!(result.resolve_oid, result.compile_oid);
+    }
+
+    #[test]
+    fn compile_result_phase_oids_deterministic() {
+        let a = compile_grammar_with_phases(
+            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+        )
+        .unwrap();
+        let b = compile_grammar_with_phases(
+            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+        )
+        .unwrap();
+        assert_eq!(a.parse_oid, b.parse_oid);
+        assert_eq!(a.resolve_oid, b.resolve_oid);
+        assert_eq!(a.compile_oid, b.compile_oid);
+    }
 
     #[test]
     fn parse_success() {

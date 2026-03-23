@@ -1,5 +1,5 @@
 -module(conversation_nif).
--export([parse_conv/1, compile_grammar/1]).
+-export([parse_conv/1, compile_grammar/1, compile_grammar_traced/1]).
 -on_load(init/0).
 
 init() ->
@@ -11,4 +11,7 @@ parse_conv(_Source) ->
     erlang:nif_error(nif_not_loaded).
 
 compile_grammar(_Source) ->
+    erlang:nif_error(nif_not_loaded).
+
+compile_grammar_traced(_Source) ->
     erlang:nif_error(nif_not_loaded).

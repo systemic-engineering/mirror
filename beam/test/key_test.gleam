@@ -52,3 +52,46 @@ pub fn different_keys_different_oids_test() {
   let oid2 = key.oid(key.public_key(kp2))
   oid.equals(ref.oid(oid1), ref.oid(oid2)) |> should.be_false()
 }
+
+pub fn hierarchical_derivation_deterministic_test() {
+  let root = key.generate()
+  let root_pub = key.public_key(root)
+  let kp1 = key.derive_child(root_pub, "compiler")
+  let kp2 = key.derive_child(root_pub, "compiler")
+  // Same root + same name = same derived key
+  let oid1 = key.oid(key.public_key(kp1))
+  let oid2 = key.oid(key.public_key(kp2))
+  oid.equals(ref.oid(oid1), ref.oid(oid2)) |> should.be_true()
+}
+
+pub fn hierarchical_differs_from_flat_test() {
+  let root = key.generate()
+  let root_pub = key.public_key(root)
+  let derived = key.derive_child(root_pub, "compiler")
+  let flat = key.from_seed(<<0:256>>)
+  // Hierarchical derivation should produce a different key than flat
+  let oid_derived = key.oid(key.public_key(derived))
+  let oid_flat = key.oid(key.public_key(flat))
+  oid.equals(ref.oid(oid_derived), ref.oid(oid_flat)) |> should.be_false()
+}
+
+pub fn different_names_different_derived_keys_test() {
+  let root = key.generate()
+  let root_pub = key.public_key(root)
+  let compiler_kp = key.derive_child(root_pub, "compiler")
+  let garden_kp = key.derive_child(root_pub, "garden")
+  // Different names under same root = different keys
+  let oid1 = key.oid(key.public_key(compiler_kp))
+  let oid2 = key.oid(key.public_key(garden_kp))
+  oid.equals(ref.oid(oid1), ref.oid(oid2)) |> should.be_false()
+}
+
+pub fn derive_sign_verify_roundtrip_test() {
+  let root = key.generate()
+  let root_pub = key.public_key(root)
+  let derived = key.derive_child(root_pub, "actor")
+  let pub_key = key.public_key(derived)
+  let message = <<"signed by derived key":utf8>>
+  let signature = key.sign(derived, message)
+  key.verify(pub_key, message, signature) |> should.be_true()
+}

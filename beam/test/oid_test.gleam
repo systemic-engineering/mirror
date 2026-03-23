@@ -24,8 +24,8 @@ pub fn to_string_roundtrip_test() {
 pub fn to_string_is_hex_test() {
   let a = oid.from_bytes(<<"abc":utf8>>)
   let s = oid.to_string(a)
-  // SHA-256 produces 64 hex characters
-  should.equal(64, string_length(s))
+  // SHA-512 produces 128 hex characters
+  should.equal(128, string_length(s))
 }
 
 fn string_length(s: String) -> Int {
