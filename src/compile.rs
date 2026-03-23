@@ -196,7 +196,17 @@ pub fn emit_actor_module(
     for name in &act_names {
         let vis = registry.action_visibility(name);
         let calls = registry.action_calls(name);
-        forms.push(emit_act_function(&registry.domain, name, &vis, calls, line));
+        let inline = registry.action_inline_body(name);
+        let rt = registry.action_runtime(name);
+        forms.push(emit_act_function(
+            &registry.domain,
+            name,
+            &vis,
+            calls,
+            inline,
+            rt,
+            line,
+        ));
         line += 1;
     }
 
@@ -224,38 +234,65 @@ pub fn emit_actor_module(
 /// - **Protected**: `name(Args) -> gen_server:call('module', {name, Args}).`
 /// - **Private**: same body as protected (but not exported from module)
 ///
+/// When an inline body is present (from `in @domain`), emit:
+///   `name(Args) -> {ok, {inline, <<"domain">>, <<"body">>}}.`
+///
 /// Cross-actor calls always use gen_server:call regardless of visibility.
+#[allow(clippy::too_many_arguments)]
 fn emit_act_function(
     module: &str,
     act_name: &str,
     visibility: &Visibility,
     calls: &[(String, String, Vec<String>)],
+    inline_body: Option<&str>,
+    runtime: Option<&str>,
     line: i32,
 ) -> Term {
     // The argument variable: {var, Line, 'Args'}
     let args_var = eaf_tuple(vec![eaf_atom("var"), eaf_int(line), eaf_atom("Args")]);
 
-    let mut body = match visibility {
-        Visibility::Public => {
-            // Public: return {ok, Args} directly — no gen_server round-trip
-            vec![eaf_tuple_expr(
-                line,
-                vec![
-                    eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("ok")]),
-                    args_var.clone(),
-                ],
-            )]
-        }
-        Visibility::Protected | Visibility::Private => {
-            // Protected/Private: dispatch through gen_server:call
-            vec![emit_gen_server_call(module, act_name, &args_var, line)]
-        }
-    };
+    let body = if let Some(body_text) = inline_body {
+        // Inline body: {ok, {inline, <<"runtime">>, <<"body">>}}
+        let rt = runtime.unwrap_or("conversation");
+        vec![eaf_tuple_expr(
+            line,
+            vec![
+                eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("ok")]),
+                eaf_tuple_expr(
+                    line,
+                    vec![
+                        eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("inline")]),
+                        eaf_bin(line, rt),
+                        eaf_bin(line, body_text),
+                    ],
+                ),
+            ],
+        )]
+    } else {
+        let mut stmts = match visibility {
+            Visibility::Public => {
+                // Public: return {ok, Args} directly — no gen_server round-trip
+                vec![eaf_tuple_expr(
+                    line,
+                    vec![
+                        eaf_tuple(vec![eaf_atom("atom"), eaf_int(line), eaf_atom("ok")]),
+                        args_var.clone(),
+                    ],
+                )]
+            }
+            Visibility::Protected | Visibility::Private => {
+                // Protected/Private: dispatch through gen_server:call
+                vec![emit_gen_server_call(module, act_name, &args_var, line)]
+            }
+        };
 
-    // Cross-actor calls always go through gen_server:call
-    for (domain, action, _args) in calls {
-        body.push(emit_gen_server_call(domain, action, &args_var, line));
-    }
+        // Cross-actor calls always go through gen_server:call
+        for (domain, action, _args) in calls {
+            stmts.push(emit_gen_server_call(domain, action, &args_var, line));
+        }
+
+        stmts
+    };
 
     // {function, Line, Name, 1, [{clause, Line, [ArgsVar], [], [Body...]}]}
     eaf_tuple(vec![

@@ -440,21 +440,16 @@ mod tests {
 
     #[test]
     fn compile_grammar_inline_body() {
-        let etf = compile_grammar_to_etf(
-            "grammar @test {\n  action foo in @erlang {\n    ok\n  }\n}\n",
-        )
-        .unwrap();
+        let etf =
+            compile_grammar_to_etf("grammar @test {\n  action foo in @erlang {\n    ok\n  }\n}\n")
+                .unwrap();
         assert!(!etf.is_empty());
         assert_eq!(etf[0], 131); // ETF version byte
 
         // Decode and verify the function body contains "inline" atom
         let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
         let forms_str = format!("{:?}", term);
-        assert!(
-            forms_str.contains("inline"),
-            "expected 'inline' in emitted EAF: {}",
-            &forms_str[..forms_str.len().min(500)],
-        );
+        assert!(forms_str.contains("inline"));
     }
 
     #[test]

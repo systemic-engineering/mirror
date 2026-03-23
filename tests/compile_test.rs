@@ -391,3 +391,22 @@ fn emit_test_module_handles_property() {
     assert!(!eaf_bytes.is_empty());
     assert_eq!(eaf_bytes[0], 131);
 }
+
+/// Actor module with inline body action emits valid ETF.
+#[test]
+fn emit_actor_module_inline_body() {
+    let registry = compile_grammar(
+        "grammar @test {\n  type = a\n  action foo in @erlang {\n    ok\n  }\n}\n",
+    );
+    let eaf_bytes = compile::emit_actor_module(&registry, &[], &[]);
+    assert!(!eaf_bytes.is_empty());
+    assert_eq!(eaf_bytes[0], 131);
+
+    let term = eetf::Term::decode(std::io::Cursor::new(&eaf_bytes)).unwrap();
+    let forms_str = format!("{:?}", term);
+    assert!(
+        forms_str.contains("inline"),
+        "expected 'inline' in EAF: {}",
+        &forms_str[..forms_str.len().min(500)],
+    );
+}
