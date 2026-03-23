@@ -1131,10 +1131,26 @@ fn parse_variants(text: &str, span: Span) -> Vec<Prism<AstNode>> {
         .collect()
 }
 
+/// Extract optional `in @domain` runtime target from the action name portion.
+///
+/// `"foo in @erlang"` → `("foo", Some("@erlang"))`
+/// `"foo(from: bar) in @erlang"` → `("foo(from: bar)", Some("@erlang"))`
+/// `"foo"` → `("foo", None)`
+fn extract_runtime_target(name: &str) -> (&str, Option<&str>) {
+    if let Some(pos) = name.find(" in @") {
+        let action_name = name[..pos].trim();
+        let domain = name[pos + 4..].trim(); // skip " in ", keep "@" prefix
+        (action_name, Some(domain))
+    } else {
+        (name, None)
+    }
+}
+
 /// Parse an action definition block inside a grammar.
 ///
 /// `send { from: address\n  to: address }` → Form("action-def", "send") with field children
 /// `noop {}` → Form("action-def", "noop") with no children
+/// `foo in @erlang { code }` → Form("action-def", "foo") with Decl("in") + Atom("inline-body")
 ///
 /// The visibility parameter becomes an `Atom("visibility", vis)` child node,
 /// inserted as the first child of the action-def Form.
@@ -1144,7 +1160,7 @@ fn parse_action_def(
     span: Span,
     lines: &mut Lines,
 ) -> Result<Prism<AstNode>, ParseError> {
-    let (name, rest) = match header.split_once('{') {
+    let (raw_name, rest) = match header.split_once('{') {
         Some((n, r)) => (n.trim(), r.trim()),
         None => {
             return Err(ParseError {
@@ -1154,24 +1170,66 @@ fn parse_action_def(
         }
     };
 
+    let (name, runtime) = extract_runtime_target(raw_name);
+    let is_opaque = runtime.is_some_and(|r| {
+        let bare = r.strip_prefix('@').unwrap_or(r);
+        bare != "conversation"
+    });
+
     let vis_node = ast::ast_leaf(Kind::Atom, "visibility", visibility, span);
 
-    // Single-line empty: `action noop {}`
+    // Build initial children: visibility, then optional runtime target
+    let mut children: Vec<Prism<AstNode>> = vec![vis_node];
+    if let Some(rt) = runtime {
+        // rt always includes '@' prefix from extract_runtime_target
+        children.push(ast::ast_leaf(Kind::Decl, "in", rt, span));
+    }
+
+    // Single-line empty: `action noop {}` or `action noop in @erlang {}`
     if rest == "}" {
+        if is_opaque {
+            children.push(ast::ast_leaf(Kind::Atom, "inline-body", "", span));
+        }
         lines.advance();
         return Ok(ast::ast_branch(
             Kind::Form,
             "action-def",
             name,
             span,
-            vec![vis_node],
+            children,
         ));
     }
 
     lines.advance(); // consume the action header line
 
-    let mut fields: Vec<Prism<AstNode>> = vec![vis_node];
+    // Opaque body: collect raw lines until `}`
+    if is_opaque {
+        let mut body_lines: Vec<String> = Vec::new();
+        while let Some(line) = lines.peek() {
+            let trimmed = line.trim();
+            if trimmed == "}" {
+                let end_span = lines.current_span();
+                lines.advance();
+                let body_text = body_lines.join("\n");
+                children.push(ast::ast_leaf(Kind::Atom, "inline-body", &body_text, span));
+                return Ok(ast::ast_branch(
+                    Kind::Form,
+                    "action-def",
+                    name,
+                    span.merge(&end_span),
+                    children,
+                ));
+            }
+            body_lines.push(line.to_string());
+            lines.advance();
+        }
+        return Err(ParseError {
+            message: "unclosed action block".into(),
+            span: Some(span),
+        });
+    }
 
+    // Normal body: parse fields and action calls (in @conversation or default)
     while let Some(line) = lines.peek() {
         let trimmed = line.trim();
 
@@ -1183,7 +1241,7 @@ fn parse_action_def(
                 "action-def",
                 name,
                 span.merge(&end_span),
-                fields,
+                children,
             ));
         }
 
@@ -1197,7 +1255,7 @@ fn parse_action_def(
         // Action call: @domain.action(args...)
         if trimmed.starts_with('@') {
             if let Some(call_node) = parse_action_call(trimmed, field_span) {
-                fields.push(call_node);
+                children.push(call_node);
                 lines.advance();
                 continue;
             }
@@ -1207,7 +1265,7 @@ fn parse_action_def(
             let fname = fname.trim();
             let ftype = ftype.trim();
             let type_ref = ast::ast_leaf(Kind::Ref, "type-ref", ftype, field_span);
-            fields.push(ast::ast_branch(
+            children.push(ast::ast_branch(
                 Kind::Atom,
                 "field",
                 fname,
@@ -1215,7 +1273,7 @@ fn parse_action_def(
                 vec![type_ref],
             ));
         } else {
-            fields.push(ast::ast_leaf(Kind::Atom, "field", trimmed, field_span));
+            children.push(ast::ast_leaf(Kind::Atom, "field", trimmed, field_span));
         }
 
         lines.advance();
@@ -3114,8 +3172,7 @@ grammar @conversation {
 
     #[test]
     fn parse_grammar_action_in_domain() {
-        let source =
-            "grammar @test {\n  action foo in @erlang {\n    some_erlang_code()\n  }\n}\n";
+        let source = "grammar @test {\n  action foo in @erlang {\n    some_erlang_code()\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
@@ -3137,6 +3194,122 @@ grammar @conversation {
         assert_eq!(body.data().kind, Kind::Atom);
         assert_eq!(body.data().name, "inline-body");
         assert!(body.data().value.contains("some_erlang_code()"));
+    }
+
+    #[test]
+    fn parse_grammar_action_in_domain_empty_body() {
+        let source = "grammar @test {\n  action noop in @erlang {}\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().value, "noop");
+        let in_node = action
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("in"))
+            .unwrap();
+        assert_eq!(in_node.data().value, "@erlang");
+        let body = action
+            .children()
+            .iter()
+            .find(|c| c.data().is_atom("inline-body"))
+            .unwrap();
+        assert_eq!(body.data().value, "");
+    }
+
+    #[test]
+    fn parse_grammar_action_in_domain_preserves_lines() {
+        let source =
+            "grammar @test {\n  action foo in @erlang {\n    Line1,\n    Line2\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let action = &tree.children()[0].children()[0];
+        let body = action
+            .children()
+            .iter()
+            .find(|c| c.data().is_atom("inline-body"))
+            .unwrap();
+        assert!(body.data().value.contains("Line1,"));
+        assert!(body.data().value.contains("Line2"));
+    }
+
+    #[test]
+    fn parse_grammar_action_in_conversation_explicit() {
+        let source =
+            "grammar @test {\n  action send in @conversation {\n    to: address\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().value, "send");
+        // Explicit @conversation gets the in node
+        let in_node = action
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("in"))
+            .unwrap();
+        assert_eq!(in_node.data().value, "@conversation");
+        // Body parsed as fields, not opaque
+        let field = action
+            .children()
+            .iter()
+            .find(|c| c.data().is_atom("field"))
+            .unwrap();
+        assert_eq!(field.data().value, "to");
+    }
+
+    #[test]
+    fn parse_grammar_public_action_in_domain() {
+        let source = "grammar @test {\n  public action foo in @erlang {\n    ok\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let action = &tree.children()[0].children()[0];
+        assert_eq!(action.children()[0].data().value, "public");
+        let in_node = action
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("in"))
+            .unwrap();
+        assert_eq!(in_node.data().value, "@erlang");
+    }
+
+    #[test]
+    fn parse_grammar_action_in_domain_with_params() {
+        let source = "grammar @test {\n  type = foo | bar\n  action transform(from: foo, to: bar) in @erlang {\n    maps:new()\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let action = grammar
+            .children()
+            .iter()
+            .find(|c| c.data().is_form("action-def"))
+            .unwrap();
+        // Name includes params but not "in @erlang"
+        assert!(action.data().value.contains("transform"));
+        assert!(!action.data().value.contains("@erlang"));
+        let in_node = action
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("in"))
+            .unwrap();
+        assert_eq!(in_node.data().value, "@erlang");
+    }
+
+    #[test]
+    fn parse_grammar_action_in_domain_unclosed() {
+        let source = "grammar @test {\n  action foo in @erlang {\n    unclosed\n";
+        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("unclosed"),
+            "expected unclosed error: {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_grammar_action_default_no_in_node() {
+        // No `in @domain` = no Decl("in") child
+        let source = "grammar @test {\n  action send {\n    to: address\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let action = &grammar.children()[0];
+        assert!(action.children().iter().all(|c| !c.data().is_decl("in")));
     }
 
     #[test]
