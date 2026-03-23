@@ -232,6 +232,144 @@ fn mail_grammar_has_three_actions() {
     assert_eq!(forward[1].0, "to");
 }
 
+// ---------------------------------------------------------------------------
+// Action visibility
+// ---------------------------------------------------------------------------
+
+const VISIBILITY_GRAMMAR: &str = "\
+grammar @filesystem {
+  type = file | path
+
+  public action read {
+    path: path
+  }
+
+  protected action write {
+    path: path
+    content: file
+  }
+
+  private action validate_path {
+    path: path
+  }
+
+  action default_action {
+    path: path
+  }
+}
+";
+
+#[test]
+fn public_action_parsed_with_visibility() {
+    let ast = Parse.trace(VISIBILITY_GRAMMAR.to_string()).unwrap();
+    let grammar = ast
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("grammar"))
+        .unwrap();
+    let action = grammar
+        .children()
+        .iter()
+        .find(|c| c.data().is_form("action-def") && c.data().value == "read")
+        .expect("should have action 'read'");
+    let vis = action
+        .children()
+        .iter()
+        .find(|c| c.data().is_atom("visibility"))
+        .expect("should have visibility child");
+    assert_eq!(vis.data().value, "public");
+}
+
+#[test]
+fn protected_action_parsed_with_visibility() {
+    let ast = Parse.trace(VISIBILITY_GRAMMAR.to_string()).unwrap();
+    let grammar = ast
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("grammar"))
+        .unwrap();
+    let action = grammar
+        .children()
+        .iter()
+        .find(|c| c.data().is_form("action-def") && c.data().value == "write")
+        .expect("should have action 'write'");
+    let vis = action
+        .children()
+        .iter()
+        .find(|c| c.data().is_atom("visibility"))
+        .expect("should have visibility child");
+    assert_eq!(vis.data().value, "protected");
+}
+
+#[test]
+fn private_action_parsed_with_visibility() {
+    let ast = Parse.trace(VISIBILITY_GRAMMAR.to_string()).unwrap();
+    let grammar = ast
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("grammar"))
+        .unwrap();
+    let action = grammar
+        .children()
+        .iter()
+        .find(|c| c.data().is_form("action-def") && c.data().value == "validate_path")
+        .expect("should have action 'validate_path'");
+    let vis = action
+        .children()
+        .iter()
+        .find(|c| c.data().is_atom("visibility"))
+        .expect("should have visibility child");
+    assert_eq!(vis.data().value, "private");
+}
+
+#[test]
+fn bare_action_defaults_to_protected() {
+    let ast = Parse.trace(VISIBILITY_GRAMMAR.to_string()).unwrap();
+    let grammar = ast
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("grammar"))
+        .unwrap();
+    let action = grammar
+        .children()
+        .iter()
+        .find(|c| c.data().is_form("action-def") && c.data().value == "default_action")
+        .expect("should have action 'default_action'");
+    let vis = action
+        .children()
+        .iter()
+        .find(|c| c.data().is_atom("visibility"))
+        .expect("bare action should have visibility child defaulting to protected");
+    assert_eq!(vis.data().value, "protected");
+}
+
+#[test]
+fn visibility_stored_in_registry() {
+    let ast = Parse.trace(VISIBILITY_GRAMMAR.to_string()).unwrap();
+    let grammar = ast
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("grammar"))
+        .unwrap();
+    let reg = conversation::resolve::TypeRegistry::compile(grammar).unwrap();
+    assert_eq!(
+        reg.action_visibility("read"),
+        conversation::resolve::Visibility::Public,
+    );
+    assert_eq!(
+        reg.action_visibility("write"),
+        conversation::resolve::Visibility::Protected,
+    );
+    assert_eq!(
+        reg.action_visibility("validate_path"),
+        conversation::resolve::Visibility::Private,
+    );
+    assert_eq!(
+        reg.action_visibility("default_action"),
+        conversation::resolve::Visibility::Protected,
+    );
+}
+
 #[test]
 fn mail_template_extracted_by_namespace() {
     let dir = TempDir::new().unwrap();

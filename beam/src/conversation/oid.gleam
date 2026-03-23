@@ -1,17 +1,17 @@
 //// Oid — content-addressed identity.
 ////
-//// Same content = same Oid. Value type wrapping a SHA-256 hex string.
+//// Same content = same Oid. Value type wrapping a SHA-512 hex string.
 
 import gleam/string
 
-/// A content address. Wraps a SHA-256 hex digest.
+/// A content address. Wraps a SHA-512 hex digest.
 pub opaque type Oid {
   Oid(hash: String)
 }
 
-/// Compute an Oid from raw bytes (SHA-256, hex-encoded).
+/// Compute an Oid from raw bytes (SHA-512, hex-encoded).
 pub fn from_bytes(data: BitArray) -> Oid {
-  Oid(hash: hex_encode(do_sha256(data)))
+  Oid(hash: hex_encode(do_sha512(data)))
 }
 
 /// Construct an Oid from its hex string representation.
@@ -29,8 +29,8 @@ pub fn equals(a: Oid, b: Oid) -> Bool {
   a.hash == b.hash
 }
 
-@external(erlang, "crypto_ffi", "sha256")
-fn do_sha256(data: BitArray) -> BitArray
+@external(erlang, "crypto_ffi", "sha512")
+fn do_sha512(data: BitArray) -> BitArray
 
 fn hex_encode(data: BitArray) -> String {
   do_hex_encode(data, "")

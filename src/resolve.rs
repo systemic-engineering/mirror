@@ -24,6 +24,14 @@ use fragmentation::store::Store;
 domain_oid!(/// Content address for resolved conversations.
 pub ConversationOid);
 
+/// Action visibility level.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Visibility {
+    Public,
+    Protected,
+    Private,
+}
+
 /// Compiled grammar. Maps type names to valid variants.
 ///
 /// ```text
@@ -42,6 +50,7 @@ pub struct TypeRegistry {
     params: HashMap<(String, String), String>,
     acts: HashMap<String, Vec<(String, Option<String>)>>,
     calls: HashMap<String, Vec<(String, String, Vec<String>)>>,
+    visibility: HashMap<String, Visibility>,
 }
 
 impl TypeRegistry {
@@ -58,6 +67,7 @@ impl TypeRegistry {
         let mut params: HashMap<(String, String), String> = HashMap::new();
         let mut acts: HashMap<String, Vec<(String, Option<String>)>> = HashMap::new();
         let mut calls: HashMap<String, Vec<(String, String, Vec<String>)>> = HashMap::new();
+        let mut visibility: HashMap<String, Visibility> = HashMap::new();
 
         for child in grammar_node.children() {
             if child.data().is_form("type-def") {
@@ -87,9 +97,16 @@ impl TypeRegistry {
                 let act_name = child.data().value.clone();
                 let mut fields = Vec::new();
                 let mut act_calls = Vec::new();
+                let mut vis = Visibility::Protected;
 
                 for item in child.children() {
-                    if item.data().is_atom("field") {
+                    if item.data().is_atom("visibility") {
+                        vis = match item.data().value.as_str() {
+                            "public" => Visibility::Public,
+                            "private" => Visibility::Private,
+                            _ => Visibility::Protected,
+                        };
+                    } else if item.data().is_atom("field") {
                         let field_name = item.data().value.clone();
                         let type_ref = item
                             .children()
@@ -112,6 +129,7 @@ impl TypeRegistry {
                     }
                 }
 
+                visibility.insert(act_name.clone(), vis);
                 acts.insert(act_name.clone(), fields);
                 if !act_calls.is_empty() {
                     calls.insert(act_name, act_calls);
@@ -144,7 +162,9 @@ impl TypeRegistry {
         // Unlike parameterized variants (which MUST reference a declared type name),
         // act fields can reference variants, external types, or undeclared names.
 
-        Ok(Self::finalize(domain, types, params, acts, calls))
+        Ok(Self::finalize(
+            domain, types, params, acts, calls, visibility,
+        ))
     }
 
     /// Build a "unknown type reference" error with did-you-mean hints.
@@ -234,6 +254,19 @@ impl TypeRegistry {
         self.calls.get(name).map(|v| v.as_slice()).unwrap_or(&[])
     }
 
+    /// The canonical encoded bytes for this grammar (deterministic).
+    pub fn encoded(&self) -> &[u8] {
+        &self.encoded
+    }
+
+    /// Get the visibility of a named action. Defaults to Protected.
+    pub fn action_visibility(&self, name: &str) -> Visibility {
+        self.visibility
+            .get(name)
+            .cloned()
+            .unwrap_or(Visibility::Protected)
+    }
+
     /// Test-only: build a registry with a parameterized variant whose type ref
     /// is NOT declared. This bypasses compile-time validation to exercise the
     /// `None => continue` defensive path in `generate::derive_type`.
@@ -260,6 +293,7 @@ impl TypeRegistry {
             params,
             HashMap::new(),
             HashMap::new(),
+            HashMap::new(),
         )
     }
 
@@ -271,6 +305,7 @@ impl TypeRegistry {
         params: HashMap<(String, String), String>,
         acts: HashMap<String, Vec<(String, Option<String>)>>,
         calls: HashMap<String, Vec<(String, String, Vec<String>)>>,
+        visibility: HashMap<String, Visibility>,
     ) -> Self {
         let encoded = Self::encode_canonical(&domain, &types, &params, &acts);
         let sha = Sha(fragment::blob_oid_bytes(&encoded));
@@ -283,6 +318,7 @@ impl TypeRegistry {
             params,
             acts,
             calls,
+            visibility,
         }
     }
 

@@ -29,6 +29,13 @@ pub type CompiledDomain {
   CompiledDomain(domain: String, source_oid: oid.Oid, module: String)
 }
 
+/// Compilation phase for traced chain.
+pub type Phase {
+  ParsePhase(phase_oid: oid.Oid)
+  ResolvePhase(phase_oid: oid.Oid)
+  CompilePhase(phase_oid: oid.Oid)
+}
+
 /// Messages the @compiler actor accepts.
 pub type Message {
   CompileGrammar(
@@ -46,35 +53,60 @@ type State {
   )
 }
 
-/// The @compiler actor's deterministic public key.
+/// The @compiler actor's deterministic public key (flat derivation).
 pub fn public_key() -> key.Key {
   key.from_seed(domain_seed(<<"compiler":utf8>>))
   |> key.public_key
 }
 
-/// Start the @compiler actor (imperative path).
+/// The @compiler actor's public key derived from a root key (hierarchical).
+pub fn public_key_from(root: key.Key) -> key.Key {
+  key.derive_child(root, "compiler")
+  |> key.public_key
+}
+
+/// Start the @compiler actor (imperative path, flat derivation).
 /// Starts the domain supervisor and manages domain server lifecycle
 /// on each compile. Use this for backwards compatibility with the
 /// existing boot path.
 pub fn start() -> actor.StartResult(Subject(Message)) {
-  // Ensure the domain supervisor is running so compiled grammars
-  // can start supervised domain servers.
   let _ = domain.start_supervisor()
-  do_start(True)
+  let kp = key.from_seed(domain_seed(<<"compiler":utf8>>))
+  do_start(kp, True)
 }
 
-/// Start the @compiler actor with a registered name (supervised path).
+/// Start the @compiler actor with hierarchical key derivation.
+/// Derives the compiler's identity from the root key.
+pub fn start_with_root(root: key.Key) -> actor.StartResult(Subject(Message)) {
+  let _ = domain.start_supervisor()
+  let kp = key.derive_child(root, "compiler")
+  do_start(kp, True)
+}
+
+/// Start the @compiler actor with a registered name (supervised path, flat).
 /// Does NOT start a domain supervisor or manage domain servers.
 /// Pure compilation: grammar → NIF → ETF → BEAM module → trace.
 /// The garden factory supervisor handles domain server lifecycle.
 pub fn start_named(
   name: process.Name(Message),
 ) -> actor.StartResult(Subject(Message)) {
-  do_start_named(name)
+  let kp = key.from_seed(domain_seed(<<"compiler":utf8>>))
+  do_start_named(kp, name)
 }
 
-fn do_start(manage_domains: Bool) -> actor.StartResult(Subject(Message)) {
-  let kp = key.from_seed(domain_seed(<<"compiler":utf8>>))
+/// Start named with hierarchical key derivation.
+pub fn start_named_with_root(
+  name: process.Name(Message),
+  root: key.Key,
+) -> actor.StartResult(Subject(Message)) {
+  let kp = key.derive_child(root, "compiler")
+  do_start_named(kp, name)
+}
+
+fn do_start(
+  kp: key.KeyPair,
+  manage_domains: Bool,
+) -> actor.StartResult(Subject(Message)) {
   let actor_oid = key.oid(key.public_key(kp))
   let state =
     State(kp: kp, actor_oid: actor_oid, manage_domains: manage_domains)
@@ -84,9 +116,9 @@ fn do_start(manage_domains: Bool) -> actor.StartResult(Subject(Message)) {
 }
 
 fn do_start_named(
+  kp: key.KeyPair,
   name: process.Name(Message),
 ) -> actor.StartResult(Subject(Message)) {
-  let kp = key.from_seed(domain_seed(<<"compiler":utf8>>))
   let actor_oid = key.oid(key.public_key(kp))
   let state = State(kp: kp, actor_oid: actor_oid, manage_domains: False)
   actor.new(state)
@@ -99,8 +131,8 @@ fn handle_message(state: State, msg: Message) -> actor.Next(State, Message) {
   case msg {
     CompileGrammar(source, reply) -> {
       let source_oid = oid.from_bytes(<<source:utf8>>)
-      case nif.compile_grammar(source) {
-        Ok(etf) -> {
+      case nif.compile_grammar_traced(source) {
+        Ok(#(etf, parse_oid_str, resolve_oid_str, compile_oid_str)) -> {
           let domain_name = case grammar.from_source(source) {
             Ok(g) -> grammar.domain(g)
             Error(_) -> "unknown"
@@ -120,13 +152,43 @@ fn handle_message(state: State, msg: Message) -> actor.Next(State, Message) {
                   }
                 False -> Nil
               }
+
+              // Build traced compilation chain: parse → resolve → compile → swap
+              let parse_trace =
+                trace.new(
+                  state.actor_oid,
+                  state.kp,
+                  ParsePhase(oid.from_string(parse_oid_str)),
+                  None,
+                )
+              let resolve_trace =
+                trace.new(
+                  state.actor_oid,
+                  state.kp,
+                  ResolvePhase(oid.from_string(resolve_oid_str)),
+                  option.Some(trace.oid(parse_trace)),
+                )
+              let compile_trace =
+                trace.new(
+                  state.actor_oid,
+                  state.kp,
+                  CompilePhase(oid.from_string(compile_oid_str)),
+                  option.Some(trace.oid(resolve_trace)),
+                )
+
               let compiled =
                 CompiledDomain(
                   domain: domain_name,
                   source_oid: source_oid,
                   module: module,
                 )
-              let t = trace.new(state.actor_oid, state.kp, compiled, None)
+              let t =
+                trace.new(
+                  state.actor_oid,
+                  state.kp,
+                  compiled,
+                  option.Some(trace.oid(compile_trace)),
+                )
               process.send(reply, Ok(t))
             }
             Error(e) -> process.send(reply, Error(e))

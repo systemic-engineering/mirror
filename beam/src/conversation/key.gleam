@@ -44,6 +44,16 @@ pub fn verify(key: Key, data: BitArray, signature: BitArray) -> Bool {
   do_verify(public, data, signature)
 }
 
+/// Derive a child keypair from a root public key and domain name.
+/// sha512(root_pub || name) → first 32 bytes → Ed25519 seed.
+/// Anyone with the root public key can derive any actor's public key.
+pub fn derive_child(root: Key, name: String) -> KeyPair {
+  let Ed25519(public) = root
+  let seed_input = <<public:bits, name:utf8>>
+  let assert <<seed:bytes-size(32), _rest:bytes>> = do_sha512(seed_input)
+  from_seed(seed)
+}
+
 /// Content address of a public key.
 pub fn oid(key: Key) -> ScopedOid(Key) {
   let Ed25519(public) = key
@@ -61,3 +71,6 @@ fn do_sign(private: BitArray, message: BitArray) -> BitArray
 
 @external(erlang, "crypto_ffi", "verify_ed25519")
 fn do_verify(public: BitArray, message: BitArray, signature: BitArray) -> Bool
+
+@external(erlang, "crypto_ffi", "sha512")
+fn do_sha512(data: BitArray) -> BitArray
