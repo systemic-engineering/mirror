@@ -3219,8 +3219,7 @@ grammar @conversation {
 
     #[test]
     fn parse_grammar_action_in_domain_preserves_lines() {
-        let source =
-            "grammar @test {\n  action foo in @erlang {\n    Line1,\n    Line2\n  }\n}\n";
+        let source = "grammar @test {\n  action foo in @erlang {\n    Line1,\n    Line2\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let action = &tree.children()[0].children()[0];
         let body = action
@@ -3234,8 +3233,7 @@ grammar @conversation {
 
     #[test]
     fn parse_grammar_action_in_conversation_explicit() {
-        let source =
-            "grammar @test {\n  action send in @conversation {\n    to: address\n  }\n}\n";
+        let source = "grammar @test {\n  action send in @conversation {\n    to: address\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];

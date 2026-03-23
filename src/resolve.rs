@@ -2535,6 +2535,37 @@ mod tests {
         assert!(calls.is_empty());
     }
 
+    // -- `in @domain` runtime targets --
+
+    #[test]
+    fn type_registry_compile_action_runtime() {
+        let reg = compile_grammar(
+            "grammar @test {\n  action foo in @erlang {\n    ok\n  }\n}\n",
+        );
+        assert!(reg.has_action("foo"));
+        assert_eq!(reg.action_runtime("foo"), Some("erlang"));
+        assert!(reg.action_inline_body("foo").unwrap().contains("ok"));
+    }
+
+    #[test]
+    fn type_registry_compile_action_no_runtime() {
+        let reg =
+            compile_grammar("grammar @test {\n  action send {\n    to: address\n  }\n}\n");
+        assert_eq!(reg.action_runtime("send"), None);
+        assert_eq!(reg.action_inline_body("send"), None);
+    }
+
+    #[test]
+    fn type_registry_compile_action_conversation_runtime() {
+        let reg = compile_grammar(
+            "grammar @test {\n  action send in @conversation {\n    to: address\n  }\n}\n",
+        );
+        assert_eq!(reg.action_runtime("send"), Some("conversation"));
+        assert_eq!(reg.action_inline_body("send"), None);
+        let fields = reg.action_fields("send").unwrap();
+        assert_eq!(fields[0].0, "to");
+    }
+
     #[test]
     fn type_registry_has_action_false_for_missing() {
         let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
