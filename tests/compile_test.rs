@@ -395,9 +395,8 @@ fn emit_test_module_handles_property() {
 /// Actor module with inline body action emits valid ETF.
 #[test]
 fn emit_actor_module_inline_body() {
-    let registry = compile_grammar(
-        "grammar @test {\n  type = a\n  action foo in @erlang {\n    ok\n  }\n}\n",
-    );
+    let registry =
+        compile_grammar("grammar @test {\n  type = a\n  action foo in @erlang {\n    ok\n  }\n}\n");
     let eaf_bytes = compile::emit_actor_module(&registry, &[], &[]);
     assert!(!eaf_bytes.is_empty());
     assert_eq!(eaf_bytes[0], 131);

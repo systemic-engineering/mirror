@@ -287,6 +287,35 @@ ubiquitous language as grammar, drift as hash mismatch. Then it goes further:
 first-order loops (system observes own state, recompiles live under load) and
 extractive systems detection as CI check.
 
+### The Core Claim
+
+Conversation is the transfer of meaning between distinct systems. The grammar
+is the handshake — the moment of physical overlap where entangled pairs are
+exchanged. After the handshake, communication cost drops to the hash.
+
+Between strangers: the full document. Between collaborators: a sentence.
+Between intimately familiar systems in physical proximity: a single token.
+The OID.
+
+The `.conv` file isn't the conversation. It's the handshake. It compiles to a
+shared tree. Once both sides have the tree, meaning transfers at the cost of
+an address — content-addressed, deterministic, O(log n). The grammar is the
+infrastructure that makes the compression possible. Without it, every
+exchange re-transmits the full context. With it, a word resolves to the full
+subspace.
+
+This is quantum fingerprinting applied to domain modeling. The closer the
+systems (the deeper the shared tree), the smaller the classical channel needs
+to be. Intimacy is compression. The ubiquitous language isn't a dictionary —
+it's a content-addressed tree that makes single-token communication possible
+between systems that have already done the handshake.
+
+DDD got the shape right: shared language reduces coordination cost. Conversation
+makes it literal: the shared language compiles to a tree, the tree has a hash,
+the hash is the communication primitive. Drift isn't "we stopped agreeing on
+terms." Drift is hash mismatch — the trees diverged. Detectable. Testable.
+Content-addressed.
+
 ### What's built
 
 - Grammar compilation to BEAM (parse → resolve → compile → load → supervise)
@@ -354,4 +383,81 @@ context map. The talk describes the system. The system runs the conference.
 
 ---
 
-*Session 2026-03-23. Alex + Reed.*
+## Three Computational Layers
+
+The system operates across three layers. Each corresponds to a different
+relationship with the possibility space.
+
+### 1. Fortran — Crystallized Ontology
+
+The known paths. Translations between domains expressed as matrix
+multiplications over the content-addressed state space. Bare metal.
+Deterministic. The paths that have already collapsed — the grammar is
+compiled, the types are resolved, the dispatch table is fixed. This is
+where the Fortran acceleration (see KanDDDinsky sequencing) lives.
+
+### 2. Quantum Emulation — Mutation Testing
+
+Explores the enumerable possibility space. The content-addressed graph IS
+the search space — each OID is an eigenvalue, each portal defines a bounded
+subspace. A quantum computer operating on this graph isn't simulating
+physics — it's running the same operation natively.
+
+We can't hold wavefunctions stable yet. But we can computationally emulate
+the exploration layer for enumerable possibility spaces. Mutation testing
+does exactly this: systematically explore the neighborhood of a known-good
+state, discover which mutations survive, map the fitness landscape.
+
+The portal bounds the search. The content addressing makes it enumerable.
+The mutation tester walks the space. When quantum hardware becomes economic,
+the substrate changes but the types don't — `Singularity` is generic over
+the hash function.
+
+See: `practice/insights/fragmentation/portal-primitive.md` (quantum keystone),
+`practice/insights/fragmentation/singularity-projection-thesis.md` (holographic
+mapping), `practice/insights/fragmentation/quantum-hashing-research.md`
+(quantum fingerprinting, ER=EPR, no-communication theorem).
+
+### 3. Collapse — The Test Suite
+
+The test IS an observation. The observation IS a commit. The commit IS
+witnessed.
+
+The test suite is the collapse operator. It measures which mutations survive.
+Each test run produces a `Trace` — same cryptographic witness infrastructure
+as compilation, same content-addressed graph, same portal. The test doesn't
+live outside the system reporting on it. The test IS the system observing
+itself.
+
+This means: testing and production are the same infrastructure, different
+portals. Test history is queryable the same way as production history.
+Coverage isn't a percentage — it's the surface area of the observed subspace.
+The parts you haven't tested are the parts you haven't observed. The missing
+test is the missing Lens — same as the Shirley card (see
+`practice/insights/fragmentation/shirley-card.md`).
+
+### Connection
+
+The three layers map to the Petri net modeling (sequencing item 1):
+
+- **Fortran** = the net's known transitions. Fired, traced, deterministic.
+- **Mutation/quantum** = the net's reachability analysis. Which states are
+  reachable? Which transitions are dead?
+- **Collapse/test** = the net's marking. The current observed state. Where
+  the tokens actually are.
+
+The Lens between domains (see `practice/insights/fragmentation/lenses-between-domains.md`)
+is what gets tested. Not the domains — those maintain themselves. The health
+check is: do the Lenses between domains still hold? The extractive systems
+detection (sequencing item 5) is exactly this: a CI check that the
+inter-domain Lenses haven't degraded.
+
+The entangled portal model (see `practice/insights/fragmentation/entangled-portals.md`)
+extends the regulation stock pattern to the infrastructure itself. The test
+suite is the stock. Each observation depletes it (the state has moved on).
+Continuous testing is the replenishment. The distance between test runs is
+the depletion rate.
+
+---
+
+*Session 2026-03-23 + 2026-03-24. Alex + Reed.*
