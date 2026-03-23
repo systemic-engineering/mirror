@@ -3110,6 +3110,35 @@ grammar @conversation {
         assert_eq!(grammar.children()[1].data().name, "action-def");
     }
 
+    // -- `in @domain` inline action bodies --
+
+    #[test]
+    fn parse_grammar_action_in_domain() {
+        let source =
+            "grammar @test {\n  action foo in @erlang {\n    some_erlang_code()\n  }\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().kind, Kind::Form);
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.data().value, "foo");
+
+        // Should have visibility + in + inline-body = 3 children
+        assert_eq!(action.children().len(), 3);
+        assert_eq!(action.children()[0].data().name, "visibility");
+        assert_eq!(action.children()[0].data().value, "protected");
+
+        let in_node = &action.children()[1];
+        assert_eq!(in_node.data().kind, Kind::Decl);
+        assert_eq!(in_node.data().name, "in");
+        assert_eq!(in_node.data().value, "@erlang");
+
+        let body = &action.children()[2];
+        assert_eq!(body.data().kind, Kind::Atom);
+        assert_eq!(body.data().name, "inline-body");
+        assert!(body.data().value.contains("some_erlang_code()"));
+    }
+
     #[test]
     fn parse_grammar_action_error_no_brace() {
         let source = "grammar @test {\n  action send\n}\n";
