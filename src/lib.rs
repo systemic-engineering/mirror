@@ -12,6 +12,8 @@ pub mod parse;
 pub mod prism;
 pub mod property;
 pub mod resolve;
+#[cfg(feature = "spectral")]
+pub mod spectral;
 
 // Re-export kernel types at the crate root.
 pub use kernel::{
