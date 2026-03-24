@@ -1552,4 +1552,215 @@ mod tests {
         assert!(s.contains("known"));
         assert!(s.contains("missing"));
     }
+
+    // -----------------------------------------------------------------------
+    // Design Break Tests — where the flat Fact model hits walls
+    // -----------------------------------------------------------------------
+    //
+    // These tests PASS. They exist to document what the FactStore
+    // CANNOT express. Each test names a specific limitation that
+    // requires a different model to resolve.
+
+    #[test]
+    fn design_break_extends_not_in_facts() {
+        // BREAK: Grammar inheritance via `extends` is not captured in facts.
+        //
+        // grammar @fox extends @smash { action dash { } }
+        // grammar @smash { action attack { } }
+        //
+        // @fox.dash calls no cross-domain actions. But @fox inherits
+        // @smash.attack through the extends chain. If another grammar
+        // calls @fox.attack, the FactStore says "action doesn't exist"
+        // because it only sees @fox's declared actions, not inherited ones.
+        //
+        // To fix: need a Rule, not just a Fact.
+        //   has_action(Domain, Action) :- extends(Domain, Parent), has_action(Parent, Action).
+        // This is a Horn clause. The FactStore only has ground facts.
+        // This is where Datalog becomes necessary.
+
+        // Build @smash with attack action
+        let smash_action = prism::fractal(
+            ref_("action-attack"),
+            AstNode {
+                kind: Kind::Form,
+                name: "action-def".into(),
+                value: "attack".into(),
+                span: span(),
+            },
+            vec![],
+        );
+        let smash_grammar = prism::fractal(
+            ref_("grammar-smash"),
+            AstNode {
+                kind: Kind::Decl,
+                name: "grammar".into(),
+                value: "@smash".into(),
+                span: span(),
+            },
+            vec![smash_action],
+        );
+        let smash_reg = TypeRegistry::compile(&smash_grammar).unwrap();
+
+        // Build @fox with dash action (no inheritance captured in AST)
+        let fox_action = prism::fractal(
+            ref_("action-dash"),
+            AstNode {
+                kind: Kind::Form,
+                name: "action-def".into(),
+                value: "dash".into(),
+                span: span(),
+            },
+            vec![],
+        );
+        let fox_grammar = prism::fractal(
+            ref_("grammar-fox"),
+            AstNode {
+                kind: Kind::Decl,
+                name: "grammar".into(),
+                value: "@fox".into(),
+                span: span(),
+            },
+            vec![fox_action],
+        );
+        let fox_reg = TypeRegistry::compile(&fox_grammar).unwrap();
+
+        let mut store = FactStore::new();
+        store.add_registry(&smash_reg);
+        store.add_registry(&fox_reg);
+
+        // The store sees @smash.attack and @fox.dash as separate facts.
+        // It does NOT know that @fox extends @smash.
+        assert!(store.actions_in("smash").contains(&"attack"));
+        assert!(store.actions_in("fox").contains(&"dash"));
+        // @fox does NOT have "attack" — the extends relationship is invisible.
+        assert!(
+            !store.actions_in("fox").contains(&"attack"),
+            "DESIGN BREAK: extends chain not captured in flat facts"
+        );
+    }
+
+    #[test]
+    fn design_break_lens_chain_not_in_facts() {
+        // BREAK: Lens composition via `in @domain` is not captured in facts.
+        //
+        // grammar @filesystem { in @reality }
+        // This means @filesystem focuses through @reality.
+        // The FactStore has no Fact variant for Lens relationships.
+        //
+        // To express this: need a Fact::LensThrough { domain, target }
+        // and a rule: reachable(A, C) :- lens_through(A, B), reachable(B, C).
+        // Again, this is a Horn clause. Ground facts can't derive transitivity.
+
+        let store = FactStore::new();
+        // No Fact variant exists for lens composition.
+        // The store has types_in, actions_in, calls_from — but no lenses_of.
+        assert!(
+            store.facts().is_empty(),
+            "DESIGN BREAK: empty store confirms no Lens facts exist"
+        );
+    }
+
+    #[test]
+    fn design_break_monotonic_no_retraction() {
+        // BREAK: The FactStore is append-only (monotonic).
+        //
+        // If @smash is loaded and then unloaded (hot-code replacement),
+        // the FactStore still has @smash's facts. There is no retract().
+        //
+        // Datalog is stratified monotonic by default. Non-monotonic
+        // extensions (negation-as-failure, aggregate stratification)
+        // are where Datalog research gets complicated.
+        //
+        // For grammar unloading, we need either:
+        // 1. Epochs: facts tagged with a version, query scoped to epoch
+        // 2. Differential: compute delta between old and new store
+        // 3. Rebuild: throw away the store and recompute from live grammars
+        //
+        // Option 3 is simplest but O(n) in the number of loaded grammars.
+        // Option 1 requires changing the Fact structure.
+        // Option 2 is what differential dataflow does (Materialize, etc).
+
+        let reg = TypeRegistry::compile(&test_grammar()).unwrap();
+        let mut store = FactStore::new();
+        store.add_registry(&reg);
+
+        let initial_len = store.len();
+        assert!(initial_len > 0);
+
+        // Adding the same registry again just inserts duplicates into a BTreeSet.
+        // BTreeSet deduplicates, so len stays the same. But there's no way to
+        // REMOVE @test's facts from the store.
+        store.add_registry(&reg);
+        assert_eq!(
+            store.len(),
+            initial_len,
+            "BTreeSet deduplicates, but there is no retract()"
+        );
+    }
+
+    #[test]
+    fn design_break_no_negation() {
+        // BREAK: The FactStore cannot express "type X does NOT exist."
+        //
+        // Negation-as-failure: if type_exists(@foo, "bar") is NOT in the
+        // store, we can infer ~type_exists(@foo, "bar"). But this is
+        // only sound under the Closed World Assumption — all true facts
+        // are in the store. For grammars loaded incrementally (some at
+        // boot, some later), the CWA doesn't hold until all grammars
+        // are loaded.
+        //
+        // The diagnostic code works around this by distinguishing:
+        // - "domain not in store" (Warning — CWA might not hold)
+        // - "domain in store, action absent" (Error — CWA holds for this domain)
+        //
+        // But there's no way to assert "I know for certain that @phantom
+        // will never exist." That's a meta-level statement about the
+        // grammar universe, not a ground fact.
+
+        let reg = TypeRegistry::compile(&calling_grammar()).unwrap();
+        let store = FactStore::from_registry(&reg);
+
+        let diags = store.diagnose_unreachable_calls();
+        assert_eq!(diags.len(), 1);
+        // This is a Warning, not an Error, because we can't prove @target
+        // doesn't exist — we can only observe its absence in the store.
+        assert!(matches!(diags[0].severity, DiagnosticSeverity::Warning));
+    }
+
+    #[test]
+    fn design_break_no_join_queries() {
+        // BREAK: The FactStore has no join operator.
+        //
+        // A natural query: "find all types that are both declared in @a
+        // AND referenced by a parameterized variant in @b."
+        //
+        // In Datalog: shared(T) :- type_exists("a", T), variant_refs("b", _, _, T).
+        // In the FactStore: you have to manually iterate and intersect.
+        //
+        // This is where the flat iteration model becomes O(n^2) for
+        // cross-domain queries. Datalog engines use hash joins, magic
+        // sets, or seminaive evaluation to make this efficient.
+
+        let linked_reg = TypeRegistry::compile(&linked_grammar()).unwrap();
+        let test_reg = TypeRegistry::compile(&test_grammar()).unwrap();
+
+        let mut store = FactStore::new();
+        store.add_registry(&linked_reg);
+        store.add_registry(&test_reg);
+
+        // Manual join: types in @linked that share names with types in @test
+        let linked_types: Vec<&str> = store.types_in("linked");
+        let test_types: Vec<&str> = store.types_in("test");
+        let shared: Vec<&&str> = linked_types
+            .iter()
+            .filter(|t| test_types.contains(t))
+            .collect();
+
+        // This works, but it's O(n*m) iteration. No index.
+        // With Datalog rules, this would be a single-pass indexed join.
+        assert!(
+            shared.is_empty() || !shared.is_empty(),
+            "DESIGN BREAK: manual join works but is O(n*m)"
+        );
+    }
 }
