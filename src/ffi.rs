@@ -37,6 +37,11 @@ pub struct CompileResult {
     pub resolve_oid: String,
     /// Content OID of the compiled EAF bytes.
     pub compile_oid: String,
+    /// Proof certificate OID — content address of the proof.
+    pub proof_oid: String,
+    /// Proof certificate serialized as ETF bytes.
+    /// Can be decoded on the BEAM side as an Erlang term.
+    pub proof_etf: Vec<u8>,
 }
 
 /// Compile with per-phase OIDs for traced compilation chain.
@@ -76,11 +81,17 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
     let etf = compile::emit_actor_module(&registry, &lenses, &extends);
     let compile_oid = crate::Oid::hash(&etf).as_ref().to_string();
 
+    // TODO: compute proof certificate and serialize to ETF
+    let proof_oid = String::new();
+    let proof_etf = Vec::new();
+
     Ok(CompileResult {
         etf,
         parse_oid,
         resolve_oid,
         compile_oid,
+        proof_oid,
+        proof_etf,
     })
 }
 
@@ -263,6 +274,60 @@ mod tests {
         assert_eq!(a.parse_oid, b.parse_oid);
         assert_eq!(a.resolve_oid, b.resolve_oid);
         assert_eq!(a.compile_oid, b.compile_oid);
+    }
+
+    #[test]
+    fn compile_result_has_proof_certificate() {
+        let result = compile_grammar_with_phases(
+            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+        )
+        .unwrap();
+        // Proof OID should be non-empty — it's the content address of the proof
+        assert!(
+            !result.proof_oid.is_empty(),
+            "proof_oid should be non-empty"
+        );
+        // Proof ETF should be non-empty — it's the serialized certificate
+        assert!(
+            !result.proof_etf.is_empty(),
+            "proof_etf should be non-empty"
+        );
+        // Proof ETF should start with ETF version byte 131
+        assert_eq!(result.proof_etf[0], 131, "proof_etf should be valid ETF");
+    }
+
+    #[test]
+    fn compile_result_proof_certificate_deterministic() {
+        let a = compile_grammar_with_phases(
+            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+        )
+        .unwrap();
+        let b = compile_grammar_with_phases(
+            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+        )
+        .unwrap();
+        assert_eq!(a.proof_oid, b.proof_oid);
+        assert_eq!(a.proof_etf, b.proof_etf);
+    }
+
+    #[test]
+    fn compile_result_proof_certificate_differs_for_different_grammars() {
+        let a = compile_grammar_with_phases("grammar @alpha {\n  type = x\n}\n").unwrap();
+        let b = compile_grammar_with_phases("grammar @beta {\n  type = y | z\n}\n").unwrap();
+        assert_ne!(a.proof_oid, b.proof_oid);
+    }
+
+    #[test]
+    fn compile_result_proof_etf_decodable() {
+        let result = compile_grammar_with_phases(
+            "grammar @test {\n  type color = red | blue\n  type shade = light | dark\n}\n",
+        )
+        .unwrap();
+        // The proof ETF should be decodable as an Erlang term
+        let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
+        let s = format!("{:?}", term);
+        // Should contain the domain name
+        assert!(s.contains("test"), "proof ETF should contain domain name");
     }
 
     #[test]
