@@ -276,6 +276,21 @@ The compiler doesn't change. The consumer changes.
 
 ---
 
+## Crystallized Vectors
+
+Coincidence produces Crystal vectors: flat `f64` arrays directly passable to
+BLAS/LAPACK/Fortran via FFI. The spectral triple, Crystal type, Fortran test
+surface, and preemptive crystallization strategy all live in coincidence.
+See: `../coincidence/ROADMAP.md` — *Crystallized Vectors* section.
+
+The integration surface for conversation: grammar trees meet
+`Laplacian::from_tree()`. The compiler already produces content-addressed
+trees. Crystallization is the compiler emitting not just a BEAM module but a
+complete geometric fingerprint of every reachable state — pre-computed at
+compile time for finite grammars, runtime lookup instead of computation.
+
+---
+
 ## KanDDDinsky — October 2026
 
 Inaugural talk: **Conversation: The Ubiquitous Language Runtime.**
@@ -310,8 +325,11 @@ translation or typed error — never partial, never silent drop. This is the
 anti-corruption layer as type (part 2 of the talk).
 
 **Fortran acceleration.** Translations between domains expressed as matrix
-multiplications over the content-addressed state space. Executed at Fortran
-speed. The claim that makes the room lean forward.
+multiplications over the content-addressed state space. Crystal vectors from
+coincidence are flat `f64` arrays passable directly to BLAS/LAPACK via FFI.
+Pre-computed at compile time for finite grammars. Distance between states is
+one vector subtraction and a norm. The claim that makes the room lean forward.
+See: `../coincidence/ROADMAP.md` — *Crystallized Vectors* section.
 
 **Error surface.** `error` declarations in grammars. Typed failures per domain.
 Exhaustiveness checking across domain boundaries in translate arms.

@@ -1,10 +1,67 @@
-# conversation — Agent Notes
+# conversation — Autonomous Development
 
-Ground rules. Hard lessons. Architectural boundaries.
+## Posture
+
+Keep going until you hit a design wall that requires human input. Until
+then: follow the math. Spawn research agents when the territory is
+unfamiliar. Iterate. The stopping condition is not "I finished a task" —
+it's "I need a decision I can't make from the math alone."
+
+A design wall is:
+- A choice between incompatible mathematical frameworks
+- A type surface question that affects downstream crates
+- An architectural boundary that changes the public API shape
+- Something the tests can't tell you
+
+Everything else — implementation, testing, documentation, research,
+refactoring — keep moving.
 
 ---
 
-## The boundary
+## This Crate
+
+The conversation compiler. Grammars → typed, content-addressed BEAM
+modules. The compiler is a model checker: finite types, no recursion,
+decidable verification. Rice's theorem does not apply.
+
+### Key Modules
+
+- **logic.rs** — TypeRegistry as Datalog fact store. Fact enum,
+  FactStore, ProofCertificate, ReachabilityMap, Determinism (Mercury
+  hierarchy → optics). Five design break tests documenting where the
+  flat model hits walls.
+- **spectral.rs** — Grammar geometry via coincidence (feature-gated).
+  GrammarSpectrum (AST Laplacian), TypeGraphSpectrum (type reference
+  graph Laplacian), GrammarProjection (type surface as P²=P operator).
+- **ffi.rs** — NIF bridge. ProofCertificate travels with compiled ETF.
+
+### Five Design Breaks (where the flat Fact model needs rules)
+
+| Break | What's missing | What it needs |
+|-------|---------------|---------------|
+| extends inheritance | Invisible to ground facts | Horn clauses (Datalog rules) |
+| Lens composition | Not captured | Transitive closure rules |
+| Monotonic only | No retract | Epochs or differential dataflow |
+| No negation | Can't prove absence | Stratified negation + CWA |
+| No joins | O(n×m) cross-domain | Indexed storage, seminaive eval |
+
+Each break is a specification for the next phase. When you encounter
+one, spawn a research agent. If the research points to implementable
+math, implement it.
+
+### Integration Points
+
+- **coincidence** — `spectral` feature flag brings in `Laplacian`,
+  `Projection`, `Spectrum`, `StateVector`. Grammar trees feed directly
+  into spectral analysis. `from_adjacency()` enables type graph spectra.
+- **fragmentation** — `Prism<AstNode>` implements `Fragmentable`.
+  Compiler output is content-addressed trees in the fragmentation store.
+
+---
+
+## Architectural Boundaries
+
+### The Rust/BEAM boundary
 
 The Rust parser is done. It parses `.conv` source into `Prism<AstNode>` and
 commits it to the in-memory Repo. What crosses the threshold is an OID. That's it.
@@ -81,3 +138,19 @@ hook enforces this. Each phase is a separate commit with the emoji marker.
 
 Red phase: hook accepts failures. Green/refactor phases: hook requires all
 checks to pass.
+
+Work on your own branch. Never commit directly to main. Merge requires
+adversarial review.
+
+Commit identity follows the agent: Reed commits as Reed, Mara commits
+as Mara. The witness is part of the hash.
+
+---
+
+## Current State
+
+627 tests. 100% line coverage. Modules: kernel, ast, compile, domain,
+ffi, filter, generate, logic, packages, parse, prism, property,
+resolve, spectral (feature-gated).
+
+Full roadmap: `ROADMAP.md`
