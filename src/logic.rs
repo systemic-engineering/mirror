@@ -260,8 +260,48 @@ impl FactStore {
     /// - Warning: target domain not in store (may be loaded at runtime).
     /// - Error: target domain exists but action is provably absent.
     pub fn diagnose_unreachable_calls(&self) -> Vec<Diagnostic> {
-        // TODO: implement diagnostic analysis
-        Vec::new()
+        let mut diags = Vec::new();
+        for fact in &self.facts {
+            if let Fact::ActionCalls {
+                domain,
+                action_name,
+                target_domain,
+                target_action,
+            } = fact
+            {
+                if !self.has_domain(target_domain) {
+                    diags.push(Diagnostic {
+                        domain: domain.clone(),
+                        action: action_name.clone(),
+                        target_domain: target_domain.clone(),
+                        target_action: target_action.clone(),
+                        severity: DiagnosticSeverity::Warning,
+                        message: format!("domain @{} not found in fact store", target_domain),
+                    });
+                } else {
+                    let target_actions = self.actions_in(target_domain);
+                    if !target_actions.contains(&target_action.as_str()) {
+                        diags.push(Diagnostic {
+                            domain: domain.clone(),
+                            action: action_name.clone(),
+                            target_domain: target_domain.clone(),
+                            target_action: target_action.clone(),
+                            severity: DiagnosticSeverity::Error,
+                            message: format!(
+                                "domain @{} exists but has no action \"{}\"",
+                                target_domain, target_action
+                            ),
+                        });
+                    }
+                }
+            }
+        }
+        diags
+    }
+
+    /// Check if a domain has any facts in the store.
+    fn has_domain(&self, domain: &str) -> bool {
+        self.facts.iter().any(|f| f.domain() == domain)
     }
 
     /// Query: all domains that depend on a given domain (call into it).

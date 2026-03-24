@@ -303,15 +303,17 @@ impl GrammarProjection {
     /// Returns None if the type doesn't exist or has no variants.
     pub fn type_superposition(&self, type_name: &str) -> Option<StateVector> {
         let prefix = format!("{}.", type_name);
-        let matching: Vec<&String> = self.labels.iter().filter(|l| l.starts_with(&prefix)).collect();
+        let matching: Vec<&String> = self
+            .labels
+            .iter()
+            .filter(|l| l.starts_with(&prefix))
+            .collect();
         if matching.is_empty() {
             return None;
         }
         let coeff = 1.0 / (matching.len() as f64).sqrt();
-        let entries: Vec<(String, f64)> = matching
-            .into_iter()
-            .map(|l| (l.clone(), coeff))
-            .collect();
+        let entries: Vec<(String, f64)> =
+            matching.into_iter().map(|l| (l.clone(), coeff)).collect();
         Some(StateVector::from_entries(self.space(), entries))
     }
 
