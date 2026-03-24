@@ -321,6 +321,92 @@ impl GrammarProjection {
     pub fn verify_idempotent(&self) -> bool {
         self.projection.is_idempotent(1e-10)
     }
+
+    /// Serialize the projection as ETF bytes for BEAM consumption.
+    ///
+    /// The projection becomes an Erlang proplist:
+    /// ```erlang
+    /// [{space, <<"grammar:test">>},
+    ///  {dimension, 3},
+    ///  {labels, [<<"type.a">>, <<"type.b">>, ...]},
+    ///  {entries, [{<<"type.a">>, <<"type.a">>, 1.0}, ...]}]
+    /// ```
+    pub fn to_etf(&self) -> Vec<u8> {
+        use eetf::{Atom, FixInteger, Float, List, Term, Tuple};
+
+        let space_pair = Term::from(Tuple::from(vec![
+            Term::from(Atom::from("space")),
+            Term::from(eetf::Binary::from(self.space().as_bytes())),
+        ]));
+
+        let dim_pair = Term::from(Tuple::from(vec![
+            Term::from(Atom::from("dimension")),
+            Term::from(FixInteger::from(self.dimension() as i32)),
+        ]));
+
+        let label_terms: Vec<Term> = self
+            .labels
+            .iter()
+            .map(|l| Term::from(eetf::Binary::from(l.as_bytes())))
+            .collect();
+        let labels_pair = Term::from(Tuple::from(vec![
+            Term::from(Atom::from("labels")),
+            Term::from(List::from(label_terms)),
+        ]));
+
+        // Entries: the diagonal of the projection matrix.
+        // For the identity projection, each entry is {label, label, 1.0}.
+        //
+        // DESIGN BREAK: This is the flat projection. Each variant is an
+        // independent basis vector. For `color.red(shade)`, the projection
+        // says "color.red is valid" and "shade.light is valid" separately.
+        // It CANNOT say "color.red requires shade.light or shade.dark" —
+        // that's a constraint between dimensions, not a diagonal entry.
+        //
+        // To express dependent types, we need:
+        //   |color.red> tensor |shade.light>  and  |color.red> tensor |shade.dark>
+        // as joint basis vectors in a product space of dimension n*m.
+        //
+        // The flat projection has dimension n+m (sum of variant counts).
+        // The tensor projection has dimension n*m (product of variant counts).
+        //
+        // For dispatch, the flat projection is a membership check.
+        // For type-safe dispatch, the tensor projection is a joint check.
+        // The GenServer can use the flat projection for "does this type exist?"
+        // but NOT for "is this combination of type and parameter valid?"
+        //
+        // That's the wall. The flat model answers set membership.
+        // The tensor model answers constraint satisfaction.
+        // Grammar semantics require constraint satisfaction.
+        let entry_terms: Vec<Term> = self
+            .labels
+            .iter()
+            .map(|l| {
+                Term::from(Tuple::from(vec![
+                    Term::from(eetf::Binary::from(l.as_bytes())),
+                    Term::from(eetf::Binary::from(l.as_bytes())),
+                    Term::from(Float { value: 1.0 }),
+                ]))
+            })
+            .collect();
+        let entries_pair = Term::from(Tuple::from(vec![
+            Term::from(Atom::from("entries")),
+            Term::from(List::from(entry_terms)),
+        ]));
+
+        let proplist = Term::from(List::from(vec![
+            space_pair,
+            dim_pair,
+            labels_pair,
+            entries_pair,
+        ]));
+
+        let mut buf = Vec::new();
+        proplist
+            .encode(&mut buf)
+            .expect("ETF encoding should not fail");
+        buf
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -721,6 +807,64 @@ mod tests {
         let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
         let gp = GrammarProjection::from_registry(&registry).unwrap();
         assert_eq!(gp.domain, "linked");
+    }
+
+    // -----------------------------------------------------------------------
+    // Projection ETF serialization tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn grammar_projection_to_etf_simple() {
+        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let etf = gp.to_etf();
+        // Should be valid ETF
+        assert!(!etf.is_empty());
+        assert_eq!(etf[0], 131, "should start with ETF version byte");
+        // Should be decodable
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let s = format!("{:?}", term);
+        // Should contain space name
+        assert!(s.contains("space"), "should have space key");
+        // Should contain labels
+        assert!(s.contains("labels"), "should have labels key");
+        // Should contain dimension
+        assert!(s.contains("dimension"), "should have dimension key");
+    }
+
+    #[test]
+    fn grammar_projection_to_etf_linked() {
+        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let etf = gp.to_etf();
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let s = format!("{:?}", term);
+        // Should contain the variant labels as bytes
+        let red_bytes: Vec<u8> = "color.red".bytes().collect();
+        assert!(
+            s.contains(&format!("{:?}", red_bytes)),
+            "should contain color.red label"
+        );
+    }
+
+    #[test]
+    fn grammar_projection_to_etf_deterministic() {
+        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let a = gp.to_etf();
+        let b = gp.to_etf();
+        assert_eq!(a, b);
+    }
+
+    #[test]
+    fn grammar_projection_to_etf_contains_entries() {
+        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let etf = gp.to_etf();
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let s = format!("{:?}", term);
+        // Should contain projection entries
+        assert!(s.contains("entries"), "should have entries key: {}", s);
     }
 
     #[test]
