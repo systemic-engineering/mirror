@@ -6,6 +6,7 @@ pub mod domain;
 pub mod ffi;
 pub mod filter;
 pub mod generate;
+pub mod logic;
 pub mod packages;
 pub mod parse;
 pub mod prism;
