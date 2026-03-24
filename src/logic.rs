@@ -250,6 +250,20 @@ impl FactStore {
             .collect()
     }
 
+    /// Diagnose unreachable cross-domain calls.
+    ///
+    /// For every `ActionCalls` fact in the store, check whether:
+    /// 1. The target domain exists in the store (has any facts).
+    /// 2. If the target domain exists, whether the target action exists.
+    ///
+    /// Returns diagnostics for violations:
+    /// - Warning: target domain not in store (may be loaded at runtime).
+    /// - Error: target domain exists but action is provably absent.
+    pub fn diagnose_unreachable_calls(&self) -> Vec<Diagnostic> {
+        // TODO: implement diagnostic analysis
+        Vec::new()
+    }
+
     /// Query: all domains that depend on a given domain (call into it).
     pub fn dependents_of(&self, target_domain: &str) -> Vec<&str> {
         let mut dependents: BTreeSet<&str> = BTreeSet::new();
@@ -511,6 +525,58 @@ impl Determinism {
             1 => Determinism::Det,
             _ => Determinism::Multi,
         }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Diagnostic — compile-time invariant violations
+// ---------------------------------------------------------------------------
+
+/// Severity of a compilation diagnostic.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum DiagnosticSeverity {
+    /// The call target domain is not in the FactStore at all.
+    /// This is a warning because the domain may be loaded at runtime.
+    Warning,
+    /// The call target domain exists but doesn't have the named action.
+    /// This is an error: the domain's type surface is known and the
+    /// action is provably absent.
+    Error,
+}
+
+/// A compile-time diagnostic for a cross-domain call invariant violation.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Diagnostic {
+    /// The domain making the call.
+    pub domain: String,
+    /// The action in the calling domain.
+    pub action: String,
+    /// The target domain being called.
+    pub target_domain: String,
+    /// The target action being called.
+    pub target_action: String,
+    /// Severity of the diagnostic.
+    pub severity: DiagnosticSeverity,
+    /// Human-readable message.
+    pub message: String,
+}
+
+impl std::fmt::Display for Diagnostic {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let severity = match self.severity {
+            DiagnosticSeverity::Warning => "warning",
+            DiagnosticSeverity::Error => "error",
+        };
+        write!(
+            f,
+            "[{}] @{}.{} calls @{}.{}: {}",
+            severity,
+            self.domain,
+            self.action,
+            self.target_domain,
+            self.target_action,
+            self.message
+        )
     }
 }
 
@@ -1304,5 +1370,146 @@ mod tests {
         // Both domains present
         assert!(!store.types_in("test").is_empty());
         assert!(!store.actions_in("caller").is_empty());
+    }
+
+    // -----------------------------------------------------------------------
+    // Diagnostic tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn diagnose_unreachable_call_single_grammar() {
+        // A grammar that calls @phantom.dispatch — but @phantom is not in the store.
+        // The FactStore should detect this as an unreachable cross-domain call.
+        let registry = TypeRegistry::compile(&calling_grammar()).unwrap();
+        let store = FactStore::from_registry(&registry);
+
+        let diags = store.diagnose_unreachable_calls();
+        assert_eq!(diags.len(), 1);
+        assert_eq!(diags[0].domain, "caller");
+        assert_eq!(diags[0].action, "invoke");
+        assert_eq!(diags[0].target_domain, "target");
+        assert_eq!(diags[0].target_action, "run");
+        assert!(
+            matches!(diags[0].severity, DiagnosticSeverity::Warning),
+            "unreachable call to unknown domain should be a warning"
+        );
+    }
+
+    #[test]
+    fn diagnose_unreachable_call_target_present() {
+        // When the target domain IS in the store, no diagnostic.
+        let caller_reg = TypeRegistry::compile(&calling_grammar()).unwrap();
+
+        // Build a target grammar: grammar @target { action run { } }
+        let target_action = prism::fractal(
+            ref_("action-run"),
+            AstNode {
+                kind: Kind::Form,
+                name: "action-def".into(),
+                value: "run".into(),
+                span: span(),
+            },
+            vec![],
+        );
+        let target_grammar = prism::fractal(
+            ref_("grammar-target"),
+            AstNode {
+                kind: Kind::Decl,
+                name: "grammar".into(),
+                value: "@target".into(),
+                span: span(),
+            },
+            vec![target_action],
+        );
+        let target_reg = TypeRegistry::compile(&target_grammar).unwrap();
+
+        let mut store = FactStore::new();
+        store.add_registry(&caller_reg);
+        store.add_registry(&target_reg);
+
+        let diags = store.diagnose_unreachable_calls();
+        assert!(diags.is_empty(), "no diagnostics when target domain exists");
+    }
+
+    #[test]
+    fn diagnose_unreachable_call_action_missing() {
+        // Target domain exists but doesn't have the called action.
+        let caller_reg = TypeRegistry::compile(&calling_grammar()).unwrap();
+
+        // Build a target grammar with a DIFFERENT action name
+        let target_action = prism::fractal(
+            ref_("action-other"),
+            AstNode {
+                kind: Kind::Form,
+                name: "action-def".into(),
+                value: "other".into(),
+                span: span(),
+            },
+            vec![],
+        );
+        let target_grammar = prism::fractal(
+            ref_("grammar-target-wrong"),
+            AstNode {
+                kind: Kind::Decl,
+                name: "grammar".into(),
+                value: "@target".into(),
+                span: span(),
+            },
+            vec![target_action],
+        );
+        let target_reg = TypeRegistry::compile(&target_grammar).unwrap();
+
+        let mut store = FactStore::new();
+        store.add_registry(&caller_reg);
+        store.add_registry(&target_reg);
+
+        let diags = store.diagnose_unreachable_calls();
+        assert_eq!(diags.len(), 1);
+        assert!(
+            matches!(diags[0].severity, DiagnosticSeverity::Error),
+            "calling nonexistent action on known domain should be an error"
+        );
+    }
+
+    #[test]
+    fn diagnose_no_calls_no_diagnostics() {
+        // Grammar with no cross-domain calls produces no diagnostics.
+        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
+        let store = FactStore::from_registry(&registry);
+
+        let diags = store.diagnose_unreachable_calls();
+        assert!(diags.is_empty());
+    }
+
+    #[test]
+    fn diagnostic_display_warning() {
+        let d = Diagnostic {
+            domain: "caller".into(),
+            action: "invoke".into(),
+            target_domain: "phantom".into(),
+            target_action: "dispatch".into(),
+            severity: DiagnosticSeverity::Warning,
+            message: "domain @phantom not found".into(),
+        };
+        let s = format!("{}", d);
+        assert!(s.contains("[warning]"));
+        assert!(s.contains("caller"));
+        assert!(s.contains("phantom"));
+    }
+
+    #[test]
+    fn diagnostic_display_error() {
+        let d = Diagnostic {
+            domain: "caller".into(),
+            action: "invoke".into(),
+            target_domain: "known".into(),
+            target_action: "missing".into(),
+            severity: DiagnosticSeverity::Error,
+            message: "action not found".into(),
+        };
+        let s = format!("{}", d);
+        assert!(s.contains("[error]"));
+        assert!(s.contains("known"));
+        assert!(s.contains("missing"));
     }
 }
