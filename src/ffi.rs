@@ -5,6 +5,7 @@
 
 use crate::compile;
 use crate::domain::conversation::Kind;
+use crate::logic::{Fact, ProofCertificate};
 use crate::parse::Parse;
 use crate::resolve::TypeRegistry;
 use crate::ContentAddressed;
@@ -81,9 +82,9 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
     let etf = compile::emit_actor_module(&registry, &lenses, &extends);
     let compile_oid = crate::Oid::hash(&etf).as_ref().to_string();
 
-    // TODO: compute proof certificate and serialize to ETF
-    let proof_oid = String::new();
-    let proof_etf = Vec::new();
+    let cert = ProofCertificate::from_registry(&registry);
+    let proof_oid = cert.proof_oid.as_ref().to_string();
+    let proof_etf = proof_certificate_to_etf(&cert);
 
     Ok(CompileResult {
         etf,
@@ -98,6 +99,160 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
 /// Compile .conv grammar source → ETF bytes for actor dispatch module.
 pub fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
     compile_grammar_with_phases(source).map(|r| r.etf)
+}
+
+/// Serialize a ProofCertificate as ETF bytes.
+///
+/// The certificate becomes an Erlang proplist:
+/// ```erlang
+/// [{domain, <<"test">>},
+///  {proof_oid, <<"sha512:...">>},
+///  {facts, [{type_exists, <<"test">>, <<"color">>}, ...]},
+///  {discharged, [{<<"requirement">>, <<"evidence">>}, ...]}]
+/// ```
+///
+/// DESIGN BREAK: This serialization is lossy in a specific way.
+/// The Fact enum variants map to tagged tuples, but the structure
+/// is flat — we lose the Rust type safety. On the BEAM side, pattern
+/// matching recovers the tag dispatch, but there's no compile-time
+/// guarantee that the BEAM consumer handles all Fact variants. This
+/// is the fundamental gap at the NIF boundary: Rust's exhaustive
+/// match becomes Erlang's runtime pattern match. A proof certificate
+/// that the BEAM side doesn't fully consume is only a partial proof.
+///
+/// To close this gap, we would need:
+/// 1. A shared schema language (the grammar itself could serve this role)
+/// 2. Codegen for BEAM-side decoders from the Fact enum
+/// 3. Or: represent the proof as a content-addressed OID only,
+///    and let the BEAM side query back into Rust for specific facts
+///
+/// Option 3 is cheapest but defeats the purpose of the proof traveling
+/// with the artifact. Option 2 is the right answer but requires
+/// the grammar to describe itself — a fixpoint we haven't reached yet.
+fn proof_certificate_to_etf(cert: &ProofCertificate) -> Vec<u8> {
+    use eetf::{Atom, List, Term, Tuple};
+
+    let domain_pair = Term::from(Tuple::from(vec![
+        Term::from(Atom::from("domain")),
+        etf_binary(&cert.domain),
+    ]));
+
+    let oid_pair = Term::from(Tuple::from(vec![
+        Term::from(Atom::from("proof_oid")),
+        etf_binary(cert.proof_oid.as_ref()),
+    ]));
+
+    let fact_terms: Vec<Term> = cert.facts.iter().map(fact_to_etf_term).collect();
+    let facts_pair = Term::from(Tuple::from(vec![
+        Term::from(Atom::from("facts")),
+        Term::from(List::from(fact_terms)),
+    ]));
+
+    let obligation_terms: Vec<Term> = cert
+        .discharged
+        .iter()
+        .map(|ob| {
+            Term::from(Tuple::from(vec![
+                etf_binary(&ob.requirement),
+                etf_binary(&ob.evidence),
+            ]))
+        })
+        .collect();
+    let discharged_pair = Term::from(Tuple::from(vec![
+        Term::from(Atom::from("discharged")),
+        Term::from(List::from(obligation_terms)),
+    ]));
+
+    let proplist = Term::from(List::from(vec![
+        domain_pair,
+        oid_pair,
+        facts_pair,
+        discharged_pair,
+    ]));
+
+    let mut buf = Vec::new();
+    proplist
+        .encode(&mut buf)
+        .expect("ETF encoding should not fail");
+    buf
+}
+
+/// Convert a Fact to an ETF term (tagged tuple).
+fn fact_to_etf_term(fact: &Fact) -> eetf::Term {
+    use eetf::{Atom, Term, Tuple};
+
+    match fact {
+        Fact::TypeExists { domain, type_name } => Term::from(Tuple::from(vec![
+            Term::from(Atom::from("type_exists")),
+            etf_binary(domain),
+            etf_binary(type_name),
+        ])),
+        Fact::TypeHasVariant {
+            domain,
+            type_name,
+            variant,
+        } => Term::from(Tuple::from(vec![
+            Term::from(Atom::from("type_has_variant")),
+            etf_binary(domain),
+            etf_binary(type_name),
+            etf_binary(variant),
+        ])),
+        Fact::VariantRefs {
+            domain,
+            type_name,
+            variant,
+            ref_type,
+        } => Term::from(Tuple::from(vec![
+            Term::from(Atom::from("variant_refs")),
+            etf_binary(domain),
+            etf_binary(type_name),
+            etf_binary(variant),
+            etf_binary(ref_type),
+        ])),
+        Fact::ActionExists {
+            domain,
+            action_name,
+        } => Term::from(Tuple::from(vec![
+            Term::from(Atom::from("action_exists")),
+            etf_binary(domain),
+            etf_binary(action_name),
+        ])),
+        Fact::ActionField {
+            domain,
+            action_name,
+            field_name,
+            type_ref,
+        } => {
+            let type_ref_term = match type_ref {
+                Some(t) => etf_binary(t),
+                None => Term::from(Atom::from("none")),
+            };
+            Term::from(Tuple::from(vec![
+                Term::from(Atom::from("action_field")),
+                etf_binary(domain),
+                etf_binary(action_name),
+                etf_binary(field_name),
+                type_ref_term,
+            ]))
+        }
+        Fact::ActionCalls {
+            domain,
+            action_name,
+            target_domain,
+            target_action,
+        } => Term::from(Tuple::from(vec![
+            Term::from(Atom::from("action_calls")),
+            etf_binary(domain),
+            etf_binary(action_name),
+            etf_binary(target_domain),
+            etf_binary(target_action),
+        ])),
+    }
+}
+
+/// Create an ETF binary from a string.
+fn etf_binary(s: &str) -> eetf::Term {
+    eetf::Term::from(eetf::Binary::from(s.as_bytes()))
 }
 
 /// Write a Prism tree to git objects. Returns the root tree OID.
@@ -326,8 +481,75 @@ mod tests {
         // The proof ETF should be decodable as an Erlang term
         let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
         let s = format!("{:?}", term);
-        // Should contain the domain name
-        assert!(s.contains("test"), "proof ETF should contain domain name");
+        // Should contain the domain name as bytes (eetf::Binary Debug shows byte array)
+        let test_bytes: Vec<u8> = "test".bytes().collect();
+        assert!(
+            s.contains(&format!("{:?}", test_bytes)),
+            "proof ETF should contain domain bytes: {}",
+            s
+        );
+        // Should contain fact tags
+        assert!(
+            s.contains("domain"),
+            "proof ETF should contain 'domain' atom"
+        );
+        assert!(s.contains("facts"), "proof ETF should contain 'facts' atom");
+    }
+
+    #[test]
+    fn compile_result_proof_etf_all_fact_variants() {
+        // Grammar that produces ALL Fact variants:
+        // - TypeExists, TypeHasVariant (from type definitions)
+        // - VariantRefs (from parameterized variant red(shade))
+        // - ActionExists, ActionField (from action with field)
+        // - ActionCalls (from cross-domain call)
+        // - Obligations (discharged VariantRefs)
+        let result = compile_grammar_with_phases(
+            "grammar @full {\n  type color = red(shade) | blue\n  type shade = light | dark\n  action paint {\n    brush: color\n    @tools.apply(brush)\n  }\n}\n",
+        )
+        .unwrap();
+        let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
+        let s = format!("{:?}", term);
+        // All fact tags should be present
+        assert!(s.contains("type_exists"), "should have type_exists facts");
+        assert!(
+            s.contains("type_has_variant"),
+            "should have type_has_variant facts"
+        );
+        assert!(s.contains("variant_refs"), "should have variant_refs facts");
+        assert!(
+            s.contains("action_exists"),
+            "should have action_exists facts"
+        );
+        assert!(s.contains("action_field"), "should have action_field facts");
+        assert!(s.contains("action_calls"), "should have action_calls facts");
+        // Discharged obligations (from red(shade) → shade exists)
+        assert!(
+            s.contains("discharged"),
+            "should have discharged obligations"
+        );
+    }
+
+    #[test]
+    fn compile_result_proof_etf_action_field_none_type_ref() {
+        // Action with field that has no type ref → ActionField with type_ref=None
+        let result = compile_grammar_with_phases(
+            "grammar @bare {\n  type = a\n  action touch {\n    target\n  }\n}\n",
+        )
+        .unwrap();
+        let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
+        let s = format!("{:?}", term);
+        assert!(
+            s.contains("action_field"),
+            "should have action_field: {}",
+            s
+        );
+        // The None type_ref should be encoded as atom 'none'
+        assert!(
+            s.contains("none"),
+            "untyped field should encode type_ref as 'none': {}",
+            s
+        );
     }
 
     #[test]
