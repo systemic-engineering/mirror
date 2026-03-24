@@ -30,7 +30,9 @@
 //! spectrum would tell you about semantic shape. Both are interesting.
 //! This module provides both.
 
+use coincidence::projection::Projection;
 use coincidence::spectral::{Laplacian, SpectralDistance, Spectrum};
+use coincidence::state::StateVector;
 
 use crate::ast::AstNode;
 use crate::prism::Prism;
@@ -103,10 +105,7 @@ pub struct TypeGraphSpectrum {
 ///
 /// This constructs the graph Laplacian for the type reference
 /// graph, which is NOT the same as the AST tree's Laplacian.
-fn laplacian_from_edges(
-    type_names: &[String],
-    edges: &[(usize, usize)],
-) -> Laplacian {
+fn laplacian_from_edges(type_names: &[String], edges: &[(usize, usize)]) -> Laplacian {
     Laplacian::from_adjacency(type_names, edges)
 }
 
@@ -116,7 +115,11 @@ impl TypeGraphSpectrum {
     /// Returns None if the grammar has no types (empty spectrum is meaningless).
     pub fn from_registry(registry: &TypeRegistry) -> Option<Self> {
         let type_names: Vec<String> = {
-            let mut names: Vec<String> = registry.type_names().iter().map(|s| s.to_string()).collect();
+            let mut names: Vec<String> = registry
+                .type_names()
+                .iter()
+                .map(|s| s.to_string())
+                .collect();
             names.sort();
             names
         };
@@ -161,6 +164,160 @@ impl TypeGraphSpectrum {
     /// Multiple components = independent type namespaces.
     pub fn components(&self) -> usize {
         self.laplacian.components()
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Grammar Projection — the type surface as a measurement apparatus
+// ---------------------------------------------------------------------------
+
+/// The grammar's type surface as a projection operator.
+///
+/// # How grammars project
+///
+/// A grammar with types `{color, shade}` where `color = red | blue`
+/// and `shade = light | dark` defines a 4-dimensional space:
+///
+///   `{color.red, color.blue, shade.light, shade.dark}`
+///
+/// Each variant is a basis vector. A typed value like `color.red`
+/// is the basis vector `|color.red>`. The grammar's projection
+/// operator P satisfies:
+///
+/// - P|color.red> = |color.red> (data that matches stays)
+/// - P|unknown>   = 0           (data outside the type surface vanishes)
+/// - P^2 = P                    (idempotent — projecting twice = projecting once)
+///
+/// The projection is the grammar's identity in the coincidence framework.
+/// Two grammars with the same type surface have the same projection.
+/// Different type surfaces → different projections → measurable distance.
+///
+/// # Where the math breaks (part 2)
+///
+/// This projection treats all variants as orthogonal. In reality,
+/// `color.red(shade.light)` has a dependency between dimensions —
+/// `red` constrains the `shade` parameter. The product space structure
+/// is richer than a flat projection captures. That's the gap between
+/// the flat variant space and the dependent type space.
+///
+/// A more precise model would use tensor products: `|color.red> ⊗ |shade.light>`.
+/// This module stays flat. The tensor product is the next break to push through.
+#[derive(Clone, Debug)]
+pub struct GrammarProjection {
+    /// The domain name.
+    pub domain: String,
+    /// The projection operator.
+    pub projection: Projection,
+    /// Dimension labels: `type.variant` strings.
+    pub labels: Vec<String>,
+}
+
+impl GrammarProjection {
+    /// Build the grammar projection from a TypeRegistry.
+    ///
+    /// Returns None if the grammar has no types (no space to project into).
+    pub fn from_registry(registry: &TypeRegistry) -> Option<Self> {
+        let mut labels: Vec<String> = Vec::new();
+
+        let mut type_names: Vec<String> = registry
+            .type_names()
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        type_names.sort();
+
+        if type_names.is_empty() {
+            return None;
+        }
+
+        for type_name in &type_names {
+            let mut variants: Vec<String> = registry
+                .variants(type_name)
+                .unwrap_or_default()
+                .into_iter()
+                .map(|s| s.to_string())
+                .collect();
+            variants.sort();
+            for variant in &variants {
+                labels.push(format!("{}.{}", type_name, variant));
+            }
+        }
+
+        // Edge case: types exist but have no variants
+        if labels.is_empty() {
+            return None;
+        }
+
+        let space = format!("grammar:{}", registry.domain);
+
+        // Build the identity projection: every variant basis vector is preserved.
+        // This is P = sum_i |e_i><e_i| over all variant basis vectors.
+        let entries: Vec<((String, String), f64)> = labels
+            .iter()
+            .map(|l| ((l.clone(), l.clone()), 1.0))
+            .collect();
+
+        let projection = Projection::from_entries(&space, labels.clone(), entries);
+
+        Some(GrammarProjection {
+            domain: registry.domain.clone(),
+            projection,
+            labels,
+        })
+    }
+
+    /// The dimension of the grammar's type space.
+    /// Equal to the total number of variants across all types.
+    pub fn dimension(&self) -> usize {
+        self.labels.len()
+    }
+
+    /// The space name for this grammar's projection.
+    pub fn space(&self) -> &str {
+        self.projection.space()
+    }
+
+    /// Project a state vector through this grammar.
+    ///
+    /// Data matching the grammar's type surface is preserved.
+    /// Data outside the type surface is projected to zero.
+    pub fn project(&self, v: &StateVector) -> Result<StateVector, coincidence::CoincidenceError> {
+        self.projection.apply(v)
+    }
+
+    /// Create a basis state vector for a specific variant.
+    ///
+    /// Returns None if the variant label doesn't exist in this grammar.
+    pub fn basis(&self, type_name: &str, variant: &str) -> Option<StateVector> {
+        let label = format!("{}.{}", type_name, variant);
+        if self.labels.contains(&label) {
+            Some(StateVector::basis(label, self.space()))
+        } else {
+            None
+        }
+    }
+
+    /// Create a uniform superposition over all variants of a type.
+    ///
+    /// For a type with n variants, each variant gets coefficient 1/sqrt(n).
+    /// Returns None if the type doesn't exist or has no variants.
+    pub fn type_superposition(&self, type_name: &str) -> Option<StateVector> {
+        let prefix = format!("{}.", type_name);
+        let matching: Vec<&String> = self.labels.iter().filter(|l| l.starts_with(&prefix)).collect();
+        if matching.is_empty() {
+            return None;
+        }
+        let coeff = 1.0 / (matching.len() as f64).sqrt();
+        let entries: Vec<(String, f64)> = matching
+            .into_iter()
+            .map(|l| (l.clone(), coeff))
+            .collect();
+        Some(StateVector::from_entries(self.space(), entries))
+    }
+
+    /// Check if this grammar's projection is idempotent (it always should be).
+    pub fn verify_idempotent(&self) -> bool {
+        self.projection.is_idempotent(1e-10)
     }
 }
 
@@ -412,6 +569,156 @@ mod tests {
         let tgs1 = TypeGraphSpectrum::from_registry(&reg1).unwrap();
         let tgs2 = TypeGraphSpectrum::from_registry(&reg2).unwrap();
         assert!(tgs1.distance(&tgs2).value() > 0.0);
+    }
+
+    // -- Grammar projection tests --
+
+    #[test]
+    fn grammar_projection_simple() {
+        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        // type "" has variants {a, b, c} → 3 dimensions
+        assert_eq!(gp.dimension(), 3);
+        assert!(gp.verify_idempotent());
+    }
+
+    #[test]
+    fn grammar_projection_linked() {
+        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        // color={red,blue} + shade={light,dark} → 4 dimensions
+        assert_eq!(gp.dimension(), 4);
+        assert!(gp.verify_idempotent());
+    }
+
+    #[test]
+    fn grammar_projection_basis_vector() {
+        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+
+        let v = gp.basis("color", "red").unwrap();
+        let projected = gp.project(&v).unwrap();
+        // Basis vector should survive projection unchanged
+        assert_eq!(projected.entries().len(), 1);
+        assert_eq!(projected.entries().get("color.red"), Some(&1.0));
+    }
+
+    #[test]
+    fn grammar_projection_unknown_variant_returns_none() {
+        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        assert!(gp.basis("unknown", "nope").is_none());
+    }
+
+    #[test]
+    fn grammar_projection_projects_outside_to_zero() {
+        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+
+        // State vector outside the grammar's type space
+        let outside = StateVector::basis("alien.thing", gp.space());
+        let projected = gp.project(&outside).unwrap();
+        assert!(projected.is_zero());
+    }
+
+    #[test]
+    fn grammar_projection_idempotent_application() {
+        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+
+        let v = gp.basis("shade", "dark").unwrap();
+        let once = gp.project(&v).unwrap();
+        let twice = gp.project(&once).unwrap();
+        assert_eq!(once, twice);
+    }
+
+    #[test]
+    fn grammar_projection_type_superposition() {
+        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+
+        let sup = gp.type_superposition("color").unwrap();
+        // color has 2 variants → coefficient = 1/sqrt(2) for each
+        let expected_coeff = 1.0 / 2.0f64.sqrt();
+        assert!((sup.entries().get("color.blue").unwrap() - expected_coeff).abs() < 1e-9);
+        assert!((sup.entries().get("color.red").unwrap() - expected_coeff).abs() < 1e-9);
+    }
+
+    #[test]
+    fn grammar_projection_superposition_unknown_type() {
+        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        assert!(gp.type_superposition("nonexistent").is_none());
+    }
+
+    #[test]
+    fn grammar_projection_superposition_survives_projection() {
+        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+
+        let sup = gp.type_superposition("shade").unwrap();
+        let projected = gp.project(&sup).unwrap();
+        // Superposition is within the grammar's space, so it should survive
+        let expected_coeff = 1.0 / 2.0f64.sqrt();
+        assert!((projected.entries().get("shade.dark").unwrap() - expected_coeff).abs() < 1e-9);
+        assert!((projected.entries().get("shade.light").unwrap() - expected_coeff).abs() < 1e-9);
+    }
+
+    #[test]
+    fn grammar_projection_space_name() {
+        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        assert_eq!(gp.space(), "grammar:test");
+    }
+
+    #[test]
+    fn grammar_projection_empty_grammar_returns_none() {
+        let grammar = prism::fractal(
+            ref_("grammar-empty"),
+            AstNode {
+                kind: Kind::Decl,
+                name: "grammar".into(),
+                value: "@empty".into(),
+                span: span(),
+            },
+            vec![],
+        );
+        let registry = TypeRegistry::compile(&grammar).unwrap();
+        assert!(GrammarProjection::from_registry(&registry).is_none());
+    }
+
+    #[test]
+    fn grammar_projection_empty_type_returns_none() {
+        // Type exists but has zero variants
+        let type_def = prism::fractal(
+            ref_("type-def-empty"),
+            AstNode {
+                kind: Kind::Form,
+                name: "type-def".into(),
+                value: "empty".into(),
+                span: span(),
+            },
+            vec![],
+        );
+        let grammar = prism::fractal(
+            ref_("grammar-empty-type"),
+            AstNode {
+                kind: Kind::Decl,
+                name: "grammar".into(),
+                value: "@evac".into(),
+                span: span(),
+            },
+            vec![type_def],
+        );
+        let registry = TypeRegistry::compile(&grammar).unwrap();
+        assert!(GrammarProjection::from_registry(&registry).is_none());
+    }
+
+    #[test]
+    fn grammar_projection_domain_stored() {
+        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        assert_eq!(gp.domain, "linked");
     }
 
     #[test]
