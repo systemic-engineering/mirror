@@ -153,4 +153,4 @@ as Mara. The witness is part of the hash.
 ffi, filter, generate, logic, packages, parse, prism, property,
 resolve, spectral (feature-gated).
 
-Full roadmap: `ROADMAP.md`
+Full roadmap: [`docs/roadmap/README.md`](docs/roadmap/README.md)

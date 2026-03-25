@@ -12,6 +12,10 @@ Stories over trees.
 A typed transformation pipeline language. `.conv` files describe desired state.
 The Rust parser produces a `Prism<AstNode>`. The BEAM runtime converges toward it.
 
+## Roadmap
+
+[`docs/roadmap/README.md`](docs/roadmap/README.md) — milestones, current focus, the three-crate architecture.
+
 ## Architecture
 
 ```
