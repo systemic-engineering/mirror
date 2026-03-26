@@ -88,7 +88,11 @@ grammar @test {
 
     assert_eq!(cert.property_results.len(), 3);
 
-    let names: Vec<&str> = cert.property_results.iter().map(|r| r.name.as_str()).collect();
+    let names: Vec<&str> = cert
+        .property_results
+        .iter()
+        .map(|r| r.name.as_str())
+        .collect();
     assert!(names.contains(&"shannon_equivalence"));
     assert!(names.contains(&"connected"));
     assert!(names.contains(&"exhaustive"));
@@ -154,9 +158,22 @@ fn ffi_pipeline_includes_property_results_in_etf() {
         "proof ETF should contain 'properties' key: {}",
         s
     );
+
+    // Property name is encoded as an ETF binary — verify by checking the raw bytes
+    // "shannon_equivalence" as UTF-8 bytes
+    let name_bytes = "shannon_equivalence".as_bytes();
     assert!(
-        s.contains("shannon_equivalence"),
-        "proof ETF should contain property name 'shannon_equivalence': {}",
+        result
+            .proof_etf
+            .windows(name_bytes.len())
+            .any(|w| w == name_bytes),
+        "proof ETF should contain property name 'shannon_equivalence' as binary bytes"
+    );
+
+    // Also verify the verdict atom "pass" or "required" appears
+    assert!(
+        s.contains("\"required\"") || s.contains("required"),
+        "proof ETF should contain property kind: {}",
         s
     );
 }
