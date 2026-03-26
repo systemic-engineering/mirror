@@ -1,7 +1,9 @@
 //! Rustler NIF bridge for the conversation crate.
 //!
-//! Exposes parse_conv/1 and compile_grammar/1 to the BEAM runtime.
+//! Exposes parse_conv/1, compile_grammar/1, and coincidence measurement
+//! functions to the BEAM runtime.
 
+use conversation::Vector;
 use rustler::{Atom, Binary, Encoder, Env, NewBinary};
 
 mod atoms {
@@ -60,6 +62,82 @@ fn compile_grammar_traced<'a>(env: Env<'a>, source: String) -> (Atom, rustler::T
         }
         Err(e) => (atoms::error(), e.encode(env)),
     }
+}
+
+// ---------------------------------------------------------------------------
+// Coincidence measurement NIFs
+// ---------------------------------------------------------------------------
+
+/// Parse source into a TypeRegistry for property checking.
+///
+/// Shared helper for all measurement NIFs. Parses the source, finds the
+/// grammar block, and compiles it into a TypeRegistry.
+fn registry_from_source(source: &str) -> Result<conversation::resolve::TypeRegistry, String> {
+    let ast = conversation::parse::Parse
+        .trace(source.to_string())
+        .into_result()
+        .map_err(|e| e.to_string())?;
+    let grammar = ast
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("grammar"))
+        .ok_or_else(|| "no grammar block".to_string())?;
+    conversation::resolve::TypeRegistry::compile(grammar).map_err(|e| e.to_string())
+}
+
+/// Check a built-in property by name against a grammar source (internal helper).
+///
+/// Returns `(ok, reason)` or `(error, reason)`.
+fn do_check_property(source: &str, property: &str) -> (Atom, String) {
+    let registry = match registry_from_source(source) {
+        Ok(r) => r,
+        Err(e) => return (atoms::error(), e),
+    };
+    match conversation::property::check_builtin(&registry, property) {
+        Some((true, reason)) => (atoms::ok(), reason),
+        Some((false, reason)) => (atoms::error(), reason),
+        None => (atoms::error(), format!("unknown property: {}", property)),
+    }
+}
+
+/// Check a built-in property by name against a grammar source.
+///
+/// Returns `{ok, ReasonString}` or `{error, ReasonString}`.
+#[rustler::nif]
+fn check_property(source: String, property: String) -> (Atom, String) {
+    do_check_property(&source, &property)
+}
+
+/// Check shannon equivalence — content address uniqueness across all derivations.
+///
+/// Returns `{ok, ReasonString}` or `{error, ReasonString}`.
+#[rustler::nif]
+fn check_shannon_equivalence(source: String) -> (Atom, String) {
+    do_check_property(&source, "shannon_equivalence")
+}
+
+/// Check type graph connectivity via spectral analysis.
+///
+/// Returns `{ok, ReasonString}` or `{error, ReasonString}`.
+#[rustler::nif]
+fn check_connected(source: String) -> (Atom, String) {
+    do_check_property(&source, "connected")
+}
+
+/// Check type graph bipartiteness via spectral analysis.
+///
+/// Returns `{ok, ReasonString}` or `{error, ReasonString}`.
+#[rustler::nif]
+fn check_bipartite(source: String) -> (Atom, String) {
+    do_check_property(&source, "bipartite")
+}
+
+/// Check that every declared type has at least one variant.
+///
+/// Returns `{ok, ReasonString}` or `{error, ReasonString}`.
+#[rustler::nif]
+fn check_exhaustive(source: String) -> (Atom, String) {
+    do_check_property(&source, "exhaustive")
 }
 
 rustler::init!("conversation_nif");

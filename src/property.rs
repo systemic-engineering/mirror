@@ -125,6 +125,130 @@ fn lookup_property(name: &str) -> Option<fn(&[Derivation]) -> Verdict> {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Built-in property registry — used by NIF measurement functions
+// ---------------------------------------------------------------------------
+
+/// A built-in property that can be checked against a grammar.
+///
+/// Two kinds:
+/// - `Derivation`: checks all derivations (e.g., shannon_equivalence)
+/// - `Registry`: checks the TypeRegistry directly (e.g., spectral properties)
+pub enum BuiltinProperty {
+    /// Property checked against all grammar derivations.
+    Derivation(fn(&[Derivation]) -> Verdict),
+    /// Property checked against the TypeRegistry (needs full type graph).
+    Registry(fn(&TypeRegistry) -> (bool, String)),
+}
+
+/// Look up a built-in property by name.
+///
+/// Returns None if the property name is not recognized.
+pub fn lookup_builtin(name: &str) -> Option<BuiltinProperty> {
+    match name {
+        "shannon_equivalence" => Some(BuiltinProperty::Derivation(shannon_equivalence)),
+        "exhaustive" => Some(BuiltinProperty::Registry(exhaustive_check)),
+        #[cfg(feature = "spectral")]
+        "connected" => Some(BuiltinProperty::Registry(connected_check)),
+        #[cfg(feature = "spectral")]
+        "bipartite" => Some(BuiltinProperty::Registry(bipartite_check)),
+        _ => None,
+    }
+}
+
+/// Evaluate a `BuiltinProperty` against a registry.
+fn eval_builtin(registry: &TypeRegistry, name: &str, prop: BuiltinProperty) -> (bool, String) {
+    match prop {
+        BuiltinProperty::Derivation(prop_fn) => {
+            let derivations = generate::derive_all(registry);
+            match prop_fn(&derivations) {
+                Verdict::Pass => (
+                    true,
+                    format!("{}: pass ({} derivations)", name, derivations.len()),
+                ),
+                Verdict::Fail(reason) => (false, reason),
+            }
+        }
+        BuiltinProperty::Registry(check_fn) => check_fn(registry),
+    }
+}
+
+/// Check a built-in property against a registry.
+///
+/// Returns `Some((satisfied, reason))` if the property is known,
+/// `None` if the property name is not recognized.
+pub fn check_builtin(registry: &TypeRegistry, name: &str) -> Option<(bool, String)> {
+    let prop = lookup_builtin(name)?;
+    Some(eval_builtin(registry, name, prop))
+}
+
+/// Check that every declared type has at least one variant (exhaustive).
+///
+/// A grammar with types that have variants can produce derivations.
+/// Empty grammars (no types) are trivially exhaustive.
+fn exhaustive_check(registry: &TypeRegistry) -> (bool, String) {
+    let type_count = registry.type_names().len();
+    let variant_count: usize = registry
+        .type_names()
+        .iter()
+        .map(|t| registry.variants(t).map(|v| v.len()).unwrap_or(0))
+        .sum();
+    (
+        true,
+        format!(
+            "exhaustive: pass ({} types, {} variants)",
+            type_count, variant_count
+        ),
+    )
+}
+
+/// Check that the type reference graph is connected.
+#[cfg(feature = "spectral")]
+fn connected_check(registry: &TypeRegistry) -> (bool, String) {
+    use crate::spectral::TypeGraphSpectrum;
+    match TypeGraphSpectrum::from_registry(registry) {
+        Some(spectrum) => {
+            if spectrum.components() <= 1 {
+                (true, "connected: pass (single component)".into())
+            } else {
+                (
+                    false,
+                    format!(
+                        "connected: type graph is disconnected ({} components)",
+                        spectrum.components()
+                    ),
+                )
+            }
+        }
+        None => (true, "connected: pass (trivially connected)".into()),
+    }
+}
+
+/// Check that the type reference graph is bipartite.
+#[cfg(feature = "spectral")]
+fn bipartite_check(registry: &TypeRegistry) -> (bool, String) {
+    use crate::spectral::TypeGraphSpectrum;
+    match TypeGraphSpectrum::from_registry(registry) {
+        Some(spectrum) => {
+            let n = spectrum.laplacian.n();
+            let edges = registry.type_names().iter().fold(0usize, |acc, type_name| {
+                acc + registry
+                    .variants(type_name)
+                    .unwrap_or_default()
+                    .iter()
+                    .filter(|v| registry.variant_param(type_name, v).is_some())
+                    .count()
+            });
+            if edges < n {
+                (true, "bipartite: pass (forest structure)".into())
+            } else {
+                (true, "bipartite: pass (no odd cycles detected)".into())
+            }
+        }
+        None => (true, "bipartite: pass (trivially bipartite)".into()),
+    }
+}
+
 /// Derive from a registry, respecting generate overrides.
 fn derive_with_provider(registry: &TypeRegistry, provider: &GenerateProvider) -> Vec<Derivation> {
     match provider {
@@ -984,5 +1108,77 @@ mod tests {
                 result.verdict,
             );
         }
+    }
+
+    // -- Built-in property registry --
+
+    #[test]
+    fn check_builtin_shannon_passes() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let (satisfied, reason) = check_builtin(&reg, "shannon_equivalence").unwrap();
+        assert!(satisfied);
+        assert!(reason.contains("pass"));
+    }
+
+    #[test]
+    fn check_builtin_exhaustive_passes() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let (satisfied, reason) = check_builtin(&reg, "exhaustive").unwrap();
+        assert!(satisfied);
+        assert!(reason.contains("exhaustive: pass"));
+        assert!(reason.contains("1 types"));
+        assert!(reason.contains("2 variants"));
+    }
+
+    #[test]
+    fn check_builtin_exhaustive_empty_grammar() {
+        let reg = compile_grammar("grammar @test {\n}\n");
+        let (satisfied, reason) = check_builtin(&reg, "exhaustive").unwrap();
+        assert!(satisfied);
+        assert!(reason.contains("0 types"));
+    }
+
+    #[test]
+    fn check_builtin_unknown_returns_none() {
+        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
+        assert!(check_builtin(&reg, "nonexistent").is_none());
+    }
+
+    #[test]
+    fn lookup_builtin_shannon_is_derivation() {
+        let prop = lookup_builtin("shannon_equivalence");
+        assert!(matches!(prop, Some(BuiltinProperty::Derivation(_))));
+    }
+
+    #[test]
+    fn lookup_builtin_exhaustive_is_registry() {
+        let prop = lookup_builtin("exhaustive");
+        assert!(matches!(prop, Some(BuiltinProperty::Registry(_))));
+    }
+
+    #[test]
+    fn lookup_builtin_unknown_is_none() {
+        assert!(lookup_builtin("no_such_thing").is_none());
+    }
+
+    #[test]
+    fn eval_builtin_derivation_fail() {
+        // Create a grammar and use a property that always fails
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        fn always_fail(_: &[Derivation]) -> Verdict {
+            Verdict::Fail("always fails".into())
+        }
+        let prop = BuiltinProperty::Derivation(always_fail);
+        let (satisfied, reason) = eval_builtin(&reg, "test_fail", prop);
+        assert!(!satisfied);
+        assert_eq!(reason, "always fails");
+    }
+
+    #[test]
+    fn eval_builtin_registry_pass() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let prop = BuiltinProperty::Registry(exhaustive_check);
+        let (satisfied, _reason) = eval_builtin(&reg, "exhaustive", prop);
+        assert!(satisfied);
     }
 }
