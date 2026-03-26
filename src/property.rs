@@ -982,4 +982,208 @@ mod tests {
             );
         }
     }
+
+    // -- Garden @topology domain --
+    //
+    // These tests verify the @topology garden grammar (garden/public/@topology/topology.conv)
+    // compiles correctly and its test section passes. The grammar declares the vocabulary
+    // for graph topology concepts: measures, phases, partitions, and boundaries.
+
+    #[test]
+    fn garden_topology_grammar_compiles() {
+        let source = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("garden/public/@topology/topology.conv"),
+        )
+        .expect("garden @topology/topology.conv should exist");
+
+        // Split on --- separator
+        let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
+        assert_eq!(
+            parts.len(),
+            2,
+            "topology.conv should have grammar and test sections"
+        );
+
+        // Compile the grammar section
+        let grammar_src = parts[0];
+        let ast = Parse.trace(grammar_src.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .expect("should have grammar block");
+        let reg = TypeRegistry::compile(grammar).unwrap();
+        assert_eq!(reg.domain, "topology");
+
+        // Verify types
+        assert!(reg.has_variant("", "graph"));
+        assert!(reg.has_variant("", "node"));
+        assert!(reg.has_variant("", "edge"));
+        assert!(reg.has_variant("", "subgraph"));
+        assert!(reg.has_variant("", "actor"));
+        assert!(reg.has_variant("measure", "spectrum"));
+        assert!(reg.has_variant("measure", "entropy"));
+        assert!(reg.has_variant("measure", "curvature"));
+        assert!(reg.has_variant("measure", "fiedler"));
+        assert!(reg.has_variant("measure", "eigengap"));
+        assert!(reg.has_variant("measure", "heat_kernel"));
+        assert!(reg.has_variant("phase", "stable"));
+        assert!(reg.has_variant("phase", "transition"));
+        assert!(reg.has_variant("phase", "critical"));
+        assert!(reg.has_variant("partition", "connected"));
+        assert!(reg.has_variant("partition", "disconnected"));
+        assert!(reg.has_variant("partition", "fragmented"));
+        assert!(reg.has_variant("boundary", "internal"));
+        assert!(reg.has_variant("boundary", "external"));
+        assert!(reg.has_variant("boundary", "ghost"));
+    }
+
+    #[test]
+    fn garden_topology_tests_pass() {
+        let source = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("garden/public/@topology/topology.conv"),
+        )
+        .expect("garden @topology/topology.conv should exist");
+
+        // Split on --- separator
+        let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
+        let grammar_src = parts[0];
+        let test_src = parts[1];
+
+        // Compile grammar and register in namespace
+        let ast = Parse.trace(grammar_src.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let reg = TypeRegistry::compile(grammar).unwrap();
+
+        let mut namespace = Namespace::new();
+        namespace.register_grammar("topology", reg);
+
+        // Run all test directives
+        let results = check_all(&namespace, test_src).unwrap();
+        assert_eq!(results.len(), 5, "expected 5 test blocks");
+        for result in &results {
+            assert_eq!(
+                result.verdict,
+                Verdict::Pass,
+                "test '{}' failed: {:?}",
+                result.name,
+                result.verdict,
+            );
+        }
+    }
+
+    // -- Garden @training domain --
+    //
+    // These tests verify the @training garden grammar (garden/public/@training/training.conv)
+    // compiles correctly and its test section passes. The grammar declares the vocabulary
+    // for graph-native model training: epochs, layers, routing, spectral properties, phases,
+    // and observations.
+
+    #[test]
+    fn garden_training_grammar_compiles() {
+        let source = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("garden/public/@training/training.conv"),
+        )
+        .expect("garden @training/training.conv should exist");
+
+        // Split on --- separator
+        let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
+        assert_eq!(
+            parts.len(),
+            2,
+            "training.conv should have grammar and test sections"
+        );
+
+        // Compile the grammar section
+        let grammar_src = parts[0];
+        let ast = Parse.trace(grammar_src.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .expect("should have grammar block");
+        let reg = TypeRegistry::compile(grammar).unwrap();
+        assert_eq!(reg.domain, "training");
+
+        // Verify types
+        assert!(reg.has_variant("", "epoch"));
+        assert!(reg.has_variant("", "step"));
+        assert!(reg.has_variant("", "checkpoint"));
+        assert!(reg.has_variant("", "topology_snapshot"));
+        assert!(reg.has_variant("layer", "attention"));
+        assert!(reg.has_variant("layer", "feedforward"));
+        assert!(reg.has_variant("layer", "embedding"));
+        assert!(reg.has_variant("layer", "output"));
+        assert!(reg.has_variant("routing", "dense"));
+        assert!(reg.has_variant("routing", "sparse"));
+        assert!(reg.has_variant("routing", "learned"));
+        assert!(reg.has_variant("routing", "fixed"));
+        assert!(reg.has_variant("spectral_property", "ramanujan"));
+        assert!(reg.has_variant("spectral_property", "small_world"));
+        assert!(reg.has_variant("spectral_property", "expander"));
+        assert!(reg.has_variant("phase", "warmup"));
+        assert!(reg.has_variant("phase", "learning"));
+        assert!(reg.has_variant("phase", "plateau"));
+        assert!(reg.has_variant("phase", "grokking"));
+        assert!(reg.has_variant("phase", "converged"));
+        assert!(reg.has_variant("observation", "loss"));
+        assert!(reg.has_variant("observation", "gradient"));
+        assert!(reg.has_variant("observation", "attention_pattern"));
+        assert!(reg.has_variant("observation", "routing_pattern"));
+        assert!(reg.has_variant("observation", "spectral_gap"));
+    }
+
+    #[test]
+    fn garden_training_tests_pass() {
+        let source = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("garden/public/@training/training.conv"),
+        )
+        .expect("garden @training/training.conv should exist");
+
+        // Split on --- separator
+        let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
+        let grammar_src = parts[0];
+        let test_src = parts[1];
+
+        // Compile grammar and register in namespace
+        let ast = Parse.trace(grammar_src.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let reg = TypeRegistry::compile(grammar).unwrap();
+
+        let mut namespace = Namespace::new();
+        namespace.register_grammar("training", reg);
+
+        // Run all test directives
+        let results = check_all(&namespace, test_src).unwrap();
+        assert_eq!(results.len(), 6, "expected 6 test blocks");
+        for result in &results {
+            assert_eq!(
+                result.verdict,
+                Verdict::Pass,
+                "test '{}' failed: {:?}",
+                result.name,
+                result.verdict,
+            );
+        }
+    }
 }
