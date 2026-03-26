@@ -104,6 +104,7 @@ impl Fact {
 #[derive(Clone, Debug, Default)]
 pub struct FactStore {
     facts: BTreeSet<Fact>,
+    obligations: Vec<Fact>,
 }
 
 impl FactStore {
@@ -189,6 +190,26 @@ impl FactStore {
     /// True when the store has no facts.
     pub fn is_empty(&self) -> bool {
         self.facts.is_empty()
+    }
+
+    /// Add a property obligation — a fact that MUST hold.
+    pub fn add_obligation(&mut self, fact: Fact) {
+        self.obligations.push(fact);
+    }
+
+    /// All obligations in the store.
+    pub fn obligations(&self) -> &[Fact] {
+        &self.obligations
+    }
+
+    /// Discharge all obligations against the fact store.
+    ///
+    /// Each obligation must match at least one fact in the store.
+    /// Returns Ok with matched (obligation, evidence) pairs if all satisfied,
+    /// Err with a description of the first unsatisfied obligation.
+    pub fn discharge_all(&self) -> Result<Vec<(Fact, Fact)>, String> {
+        // TODO: implement — always succeeds (wrong)
+        Ok(vec![])
     }
 
     /// Query: all types in a domain.
@@ -1762,5 +1783,59 @@ mod tests {
             shared.is_empty() || !shared.is_empty(),
             "DESIGN BREAK: manual join works but is O(n*m)"
         );
+    }
+
+    // -----------------------------------------------------------------------
+    // Obligation tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn fact_store_tracks_obligations() {
+        let mut store = FactStore::new();
+        store.add_obligation(Fact::TypeExists {
+            domain: "test".into(),
+            type_name: "missing".into(),
+        });
+        assert_eq!(store.obligations().len(), 1);
+        assert!(store.facts().is_empty());
+    }
+
+    #[test]
+    fn discharge_succeeds_when_fact_present() {
+        use crate::parse::Parse;
+        use crate::kernel::Vector;
+        let source = "grammar @test {\n  type = a | b\n}\n";
+        let ast = Parse.trace(source.to_string()).into_result().unwrap();
+        let grammar = ast.children().iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let reg = TypeRegistry::compile(grammar).unwrap();
+        let mut store = FactStore::from_registry(&reg);
+        store.add_obligation(Fact::TypeExists {
+            domain: "test".into(),
+            type_name: "".into(),
+        });
+        let result = store.discharge_all();
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn discharge_fails_when_fact_missing() {
+        use crate::parse::Parse;
+        use crate::kernel::Vector;
+        let source = "grammar @test {\n  type = a | b\n}\n";
+        let ast = Parse.trace(source.to_string()).into_result().unwrap();
+        let grammar = ast.children().iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let reg = TypeRegistry::compile(grammar).unwrap();
+        let mut store = FactStore::from_registry(&reg);
+        store.add_obligation(Fact::TypeExists {
+            domain: "test".into(),
+            type_name: "nonexistent".into(),
+        });
+        let result = store.discharge_all();
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("nonexistent"));
     }
 }
