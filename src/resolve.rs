@@ -164,8 +164,26 @@ impl TypeRegistry {
         // Unlike parameterized variants (which MUST reference a declared type name),
         // act fields can reference variants, external types, or undeclared names.
 
+        // Collect property declarations
+        let mut required_properties: Vec<String> = Vec::new();
+        let mut invariants_list: Vec<String> = Vec::new();
+        for child in grammar_node.children() {
+            if child.data().is_decl("requires") {
+                required_properties.push(child.data().value.clone());
+            } else if child.data().is_decl("invariant") {
+                invariants_list.push(child.data().value.clone());
+            }
+        }
+
         Ok(Self::finalize(
-            domain, types, params, acts, calls, visibility, Vec::new(), Vec::new(),
+            domain,
+            types,
+            params,
+            acts,
+            calls,
+            visibility,
+            required_properties,
+            invariants_list,
         ))
     }
 
@@ -313,6 +331,7 @@ impl TypeRegistry {
 
     /// Build a finalized TypeRegistry from raw data.
     /// Computes the canonical encoding and content address.
+    #[allow(clippy::too_many_arguments)]
     fn finalize(
         domain: String,
         types: HashMap<String, HashSet<String>>,
@@ -323,7 +342,14 @@ impl TypeRegistry {
         required_properties: Vec<String>,
         invariants: Vec<String>,
     ) -> Self {
-        let encoded = Self::encode_canonical(&domain, &types, &params, &acts, &required_properties, &invariants);
+        let encoded = Self::encode_canonical(
+            &domain,
+            &types,
+            &params,
+            &acts,
+            &required_properties,
+            &invariants,
+        );
         let sha = Sha(fragment::blob_oid_bytes(&encoded));
         let ref_ = Ref::new(sha, format!("grammar/{}", domain));
         TypeRegistry {
@@ -2953,8 +2979,12 @@ mod tests {
             "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n  requires exhaustive\n}\n",
         );
         assert_eq!(reg.required_properties().len(), 2);
-        assert!(reg.required_properties().contains(&"shannon_equivalence".to_string()));
-        assert!(reg.required_properties().contains(&"exhaustive".to_string()));
+        assert!(reg
+            .required_properties()
+            .contains(&"shannon_equivalence".to_string()));
+        assert!(reg
+            .required_properties()
+            .contains(&"exhaustive".to_string()));
     }
 
     #[test]
