@@ -208,8 +208,15 @@ impl FactStore {
     /// Returns Ok with matched (obligation, evidence) pairs if all satisfied,
     /// Err with a description of the first unsatisfied obligation.
     pub fn discharge_all(&self) -> Result<Vec<(Fact, Fact)>, String> {
-        // TODO: implement — always succeeds (wrong)
-        Ok(vec![])
+        let mut matched = Vec::new();
+        for obligation in &self.obligations {
+            if let Some(evidence) = self.facts.iter().find(|f| *f == obligation) {
+                matched.push((obligation.clone(), evidence.clone()));
+            } else {
+                return Err(format!("obligation not satisfied: {:?}", obligation));
+            }
+        }
+        Ok(matched)
     }
 
     /// Query: all types in a domain.
@@ -1802,11 +1809,13 @@ mod tests {
 
     #[test]
     fn discharge_succeeds_when_fact_present() {
-        use crate::parse::Parse;
         use crate::kernel::Vector;
+        use crate::parse::Parse;
         let source = "grammar @test {\n  type = a | b\n}\n";
         let ast = Parse.trace(source.to_string()).into_result().unwrap();
-        let grammar = ast.children().iter()
+        let grammar = ast
+            .children()
+            .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
         let reg = TypeRegistry::compile(grammar).unwrap();
@@ -1821,11 +1830,13 @@ mod tests {
 
     #[test]
     fn discharge_fails_when_fact_missing() {
-        use crate::parse::Parse;
         use crate::kernel::Vector;
+        use crate::parse::Parse;
         let source = "grammar @test {\n  type = a | b\n}\n";
         let ast = Parse.trace(source.to_string()).into_result().unwrap();
-        let grammar = ast.children().iter()
+        let grammar = ast
+            .children()
+            .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
         let reg = TypeRegistry::compile(grammar).unwrap();
