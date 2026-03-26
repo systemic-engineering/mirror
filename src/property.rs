@@ -893,6 +893,10 @@ mod tests {
     }
 
     // -- Garden @property domain --
+    //
+    // These tests verify the @property garden grammar (garden/public/@property/property.conv)
+    // compiles correctly and its test section passes. The grammar declares the vocabulary
+    // for property-based verification: types, kinds, verdicts, and built-in property names.
 
     #[test]
     fn garden_property_grammar_compiles() {

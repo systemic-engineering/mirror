@@ -1210,8 +1210,7 @@ mod tests {
     fn proof_certificate_checks_known_builtins() {
         use crate::kernel::Vector;
         use crate::parse::Parse;
-        let source =
-            "grammar @test {\n  type = a | b | c\n\n  requires shannon_equivalence\n}\n";
+        let source = "grammar @test {\n  type = a | b | c\n\n  requires shannon_equivalence\n}\n";
         let ast = Parse.trace(source.to_string()).into_result().unwrap();
         let grammar = ast
             .children()
@@ -1234,8 +1233,7 @@ mod tests {
     fn proof_certificate_unknown_property_defaults_to_satisfied() {
         use crate::kernel::Vector;
         use crate::parse::Parse;
-        let source =
-            "grammar @test {\n  type = a | b\n\n  requires custom_user_property\n}\n";
+        let source = "grammar @test {\n  type = a | b\n\n  requires custom_user_property\n}\n";
         let ast = Parse.trace(source.to_string()).into_result().unwrap();
         let grammar = ast
             .children()
