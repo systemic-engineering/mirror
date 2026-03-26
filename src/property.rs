@@ -165,7 +165,10 @@ fn eval_builtin(registry: &TypeRegistry, name: &str, prop: BuiltinProperty) -> (
         BuiltinProperty::Derivation(prop_fn) => {
             let derivations = generate::derive_all(registry);
             match prop_fn(&derivations) {
-                Verdict::Pass => (true, format!("{}: pass ({} derivations)", name, derivations.len())),
+                Verdict::Pass => (
+                    true,
+                    format!("{}: pass ({} derivations)", name, derivations.len()),
+                ),
                 Verdict::Fail(reason) => (false, reason),
             }
         }
@@ -223,10 +226,13 @@ fn connected_check(registry: &TypeRegistry) -> (bool, String) {
             if spectrum.components() <= 1 {
                 (true, "connected: pass (single component)".into())
             } else {
-                (false, format!(
-                    "connected: type graph is disconnected ({} components)",
-                    spectrum.components()
-                ))
+                (
+                    false,
+                    format!(
+                        "connected: type graph is disconnected ({} components)",
+                        spectrum.components()
+                    ),
+                )
             }
         }
         // No types or single type = trivially connected
@@ -253,7 +259,8 @@ fn bipartite_check(registry: &TypeRegistry) -> (bool, String) {
             // (components >= edge count), it's bipartite.
             let n = spectrum.laplacian.n();
             let edges = registry.type_names().iter().fold(0usize, |acc, type_name| {
-                acc + registry.variants(type_name)
+                acc + registry
+                    .variants(type_name)
                     .unwrap_or_default()
                     .iter()
                     .filter(|v| registry.variant_param(type_name, v).is_some())
@@ -883,5 +890,92 @@ mod tests {
         let reg = compile_grammar("grammar @empty {}\n");
         let (satisfied, _reason) = check_builtin(&reg, "bipartite").unwrap();
         assert!(satisfied);
+    }
+
+    // -- Garden @property domain --
+
+    #[test]
+    fn garden_property_grammar_compiles() {
+        let source = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("garden/public/@property/property.conv"),
+        )
+        .expect("garden @property/property.conv should exist");
+
+        // Split on --- separator
+        let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
+        assert_eq!(
+            parts.len(),
+            2,
+            "property.conv should have grammar and test sections"
+        );
+
+        // Compile the grammar section
+        let grammar_src = parts[0];
+        let ast = Parse.trace(grammar_src.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .expect("should have grammar block");
+        let reg = TypeRegistry::compile(grammar).unwrap();
+        assert_eq!(reg.domain, "property");
+
+        // Verify types
+        assert!(reg.has_variant("", "requires"));
+        assert!(reg.has_variant("", "invariant"));
+        assert!(reg.has_variant("", "ensures"));
+        assert!(reg.has_variant("kind", "derivation"));
+        assert!(reg.has_variant("kind", "registry"));
+        assert!(reg.has_variant("kind", "spectral"));
+        assert!(reg.has_variant("verdict", "pass"));
+        assert!(reg.has_variant("verdict", "fail"));
+        assert!(reg.has_variant("builtin", "shannon_equivalence"));
+        assert!(reg.has_variant("builtin", "connected"));
+        assert!(reg.has_variant("builtin", "components"));
+        assert!(reg.has_variant("builtin", "exhaustive"));
+    }
+
+    #[test]
+    fn garden_property_tests_pass() {
+        let source = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("garden/public/@property/property.conv"),
+        )
+        .expect("garden @property/property.conv should exist");
+
+        // Split on --- separator
+        let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
+        let grammar_src = parts[0];
+        let test_src = parts[1];
+
+        // Compile grammar and register in namespace
+        let ast = Parse.trace(grammar_src.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let reg = TypeRegistry::compile(grammar).unwrap();
+
+        let mut namespace = Namespace::new();
+        namespace.register_grammar("property", reg);
+
+        // Run all test directives
+        let results = check_all(&namespace, test_src).unwrap();
+        assert_eq!(results.len(), 4, "expected 4 test blocks");
+        for result in &results {
+            assert_eq!(
+                result.verdict,
+                Verdict::Pass,
+                "test '{}' failed: {:?}",
+                result.name,
+                result.verdict,
+            );
+        }
     }
 }
