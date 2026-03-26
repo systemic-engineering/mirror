@@ -440,21 +440,26 @@ impl ProofCertificate {
 
         // Collect property results from declared `requires` and `invariant` annotations.
         //
-        // `satisfied` is always `true` at this stage — the infrastructure records
-        // which properties were declared; evaluation against the fact store is
-        // deferred to a future phase.
+        // Known built-in properties are checked against the registry.
+        // Unknown properties default to `satisfied: true` (not yet implemented).
         let mut property_results: Vec<PropertyResult> = Vec::new();
         for name in registry.required_properties() {
+            let satisfied = crate::property::check_builtin(registry, name)
+                .map(|(s, _)| s)
+                .unwrap_or(true);
             property_results.push(PropertyResult {
                 name: name.clone(),
-                satisfied: true,
+                satisfied,
                 kind: PropertyKind::Required,
             });
         }
         for name in registry.invariants() {
+            let satisfied = crate::property::check_builtin(registry, name)
+                .map(|(s, _)| s)
+                .unwrap_or(true);
             property_results.push(PropertyResult {
                 name: name.clone(),
-                satisfied: true,
+                satisfied,
                 kind: PropertyKind::Invariant,
             });
         }
@@ -1199,6 +1204,54 @@ mod tests {
     fn proof_certificate_property_kind_required_and_invariant_distinct() {
         // Both variants of PropertyKind must be distinct
         assert_ne!(PropertyKind::Required, PropertyKind::Invariant);
+    }
+
+    #[test]
+    fn proof_certificate_checks_known_builtins() {
+        use crate::kernel::Vector;
+        use crate::parse::Parse;
+        let source =
+            "grammar @test {\n  type = a | b | c\n\n  requires shannon_equivalence\n}\n";
+        let ast = Parse.trace(source.to_string()).into_result().unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let registry = TypeRegistry::compile(grammar).unwrap();
+        let cert = ProofCertificate::from_registry(&registry);
+
+        let req = cert
+            .property_results
+            .iter()
+            .find(|r| r.name == "shannon_equivalence")
+            .expect("shannon_equivalence property result");
+        // shannon_equivalence is a known builtin — should be actually verified
+        assert!(req.satisfied);
+    }
+
+    #[test]
+    fn proof_certificate_unknown_property_defaults_to_satisfied() {
+        use crate::kernel::Vector;
+        use crate::parse::Parse;
+        let source =
+            "grammar @test {\n  type = a | b\n\n  requires custom_user_property\n}\n";
+        let ast = Parse.trace(source.to_string()).into_result().unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let registry = TypeRegistry::compile(grammar).unwrap();
+        let cert = ProofCertificate::from_registry(&registry);
+
+        let req = cert
+            .property_results
+            .iter()
+            .find(|r| r.name == "custom_user_property")
+            .expect("custom_user_property property result");
+        // Unknown properties default to satisfied (not yet implemented)
+        assert!(req.satisfied);
     }
 
     // -----------------------------------------------------------------------
