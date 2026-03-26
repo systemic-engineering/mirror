@@ -11,6 +11,7 @@
 ////   Start domain servers through the garden factory supervisor.
 ////   Used when a supervision tree manages the lifecycle.
 
+import conversation/coincidence
 import conversation/compiler
 import conversation/domain
 import conversation/garden
@@ -59,6 +60,47 @@ pub fn boot(grammars: List(String)) -> Result(BootResult, String) {
       case compile_all(subject, grammars) {
         Ok(domains) ->
           Ok(BootResult(compiler: subject, domains: domains))
+        Error(e) -> {
+          process.send(subject, compiler.Shutdown)
+          Error(e)
+        }
+      }
+    }
+  }
+}
+
+/// Boot with infrastructure domains first.
+/// Infrastructure grammars (e.g. @coincidence) compile before application
+/// grammars, ensuring measurement services are available for property checks.
+/// Also starts the @coincidence server explicitly since it's a custom server
+/// not started by normal grammar compilation.
+pub fn boot_with_infrastructure(
+  infrastructure: List(String),
+  application: List(String),
+) -> Result(BootResult, String) {
+  let _ = domain.start_supervisor()
+
+  // Start @coincidence server (custom, not started by grammar compilation)
+  let _ = coincidence.start_server()
+
+  case compiler.start() {
+    Error(_) -> Error("failed to start @compiler actor")
+    Ok(started) -> {
+      let subject = started.data
+      case compile_all(subject, infrastructure) {
+        Ok(infra_domains) -> {
+          case compile_all(subject, application) {
+            Ok(app_domains) ->
+              Ok(BootResult(
+                compiler: subject,
+                domains: list.append(infra_domains, app_domains),
+              ))
+            Error(e) -> {
+              process.send(subject, compiler.Shutdown)
+              Error(e)
+            }
+          }
+        }
         Error(e) -> {
           process.send(subject, compiler.Shutdown)
           Error(e)

@@ -391,3 +391,51 @@ fn emit_test_module_handles_property() {
     assert!(!eaf_bytes.is_empty());
     assert_eq!(eaf_bytes[0], 131);
 }
+
+/// Actor module emits requires/0 and invariants/0 functions.
+#[test]
+fn emit_actor_module_requires_and_invariants() {
+    let registry = compile_grammar(
+        "grammar @checked {\n  type = a | b\n  requires shannon_equivalence\n  invariant connected\n}\n",
+    );
+    let eaf_bytes = compile::emit_actor_module(&registry, &[], &[]);
+    let term = eetf::Term::decode(std::io::Cursor::new(&eaf_bytes)).unwrap();
+    let forms_str = format!("{:?}", term);
+    assert!(
+        forms_str.contains("requires"),
+        "should have requires/0 export: {}",
+        forms_str,
+    );
+    assert!(
+        forms_str.contains("invariants"),
+        "should have invariants/0 export: {}",
+        forms_str,
+    );
+    // Check that the property names appear as binaries
+    assert!(
+        forms_str.contains("shannon_equivalence")
+            || forms_str.contains(&format!("{:?}", "shannon_equivalence".as_bytes())),
+        "requires/0 should contain shannon_equivalence: {}",
+        forms_str,
+    );
+}
+
+/// Actor module with no properties has empty requires/0 and invariants/0.
+#[test]
+fn emit_actor_module_empty_requires_invariants() {
+    let registry = compile_grammar("grammar @plain {\n  type = x | y\n}\n");
+    let eaf_bytes = compile::emit_actor_module(&registry, &[], &[]);
+    let term = eetf::Term::decode(std::io::Cursor::new(&eaf_bytes)).unwrap();
+    let forms_str = format!("{:?}", term);
+    // Should still have requires and invariants functions (returning empty lists)
+    assert!(
+        forms_str.contains("requires"),
+        "should have requires/0 function even when empty: {}",
+        forms_str,
+    );
+    assert!(
+        forms_str.contains("invariants"),
+        "should have invariants/0 function even when empty: {}",
+        forms_str,
+    );
+}

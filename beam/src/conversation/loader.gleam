@@ -18,3 +18,11 @@ pub fn get_lenses(module: String) -> Result(List(String), String)
 /// Get a loaded module's extends (parent domains).
 @external(erlang, "loader_ffi", "get_extends")
 pub fn get_extends(module: String) -> Result(List(String), String)
+
+/// Get a loaded module's required properties.
+@external(erlang, "loader_ffi", "get_requires")
+pub fn get_requires(module: String) -> Result(List(String), String)
+
+/// Get a loaded module's invariant properties.
+@external(erlang, "loader_ffi", "get_invariants")
+pub fn get_invariants(module: String) -> Result(List(String), String)

@@ -12,6 +12,7 @@
 //// - start_named() — supervised path. Pure compilation only. The garden
 ////                    factory supervisor handles domain server lifecycle.
 
+import conversation/coincidence
 import conversation/domain
 import conversation/grammar
 import conversation/key
@@ -21,6 +22,7 @@ import conversation/oid
 import conversation/ref.{type ScopedOid}
 import conversation/trace.{type Trace}
 import gleam/erlang/process.{type Subject}
+import gleam/list
 import gleam/option.{None}
 import gleam/otp/actor
 
@@ -176,6 +178,10 @@ fn handle_message(state: State, msg: Message) -> actor.Next(State, Message) {
                   option.Some(trace.oid(resolve_trace)),
                 )
 
+              // Check property declarations through @coincidence
+              check_requires(module, source)
+              check_invariants(module, source)
+
               let compiled =
                 CompiledDomain(
                   domain: domain_name,
@@ -210,3 +216,31 @@ fn domain_seed(name: BitArray) -> BitArray {
 
 @external(erlang, "crypto_ffi", "sha512")
 fn do_sha512(data: BitArray) -> BitArray
+
+/// Check required properties through @coincidence.
+/// Failures are logged but do not fail compilation (enforcement comes later).
+fn check_requires(beam_module: String, source: String) -> Nil {
+  case loader.get_requires(beam_module) {
+    Ok(requires) -> {
+      list.each(requires, fn(name) {
+        let _ = coincidence.check_property(source, name)
+        Nil
+      })
+    }
+    Error(_) -> Nil
+  }
+}
+
+/// Check invariant properties through @coincidence.
+/// Failures are logged but do not fail compilation (enforcement comes later).
+fn check_invariants(beam_module: String, source: String) -> Nil {
+  case loader.get_invariants(beam_module) {
+    Ok(invariants) -> {
+      list.each(invariants, fn(name) {
+        let _ = coincidence.check_property(source, name)
+        Nil
+      })
+    }
+    Error(_) -> Nil
+  }
+}
