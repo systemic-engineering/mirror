@@ -1067,6 +1067,31 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
             }
         }
 
+        // Property declarations: `requires name` or `invariant name`
+        if let Some(prop_name) = trimmed.strip_prefix("requires ") {
+            let span = lines.current_span();
+            defs.push(ast::ast_leaf(
+                Kind::Decl,
+                "requires",
+                prop_name.trim(),
+                span,
+            ));
+            lines.advance();
+            continue;
+        }
+
+        if let Some(prop_name) = trimmed.strip_prefix("invariant ") {
+            let span = lines.current_span();
+            defs.push(ast::ast_leaf(
+                Kind::Decl,
+                "invariant",
+                prop_name.trim(),
+                span,
+            ));
+            lines.advance();
+            continue;
+        }
+
         if let Some(rest) = trimmed.strip_prefix("type ") {
             // Flush previous type def
             if let Some((type_name, type_span, variants)) = current.take() {
@@ -3195,6 +3220,65 @@ grammar @conversation {
             .expect("grammar block");
         assert_eq!(grammar.data().value, "@conversation");
         assert_eq!(grammar.children().len(), 2);
+    }
+
+    #[test]
+    fn parse_requires_in_grammar() {
+        let source = "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let requires: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_decl("requires"))
+            .collect();
+        assert_eq!(requires.len(), 1);
+        assert_eq!(requires[0].data().value, "shannon_equivalence");
+    }
+
+    #[test]
+    fn parse_invariant_in_grammar() {
+        let source = "grammar @test {\n  type = a | b\n\n  invariant connected\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let invariants: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_decl("invariant"))
+            .collect();
+        assert_eq!(invariants.len(), 1);
+        assert_eq!(invariants[0].data().value, "connected");
+    }
+
+    #[test]
+    fn parse_multiple_properties() {
+        let source = "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n  invariant connected\n  requires exhaustive\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let requires: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_decl("requires"))
+            .collect();
+        let invariants: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_decl("invariant"))
+            .collect();
+        assert_eq!(requires.len(), 2);
+        assert_eq!(invariants.len(), 1);
     }
 
     #[test]

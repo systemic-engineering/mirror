@@ -51,6 +51,8 @@ pub struct TypeRegistry {
     acts: HashMap<String, Vec<(String, Option<String>)>>,
     calls: HashMap<String, Vec<(String, String, Vec<String>)>>,
     visibility: HashMap<String, Visibility>,
+    required_properties: Vec<String>,
+    invariants: Vec<String>,
 }
 
 impl TypeRegistry {
@@ -162,8 +164,26 @@ impl TypeRegistry {
         // Unlike parameterized variants (which MUST reference a declared type name),
         // act fields can reference variants, external types, or undeclared names.
 
+        // Collect property declarations
+        let mut required_properties: Vec<String> = Vec::new();
+        let mut invariants_list: Vec<String> = Vec::new();
+        for child in grammar_node.children() {
+            if child.data().is_decl("requires") {
+                required_properties.push(child.data().value.clone());
+            } else if child.data().is_decl("invariant") {
+                invariants_list.push(child.data().value.clone());
+            }
+        }
+
         Ok(Self::finalize(
-            domain, types, params, acts, calls, visibility,
+            domain,
+            types,
+            params,
+            acts,
+            calls,
+            visibility,
+            required_properties,
+            invariants_list,
         ))
     }
 
@@ -267,6 +287,16 @@ impl TypeRegistry {
             .unwrap_or(Visibility::Protected)
     }
 
+    /// All `requires` property names declared in this grammar.
+    pub fn required_properties(&self) -> &[String] {
+        &self.required_properties
+    }
+
+    /// All `invariant` property names declared in this grammar.
+    pub fn invariants(&self) -> &[String] {
+        &self.invariants
+    }
+
     /// Test-only: build a registry with a parameterized variant whose type ref
     /// is NOT declared. This bypasses compile-time validation to exercise the
     /// `None => continue` defensive path in `generate::derive_type`.
@@ -294,11 +324,14 @@ impl TypeRegistry {
             HashMap::new(),
             HashMap::new(),
             HashMap::new(),
+            Vec::new(),
+            Vec::new(),
         )
     }
 
     /// Build a finalized TypeRegistry from raw data.
     /// Computes the canonical encoding and content address.
+    #[allow(clippy::too_many_arguments)]
     fn finalize(
         domain: String,
         types: HashMap<String, HashSet<String>>,
@@ -306,8 +339,17 @@ impl TypeRegistry {
         acts: HashMap<String, Vec<(String, Option<String>)>>,
         calls: HashMap<String, Vec<(String, String, Vec<String>)>>,
         visibility: HashMap<String, Visibility>,
+        required_properties: Vec<String>,
+        invariants: Vec<String>,
     ) -> Self {
-        let encoded = Self::encode_canonical(&domain, &types, &params, &acts);
+        let encoded = Self::encode_canonical(
+            &domain,
+            &types,
+            &params,
+            &acts,
+            &required_properties,
+            &invariants,
+        );
         let sha = Sha(fragment::blob_oid_bytes(&encoded));
         let ref_ = Ref::new(sha, format!("grammar/{}", domain));
         TypeRegistry {
@@ -319,6 +361,8 @@ impl TypeRegistry {
             acts,
             calls,
             visibility,
+            required_properties,
+            invariants,
         }
     }
 
@@ -329,6 +373,8 @@ impl TypeRegistry {
         types: &HashMap<String, HashSet<String>>,
         params: &HashMap<(String, String), String>,
         acts: &HashMap<String, Vec<(String, Option<String>)>>,
+        required_properties: &[String],
+        invariants: &[String],
     ) -> Vec<u8> {
         let mut lines = Vec::new();
         lines.push(domain.to_string());
@@ -362,6 +408,20 @@ impl TypeRegistry {
                 })
                 .collect();
             lines.push(format!("act:{}={}", name, fields.join(",")));
+        }
+
+        // Required properties: sorted for determinism
+        let mut sorted_requires: Vec<&String> = required_properties.iter().collect();
+        sorted_requires.sort();
+        for prop in sorted_requires {
+            lines.push(format!("requires:{}", prop));
+        }
+
+        // Invariants: sorted for determinism
+        let mut sorted_invariants: Vec<&String> = invariants.iter().collect();
+        sorted_invariants.sort();
+        for inv in sorted_invariants {
+            lines.push(format!("invariant:{}", inv));
         }
 
         lines.join("\n").into_bytes()
@@ -2895,5 +2955,44 @@ mod tests {
         store.write_tree(&reg1);
         store.write_tree(&reg2);
         assert_eq!(store.object_count(), 1);
+    }
+
+    #[test]
+    fn registry_tracks_required_properties() {
+        let reg = compile_grammar(
+            "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n  invariant connected\n}\n",
+        );
+        assert_eq!(reg.required_properties(), &["shannon_equivalence"]);
+        assert_eq!(reg.invariants(), &["connected"]);
+    }
+
+    #[test]
+    fn registry_empty_properties_by_default() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        assert!(reg.required_properties().is_empty());
+        assert!(reg.invariants().is_empty());
+    }
+
+    #[test]
+    fn registry_multiple_requires() {
+        let reg = compile_grammar(
+            "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n  requires exhaustive\n}\n",
+        );
+        assert_eq!(reg.required_properties().len(), 2);
+        assert!(reg
+            .required_properties()
+            .contains(&"shannon_equivalence".to_string()));
+        assert!(reg
+            .required_properties()
+            .contains(&"exhaustive".to_string()));
+    }
+
+    #[test]
+    fn registry_properties_affect_content_hash() {
+        let reg_without = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let reg_with = compile_grammar(
+            "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n}\n",
+        );
+        assert_ne!(reg_without.encoded(), reg_with.encoded());
     }
 }
