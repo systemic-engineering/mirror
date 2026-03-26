@@ -67,13 +67,14 @@ pub fn inline_grammar_with_requires_and_invariant_test() {
 /// 6. NIF evaluates shannon equivalence and connected
 /// 7. Properties pass, compilation succeeds
 pub fn full_property_pipeline_test() {
-  // 1. Read infrastructure and application grammars from garden
+  // 1. Read infrastructure grammars from conv/ and application from garden
+  let conv = "/Users/alexwolf/dev/projects/conversation/conv"
   let garden =
     "/Users/alexwolf/dev/systemic.engineering/garden/public"
   let assert Ok(property_source) =
-    boot.read_file(garden <> "/@property/property.conv")
+    boot.read_file(conv <> "/property.conv")
   let assert Ok(topology_source) =
-    boot.read_file(garden <> "/@topology/topology.conv")
+    boot.read_file(conv <> "/topology.conv")
   let assert Ok(training_source) =
     boot.read_file(garden <> "/@training/training.conv")
 

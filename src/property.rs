@@ -715,7 +715,7 @@ mod tests {
 
     // -- Garden @property domain --
     //
-    // These tests verify the @property garden grammar (garden/public/@property/property.conv)
+    // These tests verify the @property grammar (conv/property.conv)
     // compiles correctly and its test section passes. The grammar declares the vocabulary
     // for property-based verification: types, kinds, verdicts, and built-in property names.
 
@@ -723,11 +723,9 @@ mod tests {
     fn garden_property_grammar_compiles() {
         let source = std::fs::read_to_string(
             std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .parent()
-                .unwrap()
-                .join("garden/public/@property/property.conv"),
+                .join("conv/property.conv"),
         )
-        .expect("garden @property/property.conv should exist");
+        .expect("conv/property.conv should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -767,11 +765,9 @@ mod tests {
     fn garden_property_tests_pass() {
         let source = std::fs::read_to_string(
             std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .parent()
-                .unwrap()
-                .join("garden/public/@property/property.conv"),
+                .join("conv/property.conv"),
         )
-        .expect("garden @property/property.conv should exist");
+        .expect("conv/property.conv should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -806,7 +802,7 @@ mod tests {
 
     // -- Garden @topology domain --
     //
-    // These tests verify the @topology garden grammar (garden/public/@topology/topology.conv)
+    // These tests verify the @topology grammar (conv/topology.conv)
     // compiles correctly and its test section passes. The grammar declares the vocabulary
     // for graph topology concepts: measures, phases, partitions, and boundaries.
 
@@ -814,11 +810,9 @@ mod tests {
     fn garden_topology_grammar_compiles() {
         let source = std::fs::read_to_string(
             std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .parent()
-                .unwrap()
-                .join("garden/public/@topology/topology.conv"),
+                .join("conv/topology.conv"),
         )
-        .expect("garden @topology/topology.conv should exist");
+        .expect("conv/topology.conv should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -866,11 +860,9 @@ mod tests {
     fn garden_topology_tests_pass() {
         let source = std::fs::read_to_string(
             std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .parent()
-                .unwrap()
-                .join("garden/public/@topology/topology.conv"),
+                .join("conv/topology.conv"),
         )
-        .expect("garden @topology/topology.conv should exist");
+        .expect("conv/topology.conv should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -1010,7 +1002,7 @@ mod tests {
 
     // -- Garden @coincidence domain --
     //
-    // These tests verify the @coincidence garden grammar (garden/public/@coincidence/coincidence.conv)
+    // These tests verify the @coincidence grammar (conv/coincidence.conv)
     // compiles correctly and its test section passes. The grammar declares the vocabulary
     // for measurement: eigendecomposition, entropy, curvature, and spectral analysis.
 
@@ -1018,11 +1010,9 @@ mod tests {
     fn garden_coincidence_grammar_compiles() {
         let source = std::fs::read_to_string(
             std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .parent()
-                .unwrap()
-                .join("garden/public/@coincidence/coincidence.conv"),
+                .join("conv/coincidence.conv"),
         )
-        .expect("garden @coincidence/coincidence.conv should exist");
+        .expect("conv/coincidence.conv should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -1073,11 +1063,9 @@ mod tests {
     fn garden_coincidence_tests_pass() {
         let source = std::fs::read_to_string(
             std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .parent()
-                .unwrap()
-                .join("garden/public/@coincidence/coincidence.conv"),
+                .join("conv/coincidence.conv"),
         )
-        .expect("garden @coincidence/coincidence.conv should exist");
+        .expect("conv/coincidence.conv should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();

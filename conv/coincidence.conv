@@ -1,0 +1,58 @@
+grammar @coincidence {
+  type = measurement | verdict | spectrum
+
+  type measurement = eigenvalue | entropy | curvature | fiedler | eigengap | heat_kernel
+
+  type verdict = pass | fail
+
+  type spectrum = laplacian | adjacency | normalized
+
+  action check {
+    name: measurement
+  }
+
+  action measure {
+    target: measurement
+  }
+
+  action connected {}
+
+  action entropy {}
+
+  action curvature {}
+
+  action bipartite {}
+
+  action shannon_equivalence {}
+}
+
+in @topology
+in @property
+
+---
+
+test "measurement types" {
+  @coincidence has measurement
+  @coincidence has verdict
+  @coincidence has spectrum
+}
+
+test "measurement kinds" {
+  @coincidence.measurement has eigenvalue
+  @coincidence.measurement has entropy
+  @coincidence.measurement has curvature
+  @coincidence.measurement has fiedler
+  @coincidence.measurement has eigengap
+  @coincidence.measurement has heat_kernel
+}
+
+test "verdict types" {
+  @coincidence.verdict has pass
+  @coincidence.verdict has fail
+}
+
+test "spectrum types" {
+  @coincidence.spectrum has laplacian
+  @coincidence.spectrum has adjacency
+  @coincidence.spectrum has normalized
+}
