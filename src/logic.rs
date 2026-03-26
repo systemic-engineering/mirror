@@ -1096,6 +1096,58 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
+    // PropertyResult / PropertyKind in ProofCertificate tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn proof_certificate_has_property_results_field() {
+        use crate::parse::Parse;
+        use crate::kernel::Vector;
+        let source =
+            "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n  invariant connected\n}\n";
+        let ast = Parse.trace(source.to_string()).into_result().unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let registry = TypeRegistry::compile(grammar).unwrap();
+        let cert = ProofCertificate::from_registry(&registry);
+
+        // Two property results: one Required, one Invariant
+        assert_eq!(cert.property_results.len(), 2);
+
+        let req = cert
+            .property_results
+            .iter()
+            .find(|r| r.name == "shannon_equivalence")
+            .expect("shannon_equivalence property result");
+        assert_eq!(req.kind, PropertyKind::Required);
+        assert!(req.satisfied);
+
+        let inv = cert
+            .property_results
+            .iter()
+            .find(|r| r.name == "connected")
+            .expect("connected invariant result");
+        assert_eq!(inv.kind, PropertyKind::Invariant);
+        assert!(inv.satisfied);
+    }
+
+    #[test]
+    fn proof_certificate_empty_property_results_when_none_declared() {
+        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
+        let cert = ProofCertificate::from_registry(&registry);
+        assert!(cert.property_results.is_empty());
+    }
+
+    #[test]
+    fn proof_certificate_property_kind_required_and_invariant_distinct() {
+        // Both variants of PropertyKind must be distinct
+        assert_ne!(PropertyKind::Required, PropertyKind::Invariant);
+    }
+
+    // -----------------------------------------------------------------------
     // ReachabilityMap tests
     // -----------------------------------------------------------------------
 
