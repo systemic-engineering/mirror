@@ -163,11 +163,33 @@ fn proof_certificate_to_etf(cert: &ProofCertificate) -> Vec<u8> {
         Term::from(List::from(obligation_terms)),
     ]));
 
+    let property_terms: Vec<Term> = cert
+        .property_results
+        .iter()
+        .map(|pr| {
+            let kind_atom = match pr.kind {
+                crate::logic::PropertyKind::Required => "required",
+                crate::logic::PropertyKind::Invariant => "invariant",
+            };
+            let verdict_atom = if pr.satisfied { "pass" } else { "fail" };
+            Term::from(Tuple::from(vec![
+                etf_binary(&pr.name),
+                Term::from(Atom::from(kind_atom)),
+                Term::from(Atom::from(verdict_atom)),
+            ]))
+        })
+        .collect();
+    let properties_pair = Term::from(Tuple::from(vec![
+        Term::from(Atom::from("properties")),
+        Term::from(List::from(property_terms)),
+    ]));
+
     let proplist = Term::from(List::from(vec![
         domain_pair,
         oid_pair,
         facts_pair,
         discharged_pair,
+        properties_pair,
     ]));
 
     let mut buf = Vec::new();
@@ -784,10 +806,7 @@ mod tests {
 
     #[test]
     fn compile_without_properties_has_empty_properties_list() {
-        let result = compile_grammar_with_phases(
-            "grammar @plain {\n  type = a | b\n}\n",
-        )
-        .unwrap();
+        let result = compile_grammar_with_phases("grammar @plain {\n  type = a | b\n}\n").unwrap();
         let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
         let s = format!("{:?}", term);
         // Should still have the `properties` key even when empty

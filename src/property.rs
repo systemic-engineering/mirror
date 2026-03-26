@@ -165,7 +165,10 @@ fn eval_builtin(registry: &TypeRegistry, name: &str, prop: BuiltinProperty) -> (
         BuiltinProperty::Derivation(prop_fn) => {
             let derivations = generate::derive_all(registry);
             match prop_fn(&derivations) {
-                Verdict::Pass => (true, format!("{}: pass ({} derivations)", name, derivations.len())),
+                Verdict::Pass => (
+                    true,
+                    format!("{}: pass ({} derivations)", name, derivations.len()),
+                ),
                 Verdict::Fail(reason) => (false, reason),
             }
         }
@@ -223,10 +226,13 @@ fn connected_check(registry: &TypeRegistry) -> (bool, String) {
             if spectrum.components() <= 1 {
                 (true, "connected: pass (single component)".into())
             } else {
-                (false, format!(
-                    "connected: type graph is disconnected ({} components)",
-                    spectrum.components()
-                ))
+                (
+                    false,
+                    format!(
+                        "connected: type graph is disconnected ({} components)",
+                        spectrum.components()
+                    ),
+                )
             }
         }
         // No types or single type = trivially connected
@@ -253,7 +259,8 @@ fn bipartite_check(registry: &TypeRegistry) -> (bool, String) {
             // (components >= edge count), it's bipartite.
             let n = spectrum.laplacian.n();
             let edges = registry.type_names().iter().fold(0usize, |acc, type_name| {
-                acc + registry.variants(type_name)
+                acc + registry
+                    .variants(type_name)
                     .unwrap_or_default()
                     .iter()
                     .filter(|v| registry.variant_param(type_name, v).is_some())
