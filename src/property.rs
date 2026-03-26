@@ -891,4 +891,95 @@ mod tests {
         let (satisfied, _reason) = check_builtin(&reg, "bipartite").unwrap();
         assert!(satisfied);
     }
+
+    // -- Garden @property domain --
+    //
+    // These tests verify the @property garden grammar (garden/public/@property/property.conv)
+    // compiles correctly and its test section passes. The grammar declares the vocabulary
+    // for property-based verification: types, kinds, verdicts, and built-in property names.
+
+    #[test]
+    fn garden_property_grammar_compiles() {
+        let source = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("garden/public/@property/property.conv"),
+        )
+        .expect("garden @property/property.conv should exist");
+
+        // Split on --- separator
+        let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
+        assert_eq!(
+            parts.len(),
+            2,
+            "property.conv should have grammar and test sections"
+        );
+
+        // Compile the grammar section
+        let grammar_src = parts[0];
+        let ast = Parse.trace(grammar_src.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .expect("should have grammar block");
+        let reg = TypeRegistry::compile(grammar).unwrap();
+        assert_eq!(reg.domain, "property");
+
+        // Verify types
+        assert!(reg.has_variant("", "requires"));
+        assert!(reg.has_variant("", "invariant"));
+        assert!(reg.has_variant("", "ensures"));
+        assert!(reg.has_variant("kind", "derivation"));
+        assert!(reg.has_variant("kind", "registry"));
+        assert!(reg.has_variant("kind", "spectral"));
+        assert!(reg.has_variant("verdict", "pass"));
+        assert!(reg.has_variant("verdict", "fail"));
+        assert!(reg.has_variant("builtin", "shannon_equivalence"));
+        assert!(reg.has_variant("builtin", "connected"));
+        assert!(reg.has_variant("builtin", "components"));
+        assert!(reg.has_variant("builtin", "exhaustive"));
+    }
+
+    #[test]
+    fn garden_property_tests_pass() {
+        let source = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("garden/public/@property/property.conv"),
+        )
+        .expect("garden @property/property.conv should exist");
+
+        // Split on --- separator
+        let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
+        let grammar_src = parts[0];
+        let test_src = parts[1];
+
+        // Compile grammar and register in namespace
+        let ast = Parse.trace(grammar_src.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let reg = TypeRegistry::compile(grammar).unwrap();
+
+        let mut namespace = Namespace::new();
+        namespace.register_grammar("property", reg);
+
+        // Run all test directives
+        let results = check_all(&namespace, test_src).unwrap();
+        assert_eq!(results.len(), 4, "expected 4 test blocks");
+        for result in &results {
+            assert_eq!(
+                result.verdict,
+                Verdict::Pass,
+                "test '{}' failed: {:?}",
+                result.name,
+                result.verdict,
+            );
+        }
+    }
 }
