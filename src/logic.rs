@@ -355,36 +355,15 @@ impl FactStore {
 // ProofCertificate — structured proof beyond bare OIDs
 // ---------------------------------------------------------------------------
 
-/// Classifies a grammar-declared property by its kind.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub enum PropertyKind {
-    /// A `requires` declaration — a property that must hold.
-    Required,
-    /// An `invariant` declaration — a structural invariant.
-    Invariant,
-}
-
-/// The result of checking a single grammar-declared property.
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct PropertyResult {
-    /// The property name as declared in the grammar.
-    pub name: String,
-    /// Whether the property was satisfied.
-    ///
-    /// Currently always `true` (infrastructure phase — the checker is not
-    /// yet implemented). Future phases will evaluate each property against
-    /// the fact store and set this accordingly.
-    pub satisfied: bool,
-    /// Whether this is a `requires` or `invariant` declaration.
-    pub kind: PropertyKind,
-}
-
 /// A proof certificate for a successful grammar compilation.
 ///
 /// Not just an OID — a structured chain showing what was proven:
 /// which types were checked, which references were validated,
 /// which actions were verified. The OID is the hash of this
 /// chain, making it a commitment to the full proof.
+///
+/// Property declarations (`requires`/`invariant`) are NOT evaluated here.
+/// They pass through to the BEAM side as raw declaration lists.
 #[derive(Clone, Debug, PartialEq)]
 pub struct ProofCertificate {
     /// The domain that was compiled.
@@ -393,8 +372,6 @@ pub struct ProofCertificate {
     pub facts: BTreeSet<Fact>,
     /// Obligations that were discharged (type refs that were validated).
     pub discharged: Vec<Obligation>,
-    /// Results for each grammar-declared property (`requires` / `invariant`).
-    pub property_results: Vec<PropertyResult>,
     /// The proof hash — content address of the entire certificate.
     pub proof_oid: crate::Oid,
 }
@@ -438,34 +415,7 @@ impl ProofCertificate {
         }
         discharged.sort();
 
-        // Collect property results from declared `requires` and `invariant` annotations.
-        //
-        // Known built-in properties are checked against the registry.
-        // Unknown properties default to `satisfied: true` (not yet implemented).
-        let mut property_results: Vec<PropertyResult> = Vec::new();
-        for name in registry.required_properties() {
-            let satisfied = crate::property::check_builtin(registry, name)
-                .map(|(s, _)| s)
-                .unwrap_or(true);
-            property_results.push(PropertyResult {
-                name: name.clone(),
-                satisfied,
-                kind: PropertyKind::Required,
-            });
-        }
-        for name in registry.invariants() {
-            let satisfied = crate::property::check_builtin(registry, name)
-                .map(|(s, _)| s)
-                .unwrap_or(true);
-            property_results.push(PropertyResult {
-                name: name.clone(),
-                satisfied,
-                kind: PropertyKind::Invariant,
-            });
-        }
-        property_results.sort();
-
-        // The proof OID hashes the facts + obligations + property results
+        // The proof OID hashes the facts + obligations
         let mut hasher = crate::Oid::hasher();
         hasher.update(b"proof:");
         hasher.update(registry.domain.as_bytes());
@@ -476,18 +426,12 @@ impl ProofCertificate {
             hasher.update(ob.requirement.as_bytes());
             hasher.update(ob.evidence.as_bytes());
         }
-        for pr in &property_results {
-            hasher.update(pr.name.as_bytes());
-            hasher.update(if pr.satisfied { b"1" } else { b"0" });
-            hasher.update(format!("{:?}", pr.kind).as_bytes());
-        }
         let proof_oid = hasher.finalize();
 
         ProofCertificate {
             domain: registry.domain.clone(),
             facts,
             discharged,
-            property_results,
             proof_oid,
         }
     }
@@ -1155,11 +1099,11 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // PropertyResult / PropertyKind in ProofCertificate tests
+    // ProofCertificate no longer evaluates properties
     // -----------------------------------------------------------------------
 
     #[test]
-    fn proof_certificate_has_property_results_field() {
+    fn proof_certificate_with_property_declarations_still_compiles() {
         use crate::kernel::Vector;
         use crate::parse::Parse;
         let source =
@@ -1173,83 +1117,15 @@ mod tests {
         let registry = TypeRegistry::compile(grammar).unwrap();
         let cert = ProofCertificate::from_registry(&registry);
 
-        // Two property results: one Required, one Invariant
-        assert_eq!(cert.property_results.len(), 2);
+        // Certificate has facts and a valid proof OID but no property evaluation
+        assert!(!cert.facts.is_empty());
+        assert!(!cert.proof_oid.as_ref().is_empty());
 
-        let req = cert
-            .property_results
-            .iter()
-            .find(|r| r.name == "shannon_equivalence")
-            .expect("shannon_equivalence property result");
-        assert_eq!(req.kind, PropertyKind::Required);
-        assert!(req.satisfied);
-
-        let inv = cert
-            .property_results
-            .iter()
-            .find(|r| r.name == "connected")
-            .expect("connected invariant result");
-        assert_eq!(inv.kind, PropertyKind::Invariant);
-        assert!(inv.satisfied);
-    }
-
-    #[test]
-    fn proof_certificate_empty_property_results_when_none_declared() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
-        let cert = ProofCertificate::from_registry(&registry);
-        assert!(cert.property_results.is_empty());
-    }
-
-    #[test]
-    fn proof_certificate_property_kind_required_and_invariant_distinct() {
-        // Both variants of PropertyKind must be distinct
-        assert_ne!(PropertyKind::Required, PropertyKind::Invariant);
-    }
-
-    #[test]
-    fn proof_certificate_checks_known_builtins() {
-        use crate::kernel::Vector;
-        use crate::parse::Parse;
-        let source = "grammar @test {\n  type = a | b | c\n\n  requires shannon_equivalence\n}\n";
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
-        let grammar = ast
-            .children()
-            .iter()
-            .find(|c| c.data().is_decl("grammar"))
-            .unwrap();
-        let registry = TypeRegistry::compile(grammar).unwrap();
-        let cert = ProofCertificate::from_registry(&registry);
-
-        let req = cert
-            .property_results
-            .iter()
-            .find(|r| r.name == "shannon_equivalence")
-            .expect("shannon_equivalence property result");
-        // shannon_equivalence is a known builtin — should be actually verified
-        assert!(req.satisfied);
-    }
-
-    #[test]
-    fn proof_certificate_unknown_property_defaults_to_satisfied() {
-        use crate::kernel::Vector;
-        use crate::parse::Parse;
-        let source = "grammar @test {\n  type = a | b\n\n  requires custom_user_property\n}\n";
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
-        let grammar = ast
-            .children()
-            .iter()
-            .find(|c| c.data().is_decl("grammar"))
-            .unwrap();
-        let registry = TypeRegistry::compile(grammar).unwrap();
-        let cert = ProofCertificate::from_registry(&registry);
-
-        let req = cert
-            .property_results
-            .iter()
-            .find(|r| r.name == "custom_user_property")
-            .expect("custom_user_property property result");
-        // Unknown properties default to satisfied (not yet implemented)
-        assert!(req.satisfied);
+        // Declarations are still accessible via the registry
+        assert!(registry
+            .required_properties()
+            .contains(&"shannon_equivalence".to_string()));
+        assert!(registry.invariants().contains(&"connected".to_string()));
     }
 
     // -----------------------------------------------------------------------

@@ -43,6 +43,10 @@ pub struct CompileResult {
     /// Proof certificate serialized as ETF bytes.
     /// Can be decoded on the BEAM side as an Erlang term.
     pub proof_etf: Vec<u8>,
+    /// Raw `requires` declarations from the grammar (passed through, not evaluated).
+    pub required_properties: Vec<String>,
+    /// Raw `invariant` declarations from the grammar (passed through, not evaluated).
+    pub invariants: Vec<String>,
 }
 
 /// Compile with per-phase OIDs for traced compilation chain.
@@ -84,7 +88,10 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
 
     let cert = ProofCertificate::from_registry(&registry);
     let proof_oid = cert.proof_oid.as_ref().to_string();
-    let proof_etf = proof_certificate_to_etf(&cert);
+
+    let required_properties: Vec<String> = registry.required_properties().to_vec();
+    let invariants: Vec<String> = registry.invariants().to_vec();
+    let proof_etf = proof_certificate_to_etf(&cert, &required_properties, &invariants);
 
     Ok(CompileResult {
         etf,
@@ -93,6 +100,8 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
         compile_oid,
         proof_oid,
         proof_etf,
+        required_properties,
+        invariants,
     })
 }
 
@@ -108,8 +117,13 @@ pub fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
 /// [{domain, <<"test">>},
 ///  {proof_oid, <<"sha512:...">>},
 ///  {facts, [{type_exists, <<"test">>, <<"color">>}, ...]},
-///  {discharged, [{<<"requirement">>, <<"evidence">>}, ...]}]
+///  {discharged, [{<<"requirement">>, <<"evidence">>}, ...]},
+///  {requires, [<<"name1">>, ...]},
+///  {invariants, [<<"name2">>, ...]}]
 /// ```
+///
+/// Property declarations are passed through as raw name lists.
+/// The BEAM side is responsible for evaluating them.
 ///
 /// DESIGN BREAK: This serialization is lossy in a specific way.
 /// The Fact enum variants map to tagged tuples, but the structure
@@ -129,7 +143,11 @@ pub fn compile_grammar_to_etf(source: &str) -> Result<Vec<u8>, String> {
 /// Option 3 is cheapest but defeats the purpose of the proof traveling
 /// with the artifact. Option 2 is the right answer but requires
 /// the grammar to describe itself — a fixpoint we haven't reached yet.
-fn proof_certificate_to_etf(cert: &ProofCertificate) -> Vec<u8> {
+fn proof_certificate_to_etf(
+    cert: &ProofCertificate,
+    required_properties: &[String],
+    invariants: &[String],
+) -> Vec<u8> {
     use eetf::{Atom, List, Term, Tuple};
 
     let domain_pair = Term::from(Tuple::from(vec![
@@ -163,25 +181,17 @@ fn proof_certificate_to_etf(cert: &ProofCertificate) -> Vec<u8> {
         Term::from(List::from(obligation_terms)),
     ]));
 
-    let property_terms: Vec<Term> = cert
-        .property_results
-        .iter()
-        .map(|pr| {
-            let kind_atom = match pr.kind {
-                crate::logic::PropertyKind::Required => "required",
-                crate::logic::PropertyKind::Invariant => "invariant",
-            };
-            let verdict_atom = if pr.satisfied { "pass" } else { "fail" };
-            Term::from(Tuple::from(vec![
-                etf_binary(&pr.name),
-                Term::from(Atom::from(kind_atom)),
-                Term::from(Atom::from(verdict_atom)),
-            ]))
-        })
-        .collect();
-    let properties_pair = Term::from(Tuple::from(vec![
-        Term::from(Atom::from("properties")),
-        Term::from(List::from(property_terms)),
+    // Raw declaration passthrough — BEAM side evaluates these
+    let requires_terms: Vec<Term> = required_properties.iter().map(|n| etf_binary(n)).collect();
+    let requires_pair = Term::from(Tuple::from(vec![
+        Term::from(Atom::from("requires")),
+        Term::from(List::from(requires_terms)),
+    ]));
+
+    let invariant_terms: Vec<Term> = invariants.iter().map(|n| etf_binary(n)).collect();
+    let invariants_pair = Term::from(Tuple::from(vec![
+        Term::from(Atom::from("invariants")),
+        Term::from(List::from(invariant_terms)),
     ]));
 
     let proplist = Term::from(List::from(vec![
@@ -189,7 +199,8 @@ fn proof_certificate_to_etf(cert: &ProofCertificate) -> Vec<u8> {
         oid_pair,
         facts_pair,
         discharged_pair,
-        properties_pair,
+        requires_pair,
+        invariants_pair,
     ]));
 
     let mut buf = Vec::new();
@@ -745,74 +756,75 @@ mod tests {
         );
     }
 
-    // -- property result ETF tests --
+    // -- property declaration passthrough ETF tests --
 
     #[test]
-    fn compile_with_requires_includes_property_results_in_etf() {
-        // Grammar that declares `requires shannon_equivalence`
+    fn compile_with_requires_includes_declarations_in_etf() {
         let result = compile_grammar_with_phases(
             "grammar @proptest {\n  type = a | b | c\n\n  requires shannon_equivalence\n}\n",
         )
         .unwrap();
+
+        // CompileResult carries raw declarations
+        assert_eq!(
+            result.required_properties,
+            vec!["shannon_equivalence".to_string()]
+        );
+        assert!(result.invariants.is_empty());
+
         let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
         let s = format!("{:?}", term);
-        // The proof ETF should contain a `properties` key
+        // ETF should contain `requires` key (not `properties`)
         assert!(
-            s.contains("properties"),
-            "proof ETF should contain 'properties' atom: {}",
+            s.contains("requires"),
+            "proof ETF should contain 'requires' atom: {}",
             s
         );
-        // Should contain the property name
+        // Property name should be present as binary
         let name_bytes: Vec<u8> = "shannon_equivalence".bytes().collect();
         assert!(
             s.contains(&format!("{:?}", name_bytes)),
             "proof ETF should contain property name bytes: {}",
             s
         );
-        // Should contain verdict atom (pass or fail)
-        assert!(
-            s.contains("pass") || s.contains("fail"),
-            "proof ETF should contain verdict atom: {}",
-            s
-        );
-        // Should contain kind atom
-        assert!(
-            s.contains("required"),
-            "proof ETF should contain 'required' kind atom: {}",
-            s
-        );
     }
 
     #[test]
-    fn compile_with_invariant_includes_property_results_in_etf() {
-        // Grammar with `invariant exhaustive`
+    fn compile_with_invariant_includes_declarations_in_etf() {
         let result = compile_grammar_with_phases(
             "grammar @invtest {\n  type = x | y\n\n  invariant exhaustive\n}\n",
         )
         .unwrap();
+
+        assert!(result.required_properties.is_empty());
+        assert_eq!(result.invariants, vec!["exhaustive".to_string()]);
+
         let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
         let s = format!("{:?}", term);
         assert!(
-            s.contains("properties"),
-            "proof ETF should contain 'properties': {}",
-            s
-        );
-        assert!(
-            s.contains("invariant"),
-            "proof ETF should contain 'invariant' kind atom: {}",
+            s.contains("invariants"),
+            "proof ETF should contain 'invariants' key: {}",
             s
         );
     }
 
     #[test]
-    fn compile_without_properties_has_empty_properties_list() {
+    fn compile_without_properties_has_empty_declaration_lists() {
         let result = compile_grammar_with_phases("grammar @plain {\n  type = a | b\n}\n").unwrap();
+
+        assert!(result.required_properties.is_empty());
+        assert!(result.invariants.is_empty());
+
         let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
         let s = format!("{:?}", term);
-        // Should still have the `properties` key even when empty
         assert!(
-            s.contains("properties"),
-            "proof ETF should contain 'properties' even when empty: {}",
+            s.contains("requires"),
+            "proof ETF should contain 'requires' even when empty: {}",
+            s
+        );
+        assert!(
+            s.contains("invariants"),
+            "proof ETF should contain 'invariants' even when empty: {}",
             s
         );
     }
