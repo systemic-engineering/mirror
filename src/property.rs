@@ -588,4 +588,98 @@ mod tests {
         ];
         assert_eq!(check_uniqueness(&oids), Verdict::Pass);
     }
+
+    // -- Built-in property lookup --
+
+    #[test]
+    fn lookup_builtin_shannon_equivalence() {
+        let result = lookup_builtin("shannon_equivalence");
+        assert!(result.is_some());
+        assert!(matches!(result.unwrap(), BuiltinProperty::Derivation(_)));
+    }
+
+    #[test]
+    fn lookup_builtin_unknown_returns_none() {
+        assert!(lookup_builtin("nonexistent_property").is_none());
+    }
+
+    #[test]
+    fn check_builtin_shannon_passes() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b | c\n}\n");
+        let (satisfied, reason) = check_builtin(&reg, "shannon_equivalence").unwrap();
+        assert!(satisfied);
+        assert!(reason.contains("pass"));
+    }
+
+    #[test]
+    fn check_builtin_unknown_returns_none() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        assert!(check_builtin(&reg, "nonexistent").is_none());
+    }
+
+    // -- Spectral property tests (feature-gated) --
+
+    #[cfg(feature = "spectral")]
+    #[test]
+    fn lookup_builtin_connected() {
+        let result = lookup_builtin("connected");
+        assert!(result.is_some());
+        assert!(matches!(result.unwrap(), BuiltinProperty::Registry(_)));
+    }
+
+    #[cfg(feature = "spectral")]
+    #[test]
+    fn connected_property_passes_for_connected_grammar() {
+        let reg = compile_grammar(
+            "grammar @test {\n  type = a | b\n  type op = gt(a) | lt(b)\n}\n",
+        );
+        let (satisfied, _reason) = check_builtin(&reg, "connected").unwrap();
+        assert!(satisfied);
+    }
+
+    #[cfg(feature = "spectral")]
+    #[test]
+    fn connected_property_fails_for_disconnected_grammar() {
+        let reg = compile_grammar(
+            "grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n",
+        );
+        let (satisfied, reason) = check_builtin(&reg, "connected").unwrap();
+        assert!(!satisfied);
+        assert!(reason.contains("disconnected"));
+    }
+
+    #[cfg(feature = "spectral")]
+    #[test]
+    fn connected_property_trivially_passes_for_single_type() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let (satisfied, _reason) = check_builtin(&reg, "connected").unwrap();
+        assert!(satisfied);
+    }
+
+    #[cfg(feature = "spectral")]
+    #[test]
+    fn lookup_builtin_bipartite() {
+        let result = lookup_builtin("bipartite");
+        assert!(result.is_some());
+        assert!(matches!(result.unwrap(), BuiltinProperty::Registry(_)));
+    }
+
+    #[cfg(feature = "spectral")]
+    #[test]
+    fn bipartite_property_passes_for_bipartite_grammar() {
+        // color → shade via red(shade), shade has no back-ref → bipartite
+        let reg = compile_grammar(
+            "grammar @test {\n  type color = red(shade) | blue\n  type shade = light | dark\n}\n",
+        );
+        let (satisfied, _reason) = check_builtin(&reg, "bipartite").unwrap();
+        assert!(satisfied);
+    }
+
+    #[cfg(feature = "spectral")]
+    #[test]
+    fn bipartite_trivially_passes_for_no_types() {
+        let reg = compile_grammar("grammar @empty {}\n");
+        let (satisfied, _reason) = check_builtin(&reg, "bipartite").unwrap();
+        assert!(satisfied);
+    }
 }
