@@ -1186,4 +1186,106 @@ mod tests {
             );
         }
     }
+
+    // -- Garden @coincidence domain --
+    //
+    // These tests verify the @coincidence garden grammar (garden/public/@coincidence/coincidence.conv)
+    // compiles correctly and its test section passes. The grammar declares the vocabulary
+    // for measurement: eigendecomposition, entropy, curvature, and spectral analysis.
+
+    #[test]
+    fn garden_coincidence_grammar_compiles() {
+        let source = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("garden/public/@coincidence/coincidence.conv"),
+        )
+        .expect("garden @coincidence/coincidence.conv should exist");
+
+        // Split on --- separator
+        let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
+        assert_eq!(
+            parts.len(),
+            2,
+            "coincidence.conv should have grammar and test sections"
+        );
+
+        // Compile the grammar section
+        let grammar_src = parts[0];
+        let ast = Parse.trace(grammar_src.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .expect("should have grammar block");
+        let reg = TypeRegistry::compile(grammar).unwrap();
+        assert_eq!(reg.domain, "coincidence");
+
+        // Verify types
+        assert!(reg.has_variant("", "measurement"));
+        assert!(reg.has_variant("", "verdict"));
+        assert!(reg.has_variant("", "spectrum"));
+        assert!(reg.has_variant("measurement", "eigenvalue"));
+        assert!(reg.has_variant("measurement", "entropy"));
+        assert!(reg.has_variant("measurement", "curvature"));
+        assert!(reg.has_variant("measurement", "fiedler"));
+        assert!(reg.has_variant("measurement", "eigengap"));
+        assert!(reg.has_variant("measurement", "heat_kernel"));
+        assert!(reg.has_variant("verdict", "pass"));
+        assert!(reg.has_variant("verdict", "fail"));
+        assert!(reg.has_variant("spectrum", "laplacian"));
+        assert!(reg.has_variant("spectrum", "adjacency"));
+        assert!(reg.has_variant("spectrum", "normalized"));
+
+        // Verify actions
+        assert!(reg.has_action("check"));
+        assert!(reg.has_action("measure"));
+        assert!(reg.has_action("connected"));
+        assert!(reg.has_action("entropy"));
+        assert!(reg.has_action("curvature"));
+        assert!(reg.has_action("bipartite"));
+        assert!(reg.has_action("shannon_equivalence"));
+    }
+
+    #[test]
+    fn garden_coincidence_tests_pass() {
+        let source = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("garden/public/@coincidence/coincidence.conv"),
+        )
+        .expect("garden @coincidence/coincidence.conv should exist");
+
+        // Split on --- separator
+        let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
+        let grammar_src = parts[0];
+        let test_src = parts[1];
+
+        // Compile grammar and register in namespace
+        let ast = Parse.trace(grammar_src.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let reg = TypeRegistry::compile(grammar).unwrap();
+
+        let mut namespace = Namespace::new();
+        namespace.register_grammar("coincidence", reg);
+
+        // Run all test directives
+        let results = check_all(&namespace, test_src).unwrap();
+        assert_eq!(results.len(), 4, "expected 4 test blocks");
+        for result in &results {
+            assert_eq!(
+                result.verdict,
+                Verdict::Pass,
+                "test '{}' failed: {:?}",
+                result.name,
+                result.verdict,
+            );
+        }
+    }
 }
