@@ -355,6 +355,30 @@ impl FactStore {
 // ProofCertificate — structured proof beyond bare OIDs
 // ---------------------------------------------------------------------------
 
+/// Classifies a grammar-declared property by its kind.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum PropertyKind {
+    /// A `requires` declaration — a property that must hold.
+    Required,
+    /// An `invariant` declaration — a structural invariant.
+    Invariant,
+}
+
+/// The result of checking a single grammar-declared property.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct PropertyResult {
+    /// The property name as declared in the grammar.
+    pub name: String,
+    /// Whether the property was satisfied.
+    ///
+    /// Currently always `true` (infrastructure phase — the checker is not
+    /// yet implemented). Future phases will evaluate each property against
+    /// the fact store and set this accordingly.
+    pub satisfied: bool,
+    /// Whether this is a `requires` or `invariant` declaration.
+    pub kind: PropertyKind,
+}
+
 /// A proof certificate for a successful grammar compilation.
 ///
 /// Not just an OID — a structured chain showing what was proven:
@@ -369,6 +393,8 @@ pub struct ProofCertificate {
     pub facts: BTreeSet<Fact>,
     /// Obligations that were discharged (type refs that were validated).
     pub discharged: Vec<Obligation>,
+    /// Results for each grammar-declared property (`requires` / `invariant`).
+    pub property_results: Vec<PropertyResult>,
     /// The proof hash — content address of the entire certificate.
     pub proof_oid: crate::Oid,
 }
@@ -412,7 +438,29 @@ impl ProofCertificate {
         }
         discharged.sort();
 
-        // The proof OID hashes the facts + obligations
+        // Collect property results from declared `requires` and `invariant` annotations.
+        //
+        // `satisfied` is always `true` at this stage — the infrastructure records
+        // which properties were declared; evaluation against the fact store is
+        // deferred to a future phase.
+        let mut property_results: Vec<PropertyResult> = Vec::new();
+        for name in registry.required_properties() {
+            property_results.push(PropertyResult {
+                name: name.clone(),
+                satisfied: true,
+                kind: PropertyKind::Required,
+            });
+        }
+        for name in registry.invariants() {
+            property_results.push(PropertyResult {
+                name: name.clone(),
+                satisfied: true,
+                kind: PropertyKind::Invariant,
+            });
+        }
+        property_results.sort();
+
+        // The proof OID hashes the facts + obligations + property results
         let mut hasher = crate::Oid::hasher();
         hasher.update(b"proof:");
         hasher.update(registry.domain.as_bytes());
@@ -423,12 +471,18 @@ impl ProofCertificate {
             hasher.update(ob.requirement.as_bytes());
             hasher.update(ob.evidence.as_bytes());
         }
+        for pr in &property_results {
+            hasher.update(pr.name.as_bytes());
+            hasher.update(if pr.satisfied { b"1" } else { b"0" });
+            hasher.update(format!("{:?}", pr.kind).as_bytes());
+        }
         let proof_oid = hasher.finalize();
 
         ProofCertificate {
             domain: registry.domain.clone(),
             facts,
             discharged,
+            property_results,
             proof_oid,
         }
     }
@@ -1101,8 +1155,8 @@ mod tests {
 
     #[test]
     fn proof_certificate_has_property_results_field() {
-        use crate::parse::Parse;
         use crate::kernel::Vector;
+        use crate::parse::Parse;
         let source =
             "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n  invariant connected\n}\n";
         let ast = Parse.trace(source.to_string()).into_result().unwrap();
