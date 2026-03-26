@@ -723,6 +723,81 @@ mod tests {
         );
     }
 
+    // -- property result ETF tests --
+
+    #[test]
+    fn compile_with_requires_includes_property_results_in_etf() {
+        // Grammar that declares `requires shannon_equivalence`
+        let result = compile_grammar_with_phases(
+            "grammar @proptest {\n  type = a | b | c\n\n  requires shannon_equivalence\n}\n",
+        )
+        .unwrap();
+        let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
+        let s = format!("{:?}", term);
+        // The proof ETF should contain a `properties` key
+        assert!(
+            s.contains("properties"),
+            "proof ETF should contain 'properties' atom: {}",
+            s
+        );
+        // Should contain the property name
+        let name_bytes: Vec<u8> = "shannon_equivalence".bytes().collect();
+        assert!(
+            s.contains(&format!("{:?}", name_bytes)),
+            "proof ETF should contain property name bytes: {}",
+            s
+        );
+        // Should contain verdict atom (pass or fail)
+        assert!(
+            s.contains("pass") || s.contains("fail"),
+            "proof ETF should contain verdict atom: {}",
+            s
+        );
+        // Should contain kind atom
+        assert!(
+            s.contains("required"),
+            "proof ETF should contain 'required' kind atom: {}",
+            s
+        );
+    }
+
+    #[test]
+    fn compile_with_invariant_includes_property_results_in_etf() {
+        // Grammar with `invariant exhaustive`
+        let result = compile_grammar_with_phases(
+            "grammar @invtest {\n  type = x | y\n\n  invariant exhaustive\n}\n",
+        )
+        .unwrap();
+        let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
+        let s = format!("{:?}", term);
+        assert!(
+            s.contains("properties"),
+            "proof ETF should contain 'properties': {}",
+            s
+        );
+        assert!(
+            s.contains("invariant"),
+            "proof ETF should contain 'invariant' kind atom: {}",
+            s
+        );
+    }
+
+    #[test]
+    fn compile_without_properties_has_empty_properties_list() {
+        let result = compile_grammar_with_phases(
+            "grammar @plain {\n  type = a | b\n}\n",
+        )
+        .unwrap();
+        let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
+        let s = format!("{:?}", term);
+        // Should still have the `properties` key even when empty
+        assert!(
+            s.contains("properties"),
+            "proof ETF should contain 'properties' even when empty: {}",
+            s
+        );
+    }
+
     // -- git commit tests --
 
     #[cfg(feature = "git")]
