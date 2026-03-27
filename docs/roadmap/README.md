@@ -33,3 +33,4 @@ as content-addressed git objects.
 | [05](05-kandddinsky.md) | KanDDDinsky — October 2026 | Planned |
 | [06](06-model-checker.md) | Model checker properties | Infrastructure done |
 | [07](07-projection.md) | Projection: properties as plans | Design |
+| [08](08-oid-native-model.md) | OID-native model (experimental) | Idea |
