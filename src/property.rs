@@ -722,8 +722,7 @@ mod tests {
     #[test]
     fn garden_property_grammar_compiles() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .join("conv/property.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("conv/property.conv"),
         )
         .expect("conv/property.conv should exist");
 
@@ -764,8 +763,7 @@ mod tests {
     #[test]
     fn garden_property_tests_pass() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .join("conv/property.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("conv/property.conv"),
         )
         .expect("conv/property.conv should exist");
 
@@ -809,8 +807,7 @@ mod tests {
     #[test]
     fn garden_topology_grammar_compiles() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .join("conv/topology.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("conv/topology.conv"),
         )
         .expect("conv/topology.conv should exist");
 
@@ -859,8 +856,7 @@ mod tests {
     #[test]
     fn garden_topology_tests_pass() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .join("conv/topology.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("conv/topology.conv"),
         )
         .expect("conv/topology.conv should exist");
 
@@ -1009,8 +1005,7 @@ mod tests {
     #[test]
     fn garden_coincidence_grammar_compiles() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .join("conv/coincidence.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("conv/coincidence.conv"),
         )
         .expect("conv/coincidence.conv should exist");
 
@@ -1062,8 +1057,7 @@ mod tests {
     #[test]
     fn garden_coincidence_tests_pass() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .join("conv/coincidence.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("conv/coincidence.conv"),
         )
         .expect("conv/coincidence.conv should exist");
 

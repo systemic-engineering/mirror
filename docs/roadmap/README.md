@@ -32,3 +32,4 @@ as content-addressed git objects.
 | [04](04-fortran-bridge.md) | Fortran bridge | In progress |
 | [05](05-kandddinsky.md) | KanDDDinsky — October 2026 | Planned |
 | [06](06-model-checker.md) | Model checker properties | Infrastructure done |
+| [07](07-projection.md) | Projection: properties as plans | Design |
