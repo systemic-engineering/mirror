@@ -1,0 +1,52 @@
+grammar @projection {
+  type = projection | preview | delta
+
+  type preview = satisfiable | unsatisfiable | partial
+
+  type delta = converged | diverged
+
+  action project {
+    spec: grammar
+  }
+
+  action preview {
+    projection: projection
+  }
+
+  action measure {
+    projection: projection
+    actual: grammar
+  }
+
+  requires shannon_equivalence
+  requires connected
+}
+
+in @property
+in @coincidence
+in @compiler
+
+---
+
+test "projection types" {
+  @projection has projection
+  @projection has preview
+  @projection has delta
+}
+
+test "preview kinds" {
+  @projection.preview has satisfiable
+  @projection.preview has unsatisfiable
+  @projection.preview has partial
+}
+
+test "delta kinds" {
+  @projection.delta has converged
+  @projection.delta has diverged
+}
+
+test "actions declared" {
+  @projection has act project
+  @projection has act preview
+  @projection has act measure
+}
