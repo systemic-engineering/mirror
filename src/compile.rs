@@ -182,6 +182,7 @@ pub fn emit_actor_module(
     exports.push(eaf_tuple(vec![eaf_atom("visibility"), eaf_int(0)]));
     exports.push(eaf_tuple(vec![eaf_atom("requires"), eaf_int(0)]));
     exports.push(eaf_tuple(vec![eaf_atom("invariants"), eaf_int(0)]));
+    exports.push(eaf_tuple(vec![eaf_atom("ensures"), eaf_int(0)]));
     forms.push(eaf_tuple(vec![
         eaf_atom("attribute"),
         eaf_int(2),
@@ -222,6 +223,11 @@ pub fn emit_actor_module(
     // invariants/0 → [<<"connected">>, ...]
     let invariants: Vec<String> = registry.invariants().to_vec();
     forms.push(emit_string_list_function("invariants", &invariants, line));
+    line += 1;
+
+    // ensures/0 → [<<"response_time">>, ...]
+    let ensures: Vec<String> = registry.ensures().to_vec();
+    forms.push(emit_string_list_function("ensures", &ensures, line));
 
     let term = Term::from(List::from(forms));
     let mut buf = Vec::new();

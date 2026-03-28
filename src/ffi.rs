@@ -94,7 +94,7 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
     let required_properties: Vec<String> = registry.required_properties().to_vec();
     let invariants: Vec<String> = registry.invariants().to_vec();
     let ensures: Vec<String> = registry.ensures().to_vec();
-    let proof_etf = proof_certificate_to_etf(&cert, &required_properties, &invariants);
+    let proof_etf = proof_certificate_to_etf(&cert, &required_properties, &invariants, &ensures);
 
     Ok(CompileResult {
         etf,
@@ -151,6 +151,7 @@ fn proof_certificate_to_etf(
     cert: &ProofCertificate,
     required_properties: &[String],
     invariants: &[String],
+    ensures: &[String],
 ) -> Vec<u8> {
     use eetf::{Atom, List, Term, Tuple};
 
@@ -198,6 +199,12 @@ fn proof_certificate_to_etf(
         Term::from(List::from(invariant_terms)),
     ]));
 
+    let ensures_terms: Vec<Term> = ensures.iter().map(|n| etf_binary(n)).collect();
+    let ensures_pair = Term::from(Tuple::from(vec![
+        Term::from(Atom::from("ensures")),
+        Term::from(List::from(ensures_terms)),
+    ]));
+
     let proplist = Term::from(List::from(vec![
         domain_pair,
         oid_pair,
@@ -205,6 +212,7 @@ fn proof_certificate_to_etf(
         discharged_pair,
         requires_pair,
         invariants_pair,
+        ensures_pair,
     ]));
 
     let mut buf = Vec::new();
