@@ -3282,6 +3282,53 @@ grammar @conversation {
     }
 
     #[test]
+    fn parse_ensures_in_grammar() {
+        let source = "grammar @test {\n  type = a | b\n\n  ensures response_time\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let ensures: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_decl("ensures"))
+            .collect();
+        assert_eq!(ensures.len(), 1);
+        assert_eq!(ensures[0].data().value, "response_time");
+    }
+
+    #[test]
+    fn parse_all_three_property_kinds() {
+        let source = "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n  invariant connected\n  ensures response_time\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let requires: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_decl("requires"))
+            .collect();
+        let invariants: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_decl("invariant"))
+            .collect();
+        let ensures: Vec<_> = grammar
+            .children()
+            .iter()
+            .filter(|c| c.data().is_decl("ensures"))
+            .collect();
+        assert_eq!(requires.len(), 1);
+        assert_eq!(invariants.len(), 1);
+        assert_eq!(ensures.len(), 1);
+    }
+
+    #[test]
     fn parse_mail_conv() {
         let source = include_str!("../conv/mail.conv");
         let tree = Parse.trace(source.to_string()).unwrap();
