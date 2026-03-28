@@ -1,6 +1,6 @@
 # 06 — Model Checker Properties
 
-## Status: Infrastructure complete, enforcement pending
+## Status: Infrastructure complete, enforcement active
 
 Grammar-declared properties flow from .conv source through the full stack to
 eigenvalue evaluation. The pipeline is proven end-to-end. Properties are
@@ -86,11 +86,16 @@ through coincidence's eigendecomposition — actual dsyev calls.
 
 ## What's next
 
-### Enforcement
+### ~~Enforcement~~ ✓ Done
 
-The compiler actor discards check results (`let _ = coincidence.check_property(...)`).
-Next step: fail compilation when a required property is not satisfied. Return
-the failure reason in the compilation error.
+`check_requires` and `check_invariants` in `compiler.gleam` now return
+`Result(Nil, String)`. Failed properties fail compilation with the verdict
+reason. The `ensures` keyword is parsed and stored but not enforced at
+compile time (it's a runtime property for the @projection layer).
+
+Notable: `@training`'s `invariant connected` was always violated (6
+disconnected type groups). Enforcement caught this — it was silently
+discarded before.
 
 ### Property results in proof certificate
 
