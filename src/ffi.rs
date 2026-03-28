@@ -47,6 +47,8 @@ pub struct CompileResult {
     pub required_properties: Vec<String>,
     /// Raw `invariant` declarations from the grammar (passed through, not evaluated).
     pub invariants: Vec<String>,
+    /// Raw `ensures` declarations from the grammar (passed through, not evaluated at compile time).
+    pub ensures: Vec<String>,
 }
 
 /// Compile with per-phase OIDs for traced compilation chain.
@@ -91,6 +93,7 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
 
     let required_properties: Vec<String> = registry.required_properties().to_vec();
     let invariants: Vec<String> = registry.invariants().to_vec();
+    let ensures: Vec<String> = registry.ensures().to_vec();
     let proof_etf = proof_certificate_to_etf(&cert, &required_properties, &invariants);
 
     Ok(CompileResult {
@@ -102,6 +105,7 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
         proof_etf,
         required_properties,
         invariants,
+        ensures,
     })
 }
 
@@ -825,6 +829,35 @@ mod tests {
         assert!(
             s.contains("invariants"),
             "proof ETF should contain 'invariants' even when empty: {}",
+            s
+        );
+    }
+
+    #[test]
+    fn compile_result_includes_ensures() {
+        let source = "grammar @test {\n  type = a | b\n\n  ensures response_time\n}\n";
+        let result = compile_grammar_with_phases(source).unwrap();
+        assert_eq!(result.ensures, vec!["response_time"]);
+
+        let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
+        let s = format!("{:?}", term);
+        assert!(
+            s.contains("ensures"),
+            "proof ETF should contain 'ensures' key: {}",
+            s
+        );
+    }
+
+    #[test]
+    fn compile_without_ensures_has_empty_list() {
+        let result = compile_grammar_with_phases("grammar @plain2 {\n  type = a | b\n}\n").unwrap();
+        assert!(result.ensures.is_empty());
+
+        let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
+        let s = format!("{:?}", term);
+        assert!(
+            s.contains("ensures"),
+            "proof ETF should contain 'ensures' even when empty: {}",
             s
         );
     }
