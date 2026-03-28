@@ -26,3 +26,7 @@ pub fn get_requires(module: String) -> Result(List(String), String)
 /// Get a loaded module's invariant properties.
 @external(erlang, "loader_ffi", "get_invariants")
 pub fn get_invariants(module: String) -> Result(List(String), String)
+
+/// Get a loaded module's ensures (postcondition) properties.
+@external(erlang, "loader_ffi", "get_ensures")
+pub fn get_ensures(module: String) -> Result(List(String), String)

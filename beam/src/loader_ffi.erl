@@ -1,6 +1,6 @@
 -module(loader_ffi).
 -export([load_etf_module/1, is_loaded/1, get_lenses/1, get_extends/1,
-         get_requires/1, get_invariants/1]).
+         get_requires/1, get_invariants/1, get_ensures/1]).
 
 %% Decode ETF → EAF, compile to BEAM, load module.
 %% Returns {ok, ModuleName} or {error, Reason}.
@@ -63,6 +63,16 @@ get_invariants(ModuleBinary) ->
     try
         Invariants = Module:invariants(),
         {ok, Invariants}
+    catch
+        _:Reason -> {error, iolist_to_binary(io_lib:format("~p", [Reason]))}
+    end.
+
+%% Call Module:ensures() → List(String).
+get_ensures(ModuleBinary) ->
+    Module = binary_to_atom(ModuleBinary, utf8),
+    try
+        Ensures = Module:ensures(),
+        {ok, Ensures}
     catch
         _:Reason -> {error, iolist_to_binary(io_lib:format("~p", [Reason]))}
     end.
