@@ -2995,4 +2995,37 @@ mod tests {
         );
         assert_ne!(reg_without.encoded(), reg_with.encoded());
     }
+
+    #[test]
+    fn registry_tracks_ensures() {
+        let reg = compile_grammar(
+            "grammar @test {\n  type = a | b\n\n  ensures response_time\n}\n",
+        );
+        assert_eq!(reg.ensures(), &["response_time"]);
+    }
+
+    #[test]
+    fn registry_empty_ensures_by_default() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        assert!(reg.ensures().is_empty());
+    }
+
+    #[test]
+    fn registry_all_three_property_kinds() {
+        let reg = compile_grammar(
+            "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n  invariant connected\n  ensures response_time\n}\n",
+        );
+        assert_eq!(reg.required_properties(), &["shannon_equivalence"]);
+        assert_eq!(reg.invariants(), &["connected"]);
+        assert_eq!(reg.ensures(), &["response_time"]);
+    }
+
+    #[test]
+    fn registry_ensures_affects_content_hash() {
+        let reg_without = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let reg_with = compile_grammar(
+            "grammar @test {\n  type = a | b\n\n  ensures response_time\n}\n",
+        );
+        assert_ne!(reg_without.encoded(), reg_with.encoded());
+    }
 }
