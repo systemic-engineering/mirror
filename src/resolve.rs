@@ -53,6 +53,7 @@ pub struct TypeRegistry {
     visibility: HashMap<String, Visibility>,
     required_properties: Vec<String>,
     invariants: Vec<String>,
+    ensures: Vec<String>,
 }
 
 impl TypeRegistry {
@@ -167,11 +168,14 @@ impl TypeRegistry {
         // Collect property declarations
         let mut required_properties: Vec<String> = Vec::new();
         let mut invariants_list: Vec<String> = Vec::new();
+        let mut ensures_list: Vec<String> = Vec::new();
         for child in grammar_node.children() {
             if child.data().is_decl("requires") {
                 required_properties.push(child.data().value.clone());
             } else if child.data().is_decl("invariant") {
                 invariants_list.push(child.data().value.clone());
+            } else if child.data().is_decl("ensures") {
+                ensures_list.push(child.data().value.clone());
             }
         }
 
@@ -184,6 +188,7 @@ impl TypeRegistry {
             visibility,
             required_properties,
             invariants_list,
+            ensures_list,
         ))
     }
 
@@ -297,6 +302,11 @@ impl TypeRegistry {
         &self.invariants
     }
 
+    /// All `ensures` property names declared in this grammar.
+    pub fn ensures(&self) -> &[String] {
+        &self.ensures
+    }
+
     /// Test-only: build a registry with a parameterized variant whose type ref
     /// is NOT declared. This bypasses compile-time validation to exercise the
     /// `None => continue` defensive path in `generate::derive_type`.
@@ -326,6 +336,7 @@ impl TypeRegistry {
             HashMap::new(),
             Vec::new(),
             Vec::new(),
+            Vec::new(),
         )
     }
 
@@ -341,6 +352,7 @@ impl TypeRegistry {
         visibility: HashMap<String, Visibility>,
         required_properties: Vec<String>,
         invariants: Vec<String>,
+        ensures: Vec<String>,
     ) -> Self {
         let encoded = Self::encode_canonical(
             &domain,
@@ -349,6 +361,7 @@ impl TypeRegistry {
             &acts,
             &required_properties,
             &invariants,
+            &ensures,
         );
         let sha = Sha(fragment::blob_oid_bytes(&encoded));
         let ref_ = Ref::new(sha, format!("grammar/{}", domain));
@@ -363,6 +376,7 @@ impl TypeRegistry {
             visibility,
             required_properties,
             invariants,
+            ensures,
         }
     }
 
@@ -375,6 +389,7 @@ impl TypeRegistry {
         acts: &HashMap<String, Vec<(String, Option<String>)>>,
         required_properties: &[String],
         invariants: &[String],
+        ensures: &[String],
     ) -> Vec<u8> {
         let mut lines = Vec::new();
         lines.push(domain.to_string());
@@ -422,6 +437,13 @@ impl TypeRegistry {
         sorted_invariants.sort();
         for inv in sorted_invariants {
             lines.push(format!("invariant:{}", inv));
+        }
+
+        // Ensures: sorted for determinism
+        let mut sorted_ensures: Vec<&String> = ensures.iter().collect();
+        sorted_ensures.sort();
+        for ens in sorted_ensures {
+            lines.push(format!("ensures:{}", ens));
         }
 
         lines.join("\n").into_bytes()
@@ -2998,9 +3020,8 @@ mod tests {
 
     #[test]
     fn registry_tracks_ensures() {
-        let reg = compile_grammar(
-            "grammar @test {\n  type = a | b\n\n  ensures response_time\n}\n",
-        );
+        let reg =
+            compile_grammar("grammar @test {\n  type = a | b\n\n  ensures response_time\n}\n");
         assert_eq!(reg.ensures(), &["response_time"]);
     }
 
@@ -3023,9 +3044,8 @@ mod tests {
     #[test]
     fn registry_ensures_affects_content_hash() {
         let reg_without = compile_grammar("grammar @test {\n  type = a | b\n}\n");
-        let reg_with = compile_grammar(
-            "grammar @test {\n  type = a | b\n\n  ensures response_time\n}\n",
-        );
+        let reg_with =
+            compile_grammar("grammar @test {\n  type = a | b\n\n  ensures response_time\n}\n");
         assert_ne!(reg_without.encoded(), reg_with.encoded());
     }
 }
