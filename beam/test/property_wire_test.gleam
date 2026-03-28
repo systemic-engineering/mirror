@@ -93,6 +93,51 @@ pub fn compiler_calls_coincidence_on_requires_test() {
   let _ = coincidence.stop_server()
 }
 
+/// Compiled module exposes ensures/0 with declared ensures.
+pub fn compiled_module_has_ensures_test() {
+  let assert Ok(started) = compiler.start()
+  let subject = started.data
+
+  let reply = process.new_subject()
+  let source =
+    "grammar @ensures_wire_test {
+  type = a | b
+
+  ensures response_time
+}
+"
+  process.send(subject, compiler.CompileGrammar(source, reply))
+  let assert Ok(Ok(t)) = process.receive(reply, 10_000)
+  let compiled = trace.value(t)
+
+  let assert Ok(ensures) = loader.get_ensures(compiled.module)
+  should.equal(ensures, ["response_time"])
+
+  process.send(subject, compiler.Shutdown)
+}
+
+/// Module without ensures has empty ensures/0.
+pub fn compiled_module_empty_ensures_test() {
+  let assert Ok(started) = compiler.start()
+  let subject = started.data
+
+  let reply = process.new_subject()
+  process.send(
+    subject,
+    compiler.CompileGrammar(
+      "grammar @no_ensures {\n  type = x | y\n}\n",
+      reply,
+    ),
+  )
+  let assert Ok(Ok(t)) = process.receive(reply, 10_000)
+  let compiled = trace.value(t)
+
+  let assert Ok(ensures) = loader.get_ensures(compiled.module)
+  should.equal(ensures, [])
+
+  process.send(subject, compiler.Shutdown)
+}
+
 /// Boot with infrastructure starts infra domains before app domains.
 pub fn boot_with_infrastructure_ordering_test() {
   let infra = "grammar @infra {
