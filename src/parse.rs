@@ -1092,6 +1092,13 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
             continue;
         }
 
+        if let Some(prop_name) = trimmed.strip_prefix("ensures ") {
+            let span = lines.current_span();
+            defs.push(ast::ast_leaf(Kind::Decl, "ensures", prop_name.trim(), span));
+            lines.advance();
+            continue;
+        }
+
         if let Some(rest) = trimmed.strip_prefix("type ") {
             // Flush previous type def
             if let Some((type_name, type_span, variants)) = current.take() {
