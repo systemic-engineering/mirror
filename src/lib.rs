@@ -1,6 +1,7 @@
 #[macro_use]
 pub mod kernel;
 pub mod ast;
+pub mod check;
 pub mod compile;
 pub mod domain;
 pub mod ffi;
@@ -12,7 +13,6 @@ pub mod parse;
 pub mod prism;
 pub mod property;
 pub mod resolve;
-#[cfg(feature = "spectral")]
 pub mod spectral;
 
 // Re-export kernel types at the crate root.

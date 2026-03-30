@@ -707,7 +707,13 @@ mod tests {
             "tree",
             vec![noise, leaf_var, node_variant],
         );
-        let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@recursive", vec![type_def]);
+        let grammar = mk_fractal(
+            "grammar",
+            Kind::Decl,
+            "grammar",
+            "@recursive",
+            vec![type_def],
+        );
 
         let domain = Domain::from_grammar(&grammar).unwrap();
 
@@ -771,13 +777,7 @@ mod tests {
     #[test]
     fn from_grammar_action_default_visibility_protected() {
         // action with no visibility atom → defaults to Protected.
-        let action = mk_fractal(
-            "action-default",
-            Kind::Form,
-            "action-def",
-            "ping",
-            vec![],
-        );
+        let action = mk_fractal("action-default", Kind::Form, "action-def", "ping", vec![]);
         let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@health", vec![action]);
 
         let domain = Domain::from_grammar(&grammar).unwrap();
@@ -865,13 +865,7 @@ mod tests {
             "payload",
             vec![type_ref],
         );
-        let action = mk_fractal(
-            "action-send",
-            Kind::Form,
-            "action-def",
-            "send",
-            vec![field],
-        );
+        let action = mk_fractal("action-send", Kind::Form, "action-def", "send", vec![field]);
         let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@msg", vec![action]);
 
         let domain = Domain::from_grammar(&grammar).unwrap();
