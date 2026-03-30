@@ -3,8 +3,8 @@
 //! Defines the async `Runtime` trait for domain lifecycle management and
 //! dispatch, plus the typed `Args`, `Response`, and `Value` enums.
 //!
-//! `RactorRuntime` is the concrete implementation. This module provides the
-//! non-actor path only — actor support is added in the next task.
+//! `RactorRuntime` is the concrete implementation. Actor support for
+//! `in @actor` domains is stubbed — tests specify the contract.
 
 use std::collections::{BTreeMap, HashMap};
 use std::fmt;
@@ -101,7 +101,7 @@ pub trait Runtime: Send + Sync {
 // RactorRuntime
 // ---------------------------------------------------------------------------
 
-/// Non-actor runtime implementation (actor support added in Task 5).
+/// Non-actor runtime implementation (actor support stubbed — Task 5).
 pub struct RactorRuntime {
     pub(crate) domains: HashMap<String, Domain>,
 }
@@ -316,6 +316,7 @@ mod tests {
     fn ractor_runtime_default() {
         let rt = RactorRuntime::default();
         assert!(rt.domains.is_empty());
+        assert!(rt.actors.is_empty());
     }
 
     #[tokio::test]
@@ -397,6 +398,81 @@ mod tests {
         // simple_verified() has no properties → verify() passes → Ok(Verified)
         let result = rt.check_ensures(&domain).await;
         assert!(result.is_ok());
+    }
+
+    // -----------------------------------------------------------------------
+    // Actor domain helpers + tests
+    // -----------------------------------------------------------------------
+
+    /// Build a verified actor domain:
+    ///   in @actor
+    ///   type target = rust | beam
+    ///   action compile
+    fn actor_verified() -> check::Verified {
+        use crate::model::Lens;
+        let domain = Domain {
+            name: DomainName::new("compiler"),
+            types: vec![TypeDef {
+                name: TypeName::new("target"),
+                variants: vec![
+                    Variant {
+                        name: VariantName::new("rust"),
+                        params: vec![],
+                    },
+                    Variant {
+                        name: VariantName::new("beam"),
+                        params: vec![],
+                    },
+                ],
+            }],
+            actions: vec![Action {
+                name: ActionName::new("compile"),
+                fields: vec![],
+                visibility: Visibility::Protected,
+                calls: vec![],
+            }],
+            lenses: vec![Lens {
+                target: DomainName::new("actor"),
+            }],
+            properties: Properties::empty(),
+        };
+        check::verify(domain).unwrap()
+    }
+
+    #[tokio::test]
+    async fn ractor_runtime_register_actor_domain() {
+        let mut rt = RactorRuntime::new();
+        let verified = actor_verified();
+        rt.register(&verified).await.unwrap();
+        assert!(rt.domains.contains_key("compiler"));
+        assert!(rt.actors.contains_key("compiler"));
+    }
+
+    #[tokio::test]
+    async fn ractor_runtime_dispatch_actor_domain() {
+        let mut rt = RactorRuntime::new();
+        let verified = actor_verified();
+        rt.register(&verified).await.unwrap();
+        let resp = rt
+            .dispatch(
+                &DomainName::new("compiler"),
+                &ActionName::new("compile"),
+                Args::Single(Value::Text("test.conv".into())),
+            )
+            .await
+            .unwrap();
+        assert!(matches!(resp, Response::Ok(_)));
+    }
+
+    #[tokio::test]
+    async fn ractor_runtime_shutdown_actor() {
+        let mut rt = RactorRuntime::new();
+        let verified = actor_verified();
+        rt.register(&verified).await.unwrap();
+        assert!(rt.actors.contains_key("compiler"));
+        rt.shutdown(&DomainName::new("compiler")).await.unwrap();
+        assert!(!rt.actors.contains_key("compiler"));
+        assert!(!rt.domains.contains_key("compiler"));
     }
 
     #[tokio::test]
