@@ -32,3 +32,5 @@ pub use resolve::{
 // Re-export fragmentation's Repo trait and Store implementation.
 pub use fragmentation::repo::Repo;
 pub use fragmentation::store::Store;
+
+pub mod model;
