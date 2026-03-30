@@ -204,6 +204,12 @@ impl Runtime for RactorRuntime {
 
     async fn register(&mut self, domain: &Verified) -> Result<(), RuntimeError> {
         let d = domain.domain();
+        if self.domains.contains_key(d.name.as_str()) {
+            return Err(RuntimeError(format!(
+                "domain '{}' already registered",
+                d.name
+            )));
+        }
         self.domains.insert(d.name.as_str().to_owned(), d.clone());
 
         if d.is_actor() {
@@ -420,6 +426,21 @@ mod tests {
         let verified = simple_verified();
         rt.register(&verified).await.unwrap();
         assert!(rt.domains.contains_key("color"));
+    }
+
+    #[tokio::test]
+    async fn ractor_runtime_register_duplicate_errors() {
+        let mut rt = RactorRuntime::new();
+        let verified = simple_verified();
+        rt.register(&verified).await.unwrap();
+        let result = rt.register(&verified).await;
+        assert!(result.is_err());
+        let err = format!("{}", result.unwrap_err());
+        assert!(
+            err.contains("already registered"),
+            "error should say already registered: {}",
+            err
+        );
     }
 
     #[tokio::test]

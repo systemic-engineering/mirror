@@ -73,7 +73,10 @@ grammar @broken {
 ";
     let domain = parse_to_domain(source).expect("parse_to_domain should succeed");
     let result = check::verify(domain);
-    assert!(result.is_err(), "disconnected grammar should fail verification");
+    assert!(
+        result.is_err(),
+        "disconnected grammar should fail verification"
+    );
 
     let violations = result.unwrap_err();
     let msg = format!("{}", violations);

@@ -64,7 +64,10 @@ impl fmt::Display for Violations {
         let mut lines: Vec<String> = Vec::new();
         lines.push(format!("@{}: property verification failed", self.domain));
         for v in &self.violations {
-            lines.push(format!("  {} property '{}' violated", v.kind, v.property));
+            lines.push(format!(
+                "  {} property '{}' violated: {}",
+                v.kind, v.property, v.reason
+            ));
             match &v.evidence {
                 Evidence::Spectral {
                     measure,
@@ -193,8 +196,16 @@ fn check_property(
 ) -> Option<PropertyViolation> {
     match property.as_str() {
         "connected" => check_connected(domain, property, kind),
-        // Unknown properties pass — extensible registry in the future.
-        _ => None,
+        unknown => Some(PropertyViolation {
+            domain: domain.name.clone(),
+            property: property.clone(),
+            kind,
+            reason: format!("unknown property '{}'", unknown),
+            evidence: Evidence::Unresolvable {
+                name: TypeName::new(unknown),
+                candidates: vec![TypeName::new("connected")],
+            },
+        }),
     }
 }
 
@@ -518,8 +529,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_unknown_property_passes() {
-        // Unknown properties are silently passed — extensible registry.
+    fn verify_unknown_property_fails() {
+        // Unknown properties now return a violation — typos are caught.
         let domain = Domain {
             name: DomainName::new("future"),
             types: vec![],
@@ -531,7 +542,37 @@ mod tests {
                 ensures: vec![],
             },
         };
-        assert!(verify(domain).is_ok());
+        assert!(verify(domain).is_err());
+    }
+
+    #[test]
+    fn verify_unknown_property_error_message() {
+        let domain = Domain {
+            name: DomainName::new("test"),
+            types: vec![],
+            actions: vec![],
+            lenses: vec![],
+            properties: Properties {
+                requires: vec![PropertyName::new("conected")], // typo
+                invariants: vec![],
+                ensures: vec![],
+            },
+        };
+        let result = verify(domain);
+        assert!(result.is_err());
+        let violations = result.unwrap_err();
+        let msg = format!("{}", violations);
+        assert!(
+            msg.contains("unknown property"),
+            "should mention unknown: {}",
+            msg
+        );
+        assert!(msg.contains("conected"), "should mention the typo: {}", msg);
+        assert!(
+            msg.contains("connected"),
+            "should suggest the correct name: {}",
+            msg
+        );
     }
 
     #[test]
