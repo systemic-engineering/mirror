@@ -3,11 +3,13 @@
 //! Defines the async `Runtime` trait for domain lifecycle management and
 //! dispatch, plus the typed `Args`, `Response`, and `Value` enums.
 //!
-//! `RactorRuntime` is the concrete implementation. Actor support for
-//! `in @actor` domains is stubbed — tests specify the contract.
+//! `RactorRuntime` is the concrete implementation, with actor support for
+//! domains that have `in @actor` via ractor.
 
 use std::collections::{BTreeMap, HashMap};
 use std::fmt;
+
+use ractor::{Actor, ActorProcessingErr, ActorRef};
 
 use crate::check::{self, Evidence, PropertyKind, PropertyViolation, Verified, Violations};
 use crate::model::{ActionName, Domain, DomainName, PropertyName, TypeName};
@@ -98,12 +100,75 @@ pub trait Runtime: Send + Sync {
 }
 
 // ---------------------------------------------------------------------------
+// DomainActor
+// ---------------------------------------------------------------------------
+
+/// Message type for actor-backed domains.
+///
+/// `Dispatch(action, args, reply)` — tuple variant so `ractor::call!` can
+/// construct it as `Dispatch(action, args, tx)`.
+pub(crate) enum DomainMessage {
+    Dispatch(
+        ActionName,
+        Args,
+        ractor::RpcReplyPort<Result<Response, String>>,
+    ),
+}
+
+pub(crate) struct DomainActorState {
+    domain: Domain,
+}
+
+pub(crate) struct DomainActor;
+
+impl Actor for DomainActor {
+    type Msg = DomainMessage;
+    type State = DomainActorState;
+    type Arguments = Domain;
+
+    async fn pre_start(
+        &self,
+        _myself: ActorRef<Self::Msg>,
+        args: Self::Arguments,
+    ) -> Result<Self::State, ActorProcessingErr> {
+        Ok(DomainActorState { domain: args })
+    }
+
+    async fn handle(
+        &self,
+        _myself: ActorRef<Self::Msg>,
+        message: Self::Msg,
+        state: &mut Self::State,
+    ) -> Result<(), ActorProcessingErr> {
+        match message {
+            DomainMessage::Dispatch(action, _args, reply) => {
+                let action_exists = state.domain.actions.iter().any(|a| a.name == action);
+                let result = if action_exists {
+                    Ok(Response::Ok(Value::Text(format!(
+                        "{}:{}",
+                        state.domain.name, action
+                    ))))
+                } else {
+                    Err(format!(
+                        "unknown action '{}' in domain @{}",
+                        action, state.domain.name
+                    ))
+                };
+                let _ = reply.send(result);
+            }
+        }
+        Ok(())
+    }
+}
+
+// ---------------------------------------------------------------------------
 // RactorRuntime
 // ---------------------------------------------------------------------------
 
-/// Non-actor runtime implementation (actor support stubbed — Task 5).
+/// Runtime implementation with actor support for `in @actor` domains.
 pub struct RactorRuntime {
     pub(crate) domains: HashMap<String, Domain>,
+    pub(crate) actors: HashMap<String, ActorRef<DomainMessage>>,
 }
 
 impl RactorRuntime {
@@ -111,6 +176,7 @@ impl RactorRuntime {
     pub fn new() -> Self {
         Self {
             domains: HashMap::new(),
+            actors: HashMap::new(),
         }
     }
 }
@@ -121,12 +187,32 @@ impl Default for RactorRuntime {
     }
 }
 
+/// Convert a ractor spawn error into a RuntimeError.
+/// Named function to avoid inline-closure monomorphization coverage issues.
+fn spawn_err(e: ractor::SpawnErr) -> RuntimeError {
+    RuntimeError(format!("failed to spawn actor: {}", e))
+}
+
+/// Convert a ractor call error into a RuntimeError.
+/// Named function to avoid inline-closure monomorphization coverage issues.
+fn call_err(e: ractor::RactorErr<DomainMessage>) -> RuntimeError {
+    RuntimeError(format!("actor call failed: {}", e))
+}
+
 impl Runtime for RactorRuntime {
     type Error = RuntimeError;
 
     async fn register(&mut self, domain: &Verified) -> Result<(), RuntimeError> {
         let d = domain.domain();
         self.domains.insert(d.name.as_str().to_owned(), d.clone());
+
+        if d.is_actor() {
+            let (actor_ref, _handle) = Actor::spawn(None, DomainActor, d.clone())
+                .await
+                .map_err(spawn_err)?;
+            self.actors.insert(d.name.as_str().to_string(), actor_ref);
+        }
+
         Ok(())
     }
 
@@ -134,12 +220,18 @@ impl Runtime for RactorRuntime {
         &self,
         domain: &DomainName,
         action: &ActionName,
-        _args: Args,
+        args: Args,
     ) -> Result<Response, RuntimeError> {
         let d = self
             .domains
             .get(domain.as_str())
             .ok_or_else(|| RuntimeError::new(format!("domain not registered: @{}", domain)))?;
+
+        if let Some(actor_ref) = self.actors.get(domain.as_str()) {
+            let result = ractor::call!(actor_ref, DomainMessage::Dispatch, action.clone(), args)
+                .map_err(call_err)?;
+            return result.map_err(RuntimeError);
+        }
 
         let action_exists = d.actions.iter().any(|a| &a.name == action);
         if !action_exists {
@@ -180,6 +272,9 @@ impl Runtime for RactorRuntime {
     }
 
     async fn shutdown(&mut self, domain: &DomainName) -> Result<(), RuntimeError> {
+        if let Some(actor_ref) = self.actors.remove(domain.as_str()) {
+            actor_ref.stop(None);
+        }
         self.domains.remove(domain.as_str());
         Ok(())
     }
@@ -401,6 +496,22 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
+    // Error conversion helpers — coverage for spawn_err / call_err
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn spawn_err_formats_message() {
+        let e = spawn_err(ractor::SpawnErr::ActorAlreadyStarted);
+        assert!(e.to_string().contains("failed to spawn actor"));
+    }
+
+    #[test]
+    fn call_err_formats_message() {
+        let e = call_err(ractor::RactorErr::Timeout);
+        assert!(e.to_string().contains("actor call failed"));
+    }
+
+    // -----------------------------------------------------------------------
     // Actor domain helpers + tests
     // -----------------------------------------------------------------------
 
@@ -462,6 +573,23 @@ mod tests {
             .await
             .unwrap();
         assert!(matches!(resp, Response::Ok(_)));
+    }
+
+    #[tokio::test]
+    async fn ractor_runtime_dispatch_actor_unknown_action() {
+        let mut rt = RactorRuntime::new();
+        let verified = actor_verified();
+        rt.register(&verified).await.unwrap();
+        let err = rt
+            .dispatch(
+                &DomainName::new("compiler"),
+                &ActionName::new("nonexistent"),
+                Args::Empty,
+            )
+            .await
+            .unwrap_err();
+        assert!(err.to_string().contains("nonexistent"));
+        assert!(err.to_string().contains("compiler"));
     }
 
     #[tokio::test]
