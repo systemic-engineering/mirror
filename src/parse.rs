@@ -924,6 +924,125 @@ fn parse_extends_clause(name_and_extends: &str) -> (&str, Vec<&str>) {
     }
 }
 
+/// Parse a parameter list from between parentheses.
+///
+/// Supports two forms:
+/// - Sugar: `name` expands to `name:name`
+/// - Explicit: `name: type` stays as `name:type`
+///
+/// Returns Atom nodes with name="param", value="param_name:type_name".
+fn parse_action_params(params_str: &str, span: Span) -> Vec<Prism<AstNode>> {
+    if params_str.trim().is_empty() {
+        return vec![];
+    }
+    params_str
+        .split(',')
+        .map(|p| {
+            let p = p.trim();
+            if let Some((name, typ)) = p.split_once(':') {
+                let name = name.trim();
+                let typ = typ.trim();
+                ast::ast_leaf(Kind::Atom, "param", format!("{}:{}", name, typ), span)
+            } else {
+                // Sugar: name alone expands to name:name
+                ast::ast_leaf(Kind::Atom, "param", format!("{}:{}", p, p), span)
+            }
+        })
+        .collect()
+}
+
+/// Parse `abstract action name(params)` — a signature-only action declaration.
+///
+/// `rest` is the text after "abstract action ", e.g. `observe(observable)`.
+/// Returns a Decl node with name="abstract-action".
+fn parse_abstract_action_decl(rest: &str, span: Span) -> Result<Prism<AstNode>, ParseError> {
+    let paren = rest.find('(').ok_or_else(|| ParseError {
+        message: format!("abstract action: expected '(' in: abstract action {}", rest),
+        span: Some(span),
+    })?;
+    let name = rest[..paren].trim();
+    let close = rest.find(')').ok_or_else(|| ParseError {
+        message: format!("abstract action: expected ')' in: abstract action {}", rest),
+        span: Some(span),
+    })?;
+    let params_str = &rest[paren + 1..close];
+    let children = parse_action_params(params_str, span);
+    Ok(ast::ast_branch(Kind::Decl, "abstract-action", name, span, children))
+}
+
+/// Parse `name(params) in @target { body }` — an action with body and target.
+///
+/// `rest` is the text after the action keyword (with visibility stripped),
+/// e.g. `decide(observation) in @rust { ... }`.
+/// Returns a Form node with name="action-def".
+fn parse_action_body_def(
+    rest: &str,
+    visibility: &str,
+    span: Span,
+    lines: &mut Lines,
+) -> Result<Prism<AstNode>, ParseError> {
+    // Caller guarantees '(' exists (checked before dispatch).
+    let paren = rest.find('(').expect("caller checked '(' exists");
+    let name = rest[..paren].trim();
+    let close = rest.find(')').ok_or_else(|| ParseError {
+        message: format!("action: expected ')' in: action {}", rest),
+        span: Some(span),
+    })?;
+    let params_str = &rest[paren + 1..close];
+    let after_parens = rest[close + 1..].trim();
+
+    // Parse "in @target { body }" or "in @target {\n  body\n}"
+    let target_rest = after_parens.strip_prefix("in ").ok_or_else(|| ParseError {
+        message: format!("action: expected 'in @target' after params in: action {}", rest),
+        span: Some(span),
+    })?;
+
+    // Extract @target
+    let brace_pos = target_rest.find('{').ok_or_else(|| ParseError {
+        message: format!("action: expected '{{' in: action {}", rest),
+        span: Some(span),
+    })?;
+    let target_name = target_rest[..brace_pos].trim().trim_start_matches('@');
+    let after_brace = target_rest[brace_pos + 1..].trim();
+
+    let vis_node = ast::ast_leaf(Kind::Atom, "visibility", visibility, span);
+    let target_node = ast::ast_leaf(Kind::Atom, "target", target_name, span);
+    let mut params = parse_action_params(params_str, span);
+
+    // Collect body text
+    let body_text = if after_brace.ends_with('}') {
+        // Single-line: `in @rust { body }` or `in @rust {}`
+        let body = after_brace.trim_end_matches('}').trim();
+        lines.advance();
+        body.to_string()
+    } else {
+        // Multi-line body
+        lines.advance(); // consume the action header line
+        let mut body_lines = Vec::new();
+        if !after_brace.is_empty() {
+            body_lines.push(after_brace.to_string());
+        }
+        while let Some(line) = lines.peek() {
+            let trimmed = line.trim();
+            if trimmed == "}" {
+                lines.advance();
+                break;
+            }
+            body_lines.push(trimmed.to_string());
+            lines.advance();
+        }
+        body_lines.join("\n")
+    };
+
+    let body_node = ast::ast_leaf(Kind::Atom, "body", &body_text, span);
+
+    let mut children = vec![vis_node, target_node];
+    children.append(&mut params);
+    children.push(body_node);
+
+    Ok(ast::ast_branch(Kind::Decl, "action-def", name, span, children))
+}
+
 /// Extract visibility modifier from an action line.
 /// Returns `(rest_of_line, visibility)` if it matches, or `None`.
 fn parse_action_visibility(line: &str) -> Option<(&str, &str)> {
@@ -1024,6 +1143,24 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
             continue;
         }
 
+        // Abstract action: `abstract action name(params)` — signature only
+        if let Some(rest) = trimmed.strip_prefix("abstract action ") {
+            // Flush any pending type def
+            if let Some((type_name, type_span, variants)) = current.take() {
+                defs.push(ast::ast_branch(
+                    Kind::Form,
+                    "type-def",
+                    &*type_name,
+                    type_span,
+                    variants,
+                ));
+            }
+            let span = lines.current_span();
+            defs.push(parse_abstract_action_decl(rest, span)?);
+            lines.advance();
+            continue;
+        }
+
         // Action with visibility modifier: `public action read {`, etc.
         if let Some((rest, visibility)) = parse_action_visibility(trimmed) {
             // Flush any pending type def
@@ -1037,7 +1174,14 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
                 ));
             }
             let span = lines.current_span();
-            defs.push(parse_action_def(rest, visibility, span, lines)?);
+            // Check if this is the new param/body form: name(params) in @target { body }
+            let has_paren = rest.find('(');
+            let has_brace = rest.find('{');
+            if has_paren.is_some() && (has_brace.is_none() || has_paren < has_brace) {
+                defs.push(parse_action_body_def(rest, visibility, span, lines)?);
+            } else {
+                defs.push(parse_action_def(rest, visibility, span, lines)?);
+            }
             continue;
         }
 
@@ -3294,6 +3438,134 @@ grammar @conversation {
         let body = action.children().iter().find(|c| c.data().name == "body");
         // Empty body is valid — the body node exists but with empty value
         assert!(body.is_some());
+    }
+
+    #[test]
+    fn parse_action_body_no_params() {
+        // Exercises the empty-params path in parse_action_params
+        let source = "grammar @test {\n  type = x\n\n  action f() in @rust { body }\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let action = grammar
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("action-def"))
+            .expect("should have action-def");
+        let params: Vec<_> = action
+            .children()
+            .iter()
+            .filter(|c| c.data().name == "param")
+            .collect();
+        assert_eq!(params.len(), 0);
+    }
+
+    #[test]
+    fn parse_abstract_action_error_no_paren() {
+        let source = "grammar @test {\n  abstract action observe\n}\n";
+        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("("),
+            "expected mention of '(': {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_abstract_action_error_no_close_paren() {
+        let source = "grammar @test {\n  abstract action observe(x\n}\n";
+        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains(")"),
+            "expected mention of ')': {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_action_body_error_no_close_paren() {
+        let source = "grammar @test {\n  action f(x in @rust { body }\n}\n";
+        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains(")"),
+            "expected mention of ')': {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_action_body_error_no_in() {
+        let source = "grammar @test {\n  action f(x) @rust { body }\n}\n";
+        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("in @target"),
+            "expected mention of 'in @target': {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_action_body_error_no_brace() {
+        let source = "grammar @test {\n  action f(x) in @rust\n}\n";
+        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
+        assert!(
+            err.message.contains("{"),
+            "expected mention of '{{': {}",
+            err.message
+        );
+    }
+
+    #[test]
+    fn parse_action_body_multiline() {
+        // Exercises the multi-line body path
+        let source =
+            "grammar @test {\n  type = x\n\n  action f(x) in @rust {\n    line_one\n    line_two\n  }\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let action = grammar
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("action-def"))
+            .expect("should have action-def");
+        let body = action
+            .children()
+            .iter()
+            .find(|c| c.data().name == "body")
+            .expect("should have body");
+        assert!(body.data().value.contains("line_one"));
+        assert!(body.data().value.contains("line_two"));
+    }
+
+    #[test]
+    fn parse_action_body_multiline_text_after_brace() {
+        // Exercises the after_brace non-empty path in multi-line body
+        let source =
+            "grammar @test {\n  type = x\n\n  action f(x) in @rust { first_line\n    second_line\n  }\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let action = grammar
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("action-def"))
+            .expect("should have action-def");
+        let body = action
+            .children()
+            .iter()
+            .find(|c| c.data().name == "body")
+            .expect("should have body");
+        assert!(body.data().value.contains("first_line"));
+        assert!(body.data().value.contains("second_line"));
     }
 
     #[test]
