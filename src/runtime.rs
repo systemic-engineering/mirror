@@ -705,7 +705,10 @@ mod tests {
         // temperature() exercises Diffusion arm; fiedler is verified
         // indirectly through non-zero temperature at nonzero complexity.
         let temp = schedule.temperature(1.0);
-        assert!(temp > 0.0, "diffusion schedule should have nonzero temperature");
+        assert!(
+            temp > 0.0,
+            "diffusion schedule should have nonzero temperature"
+        );
     }
 
     #[test]
