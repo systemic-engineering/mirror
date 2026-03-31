@@ -348,6 +348,7 @@ mod tests {
             actions: vec![],
             lenses: vec![],
             properties: Properties::empty(),
+            registry: None,
         }
     }
 
@@ -396,6 +397,7 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![],
             },
+            registry: None,
         }
     }
 
@@ -418,6 +420,7 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![],
             },
+            registry: None,
         }
     }
 
@@ -503,6 +506,7 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![],
             },
+            registry: None,
         };
         assert!(verify(domain).is_ok());
     }
@@ -522,6 +526,7 @@ mod tests {
                 invariants: vec![PropertyName::new("connected")],
                 ensures: vec![],
             },
+            registry: None,
         };
         let err = verify(domain).unwrap_err();
         assert_eq!(err.violations[0].property.as_str(), "connected");
@@ -541,6 +546,7 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![],
             },
+            registry: None,
         };
         assert!(verify(domain).is_err());
     }
@@ -557,6 +563,7 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![],
             },
+            registry: None,
         };
         let result = verify(domain);
         assert!(result.is_err());
@@ -591,6 +598,7 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![PropertyName::new("connected")],
             },
+            registry: None,
         };
         assert!(verify(domain).is_ok());
     }
@@ -734,6 +742,7 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![],
             },
+            registry: None,
         };
         // Single type — trivially connected even with self-reference.
         assert!(verify(domain).is_ok());
@@ -771,6 +780,7 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![],
             },
+            registry: None,
         };
         let err = verify(domain).unwrap_err();
         assert_eq!(err.violations.len(), 1);
@@ -821,6 +831,7 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![],
             },
+            registry: None,
         };
         // Dangling ref is ignored; color and shape are unconnected → fails.
         assert!(verify(domain).is_err());

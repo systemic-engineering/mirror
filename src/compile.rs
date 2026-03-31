@@ -432,6 +432,26 @@ fn eaf_tuple_expr(line: i32, elements: Vec<Term>) -> Term {
     eaf_tuple(vec![eaf_atom("tuple"), eaf_int(line), eaf_list(elements)])
 }
 
+/// Emit an actor dispatch module from a `Domain` model.
+///
+/// This is the Domain-based entry point for compilation. It delegates to
+/// `emit_actor_module` internally but accepts the public `Domain` type
+/// instead of the internal `TypeRegistry`.
+pub fn emit_actor_module_from_domain(domain: &crate::model::Domain) -> Vec<u8> {
+    let registry = domain.registry();
+    // Filter out self-lenses (e.g. @filesystem in a @filesystem grammar).
+    let domain_name = domain.name.as_str();
+    let lenses: Vec<String> = domain
+        .lenses
+        .iter()
+        .map(|l| l.target.as_str().to_owned())
+        .filter(|l| l != domain_name)
+        .collect();
+    // Domain doesn't track extends yet — pass empty.
+    let extends: Vec<String> = Vec::new();
+    emit_actor_module(registry, &lenses, &extends)
+}
+
 /// Emit a test module from an `annotate(@test)` subtree.
 ///
 /// Produces an Erlang module the BEAM can load:
@@ -492,6 +512,14 @@ pub fn emit_test_module(domain: &str, annotate: &Prism<AstNode>) -> Vec<u8> {
     buf
 }
 
+/// Emit an actor dispatch module from a `Verified` domain.
+///
+/// Accepts the proof wrapper from `check::verify()`, guaranteeing that the
+/// domain passed all property checks before compilation.
+pub fn emit_actor_module_from_verified(verified: &crate::check::Verified) -> Vec<u8> {
+    emit_actor_module_from_domain(verified.domain())
+}
+
 /// Emit a single test descriptor from a Form child of annotate(@test).
 ///
 /// `{tuple, Line, [{atom, Line, test}, {bin, Line, Name}, ConsAssertions]}`
@@ -549,9 +577,14 @@ mod tests {
 
         assert!(!etf.is_empty());
         assert_eq!(etf[0], 131); // ETF version byte
+                                 // Should contain conv_test module name
         let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
         let s = format!("{:?}", term);
-        assert!(s.contains("conv_test"), "should have conv_test module: {}", s);
+        assert!(
+            s.contains("conv_test"),
+            "should have conv_test module: {}",
+            s
+        );
     }
 
     #[test]
@@ -600,6 +633,10 @@ mod tests {
         assert_eq!(etf[0], 131);
         let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
         let s = format!("{:?}", term);
-        assert!(s.contains("conv_clean"), "should have conv_clean module: {}", s);
+        assert!(
+            s.contains("conv_clean"),
+            "should have conv_clean module: {}",
+            s
+        );
     }
 }

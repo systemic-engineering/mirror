@@ -7,7 +7,6 @@ use crate::compile;
 use crate::domain::conversation::Kind;
 use crate::logic::{Fact, ProofCertificate};
 use crate::parse::Parse;
-use crate::resolve::TypeRegistry;
 use crate::ContentAddressed;
 use crate::Vector;
 
@@ -66,17 +65,17 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
         .find(|c| c.data().is_decl("grammar"))
         .ok_or_else(|| "no grammar block found".to_string())?;
 
-    let registry = TypeRegistry::compile(grammar_node).map_err(|e| e.to_string())?;
-    let resolve_oid = crate::Oid::hash(registry.encoded()).as_ref().to_string();
-
-    let domain_name = registry.domain.clone();
-    let lenses: Vec<String> = ast
+    // Build Domain from grammar — this also compiles the internal TypeRegistry.
+    let lens_values: Vec<String> = ast
         .children()
         .iter()
         .filter(|c| c.data().is_decl("in"))
-        .map(|c| c.data().value.trim_start_matches('@').to_string())
-        .filter(|d| *d != domain_name)
+        .map(|c| c.data().value.clone())
         .collect();
+    let domain = crate::model::Domain::from_grammar_with_lenses(grammar_node, &lens_values)?;
+
+    let registry = domain.registry();
+    let resolve_oid = crate::Oid::hash(registry.encoded()).as_ref().to_string();
 
     let extends: Vec<String> = grammar_node
         .children()
@@ -85,10 +84,19 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
         .map(|c| c.data().value.trim_start_matches('@').to_string())
         .collect();
 
-    let etf = compile::emit_actor_module(&registry, &lenses, &extends);
+    // Use Domain-based compilation path, then patch in extends.
+    // Filter out self-lenses (e.g. @filesystem in a @filesystem grammar).
+    let domain_name_str = domain.name.as_str();
+    let lenses: Vec<String> = domain
+        .lenses
+        .iter()
+        .map(|l| l.target.as_str().to_owned())
+        .filter(|l| l != domain_name_str)
+        .collect();
+    let etf = compile::emit_actor_module(registry, &lenses, &extends);
     let compile_oid = crate::Oid::hash(&etf).as_ref().to_string();
 
-    let cert = ProofCertificate::from_registry(&registry);
+    let cert = ProofCertificate::from_registry(registry);
     let proof_oid = cert.proof_oid.as_ref().to_string();
 
     let required_properties: Vec<String> = registry.required_properties().to_vec();

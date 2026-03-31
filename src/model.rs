@@ -8,7 +8,7 @@ use std::fmt;
 
 use crate::ast::AstNode;
 use crate::prism::Prism;
-use crate::resolve::Visibility;
+use crate::resolve::{TypeRegistry, Visibility};
 
 // ---------------------------------------------------------------------------
 // Newtypes
@@ -198,19 +198,43 @@ impl Properties {
 }
 
 /// A compiled domain: the public API replacing `TypeRegistry`.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug)]
 pub struct Domain {
     pub name: DomainName,
     pub types: Vec<TypeDef>,
     pub actions: Vec<Action>,
     pub lenses: Vec<Lens>,
     pub properties: Properties,
+    /// Internal registry for compilation. Not part of equality.
+    pub(crate) registry: Option<TypeRegistry>,
 }
+
+impl PartialEq for Domain {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+            && self.types == other.types
+            && self.actions == other.actions
+            && self.lenses == other.lenses
+            && self.properties == other.properties
+    }
+}
+
+impl Eq for Domain {}
 
 impl Domain {
     /// Returns `true` if this domain has a lens targeting `"actor"`.
     pub fn is_actor(&self) -> bool {
         self.lenses.iter().any(|l| l.target.as_str() == "actor")
+    }
+
+    /// Access the internal TypeRegistry for compilation.
+    ///
+    /// Only available within the crate — external callers use Domain directly.
+    /// Panics if the Domain was constructed without a grammar node (manual construction).
+    pub(crate) fn registry(&self) -> &TypeRegistry {
+        self.registry
+            .as_ref()
+            .expect("Domain::registry() requires a grammar-built Domain (use from_grammar)")
     }
 
     /// Build a `Domain` from a grammar AST node with no external lens declarations.
@@ -357,12 +381,19 @@ impl Domain {
             }
         }
 
+        // Also compile the TypeRegistry from the same AST for internal use.
+        // Domain already validates type refs above (line ~295), so TypeRegistry::compile
+        // cannot fail here — its only error path is the same bad-type-ref check.
+        let registry = TypeRegistry::compile(node)
+            .expect("Domain validation should have caught type-ref errors before TypeRegistry");
+
         Ok(Domain {
             name: domain_name,
             types,
             actions,
             lenses,
             properties,
+            registry: Some(registry),
         })
     }
 }
@@ -455,6 +486,7 @@ mod tests {
             actions: vec![],
             lenses,
             properties: Properties::empty(),
+            registry: None,
         }
     }
 
@@ -986,6 +1018,7 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![PropertyName::new("delivered")],
             },
+            registry: None,
         };
 
         assert_eq!(domain.name.as_str(), "reed");
@@ -1017,5 +1050,42 @@ mod tests {
         let registry = domain.registry();
         assert_eq!(registry.domain, "test");
         assert!(registry.has_type("color"));
+    }
+
+    #[test]
+    #[should_panic(expected = "requires a grammar-built Domain")]
+    fn registry_panics_on_manual_domain() {
+        let d = make_domain(vec![]);
+        let _ = d.registry();
+    }
+
+    #[test]
+    fn domain_equality_ignores_registry() {
+        // Two domains with same fields but different registry presence are equal.
+        let d1 = make_domain(vec![]);
+        let variant_a = mk_shard("va", Kind::Form, "variant", "a");
+        let type_def = mk_fractal(
+            "type-def",
+            Kind::Form,
+            "type-def",
+            "unused",
+            vec![variant_a],
+        );
+        let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@test", vec![type_def]);
+        let d2_from_grammar = Domain::from_grammar(&grammar).unwrap();
+
+        // d1 has registry=None, d2 has registry=Some(...).
+        // They have different types, so they won't be equal on types field.
+        // But the point is: registry is NOT part of equality check.
+        // Construct d2 manually with same fields as d1 but with a registry.
+        let d2 = Domain {
+            name: DomainName::new("test"),
+            types: vec![],
+            actions: vec![],
+            lenses: vec![],
+            properties: Properties::empty(),
+            registry: d2_from_grammar.registry,
+        };
+        assert_eq!(d1, d2);
     }
 }

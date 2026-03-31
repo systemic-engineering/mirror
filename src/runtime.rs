@@ -329,6 +329,7 @@ mod tests {
             actions: vec![paint],
             lenses: vec![],
             properties: Properties::empty(),
+            registry: None,
         };
         check::verify(domain).unwrap()
     }
@@ -567,6 +568,7 @@ mod tests {
                 target: DomainName::new("actor"),
             }],
             properties: Properties::empty(),
+            registry: None,
         };
         check::verify(domain).unwrap()
     }
@@ -655,6 +657,7 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![],
             },
+            registry: None,
         };
 
         let mut rt = RactorRuntime::new();
