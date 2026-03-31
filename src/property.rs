@@ -1206,4 +1206,22 @@ mod tests {
         let (satisfied, _reason) = eval_builtin(&reg, "exhaustive", prop);
         assert!(satisfied);
     }
+
+    // -- inference_justified --
+
+    #[test]
+    fn check_builtin_inference_justified_passes() {
+        let reg = compile_grammar(
+            "grammar @test {\n  type color = red | blue\n  type pair = combo(color)\n}\n",
+        );
+        let (satisfied, reason) = check_builtin(&reg, "inference_justified").unwrap();
+        assert!(satisfied, "should pass: {}", reason);
+    }
+
+    #[test]
+    fn check_builtin_inference_justified_fails_trivial() {
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let (satisfied, reason) = check_builtin(&reg, "inference_justified").unwrap();
+        assert!(!satisfied, "should fail for trivial domain: {}", reason);
+    }
 }
