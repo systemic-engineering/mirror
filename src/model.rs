@@ -341,6 +341,138 @@ impl Domain {
         self.lenses.iter().any(|l| l.target.as_str() == "actor")
     }
 
+    // -----------------------------------------------------------------------
+    // Query methods — Domain equivalents of TypeRegistry's API
+    // -----------------------------------------------------------------------
+
+    /// The domain name as a string.
+    pub fn domain_name(&self) -> &str {
+        self.name.as_str()
+    }
+
+    /// All type names declared in this domain.
+    pub fn type_names(&self) -> Vec<&str> {
+        self.types.iter().map(|t| t.name.as_str()).collect()
+    }
+
+    /// Check if a named type exists in this domain.
+    pub fn has_type(&self, name: &str) -> bool {
+        self.types.iter().any(|t| t.name.as_str() == name)
+    }
+
+    /// All variants for a named type. Returns None if the type doesn't exist.
+    pub fn variants(&self, type_name: &str) -> Option<Vec<&str>> {
+        self.types
+            .iter()
+            .find(|t| t.name.as_str() == type_name)
+            .map(|t| t.variants.iter().map(|v| v.name.as_str()).collect())
+    }
+
+    /// Check if a variant exists under a given type name.
+    pub fn has_variant(&self, type_name: &str, variant: &str) -> bool {
+        self.types
+            .iter()
+            .find(|t| t.name.as_str() == type_name)
+            .is_some_and(|t| t.variants.iter().any(|v| v.name.as_str() == variant))
+    }
+
+    /// The parameter type reference for a parameterized variant, if any.
+    pub fn variant_param(&self, type_name: &str, variant: &str) -> Option<&str> {
+        self.types
+            .iter()
+            .find(|t| t.name.as_str() == type_name)
+            .and_then(|t| {
+                t.variants
+                    .iter()
+                    .find(|v| v.name.as_str() == variant)
+                    .and_then(|v| v.params.first().map(|(_, tr)| tr.type_name().as_str()))
+            })
+    }
+
+    /// Check if a named action exists in this domain.
+    pub fn has_action(&self, name: &str) -> bool {
+        self.actions.iter().any(|a| a.name.as_str() == name)
+    }
+
+    /// All action names declared in this domain.
+    pub fn act_names(&self) -> Vec<&str> {
+        self.actions.iter().map(|a| a.name.as_str()).collect()
+    }
+
+    /// Get the fields of a named action: (field_name, type_ref_name).
+    ///
+    /// Returns field name and type ref as string tuples, matching
+    /// the TypeRegistry `action_fields` signature shape.
+    pub fn act_fields(&self, name: &str) -> Option<Vec<(&str, Option<&str>)>> {
+        self.actions
+            .iter()
+            .find(|a| a.name.as_str() == name)
+            .map(|a| {
+                a.fields
+                    .iter()
+                    .map(|(field_name, type_ref)| {
+                        let tr = type_ref.type_name().as_str();
+                        let tr_opt = if tr.is_empty() { None } else { Some(tr) };
+                        (field_name.as_str(), tr_opt)
+                    })
+                    .collect()
+            })
+    }
+
+    /// Get the cross-actor calls for a named action: (domain, action, args).
+    pub fn action_calls(&self, name: &str) -> Vec<(&str, &str, Vec<&str>)> {
+        self.actions
+            .iter()
+            .find(|a| a.name.as_str() == name)
+            .map(|a| {
+                a.calls
+                    .iter()
+                    .map(|c| {
+                        let args: Vec<&str> =
+                            c.args.iter().map(|tr| tr.type_name().as_str()).collect();
+                        (c.domain.as_str(), c.action.as_str(), args)
+                    })
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+
+    /// Get the visibility of a named action. Defaults to Protected.
+    pub fn action_visibility(&self, name: &str) -> Visibility {
+        self.actions
+            .iter()
+            .find(|a| a.name.as_str() == name)
+            .map(|a| a.visibility.clone())
+            .unwrap_or(Visibility::Protected)
+    }
+
+    /// All `requires` property names declared in this domain.
+    pub fn required_properties(&self) -> Vec<&str> {
+        self.properties
+            .requires
+            .iter()
+            .map(|p| p.as_str())
+            .collect()
+    }
+
+    /// All `invariant` property names declared in this domain.
+    pub fn invariants(&self) -> Vec<&str> {
+        self.properties
+            .invariants
+            .iter()
+            .map(|p| p.as_str())
+            .collect()
+    }
+
+    /// All `ensures` property names declared in this domain.
+    pub fn ensures(&self) -> Vec<&str> {
+        self.properties
+            .ensures
+            .iter()
+            .map(|p| p.as_str())
+            .collect()
+    }
+
     /// Access the internal TypeRegistry for compilation.
     ///
     /// Only available within the crate — external callers use Domain directly.
@@ -504,10 +636,7 @@ impl Domain {
         }
 
         // Aggregate calls from all actions to the domain level.
-        let calls: Vec<ActionCall> = actions
-            .iter()
-            .flat_map(|a| a.calls.clone())
-            .collect();
+        let calls: Vec<ActionCall> = actions.iter().flat_map(|a| a.calls.clone()).collect();
 
         // Also compile the TypeRegistry from the same AST for internal use.
         // Domain already validates type refs above (line ~295), so TypeRegistry::compile
@@ -1200,6 +1329,187 @@ mod tests {
         assert_eq!(domain.actions[0].calls.len(), 1);
         assert_eq!(domain.actions[0].calls[0].domain.as_str(), "erlang");
         assert!(!domain.is_actor());
+    }
+
+    // --- Domain query methods ---
+
+    fn make_rich_domain() -> Domain {
+        Domain {
+            name: DomainName::new("@reed"),
+            types: vec![TypeDef {
+                name: TypeName::new("signal"),
+                variants: vec![
+                    Variant {
+                        name: VariantName::new("tick"),
+                        params: vec![],
+                    },
+                    Variant {
+                        name: VariantName::new("data"),
+                        params: vec![(
+                            VariantName::new("value"),
+                            TypeRef::new(TypeName::new("signal")),
+                        )],
+                    },
+                ],
+            }],
+            actions: vec![Action {
+                name: ActionName::new("send"),
+                fields: vec![(
+                    ActionName::new("payload"),
+                    TypeRef::new(TypeName::new("signal")),
+                )],
+                visibility: Visibility::Public,
+                calls: vec![ActionCall {
+                    domain: DomainName::new("@erlang"),
+                    action: ActionName::new("exec"),
+                    args: vec![TypeRef::new(TypeName::new("mfa"))],
+                }],
+            }],
+            lenses: vec![],
+            extends: vec![],
+            calls: vec![],
+            properties: Properties {
+                requires: vec![PropertyName::new("initialized")],
+                invariants: vec![PropertyName::new("non_empty")],
+                ensures: vec![PropertyName::new("delivered")],
+            },
+            registry: None,
+        }
+    }
+
+    #[test]
+    fn domain_query_domain_name() {
+        let d = make_rich_domain();
+        assert_eq!(d.domain_name(), "reed");
+    }
+
+    #[test]
+    fn domain_query_type_names() {
+        let d = make_rich_domain();
+        let names = d.type_names();
+        assert_eq!(names, vec!["signal"]);
+    }
+
+    #[test]
+    fn domain_query_has_type() {
+        let d = make_rich_domain();
+        assert!(d.has_type("signal"));
+        assert!(!d.has_type("nonexistent"));
+    }
+
+    #[test]
+    fn domain_query_variants() {
+        let d = make_rich_domain();
+        let vs = d.variants("signal").unwrap();
+        assert!(vs.contains(&"tick"));
+        assert!(vs.contains(&"data"));
+        assert!(d.variants("nonexistent").is_none());
+    }
+
+    #[test]
+    fn domain_query_has_variant() {
+        let d = make_rich_domain();
+        assert!(d.has_variant("signal", "tick"));
+        assert!(d.has_variant("signal", "data"));
+        assert!(!d.has_variant("signal", "nonexistent"));
+        assert!(!d.has_variant("nonexistent", "tick"));
+    }
+
+    #[test]
+    fn domain_query_variant_param() {
+        let d = make_rich_domain();
+        // "data" variant has a param referencing "signal"
+        assert_eq!(d.variant_param("signal", "data"), Some("signal"));
+        // "tick" variant has no params
+        assert!(d.variant_param("signal", "tick").is_none());
+        // nonexistent type
+        assert!(d.variant_param("nonexistent", "data").is_none());
+    }
+
+    #[test]
+    fn domain_query_has_action() {
+        let d = make_rich_domain();
+        assert!(d.has_action("send"));
+        assert!(!d.has_action("nonexistent"));
+    }
+
+    #[test]
+    fn domain_query_act_names() {
+        let d = make_rich_domain();
+        assert_eq!(d.act_names(), vec!["send"]);
+    }
+
+    #[test]
+    fn domain_query_act_fields() {
+        let d = make_rich_domain();
+        let fields = d.act_fields("send").unwrap();
+        assert_eq!(fields.len(), 1);
+        assert_eq!(fields[0].0, "payload");
+        assert_eq!(fields[0].1, Some("signal"));
+        assert!(d.act_fields("nonexistent").is_none());
+    }
+
+    #[test]
+    fn domain_query_act_fields_empty_type_ref() {
+        // Action with a field whose type ref is empty string → None.
+        let d = Domain {
+            name: DomainName::new("test"),
+            types: vec![],
+            actions: vec![Action {
+                name: ActionName::new("ping"),
+                fields: vec![(
+                    ActionName::new("target"),
+                    TypeRef::new(TypeName::new("")),
+                )],
+                visibility: Visibility::Protected,
+                calls: vec![],
+            }],
+            lenses: vec![],
+            extends: vec![],
+            calls: vec![],
+            properties: Properties::empty(),
+            registry: None,
+        };
+        let fields = d.act_fields("ping").unwrap();
+        assert_eq!(fields[0].1, None);
+    }
+
+    #[test]
+    fn domain_query_action_calls() {
+        let d = make_rich_domain();
+        let calls = d.action_calls("send");
+        assert_eq!(calls.len(), 1);
+        assert_eq!(calls[0].0, "erlang");
+        assert_eq!(calls[0].1, "exec");
+        assert_eq!(calls[0].2, vec!["mfa"]);
+        // nonexistent action returns empty
+        assert!(d.action_calls("nonexistent").is_empty());
+    }
+
+    #[test]
+    fn domain_query_action_visibility() {
+        let d = make_rich_domain();
+        assert_eq!(d.action_visibility("send"), Visibility::Public);
+        // nonexistent action defaults to Protected
+        assert_eq!(d.action_visibility("nonexistent"), Visibility::Protected);
+    }
+
+    #[test]
+    fn domain_query_required_properties() {
+        let d = make_rich_domain();
+        assert_eq!(d.required_properties(), vec!["initialized"]);
+    }
+
+    #[test]
+    fn domain_query_invariants() {
+        let d = make_rich_domain();
+        assert_eq!(d.invariants(), vec!["non_empty"]);
+    }
+
+    #[test]
+    fn domain_query_ensures() {
+        let d = make_rich_domain();
+        assert_eq!(d.ensures(), vec!["delivered"]);
     }
 
     // --- Domain::registry() ---
