@@ -7,7 +7,8 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use crate::resolve::{resolve_template, Namespace, TemplateProvider, TypeRegistry};
+use crate::model::Domain;
+use crate::resolve::{resolve_template, Namespace, TemplateProvider};
 
 /// A discovered package.
 #[derive(Clone, Debug)]
@@ -100,10 +101,10 @@ impl PackageRegistry {
             // Extract grammars
             for child in ast.children() {
                 if child.data().is_decl("grammar") {
-                    let registry = TypeRegistry::compile(child)
-                        .map_err(|e| format!("@{}: {}", name, e.message))?;
-                    let domain = registry.domain.clone();
-                    namespace.register_grammar(&domain, registry);
+                    let domain = Domain::from_grammar(child)
+                        .map_err(|e| format!("@{}: {}", name, e))?;
+                    let domain_name = domain.domain_name().to_string();
+                    namespace.register_domain(&domain_name, domain);
                 }
             }
 
@@ -366,7 +367,7 @@ mod tests {
         assert!(namespace.contains("beam"));
         assert!(namespace.has_grammar("beam"));
         assert!(namespace
-            .grammar("beam")
+            .domain("beam")
             .unwrap()
             .has_variant("", "process"));
     }
@@ -431,7 +432,7 @@ mod tests {
     #[test]
     fn to_namespace_grammar_compile_error() {
         let dir = TempDir::new().unwrap();
-        // Parameterized variant referencing a non-existent type → TypeRegistry error
+        // Parameterized variant referencing a non-existent type → Domain error
         fs::write(
             dir.path().join("@bad"),
             "grammar @bad {\n  type = thing(missing)\n}\n",

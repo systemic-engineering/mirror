@@ -1,6 +1,6 @@
-//! Logic — the TypeRegistry as an explicit logic program.
+//! Logic — the Domain as an explicit logic program.
 //!
-//! The TypeRegistry IS a Datalog fact store. This module makes that
+//! The Domain IS a Datalog fact store. This module makes that
 //! interpretation explicit by exposing the type surface as queryable
 //! facts and Horn clauses. Compilation succeeding is a satisfiability
 //! proof. The OID is the proof certificate.
@@ -28,7 +28,7 @@
 
 use std::collections::{BTreeSet, HashMap, VecDeque};
 
-use crate::resolve::TypeRegistry;
+use crate::model::Domain;
 
 // ---------------------------------------------------------------------------
 // Fact — a ground truth in the grammar's logic program
@@ -95,10 +95,10 @@ impl Fact {
 }
 
 // ---------------------------------------------------------------------------
-// FactStore — extract facts from a TypeRegistry
+// FactStore — extract facts from a Domain
 // ---------------------------------------------------------------------------
 
-/// A set of ground facts extracted from one or more TypeRegistries.
+/// A set of ground facts extracted from one or more Domains.
 ///
 /// This is the Datalog fact store. You can query it.
 #[derive(Clone, Debug, Default)]
@@ -112,35 +112,35 @@ impl FactStore {
         Self::default()
     }
 
-    /// Extract all facts from a TypeRegistry.
-    pub fn from_registry(registry: &TypeRegistry) -> Self {
+    /// Extract all facts from a Domain.
+    pub fn from_domain(domain: &Domain) -> Self {
         let mut store = Self::new();
-        store.add_registry(registry);
+        store.add_domain(domain);
         store
     }
 
-    /// Add all facts from a TypeRegistry to this store.
-    pub fn add_registry(&mut self, registry: &TypeRegistry) {
-        let domain = &registry.domain;
+    /// Add all facts from a Domain to this store.
+    pub fn add_domain(&mut self, domain: &Domain) {
+        let domain_name = domain.domain_name().to_string();
 
         // Type facts
-        for type_name in registry.type_names() {
+        for type_name in domain.type_names() {
             self.facts.insert(Fact::TypeExists {
-                domain: domain.clone(),
+                domain: domain_name.clone(),
                 type_name: type_name.to_string(),
             });
 
-            for variant in registry.variants(type_name).unwrap_or_default() {
+            for variant in domain.variants(type_name).unwrap_or_default() {
                 self.facts.insert(Fact::TypeHasVariant {
-                    domain: domain.clone(),
+                    domain: domain_name.clone(),
                     type_name: type_name.to_string(),
                     variant: variant.to_string(),
                 });
 
                 // Check for parameterized variant refs
-                if let Some(ref_type) = registry.variant_param(type_name, variant) {
+                if let Some(ref_type) = domain.variant_param(type_name, variant) {
                     self.facts.insert(Fact::VariantRefs {
-                        domain: domain.clone(),
+                        domain: domain_name.clone(),
                         type_name: type_name.to_string(),
                         variant: variant.to_string(),
                         ref_type: ref_type.to_string(),
@@ -150,28 +150,28 @@ impl FactStore {
         }
 
         // Action facts
-        for action_name in registry.act_names() {
+        for action_name in domain.act_names() {
             self.facts.insert(Fact::ActionExists {
-                domain: domain.clone(),
+                domain: domain_name.clone(),
                 action_name: action_name.to_string(),
             });
 
-            for (field_name, type_ref) in registry.action_fields(action_name).unwrap_or(&[]) {
+            for (field_name, type_ref) in domain.act_fields(action_name).unwrap_or_default() {
                 self.facts.insert(Fact::ActionField {
-                    domain: domain.clone(),
+                    domain: domain_name.clone(),
                     action_name: action_name.to_string(),
-                    field_name: field_name.clone(),
-                    type_ref: type_ref.clone(),
+                    field_name: field_name.to_string(),
+                    type_ref: type_ref.map(|s| s.to_string()),
                 });
             }
 
             // Cross-domain calls
-            for (target_domain, target_action, _args) in registry.action_calls(action_name) {
+            for (target_domain, target_action, _args) in domain.action_calls(action_name) {
                 self.facts.insert(Fact::ActionCalls {
-                    domain: domain.clone(),
+                    domain: domain_name.clone(),
                     action_name: action_name.to_string(),
-                    target_domain: target_domain.clone(),
-                    target_action: target_action.clone(),
+                    target_domain: target_domain.to_string(),
+                    target_action: target_action.to_string(),
                 });
             }
         }
@@ -389,9 +389,9 @@ pub struct Obligation {
 }
 
 impl ProofCertificate {
-    /// Build a proof certificate from a compiled TypeRegistry.
-    pub fn from_registry(registry: &TypeRegistry) -> Self {
-        let store = FactStore::from_registry(registry);
+    /// Build a proof certificate from a compiled Domain.
+    pub fn from_domain(domain: &Domain) -> Self {
+        let store = FactStore::from_domain(domain);
         let facts = store.facts().clone();
 
         // Collect discharged obligations: every VariantRefs fact was validated
@@ -418,7 +418,7 @@ impl ProofCertificate {
         // The proof OID hashes the facts + obligations
         let mut hasher = crate::Oid::hasher();
         hasher.update(b"proof:");
-        hasher.update(registry.domain.as_bytes());
+        hasher.update(domain.domain_name().as_bytes());
         for fact in &facts {
             hasher.update(format!("{:?}", fact).as_bytes());
         }
@@ -429,7 +429,7 @@ impl ProofCertificate {
         let proof_oid = hasher.finalize();
 
         ProofCertificate {
-            domain: registry.domain.clone(),
+            domain: domain.domain_name().to_string(),
             facts,
             discharged,
             proof_oid,
@@ -457,19 +457,19 @@ pub struct ReachabilityMap {
 }
 
 impl ReachabilityMap {
-    /// Compute the reachable state space from a TypeRegistry.
-    pub fn from_registry(registry: &TypeRegistry) -> Self {
+    /// Compute the reachable state space from a Domain.
+    pub fn from_domain(domain: &Domain) -> Self {
         // Build the type reference graph
         let mut edges: HashMap<String, Vec<String>> = HashMap::new();
-        let declared: BTreeSet<String> = registry
+        let declared: BTreeSet<String> = domain
             .type_names()
             .into_iter()
             .map(|s| s.to_string())
             .collect();
 
-        for type_name in registry.type_names() {
-            for variant in registry.variants(type_name).unwrap_or_default() {
-                if let Some(ref_type) = registry.variant_param(type_name, variant) {
+        for type_name in domain.type_names() {
+            for variant in domain.variants(type_name).unwrap_or_default() {
+                if let Some(ref_type) = domain.variant_param(type_name, variant) {
                     edges
                         .entry(type_name.to_string())
                         .or_default()
@@ -563,15 +563,15 @@ pub enum Determinism {
 }
 
 impl Determinism {
-    /// Classify a type lookup in the TypeRegistry.
+    /// Classify a type lookup in a Domain.
     ///
     /// The classification depends on the number of variants:
     /// - Type not found → Nondet (0+ = unknown)
     /// - 0 variants → Semidet (type exists but empty)
     /// - 1 variant → Det (exactly determined)
     /// - 2+ variants → Multi (multiple solutions)
-    pub fn classify(registry: &TypeRegistry, type_name: &str) -> Self {
-        match registry.variants(type_name) {
+    pub fn classify(domain: &Domain, type_name: &str) -> Self {
+        match domain.variants(type_name) {
             None => Determinism::Nondet,
             Some(variants) => match variants.len() {
                 0 => Determinism::Semidet,
@@ -913,8 +913,8 @@ mod tests {
 
     #[test]
     fn fact_store_extracts_type_facts() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
-        let store = FactStore::from_registry(&registry);
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
+        let store = FactStore::from_domain(&registry);
 
         // Should have TypeExists facts
         let types = store.types_in("test");
@@ -924,8 +924,8 @@ mod tests {
 
     #[test]
     fn fact_store_extracts_variant_facts() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
-        let store = FactStore::from_registry(&registry);
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
+        let store = FactStore::from_domain(&registry);
 
         let default_variants = store.variants_of("test", "");
         assert!(default_variants.contains(&"a"));
@@ -939,8 +939,8 @@ mod tests {
 
     #[test]
     fn fact_store_extracts_action_facts() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
-        let store = FactStore::from_registry(&registry);
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
+        let store = FactStore::from_domain(&registry);
 
         let actions = store.actions_in("test");
         assert!(actions.contains(&"compile"));
@@ -948,8 +948,8 @@ mod tests {
 
     #[test]
     fn fact_store_extracts_variant_refs() {
-        let registry = TypeRegistry::compile(&linked_grammar()).unwrap();
-        let store = FactStore::from_registry(&registry);
+        let registry = Domain::from_grammar(&linked_grammar()).unwrap();
+        let store = FactStore::from_domain(&registry);
 
         // color.red references shade
         let has_ref = store.facts().iter().any(|f| {
@@ -965,8 +965,8 @@ mod tests {
 
     #[test]
     fn fact_store_extracts_cross_domain_calls() {
-        let registry = TypeRegistry::compile(&calling_grammar()).unwrap();
-        let store = FactStore::from_registry(&registry);
+        let registry = Domain::from_grammar(&calling_grammar()).unwrap();
+        let store = FactStore::from_domain(&registry);
 
         let calls = store.calls_from("caller");
         assert_eq!(calls.len(), 1);
@@ -975,9 +975,9 @@ mod tests {
 
     #[test]
     fn fact_store_dependents() {
-        let caller_reg = TypeRegistry::compile(&calling_grammar()).unwrap();
+        let caller_reg = Domain::from_grammar(&calling_grammar()).unwrap();
         let mut store = FactStore::new();
-        store.add_registry(&caller_reg);
+        store.add_domain(&caller_reg);
 
         let deps = store.dependents_of("target");
         assert!(deps.contains(&"caller"));
@@ -992,8 +992,8 @@ mod tests {
 
     #[test]
     fn fact_store_len() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
-        let store = FactStore::from_registry(&registry);
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
+        let store = FactStore::from_domain(&registry);
         assert!(store.len() > 0);
         assert!(!store.is_empty());
     }
@@ -1055,8 +1055,8 @@ mod tests {
 
     #[test]
     fn proof_certificate_simple_grammar() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
-        let cert = ProofCertificate::from_registry(&registry);
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
+        let cert = ProofCertificate::from_domain(&registry);
 
         assert_eq!(cert.domain, "test");
         assert!(!cert.facts.is_empty());
@@ -1066,8 +1066,8 @@ mod tests {
 
     #[test]
     fn proof_certificate_with_obligations() {
-        let registry = TypeRegistry::compile(&linked_grammar()).unwrap();
-        let cert = ProofCertificate::from_registry(&registry);
+        let registry = Domain::from_grammar(&linked_grammar()).unwrap();
+        let cert = ProofCertificate::from_domain(&registry);
 
         assert_eq!(cert.domain, "linked");
         assert!(!cert.discharged.is_empty());
@@ -1080,9 +1080,9 @@ mod tests {
 
     #[test]
     fn proof_certificate_deterministic() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
-        let cert1 = ProofCertificate::from_registry(&registry);
-        let cert2 = ProofCertificate::from_registry(&registry);
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
+        let cert1 = ProofCertificate::from_domain(&registry);
+        let cert2 = ProofCertificate::from_domain(&registry);
 
         assert_eq!(cert1.proof_oid, cert2.proof_oid);
         assert_eq!(cert1.facts, cert2.facts);
@@ -1090,10 +1090,10 @@ mod tests {
 
     #[test]
     fn proof_certificate_different_grammars_differ() {
-        let reg1 = TypeRegistry::compile(&test_grammar()).unwrap();
-        let reg2 = TypeRegistry::compile(&linked_grammar()).unwrap();
-        let cert1 = ProofCertificate::from_registry(&reg1);
-        let cert2 = ProofCertificate::from_registry(&reg2);
+        let reg1 = Domain::from_grammar(&test_grammar()).unwrap();
+        let reg2 = Domain::from_grammar(&linked_grammar()).unwrap();
+        let cert1 = ProofCertificate::from_domain(&reg1);
+        let cert2 = ProofCertificate::from_domain(&reg2);
 
         assert_ne!(cert1.proof_oid, cert2.proof_oid);
     }
@@ -1114,18 +1114,18 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let registry = TypeRegistry::compile(grammar).unwrap();
-        let cert = ProofCertificate::from_registry(&registry);
+        let domain = Domain::from_grammar(grammar).unwrap();
+        let cert = ProofCertificate::from_domain(&domain);
 
         // Certificate has facts and a valid proof OID but no property evaluation
         assert!(!cert.facts.is_empty());
         assert!(!cert.proof_oid.as_ref().is_empty());
 
-        // Declarations are still accessible via the registry
-        assert!(registry
+        // Declarations are still accessible via the domain
+        assert!(domain
             .required_properties()
-            .contains(&"shannon_equivalence".to_string()));
-        assert!(registry.invariants().contains(&"connected".to_string()));
+            .contains(&"shannon_equivalence"));
+        assert!(domain.invariants().contains(&"connected"));
     }
 
     // -----------------------------------------------------------------------
@@ -1134,8 +1134,8 @@ mod tests {
 
     #[test]
     fn reachability_no_references() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
-        let reach = ReachabilityMap::from_registry(&registry);
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
+        let reach = ReachabilityMap::from_domain(&registry);
 
         assert!(reach.is_complete());
         assert_eq!(reach.edge_count(), 0);
@@ -1143,8 +1143,8 @@ mod tests {
 
     #[test]
     fn reachability_with_references() {
-        let registry = TypeRegistry::compile(&linked_grammar()).unwrap();
-        let reach = ReachabilityMap::from_registry(&registry);
+        let registry = Domain::from_grammar(&linked_grammar()).unwrap();
+        let reach = ReachabilityMap::from_domain(&registry);
 
         assert!(reach.is_complete());
         // color → shade (via red(shade))
@@ -1154,24 +1154,24 @@ mod tests {
 
     #[test]
     fn reachability_type_count() {
-        let registry = TypeRegistry::compile(&linked_grammar()).unwrap();
-        let reach = ReachabilityMap::from_registry(&registry);
+        let registry = Domain::from_grammar(&linked_grammar()).unwrap();
+        let reach = ReachabilityMap::from_domain(&registry);
 
         assert_eq!(reach.type_count(), 2); // color, shade
     }
 
     #[test]
     fn reachability_nonexistent_type() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
-        let reach = ReachabilityMap::from_registry(&registry);
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
+        let reach = ReachabilityMap::from_domain(&registry);
 
         assert!(reach.reachable_from("nonexistent").is_none());
     }
 
     #[test]
     fn reachability_unreachable_empty_for_valid() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
-        let reach = ReachabilityMap::from_registry(&registry);
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
+        let reach = ReachabilityMap::from_domain(&registry);
 
         assert!(reach.unreachable().is_empty());
     }
@@ -1263,8 +1263,8 @@ mod tests {
             },
             vec![container_type, inner_type],
         );
-        let registry = TypeRegistry::compile(&grammar).unwrap();
-        let reach = ReachabilityMap::from_registry(&registry);
+        let registry = Domain::from_grammar(&grammar).unwrap();
+        let reach = ReachabilityMap::from_domain(&registry);
 
         assert!(reach.is_complete());
         let from_container = reach.reachable_from("container").unwrap();
@@ -1309,7 +1309,7 @@ mod tests {
             },
             vec![type_def],
         );
-        let registry = TypeRegistry::compile(&grammar).unwrap();
+        let registry = Domain::from_grammar(&grammar).unwrap();
         assert_eq!(
             Determinism::classify(&registry, "singular"),
             Determinism::Det
@@ -1318,7 +1318,7 @@ mod tests {
 
     #[test]
     fn determinism_multi_variants() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
         // Default type has 3 variants (a, b, c)
         assert_eq!(Determinism::classify(&registry, ""), Determinism::Multi);
         // Op type has 2 variants (gt, lt)
@@ -1327,7 +1327,7 @@ mod tests {
 
     #[test]
     fn determinism_nondet_missing_type() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
         assert_eq!(
             Determinism::classify(&registry, "nonexistent"),
             Determinism::Nondet
@@ -1357,7 +1357,7 @@ mod tests {
             },
             vec![type_def],
         );
-        let registry = TypeRegistry::compile(&grammar).unwrap();
+        let registry = Domain::from_grammar(&grammar).unwrap();
         assert_eq!(
             Determinism::classify(&registry, "empty"),
             Determinism::Semidet
@@ -1366,8 +1366,8 @@ mod tests {
 
     #[test]
     fn determinism_classify_in_store() {
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
-        let store = FactStore::from_registry(&registry);
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
+        let store = FactStore::from_domain(&registry);
 
         // Multi: default type has 3 variants
         assert_eq!(
@@ -1414,8 +1414,8 @@ mod tests {
             },
             vec![type_def],
         );
-        let registry = TypeRegistry::compile(&grammar).unwrap();
-        let store = FactStore::from_registry(&registry);
+        let registry = Domain::from_grammar(&grammar).unwrap();
+        let store = FactStore::from_domain(&registry);
 
         assert_eq!(
             Determinism::classify_in_store(&store, "solo", "solo_type"),
@@ -1446,8 +1446,8 @@ mod tests {
             },
             vec![type_def],
         );
-        let registry = TypeRegistry::compile(&grammar).unwrap();
-        let store = FactStore::from_registry(&registry);
+        let registry = Domain::from_grammar(&grammar).unwrap();
+        let store = FactStore::from_domain(&registry);
 
         assert_eq!(
             Determinism::classify_in_store(&store, "semi", "empty"),
@@ -1461,12 +1461,12 @@ mod tests {
 
     #[test]
     fn multi_registry_store() {
-        let reg1 = TypeRegistry::compile(&test_grammar()).unwrap();
-        let reg2 = TypeRegistry::compile(&calling_grammar()).unwrap();
+        let reg1 = Domain::from_grammar(&test_grammar()).unwrap();
+        let reg2 = Domain::from_grammar(&calling_grammar()).unwrap();
 
         let mut store = FactStore::new();
-        store.add_registry(&reg1);
-        store.add_registry(&reg2);
+        store.add_domain(&reg1);
+        store.add_domain(&reg2);
 
         // Both domains present
         assert!(!store.types_in("test").is_empty());
@@ -1481,8 +1481,8 @@ mod tests {
     fn diagnose_unreachable_call_single_grammar() {
         // A grammar that calls @phantom.dispatch — but @phantom is not in the store.
         // The FactStore should detect this as an unreachable cross-domain call.
-        let registry = TypeRegistry::compile(&calling_grammar()).unwrap();
-        let store = FactStore::from_registry(&registry);
+        let registry = Domain::from_grammar(&calling_grammar()).unwrap();
+        let store = FactStore::from_domain(&registry);
 
         let diags = store.diagnose_unreachable_calls();
         assert_eq!(diags.len(), 1);
@@ -1499,7 +1499,7 @@ mod tests {
     #[test]
     fn diagnose_unreachable_call_target_present() {
         // When the target domain IS in the store, no diagnostic.
-        let caller_reg = TypeRegistry::compile(&calling_grammar()).unwrap();
+        let caller_reg = Domain::from_grammar(&calling_grammar()).unwrap();
 
         // Build a target grammar: grammar @target { action run { } }
         let target_action = prism::fractal(
@@ -1522,11 +1522,11 @@ mod tests {
             },
             vec![target_action],
         );
-        let target_reg = TypeRegistry::compile(&target_grammar).unwrap();
+        let target_reg = Domain::from_grammar(&target_grammar).unwrap();
 
         let mut store = FactStore::new();
-        store.add_registry(&caller_reg);
-        store.add_registry(&target_reg);
+        store.add_domain(&caller_reg);
+        store.add_domain(&target_reg);
 
         let diags = store.diagnose_unreachable_calls();
         assert!(diags.is_empty(), "no diagnostics when target domain exists");
@@ -1535,7 +1535,7 @@ mod tests {
     #[test]
     fn diagnose_unreachable_call_action_missing() {
         // Target domain exists but doesn't have the called action.
-        let caller_reg = TypeRegistry::compile(&calling_grammar()).unwrap();
+        let caller_reg = Domain::from_grammar(&calling_grammar()).unwrap();
 
         // Build a target grammar with a DIFFERENT action name
         let target_action = prism::fractal(
@@ -1558,11 +1558,11 @@ mod tests {
             },
             vec![target_action],
         );
-        let target_reg = TypeRegistry::compile(&target_grammar).unwrap();
+        let target_reg = Domain::from_grammar(&target_grammar).unwrap();
 
         let mut store = FactStore::new();
-        store.add_registry(&caller_reg);
-        store.add_registry(&target_reg);
+        store.add_domain(&caller_reg);
+        store.add_domain(&target_reg);
 
         let diags = store.diagnose_unreachable_calls();
         assert_eq!(diags.len(), 1);
@@ -1575,8 +1575,8 @@ mod tests {
     #[test]
     fn diagnose_no_calls_no_diagnostics() {
         // Grammar with no cross-domain calls produces no diagnostics.
-        let registry = TypeRegistry::compile(&test_grammar()).unwrap();
-        let store = FactStore::from_registry(&registry);
+        let registry = Domain::from_grammar(&test_grammar()).unwrap();
+        let store = FactStore::from_domain(&registry);
 
         let diags = store.diagnose_unreachable_calls();
         assert!(diags.is_empty());
@@ -1660,7 +1660,7 @@ mod tests {
             },
             vec![smash_action],
         );
-        let smash_reg = TypeRegistry::compile(&smash_grammar).unwrap();
+        let smash_reg = Domain::from_grammar(&smash_grammar).unwrap();
 
         // Build @fox with dash action (no inheritance captured in AST)
         let fox_action = prism::fractal(
@@ -1683,11 +1683,11 @@ mod tests {
             },
             vec![fox_action],
         );
-        let fox_reg = TypeRegistry::compile(&fox_grammar).unwrap();
+        let fox_reg = Domain::from_grammar(&fox_grammar).unwrap();
 
         let mut store = FactStore::new();
-        store.add_registry(&smash_reg);
-        store.add_registry(&fox_reg);
+        store.add_domain(&smash_reg);
+        store.add_domain(&fox_reg);
 
         // The store sees @smash.attack and @fox.dash as separate facts.
         // It does NOT know that @fox extends @smash.
@@ -1741,9 +1741,9 @@ mod tests {
         // Option 1 requires changing the Fact structure.
         // Option 2 is what differential dataflow does (Materialize, etc).
 
-        let reg = TypeRegistry::compile(&test_grammar()).unwrap();
+        let reg = Domain::from_grammar(&test_grammar()).unwrap();
         let mut store = FactStore::new();
-        store.add_registry(&reg);
+        store.add_domain(&reg);
 
         let initial_len = store.len();
         assert!(initial_len > 0);
@@ -1751,7 +1751,7 @@ mod tests {
         // Adding the same registry again just inserts duplicates into a BTreeSet.
         // BTreeSet deduplicates, so len stays the same. But there's no way to
         // REMOVE @test's facts from the store.
-        store.add_registry(&reg);
+        store.add_domain(&reg);
         assert_eq!(
             store.len(),
             initial_len,
@@ -1778,8 +1778,8 @@ mod tests {
         // will never exist." That's a meta-level statement about the
         // grammar universe, not a ground fact.
 
-        let reg = TypeRegistry::compile(&calling_grammar()).unwrap();
-        let store = FactStore::from_registry(&reg);
+        let reg = Domain::from_grammar(&calling_grammar()).unwrap();
+        let store = FactStore::from_domain(&reg);
 
         let diags = store.diagnose_unreachable_calls();
         assert_eq!(diags.len(), 1);
@@ -1802,12 +1802,12 @@ mod tests {
         // cross-domain queries. Datalog engines use hash joins, magic
         // sets, or seminaive evaluation to make this efficient.
 
-        let linked_reg = TypeRegistry::compile(&linked_grammar()).unwrap();
-        let test_reg = TypeRegistry::compile(&test_grammar()).unwrap();
+        let linked_reg = Domain::from_grammar(&linked_grammar()).unwrap();
+        let test_reg = Domain::from_grammar(&test_grammar()).unwrap();
 
         let mut store = FactStore::new();
-        store.add_registry(&linked_reg);
-        store.add_registry(&test_reg);
+        store.add_domain(&linked_reg);
+        store.add_domain(&test_reg);
 
         // Manual join: types in @linked that share names with types in @test
         let linked_types: Vec<&str> = store.types_in("linked");
@@ -1851,8 +1851,8 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let reg = TypeRegistry::compile(grammar).unwrap();
-        let mut store = FactStore::from_registry(&reg);
+        let reg = Domain::from_grammar(grammar).unwrap();
+        let mut store = FactStore::from_domain(&reg);
         store.add_obligation(Fact::TypeExists {
             domain: "test".into(),
             type_name: "".into(),
@@ -1872,8 +1872,8 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let reg = TypeRegistry::compile(grammar).unwrap();
-        let mut store = FactStore::from_registry(&reg);
+        let reg = Domain::from_grammar(grammar).unwrap();
+        let mut store = FactStore::from_domain(&reg);
         store.add_obligation(Fact::TypeExists {
             domain: "test".into(),
             type_name: "nonexistent".into(),

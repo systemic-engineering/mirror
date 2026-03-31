@@ -1,7 +1,7 @@
 //! Integration tests for cross-domain grammar resolution.
 //!
 //! Verifies that grammar packages (@actor, @compiler, @beam, @mail)
-//! parse, compile through TypeRegistry, and integrate via the package
+//! parse, compile through Domain, and integrate via the package
 //! discovery system.
 
 use std::fs;
@@ -93,7 +93,7 @@ template $message(@imap) {
 ";
 
 // ---------------------------------------------------------------------------
-// TypeRegistry compilation
+// Domain compilation
 // ---------------------------------------------------------------------------
 
 #[test]
@@ -104,8 +104,8 @@ fn actor_grammar_compiles() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::resolve::TypeRegistry::compile(grammar).unwrap();
-    assert_eq!(reg.domain, "actor");
+    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
+    assert_eq!(reg.domain_name(), "actor");
     assert!(reg.has_variant("", "identity"));
     assert!(reg.has_variant("", "session"));
     assert!(reg.has_variant("", "signal"));
@@ -123,8 +123,8 @@ fn compiler_grammar_compiles() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::resolve::TypeRegistry::compile(grammar).unwrap();
-    assert_eq!(reg.domain, "compiler");
+    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
+    assert_eq!(reg.domain_name(), "compiler");
     assert!(reg.has_variant("", "target"));
     assert!(reg.has_variant("", "artifact"));
     assert!(reg.has_variant("target", "gleam"));
@@ -144,14 +144,14 @@ fn compiler_grammar_has_action_compile() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::resolve::TypeRegistry::compile(grammar).unwrap();
+    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
     assert!(reg.has_action("compile"));
-    let fields = reg.action_fields("compile").unwrap();
+    let fields = reg.act_fields("compile").unwrap();
     assert_eq!(fields.len(), 2);
     assert_eq!(fields[0].0, "source");
-    assert_eq!(fields[0].1, Some("artifact".to_string()));
+    assert_eq!(fields[0].1, Some("artifact"));
     assert_eq!(fields[1].0, "target");
-    assert_eq!(fields[1].1, Some("target".to_string()));
+    assert_eq!(fields[1].1, Some("target"));
 }
 
 #[test]
@@ -162,8 +162,8 @@ fn beam_grammar_compiles() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::resolve::TypeRegistry::compile(grammar).unwrap();
-    assert_eq!(reg.domain, "beam");
+    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
+    assert_eq!(reg.domain_name(), "beam");
     assert!(reg.has_variant("", "process"));
     assert!(reg.has_variant("", "supervision"));
     assert!(reg.has_variant("", "module"));
@@ -177,8 +177,8 @@ fn mail_grammar_compiles_full_type_hierarchy() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::resolve::TypeRegistry::compile(grammar).unwrap();
-    assert_eq!(reg.domain, "mail");
+    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
+    assert_eq!(reg.domain_name(), "mail");
     assert!(reg.has_variant("", "message"));
     assert!(reg.has_variant("", "thread"));
     assert!(reg.has_variant("", "attachment"));
@@ -203,30 +203,30 @@ fn mail_grammar_has_three_actions() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::resolve::TypeRegistry::compile(grammar).unwrap();
+    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
 
     // action send
     assert!(reg.has_action("send"));
-    let send = reg.action_fields("send").unwrap();
+    let send = reg.act_fields("send").unwrap();
     assert_eq!(send.len(), 4);
     assert_eq!(send[0].0, "from");
-    assert_eq!(send[0].1, Some("address".to_string()));
+    assert_eq!(send[0].1, Some("address"));
     assert_eq!(send[1].0, "to");
     assert_eq!(send[2].0, "subject");
     assert_eq!(send[2].1, None); // untyped field
     assert_eq!(send[3].0, "body");
-    assert_eq!(send[3].1, Some("article".to_string()));
+    assert_eq!(send[3].1, Some("article"));
 
     // action reply
     assert!(reg.has_action("reply"));
-    let reply = reg.action_fields("reply").unwrap();
+    let reply = reg.act_fields("reply").unwrap();
     assert_eq!(reply.len(), 2);
     assert_eq!(reply[0].0, "in-reply-to");
-    assert_eq!(reply[0].1, Some("message-id".to_string()));
+    assert_eq!(reply[0].1, Some("message-id"));
 
     // action forward
     assert!(reg.has_action("forward"));
-    let forward = reg.action_fields("forward").unwrap();
+    let forward = reg.act_fields("forward").unwrap();
     assert_eq!(forward.len(), 2);
     assert_eq!(forward[0].0, "message");
     assert_eq!(forward[1].0, "to");
@@ -351,7 +351,7 @@ fn visibility_stored_in_registry() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::resolve::TypeRegistry::compile(grammar).unwrap();
+    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
     assert_eq!(
         reg.action_visibility("read"),
         conversation::resolve::Visibility::Public,
@@ -417,11 +417,11 @@ fn compiler_grammar_types_available_via_namespace() {
 
     let registry = PackageRegistry::discover(dir.path()).unwrap();
     let namespace = registry.to_namespace().unwrap();
-    let compiler_reg = namespace
-        .grammar("compiler")
-        .expect("compiler grammar registered");
-    assert!(compiler_reg.has_variant("target", "eaf"));
-    assert!(compiler_reg.has_action("compile"));
+    let compiler_dom = namespace
+        .domain("compiler")
+        .expect("compiler domain registered");
+    assert!(compiler_dom.has_variant("target", "eaf"));
+    assert!(compiler_dom.has_action("compile"));
 }
 
 // ---------------------------------------------------------------------------

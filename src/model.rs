@@ -2,13 +2,13 @@
 //!
 //! Make illegal state unrepresentable. This module provides newtypes and
 //! domain structs that serve as the public API for compiled grammars,
-//! replacing the raw TypeRegistry internals.
+//! Domain model types for compiled grammars.
 
 use std::fmt;
 
 use crate::ast::AstNode;
 use crate::prism::Prism;
-use crate::resolve::{TypeRegistry, Visibility};
+use crate::resolve::Visibility;
 use crate::{ContentAddressed, Oid};
 use fragmentation::encoding::Encode;
 
@@ -232,8 +232,8 @@ impl Properties {
     }
 }
 
-/// A compiled domain: the public API replacing `TypeRegistry`.
-#[derive(Clone, Debug)]
+/// A compiled domain.
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Domain {
     pub name: DomainName,
     pub types: Vec<TypeDef>,
@@ -242,23 +242,7 @@ pub struct Domain {
     pub extends: Vec<DomainName>,
     pub calls: Vec<ActionCall>,
     pub properties: Properties,
-    /// Internal registry for compilation. Not part of equality.
-    pub(crate) registry: Option<TypeRegistry>,
 }
-
-impl PartialEq for Domain {
-    fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
-            && self.types == other.types
-            && self.actions == other.actions
-            && self.lenses == other.lenses
-            && self.extends == other.extends
-            && self.calls == other.calls
-            && self.properties == other.properties
-    }
-}
-
-impl Eq for Domain {}
 
 domain_oid!(/// Content address for domains.
 pub DomainOid);
@@ -279,6 +263,18 @@ impl Encode for Domain {
         for action in &self.actions {
             bytes.extend_from_slice(b":action:");
             bytes.extend_from_slice(action.name.as_str().as_bytes());
+        }
+        for prop in &self.properties.requires {
+            bytes.extend_from_slice(b":requires:");
+            bytes.extend_from_slice(prop.as_str().as_bytes());
+        }
+        for prop in &self.properties.invariants {
+            bytes.extend_from_slice(b":invariant:");
+            bytes.extend_from_slice(prop.as_str().as_bytes());
+        }
+        for prop in &self.properties.ensures {
+            bytes.extend_from_slice(b":ensures:");
+            bytes.extend_from_slice(prop.as_str().as_bytes());
         }
         bytes
     }
@@ -342,7 +338,7 @@ impl Domain {
     }
 
     // -----------------------------------------------------------------------
-    // Query methods — Domain equivalents of TypeRegistry's API
+    // Query methods
     // -----------------------------------------------------------------------
 
     /// The domain name as a string.
@@ -402,7 +398,7 @@ impl Domain {
     /// Get the fields of a named action: (field_name, type_ref_name).
     ///
     /// Returns field name and type ref as string tuples, matching
-    /// the TypeRegistry `action_fields` signature shape.
+    /// Returns field name and optional type ref as string tuples.
     pub fn act_fields(&self, name: &str) -> Option<Vec<(&str, Option<&str>)>> {
         self.actions
             .iter()
@@ -467,114 +463,6 @@ impl Domain {
     /// All `ensures` property names declared in this domain.
     pub fn ensures(&self) -> Vec<&str> {
         self.properties.ensures.iter().map(|p| p.as_str()).collect()
-    }
-
-    /// Access the internal TypeRegistry for compilation.
-    ///
-    /// Only available within the crate — external callers use Domain directly.
-    /// Panics if the Domain was constructed without a grammar node (manual construction).
-    pub(crate) fn registry(&self) -> &TypeRegistry {
-        self.registry
-            .as_ref()
-            .expect("Domain::registry() requires a grammar-built Domain (use from_grammar)")
-    }
-
-    /// Build a `Domain` wrapping an existing TypeRegistry.
-    ///
-    /// Bridge constructor for the TypeRegistry → Domain migration.
-    /// Populates Domain fields from registry data so query methods work.
-    /// Crate-internal — callers should use `from_grammar` for new code.
-    pub(crate) fn from_registry(registry: TypeRegistry) -> Self {
-        let name = DomainName::new(registry.domain.as_str());
-
-        let mut types = Vec::new();
-        let mut sorted_type_names = registry.type_names();
-        sorted_type_names.sort();
-        for type_name in &sorted_type_names {
-            let mut variants = Vec::new();
-            for variant_name in registry.variants(type_name).unwrap_or_default() {
-                let mut params = Vec::new();
-                if let Some(ref_type) = registry.variant_param(type_name, variant_name) {
-                    params.push((
-                        VariantName::new(variant_name),
-                        TypeRef::new(TypeName::new(ref_type)),
-                    ));
-                }
-                variants.push(Variant {
-                    name: VariantName::new(variant_name),
-                    params,
-                });
-            }
-            types.push(TypeDef {
-                name: TypeName::new(*type_name),
-                variants,
-            });
-        }
-
-        let mut actions = Vec::new();
-        for act_name in registry.act_names() {
-            let mut fields = Vec::new();
-            for (field_name, type_ref) in registry.action_fields(act_name).unwrap_or(&[]) {
-                let tr = type_ref.as_deref().unwrap_or("");
-                fields.push((
-                    ActionName::new(field_name.as_str()),
-                    TypeRef::new(TypeName::new(tr)),
-                ));
-            }
-            let mut calls = Vec::new();
-            for (domain, action, args) in registry.action_calls(act_name) {
-                let mut call_args = Vec::new();
-                for a in args {
-                    call_args.push(TypeRef::new(TypeName::new(a.as_str())));
-                }
-                calls.push(ActionCall {
-                    domain: DomainName::new(domain.as_str()),
-                    action: ActionName::new(action.as_str()),
-                    args: call_args,
-                });
-            }
-            let visibility = registry.action_visibility(act_name);
-            actions.push(Action {
-                name: ActionName::new(act_name),
-                fields,
-                visibility,
-                calls,
-            });
-        }
-
-        let mut requires = Vec::new();
-        for s in registry.required_properties() {
-            requires.push(PropertyName::new(s.as_str()));
-        }
-        let mut invariants = Vec::new();
-        for s in registry.invariants() {
-            invariants.push(PropertyName::new(s.as_str()));
-        }
-        let mut ensures = Vec::new();
-        for s in registry.ensures() {
-            ensures.push(PropertyName::new(s.as_str()));
-        }
-        let properties = Properties {
-            requires,
-            invariants,
-            ensures,
-        };
-
-        let mut all_calls = Vec::new();
-        for a in &actions {
-            all_calls.extend(a.calls.clone());
-        }
-
-        Domain {
-            name,
-            types,
-            actions,
-            lenses: vec![],
-            extends: vec![],
-            calls: all_calls,
-            properties,
-            registry: Some(registry),
-        }
     }
 
     /// Build a `Domain` from a grammar AST node with no external lens declarations.
@@ -732,12 +620,6 @@ impl Domain {
         // Aggregate calls from all actions to the domain level.
         let calls: Vec<ActionCall> = actions.iter().flat_map(|a| a.calls.clone()).collect();
 
-        // Also compile the TypeRegistry from the same AST for internal use.
-        // Domain already validates type refs above (line ~295), so TypeRegistry::compile
-        // cannot fail here — its only error path is the same bad-type-ref check.
-        let registry = TypeRegistry::compile(node)
-            .expect("Domain validation should have caught type-ref errors before TypeRegistry");
-
         Ok(Domain {
             name: domain_name,
             types,
@@ -746,7 +628,6 @@ impl Domain {
             extends,
             calls,
             properties,
-            registry: Some(registry),
         })
     }
 
@@ -787,6 +668,38 @@ impl Domain {
         let laplacian = coincidence::spectral::Laplacian::from_adjacency(&type_names, &edges);
         let eigenvalues = laplacian.eigenvalues();
         DomainComplexity::Spectrum(DomainSpectrum::new(eigenvalues))
+    }
+}
+
+impl Domain {
+    /// Test-only: build a domain with a parameterized variant whose type ref
+    /// is NOT declared. This exercises the `None => continue` defensive path
+    /// in `generate::derive_type`.
+    #[cfg(test)]
+    pub(crate) fn with_dangling_param(
+        domain: &str,
+        type_name: &str,
+        variant: &str,
+        param_ref: &str,
+    ) -> Self {
+        Domain {
+            name: DomainName::new(domain),
+            types: vec![TypeDef {
+                name: TypeName::new(type_name),
+                variants: vec![Variant {
+                    name: VariantName::new(variant),
+                    params: vec![(
+                        VariantName::new(variant),
+                        TypeRef::new(TypeName::new(param_ref)),
+                    )],
+                }],
+            }],
+            actions: vec![],
+            lenses: vec![],
+            extends: vec![],
+            calls: vec![],
+            properties: Properties::empty(),
+        }
     }
 }
 
@@ -880,7 +793,6 @@ mod tests {
             extends: vec![],
             calls: vec![],
             properties: Properties::empty(),
-            registry: None,
         }
     }
 
@@ -1414,7 +1326,6 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![PropertyName::new("delivered")],
             },
-            registry: None,
         };
 
         assert_eq!(domain.name.as_str(), "reed");
@@ -1467,7 +1378,6 @@ mod tests {
                 invariants: vec![PropertyName::new("non_empty")],
                 ensures: vec![PropertyName::new("delivered")],
             },
-            registry: None,
         }
     }
 
@@ -1559,7 +1469,6 @@ mod tests {
             extends: vec![],
             calls: vec![],
             properties: Properties::empty(),
-            registry: None,
         };
         let fields = d.act_fields("ping").unwrap();
         assert_eq!(fields[0].1, None);
@@ -1601,66 +1510,6 @@ mod tests {
     fn domain_query_ensures() {
         let d = make_rich_domain();
         assert_eq!(d.ensures(), vec!["delivered"]);
-    }
-
-    // --- Domain::from_registry ---
-
-    #[test]
-    fn from_registry_with_actions_and_calls() {
-        use crate::parse::Parse;
-        use crate::Vector;
-        // Grammar with types, actions, calls (with args), and properties.
-        let source = "grammar @test {\n  type = a | b\n\n  public action send {\n    payload\n    @tools.exec(payload)\n  }\n\n  requires shannon_equivalence\n  invariant connected\n  ensures delivered\n}\n";
-        let ast = Parse.trace(source.to_string()).into_result().unwrap();
-        let grammar = ast
-            .children()
-            .iter()
-            .find(|c| c.data().is_decl("grammar"))
-            .unwrap();
-        let registry = crate::resolve::TypeRegistry::compile(grammar).unwrap();
-        let domain = Domain::from_registry(registry);
-
-        assert_eq!(domain.domain_name(), "test");
-        assert!(domain.has_type(""));
-        assert!(domain.has_action("send"));
-        assert_eq!(domain.action_visibility("send"), Visibility::Public);
-        assert!(!domain.act_fields("send").unwrap().is_empty());
-        assert!(!domain.action_calls("send").is_empty());
-        assert_eq!(domain.required_properties(), vec!["shannon_equivalence"]);
-        assert_eq!(domain.invariants(), vec!["connected"]);
-        assert_eq!(domain.ensures(), vec!["delivered"]);
-        // Registry should still be accessible.
-        assert!(domain.registry().has_type(""));
-    }
-
-    // --- Domain::registry() ---
-
-    #[test]
-    fn from_grammar_populates_registry() {
-        let variant_a = mk_shard("va", Kind::Form, "variant", "a");
-        let variant_b = mk_shard("vb", Kind::Form, "variant", "b");
-        let type_def = mk_fractal(
-            "type-def",
-            Kind::Form,
-            "type-def",
-            "color",
-            vec![variant_a, variant_b],
-        );
-        let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@test", vec![type_def]);
-
-        let domain = Domain::from_grammar(&grammar).unwrap();
-
-        // Registry should be populated and accessible.
-        let registry = domain.registry();
-        assert_eq!(registry.domain, "test");
-        assert!(registry.has_type("color"));
-    }
-
-    #[test]
-    #[should_panic(expected = "requires a grammar-built Domain")]
-    fn registry_panics_on_manual_domain() {
-        let d = make_domain(vec![]);
-        let _ = d.registry();
     }
 
     // --- DomainComplexity tests ---
@@ -1738,7 +1587,6 @@ mod tests {
             extends: vec![],
             calls: vec![],
             properties: Properties::empty(),
-            registry: None,
         };
         assert!(matches!(domain.complexity(), DomainComplexity::Trivial));
     }
@@ -1769,41 +1617,8 @@ mod tests {
             extends: vec![],
             calls: vec![],
             properties: Properties::empty(),
-            registry: None,
         };
         assert!(matches!(domain.complexity(), DomainComplexity::Trivial));
-    }
-
-    #[test]
-    fn domain_equality_ignores_registry() {
-        // Two domains with same fields but different registry presence are equal.
-        let d1 = make_domain(vec![]);
-        let variant_a = mk_shard("va", Kind::Form, "variant", "a");
-        let type_def = mk_fractal(
-            "type-def",
-            Kind::Form,
-            "type-def",
-            "unused",
-            vec![variant_a],
-        );
-        let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@test", vec![type_def]);
-        let d2_from_grammar = Domain::from_grammar(&grammar).unwrap();
-
-        // d1 has registry=None, d2 has registry=Some(...).
-        // They have different types, so they won't be equal on types field.
-        // But the point is: registry is NOT part of equality check.
-        // Construct d2 manually with same fields as d1 but with a registry.
-        let d2 = Domain {
-            name: DomainName::new("test"),
-            types: vec![],
-            actions: vec![],
-            lenses: vec![],
-            extends: vec![],
-            calls: vec![],
-            properties: Properties::empty(),
-            registry: d2_from_grammar.registry,
-        };
-        assert_eq!(d1, d2);
     }
 
     // --- extends and calls ---
@@ -1818,7 +1633,6 @@ mod tests {
             extends: vec![DomainName::new("base")],
             calls: vec![],
             properties: Properties::empty(),
-            registry: None,
         };
         assert!(domain.extends.iter().any(|d| d.as_str() == "base"));
     }

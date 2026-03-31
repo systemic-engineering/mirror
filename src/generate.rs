@@ -1,12 +1,12 @@
-//! Grammar-derived generator. Exhaustive derivation from TypeRegistry.
+//! Grammar-derived generator. Exhaustive derivation from Domain.
 //!
 //! The grammar IS the generator. `type = a | b | c` means exactly {a, b, c}.
 //! No randomness — full enumeration. The derivation space is finite.
 
 use crate::ast::{self, AstNode, Span};
 use crate::domain::conversation::Kind;
+use crate::model::Domain;
 use crate::prism::Prism;
-use crate::resolve::TypeRegistry;
 
 /// A single derivation from a grammar type.
 #[derive(Clone, Debug)]
@@ -24,8 +24,8 @@ const GEN_SPAN: Span = Span { start: 0, end: 0 };
 /// For `type = a | b | c`, produces 3 Derivation values.
 /// Parameterized variants like `when(op)` expand recursively:
 /// one derivation per (variant, param-variant) pair.
-pub fn derive_type(registry: &TypeRegistry, type_name: &str) -> Vec<Derivation> {
-    let variants = match registry.variants(type_name) {
+pub fn derive_type(domain: &Domain, type_name: &str) -> Vec<Derivation> {
+    let variants = match domain.variants(type_name) {
         Some(vs) => vs,
         None => return Vec::new(),
     };
@@ -35,9 +35,9 @@ pub fn derive_type(registry: &TypeRegistry, type_name: &str) -> Vec<Derivation> 
 
     let mut derivations = Vec::new();
     for variant in sorted {
-        if let Some(param_type) = registry.variant_param(type_name, variant) {
+        if let Some(param_type) = domain.variant_param(type_name, variant) {
             // Parameterized: expand recursively
-            let param_variants = match registry.variants(param_type) {
+            let param_variants = match domain.variants(param_type) {
                 Some(vs) => {
                     let mut vs = vs;
                     vs.sort();
@@ -72,24 +72,24 @@ pub fn derive_type(registry: &TypeRegistry, type_name: &str) -> Vec<Derivation> 
 /// Derive all types in the grammar.
 ///
 /// Iterates type names in sorted order, derives each, concatenates.
-pub fn derive_all(registry: &TypeRegistry) -> Vec<Derivation> {
-    let mut type_names = registry.type_names();
+pub fn derive_all(domain: &Domain) -> Vec<Derivation> {
+    let mut type_names = domain.type_names();
     type_names.sort();
 
     let mut all = Vec::new();
     for tn in type_names {
-        all.extend(derive_type(registry, tn));
+        all.extend(derive_type(domain, tn));
     }
 
     // Derive acts: one derivation per act with fields as children
-    let mut act_names = registry.act_names();
+    let mut act_names = domain.act_names();
     act_names.sort();
     for act_name in act_names {
-        let fields = registry.action_fields(act_name).unwrap_or(&[]);
+        let fields = domain.act_fields(act_name).unwrap_or_default();
         let children: Vec<Prism<AstNode>> = fields
             .iter()
-            .map(|(name, type_ref)| {
-                let value = type_ref.as_deref().unwrap_or("");
+            .map(|&(name, type_ref)| {
+                let value = type_ref.unwrap_or("");
                 ast::ast_leaf(Kind::Atom, "field", name, GEN_SPAN)
                     // Attach type-ref child if present
                     ;
@@ -116,18 +116,18 @@ pub fn derive_all(registry: &TypeRegistry) -> Vec<Derivation> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::model::Domain;
     use crate::parse::Parse;
-    use crate::resolve::TypeRegistry;
     use crate::Vector;
 
-    fn compile_grammar(source: &str) -> TypeRegistry {
+    fn compile_grammar(source: &str) -> Domain {
         let ast = Parse.trace(source.to_string()).unwrap();
         let grammar = ast
             .children()
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("source must contain a grammar block");
-        TypeRegistry::compile(grammar).unwrap()
+        Domain::from_grammar(grammar).unwrap()
     }
 
     #[test]
@@ -249,10 +249,10 @@ mod tests {
 
     #[test]
     fn derive_parameterized_dangling_ref_skips() {
-        // TypeRegistry with a parameterized variant whose type ref is NOT declared.
+        // Domain with a parameterized variant whose type ref is NOT declared.
         // derive_type should skip it (None => continue).
-        let reg = TypeRegistry::with_dangling_param("test", "", "when", "nonexistent");
-        let derivations = derive_type(&reg, "");
+        let dom = Domain::with_dangling_param("test", "", "when", "nonexistent");
+        let derivations = derive_type(&dom, "");
         // The "when" variant has a param ref to "nonexistent" which has no variants,
         // so it is skipped entirely.
         assert!(derivations.is_empty());

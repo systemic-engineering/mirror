@@ -32,7 +32,7 @@ pub struct CompileResult {
     pub etf: Vec<u8>,
     /// Content OID of the parsed AST.
     pub parse_oid: String,
-    /// Content OID of the resolved TypeRegistry.
+    /// Content OID of the resolved Domain.
     pub resolve_oid: String,
     /// Content OID of the compiled EAF bytes.
     pub compile_oid: String,
@@ -64,7 +64,7 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
         .find(|c| c.data().is_decl("grammar"))
         .ok_or_else(|| "no grammar block found".to_string())?;
 
-    // Build Domain from grammar — this also compiles the internal TypeRegistry.
+    // Build Domain from grammar AST node.
     let lens_values: Vec<String> = ast
         .children()
         .iter()
@@ -93,12 +93,14 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
     let etf = compile::emit_actor_module_for_domain(&domain, &lenses, &extends);
     let compile_oid = crate::Oid::hash(&etf).as_ref().to_string();
 
-    // ProofCertificate still needs TypeRegistry for now.
-    let registry = domain.registry();
-    let cert = ProofCertificate::from_registry(registry);
+    let cert = ProofCertificate::from_domain(&domain);
     let proof_oid = cert.proof_oid.as_ref().to_string();
 
-    let required_properties: Vec<String> = domain.required_properties().iter().map(|s| s.to_string()).collect();
+    let required_properties: Vec<String> = domain
+        .required_properties()
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
     let invariants: Vec<String> = domain.invariants().iter().map(|s| s.to_string()).collect();
     let ensures: Vec<String> = domain.ensures().iter().map(|s| s.to_string()).collect();
     let proof_etf = proof_certificate_to_etf(&cert, &required_properties, &invariants, &ensures);

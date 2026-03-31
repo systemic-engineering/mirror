@@ -208,7 +208,13 @@ pub fn emit_actor_module_for_domain(
             }
             calls_owned.push((d.to_string(), a.to_string(), owned_args));
         }
-        forms.push(emit_act_function(domain_name, name, &vis, &calls_owned, line));
+        forms.push(emit_act_function(
+            domain_name,
+            name,
+            &vis,
+            &calls_owned,
+            line,
+        ));
         line += 1;
     }
 
@@ -225,7 +231,11 @@ pub fn emit_actor_module_for_domain(
     line += 1;
 
     // requires/0 → [<<"shannon_equivalence">>, ...]
-    let requires: Vec<String> = domain.required_properties().iter().map(|s| s.to_string()).collect();
+    let requires: Vec<String> = domain
+        .required_properties()
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
     forms.push(emit_string_list_function("requires", &requires, line));
     line += 1;
 
@@ -444,7 +454,7 @@ fn eaf_tuple_expr(line: i32, elements: Vec<Term>) -> Term {
 /// Emit an actor dispatch module from a `Domain` model.
 ///
 /// This is the primary Domain-based entry point for compilation.
-/// Uses Domain query methods directly — no TypeRegistry access.
+/// Uses Domain query methods directly.
 pub fn emit_actor_module_from_domain(domain: &crate::model::Domain) -> Vec<u8> {
     // Filter out self-lenses (e.g. @filesystem in a @filesystem grammar).
     let domain_name = domain.name.as_str();

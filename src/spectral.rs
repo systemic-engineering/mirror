@@ -36,7 +36,7 @@ use coincidence::state::StateVector;
 
 use crate::ast::AstNode;
 use crate::prism::Prism;
-use crate::resolve::TypeRegistry;
+use crate::model::Domain;
 
 /// Spectral analysis of a grammar's AST tree.
 ///
@@ -113,9 +113,9 @@ impl TypeGraphSpectrum {
     /// Compute the spectrum of a grammar's type reference graph.
     ///
     /// Returns None if the grammar has no types (empty spectrum is meaningless).
-    pub fn from_registry(registry: &TypeRegistry) -> Option<Self> {
+    pub fn from_domain(domain: &Domain) -> Option<Self> {
         let type_names: Vec<String> = {
-            let mut names: Vec<String> = registry
+            let mut names: Vec<String> = domain
                 .type_names()
                 .iter()
                 .map(|s| s.to_string())
@@ -131,8 +131,8 @@ impl TypeGraphSpectrum {
         // Build edges from parameterized variant refs
         let mut edges: Vec<(usize, usize)> = Vec::new();
         for (i, type_name) in type_names.iter().enumerate() {
-            for variant in registry.variants(type_name).unwrap_or_default() {
-                if let Some(ref_type) = registry.variant_param(type_name, variant) {
+            for variant in domain.variants(type_name).unwrap_or_default() {
+                if let Some(ref_type) = domain.variant_param(type_name, variant) {
                     if let Some(j) = type_names.iter().position(|t| t == ref_type) {
                         edges.push((i, j));
                     }
@@ -213,13 +213,13 @@ pub struct GrammarProjection {
 }
 
 impl GrammarProjection {
-    /// Build the grammar projection from a TypeRegistry.
+    /// Build the grammar projection from a Domain.
     ///
     /// Returns None if the grammar has no types (no space to project into).
-    pub fn from_registry(registry: &TypeRegistry) -> Option<Self> {
+    pub fn from_domain(domain: &Domain) -> Option<Self> {
         let mut labels: Vec<String> = Vec::new();
 
-        let mut type_names: Vec<String> = registry
+        let mut type_names: Vec<String> = domain
             .type_names()
             .iter()
             .map(|s| s.to_string())
@@ -231,7 +231,7 @@ impl GrammarProjection {
         }
 
         for type_name in &type_names {
-            let mut variants: Vec<String> = registry
+            let mut variants: Vec<String> = domain
                 .variants(type_name)
                 .unwrap_or_default()
                 .into_iter()
@@ -248,7 +248,7 @@ impl GrammarProjection {
             return None;
         }
 
-        let space = format!("grammar:{}", registry.domain);
+        let space = format!("grammar:{}", domain.domain_name());
 
         // Build the identity projection: every variant basis vector is preserved.
         // This is P = sum_i |e_i><e_i| over all variant basis vectors.
@@ -260,7 +260,7 @@ impl GrammarProjection {
         let projection = Projection::from_entries(&space, labels.clone(), entries);
 
         Some(GrammarProjection {
-            domain: registry.domain.clone(),
+            domain: domain.domain_name().to_string(),
             projection,
             labels,
         })
@@ -626,8 +626,8 @@ mod tests {
 
     #[test]
     fn type_graph_no_refs_disconnected() {
-        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
-        let tgs = TypeGraphSpectrum::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let tgs = TypeGraphSpectrum::from_domain(&registry).unwrap();
         // Single type, no references → 1 component, connectivity 0
         assert_eq!(tgs.components(), 1);
         assert!(tgs.connectivity().abs() < 1e-9);
@@ -635,8 +635,8 @@ mod tests {
 
     #[test]
     fn type_graph_with_refs_connected() {
-        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
-        let tgs = TypeGraphSpectrum::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let tgs = TypeGraphSpectrum::from_domain(&registry).unwrap();
         // color → shade reference → connected
         assert_eq!(tgs.components(), 1);
         assert!(tgs.connectivity() > 0.0);
@@ -644,18 +644,18 @@ mod tests {
 
     #[test]
     fn type_graph_distance_self_zero() {
-        let reg = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
-        let tgs1 = TypeGraphSpectrum::from_registry(&reg).unwrap();
-        let tgs2 = TypeGraphSpectrum::from_registry(&reg).unwrap();
+        let reg = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let tgs1 = TypeGraphSpectrum::from_domain(&reg).unwrap();
+        let tgs2 = TypeGraphSpectrum::from_domain(&reg).unwrap();
         assert!(tgs1.distance(&tgs2).value() < 1e-9);
     }
 
     #[test]
     fn type_graph_distance_different_nonzero() {
-        let reg1 = TypeRegistry::compile(&simple_grammar()).unwrap();
-        let reg2 = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
-        let tgs1 = TypeGraphSpectrum::from_registry(&reg1).unwrap();
-        let tgs2 = TypeGraphSpectrum::from_registry(&reg2).unwrap();
+        let reg1 = Domain::from_grammar(&simple_grammar()).unwrap();
+        let reg2 = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let tgs1 = TypeGraphSpectrum::from_domain(&reg1).unwrap();
+        let tgs2 = TypeGraphSpectrum::from_domain(&reg2).unwrap();
         assert!(tgs1.distance(&tgs2).value() > 0.0);
     }
 
@@ -663,8 +663,8 @@ mod tests {
 
     #[test]
     fn grammar_projection_simple() {
-        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
         // type "" has variants {a, b, c} → 3 dimensions
         assert_eq!(gp.dimension(), 3);
         assert!(gp.verify_idempotent());
@@ -672,8 +672,8 @@ mod tests {
 
     #[test]
     fn grammar_projection_linked() {
-        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
         // color={red,blue} + shade={light,dark} → 4 dimensions
         assert_eq!(gp.dimension(), 4);
         assert!(gp.verify_idempotent());
@@ -681,8 +681,8 @@ mod tests {
 
     #[test]
     fn grammar_projection_basis_vector() {
-        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
 
         let v = gp.basis("color", "red").unwrap();
         let projected = gp.project(&v).unwrap();
@@ -693,15 +693,15 @@ mod tests {
 
     #[test]
     fn grammar_projection_unknown_variant_returns_none() {
-        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
         assert!(gp.basis("unknown", "nope").is_none());
     }
 
     #[test]
     fn grammar_projection_projects_outside_to_zero() {
-        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
 
         // State vector outside the grammar's type space
         let outside = StateVector::basis("alien.thing", gp.space());
@@ -711,8 +711,8 @@ mod tests {
 
     #[test]
     fn grammar_projection_idempotent_application() {
-        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
 
         let v = gp.basis("shade", "dark").unwrap();
         let once = gp.project(&v).unwrap();
@@ -722,8 +722,8 @@ mod tests {
 
     #[test]
     fn grammar_projection_type_superposition() {
-        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
 
         let sup = gp.type_superposition("color").unwrap();
         // color has 2 variants → coefficient = 1/sqrt(2) for each
@@ -734,15 +734,15 @@ mod tests {
 
     #[test]
     fn grammar_projection_superposition_unknown_type() {
-        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
         assert!(gp.type_superposition("nonexistent").is_none());
     }
 
     #[test]
     fn grammar_projection_superposition_survives_projection() {
-        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
 
         let sup = gp.type_superposition("shade").unwrap();
         let projected = gp.project(&sup).unwrap();
@@ -754,8 +754,8 @@ mod tests {
 
     #[test]
     fn grammar_projection_space_name() {
-        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
         assert_eq!(gp.space(), "grammar:test");
     }
 
@@ -771,8 +771,8 @@ mod tests {
             },
             vec![],
         );
-        let registry = TypeRegistry::compile(&grammar).unwrap();
-        assert!(GrammarProjection::from_registry(&registry).is_none());
+        let registry = Domain::from_grammar(&grammar).unwrap();
+        assert!(GrammarProjection::from_domain(&registry).is_none());
     }
 
     #[test]
@@ -798,14 +798,14 @@ mod tests {
             },
             vec![type_def],
         );
-        let registry = TypeRegistry::compile(&grammar).unwrap();
-        assert!(GrammarProjection::from_registry(&registry).is_none());
+        let registry = Domain::from_grammar(&grammar).unwrap();
+        assert!(GrammarProjection::from_domain(&registry).is_none());
     }
 
     #[test]
     fn grammar_projection_domain_stored() {
-        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
         assert_eq!(gp.domain, "linked");
     }
 
@@ -815,8 +815,8 @@ mod tests {
 
     #[test]
     fn grammar_projection_to_etf_simple() {
-        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
         let etf = gp.to_etf();
         // Should be valid ETF
         assert!(!etf.is_empty());
@@ -834,8 +834,8 @@ mod tests {
 
     #[test]
     fn grammar_projection_to_etf_linked() {
-        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
         let etf = gp.to_etf();
         let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
         let s = format!("{:?}", term);
@@ -849,8 +849,8 @@ mod tests {
 
     #[test]
     fn grammar_projection_to_etf_deterministic() {
-        let registry = TypeRegistry::compile(&simple_grammar()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
         let a = gp.to_etf();
         let b = gp.to_etf();
         assert_eq!(a, b);
@@ -858,8 +858,8 @@ mod tests {
 
     #[test]
     fn grammar_projection_to_etf_contains_entries() {
-        let registry = TypeRegistry::compile(&linked_grammar_ast()).unwrap();
-        let gp = GrammarProjection::from_registry(&registry).unwrap();
+        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let gp = GrammarProjection::from_domain(&registry).unwrap();
         let etf = gp.to_etf();
         let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
         let s = format!("{:?}", term);
@@ -880,7 +880,7 @@ mod tests {
             },
             vec![],
         );
-        let registry = TypeRegistry::compile(&grammar).unwrap();
-        assert!(TypeGraphSpectrum::from_registry(&registry).is_none());
+        let registry = Domain::from_grammar(&grammar).unwrap();
+        assert!(TypeGraphSpectrum::from_domain(&registry).is_none());
     }
 }

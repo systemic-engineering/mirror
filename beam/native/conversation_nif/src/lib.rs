@@ -68,11 +68,11 @@ fn compile_grammar_traced<'a>(env: Env<'a>, source: String) -> (Atom, rustler::T
 // Coincidence measurement NIFs
 // ---------------------------------------------------------------------------
 
-/// Parse source into a TypeRegistry for property checking.
+/// Parse source into a Domain for property checking.
 ///
 /// Shared helper for all measurement NIFs. Parses the source, finds the
-/// grammar block, and compiles it into a TypeRegistry.
-fn registry_from_source(source: &str) -> Result<conversation::resolve::TypeRegistry, String> {
+/// grammar block, and compiles it into a Domain.
+fn domain_from_source(source: &str) -> Result<conversation::model::Domain, String> {
     let ast = conversation::parse::Parse
         .trace(source.to_string())
         .into_result()
@@ -82,18 +82,18 @@ fn registry_from_source(source: &str) -> Result<conversation::resolve::TypeRegis
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .ok_or_else(|| "no grammar block".to_string())?;
-    conversation::resolve::TypeRegistry::compile(grammar).map_err(|e| e.to_string())
+    conversation::model::Domain::from_grammar(grammar)
 }
 
 /// Check a built-in property by name against a grammar source (internal helper).
 ///
 /// Returns `(ok, reason)` or `(error, reason)`.
 fn do_check_property(source: &str, property: &str) -> (Atom, String) {
-    let registry = match registry_from_source(source) {
+    let domain = match domain_from_source(source) {
         Ok(r) => r,
         Err(e) => return (atoms::error(), e),
     };
-    match conversation::property::check_builtin(&registry, property) {
+    match conversation::property::check_builtin(&domain, property) {
         Some((true, reason)) => (atoms::ok(), reason),
         Some((false, reason)) => (atoms::error(), reason),
         None => (atoms::error(), format!("unknown property: {}", property)),

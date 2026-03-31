@@ -10,7 +10,7 @@ use crate::generate::{self, Derivation};
 use crate::model::Domain;
 use crate::parse::{self, HasAssertion, PropertyCheck, TestDirective};
 use crate::prism;
-use crate::resolve::{GenerateProvider, Namespace, TypeRegistry};
+use crate::resolve::{GenerateProvider, Namespace};
 
 /// Outcome of a property check.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -28,11 +28,11 @@ pub struct PropertyResult {
 }
 
 /// Check a property against all derivations of a grammar.
-pub fn check_property<F>(registry: &TypeRegistry, name: &str, prop: F) -> PropertyResult
+pub fn check_property<F>(domain: &Domain, name: &str, prop: F) -> PropertyResult
 where
     F: Fn(&[Derivation]) -> Verdict,
 {
-    let derivations = generate::derive_all(registry);
+    let derivations = generate::derive_all(domain);
     let count = derivations.len();
     let verdict = prop(&derivations);
     PropertyResult {
@@ -158,8 +158,7 @@ pub fn lookup_builtin(name: &str) -> Option<BuiltinProperty> {
 fn eval_builtin(domain: &Domain, name: &str, prop: BuiltinProperty) -> (bool, String) {
     match prop {
         BuiltinProperty::Derivation(prop_fn) => {
-            let registry = domain.registry();
-            let derivations = generate::derive_all(registry);
+            let derivations = generate::derive_all(domain);
             match prop_fn(&derivations) {
                 Verdict::Pass => (
                     true,
@@ -181,13 +180,12 @@ pub fn check_builtin_domain(domain: &Domain, name: &str) -> Option<(bool, String
     Some(eval_builtin(domain, name, prop))
 }
 
-/// Check a built-in property against a registry.
+/// Check a built-in property against a domain.
 ///
 /// Returns `Some((satisfied, reason))` if the property is known,
 /// `None` if the property name is not recognized.
-pub fn check_builtin(registry: &TypeRegistry, name: &str) -> Option<(bool, String)> {
-    let domain = Domain::from_registry(registry.clone());
-    check_builtin_domain(&domain, name)
+pub fn check_builtin(domain: &Domain, name: &str) -> Option<(bool, String)> {
+    check_builtin_domain(domain, name)
 }
 
 /// Check that every declared type has at least one variant (exhaustive).
@@ -249,8 +247,7 @@ fn inference_justified_check(domain: &Domain) -> (bool, String) {
 #[cfg(feature = "spectral")]
 fn connected_check(domain: &Domain) -> (bool, String) {
     use crate::spectral::TypeGraphSpectrum;
-    let registry = domain.registry();
-    match TypeGraphSpectrum::from_registry(registry) {
+    match TypeGraphSpectrum::from_domain(domain) {
         Some(spectrum) => {
             if spectrum.components() <= 1 {
                 (true, "connected: pass (single component)".into())
@@ -272,8 +269,7 @@ fn connected_check(domain: &Domain) -> (bool, String) {
 #[cfg(feature = "spectral")]
 fn bipartite_check(domain: &Domain) -> (bool, String) {
     use crate::spectral::TypeGraphSpectrum;
-    let registry = domain.registry();
-    match TypeGraphSpectrum::from_registry(registry) {
+    match TypeGraphSpectrum::from_domain(domain) {
         Some(spectrum) => {
             let n = spectrum.laplacian.n();
             let edges = domain.type_names().iter().fold(0usize, |acc, type_name| {
@@ -294,10 +290,10 @@ fn bipartite_check(domain: &Domain) -> (bool, String) {
     }
 }
 
-/// Derive from a registry, respecting generate overrides.
-fn derive_with_provider(registry: &TypeRegistry, provider: &GenerateProvider) -> Vec<Derivation> {
+/// Derive from a domain, respecting generate overrides.
+fn derive_with_provider(domain: &Domain, provider: &GenerateProvider) -> Vec<Derivation> {
     match provider {
-        GenerateProvider::Derived => generate::derive_all(registry),
+        GenerateProvider::Derived => generate::derive_all(domain),
         GenerateProvider::Override(overrides) => {
             // Apply overrides: replace type variants with custom ones
             let mut derivations = Vec::new();
@@ -356,11 +352,10 @@ fn check_property_block_with_overrides(
                 });
             }
             Some(BuiltinProperty::Derivation(prop_fn)) => {
-                let registry = domain.registry();
                 let provider = overrides
                     .get(&check.domain)
                     .unwrap_or(&GenerateProvider::Derived);
-                let derivations = derive_with_provider(registry, provider);
+                let derivations = derive_with_provider(domain, provider);
                 let count = derivations.len();
                 let verdict = prop_fn(&derivations);
                 results.push(PropertyResult {
@@ -434,8 +429,8 @@ pub fn check_all(namespace: &Namespace, test_section: &str) -> Result<Vec<Proper
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::model::Domain;
     use crate::parse::Parse;
-    use crate::resolve::TypeRegistry;
     use crate::Vector;
 
     /// Extract the failure message from a Verdict, panicking if Pass.
@@ -467,14 +462,14 @@ mod tests {
         Verdict::Pass.fail_msg();
     }
 
-    fn compile_grammar(source: &str) -> TypeRegistry {
+    fn compile_grammar(source: &str) -> Domain {
         let ast = Parse.trace(source.to_string()).unwrap();
         let grammar = ast
             .children()
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("source must contain a grammar block");
-        TypeRegistry::compile(grammar).unwrap()
+        Domain::from_grammar(grammar).unwrap()
     }
 
     // -- shannon_equivalence --
@@ -542,7 +537,7 @@ mod tests {
     fn check_all_test_pass() {
         let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
         let mut namespace = Namespace::new();
-        namespace.register_grammar("test", reg);
+        namespace.register_domain("test", reg);
         let test_src = "test \"basics\" { @test has a; @test has b }";
         let results = check_all(&namespace, test_src).unwrap();
         assert_eq!(results.len(), 1);
@@ -553,7 +548,7 @@ mod tests {
     fn check_all_test_fail() {
         let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
         let mut namespace = Namespace::new();
-        namespace.register_grammar("test", reg);
+        namespace.register_domain("test", reg);
         let test_src = "test \"bad\" { @test has missing }";
         let results = check_all(&namespace, test_src).unwrap();
         assert_eq!(results.len(), 1);
@@ -572,7 +567,7 @@ mod tests {
     fn check_all_property_pass() {
         let reg = compile_grammar("grammar @test {\n  type = a | b | c\n}\n");
         let mut namespace = Namespace::new();
-        namespace.register_grammar("test", reg);
+        namespace.register_domain("test", reg);
         let test_src = "property \"shannon\" { @test preserves shannon_equivalence }";
         let results = check_all(&namespace, test_src).unwrap();
         assert_eq!(results.len(), 1);
@@ -592,7 +587,7 @@ mod tests {
     fn check_all_property_unknown_property() {
         let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
         let mut namespace = Namespace::new();
-        namespace.register_grammar("test", reg);
+        namespace.register_domain("test", reg);
         let test_src = "property \"bad\" { @test preserves nonexistent }";
         let results = check_all(&namespace, test_src).unwrap();
         assert!(results[0].verdict.fail_msg().contains("nonexistent"));
@@ -601,10 +596,10 @@ mod tests {
     #[test]
     fn check_all_property_registry_builtin() {
         // Registry-type builtins (exhaustive, connected, bipartite) run against
-        // the TypeRegistry directly — they don't enumerate derivations.
+        // the Domain directly — they don't enumerate derivations.
         let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
         let mut namespace = Namespace::new();
-        namespace.register_grammar("test", reg);
+        namespace.register_domain("test", reg);
         let test_src = "property \"exhaustive\" { @test preserves exhaustive }";
         let results = check_all(&namespace, test_src).unwrap();
         assert_eq!(results.len(), 1);
@@ -619,7 +614,7 @@ mod tests {
         // Uses a test-only property that always returns (false, reason).
         let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
         let mut namespace = Namespace::new();
-        namespace.register_grammar("test", reg);
+        namespace.register_domain("test", reg);
         let test_src = "property \"fail\" { @test preserves _test_registry_fail }";
         let results = check_all(&namespace, test_src).unwrap();
         assert_eq!(results.len(), 1);
@@ -631,7 +626,7 @@ mod tests {
     fn check_all_mixed_directives() {
         let reg = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
         let mut namespace = Namespace::new();
-        namespace.register_grammar("test", reg);
+        namespace.register_domain("test", reg);
         let test_src = "test \"has\" { @test has a }\nproperty \"shannon\" { @test preserves shannon_equivalence }\n";
         let results = check_all(&namespace, test_src).unwrap();
         assert_eq!(results.len(), 2);
@@ -651,7 +646,7 @@ mod tests {
     fn check_all_typed_assertion() {
         let reg = compile_grammar("grammar @test {\n  type = a\n  type op = gt | lt\n}\n");
         let mut namespace = Namespace::new();
-        namespace.register_grammar("test", reg);
+        namespace.register_domain("test", reg);
         let test_src = "test \"typed\" { @test.op has gt }";
         let results = check_all(&namespace, test_src).unwrap();
         assert_eq!(results[0].verdict, Verdict::Pass);
@@ -661,7 +656,7 @@ mod tests {
     fn check_all_typed_assertion_fail() {
         let reg = compile_grammar("grammar @test {\n  type = a\n  type op = gt | lt\n}\n");
         let mut namespace = Namespace::new();
-        namespace.register_grammar("test", reg);
+        namespace.register_domain("test", reg);
         let test_src = "test \"typed\" { @test.op has missing }";
         let results = check_all(&namespace, test_src).unwrap();
         results[0].verdict.fail_msg();
@@ -678,7 +673,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("conv file must have a grammar block");
-        let reg = TypeRegistry::compile(grammar).unwrap();
+        let reg = Domain::from_grammar(grammar).unwrap();
         let derivations = generate::derive_all(&reg);
         assert!(
             !derivations.is_empty(),
@@ -719,7 +714,7 @@ mod tests {
     fn check_all_with_generate_override() {
         let reg = compile_grammar("grammar @test {\n  type = a | b | c\n}\n");
         let mut namespace = Namespace::new();
-        namespace.register_grammar("test", reg);
+        namespace.register_domain("test", reg);
         // Override reduces derivation space to 2 custom variants
         let test_src = "generate @test { type = x | y }\nproperty \"shannon\" { @test preserves shannon_equivalence }\n";
         let results = check_all(&namespace, test_src).unwrap();
@@ -732,7 +727,7 @@ mod tests {
     fn check_all_namespace_generate_provider() {
         let reg = compile_grammar("grammar @test {\n  type = a | b | c\n}\n");
         let mut namespace = Namespace::new();
-        namespace.register_grammar("test", reg);
+        namespace.register_domain("test", reg);
         namespace.register_generate(
             "test",
             GenerateProvider::Override(vec![("".into(), vec!["p".into(), "q".into()])]),
@@ -747,7 +742,7 @@ mod tests {
     fn check_all_test_section_override_beats_namespace() {
         let reg = compile_grammar("grammar @test {\n  type = a | b | c\n}\n");
         let mut namespace = Namespace::new();
-        namespace.register_grammar("test", reg);
+        namespace.register_domain("test", reg);
         // Namespace says override with 2 variants
         namespace.register_generate(
             "test",
@@ -835,8 +830,8 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("should have grammar block");
-        let reg = TypeRegistry::compile(grammar).unwrap();
-        assert_eq!(reg.domain, "property");
+        let reg = Domain::from_grammar(grammar).unwrap();
+        assert_eq!(reg.domain_name(), "property");
 
         // Verify types
         assert!(reg.has_variant("", "requires"));
@@ -872,10 +867,10 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let reg = TypeRegistry::compile(grammar).unwrap();
+        let reg = Domain::from_grammar(grammar).unwrap();
 
         let mut namespace = Namespace::new();
-        namespace.register_grammar("property", reg);
+        namespace.register_domain("property", reg);
 
         // Run all test directives
         let results = check_all(&namespace, test_src).unwrap();
@@ -920,8 +915,8 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("should have grammar block");
-        let reg = TypeRegistry::compile(grammar).unwrap();
-        assert_eq!(reg.domain, "topology");
+        let reg = Domain::from_grammar(grammar).unwrap();
+        assert_eq!(reg.domain_name(), "topology");
 
         // Verify types
         assert!(reg.has_variant("", "graph"));
@@ -965,10 +960,10 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let reg = TypeRegistry::compile(grammar).unwrap();
+        let reg = Domain::from_grammar(grammar).unwrap();
 
         let mut namespace = Namespace::new();
-        namespace.register_grammar("topology", reg);
+        namespace.register_domain("topology", reg);
 
         // Run all test directives
         let results = check_all(&namespace, test_src).unwrap();
@@ -1017,8 +1012,8 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("should have grammar block");
-        let reg = TypeRegistry::compile(grammar).unwrap();
-        assert_eq!(reg.domain, "training");
+        let reg = Domain::from_grammar(grammar).unwrap();
+        assert_eq!(reg.domain_name(), "training");
 
         // Verify types
         assert!(reg.has_variant("", "epoch"));
@@ -1070,10 +1065,10 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let reg = TypeRegistry::compile(grammar).unwrap();
+        let reg = Domain::from_grammar(grammar).unwrap();
 
         let mut namespace = Namespace::new();
-        namespace.register_grammar("training", reg);
+        namespace.register_domain("training", reg);
 
         // Run all test directives
         let results = check_all(&namespace, test_src).unwrap();
@@ -1118,8 +1113,8 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("should have grammar block");
-        let reg = TypeRegistry::compile(grammar).unwrap();
-        assert_eq!(reg.domain, "coincidence");
+        let reg = Domain::from_grammar(grammar).unwrap();
+        assert_eq!(reg.domain_name(), "coincidence");
 
         // Verify types
         assert!(reg.has_variant("", "measurement"));
@@ -1166,10 +1161,10 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let reg = TypeRegistry::compile(grammar).unwrap();
+        let reg = Domain::from_grammar(grammar).unwrap();
 
         let mut namespace = Namespace::new();
-        namespace.register_grammar("coincidence", reg);
+        namespace.register_domain("coincidence", reg);
 
         // Run all test directives
         let results = check_all(&namespace, test_src).unwrap();
@@ -1239,8 +1234,7 @@ mod tests {
     #[test]
     fn eval_builtin_derivation_fail() {
         // Create a grammar and use a property that always fails
-        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
-        let domain = Domain::from_registry(reg);
+        let domain = compile_grammar("grammar @test {\n  type = a | b\n}\n");
         fn always_fail(_: &[Derivation]) -> Verdict {
             Verdict::Fail("always fails".into())
         }
@@ -1252,8 +1246,7 @@ mod tests {
 
     #[test]
     fn eval_builtin_registry_pass() {
-        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
-        let domain = Domain::from_registry(reg);
+        let domain = compile_grammar("grammar @test {\n  type = a | b\n}\n");
         let prop = BuiltinProperty::Registry(exhaustive_check);
         let (satisfied, _reason) = eval_builtin(&domain, "exhaustive", prop);
         assert!(satisfied);
@@ -1287,7 +1280,7 @@ mod tests {
 
     #[test]
     fn check_builtin_exhaustive_with_actions() {
-        // Exercises the from_registry path with actions, fields, calls (with args), and properties.
+        // Exercises the Domain path with actions, fields, calls (with args), and properties.
         let reg = compile_grammar(
             "grammar @test {\n  type = a | b\n\n  public action send {\n    payload\n    @tools.exec(payload)\n  }\n\n  requires shannon_equivalence\n  invariant connected\n  ensures delivered\n}\n",
         );

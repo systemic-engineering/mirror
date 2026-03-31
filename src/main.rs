@@ -19,7 +19,8 @@ use std::process;
 use conversation::domain::filesystem::{Filesystem, Folder};
 use conversation::packages::{self, PackageRegistry};
 use conversation::property;
-use conversation::resolve::{Conversation, Resolve, TypeRegistry};
+use conversation::model::Domain;
+use conversation::resolve::{Conversation, Resolve};
 use conversation::{Parse, Vector};
 
 fn main() {
@@ -126,9 +127,9 @@ fn run_tests(source: &str, resolve: &Resolve) {
     if let Ok(ast) = Parse.trace(source.to_string()).into_result() {
         for child in ast.children() {
             if child.data().is_decl("grammar") {
-                if let Ok(registry) = TypeRegistry::compile(child) {
-                    let domain = registry.domain.clone();
-                    namespace.register_grammar(&domain, registry);
+                if let Ok(domain) = Domain::from_grammar(child) {
+                    let domain_name = domain.domain_name().to_string();
+                    namespace.register_domain(&domain_name, domain);
                 }
             }
         }

@@ -4,7 +4,7 @@
 //! Validates domain references, template references, output structure.
 //! Errors carry spans and did-you-mean hints.
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::marker::PhantomData;
 
 use serde_json::Value;
@@ -15,11 +15,8 @@ use crate::parse::ParseError;
 use crate::prism::{self, Prism};
 use crate::{ComposedError, Vector};
 
-use fragmentation::fragment::{self, Fragmentable};
 use fragmentation::ref_::Ref;
-use fragmentation::repo::Repo;
-use fragmentation::sha::{self, Sha};
-use fragmentation::store::Store;
+use fragmentation::sha;
 
 domain_oid!(/// Content address for resolved conversations.
 pub ConversationOid);
@@ -30,441 +27,6 @@ pub enum Visibility {
     Public,
     Protected,
     Private,
-}
-
-/// Compiled grammar. Maps type names to valid variants.
-///
-/// ```text
-/// grammar @conversation { type = in | out | ...  type op = gt | lt | ... }
-/// ```
-/// yields:
-///   `""` → `{"in", "out", "template", ...}`    (anonymous/default type)
-///   `"op"` → `{"gt", "lt", "gte", "lte", ...}` (named type)
-#[derive(Clone, Debug)]
-pub struct TypeRegistry {
-    ref_: Ref,
-    encoded: Vec<u8>,
-    pub domain: String,
-    types: HashMap<String, HashSet<String>>,
-    #[allow(dead_code)] // read in tests; used by Phase 4 validation
-    params: HashMap<(String, String), String>,
-    acts: HashMap<String, Vec<(String, Option<String>)>>,
-    calls: HashMap<String, Vec<(String, String, Vec<String>)>>,
-    visibility: HashMap<String, Visibility>,
-    required_properties: Vec<String>,
-    invariants: Vec<String>,
-    ensures: Vec<String>,
-}
-
-impl TypeRegistry {
-    /// Compile a Grammar AST node into a validated TypeRegistry.
-    ///
-    /// Walks the Grammar's TypeDef children, extracts type names and variant
-    /// names, records parameterized variant references, then validates that
-    /// every TypeRef points to a declared type name.
-    pub fn compile(grammar_node: &Prism<AstNode>) -> Result<TypeRegistry, ResolveError> {
-        let raw = &grammar_node.data().value;
-        let domain = raw.strip_prefix('@').unwrap_or(raw).to_string();
-
-        let mut types: HashMap<String, HashSet<String>> = HashMap::new();
-        let mut params: HashMap<(String, String), String> = HashMap::new();
-        let mut acts: HashMap<String, Vec<(String, Option<String>)>> = HashMap::new();
-        let mut calls: HashMap<String, Vec<(String, String, Vec<String>)>> = HashMap::new();
-        let mut visibility: HashMap<String, Visibility> = HashMap::new();
-
-        for child in grammar_node.children() {
-            if child.data().is_form("type-def") {
-                let type_name = child.data().value.clone();
-                let mut variants = HashSet::new();
-
-                for variant in child.children() {
-                    if !variant.data().is_form("variant") {
-                        continue;
-                    }
-                    let variant_name = variant.data().value.clone();
-
-                    for sub in variant.children() {
-                        if sub.data().is_ref("type-ref") {
-                            params.insert(
-                                (type_name.clone(), variant_name.clone()),
-                                sub.data().value.clone(),
-                            );
-                        }
-                    }
-
-                    variants.insert(variant_name);
-                }
-
-                types.insert(type_name, variants);
-            } else if child.data().is_form("action-def") {
-                let act_name = child.data().value.clone();
-                let mut fields = Vec::new();
-                let mut act_calls = Vec::new();
-                let mut vis = Visibility::Protected;
-
-                for item in child.children() {
-                    if item.data().is_atom("visibility") {
-                        vis = match item.data().value.as_str() {
-                            "public" => Visibility::Public,
-                            "private" => Visibility::Private,
-                            _ => Visibility::Protected,
-                        };
-                    } else if item.data().is_atom("field") {
-                        let field_name = item.data().value.clone();
-                        let type_ref = item
-                            .children()
-                            .iter()
-                            .find(|c| c.data().is_ref("type-ref"))
-                            .map(|c| c.data().value.clone());
-                        fields.push((field_name, type_ref));
-                    } else if item.data().is_ref("action-call") {
-                        // @domain.action → split into domain + action
-                        let target = &item.data().value;
-                        let target = target.strip_prefix('@').unwrap_or(target);
-                        if let Some((domain, action)) = target.split_once('.') {
-                            let args: Vec<String> = item
-                                .children()
-                                .iter()
-                                .map(|c| c.data().value.clone())
-                                .collect();
-                            act_calls.push((domain.to_string(), action.to_string(), args));
-                        }
-                    }
-                }
-
-                visibility.insert(act_name.clone(), vis);
-                acts.insert(act_name.clone(), fields);
-                if !act_calls.is_empty() {
-                    calls.insert(act_name, act_calls);
-                }
-            }
-        }
-
-        // Validate: every TypeRef must reference a declared type name
-        let span = grammar_node.data().span;
-        for ((parent_type, variant_name), ref_type) in &params {
-            if !types.contains_key(ref_type) {
-                return Err(Self::bad_type_ref(
-                    ref_type,
-                    &types,
-                    &domain,
-                    format!(
-                        "variant \"{}\" in type \"{}\"",
-                        variant_name,
-                        if parent_type.is_empty() {
-                            "<default>"
-                        } else {
-                            parent_type
-                        },
-                    ),
-                    span,
-                ));
-            }
-        }
-        // Act field type-refs are semantic annotations, not validated references.
-        // Unlike parameterized variants (which MUST reference a declared type name),
-        // act fields can reference variants, external types, or undeclared names.
-
-        // Collect property declarations
-        let mut required_properties: Vec<String> = Vec::new();
-        let mut invariants_list: Vec<String> = Vec::new();
-        let mut ensures_list: Vec<String> = Vec::new();
-        for child in grammar_node.children() {
-            if child.data().is_decl("requires") {
-                required_properties.push(child.data().value.clone());
-            } else if child.data().is_decl("invariant") {
-                invariants_list.push(child.data().value.clone());
-            } else if child.data().is_decl("ensures") {
-                ensures_list.push(child.data().value.clone());
-            }
-        }
-
-        Ok(Self::finalize(
-            domain,
-            types,
-            params,
-            acts,
-            calls,
-            visibility,
-            required_properties,
-            invariants_list,
-            ensures_list,
-        ))
-    }
-
-    /// Build a "unknown type reference" error with did-you-mean hints.
-    fn bad_type_ref(
-        ref_type: &str,
-        types: &HashMap<String, HashSet<String>>,
-        domain: &str,
-        context: String,
-        span: crate::ast::Span,
-    ) -> ResolveError {
-        let declared: Vec<&str> = types.keys().map(|s| s.as_str()).collect();
-        let hints = hint_did_you_mean(ref_type, &declared, |s| format!("did you mean \"{}\"?", s));
-        ResolveError {
-            message: format!(
-                "unknown type reference \"{}\" in grammar @{} ({})",
-                ref_type, domain, context,
-            ),
-            span: Some(span),
-            hints,
-        }
-    }
-
-    /// Check if a named type exists in this registry.
-    pub fn has_type(&self, name: &str) -> bool {
-        self.types.contains_key(name)
-    }
-
-    /// Check if a variant exists under a given type name.
-    pub fn has_variant(&self, type_name: &str, variant: &str) -> bool {
-        self.types
-            .get(type_name)
-            .is_some_and(|vs| vs.contains(variant))
-    }
-
-    /// Validate that a type reference name exists. Returns error with did-you-mean if not.
-    pub fn validate_type_ref(&self, ref_name: &str) -> Result<(), ResolveError> {
-        if self.types.contains_key(ref_name) {
-            Ok(())
-        } else {
-            let declared: Vec<&str> = self.types.keys().map(|s| s.as_str()).collect();
-            let hints =
-                hint_did_you_mean(ref_name, &declared, |s| format!("did you mean \"{}\"?", s));
-            Err(ResolveError {
-                message: format!("unknown type \"{}\" in grammar @{}", ref_name, self.domain),
-                span: None,
-                hints,
-            })
-        }
-    }
-
-    /// Check if a named action exists in this registry.
-    pub fn has_action(&self, name: &str) -> bool {
-        self.acts.contains_key(name)
-    }
-
-    /// Get the fields of a named action: (field_name, optional_type_ref).
-    pub fn action_fields(&self, name: &str) -> Option<&[(String, Option<String>)]> {
-        self.acts.get(name).map(|v| v.as_slice())
-    }
-
-    /// All type names declared in this grammar.
-    pub fn type_names(&self) -> Vec<&str> {
-        self.types.keys().map(|s| s.as_str()).collect()
-    }
-
-    /// All variants for a named type. Returns None if the type doesn't exist.
-    pub fn variants(&self, type_name: &str) -> Option<Vec<&str>> {
-        self.types
-            .get(type_name)
-            .map(|vs| vs.iter().map(|s| s.as_str()).collect())
-    }
-
-    /// The parameter type reference for a parameterized variant, if any.
-    pub fn variant_param(&self, type_name: &str, variant: &str) -> Option<&str> {
-        self.params
-            .get(&(type_name.to_string(), variant.to_string()))
-            .map(|s| s.as_str())
-    }
-
-    /// All act names declared in this grammar.
-    pub fn act_names(&self) -> Vec<&str> {
-        self.acts.keys().map(|s| s.as_str()).collect()
-    }
-
-    /// Get the cross-actor calls for a named action: (domain, action, args).
-    pub fn action_calls(&self, name: &str) -> &[(String, String, Vec<String>)] {
-        self.calls.get(name).map(|v| v.as_slice()).unwrap_or(&[])
-    }
-
-    /// The canonical encoded bytes for this grammar (deterministic).
-    pub fn encoded(&self) -> &[u8] {
-        &self.encoded
-    }
-
-    /// Get the visibility of a named action. Defaults to Protected.
-    pub fn action_visibility(&self, name: &str) -> Visibility {
-        self.visibility
-            .get(name)
-            .cloned()
-            .unwrap_or(Visibility::Protected)
-    }
-
-    /// All `requires` property names declared in this grammar.
-    pub fn required_properties(&self) -> &[String] {
-        &self.required_properties
-    }
-
-    /// All `invariant` property names declared in this grammar.
-    pub fn invariants(&self) -> &[String] {
-        &self.invariants
-    }
-
-    /// All `ensures` property names declared in this grammar.
-    pub fn ensures(&self) -> &[String] {
-        &self.ensures
-    }
-
-    /// Test-only: build a registry with a parameterized variant whose type ref
-    /// is NOT declared. This bypasses compile-time validation to exercise the
-    /// `None => continue` defensive path in `generate::derive_type`.
-    #[cfg(test)]
-    pub(crate) fn with_dangling_param(
-        domain: &str,
-        type_name: &str,
-        variant: &str,
-        param_ref: &str,
-    ) -> Self {
-        let mut types = HashMap::new();
-        let mut variants = HashSet::new();
-        variants.insert(variant.to_string());
-        types.insert(type_name.to_string(), variants);
-        // param points to a type that does NOT exist in `types`
-        let mut params = HashMap::new();
-        params.insert(
-            (type_name.to_string(), variant.to_string()),
-            param_ref.to_string(),
-        );
-        Self::finalize(
-            domain.to_string(),
-            types,
-            params,
-            HashMap::new(),
-            HashMap::new(),
-            HashMap::new(),
-            Vec::new(),
-            Vec::new(),
-            Vec::new(),
-        )
-    }
-
-    /// Build a finalized TypeRegistry from raw data.
-    /// Computes the canonical encoding and content address.
-    #[allow(clippy::too_many_arguments)]
-    fn finalize(
-        domain: String,
-        types: HashMap<String, HashSet<String>>,
-        params: HashMap<(String, String), String>,
-        acts: HashMap<String, Vec<(String, Option<String>)>>,
-        calls: HashMap<String, Vec<(String, String, Vec<String>)>>,
-        visibility: HashMap<String, Visibility>,
-        required_properties: Vec<String>,
-        invariants: Vec<String>,
-        ensures: Vec<String>,
-    ) -> Self {
-        let encoded = Self::encode_canonical(
-            &domain,
-            &types,
-            &params,
-            &acts,
-            &required_properties,
-            &invariants,
-            &ensures,
-        );
-        let sha = Sha(fragment::blob_oid_bytes(&encoded));
-        let ref_ = Ref::new(sha, format!("grammar/{}", domain));
-        TypeRegistry {
-            ref_,
-            encoded,
-            domain,
-            types,
-            params,
-            acts,
-            calls,
-            visibility,
-            required_properties,
-            invariants,
-            ensures,
-        }
-    }
-
-    /// Deterministic encoding of grammar data.
-    /// Sorted keys ensure same grammar → same bytes → same OID.
-    fn encode_canonical(
-        domain: &str,
-        types: &HashMap<String, HashSet<String>>,
-        params: &HashMap<(String, String), String>,
-        acts: &HashMap<String, Vec<(String, Option<String>)>>,
-        required_properties: &[String],
-        invariants: &[String],
-        ensures: &[String],
-    ) -> Vec<u8> {
-        let mut lines = Vec::new();
-        lines.push(domain.to_string());
-
-        // Types: sorted by name, variants sorted
-        let mut type_keys: Vec<&String> = types.keys().collect();
-        type_keys.sort();
-        for name in type_keys {
-            let mut variants: Vec<&String> = types[name].iter().collect();
-            variants.sort();
-            let vs: Vec<&str> = variants.iter().map(|s| s.as_str()).collect();
-            lines.push(format!("type:{}={}", name, vs.join(",")));
-        }
-
-        // Params: sorted by (type, variant)
-        let mut param_keys: Vec<&(String, String)> = params.keys().collect();
-        param_keys.sort();
-        for key in param_keys {
-            lines.push(format!("param:{},{}={}", key.0, key.1, params[key]));
-        }
-
-        // Acts: sorted by name, fields in order
-        let mut act_keys: Vec<&String> = acts.keys().collect();
-        act_keys.sort();
-        for name in act_keys {
-            let fields: Vec<String> = acts[name]
-                .iter()
-                .map(|(f, t)| match t {
-                    Some(tr) => format!("{}:{}", f, tr),
-                    None => f.clone(),
-                })
-                .collect();
-            lines.push(format!("act:{}={}", name, fields.join(",")));
-        }
-
-        // Required properties: sorted for determinism
-        let mut sorted_requires: Vec<&String> = required_properties.iter().collect();
-        sorted_requires.sort();
-        for prop in sorted_requires {
-            lines.push(format!("requires:{}", prop));
-        }
-
-        // Invariants: sorted for determinism
-        let mut sorted_invariants: Vec<&String> = invariants.iter().collect();
-        sorted_invariants.sort();
-        for inv in sorted_invariants {
-            lines.push(format!("invariant:{}", inv));
-        }
-
-        // Ensures: sorted for determinism
-        let mut sorted_ensures: Vec<&String> = ensures.iter().collect();
-        sorted_ensures.sort();
-        for ens in sorted_ensures {
-            lines.push(format!("ensures:{}", ens));
-        }
-
-        lines.join("\n").into_bytes()
-    }
-}
-
-impl Fragmentable for TypeRegistry {
-    type Data = Vec<u8>;
-    type Hash = Sha;
-
-    fn self_ref(&self) -> &Ref {
-        &self.ref_
-    }
-
-    fn data(&self) -> &Vec<u8> {
-        &self.encoded
-    }
-
-    fn children(&self) -> &[Self] {
-        &[]
-    }
 }
 
 /// What a namespace module provides when resolved.
@@ -494,7 +56,6 @@ pub enum GenerateProvider {
 #[derive(Clone, Debug, Default)]
 pub struct Namespace {
     modules: HashMap<String, TemplateProvider>,
-    grammar_store: Store<TypeRegistry>,
     domain_store: HashMap<String, crate::model::Domain>,
     generate_overrides: HashMap<String, GenerateProvider>,
 }
@@ -509,24 +70,9 @@ impl Namespace {
         self.modules.insert(name.to_string(), provider);
     }
 
-    /// Register a compiled grammar for a domain.
-    ///
-    /// Stores both the TypeRegistry (for backward compat) and a Domain.
-    pub fn register_grammar(&mut self, domain: &str, registry: TypeRegistry) {
-        let ref_name = format!("grammar/{}", domain);
-        self.grammar_store.write_tree(&registry);
-        let sha = registry.self_ref().sha.clone();
-        self.grammar_store.update_ref(&ref_name, sha);
-        // Also store a Domain for the new API.
-        let dom = crate::model::Domain::from_registry(registry);
-        self.domain_store.insert(domain.to_string(), dom);
-    }
-
-    /// Look up a grammar by domain name.
-    pub fn grammar(&self, domain: &str) -> Option<TypeRegistry> {
-        let ref_name = format!("grammar/{}", domain);
-        let sha = self.grammar_store.resolve_ref(&ref_name)?;
-        self.grammar_store.read_tree(&sha.0)
+    /// Register a compiled domain.
+    pub fn register_domain(&mut self, name: &str, domain: crate::model::Domain) {
+        self.domain_store.insert(name.to_string(), domain);
     }
 
     /// Look up a domain by name.
@@ -875,8 +421,13 @@ fn resolve_ast<C: Setting>(
     let mut grammar_domains: Vec<String> = Vec::new();
     for child in children {
         if child.data().is_decl("grammar") {
-            let registry = TypeRegistry::compile(child)?;
-            grammar_domains.push(registry.domain);
+            let domain = crate::model::Domain::from_grammar(child)
+                .map_err(|msg| ResolveError {
+                    message: msg,
+                    span: Some(child.data().span),
+                    hints: vec![],
+                })?;
+            grammar_domains.push(domain.domain_name().to_string());
         }
     }
 
@@ -2368,54 +1919,51 @@ mod tests {
         assert_eq!(tmpl.fields.len(), 1);
     }
 
-    // -- TypeRegistry --
+    // -- Grammar compilation via Domain --
 
-    /// Parse a grammar source and compile its TypeRegistry.
-    fn compile_grammar(source: &str) -> TypeRegistry {
+    /// Parse a grammar source and compile a Domain.
+    fn compile_grammar(source: &str) -> crate::model::Domain {
         let ast = Parse.trace(source.to_string()).unwrap();
         let grammar = ast
             .children()
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("source must contain a grammar block");
-        TypeRegistry::compile(grammar).unwrap()
+        crate::model::Domain::from_grammar(grammar).unwrap()
     }
 
     #[test]
-    fn type_registry_compile_anonymous_type() {
-        let reg = compile_grammar("grammar @test {\n  type = a | b | c\n}\n");
-        assert_eq!(reg.domain, "test");
-        assert!(reg.has_type(""));
-        assert!(reg.has_variant("", "a"));
-        assert!(reg.has_variant("", "b"));
-        assert!(reg.has_variant("", "c"));
-        assert!(!reg.has_variant("", "d"));
+    fn domain_compile_anonymous_type() {
+        let dom = compile_grammar("grammar @test {\n  type = a | b | c\n}\n");
+        assert_eq!(dom.domain_name(), "test");
+        assert!(dom.has_type(""));
+        assert!(dom.has_variant("", "a"));
+        assert!(dom.has_variant("", "b"));
+        assert!(dom.has_variant("", "c"));
+        assert!(!dom.has_variant("", "d"));
     }
 
     #[test]
-    fn type_registry_compile_named_type() {
-        let reg = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
-        assert!(reg.has_type("op"));
-        assert!(reg.has_variant("op", "gt"));
-        assert!(reg.has_variant("op", "lt"));
-        assert!(!reg.has_variant("op", "eq"));
+    fn domain_compile_named_type() {
+        let dom = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
+        assert!(dom.has_type("op"));
+        assert!(dom.has_variant("op", "gt"));
+        assert!(dom.has_variant("op", "lt"));
+        assert!(!dom.has_variant("op", "eq"));
     }
 
     #[test]
-    fn type_registry_compile_parameterized_variant() {
-        let reg =
+    fn domain_compile_parameterized_variant() {
+        let dom =
             compile_grammar("grammar @test {\n  type = plain | when(op)\n  type op = gt | lt\n}\n");
-        assert!(reg.has_variant("", "when"));
-        assert!(reg.has_variant("", "plain"));
+        assert!(dom.has_variant("", "when"));
+        assert!(dom.has_variant("", "plain"));
         // The param reference should be recorded
-        assert!(reg
-            .params
-            .contains_key(&("".to_string(), "when".to_string())));
-        assert_eq!(reg.params[&("".to_string(), "when".to_string())], "op");
+        assert_eq!(dom.variant_param("", "when"), Some("op"));
     }
 
     #[test]
-    fn type_registry_compile_invalid_type_ref() {
+    fn domain_compile_invalid_type_ref() {
         let source = "grammar @test {\n  type = when(ops)\n  type op = gt | lt\n}\n";
         let ast = Parse.trace(source.to_string()).unwrap();
         let grammar = ast
@@ -2423,23 +1971,21 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("grammar");
-        let err = TypeRegistry::compile(grammar).unwrap_err();
+        let err = crate::model::Domain::from_grammar(grammar).unwrap_err();
         assert!(
-            err.message.contains("ops"),
+            err.contains("ops"),
             "should mention bad ref: {}",
             err
         );
         assert!(
-            err.message.contains("@test"),
+            err.contains("@test"),
             "should mention domain: {}",
             err
         );
-        assert!(!err.hints.is_empty(), "should suggest 'op'");
-        assert!(err.hints[0].contains("op"), "{}", err.hints[0]);
     }
 
     #[test]
-    fn type_registry_compile_invalid_named_type_ref() {
+    fn domain_compile_invalid_named_type_ref() {
         // Bad ref in a NAMED type (exercises the else branch in the error message)
         let source =
             "grammar @test {\n  type color = red(shades)\n  type shade = light | dark\n}\n";
@@ -2449,17 +1995,17 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("grammar");
-        let err = TypeRegistry::compile(grammar).unwrap_err();
-        assert!(err.message.contains("shades"), "{}", err);
+        let err = crate::model::Domain::from_grammar(grammar).unwrap_err();
+        assert!(err.contains("shades"), "{}", err);
         assert!(
-            err.message.contains("color"),
+            err.contains("color"),
             "should mention parent type: {}",
             err
         );
     }
 
     #[test]
-    fn type_registry_compile_skips_non_typedef_children() {
+    fn domain_compile_skips_non_typedef_children() {
         use crate::ast::{self, Span};
         // Grammar node with a non-TypeDef child (Field) — should be skipped
         let span = Span::new(0, 50);
@@ -2473,12 +2019,12 @@ mod tests {
             span,
             vec![stray_child, typedef],
         );
-        let reg = TypeRegistry::compile(&grammar).unwrap();
-        assert!(reg.has_variant("", "a"));
+        let dom = crate::model::Domain::from_grammar(&grammar).unwrap();
+        assert!(dom.has_variant("", "a"));
     }
 
     #[test]
-    fn type_registry_compile_skips_non_variant_children() {
+    fn domain_compile_skips_non_variant_children() {
         use crate::ast::{self, Span};
         // TypeDef with a non-Variant child (Field) — should be skipped
         let span = Span::new(0, 50);
@@ -2486,95 +2032,77 @@ mod tests {
         let variant = ast::ast_leaf(Kind::Form, "variant", "a", span);
         let typedef = ast::ast_branch(Kind::Form, "type-def", "", span, vec![stray, variant]);
         let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![typedef]);
-        let reg = TypeRegistry::compile(&grammar).unwrap();
-        assert!(reg.has_variant("", "a"));
+        let dom = crate::model::Domain::from_grammar(&grammar).unwrap();
+        assert!(dom.has_variant("", "a"));
         // Only 1 variant, not 2
-        assert_eq!(reg.types[""].len(), 1);
+        assert_eq!(dom.variants("").unwrap().len(), 1);
     }
 
     #[test]
-    fn type_registry_compile_empty_grammar() {
-        let reg = compile_grammar("grammar @empty {}\n");
-        assert_eq!(reg.domain, "empty");
-        assert!(!reg.has_type(""));
+    fn domain_compile_empty_grammar() {
+        let dom = compile_grammar("grammar @empty {}\n");
+        assert_eq!(dom.domain_name(), "empty");
+        assert!(!dom.has_type(""));
     }
 
     #[test]
-    fn type_registry_validate_type_ref_ok() {
-        let reg = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
-        assert!(reg.validate_type_ref("op").is_ok());
-        assert!(reg.validate_type_ref("").is_ok());
+    fn domain_has_type_false_for_missing() {
+        let dom = compile_grammar("grammar @test {\n  type = a\n}\n");
+        assert!(!dom.has_type("missing"));
     }
 
     #[test]
-    fn type_registry_validate_type_ref_error() {
-        let reg = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
-        let err = reg.validate_type_ref("ops").unwrap_err();
-        assert!(err.message.contains("ops"), "{}", err);
-        assert!(!err.hints.is_empty());
-        assert!(err.hints[0].contains("op"), "{}", err.hints[0]);
+    fn domain_has_variant_false_for_missing_type() {
+        let dom = compile_grammar("grammar @test {\n  type = a\n}\n");
+        assert!(!dom.has_variant("missing", "a"));
     }
 
-    #[test]
-    fn type_registry_has_type_false_for_missing() {
-        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
-        assert!(!reg.has_type("missing"));
-    }
+    // -- Action compilation --
 
     #[test]
-    fn type_registry_has_variant_false_for_missing_type() {
-        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
-        assert!(!reg.has_variant("missing", "a"));
-    }
-
-    // -- TypeRegistry: action compilation --
-
-    #[test]
-    fn type_registry_compile_action() {
-        let reg = compile_grammar(
+    fn domain_compile_action() {
+        let dom = compile_grammar(
             "grammar @test {\n  type address = email | uri\n  action send {\n    to: address\n  }\n}\n",
         );
-        assert!(reg.has_action("send"));
-        let fields = reg.action_fields("send").unwrap();
+        assert!(dom.has_action("send"));
+        let fields = dom.act_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].0, "to");
-        assert_eq!(fields[0].1, Some("address".to_string()));
+        assert_eq!(fields[0].1, Some("address"));
     }
 
     #[test]
-    fn type_registry_compile_action_untyped_field() {
-        let reg = compile_grammar("grammar @test {\n  action send {\n    subject\n  }\n}\n");
-        assert!(reg.has_action("send"));
-        let fields = reg.action_fields("send").unwrap();
+    fn domain_compile_action_untyped_field() {
+        let dom = compile_grammar("grammar @test {\n  action send {\n    subject\n  }\n}\n");
+        assert!(dom.has_action("send"));
+        let fields = dom.act_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].0, "subject");
         assert_eq!(fields[0].1, None);
     }
 
     #[test]
-    fn type_registry_compile_action_unvalidated_type_ref() {
+    fn domain_compile_action_unvalidated_type_ref() {
         // Action field type-refs are semantic annotations — not validated against type names.
-        // This mirrors real usage: garden's @mail uses `from: address` where `address`
-        // is a variant, and `body: article` which is undeclared.
-        let reg = compile_grammar(
+        let dom = compile_grammar(
             "grammar @test {\n  type address = email | uri\n  action send {\n    to: addres\n    body: article\n  }\n}\n",
         );
-        assert!(reg.has_action("send"));
-        let fields = reg.action_fields("send").unwrap();
-        assert_eq!(fields[0], ("to".into(), Some("addres".into())));
-        assert_eq!(fields[1], ("body".into(), Some("article".into())));
+        assert!(dom.has_action("send"));
+        let fields = dom.act_fields("send").unwrap();
+        assert_eq!(fields[0], ("to", Some("addres")));
+        assert_eq!(fields[1], ("body", Some("article")));
     }
 
     #[test]
-    fn type_registry_compile_action_empty() {
-        let reg = compile_grammar("grammar @test {\n  action noop {}\n}\n");
-        assert!(reg.has_action("noop"));
-        let fields = reg.action_fields("noop").unwrap();
+    fn domain_compile_action_empty() {
+        let dom = compile_grammar("grammar @test {\n  action noop {}\n}\n");
+        assert!(dom.has_action("noop"));
+        let fields = dom.act_fields("noop").unwrap();
         assert!(fields.is_empty());
     }
 
     #[test]
-    fn type_registry_compile_action_skips_non_field_children() {
+    fn domain_compile_action_skips_non_field_children() {
         use crate::ast::{self, Span};
         // Action-def with a non-field child — should be skipped
         let span = Span::new(0, 50);
@@ -2582,33 +2110,33 @@ mod tests {
         let field = ast::ast_leaf(Kind::Atom, "field", "to", span);
         let actiondef = ast::ast_branch(Kind::Form, "action-def", "send", span, vec![stray, field]);
         let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![actiondef]);
-        let reg = TypeRegistry::compile(&grammar).unwrap();
-        assert!(reg.has_action("send"));
-        let fields = reg.action_fields("send").unwrap();
+        let dom = crate::model::Domain::from_grammar(&grammar).unwrap();
+        assert!(dom.has_action("send"));
+        let fields = dom.act_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].0, "to");
     }
 
     #[test]
-    fn type_registry_compile_action_call_no_dot_skipped() {
+    fn domain_compile_action_call_no_dot_skipped() {
         use crate::ast::{self, Span};
         // Manually construct an action-call node with no dot (defensive path)
         let span = Span::new(0, 50);
         let call = ast::ast_leaf(Kind::Ref, "action-call", "nodot", span);
         let actiondef = ast::ast_branch(Kind::Form, "action-def", "ping", span, vec![call]);
         let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![actiondef]);
-        let reg = TypeRegistry::compile(&grammar).unwrap();
-        assert!(reg.has_action("ping"));
-        assert!(reg.action_calls("ping").is_empty());
+        let dom = crate::model::Domain::from_grammar(&grammar).unwrap();
+        assert!(dom.has_action("ping"));
+        assert!(dom.action_calls("ping").is_empty());
     }
 
     #[test]
-    fn type_registry_compile_action_calls() {
-        let reg = compile_grammar(
+    fn domain_compile_action_calls() {
+        let dom = compile_grammar(
             "grammar @test {\n  type source = a | b\n  action commit {\n    source: source\n    @filesystem.write(source)\n  }\n}\n",
         );
-        assert!(reg.has_action("commit"));
-        let calls = reg.action_calls("commit");
+        assert!(dom.has_action("commit"));
+        let calls = dom.action_calls("commit");
         assert_eq!(calls.len(), 1);
         assert_eq!(calls[0].0, "filesystem"); // target domain
         assert_eq!(calls[0].1, "write"); // target action
@@ -2616,68 +2144,68 @@ mod tests {
     }
 
     #[test]
-    fn type_registry_compile_action_calls_empty() {
-        let reg = compile_grammar("grammar @test {\n  action send {\n    to: address\n  }\n}\n");
-        let calls = reg.action_calls("send");
+    fn domain_compile_action_calls_empty() {
+        let dom = compile_grammar("grammar @test {\n  action send {\n    to: address\n  }\n}\n");
+        let calls = dom.action_calls("send");
         assert!(calls.is_empty());
     }
 
     #[test]
-    fn type_registry_has_action_false_for_missing() {
-        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
-        assert!(!reg.has_action("missing"));
+    fn domain_has_action_false_for_missing() {
+        let dom = compile_grammar("grammar @test {\n  type = a\n}\n");
+        assert!(!dom.has_action("missing"));
     }
 
     #[test]
-    fn type_registry_action_fields_none_for_missing() {
-        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
-        assert!(reg.action_fields("missing").is_none());
+    fn domain_act_fields_none_for_missing() {
+        let dom = compile_grammar("grammar @test {\n  type = a\n}\n");
+        assert!(dom.act_fields("missing").is_none());
     }
 
     #[test]
-    fn type_registry_compile_mail_conv() {
-        let reg = compile_grammar(include_str!("../conv/mail.conv"));
-        assert_eq!(reg.domain, "mail");
+    fn domain_compile_mail_conv() {
+        let dom = compile_grammar(include_str!("../conv/mail.conv"));
+        assert_eq!(dom.domain_name(), "mail");
         // Types
-        assert!(reg.has_variant("", "message"));
-        assert!(reg.has_variant("", "server"));
-        assert!(reg.has_variant("header", "from"));
-        assert!(reg.has_variant("flag", "seen"));
-        assert!(reg.has_variant("protocol", "jmap"));
-        assert!(reg.has_variant("server", "stalwart"));
-        assert!(reg.has_variant("dns", "dkim"));
+        assert!(dom.has_variant("", "message"));
+        assert!(dom.has_variant("", "server"));
+        assert!(dom.has_variant("header", "from"));
+        assert!(dom.has_variant("flag", "seen"));
+        assert!(dom.has_variant("protocol", "jmap"));
+        assert!(dom.has_variant("server", "stalwart"));
+        assert!(dom.has_variant("dns", "dkim"));
         // Actions
-        assert!(reg.has_action("send"));
-        assert!(reg.has_action("reply"));
-        assert!(reg.has_action("forward"));
-        let send = reg.action_fields("send").unwrap();
+        assert!(dom.has_action("send"));
+        assert!(dom.has_action("reply"));
+        assert!(dom.has_action("forward"));
+        let send = dom.act_fields("send").unwrap();
         assert_eq!(send.len(), 4);
-        assert_eq!(send[0], ("from".into(), Some("address".into())));
-        assert_eq!(send[2], ("subject".into(), None));
-        let forward = reg.action_fields("forward").unwrap();
+        assert_eq!(send[0], ("from", Some("address")));
+        assert_eq!(send[2], ("subject", None));
+        let forward = dom.act_fields("forward").unwrap();
         assert_eq!(forward.len(), 2);
-        assert_eq!(forward[0], ("message".into(), Some("message-id".into())));
+        assert_eq!(forward[0], ("message", Some("message-id")));
     }
 
     #[test]
-    fn type_registry_compile_main_conv() {
+    fn domain_compile_main_conv() {
         // Compile the actual main.conv grammar — the self-describing vocabulary
         let main_conv = include_str!("../main.conv");
-        let reg = compile_grammar(main_conv);
-        assert_eq!(reg.domain, "conversation");
+        let dom = compile_grammar(main_conv);
+        assert_eq!(dom.domain_name(), "conversation");
         // Verify the anonymous type has the expected vocabulary
-        assert!(reg.has_variant("", "in"));
-        assert!(reg.has_variant("", "out"));
-        assert!(reg.has_variant("", "template"));
-        assert!(reg.has_variant("", "when"));
-        assert!(reg.has_variant("", "cmp"));
+        assert!(dom.has_variant("", "in"));
+        assert!(dom.has_variant("", "out"));
+        assert!(dom.has_variant("", "template"));
+        assert!(dom.has_variant("", "when"));
+        assert!(dom.has_variant("", "cmp"));
         // Named type 'op' should exist
-        assert!(reg.has_type("op"));
-        assert!(reg.has_variant("op", "gt"));
-        assert!(reg.has_variant("op", "ne"));
+        assert!(dom.has_type("op"));
+        assert!(dom.has_variant("op", "gt"));
+        assert!(dom.has_variant("op", "ne"));
         // Parameterized variants reference 'op'
-        assert_eq!(reg.params[&("".to_string(), "when".to_string())], "op");
-        assert_eq!(reg.params[&("".to_string(), "cmp".to_string())], "op");
+        assert_eq!(dom.variant_param("", "when"), Some("op"));
+        assert_eq!(dom.variant_param("", "cmp"), Some("op"));
     }
 
     #[test]
@@ -2692,11 +2220,10 @@ mod tests {
             "should mention bad ref 'ops': {}",
             err
         );
-        assert!(!err.hints.is_empty(), "should suggest 'op'");
     }
 
     #[test]
-    fn type_registry_multi_grammar() {
+    fn domain_multi_grammar() {
         let source = "grammar @first {\n  type = a | b\n}\ngrammar @second {\n  type = x | y\n}\nin @first\nout r {\n\tx {}\n}\n";
         let ast = Parse.trace(source.to_string()).unwrap();
         let grammars: Vec<_> = ast
@@ -2706,12 +2233,12 @@ mod tests {
             .collect();
         assert_eq!(grammars.len(), 2);
 
-        let reg1 = TypeRegistry::compile(grammars[0]).unwrap();
-        let reg2 = TypeRegistry::compile(grammars[1]).unwrap();
-        assert_eq!(reg1.domain, "first");
-        assert_eq!(reg2.domain, "second");
-        assert!(reg1.has_variant("", "a"));
-        assert!(reg2.has_variant("", "x"));
+        let dom1 = crate::model::Domain::from_grammar(grammars[0]).unwrap();
+        let dom2 = crate::model::Domain::from_grammar(grammars[1]).unwrap();
+        assert_eq!(dom1.domain_name(), "first");
+        assert_eq!(dom2.domain_name(), "second");
+        assert!(dom1.has_variant("", "a"));
+        assert!(dom2.has_variant("", "x"));
     }
 
     /// Test-only domain for proving Conversation<C> polymorphism.
@@ -2779,9 +2306,9 @@ mod tests {
         let ast = Parse.trace(source.to_string()).unwrap();
         for child in ast.children() {
             if child.data().is_decl("grammar") {
-                let registry = TypeRegistry::compile(child).unwrap();
-                let domain = registry.domain.clone();
-                namespace.register_grammar(&domain, registry);
+                let domain = crate::model::Domain::from_grammar(child).unwrap();
+                let domain_name = domain.domain_name().to_string();
+                namespace.register_domain(&domain_name, domain);
             }
         }
         // Extract templates from the source too
@@ -2844,12 +2371,12 @@ mod tests {
     #[test]
     fn bootstrap_compiler_grammar_compiles() {
         let source = include_str!("../bootstrap.conv");
-        let reg = compile_grammar(source);
-        assert_eq!(reg.domain, "compiler");
-        assert!(reg.has_type(""));
-        assert!(reg.has_variant("", "grammar"));
-        assert!(reg.has_variant("", "type"));
-        assert!(reg.has_action("compile"));
+        let dom = compile_grammar(source);
+        assert_eq!(dom.domain_name(), "compiler");
+        assert!(dom.has_type(""));
+        assert!(dom.has_variant("", "grammar"));
+        assert!(dom.has_variant("", "type"));
+        assert!(dom.has_action("compile"));
     }
 
     #[test]
@@ -2866,200 +2393,165 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("child grammar must have a grammar block");
-        let reg = TypeRegistry::compile(grammar).unwrap();
+        let dom = crate::model::Domain::from_grammar(grammar).unwrap();
 
         // @build grammar has the expected types
-        assert_eq!(reg.domain, "build");
-        assert!(reg.has_variant("", "artifact"));
-        assert!(reg.has_variant("", "target"));
+        assert_eq!(dom.domain_name(), "build");
+        assert!(dom.has_variant("", "artifact"));
+        assert!(dom.has_variant("", "target"));
 
         // @compiler is registered — the chain is live
         assert!(namespace.has_grammar("compiler"));
     }
 
-    // -- TypeRegistry accessors --
+    // -- Domain accessors --
 
     #[test]
-    fn type_registry_type_names() {
-        let reg = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
-        let mut names = reg.type_names();
+    fn domain_type_names() {
+        let dom = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
+        let mut names = dom.type_names();
         names.sort();
         assert_eq!(names, vec!["", "op"]);
     }
 
     #[test]
-    fn type_registry_variants() {
-        let reg = compile_grammar("grammar @test {\n  type = a | b | c\n}\n");
-        let mut variants = reg.variants("").unwrap();
+    fn domain_variants() {
+        let dom = compile_grammar("grammar @test {\n  type = a | b | c\n}\n");
+        let mut variants = dom.variants("").unwrap();
         variants.sort();
         assert_eq!(variants, vec!["a", "b", "c"]);
-        assert!(reg.variants("missing").is_none());
+        assert!(dom.variants("missing").is_none());
     }
 
     #[test]
-    fn type_registry_variant_param() {
-        let reg =
+    fn domain_variant_param() {
+        let dom =
             compile_grammar("grammar @test {\n  type = plain | when(op)\n  type op = gt | lt\n}\n");
-        assert_eq!(reg.variant_param("", "when"), Some("op"));
-        assert!(reg.variant_param("", "plain").is_none());
-        assert!(reg.variant_param("missing", "x").is_none());
+        assert_eq!(dom.variant_param("", "when"), Some("op"));
+        assert!(dom.variant_param("", "plain").is_none());
+        assert!(dom.variant_param("missing", "x").is_none());
     }
 
     #[test]
-    fn type_registry_act_names() {
-        let reg = compile_grammar(
+    fn domain_act_names() {
+        let dom = compile_grammar(
             "grammar @test {\n  type = a\n  action compile {\n    source: a\n  }\n  action run {\n    target\n  }\n}\n",
         );
-        let mut names = reg.act_names();
+        let mut names = dom.act_names();
         names.sort();
         assert_eq!(names, vec!["compile", "run"]);
     }
 
     #[test]
-    fn type_registry_act_names_empty() {
-        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
-        assert!(reg.act_names().is_empty());
+    fn domain_act_names_empty() {
+        let dom = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        assert!(dom.act_names().is_empty());
     }
 
-    // -- Fragmentable --
+    // -- Content addressing --
 
     #[test]
-    fn type_registry_same_grammar_same_oid() {
-        let reg1 = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
-        let reg2 = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
-        assert_eq!(fragment::content_oid(&reg1), fragment::content_oid(&reg2),);
-    }
-
-    #[test]
-    fn type_registry_different_grammar_different_oid() {
-        let reg1 = compile_grammar("grammar @test {\n  type = a | b\n}\n");
-        let reg2 = compile_grammar("grammar @test {\n  type = a | c\n}\n");
-        assert_ne!(fragment::content_oid(&reg1), fragment::content_oid(&reg2),);
+    fn domain_same_grammar_same_oid() {
+        use crate::ContentAddressed;
+        let dom1 = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
+        let dom2 = compile_grammar("grammar @test {\n  type = a | b\n  type op = gt | lt\n}\n");
+        assert_eq!(dom1.content_oid(), dom2.content_oid());
     }
 
     #[test]
-    fn type_registry_different_domain_different_oid() {
-        let reg1 = compile_grammar("grammar @foo {\n  type = a\n}\n");
-        let reg2 = compile_grammar("grammar @bar {\n  type = a\n}\n");
-        assert_ne!(fragment::content_oid(&reg1), fragment::content_oid(&reg2),);
+    fn domain_different_grammar_different_oid() {
+        use crate::ContentAddressed;
+        let dom1 = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let dom2 = compile_grammar("grammar @test {\n  type = a | c\n}\n");
+        assert_ne!(dom1.content_oid(), dom2.content_oid());
     }
 
     #[test]
-    fn type_registry_is_shard() {
-        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
-        assert!(reg.is_shard());
-        assert!(!reg.is_fractal());
-        assert!(reg.children().is_empty());
+    fn domain_different_name_different_oid() {
+        use crate::ContentAddressed;
+        let dom1 = compile_grammar("grammar @foo {\n  type = a\n}\n");
+        let dom2 = compile_grammar("grammar @bar {\n  type = a\n}\n");
+        assert_ne!(dom1.content_oid(), dom2.content_oid());
     }
 
     #[test]
-    fn type_registry_self_ref_label() {
-        let reg = compile_grammar("grammar @test {\n  type = a\n}\n");
-        assert_eq!(reg.self_ref().label, "grammar/test");
-    }
-
-    use fragmentation::repo::Repo;
-    use fragmentation::store::Store;
-
-    #[test]
-    fn type_registry_store_round_trip() {
-        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
-        let mut store = Store::<TypeRegistry>::new();
-        let oid = store.write_tree(&reg);
-        let read_back = store.read_tree(&oid).unwrap();
-        assert_eq!(read_back.domain, reg.domain);
-        assert_eq!(
-            fragment::content_oid(&read_back),
-            fragment::content_oid(&reg)
-        );
-    }
-
-    #[test]
-    fn type_registry_store_dedup() {
-        let reg1 = compile_grammar("grammar @test {\n  type = a | b\n}\n");
-        let reg2 = compile_grammar("grammar @test {\n  type = a | b\n}\n");
-        let mut store = Store::<TypeRegistry>::new();
-        store.write_tree(&reg1);
-        store.write_tree(&reg2);
-        assert_eq!(store.object_count(), 1);
-    }
-
-    #[test]
-    fn registry_tracks_required_properties() {
-        let reg = compile_grammar(
+    fn domain_tracks_required_properties() {
+        let dom = compile_grammar(
             "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n  invariant connected\n}\n",
         );
-        assert_eq!(reg.required_properties(), &["shannon_equivalence"]);
-        assert_eq!(reg.invariants(), &["connected"]);
+        assert_eq!(dom.required_properties(), vec!["shannon_equivalence"]);
+        assert_eq!(dom.invariants(), vec!["connected"]);
     }
 
     #[test]
-    fn registry_empty_properties_by_default() {
-        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
-        assert!(reg.required_properties().is_empty());
-        assert!(reg.invariants().is_empty());
+    fn domain_empty_properties_by_default() {
+        let dom = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        assert!(dom.required_properties().is_empty());
+        assert!(dom.invariants().is_empty());
     }
 
     #[test]
-    fn registry_multiple_requires() {
-        let reg = compile_grammar(
+    fn domain_multiple_requires() {
+        let dom = compile_grammar(
             "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n  requires exhaustive\n}\n",
         );
-        assert_eq!(reg.required_properties().len(), 2);
-        assert!(reg
+        assert_eq!(dom.required_properties().len(), 2);
+        assert!(dom
             .required_properties()
-            .contains(&"shannon_equivalence".to_string()));
-        assert!(reg
+            .contains(&"shannon_equivalence"));
+        assert!(dom
             .required_properties()
-            .contains(&"exhaustive".to_string()));
+            .contains(&"exhaustive"));
     }
 
     #[test]
-    fn registry_properties_affect_content_hash() {
-        let reg_without = compile_grammar("grammar @test {\n  type = a | b\n}\n");
-        let reg_with = compile_grammar(
+    fn domain_properties_affect_content_hash() {
+        use crate::ContentAddressed;
+        let dom_without = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let dom_with = compile_grammar(
             "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n}\n",
         );
-        assert_ne!(reg_without.encoded(), reg_with.encoded());
+        assert_ne!(dom_without.content_oid(), dom_with.content_oid());
     }
 
     #[test]
-    fn registry_tracks_ensures() {
-        let reg =
+    fn domain_tracks_ensures() {
+        let dom =
             compile_grammar("grammar @test {\n  type = a | b\n\n  ensures response_time\n}\n");
-        assert_eq!(reg.ensures(), &["response_time"]);
+        assert_eq!(dom.ensures(), vec!["response_time"]);
     }
 
     #[test]
-    fn registry_empty_ensures_by_default() {
-        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
-        assert!(reg.ensures().is_empty());
+    fn domain_empty_ensures_by_default() {
+        let dom = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        assert!(dom.ensures().is_empty());
     }
 
     #[test]
-    fn registry_all_three_property_kinds() {
-        let reg = compile_grammar(
+    fn domain_all_three_property_kinds() {
+        let dom = compile_grammar(
             "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n  invariant connected\n  ensures response_time\n}\n",
         );
-        assert_eq!(reg.required_properties(), &["shannon_equivalence"]);
-        assert_eq!(reg.invariants(), &["connected"]);
-        assert_eq!(reg.ensures(), &["response_time"]);
+        assert_eq!(dom.required_properties(), vec!["shannon_equivalence"]);
+        assert_eq!(dom.invariants(), vec!["connected"]);
+        assert_eq!(dom.ensures(), vec!["response_time"]);
     }
 
     #[test]
-    fn registry_ensures_affects_content_hash() {
-        let reg_without = compile_grammar("grammar @test {\n  type = a | b\n}\n");
-        let reg_with =
+    fn domain_ensures_affects_content_hash() {
+        use crate::ContentAddressed;
+        let dom_without = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let dom_with =
             compile_grammar("grammar @test {\n  type = a | b\n\n  ensures response_time\n}\n");
-        assert_ne!(reg_without.encoded(), reg_with.encoded());
+        assert_ne!(dom_without.content_oid(), dom_with.content_oid());
     }
 
     #[test]
     fn resolve_namespace_accessor() {
         // Resolve::namespace() exposes the registered namespace for property testing.
         let mut ns = Namespace::new();
-        let reg = compile_grammar("grammar @beam {\n  type = process | module\n}\n");
-        ns.register_grammar("beam", reg);
+        let dom = compile_grammar("grammar @beam {\n  type = process | module\n}\n");
+        ns.register_domain("beam", dom);
         let resolve = Resolve::new().with_namespace(ns);
         let ns_ref = resolve.namespace();
         assert!(ns_ref.grammar_domains().contains(&"beam".to_string()));

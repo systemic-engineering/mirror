@@ -434,8 +434,7 @@ fn emit_actor_module_filters_self_lenses() {
         .unwrap();
     // Pass @test (self) and @other as lenses.
     let lenses = vec!["@test".to_string(), "@other".to_string()];
-    let domain =
-        conversation::Domain::from_grammar_with_lenses(grammar_node, &lenses).unwrap();
+    let domain = conversation::Domain::from_grammar_with_lenses(grammar_node, &lenses).unwrap();
 
     let etf = compile::emit_actor_module_from_domain(&domain);
     let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();

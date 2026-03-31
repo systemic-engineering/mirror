@@ -365,7 +365,6 @@ mod tests {
             extends: vec![],
             calls: vec![],
             properties: Properties::empty(),
-            registry: None,
         };
         check::verify(domain).unwrap()
     }
@@ -606,7 +605,6 @@ mod tests {
             extends: vec![],
             calls: vec![],
             properties: Properties::empty(),
-            registry: None,
         };
         check::verify(domain).unwrap()
     }
@@ -791,7 +789,6 @@ mod tests {
                 invariants: vec![],
                 ensures: vec![],
             },
-            registry: None,
         };
 
         let mut rt = RactorRuntime::new();
