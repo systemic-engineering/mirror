@@ -143,16 +143,16 @@ fn handle_message(state: State, msg: Message) -> actor.Next(State, Message) {
             Ok(module) -> {
               // Only manage domain servers in imperative mode.
               // In supervised mode, the garden handles this.
-              case state.manage_domains {
+              let domain_was_started = case state.manage_domains {
                 True ->
                   case domain.is_running(domain_name) {
                     False -> {
                       let _ = domain.start_supervised(domain_name)
-                      Nil
+                      True
                     }
-                    True -> Nil
+                    True -> False
                   }
-                False -> Nil
+                False -> False
               }
 
               // Build traced compilation chain: parse → resolve → compile → swap
@@ -178,37 +178,47 @@ fn handle_message(state: State, msg: Message) -> actor.Next(State, Message) {
                   option.Some(trace.oid(resolve_trace)),
                 )
 
-              // Enforce property declarations through @coincidence
-              case check_requires(module, source) {
-                Error(reason) ->
-                  process.send(
-                    reply,
-                    Error("property enforcement: " <> reason),
-                  )
+              // Enforce property declarations through @coincidence.
+              // On failure: stop the domain server (if we started it) and
+              // purge the loaded module so no half-loaded state remains.
+              let enforcement_result = case check_requires(module, source) {
+                Error(reason) -> Error("property enforcement: " <> reason)
                 Ok(Nil) ->
                   case check_invariants(module, source) {
-                    Error(reason) ->
-                      process.send(
-                        reply,
-                        Error("property enforcement: " <> reason),
-                      )
-                    Ok(Nil) -> {
-                      let compiled =
-                        CompiledDomain(
-                          domain: domain_name,
-                          source_oid: source_oid,
-                          module: module,
-                        )
-                      let t =
-                        trace.new(
-                          state.actor_oid,
-                          state.kp,
-                          compiled,
-                          option.Some(trace.oid(compile_trace)),
-                        )
-                      process.send(reply, Ok(t))
-                    }
+                    Error(reason) -> Error("property enforcement: " <> reason)
+                    Ok(Nil) -> Ok(Nil)
                   }
+              }
+
+              case enforcement_result {
+                Error(reason) -> {
+                  // Clean up: stop domain server if we started it, purge module.
+                  case domain_was_started {
+                    True -> {
+                      let _ = domain.stop(domain_name)
+                      Nil
+                    }
+                    False -> Nil
+                  }
+                  let _ = loader.purge_module(module)
+                  process.send(reply, Error(reason))
+                }
+                Ok(Nil) -> {
+                  let compiled =
+                    CompiledDomain(
+                      domain: domain_name,
+                      source_oid: source_oid,
+                      module: module,
+                    )
+                  let t =
+                    trace.new(
+                      state.actor_oid,
+                      state.kp,
+                      compiled,
+                      option.Some(trace.oid(compile_trace)),
+                    )
+                  process.send(reply, Ok(t))
+                }
               }
             }
             Error(e) -> process.send(reply, Error(e))

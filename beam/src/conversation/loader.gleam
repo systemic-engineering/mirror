@@ -30,3 +30,9 @@ pub fn get_invariants(module: String) -> Result(List(String), String)
 /// Get a loaded module's ensures (postcondition) properties.
 @external(erlang, "loader_ffi", "get_ensures")
 pub fn get_ensures(module: String) -> Result(List(String), String)
+
+/// Purge and delete a loaded module from the BEAM.
+/// Idempotent — safe to call even if the module was never loaded.
+/// Use this to clean up after an enforcement failure.
+@external(erlang, "loader_ffi", "purge_module")
+pub fn purge_module(module: String) -> Nil

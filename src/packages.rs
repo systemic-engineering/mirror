@@ -518,6 +518,33 @@ mod tests {
         assert!(!dir.as_os_str().is_empty());
     }
 
+    #[test]
+    fn packages_dir_from_env() {
+        // Exercise the CONVERSATION_PACKAGES env branch (PathBuf::from(dir)).
+        // Sets CONVERSATION_PACKAGES to a temp dir path, calls packages_dir(),
+        // and verifies the returned path matches. Uses unsafe env mutation — safe
+        // because this test only reads a known temp dir value immediately after.
+        let tmp = TempDir::new().unwrap();
+        let expected = tmp.path().to_path_buf();
+        unsafe {
+            std::env::set_var("CONVERSATION_PACKAGES", &expected);
+        }
+        let dir = PackageRegistry::packages_dir();
+        unsafe {
+            std::env::remove_var("CONVERSATION_PACKAGES");
+        }
+        assert_eq!(dir, expected);
+    }
+
+    #[test]
+    fn package_roots_delegates_to_home() {
+        // package_roots() is the public entry point; it calls package_roots_with_home
+        // using packages_dir() as the home. Verify it does not panic.
+        let self_dir = TempDir::new().unwrap();
+        let roots = PackageRegistry::package_roots(self_dir.path());
+        let _ = roots; // result depends on env; just verify no panic
+    }
+
     // -- split_test_section --
 
     #[test]
