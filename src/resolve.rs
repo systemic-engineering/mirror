@@ -495,6 +495,7 @@ pub enum GenerateProvider {
 pub struct Namespace {
     modules: HashMap<String, TemplateProvider>,
     grammar_store: Store<TypeRegistry>,
+    domain_store: HashMap<String, crate::model::Domain>,
     generate_overrides: HashMap<String, GenerateProvider>,
 }
 
@@ -509,11 +510,16 @@ impl Namespace {
     }
 
     /// Register a compiled grammar for a domain.
+    ///
+    /// Stores both the TypeRegistry (for backward compat) and a Domain.
     pub fn register_grammar(&mut self, domain: &str, registry: TypeRegistry) {
         let ref_name = format!("grammar/{}", domain);
         self.grammar_store.write_tree(&registry);
         let sha = registry.self_ref().sha.clone();
         self.grammar_store.update_ref(&ref_name, sha);
+        // Also store a Domain for the new API.
+        let dom = crate::model::Domain::from_registry(registry);
+        self.domain_store.insert(domain.to_string(), dom);
     }
 
     /// Look up a grammar by domain name.
@@ -523,20 +529,19 @@ impl Namespace {
         self.grammar_store.read_tree(&sha.0)
     }
 
+    /// Look up a domain by name.
+    pub fn domain(&self, domain: &str) -> Option<&crate::model::Domain> {
+        self.domain_store.get(domain)
+    }
+
     /// Check if a grammar is registered for a domain.
     pub fn has_grammar(&self, domain: &str) -> bool {
-        let ref_name = format!("grammar/{}", domain);
-        self.grammar_store.resolve_ref(&ref_name).is_some()
+        self.domain_store.contains_key(domain)
     }
 
     /// All registered grammar domain names.
     pub fn grammar_domains(&self) -> Vec<String> {
-        self.grammar_store
-            .ref_names()
-            .iter()
-            .filter_map(|name| name.strip_prefix("grammar/"))
-            .map(|s| s.to_string())
-            .collect()
+        self.domain_store.keys().cloned().collect()
     }
 
     /// Register a generate override for a domain.

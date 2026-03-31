@@ -516,7 +516,10 @@ impl Domain {
             let mut fields = Vec::new();
             for (field_name, type_ref) in registry.action_fields(act_name).unwrap_or(&[]) {
                 let tr = type_ref.as_deref().unwrap_or("");
-                fields.push((ActionName::new(field_name.as_str()), TypeRef::new(TypeName::new(tr))));
+                fields.push((
+                    ActionName::new(field_name.as_str()),
+                    TypeRef::new(TypeName::new(tr)),
+                ));
             }
             let mut calls = Vec::new();
             for (domain, action, args) in registry.action_calls(act_name) {
@@ -551,7 +554,11 @@ impl Domain {
         for s in registry.ensures() {
             ensures.push(PropertyName::new(s.as_str()));
         }
-        let properties = Properties { requires, invariants, ensures };
+        let properties = Properties {
+            requires,
+            invariants,
+            ensures,
+        };
 
         let mut all_calls = Vec::new();
         for a in &actions {

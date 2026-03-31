@@ -84,8 +84,8 @@ fn check_uniqueness(oids: &[(String, String)]) -> Verdict {
 /// Check a static `test` block: verify that grammars have the expected variants.
 fn check_test(name: &str, assertions: &[HasAssertion], namespace: &Namespace) -> PropertyResult {
     for a in assertions {
-        let registry = match namespace.grammar(&a.domain) {
-            Some(r) => r,
+        let domain = match namespace.domain(&a.domain) {
+            Some(d) => d,
             None => {
                 return PropertyResult {
                     name: name.to_string(),
@@ -95,7 +95,7 @@ fn check_test(name: &str, assertions: &[HasAssertion], namespace: &Namespace) ->
             }
         };
         let type_name = a.type_name.as_deref().unwrap_or("");
-        if !registry.has_variant(type_name, &a.variant) {
+        if !domain.has_variant(type_name, &a.variant) {
             return PropertyResult {
                 name: name.to_string(),
                 derivations_checked: 0,
@@ -336,8 +336,8 @@ fn check_property_block_with_overrides(
 ) -> Vec<PropertyResult> {
     let mut results = Vec::new();
     for check in checks {
-        let registry = match namespace.grammar(&check.domain) {
-            Some(r) => r,
+        let domain = match namespace.domain(&check.domain) {
+            Some(d) => d,
             None => {
                 results.push(PropertyResult {
                     name: format!("{}: @{}", name, check.domain),
@@ -347,7 +347,6 @@ fn check_property_block_with_overrides(
                 continue;
             }
         };
-        let domain = Domain::from_registry(registry.clone());
         match lookup_builtin(&check.property) {
             None => {
                 results.push(PropertyResult {
@@ -357,10 +356,11 @@ fn check_property_block_with_overrides(
                 });
             }
             Some(BuiltinProperty::Derivation(prop_fn)) => {
+                let registry = domain.registry();
                 let provider = overrides
                     .get(&check.domain)
                     .unwrap_or(&GenerateProvider::Derived);
-                let derivations = derive_with_provider(&registry, provider);
+                let derivations = derive_with_provider(registry, provider);
                 let count = derivations.len();
                 let verdict = prop_fn(&derivations);
                 results.push(PropertyResult {
@@ -370,7 +370,7 @@ fn check_property_block_with_overrides(
                 });
             }
             Some(BuiltinProperty::Registry(check_fn)) => {
-                let (satisfied, reason) = check_fn(&domain);
+                let (satisfied, reason) = check_fn(domain);
                 results.push(PropertyResult {
                     name: format!("{}: @{} satisfies {}", name, check.domain, check.property),
                     derivations_checked: 0,
