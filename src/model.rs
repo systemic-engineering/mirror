@@ -376,8 +376,13 @@ impl Domain {
             })
             .collect();
 
-        // TODO: extract extends declarations from grammar children.
-        let extends: Vec<DomainName> = vec![];
+        // Extract extends declarations from grammar children.
+        let extends: Vec<DomainName> = node
+            .children()
+            .iter()
+            .filter(|c| c.data().is_ref("extends"))
+            .map(|c| DomainName::new(c.data().value.as_str()))
+            .collect();
 
         // First pass: collect all declared type names for validation.
         let mut declared_types: std::collections::HashSet<String> =
@@ -498,8 +503,11 @@ impl Domain {
             }
         }
 
-        // TODO: aggregate calls from all actions to the domain level.
-        let calls: Vec<ActionCall> = vec![];
+        // Aggregate calls from all actions to the domain level.
+        let calls: Vec<ActionCall> = actions
+            .iter()
+            .flat_map(|a| a.calls.clone())
+            .collect();
 
         // Also compile the TypeRegistry from the same AST for internal use.
         // Domain already validates type refs above (line ~295), so TypeRegistry::compile
