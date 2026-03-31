@@ -221,6 +221,48 @@ impl PartialEq for Domain {
 
 impl Eq for Domain {}
 
+// ---------------------------------------------------------------------------
+// DomainSpectrum / DomainComplexity
+// ---------------------------------------------------------------------------
+
+/// Spectral analysis of a domain's type graph.
+/// Only constructable internally — eigenvalues come from the Laplacian.
+pub struct DomainSpectrum {
+    eigenvalues: coincidence::eigenvalues::Eigenvalues,
+}
+
+impl DomainSpectrum {
+    pub(crate) fn new(eigenvalues: coincidence::eigenvalues::Eigenvalues) -> Self {
+        DomainSpectrum { eigenvalues }
+    }
+
+    pub fn eigenvalues(&self) -> &coincidence::eigenvalues::Eigenvalues {
+        &self.eigenvalues
+    }
+}
+
+/// Grammars with no type reference edges have no type reference graph.
+/// Not "spectrum with zeros" — absence of spectrum entirely.
+pub enum DomainComplexity {
+    Trivial,
+    Spectrum(DomainSpectrum),
+}
+
+impl DomainComplexity {
+    /// Returns `true` if this complexity is trivial (no type reference graph).
+    pub fn is_trivial(&self) -> bool {
+        matches!(self, DomainComplexity::Trivial)
+    }
+
+    /// Extract the spectrum, returning `None` for trivial domains.
+    pub fn spectrum(self) -> Option<DomainSpectrum> {
+        match self {
+            DomainComplexity::Trivial => None,
+            DomainComplexity::Spectrum(s) => Some(s),
+        }
+    }
+}
+
 impl Domain {
     /// Returns `true` if this domain has a lens targeting `"actor"`.
     pub fn is_actor(&self) -> bool {
@@ -395,6 +437,45 @@ impl Domain {
             properties,
             registry: Some(registry),
         })
+    }
+
+    /// Compute the spectral complexity of this domain's type reference graph.
+    ///
+    /// Types are vertices, parameterized variant references are directed edges.
+    /// If there are no inter-type references, returns `Trivial` — not a zero
+    /// spectrum, but absence of spectrum entirely.
+    pub fn complexity(&self) -> DomainComplexity {
+        let type_names: Vec<String> = self
+            .types
+            .iter()
+            .map(|t| t.name.as_str().to_string())
+            .collect();
+
+        if type_names.is_empty() {
+            return DomainComplexity::Trivial;
+        }
+
+        // Build edges from parameterized variant references
+        let mut edges: Vec<(usize, usize)> = Vec::new();
+        for (i, typedef) in self.types.iter().enumerate() {
+            for variant in &typedef.variants {
+                for (_param_name, type_ref) in &variant.params {
+                    if let Some(j) = type_names.iter().position(|n| n == type_ref.0.as_str()) {
+                        if i != j {
+                            edges.push((i, j));
+                        }
+                    }
+                }
+            }
+        }
+
+        if edges.is_empty() {
+            return DomainComplexity::Trivial;
+        }
+
+        let laplacian = coincidence::spectral::Laplacian::from_adjacency(&type_names, &edges);
+        let eigenvalues = laplacian.eigenvalues();
+        DomainComplexity::Spectrum(DomainSpectrum::new(eigenvalues))
     }
 }
 
@@ -1066,11 +1147,15 @@ mod tests {
         use crate::{Parse, Vector};
         let source = "grammar @empty {}\n";
         let ast = Parse.trace(source.to_string()).unwrap();
-        let grammar = ast.children().iter()
+        let grammar = ast
+            .children()
+            .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
         let domain = Domain::from_grammar(grammar).unwrap();
-        assert!(matches!(domain.complexity(), DomainComplexity::Trivial));
+        let complexity = domain.complexity();
+        assert!(complexity.is_trivial());
+        assert!(complexity.spectrum().is_none());
     }
 
     #[test]
@@ -1078,7 +1163,9 @@ mod tests {
         use crate::{Parse, Vector};
         let source = "grammar @flat {\n  type = a | b\n  type op = gt | lt\n}\n";
         let ast = Parse.trace(source.to_string()).unwrap();
-        let grammar = ast.children().iter()
+        let grammar = ast
+            .children()
+            .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
         let domain = Domain::from_grammar(grammar).unwrap();
@@ -1088,20 +1175,74 @@ mod tests {
     #[test]
     fn domain_complexity_spectrum_for_referenced_types() {
         use crate::{Parse, Vector};
-        let source = "grammar @linked {\n  type color = red | blue\n  type pair = combo(color)\n}\n";
+        let source =
+            "grammar @linked {\n  type color = red | blue\n  type pair = combo(color)\n}\n";
         let ast = Parse.trace(source.to_string()).unwrap();
-        let grammar = ast.children().iter()
+        let grammar = ast
+            .children()
+            .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
         let domain = Domain::from_grammar(grammar).unwrap();
-        match domain.complexity() {
-            DomainComplexity::Spectrum(spectrum) => {
-                let ev = spectrum.eigenvalues();
-                assert!(ev.len() >= 2);
-                assert!(ev.fiedler_value().unwrap() > 0.0);
-            }
-            DomainComplexity::Trivial => panic!("expected Spectrum, got Trivial"),
-        }
+        let spectrum = domain.complexity().spectrum()
+            .expect("expected Spectrum, got Trivial");
+        let ev = spectrum.eigenvalues();
+        assert!(ev.len() >= 2);
+        assert!(ev.fiedler_value().unwrap() > 0.0);
+    }
+
+    #[test]
+    fn domain_complexity_trivial_for_external_type_refs() {
+        // A manually-constructed Domain where variant params reference
+        // types outside this domain — those edges are skipped, leaving
+        // no internal edges → Trivial.
+        let domain = Domain {
+            name: DomainName::new("manual"),
+            types: vec![TypeDef {
+                name: TypeName::new("request"),
+                variants: vec![Variant {
+                    name: VariantName::new("send"),
+                    params: vec![(
+                        VariantName::new("payload"),
+                        TypeRef::new(TypeName::new("external_type")),
+                    )],
+                }],
+            }],
+            actions: vec![],
+            lenses: vec![],
+            properties: Properties::empty(),
+            registry: None,
+        };
+        assert!(matches!(domain.complexity(), DomainComplexity::Trivial));
+    }
+
+    #[test]
+    fn domain_complexity_trivial_for_self_referential_types() {
+        // A type that only references itself (i == j) → self-edges skipped → Trivial.
+        let domain = Domain {
+            name: DomainName::new("recursive"),
+            types: vec![TypeDef {
+                name: TypeName::new("tree"),
+                variants: vec![
+                    Variant {
+                        name: VariantName::new("leaf"),
+                        params: vec![],
+                    },
+                    Variant {
+                        name: VariantName::new("node"),
+                        params: vec![(
+                            VariantName::new("child"),
+                            TypeRef::new(TypeName::new("tree")),
+                        )],
+                    },
+                ],
+            }],
+            actions: vec![],
+            lenses: vec![],
+            properties: Properties::empty(),
+            registry: None,
+        };
+        assert!(matches!(domain.complexity(), DomainComplexity::Trivial));
     }
 
     #[test]
