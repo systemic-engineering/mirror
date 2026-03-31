@@ -1059,6 +1059,51 @@ mod tests {
         let _ = d.registry();
     }
 
+    // --- DomainComplexity tests ---
+
+    #[test]
+    fn domain_complexity_trivial_for_no_types() {
+        use crate::{Parse, Vector};
+        let source = "grammar @empty {}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast.children().iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let domain = Domain::from_grammar(grammar).unwrap();
+        assert!(matches!(domain.complexity(), DomainComplexity::Trivial));
+    }
+
+    #[test]
+    fn domain_complexity_trivial_for_flat_types() {
+        use crate::{Parse, Vector};
+        let source = "grammar @flat {\n  type = a | b\n  type op = gt | lt\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast.children().iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let domain = Domain::from_grammar(grammar).unwrap();
+        assert!(matches!(domain.complexity(), DomainComplexity::Trivial));
+    }
+
+    #[test]
+    fn domain_complexity_spectrum_for_referenced_types() {
+        use crate::{Parse, Vector};
+        let source = "grammar @linked {\n  type color = red | blue\n  type pair = combo(color)\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast.children().iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let domain = Domain::from_grammar(grammar).unwrap();
+        match domain.complexity() {
+            DomainComplexity::Spectrum(spectrum) => {
+                let ev = spectrum.eigenvalues();
+                assert!(ev.len() >= 2);
+                assert!(ev.fiedler_value().unwrap() > 0.0);
+            }
+            DomainComplexity::Trivial => panic!("expected Spectrum, got Trivial"),
+        }
+    }
+
     #[test]
     fn domain_equality_ignores_registry() {
         // Two domains with same fields but different registry presence are equal.
