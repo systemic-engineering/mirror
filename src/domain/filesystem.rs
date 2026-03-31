@@ -149,7 +149,9 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let sub = dir.path().join("child");
         std::fs::create_dir(&sub).unwrap();
-        std::fs::write(sub.join("file.txt"), "hello").unwrap();
+        // Two files so sort_by_key comparator is exercised (single-element skips it).
+        std::fs::write(sub.join("b.txt"), "second").unwrap();
+        std::fs::write(sub.join("a.txt"), "first").unwrap();
 
         let tree = Folder::read_tree(dir.path().to_str().unwrap());
         assert!(tree.is_fractal());
@@ -157,10 +159,11 @@ mod tests {
         let child = &tree.children()[0];
         assert_eq!(child.data().name, "child");
         assert!(child.is_fractal());
-        assert_eq!(child.children().len(), 1);
-        let file = &child.children()[0];
-        assert_eq!(file.data().name, "file.txt");
-        assert_eq!(file.data().content.as_deref(), Some("hello"));
+        assert_eq!(child.children().len(), 2);
+        // Sorted order: a.txt before b.txt
+        assert_eq!(child.children()[0].data().name, "a.txt");
+        assert_eq!(child.children()[0].data().content.as_deref(), Some("first"));
+        assert_eq!(child.children()[1].data().name, "b.txt");
     }
 
     #[test]
@@ -185,6 +188,23 @@ mod tests {
 
         // Restore permissions for cleanup
         std::fs::set_permissions(&restricted, std::fs::Permissions::from_mode(0o755)).unwrap();
+    }
+
+    #[test]
+    fn folder_node_name_and_content() {
+        use super::super::Addressable;
+        let file = Folder {
+            name: "foo.txt".into(),
+            content: Some("data".into()),
+        };
+        assert_eq!(file.node_name(), "foo.txt");
+        assert_eq!(file.node_content(), Some("data"));
+        let dir = Folder {
+            name: "dir".into(),
+            content: None,
+        };
+        assert_eq!(dir.node_name(), "dir");
+        assert_eq!(dir.node_content(), None);
     }
 
     // -- Encode --

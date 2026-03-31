@@ -3048,4 +3048,15 @@ mod tests {
             compile_grammar("grammar @test {\n  type = a | b\n\n  ensures response_time\n}\n");
         assert_ne!(reg_without.encoded(), reg_with.encoded());
     }
+
+    #[test]
+    fn resolve_namespace_accessor() {
+        // Resolve::namespace() exposes the registered namespace for property testing.
+        let mut ns = Namespace::new();
+        let reg = compile_grammar("grammar @beam {\n  type = process | module\n}\n");
+        ns.register_grammar("beam", reg);
+        let resolve = Resolve::new().with_namespace(ns);
+        let ns_ref = resolve.namespace();
+        assert!(ns_ref.grammar_domains().contains(&"beam".to_string()));
+    }
 }

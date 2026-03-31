@@ -117,14 +117,6 @@ fn check_test(name: &str, assertions: &[HasAssertion], namespace: &Namespace) ->
     }
 }
 
-/// Built-in property lookup (internal, for check_all property blocks).
-fn lookup_property(name: &str) -> Option<fn(&[Derivation]) -> Verdict> {
-    match name {
-        "shannon_equivalence" => Some(shannon_equivalence),
-        _ => None,
-    }
-}
-
 // ---------------------------------------------------------------------------
 // Built-in property registry — used by NIF measurement functions
 // ---------------------------------------------------------------------------
@@ -152,6 +144,10 @@ pub fn lookup_builtin(name: &str) -> Option<BuiltinProperty> {
         "connected" => Some(BuiltinProperty::Registry(connected_check)),
         #[cfg(feature = "spectral")]
         "bipartite" => Some(BuiltinProperty::Registry(bipartite_check)),
+        #[cfg(test)]
+        "_test_registry_fail" => Some(BuiltinProperty::Registry(|_| {
+            (false, "intentional test failure".into())
+        })),
         _ => None,
     }
 }
@@ -277,6 +273,12 @@ fn derive_with_provider(registry: &TypeRegistry, provider: &GenerateProvider) ->
 }
 
 /// Check a `property` block against grammar derivations, with override support.
+///
+/// Routes through `lookup_builtin` so all recognized property names are
+/// accepted. Derivation-type properties (e.g., shannon_equivalence) run
+/// against all derivations with override support. Registry-type properties
+/// (e.g., exhaustive, connected, bipartite) run directly against the
+/// TypeRegistry and report 0 derivations_checked (they don't enumerate).
 fn check_property_block_with_overrides(
     name: &str,
     checks: &[PropertyCheck],
@@ -296,28 +298,40 @@ fn check_property_block_with_overrides(
                 continue;
             }
         };
-        let prop_fn = match lookup_property(&check.property) {
-            Some(f) => f,
+        match lookup_builtin(&check.property) {
             None => {
                 results.push(PropertyResult {
                     name: format!("{}: {}", name, check.property),
                     derivations_checked: 0,
                     verdict: Verdict::Fail(format!("unknown property \"{}\"", check.property)),
                 });
-                continue;
             }
-        };
-        let provider = overrides
-            .get(&check.domain)
-            .unwrap_or(&GenerateProvider::Derived);
-        let derivations = derive_with_provider(&registry, provider);
-        let count = derivations.len();
-        let verdict = prop_fn(&derivations);
-        results.push(PropertyResult {
-            name: format!("{}: @{} preserves {}", name, check.domain, check.property),
-            derivations_checked: count,
-            verdict,
-        });
+            Some(BuiltinProperty::Derivation(prop_fn)) => {
+                let provider = overrides
+                    .get(&check.domain)
+                    .unwrap_or(&GenerateProvider::Derived);
+                let derivations = derive_with_provider(&registry, provider);
+                let count = derivations.len();
+                let verdict = prop_fn(&derivations);
+                results.push(PropertyResult {
+                    name: format!("{}: @{} preserves {}", name, check.domain, check.property),
+                    derivations_checked: count,
+                    verdict,
+                });
+            }
+            Some(BuiltinProperty::Registry(check_fn)) => {
+                let (satisfied, reason) = check_fn(&registry);
+                results.push(PropertyResult {
+                    name: format!("{}: @{} satisfies {}", name, check.domain, check.property),
+                    derivations_checked: 0,
+                    verdict: if satisfied {
+                        Verdict::Pass
+                    } else {
+                        Verdict::Fail(reason)
+                    },
+                });
+            }
+        }
     }
     results
 }
@@ -532,6 +546,35 @@ mod tests {
         let test_src = "property \"bad\" { @test preserves nonexistent }";
         let results = check_all(&namespace, test_src).unwrap();
         assert!(results[0].verdict.fail_msg().contains("nonexistent"));
+    }
+
+    #[test]
+    fn check_all_property_registry_builtin() {
+        // Registry-type builtins (exhaustive, connected, bipartite) run against
+        // the TypeRegistry directly — they don't enumerate derivations.
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let mut namespace = Namespace::new();
+        namespace.register_grammar("test", reg);
+        let test_src = "property \"exhaustive\" { @test preserves exhaustive }";
+        let results = check_all(&namespace, test_src).unwrap();
+        assert_eq!(results.len(), 1);
+        assert_eq!(results[0].derivations_checked, 0);
+        assert_eq!(results[0].verdict, Verdict::Pass);
+        assert!(results[0].name.contains("satisfies exhaustive"));
+    }
+
+    #[test]
+    fn check_all_property_registry_builtin_fail() {
+        // Exercises the Fail path of the Registry branch (check_fn returns false).
+        // Uses a test-only property that always returns (false, reason).
+        let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let mut namespace = Namespace::new();
+        namespace.register_grammar("test", reg);
+        let test_src = "property \"fail\" { @test preserves _test_registry_fail }";
+        let results = check_all(&namespace, test_src).unwrap();
+        assert_eq!(results.len(), 1);
+        assert_eq!(results[0].derivations_checked, 0);
+        assert!(results[0].verdict.fail_msg().contains("intentional"));
     }
 
     #[test]

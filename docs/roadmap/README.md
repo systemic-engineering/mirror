@@ -16,8 +16,8 @@ as content-addressed git objects.
 
 ## Status
 
-- 642 Rust tests, 100% line coverage
-- 99 Gleam tests (compiler, boot, domain, garden, key, oid, supervisor, coincidence, properties)
+- 650 Rust tests, 100% line coverage
+- 104 Gleam tests (compiler, boot, domain, garden, key, oid, supervisor, coincidence, properties, enforcement)
 - 24 compile integration tests
 - Pre-commit hook enforces all gates
 
@@ -31,6 +31,6 @@ as content-addressed git objects.
 | [03](03-shipping.md) | Shipping via fragmentation | In progress |
 | [04](04-fortran-bridge.md) | Fortran bridge | In progress |
 | [05](05-kandddinsky.md) | KanDDDinsky — October 2026 | Planned |
-| [06](06-model-checker.md) | Model checker properties | Infrastructure done |
+| [06](06-model-checker.md) | Model checker properties | Enforcement active |
 | [07](07-projection.md) | Projection: properties as plans | Design |
 | [08](08-oid-native-model.md) | OID-native model (experimental) | Idea |

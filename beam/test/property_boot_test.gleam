@@ -3,6 +3,7 @@ import conversation/coincidence
 import conversation/domain
 import conversation/loader
 import gleam/list
+import gleam/string
 import gleeunit/should
 
 /// Inline grammar with requires — proves the full pipeline without garden files.
@@ -56,16 +57,18 @@ pub fn inline_grammar_with_requires_and_invariant_test() {
 }
 
 /// Full pipeline: boot infrastructure domains, then @training with
-/// requires/invariant. Properties checked through @coincidence.
+/// requires/invariant. Properties enforced through @coincidence.
 ///
-/// This is the capstone test proving the full pipeline works end-to-end:
+/// @training declares `invariant connected` but has 6 disconnected type
+/// groups, so compilation correctly fails with property enforcement.
+/// This test proves enforcement catches real violations end-to-end:
 /// 1. Grammar declares `requires shannon_equivalence` and `invariant connected`
 /// 2. Rust compiler emits `requires/0` and `invariants/0` in BEAM module
 /// 3. Compiler actor reads `requires/0` and `invariants/0`
 /// 4. Compiler actor calls `@coincidence.check_property(source, property_name)`
 /// 5. @coincidence domain server routes to NIF
-/// 6. NIF evaluates shannon equivalence and connected
-/// 7. Properties pass, compilation succeeds
+/// 6. NIF evaluates shannon equivalence (passes) and connected (fails)
+/// 7. Compilation fails with property enforcement error
 pub fn full_property_pipeline_test() {
   // 1. Read infrastructure grammars from conv/ and application from garden
   let conv = "/Users/alexwolf/dev/projects/conversation/conv"
@@ -79,36 +82,67 @@ pub fn full_property_pipeline_test() {
     boot.read_file(garden <> "/@training/training.conv")
 
   // 2. Boot with ordering: infrastructure first, then application
-  let assert Ok(result) =
+  let result =
     boot.boot_with_infrastructure(
       [property_source, topology_source],
       [training_source],
     )
 
-  // 3. Verify all domains are running
+  // 3. @training has disconnected type groups — enforcement correctly rejects
+  should.be_error(result)
+  let assert Error(reason) = result
+  should.be_true(string.contains(reason, "property enforcement"))
+  should.be_true(string.contains(reason, "connected"))
+
+  // 4. Infrastructure domains compiled before the failure
   should.be_true(domain.is_running("property"))
   should.be_true(domain.is_running("topology"))
-  should.be_true(domain.is_running("training"))
 
-  // 4. Verify modules are loaded
-  should.be_true(loader.is_loaded("conv_property"))
-  should.be_true(loader.is_loaded("conv_topology"))
-  should.be_true(loader.is_loaded("conv_training"))
+  // 5. Cleanup
+  let _ = coincidence.stop_server()
+}
 
-  // 5. Verify @training has the expected property declarations
-  let assert Ok(requires) = loader.get_requires("conv_training")
-  let assert Ok(invariants) = loader.get_invariants("conv_training")
-  should.equal(requires, ["shannon_equivalence"])
-  should.equal(invariants, ["connected"])
+/// Compilation fails when a required property is unknown.
+pub fn enforcement_unknown_requires_fails_test() {
+  let source =
+    "grammar @bad_req {
+  type = a | b
 
-  // 6. Verify @coincidence was started (by boot_with_infrastructure)
-  should.be_true(coincidence.is_running())
+  requires nonexistent_property
+}
+"
+  let _ = coincidence.start_server()
+  let result = boot.boot_with_infrastructure([], [source])
+  should.be_error(result)
+  let _ = coincidence.stop_server()
+}
 
-  // 7. Verify infrastructure domains appear before application domains
-  let names = list.map(result.domains, fn(d) { d.domain })
-  should.equal(names, ["property", "topology", "training"])
+/// Compilation succeeds when all required properties pass.
+pub fn enforcement_valid_requires_passes_test() {
+  let source =
+    "grammar @good_req {
+  type = a | b | c
 
-  // 8. Cleanup
+  requires shannon_equivalence
+}
+"
+  let assert Ok(result) =
+    boot.boot_with_infrastructure([], [source])
   boot.shutdown(result)
+  let _ = coincidence.stop_server()
+}
+
+/// Compilation fails when an invariant property is unknown.
+pub fn enforcement_unknown_invariant_fails_test() {
+  let source =
+    "grammar @bad_inv {
+  type = a | b
+
+  invariant nonexistent_invariant
+}
+"
+  let _ = coincidence.start_server()
+  let result = boot.boot_with_infrastructure([], [source])
+  should.be_error(result)
   let _ = coincidence.stop_server()
 }

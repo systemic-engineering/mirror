@@ -143,16 +143,16 @@ fn handle_message(state: State, msg: Message) -> actor.Next(State, Message) {
             Ok(module) -> {
               // Only manage domain servers in imperative mode.
               // In supervised mode, the garden handles this.
-              case state.manage_domains {
+              let domain_was_started = case state.manage_domains {
                 True ->
                   case domain.is_running(domain_name) {
                     False -> {
                       let _ = domain.start_supervised(domain_name)
-                      Nil
+                      True
                     }
-                    True -> Nil
+                    True -> False
                   }
-                False -> Nil
+                False -> False
               }
 
               // Build traced compilation chain: parse → resolve → compile → swap
@@ -178,24 +178,48 @@ fn handle_message(state: State, msg: Message) -> actor.Next(State, Message) {
                   option.Some(trace.oid(resolve_trace)),
                 )
 
-              // Check property declarations through @coincidence
-              check_requires(module, source)
-              check_invariants(module, source)
+              // Enforce property declarations through @coincidence.
+              // On failure: stop the domain server (if we started it) and
+              // purge the loaded module so no half-loaded state remains.
+              let enforcement_result = case check_requires(module, source) {
+                Error(reason) -> Error("property enforcement: " <> reason)
+                Ok(Nil) ->
+                  case check_invariants(module, source) {
+                    Error(reason) -> Error("property enforcement: " <> reason)
+                    Ok(Nil) -> Ok(Nil)
+                  }
+              }
 
-              let compiled =
-                CompiledDomain(
-                  domain: domain_name,
-                  source_oid: source_oid,
-                  module: module,
-                )
-              let t =
-                trace.new(
-                  state.actor_oid,
-                  state.kp,
-                  compiled,
-                  option.Some(trace.oid(compile_trace)),
-                )
-              process.send(reply, Ok(t))
+              case enforcement_result {
+                Error(reason) -> {
+                  // Clean up: stop domain server if we started it, purge module.
+                  case domain_was_started {
+                    True -> {
+                      let _ = domain.stop(domain_name)
+                      Nil
+                    }
+                    False -> Nil
+                  }
+                  let _ = loader.purge_module(module)
+                  process.send(reply, Error(reason))
+                }
+                Ok(Nil) -> {
+                  let compiled =
+                    CompiledDomain(
+                      domain: domain_name,
+                      source_oid: source_oid,
+                      module: module,
+                    )
+                  let t =
+                    trace.new(
+                      state.actor_oid,
+                      state.kp,
+                      compiled,
+                      option.Some(trace.oid(compile_trace)),
+                    )
+                  process.send(reply, Ok(t))
+                }
+              }
             }
             Error(e) -> process.send(reply, Error(e))
           }
@@ -218,29 +242,51 @@ fn domain_seed(name: BitArray) -> BitArray {
 fn do_sha512(data: BitArray) -> BitArray
 
 /// Check required properties through @coincidence.
-/// Failures are logged but do not fail compilation (enforcement comes later).
-fn check_requires(beam_module: String, source: String) -> Nil {
+/// Returns Error if any required property fails.
+fn check_requires(
+  beam_module: String,
+  source: String,
+) -> Result(Nil, String) {
   case loader.get_requires(beam_module) {
     Ok(requires) -> {
-      list.each(requires, fn(name) {
-        let _ = coincidence.check_property(source, name)
-        Nil
-      })
+      let failures =
+        list.filter_map(requires, fn(name) {
+          case coincidence.check_property(source, name) {
+            Ok(_) -> Error(Nil)
+            Error(reason) ->
+              Ok("required property '" <> name <> "' failed: " <> reason)
+          }
+        })
+      case failures {
+        [] -> Ok(Nil)
+        [first, ..] -> Error(first)
+      }
     }
-    Error(_) -> Nil
+    Error(_) -> Ok(Nil)
   }
 }
 
 /// Check invariant properties through @coincidence.
-/// Failures are logged but do not fail compilation (enforcement comes later).
-fn check_invariants(beam_module: String, source: String) -> Nil {
+/// Returns Error if any invariant property fails.
+fn check_invariants(
+  beam_module: String,
+  source: String,
+) -> Result(Nil, String) {
   case loader.get_invariants(beam_module) {
     Ok(invariants) -> {
-      list.each(invariants, fn(name) {
-        let _ = coincidence.check_property(source, name)
-        Nil
-      })
+      let failures =
+        list.filter_map(invariants, fn(name) {
+          case coincidence.check_property(source, name) {
+            Ok(_) -> Error(Nil)
+            Error(reason) ->
+              Ok("invariant '" <> name <> "' failed: " <> reason)
+          }
+        })
+      case failures {
+        [] -> Ok(Nil)
+        [first, ..] -> Error(first)
+      }
     }
-    Error(_) -> Nil
+    Error(_) -> Ok(Nil)
   }
 }
