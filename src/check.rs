@@ -11,7 +11,7 @@ use std::fmt;
 
 use coincidence::spectral::Laplacian;
 
-use crate::model::{Domain, DomainName, PropertyName, TypeName};
+use crate::model::{Domain, DomainComplexity, DomainName, PropertyName, TypeName};
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -22,23 +22,31 @@ use crate::model::{Domain, DomainName, PropertyName, TypeName};
 /// Can only be constructed by `verify()`. Callers that receive a `Verified`
 /// know the domain satisfies all static properties without needing to re-run
 /// the checks.
-pub struct Verified(Domain);
+pub struct Verified {
+    domain: Domain,
+    spectrum: DomainComplexity,
+}
 
 impl fmt::Debug for Verified {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_tuple("Verified").field(&self.0.name).finish()
+        f.debug_tuple("Verified").field(&self.domain.name).finish()
     }
 }
 
 impl Verified {
     /// Borrow the verified domain.
     pub fn domain(&self) -> &Domain {
-        &self.0
+        &self.domain
     }
 
     /// Consume the wrapper and return the inner domain.
     pub fn into_domain(self) -> Domain {
-        self.0
+        self.domain
+    }
+
+    /// Borrow the spectral complexity computed during verification.
+    pub fn complexity(&self) -> &DomainComplexity {
+        &self.spectrum
     }
 }
 
@@ -176,7 +184,8 @@ pub fn verify(domain: Domain) -> Result<Verified, Violations> {
     }
 
     if violations.is_empty() {
-        Ok(Verified(domain))
+        let spectrum = domain.complexity();
+        Ok(Verified { domain, spectrum })
     } else {
         Err(Violations {
             domain: domain.name,

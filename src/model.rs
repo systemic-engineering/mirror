@@ -227,6 +227,7 @@ impl Eq for Domain {}
 
 /// Spectral analysis of a domain's type graph.
 /// Only constructable internally — eigenvalues come from the Laplacian.
+#[derive(Clone)]
 pub struct DomainSpectrum {
     eigenvalues: coincidence::eigenvalues::Eigenvalues,
 }
@@ -243,6 +244,7 @@ impl DomainSpectrum {
 
 /// Grammars with no type reference edges have no type reference graph.
 /// Not "spectrum with zeros" — absence of spectrum entirely.
+#[derive(Clone)]
 pub enum DomainComplexity {
     Trivial,
     Spectrum(DomainSpectrum),
