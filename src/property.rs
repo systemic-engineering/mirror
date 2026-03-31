@@ -144,6 +144,7 @@ pub fn lookup_builtin(name: &str) -> Option<BuiltinProperty> {
         "connected" => Some(BuiltinProperty::Registry(connected_check)),
         #[cfg(feature = "spectral")]
         "bipartite" => Some(BuiltinProperty::Registry(bipartite_check)),
+        "inference_justified" => Some(BuiltinProperty::Registry(inference_justified_check)),
         #[cfg(test)]
         "_test_registry_fail" => Some(BuiltinProperty::Registry(|_| {
             (false, "intentional test failure".into())
@@ -194,6 +195,41 @@ fn exhaustive_check(registry: &TypeRegistry) -> (bool, String) {
         format!(
             "exhaustive: pass ({} types, {} variants)",
             type_count, variant_count
+        ),
+    )
+}
+
+/// Check that a domain's type graph has non-trivial spectral structure.
+///
+/// Inference over a trivial domain (no type references) has nothing to
+/// explore — the temperature schedule would be meaningless.
+fn inference_justified_check(registry: &TypeRegistry) -> (bool, String) {
+    let type_names = registry.type_names();
+    if type_names.is_empty() {
+        return (false, "inference_justified: no types declared".into());
+    }
+
+    // Check for parameterized variant references (edges in the type graph)
+    let has_edges = type_names.iter().any(|type_name| {
+        registry
+            .variants(type_name)
+            .unwrap_or_default()
+            .iter()
+            .any(|variant| registry.variant_param(type_name, variant).is_some())
+    });
+
+    if !has_edges {
+        return (
+            false,
+            "inference_justified: type graph has no references — spectrum is trivial".into(),
+        );
+    }
+
+    (
+        true,
+        format!(
+            "inference_justified: pass ({} types with cross-references)",
+            type_names.len()
         ),
     )
 }
@@ -1223,5 +1259,13 @@ mod tests {
         let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
         let (satisfied, reason) = check_builtin(&reg, "inference_justified").unwrap();
         assert!(!satisfied, "should fail for trivial domain: {}", reason);
+    }
+
+    #[test]
+    fn check_builtin_inference_justified_fails_empty() {
+        let reg = compile_grammar("grammar @test {}\n");
+        let (satisfied, reason) = check_builtin(&reg, "inference_justified").unwrap();
+        assert!(!satisfied, "should fail for empty grammar: {}", reason);
+        assert!(reason.contains("no types declared"));
     }
 }
