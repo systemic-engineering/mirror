@@ -466,11 +466,7 @@ impl Domain {
 
     /// All `ensures` property names declared in this domain.
     pub fn ensures(&self) -> Vec<&str> {
-        self.properties
-            .ensures
-            .iter()
-            .map(|p| p.as_str())
-            .collect()
+        self.properties.ensures.iter().map(|p| p.as_str()).collect()
     }
 
     /// Access the internal TypeRegistry for compilation.
@@ -481,6 +477,97 @@ impl Domain {
         self.registry
             .as_ref()
             .expect("Domain::registry() requires a grammar-built Domain (use from_grammar)")
+    }
+
+    /// Build a `Domain` wrapping an existing TypeRegistry.
+    ///
+    /// Bridge constructor for the TypeRegistry → Domain migration.
+    /// Populates Domain fields from registry data so query methods work.
+    /// Crate-internal — callers should use `from_grammar` for new code.
+    pub(crate) fn from_registry(registry: TypeRegistry) -> Self {
+        let name = DomainName::new(registry.domain.as_str());
+
+        let mut types = Vec::new();
+        let mut sorted_type_names = registry.type_names();
+        sorted_type_names.sort();
+        for type_name in &sorted_type_names {
+            let mut variants = Vec::new();
+            for variant_name in registry.variants(type_name).unwrap_or_default() {
+                let mut params = Vec::new();
+                if let Some(ref_type) = registry.variant_param(type_name, variant_name) {
+                    params.push((
+                        VariantName::new(variant_name),
+                        TypeRef::new(TypeName::new(ref_type)),
+                    ));
+                }
+                variants.push(Variant {
+                    name: VariantName::new(variant_name),
+                    params,
+                });
+            }
+            types.push(TypeDef {
+                name: TypeName::new(*type_name),
+                variants,
+            });
+        }
+
+        let mut actions = Vec::new();
+        for act_name in registry.act_names() {
+            let mut fields = Vec::new();
+            for (field_name, type_ref) in registry.action_fields(act_name).unwrap_or(&[]) {
+                let tr = type_ref.as_deref().unwrap_or("");
+                fields.push((ActionName::new(field_name.as_str()), TypeRef::new(TypeName::new(tr))));
+            }
+            let mut calls = Vec::new();
+            for (domain, action, args) in registry.action_calls(act_name) {
+                let mut call_args = Vec::new();
+                for a in args {
+                    call_args.push(TypeRef::new(TypeName::new(a.as_str())));
+                }
+                calls.push(ActionCall {
+                    domain: DomainName::new(domain.as_str()),
+                    action: ActionName::new(action.as_str()),
+                    args: call_args,
+                });
+            }
+            let visibility = registry.action_visibility(act_name);
+            actions.push(Action {
+                name: ActionName::new(act_name),
+                fields,
+                visibility,
+                calls,
+            });
+        }
+
+        let mut requires = Vec::new();
+        for s in registry.required_properties() {
+            requires.push(PropertyName::new(s.as_str()));
+        }
+        let mut invariants = Vec::new();
+        for s in registry.invariants() {
+            invariants.push(PropertyName::new(s.as_str()));
+        }
+        let mut ensures = Vec::new();
+        for s in registry.ensures() {
+            ensures.push(PropertyName::new(s.as_str()));
+        }
+        let properties = Properties { requires, invariants, ensures };
+
+        let mut all_calls = Vec::new();
+        for a in &actions {
+            all_calls.extend(a.calls.clone());
+        }
+
+        Domain {
+            name,
+            types,
+            actions,
+            lenses: vec![],
+            extends: vec![],
+            calls: all_calls,
+            properties,
+            registry: Some(registry),
+        }
     }
 
     /// Build a `Domain` from a grammar AST node with no external lens declarations.
@@ -1457,10 +1544,7 @@ mod tests {
             types: vec![],
             actions: vec![Action {
                 name: ActionName::new("ping"),
-                fields: vec![(
-                    ActionName::new("target"),
-                    TypeRef::new(TypeName::new("")),
-                )],
+                fields: vec![(ActionName::new("target"), TypeRef::new(TypeName::new("")))],
                 visibility: Visibility::Protected,
                 calls: vec![],
             }],
@@ -1510,6 +1594,36 @@ mod tests {
     fn domain_query_ensures() {
         let d = make_rich_domain();
         assert_eq!(d.ensures(), vec!["delivered"]);
+    }
+
+    // --- Domain::from_registry ---
+
+    #[test]
+    fn from_registry_with_actions_and_calls() {
+        use crate::parse::Parse;
+        use crate::Vector;
+        // Grammar with types, actions, calls (with args), and properties.
+        let source = "grammar @test {\n  type = a | b\n\n  public action send {\n    payload\n    @tools.exec(payload)\n  }\n\n  requires shannon_equivalence\n  invariant connected\n  ensures delivered\n}\n";
+        let ast = Parse.trace(source.to_string()).into_result().unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let registry = crate::resolve::TypeRegistry::compile(grammar).unwrap();
+        let domain = Domain::from_registry(registry);
+
+        assert_eq!(domain.domain_name(), "test");
+        assert!(domain.has_type(""));
+        assert!(domain.has_action("send"));
+        assert_eq!(domain.action_visibility("send"), Visibility::Public);
+        assert!(!domain.act_fields("send").unwrap().is_empty());
+        assert!(!domain.action_calls("send").is_empty());
+        assert_eq!(domain.required_properties(), vec!["shannon_equivalence"]);
+        assert_eq!(domain.invariants(), vec!["connected"]);
+        assert_eq!(domain.ensures(), vec!["delivered"]);
+        // Registry should still be accessible.
+        assert!(domain.registry().has_type(""));
     }
 
     // --- Domain::registry() ---

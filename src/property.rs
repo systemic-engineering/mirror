@@ -7,6 +7,7 @@
 use std::collections::{HashMap, HashSet};
 
 use crate::generate::{self, Derivation};
+use crate::model::Domain;
 use crate::parse::{self, HasAssertion, PropertyCheck, TestDirective};
 use crate::prism;
 use crate::resolve::{GenerateProvider, Namespace, TypeRegistry};
@@ -125,12 +126,12 @@ fn check_test(name: &str, assertions: &[HasAssertion], namespace: &Namespace) ->
 ///
 /// Two kinds:
 /// - `Derivation`: checks all derivations (e.g., shannon_equivalence)
-/// - `Registry`: checks the TypeRegistry directly (e.g., spectral properties)
+/// - `Domain`: checks the Domain model directly (e.g., spectral properties)
 pub enum BuiltinProperty {
     /// Property checked against all grammar derivations.
     Derivation(fn(&[Derivation]) -> Verdict),
-    /// Property checked against the TypeRegistry (needs full type graph).
-    Registry(fn(&TypeRegistry) -> (bool, String)),
+    /// Property checked against the Domain model (needs full type graph).
+    Registry(fn(&Domain) -> (bool, String)),
 }
 
 /// Look up a built-in property by name.
@@ -146,17 +147,18 @@ pub fn lookup_builtin(name: &str) -> Option<BuiltinProperty> {
         "bipartite" => Some(BuiltinProperty::Registry(bipartite_check)),
         "inference_justified" => Some(BuiltinProperty::Registry(inference_justified_check)),
         #[cfg(test)]
-        "_test_registry_fail" => Some(BuiltinProperty::Registry(|_| {
+        "_test_registry_fail" => Some(BuiltinProperty::Registry(|_: &Domain| {
             (false, "intentional test failure".into())
         })),
         _ => None,
     }
 }
 
-/// Evaluate a `BuiltinProperty` against a registry.
-fn eval_builtin(registry: &TypeRegistry, name: &str, prop: BuiltinProperty) -> (bool, String) {
+/// Evaluate a `BuiltinProperty` against a Domain.
+fn eval_builtin(domain: &Domain, name: &str, prop: BuiltinProperty) -> (bool, String) {
     match prop {
         BuiltinProperty::Derivation(prop_fn) => {
+            let registry = domain.registry();
             let derivations = generate::derive_all(registry);
             match prop_fn(&derivations) {
                 Verdict::Pass => (
@@ -166,8 +168,17 @@ fn eval_builtin(registry: &TypeRegistry, name: &str, prop: BuiltinProperty) -> (
                 Verdict::Fail(reason) => (false, reason),
             }
         }
-        BuiltinProperty::Registry(check_fn) => check_fn(registry),
+        BuiltinProperty::Registry(check_fn) => check_fn(domain),
     }
+}
+
+/// Check a built-in property against a Domain.
+///
+/// Returns `Some((satisfied, reason))` if the property is known,
+/// `None` if the property name is not recognized.
+pub fn check_builtin_domain(domain: &Domain, name: &str) -> Option<(bool, String)> {
+    let prop = lookup_builtin(name)?;
+    Some(eval_builtin(domain, name, prop))
 }
 
 /// Check a built-in property against a registry.
@@ -175,20 +186,20 @@ fn eval_builtin(registry: &TypeRegistry, name: &str, prop: BuiltinProperty) -> (
 /// Returns `Some((satisfied, reason))` if the property is known,
 /// `None` if the property name is not recognized.
 pub fn check_builtin(registry: &TypeRegistry, name: &str) -> Option<(bool, String)> {
-    let prop = lookup_builtin(name)?;
-    Some(eval_builtin(registry, name, prop))
+    let domain = Domain::from_registry(registry.clone());
+    check_builtin_domain(&domain, name)
 }
 
 /// Check that every declared type has at least one variant (exhaustive).
 ///
 /// A grammar with types that have variants can produce derivations.
 /// Empty grammars (no types) are trivially exhaustive.
-fn exhaustive_check(registry: &TypeRegistry) -> (bool, String) {
-    let type_count = registry.type_names().len();
-    let variant_count: usize = registry
+fn exhaustive_check(domain: &Domain) -> (bool, String) {
+    let type_count = domain.type_names().len();
+    let variant_count: usize = domain
         .type_names()
         .iter()
-        .map(|t| registry.variants(t).map(|v| v.len()).unwrap_or(0))
+        .map(|t| domain.variants(t).map(|v| v.len()).unwrap_or(0))
         .sum();
     (
         true,
@@ -203,19 +214,19 @@ fn exhaustive_check(registry: &TypeRegistry) -> (bool, String) {
 ///
 /// Inference over a trivial domain (no type references) has nothing to
 /// explore — the temperature schedule would be meaningless.
-fn inference_justified_check(registry: &TypeRegistry) -> (bool, String) {
-    let type_names = registry.type_names();
+fn inference_justified_check(domain: &Domain) -> (bool, String) {
+    let type_names = domain.type_names();
     if type_names.is_empty() {
         return (false, "inference_justified: no types declared".into());
     }
 
     // Check for parameterized variant references (edges in the type graph)
     let has_edges = type_names.iter().any(|type_name| {
-        registry
+        domain
             .variants(type_name)
             .unwrap_or_default()
             .iter()
-            .any(|variant| registry.variant_param(type_name, variant).is_some())
+            .any(|variant| domain.variant_param(type_name, variant).is_some())
     });
 
     if !has_edges {
@@ -236,8 +247,9 @@ fn inference_justified_check(registry: &TypeRegistry) -> (bool, String) {
 
 /// Check that the type reference graph is connected.
 #[cfg(feature = "spectral")]
-fn connected_check(registry: &TypeRegistry) -> (bool, String) {
+fn connected_check(domain: &Domain) -> (bool, String) {
     use crate::spectral::TypeGraphSpectrum;
+    let registry = domain.registry();
     match TypeGraphSpectrum::from_registry(registry) {
         Some(spectrum) => {
             if spectrum.components() <= 1 {
@@ -258,17 +270,18 @@ fn connected_check(registry: &TypeRegistry) -> (bool, String) {
 
 /// Check that the type reference graph is bipartite.
 #[cfg(feature = "spectral")]
-fn bipartite_check(registry: &TypeRegistry) -> (bool, String) {
+fn bipartite_check(domain: &Domain) -> (bool, String) {
     use crate::spectral::TypeGraphSpectrum;
+    let registry = domain.registry();
     match TypeGraphSpectrum::from_registry(registry) {
         Some(spectrum) => {
             let n = spectrum.laplacian.n();
-            let edges = registry.type_names().iter().fold(0usize, |acc, type_name| {
-                acc + registry
+            let edges = domain.type_names().iter().fold(0usize, |acc, type_name| {
+                acc + domain
                     .variants(type_name)
                     .unwrap_or_default()
                     .iter()
-                    .filter(|v| registry.variant_param(type_name, v).is_some())
+                    .filter(|v| domain.variant_param(type_name, v).is_some())
                     .count()
             });
             if edges < n {
@@ -314,7 +327,7 @@ fn derive_with_provider(registry: &TypeRegistry, provider: &GenerateProvider) ->
 /// accepted. Derivation-type properties (e.g., shannon_equivalence) run
 /// against all derivations with override support. Registry-type properties
 /// (e.g., exhaustive, connected, bipartite) run directly against the
-/// TypeRegistry and report 0 derivations_checked (they don't enumerate).
+/// Domain model and report 0 derivations_checked (they don't enumerate).
 fn check_property_block_with_overrides(
     name: &str,
     checks: &[PropertyCheck],
@@ -334,6 +347,7 @@ fn check_property_block_with_overrides(
                 continue;
             }
         };
+        let domain = Domain::from_registry(registry.clone());
         match lookup_builtin(&check.property) {
             None => {
                 results.push(PropertyResult {
@@ -356,7 +370,7 @@ fn check_property_block_with_overrides(
                 });
             }
             Some(BuiltinProperty::Registry(check_fn)) => {
-                let (satisfied, reason) = check_fn(&registry);
+                let (satisfied, reason) = check_fn(&domain);
                 results.push(PropertyResult {
                     name: format!("{}: @{} satisfies {}", name, check.domain, check.property),
                     derivations_checked: 0,
@@ -1226,11 +1240,12 @@ mod tests {
     fn eval_builtin_derivation_fail() {
         // Create a grammar and use a property that always fails
         let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let domain = Domain::from_registry(reg);
         fn always_fail(_: &[Derivation]) -> Verdict {
             Verdict::Fail("always fails".into())
         }
         let prop = BuiltinProperty::Derivation(always_fail);
-        let (satisfied, reason) = eval_builtin(&reg, "test_fail", prop);
+        let (satisfied, reason) = eval_builtin(&domain, "test_fail", prop);
         assert!(!satisfied);
         assert_eq!(reason, "always fails");
     }
@@ -1238,8 +1253,9 @@ mod tests {
     #[test]
     fn eval_builtin_registry_pass() {
         let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
+        let domain = Domain::from_registry(reg);
         let prop = BuiltinProperty::Registry(exhaustive_check);
-        let (satisfied, _reason) = eval_builtin(&reg, "exhaustive", prop);
+        let (satisfied, _reason) = eval_builtin(&domain, "exhaustive", prop);
         assert!(satisfied);
     }
 
@@ -1267,5 +1283,15 @@ mod tests {
         let (satisfied, reason) = check_builtin(&reg, "inference_justified").unwrap();
         assert!(!satisfied, "should fail for empty grammar: {}", reason);
         assert!(reason.contains("no types declared"));
+    }
+
+    #[test]
+    fn check_builtin_exhaustive_with_actions() {
+        // Exercises the from_registry path with actions, fields, calls (with args), and properties.
+        let reg = compile_grammar(
+            "grammar @test {\n  type = a | b\n\n  public action send {\n    payload\n    @tools.exec(payload)\n  }\n\n  requires shannon_equivalence\n  invariant connected\n  ensures delivered\n}\n",
+        );
+        let (satisfied, reason) = check_builtin(&reg, "exhaustive").unwrap();
+        assert!(satisfied, "exhaustive should pass: {}", reason);
     }
 }
