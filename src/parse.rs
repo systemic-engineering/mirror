@@ -3154,6 +3154,149 @@ grammar @conversation {
     }
 
     #[test]
+    fn parse_abstract_action() {
+        let source =
+            "grammar @cogito {\n  type = observable\n\n  abstract action observe(observable)\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let action = grammar
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("abstract-action"))
+            .expect("should have abstract-action node");
+        assert_eq!(action.data().value, "observe");
+        let params: Vec<_> = action
+            .children()
+            .iter()
+            .filter(|c| c.data().name == "param")
+            .collect();
+        assert_eq!(params.len(), 1);
+        assert_eq!(params[0].data().value, "observable:observable");
+    }
+
+    #[test]
+    fn parse_action_with_body_and_target() {
+        let source = "grammar @ai {\n  type = observation\n\n  action decide(observation) in @rust {\n    provider.infer(observation)\n  }\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let action = grammar
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("action-def"))
+            .expect("should have action-def node");
+        assert_eq!(action.data().value, "decide");
+        let target = action
+            .children()
+            .iter()
+            .find(|c| c.data().name == "target")
+            .expect("should have target node");
+        assert_eq!(target.data().value, "rust");
+        let body = action
+            .children()
+            .iter()
+            .find(|c| c.data().name == "body")
+            .expect("should have body node");
+        assert!(body.data().value.contains("provider.infer"));
+    }
+
+    #[test]
+    fn parse_action_param_sugar() {
+        let source = "grammar @test {\n  type = x | y\n\n  action f(x) in @rust { body }\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let action = grammar
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("action-def"))
+            .expect("should have action-def node");
+        let params: Vec<_> = action
+            .children()
+            .iter()
+            .filter(|c| c.data().name == "param")
+            .collect();
+        assert_eq!(params.len(), 1);
+        assert_eq!(params[0].data().value, "x:x");
+    }
+
+    #[test]
+    fn parse_action_param_explicit() {
+        let source = "grammar @test {\n  type observation = a | b\n\n  action f(obs: observation) in @rust { body }\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let action = grammar
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("action-def"))
+            .expect("should have action-def node");
+        let params: Vec<_> = action
+            .children()
+            .iter()
+            .filter(|c| c.data().name == "param")
+            .collect();
+        assert_eq!(params.len(), 1);
+        assert_eq!(params[0].data().value, "obs:observation");
+    }
+
+    #[test]
+    fn parse_abstract_action_multiple_params() {
+        let source = "grammar @test {\n  type observation = a\n  type schedule = b\n\n  abstract action decide(observation, schedule)\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let action = grammar
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("abstract-action"))
+            .expect("should have abstract-action node");
+        let params: Vec<_> = action
+            .children()
+            .iter()
+            .filter(|c| c.data().name == "param")
+            .collect();
+        assert_eq!(params.len(), 2);
+        assert_eq!(params[0].data().value, "observation:observation");
+        assert_eq!(params[1].data().value, "schedule:schedule");
+    }
+
+    #[test]
+    fn parse_action_empty_body() {
+        let source = "grammar @test {\n  type = x\n\n  action f(x) in @rust {}\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let action = grammar
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("action-def"))
+            .expect("should have action-def");
+        let body = action.children().iter().find(|c| c.data().name == "body");
+        // Empty body is valid — the body node exists but with empty value
+        assert!(body.is_some());
+    }
+
+    #[test]
     fn parse_grammar_extends() {
         let source = "grammar @fox extends @smash, @controller {\n  type = move | attack\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
