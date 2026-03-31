@@ -626,6 +626,93 @@ mod tests {
         assert!(!rt.domains.contains_key("compiler"));
     }
 
+    // -----------------------------------------------------------------------
+    // InferenceSchedule tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn inference_schedule_immediate_for_trivial() {
+        use crate::model::Domain;
+        use crate::parse::Parse;
+        use crate::Vector;
+        let source = "grammar @simple {\n  type = a | b\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let domain = Domain::from_grammar(grammar).unwrap();
+        let verified = check::verify(domain).unwrap();
+        let schedule = InferenceSchedule::from_verified(&verified);
+        assert!(matches!(schedule, InferenceSchedule::Immediate));
+    }
+
+    #[test]
+    fn inference_schedule_diffusion_for_spectrum() {
+        use crate::model::Domain;
+        use crate::parse::Parse;
+        use crate::Vector;
+        let source =
+            "grammar @linked {\n  type color = red | blue\n  type pair = combo(color)\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let domain = Domain::from_grammar(grammar).unwrap();
+        let verified = check::verify(domain).unwrap();
+        let schedule = InferenceSchedule::from_verified(&verified);
+        match &schedule {
+            InferenceSchedule::Diffusion(ev) => {
+                assert!(ev.fiedler_value().unwrap() > 0.0);
+            }
+            InferenceSchedule::Immediate => panic!("expected Diffusion"),
+        }
+    }
+
+    #[test]
+    fn schedule_temperature_decreases_with_complexity() {
+        use crate::model::Domain;
+        use crate::parse::Parse;
+        use crate::Vector;
+        let source =
+            "grammar @linked {\n  type color = red | blue\n  type pair = combo(color)\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let domain = Domain::from_grammar(grammar).unwrap();
+        let verified = check::verify(domain).unwrap();
+        let schedule = InferenceSchedule::from_verified(&verified);
+        let t_full = schedule.temperature(1.0);
+        let t_half = schedule.temperature(0.5);
+        let t_zero = schedule.temperature(0.0);
+        assert!(
+            t_full >= t_half,
+            "full {} should >= half {}",
+            t_full,
+            t_half
+        );
+        assert!(
+            t_half >= t_zero,
+            "half {} should >= zero {}",
+            t_half,
+            t_zero
+        );
+    }
+
+    #[test]
+    fn schedule_immediate_always_zero_temperature() {
+        let schedule = InferenceSchedule::Immediate;
+        assert_eq!(schedule.temperature(0.0), 0.0);
+        assert_eq!(schedule.temperature(0.5), 0.0);
+        assert_eq!(schedule.temperature(1.0), 0.0);
+    }
+
     #[tokio::test]
     async fn ractor_runtime_check_ensures_retags_violations_as_ensures() {
         use crate::model::{Properties, PropertyName, TypeDef, TypeName, Variant, VariantName};
