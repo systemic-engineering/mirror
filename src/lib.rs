@@ -35,3 +35,5 @@ pub use fragmentation::store::Store;
 
 pub mod model;
 pub mod runtime;
+
+pub use model::Domain;

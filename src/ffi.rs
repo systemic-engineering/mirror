@@ -4,7 +4,6 @@
 //! `parse_to_oid` and `compile_grammar_to_etf` are the two core operations.
 
 use crate::compile;
-use crate::domain::conversation::Kind;
 use crate::logic::{Fact, ProofCertificate};
 use crate::parse::Parse;
 use crate::ContentAddressed;
@@ -74,18 +73,16 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
         .collect();
     let domain = crate::model::Domain::from_grammar_with_lenses(grammar_node, &lens_values)?;
 
-    let registry = domain.registry();
-    let resolve_oid = crate::Oid::hash(registry.encoded()).as_ref().to_string();
+    // Resolve OID: content address from the Domain's encoded form.
+    let resolve_oid = domain.content_oid().as_ref().to_string();
 
-    let extends: Vec<String> = grammar_node
-        .children()
+    let extends: Vec<String> = domain
+        .extends
         .iter()
-        .filter(|c| c.data().kind == Kind::Ref && c.data().name == "extends")
-        .map(|c| c.data().value.trim_start_matches('@').to_string())
+        .map(|d| d.as_str().to_string())
         .collect();
 
-    // Use Domain-based compilation path, then patch in extends.
-    // Filter out self-lenses (e.g. @filesystem in a @filesystem grammar).
+    // Use Domain-based compilation path.
     let domain_name_str = domain.name.as_str();
     let lenses: Vec<String> = domain
         .lenses
@@ -93,15 +90,17 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
         .map(|l| l.target.as_str().to_owned())
         .filter(|l| l != domain_name_str)
         .collect();
-    let etf = compile::emit_actor_module(registry, &lenses, &extends);
+    let etf = compile::emit_actor_module_for_domain(&domain, &lenses, &extends);
     let compile_oid = crate::Oid::hash(&etf).as_ref().to_string();
 
+    // ProofCertificate still needs TypeRegistry for now.
+    let registry = domain.registry();
     let cert = ProofCertificate::from_registry(registry);
     let proof_oid = cert.proof_oid.as_ref().to_string();
 
-    let required_properties: Vec<String> = registry.required_properties().to_vec();
-    let invariants: Vec<String> = registry.invariants().to_vec();
-    let ensures: Vec<String> = registry.ensures().to_vec();
+    let required_properties: Vec<String> = domain.required_properties().iter().map(|s| s.to_string()).collect();
+    let invariants: Vec<String> = domain.invariants().iter().map(|s| s.to_string()).collect();
+    let ensures: Vec<String> = domain.ensures().iter().map(|s| s.to_string()).collect();
     let proof_etf = proof_certificate_to_etf(&cert, &required_properties, &invariants, &ensures);
 
     Ok(CompileResult {

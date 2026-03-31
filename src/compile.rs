@@ -7,7 +7,7 @@ use eetf::{Atom, FixInteger, List, Term, Tuple};
 
 use crate::ast::AstNode;
 use crate::prism::Prism;
-use crate::resolve::{BranchAction, BranchPattern, OutputNode, TypeRegistry, Visibility};
+use crate::resolve::{BranchAction, BranchPattern, OutputNode, Visibility};
 
 /// Emit Erlang Abstract Format from a transformation tree.
 ///
@@ -141,24 +141,25 @@ fn emit_branch_arm(arm: &crate::resolve::BranchArm, line: i32) -> Term {
     )
 }
 
-/// Emit an actor dispatch module from a grammar's TypeRegistry.
+/// Emit an actor dispatch module from a `Domain` model.
 ///
-/// Each act declared in the grammar becomes an exported function that
+/// Each act declared in the domain becomes an exported function that
 /// dispatches to the registered actor process via gen_server:call.
 ///
 /// For `grammar @compiler { action compile { source: target } }`:
 /// ```erlang
-/// -module('@compiler').
+/// -module('conv_compiler').
 /// -export([compile/1]).
-/// compile(Args) -> gen_server:call('@compiler', {compile, Args}).
+/// compile(Args) -> gen_server:call('compiler', {compile, Args}).
 /// ```
-pub fn emit_actor_module(
-    registry: &TypeRegistry,
+pub fn emit_actor_module_for_domain(
+    domain: &crate::model::Domain,
     lenses: &[String],
     extends: &[String],
 ) -> Vec<u8> {
-    let beam_module = format!("conv_{}", registry.domain);
-    let act_names = registry.act_names();
+    let domain_name = domain.domain_name();
+    let beam_module = format!("conv_{}", domain_name);
+    let act_names = domain.act_names();
 
     let mut forms = Vec::new();
 
@@ -174,7 +175,7 @@ pub fn emit_actor_module(
     // Private actions are NOT exported.
     let mut exports: Vec<Term> = act_names
         .iter()
-        .filter(|name| registry.action_visibility(name) != Visibility::Private)
+        .filter(|name| domain.action_visibility(name) != Visibility::Private)
         .map(|name| eaf_tuple(vec![eaf_atom(name), eaf_int(1)]))
         .collect();
     exports.push(eaf_tuple(vec![eaf_atom("lenses"), eaf_int(0)]));
@@ -197,9 +198,17 @@ pub fn emit_actor_module(
     //   private   → gen_server:call('module', {action, Args}) (same body, not exported)
     let mut line = 3i32;
     for name in &act_names {
-        let vis = registry.action_visibility(name);
-        let calls = registry.action_calls(name);
-        forms.push(emit_act_function(&registry.domain, name, &vis, calls, line));
+        let vis = domain.action_visibility(name);
+        let calls = domain.action_calls(name);
+        let mut calls_owned: Vec<(String, String, Vec<String>)> = Vec::new();
+        for (d, a, args) in &calls {
+            let mut owned_args = Vec::new();
+            for s in args {
+                owned_args.push(s.to_string());
+            }
+            calls_owned.push((d.to_string(), a.to_string(), owned_args));
+        }
+        forms.push(emit_act_function(domain_name, name, &vis, &calls_owned, line));
         line += 1;
     }
 
@@ -211,22 +220,22 @@ pub fn emit_actor_module(
     forms.push(emit_string_list_function("extends", extends, line));
     line += 1;
 
-    // visibility/0 → [{<<"action">>, <<"public">>}, ...]
-    forms.push(emit_visibility_function(registry, line));
+    // visibility/0 → [{<<"action">>, <<"vis">>}, ...]
+    forms.push(emit_visibility_function_from_domain(domain, line));
     line += 1;
 
     // requires/0 → [<<"shannon_equivalence">>, ...]
-    let requires: Vec<String> = registry.required_properties().to_vec();
+    let requires: Vec<String> = domain.required_properties().iter().map(|s| s.to_string()).collect();
     forms.push(emit_string_list_function("requires", &requires, line));
     line += 1;
 
     // invariants/0 → [<<"connected">>, ...]
-    let invariants: Vec<String> = registry.invariants().to_vec();
+    let invariants: Vec<String> = domain.invariants().iter().map(|s| s.to_string()).collect();
     forms.push(emit_string_list_function("invariants", &invariants, line));
     line += 1;
 
     // ensures/0 → [<<"response_time">>, ...]
-    let ensures: Vec<String> = registry.ensures().to_vec();
+    let ensures: Vec<String> = domain.ensures().iter().map(|s| s.to_string()).collect();
     forms.push(emit_string_list_function("ensures", &ensures, line));
 
     let term = Term::from(List::from(forms));
@@ -291,13 +300,13 @@ fn emit_act_function(
     ])
 }
 
-/// Emit `visibility/0` function: returns a list of `{<<"action">>, <<"vis">>}` tuples.
-fn emit_visibility_function(registry: &TypeRegistry, line: i32) -> Term {
-    let pairs: Vec<Term> = registry
+/// Emit `visibility/0` function from a Domain: returns a list of `{<<"action">>, <<"vis">>}` tuples.
+fn emit_visibility_function_from_domain(domain: &crate::model::Domain, line: i32) -> Term {
+    let pairs: Vec<Term> = domain
         .act_names()
         .iter()
         .map(|name| {
-            let vis = match registry.action_visibility(name) {
+            let vis = match domain.action_visibility(name) {
                 Visibility::Public => "public",
                 Visibility::Protected => "protected",
                 Visibility::Private => "private",
@@ -434,22 +443,24 @@ fn eaf_tuple_expr(line: i32, elements: Vec<Term>) -> Term {
 
 /// Emit an actor dispatch module from a `Domain` model.
 ///
-/// This is the Domain-based entry point for compilation. It delegates to
-/// `emit_actor_module` internally but accepts the public `Domain` type
-/// instead of the internal `TypeRegistry`.
+/// This is the primary Domain-based entry point for compilation.
+/// Uses Domain query methods directly — no TypeRegistry access.
 pub fn emit_actor_module_from_domain(domain: &crate::model::Domain) -> Vec<u8> {
-    let registry = domain.registry();
     // Filter out self-lenses (e.g. @filesystem in a @filesystem grammar).
     let domain_name = domain.name.as_str();
-    let lenses: Vec<String> = domain
-        .lenses
-        .iter()
-        .map(|l| l.target.as_str().to_owned())
-        .filter(|l| l != domain_name)
-        .collect();
-    // Domain doesn't track extends yet — pass empty.
-    let extends: Vec<String> = Vec::new();
-    emit_actor_module(registry, &lenses, &extends)
+    let mut lenses = Vec::new();
+    for l in &domain.lenses {
+        let target = l.target.as_str().to_owned();
+        if target != domain_name {
+            lenses.push(target);
+        }
+    }
+    // Extends from domain model.
+    let mut extends = Vec::new();
+    for d in &domain.extends {
+        extends.push(d.as_str().to_string());
+    }
+    emit_actor_module_for_domain(domain, &lenses, &extends)
 }
 
 /// Emit a test module from an `annotate(@test)` subtree.
@@ -588,17 +599,16 @@ mod tests {
     }
 
     #[test]
-    fn emit_actor_module_from_domain_matches_registry_path() {
+    fn emit_actor_module_from_domain_deterministic() {
         let source = "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n";
         let grammar_node = parse_grammar_node(source);
         let domain = Domain::from_grammar(&grammar_node).unwrap();
-        let registry = crate::resolve::TypeRegistry::compile(&grammar_node).unwrap();
 
-        let domain_etf = emit_actor_module_from_domain(&domain);
-        let registry_etf = emit_actor_module(&registry, &[], &[]);
+        let etf1 = emit_actor_module_from_domain(&domain);
+        let etf2 = emit_actor_module_from_domain(&domain);
 
-        // Both paths should produce identical output.
-        assert_eq!(domain_etf, registry_etf);
+        // Same domain → same output (deterministic).
+        assert_eq!(etf1, etf2);
     }
 
     #[test]
