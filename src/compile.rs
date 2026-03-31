@@ -515,3 +515,91 @@ fn emit_test_descriptor(child: &Prism<AstNode>, line: i32) -> Term {
         ],
     )
 }
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::Domain;
+    use crate::parse::Parse;
+    use crate::Vector;
+
+    fn parse_grammar_node(source: &str) -> crate::prism::Prism<crate::ast::AstNode> {
+        let ast = Parse
+            .trace(source.to_string())
+            .into_result()
+            .expect("parse should succeed");
+        ast.children()
+            .iter()
+            .find(|c: &&crate::prism::Prism<crate::ast::AstNode>| c.data().is_decl("grammar"))
+            .expect("grammar block should exist")
+            .clone()
+    }
+
+    #[test]
+    fn emit_actor_module_from_domain_produces_valid_etf() {
+        let source = "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n";
+        let grammar_node = parse_grammar_node(source);
+        let domain = Domain::from_grammar(&grammar_node).unwrap();
+
+        let etf = emit_actor_module_from_domain(&domain);
+
+        assert!(!etf.is_empty());
+        assert_eq!(etf[0], 131); // ETF version byte
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let s = format!("{:?}", term);
+        assert!(s.contains("conv_test"), "should have conv_test module: {}", s);
+    }
+
+    #[test]
+    fn emit_actor_module_from_domain_matches_registry_path() {
+        let source = "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n";
+        let grammar_node = parse_grammar_node(source);
+        let domain = Domain::from_grammar(&grammar_node).unwrap();
+        let registry = crate::resolve::TypeRegistry::compile(&grammar_node).unwrap();
+
+        let domain_etf = emit_actor_module_from_domain(&domain);
+        let registry_etf = emit_actor_module(&registry, &[], &[]);
+
+        // Both paths should produce identical output.
+        assert_eq!(domain_etf, registry_etf);
+    }
+
+    #[test]
+    fn emit_actor_module_from_domain_includes_lenses() {
+        let source = "grammar @fs {\n  type = file | folder\n}\n";
+        let grammar_node = parse_grammar_node(source);
+        let lenses = vec!["@reality".to_string()];
+        let domain = Domain::from_grammar_with_lenses(&grammar_node, &lenses).unwrap();
+
+        let etf = emit_actor_module_from_domain(&domain);
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let s = format!("{:?}", term);
+
+        let reality_bytes: Vec<u8> = "reality".bytes().collect();
+        assert!(
+            s.contains(&format!("{:?}", reality_bytes)),
+            "should contain reality lens: {}",
+            s
+        );
+    }
+
+    #[test]
+    fn emit_actor_module_from_verified_produces_valid_etf() {
+        let source = "grammar @clean {\n  type = x | y\n}\n";
+        let grammar_node = parse_grammar_node(source);
+        let domain = Domain::from_grammar(&grammar_node).unwrap();
+        let verified = crate::check::verify(domain).unwrap();
+
+        let etf = emit_actor_module_from_verified(&verified);
+
+        assert!(!etf.is_empty());
+        assert_eq!(etf[0], 131);
+        let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
+        let s = format!("{:?}", term);
+        assert!(s.contains("conv_clean"), "should have conv_clean module: {}", s);
+    }
+}

@@ -995,4 +995,27 @@ mod tests {
         assert_eq!(domain.actions[0].calls[0].domain.as_str(), "erlang");
         assert!(!domain.is_actor());
     }
+
+    // --- Domain::registry() ---
+
+    #[test]
+    fn from_grammar_populates_registry() {
+        let variant_a = mk_shard("va", Kind::Form, "variant", "a");
+        let variant_b = mk_shard("vb", Kind::Form, "variant", "b");
+        let type_def = mk_fractal(
+            "type-def",
+            Kind::Form,
+            "type-def",
+            "color",
+            vec![variant_a, variant_b],
+        );
+        let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@test", vec![type_def]);
+
+        let domain = Domain::from_grammar(&grammar).unwrap();
+
+        // Registry should be populated and accessible.
+        let registry = domain.registry();
+        assert_eq!(registry.domain, "test");
+        assert!(registry.has_type("color"));
+    }
 }
