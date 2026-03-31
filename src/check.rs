@@ -797,6 +797,46 @@ mod tests {
     // Coverage: dangling type ref (variant points to undeclared type — skipped)
     // -----------------------------------------------------------------------
 
+    // -----------------------------------------------------------------------
+    // Verified carries spectrum
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn verified_carries_trivial_complexity() {
+        use crate::{Parse, Vector};
+        let source = "grammar @simple {\n  type = a | b\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let domain = Domain::from_grammar(grammar).unwrap();
+        let verified = verify(domain).unwrap();
+        assert!(verified.complexity().is_trivial());
+    }
+
+    #[test]
+    fn verified_carries_spectrum_for_referenced_types() {
+        use crate::{Parse, Vector};
+        let source =
+            "grammar @linked {\n  type color = red | blue\n  type pair = combo(color)\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let domain = Domain::from_grammar(grammar).unwrap();
+        let verified = verify(domain).unwrap();
+        let spectrum = verified
+            .complexity()
+            .clone()
+            .spectrum()
+            .expect("should have spectrum");
+        assert!(spectrum.eigenvalues().fiedler_value().unwrap() > 0.0);
+    }
+
     #[test]
     fn verify_dangling_type_ref_skipped_and_domain_disconnected() {
         // type color = red(ghost) | blue  — ghost is not declared.

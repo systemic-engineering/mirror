@@ -1184,7 +1184,9 @@ mod tests {
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
         let domain = Domain::from_grammar(grammar).unwrap();
-        let spectrum = domain.complexity().spectrum()
+        let spectrum = domain
+            .complexity()
+            .spectrum()
             .expect("expected Spectrum, got Trivial");
         let ev = spectrum.eigenvalues();
         assert!(ev.len() >= 2);
