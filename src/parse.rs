@@ -1031,14 +1031,22 @@ fn parse_action_body_def(
         if !after_brace.is_empty() {
             body_lines.push(after_brace.to_string());
         }
+        let mut found_close = false;
         while let Some(line) = lines.peek() {
             let trimmed = line.trim();
             if trimmed == "}" {
                 lines.advance();
+                found_close = true;
                 break;
             }
             body_lines.push(trimmed.to_string());
             lines.advance();
+        }
+        if !found_close {
+            return Err(ParseError {
+                message: "unclosed action body block".into(),
+                span: Some(span),
+            });
         }
         body_lines.join("\n")
     };
@@ -3581,6 +3589,21 @@ grammar @conversation {
             .expect("should have body");
         assert!(body.data().value.contains("first_line"));
         assert!(body.data().value.contains("second_line"));
+    }
+
+    #[test]
+    fn parse_action_body_unclosed() {
+        // Multi-line action body without closing brace → error
+        let source =
+            "grammar @test {\n  type = x\n\n  action f(x) in @rust {\n    line_one\n    line_two\n";
+        let result = Parse.trace(source.to_string()).into_result();
+        assert!(result.is_err(), "unclosed action body should return error");
+        let err = result.unwrap_err();
+        assert!(
+            err.message.contains("unclosed action body block"),
+            "error message should mention unclosed body, got: {}",
+            err.message
+        );
     }
 
     #[test]

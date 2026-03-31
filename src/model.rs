@@ -637,13 +637,15 @@ impl Domain {
     /// If there are no inter-type references, returns `Trivial` — not a zero
     /// spectrum, but absence of spectrum entirely.
     pub fn complexity(&self) -> DomainComplexity {
+        const MAX_TYPE_GRAPH_SIZE: usize = 500;
+
         let type_names: Vec<String> = self
             .types
             .iter()
             .map(|t| t.name.as_str().to_string())
             .collect();
 
-        if type_names.is_empty() {
+        if type_names.is_empty() || type_names.len() > MAX_TYPE_GRAPH_SIZE {
             return DomainComplexity::Trivial;
         }
 
@@ -1612,6 +1614,30 @@ mod tests {
                     },
                 ],
             }],
+            actions: vec![],
+            lenses: vec![],
+            extends: vec![],
+            calls: vec![],
+            properties: Properties::empty(),
+        };
+        assert!(matches!(domain.complexity(), DomainComplexity::Trivial));
+    }
+
+    #[test]
+    fn domain_complexity_trivial_for_oversized_type_graph() {
+        // More than 500 types → short-circuit to Trivial (DoS protection).
+        let types: Vec<TypeDef> = (0..501)
+            .map(|i| TypeDef {
+                name: TypeName::new(format!("t{}", i)),
+                variants: vec![Variant {
+                    name: VariantName::new("v"),
+                    params: vec![],
+                }],
+            })
+            .collect();
+        let domain = Domain {
+            name: DomainName::new("huge"),
+            types,
             actions: vec![],
             lenses: vec![],
             extends: vec![],
