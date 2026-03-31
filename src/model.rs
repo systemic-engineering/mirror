@@ -9,6 +9,8 @@ use std::fmt;
 use crate::ast::AstNode;
 use crate::prism::Prism;
 use crate::resolve::{TypeRegistry, Visibility};
+use crate::{ContentAddressed, Oid};
+use fragmentation::encoding::Encode;
 
 // ---------------------------------------------------------------------------
 // Newtypes
@@ -121,6 +123,32 @@ impl fmt::Display for PropertyName {
     }
 }
 
+/// A parameter name within an action definition.
+#[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct ParamName(String);
+
+impl ParamName {
+    pub fn new(s: impl Into<String>) -> Self {
+        Self(s.into())
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+impl AsRef<str> for ParamName {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+
+impl fmt::Display for ParamName {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Domain model structs
 // ---------------------------------------------------------------------------
@@ -167,6 +195,13 @@ pub struct ActionCall {
     pub args: Vec<TypeRef>,
 }
 
+/// The body of an action — a target domain and raw source text.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ActionBody {
+    pub target: DomainName,
+    pub source: String,
+}
+
 /// An action exported by a domain.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Action {
@@ -204,6 +239,8 @@ pub struct Domain {
     pub types: Vec<TypeDef>,
     pub actions: Vec<Action>,
     pub lenses: Vec<Lens>,
+    pub extends: Vec<DomainName>,
+    pub calls: Vec<ActionCall>,
     pub properties: Properties,
     /// Internal registry for compilation. Not part of equality.
     pub(crate) registry: Option<TypeRegistry>,
@@ -215,11 +252,44 @@ impl PartialEq for Domain {
             && self.types == other.types
             && self.actions == other.actions
             && self.lenses == other.lenses
+            && self.extends == other.extends
+            && self.calls == other.calls
             && self.properties == other.properties
     }
 }
 
 impl Eq for Domain {}
+
+domain_oid!(/// Content address for domains.
+pub DomainOid);
+
+impl Encode for Domain {
+    fn encode(&self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(b"domain:");
+        bytes.extend_from_slice(self.name.as_str().as_bytes());
+        for typedef in &self.types {
+            bytes.extend_from_slice(b":type:");
+            bytes.extend_from_slice(typedef.name.as_str().as_bytes());
+            for variant in &typedef.variants {
+                bytes.extend_from_slice(b":");
+                bytes.extend_from_slice(variant.name.as_str().as_bytes());
+            }
+        }
+        for action in &self.actions {
+            bytes.extend_from_slice(b":action:");
+            bytes.extend_from_slice(action.name.as_str().as_bytes());
+        }
+        bytes
+    }
+}
+
+impl ContentAddressed for Domain {
+    type Oid = DomainOid;
+    fn content_oid(&self) -> DomainOid {
+        DomainOid::from(Oid::hash(&self.encode()))
+    }
+}
 
 // ---------------------------------------------------------------------------
 // DomainSpectrum / DomainComplexity
@@ -305,6 +375,9 @@ impl Domain {
                 target: DomainName::new(v.as_str()),
             })
             .collect();
+
+        // TODO: extract extends declarations from grammar children.
+        let extends: Vec<DomainName> = vec![];
 
         // First pass: collect all declared type names for validation.
         let mut declared_types: std::collections::HashSet<String> =
@@ -425,6 +498,9 @@ impl Domain {
             }
         }
 
+        // TODO: aggregate calls from all actions to the domain level.
+        let calls: Vec<ActionCall> = vec![];
+
         // Also compile the TypeRegistry from the same AST for internal use.
         // Domain already validates type refs above (line ~295), so TypeRegistry::compile
         // cannot fail here — its only error path is the same bad-type-ref check.
@@ -436,6 +512,8 @@ impl Domain {
             types,
             actions,
             lenses,
+            extends,
+            calls,
             properties,
             registry: Some(registry),
         })
@@ -568,6 +646,8 @@ mod tests {
             types: vec![],
             actions: vec![],
             lenses,
+            extends: vec![],
+            calls: vec![],
             properties: Properties::empty(),
             registry: None,
         }
@@ -1096,6 +1176,8 @@ mod tests {
                 }],
             }],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties {
                 requires: vec![PropertyName::new("initialized")],
                 invariants: vec![],
@@ -1214,6 +1296,8 @@ mod tests {
             }],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties::empty(),
             registry: None,
         };
@@ -1243,6 +1327,8 @@ mod tests {
             }],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties::empty(),
             registry: None,
         };
@@ -1273,9 +1359,173 @@ mod tests {
             types: vec![],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties::empty(),
             registry: d2_from_grammar.registry,
         };
         assert_eq!(d1, d2);
+    }
+
+    // --- extends and calls ---
+
+    #[test]
+    fn domain_has_extends() {
+        let domain = Domain {
+            name: DomainName::new("sub"),
+            types: vec![],
+            actions: vec![],
+            lenses: vec![],
+            extends: vec![DomainName::new("base")],
+            calls: vec![],
+            properties: Properties::empty(),
+            registry: None,
+        };
+        assert!(domain.extends.iter().any(|d| d.as_str() == "base"));
+    }
+
+    #[test]
+    fn domain_has_action_calls() {
+        use crate::{Parse, Vector};
+        let source = "grammar @ai {\n  type = observation\n\n  act decide {\n    @tools.exec(observation)\n  }\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let domain = Domain::from_grammar(grammar).unwrap();
+        assert!(
+            !domain.calls.is_empty(),
+            "domain-level calls should be aggregated from actions"
+        );
+        assert_eq!(domain.calls[0].domain.as_str(), "tools");
+        assert_eq!(domain.calls[0].action.as_str(), "exec");
+    }
+
+    #[test]
+    fn domain_content_addressed() {
+        use crate::{Parse, Vector};
+        let source = "grammar @test {\n  type = a | b\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let d1 = Domain::from_grammar(grammar).unwrap();
+        let d2 = Domain::from_grammar(grammar).unwrap();
+        assert_eq!(d1.content_oid(), d2.content_oid());
+    }
+
+    #[test]
+    fn domain_different_content_different_oid() {
+        use crate::{Parse, Vector};
+        let ast1 = Parse
+            .trace("grammar @a {\n  type = x\n}\n".to_string())
+            .unwrap();
+        let g1 = ast1
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let d1 = Domain::from_grammar(g1).unwrap();
+
+        let ast2 = Parse
+            .trace("grammar @b {\n  type = y\n}\n".to_string())
+            .unwrap();
+        let g2 = ast2
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let d2 = Domain::from_grammar(g2).unwrap();
+
+        assert_ne!(d1.content_oid(), d2.content_oid());
+    }
+
+    #[test]
+    fn domain_content_addressed_with_actions() {
+        use crate::{Parse, Vector};
+        let source = "grammar @ai {\n  type = observation\n\n  act decide {\n    @tools.exec(observation)\n  }\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let d1 = Domain::from_grammar(grammar).unwrap();
+        let d2 = Domain::from_grammar(grammar).unwrap();
+        // Same source → same OID.
+        assert_eq!(d1.content_oid(), d2.content_oid());
+        // OID differs from a domain without actions.
+        let source2 = "grammar @ai {\n  type = observation\n}\n";
+        let ast2 = Parse.trace(source2.to_string()).unwrap();
+        let g2 = ast2
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let d3 = Domain::from_grammar(g2).unwrap();
+        assert_ne!(d1.content_oid(), d3.content_oid());
+    }
+
+    #[test]
+    fn from_grammar_extracts_extends() {
+        use crate::{Parse, Vector};
+        let source = "grammar @fox extends @smash, @controller {\n  type = move\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let domain = Domain::from_grammar(grammar).unwrap();
+        assert_eq!(domain.extends.len(), 2);
+        assert_eq!(domain.extends[0].as_str(), "smash");
+        assert_eq!(domain.extends[1].as_str(), "controller");
+    }
+
+    #[test]
+    fn from_grammar_no_extends_empty() {
+        use crate::{Parse, Vector};
+        let source = "grammar @plain {\n  type = a | b\n}\n";
+        let ast = Parse.trace(source.to_string()).unwrap();
+        let grammar = ast
+            .children()
+            .iter()
+            .find(|c| c.data().is_decl("grammar"))
+            .unwrap();
+        let domain = Domain::from_grammar(grammar).unwrap();
+        assert!(domain.extends.is_empty());
+    }
+
+    // --- ParamName and ActionBody ---
+
+    #[test]
+    fn param_name_new_display_as_ref() {
+        let p = ParamName::new("source");
+        assert_eq!(p.as_str(), "source");
+        assert_eq!(p.as_ref(), "source");
+        assert_eq!(p.to_string(), "source");
+    }
+
+    #[test]
+    fn action_body_construction() {
+        let body = ActionBody {
+            target: DomainName::new("rust"),
+            source: "fn main() {}".to_string(),
+        };
+        assert_eq!(body.target.as_str(), "rust");
+        assert_eq!(body.source, "fn main() {}");
+    }
+
+    // --- DomainOid ---
+
+    #[test]
+    fn domain_oid_from_and_display() {
+        let oid = DomainOid::new("abc123");
+        assert_eq!(oid.as_ref(), "abc123");
+        assert_eq!(oid.to_string(), "abc123");
     }
 }

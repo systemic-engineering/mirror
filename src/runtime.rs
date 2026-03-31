@@ -362,6 +362,8 @@ mod tests {
             types: vec![color],
             actions: vec![paint],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties::empty(),
             registry: None,
         };
@@ -601,6 +603,8 @@ mod tests {
             lenses: vec![Lens {
                 target: DomainName::new("actor"),
             }],
+            extends: vec![],
+            calls: vec![],
             properties: Properties::empty(),
             registry: None,
         };
@@ -780,6 +784,8 @@ mod tests {
             types: vec![color, shape],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties {
                 requires: vec![PropertyName::new("connected")],
                 invariants: vec![],

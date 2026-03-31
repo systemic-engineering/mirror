@@ -967,7 +967,13 @@ fn parse_abstract_action_decl(rest: &str, span: Span) -> Result<Prism<AstNode>, 
     })?;
     let params_str = &rest[paren + 1..close];
     let children = parse_action_params(params_str, span);
-    Ok(ast::ast_branch(Kind::Decl, "abstract-action", name, span, children))
+    Ok(ast::ast_branch(
+        Kind::Decl,
+        "abstract-action",
+        name,
+        span,
+        children,
+    ))
 }
 
 /// Parse `name(params) in @target { body }` — an action with body and target.
@@ -993,7 +999,10 @@ fn parse_action_body_def(
 
     // Parse "in @target { body }" or "in @target {\n  body\n}"
     let target_rest = after_parens.strip_prefix("in ").ok_or_else(|| ParseError {
-        message: format!("action: expected 'in @target' after params in: action {}", rest),
+        message: format!(
+            "action: expected 'in @target' after params in: action {}",
+            rest
+        ),
         span: Some(span),
     })?;
 
@@ -1040,7 +1049,13 @@ fn parse_action_body_def(
     children.append(&mut params);
     children.push(body_node);
 
-    Ok(ast::ast_branch(Kind::Decl, "action-def", name, span, children))
+    Ok(ast::ast_branch(
+        Kind::Decl,
+        "action-def",
+        name,
+        span,
+        children,
+    ))
 }
 
 /// Extract visibility modifier from an action line.

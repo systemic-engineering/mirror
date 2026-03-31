@@ -356,6 +356,8 @@ mod tests {
             types: vec![],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties::empty(),
             registry: None,
         }
@@ -401,6 +403,8 @@ mod tests {
             types: vec![color, shade],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties {
                 requires: vec![PropertyName::new("connected")],
                 invariants: vec![],
@@ -424,6 +428,8 @@ mod tests {
             types: vec![color, shape],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties {
                 requires: vec![PropertyName::new("connected")],
                 invariants: vec![],
@@ -510,6 +516,8 @@ mod tests {
             types: vec![type_def_simple("signal", &["tick", "data"])],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties {
                 requires: vec![PropertyName::new("connected")],
                 invariants: vec![],
@@ -530,6 +538,8 @@ mod tests {
             types: vec![color, shape],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties {
                 requires: vec![],
                 invariants: vec![PropertyName::new("connected")],
@@ -550,6 +560,8 @@ mod tests {
             types: vec![],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties {
                 requires: vec![PropertyName::new("future_property_not_yet_known")],
                 invariants: vec![],
@@ -567,6 +579,8 @@ mod tests {
             types: vec![],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties {
                 requires: vec![PropertyName::new("conected")], // typo
                 invariants: vec![],
@@ -602,6 +616,8 @@ mod tests {
             types: vec![color, shape],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties {
                 requires: vec![],
                 invariants: vec![],
@@ -746,6 +762,8 @@ mod tests {
             types: vec![tree],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties {
                 requires: vec![PropertyName::new("connected")],
                 invariants: vec![],
@@ -784,6 +802,8 @@ mod tests {
             types: vec![type_a, type_b, type_c],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties {
                 requires: vec![PropertyName::new("connected")],
                 invariants: vec![],
@@ -875,6 +895,8 @@ mod tests {
             types: vec![color, shape],
             actions: vec![],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
             properties: Properties {
                 requires: vec![PropertyName::new("connected")],
                 invariants: vec![],
