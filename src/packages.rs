@@ -101,8 +101,8 @@ impl PackageRegistry {
             // Extract grammars
             for child in ast.children() {
                 if child.data().is_decl("grammar") {
-                    let domain = Domain::from_grammar(child)
-                        .map_err(|e| format!("@{}: {}", name, e))?;
+                    let domain =
+                        Domain::from_grammar(child).map_err(|e| format!("@{}: {}", name, e))?;
                     let domain_name = domain.domain_name().to_string();
                     namespace.register_domain(&domain_name, domain);
                 }
@@ -366,10 +366,7 @@ mod tests {
         let namespace = registry.to_namespace().unwrap();
         assert!(namespace.contains("beam"));
         assert!(namespace.has_grammar("beam"));
-        assert!(namespace
-            .domain("beam")
-            .unwrap()
-            .has_variant("", "process"));
+        assert!(namespace.domain("beam").unwrap().has_variant("", "process"));
     }
 
     #[test]

@@ -421,12 +421,11 @@ fn resolve_ast<C: Setting>(
     let mut grammar_domains: Vec<String> = Vec::new();
     for child in children {
         if child.data().is_decl("grammar") {
-            let domain = crate::model::Domain::from_grammar(child)
-                .map_err(|msg| ResolveError {
-                    message: msg,
-                    span: Some(child.data().span),
-                    hints: vec![],
-                })?;
+            let domain = crate::model::Domain::from_grammar(child).map_err(|msg| ResolveError {
+                message: msg,
+                span: Some(child.data().span),
+                hints: vec![],
+            })?;
             grammar_domains.push(domain.domain_name().to_string());
         }
     }
@@ -1972,16 +1971,8 @@ mod tests {
             .find(|c| c.data().is_decl("grammar"))
             .expect("grammar");
         let err = crate::model::Domain::from_grammar(grammar).unwrap_err();
-        assert!(
-            err.contains("ops"),
-            "should mention bad ref: {}",
-            err
-        );
-        assert!(
-            err.contains("@test"),
-            "should mention domain: {}",
-            err
-        );
+        assert!(err.contains("ops"), "should mention bad ref: {}", err);
+        assert!(err.contains("@test"), "should mention domain: {}", err);
     }
 
     #[test]
@@ -1997,11 +1988,7 @@ mod tests {
             .expect("grammar");
         let err = crate::model::Domain::from_grammar(grammar).unwrap_err();
         assert!(err.contains("shades"), "{}", err);
-        assert!(
-            err.contains("color"),
-            "should mention parent type: {}",
-            err
-        );
+        assert!(err.contains("color"), "should mention parent type: {}", err);
     }
 
     #[test]
@@ -2496,12 +2483,8 @@ mod tests {
             "grammar @test {\n  type = a | b\n\n  requires shannon_equivalence\n  requires exhaustive\n}\n",
         );
         assert_eq!(dom.required_properties().len(), 2);
-        assert!(dom
-            .required_properties()
-            .contains(&"shannon_equivalence"));
-        assert!(dom
-            .required_properties()
-            .contains(&"exhaustive"));
+        assert!(dom.required_properties().contains(&"shannon_equivalence"));
+        assert!(dom.required_properties().contains(&"exhaustive"));
     }
 
     #[test]

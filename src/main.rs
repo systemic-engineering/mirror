@@ -17,9 +17,9 @@ use std::io::{self, BufRead, Write};
 use std::process;
 
 use conversation::domain::filesystem::{Filesystem, Folder};
+use conversation::model::Domain;
 use conversation::packages::{self, PackageRegistry};
 use conversation::property;
-use conversation::model::Domain;
 use conversation::resolve::{Conversation, Resolve};
 use conversation::{Parse, Vector};
 

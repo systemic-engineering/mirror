@@ -35,8 +35,8 @@ use coincidence::spectral::{Laplacian, SpectralDistance, Spectrum};
 use coincidence::state::StateVector;
 
 use crate::ast::AstNode;
-use crate::prism::Prism;
 use crate::model::Domain;
+use crate::prism::Prism;
 
 /// Spectral analysis of a grammar's AST tree.
 ///
@@ -115,11 +115,8 @@ impl TypeGraphSpectrum {
     /// Returns None if the grammar has no types (empty spectrum is meaningless).
     pub fn from_domain(domain: &Domain) -> Option<Self> {
         let type_names: Vec<String> = {
-            let mut names: Vec<String> = domain
-                .type_names()
-                .iter()
-                .map(|s| s.to_string())
-                .collect();
+            let mut names: Vec<String> =
+                domain.type_names().iter().map(|s| s.to_string()).collect();
             names.sort();
             names
         };
@@ -219,11 +216,8 @@ impl GrammarProjection {
     pub fn from_domain(domain: &Domain) -> Option<Self> {
         let mut labels: Vec<String> = Vec::new();
 
-        let mut type_names: Vec<String> = domain
-            .type_names()
-            .iter()
-            .map(|s| s.to_string())
-            .collect();
+        let mut type_names: Vec<String> =
+            domain.type_names().iter().map(|s| s.to_string()).collect();
         type_names.sort();
 
         if type_names.is_empty() {
