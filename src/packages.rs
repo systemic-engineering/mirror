@@ -93,18 +93,30 @@ impl PackageRegistry {
         let mut namespace = Namespace::new();
 
         for (name, package) in &self.packages {
-            let ast = Parse
+            let ast = match Parse
                 .trace(package.source.clone())
                 .into_result()
-                .map_err(|e| format!("@{}: {}", name, e.message))?;
+            {
+                Ok(ast) => ast,
+                Err(e) => {
+                    eprintln!("conversation: packages: @{}: {}", name, e.message);
+                    continue;
+                }
+            };
 
             // Extract grammars
             for child in ast.children() {
                 if child.data().is_decl("grammar") {
-                    let domain =
-                        Domain::from_grammar(child).map_err(|e| format!("@{}: {}", name, e))?;
-                    let domain_name = domain.domain_name().to_string();
-                    namespace.register_domain(&domain_name, domain);
+                    match Domain::from_grammar(child) {
+                        Ok(domain) => {
+                            let domain_name = domain.domain_name().to_string();
+                            namespace.register_domain(&domain_name, domain);
+                        }
+                        Err(e) => {
+                            eprintln!("conversation: packages: @{}: {}", name, e);
+                            continue;
+                        }
+                    }
                 }
             }
 
