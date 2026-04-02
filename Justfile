@@ -27,7 +27,7 @@ format:
 
 # 100% line coverage or fail (cli tests excluded — they hang on deep filesystem traversal)
 coverage:
-    nix develop -c cargo llvm-cov --package conversation --lib --test compile_test --test grammar_test --test repo_test --test property_pipeline --fail-under-lines 100 --ignore-filename-regex 'story/|main\.rs'
+    nix develop -c cargo llvm-cov --package conversation --lib --test compile_test --test grammar_test --test repo_test --test property_pipeline --fail-under-lines 100 --ignore-filename-regex 'story/|main\.rs|/nix/'
 
 # HTML report
 coverage-html:

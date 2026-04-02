@@ -219,7 +219,7 @@ impl RactorRuntime {
     /// The caller provides their own `ActorRef<DomainMessage>`. The runtime
     /// stores it alongside the domain — dispatch works identically to
     /// internally-spawned actors.
-    pub async fn register_actor(
+    pub fn register_actor(
         &mut self,
         domain: &Verified,
         actor_ref: ActorRef<DomainMessage>,
@@ -824,7 +824,7 @@ mod tests {
             .expect("spawn external actor");
 
         let mut rt = RactorRuntime::new();
-        rt.register_actor(&verified, actor_ref).await.unwrap();
+        rt.register_actor(&verified, actor_ref).unwrap();
 
         let resp = rt
             .dispatch(
@@ -835,12 +835,11 @@ mod tests {
             .await
             .unwrap();
 
-        match resp {
-            Response::Ok(Value::Text(s)) => {
-                assert!(s.starts_with("external:"), "got: {s}");
-            }
-            other => panic!("expected external text response, got {:?}", other),
-        }
+        assert!(
+            matches!(&resp, Response::Ok(Value::Text(s)) if s.starts_with("external:")),
+            "unexpected response: {:?}",
+            resp
+        );
 
         rt.shutdown(&DomainName::new("color")).await.unwrap();
     }
@@ -890,5 +889,37 @@ mod tests {
         for v in &err.violations {
             assert!(matches!(v.kind, PropertyKind::Ensures));
         }
+    }
+
+    #[tokio::test]
+    async fn register_actor_duplicate_errors() {
+        use ractor::Actor;
+
+        struct DummyActor;
+        impl Actor for DummyActor {
+            type Msg = DomainMessage;
+            type State = ();
+            type Arguments = ();
+
+            async fn pre_start(
+                &self,
+                _myself: ActorRef<Self::Msg>,
+                _args: Self::Arguments,
+            ) -> Result<Self::State, ActorProcessingErr> {
+                Ok(())
+            }
+        }
+
+        let verified = simple_verified();
+
+        let (actor_ref1, _h1) = Actor::spawn(None, DummyActor, ()).await.unwrap();
+        let (actor_ref2, _h2) = Actor::spawn(None, DummyActor, ()).await.unwrap();
+
+        let mut rt = RactorRuntime::new();
+        rt.register_actor(&verified, actor_ref1).unwrap();
+
+        // Registering the same domain a second time should fail.
+        let err = rt.register_actor(&verified, actor_ref2).unwrap_err();
+        assert!(err.to_string().contains("already registered"), "got: {err}");
     }
 }
