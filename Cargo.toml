@@ -13,7 +13,8 @@ crate-type = ["lib"]
 
 [features]
 default = []
-git = ["fragmentation/git", "dep:git2", "dep:ssh-key"]
+git = ["dep:git2", "dep:ssh-key"]
+lsp = ["dep:tower-lsp", "dep:lsp-types"]
 slow = []
 spectral = []  # kept for backward compat; coincidence is now always required
 
@@ -30,6 +31,8 @@ git2 = { version = "0.19", optional = true }
 ssh-key = { version = "0.6", features = ["std", "ed25519", "crypto"], optional = true }
 ractor = "0.15"
 tokio = { version = "1", features = ["full"] }
+tower-lsp = { version = "0.20", optional = true }
+lsp-types = { version = "0.97", optional = true }
 
 [dev-dependencies]
 tempfile = "3"
