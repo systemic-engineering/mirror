@@ -33,6 +33,9 @@ pub use resolve::{
 pub use fragmentation::repo::Repo;
 pub use fragmentation::store::Store;
 
+#[cfg(feature = "db")]
+pub mod db;
+
 #[cfg(feature = "lsp")]
 pub mod lsp;
 

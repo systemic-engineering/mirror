@@ -71,6 +71,11 @@ fn main() {
             let path = args.get(3).map(|s| s.as_str()).unwrap_or(".");
             run(&source, path, &resolve);
         }
+        #[cfg(feature = "db")]
+        "db" => {
+            let db_args: Vec<String> = args[2..].to_vec();
+            conversation::db::cli(&db_args);
+        }
         #[cfg(feature = "lsp")]
         "lsp" => {
             let rt = tokio::runtime::Runtime::new().unwrap();
