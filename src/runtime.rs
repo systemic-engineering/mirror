@@ -141,7 +141,7 @@ pub trait Runtime: Send + Sync {
 ///
 /// `Dispatch(action, args, reply)` — tuple variant so `ractor::call!` can
 /// construct it as `Dispatch(action, args, tx)`.
-pub(crate) enum DomainMessage {
+pub enum DomainMessage {
     Dispatch(
         ActionName,
         Args,
@@ -212,6 +212,19 @@ impl RactorRuntime {
             domains: HashMap::new(),
             actors: HashMap::new(),
         }
+    }
+
+    /// Register a domain with an externally-spawned actor.
+    ///
+    /// The caller provides their own `ActorRef<DomainMessage>`. The runtime
+    /// stores it alongside the domain — dispatch works identically to
+    /// internally-spawned actors.
+    pub async fn register_actor(
+        &mut self,
+        domain: &Verified,
+        actor_ref: ActorRef<DomainMessage>,
+    ) -> Result<(), RuntimeError> {
+        todo!()
     }
 }
 
@@ -754,6 +767,72 @@ mod tests {
         assert_eq!(schedule.temperature(0.0), 0.0);
         assert_eq!(schedule.temperature(0.5), 0.0);
         assert_eq!(schedule.temperature(1.0), 0.0);
+    }
+
+    #[tokio::test]
+    async fn register_external_actor() {
+        struct ExternalActor;
+        struct ExternalState {
+            domain: Domain,
+        }
+
+        impl Actor for ExternalActor {
+            type Msg = DomainMessage;
+            type State = ExternalState;
+            type Arguments = Domain;
+
+            async fn pre_start(
+                &self,
+                _myself: ActorRef<Self::Msg>,
+                args: Self::Arguments,
+            ) -> Result<Self::State, ActorProcessingErr> {
+                Ok(ExternalState { domain: args })
+            }
+
+            async fn handle(
+                &self,
+                _myself: ActorRef<Self::Msg>,
+                message: Self::Msg,
+                state: &mut Self::State,
+            ) -> Result<(), ActorProcessingErr> {
+                match message {
+                    DomainMessage::Dispatch(action, _args, reply) => {
+                        let _ = reply.send(Ok(Response::Ok(Value::Text(
+                            format!("external:{}:{}", state.domain.name, action),
+                        ))));
+                    }
+                }
+                Ok(())
+            }
+        }
+
+        let verified = simple_verified();
+        let domain = verified.domain().clone();
+
+        let (actor_ref, _handle) = Actor::spawn(None, ExternalActor, domain)
+            .await
+            .expect("spawn external actor");
+
+        let mut rt = RactorRuntime::new();
+        rt.register_actor(&verified, actor_ref).await.unwrap();
+
+        let resp = rt
+            .dispatch(
+                &DomainName::new("color"),
+                &ActionName::new("paint"),
+                Args::Empty,
+            )
+            .await
+            .unwrap();
+
+        match resp {
+            Response::Ok(Value::Text(s)) => {
+                assert!(s.starts_with("external:"), "got: {s}");
+            }
+            other => panic!("expected external text response, got {:?}", other),
+        }
+
+        rt.shutdown(&DomainName::new("color")).await.unwrap();
     }
 
     #[tokio::test]
