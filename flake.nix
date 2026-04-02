@@ -51,7 +51,7 @@
                   # Deduplicates: only adds keys not already present in the merged file.
                   if [ -f "${pkgSrc}/gleam.toml" ] && [ -f "$out/gleam.toml" ]; then
                     # Step 1: collect new (non-duplicate) dep lines from the package
-                    awk '
+                    gawk '
                       NR==FNR {
                         if (/^\[dependencies\]/) { in_deps=1; next }
                         if (/^\[/) { in_deps=0 }
@@ -67,7 +67,7 @@
                     ' "$out/gleam.toml" "${pkgSrc}/gleam.toml" > "$out/gleam.toml.pkgdeps_${pname}" || true
                     # Step 2: if there are new deps, splice them into [dependencies] section
                     if [ -s "$out/gleam.toml.pkgdeps_${pname}" ]; then
-                      awk -v newdeps="$out/gleam.toml.pkgdeps_${pname}" '
+                      gawk -v newdeps="$out/gleam.toml.pkgdeps_${pname}" '
                         /^\[dev-dependencies\]/ && !inserted {
                           # flush new deps before the [dev-dependencies] header
                           print ""
