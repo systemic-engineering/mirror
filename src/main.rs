@@ -71,6 +71,11 @@ fn main() {
             let path = args.get(3).map(|s| s.as_str()).unwrap_or(".");
             run(&source, path, &resolve);
         }
+        #[cfg(feature = "lsp")]
+        "lsp" => {
+            let rt = tokio::runtime::Runtime::new().unwrap();
+            rt.block_on(conversation::lsp::run());
+        }
         _ => {
             let conv_path = &args[1];
             let source = match std::fs::read_to_string(conv_path) {
