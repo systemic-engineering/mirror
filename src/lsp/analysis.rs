@@ -2,7 +2,7 @@
 //!
 //! Bridges the conversation parser/resolver to LSP diagnostic and hover types.
 
-use lsp_types::{Diagnostic, DiagnosticSeverity, Position};
+use tower_lsp::lsp_types::{Diagnostic, DiagnosticSeverity, Position};
 
 use crate::ast::Span;
 use crate::lsp::position::LineIndex;
@@ -65,7 +65,7 @@ pub fn analyze(source: &str, namespace: &Namespace) -> AnalysisResult {
             let range = if let Some(span) = e.span {
                 line_index.range(span)
             } else {
-                lsp_types::Range::new(Position::new(0, 0), Position::new(0, 0))
+                tower_lsp::lsp_types::Range::new(Position::new(0, 0), Position::new(0, 0))
             };
             diagnostics.push(Diagnostic {
                 range,

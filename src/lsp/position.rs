@@ -2,7 +2,7 @@
 //!
 //! `LineIndex` pre-computes newline offsets for O(log n) lookups.
 
-use lsp_types::Position;
+use tower_lsp::lsp_types::Position;
 
 use crate::ast::Span;
 
@@ -49,8 +49,8 @@ impl LineIndex {
     }
 
     /// Convert a `Span` (byte offsets) to an LSP `Range`.
-    pub fn range(&self, span: Span) -> lsp_types::Range {
-        lsp_types::Range::new(self.position(span.start), self.position(span.end))
+    pub fn range(&self, span: Span) -> tower_lsp::lsp_types::Range {
+        tower_lsp::lsp_types::Range::new(self.position(span.start), self.position(span.end))
     }
 }
 

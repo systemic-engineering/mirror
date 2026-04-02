@@ -14,7 +14,7 @@ crate-type = ["lib"]
 [features]
 default = []
 git = ["dep:git2", "dep:ssh-key"]
-lsp = ["dep:tower-lsp", "dep:lsp-types"]
+lsp = ["dep:tower-lsp"]
 slow = []
 spectral = []  # kept for backward compat; coincidence is now always required
 
@@ -32,7 +32,6 @@ ssh-key = { version = "0.6", features = ["std", "ed25519", "crypto"], optional =
 ractor = "0.15"
 tokio = { version = "1", features = ["full"] }
 tower-lsp = { version = "0.20", optional = true }
-lsp-types = { version = "0.97", optional = true }
 
 [dev-dependencies]
 tempfile = "3"
