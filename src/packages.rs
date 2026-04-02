@@ -93,14 +93,11 @@ impl PackageRegistry {
         let mut namespace = Namespace::new();
 
         for (name, package) in &self.packages {
-            let ast = match Parse
-                .trace(package.source.clone())
-                .into_result()
-            {
+            let ast = match Parse.trace(package.source.clone()).into_result() {
                 Ok(ast) => ast,
                 Err(e) => {
                     eprintln!("conversation: packages: @{}: {}", name, e.message);
-                    continue;
+                    return Err(format!("@{}: {}", name, e.message));
                 }
             };
 
@@ -114,7 +111,7 @@ impl PackageRegistry {
                         }
                         Err(e) => {
                             eprintln!("conversation: packages: @{}: {}", name, e);
-                            continue;
+                            return Err(format!("@{}: {}", name, e));
                         }
                     }
                 }

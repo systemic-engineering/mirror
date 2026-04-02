@@ -112,15 +112,14 @@ pub fn hover_at(
     }
 
     // Check types across all known domains.
-    for domain in local_domains
-        .iter()
-        .chain(namespace.grammar_domains().iter().filter_map(|n| namespace.domain(n)))
-    {
+    for domain in local_domains.iter().chain(
+        namespace
+            .grammar_domains()
+            .iter()
+            .filter_map(|n| namespace.domain(n)),
+    ) {
         if domain.has_type(&word) {
-            let variants = domain
-                .variants(&word)
-                .unwrap_or_default()
-                .join(" | ");
+            let variants = domain.variants(&word).unwrap_or_default().join(" | ");
             return Some(format!(
                 "**type** `{}` in `@{}`\n\n{}",
                 word,
@@ -211,7 +210,11 @@ mod tests {
         let source = "grammar @test {\n  type status = active | inactive\n}\n";
         let ns = Namespace::new();
         let result = analyze(source, &ns);
-        assert!(result.diagnostics.is_empty(), "expected no diagnostics, got: {:?}", result.diagnostics);
+        assert!(
+            result.diagnostics.is_empty(),
+            "expected no diagnostics, got: {:?}",
+            result.diagnostics
+        );
         assert_eq!(result.domains.len(), 1);
         assert_eq!(result.domains[0].domain_name(), "test");
     }
@@ -221,8 +224,14 @@ mod tests {
         let source = "grammar @broken {\n";
         let ns = Namespace::new();
         let result = analyze(source, &ns);
-        assert!(!result.diagnostics.is_empty(), "expected diagnostics for parse error");
-        assert_eq!(result.diagnostics[0].severity, Some(DiagnosticSeverity::ERROR));
+        assert!(
+            !result.diagnostics.is_empty(),
+            "expected diagnostics for parse error"
+        );
+        assert_eq!(
+            result.diagnostics[0].severity,
+            Some(DiagnosticSeverity::ERROR)
+        );
     }
 
     #[test]

@@ -87,12 +87,7 @@ impl LanguageServer for ConversationLsp {
             None => return Ok(None),
         };
 
-        let result = analysis::hover_at(
-            &doc.source,
-            position,
-            &self.namespace,
-            &doc.domains,
-        );
+        let result = analysis::hover_at(&doc.source, position, &self.namespace, &doc.domains);
 
         Ok(result.map(|text| Hover {
             contents: HoverContents::Markup(MarkupContent {

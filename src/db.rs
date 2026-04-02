@@ -108,7 +108,14 @@ impl ConversationDb {
             let tree_oid = builder.write()?;
             let tree = repo.find_tree(tree_oid)?;
             let sig = git2::Signature::now("conversation", "conversation@systemic.engineer")?;
-            repo.commit(Some("HEAD"), &sig, &sig, "init: conversation db", &tree, &[])?;
+            repo.commit(
+                Some("HEAD"),
+                &sig,
+                &sig,
+                "init: conversation db",
+                &tree,
+                &[],
+            )?;
         }
 
         Ok(ConversationDb {
@@ -182,11 +189,7 @@ impl ConversationDb {
 
         let mut builder = self.repo.treebuilder(Some(&parent_tree))?;
         // Tree entries are flat — no path separators. Use "domain.<name>" prefix.
-        builder.insert(
-            format!("domain.{}.conv", domain_name),
-            blob_oid,
-            0o100644,
-        )?;
+        builder.insert(format!("domain.{}.conv", domain_name), blob_oid, 0o100644)?;
 
         // Write updated index
         let index_bytes = serialize_index(&self.index);
@@ -195,8 +198,7 @@ impl ConversationDb {
 
         let tree_oid = builder.write()?;
         let tree = self.repo.find_tree(tree_oid)?;
-        let sig =
-            git2::Signature::now("conversation", "conversation@systemic.engineer")?;
+        let sig = git2::Signature::now("conversation", "conversation@systemic.engineer")?;
         self.repo.commit(
             Some("HEAD"),
             &sig,
@@ -247,9 +249,11 @@ impl ConversationDb {
     /// The node type must exist in the schema.
     pub fn insert(&mut self, node_type: &str, data: &str) -> Result<String, DbError> {
         // Validate type against schema
-        let valid = self.schema.types.iter().any(|t| {
-            t.variants.iter().any(|v| v.name.as_str() == node_type)
-        });
+        let valid = self
+            .schema
+            .types
+            .iter()
+            .any(|t| t.variants.iter().any(|v| v.name.as_str() == node_type));
         if !valid {
             return Err(DbError::Validation(format!(
                 "type '{}' not in schema @{}",
@@ -273,11 +277,7 @@ impl ConversationDb {
         let parent_tree = parent.tree()?;
 
         let mut builder = self.repo.treebuilder(Some(&parent_tree))?;
-        builder.insert(
-            format!("node.{}", oid_str),
-            blob_oid,
-            0o100644,
-        )?;
+        builder.insert(format!("node.{}", oid_str), blob_oid, 0o100644)?;
 
         let index_bytes = serialize_index(&self.index);
         let index_oid = self.repo.blob(&index_bytes)?;
@@ -285,8 +285,7 @@ impl ConversationDb {
 
         let tree_oid = builder.write()?;
         let tree = self.repo.find_tree(tree_oid)?;
-        let sig =
-            git2::Signature::now("conversation", "conversation@systemic.engineer")?;
+        let sig = git2::Signature::now("conversation", "conversation@systemic.engineer")?;
         self.repo.commit(
             Some("HEAD"),
             &sig,
@@ -336,7 +335,11 @@ impl ConversationDb {
 
     /// Get database stats.
     pub fn stats(&self) -> DbStats {
-        let domain_count = self.index.iter().filter(|(k, _)| !k.starts_with("node:")).count();
+        let domain_count = self
+            .index
+            .iter()
+            .filter(|(k, _)| !k.starts_with("node:"))
+            .count();
         let schema_types: Vec<String> = self
             .schema
             .types
@@ -383,10 +386,7 @@ fn compile_schema(source: &str) -> Result<Domain, DbError> {
 
 /// Serialize index as "key\tvalue\n" lines.
 fn serialize_index(index: &HashMap<String, String>) -> Vec<u8> {
-    let mut lines: Vec<String> = index
-        .iter()
-        .map(|(k, v)| format!("{}\t{}", k, v))
-        .collect();
+    let mut lines: Vec<String> = index.iter().map(|(k, v)| format!("{}\t{}", k, v)).collect();
     lines.sort(); // deterministic output
     lines.join("\n").into_bytes()
 }
@@ -525,7 +525,9 @@ fn cli_status(args: &[String]) {
     println!("schema: @{}", stats.schema_name);
     println!("types: {}", stats.schema_types.join(", "));
     println!("domains: {}", stats.domain_count);
-    let total_nodes: usize = stats.schema_types.iter()
+    let total_nodes: usize = stats
+        .schema_types
+        .iter()
         .filter_map(|t| db.query(t).ok())
         .map(|r| r.len())
         .sum();
@@ -567,8 +569,7 @@ mod tests {
         let db_path = dir.path().join("testdb");
         let mut db = ConversationDb::init(&db_path, SCHEMA).unwrap();
 
-        let domain_source =
-            "grammar @roles {\n  type = engineer | designer | manager\n}";
+        let domain_source = "grammar @roles {\n  type = engineer | designer | manager\n}";
         let oid = db.store_domain(domain_source).unwrap();
         assert!(!oid.is_empty());
 
@@ -667,10 +668,8 @@ mod tests {
         let db_path = dir.path().join("testdb");
         let mut db = ConversationDb::init(&db_path, SCHEMA).unwrap();
 
-        db.store_domain("grammar @a {\n  type = x | y\n}")
-            .unwrap();
-        db.store_domain("grammar @b {\n  type = m | n\n}")
-            .unwrap();
+        db.store_domain("grammar @a {\n  type = x | y\n}").unwrap();
+        db.store_domain("grammar @b {\n  type = m | n\n}").unwrap();
 
         let mut names = db.domain_names();
         names.sort();
