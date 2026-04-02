@@ -71,6 +71,9 @@ fn main() {
             let path = args.get(3).map(|s| s.as_str()).unwrap_or(".");
             run(&source, path, &resolve);
         }
+        "actor" => {
+            conversation::actor::run(&args[2..].to_vec());
+        }
         #[cfg(feature = "db")]
         "db" => {
             let db_args: Vec<String> = args[2..].to_vec();

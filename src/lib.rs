@@ -1,5 +1,6 @@
 #[macro_use]
 pub mod kernel;
+pub mod actor;
 pub mod ast;
 pub mod check;
 pub mod compile;
