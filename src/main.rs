@@ -120,9 +120,29 @@ fn actor_cmd(args: &[String]) {
             let repo_path = std::path::Path::new(&args[2]);
             actor_observe(repo_path);
         }
+        "init" => {
+            if args.len() < 2 {
+                eprintln!("usage: conversation actor init <path> --role <role>");
+                process::exit(1);
+            }
+            let path = std::path::Path::new(&args[1]);
+            let role = args
+                .iter()
+                .position(|a| a == "--role")
+                .and_then(|i| args.get(i + 1))
+                .map(|s| s.as_str())
+                .unwrap_or("default");
+            match conversation::actor::init::init(path, role) {
+                Ok(()) => eprintln!("conversation actor init: {} ({})", path.display(), role),
+                Err(e) => {
+                    eprintln!("conversation actor init: {e}");
+                    process::exit(1);
+                }
+            }
+        }
         other => {
             eprintln!("conversation actor: unknown subcommand '{other}'");
-            eprintln!("available: observe");
+            eprintln!("available: observe, init");
             process::exit(1);
         }
     }
