@@ -18,9 +18,11 @@
         { inherit name src grammar; _type = "conversation-package"; };
 
       # Merge core + packages into a unified source tree for gleam/rebar builds.
+      # Each package's src/ files are copied into the merged src/.
+      # Each package's gleam.toml [dependencies] are appended to the merged gleam.toml.
       lib.beam = { pkgs, name, src, packages ? {} }:
         let
-          mergedSrc = pkgs.runCommand "${name}-merged" {} ''
+          mergedSrc = pkgs.runCommand "${name}-merged" { nativeBuildInputs = [ pkgs.gawk ]; } ''
             mkdir -p $out/src $out/test
 
             # Copy core sources
@@ -31,7 +33,12 @@
               cp -rn ${src}/test/* $out/test/ 2>/dev/null || true
             fi
 
-            # Mount each package's sources into the tree
+            # Copy gleam.toml from core (start with core's deps, writable for appending)
+            if [ -f "${src}/gleam.toml" ]; then
+              install -m 644 ${src}/gleam.toml $out/gleam.toml
+            fi
+
+            # Mount each package's sources and merge their gleam.toml [dependencies]
             ${builtins.concatStringsSep "\n" (builtins.attrValues (
               builtins.mapAttrs (pname: pkg:
                 let pkgSrc = if builtins.isAttrs pkg && pkg ? src then pkg.src else pkg;
@@ -39,14 +46,45 @@
                   if [ -d "${pkgSrc}/src" ]; then
                     cp -rn ${pkgSrc}/src/* $out/src/ 2>/dev/null || true
                   fi
+                  # Merge [dependencies] from package gleam.toml into merged gleam.toml.
+                  # New deps are inserted inside the [dependencies] section (before [dev-dependencies]).
+                  # Deduplicates: only adds keys not already present in the merged file.
+                  if [ -f "${pkgSrc}/gleam.toml" ] && [ -f "$out/gleam.toml" ]; then
+                    # Step 1: collect new (non-duplicate) dep lines from the package
+                    awk '
+                      NR==FNR {
+                        if (/^\[dependencies\]/) { in_deps=1; next }
+                        if (/^\[/) { in_deps=0 }
+                        if (in_deps && /^[a-zA-Z]/) { key=gensub(/[ =].*/, "", 1, $0); existing[key]=1 }
+                        next
+                      }
+                      /^\[dependencies\]/ { in_deps=1; next }
+                      /^\[/ { in_deps=0 }
+                      in_deps && /^[a-zA-Z]/ {
+                        key=gensub(/[ =].*/, "", 1, $0)
+                        if (!(key in existing)) print
+                      }
+                    ' "$out/gleam.toml" "${pkgSrc}/gleam.toml" > "$out/gleam.toml.pkgdeps_${pname}" || true
+                    # Step 2: if there are new deps, splice them into [dependencies] section
+                    if [ -s "$out/gleam.toml.pkgdeps_${pname}" ]; then
+                      awk -v newdeps="$out/gleam.toml.pkgdeps_${pname}" '
+                        /^\[dev-dependencies\]/ && !inserted {
+                          # flush new deps before the [dev-dependencies] header
+                          print ""
+                          while ((getline line < newdeps) > 0) print line
+                          close(newdeps)
+                          print ""
+                          inserted=1
+                        }
+                        { print }
+                      ' "$out/gleam.toml" > "$out/gleam.toml.new"
+                      mv "$out/gleam.toml.new" "$out/gleam.toml"
+                    fi
+                    rm -f "$out/gleam.toml.pkgdeps_${pname}"
+                  fi
                 ''
               ) packages
             ))}
-
-            # Copy gleam.toml from core (the merged tree needs it)
-            if [ -f "${src}/gleam.toml" ]; then
-              cp ${src}/gleam.toml $out/gleam.toml
-            fi
           '';
         in {
           inherit mergedSrc name;
