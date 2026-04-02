@@ -224,7 +224,16 @@ impl RactorRuntime {
         domain: &Verified,
         actor_ref: ActorRef<DomainMessage>,
     ) -> Result<(), RuntimeError> {
-        todo!()
+        let d = domain.domain();
+        if self.domains.contains_key(d.name.as_str()) {
+            return Err(RuntimeError(format!(
+                "domain '{}' already registered",
+                d.name
+            )));
+        }
+        self.domains.insert(d.name.as_str().to_owned(), d.clone());
+        self.actors.insert(d.name.as_str().to_string(), actor_ref);
+        Ok(())
     }
 }
 
@@ -797,9 +806,10 @@ mod tests {
             ) -> Result<(), ActorProcessingErr> {
                 match message {
                     DomainMessage::Dispatch(action, _args, reply) => {
-                        let _ = reply.send(Ok(Response::Ok(Value::Text(
-                            format!("external:{}:{}", state.domain.name, action),
-                        ))));
+                        let _ = reply.send(Ok(Response::Ok(Value::Text(format!(
+                            "external:{}:{}",
+                            state.domain.name, action
+                        )))));
                     }
                 }
                 Ok(())
