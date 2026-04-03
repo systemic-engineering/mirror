@@ -104,19 +104,29 @@ impl fmt::Display for RuntimeError {
 // Runtime trait
 // ---------------------------------------------------------------------------
 
-/// The compiler backend. Takes a verified domain, produces an artifact
-/// wrapped in a Beam — the trace of the compilation.
+/// The compiler backend. Two operations:
+/// - compile: Verified → Artifact (pure, storable)
+/// - spawn: Artifact → Handle (side effect, ephemeral)
 #[allow(async_fn_in_trait)]
 pub trait Runtime: Send + Sync {
+    /// The compiled artifact. Storable. Content-addressed.
     type Artifact;
+    /// The running actor. Ephemeral. Dispatchable.
+    type Actor;
     type Error: fmt::Display + Send;
 
-    /// Compile a verified domain into a runtime artifact.
+    /// Compile a verified domain into a storable artifact.
     /// Result handles total failure. Beam handles partial success with loss.
     async fn compile(
         &self,
         domain: Verified,
     ) -> Result<prism::Beam<Self::Artifact>, Self::Error>;
+
+    /// Spawn a running actor from a compiled artifact.
+    async fn spawn(
+        &self,
+        artifact: &Self::Artifact,
+    ) -> Result<Self::Actor, Self::Error>;
 }
 
 // ---------------------------------------------------------------------------
@@ -208,18 +218,25 @@ fn spawn_err(e: ractor::SpawnErr) -> RuntimeError {
 }
 
 impl Runtime for RactorRuntime {
-    type Artifact = ActorRef<DomainMessage>;
+    type Artifact = Domain;
+    type Actor = ActorRef<DomainMessage>;
     type Error = RuntimeError;
 
     async fn compile(
         &self,
         domain: Verified,
-    ) -> Result<prism::Beam<ActorRef<DomainMessage>>, RuntimeError> {
-        let d = domain.into_domain();
-        let (actor_ref, _handle) = Actor::spawn(None, DomainActor, d)
+    ) -> Result<prism::Beam<Domain>, RuntimeError> {
+        Ok(prism::Beam::new(domain.into_domain()))
+    }
+
+    async fn spawn(
+        &self,
+        artifact: &Domain,
+    ) -> Result<ActorRef<DomainMessage>, RuntimeError> {
+        let (actor_ref, _handle) = Actor::spawn(None, DomainActor, artifact.clone())
             .await
             .map_err(spawn_err)?;
-        Ok(prism::Beam::new(actor_ref))
+        Ok(actor_ref)
     }
 }
 
@@ -402,7 +419,7 @@ mod tests {
         let rt = RactorRuntime::new();
         let verified = simple_verified();
         let beam = rt.compile(verified).await.unwrap();
-        let artifact = beam.result;
+        let artifact = rt.spawn(&beam.result).await.unwrap();
         let resp = ractor::call!(
             artifact, DomainMessage::Dispatch,
             ActionName::new("paint"), Args::Empty
@@ -416,7 +433,7 @@ mod tests {
         let rt = RactorRuntime::new();
         let verified = simple_verified();
         let beam = rt.compile(verified).await.unwrap();
-        let artifact = beam.result;
+        let artifact = rt.spawn(&beam.result).await.unwrap();
         let resp = ractor::call!(
             artifact, DomainMessage::Dispatch,
             ActionName::new("fly"), Args::Empty
@@ -430,7 +447,7 @@ mod tests {
         let rt = RactorRuntime::new();
         let verified = actor_verified();
         let beam = rt.compile(verified).await.unwrap();
-        let artifact = beam.result;
+        let artifact = rt.spawn(&beam.result).await.unwrap();
         let resp = ractor::call!(
             artifact, DomainMessage::Dispatch,
             ActionName::new("compile"), Args::Empty
@@ -444,7 +461,7 @@ mod tests {
         let rt = RactorRuntime::new();
         let verified = simple_verified();
         let beam = rt.compile(verified).await.unwrap();
-        let artifact = beam.result;
+        let artifact = rt.spawn(&beam.result).await.unwrap();
         artifact.stop(None);
         // Actor should be stopped — let it settle
         tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;

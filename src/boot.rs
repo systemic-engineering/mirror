@@ -10,10 +10,8 @@ use std::path::{Path, PathBuf};
 use crate::check;
 use crate::model::Domain;
 use crate::parse::Parse;
-use crate::runtime::{DomainMessage, RactorRuntime, Runtime};
+use crate::runtime::{RactorRuntime, Runtime};
 use crate::Vector;
-
-use ractor::ActorRef;
 
 // ---------------------------------------------------------------------------
 // Types
@@ -148,7 +146,7 @@ fn compile_source(source: &str) -> Result<check::Verified, String> {
 pub async fn boot(
     runtime: &RactorRuntime,
     sequence: &BootSequence,
-) -> Result<Vec<prism::Beam<ActorRef<DomainMessage>>>, String> {
+) -> Result<Vec<prism::Beam<Domain>>, String> {
     let mut all_artifacts = Vec::new();
 
     for (layer, entries) in &sequence.layers {
@@ -216,7 +214,7 @@ mod tests {
     #[test]
     fn boot_sequence_from_dir() {
         let seq = BootSequence::from_dir(
-            &PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot"),
+            &PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot.backup"),
         )
         .unwrap();
 
@@ -249,7 +247,7 @@ mod tests {
     #[tokio::test]
     async fn boot_sequence_compiles() {
         let seq = BootSequence::from_dir(
-            &PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot"),
+            &PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot.backup"),
         )
         .unwrap();
 
@@ -264,9 +262,7 @@ mod tests {
             assert!(beam.is_lossless());
         }
 
-        // Clean up actors
-        for beam in artifacts {
-            beam.result.stop(None);
-        }
+        // Artifacts are Domains — no actors to clean up.
+        // Spawning is a separate step.
     }
 }

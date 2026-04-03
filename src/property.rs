@@ -810,9 +810,9 @@ mod tests {
     #[test]
     fn garden_property_grammar_compiles() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot/05-property.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/05-property.conv"),
         )
-        .expect("boot/05-property.conv should exist");
+        .expect("boot.backup/05-property.conv should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -851,9 +851,9 @@ mod tests {
     #[test]
     fn garden_property_tests_pass() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot/05-property.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/05-property.conv"),
         )
-        .expect("boot/05-property.conv should exist");
+        .expect("boot.backup/05-property.conv should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -895,9 +895,9 @@ mod tests {
     #[test]
     fn garden_topology_grammar_compiles() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot/06-topology.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/06-topology.conv"),
         )
-        .expect("boot/06-topology.conv should exist");
+        .expect("boot.backup/06-topology.conv should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -944,9 +944,9 @@ mod tests {
     #[test]
     fn garden_topology_tests_pass() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot/06-topology.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/06-topology.conv"),
         )
-        .expect("boot/06-topology.conv should exist");
+        .expect("boot.backup/06-topology.conv should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -1093,9 +1093,9 @@ mod tests {
     #[test]
     fn garden_coincidence_grammar_compiles() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot/06-coincidence.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/06-coincidence.conv"),
         )
-        .expect("boot/06-coincidence.conv should exist");
+        .expect("boot.backup/06-coincidence.conv should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -1145,9 +1145,9 @@ mod tests {
     #[test]
     fn garden_coincidence_tests_pass() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot/06-coincidence.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/06-coincidence.conv"),
         )
-        .expect("boot/06-coincidence.conv should exist");
+        .expect("boot.backup/06-coincidence.conv should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
