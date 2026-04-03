@@ -1,19 +1,10 @@
-//// Boot — starts the BEAM runtime and compiles grammars.
+//// Boot — compile grammars through a supervised @compiler.
 ////
-//// Two boot paths:
-////
-//// Imperative (boot/boot_from_files):
-////   Start supervisor + @compiler, compile each grammar, return handles.
-////   Domain servers are started by @compiler during compilation.
-////
-//// Supervised (supervised_boot/supervised_boot_from_files):
-////   Compile grammars through an already-running named @compiler.
-////   Start domain servers through the garden factory supervisor.
-////   Used when a supervision tree manages the lifecycle.
+//// One boot path: supervised. The caller provides the compiler subject
+//// and garden name from the supervision tree. This module orchestrates
+//// compilation + domain startup through them.
 
-import conversation/coincidence
 import conversation/compiler
-import conversation/domain
 import conversation/garden
 import conversation/loader
 import conversation/trace
@@ -35,229 +26,57 @@ pub type BootedDomain {
   )
 }
 
-/// Boot result: the compiler subject + list of booted domains.
-pub type BootResult {
-  BootResult(
-    compiler: Subject(compiler.Message),
-    domains: List(BootedDomain),
-  )
-}
-
-/// Boot the runtime with a list of grammar sources.
-/// Starts supervisor + @compiler actor, compiles each grammar, returns handles.
-pub fn boot(grammars: List(String)) -> Result(BootResult, String) {
-  // 1. Start domain supervisor (so crashed domains auto-restart)
-  // Idempotent — if already running, that's fine.
-  let _ = domain.start_supervisor()
-
-  // 2. Start @compiler actor
-  case compiler.start() {
-    Error(_) -> Error("failed to start @compiler actor")
-    Ok(started) -> {
-      let subject = started.data
-
-      // 3. Compile each grammar
-      case compile_all(subject, grammars) {
-        Ok(domains) ->
-          Ok(BootResult(compiler: subject, domains: domains))
-        Error(e) -> {
-          process.send(subject, compiler.Shutdown)
-          Error(e)
-        }
-      }
-    }
-  }
-}
-
-/// Boot with infrastructure domains first.
-/// Infrastructure grammars (e.g. @coincidence) compile before application
-/// grammars, ensuring measurement services are available for property checks.
-/// Also starts the @coincidence server explicitly since it's a custom server
-/// not started by normal grammar compilation.
-pub fn boot_with_infrastructure(
-  infrastructure: List(String),
-  application: List(String),
-) -> Result(BootResult, String) {
-  let _ = domain.start_supervisor()
-
-  // Start @coincidence server (custom, not started by grammar compilation)
-  let _ = coincidence.start_server()
-
-  case compiler.start() {
-    Error(_) -> Error("failed to start @compiler actor")
-    Ok(started) -> {
-      let subject = started.data
-      case compile_all(subject, infrastructure) {
-        Ok(infra_domains) -> {
-          case compile_all(subject, application) {
-            Ok(app_domains) ->
-              Ok(BootResult(
-                compiler: subject,
-                domains: list.append(infra_domains, app_domains),
-              ))
-            Error(e) -> {
-              process.send(subject, compiler.Shutdown)
-              Error(e)
-            }
-          }
-        }
-        Error(e) -> {
-          process.send(subject, compiler.Shutdown)
-          Error(e)
-        }
-      }
-    }
-  }
-}
-
-/// Compile a list of grammars through the @compiler actor.
-fn compile_all(
-  subject: Subject(compiler.Message),
+/// Compile grammars through a supervised @compiler and start domain
+/// servers through the garden factory supervisor.
+pub fn boot(
+  compiler_subject: Subject(compiler.Message),
+  garden_name: process.Name(
+    factory_supervisor.Message(String, String),
+  ),
   grammars: List(String),
 ) -> Result(List(BootedDomain), String) {
-  compile_loop(subject, grammars, [])
+  compile_loop(compiler_subject, garden_name, grammars, [])
 }
 
-fn compile_loop(
-  subject: Subject(compiler.Message),
-  remaining: List(String),
-  acc: List(BootedDomain),
+/// Read .conv files from disk, then boot.
+pub fn boot_from_files(
+  compiler_subject: Subject(compiler.Message),
+  garden_name: process.Name(
+    factory_supervisor.Message(String, String),
+  ),
+  paths: List(String),
 ) -> Result(List(BootedDomain), String) {
-  case remaining {
-    [] -> Ok(list.reverse(acc))
-    [source, ..rest] -> {
-      case compile_one(subject, source) {
-        Ok(booted) -> compile_loop(subject, rest, [booted, ..acc])
-        Error(e) -> Error(e)
-      }
-    }
+  case read_all_files(paths, []) {
+    Ok(sources) -> boot(compiler_subject, garden_name, sources)
+    Error(e) -> Error(e)
   }
-}
-
-fn compile_one(
-  subject: Subject(compiler.Message),
-  source: String,
-) -> Result(BootedDomain, String) {
-  let reply = process.new_subject()
-  process.send(
-    subject,
-    compiler.CompileGrammar(source, reply),
-  )
-  case process.receive(reply, 10_000) {
-    Error(_) -> Error("timeout compiling grammar")
-    Ok(Error(e)) -> Error(e)
-    Ok(Ok(t)) -> {
-      let compiled = trace.value(t)
-      let beam_module = compiled.module
-      let lenses = case loader.get_lenses(beam_module) {
-        Ok(l) -> l
-        Error(_) -> []
-      }
-      let extends = case loader.get_extends(beam_module) {
-        Ok(e) -> e
-        Error(_) -> []
-      }
-      Ok(BootedDomain(
-        domain: compiled.domain,
-        module: beam_module,
-        lenses: lenses,
-        extends: extends,
-      ))
-    }
-  }
-}
-
-/// Shut down the boot runtime.
-pub fn shutdown(result: BootResult) -> Nil {
-  // Stop domain servers
-  list.each(result.domains, fn(d) {
-    let _ = domain.stop(d.domain)
-    Nil
-  })
-  // Stop compiler
-  process.send(result.compiler, compiler.Shutdown)
 }
 
 /// Check if a booted domain is alive.
 pub fn is_alive(booted: BootedDomain) -> Bool {
-  domain.is_running(booted.domain)
+  garden.is_running(booted.domain)
   && loader.is_loaded(booted.module)
 }
 
-/// Check if all lens imports are satisfied — every imported domain is booted.
-pub fn imports_resolved(result: BootResult) -> Bool {
-  let booted_names = list.map(result.domains, fn(d) { d.domain })
-  list.all(result.domains, fn(d) {
+/// Check if all lens imports are satisfied.
+pub fn imports_resolved(domains: List(BootedDomain)) -> Bool {
+  let booted_names = list.map(domains, fn(d) { d.domain })
+  list.all(domains, fn(d) {
     list.all(d.lenses, fn(lens) { list.contains(booted_names, lens) })
   })
 }
 
-/// Check if all extends parents are satisfied — every parent domain is booted.
-pub fn extends_resolved(result: BootResult) -> Bool {
-  let booted_names = list.map(result.domains, fn(d) { d.domain })
-  list.all(result.domains, fn(d) {
+/// Check if all extends parents are satisfied.
+pub fn extends_resolved(domains: List(BootedDomain)) -> Bool {
+  let booted_names = list.map(domains, fn(d) { d.domain })
+  list.all(domains, fn(d) {
     list.all(d.extends, fn(parent) { list.contains(booted_names, parent) })
   })
 }
 
-/// Boot from garden .conv files on disk.
-/// Reads each file, compiles, loads.
-pub fn boot_from_files(
-  paths: List(String),
-) -> Result(BootResult, String) {
-  case read_all_files(paths, []) {
-    Ok(sources) -> boot(sources)
-    Error(e) -> Error(e)
-  }
-}
+// --- Internal ---
 
-fn read_all_files(
-  paths: List(String),
-  acc: List(String),
-) -> Result(List(String), String) {
-  case paths {
-    [] -> Ok(list.reverse(acc))
-    [path, ..rest] -> {
-      case read_file(path) {
-        Ok(contents) -> read_all_files(rest, [contents, ..acc])
-        Error(e) -> Error("reading " <> path <> ": " <> e)
-      }
-    }
-  }
-}
-
-// --- Supervised boot path ---
-// Used when a supervision tree manages @compiler and garden lifecycle.
-// The caller provides the compiler subject and garden name; this module
-// only orchestrates compilation + domain startup through them.
-
-/// Compile grammars through a supervised @compiler and start domain
-/// servers through the garden factory supervisor.
-pub fn supervised_boot(
-  compiler_subject: Subject(compiler.Message),
-  garden_name: process.Name(
-    factory_supervisor.Message(String, String),
-  ),
-  grammars: List(String),
-) -> Result(List(BootedDomain), String) {
-  supervised_compile_loop(compiler_subject, garden_name, grammars, [])
-}
-
-/// Read .conv files from disk, then supervised_boot.
-pub fn supervised_boot_from_files(
-  compiler_subject: Subject(compiler.Message),
-  garden_name: process.Name(
-    factory_supervisor.Message(String, String),
-  ),
-  paths: List(String),
-) -> Result(List(BootedDomain), String) {
-  case read_all_files(paths, []) {
-    Ok(sources) -> supervised_boot(compiler_subject, garden_name, sources)
-    Error(e) -> Error(e)
-  }
-}
-
-fn supervised_compile_loop(
+fn compile_loop(
   compiler_subject: Subject(compiler.Message),
   garden_name: process.Name(
     factory_supervisor.Message(String, String),
@@ -268,9 +87,9 @@ fn supervised_compile_loop(
   case remaining {
     [] -> Ok(list.reverse(acc))
     [source, ..rest] -> {
-      case supervised_compile_one(compiler_subject, garden_name, source) {
+      case compile_one(compiler_subject, garden_name, source) {
         Ok(booted) ->
-          supervised_compile_loop(compiler_subject, garden_name, rest, [
+          compile_loop(compiler_subject, garden_name, rest, [
             booted,
             ..acc
           ])
@@ -280,14 +99,13 @@ fn supervised_compile_loop(
   }
 }
 
-fn supervised_compile_one(
+fn compile_one(
   compiler_subject: Subject(compiler.Message),
   garden_name: process.Name(
     factory_supervisor.Message(String, String),
   ),
   source: String,
 ) -> Result(BootedDomain, String) {
-  // 1. Compile through @compiler (pure — no domain server lifecycle)
   let reply = process.new_subject()
   process.send(compiler_subject, compiler.CompileGrammar(source, reply))
   case process.receive(reply, 10_000) {
@@ -297,7 +115,7 @@ fn supervised_compile_one(
       let compiled = trace.value(t)
       let beam_module = compiled.module
 
-      // 2. Start domain server through garden factory supervisor
+      // Start domain server through garden factory supervisor
       case garden.is_running(compiled.domain) {
         True -> Nil
         False -> {
@@ -320,6 +138,21 @@ fn supervised_compile_one(
         lenses: lenses,
         extends: extends,
       ))
+    }
+  }
+}
+
+fn read_all_files(
+  paths: List(String),
+  acc: List(String),
+) -> Result(List(String), String) {
+  case paths {
+    [] -> Ok(list.reverse(acc))
+    [path, ..rest] -> {
+      case read_file(path) {
+        Ok(contents) -> read_all_files(rest, [contents, ..acc])
+        Error(e) -> Error("reading " <> path <> ": " <> e)
+      }
     }
   }
 }

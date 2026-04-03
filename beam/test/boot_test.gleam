@@ -1,9 +1,12 @@
 import conversation/boot
+import conversation/compiler
 import conversation/domain
 import conversation/loader
+import conversation/supervisor as conv_sup
 import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/list
+import gleam/otp/factory_supervisor
 import gleeunit/should
 
 const reed_grammar = "grammar @reed {
@@ -21,9 +24,21 @@ in @actor
 in @reality
 "
 
+fn setup() -> #(
+  process.Subject(compiler.Message),
+  process.Name(factory_supervisor.Message(String, String)),
+) {
+  let compiler_name = process.new_name("compiler")
+  let garden_name = process.new_name("garden")
+  let assert Ok(_) = conv_sup.start(compiler_name, garden_name)
+  let subject = process.named_subject(compiler_name)
+  #(subject, garden_name)
+}
+
 /// Reed boots on the BEAM.
 pub fn reed_boots_test() {
-  let assert Ok(result) = boot.boot([reed_grammar])
+  let #(subject, garden_name) = setup()
+  let assert Ok(domains) = boot.boot(subject, garden_name, [reed_grammar])
 
   // Domain server running
   should.be_true(domain.is_running("reed"))
@@ -33,10 +48,8 @@ pub fn reed_boots_test() {
 
   // Booted domain reports alive
   let assert Ok(reed) =
-    list.find(result.domains, fn(d) { d.domain == "reed" })
+    list.find(domains, fn(d) { d.domain == "reed" })
   should.be_true(boot.is_alive(reed))
-
-  boot.shutdown(result)
 }
 
 /// Boot multiple grammars at once.
@@ -58,7 +71,9 @@ in @tools
 in @reality
 "
 
-  let assert Ok(result) = boot.boot([reed_grammar, erlang_grammar])
+  let #(subject, garden_name) = setup()
+  let assert Ok(domains) =
+    boot.boot(subject, garden_name, [reed_grammar, erlang_grammar])
 
   // Both domains running
   should.be_true(domain.is_running("reed"))
@@ -68,16 +83,15 @@ in @reality
   let assert Ok(val) =
     domain.exec("native_boot", "erlang", "abs", [-7])
   let assert Ok(7) = decode.run(val, decode.int)
-
-  boot.shutdown(result)
 }
 
 /// Boot Reed from the actual garden files.
 pub fn boot_reed_from_garden_test() {
   let garden =
     "/Users/alexwolf/dev/systemic.engineering/garden/public"
-  let assert Ok(result) =
-    boot.boot_from_files([
+  let #(subject, garden_name) = setup()
+  let assert Ok(_domains) =
+    boot.boot_from_files(subject, garden_name, [
       garden <> "/@reed/reed.conv",
       garden <> "/@erlang/erlang.conv",
     ])
@@ -94,8 +108,6 @@ pub fn boot_reed_from_garden_test() {
   let assert Ok(val) =
     domain.exec("erlang", "erlang", "abs", [-99])
   let assert Ok(99) = decode.run(val, decode.int)
-
-  boot.shutdown(result)
 }
 
 /// Boot populates lens dependencies from compiled modules.
@@ -113,44 +125,40 @@ pub fn boot_populates_lenses_test() {
 in @tools
 "
 
-  let assert Ok(result) = boot.boot([inner, outer])
+  let #(subject, garden_name) = setup()
+  let assert Ok(domains) =
+    boot.boot(subject, garden_name, [inner, outer])
 
   // Workshop imports @tools
   let assert Ok(workshop) =
-    list.find(result.domains, fn(d) { d.domain == "workshop" })
+    list.find(domains, fn(d) { d.domain == "workshop" })
   should.equal(workshop.lenses, ["tools"])
 
   // Tools has no imports
   let assert Ok(tools) =
-    list.find(result.domains, fn(d) { d.domain == "tools" })
+    list.find(domains, fn(d) { d.domain == "tools" })
   should.equal(tools.lenses, [])
 
-  // All imports satisfied — both domains are booted
-  should.be_true(boot.imports_resolved(result))
-
-  boot.shutdown(result)
+  // All imports satisfied
+  should.be_true(boot.imports_resolved(domains))
 }
 
 /// Imports not resolved when dependency is missing.
 pub fn boot_unresolved_imports_test() {
-  // This grammar imports @phantom, which we don't compile
   let lonely = "grammar @lonely {
   type = echo
 }
 in @phantom
 "
 
-  let assert Ok(result) = boot.boot([lonely])
+  let #(subject, garden_name) = setup()
+  let assert Ok(domains) = boot.boot(subject, garden_name, [lonely])
 
-  // Lenses populated from the compiled module
   let assert Ok(d) =
-    list.find(result.domains, fn(d) { d.domain == "lonely" })
+    list.find(domains, fn(d) { d.domain == "lonely" })
   should.equal(d.lenses, ["phantom"])
 
-  // Not all imports resolved — @phantom is not booted
-  should.be_false(boot.imports_resolved(result))
-
-  boot.shutdown(result)
+  should.be_false(boot.imports_resolved(domains))
 }
 
 /// Supervisor restarts crashed domain servers.
@@ -163,18 +171,16 @@ pub fn supervisor_restarts_domain_test() {
 }
 "
 
-  let assert Ok(result) = boot.boot([grammar])
+  let #(subject, garden_name) = setup()
+  let assert Ok(_domains) = boot.boot(subject, garden_name, [grammar])
   should.be_true(domain.is_running("phoenix"))
 
   // Kill the domain server
   domain.kill("phoenix")
-  // Brief sleep to let supervisor restart
   process.sleep(50)
 
-  // Supervisor should have restarted it
+  // Garden factory supervisor should have restarted it
   should.be_true(domain.is_running("phoenix"))
-
-  boot.shutdown(result)
 }
 
 /// Boot populates extends from compiled modules.
@@ -188,22 +194,19 @@ pub fn boot_populates_extends_test() {
 }
 "
 
-  let assert Ok(result) = boot.boot([parent, child])
+  let #(subject, garden_name) = setup()
+  let assert Ok(domains) =
+    boot.boot(subject, garden_name, [parent, child])
 
-  // Fox extends @smash
   let assert Ok(fox) =
-    list.find(result.domains, fn(d) { d.domain == "fox" })
+    list.find(domains, fn(d) { d.domain == "fox" })
   should.equal(fox.extends, ["smash"])
 
-  // Smash has no extends
   let assert Ok(smash) =
-    list.find(result.domains, fn(d) { d.domain == "smash" })
+    list.find(domains, fn(d) { d.domain == "smash" })
   should.equal(smash.extends, [])
 
-  // All extends satisfied — both domains are booted
-  should.be_true(boot.extends_resolved(result))
-
-  boot.shutdown(result)
+  should.be_true(boot.extends_resolved(domains))
 }
 
 /// Extends not resolved when parent is missing.
@@ -213,17 +216,14 @@ pub fn boot_unresolved_extends_test() {
 }
 "
 
-  let assert Ok(result) = boot.boot([orphan])
+  let #(subject, garden_name) = setup()
+  let assert Ok(domains) = boot.boot(subject, garden_name, [orphan])
 
-  // Extends populated from the compiled module
   let assert Ok(d) =
-    list.find(result.domains, fn(d) { d.domain == "orphan" })
+    list.find(domains, fn(d) { d.domain == "orphan" })
   should.equal(d.extends, ["missing"])
 
-  // Not all extends resolved — @missing is not booted
-  should.be_false(boot.extends_resolved(result))
-
-  boot.shutdown(result)
+  should.be_false(boot.extends_resolved(domains))
 }
 
 /// Boot then exec proves the full loop: grammar → module → server → reality.
@@ -240,12 +240,11 @@ pub fn boot_exec_reality_test() {
 in @reality
 "
 
-  let assert Ok(result) = boot.boot([native_grammar])
+  let #(subject, garden_name) = setup()
+  let assert Ok(_domains) =
+    boot.boot(subject, garden_name, [native_grammar])
 
-  // The loop: grammar compiled → module loaded → domain server running → exec → apply/3
   let assert Ok(val) =
     domain.exec("boot_exec", "erlang", "integer_to_binary", [42])
   let assert Ok("42") = decode.run(val, decode.string)
-
-  boot.shutdown(result)
 }

@@ -11,6 +11,7 @@ use conversation::check;
 use conversation::model::*;
 use conversation::parse::Parse;
 use conversation::runtime::*;
+use conversation::Runtime;
 use conversation::Vector;
 
 // ---------------------------------------------------------------------------
@@ -103,11 +104,11 @@ grammar @broken {
 }
 
 // ---------------------------------------------------------------------------
-// Test 3: register and dispatch — non-actor grammar
+// Test 3: compile and dispatch — non-actor grammar
 // ---------------------------------------------------------------------------
 
 #[tokio::test]
-async fn register_and_dispatch_non_actor() {
+async fn compile_and_dispatch_non_actor() {
     let source = "\
 grammar @tools {
   type = exec | query
@@ -122,30 +123,29 @@ grammar @tools {
     let verified = check::verify(domain).expect("tools domain should verify");
 
     let mut rt = RactorRuntime::new();
-    rt.register(&verified)
-        .await
-        .expect("register should succeed");
+    let artifact = rt.compile(verified).await.expect("compile should succeed");
 
-    let domain_name = DomainName::new("tools");
-    let action_name = ActionName::new("run");
-    let resp = rt
-        .dispatch(&domain_name, &action_name, Args::Empty)
-        .await
-        .expect("dispatch should succeed");
+    let resp = ractor::call!(
+        artifact, DomainMessage::Dispatch,
+        ActionName::new("run"), Args::Empty
+    )
+    .expect("dispatch should succeed");
 
     assert!(
-        matches!(resp, Response::Ok(_)),
+        matches!(resp, Ok(Response::Ok(_))),
         "dispatch should return Ok: {:?}",
         resp
     );
+
+    artifact.stop(None);
 }
 
 // ---------------------------------------------------------------------------
-// Test 4: register and dispatch — actor grammar
+// Test 4: compile and dispatch — actor grammar
 // ---------------------------------------------------------------------------
 
 #[tokio::test]
-async fn register_and_dispatch_actor() {
+async fn compile_and_dispatch_actor() {
     let source = "\
 in @actor
 
@@ -162,30 +162,22 @@ grammar @compiler {
     let verified = check::verify(domain).expect("compiler domain should verify");
 
     let mut rt = RactorRuntime::new();
-    rt.register(&verified)
-        .await
-        .expect("register should succeed");
+    let artifact = rt.compile(verified).await.expect("compile should succeed");
 
-    let domain_name = DomainName::new("compiler");
-    let action_name = ActionName::new("compile");
-    let resp = rt
-        .dispatch(
-            &domain_name,
-            &action_name,
-            Args::Single(Value::Text("main.conv".into())),
-        )
-        .await
-        .expect("dispatch should succeed");
+    let resp = ractor::call!(
+        artifact, DomainMessage::Dispatch,
+        ActionName::new("compile"),
+        Args::Single(Value::Text("main.conv".into()))
+    )
+    .expect("dispatch should succeed");
 
     assert!(
-        matches!(resp, Response::Ok(_)),
+        matches!(resp, Ok(Response::Ok(_))),
         "actor dispatch should return Ok: {:?}",
         resp
     );
 
-    rt.shutdown(&domain_name)
-        .await
-        .expect("shutdown should succeed");
+    artifact.stop(None);
 }
 
 // ---------------------------------------------------------------------------
@@ -300,31 +292,25 @@ grammar @test {
         }
     }
 
-    // Runtime: register actor, dispatch, shutdown.
+    // Runtime: compile to artifact, dispatch, stop.
     // The actor booted with the schedule's eigenvalues baked in.
     let mut runtime = RactorRuntime::new();
-    runtime
-        .register(&verified)
+    let artifact = runtime
+        .compile(verified)
         .await
-        .expect("register should succeed");
+        .expect("compile should succeed");
 
     // Dispatch "decide" — the action exists so the actor handles it.
-    let resp = runtime
-        .dispatch(
-            &DomainName::new("test"),
-            &ActionName::new("decide"),
-            Args::Empty,
-        )
-        .await
-        .expect("dispatch should succeed");
+    let resp = ractor::call!(
+        artifact, DomainMessage::Dispatch,
+        ActionName::new("decide"), Args::Empty
+    )
+    .expect("dispatch should succeed");
     assert!(
-        matches!(resp, Response::Ok(_)),
+        matches!(resp, Ok(Response::Ok(_))),
         "actor dispatch should return Ok: {:?}",
         resp
     );
 
-    runtime
-        .shutdown(&DomainName::new("test"))
-        .await
-        .expect("shutdown should succeed");
+    artifact.stop(None);
 }

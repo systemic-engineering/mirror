@@ -3,6 +3,7 @@ import conversation/coincidence
 import conversation/compiler
 import conversation/domain
 import conversation/loader
+import conversation/supervisor as conv_sup
 import conversation/trace
 import gleam/erlang/process
 import gleam/list
@@ -138,8 +139,8 @@ pub fn compiled_module_empty_ensures_test() {
   process.send(subject, compiler.Shutdown)
 }
 
-/// Boot with infrastructure starts infra domains before app domains.
-pub fn boot_with_infrastructure_ordering_test() {
+/// Boot ordering: infra domains before app domains.
+pub fn boot_ordering_test() {
   let infra = "grammar @infra {
   type = service
 }
@@ -150,39 +151,50 @@ pub fn boot_with_infrastructure_ordering_test() {
 }
 "
 
-  let assert Ok(result) =
-    boot.boot_with_infrastructure([infra], [app])
+  let compiler_name = process.new_name("compiler")
+  let garden_name = process.new_name("garden")
+  let assert Ok(_) = conv_sup.start(compiler_name, garden_name)
+  let _ = coincidence.start_server()
+  let subject = process.named_subject(compiler_name)
 
-  // Both domains are running
+  // Boot infra first, then app
+  let assert Ok(infra_domains) =
+    boot.boot(subject, garden_name, [infra])
+  let assert Ok(app_domains) =
+    boot.boot(subject, garden_name, [app])
+
+  // Both domains running
   should.be_true(domain.is_running("infra"))
   should.be_true(domain.is_running("app"))
 
-  // @coincidence server was started by boot_with_infrastructure
-  should.be_true(coincidence.is_running())
+  // Order preserved
+  let infra_names = list.map(infra_domains, fn(d) { d.domain })
+  let app_names = list.map(app_domains, fn(d) { d.domain })
+  should.equal(infra_names, ["infra"])
+  should.equal(app_names, ["app"])
 
-  // Domains appear in order: infrastructure first, then application
-  let names = list.map(result.domains, fn(d) { d.domain })
-  should.equal(names, ["infra", "app"])
-
-  boot.shutdown(result)
   let _ = coincidence.stop_server()
 }
 
-/// Boot with infrastructure handles empty infrastructure list.
-pub fn boot_with_infrastructure_empty_infra_test() {
+/// Boot handles empty grammar list.
+pub fn boot_empty_grammars_test() {
   let app = "grammar @solo_app {
   type = widget
 }
 "
 
-  let assert Ok(result) =
-    boot.boot_with_infrastructure([], [app])
+  let compiler_name = process.new_name("compiler")
+  let garden_name = process.new_name("garden")
+  let assert Ok(_) = conv_sup.start(compiler_name, garden_name)
+  let _ = coincidence.start_server()
+  let subject = process.named_subject(compiler_name)
+
+  let assert Ok(domains) = boot.boot(subject, garden_name, [app])
 
   should.be_true(domain.is_running("solo_app"))
 
-  let names = list.map(result.domains, fn(d) { d.domain })
+  let names = list.map(domains, fn(d) { d.domain })
   should.equal(names, ["solo_app"])
 
-  boot.shutdown(result)
   let _ = coincidence.stop_server()
 }

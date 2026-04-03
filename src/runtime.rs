@@ -1,18 +1,18 @@
 //! Runtime trait + typed Args/Response/Value.
 //!
-//! Defines the async `Runtime` trait for domain lifecycle management and
-//! dispatch, plus the typed `Args`, `Response`, and `Value` enums.
+//! Defines the async `Runtime` trait — one method: `compile(Verified) -> Artifact`.
+//! Plus the typed `Args`, `Response`, and `Value` enums.
 //!
-//! `RactorRuntime` is the concrete implementation, with actor support for
-//! domains that have `in @actor` via ractor.
+//! `RactorRuntime` is the concrete implementation. Stateless — the caller
+//! owns the artifact.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 use std::fmt;
 
 use ractor::{Actor, ActorProcessingErr, ActorRef};
 
-use crate::check::{self, Evidence, PropertyKind, PropertyViolation, Verified, Violations};
-use crate::model::{ActionName, Domain, DomainComplexity, DomainName, PropertyName, TypeName};
+use crate::check::Verified;
+use crate::model::{ActionName, Domain, DomainComplexity};
 use crate::Oid;
 
 // ---------------------------------------------------------------------------
@@ -94,12 +94,6 @@ pub enum Response {
 #[derive(Debug)]
 pub struct RuntimeError(String);
 
-impl RuntimeError {
-    fn new(msg: impl Into<String>) -> Self {
-        Self(msg.into())
-    }
-}
-
 impl fmt::Display for RuntimeError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(&self.0)
@@ -110,27 +104,15 @@ impl fmt::Display for RuntimeError {
 // Runtime trait
 // ---------------------------------------------------------------------------
 
-/// Async lifecycle + dispatch interface for domain runtimes.
+/// The compiler backend. Takes a verified domain, produces an artifact.
+/// What the artifact IS depends on the runtime.
 #[allow(async_fn_in_trait)]
 pub trait Runtime: Send + Sync {
+    type Artifact;
     type Error: fmt::Display + Send;
 
-    /// Register a verified domain with the runtime.
-    async fn register(&mut self, domain: &Verified) -> Result<(), Self::Error>;
-
-    /// Dispatch an action call into a registered domain.
-    async fn dispatch(
-        &self,
-        domain: &DomainName,
-        action: &ActionName,
-        args: Args,
-    ) -> Result<Response, Self::Error>;
-
-    /// Re-run `ensures` checks against a running domain.
-    async fn check_ensures(&self, domain: &DomainName) -> Result<Verified, Violations>;
-
-    /// Shut down and deregister a domain.
-    async fn shutdown(&mut self, domain: &DomainName) -> Result<(), Self::Error>;
+    /// Compile a verified domain into a runtime artifact.
+    async fn compile(&mut self, domain: Verified) -> Result<Self::Artifact, Self::Error>;
 }
 
 // ---------------------------------------------------------------------------
@@ -199,41 +181,13 @@ impl Actor for DomainActor {
 // RactorRuntime
 // ---------------------------------------------------------------------------
 
-/// Runtime implementation with actor support for `in @actor` domains.
-pub struct RactorRuntime {
-    pub(crate) domains: HashMap<String, Domain>,
-    pub(crate) actors: HashMap<String, ActorRef<DomainMessage>>,
-}
+/// Ractor runtime. Compiles domains into running actors.
+/// Stateless — the caller owns the artifact.
+pub struct RactorRuntime;
 
 impl RactorRuntime {
-    /// Create an empty runtime with no registered domains.
     pub fn new() -> Self {
-        Self {
-            domains: HashMap::new(),
-            actors: HashMap::new(),
-        }
-    }
-
-    /// Register a domain with an externally-spawned actor.
-    ///
-    /// The caller provides their own `ActorRef<DomainMessage>`. The runtime
-    /// stores it alongside the domain — dispatch works identically to
-    /// internally-spawned actors.
-    pub fn register_actor(
-        &mut self,
-        domain: &Verified,
-        actor_ref: ActorRef<DomainMessage>,
-    ) -> Result<(), RuntimeError> {
-        let d = domain.domain();
-        if self.domains.contains_key(d.name.as_str()) {
-            return Err(RuntimeError(format!(
-                "domain '{}' already registered",
-                d.name
-            )));
-        }
-        self.domains.insert(d.name.as_str().to_owned(), d.clone());
-        self.actors.insert(d.name.as_str().to_string(), actor_ref);
-        Ok(())
+        Self
     }
 }
 
@@ -249,96 +203,16 @@ fn spawn_err(e: ractor::SpawnErr) -> RuntimeError {
     RuntimeError(format!("failed to spawn actor: {}", e))
 }
 
-/// Convert a ractor call error into a RuntimeError.
-/// Named function to avoid inline-closure monomorphization coverage issues.
-fn call_err(e: ractor::RactorErr<DomainMessage>) -> RuntimeError {
-    RuntimeError(format!("actor call failed: {}", e))
-}
-
 impl Runtime for RactorRuntime {
+    type Artifact = ActorRef<DomainMessage>;
     type Error = RuntimeError;
 
-    async fn register(&mut self, domain: &Verified) -> Result<(), RuntimeError> {
-        let d = domain.domain();
-        if self.domains.contains_key(d.name.as_str()) {
-            return Err(RuntimeError(format!(
-                "domain '{}' already registered",
-                d.name
-            )));
-        }
-        self.domains.insert(d.name.as_str().to_owned(), d.clone());
-
-        if d.is_actor() {
-            let (actor_ref, _handle) = Actor::spawn(None, DomainActor, d.clone())
-                .await
-                .map_err(spawn_err)?;
-            self.actors.insert(d.name.as_str().to_string(), actor_ref);
-        }
-
-        Ok(())
-    }
-
-    async fn dispatch(
-        &self,
-        domain: &DomainName,
-        action: &ActionName,
-        args: Args,
-    ) -> Result<Response, RuntimeError> {
-        let d = self
-            .domains
-            .get(domain.as_str())
-            .ok_or_else(|| RuntimeError::new(format!("domain not registered: @{}", domain)))?;
-
-        if let Some(actor_ref) = self.actors.get(domain.as_str()) {
-            let result = ractor::call!(actor_ref, DomainMessage::Dispatch, action.clone(), args)
-                .map_err(call_err)?;
-            return result.map_err(RuntimeError);
-        }
-
-        let action_exists = d.actions.iter().any(|a| &a.name == action);
-        if !action_exists {
-            return Err(RuntimeError::new(format!(
-                "unknown action '{}' in domain @{}",
-                action, domain
-            )));
-        }
-
-        Ok(Response::Ok(Value::Text(format!("{}:{}", domain, action))))
-    }
-
-    async fn check_ensures(&self, domain: &DomainName) -> Result<Verified, Violations> {
-        let d = self
-            .domains
-            .get(domain.as_str())
-            .ok_or_else(|| Violations {
-                domain: domain.clone(),
-                violations: vec![PropertyViolation {
-                    domain: domain.clone(),
-                    property: PropertyName::new("ensures"),
-                    kind: PropertyKind::Ensures,
-                    reason: format!("domain not registered: @{}", domain),
-                    evidence: Evidence::Unresolvable {
-                        name: TypeName::new(domain.as_str()),
-                        candidates: vec![],
-                    },
-                }],
-            })?;
-
-        check::verify(d.clone()).map_err(|mut v| {
-            // Re-tag violations as Ensures kind.
-            for violation in &mut v.violations {
-                violation.kind = PropertyKind::Ensures;
-            }
-            v
-        })
-    }
-
-    async fn shutdown(&mut self, domain: &DomainName) -> Result<(), RuntimeError> {
-        if let Some(actor_ref) = self.actors.remove(domain.as_str()) {
-            actor_ref.stop(None);
-        }
-        self.domains.remove(domain.as_str());
-        Ok(())
+    async fn compile(&mut self, domain: Verified) -> Result<ActorRef<DomainMessage>, RuntimeError> {
+        let d = domain.into_domain();
+        let (actor_ref, _handle) = Actor::spawn(None, DomainActor, d)
+            .await
+            .map_err(spawn_err)?;
+        Ok(actor_ref)
     }
 }
 
@@ -349,7 +223,10 @@ impl Runtime for RactorRuntime {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::model::{Action, Domain, DomainName, Properties, TypeDef, Variant, VariantName};
+    use crate::check;
+    use crate::model::{
+        Action, Domain, DomainName, Properties, TypeDef, TypeName, Variant, VariantName,
+    };
     use crate::resolve::Visibility;
 
     // -----------------------------------------------------------------------
@@ -384,6 +261,43 @@ mod tests {
             types: vec![color],
             actions: vec![paint],
             lenses: vec![],
+            extends: vec![],
+            calls: vec![],
+            properties: Properties::empty(),
+        };
+        check::verify(domain).unwrap()
+    }
+
+    /// Build a verified actor domain:
+    ///   in @actor
+    ///   type target = rust | beam
+    ///   action compile
+    fn actor_verified() -> Verified {
+        use crate::model::Lens;
+        let domain = Domain {
+            name: DomainName::new("compiler"),
+            types: vec![TypeDef {
+                name: TypeName::new("target"),
+                variants: vec![
+                    Variant {
+                        name: VariantName::new("rust"),
+                        params: vec![],
+                    },
+                    Variant {
+                        name: VariantName::new("beam"),
+                        params: vec![],
+                    },
+                ],
+            }],
+            actions: vec![Action {
+                name: ActionName::new("compile"),
+                fields: vec![],
+                visibility: Visibility::Protected,
+                calls: vec![],
+            }],
+            lenses: vec![Lens {
+                target: DomainName::new("actor"),
+            }],
             extends: vec![],
             calls: vec![],
             properties: Properties::empty(),
@@ -473,215 +387,66 @@ mod tests {
 
     #[test]
     fn ractor_runtime_default() {
-        let rt = RactorRuntime::default();
-        assert!(rt.domains.is_empty());
-        assert!(rt.actors.is_empty());
+        let _rt = RactorRuntime::default();
     }
 
     #[tokio::test]
-    async fn ractor_runtime_register_non_actor() {
+    async fn compile_produces_artifact() {
         let mut rt = RactorRuntime::new();
         let verified = simple_verified();
-        rt.register(&verified).await.unwrap();
-        assert!(rt.domains.contains_key("color"));
+        let artifact = rt.compile(verified).await.unwrap();
+        let resp = ractor::call!(
+            artifact, DomainMessage::Dispatch,
+            ActionName::new("paint"), Args::Empty
+        ).unwrap();
+        assert!(matches!(resp, Ok(Response::Ok(_))));
+        artifact.stop(None);
     }
 
     #[tokio::test]
-    async fn ractor_runtime_register_duplicate_errors() {
+    async fn compile_unknown_action_errors() {
         let mut rt = RactorRuntime::new();
         let verified = simple_verified();
-        rt.register(&verified).await.unwrap();
-        let result = rt.register(&verified).await;
-        assert!(result.is_err());
-        let err = format!("{}", result.unwrap_err());
-        assert!(
-            err.contains("already registered"),
-            "error should say already registered: {}",
-            err
-        );
+        let artifact = rt.compile(verified).await.unwrap();
+        let resp = ractor::call!(
+            artifact, DomainMessage::Dispatch,
+            ActionName::new("fly"), Args::Empty
+        ).unwrap();
+        assert!(matches!(resp, Err(_)));
+        artifact.stop(None);
     }
 
     #[tokio::test]
-    async fn ractor_runtime_dispatch_non_actor() {
+    async fn compile_actor_domain() {
+        let mut rt = RactorRuntime::new();
+        let verified = actor_verified();
+        let artifact = rt.compile(verified).await.unwrap();
+        let resp = ractor::call!(
+            artifact, DomainMessage::Dispatch,
+            ActionName::new("compile"), Args::Empty
+        ).unwrap();
+        assert!(matches!(resp, Ok(Response::Ok(_))));
+        artifact.stop(None);
+    }
+
+    #[tokio::test]
+    async fn compile_and_stop() {
         let mut rt = RactorRuntime::new();
         let verified = simple_verified();
-        rt.register(&verified).await.unwrap();
-
-        let domain = DomainName::new("color");
-        let action = ActionName::new("paint");
-        let resp = rt.dispatch(&domain, &action, Args::Empty).await.unwrap();
-
-        assert!(matches!(resp, Response::Ok(Value::Text(_))));
-    }
-
-    #[tokio::test]
-    async fn ractor_runtime_dispatch_unknown_domain() {
-        let rt = RactorRuntime::new();
-        let domain = DomainName::new("nonexistent");
-        let action = ActionName::new("paint");
-        let err = rt
-            .dispatch(&domain, &action, Args::Empty)
-            .await
-            .unwrap_err();
-        assert!(err.to_string().contains("nonexistent"));
-    }
-
-    #[tokio::test]
-    async fn ractor_runtime_dispatch_unknown_action() {
-        let mut rt = RactorRuntime::new();
-        let verified = simple_verified();
-        rt.register(&verified).await.unwrap();
-
-        let domain = DomainName::new("color");
-        let action = ActionName::new("fly");
-        let err = rt
-            .dispatch(&domain, &action, Args::Empty)
-            .await
-            .unwrap_err();
-        assert!(err.to_string().contains("fly"));
-        assert!(err.to_string().contains("color"));
-    }
-
-    #[tokio::test]
-    async fn ractor_runtime_shutdown() {
-        let mut rt = RactorRuntime::new();
-        let verified = simple_verified();
-        rt.register(&verified).await.unwrap();
-        assert!(rt.domains.contains_key("color"));
-
-        rt.shutdown(&DomainName::new("color")).await.unwrap();
-        assert!(!rt.domains.contains_key("color"));
-    }
-
-    #[tokio::test]
-    async fn ractor_runtime_check_ensures_unknown_domain() {
-        let rt = RactorRuntime::new();
-        let domain = DomainName::new("ghost");
-        let err = rt.check_ensures(&domain).await.unwrap_err();
-        assert_eq!(err.violations.len(), 1);
-        assert!(err.violations[0].reason.contains("ghost"));
-    }
-
-    #[tokio::test]
-    async fn ractor_runtime_check_ensures_registered_domain() {
-        let mut rt = RactorRuntime::new();
-        let verified = simple_verified();
-        rt.register(&verified).await.unwrap();
-
-        let domain = DomainName::new("color");
-        // simple_verified() has no properties → verify() passes → Ok(Verified)
-        let result = rt.check_ensures(&domain).await;
-        assert!(result.is_ok());
+        let artifact = rt.compile(verified).await.unwrap();
+        artifact.stop(None);
+        // Actor should be stopped — let it settle
+        tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;
     }
 
     // -----------------------------------------------------------------------
-    // Error conversion helpers — coverage for spawn_err / call_err
+    // Error conversion helpers — coverage for spawn_err
     // -----------------------------------------------------------------------
 
     #[test]
     fn spawn_err_formats_message() {
         let e = spawn_err(ractor::SpawnErr::ActorAlreadyStarted);
         assert!(e.to_string().contains("failed to spawn actor"));
-    }
-
-    #[test]
-    fn call_err_formats_message() {
-        let e = call_err(ractor::RactorErr::Timeout);
-        assert!(e.to_string().contains("actor call failed"));
-    }
-
-    // -----------------------------------------------------------------------
-    // Actor domain helpers + tests
-    // -----------------------------------------------------------------------
-
-    /// Build a verified actor domain:
-    ///   in @actor
-    ///   type target = rust | beam
-    ///   action compile
-    fn actor_verified() -> check::Verified {
-        use crate::model::Lens;
-        let domain = Domain {
-            name: DomainName::new("compiler"),
-            types: vec![TypeDef {
-                name: TypeName::new("target"),
-                variants: vec![
-                    Variant {
-                        name: VariantName::new("rust"),
-                        params: vec![],
-                    },
-                    Variant {
-                        name: VariantName::new("beam"),
-                        params: vec![],
-                    },
-                ],
-            }],
-            actions: vec![Action {
-                name: ActionName::new("compile"),
-                fields: vec![],
-                visibility: Visibility::Protected,
-                calls: vec![],
-            }],
-            lenses: vec![Lens {
-                target: DomainName::new("actor"),
-            }],
-            extends: vec![],
-            calls: vec![],
-            properties: Properties::empty(),
-        };
-        check::verify(domain).unwrap()
-    }
-
-    #[tokio::test]
-    async fn ractor_runtime_register_actor_domain() {
-        let mut rt = RactorRuntime::new();
-        let verified = actor_verified();
-        rt.register(&verified).await.unwrap();
-        assert!(rt.domains.contains_key("compiler"));
-        assert!(rt.actors.contains_key("compiler"));
-    }
-
-    #[tokio::test]
-    async fn ractor_runtime_dispatch_actor_domain() {
-        let mut rt = RactorRuntime::new();
-        let verified = actor_verified();
-        rt.register(&verified).await.unwrap();
-        let resp = rt
-            .dispatch(
-                &DomainName::new("compiler"),
-                &ActionName::new("compile"),
-                Args::Single(Value::Text("test.conv".into())),
-            )
-            .await
-            .unwrap();
-        assert!(matches!(resp, Response::Ok(_)));
-    }
-
-    #[tokio::test]
-    async fn ractor_runtime_dispatch_actor_unknown_action() {
-        let mut rt = RactorRuntime::new();
-        let verified = actor_verified();
-        rt.register(&verified).await.unwrap();
-        let err = rt
-            .dispatch(
-                &DomainName::new("compiler"),
-                &ActionName::new("nonexistent"),
-                Args::Empty,
-            )
-            .await
-            .unwrap_err();
-        assert!(err.to_string().contains("nonexistent"));
-        assert!(err.to_string().contains("compiler"));
-    }
-
-    #[tokio::test]
-    async fn ractor_runtime_shutdown_actor() {
-        let mut rt = RactorRuntime::new();
-        let verified = actor_verified();
-        rt.register(&verified).await.unwrap();
-        assert!(rt.actors.contains_key("compiler"));
-        rt.shutdown(&DomainName::new("compiler")).await.unwrap();
-        assert!(!rt.actors.contains_key("compiler"));
-        assert!(!rt.domains.contains_key("compiler"));
     }
 
     // -----------------------------------------------------------------------
@@ -726,8 +491,6 @@ mod tests {
             matches!(&schedule, InferenceSchedule::Diffusion(_)),
             "expected Diffusion"
         );
-        // temperature() exercises Diffusion arm; fiedler is verified
-        // indirectly through non-zero temperature at nonzero complexity.
         let temp = schedule.temperature(1.0);
         assert!(
             temp > 0.0,
@@ -754,8 +517,6 @@ mod tests {
         let t_full = schedule.temperature(1.0);
         let t_half = schedule.temperature(0.5);
         let t_zero = schedule.temperature(0.0);
-        // Higher context_complexity → longer diffusion_time → more cooling → lower temperature.
-        // temperature_at is normalized heat kernel: starts at 1.0 (t=0), decays toward 1/n.
         assert!(
             t_zero >= t_half,
             "zero {} should >= half {}",
@@ -776,150 +537,5 @@ mod tests {
         assert_eq!(schedule.temperature(0.0), 0.0);
         assert_eq!(schedule.temperature(0.5), 0.0);
         assert_eq!(schedule.temperature(1.0), 0.0);
-    }
-
-    #[tokio::test]
-    async fn register_external_actor() {
-        struct ExternalActor;
-        struct ExternalState {
-            domain: Domain,
-        }
-
-        impl Actor for ExternalActor {
-            type Msg = DomainMessage;
-            type State = ExternalState;
-            type Arguments = Domain;
-
-            async fn pre_start(
-                &self,
-                _myself: ActorRef<Self::Msg>,
-                args: Self::Arguments,
-            ) -> Result<Self::State, ActorProcessingErr> {
-                Ok(ExternalState { domain: args })
-            }
-
-            async fn handle(
-                &self,
-                _myself: ActorRef<Self::Msg>,
-                message: Self::Msg,
-                state: &mut Self::State,
-            ) -> Result<(), ActorProcessingErr> {
-                match message {
-                    DomainMessage::Dispatch(action, _args, reply) => {
-                        let _ = reply.send(Ok(Response::Ok(Value::Text(format!(
-                            "external:{}:{}",
-                            state.domain.name, action
-                        )))));
-                    }
-                }
-                Ok(())
-            }
-        }
-
-        let verified = simple_verified();
-        let domain = verified.domain().clone();
-
-        let (actor_ref, _handle) = Actor::spawn(None, ExternalActor, domain)
-            .await
-            .expect("spawn external actor");
-
-        let mut rt = RactorRuntime::new();
-        rt.register_actor(&verified, actor_ref).unwrap();
-
-        let resp = rt
-            .dispatch(
-                &DomainName::new("color"),
-                &ActionName::new("paint"),
-                Args::Empty,
-            )
-            .await
-            .unwrap();
-
-        assert!(
-            matches!(&resp, Response::Ok(Value::Text(s)) if s.starts_with("external:")),
-            "unexpected response: {:?}",
-            resp
-        );
-
-        rt.shutdown(&DomainName::new("color")).await.unwrap();
-    }
-
-    #[tokio::test]
-    async fn ractor_runtime_check_ensures_retags_violations_as_ensures() {
-        use crate::model::{Properties, PropertyName, TypeDef, TypeName, Variant, VariantName};
-
-        // Build a domain that will fail check::verify: two disconnected types,
-        // with "requires connected". We insert it directly into the runtime
-        // bypassing the Verified wrapper to simulate a stale registration.
-        let color = TypeDef {
-            name: TypeName::new("color"),
-            variants: vec![Variant {
-                name: VariantName::new("red"),
-                params: vec![],
-            }],
-        };
-        let shape = TypeDef {
-            name: TypeName::new("shape"),
-            variants: vec![Variant {
-                name: VariantName::new("circle"),
-                params: vec![],
-            }],
-        };
-        let bad_domain = Domain {
-            name: DomainName::new("broken"),
-            types: vec![color, shape],
-            actions: vec![],
-            lenses: vec![],
-            extends: vec![],
-            calls: vec![],
-            properties: Properties {
-                requires: vec![PropertyName::new("connected")],
-                invariants: vec![],
-                ensures: vec![],
-            },
-        };
-
-        let mut rt = RactorRuntime::new();
-        rt.domains.insert("broken".to_owned(), bad_domain);
-
-        let domain = DomainName::new("broken");
-        let err = rt.check_ensures(&domain).await.unwrap_err();
-        assert!(!err.violations.is_empty());
-        // All violations should be re-tagged as Ensures.
-        for v in &err.violations {
-            assert!(matches!(v.kind, PropertyKind::Ensures));
-        }
-    }
-
-    #[tokio::test]
-    async fn register_actor_duplicate_errors() {
-        use ractor::Actor;
-
-        struct DummyActor;
-        impl Actor for DummyActor {
-            type Msg = DomainMessage;
-            type State = ();
-            type Arguments = ();
-
-            async fn pre_start(
-                &self,
-                _myself: ActorRef<Self::Msg>,
-                _args: Self::Arguments,
-            ) -> Result<Self::State, ActorProcessingErr> {
-                Ok(())
-            }
-        }
-
-        let verified = simple_verified();
-
-        let (actor_ref1, _h1) = Actor::spawn(None, DummyActor, ()).await.unwrap();
-        let (actor_ref2, _h2) = Actor::spawn(None, DummyActor, ()).await.unwrap();
-
-        let mut rt = RactorRuntime::new();
-        rt.register_actor(&verified, actor_ref1).unwrap();
-
-        // Registering the same domain a second time should fail.
-        let err = rt.register_actor(&verified, actor_ref2).unwrap_err();
-        assert!(err.to_string().contains("already registered"), "got: {err}");
     }
 }

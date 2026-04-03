@@ -1,13 +1,28 @@
 import conversation/boot
 import conversation/coincidence
+import conversation/compiler
 import conversation/domain
 import conversation/loader
+import conversation/supervisor as conv_sup
+import gleam/erlang/process
 import gleam/list
+import gleam/otp/factory_supervisor
 import gleam/string
 import gleeunit/should
 
+fn setup() -> #(
+  process.Subject(compiler.Message),
+  process.Name(factory_supervisor.Message(String, String)),
+) {
+  let compiler_name = process.new_name("compiler")
+  let garden_name = process.new_name("garden")
+  let assert Ok(_) = conv_sup.start(compiler_name, garden_name)
+  let _ = coincidence.start_server()
+  let subject = process.named_subject(compiler_name)
+  #(subject, garden_name)
+}
+
 /// Inline grammar with requires — proves the full pipeline without garden files.
-/// Grammar → Rust NIF → ETF → BEAM module → requires/0 → @coincidence.check_property → NIF → pass.
 pub fn inline_grammar_with_requires_test() {
   let source =
     "grammar @inline_prop {
@@ -17,17 +32,15 @@ pub fn inline_grammar_with_requires_test() {
 }
 "
 
-  let assert Ok(result) =
-    boot.boot_with_infrastructure([], [source])
+  let #(subject, garden_name) = setup()
+  let assert Ok(domains) = boot.boot(subject, garden_name, [source])
 
   should.be_true(domain.is_running("inline_prop"))
   should.be_true(loader.is_loaded("conv_inline_prop"))
 
-  // Verify the module actually exposes requires/0
   let assert Ok(requires) = loader.get_requires("conv_inline_prop")
   should.equal(requires, ["shannon_equivalence"])
 
-  boot.shutdown(result)
   let _ = coincidence.stop_server()
 }
 
@@ -42,8 +55,8 @@ pub fn inline_grammar_with_requires_and_invariant_test() {
 }
 "
 
-  let assert Ok(result) =
-    boot.boot_with_infrastructure([], [source])
+  let #(subject, garden_name) = setup()
+  let assert Ok(domains) = boot.boot(subject, garden_name, [source])
 
   should.be_true(domain.is_running("dual_prop"))
 
@@ -52,25 +65,12 @@ pub fn inline_grammar_with_requires_and_invariant_test() {
   should.equal(requires, ["shannon_equivalence"])
   should.equal(invariants, ["connected"])
 
-  boot.shutdown(result)
   let _ = coincidence.stop_server()
 }
 
 /// Full pipeline: boot infrastructure domains, then @training with
 /// requires/invariant. Properties enforced through @coincidence.
-///
-/// @training declares `invariant connected` but has 6 disconnected type
-/// groups, so compilation correctly fails with property enforcement.
-/// This test proves enforcement catches real violations end-to-end:
-/// 1. Grammar declares `requires shannon_equivalence` and `invariant connected`
-/// 2. Rust compiler emits `requires/0` and `invariants/0` in BEAM module
-/// 3. Compiler actor reads `requires/0` and `invariants/0`
-/// 4. Compiler actor calls `@coincidence.check_property(source, property_name)`
-/// 5. @coincidence domain server routes to NIF
-/// 6. NIF evaluates shannon equivalence (passes) and connected (fails)
-/// 7. Compilation fails with property enforcement error
 pub fn full_property_pipeline_test() {
-  // 1. Read infrastructure grammars from conv/ and application from garden
   let conv = "/Users/alexwolf/dev/projects/conversation/conv"
   let garden =
     "/Users/alexwolf/dev/systemic.engineering/garden/public"
@@ -81,24 +81,23 @@ pub fn full_property_pipeline_test() {
   let assert Ok(training_source) =
     boot.read_file(garden <> "/@training/training.conv")
 
-  // 2. Boot with ordering: infrastructure first, then application
-  let result =
-    boot.boot_with_infrastructure(
-      [property_source, topology_source],
-      [training_source],
-    )
+  let #(subject, garden_name) = setup()
 
-  // 3. @training has disconnected type groups — enforcement correctly rejects
+  // Boot infrastructure first, then application
+  let assert Ok(_infra) =
+    boot.boot(subject, garden_name, [property_source, topology_source])
+
+  // @training has disconnected type groups — enforcement correctly rejects
+  let result = boot.boot(subject, garden_name, [training_source])
   should.be_error(result)
   let assert Error(reason) = result
   should.be_true(string.contains(reason, "property enforcement"))
   should.be_true(string.contains(reason, "connected"))
 
-  // 4. Infrastructure domains compiled before the failure
+  // Infrastructure domains compiled before the failure
   should.be_true(domain.is_running("property"))
   should.be_true(domain.is_running("topology"))
 
-  // 5. Cleanup
   let _ = coincidence.stop_server()
 }
 
@@ -111,8 +110,8 @@ pub fn enforcement_unknown_requires_fails_test() {
   requires nonexistent_property
 }
 "
-  let _ = coincidence.start_server()
-  let result = boot.boot_with_infrastructure([], [source])
+  let #(subject, garden_name) = setup()
+  let result = boot.boot(subject, garden_name, [source])
   should.be_error(result)
   let _ = coincidence.stop_server()
 }
@@ -126,9 +125,8 @@ pub fn enforcement_valid_requires_passes_test() {
   requires shannon_equivalence
 }
 "
-  let assert Ok(result) =
-    boot.boot_with_infrastructure([], [source])
-  boot.shutdown(result)
+  let #(subject, garden_name) = setup()
+  let assert Ok(_domains) = boot.boot(subject, garden_name, [source])
   let _ = coincidence.stop_server()
 }
 
@@ -141,8 +139,8 @@ pub fn enforcement_unknown_invariant_fails_test() {
   invariant nonexistent_invariant
 }
 "
-  let _ = coincidence.start_server()
-  let result = boot.boot_with_infrastructure([], [source])
+  let #(subject, garden_name) = setup()
+  let result = boot.boot(subject, garden_name, [source])
   should.be_error(result)
   let _ = coincidence.stop_server()
 }

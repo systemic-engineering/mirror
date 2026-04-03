@@ -61,7 +61,7 @@ pub fn supervised_compile_and_garden_test() {
 }
 "
   let assert Ok(domains) =
-    boot.supervised_boot(subject, garden_name, [grammar])
+    boot.boot(subject, garden_name, [grammar])
 
   // Domain should be running under garden
   should.be_true(garden.is_running("garden_compile"))
@@ -91,7 +91,7 @@ pub fn garden_restarts_killed_domain_test() {
   type = a | b
 }
 "
-  let assert Ok(_) = boot.supervised_boot(subject, garden_name, [grammar])
+  let assert Ok(_) = boot.boot(subject, garden_name, [grammar])
   should.be_true(garden.is_running("resilient"))
 
   // Kill the domain server
@@ -115,7 +115,7 @@ pub fn supervised_boot_from_files_test() {
   let garden_path =
     "/Users/alexwolf/dev/systemic.engineering/garden/public"
   let assert Ok(domains) =
-    boot.supervised_boot_from_files(subject, garden_name, [
+    boot.boot_from_files(subject, garden_name, [
       garden_path <> "/@reed/reed.conv",
       garden_path <> "/@erlang/erlang.conv",
     ])
