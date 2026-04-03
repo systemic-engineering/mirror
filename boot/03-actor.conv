@@ -1,0 +1,7 @@
+grammar @actor {
+  type = identity | session | signal
+
+  type signal = message | question | insight | work | init | exit
+
+  type visibility = public | protected | private
+}

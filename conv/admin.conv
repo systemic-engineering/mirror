@@ -9,15 +9,9 @@ grammar @admin {
 
   type api = state | grammar | cluster
 
-  action serve {
-    port: route
-  }
+  action serve(port: route)
 
-  action mount {
-    panel: panel
-  }
+  action mount(panel: panel)
 
-  action respond {
-    endpoint: api
-  }
+  action respond(endpoint: api)
 }

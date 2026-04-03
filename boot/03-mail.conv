@@ -1,0 +1,28 @@
+grammar @mail {
+  type = message | thread | attachment | address | server
+
+  type header = from | to | cc | bcc | subject
+              | date | reply-to | message-id
+              | in-reply-to | references
+
+  type flag = seen | flagged | draft | answered | deleted
+
+  type protocol = smtp | imap | jmap
+
+  type server = stalwart | maddy | mailbox
+
+  type dns = spf | dkim | dmarc | mta-sts | dane
+
+  action send(from: address, to: address, subject, body: article)
+  action reply(in-reply-to: message-id, body: article)
+  action forward(message: message-id, to: address)
+}
+
+template $message(@imap) {
+  message-id
+  from: address
+  to: address
+  subject
+  date
+  body: article
+}
