@@ -36,16 +36,17 @@ fn main() {
     match args[1].as_str() {
         "settle" => {
             if args.len() < 3 {
-                eprintln!("usage: abyss settle <file.conv>");
+                eprintln!("usage: abyss settle <file.conv|dir>");
                 process::exit(1);
             }
             let conv_path = &args[2];
-            let source = match std::fs::read_to_string(conv_path) {
-                Ok(s) => s,
-                Err(e) => {
+            let source = if std::path::Path::new(conv_path).is_dir() {
+                String::new() // directory mode — settle_cmd reads files
+            } else {
+                std::fs::read_to_string(conv_path).unwrap_or_else(|e| {
                     eprintln!("abyss: {}: {}", conv_path, e);
                     process::exit(1);
-                }
+                })
             };
             settle_cmd(&source, conv_path);
         }
@@ -117,40 +118,65 @@ fn main() {
 
 fn settle_cmd(source: &str, path: &str) {
     use mirror::abyss::{self, AbyssConfig, PrismLoop, Termination};
-    use mirror::prism::Prism as PrismTree;
-    use prism::{Beam, Oid, Precision};
+    use prism::{Beam, Oid, Precision, ShannonLoss};
     use std::collections::hash_map::DefaultHasher;
     use std::hash::{Hash, Hasher};
 
-    // Parse the source into an AST
-    let ast = match Parse.trace(source.to_string()).into_result() {
-        Ok(tree) => tree,
-        Err(e) => {
-            eprintln!("abyss: parse error: {}", e);
-            process::exit(1);
-        }
+    // If path is a directory, settle ALL .conv files as lenses on one graph.
+    // If path is a file, settle that single file.
+    let sources: Vec<(String, String)> = if std::path::Path::new(path).is_dir() {
+        let mut entries: Vec<_> = std::fs::read_dir(path)
+            .unwrap_or_else(|e| { eprintln!("abyss: {}: {}", path, e); process::exit(1); })
+            .filter_map(|e| e.ok())
+            .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("conv"))
+            .map(|e| {
+                let p = e.path();
+                let s = std::fs::read_to_string(&p).unwrap_or_default();
+                (p.display().to_string(), s)
+            })
+            .collect();
+        entries.sort_by(|a, b| a.0.cmp(&b.0)); // sort by filename = layer order
+        entries
+    } else {
+        vec![(path.to_string(), source.to_string())]
     };
 
-    // The AST IS the graph. Each node is a vertex.
-    // The Prism over AST nodes: fold decomposes into children,
-    // prism filters by kind, traversal walks, lens transforms.
-    struct AstPrism;
+    // Parse all sources into AST nodes, accumulate into one graph.
+    let mut graph: Vec<String> = Vec::new();
 
-    impl prism::Prism for AstPrism {
-        type Input = mirror::prism::Prism<mirror::ast::AstNode>;
-        type Eigenvalues = Vec<String>; // node names
+    for (file_path, file_source) in &sources {
+        let ast = match Parse.trace(file_source.to_string()).into_result() {
+            Ok(tree) => tree,
+            Err(e) => {
+                eprintln!("abyss: {}: parse error: {}", file_path, e);
+                continue;
+            }
+        };
+        // Each AST child is a node in the combined graph
+        for child in ast.children() {
+            graph.push(format!("{}:{}", child.data().name, child.data().value));
+        }
+        eprintln!("  lens {}: +{} nodes → {} total",
+            std::path::Path::new(file_path).file_name().unwrap().to_str().unwrap(),
+            ast.children().len(),
+            graph.len());
+    }
+
+    // Now settle the combined graph.
+    // The Prism over the graph: fold = identity (already decomposed),
+    // lens = sort + dedup (the settling transform).
+    struct GraphPrism;
+
+    impl prism::Prism for GraphPrism {
+        type Input = Vec<String>;
+        type Eigenvalues = Vec<String>;
         type Projection = Vec<String>;
         type Node = String;
         type Convergence = Vec<String>;
         type Crystal = Vec<String>;
 
-        fn fold(&self, input: &Self::Input) -> Beam<Vec<String>> {
-            let names: Vec<String> = input
-                .children()
-                .iter()
-                .map(|c| format!("{}:{}", c.data().name, c.data().value))
-                .collect();
-            Beam::new(names)
+        fn fold(&self, input: &Vec<String>) -> Beam<Vec<String>> {
+            Beam::new(input.clone())
         }
 
         fn prism(&self, eigenvalues: &Vec<String>, _precision: Precision) -> Beam<Vec<String>> {
@@ -158,9 +184,7 @@ fn settle_cmd(source: &str, path: &str) {
         }
 
         fn traversal(&self, projection: &Vec<String>) -> Vec<Beam<String>> {
-            projection
-                .iter()
-                .enumerate()
+            projection.iter().enumerate()
                 .map(|(i, s)| Beam::new(s.clone()).with_step(Oid::new(format!("{}", i))))
                 .collect()
         }
@@ -178,15 +202,15 @@ fn settle_cmd(source: &str, path: &str) {
         }
     }
 
-    impl PrismLoop for AstPrism {
+    impl PrismLoop for GraphPrism {
         fn fold_from_projection(&self, projection: &Vec<String>) -> Vec<String> {
             projection.clone()
         }
     }
 
-    let prism = AstPrism;
+    let prism = GraphPrism;
     let config = AbyssConfig {
-        max_cycles: 16,
+        max_cycles: 64,
         precision: Precision::new(0.0),
         oscillation_window: 4,
     };
@@ -197,15 +221,22 @@ fn settle_cmd(source: &str, path: &str) {
         Oid::new(format!("{:016x}", hasher.finish()))
     };
 
+    // The settling transform: sort, dedup, and measure loss
     let (beam, termination) = abyss::settle_loop(
         &prism,
-        &ast,
+        &graph,
         &config,
-        &|v| v, // identity — settle on the parse itself
+        &|mut v| {
+            let before = v.len();
+            v.sort();
+            v.dedup();
+            v
+        },
         &hash_fn,
     );
 
     // Output
+    eprintln!();
     eprintln!("abyss settle: {}", path);
     match &termination {
         Termination::Settled { cycles } => {
@@ -221,9 +252,7 @@ fn settle_cmd(source: &str, path: &str) {
     eprintln!("  nodes: {}", beam.result.len());
     eprintln!("  path: {} steps", beam.path.len());
     eprintln!("  loss: {}", beam.loss);
-    eprintln!("  precision: {}", beam.precision);
 
-    // Print the settled nodes
     for node in &beam.result {
         println!("  {}", node);
     }
