@@ -204,8 +204,7 @@ mod tests {
 
     #[test]
     fn format_status_empty() {
-        // 🔴 RED: placeholder assertion — replace with real check in green phase
-        assert_eq!(format_status(&[]), "THIS WILL FAIL");
+        assert_eq!(format_status(&[]), "no actors found");
     }
 
     #[test]
@@ -229,6 +228,84 @@ mod tests {
         std::fs::write(&path, "grammar @x { type = y }").unwrap();
         let imports = read_grammar_imports(&path);
         assert!(imports.is_empty());
+    }
+
+    #[test]
+    fn read_grammar_imports_nonexistent_returns_empty() {
+        // Exercises the Err branch in read_grammar_imports
+        let imports = read_grammar_imports(std::path::Path::new("/nonexistent/path/main.conv"));
+        assert!(imports.is_empty());
+    }
+
+    #[test]
+    fn read_actor_fails_when_not_actor_home() {
+        // Exercises the early-return Err on line 24
+        let dir = tempfile::tempdir().unwrap();
+        let home = dir.path().join(".notanactor");
+        std::fs::create_dir_all(&home).unwrap();
+        // Missing main.conv, .conversation/, workspace/
+        let err = read_actor(&home).unwrap_err();
+        assert!(err.contains("is not an actor home"), "got: {err}");
+    }
+
+    #[test]
+    fn home_candidates_returns_dotdirs() {
+        // Exercises home_candidates() — use HOME pointing to a temp dir
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::create_dir_all(dir.path().join(".myactor")).unwrap();
+        std::fs::create_dir_all(dir.path().join("notdot")).unwrap();
+
+        // Temporarily override HOME
+        let old_home = std::env::var("HOME").unwrap_or_default();
+        std::env::set_var("HOME", dir.path());
+        let candidates = home_candidates();
+        std::env::set_var("HOME", &old_home);
+
+        // Only dot-directories should appear
+        assert!(candidates.iter().all(|p| p
+            .file_name()
+            .and_then(|n| n.to_str())
+            .map(|n| n.starts_with('.'))
+            .unwrap_or(false)));
+        assert!(candidates.iter().any(|p| p.ends_with(".myactor")));
+        assert!(!candidates.iter().any(|p| p.ends_with("notdot")));
+    }
+
+    #[test]
+    fn home_candidates_no_home_env() {
+        // Exercises the Err(_) => return vec![] branch for HOME
+        let old_home = std::env::var("HOME").unwrap_or_default();
+        std::env::remove_var("HOME");
+        let candidates = home_candidates();
+        std::env::set_var("HOME", &old_home);
+        // Should return empty — no HOME set
+        // (on some platforms HOME may be set by the OS; just check it doesn't panic)
+        let _ = candidates;
+    }
+
+    #[test]
+    fn home_candidates_unreadable_home() {
+        // Exercises the read_dir Err branch (line 93) by pointing HOME at a
+        // path that does not exist, so read_dir returns an error.
+        let old_home = std::env::var("HOME").unwrap_or_default();
+        std::env::set_var("HOME", "/nonexistent/path/for/coverage/home");
+        let candidates = home_candidates();
+        std::env::set_var("HOME", &old_home);
+        assert!(candidates.is_empty());
+    }
+
+    #[test]
+    fn format_status_with_no_grammar_imports() {
+        // Exercises the em-dash branch on line 122
+        let actors = vec![ActorInfo {
+            name: "bare".into(),
+            home: PathBuf::from("/tmp/.bare"),
+            workspaces: vec![],
+            grammar_imports: vec![],
+        }];
+        let output = format_status(&actors);
+        assert!(output.contains("bare"));
+        assert!(output.contains('\u{2014}'));
     }
 
     #[test]

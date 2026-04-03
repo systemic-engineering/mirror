@@ -106,7 +106,7 @@ fn main() {
 
 fn actor_cmd(args: &[String]) {
     if args.is_empty() {
-        eprintln!("usage: conversation actor <observe|init|mount|unmount> [args]");
+        eprintln!("usage: conversation actor <observe|init|mount|unmount|status> [args]");
         process::exit(1);
     }
 
@@ -184,9 +184,14 @@ fn actor_cmd(args: &[String]) {
                 }
             }
         }
+        "status" => {
+            let candidates = conversation::actor::status::home_candidates();
+            let actors = conversation::actor::status::discover_actors(&candidates);
+            println!("{}", conversation::actor::status::format_status(&actors));
+        }
         other => {
             eprintln!("conversation actor: unknown subcommand '{other}'");
-            eprintln!("available: observe, init, mount, unmount");
+            eprintln!("available: observe, init, mount, unmount, status");
             process::exit(1);
         }
     }
