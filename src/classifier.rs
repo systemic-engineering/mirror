@@ -357,4 +357,32 @@ mod tests {
         let bytes = w.to_bytes();
         assert_eq!(bytes.len(), 23136); // 2892 * 8
     }
+
+    #[test]
+    fn trained_weights_load_and_classify() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("abyss.weights");
+        if !path.exists() {
+            return; // skip if weights not trained yet
+        }
+        let bytes = std::fs::read(&path).unwrap();
+        let w = Weights::from_bytes(&bytes).unwrap();
+        assert_eq!(w.param_count(), PARAM_COUNT);
+
+        // Classify a "lens" commit: lots of insertions, .rs files, 🟢 marker
+        let mut input = [0.0; INPUT_DIM];
+        input[0] = 0.15; // files_changed / 20
+        input[1] = 0.3;  // insertions / 1000
+        input[2] = 0.05; // deletions / 1000
+        input[3] = 0.9;  // confidence
+        input[4] = 0.85; // ins ratio
+        input[6] = 1.0;  // .rs file
+        input[16] = 1.0; // 🟢
+        input[29] = 1.0; // conversation repo
+
+        let (optic, confidence, _) = classify(&w, &input);
+        // Should classify as some optic with reasonable confidence
+        assert!(confidence > 0.1, "confidence should be non-trivial: {}", confidence);
+        // The trained model should not return Noop for a clearly active commit
+        assert_ne!(optic, Optic::Noop, "active commit should not be Noop");
+    }
 }
