@@ -24,6 +24,7 @@ pub use prism_crate as beam;
 pub mod kernel;
 pub mod abyss;
 pub mod actor;
+pub mod classifier;
 pub mod artifact;
 pub mod ast;
 pub mod boot;
