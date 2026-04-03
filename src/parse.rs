@@ -120,10 +120,22 @@ impl<'a> Lines<'a> {
 type KeywordHandler = fn(&str, &mut Lines) -> Result<Prism<AstNode>, ParseError>;
 
 /// Keyword → handler table. Checked in order; first prefix match wins.
-/// Each handler receives the rest of the line after stripping the keyword
-/// prefix and is responsible for consuming all lines it needs (including
-/// calling `lines.advance()` for single-line keywords).
+///
+/// Two layers:
+/// - Crystal keywords (fold, prism, traversal, lens, iso) — from metal/prism.metal
+/// - Bootstrap keywords (in, use, when, case, template, out, grammar) — the old parser
+///
+/// Crystal keywords are checked first. They all parse as generic
+/// optic declarations. Bootstrap keywords have specific handlers
+/// for backward compatibility.
 const KEYWORD_TABLE: &[(&str, KeywordHandler)] = &[
+    // Crystal keywords — the five Prism operations
+    ("fold ", parse_crystal_keyword),
+    ("prism ", parse_crystal_keyword),
+    ("traversal ", parse_crystal_keyword),
+    ("lens ", parse_crystal_keyword),
+    ("iso ", parse_crystal_keyword),
+    // Bootstrap keywords — backward compatibility
     ("in ", parse_in_keyword),
     ("use ", parse_use_keyword),
     ("when ", parse_when_keyword),
@@ -141,10 +153,60 @@ fn dispatch_keyword(
 ) -> Result<Option<Prism<AstNode>>, ParseError> {
     for &(prefix, handler) in KEYWORD_TABLE {
         if let Some(rest) = trimmed.strip_prefix(prefix) {
+            // For crystal keywords, we need to pass the keyword name too.
+            // The handler receives the rest of the line after the prefix.
             return Ok(Some(handler(rest, lines)?));
         }
     }
     Ok(None)
+}
+
+/// Parse a crystal keyword: fold, prism, traversal, lens, iso.
+///
+/// Crystal keywords are generic optic declarations:
+///   fold input
+///   prism eigenvalues(precision)
+///   traversal type = a | b | c
+///   lens type(id)
+///   iso convergence
+///
+/// They produce Decl nodes with the keyword as the name.
+fn parse_crystal_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+    let span = lines.current_span();
+    let trimmed = rest.trim();
+
+    // Check for type-like declaration: `traversal type = a | b | c`
+    if let Some(eq_pos) = trimmed.find('=') {
+        let name = trimmed[..eq_pos].trim();
+        let variants_str = trimmed[eq_pos + 1..].trim();
+        let variants: Vec<Prism<AstNode>> = variants_str
+            .split('|')
+            .map(|v| ast::ast_leaf(Kind::Atom, "variant", v.trim(), span))
+            .collect();
+        lines.advance();
+        return Ok(ast::ast_branch(Kind::Decl, "crystal-def", name, span, variants));
+    }
+
+    // Check for parameterized: `lens type(id)` or `prism eigenvalues(precision)`
+    if let Some(paren) = trimmed.find('(') {
+        let name = trimmed[..paren].trim();
+        let close = trimmed.find(')').unwrap_or(trimmed.len());
+        let params_str = &trimmed[paren + 1..close];
+        let params: Vec<Prism<AstNode>> = if params_str.is_empty() {
+            vec![]
+        } else {
+            params_str
+                .split(',')
+                .map(|p| ast::ast_leaf(Kind::Atom, "param", p.trim(), span))
+                .collect()
+        };
+        lines.advance();
+        return Ok(ast::ast_branch(Kind::Decl, "crystal-def", name, span, params));
+    }
+
+    // Simple: `fold input` or `iso convergence`
+    lines.advance();
+    Ok(ast::ast_leaf(Kind::Decl, "crystal-def", trimmed, span))
 }
 
 /// `in @domain` / `in @domain(params)` / `in @domain as $name`
