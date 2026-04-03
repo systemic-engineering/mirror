@@ -1,0 +1,7 @@
+grammar @lens {
+  type = iso | lens | prism | traversal | fold | setter
+  type composition = then | compose | identity
+}
+
+in @conversation
+in @prism

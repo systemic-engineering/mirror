@@ -9,6 +9,11 @@ grammar @prism {
   type = in | out | template | field | pipe
 }
 
+grammar @lens {
+  type = iso | lens | prism | traversal | fold | setter
+  type composition = then | compose | identity
+}
+
 grammar @test {
   type = assertion | property
   type assertion = has | eq
@@ -29,6 +34,18 @@ test "prism defines structure" {
   @prism has template
   @prism has field
   @prism has pipe
+}
+
+test "lens defines optics" {
+  @lens has iso
+  @lens has lens
+  @lens has prism
+  @lens has traversal
+  @lens has fold
+  @lens has setter
+  @lens.composition has then
+  @lens.composition has compose
+  @lens.composition has identity
 }
 
 test "test defines verification" {
