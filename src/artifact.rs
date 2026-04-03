@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use crate::model::DomainName;
 pub use prism::Pressure;
 
-use fragmentation::bounded_store::GitBoundedStore;
+use fragmentation_git::bounded_store::GitBoundedStore;
 use fragmentation::encoding::{Decode, Encode};
 use fragmentation::fragment::{self, Fractal};
 use fragmentation::ref_::Ref;
