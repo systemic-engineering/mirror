@@ -554,7 +554,7 @@ impl Domain {
                     name: type_name,
                     variants,
                 });
-            } else if child.data().is_form("action-def") {
+            } else if child.data().is_decl("action-def") || child.data().is_form("action-def") {
                 let action_name = ActionName::new(child.data().value.as_str());
                 let mut fields: Vec<(ActionName, TypeRef)> = Vec::new();
                 let mut calls: Vec<ActionCall> = Vec::new();
@@ -567,9 +567,18 @@ impl Domain {
                             "private" => Visibility::Private,
                             _ => Visibility::Protected,
                         };
+                    } else if item.data().is_atom("param") {
+                        // New syntax: param node value is "name:type"
+                        let param_val = item.data().value.as_str();
+                        let (pname, ptype) = param_val
+                            .split_once(':')
+                            .unwrap_or((param_val, ""));
+                        let field_name = ActionName::new(pname);
+                        let type_ref = TypeRef::new(TypeName::new(ptype));
+                        fields.push((field_name, type_ref));
                     } else if item.data().is_atom("field") {
+                        // Legacy: field nodes from older ASTs
                         let field_name = ActionName::new(item.data().value.as_str());
-                        // Type ref on action fields is a semantic annotation — not validated.
                         let type_ref = item
                             .children()
                             .iter()

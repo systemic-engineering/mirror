@@ -2060,12 +2060,13 @@ mod tests {
 
     #[test]
     fn domain_compile_action_untyped_field() {
+        // Sugar: `subject` expands to `subject:subject`
         let dom = compile_grammar("grammar @test {\n  action send(subject)\n}\n");
         assert!(dom.has_action("send"));
         let fields = dom.act_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].0, "subject");
-        assert_eq!(fields[0].1, None);
+        assert_eq!(fields[0].1, Some("subject"));
     }
 
     #[test]

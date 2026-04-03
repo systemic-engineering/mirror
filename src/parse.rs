@@ -3018,18 +3018,13 @@ grammar @conversation {
 
         let from = &action.children()[1];
         assert_eq!(from.data().kind, Kind::Atom);
-        assert_eq!(from.data().name, "field");
-        assert_eq!(from.data().value, "from");
-        assert_eq!(from.children().len(), 1);
-        assert_eq!(from.children()[0].data().kind, Kind::Ref);
-        assert_eq!(from.children()[0].data().name, "type-ref");
-        assert_eq!(from.children()[0].data().value, "address");
+        assert_eq!(from.data().name, "param");
+        assert_eq!(from.data().value, "from:address");
 
         let to = &action.children()[2];
         assert_eq!(to.data().kind, Kind::Atom);
-        assert_eq!(to.data().name, "field");
-        assert_eq!(to.data().value, "to");
-        assert_eq!(to.children()[0].data().value, "address");
+        assert_eq!(to.data().name, "param");
+        assert_eq!(to.data().value, "to:address");
     }
 
     #[test]
