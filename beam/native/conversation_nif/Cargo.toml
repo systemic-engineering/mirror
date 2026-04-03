@@ -8,5 +8,5 @@ name = "conversation_nif"
 crate-type = ["cdylib"]
 
 [dependencies]
-abyss = { path = "../../..", package = "abyss", features = ["spectral"] }
+mirror = { path = "../../..", features = ["spectral"] }
 rustler = "0.37"

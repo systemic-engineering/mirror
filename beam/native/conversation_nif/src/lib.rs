@@ -3,7 +3,7 @@
 //! Exposes parse_conv/1, compile_grammar/1, and coincidence measurement
 //! functions to the BEAM runtime.
 
-use conversation::Vector;
+use mirror::Vector;
 use rustler::{Atom, Binary, Encoder, Env, NewBinary};
 
 mod atoms {
@@ -18,7 +18,7 @@ mod atoms {
 /// Returns `{ok, OidString}` or `{error, ErrorString}`.
 #[rustler::nif]
 fn parse_conv(source: String) -> (Atom, String) {
-    match conversation::ffi::parse_to_oid(&source) {
+    match mirror::ffi::parse_to_oid(&source) {
         Ok(oid) => (atoms::ok(), oid),
         Err(e) => (atoms::error(), e),
     }
@@ -30,7 +30,7 @@ fn parse_conv(source: String) -> (Atom, String) {
 /// Binary contains ETF-encoded EAF ready for `compile:forms/1`.
 #[rustler::nif(schedule = "DirtyCpu")]
 fn compile_grammar<'a>(env: Env<'a>, source: String) -> (Atom, rustler::Term<'a>) {
-    match conversation::ffi::compile_grammar_to_etf(&source) {
+    match mirror::ffi::compile_grammar_to_etf(&source) {
         Ok(etf) => {
             let mut binary = NewBinary::new(env, etf.len());
             binary.as_mut_slice().copy_from_slice(&etf);
@@ -46,7 +46,7 @@ fn compile_grammar<'a>(env: Env<'a>, source: String) -> (Atom, rustler::Term<'a>
 /// Each OID is a hex-encoded SHA-512 content address for that compilation phase.
 #[rustler::nif(schedule = "DirtyCpu")]
 fn compile_grammar_traced<'a>(env: Env<'a>, source: String) -> (Atom, rustler::Term<'a>) {
-    match conversation::ffi::compile_grammar_with_phases(&source) {
+    match mirror::ffi::compile_grammar_with_phases(&source) {
         Ok(result) => {
             let mut binary = NewBinary::new(env, result.etf.len());
             binary.as_mut_slice().copy_from_slice(&result.etf);
@@ -72,8 +72,8 @@ fn compile_grammar_traced<'a>(env: Env<'a>, source: String) -> (Atom, rustler::T
 ///
 /// Shared helper for all measurement NIFs. Parses the source, finds the
 /// grammar block, and compiles it into a Domain.
-fn domain_from_source(source: &str) -> Result<conversation::model::Domain, String> {
-    let ast = conversation::parse::Parse
+fn domain_from_source(source: &str) -> Result<mirror::model::Domain, String> {
+    let ast = mirror::parse::Parse
         .trace(source.to_string())
         .into_result()
         .map_err(|e| e.to_string())?;
@@ -82,7 +82,7 @@ fn domain_from_source(source: &str) -> Result<conversation::model::Domain, Strin
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .ok_or_else(|| "no grammar block".to_string())?;
-    conversation::model::Domain::from_grammar(grammar)
+    mirror::model::Domain::from_grammar(grammar)
 }
 
 /// Check a built-in property by name against a grammar source (internal helper).
@@ -93,7 +93,7 @@ fn do_check_property(source: &str, property: &str) -> (Atom, String) {
         Ok(r) => r,
         Err(e) => return (atoms::error(), e),
     };
-    match conversation::property::check_builtin(&domain, property) {
+    match mirror::property::check_builtin(&domain, property) {
         Some((true, reason)) => (atoms::ok(), reason),
         Some((false, reason)) => (atoms::error(), reason),
         None => (atoms::error(), format!("unknown property: {}", property)),

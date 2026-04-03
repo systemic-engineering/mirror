@@ -11,12 +11,12 @@
 use std::io::{self, BufRead, Write};
 use std::process;
 
-use abyss::domain::filesystem::{Filesystem, Folder};
-use abyss::model::Domain;
-use abyss::packages::{self, PackageRegistry};
-use abyss::property;
-use abyss::resolve::{Conversation, Resolve};
-use abyss::{Parse, Vector};
+use mirror::domain::filesystem::{Filesystem, Folder};
+use mirror::model::Domain;
+use mirror::packages::{self, PackageRegistry};
+use mirror::property;
+use mirror::resolve::{Conversation, Resolve};
+use mirror::{Parse, Vector};
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -77,7 +77,7 @@ fn main() {
         #[cfg(feature = "db")]
         "db" => {
             let db_args: Vec<String> = args[2..].to_vec();
-            abyss::db::cli(&db_args);
+            mirror::db::cli(&db_args);
         }
         // LSP moved to standalone binary: conversation-lsp
         _ => {
@@ -128,7 +128,7 @@ fn actor_cmd(args: &[String]) {
                 .and_then(|i| args.get(i + 1))
                 .map(|s| s.as_str())
                 .unwrap_or("default");
-            match abyss::actor::init::init(path, role) {
+            match mirror::actor::init::init(path, role) {
                 Ok(()) => eprintln!("conversation actor init: {} ({})", path.display(), role),
                 Err(e) => {
                     eprintln!("conversation actor init: {e}");
@@ -143,12 +143,12 @@ fn actor_cmd(args: &[String]) {
             }
             let actor_home = std::path::Path::new(&args[1]);
             let workspace_path = std::path::Path::new(&args[2]);
-            match abyss::actor::mount::mount(actor_home, workspace_path) {
+            match mirror::actor::mount::mount(actor_home, workspace_path) {
                 Ok(name) => {
                     eprintln!("mounted: {} → {}", name, workspace_path.display());
                     // Run observe on the mounted workspace
                     let mounted = actor_home.join("workspace").join(&name);
-                    if let Ok(deps) = abyss::actor::observe::scan_repo(&mounted) {
+                    if let Ok(deps) = mirror::actor::observe::scan_repo(&mounted) {
                         let packages: Vec<_> = deps
                             .iter()
                             .filter(|d| d.is_package)
@@ -172,7 +172,7 @@ fn actor_cmd(args: &[String]) {
             }
             let actor_home = std::path::Path::new(&args[1]);
             let name = &args[2];
-            match abyss::actor::mount::unmount(actor_home, name) {
+            match mirror::actor::mount::unmount(actor_home, name) {
                 Ok(()) => eprintln!("unmounted: {}", name),
                 Err(e) => {
                     eprintln!("conversation actor unmount: {e}");
@@ -181,9 +181,9 @@ fn actor_cmd(args: &[String]) {
             }
         }
         "status" => {
-            let candidates = abyss::actor::status::home_candidates();
-            let actors = abyss::actor::status::discover_actors(&candidates);
-            println!("{}", abyss::actor::status::format_status(&actors));
+            let candidates = mirror::actor::status::home_candidates();
+            let actors = mirror::actor::status::discover_actors(&candidates);
+            println!("{}", mirror::actor::status::format_status(&actors));
         }
         other => {
             eprintln!("conversation actor: unknown subcommand '{other}'");
@@ -194,8 +194,8 @@ fn actor_cmd(args: &[String]) {
 }
 
 fn actor_observe(repo_path: &std::path::Path) {
-    use abyss::actor::emit_nix;
-    use abyss::actor::observe;
+    use mirror::actor::emit_nix;
+    use mirror::actor::observe;
 
     eprintln!("observing: {}", repo_path.display());
 

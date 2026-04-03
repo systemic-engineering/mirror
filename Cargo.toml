@@ -2,11 +2,11 @@
 members = [".", "beam/native/conversation_nif"]
 
 [package]
-name = "abyss"
+name = "mirror"
 version = "0.1.0"
 edition = "2021"
 license-file = "LICENSE.md"
-description = "fold | prism | traversal | lens | iso — the five optic operations"
+description = "fold | prism | traversal | lens | iso — the thing you look into that looks back"
 
 [lib]
 crate-type = ["lib"]

@@ -72,7 +72,7 @@ impl Optic {
 // ---------------------------------------------------------------------------
 
 /// The trained weights, baked into the binary at compile time.
-static TRAINED_WEIGHTS: &[u8] = include_bytes!("../abyss.weights");
+static TRAINED_WEIGHTS: &[u8] = include_bytes!("../mirror.weights");
 
 /// Load the trained weights baked into the binary.
 pub fn trained() -> Weights {
