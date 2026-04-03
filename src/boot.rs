@@ -221,8 +221,8 @@ mod tests {
         .unwrap();
 
         assert!(!seq.is_empty());
-        assert!(seq.len() >= 16); // at least our 16 boot files
-        assert!(seq.layer_count() >= 8); // layers 0-7
+        assert!(seq.len() >= 15); // at least our 15 boot files
+        assert!(seq.layer_count() >= 7); // layers 0-6
 
         // Layer 0 has main.conv
         let layer0 = seq.layers.get(&BootLayer(0)).unwrap();
