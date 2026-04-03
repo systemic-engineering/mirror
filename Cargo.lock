@@ -370,6 +370,7 @@ dependencies = [
  "fragmentation",
  "git2",
  "hex",
+ "prism",
  "ractor",
  "serde_json",
  "sha2",
@@ -1789,6 +1790,10 @@ checksum = "353e1ca18966c16d9deb1c69278edbc5f194139612772bd9537af60ac231e1e6"
 dependencies = [
  "elliptic-curve",
 ]
+
+[[package]]
+name = "prism"
+version = "0.1.0"
 
 [[package]]
 name = "proc-macro-error-attr2"

@@ -20,6 +20,7 @@ slow = []
 spectral = []  # kept for backward compat; coincidence is now always required
 
 [dependencies]
+prism = { path = "../prism" }
 fragmentation = { path = "../fragmentation" }
 coincidence = { path = "../coincidence" }
 serde_json = "1"

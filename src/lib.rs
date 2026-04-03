@@ -1,3 +1,6 @@
+pub extern crate prism as prism_crate;
+pub use prism_crate as beam;
+
 #[macro_use]
 pub mod kernel;
 pub mod actor;
