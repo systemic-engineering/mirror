@@ -22,6 +22,7 @@ pub use prism_crate as beam;
 
 #[macro_use]
 pub mod kernel;
+pub mod abyss;
 pub mod actor;
 pub mod artifact;
 pub mod ast;
