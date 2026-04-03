@@ -175,7 +175,7 @@ mod tests {
         }
     }
 
-    fn hash_vec(v: &Vec<i32>) -> Oid {
+    fn hash_vec<T: Hash>(v: &Vec<T>) -> Oid {
         let mut hasher = DefaultHasher::new();
         v.hash(&mut hasher);
         Oid::new(format!("{:x}", hasher.finish()))
@@ -264,6 +264,78 @@ mod tests {
 
         // Path should have entries — the Abyss records each cycle's hash
         assert!(!beam.path.is_empty());
+    }
+
+    #[test]
+    fn boot_sequence_settles_combined() {
+        use crate::parse::Parse;
+        use crate::Vector;
+
+        // Read all boot files, parse, accumulate into one graph
+        let boot_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot");
+        let mut entries: Vec<_> = std::fs::read_dir(&boot_dir)
+            .unwrap()
+            .filter_map(|e| e.ok())
+            .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("conv"))
+            .collect();
+        entries.sort_by_key(|e| e.path());
+
+        let mut graph: Vec<String> = Vec::new();
+        for entry in &entries {
+            let source = std::fs::read_to_string(entry.path()).unwrap();
+            if let Ok(ast) = Parse.trace(source).into_result() {
+                for child in ast.children() {
+                    graph.push(format!("{}:{}", child.data().name, child.data().value));
+                }
+            }
+        }
+        assert!(graph.len() >= 19, "boot should have at least 19 nodes, got {}", graph.len());
+
+        // Settle with sort+dedup transform
+        let prism = ConvergingPrism;
+        let config = AbyssConfig { max_cycles: 64, ..Default::default() };
+
+        // Adapt: use the graph as input to ConvergingPrism
+        // which works on Vec<i32> — let's use a StringPrism instead
+        struct BootPrism;
+        impl prism::Prism for BootPrism {
+            type Input = Vec<String>;
+            type Eigenvalues = Vec<String>;
+            type Projection = Vec<String>;
+            type Node = String;
+            type Convergence = Vec<String>;
+            type Crystal = Vec<String>;
+
+            fn fold(&self, input: &Vec<String>) -> Beam<Vec<String>> { Beam::new(input.clone()) }
+            fn prism(&self, ev: &Vec<String>, _p: prism::Precision) -> Beam<Vec<String>> { Beam::new(ev.clone()) }
+            fn traversal(&self, proj: &Vec<String>) -> Vec<Beam<String>> {
+                proj.iter().map(|s| Beam::new(s.clone())).collect()
+            }
+            fn lens(&self, beam: Beam<Vec<String>>, f: &dyn Fn(Vec<String>) -> Vec<String>) -> Beam<Vec<String>> {
+                beam.map(f)
+            }
+            fn iso(&self, beam: Beam<Vec<String>>) -> Vec<String> { beam.result }
+        }
+        impl PrismLoop for BootPrism {
+            fn fold_from_projection(&self, p: &Vec<String>) -> Vec<String> { p.clone() }
+        }
+
+        let (beam, term) = settle_loop(
+            &BootPrism,
+            &graph,
+            &config,
+            &|mut v| { v.sort(); v.dedup(); v },
+            &hash_vec,
+        );
+
+        // Must settle
+        assert!(matches!(term, Termination::Settled { .. }), "boot must settle, got {:?}", term);
+        // Dedup removes duplicates
+        assert!(beam.result.len() < graph.len(), "dedup should reduce nodes");
+        // 17 unique crystal definitions
+        assert_eq!(beam.result.len(), 17, "expected 17 unique keywords, got {}", beam.result.len());
+        // Zero loss
+        assert!(beam.is_lossless());
     }
 
     #[test]
