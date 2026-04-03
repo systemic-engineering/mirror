@@ -106,7 +106,7 @@ fn main() {
 
 fn actor_cmd(args: &[String]) {
     if args.is_empty() {
-        eprintln!("usage: conversation actor <observe|init|spawn|mount|status> [args]");
+        eprintln!("usage: conversation actor <observe|init|mount|unmount> [args]");
         process::exit(1);
     }
 
@@ -140,9 +140,53 @@ fn actor_cmd(args: &[String]) {
                 }
             }
         }
+        "mount" => {
+            if args.len() < 3 {
+                eprintln!("usage: conversation actor mount <actor-home> <workspace-path>");
+                process::exit(1);
+            }
+            let actor_home = std::path::Path::new(&args[1]);
+            let workspace_path = std::path::Path::new(&args[2]);
+            match conversation::actor::mount::mount(actor_home, workspace_path) {
+                Ok(name) => {
+                    eprintln!("mounted: {} → {}", name, workspace_path.display());
+                    // Run observe on the mounted workspace
+                    let mounted = actor_home.join("workspace").join(&name);
+                    if let Ok(deps) = conversation::actor::observe::scan_repo(&mounted) {
+                        let packages: Vec<_> = deps
+                            .iter()
+                            .filter(|d| d.is_package)
+                            .map(|d| d.name.as_str())
+                            .collect();
+                        if !packages.is_empty() {
+                            eprintln!("  packages needed: {}", packages.join(", "));
+                        }
+                    }
+                }
+                Err(e) => {
+                    eprintln!("conversation actor mount: {e}");
+                    process::exit(1);
+                }
+            }
+        }
+        "unmount" => {
+            if args.len() < 3 {
+                eprintln!("usage: conversation actor unmount <actor-home> <name>");
+                process::exit(1);
+            }
+            let actor_home = std::path::Path::new(&args[1]);
+            let name = &args[2];
+            match conversation::actor::mount::unmount(actor_home, name) {
+                Ok(()) => eprintln!("unmounted: {}", name),
+                Err(e) => {
+                    eprintln!("conversation actor unmount: {e}");
+                    process::exit(1);
+                }
+            }
+        }
         other => {
             eprintln!("conversation actor: unknown subcommand '{other}'");
-            eprintln!("available: observe, init");
+            eprintln!("available: observe, init, mount, unmount");
             process::exit(1);
         }
     }
