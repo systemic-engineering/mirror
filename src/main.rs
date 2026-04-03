@@ -1,45 +1,42 @@
-//! abyss — fold | prism | traversal | lens | iso.
-//!
-//! Five operations. A loop. A tiny classifier. A garden of lenses.
-//! The thing you look into that looks back.
+//! conversation — the human interface to the Abyss.
 //!
 //! ```sh
-//! abyss schema.conv ./input     # apply grammar to input
-//! abyss settle ./src            # loop until convergence
-//! abyss test cogito.conv        # run tests
-//! abyss shell                   # REPL
-//! #!/usr/bin/env abyss
+//! conversation schema.conv ./input     # apply grammar to input
+//! conversation settle ./src            # loop until convergence
+//! conversation test cogito.conv        # run tests
+//! conversation shell                   # REPL
+//! #!/usr/bin/env conversation
 //! ```
 
 use std::io::{self, BufRead, Write};
 use std::process;
 
-use conversation::domain::filesystem::{Filesystem, Folder};
-use conversation::model::Domain;
-use conversation::packages::{self, PackageRegistry};
-use conversation::property;
-use conversation::resolve::{Conversation, Resolve};
-use conversation::{Parse, Vector};
+use abyss::domain::filesystem::{Filesystem, Folder};
+use abyss::model::Domain;
+use abyss::packages::{self, PackageRegistry};
+use abyss::property;
+use abyss::resolve::{Conversation, Resolve};
+use abyss::{Parse, Vector};
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
 
     if args.len() < 2 {
-        eprintln!("abyss — fold | prism | traversal | lens | iso");
+        eprintln!("conversation — fold | prism | traversal | lens | iso");
         eprintln!();
-        eprintln!("usage: abyss <grammar> <input>     apply grammar to input");
-        eprintln!("       abyss test <file.conv>      run tests");
-        eprintln!("       abyss shell [path]           REPL");
-        eprintln!("       abyss boot [dir]             boot the garden");
-        eprintln!("       abyss settle <input>         loop until convergence");
-        eprintln!("       abyss -e '<expr>' [path]     evaluate expression");
+        eprintln!("usage: conversation <grammar> <input>     apply grammar to input");
+        eprintln!("       conversation test <file.conv>      run tests");
+        eprintln!("       conversation shell [path]           REPL");
+        eprintln!("       conversation boot [dir]             boot the garden");
+        eprintln!("       conversation settle <input>         loop until convergence");
+        eprintln!("       conversation -e '<expr>' [path]     evaluate expression");
         process::exit(1);
     }
 
     match args[1].as_str() {
         "test" => {
             if args.len() < 3 {
-                eprintln!("usage: abyss test <file.conv>");
+                eprintln!("usage: conversation test <file.conv>");
                 process::exit(1);
             }
             let conv_path = &args[2];
@@ -80,7 +77,7 @@ fn main() {
         #[cfg(feature = "db")]
         "db" => {
             let db_args: Vec<String> = args[2..].to_vec();
-            conversation::db::cli(&db_args);
+            abyss::db::cli(&db_args);
         }
         // LSP moved to standalone binary: conversation-lsp
         _ => {
@@ -131,7 +128,7 @@ fn actor_cmd(args: &[String]) {
                 .and_then(|i| args.get(i + 1))
                 .map(|s| s.as_str())
                 .unwrap_or("default");
-            match conversation::actor::init::init(path, role) {
+            match abyss::actor::init::init(path, role) {
                 Ok(()) => eprintln!("conversation actor init: {} ({})", path.display(), role),
                 Err(e) => {
                     eprintln!("conversation actor init: {e}");
@@ -146,12 +143,12 @@ fn actor_cmd(args: &[String]) {
             }
             let actor_home = std::path::Path::new(&args[1]);
             let workspace_path = std::path::Path::new(&args[2]);
-            match conversation::actor::mount::mount(actor_home, workspace_path) {
+            match abyss::actor::mount::mount(actor_home, workspace_path) {
                 Ok(name) => {
                     eprintln!("mounted: {} → {}", name, workspace_path.display());
                     // Run observe on the mounted workspace
                     let mounted = actor_home.join("workspace").join(&name);
-                    if let Ok(deps) = conversation::actor::observe::scan_repo(&mounted) {
+                    if let Ok(deps) = abyss::actor::observe::scan_repo(&mounted) {
                         let packages: Vec<_> = deps
                             .iter()
                             .filter(|d| d.is_package)
@@ -175,7 +172,7 @@ fn actor_cmd(args: &[String]) {
             }
             let actor_home = std::path::Path::new(&args[1]);
             let name = &args[2];
-            match conversation::actor::mount::unmount(actor_home, name) {
+            match abyss::actor::mount::unmount(actor_home, name) {
                 Ok(()) => eprintln!("unmounted: {}", name),
                 Err(e) => {
                     eprintln!("conversation actor unmount: {e}");
@@ -184,12 +181,12 @@ fn actor_cmd(args: &[String]) {
             }
         }
         "status" => {
-            let candidates = conversation::actor::status::home_candidates();
-            let actors = conversation::actor::status::discover_actors(&candidates);
-            println!("{}", conversation::actor::status::format_status(&actors));
+            let candidates = abyss::actor::status::home_candidates();
+            let actors = abyss::actor::status::discover_actors(&candidates);
+            println!("{}", abyss::actor::status::format_status(&actors));
         }
         other => {
-            eprintln!("abyss actor: unknown subcommand '{other}'");
+            eprintln!("conversation actor: unknown subcommand '{other}'");
             eprintln!("available: observe, init, mount, unmount, status");
             process::exit(1);
         }
@@ -197,8 +194,8 @@ fn actor_cmd(args: &[String]) {
 }
 
 fn actor_observe(repo_path: &std::path::Path) {
-    use conversation::actor::emit_nix;
-    use conversation::actor::observe;
+    use abyss::actor::emit_nix;
+    use abyss::actor::observe;
 
     eprintln!("observing: {}", repo_path.display());
 

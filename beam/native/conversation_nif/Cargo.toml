@@ -8,5 +8,5 @@ name = "conversation_nif"
 crate-type = ["cdylib"]
 
 [dependencies]
-conversation = { path = "../../..", features = ["spectral"] }
+abyss = { path = "../../..", package = "abyss", features = ["spectral"] }
 rustler = "0.37"

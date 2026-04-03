@@ -2,17 +2,17 @@
 members = [".", "beam/native/conversation_nif"]
 
 [package]
-name = "conversation"
+name = "abyss"
 version = "0.1.0"
 edition = "2021"
 license-file = "LICENSE.md"
-description = "fold | prism | traversal | lens | iso"
+description = "fold | prism | traversal | lens | iso — the five optic operations"
 
 [lib]
 crate-type = ["lib"]
 
 [[bin]]
-name = "abyss"
+name = "conversation"
 path = "src/main.rs"
 
 [features]

@@ -3,6 +3,28 @@
 version = 4
 
 [[package]]
+name = "abyss"
+version = "0.1.0"
+dependencies = [
+ "age",
+ "base64 0.22.1",
+ "coincidence",
+ "eetf",
+ "fragmentation",
+ "fragmentation-git",
+ "futures",
+ "git2",
+ "hex",
+ "prism",
+ "ractor",
+ "serde_json",
+ "sha2",
+ "ssh-key",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
 name = "adler32"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -332,32 +354,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2459377285ad874054d797f3ccebf984978aa39129f6eafde5cdc8315b612f8"
 
 [[package]]
-name = "conversation"
-version = "0.1.0"
-dependencies = [
- "age",
- "base64 0.22.1",
- "coincidence",
- "eetf",
- "fragmentation",
- "fragmentation-git",
- "futures",
- "git2",
- "hex",
- "prism",
- "ractor",
- "serde_json",
- "sha2",
- "ssh-key",
- "tempfile",
- "tokio",
-]
-
-[[package]]
 name = "conversation_nif"
 version = "0.1.0"
 dependencies = [
- "conversation",
+ "abyss",
  "rustler",
 ]
 
