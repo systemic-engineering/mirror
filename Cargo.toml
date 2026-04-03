@@ -6,10 +6,14 @@ name = "conversation"
 version = "0.1.0"
 edition = "2021"
 license-file = "LICENSE.md"
-description = "Traceables over trees"
+description = "fold | prism | traversal | lens | iso"
 
 [lib]
 crate-type = ["lib"]
+
+[[bin]]
+name = "abyss"
+path = "src/main.rs"
 
 [features]
 default = []

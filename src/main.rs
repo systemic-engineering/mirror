@@ -1,16 +1,14 @@
-//! conversation — stories over trees.
+//! abyss — fold | prism | traversal | lens | iso.
 //!
-//! A unix tool. Reads a .conv spec, reads a domain tree, writes JSON.
+//! Five operations. A loop. A tiny classifier. A garden of lenses.
+//! The thing you look into that looks back.
 //!
 //! ```sh
-//! # File mode (shebang-compatible):
-//! conversation systemic.engineering.conv ./blog
-//!
-//! # Interactive shell (IEx-style):
-//! conversation shell ./blog
-//!
-//! # Shebang:
-//! #!/usr/bin/env conversation
+//! abyss schema.conv ./input     # apply grammar to input
+//! abyss settle ./src            # loop until convergence
+//! abyss test cogito.conv        # run tests
+//! abyss shell                   # REPL
+//! #!/usr/bin/env abyss
 //! ```
 
 use std::io::{self, BufRead, Write};
@@ -27,16 +25,21 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
 
     if args.len() < 2 {
-        eprintln!("usage: conversation <file.conv> [path]");
-        eprintln!("       conversation -e '<expr>' [path]");
-        eprintln!("       conversation shell [path]");
+        eprintln!("abyss — fold | prism | traversal | lens | iso");
+        eprintln!();
+        eprintln!("usage: abyss <grammar> <input>     apply grammar to input");
+        eprintln!("       abyss test <file.conv>      run tests");
+        eprintln!("       abyss shell [path]           REPL");
+        eprintln!("       abyss boot [dir]             boot the garden");
+        eprintln!("       abyss settle <input>         loop until convergence");
+        eprintln!("       abyss -e '<expr>' [path]     evaluate expression");
         process::exit(1);
     }
 
     match args[1].as_str() {
         "test" => {
             if args.len() < 3 {
-                eprintln!("usage: conversation test <file.conv>");
+                eprintln!("usage: abyss test <file.conv>");
                 process::exit(1);
             }
             let conv_path = &args[2];
@@ -186,7 +189,7 @@ fn actor_cmd(args: &[String]) {
             println!("{}", conversation::actor::status::format_status(&actors));
         }
         other => {
-            eprintln!("conversation actor: unknown subcommand '{other}'");
+            eprintln!("abyss actor: unknown subcommand '{other}'");
             eprintln!("available: observe, init, mount, unmount, status");
             process::exit(1);
         }
