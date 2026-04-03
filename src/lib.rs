@@ -4,6 +4,7 @@ pub use prism_crate as beam;
 #[macro_use]
 pub mod kernel;
 pub mod actor;
+pub mod artifact;
 pub mod ast;
 pub mod check;
 pub mod compile;
@@ -48,3 +49,4 @@ pub mod runtime;
 
 pub use model::Domain;
 pub use runtime::DomainMessage;
+pub use runtime::Runtime;
