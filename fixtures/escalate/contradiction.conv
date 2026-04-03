@@ -1,0 +1,14 @@
+fold witness
+prism affirm(witness)
+lens deny(witness)
+traversal source = left | right | both
+traversal constraint_a = left | right
+traversal constraint_b = right | both
+traversal constraint_c = left | both
+iso anchor(source)
+lens project_a(source)
+prism narrow_b(source)
+fold accumulate(constraint_a, constraint_b, constraint_c)
+traversal forbidden = neither
+lens apply(anchor, witness)
+prism refute(denied)

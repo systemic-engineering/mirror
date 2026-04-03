@@ -1,0 +1,5 @@
+fold input
+prism eigenvalues(precision)
+traversal projection = alpha | beta | gamma
+lens transform(projection)
+iso convergence

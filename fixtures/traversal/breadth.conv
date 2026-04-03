@@ -1,0 +1,24 @@
+traversal root = branch1 | branch2 | branch3 | branch4 | branch5 | branch6
+
+traversal branch1 = leaf1a | leaf1b
+traversal branch2 = leaf2a | leaf2b | leaf2c
+traversal branch3 = leaf3a | leaf3b
+traversal branch4 = leaf4a | leaf4b | leaf4c | leaf4d
+traversal branch5 = leaf5a | leaf5b | leaf5c
+traversal branch6 = leaf6a | leaf6b | leaf6c | leaf6d | leaf6e
+
+prism focus1 = branch1 | branch2
+prism focus2 = branch3 | branch4 | branch5
+prism focus3 = branch6
+
+fold gather_all = root
+fold gather_left = branch1 | branch2 | branch3
+
+iso anchor = root
+
+lens view_branch1(root) = branch1
+lens view_branch2(root) = branch2
+lens view_branch3(root) = branch3
+lens view_branch4(root) = branch4
+lens view_branch5(root) = branch5
+lens view_branch6(root) = branch6

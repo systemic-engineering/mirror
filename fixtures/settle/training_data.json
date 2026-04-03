@@ -1,0 +1,146 @@
+[
+  {
+    "fixture": "optic_fold_decompose.conv",
+    "optic": 0,
+    "features": {
+      "node_count_norm": 0.70,
+      "duplicate_ratio": 0.03,
+      "crystal_def_ratio": 0.06,
+      "prefix_entropy": 1.0,
+      "density": 0.03
+    },
+    "description": "flat traversal with 32 heterogeneous items needs decomposition into sub-structures"
+  },
+  {
+    "fixture": "optic_fold_accumulate.conv",
+    "optic": 1,
+    "features": {
+      "node_count_norm": 0.70,
+      "duplicate_ratio": 0.03,
+      "crystal_def_ratio": 0.57,
+      "prefix_entropy": 1.0,
+      "density": 0.03
+    },
+    "description": "many independent fold declarations with no duplicates need accumulation into a unified namespace"
+  },
+  {
+    "fixture": "optic_prism_project.conv",
+    "optic": 2,
+    "features": {
+      "node_count_norm": 0.90,
+      "duplicate_ratio": 0.04,
+      "crystal_def_ratio": 0.12,
+      "prefix_entropy": 0.80,
+      "density": 0.04
+    },
+    "description": "large noise set (13 fields) dwarfs signal set (9 fields); projection needed to retain only high-value nodes"
+  },
+  {
+    "fixture": "optic_prism_narrow.conv",
+    "optic": 3,
+    "features": {
+      "node_count_norm": 1.0,
+      "duplicate_ratio": 0.38,
+      "crystal_def_ratio": 0.10,
+      "prefix_entropy": 0.70,
+      "density": 0.38
+    },
+    "description": "overloaded domain with too many concerns per action; narrowing needed to reduce to core optic operations"
+  },
+  {
+    "fixture": "optic_traversal_breadth.conv",
+    "optic": 4,
+    "features": {
+      "node_count_norm": 1.0,
+      "duplicate_ratio": 0.38,
+      "crystal_def_ratio": 0.31,
+      "prefix_entropy": 0.70,
+      "density": 0.38
+    },
+    "description": "wide tree with 6 branches and fan-out leaves needs breadth-first traversal to connect layers"
+  },
+  {
+    "fixture": "optic_traversal_depth.conv",
+    "optic": 5,
+    "features": {
+      "node_count_norm": 0.60,
+      "duplicate_ratio": 0.47,
+      "crystal_def_ratio": 0.50,
+      "prefix_entropy": 1.0,
+      "density": 0.47
+    },
+    "description": "15-level linear chain where each level references the prior; depth-first descent needed"
+  },
+  {
+    "fixture": "optic_lens_transform.conv",
+    "optic": 6,
+    "features": {
+      "node_count_norm": 1.0,
+      "duplicate_ratio": 0.06,
+      "crystal_def_ratio": 0.08,
+      "prefix_entropy": 1.0,
+      "density": 0.06
+    },
+    "description": "18 operations with inconsistently ordered optic type chains need lens-focus transformation into canonical order"
+  },
+  {
+    "fixture": "optic_lens_merge.conv",
+    "optic": 7,
+    "features": {
+      "node_count_norm": 0.58,
+      "duplicate_ratio": 0.71,
+      "crystal_def_ratio": 0.50,
+      "prefix_entropy": 0.70,
+      "density": 0.71
+    },
+    "description": "extreme duplicate ratio (0.71) across crystal declarations of only 6 unique names; merging is unambiguous"
+  },
+  {
+    "fixture": "optic_lens_split.conv",
+    "optic": 8,
+    "features": {
+      "node_count_norm": 1.0,
+      "duplicate_ratio": 0.56,
+      "crystal_def_ratio": 0.19,
+      "prefix_entropy": 1.0,
+      "density": 0.56
+    },
+    "description": "monolith traversal with 20 cross-domain concerns already partially split; lens split to finalize separation"
+  },
+  {
+    "fixture": "optic_iso_settle.conv",
+    "optic": 9,
+    "features": {
+      "node_count_norm": 0.20,
+      "duplicate_ratio": 0.10,
+      "crystal_def_ratio": 0.50,
+      "prefix_entropy": 0.90,
+      "density": 0.10
+    },
+    "description": "complete fold->prism->traversal->lens->iso pipeline already in canonical form; convergence detected"
+  },
+  {
+    "fixture": "optic_escalate.conv",
+    "optic": 10,
+    "features": {
+      "node_count_norm": 0.58,
+      "duplicate_ratio": 0.48,
+      "crystal_def_ratio": 0.29,
+      "prefix_entropy": 0.70,
+      "density": 0.48
+    },
+    "description": "witness/denial conflict across traversal constraints (left/right/both sets) produces irreconcilable tension"
+  },
+  {
+    "fixture": "optic_noop.conv",
+    "optic": 11,
+    "features": {
+      "node_count_norm": 0.06,
+      "duplicate_ratio": 0.0,
+      "crystal_def_ratio": 1.0,
+      "prefix_entropy": 0.10,
+      "density": 0.0
+    },
+    "description": "three empty crystal blocks (fold, prism, lens) with no content; no tension present, no action required"
+  }
+]

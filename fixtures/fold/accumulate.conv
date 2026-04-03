@@ -1,0 +1,28 @@
+fold parse
+fold resolve
+fold compile
+fold check
+
+prism optional_field(presence)
+prism valid_value(constraint)
+
+traversal all_results = success | warning | error
+traversal all_phases = early | mid | late
+
+lens depth(scale)
+lens breadth(span)
+
+fold emit
+fold output
+
+iso normalized
+iso flattened
+
+fold aggregate
+fold reduce
+
+prism capture(signal)
+traversal signals = input | process | output
+lens channel(index)
+
+fold collect

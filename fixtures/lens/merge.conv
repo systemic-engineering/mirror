@@ -1,0 +1,49 @@
+lens field(name)
+lens field(name)
+lens field(name)
+
+lens property(value)
+lens property(value)
+lens property(value)
+lens property(value)
+
+traversal collection(item)
+traversal collection(item)
+traversal collection(item)
+
+prism optional(content)
+prism optional(content)
+
+fold aggregate(sum)
+fold aggregate(sum)
+
+iso identity(stable)
+iso identity(stable)
+
+lens field(name)
+lens property(value)
+traversal collection(item)
+
+prism optional(content)
+fold aggregate(sum)
+
+---
+
+@test {
+  merge_duplicate_lenses: lens dedup {
+    assert field(name) = field(name)
+    assert property(value) = property(value)
+  }
+
+  merge_traversals: traversal deduplicate {
+    keep collection(item)
+  }
+
+  merge_prism_option: prism merge {
+    unify optional(content)
+  }
+
+  merge_fold_aggregate: fold accumulate {
+    combine aggregate(sum)
+  }
+}

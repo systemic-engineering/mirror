@@ -1,0 +1,72 @@
+@prism {
+  # Signal: project metadata
+
+  project_id lens string
+  project_name lens string
+  root_path iso path
+
+  # Noise: analytics spam
+
+  metric_timestamp lens float
+  event_count lens integer
+  session_hash lens string
+  deprecated_flag iso boolean
+
+  # Signal: task structure
+
+  task_title lens string
+  task_critical prism boolean
+  task_dependencies traversal string
+
+  # Noise: monitoring junk
+
+  alert_fired iso boolean
+  false_positive iso boolean
+  threshold_breach lens float
+  debug_verbose iso boolean
+
+  # Signal: real dependencies
+
+  required_package lens string
+  min_version lens string
+  package_loaded prism boolean
+
+  # Noise: telemetry cruft
+
+  trace_id lens string
+  span_duration lens float
+  sample_rate lens float
+  dropped iso boolean
+
+  # Signal: deployment state
+
+  environment_name lens string
+  rollout_status prism string
+  config_hash iso string
+
+  # Noise: log garbage
+
+  log_level lens string
+  message_noise lens string
+  ignore_line iso boolean
+}
+
+---
+
+@test {
+  prism_filters_noise : prism project_critical {
+    keep(project_id)
+    keep(project_name)
+    keep(task_critical)
+    keep(task_dependencies)
+    keep(package_loaded)
+    keep(rollout_status)
+    drop(metric_timestamp)
+    drop(event_count)
+    drop(alert_fired)
+    drop(false_positive)
+    drop(trace_id)
+    drop(sample_rate)
+    drop(log_level)
+  }
+}

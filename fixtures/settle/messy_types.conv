@@ -1,0 +1,10 @@
+traversal color = red | blue | green | red | blue
+traversal shape = circle | square | circle
+traversal size = small | medium | large | small | medium
+lens combine(color, shape, size)
+traversal result = color | shape | size | color
+fold observe(result)
+prism filter(result)
+lens transform(result)
+traversal extra = unused | dead | stale | unused | dead
+iso settle

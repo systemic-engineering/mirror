@@ -1,0 +1,111 @@
+@transform {
+  -- Original structure: deeply nested, poorly ordered, inconsistent naming
+
+  traverse_bundle {
+    arg items: traversal
+    action fold_results(items) -> iso
+  }
+
+  iso_pair {
+    arg left: lens
+    arg right: lens
+    action unwrap_both(left, right) -> traversal
+  }
+
+  prism_optional {
+    arg probe: iso
+    arg fallback: lens
+    action select_present(probe) -> prism
+  }
+
+  fold_accumulate {
+    arg state: lens
+    arg values: traversal
+    action reduce_state(state, values) -> iso
+  }
+
+  nested_traversal {
+    arg outer: iso
+    arg inner: prism
+    action apply_layers(outer, inner) -> lens
+  }
+
+  lens_focus {
+    arg container: traversal
+    arg path: fold
+    action extract_focus(container, path) -> prism
+  }
+
+  prism_recover {
+    arg attempt: lens
+    arg rescue: traversal
+    action handle_failure(attempt, rescue) -> fold
+  }
+
+  iso_bidirectional {
+    arg forward: fold
+    arg backward: prism
+    action compose_directions(forward, backward) -> traversal
+  }
+
+  fold_many {
+    arg items: prism
+    arg combine: iso
+    action aggregate(items, combine) -> lens
+  }
+
+  traversal_filter {
+    arg source: lens
+    arg predicate: fold
+    action keep_matching(source, predicate) -> iso
+  }
+
+  lens_chain {
+    arg a: prism
+    arg b: traversal
+    arg c: lens
+    action thread_through(a, b, c) -> fold
+  }
+
+  prism_nest {
+    arg container: fold
+    arg elements: iso
+    action wrap_elements(container, elements) -> prism
+  }
+
+  iso_swap {
+    arg x: traversal
+    arg y: lens
+    action exchange(x, y) -> fold
+  }
+
+  fold_reduce {
+    arg acc: prism
+    arg next: iso
+    action step(acc, next) -> traversal
+  }
+
+  traversal_each {
+    arg scope: lens
+    arg visitor: fold
+    action visit_all(scope, visitor) -> prism
+  }
+
+  lens_get_set {
+    arg subject: iso
+    arg new_value: traversal
+    action update_subject(subject, new_value) -> lens
+  }
+
+  prism_match {
+    arg pattern: fold
+    arg target: lens
+    action test_pattern(pattern, target) -> iso
+  }
+
+  fold_final {
+    arg init: traversal
+    arg process: prism
+    action finish(init, process) -> lens
+  }
+}

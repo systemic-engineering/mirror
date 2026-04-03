@@ -1,0 +1,3 @@
+traversal flat_stage = parse | resolve | compile | check | generate | emit | load | run | test | deploy | monitor | scale | validate | format | lint | bundle | signal | observation | storage | retrieval | compute | cache | api_in | api_out | fork | join | halt | recover | normalize | archive | hash | version
+
+fold observe(flat_stage)

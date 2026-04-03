@@ -1,0 +1,19 @@
+traversal monolith = parse | resolve | compile | check | generate | emit | load | run | test | deploy | monitor | scale | validate | format | lint | bundle | auth | cache | log | trace
+
+lens frontend_concern(monolith) = parse | resolve | compile
+lens backend_concern(monolith) = emit | load | run
+lens deployment_concern(monolith) = deploy | monitor | scale
+lens validation_concern(monolith) = check | validate | lint | test
+lens infrastructure_concern(monolith) = auth | cache | log | trace
+
+fold gather_frontend = parse | resolve | compile
+fold gather_backend = emit | load | run
+fold gather_deployment = deploy | monitor | scale
+fold gather_validation = check | validate | lint | test
+fold gather_infrastructure = auth | cache | log | trace
+
+prism static_analysis = check | validate | lint
+prism dynamic_execution = test | run | deploy
+prism observability = log | trace | monitor
+
+iso restructured = monolith
