@@ -500,7 +500,7 @@ mod tests {
     #[test]
     fn shannon_with_acts_passes() {
         let reg = compile_grammar(
-            "grammar @test {\n  type = a\n  action send {\n    to\n    subject\n  }\n}\n",
+            "grammar @test {\n  type = a\n  action send(to, subject)\n}\n",
         );
         let derivations = generate::derive_all(&reg);
         assert_eq!(shannon_equivalence(&derivations), Verdict::Pass);
@@ -1282,7 +1282,7 @@ mod tests {
     fn check_builtin_exhaustive_with_actions() {
         // Exercises the Domain path with actions, fields, calls (with args), and properties.
         let reg = compile_grammar(
-            "grammar @test {\n  type = a | b\n\n  public action send {\n    payload\n    @tools.exec(payload)\n  }\n\n  requires shannon_equivalence\n  invariant connected\n  ensures delivered\n}\n",
+            "grammar @test {\n  type = a | b\n\n  public action send(payload)\n\n  requires shannon_equivalence\n  invariant connected\n  ensures delivered\n}\n",
         );
         let (satisfied, reason) = check_builtin(&reg, "exhaustive").unwrap();
         assert!(satisfied, "exhaustive should pass: {}", reason);

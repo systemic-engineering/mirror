@@ -187,7 +187,7 @@ mod tests {
     #[test]
     fn derive_all_includes_acts() {
         let reg = compile_grammar(
-            "grammar @test {\n  type = a\n  action send {\n    to\n    subject\n  }\n}\n",
+            "grammar @test {\n  type = a\n  action send(to, subject)\n}\n",
         );
         let all = derive_all(&reg);
         // 1 type variant + 1 act = 2
@@ -201,7 +201,7 @@ mod tests {
     #[test]
     fn derive_all_act_with_typed_field() {
         let reg = compile_grammar(
-            "grammar @test {\n  type address = email | uri\n  action send {\n    to: address\n  }\n}\n",
+            "grammar @test {\n  type address = email | uri\n  action send(to: address)\n}\n",
         );
         let all = derive_all(&reg);
         let act = all.iter().find(|d| d.type_name == "act:send").unwrap();

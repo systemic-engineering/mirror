@@ -3002,13 +3002,13 @@ grammar @conversation {
     #[test]
     fn parse_grammar_action_single() {
         let source =
-            "grammar @test {\n  action send {\n    from: address\n    to: address\n  }\n}\n";
+            "grammar @test {\n  action send(from: address, to: address)\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 1);
 
         let action = &grammar.children()[0];
-        assert_eq!(action.data().kind, Kind::Form);
+        assert_eq!(action.data().kind, Kind::Decl);
         assert_eq!(action.data().name, "action-def");
         assert_eq!(action.data().value, "send");
         assert_eq!(action.children().len(), 3);
@@ -3034,42 +3034,49 @@ grammar @conversation {
 
     #[test]
     fn parse_grammar_action_untyped_field() {
-        let source = "grammar @test {\n  action send {\n    subject\n  }\n}\n";
+        // Sugar: `subject` expands to `subject:subject`
+        let source = "grammar @test {\n  action send(subject)\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
         assert_eq!(action.data().name, "action-def");
         assert_eq!(action.data().value, "send");
-        assert_eq!(action.children().len(), 2);
-
-        let field = &action.children()[1];
-        assert_eq!(field.data().kind, Kind::Atom);
-        assert_eq!(field.data().name, "field");
-        assert_eq!(field.data().value, "subject");
-        assert!(field.is_shard()); // no children — untyped
+        assert_eq!(action.children().len(), 2); // visibility + 1 param
+        assert_eq!(action.children()[1].data().name, "param");
+        assert_eq!(action.children()[1].data().value, "subject:subject");
     }
 
     #[test]
     fn parse_grammar_action_empty() {
-        let source = "grammar @test {\n  action noop {}\n}\n";
+        let source = "grammar @test {\n  action noop\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 1);
 
         let action = &grammar.children()[0];
-        assert_eq!(action.data().kind, Kind::Form);
+        assert_eq!(action.data().kind, Kind::Decl);
         assert_eq!(action.data().name, "action-def");
         assert_eq!(action.data().value, "noop");
-        assert_eq!(action.children().len(), 1);
+        assert_eq!(action.children().len(), 1); // just visibility
         assert_eq!(action.children()[0].data().name, "visibility");
     }
 
     #[test]
-    fn parse_grammar_mixed_types_and_actions() {
-        let source = "grammar @test {\n  type = a | b\n  action send {\n    to: address\n  }\n  type address = email | uri\n}\n";
+    fn parse_grammar_action_empty_with_parens() {
+        let source = "grammar @test {\n  action noop()\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        // grammar has 3 children: type-def, action-def, type-def
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.data().value, "noop");
+        assert_eq!(action.children().len(), 1); // just visibility
+    }
+
+    #[test]
+    fn parse_grammar_mixed_types_and_actions() {
+        let source = "grammar @test {\n  type = a | b\n  action send(to: address)\n  type address = email | uri\n}\n";
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 3);
 
         assert_eq!(grammar.children()[0].data().name, "type-def");
@@ -3081,157 +3088,55 @@ grammar @conversation {
     }
 
     #[test]
-    fn parse_grammar_action_error_unclosed() {
-        let source = "grammar @test {\n  action send {\n    from: address\n";
-        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
-        assert!(
-            err.message.contains("unclosed"),
-            "expected 'unclosed': {}",
-            err.message
-        );
-    }
-
-    #[test]
-    fn parse_grammar_action_comments_blanks() {
-        let source =
-            "grammar @test {\n  action send {\n    # a comment\n\n    from: address\n  }\n}\n";
-        let tree = Parse.trace(source.to_string()).unwrap();
-        let grammar = &tree.children()[0];
-        let action = &grammar.children()[0];
-        assert_eq!(action.data().name, "action-def");
-        assert_eq!(action.children().len(), 2); // visibility + field, comments/blanks skipped
-        assert_eq!(action.children()[1].data().value, "from");
-    }
-
-    #[test]
-    fn parse_grammar_action_call() {
-        let source = "grammar @test {\n  action commit {\n    source: source\n    @filesystem.write(source)\n  }\n}\n";
+    fn parse_grammar_action_with_body() {
+        let source = "grammar @test {\n  action commit(source: source) in @filesystem {\n    write(source)\n  }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
         assert_eq!(action.data().value, "commit");
-        assert_eq!(action.children().len(), 3); // visibility + field + action-call
+        // visibility + target + param + body
+        assert!(action.children().len() >= 3);
 
-        let call = &action.children()[2];
-        assert_eq!(call.data().kind, Kind::Ref);
-        assert_eq!(call.data().name, "action-call");
-        assert_eq!(call.data().value, "@filesystem.write");
-        assert_eq!(call.children().len(), 1); // one argument
-        assert_eq!(call.children()[0].data().value, "source");
+        // Has target node
+        let target = action.children().iter().find(|c| c.data().name == "target").unwrap();
+        assert_eq!(target.data().value, "filesystem");
+
+        // Has body node
+        let body = action.children().iter().find(|c| c.data().name == "body").unwrap();
+        assert_eq!(body.data().value, "write(source)");
     }
 
     #[test]
-    fn parse_grammar_action_call_multiple_args() {
-        let source = "grammar @test {\n  action send {\n    from: address\n    to: address\n    @mail.deliver(from, to)\n  }\n}\n";
+    fn parse_grammar_action_single_line_body() {
+        let source = "grammar @test {\n  action ping() in @health { check() }\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
-        assert_eq!(action.children().len(), 4); // visibility + 2 fields + 1 action-call
-
-        let call = &action.children()[3];
-        assert_eq!(call.data().name, "action-call");
-        assert_eq!(call.data().value, "@mail.deliver");
-        assert_eq!(call.children().len(), 2);
-        assert_eq!(call.children()[0].data().value, "from");
-        assert_eq!(call.children()[1].data().value, "to");
+        assert_eq!(action.data().value, "ping");
+        let body = action.children().iter().find(|c| c.data().name == "body").unwrap();
+        assert_eq!(body.data().value, "check()");
     }
 
     #[test]
-    fn parse_grammar_action_call_no_args() {
-        let source = "grammar @test {\n  action ping {\n    @health.check()\n  }\n}\n";
-        let tree = Parse.trace(source.to_string()).unwrap();
-        let grammar = &tree.children()[0];
-        let action = &grammar.children()[0];
-        assert_eq!(action.children().len(), 2);
-
-        let call = &action.children()[1];
-        assert_eq!(call.data().name, "action-call");
-        assert_eq!(call.data().value, "@health.check");
-        assert_eq!(call.children().len(), 0);
-    }
-
-    #[test]
-    fn parse_grammar_action_call_no_dot_falls_through() {
-        // @nodot(x) has parens but no dot — falls through to field
-        let source = "grammar @test {\n  action ping {\n    @nodot(x)\n  }\n}\n";
-        let tree = Parse.trace(source.to_string()).unwrap();
-        let grammar = &tree.children()[0];
-        let action = &grammar.children()[0];
-        // Parsed as untyped field, not action-call
-        assert_eq!(action.children().len(), 2);
-        assert_eq!(action.children()[1].data().name, "field");
-    }
-
-    #[test]
-    fn parse_grammar_action_call_no_parens_falls_through() {
-        // @domain.action without parens — falls through to field
-        let source = "grammar @test {\n  action ping {\n    @domain.action\n  }\n}\n";
-        let tree = Parse.trace(source.to_string()).unwrap();
-        let grammar = &tree.children()[0];
-        let action = &grammar.children()[0];
-        assert_eq!(action.children().len(), 2);
-        assert_eq!(action.children()[1].data().name, "field");
-    }
-
-    // -- Legacy `act` keyword --
-
-    #[test]
-    fn parse_grammar_act_with_params() {
-        // act enact(effect) { ... } parsed as action "enact"
-        let source = "grammar @test {\n  act enact(effect) {\n    target: path\n  }\n}\n";
-        let tree = Parse.trace(source.to_string()).unwrap();
-        let grammar = &tree.children()[0];
-        assert_eq!(grammar.children().len(), 1);
-        let action = &grammar.children()[0];
-        assert_eq!(action.data().name, "action-def");
-        assert_eq!(action.data().value, "enact");
-    }
-
-    #[test]
-    fn parse_grammar_act_without_params() {
-        // act enact { ... } without parens — falls into else branch
-        let source = "grammar @test {\n  act enact {\n    target: path\n  }\n}\n";
-        let tree = Parse.trace(source.to_string()).unwrap();
-        let grammar = &tree.children()[0];
-        assert_eq!(grammar.children().len(), 1);
-        let action = &grammar.children()[0];
-        assert_eq!(action.data().name, "action-def");
-        assert_eq!(action.data().value, "enact");
-    }
-
-    #[test]
-    fn parse_grammar_act_without_brace_skipped() {
-        // act without { on the line — falls through to unknown-line handler
-        let source = "grammar @test {\n  act enact\n  type = a\n}\n";
-        let tree = Parse.trace(source.to_string()).unwrap();
-        let grammar = &tree.children()[0];
-        // Only the type-def should be present; the act line is skipped
-        assert_eq!(grammar.children().len(), 1);
-        assert_eq!(grammar.children()[0].data().name, "type-def");
-    }
-
-    #[test]
-    fn parse_grammar_act_flushes_pending_type() {
-        // type def before act — pending type flushed before action
+    fn parse_grammar_action_flushes_pending_type() {
         let source =
-            "grammar @test {\n  type = a | b\n  act enact(effect) {\n    target: path\n  }\n}\n";
+            "grammar @test {\n  type = a | b\n  action enact(target: path)\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
-        // Should have type-def followed by action-def
         assert_eq!(grammar.children().len(), 2);
         assert_eq!(grammar.children()[0].data().name, "type-def");
         assert_eq!(grammar.children()[1].data().name, "action-def");
     }
 
     #[test]
-    fn parse_grammar_action_error_no_brace() {
+    fn parse_grammar_action_bare_name_is_valid() {
+        // action without parens is valid — formatter normalizes to parens
         let source = "grammar @test {\n  action send\n}\n";
-        let err = Parse.trace(source.to_string()).into_result().unwrap_err();
-        assert!(
-            err.message.contains("{"),
-            "expected mention of '{{': {}",
-            err.message
-        );
+        let tree = Parse.trace(source.to_string()).unwrap();
+        let grammar = &tree.children()[0];
+        let action = &grammar.children()[0];
+        assert_eq!(action.data().name, "action-def");
+        assert_eq!(action.data().value, "send");
     }
 
     #[test]

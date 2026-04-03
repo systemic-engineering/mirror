@@ -2049,7 +2049,7 @@ mod tests {
     #[test]
     fn domain_compile_action() {
         let dom = compile_grammar(
-            "grammar @test {\n  type address = email | uri\n  action send {\n    to: address\n  }\n}\n",
+            "grammar @test {\n  type address = email | uri\n  action send(to: address)\n}\n",
         );
         assert!(dom.has_action("send"));
         let fields = dom.act_fields("send").unwrap();
@@ -2060,7 +2060,7 @@ mod tests {
 
     #[test]
     fn domain_compile_action_untyped_field() {
-        let dom = compile_grammar("grammar @test {\n  action send {\n    subject\n  }\n}\n");
+        let dom = compile_grammar("grammar @test {\n  action send(subject)\n}\n");
         assert!(dom.has_action("send"));
         let fields = dom.act_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
@@ -2072,7 +2072,7 @@ mod tests {
     fn domain_compile_action_unvalidated_type_ref() {
         // Action field type-refs are semantic annotations — not validated against type names.
         let dom = compile_grammar(
-            "grammar @test {\n  type address = email | uri\n  action send {\n    to: addres\n    body: article\n  }\n}\n",
+            "grammar @test {\n  type address = email | uri\n  action send(to: addres, body: article)\n}\n",
         );
         assert!(dom.has_action("send"));
         let fields = dom.act_fields("send").unwrap();
@@ -2082,7 +2082,7 @@ mod tests {
 
     #[test]
     fn domain_compile_action_empty() {
-        let dom = compile_grammar("grammar @test {\n  action noop {}\n}\n");
+        let dom = compile_grammar("grammar @test {\n  action noop\n}\n");
         assert!(dom.has_action("noop"));
         let fields = dom.act_fields("noop").unwrap();
         assert!(fields.is_empty());
@@ -2120,7 +2120,7 @@ mod tests {
     #[test]
     fn domain_compile_action_calls() {
         let dom = compile_grammar(
-            "grammar @test {\n  type source = a | b\n  action commit {\n    source: source\n    @filesystem.write(source)\n  }\n}\n",
+            "grammar @test {\n  type source = a | b\n  action commit(source: source)\n}\n",
         );
         assert!(dom.has_action("commit"));
         let calls = dom.action_calls("commit");
@@ -2132,7 +2132,7 @@ mod tests {
 
     #[test]
     fn domain_compile_action_calls_empty() {
-        let dom = compile_grammar("grammar @test {\n  action send {\n    to: address\n  }\n}\n");
+        let dom = compile_grammar("grammar @test {\n  action send(to: address)\n}\n");
         let calls = dom.action_calls("send");
         assert!(calls.is_empty());
     }
@@ -2414,7 +2414,7 @@ mod tests {
     #[test]
     fn domain_act_names() {
         let dom = compile_grammar(
-            "grammar @test {\n  type = a\n  action compile {\n    source: a\n  }\n  action run {\n    target\n  }\n}\n",
+            "grammar @test {\n  type = a\n  action compile(source: a)\n  action run(target)\n}\n",
         );
         let mut names = dom.act_names();
         names.sort();

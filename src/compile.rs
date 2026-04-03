@@ -590,7 +590,7 @@ mod tests {
 
     #[test]
     fn emit_actor_module_from_domain_produces_valid_etf() {
-        let source = "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n";
+        let source = "grammar @test {\n  type = a | b\n  action ping(target: a)\n}\n";
         let grammar_node = parse_grammar_node(source);
         let domain = Domain::from_grammar(&grammar_node).unwrap();
 
@@ -610,7 +610,7 @@ mod tests {
 
     #[test]
     fn emit_actor_module_from_domain_deterministic() {
-        let source = "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n";
+        let source = "grammar @test {\n  type = a | b\n  action ping(target: a)\n}\n";
         let grammar_node = parse_grammar_node(source);
         let domain = Domain::from_grammar(&grammar_node).unwrap();
 

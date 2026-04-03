@@ -1666,7 +1666,7 @@ mod tests {
     #[test]
     fn domain_has_action_calls() {
         use crate::{Parse, Vector};
-        let source = "grammar @ai {\n  type = observation\n\n  act decide {\n    @tools.exec(observation)\n  }\n}\n";
+        let source = "grammar @ai {\n  type = observation\n\n  action decide(observation)\n}\n";
         let ast = Parse.trace(source.to_string()).unwrap();
         let grammar = ast
             .children()
@@ -1726,7 +1726,7 @@ mod tests {
     #[test]
     fn domain_content_addressed_with_actions() {
         use crate::{Parse, Vector};
-        let source = "grammar @ai {\n  type = observation\n\n  act decide {\n    @tools.exec(observation)\n  }\n}\n";
+        let source = "grammar @ai {\n  type = observation\n\n  action decide(observation)\n}\n";
         let ast = Parse.trace(source.to_string()).unwrap();
         let grammar = ast
             .children()

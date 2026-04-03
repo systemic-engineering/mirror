@@ -457,7 +457,7 @@ mod tests {
     #[test]
     fn compile_result_has_phase_oids() {
         let result = compile_grammar_with_phases(
-            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+            "grammar @test {\n  type = a | b\n  action ping(target: a)\n}\n",
         )
         .unwrap();
         assert!(!result.etf.is_empty());
@@ -473,11 +473,11 @@ mod tests {
     #[test]
     fn compile_result_phase_oids_deterministic() {
         let a = compile_grammar_with_phases(
-            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+            "grammar @test {\n  type = a | b\n  action ping(target: a)\n}\n",
         )
         .unwrap();
         let b = compile_grammar_with_phases(
-            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+            "grammar @test {\n  type = a | b\n  action ping(target: a)\n}\n",
         )
         .unwrap();
         assert_eq!(a.parse_oid, b.parse_oid);
@@ -488,7 +488,7 @@ mod tests {
     #[test]
     fn compile_result_has_proof_certificate() {
         let result = compile_grammar_with_phases(
-            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+            "grammar @test {\n  type = a | b\n  action ping(target: a)\n}\n",
         )
         .unwrap();
         // Proof OID should be non-empty — it's the content address of the proof
@@ -508,11 +508,11 @@ mod tests {
     #[test]
     fn compile_result_proof_certificate_deterministic() {
         let a = compile_grammar_with_phases(
-            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+            "grammar @test {\n  type = a | b\n  action ping(target: a)\n}\n",
         )
         .unwrap();
         let b = compile_grammar_with_phases(
-            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+            "grammar @test {\n  type = a | b\n  action ping(target: a)\n}\n",
         )
         .unwrap();
         assert_eq!(a.proof_oid, b.proof_oid);
@@ -559,7 +559,7 @@ mod tests {
         // - ActionCalls (from cross-domain call)
         // - Obligations (discharged VariantRefs)
         let result = compile_grammar_with_phases(
-            "grammar @full {\n  type color = red(shade) | blue\n  type shade = light | dark\n  action paint {\n    brush: color\n    @tools.apply(brush)\n  }\n}\n",
+            "grammar @full {\n  type color = red(shade) | blue\n  type shade = light | dark\n  action paint(brush: color)\n}\n",
         )
         .unwrap();
         let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
@@ -588,7 +588,7 @@ mod tests {
     fn compile_result_proof_etf_action_field_none_type_ref() {
         // Action with field that has no type ref → ActionField with type_ref=None
         let result = compile_grammar_with_phases(
-            "grammar @bare {\n  type = a\n  action touch {\n    target\n  }\n}\n",
+            "grammar @bare {\n  type = a\n  action touch(target)\n}\n",
         )
         .unwrap();
         let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
@@ -628,7 +628,7 @@ mod tests {
     #[test]
     fn compile_grammar_success() {
         let etf = compile_grammar_to_etf(
-            "grammar @compiler {\n  type = target\n  type target = eaf | beam\n  action compile {\n    source: target\n  }\n}\n",
+            "grammar @compiler {\n  type = target\n  type target = eaf | beam\n  action compile(source: target)\n}\n",
         )
         .unwrap();
         assert!(!etf.is_empty());
@@ -657,11 +657,11 @@ mod tests {
     #[test]
     fn compile_grammar_deterministic() {
         let a = compile_grammar_to_etf(
-            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+            "grammar @test {\n  type = a | b\n  action ping(target: a)\n}\n",
         )
         .unwrap();
         let b = compile_grammar_to_etf(
-            "grammar @test {\n  type = a | b\n  action ping {\n    target: a\n  }\n}\n",
+            "grammar @test {\n  type = a | b\n  action ping(target: a)\n}\n",
         )
         .unwrap();
         assert_eq!(a, b);
