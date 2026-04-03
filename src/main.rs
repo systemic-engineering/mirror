@@ -79,11 +79,7 @@ fn main() {
             let db_args: Vec<String> = args[2..].to_vec();
             conversation::db::cli(&db_args);
         }
-        #[cfg(feature = "lsp")]
-        "lsp" => {
-            let rt = tokio::runtime::Runtime::new().unwrap();
-            rt.block_on(conversation::lsp::run());
-        }
+        // LSP moved to standalone binary: conversation-lsp
         _ => {
             let conv_path = &args[1];
             let source = match std::fs::read_to_string(conv_path) {

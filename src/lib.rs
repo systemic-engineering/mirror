@@ -42,8 +42,7 @@ pub use fragmentation::store::Store;
 #[cfg(feature = "db")]
 pub mod db;
 
-#[cfg(feature = "lsp")]
-pub mod lsp;
+// LSP moved to standalone crate: conversation-lsp
 
 pub mod model;
 pub mod runtime;
