@@ -1,18 +1,19 @@
-//! Artifact storage — bounded storage for compilation artifacts.
+//! Artifact storage — bounded storage for compiled modules.
 //!
-//! The runtime produces artifacts via `Runtime::compile`. The store holds them.
-//! The caller decides eviction policy based on `state()`.
+//! The runtime produces artifacts via `Runtime::compile`. The store holds them
+//! and reports `StoreState` with memory `Pressure` (from prism crate).
+//! The caller decides eviction policy based on state().
 
 use std::collections::HashMap;
 
 use crate::model::DomainName;
 pub use prism::Pressure;
 
-use fragmentation_git::bounded_store::GitBoundedStore;
 use fragmentation::encoding::{Decode, Encode};
 use fragmentation::fragment::{self, Fractal};
 use fragmentation::ref_::Ref;
 use fragmentation::sha::{HashAlg, Sha};
+use fragmentation_git::bounded_store::GitBoundedStore;
 
 // ---------------------------------------------------------------------------
 // StoreState
@@ -427,8 +428,7 @@ mod tests {
     fn git_store_zero_capacity() {
         let dir = tempfile::tempdir().unwrap();
         git2::Repository::init(dir.path()).unwrap();
-        let store: GitStore<Vec<u8>> =
-            GitStore::open(dir.path().to_str().unwrap(), 0).unwrap();
+        let store: GitStore<Vec<u8>> = GitStore::open(dir.path().to_str().unwrap(), 0).unwrap();
         assert_eq!(store.state().pressure.ratio(), 1.0);
     }
 }

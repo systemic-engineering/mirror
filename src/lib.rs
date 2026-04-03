@@ -1,3 +1,22 @@
+//! conversation — Typed transformation pipeline language.
+//!
+//! `.conv` files → content-addressed AST → compiled modules → GenServer → execute.
+//!
+//! ## Architecture
+//!
+//! - **parse** — Source → AST tree (frozen bootstrap parser)
+//! - **resolve** — Grammar type checking, namespace validation
+//! - **compile** — AST → BEAM Erlang Abstract Form (EAF)
+//! - **kernel** — Content addressing, Oid, Trace, Vector trait hierarchy
+//! - **runtime** — Async compilation + spawn via ractor
+//! - **artifact** — Bounded storage for compiled modules (Pressure-based eviction)
+//! - **boot** — Parallel multi-layer boot sequence from `boot/` directory
+//!
+//! ## Re-exports
+//!
+//! Kernel types (`Oid`, `Trace`, `Vector`, `ContentAddressed`) are re-exported at crate root.
+//! The `prism` crate is aliased as `beam` for BEAM integration.
+
 pub extern crate prism as prism_crate;
 pub use prism_crate as beam;
 
@@ -5,8 +24,8 @@ pub use prism_crate as beam;
 pub mod kernel;
 pub mod actor;
 pub mod artifact;
-pub mod boot;
 pub mod ast;
+pub mod boot;
 pub mod check;
 pub mod compile;
 pub mod domain;
@@ -21,7 +40,7 @@ pub mod property;
 pub mod resolve;
 pub mod spectral;
 
-// Re-export kernel types at the crate root.
+// Kernel types at the crate root.
 pub use kernel::{
     Addressable, Composed, ComposedError, ContentAddressed, Latent, Oid, Setting, Trace, TraceOid,
     Vector,
@@ -35,14 +54,12 @@ pub use resolve::{
     TemplateProvider,
 };
 
-// Re-export fragmentation's Repo trait and Store implementation.
+// Fragmentation traits for content-addressed storage.
 pub use fragmentation::repo::Repo;
 pub use fragmentation::store::Store;
 
 #[cfg(feature = "db")]
 pub mod db;
-
-// LSP moved to standalone crate: conversation-lsp
 
 pub mod model;
 pub mod runtime;

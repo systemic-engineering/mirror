@@ -1,10 +1,11 @@
-//! Runtime trait + typed Args/Response/Value.
+//! Compilation runtime and inference scheduling.
 //!
-//! Defines the async `Runtime` trait — one method: `compile(Verified) -> Artifact`.
-//! Plus the typed `Args`, `Response`, and `Value` enums.
+//! - **Runtime trait** — Async compilation interface: `compile(Verified) -> Artifact`
+//! - **RactorRuntime** — Concrete implementation using ractor actors (stateless)
+//! - **InferenceSchedule** — Heat kernel scheduling from domain eigenvalues
+//! - **Value, Args, Response** — Typed representations for action dispatch
 //!
-//! `RactorRuntime` is the concrete implementation. Stateless — the caller
-//! owns the artifact.
+//! Follows compile/spawn split: compile phase (proof) → spawn phase (execution).
 
 use std::collections::BTreeMap;
 use std::fmt;
@@ -117,16 +118,10 @@ pub trait Runtime: Send + Sync {
 
     /// Compile a verified domain into a storable artifact.
     /// Result handles total failure. Beam handles partial success with loss.
-    async fn compile(
-        &self,
-        domain: Verified,
-    ) -> Result<prism::Beam<Self::Artifact>, Self::Error>;
+    async fn compile(&self, domain: Verified) -> Result<prism::Beam<Self::Artifact>, Self::Error>;
 
     /// Spawn a running actor from a compiled artifact.
-    async fn spawn(
-        &self,
-        artifact: &Self::Artifact,
-    ) -> Result<Self::Actor, Self::Error>;
+    async fn spawn(&self, artifact: &Self::Artifact) -> Result<Self::Actor, Self::Error>;
 }
 
 // ---------------------------------------------------------------------------
@@ -222,17 +217,11 @@ impl Runtime for RactorRuntime {
     type Actor = ActorRef<DomainMessage>;
     type Error = RuntimeError;
 
-    async fn compile(
-        &self,
-        domain: Verified,
-    ) -> Result<prism::Beam<Domain>, RuntimeError> {
+    async fn compile(&self, domain: Verified) -> Result<prism::Beam<Domain>, RuntimeError> {
         Ok(prism::Beam::new(domain.into_domain()))
     }
 
-    async fn spawn(
-        &self,
-        artifact: &Domain,
-    ) -> Result<ActorRef<DomainMessage>, RuntimeError> {
+    async fn spawn(&self, artifact: &Domain) -> Result<ActorRef<DomainMessage>, RuntimeError> {
         let (actor_ref, _handle) = Actor::spawn(None, DomainActor, artifact.clone())
             .await
             .map_err(spawn_err)?;
@@ -421,9 +410,12 @@ mod tests {
         let beam = rt.compile(verified).await.unwrap();
         let artifact = rt.spawn(&beam.result).await.unwrap();
         let resp = ractor::call!(
-            artifact, DomainMessage::Dispatch,
-            ActionName::new("paint"), Args::Empty
-        ).unwrap();
+            artifact,
+            DomainMessage::Dispatch,
+            ActionName::new("paint"),
+            Args::Empty
+        )
+        .unwrap();
         assert!(matches!(resp, Ok(Response::Ok(_))));
         artifact.stop(None);
     }
@@ -435,9 +427,12 @@ mod tests {
         let beam = rt.compile(verified).await.unwrap();
         let artifact = rt.spawn(&beam.result).await.unwrap();
         let resp = ractor::call!(
-            artifact, DomainMessage::Dispatch,
-            ActionName::new("fly"), Args::Empty
-        ).unwrap();
+            artifact,
+            DomainMessage::Dispatch,
+            ActionName::new("fly"),
+            Args::Empty
+        )
+        .unwrap();
         assert!(matches!(resp, Err(_)));
         artifact.stop(None);
     }
@@ -449,9 +444,12 @@ mod tests {
         let beam = rt.compile(verified).await.unwrap();
         let artifact = rt.spawn(&beam.result).await.unwrap();
         let resp = ractor::call!(
-            artifact, DomainMessage::Dispatch,
-            ActionName::new("compile"), Args::Empty
-        ).unwrap();
+            artifact,
+            DomainMessage::Dispatch,
+            ActionName::new("compile"),
+            Args::Empty
+        )
+        .unwrap();
         assert!(matches!(resp, Ok(Response::Ok(_))));
         artifact.stop(None);
     }

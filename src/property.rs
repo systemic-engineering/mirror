@@ -499,9 +499,7 @@ mod tests {
 
     #[test]
     fn shannon_with_acts_passes() {
-        let reg = compile_grammar(
-            "grammar @test {\n  type = a\n  action send(to, subject)\n}\n",
-        );
+        let reg = compile_grammar("grammar @test {\n  type = a\n  action send(to, subject)\n}\n");
         let derivations = generate::derive_all(&reg);
         assert_eq!(shannon_equivalence(&derivations), Verdict::Pass);
     }
@@ -1093,7 +1091,8 @@ mod tests {
     #[test]
     fn garden_coincidence_grammar_compiles() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/06-coincidence.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("boot.backup/06-coincidence.conv"),
         )
         .expect("boot.backup/06-coincidence.conv should exist");
 
@@ -1145,7 +1144,8 @@ mod tests {
     #[test]
     fn garden_coincidence_tests_pass() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/06-coincidence.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("boot.backup/06-coincidence.conv"),
         )
         .expect("boot.backup/06-coincidence.conv should exist");
 

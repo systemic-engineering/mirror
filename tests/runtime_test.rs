@@ -126,8 +126,10 @@ grammar @tools {
     let artifact = rt.compile(verified).await.expect("compile should succeed");
 
     let resp = ractor::call!(
-        artifact, DomainMessage::Dispatch,
-        ActionName::new("run"), Args::Empty
+        artifact,
+        DomainMessage::Dispatch,
+        ActionName::new("run"),
+        Args::Empty
     )
     .expect("dispatch should succeed");
 
@@ -165,7 +167,8 @@ grammar @compiler {
     let artifact = rt.compile(verified).await.expect("compile should succeed");
 
     let resp = ractor::call!(
-        artifact, DomainMessage::Dispatch,
+        artifact,
+        DomainMessage::Dispatch,
         ActionName::new("compile"),
         Args::Single(Value::Text("main.conv".into()))
     )
@@ -302,8 +305,10 @@ grammar @test {
 
     // Dispatch "decide" — the action exists so the actor handles it.
     let resp = ractor::call!(
-        artifact, DomainMessage::Dispatch,
-        ActionName::new("decide"), Args::Empty
+        artifact,
+        DomainMessage::Dispatch,
+        ActionName::new("decide"),
+        Args::Empty
     )
     .expect("dispatch should succeed");
     assert!(

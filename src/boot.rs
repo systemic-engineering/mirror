@@ -81,10 +81,11 @@ impl BootSequence {
             let source = std::fs::read_to_string(&path)
                 .map_err(|e| format!("boot: read {}: {}", path.display(), e))?;
 
-            layers
-                .entry(layer)
-                .or_default()
-                .push(BootEntry { layer, path, source });
+            layers.entry(layer).or_default().push(BootEntry {
+                layer,
+                path,
+                source,
+            });
         }
 
         Ok(BootSequence { layers })
@@ -160,10 +161,7 @@ pub async fn boot(
         }
 
         // Compile through runtime — all entries in this layer in parallel.
-        let futures: Vec<_> = verified
-            .into_iter()
-            .map(|v| runtime.compile(v))
-            .collect();
+        let futures: Vec<_> = verified.into_iter().map(|v| runtime.compile(v)).collect();
         let results = futures::future::join_all(futures).await;
         let mut layer_artifacts = Vec::new();
         for result in results {
@@ -202,7 +200,10 @@ mod tests {
     fn parse_layer_prefix_valid() {
         assert_eq!(parse_layer_prefix("03-actor.conv").unwrap(), BootLayer(3));
         assert_eq!(parse_layer_prefix("00-main.conv").unwrap(), BootLayer(0));
-        assert_eq!(parse_layer_prefix("07-projection.conv").unwrap(), BootLayer(7));
+        assert_eq!(
+            parse_layer_prefix("07-projection.conv").unwrap(),
+            BootLayer(7)
+        );
     }
 
     #[test]
@@ -213,10 +214,9 @@ mod tests {
 
     #[test]
     fn boot_sequence_from_dir() {
-        let seq = BootSequence::from_dir(
-            &PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot.backup"),
-        )
-        .unwrap();
+        let seq =
+            BootSequence::from_dir(&PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot.backup"))
+                .unwrap();
 
         assert!(!seq.is_empty());
         assert!(seq.len() >= 15); // at least our 15 boot files
@@ -246,10 +246,9 @@ mod tests {
 
     #[tokio::test]
     async fn boot_sequence_compiles() {
-        let seq = BootSequence::from_dir(
-            &PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot.backup"),
-        )
-        .unwrap();
+        let seq =
+            BootSequence::from_dir(&PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot.backup"))
+                .unwrap();
 
         let runtime = RactorRuntime::new();
         let artifacts = boot(&runtime, &seq).await.unwrap();

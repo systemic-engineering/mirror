@@ -570,9 +570,7 @@ impl Domain {
                     } else if item.data().is_atom("param") {
                         // New syntax: param node value is "name:type"
                         let param_val = item.data().value.as_str();
-                        let (pname, ptype) = param_val
-                            .split_once(':')
-                            .unwrap_or((param_val, ""));
+                        let (pname, ptype) = param_val.split_once(':').unwrap_or((param_val, ""));
                         let field_name = ActionName::new(pname);
                         let type_ref = TypeRef::new(TypeName::new(ptype));
                         fields.push((field_name, type_ref));
@@ -1685,10 +1683,7 @@ mod tests {
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
         let domain = Domain::from_grammar(grammar).unwrap();
-        assert!(
-            domain.calls.is_empty(),
-            "no calls without a body"
-        );
+        assert!(domain.calls.is_empty(), "no calls without a body");
     }
 
     #[test]

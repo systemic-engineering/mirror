@@ -1057,7 +1057,10 @@ fn parse_action_body_def(
         Some(target_rest) => {
             // Has body: `action find(type: node_type) in @db { walk(@store, type) }`
             let brace_pos = target_rest.find('{').ok_or_else(|| ParseError {
-                message: format!("action: expected '{{' after 'in @target' in: action {}", rest),
+                message: format!(
+                    "action: expected '{{' after 'in @target' in: action {}",
+                    rest
+                ),
                 span: Some(span),
             })?;
             let target_name = target_rest[..brace_pos].trim().trim_start_matches('@');
@@ -1343,47 +1346,6 @@ fn parse_variants(text: &str, span: Span) -> Vec<Prism<AstNode>> {
             }
         })
         .collect()
-}
-
-/// Parse an action definition block inside a grammar.
-///
-// Old brace-delimited action syntax removed.
-// The only action syntax is: action name(params) [in @domain { body }]
-
-/// Parse `@domain.action(arg1, arg2)` into a Ref("action-call") node.
-///
-/// Returns None if the line doesn't match the pattern (falls through to field parsing).
-fn parse_action_call(trimmed: &str, span: Span) -> Option<Prism<AstNode>> {
-    // Find the '(' that separates target from arguments
-    let paren_pos = trimmed.find('(')?;
-    let target = &trimmed[..paren_pos]; // "@domain.action"
-
-    // Must contain a dot separating domain from action name
-    if !target.contains('.') {
-        return None;
-    }
-
-    // Extract args between parens
-    let rest = &trimmed[paren_pos + 1..];
-    let close = rest.find(')')?;
-    let args_str = rest[..close].trim();
-
-    let arg_nodes: Vec<Prism<AstNode>> = if args_str.is_empty() {
-        vec![]
-    } else {
-        args_str
-            .split(',')
-            .map(|a| ast::ast_leaf(Kind::Ref, "arg-ref", a.trim(), span))
-            .collect()
-    };
-
-    Some(ast::ast_branch(
-        Kind::Ref,
-        "action-call",
-        target,
-        span,
-        arg_nodes,
-    ))
 }
 
 /// Parse `annotate(@domain)` — inline leaf or `annotate(@domain) { ... }` block.
@@ -3011,8 +2973,7 @@ grammar @conversation {
 
     #[test]
     fn parse_grammar_action_single() {
-        let source =
-            "grammar @test {\n  action send(from: address, to: address)\n}\n";
+        let source = "grammar @test {\n  action send(from: address, to: address)\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 1);
@@ -3103,11 +3064,19 @@ grammar @conversation {
         assert!(action.children().len() >= 3);
 
         // Has target node
-        let target = action.children().iter().find(|c| c.data().name == "target").unwrap();
+        let target = action
+            .children()
+            .iter()
+            .find(|c| c.data().name == "target")
+            .unwrap();
         assert_eq!(target.data().value, "filesystem");
 
         // Has body node
-        let body = action.children().iter().find(|c| c.data().name == "body").unwrap();
+        let body = action
+            .children()
+            .iter()
+            .find(|c| c.data().name == "body")
+            .unwrap();
         assert_eq!(body.data().value, "write(source)");
     }
 
@@ -3118,14 +3087,17 @@ grammar @conversation {
         let grammar = &tree.children()[0];
         let action = &grammar.children()[0];
         assert_eq!(action.data().value, "ping");
-        let body = action.children().iter().find(|c| c.data().name == "body").unwrap();
+        let body = action
+            .children()
+            .iter()
+            .find(|c| c.data().name == "body")
+            .unwrap();
         assert_eq!(body.data().value, "check()");
     }
 
     #[test]
     fn parse_grammar_action_flushes_pending_type() {
-        let source =
-            "grammar @test {\n  type = a | b\n  action enact(target: path)\n}\n";
+        let source = "grammar @test {\n  type = a | b\n  action enact(target: path)\n}\n";
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.children().len(), 2);

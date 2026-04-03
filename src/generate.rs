@@ -186,9 +186,7 @@ mod tests {
 
     #[test]
     fn derive_all_includes_acts() {
-        let reg = compile_grammar(
-            "grammar @test {\n  type = a\n  action send(to, subject)\n}\n",
-        );
+        let reg = compile_grammar("grammar @test {\n  type = a\n  action send(to, subject)\n}\n");
         let all = derive_all(&reg);
         // 1 type variant + 1 act = 2
         assert_eq!(all.len(), 2);

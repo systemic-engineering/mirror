@@ -587,10 +587,9 @@ mod tests {
     #[test]
     fn compile_result_proof_etf_action_param() {
         // Sugar: `target` expands to `target:target`
-        let result = compile_grammar_with_phases(
-            "grammar @bare {\n  type = a\n  action touch(target)\n}\n",
-        )
-        .unwrap();
+        let result =
+            compile_grammar_with_phases("grammar @bare {\n  type = a\n  action touch(target)\n}\n")
+                .unwrap();
         let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
         let s = format!("{:?}", term);
         // The compiled ETF should contain action_exists and action_field facts
