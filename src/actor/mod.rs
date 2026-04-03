@@ -7,3 +7,4 @@ pub mod emit_nix;
 pub mod init;
 pub mod mount;
 pub mod observe;
+pub mod status;
