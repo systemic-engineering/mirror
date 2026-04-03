@@ -60,8 +60,9 @@ pub fn supervised_compile_and_garden_test() {
   }
 }
 "
-  let assert Ok(domains) =
+  let assert Ok(beams) =
     boot.boot(subject, garden_name, [grammar])
+  let domains = boot.results(beams)
 
   // Domain should be running under garden
   should.be_true(garden.is_running("garden_compile"))
@@ -114,11 +115,12 @@ pub fn supervised_boot_from_files_test() {
   let subject = process.named_subject(compiler_name)
   let garden_path =
     "/Users/alexwolf/dev/systemic.engineering/garden/public"
-  let assert Ok(domains) =
+  let assert Ok(beams) =
     boot.boot_from_files(subject, garden_name, [
       garden_path <> "/@reed/reed.conv",
       garden_path <> "/@erlang/erlang.conv",
     ])
+  let domains = boot.results(beams)
 
   should.be_true(garden.is_running("reed"))
   should.be_true(garden.is_running("erlang"))

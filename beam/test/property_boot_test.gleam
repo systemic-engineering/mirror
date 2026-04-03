@@ -33,7 +33,8 @@ pub fn inline_grammar_with_requires_test() {
 "
 
   let #(subject, garden_name) = setup()
-  let assert Ok(domains) = boot.boot(subject, garden_name, [source])
+  let assert Ok(beams) = boot.boot(subject, garden_name, [source])
+  let domains = boot.results(beams)
 
   should.be_true(domain.is_running("inline_prop"))
   should.be_true(loader.is_loaded("conv_inline_prop"))
@@ -56,7 +57,8 @@ pub fn inline_grammar_with_requires_and_invariant_test() {
 "
 
   let #(subject, garden_name) = setup()
-  let assert Ok(domains) = boot.boot(subject, garden_name, [source])
+  let assert Ok(beams) = boot.boot(subject, garden_name, [source])
+  let domains = boot.results(beams)
 
   should.be_true(domain.is_running("dual_prop"))
 

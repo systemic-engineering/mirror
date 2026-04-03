@@ -38,7 +38,8 @@ fn setup() -> #(
 /// Reed boots on the BEAM.
 pub fn reed_boots_test() {
   let #(subject, garden_name) = setup()
-  let assert Ok(domains) = boot.boot(subject, garden_name, [reed_grammar])
+  let assert Ok(beams) = boot.boot(subject, garden_name, [reed_grammar])
+  let domains = boot.results(beams)
 
   // Domain server running
   should.be_true(domain.is_running("reed"))
@@ -72,7 +73,7 @@ in @reality
 "
 
   let #(subject, garden_name) = setup()
-  let assert Ok(domains) =
+  let assert Ok(beams) =
     boot.boot(subject, garden_name, [reed_grammar, erlang_grammar])
 
   // Both domains running
@@ -126,8 +127,9 @@ in @tools
 "
 
   let #(subject, garden_name) = setup()
-  let assert Ok(domains) =
+  let assert Ok(beams) =
     boot.boot(subject, garden_name, [inner, outer])
+  let domains = boot.results(beams)
 
   // Workshop imports @tools
   let assert Ok(workshop) =
@@ -152,7 +154,8 @@ in @phantom
 "
 
   let #(subject, garden_name) = setup()
-  let assert Ok(domains) = boot.boot(subject, garden_name, [lonely])
+  let assert Ok(beams) = boot.boot(subject, garden_name, [lonely])
+  let domains = boot.results(beams)
 
   let assert Ok(d) =
     list.find(domains, fn(d) { d.domain == "lonely" })
@@ -172,7 +175,7 @@ pub fn supervisor_restarts_domain_test() {
 "
 
   let #(subject, garden_name) = setup()
-  let assert Ok(_domains) = boot.boot(subject, garden_name, [grammar])
+  let assert Ok(_beams) = boot.boot(subject, garden_name, [grammar])
   should.be_true(domain.is_running("phoenix"))
 
   // Kill the domain server
@@ -195,8 +198,9 @@ pub fn boot_populates_extends_test() {
 "
 
   let #(subject, garden_name) = setup()
-  let assert Ok(domains) =
+  let assert Ok(beams) =
     boot.boot(subject, garden_name, [parent, child])
+  let domains = boot.results(beams)
 
   let assert Ok(fox) =
     list.find(domains, fn(d) { d.domain == "fox" })
@@ -217,7 +221,8 @@ pub fn boot_unresolved_extends_test() {
 "
 
   let #(subject, garden_name) = setup()
-  let assert Ok(domains) = boot.boot(subject, garden_name, [orphan])
+  let assert Ok(beams) = boot.boot(subject, garden_name, [orphan])
+  let domains = boot.results(beams)
 
   let assert Ok(d) =
     list.find(domains, fn(d) { d.domain == "orphan" })

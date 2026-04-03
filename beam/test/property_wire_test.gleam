@@ -158,10 +158,12 @@ pub fn boot_ordering_test() {
   let subject = process.named_subject(compiler_name)
 
   // Boot infra first, then app
-  let assert Ok(infra_domains) =
+  let assert Ok(infra_beams) =
     boot.boot(subject, garden_name, [infra])
-  let assert Ok(app_domains) =
+  let assert Ok(app_beams) =
     boot.boot(subject, garden_name, [app])
+  let infra_domains = boot.results(infra_beams)
+  let app_domains = boot.results(app_beams)
 
   // Both domains running
   should.be_true(domain.is_running("infra"))
@@ -189,7 +191,8 @@ pub fn boot_empty_grammars_test() {
   let _ = coincidence.start_server()
   let subject = process.named_subject(compiler_name)
 
-  let assert Ok(domains) = boot.boot(subject, garden_name, [app])
+  let assert Ok(beams) = boot.boot(subject, garden_name, [app])
+  let domains = boot.results(beams)
 
   should.be_true(domain.is_running("solo_app"))
 

@@ -11,6 +11,7 @@ import conversation/trace
 import gleam/erlang/process.{type Subject}
 import gleam/list
 import gleam/otp/factory_supervisor
+import prism_beam
 
 /// Read a file from disk.
 @external(erlang, "file_ffi", "read_file")
@@ -28,13 +29,14 @@ pub type BootedDomain {
 
 /// Compile grammars through a supervised @compiler and start domain
 /// servers through the garden factory supervisor.
+/// Each compiled domain is wrapped in a Beam — the compilation trace.
 pub fn boot(
   compiler_subject: Subject(compiler.Message),
   garden_name: process.Name(
     factory_supervisor.Message(String, String),
   ),
   grammars: List(String),
-) -> Result(List(BootedDomain), String) {
+) -> Result(List(prism_beam.Beam(BootedDomain)), String) {
   compile_loop(compiler_subject, garden_name, grammars, [])
 }
 
@@ -45,11 +47,16 @@ pub fn boot_from_files(
     factory_supervisor.Message(String, String),
   ),
   paths: List(String),
-) -> Result(List(BootedDomain), String) {
+) -> Result(List(prism_beam.Beam(BootedDomain)), String) {
   case read_all_files(paths, []) {
     Ok(sources) -> boot(compiler_subject, garden_name, sources)
     Error(e) -> Error(e)
   }
+}
+
+/// Extract all BootedDomains from a list of Beams.
+pub fn results(beams: List(prism_beam.Beam(BootedDomain))) -> List(BootedDomain) {
+  list.map(beams, fn(b) { b.result })
 }
 
 /// Check if a booted domain is alive.
@@ -82,15 +89,15 @@ fn compile_loop(
     factory_supervisor.Message(String, String),
   ),
   remaining: List(String),
-  acc: List(BootedDomain),
-) -> Result(List(BootedDomain), String) {
+  acc: List(prism_beam.Beam(BootedDomain)),
+) -> Result(List(prism_beam.Beam(BootedDomain)), String) {
   case remaining {
     [] -> Ok(list.reverse(acc))
     [source, ..rest] -> {
       case compile_one(compiler_subject, garden_name, source) {
-        Ok(booted) ->
+        Ok(beam) ->
           compile_loop(compiler_subject, garden_name, rest, [
-            booted,
+            beam,
             ..acc
           ])
         Error(e) -> Error(e)
@@ -105,7 +112,7 @@ fn compile_one(
     factory_supervisor.Message(String, String),
   ),
   source: String,
-) -> Result(BootedDomain, String) {
+) -> Result(prism_beam.Beam(BootedDomain), String) {
   let reply = process.new_subject()
   process.send(compiler_subject, compiler.CompileGrammar(source, reply))
   case process.receive(reply, 10_000) {
@@ -132,12 +139,12 @@ fn compile_one(
         Ok(e) -> e
         Error(_) -> []
       }
-      Ok(BootedDomain(
+      Ok(prism_beam.new(BootedDomain(
         domain: compiled.domain,
         module: beam_module,
         lenses: lenses,
         extends: extends,
-      ))
+      )))
     }
   }
 }
