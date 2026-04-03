@@ -146,7 +146,7 @@ fn compile_source(source: &str) -> Result<check::Verified, String> {
 /// Boot the full sequence: compile each layer, barrier between layers.
 /// Same-layer entries compile concurrently via ractor tasks.
 pub async fn boot(
-    runtime: &mut RactorRuntime,
+    runtime: &RactorRuntime,
     sequence: &BootSequence,
 ) -> Result<Vec<prism::Beam<ActorRef<DomainMessage>>>, String> {
     let mut all_artifacts = Vec::new();
@@ -161,13 +161,15 @@ pub async fn boot(
             verified.push(v);
         }
 
-        // Compile through runtime (spawns actors — async)
+        // Compile through runtime — all entries in this layer in parallel.
+        let futures: Vec<_> = verified
+            .into_iter()
+            .map(|v| runtime.compile(v))
+            .collect();
+        let results = futures::future::join_all(futures).await;
         let mut layer_artifacts = Vec::new();
-        for v in verified {
-            let beam = runtime
-                .compile(v)
-                .await
-                .map_err(|e| format!("layer {}: runtime: {}", layer, e))?;
+        for result in results {
+            let beam = result.map_err(|e| format!("layer {}: runtime: {}", layer, e))?;
             layer_artifacts.push(beam);
         }
 
@@ -251,8 +253,8 @@ mod tests {
         )
         .unwrap();
 
-        let mut runtime = RactorRuntime::new();
-        let artifacts = boot(&mut runtime, &seq).await.unwrap();
+        let runtime = RactorRuntime::new();
+        let artifacts = boot(&runtime, &seq).await.unwrap();
 
         // Should have compiled all boot entries
         assert_eq!(artifacts.len(), seq.len());

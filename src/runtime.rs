@@ -114,7 +114,7 @@ pub trait Runtime: Send + Sync {
     /// Compile a verified domain into a runtime artifact.
     /// Result handles total failure. Beam handles partial success with loss.
     async fn compile(
-        &mut self,
+        &self,
         domain: Verified,
     ) -> Result<prism::Beam<Self::Artifact>, Self::Error>;
 }
@@ -212,7 +212,7 @@ impl Runtime for RactorRuntime {
     type Error = RuntimeError;
 
     async fn compile(
-        &mut self,
+        &self,
         domain: Verified,
     ) -> Result<prism::Beam<ActorRef<DomainMessage>>, RuntimeError> {
         let d = domain.into_domain();
@@ -399,7 +399,7 @@ mod tests {
 
     #[tokio::test]
     async fn compile_produces_artifact() {
-        let mut rt = RactorRuntime::new();
+        let rt = RactorRuntime::new();
         let verified = simple_verified();
         let beam = rt.compile(verified).await.unwrap();
         let artifact = beam.result;
@@ -413,7 +413,7 @@ mod tests {
 
     #[tokio::test]
     async fn compile_unknown_action_errors() {
-        let mut rt = RactorRuntime::new();
+        let rt = RactorRuntime::new();
         let verified = simple_verified();
         let beam = rt.compile(verified).await.unwrap();
         let artifact = beam.result;
@@ -427,7 +427,7 @@ mod tests {
 
     #[tokio::test]
     async fn compile_actor_domain() {
-        let mut rt = RactorRuntime::new();
+        let rt = RactorRuntime::new();
         let verified = actor_verified();
         let beam = rt.compile(verified).await.unwrap();
         let artifact = beam.result;
@@ -441,7 +441,7 @@ mod tests {
 
     #[tokio::test]
     async fn compile_and_stop() {
-        let mut rt = RactorRuntime::new();
+        let rt = RactorRuntime::new();
         let verified = simple_verified();
         let beam = rt.compile(verified).await.unwrap();
         let artifact = beam.result;
