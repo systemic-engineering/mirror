@@ -1,0 +1,4 @@
+iso test(ref)
+
+traversal assertion = has | eq
+traversal property = requires | invariant | ensures
