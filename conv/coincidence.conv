@@ -7,23 +7,13 @@ grammar @coincidence {
 
   type spectrum = laplacian | adjacency | normalized
 
-  action check {
-    name: measurement
-  }
-
-  action measure {
-    target: measurement
-  }
-
-  action connected {}
-
-  action entropy {}
-
-  action curvature {}
-
-  action bipartite {}
-
-  action shannon_equivalence {}
+  action check(name: measurement)
+  action measure(target: measurement)
+  action connected
+  action entropy
+  action curvature
+  action bipartite
+  action shannon_equivalence
 }
 
 in @topology

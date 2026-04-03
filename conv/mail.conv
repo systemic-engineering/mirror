@@ -13,20 +13,9 @@ grammar @mail {
 
   type dns = spf | dkim | dmarc | mta-sts | dane
 
-  action send {
-    from: address
-    to: address
-    subject
-    body: article
-  }
-  action reply {
-    in-reply-to: message-id
-    body: article
-  }
-  action forward {
-    message: message-id
-    to: address
-  }
+  action send(from: address, to: address, subject, body: article)
+  action reply(in-reply-to: message-id, body: article)
+  action forward(message: message-id, to: address)
 }
 
 template $message(@imap) {

@@ -1674,6 +1674,8 @@ mod tests {
 
     #[test]
     fn domain_has_action_calls() {
+        // With new syntax, action calls only exist in bodies
+        // Without a body, the domain has no calls
         use crate::{Parse, Vector};
         let source = "grammar @ai {\n  type = observation\n\n  action decide(observation)\n}\n";
         let ast = Parse.trace(source.to_string()).unwrap();
@@ -1684,11 +1686,9 @@ mod tests {
             .unwrap();
         let domain = Domain::from_grammar(grammar).unwrap();
         assert!(
-            !domain.calls.is_empty(),
-            "domain-level calls should be aggregated from actions"
+            domain.calls.is_empty(),
+            "no calls without a body"
         );
-        assert_eq!(domain.calls[0].domain.as_str(), "tools");
-        assert_eq!(domain.calls[0].action.as_str(), "exec");
     }
 
     #[test]

@@ -9,8 +9,5 @@ grammar @compiler {
 
   type status = ok | error | pending
 
-  action compile {
-    source: artifact
-    target: target
-  }
+  action compile(source: artifact, target: target)
 }

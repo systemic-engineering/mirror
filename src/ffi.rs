@@ -576,7 +576,7 @@ mod tests {
             "should have action_exists facts"
         );
         assert!(s.contains("action_field"), "should have action_field facts");
-        assert!(s.contains("action_calls"), "should have action_calls facts");
+        // action_calls only present when actions have bodies — none here
         // Discharged obligations (from red(shade) → shade exists)
         assert!(
             s.contains("discharged"),
@@ -585,23 +585,23 @@ mod tests {
     }
 
     #[test]
-    fn compile_result_proof_etf_action_field_none_type_ref() {
-        // Action with field that has no type ref → ActionField with type_ref=None
+    fn compile_result_proof_etf_action_param() {
+        // Sugar: `target` expands to `target:target`
         let result = compile_grammar_with_phases(
             "grammar @bare {\n  type = a\n  action touch(target)\n}\n",
         )
         .unwrap();
         let term = eetf::Term::decode(std::io::Cursor::new(&result.proof_etf)).unwrap();
         let s = format!("{:?}", term);
+        // The compiled ETF should contain action_exists and action_field facts
         assert!(
-            s.contains("action_field"),
-            "should have action_field: {}",
+            s.contains("action_exists"),
+            "should contain action_exists fact: {}",
             s
         );
-        // The None type_ref should be encoded as atom 'none'
         assert!(
-            s.contains("none"),
-            "untyped field should encode type_ref as 'none': {}",
+            s.contains("action_field"),
+            "should contain action_field fact: {}",
             s
         );
     }

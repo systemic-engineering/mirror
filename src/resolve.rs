@@ -2120,15 +2120,14 @@ mod tests {
 
     #[test]
     fn domain_compile_action_calls() {
+        // New syntax: action calls are in bodies, not inline fields
+        // Without a body, no calls
         let dom = compile_grammar(
             "grammar @test {\n  type source = a | b\n  action commit(source: source)\n}\n",
         );
         assert!(dom.has_action("commit"));
         let calls = dom.action_calls("commit");
-        assert_eq!(calls.len(), 1);
-        assert_eq!(calls[0].0, "filesystem"); // target domain
-        assert_eq!(calls[0].1, "write"); // target action
-        assert_eq!(calls[0].2, vec!["source"]); // args
+        assert!(calls.is_empty());
     }
 
     #[test]
@@ -2169,7 +2168,7 @@ mod tests {
         let send = dom.act_fields("send").unwrap();
         assert_eq!(send.len(), 4);
         assert_eq!(send[0], ("from", Some("address")));
-        assert_eq!(send[2], ("subject", None));
+        assert_eq!(send[2], ("subject", Some("subject")));
         let forward = dom.act_fields("forward").unwrap();
         assert_eq!(forward.len(), 2);
         assert_eq!(forward[0], ("message", Some("message-id")));

@@ -1,7 +1,5 @@
 grammar @compiler {
   type = grammar | type
 
-  action compile {
-    source: grammar
-  }
+  action compile(source: grammar)
 }
