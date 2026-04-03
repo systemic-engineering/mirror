@@ -104,15 +104,19 @@ impl fmt::Display for RuntimeError {
 // Runtime trait
 // ---------------------------------------------------------------------------
 
-/// The compiler backend. Takes a verified domain, produces an artifact.
-/// What the artifact IS depends on the runtime.
+/// The compiler backend. Takes a verified domain, produces an artifact
+/// wrapped in a Beam — the trace of the compilation.
 #[allow(async_fn_in_trait)]
 pub trait Runtime: Send + Sync {
     type Artifact;
     type Error: fmt::Display + Send;
 
     /// Compile a verified domain into a runtime artifact.
-    async fn compile(&mut self, domain: Verified) -> Result<Self::Artifact, Self::Error>;
+    /// Result handles total failure. Beam handles partial success with loss.
+    async fn compile(
+        &mut self,
+        domain: Verified,
+    ) -> Result<prism::Beam<Self::Artifact>, Self::Error>;
 }
 
 // ---------------------------------------------------------------------------
@@ -207,12 +211,15 @@ impl Runtime for RactorRuntime {
     type Artifact = ActorRef<DomainMessage>;
     type Error = RuntimeError;
 
-    async fn compile(&mut self, domain: Verified) -> Result<ActorRef<DomainMessage>, RuntimeError> {
+    async fn compile(
+        &mut self,
+        domain: Verified,
+    ) -> Result<prism::Beam<ActorRef<DomainMessage>>, RuntimeError> {
         let d = domain.into_domain();
         let (actor_ref, _handle) = Actor::spawn(None, DomainActor, d)
             .await
             .map_err(spawn_err)?;
-        Ok(actor_ref)
+        Ok(prism::Beam::new(actor_ref))
     }
 }
 
@@ -394,7 +401,8 @@ mod tests {
     async fn compile_produces_artifact() {
         let mut rt = RactorRuntime::new();
         let verified = simple_verified();
-        let artifact = rt.compile(verified).await.unwrap();
+        let beam = rt.compile(verified).await.unwrap();
+        let artifact = beam.result;
         let resp = ractor::call!(
             artifact, DomainMessage::Dispatch,
             ActionName::new("paint"), Args::Empty
@@ -407,7 +415,8 @@ mod tests {
     async fn compile_unknown_action_errors() {
         let mut rt = RactorRuntime::new();
         let verified = simple_verified();
-        let artifact = rt.compile(verified).await.unwrap();
+        let beam = rt.compile(verified).await.unwrap();
+        let artifact = beam.result;
         let resp = ractor::call!(
             artifact, DomainMessage::Dispatch,
             ActionName::new("fly"), Args::Empty
@@ -420,7 +429,8 @@ mod tests {
     async fn compile_actor_domain() {
         let mut rt = RactorRuntime::new();
         let verified = actor_verified();
-        let artifact = rt.compile(verified).await.unwrap();
+        let beam = rt.compile(verified).await.unwrap();
+        let artifact = beam.result;
         let resp = ractor::call!(
             artifact, DomainMessage::Dispatch,
             ActionName::new("compile"), Args::Empty
@@ -433,7 +443,8 @@ mod tests {
     async fn compile_and_stop() {
         let mut rt = RactorRuntime::new();
         let verified = simple_verified();
-        let artifact = rt.compile(verified).await.unwrap();
+        let beam = rt.compile(verified).await.unwrap();
+        let artifact = beam.result;
         artifact.stop(None);
         // Actor should be stopped — let it settle
         tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;
