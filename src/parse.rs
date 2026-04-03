@@ -987,83 +987,120 @@ fn parse_action_body_def(
     span: Span,
     lines: &mut Lines,
 ) -> Result<Prism<AstNode>, ParseError> {
-    // Caller guarantees '(' exists (checked before dispatch).
-    let paren = rest.find('(').expect("caller checked '(' exists");
-    let name = rest[..paren].trim();
-    let close = rest.find(')').ok_or_else(|| ParseError {
-        message: format!("action: expected ')' in: action {}", rest),
-        span: Some(span),
-    })?;
-    let params_str = &rest[paren + 1..close];
-    let after_parens = rest[close + 1..].trim();
-
-    // Parse "in @target { body }" or "in @target {\n  body\n}"
-    let target_rest = after_parens.strip_prefix("in ").ok_or_else(|| ParseError {
-        message: format!(
-            "action: expected 'in @target' after params in: action {}",
-            rest
-        ),
-        span: Some(span),
-    })?;
-
-    // Extract @target
-    let brace_pos = target_rest.find('{').ok_or_else(|| ParseError {
-        message: format!("action: expected '{{' in: action {}", rest),
-        span: Some(span),
-    })?;
-    let target_name = target_rest[..brace_pos].trim().trim_start_matches('@');
-    let after_brace = target_rest[brace_pos + 1..].trim();
-
-    let vis_node = ast::ast_leaf(Kind::Atom, "visibility", visibility, span);
-    let target_node = ast::ast_leaf(Kind::Atom, "target", target_name, span);
-    let mut params = parse_action_params(params_str, span);
-
-    // Collect body text
-    let body_text = if after_brace.ends_with('}') {
-        // Single-line: `in @rust { body }` or `in @rust {}`
-        let body = after_brace.trim_end_matches('}').trim();
-        lines.advance();
-        body.to_string()
+    // Parse name and optional (params)
+    let (name, after_name) = if let Some(paren) = rest.find('(') {
+        let name = rest[..paren].trim();
+        let close = rest.find(')').ok_or_else(|| ParseError {
+            message: format!("action: expected ')' in: action {}", rest),
+            span: Some(span),
+        })?;
+        (name, rest[close + 1..].trim())
     } else {
-        // Multi-line body
-        lines.advance(); // consume the action header line
-        let mut body_lines = Vec::new();
-        if !after_brace.is_empty() {
-            body_lines.push(after_brace.to_string());
-        }
-        let mut found_close = false;
-        while let Some(line) = lines.peek() {
-            let trimmed = line.trim();
-            if trimmed == "}" {
-                lines.advance();
-                found_close = true;
-                break;
-            }
-            body_lines.push(trimmed.to_string());
-            lines.advance();
-        }
-        if !found_close {
-            return Err(ParseError {
-                message: "unclosed action body block".into(),
-                span: Some(span),
-            });
-        }
-        body_lines.join("\n")
+        // No parens — bare action name, possibly followed by `in @domain { body }`
+        let name_end = rest.find(' ').unwrap_or(rest.len());
+        let name = rest[..name_end].trim();
+        let after = rest[name_end..].trim();
+        (name, after)
     };
 
-    let body_node = ast::ast_leaf(Kind::Atom, "body", &body_text, span);
+    let params_str = if let Some(paren) = rest.find('(') {
+        let close = rest.find(')').unwrap();
+        &rest[paren + 1..close]
+    } else {
+        ""
+    };
 
-    let mut children = vec![vis_node, target_node];
-    children.append(&mut params);
-    children.push(body_node);
+    let after_parens = after_name;
 
-    Ok(ast::ast_branch(
-        Kind::Decl,
-        "action-def",
-        name,
-        span,
-        children,
-    ))
+    // Optional: "in @target { body }"
+    let target_rest = match after_parens.strip_prefix("in ") {
+        Some(r) => Some(r),
+        None if after_parens.is_empty() => None,
+        None => {
+            return Err(ParseError {
+                message: format!(
+                    "action: unexpected '{}' after action {} — expected 'in @target {{ body }}' or end of line",
+                    after_parens, name
+                ),
+                span: Some(span),
+            })
+        }
+    };
+
+    let vis_node = ast::ast_leaf(Kind::Atom, "visibility", visibility, span);
+    let mut params = parse_action_params(params_str, span);
+
+    match target_rest {
+        None => {
+            // No body: `action tick()` or `action tick`
+            lines.advance();
+            let mut children = vec![vis_node];
+            children.append(&mut params);
+            Ok(ast::ast_branch(
+                Kind::Decl,
+                "action-def",
+                name,
+                span,
+                children,
+            ))
+        }
+        Some(target_rest) => {
+            // Has body: `action find(type: node_type) in @db { walk(@store, type) }`
+            let brace_pos = target_rest.find('{').ok_or_else(|| ParseError {
+                message: format!("action: expected '{{' after 'in @target' in: action {}", rest),
+                span: Some(span),
+            })?;
+            let target_name = target_rest[..brace_pos].trim().trim_start_matches('@');
+            let after_brace = target_rest[brace_pos + 1..].trim();
+
+            let target_node = ast::ast_leaf(Kind::Atom, "target", target_name, span);
+
+            // Collect body text
+            let body_text = if after_brace.ends_with('}') {
+                let body = after_brace.trim_end_matches('}').trim();
+                lines.advance();
+                body.to_string()
+            } else {
+                lines.advance();
+                let mut body_lines = Vec::new();
+                if !after_brace.is_empty() {
+                    body_lines.push(after_brace.to_string());
+                }
+                let mut found_close = false;
+                while let Some(line) = lines.peek() {
+                    let trimmed = line.trim();
+                    if trimmed == "}" {
+                        lines.advance();
+                        found_close = true;
+                        break;
+                    }
+                    body_lines.push(trimmed.to_string());
+                    lines.advance();
+                }
+                if !found_close {
+                    return Err(ParseError {
+                        message: "unclosed action body block".into(),
+                        span: Some(span),
+                    });
+                }
+                body_lines.join("\n")
+            };
+
+            let body_node = ast::ast_leaf(Kind::Atom, "body", &body_text, span);
+
+            let mut children = vec![vis_node, target_node];
+            children.append(&mut params);
+            children.push(body_node);
+
+            Ok(ast::ast_branch(
+                Kind::Decl,
+                "action-def",
+                name,
+                span,
+                children,
+            ))
+        }
+    }
 }
 
 /// Extract visibility modifier from an action line.
@@ -1184,7 +1221,8 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
             continue;
         }
 
-        // Action with visibility modifier: `public action read {`, etc.
+        // Action: `action name(params)` or `action name(params) in @domain { body }`
+        // With optional visibility: `public action`, `protected action`, `private action`
         if let Some((rest, visibility)) = parse_action_visibility(trimmed) {
             // Flush any pending type def
             if let Some((type_name, type_span, variants)) = current.take() {
@@ -1197,41 +1235,8 @@ fn parse_grammar(header: &str, lines: &mut Lines) -> Result<Prism<AstNode>, Pars
                 ));
             }
             let span = lines.current_span();
-            // Check if this is the new param/body form: name(params) in @target { body }
-            let has_paren = rest.find('(');
-            let has_brace = rest.find('{');
-            if has_paren.is_some() && (has_brace.is_none() || has_paren < has_brace) {
-                defs.push(parse_action_body_def(rest, visibility, span, lines)?);
-            } else {
-                defs.push(parse_action_def(rest, visibility, span, lines)?);
-            }
+            defs.push(parse_action_body_def(rest, visibility, span, lines)?);
             continue;
-        }
-
-        // Legacy `act name(params) {` keyword: treat as `action name {`.
-        if let Some(act_rest) = trimmed.strip_prefix("act ") {
-            if act_rest.contains('{') {
-                // Flush any pending type def
-                if let Some((type_name, type_span, variants)) = current.take() {
-                    defs.push(ast::ast_branch(
-                        Kind::Form,
-                        "type-def",
-                        &*type_name,
-                        type_span,
-                        variants,
-                    ));
-                }
-                // Strip optional params: `enact(effect) {` → `enact {`
-                let action_header = if let Some(paren) = act_rest.find('(') {
-                    let name = act_rest[..paren].trim();
-                    format!("{} {{", name)
-                } else {
-                    act_rest.to_string()
-                };
-                let span = lines.current_span();
-                defs.push(parse_action_def(&action_header, "protected", span, lines)?);
-                continue;
-            }
         }
 
         // Property declarations: `requires name` or `invariant name`
@@ -1332,99 +1337,8 @@ fn parse_variants(text: &str, span: Span) -> Vec<Prism<AstNode>> {
 
 /// Parse an action definition block inside a grammar.
 ///
-/// `send { from: address\n  to: address }` → Form("action-def", "send") with field children
-/// `noop {}` → Form("action-def", "noop") with no children
-///
-/// The visibility parameter becomes an `Atom("visibility", vis)` child node,
-/// inserted as the first child of the action-def Form.
-fn parse_action_def(
-    header: &str,
-    visibility: &str,
-    span: Span,
-    lines: &mut Lines,
-) -> Result<Prism<AstNode>, ParseError> {
-    let (name, rest) = match header.split_once('{') {
-        Some((n, r)) => (n.trim(), r.trim()),
-        None => {
-            return Err(ParseError {
-                message: format!("action: expected '{{' in: action {}", header),
-                span: Some(span),
-            })
-        }
-    };
-
-    let vis_node = ast::ast_leaf(Kind::Atom, "visibility", visibility, span);
-
-    // Single-line empty: `action noop {}`
-    if rest == "}" {
-        lines.advance();
-        return Ok(ast::ast_branch(
-            Kind::Form,
-            "action-def",
-            name,
-            span,
-            vec![vis_node],
-        ));
-    }
-
-    lines.advance(); // consume the action header line
-
-    let mut fields: Vec<Prism<AstNode>> = vec![vis_node];
-
-    while let Some(line) = lines.peek() {
-        let trimmed = line.trim();
-
-        if trimmed == "}" {
-            let end_span = lines.current_span();
-            lines.advance();
-            return Ok(ast::ast_branch(
-                Kind::Form,
-                "action-def",
-                name,
-                span.merge(&end_span),
-                fields,
-            ));
-        }
-
-        if trimmed.is_empty() || trimmed.starts_with('#') {
-            lines.advance();
-            continue;
-        }
-
-        let field_span = lines.current_span();
-
-        // Action call: @domain.action(args...)
-        if trimmed.starts_with('@') {
-            if let Some(call_node) = parse_action_call(trimmed, field_span) {
-                fields.push(call_node);
-                lines.advance();
-                continue;
-            }
-        }
-
-        if let Some((fname, ftype)) = trimmed.split_once(':') {
-            let fname = fname.trim();
-            let ftype = ftype.trim();
-            let type_ref = ast::ast_leaf(Kind::Ref, "type-ref", ftype, field_span);
-            fields.push(ast::ast_branch(
-                Kind::Atom,
-                "field",
-                fname,
-                field_span,
-                vec![type_ref],
-            ));
-        } else {
-            fields.push(ast::ast_leaf(Kind::Atom, "field", trimmed, field_span));
-        }
-
-        lines.advance();
-    }
-
-    Err(ParseError {
-        message: "unclosed action block".into(),
-        span: Some(span),
-    })
-}
+// Old brace-delimited action syntax removed.
+// The only action syntax is: action name(params) [in @domain { body }]
 
 /// Parse `@domain.action(arg1, arg2)` into a Ref("action-call") node.
 ///
