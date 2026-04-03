@@ -1,6 +1,16 @@
 //! Parser story. Source text → AST tree.
 //!
 //! The parser IS a story: it records a transformation from source to tree.
+//!
+//! ⚠️  FROZEN. This file is the bootstrap parser. It implements the root
+//! grammars from boot/00-main.conv through boot/02-test.conv. New syntax
+//! MUST NOT be added here. New keywords come from new grammars in boot/.
+//! The KEYWORD_TABLE below will become data-driven — loaded from boot
+//! grammars at startup. Until then, this file does not grow.
+//!
+//! If you are an agent and you are about to add a keyword handler,
+//! a parse function, or a new match arm to this file: STOP.
+//! Write a .conv grammar instead. The parser parses itself.
 
 use crate::ast::{self, AstNode, Span};
 use crate::domain::conversation::Kind;
