@@ -12,7 +12,7 @@ description = "fold | prism | traversal | lens | iso — the five optic operatio
 crate-type = ["lib"]
 
 [[bin]]
-name = "conversation"
+name = "abyss"
 path = "src/main.rs"
 
 [features]
