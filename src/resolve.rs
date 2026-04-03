@@ -2176,23 +2176,15 @@ mod tests {
 
     #[test]
     fn domain_compile_main_conv() {
-        // Compile the actual main.conv grammar — the self-describing vocabulary
+        // Compile the actual main.conv — the fixed point: three root grammars
+        // compile_grammar picks the first grammar block → @conversation
         let main_conv = include_str!("../main.conv");
         let dom = compile_grammar(main_conv);
         assert_eq!(dom.domain_name(), "conversation");
-        // Verify the anonymous type has the expected vocabulary
-        assert!(dom.has_variant("", "in"));
-        assert!(dom.has_variant("", "out"));
-        assert!(dom.has_variant("", "template"));
-        assert!(dom.has_variant("", "when"));
-        assert!(dom.has_variant("", "cmp"));
-        // Named type 'op' should exist
-        assert!(dom.has_type("op"));
-        assert!(dom.has_variant("op", "gt"));
-        assert!(dom.has_variant("op", "ne"));
-        // Parameterized variants reference 'op'
-        assert_eq!(dom.variant_param("", "when"), Some("op"));
-        assert_eq!(dom.variant_param("", "cmp"), Some("op"));
+        // @conversation { type = grammar | type | action }
+        assert!(dom.has_variant("", "grammar"));
+        assert!(dom.has_variant("", "type"));
+        assert!(dom.has_variant("", "action"));
     }
 
     #[test]

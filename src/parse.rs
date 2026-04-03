@@ -3672,14 +3672,16 @@ grammar @conversation {
     fn parse_grammar_fixture() {
         let source = include_str!("../main.conv");
         let tree = Parse.trace(source.to_string()).unwrap();
-        // main.conv: in @sha512 as @oid, in @git(...), grammar @conversation { ... }
-        let grammar = tree
+        // main.conv: three root grammars — @conversation, @prism, @test
+        let grammars: Vec<_> = tree
             .children()
             .iter()
-            .find(|c| c.data().is_decl("grammar"))
-            .expect("grammar block");
-        assert_eq!(grammar.data().value, "@conversation");
-        assert_eq!(grammar.children().len(), 2);
+            .filter(|c| c.data().is_decl("grammar"))
+            .collect();
+        assert_eq!(grammars.len(), 3);
+        assert_eq!(grammars[0].data().value, "@conversation");
+        assert_eq!(grammars[1].data().value, "@prism");
+        assert_eq!(grammars[2].data().value, "@test");
     }
 
     #[test]
