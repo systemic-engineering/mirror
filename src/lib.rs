@@ -5,6 +5,7 @@ pub use prism_crate as beam;
 pub mod kernel;
 pub mod actor;
 pub mod artifact;
+pub mod boot;
 pub mod ast;
 pub mod check;
 pub mod compile;

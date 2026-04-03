@@ -11,8 +11,6 @@ grammar @projection {
 
   action measure(projection: projection, actual: grammar)
 
-  requires shannon_equivalence
-  requires connected
 }
 
 in @property
