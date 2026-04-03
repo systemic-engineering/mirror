@@ -71,6 +71,15 @@ impl Optic {
 // Weights — the 2,892 parameters
 // ---------------------------------------------------------------------------
 
+/// The trained weights, baked into the binary at compile time.
+static TRAINED_WEIGHTS: &[u8] = include_bytes!("../abyss.weights");
+
+/// Load the trained weights baked into the binary.
+pub fn trained() -> Weights {
+    Weights::from_bytes(TRAINED_WEIGHTS)
+        .expect("baked weights must be valid — this is a build error")
+}
+
 /// The classifier weights. Two layers.
 ///
 /// W1: 32 × 64 = 2,048 parameters
