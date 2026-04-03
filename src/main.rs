@@ -34,6 +34,21 @@ fn main() {
     }
 
     match args[1].as_str() {
+        "settle" => {
+            if args.len() < 3 {
+                eprintln!("usage: abyss settle <file.conv>");
+                process::exit(1);
+            }
+            let conv_path = &args[2];
+            let source = match std::fs::read_to_string(conv_path) {
+                Ok(s) => s,
+                Err(e) => {
+                    eprintln!("abyss: {}: {}", conv_path, e);
+                    process::exit(1);
+                }
+            };
+            settle_cmd(&source, conv_path);
+        }
         "test" => {
             if args.len() < 3 {
                 eprintln!("usage: conversation test <file.conv>");
@@ -97,6 +112,120 @@ fn main() {
             let path = args.get(2).map(|s| s.as_str()).unwrap_or(".");
             run(&source, path, &resolve);
         }
+    }
+}
+
+fn settle_cmd(source: &str, path: &str) {
+    use mirror::abyss::{self, AbyssConfig, PrismLoop, Termination};
+    use mirror::prism::Prism as PrismTree;
+    use prism::{Beam, Oid, Precision};
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
+
+    // Parse the source into an AST
+    let ast = match Parse.trace(source.to_string()).into_result() {
+        Ok(tree) => tree,
+        Err(e) => {
+            eprintln!("abyss: parse error: {}", e);
+            process::exit(1);
+        }
+    };
+
+    // The AST IS the graph. Each node is a vertex.
+    // The Prism over AST nodes: fold decomposes into children,
+    // prism filters by kind, traversal walks, lens transforms.
+    struct AstPrism;
+
+    impl prism::Prism for AstPrism {
+        type Input = mirror::prism::Prism<mirror::ast::AstNode>;
+        type Eigenvalues = Vec<String>; // node names
+        type Projection = Vec<String>;
+        type Node = String;
+        type Convergence = Vec<String>;
+        type Crystal = Vec<String>;
+
+        fn fold(&self, input: &Self::Input) -> Beam<Vec<String>> {
+            let names: Vec<String> = input
+                .children()
+                .iter()
+                .map(|c| format!("{}:{}", c.data().name, c.data().value))
+                .collect();
+            Beam::new(names)
+        }
+
+        fn prism(&self, eigenvalues: &Vec<String>, _precision: Precision) -> Beam<Vec<String>> {
+            Beam::new(eigenvalues.clone())
+        }
+
+        fn traversal(&self, projection: &Vec<String>) -> Vec<Beam<String>> {
+            projection
+                .iter()
+                .enumerate()
+                .map(|(i, s)| Beam::new(s.clone()).with_step(Oid::new(format!("{}", i))))
+                .collect()
+        }
+
+        fn lens(
+            &self,
+            beam: Beam<Vec<String>>,
+            f: &dyn Fn(Vec<String>) -> Vec<String>,
+        ) -> Beam<Vec<String>> {
+            beam.map(f)
+        }
+
+        fn iso(&self, beam: Beam<Vec<String>>) -> Vec<String> {
+            beam.result
+        }
+    }
+
+    impl PrismLoop for AstPrism {
+        fn fold_from_projection(&self, projection: &Vec<String>) -> Vec<String> {
+            projection.clone()
+        }
+    }
+
+    let prism = AstPrism;
+    let config = AbyssConfig {
+        max_cycles: 16,
+        precision: Precision::new(0.0),
+        oscillation_window: 4,
+    };
+
+    let hash_fn = |v: &Vec<String>| -> Oid {
+        let mut hasher = DefaultHasher::new();
+        v.hash(&mut hasher);
+        Oid::new(format!("{:016x}", hasher.finish()))
+    };
+
+    let (beam, termination) = abyss::settle_loop(
+        &prism,
+        &ast,
+        &config,
+        &|v| v, // identity — settle on the parse itself
+        &hash_fn,
+    );
+
+    // Output
+    eprintln!("abyss settle: {}", path);
+    match &termination {
+        Termination::Settled { cycles } => {
+            eprintln!("  settled in {} cycles", cycles);
+        }
+        Termination::BudgetExhausted { cycles, .. } => {
+            eprintln!("  budget exhausted after {} cycles", cycles);
+        }
+        Termination::Oscillation { cycles, attractors } => {
+            eprintln!("  oscillation after {} cycles ({} attractors)", cycles, attractors.len());
+        }
+    }
+    eprintln!("  nodes: {}", beam.result.len());
+    eprintln!("  path: {} steps", beam.path.len());
+    eprintln!("  loss: {}", beam.loss);
+    eprintln!("  precision: {}", beam.precision);
+
+    // Print the settled nodes
+    for node in &beam.result {
+        println!("  {}", node);
     }
 }
 
