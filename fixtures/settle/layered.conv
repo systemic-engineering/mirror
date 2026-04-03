@@ -1,0 +1,7 @@
+fold base
+lens type(id)
+lens ref(id)
+lens grammar(ref)
+prism out(ref)
+fold in(ref)
+iso test(ref)
