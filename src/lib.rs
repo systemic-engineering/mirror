@@ -41,6 +41,7 @@ pub mod parse;
 pub mod prism;
 pub mod property;
 pub mod resolve;
+pub mod mirror_bf;
 pub mod spectral;
 
 // Kernel types at the crate root.
