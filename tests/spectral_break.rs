@@ -1,0 +1,235 @@
+//! Wire spectral-db to the Cayley graph. Let it settle.
+//!
+//! spectral_db.open("curve-8bit")
+//! spectral_db.ingest(cayley_graph)
+//! spectral_db.tick() // settle
+//! spectral_db.tick()
+//! // ...settled.
+//! // The crystal forms at whatever pace the hardware allows.
+
+mod curve {
+    //! Elliptic curve arithmetic — shared with crypto_break.rs
+
+    #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+    pub enum Point {
+        Infinity,
+        Affine { x: u64, y: u64 },
+    }
+
+    pub fn mod_inv(a: u64, p: u64) -> Option<u64> {
+        let (mut old_r, mut r) = (a as i128, p as i128);
+        let (mut old_s, mut s) = (1i128, 0i128);
+        while r != 0 {
+            let q = old_r / r;
+            let tmp = r; r = old_r - q * r; old_r = tmp;
+            let tmp = s; s = old_s - q * s; old_s = tmp;
+        }
+        if old_r != 1 { return None; }
+        Some(((old_s % p as i128 + p as i128) % p as i128) as u64)
+    }
+
+    pub fn point_add(p1: Point, p2: Point, a: u64, p: u64) -> Point {
+        match (p1, p2) {
+            (Point::Infinity, q) | (q, Point::Infinity) => q,
+            (Point::Affine { x: x1, y: y1 }, Point::Affine { x: x2, y: y2 }) => {
+                if x1 == x2 && y1 != y2 { return Point::Infinity; }
+                if x1 == x2 && y1 == y2 {
+                    if y1 == 0 { return Point::Infinity; }
+                    let num = (3 * x1 % p * x1 % p + a) % p;
+                    let den = (2 * y1) % p;
+                    let inv = match mod_inv(den, p) { Some(i) => i, None => return Point::Infinity };
+                    let lam = num * inv % p;
+                    let x3 = (lam * lam % p + p + p - x1 - x2) % p;
+                    let y3 = (lam * ((x1 + p - x3) % p) % p + p - y1) % p;
+                    Point::Affine { x: x3, y: y3 }
+                } else {
+                    let num = (y2 + p - y1) % p;
+                    let den = (x2 + p - x1) % p;
+                    let inv = match mod_inv(den, p) { Some(i) => i, None => return Point::Infinity };
+                    let lam = num * inv % p;
+                    let x3 = (lam * lam % p + p + p - x1 - x2) % p;
+                    let y3 = (lam * ((x1 + p - x3) % p) % p + p - y1) % p;
+                    Point::Affine { x: x3, y: y3 }
+                }
+            }
+        }
+    }
+
+    pub fn scalar_mul(k: u64, point: Point, a: u64, p: u64) -> Point {
+        if k == 0 { return Point::Infinity; }
+        let mut result = Point::Infinity;
+        let mut base = point;
+        let mut k = k;
+        while k > 0 {
+            if k & 1 == 1 { result = point_add(result, base, a, p); }
+            base = point_add(base, base, a, p);
+            k >>= 1;
+        }
+        result
+    }
+
+    fn mod_pow(mut base: u128, mut exp: u128, m: u128) -> u128 {
+        let mut result = 1u128;
+        base %= m;
+        while exp > 0 {
+            if exp & 1 == 1 { result = result * base % m; }
+            exp >>= 1;
+            base = base * base % m;
+        }
+        result
+    }
+
+    fn mod_sqrt(n: u64, p: u64) -> Option<u64> {
+        if n == 0 { return Some(0); }
+        let pm = p as u128;
+        let nm = n as u128;
+        if mod_pow(nm, (pm - 1) / 2, pm) != 1 { return None; }
+        if p % 4 == 3 { return Some(mod_pow(nm, (pm + 1) / 4, pm) as u64); }
+        let mut q = pm - 1;
+        let mut s = 0u32;
+        while q % 2 == 0 { q /= 2; s += 1; }
+        let mut z = 2u128;
+        while mod_pow(z, (pm - 1) / 2, pm) != pm - 1 { z += 1; }
+        let mut m_val = s;
+        let mut c = mod_pow(z, q, pm);
+        let mut t = mod_pow(nm, q, pm);
+        let mut r = mod_pow(nm, (q + 1) / 2, pm);
+        loop {
+            if t == 1 { return Some(r as u64); }
+            let mut i = 0u32;
+            let mut tmp = t;
+            while tmp != 1 { tmp = tmp * tmp % pm; i += 1; }
+            let b = mod_pow(c, 1u128 << (m_val - i - 1), pm);
+            m_val = i;
+            c = b * b % pm;
+            t = t * c % pm;
+            r = r * b % pm;
+        }
+    }
+
+    pub fn enumerate_curve(a: u64, b: u64, p: u64) -> Vec<Point> {
+        let mut points = vec![Point::Infinity];
+        let pm = p as u128;
+        for x in 0..p {
+            let xm = x as u128;
+            let rhs = ((xm * xm % pm * xm % pm) + (a as u128) * xm % pm + (b as u128)) % pm;
+            if let Some(y) = mod_sqrt(rhs as u64, p) {
+                points.push(Point::Affine { x, y });
+                if y != 0 { points.push(Point::Affine { x, y: p - y }); }
+            }
+        }
+        points
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::curve::*;
+
+    const SCHEMA: &str = "grammar @curve {\n  type = point\n}";
+
+    #[test]
+    fn spectral_db_ingests_8bit_cayley_graph() {
+        let a = 1u64;
+        let b = 1u64;
+        let p = 251u64;
+
+        let points = enumerate_curve(a, b, p);
+        let n = points.len();
+        let gen = points[1]; // first non-infinity point
+
+        // Compute generator order
+        let mut pt = gen;
+        let mut order = 1u64;
+        loop {
+            pt = point_add(pt, gen, a, p);
+            order += 1;
+            if pt == Point::Infinity || order > n as u64 + 1 { break; }
+        }
+        eprintln!("  8-bit: {} points, generator order {}", n, order);
+
+        // Open spectral-db
+        let dir = tempfile::tempdir().unwrap();
+        let db = spectral_db::SpectralDb::open(dir.path(), SCHEMA, 1e-10, 50_000_000).unwrap();
+
+        // Ingest all points as nodes
+        let point_to_idx: std::collections::HashMap<Point, usize> = points
+            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+
+        let mut oids = Vec::with_capacity(n);
+        for (i, pt) in points.iter().enumerate() {
+            let label = match pt {
+                Point::Infinity => "O".to_string(),
+                Point::Affine { x, y } => format!("({},{})", x, y),
+            };
+            let oid = db.insert("point", label.as_bytes()).unwrap();
+            oids.push(oid);
+        }
+        eprintln!("  inserted {} nodes", oids.len());
+
+        // Ingest Cayley graph edges: for each point P, connect P to P+G
+        let mut edge_count = 0;
+        for (i, &pt) in points.iter().enumerate() {
+            let sum = point_add(pt, gen, a, p);
+            if let Some(&j) = point_to_idx.get(&sum) {
+                db.connect(&oids[i], &oids[j]).unwrap();
+                edge_count += 1;
+            }
+        }
+        eprintln!("  connected {} edges", edge_count);
+
+        let (nodes, edges) = db.graph_stats();
+        eprintln!("  spectral-db: {} nodes, {} edges", nodes, edges);
+
+        // Tick until settled
+        let mut ticks = 0;
+        loop {
+            let result = db.scheduler_tick();
+            ticks += 1;
+            match result.convergence {
+                spectral_db::scheduler::Convergence::Settled => {
+                    eprintln!("  settled in {} ticks", ticks);
+                    break;
+                }
+                spectral_db::scheduler::Convergence::FirstTick => {
+                    eprintln!("  tick {}: first", ticks);
+                }
+                spectral_db::scheduler::Convergence::Changed => {
+                    eprintln!("  tick {}: changed", ticks);
+                }
+            }
+            if ticks > 10 { break; }
+        }
+
+        // Compute spectral coordinates
+        db.compute_spectral_coordinates();
+
+        // Test spectral distance: G (private key 1) should be close to 2G (private key 2)
+        // and far from (n/2)G (opposite side of the ring)
+        let g_oid = &oids[point_to_idx[&gen]];
+        let two_g = scalar_mul(2, gen, a, p);
+        let two_g_oid = &oids[point_to_idx[&two_g]];
+        let half_g = scalar_mul(order / 2, gen, a, p);
+        let half_g_oid = &oids[point_to_idx[&half_g]];
+
+        let dist_near = db.spectral_distance(g_oid, two_g_oid);
+        let dist_far = db.spectral_distance(g_oid, half_g_oid);
+
+        eprintln!("  spectral distance G→2G: {:?}", dist_near);
+        eprintln!("  spectral distance G→(n/2)G: {:?}", dist_far);
+
+        if let (Some(near), Some(far)) = (dist_near, dist_far) {
+            eprintln!("  ratio far/near: {:.2}", far / near.max(1e-15));
+            // Near should be smaller than far
+            assert!(near < far, "adjacent keys should be spectrally closer than opposite keys");
+        }
+
+        // Crystallize
+        let crystals = db.crystallize();
+        eprintln!("  crystals: {}", crystals.len());
+
+        let status = db.status();
+        eprintln!("  final: {} nodes, {} edges, {} crystals, {} queries",
+            status.node_count, status.edge_count, status.crystals, status.query_count);
+    }
+}
