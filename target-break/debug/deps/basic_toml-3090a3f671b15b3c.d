@@ -1,0 +1,15 @@
+/Users/alexwolf/dev/projects/mirror-break-crypto/target-break/debug/deps/basic_toml-3090a3f671b15b3c.d: /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/lib.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/de.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/error.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/ser.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/tokens.rs
+
+/Users/alexwolf/dev/projects/mirror-break-crypto/target-break/debug/deps/libbasic_toml-3090a3f671b15b3c.rlib: /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/lib.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/de.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/error.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/ser.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/tokens.rs
+
+/Users/alexwolf/dev/projects/mirror-break-crypto/target-break/debug/deps/libbasic_toml-3090a3f671b15b3c.rmeta: /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/lib.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/de.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/error.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/ser.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/tokens.rs
+
+/Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/lib.rs:
+/Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/de.rs:
+/Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/error.rs:
+/Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/ser.rs:
+/Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-toml-0.1.10/src/tokens.rs:
+
+# env-dep:CARGO_PKG_VERSION_MAJOR=0
+# env-dep:CARGO_PKG_VERSION_MINOR=1
+# env-dep:CARGO_PKG_VERSION_PATCH=10

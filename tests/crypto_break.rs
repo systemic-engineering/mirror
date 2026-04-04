@@ -113,7 +113,9 @@ fn mod_pow(mut base: u128, mut exp: u128, m: u128) -> u128 {
 
 /// Tonelli-Shanks modular square root: returns Some(y) where y² ≡ n (mod p), or None.
 fn mod_sqrt(n: u64, p: u64) -> Option<u64> {
-    if n == 0 { return Some(0); }
+    if n == 0 {
+        return Some(0);
+    }
     let pm = p as u128;
     let nm = n as u128;
 
@@ -149,7 +151,9 @@ fn mod_sqrt(n: u64, p: u64) -> Option<u64> {
     let mut r = mod_pow(nm, (q + 1) / 2, pm);
 
     loop {
-        if t == 1 { return Some(r as u64); }
+        if t == 1 {
+            return Some(r as u64);
+        }
         // Find least i such that t^(2^i) = 1
         let mut i = 0u32;
         let mut tmp = t;
@@ -665,8 +669,8 @@ mod tests {
         let eigensystem = laplacian.eigensystem();
         let eigenvalues = eigensystem.eigenvalues();
 
-        let point_to_idx: std::collections::HashMap<Point, usize> = points
-            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+        let point_to_idx: std::collections::HashMap<Point, usize> =
+            points.iter().enumerate().map(|(i, &p)| (p, i)).collect();
 
         // The first non-zero eigenvalue pair (indices 1 and 2) corresponds to frequency 1.
         // These are the Fiedler pair. Their components at each vertex encode position.
@@ -676,8 +680,12 @@ mod tests {
 
         // Find the Fiedler pair indices
         let fiedler_start = eigenvalues.iter().position(|&v| v > 1e-10).unwrap_or(1);
-        eprintln!("  fiedler pair at indices {} and {}, eigenvalue {:.6}",
-            fiedler_start, fiedler_start + 1, eigenvalues[fiedler_start]);
+        eprintln!(
+            "  fiedler pair at indices {} and {}, eigenvalue {:.6}",
+            fiedler_start,
+            fiedler_start + 1,
+            eigenvalues[fiedler_start]
+        );
 
         // Calibrate: vertex of G (private key = 1) gives the phase step
         let g_idx = point_to_idx[&gen]; // vertex index of generator G
@@ -692,8 +700,14 @@ mod tests {
         let g_phase = g_v2.atan2(g_v1);
         let phase_step = g_phase - o_phase; // phase per unit of private key
 
-        eprintln!("  O phase: {:.6}, G phase: {:.6}, step: {:.6}", o_phase, g_phase, phase_step);
-        eprintln!("  expected step: {:.6}", 2.0 * std::f64::consts::PI / n as f64);
+        eprintln!(
+            "  O phase: {:.6}, G phase: {:.6}, step: {:.6}",
+            o_phase, g_phase, phase_step
+        );
+        eprintln!(
+            "  expected step: {:.6}",
+            2.0 * std::f64::consts::PI / n as f64
+        );
 
         // Recover all private keys
         let mut correct = 0;
@@ -716,21 +730,38 @@ mod tests {
             let pos = delta_norm / phase_step.abs();
             let recovered = pos.round() as u64 % order;
 
-            if recovered == k { correct += 1; }
-            if recovered == k || recovered == order - k { correct_mod += 1; }
+            if recovered == k {
+                correct += 1;
+            }
+            if recovered == k || recovered == order - k {
+                correct_mod += 1;
+            }
         }
 
         let accuracy = correct as f64 / total as f64;
         let accuracy_mod = correct_mod as f64 / total as f64;
-        eprintln!("  spectral DFT: {}/{} exact ({:.1}%)", correct, total, accuracy * 100.0);
-        eprintln!("  spectral DFT: {}/{} mod-symmetric ({:.1}%)", correct_mod, total, accuracy_mod * 100.0);
+        eprintln!(
+            "  spectral DFT: {}/{} exact ({:.1}%)",
+            correct,
+            total,
+            accuracy * 100.0
+        );
+        eprintln!(
+            "  spectral DFT: {}/{} mod-symmetric ({:.1}%)",
+            correct_mod,
+            total,
+            accuracy_mod * 100.0
+        );
 
-        assert!(accuracy_mod > 0.95,
-            "spectral DFT should recover >95% (got {:.1}%)", accuracy_mod * 100.0);
+        assert!(
+            accuracy_mod > 0.95,
+            "spectral DFT should recover >95% (got {:.1}%)",
+            accuracy_mod * 100.0
+        );
     }
 
     #[test]
-    fn generate_16bit_keypairs() {
+    fn generate_16bit_and_test_transfer() {
         // 16-bit curve: y² = x³ + x + 1 (mod 65521)
         // 65521 is the largest 16-bit prime.
         // Expected: ~65521 points (Hasse bound: |N - p - 1| ≤ 2√p ≈ 512)
@@ -742,20 +773,35 @@ mod tests {
 
         // Enumerate points — this is O(p) which is ~65k iterations
         let points = enumerate_curve(a16, b16, p16);
-        eprintln!("  points: {}", points.len());
-        assert!(points.len() > 60000, "16-bit curve should have >60k points");
-        assert!(points.len() < 70000, "16-bit curve should have <70k points");
+        let n = points.len();
+        eprintln!("  points: {}", n);
+        assert!(n > 60000, "16-bit curve should have >60k points");
+        assert!(n < 70000, "16-bit curve should have <70k points");
 
-        // Find generator
-        let (gen, order) = find_generator(&points, a16, p16);
-        eprintln!("  generator: {:?}, order: {}", gen, order);
+        // Use first non-infinity point. Compute order by walking (skip find_generator — too slow).
+        let gen = points[1];
+        let mut pt = gen;
+        let mut order = 1u64;
+        loop {
+            pt = point_add(pt, gen, a16, p16);
+            order += 1;
+            if pt == Point::Infinity || order > n as u64 + 1 {
+                break;
+            }
+        }
+        eprintln!(
+            "  generator: {:?}, order: {} (full: {})",
+            gen,
+            order,
+            order == n as u64
+        );
 
         // Generate 1000 keypairs (don't need all ~65k)
-        let point_to_idx: std::collections::HashMap<Point, usize> = points
-            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+        let point_to_idx: std::collections::HashMap<Point, usize> =
+            points.iter().enumerate().map(|(i, &p)| (p, i)).collect();
 
-        let fixture_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("fixtures/keypairs/16bit");
+        let fixture_dir =
+            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/keypairs/16bit");
         std::fs::create_dir_all(&fixture_dir).unwrap();
 
         let sample_size = 1000u64;
@@ -776,7 +822,11 @@ mod tests {
         );
         std::fs::write(fixture_dir.join("curve.txt"), &params).unwrap();
 
-        eprintln!("  wrote {} keypairs to {}", sample_size, fixture_dir.display());
+        eprintln!(
+            "  wrote {} keypairs to {}",
+            sample_size,
+            fixture_dir.display()
+        );
 
         // The critical question: can we build the Cayley graph at 16-bit?
         // 65k vertices, 65k edges. Laplacian is 65k × 65k = ~34GB dense matrix.
@@ -797,9 +847,10 @@ mod tests {
         // permutation (which maps point indices to group positions) can be
         // recovered from the spectral structure of the CURVE, not the ring.
 
-        eprintln!("  NOTE: dense Laplacian at 16-bit = {}×{} = {:.1}GB — NOT computed",
-            points.len(), points.len(),
-            (points.len() * points.len() * 8) as f64 / 1e9);
-        eprintln!("  analytical eigenvalues available (ring structure confirmed at 8-bit)");
+        let matrix_mb = (n as u64 * n as u64 * 8) as f64 / 1e6;
+        eprintln!(
+            "  dense laplacian would be: {:.0}MB — spectral-db needed",
+            matrix_mb
+        );
     }
 }

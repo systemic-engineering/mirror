@@ -1,0 +1,9 @@
+/Users/alexwolf/dev/projects/mirror-break-crypto/target-break/debug/deps/jobserver-34bbced8e1d6cf04.d: /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.34/src/lib.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.34/src/error.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.34/src/unix.rs
+
+/Users/alexwolf/dev/projects/mirror-break-crypto/target-break/debug/deps/libjobserver-34bbced8e1d6cf04.rlib: /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.34/src/lib.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.34/src/error.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.34/src/unix.rs
+
+/Users/alexwolf/dev/projects/mirror-break-crypto/target-break/debug/deps/libjobserver-34bbced8e1d6cf04.rmeta: /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.34/src/lib.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.34/src/error.rs /Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.34/src/unix.rs
+
+/Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.34/src/lib.rs:
+/Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.34/src/error.rs:
+/Users/alexwolf/dev/projects/mirror-break-crypto/.nix-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.34/src/unix.rs:
