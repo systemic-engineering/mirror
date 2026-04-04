@@ -1,6 +1,6 @@
-//! mirror — fold | prism | traversal | lens | iso — the thing you look into that looks back.
+//! conversation — Typed transformation pipeline language.
 //!
-//! `.conv` files → content-addressed AST → compiled modules → verified domains.
+//! `.conv` files → content-addressed AST → compiled modules → GenServer → execute.
 //!
 //! ## Architecture
 //!
@@ -8,10 +8,9 @@
 //! - **resolve** — Grammar type checking, namespace validation
 //! - **compile** — AST → BEAM Erlang Abstract Form (EAF)
 //! - **kernel** — Content addressing, Oid, Trace, Vector trait hierarchy
-//! - **runtime** — Runtime trait (sync compilation interface)
-//! - **dispatch** — Value, Args, Response, InferenceSchedule
+//! - **runtime** — Async compilation + spawn via ractor
 //! - **artifact** — Bounded storage for compiled modules (Pressure-based eviction)
-//! - **boot** — Multi-layer boot sequence from `boot/` directory
+//! - **boot** — Parallel multi-layer boot sequence from `boot/` directory
 //!
 //! ## Re-exports
 //!
@@ -25,14 +24,13 @@ pub use prism_crate as beam;
 pub mod kernel;
 pub mod abyss;
 pub mod actor;
+pub mod classifier;
 pub mod artifact;
 pub mod ast;
 pub mod boot;
 pub mod bounded;
 pub mod check;
-pub mod classifier;
 pub mod compile;
-pub mod dispatch;
 pub mod domain;
 pub mod emit;
 pub mod ffi;
@@ -70,5 +68,6 @@ pub mod db;
 pub mod model;
 pub mod runtime;
 
-pub use model::Mirror;
+pub use model::Domain;
+pub use runtime::DomainMessage;
 pub use runtime::Runtime;

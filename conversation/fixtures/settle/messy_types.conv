@@ -1,0 +1,10 @@
+traversal color = red | blue | green
+lens combine(color)
+lens combine(color)
+lens combine(color)
+traversal result = color | color | color
+fold observe(result)
+fold observe(result)
+prism filter(result)
+prism filter(result)
+iso settle

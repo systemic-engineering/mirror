@@ -1,0 +1,2 @@
+traversal items = a | b | a | c | b | c
+lens dedup(items)

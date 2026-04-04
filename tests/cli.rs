@@ -4,7 +4,7 @@ use std::io::Write;
 use std::process::{Command, Stdio};
 
 fn conversation_bin() -> Command {
-    Command::new(env!("CARGO_BIN_EXE_conversation"))
+    Command::new(env!("CARGO_BIN_EXE_mirror"))
 }
 
 #[test]

@@ -1,16 +1,16 @@
-//! Boot sequence — sequential compilation by layer.
+//! Boot sequence — parallel compilation by layer.
 //!
 //! Reads `boot/` directory, groups .conv files by number prefix,
-//! compiles each layer sequentially. Barrier between layers.
-//! Same prefix = same layer = no cross-dependencies.
+//! compiles each layer in parallel via ractor. Barrier between layers.
+//! Same prefix = same layer = parallel safe (no cross-dependencies).
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use crate::check;
-use crate::model::Mirror;
+use crate::model::Domain;
 use crate::parse::Parse;
-use crate::runtime::Runtime;
+use crate::runtime::{RactorRuntime, Runtime};
 use crate::Vector;
 
 // ---------------------------------------------------------------------------
@@ -138,26 +138,38 @@ fn compile_source(source: &str) -> Result<check::Verified, String> {
         .find(|c| c.data().is_decl("grammar"))
         .ok_or_else(|| "boot: no grammar block found".to_string())?;
 
-    let domain = Mirror::from_grammar(grammar).map_err(|e| format!("model: {}", e))?;
+    let domain = Domain::from_grammar(grammar).map_err(|e| format!("model: {}", e))?;
     check::verify(domain).map_err(|v| format!("check: {:?}", v))
 }
 
-/// Boot the full sequence: compile each layer sequentially, barrier between layers.
-pub fn boot<R: Runtime>(
-    runtime: &R,
+/// Boot the full sequence: compile each layer, barrier between layers.
+/// Same-layer entries compile concurrently via ractor tasks.
+pub async fn boot(
+    runtime: &RactorRuntime,
     sequence: &BootSequence,
-) -> Result<Vec<prism::Beam<Mirror>>, String> {
+) -> Result<Vec<prism::Beam<Domain>>, String> {
     let mut all_artifacts = Vec::new();
 
     for (layer, entries) in &sequence.layers {
+        let mut verified = Vec::new();
+
+        // Parse + verify all entries in this layer (CPU-bound, fast)
         for entry in entries {
-            let verified = compile_source(&entry.source)
+            let v = compile_source(&entry.source)
                 .map_err(|e| format!("layer {}, {}: {}", layer, entry.path.display(), e))?;
-            let beam = runtime
-                .compile(verified)
-                .map_err(|e| format!("layer {}: runtime: {}", layer, e))?;
-            all_artifacts.push(beam);
+            verified.push(v);
         }
+
+        // Compile through runtime — all entries in this layer in parallel.
+        let futures: Vec<_> = verified.into_iter().map(|v| runtime.compile(v)).collect();
+        let results = futures::future::join_all(futures).await;
+        let mut layer_artifacts = Vec::new();
+        for result in results {
+            let beam = result.map_err(|e| format!("layer {}: runtime: {}", layer, e))?;
+            layer_artifacts.push(beam);
+        }
+
+        all_artifacts.extend(layer_artifacts);
     }
 
     Ok(all_artifacts)
@@ -170,19 +182,6 @@ pub fn boot<R: Runtime>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::runtime::RuntimeError;
-
-    /// A trivial synchronous runtime for testing boot.
-    struct TestRuntime;
-
-    impl Runtime for TestRuntime {
-        type Actor = ();
-        type Error = RuntimeError;
-
-        fn compile(&self, verified: check::Verified) -> Result<prism::Beam<Mirror>, RuntimeError> {
-            Ok(prism::Beam::new(verified.into_mirror()))
-        }
-    }
 
     #[test]
     fn boot_layer_ordering() {
@@ -245,14 +244,14 @@ mod tests {
         assert!(result.is_err());
     }
 
-    #[test]
-    fn boot_sequence_compiles() {
+    #[tokio::test]
+    async fn boot_sequence_compiles() {
         let seq =
             BootSequence::from_dir(&PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot.backup"))
                 .unwrap();
 
-        let runtime = TestRuntime;
-        let artifacts = boot(&runtime, &seq).unwrap();
+        let runtime = RactorRuntime::new();
+        let artifacts = boot(&runtime, &seq).await.unwrap();
 
         // Should have compiled all boot entries
         assert_eq!(artifacts.len(), seq.len());
@@ -261,5 +260,8 @@ mod tests {
         for beam in &artifacts {
             assert!(beam.is_lossless());
         }
+
+        // Artifacts are Domains — no actors to clean up.
+        // Spawning is a separate step.
     }
 }
