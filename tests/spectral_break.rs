@@ -455,19 +455,23 @@ mod tests {
         loop {
             pt = point_add(pt, gen, a, p);
             order += 1;
-            if pt == Point::Infinity || order > n as u64 + 1 { break; }
+            if pt == Point::Infinity || order > n as u64 + 1 {
+                break;
+            }
         }
         eprintln!("  12-bit: {} points, order {}", n, order);
 
-        let point_to_idx: std::collections::HashMap<Point, usize> = points
-            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+        let point_to_idx: std::collections::HashMap<Point, usize> =
+            points.iter().enumerate().map(|(i, &p)| (p, i)).collect();
 
         // Build Cayley graph
         let mut edge_set = std::collections::HashSet::new();
-        let vertices: Vec<String> = (0..n).map(|i| match points[i] {
-            Point::Infinity => "O".to_string(),
-            Point::Affine { x, y } => format!("({},{})", x, y),
-        }).collect();
+        let vertices: Vec<String> = (0..n)
+            .map(|i| match points[i] {
+                Point::Infinity => "O".to_string(),
+                Point::Affine { x, y } => format!("({},{})", x, y),
+            })
+            .collect();
 
         for (i, &pt) in points.iter().enumerate() {
             let sum = point_add(pt, gen, a, p);
@@ -477,7 +481,11 @@ mod tests {
             }
         }
         let edges: Vec<(usize, usize)> = edge_set.into_iter().collect();
-        eprintln!("  cayley: {} vertices, {} edges", vertices.len(), edges.len());
+        eprintln!(
+            "  cayley: {} vertices, {} edges",
+            vertices.len(),
+            edges.len()
+        );
 
         let matrix_mb = (n * n * 8) as f64 / 1e6;
         eprintln!("  laplacian: {:.0}MB", matrix_mb);
@@ -489,7 +497,11 @@ mod tests {
         let eigenvalues = eigensystem.eigenvalues();
 
         let zero_count = eigenvalues.iter().filter(|&&v| v.abs() < 1e-10).count();
-        eprintln!("  eigenvalues: {}, components: {}", eigenvalues.len(), zero_count);
+        eprintln!(
+            "  eigenvalues: {}, components: {}",
+            eigenvalues.len(),
+            zero_count
+        );
 
         // Fiedler pair DFT recovery — same method as 8-bit
         let fiedler_start = eigenvalues.iter().position(|&v| v > 1e-10).unwrap_or(1);
@@ -505,8 +517,11 @@ mod tests {
         let g_phase = g_v2.atan2(g_v1);
         let phase_step = g_phase - o_phase;
 
-        eprintln!("  phase step: {:.8}, expected: {:.8}",
-            phase_step, 2.0 * std::f64::consts::PI / order as f64);
+        eprintln!(
+            "  phase step: {:.8}, expected: {:.8}",
+            phase_step,
+            2.0 * std::f64::consts::PI / order as f64
+        );
 
         // Test on first 500 keypairs
         let sample = 500u64.min(order - 1);
@@ -520,29 +535,136 @@ mod tests {
             let v1 = eigensystem.eigenvector_component(idx, fiedler_start);
             let v2 = eigensystem.eigenvector_component(idx, fiedler_start + 1);
             let phase = v2.atan2(v1);
-            let delta = (phase - o_phase + 10.0 * std::f64::consts::PI)
-                % (2.0 * std::f64::consts::PI);
+            let delta =
+                (phase - o_phase + 10.0 * std::f64::consts::PI) % (2.0 * std::f64::consts::PI);
             let pos = delta / phase_step.abs();
             let recovered = pos.round() as u64 % order;
 
-            if recovered == k { correct += 1; }
-            if recovered == k || recovered == order - k { correct_mod += 1; }
+            if recovered == k {
+                correct += 1;
+            }
+            if recovered == k || recovered == order - k {
+                correct_mod += 1;
+            }
         }
 
-        eprintln!("  12-bit DFT: {}/{} exact ({:.1}%)",
-            correct, sample, correct as f64 / sample as f64 * 100.0);
-        eprintln!("  12-bit DFT: {}/{} mod-symmetric ({:.1}%)",
-            correct_mod, sample, correct_mod as f64 / sample as f64 * 100.0);
+        eprintln!(
+            "  12-bit DFT: {}/{} exact ({:.1}%)",
+            correct,
+            sample,
+            correct as f64 / sample as f64 * 100.0
+        );
+        eprintln!(
+            "  12-bit DFT: {}/{} mod-symmetric ({:.1}%)",
+            correct_mod,
+            sample,
+            correct_mod as f64 / sample as f64 * 100.0
+        );
 
         // Compare theoretical eigenvalues
         let n_ring = order as usize; // the subgroup ring size
         let theoretical_fiedler = 2.0 - 2.0 * (2.0 * std::f64::consts::PI / n_ring as f64).cos();
-        eprintln!("  theoretical fiedler: {:.8}, actual: {:.8}, diff: {:.2e}",
-            theoretical_fiedler, eigenvalues[fiedler_start],
-            (theoretical_fiedler - eigenvalues[fiedler_start]).abs());
+        eprintln!(
+            "  theoretical fiedler: {:.8}, actual: {:.8}, diff: {:.2e}",
+            theoretical_fiedler,
+            eigenvalues[fiedler_start],
+            (theoretical_fiedler - eigenvalues[fiedler_start]).abs()
+        );
 
-        assert!(correct_mod as f64 / sample as f64 > 0.90,
+        assert!(
+            correct_mod as f64 / sample as f64 > 0.90,
             "12-bit DFT should recover >90% (got {:.1}%)",
-            correct_mod as f64 / sample as f64 * 100.0);
+            correct_mod as f64 / sample as f64 * 100.0
+        );
+    }
+
+    #[test]
+    fn sparse_lanczos_12bit_dft_recovery() {
+        // The SPARSE test: same as full_laplacian_12bit but using
+        // SparseLaplacian + Lanczos. O(n) memory instead of O(n²).
+        let a = 1u64;
+        let b = 1u64;
+        let p = 4093u64;
+
+        let points = enumerate_curve(a, b, p);
+        let n = points.len();
+        let gen = points[1];
+
+        let mut pt = gen;
+        let mut order = 1u64;
+        loop {
+            pt = point_add(pt, gen, a, p);
+            order += 1;
+            if pt == Point::Infinity || order > n as u64 + 1 { break; }
+        }
+        eprintln!("  12-bit sparse: {} points, order {}", n, order);
+
+        let point_to_idx: std::collections::HashMap<Point, usize> = points
+            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+
+        // Build edges
+        let vertices: Vec<String> = (0..n).map(|i| match points[i] {
+            Point::Infinity => "O".to_string(),
+            Point::Affine { x, y } => format!("({},{})", x, y),
+        }).collect();
+
+        let mut edge_set = std::collections::HashSet::new();
+        for (i, &pt) in points.iter().enumerate() {
+            let sum = point_add(pt, gen, a, p);
+            if let Some(&j) = point_to_idx.get(&sum) {
+                let edge = if i < j { (i, j) } else { (j, i) };
+                edge_set.insert(edge);
+            }
+        }
+        let edges: Vec<(usize, usize)> = edge_set.into_iter().collect();
+
+        // Sparse Lanczos — O(n) memory
+        eprintln!("  building SparseLaplacian...");
+        let sparse = coincidence::spectral::SparseLaplacian::from_edges(&vertices, &edges);
+
+        let num_comp = sparse.components().iter().copied().max().map_or(0, |m| m + 1);
+        eprintln!("  components: {}", num_comp);
+
+        // Use component-aware Fiedler pair: decompose within the orbit of vertex 0
+        eprintln!("  computing component Fiedler pair via Lanczos...");
+        let (fiedler_val, v1, v2) = sparse.component_fiedler_pair(0)
+            .expect("should find Fiedler pair in component of vertex 0");
+
+        let expected = 2.0 - 2.0 * (2.0 * std::f64::consts::PI / order as f64).cos();
+        eprintln!("  fiedler: {:.8} (expected: {:.8}, diff: {:.2e})",
+            fiedler_val, expected, (fiedler_val - expected).abs());
+
+        // Phase recovery using Lanczos Fiedler pair
+        let o_phase = v2[0].atan2(v1[0]); // vertex 0 = Infinity
+        let g_idx = point_to_idx[&gen];
+        let g_phase = v2[g_idx].atan2(v1[g_idx]);
+        let phase_step = g_phase - o_phase;
+
+        eprintln!("  phase step: {:.8}", phase_step);
+
+        let sample = 500u64.min(order - 1);
+        let mut correct_mod = 0u64;
+
+        for k in 1..=sample {
+            let public = scalar_mul(k, gen, a, p);
+            let idx = point_to_idx[&public];
+            let phase = v2[idx].atan2(v1[idx]);
+            let delta = (phase - o_phase + 10.0 * std::f64::consts::PI)
+                % (2.0 * std::f64::consts::PI);
+            let pos = delta / phase_step.abs();
+            let recovered = pos.round() as u64 % order;
+            if recovered == k || recovered == order - k { correct_mod += 1; }
+        }
+
+        eprintln!("  sparse 12-bit DFT: {}/{} mod-symmetric ({:.1}%)",
+            correct_mod, sample, correct_mod as f64 / sample as f64 * 100.0);
+
+        // Memory comparison
+        let dense_bytes = n * n * 8;
+        let sparse_bytes = n * 2 * 16 + n * 2 * 8; // adj list + fiedler pair
+        eprintln!("  memory: dense={}MB, sparse={}KB, ratio={:.0}x",
+            dense_bytes / 1_000_000,
+            sparse_bytes / 1000,
+            dense_bytes as f64 / sparse_bytes as f64);
     }
 }
