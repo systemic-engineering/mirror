@@ -97,14 +97,87 @@ fn scalar_mul(k: u64, point: Point, a: u64, p: u64) -> Point {
     result
 }
 
-/// Enumerate all points on y² = x³ + ax + b (mod p).
+/// Modular exponentiation: base^exp mod m.
+fn mod_pow(mut base: u128, mut exp: u128, m: u128) -> u128 {
+    let mut result = 1u128;
+    base %= m;
+    while exp > 0 {
+        if exp & 1 == 1 {
+            result = result * base % m;
+        }
+        exp >>= 1;
+        base = base * base % m;
+    }
+    result
+}
+
+/// Tonelli-Shanks modular square root: returns Some(y) where y² ≡ n (mod p), or None.
+fn mod_sqrt(n: u64, p: u64) -> Option<u64> {
+    if n == 0 { return Some(0); }
+    let pm = p as u128;
+    let nm = n as u128;
+
+    // Check if n is a quadratic residue: n^((p-1)/2) ≡ 1 (mod p)
+    if mod_pow(nm, (pm - 1) / 2, pm) != 1 {
+        return None;
+    }
+
+    // Simple case: p ≡ 3 (mod 4) → sqrt = n^((p+1)/4)
+    if p % 4 == 3 {
+        let r = mod_pow(nm, (pm + 1) / 4, pm);
+        return Some(r as u64);
+    }
+
+    // Tonelli-Shanks for general p
+    // Factor p-1 = q * 2^s
+    let mut q = pm - 1;
+    let mut s = 0u32;
+    while q % 2 == 0 {
+        q /= 2;
+        s += 1;
+    }
+
+    // Find a non-residue z
+    let mut z = 2u128;
+    while mod_pow(z, (pm - 1) / 2, pm) != pm - 1 {
+        z += 1;
+    }
+
+    let mut m_val = s;
+    let mut c = mod_pow(z, q, pm);
+    let mut t = mod_pow(nm, q, pm);
+    let mut r = mod_pow(nm, (q + 1) / 2, pm);
+
+    loop {
+        if t == 1 { return Some(r as u64); }
+        // Find least i such that t^(2^i) = 1
+        let mut i = 0u32;
+        let mut tmp = t;
+        while tmp != 1 {
+            tmp = tmp * tmp % pm;
+            i += 1;
+        }
+        let b = mod_pow(c, 1u128 << (m_val - i - 1), pm);
+        m_val = i;
+        c = b * b % pm;
+        t = t * c % pm;
+        r = r * b % pm;
+    }
+}
+
+/// Enumerate all points on y² = x³ + ax + b (mod p). O(p) via Tonelli-Shanks.
 fn enumerate_curve(a: u64, b: u64, p: u64) -> Vec<Point> {
     let mut points = vec![Point::Infinity];
+    let pm = p as u128;
     for x in 0..p {
-        let rhs = (x * x % p * x % p + a * x % p + b) % p;
-        for y in 0..p {
-            if y * y % p == rhs {
-                points.push(Point::Affine { x, y });
+        let xm = x as u128;
+        let rhs = ((xm * xm % pm * xm % pm) + (a as u128) * xm % pm + (b as u128)) % pm;
+        let rhs = rhs as u64;
+        if let Some(y) = mod_sqrt(rhs, p) {
+            points.push(Point::Affine { x, y });
+            if y != 0 {
+                let neg_y = p - y;
+                points.push(Point::Affine { x, y: neg_y });
             }
         }
     }
@@ -459,12 +532,15 @@ mod tests {
         let eigensystem = laplacian.eigensystem();
         let eigenvalues = eigensystem.eigenvalues();
 
-        eprintln!("  eigensystem: {} eigenvalues, dim {}",
-            eigenvalues.len(), eigensystem.dimension());
+        eprintln!(
+            "  eigensystem: {} eigenvalues, dim {}",
+            eigenvalues.len(),
+            eigensystem.dimension()
+        );
 
         // Build the permutation: vertex_index → private_key
-        let point_to_idx: std::collections::HashMap<Point, usize> = points
-            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+        let point_to_idx: std::collections::HashMap<Point, usize> =
+            points.iter().enumerate().map(|(i, &p)| (p, i)).collect();
 
         // idx_to_private[vertex_index] = private_key (or 0 for Infinity)
         let mut idx_to_private = vec![0u64; n];
@@ -543,10 +619,187 @@ mod tests {
 
         let accuracy = correct as f64 / total as f64;
         let accuracy_mod = correct_mod as f64 / total as f64;
-        eprintln!("  DFT recovery: {}/{} exact ({:.1}%)", correct, total, accuracy * 100.0);
-        eprintln!("  DFT recovery: {}/{} mod-symmetric ({:.1}%)", correct_mod, total, accuracy_mod * 100.0);
+        eprintln!(
+            "  DFT recovery: {}/{} exact ({:.1}%)",
+            correct,
+            total,
+            accuracy * 100.0
+        );
+        eprintln!(
+            "  DFT recovery: {}/{} mod-symmetric ({:.1}%)",
+            correct_mod,
+            total,
+            accuracy_mod * 100.0
+        );
 
         // The ring DFT should give near-perfect recovery (mod sign)
-        assert!(accuracy_mod > 0.95, "DFT should recover >95% of private keys (got {:.1}%)", accuracy_mod * 100.0);
+        assert!(
+            accuracy_mod > 0.95,
+            "DFT should recover >95% of private keys (got {:.1}%)",
+            accuracy_mod * 100.0
+        );
+    }
+
+    #[test]
+    fn spectral_dft_recovers_private_key() {
+        // The REAL spectral test: recover the private key using ONLY
+        // the eigenvector structure, not the permutation walk.
+        //
+        // For a ring of size n, the Laplacian eigenvectors are:
+        //   v_0 = (1/√n, 1/√n, ..., 1/√n)  (constant, eigenvalue 0)
+        //   v_{2k-1}[j] = √(2/n) · cos(2π·k·π(j)/n)  (eigenvalue 2-2cos(2πk/n))
+        //   v_{2k}[j]   = √(2/n) · sin(2π·k·π(j)/n)
+        //
+        // where π(j) is the POSITION of vertex j in the ring (= private key for j).
+        //
+        // So: atan2(v_{2}[j], v_{1}[j]) = 2π·private_key/n
+        // But the eigenvectors are sorted by eigenvalue, and degenerate pairs
+        // can swap cos/sin. We need to identify the correct pair.
+
+        let points = enumerate_curve(CURVE_A, CURVE_B, CURVE_P);
+        let n = points.len();
+        let (gen, order) = find_generator(&points, CURVE_A, CURVE_P);
+        let (vertices, edges) = cayley_graph(&points, gen, CURVE_A, CURVE_P);
+
+        let laplacian = coincidence::spectral::Laplacian::from_adjacency(&vertices, &edges);
+        let eigensystem = laplacian.eigensystem();
+        let eigenvalues = eigensystem.eigenvalues();
+
+        let point_to_idx: std::collections::HashMap<Point, usize> = points
+            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+
+        // The first non-zero eigenvalue pair (indices 1 and 2) corresponds to frequency 1.
+        // These are the Fiedler pair. Their components at each vertex encode position.
+        //
+        // Strategy: use vertex 0 (Infinity, private key = 0) and vertex of G (private key = 1)
+        // as calibration points. Then recover all other keys from the phase.
+
+        // Find the Fiedler pair indices
+        let fiedler_start = eigenvalues.iter().position(|&v| v > 1e-10).unwrap_or(1);
+        eprintln!("  fiedler pair at indices {} and {}, eigenvalue {:.6}",
+            fiedler_start, fiedler_start + 1, eigenvalues[fiedler_start]);
+
+        // Calibrate: vertex of G (private key = 1) gives the phase step
+        let g_idx = point_to_idx[&gen]; // vertex index of generator G
+        let o_idx = 0usize; // vertex index of Infinity (private key 0)
+
+        let o_v1 = eigensystem.eigenvector_component(o_idx, fiedler_start);
+        let o_v2 = eigensystem.eigenvector_component(o_idx, fiedler_start + 1);
+        let g_v1 = eigensystem.eigenvector_component(g_idx, fiedler_start);
+        let g_v2 = eigensystem.eigenvector_component(g_idx, fiedler_start + 1);
+
+        let o_phase = o_v2.atan2(o_v1);
+        let g_phase = g_v2.atan2(g_v1);
+        let phase_step = g_phase - o_phase; // phase per unit of private key
+
+        eprintln!("  O phase: {:.6}, G phase: {:.6}, step: {:.6}", o_phase, g_phase, phase_step);
+        eprintln!("  expected step: {:.6}", 2.0 * std::f64::consts::PI / n as f64);
+
+        // Recover all private keys
+        let mut correct = 0;
+        let mut correct_mod = 0;
+        let total = (order - 1) as usize;
+
+        for k in 1..order {
+            let public = scalar_mul(k, gen, CURVE_A, CURVE_P);
+            let idx = point_to_idx[&public];
+
+            let v1 = eigensystem.eigenvector_component(idx, fiedler_start);
+            let v2 = eigensystem.eigenvector_component(idx, fiedler_start + 1);
+
+            let phase = v2.atan2(v1);
+            // Recover position from phase relative to O
+            let delta = phase - o_phase;
+            // Normalize to [0, 2π)
+            let delta_norm = (delta + 10.0 * std::f64::consts::PI) % (2.0 * std::f64::consts::PI);
+            // Convert to position
+            let pos = delta_norm / phase_step.abs();
+            let recovered = pos.round() as u64 % order;
+
+            if recovered == k { correct += 1; }
+            if recovered == k || recovered == order - k { correct_mod += 1; }
+        }
+
+        let accuracy = correct as f64 / total as f64;
+        let accuracy_mod = correct_mod as f64 / total as f64;
+        eprintln!("  spectral DFT: {}/{} exact ({:.1}%)", correct, total, accuracy * 100.0);
+        eprintln!("  spectral DFT: {}/{} mod-symmetric ({:.1}%)", correct_mod, total, accuracy_mod * 100.0);
+
+        assert!(accuracy_mod > 0.95,
+            "spectral DFT should recover >95% (got {:.1}%)", accuracy_mod * 100.0);
+    }
+
+    #[test]
+    fn generate_16bit_keypairs() {
+        // 16-bit curve: y² = x³ + x + 1 (mod 65521)
+        // 65521 is the largest 16-bit prime.
+        // Expected: ~65521 points (Hasse bound: |N - p - 1| ≤ 2√p ≈ 512)
+        let p16: u64 = 65521;
+        let a16: u64 = 1;
+        let b16: u64 = 1;
+
+        eprintln!("  16-bit curve y² = x³ + {}x + {} (mod {})", a16, b16, p16);
+
+        // Enumerate points — this is O(p) which is ~65k iterations
+        let points = enumerate_curve(a16, b16, p16);
+        eprintln!("  points: {}", points.len());
+        assert!(points.len() > 60000, "16-bit curve should have >60k points");
+        assert!(points.len() < 70000, "16-bit curve should have <70k points");
+
+        // Find generator
+        let (gen, order) = find_generator(&points, a16, p16);
+        eprintln!("  generator: {:?}, order: {}", gen, order);
+
+        // Generate 1000 keypairs (don't need all ~65k)
+        let point_to_idx: std::collections::HashMap<Point, usize> = points
+            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+
+        let fixture_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("fixtures/keypairs/16bit");
+        std::fs::create_dir_all(&fixture_dir).unwrap();
+
+        let sample_size = 1000u64;
+        let mut csv = String::from("private_key,public_x,public_y,vertex_index\n");
+        for k in 1..=sample_size {
+            let public = scalar_mul(k, gen, a16, p16);
+            let idx = point_to_idx[&public];
+            match public {
+                Point::Affine { x, y } => csv.push_str(&format!("{},{},{},{}\n", k, x, y, idx)),
+                Point::Infinity => csv.push_str(&format!("{},inf,inf,0\n", k)),
+            }
+        }
+        std::fs::write(fixture_dir.join("keypairs.csv"), &csv).unwrap();
+
+        let params = format!(
+            "# 16-bit curve: y² = x³ + {}x + {} (mod {})\n# {} points, generator {:?}, order {}\n# sample: {} keypairs\n",
+            a16, b16, p16, points.len(), gen, order, sample_size
+        );
+        std::fs::write(fixture_dir.join("curve.txt"), &params).unwrap();
+
+        eprintln!("  wrote {} keypairs to {}", sample_size, fixture_dir.display());
+
+        // The critical question: can we build the Cayley graph at 16-bit?
+        // 65k vertices, 65k edges. Laplacian is 65k × 65k = ~34GB dense matrix.
+        // NOT feasible with dense Laplacian. Need sparse methods.
+        //
+        // But the STRUCTURE test doesn't need the full Laplacian.
+        // The 8-bit crystal showed the eigenvalues = DFT of the ring.
+        // At 16-bit, the eigenvalues are KNOWN ANALYTICALLY:
+        //   λ_k = 2 - 2cos(2πk/n) for k = 0..n-1
+        //
+        // The eigenvectors are also known: DFT basis vectors.
+        // We don't need to COMPUTE them — we can USE the analytical form.
+        //
+        // Spectral recovery at 16-bit uses the SAME formula as 8-bit:
+        //   phase = atan2(sin(2π·k/n), cos(2π·k/n)) for position k
+        //
+        // This is trivially the DFT. The question is whether the CAYLEY GRAPH
+        // permutation (which maps point indices to group positions) can be
+        // recovered from the spectral structure of the CURVE, not the ring.
+
+        eprintln!("  NOTE: dense Laplacian at 16-bit = {}×{} = {:.1}GB — NOT computed",
+            points.len(), points.len(),
+            (points.len() * points.len() * 8) as f64 / 1e9);
+        eprintln!("  analytical eigenvalues available (ring structure confirmed at 8-bit)");
     }
 }
