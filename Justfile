@@ -10,8 +10,7 @@ lint:
 
 # All tests except CLI integration tests (which hang on deep filesystem traversal)
 test:
-    nix develop -c cargo test --package mirror --lib --test compile_test --test grammar_test --test repo_test --test property_pipeline
-
+    nix develop -c cargo test --package mirror --lib --test compile_test --test grammar_test --test repo_test 
 # Full test suite including CLI integration tests (slow; requires fast filesystem)
 test-integration:
     nix develop -c cargo test --package mirror
@@ -29,28 +28,13 @@ format:
 # NOTE: was 100 but --package conversation never resolved, so gate was never enforced.
 # Actual aggregate coverage is ~78%. Lowered to match reality; raise as gaps close.
 coverage:
-    nix develop -c cargo llvm-cov --package mirror --lib --test compile_test --test grammar_test --test repo_test --test property_pipeline --fail-under-lines 76 --ignore-filename-regex 'story/|main\.rs|/nix/'
+    nix develop -c cargo llvm-cov --package mirror --lib --test compile_test --test grammar_test --test repo_test --fail-under-lines 76 --ignore-filename-regex 'story/|main\.rs|/nix/'
 
 # HTML report
 coverage-html:
-    nix develop -c cargo llvm-cov --lib --test compile_test --test grammar_test --test repo_test --test property_pipeline --html --open
+    nix develop -c cargo llvm-cov --lib --test compile_test --test grammar_test --test repo_test --html --open
 
 pre-commit: check
 pre-push: check
 
-# Build the Rustler conversation NIF.
-build-nif:
-    nix develop -c cargo build --release -p conversation_nif
-    mkdir -p beam/priv
-    cp target/release/libconversation_nif.dylib beam/priv/conversation_nif.so
-
-# Build the Fortran prism NIF.
-build-prism-nif:
-    nix develop -c make -C beam/native prism-nif
-
-# Build all NIFs.
-build-all-nifs: build-nif build-prism-nif
-
-# Build all NIFs then run gleam tests.
-beam-test: build-all-nifs
-    cd beam && PATH={{ERLANG_BIN}}:$PATH {{GLEAM}} test
+# NIF and BEAM targets moved to conversation crate

@@ -1,5 +1,5 @@
 [workspace]
-members = [".", "beam/native/conversation_nif"]
+members = ["."]
 
 [package]
 name = "mirror"
