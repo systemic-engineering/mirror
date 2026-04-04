@@ -595,18 +595,22 @@ mod tests {
         loop {
             pt = point_add(pt, gen, a, p);
             order += 1;
-            if pt == Point::Infinity || order > n as u64 + 1 { break; }
+            if pt == Point::Infinity || order > n as u64 + 1 {
+                break;
+            }
         }
         eprintln!("  12-bit sparse: {} points, order {}", n, order);
 
-        let point_to_idx: std::collections::HashMap<Point, usize> = points
-            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+        let point_to_idx: std::collections::HashMap<Point, usize> =
+            points.iter().enumerate().map(|(i, &p)| (p, i)).collect();
 
         // Build edges
-        let vertices: Vec<String> = (0..n).map(|i| match points[i] {
-            Point::Infinity => "O".to_string(),
-            Point::Affine { x, y } => format!("({},{})", x, y),
-        }).collect();
+        let vertices: Vec<String> = (0..n)
+            .map(|i| match points[i] {
+                Point::Infinity => "O".to_string(),
+                Point::Affine { x, y } => format!("({},{})", x, y),
+            })
+            .collect();
 
         let mut edge_set = std::collections::HashSet::new();
         for (i, &pt) in points.iter().enumerate() {
@@ -622,17 +626,27 @@ mod tests {
         eprintln!("  building SparseLaplacian...");
         let sparse = coincidence::spectral::SparseLaplacian::from_edges(&vertices, &edges);
 
-        let num_comp = sparse.components().iter().copied().max().map_or(0, |m| m + 1);
+        let num_comp = sparse
+            .components()
+            .iter()
+            .copied()
+            .max()
+            .map_or(0, |m| m + 1);
         eprintln!("  components: {}", num_comp);
 
         // Use component-aware Fiedler pair: decompose within the orbit of vertex 0
         eprintln!("  computing component Fiedler pair via Lanczos...");
-        let (fiedler_val, v1, v2) = sparse.component_fiedler_pair(0)
+        let (fiedler_val, v1, v2) = sparse
+            .component_fiedler_pair(0)
             .expect("should find Fiedler pair in component of vertex 0");
 
         let expected = 2.0 - 2.0 * (2.0 * std::f64::consts::PI / order as f64).cos();
-        eprintln!("  fiedler: {:.8} (expected: {:.8}, diff: {:.2e})",
-            fiedler_val, expected, (fiedler_val - expected).abs());
+        eprintln!(
+            "  fiedler: {:.8} (expected: {:.8}, diff: {:.2e})",
+            fiedler_val,
+            expected,
+            (fiedler_val - expected).abs()
+        );
 
         // Phase recovery using Lanczos Fiedler pair
         let o_phase = v2[0].atan2(v1[0]); // vertex 0 = Infinity
@@ -649,22 +663,30 @@ mod tests {
             let public = scalar_mul(k, gen, a, p);
             let idx = point_to_idx[&public];
             let phase = v2[idx].atan2(v1[idx]);
-            let delta = (phase - o_phase + 10.0 * std::f64::consts::PI)
-                % (2.0 * std::f64::consts::PI);
+            let delta =
+                (phase - o_phase + 10.0 * std::f64::consts::PI) % (2.0 * std::f64::consts::PI);
             let pos = delta / phase_step.abs();
             let recovered = pos.round() as u64 % order;
-            if recovered == k || recovered == order - k { correct_mod += 1; }
+            if recovered == k || recovered == order - k {
+                correct_mod += 1;
+            }
         }
 
-        eprintln!("  sparse 12-bit DFT: {}/{} mod-symmetric ({:.1}%)",
-            correct_mod, sample, correct_mod as f64 / sample as f64 * 100.0);
+        eprintln!(
+            "  sparse 12-bit DFT: {}/{} mod-symmetric ({:.1}%)",
+            correct_mod,
+            sample,
+            correct_mod as f64 / sample as f64 * 100.0
+        );
 
         // Memory comparison
         let dense_bytes = n * n * 8;
         let sparse_bytes = n * 2 * 16 + n * 2 * 8; // adj list + fiedler pair
-        eprintln!("  memory: dense={}MB, sparse={}KB, ratio={:.0}x",
+        eprintln!(
+            "  memory: dense={}MB, sparse={}KB, ratio={:.0}x",
             dense_bytes / 1_000_000,
             sparse_bytes / 1000,
-            dense_bytes as f64 / sparse_bytes as f64);
+            dense_bytes as f64 / sparse_bytes as f64
+        );
     }
 }
