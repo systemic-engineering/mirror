@@ -133,11 +133,11 @@ mod tests {
 
     /// Behavioral fingerprint for a candidate private key.
     struct Fingerprint {
-        nonce_spread: f64,         // Feature 1: variance of |x(k_i*G) - r_i|
-        spectral_coherence: f64,   // Feature 2: DFT power concentration
-        cross_correlation: f64,    // Feature 3: pairwise product structure
-        x_projection_peak: f64,    // Feature 4: circular cross-correlation peak
-        cluster_spread: f64,       // Feature 5: group-theoretic clustering
+        nonce_spread: f64,       // Feature 1: variance of |x(k_i*G) - r_i|
+        spectral_coherence: f64, // Feature 2: DFT power concentration
+        cross_correlation: f64,  // Feature 3: pairwise product structure
+        x_projection_peak: f64,  // Feature 4: circular cross-correlation peak
+        cluster_spread: f64,     // Feature 5: group-theoretic clustering
     }
 
     /// Generate deterministic ECDSA signatures.
@@ -168,8 +168,7 @@ mod tests {
                 Some(ki) => ki,
                 None => continue,
             };
-            let s = (k_inv as u128 * ((h as u128 + r as u128 * d as u128) % n as u128))
-                % n as u128;
+            let s = (k_inv as u128 * ((h as u128 + r as u128 * d as u128) % n as u128)) % n as u128;
             let s = s as u64;
             if s == 0 {
                 continue;
@@ -184,9 +183,9 @@ mod tests {
         sigs.iter()
             .map(|sig| {
                 let s_inv = mod_inv(sig.s, n).unwrap_or(0);
-                let k_c =
-                    (s_inv as u128 * ((sig.h as u128 + sig.r as u128 * d_c as u128) % n as u128))
-                        % n as u128;
+                let k_c = (s_inv as u128
+                    * ((sig.h as u128 + sig.r as u128 * d_c as u128) % n as u128))
+                    % n as u128;
                 k_c as u64
             })
             .collect()
@@ -226,8 +225,8 @@ mod tests {
             .collect();
 
         let mean = residuals.iter().sum::<f64>() / residuals.len() as f64;
-        let variance = residuals.iter().map(|r| (r - mean).powi(2)).sum::<f64>()
-            / residuals.len() as f64;
+        let variance =
+            residuals.iter().map(|r| (r - mean).powi(2)).sum::<f64>() / residuals.len() as f64;
         variance
     }
 
@@ -253,10 +252,7 @@ mod tests {
 
         // Spectral coherence: ratio of max magnitude to total magnitude
         let total: f64 = magnitudes.iter().sum();
-        let max_mag = magnitudes
-            .iter()
-            .cloned()
-            .fold(0.0f64, |a, b| a.max(b));
+        let max_mag = magnitudes.iter().cloned().fold(0.0f64, |a, b| a.max(b));
         if total > 0.0 {
             max_mag / total
         } else {
@@ -451,7 +447,10 @@ mod tests {
                 Point::Infinity => 0,
             };
             if rx != sig.r {
-                eprintln!("  WARNING: sig {} mismatch: x(k*G)%n={} vs r={}", i, rx, sig.r);
+                eprintln!(
+                    "  WARNING: sig {} mismatch: x(k*G)%n={} vs r={}",
+                    i, rx, sig.r
+                );
                 all_match = false;
             }
         }
@@ -510,8 +509,7 @@ mod tests {
             let true_val = f(fp_true);
             let vals: Vec<f64> = others.iter().map(|fp| f(fp)).collect();
             let mean = vals.iter().sum::<f64>() / vals.len() as f64;
-            let variance =
-                vals.iter().map(|v| (v - mean).powi(2)).sum::<f64>() / vals.len() as f64;
+            let variance = vals.iter().map(|v| (v - mean).powi(2)).sum::<f64>() / vals.len() as f64;
             let std = variance.sqrt();
             let z_score = if std > 0.0 {
                 (true_val - mean) / std
@@ -554,8 +552,8 @@ mod tests {
         // ============================================================
         eprintln!("\n--- Step 3: Neighborhood Analysis (d_true +/- 10) ---");
 
-        let neighborhood: Vec<u64> = (d_true.saturating_sub(10)..=std::cmp::min(d_true + 10, n - 1))
-            .collect();
+        let neighborhood: Vec<u64> =
+            (d_true.saturating_sub(10)..=std::cmp::min(d_true + 10, n - 1)).collect();
         let far_samples: Vec<u64> = {
             let mut samples = Vec::new();
             // Pick 20 candidates far from d_true
@@ -588,10 +586,7 @@ mod tests {
                 .map(|v| (v - near_mean).powi(2))
                 .sum::<f64>()
                 / near_vals.len().max(1) as f64;
-            let far_var = far_vals
-                .iter()
-                .map(|v| (v - far_mean).powi(2))
-                .sum::<f64>()
+            let far_var = far_vals.iter().map(|v| (v - far_mean).powi(2)).sum::<f64>()
                 / far_vals.len().max(1) as f64;
 
             let pooled_std = ((near_var + far_var) / 2.0).sqrt();
@@ -660,8 +655,7 @@ mod tests {
                     continue;
                 }
 
-                let om_mean =
-                    other_means.iter().sum::<f64>() / other_means.len() as f64;
+                let om_mean = other_means.iter().sum::<f64>() / other_means.len() as f64;
                 let om_var = other_means
                     .iter()
                     .map(|v| (v - om_mean).powi(2))
@@ -781,7 +775,10 @@ mod tests {
             + 1;
 
         eprintln!("  Ranking by ALL-feature anomaly (includes verification, non-circular):");
-        eprintln!("  d_true = {} rank: {} out of {}", d_true, anomaly_rank_all, n);
+        eprintln!(
+            "  d_true = {} rank: {} out of {}",
+            d_true, anomaly_rank_all, n
+        );
         eprintln!("  Top 10:");
         for (rank, (d_c, score)) in anomaly_scores_all.iter().take(10).enumerate() {
             let marker = if *d_c == d_true { " <-- d_true" } else { "" };
@@ -819,7 +816,10 @@ mod tests {
             + 1;
 
         eprintln!("\n  Ranking by GENUINE-feature anomaly (no scalar_mul, non-circular):");
-        eprintln!("  d_true = {} rank: {} out of {}", d_true, anomaly_rank_genuine, n);
+        eprintln!(
+            "  d_true = {} rank: {} out of {}",
+            d_true, anomaly_rank_genuine, n
+        );
         eprintln!("  Top 10:");
         for (rank, (d_c, score)) in anomaly_scores_genuine.iter().take(10).enumerate() {
             let marker = if *d_c == d_true { " <-- d_true" } else { "" };
@@ -850,10 +850,7 @@ mod tests {
             + 1;
 
         eprintln!("\n  Ranking by nonce_spread alone (lower = better):");
-        eprintln!(
-            "  d_true = {} rank: {} out of {}",
-            d_true, spread_rank, n
-        );
+        eprintln!("  d_true = {} rank: {} out of {}", d_true, spread_rank, n);
         eprintln!("  Top 10:");
         for (rank, (d_c, spread)) in spread_ranking.iter().take(10).enumerate() {
             let marker = if *d_c == d_true { " <-- d_true" } else { "" };
@@ -948,11 +945,19 @@ mod tests {
         );
         eprintln!(
             "  Anomaly ranking signal (top 10%): {}",
-            if has_anomaly_ranking_signal { "YES" } else { "NO" }
+            if has_anomaly_ranking_signal {
+                "YES"
+            } else {
+                "NO"
+            }
         );
         eprintln!(
             "  Spread ranking signal (top 10%): {}",
-            if has_spread_ranking_signal { "YES" } else { "NO" }
+            if has_spread_ranking_signal {
+                "YES"
+            } else {
+                "NO"
+            }
         );
         eprintln!(
             "  Z-score signal (any > 2sigma): {}",
@@ -967,7 +972,10 @@ mod tests {
             eprintln!("\n  CRITICAL OBSERVATION: nonce_spread is EXACTLY ZERO at d_true.");
             eprintln!("  This is the VERIFICATION delta function repackaged.");
             eprintln!("  Ranking by nonce_spread = brute-force verification of each candidate.");
-            eprintln!("  Cost per candidate: {} scalar_muls (same as BSGS per step).", sigs.len());
+            eprintln!(
+                "  Cost per candidate: {} scalar_muls (same as BSGS per step).",
+                sigs.len()
+            );
             eprintln!(
                 "  Full scan: {} candidates x {} sigs = {} ops (vs BSGS: {}).",
                 n,
@@ -998,12 +1006,27 @@ mod tests {
 
         eprintln!("\n  FEATURE CLASSIFICATION:");
         eprintln!("  Verification-based (use scalar_mul, = known delta):");
-        eprintln!("    nonce_spread     z={:.2} (computes k*G for each candidate)", stats[0].z_score);
-        eprintln!("    x_projection_peak z={:.2} (computes k*G for each candidate)", stats[3].z_score);
-        eprintln!("    cluster_spread   z={:.2} (computes k*G for each candidate)", stats[4].z_score);
+        eprintln!(
+            "    nonce_spread     z={:.2} (computes k*G for each candidate)",
+            stats[0].z_score
+        );
+        eprintln!(
+            "    x_projection_peak z={:.2} (computes k*G for each candidate)",
+            stats[3].z_score
+        );
+        eprintln!(
+            "    cluster_spread   z={:.2} (computes k*G for each candidate)",
+            stats[4].z_score
+        );
         eprintln!("  Genuinely non-verification (no scalar_mul, only mod arithmetic):");
-        eprintln!("    spectral_coherence z={:.2} (DFT of implied nonces only)", stats[1].z_score);
-        eprintln!("    cross_correlation  z={:.2} (pairwise nonce products only)", stats[2].z_score);
+        eprintln!(
+            "    spectral_coherence z={:.2} (DFT of implied nonces only)",
+            stats[1].z_score
+        );
+        eprintln!(
+            "    cross_correlation  z={:.2} (pairwise nonce products only)",
+            stats[2].z_score
+        );
 
         // The genuine features are indices 1 (spectral_coherence) and 2 (cross_correlation)
         let genuine_signal = stats[1].z_score.abs() > 2.0 || stats[2].z_score.abs() > 2.0;
@@ -1023,9 +1046,13 @@ mod tests {
             eprintln!("  ");
             eprintln!("  WHY: k_i(d_c) is a LINEAR function of d_c modulo a prime n.");
             eprintln!("  As d_c varies, the nonces rotate uniformly through Z/nZ.");
-            eprintln!("  There is no special structure at d_true visible in the nonce values alone.");
+            eprintln!(
+                "  There is no special structure at d_true visible in the nonce values alone."
+            );
             eprintln!("  The structure only appears when you MAP nonces to curve points (k*G)");
-            eprintln!("  and CHECK against the signature — which is verification, not discrimination.");
+            eprintln!(
+                "  and CHECK against the signature — which is verification, not discrimination."
+            );
         }
 
         // Bits accounting
@@ -1041,7 +1068,8 @@ mod tests {
         };
         eprintln!("\n  Bits of discrimination (anomaly): {:.1}", anomaly_bits);
         eprintln!("  Bits of discrimination (spread): {:.1}", spread_bits);
-        eprintln!("  (Full key = {:.1} bits, BSGS = {:.1} bits per sqrt(n) ops)\n",
+        eprintln!(
+            "  (Full key = {:.1} bits, BSGS = {:.1} bits per sqrt(n) ops)\n",
             (n as f64).log2(),
             (n as f64).log2() / 2.0
         );
