@@ -1,11 +1,11 @@
-use conversation::prism;
-use conversation::{Conversation, Filesystem, Folder, OutputNode, Prism, Repo, Store, Vector};
 use fragmentation::commit::{Commit, Draft};
 use fragmentation::encoding;
 use fragmentation::fragment::{content_oid, Fractal};
 use fragmentation::ref_::Ref;
 use fragmentation::sha;
 use fragmentation::witnessed::Committer;
+use mirror::prism;
+use mirror::{Conversation, Filesystem, Folder, OutputNode, Prism, Repo, Store, Vector};
 
 fn test_ref(label: &str) -> Ref {
     Ref::new(sha::hash(label), label)

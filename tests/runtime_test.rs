@@ -7,12 +7,12 @@
 //! .conv source → parse → Domain → verify with spectrum → actor boots with schedule
 //! → decide uses temperature from eigenvalues.
 
-use conversation::check;
-use conversation::model::*;
-use conversation::parse::Parse;
-use conversation::runtime::*;
-use conversation::Runtime;
-use conversation::Vector;
+use mirror::check;
+use mirror::model::*;
+use mirror::parse::Parse;
+use mirror::runtime::*;
+use mirror::Runtime;
+use mirror::Vector;
 
 // ---------------------------------------------------------------------------
 // Helper

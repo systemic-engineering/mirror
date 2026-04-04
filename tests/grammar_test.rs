@@ -6,9 +6,9 @@
 
 use std::fs;
 
-use conversation::packages::PackageRegistry;
-use conversation::resolve::Resolve;
-use conversation::{Conversation, Filesystem, Parse, Vector};
+use mirror::packages::PackageRegistry;
+use mirror::resolve::Resolve;
+use mirror::{Conversation, Filesystem, Parse, Vector};
 use tempfile::TempDir;
 
 // ---------------------------------------------------------------------------
@@ -37,10 +37,7 @@ grammar @compiler {
 
   type status = ok | error | pending
 
-  action compile {
-    source: artifact
-    target: target
-  }
+  action compile(source: artifact, target: target)
 }
 ";
 
@@ -66,20 +63,9 @@ grammar @mail {
 
   type dns = spf | dkim | dmarc | mta-sts | dane
 
-  action send {
-    from: address
-    to: address
-    subject
-    body: article
-  }
-  action reply {
-    in-reply-to: message-id
-    body: article
-  }
-  action forward {
-    message: message-id
-    to: address
-  }
+  action send(from: address, to: address, subject, body: article)
+  action reply(in-reply-to: message-id, body: article)
+  action forward(message: message-id, to: address)
 }
 
 template $message(@imap) {
@@ -104,7 +90,7 @@ fn actor_grammar_compiles() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
     assert_eq!(reg.domain_name(), "actor");
     assert!(reg.has_variant("", "identity"));
     assert!(reg.has_variant("", "session"));
@@ -123,7 +109,7 @@ fn compiler_grammar_compiles() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
     assert_eq!(reg.domain_name(), "compiler");
     assert!(reg.has_variant("", "target"));
     assert!(reg.has_variant("", "artifact"));
@@ -144,7 +130,7 @@ fn compiler_grammar_has_action_compile() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
     assert!(reg.has_action("compile"));
     let fields = reg.act_fields("compile").unwrap();
     assert_eq!(fields.len(), 2);
@@ -162,7 +148,7 @@ fn beam_grammar_compiles() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
     assert_eq!(reg.domain_name(), "beam");
     assert!(reg.has_variant("", "process"));
     assert!(reg.has_variant("", "supervision"));
@@ -177,7 +163,7 @@ fn mail_grammar_compiles_full_type_hierarchy() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
     assert_eq!(reg.domain_name(), "mail");
     assert!(reg.has_variant("", "message"));
     assert!(reg.has_variant("", "thread"));
@@ -203,7 +189,7 @@ fn mail_grammar_has_three_actions() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
 
     // action send
     assert!(reg.has_action("send"));
@@ -213,7 +199,7 @@ fn mail_grammar_has_three_actions() {
     assert_eq!(send[0].1, Some("address"));
     assert_eq!(send[1].0, "to");
     assert_eq!(send[2].0, "subject");
-    assert_eq!(send[2].1, None); // untyped field
+    assert_eq!(send[2].1, Some("subject")); // param sugar: subject → subject:subject
     assert_eq!(send[3].0, "body");
     assert_eq!(send[3].1, Some("article"));
 
@@ -240,22 +226,13 @@ const VISIBILITY_GRAMMAR: &str = "\
 grammar @filesystem {
   type = file | path
 
-  public action read {
-    path: path
-  }
+  public action read(path: path)
 
-  protected action write {
-    path: path
-    content: file
-  }
+  protected action write(path: path, content: file)
 
-  private action validate_path {
-    path: path
-  }
+  private action validate_path(path: path)
 
-  action default_action {
-    path: path
-  }
+  action default_action(path: path)
 }
 ";
 
@@ -270,7 +247,7 @@ fn public_action_parsed_with_visibility() {
     let action = grammar
         .children()
         .iter()
-        .find(|c| c.data().is_form("action-def") && c.data().value == "read")
+        .find(|c| c.data().is_decl("action-def") && c.data().value == "read")
         .expect("should have action 'read'");
     let vis = action
         .children()
@@ -291,7 +268,7 @@ fn protected_action_parsed_with_visibility() {
     let action = grammar
         .children()
         .iter()
-        .find(|c| c.data().is_form("action-def") && c.data().value == "write")
+        .find(|c| c.data().is_decl("action-def") && c.data().value == "write")
         .expect("should have action 'write'");
     let vis = action
         .children()
@@ -312,7 +289,7 @@ fn private_action_parsed_with_visibility() {
     let action = grammar
         .children()
         .iter()
-        .find(|c| c.data().is_form("action-def") && c.data().value == "validate_path")
+        .find(|c| c.data().is_decl("action-def") && c.data().value == "validate_path")
         .expect("should have action 'validate_path'");
     let vis = action
         .children()
@@ -333,7 +310,7 @@ fn bare_action_defaults_to_protected() {
     let action = grammar
         .children()
         .iter()
-        .find(|c| c.data().is_form("action-def") && c.data().value == "default_action")
+        .find(|c| c.data().is_decl("action-def") && c.data().value == "default_action")
         .expect("should have action 'default_action'");
     let vis = action
         .children()
@@ -351,22 +328,22 @@ fn visibility_stored_in_registry() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = conversation::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
     assert_eq!(
         reg.action_visibility("read"),
-        conversation::resolve::Visibility::Public,
+        mirror::resolve::Visibility::Public,
     );
     assert_eq!(
         reg.action_visibility("write"),
-        conversation::resolve::Visibility::Protected,
+        mirror::resolve::Visibility::Protected,
     );
     assert_eq!(
         reg.action_visibility("validate_path"),
-        conversation::resolve::Visibility::Private,
+        mirror::resolve::Visibility::Private,
     );
     assert_eq!(
         reg.action_visibility("default_action"),
-        conversation::resolve::Visibility::Protected,
+        mirror::resolve::Visibility::Protected,
     );
 }
 

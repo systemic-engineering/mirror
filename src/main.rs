@@ -36,7 +36,7 @@ fn main() {
     match args[1].as_str() {
         "settle" => {
             if args.len() < 3 {
-                eprintln!("usage: abyss settle <file.conv|dir>");
+                eprintln!("usage: mirror settle <file.conv|dir>");
                 process::exit(1);
             }
             let conv_path = &args[2];
@@ -44,7 +44,7 @@ fn main() {
                 String::new() // directory mode — settle_cmd reads files
             } else {
                 std::fs::read_to_string(conv_path).unwrap_or_else(|e| {
-                    eprintln!("abyss: {}: {}", conv_path, e);
+                    eprintln!("mirror: {}: {}", conv_path, e);
                     process::exit(1);
                 })
             };
@@ -118,7 +118,7 @@ fn main() {
 
 fn settle_cmd(source: &str, path: &str) {
     use mirror::abyss::{self, AbyssConfig, PrismLoop, Termination};
-    use prism::{Beam, Oid, Precision, ShannonLoss};
+    use prism::{Beam, Oid, Precision};
     use std::collections::hash_map::DefaultHasher;
     use std::hash::{Hash, Hasher};
 
@@ -126,7 +126,10 @@ fn settle_cmd(source: &str, path: &str) {
     // If path is a file, settle that single file.
     let sources: Vec<(String, String)> = if std::path::Path::new(path).is_dir() {
         let mut entries: Vec<_> = std::fs::read_dir(path)
-            .unwrap_or_else(|e| { eprintln!("abyss: {}: {}", path, e); process::exit(1); })
+            .unwrap_or_else(|e| {
+                eprintln!("mirror: {}: {}", path, e);
+                process::exit(1);
+            })
             .filter_map(|e| e.ok())
             .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("conv"))
             .map(|e| {
@@ -148,7 +151,7 @@ fn settle_cmd(source: &str, path: &str) {
         let ast = match Parse.trace(file_source.to_string()).into_result() {
             Ok(tree) => tree,
             Err(e) => {
-                eprintln!("abyss: {}: parse error: {}", file_path, e);
+                eprintln!("mirror: {}: parse error: {}", file_path, e);
                 continue;
             }
         };
@@ -156,10 +159,16 @@ fn settle_cmd(source: &str, path: &str) {
         for child in ast.children() {
             graph.push(format!("{}:{}", child.data().name, child.data().value));
         }
-        eprintln!("  lens {}: +{} nodes → {} total",
-            std::path::Path::new(file_path).file_name().unwrap().to_str().unwrap(),
+        eprintln!(
+            "  lens {}: +{} nodes → {} total",
+            std::path::Path::new(file_path)
+                .file_name()
+                .unwrap()
+                .to_str()
+                .unwrap(),
             ast.children().len(),
-            graph.len());
+            graph.len()
+        );
     }
 
     // Now settle the combined graph.
@@ -184,7 +193,9 @@ fn settle_cmd(source: &str, path: &str) {
         }
 
         fn traversal(&self, projection: &Vec<String>) -> Vec<Beam<String>> {
-            projection.iter().enumerate()
+            projection
+                .iter()
+                .enumerate()
                 .map(|(i, s)| Beam::new(s.clone()).with_step(Oid::new(format!("{}", i))))
                 .collect()
         }
@@ -227,7 +238,7 @@ fn settle_cmd(source: &str, path: &str) {
         &graph,
         &config,
         &|mut v| {
-            let before = v.len();
+            let _before = v.len();
             v.sort();
             v.dedup();
             v
@@ -237,7 +248,7 @@ fn settle_cmd(source: &str, path: &str) {
 
     // Output
     eprintln!();
-    eprintln!("abyss settle: {}", path);
+    eprintln!("mirror settle: {}", path);
     match &termination {
         Termination::Settled { cycles } => {
             eprintln!("  settled in {} cycles", cycles);
@@ -246,7 +257,11 @@ fn settle_cmd(source: &str, path: &str) {
             eprintln!("  budget exhausted after {} cycles", cycles);
         }
         Termination::Oscillation { cycles, attractors } => {
-            eprintln!("  oscillation after {} cycles ({} attractors)", cycles, attractors.len());
+            eprintln!(
+                "  oscillation after {} cycles ({} attractors)",
+                cycles,
+                attractors.len()
+            );
         }
     }
     eprintln!("  nodes: {}", beam.result.len());

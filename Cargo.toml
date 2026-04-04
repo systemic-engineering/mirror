@@ -12,7 +12,7 @@ description = "fold | prism | traversal | lens | iso — the thing you look into
 crate-type = ["lib"]
 
 [[bin]]
-name = "abyss"
+name = "mirror"
 path = "src/main.rs"
 
 [features]

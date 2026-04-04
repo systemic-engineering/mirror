@@ -101,7 +101,8 @@ pub const HIDDEN_DIM: usize = 64;
 /// Output dimension: optic categories.
 pub const OUTPUT_DIM: usize = 12;
 /// Total parameter count.
-pub const PARAM_COUNT: usize = INPUT_DIM * HIDDEN_DIM + HIDDEN_DIM + HIDDEN_DIM * OUTPUT_DIM + OUTPUT_DIM;
+pub const PARAM_COUNT: usize =
+    INPUT_DIM * HIDDEN_DIM + HIDDEN_DIM + HIDDEN_DIM * OUTPUT_DIM + OUTPUT_DIM;
 
 impl Weights {
     /// Initialize with zeros. The untrained classifier.
@@ -121,9 +122,13 @@ impl Weights {
         let scale2 = (2.0 / (HIDDEN_DIM + OUTPUT_DIM) as f64).sqrt();
 
         Weights {
-            w1: (0..INPUT_DIM * HIDDEN_DIM).map(|_| rng.next_normal() * scale1).collect(),
+            w1: (0..INPUT_DIM * HIDDEN_DIM)
+                .map(|_| rng.next_normal() * scale1)
+                .collect(),
             b1: vec![0.0; HIDDEN_DIM],
-            w2: (0..HIDDEN_DIM * OUTPUT_DIM).map(|_| rng.next_normal() * scale2).collect(),
+            w2: (0..HIDDEN_DIM * OUTPUT_DIM)
+                .map(|_| rng.next_normal() * scale2)
+                .collect(),
             b2: vec![0.0; OUTPUT_DIM],
         }
     }
@@ -154,7 +159,13 @@ impl Weights {
     /// Serialize to raw bytes (f64 little-endian, packed).
     pub fn to_bytes(&self) -> Vec<u8> {
         let mut bytes = Vec::with_capacity(PARAM_COUNT * 8);
-        for &v in self.w1.iter().chain(self.b1.iter()).chain(self.w2.iter()).chain(self.b2.iter()) {
+        for &v in self
+            .w1
+            .iter()
+            .chain(self.b1.iter())
+            .chain(self.w2.iter())
+            .chain(self.b2.iter())
+        {
             bytes.extend_from_slice(&v.to_le_bytes());
         }
         bytes
@@ -176,7 +187,11 @@ impl Weights {
 /// output = softmax(W2 · hidden + b2)
 ///
 /// Returns (predicted_optic, confidence, all_probabilities).
-pub fn classify(weights: &Weights, spectral_features: &[f64; INPUT_DIM]) -> (Optic, f64, [f64; OUTPUT_DIM]) {
+#[allow(clippy::needless_range_loop)]
+pub fn classify(
+    weights: &Weights,
+    spectral_features: &[f64; INPUT_DIM],
+) -> (Optic, f64, [f64; OUTPUT_DIM]) {
     // Layer 1: hidden = sigmoid(W1 · input + b1)
     let mut hidden = [0.0f64; HIDDEN_DIM];
     for i in 0..HIDDEN_DIM {
@@ -221,6 +236,7 @@ fn sigmoid(x: f64) -> f64 {
     1.0 / (1.0 + (-x).exp())
 }
 
+#[allow(clippy::needless_range_loop)]
 fn softmax(logits: &[f64; OUTPUT_DIM]) -> [f64; OUTPUT_DIM] {
     let max = logits.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
     let mut exps = [0.0f64; OUTPUT_DIM];
@@ -243,7 +259,10 @@ struct SimpleRng(u64);
 
 impl SimpleRng {
     fn next_u64(&mut self) -> u64 {
-        self.0 = self.0.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+        self.0 = self
+            .0
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
         self.0
     }
 
@@ -324,7 +343,9 @@ mod tests {
 
     #[test]
     fn softmax_sums_to_one() {
-        let logits = [1.0, 2.0, 3.0, 0.5, -1.0, 0.0, 1.5, -0.5, 2.5, 0.1, -2.0, 1.0];
+        let logits = [
+            1.0, 2.0, 3.0, 0.5, -1.0, 0.0, 1.5, -0.5, 2.5, 0.1, -2.0, 1.0,
+        ];
         let probs = softmax(&logits);
         let sum: f64 = probs.iter().sum();
         assert!((sum - 1.0).abs() < 1e-10);
@@ -380,17 +401,21 @@ mod tests {
         // Classify a "lens" commit: lots of insertions, .rs files, 🟢 marker
         let mut input = [0.0; INPUT_DIM];
         input[0] = 0.15; // files_changed / 20
-        input[1] = 0.3;  // insertions / 1000
+        input[1] = 0.3; // insertions / 1000
         input[2] = 0.05; // deletions / 1000
-        input[3] = 0.9;  // confidence
+        input[3] = 0.9; // confidence
         input[4] = 0.85; // ins ratio
-        input[6] = 1.0;  // .rs file
+        input[6] = 1.0; // .rs file
         input[16] = 1.0; // 🟢
         input[29] = 1.0; // conversation repo
 
         let (optic, confidence, _) = classify(&w, &input);
         // Should classify as some optic with reasonable confidence
-        assert!(confidence > 0.1, "confidence should be non-trivial: {}", confidence);
+        assert!(
+            confidence > 0.1,
+            "confidence should be non-trivial: {}",
+            confidence
+        );
         // The trained model should not return Noop for a clearly active commit
         assert_ne!(optic, Optic::Noop, "active commit should not be Noop");
     }

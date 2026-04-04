@@ -4,11 +4,11 @@
 //! -> parse -> resolve -> compile -> declarations pass through without evaluation
 //! -> ETF output with raw declaration lists.
 
-use conversation::ffi::{self, CompileResult};
-use conversation::logic::ProofCertificate;
-use conversation::model::Domain;
-use conversation::parse::Parse;
-use conversation::Vector;
+use mirror::ffi::{self, CompileResult};
+use mirror::logic::ProofCertificate;
+use mirror::model::Domain;
+use mirror::parse::Parse;
+use mirror::Vector;
 
 fn compile_grammar(source: &str) -> Domain {
     let ast = Parse.trace(source.to_string()).unwrap();

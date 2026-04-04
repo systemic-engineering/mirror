@@ -184,7 +184,13 @@ fn parse_crystal_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>
             .map(|v| ast::ast_leaf(Kind::Atom, "variant", v.trim(), span))
             .collect();
         lines.advance();
-        return Ok(ast::ast_branch(Kind::Decl, "crystal-def", name, span, variants));
+        return Ok(ast::ast_branch(
+            Kind::Decl,
+            "crystal-def",
+            name,
+            span,
+            variants,
+        ));
     }
 
     // Check for parameterized: `lens type(id)` or `prism eigenvalues(precision)`
@@ -201,7 +207,13 @@ fn parse_crystal_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>
                 .collect()
         };
         lines.advance();
-        return Ok(ast::ast_branch(Kind::Decl, "crystal-def", name, span, params));
+        return Ok(ast::ast_branch(
+            Kind::Decl,
+            "crystal-def",
+            name,
+            span,
+            params,
+        ));
     }
 
     // Simple: `fold input` or `iso convergence`

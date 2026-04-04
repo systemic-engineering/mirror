@@ -59,8 +59,8 @@ fn hash_strings(v: &Vec<String>) -> Oid {
 }
 
 fn settle_file(path: &std::path::Path) -> (Vec<String>, Termination) {
-    let source = std::fs::read_to_string(path)
-        .unwrap_or_else(|e| panic!("read {}: {}", path.display(), e));
+    let source =
+        std::fs::read_to_string(path).unwrap_or_else(|e| panic!("read {}: {}", path.display(), e));
 
     let ast = Parse
         .trace(source)
@@ -95,8 +95,7 @@ fn settle_file(path: &std::path::Path) -> (Vec<String>, Termination) {
 
 #[test]
 fn all_settle_fixtures_settle() {
-    let fixtures_dir =
-        std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/settle");
+    let fixtures_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/settle");
 
     let mut entries: Vec<_> = std::fs::read_dir(&fixtures_dir)
         .unwrap_or_else(|e| panic!("read fixtures/settle: {}", e))
@@ -105,7 +104,10 @@ fn all_settle_fixtures_settle() {
         .collect();
     entries.sort_by_key(|e| e.path());
 
-    assert!(!entries.is_empty(), "no .conv fixtures found in fixtures/settle/");
+    assert!(
+        !entries.is_empty(),
+        "no .conv fixtures found in fixtures/settle/"
+    );
 
     let mut total = 0;
     let mut settled = 0;
@@ -119,10 +121,20 @@ fn all_settle_fixtures_settle() {
         match &term {
             Termination::Settled { cycles } => {
                 settled += 1;
-                eprintln!("  SETTLED  {}: {} nodes, {} cycles", name, result.len(), cycles);
+                eprintln!(
+                    "  SETTLED  {}: {} nodes, {} cycles",
+                    name,
+                    result.len(),
+                    cycles
+                );
             }
             Termination::BudgetExhausted { cycles, .. } => {
-                eprintln!("  BUDGET   {}: {} nodes, {} cycles", name, result.len(), cycles);
+                eprintln!(
+                    "  BUDGET   {}: {} nodes, {} cycles",
+                    name,
+                    result.len(),
+                    cycles
+                );
             }
             Termination::Oscillation { cycles, attractors } => {
                 eprintln!(

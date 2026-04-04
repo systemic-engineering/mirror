@@ -21,7 +21,10 @@ pub enum Termination {
     /// Spectral hash matched previous cycle. Fixed point reached.
     Settled { cycles: usize },
     /// Tension budget exhausted before convergence.
-    BudgetExhausted { cycles: usize, remaining_loss: ShannonLoss },
+    BudgetExhausted {
+        cycles: usize,
+        remaining_loss: ShannonLoss,
+    },
     /// Hash oscillates between attractors. Gödelian boundary.
     Oscillation { cycles: usize, attractors: Vec<Oid> },
 }
@@ -156,11 +159,7 @@ mod tests {
             projection.iter().map(|&v| Beam::new(v)).collect()
         }
 
-        fn lens(
-            &self,
-            beam: Beam<Vec<i32>>,
-            f: &dyn Fn(Vec<i32>) -> Vec<i32>,
-        ) -> Beam<Vec<i32>> {
+        fn lens(&self, beam: Beam<Vec<i32>>, f: &dyn Fn(Vec<i32>) -> Vec<i32>) -> Beam<Vec<i32>> {
             beam.map(f)
         }
 
@@ -242,7 +241,10 @@ mod tests {
             &hash_vec,
         );
 
-        assert!(matches!(term, Termination::BudgetExhausted { cycles: 3, .. }));
+        assert!(matches!(
+            term,
+            Termination::BudgetExhausted { cycles: 3, .. }
+        ));
     }
 
     #[test]
@@ -289,11 +291,18 @@ mod tests {
                 }
             }
         }
-        assert!(graph.len() >= 19, "boot should have at least 19 nodes, got {}", graph.len());
+        assert!(
+            graph.len() >= 19,
+            "boot should have at least 19 nodes, got {}",
+            graph.len()
+        );
 
         // Settle with sort+dedup transform
         let prism = ConvergingPrism;
-        let config = AbyssConfig { max_cycles: 64, ..Default::default() };
+        let config = AbyssConfig {
+            max_cycles: 64,
+            ..Default::default()
+        };
 
         // Adapt: use the graph as input to ConvergingPrism
         // which works on Vec<i32> — let's use a StringPrism instead
@@ -306,34 +315,59 @@ mod tests {
             type Convergence = Vec<String>;
             type Crystal = Vec<String>;
 
-            fn fold(&self, input: &Vec<String>) -> Beam<Vec<String>> { Beam::new(input.clone()) }
-            fn prism(&self, ev: &Vec<String>, _p: prism::Precision) -> Beam<Vec<String>> { Beam::new(ev.clone()) }
+            fn fold(&self, input: &Vec<String>) -> Beam<Vec<String>> {
+                Beam::new(input.clone())
+            }
+            fn prism(&self, ev: &Vec<String>, _p: prism::Precision) -> Beam<Vec<String>> {
+                Beam::new(ev.clone())
+            }
             fn traversal(&self, proj: &Vec<String>) -> Vec<Beam<String>> {
                 proj.iter().map(|s| Beam::new(s.clone())).collect()
             }
-            fn lens(&self, beam: Beam<Vec<String>>, f: &dyn Fn(Vec<String>) -> Vec<String>) -> Beam<Vec<String>> {
+            fn lens(
+                &self,
+                beam: Beam<Vec<String>>,
+                f: &dyn Fn(Vec<String>) -> Vec<String>,
+            ) -> Beam<Vec<String>> {
                 beam.map(f)
             }
-            fn iso(&self, beam: Beam<Vec<String>>) -> Vec<String> { beam.result }
+            fn iso(&self, beam: Beam<Vec<String>>) -> Vec<String> {
+                beam.result
+            }
         }
         impl PrismLoop for BootPrism {
-            fn fold_from_projection(&self, p: &Vec<String>) -> Vec<String> { p.clone() }
+            fn fold_from_projection(&self, p: &Vec<String>) -> Vec<String> {
+                p.clone()
+            }
         }
 
         let (beam, term) = settle_loop(
             &BootPrism,
             &graph,
             &config,
-            &|mut v| { v.sort(); v.dedup(); v },
+            &|mut v| {
+                v.sort();
+                v.dedup();
+                v
+            },
             &hash_vec,
         );
 
         // Must settle
-        assert!(matches!(term, Termination::Settled { .. }), "boot must settle, got {:?}", term);
+        assert!(
+            matches!(term, Termination::Settled { .. }),
+            "boot must settle, got {:?}",
+            term
+        );
         // Dedup removes duplicates
         assert!(beam.result.len() < graph.len(), "dedup should reduce nodes");
         // 17 unique crystal definitions
-        assert_eq!(beam.result.len(), 17, "expected 17 unique keywords, got {}", beam.result.len());
+        assert_eq!(
+            beam.result.len(),
+            17,
+            "expected 17 unique keywords, got {}",
+            beam.result.len()
+        );
         // Zero loss
         assert!(beam.is_lossless());
     }
