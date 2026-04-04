@@ -13,13 +13,20 @@
 
 mod curve {
     #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-    pub enum Point { Infinity, Affine { x: u64, y: u64 } }
+    pub enum Point {
+        Infinity,
+        Affine { x: u64, y: u64 },
+    }
 
     pub fn mod_pow(mut base: u128, mut exp: u128, m: u128) -> u128 {
-        let mut result = 1u128; base %= m;
+        let mut result = 1u128;
+        base %= m;
         while exp > 0 {
-            if exp & 1 == 1 { result = result * base % m; }
-            exp >>= 1; base = base * base % m;
+            if exp & 1 == 1 {
+                result = result * base % m;
+            }
+            exp >>= 1;
+            base = base * base % m;
         }
         result
     }
@@ -29,10 +36,16 @@ mod curve {
         let (mut old_s, mut s) = (1i128, 0i128);
         while r != 0 {
             let q = old_r / r;
-            let tmp = r; r = old_r - q * r; old_r = tmp;
-            let tmp = s; s = old_s - q * s; old_s = tmp;
+            let tmp = r;
+            r = old_r - q * r;
+            old_r = tmp;
+            let tmp = s;
+            s = old_s - q * s;
+            old_s = tmp;
         }
-        if old_r != 1 { return None; }
+        if old_r != 1 {
+            return None;
+        }
         Some(((old_s % p as i128 + p as i128) % p as i128) as u64)
     }
 
@@ -40,12 +53,19 @@ mod curve {
         match (p1, p2) {
             (Point::Infinity, q) | (q, Point::Infinity) => q,
             (Point::Affine { x: x1, y: y1 }, Point::Affine { x: x2, y: y2 }) => {
-                if x1 == x2 && y1 != y2 { return Point::Infinity; }
+                if x1 == x2 && y1 != y2 {
+                    return Point::Infinity;
+                }
                 if x1 == x2 && y1 == y2 {
-                    if y1 == 0 { return Point::Infinity; }
+                    if y1 == 0 {
+                        return Point::Infinity;
+                    }
                     let num = (3 * x1 % p * x1 % p + a) % p;
                     let den = (2 * y1) % p;
-                    let inv = match mod_inv(den, p) { Some(i) => i, None => return Point::Infinity };
+                    let inv = match mod_inv(den, p) {
+                        Some(i) => i,
+                        None => return Point::Infinity,
+                    };
                     let lam = num * inv % p;
                     let x3 = (lam * lam % p + p + p - x1 - x2) % p;
                     let y3 = (lam * ((x1 + p - x3) % p) % p + p - y1) % p;
@@ -53,7 +73,10 @@ mod curve {
                 } else {
                     let num = (y2 + p - y1) % p;
                     let den = (x2 + p - x1) % p;
-                    let inv = match mod_inv(den, p) { Some(i) => i, None => return Point::Infinity };
+                    let inv = match mod_inv(den, p) {
+                        Some(i) => i,
+                        None => return Point::Infinity,
+                    };
                     let lam = num * inv % p;
                     let x3 = (lam * lam % p + p + p - x1 - x2) % p;
                     let y3 = (lam * ((x1 + p - x3) % p) % p + p - y1) % p;
@@ -64,12 +87,16 @@ mod curve {
     }
 
     pub fn scalar_mul(k: u64, point: Point, a: u64, p: u64) -> Point {
-        if k == 0 { return Point::Infinity; }
+        if k == 0 {
+            return Point::Infinity;
+        }
         let mut result = Point::Infinity;
         let mut base = point;
         let mut k = k;
         while k > 0 {
-            if k & 1 == 1 { result = point_add(result, base, a, p); }
+            if k & 1 == 1 {
+                result = point_add(result, base, a, p);
+            }
             base = point_add(base, base, a, p);
             k >>= 1;
         }
@@ -77,24 +104,46 @@ mod curve {
     }
 
     fn mod_sqrt(n: u64, p: u64) -> Option<u64> {
-        if n == 0 { return Some(0); }
-        let pm = p as u128; let nm = n as u128;
-        if mod_pow(nm, (pm - 1) / 2, pm) != 1 { return None; }
-        if p % 4 == 3 { return Some(mod_pow(nm, (pm + 1) / 4, pm) as u64); }
-        let mut q = pm - 1; let mut s = 0u32;
-        while q % 2 == 0 { q /= 2; s += 1; }
+        if n == 0 {
+            return Some(0);
+        }
+        let pm = p as u128;
+        let nm = n as u128;
+        if mod_pow(nm, (pm - 1) / 2, pm) != 1 {
+            return None;
+        }
+        if p % 4 == 3 {
+            return Some(mod_pow(nm, (pm + 1) / 4, pm) as u64);
+        }
+        let mut q = pm - 1;
+        let mut s = 0u32;
+        while q % 2 == 0 {
+            q /= 2;
+            s += 1;
+        }
         let mut z = 2u128;
-        while mod_pow(z, (pm - 1) / 2, pm) != pm - 1 { z += 1; }
+        while mod_pow(z, (pm - 1) / 2, pm) != pm - 1 {
+            z += 1;
+        }
         let mut m_val = s;
         let mut c = mod_pow(z, q, pm);
         let mut t = mod_pow(nm, q, pm);
         let mut r = mod_pow(nm, (q + 1) / 2, pm);
         loop {
-            if t == 1 { return Some(r as u64); }
-            let mut i = 0u32; let mut tmp = t;
-            while tmp != 1 { tmp = tmp * tmp % pm; i += 1; }
+            if t == 1 {
+                return Some(r as u64);
+            }
+            let mut i = 0u32;
+            let mut tmp = t;
+            while tmp != 1 {
+                tmp = tmp * tmp % pm;
+                i += 1;
+            }
             let b = mod_pow(c, 1u128 << (m_val - i - 1), pm);
-            m_val = i; c = b * b % pm; t = t * c % pm; r = r * b % pm;
+            m_val = i;
+            c = b * b % pm;
+            t = t * c % pm;
+            r = r * b % pm;
         }
     }
 
@@ -106,7 +155,9 @@ mod curve {
             let rhs = ((xm * xm % pm * xm % pm) + (a as u128) * xm % pm + (b as u128)) % pm;
             if let Some(y) = mod_sqrt(rhs as u64, p) {
                 points.push(Point::Affine { x, y });
-                if y != 0 { points.push(Point::Affine { x, y: p - y }); }
+                if y != 0 {
+                    points.push(Point::Affine { x, y: p - y });
+                }
             }
         }
         points
@@ -114,11 +165,9 @@ mod curve {
 
     /// Build the ring walk ordering: starting from Infinity, walk by adding G.
     /// Returns the vertex indices in ring order.
-    pub fn ring_ordering(
-        points: &[Point], gen: Point, a: u64, p: u64, order: u64,
-    ) -> Vec<usize> {
-        let point_to_idx: std::collections::HashMap<Point, usize> = points
-            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+    pub fn ring_ordering(points: &[Point], gen: Point, a: u64, p: u64, order: u64) -> Vec<usize> {
+        let point_to_idx: std::collections::HashMap<Point, usize> =
+            points.iter().enumerate().map(|(i, &p)| (p, i)).collect();
         let mut ordering = Vec::with_capacity(order as usize);
         let mut pt = Point::Infinity;
         for _ in 0..order {
@@ -145,7 +194,9 @@ mod tests {
         loop {
             pt = point_add(pt, gen_8, 1, 251);
             order_8 += 1;
-            if pt == Point::Infinity || order_8 > 300 { break; }
+            if pt == Point::Infinity || order_8 > 300 {
+                break;
+            }
         }
         eprintln!("  8-bit: {} points, order {}", points_8.len(), order_8);
 
@@ -170,10 +221,16 @@ mod tests {
         for k in 1..order_8 {
             let phase = crystal_8_sin[k as usize].atan2(crystal_8_cos[k as usize]);
             let recovered = ((phase * n8 / (2.0 * PI) + n8) % n8).round() as u64 % order_8;
-            if recovered == k || recovered == order_8 - k { correct_8 += 1; }
+            if recovered == k || recovered == order_8 - k {
+                correct_8 += 1;
+            }
         }
-        eprintln!("  8-bit crystal recovery: {}/{} ({:.0}%)",
-            correct_8, order_8 - 1, correct_8 as f64 / (order_8 - 1) as f64 * 100.0);
+        eprintln!(
+            "  8-bit crystal recovery: {}/{} ({:.0}%)",
+            correct_8,
+            order_8 - 1,
+            correct_8 as f64 / (order_8 - 1) as f64 * 100.0
+        );
         assert_eq!(correct_8, order_8 - 1, "8-bit crystal must be 100%");
 
         // ── 12-bit target: the unknown structure ────────────────────
@@ -185,7 +242,9 @@ mod tests {
         loop {
             pt = point_add(pt, gen_12, 1, 4093);
             order_12 += 1;
-            if pt == Point::Infinity || order_12 > points_12.len() as u64 + 1 { break; }
+            if pt == Point::Infinity || order_12 > points_12.len() as u64 + 1 {
+                break;
+            }
         }
         eprintln!("  12-bit: {} points, order {}", points_12.len(), order_12);
 
@@ -236,19 +295,21 @@ mod tests {
         // the 8-bit sequence relates to the 12-bit sequence?
 
         // Collect the x-coordinate sequences
-        let x_seq_8: Vec<u64> = (0..order_8).map(|k| {
-            match scalar_mul(k, gen_8, 1, 251) {
-                Point::Affine { x, .. } => x,
-                Point::Infinity => 251, // sentinel
-            }
-        }).collect();
+        let x_seq_8: Vec<u64> = (0..order_8)
+            .map(|k| {
+                match scalar_mul(k, gen_8, 1, 251) {
+                    Point::Affine { x, .. } => x,
+                    Point::Infinity => 251, // sentinel
+                }
+            })
+            .collect();
 
-        let x_seq_12: Vec<u64> = (0..order_12.min(1000)).map(|k| {
-            match scalar_mul(k, gen_12, 1, 4093) {
+        let x_seq_12: Vec<u64> = (0..order_12.min(1000))
+            .map(|k| match scalar_mul(k, gen_12, 1, 4093) {
                 Point::Affine { x, .. } => x,
                 Point::Infinity => 4093,
-            }
-        }).collect();
+            })
+            .collect();
 
         // Normalize to [0,1]: x/p
         let x_norm_8: Vec<f64> = x_seq_8.iter().map(|&x| x as f64 / 251.0).collect();
@@ -271,7 +332,10 @@ mod tests {
         }
         let pearson = cov / (var_8.sqrt() * var_12.sqrt()).max(1e-15);
 
-        eprintln!("  x-sequence correlation (8↔12, first {}): {:.4}", min_len, pearson);
+        eprintln!(
+            "  x-sequence correlation (8↔12, first {}): {:.4}",
+            min_len, pearson
+        );
         eprintln!("  (1.0 = identical sequences, 0.0 = no correlation)");
 
         // The tiling test: if pearson ≈ 1, the x-coordinates follow
@@ -302,11 +366,17 @@ mod tests {
             }
         }
         let ratio_pearson = ratio_corr_num / (ratio_var_8.sqrt() * ratio_var_12.sqrt()).max(1e-15);
-        eprintln!("  ratio correlation (Δx_8 ↔ Δx_12): {:.4} (n={})", ratio_pearson, ratio_count);
+        eprintln!(
+            "  ratio correlation (Δx_8 ↔ Δx_12): {:.4} (n={})",
+            ratio_pearson, ratio_count
+        );
 
         eprintln!("\n  === CRYSTAL TRANSFER VERDICT ===");
         if pearson.abs() > 0.3 {
-            eprintln!("  SIGNAL: x-sequences correlate across scales ({:.4})", pearson);
+            eprintln!(
+                "  SIGNAL: x-sequences correlate across scales ({:.4})",
+                pearson
+            );
             eprintln!("  The crystal MAY tile. Further investigation warranted.");
         } else if ratio_pearson.abs() > 0.3 {
             eprintln!("  SIGNAL: ratio sequences correlate ({:.4})", ratio_pearson);
