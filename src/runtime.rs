@@ -13,7 +13,7 @@ use std::fmt;
 use ractor::{Actor, ActorProcessingErr, ActorRef};
 
 use crate::check::Verified;
-use crate::model::{ActionName, Domain, DomainComplexity};
+use crate::model::{ActionName, DomainComplexity, Mirror};
 use crate::Oid;
 
 // ---------------------------------------------------------------------------
@@ -141,7 +141,7 @@ pub enum DomainMessage {
 }
 
 pub(crate) struct DomainActorState {
-    domain: Domain,
+    mirror: Mirror,
 }
 
 pub(crate) struct DomainActor;
@@ -149,14 +149,14 @@ pub(crate) struct DomainActor;
 impl Actor for DomainActor {
     type Msg = DomainMessage;
     type State = DomainActorState;
-    type Arguments = Domain;
+    type Arguments = Mirror;
 
     async fn pre_start(
         &self,
         _myself: ActorRef<Self::Msg>,
         args: Self::Arguments,
     ) -> Result<Self::State, ActorProcessingErr> {
-        Ok(DomainActorState { domain: args })
+        Ok(DomainActorState { mirror: args })
     }
 
     async fn handle(
@@ -167,16 +167,16 @@ impl Actor for DomainActor {
     ) -> Result<(), ActorProcessingErr> {
         match message {
             DomainMessage::Dispatch(action, _args, reply) => {
-                let action_exists = state.domain.actions.iter().any(|a| a.name == action);
+                let action_exists = state.mirror.actions.iter().any(|a| a.name == action);
                 let result = if action_exists {
                     Ok(Response::Ok(Value::Text(format!(
                         "{}:{}",
-                        state.domain.name, action
+                        state.mirror.name, action
                     ))))
                 } else {
                     Err(format!(
                         "unknown action '{}' in domain @{}",
-                        action, state.domain.name
+                        action, state.mirror.name
                     ))
                 };
                 let _ = reply.send(result);
@@ -213,15 +213,15 @@ fn spawn_err(e: ractor::SpawnErr) -> RuntimeError {
 }
 
 impl Runtime for RactorRuntime {
-    type Artifact = Domain;
+    type Artifact = Mirror;
     type Actor = ActorRef<DomainMessage>;
     type Error = RuntimeError;
 
-    async fn compile(&self, domain: Verified) -> Result<prism::Beam<Domain>, RuntimeError> {
-        Ok(prism::Beam::new(domain.into_domain()))
+    async fn compile(&self, domain: Verified) -> Result<prism::Beam<Mirror>, RuntimeError> {
+        Ok(prism::Beam::new(domain.into_mirror()))
     }
 
-    async fn spawn(&self, artifact: &Domain) -> Result<ActorRef<DomainMessage>, RuntimeError> {
+    async fn spawn(&self, artifact: &Mirror) -> Result<ActorRef<DomainMessage>, RuntimeError> {
         let (actor_ref, _handle) = Actor::spawn(None, DomainActor, artifact.clone())
             .await
             .map_err(spawn_err)?;
@@ -238,7 +238,7 @@ mod tests {
     use super::*;
     use crate::check;
     use crate::model::{
-        Action, Domain, DomainName, Properties, TypeDef, TypeName, Variant, VariantName,
+        Action, DomainName, Mirror, Properties, TypeDef, TypeName, Variant, VariantName,
     };
     use crate::resolve::Visibility;
 
@@ -269,7 +269,7 @@ mod tests {
             visibility: Visibility::Public,
             calls: vec![],
         };
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("color"),
             types: vec![color],
             actions: vec![paint],
@@ -287,7 +287,7 @@ mod tests {
     ///   action compile
     fn actor_verified() -> Verified {
         use crate::model::Lens;
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("compiler"),
             types: vec![TypeDef {
                 name: TypeName::new("target"),
@@ -481,7 +481,7 @@ mod tests {
 
     #[test]
     fn inference_schedule_immediate_for_trivial() {
-        use crate::model::Domain;
+        use crate::model::Mirror;
         use crate::parse::Parse;
         use crate::Vector;
         let source = "grammar @simple {\n  type = a | b\n}\n";
@@ -491,7 +491,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let domain = Domain::from_grammar(grammar).unwrap();
+        let domain = Mirror::from_grammar(grammar).unwrap();
         let verified = check::verify(domain).unwrap();
         let schedule = InferenceSchedule::from_verified(&verified);
         assert!(matches!(schedule, InferenceSchedule::Immediate));
@@ -499,7 +499,7 @@ mod tests {
 
     #[test]
     fn inference_schedule_diffusion_for_spectrum() {
-        use crate::model::Domain;
+        use crate::model::Mirror;
         use crate::parse::Parse;
         use crate::Vector;
         let source =
@@ -510,7 +510,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let domain = Domain::from_grammar(grammar).unwrap();
+        let domain = Mirror::from_grammar(grammar).unwrap();
         let verified = check::verify(domain).unwrap();
         let schedule = InferenceSchedule::from_verified(&verified);
         assert!(
@@ -526,7 +526,7 @@ mod tests {
 
     #[test]
     fn schedule_temperature_decreases_with_complexity() {
-        use crate::model::Domain;
+        use crate::model::Mirror;
         use crate::parse::Parse;
         use crate::Vector;
         let source =
@@ -537,7 +537,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let domain = Domain::from_grammar(grammar).unwrap();
+        let domain = Mirror::from_grammar(grammar).unwrap();
         let verified = check::verify(domain).unwrap();
         let schedule = InferenceSchedule::from_verified(&verified);
         let t_full = schedule.temperature(1.0);

@@ -68,6 +68,6 @@ pub mod db;
 pub mod model;
 pub mod runtime;
 
-pub use model::Domain;
+pub use model::Mirror;
 pub use runtime::DomainMessage;
 pub use runtime::Runtime;

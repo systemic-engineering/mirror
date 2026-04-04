@@ -56,7 +56,7 @@ pub enum GenerateProvider {
 #[derive(Clone, Debug, Default)]
 pub struct Namespace {
     modules: HashMap<String, TemplateProvider>,
-    domain_store: HashMap<String, crate::model::Domain>,
+    domain_store: HashMap<String, crate::model::Mirror>,
     generate_overrides: HashMap<String, GenerateProvider>,
 }
 
@@ -71,12 +71,12 @@ impl Namespace {
     }
 
     /// Register a compiled domain.
-    pub fn register_domain(&mut self, name: &str, domain: crate::model::Domain) {
+    pub fn register_domain(&mut self, name: &str, domain: crate::model::Mirror) {
         self.domain_store.insert(name.to_string(), domain);
     }
 
     /// Look up a domain by name.
-    pub fn domain(&self, domain: &str) -> Option<&crate::model::Domain> {
+    pub fn domain(&self, domain: &str) -> Option<&crate::model::Mirror> {
         self.domain_store.get(domain)
     }
 
@@ -421,7 +421,7 @@ fn resolve_ast<C: Setting>(
     let mut grammar_domains: Vec<String> = Vec::new();
     for child in children {
         if child.data().is_decl("grammar") {
-            let domain = crate::model::Domain::from_grammar(child).map_err(|msg| ResolveError {
+            let domain = crate::model::Mirror::from_grammar(child).map_err(|msg| ResolveError {
                 message: msg,
                 span: Some(child.data().span),
                 hints: vec![],
@@ -1918,17 +1918,17 @@ mod tests {
         assert_eq!(tmpl.fields.len(), 1);
     }
 
-    // -- Grammar compilation via Domain --
+    // -- Grammar compilation via Mirror --
 
-    /// Parse a grammar source and compile a Domain.
-    fn compile_grammar(source: &str) -> crate::model::Domain {
+    /// Parse a grammar source and compile a Mirror.
+    fn compile_grammar(source: &str) -> crate::model::Mirror {
         let ast = Parse.trace(source.to_string()).unwrap();
         let grammar = ast
             .children()
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("source must contain a grammar block");
-        crate::model::Domain::from_grammar(grammar).unwrap()
+        crate::model::Mirror::from_grammar(grammar).unwrap()
     }
 
     #[test]
@@ -1970,7 +1970,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("grammar");
-        let err = crate::model::Domain::from_grammar(grammar).unwrap_err();
+        let err = crate::model::Mirror::from_grammar(grammar).unwrap_err();
         assert!(err.contains("ops"), "should mention bad ref: {}", err);
         assert!(err.contains("@test"), "should mention domain: {}", err);
     }
@@ -1986,7 +1986,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("grammar");
-        let err = crate::model::Domain::from_grammar(grammar).unwrap_err();
+        let err = crate::model::Mirror::from_grammar(grammar).unwrap_err();
         assert!(err.contains("shades"), "{}", err);
         assert!(err.contains("color"), "should mention parent type: {}", err);
     }
@@ -2006,7 +2006,7 @@ mod tests {
             span,
             vec![stray_child, typedef],
         );
-        let dom = crate::model::Domain::from_grammar(&grammar).unwrap();
+        let dom = crate::model::Mirror::from_grammar(&grammar).unwrap();
         assert!(dom.has_variant("", "a"));
     }
 
@@ -2019,7 +2019,7 @@ mod tests {
         let variant = ast::ast_leaf(Kind::Form, "variant", "a", span);
         let typedef = ast::ast_branch(Kind::Form, "type-def", "", span, vec![stray, variant]);
         let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![typedef]);
-        let dom = crate::model::Domain::from_grammar(&grammar).unwrap();
+        let dom = crate::model::Mirror::from_grammar(&grammar).unwrap();
         assert!(dom.has_variant("", "a"));
         // Only 1 variant, not 2
         assert_eq!(dom.variants("").unwrap().len(), 1);
@@ -2098,7 +2098,7 @@ mod tests {
         let field = ast::ast_leaf(Kind::Atom, "field", "to", span);
         let actiondef = ast::ast_branch(Kind::Form, "action-def", "send", span, vec![stray, field]);
         let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![actiondef]);
-        let dom = crate::model::Domain::from_grammar(&grammar).unwrap();
+        let dom = crate::model::Mirror::from_grammar(&grammar).unwrap();
         assert!(dom.has_action("send"));
         let fields = dom.act_fields("send").unwrap();
         assert_eq!(fields.len(), 1);
@@ -2113,7 +2113,7 @@ mod tests {
         let call = ast::ast_leaf(Kind::Ref, "action-call", "nodot", span);
         let actiondef = ast::ast_branch(Kind::Form, "action-def", "ping", span, vec![call]);
         let grammar = ast::ast_branch(Kind::Decl, "grammar", "@test", span, vec![actiondef]);
-        let dom = crate::model::Domain::from_grammar(&grammar).unwrap();
+        let dom = crate::model::Mirror::from_grammar(&grammar).unwrap();
         assert!(dom.has_action("ping"));
         assert!(dom.action_calls("ping").is_empty());
     }
@@ -2212,8 +2212,8 @@ mod tests {
             .collect();
         assert_eq!(grammars.len(), 2);
 
-        let dom1 = crate::model::Domain::from_grammar(grammars[0]).unwrap();
-        let dom2 = crate::model::Domain::from_grammar(grammars[1]).unwrap();
+        let dom1 = crate::model::Mirror::from_grammar(grammars[0]).unwrap();
+        let dom2 = crate::model::Mirror::from_grammar(grammars[1]).unwrap();
         assert_eq!(dom1.domain_name(), "first");
         assert_eq!(dom2.domain_name(), "second");
         assert!(dom1.has_variant("", "a"));
@@ -2285,7 +2285,7 @@ mod tests {
         let ast = Parse.trace(source.to_string()).unwrap();
         for child in ast.children() {
             if child.data().is_decl("grammar") {
-                let domain = crate::model::Domain::from_grammar(child).unwrap();
+                let domain = crate::model::Mirror::from_grammar(child).unwrap();
                 let domain_name = domain.domain_name().to_string();
                 namespace.register_domain(&domain_name, domain);
             }
@@ -2372,7 +2372,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("child grammar must have a grammar block");
-        let dom = crate::model::Domain::from_grammar(grammar).unwrap();
+        let dom = crate::model::Mirror::from_grammar(grammar).unwrap();
 
         // @build grammar has the expected types
         assert_eq!(dom.domain_name(), "build");
@@ -2383,7 +2383,7 @@ mod tests {
         assert!(namespace.has_grammar("compiler"));
     }
 
-    // -- Domain accessors --
+    // -- Mirror accessors --
 
     #[test]
     fn domain_type_names() {

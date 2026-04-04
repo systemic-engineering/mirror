@@ -6,18 +6,18 @@
 
 use mirror::ffi::{self, CompileResult};
 use mirror::logic::ProofCertificate;
-use mirror::model::Domain;
+use mirror::model::Mirror;
 use mirror::parse::Parse;
 use mirror::Vector;
 
-fn compile_grammar(source: &str) -> Domain {
+fn compile_grammar(source: &str) -> Mirror {
     let ast = Parse.trace(source.to_string()).unwrap();
     let grammar = ast
         .children()
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .expect("source must contain a grammar block");
-    Domain::from_grammar(grammar).unwrap()
+    Mirror::from_grammar(grammar).unwrap()
 }
 
 #[test]

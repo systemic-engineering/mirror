@@ -1,11 +1,11 @@
-//! Grammar-derived generator. Exhaustive derivation from Domain.
+//! Grammar-derived generator. Exhaustive derivation from Mirror.
 //!
 //! The grammar IS the generator. `type = a | b | c` means exactly {a, b, c}.
 //! No randomness — full enumeration. The derivation space is finite.
 
 use crate::ast::{self, AstNode, Span};
 use crate::domain::conversation::Kind;
-use crate::model::Domain;
+use crate::model::Mirror;
 use crate::prism::Prism;
 
 /// A single derivation from a grammar type.
@@ -24,7 +24,7 @@ const GEN_SPAN: Span = Span { start: 0, end: 0 };
 /// For `type = a | b | c`, produces 3 Derivation values.
 /// Parameterized variants like `when(op)` expand recursively:
 /// one derivation per (variant, param-variant) pair.
-pub fn derive_type(domain: &Domain, type_name: &str) -> Vec<Derivation> {
+pub fn derive_type(domain: &Mirror, type_name: &str) -> Vec<Derivation> {
     let variants = match domain.variants(type_name) {
         Some(vs) => vs,
         None => return Vec::new(),
@@ -72,7 +72,7 @@ pub fn derive_type(domain: &Domain, type_name: &str) -> Vec<Derivation> {
 /// Derive all types in the grammar.
 ///
 /// Iterates type names in sorted order, derives each, concatenates.
-pub fn derive_all(domain: &Domain) -> Vec<Derivation> {
+pub fn derive_all(domain: &Mirror) -> Vec<Derivation> {
     let mut type_names = domain.type_names();
     type_names.sort();
 
@@ -116,18 +116,18 @@ pub fn derive_all(domain: &Domain) -> Vec<Derivation> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::model::Domain;
+    use crate::model::Mirror;
     use crate::parse::Parse;
     use crate::Vector;
 
-    fn compile_grammar(source: &str) -> Domain {
+    fn compile_grammar(source: &str) -> Mirror {
         let ast = Parse.trace(source.to_string()).unwrap();
         let grammar = ast
             .children()
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("source must contain a grammar block");
-        Domain::from_grammar(grammar).unwrap()
+        Mirror::from_grammar(grammar).unwrap()
     }
 
     #[test]
@@ -247,9 +247,9 @@ mod tests {
 
     #[test]
     fn derive_parameterized_dangling_ref_skips() {
-        // Domain with a parameterized variant whose type ref is NOT declared.
+        // Mirror with a parameterized variant whose type ref is NOT declared.
         // derive_type should skip it (None => continue).
-        let dom = Domain::with_dangling_param("test", "", "when", "nonexistent");
+        let dom = Mirror::with_dangling_param("test", "", "when", "nonexistent");
         let derivations = derive_type(&dom, "");
         // The "when" variant has a param ref to "nonexistent" which has no variants,
         // so it is skipped entirely.

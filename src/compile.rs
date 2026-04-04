@@ -141,7 +141,7 @@ fn emit_branch_arm(arm: &crate::resolve::BranchArm, line: i32) -> Term {
     )
 }
 
-/// Emit an actor dispatch module from a `Domain` model.
+/// Emit an actor dispatch module from a `Mirror` model.
 ///
 /// Each act declared in the domain becomes an exported function that
 /// dispatches to the registered actor process via gen_server:call.
@@ -153,7 +153,7 @@ fn emit_branch_arm(arm: &crate::resolve::BranchArm, line: i32) -> Term {
 /// compile(Args) -> gen_server:call('compiler', {compile, Args}).
 /// ```
 pub fn emit_actor_module_for_domain(
-    domain: &crate::model::Domain,
+    domain: &crate::model::Mirror,
     lenses: &[String],
     extends: &[String],
 ) -> Vec<u8> {
@@ -163,7 +163,7 @@ pub fn emit_actor_module_for_domain(
 
     let mut forms = Vec::new();
 
-    // {attribute, 1, module, conv_Domain}
+    // {attribute, 1, module, conv_Mirror}
     forms.push(eaf_tuple(vec![
         eaf_atom("attribute"),
         eaf_int(1),
@@ -310,8 +310,8 @@ fn emit_act_function(
     ])
 }
 
-/// Emit `visibility/0` function from a Domain: returns a list of `{<<"action">>, <<"vis">>}` tuples.
-fn emit_visibility_function_from_domain(domain: &crate::model::Domain, line: i32) -> Term {
+/// Emit `visibility/0` function from a Mirror: returns a list of `{<<"action">>, <<"vis">>}` tuples.
+fn emit_visibility_function_from_domain(domain: &crate::model::Mirror, line: i32) -> Term {
     let pairs: Vec<Term> = domain
         .act_names()
         .iter()
@@ -451,11 +451,11 @@ fn eaf_tuple_expr(line: i32, elements: Vec<Term>) -> Term {
     eaf_tuple(vec![eaf_atom("tuple"), eaf_int(line), eaf_list(elements)])
 }
 
-/// Emit an actor dispatch module from a `Domain` model.
+/// Emit an actor dispatch module from a `Mirror` model.
 ///
-/// This is the primary Domain-based entry point for compilation.
-/// Uses Domain query methods directly.
-pub fn emit_actor_module_from_domain(domain: &crate::model::Domain) -> Vec<u8> {
+/// This is the primary Mirror-based entry point for compilation.
+/// Uses Mirror query methods directly.
+pub fn emit_actor_module_from_domain(domain: &crate::model::Mirror) -> Vec<u8> {
     // Filter out self-lenses (e.g. @filesystem in a @filesystem grammar).
     let domain_name = domain.name.as_str();
     let mut lenses = Vec::new();
@@ -572,7 +572,7 @@ fn emit_test_descriptor(child: &Prism<AstNode>, line: i32) -> Term {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::model::Domain;
+    use crate::model::Mirror;
     use crate::parse::Parse;
     use crate::Vector;
 
@@ -592,7 +592,7 @@ mod tests {
     fn emit_actor_module_from_domain_produces_valid_etf() {
         let source = "grammar @test {\n  type = a | b\n  action ping(target: a)\n}\n";
         let grammar_node = parse_grammar_node(source);
-        let domain = Domain::from_grammar(&grammar_node).unwrap();
+        let domain = Mirror::from_grammar(&grammar_node).unwrap();
 
         let etf = emit_actor_module_from_domain(&domain);
 
@@ -612,7 +612,7 @@ mod tests {
     fn emit_actor_module_from_domain_deterministic() {
         let source = "grammar @test {\n  type = a | b\n  action ping(target: a)\n}\n";
         let grammar_node = parse_grammar_node(source);
-        let domain = Domain::from_grammar(&grammar_node).unwrap();
+        let domain = Mirror::from_grammar(&grammar_node).unwrap();
 
         let etf1 = emit_actor_module_from_domain(&domain);
         let etf2 = emit_actor_module_from_domain(&domain);
@@ -626,7 +626,7 @@ mod tests {
         let source = "grammar @fs {\n  type = file | folder\n}\n";
         let grammar_node = parse_grammar_node(source);
         let lenses = vec!["@reality".to_string()];
-        let domain = Domain::from_grammar_with_lenses(&grammar_node, &lenses).unwrap();
+        let domain = Mirror::from_grammar_with_lenses(&grammar_node, &lenses).unwrap();
 
         let etf = emit_actor_module_from_domain(&domain);
         let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
@@ -644,7 +644,7 @@ mod tests {
     fn emit_actor_module_from_verified_produces_valid_etf() {
         let source = "grammar @clean {\n  type = x | y\n}\n";
         let grammar_node = parse_grammar_node(source);
-        let domain = Domain::from_grammar(&grammar_node).unwrap();
+        let domain = Mirror::from_grammar(&grammar_node).unwrap();
         let verified = crate::check::verify(domain).unwrap();
 
         let etf = emit_actor_module_from_verified(&verified);

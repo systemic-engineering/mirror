@@ -7,7 +7,7 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use crate::model::Domain;
+use crate::model::Mirror;
 use crate::resolve::{resolve_template, Namespace, TemplateProvider};
 
 /// A discovered package.
@@ -104,7 +104,7 @@ impl PackageRegistry {
             // Extract grammars
             for child in ast.children() {
                 if child.data().is_decl("grammar") {
-                    match Domain::from_grammar(child) {
+                    match Mirror::from_grammar(child) {
                         Ok(domain) => {
                             let domain_name = domain.domain_name().to_string();
                             namespace.register_domain(&domain_name, domain);
@@ -438,7 +438,7 @@ mod tests {
     #[test]
     fn to_namespace_grammar_compile_error() {
         let dir = TempDir::new().unwrap();
-        // Parameterized variant referencing a non-existent type → Domain error
+        // Parameterized variant referencing a non-existent type → Mirror error
         fs::write(
             dir.path().join("@bad"),
             "grammar @bad {\n  type = thing(missing)\n}\n",

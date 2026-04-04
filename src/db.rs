@@ -18,7 +18,7 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use crate::model::Domain;
+use crate::model::Mirror;
 use crate::parse::Parse;
 use crate::ContentAddressed;
 use crate::Vector;
@@ -32,7 +32,7 @@ pub enum DbError {
     Io(std::io::Error),
     /// Schema compilation failed.
     Schema(String),
-    /// Domain not found.
+    /// Mirror not found.
     NotFound(String),
     /// Validation error.
     Validation(String),
@@ -69,7 +69,7 @@ impl std::fmt::Display for DbError {
 /// An index file maps domain names to git blob OIDs.
 pub struct ConversationDb {
     repo: git2::Repository,
-    schema: Domain,
+    schema: Mirror,
     schema_source: String,
     index: HashMap<String, String>,
     path: PathBuf,
@@ -212,7 +212,7 @@ impl ConversationDb {
     }
 
     /// Load a domain by name. Recompiles from stored source.
-    pub fn load_domain(&self, name: &str) -> Result<Domain, DbError> {
+    pub fn load_domain(&self, name: &str) -> Result<Mirror, DbError> {
         let _oid = self
             .index
             .get(name)
@@ -234,7 +234,7 @@ impl ConversationDb {
     }
 
     /// Load a domain by its content OID.
-    pub fn load_domain_by_oid(&self, target_oid: &str) -> Result<Domain, DbError> {
+    pub fn load_domain_by_oid(&self, target_oid: &str) -> Result<Mirror, DbError> {
         let name = self
             .index
             .iter()
@@ -356,7 +356,7 @@ impl ConversationDb {
     }
 
     /// The schema domain.
-    pub fn schema(&self) -> &Domain {
+    pub fn schema(&self) -> &Mirror {
         &self.schema
     }
 
@@ -366,8 +366,8 @@ impl ConversationDb {
     }
 }
 
-/// Compile a .conv source into a Domain.
-fn compile_schema(source: &str) -> Result<Domain, DbError> {
+/// Compile a .conv source into a Mirror.
+fn compile_schema(source: &str) -> Result<Mirror, DbError> {
     let ast = Parse
         .trace(source.to_string())
         .into_result()
@@ -375,7 +375,7 @@ fn compile_schema(source: &str) -> Result<Domain, DbError> {
 
     for child in ast.children() {
         if child.data().is_decl("grammar") {
-            return Domain::from_grammar(child).map_err(DbError::Schema);
+            return Mirror::from_grammar(child).map_err(DbError::Schema);
         }
     }
 

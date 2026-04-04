@@ -68,11 +68,11 @@ fn compile_grammar_traced<'a>(env: Env<'a>, source: String) -> (Atom, rustler::T
 // Coincidence measurement NIFs
 // ---------------------------------------------------------------------------
 
-/// Parse source into a Domain for property checking.
+/// Parse source into a Mirror for property checking.
 ///
 /// Shared helper for all measurement NIFs. Parses the source, finds the
-/// grammar block, and compiles it into a Domain.
-fn domain_from_source(source: &str) -> Result<mirror::model::Domain, String> {
+/// grammar block, and compiles it into a Mirror.
+fn domain_from_source(source: &str) -> Result<mirror::model::Mirror, String> {
     let ast = mirror::parse::Parse
         .trace(source.to_string())
         .into_result()
@@ -82,7 +82,7 @@ fn domain_from_source(source: &str) -> Result<mirror::model::Domain, String> {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .ok_or_else(|| "no grammar block".to_string())?;
-    mirror::model::Domain::from_grammar(grammar)
+    mirror::model::Mirror::from_grammar(grammar)
 }
 
 /// Check a built-in property by name against a grammar source (internal helper).

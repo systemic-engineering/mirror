@@ -1,8 +1,8 @@
-//! Domain model types.
+//! Mirror model types.
 //!
 //! Make illegal state unrepresentable. This module provides newtypes and
 //! domain structs that serve as the public API for compiled grammars,
-//! Domain model types for compiled grammars.
+//! Mirror model types for compiled grammars.
 
 use std::fmt;
 
@@ -150,7 +150,7 @@ impl fmt::Display for ParamName {
 }
 
 // ---------------------------------------------------------------------------
-// Domain model structs
+// Mirror model structs
 // ---------------------------------------------------------------------------
 
 /// A validated reference to a type by name.
@@ -234,7 +234,7 @@ impl Properties {
 
 /// A compiled domain.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Domain {
+pub struct Mirror {
     pub name: DomainName,
     pub types: Vec<TypeDef>,
     pub actions: Vec<Action>,
@@ -245,9 +245,9 @@ pub struct Domain {
 }
 
 domain_oid!(/// Content address for domains.
-pub DomainOid);
+pub MirrorOid);
 
-impl Encode for Domain {
+impl Encode for Mirror {
     fn encode(&self) -> Vec<u8> {
         let mut bytes = Vec::new();
         bytes.extend_from_slice(b"domain:");
@@ -280,10 +280,10 @@ impl Encode for Domain {
     }
 }
 
-impl ContentAddressed for Domain {
-    type Oid = DomainOid;
-    fn content_oid(&self) -> DomainOid {
-        DomainOid::from(Oid::hash(&self.encode()))
+impl ContentAddressed for Mirror {
+    type Oid = MirrorOid;
+    fn content_oid(&self) -> MirrorOid {
+        MirrorOid::from(Oid::hash(&self.encode()))
     }
 }
 
@@ -331,7 +331,7 @@ impl DomainComplexity {
     }
 }
 
-impl Domain {
+impl Mirror {
     /// Returns `true` if this domain has a lens targeting `"actor"`.
     pub fn is_actor(&self) -> bool {
         self.lenses.iter().any(|l| l.target.as_str() == "actor")
@@ -465,12 +465,12 @@ impl Domain {
         self.properties.ensures.iter().map(|p| p.as_str()).collect()
     }
 
-    /// Build a `Domain` from a grammar AST node with no external lens declarations.
+    /// Build a `Mirror` from a grammar AST node with no external lens declarations.
     pub fn from_grammar(node: &Prism<AstNode>) -> Result<Self, String> {
         Self::from_grammar_with_lenses(node, &[])
     }
 
-    /// Build a `Domain` from a grammar AST node plus external lens declarations.
+    /// Build a `Mirror` from a grammar AST node plus external lens declarations.
     ///
     /// `lens_values` is a slice of values like `"@actor"` or `"@tools"` sourced
     /// from sibling `in @domain` declarations.
@@ -627,7 +627,7 @@ impl Domain {
         // Aggregate calls from all actions to the domain level.
         let calls: Vec<ActionCall> = actions.iter().flat_map(|a| a.calls.clone()).collect();
 
-        Ok(Domain {
+        Ok(Mirror {
             name: domain_name,
             types,
             actions,
@@ -680,7 +680,7 @@ impl Domain {
     }
 }
 
-impl Domain {
+impl Mirror {
     /// Test-only: build a domain with a parameterized variant whose type ref
     /// is NOT declared. This exercises the `None => continue` defensive path
     /// in `generate::derive_type`.
@@ -691,7 +691,7 @@ impl Domain {
         variant: &str,
         param_ref: &str,
     ) -> Self {
-        Domain {
+        Mirror {
             name: DomainName::new(domain),
             types: vec![TypeDef {
                 name: TypeName::new(type_name),
@@ -791,10 +791,10 @@ mod tests {
         assert!(p.ensures.is_empty());
     }
 
-    // --- Domain struct construction ---
+    // --- Mirror struct construction ---
 
-    fn make_domain(lenses: Vec<Lens>) -> Domain {
-        Domain {
+    fn make_domain(lenses: Vec<Lens>) -> Mirror {
+        Mirror {
             name: DomainName::new("test"),
             types: vec![],
             actions: vec![],
@@ -814,7 +814,7 @@ mod tests {
         assert!(d.lenses.is_empty());
     }
 
-    // --- Domain::is_actor ---
+    // --- Mirror::is_actor ---
 
     #[test]
     fn is_actor_false_without_actor_lens() {
@@ -867,7 +867,7 @@ mod tests {
         _accepts_property_name(PropertyName::new("p"));
     }
 
-    // --- Domain::from_grammar helpers ---
+    // --- Mirror::from_grammar helpers ---
 
     use crate::ast::{AstNode, Span};
     use crate::domain::conversation::Kind;
@@ -931,7 +931,7 @@ mod tests {
         );
         let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@test", vec![type_def]);
 
-        let domain = Domain::from_grammar(&grammar).unwrap();
+        let domain = Mirror::from_grammar(&grammar).unwrap();
 
         assert_eq!(domain.name.as_str(), "test");
         assert_eq!(domain.types.len(), 1);
@@ -956,7 +956,7 @@ mod tests {
         let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@compiler", vec![action]);
         let lenses = vec!["@actor".to_string()];
 
-        let domain = Domain::from_grammar_with_lenses(&grammar, &lenses).unwrap();
+        let domain = Mirror::from_grammar_with_lenses(&grammar, &lenses).unwrap();
 
         assert_eq!(domain.name.as_str(), "compiler");
         assert!(domain.is_actor());
@@ -978,7 +978,7 @@ mod tests {
             vec![req, inv, ens],
         );
 
-        let domain = Domain::from_grammar(&grammar).unwrap();
+        let domain = Mirror::from_grammar(&grammar).unwrap();
 
         assert_eq!(domain.name.as_str(), "guarded");
         assert_eq!(
@@ -1015,7 +1015,7 @@ mod tests {
         );
         let grammar = mk_fractal("grammar-bad", Kind::Decl, "grammar", "@bad", vec![type_def]);
 
-        let err = Domain::from_grammar(&grammar).unwrap_err();
+        let err = Mirror::from_grammar(&grammar).unwrap_err();
 
         assert!(
             err.contains("nonexistent"),
@@ -1062,7 +1062,7 @@ mod tests {
             vec![type_def],
         );
 
-        let domain = Domain::from_grammar(&grammar).unwrap();
+        let domain = Mirror::from_grammar(&grammar).unwrap();
 
         assert_eq!(domain.types.len(), 1);
         assert_eq!(domain.types[0].variants.len(), 2);
@@ -1104,7 +1104,7 @@ mod tests {
             vec![action_pub, action_priv],
         );
 
-        let domain = Domain::from_grammar(&grammar).unwrap();
+        let domain = Mirror::from_grammar(&grammar).unwrap();
 
         assert_eq!(domain.actions.len(), 2);
 
@@ -1127,7 +1127,7 @@ mod tests {
         let action = mk_fractal("action-default", Kind::Form, "action-def", "ping", vec![]);
         let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@health", vec![action]);
 
-        let domain = Domain::from_grammar(&grammar).unwrap();
+        let domain = Mirror::from_grammar(&grammar).unwrap();
 
         assert_eq!(domain.actions[0].visibility, Visibility::Protected);
     }
@@ -1145,7 +1145,7 @@ mod tests {
         );
         let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@service", vec![action]);
 
-        let domain = Domain::from_grammar(&grammar).unwrap();
+        let domain = Mirror::from_grammar(&grammar).unwrap();
 
         assert_eq!(domain.actions[0].visibility, Visibility::Protected);
     }
@@ -1171,7 +1171,7 @@ mod tests {
         );
         let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@pipeline", vec![action]);
 
-        let domain = Domain::from_grammar(&grammar).unwrap();
+        let domain = Mirror::from_grammar(&grammar).unwrap();
 
         let copy_action = &domain.actions[0];
         assert_eq!(copy_action.calls.len(), 1);
@@ -1195,7 +1195,7 @@ mod tests {
         );
         let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@misc", vec![action]);
 
-        let domain = Domain::from_grammar(&grammar).unwrap();
+        let domain = Mirror::from_grammar(&grammar).unwrap();
 
         // Call is skipped — no calls recorded.
         assert_eq!(domain.actions[0].calls.len(), 0);
@@ -1215,7 +1215,7 @@ mod tests {
         let action = mk_fractal("action-send", Kind::Form, "action-def", "send", vec![field]);
         let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@msg", vec![action]);
 
-        let domain = Domain::from_grammar(&grammar).unwrap();
+        let domain = Mirror::from_grammar(&grammar).unwrap();
 
         let send = &domain.actions[0];
         assert_eq!(send.fields.len(), 1);
@@ -1237,7 +1237,7 @@ mod tests {
         );
         let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@silent", vec![action]);
 
-        let domain = Domain::from_grammar(&grammar).unwrap();
+        let domain = Mirror::from_grammar(&grammar).unwrap();
 
         let quiet = &domain.actions[0];
         assert_eq!(quiet.fields.len(), 0);
@@ -1265,7 +1265,7 @@ mod tests {
         );
         let grammar = mk_fractal("grammar", Kind::Decl, "grammar", "@clean", vec![type_def]);
 
-        let domain = Domain::from_grammar(&grammar).unwrap();
+        let domain = Mirror::from_grammar(&grammar).unwrap();
 
         assert_eq!(domain.types[0].variants[0].params.len(), 0);
     }
@@ -1292,11 +1292,11 @@ mod tests {
         assert_eq!(map[&DomainName::new("fs")], 1);
     }
 
-    // --- Full Domain with nested structs ---
+    // --- Full Mirror with nested structs ---
 
     #[test]
     fn domain_with_types_and_actions() {
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("@reed"),
             types: vec![TypeDef {
                 name: TypeName::new("signal"),
@@ -1345,10 +1345,10 @@ mod tests {
         assert!(!domain.is_actor());
     }
 
-    // --- Domain query methods ---
+    // --- Mirror query methods ---
 
-    fn make_rich_domain() -> Domain {
-        Domain {
+    fn make_rich_domain() -> Mirror {
+        Mirror {
             name: DomainName::new("@reed"),
             types: vec![TypeDef {
                 name: TypeName::new("signal"),
@@ -1465,7 +1465,7 @@ mod tests {
     #[test]
     fn domain_query_act_fields_empty_type_ref() {
         // Action with a field whose type ref is empty string → None.
-        let d = Domain {
+        let d = Mirror {
             name: DomainName::new("test"),
             types: vec![],
             actions: vec![Action {
@@ -1533,7 +1533,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let domain = Domain::from_grammar(grammar).unwrap();
+        let domain = Mirror::from_grammar(grammar).unwrap();
         let complexity = domain.complexity();
         assert!(complexity.is_trivial());
         assert!(complexity.spectrum().is_none());
@@ -1549,7 +1549,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let domain = Domain::from_grammar(grammar).unwrap();
+        let domain = Mirror::from_grammar(grammar).unwrap();
         assert!(matches!(domain.complexity(), DomainComplexity::Trivial));
     }
 
@@ -1564,7 +1564,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let domain = Domain::from_grammar(grammar).unwrap();
+        let domain = Mirror::from_grammar(grammar).unwrap();
         let spectrum = domain
             .complexity()
             .spectrum()
@@ -1576,10 +1576,10 @@ mod tests {
 
     #[test]
     fn domain_complexity_trivial_for_external_type_refs() {
-        // A manually-constructed Domain where variant params reference
+        // A manually-constructed Mirror where variant params reference
         // types outside this domain — those edges are skipped, leaving
         // no internal edges → Trivial.
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("manual"),
             types: vec![TypeDef {
                 name: TypeName::new("request"),
@@ -1603,7 +1603,7 @@ mod tests {
     #[test]
     fn domain_complexity_trivial_for_self_referential_types() {
         // A type that only references itself (i == j) → self-edges skipped → Trivial.
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("recursive"),
             types: vec![TypeDef {
                 name: TypeName::new("tree"),
@@ -1642,7 +1642,7 @@ mod tests {
                 }],
             })
             .collect();
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("huge"),
             types,
             actions: vec![],
@@ -1658,7 +1658,7 @@ mod tests {
 
     #[test]
     fn domain_has_extends() {
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("sub"),
             types: vec![],
             actions: vec![],
@@ -1682,7 +1682,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let domain = Domain::from_grammar(grammar).unwrap();
+        let domain = Mirror::from_grammar(grammar).unwrap();
         assert!(domain.calls.is_empty(), "no calls without a body");
     }
 
@@ -1696,8 +1696,8 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let d1 = Domain::from_grammar(grammar).unwrap();
-        let d2 = Domain::from_grammar(grammar).unwrap();
+        let d1 = Mirror::from_grammar(grammar).unwrap();
+        let d2 = Mirror::from_grammar(grammar).unwrap();
         assert_eq!(d1.content_oid(), d2.content_oid());
     }
 
@@ -1712,7 +1712,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let d1 = Domain::from_grammar(g1).unwrap();
+        let d1 = Mirror::from_grammar(g1).unwrap();
 
         let ast2 = Parse
             .trace("grammar @b {\n  type = y\n}\n".to_string())
@@ -1722,7 +1722,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let d2 = Domain::from_grammar(g2).unwrap();
+        let d2 = Mirror::from_grammar(g2).unwrap();
 
         assert_ne!(d1.content_oid(), d2.content_oid());
     }
@@ -1737,8 +1737,8 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let d1 = Domain::from_grammar(grammar).unwrap();
-        let d2 = Domain::from_grammar(grammar).unwrap();
+        let d1 = Mirror::from_grammar(grammar).unwrap();
+        let d2 = Mirror::from_grammar(grammar).unwrap();
         // Same source → same OID.
         assert_eq!(d1.content_oid(), d2.content_oid());
         // OID differs from a domain without actions.
@@ -1749,7 +1749,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let d3 = Domain::from_grammar(g2).unwrap();
+        let d3 = Mirror::from_grammar(g2).unwrap();
         assert_ne!(d1.content_oid(), d3.content_oid());
     }
 
@@ -1763,7 +1763,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let domain = Domain::from_grammar(grammar).unwrap();
+        let domain = Mirror::from_grammar(grammar).unwrap();
         assert_eq!(domain.extends.len(), 2);
         assert_eq!(domain.extends[0].as_str(), "smash");
         assert_eq!(domain.extends[1].as_str(), "controller");
@@ -1779,7 +1779,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let domain = Domain::from_grammar(grammar).unwrap();
+        let domain = Mirror::from_grammar(grammar).unwrap();
         assert!(domain.extends.is_empty());
     }
 
@@ -1803,11 +1803,11 @@ mod tests {
         assert_eq!(body.source, "fn main() {}");
     }
 
-    // --- DomainOid ---
+    // --- MirrorOid ---
 
     #[test]
     fn domain_oid_from_and_display() {
-        let oid = DomainOid::new("abc123");
+        let oid = MirrorOid::new("abc123");
         assert_eq!(oid.as_ref(), "abc123");
         assert_eq!(oid.to_string(), "abc123");
     }

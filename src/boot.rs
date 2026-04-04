@@ -8,7 +8,7 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use crate::check;
-use crate::model::Domain;
+use crate::model::Mirror;
 use crate::parse::Parse;
 use crate::runtime::{RactorRuntime, Runtime};
 use crate::Vector;
@@ -138,7 +138,7 @@ fn compile_source(source: &str) -> Result<check::Verified, String> {
         .find(|c| c.data().is_decl("grammar"))
         .ok_or_else(|| "boot: no grammar block found".to_string())?;
 
-    let domain = Domain::from_grammar(grammar).map_err(|e| format!("model: {}", e))?;
+    let domain = Mirror::from_grammar(grammar).map_err(|e| format!("model: {}", e))?;
     check::verify(domain).map_err(|v| format!("check: {:?}", v))
 }
 
@@ -147,7 +147,7 @@ fn compile_source(source: &str) -> Result<check::Verified, String> {
 pub async fn boot(
     runtime: &RactorRuntime,
     sequence: &BootSequence,
-) -> Result<Vec<prism::Beam<Domain>>, String> {
+) -> Result<Vec<prism::Beam<Mirror>>, String> {
     let mut all_artifacts = Vec::new();
 
     for (layer, entries) in &sequence.layers {

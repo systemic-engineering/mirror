@@ -184,7 +184,6 @@ impl Weights {
 // Forward pass
 // ---------------------------------------------------------------------------
 
-
 /// The forward pass. spectral_features → optic category.
 ///
 /// hidden = sigmoid(W1 · input + b1)

@@ -148,14 +148,14 @@ fn compile_imported_template_content_addressed() {
 
 // -- Act dispatch: grammar → actor module --
 
-fn compile_grammar(source: &str) -> mirror::Domain {
+fn compile_grammar(source: &str) -> mirror::Mirror {
     let ast = mirror::Parse.trace(source.to_string()).unwrap();
     let grammar_node = ast
         .children()
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .expect("source should contain a grammar block");
-    mirror::Domain::from_grammar(grammar_node).unwrap()
+    mirror::Mirror::from_grammar(grammar_node).unwrap()
 }
 
 /// Act dispatch: grammar with acts produces a valid actor module.
@@ -425,7 +425,7 @@ fn emit_actor_module_filters_self_lenses() {
         .unwrap();
     // Pass @test (self) and @other as lenses.
     let lenses = vec!["@test".to_string(), "@other".to_string()];
-    let domain = mirror::Domain::from_grammar_with_lenses(grammar_node, &lenses).unwrap();
+    let domain = mirror::Mirror::from_grammar_with_lenses(grammar_node, &lenses).unwrap();
 
     let etf = compile::emit_actor_module_from_domain(&domain);
     let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();

@@ -1,10 +1,10 @@
 //! Integration test — the litmus test.
 //!
-//! Full pipeline: `.conv` source text → parse → Domain → verify → Runtime dispatch.
+//! Full pipeline: `.conv` source text → parse → Mirror → verify → Runtime dispatch.
 //! Key property: violated invariants produce clear, structured error messages entirely in Rust.
 //!
 //! Test 6 proves the inference physics pipeline end-to-end:
-//! .conv source → parse → Domain → verify with spectrum → actor boots with schedule
+//! .conv source → parse → Mirror → verify with spectrum → actor boots with schedule
 //! → decide uses temperature from eigenvalues.
 
 use mirror::check;
@@ -18,8 +18,8 @@ use mirror::Vector;
 // Helper
 // ---------------------------------------------------------------------------
 
-/// Parse a .conv source into a Domain.
-fn parse_to_domain(source: &str) -> Result<Domain, String> {
+/// Parse a .conv source into a Mirror.
+fn parse_to_domain(source: &str) -> Result<Mirror, String> {
     let ast = Parse
         .trace(source.to_string())
         .into_result()
@@ -38,7 +38,7 @@ fn parse_to_domain(source: &str) -> Result<Domain, String> {
         .map(|c| c.data().value.clone())
         .collect();
 
-    Domain::from_grammar_with_lenses(grammar_node, &lenses)
+    Mirror::from_grammar_with_lenses(grammar_node, &lenses)
 }
 
 // ---------------------------------------------------------------------------
@@ -225,7 +225,7 @@ grammar @training {
 
 /// End-to-end proof that the inference physics pipeline works:
 ///
-/// .conv source → parse → Domain → verify (spectrum computed) →
+/// .conv source → parse → Mirror → verify (spectrum computed) →
 /// InferenceSchedule (Diffusion with eigenvalues) → temperature from
 /// eigenvalues → actor boots with schedule → dispatch through runtime.
 ///

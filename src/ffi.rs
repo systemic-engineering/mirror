@@ -32,7 +32,7 @@ pub struct CompileResult {
     pub etf: Vec<u8>,
     /// Content OID of the parsed AST.
     pub parse_oid: String,
-    /// Content OID of the resolved Domain.
+    /// Content OID of the resolved Mirror.
     pub resolve_oid: String,
     /// Content OID of the compiled EAF bytes.
     pub compile_oid: String,
@@ -64,16 +64,16 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
         .find(|c| c.data().is_decl("grammar"))
         .ok_or_else(|| "no grammar block found".to_string())?;
 
-    // Build Domain from grammar AST node.
+    // Build Mirror from grammar AST node.
     let lens_values: Vec<String> = ast
         .children()
         .iter()
         .filter(|c| c.data().is_decl("in"))
         .map(|c| c.data().value.clone())
         .collect();
-    let domain = crate::model::Domain::from_grammar_with_lenses(grammar_node, &lens_values)?;
+    let domain = crate::model::Mirror::from_grammar_with_lenses(grammar_node, &lens_values)?;
 
-    // Resolve OID: content address from the Domain's encoded form.
+    // Resolve OID: content address from the Mirror's encoded form.
     let resolve_oid = domain.content_oid().as_ref().to_string();
 
     let extends: Vec<String> = domain
@@ -82,7 +82,7 @@ pub fn compile_grammar_with_phases(source: &str) -> Result<CompileResult, String
         .map(|d| d.as_str().to_string())
         .collect();
 
-    // Use Domain-based compilation path.
+    // Use Mirror-based compilation path.
     let domain_name_str = domain.name.as_str();
     let lenses: Vec<String> = domain
         .lenses

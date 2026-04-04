@@ -7,7 +7,7 @@
 use std::collections::{HashMap, HashSet};
 
 use crate::generate::{self, Derivation};
-use crate::model::Domain;
+use crate::model::Mirror;
 use crate::parse::{self, HasAssertion, PropertyCheck, TestDirective};
 use crate::prism;
 use crate::resolve::{GenerateProvider, Namespace};
@@ -28,7 +28,7 @@ pub struct PropertyResult {
 }
 
 /// Check a property against all derivations of a grammar.
-pub fn check_property<F>(domain: &Domain, name: &str, prop: F) -> PropertyResult
+pub fn check_property<F>(domain: &Mirror, name: &str, prop: F) -> PropertyResult
 where
     F: Fn(&[Derivation]) -> Verdict,
 {
@@ -126,12 +126,12 @@ fn check_test(name: &str, assertions: &[HasAssertion], namespace: &Namespace) ->
 ///
 /// Two kinds:
 /// - `Derivation`: checks all derivations (e.g., shannon_equivalence)
-/// - `Domain`: checks the Domain model directly (e.g., spectral properties)
+/// - `Mirror`: checks the Mirror model directly (e.g., spectral properties)
 pub enum BuiltinProperty {
     /// Property checked against all grammar derivations.
     Derivation(fn(&[Derivation]) -> Verdict),
-    /// Property checked against the Domain model (needs full type graph).
-    Registry(fn(&Domain) -> (bool, String)),
+    /// Property checked against the Mirror model (needs full type graph).
+    Registry(fn(&Mirror) -> (bool, String)),
 }
 
 /// Look up a built-in property by name.
@@ -147,15 +147,15 @@ pub fn lookup_builtin(name: &str) -> Option<BuiltinProperty> {
         "bipartite" => Some(BuiltinProperty::Registry(bipartite_check)),
         "inference_justified" => Some(BuiltinProperty::Registry(inference_justified_check)),
         #[cfg(test)]
-        "_test_registry_fail" => Some(BuiltinProperty::Registry(|_: &Domain| {
+        "_test_registry_fail" => Some(BuiltinProperty::Registry(|_: &Mirror| {
             (false, "intentional test failure".into())
         })),
         _ => None,
     }
 }
 
-/// Evaluate a `BuiltinProperty` against a Domain.
-fn eval_builtin(domain: &Domain, name: &str, prop: BuiltinProperty) -> (bool, String) {
+/// Evaluate a `BuiltinProperty` against a Mirror.
+fn eval_builtin(domain: &Mirror, name: &str, prop: BuiltinProperty) -> (bool, String) {
     match prop {
         BuiltinProperty::Derivation(prop_fn) => {
             let derivations = generate::derive_all(domain);
@@ -171,11 +171,11 @@ fn eval_builtin(domain: &Domain, name: &str, prop: BuiltinProperty) -> (bool, St
     }
 }
 
-/// Check a built-in property against a Domain.
+/// Check a built-in property against a Mirror.
 ///
 /// Returns `Some((satisfied, reason))` if the property is known,
 /// `None` if the property name is not recognized.
-pub fn check_builtin_domain(domain: &Domain, name: &str) -> Option<(bool, String)> {
+pub fn check_builtin_domain(domain: &Mirror, name: &str) -> Option<(bool, String)> {
     let prop = lookup_builtin(name)?;
     Some(eval_builtin(domain, name, prop))
 }
@@ -184,7 +184,7 @@ pub fn check_builtin_domain(domain: &Domain, name: &str) -> Option<(bool, String
 ///
 /// Returns `Some((satisfied, reason))` if the property is known,
 /// `None` if the property name is not recognized.
-pub fn check_builtin(domain: &Domain, name: &str) -> Option<(bool, String)> {
+pub fn check_builtin(domain: &Mirror, name: &str) -> Option<(bool, String)> {
     check_builtin_domain(domain, name)
 }
 
@@ -192,7 +192,7 @@ pub fn check_builtin(domain: &Domain, name: &str) -> Option<(bool, String)> {
 ///
 /// A grammar with types that have variants can produce derivations.
 /// Empty grammars (no types) are trivially exhaustive.
-fn exhaustive_check(domain: &Domain) -> (bool, String) {
+fn exhaustive_check(domain: &Mirror) -> (bool, String) {
     let type_count = domain.type_names().len();
     let variant_count: usize = domain
         .type_names()
@@ -212,7 +212,7 @@ fn exhaustive_check(domain: &Domain) -> (bool, String) {
 ///
 /// Inference over a trivial domain (no type references) has nothing to
 /// explore — the temperature schedule would be meaningless.
-fn inference_justified_check(domain: &Domain) -> (bool, String) {
+fn inference_justified_check(domain: &Mirror) -> (bool, String) {
     let type_names = domain.type_names();
     if type_names.is_empty() {
         return (false, "inference_justified: no types declared".into());
@@ -245,7 +245,7 @@ fn inference_justified_check(domain: &Domain) -> (bool, String) {
 
 /// Check that the type reference graph is connected.
 #[cfg(feature = "spectral")]
-fn connected_check(domain: &Domain) -> (bool, String) {
+fn connected_check(domain: &Mirror) -> (bool, String) {
     use crate::spectral::TypeGraphSpectrum;
     match TypeGraphSpectrum::from_domain(domain) {
         Some(spectrum) => {
@@ -267,7 +267,7 @@ fn connected_check(domain: &Domain) -> (bool, String) {
 
 /// Check that the type reference graph is bipartite.
 #[cfg(feature = "spectral")]
-fn bipartite_check(domain: &Domain) -> (bool, String) {
+fn bipartite_check(domain: &Mirror) -> (bool, String) {
     use crate::spectral::TypeGraphSpectrum;
     match TypeGraphSpectrum::from_domain(domain) {
         Some(spectrum) => {
@@ -291,7 +291,7 @@ fn bipartite_check(domain: &Domain) -> (bool, String) {
 }
 
 /// Derive from a domain, respecting generate overrides.
-fn derive_with_provider(domain: &Domain, provider: &GenerateProvider) -> Vec<Derivation> {
+fn derive_with_provider(domain: &Mirror, provider: &GenerateProvider) -> Vec<Derivation> {
     match provider {
         GenerateProvider::Derived => generate::derive_all(domain),
         GenerateProvider::Override(overrides) => {
@@ -323,7 +323,7 @@ fn derive_with_provider(domain: &Domain, provider: &GenerateProvider) -> Vec<Der
 /// accepted. Derivation-type properties (e.g., shannon_equivalence) run
 /// against all derivations with override support. Registry-type properties
 /// (e.g., exhaustive, connected, bipartite) run directly against the
-/// Domain model and report 0 derivations_checked (they don't enumerate).
+/// Mirror model and report 0 derivations_checked (they don't enumerate).
 fn check_property_block_with_overrides(
     name: &str,
     checks: &[PropertyCheck],
@@ -429,7 +429,7 @@ pub fn check_all(namespace: &Namespace, test_section: &str) -> Result<Vec<Proper
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::model::Domain;
+    use crate::model::Mirror;
     use crate::parse::Parse;
     use crate::Vector;
 
@@ -462,14 +462,14 @@ mod tests {
         Verdict::Pass.fail_msg();
     }
 
-    fn compile_grammar(source: &str) -> Domain {
+    fn compile_grammar(source: &str) -> Mirror {
         let ast = Parse.trace(source.to_string()).unwrap();
         let grammar = ast
             .children()
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("source must contain a grammar block");
-        Domain::from_grammar(grammar).unwrap()
+        Mirror::from_grammar(grammar).unwrap()
     }
 
     // -- shannon_equivalence --
@@ -594,7 +594,7 @@ mod tests {
     #[test]
     fn check_all_property_registry_builtin() {
         // Registry-type builtins (exhaustive, connected, bipartite) run against
-        // the Domain directly — they don't enumerate derivations.
+        // the Mirror directly — they don't enumerate derivations.
         let reg = compile_grammar("grammar @test {\n  type = a | b\n}\n");
         let mut namespace = Namespace::new();
         namespace.register_domain("test", reg);
@@ -671,7 +671,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("conv file must have a grammar block");
-        let reg = Domain::from_grammar(grammar).unwrap();
+        let reg = Mirror::from_grammar(grammar).unwrap();
         let derivations = generate::derive_all(&reg);
         assert!(
             !derivations.is_empty(),
@@ -828,7 +828,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("should have grammar block");
-        let reg = Domain::from_grammar(grammar).unwrap();
+        let reg = Mirror::from_grammar(grammar).unwrap();
         assert_eq!(reg.domain_name(), "property");
 
         // Verify types
@@ -865,7 +865,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let reg = Domain::from_grammar(grammar).unwrap();
+        let reg = Mirror::from_grammar(grammar).unwrap();
 
         let mut namespace = Namespace::new();
         namespace.register_domain("property", reg);
@@ -913,7 +913,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("should have grammar block");
-        let reg = Domain::from_grammar(grammar).unwrap();
+        let reg = Mirror::from_grammar(grammar).unwrap();
         assert_eq!(reg.domain_name(), "topology");
 
         // Verify types
@@ -958,7 +958,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let reg = Domain::from_grammar(grammar).unwrap();
+        let reg = Mirror::from_grammar(grammar).unwrap();
 
         let mut namespace = Namespace::new();
         namespace.register_domain("topology", reg);
@@ -1010,7 +1010,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("should have grammar block");
-        let reg = Domain::from_grammar(grammar).unwrap();
+        let reg = Mirror::from_grammar(grammar).unwrap();
         assert_eq!(reg.domain_name(), "training");
 
         // Verify types
@@ -1063,7 +1063,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let reg = Domain::from_grammar(grammar).unwrap();
+        let reg = Mirror::from_grammar(grammar).unwrap();
 
         let mut namespace = Namespace::new();
         namespace.register_domain("training", reg);
@@ -1112,7 +1112,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .expect("should have grammar block");
-        let reg = Domain::from_grammar(grammar).unwrap();
+        let reg = Mirror::from_grammar(grammar).unwrap();
         assert_eq!(reg.domain_name(), "coincidence");
 
         // Verify types
@@ -1161,7 +1161,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let reg = Domain::from_grammar(grammar).unwrap();
+        let reg = Mirror::from_grammar(grammar).unwrap();
 
         let mut namespace = Namespace::new();
         namespace.register_domain("coincidence", reg);
@@ -1280,7 +1280,7 @@ mod tests {
 
     #[test]
     fn check_builtin_exhaustive_with_actions() {
-        // Exercises the Domain path with actions, fields, calls (with args), and properties.
+        // Exercises the Mirror path with actions, fields, calls (with args), and properties.
         let reg = compile_grammar(
             "grammar @test {\n  type = a | b\n\n  public action send(payload)\n\n  requires shannon_equivalence\n  invariant connected\n  ensures delivered\n}\n",
         );

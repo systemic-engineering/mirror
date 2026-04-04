@@ -1,6 +1,6 @@
-//! Model checker — static verification of Domain properties.
+//! Model checker — static verification of Mirror properties.
 //!
-//! Pure functions, no actors, no async. Takes a Domain, checks all
+//! Pure functions, no actors, no async. Takes a Mirror, checks all
 //! `requires` and `invariant` properties against the type graph, and
 //! returns either a `Verified` proof wrapper or a `Violations` report.
 //!
@@ -11,7 +11,7 @@ use std::fmt;
 
 use coincidence::spectral::Laplacian;
 
-use crate::model::{Domain, DomainComplexity, DomainName, PropertyName, TypeName};
+use crate::model::{DomainComplexity, DomainName, Mirror, PropertyName, TypeName};
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -23,7 +23,7 @@ use crate::model::{Domain, DomainComplexity, DomainName, PropertyName, TypeName}
 /// know the domain satisfies all static properties without needing to re-run
 /// the checks.
 pub struct Verified {
-    domain: Domain,
+    domain: Mirror,
     spectrum: DomainComplexity,
 }
 
@@ -35,12 +35,12 @@ impl fmt::Debug for Verified {
 
 impl Verified {
     /// Borrow the verified domain.
-    pub fn domain(&self) -> &Domain {
+    pub fn domain(&self) -> &Mirror {
         &self.domain
     }
 
     /// Consume the wrapper and return the inner domain.
-    pub fn into_domain(self) -> Domain {
+    pub fn into_mirror(self) -> Mirror {
         self.domain
     }
 
@@ -168,7 +168,7 @@ pub enum Evidence {
 /// Returns `Err(Violations)` with structured evidence if any fail.
 ///
 /// `ensures` properties are skipped — they require a running system.
-pub fn verify(domain: Domain) -> Result<Verified, Violations> {
+pub fn verify(domain: Mirror) -> Result<Verified, Violations> {
     let mut violations: Vec<PropertyViolation> = Vec::new();
 
     for prop in &domain.properties.requires {
@@ -199,7 +199,7 @@ pub fn verify(domain: Domain) -> Result<Verified, Violations> {
 // ---------------------------------------------------------------------------
 
 fn check_property(
-    domain: &Domain,
+    domain: &Mirror,
     property: &PropertyName,
     kind: PropertyKind,
 ) -> Option<PropertyViolation> {
@@ -223,7 +223,7 @@ fn check_property(
 // ---------------------------------------------------------------------------
 
 fn check_connected(
-    domain: &Domain,
+    domain: &Mirror,
     property: &PropertyName,
     kind: PropertyKind,
 ) -> Option<PropertyViolation> {
@@ -347,11 +347,11 @@ fn gather_components(
 mod tests {
     use super::*;
     use crate::model::{
-        Domain, DomainName, Properties, PropertyName, TypeDef, TypeRef, Variant, VariantName,
+        DomainName, Mirror, Properties, PropertyName, TypeDef, TypeRef, Variant, VariantName,
     };
 
-    fn empty_domain(name: &str) -> Domain {
-        Domain {
+    fn empty_domain(name: &str) -> Mirror {
+        Mirror {
             name: DomainName::new(name),
             types: vec![],
             actions: vec![],
@@ -379,7 +379,7 @@ mod tests {
     ///
     /// type color = red(shade) | blue
     /// type shade = light | dark
-    fn connected_domain() -> Domain {
+    fn connected_domain() -> Mirror {
         let shade_variant = Variant {
             name: VariantName::new("red"),
             params: vec![(
@@ -397,7 +397,7 @@ mod tests {
         };
         let shade = type_def_simple("shade", &["light", "dark"]);
 
-        Domain {
+        Mirror {
             name: DomainName::new("connected"),
             types: vec![color, shade],
             actions: vec![],
@@ -417,11 +417,11 @@ mod tests {
     /// type color = red | blue
     /// type shape = circle | square
     /// requires connected
-    fn disconnected_domain() -> Domain {
+    fn disconnected_domain() -> Mirror {
         let color = type_def_simple("color", &["red", "blue"]);
         let shape = type_def_simple("shape", &["circle", "square"]);
 
-        Domain {
+        Mirror {
             name: DomainName::new("broken"),
             types: vec![color, shape],
             actions: vec![],
@@ -500,7 +500,7 @@ mod tests {
         let domain = empty_domain("ok");
         let verified = verify(domain).unwrap();
         assert_eq!(verified.domain().name.as_str(), "ok");
-        let inner = verified.into_domain();
+        let inner = verified.into_mirror();
         assert_eq!(inner.name.as_str(), "ok");
     }
 
@@ -508,7 +508,7 @@ mod tests {
     fn verify_single_type_trivially_connected() {
         // A domain with one type and "requires connected" should pass —
         // a single-node graph is trivially connected.
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("solo"),
             types: vec![type_def_simple("signal", &["tick", "data"])],
             actions: vec![],
@@ -529,7 +529,7 @@ mod tests {
         // "invariant connected" should be checked the same way as "requires connected".
         let color = type_def_simple("color", &["red", "blue"]);
         let shape = type_def_simple("shape", &["circle", "square"]);
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("guarded"),
             types: vec![color, shape],
             actions: vec![],
@@ -550,7 +550,7 @@ mod tests {
     #[test]
     fn verify_unknown_property_fails() {
         // Unknown properties now return a violation — typos are caught.
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("future"),
             types: vec![],
             actions: vec![],
@@ -568,7 +568,7 @@ mod tests {
 
     #[test]
     fn verify_unknown_property_error_message() {
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("test"),
             types: vec![],
             actions: vec![],
@@ -604,7 +604,7 @@ mod tests {
         // A domain with only "ensures connected" should always pass.
         let color = type_def_simple("color", &["red"]);
         let shape = type_def_simple("shape", &["circle"]);
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("deferred"),
             types: vec![color, shape],
             actions: vec![],
@@ -749,7 +749,7 @@ mod tests {
             name: TypeName::new("tree"),
             variants: vec![leaf_variant, self_ref_variant],
         };
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("recursive"),
             types: vec![tree],
             actions: vec![],
@@ -788,7 +788,7 @@ mod tests {
         let type_b = type_def_simple("b", &["y"]);
         let type_c = type_def_simple("c", &["z"]);
 
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("partial"),
             types: vec![type_a, type_b, type_c],
             actions: vec![],
@@ -830,7 +830,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let domain = Domain::from_grammar(grammar).unwrap();
+        let domain = Mirror::from_grammar(grammar).unwrap();
         let verified = verify(domain).unwrap();
         assert!(verified.complexity().is_trivial());
     }
@@ -846,7 +846,7 @@ mod tests {
             .iter()
             .find(|c| c.data().is_decl("grammar"))
             .unwrap();
-        let domain = Domain::from_grammar(grammar).unwrap();
+        let domain = Mirror::from_grammar(grammar).unwrap();
         let verified = verify(domain).unwrap();
         let spectrum = verified
             .complexity()
@@ -880,7 +880,7 @@ mod tests {
         };
         let shape = type_def_simple("shape", &["circle"]);
 
-        let domain = Domain {
+        let domain = Mirror {
             name: DomainName::new("dangling"),
             types: vec![color, shape],
             actions: vec![],

@@ -35,7 +35,7 @@ use coincidence::spectral::{Laplacian, SpectralDistance, Spectrum};
 use coincidence::state::StateVector;
 
 use crate::ast::AstNode;
-use crate::model::Domain;
+use crate::model::Mirror;
 use crate::prism::Prism;
 
 /// Spectral analysis of a grammar's AST tree.
@@ -113,7 +113,7 @@ impl TypeGraphSpectrum {
     /// Compute the spectrum of a grammar's type reference graph.
     ///
     /// Returns None if the grammar has no types (empty spectrum is meaningless).
-    pub fn from_domain(domain: &Domain) -> Option<Self> {
+    pub fn from_domain(domain: &Mirror) -> Option<Self> {
         let type_names: Vec<String> = {
             let mut names: Vec<String> =
                 domain.type_names().iter().map(|s| s.to_string()).collect();
@@ -210,10 +210,10 @@ pub struct GrammarProjection {
 }
 
 impl GrammarProjection {
-    /// Build the grammar projection from a Domain.
+    /// Build the grammar projection from a Mirror.
     ///
     /// Returns None if the grammar has no types (no space to project into).
-    pub fn from_domain(domain: &Domain) -> Option<Self> {
+    pub fn from_domain(domain: &Mirror) -> Option<Self> {
         let mut labels: Vec<String> = Vec::new();
 
         let mut type_names: Vec<String> =
@@ -620,7 +620,7 @@ mod tests {
 
     #[test]
     fn type_graph_no_refs_disconnected() {
-        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let registry = Mirror::from_grammar(&simple_grammar()).unwrap();
         let tgs = TypeGraphSpectrum::from_domain(&registry).unwrap();
         // Single type, no references → 1 component, connectivity 0
         assert_eq!(tgs.components(), 1);
@@ -629,7 +629,7 @@ mod tests {
 
     #[test]
     fn type_graph_with_refs_connected() {
-        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let registry = Mirror::from_grammar(&linked_grammar_ast()).unwrap();
         let tgs = TypeGraphSpectrum::from_domain(&registry).unwrap();
         // color → shade reference → connected
         assert_eq!(tgs.components(), 1);
@@ -638,7 +638,7 @@ mod tests {
 
     #[test]
     fn type_graph_distance_self_zero() {
-        let reg = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let reg = Mirror::from_grammar(&linked_grammar_ast()).unwrap();
         let tgs1 = TypeGraphSpectrum::from_domain(&reg).unwrap();
         let tgs2 = TypeGraphSpectrum::from_domain(&reg).unwrap();
         assert!(tgs1.distance(&tgs2).value() < 1e-9);
@@ -646,8 +646,8 @@ mod tests {
 
     #[test]
     fn type_graph_distance_different_nonzero() {
-        let reg1 = Domain::from_grammar(&simple_grammar()).unwrap();
-        let reg2 = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let reg1 = Mirror::from_grammar(&simple_grammar()).unwrap();
+        let reg2 = Mirror::from_grammar(&linked_grammar_ast()).unwrap();
         let tgs1 = TypeGraphSpectrum::from_domain(&reg1).unwrap();
         let tgs2 = TypeGraphSpectrum::from_domain(&reg2).unwrap();
         assert!(tgs1.distance(&tgs2).value() > 0.0);
@@ -657,7 +657,7 @@ mod tests {
 
     #[test]
     fn grammar_projection_simple() {
-        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let registry = Mirror::from_grammar(&simple_grammar()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
         // type "" has variants {a, b, c} → 3 dimensions
         assert_eq!(gp.dimension(), 3);
@@ -666,7 +666,7 @@ mod tests {
 
     #[test]
     fn grammar_projection_linked() {
-        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let registry = Mirror::from_grammar(&linked_grammar_ast()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
         // color={red,blue} + shade={light,dark} → 4 dimensions
         assert_eq!(gp.dimension(), 4);
@@ -675,7 +675,7 @@ mod tests {
 
     #[test]
     fn grammar_projection_basis_vector() {
-        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let registry = Mirror::from_grammar(&linked_grammar_ast()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
 
         let v = gp.basis("color", "red").unwrap();
@@ -687,14 +687,14 @@ mod tests {
 
     #[test]
     fn grammar_projection_unknown_variant_returns_none() {
-        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let registry = Mirror::from_grammar(&simple_grammar()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
         assert!(gp.basis("unknown", "nope").is_none());
     }
 
     #[test]
     fn grammar_projection_projects_outside_to_zero() {
-        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let registry = Mirror::from_grammar(&simple_grammar()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
 
         // State vector outside the grammar's type space
@@ -705,7 +705,7 @@ mod tests {
 
     #[test]
     fn grammar_projection_idempotent_application() {
-        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let registry = Mirror::from_grammar(&linked_grammar_ast()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
 
         let v = gp.basis("shade", "dark").unwrap();
@@ -716,7 +716,7 @@ mod tests {
 
     #[test]
     fn grammar_projection_type_superposition() {
-        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let registry = Mirror::from_grammar(&linked_grammar_ast()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
 
         let sup = gp.type_superposition("color").unwrap();
@@ -728,14 +728,14 @@ mod tests {
 
     #[test]
     fn grammar_projection_superposition_unknown_type() {
-        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let registry = Mirror::from_grammar(&simple_grammar()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
         assert!(gp.type_superposition("nonexistent").is_none());
     }
 
     #[test]
     fn grammar_projection_superposition_survives_projection() {
-        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let registry = Mirror::from_grammar(&linked_grammar_ast()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
 
         let sup = gp.type_superposition("shade").unwrap();
@@ -748,7 +748,7 @@ mod tests {
 
     #[test]
     fn grammar_projection_space_name() {
-        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let registry = Mirror::from_grammar(&simple_grammar()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
         assert_eq!(gp.space(), "grammar:test");
     }
@@ -765,7 +765,7 @@ mod tests {
             },
             vec![],
         );
-        let registry = Domain::from_grammar(&grammar).unwrap();
+        let registry = Mirror::from_grammar(&grammar).unwrap();
         assert!(GrammarProjection::from_domain(&registry).is_none());
     }
 
@@ -792,13 +792,13 @@ mod tests {
             },
             vec![type_def],
         );
-        let registry = Domain::from_grammar(&grammar).unwrap();
+        let registry = Mirror::from_grammar(&grammar).unwrap();
         assert!(GrammarProjection::from_domain(&registry).is_none());
     }
 
     #[test]
     fn grammar_projection_domain_stored() {
-        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let registry = Mirror::from_grammar(&linked_grammar_ast()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
         assert_eq!(gp.domain, "linked");
     }
@@ -809,7 +809,7 @@ mod tests {
 
     #[test]
     fn grammar_projection_to_etf_simple() {
-        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let registry = Mirror::from_grammar(&simple_grammar()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
         let etf = gp.to_etf();
         // Should be valid ETF
@@ -828,7 +828,7 @@ mod tests {
 
     #[test]
     fn grammar_projection_to_etf_linked() {
-        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let registry = Mirror::from_grammar(&linked_grammar_ast()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
         let etf = gp.to_etf();
         let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
@@ -843,7 +843,7 @@ mod tests {
 
     #[test]
     fn grammar_projection_to_etf_deterministic() {
-        let registry = Domain::from_grammar(&simple_grammar()).unwrap();
+        let registry = Mirror::from_grammar(&simple_grammar()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
         let a = gp.to_etf();
         let b = gp.to_etf();
@@ -852,7 +852,7 @@ mod tests {
 
     #[test]
     fn grammar_projection_to_etf_contains_entries() {
-        let registry = Domain::from_grammar(&linked_grammar_ast()).unwrap();
+        let registry = Mirror::from_grammar(&linked_grammar_ast()).unwrap();
         let gp = GrammarProjection::from_domain(&registry).unwrap();
         let etf = gp.to_etf();
         let term = eetf::Term::decode(std::io::Cursor::new(&etf)).unwrap();
@@ -874,7 +874,7 @@ mod tests {
             },
             vec![],
         );
-        let registry = Domain::from_grammar(&grammar).unwrap();
+        let registry = Mirror::from_grammar(&grammar).unwrap();
         assert!(TypeGraphSpectrum::from_domain(&registry).is_none());
     }
 }

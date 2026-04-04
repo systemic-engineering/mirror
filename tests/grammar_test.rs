@@ -1,7 +1,7 @@
 //! Integration tests for cross-domain grammar resolution.
 //!
 //! Verifies that grammar packages (@actor, @compiler, @beam, @mail)
-//! parse, compile through Domain, and integrate via the package
+//! parse, compile through Mirror, and integrate via the package
 //! discovery system.
 
 use std::fs;
@@ -79,7 +79,7 @@ template $message(@imap) {
 ";
 
 // ---------------------------------------------------------------------------
-// Domain compilation
+// Mirror compilation
 // ---------------------------------------------------------------------------
 
 #[test]
@@ -90,7 +90,7 @@ fn actor_grammar_compiles() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Mirror::from_grammar(grammar).unwrap();
     assert_eq!(reg.domain_name(), "actor");
     assert!(reg.has_variant("", "identity"));
     assert!(reg.has_variant("", "session"));
@@ -109,7 +109,7 @@ fn compiler_grammar_compiles() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Mirror::from_grammar(grammar).unwrap();
     assert_eq!(reg.domain_name(), "compiler");
     assert!(reg.has_variant("", "target"));
     assert!(reg.has_variant("", "artifact"));
@@ -130,7 +130,7 @@ fn compiler_grammar_has_action_compile() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Mirror::from_grammar(grammar).unwrap();
     assert!(reg.has_action("compile"));
     let fields = reg.act_fields("compile").unwrap();
     assert_eq!(fields.len(), 2);
@@ -148,7 +148,7 @@ fn beam_grammar_compiles() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Mirror::from_grammar(grammar).unwrap();
     assert_eq!(reg.domain_name(), "beam");
     assert!(reg.has_variant("", "process"));
     assert!(reg.has_variant("", "supervision"));
@@ -163,7 +163,7 @@ fn mail_grammar_compiles_full_type_hierarchy() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Mirror::from_grammar(grammar).unwrap();
     assert_eq!(reg.domain_name(), "mail");
     assert!(reg.has_variant("", "message"));
     assert!(reg.has_variant("", "thread"));
@@ -189,7 +189,7 @@ fn mail_grammar_has_three_actions() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Mirror::from_grammar(grammar).unwrap();
 
     // action send
     assert!(reg.has_action("send"));
@@ -328,7 +328,7 @@ fn visibility_stored_in_registry() {
         .iter()
         .find(|c| c.data().is_decl("grammar"))
         .unwrap();
-    let reg = mirror::model::Domain::from_grammar(grammar).unwrap();
+    let reg = mirror::model::Mirror::from_grammar(grammar).unwrap();
     assert_eq!(
         reg.action_visibility("read"),
         mirror::resolve::Visibility::Public,

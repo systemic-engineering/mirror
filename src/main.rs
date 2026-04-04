@@ -12,7 +12,7 @@ use std::io::{self, BufRead, Write};
 use std::process;
 
 use mirror::domain::filesystem::{Filesystem, Folder};
-use mirror::model::Domain;
+use mirror::model::Mirror;
 use mirror::packages::{self, PackageRegistry};
 use mirror::property;
 use mirror::resolve::{Conversation, Resolve};
@@ -890,7 +890,7 @@ fn run_tests(source: &str, resolve: &Resolve) {
     if let Ok(ast) = Parse.trace(source.to_string()).into_result() {
         for child in ast.children() {
             if child.data().is_decl("grammar") {
-                if let Ok(domain) = Domain::from_grammar(child) {
+                if let Ok(domain) = Mirror::from_grammar(child) {
                     let domain_name = domain.domain_name().to_string();
                     namespace.register_domain(&domain_name, domain);
                 }
