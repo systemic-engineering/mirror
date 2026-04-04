@@ -240,7 +240,13 @@ fn flatness_metrics(power: &[f64]) -> (f64, f64, usize, usize, usize) {
         }
     }
 
-    (peak_to_avg, normalized_entropy, freqs_50, freqs_80, freqs_90)
+    (
+        peak_to_avg,
+        normalized_entropy,
+        freqs_50,
+        freqs_80,
+        freqs_90,
+    )
 }
 
 // -- Tests -------------------------------------------------------------------
@@ -286,11 +292,19 @@ mod tests {
     }
 
     fn yn(b: bool) -> &'static str {
-        if b { "YES" } else { "NO " }
+        if b {
+            "YES"
+        } else {
+            "NO "
+        }
     }
 
     fn gcd(a: usize, b: usize) -> usize {
-        if b == 0 { a } else { gcd(b, a % b) }
+        if b == 0 {
+            a
+        } else {
+            gcd(b, a % b)
+        }
     }
 
     #[test]
@@ -301,12 +315,18 @@ mod tests {
 
         eprintln!("\n  =====================================================================");
         eprintln!("  LENS -- x-projection spectrum of f(k) = x(kG)");
-        eprintln!("  Curve: y^2 = x^3 + {}x + {} (mod {})", curve_a, curve_b, curve_p);
+        eprintln!(
+            "  Curve: y^2 = x^3 + {}x + {} (mod {})",
+            curve_a, curve_b, curve_p
+        );
         eprintln!("  =====================================================================\n");
 
         // -- Step 1: Setup ---------------------------------------------------
         let points = enumerate_curve(curve_a, curve_b, curve_p);
-        eprintln!("  Total curve points (including infinity): {}", points.len());
+        eprintln!(
+            "  Total curve points (including infinity): {}",
+            points.len()
+        );
 
         let (gen, order) = find_generator(&points, curve_a, curve_p);
         let n = order as usize;
@@ -342,8 +362,16 @@ mod tests {
         let dc_power = power[0];
         let ac_total: f64 = power[1..].iter().sum();
         let total_energy: f64 = power.iter().sum();
-        eprintln!("  DC power |F(0)|^2 = {:.2} ({:.1}% of total)", dc_power, 100.0 * dc_power / total_energy);
-        eprintln!("  AC power (omega>0) = {:.2} ({:.1}% of total)", ac_total, 100.0 * ac_total / total_energy);
+        eprintln!(
+            "  DC power |F(0)|^2 = {:.2} ({:.1}% of total)",
+            dc_power,
+            100.0 * dc_power / total_energy
+        );
+        eprintln!(
+            "  AC power (omega>0) = {:.2} ({:.1}% of total)",
+            ac_total,
+            100.0 * ac_total / total_energy
+        );
 
         // -- Step 4: Flatness tests (DC-REMOVED) -----------------------------
         eprintln!("\n  -- FLATNESS TEST (DC removed, AC components only) --");
@@ -352,19 +380,46 @@ mod tests {
         let ac_n = n - 1;
 
         eprintln!("  Peak-to-average ratio (AC): {:.4}", peak_to_avg);
-        eprintln!("  Expected for random permutation: ~O(log n) = {:.2}", (ac_n as f64).ln());
+        eprintln!(
+            "  Expected for random permutation: ~O(log n) = {:.2}",
+            (ac_n as f64).ln()
+        );
         eprintln!("  Normalized entropy (AC): {:.4}", norm_entropy);
         eprintln!("  (1.0 = perfectly flat, <0.8 = structured)");
-        eprintln!("  Frequencies for 50% AC energy: {} / {} ({:.1}%)", freqs_50, ac_n, 100.0 * freqs_50 as f64 / ac_n as f64);
-        eprintln!("  Frequencies for 80% AC energy: {} / {} ({:.1}%)", freqs_80, ac_n, 100.0 * freqs_80 as f64 / ac_n as f64);
-        eprintln!("  Frequencies for 90% AC energy: {} / {} ({:.1}%)", freqs_90, ac_n, 100.0 * freqs_90 as f64 / ac_n as f64);
+        eprintln!(
+            "  Frequencies for 50% AC energy: {} / {} ({:.1}%)",
+            freqs_50,
+            ac_n,
+            100.0 * freqs_50 as f64 / ac_n as f64
+        );
+        eprintln!(
+            "  Frequencies for 80% AC energy: {} / {} ({:.1}%)",
+            freqs_80,
+            ac_n,
+            100.0 * freqs_80 as f64 / ac_n as f64
+        );
+        eprintln!(
+            "  Frequencies for 90% AC energy: {} / {} ({:.1}%)",
+            freqs_90,
+            ac_n,
+            100.0 * freqs_90 as f64 / ac_n as f64
+        );
 
         // Top 10 AC frequencies
-        let mut indexed_ac: Vec<(usize, f64)> = power[1..].iter().enumerate().map(|(i, &v)| (i + 1, v)).collect();
+        let mut indexed_ac: Vec<(usize, f64)> = power[1..]
+            .iter()
+            .enumerate()
+            .map(|(i, &v)| (i + 1, v))
+            .collect();
         indexed_ac.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
         eprintln!("\n  Top 10 AC frequencies by power:");
         for &(freq, pw) in indexed_ac.iter().take(10) {
-            eprintln!("    omega={:4}  |F|^2={:12.2}  ({:.2}% of AC)", freq, pw, 100.0 * pw / ac_total);
+            eprintln!(
+                "    omega={:4}  |F|^2={:12.2}  ({:.2}% of AC)",
+                freq,
+                pw,
+                100.0 * pw / ac_total
+            );
         }
 
         // -- Conjugate symmetry check ----------------------------------------
@@ -373,37 +428,67 @@ mod tests {
         for &(freq, pw) in indexed_ac.iter().take(10) {
             let conj_freq = n - freq;
             let conj_pw = power[conj_freq];
-            let ratio = if pw > conj_pw { conj_pw / pw } else { pw / conj_pw };
+            let ratio = if pw > conj_pw {
+                conj_pw / pw
+            } else {
+                pw / conj_pw
+            };
             if ratio > 0.99 {
                 pair_count += 1;
             }
-            eprintln!("    omega={:3} <-> omega={:3}  ratio={:.6}", freq, conj_freq, ratio);
+            eprintln!(
+                "    omega={:3} <-> omega={:3}  ratio={:.6}",
+                freq, conj_freq, ratio
+            );
         }
-        eprintln!("  Conjugate pairs in top 10: {} (expected for real signal: all)", pair_count);
+        eprintln!(
+            "  Conjugate pairs in top 10: {} (expected for real signal: all)",
+            pair_count
+        );
 
         // -- Random baseline 1: LCG -----------------------------------------
         eprintln!("\n  -- RANDOM BASELINE 1 (LCG: k*137+59 mod p) --");
-        let random_f: Vec<f64> = (0..n).map(|k| {
-            ((k as u64 * 137 + 59) % curve_p) as f64
-        }).collect();
+        let random_f: Vec<f64> = (0..n)
+            .map(|k| ((k as u64 * 137 + 59) % curve_p) as f64)
+            .collect();
         let (_, _, random_power_full) = full_dft(&random_f);
         let (r_peak_avg, r_norm_ent, r_f50, r_f80, r_f90) = flatness_metrics(&random_power_full);
         eprintln!("  Peak-to-average (AC): {:.4}", r_peak_avg);
         eprintln!("  Normalized entropy (AC): {:.4}", r_norm_ent);
-        eprintln!("  50% energy in: {} / {} ({:.1}%)", r_f50, ac_n, 100.0 * r_f50 as f64 / ac_n as f64);
-        eprintln!("  80% energy in: {} / {} ({:.1}%)", r_f80, ac_n, 100.0 * r_f80 as f64 / ac_n as f64);
-        eprintln!("  90% energy in: {} / {} ({:.1}%)", r_f90, ac_n, 100.0 * r_f90 as f64 / ac_n as f64);
+        eprintln!(
+            "  50% energy in: {} / {} ({:.1}%)",
+            r_f50,
+            ac_n,
+            100.0 * r_f50 as f64 / ac_n as f64
+        );
+        eprintln!(
+            "  80% energy in: {} / {} ({:.1}%)",
+            r_f80,
+            ac_n,
+            100.0 * r_f80 as f64 / ac_n as f64
+        );
+        eprintln!(
+            "  90% energy in: {} / {} ({:.1}%)",
+            r_f90,
+            ac_n,
+            100.0 * r_f90 as f64 / ac_n as f64
+        );
 
         // -- Random baseline 2: quadratic -----------------------------------
         eprintln!("\n  -- RANDOM BASELINE 2 (k^2 mod p) --");
-        let random_f2: Vec<f64> = (0..n).map(|k| {
-            ((k as u64 * k as u64) % curve_p) as f64
-        }).collect();
+        let random_f2: Vec<f64> = (0..n)
+            .map(|k| ((k as u64 * k as u64) % curve_p) as f64)
+            .collect();
         let (_, _, random_power2) = full_dft(&random_f2);
         let (r2_peak_avg, r2_norm_ent, r2_f50, _, _) = flatness_metrics(&random_power2);
         eprintln!("  Peak-to-average (AC): {:.4}", r2_peak_avg);
         eprintln!("  Normalized entropy (AC): {:.4}", r2_norm_ent);
-        eprintln!("  50% energy in: {} / {} ({:.1}%)", r2_f50, ac_n, 100.0 * r2_f50 as f64 / ac_n as f64);
+        eprintln!(
+            "  50% energy in: {} / {} ({:.1}%)",
+            r2_f50,
+            ac_n,
+            100.0 * r2_f50 as f64 / ac_n as f64
+        );
 
         // -- Step 5: Window cross-correlation test ---------------------------
         eprintln!("\n  =====================================================================");
@@ -454,8 +539,10 @@ mod tests {
             let mut cross_re = vec![0.0; n];
             let mut cross_im = vec![0.0; n];
             for omega in 0..n {
-                cross_re[omega] = dft_re[omega] * window_re[omega] + dft_im[omega] * window_im[omega];
-                cross_im[omega] = dft_im[omega] * window_re[omega] - dft_re[omega] * window_im[omega];
+                cross_re[omega] =
+                    dft_re[omega] * window_re[omega] + dft_im[omega] * window_im[omega];
+                cross_im[omega] =
+                    dft_im[omega] * window_re[omega] - dft_re[omega] * window_im[omega];
             }
 
             // IDFT
@@ -472,21 +559,35 @@ mod tests {
             let max_corr = corr.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
             let peak_tau = corr.iter().position(|&v| v == max_corr).unwrap();
             let corr_mean: f64 = corr.iter().sum::<f64>() / n as f64;
-            let corr_std: f64 = (corr.iter().map(|v| (v - corr_mean).powi(2)).sum::<f64>() / n as f64).sqrt();
-            let peak_snr = if corr_std > 0.0 { (max_corr - corr_mean) / corr_std } else { 0.0 };
+            let corr_std: f64 =
+                (corr.iter().map(|v| (v - corr_mean).powi(2)).sum::<f64>() / n as f64).sqrt();
+            let peak_snr = if corr_std > 0.0 {
+                (max_corr - corr_mean) / corr_std
+            } else {
+                0.0
+            };
 
             let recovered_d = peak_tau;
             let correct = recovered_d == d_target as usize;
 
             eprintln!("    Peak at tau = {} (target d = {})", peak_tau, d_target);
             eprintln!("    Peak SNR: {:.2} sigma", peak_snr);
-            eprintln!("    RECOVERED d = {}  {}", recovered_d, if correct { "CORRECT" } else { "WRONG" });
+            eprintln!(
+                "    RECOVERED d = {}  {}",
+                recovered_d,
+                if correct { "CORRECT" } else { "WRONG" }
+            );
 
-            let mut indexed_corr: Vec<(usize, f64)> = corr.iter().enumerate().map(|(i, &v)| (i, v)).collect();
+            let mut indexed_corr: Vec<(usize, f64)> =
+                corr.iter().enumerate().map(|(i, &v)| (i, v)).collect();
             indexed_corr.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
             eprintln!("    Top 5 peaks:");
             for &(tau, c) in indexed_corr.iter().take(5) {
-                let marker = if tau == d_target as usize { " <-- TARGET" } else { "" };
+                let marker = if tau == d_target as usize {
+                    " <-- TARGET"
+                } else {
+                    ""
+                };
                 eprintln!("      tau={:4}  corr={:12.2}{}", tau, c, marker);
             }
         }
@@ -517,8 +618,16 @@ mod tests {
 
         // Hasse-Weil and Frobenius trace
         let hasse_bound = 2.0 * (curve_p as f64).sqrt();
-        eprintln!("  Hasse-Weil: |#E - (p+1)| <= 2*sqrt(p) = {:.1}", hasse_bound);
-        eprintln!("  Actual: #E = {}, p+1 = {}, |#E-(p+1)| = {}", n, curve_p + 1, (n as i64 - curve_p as i64 - 1).unsigned_abs());
+        eprintln!(
+            "  Hasse-Weil: |#E - (p+1)| <= 2*sqrt(p) = {:.1}",
+            hasse_bound
+        );
+        eprintln!(
+            "  Actual: #E = {}, p+1 = {}, |#E-(p+1)| = {}",
+            n,
+            curve_p + 1,
+            (n as i64 - curve_p as i64 - 1).unsigned_abs()
+        );
 
         let trace = curve_p as i64 + 1 - n as i64;
         eprintln!("  Frobenius trace t = {}", trace);
@@ -539,13 +648,21 @@ mod tests {
                 divisor_total += 1;
             }
         }
-        eprintln!("  Divisor matches: {} / {} (ratio ~1.0 means divisor structure)", divisor_match, divisor_total);
+        eprintln!(
+            "  Divisor matches: {} / {} (ratio ~1.0 means divisor structure)",
+            divisor_match, divisor_total
+        );
 
         // Power at divisors of n
         eprintln!("\n  Power at divisors of n={}:", n);
         for d in 1..=n {
             if n % d == 0 {
-                eprintln!("    omega={:4} (n/omega={:4})  |F|^2={:12.2}", d, n / d, power[d % n]);
+                eprintln!(
+                    "    omega={:4} (n/omega={:4})  |F|^2={:12.2}",
+                    d,
+                    n / d,
+                    power[d % n]
+                );
             }
         }
 
@@ -559,14 +676,35 @@ mod tests {
         let entropy_low = norm_entropy < 0.80;
 
         eprintln!("\n  SPECTRUM (AC, DC removed):");
-        eprintln!("  Peak-to-average > 10?    {}  ({:.4})", yn(is_structured), peak_to_avg);
-        eprintln!("  50% energy in <20% freq? {}  ({:.1}%)", yn(is_concentrated), 100.0 * freqs_50 as f64 / ac_n as f64);
-        eprintln!("  Entropy < 0.80?          {}  ({:.4})", yn(entropy_low), norm_entropy);
+        eprintln!(
+            "  Peak-to-average > 10?    {}  ({:.4})",
+            yn(is_structured),
+            peak_to_avg
+        );
+        eprintln!(
+            "  50% energy in <20% freq? {}  ({:.1}%)",
+            yn(is_concentrated),
+            100.0 * freqs_50 as f64 / ac_n as f64
+        );
+        eprintln!(
+            "  Entropy < 0.80?          {}  ({:.4})",
+            yn(entropy_low),
+            norm_entropy
+        );
 
         eprintln!("\n  vs RANDOM BASELINES:");
-        eprintln!("  Peak-to-average:   curve={:.2}  LCG={:.2}  k^2={:.2}", peak_to_avg, r_peak_avg, r2_peak_avg);
-        eprintln!("  Norm entropy:      curve={:.4}  LCG={:.4}  k^2={:.4}", norm_entropy, r_norm_ent, r2_norm_ent);
-        eprintln!("  50%% energy freqs:  curve={}  LCG={}  k^2={}", freqs_50, r_f50, r2_f50);
+        eprintln!(
+            "  Peak-to-average:   curve={:.2}  LCG={:.2}  k^2={:.2}",
+            peak_to_avg, r_peak_avg, r2_peak_avg
+        );
+        eprintln!(
+            "  Norm entropy:      curve={:.4}  LCG={:.4}  k^2={:.4}",
+            norm_entropy, r_norm_ent, r2_norm_ent
+        );
+        eprintln!(
+            "  50%% energy freqs:  curve={}  LCG={}  k^2={}",
+            freqs_50, r_f50, r2_f50
+        );
 
         eprintln!("\n  CROSS-CORRELATION:");
         eprintln!("  Recovers d=42 at all window sizes (m=20,50,100).");
