@@ -243,7 +243,10 @@ fn abyss_meta_navigation() {
     let curve_a = 1u64;
     let curve_b = 1u64;
     let points = enumerate_curve(curve_a, curve_b, field_p);
-    eprintln!("  Curve: y^2 = x^3 + {}x + {} (mod {})", curve_a, curve_b, field_p);
+    eprintln!(
+        "  Curve: y^2 = x^3 + {}x + {} (mod {})",
+        curve_a, curve_b, field_p
+    );
     eprintln!("  Points enumerated: {}", points.len());
 
     // Find a generator: try points[1], check it generates all affine points.
@@ -489,7 +492,10 @@ fn abyss_meta_navigation() {
     let mut state = padded_views[start_view].clone();
     normalize(&mut state);
 
-    eprintln!("  Starting from: {} (view {})", view_names[start_view], start_view);
+    eprintln!(
+        "  Starting from: {} (view {})",
+        view_names[start_view], start_view
+    );
     eprintln!("  Initial argmax: {} (true d={})", argmax(&state), d);
     eprintln!();
 
@@ -585,10 +591,8 @@ fn abyss_meta_navigation() {
             view_names[vi], best_k, best_corr
         );
         // Print top 3
-        let mut sorted_corrs: Vec<(usize, f64)> = correlations
-            .iter()
-            .map(|&(k, c)| (k, c.abs()))
-            .collect();
+        let mut sorted_corrs: Vec<(usize, f64)> =
+            correlations.iter().map(|&(k, c)| (k, c.abs())).collect();
         sorted_corrs.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
         for &(k, c) in sorted_corrs.iter().take(3) {
             eprintln!("             T_{:2}: |corr|={:.4}", k, c);

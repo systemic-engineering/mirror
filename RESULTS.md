@@ -221,10 +221,36 @@ functional programming / category theory:
 | **Traverse** | Walk all elements, preserve shape. | 8 (coordinate-order walk) | Flat — no signal |
 | **Lens** | Bidirectional focus into sub-structure. | 7 (x-projection DFT) | Spectrally generic |
 | **Iso** | Lossless bidirectional bridge. | 9 (windowed matching), theoretical survey | Circular + noise |
+| **Composition** | Circular-reflexive loop over all five. | 10 (Abyss meta-graph) | Fixed point exists but input is circular |
 
 Consumer optics (fold, prism) collapse too much information.
 Producer optics (traverse, lens, iso) preserve structure but find
 the permutation is pseudorandom in both directions.
+Composing all five (circular-reflexive navigation) preserves existing
+signal but creates no new signal — the views are orthogonal (all
+pairwise spectral distances ≈ 1.0).
+
+### 10. Abyss Meta-Graph — Circular Reflexive Navigation (8-bit)
+
+Built a meta-graph where nodes are the five mathematical views and
+edges are spectral distances. Navigated by minimum-meaning-loss through
+circular-reflexive loops.
+
+- All pairwise spectral distances ≈ 1.0 — views are orthogonal
+- Peak sharpening from Iso converges to d=42 (correct) — but Iso's
+  input is circular (requires O(n) DLP computations)
+- No other starting view recovers d under any interference operation
+- Chebyshev coincidence: Lens and Hodge share dominant T₁₆
+- No view follows Catalan rank distribution
+
+**Result:** The circular loop converges (the mechanism works). But
+it preserves existing signal, not creates new signal. The five views
+are in orthogonal spectral subspaces — no interference pattern can
+concentrate information that isn't already present.
+
+**The Chebyshev T₁₆ coincidence** between Lens (group-theoretic) and
+Hodge (geometric) views is genuine cross-domain structure. Not useful
+for DLP. Real for spectral navigation of mathematical knowledge graphs.
 
 ## What We Built (Valuable)
 
@@ -234,6 +260,11 @@ the permutation is pseudorandom in both directions.
 - **spectral-db integration**: 65k-node graph ingestion, settling in 2 ticks
 - **skeleton-key test harness**: clean, reproducible, TDD throughout
 - **Theoretical survey**: 30+ papers reviewed, six directions evaluated
+- **16 .mirror grammars**: the meta-graph of EC mathematics, content-addressed,
+  typed, navigable. `@weierstrass` as hub (9 inbound refs). `spectral_bridge`
+  encoding the functors between structures. The Abyss's first real territory.
+- **Mechanism insight**: LLM ≡ Abyss ≡ circular-reflexive collapse of
+  possibility space. Same operation, different graph. Applies to Pathfinder.
 
 ## The Sentence
 
@@ -243,10 +274,12 @@ directions. Any spectral decomposition of the group requires the discrete
 log to evaluate — the representation theory is circular. Shor bypasses
 this via quantum superposition, not by finding a better target space.
 
-Nine experiments. Six theoretical directions. Three layers of explanation.
+Ten experiments. Six theoretical directions. Three layers of explanation.
 The internet stays locked.
 
 Both outcomes were always publishable. This one doesn't change the world.
 But it sharpens the tool. And the tool — spectral-db, the Abyss, the
-Lanczos iteration, the self-similar index — those are real. They just
-needed a different graph.
+Lanczos iteration, the self-similar index, the .mirror grammars, the
+walker — those are real. They just needed a different graph.
+
+The skeleton key opened itself. That's the product.
