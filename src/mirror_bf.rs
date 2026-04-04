@@ -256,10 +256,7 @@ mod tests {
         let mirror_hello = from_brainfuck(bf_hello);
         let program = parse(&mirror_hello);
         let (output, _tape) = execute(&program, &[]);
-        assert_eq!(
-            String::from_utf8(output).unwrap(),
-            "Hello World!\n"
-        );
+        assert_eq!(String::from_utf8(output).unwrap(), "Hello World!\n");
     }
 
     // ---- (b) Round-trip: BF → Mirror-BF → BF preserves semantics ----
@@ -337,9 +334,15 @@ mod tests {
         // `f` and `F` should only change the data pointer, not the cell values.
         let program = parse("fffFFF");
         let (output, tape) = execute(&program, &[]);
-        assert!(output.is_empty(), "fold instructions should not produce output");
+        assert!(
+            output.is_empty(),
+            "fold instructions should not produce output"
+        );
         // Tape should be all zeros — fold never modifies values.
-        assert!(tape.iter().all(|&b| b == 0), "fold should not change cell values");
+        assert!(
+            tape.iter().all(|&b| b == 0),
+            "fold should not change cell values"
+        );
     }
 
     #[test]
@@ -354,7 +357,8 @@ mod tests {
     #[test]
     fn traversal_instructions_only_do_io() {
         // `t` outputs the current cell. `T` reads input.
-        let program_out = parse("pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppt"); // 65 increments then output = 'A'
+        let program_out =
+            parse("pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppt"); // 65 increments then output = 'A'
         let (output, _tape) = execute(&program_out, &[]);
         assert_eq!(output, vec![65], "traverse out should emit current cell");
 
@@ -370,7 +374,11 @@ mod tests {
         let program = parse("lppppppppppL"); // cell is 0, so [++++++++++] should skip
         let (output, tape) = execute(&program, &[]);
         assert!(output.is_empty());
-        assert_eq!(tape, vec![0], "lens on zero cell should skip loop body entirely");
+        assert_eq!(
+            tape,
+            vec![0],
+            "lens on zero cell should skip loop body entirely"
+        );
 
         // A loop that decrements to zero.
         let program2 = parse("pppppplPLt"); // cell=6, then loop: decrement until 0, then output 0
@@ -389,7 +397,10 @@ mod tests {
         let (output, tape) = execute(&program, &[]);
         assert!(output.is_empty());
         // The tape has crystallized: the fixed point is zero.
-        assert_eq!(tape[0], 0, "program reached its fixed point (iso): all motion resolved to zero");
+        assert_eq!(
+            tape[0], 0,
+            "program reached its fixed point (iso): all motion resolved to zero"
+        );
     }
 
     #[test]
