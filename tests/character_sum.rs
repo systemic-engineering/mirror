@@ -21,7 +21,9 @@ mod curve {
         let mut result = 1u128;
         base %= m;
         while exp > 0 {
-            if exp & 1 == 1 { result = result * base % m; }
+            if exp & 1 == 1 {
+                result = result * base % m;
+            }
             exp >>= 1;
             base = base * base % m;
         }
@@ -33,10 +35,16 @@ mod curve {
         let (mut old_s, mut s) = (1i128, 0i128);
         while r != 0 {
             let q = old_r / r;
-            let tmp = r; r = old_r - q * r; old_r = tmp;
-            let tmp = s; s = old_s - q * s; old_s = tmp;
+            let tmp = r;
+            r = old_r - q * r;
+            old_r = tmp;
+            let tmp = s;
+            s = old_s - q * s;
+            old_s = tmp;
         }
-        if old_r != 1 { return None; }
+        if old_r != 1 {
+            return None;
+        }
         Some(((old_s % p as i128 + p as i128) % p as i128) as u64)
     }
 
@@ -44,12 +52,19 @@ mod curve {
         match (p1, p2) {
             (Point::Infinity, q) | (q, Point::Infinity) => q,
             (Point::Affine { x: x1, y: y1 }, Point::Affine { x: x2, y: y2 }) => {
-                if x1 == x2 && y1 != y2 { return Point::Infinity; }
+                if x1 == x2 && y1 != y2 {
+                    return Point::Infinity;
+                }
                 if x1 == x2 && y1 == y2 {
-                    if y1 == 0 { return Point::Infinity; }
+                    if y1 == 0 {
+                        return Point::Infinity;
+                    }
                     let num = (3 * x1 % p * x1 % p + a) % p;
                     let den = (2 * y1) % p;
-                    let inv = match mod_inv(den, p) { Some(i) => i, None => return Point::Infinity };
+                    let inv = match mod_inv(den, p) {
+                        Some(i) => i,
+                        None => return Point::Infinity,
+                    };
                     let lam = num * inv % p;
                     let x3 = (lam * lam % p + p + p - x1 - x2) % p;
                     let y3 = (lam * ((x1 + p - x3) % p) % p + p - y1) % p;
@@ -57,7 +72,10 @@ mod curve {
                 } else {
                     let num = (y2 + p - y1) % p;
                     let den = (x2 + p - x1) % p;
-                    let inv = match mod_inv(den, p) { Some(i) => i, None => return Point::Infinity };
+                    let inv = match mod_inv(den, p) {
+                        Some(i) => i,
+                        None => return Point::Infinity,
+                    };
                     let lam = num * inv % p;
                     let x3 = (lam * lam % p + p + p - x1 - x2) % p;
                     let y3 = (lam * ((x1 + p - x3) % p) % p + p - y1) % p;
@@ -68,12 +86,16 @@ mod curve {
     }
 
     pub fn scalar_mul(k: u64, point: Point, a: u64, p: u64) -> Point {
-        if k == 0 { return Point::Infinity; }
+        if k == 0 {
+            return Point::Infinity;
+        }
         let mut result = Point::Infinity;
         let mut base = point;
         let mut k = k;
         while k > 0 {
-            if k & 1 == 1 { result = point_add(result, base, a, p); }
+            if k & 1 == 1 {
+                result = point_add(result, base, a, p);
+            }
             base = point_add(base, base, a, p);
             k >>= 1;
         }
@@ -83,9 +105,15 @@ mod curve {
     /// Legendre symbol: (a/p) = a^((p-1)/2) mod p.
     /// Returns 1 if quadratic residue, -1 if non-residue, 0 if a ≡ 0.
     pub fn legendre(a: u64, p: u64) -> i64 {
-        if a % p == 0 { return 0; }
+        if a % p == 0 {
+            return 0;
+        }
         let r = mod_pow(a as u128, ((p - 1) / 2) as u128, p as u128) as u64;
-        if r == 1 { 1 } else { -1 }
+        if r == 1 {
+            1
+        } else {
+            -1
+        }
     }
 
     /// Evaluate the curve RHS: x³ + ax + b (mod p).
@@ -96,25 +124,41 @@ mod curve {
     }
 
     fn mod_sqrt(n: u64, p: u64) -> Option<u64> {
-        if n == 0 { return Some(0); }
+        if n == 0 {
+            return Some(0);
+        }
         let pm = p as u128;
         let nm = n as u128;
-        if mod_pow(nm, (pm - 1) / 2, pm) != 1 { return None; }
-        if p % 4 == 3 { return Some(mod_pow(nm, (pm + 1) / 4, pm) as u64); }
+        if mod_pow(nm, (pm - 1) / 2, pm) != 1 {
+            return None;
+        }
+        if p % 4 == 3 {
+            return Some(mod_pow(nm, (pm + 1) / 4, pm) as u64);
+        }
         let mut q = pm - 1;
         let mut s = 0u32;
-        while q % 2 == 0 { q /= 2; s += 1; }
+        while q % 2 == 0 {
+            q /= 2;
+            s += 1;
+        }
         let mut z = 2u128;
-        while mod_pow(z, (pm - 1) / 2, pm) != pm - 1 { z += 1; }
+        while mod_pow(z, (pm - 1) / 2, pm) != pm - 1 {
+            z += 1;
+        }
         let mut m_val = s;
         let mut c = mod_pow(z, q, pm);
         let mut t = mod_pow(nm, q, pm);
         let mut r = mod_pow(nm, (q + 1) / 2, pm);
         loop {
-            if t == 1 { return Some(r as u64); }
+            if t == 1 {
+                return Some(r as u64);
+            }
             let mut i = 0u32;
             let mut tmp = t;
-            while tmp != 1 { tmp = tmp * tmp % pm; i += 1; }
+            while tmp != 1 {
+                tmp = tmp * tmp % pm;
+                i += 1;
+            }
             let b = mod_pow(c, 1u128 << (m_val - i - 1), pm);
             m_val = i;
             c = b * b % pm;
@@ -131,7 +175,9 @@ mod curve {
             let rhs = ((xm * xm % pm * xm % pm) + (a as u128) * xm % pm + (b as u128)) % pm;
             if let Some(y) = mod_sqrt(rhs as u64, p) {
                 points.push(Point::Affine { x, y });
-                if y != 0 { points.push(Point::Affine { x, y: p - y }); }
+                if y != 0 {
+                    points.push(Point::Affine { x, y: p - y });
+                }
             }
         }
         points
@@ -166,8 +212,10 @@ mod tests {
         eprintln!("  legendre sum: {}", legendre_sum);
         eprintln!("  expected (= -trace): {}", -frobenius_trace);
 
-        assert_eq!(legendre_sum, -frobenius_trace,
-            "sum of Legendre symbols should equal negative Frobenius trace");
+        assert_eq!(
+            legendre_sum, -frobenius_trace,
+            "sum of Legendre symbols should equal negative Frobenius trace"
+        );
     }
 
     #[test]
@@ -188,7 +236,9 @@ mod tests {
         loop {
             pt = point_add(pt, gen, A, P);
             order += 1;
-            if pt == Point::Infinity || order > points.len() as u64 + 1 { break; }
+            if pt == Point::Infinity || order > points.len() as u64 + 1 {
+                break;
+            }
         }
         eprintln!("  generator: {:?}, order: {}", gen, order);
 
@@ -215,16 +265,22 @@ mod tests {
 
         // Compute Spearman rank correlation between k and S(x_Q)
         let n = pairs.len();
-        let mut k_ranks: Vec<(u64, usize)> = pairs.iter().enumerate()
-            .map(|(i, &(k, _, _))| (k, i)).collect();
+        let mut k_ranks: Vec<(u64, usize)> = pairs
+            .iter()
+            .enumerate()
+            .map(|(i, &(k, _, _))| (k, i))
+            .collect();
         k_ranks.sort_by_key(|&(k, _)| k);
         let mut rank_k = vec![0usize; n];
         for (rank, &(_, orig_idx)) in k_ranks.iter().enumerate() {
             rank_k[orig_idx] = rank;
         }
 
-        let mut s_ranks: Vec<(i64, usize)> = pairs.iter().enumerate()
-            .map(|(i, &(_, _, s))| (s, i)).collect();
+        let mut s_ranks: Vec<(i64, usize)> = pairs
+            .iter()
+            .enumerate()
+            .map(|(i, &(_, _, s))| (s, i))
+            .collect();
         s_ranks.sort_by_key(|&(s, _)| s);
         let mut rank_s = vec![0usize; n];
         for (rank, &(_, orig_idx)) in s_ranks.iter().enumerate() {
@@ -245,8 +301,11 @@ mod tests {
         eprintln!("  (0 = no correlation, ±1 = perfect)");
 
         // Also check: does x_Q alone correlate with k?
-        let mut x_ranks: Vec<(u64, usize)> = pairs.iter().enumerate()
-            .map(|(i, &(_, x, _))| (x, i)).collect();
+        let mut x_ranks: Vec<(u64, usize)> = pairs
+            .iter()
+            .enumerate()
+            .map(|(i, &(_, x, _))| (x, i))
+            .collect();
         x_ranks.sort_by_key(|&(x, _)| x);
         let mut rank_x = vec![0usize; n];
         for (rank, &(_, orig_idx)) in x_ranks.iter().enumerate() {
@@ -285,7 +344,12 @@ mod tests {
                 im += chi * angle.sin();
             }
             let power = re * re + im * im;
-            eprintln!("    S_{}: |S|² = {:.2}, |S| = {:.2}", t, power, power.sqrt());
+            eprintln!(
+                "    S_{}: |S|² = {:.2}, |S| = {:.2}",
+                t,
+                power,
+                power.sqrt()
+            );
         }
 
         // The Hasse-Weil bound: |S_t| ≤ 2√p for all t ≠ 0.
@@ -314,8 +378,11 @@ mod tests {
         }
 
         // Correlation between k and |S_{x_Q}|
-        let mut mag_ranks: Vec<(usize, f64)> = char_sum_pairs.iter().enumerate()
-            .map(|(i, &(_, m))| (i, m)).collect();
+        let mut mag_ranks: Vec<(usize, f64)> = char_sum_pairs
+            .iter()
+            .enumerate()
+            .map(|(i, &(_, m))| (i, m))
+            .collect();
         mag_ranks.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
         let mut rank_mag = vec![0usize; n];
         for (rank, &(orig_idx, _)) in mag_ranks.iter().enumerate() {
