@@ -170,12 +170,20 @@ mod tests {
 
     /// Check if n is prime (trial division, fine for small n).
     fn is_prime(n: u64) -> bool {
-        if n < 2 { return false; }
-        if n < 4 { return true; }
-        if n % 2 == 0 || n % 3 == 0 { return false; }
+        if n < 2 {
+            return false;
+        }
+        if n < 4 {
+            return true;
+        }
+        if n % 2 == 0 || n % 3 == 0 {
+            return false;
+        }
         let mut i = 5u64;
         while i * i <= n {
-            if n % i == 0 || n % (i + 2) == 0 { return false; }
+            if n % i == 0 || n % (i + 2) == 0 {
+                return false;
+            }
             i += 6;
         }
         true
@@ -209,14 +217,21 @@ mod tests {
         // Find the largest prime factor as subgroup order
         let target_order = *factors.iter().rev().find(|&&f| is_prime(f)).unwrap();
         let cofactor = group_size / target_order;
-        eprintln!("  Target prime subgroup order: {}, cofactor: {}", target_order, cofactor);
+        eprintln!(
+            "  Target prime subgroup order: {}, cofactor: {}",
+            target_order, cofactor
+        );
 
         // Find a generator of the prime-order subgroup:
         // Multiply a random point by the cofactor to get into the subgroup.
         for &pt in &points {
-            if pt == Point::Infinity { continue; }
+            if pt == Point::Infinity {
+                continue;
+            }
             let candidate = scalar_mul(cofactor, pt, a, p);
-            if candidate == Point::Infinity { continue; }
+            if candidate == Point::Infinity {
+                continue;
+            }
             // Verify it has the right order
             let ord = point_order(candidate, a, p, target_order + 1);
             if ord == target_order {
@@ -301,14 +316,7 @@ mod tests {
     }
 
     /// Compute soft error for candidate d_c.
-    fn soft_error_candidate(
-        d_c: u64,
-        sigs: &[Signature],
-        g: Point,
-        n: u64,
-        a: u64,
-        p: u64,
-    ) -> f64 {
+    fn soft_error_candidate(d_c: u64, sigs: &[Signature], g: Point, n: u64, a: u64, p: u64) -> f64 {
         let mut total = 0.0f64;
         for sig in sigs {
             let s_inv = match mod_inv(sig.s, n) {
@@ -353,7 +361,9 @@ mod tests {
     #[test]
     fn shannon_error_landscape() {
         eprintln!("\n=== SHANNON ERROR LANDSCAPE ===");
-        eprintln!("  Hypothesis: ECDSA signature verification error has navigable spectral structure\n");
+        eprintln!(
+            "  Hypothesis: ECDSA signature verification error has navigable spectral structure\n"
+        );
 
         // Use a larger field for meaningful statistics.
         // y² = x³ + x + 1 (mod 251) has 282 = 2·3·47 points → prime subgroup of order 47.
@@ -374,12 +384,21 @@ mod tests {
         eprintln!("  Using d_true = {} (n = {})", d_true, n);
 
         let sigs = generate_signatures(num_sigs, g, n, a_curve, p, d_true);
-        eprintln!("  Generated {} signatures with d_true={}", sigs.len(), d_true);
+        eprintln!(
+            "  Generated {} signatures with d_true={}",
+            sigs.len(),
+            d_true
+        );
         eprintln!("  Group order n={}", n);
 
         // Verify ground truth: all signatures should verify with d_true
         let true_score = score_candidate(d_true, &sigs, g, n, a_curve, p);
-        eprintln!("  Verification: score(d_true={}) = {}/{}", d_true, true_score, sigs.len());
+        eprintln!(
+            "  Verification: score(d_true={}) = {}/{}",
+            d_true,
+            true_score,
+            sigs.len()
+        );
         assert_eq!(
             true_score,
             sigs.len(),
@@ -477,10 +496,7 @@ mod tests {
 
         // Peak-to-average ratio
         let avg_power = total_energy / nn as f64;
-        let max_power = power
-            .iter()
-            .cloned()
-            .fold(0.0f64, |a, b| a.max(b));
+        let max_power = power.iter().cloned().fold(0.0f64, |a, b| a.max(b));
         let peak_to_avg = max_power / avg_power;
 
         // Energy concentration: how many frequencies hold 90% of energy?
@@ -511,7 +527,8 @@ mod tests {
         );
 
         // Top 10 frequencies
-        let mut freq_idx: Vec<(usize, f64)> = power.iter().enumerate().map(|(i, &p)| (i, p)).collect();
+        let mut freq_idx: Vec<(usize, f64)> =
+            power.iter().enumerate().map(|(i, &p)| (i, p)).collect();
         freq_idx.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
         eprintln!("    top 10 frequencies:");
         for &(k, pw) in freq_idx.iter().take(10) {
@@ -845,10 +862,7 @@ mod tests {
                 let r_point = scalar_mul(k_c, g, a_curve, p);
                 if let Point::Affine { x, .. } = r_point {
                     if x % n == sig.r {
-                        baby_steps
-                            .entry((sig_idx, sig.r))
-                            .or_default()
-                            .push(d_c);
+                        baby_steps.entry((sig_idx, sig.r)).or_default().push(d_c);
                     }
                 }
             }
@@ -856,10 +870,7 @@ mod tests {
 
         let baby_ops = get_ops();
         let found_partial = baby_steps.values().any(|v| v.contains(&d_true));
-        eprintln!(
-            "    Baby step phase: {} group ops",
-            baby_ops
-        );
+        eprintln!("    Baby step phase: {} group ops", baby_ops);
         eprintln!(
             "    d_true={} in baby step range [0, {}): {}",
             d_true,
@@ -998,12 +1009,13 @@ mod tests {
             "    Method C (multi-sig gradient): {}/{} success",
             method_c_successes, num_trials
         );
-        eprintln!("    Method D (Bayesian full): always succeeds, {} ops", bayesian_ops);
+        eprintln!(
+            "    Method D (Bayesian full): always succeeds, {} ops",
+            bayesian_ops
+        );
         eprintln!(
             "    Method E (BSGS-like): found={}, {} + {} ops",
-            giant_found,
-            baby_ops,
-            giant_ops
+            giant_found, baby_ops, giant_ops
         );
 
         eprintln!("\n  COST COMPARISON:");
@@ -1041,10 +1053,19 @@ mod tests {
 
         // Method C caveat
         if method_c_successes > num_trials / 2 && !method_c_real_signal {
-            eprintln!("    NOTE: Method C appears to succeed but uses {:.0} avg ops", method_c_avg_ops);
-            eprintln!("    vs brute force {} ops — it's disguised enumeration, not gradient descent.", n);
-            eprintln!("    Window ±10 on n={} covers {:.0}% of search space per iteration.",
-                n, 100.0 * 21.0f64.min(n as f64) / n as f64);
+            eprintln!(
+                "    NOTE: Method C appears to succeed but uses {:.0} avg ops",
+                method_c_avg_ops
+            );
+            eprintln!(
+                "    vs brute force {} ops — it's disguised enumeration, not gradient descent.",
+                n
+            );
+            eprintln!(
+                "    Window ±10 on n={} covers {:.0}% of search space per iteration.",
+                n,
+                100.0 * 21.0f64.min(n as f64) / n as f64
+            );
         }
 
         if num_perfect == 1
