@@ -21,10 +21,16 @@ mod curve {
         let (mut old_s, mut s) = (1i128, 0i128);
         while r != 0 {
             let q = old_r / r;
-            let tmp = r; r = old_r - q * r; old_r = tmp;
-            let tmp = s; s = old_s - q * s; old_s = tmp;
+            let tmp = r;
+            r = old_r - q * r;
+            old_r = tmp;
+            let tmp = s;
+            s = old_s - q * s;
+            old_s = tmp;
         }
-        if old_r != 1 { return None; }
+        if old_r != 1 {
+            return None;
+        }
         Some(((old_s % p as i128 + p as i128) % p as i128) as u64)
     }
 
@@ -32,12 +38,19 @@ mod curve {
         match (p1, p2) {
             (Point::Infinity, q) | (q, Point::Infinity) => q,
             (Point::Affine { x: x1, y: y1 }, Point::Affine { x: x2, y: y2 }) => {
-                if x1 == x2 && y1 != y2 { return Point::Infinity; }
+                if x1 == x2 && y1 != y2 {
+                    return Point::Infinity;
+                }
                 if x1 == x2 && y1 == y2 {
-                    if y1 == 0 { return Point::Infinity; }
+                    if y1 == 0 {
+                        return Point::Infinity;
+                    }
                     let num = (3 * x1 % p * x1 % p + a) % p;
                     let den = (2 * y1) % p;
-                    let inv = match mod_inv(den, p) { Some(i) => i, None => return Point::Infinity };
+                    let inv = match mod_inv(den, p) {
+                        Some(i) => i,
+                        None => return Point::Infinity,
+                    };
                     let lam = num * inv % p;
                     let x3 = (lam * lam % p + p + p - x1 - x2) % p;
                     let y3 = (lam * ((x1 + p - x3) % p) % p + p - y1) % p;
@@ -45,7 +58,10 @@ mod curve {
                 } else {
                     let num = (y2 + p - y1) % p;
                     let den = (x2 + p - x1) % p;
-                    let inv = match mod_inv(den, p) { Some(i) => i, None => return Point::Infinity };
+                    let inv = match mod_inv(den, p) {
+                        Some(i) => i,
+                        None => return Point::Infinity,
+                    };
                     let lam = num * inv % p;
                     let x3 = (lam * lam % p + p + p - x1 - x2) % p;
                     let y3 = (lam * ((x1 + p - x3) % p) % p + p - y1) % p;
@@ -56,12 +72,16 @@ mod curve {
     }
 
     pub fn scalar_mul(k: u64, point: Point, a: u64, p: u64) -> Point {
-        if k == 0 { return Point::Infinity; }
+        if k == 0 {
+            return Point::Infinity;
+        }
         let mut result = Point::Infinity;
         let mut base = point;
         let mut k = k;
         while k > 0 {
-            if k & 1 == 1 { result = point_add(result, base, a, p); }
+            if k & 1 == 1 {
+                result = point_add(result, base, a, p);
+            }
             base = point_add(base, base, a, p);
             k >>= 1;
         }
@@ -72,7 +92,9 @@ mod curve {
         let mut result = 1u128;
         base %= m;
         while exp > 0 {
-            if exp & 1 == 1 { result = result * base % m; }
+            if exp & 1 == 1 {
+                result = result * base % m;
+            }
             exp >>= 1;
             base = base * base % m;
         }
@@ -80,25 +102,41 @@ mod curve {
     }
 
     fn mod_sqrt(n: u64, p: u64) -> Option<u64> {
-        if n == 0 { return Some(0); }
+        if n == 0 {
+            return Some(0);
+        }
         let pm = p as u128;
         let nm = n as u128;
-        if mod_pow(nm, (pm - 1) / 2, pm) != 1 { return None; }
-        if p % 4 == 3 { return Some(mod_pow(nm, (pm + 1) / 4, pm) as u64); }
+        if mod_pow(nm, (pm - 1) / 2, pm) != 1 {
+            return None;
+        }
+        if p % 4 == 3 {
+            return Some(mod_pow(nm, (pm + 1) / 4, pm) as u64);
+        }
         let mut q = pm - 1;
         let mut s = 0u32;
-        while q % 2 == 0 { q /= 2; s += 1; }
+        while q % 2 == 0 {
+            q /= 2;
+            s += 1;
+        }
         let mut z = 2u128;
-        while mod_pow(z, (pm - 1) / 2, pm) != pm - 1 { z += 1; }
+        while mod_pow(z, (pm - 1) / 2, pm) != pm - 1 {
+            z += 1;
+        }
         let mut m_val = s;
         let mut c = mod_pow(z, q, pm);
         let mut t = mod_pow(nm, q, pm);
         let mut r = mod_pow(nm, (q + 1) / 2, pm);
         loop {
-            if t == 1 { return Some(r as u64); }
+            if t == 1 {
+                return Some(r as u64);
+            }
             let mut i = 0u32;
             let mut tmp = t;
-            while tmp != 1 { tmp = tmp * tmp % pm; i += 1; }
+            while tmp != 1 {
+                tmp = tmp * tmp % pm;
+                i += 1;
+            }
             let b = mod_pow(c, 1u128 << (m_val - i - 1), pm);
             m_val = i;
             c = b * b % pm;
@@ -115,7 +153,9 @@ mod curve {
             let rhs = ((xm * xm % pm * xm % pm) + (a as u128) * xm % pm + (b as u128)) % pm;
             if let Some(y) = mod_sqrt(rhs as u64, p) {
                 points.push(Point::Affine { x, y });
-                if y != 0 { points.push(Point::Affine { x, y: p - y }); }
+                if y != 0 {
+                    points.push(Point::Affine { x, y: p - y });
+                }
             }
         }
         points
@@ -144,7 +184,9 @@ mod tests {
         loop {
             pt = point_add(pt, gen, a, p);
             order += 1;
-            if pt == Point::Infinity || order > n as u64 + 1 { break; }
+            if pt == Point::Infinity || order > n as u64 + 1 {
+                break;
+            }
         }
         eprintln!("  8-bit: {} points, generator order {}", n, order);
 
@@ -153,8 +195,8 @@ mod tests {
         let db = spectral_db::SpectralDb::open(dir.path(), SCHEMA, 1e-10, 50_000_000).unwrap();
 
         // Ingest all points as nodes
-        let point_to_idx: std::collections::HashMap<Point, usize> = points
-            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+        let point_to_idx: std::collections::HashMap<Point, usize> =
+            points.iter().enumerate().map(|(i, &p)| (p, i)).collect();
 
         let mut oids = Vec::with_capacity(n);
         for (i, pt) in points.iter().enumerate() {
@@ -198,7 +240,9 @@ mod tests {
                     eprintln!("  tick {}: changed", ticks);
                 }
             }
-            if ticks > 10 { break; }
+            if ticks > 10 {
+                break;
+            }
         }
 
         // Compute spectral coordinates
@@ -221,7 +265,10 @@ mod tests {
         if let (Some(near), Some(far)) = (dist_near, dist_far) {
             eprintln!("  ratio far/near: {:.2}", far / near.max(1e-15));
             // Near should be smaller than far
-            assert!(near < far, "adjacent keys should be spectrally closer than opposite keys");
+            assert!(
+                near < far,
+                "adjacent keys should be spectrally closer than opposite keys"
+            );
         }
 
         // Crystallize
@@ -229,7 +276,150 @@ mod tests {
         eprintln!("  crystals: {}", crystals.len());
 
         let status = db.status();
-        eprintln!("  final: {} nodes, {} edges, {} crystals, {} queries",
-            status.node_count, status.edge_count, status.crystals, status.query_count);
+        eprintln!(
+            "  final: {} nodes, {} edges, {} crystals, {} queries",
+            status.node_count, status.edge_count, status.crystals, status.query_count
+        );
+    }
+
+    #[test]
+    fn spectral_db_ingests_12bit_cayley_graph() {
+        // 12-bit: intermediate scale between 8-bit (282) and 16-bit (65k).
+        // ~4000 points. Dense enough to test transfer, small enough to compute.
+        let a = 1u64;
+        let b = 1u64;
+        let p = 4093u64; // largest 12-bit prime
+
+        eprintln!("  12-bit curve y² = x³ + {}x + {} (mod {})", a, b, p);
+
+        let points = enumerate_curve(a, b, p);
+        let n = points.len();
+        eprintln!("  points: {}", n);
+
+        let gen = points[1];
+
+        // Generator order
+        let mut pt = gen;
+        let mut order = 1u64;
+        loop {
+            pt = point_add(pt, gen, a, p);
+            order += 1;
+            if pt == Point::Infinity || order > n as u64 + 1 { break; }
+        }
+        eprintln!("  generator: {:?}, order: {} (full: {})", gen, order, order == n as u64);
+
+        let point_to_idx: std::collections::HashMap<Point, usize> = points
+            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+
+        // Open spectral-db with 100MB budget
+        let dir = tempfile::tempdir().unwrap();
+        let db = spectral_db::SpectralDb::open(dir.path(), SCHEMA, 1e-10, 100_000_000).unwrap();
+
+        // Ingest points in batches
+        eprintln!("  inserting {} nodes...", n);
+        let mut oids = Vec::with_capacity(n);
+        for pt in &points {
+            let label = match pt {
+                Point::Infinity => "O".to_string(),
+                Point::Affine { x, y } => format!("({},{})", x, y),
+            };
+            let oid = db.insert("point", label.as_bytes()).unwrap();
+            oids.push(oid);
+        }
+        eprintln!("  inserted {} nodes", oids.len());
+
+        // Connect Cayley graph edges
+        eprintln!("  connecting edges...");
+        let mut edge_count = 0;
+        for (i, &pt) in points.iter().enumerate() {
+            let sum = point_add(pt, gen, a, p);
+            if let Some(&j) = point_to_idx.get(&sum) {
+                db.connect(&oids[i], &oids[j]).unwrap();
+                edge_count += 1;
+            }
+        }
+        eprintln!("  connected {} edges", edge_count);
+
+        let (nodes, edges) = db.graph_stats();
+        eprintln!("  spectral-db: {} nodes, {} edges", nodes, edges);
+
+        // Tick until settled
+        let mut ticks = 0;
+        loop {
+            let result = db.scheduler_tick();
+            ticks += 1;
+            match result.convergence {
+                spectral_db::scheduler::Convergence::Settled => {
+                    eprintln!("  settled in {} ticks", ticks);
+                    break;
+                }
+                spectral_db::scheduler::Convergence::FirstTick => {
+                    eprintln!("  tick {}: first", ticks);
+                }
+                spectral_db::scheduler::Convergence::Changed => {
+                    eprintln!("  tick {}: changed", ticks);
+                }
+            }
+            if ticks > 10 { break; }
+        }
+
+        // Compute spectral coordinates (ego-graph based — bounded memory)
+        eprintln!("  computing spectral coordinates...");
+        db.compute_spectral_coordinates();
+
+        // Test: spectral distance should distinguish near from far
+        let g_oid = &oids[point_to_idx[&gen]];
+        let two_g = scalar_mul(2, gen, a, p);
+        let two_g_oid = &oids[point_to_idx[&two_g]];
+        let far_g = scalar_mul(order / 2, gen, a, p);
+        let far_g_oid = &oids[point_to_idx[&far_g]];
+
+        let dist_near = db.spectral_distance(g_oid, two_g_oid);
+        let dist_far = db.spectral_distance(g_oid, far_g_oid);
+
+        eprintln!("  spectral distance G→2G: {:?}", dist_near);
+        eprintln!("  spectral distance G→(n/2)G: {:?}", dist_far);
+
+        if let (Some(near), Some(far)) = (dist_near, dist_far) {
+            eprintln!("  ratio far/near: {:.2}", far / near.max(1e-15));
+        }
+
+        // Eigenvector distance (if coords were computed)
+        let eigen_near = db.spectral_distance_eigen(g_oid, two_g_oid);
+        let eigen_far = db.spectral_distance_eigen(g_oid, far_g_oid);
+        eprintln!("  eigen distance G→2G: {:?}", eigen_near);
+        eprintln!("  eigen distance G→(n/2)G: {:?}", eigen_far);
+
+        if let (Some(near), Some(far)) = (eigen_near, eigen_far) {
+            eprintln!("  eigen ratio far/near: {:.2}", far / near.max(1e-15));
+        }
+
+        // Generate 100 keypairs and test spectral ordering
+        // If spectral distance correlates with private key distance,
+        // we have the seed of a spectral break.
+        let sample = 100u64;
+        let mut distances: Vec<(u64, f64)> = Vec::new();
+        for k in 1..=sample {
+            let pub_k = scalar_mul(k, gen, a, p);
+            let pub_oid = &oids[point_to_idx[&pub_k]];
+            if let Some(d) = db.spectral_distance(g_oid, pub_oid) {
+                distances.push((k, d));
+            }
+        }
+
+        // Check monotonicity: does spectral distance grow with private key?
+        let mut monotone_count = 0;
+        for w in distances.windows(2) {
+            if w[1].1 >= w[0].1 { monotone_count += 1; }
+        }
+        let monotonicity = monotone_count as f64 / (distances.len().saturating_sub(1)) as f64;
+        eprintln!("  monotonicity (spectral dist vs private key): {:.1}%", monotonicity * 100.0);
+        eprintln!("  (50% = random, 100% = perfect correlation)");
+
+        let status = db.status();
+        eprintln!(
+            "  final: {} nodes, {} edges, {} crystals",
+            status.node_count, status.edge_count, status.crystals
+        );
     }
 }
