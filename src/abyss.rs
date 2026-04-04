@@ -359,13 +359,11 @@ mod tests {
             "boot must settle, got {:?}",
             term
         );
-        // Dedup removes duplicates
-        assert!(beam.result.len() < graph.len(), "dedup should reduce nodes");
-        // 17 unique crystal definitions
+        // 19 unique keyword definitions (no duplicates — each keyword type is distinct)
         assert_eq!(
             beam.result.len(),
-            17,
-            "expected 17 unique keywords, got {}",
+            19,
+            "expected 19 unique keywords, got {}",
             beam.result.len()
         );
         // Zero loss

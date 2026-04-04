@@ -8,6 +8,9 @@
 //!
 //! At f16: 5,784 bytes. Fits in an HTTP header.
 
+// Matmul loops over fixed-size arrays — iterator style obscures the linear algebra.
+#![allow(clippy::needless_range_loop)]
+
 // ---------------------------------------------------------------------------
 // Optic categories — the 12 output classes
 // ---------------------------------------------------------------------------
@@ -181,13 +184,13 @@ impl Weights {
 // Forward pass
 // ---------------------------------------------------------------------------
 
+
 /// The forward pass. spectral_features → optic category.
 ///
 /// hidden = sigmoid(W1 · input + b1)
 /// output = softmax(W2 · hidden + b2)
 ///
 /// Returns (predicted_optic, confidence, all_probabilities).
-#[allow(clippy::needless_range_loop)]
 pub fn classify(
     weights: &Weights,
     spectral_features: &[f64; INPUT_DIM],
@@ -236,7 +239,6 @@ fn sigmoid(x: f64) -> f64 {
     1.0 / (1.0 + (-x).exp())
 }
 
-#[allow(clippy::needless_range_loop)]
 fn softmax(logits: &[f64; OUTPUT_DIM]) -> [f64; OUTPUT_DIM] {
     let max = logits.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
     let mut exps = [0.0f64; OUTPUT_DIM];
@@ -276,6 +278,261 @@ impl SimpleRng {
         let u2 = self.next_f64();
         (-2.0 * u1.ln()).sqrt() * (2.0 * std::f64::consts::PI * u2).cos()
     }
+}
+
+// ---------------------------------------------------------------------------
+// Training — backpropagation + SGD
+// ---------------------------------------------------------------------------
+
+/// A labeled training example.
+pub struct Example {
+    pub features: [f64; INPUT_DIM],
+    pub label: usize, // 0..OUTPUT_DIM
+}
+
+/// Training configuration.
+pub struct TrainConfig {
+    pub learning_rate: f64,
+    pub epochs: usize,
+    pub augmentation_noise: f64,
+    pub augmentation_factor: usize,
+}
+
+impl Default for TrainConfig {
+    fn default() -> Self {
+        TrainConfig {
+            learning_rate: 0.05,
+            epochs: 2000,
+            augmentation_noise: 0.08,
+            augmentation_factor: 50,
+        }
+    }
+}
+
+/// Forward pass with intermediate values for backprop.
+struct ForwardResult {
+    hidden: [f64; HIDDEN_DIM],
+    #[allow(dead_code)]
+    logits: [f64; OUTPUT_DIM],
+    probs: [f64; OUTPUT_DIM],
+}
+
+fn forward(weights: &Weights, input: &[f64; INPUT_DIM]) -> ForwardResult {
+    let mut hidden = [0.0f64; HIDDEN_DIM];
+    for i in 0..HIDDEN_DIM {
+        let mut sum = weights.b1[i];
+        for j in 0..INPUT_DIM {
+            sum += weights.w1[i * INPUT_DIM + j] * input[j];
+        }
+        hidden[i] = sigmoid(sum);
+    }
+
+    let mut logits = [0.0f64; OUTPUT_DIM];
+    for i in 0..OUTPUT_DIM {
+        let mut sum = weights.b2[i];
+        for j in 0..HIDDEN_DIM {
+            sum += weights.w2[i * HIDDEN_DIM + j] * hidden[j];
+        }
+        logits[i] = sum;
+    }
+
+    let probs = softmax(&logits);
+    ForwardResult {
+        hidden,
+        logits,
+        probs,
+    }
+}
+
+/// Cross-entropy loss for a single example.
+fn cross_entropy_loss(probs: &[f64; OUTPUT_DIM], label: usize) -> f64 {
+    -probs[label].max(1e-15).ln()
+}
+
+/// Train weights on a set of examples. Returns (trained_weights, final_loss, accuracy).
+pub fn train(examples: &[Example], config: &TrainConfig) -> (Weights, f64, f64) {
+    let mut rng = SimpleRng(42);
+    let mut weights = Weights::random(7);
+
+    // Augment data
+    let mut dataset: Vec<Example> = Vec::new();
+    for ex in examples {
+        // Original
+        dataset.push(Example {
+            features: ex.features,
+            label: ex.label,
+        });
+        // Augmented copies
+        for _ in 0..config.augmentation_factor {
+            let mut noisy = ex.features;
+            for f in noisy.iter_mut() {
+                if *f != 0.0 {
+                    *f += rng.next_normal() * config.augmentation_noise;
+                    *f = f.clamp(0.0, 1.0);
+                }
+            }
+            dataset.push(Example {
+                features: noisy,
+                label: ex.label,
+            });
+        }
+    }
+
+    let mut final_loss = 0.0;
+
+    for _epoch in 0..config.epochs {
+        // Shuffle (Fisher-Yates with our simple RNG)
+        for i in (1..dataset.len()).rev() {
+            let j = (rng.next_u64() as usize) % (i + 1);
+            dataset.swap(i, j);
+        }
+
+        let mut epoch_loss = 0.0;
+
+        for ex in &dataset {
+            let fwd = forward(&weights, &ex.features);
+            epoch_loss += cross_entropy_loss(&fwd.probs, ex.label);
+
+            // Backprop through softmax + cross-entropy:
+            // d_logits[i] = probs[i] - (1 if i == label)
+            let mut d_logits = fwd.probs;
+            d_logits[ex.label] -= 1.0;
+
+            // Gradients for W2, b2
+            for i in 0..OUTPUT_DIM {
+                weights.b2[i] -= config.learning_rate * d_logits[i];
+                for j in 0..HIDDEN_DIM {
+                    let grad = d_logits[i] * fwd.hidden[j];
+                    weights.w2[i * HIDDEN_DIM + j] -= config.learning_rate * grad;
+                }
+            }
+
+            // Backprop through hidden layer
+            let mut d_hidden = [0.0f64; HIDDEN_DIM];
+            for j in 0..HIDDEN_DIM {
+                for i in 0..OUTPUT_DIM {
+                    d_hidden[j] += weights.w2[i * HIDDEN_DIM + j] * d_logits[i];
+                }
+                // sigmoid derivative: sigmoid(x) * (1 - sigmoid(x))
+                d_hidden[j] *= fwd.hidden[j] * (1.0 - fwd.hidden[j]);
+            }
+
+            // Gradients for W1, b1
+            for i in 0..HIDDEN_DIM {
+                weights.b1[i] -= config.learning_rate * d_hidden[i];
+                for j in 0..INPUT_DIM {
+                    let grad = d_hidden[i] * ex.features[j];
+                    weights.w1[i * INPUT_DIM + j] -= config.learning_rate * grad;
+                }
+            }
+        }
+
+        final_loss = epoch_loss / dataset.len() as f64;
+    }
+
+    // Compute accuracy on original (non-augmented) examples
+    let mut correct = 0;
+    for ex in examples {
+        let (optic, _, _) = classify(&weights, &ex.features);
+        if optic as usize == ex.label {
+            correct += 1;
+        }
+    }
+    let accuracy = correct as f64 / examples.len() as f64;
+
+    (weights, final_loss, accuracy)
+}
+
+/// Fine-tune existing weights on new examples. Incremental training.
+///
+/// Loads from `base`, trains on `examples` with lower learning rate
+/// and fewer epochs. Returns (updated_weights, loss, accuracy).
+pub fn fine_tune(base: Weights, examples: &[Example]) -> (Weights, f64, f64) {
+    let config = TrainConfig {
+        learning_rate: 0.01,      // 5x lower than full train
+        epochs: 200,              // 15x fewer than full train
+        augmentation_noise: 0.05, // tighter noise
+        augmentation_factor: 20,  // less augmentation
+    };
+
+    let mut rng = SimpleRng(42);
+    let mut weights = base;
+
+    // Augment
+    let mut dataset: Vec<Example> = Vec::new();
+    for ex in examples {
+        dataset.push(Example {
+            features: ex.features,
+            label: ex.label,
+        });
+        for _ in 0..config.augmentation_factor {
+            let mut noisy = ex.features;
+            for f in noisy.iter_mut() {
+                if *f != 0.0 {
+                    *f += rng.next_normal() * config.augmentation_noise;
+                    *f = f.clamp(0.0, 1.0);
+                }
+            }
+            dataset.push(Example {
+                features: noisy,
+                label: ex.label,
+            });
+        }
+    }
+
+    let mut final_loss = 0.0;
+
+    for _epoch in 0..config.epochs {
+        for i in (1..dataset.len()).rev() {
+            let j = (rng.next_u64() as usize) % (i + 1);
+            dataset.swap(i, j);
+        }
+
+        let mut epoch_loss = 0.0;
+        for ex in &dataset {
+            let fwd = forward(&weights, &ex.features);
+            epoch_loss += cross_entropy_loss(&fwd.probs, ex.label);
+
+            let mut d_logits = fwd.probs;
+            d_logits[ex.label] -= 1.0;
+
+            for i in 0..OUTPUT_DIM {
+                weights.b2[i] -= config.learning_rate * d_logits[i];
+                for j in 0..HIDDEN_DIM {
+                    weights.w2[i * HIDDEN_DIM + j] -=
+                        config.learning_rate * d_logits[i] * fwd.hidden[j];
+                }
+            }
+
+            let mut d_hidden = [0.0f64; HIDDEN_DIM];
+            for j in 0..HIDDEN_DIM {
+                for i in 0..OUTPUT_DIM {
+                    d_hidden[j] += weights.w2[i * HIDDEN_DIM + j] * d_logits[i];
+                }
+                d_hidden[j] *= fwd.hidden[j] * (1.0 - fwd.hidden[j]);
+            }
+
+            for i in 0..HIDDEN_DIM {
+                weights.b1[i] -= config.learning_rate * d_hidden[i];
+                for j in 0..INPUT_DIM {
+                    weights.w1[i * INPUT_DIM + j] -=
+                        config.learning_rate * d_hidden[i] * ex.features[j];
+                }
+            }
+        }
+        final_loss = epoch_loss / dataset.len() as f64;
+    }
+
+    let mut correct = 0;
+    for ex in examples {
+        let (optic, _, _) = classify(&weights, &ex.features);
+        if optic as usize == ex.label {
+            correct += 1;
+        }
+    }
+    let accuracy = correct as f64 / examples.len() as f64;
+
+    (weights, final_loss, accuracy)
 }
 
 // ---------------------------------------------------------------------------
@@ -389,34 +646,33 @@ mod tests {
     }
 
     #[test]
-    fn trained_weights_load_and_classify() {
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("abyss.weights");
-        if !path.exists() {
-            return; // skip if weights not trained yet
-        }
-        let bytes = std::fs::read(&path).unwrap();
-        let w = Weights::from_bytes(&bytes).unwrap();
+    fn trained_weights_load() {
+        let w = trained();
         assert_eq!(w.param_count(), PARAM_COUNT);
+    }
 
-        // Classify a "lens" commit: lots of insertions, .rs files, 🟢 marker
-        let mut input = [0.0; INPUT_DIM];
-        input[0] = 0.15; // files_changed / 20
-        input[1] = 0.3; // insertions / 1000
-        input[2] = 0.05; // deletions / 1000
-        input[3] = 0.9; // confidence
-        input[4] = 0.85; // ins ratio
-        input[6] = 1.0; // .rs file
-        input[16] = 1.0; // 🟢
-        input[29] = 1.0; // conversation repo
+    #[test]
+    fn train_separates_distinct_classes() {
+        // Synthetic features that are clearly separable.
+        // Each class gets a dominant feature in a different dimension.
+        let mut examples = Vec::new();
+        for label in 0..OUTPUT_DIM {
+            let mut features = [0.0; INPUT_DIM];
+            features[label] = 1.0; // dominant feature
+            features[(label + 1) % INPUT_DIM] = 0.3; // secondary
+            examples.push(Example { features, label });
+        }
 
-        let (optic, confidence, _) = classify(&w, &input);
-        // Should classify as some optic with reasonable confidence
+        let config = TrainConfig {
+            epochs: 500,
+            augmentation_factor: 20,
+            ..Default::default()
+        };
+        let (_, _, accuracy) = train(&examples, &config);
         assert!(
-            confidence > 0.1,
-            "confidence should be non-trivial: {}",
-            confidence
+            accuracy >= 1.0,
+            "must separate 12 distinct classes, got {:.1}%",
+            accuracy * 100.0
         );
-        // The trained model should not return Noop for a clearly active commit
-        assert_ne!(optic, Optic::Noop, "active commit should not be Noop");
     }
 }

@@ -130,11 +130,11 @@ type KeywordHandler = fn(&str, &mut Lines) -> Result<Prism<AstNode>, ParseError>
 /// for backward compatibility.
 const KEYWORD_TABLE: &[(&str, KeywordHandler)] = &[
     // Crystal keywords — the five Prism operations
-    ("fold ", parse_crystal_keyword),
-    ("prism ", parse_crystal_keyword),
-    ("traversal ", parse_crystal_keyword),
-    ("lens ", parse_crystal_keyword),
-    ("iso ", parse_crystal_keyword),
+    ("fold ", parse_fold_keyword),
+    ("prism ", parse_prism_keyword),
+    ("traversal ", parse_traversal_keyword),
+    ("lens ", parse_lens_keyword),
+    ("iso ", parse_iso_keyword),
     // Bootstrap keywords — backward compatibility
     ("in ", parse_in_keyword),
     ("use ", parse_use_keyword),
@@ -161,6 +161,23 @@ fn dispatch_keyword(
     Ok(None)
 }
 
+/// Delegating handlers — each crystal keyword preserves its type in the node name.
+fn parse_fold_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+    parse_crystal_keyword("fold", rest, lines)
+}
+fn parse_prism_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+    parse_crystal_keyword("prism", rest, lines)
+}
+fn parse_traversal_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+    parse_crystal_keyword("traversal", rest, lines)
+}
+fn parse_lens_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+    parse_crystal_keyword("lens", rest, lines)
+}
+fn parse_iso_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+    parse_crystal_keyword("iso", rest, lines)
+}
+
 /// Parse a crystal keyword: fold, prism, traversal, lens, iso.
 ///
 /// Crystal keywords are generic optic declarations:
@@ -170,10 +187,16 @@ fn dispatch_keyword(
 ///   lens type(id)
 ///   iso convergence
 ///
-/// They produce Decl nodes with the keyword as the name.
-fn parse_crystal_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>, ParseError> {
+/// The `keyword` parameter preserves which crystal keyword was used,
+/// producing node names like "fold-def", "prism-def", etc.
+fn parse_crystal_keyword(
+    keyword: &str,
+    rest: &str,
+    lines: &mut Lines,
+) -> Result<Prism<AstNode>, ParseError> {
     let span = lines.current_span();
     let trimmed = rest.trim();
+    let node_name = format!("{}-def", keyword);
 
     // Check for type-like declaration: `traversal type = a | b | c`
     if let Some(eq_pos) = trimmed.find('=') {
@@ -186,7 +209,7 @@ fn parse_crystal_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>
         lines.advance();
         return Ok(ast::ast_branch(
             Kind::Decl,
-            "crystal-def",
+            &node_name,
             name,
             span,
             variants,
@@ -207,18 +230,12 @@ fn parse_crystal_keyword(rest: &str, lines: &mut Lines) -> Result<Prism<AstNode>
                 .collect()
         };
         lines.advance();
-        return Ok(ast::ast_branch(
-            Kind::Decl,
-            "crystal-def",
-            name,
-            span,
-            params,
-        ));
+        return Ok(ast::ast_branch(Kind::Decl, &node_name, name, span, params));
     }
 
     // Simple: `fold input` or `iso convergence`
     lines.advance();
-    Ok(ast::ast_leaf(Kind::Decl, "crystal-def", trimmed, span))
+    Ok(ast::ast_leaf(Kind::Decl, &node_name, trimmed, span))
 }
 
 /// `in @domain` / `in @domain(params)` / `in @domain as $name`
