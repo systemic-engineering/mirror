@@ -19,13 +19,20 @@
 
 mod curve {
     #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-    pub enum Point { Infinity, Affine { x: u64, y: u64 } }
+    pub enum Point {
+        Infinity,
+        Affine { x: u64, y: u64 },
+    }
 
     pub fn mod_pow(mut base: u128, mut exp: u128, m: u128) -> u128 {
-        let mut result = 1u128; base %= m;
+        let mut result = 1u128;
+        base %= m;
         while exp > 0 {
-            if exp & 1 == 1 { result = result * base % m; }
-            exp >>= 1; base = base * base % m;
+            if exp & 1 == 1 {
+                result = result * base % m;
+            }
+            exp >>= 1;
+            base = base * base % m;
         }
         result
     }
@@ -35,10 +42,16 @@ mod curve {
         let (mut old_s, mut s) = (1i128, 0i128);
         while r != 0 {
             let q = old_r / r;
-            let tmp = r; r = old_r - q * r; old_r = tmp;
-            let tmp = s; s = old_s - q * s; old_s = tmp;
+            let tmp = r;
+            r = old_r - q * r;
+            old_r = tmp;
+            let tmp = s;
+            s = old_s - q * s;
+            old_s = tmp;
         }
-        if old_r != 1 { return None; }
+        if old_r != 1 {
+            return None;
+        }
         Some(((old_s % p as i128 + p as i128) % p as i128) as u64)
     }
 
@@ -46,12 +59,19 @@ mod curve {
         match (p1, p2) {
             (Point::Infinity, q) | (q, Point::Infinity) => q,
             (Point::Affine { x: x1, y: y1 }, Point::Affine { x: x2, y: y2 }) => {
-                if x1 == x2 && y1 != y2 { return Point::Infinity; }
+                if x1 == x2 && y1 != y2 {
+                    return Point::Infinity;
+                }
                 if x1 == x2 && y1 == y2 {
-                    if y1 == 0 { return Point::Infinity; }
+                    if y1 == 0 {
+                        return Point::Infinity;
+                    }
                     let num = (3 * x1 % p * x1 % p + a) % p;
                     let den = (2 * y1) % p;
-                    let inv = match mod_inv(den, p) { Some(i) => i, None => return Point::Infinity };
+                    let inv = match mod_inv(den, p) {
+                        Some(i) => i,
+                        None => return Point::Infinity,
+                    };
                     let lam = num * inv % p;
                     let x3 = (lam * lam % p + p + p - x1 - x2) % p;
                     let y3 = (lam * ((x1 + p - x3) % p) % p + p - y1) % p;
@@ -59,7 +79,10 @@ mod curve {
                 } else {
                     let num = (y2 + p - y1) % p;
                     let den = (x2 + p - x1) % p;
-                    let inv = match mod_inv(den, p) { Some(i) => i, None => return Point::Infinity };
+                    let inv = match mod_inv(den, p) {
+                        Some(i) => i,
+                        None => return Point::Infinity,
+                    };
                     let lam = num * inv % p;
                     let x3 = (lam * lam % p + p + p - x1 - x2) % p;
                     let y3 = (lam * ((x1 + p - x3) % p) % p + p - y1) % p;
@@ -70,12 +93,16 @@ mod curve {
     }
 
     pub fn scalar_mul(k: u64, point: Point, a: u64, p: u64) -> Point {
-        if k == 0 { return Point::Infinity; }
+        if k == 0 {
+            return Point::Infinity;
+        }
         let mut result = Point::Infinity;
         let mut base = point;
         let mut k = k;
         while k > 0 {
-            if k & 1 == 1 { result = point_add(result, base, a, p); }
+            if k & 1 == 1 {
+                result = point_add(result, base, a, p);
+            }
             base = point_add(base, base, a, p);
             k >>= 1;
         }
@@ -153,8 +180,8 @@ mod tests {
         let gen = points[1];
 
         // Compute the ring ordering (THIS IS THE DLP — we're using it as ground truth)
-        let point_to_idx: std::collections::HashMap<Point, usize> = points
-            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+        let point_to_idx: std::collections::HashMap<Point, usize> =
+            points.iter().enumerate().map(|(i, &p)| (p, i)).collect();
 
         let mut ring_order = vec![0usize; n]; // ring_order[k] = vertex index of kG
         let mut pt = Point::Infinity;
@@ -166,7 +193,10 @@ mod tests {
         // For a target private key k_target, the public key is at ring_order[k_target]
         let k_target = 42u64;
         let public_idx = ring_order[k_target as usize];
-        eprintln!("  target k={}, public vertex index={}", k_target, public_idx);
+        eprintln!(
+            "  target k={}, public vertex index={}",
+            k_target, public_idx
+        );
 
         // Create the indicator signal in VERTEX ordering
         let mut signal = vec![0.0f64; n];
@@ -184,9 +214,14 @@ mod tests {
         let (r1_re, r1_im) = dft_coefficient(&signal_ring, 1, n);
         let ring_phase = r1_im.atan2(r1_re);
         let recovered = ((-ring_phase * n as f64 / (2.0 * PI)) % n as f64 + n as f64) % n as f64;
-        eprintln!("  DFT in ring order: phase={:.4}, recovered={:.1}", ring_phase, recovered);
-        assert!((recovered.round() as u64 % n as u64) == k_target,
-            "ring-ordered DFT should recover k exactly");
+        eprintln!(
+            "  DFT in ring order: phase={:.4}, recovered={:.1}",
+            ring_phase, recovered
+        );
+        assert!(
+            (recovered.round() as u64 % n as u64) == k_target,
+            "ring-ordered DFT should recover k exactly"
+        );
 
         // The gap: converting from vertex-ordered DFT to ring-ordered DFT
         // requires the PERMUTATION that maps vertex indices to ring positions.
@@ -234,11 +269,13 @@ mod tests {
             let phase = r_im.atan2(r_re);
             let rec = ((-phase * n as f64 / (2.0 * PI)) % n as f64 + n as f64) % n as f64;
             let rec_k = rec.round() as u64 % n as u64;
-            let error_from_true = ((rec_k as i64 - k_target as i64).abs()).min(
-                (n as i64 - (rec_k as i64 - k_target as i64).abs())
-            );
+            let error_from_true = ((rec_k as i64 - k_target as i64).abs())
+                .min((n as i64 - (rec_k as i64 - k_target as i64).abs()));
             results.push((error_radius, rec_k, error_from_true));
-            eprintln!("  error_radius={:3}: recovered={:3}, off by {}", error_radius, rec_k, error_from_true);
+            eprintln!(
+                "  error_radius={:3}: recovered={:3}, off by {}",
+                error_radius, rec_k, error_from_true
+            );
         }
 
         eprintln!("\n  The DFT is EXACT — any error in ring position maps to");
