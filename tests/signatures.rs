@@ -263,10 +263,7 @@ mod tests {
 
         // Find generator of maximal order
         let (gen, group_order) = find_generator(&points, curve_a, field_p);
-        eprintln!(
-            "  Generator: {:?}, order: {}",
-            gen, group_order
-        );
+        eprintln!("  Generator: {:?}, order: {}", gen, group_order);
 
         let n = group_order; // group order for modular arithmetic
 
@@ -329,7 +326,8 @@ mod tests {
                 Some(inv) => inv,
                 None => continue,
             };
-            let s_i = (k_inv as u128 * ((h_i as u128 + r_i as u128 * d as u128) % n as u128)) % n as u128;
+            let s_i =
+                (k_inv as u128 * ((h_i as u128 + r_i as u128 * d as u128) % n as u128)) % n as u128;
             let s_i = s_i as u64;
             if s_i == 0 {
                 continue;
@@ -386,9 +384,9 @@ mod tests {
                     Some(inv) => inv,
                     None => continue,
                 };
-                let k_cand =
-                    (s_inv as u128 * ((sig.h as u128 + sig.r as u128 * d_c as u128) % n as u128))
-                        % n as u128;
+                let k_cand = (s_inv as u128
+                    * ((sig.h as u128 + sig.r as u128 * d_c as u128) % n as u128))
+                    % n as u128;
                 let k_cand = k_cand as u64;
                 if k_cand == 0 {
                     continue;
@@ -409,10 +407,7 @@ mod tests {
         }
 
         let view_a_ops = get_ops();
-        let view_a_max = consistency_score
-            .iter()
-            .cloned()
-            .fold(0.0f64, f64::max);
+        let view_a_max = consistency_score.iter().cloned().fold(0.0f64, f64::max);
         let view_a_argmax = consistency_score
             .iter()
             .enumerate()
@@ -423,7 +418,10 @@ mod tests {
             "  Max consistency: {:.0}/20 at d_c = {}",
             view_a_max, view_a_argmax
         );
-        eprintln!("  Correct d = {} → score = {:.0}", d, consistency_score[d as usize]);
+        eprintln!(
+            "  Correct d = {} → score = {:.0}",
+            d, consistency_score[d as usize]
+        );
         eprintln!("  Cost: {} group ops (brute force baseline)", view_a_ops);
 
         // Count how many candidates score > 0
@@ -455,10 +453,7 @@ mod tests {
         // View B power spectrum
         let view_b_spectrum = power_spectrum(&t_histogram);
         let view_b_dc = view_b_spectrum[0];
-        let view_b_max_nondc = view_b_spectrum[1..]
-            .iter()
-            .cloned()
-            .fold(0.0f64, f64::max);
+        let view_b_max_nondc = view_b_spectrum[1..].iter().cloned().fold(0.0f64, f64::max);
         eprintln!(
             "  View B spectrum: DC={:.1}, max non-DC={:.1}",
             view_b_dc, view_b_max_nondc
@@ -475,10 +470,7 @@ mod tests {
 
         let view_c_spectrum = power_spectrum(&r_signal);
         let view_c_dc = view_c_spectrum[0];
-        let view_c_max_nondc = view_c_spectrum[1..]
-            .iter()
-            .cloned()
-            .fold(0.0f64, f64::max);
+        let view_c_max_nondc = view_c_spectrum[1..].iter().cloned().fold(0.0f64, f64::max);
         eprintln!(
             "  View C spectrum: DC={:.1}, max non-DC={:.1}",
             view_c_dc, view_c_max_nondc
@@ -504,9 +496,9 @@ mod tests {
 
             for sig in &signatures {
                 let s_inv = mod_inv(sig.s, n).unwrap();
-                let k_cand =
-                    (s_inv as u128 * ((sig.h as u128 + sig.r as u128 * d_c as u128) % n as u128))
-                        % n as u128;
+                let k_cand = (s_inv as u128
+                    * ((sig.h as u128 + sig.r as u128 * d_c as u128) % n as u128))
+                    % n as u128;
                 let k_cand = k_cand as u64;
 
                 // Check if k_cand produces the right r
@@ -536,10 +528,7 @@ mod tests {
         }
 
         let view_d_ops = get_ops();
-        let view_d_max = pairwise_score
-            .iter()
-            .cloned()
-            .fold(0.0f64, f64::max);
+        let view_d_max = pairwise_score.iter().cloned().fold(0.0f64, f64::max);
         let view_d_argmax = pairwise_score
             .iter()
             .enumerate()
@@ -611,10 +600,7 @@ mod tests {
                 .unwrap()
                 .0;
 
-            let max_weight = weighted
-                .iter()
-                .cloned()
-                .fold(0.0f64, f64::max);
+            let max_weight = weighted.iter().cloned().fold(0.0f64, f64::max);
             let second_max = weighted
                 .iter()
                 .enumerate()
@@ -649,10 +635,7 @@ mod tests {
 
         let loop_ops = get_ops();
         eprintln!("\n  Circular loop cost: {} group ops", loop_ops);
-        eprintln!(
-            "  Final argmax: {} (correct d = {})",
-            prev_argmax, d
-        );
+        eprintln!("  Final argmax: {} (correct d = {})", prev_argmax, d);
         if prev_argmax == d as usize {
             eprintln!("  >>> CIRCULAR LOOP CONVERGED TO d <<<");
         } else {
@@ -668,9 +651,9 @@ mod tests {
             let mut all_valid = true;
             for sig in &signatures {
                 let s_inv = mod_inv(sig.s, n).unwrap();
-                let k_cand =
-                    (s_inv as u128 * ((sig.h as u128 + sig.r as u128 * d_c as u128) % n as u128))
-                        % n as u128;
+                let k_cand = (s_inv as u128
+                    * ((sig.h as u128 + sig.r as u128 * d_c as u128) % n as u128))
+                    % n as u128;
                 let k_cand = k_cand as u64;
                 if k_cand == 0 {
                     all_valid = false;
@@ -697,10 +680,7 @@ mod tests {
         }
 
         let brute_ops = get_ops();
-        eprintln!(
-            "  Brute force result: d = {:?}",
-            brute_d
-        );
+        eprintln!("  Brute force result: d = {:?}", brute_d);
         eprintln!("  Cost: {} group ops", brute_ops);
         assert_eq!(brute_d, Some(d), "Brute force should find correct d");
 
@@ -718,12 +698,10 @@ mod tests {
                 let si = &signatures[i];
                 let sj = &signatures[j];
 
-                let a_ij = ((si.s as u128 * sj.r as u128) % n as u128
-                    + n as u128
+                let a_ij = ((si.s as u128 * sj.r as u128) % n as u128 + n as u128
                     - (sj.s as u128 * si.r as u128) % n as u128)
                     % n as u128;
-                let b_ij = ((si.s as u128 * sj.h as u128) % n as u128
-                    + n as u128
+                let b_ij = ((si.s as u128 * sj.h as u128) % n as u128 + n as u128
                     - (sj.s as u128 * si.h as u128) % n as u128)
                     % n as u128;
 
@@ -755,10 +733,7 @@ mod tests {
 
         let lattice_spectrum = power_spectrum(&lattice_signal);
         let lattice_dc = lattice_spectrum[0];
-        let lattice_max_nondc = lattice_spectrum[1..]
-            .iter()
-            .cloned()
-            .fold(0.0f64, f64::max);
+        let lattice_max_nondc = lattice_spectrum[1..].iter().cloned().fold(0.0f64, f64::max);
         eprintln!(
             "  Lattice signal: {} pairs, spectrum DC={:.1}, max non-DC={:.1}",
             lattice_a_values.len(),
@@ -831,11 +806,17 @@ mod tests {
 
         // Structural views: 0 (lens), 1 (iso)
         let structural_avg = (dist_matrix[0][1]) / 1.0;
-        eprintln!("    Structural-structural avg distance: {:.4}", structural_avg);
+        eprintln!(
+            "    Structural-structural avg distance: {:.4}",
+            structural_avg
+        );
 
         // Signature views: 2 (consistency), 4 (pairwise)
         let sig_internal = dist_matrix[2][4];
-        eprintln!("    Signature-signature (consistency↔pairwise): {:.4}", sig_internal);
+        eprintln!(
+            "    Signature-signature (consistency↔pairwise): {:.4}",
+            sig_internal
+        );
 
         // Cross-cluster
         let mut cross_dists = Vec::new();
@@ -907,29 +888,51 @@ mod tests {
         eprintln!("║                        RESULTS                              ║");
         eprintln!("╚══════════════════════════════════════════════════════════════╝\n");
 
-        eprintln!("  Curve: y² = x³ + x + 4 (mod 251), |E| = {}, generator order = {}", num_points, n);
+        eprintln!(
+            "  Curve: y² = x³ + x + 4 (mod 251), |E| = {}, generator order = {}",
+            num_points, n
+        );
         eprintln!("  Private key d = {}, public key Q = {:?}", d, pub_key);
         eprintln!("  Signatures: {}", signatures.len());
         eprintln!();
 
         // View A result
-        eprintln!("  View A (consistency): d recovered at argmax = {} ✓", view_a_argmax);
-        eprintln!("    Cost: {} group ops (O(n · sigs) = brute force)", view_a_ops);
+        eprintln!(
+            "  View A (consistency): d recovered at argmax = {} ✓",
+            view_a_argmax
+        );
+        eprintln!(
+            "    Cost: {} group ops (O(n · sigs) = brute force)",
+            view_a_ops
+        );
 
         // View D result
-        eprintln!("  View D (pairwise): d recovered at argmax = {} ✓", view_d_argmax);
-        eprintln!("    Cost: {} group ops (O(n · sigs) = brute force)", view_d_ops);
+        eprintln!(
+            "  View D (pairwise): d recovered at argmax = {} ✓",
+            view_d_argmax
+        );
+        eprintln!(
+            "    Cost: {} group ops (O(n · sigs) = brute force)",
+            view_d_ops
+        );
 
         // Brute force
         eprintln!("  Brute force: d = {} ✓", brute_d.unwrap());
-        eprintln!("    Cost: {} group ops (early exit at d = {})", brute_ops, d);
+        eprintln!(
+            "    Cost: {} group ops (early exit at d = {})",
+            brute_ops, d
+        );
 
         // Circular loop
         let loop_converged = prev_argmax == d as usize;
         eprintln!(
             "  Circular loop: final argmax = {} {}",
             prev_argmax,
-            if loop_converged { "✓ CONVERGED" } else { "✗ DID NOT CONVERGE" }
+            if loop_converged {
+                "✓ CONVERGED"
+            } else {
+                "✗ DID NOT CONVERGE"
+            }
         );
         eprintln!("    Cost: {} group ops", loop_ops);
 
