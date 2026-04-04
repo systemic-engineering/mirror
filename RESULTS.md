@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-04
 **Branch:** `break/crypto`
-**Status:** Negative result. Clean. Publishable.
+**Status:** Negative result. Settled. Publishable.
 
 ## Thesis
 
@@ -84,6 +84,51 @@ each level needs the DLP.
 **Result:** Confirmed circularity. Cooley-Tukey requires ring-ordered
 access, which IS the discrete log.
 
+### 7. Lens — x-Projection Spectrum (8-bit)
+
+The function f(k) = x(kG) maps group index to x-coordinate. Computed
+the full DFT F(ω) and power spectrum for all 282 frequencies.
+
+- Peak-to-average ratio: 15.12
+- Normalized spectral entropy: 0.8684
+- 50% energy in 14.2% of frequencies
+
+**But:** The k² mod p baseline has nearly identical properties (entropy 0.8841,
+peak-to-avg 7.28, 50% energy in 13.5%). An LCG baseline is actually MORE
+structured (entropy 0.43, peak-to-avg 84.65).
+
+**Result:** The x-projection is **spectrally generic** — no curve-specific
+structure beyond what any simple algebraic function over a finite field
+produces. The concentration is real but not exploitable.
+
+### 8. Traverse — Coordinate-Order Walk (8-bit)
+
+Walked curve points in x-coordinate order (not group order). Computed
+group differences between consecutive-x points. Compared to random
+permutation baseline.
+
+- Group-index difference variance: 0.9936× expected (uniform)
+- DFT peak-to-average: 5.85 (curve) vs 5.05 (random) — ratio 1.16
+- Autocorrelation peaks: 10 (curve) vs 8 (random)
+
+**Result:** The coordinate-to-index permutation is **spectrally flat** when
+viewed from coordinate space. Indistinguishable from a random permutation.
+
+### 9. Iso — Windowed Spectral Matching (8-bit)
+
+Given public key Q = dG, computed the window w(j) = x(Q + jG) using
+only public data. Cross-correlated with full f(k) to attempt recovery
+of d.
+
+- Cross-correlation peak lands at correct d for all test keys
+- Peak-to-second ratio: max 1.21 — indistinguishable from noise
+- Minimum window for correct peak position: scales O(√n)
+- Phase-based recovery: complete failure
+- **Circularity:** computing f(k) for all k requires O(n) = brute force DLP
+
+**Result:** Faint signal exists but is buried in noise. The approach is
+circular — total cost O(n) regardless of window size.
+
 ## Literature Survey
 
 Research agent surveyed 10 areas (see full output in agent logs):
@@ -100,22 +145,86 @@ Research agent surveyed 10 areas (see full output in agent logs):
 | Isogenies | Same field; Ramanujan works against you |
 | Cross-field transfer | **Structurally impossible** (Shoup bound) |
 
+### Theoretical Survey: Spectral Bridges (2026-04-04)
+
+Six areas investigated for a cross-object spectral bridge (iso between
+different mathematical structures). Full survey: `docs/theoretical-iso-survey.md`.
+
+| Direction | Status |
+|-----------|--------|
+| Spectral reduction of embedding degree | Dead — k = ord_n(p) is arithmetic, not spectral |
+| Isogeny graph spectra | Ramanujan property works FOR security |
+| AG codes / Riemann-Roch | No connection — different mathematical objects |
+| SEA-style modular decomposition | Computes global invariants, not local DLP |
+| Lower bounds for structured algorithms | **Open** — no proof field structure can't help |
+| Spectral bridge X | Representation-theoretic circularity — see below |
+
 ## Why the Spectral Approach Fails
 
-The "crystal" at any scale is the DFT matrix of Z/nZ.
-This matrix is **trivially known** for any cyclic group of any size.
-It's always `cos(2πjk/n)`.
+### Layer 1: The permutation is pseudorandom
 
-The DLP hardness is NOT in the spectral structure.
-It's in the **coordinate-to-index mapping**: which curve point (x,y)
-corresponds to which group element k. This mapping depends on:
-1. The curve equation y² = x³ + ax + b
-2. The field arithmetic in GF(p)
-3. The choice of generator G
+The coordinate-to-index mapping (which curve point (x,y) corresponds to
+which group element k) behaves as a pseudorandom permutation. Verified
+in both directions:
 
-All three are field-specific. Different fields produce unrelated mappings.
-Any cross-field correlation would violate Shoup's Ω(√n) lower bound
-for generic DLP algorithms.
+- **Group → coordinates** (lens): f(k) = x(kG) is spectrally generic.
+  No curve-specific structure. Same spectral profile as k² mod p.
+- **Coordinates → group** (traverse): walking in x-order, group differences
+  are uniform. Indistinguishable from random permutation.
+
+### Layer 2: The spectral decomposition is circular
+
+Any spectral decomposition of Z/nZ requires evaluating group characters
+χ_ω(P) = exp(2πi·log_G(P)·ω/n). Evaluating χ_ω(P) requires the discrete
+log of P. The DFT of the group IS the DLP.
+
+This isn't an accident. The hardness of ECDLP is precisely the statement
+that no efficient representation of the group action exists from coordinate
+descriptions of points.
+
+### Layer 3: The group law is non-linearizable
+
+Spectral methods linearize. The EC group law is a degree-2 rational function
+in the coordinates:
+
+    x(P+Q) = ((y_Q - y_P)/(x_Q - x_P))² - x_P - x_Q
+
+This has no known linearization over any finite field. The formal group
+gives a local (p-adic) linearization, but computing it globally requires
+O(n) operations.
+
+Shor's algorithm doesn't linearize either — it evaluates the non-linear
+map in quantum superposition. There is no classical analogue.
+
+## The Open Gap
+
+No proof exists that ECDLP over prime fields requires Ω(√n) time for
+all algorithms. The Shoup/Nechaev/AGM lower bounds cover generic and
+algebraic group models but not algorithms that exploit field structure.
+The gap between "generic algorithms need √n" and "there exists a
+polynomial-time algorithm using field structure" is technically open.
+
+Every concrete approach that enters this gap hits one of three walls:
+1. Reduces to a known-hard problem in the target domain
+2. Requires the discrete log to set up the spectral decomposition
+3. Exploits structure that cryptographic curves are designed to lack
+
+## Optics Vocabulary
+
+The experiments were organized using the optics vocabulary from
+functional programming / category theory:
+
+| Optic | Property | Experiments | Signal? |
+|-------|----------|-------------|---------|
+| **Fold** | Collapse structure to value. Lossy. | 1 (eigendecomposition), 3 (character sums), 5 (Lanczos) | Trivially known |
+| **Prism** | Partial decomposition into cases. | 6 (butterfly), 5 (components) | Circular |
+| **Traverse** | Walk all elements, preserve shape. | 8 (coordinate-order walk) | Flat — no signal |
+| **Lens** | Bidirectional focus into sub-structure. | 7 (x-projection DFT) | Spectrally generic |
+| **Iso** | Lossless bidirectional bridge. | 9 (windowed matching), theoretical survey | Circular + noise |
+
+Consumer optics (fold, prism) collapse too much information.
+Producer optics (traverse, lens, iso) preserve structure but find
+the permutation is pseudorandom in both directions.
 
 ## What We Built (Valuable)
 
@@ -124,14 +233,18 @@ for generic DLP algorithms.
 - **Full elliptic curve arithmetic**: point_add, scalar_mul, Tonelli-Shanks mod_sqrt
 - **spectral-db integration**: 65k-node graph ingestion, settling in 2 ticks
 - **skeleton-key test harness**: clean, reproducible, TDD throughout
+- **Theoretical survey**: 30+ papers reviewed, six directions evaluated
 
 ## The Sentence
 
-The spectral structure of elliptic curve Cayley graphs is trivially known
-(it's the DFT of Z/nZ). The hardness of the discrete log lives in the
-coordinate-to-index mapping, which is field-specific and does not transfer
-across characteristics. The crystal doesn't tile because there is no
-crystal — only a permutation that differs per field.
+The EC group law is non-linearizable over finite fields. Spectral methods
+linearize. The coordinate-to-index permutation is pseudorandom in both
+directions. Any spectral decomposition of the group requires the discrete
+log to evaluate — the representation theory is circular. Shor bypasses
+this via quantum superposition, not by finding a better target space.
+
+Nine experiments. Six theoretical directions. Three layers of explanation.
+The internet stays locked.
 
 Both outcomes were always publishable. This one doesn't change the world.
 But it sharpens the tool. And the tool — spectral-db, the Abyss, the

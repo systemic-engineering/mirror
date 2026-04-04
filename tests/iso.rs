@@ -302,7 +302,10 @@ mod tests {
 
         // Compute full x-projection f(k) = x(kG)
         let f = compute_x_projection(g, n, A, P);
-        eprintln!("  f(0..4) = [{:.0}, {:.0}, {:.0}, {:.0}, ...]", f[0], f[1], f[2], f[3]);
+        eprintln!(
+            "  f(0..4) = [{:.0}, {:.0}, {:.0}, {:.0}, ...]",
+            f[0], f[1], f[2], f[3]
+        );
 
         // Verify f is correct by spot-checking
         let g3 = scalar_mul(3, g, A, P);
@@ -444,16 +447,26 @@ mod tests {
                 let fraction = m_min_correct as f64 / n as f64;
                 eprintln!(
                     "  d={:>3}: m_min_correct={:>4} ({:.1}% of n, {:.1}× √n, {:.1}× log n)",
-                    d, m_min_correct, 100.0 * fraction, m_min_correct as f64 / sqrt_n, m_min_correct as f64 / log_n
+                    d,
+                    m_min_correct,
+                    100.0 * fraction,
+                    m_min_correct as f64 / sqrt_n,
+                    m_min_correct as f64 / log_n
                 );
             } else {
-                eprintln!("  d={:>3}: NEVER correct (peak always at wrong position)", d);
+                eprintln!(
+                    "  d={:>3}: NEVER correct (peak always at wrong position)",
+                    d
+                );
             }
             if m_min_strong > 0 {
                 let fraction = m_min_strong as f64 / n as f64;
                 eprintln!(
                     "         m_min_strong={:>4} ({:.1}% of n, {:.1}× √n, {:.1}× log n)",
-                    m_min_strong, 100.0 * fraction, m_min_strong as f64 / sqrt_n, m_min_strong as f64 / log_n
+                    m_min_strong,
+                    100.0 * fraction,
+                    m_min_strong as f64 / sqrt_n,
+                    m_min_strong as f64 / log_n
                 );
             } else {
                 eprintln!("         NEVER strong (ratio never > 2.0)");
@@ -516,8 +529,13 @@ mod tests {
             eprintln!("\n  VERDICT: COMPLETE FAILURE.");
             eprintln!("  Cross-correlation never peaked at the correct d for any window size.");
         } else {
-            let avg_correct = m_mins_correct.iter().sum::<usize>() as f64 / m_mins_correct.len() as f64;
-            eprintln!("  Avg m where peak first correct = {:.1} ({:.1}% of n)", avg_correct, 100.0 * avg_correct / n as f64);
+            let avg_correct =
+                m_mins_correct.iter().sum::<usize>() as f64 / m_mins_correct.len() as f64;
+            eprintln!(
+                "  Avg m where peak first correct = {:.1} ({:.1}% of n)",
+                avg_correct,
+                100.0 * avg_correct / n as f64
+            );
 
             if m_mins_strong.is_empty() {
                 eprintln!("\n  VERDICT: WEAK SIGNAL — NO BREAK.");
@@ -526,8 +544,13 @@ mod tests {
                 eprintln!("  The peak is not distinguishable from noise without knowing d.");
                 eprintln!("  An attacker could not identify the correct peak.");
             } else {
-                let avg_strong = m_mins_strong.iter().sum::<usize>() as f64 / m_mins_strong.len() as f64;
-                eprintln!("  Avg m for strong signal (ratio > 2.0) = {:.1} ({:.1}% of n)", avg_strong, 100.0 * avg_strong / n as f64);
+                let avg_strong =
+                    m_mins_strong.iter().sum::<usize>() as f64 / m_mins_strong.len() as f64;
+                eprintln!(
+                    "  Avg m for strong signal (ratio > 2.0) = {:.1} ({:.1}% of n)",
+                    avg_strong,
+                    100.0 * avg_strong / n as f64
+                );
                 eprintln!("  m_strong / √n = {:.1}", avg_strong / sqrt_n);
                 eprintln!("  m_strong / log n = {:.1}", avg_strong / log_n);
 
