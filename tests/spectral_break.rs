@@ -304,12 +304,19 @@ mod tests {
         loop {
             pt = point_add(pt, gen, a, p);
             order += 1;
-            if pt == Point::Infinity || order > n as u64 + 1 { break; }
+            if pt == Point::Infinity || order > n as u64 + 1 {
+                break;
+            }
         }
-        eprintln!("  generator: {:?}, order: {} (full: {})", gen, order, order == n as u64);
+        eprintln!(
+            "  generator: {:?}, order: {} (full: {})",
+            gen,
+            order,
+            order == n as u64
+        );
 
-        let point_to_idx: std::collections::HashMap<Point, usize> = points
-            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+        let point_to_idx: std::collections::HashMap<Point, usize> =
+            points.iter().enumerate().map(|(i, &p)| (p, i)).collect();
 
         // Open spectral-db with 100MB budget
         let dir = tempfile::tempdir().unwrap();
@@ -360,7 +367,9 @@ mod tests {
                     eprintln!("  tick {}: changed", ticks);
                 }
             }
-            if ticks > 10 { break; }
+            if ticks > 10 {
+                break;
+            }
         }
 
         // Compute spectral coordinates (ego-graph based — bounded memory)
@@ -410,10 +419,15 @@ mod tests {
         // Check monotonicity: does spectral distance grow with private key?
         let mut monotone_count = 0;
         for w in distances.windows(2) {
-            if w[1].1 >= w[0].1 { monotone_count += 1; }
+            if w[1].1 >= w[0].1 {
+                monotone_count += 1;
+            }
         }
         let monotonicity = monotone_count as f64 / (distances.len().saturating_sub(1)) as f64;
-        eprintln!("  monotonicity (spectral dist vs private key): {:.1}%", monotonicity * 100.0);
+        eprintln!(
+            "  monotonicity (spectral dist vs private key): {:.1}%",
+            monotonicity * 100.0
+        );
         eprintln!("  (50% = random, 100% = perfect correlation)");
 
         let status = db.status();
@@ -421,5 +435,114 @@ mod tests {
             "  final: {} nodes, {} edges, {} crystals",
             status.node_count, status.edge_count, status.crystals
         );
+    }
+
+    #[test]
+    fn full_laplacian_12bit_dft_recovery() {
+        // The REAL transfer test: does the 8-bit DFT approach
+        // work at 12-bit with full-graph eigenvectors?
+        // 4100 points → 4100×4100 = 134MB dense matrix. Feasible.
+        let a = 1u64;
+        let b = 1u64;
+        let p = 4093u64;
+
+        let points = enumerate_curve(a, b, p);
+        let n = points.len();
+        let gen = points[1];
+
+        let mut pt = gen;
+        let mut order = 1u64;
+        loop {
+            pt = point_add(pt, gen, a, p);
+            order += 1;
+            if pt == Point::Infinity || order > n as u64 + 1 { break; }
+        }
+        eprintln!("  12-bit: {} points, order {}", n, order);
+
+        let point_to_idx: std::collections::HashMap<Point, usize> = points
+            .iter().enumerate().map(|(i, &p)| (p, i)).collect();
+
+        // Build Cayley graph
+        let mut edge_set = std::collections::HashSet::new();
+        let vertices: Vec<String> = (0..n).map(|i| match points[i] {
+            Point::Infinity => "O".to_string(),
+            Point::Affine { x, y } => format!("({},{})", x, y),
+        }).collect();
+
+        for (i, &pt) in points.iter().enumerate() {
+            let sum = point_add(pt, gen, a, p);
+            if let Some(&j) = point_to_idx.get(&sum) {
+                let edge = if i < j { (i, j) } else { (j, i) };
+                edge_set.insert(edge);
+            }
+        }
+        let edges: Vec<(usize, usize)> = edge_set.into_iter().collect();
+        eprintln!("  cayley: {} vertices, {} edges", vertices.len(), edges.len());
+
+        let matrix_mb = (n * n * 8) as f64 / 1e6;
+        eprintln!("  laplacian: {:.0}MB", matrix_mb);
+
+        // Full eigendecomposition
+        eprintln!("  computing eigensystem...");
+        let laplacian = coincidence::spectral::Laplacian::from_adjacency(&vertices, &edges);
+        let eigensystem = laplacian.eigensystem();
+        let eigenvalues = eigensystem.eigenvalues();
+
+        let zero_count = eigenvalues.iter().filter(|&&v| v.abs() < 1e-10).count();
+        eprintln!("  eigenvalues: {}, components: {}", eigenvalues.len(), zero_count);
+
+        // Fiedler pair DFT recovery — same method as 8-bit
+        let fiedler_start = eigenvalues.iter().position(|&v| v > 1e-10).unwrap_or(1);
+        eprintln!("  fiedler eigenvalue: {:.8}", eigenvalues[fiedler_start]);
+
+        let o_v1 = eigensystem.eigenvector_component(0, fiedler_start);
+        let o_v2 = eigensystem.eigenvector_component(0, fiedler_start + 1);
+        let o_phase = o_v2.atan2(o_v1);
+
+        let g_idx = point_to_idx[&gen];
+        let g_v1 = eigensystem.eigenvector_component(g_idx, fiedler_start);
+        let g_v2 = eigensystem.eigenvector_component(g_idx, fiedler_start + 1);
+        let g_phase = g_v2.atan2(g_v1);
+        let phase_step = g_phase - o_phase;
+
+        eprintln!("  phase step: {:.8}, expected: {:.8}",
+            phase_step, 2.0 * std::f64::consts::PI / order as f64);
+
+        // Test on first 500 keypairs
+        let sample = 500u64.min(order - 1);
+        let mut correct = 0u64;
+        let mut correct_mod = 0u64;
+
+        for k in 1..=sample {
+            let public = scalar_mul(k, gen, a, p);
+            let idx = point_to_idx[&public];
+
+            let v1 = eigensystem.eigenvector_component(idx, fiedler_start);
+            let v2 = eigensystem.eigenvector_component(idx, fiedler_start + 1);
+            let phase = v2.atan2(v1);
+            let delta = (phase - o_phase + 10.0 * std::f64::consts::PI)
+                % (2.0 * std::f64::consts::PI);
+            let pos = delta / phase_step.abs();
+            let recovered = pos.round() as u64 % order;
+
+            if recovered == k { correct += 1; }
+            if recovered == k || recovered == order - k { correct_mod += 1; }
+        }
+
+        eprintln!("  12-bit DFT: {}/{} exact ({:.1}%)",
+            correct, sample, correct as f64 / sample as f64 * 100.0);
+        eprintln!("  12-bit DFT: {}/{} mod-symmetric ({:.1}%)",
+            correct_mod, sample, correct_mod as f64 / sample as f64 * 100.0);
+
+        // Compare theoretical eigenvalues
+        let n_ring = order as usize; // the subgroup ring size
+        let theoretical_fiedler = 2.0 - 2.0 * (2.0 * std::f64::consts::PI / n_ring as f64).cos();
+        eprintln!("  theoretical fiedler: {:.8}, actual: {:.8}, diff: {:.2e}",
+            theoretical_fiedler, eigenvalues[fiedler_start],
+            (theoretical_fiedler - eigenvalues[fiedler_start]).abs());
+
+        assert!(correct_mod as f64 / sample as f64 > 0.90,
+            "12-bit DFT should recover >90% (got {:.1}%)",
+            correct_mod as f64 / sample as f64 * 100.0);
     }
 }
