@@ -92,7 +92,20 @@ static DEFAULT_ECHO: OnceLock<GhostEcho> = OnceLock::new();
 /// The corpus covers diverse structural patterns: plain enums, parameterised
 /// types, multi-type grammars, and cross-type references.
 pub fn default_echo() -> &'static GhostEcho {
-    DEFAULT_ECHO.get_or_init(|| todo!("default_echo: not yet implemented"))
+    DEFAULT_ECHO.get_or_init(|| {
+        let sources = [
+            "grammar @colors {\n  type color = red | blue | green\n}\n",
+            "grammar @shapes {\n  type shape = circle | square | triangle\n}\n",
+            "grammar @linked {\n  type color = red(shade) | blue\n  type shade = light | dark\n}\n",
+            "grammar @ops {\n  type op = fold | prism | traversal | lens | iso\n}\n",
+            "grammar @complex {\n  type a = x(b) | y\n  type b = p | q\n  type c = m(a) | n(b)\n}\n",
+        ];
+        let features: Vec<Features> = sources
+            .iter()
+            .map(|s| crate::features::extract_from_source(s))
+            .collect();
+        GhostEcho::from_features(&features)
+    })
 }
 
 // ---------------------------------------------------------------------------

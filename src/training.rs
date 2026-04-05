@@ -237,6 +237,17 @@ pub fn retrain() -> (crate::classifier::Weights, f64, f64) {
     crate::classifier::train(&merged, &config)
 }
 
+/// Retrain and save to the given path.
+///
+/// Runs the full retrain cycle, serializes the resulting weights to
+/// raw f64 little-endian bytes, and writes them to `path`.
+/// Returns (final_loss, accuracy).
+pub fn retrain_and_save(path: &str) -> std::io::Result<(f64, f64)> {
+    let (weights, loss, accuracy) = retrain();
+    std::fs::write(path, weights.to_bytes())?;
+    Ok((loss, accuracy))
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -440,6 +451,58 @@ mod tests {
                 ex.label
             );
         }
+    }
+
+    #[test]
+    #[ignore] // Run explicitly: cargo test save_weights -- --ignored --nocapture
+    fn save_weights() {
+        let (loss, accuracy) = retrain_and_save("mirror.weights").expect("failed to save weights");
+        eprintln!(
+            "  Saved mirror.weights: loss={:.4} accuracy={:.1}%",
+            loss,
+            accuracy * 100.0
+        );
+    }
+
+    #[test]
+    fn full_retrain_produces_cluster_separation() {
+        let (weights, _loss, accuracy) = retrain();
+
+        // Conservative optics that extractive grammars should route to.
+        let conservative = [
+            crate::classifier::Optic::FoldAccumulate,
+            crate::classifier::Optic::PrismNarrow,
+            crate::classifier::Optic::IsoSettle,
+            crate::classifier::Optic::Noop,
+        ];
+
+        // Test at least 2 extractive grammars route to conservative optics.
+        let extractive_sources = [
+            include_str!("../fixtures/extractive/no_attribution.conv"),
+            include_str!("../fixtures/extractive/coordination_tax.conv"),
+        ];
+        let mut conservative_count = 0;
+        for source in &extractive_sources {
+            let f = features::extract_from_source(source);
+            let mut input = [0.0f64; crate::classifier::INPUT_DIM];
+            input[..FEATURE_DIM].copy_from_slice(&f);
+            let (optic, conf, _) = crate::classifier::classify(&weights, &input);
+            eprintln!("  extractive -> {:?} ({:.1}%)", optic, conf * 100.0);
+            if conservative.contains(&optic) {
+                conservative_count += 1;
+            }
+        }
+        assert!(
+            conservative_count >= 2,
+            "expected both extractive grammars to route to conservative optics, got {}/2",
+            conservative_count
+        );
+
+        assert!(
+            accuracy > 0.85,
+            "accuracy {:.1}% below 85% threshold",
+            accuracy * 100.0
+        );
     }
 
     /// Retrained model achieves >70% accuracy and routes extractive inputs
