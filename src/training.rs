@@ -94,6 +94,34 @@ pub fn legitimate_corpus() -> Vec<Example> {
 }
 
 // ---------------------------------------------------------------------------
+// Two-corpus retrain API (echo/shadow cluster training)
+// ---------------------------------------------------------------------------
+
+/// Build the full legitimate corpus from inline grammars that actually parse.
+///
+/// The settle .conv files use a DSL the parser doesn't understand, producing
+/// all-zero feature vectors. This function provides inline grammars using the
+/// `grammar @name { ... }` format that the spectral extractor handles.
+pub fn inline_legitimate_corpus() -> Vec<Example> {
+    todo!("Task 5: inline legitimate corpus with parseable grammars")
+}
+
+/// Build the extractive corpus from the five §9b violation fixtures.
+pub fn extractive_corpus() -> Vec<Example> {
+    todo!("Task 5: extractive corpus from fixtures")
+}
+
+/// Retrain mirror.weights with both legitimate and extractive corpora.
+///
+/// Returns (trained_weights, final_loss, accuracy).
+/// Legitimate grammars get the full range of optics.
+/// Extractive grammars get only conservative (shadow-cluster) optics:
+/// FoldAccumulate, PrismNarrow, IsoSettle, Noop.
+pub fn retrain() -> (crate::classifier::Weights, f64, f64) {
+    todo!("Task 5: retrain with merged corpora")
+}
+
+// ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
@@ -266,5 +294,60 @@ mod tests {
                 );
             }
         }
+    }
+
+    /// inline_legitimate_corpus() returns 8 examples with non-zero features.
+    #[test]
+    fn inline_legitimate_corpus_is_parseable() {
+        let corpus = inline_legitimate_corpus();
+        assert_eq!(corpus.len(), 8, "expected 8 inline grammars");
+        for ex in &corpus {
+            let nonzero = ex.features[..FEATURE_DIM].iter().any(|&v| v != 0.0);
+            assert!(
+                nonzero,
+                "label={}: inline grammar produced all-zero features",
+                ex.label
+            );
+        }
+    }
+
+    /// extractive_corpus() returns 5 examples with non-zero features.
+    #[test]
+    fn extractive_corpus_is_parseable() {
+        let corpus = extractive_corpus();
+        assert_eq!(corpus.len(), 5, "expected 5 extractive grammars");
+        for ex in &corpus {
+            let nonzero = ex.features[..FEATURE_DIM].iter().any(|&v| v != 0.0);
+            assert!(
+                nonzero,
+                "label={}: extractive grammar produced all-zero features",
+                ex.label
+            );
+        }
+    }
+
+    /// Retrained model achieves >70% accuracy and routes extractive inputs
+    /// to conservative optics (FoldAccumulate, PrismNarrow, IsoSettle, Noop).
+    #[test]
+    fn retrained_model_routes_extractive_to_conservative() {
+        let (weights, loss, accuracy) = retrain();
+        eprintln!("  loss={:.4} accuracy={:.1}%", loss, accuracy * 100.0);
+
+        // Verify extractive inputs route to conservative optics
+        let extractive_sources = [
+            include_str!("../fixtures/extractive/no_attribution.conv"),
+            include_str!("../fixtures/extractive/coordination_tax.conv"),
+        ];
+        for source in &extractive_sources {
+            let f = features::extract_from_source(source);
+            let mut input = [0.0f64; crate::classifier::INPUT_DIM];
+            for i in 0..FEATURE_DIM.min(crate::classifier::INPUT_DIM) {
+                input[i] = f[i];
+            }
+            let (optic, conf, _) = crate::classifier::classify(&weights, &input);
+            eprintln!("  extractive -> {:?} ({:.1}%)", optic, conf * 100.0);
+        }
+
+        assert!(accuracy > 0.7, "accuracy: {:.1}%", accuracy * 100.0);
     }
 }
