@@ -69,6 +69,7 @@ pub mod features;
 pub mod ghost;
 pub mod model;
 pub mod runtime;
+pub mod training;
 
 pub use model::Mirror;
 pub use runtime::Runtime;
