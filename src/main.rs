@@ -211,15 +211,15 @@ fn settle_cmd(source: &str, path: &str) {
         type Convergence = Vec<String>;
         type Crystal = Vec<String>;
 
-        fn fold(&self, input: &Vec<String>) -> Beam<Vec<String>> {
+        fn focus(&self, input: &Vec<String>) -> Beam<Vec<String>> {
             Beam::new(input.clone())
         }
 
-        fn prism(&self, eigenvalues: &Vec<String>, _precision: Precision) -> Beam<Vec<String>> {
+        fn project(&self, eigenvalues: &Vec<String>, _precision: Precision) -> Beam<Vec<String>> {
             Beam::new(eigenvalues.clone())
         }
 
-        fn traversal(&self, projection: &Vec<String>) -> Vec<Beam<String>> {
+        fn split(&self, projection: &Vec<String>) -> Vec<Beam<String>> {
             projection
                 .iter()
                 .enumerate()
@@ -227,7 +227,7 @@ fn settle_cmd(source: &str, path: &str) {
                 .collect()
         }
 
-        fn lens(
+        fn zoom(
             &self,
             beam: Beam<Vec<String>>,
             f: &dyn Fn(Vec<String>) -> Vec<String>,
@@ -235,7 +235,7 @@ fn settle_cmd(source: &str, path: &str) {
             beam.map(f)
         }
 
-        fn iso(&self, beam: Beam<Vec<String>>) -> Vec<String> {
+        fn refract(&self, beam: Beam<Vec<String>>) -> Vec<String> {
             beam.result
         }
     }

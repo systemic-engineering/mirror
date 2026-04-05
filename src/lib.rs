@@ -65,6 +65,7 @@ pub use fragmentation::store::Store;
 #[cfg(feature = "db")]
 pub mod db;
 
+pub mod features;
 pub mod model;
 pub mod runtime;
 

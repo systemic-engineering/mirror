@@ -126,11 +126,11 @@ impl prism::Prism for GrammarPrism {
     type Convergence = Vec<String>;
     type Crystal = Vec<String>;
 
-    fn fold(&self, input: &Vec<String>) -> Beam<Vec<String>> {
+    fn focus(&self, input: &Vec<String>) -> Beam<Vec<String>> {
         Beam::new(input.clone())
     }
 
-    fn prism(&self, ev: &Vec<String>, precision: Precision) -> Beam<Vec<String>> {
+    fn project(&self, ev: &Vec<String>, precision: Precision) -> Beam<Vec<String>> {
         // Filter: keep only nodes above the precision threshold (by frequency)
         let mut counts: std::collections::HashMap<&str, usize> = std::collections::HashMap::new();
         for s in ev {
@@ -153,14 +153,14 @@ impl prism::Prism for GrammarPrism {
         }
     }
 
-    fn traversal(&self, proj: &Vec<String>) -> Vec<Beam<String>> {
+    fn split(&self, proj: &Vec<String>) -> Vec<Beam<String>> {
         proj.iter()
             .enumerate()
             .map(|(i, s)| Beam::new(s.clone()).with_step(Oid::new(format!("{}", i))))
             .collect()
     }
 
-    fn lens(
+    fn zoom(
         &self,
         beam: Beam<Vec<String>>,
         f: &dyn Fn(Vec<String>) -> Vec<String>,
@@ -168,7 +168,7 @@ impl prism::Prism for GrammarPrism {
         beam.map(f)
     }
 
-    fn iso(&self, beam: Beam<Vec<String>>) -> Vec<String> {
+    fn refract(&self, beam: Beam<Vec<String>>) -> Vec<String> {
         beam.result
     }
 }

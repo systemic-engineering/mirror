@@ -89,8 +89,8 @@ where
 
     for cycle in 1..config.max_cycles {
         let eigenvalues = optic.fold_from_projection(&beam.result);
-        let projection = optic.prism(&eigenvalues, config.precision.clone());
-        beam = optic.lens(projection, transform);
+        let projection = optic.project(&eigenvalues, config.precision.clone());
+        beam = optic.zoom(projection, transform);
 
         let current_hash = hash(&beam.result);
         beam = beam.with_step(current_hash.clone());
@@ -147,23 +147,23 @@ mod tests {
         type Convergence = Vec<i32>;
         type Crystal = Vec<i32>;
 
-        fn fold(&self, input: &Vec<i32>) -> Beam<Vec<i32>> {
+        fn focus(&self, input: &Vec<i32>) -> Beam<Vec<i32>> {
             Beam::new(input.clone())
         }
 
-        fn prism(&self, eigenvalues: &Vec<i32>, _precision: Precision) -> Beam<Vec<i32>> {
+        fn project(&self, eigenvalues: &Vec<i32>, _precision: Precision) -> Beam<Vec<i32>> {
             Beam::new(eigenvalues.clone())
         }
 
-        fn traversal(&self, projection: &Vec<i32>) -> Vec<Beam<i32>> {
+        fn split(&self, projection: &Vec<i32>) -> Vec<Beam<i32>> {
             projection.iter().map(|&v| Beam::new(v)).collect()
         }
 
-        fn lens(&self, beam: Beam<Vec<i32>>, f: &dyn Fn(Vec<i32>) -> Vec<i32>) -> Beam<Vec<i32>> {
+        fn zoom(&self, beam: Beam<Vec<i32>>, f: &dyn Fn(Vec<i32>) -> Vec<i32>) -> Beam<Vec<i32>> {
             beam.map(f)
         }
 
-        fn iso(&self, beam: Beam<Vec<i32>>) -> Vec<i32> {
+        fn refract(&self, beam: Beam<Vec<i32>>) -> Vec<i32> {
             beam.result
         }
     }
@@ -315,23 +315,23 @@ mod tests {
             type Convergence = Vec<String>;
             type Crystal = Vec<String>;
 
-            fn fold(&self, input: &Vec<String>) -> Beam<Vec<String>> {
+            fn focus(&self, input: &Vec<String>) -> Beam<Vec<String>> {
                 Beam::new(input.clone())
             }
-            fn prism(&self, ev: &Vec<String>, _p: prism::Precision) -> Beam<Vec<String>> {
+            fn project(&self, ev: &Vec<String>, _p: prism::Precision) -> Beam<Vec<String>> {
                 Beam::new(ev.clone())
             }
-            fn traversal(&self, proj: &Vec<String>) -> Vec<Beam<String>> {
+            fn split(&self, proj: &Vec<String>) -> Vec<Beam<String>> {
                 proj.iter().map(|s| Beam::new(s.clone())).collect()
             }
-            fn lens(
+            fn zoom(
                 &self,
                 beam: Beam<Vec<String>>,
                 f: &dyn Fn(Vec<String>) -> Vec<String>,
             ) -> Beam<Vec<String>> {
                 beam.map(f)
             }
-            fn iso(&self, beam: Beam<Vec<String>>) -> Vec<String> {
+            fn refract(&self, beam: Beam<Vec<String>>) -> Vec<String> {
                 beam.result
             }
         }
