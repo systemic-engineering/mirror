@@ -15,15 +15,39 @@ use crate::features::{self, FEATURE_DIM};
 /// Features are extracted from each source via `features::extract_from_source`,
 /// placed into the first 16 dims of the 32-dim classifier input.
 /// The remaining 16 dims are zero-padded.
-pub fn examples_from_sources(_pairs: &[(&str, usize)]) -> Vec<Example> {
-    todo!("not yet implemented")
+pub fn examples_from_sources(pairs: &[(&str, usize)]) -> Vec<Example> {
+    pairs
+        .iter()
+        .map(|&(source, label)| {
+            let spectral = features::extract_from_source(source);
+            let mut input = [0.0f64; INPUT_DIM];
+            input[..FEATURE_DIM].copy_from_slice(&spectral);
+            Example {
+                features: input,
+                label,
+            }
+        })
+        .collect()
 }
 
 /// Merge legitimate and extractive corpora into a single training set.
 ///
 /// Concatenates both slices preserving their order.
-pub fn merge_corpora(_legitimate: &[Example], _extractive: &[Example]) -> Vec<Example> {
-    todo!("not yet implemented")
+pub fn merge_corpora(legitimate: &[Example], extractive: &[Example]) -> Vec<Example> {
+    let mut merged = Vec::with_capacity(legitimate.len() + extractive.len());
+    for ex in legitimate {
+        merged.push(Example {
+            features: ex.features,
+            label: ex.label,
+        });
+    }
+    for ex in extractive {
+        merged.push(Example {
+            features: ex.features,
+            label: ex.label,
+        });
+    }
+    merged
 }
 
 // ---------------------------------------------------------------------------
