@@ -1,15 +1,40 @@
-in @ca
+in @actor
 
 grammar @ai {
-  type = collapse | tension | branch
+  type = model | collapse | tension | branch
+
+  type model = abyss | pathfinder | cartographer | explorer | fate
 
   type collapse = clear | partial | ambiguous
 
   type tension = competing | complementary | contradictory
 
+  action abyss(input)
+  action pathfinder(input)
+  action cartographer(input)
+  action explorer(input)
+  action fate(input)
+
   action project(input: collapse)
-
   action branch(tension: tension)
-
   action escalate(tension: tension)
+}
+
+---
+
+test "ai models" {
+  @ai has model
+  @ai.model has abyss
+  @ai.model has pathfinder
+  @ai.model has cartographer
+  @ai.model has explorer
+  @ai.model has fate
+}
+
+test "ai actions" {
+  @ai has act abyss
+  @ai has act pathfinder
+  @ai has act cartographer
+  @ai has act explorer
+  @ai has act fate
 }
