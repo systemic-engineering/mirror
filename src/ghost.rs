@@ -11,6 +11,7 @@
 //! anomalous grammars sit far from the echo and score low.
 
 use crate::features::{Features, FEATURE_DIM};
+use std::sync::OnceLock;
 
 // ---------------------------------------------------------------------------
 // GhostEcho
@@ -77,6 +78,21 @@ impl GhostEcho {
         let dist = self.coherence_distance(features);
         (-dist / scale).exp()
     }
+}
+
+// ---------------------------------------------------------------------------
+// Default echo
+// ---------------------------------------------------------------------------
+
+static DEFAULT_ECHO: OnceLock<GhostEcho> = OnceLock::new();
+
+/// Get the default ghost echo computed from inline legitimate grammars.
+///
+/// The echo is initialised once and reused for the lifetime of the process.
+/// The corpus covers diverse structural patterns: plain enums, parameterised
+/// types, multi-type grammars, and cross-type references.
+pub fn default_echo() -> &'static GhostEcho {
+    DEFAULT_ECHO.get_or_init(|| todo!("default_echo: not yet implemented"))
 }
 
 // ---------------------------------------------------------------------------
@@ -176,6 +192,36 @@ mod tests {
             avg_extractive_dist,
             avg_legit_dist
         );
+    }
+
+    // 4: default_echo() returns a non-trivial reference (not all zeros).
+    #[test]
+    fn default_echo_computes() {
+        let echo = default_echo();
+        assert!(
+            echo.reference.iter().any(|&v| v > 0.0),
+            "default_echo reference should have at least one non-zero component"
+        );
+    }
+
+    // 5: Extractive fixtures score low coherence against the default echo.
+    #[test]
+    fn extractive_grammars_low_coherence() {
+        let echo = default_echo();
+        let sources = [
+            include_str!("../fixtures/extractive/no_attribution.conv"),
+            include_str!("../fixtures/extractive/coordination_tax.conv"),
+        ];
+        for source in &sources {
+            let f = crate::features::extract_from_source(source);
+            let score = echo.coherence_score(&f, 1.0);
+            eprintln!("  extractive coherence: {:.4}", score);
+            assert!(
+                score < 0.8,
+                "extractive grammar coherence ({:.4}) should be below 0.8",
+                score
+            );
+        }
     }
 
     // 3: Coherence score decays with distance.
