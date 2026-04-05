@@ -79,6 +79,7 @@ pub fn settle_loop<P>(
 ) -> (Beam<P::Projection>, Termination)
 where
     P: PrismLoop,
+    P: prism_crate::Prism<Precision = Precision>,
     P::Projection: Clone,
 {
     let mut beam = prism::apply(optic, input, config.precision.clone(), transform);
@@ -146,6 +147,7 @@ mod tests {
         type Node = i32;
         type Convergence = Vec<i32>;
         type Crystal = Vec<i32>;
+        type Precision = Precision;
 
         fn focus(&self, input: &Vec<i32>) -> Beam<Vec<i32>> {
             Beam::new(input.clone())
@@ -314,6 +316,7 @@ mod tests {
             type Node = String;
             type Convergence = Vec<String>;
             type Crystal = Vec<String>;
+            type Precision = prism::Precision;
 
             fn focus(&self, input: &Vec<String>) -> Beam<Vec<String>> {
                 Beam::new(input.clone())

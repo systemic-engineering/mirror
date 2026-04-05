@@ -1,11 +1,11 @@
-//! conversation — the human interface to the Abyss.
+//! mirror — the human interface to the Abyss.
 //!
 //! ```sh
-//! conversation schema.conv ./input     # apply grammar to input
-//! conversation settle ./src            # loop until convergence
-//! conversation test cogito.conv        # run tests
-//! conversation shell                   # REPL
-//! #!/usr/bin/env conversation
+//! mirror schema.conv ./input     # apply grammar to input
+//! mirror settle ./src            # loop until convergence
+//! mirror test cogito.conv        # run tests
+//! mirror shell                   # REPL
+//! #!/usr/bin/env mirror
 //! ```
 
 use std::io::{self, BufRead, Write};
@@ -22,17 +22,18 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
 
     if args.len() < 2 {
-        eprintln!("conversation — fold | prism | traversal | lens | iso");
+        eprintln!("mirror — fold | prism | traversal | lens | iso");
         eprintln!();
-        eprintln!("usage: conversation <grammar> <input>     apply grammar to input");
-        eprintln!("       conversation test <file.conv>      run tests");
-        eprintln!("       conversation shell [path]           REPL");
-        eprintln!("       conversation boot [dir]             boot the garden");
-        eprintln!("       conversation fmt [--settle] [--train] <file>  format / settle / train");
-        eprintln!("       conversation settle <input>         loop until convergence");
-        eprintln!("       conversation train                  retrain from fixtures");
-        eprintln!("       conversation resolve                resolve tension → resolved");
-        eprintln!("       conversation -e '<expr>' [path]     evaluate expression");
+        eprintln!("usage: mirror <grammar> <input>     apply grammar to input");
+        eprintln!("       mirror test <file.conv>      run tests");
+        eprintln!("       mirror shell [path]           REPL");
+        eprintln!("       mirror boot [dir]             boot the garden");
+        eprintln!("       mirror fmt [--settle] [--train] <file>  format / settle / train");
+        eprintln!("       mirror settle <input>         loop until convergence");
+        eprintln!("       mirror train                  retrain from fixtures");
+        eprintln!("       mirror resolve                resolve tension → resolved");
+        eprintln!("       mirror -e '<expr>' [path]     evaluate expression");
+        eprintln!("       mirror @domain action [args]  invoke domain action");
         process::exit(1);
     }
 
@@ -48,7 +49,7 @@ fn main() {
     match positional.first().map(|s| s.as_str()) {
         Some("fmt") => {
             if positional.len() < 2 {
-                eprintln!("usage: conversation fmt [--settle] [--train] <file.conv>");
+                eprintln!("usage: mirror fmt [--settle] [--train] <file.conv>");
                 process::exit(1);
             }
             let conv_path = positional[1];
@@ -56,7 +57,7 @@ fn main() {
         }
         Some("settle") => {
             if positional.len() < 2 {
-                eprintln!("usage: abyss settle <file.conv|dir>");
+                eprintln!("usage: mirror settle <file.conv|dir>");
                 process::exit(1);
             }
             let conv_path = positional[1].as_str();
@@ -72,14 +73,14 @@ fn main() {
         }
         Some("test") => {
             if positional.len() < 2 {
-                eprintln!("usage: conversation test <file.conv>");
+                eprintln!("usage: mirror test <file.conv>");
                 process::exit(1);
             }
             let conv_path = positional[1];
             let source = match std::fs::read_to_string(conv_path) {
                 Ok(s) => s,
                 Err(e) => {
-                    eprintln!("conversation: {}: {}", conv_path, e);
+                    eprintln!("mirror: {}: {}", conv_path, e);
                     process::exit(1);
                 }
             };
@@ -98,7 +99,7 @@ fn main() {
         }
         Some("-e") => {
             if positional.len() < 2 {
-                eprintln!("usage: conversation -e '<expr>' [path]");
+                eprintln!("usage: mirror -e '<expr>' [path]");
                 process::exit(1);
             }
             let self_dir = std::env::current_dir().unwrap_or(std::path::PathBuf::from("."));
@@ -119,7 +120,7 @@ fn main() {
             mirror::db::cli(&db_args);
         }
         None => {
-            eprintln!("conversation — fold | prism | traversal | lens | iso");
+            eprintln!("mirror — fold | prism | traversal | lens | iso");
             process::exit(1);
         }
         // Default: treat first positional as grammar file
@@ -128,7 +129,7 @@ fn main() {
             let source = match std::fs::read_to_string(conv_path) {
                 Ok(s) => s,
                 Err(e) => {
-                    eprintln!("conversation: {}: {}", conv_path, e);
+                    eprintln!("mirror: {}: {}", conv_path, e);
                     process::exit(1);
                 }
             };
@@ -210,6 +211,7 @@ fn settle_cmd(source: &str, path: &str) {
         type Node = String;
         type Convergence = Vec<String>;
         type Crystal = Vec<String>;
+        type Precision = prism::Precision;
 
         fn focus(&self, input: &Vec<String>) -> Beam<Vec<String>> {
             Beam::new(input.clone())
@@ -718,12 +720,12 @@ fn load_packages(self_dir: &std::path::Path) -> Resolve {
         Ok(r) => match r.to_namespace() {
             Ok(ns) => Resolve::new().with_namespace(ns),
             Err(e) => {
-                eprintln!("conversation: packages: {}", e);
+                eprintln!("mirror: packages: {}", e);
                 Resolve::new()
             }
         },
         Err(e) => {
-            eprintln!("conversation: packages: {}", e);
+            eprintln!("mirror: packages: {}", e);
             Resolve::new()
         }
     }
@@ -754,7 +756,7 @@ fn run_tests(source: &str, resolve: &Resolve) {
     let results = match property::check_all(&namespace, test_text) {
         Ok(r) => r,
         Err(e) => {
-            eprintln!("conversation: test: {}", e);
+            eprintln!("mirror: test: {}", e);
             process::exit(1);
         }
     };
@@ -793,7 +795,7 @@ fn run(source: &str, input_path: &str, resolve: &Resolve) {
     let resolved = match Conversation::<Filesystem>::from_source_with(source, resolve.clone()) {
         Ok(c) => c,
         Err(e) => {
-            eprintln!("conversation: {}", e);
+            eprintln!("mirror: {}", e);
             process::exit(1)
         }
     };
@@ -811,17 +813,17 @@ fn shell(path: &str, resolve: &Resolve) {
     let reader = stdin.lock();
     let mut stdout = io::stdout();
 
-    eprintln!("conversation shell — {}", path);
+    eprintln!("mirror shell — {}", path);
     eprintln!("type expressions, ctrl+d to exit\n");
 
     for line in reader.lines() {
-        let _ = write!(stdout, "conversation> ");
+        let _ = write!(stdout, "mirror> ");
         let _ = stdout.flush();
 
         let line = match line {
             Ok(l) => l,
             Err(e) => {
-                eprintln!("conversation: read error: {}", e);
+                eprintln!("mirror: read error: {}", e);
                 break;
             }
         };

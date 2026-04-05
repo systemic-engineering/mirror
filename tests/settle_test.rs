@@ -125,6 +125,7 @@ impl prism::Prism for GrammarPrism {
     type Node = String;
     type Convergence = Vec<String>;
     type Crystal = Vec<String>;
+    type Precision = prism::Precision;
 
     fn focus(&self, input: &Vec<String>) -> Beam<Vec<String>> {
         Beam::new(input.clone())
