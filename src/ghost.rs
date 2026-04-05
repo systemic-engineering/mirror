@@ -28,15 +28,43 @@ impl GhostEcho {
     /// Build a `GhostEcho` from a corpus by computing the component-wise mean.
     ///
     /// If `corpus` is empty, returns a zero-vector reference.
-    pub fn from_features(_corpus: &[Features]) -> Self {
-        todo!("implement mean of corpus")
+    pub fn from_features(corpus: &[Features]) -> Self {
+        if corpus.is_empty() {
+            return Self {
+                reference: [0.0; FEATURE_DIM],
+            };
+        }
+
+        let mut sum = [0.0f64; FEATURE_DIM];
+        for features in corpus {
+            for (i, &v) in features.iter().enumerate() {
+                sum[i] += v;
+            }
+        }
+
+        let n = corpus.len() as f64;
+        let mut reference = [0.0f64; FEATURE_DIM];
+        for (i, r) in reference.iter_mut().enumerate() {
+            *r = sum[i] / n;
+        }
+
+        Self { reference }
     }
 
     // ---
 
     /// Euclidean distance between the reference vector and `features`.
-    pub fn coherence_distance(&self, _features: &Features) -> f64 {
-        todo!("implement Euclidean distance")
+    pub fn coherence_distance(&self, features: &Features) -> f64 {
+        let sum_sq: f64 = self
+            .reference
+            .iter()
+            .zip(features.iter())
+            .map(|(r, f)| {
+                let diff = r - f;
+                diff * diff
+            })
+            .sum();
+        sum_sq.sqrt()
     }
 
     // ---
@@ -45,8 +73,9 @@ impl GhostEcho {
     ///
     /// Returns 1.0 when `features` equals the reference, decaying toward 0.0
     /// as distance grows. `scale` controls the decay rate.
-    pub fn coherence_score(&self, _features: &Features, _scale: f64) -> f64 {
-        todo!("implement exp(-dist/scale)")
+    pub fn coherence_score(&self, features: &Features, scale: f64) -> f64 {
+        let dist = self.coherence_distance(features);
+        (-dist / scale).exp()
     }
 }
 
@@ -81,9 +110,12 @@ mod tests {
     //    are farther from the echo on average than the legitimate ones.
     //
     //    Legitimate: rich vocabulary, multiple variants, parameterized types.
-    //    Extractive proxy: many single-variant types with no parameterization.
+    //    Extractive proxy: many single-variant types with no parameterization —
+    //    structurally impoverished grammars that sit far from the legitimate centroid
+    //    in feature space (low variant_count_norm, low ref_ratio, different density).
     #[test]
     fn extractive_grammars_farther_from_echo() {
+        // Legitimate grammars — rich structure, varied types and variants
         let legitimate = [
             "grammar @color {\n  type hue = red | green | blue\n  type shade = light | dark | mid\n  type palette = warm | cool | neutral\n}",
             "grammar @signal {\n  type status = ok | error | pending | timeout\n  type level = low | medium | high | critical\n  type alert = clear | warn(level) | page(level)\n}",
@@ -93,6 +125,7 @@ mod tests {
         let legit_features: Vec<Features> =
             legitimate.iter().map(|s| extract_from_source(s)).collect();
 
+        // Sanity: ensure legitimate grammars produced non-zero features
         for (i, f) in legit_features.iter().enumerate() {
             assert!(
                 f.iter().any(|&v| v > 0.0),
@@ -103,18 +136,24 @@ mod tests {
 
         let echo = GhostEcho::from_features(&legit_features);
 
+        // Extractive proxy grammars — structurally impoverished:
+        // many single-variant types, no parameterization, no namespace diversity.
+        // High type count, zero ref_ratio, 1:1 variant-to-type ratio.
         let extractive = [
+            // Twenty single-variant types — high type_count_norm, zero ref_ratio
             "grammar @flat {\n  type a = only_a\n  type b = only_b\n  type c = only_c\n  type d = only_d\n  type e = only_e\n  type f = only_f\n  type g = only_g\n  type h = only_h\n  type i = only_i\n  type j = only_j\n  type k = only_k\n  type l = only_l\n  type m = only_m\n  type n = only_n\n  type o = only_o\n  type p = only_p\n  type q = only_q\n  type r = only_r\n  type s = only_s\n  type t = only_t\n}",
+            // Fifteen single-variant types — similar impoverished profile
             "grammar @mono {\n  type aa = val_aa\n  type bb = val_bb\n  type cc = val_cc\n  type dd = val_dd\n  type ee = val_ee\n  type ff = val_ff\n  type gg = val_gg\n  type hh = val_hh\n  type ii = val_ii\n  type jj = val_jj\n  type kk = val_kk\n  type ll = val_ll\n  type mm = val_mm\n  type nn = val_nn\n  type oo = val_oo\n}",
         ];
 
         let extractive_features: Vec<Features> =
             extractive.iter().map(|s| extract_from_source(s)).collect();
 
+        // Sanity: ensure extractive grammars also produced non-zero features
         for (i, f) in extractive_features.iter().enumerate() {
             assert!(
                 f.iter().any(|&v| v > 0.0),
-                "extractive grammar {} produced all-zero features",
+                "extractive grammar {} produced all-zero features — grammar failed to parse",
                 i
             );
         }
@@ -146,8 +185,11 @@ mod tests {
         let reference: Features = [0.5; FEATURE_DIM];
         let echo = GhostEcho { reference };
 
+        // Close: slight nudge away from reference
         let close: Features = [0.55; FEATURE_DIM];
+        // Mid: moderate deviation
         let mid: Features = [0.7; FEATURE_DIM];
+        // Far: large deviation toward 0.0
         let far: Features = [0.0; FEATURE_DIM];
 
         let scale = 1.0;
