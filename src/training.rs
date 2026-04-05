@@ -94,21 +94,132 @@ pub fn legitimate_corpus() -> Vec<Example> {
 }
 
 // ---------------------------------------------------------------------------
-// Two-corpus retrain API (echo/shadow cluster training)
+// Extractive corpus — five §9b violation fixtures
 // ---------------------------------------------------------------------------
 
+/// Extractive fixture: no_attribution.conv → FoldAccumulate (1)
+const EXTRACTIVE_NO_ATTRIBUTION: (&str, usize) = (
+    include_str!("../fixtures/extractive/no_attribution.conv"),
+    1,
+);
+
+/// Extractive fixture: regulation_depletion.conv → Noop (11)
+const EXTRACTIVE_REGULATION_DEPLETION: (&str, usize) = (
+    include_str!("../fixtures/extractive/regulation_depletion.conv"),
+    11,
+);
+
+/// Extractive fixture: invisible_glue.conv → IsoSettle (9)
+const EXTRACTIVE_INVISIBLE_GLUE: (&str, usize) = (
+    include_str!("../fixtures/extractive/invisible_glue.conv"),
+    9,
+);
+
+/// Extractive fixture: shifting_burden.conv → PrismNarrow (3)
+const EXTRACTIVE_SHIFTING_BURDEN: (&str, usize) = (
+    include_str!("../fixtures/extractive/shifting_burden.conv"),
+    3,
+);
+
+/// Extractive fixture: coordination_tax.conv → FoldAccumulate (1)
+const EXTRACTIVE_COORDINATION_TAX: (&str, usize) = (
+    include_str!("../fixtures/extractive/coordination_tax.conv"),
+    1,
+);
+
+/// All five extractive fixtures with their shadow-cluster labels.
+const EXTRACTIVE_CORPUS: &[(&str, usize)] = &[
+    EXTRACTIVE_NO_ATTRIBUTION,
+    EXTRACTIVE_REGULATION_DEPLETION,
+    EXTRACTIVE_INVISIBLE_GLUE,
+    EXTRACTIVE_SHIFTING_BURDEN,
+    EXTRACTIVE_COORDINATION_TAX,
+];
+
+// ---------------------------------------------------------------------------
+// Inline legitimate corpus — grammars that actually parse
+// ---------------------------------------------------------------------------
+//
+// The settle .conv files use a DSL the parser doesn't understand, producing
+// all-zero feature vectors. These inline grammars use the grammar @name { }
+// format that the spectral extractor handles correctly.
+
+/// Simple flat: one type, three variants, no cross-refs.
+/// Label: FoldDecompose (0) — observe structure.
+const LEGIT_SIMPLE_FLAT: (&str, usize) = (
+    "grammar @palette {\n  type color = red | green | blue\n}\n",
+    0, // FoldDecompose
+);
+
+/// Slightly larger flat: one type, five variants.
+/// Label: TraversalBreadth (4) — walk breadth-first.
+const LEGIT_WIDER_FLAT: (&str, usize) = (
+    "grammar @status {\n  type state = pending | active | paused | done | archived\n}\n",
+    4, // TraversalBreadth
+);
+
+/// Two independent types, no cross-refs.
+/// Label: FoldDecompose (0) — observe structure.
+const LEGIT_TWO_INDEPENDENT: (&str, usize) = (
+    "grammar @config {\n  type mode = debug | release\n  type env = dev | staging | prod\n}\n",
+    0, // FoldDecompose
+);
+
+/// Cross-type reference: one type references another.
+/// Label: LensTransform (6) — focus and transform.
+const LEGIT_CROSS_REF: (&str, usize) = (
+    "grammar @message {\n  type priority = low | medium | high\n  type envelope = plain | urgent(priority)\n}\n",
+    6, // LensTransform
+);
+
+/// Three types with cross-refs forming a chain.
+/// Label: TraversalDepth (5) — walk depth-first.
+const LEGIT_CHAIN: (&str, usize) = (
+    "grammar @pipeline {\n  type stage = parse | resolve | emit\n  type step = run(stage) | skip(stage)\n  type plan = sequential(step) | parallel(step)\n}\n",
+    5, // TraversalDepth
+);
+
+/// High duplication: many variants referencing the same type.
+/// Label: LensMerge (7) — focus and merge.
+const LEGIT_HIGH_DUP: (&str, usize) = (
+    "grammar @events {\n  type channel = email | sms | push | webhook\n  type alert = notify(channel) | escalate(channel) | silence(channel)\n}\n",
+    7, // LensMerge
+);
+
+/// Complex multi-type with mixed references.
+/// Label: LensSplit (8) — focus and split.
+const LEGIT_COMPLEX: (&str, usize) = (
+    "grammar @workflow {\n  type role = author | reviewer | approver | admin\n  type action = submit | review(role) | approve(role) | reject\n  type state = draft | pending | approved | rejected\n  type transition = advance(state) | revert(state)\n}\n",
+    8, // LensSplit
+);
+
+/// Converged single type, clean structure.
+/// Label: IsoSettle (9) — convergence detected.
+const LEGIT_CONVERGED: (&str, usize) = (
+    "grammar @answer {\n  type verdict = yes | no\n}\n",
+    9, // IsoSettle
+);
+
+/// All inline legitimate grammars.
+const INLINE_LEGIT_CORPUS: &[(&str, usize)] = &[
+    LEGIT_SIMPLE_FLAT,
+    LEGIT_WIDER_FLAT,
+    LEGIT_TWO_INDEPENDENT,
+    LEGIT_CROSS_REF,
+    LEGIT_CHAIN,
+    LEGIT_HIGH_DUP,
+    LEGIT_COMPLEX,
+    LEGIT_CONVERGED,
+];
+
 /// Build the full legitimate corpus from inline grammars that actually parse.
-///
-/// The settle .conv files use a DSL the parser doesn't understand, producing
-/// all-zero feature vectors. This function provides inline grammars using the
-/// `grammar @name { ... }` format that the spectral extractor handles.
 pub fn inline_legitimate_corpus() -> Vec<Example> {
-    todo!("Task 5: inline legitimate corpus with parseable grammars")
+    examples_from_sources(INLINE_LEGIT_CORPUS)
 }
 
 /// Build the extractive corpus from the five §9b violation fixtures.
 pub fn extractive_corpus() -> Vec<Example> {
-    todo!("Task 5: extractive corpus from fixtures")
+    examples_from_sources(EXTRACTIVE_CORPUS)
 }
 
 /// Retrain mirror.weights with both legitimate and extractive corpora.
@@ -118,7 +229,12 @@ pub fn extractive_corpus() -> Vec<Example> {
 /// Extractive grammars get only conservative (shadow-cluster) optics:
 /// FoldAccumulate, PrismNarrow, IsoSettle, Noop.
 pub fn retrain() -> (crate::classifier::Weights, f64, f64) {
-    todo!("Task 5: retrain with merged corpora")
+    let legit = inline_legitimate_corpus();
+    let extractive = extractive_corpus();
+    let merged = merge_corpora(&legit, &extractive);
+
+    let config = crate::classifier::TrainConfig::default();
+    crate::classifier::train(&merged, &config)
 }
 
 // ---------------------------------------------------------------------------
