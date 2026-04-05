@@ -1,0 +1,6 @@
+grammar @burden_shift {
+  type symptom = error | delay | complaint
+  type quick_fix = retry(symptom) | cache(symptom) | workaround(symptom) | patch(symptom) | revert(symptom)
+  type fundamental = redesign | refactor
+  type dependency = on_retry | on_cache | on_workaround | on_patch | on_revert
+}

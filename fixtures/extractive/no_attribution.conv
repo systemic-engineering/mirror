@@ -1,0 +1,5 @@
+grammar @extractor {
+  type source = knowledge | pattern | insight
+  type private_output = report(source) | summary(source) | derivative(source)
+  type attribution = none
+}

@@ -1,0 +1,5 @@
+grammar @overhead {
+  type work = task(overhead) | review(overhead) | meeting(overhead) | sync(overhead)
+  type overhead = process | status | alignment | reporting | tracking | ceremony
+  type outcome = done
+}

@@ -1,0 +1,5 @@
+grammar @hidden_labor {
+  type visible_work = feature | release | demo
+  type outcome = delivered(visible_work)
+  type process = plan(visible_work) | execute(visible_work) | ship(visible_work)
+}

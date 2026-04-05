@@ -420,4 +420,63 @@ mod tests {
             features[7]
         );
     }
+
+    // §9b extractive topology fixtures: all five parse and produce non-zero vectors.
+    #[test]
+    fn extractive_fixtures_parse_and_produce_features() {
+        let fixtures: &[(&str, &str)] = &[
+            (
+                "no_attribution",
+                include_str!("../fixtures/extractive/no_attribution.conv"),
+            ),
+            (
+                "regulation_depletion",
+                include_str!("../fixtures/extractive/regulation_depletion.conv"),
+            ),
+            (
+                "invisible_glue",
+                include_str!("../fixtures/extractive/invisible_glue.conv"),
+            ),
+            (
+                "shifting_burden",
+                include_str!("../fixtures/extractive/shifting_burden.conv"),
+            ),
+            (
+                "coordination_tax",
+                include_str!("../fixtures/extractive/coordination_tax.conv"),
+            ),
+        ];
+
+        for (name, source) in fixtures {
+            let features = extract_from_source(source);
+
+            // All 16 dims must be in [0, 1].
+            for (i, &v) in features.iter().enumerate() {
+                assert!(
+                    (0.0..=1.0).contains(&v),
+                    "fixture '{}': feature[{}] = {} out of [0, 1]",
+                    name,
+                    i,
+                    v
+                );
+            }
+
+            // Vector must be non-zero (grammar parsed successfully).
+            let nonzero = features.iter().any(|&v| v != 0.0);
+            assert!(
+                nonzero,
+                "fixture '{}' produced an all-zero feature vector — parse failed",
+                name
+            );
+
+            println!(
+                "{}: {:?}",
+                name,
+                features
+                    .iter()
+                    .map(|v| format!("{:.3}", v))
+                    .collect::<Vec<_>>()
+            );
+        }
+    }
 }

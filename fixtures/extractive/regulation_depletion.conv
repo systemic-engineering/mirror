@@ -1,0 +1,5 @@
+grammar @depleter {
+  type stock = trust | capacity | energy | regulation
+  type drain = demand(stock) | activation(stock) | coordination(stock) | override(stock)
+  type recovery = rest
+}
