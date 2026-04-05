@@ -284,6 +284,7 @@ dependencies = [
  "git2",
  "hex",
  "hkdf",
+ "prism",
  "rayon",
  "rustfft",
  "serde_json",
