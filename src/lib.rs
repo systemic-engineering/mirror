@@ -66,6 +66,7 @@ pub use fragmentation::store::Store;
 pub mod db;
 
 pub mod features;
+pub mod ghost;
 pub mod model;
 pub mod runtime;
 
