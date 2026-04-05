@@ -526,6 +526,42 @@ mod tests {
     }
 
     #[test]
+    fn discover_mirror_file() {
+        let dir = TempDir::new().unwrap();
+        let public = dir.path().join("public");
+        fs::create_dir(&public).unwrap();
+        fs::write(
+            public.join("document.mirror"),
+            "grammar @document {\n  type = section | paragraph\n}\n",
+        )
+        .unwrap();
+        let registry = PackageRegistry::discover(dir.path()).unwrap();
+        assert_eq!(registry.len(), 1);
+        assert!(registry.packages.contains_key("document"));
+    }
+
+    #[test]
+    fn discover_mirror_and_conv_coexist() {
+        let dir = TempDir::new().unwrap();
+        fs::write(
+            dir.path().join("@beam"),
+            "grammar @beam {\n  type = process\n}\n",
+        )
+        .unwrap();
+        let public = dir.path().join("public");
+        fs::create_dir(&public).unwrap();
+        fs::write(
+            public.join("document.mirror"),
+            "grammar @document {\n  type = section\n}\n",
+        )
+        .unwrap();
+        let registry = PackageRegistry::discover(dir.path()).unwrap();
+        assert_eq!(registry.len(), 2);
+        assert!(registry.packages.contains_key("beam"));
+        assert!(registry.packages.contains_key("document"));
+    }
+
+    #[test]
     fn packages_dir_from_env() {
         // Exercise the CONVERSATION_PACKAGES env branch (PathBuf::from(dir)).
         // Sets CONVERSATION_PACKAGES to a temp dir path, calls packages_dir(),
