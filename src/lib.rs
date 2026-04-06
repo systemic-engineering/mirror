@@ -63,6 +63,7 @@ pub use fragmentation::repo::Repo;
 pub use fragmentation::store::Store;
 
 pub mod db;
+pub mod domain_dispatch;
 
 pub mod features;
 pub mod ghost;

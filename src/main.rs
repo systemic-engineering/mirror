@@ -123,6 +123,23 @@ fn main() {
             eprintln!("mirror — fold | prism | traversal | lens | iso");
             process::exit(1);
         }
+        // Domain dispatch: mirror @domain action [args]
+        Some(first) if first.starts_with('@') => {
+            let positional_strs: Vec<&str> = positional.iter().map(|s| s.as_str()).collect();
+            match mirror::domain_dispatch::DomainInvocation::parse(&positional_strs) {
+                Some(inv) => match mirror::domain_dispatch::dispatch(&inv) {
+                    Ok(output) => print!("{}", output),
+                    Err(e) => {
+                        eprintln!("mirror: {}", e);
+                        process::exit(1);
+                    }
+                },
+                None => {
+                    eprintln!("usage: mirror @domain action [args]");
+                    process::exit(1);
+                }
+            }
+        }
         // Default: treat first positional as grammar file
         _ => {
             let conv_path = positional[0];
