@@ -1,8 +1,7 @@
 //! Session — encounter state for mirror shell.
 //!
-//! /focus → /project → /split → /zoom → /merge → /tock → /exit
-//! The Prism of Language as a state machine.
-//! Every tick is a reader action. Every tock launches Reflection.
+//! Tracks the Prism of Language operations as they happen:
+//! focus -> project -> split -> zoom -> merge -> train -> refract.
 
 use crate::gestalt::GestaltProfile;
 
@@ -11,14 +10,14 @@ use crate::gestalt::GestaltProfile;
 // ---------------------------------------------------------------------------
 
 /// The lifecycle state of an encounter session.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum SessionState {
     Idle,
     Focused { question: String },
     Projected,
     Forked { active_fork: usize },
     Merged,
-    Tocked,
+    Trained,
 }
 
 // ---------------------------------------------------------------------------
@@ -26,6 +25,7 @@ pub enum SessionState {
 // ---------------------------------------------------------------------------
 
 /// An independent exploration branch, forked from the session gestalt.
+#[derive(Clone, Debug)]
 pub struct Fork {
     pub name: String,
     pub gestalt: GestaltProfile,
@@ -36,178 +36,84 @@ pub struct Fork {
 // Session
 // ---------------------------------------------------------------------------
 
-/// An encounter session — the stateful shell around a reader's gestalt.
+/// A mirror shell session. Tracks encounter state and gestalt.
+#[derive(Clone, Debug)]
 pub struct Session {
     pub state: SessionState,
     pub gestalt: GestaltProfile,
     pub forks: Vec<Fork>,
     pub gestalt_path: String,
-    pub tick_count: u64,
-    pub tock_count: u64,
 }
 
 impl Session {
     // ---
 
-    /// Create a new session for `reader`, bound to `gestalt_path`.
-    ///
-    /// Loads an existing gestalt from disk if the file exists,
-    /// otherwise starts fresh with `GestaltProfile::new(reader)`.
+    /// Start a new session. Loads gestalt from disk or creates new.
     pub fn new(reader: &str, gestalt_path: &str) -> Self {
         let gestalt =
             GestaltProfile::load(gestalt_path).unwrap_or_else(|_| GestaltProfile::new(reader));
-        Self {
+        Session {
             state: SessionState::Idle,
             gestalt,
-            forks: Vec::new(),
+            forks: vec![],
             gestalt_path: gestalt_path.to_string(),
-            tick_count: 0,
-            tock_count: 0,
         }
     }
 
     // ---
 
-    /// Focus the session on a question.
-    ///
-    /// Increments `tick_count`, transitions state to `Focused`.
-    pub fn focus(&mut self, question: &str) -> Result<String, String> {
-        self.tick_count += 1;
-        self.state = SessionState::Focused {
-            question: question.to_string(),
-        };
-        Ok(format!("focused: {}", question))
+    /// /focus -- ask a question, create singularity.
+    pub fn focus(&mut self, _question: &str) -> Result<String, String> {
+        unimplemented!("focus: red phase")
     }
 
     // ---
 
-    /// Project from the current focus — begin resolving a question into structure.
-    ///
-    /// Requires state to be `Focused` or `Tocked`. Transitions to `Projected`.
+    /// /project -- make the entanglement visible.
     pub fn project(&mut self) -> Result<String, String> {
-        match &self.state {
-            SessionState::Focused { question } => {
-                let q = question.clone();
-                self.state = SessionState::Projected;
-                Ok(format!("projected from: {}", q))
-            }
-            SessionState::Tocked => {
-                self.state = SessionState::Projected;
-                Ok("projected from tocked state".to_string())
-            }
-            other => Err(format!(
-                "project requires Focused or Tocked state, got {:?}",
-                other
-            )),
-        }
+        unimplemented!("project: red phase")
     }
 
     // ---
 
-    /// Split the current gestalt into 2 named forks for independent exploration.
-    ///
-    /// Each fork starts as a deep clone of the session gestalt.
+    /// /split -- fork the session.
     pub fn split(&mut self) -> Result<String, String> {
-        let fork_a = Fork {
-            name: "a".to_string(),
-            gestalt: self.gestalt.fork(),
-            zoom_depth: 0,
-        };
-        let fork_b = Fork {
-            name: "b".to_string(),
-            gestalt: self.gestalt.fork(),
-            zoom_depth: 0,
-        };
-        self.forks = vec![fork_a, fork_b];
-        self.state = SessionState::Forked { active_fork: 0 };
-        Ok("split into forks: a, b".to_string())
+        unimplemented!("split: red phase")
     }
 
     // ---
 
-    /// Increment the zoom depth on the currently active fork.
-    ///
-    /// `direction` is recorded as a string label (e.g. "deeper", "simpler", "connected").
-    pub fn zoom(&mut self, direction: &str) -> Result<String, String> {
-        let active = match &self.state {
-            SessionState::Forked { active_fork } => *active_fork,
-            other => return Err(format!("zoom requires Forked state, got {:?}", other)),
-        };
-        if self.forks.is_empty() {
-            return Err("zoom: no forks available".to_string());
-        }
-        let idx = active % self.forks.len();
-        self.forks[idx].zoom_depth += 1;
-        Ok(format!(
-            "zoomed {} on fork '{}' (depth {})",
-            direction, self.forks[idx].name, self.forks[idx].zoom_depth
-        ))
+    /// /zoom -- go deeper in the active fork.
+    pub fn zoom(&mut self, _direction: &str) -> Result<String, String> {
+        unimplemented!("zoom: red phase")
     }
 
     // ---
 
     /// Switch the active fork by name.
-    pub fn switch_fork(&mut self, name: &str) -> Result<String, String> {
-        let idx = self
-            .forks
-            .iter()
-            .position(|f| f.name == name)
-            .ok_or_else(|| format!("no fork named '{}'", name))?;
-        self.state = SessionState::Forked { active_fork: idx };
-        Ok(format!("switched to fork '{}'", name))
+    pub fn switch_fork(&mut self, _name: &str) -> Result<String, String> {
+        unimplemented!("switch_fork: red phase")
     }
 
     // ---
 
-    /// Merge all forks back into the session gestalt.
-    ///
-    /// Uses `GestaltProfile::merge` weighted by inverse loss.
-    /// Clears the fork list. Transitions to `Merged`.
+    /// /merge -- reunite forks.
     pub fn merge(&mut self) -> Result<String, String> {
-        if self.forks.is_empty() {
-            self.state = SessionState::Merged;
-            return Ok("merged (no forks — base gestalt kept)".to_string());
-        }
-        let profiles: Vec<GestaltProfile> = self.forks.iter().map(|f| f.gestalt.clone()).collect();
-        self.gestalt = GestaltProfile::merge(&profiles);
-        self.forks.clear();
-        self.state = SessionState::Merged;
-        Ok(format!("merged {} forks", profiles.len()))
+        unimplemented!("merge: red phase")
     }
 
     // ---
 
-    /// Tock — end the current reflection cycle.
-    ///
-    /// Records an encounter on the gestalt, settles tensions below the
-    /// threshold (0.3), increments `tock_count`, transitions to `Tocked`.
-    pub fn tock(&mut self) -> Result<String, String> {
-        let crystal_oid = format!("tock:{}", self.tock_count);
-        let loss = self.gestalt.loss;
-        self.gestalt.record_encounter(&crystal_oid, loss);
-        self.gestalt.settle_tensions(0.3);
-        self.tock_count += 1;
-        self.state = SessionState::Tocked;
-        Ok(format!(
-            "tock {} — encounters: {}",
-            self.tock_count, self.gestalt.encounters
-        ))
+    /// /train -- update weights inline.
+    pub fn train(&mut self) -> Result<String, String> {
+        unimplemented!("train: red phase")
     }
 
     // ---
 
-    /// Refract — save the gestalt to disk.
-    ///
-    /// If the session hasn't been tocked yet, calls `tock()` first.
-    /// Writes the gestalt to `self.gestalt_path`.
+    /// /exit -- refract. Crystallize and save.
     pub fn refract(&mut self) -> Result<String, String> {
-        if self.state != SessionState::Tocked {
-            self.tock()?;
-        }
-        self.gestalt
-            .save(&self.gestalt_path)
-            .map_err(|e| format!("refract save failed: {}", e))?;
-        Ok(format!("refracted → {}", self.gestalt_path))
+        unimplemented!("refract: red phase")
     }
 }
 
@@ -219,116 +125,159 @@ impl Session {
 mod tests {
     use super::*;
 
-    // 1: new_session_is_idle
+    // 1: new session starts idle with empty forks
     #[test]
     fn new_session_is_idle() {
-        let s = Session::new("alex", "/nonexistent/path/gestalt.gestalt");
+        let s = Session::new("test-reader", ".gestalt");
         assert_eq!(s.state, SessionState::Idle);
-        assert_eq!(s.tick_count, 0);
-        assert_eq!(s.tock_count, 0);
-        assert!(s.forks.is_empty());
+        assert_eq!(s.forks.len(), 0);
     }
 
-    // 2: focus_project_sequence — focus then project works
+    // 2: focus sets state and returns deficit message
     #[test]
-    fn focus_project_sequence() {
-        let mut s = Session::new("alex", "/nonexistent/path/gestalt.gestalt");
-        let r = s.focus("is the structure emergent?");
-        assert!(r.is_ok(), "focus failed: {:?}", r);
-        assert_eq!(s.tick_count, 1);
+    fn focus_sets_state() {
+        let mut s = Session::new("test", "/tmp/test.gestalt");
+        let result = s.focus("what is loss?").unwrap();
+        assert!(result.contains("deficit"));
         assert!(matches!(s.state, SessionState::Focused { .. }));
-
-        let r = s.project();
-        assert!(r.is_ok(), "project failed: {:?}", r);
-        assert_eq!(s.state, SessionState::Projected);
     }
 
-    // 3: project_requires_focus — project without focus fails
+    // 3: project requires focus
     #[test]
     fn project_requires_focus() {
-        let mut s = Session::new("alex", "/nonexistent/path/gestalt.gestalt");
-        let r = s.project();
-        assert!(r.is_err(), "project should fail when not Focused");
+        let mut s = Session::new("test", "/tmp/test.gestalt");
+        assert!(s.project().is_err());
+        s.focus("question").unwrap();
+        assert!(s.project().is_ok());
     }
 
-    // 4: split_creates_forks — 2 forks
+    // 4: split creates 2 forks
     #[test]
     fn split_creates_forks() {
-        let mut s = Session::new("alex", "/nonexistent/path/gestalt.gestalt");
-        let r = s.split();
-        assert!(r.is_ok(), "split failed: {:?}", r);
+        let mut s = Session::new("test", "/tmp/test.gestalt");
+        s.focus("question").unwrap();
+        s.split().unwrap();
         assert_eq!(s.forks.len(), 2);
-        assert_eq!(s.forks[0].name, "a");
-        assert_eq!(s.forks[1].name, "b");
-        assert!(matches!(s.state, SessionState::Forked { active_fork: 0 }));
     }
 
-    // 5: zoom_increments_fork_depth
+    // 5: split requires focused or projected state
     #[test]
-    fn zoom_increments_fork_depth() {
-        let mut s = Session::new("alex", "/nonexistent/path/gestalt.gestalt");
+    fn split_requires_focus_or_projected() {
+        let mut s = Session::new("test", "/tmp/test.gestalt");
+        assert!(s.split().is_err(), "split should fail when Idle");
+    }
+
+    // 6: zoom increments fork depth
+    #[test]
+    fn zoom_increments_depth() {
+        let mut s = Session::new("test", "/tmp/test.gestalt");
+        s.focus("question").unwrap();
         s.split().unwrap();
-        let depth_before = s.forks[0].zoom_depth;
+        s.zoom("deeper").unwrap();
+        assert_eq!(s.forks[0].zoom_depth, 1);
+    }
+
+    // 7: zoom works on focused state too
+    #[test]
+    fn zoom_on_focused() {
+        let mut s = Session::new("test", "/tmp/test.gestalt");
+        s.focus("question").unwrap();
         let r = s.zoom("deeper");
-        assert!(r.is_ok(), "zoom failed: {:?}", r);
-        assert_eq!(s.forks[0].zoom_depth, depth_before + 1);
+        assert!(r.is_ok(), "zoom should work when Focused");
     }
 
-    // 6: merge_reconciles — forks cleared, state=Merged
+    // 8: merge reconciles forks
     #[test]
-    fn merge_reconciles() {
-        let mut s = Session::new("alex", "/nonexistent/path/gestalt.gestalt");
+    fn merge_reconciles_forks() {
+        let mut s = Session::new("test", "/tmp/test.gestalt");
+        s.focus("question").unwrap();
         s.split().unwrap();
-        assert_eq!(s.forks.len(), 2);
-        let r = s.merge();
-        assert!(r.is_ok(), "merge failed: {:?}", r);
-        assert!(s.forks.is_empty(), "forks should be cleared after merge");
+        s.merge().unwrap();
+        assert!(s.forks.is_empty());
         assert_eq!(s.state, SessionState::Merged);
     }
 
-    // 7: tock_records_encounter — encounters++, tock_count++
+    // 9: merge errors when no forks
     #[test]
-    fn tock_records_encounter() {
-        let mut s = Session::new("alex", "/nonexistent/path/gestalt.gestalt");
-        let encounters_before = s.gestalt.encounters;
-        let tock_before = s.tock_count;
-        let r = s.tock();
-        assert!(r.is_ok(), "tock failed: {:?}", r);
-        assert_eq!(s.gestalt.encounters, encounters_before + 1);
-        assert_eq!(s.tock_count, tock_before + 1);
-        assert_eq!(s.state, SessionState::Tocked);
+    fn merge_errors_without_forks() {
+        let mut s = Session::new("test", "/tmp/test.gestalt");
+        assert!(s.merge().is_err(), "merge should fail with no forks");
     }
 
-    // 8: refract_saves_gestalt — file exists after refract (use tempfile)
+    // 10: train records encounter
+    #[test]
+    fn train_records_encounter() {
+        let mut s = Session::new("test", "/tmp/test.gestalt");
+        s.focus("question").unwrap();
+        s.train().unwrap();
+        assert_eq!(s.gestalt.encounters, 1);
+        assert_eq!(s.state, SessionState::Trained);
+    }
+
+    // 11: refract saves gestalt to disk
     #[test]
     fn refract_saves_gestalt() {
-        let dir = tempfile::tempdir().expect("tempdir");
+        let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("test.gestalt");
-        let path_str = path.to_str().unwrap();
-
-        let mut s = Session::new("alex", path_str);
-        s.focus("does structure emerge?").unwrap();
-        let r = s.refract();
-        assert!(r.is_ok(), "refract failed: {:?}", r);
-        assert!(path.exists(), "gestalt file should exist after refract");
+        let mut s = Session::new("test", path.to_str().unwrap());
+        s.focus("question").unwrap();
+        s.refract().unwrap();
+        assert!(path.exists());
     }
 
-    // 9: tick_tock_counting — tick_count and tock_count track separately
+    // 12: refract auto-trains if not already trained
     #[test]
-    fn tick_tock_counting() {
-        let mut s = Session::new("alex", "/nonexistent/path/gestalt.gestalt");
+    fn refract_auto_trains() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("test.gestalt");
+        let mut s = Session::new("test", path.to_str().unwrap());
+        s.focus("question").unwrap();
+        assert_ne!(s.state, SessionState::Trained);
+        s.refract().unwrap();
+        // After refract, train was called, so encounters should be 1
+        assert_eq!(s.gestalt.encounters, 1);
+    }
 
-        s.focus("q1").unwrap();
-        s.focus("q2").unwrap();
-        s.focus("q3").unwrap();
-        assert_eq!(s.tick_count, 3);
-        assert_eq!(s.tock_count, 0);
+    // 13: switch_fork changes active fork
+    #[test]
+    fn switch_fork_changes_active() {
+        let mut s = Session::new("test", "/tmp/test.gestalt");
+        s.focus("question").unwrap();
+        s.split().unwrap();
+        assert!(matches!(s.state, SessionState::Forked { active_fork: 0 }));
+        s.switch_fork("fork-b").unwrap();
+        assert!(matches!(s.state, SessionState::Forked { active_fork: 1 }));
+    }
 
-        s.tock().unwrap();
-        assert_eq!(s.tick_count, 3);
-        assert_eq!(s.tock_count, 1);
+    // 14: full lifecycle: focus -> project -> split -> zoom -> merge -> train -> refract
+    #[test]
+    fn full_lifecycle() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("lifecycle.gestalt");
+        let mut s = Session::new("test", path.to_str().unwrap());
 
-        s.tock().unwrap();
-        assert_eq!(s.tock_count, 2);
+        s.focus("what is structure?").unwrap();
+        assert!(matches!(s.state, SessionState::Focused { .. }));
+
+        s.project().unwrap();
+        assert_eq!(s.state, SessionState::Projected);
+
+        s.split().unwrap();
+        assert!(matches!(s.state, SessionState::Forked { .. }));
+        assert_eq!(s.forks.len(), 2);
+
+        s.zoom("deeper").unwrap();
+        assert_eq!(s.forks[0].zoom_depth, 1);
+
+        s.merge().unwrap();
+        assert_eq!(s.state, SessionState::Merged);
+        assert!(s.forks.is_empty());
+
+        s.train().unwrap();
+        assert_eq!(s.state, SessionState::Trained);
+        assert_eq!(s.gestalt.encounters, 1);
+
+        s.refract().unwrap();
+        assert!(path.exists());
     }
 }
