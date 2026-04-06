@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 use crate::model::Mirror;
-use crate::resolve::{resolve_template, Namespace, TemplateProvider};
+use crate::resolve::{resolve_template, Namespace, TemplateProvider, Visibility};
 
 /// A discovered package.
 #[derive(Clone, Debug)]
@@ -16,6 +16,7 @@ pub struct Package {
     pub name: String,
     pub source: String,
     pub path: PathBuf,
+    pub visibility: Visibility,
 }
 
 /// Registry of discovered packages.
@@ -133,6 +134,40 @@ impl PackageRegistry {
         Ok(namespace)
     }
 
+    /// Convert to a Namespace with visibility export enforcement.
+    ///
+    /// Checks that public grammars do not reference protected or private packages.
+    /// Import downwards (protected using public) is allowed. Export upwards
+    /// (public referencing protected/private) is a compile error.
+    pub fn to_namespace_checked(&self) -> Result<Namespace, String> {
+        // Visibility check: public grammars must not reference non-public packages.
+        for (name, package) in &self.packages {
+            if package.visibility == Visibility::Public {
+                for (ref_name, ref_pkg) in &self.packages {
+                    if ref_pkg.visibility != Visibility::Public {
+                        let marker = format!("@{}", ref_name);
+                        if package.source.contains(&marker) {
+                            return Err(format!(
+                                "visibility: public grammar @{} exports type '{}' \
+                                 from {} grammar @{}",
+                                name,
+                                ref_name,
+                                match ref_pkg.visibility {
+                                    Visibility::Protected => "protected",
+                                    Visibility::Private => "private",
+                                    _ => unreachable!(),
+                                },
+                                ref_name
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+
+        self.to_namespace()
+    }
+
     /// Number of discovered packages.
     pub fn len(&self) -> usize {
         self.packages.len()
@@ -151,6 +186,25 @@ impl PackageRegistry {
             dirs_home().join(".conversation")
         }
     }
+}
+
+/// Infer the visibility of a package from its file path.
+///
+/// Walks upward through the path ancestors looking for a directory named
+/// `private`, `protected`, or `public`. If none is found, defaults to
+/// `Visibility::Public`.
+fn visibility_from_path(path: &Path) -> Visibility {
+    for ancestor in path.ancestors() {
+        if let Some(name) = ancestor.file_name().and_then(|n| n.to_str()) {
+            match name {
+                "private" => return Visibility::Private,
+                "protected" => return Visibility::Protected,
+                "public" => return Visibility::Public,
+                _ => continue,
+            }
+        }
+    }
+    Visibility::Public
 }
 
 /// Walk a directory recursively, following symlinks.
@@ -184,10 +238,12 @@ fn try_file_package(path: &Path) -> Option<Package> {
     if file_name.starts_with('@') && path.extension().is_none() {
         let name = file_name.strip_prefix('@')?.to_string();
         let source = std::fs::read_to_string(path).ok()?;
+        let visibility = visibility_from_path(path);
         Some(Package {
             name,
             source,
             path: path.to_path_buf(),
+            visibility,
         })
     } else {
         None
@@ -205,10 +261,12 @@ fn try_dir_package(path: &Path) -> Option<Package> {
     // .mirror files: standalone package (no directory match required)
     if ext == "mirror" {
         let source = std::fs::read_to_string(path).ok()?;
+        let visibility = visibility_from_path(path);
         return Some(Package {
             name: stem.to_string(),
             source,
             path: path.to_path_buf(),
+            visibility,
         });
     }
 
@@ -218,10 +276,12 @@ fn try_dir_package(path: &Path) -> Option<Package> {
     let dir_name = parent_name.strip_prefix('@').unwrap_or(parent_name);
     if stem == dir_name {
         let source = std::fs::read_to_string(path).ok()?;
+        let visibility = visibility_from_path(path);
         Some(Package {
             name: stem.to_string(),
             source,
             path: path.to_path_buf(),
+            visibility,
         })
     } else {
         None
@@ -349,7 +409,7 @@ mod tests {
         .unwrap();
         fs::write(
             protected.join("local.mirror"),
-            "grammar @local {\n  use @base\n  type = themed(shared)\n}\n",
+            "grammar @local {\n  use @base\n  type = themed\n}\n",
         )
         .unwrap();
         let registry = PackageRegistry::discover(dir.path()).unwrap();
