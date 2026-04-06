@@ -830,10 +830,15 @@ fn shell(path: &str, resolve: &Resolve) {
     let reader = stdin.lock();
     let mut stdout = io::stdout();
 
-    eprintln!("mirror shell — {}", path);
-    eprintln!("type expressions, ctrl+d to exit\n");
+    let gestalt_path = format!("{}/.gestalt", path);
+    let reader_id = std::env::var("USER").unwrap_or_else(|_| "anonymous".to_string());
+    let mut session = mirror::session::Session::new(&reader_id, &gestalt_path);
 
-    for line in reader.lines() {
+    eprintln!("mirror shell — {}", path);
+    eprintln!("commands: /focus /project /split /zoom /merge /tock /exit");
+    eprintln!("type expressions or commands, ctrl+d to exit\n");
+
+    'repl: for line in reader.lines() {
         let _ = write!(stdout, "mirror> ");
         let _ = stdout.flush();
 
@@ -850,7 +855,67 @@ fn shell(path: &str, resolve: &Resolve) {
             continue;
         }
 
-        // Build a .mirror source from the expression
+        // Slash commands → session state machine
+        if let Some(slash_line) = line.strip_prefix('/') {
+            let (cmd, arg) = match slash_line.splitn(2, ' ').collect::<Vec<_>>().as_slice() {
+                [cmd, rest] => (cmd.to_string(), rest.trim().to_string()),
+                [cmd] => (cmd.to_string(), String::new()),
+                _ => continue,
+            };
+            let result = match cmd.as_str() {
+                "focus" => {
+                    if arg.is_empty() {
+                        Err("/focus requires a question".to_string())
+                    } else {
+                        session.focus(&arg)
+                    }
+                }
+                "project" => session.project(),
+                "split" => session.split(),
+                "zoom" => {
+                    let direction = if arg.is_empty() { "deeper" } else { &arg };
+                    session.zoom(direction)
+                }
+                "fork" => {
+                    if arg.is_empty() {
+                        Err("/fork requires a name".to_string())
+                    } else {
+                        session.switch_fork(&arg)
+                    }
+                }
+                "merge" => session.merge(),
+                "tock" | "train" => session.tock(),
+                "exit" => {
+                    match session.refract() {
+                        Ok(msg) => eprintln!("  {}", msg),
+                        Err(e) => eprintln!("  refract error: {}", e),
+                    }
+                    break 'repl;
+                }
+                unknown => Err(format!("unknown command: /{}", unknown)),
+            };
+            match result {
+                Ok(msg) => eprintln!("  {}", msg),
+                Err(e) => eprintln!("  error: {}", e),
+            }
+            continue;
+        }
+
+        // Domain invocations → DomainInvocation::parse + dispatch
+        if line.starts_with('@') {
+            let parts: Vec<&str> = line.splitn(3, ' ').collect();
+            let refs: Vec<&str> = parts.iter().map(|s| s.as_ref()).collect();
+            match mirror::domain_dispatch::DomainInvocation::parse(&refs) {
+                Some(inv) => match mirror::domain_dispatch::dispatch(&inv) {
+                    Ok(output) => print!("{}", output),
+                    Err(e) => eprintln!("  error: {}", e),
+                },
+                None => eprintln!("  error: invalid domain invocation (missing action)"),
+            }
+            continue;
+        }
+
+        // Everything else → evaluate as .mirror expression
         let source = format!("out {}\n", line);
 
         let resolved = match Conversation::<Filesystem>::from_source_with(&source, resolve.clone())

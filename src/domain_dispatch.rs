@@ -201,15 +201,25 @@ fn dispatch_gestalt(action: &str, args: &[String]) -> Result<String, String> {
                 };
                 out.push_str(&format!("  [{}] {:.4} {}\n", state, t.loss, t.description));
             }
-            if p.tensions.is_empty() { out.push_str("  (none)\n"); }
+            if p.tensions.is_empty() {
+                out.push_str("  (none)\n");
+            }
             Ok(out)
         }
         "diff" => {
-            if args.len() < 2 { return Err("usage: @gestalt diff <path-a> <path-b>".to_string()); }
+            if args.len() < 2 {
+                return Err("usage: @gestalt diff <path-a> <path-b>".to_string());
+            }
             let a = crate::gestalt::GestaltProfile::load(&args[0])?;
             let b = crate::gestalt::GestaltProfile::load(&args[1])?;
-            Ok(format!("@gestalt diff\n  a: {} enc, loss {:.4}\n  b: {} enc, loss {:.4}\n  delta: {:.4}",
-                a.encounters, a.loss, b.encounters, b.loss, (a.loss - b.loss).abs()))
+            Ok(format!(
+                "@gestalt diff\n  a: {} enc, loss {:.4}\n  b: {} enc, loss {:.4}\n  delta: {:.4}",
+                a.encounters,
+                a.loss,
+                b.encounters,
+                b.loss,
+                (a.loss - b.loss).abs()
+            ))
         }
         _ => Err(format!("@gestalt: unknown action: {}", action)),
     }
@@ -321,13 +331,21 @@ mod tests {
 
     #[test]
     fn dispatch_gestalt_read_missing() {
-        let inv = DomainInvocation { domain: "gestalt".to_string(), action: "read".to_string(), args: vec!["/nonexistent".to_string()] };
+        let inv = DomainInvocation {
+            domain: "gestalt".to_string(),
+            action: "read".to_string(),
+            args: vec!["/nonexistent".to_string()],
+        };
         assert!(dispatch(&inv).is_err());
     }
 
     #[test]
     fn dispatch_gestalt_tensions_missing() {
-        let inv = DomainInvocation { domain: "gestalt".to_string(), action: "tensions".to_string(), args: vec!["/nonexistent".to_string()] };
+        let inv = DomainInvocation {
+            domain: "gestalt".to_string(),
+            action: "tensions".to_string(),
+            args: vec!["/nonexistent".to_string()],
+        };
         assert!(dispatch(&inv).is_err());
     }
 }
