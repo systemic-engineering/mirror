@@ -402,6 +402,65 @@ fn compiler_grammar_types_available_via_namespace() {
 }
 
 // ---------------------------------------------------------------------------
+// gestalt-mirror grammars
+// ---------------------------------------------------------------------------
+
+const GESTALT_DOCUMENT_GRAMMAR: &str = include_str!(
+    "/Users/alexwolf/dev/projects/gestalt-mirror/public/document.mirror"
+);
+
+const GESTALT_UI_GRAMMAR: &str = include_str!(
+    "/Users/alexwolf/dev/projects/gestalt-mirror/protected/ui.mirror"
+);
+
+#[test]
+fn gestalt_document_grammar_compiles() {
+    let ast = Parse.trace(GESTALT_DOCUMENT_GRAMMAR.to_string()).unwrap();
+    let grammar = ast
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("grammar"))
+        .expect("document.mirror should contain a grammar declaration");
+    let reg = mirror::model::Mirror::from_grammar(grammar).unwrap();
+    assert_eq!(reg.domain_name(), "document");
+    // Primary type has block-level variants
+    assert!(reg.has_variant("", "section"));
+    assert!(reg.has_variant("", "paragraph"));
+    assert!(reg.has_variant("", "separator"));
+    assert!(reg.has_variant("", "breath"));
+    // Named sub-types
+    assert!(reg.has_variant("span", "text"));
+    assert!(reg.has_variant("span", "code"));
+    assert!(reg.has_variant("span", "hard_break"));
+    assert!(reg.has_variant("mark", "strong"));
+    assert!(reg.has_variant("mark", "emphasis"));
+    assert!(reg.has_variant("role", "claim"));
+    assert!(reg.has_variant("role", "evidence"));
+    assert!(reg.has_variant("callout_kind", "note"));
+    assert!(reg.has_variant("callout_kind", "warning"));
+}
+
+#[test]
+fn gestalt_ui_grammar_compiles() {
+    let ast = Parse.trace(GESTALT_UI_GRAMMAR.to_string()).unwrap();
+    let grammar = ast
+        .children()
+        .iter()
+        .find(|c| c.data().is_decl("grammar"))
+        .expect("ui.mirror should contain a grammar declaration");
+    let reg = mirror::model::Mirror::from_grammar(grammar).unwrap();
+    assert_eq!(reg.domain_name(), "ui");
+    assert!(reg.has_variant("", "theme"));
+    assert!(reg.has_variant("mode", "light"));
+    assert!(reg.has_variant("mode", "dark"));
+    assert!(reg.has_variant("density", "compact"));
+    assert!(reg.has_variant("color_intent", "background"));
+    assert!(reg.has_variant("color_intent", "agent"));
+    assert!(reg.has_variant("role", "supervisor"));
+    assert!(reg.has_variant("signal_kind", "message"));
+}
+
+// ---------------------------------------------------------------------------
 // Cross-domain resolution: in @compiler resolves when namespace has it
 // ---------------------------------------------------------------------------
 
