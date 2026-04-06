@@ -194,13 +194,25 @@ fn try_file_package(path: &Path) -> Option<Package> {
     }
 }
 
-/// Try to match `name.conv` inside `name/` or `@name/` directory.
+/// Try to match `name.conv` inside `name/` or `@name/` directory, or `name.mirror` anywhere.
 fn try_dir_package(path: &Path) -> Option<Package> {
     let ext = path.extension()?.to_str()?;
-    if ext != "conv" {
+    if ext != "conv" && ext != "mirror" {
         return None;
     }
     let stem = path.file_stem()?.to_str()?;
+
+    // .mirror files: standalone package (no directory match required)
+    if ext == "mirror" {
+        let source = std::fs::read_to_string(path).ok()?;
+        return Some(Package {
+            name: stem.to_string(),
+            source,
+            path: path.to_path_buf(),
+        });
+    }
+
+    // .conv files: require parent directory name match
     let parent = path.parent()?;
     let parent_name = parent.file_name()?.to_str()?;
     let dir_name = parent_name.strip_prefix('@').unwrap_or(parent_name);
