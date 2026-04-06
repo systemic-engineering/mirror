@@ -254,8 +254,108 @@ fn dirs_home() -> PathBuf {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::resolve::Visibility;
     use std::fs;
     use tempfile::TempDir;
+
+    #[test]
+    fn visibility_from_public_dir() {
+        let dir = TempDir::new().unwrap();
+        let public = dir.path().join("public");
+        fs::create_dir(&public).unwrap();
+        fs::write(
+            public.join("base.mirror"),
+            "grammar @base {\n  type = shared\n}\n",
+        )
+        .unwrap();
+        let registry = PackageRegistry::discover(dir.path()).unwrap();
+        assert_eq!(registry.packages["base"].visibility, Visibility::Public);
+    }
+
+    #[test]
+    fn visibility_from_protected_dir() {
+        let dir = TempDir::new().unwrap();
+        let protected = dir.path().join("protected");
+        fs::create_dir(&protected).unwrap();
+        fs::write(
+            protected.join("local.mirror"),
+            "grammar @local {\n  type = themed\n}\n",
+        )
+        .unwrap();
+        let registry = PackageRegistry::discover(dir.path()).unwrap();
+        assert_eq!(registry.packages["local"].visibility, Visibility::Protected);
+    }
+
+    #[test]
+    fn visibility_from_private_dir() {
+        let dir = TempDir::new().unwrap();
+        let private = dir.path().join("private");
+        fs::create_dir(&private).unwrap();
+        fs::write(
+            private.join("secret.mirror"),
+            "grammar @secret {\n  type = hidden\n}\n",
+        )
+        .unwrap();
+        let registry = PackageRegistry::discover(dir.path()).unwrap();
+        assert_eq!(registry.packages["secret"].visibility, Visibility::Private);
+    }
+
+    #[test]
+    fn visibility_defaults_to_public() {
+        let dir = TempDir::new().unwrap();
+        fs::write(
+            dir.path().join("@beam"),
+            "grammar @beam {\n  type = process\n}\n",
+        )
+        .unwrap();
+        let registry = PackageRegistry::discover(dir.path()).unwrap();
+        assert_eq!(registry.packages["beam"].visibility, Visibility::Public);
+    }
+
+    #[test]
+    fn public_cannot_export_protected_type() {
+        let dir = TempDir::new().unwrap();
+        let public = dir.path().join("public");
+        let protected = dir.path().join("protected");
+        fs::create_dir(&public).unwrap();
+        fs::create_dir(&protected).unwrap();
+        fs::write(
+            protected.join("secret.mirror"),
+            "grammar @secret {\n  type = hidden | classified\n}\n",
+        )
+        .unwrap();
+        fs::write(
+            public.join("leaky.mirror"),
+            "grammar @leaky {\n  use @secret\n  type = exposed(hidden)\n}\n",
+        )
+        .unwrap();
+        let registry = PackageRegistry::discover(dir.path()).unwrap();
+        let result = registry.to_namespace_checked();
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("visibility"));
+    }
+
+    #[test]
+    fn protected_can_use_public_type() {
+        let dir = TempDir::new().unwrap();
+        let public = dir.path().join("public");
+        let protected = dir.path().join("protected");
+        fs::create_dir(&public).unwrap();
+        fs::create_dir(&protected).unwrap();
+        fs::write(
+            public.join("base.mirror"),
+            "grammar @base {\n  type = shared | common\n}\n",
+        )
+        .unwrap();
+        fs::write(
+            protected.join("local.mirror"),
+            "grammar @local {\n  use @base\n  type = themed(shared)\n}\n",
+        )
+        .unwrap();
+        let registry = PackageRegistry::discover(dir.path()).unwrap();
+        let result = registry.to_namespace_checked();
+        assert!(result.is_ok());
+    }
 
     #[test]
     fn discover_empty_dir() {
