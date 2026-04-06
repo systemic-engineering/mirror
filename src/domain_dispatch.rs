@@ -43,6 +43,7 @@ pub fn dispatch(inv: &DomainInvocation) -> Result<String, String> {
     match inv.domain.as_str() {
         "fate" => dispatch_fate(&inv.action, &inv.args),
         "ai" => dispatch_ai(&inv.action, &inv.args),
+        "gestalt" => dispatch_gestalt(&inv.action, &inv.args),
         _ => Err(format!("unknown domain: @{}", inv.domain)),
     }
 }
@@ -170,6 +171,51 @@ fn dispatch_ai_settle(args: &[String]) -> Result<String, String> {
 }
 
 // ---------------------------------------------------------------------------
+// @gestalt — reader portrait (encounters, loss, concepts, tensions)
+// ---------------------------------------------------------------------------
+
+fn dispatch_gestalt(action: &str, args: &[String]) -> Result<String, String> {
+    let path = args.first().map(|s| s.as_str()).unwrap_or(".gestalt");
+    match action {
+        "read" => {
+            let p = crate::gestalt::GestaltProfile::load(path)?;
+            Ok(format!("@gestalt read\n  reader: {}\n  encounters: {}\n  loss: {:.4}\n  concepts: {}\n  tensions: {} held",
+                p.reader, p.encounters, p.loss, p.concept_loss.len(), p.held_tensions().len()))
+        }
+        "loss" => {
+            let p = crate::gestalt::GestaltProfile::load(path)?;
+            let mut out = String::from("@gestalt loss (highest)\n");
+            for (c, l) in p.high_loss_concepts(5) {
+                out.push_str(&format!("  {}: {:.4}\n", c, l));
+            }
+            Ok(out)
+        }
+        "tensions" => {
+            let p = crate::gestalt::GestaltProfile::load(path)?;
+            let mut out = String::from("@gestalt tensions\n");
+            for t in &p.tensions {
+                let state = match t.state {
+                    crate::gestalt::TensionState::Held => "held",
+                    crate::gestalt::TensionState::Settling => "settling",
+                    crate::gestalt::TensionState::Settled => "settled",
+                };
+                out.push_str(&format!("  [{}] {:.4} {}\n", state, t.loss, t.description));
+            }
+            if p.tensions.is_empty() { out.push_str("  (none)\n"); }
+            Ok(out)
+        }
+        "diff" => {
+            if args.len() < 2 { return Err("usage: @gestalt diff <path-a> <path-b>".to_string()); }
+            let a = crate::gestalt::GestaltProfile::load(&args[0])?;
+            let b = crate::gestalt::GestaltProfile::load(&args[1])?;
+            Ok(format!("@gestalt diff\n  a: {} enc, loss {:.4}\n  b: {} enc, loss {:.4}\n  delta: {:.4}",
+                a.encounters, a.loss, b.encounters, b.loss, (a.loss - b.loss).abs()))
+        }
+        _ => Err(format!("@gestalt: unknown action: {}", action)),
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
@@ -271,5 +317,17 @@ mod tests {
         assert!(output.contains("model:"));
         assert!(output.contains("optic:"));
         assert!(output.contains("cluster:"));
+    }
+
+    #[test]
+    fn dispatch_gestalt_read_missing() {
+        let inv = DomainInvocation { domain: "gestalt".to_string(), action: "read".to_string(), args: vec!["/nonexistent".to_string()] };
+        assert!(dispatch(&inv).is_err());
+    }
+
+    #[test]
+    fn dispatch_gestalt_tensions_missing() {
+        let inv = DomainInvocation { domain: "gestalt".to_string(), action: "tensions".to_string(), args: vec!["/nonexistent".to_string()] };
+        assert!(dispatch(&inv).is_err());
     }
 }
