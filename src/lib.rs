@@ -70,6 +70,7 @@ pub mod gestalt;
 pub mod ghost;
 pub mod model;
 pub mod runtime;
+pub mod session;
 pub mod training;
 
 pub use model::Mirror;

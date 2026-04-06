@@ -330,7 +330,10 @@ impl GestaltProfile {
                 "split_frequency {:.2}\n",
                 self.attention.split_frequency
             ));
-            out.push_str(&format!("fork_depth {:.1}\n", self.attention.avg_fork_depth));
+            out.push_str(&format!(
+                "fork_depth {:.1}\n",
+                self.attention.avg_fork_depth
+            ));
         }
 
         // Tensions
@@ -415,8 +418,9 @@ impl GestaltProfile {
                 if !val.trim().is_empty() {
                     for s in val.split(',') {
                         let s = s.trim();
-                        let v: f64 =
-                            s.parse().map_err(|e| format!("invalid eigenvalue: {}", e))?;
+                        let v: f64 = s
+                            .parse()
+                            .map_err(|e| format!("invalid eigenvalue: {}", e))?;
                         eigenvalues.push(v);
                     }
                 }
@@ -467,9 +471,7 @@ impl GestaltProfile {
                     .trim()
                     .strip_prefix('"')
                     .and_then(|s| s.strip_suffix('"'))
-                    .ok_or_else(|| {
-                        format!("tension description must be quoted: '{}'", rest)
-                    })?
+                    .ok_or_else(|| format!("tension description must be quoted: '{}'", rest))?
                     .to_string();
                 tensions.push(HeldTension {
                     description,
@@ -509,8 +511,7 @@ impl GestaltProfile {
 
     /// Read a .gestalt file from `path` and parse it.
     pub fn load(path: &str) -> Result<Self, String> {
-        let text =
-            std::fs::read_to_string(path).map_err(|e| format!("load '{}': {}", path, e))?;
+        let text = std::fs::read_to_string(path).map_err(|e| format!("load '{}': {}", path, e))?;
         Self::from_gestalt_text(&text)
     }
 
@@ -628,8 +629,7 @@ mod tests {
         p.eigenvalues = vec![1.2, 0.8, 0.3];
 
         let text = p.to_gestalt_text();
-        let q = GestaltProfile::from_gestalt_text(&text)
-            .expect("round_trip: parse failed");
+        let q = GestaltProfile::from_gestalt_text(&text).expect("round_trip: parse failed");
 
         assert_eq!(q.reader, p.reader);
         assert_eq!(q.updated, p.updated);
