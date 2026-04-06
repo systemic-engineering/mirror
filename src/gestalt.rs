@@ -274,6 +274,253 @@ impl GestaltProfile {
             .filter(|t| t.state == TensionState::Held)
             .collect()
     }
+
+    // ---
+
+    /// Emit the profile as .gestalt file text.
+    pub fn to_gestalt_text(&self) -> String {
+        let mut out = String::new();
+
+        out.push_str("gestalt v1\n");
+        out.push_str(&format!("reader: {}\n", self.reader));
+        out.push_str(&format!("updated: {}\n", self.updated));
+        out.push_str(&format!("encounters: {}\n", self.encounters));
+        out.push_str(&format!("loss: {:.4}\n", self.loss));
+
+        // Eigenvalues
+        {
+            let vals: Vec<String> = self.eigenvalues.iter().map(|v| v.to_string()).collect();
+            out.push_str(&format!("\neigenvalues [{}]\n", vals.join(", ")));
+        }
+
+        // Concept loss — one "loss" line, all concepts space-separated
+        if !self.concept_loss.is_empty() {
+            let pairs: Vec<String> = self
+                .concept_loss
+                .iter()
+                .map(|(k, v)| format!("{}:{:.4}", k, v))
+                .collect();
+            out.push_str(&format!("\nloss {}\n", pairs.join(" ")));
+        }
+
+        // Attention
+        {
+            let pattern = match self.attention.focus_pattern {
+                FocusPattern::DepthFirst => "depth_first",
+                FocusPattern::BreadthFirst => "breadth_first",
+                FocusPattern::Mixed => "mixed",
+            };
+            out.push_str(&format!("\nattention {}\n", pattern));
+
+            let zooms: Vec<&str> = self
+                .attention
+                .zoom_preference
+                .iter()
+                .map(|z| match z {
+                    ZoomDirection::Deeper => "deeper",
+                    ZoomDirection::Simpler => "simpler",
+                    ZoomDirection::Connected => "connected",
+                })
+                .collect();
+            if !zooms.is_empty() {
+                out.push_str(&format!("zoom {}\n", zooms.join(" > ")));
+            }
+
+            out.push_str(&format!(
+                "split_frequency {:.2}\n",
+                self.attention.split_frequency
+            ));
+            out.push_str(&format!("fork_depth {:.1}\n", self.attention.avg_fork_depth));
+        }
+
+        // Tensions
+        for tension in &self.tensions {
+            let state = match tension.state {
+                TensionState::Held => "held",
+                TensionState::Settling => "settling",
+                TensionState::Settled => "settled",
+            };
+            out.push_str(&format!(
+                "\ntension {}:{:.4} \"{}\"\n",
+                state, tension.loss, tension.description
+            ));
+        }
+
+        // Crystals
+        if !self.crystals.is_empty() {
+            out.push_str(&format!("\ncrystals [{}]\n", self.crystals.join(", ")));
+        }
+
+        out
+    }
+
+    // ---
+
+    /// Parse a GestaltProfile from .gestalt file text.
+    pub fn from_gestalt_text(text: &str) -> Result<Self, String> {
+        let mut lines = text.lines().peekable();
+
+        // First line must be "gestalt v1"
+        match lines.next() {
+            Some("gestalt v1") => {}
+            Some(other) => {
+                return Err(format!("expected 'gestalt v1', got '{}'", other));
+            }
+            None => return Err("empty gestalt text".to_string()),
+        }
+
+        let mut reader = String::new();
+        let mut updated = String::new();
+        let mut encounters: u64 = 0;
+        let mut loss: f64 = 1.0;
+        let mut eigenvalues: Vec<f64> = Vec::new();
+        let mut concept_loss: BTreeMap<String, f64> = BTreeMap::new();
+        let mut focus_pattern = FocusPattern::Mixed;
+        let mut zoom_preference: Vec<ZoomDirection> = Vec::new();
+        let mut split_frequency: f64 = 0.0;
+        let mut avg_fork_depth: f64 = 0.0;
+        let mut tensions: Vec<HeldTension> = Vec::new();
+        let mut crystals: Vec<String> = Vec::new();
+
+        for line in lines {
+            let line = line.trim();
+            if line.is_empty() {
+                continue;
+            }
+
+            if let Some(val) = line.strip_prefix("reader: ") {
+                reader = val.to_string();
+            } else if let Some(val) = line.strip_prefix("updated: ") {
+                updated = val.to_string();
+            } else if let Some(val) = line.strip_prefix("encounters: ") {
+                encounters = val
+                    .parse()
+                    .map_err(|e| format!("invalid encounters: {}", e))?;
+            } else if let Some(val) = line.strip_prefix("loss: ") {
+                // Global loss line
+                loss = val.parse().map_err(|e| format!("invalid loss: {}", e))?;
+            } else if let Some(val) = line.strip_prefix("loss ") {
+                // Concept loss line: "concept1:0.4200 concept2:0.3100"
+                for pair in val.split_whitespace() {
+                    let (k, v) = pair
+                        .split_once(':')
+                        .ok_or_else(|| format!("invalid concept loss pair: '{}'", pair))?;
+                    let v: f64 = v
+                        .parse()
+                        .map_err(|e| format!("invalid concept loss value: {}", e))?;
+                    concept_loss.insert(k.to_string(), v);
+                }
+            } else if let Some(val) = line.strip_prefix("eigenvalues [") {
+                let val = val.trim_end_matches(']');
+                if !val.trim().is_empty() {
+                    for s in val.split(',') {
+                        let s = s.trim();
+                        let v: f64 =
+                            s.parse().map_err(|e| format!("invalid eigenvalue: {}", e))?;
+                        eigenvalues.push(v);
+                    }
+                }
+            } else if let Some(val) = line.strip_prefix("attention ") {
+                focus_pattern = match val.trim() {
+                    "depth_first" => FocusPattern::DepthFirst,
+                    "breadth_first" => FocusPattern::BreadthFirst,
+                    "mixed" => FocusPattern::Mixed,
+                    other => return Err(format!("unknown focus pattern: '{}'", other)),
+                };
+            } else if let Some(val) = line.strip_prefix("zoom ") {
+                zoom_preference = val
+                    .split(" > ")
+                    .map(|s| match s.trim() {
+                        "deeper" => Ok(ZoomDirection::Deeper),
+                        "simpler" => Ok(ZoomDirection::Simpler),
+                        "connected" => Ok(ZoomDirection::Connected),
+                        other => Err(format!("unknown zoom direction: '{}'", other)),
+                    })
+                    .collect::<Result<Vec<_>, _>>()?;
+            } else if let Some(val) = line.strip_prefix("split_frequency ") {
+                split_frequency = val
+                    .parse()
+                    .map_err(|e| format!("invalid split_frequency: {}", e))?;
+            } else if let Some(val) = line.strip_prefix("fork_depth ") {
+                avg_fork_depth = val
+                    .parse()
+                    .map_err(|e| format!("invalid fork_depth: {}", e))?;
+            } else if let Some(val) = line.strip_prefix("tension ") {
+                // "held:0.6700 \"is depth the same as scale?\""
+                let (state_loss, rest) = val
+                    .split_once(' ')
+                    .ok_or_else(|| format!("invalid tension line: '{}'", line))?;
+                let (state_str, loss_str) = state_loss
+                    .split_once(':')
+                    .ok_or_else(|| format!("invalid tension state:loss: '{}'", state_loss))?;
+                let t_loss: f64 = loss_str
+                    .parse()
+                    .map_err(|e| format!("invalid tension loss: {}", e))?;
+                let state = match state_str {
+                    "held" => TensionState::Held,
+                    "settling" => TensionState::Settling,
+                    "settled" => TensionState::Settled,
+                    other => return Err(format!("unknown tension state: '{}'", other)),
+                };
+                // Description is quoted
+                let description = rest
+                    .trim()
+                    .strip_prefix('"')
+                    .and_then(|s| s.strip_suffix('"'))
+                    .ok_or_else(|| {
+                        format!("tension description must be quoted: '{}'", rest)
+                    })?
+                    .to_string();
+                tensions.push(HeldTension {
+                    description,
+                    loss: t_loss,
+                    state,
+                });
+            } else if let Some(val) = line.strip_prefix("crystals [") {
+                let val = val.trim_end_matches(']');
+                if !val.trim().is_empty() {
+                    for s in val.split(',') {
+                        crystals.push(s.trim().to_string());
+                    }
+                }
+            }
+            // Unknown lines are silently skipped for forward compatibility.
+        }
+
+        Ok(Self {
+            reader,
+            updated,
+            encounters,
+            loss,
+            eigenvalues,
+            concept_loss,
+            attention: AttentionSignature {
+                focus_pattern,
+                zoom_preference,
+                split_frequency,
+                avg_fork_depth,
+            },
+            tensions,
+            crystals,
+        })
+    }
+
+    // ---
+
+    /// Read a .gestalt file from `path` and parse it.
+    pub fn load(path: &str) -> Result<Self, String> {
+        let text =
+            std::fs::read_to_string(path).map_err(|e| format!("load '{}': {}", path, e))?;
+        Self::from_gestalt_text(&text)
+    }
+
+    // ---
+
+    /// Emit the profile as .gestalt text and write it to `path`.
+    pub fn save(&self, path: &str) -> Result<(), String> {
+        let text = self.to_gestalt_text();
+        std::fs::write(path, text).map_err(|e| format!("save '{}': {}", path, e))
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -297,11 +544,7 @@ mod tests {
     fn record_encounter_decreases_loss() {
         let mut p = GestaltProfile::new("alex");
         p.record_encounter("oid:abc123", 0.2);
-        assert!(
-            p.loss < 1.0,
-            "loss should have decreased, got {}",
-            p.loss
-        );
+        assert!(p.loss < 1.0, "loss should have decreased, got {}", p.loss);
         assert_eq!(p.encounters, 1);
         assert_eq!(p.crystals, vec!["oid:abc123"]);
     }
@@ -362,6 +605,95 @@ mod tests {
         assert_eq!(forked.encounters, 2);
         assert_eq!(forked.crystals.len(), 2);
         assert_eq!(forked.tensions.len(), 1);
+    }
+
+    // 7: round-trip through text — emit then parse reproduces exact field values.
+    #[test]
+    fn round_trip_through_text() {
+        let mut p = GestaltProfile::new("alex");
+        p.updated = "2026-04-06T00:00:00Z".to_string();
+        p.record_encounter("oid:abc123", 0.4);
+        p.update_concept_loss("depth", 0.42);
+        p.update_concept_loss("scale", 0.31);
+        p.hold_tension("is depth the same as scale?", 0.67);
+        p.hold_tension("another question", 0.12);
+        p.attention.focus_pattern = FocusPattern::DepthFirst;
+        p.attention.zoom_preference = vec![
+            ZoomDirection::Deeper,
+            ZoomDirection::Connected,
+            ZoomDirection::Simpler,
+        ];
+        p.attention.split_frequency = 0.30;
+        p.attention.avg_fork_depth = 4.2;
+        p.eigenvalues = vec![1.2, 0.8, 0.3];
+
+        let text = p.to_gestalt_text();
+        let q = GestaltProfile::from_gestalt_text(&text)
+            .expect("round_trip: parse failed");
+
+        assert_eq!(q.reader, p.reader);
+        assert_eq!(q.updated, p.updated);
+        assert_eq!(q.encounters, p.encounters);
+        assert!((q.loss - p.loss).abs() < 1e-6, "loss mismatch");
+        assert_eq!(q.eigenvalues.len(), 3);
+        assert!((q.eigenvalues[0] - 1.2).abs() < 1e-9);
+        assert_eq!(q.concept_loss.len(), 2);
+        assert!((q.concept_loss["depth"] - p.concept_loss["depth"]).abs() < 1e-4);
+        assert_eq!(q.attention.focus_pattern, FocusPattern::DepthFirst);
+        assert_eq!(q.attention.zoom_preference.len(), 3);
+        assert_eq!(q.attention.zoom_preference[0], ZoomDirection::Deeper);
+        assert!((q.attention.split_frequency - 0.30).abs() < 1e-6);
+        assert!((q.attention.avg_fork_depth - 4.2).abs() < 1e-6);
+        assert_eq!(q.tensions.len(), 2);
+        assert_eq!(q.tensions[0].description, "is depth the same as scale?");
+        assert_eq!(q.tensions[0].state, TensionState::Held);
+        assert!((q.tensions[0].loss - 0.67).abs() < 1e-4);
+        assert_eq!(q.tensions[1].description, "another question");
+        assert_eq!(q.crystals, p.crystals);
+    }
+
+    // 8: save to a tempfile and load it back — fields survive the round-trip.
+    #[test]
+    fn save_and_load() {
+        let mut p = GestaltProfile::new("alex");
+        p.updated = "2026-04-06T00:00:00Z".to_string();
+        p.record_encounter("oid:save-test", 0.25);
+        p.update_concept_loss("concept1", 0.5);
+        p.hold_tension("does save work?", 0.8);
+
+        let tmp = tempfile::NamedTempFile::new().expect("tempfile");
+        let path = tmp.path().to_str().expect("path to str");
+
+        p.save(path).expect("save failed");
+        let q = GestaltProfile::load(path).expect("load failed");
+
+        assert_eq!(q.reader, "alex");
+        assert_eq!(q.encounters, 1);
+        assert!((q.loss - p.loss).abs() < 1e-6);
+        assert_eq!(q.concept_loss.len(), 1);
+        assert_eq!(q.tensions.len(), 1);
+        assert_eq!(q.tensions[0].description, "does save work?");
+        assert_eq!(q.crystals, vec!["oid:save-test"]);
+    }
+
+    // 9: parse a minimal profile — defaults hold for omitted optional fields.
+    #[test]
+    fn parse_empty_profile() {
+        let text = "gestalt v1\nreader: test\n";
+        let p = GestaltProfile::from_gestalt_text(text).expect("parse failed");
+
+        assert_eq!(p.reader, "test");
+        assert_eq!(p.updated, "");
+        assert_eq!(p.encounters, 0);
+        assert_eq!(p.loss, 1.0);
+        assert!(p.eigenvalues.is_empty());
+        assert!(p.concept_loss.is_empty());
+        assert_eq!(p.attention.focus_pattern, FocusPattern::Mixed);
+        assert!(p.attention.zoom_preference.is_empty());
+        assert_eq!(p.attention.split_frequency, 0.0);
+        assert_eq!(p.attention.avg_fork_depth, 0.0);
+        assert!(p.tensions.is_empty());
+        assert!(p.crystals.is_empty());
     }
 
     // 6: merge weights by inverse loss — merged result closer to the better fork.
