@@ -405,13 +405,11 @@ fn compiler_grammar_types_available_via_namespace() {
 // gestalt-mirror grammars
 // ---------------------------------------------------------------------------
 
-const GESTALT_DOCUMENT_GRAMMAR: &str = include_str!(
-    "/Users/alexwolf/dev/projects/gestalt-mirror/public/document.mirror"
-);
+const GESTALT_DOCUMENT_GRAMMAR: &str =
+    include_str!("/Users/alexwolf/dev/projects/gestalt-mirror/public/document.mirror");
 
-const GESTALT_UI_GRAMMAR: &str = include_str!(
-    "/Users/alexwolf/dev/projects/gestalt-mirror/protected/ui.mirror"
-);
+const GESTALT_UI_GRAMMAR: &str =
+    include_str!("/Users/alexwolf/dev/projects/gestalt-mirror/protected/ui.mirror");
 
 #[test]
 fn gestalt_document_grammar_compiles() {
