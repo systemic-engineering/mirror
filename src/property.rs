@@ -688,22 +688,22 @@ mod tests {
 
     #[test]
     fn shannon_compiler_grammar() {
-        assert_shannon_on_conv(include_str!("../conv/compiler.conv"), "compiler.conv");
+        assert_shannon_on_conv(include_str!("../prism/compiler.mirror"), "compiler.mirror");
     }
 
     #[test]
     fn shannon_mail_grammar() {
-        assert_shannon_on_conv(include_str!("../conv/mail.conv"), "mail.conv");
+        assert_shannon_on_conv(include_str!("../prism/mail.mirror"), "mail.mirror");
     }
 
     #[test]
     fn shannon_beam_grammar() {
-        assert_shannon_on_conv(include_str!("../conv/beam.conv"), "beam.conv");
+        assert_shannon_on_conv(include_str!("../prism/beam.mirror"), "beam.mirror");
     }
 
     #[test]
     fn shannon_git_grammar() {
-        assert_shannon_on_conv(include_str!("../conv/git.conv"), "git.conv");
+        assert_shannon_on_conv(include_str!("../prism/git.mirror"), "git.mirror");
     }
 
     // -- Generate override --
@@ -801,23 +801,23 @@ mod tests {
 
     // -- Garden @property domain --
     //
-    // These tests verify the @property grammar (conv/property.conv)
+    // These tests verify the @property grammar (conv/property.mirror)
     // compiles correctly and its test section passes. The grammar declares the vocabulary
     // for property-based verification: types, kinds, verdicts, and built-in property names.
 
     #[test]
     fn garden_property_grammar_compiles() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/05-property.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/05-property.mirror"),
         )
-        .expect("boot.backup/05-property.conv should exist");
+        .expect("boot.backup/05-property.mirror should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
         assert_eq!(
             parts.len(),
             2,
-            "property.conv should have grammar and test sections"
+            "property.mirror should have grammar and test sections"
         );
 
         // Compile the grammar section
@@ -849,9 +849,9 @@ mod tests {
     #[test]
     fn garden_property_tests_pass() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/05-property.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/05-property.mirror"),
         )
-        .expect("boot.backup/05-property.conv should exist");
+        .expect("boot.backup/05-property.mirror should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -886,23 +886,23 @@ mod tests {
 
     // -- Garden @topology domain --
     //
-    // These tests verify the @topology grammar (conv/topology.conv)
+    // These tests verify the @topology grammar (conv/topology.mirror)
     // compiles correctly and its test section passes. The grammar declares the vocabulary
     // for graph topology concepts: measures, phases, partitions, and boundaries.
 
     #[test]
     fn garden_topology_grammar_compiles() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/06-topology.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/06-topology.mirror"),
         )
-        .expect("boot.backup/06-topology.conv should exist");
+        .expect("boot.backup/06-topology.mirror should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
         assert_eq!(
             parts.len(),
             2,
-            "topology.conv should have grammar and test sections"
+            "topology.mirror should have grammar and test sections"
         );
 
         // Compile the grammar section
@@ -942,9 +942,9 @@ mod tests {
     #[test]
     fn garden_topology_tests_pass() {
         let source = std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/06-topology.conv"),
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("boot.backup/06-topology.mirror"),
         )
-        .expect("boot.backup/06-topology.conv should exist");
+        .expect("boot.backup/06-topology.mirror should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -979,7 +979,7 @@ mod tests {
 
     // -- Garden @training domain --
     //
-    // These tests verify the @training garden grammar (garden/public/@training/training.conv)
+    // These tests verify the @training garden grammar (garden/public/@training/training.mirror)
     // compiles correctly and its test section passes. The grammar declares the vocabulary
     // for graph-native model training: epochs, layers, routing, spectral properties, phases,
     // and observations.
@@ -990,16 +990,22 @@ mod tests {
             std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
                 .parent()
                 .unwrap()
-                .join("garden/public/@training/training.conv"),
+                .join("garden/public/@training/training.mirror"),
         )
-        .expect("garden @training/training.conv should exist");
+        .or_else(|_| std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("garden/public/@training/training.conv"),
+        ))
+        .expect("garden @training should exist (.mirror or .conv)");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
         assert_eq!(
             parts.len(),
             2,
-            "training.conv should have grammar and test sections"
+            "training.mirror should have grammar and test sections"
         );
 
         // Compile the grammar section
@@ -1047,9 +1053,15 @@ mod tests {
             std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
                 .parent()
                 .unwrap()
-                .join("garden/public/@training/training.conv"),
+                .join("garden/public/@training/training.mirror"),
         )
-        .expect("garden @training/training.conv should exist");
+        .or_else(|_| std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("garden/public/@training/training.conv"),
+        ))
+        .expect("garden @training should exist (.mirror or .conv)");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
@@ -1084,7 +1096,7 @@ mod tests {
 
     // -- Garden @coincidence domain --
     //
-    // These tests verify the @coincidence grammar (conv/coincidence.conv)
+    // These tests verify the @coincidence grammar (conv/coincidence.mirror)
     // compiles correctly and its test section passes. The grammar declares the vocabulary
     // for measurement: eigendecomposition, entropy, curvature, and spectral analysis.
 
@@ -1092,16 +1104,16 @@ mod tests {
     fn garden_coincidence_grammar_compiles() {
         let source = std::fs::read_to_string(
             std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .join("boot.backup/06-coincidence.conv"),
+                .join("boot.backup/06-coincidence.mirror"),
         )
-        .expect("boot.backup/06-coincidence.conv should exist");
+        .expect("boot.backup/06-coincidence.mirror should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();
         assert_eq!(
             parts.len(),
             2,
-            "coincidence.conv should have grammar and test sections"
+            "coincidence.mirror should have grammar and test sections"
         );
 
         // Compile the grammar section
@@ -1145,9 +1157,9 @@ mod tests {
     fn garden_coincidence_tests_pass() {
         let source = std::fs::read_to_string(
             std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .join("boot.backup/06-coincidence.conv"),
+                .join("boot.backup/06-coincidence.mirror"),
         )
-        .expect("boot.backup/06-coincidence.conv should exist");
+        .expect("boot.backup/06-coincidence.mirror should exist");
 
         // Split on --- separator
         let parts: Vec<&str> = source.splitn(2, "\n---\n").collect();

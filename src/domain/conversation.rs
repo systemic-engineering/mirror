@@ -1,6 +1,6 @@
 //! The conversation domain. The AST's own vocabulary.
 //!
-//! A .conv file parsed into a tree is a tree in this domain.
+//! A .mirror file parsed into a tree is a tree in this domain.
 //! The crate describes itself.
 
 use super::Setting;

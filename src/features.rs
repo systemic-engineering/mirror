@@ -427,23 +427,23 @@ mod tests {
         let fixtures: &[(&str, &str)] = &[
             (
                 "no_attribution",
-                include_str!("../fixtures/extractive/no_attribution.conv"),
+                include_str!("../fixtures/extractive/no_attribution.mirror"),
             ),
             (
                 "regulation_depletion",
-                include_str!("../fixtures/extractive/regulation_depletion.conv"),
+                include_str!("../fixtures/extractive/regulation_depletion.mirror"),
             ),
             (
                 "invisible_glue",
-                include_str!("../fixtures/extractive/invisible_glue.conv"),
+                include_str!("../fixtures/extractive/invisible_glue.mirror"),
             ),
             (
                 "shifting_burden",
-                include_str!("../fixtures/extractive/shifting_burden.conv"),
+                include_str!("../fixtures/extractive/shifting_burden.mirror"),
             ),
             (
                 "coordination_tax",
-                include_str!("../fixtures/extractive/coordination_tax.conv"),
+                include_str!("../fixtures/extractive/coordination_tax.mirror"),
             ),
         ];
 

@@ -3,14 +3,14 @@
 //! The parser IS a story: it records a transformation from source to tree.
 //!
 //! ⚠️  FROZEN. This file is the bootstrap parser. It implements the root
-//! grammars from boot/00-main.conv through boot/02-test.conv. New syntax
+//! grammars from boot/00-main.mirror through boot/02-test.mirror. New syntax
 //! MUST NOT be added here. New keywords come from new grammars in boot/.
 //! The KEYWORD_TABLE below will become data-driven — loaded from boot
 //! grammars at startup. Until then, this file does not grow.
 //!
 //! If you are an agent and you are about to add a keyword handler,
 //! a parse function, or a new match arm to this file: STOP.
-//! Write a .conv grammar instead. The parser parses itself.
+//! Write a .mirror grammar instead. The parser parses itself.
 
 use crate::ast::{self, AstNode, Span};
 use crate::domain::conversation::Kind;
@@ -1958,7 +1958,7 @@ mod tests {
 
     #[test]
     fn parse_full_conv_file() {
-        let source = include_str!("../systemic.engineering.conv").to_string();
+        let source = include_str!("../systemic.engineering.mirror").to_string();
         let tree = Parse.trace(source).unwrap();
 
         // Root has children: In, Template, Out
@@ -2097,7 +2097,7 @@ mod tests {
 
     #[test]
     fn parse_json_fixture() {
-        let source = include_str!("../fixtures/json.conv");
+        let source = include_str!("../fixtures/json.mirror");
         let tree = Parse.trace(source.to_string()).unwrap();
         let out = &tree.children()[0];
         assert_eq!(out.data().kind, Kind::Decl);
@@ -2119,7 +2119,7 @@ mod tests {
 
     #[test]
     fn parse_coverage_fixture() {
-        let source = include_str!("../fixtures/coverage-on-last-3-main-commits.conv");
+        let source = include_str!("../fixtures/coverage-on-last-3-main-commits.mirror");
         let tree = Parse.trace(source.to_string()).unwrap();
         let children = tree.children();
         assert_eq!(children.len(), 2); // in + pipeline
@@ -2168,7 +2168,7 @@ mod tests {
 
     #[test]
     fn parse_commit_from_main_to_test_fixture() {
-        let source = include_str!("../fixtures/commit-from-main-to-test.conv");
+        let source = include_str!("../fixtures/commit-from-main-to-test.mirror");
         let tree = Parse.trace(source.to_string()).unwrap();
         let pipeline = &tree.children()[0];
         assert_eq!(pipeline.data().kind, Kind::Form);
@@ -2177,7 +2177,7 @@ mod tests {
 
     #[test]
     fn parse_additive_fixture() {
-        let source = include_str!("../fixtures/additive.conv");
+        let source = include_str!("../fixtures/additive.mirror");
         let tree = Parse.trace(source.to_string()).unwrap();
         let children = tree.children();
         assert_eq!(children.len(), 3); // two ins + one out
@@ -3557,9 +3557,9 @@ grammar @conversation {
 
     #[test]
     fn parse_grammar_fixture() {
-        let source = include_str!("../main.conv");
+        let source = include_str!("../main.mirror");
         let tree = Parse.trace(source.to_string()).unwrap();
-        // main.conv: four root grammars — @conversation, @prism, @lens, @test
+        // main.mirror: four root grammars — @conversation, @prism, @lens, @test
         let grammars: Vec<_> = tree
             .children()
             .iter()
@@ -3680,7 +3680,7 @@ grammar @conversation {
 
     #[test]
     fn parse_mail_conv() {
-        let source = include_str!("../conv/mail.conv");
+        let source = include_str!("../prism/mail.mirror");
         let tree = Parse.trace(source.to_string()).unwrap();
         let children = tree.children();
         assert_eq!(children.len(), 2); // grammar + template
@@ -3926,7 +3926,7 @@ grammar @conversation {
 
     #[test]
     fn parse_beam_conv() {
-        let source = include_str!("../conv/beam.conv");
+        let source = include_str!("../prism/beam.mirror");
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.data().kind, Kind::Decl);
@@ -3941,7 +3941,7 @@ grammar @conversation {
 
     #[test]
     fn parse_git_conv() {
-        let source = include_str!("../conv/git.conv");
+        let source = include_str!("../prism/git.mirror");
         let tree = Parse.trace(source.to_string()).unwrap();
         let grammar = &tree.children()[0];
         assert_eq!(grammar.data().kind, Kind::Decl);

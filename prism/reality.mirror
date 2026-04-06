@@ -1,0 +1,17 @@
+in @prism
+
+grammar @reality {
+  type truth = observation
+  type contradiction = tension
+
+  action witness(world) -> truth
+  action contradict(truth, truth) -> contradiction
+  action hold(contradiction) -> tension
+}
+
+---
+
+test "reality types" {
+  @reality has truth
+  @reality has contradiction
+}

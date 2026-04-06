@@ -1,6 +1,6 @@
 //! Boot sequence — sequential compilation by layer.
 //!
-//! Reads `boot/` directory, groups .conv files by number prefix,
+//! Reads `boot/` directory, groups .mirror files by number prefix,
 //! compiles each layer sequentially. Barrier between layers.
 //! Same prefix = same layer = no cross-dependencies.
 
@@ -17,7 +17,7 @@ use crate::Vector;
 // Types
 // ---------------------------------------------------------------------------
 
-/// A layer number parsed from the filename prefix (e.g. `03` from `03-actor.conv`).
+/// A layer number parsed from the filename prefix (e.g. `03` from `03-actor.mirror`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct BootLayer(u8);
 
@@ -37,7 +37,7 @@ impl std::fmt::Display for BootLayer {
     }
 }
 
-/// A single .conv file in the boot sequence.
+/// A single .mirror file in the boot sequence.
 #[derive(Debug, Clone)]
 pub struct BootEntry {
     pub layer: BootLayer,
@@ -57,7 +57,7 @@ pub struct BootSequence {
 
 impl BootSequence {
     /// Read the boot sequence from a directory.
-    /// Files must be named `NN-name.conv` where NN is the layer number.
+    /// Files must be named `NN-name.mirror` where NN is the layer number.
     pub fn from_dir(dir: &Path) -> Result<Self, String> {
         let mut layers: BTreeMap<BootLayer, Vec<BootEntry>> = BTreeMap::new();
 
@@ -68,7 +68,7 @@ impl BootSequence {
             let entry = entry.map_err(|e| format!("boot: entry: {}", e))?;
             let path = entry.path();
 
-            if path.extension().and_then(|e| e.to_str()) != Some("conv") {
+            if path.extension().and_then(|e| e.to_str()) != Some("mirror") {
                 continue;
             }
 
@@ -107,7 +107,7 @@ impl BootSequence {
     }
 }
 
-/// Parse the layer prefix from a filename like `03-actor.conv` → BootLayer(3).
+/// Parse the layer prefix from a filename like `03-actor.mirror` → BootLayer(3).
 fn parse_layer_prefix(filename: &str) -> Result<BootLayer, String> {
     let prefix = filename
         .split('-')
@@ -199,18 +199,18 @@ mod tests {
 
     #[test]
     fn parse_layer_prefix_valid() {
-        assert_eq!(parse_layer_prefix("03-actor.conv").unwrap(), BootLayer(3));
-        assert_eq!(parse_layer_prefix("00-main.conv").unwrap(), BootLayer(0));
+        assert_eq!(parse_layer_prefix("03-actor.mirror").unwrap(), BootLayer(3));
+        assert_eq!(parse_layer_prefix("00-main.mirror").unwrap(), BootLayer(0));
         assert_eq!(
-            parse_layer_prefix("07-projection.conv").unwrap(),
+            parse_layer_prefix("07-projection.mirror").unwrap(),
             BootLayer(7)
         );
     }
 
     #[test]
     fn parse_layer_prefix_invalid() {
-        assert!(parse_layer_prefix("actor.conv").is_err());
-        assert!(parse_layer_prefix("xx-bad.conv").is_err());
+        assert!(parse_layer_prefix("actor.mirror").is_err());
+        assert!(parse_layer_prefix("xx-bad.mirror").is_err());
     }
 
     #[test]
@@ -223,7 +223,7 @@ mod tests {
         assert!(seq.len() >= 15); // at least our 15 boot files
         assert!(seq.layer_count() >= 7); // layers 0-6
 
-        // Layer 0 has main.conv
+        // Layer 0 has main.mirror
         let layer0 = seq.layers.get(&BootLayer(0)).unwrap();
         assert!(layer0.iter().any(|e| e.source.contains("@conversation")));
 

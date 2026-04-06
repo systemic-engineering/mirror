@@ -32,9 +32,9 @@ pub enum Visibility {
 /// What a namespace module provides when resolved.
 #[derive(Clone, Debug)]
 pub enum TemplateProvider {
-    /// Inline templates (defined in the same .conv file or injected).
+    /// Inline templates (defined in the same .mirror file or injected).
     Inline(HashMap<String, Template>),
-    /// Reference to another .conv file (future: lazy resolution).
+    /// Reference to another .mirror file (future: lazy resolution).
     External(String),
 }
 
@@ -139,7 +139,7 @@ pub struct ResolveError {
     pub hints: Vec<String>,
 }
 
-/// A resolved .conv file. Validated and ready to execute.
+/// A resolved .mirror file. Validated and ready to execute.
 ///
 /// The type parameter `C` is the input domain's context.
 /// `Conversation<Filesystem>` executes against `Prism<Folder>`.
@@ -634,7 +634,7 @@ impl<C: Setting> crate::ContentAddressed for Conversation<C> {
 }
 
 impl<C: Setting> Conversation<C> {
-    /// Parse and resolve a `.conv` source string in one step.
+    /// Parse and resolve a `.mirror` source string in one step.
     ///
     /// Chains Parse → Resolve via traceable composition.
     pub fn from_source(source: &str) -> Result<Self, ComposedError<ParseError, ResolveError>> {
@@ -1873,7 +1873,7 @@ mod tests {
     #[test]
     fn namespace_get_templates_external_returns_none() {
         let mut ns = Namespace::new();
-        ns.register("ext", TemplateProvider::External("file.conv".into()));
+        ns.register("ext", TemplateProvider::External("file.mirror".into()));
         assert!(ns.get_templates("ext").is_none());
     }
 
@@ -2151,7 +2151,7 @@ mod tests {
 
     #[test]
     fn domain_compile_mail_conv() {
-        let dom = compile_grammar(include_str!("../conv/mail.conv"));
+        let dom = compile_grammar(include_str!("../prism/mail.mirror"));
         assert_eq!(dom.domain_name(), "mail");
         // Types
         assert!(dom.has_variant("", "message"));
@@ -2176,9 +2176,9 @@ mod tests {
 
     #[test]
     fn domain_compile_main_conv() {
-        // Compile the actual main.conv — the fixed point: three root grammars
+        // Compile the actual main.mirror — the fixed point: three root grammars
         // compile_grammar picks the first grammar block → @conversation
-        let main_conv = include_str!("../main.conv");
+        let main_conv = include_str!("../main.mirror");
         let dom = compile_grammar(main_conv);
         assert_eq!(dom.domain_name(), "conversation");
         // @conversation { type = grammar | type | action }
@@ -2189,7 +2189,7 @@ mod tests {
 
     #[test]
     fn resolve_catches_bad_grammar_type_ref() {
-        // A .conv source with a bad TypeRef should fail during resolution
+        // A .mirror source with a bad TypeRef should fail during resolution
         let source = "grammar @test {\n  type = when(ops)\n  type op = gt | lt\n}\nin @test\nout r {\n\tx {}\n}\n";
         let ast = Parse.trace(source.to_string()).unwrap();
         let result = resolve_fs(ast).into_result();
@@ -2349,7 +2349,7 @@ mod tests {
 
     #[test]
     fn bootstrap_compiler_grammar_compiles() {
-        let source = include_str!("../bootstrap.conv");
+        let source = include_str!("../bootstrap.mirror");
         let dom = compile_grammar(source);
         assert_eq!(dom.domain_name(), "compiler");
         assert!(dom.has_type(""));
@@ -2360,8 +2360,8 @@ mod tests {
 
     #[test]
     fn bootstrap_two_pass_chain() {
-        // Pass 1: bootstrap.conv → @compiler registered in namespace
-        let bootstrap_src = include_str!("../bootstrap.conv");
+        // Pass 1: bootstrap.mirror → @compiler registered in namespace
+        let bootstrap_src = include_str!("../bootstrap.mirror");
         let namespace = namespace_with_grammar(bootstrap_src, "compiler");
 
         // Pass 2: a grammar with `in @compiler` resolves against that namespace

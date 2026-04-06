@@ -200,7 +200,7 @@ mod tests {
 
     #[test]
     fn parse_non_domain_returns_none() {
-        assert!(DomainInvocation::parse(&["test", "file.conv"]).is_none());
+        assert!(DomainInvocation::parse(&["test", "file.mirror"]).is_none());
     }
 
     #[test]

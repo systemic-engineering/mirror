@@ -280,7 +280,7 @@ mod tests {
         let mut entries: Vec<_> = std::fs::read_dir(&boot_dir)
             .unwrap()
             .filter_map(|e| e.ok())
-            .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("conv"))
+            .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("mirror"))
             .collect();
         entries.sort_by_key(|e| e.path());
 

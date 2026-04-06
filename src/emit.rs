@@ -1,4 +1,4 @@
-//! Emit — project AST back to `.conv` syntax.
+//! Emit — project AST back to `.mirror` syntax.
 //!
 //! The inverse of parse. `parse(emit(ast)) ≡ ast` for crystal keywords.
 //!
@@ -11,7 +11,7 @@
 use crate::ast::AstNode;
 use crate::prism::Prism;
 
-/// Emit a single AST node as `.conv` syntax.
+/// Emit a single AST node as `.mirror` syntax.
 ///
 /// Returns `None` if the node isn't a crystal keyword definition.
 pub fn emit_node(node: &Prism<AstNode>) -> Option<String> {
@@ -65,7 +65,7 @@ pub fn emit_node(node: &Prism<AstNode>) -> Option<String> {
     }
 }
 
-/// Emit an entire AST tree as `.conv` source.
+/// Emit an entire AST tree as `.mirror` source.
 ///
 /// Each top-level child becomes one line. Non-crystal nodes are skipped.
 pub fn emit(tree: &Prism<AstNode>) -> String {
@@ -189,7 +189,7 @@ mod tests {
         }
         for entry in std::fs::read_dir(&resolved_dir).unwrap() {
             let path = entry.unwrap().path();
-            if path.extension().and_then(|x| x.to_str()) != Some("conv") {
+            if path.extension().and_then(|x| x.to_str()) != Some("mirror") {
                 continue;
             }
             let source = std::fs::read_to_string(&path).unwrap();
@@ -212,7 +212,7 @@ mod tests {
         let boot_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot");
         for entry in std::fs::read_dir(&boot_dir).unwrap() {
             let path = entry.unwrap().path();
-            if path.extension().and_then(|x| x.to_str()) != Some("conv") {
+            if path.extension().and_then(|x| x.to_str()) != Some("mirror") {
                 continue;
             }
             let source = std::fs::read_to_string(&path).unwrap();

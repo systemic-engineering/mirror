@@ -1,9 +1,9 @@
 //! mirror — the human interface to the Abyss.
 //!
 //! ```sh
-//! mirror schema.conv ./input     # apply grammar to input
+//! mirror schema.mirror ./input     # apply grammar to input
 //! mirror settle ./src            # loop until convergence
-//! mirror test cogito.conv        # run tests
+//! mirror test cogito.mirror        # run tests
 //! mirror shell                   # REPL
 //! #!/usr/bin/env mirror
 //! ```
@@ -25,7 +25,7 @@ fn main() {
         eprintln!("mirror — fold | prism | traversal | lens | iso");
         eprintln!();
         eprintln!("usage: mirror <grammar> <input>     apply grammar to input");
-        eprintln!("       mirror test <file.conv>      run tests");
+        eprintln!("       mirror test <file.mirror>      run tests");
         eprintln!("       mirror shell [path]           REPL");
         eprintln!("       mirror boot [dir]             boot the garden");
         eprintln!("       mirror fmt [--settle] [--train] <file>  format / settle / train");
@@ -49,7 +49,7 @@ fn main() {
     match positional.first().map(|s| s.as_str()) {
         Some("fmt") => {
             if positional.len() < 2 {
-                eprintln!("usage: mirror fmt [--settle] [--train] <file.conv>");
+                eprintln!("usage: mirror fmt [--settle] [--train] <file.mirror>");
                 process::exit(1);
             }
             let conv_path = positional[1];
@@ -57,7 +57,7 @@ fn main() {
         }
         Some("settle") => {
             if positional.len() < 2 {
-                eprintln!("usage: mirror settle <file.conv|dir>");
+                eprintln!("usage: mirror settle <file.mirror|dir>");
                 process::exit(1);
             }
             let conv_path = positional[1].as_str();
@@ -73,7 +73,7 @@ fn main() {
         }
         Some("test") => {
             if positional.len() < 2 {
-                eprintln!("usage: mirror test <file.conv>");
+                eprintln!("usage: mirror test <file.mirror>");
                 process::exit(1);
             }
             let conv_path = positional[1];
@@ -167,7 +167,7 @@ fn settle_cmd(source: &str, path: &str) {
     use std::collections::hash_map::DefaultHasher;
     use std::hash::{Hash, Hasher};
 
-    // If path is a directory, settle ALL .conv files as lenses on one graph.
+    // If path is a directory, settle ALL .mirror files as lenses on one graph.
     // If path is a file, settle that single file.
     let sources: Vec<(String, String)> = if std::path::Path::new(path).is_dir() {
         let mut entries: Vec<_> = std::fs::read_dir(path)
@@ -176,7 +176,7 @@ fn settle_cmd(source: &str, path: &str) {
                 process::exit(1);
             })
             .filter_map(|e| e.ok())
-            .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("conv"))
+            .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("mirror"))
             .map(|e| {
                 let p = e.path();
                 let s = std::fs::read_to_string(&p).unwrap_or_default();
@@ -659,7 +659,7 @@ fn resolve_cmd() {
             process::exit(1);
         })
         .filter_map(|e| e.ok())
-        .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("conv"))
+        .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("mirror"))
         .collect();
     entries.sort_by_key(|e| e.path());
 
@@ -720,7 +720,7 @@ fn resolve_cmd() {
             -(reduced as i32)
         );
 
-        // Emit back to .conv syntax
+        // Emit back to .mirror syntax
         let output = emit::emit(&resolved_ast);
         let resolved_path = resolved_dir.join(name);
         std::fs::write(&resolved_path, &output).unwrap();
@@ -850,7 +850,7 @@ fn shell(path: &str, resolve: &Resolve) {
             continue;
         }
 
-        // Build a .conv source from the expression
+        // Build a .mirror source from the expression
         let source = format!("out {}\n", line);
 
         let resolved = match Conversation::<Filesystem>::from_source_with(&source, resolve.clone())

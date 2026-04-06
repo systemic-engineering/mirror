@@ -1,0 +1,29 @@
+in @actor
+
+grammar @ai {
+  type = collapse | tension | branch
+
+  type collapse = clear | partial | ambiguous
+
+  type tension = competing | complementary | contradictory
+
+  action project(input: collapse)
+  action coherence(input)
+  action settle(input)
+  action branch(tension: tension)
+  action escalate(tension: tension)
+}
+
+---
+
+test "ai types" {
+  @ai has collapse
+  @ai has tension
+  @ai has branch
+}
+
+test "ai actions" {
+  @ai has act project
+  @ai has act coherence
+  @ai has act settle
+}

@@ -1,0 +1,23 @@
+in @reality
+
+grammar @actor {
+  type = identity | session | signal
+
+  type signal = message | question | insight | work | init | exit
+
+  type visibility = public | protected | private
+
+  action action(input)
+}
+
+---
+
+test "actor types" {
+  @actor has identity
+  @actor has session
+  @actor has signal
+}
+
+test "actor inherits prism" {
+  @actor has act action
+}

@@ -1,0 +1,34 @@
+in @actor
+
+grammar @language {
+  type encounter = focus | project | split | zoom | refract | merge | train
+
+  type singularity = deficit
+  type entanglement = model_weights | reader_weights | visible
+  type fork = session | branch | parallel
+  type depth = deeper | simpler | connected
+  type crystal = gestalt | shatter | permanent
+  type union = crystals | meta_crystal | retrained
+  type trained = weights | loss | delta
+
+  action focus(question) -> singularity
+  action project(singularity) -> entanglement
+  action split(entanglement) -> [fork]
+  action zoom(fork, direction: depth) -> fork
+  action refract(fork) -> crystal
+  action merge([crystal]) -> union
+  action train(union) -> trained
+}
+
+---
+
+test "language encounter types" {
+  @language has encounter
+  @language.encounter has focus
+  @language.encounter has project
+  @language.encounter has split
+  @language.encounter has zoom
+  @language.encounter has refract
+  @language.encounter has merge
+  @language.encounter has train
+}

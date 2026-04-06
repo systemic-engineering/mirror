@@ -1,6 +1,6 @@
 //! mirror — fold | prism | traversal | lens | iso — the thing you look into that looks back.
 //!
-//! `.conv` files → content-addressed AST → compiled modules → verified domains.
+//! `.mirror` files → content-addressed AST → compiled modules → verified domains.
 //!
 //! ## Architecture
 //!

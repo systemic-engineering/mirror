@@ -1,6 +1,6 @@
 //! AST primitives. Span + AstNode.
 //!
-//! The AST is `Prism<AstNode>`. A .conv file parsed is a tree
+//! The AST is `Prism<AstNode>`. A .mirror file parsed is a tree
 //! in the conversation domain. Same type as everything else.
 
 use crate::domain::conversation::Kind;

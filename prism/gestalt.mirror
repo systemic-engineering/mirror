@@ -1,0 +1,27 @@
+in @language
+
+grammar @gestalt {
+  type = profile | loss_map | attention | history | tensions
+
+  type profile = eigenvalues | updated | encounters
+  type loss_map = concept_loss
+  type attention = focus_pattern | zoom_preference | split_frequency | fork_depth
+  type history = crystal
+  type tensions = held | settling | settled
+
+  action read(reader) -> profile
+  action update(profile, crystal) -> profile
+  action fork(profile) -> profile
+  action merge([profile]) -> profile
+  action diff(profile, profile) -> loss_map
+}
+
+---
+
+test "gestalt types" {
+  @gestalt has profile
+  @gestalt has loss_map
+  @gestalt has attention
+  @gestalt has history
+  @gestalt has tensions
+}

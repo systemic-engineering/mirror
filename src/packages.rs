@@ -1,8 +1,8 @@
-//! Package discovery. Find `.conv` packages from a directory.
+//! Package discovery. Find `.mirror` packages from a directory.
 //!
 //! Two file patterns:
-//!   `@name` (no extension) — content IS .conv source
-//!   `name.conv` in a directory — directory package
+//!   `@name` (no extension) — content IS .mirror source
+//!   `name.mirror` in a directory — directory package
 
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -29,7 +29,7 @@ impl PackageRegistry {
     ///
     /// Walks `root` recursively (following symlinks). Two patterns match:
     ///   - `@name` files (no extension): strip `@`, domain = "name"
-    ///   - `name.conv` inside `name/` or `@name/`: domain = "name"
+    ///   - `name.mirror` inside `name/` or `@name/`: domain = "name"
     ///
     /// First-found wins on duplicates.
     pub fn discover(root: &Path) -> Result<Self, String> {
@@ -59,7 +59,7 @@ impl PackageRegistry {
     /// 1. $SELF/private
     /// 2. $SELF/protected
     /// 3. $SELF/public
-    /// 4. $HOME/private      ($HOME = $CONVERSATION_PACKAGES or ~/.conversation)
+    /// 4. $HOME/private      ($HOME = $CONVERSATION_PACKAGES or ~/.mirrorersation)
     /// 5. $HOME/protected
     /// 6. $HOME/public
     /// ```
@@ -148,7 +148,7 @@ impl PackageRegistry {
         if let Ok(dir) = std::env::var("CONVERSATION_PACKAGES") {
             PathBuf::from(dir)
         } else {
-            dirs_home().join(".conversation")
+            dirs_home().join(".mirrorersation")
         }
     }
 }
@@ -194,10 +194,10 @@ fn try_file_package(path: &Path) -> Option<Package> {
     }
 }
 
-/// Try to match `name.conv` inside `name/` or `@name/` directory.
+/// Try to match `name.mirror` inside `name/` or `@name/` directory.
 fn try_dir_package(path: &Path) -> Option<Package> {
     let ext = path.extension()?.to_str()?;
-    if ext != "conv" {
+    if ext != "mirror" {
         return None;
     }
     let stem = path.file_stem()?.to_str()?;
@@ -273,7 +273,7 @@ mod tests {
         let git_dir = dir.path().join("@git");
         fs::create_dir(&git_dir).unwrap();
         fs::write(
-            git_dir.join("git.conv"),
+            git_dir.join("git.mirror"),
             "grammar @git {\n  type = ref | commit | entry | blob\n}\n",
         )
         .unwrap();
@@ -288,7 +288,7 @@ mod tests {
         let glue_dir = dir.path().join("glue");
         fs::create_dir(&glue_dir).unwrap();
         fs::write(
-            glue_dir.join("glue.conv"),
+            glue_dir.join("glue.mirror"),
             "grammar @glue {\n  type = session\n}\n",
         )
         .unwrap();
@@ -302,7 +302,7 @@ mod tests {
         let dir = TempDir::new().unwrap();
         let actual = TempDir::new().unwrap();
         fs::write(
-            actual.path().join("glue.conv"),
+            actual.path().join("glue.mirror"),
             "grammar @glue {\n  type = session\n}\n",
         )
         .unwrap();
@@ -320,14 +320,14 @@ mod tests {
     fn discover_skips_non_conv() {
         let dir = TempDir::new().unwrap();
         fs::write(dir.path().join("README.md"), "# not a package").unwrap();
-        fs::write(dir.path().join("main.conv"), "grammar @x { type = a }").unwrap();
+        fs::write(dir.path().join("main.mirror"), "grammar @x { type = a }").unwrap();
         fs::write(
             dir.path().join("@beam"),
             "grammar @beam {\n  type = process\n}\n",
         )
         .unwrap();
         let registry = PackageRegistry::discover(dir.path()).unwrap();
-        // Should find @beam but not README.md or main.conv (not @-prefixed file)
+        // Should find @beam but not README.md or main.mirror (not @-prefixed file)
         assert_eq!(registry.len(), 1);
         assert!(registry.packages.contains_key("beam"));
     }

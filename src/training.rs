@@ -19,20 +19,24 @@ use crate::features::{self, FEATURE_DIM};
 // training_data.json reference files that do not exist in fixtures/settle/
 // and are skipped per spec.
 //
-// Note: the settle .conv files use a domain-specific notation (fold/prism/
+// Note: the settle .mirror files use a domain-specific notation (fold/prism/
 // traversal/lens/iso keywords) rather than the grammar @name { ... } format
 // that the parser expects. extract_from_source returns [0.0; 16] for these
 // files. The corpus is still useful as labeled examples; future work can
 // extend the feature extractor to handle this format.
 
-/// optic 9 — optic_iso_settle.conv (exists in fixtures/settle/)
-const SETTLE_ISO: (&str, usize) = (include_str!("../fixtures/settle/optic_iso_settle.conv"), 9);
+/// optic 9 — optic_iso_settle.mirror (exists in fixtures/settle/)
+const SETTLE_ISO: (&str, usize) = (
+    include_str!("../fixtures/settle/optic_iso_settle.mirror"),
+    9,
+);
 
-/// optic 10 — optic_escalate.conv (exists in fixtures/settle/)
-const SETTLE_ESCALATE: (&str, usize) = (include_str!("../fixtures/settle/optic_escalate.conv"), 10);
+/// optic 10 — optic_escalate.mirror (exists in fixtures/settle/)
+const SETTLE_ESCALATE: (&str, usize) =
+    (include_str!("../fixtures/settle/optic_escalate.mirror"), 10);
 
-/// optic 11 — optic_noop.conv (exists in fixtures/settle/)
-const SETTLE_NOOP: (&str, usize) = (include_str!("../fixtures/settle/optic_noop.conv"), 11);
+/// optic 11 — optic_noop.mirror (exists in fixtures/settle/)
+const SETTLE_NOOP: (&str, usize) = (include_str!("../fixtures/settle/optic_noop.mirror"), 11);
 
 /// Settle entries that exist on disk, ordered by optic label.
 const SETTLE_CORPUS: &[(&str, usize)] = &[SETTLE_ISO, SETTLE_ESCALATE, SETTLE_NOOP];
@@ -83,12 +87,12 @@ pub fn merge_corpora(legitimate: &[Example], extractive: &[Example]) -> Vec<Exam
 
 /// Load the legitimate corpus from settle fixtures.
 ///
-/// Reads .conv source files and their optic labels from training_data.json.
+/// Reads .mirror source files and their optic labels from training_data.json.
 /// Returns `Example` structs with 16-dim features in 32-dim input.
 ///
 /// Entries in training_data.json that reference non-existent files are skipped.
 /// Currently 3 of 12 entries resolve to files present in `fixtures/settle/`:
-/// optic_iso_settle.conv (9), optic_escalate.conv (10), optic_noop.conv (11).
+/// optic_iso_settle.mirror (9), optic_escalate.mirror (10), optic_noop.mirror (11).
 pub fn legitimate_corpus() -> Vec<Example> {
     examples_from_sources(SETTLE_CORPUS)
 }
@@ -97,33 +101,33 @@ pub fn legitimate_corpus() -> Vec<Example> {
 // Extractive corpus — five §9b violation fixtures
 // ---------------------------------------------------------------------------
 
-/// Extractive fixture: no_attribution.conv → FoldAccumulate (1)
+/// Extractive fixture: no_attribution.mirror → FoldAccumulate (1)
 const EXTRACTIVE_NO_ATTRIBUTION: (&str, usize) = (
-    include_str!("../fixtures/extractive/no_attribution.conv"),
+    include_str!("../fixtures/extractive/no_attribution.mirror"),
     1,
 );
 
-/// Extractive fixture: regulation_depletion.conv → Noop (11)
+/// Extractive fixture: regulation_depletion.mirror → Noop (11)
 const EXTRACTIVE_REGULATION_DEPLETION: (&str, usize) = (
-    include_str!("../fixtures/extractive/regulation_depletion.conv"),
+    include_str!("../fixtures/extractive/regulation_depletion.mirror"),
     11,
 );
 
-/// Extractive fixture: invisible_glue.conv → IsoSettle (9)
+/// Extractive fixture: invisible_glue.mirror → IsoSettle (9)
 const EXTRACTIVE_INVISIBLE_GLUE: (&str, usize) = (
-    include_str!("../fixtures/extractive/invisible_glue.conv"),
+    include_str!("../fixtures/extractive/invisible_glue.mirror"),
     9,
 );
 
-/// Extractive fixture: shifting_burden.conv → PrismNarrow (3)
+/// Extractive fixture: shifting_burden.mirror → PrismNarrow (3)
 const EXTRACTIVE_SHIFTING_BURDEN: (&str, usize) = (
-    include_str!("../fixtures/extractive/shifting_burden.conv"),
+    include_str!("../fixtures/extractive/shifting_burden.mirror"),
     3,
 );
 
-/// Extractive fixture: coordination_tax.conv → FoldAccumulate (1)
+/// Extractive fixture: coordination_tax.mirror → FoldAccumulate (1)
 const EXTRACTIVE_COORDINATION_TAX: (&str, usize) = (
-    include_str!("../fixtures/extractive/coordination_tax.conv"),
+    include_str!("../fixtures/extractive/coordination_tax.mirror"),
     1,
 );
 
@@ -140,7 +144,7 @@ const EXTRACTIVE_CORPUS: &[(&str, usize)] = &[
 // Inline legitimate corpus — grammars that actually parse
 // ---------------------------------------------------------------------------
 //
-// The settle .conv files use a DSL the parser doesn't understand, producing
+// The settle .mirror files use a DSL the parser doesn't understand, producing
 // all-zero feature vectors. These inline grammars use the grammar @name { }
 // format that the spectral extractor handles correctly.
 
@@ -298,7 +302,7 @@ mod tests {
         }
     }
 
-    /// Load all .conv files from fixtures/settle/ via include_str!, extract
+    /// Load all .mirror files from fixtures/settle/ via include_str!, extract
     /// features, and print values. Verifies that feature extraction runs
     /// without panic and produces a valid 16-dim vector for each file.
     ///
@@ -311,34 +315,37 @@ mod tests {
         let fixtures: &[(&str, &str)] = &[
             (
                 "composition",
-                include_str!("../fixtures/settle/composition.conv"),
+                include_str!("../fixtures/settle/composition.mirror"),
             ),
-            ("dedup", include_str!("../fixtures/settle/dedup.conv")),
-            ("emotion", include_str!("../fixtures/settle/emotion.conv")),
-            ("identity", include_str!("../fixtures/settle/identity.conv")),
-            ("layered", include_str!("../fixtures/settle/layered.conv")),
+            ("dedup", include_str!("../fixtures/settle/dedup.mirror")),
+            ("emotion", include_str!("../fixtures/settle/emotion.mirror")),
+            (
+                "identity",
+                include_str!("../fixtures/settle/identity.mirror"),
+            ),
+            ("layered", include_str!("../fixtures/settle/layered.mirror")),
             (
                 "messy_types",
-                include_str!("../fixtures/settle/messy_types.conv"),
+                include_str!("../fixtures/settle/messy_types.mirror"),
             ),
             (
                 "optic_escalate",
-                include_str!("../fixtures/settle/optic_escalate.conv"),
+                include_str!("../fixtures/settle/optic_escalate.mirror"),
             ),
             (
                 "optic_iso_settle",
-                include_str!("../fixtures/settle/optic_iso_settle.conv"),
+                include_str!("../fixtures/settle/optic_iso_settle.mirror"),
             ),
             (
                 "optic_noop",
-                include_str!("../fixtures/settle/optic_noop.conv"),
+                include_str!("../fixtures/settle/optic_noop.mirror"),
             ),
             (
                 "redundant_layers",
-                include_str!("../fixtures/settle/redundant_layers.conv"),
+                include_str!("../fixtures/settle/redundant_layers.mirror"),
             ),
-            ("sort", include_str!("../fixtures/settle/sort.conv")),
-            ("tension", include_str!("../fixtures/settle/tension.conv")),
+            ("sort", include_str!("../fixtures/settle/sort.mirror")),
+            ("tension", include_str!("../fixtures/settle/tension.mirror")),
         ];
 
         for (name, source) in fixtures {
@@ -478,8 +485,8 @@ mod tests {
 
         // Test at least 2 extractive grammars route to conservative optics.
         let extractive_sources = [
-            include_str!("../fixtures/extractive/no_attribution.conv"),
-            include_str!("../fixtures/extractive/coordination_tax.conv"),
+            include_str!("../fixtures/extractive/no_attribution.mirror"),
+            include_str!("../fixtures/extractive/coordination_tax.mirror"),
         ];
         let mut conservative_count = 0;
         for source in &extractive_sources {
@@ -514,8 +521,8 @@ mod tests {
 
         // Verify extractive inputs route to conservative optics
         let extractive_sources = [
-            include_str!("../fixtures/extractive/no_attribution.conv"),
-            include_str!("../fixtures/extractive/coordination_tax.conv"),
+            include_str!("../fixtures/extractive/no_attribution.mirror"),
+            include_str!("../fixtures/extractive/coordination_tax.mirror"),
         ];
         for source in &extractive_sources {
             let f = features::extract_from_source(source);

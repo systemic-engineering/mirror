@@ -222,8 +222,8 @@ mod tests {
     fn extractive_grammars_low_coherence() {
         let echo = default_echo();
         let sources = [
-            include_str!("../fixtures/extractive/no_attribution.conv"),
-            include_str!("../fixtures/extractive/coordination_tax.conv"),
+            include_str!("../fixtures/extractive/no_attribution.mirror"),
+            include_str!("../fixtures/extractive/coordination_tax.mirror"),
         ];
         for source in &sources {
             let f = crate::features::extract_from_source(source);

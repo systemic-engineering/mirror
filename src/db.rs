@@ -85,8 +85,8 @@ pub fn cli(args: &[String]) {
     use std::process;
 
     if args.is_empty() {
-        eprintln!("usage: mirror db init <path> <schema.conv>");
-        eprintln!("       mirror db insert <path> <source.conv>");
+        eprintln!("usage: mirror db init <path> <schema.mirror>");
+        eprintln!("       mirror db insert <path> <source.mirror>");
         eprintln!("       mirror db get <path> <oid>");
         eprintln!("       mirror db status <path>");
         process::exit(1);
@@ -95,7 +95,7 @@ pub fn cli(args: &[String]) {
     match args[0].as_str() {
         "init" => {
             if args.len() < 3 {
-                eprintln!("usage: mirror db init <path> <schema.conv>");
+                eprintln!("usage: mirror db init <path> <schema.mirror>");
                 process::exit(1);
             }
             let store_path = format!("{}/.frgmnt", args[1]);
@@ -119,7 +119,7 @@ pub fn cli(args: &[String]) {
         }
         "insert" => {
             if args.len() < 3 {
-                eprintln!("usage: mirror db insert <path> <source.conv>");
+                eprintln!("usage: mirror db insert <path> <source.mirror>");
                 process::exit(1);
             }
             let store_path = format!("{}/.frgmnt", args[1]);
