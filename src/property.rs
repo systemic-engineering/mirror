@@ -992,12 +992,14 @@ mod tests {
                 .unwrap()
                 .join("garden/public/@training/training.mirror"),
         )
-        .or_else(|_| std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .parent()
-                .unwrap()
-                .join("garden/public/@training/training.conv"),
-        ))
+        .or_else(|_| {
+            std::fs::read_to_string(
+                std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                    .parent()
+                    .unwrap()
+                    .join("garden/public/@training/training.conv"),
+            )
+        })
         .expect("garden @training should exist (.mirror or .conv)");
 
         // Split on --- separator
@@ -1055,12 +1057,14 @@ mod tests {
                 .unwrap()
                 .join("garden/public/@training/training.mirror"),
         )
-        .or_else(|_| std::fs::read_to_string(
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                .parent()
-                .unwrap()
-                .join("garden/public/@training/training.conv"),
-        ))
+        .or_else(|_| {
+            std::fs::read_to_string(
+                std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                    .parent()
+                    .unwrap()
+                    .join("garden/public/@training/training.conv"),
+            )
+        })
         .expect("garden @training should exist (.mirror or .conv)");
 
         // Split on --- separator

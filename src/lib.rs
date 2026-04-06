@@ -66,6 +66,7 @@ pub mod db;
 pub mod domain_dispatch;
 
 pub mod features;
+pub mod gestalt;
 pub mod ghost;
 pub mod model;
 pub mod runtime;
