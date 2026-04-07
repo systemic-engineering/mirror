@@ -1,0 +1,25 @@
+focus id
+
+prism @(id) {
+  focus prism
+  project prism
+  split prism
+  zoom prism
+  refract prism
+}
+
+prism @prism {
+  focus focus
+  project project
+  split split
+  zoom zoom
+  refract refract
+}
+
+project in(prism)
+project out(prism)
+
+out in
+out id
+out @
+out @prism

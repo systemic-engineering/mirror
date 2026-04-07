@@ -1,0 +1,23 @@
+in @prism
+in @meta
+
+type actor(id)
+type state(type)
+type process(actor, state)
+type message = call(actor, ref) | cast(actor, ref)
+
+prism @actor {
+  type start_opts(tbd)
+
+  focus actor
+  project process(actor)
+  split start(process, start_opts)
+  zoom send(process, message)
+  refract exit(process)
+}
+
+out actor
+out state
+out process
+out message
+out @actor
