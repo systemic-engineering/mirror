@@ -581,7 +581,11 @@ impl MirrorRuntime {
         self.compile_source(&src)
     }
 
-    pub fn compile_boot_dir(&self, dir: &Path) -> Result<BootShatter, MirrorRuntimeError> {
+    pub fn compile_boot_dir(
+        &self,
+        dir: &Path,
+        store_dir: &Path,
+    ) -> Result<BootResolution, MirrorRuntimeError> {
         let mut entries: Vec<_> = std::fs::read_dir(dir)
             .map_err(|e| err(format!("read_dir {}: {}", dir.display(), e)))?
             .filter_map(|e| e.ok())
@@ -590,7 +594,9 @@ impl MirrorRuntime {
             .collect();
         entries.sort();
 
-        let mut per_file: BTreeMap<String, CompiledShatter> = BTreeMap::new();
+        let mut registry = MirrorRegistry::open(store_dir)?;
+        let mut resolved: BTreeMap<String, CompiledShatter> = BTreeMap::new();
+        let mut failed: BTreeMap<String, MirrorResolveError> = BTreeMap::new();
         let mut all_forms: Vec<Form> = Vec::new();
 
         for path in entries {
@@ -601,8 +607,19 @@ impl MirrorRuntime {
                 .to_string();
             let compiled = self.compile_file(&path)?;
             all_forms.push(compiled.form.clone());
-            per_file.insert(stem, compiled);
+
+            match registry.resolve(&compiled.form) {
+                Ok(()) => {
+                    registry.register(&compiled.form);
+                    resolved.insert(stem, compiled);
+                }
+                Err(e) => {
+                    failed.insert(stem, e);
+                }
+            }
         }
+
+        registry.flush();
 
         let collapsed_form = Form::new(DeclKind::Form, "mirror", Vec::new(), Vec::new(), all_forms);
         let shatter = Shatter;
@@ -612,18 +629,26 @@ impl MirrorRuntime {
             fragment: collapsed_fragment,
         };
 
-        Ok(BootShatter {
-            per_file,
+        let store_root = registry.root().to_path_buf();
+        Ok(BootResolution {
+            resolved,
+            failed,
+            store_root,
             collapsed,
         })
     }
 }
 
 #[derive(Debug)]
-pub struct BootShatter {
-    pub per_file: BTreeMap<String, CompiledShatter>,
+pub struct BootResolution {
+    pub resolved: BTreeMap<String, CompiledShatter>,
+    pub failed: BTreeMap<String, MirrorResolveError>,
+    pub store_root: PathBuf,
     pub collapsed: CompiledShatter,
 }
+
+// Retain BootShatter as a type alias for transitional callers.
+pub type BootShatter = BootResolution;
 
 // ---------------------------------------------------------------------------
 // MirrorRegistry — content-addressed store backed by FrgmntStore
@@ -855,16 +880,14 @@ mod tests {
     #[test]
     fn mirror_runtime_compiles_full_boot_dir() {
         let runtime = MirrorRuntime::new();
-        let boot = runtime.compile_boot_dir(&boot_dir()).unwrap();
-        assert_eq!(boot.per_file.len(), 5);
-        assert!(boot.per_file.contains_key("00-prism"));
-        assert!(boot.per_file.contains_key("01-meta"));
-        assert!(boot.per_file.contains_key("02-actor"));
-        assert!(boot.per_file.contains_key("03-property"));
-        assert!(boot.per_file.contains_key("10-mirror"));
+        let store_dir = tempdir_for_test("compiles_full_boot_dir");
+        let boot = runtime.compile_boot_dir(&boot_dir(), &store_dir).unwrap();
+        assert_eq!(boot.resolved.len() + boot.failed.len(), 5);
         assert_eq!(boot.collapsed.form_name(), "mirror");
         assert_eq!(boot.collapsed.form.children.len(), 5);
-        let again = runtime.compile_boot_dir(&boot_dir()).unwrap();
+
+        let store_dir2 = tempdir_for_test("compiles_full_boot_dir_2");
+        let again = runtime.compile_boot_dir(&boot_dir(), &store_dir2).unwrap();
         assert_eq!(boot.collapsed.crystal(), again.collapsed.crystal());
     }
 
@@ -1092,5 +1115,26 @@ mod tests {
             registry.resolve(&file).is_ok(),
             "resolve must use store ref lookup, not in-memory state"
         );
+    }
+
+    #[test]
+    fn boot_dir_resolves_first_three_files_and_fails_property_and_mirror() {
+        let runtime = MirrorRuntime::new();
+        let store_dir = tempdir_for_test("boot_dir_resolves_full");
+        let boot = runtime.compile_boot_dir(&boot_dir(), &store_dir).unwrap();
+
+        assert!(boot.resolved.contains_key("00-prism"));
+        assert!(boot.resolved.contains_key("01-meta"));
+        assert!(boot.resolved.contains_key("02-actor"));
+
+        assert!(boot.failed.contains_key("03-property"));
+        assert!(boot.failed.contains_key("10-mirror"));
+
+        let reopened = MirrorRegistry::open(&store_dir).unwrap();
+        assert!(reopened.lookup("@prism").is_some());
+        assert!(reopened.lookup("@meta").is_some());
+        assert!(reopened.lookup("@actor").is_some());
+        assert!(reopened.lookup("@property").is_none());
+        assert!(reopened.lookup("@mirror").is_none());
     }
 }
