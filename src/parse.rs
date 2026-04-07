@@ -1954,28 +1954,8 @@ mod tests {
         assert_eq!(select.children()[1].data().value, "$corpus");
     }
 
-    // -- Full file parse --
-
-    #[test]
-    fn parse_full_conv_file() {
-        let source = include_str!("../systemic.engineering.mirror").to_string();
-        let tree = Parse.trace(source).unwrap();
-
-        // Root has children: In, Template, Out
-        let children = tree.children();
-        let in_node = children.iter().find(|c| c.data().is_decl("in")).unwrap();
-        assert_eq!(in_node.data().value, "@filesystem");
-
-        let tmpl = children
-            .iter()
-            .find(|c| c.data().is_decl("template"))
-            .unwrap();
-        assert_eq!(tmpl.data().value, "$corpus");
-        assert_eq!(tmpl.children().len(), 4); // slug, excerpt, headlines, html
-
-        let out = children.iter().find(|c| c.data().is_decl("out")).unwrap();
-        assert_eq!(out.data().value, "blog");
-    }
+    // (parse_full_conv_file deleted 2026-04-07: tested OLD pipeline against
+    // systemic.engineering.mirror at the crate root, both vestigial.)
 
     // -- Error paths --
 
@@ -3555,22 +3535,8 @@ grammar @conversation {
         assert_eq!(extends.len(), 0, "expected no extends refs");
     }
 
-    #[test]
-    fn parse_grammar_fixture() {
-        let source = include_str!("../main.mirror");
-        let tree = Parse.trace(source.to_string()).unwrap();
-        // main.mirror: four root grammars — @conversation, @prism, @lens, @test
-        let grammars: Vec<_> = tree
-            .children()
-            .iter()
-            .filter(|c| c.data().is_decl("grammar"))
-            .collect();
-        assert_eq!(grammars.len(), 4);
-        assert_eq!(grammars[0].data().value, "@conversation");
-        assert_eq!(grammars[1].data().value, "@prism");
-        assert_eq!(grammars[2].data().value, "@lens");
-        assert_eq!(grammars[3].data().value, "@test");
-    }
+    // (parse_grammar_fixture deleted 2026-04-07: tested OLD pipeline against
+    // main.mirror at the crate root, both vestigial.)
 
     #[test]
     fn parse_requires_in_grammar() {

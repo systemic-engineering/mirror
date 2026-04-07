@@ -22,8 +22,8 @@ use mirror::mirror_runtime::{emit_form, parse_form, Form, MirrorRuntime};
 
 use coincidence::declaration::DeclKind;
 
-use fate::{Features, Model, FEATURE_DIM};
 use fate::runtime::FateRuntime;
+use fate::{Features, Model, FEATURE_DIM};
 
 // ---------------------------------------------------------------------------
 // Usage
@@ -244,7 +244,11 @@ fn cmd_query(query_src: &str, file: &str, compile_target: Option<&str>) -> ! {
         "mirror: query parsed as form `{}`, target parsed as form `{}` — \
          applying form-as-operation semantics is TBD; the runtime does not \
          yet implement this.",
-        if query_form.name.is_empty() { "<anon>" } else { &query_form.name },
+        if query_form.name.is_empty() {
+            "<anon>"
+        } else {
+            &query_form.name
+        },
         compiled.form_name(),
     );
     process::exit(2);
@@ -362,7 +366,14 @@ fn selection_form(input_name: &str, from: Model, to: Model) -> Form {
         vec![],
         vec![],
         vec![
-            child("input", if input_name.is_empty() { "<anon>" } else { input_name }),
+            child(
+                "input",
+                if input_name.is_empty() {
+                    "<anon>"
+                } else {
+                    input_name
+                },
+            ),
             child("from", model_name(from)),
             child("next", model_name(to)),
         ],
@@ -410,8 +421,7 @@ fn cmd_ai(
     if let Some(cap) = capture {
         let input_oid = form_oid(&form);
         let output_oid = form_oid(&result);
-        let shatter_text =
-            format_chain_shatter(&accumulated_chain, &input_oid, &output_oid);
+        let shatter_text = format_chain_shatter(&accumulated_chain, &input_oid, &output_oid);
         if let Err(e) = std::fs::write(cap, &shatter_text) {
             eprintln!("mirror: write capture {}: {}", cap, e);
             process::exit(1);
@@ -584,7 +594,13 @@ fn main() {
             None => (Model::Fate, &positional[..]),
         };
         let file = resolve_file_arg(file_args);
-        cmd_ai(starting, file.as_deref(), out.as_deref(), train, capture.as_deref());
+        cmd_ai(
+            starting,
+            file.as_deref(),
+            out.as_deref(),
+            train,
+            capture.as_deref(),
+        );
     }
 
     // `compile <file>`

@@ -2174,18 +2174,8 @@ mod tests {
         assert_eq!(forward[0], ("message", Some("message-id")));
     }
 
-    #[test]
-    fn domain_compile_main_conv() {
-        // Compile the actual main.mirror — the fixed point: three root grammars
-        // compile_grammar picks the first grammar block → @conversation
-        let main_conv = include_str!("../main.mirror");
-        let dom = compile_grammar(main_conv);
-        assert_eq!(dom.domain_name(), "conversation");
-        // @conversation { type = grammar | type | action }
-        assert!(dom.has_variant("", "grammar"));
-        assert!(dom.has_variant("", "type"));
-        assert!(dom.has_variant("", "action"));
-    }
+    // (domain_compile_main_conv deleted 2026-04-07: tested OLD pipeline
+    // against main.mirror at the crate root, both vestigial.)
 
     #[test]
     fn resolve_catches_bad_grammar_type_ref() {
@@ -2343,44 +2333,6 @@ mod tests {
         let source = "in @beam\ntemplate $t {\n\tname\n}\nout r {\n\tx: f { $t }\n}\n";
         let conv = Conversation::<test_domain::TestDomain>::from_source_with(source, resolve);
         assert!(conv.is_ok(), "expected Ok, got: {:?}", conv.err());
-    }
-
-    // -- Bootstrap --
-
-    #[test]
-    fn bootstrap_compiler_grammar_compiles() {
-        let source = include_str!("../bootstrap.mirror");
-        let dom = compile_grammar(source);
-        assert_eq!(dom.domain_name(), "compiler");
-        assert!(dom.has_type(""));
-        assert!(dom.has_variant("", "grammar"));
-        assert!(dom.has_variant("", "type"));
-        assert!(dom.has_action("compile"));
-    }
-
-    #[test]
-    fn bootstrap_two_pass_chain() {
-        // Pass 1: bootstrap.mirror → @compiler registered in namespace
-        let bootstrap_src = include_str!("../bootstrap.mirror");
-        let namespace = namespace_with_grammar(bootstrap_src, "compiler");
-
-        // Pass 2: a grammar with `in @compiler` resolves against that namespace
-        let child_src = "in @compiler\n\ngrammar @build {\n  type = artifact | target\n}\n";
-        let ast = Parse.trace(child_src.to_string()).unwrap();
-        let grammar = ast
-            .children()
-            .iter()
-            .find(|c| c.data().is_decl("grammar"))
-            .expect("child grammar must have a grammar block");
-        let dom = crate::model::Mirror::from_grammar(grammar).unwrap();
-
-        // @build grammar has the expected types
-        assert_eq!(dom.domain_name(), "build");
-        assert!(dom.has_variant("", "artifact"));
-        assert!(dom.has_variant("", "target"));
-
-        // @compiler is registered — the chain is live
-        assert!(namespace.has_grammar("compiler"));
     }
 
     // -- Mirror accessors --

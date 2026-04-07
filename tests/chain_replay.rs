@@ -136,7 +136,8 @@ fn chain_replay_matches_live_pipeline() {
 
     // 5. THE INVARIANT: replay is bit-for-bit identical to the live pipeline.
     assert_eq!(
-        live_out, replayed_out,
+        live_out,
+        replayed_out,
         "replay output must be byte-identical to live pipeline output.\n\
          live: {:?}\n\
          replay: {:?}",

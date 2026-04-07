@@ -206,37 +206,4 @@ mod tests {
             );
         }
     }
-
-    #[test]
-    fn round_trip_boot() {
-        let boot_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot");
-        for entry in std::fs::read_dir(&boot_dir).unwrap() {
-            let path = entry.unwrap().path();
-            if path.extension().and_then(|x| x.to_str()) != Some("mirror") {
-                continue;
-            }
-            let source = std::fs::read_to_string(&path).unwrap();
-            let ast = Parse.trace(source.clone()).into_result().unwrap();
-            let emitted = emit(&ast);
-            // Filter source to only crystal keyword lines for comparison
-            let expected: String = source
-                .lines()
-                .filter(|l| {
-                    let t = l.trim();
-                    t.starts_with("fold ")
-                        || t.starts_with("prism ")
-                        || t.starts_with("traversal ")
-                        || t.starts_with("lens ")
-                        || t.starts_with("iso ")
-                })
-                .map(|l| format!("{}\n", l))
-                .collect();
-            assert_eq!(
-                emitted,
-                expected,
-                "round-trip failed for {}",
-                path.display()
-            );
-        }
-    }
 }

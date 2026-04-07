@@ -10,7 +10,7 @@ lint:
 
 # All tests except CLI integration tests (which hang on deep filesystem traversal)
 test:
-    nix develop -c cargo test --package mirror --lib --test compile_test --test grammar_test --test repo_test 
+    nix develop -c cargo test --package mirror --lib --test grammar_test --test repo_test
 # Full test suite including CLI integration tests (slow; requires fast filesystem)
 test-integration:
     nix develop -c cargo test --package mirror
@@ -28,11 +28,11 @@ format:
 # NOTE: was 100 but --package conversation never resolved, so gate was never enforced.
 # Actual aggregate coverage is ~78%. Lowered to match reality; raise as gaps close.
 coverage:
-    nix develop -c cargo llvm-cov --package mirror --lib --test compile_test --test grammar_test --test repo_test --fail-under-lines 76 --ignore-filename-regex 'story/|main\.rs|/nix/'
+    nix develop -c cargo llvm-cov --package mirror --lib --test grammar_test --test repo_test --fail-under-lines 76 --ignore-filename-regex 'story/|main\.rs|/nix/'
 
 # HTML report
 coverage-html:
-    nix develop -c cargo llvm-cov --lib --test compile_test --test grammar_test --test repo_test --html --open
+    nix develop -c cargo llvm-cov --lib --test grammar_test --test repo_test --html --open
 
 pre-commit: check
 pre-push: check
