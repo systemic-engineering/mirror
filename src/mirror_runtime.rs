@@ -967,4 +967,94 @@ mod tests {
         let restored = shatter.decompile(&stored);
         assert_eq!(restored.name, "@prism");
     }
+
+    #[test]
+    fn registry_resolves_in_reference_when_target_in_store() {
+        let tmp = tempdir_for_test("registry_resolves_in");
+        let mut registry = MirrorRegistry::open(&tmp).unwrap();
+
+        let prism_form = Form::new(
+            DeclKind::Prism,
+            "@prism",
+            Vec::new(),
+            Vec::new(),
+            Vec::new(),
+        );
+        registry.register(&prism_form);
+
+        let file = Form::new(
+            DeclKind::Form,
+            "",
+            Vec::new(),
+            Vec::new(),
+            vec![Form::new(
+                DeclKind::In,
+                "@prism",
+                Vec::new(),
+                Vec::new(),
+                Vec::new(),
+            )],
+        );
+        assert!(registry.resolve(&file).is_ok());
+    }
+
+    #[test]
+    fn registry_resolve_fails_when_in_target_missing() {
+        let tmp = tempdir_for_test("registry_resolve_missing");
+        let registry = MirrorRegistry::open(&tmp).unwrap();
+        let file = Form::new(
+            DeclKind::Form,
+            "",
+            Vec::new(),
+            Vec::new(),
+            vec![Form::new(
+                DeclKind::In,
+                "@nonexistent",
+                Vec::new(),
+                Vec::new(),
+                Vec::new(),
+            )],
+        );
+        let err = registry.resolve(&file).unwrap_err();
+        assert!(
+            err.0.contains("@nonexistent"),
+            "error message should mention the missing form: {}",
+            err.0
+        );
+    }
+
+    #[test]
+    fn registry_resolve_uses_disk_after_reopen() {
+        let tmp = tempdir_for_test("registry_resolve_disk");
+        {
+            let mut registry = MirrorRegistry::open(&tmp).unwrap();
+            let prism_form = Form::new(
+                DeclKind::Prism,
+                "@prism",
+                Vec::new(),
+                Vec::new(),
+                Vec::new(),
+            );
+            registry.register(&prism_form);
+            registry.flush();
+        }
+        let registry = MirrorRegistry::open(&tmp).unwrap();
+        let file = Form::new(
+            DeclKind::Form,
+            "",
+            Vec::new(),
+            Vec::new(),
+            vec![Form::new(
+                DeclKind::In,
+                "@prism",
+                Vec::new(),
+                Vec::new(),
+                Vec::new(),
+            )],
+        );
+        assert!(
+            registry.resolve(&file).is_ok(),
+            "resolve must use store ref lookup, not in-memory state"
+        );
+    }
 }
