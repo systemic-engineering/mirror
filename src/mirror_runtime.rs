@@ -849,4 +849,75 @@ mod tests {
         assert!(tmp.join("objects").exists());
         assert!(tmp.join("refs").exists());
     }
+
+    #[test]
+    fn registry_registers_named_form_into_store() {
+        let tmp = tempdir_for_test("registry_registers_named");
+        let mut registry = MirrorRegistry::open(&tmp).unwrap();
+
+        let form = Form::new(
+            DeclKind::Prism,
+            "@prism",
+            Vec::new(),
+            Vec::new(),
+            vec![Form::new(
+                DeclKind::Prism,
+                "focus",
+                Vec::new(),
+                Vec::new(),
+                Vec::new(),
+            )],
+        );
+        registry.register(&form);
+
+        let stored = registry.lookup("@prism").expect("@prism in registry");
+        let shatter = Shatter;
+        let restored = shatter.decompile(&stored);
+        assert_eq!(restored.name, "@prism");
+        assert_eq!(restored.children.len(), 1);
+        assert_eq!(restored.children[0].name, "focus");
+    }
+
+    #[test]
+    fn registry_registers_only_at_named_top_level_forms() {
+        let tmp = tempdir_for_test("registry_registers_only_at");
+        let mut registry = MirrorRegistry::open(&tmp).unwrap();
+
+        // A name without @-prefix should NOT become a form binding.
+        let form = Form::new(
+            DeclKind::Prism,
+            "id",
+            Vec::new(),
+            Vec::new(),
+            Vec::new(),
+        );
+        registry.register(&form);
+        assert!(registry.lookup("id").is_none());
+        assert!(registry.lookup("@id").is_none());
+    }
+
+    #[test]
+    fn registry_persists_across_reopen() {
+        let tmp = tempdir_for_test("registry_persists");
+        {
+            let mut registry = MirrorRegistry::open(&tmp).unwrap();
+            let form = Form::new(
+                DeclKind::Prism,
+                "@prism",
+                Vec::new(),
+                Vec::new(),
+                Vec::new(),
+            );
+            registry.register(&form);
+            registry.flush();
+        }
+        // Reopen — cache is gone, but the disk + refs persist.
+        let registry = MirrorRegistry::open(&tmp).unwrap();
+        let stored = registry
+            .lookup("@prism")
+            .expect("@prism survives reopen via disk");
+        let shatter = Shatter;
+        let restored = shatter.decompile(&stored);
+        assert_eq!(restored.name, "@prism");
+    }
 }
