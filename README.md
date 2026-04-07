@@ -1,141 +1,180 @@
-# conversation
+# mirror
 
-> **Pre-v0.1** — This project is in active development. APIs, file formats,
-> and architecture may change without notice. Not yet suitable for production use.
+> Pre-v0.1. The shapes are stable enough to document. The implementation is
+> not stable enough to depend on.
 
-![Coverage](https://img.shields.io/badge/coverage-100%25_lines-brightgreen)
-![Tests](https://img.shields.io/badge/tests-599_passing-brightgreen)
-![License](https://img.shields.io/badge/license-systemic.engineering-blue)
+A self-hosting language whose programs are inferred chains of model
+invocations, compiled to spectral content-addressed artifacts. `prism` is
+the only hardcoded keyword. Everything else is declared in source.
 
-Stories over trees.
+```
+mirror compile boot/00-form.mirror
+```
 
-A typed transformation pipeline language. `.conv` files describe desired state.
-The Rust parser produces a `Prism<AstNode>`. The BEAM runtime converges toward it.
+## What it is
 
-## Roadmap
+A `.mirror` file describes a *form*: a typed declaration tree built from a
+small fixed vocabulary of optic operations (focus, project, split, zoom,
+refract) plus declared types, lenses, properties, and boundaries. The
+compiler turns the file into a `Shatter` — a content-addressed trajectory
+in a five-dimensional spectral hash space — and writes it to disk as
+`<file>.shatter`.
 
-[`docs/roadmap/README.md`](docs/roadmap/README.md) — milestones, current focus, the three-crate architecture.
+The compilation primitive is `MirrorFragment`, a
+`Fractal<MirrorData, CoincidenceHash<5>>` defined in the `coincidence`
+crate. Round-trip is exact: parse → emit → parse yields identical content
+OIDs because the OID is derived from `MirrorData::encode()` and recursive
+child OIDs.
+
+`prism` is the only keyword the parser hardcodes. The other declaration
+words (`form`, `lens`, `fold`, `traversal`, `iso`, `property`, `requires`,
+`invariant`, `ensures`, `in`, `type`, `boundary`, `setter`, and the five
+prism operations) are vocabulary items declared in the standard library at
+`boot/00-form.mirror` through `boot/06-mirror.mirror`. They are recognized
+by the parser as content-address tags — recorded, not interpreted.
 
 ## Architecture
 
 ```
-main.conv ──→ [Rust] ──→ Prism (projection matrix)
-                              │
-                    git commit to .git/refs/conversation/<branch>
-                    author: conversation@systemic.engineering
-                              │
-                             OID ──→ [BEAM]
-                              │
-                    [Fortran NIF] ← matmul, preview, review, modify, compose
+parse        .mirror source           → Form (typed declaration tree)
+runtime      Form                     → MirrorFragment (content-addressed)
+shatter      Form ↔ MirrorFragment    via Prism trait (focus / project /
+                                       split / zoom / refract)
+emit         CompiledShatter          → <file>.shatter on disk
 ```
 
-**Rust** (`src/`): Parses `.conv` source into a `Prism<AstNode>` (projection matrix),
-generates the Fortran wiring + NIF bridge for matrix operations, commits the Prism
-to `.git/refs/conversation/<branch>` as `conversation@systemic.engineering`, and
-hands the OID to the BEAM. The branch is a Lens in the Prism pointing to HEAD.
+The compilation pipeline lives in `src/mirror_runtime.rs`:
 
-**Fortran**: Basic linear algebra on the Prism. The matrix never leaves its native
-representation — no ETF, no JSON, no lossy intermediate format. Rust generates the
-`.f90` and the NIF glue.
+- `parse_form(source)` → `Form` — line-oriented brace-balanced parser.
+- `MirrorRuntime::compile_source` / `compile_file` / `compile_boot_dir` →
+  `CompiledShatter` (the form, its content-addressed fragment, the crystal
+  OID).
+- `Shatter` implements the `Prism` trait. `focus` reads the top-level
+  eigenvalues. `project` builds a content-addressed fragment from those
+  eigenvalues. `refract` settles a fragment back into a `Form`. `split`
+  and `zoom` are conservative no-ops with `// TBD` comments — their
+  semantics will be specified when use arrives.
 
-**BEAM** (`beam/`): Gleam. Receives the OID. Operates on the Prism through the
-Fortran NIF. Owns resolution, compilation, package discovery, and actor lifecycle.
-The `@conversation` actor extends `@compiler`.
-
-### Rust modules
-
-| Module | Purpose |
-|--------|---------|
-| `kernel.rs` | Oid, Trace, Vector, ContentAddressed — core algebra |
-| `ast.rs` | AstNode, Kind enum — the AST types |
-| `parse.rs` | `.conv` source → `Prism<AstNode>` |
-| `prism.rs` | Content-addressed tree structure |
-| `ffi.rs` | `conv_parse`, `conv_compile_grammar` — FFI entry points |
-| `compile.rs` | EAF emission — grammar → BEAM module bytecode |
-| `domain/` | Domain implementations (filesystem) |
-| `filter.rs` | Tree filtering (hash, sign, encrypt) |
-| `generate.rs` | Type derivation from grammar registries |
-
-Modules being superseded by BEAM (do not extend):
-`resolve.rs`, `packages.rs`, `property.rs`
-
-### BEAM modules (`beam/src/conversation/`)
-
-| Module | Purpose |
-|--------|---------|
-| `compiler.gleam` | @compiler actor — compiles grammars, loads BEAM modules |
-| `supervisor.gleam` | Static supervisor — @compiler + garden (RestForOne) |
-| `garden.gleam` | Factory supervisor — domain server lifecycle |
-| `boot.gleam` | Boot orchestration — imperative and supervised paths |
-| `domain.gleam` | FFI bindings to domain_server.erl |
-| `loader.gleam` | BEAM module loading (ETF → forms → binary) |
-| `trace.gleam` | Witnessed, signed records |
-| `oid.gleam` | Content-addressed identity (SHA-256) |
-| `key.gleam` | Ed25519 actor identity |
-| `ref.gleam` | Scoped content-addressed references |
-| `prism.gleam` | Projection matrix (Fortran NIF) |
-| `nif.gleam` | Bridge to Rust parser |
-| `protocol.gleam` | Spec types — desired BEAM state |
-| `runtime.gleam` | Convergence engine — delta computation |
-
-### Supervision
+## CLI
 
 ```
-conversation_supervisor (static_supervisor, RestForOne)
-├── @compiler              — compiles grammars, loads BEAM modules, returns traces
-└── garden (factory_sup)   — dynamic domain server lifecycle
+mirror compile <file>                 compile to <file>.shatter
+mirror ai <model> <file>              run one inference step under <model>
+mirror ai <file>                      alias for: mirror ai fate <file>
+mirror ai <file> --out=<target>       write the result to <target>
+mirror fmt <file>                     alias: mirror ai fate --train --out=<file>
+mirror '<query>' <file>               TBD — form-as-operation query mode
 ```
 
-**@compiler** starts first. Compiles `.conv` source → calls Rust NIF → loads BEAM
-module → returns `Trace(CompiledDomain)`. In supervised mode, does not start domain
-servers directly.
+The `ai` subcommands compose through bash pipes. Each invocation reads a
+`.mirror` file (or stdin), extracts deterministic spectral features from
+its declaration tree, runs `FateRuntime::select` with the named model as
+the starting context, and emits a small mirror form on stdout that names
+the selected next model. The next `mirror ai` invocation reads that form.
 
-**garden** starts second. Factory supervisor that manages domain servers as dynamic
-children. When a grammar is compiled, `garden.start_domain(name, domain)` starts
-its GenServer under the factory. If a domain server crashes, the garden restarts it.
+```
+mirror ai abyss form.mirror | mirror ai pathfinder - | mirror ai fate -
+```
 
-**RestForOne**: if @compiler crashes, the garden and all domain servers restart
-(clean slate). If a single domain server crashes, the factory restarts just that one.
+The chain is the program. The chain is also the `.shatter`.
 
-Two boot paths:
-- **Imperative** (`boot.boot_from_files`): starts its own supervisor + @compiler,
-  compiles grammars, starts domain servers inline. For standalone use.
-- **Supervised** (`boot.supervised_boot_from_files`): compiles through an
-  already-running named @compiler, starts domains through the garden. For embedding
-  in a larger supervision tree.
+## The five fate models
 
-### Packages
+The `fate` crate provides the inference primitives. Five models, one
+selector. Each maps to one operation of the Prism trait:
 
-`@conversation` lives in this repo. It is the meta-grammar — it describes the
-language's own type system. The `@conversation` actor reads this definition to
-bootstrap.
+| Model        | Operation | What it does                              |
+|--------------|-----------|-------------------------------------------|
+| Abyss        | focus     | Observe the spectral state.               |
+| Pathfinder   | project   | Precision cut — which paths survive.      |
+| Cartographer | split     | Map the territory. Walk every node.       |
+| Explorer     | zoom      | Recover meaning at the boundary.          |
+| Fate         | refract   | Crystallize. Select what runs next.       |
 
-Other packages live in the garden (`garden/public/@name/`). Each package that
-declares `in @actor` becomes a spawned actor on the BEAM.
+The weights are hardcoded. The binary is the model. Inference is bit-for-
+bit deterministic — same Form, same features, same selection, forever.
 
-### main.conv
+## The standard library
 
-The entry point. Parsed by Rust into the Prism that crosses the FFI threshold.
+Seven files, ~17 lines plus property declarations. The whole vocabulary of
+mirror is defined here:
 
-## Building
+- `boot/00-form.mirror` — declares `@form` itself, naming the five Prism
+  operations as the root vocabulary.
+- `boot/01-prism.mirror` — the Prism algebra.
+- `boot/02-type.mirror` — types.
+- `boot/03-boundary.mirror` — boundaries.
+- `boot/04-lens.mirror` — lenses.
+- `boot/05-property.mirror` — the nine standard properties.
+- `boot/06-mirror.mirror` — declares `form @mirror { ... }`, re-exports
+  everything via `in`, and applies the standard properties to mirror
+  itself.
 
-```sh
-# Everything (Rust lint + test + coverage + Gleam tests)
-just check
+The nine standard properties (renamed from math-discipline labels into
+operator-legible names so the type system reads as instructions, not as
+research notes):
 
-# Rust only
+| Property               | Was                     |
+|------------------------|-------------------------|
+| `unique_variants`      | shannon_equivalence     |
+| `every_type_reachable` | connected               |
+| `dual_partition`       | bipartite               |
+| `no_dead_variants`     | exhaustive              |
+| `idempotent`           | (new)                   |
+| `always_halts`         | (new)                   |
+| `deterministic`        | (new)                   |
+| `pure`                 | (new)                   |
+| `no_cycles`            | (new)                   |
+
+`06-mirror.mirror` applies them: `requires unique_variants`,
+`invariant idempotent`, `ensures always_halts`. The standard library
+checks itself.
+
+## Build and run
+
+```
+nix develop -c cargo build
+nix develop -c cargo run -- compile boot/00-form.mirror
+```
+
+Tests:
+
+```
 nix develop -c cargo test
-nix develop -c cargo llvm-cov --package conversation --fail-under-lines 100
-
-# BEAM only
-just beam-test
-
-# Individual commands
-nix develop -c cargo build                    # Rust parser
-cd beam && gleam build                         # Gleam modules
-cd beam && gleam test                          # Gleam tests
 ```
 
-## License
+## A note on N=5
 
-systemic.engineering License v1.0
+`MirrorFragment = Fractal<MirrorData, CoincidenceHash<5>>`. The `5` is the
+spectral dimension. Five eigenvalues per content address.
+
+Five spectral dimensions: meets-and-exceeds the 3+1 of the cosmos. The
+hash function has enough degrees of freedom to be a cosmic content
+address — every structurally distinct form has a unique slot, with room.
+The dimension is over-determined: it is also the count of operations in
+the Prism algebra (focus / project / split / zoom / refract) and the count
+of fate models (abyss / pathfinder / cartographer / explorer / fate). The
+same number lands in three places. That is the reason the choice is
+canonical rather than tuned.
+
+See `coincidence/docs/insights/2026-04-07-spectral-hash-as-canonical-default.md`.
+
+## Layering: mirror vs spectral
+
+mirror compiles a single `.mirror` file. spectral wraps multiple mirror
+processes for build, runtime, deployment, and collaboration. The Unix
+analogy: mirror is to spectral what gcc is to make. The BEAM runtime
+backend lives in spectral (`spectral/docs/gen_prism.md`), not in mirror.
+
+## Insights
+
+- `docs/insights/2026-04-07-the-chain-is-the-shatter.md` — why the chain of
+  model invocations *is* the `.shatter` file, and what the editing
+  experience becomes when that recognition lands.
+- `docs/insights/2026-04-07-quantum-native-on-classical-hardware.md` — the
+  mapping from quantum-mechanical primitives to mirror types, and the
+  implementation strategy that gets quantum semantics on a CPU.
+
+---
+
+Built with math and lots of weed. Both are load-bearing.

@@ -1,7 +1,0 @@
-grammar @test {
-  type = assertion | property
-  type assertion = has | eq
-  type property = requires | invariant | ensures
-}
-
-in @lens

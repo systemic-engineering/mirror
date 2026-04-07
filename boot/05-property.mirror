@@ -1,0 +1,69 @@
+form @property {
+  in @form
+
+  traversal verdict = pass | fail
+  traversal lifecycle = requires | invariant | ensures
+  traversal assertion = has | eq
+
+  property unique_variants(form) {
+    fold input
+    traversal variants
+    lens shannon
+    refract verdict
+  }
+
+  property every_type_reachable(form) {
+    fold input
+    traversal types
+    lens connected
+    refract verdict
+  }
+
+  property dual_partition(form) {
+    fold input
+    traversal types
+    lens bipartite
+    refract verdict
+  }
+
+  property no_dead_variants(form) {
+    fold input
+    traversal variants
+    lens exhaustive
+    refract verdict
+  }
+
+  property idempotent(form) {
+    fold input
+    lens twice
+    iso equal
+    refract verdict
+  }
+
+  property always_halts(form) {
+    fold input
+    lens bounded_steps
+    refract verdict
+  }
+
+  property deterministic(form) {
+    fold input
+    lens replay
+    iso equal
+    refract verdict
+  }
+
+  property pure(form) {
+    fold input
+    lens effects
+    iso empty
+    refract verdict
+  }
+
+  property no_cycles(form) {
+    fold input
+    traversal dependencies
+    lens topological
+    refract verdict
+  }
+}

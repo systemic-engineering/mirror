@@ -1,8 +1,0 @@
-lens lens(ref)
-lens action(ref)
-
-traversal type = iso | lens | prism | traversal | fold | setter
-traversal composition = then | compose | identity
-
-traversal preview = satisfiable | unsatisfiable | partial
-traversal delta = converged | diverged

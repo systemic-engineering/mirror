@@ -1,938 +1,645 @@
-//! mirror — the human interface to the Abyss.
+//! mirror — fold | prism | traversal | lens | iso | setter
 //!
-//! ```sh
-//! mirror schema.mirror ./input     # apply grammar to input
-//! mirror settle ./src            # loop until convergence
-//! mirror test cogito.mirror        # run tests
-//! mirror shell                   # REPL
-//! #!/usr/bin/env mirror
-//! ```
+//! The CLI surface for the mirror runtime. Two modes:
+//!
+//! - `mirror compile <file>` — parse a `.mirror` file via `MirrorRuntime`,
+//!   write its content-addressed `Shatter` artifact to `<file>.shatter`,
+//!   print the crystal OID to stdout.
+//!
+//! - `mirror '<query>' <file> [--compile <target>]` — TBD. The query is
+//!   parsed as a Form, the file is parsed as a Form, and a TBD message
+//!   names what would happen if the runtime supported form-as-operation
+//!   semantics. Exits with status 2.
+//!
+//! Five spectral dimensions: meets-and-exceeds the 3+1 of the cosmos.
 
-use std::io::{self, BufRead, Write};
+use std::io::{IsTerminal, Read as _};
+use std::path::Path;
 use std::process;
 
-use mirror::domain::filesystem::{Filesystem, Folder};
-use mirror::model::Mirror;
-use mirror::packages::{self, PackageRegistry};
-use mirror::property;
-use mirror::resolve::{Conversation, Resolve};
-use mirror::{Parse, Vector};
+use fragmentation::sha::HashAlg;
+use mirror::mirror_runtime::{emit_form, parse_form, Form, MirrorRuntime};
+
+use coincidence::declaration::DeclKind;
+
+use fate::{Features, Model, FEATURE_DIM};
+use fate::runtime::FateRuntime;
+
+// ---------------------------------------------------------------------------
+// Usage
+// ---------------------------------------------------------------------------
+
+const USAGE: &str = "\
+mirror — fold | prism | traversal | lens | iso | setter
+
+usage: mirror compile <file>                          compile to <file>.shatter
+       mirror replay <chain.shatter> <input>          re-run a chain against an input
+       mirror '<query>' <file> [--compile <target>]   run query against file (TBD)
+       mirror ai <subcmd> [file|-]                    fate-driven inference
+       mirror fmt <file>                              alias: ai --train --out=<file>
+
+ai subcommands (each reads <file>, or stdin via '-' / pipe; emits a mirror
+form on stdout that the next 'mirror ai' invocation can read; the chain
+of stages accumulates through pipes via a leading '# chain:' comment):
+
+  mirror ai abyss        <file>   apply abyss        (focus / observe)
+  mirror ai pathfinder   <file>   apply pathfinder   (project / cut)
+  mirror ai cartographer <file>   apply cartographer (split / map)
+  mirror ai explorer     <file>   apply explorer     (zoom / boundary)
+  mirror ai fate         <file>   apply fate         (refract / select)
+  mirror ai              <file>   alias for: mirror ai fate <file>
+  mirror ai '<form>'     <file>   anonymous form invocation (TBD)
+
+flags:
+  --out=<file>           write output to <file> instead of stdout
+  --capture=<file>       write the accumulated chain to <file>.shatter
+                         (the chain is the program; replay reproduces it)
+  --train                training pass (TBD; --out is honored)
+
+chain-as-shatter: a .shatter file is a human-readable chain expression
+plus input/output content addresses. Replaying the chain against the
+same input is bit-for-bit identical to running the live pipeline. We
+don't compute. We crystallize.
+
+mirror compiles single .mirror files via MirrorRuntime to spectral
+content-addressed shatter artifacts (CoincidenceHash<5>: five spectral
+dimensions, meets-and-exceeds the 3+1 of the cosmos).
+";
+
+fn print_usage_and_exit() -> ! {
+    eprintln!("{}", USAGE);
+    process::exit(1);
+}
+
+// ---------------------------------------------------------------------------
+// .shatter serialization — chain-as-shatter
+// ---------------------------------------------------------------------------
+//
+// On-disk format: human-readable text. Three lines.
+//
+//     chain: <model> |> <model> |> <model>
+//     input: <coincidence-hash-5>
+//     output: <coincidence-hash-5>
+//
+// The chain is the program. The .shatter file is the chain expression plus
+// the input fingerprint plus the output fingerprint. Replaying requires the
+// input (or any input with the same fingerprint), and re-runs the chain
+// deterministically. Same input + same chain → bit-identical output.
+//
+// We don't compute. We crystallize.
+
+const CHAIN_PREFIX: &str = "# chain: ";
+
+/// Format a chain-shatter file's text content.
+fn format_chain_shatter(chain: &[String], input_oid: &str, output_oid: &str) -> String {
+    let mut s = String::new();
+    s.push_str("chain: ");
+    s.push_str(&chain.join(" |> "));
+    s.push('\n');
+    s.push_str("input: ");
+    s.push_str(input_oid);
+    s.push('\n');
+    s.push_str("output: ");
+    s.push_str(output_oid);
+    s.push('\n');
+    s
+}
+
+/// Parse a chain-shatter file's text content.
+/// Returns (chain, input_oid, output_oid).
+fn parse_chain_shatter(text: &str) -> Result<(Vec<String>, String, String), String> {
+    let mut chain: Vec<String> = Vec::new();
+    let mut input_oid = String::new();
+    let mut output_oid = String::new();
+    for line in text.lines() {
+        let line = line.trim();
+        if let Some(rest) = line.strip_prefix("chain:") {
+            chain = rest
+                .split("|>")
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+                .collect();
+        } else if let Some(rest) = line.strip_prefix("input:") {
+            input_oid = rest.trim().to_string();
+        } else if let Some(rest) = line.strip_prefix("output:") {
+            output_oid = rest.trim().to_string();
+        }
+    }
+    if chain.is_empty() {
+        return Err("chain-shatter: no chain line".to_string());
+    }
+    Ok((chain, input_oid, output_oid))
+}
+
+/// Strip a leading `# chain: <chain>` comment from input source if present.
+/// Returns (accumulated_chain, source_without_chain_comment).
+fn strip_chain_comment(source: &str) -> (Vec<String>, String) {
+    if let Some(rest) = source.strip_prefix(CHAIN_PREFIX) {
+        if let Some(newline_idx) = rest.find('\n') {
+            let chain_str = &rest[..newline_idx];
+            let chain: Vec<String> = chain_str
+                .split("|>")
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+                .collect();
+            let body = rest[newline_idx + 1..].to_string();
+            return (chain, body);
+        }
+    }
+    (Vec::new(), source.to_string())
+}
+
+/// Prepend a `# chain: <chain>` comment line to a body.
+fn prepend_chain_comment(chain: &[String], body: &str) -> String {
+    let mut s = String::new();
+    s.push_str(CHAIN_PREFIX);
+    s.push_str(&chain.join(" |> "));
+    s.push('\n');
+    s.push_str(body);
+    s
+}
+
+/// Compute a content address for a parsed Form by routing through the runtime.
+fn form_oid(form: &Form) -> String {
+    let runtime = MirrorRuntime::new();
+    let text = emit_form(form);
+    match runtime.compile_source(&text) {
+        Ok(c) => c.crystal().as_str().to_string(),
+        Err(_) => "<unhashable>".to_string(),
+    }
+}
+
+// ---------------------------------------------------------------------------
+// compile mode
+// ---------------------------------------------------------------------------
+
+fn cmd_compile(file: &str) -> ! {
+    let runtime = MirrorRuntime::new();
+    let path = Path::new(file);
+    let compiled = match runtime.compile_file(path) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("mirror: compile {}: {}", file, e);
+            process::exit(1);
+        }
+    };
+    // Single-stage chain: the identity transformation. The .shatter file
+    // records the input and output OIDs (which are equal for the identity
+    // case) and the trivial chain `compile`.
+    let oid = compiled.crystal().as_str().to_string();
+    let chain = vec!["compile".to_string()];
+    let text = format_chain_shatter(&chain, &oid, &oid);
+    let target_str = format!("{}.shatter", file);
+    let target = Path::new(&target_str);
+    if let Err(e) = std::fs::write(target, &text) {
+        eprintln!("mirror: write {}: {}", target.display(), e);
+        process::exit(1);
+    }
+    println!("{}", target.display());
+    println!("crystal: {}", oid);
+    process::exit(0);
+}
+
+// ---------------------------------------------------------------------------
+// query mode (stub)
+// ---------------------------------------------------------------------------
+
+fn cmd_query(query_src: &str, file: &str, compile_target: Option<&str>) -> ! {
+    // Parse the query as a Form.
+    let query_form = match parse_form(query_src) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("mirror: query parse: {}", e);
+            process::exit(1);
+        }
+    };
+
+    // Parse the target file as a Form (via the runtime).
+    let runtime = MirrorRuntime::new();
+    let compiled = match runtime.compile_file(Path::new(file)) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("mirror: target {}: {}", file, e);
+            process::exit(1);
+        }
+    };
+
+    // If --compile target.shatter was passed, write a chain-shatter for the
+    // identity-compile of the target.
+    if let Some(target) = compile_target {
+        let oid = compiled.crystal().as_str().to_string();
+        let chain = vec!["compile".to_string()];
+        let text = format_chain_shatter(&chain, &oid, &oid);
+        if let Err(e) = std::fs::write(target, &text) {
+            eprintln!("mirror: write {}: {}", target, e);
+            process::exit(1);
+        }
+        println!("{}", target);
+        println!("crystal: {}", oid);
+    }
+
+    // The form-as-operation semantics are TBD — same posture as `split` and
+    // `zoom` on the Shatter Prism trait. Be honest.
+    eprintln!(
+        "mirror: query parsed as form `{}`, target parsed as form `{}` — \
+         applying form-as-operation semantics is TBD; the runtime does not \
+         yet implement this.",
+        if query_form.name.is_empty() { "<anon>" } else { &query_form.name },
+        compiled.form_name(),
+    );
+    process::exit(2);
+}
+
+// ---------------------------------------------------------------------------
+// ai mode — fate-driven inference over mirror forms
+// ---------------------------------------------------------------------------
+
+/// Read input source: from `path` if Some and not "-", else from stdin.
+/// Returns (source_text, label_for_diagnostics).
+fn read_input(path: Option<&str>) -> (String, String) {
+    match path {
+        Some(p) if p != "-" => match std::fs::read_to_string(p) {
+            Ok(s) => (s, p.to_string()),
+            Err(e) => {
+                eprintln!("mirror: read {}: {}", p, e);
+                process::exit(1);
+            }
+        },
+        _ => {
+            let mut buf = String::new();
+            if let Err(e) = std::io::stdin().read_to_string(&mut buf) {
+                eprintln!("mirror: read stdin: {}", e);
+                process::exit(1);
+            }
+            (buf, "<stdin>".to_string())
+        }
+    }
+}
+
+/// Deterministic feature extraction from a parsed Form.
+///
+/// 16 dimensions. Pure structural counts of the form's declarations,
+/// normalized to a finite range. No randomness, no time, no env.
+/// Same Form → same Features, forever.
+fn features_of(form: &Form) -> Features {
+    let mut f: Features = [0.0; FEATURE_DIM];
+    fn walk(form: &Form, f: &mut Features) {
+        // Map DeclKind to a feature slot. We use the discriminant via
+        // a stable string label so the mapping survives DeclKind changes.
+        let slot = match format!("{:?}", form.kind).as_str() {
+            "Form" => 0,
+            "Prism" => 1,
+            "Lens" => 2,
+            "Fold" => 3,
+            "Traversal" => 4,
+            "Iso" => 5,
+            "Setter" => 6,
+            "Property" => 7,
+            "Requires" => 8,
+            "Invariant" => 9,
+            "Ensures" => 10,
+            "In" => 11,
+            "Type" => 12,
+            "Boundary" => 13,
+            _ => 14,
+        };
+        f[slot] += 1.0;
+        // Slot 15: a structural width signal (params + variants).
+        f[15] += (form.params.len() + form.variants.len()) as f64;
+        for child in &form.children {
+            walk(child, f);
+        }
+    }
+    walk(form, &mut f);
+    // Normalize to keep magnitudes small and bounded. Deterministic.
+    let total: f64 = f.iter().sum::<f64>().max(1.0);
+    for v in f.iter_mut() {
+        *v /= total;
+    }
+    f
+}
+
+fn model_name(m: Model) -> &'static str {
+    match m {
+        Model::Abyss => "abyss",
+        Model::Pathfinder => "pathfinder",
+        Model::Cartographer => "cartographer",
+        Model::Explorer => "explorer",
+        Model::Fate => "fate",
+    }
+}
+
+fn parse_model(name: &str) -> Option<Model> {
+    match name {
+        "abyss" => Some(Model::Abyss),
+        "pathfinder" => Some(Model::Pathfinder),
+        "cartographer" => Some(Model::Cartographer),
+        "explorer" => Some(Model::Explorer),
+        "fate" => Some(Model::Fate),
+        _ => None,
+    }
+}
+
+/// Build the result Form: a small mirror form encoding the selection.
+fn selection_form(input_name: &str, from: Model, to: Model) -> Form {
+    // form @selection {
+    //   prism input <name>
+    //   prism from <model>
+    //   prism next <model>
+    // }
+    let child = |label: &str, value: &str| {
+        Form::new(
+            DeclKind::Prism,
+            label.to_string(),
+            vec![value.to_string()],
+            vec![],
+            vec![],
+        )
+    };
+    Form::new(
+        DeclKind::Form,
+        "@selection".to_string(),
+        vec![],
+        vec![],
+        vec![
+            child("input", if input_name.is_empty() { "<anon>" } else { input_name }),
+            child("from", model_name(from)),
+            child("next", model_name(to)),
+        ],
+    )
+}
+
+fn cmd_ai(
+    starting: Model,
+    file: Option<&str>,
+    out: Option<&str>,
+    _train: bool,
+    capture: Option<&str>,
+) -> ! {
+    let (source, label) = read_input(file);
+
+    // Strip any leading `# chain: ...` comment from the input source.
+    // This is how the chain accumulates across pipeline stages.
+    let (mut accumulated_chain, body) = strip_chain_comment(&source);
+
+    let form = match parse_form(&body) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("mirror: ai parse {}: {}", label, e);
+            process::exit(1);
+        }
+    };
+
+    // Compute features and run the model.
+    let features = features_of(&form);
+    let runtime = FateRuntime::new();
+    let next = runtime.select(starting, &features);
+    let result = selection_form(&form.name, starting, next);
+    let result_text = emit_form(&result);
+
+    // Append this stage's model name to the accumulated chain.
+    accumulated_chain.push(model_name(starting).to_string());
+
+    // Output: prepend the accumulated chain comment to the result text.
+    // This is what makes the next stage in the pipeline able to read the
+    // chain so far.
+    let stamped = prepend_chain_comment(&accumulated_chain, &result_text);
+
+    // Capture: if --capture <file> was passed, write the chain-shatter
+    // file. We compute input/output OIDs by routing through the runtime.
+    if let Some(cap) = capture {
+        let input_oid = form_oid(&form);
+        let output_oid = form_oid(&result);
+        let shatter_text =
+            format_chain_shatter(&accumulated_chain, &input_oid, &output_oid);
+        if let Err(e) = std::fs::write(cap, &shatter_text) {
+            eprintln!("mirror: write capture {}: {}", cap, e);
+            process::exit(1);
+        }
+    }
+
+    match out {
+        Some(path) => {
+            if let Err(e) = std::fs::write(path, &stamped) {
+                eprintln!("mirror: write {}: {}", path, e);
+                process::exit(1);
+            }
+        }
+        None => {
+            print!("{}", stamped);
+            if !stamped.ends_with('\n') {
+                println!();
+            }
+        }
+    }
+    process::exit(0);
+}
+
+// ---------------------------------------------------------------------------
+// replay mode — re-run a chain against an input file
+// ---------------------------------------------------------------------------
+
+/// Pure ai_step: take a model and a parsed Form, return the result Form.
+/// Used by both cmd_ai (with I/O around it) and cmd_replay (in a loop).
+fn ai_step(starting: Model, form: &Form) -> Form {
+    let features = features_of(form);
+    let runtime = FateRuntime::new();
+    let next = runtime.select(starting, &features);
+    selection_form(&form.name, starting, next)
+}
+
+fn cmd_replay(shatter_file: &str, input_file: &str) -> ! {
+    let shatter_text = match std::fs::read_to_string(shatter_file) {
+        Ok(s) => s,
+        Err(e) => {
+            eprintln!("mirror: replay read {}: {}", shatter_file, e);
+            process::exit(1);
+        }
+    };
+    let (chain, _input_oid, _output_oid) = match parse_chain_shatter(&shatter_text) {
+        Ok(parts) => parts,
+        Err(e) => {
+            eprintln!("mirror: replay parse: {}", e);
+            process::exit(1);
+        }
+    };
+    let input_text = match std::fs::read_to_string(input_file) {
+        Ok(s) => s,
+        Err(e) => {
+            eprintln!("mirror: replay input {}: {}", input_file, e);
+            process::exit(1);
+        }
+    };
+    // Strip any pre-existing chain comment from the input file (it's
+    // possible the input was itself the output of a previous stage).
+    let (_pre_chain, body) = strip_chain_comment(&input_text);
+    let mut current = match parse_form(&body) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("mirror: replay input parse: {}", e);
+            process::exit(1);
+        }
+    };
+
+    // Run each model in the chain in sequence.
+    let mut accumulated: Vec<String> = Vec::new();
+    for model_str in &chain {
+        // The "compile" pseudo-model in single-stage chains is the identity
+        // — it preserves the form unchanged.
+        if model_str == "compile" {
+            accumulated.push("compile".to_string());
+            continue;
+        }
+        let m = match parse_model(model_str) {
+            Some(m) => m,
+            None => {
+                eprintln!("mirror: replay unknown model: {}", model_str);
+                process::exit(1);
+            }
+        };
+        current = ai_step(m, &current);
+        accumulated.push(model_name(m).to_string());
+    }
+
+    let result_text = emit_form(&current);
+    let stamped = prepend_chain_comment(&accumulated, &result_text);
+    print!("{}", stamped);
+    if !stamped.ends_with('\n') {
+        println!();
+    }
+    process::exit(0);
+}
+
+/// Parse `--out=<file>`, `--train`, `--capture=<file>` flags out of an arg slice.
+/// Returns (out, train, capture, remaining positional args).
+/// Both `--capture=<file>` and `--capture <file>` (two-arg) forms are accepted.
+fn parse_ai_flags(args: &[String]) -> (Option<String>, bool, Option<String>, Vec<String>) {
+    let mut out = None;
+    let mut train = false;
+    let mut capture = None;
+    let mut rest = Vec::new();
+    let mut i = 0;
+    while i < args.len() {
+        let a = &args[i];
+        if let Some(v) = a.strip_prefix("--out=") {
+            out = Some(v.to_string());
+        } else if let Some(v) = a.strip_prefix("--capture=") {
+            capture = Some(v.to_string());
+        } else if a == "--capture" && i + 1 < args.len() {
+            capture = Some(args[i + 1].clone());
+            i += 1;
+        } else if a == "--train" {
+            train = true;
+        } else {
+            rest.push(a.clone());
+        }
+        i += 1;
+    }
+    (out, train, capture, rest)
+}
+
+/// Resolve the file argument: explicit positional, or None which means
+/// "stdin if not a tty, otherwise error".
+fn resolve_file_arg(positional: &[String]) -> Option<String> {
+    if let Some(p) = positional.first() {
+        return Some(p.clone());
+    }
+    if !std::io::stdin().is_terminal() {
+        return Some("-".to_string());
+    }
+    eprintln!("mirror: ai: no input file and stdin is a tty");
+    process::exit(1);
+}
+
+// ---------------------------------------------------------------------------
+// argv
+// ---------------------------------------------------------------------------
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
 
     if args.len() < 2 {
-        eprintln!("mirror — fold | prism | traversal | lens | iso");
-        eprintln!();
-        eprintln!("usage: mirror <grammar> <input>     apply grammar to input");
-        eprintln!("       mirror test <file.mirror>      run tests");
-        eprintln!("       mirror shell [path]           REPL");
-        eprintln!("       mirror boot [dir]             boot the garden");
-        eprintln!("       mirror fmt [--settle] [--train] <file>  format / settle / train");
-        eprintln!("       mirror settle <input>         loop until convergence");
-        eprintln!("       mirror train                  retrain from fixtures");
-        eprintln!("       mirror resolve                resolve tension → resolved");
-        eprintln!("       mirror -e '<expr>' [path]     evaluate expression");
-        eprintln!("       mirror @domain action [args]  invoke domain action");
-        process::exit(1);
+        print_usage_and_exit();
     }
 
-    // Parse flags
-    let has_settle = args.iter().any(|a| a == "--settle");
-    let has_train = args.iter().any(|a| a == "--train");
-    let positional: Vec<&String> = args
-        .iter()
-        .skip(1)
-        .filter(|a| !a.starts_with("--"))
-        .collect();
-
-    match positional.first().map(|s| s.as_str()) {
-        Some("fmt") => {
-            if positional.len() < 2 {
-                eprintln!("usage: mirror fmt [--settle] [--train] <file.mirror>");
-                process::exit(1);
-            }
-            let conv_path = positional[1];
-            fmt_cmd(conv_path, has_settle, has_train);
+    // `mirror fmt <file>` → ai fate --train --out=<file> <file>
+    if args[1] == "fmt" {
+        if args.len() != 3 {
+            print_usage_and_exit();
         }
-        Some("settle") => {
-            if positional.len() < 2 {
-                eprintln!("usage: mirror settle <file.mirror|dir>");
-                process::exit(1);
-            }
-            let conv_path = positional[1].as_str();
-            let source = if std::path::Path::new(conv_path).is_dir() {
-                String::new()
+        let file = args[2].clone();
+        cmd_ai(Model::Fate, Some(&file), Some(&file), true, None);
+    }
+
+    // `mirror ai ...`
+    if args[1] == "ai" {
+        let rest: Vec<String> = args[2..].to_vec();
+        let (out, train, capture, positional) = parse_ai_flags(&rest);
+        // First positional may be a model name OR a file path/'-'.
+        let (starting, file_args): (Model, &[String]) = match positional.first() {
+            Some(first) => match parse_model(first) {
+                Some(m) => (m, &positional[1..]),
+                None => (Model::Fate, &positional[..]),
+            },
+            None => (Model::Fate, &positional[..]),
+        };
+        let file = resolve_file_arg(file_args);
+        cmd_ai(starting, file.as_deref(), out.as_deref(), train, capture.as_deref());
+    }
+
+    // `compile <file>`
+    if args[1] == "compile" {
+        if args.len() != 3 {
+            print_usage_and_exit();
+        }
+        cmd_compile(&args[2]);
+    }
+
+    // `replay <shatter-file> <input-file>`
+    if args[1] == "replay" {
+        if args.len() != 4 {
+            eprintln!("usage: mirror replay <chain.shatter> <input.mirror>");
+            process::exit(1);
+        }
+        cmd_replay(&args[2], &args[3]);
+    }
+
+    // `<query> <file> [--compile <target>]`
+    //
+    // Heuristic: a query string contains characters that aren't valid in a
+    // bare subcommand name (`{`, `@`, space, etc.). Anything else falls to
+    // usage.
+    if args.len() >= 3 && looks_like_query(&args[1]) {
+        let query = args[1].clone();
+        let file = args[2].clone();
+        let mut compile_target: Option<String> = None;
+        let mut i = 3;
+        while i < args.len() {
+            if args[i] == "--compile" && i + 1 < args.len() {
+                compile_target = Some(args[i + 1].clone());
+                i += 2;
             } else {
-                std::fs::read_to_string(conv_path).unwrap_or_else(|e| {
-                    eprintln!("mirror: {}: {}", conv_path, e);
-                    process::exit(1);
-                })
-            };
-            settle_cmd(&source, conv_path);
-        }
-        Some("test") => {
-            if positional.len() < 2 {
-                eprintln!("usage: mirror test <file.mirror>");
-                process::exit(1);
-            }
-            let conv_path = positional[1];
-            let source = match std::fs::read_to_string(conv_path) {
-                Ok(s) => s,
-                Err(e) => {
-                    eprintln!("mirror: {}: {}", conv_path, e);
-                    process::exit(1);
-                }
-            };
-            let self_dir = std::path::Path::new(conv_path)
-                .parent()
-                .unwrap_or(std::path::Path::new("."))
-                .to_path_buf();
-            let resolve = load_packages(&self_dir);
-            run_tests(&source, &resolve);
-        }
-        Some("shell") => {
-            let self_dir = std::env::current_dir().unwrap_or(std::path::PathBuf::from("."));
-            let resolve = load_packages(&self_dir);
-            let path = positional.get(1).map(|s| s.as_str()).unwrap_or(".");
-            shell(path, &resolve);
-        }
-        Some("-e") => {
-            if positional.len() < 2 {
-                eprintln!("usage: mirror -e '<expr>' [path]");
-                process::exit(1);
-            }
-            let self_dir = std::env::current_dir().unwrap_or(std::path::PathBuf::from("."));
-            let resolve = load_packages(&self_dir);
-            let source = format!("out {}\n", positional[1]);
-            let path = positional.get(2).map(|s| s.as_str()).unwrap_or(".");
-            run(&source, path, &resolve);
-        }
-        Some("train") => {
-            train_cmd();
-        }
-        Some("resolve") => {
-            resolve_cmd();
-        }
-        #[cfg(feature = "db")]
-        Some("db") => {
-            let db_args: Vec<String> = args[2..].to_vec();
-            mirror::db::cli(&db_args);
-        }
-        None => {
-            eprintln!("mirror — fold | prism | traversal | lens | iso");
-            process::exit(1);
-        }
-        // Domain dispatch: mirror @domain action [args]
-        Some(first) if first.starts_with('@') => {
-            let positional_strs: Vec<&str> = positional.iter().map(|s| s.as_str()).collect();
-            match mirror::domain_dispatch::DomainInvocation::parse(&positional_strs) {
-                Some(inv) => match mirror::domain_dispatch::dispatch(&inv) {
-                    Ok(output) => print!("{}", output),
-                    Err(e) => {
-                        eprintln!("mirror: {}", e);
-                        process::exit(1);
-                    }
-                },
-                None => {
-                    eprintln!("usage: mirror @domain action [args]");
-                    process::exit(1);
-                }
+                eprintln!("mirror: unrecognized argument: {}", args[i]);
+                print_usage_and_exit();
             }
         }
-        // Default: treat first positional as grammar file
-        _ => {
-            let conv_path = positional[0];
-            let source = match std::fs::read_to_string(conv_path) {
-                Ok(s) => s,
-                Err(e) => {
-                    eprintln!("mirror: {}: {}", conv_path, e);
-                    process::exit(1);
-                }
-            };
-            let self_dir = std::path::Path::new(conv_path)
-                .parent()
-                .unwrap_or(std::path::Path::new("."))
-                .to_path_buf();
-            let resolve = load_packages(&self_dir);
-            let path = positional.get(1).map(|s| s.as_str()).unwrap_or(".");
-            run(&source, path, &resolve);
-        }
+        cmd_query(&query, &file, compile_target.as_deref());
     }
+
+    print_usage_and_exit();
 }
 
-fn settle_cmd(source: &str, path: &str) {
-    use mirror::abyss::{self, AbyssConfig, PrismLoop, Termination};
-    use prism::{Beam, Oid, Precision};
-    use std::collections::hash_map::DefaultHasher;
-    use std::hash::{Hash, Hasher};
-
-    // If path is a directory, settle ALL .mirror files as lenses on one graph.
-    // If path is a file, settle that single file.
-    let sources: Vec<(String, String)> = if std::path::Path::new(path).is_dir() {
-        let mut entries: Vec<_> = std::fs::read_dir(path)
-            .unwrap_or_else(|e| {
-                eprintln!("mirror: {}: {}", path, e);
-                process::exit(1);
-            })
-            .filter_map(|e| e.ok())
-            .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("mirror"))
-            .map(|e| {
-                let p = e.path();
-                let s = std::fs::read_to_string(&p).unwrap_or_default();
-                (p.display().to_string(), s)
-            })
-            .collect();
-        entries.sort_by(|a, b| a.0.cmp(&b.0)); // sort by filename = layer order
-        entries
-    } else {
-        vec![(path.to_string(), source.to_string())]
-    };
-
-    // Parse all sources into AST nodes, accumulate into one graph.
-    let mut graph: Vec<String> = Vec::new();
-
-    for (file_path, file_source) in &sources {
-        let ast = match Parse.trace(file_source.to_string()).into_result() {
-            Ok(tree) => tree,
-            Err(e) => {
-                eprintln!("mirror: {}: parse error: {}", file_path, e);
-                continue;
-            }
-        };
-        // Each AST child is a node in the combined graph
-        for child in ast.children() {
-            graph.push(format!("{}:{}", child.data().name, child.data().value));
-        }
-        eprintln!(
-            "  lens {}: +{} nodes → {} total",
-            std::path::Path::new(file_path)
-                .file_name()
-                .unwrap()
-                .to_str()
-                .unwrap(),
-            ast.children().len(),
-            graph.len()
-        );
-    }
-
-    // Now settle the combined graph.
-    // The Prism over the graph: fold = identity (already decomposed),
-    // lens = sort + dedup (the settling transform).
-    struct GraphPrism;
-
-    impl prism::Prism for GraphPrism {
-        type Input = Vec<String>;
-        type Eigenvalues = Vec<String>;
-        type Projection = Vec<String>;
-        type Node = String;
-        type Convergence = Vec<String>;
-        type Crystal = Vec<String>;
-        type Precision = prism::Precision;
-
-        fn focus(&self, input: &Vec<String>) -> Beam<Vec<String>> {
-            Beam::new(input.clone())
-        }
-
-        fn project(&self, eigenvalues: &Vec<String>, _precision: Precision) -> Beam<Vec<String>> {
-            Beam::new(eigenvalues.clone())
-        }
-
-        fn split(&self, projection: &Vec<String>) -> Vec<Beam<String>> {
-            projection
-                .iter()
-                .enumerate()
-                .map(|(i, s)| Beam::new(s.clone()).with_step(Oid::new(format!("{}", i))))
-                .collect()
-        }
-
-        fn zoom(
-            &self,
-            beam: Beam<Vec<String>>,
-            f: &dyn Fn(Vec<String>) -> Vec<String>,
-        ) -> Beam<Vec<String>> {
-            beam.map(f)
-        }
-
-        fn refract(&self, beam: Beam<Vec<String>>) -> Vec<String> {
-            beam.result
-        }
-    }
-
-    impl PrismLoop for GraphPrism {
-        fn fold_from_projection(&self, projection: &Vec<String>) -> Vec<String> {
-            projection.clone()
-        }
-    }
-
-    let prism = GraphPrism;
-    let config = AbyssConfig {
-        max_cycles: 64,
-        precision: Precision::new(0.0),
-        oscillation_window: 4,
-    };
-
-    let hash_fn = |v: &Vec<String>| -> Oid {
-        let mut hasher = DefaultHasher::new();
-        v.hash(&mut hasher);
-        Oid::new(format!("{:016x}", hasher.finish()))
-    };
-
-    // The settling transform: sort, dedup, and measure loss
-    let (beam, termination) = abyss::settle_loop(
-        &prism,
-        &graph,
-        &config,
-        &|mut v| {
-            v.sort();
-            v.dedup();
-            v
-        },
-        &hash_fn,
-    );
-
-    // Output
-    eprintln!();
-    eprintln!("abyss settle: {}", path);
-    match &termination {
-        Termination::Settled { cycles } => {
-            eprintln!("  settled in {} cycles", cycles);
-        }
-        Termination::BudgetExhausted { cycles, .. } => {
-            eprintln!("  budget exhausted after {} cycles", cycles);
-        }
-        Termination::Oscillation { cycles, attractors } => {
-            eprintln!(
-                "  oscillation after {} cycles ({} attractors)",
-                cycles,
-                attractors.len()
-            );
-        }
-    }
-    eprintln!("  nodes: {}", beam.result.len());
-    eprintln!("  path: {} steps", beam.path.len());
-    eprintln!("  loss: {}", beam.loss);
-
-    for node in &beam.result {
-        println!("  {}", node);
-    }
-}
-
-fn train_cmd() {
-    use mirror::classifier::{self, Example, TrainConfig};
-    use mirror::parse::Parse;
-    use mirror::Vector;
-
-    let fixtures_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/settle");
-    let training_data_path = fixtures_dir.join("training_data.json");
-
-    let training_json = std::fs::read_to_string(&training_data_path).unwrap_or_else(|e| {
-        eprintln!("train: {}: {}", training_data_path.display(), e);
-        process::exit(1);
-    });
-    let entries: Vec<serde_json::Value> = serde_json::from_str(&training_json).unwrap();
-
-    let mut examples = Vec::new();
-
-    for entry in &entries {
-        let fixture_name = entry["fixture"].as_str().unwrap();
-        let label = entry["optic"].as_u64().unwrap() as usize;
-        let fixture_path = fixtures_dir.join(fixture_name);
-
-        let source = std::fs::read_to_string(&fixture_path).unwrap_or_else(|e| {
-            eprintln!("train: {}: {}", fixture_path.display(), e);
-            process::exit(1);
-        });
-
-        // Parse and extract graph features
-        let ast = Parse.trace(source).into_result().unwrap_or_else(|e| {
-            eprintln!("train: parse {}: {}", fixture_name, e);
-            process::exit(1);
-        });
-
-        let graph: Vec<String> = ast
-            .children()
-            .iter()
-            .map(|c| format!("{}:{}", c.data().name, c.data().value))
-            .collect();
-
-        let features = spectral_features(&graph);
-
-        eprintln!("  {:30} label={:2} n={:.2} dup={:.2} f={:.2} p={:.2} t={:.2} l={:.2} i={:.2} ent={:.2} edge={:.2} par={:.2} var={:.2} div={:.2}",
-            fixture_name, label,
-            features[0], features[1], features[2], features[3], features[4],
-            features[5], features[6], features[7], features[8], features[9],
-            features[10], features[11]);
-
-        examples.push(Example { features, label });
-    }
-
-    eprintln!("\ntraining on {} labeled examples...", examples.len());
-
-    let config = TrainConfig {
-        learning_rate: 0.05,
-        epochs: 3000,
-        augmentation_noise: 0.08,
-        augmentation_factor: 100,
-    };
-    let (weights, loss, accuracy) = classifier::train(&examples, &config);
-
-    eprintln!("  loss:     {:.4}", loss);
-    eprintln!("  accuracy: {:.1}%", accuracy * 100.0);
-
-    // Verify each example
-    let mut misses = 0;
-    for (i, ex) in examples.iter().enumerate() {
-        let (optic, confidence, _) = classifier::classify(&weights, &ex.features);
-        let correct = optic as usize == ex.label;
-        if !correct {
-            misses += 1;
-        }
-        eprintln!(
-            "  {:30} → {:?} ({:.1}%) {}",
-            entries[i]["fixture"].as_str().unwrap(),
-            optic,
-            confidence * 100.0,
-            if correct { "✓" } else { "✗" }
-        );
-    }
-
-    if misses > 0 {
-        eprintln!("\n  {} misclassified — weights NOT written", misses);
-        process::exit(1);
-    }
-
-    // Write weights
-    let weights_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("mirror.weights");
-    let bytes = weights.to_bytes();
-    std::fs::write(&weights_path, &bytes).unwrap_or_else(|e| {
-        eprintln!("train: write {}: {}", weights_path.display(), e);
-        process::exit(1);
-    });
-    eprintln!(
-        "\n  wrote {} bytes to {}",
-        bytes.len(),
-        weights_path.display()
-    );
-}
-
-/// Extract spectral features from a graph (shared between train_cmd and settle_cmd).
-///
-/// 12 features using the first 12 of 32 input dimensions:
-///  0: node_count_norm      — graph size / 50
-///  1: duplicate_ratio      — 1 - unique/n
-///  2: fold_ratio           — fraction of fold-def nodes
-///  3: prism_ratio          — fraction of prism-def nodes
-///  4: traversal_ratio      — fraction of traversal-def nodes
-///  5: lens_ratio           — fraction of lens-def nodes
-///  6: iso_ratio            — fraction of iso-def nodes
-///  7: prefix_entropy       — unique prefixes / 10
-///  8: edge_density         — namespace co-occurrence
-///  9: param_ratio          — fraction of parameterized nodes
-/// 10: variant_ratio        — fraction of variant nodes
-/// 11: keyword_diversity    — how many of the 5 crystal types appear (/ 5)
-pub fn spectral_features(graph: &[String]) -> [f64; mirror::classifier::INPUT_DIM] {
-    let mut features = [0.0; mirror::classifier::INPUT_DIM];
-    let n = graph.len() as f64;
-    if n == 0.0 {
-        return features;
-    }
-
-    // 0: node count
-    features[0] = (n / 50.0).min(1.0);
-
-    // 1: duplicate ratio
-    let mut sorted = graph.to_vec();
-    sorted.sort();
-    sorted.dedup();
-    let unique = sorted.len() as f64;
-    features[1] = 1.0 - (unique / n);
-
-    // 2-6: crystal keyword distribution
-    let fold_count = graph.iter().filter(|s| s.starts_with("fold-def:")).count() as f64;
-    let prism_count = graph.iter().filter(|s| s.starts_with("prism-def:")).count() as f64;
-    let traversal_count = graph
-        .iter()
-        .filter(|s| s.starts_with("traversal-def:"))
-        .count() as f64;
-    let lens_count = graph.iter().filter(|s| s.starts_with("lens-def:")).count() as f64;
-    let iso_count = graph.iter().filter(|s| s.starts_with("iso-def:")).count() as f64;
-    features[2] = fold_count / n;
-    features[3] = prism_count / n;
-    features[4] = traversal_count / n;
-    features[5] = lens_count / n;
-    features[6] = iso_count / n;
-
-    // 7: prefix entropy
-    let prefixes: Vec<&str> = graph.iter().filter_map(|s| s.split(':').next()).collect();
-    let unique_prefixes: std::collections::HashSet<&&str> = prefixes.iter().collect();
-    features[7] = (unique_prefixes.len() as f64 / 10.0).min(1.0);
-
-    // 8: edge density — co-occurrence within same prefix
-    let mut edges = 0usize;
-    for i in 0..graph.len() {
-        for j in (i + 1)..graph.len() {
-            let pi = graph[i].split(':').next().unwrap_or("");
-            let pj = graph[j].split(':').next().unwrap_or("");
-            if pi == pj {
-                edges += 1;
-            }
-        }
-    }
-    let possible = graph.len() * graph.len().saturating_sub(1) / 2;
-    features[8] = if possible > 0 {
-        edges as f64 / possible as f64
-    } else {
-        0.0
-    };
-
-    // 9: param ratio — nodes containing parentheses in value
-    let param_count = graph
-        .iter()
-        .filter(|s| s.split(':').nth(1).is_some_and(|v| v.contains('(')))
-        .count() as f64;
-    features[9] = param_count / n;
-
-    // 10: variant ratio — nodes named "variant"
-    let variant_count = graph.iter().filter(|s| s.starts_with("variant:")).count() as f64;
-    features[10] = variant_count / n;
-
-    // 11: keyword diversity — how many of the 5 crystal keywords appear
-    let mut keyword_types = 0u8;
-    if fold_count > 0.0 {
-        keyword_types += 1;
-    }
-    if prism_count > 0.0 {
-        keyword_types += 1;
-    }
-    if traversal_count > 0.0 {
-        keyword_types += 1;
-    }
-    if lens_count > 0.0 {
-        keyword_types += 1;
-    }
-    if iso_count > 0.0 {
-        keyword_types += 1;
-    }
-    features[11] = keyword_types as f64 / 5.0;
-
-    features
-}
-
-fn fmt_cmd(conv_path: &str, settle: bool, train: bool) {
-    use mirror::ast::{self as ast_mod, AstNode, Span};
-    use mirror::classifier::{self, Optic};
-    use mirror::domain::conversation::Kind;
-    use mirror::emit;
-    use mirror::parse::Parse;
-    use mirror::prism::Prism as PrismTree;
-    use mirror::Vector;
-
-    let source = std::fs::read_to_string(conv_path).unwrap_or_else(|e| {
-        eprintln!("fmt: {}: {}", conv_path, e);
-        process::exit(1);
-    });
-
-    let ast = Parse
-        .trace(source.clone())
-        .into_result()
-        .unwrap_or_else(|e| {
-            eprintln!("fmt: {}: parse error: {}", conv_path, e);
-            process::exit(1);
-        });
-
-    let graph: Vec<String> = ast
-        .children()
-        .iter()
-        .map(|c| format!("{}:{}", c.data().name, c.data().value))
-        .collect();
-    let initial_len = graph.len();
-
-    if !settle {
-        // Plain fmt: just emit canonical form (sorted, no dedup)
-        let mut children = ast.children().to_vec();
-        children.sort_by(|a, b| {
-            let ka = format!("{}:{}", a.data().name, a.data().value);
-            let kb = format!("{}:{}", b.data().name, b.data().value);
-            ka.cmp(&kb)
-        });
-        let sorted = ast_mod::ast_branch(Kind::Decl, "root", "fmt", Span::new(0, 0), children);
-        let output = emit::emit(&sorted);
-        print!("{}", output);
-        return;
-    }
-
-    // --settle: classify and apply optic
-    let weights = classifier::trained();
-    let features = spectral_features(&graph);
-    let (optic, confidence, _) = classifier::classify(&weights, &features);
-
-    let resolved_ast: PrismTree<AstNode> = match optic {
-        Optic::Noop => ast.clone(),
-        _ => {
-            let mut children = ast.children().to_vec();
-            children.sort_by(|a, b| {
-                let ka = format!("{}:{}", a.data().name, a.data().value);
-                let kb = format!("{}:{}", b.data().name, b.data().value);
-                ka.cmp(&kb)
-            });
-            children.dedup_by(|a, b| {
-                let ka = format!("{}:{}", a.data().name, a.data().value);
-                let kb = format!("{}:{}", b.data().name, b.data().value);
-                ka == kb
-            });
-            ast_mod::ast_branch(Kind::Decl, "root", "resolved", Span::new(0, 0), children)
-        }
-    };
-
-    let resolved_len = resolved_ast.children().len();
-    let output = emit::emit(&resolved_ast);
-
-    eprintln!(
-        "  {:?} ({:.0}%) {} → {} nodes",
-        optic,
-        confidence * 100.0,
-        initial_len,
-        resolved_len
-    );
-
-    if train {
-        // --train: write the tension/resolved pair + fine-tune weights
-        let fixtures_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures");
-        let tension_dir = fixtures_dir.join("tension");
-        let resolved_dir = fixtures_dir.join("resolved");
-        std::fs::create_dir_all(&tension_dir).unwrap();
-        std::fs::create_dir_all(&resolved_dir).unwrap();
-
-        let name = std::path::Path::new(conv_path)
-            .file_name()
-            .unwrap()
-            .to_str()
-            .unwrap();
-
-        // Tension = the original source
-        std::fs::write(tension_dir.join(name), &source).unwrap();
-        // Resolved = what the Abyss produced
-        std::fs::write(resolved_dir.join(name), &output).unwrap();
-
-        // Fine-tune on this example
-        let example = classifier::Example {
-            features,
-            label: optic as usize,
-        };
-        let (new_weights, loss, _) = classifier::fine_tune(weights, &[example]);
-        let weights_path =
-            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("mirror.weights");
-        std::fs::write(&weights_path, new_weights.to_bytes()).unwrap();
-
-        eprintln!(
-            "  train: loss={:.4} → {}",
-            loss,
-            weights_path.file_name().unwrap().to_str().unwrap()
-        );
-    }
-
-    // Write the settled output
-    print!("{}", output);
-}
-
-fn resolve_cmd() {
-    use mirror::ast::{self as ast_mod, AstNode, Span};
-    use mirror::classifier::{self, Optic};
-    use mirror::domain::conversation::Kind;
-    use mirror::emit;
-    use mirror::parse::Parse;
-    use mirror::prism::Prism as PrismTree;
-    use mirror::Vector;
-
-    let tension_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/tension");
-    let resolved_dir =
-        std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/resolved");
-
-    std::fs::create_dir_all(&resolved_dir).unwrap();
-
-    let weights = classifier::trained();
-
-    let mut entries: Vec<_> = std::fs::read_dir(&tension_dir)
-        .unwrap_or_else(|e| {
-            eprintln!("resolve: {}: {}", tension_dir.display(), e);
-            process::exit(1);
-        })
-        .filter_map(|e| e.ok())
-        .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("mirror"))
-        .collect();
-    entries.sort_by_key(|e| e.path());
-
-    for entry in &entries {
-        let path = entry.path();
-        let name = path.file_name().unwrap().to_str().unwrap();
-        let source = std::fs::read_to_string(&path).unwrap();
-
-        let ast = match Parse.trace(source).into_result() {
-            Ok(tree) => tree,
-            Err(e) => {
-                eprintln!("  SKIP {:25} parse error: {}", name, e);
-                continue;
-            }
-        };
-
-        // Extract features from the graph representation
-        let graph: Vec<String> = ast
-            .children()
-            .iter()
-            .map(|c| format!("{}:{}", c.data().name, c.data().value))
-            .collect();
-        let initial_len = graph.len();
-
-        let features = spectral_features(&graph);
-        let (optic, confidence, _) = classifier::classify(&weights, &features);
-
-        // Apply the optic transform at the AST level
-        let resolved_ast: PrismTree<AstNode> = match optic {
-            Optic::Noop => ast.clone(),
-            _ => {
-                // Sort children by content address, dedup by name:value
-                let mut children = ast.children().to_vec();
-                children.sort_by(|a, b| {
-                    let ka = format!("{}:{}", a.data().name, a.data().value);
-                    let kb = format!("{}:{}", b.data().name, b.data().value);
-                    ka.cmp(&kb)
-                });
-                children.dedup_by(|a, b| {
-                    let ka = format!("{}:{}", a.data().name, a.data().value);
-                    let kb = format!("{}:{}", b.data().name, b.data().value);
-                    ka == kb
-                });
-                ast_mod::ast_branch(Kind::Decl, "root", "resolved", Span::new(0, 0), children)
-            }
-        };
-
-        let resolved_len = resolved_ast.children().len();
-        let reduced = initial_len - resolved_len;
-
-        eprintln!(
-            "  {:25} {:?} ({:.0}%) {:2} → {:2} ({:+})",
-            name,
-            optic,
-            confidence * 100.0,
-            initial_len,
-            resolved_len,
-            -(reduced as i32)
-        );
-
-        // Emit back to .mirror syntax
-        let output = emit::emit(&resolved_ast);
-        let resolved_path = resolved_dir.join(name);
-        std::fs::write(&resolved_path, &output).unwrap();
-    }
-}
-
-/// Discover packages from priority-ordered roots relative to `self_dir`.
-fn load_packages(self_dir: &std::path::Path) -> Resolve {
-    let roots = PackageRegistry::package_roots(self_dir);
-    if roots.is_empty() {
-        return Resolve::new();
-    }
-    match PackageRegistry::discover_ordered(&roots) {
-        Ok(r) => match r.to_namespace() {
-            Ok(ns) => Resolve::new().with_namespace(ns),
-            Err(e) => {
-                eprintln!("mirror: packages: {}", e);
-                Resolve::new()
-            }
-        },
-        Err(e) => {
-            eprintln!("mirror: packages: {}", e);
-            Resolve::new()
-        }
-    }
-}
-
-fn run_tests(source: &str, resolve: &Resolve) {
-    let (_, test_section) = packages::split_test_section(source);
-    let test_text = match test_section {
-        Some(t) => t,
-        None => {
-            println!("no test section found");
-            return;
-        }
-    };
-
-    // Build namespace: start with packages, then add the file's own grammars.
-    let mut namespace = resolve.namespace().clone();
-    if let Ok(ast) = Parse.trace(source.to_string()).into_result() {
-        for child in ast.children() {
-            if child.data().is_decl("grammar") {
-                if let Ok(domain) = Mirror::from_grammar(child) {
-                    let domain_name = domain.domain_name().to_string();
-                    namespace.register_domain(&domain_name, domain);
-                }
-            }
-        }
-    }
-    let results = match property::check_all(&namespace, test_text) {
-        Ok(r) => r,
-        Err(e) => {
-            eprintln!("mirror: test: {}", e);
-            process::exit(1);
-        }
-    };
-
-    let mut failed = 0;
-    for result in &results {
-        match &result.verdict {
-            property::Verdict::Pass => {
-                println!("PASS {}", result.name);
-            }
-            property::Verdict::Fail(msg) => {
-                println!("FAIL {}", result.name);
-                println!("     {}", msg);
-                failed += 1;
-            }
-        }
-    }
-
-    if results.is_empty() {
-        println!("no tests");
-    } else {
-        println!(
-            "\n{} tests, {} passed, {} failed",
-            results.len(),
-            results.len() - failed,
-            failed
-        );
-    }
-
-    if failed > 0 {
-        process::exit(1);
-    }
-}
-
-fn run(source: &str, input_path: &str, resolve: &Resolve) {
-    let resolved = match Conversation::<Filesystem>::from_source_with(source, resolve.clone()) {
-        Ok(c) => c,
-        Err(e) => {
-            eprintln!("mirror: {}", e);
-            process::exit(1)
-        }
-    };
-    let tree = Folder::read_tree(input_path);
-    let value = resolved.trace(tree).into_result().unwrap();
-    let json = serde_json::to_string_pretty(&value).unwrap();
-    let stdout = io::stdout();
-    let mut out = stdout.lock();
-    let _ = out.write_all(json.as_bytes());
-    let _ = out.write_all(b"\n");
-}
-
-fn shell(path: &str, resolve: &Resolve) {
-    let stdin = io::stdin();
-    let reader = stdin.lock();
-    let mut stdout = io::stdout();
-
-    let gestalt_path = format!("{}/.gestalt", path);
-    let reader_id = std::env::var("USER").unwrap_or_else(|_| "anonymous".to_string());
-    let mut session = mirror::session::Session::new(&reader_id, &gestalt_path);
-
-    eprintln!("mirror shell — {}", path);
-    eprintln!("commands: /focus /project /split /zoom /merge /tock /exit");
-    eprintln!("type expressions or commands, ctrl+d to exit\n");
-
-    'repl: for line in reader.lines() {
-        let _ = write!(stdout, "mirror> ");
-        let _ = stdout.flush();
-
-        let line = match line {
-            Ok(l) => l,
-            Err(e) => {
-                eprintln!("mirror: read error: {}", e);
-                break;
-            }
-        };
-
-        let line = line.trim().to_string();
-        if line.is_empty() {
-            continue;
-        }
-
-        // Slash commands → session state machine
-        if let Some(slash_line) = line.strip_prefix('/') {
-            let (cmd, arg) = match slash_line.splitn(2, ' ').collect::<Vec<_>>().as_slice() {
-                [cmd, rest] => (cmd.to_string(), rest.trim().to_string()),
-                [cmd] => (cmd.to_string(), String::new()),
-                _ => continue,
-            };
-            let result = match cmd.as_str() {
-                "focus" => {
-                    if arg.is_empty() {
-                        Err("/focus requires a question".to_string())
-                    } else {
-                        session.focus(&arg)
-                    }
-                }
-                "project" => session.project(),
-                "split" => session.split(),
-                "zoom" => {
-                    let direction = if arg.is_empty() { "deeper" } else { &arg };
-                    session.zoom(direction)
-                }
-                "fork" => {
-                    if arg.is_empty() {
-                        Err("/fork requires a name".to_string())
-                    } else {
-                        session.switch_fork(&arg)
-                    }
-                }
-                "merge" => session.merge(),
-                "tock" | "train" => session.tock(),
-                "exit" => {
-                    match session.refract() {
-                        Ok(msg) => eprintln!("  {}", msg),
-                        Err(e) => eprintln!("  refract error: {}", e),
-                    }
-                    break 'repl;
-                }
-                unknown => Err(format!("unknown command: /{}", unknown)),
-            };
-            match result {
-                Ok(msg) => eprintln!("  {}", msg),
-                Err(e) => eprintln!("  error: {}", e),
-            }
-            continue;
-        }
-
-        // Domain invocations → DomainInvocation::parse + dispatch
-        if line.starts_with('@') {
-            let parts: Vec<&str> = line.splitn(3, ' ').collect();
-            let refs: Vec<&str> = parts.iter().map(|s| s.as_ref()).collect();
-            match mirror::domain_dispatch::DomainInvocation::parse(&refs) {
-                Some(inv) => match mirror::domain_dispatch::dispatch(&inv) {
-                    Ok(output) => print!("{}", output),
-                    Err(e) => eprintln!("  error: {}", e),
-                },
-                None => eprintln!("  error: invalid domain invocation (missing action)"),
-            }
-            continue;
-        }
-
-        // Everything else → evaluate as .mirror expression
-        let source = format!("out {}\n", line);
-
-        let resolved = match Conversation::<Filesystem>::from_source_with(&source, resolve.clone())
-        {
-            Ok(conv) => conv,
-            Err(e) => {
-                eprintln!("  error: {}", e);
-                continue;
-            }
-        };
-
-        let tree = Folder::read_tree(path);
-
-        let value = resolved.trace(tree).into_result().unwrap();
-        let json = serde_json::to_string_pretty(&value).unwrap();
-        println!("{}", json);
-    }
-
-    let _ = writeln!(stdout);
+fn looks_like_query(s: &str) -> bool {
+    // Anything containing whitespace, braces, or starting with a known
+    // mirror keyword is treated as a query string.
+    s.contains(' ')
+        || s.contains('{')
+        || s.contains('}')
+        || s.starts_with("form")
+        || s.starts_with("prism")
+        || s.starts_with("fold")
+        || s.starts_with("lens")
+        || s.starts_with("traversal")
+        || s.starts_with("iso")
+        || s.starts_with("setter")
 }

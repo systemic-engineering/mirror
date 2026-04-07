@@ -1,0 +1,7 @@
+form @form {
+  prism focus
+  prism project
+  prism split
+  prism zoom
+  prism refract
+}

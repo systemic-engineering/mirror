@@ -1,0 +1,18 @@
+form @mirror {
+  in @form
+  in @prism
+  in @type
+  in @boundary
+  in @lens
+  in @property
+
+  requires unique_variants
+  requires every_type_reachable
+  requires no_dead_variants
+  invariant dual_partition
+  invariant idempotent
+  invariant deterministic
+  invariant pure
+  invariant no_cycles
+  ensures always_halts
+}

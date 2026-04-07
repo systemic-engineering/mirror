@@ -1,0 +1,7 @@
+form @type {
+  in @form
+
+  lens type(id)
+  lens ref(id)
+  lens grammar(ref)
+}

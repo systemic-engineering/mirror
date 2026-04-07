@@ -6,12 +6,11 @@
 //!
 //! - **parse** — Source → AST tree (frozen bootstrap parser)
 //! - **resolve** — Grammar type checking, namespace validation
-//! - **compile** — AST → BEAM Erlang Abstract Form (EAF)
+//! - **mirror_runtime** — Spectral content-addressed compilation pipeline
 //! - **kernel** — Content addressing, Oid, Trace, Vector trait hierarchy
 //! - **runtime** — Runtime trait (sync compilation interface)
 //! - **dispatch** — Value, Args, Response, InferenceSchedule
 //! - **artifact** — Bounded storage for compiled modules (Pressure-based eviction)
-//! - **boot** — Multi-layer boot sequence from `boot/` directory
 //!
 //! ## Re-exports
 //!
@@ -25,11 +24,9 @@ pub use prism_crate as beam;
 pub mod kernel;
 pub mod abyss;
 pub mod ast;
-pub mod boot;
 pub mod bounded;
 pub mod check;
 pub mod classifier;
-pub mod compile;
 pub mod dispatch;
 pub mod domain;
 pub mod emit;
@@ -68,6 +65,7 @@ pub mod domain_dispatch;
 pub mod features;
 pub mod gestalt;
 pub mod ghost;
+pub mod mirror_runtime;
 pub mod model;
 pub mod runtime;
 pub mod session;

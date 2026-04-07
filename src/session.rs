@@ -63,57 +63,144 @@ impl Session {
     // ---
 
     /// /focus -- ask a question, create singularity.
-    pub fn focus(&mut self, _question: &str) -> Result<String, String> {
-        unimplemented!("focus: red phase")
+    pub fn focus(&mut self, question: &str) -> Result<String, String> {
+        self.state = SessionState::Focused {
+            question: question.to_string(),
+        };
+        Ok(format!("singularity: deficit identified ({})", question))
     }
 
     // ---
 
     /// /project -- make the entanglement visible.
     pub fn project(&mut self) -> Result<String, String> {
-        unimplemented!("project: red phase")
+        match &self.state {
+            SessionState::Focused { .. } => {
+                self.state = SessionState::Projected;
+                Ok(format!(
+                    "entanglement visible:\n  reader loss: {:.2}\n  encounters: {}",
+                    self.gestalt.loss, self.gestalt.encounters
+                ))
+            }
+            _ => Err("nothing to project -- /focus first".to_string()),
+        }
     }
 
     // ---
 
     /// /split -- fork the session.
     pub fn split(&mut self) -> Result<String, String> {
-        unimplemented!("split: red phase")
+        if !matches!(
+            self.state,
+            SessionState::Projected | SessionState::Focused { .. }
+        ) {
+            return Err("/split requires a focused or projected state".to_string());
+        }
+        self.forks = vec![
+            Fork {
+                name: "fork-a".into(),
+                gestalt: self.gestalt.fork(),
+                zoom_depth: 0,
+            },
+            Fork {
+                name: "fork-b".into(),
+                gestalt: self.gestalt.fork(),
+                zoom_depth: 0,
+            },
+        ];
+        self.state = SessionState::Forked { active_fork: 0 };
+        let names: Vec<&str> = self.forks.iter().map(|f| f.name.as_str()).collect();
+        Ok(format!("split: {}", names.join(", ")))
     }
 
     // ---
 
     /// /zoom -- go deeper in the active fork.
-    pub fn zoom(&mut self, _direction: &str) -> Result<String, String> {
-        unimplemented!("zoom: red phase")
+    pub fn zoom(&mut self, direction: &str) -> Result<String, String> {
+        match &self.state {
+            SessionState::Forked { active_fork } => {
+                let idx = *active_fork;
+                if let Some(fork) = self.forks.get_mut(idx) {
+                    fork.zoom_depth += 1;
+                    Ok(format!(
+                        "{}: zoom {} (depth {})",
+                        fork.name, direction, fork.zoom_depth
+                    ))
+                } else {
+                    Err("no active fork".to_string())
+                }
+            }
+            SessionState::Focused { .. } | SessionState::Projected => {
+                Ok(format!("zoom {} (depth 1)", direction))
+            }
+            _ => Err("/zoom requires an active encounter".to_string()),
+        }
     }
 
     // ---
 
     /// Switch the active fork by name.
-    pub fn switch_fork(&mut self, _name: &str) -> Result<String, String> {
-        unimplemented!("switch_fork: red phase")
+    pub fn switch_fork(&mut self, name: &str) -> Result<String, String> {
+        let idx = self
+            .forks
+            .iter()
+            .position(|f| f.name == name)
+            .ok_or_else(|| format!("no fork named '{}'", name))?;
+        self.state = SessionState::Forked { active_fork: idx };
+        Ok(format!("switched to fork '{}'", name))
     }
 
     // ---
 
     /// /merge -- reunite forks.
     pub fn merge(&mut self) -> Result<String, String> {
-        unimplemented!("merge: red phase")
+        if self.forks.is_empty() {
+            return Err("nothing to merge -- /split first".to_string());
+        }
+        let profiles: Vec<GestaltProfile> = self.forks.iter().map(|f| f.gestalt.clone()).collect();
+        self.gestalt = GestaltProfile::merge(&profiles);
+
+        let losses: Vec<String> = self
+            .forks
+            .iter()
+            .map(|f| format!("{}: {:.2}", f.name, f.gestalt.loss))
+            .collect();
+
+        self.forks.clear();
+        self.state = SessionState::Merged;
+        Ok(format!("merged: {}", losses.join(", ")))
     }
 
     // ---
 
     /// /train -- update weights inline.
     pub fn train(&mut self) -> Result<String, String> {
-        unimplemented!("train: red phase")
+        let crystal_oid = format!("crystal-{}", self.gestalt.encounters + 1);
+        let current_loss = self.gestalt.loss;
+        self.gestalt.record_encounter(&crystal_oid, current_loss);
+        self.state = SessionState::Trained;
+        Ok(format!(
+            "trained: encounter {} recorded, loss {:.4}",
+            self.gestalt.encounters, self.gestalt.loss
+        ))
     }
 
     // ---
 
     /// /exit -- refract. Crystallize and save.
     pub fn refract(&mut self) -> Result<String, String> {
-        unimplemented!("refract: red phase")
+        // Always train on exit if not already trained
+        if self.state != SessionState::Trained {
+            let _ = self.train();
+        }
+        // Save gestalt
+        self.gestalt
+            .save(&self.gestalt_path)
+            .map_err(|e| format!("save gestalt: {}", e))?;
+        Ok(format!(
+            "refract: session crystallized, {} encounters total",
+            self.gestalt.encounters
+        ))
     }
 }
 
@@ -234,7 +321,6 @@ mod tests {
         s.focus("question").unwrap();
         assert_ne!(s.state, SessionState::Trained);
         s.refract().unwrap();
-        // After refract, train was called, so encounters should be 1
         assert_eq!(s.gestalt.encounters, 1);
     }
 

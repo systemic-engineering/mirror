@@ -1,0 +1,6 @@
+form @boundary {
+  in @form
+
+  fold in(ref)
+  prism out(ref)
+}

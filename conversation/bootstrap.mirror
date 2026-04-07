@@ -1,5 +1,0 @@
-grammar @compiler {
-  type = grammar | type
-
-  action compile(source: grammar)
-}
