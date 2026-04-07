@@ -53,6 +53,17 @@ fn err(s: impl Into<String>) -> MirrorRuntimeError {
     MirrorRuntimeError(s.into())
 }
 
+#[derive(Debug)]
+pub struct MirrorResolveError(pub String);
+
+impl std::fmt::Display for MirrorResolveError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+
+impl std::error::Error for MirrorResolveError {}
+
 // ---------------------------------------------------------------------------
 // Form — the runtime structure that Shatter compiles to/from.
 // ---------------------------------------------------------------------------
@@ -716,6 +727,31 @@ impl MirrorRegistry {
             bytes += self.estimate_size(child);
         }
         bytes
+    }
+
+    /// Resolve a Form tree by checking that every `in @X` reference exists in the store.
+    /// Returns the first unresolved reference as an error, or Ok(()) if all resolve.
+    /// Resolution goes through store.get_ref() to ensure it works after a reopen
+    /// (disk-backed, not in-memory shadow).
+    pub fn resolve(&self, form: &Form) -> Result<(), MirrorResolveError> {
+        self.resolve_node(form)
+    }
+
+    fn resolve_node(&self, node: &Form) -> Result<(), MirrorResolveError> {
+        if node.kind == DeclKind::In {
+            let target = &node.name;
+            if self.store.get_ref(target).is_none() {
+                return Err(MirrorResolveError(format!(
+                    "unresolved `in {}`: no such ref in registry store at {}",
+                    target,
+                    self.root.display()
+                )));
+            }
+        }
+        for child in &node.children {
+            self.resolve_node(child)?;
+        }
+        Ok(())
     }
 }
 
