@@ -31,6 +31,7 @@ use coincidence::declaration::{
     fragment as build_fragment, DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, MirrorHash,
 };
 use fragmentation::frgmnt_store::FrgmntStore;
+use fragmentation::sha::HashAlg;
 use prism::{Beam, Precision, Prism};
 
 // ---------------------------------------------------------------------------
@@ -654,15 +655,67 @@ impl MirrorRegistry {
     }
 
     /// Look up a named fragment in the registry. Returns None if the name
-    /// doesn't exist or the Oid it references isn't in the cache.
+    /// doesn't exist or the Oid it references isn't in the cache or on disk.
     pub fn lookup(&self, name: &str) -> Option<MirrorFragment> {
         let oid = self.store.get_ref(name)?;
-        self.store.get(&oid)
+        self.store.get_persistent(&oid)
     }
 
     /// Root path of the registry.
     pub fn root(&self) -> &Path {
         &self.root
+    }
+
+    /// Flush all cached fragments to disk and clear the in-memory cache.
+    /// Call this before dropping the registry to ensure all fragments are persisted.
+    pub fn flush(&self) {
+        self.store.flush();
+    }
+
+    /// Register forms into the store. If the form's name is empty (synthetic file-level form),
+    /// recurse into children. For forms starting with `@`, compile to a MirrorFragment,
+    /// store persistently, and map the name to its OID. Forms without `@` prefix are ignored.
+    /// Returns OIDs of newly-registered forms.
+    pub fn register(&mut self, form: &Form) -> Vec<String> {
+        let mut oids = Vec::new();
+        if form.name.is_empty() {
+            // Synthetic file-level form: recurse into children
+            for child in &form.children {
+                oids.extend(self.register_decl(child));
+            }
+        } else {
+            // Single named form: try to register it
+            oids.extend(self.register_decl(form));
+        }
+        oids
+    }
+
+    /// Register a single declaration if its name starts with `@`.
+    fn register_decl(&mut self, decl: &Form) -> Option<String> {
+        if !decl.name.starts_with('@') {
+            return None;
+        }
+        let shatter = Shatter;
+        let fragment = shatter.compile_form(decl);
+        let oid = fragment.oid().as_str().to_string();
+        let size = self.estimate_size(decl);
+        self.store.insert_persistent(oid.clone(), fragment, size);
+        if let Err(e) = self.store.set_ref(&decl.name, &oid) {
+            eprintln!("warning: set_ref({} -> {}) failed: {}", decl.name, oid, e);
+        }
+        Some(oid)
+    }
+
+    /// Estimate the byte size of a form for cache accounting.
+    fn estimate_size(&self, form: &Form) -> usize {
+        let mut bytes = form.name.len()
+            + form.params.iter().map(|s| s.len()).sum::<usize>()
+            + form.variants.iter().map(|s| s.len()).sum::<usize>()
+            + 64; // Base overhead for Kind and structure
+        for child in &form.children {
+            bytes += self.estimate_size(child);
+        }
+        bytes
     }
 }
 
@@ -884,13 +937,7 @@ mod tests {
         let mut registry = MirrorRegistry::open(&tmp).unwrap();
 
         // A name without @-prefix should NOT become a form binding.
-        let form = Form::new(
-            DeclKind::Prism,
-            "id",
-            Vec::new(),
-            Vec::new(),
-            Vec::new(),
-        );
+        let form = Form::new(DeclKind::Prism, "id", Vec::new(), Vec::new(), Vec::new());
         registry.register(&form);
         assert!(registry.lookup("id").is_none());
         assert!(registry.lookup("@id").is_none());
