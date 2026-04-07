@@ -30,6 +30,7 @@ use std::path::{Path, PathBuf};
 use coincidence::declaration::{
     fragment as build_fragment, DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, MirrorHash,
 };
+use fragmentation::frgmnt_store::FrgmntStore;
 use prism::{Beam, Precision, Prism};
 
 // ---------------------------------------------------------------------------
@@ -613,6 +614,59 @@ pub struct BootShatter {
 }
 
 // ---------------------------------------------------------------------------
+// MirrorRegistry — content-addressed store backed by FrgmntStore
+// ---------------------------------------------------------------------------
+
+const REGISTRY_CACHE_BYTES: usize = 16 * 1024 * 1024;
+
+/// MirrorRegistry holds compiled fragments in a content-addressed store.
+/// Backed by FrgmntStore<MirrorFragment>, which manages both in-memory cache
+/// and persistent disk storage via the `.frgmnt/` directory structure.
+pub struct MirrorRegistry {
+    store: FrgmntStore<MirrorFragment>,
+    ops: std::collections::BTreeSet<String>,
+    root: PathBuf,
+}
+
+impl MirrorRegistry {
+    /// Open or create a registry at the given path. Creates `.frgmnt/objects`
+    /// and `.frgmnt/refs` subdirectories if they don't exist. Initializes
+    /// builtin operations ("in", "out").
+    pub fn open(path: &Path) -> Result<Self, MirrorRuntimeError> {
+        let path_str = path
+            .to_str()
+            .ok_or_else(|| err(format!("non-utf8 registry path: {}", path.display())))?;
+        let store = FrgmntStore::<MirrorFragment>::open(path_str, REGISTRY_CACHE_BYTES)
+            .map_err(|e| err(format!("open frgmnt store at {}: {}", path.display(), e)))?;
+        let mut ops = std::collections::BTreeSet::new();
+        ops.insert("in".to_string());
+        ops.insert("out".to_string());
+        Ok(MirrorRegistry {
+            store,
+            ops,
+            root: path.to_path_buf(),
+        })
+    }
+
+    /// Check if an operation name is registered (builtin or custom).
+    pub fn has_op(&self, name: &str) -> bool {
+        self.ops.contains(name)
+    }
+
+    /// Look up a named fragment in the registry. Returns None if the name
+    /// doesn't exist or the Oid it references isn't in the cache.
+    pub fn lookup(&self, name: &str) -> Option<MirrorFragment> {
+        let oid = self.store.get_ref(name)?;
+        self.store.get(&oid)
+    }
+
+    /// Root path of the registry.
+    pub fn root(&self) -> &Path {
+        &self.root
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
@@ -627,8 +681,7 @@ mod tests {
     }
 
     fn tempdir_for_test(name: &str) -> PathBuf {
-        let dir = std::env::temp_dir()
-            .join(format!("mirror-test-{}-{}", name, std::process::id()));
+        let dir = std::env::temp_dir().join(format!("mirror-test-{}-{}", name, std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         std::fs::create_dir_all(&dir).unwrap();
         dir
