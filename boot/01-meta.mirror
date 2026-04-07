@@ -1,0 +1,37 @@
+in @form
+
+form @prism {
+  focus focus
+  project project
+  split split
+  zoom zoom
+  refract refract
+}
+
+focus type(id)
+project ref(type)
+
+focus .(type)
+split |(ref, ref)
+zoom |>(ref, prism)
+zoom <|(prism, ref)
+zoom /(ref, focus)
+refract ..(ref)
+
+type loss(f64)
+type precision(f64)
+
+type beam(result) {
+  result: result,
+  path: [prism],
+  loss: loss
+  precision: precision
+}
+
+form @meta {
+  focus .
+  project |>
+  split |
+  zoom /
+  refract ..
+}
