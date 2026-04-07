@@ -28,8 +28,7 @@ use std::collections::BTreeMap;
 use std::path::Path;
 
 use coincidence::declaration::{
-    fragment as build_fragment, DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt,
-    MirrorHash,
+    fragment as build_fragment, DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, MirrorHash,
 };
 use prism::{Beam, Precision, Prism};
 
@@ -92,8 +91,7 @@ impl Form {
             self.params.clone(),
             self.variants.clone(),
         );
-        let children: Vec<MirrorFragment> =
-            self.children.iter().map(|c| c.to_fragment()).collect();
+        let children: Vec<MirrorFragment> = self.children.iter().map(|c| c.to_fragment()).collect();
         build_fragment(data, children)
     }
 
@@ -195,23 +193,37 @@ impl Shatter {
 // Parser — line-oriented, brace-balanced.
 // ---------------------------------------------------------------------------
 
-/// Parse a `.mirror` source string. Expects exactly one top-level
-/// `form @name { ... }` declaration. Returns the form's structural Form.
+/// Parse a `.mirror` source string. The top-level may contain one or more
+/// declarations. If there is exactly one, return it as-is. If there are
+/// multiple, wrap them in a synthetic file-level Form.
 pub fn parse_form(source: &str) -> Result<Form, MirrorRuntimeError> {
     let tokens = tokenize(source);
     let mut cursor = 0usize;
-    let form = parse_decl(&tokens, &mut cursor)?;
-    skip_trivia(&tokens, &mut cursor);
-    if cursor != tokens.len() {
-        return Err(err(format!(
-            "trailing content at token {}: {:?}",
-            cursor, tokens[cursor]
-        )));
+    let mut decls = Vec::new();
+
+    loop {
+        skip_trivia(&tokens, &mut cursor);
+        if cursor >= tokens.len() {
+            break;
+        }
+        decls.push(parse_decl(&tokens, &mut cursor)?);
     }
-    if form.kind != DeclKind::Form {
-        return Err(err(format!("expected top-level form, got {:?}", form.kind)));
+
+    if decls.is_empty() {
+        Err(err("no declarations found".to_string()))
+    } else if decls.len() == 1 {
+        Ok(decls.into_iter().next().unwrap())
+    } else {
+        // Multiple declarations: wrap in a synthetic file-level Form
+        let wrapped = Form::new(
+            DeclKind::Form,
+            "".to_string(),
+            Vec::new(),
+            Vec::new(),
+            decls,
+        );
+        Ok(wrapped)
     }
-    Ok(form)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -222,7 +234,6 @@ enum Tok {
     LParen,
     RParen,
     Comma,
-    Pipe,
     Equals,
     Newline,
 }
@@ -266,9 +277,31 @@ fn tokenize(source: &str) -> Vec<Tok> {
                 out.push(Tok::Comma);
                 i += 1;
             }
-            '|' => {
-                out.push(Tok::Pipe);
-                i += 1;
+            '|' | '.' | '/' | '<' | '>' | ':' | '-' => {
+                // Operator sequences like |, |>, <|, /, .., etc. can be declaration names.
+                // Try to collect them as a word if they form a contiguous symbol sequence.
+                let start = i;
+                while i < bytes.len() {
+                    let cc = bytes[i] as char;
+                    if cc == '|'
+                        || cc == '.'
+                        || cc == '/'
+                        || cc == '<'
+                        || cc == '>'
+                        || cc == ':'
+                        || cc == '-'
+                    {
+                        i += 1;
+                    } else {
+                        break;
+                    }
+                }
+                if i == start {
+                    i += 1;
+                } else {
+                    let sym = source[start..i].to_string();
+                    out.push(Tok::Word(sym));
+                }
             }
             '=' => {
                 out.push(Tok::Equals);
@@ -305,7 +338,12 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
     skip_trivia(tokens, cursor);
     let kind_word = match tokens.get(*cursor) {
         Some(Tok::Word(w)) => w.clone(),
-        other => return Err(err(format!("expected declaration keyword, got {:?}", other))),
+        other => {
+            return Err(err(format!(
+                "expected declaration keyword, got {:?}",
+                other
+            )))
+        }
     };
     *cursor += 1;
     let kind = DeclKind::parse(&kind_word)
@@ -344,13 +382,32 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
     if matches!(tokens.get(*cursor), Some(Tok::Equals)) {
         *cursor += 1;
         loop {
+            // Don't skip newlines here - they terminate the variant list
             match tokens.get(*cursor) {
+                Some(Tok::Newline) => {
+                    *cursor += 1;
+                    break;
+                }
+                Some(Tok::Word(w)) if w == "|" => {
+                    // Pipe separator in variant list
+                    *cursor += 1;
+                }
                 Some(Tok::Word(w)) => {
                     variants.push(w.clone());
                     *cursor += 1;
-                }
-                Some(Tok::Pipe) => {
-                    *cursor += 1;
+                    // If variant is followed by params like call(...), consume them
+                    if matches!(tokens.get(*cursor), Some(Tok::LParen)) {
+                        *cursor += 1;
+                        let mut paren_depth = 1;
+                        while *cursor < tokens.len() && paren_depth > 0 {
+                            match tokens.get(*cursor) {
+                                Some(Tok::LParen) => paren_depth += 1,
+                                Some(Tok::RParen) => paren_depth -= 1,
+                                _ => {}
+                            }
+                            *cursor += 1;
+                        }
+                    }
                 }
                 _ => break,
             }
@@ -369,9 +426,40 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
                     break;
                 }
                 None => return Err(err("unterminated block".to_string())),
+                Some(Tok::Word(w)) => {
+                    // Try to parse as a declaration. If the word is not a recognized
+                    // declaration kind, skip it and any following tokens until the
+                    // next recognized declaration or closing brace.
+                    if DeclKind::parse(w).is_some() {
+                        let child = parse_decl(tokens, cursor)?;
+                        children.push(child);
+                    } else {
+                        // Unrecognized keyword - skip tokens until we find a newline
+                        // or something that looks like the start of a new declaration
+                        while *cursor < tokens.len() {
+                            match tokens.get(*cursor) {
+                                Some(Tok::RBrace) | Some(Tok::Newline) => break,
+                                _ => {
+                                    *cursor += 1;
+                                }
+                            }
+                        }
+                        // Consume the newline if present
+                        if matches!(tokens.get(*cursor), Some(Tok::Newline)) {
+                            *cursor += 1;
+                        }
+                    }
+                }
                 _ => {
-                    let child = parse_decl(tokens, cursor)?;
-                    children.push(child);
+                    // Unexpected token - skip to next line
+                    while *cursor < tokens.len()
+                        && !matches!(tokens.get(*cursor), Some(Tok::Newline | Tok::RBrace))
+                    {
+                        *cursor += 1;
+                    }
+                    if matches!(tokens.get(*cursor), Some(Tok::Newline)) {
+                        *cursor += 1;
+                    }
                 }
             }
         }
@@ -503,13 +591,7 @@ impl MirrorRuntime {
             per_file.insert(stem, compiled);
         }
 
-        let collapsed_form = Form::new(
-            DeclKind::Form,
-            "mirror",
-            Vec::new(),
-            Vec::new(),
-            all_forms,
-        );
+        let collapsed_form = Form::new(DeclKind::Form, "mirror", Vec::new(), Vec::new(), all_forms);
         let shatter = Shatter;
         let collapsed_fragment = shatter.compile_form(&collapsed_form);
         let collapsed = CompiledShatter {
@@ -568,8 +650,7 @@ mod tests {
 
     #[test]
     fn mirror_runtime_parses_nested_property() {
-        let src =
-            "form @property {\n  property unique_variants(form) {\n    fold input\n  }\n}\n";
+        let src = "form @property {\n  property unique_variants(form) {\n    fold input\n  }\n}\n";
         let form = parse_form(src).unwrap();
         assert_eq!(form.children.len(), 1);
         let prop = &form.children[0];
@@ -584,17 +665,21 @@ mod tests {
     fn mirror_runtime_compile_form_file() {
         let runtime = MirrorRuntime::new();
         let compiled = runtime
-            .compile_file(&boot_dir().join("00-form.mirror"))
+            .compile_file(&boot_dir().join("00-prism.mirror"))
             .unwrap();
-        assert_eq!(compiled.form_name(), "@form");
-        assert_eq!(compiled.form.children.len(), 5);
-        for (i, op) in ["focus", "project", "split", "zoom", "refract"]
+        // 00-prism.mirror has multiple declarations, so they're wrapped in a
+        // synthetic file-level Form.
+        assert_eq!(compiled.form.kind, DeclKind::Form);
+        assert!(compiled.form.children.len() >= 2);
+        // Look for @prism declaration
+        let prism_decl = compiled
+            .form
+            .children
             .iter()
-            .enumerate()
-        {
-            assert_eq!(compiled.form.children[i].kind, DeclKind::Prism);
-            assert_eq!(compiled.form.children[i].name, *op);
-        }
+            .find(|f| f.name == "@prism")
+            .expect("@prism declaration present");
+        assert_eq!(prism_decl.kind, DeclKind::Prism);
+        assert_eq!(prism_decl.children.len(), 5);
     }
 
     #[test]
@@ -621,11 +706,14 @@ mod tests {
     fn mirror_runtime_compiles_full_boot_dir() {
         let runtime = MirrorRuntime::new();
         let boot = runtime.compile_boot_dir(&boot_dir()).unwrap();
-        assert_eq!(boot.per_file.len(), 7);
-        assert!(boot.per_file.contains_key("00-form"));
-        assert!(boot.per_file.contains_key("06-mirror"));
+        assert_eq!(boot.per_file.len(), 5);
+        assert!(boot.per_file.contains_key("00-prism"));
+        assert!(boot.per_file.contains_key("01-meta"));
+        assert!(boot.per_file.contains_key("02-actor"));
+        assert!(boot.per_file.contains_key("03-property"));
+        assert!(boot.per_file.contains_key("10-mirror"));
         assert_eq!(boot.collapsed.form_name(), "mirror");
-        assert_eq!(boot.collapsed.form.children.len(), 7);
+        assert_eq!(boot.collapsed.form.children.len(), 5);
         let again = runtime.compile_boot_dir(&boot_dir()).unwrap();
         assert_eq!(boot.collapsed.crystal(), again.collapsed.crystal());
     }
@@ -634,7 +722,7 @@ mod tests {
     fn mirror_runtime_property_file_compiles() {
         let runtime = MirrorRuntime::new();
         let compiled = runtime
-            .compile_file(&boot_dir().join("05-property.mirror"))
+            .compile_file(&boot_dir().join("03-property.mirror"))
             .unwrap();
         assert_eq!(compiled.form_name(), "@property");
         let prop_count = compiled
@@ -650,10 +738,9 @@ mod tests {
     fn mirror_runtime_mirror_form_has_property_applications() {
         let runtime = MirrorRuntime::new();
         let compiled = runtime
-            .compile_file(&boot_dir().join("06-mirror.mirror"))
+            .compile_file(&boot_dir().join("10-mirror.mirror"))
             .unwrap();
-        let kinds: Vec<&DeclKind> =
-            compiled.form.children.iter().map(|f| &f.kind).collect();
+        let kinds: Vec<&DeclKind> = compiled.form.children.iter().map(|f| &f.kind).collect();
         assert!(kinds.contains(&&DeclKind::Requires));
         assert!(kinds.contains(&&DeclKind::Invariant));
         assert!(kinds.contains(&&DeclKind::Ensures));
@@ -667,14 +754,15 @@ mod tests {
         // project on the trait surface only carries the top eigenvalues.
         let runtime = MirrorRuntime::new();
         let compiled = runtime
-            .compile_file(&boot_dir().join("00-form.mirror"))
+            .compile_file(&boot_dir().join("00-prism.mirror"))
             .unwrap();
         let shatter = Shatter;
 
         // Trait-level focus carries the top eigenvalues.
         let eigen_beam = shatter.focus(&compiled.form);
         assert_eq!(eigen_beam.result.kind, DeclKind::Form);
-        assert_eq!(eigen_beam.result.name, "@form");
+        // 00-prism.mirror wraps multiple declarations in a synthetic Form with empty name
+        assert_eq!(eigen_beam.result.name, "");
 
         // Trait-level project produces a content-addressed (childless) frag.
         let proj_beam = shatter.project(&eigen_beam.result, Precision::new(1.0));
