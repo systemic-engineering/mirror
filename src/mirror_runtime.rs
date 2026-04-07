@@ -25,7 +25,7 @@
 //! recursive child OIDs via `fragmentation::fragment::content_oid()`.
 
 use std::collections::BTreeMap;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use coincidence::declaration::{
     fragment as build_fragment, DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, MirrorHash,
@@ -626,6 +626,14 @@ mod tests {
         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot")
     }
 
+    fn tempdir_for_test(name: &str) -> PathBuf {
+        let dir = std::env::temp_dir()
+            .join(format!("mirror-test-{}-{}", name, std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        dir
+    }
+
     #[test]
     fn mirror_runtime_parses_atom_decl() {
         let src = "form @form {\n  prism focus\n}\n";
@@ -776,5 +784,16 @@ mod tests {
         // Stable OID across runs (CoincidenceHash<5> determinism).
         let frag2 = shatter.compile_form(&compiled.form);
         assert_eq!(frag.oid(), frag2.oid());
+    }
+
+    #[test]
+    fn registry_opens_at_path_with_in_and_out_builtins() {
+        let tmp = tempdir_for_test("registry_opens");
+        let registry = MirrorRegistry::open(&tmp).expect("open registry");
+        assert!(registry.has_op("in"), "in must be a builtin op");
+        assert!(registry.has_op("out"), "out must be a builtin op");
+        assert!(registry.lookup("@prism").is_none());
+        assert!(tmp.join("objects").exists());
+        assert!(tmp.join("refs").exists());
     }
 }
