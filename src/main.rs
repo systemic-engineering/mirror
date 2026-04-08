@@ -205,44 +205,51 @@ fn settle_cmd(source: &str, path: &str) {
 
     impl prism::Prism for GraphPrism {
         type Input = Vec<String>;
-        type Eigenvalues = Vec<String>;
-        type Projection = Vec<String>;
-        type Node = String;
-        type Convergence = Vec<String>;
-        type Crystal = Vec<String>;
+        type Focused = Vec<String>;
+        type Projected = Vec<String>;
+        type Part = String;
+        type Crystal = GraphPrism;
 
-        fn fold(&self, input: &Vec<String>) -> Beam<Vec<String>> {
-            Beam::new(input.clone())
+        fn focus(&self, beam: Beam<Vec<String>>) -> Beam<Vec<String>> {
+            use prism::Stage;
+            Beam { result: beam.result, path: beam.path, loss: beam.loss, precision: beam.precision, recovered: beam.recovered, stage: Stage::Focused }
         }
 
-        fn prism(&self, eigenvalues: &Vec<String>, _precision: Precision) -> Beam<Vec<String>> {
-            Beam::new(eigenvalues.clone())
+        fn project(&self, beam: Beam<Vec<String>>) -> Beam<Vec<String>> {
+            use prism::Stage;
+            Beam { result: beam.result, path: beam.path, loss: beam.loss, precision: beam.precision, recovered: beam.recovered, stage: Stage::Projected }
         }
 
-        fn traversal(&self, projection: &Vec<String>) -> Vec<Beam<String>> {
-            projection
+        fn split(&self, beam: Beam<Vec<String>>) -> Vec<Beam<String>> {
+            beam.result
                 .iter()
                 .enumerate()
                 .map(|(i, s)| Beam::new(s.clone()).with_step(Oid::new(format!("{}", i))))
                 .collect()
         }
 
-        fn lens(
-            &self,
-            beam: Beam<Vec<String>>,
-            f: &dyn Fn(Vec<String>) -> Vec<String>,
-        ) -> Beam<Vec<String>> {
-            beam.map(f)
+        fn join(&self, parts: Vec<Beam<String>>) -> Beam<Vec<String>> {
+            Beam::new(parts.into_iter().map(|b| b.result).collect())
         }
 
-        fn iso(&self, beam: Beam<Vec<String>>) -> Vec<String> {
-            beam.result
+        fn zoom(
+            &self,
+            beam: Beam<Vec<String>>,
+            f: &dyn Fn(Beam<Vec<String>>) -> Beam<Vec<String>>,
+        ) -> Beam<Vec<String>> {
+            f(beam)
+        }
+
+        fn refract(&self, beam: Beam<Vec<String>>) -> Beam<GraphPrism> {
+            use prism::Stage;
+            Beam { result: GraphPrism, path: beam.path, loss: beam.loss, precision: beam.precision, recovered: beam.recovered, stage: Stage::Refracted }
         }
     }
 
     impl PrismLoop for GraphPrism {
-        fn fold_from_projection(&self, projection: &Vec<String>) -> Vec<String> {
-            projection.clone()
+        fn fold_from_projection(&self, beam: Beam<Vec<String>>) -> Beam<Vec<String>> {
+            use prism::Stage;
+            Beam { result: beam.result, path: beam.path, loss: beam.loss, precision: beam.precision, recovered: beam.recovered, stage: Stage::Focused }
         }
     }
 
@@ -262,12 +269,14 @@ fn settle_cmd(source: &str, path: &str) {
     // The settling transform: sort, dedup, and measure loss
     let (beam, termination) = abyss::settle_loop(
         &prism,
-        &graph,
+        graph,
         &config,
-        &|mut v| {
-            v.sort();
-            v.dedup();
-            v
+        &|b| {
+            b.map(|mut v| {
+                v.sort();
+                v.dedup();
+                v
+            })
         },
         &hash_fn,
     );

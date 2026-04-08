@@ -144,12 +144,20 @@ mod tests {
 
     /// Check if n is prime.
     fn is_prime(n: u64) -> bool {
-        if n < 2 { return false; }
-        if n < 4 { return true; }
-        if n % 2 == 0 || n % 3 == 0 { return false; }
+        if n < 2 {
+            return false;
+        }
+        if n < 4 {
+            return true;
+        }
+        if n % 2 == 0 || n % 3 == 0 {
+            return false;
+        }
         let mut i = 5;
         while i * i <= n {
-            if n % i == 0 || n % (i + 2) == 0 { return false; }
+            if n % i == 0 || n % (i + 2) == 0 {
+                return false;
+            }
             i += 6;
         }
         true
@@ -159,7 +167,7 @@ mod tests {
     /// Returns (generator, prime_order).
     fn find_prime_subgroup_generator(points: &[Point], a: u64, p: u64) -> (Point, usize) {
         let n = points.len(); // full group order
-        // Find prime factors of n
+                              // Find prime factors of n
         let mut factors = Vec::new();
         let mut m = n as u64;
         let mut d = 2u64;
@@ -182,10 +190,14 @@ mod tests {
 
         // Find a point whose order is exactly largest_prime
         for pt in points.iter() {
-            if *pt == Point::Infinity { continue; }
+            if *pt == Point::Infinity {
+                continue;
+            }
             // Multiply by cofactor to get into the subgroup
             let sub_pt = scalar_mul(cofactor, *pt, a, p);
-            if sub_pt == Point::Infinity { continue; }
+            if sub_pt == Point::Infinity {
+                continue;
+            }
             // Verify order is exactly largest_prime
             let ord = point_order(sub_pt, a, p, largest_prime as usize + 1);
             if ord == largest_prime as usize {
@@ -612,7 +624,11 @@ mod tests {
         let (eigenvalues, u_mat) = symmetric_eigen(&mmt);
 
         // Sort by eigenvalue descending
-        let mut indexed: Vec<(usize, f64)> = eigenvalues.iter().enumerate().map(|(i, &v)| (i, v)).collect();
+        let mut indexed: Vec<(usize, f64)> = eigenvalues
+            .iter()
+            .enumerate()
+            .map(|(i, &v)| (i, v))
+            .collect();
         indexed.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
 
         let mut singular_values = Vec::new();
@@ -664,7 +680,12 @@ mod tests {
         let n = n_order as u64;
         eprintln!("  generator: {:?}", g);
         eprintln!("  subgroup order n = {} (prime: {})", n, is_prime(n));
-        eprintln!("  full group order: {} = {} × {}", n_points, n_points as u64 / n, n);
+        eprintln!(
+            "  full group order: {} = {} × {}",
+            n_points,
+            n_points as u64 / n,
+            n
+        );
 
         // d_true must be in [1, n-1]
         let d_true = 42u64 % (n - 1) + 1; // ensures d_true in [1, n-1]
@@ -685,10 +706,16 @@ mod tests {
             .iter()
             .all(|&(r, s, h)| sig_consistent(d_true, r, s, h, g, n, a_curve, p));
         eprintln!("  d_true consistent with all sigs: {}", all_consistent);
-        assert!(all_consistent, "d_true must be consistent with all signatures");
+        assert!(
+            all_consistent,
+            "d_true must be consistent with all signatures"
+        );
 
         // === Step 2: Build Constraint Matrix M ===
-        eprintln!("\n  ── Step 2: Constraint matrix M ({} × {}) ──", num_sigs, n);
+        eprintln!(
+            "\n  ── Step 2: Constraint matrix M ({} × {}) ──",
+            num_sigs, n
+        );
         let m_matrix = build_constraint_matrix(&sigs, g, n, a_curve, p);
 
         // Count 1s per row and find all-1 column
@@ -700,7 +727,11 @@ mod tests {
                 eprintln!("    row {}: {} ones", i, ones);
             }
         }
-        eprintln!("    ... total ones in M: {} (avg {:.1}/row)", total_ones, total_ones as f64 / num_sigs as f64);
+        eprintln!(
+            "    ... total ones in M: {} (avg {:.1}/row)",
+            total_ones,
+            total_ones as f64 / num_sigs as f64
+        );
 
         // Check which column(s) have all 1s
         let mut all_one_cols = Vec::new();
@@ -823,12 +854,18 @@ mod tests {
             );
         }
         eprintln!("    └──────────────────────┴──────┴──────┴──────┴──────┘");
-        eprintln!("    (√n = {} — any basis < √n at 90% would be a signal)", sqrt_n);
+        eprintln!(
+            "    (√n = {} — any basis < √n at 90% would be a signal)",
+            sqrt_n
+        );
 
         let any_signal = all_results.iter().skip(1).any(|(name, res)| {
             let is_signal = res[2] < sqrt_n && *name != "Standard";
             if is_signal {
-                eprintln!("    *** SIGNAL: {} has {}<√n={} at 90% ***", name, res[2], sqrt_n);
+                eprintln!(
+                    "    *** SIGNAL: {} has {}<√n={} at 90% ***",
+                    name, res[2], sqrt_n
+                );
             }
             is_signal
         });
@@ -855,9 +892,16 @@ mod tests {
 
         let transfer_coeffs: Vec<f64> = v_cols_m.iter().map(|v_j| v_j[d_other as usize]).collect();
         let transfer_energy = energy_capture(&transfer_coeffs, &thresholds);
-        eprintln!("    e_{{d_other={}}} in SVD basis computed for d={}:", d_other, d_true);
+        eprintln!(
+            "    e_{{d_other={}}} in SVD basis computed for d={}:",
+            d_other, d_true
+        );
         for (i, &t) in thresholds.iter().enumerate() {
-            eprintln!("      {:.0}%: {} coefficients", t * 100.0, transfer_energy[i]);
+            eprintln!(
+                "      {:.0}%: {} coefficients",
+                t * 100.0,
+                transfer_energy[i]
+            );
         }
 
         // Also compute SVD of M' (for d_other) and check e_{d_other} in its own basis
@@ -888,7 +932,10 @@ mod tests {
 
         eprintln!("    cost of building M: {} scalar_mul ops", cost_m);
         eprintln!("    cost of SVD (M·M^T + eigendecomp): ~{} ops", cost_svd);
-        eprintln!("    cost of expressing e_d in SVD basis: {} dot products", cost_express);
+        eprintln!(
+            "    cost of expressing e_d in SVD basis: {} dot products",
+            cost_express
+        );
         eprintln!("    total precomputation: ~{} ops", cost_m + cost_svd);
         eprintln!("    per-query cost (given basis): {} ops", cost_express);
         eprintln!("    BSGS: {} ops (no precomputation)", bsgs_cost);
@@ -914,7 +961,10 @@ mod tests {
             cost_express, bsgs_cost
         );
         if cost_express < bsgs_cost {
-            eprintln!("    per-query is cheaper, BUT requires {} precomp", cost_m + cost_svd);
+            eprintln!(
+                "    per-query is cheaper, BUT requires {} precomp",
+                cost_m + cost_svd
+            );
             let breakeven = (cost_m + cost_svd) / (bsgs_cost - cost_express).max(1);
             eprintln!("    break-even after {} queries", breakeven);
         }

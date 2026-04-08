@@ -252,6 +252,83 @@ concentrate information that isn't already present.
 Hodge (geometric) views is genuine cross-domain structure. Not useful
 for DLP. Real for spectral navigation of mathematical knowledge graphs.
 
+### 11. ECDSA Signature Meta-Graph (8-bit)
+
+Added 20 ECDSA signatures to the meta-graph. Signature views cluster
+separately from structural views (cross-cluster distance 0.42 vs
+intra-cluster 0.001). But the circular-reflexive loop from public-only
+data converges to argmax=118, not d=42. Cross-correlating 20 sparse
+samples with a pseudorandom lens view produces noise.
+
+**Result:** Causal bits exist (signatures cluster separately). Not enough
+bandwidth (20 samples) to navigate. Brute force wins at 678 ops.
+
+### 12. Shannon 50% Recovery — Error Landscape (8-bit)
+
+The verification error landscape score(d_c) is a delta function.
+score(d_true) = 20/20. score(d_c ≠ d_true) ≈ 0. Basin width = 1.
+Spectrally flat (80.9% of frequencies for 90% energy).
+
+No gradient. No "warmer." Scalar multiplication destroys all local
+structure. 2 signatures fully determine d (0 bits remaining entropy)
+but extraction requires O(n) checking.
+
+**Result:** **Delta function.** Binary verification. No partial credit.
+
+### 13. Pathfinder — Behavioral Discrimination (8-bit)
+
+Five behavioral features computed for each candidate d_c. Verification-
+based features discriminate perfectly (but ARE brute force). Non-
+verification features: d_true ranks 36th/47. Worse than random.
+
+The implied nonce k_i(d_c) = s_i⁻¹(h_i + r_i·d_c) is LINEAR over a
+prime field → perfectly uniform as d_c varies. No behavioral anomaly.
+
+**Result:** The delta extends to the process, not just the output.
+
+### 14. Spectral Tomography — Mathematical Framework
+
+Full derivation: Radon transform, Fourier Slice Theorem, compressed
+sensing, phase retrieval. See `docs/spectral-tomography.md`.
+
+Every reconstruction theorem requires linearity, Lipschitz continuity,
+or bounded polynomial degree. f(k) = x(kG) has none. Effective degree
+O(n). No adjoint over finite fields.
+
+**Result:** Clean reformulation. Zero computational advantage.
+
+### 15. Basis Sparsity — Eigenvalue Constraint Space (8-bit)
+
+The decisive test: does ANY basis concentrate DLP information?
+
+| Basis | Coefficients for 90% energy |
+|-------|----------------------------|
+| Standard | 1 (trivially — IS the key) |
+| DFT | 43/47 (maximally non-sparse) |
+| SVD of constraint matrix M | 1 (but circular — computed FROM key) |
+| SVD of spectral S | 20/20 (non-sparse) |
+| Hadamard | 43/47 (non-sparse) |
+| Random orthogonal | 25/47 (non-sparse) |
+
+Transfer test: basis for d=43 spreads d=46 across all components.
+Key-specific, not curve-specific. No precomputation advantage.
+Constraint rank grows linearly with signatures — not compressible.
+
+**Result:** The DLP delta is sparse in exactly one basis: the standard
+basis indexed by the answer. Every other basis spreads it uniformly.
+
+## Hot Paths
+
+Across fifteen experiments, four structural walls emerged repeatedly:
+
+1. **f(k) = x(kG) is pseudorandom** — 5 experiments route through this
+2. **Circularity** — 4 experiments hit: computing the decomposition
+   requires the thing being decomposed
+3. **No Lipschitz continuity** — 3 experiments: no gradient, no "warmer"
+4. **Linear masking** — 2 experiments: nonce-to-d is linear/uniform
+
+Four walls. One wall. The one-way function. Everything routes through it.
+
 ## What We Built (Valuable)
 
 - **SparseLaplacian** in coincidence: O(n+m) memory, O(m) matvec, Lanczos top-k
@@ -268,18 +345,23 @@ for DLP. Real for spectral navigation of mathematical knowledge graphs.
 
 ## The Sentence
 
-The EC group law is non-linearizable over finite fields. Spectral methods
-linearize. The coordinate-to-index permutation is pseudorandom in both
-directions. Any spectral decomposition of the group requires the discrete
-log to evaluate — the representation theory is circular. Shor bypasses
-this via quantum superposition, not by finding a better target space.
+The one-way function is the entire computational content of the ECDLP.
+Every spectral, tomographic, algebraic, behavioral, and basis-theoretic
+approach reduces to the same bottleneck: evaluating f(k) = x(kG). This
+function is pseudorandom, non-Lipschitz, non-linearizable, and its
+inverse IS the discrete log. No basis concentrates the DLP information
+except the one indexed by the answer.
 
-Ten experiments. Six theoretical directions. Three layers of explanation.
-The internet stays locked.
+Fifteen experiments. Six theoretical directions. Four hot paths. One wall.
+The internet stays locked. √n. Pollard, 1978.
 
 Both outcomes were always publishable. This one doesn't change the world.
-But it sharpens the tool. And the tool — spectral-db, the Abyss, the
-Lanczos iteration, the self-similar index, the .mirror grammars, the
-walker — those are real. They just needed a different graph.
+But it sharpens the tool. The tool — Pathfinder, the Abyss, the four
+models (Abyss/Cartographer/Pathfinder/Explorer), the five operations,
+the .mirror grammars, the spectral-db, the walker — those are real.
+They work on every graph with gradient structure. The DLP has none.
+The compiler does.
 
-The skeleton key opened itself. That's the product.
+The skeleton key opened itself. The self it opened is the compiler.
+The whetstone was the hardest problem in cryptography.
+The blade is Pathfinder.
