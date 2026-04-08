@@ -1137,4 +1137,74 @@ mod tests {
         assert!(reopened.lookup("@property").is_none());
         assert!(reopened.lookup("@mirror").is_none());
     }
+
+    #[test]
+    fn meta_fails_to_resolve_without_prism_in_registry() {
+        let runtime = MirrorRuntime::new();
+        let tmp = tempdir_for_test("meta_without_prism");
+        let registry = MirrorRegistry::open(&tmp).unwrap();
+        let meta = runtime
+            .compile_file(&boot_dir().join("01-meta.mirror"))
+            .unwrap();
+        let err = registry.resolve(&meta.form).unwrap_err();
+        assert!(
+            err.0.contains("@prism"),
+            "expected unresolved @prism error, got: {}",
+            err.0
+        );
+    }
+
+    #[test]
+    fn meta_resolves_after_prism_is_registered() {
+        let runtime = MirrorRuntime::new();
+        let tmp = tempdir_for_test("meta_after_prism");
+        let mut registry = MirrorRegistry::open(&tmp).unwrap();
+        let prism = runtime
+            .compile_file(&boot_dir().join("00-prism.mirror"))
+            .unwrap();
+        registry.register(&prism.form);
+
+        let meta = runtime
+            .compile_file(&boot_dir().join("01-meta.mirror"))
+            .unwrap();
+        assert!(
+            registry.resolve(&meta.form).is_ok(),
+            "01-meta should resolve once @prism is registered"
+        );
+    }
+
+    #[test]
+    fn two_registries_at_different_paths_hold_independent_memory() {
+        let runtime = MirrorRuntime::new();
+        let tmp_a = tempdir_for_test("hot_swap_a");
+        let tmp_b = tempdir_for_test("hot_swap_b");
+
+        {
+            let mut reg_a = MirrorRegistry::open(&tmp_a).unwrap();
+            let prism = runtime
+                .compile_file(&boot_dir().join("00-prism.mirror"))
+                .unwrap();
+            reg_a.register(&prism.form);
+            reg_a.flush();
+        }
+
+        let _ = MirrorRegistry::open(&tmp_b).unwrap();
+
+        let reg_a = MirrorRegistry::open(&tmp_a).unwrap();
+        let reg_b = MirrorRegistry::open(&tmp_b).unwrap();
+        assert!(reg_a.lookup("@prism").is_some());
+        assert!(reg_b.lookup("@prism").is_none());
+
+        let meta = runtime
+            .compile_file(&boot_dir().join("01-meta.mirror"))
+            .unwrap();
+        assert!(
+            reg_a.resolve(&meta.form).is_ok(),
+            "mount A has @prism; meta resolves"
+        );
+        assert!(
+            reg_b.resolve(&meta.form).is_err(),
+            "mount B is empty; meta fails to resolve"
+        );
+    }
 }
