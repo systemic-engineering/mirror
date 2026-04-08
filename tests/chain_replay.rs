@@ -98,7 +98,7 @@ fn run_replay(shatter_file: &str, input_file: &str) -> Vec<u8> {
 #[test]
 fn chain_replay_matches_live_pipeline() {
     let manifest = env!("CARGO_MANIFEST_DIR");
-    let input_file = format!("{}/boot/00-form.mirror", manifest);
+    let input_file = format!("{}/boot/00-prism.mirror", manifest);
 
     // Write the chain-shatter capture to a tempfile under /tmp.
     let capture_path = "/tmp/mirror-chain-replay-test.shatter";
