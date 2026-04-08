@@ -4,10 +4,7 @@ use std::process::Command;
 fn mirror_registry_command_lists_resolved_forms() {
     let bin = env!("CARGO_BIN_EXE_mirror");
     let manifest_dir = env!("CARGO_MANIFEST_DIR");
-    let store_dir = std::env::temp_dir().join(format!(
-        "mirror-cli-test-{}",
-        std::process::id()
-    ));
+    let store_dir = std::env::temp_dir().join(format!("mirror-cli-test-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&store_dir);
 
     let output = Command::new(bin)
@@ -25,9 +22,17 @@ fn mirror_registry_command_lists_resolved_forms() {
         String::from_utf8_lossy(&output.stderr)
     );
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(stdout.contains("@prism"), "stdout missing @prism: {}", stdout);
+    assert!(
+        stdout.contains("@prism"),
+        "stdout missing @prism: {}",
+        stdout
+    );
     assert!(stdout.contains("@meta"), "stdout missing @meta: {}", stdout);
-    assert!(stdout.contains("@actor"), "stdout missing @actor: {}", stdout);
+    assert!(
+        stdout.contains("@actor"),
+        "stdout missing @actor: {}",
+        stdout
+    );
     assert!(
         stdout.contains("03-property") && stdout.contains("FAIL"),
         "stdout should mark 03-property as FAIL: {}",

@@ -1,28 +1,56 @@
-//! MirrorRuntime — produces compiled `Shatter` artifacts from `.mirror` source.
+//! MirrorRuntime — produces compiled `Shatter` artifacts from `.mirror` source,
+//! and tracks bootstrap state in a `MirrorRegistry`.
 //!
 //! ## Recognition
 //!
 //! Each declaration in a `.mirror` file IS one beam in a content-addressed
 //! trajectory. The compilation primitive is `MirrorFragment` (a
-//! `Fractal<MirrorData, CoincidenceHash<5>>`), which lives in the
-//! `coincidence` crate alongside `CoincidenceHash` itself.
+//! `Fractal<MirrorData, CoincidenceHash<5>>`).
 //!
-//! Five spectral dimensions: meets-and-exceeds the 3+1 of the cosmos. The
-//! hash function has enough degrees of freedom to be a cosmic content
-//! address — every structurally distinct form has a unique slot, with room.
+//! ## MirrorRegistry — the Rust/Mirror glass wall
+//!
+//! The Rust side hardcodes a small token surface: `prism`, the five operation
+//! names (`focus split zoom project refract`), and `in` / `out`. Everything
+//! else is learned by reading boot files in order.
+//!
+//! `MirrorRegistry` is the shared state between Rust and Mirror, backed by
+//! `FrgmntStore<MirrorFragment>` from the fragmentation crate. Form names
+//! (`@prism`, `@meta`, `@actor`) are stored as named refs pointing at the
+//! OIDs of the MirrorFragments that declared them. The store IS the registry;
+//! the registry is just a typed surface over it.
+//!
+//! As each boot file is compiled:
+//!
+//! 1. Parse → `Form` (structural).
+//! 2. `registry.resolve(&form)` checks every `in @X` reference against the
+//!    store's named refs. Failure means missing prerequisite.
+//! 3. `registry.register(&form)` compiles each top-level `@X` declaration to
+//!    a MirrorFragment, inserts it into the store persistently, and writes
+//!    a ref mapping `@X → oid`.
+//!
+//! `in` is a partial read (semantically project / prism in the optic family):
+//! `in @X` succeeds iff a ref named `@X` is in the store. `out` is implicit —
+//! registering a form publishes its top-level children as that form's export
+//! surface (semantically refract: a write to the form's state).
+//!
+//! ## Hot-swap memory layer
+//!
+//! Because the registry is content-addressed and disk-persistent, swapping
+//! the `.frgmnt/` directory a MirrorRegistry is mounted at swaps the entire
+//! memory of the language. Two processes can share state by mounting the
+//! same path; one process can diverge by reopening at a different path.
+//! The Shatter pipeline becomes a hot-swappable memory layer by construction.
 //!
 //! ## Pipeline
 //!
-//! - parse `.mirror` source → `MirrorFragment` tree (typed declaration node)
+//! - parse `.mirror` source → `Form` tree
+//! - resolve against accumulated `MirrorRegistry`
+//! - register the file's top-level forms into the registry's store
 //! - wrap into `Shatter`, the runtime artifact
-//! - `Shatter` implements the `Prism` trait: focus / project / refract are
-//!   the operations that move a Form into and out of its content-addressed
-//!   representation. `split` and `zoom` are TBD — their semantics will
-//!   emerge when the trait is specced.
 //!
 //! Round-trip is exact: parse → emit text → parse again yields identical
 //! content OIDs because the OID is derived from `MirrorData::encode()` and
-//! recursive child OIDs via `fragmentation::fragment::content_oid()`.
+//! recursive child OIDs.
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
