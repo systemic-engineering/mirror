@@ -708,6 +708,20 @@ impl MirrorRegistry {
         self.store.flush();
     }
 
+    /// Iterate the names of all refs in the underlying store. Reads from disk.
+    pub fn ref_names(&self) -> Vec<String> {
+        let refs_dir = self.root.join("refs");
+        let Ok(entries) = std::fs::read_dir(&refs_dir) else {
+            return Vec::new();
+        };
+        let mut names: Vec<String> = entries
+            .filter_map(|e| e.ok())
+            .filter_map(|e| e.file_name().into_string().ok())
+            .collect();
+        names.sort();
+        names
+    }
+
     /// Register forms into the store. If the form's name is empty (synthetic file-level form),
     /// recurse into children. For forms starting with `@`, compile to a MirrorFragment,
     /// store persistently, and map the name to its OID. Forms without `@` prefix are ignored.

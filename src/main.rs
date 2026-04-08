@@ -18,7 +18,7 @@ use std::path::Path;
 use std::process;
 
 use fragmentation::sha::HashAlg;
-use mirror::mirror_runtime::{emit_form, parse_form, Form, MirrorRuntime};
+use mirror::mirror_runtime::{emit_form, parse_form, Form, MirrorRegistry, MirrorRuntime};
 
 use coincidence::declaration::DeclKind;
 
@@ -562,6 +562,66 @@ fn resolve_file_arg(positional: &[String]) -> Option<String> {
 }
 
 // ---------------------------------------------------------------------------
+// registry mode — inspect boot state and registered forms
+// ---------------------------------------------------------------------------
+
+fn cmd_registry(args: &[String]) -> Result<(), String> {
+    let mut positional: Vec<&String> = Vec::new();
+    let mut store_override: Option<&String> = None;
+    let mut i = 0;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--store" => {
+                store_override = args.get(i + 1);
+                i += 2;
+            }
+            _ => {
+                positional.push(&args[i]);
+                i += 1;
+            }
+        }
+    }
+
+    let boot_dir = positional
+        .first()
+        .ok_or_else(|| "usage: mirror registry <boot-dir> [--store <frgmnt-dir>]".to_string())?;
+    let boot_path = std::path::PathBuf::from(boot_dir.as_str());
+    let store_path = match store_override {
+        Some(s) => std::path::PathBuf::from(s.as_str()),
+        None => boot_path
+            .parent()
+            .unwrap_or(std::path::Path::new("."))
+            .join(".frgmnt")
+            .join("mirror"),
+    };
+
+    let runtime = MirrorRuntime::new();
+    let boot = runtime
+        .compile_boot_dir(&boot_path, &store_path)
+        .map_err(|e| format!("compile_boot_dir: {}", e))?;
+
+    println!("# Store mounted at: {}", store_path.display());
+    println!();
+    println!("# Resolved files");
+    for stem in boot.resolved.keys() {
+        println!("  OK   {}", stem);
+    }
+    println!();
+    println!("# Failed files");
+    for (stem, err) in &boot.failed {
+        println!("  FAIL {}: {}", stem, err);
+    }
+    println!();
+    println!("# Registered forms (named refs in store)");
+    let registry = MirrorRegistry::open(&store_path)
+        .map_err(|e| format!("reopen registry for listing: {}", e))?;
+    for name in registry.ref_names() {
+        println!("  {}", name);
+    }
+    Ok(())
+}
+
+// ---------------------------------------------------------------------------
 // argv
 // ---------------------------------------------------------------------------
 
@@ -570,6 +630,18 @@ fn main() {
 
     if args.len() < 2 {
         print_usage_and_exit();
+    }
+
+    // `mirror registry <boot-dir> [--store <frgmnt-dir>]`
+    if args[1] == "registry" {
+        let rest: Vec<String> = args[2..].to_vec();
+        match cmd_registry(&rest) {
+            Ok(()) => process::exit(0),
+            Err(e) => {
+                eprintln!("mirror: registry: {}", e);
+                process::exit(1);
+            }
+        }
     }
 
     // `mirror fmt <file>` → ai fate --train --out=<file> <file>
