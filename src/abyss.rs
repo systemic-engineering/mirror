@@ -9,7 +9,7 @@
 //!
 //! ~3K parameters classify tension. Everything else is structural.
 
-use prism::{Beam, Oid, Precision, Prism, ShannonLoss};
+use prism::{Beam, Oid, Precision, ShannonLoss};
 
 // ---------------------------------------------------------------------------
 // Convergence
@@ -57,12 +57,13 @@ impl Default for AbyssConfig {
 // PrismLoop — the recursive extension
 // ---------------------------------------------------------------------------
 
-/// A Prism that can loop: fold from a projection back to eigenvalues.
+/// A Prism that can loop: fold from a projection back to the focused form.
 /// The output of one cycle becomes the input of the next.
-pub trait PrismLoop: Prism {
-    /// Re-decompose a projection into eigenvalues.
+pub trait PrismLoop: prism_crate::Prism {
+    /// Re-decompose a projection into focused form.
+    /// Maps Beam<Projected> → Beam<Focused>, skipping the raw input stage.
     /// The recursive step that makes the loop possible.
-    fn fold_from_projection(&self, projection: &Self::Projection) -> Self::Eigenvalues;
+    fn fold_from_projection(&self, beam: Beam<Self::Projected>) -> Beam<Self::Focused>;
 }
 
 // ---------------------------------------------------------------------------
@@ -70,28 +71,35 @@ pub trait PrismLoop: Prism {
 // ---------------------------------------------------------------------------
 
 /// Run the Abyss: apply a PrismLoop until convergence.
+///
+/// Each cycle: project → zoom (transform in Projected space) → hash → fold back → repeat.
+/// The transform closure works on Beam<Projected> to stay in the new trait shape.
 pub fn settle_loop<P>(
     optic: &P,
-    input: &P::Input,
+    input: P::Input,
     config: &AbyssConfig,
-    transform: &dyn Fn(P::Projection) -> P::Projection,
-    hash: &dyn Fn(&P::Projection) -> Oid,
-) -> (Beam<P::Projection>, Termination)
+    transform: &dyn Fn(Beam<P::Projected>) -> Beam<P::Projected>,
+    hash: &dyn Fn(&P::Projected) -> Oid,
+) -> (Beam<P::Projected>, Termination)
 where
     P: PrismLoop,
-    P: prism_crate::Prism<Precision = Precision>,
-    P::Projection: Clone,
+    P::Projected: Clone,
 {
-    let mut beam = prism::apply(optic, input, config.precision.clone(), transform);
+    // First cycle: full pipeline (focus → project → zoom)
+    let focused = optic.focus(Beam::new(input).with_precision(config.precision.clone()));
+    let projected = optic.project(focused);
+    let mut beam = optic.zoom(projected, transform);
+
     let mut prev_hash = hash(&beam.result);
     beam = beam.with_step(prev_hash.clone());
 
     let mut hashes: Vec<Oid> = vec![prev_hash.clone()];
 
     for cycle in 1..config.max_cycles {
-        let eigenvalues = optic.fold_from_projection(&beam.result);
-        let projection = optic.project(&eigenvalues, config.precision.clone());
-        beam = optic.zoom(projection, transform);
+        // Fold back: projected → focused (skip raw input stage)
+        let focused = optic.fold_from_projection(beam);
+        let projected = optic.project(focused);
+        beam = optic.zoom(projected, transform);
 
         let current_hash = hash(&beam.result);
         beam = beam.with_step(current_hash.clone());
@@ -133,46 +141,107 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use prism::{Beam, Precision, ShannonLoss};
+    use prism::{Beam, Precision, ShannonLoss, Stage};
     use std::collections::hash_map::DefaultHasher;
     use std::hash::{Hash, Hasher};
 
-    /// A Prism that converges: each cycle removes one element.
+    /// A Prism that converges: each cycle is identity (settles immediately).
     struct ConvergingPrism;
 
-    impl Prism for ConvergingPrism {
+    impl prism_crate::Prism for ConvergingPrism {
         type Input = Vec<i32>;
-        type Eigenvalues = Vec<i32>;
-        type Projection = Vec<i32>;
-        type Node = i32;
-        type Convergence = Vec<i32>;
-        type Crystal = Vec<i32>;
-        type Precision = Precision;
+        type Focused = Vec<i32>;
+        type Projected = Vec<i32>;
+        type Part = i32;
+        type Crystal = ConvergingPrism;
 
-        fn focus(&self, input: &Vec<i32>) -> Beam<Vec<i32>> {
-            Beam::new(input.clone())
+        fn focus(&self, beam: Beam<Vec<i32>>) -> Beam<Vec<i32>> {
+            Beam {
+                result: beam.result,
+                path: beam.path,
+                loss: beam.loss,
+                precision: beam.precision,
+                recovered: beam.recovered,
+                stage: Stage::Focused,
+            }
         }
 
-        fn project(&self, eigenvalues: &Vec<i32>, _precision: Precision) -> Beam<Vec<i32>> {
-            Beam::new(eigenvalues.clone())
+        fn project(&self, beam: Beam<Vec<i32>>) -> Beam<Vec<i32>> {
+            Beam {
+                result: beam.result,
+                path: beam.path,
+                loss: beam.loss,
+                precision: beam.precision,
+                recovered: beam.recovered,
+                stage: Stage::Projected,
+            }
         }
 
-        fn split(&self, projection: &Vec<i32>) -> Vec<Beam<i32>> {
-            projection.iter().map(|&v| Beam::new(v)).collect()
-        }
-
-        fn zoom(&self, beam: Beam<Vec<i32>>, f: &dyn Fn(Vec<i32>) -> Vec<i32>) -> Beam<Vec<i32>> {
-            beam.map(f)
-        }
-
-        fn refract(&self, beam: Beam<Vec<i32>>) -> Vec<i32> {
+        fn split(&self, beam: Beam<Vec<i32>>) -> Vec<Beam<i32>> {
+            let parent_loss = beam.loss.clone();
+            let parent_precision = beam.precision.clone();
             beam.result
+                .into_iter()
+                .map(|v| Beam {
+                    result: v,
+                    path: beam.path.clone(),
+                    loss: parent_loss.clone(),
+                    precision: parent_precision.clone(),
+                    recovered: None,
+                    stage: Stage::Split,
+                })
+                .collect()
+        }
+
+        fn join(&self, parts: Vec<Beam<i32>>) -> Beam<Vec<i32>> {
+            let result: Vec<i32> = parts.iter().map(|b| b.result).collect();
+            let total_loss: f64 = parts.iter().map(|b| b.loss.as_f64()).sum();
+            let precision = parts
+                .first()
+                .map(|b| b.precision.clone())
+                .unwrap_or(Precision::new(0.0));
+            let path = parts.first().map(|b| b.path.clone()).unwrap_or_default();
+            Beam {
+                result,
+                path,
+                loss: ShannonLoss::new(total_loss),
+                precision,
+                recovered: None,
+                stage: Stage::Joined,
+            }
+        }
+
+        fn zoom(
+            &self,
+            beam: Beam<Vec<i32>>,
+            f: &dyn Fn(Beam<Vec<i32>>) -> Beam<Vec<i32>>,
+        ) -> Beam<Vec<i32>> {
+            f(beam)
+        }
+
+        fn refract(&self, beam: Beam<Vec<i32>>) -> Beam<ConvergingPrism> {
+            Beam {
+                result: ConvergingPrism,
+                path: beam.path,
+                loss: beam.loss,
+                precision: beam.precision,
+                recovered: beam.recovered,
+                stage: Stage::Refracted,
+            }
         }
     }
 
     impl PrismLoop for ConvergingPrism {
-        fn fold_from_projection(&self, projection: &Vec<i32>) -> Vec<i32> {
-            projection.clone()
+        fn fold_from_projection(&self, beam: Beam<Vec<i32>>) -> Beam<Vec<i32>> {
+            // Identity fold: the projected value IS the focused value for this prism.
+            Beam {
+                result: beam.result,
+                path: beam.path,
+                loss: beam.loss,
+                precision: beam.precision,
+                recovered: beam.recovered,
+                stage: Stage::Focused,
+            }
         }
     }
 
@@ -190,9 +259,9 @@ mod tests {
 
         let (beam, term) = settle_loop(
             &prism,
-            &input,
+            input,
             &config,
-            &|v| v, // identity — already settled
+            &|b| b, // identity — already settled
             &hash_vec,
         );
 
@@ -208,11 +277,13 @@ mod tests {
 
         let (beam, term) = settle_loop(
             &prism,
-            &input,
+            input,
             &config,
-            &|mut v| {
-                v.sort();
-                v
+            &|b| {
+                b.map(|mut v| {
+                    v.sort();
+                    v
+                })
             },
             &hash_vec,
         );
@@ -233,12 +304,14 @@ mod tests {
 
         let (_, term) = settle_loop(
             &prism,
-            &input,
+            input,
             &config,
-            &|mut v| {
-                // Never settles — always changes
-                v.push(v.len() as i32);
-                v
+            &|b| {
+                b.map(|mut v| {
+                    // Never settles — always changes
+                    v.push(v.len() as i32);
+                    v
+                })
             },
             &hash_vec,
         );
@@ -260,9 +333,9 @@ mod tests {
 
         let (beam, _) = settle_loop(
             &prism,
-            &input,
+            input,
             &config,
-            &|v| v, // identity — settles immediately
+            &|b| b, // identity — settles immediately
             &hash_vec,
         );
 
