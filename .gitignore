@@ -4,8 +4,5 @@ target/
 erl_crash.dump
 target/llvm-cov/
 .worktrees/
+.direnv/
 
-# NIF build artifacts
-beam/native/*.o
-beam/native/*.mod
-beam/priv/
