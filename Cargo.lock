@@ -278,13 +278,12 @@ dependencies = [
 name = "coincidence"
 version = "0.1.0"
 dependencies = [
- "cc",
  "chacha20poly1305",
  "fragmentation",
  "git2",
  "hex",
  "hkdf",
- "prism",
+ "prism-core",
  "serde_json",
  "sha2",
 ]
@@ -540,7 +539,7 @@ checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 name = "fate"
 version = "0.1.0"
 dependencies = [
- "prism",
+ "prism-core",
 ]
 
 [[package]]
@@ -1063,6 +1062,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "imperfect"
+version = "0.1.0"
+
+[[package]]
 name = "indexmap"
 version = "2.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1268,7 +1271,7 @@ dependencies = [
  "fragmentation-git",
  "git2",
  "hex",
- "prism",
+ "prism-core",
  "serde_json",
  "sha2",
  "ssh-key",
@@ -1571,8 +1574,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "prism"
+name = "prism-core"
 version = "0.1.0"
+dependencies = [
+ "cc",
+ "imperfect",
+]
 
 [[package]]
 name = "proc-macro-error-attr2"

@@ -60,7 +60,7 @@ use coincidence::declaration::{
 };
 use fragmentation::frgmnt_store::FrgmntStore;
 use fragmentation::sha::HashAlg;
-use prism::{Beam, Precision, Prism};
+use prism::{Beam, Prism, PureBeam};
 
 // ---------------------------------------------------------------------------
 // Errors
@@ -158,62 +158,40 @@ impl Form {
 // ---------------------------------------------------------------------------
 
 /// `Shatter` is the compilation artifact of `MirrorRuntime`. It implements
-/// the `Prism` trait: the five operations move a `Form` into and out of its
+/// the `Prism` trait: three operations move a `Form` into and out of its
 /// content-addressed representation.
-///
-/// `split` and `zoom` are TBD: their semantics will be specified when use
-/// arrives. They are conservative no-ops that preserve compilation.
 #[derive(Clone, Debug, Default)]
 pub struct Shatter;
 
 impl Prism for Shatter {
-    type Input = Form;
-    type Eigenvalues = MirrorData;
-    type Projection = MirrorFragment;
-    type Node = Form;
-    type Convergence = MirrorFragment;
-    type Crystal = Form;
-    type Precision = Precision;
+    type Input = PureBeam<(), Form>;
+    type Focused = PureBeam<Form, MirrorData>;
+    type Projected = PureBeam<MirrorData, MirrorFragment>;
+    type Refracted = PureBeam<MirrorFragment, Shatter>;
 
     /// Focus: read the top-level eigenvalues (kind/name/params/variants).
-    fn focus(&self, input: &Form) -> Beam<MirrorData> {
-        Beam::new(MirrorData::new(
+    fn focus(&self, beam: Self::Input) -> Self::Focused {
+        let input = beam.result().ok().expect("focus: Err beam");
+        let focused = MirrorData::new(
             input.kind.clone(),
             input.name.clone(),
             input.params.clone(),
             input.variants.clone(),
-        ))
+        );
+        beam.next(focused)
     }
 
-    /// Project: turn the eigenvalues + a fresh form into a content-addressed
-    /// MirrorFragment. Precision is honored as part of the trait contract
-    /// but the projection is structurally lossless.
-    fn project(&self, _eigenvalues: &MirrorData, _precision: Precision) -> Beam<MirrorFragment> {
-        // The eigenvalues alone don't carry children. Project against an
-        // empty form so the call is meaningful at the trait surface; full
-        // structural projection happens via `compile_form()` below.
-        let frag = build_fragment(_eigenvalues.clone(), Vec::new());
-        Beam::new(frag)
+    /// Project: turn the focused MirrorData into a content-addressed
+    /// MirrorFragment. Structurally lossless; full projection via `compile_form`.
+    fn project(&self, beam: Self::Focused) -> Self::Projected {
+        let data = beam.result().ok().expect("project: Err beam").clone();
+        let frag = build_fragment(data, Vec::new());
+        beam.next(frag)
     }
 
-    /// Split — TBD. Conservative no-op: yield the projection back as one
-    /// node beam. The semantics will be specified when use arrives.
-    fn split(&self, projection: &MirrorFragment) -> Vec<Beam<Form>> {
-        vec![Beam::new(Form::from_fragment(projection))]
-    }
-
-    /// Zoom — TBD. Conservative pass-through over the contained projection.
-    fn zoom(
-        &self,
-        beam: Beam<MirrorFragment>,
-        f: &dyn Fn(MirrorFragment) -> MirrorFragment,
-    ) -> Beam<MirrorFragment> {
-        beam.map(f)
-    }
-
-    /// Refract: settle a content-addressed projection back into a Form.
-    fn refract(&self, beam: Beam<MirrorFragment>) -> Form {
-        Form::from_fragment(&beam.result)
+    /// Refract: settle into the fixed-point crystal (Shatter itself).
+    fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+        beam.next(Shatter)
     }
 }
 
@@ -974,18 +952,24 @@ mod tests {
         let shatter = Shatter;
 
         // Trait-level focus carries the top eigenvalues.
-        let eigen_beam = shatter.focus(&compiled.form);
-        assert_eq!(eigen_beam.result.kind, DeclKind::Form);
+        let seed: PureBeam<(), Form> = PureBeam::ok((), compiled.form.clone());
+        let focused = shatter.focus(seed);
+        let eigen = focused.result().ok().expect("focus failed");
+        assert_eq!(eigen.kind, DeclKind::Form);
         // 00-prism.mirror wraps multiple declarations in a synthetic Form with empty name
-        assert_eq!(eigen_beam.result.name, "");
+        assert_eq!(eigen.name, "");
 
         // Trait-level project produces a content-addressed (childless) frag.
-        let proj_beam = shatter.project(&eigen_beam.result, Precision::new(1.0));
-        assert!(!proj_beam.result.oid().as_str().is_empty());
+        // Re-seed because focus consumed the previous beam.
+        let seed2: PureBeam<(), Form> = PureBeam::ok((), compiled.form.clone());
+        let focused2 = shatter.focus(seed2);
+        let projected = shatter.project(focused2);
+        let frag_result = projected.result().ok().expect("project failed");
+        assert!(!frag_result.oid().as_str().is_empty());
 
-        // Full structural projection via compile_form, then refract back.
+        // Full structural projection via compile_form — uses all children.
         let frag = shatter.compile_form(&compiled.form);
-        let restored = shatter.refract(Beam::new(frag.clone()));
+        let restored = shatter.decompile(&frag);
         assert_eq!(restored, compiled.form);
 
         // Stable OID across runs (CoincidenceHash<5> determinism).
