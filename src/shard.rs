@@ -6,7 +6,7 @@
 //! The .shard IS the NakedSingularity seed.
 //! No parent. Just IS.
 
-use prism::{Decomposition, KernelSpec, Precision};
+use prism::{Decomposition, KernelSpec};
 
 use super::bundle::Target;
 
@@ -24,21 +24,28 @@ pub struct Shard {
 
 impl Shard {
     pub fn new(grammar_oid: String, kernel_spec: KernelSpec, target: Target) -> Self {
-        todo!()
+        Shard {
+            grammar_oid,
+            kernel_spec,
+            target,
+        }
     }
 
+    /// Number of preserved dimensions in the kernel.
     pub fn rank(&self) -> usize {
-        todo!()
+        self.kernel_spec.rank()
     }
 
+    /// The decomposition type.
     pub fn decomposition(&self) -> Decomposition {
-        todo!()
+        self.kernel_spec.decomposition
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use prism::Precision;
 
     #[test]
     fn shard_carries_kernel_spec() {

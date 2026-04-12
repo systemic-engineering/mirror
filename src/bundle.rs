@@ -5,25 +5,20 @@
 //! The bundle tower IS the compiler.
 
 use prism::{
-    Bundle, Closure, Connection, Decomposition, Fiber, Gauge, Imperfect, KernelSpec, Precision,
+    Closure, Connection, Decomposition, Fiber, Gauge, Imperfect, KernelSpec, Precision,
     ShannonLoss, Transport,
 };
 
 /// Compilation target.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Target {
     /// BEAM (Erlang VM)
+    #[default]
     Beam,
     /// WebAssembly
     Wasm,
     /// Metal/GPU
     Metal,
-}
-
-impl Default for Target {
-    fn default() -> Self {
-        Target::Beam
-    }
 }
 
 /// The Mirror compiler as a principal bundle.
@@ -39,51 +34,86 @@ pub struct MirrorCompiler {
     pub artifact_oid: Option<String>,
 }
 
+impl Default for MirrorCompiler {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl MirrorCompiler {
     pub fn new() -> Self {
-        todo!()
+        MirrorCompiler {
+            kernel_spec: KernelSpec::new(
+                (0..8).collect(),
+                Decomposition::Eigenvalue,
+                Precision::new(0.01),
+            ),
+            target: Target::default(),
+            artifact_oid: None,
+        }
     }
 
     pub fn with_target(mut self, target: Target) -> Self {
-        todo!()
+        self.target = target;
+        self
     }
 }
 
 impl Fiber for MirrorCompiler {
-    type State = String;
+    type State = String; // .mirror source text
 }
 
 impl Connection for MirrorCompiler {
     type Optic = KernelSpec;
     fn connection(&self) -> &KernelSpec {
-        todo!()
+        &self.kernel_spec
     }
 }
 
 impl Gauge for MirrorCompiler {
     type Group = Target;
     fn gauge(&self) -> &Target {
-        todo!()
+        &self.target
     }
 }
 
 impl Transport for MirrorCompiler {
     type Holonomy = ShannonLoss;
     fn transport(&self, source: &String) -> Imperfect<String, ShannonLoss> {
-        todo!()
+        // Compilation: source in, compiled form out.
+        // Loss = information that doesn't survive compilation.
+        // For now: parse the source, measure what survives.
+        if source.is_empty() {
+            return Imperfect::Success(String::new());
+        }
+
+        // The compilation step: we have the AST module available.
+        // Real compilation will go through mirror_runtime::Shatter.
+        // For now: the source itself is the "compiled" output,
+        // with loss measured as the ratio of non-structural characters.
+        let structural_chars: usize = source.chars().filter(|c| "@{}()|".contains(*c)).count();
+        let total = source.len();
+        let loss = (total - structural_chars) as f64;
+
+        if loss == 0.0 {
+            Imperfect::Success(source.clone())
+        } else {
+            Imperfect::Partial(source.clone(), ShannonLoss::new(loss))
+        }
     }
 }
 
 impl Closure for MirrorCompiler {
-    type Fixed = Option<String>;
+    type Fixed = Option<String>; // artifact OID, None if not yet compiled
     fn close(&self) -> &Option<String> {
-        todo!()
+        &self.artifact_oid
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use prism::Bundle;
 
     #[test]
     fn mirror_compiler_is_bundle() {
@@ -118,6 +148,7 @@ mod tests {
         let compiler = MirrorCompiler::new();
         let source = "prism @test { focus type(id) }".to_string();
         let result = compiler.transport(&source);
+        // Non-empty source always has some non-structural characters = loss
         assert!(result.is_partial());
     }
 
