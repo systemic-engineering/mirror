@@ -4,6 +4,8 @@
 //! Compilation as Transport.
 //! The bundle tower IS the compiler.
 
+use crate::mirror_runtime::{CompiledShatter, MirrorRuntime, MirrorRuntimeError};
+use fragmentation::sha::HashAlg;
 use prism::{
     Closure, Connection, Decomposition, Fiber, Gauge, Imperfect, KernelSpec, Precision,
     ShannonLoss, Transport,
@@ -32,6 +34,7 @@ pub struct MirrorCompiler {
     pub kernel_spec: KernelSpec,
     pub target: Target,
     pub artifact_oid: Option<String>,
+    runtime: MirrorRuntime,
 }
 
 impl Default for MirrorCompiler {
@@ -50,12 +53,24 @@ impl MirrorCompiler {
             ),
             target: Target::default(),
             artifact_oid: None,
+            runtime: MirrorRuntime::new(),
         }
     }
 
     pub fn with_target(mut self, target: Target) -> Self {
         self.target = target;
         self
+    }
+
+    /// Compile .mirror source through the full pipeline.
+    /// Updates artifact_oid (for Closure::close).
+    pub fn compile(
+        &mut self,
+        source: &str,
+    ) -> Result<CompiledShatter, MirrorRuntimeError> {
+        let compiled = self.runtime.compile_source(source)?;
+        self.artifact_oid = Some(compiled.crystal().as_str().to_string());
+        Ok(compiled)
     }
 }
 
@@ -80,25 +95,33 @@ impl Gauge for MirrorCompiler {
 impl Transport for MirrorCompiler {
     type Holonomy = ShannonLoss;
     fn transport(&self, source: &String) -> Imperfect<String, ShannonLoss> {
-        // Compilation: source in, compiled form out.
-        // Loss = information that doesn't survive compilation.
-        // For now: parse the source, measure what survives.
         if source.is_empty() {
             return Imperfect::Success(String::new());
         }
 
-        // The compilation step: we have the AST module available.
-        // Real compilation will go through mirror_runtime::Shatter.
-        // For now: the source itself is the "compiled" output,
-        // with loss measured as the ratio of non-structural characters.
-        let structural_chars: usize = source.chars().filter(|c| "@{}()|".contains(*c)).count();
-        let total = source.len();
-        let loss = (total - structural_chars) as f64;
+        match self.runtime.compile_source(source) {
+            Ok(compiled) => {
+                // Loss = source length - OID length.
+                // The OID is the compressed representation.
+                // Everything that isn't in the OID is lost.
+                let oid = compiled.crystal().as_str().to_string();
+                let source_len = source.len() as f64;
+                let oid_len = oid.len() as f64;
+                let loss = source_len - oid_len;
 
-        if loss == 0.0 {
-            Imperfect::Success(source.clone())
-        } else {
-            Imperfect::Partial(source.clone(), ShannonLoss::new(loss))
+                if loss <= 0.0 {
+                    Imperfect::Success(oid)
+                } else {
+                    Imperfect::Partial(oid, ShannonLoss::new(loss))
+                }
+            }
+            Err(_) => {
+                // Compilation failure = total loss
+                Imperfect::Partial(
+                    String::new(),
+                    ShannonLoss::new(source.len() as f64),
+                )
+            }
         }
     }
 }
@@ -144,12 +167,15 @@ mod tests {
     }
 
     #[test]
-    fn transport_source_with_content_returns_partial() {
+    fn transport_source_with_content_compiles_to_oid() {
         let compiler = MirrorCompiler::new();
         let source = "prism @test { focus type(id) }".to_string();
         let result = compiler.transport(&source);
-        // Non-empty source always has some non-structural characters = loss
-        assert!(result.is_partial());
+        // Real compilation: the OID is the output.
+        // Short sources may produce an OID longer than the source (Success),
+        // or shorter (Partial). Either way, transport succeeds (not Failure).
+        assert!(!result.is_err());
+        assert!(result.ok().is_some_and(|oid| !oid.is_empty()));
     }
 
     #[test]
@@ -163,8 +189,25 @@ mod tests {
         let compiler = MirrorCompiler::new();
         let source = "form @test {\n  prism focus\n}\n".to_string();
         let result = compiler.transport(&source);
-        // Real compilation produces an OID
-        assert!(result.is_partial()); // source > OID length = loss
+        // Real compilation produces an OID. Transport succeeds (not Failure).
+        // Short sources produce OIDs >= source length → Success.
+        // The OID is the content-addressed output.
+        assert!(!result.is_err(), "compilation should not fail");
+        let oid = result.ok().expect("should have OID");
+        assert!(!oid.is_empty(), "should produce a non-empty OID");
+    }
+
+    #[test]
+    fn transport_long_source_returns_partial() {
+        let compiler = MirrorCompiler::new();
+        // A long source should compress to an OID shorter than the source.
+        // Repeat a valid form declaration many times.
+        let block = "form @test {\n  prism focus\n  prism split\n  prism zoom\n  prism project\n  prism refract\n}\n";
+        let source = block.repeat(20);
+        let result = compiler.transport(&source);
+        assert!(!result.is_err(), "compilation should not fail");
+        // With a long enough source, OID < source length = Partial
+        assert!(result.is_partial(), "long source should have loss");
         match result {
             Imperfect::Partial(oid, loss) => {
                 assert!(!oid.is_empty(), "should produce an OID");
