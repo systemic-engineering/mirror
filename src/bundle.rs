@@ -157,4 +157,42 @@ mod tests {
         let compiler = MirrorCompiler::new();
         assert!(compiler.close().is_none());
     }
+
+    #[test]
+    fn transport_compiles_real_source() {
+        let compiler = MirrorCompiler::new();
+        let source = "form @test {\n  prism focus\n}\n".to_string();
+        let result = compiler.transport(&source);
+        // Real compilation produces an OID
+        assert!(result.is_partial()); // source > OID length = loss
+        match result {
+            Imperfect::Partial(oid, loss) => {
+                assert!(!oid.is_empty(), "should produce an OID");
+                assert!(loss.as_f64() > 0.0, "compilation should have loss");
+            }
+            _ => panic!("expected Partial"),
+        }
+    }
+
+    #[test]
+    fn transport_invalid_source_returns_partial_with_max_loss() {
+        let compiler = MirrorCompiler::new();
+        let source = "this is not valid mirror syntax {{{".to_string();
+        let result = compiler.transport(&source);
+        // Invalid source = compilation failure = total loss
+        assert!(result.is_partial());
+    }
+
+    #[test]
+    fn compile_stores_artifact_oid() {
+        let mut compiler = MirrorCompiler::new();
+        let compiled = compiler
+            .compile("form @test {\n  prism focus\n}\n")
+            .unwrap();
+        assert!(compiler.artifact_oid.is_some());
+        assert_eq!(
+            compiler.artifact_oid.as_ref().unwrap(),
+            compiled.crystal().as_str()
+        );
+    }
 }
