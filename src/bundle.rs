@@ -5,6 +5,7 @@
 //! The bundle tower IS the compiler.
 
 use crate::mirror_runtime::{CompiledShatter, MirrorRuntime, MirrorRuntimeError};
+use coincidence::declaration::{MirrorFragment, MirrorFragmentExt, MirrorHash};
 use fragmentation::sha::HashAlg;
 use prism::{
     Closure, Connection, Decomposition, Fiber, Gauge, Imperfect, KernelSpec, Precision,
@@ -33,7 +34,7 @@ pub enum Target {
 pub struct MirrorCompiler {
     pub kernel_spec: KernelSpec,
     pub target: Target,
-    pub artifact_oid: Option<String>,
+    pub last_hash: Option<MirrorHash>,
     runtime: MirrorRuntime,
 }
 
@@ -52,7 +53,7 @@ impl MirrorCompiler {
                 Precision::new(0.01),
             ),
             target: Target::default(),
-            artifact_oid: None,
+            last_hash: None,
             runtime: MirrorRuntime::new(),
         }
     }
@@ -63,10 +64,10 @@ impl MirrorCompiler {
     }
 
     /// Compile .mirror source through the full pipeline.
-    /// Updates artifact_oid (for Closure::close).
+    /// Updates last_hash (for Closure::close).
     pub fn compile(&mut self, source: &str) -> Result<CompiledShatter, MirrorRuntimeError> {
         let compiled = self.runtime.compile_source(source)?;
-        self.artifact_oid = Some(compiled.crystal().as_str().to_string());
+        self.last_hash = Some(compiled.crystal().clone());
         Ok(compiled)
     }
 }
@@ -98,33 +99,53 @@ impl Transport for MirrorCompiler {
 
         match self.runtime.compile_source(source) {
             Ok(compiled) => {
-                // Loss = source length - OID length.
-                // The OID is the compressed representation.
-                // Everything that isn't in the OID is lost.
-                let oid = compiled.crystal().as_str().to_string();
-                let source_len = source.len() as f64;
-                let oid_len = oid.len() as f64;
-                let loss = source_len - oid_len;
-
-                if loss <= 0.0 {
-                    Imperfect::Success(oid)
+                // Structural loss: source tokens vs fragment nodes.
+                let source_nodes = count_structural_tokens(source);
+                let fragment_nodes = count_fragment_nodes(&compiled.fragment);
+                let loss = if source_nodes > fragment_nodes {
+                    (source_nodes - fragment_nodes) as f64
                 } else {
-                    Imperfect::Partial(oid, ShannonLoss::new(loss))
+                    0.0
+                };
+
+                let oid_str = compiled.crystal().as_str().to_string();
+
+                if loss == 0.0 {
+                    Imperfect::Success(oid_str)
+                } else {
+                    Imperfect::Partial(oid_str, ShannonLoss::new(loss))
                 }
             }
             Err(_) => {
                 // Compilation failure = total loss
-                Imperfect::Partial(String::new(), ShannonLoss::new(source.len() as f64))
+                Imperfect::Partial(
+                    String::new(),
+                    ShannonLoss::new(count_structural_tokens(source) as f64),
+                )
             }
         }
     }
 }
 
 impl Closure for MirrorCompiler {
-    type Fixed = Option<String>; // artifact OID, None if not yet compiled
-    fn close(&self) -> &Option<String> {
-        &self.artifact_oid
+    type Fixed = Option<MirrorHash>; // artifact hash, None if not yet compiled
+    fn close(&self) -> &Option<MirrorHash> {
+        &self.last_hash
     }
+}
+
+/// Count whitespace-separated tokens in source (structural measure).
+fn count_structural_tokens(source: &str) -> usize {
+    source.split_whitespace().count()
+}
+
+/// Recursively count nodes in a MirrorFragment tree.
+fn count_fragment_nodes(fragment: &MirrorFragment) -> usize {
+    1 + fragment
+        .mirror_children()
+        .iter()
+        .map(count_fragment_nodes)
+        .sum::<usize>()
 }
 
 #[cfg(test)]
@@ -179,6 +200,16 @@ mod tests {
     }
 
     #[test]
+    fn count_structural_tokens_counts_words() {
+        assert_eq!(
+            super::count_structural_tokens("form @test {\n  prism focus\n}"),
+            6
+        );
+        assert_eq!(super::count_structural_tokens(""), 0);
+        assert_eq!(super::count_structural_tokens("   "), 0);
+    }
+
+    #[test]
     fn transport_compiles_real_source() {
         let compiler = MirrorCompiler::new();
         let source = "form @test {\n  prism focus\n}\n".to_string();
@@ -221,16 +252,13 @@ mod tests {
     }
 
     #[test]
-    fn compile_stores_artifact_oid() {
+    fn compile_stores_last_hash() {
         let mut compiler = MirrorCompiler::new();
         let compiled = compiler
             .compile("form @test {\n  prism focus\n}\n")
             .unwrap();
-        assert!(compiler.artifact_oid.is_some());
-        assert_eq!(
-            compiler.artifact_oid.as_ref().unwrap(),
-            compiled.crystal().as_str()
-        );
+        assert!(compiler.last_hash.is_some());
+        assert_eq!(compiler.last_hash.as_ref().unwrap(), compiled.crystal());
     }
 
     #[test]
@@ -241,9 +269,9 @@ mod tests {
         let compiled = compiler
             .compile("form @test {\n  prism focus\n  prism split\n}\n")
             .unwrap();
-        let oid = compiled.crystal().as_str().to_string();
-        let shard = Shard::new(oid.clone(), compiler.kernel_spec.clone(), compiler.target);
-        assert_eq!(shard.grammar_oid, oid);
+        let hash = compiled.crystal().clone();
+        let shard = Shard::new(hash.clone(), compiler.kernel_spec.clone(), compiler.target);
+        assert_eq!(shard.grammar_oid, hash);
         assert_eq!(shard.rank(), 8);
         assert_eq!(shard.target, Target::Beam);
     }

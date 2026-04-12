@@ -59,15 +59,15 @@ fn cmd_compile(args: &[String]) -> ! {
     match compiler.compile(&source) {
         Ok(compiled) => {
             let shard = mirror::shard::Shard::new(
-                compiled.crystal().as_str().to_string(),
+                compiled.crystal().clone(),
                 compiler.kernel_spec.clone(),
                 compiler.target,
             );
-            println!("{}", shard.grammar_oid);
+            println!("{}", shard.grammar_oid.as_str());
             eprintln!(
                 "compiled {} → {} (rank {}, {:?})",
                 file,
-                shard.grammar_oid,
+                shard.grammar_oid.as_str(),
                 shard.rank(),
                 shard.target,
             );
