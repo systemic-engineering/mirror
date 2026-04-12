@@ -235,7 +235,16 @@ mod tests {
 
     #[test]
     fn compile_wires_to_shard() {
+        use crate::shard::Shard;
         // compile → Shard: grammar_oid matches crystal, rank and target flow through.
-        todo!("wire cmd_compile: read file → compile → Shard → print OID")
+        let mut compiler = MirrorCompiler::new();
+        let compiled = compiler
+            .compile("form @test {\n  prism focus\n  prism split\n}\n")
+            .unwrap();
+        let oid = compiled.crystal().as_str().to_string();
+        let shard = Shard::new(oid.clone(), compiler.kernel_spec.clone(), compiler.target);
+        assert_eq!(shard.grammar_oid, oid);
+        assert_eq!(shard.rank(), 8);
+        assert_eq!(shard.target, Target::Beam);
     }
 }

@@ -4,6 +4,7 @@
 
 use std::process;
 
+use fragmentation::sha::HashAlg;
 use mirror::ast_prism::ASTPrism;
 use prism::{Beam, Prism, PureBeam};
 
@@ -15,7 +16,7 @@ usage:
   mirror ai <model> [file|-]        run a fate model
   mirror <query>                    parse and print the AST
 
-models: abyss | pathfinder | cartographer | explorer | fate
+models: abyss | introject | cartographer | explorer | fate
 ";
 
 fn main() {
@@ -46,9 +47,37 @@ fn cmd_compile(args: &[String]) -> ! {
         }
     };
 
-    // TODO: wire up MirrorRuntime::compile_file
-    eprintln!("compile: {}", file);
-    process::exit(0)
+    let source = match std::fs::read_to_string(file) {
+        Ok(s) => s,
+        Err(e) => {
+            eprintln!("error: cannot read {}: {}", file, e);
+            process::exit(1);
+        }
+    };
+
+    let mut compiler = mirror::bundle::MirrorCompiler::new();
+    match compiler.compile(&source) {
+        Ok(compiled) => {
+            let shard = mirror::shard::Shard::new(
+                compiled.crystal().as_str().to_string(),
+                compiler.kernel_spec.clone(),
+                compiler.target,
+            );
+            println!("{}", shard.grammar_oid);
+            eprintln!(
+                "compiled {} → {} (rank {}, {:?})",
+                file,
+                shard.grammar_oid,
+                shard.rank(),
+                shard.target,
+            );
+            process::exit(0);
+        }
+        Err(e) => {
+            eprintln!("error: compile {}: {}", file, e);
+            process::exit(1);
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -58,7 +87,7 @@ fn cmd_compile(args: &[String]) -> ! {
 fn cmd_ai(args: &[String]) -> ! {
     let model = match args.first().map(|s| s.as_str()) {
         Some("abyss") => "abyss",
-        Some("pathfinder") => "pathfinder",
+        Some("introject") => "introject",
         Some("cartographer") => "cartographer",
         Some("explorer") => "explorer",
         Some("fate") => "fate",
