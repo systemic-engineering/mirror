@@ -45,7 +45,9 @@ pub use prism::Prism;
 pub use fragmentation::repo::Repo;
 pub use fragmentation::store::Store;
 
+pub mod bundle;
 pub mod gestalt;
 pub mod mirror_runtime;
 pub mod runtime;
 pub mod session;
+pub mod shard;
