@@ -960,7 +960,9 @@ pub fn emit_shatter(
     ));
     out.push('\n');
 
-    // DELIBERATELY BROKEN: emit nothing — will cause OID mismatch on round-trip
+    // Emit the collapsed form as valid .mirror syntax.
+    // emit_form is already proven to round-trip exactly (same OIDs).
+    out.push_str(&emit_form(&collapsed.form));
     out
 }
 
