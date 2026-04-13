@@ -40,6 +40,7 @@ pub use kernel::{
 
 pub use domain::filesystem::{Filesystem, Folder, FolderOid};
 pub use prism::Prism;
+pub use store::{ForeignKey, MirrorOid, Shard};
 
 // Fragmentation traits for content-addressed storage.
 pub use fragmentation::repo::Repo;
