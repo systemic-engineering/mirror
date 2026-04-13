@@ -129,14 +129,30 @@ impl SignFilter {
     /// Load signing identity from environment.
     ///
     /// Resolution order:
-    /// 1. `CONVERSATION_KEYS_PUBLIC` — path to a specific `.pub` file
-    /// 2. `CONVERSATION_KEYS` — path to a directory containing `.pub` files
-    /// 3. `~/.ssh` — default keys directory
+    /// 1. `MIRROR_CI_SIGN_KEY` — CI key (file path or base64 content)
+    /// 2. `CONVERSATION_KEYS_PUBLIC` — path to a specific `.pub` file
+    /// 3. `CONVERSATION_KEYS` — path to a directory containing `.pub` files
+    /// 4. `~/.ssh` — default keys directory
     ///
     /// `CONVERSATION_KEYS_PRIVATE` is recognized but reserved for future
     /// cryptographic signing (GPG/SSH). `@sign` currently uses the public
     /// key as a structural witness, not a cryptographic signature.
     pub fn from_env() -> Option<Self> {
+        if let Ok(ci_key) = std::env::var("MIRROR_CI_SIGN_KEY") {
+            if let Some(content) = resolve_ci_key(&ci_key) {
+                let content = content.trim().to_string();
+                let parts: Vec<&str> = content.splitn(3, ' ').collect();
+                let signer = if parts.len() >= 3 {
+                    parts[2].to_string()
+                } else {
+                    "ci".to_string()
+                };
+                return Some(SignFilter {
+                    signer,
+                    signature: content.as_bytes().to_vec(),
+                });
+            }
+        }
         if let Ok(pub_path) = std::env::var("CONVERSATION_KEYS_PUBLIC") {
             return Self::from_pub_file(std::path::Path::new(&pub_path));
         }
@@ -182,8 +198,15 @@ impl Visibility {
     ///
     /// Case-insensitive. Unset or unrecognized values default to `Public`.
     pub fn from_env() -> Self {
-        // TODO: implement — always returns Public for now
-        Visibility::Public
+        match std::env::var("MIRROR_CI_VISIBILITY") {
+            Ok(val) => match val.to_lowercase().as_str() {
+                "public" => Visibility::Public,
+                "protected" => Visibility::Protected,
+                "private" => Visibility::Private,
+                _ => Visibility::Public,
+            },
+            Err(_) => Visibility::Public,
+        }
     }
 }
 
@@ -196,9 +219,20 @@ impl Visibility {
 /// The value is either:
 /// - A path to a key file (if a file exists at that path)
 /// - Base64-encoded key content (otherwise)
-fn resolve_ci_key(_value: &str) -> Option<String> {
-    // TODO: implement
-    None
+fn resolve_ci_key(value: &str) -> Option<String> {
+    // Try as file path first
+    let path = std::path::Path::new(value);
+    if path.exists() {
+        return std::fs::read_to_string(path)
+            .ok()
+            .map(|s| s.trim().to_string());
+    }
+    // Try base64 decode
+    use base64::Engine;
+    base64::engine::general_purpose::STANDARD
+        .decode(value)
+        .ok()
+        .and_then(|bytes| String::from_utf8(bytes).ok())
 }
 
 // ---------------------------------------------------------------------------
@@ -250,9 +284,21 @@ impl EncryptKey {
     }
 
     /// Resolve the key to SSH public key content for encryption.
+    ///
+    /// Resolution order for `Public`:
+    /// 1. `MIRROR_CI_ENCRYPT_KEY` — CI key (file path or base64 content)
+    /// 2. `CONVERSATION_KEYS_PUBLIC` — path to a specific `.pub` file
+    /// 3. `CONVERSATION_KEYS` — path to a directory containing `.pub` files
+    /// 4. `~/.ssh` — default keys directory
     pub fn resolve(&self) -> Result<String, ResolveError> {
         match self {
             EncryptKey::Public => {
+                // CI key takes priority
+                if let Ok(ci_key) = std::env::var("MIRROR_CI_ENCRYPT_KEY") {
+                    if let Some(content) = resolve_ci_key(&ci_key) {
+                        return Ok(content);
+                    }
+                }
                 // Same hierarchy as SignFilter: CONVERSATION_KEYS_PUBLIC → CONVERSATION_KEYS dir → ~/.ssh
                 if let Ok(pub_path) = std::env::var("CONVERSATION_KEYS_PUBLIC") {
                     return read_key_file(&pub_path);
