@@ -100,8 +100,7 @@ impl MirrorLoss {
             Convergence::BudgetExhausted => f64::INFINITY,
         };
 
-        // DELIBERATE BUG: multiply instead of add
-        phase_loss * unresolved_penalty * convergence_penalty
+        phase_loss + unresolved_penalty + convergence_penalty
     }
 }
 
@@ -491,7 +490,11 @@ mod tests {
             }],
             ..MirrorLoss::zero()
         };
-        assert!((loss.holonomy() - 3.5).abs() < 1e-10, "holonomy should be 3.5, got {}", loss.holonomy());
+        assert!(
+            (loss.holonomy() - 3.5).abs() < 1e-10,
+            "holonomy should be 3.5, got {}",
+            loss.holonomy()
+        );
     }
 
     #[test]
@@ -503,7 +506,11 @@ mod tests {
             ],
             ..MirrorLoss::zero()
         };
-        assert!((loss.holonomy() - 2.0).abs() < 1e-10, "holonomy should be 2.0, got {}", loss.holonomy());
+        assert!(
+            (loss.holonomy() - 2.0).abs() < 1e-10,
+            "holonomy should be 2.0, got {}",
+            loss.holonomy()
+        );
     }
 
     #[test]
@@ -512,19 +519,31 @@ mod tests {
             convergence: Convergence::Converging(5),
             ..MirrorLoss::zero()
         };
-        assert!((converging.holonomy() - 5.0).abs() < 1e-10, "Converging(5) should be 5.0, got {}", converging.holonomy());
+        assert!(
+            (converging.holonomy() - 5.0).abs() < 1e-10,
+            "Converging(5) should be 5.0, got {}",
+            converging.holonomy()
+        );
 
         let oscillating = MirrorLoss {
             convergence: Convergence::Oscillating(3),
             ..MirrorLoss::zero()
         };
-        assert!((oscillating.holonomy() - 6.0).abs() < 1e-10, "Oscillating(3) should be 6.0, got {}", oscillating.holonomy());
+        assert!(
+            (oscillating.holonomy() - 6.0).abs() < 1e-10,
+            "Oscillating(3) should be 6.0, got {}",
+            oscillating.holonomy()
+        );
 
         let exhausted = MirrorLoss {
             convergence: Convergence::BudgetExhausted,
             ..MirrorLoss::zero()
         };
-        assert!(exhausted.holonomy().is_infinite(), "BudgetExhausted should be infinite, got {}", exhausted.holonomy());
+        assert!(
+            exhausted.holonomy().is_infinite(),
+            "BudgetExhausted should be infinite, got {}",
+            exhausted.holonomy()
+        );
     }
 
     #[test]
@@ -540,6 +559,10 @@ mod tests {
             convergence: Convergence::Converging(3),
             ..MirrorLoss::zero()
         };
-        assert!((loss.holonomy() - 6.0).abs() < 1e-10, "holonomy should be sum 6.0, got {}", loss.holonomy());
+        assert!(
+            (loss.holonomy() - 6.0).abs() < 1e-10,
+            "holonomy should be sum 6.0, got {}",
+            loss.holonomy()
+        );
     }
 }

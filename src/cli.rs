@@ -320,7 +320,7 @@ flags:
         if p.is_dir() {
             let mut entries: Vec<_> = std::fs::read_dir(p)?
                 .filter_map(|e| e.ok())
-                .filter(|e| e.path().extension().map_or(false, |ext| ext == "mirror"))
+                .filter(|e| e.path().extension().is_some_and(|ext| ext == "mirror"))
                 .collect();
             entries.sort_by_key(|e| e.file_name());
             if entries.is_empty() {
@@ -345,7 +345,13 @@ flags:
                 }
             }
             let total_h = total_loss.holonomy();
-            out.insert_str(0, &format!("ci {} ({} files)\nholonomy: {:.4}\n", path, file_count, total_h));
+            out.insert_str(
+                0,
+                &format!(
+                    "ci {} ({} files)\nholonomy: {:.4}\n",
+                    path, file_count, total_h
+                ),
+            );
             Ok(out)
         } else {
             let (_oid, loss) = self.ci_single_file(path)?;
@@ -354,7 +360,12 @@ flags:
             if loss.is_zero() {
                 out.push_str(&format!("crystal\nholonomy: {:.4}", holonomy));
             } else {
-                out.push_str(&format!("partial\nholonomy: {:.4}\nphases: {}\nresolution: {:.2}", holonomy, loss.phases.len(), loss.resolution_ratio));
+                out.push_str(&format!(
+                    "partial\nholonomy: {:.4}\nphases: {}\nresolution: {:.2}",
+                    holonomy,
+                    loss.phases.len(),
+                    loss.resolution_ratio
+                ));
                 if !loss.unresolved_refs.is_empty() {
                     out.push_str(&format!("\nunresolved: {}", loss.unresolved_refs.len()));
                     for (name, _oid) in &loss.unresolved_refs {
@@ -384,7 +395,7 @@ flags:
             let mut total = crate::loss::MirrorLoss::zero();
             if let Ok(entries) = std::fs::read_dir(p) {
                 for entry in entries.filter_map(|e| e.ok()) {
-                    if entry.path().extension().map_or(false, |ext| ext == "mirror") {
+                    if entry.path().extension().is_some_and(|ext| ext == "mirror") {
                         if let Ok((_oid, l)) = self.ci_single_file(entry.path().to_str().unwrap()) {
                             total = total.combine(l);
                         }
@@ -405,11 +416,17 @@ flags:
         out.push_str("\n---\nsuggestions:");
         for phase in &loss.phases {
             if phase.structural_loss > 0.0 {
-                out.push_str(&format!("\n  {:?} phase: loss {:.4}", phase.phase, phase.structural_loss));
+                out.push_str(&format!(
+                    "\n  {:?} phase: loss {:.4}",
+                    phase.phase, phase.structural_loss
+                ));
             }
         }
         if !loss.unresolved_refs.is_empty() {
-            out.push_str(&format!("\n  unresolved refs: {}", loss.unresolved_refs.len()));
+            out.push_str(&format!(
+                "\n  unresolved refs: {}",
+                loss.unresolved_refs.len()
+            ));
         }
         let enforce = args.iter().any(|a| a == "--enforce");
         if enforce {
@@ -928,7 +945,11 @@ mod tests {
         let result = cli.dispatch("ci", &[file.to_str().unwrap().to_string()]);
         assert!(result.is_ok());
         let output = result.unwrap();
-        assert!(output.contains("holonomy:"), "should report holonomy value, got: {}", output);
+        assert!(
+            output.contains("holonomy:"),
+            "should report holonomy value, got: {}",
+            output
+        );
     }
 
     #[test]
@@ -942,8 +963,16 @@ mod tests {
         let result = cli.dispatch("ci", &[file.to_str().unwrap().to_string()]);
         assert!(result.is_ok());
         let output = result.unwrap();
-        assert!(output.contains("partial"), "long source should report partial, got: {}", output);
-        assert!(output.contains("holonomy:"), "should contain holonomy value, got: {}", output);
+        assert!(
+            output.contains("partial"),
+            "long source should report partial, got: {}",
+            output
+        );
+        assert!(
+            output.contains("holonomy:"),
+            "should contain holonomy value, got: {}",
+            output
+        );
     }
 
     #[test]
@@ -956,8 +985,16 @@ mod tests {
         let result = cli.dispatch("ci", &[dir.path().to_str().unwrap().to_string()]);
         assert!(result.is_ok());
         let output = result.unwrap();
-        assert!(output.contains("2 files"), "should report 2 files, got: {}", output);
-        assert!(output.contains("holonomy:"), "should contain holonomy, got: {}", output);
+        assert!(
+            output.contains("2 files"),
+            "should report 2 files, got: {}",
+            output
+        );
+        assert!(
+            output.contains("holonomy:"),
+            "should contain holonomy, got: {}",
+            output
+        );
     }
 
     #[test]
@@ -982,7 +1019,11 @@ mod tests {
         let result = cli.dispatch("ca", &[file.to_str().unwrap().to_string()]);
         assert!(result.is_ok());
         let output = result.unwrap();
-        assert!(output.contains("nothing to do"), "crystal file should say nothing to do, got: {}", output);
+        assert!(
+            output.contains("nothing to do"),
+            "crystal file should say nothing to do, got: {}",
+            output
+        );
     }
 
     #[test]
@@ -996,7 +1037,11 @@ mod tests {
         let result = cli.dispatch("ca", &[file.to_str().unwrap().to_string()]);
         assert!(result.is_ok());
         let output = result.unwrap();
-        assert!(output.contains("suggestions"), "file with holonomy should produce suggestions, got: {}", output);
+        assert!(
+            output.contains("suggestions"),
+            "file with holonomy should produce suggestions, got: {}",
+            output
+        );
     }
 
     #[test]
@@ -1007,10 +1052,17 @@ mod tests {
         let source = block.repeat(20);
         std::fs::write(&file, &source).unwrap();
         let cli = Cli::default();
-        let result = cli.dispatch("ca", &[file.to_str().unwrap().to_string(), "--enforce".to_string()]);
+        let result = cli.dispatch(
+            "ca",
+            &[file.to_str().unwrap().to_string(), "--enforce".to_string()],
+        );
         assert!(result.is_ok());
         let output = result.unwrap();
-        assert!(output.contains("enforce: not yet implemented"), "enforce flag should report stub, got: {}", output);
+        assert!(
+            output.contains("enforce: not yet implemented"),
+            "enforce flag should report stub, got: {}",
+            output
+        );
     }
 
     #[test]
@@ -1026,12 +1078,20 @@ mod tests {
         let result = cli.dispatch("ca", &["--help".to_string()]);
         assert!(result.is_ok());
         let output = result.unwrap();
-        assert!(output.contains("observe, suggest, enforce"), "ca --help should describe the command, got: {}", output);
+        assert!(
+            output.contains("observe, suggest, enforce"),
+            "ca --help should describe the command, got: {}",
+            output
+        );
     }
 
     #[test]
     fn help_text_includes_ca() {
         let text = Cli::help_text();
-        assert!(text.contains("ca"), "help text should include ca command, got: {}", text);
+        assert!(
+            text.contains("ca"),
+            "help text should include ca command, got: {}",
+            text
+        );
     }
 }
