@@ -106,6 +106,12 @@ pub struct Form {
     pub params: Vec<String>,
     pub variants: Vec<String>,
     pub children: Vec<Form>,
+    /// For `action` declarations: the grammar reference (e.g. `@code/rust`).
+    /// `None` means inherit the grammar from the enclosing form's `in` declaration.
+    pub grammar_ref: Option<String>,
+    /// For `action` declarations: the raw body text, brace-balanced but unparsed.
+    /// The mirror compiler stores it as-is; the target grammar's parser handles it.
+    pub body_text: Option<String>,
 }
 
 impl Form {
@@ -122,16 +128,44 @@ impl Form {
             params,
             variants,
             children,
+            grammar_ref: None,
+            body_text: None,
+        }
+    }
+
+    /// Create an action Form with grammar reference and raw body text.
+    pub fn action(
+        name: impl Into<String>,
+        params: Vec<String>,
+        grammar_ref: Option<String>,
+        body_text: Option<String>,
+        children: Vec<Form>,
+    ) -> Self {
+        Form {
+            kind: DeclKind::Action,
+            name: name.into(),
+            params,
+            variants: Vec::new(),
+            children,
+            grammar_ref,
+            body_text,
         }
     }
 
     fn to_fragment(&self) -> MirrorFragment {
-        let data = MirrorData::new(
-            self.kind.clone(),
-            self.name.clone(),
-            self.params.clone(),
-            self.variants.clone(),
-        );
+        // For actions, encode grammar_ref and body_text into the fragment's
+        // params and variants so they survive content-addressing round-trips.
+        let mut params = self.params.clone();
+        let mut variants = self.variants.clone();
+        if self.kind == DeclKind::Action {
+            if let Some(ref gr) = self.grammar_ref {
+                params.push(format!("in:{}", gr));
+            }
+            if let Some(ref bt) = self.body_text {
+                variants.push(format!("body:{}", bt));
+            }
+        }
+        let data = MirrorData::new(self.kind.clone(), self.name.clone(), params, variants);
         let children: Vec<MirrorFragment> = self.children.iter().map(|c| c.to_fragment()).collect();
         build_fragment(data, children)
     }
@@ -143,12 +177,45 @@ impl Form {
             .iter()
             .map(Form::from_fragment)
             .collect();
-        Form {
-            kind: d.kind.clone(),
-            name: d.name.clone(),
-            params: d.params.clone(),
-            variants: d.variants.clone(),
-            children,
+        if d.kind == DeclKind::Action {
+            // Decode grammar_ref and body_text from the encoded params/variants.
+            let mut params = Vec::new();
+            let mut grammar_ref = None;
+            for p in &d.params {
+                if let Some(gr) = p.strip_prefix("in:") {
+                    grammar_ref = Some(gr.to_string());
+                } else {
+                    params.push(p.clone());
+                }
+            }
+            let mut variants = Vec::new();
+            let mut body_text = None;
+            for v in &d.variants {
+                if let Some(bt) = v.strip_prefix("body:") {
+                    body_text = Some(bt.to_string());
+                } else {
+                    variants.push(v.clone());
+                }
+            }
+            Form {
+                kind: DeclKind::Action,
+                name: d.name.clone(),
+                params,
+                variants,
+                children,
+                grammar_ref,
+                body_text,
+            }
+        } else {
+            Form {
+                kind: d.kind.clone(),
+                name: d.name.clone(),
+                params: d.params.clone(),
+                variants: d.variants.clone(),
+                children,
+                grammar_ref: None,
+                body_text: None,
+            }
         }
     }
 }
@@ -376,20 +443,53 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
         _ => String::new(),
     };
 
-    let mut params = Vec::new();
+    let mut params: Vec<String> = Vec::new();
     if matches!(tokens.get(*cursor), Some(Tok::LParen)) {
         *cursor += 1;
+        let mut paren_depth: usize = 1;
         loop {
             match tokens.get(*cursor) {
                 Some(Tok::RParen) => {
+                    paren_depth -= 1;
+                    if paren_depth == 0 {
+                        *cursor += 1;
+                        break;
+                    }
+                    // Nested closing paren: include as part of the previous param
+                    if let Some(last) = params.last_mut() {
+                        last.push(')');
+                    }
                     *cursor += 1;
-                    break;
+                }
+                Some(Tok::LParen) => {
+                    paren_depth += 1;
+                    // Nested opening paren: append to the previous param
+                    if let Some(last) = params.last_mut() {
+                        last.push('(');
+                    }
+                    *cursor += 1;
                 }
                 Some(Tok::Word(w)) => {
-                    params.push(w.clone());
+                    if paren_depth > 1 {
+                        // Inside nested parens: append to previous param
+                        if let Some(last) = params.last_mut() {
+                            last.push_str(w);
+                        } else {
+                            params.push(w.clone());
+                        }
+                    } else {
+                        params.push(w.clone());
+                    }
                     *cursor += 1;
                 }
                 Some(Tok::Comma) => {
+                    if paren_depth > 1 {
+                        // Comma inside nested parens: append to previous param
+                        if let Some(last) = params.last_mut() {
+                            last.push(',');
+                        }
+                    }
+                    // At depth 1, comma is just a separator — skip it
                     *cursor += 1;
                 }
                 other => return Err(err(format!("malformed params: {:?}", other))),
@@ -431,6 +531,13 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
                 _ => break,
             }
         }
+    }
+
+    // Action declarations: parse optional `in @grammar` and raw body block.
+    if kind == DeclKind::Action {
+        let grammar_ref = parse_action_grammar_ref(tokens, cursor);
+        let (body_text, children) = parse_action_body(tokens, cursor)?;
+        return Ok(Form::action(name, params, grammar_ref, body_text, children));
     }
 
     let mut children = Vec::new();
@@ -487,6 +594,155 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
     Ok(Form::new(kind, name, params, variants, children))
 }
 
+/// Parse an optional `in @grammar/path` after action params.
+/// Consumes `in @word` or `in @word/path` tokens if present.
+fn parse_action_grammar_ref(tokens: &[Tok], cursor: &mut usize) -> Option<String> {
+    skip_inline_trivia(tokens, cursor);
+    // Look for `in` keyword followed by `@grammar`
+    if let Some(Tok::Word(w)) = tokens.get(*cursor) {
+        if w == "in" {
+            if let Some(Tok::Word(ref_word)) = tokens.get(*cursor + 1) {
+                if ref_word.starts_with('@') {
+                    *cursor += 2;
+                    let mut grammar = ref_word.clone();
+                    // Absorb path segments: @code/rust → `@code` `/` `rust`
+                    // The tokenizer splits `/` into its own Word token.
+                    while let Some(Tok::Word(seg)) = tokens.get(*cursor) {
+                        if seg.starts_with('/') || seg == "/" {
+                            grammar.push_str(seg);
+                            *cursor += 1;
+                            // Absorb the next segment too if `/` was standalone
+                            if seg == "/" {
+                                if let Some(Tok::Word(next)) = tokens.get(*cursor) {
+                                    grammar.push_str(next);
+                                    *cursor += 1;
+                                }
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                    return Some(grammar);
+                }
+            }
+        }
+    }
+    None
+}
+
+/// Parse the body of an action declaration. The body is collected as raw text
+/// (brace-balanced but not parsed by the mirror compiler). If the body contains
+/// mirror declarations (like in `04-action.mirror`'s meta-actions), they are
+/// parsed as children instead.
+fn parse_action_body(
+    tokens: &[Tok],
+    cursor: &mut usize,
+) -> Result<(Option<String>, Vec<Form>), MirrorRuntimeError> {
+    skip_inline_trivia(tokens, cursor);
+    if !matches!(tokens.get(*cursor), Some(Tok::LBrace)) {
+        return Ok((None, Vec::new()));
+    }
+    *cursor += 1;
+
+    // Peek ahead: if the body contains mirror declaration keywords, parse as
+    // structured children (this handles `04-action.mirror`'s meta-action bodies).
+    // Otherwise, collect as raw text.
+    let start_cursor = *cursor;
+    let mut has_decl_keywords = false;
+    let mut peek = start_cursor;
+    let mut depth = 1;
+    while peek < tokens.len() && depth > 0 {
+        match &tokens[peek] {
+            Tok::LBrace => depth += 1,
+            Tok::RBrace => depth -= 1,
+            Tok::Word(w) if depth == 1 => {
+                if DeclKind::parse(w).is_some() {
+                    has_decl_keywords = true;
+                    break;
+                }
+            }
+            _ => {}
+        }
+        peek += 1;
+    }
+
+    if has_decl_keywords {
+        // Parse structured children (mirror declarations inside the action body).
+        let mut children = Vec::new();
+        loop {
+            skip_trivia(tokens, cursor);
+            match tokens.get(*cursor) {
+                Some(Tok::RBrace) => {
+                    *cursor += 1;
+                    break;
+                }
+                None => return Err(err("unterminated action block")),
+                Some(Tok::Word(w)) => {
+                    if DeclKind::parse(w).is_some() {
+                        let child = parse_decl(tokens, cursor)?;
+                        children.push(child);
+                    } else {
+                        // Skip unrecognized tokens to next line or brace
+                        while *cursor < tokens.len() {
+                            match tokens.get(*cursor) {
+                                Some(Tok::RBrace) | Some(Tok::Newline) => break,
+                                _ => *cursor += 1,
+                            }
+                        }
+                        if matches!(tokens.get(*cursor), Some(Tok::Newline)) {
+                            *cursor += 1;
+                        }
+                    }
+                }
+                _ => {
+                    while *cursor < tokens.len()
+                        && !matches!(tokens.get(*cursor), Some(Tok::Newline | Tok::RBrace))
+                    {
+                        *cursor += 1;
+                    }
+                    if matches!(tokens.get(*cursor), Some(Tok::Newline)) {
+                        *cursor += 1;
+                    }
+                }
+            }
+        }
+        Ok((None, children))
+    } else {
+        // Collect raw body text: reconstruct from tokens, brace-balanced.
+        let mut body = String::new();
+        let mut brace_depth = 1;
+        while *cursor < tokens.len() && brace_depth > 0 {
+            match &tokens[*cursor] {
+                Tok::LBrace => {
+                    brace_depth += 1;
+                    body.push('{');
+                }
+                Tok::RBrace => {
+                    brace_depth -= 1;
+                    if brace_depth > 0 {
+                        body.push('}');
+                    }
+                }
+                Tok::LParen => body.push('('),
+                Tok::RParen => body.push(')'),
+                Tok::Comma => body.push(','),
+                Tok::Equals => body.push('='),
+                Tok::Newline => body.push('\n'),
+                Tok::Word(w) => {
+                    if !body.is_empty() && !body.ends_with('\n') && !body.ends_with('{') {
+                        body.push(' ');
+                    }
+                    body.push_str(w);
+                }
+            }
+            *cursor += 1;
+        }
+        let body = body.trim().to_string();
+        let body_text = if body.is_empty() { None } else { Some(body) };
+        Ok((body_text, Vec::new()))
+    }
+}
+
 fn skip_inline_trivia(tokens: &[Tok], cursor: &mut usize) {
     while matches!(tokens.get(*cursor), Some(Tok::Newline)) {
         *cursor += 1;
@@ -522,6 +778,13 @@ fn emit_form_into(form: &Form, indent: usize, out: &mut String) {
         }
         out.push(')');
     }
+    // Action-specific: emit `in @grammar` before the body.
+    if form.kind == DeclKind::Action {
+        if let Some(ref gr) = form.grammar_ref {
+            out.push_str(" in ");
+            out.push_str(gr);
+        }
+    }
     if !form.variants.is_empty() {
         out.push_str(" = ");
         for (i, v) in form.variants.iter().enumerate() {
@@ -529,6 +792,24 @@ fn emit_form_into(form: &Form, indent: usize, out: &mut String) {
                 out.push_str(" | ");
             }
             out.push_str(v);
+        }
+    }
+    // Action with raw body text: emit the body block.
+    if form.kind == DeclKind::Action {
+        if let Some(ref bt) = form.body_text {
+            out.push_str(" {\n");
+            for line in bt.lines() {
+                for _ in 0..=indent {
+                    out.push_str("  ");
+                }
+                out.push_str(line);
+                out.push('\n');
+            }
+            for _ in 0..indent {
+                out.push_str("  ");
+            }
+            out.push_str("}\n");
+            return;
         }
     }
     if !form.children.is_empty() {
@@ -902,9 +1183,9 @@ mod tests {
         let runtime = MirrorRuntime::new();
         let store_dir = tempdir_for_test("compiles_full_boot_dir");
         let boot = runtime.compile_boot_dir(&boot_dir(), &store_dir).unwrap();
-        assert_eq!(boot.resolved.len() + boot.failed.len(), 5);
+        assert_eq!(boot.resolved.len() + boot.failed.len(), 6);
         assert_eq!(boot.collapsed.form_name(), "mirror");
-        assert_eq!(boot.collapsed.form.children.len(), 5);
+        assert_eq!(boot.collapsed.form.children.len(), 6);
 
         let store_dir2 = tempdir_for_test("compiles_full_boot_dir_2");
         let again = runtime.compile_boot_dir(&boot_dir(), &store_dir2).unwrap();
@@ -924,7 +1205,7 @@ mod tests {
             .iter()
             .filter(|f| f.kind == DeclKind::Property)
             .count();
-        assert_eq!(prop_count, 9);
+        assert_eq!(prop_count, 11);
     }
 
     #[test]
@@ -1152,6 +1433,7 @@ mod tests {
         assert!(boot.resolved.contains_key("00-prism"));
         assert!(boot.resolved.contains_key("01-meta"));
         assert!(boot.resolved.contains_key("02-actor"));
+        assert!(boot.resolved.contains_key("04-action"));
 
         assert!(boot.failed.contains_key("03-property"));
         assert!(boot.failed.contains_key("10-mirror"));
@@ -1160,6 +1442,8 @@ mod tests {
         assert!(reopened.lookup("@prism").is_some());
         assert!(reopened.lookup("@meta").is_some());
         assert!(reopened.lookup("@actor").is_some());
+        // 04-action.mirror declares types/prism/action at top level without @-prefix,
+        // so no @action ref is created. The file resolves but exports nothing named.
         assert!(reopened.lookup("@property").is_none());
         assert!(reopened.lookup("@mirror").is_none());
     }
@@ -1231,6 +1515,165 @@ mod tests {
         assert!(
             reg_b.resolve(&meta.form).is_err(),
             "mount B is empty; meta fails to resolve"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Action declaration tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn parse_action_with_grammar_ref() {
+        let src = "action transform(state) in @code/rust {\n    fn transform(&mut self) { }\n}\n";
+        let form = parse_form(src).unwrap();
+        assert_eq!(form.kind, DeclKind::Action);
+        assert_eq!(form.name, "transform");
+        assert_eq!(form.params, vec!["state".to_string()]);
+        assert_eq!(form.grammar_ref, Some("@code/rust".to_string()));
+        assert!(form.body_text.is_some(), "body text should be captured");
+        let body = form.body_text.as_ref().unwrap();
+        assert!(
+            body.contains("transform"),
+            "body should contain the raw text: {}",
+            body
+        );
+    }
+
+    #[test]
+    fn parse_action_without_grammar_ref() {
+        let src = "action update(state) {\n    state.apply()\n}\n";
+        let form = parse_form(src).unwrap();
+        assert_eq!(form.kind, DeclKind::Action);
+        assert_eq!(form.name, "update");
+        assert_eq!(form.params, vec!["state".to_string()]);
+        assert_eq!(form.grammar_ref, None, "no `in @grammar` means None");
+        assert!(form.body_text.is_some());
+    }
+
+    #[test]
+    fn parse_action_receiver_stored() {
+        let src = "action send(process, message) in @actor {\n    dispatch(message)\n}\n";
+        let form = parse_form(src).unwrap();
+        assert_eq!(form.kind, DeclKind::Action);
+        assert_eq!(form.name, "send");
+        assert_eq!(
+            form.params,
+            vec!["process".to_string(), "message".to_string()]
+        );
+        assert_eq!(form.grammar_ref, Some("@actor".to_string()));
+    }
+
+    #[test]
+    fn parse_action_body_stored_as_raw() {
+        let src = "action compute(x) in @code/rust {\n    let y = x * 2;\n    y + 1\n}\n";
+        let form = parse_form(src).unwrap();
+        assert!(form.body_text.is_some());
+        let body = form.body_text.unwrap();
+        // Body should contain the raw text, not parsed mirror declarations
+        assert!(
+            body.contains("let"),
+            "raw body should be preserved: {}",
+            body
+        );
+    }
+
+    #[test]
+    fn parse_action_empty_body() {
+        let src = "action noop(state) { }\n";
+        let form = parse_form(src).unwrap();
+        assert_eq!(form.kind, DeclKind::Action);
+        assert_eq!(form.name, "noop");
+        assert_eq!(form.body_text, None, "empty body should be None");
+    }
+
+    #[test]
+    fn action_form_round_trip_fragment() {
+        let form = Form::action(
+            "transform",
+            vec!["state".to_string()],
+            Some("@code/rust".to_string()),
+            Some("fn transform() {}".to_string()),
+            Vec::new(),
+        );
+        let shatter = Shatter;
+        let frag = shatter.compile_form(&form);
+        let restored = shatter.decompile(&frag);
+        assert_eq!(restored.kind, DeclKind::Action);
+        assert_eq!(restored.name, "transform");
+        assert_eq!(restored.params, vec!["state".to_string()]);
+        assert_eq!(restored.grammar_ref, Some("@code/rust".to_string()));
+        assert_eq!(restored.body_text, Some("fn transform() {}".to_string()));
+    }
+
+    #[test]
+    fn action_file_04_parses_and_resolves() {
+        let runtime = MirrorRuntime::new();
+        let compiled = runtime
+            .compile_file(&boot_dir().join("04-action.mirror"))
+            .unwrap();
+        // 04-action.mirror has multiple top-level declarations, wrapped in synthetic Form
+        assert_eq!(compiled.form.kind, DeclKind::Form);
+        // Should contain: in @prism, in @meta, in @actor, prism action, action action, out action
+        let action_decls: Vec<&Form> = compiled
+            .form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Action)
+            .collect();
+        assert_eq!(
+            action_decls.len(),
+            1,
+            "04-action.mirror has one action declaration"
+        );
+        let action = action_decls[0];
+        assert_eq!(action.name, "action");
+        // The action body contains mirror declaration keywords (focus, project, etc.)
+        // so it's parsed as structured children, not raw body text.
+        assert!(
+            !action.children.is_empty(),
+            "action body with mirror keywords should be parsed as children"
+        );
+    }
+
+    #[test]
+    fn action_is_named_type_property_passes_for_named_receiver() {
+        // Simulate checking `action_is_named_type`: all actions have named type receivers
+        let form = Form::new(
+            DeclKind::Form,
+            "@test",
+            Vec::new(),
+            Vec::new(),
+            vec![Form::action(
+                "transform",
+                vec!["state".to_string()],
+                Some("@code/rust".to_string()),
+                Some("body".to_string()),
+                Vec::new(),
+            )],
+        );
+        // Check: every action's first param (receiver) is a non-empty named type
+        let all_named = form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Action)
+            .all(|f| !f.params.is_empty() && !f.params[0].is_empty());
+        assert!(all_named, "all action receivers should be named types");
+    }
+
+    #[test]
+    fn action_is_named_type_property_fails_for_empty_receiver() {
+        // An action with no params = no receiver = anonymous = property violation
+        let form = Form::action(
+            "bad",
+            Vec::new(),
+            None,
+            Some("body".to_string()),
+            Vec::new(),
+        );
+        let has_named_receiver = !form.params.is_empty() && !form.params[0].is_empty();
+        assert!(
+            !has_named_receiver,
+            "action with no params should fail action_is_named_type"
         );
     }
 }

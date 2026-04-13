@@ -37,6 +37,8 @@ pub enum DeclKind {
     // Optics
     Traversal,
     Lens,
+    // Actions
+    Action,
 }
 
 impl DeclKind {
@@ -60,6 +62,7 @@ impl DeclKind {
             "refract" => Some(DeclKind::Refract),
             "traversal" => Some(DeclKind::Traversal),
             "lens" => Some(DeclKind::Lens),
+            "action" => None, // 🔴 deliberately broken
             _ => None,
         }
     }
@@ -84,6 +87,7 @@ impl DeclKind {
             DeclKind::Refract => "refract",
             DeclKind::Traversal => "traversal",
             DeclKind::Lens => "lens",
+            DeclKind::Action => "action",
         }
     }
 }
@@ -236,6 +240,7 @@ mod tests {
             DeclKind::Prism,
             DeclKind::In,
             DeclKind::Out,
+            DeclKind::Action,
         ] {
             assert_eq!(DeclKind::parse(kind.as_str()), Some(kind));
         }
