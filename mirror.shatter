@@ -1,6 +1,6 @@
 # mirror.shatter
 # oid: 4244dcaf15bc6637ccd1f60bb5c31eff1889d78e98c8f6b625590b812fcc4ed4
-# resolved: 5 | failed: 2
+# resolved: 6 | failed: 2
 
 form mirror {
   form {
@@ -38,10 +38,13 @@ form mirror {
     type loss(f64)
     type precision(f64)
     type grammar
+    type action
     type block(grammar)
     type imperfect(type, type, loss)
+    type abstract(grammar)
+    type abstract(action)
     type beam(result)
-    form @meta {
+    grammar @meta {
       focus @
       project |>
       split |
@@ -58,8 +61,10 @@ form mirror {
     out precision
     out beam
     out grammar
+    out action
     out block
     out imperfect
+    out abstract
     out @meta
   }
   form {
@@ -71,14 +76,7 @@ form mirror {
     type diagnostic
     type completion
     type token
-    grammar @code {
-      action complete(position)
-      action diagnose(range)
-      action hover(position)
-      action definition(position)
-      action references(position)
-      action tokens(range)
-    }
+    abstract grammar @code
     out position
     out range
     out severity
@@ -88,20 +86,44 @@ form mirror {
     out @code
   }
   form {
+    in @code
+    grammar @code/rust {
+      type u8
+      type u16
+      type u32
+      type u64
+      type usize
+      type i8
+      type i16
+      type i32
+      type i64
+      type f32
+      type f64
+      type bool
+      type str
+      type string
+      type vec(t)
+      type option(t)
+      type result(t, e)
+      type hashmap(k, v)
+      type imperfect(t, e, l)
+      action complete(position) in @code/rust
+      action diagnose(range) in @code/rust
+      action hover(position) in @code/rust
+      action definition(position) in @code/rust
+      action references(position) in @code/rust
+      action tokens(range) in @code/rust
+    }
+    out @code/rust
+  }
+  form {
     in @prism
     in @meta
     type actor(id)
     type state(type)
     type process(actor, state)
     type message = call | cast
-    prism @actor {
-      type start_opts(tbd)
-      focus actor
-      project process(actor)
-      split start(process, start_opts)
-      zoom send(process, message)
-      refract exit(process)
-    }
+    abstract grammar @actor
     out actor
     out state
     out process

@@ -112,6 +112,10 @@ pub struct Form {
     /// For `action` declarations: the raw body text, brace-balanced but unparsed.
     /// The mirror compiler stores it as-is; the target grammar's parser handles it.
     pub body_text: Option<String>,
+    /// Whether this declaration has the `abstract` modifier.
+    pub is_abstract: bool,
+    /// Optional return type annotation (e.g. `-> [completion]`).
+    pub return_type: Option<String>,
 }
 
 impl Form {
@@ -130,6 +134,8 @@ impl Form {
             children,
             grammar_ref: None,
             body_text: None,
+            is_abstract: false,
+            return_type: None,
         }
     }
 
@@ -149,11 +155,13 @@ impl Form {
             children,
             grammar_ref,
             body_text,
+            is_abstract: false,
+            return_type: None,
         }
     }
 
     fn to_fragment(&self) -> MirrorFragment {
-        // For actions, encode grammar_ref and body_text into the fragment's
+        // Encode action-specific and modifier fields into the fragment's
         // params and variants so they survive content-addressing round-trips.
         let mut params = self.params.clone();
         let mut variants = self.variants.clone();
@@ -161,9 +169,15 @@ impl Form {
             if let Some(ref gr) = self.grammar_ref {
                 params.push(format!("in:{}", gr));
             }
+            if let Some(ref rt) = self.return_type {
+                params.push(format!("returns:{}", rt));
+            }
             if let Some(ref bt) = self.body_text {
                 variants.push(format!("body:{}", bt));
             }
+        }
+        if self.is_abstract {
+            params.push("modifier:abstract".to_string());
         }
         let data = MirrorData::new(self.kind.clone(), self.name.clone(), params, variants);
         let children: Vec<MirrorFragment> = self.children.iter().map(|c| c.to_fragment()).collect();
@@ -177,45 +191,41 @@ impl Form {
             .iter()
             .map(Form::from_fragment)
             .collect();
-        if d.kind == DeclKind::Action {
-            // Decode grammar_ref and body_text from the encoded params/variants.
-            let mut params = Vec::new();
-            let mut grammar_ref = None;
-            for p in &d.params {
-                if let Some(gr) = p.strip_prefix("in:") {
-                    grammar_ref = Some(gr.to_string());
-                } else {
-                    params.push(p.clone());
-                }
+        // Decode encoded params: in:, returns:, modifier:abstract
+        let mut params = Vec::new();
+        let mut grammar_ref = None;
+        let mut return_type = None;
+        let mut is_abstract = false;
+        for p in &d.params {
+            if let Some(gr) = p.strip_prefix("in:") {
+                grammar_ref = Some(gr.to_string());
+            } else if let Some(rt) = p.strip_prefix("returns:") {
+                return_type = Some(rt.to_string());
+            } else if p == "modifier:abstract" {
+                is_abstract = true;
+            } else {
+                params.push(p.clone());
             }
-            let mut variants = Vec::new();
-            let mut body_text = None;
-            for v in &d.variants {
-                if let Some(bt) = v.strip_prefix("body:") {
-                    body_text = Some(bt.to_string());
-                } else {
-                    variants.push(v.clone());
-                }
+        }
+        let mut variants = Vec::new();
+        let mut body_text = None;
+        for v in &d.variants {
+            if let Some(bt) = v.strip_prefix("body:") {
+                body_text = Some(bt.to_string());
+            } else {
+                variants.push(v.clone());
             }
-            Form {
-                kind: DeclKind::Action,
-                name: d.name.clone(),
-                params,
-                variants,
-                children,
-                grammar_ref,
-                body_text,
-            }
-        } else {
-            Form {
-                kind: d.kind.clone(),
-                name: d.name.clone(),
-                params: d.params.clone(),
-                variants: d.variants.clone(),
-                children,
-                grammar_ref: None,
-                body_text: None,
-            }
+        }
+        Form {
+            kind: d.kind.clone(),
+            name: d.name.clone(),
+            params,
+            variants,
+            children,
+            grammar_ref,
+            body_text,
+            is_abstract,
+            return_type,
         }
     }
 }
@@ -432,13 +442,51 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
         }
     };
     *cursor += 1;
-    let kind = DeclKind::parse(&kind_word)
-        .ok_or_else(|| err(format!("unknown declaration kind: {}", kind_word)))?;
+
+    // Handle modifier keywords (e.g. `abstract grammar`, `abstract action`).
+    // The modifier is consumed and the actual DeclKind follows.
+    let (kind, modifier) = if kind_word == "abstract" {
+        let actual_word = match tokens.get(*cursor) {
+            Some(Tok::Word(w)) => w.clone(),
+            other => {
+                return Err(err(format!(
+                    "expected declaration keyword after 'abstract', got {:?}",
+                    other
+                )))
+            }
+        };
+        *cursor += 1;
+        let k = DeclKind::parse(&actual_word)
+            .ok_or_else(|| err(format!("unknown declaration kind: {}", actual_word)))?;
+        (k, true)
+    } else {
+        let k = DeclKind::parse(&kind_word)
+            .ok_or_else(|| err(format!("unknown declaration kind: {}", kind_word)))?;
+        (k, false)
+    };
+    // modifier is used below when constructing the Form
 
     let name = match tokens.get(*cursor) {
         Some(Tok::Word(w)) => {
+            let mut n = w.clone();
             *cursor += 1;
-            w.clone()
+            // Absorb path segments: `@code/rust` → `@code` `/` `rust`
+            while let Some(Tok::Word(seg)) = tokens.get(*cursor) {
+                if seg.starts_with('/') || seg == "/" {
+                    n.push_str(seg);
+                    *cursor += 1;
+                    // If `/` was standalone, absorb the next segment too
+                    if seg == "/" {
+                        if let Some(Tok::Word(next)) = tokens.get(*cursor) {
+                            n.push_str(next);
+                            *cursor += 1;
+                        }
+                    }
+                } else {
+                    break;
+                }
+            }
+            n
         }
         _ => String::new(),
     };
@@ -533,11 +581,15 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
         }
     }
 
-    // Action declarations: parse optional `in @grammar` and raw body block.
+    // Action declarations: parse optional `in @grammar`, optional `-> return_type`, and raw body block.
     if kind == DeclKind::Action {
         let grammar_ref = parse_action_grammar_ref(tokens, cursor);
+        let return_type = parse_return_type(tokens, cursor);
         let (body_text, children) = parse_action_body(tokens, cursor)?;
-        return Ok(Form::action(name, params, grammar_ref, body_text, children));
+        let mut form = Form::action(name, params, grammar_ref, body_text, children);
+        form.is_abstract = modifier;
+        form.return_type = return_type;
+        return Ok(form);
     }
 
     let mut children = Vec::new();
@@ -591,7 +643,9 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
         }
     }
 
-    Ok(Form::new(kind, name, params, variants, children))
+    let mut form = Form::new(kind, name, params, variants, children);
+    form.is_abstract = modifier;
+    Ok(form)
 }
 
 /// Parse an optional `in @grammar/path` after action params.
@@ -625,6 +679,37 @@ fn parse_action_grammar_ref(tokens: &[Tok], cursor: &mut usize) -> Option<String
                     return Some(grammar);
                 }
             }
+        }
+    }
+    None
+}
+
+/// Parse an optional return type annotation: `-> type` or `-> [type]`.
+/// Returns the return type string if present.
+fn parse_return_type(tokens: &[Tok], cursor: &mut usize) -> Option<String> {
+    skip_inline_trivia(tokens, cursor);
+    if let Some(Tok::Word(w)) = tokens.get(*cursor) {
+        if w == "->" {
+            *cursor += 1;
+            // Collect the return type tokens until newline or brace
+            let mut rt = String::new();
+            while *cursor < tokens.len() {
+                match tokens.get(*cursor) {
+                    Some(Tok::Newline) | Some(Tok::LBrace) => break,
+                    Some(Tok::Word(w)) => {
+                        if !rt.is_empty() {
+                            rt.push(' ');
+                        }
+                        rt.push_str(w);
+                        *cursor += 1;
+                    }
+                    _ => *cursor += 1,
+                }
+            }
+            if rt.is_empty() {
+                return None;
+            }
+            return Some(rt);
         }
     }
     None
@@ -763,6 +848,9 @@ fn emit_form_into(form: &Form, indent: usize, out: &mut String) {
     for _ in 0..indent {
         out.push_str("  ");
     }
+    if form.is_abstract {
+        out.push_str("abstract ");
+    }
     out.push_str(form.kind.as_str());
     if !form.name.is_empty() {
         out.push(' ');
@@ -778,11 +866,15 @@ fn emit_form_into(form: &Form, indent: usize, out: &mut String) {
         }
         out.push(')');
     }
-    // Action-specific: emit `in @grammar` before the body.
+    // Action-specific: emit `in @grammar` and `-> return_type` before the body.
     if form.kind == DeclKind::Action {
         if let Some(ref gr) = form.grammar_ref {
             out.push_str(" in ");
             out.push_str(gr);
+        }
+        if let Some(ref rt) = form.return_type {
+            out.push_str(" -> ");
+            out.push_str(rt);
         }
     }
     if !form.variants.is_empty() {
@@ -1213,7 +1305,14 @@ mod tests {
             }
             let s1 = runtime.compile_file(&path).unwrap();
             let text = emit_form(&s1.form);
-            let s2 = runtime.compile_source(&text).unwrap();
+            let s2 = runtime.compile_source(&text).unwrap_or_else(|e| {
+                panic!(
+                    "round-trip parse failed for {}:\nemitted:\n{}\nerror: {}",
+                    path.display(),
+                    text,
+                    e
+                );
+            });
             assert_eq!(
                 s1.crystal(),
                 s2.crystal(),
@@ -1228,9 +1327,9 @@ mod tests {
         let runtime = MirrorRuntime::new();
         let store_dir = tempdir_for_test("compiles_full_boot_dir");
         let boot = runtime.compile_boot_dir(&boot_dir(), &store_dir).unwrap();
-        assert_eq!(boot.resolved.len() + boot.failed.len(), 7);
+        assert_eq!(boot.resolved.len() + boot.failed.len(), 8);
         assert_eq!(boot.collapsed.form_name(), "mirror");
-        assert_eq!(boot.collapsed.form.children.len(), 7);
+        assert_eq!(boot.collapsed.form.children.len(), 8);
 
         let store_dir2 = tempdir_for_test("compiles_full_boot_dir_2");
         let again = runtime.compile_boot_dir(&boot_dir(), &store_dir2).unwrap();
@@ -1478,6 +1577,10 @@ mod tests {
         assert!(boot.resolved.contains_key("00-prism"));
         assert!(boot.resolved.contains_key("01-meta"));
         assert!(boot.resolved.contains_key("02-code"));
+        assert!(
+            boot.resolved.contains_key("02a-code-rust"),
+            "02a-code-rust should resolve"
+        );
         assert!(boot.resolved.contains_key("03-actor"));
         assert!(boot.resolved.contains_key("04-action"));
 
@@ -1776,8 +1879,8 @@ mod tests {
         // Must contain the boot forms (all 7 boot files collapsed)
         assert_eq!(
             form.children.len(),
-            7,
-            "shatter must contain all 7 boot file forms"
+            8,
+            "shatter must contain all 8 boot file forms"
         );
     }
 
