@@ -114,8 +114,7 @@ mod tests {
             &mut self,
             value: Self::Value,
         ) -> Imperfect<Self::Shard, Self::Error, Self::Loss> {
-            // DELIBERATELY BROKEN: returns wrong OID to prove tests catch it
-            let oid = Oid::new("broken");
+            let oid = Oid::hash(value.as_bytes());
             let shard = TestShard {
                 oid: oid.clone(),
                 data: value,
@@ -125,11 +124,13 @@ mod tests {
         }
 
         fn get(&self, oid: &Oid) -> Imperfect<Self::Shard, Self::Error, Self::Loss> {
-            // DELIBERATELY BROKEN: always returns failure
-            Imperfect::Failure(
-                format!("broken: {}", oid),
-                TestLoss::total(),
-            )
+            match self.entries.get(oid.as_ref()) {
+                Some(shard) => Imperfect::Success(shard.clone()),
+                None => Imperfect::Failure(
+                    format!("not found: {}", oid),
+                    TestLoss::total(),
+                ),
+            }
         }
     }
 
