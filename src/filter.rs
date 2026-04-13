@@ -424,15 +424,39 @@ impl EncryptFilter {
     }
 }
 
-/// Encrypt plaintext bytes to an SSH recipient key, returning base64-encoded ciphertext.
+/// Decrypt base64-encoded age ciphertext using an age identity (x25519 or SSH private key).
+///
+/// Returns the decrypted plaintext as a UTF-8 string, or an error message.
+pub fn age_decrypt(_identity_key: &str, _ciphertext_b64: &str) -> Result<String, String> {
+    todo!("age_decrypt not yet implemented")
+}
+
+/// Verify that decrypted ciphertext matches the expected OID.
+///
+/// Decrypts the ciphertext, computes the OID of the decrypted value,
+/// and returns true if it matches the provided OID.
+pub fn verify_encrypted(_oid: &Oid, _identity_key: &str, _ciphertext_b64: &str) -> bool {
+    todo!("verify_encrypted not yet implemented")
+}
+
+/// Encrypt plaintext bytes to a recipient key, returning base64-encoded ciphertext.
+///
+/// Accepts both SSH public keys (`ssh-ed25519 ...`) and age x25519 recipients
+/// (`age1...`).
 fn age_encrypt(recipient_key: &str, plaintext: &[u8]) -> Result<String, String> {
-    let recipient = recipient_key
-        .parse::<age::ssh::Recipient>()
-        .map_err(|e| format!("invalid SSH public key for encryption: {:?}", e))?;
+    let recipient: Box<dyn age::Recipient + Send> =
+        if let Ok(r) = recipient_key.parse::<age::x25519::Recipient>() {
+            Box::new(r)
+        } else {
+            let r = recipient_key
+                .parse::<age::ssh::Recipient>()
+                .map_err(|e| format!("invalid recipient key for encryption: {:?}", e))?;
+            Box::new(r)
+        };
 
     // These operations cannot fail: with_recipients has a valid recipient,
     // and wrap_output/write_all/finish target a Vec<u8> (infallible I/O).
-    let recipients: Vec<&dyn age::Recipient> = vec![&recipient];
+    let recipients: Vec<&dyn age::Recipient> = vec![recipient.as_ref()];
     let encryptor = age::Encryptor::with_recipients(recipients.into_iter())
         .expect("single valid recipient should not fail");
     let mut encrypted = vec![];
@@ -855,7 +879,7 @@ mod tests {
         let filter = EncryptFilter::new("not-a-key");
         let input = Value::String("hello".into());
         let err = filter.trace(input).into_result().unwrap_err();
-        assert!(err.message.contains("invalid SSH public key"));
+        assert!(err.message.contains("invalid recipient key"));
     }
 
     #[test]
@@ -1097,5 +1121,93 @@ mod tests {
         std::env::remove_var("CONVERSATION_KEYS_PUBLIC");
         std::env::remove_var("CONVERSATION_KEYS_PRIVATE");
         std::env::remove_var("CONVERSATION_KEYS");
+    }
+
+    // -- age_decrypt + verify_encrypted round-trip --
+
+    /// Helper: generate an x25519 identity and recipient string pair for testing.
+    fn test_x25519_keypair() -> (String, String) {
+        use age::secrecy::ExposeSecret;
+        let identity = age::x25519::Identity::generate();
+        let recipient = identity.to_public();
+        (identity.to_string().expose_secret().to_string(), recipient.to_string())
+    }
+
+    #[test]
+    fn decrypt_round_trip() {
+        let (identity_str, recipient_str) = test_x25519_keypair();
+
+        let plaintext = b"hello, round trip";
+        let ciphertext_b64 = age_encrypt(&recipient_str, plaintext).unwrap();
+        let decrypted = age_decrypt(&identity_str, &ciphertext_b64).unwrap();
+
+        assert_eq!(decrypted.as_bytes(), plaintext);
+    }
+
+    #[test]
+    fn verify_encrypted_round_trip() {
+        let (identity_str, recipient_str) = test_x25519_keypair();
+
+        let input = Value::String("verify me".into());
+        let source_oid = input.content_oid();
+        let plaintext_json = input.to_string();
+
+        let ciphertext_b64 = age_encrypt(&recipient_str, plaintext_json.as_bytes()).unwrap();
+        assert!(verify_encrypted(&source_oid, &identity_str, &ciphertext_b64));
+    }
+
+    #[test]
+    fn verify_encrypted_full_pipeline() {
+        // End-to-end: EncryptFilter → envelope → extract → verify
+        let (identity_str, recipient_str) = test_x25519_keypair();
+
+        let filter = EncryptFilter::new(&recipient_str);
+        let input = Value::String("pipeline test".into());
+        let result = filter.trace(input).into_result().unwrap();
+
+        let oid_str = result["oid"].as_str().unwrap();
+        let oid = Oid::new(oid_str);
+        let ciphertext_b64 = result["encrypted"].as_str().unwrap();
+
+        assert!(verify_encrypted(&oid, &identity_str, ciphertext_b64));
+    }
+
+    #[test]
+    fn verify_encrypted_wrong_oid_fails() {
+        let (identity_str, recipient_str) = test_x25519_keypair();
+
+        let input = Value::String("original".into());
+        let plaintext_json = input.to_string();
+        let ciphertext_b64 = age_encrypt(&recipient_str, plaintext_json.as_bytes()).unwrap();
+
+        let wrong_oid = Oid::hash(b"different content");
+        assert!(!verify_encrypted(&wrong_oid, &identity_str, &ciphertext_b64));
+    }
+
+    #[test]
+    fn verify_encrypted_wrong_key_fails() {
+        let (_identity_str, recipient_str) = test_x25519_keypair();
+        let (wrong_identity, _) = test_x25519_keypair();
+
+        let input = Value::String("secret".into());
+        let source_oid = input.content_oid();
+        let plaintext_json = input.to_string();
+        let ciphertext_b64 = age_encrypt(&recipient_str, plaintext_json.as_bytes()).unwrap();
+
+        // Wrong key → decryption fails → verify returns false
+        assert!(!verify_encrypted(&source_oid, &wrong_identity, &ciphertext_b64));
+    }
+
+    #[test]
+    fn decrypt_invalid_base64_fails() {
+        let (identity_str, _) = test_x25519_keypair();
+        let err = age_decrypt(&identity_str, "not-valid-base64!!!").unwrap_err();
+        assert!(err.contains("invalid base64"));
+    }
+
+    #[test]
+    fn decrypt_invalid_identity_fails() {
+        let err = age_decrypt("not-a-key", "dGVzdA==").unwrap_err();
+        assert!(err.contains("invalid identity key") || err.contains("cannot parse"));
     }
 }
