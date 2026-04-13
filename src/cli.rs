@@ -86,6 +86,7 @@ impl Cli {
             "ai" => self.cmd_ai(args),
             "ci" => self.cmd_ci(args),
             "bench" => self.cmd_bench(args),
+            "verify" => self.cmd_verify(args),
             "init" => self.cmd_init(args),
             "repl" => self.cmd_repl(args),
             "focus" | "project" | "split" | "zoom" | "refract" => self.cmd_optic(command, args),
@@ -112,6 +113,7 @@ compiler:
   compile <path>     compile a .mirror file
   crystal [output]   materialize the standard library
   ci <path>          measure holonomy
+  verify <file>      verify signed .shatter
 
 session:
   init               initialize .git/mirror/
@@ -123,6 +125,7 @@ tools:
 
 flags:
   --oid              print content address only
+  --sign             sign compilation output (compile)
   --help             this message"
     }
 
@@ -134,13 +137,14 @@ flags:
             "split" => Some("split <path> -- explore connections\n\nShows the branches: variants, forks, alternatives.\nThe split optic maps one-to-many."),
             "zoom" => Some("zoom <path> -- transform\n\nMoves between levels of abstraction.\nThe zoom optic changes coordinates."),
             "refract" => Some("refract <path> -- settle into crystal\n\nRuns the full compilation loop until the OID stabilizes.\nThe refract optic scatters and reconverges."),
-            "compile" => Some("compile <path> -- compile a .mirror file\n\nParses, resolves, and content-addresses the source.\nPrints the crystal OID to stdout."),
+            "compile" => Some("compile <path> [--sign] -- compile a .mirror file\n\nParses, resolves, and content-addresses the source.\nPrints the crystal OID to stdout.\nWith --sign: produces .shatter.sig alongside .shatter."),
             "crystal" => Some("crystal [output] -- materialize the standard library\n\nCompiles boot/ in order and emits mirror.shatter.\nWith --oid: prints the loaded crystal OID."),
             "ci" => Some("ci <path> -- measure holonomy\n\nCompiles and reports the MirrorLoss.\nZero holonomy means crystal. Nonzero means alive."),
             "init" => Some("init -- initialize .git/mirror/\n\nSets up the mirror store in the current git repository."),
             "repl" => Some("repl -- interactive shard> prompt\n\nStarts an interactive session.\nType .mirror expressions and see them compiled live."),
             "ai" => Some("ai <model> [path] -- run a Fate model\n\nModels: abyss | introject | cartographer | explorer | fate\n\nReads from <path> or stdin. Routes through the named model."),
             "bench" => Some("bench <path> -- benchmark compilation\n\nMeasures compilation time and structural loss.\nPrints timing and MirrorLoss summary."),
+            "verify" => Some("verify <file> -- verify a signed .shatter file\n\nChecks the Ed25519 signature (.shatter.sig) against the content.\nUses the public key from CONVERSATION_KEYS hierarchy.\nExits 0 if valid, nonzero if tampered or unsigned."),
             _ => None,
         }
     }
@@ -150,11 +154,13 @@ flags:
     // -----------------------------------------------------------------------
 
     fn cmd_compile(&self, args: &[String]) -> Result<String, CliError> {
-        let file = args
+        let sign = args.iter().any(|a| a == "--sign");
+        let file_args: Vec<&String> = args.iter().filter(|a| !a.starts_with("--")).collect();
+        let file = file_args
             .first()
-            .ok_or_else(|| CliError::Usage("usage: mirror compile <file>".to_string()))?;
+            .ok_or_else(|| CliError::Usage("usage: mirror compile <file> [--sign]".to_string()))?;
 
-        let source = std::fs::read_to_string(file)?;
+        let source = std::fs::read_to_string(file.as_str())?;
         let mut compiler = crate::bundle::MirrorCompiler::new();
         match compiler.compile(&source) {
             Ok(compiled) => {
@@ -163,14 +169,41 @@ flags:
                     compiler.kernel_spec.clone(),
                     compiler.target,
                 );
+                let oid = shard.grammar_oid.clone();
+
+                // Write .shatter output alongside the source
+                let shatter_path = std::path::Path::new(file.as_str()).with_extension("shatter");
+                std::fs::write(&shatter_path, &source)?;
+
                 eprintln!(
                     "compiled {} -> {} (rank {}, {:?})",
                     file,
-                    shard.grammar_oid.as_str(),
+                    oid.as_str(),
                     shard.rank(),
                     shard.target,
                 );
-                Ok(shard.grammar_oid.as_str().to_string())
+
+                if sign {
+                    #[cfg(feature = "git")]
+                    {
+                        let content_oid = crate::Oid::hash(source.as_bytes());
+                        let private_key = crate::sign::resolve_private_key()
+                            .map_err(|e| CliError::Usage(format!("--sign: {}", e)))?;
+                        let sig_pem = crate::sign::sign_oid(&private_key, &content_oid)
+                            .map_err(|e| CliError::Usage(format!("--sign: {}", e)))?;
+                        let sig_path = shatter_path.with_extension("shatter.sig");
+                        std::fs::write(&sig_path, &sig_pem)?;
+                        eprintln!("signed {} -> {}", oid.as_str(), sig_path.display());
+                    }
+                    #[cfg(not(feature = "git"))]
+                    {
+                        return Err(CliError::Usage(
+                            "--sign requires the \'git\' feature (ssh-key crate)".to_string(),
+                        ));
+                    }
+                }
+
+                Ok(oid.as_str().to_string())
             }
             Err(e) => Err(CliError::Runtime(MirrorRuntimeError(format!(
                 "compile {}: {}",
@@ -341,6 +374,64 @@ flags:
             elapsed.as_secs_f64() * 1000.0,
             compiled.crystal().as_str()
         ))
+    }
+
+    // -----------------------------------------------------------------------
+    // verify -- check Ed25519 signature on .shatter
+    // -----------------------------------------------------------------------
+
+    fn cmd_verify(&self, args: &[String]) -> Result<String, CliError> {
+        if args.iter().any(|a| a == "--help" || a == "-h") {
+            return Ok(Self::command_help("verify").unwrap_or("").to_string());
+        }
+
+        #[cfg(feature = "git")]
+        {
+            let file = args
+                .first()
+                .ok_or_else(|| CliError::Usage("usage: mirror verify <file>".to_string()))?;
+
+            let sig_path_arg = args
+                .iter()
+                .position(|a| a == "--sig")
+                .and_then(|i| args.get(i + 1));
+
+            let sig_path = match sig_path_arg {
+                Some(p) => std::path::PathBuf::from(p),
+                None => {
+                    let p = std::path::Path::new(file.as_str());
+                    p.with_extension("shatter.sig")
+                }
+            };
+
+            let content = std::fs::read_to_string(file)?;
+            let sig_pem = std::fs::read_to_string(&sig_path).map_err(|_| {
+                CliError::Usage(format!(
+                    "signature file not found: {} (compile with --sign first)",
+                    sig_path.display()
+                ))
+            })?;
+
+            let oid = crate::Oid::hash(content.as_bytes());
+            let public_key = crate::sign::resolve_public_key()
+                .map_err(|e| CliError::Usage(format!("verify: {}", e)))?;
+
+            match crate::sign::verify_oid(&public_key, &oid, &sig_pem) {
+                Ok(()) => Ok(format!("verified {}", oid.as_ref())),
+                Err(e) => Err(CliError::Usage(format!(
+                    "verification failed for {}: {}",
+                    file, e
+                ))),
+            }
+        }
+
+        #[cfg(not(feature = "git"))]
+        {
+            let _ = args;
+            Err(CliError::Usage(
+                "verify requires the \'git\' feature (ssh-key crate)".to_string(),
+            ))
+        }
     }
 
     // -----------------------------------------------------------------------
@@ -704,7 +795,7 @@ mod tests {
     fn command_help_returns_per_command_help() {
         for cmd in [
             "focus", "project", "split", "zoom", "refract", "compile", "crystal", "ci", "init",
-            "repl", "ai", "bench",
+            "repl", "ai", "bench", "verify",
         ] {
             assert!(
                 Cli::command_help(cmd).is_some(),
@@ -814,5 +905,185 @@ mod tests {
         let output = result.unwrap();
         assert!(output.contains("compiled"));
         assert!(output.contains("oid:"));
+    }
+
+    // -----------------------------------------------------------------------
+    // Sign and verify tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn dispatch_compile_writes_shatter() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let file = dir.path().join("test.mirror");
+        std::fs::write(&file, "type greeting\n").unwrap();
+
+        let cli = Cli::default();
+        let result = cli.dispatch("compile", &[file.to_str().unwrap().to_string()]);
+        assert!(result.is_ok());
+        let shatter = dir.path().join("test.shatter");
+        assert!(shatter.exists(), ".shatter should be written");
+        let sig = dir.path().join("test.shatter.sig");
+        assert!(
+            !sig.exists(),
+            ".shatter.sig should not exist without --sign"
+        );
+    }
+
+    /// Sign+verify round trip using direct API (no env vars = no races).
+    /// Tests the full flow: sign content, verify untampered, fail on tampered.
+    #[cfg(feature = "git")]
+    #[test]
+    fn sign_verify_round_trip_direct_api() {
+        let key = ssh_key::PrivateKey::random(
+            &mut ssh_key::rand_core::OsRng,
+            ssh_key::Algorithm::Ed25519,
+        )
+        .unwrap();
+
+        // Compile some content
+        let source = "type greeting\n";
+        let mut compiler = crate::bundle::MirrorCompiler::new();
+        let compiled = compiler.compile(source).expect("compile should succeed");
+        let crystal_oid = compiled.crystal().clone();
+
+        // Sign the content OID
+        let content_oid = crate::Oid::hash(source.as_bytes());
+        let sig_pem = crate::sign::sign_oid(&key, &content_oid).expect("sign should succeed");
+        assert!(sig_pem.contains("BEGIN SSH SIGNATURE"));
+
+        // Write .shatter and .shatter.sig
+        let dir = tempfile::TempDir::new().unwrap();
+        let shatter = dir.path().join("test.shatter");
+        let sig_file = dir.path().join("test.shatter.sig");
+        std::fs::write(&shatter, source).unwrap();
+        std::fs::write(&sig_file, &sig_pem).unwrap();
+
+        // Verify untampered: succeeds
+        let loaded_sig = std::fs::read_to_string(&sig_file).unwrap();
+        crate::sign::verify_oid(&key.public_key().clone(), &content_oid, &loaded_sig)
+            .expect("untampered verify should succeed");
+
+        // Tamper with the .shatter
+        let tampered = "type TAMPERED\n";
+        std::fs::write(&shatter, tampered).unwrap();
+        let tampered_oid = crate::Oid::hash(tampered.as_bytes());
+
+        // Verify tampered: fails
+        let result = crate::sign::verify_oid(&key.public_key().clone(), &tampered_oid, &loaded_sig);
+        assert!(result.is_err(), "tampered content must fail verification");
+        assert!(
+            result.unwrap_err().message.contains("verification failed"),
+            "should indicate verification failure"
+        );
+
+        // Wrong key: also fails
+        let other_key = ssh_key::PrivateKey::random(
+            &mut ssh_key::rand_core::OsRng,
+            ssh_key::Algorithm::Ed25519,
+        )
+        .unwrap();
+        let result =
+            crate::sign::verify_oid(&other_key.public_key().clone(), &content_oid, &loaded_sig);
+        assert!(result.is_err(), "wrong key must fail verification");
+
+        // Crystal OID is deterministic
+        let mut compiler2 = crate::bundle::MirrorCompiler::new();
+        let compiled2 = compiler2.compile(source).unwrap();
+        assert_eq!(
+            crystal_oid.as_str(),
+            compiled2.crystal().as_str(),
+            "compilation must be deterministic"
+        );
+    }
+
+    /// Test that compile --sign produces the expected files (env-dependent).
+    /// Grouped with other env-dependent tests in sign::tests to minimize races.
+    /// This test only checks file production, not verification via CLI dispatch.
+    #[cfg(feature = "git")]
+    #[test]
+    fn compile_sign_produces_files() {
+        // Generate test keypair and write to a temp dir
+        let key_dir = tempfile::TempDir::new().unwrap();
+        let key = ssh_key::PrivateKey::random(
+            &mut ssh_key::rand_core::OsRng,
+            ssh_key::Algorithm::Ed25519,
+        )
+        .unwrap();
+        let pem = key.to_openssh(ssh_key::LineEnding::LF).unwrap();
+        let pem_bytes: &[u8] = pem.as_ref();
+        let priv_path = key_dir.path().join("id_ed25519");
+        std::fs::write(&priv_path, pem_bytes).unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::set_permissions(&priv_path, std::fs::Permissions::from_mode(0o600)).unwrap();
+        }
+
+        // Set MIRROR_CI_SIGN_KEY to the private key file path (most specific env var)
+        std::env::set_var("MIRROR_CI_SIGN_KEY", priv_path.as_os_str());
+
+        let dir = tempfile::TempDir::new().unwrap();
+        let file = dir.path().join("test.mirror");
+        std::fs::write(&file, "type greeting\n").unwrap();
+
+        let cli = Cli::default();
+        let result = cli.dispatch(
+            "compile",
+            &[file.to_str().unwrap().to_string(), "--sign".to_string()],
+        );
+        assert!(result.is_ok(), "compile --sign failed: {:?}", result.err());
+
+        let shatter = dir.path().join("test.shatter");
+        let sig = dir.path().join("test.shatter.sig");
+        assert!(shatter.exists(), ".shatter should exist");
+        assert!(sig.exists(), ".shatter.sig should exist after --sign");
+
+        // Verify the sig file contains a valid SSH signature PEM
+        let sig_content = std::fs::read_to_string(&sig).unwrap();
+        assert!(
+            sig_content.contains("BEGIN SSH SIGNATURE"),
+            "sig file should contain SSH signature PEM"
+        );
+
+        std::env::remove_var("MIRROR_CI_SIGN_KEY");
+    }
+
+    #[test]
+    fn dispatch_verify_no_args_is_usage_error() {
+        let cli = Cli::default();
+        let result = cli.dispatch("verify", &[]);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn dispatch_verify_help_flag() {
+        let cli = Cli::default();
+        let result = cli.dispatch("verify", &["--help".to_string()]);
+        assert!(result.is_ok());
+        assert!(result.unwrap().contains("verify"));
+    }
+
+    #[test]
+    fn dispatch_verify_missing_sig_file() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let file = dir.path().join("test.shatter");
+        std::fs::write(&file, "type greeting\n").unwrap();
+
+        let cli = Cli::default();
+        let result = cli.dispatch("verify", &[file.to_str().unwrap().to_string()]);
+        assert!(result.is_err());
+        let err = format!("{}", result.unwrap_err());
+        assert!(
+            err.contains("signature file not found") || err.contains("requires the"),
+            "should report missing sig or missing feature, got: {}",
+            err
+        );
+    }
+
+    #[test]
+    fn help_text_includes_verify_and_sign() {
+        let text = Cli::help_text();
+        assert!(text.contains("verify"), "help should mention verify");
+        assert!(text.contains("--sign"), "help should mention --sign");
     }
 }
