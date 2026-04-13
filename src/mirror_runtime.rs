@@ -57,6 +57,7 @@ use std::path::{Path, PathBuf};
 
 use crate::declaration::{
     fragment as build_fragment, DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, MirrorHash,
+    OpticOp,
 };
 use fragmentation::frgmnt_store::FrgmntStore;
 use fragmentation::sha::HashAlg;
@@ -99,7 +100,7 @@ impl std::error::Error for MirrorResolveError {}
 /// `Form` is the parsed-but-not-yet-content-addressed view: kind / name /
 /// params / variants / nested children. The structural mirror of `MirrorData`
 /// + recursive children. Used as `Prism::Input` and `Prism::Crystal`.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Eq)]
 pub struct Form {
     pub kind: DeclKind,
     pub name: String,
@@ -116,6 +117,27 @@ pub struct Form {
     pub is_abstract: bool,
     /// Optional return type annotation (e.g. `-> [completion]`).
     pub return_type: Option<String>,
+    /// Optic operators found in this declaration.
+    /// For example, `type visibility = private | protected | public` would
+    /// have `[OpticOp::Iso, OpticOp::Split]`.
+    pub optic_ops: Vec<OpticOp>,
+}
+
+/// `optic_ops` is excluded from equality: it's a parser annotation about which
+/// optic operators were used, not structural content. Content-addressed round-trips
+/// (Form → MirrorFragment → Form) don't preserve it.
+impl PartialEq for Form {
+    fn eq(&self, other: &Self) -> bool {
+        self.kind == other.kind
+            && self.name == other.name
+            && self.params == other.params
+            && self.variants == other.variants
+            && self.children == other.children
+            && self.grammar_ref == other.grammar_ref
+            && self.body_text == other.body_text
+            && self.is_abstract == other.is_abstract
+            && self.return_type == other.return_type
+    }
 }
 
 impl Form {
@@ -136,6 +158,7 @@ impl Form {
             body_text: None,
             is_abstract: false,
             return_type: None,
+            optic_ops: Vec::new(),
         }
     }
 
@@ -157,6 +180,7 @@ impl Form {
             body_text,
             is_abstract: false,
             return_type: None,
+            optic_ops: Vec::new(),
         }
     }
 
@@ -226,6 +250,7 @@ impl Form {
             body_text,
             is_abstract,
             return_type,
+            optic_ops: Vec::new(),
         }
     }
 }
@@ -491,8 +516,10 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
         _ => String::new(),
     };
 
+    let mut has_parens = false;
     let mut params: Vec<String> = Vec::new();
     if matches!(tokens.get(*cursor), Some(Tok::LParen)) {
+        has_parens = true;
         *cursor += 1;
         let mut paren_depth: usize = 1;
         loop {
@@ -546,7 +573,9 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
     }
 
     let mut variants = Vec::new();
+    let mut optic_ops = Vec::new();
     if matches!(tokens.get(*cursor), Some(Tok::Equals)) {
+        optic_ops.push(OpticOp::Iso);
         *cursor += 1;
         loop {
             // Don't skip newlines here - they terminate the variant list
@@ -556,6 +585,9 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
                     break;
                 }
                 Some(Tok::Word(w)) if w == "|" => {
+                    if !optic_ops.contains(&OpticOp::Split) {
+                        optic_ops.push(OpticOp::Split);
+                    }
                     // Pipe separator in variant list
                     *cursor += 1;
                 }
@@ -578,6 +610,18 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
                 }
                 _ => break,
             }
+        }
+    }
+
+    // Classify parentheses as Focus.
+    if has_parens && !optic_ops.contains(&OpticOp::Focus) {
+        optic_ops.push(OpticOp::Focus);
+    }
+
+    // Classify the declaration keyword itself as an optic if applicable.
+    if let Some(op) = OpticOp::from_decl_kind(&kind) {
+        if !optic_ops.contains(&op) {
+            optic_ops.push(op);
         }
     }
 
@@ -645,6 +689,7 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
 
     let mut form = Form::new(kind, name, params, variants, children);
     form.is_abstract = modifier;
+    form.optic_ops = optic_ops;
     Ok(form)
 }
 
@@ -1238,6 +1283,93 @@ mod tests {
         std::fs::create_dir_all(&dir).unwrap();
         dir
     }
+
+    // -----------------------------------------------------------------------
+    // OpticOp classification in parsed Forms
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn type_declaration_uses_iso_and_split() {
+        let source = "type visibility = private | protected | public";
+        let form = parse_form(source).unwrap();
+        assert_eq!(form.kind, DeclKind::Type);
+        assert!(
+            form.optic_ops.contains(&OpticOp::Iso),
+            "= should classify as Iso, got {:?}",
+            form.optic_ops
+        );
+        assert!(
+            form.optic_ops.contains(&OpticOp::Split),
+            "| should classify as Split, got {:?}",
+            form.optic_ops
+        );
+    }
+
+    #[test]
+    fn split_decl_keyword_classified_as_optic() {
+        let source = "split |(ref, ref)";
+        let form = parse_form(source).unwrap();
+        assert_eq!(form.kind, DeclKind::Split);
+        assert!(
+            form.optic_ops.contains(&OpticOp::Split),
+            "split keyword should be classified as OpticOp::Split"
+        );
+    }
+
+    #[test]
+    fn zoom_decl_keyword_classified_as_optic() {
+        let source = "zoom |>(ref, prism)";
+        let form = parse_form(source).unwrap();
+        assert_eq!(form.kind, DeclKind::Zoom);
+        assert!(
+            form.optic_ops.contains(&OpticOp::Zoom),
+            "zoom keyword should be classified as OpticOp::Zoom"
+        );
+    }
+
+    #[test]
+    fn refract_decl_keyword_classified_as_optic() {
+        let source = "refract ..(ref)";
+        let form = parse_form(source).unwrap();
+        assert_eq!(form.kind, DeclKind::Refract);
+        assert!(
+            form.optic_ops.contains(&OpticOp::Refract),
+            "refract keyword should be classified as OpticOp::Refract"
+        );
+    }
+
+    #[test]
+    fn focus_decl_with_params_classified_as_optic() {
+        let source = "focus type(id)";
+        let form = parse_form(source).unwrap();
+        assert_eq!(form.kind, DeclKind::Focus);
+        assert!(
+            form.optic_ops.contains(&OpticOp::Focus),
+            "focus keyword with params should be classified as OpticOp::Focus"
+        );
+    }
+
+    #[test]
+    fn type_without_variants_has_no_split() {
+        let source = "type grammar";
+        let form = parse_form(source).unwrap();
+        assert!(!form.optic_ops.contains(&OpticOp::Split));
+        assert!(!form.optic_ops.contains(&OpticOp::Iso));
+    }
+
+    #[test]
+    fn parens_classified_as_focus() {
+        let source = "type beam(result)";
+        let form = parse_form(source).unwrap();
+        assert!(
+            form.optic_ops.contains(&OpticOp::Focus),
+            "parenthesized params should classify as Focus"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Parser tests
+    // -----------------------------------------------------------------------
 
     #[test]
     fn mirror_runtime_parses_atom_decl() {

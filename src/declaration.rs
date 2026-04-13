@@ -97,6 +97,95 @@ impl DeclKind {
 }
 
 // ---------------------------------------------------------------------------
+// OpticOp — the five prism operations as operator tokens
+// ---------------------------------------------------------------------------
+
+/// The five prism optics, classified by their operator token.
+///
+/// These are the shared kernel between Rust and .mirror: the same five
+/// operators mean the same thing on both sides of the glass wall.
+///
+/// ```text
+/// =    Iso      structural equality / assertion
+/// |    Split    superposition / enum variants
+/// ()   Focus    grouping / function call (structural, not a single token)
+/// ->   Zoom     flow / return type / transformation
+/// ..   Refract  spread / range / settlement
+/// ```
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum OpticOp {
+    /// `=` — structural equality. The iso: what goes in comes out unchanged.
+    Iso,
+    /// `|` — superposition. The split: one of many.
+    Split,
+    /// `()` — grouping / function call. The focus: look closer.
+    /// Note: parentheses are delimiters in the tokenizer, not a single token.
+    /// Focus is implicit in the grammar structure (params, grouping).
+    Focus,
+    /// `->`, `|>`, `<|`, `/` — flow / transformation. The zoom: move between levels.
+    Zoom,
+    /// `..` — spread / range / settlement. The refract: scatter and reconverge.
+    Refract,
+}
+
+impl OpticOp {
+    /// Classify an operator token as an optic operation.
+    pub fn from_token(token: &str) -> Option<OpticOp> {
+        // DELIBERATE BUG: returns wrong variant for "=" to prove tests are real.
+        // TDD red phase: the test must catch this.
+        match token {
+            "=" => Some(OpticOp::Split), // BUG: should be Iso
+            "|" => Some(OpticOp::Split),
+            "->" | "|>" | "<|" | "/" => Some(OpticOp::Zoom),
+            ".." => Some(OpticOp::Refract),
+            _ => None,
+        }
+    }
+
+    /// The canonical single-token representation of this optic.
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            OpticOp::Iso => "=",
+            OpticOp::Split => "|",
+            OpticOp::Focus => "()",
+            OpticOp::Zoom => "->",
+            OpticOp::Refract => "..",
+        }
+    }
+
+    /// The DeclKind that corresponds to this optic operation, if any.
+    /// Focus and Project are DeclKind variants; Iso has no direct DeclKind.
+    pub fn to_decl_kind(&self) -> Option<DeclKind> {
+        match self {
+            OpticOp::Split => Some(DeclKind::Split),
+            OpticOp::Zoom => Some(DeclKind::Zoom),
+            OpticOp::Refract => Some(DeclKind::Refract),
+            OpticOp::Focus => Some(DeclKind::Focus),
+            OpticOp::Iso => None, // Iso is structural (=), not a declaration keyword
+        }
+    }
+}
+
+impl OpticOp {
+    /// Classify a declaration keyword as its corresponding optic operation.
+    pub fn from_decl_kind(kind: &DeclKind) -> Option<OpticOp> {
+        match kind {
+            DeclKind::Focus => Some(OpticOp::Focus),
+            DeclKind::Split => Some(OpticOp::Split),
+            DeclKind::Zoom => Some(OpticOp::Zoom),
+            DeclKind::Refract => Some(OpticOp::Refract),
+            _ => None,
+        }
+    }
+}
+
+impl std::fmt::Display for OpticOp {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+// ---------------------------------------------------------------------------
 // MirrorData — the focused eigenvalues of a declaration
 // ---------------------------------------------------------------------------
 
@@ -235,6 +324,97 @@ pub fn fragment(data: MirrorData, children: Vec<MirrorFragment>) -> MirrorFragme
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // -----------------------------------------------------------------------
+    // OpticOp tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn operator_iso_maps_to_equals() {
+        assert_eq!(OpticOp::from_token("="), Some(OpticOp::Iso));
+    }
+
+    #[test]
+    fn operator_split_maps_to_pipe() {
+        assert_eq!(OpticOp::from_token("|"), Some(OpticOp::Split));
+    }
+
+    #[test]
+    fn operator_zoom_maps_to_arrow() {
+        assert_eq!(OpticOp::from_token("->"), Some(OpticOp::Zoom));
+    }
+
+    #[test]
+    fn operator_zoom_maps_to_pipe_arrow() {
+        assert_eq!(OpticOp::from_token("|>"), Some(OpticOp::Zoom));
+    }
+
+    #[test]
+    fn operator_zoom_maps_to_reverse_pipe() {
+        assert_eq!(OpticOp::from_token("<|"), Some(OpticOp::Zoom));
+    }
+
+    #[test]
+    fn operator_zoom_maps_to_slash() {
+        assert_eq!(OpticOp::from_token("/"), Some(OpticOp::Zoom));
+    }
+
+    #[test]
+    fn operator_refract_maps_to_dotdot() {
+        assert_eq!(OpticOp::from_token(".."), Some(OpticOp::Refract));
+    }
+
+    #[test]
+    fn unknown_operator_returns_none() {
+        assert_eq!(OpticOp::from_token("+"), None);
+    }
+
+    #[test]
+    fn optic_op_as_str_roundtrips() {
+        for op in [
+            OpticOp::Iso,
+            OpticOp::Split,
+            OpticOp::Focus,
+            OpticOp::Zoom,
+            OpticOp::Refract,
+        ] {
+            // as_str returns the canonical token
+            let s = op.as_str();
+            assert!(!s.is_empty());
+        }
+    }
+
+    #[test]
+    fn optic_op_display() {
+        assert_eq!(format!("{}", OpticOp::Iso), "=");
+        assert_eq!(format!("{}", OpticOp::Split), "|");
+        assert_eq!(format!("{}", OpticOp::Focus), "()");
+        assert_eq!(format!("{}", OpticOp::Zoom), "->");
+        assert_eq!(format!("{}", OpticOp::Refract), "..");
+    }
+
+    #[test]
+    fn optic_op_to_decl_kind() {
+        assert_eq!(OpticOp::Split.to_decl_kind(), Some(DeclKind::Split));
+        assert_eq!(OpticOp::Zoom.to_decl_kind(), Some(DeclKind::Zoom));
+        assert_eq!(OpticOp::Refract.to_decl_kind(), Some(DeclKind::Refract));
+        assert_eq!(OpticOp::Focus.to_decl_kind(), Some(DeclKind::Focus));
+        assert_eq!(OpticOp::Iso.to_decl_kind(), None);
+    }
+
+    #[test]
+    fn optic_op_from_decl_kind() {
+        assert_eq!(OpticOp::from_decl_kind(&DeclKind::Split), Some(OpticOp::Split));
+        assert_eq!(OpticOp::from_decl_kind(&DeclKind::Zoom), Some(OpticOp::Zoom));
+        assert_eq!(OpticOp::from_decl_kind(&DeclKind::Refract), Some(OpticOp::Refract));
+        assert_eq!(OpticOp::from_decl_kind(&DeclKind::Focus), Some(OpticOp::Focus));
+        assert_eq!(OpticOp::from_decl_kind(&DeclKind::Type), None);
+        assert_eq!(OpticOp::from_decl_kind(&DeclKind::Grammar), None);
+    }
+
+    // -----------------------------------------------------------------------
+    // DeclKind tests
+    // -----------------------------------------------------------------------
 
     #[test]
     fn decl_kind_parse_roundtrip() {
