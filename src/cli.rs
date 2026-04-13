@@ -55,6 +55,13 @@ pub struct Cli {
     crystal_oid: Option<MirrorHash>,
 }
 
+/// Information about a branch's merge readiness.
+struct BranchInfo {
+    name: String,
+    commits_ahead: usize,
+    has_conflicts: bool,
+}
+
 impl Cli {
     /// Open the CLI. If `spec_path` exists, compile it and store
     /// the crystal OID. If it doesn't exist, continue without one.
@@ -86,7 +93,13 @@ impl Cli {
             "ai" => self.cmd_ai(args),
             "ci" => self.cmd_ci(args),
             "lsp" => self.cmd_lsp(args),
-            "ca" => self.cmd_ca(args),
+            "ca" => {
+                if args.iter().any(|a| a == "--merge") {
+                    self.cmd_ca_merge()
+                } else {
+                    self.cmd_ca(args)
+                }
+            }
             "bench" => self.cmd_bench(args),
             "verify" => self.cmd_verify(args),
             "init" => self.cmd_init(args),
@@ -467,6 +480,209 @@ flags:
             out.push_str("\nenforce: not yet implemented");
         }
         Ok(out)
+    }
+
+    // -----------------------------------------------------------------------
+    // ca --merge -- merge branches into main
+    // -----------------------------------------------------------------------
+
+    /// List all local branches except main and the current branch.
+    fn list_branches(repo_dir: &Path) -> Result<Vec<String>, CliError> {
+        let output = std::process::Command::new("git")
+            .args(["branch", "--list", "--format=%(refname:short)"])
+            .current_dir(repo_dir)
+            .output()
+            .map_err(CliError::Io)?;
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        // DELIBERATE BUG: return empty vec always (for red phase)
+        let _ = stdout;
+        Ok(Vec::new())
+    }
+
+    /// Count commits on `branch` that are not on main.
+    fn commits_ahead(repo_dir: &Path, branch: &str) -> Result<usize, CliError> {
+        let output = std::process::Command::new("git")
+            .args(["rev-list", "--count", &format!("main..{}", branch)])
+            .current_dir(repo_dir)
+            .output()
+            .map_err(CliError::Io)?;
+        Ok(String::from_utf8_lossy(&output.stdout)
+            .trim()
+            .parse()
+            .unwrap_or(0))
+    }
+
+    /// Attempt a merge. On conflict, abort and return Err.
+    fn try_merge(repo_dir: &Path, branch: &str) -> Result<(), CliError> {
+        let output = std::process::Command::new("git")
+            .args(["merge", "--no-edit", "--no-ff", branch])
+            .current_dir(repo_dir)
+            .output()
+            .map_err(CliError::Io)?;
+        if output.status.success() {
+            Ok(())
+        } else {
+            let _ = std::process::Command::new("git")
+                .args(["merge", "--abort"])
+                .current_dir(repo_dir)
+                .output();
+            Err(CliError::Runtime(MirrorRuntimeError(format!(
+                "merge conflict: {}",
+                branch
+            ))))
+        }
+    }
+
+    /// Run `cargo test --quiet` in the given directory and return whether it passed.
+    fn cargo_test_passes(repo_dir: &Path) -> bool {
+        std::process::Command::new("cargo")
+            .args(["test", "--lib", "--quiet"])
+            .current_dir(repo_dir)
+            .status()
+            .map(|s| s.success())
+            .unwrap_or(false)
+    }
+
+    /// Undo the last merge commit (used when tests fail after merge).
+    fn undo_last_merge(repo_dir: &Path) -> Result<(), CliError> {
+        let output = std::process::Command::new("git")
+            .args(["reset", "--hard", "HEAD~1"])
+            .current_dir(repo_dir)
+            .output()
+            .map_err(CliError::Io)?;
+        if output.status.success() {
+            Ok(())
+        } else {
+            Err(CliError::Runtime(MirrorRuntimeError(
+                "failed to undo merge".to_string(),
+            )))
+        }
+    }
+
+    /// Get the current branch name.
+    fn current_branch(repo_dir: &Path) -> Result<String, CliError> {
+        let output = std::process::Command::new("git")
+            .args(["branch", "--show-current"])
+            .current_dir(repo_dir)
+            .output()
+            .map_err(CliError::Io)?;
+        Ok(String::from_utf8_lossy(&output.stdout).trim().to_string())
+    }
+
+    /// Analyze a branch: count commits ahead and check for conflicts.
+    fn analyze_branch(repo_dir: &Path, branch: &str) -> Result<BranchInfo, CliError> {
+        let ahead = Self::commits_ahead(repo_dir, branch)?;
+
+        // Dry-run merge to check for conflicts
+        let output = std::process::Command::new("git")
+            .args(["merge", "--no-commit", "--no-ff", branch])
+            .current_dir(repo_dir)
+            .output()
+            .map_err(CliError::Io)?;
+        let has_conflicts = !output.status.success();
+
+        // Always abort the dry-run
+        let _ = std::process::Command::new("git")
+            .args(["merge", "--abort"])
+            .current_dir(repo_dir)
+            .output();
+
+        Ok(BranchInfo {
+            name: branch.to_string(),
+            commits_ahead: ahead,
+            has_conflicts,
+        })
+    }
+
+    fn cmd_ca_merge(&self) -> Result<String, CliError> {
+        self.cmd_ca_merge_in(&std::env::current_dir().map_err(CliError::Io)?)
+    }
+
+    fn cmd_ca_merge_in(&self, repo_dir: &Path) -> Result<String, CliError> {
+        // 1. Must be on main
+        let current = Self::current_branch(repo_dir)?;
+        if current != "main" {
+            return Err(CliError::Usage(
+                "ca --merge must be run from main".to_string(),
+            ));
+        }
+
+        // 2. List branches
+        let branches = Self::list_branches(repo_dir)?;
+        if branches.is_empty() {
+            return Ok("nothing to merge".to_string());
+        }
+
+        // 3. Analyze each branch
+        let mut infos: Vec<BranchInfo> = Vec::new();
+        for branch in &branches {
+            match Self::analyze_branch(repo_dir, branch) {
+                Ok(info) => infos.push(info),
+                Err(e) => eprintln!("  skip {}: {}", branch, e),
+            }
+        }
+
+        // 4. Sort: no-conflict first, then by commits ahead ascending
+        infos.sort_by(|a, b| {
+            a.has_conflicts
+                .cmp(&b.has_conflicts)
+                .then(a.commits_ahead.cmp(&b.commits_ahead))
+        });
+
+        // 5. Merge loop
+        let mut merged: Vec<String> = Vec::new();
+        let mut skipped: Vec<String> = Vec::new();
+
+        for info in &infos {
+            eprintln!(
+                "  trying {} ({} ahead, conflicts: {})",
+                info.name, info.commits_ahead, info.has_conflicts
+            );
+
+            if info.has_conflicts {
+                eprintln!("  skipped (conflicts): {}", info.name);
+                skipped.push(info.name.clone());
+                continue;
+            }
+
+            match Self::try_merge(repo_dir, &info.name) {
+                Ok(()) => {
+                    if Self::cargo_test_passes(repo_dir) {
+                        eprintln!("  merged: {}", info.name);
+                        merged.push(info.name.clone());
+                    } else {
+                        eprintln!("  skipped (tests fail): {}", info.name);
+                        if let Err(e) = Self::undo_last_merge(repo_dir) {
+                            eprintln!("  warning: failed to undo merge: {}", e);
+                        }
+                        skipped.push(info.name.clone());
+                    }
+                }
+                Err(_) => {
+                    eprintln!("  skipped (merge failed): {}", info.name);
+                    skipped.push(info.name.clone());
+                }
+            }
+        }
+
+        // 6. Re-crystallize if anything merged
+        let crystal_note = if !merged.is_empty() {
+            match self.cmd_crystal(&["mirror.shatter".into()]) {
+                Ok(oid) => format!("\ncrystal: {}", oid),
+                Err(e) => format!("\ncrystal: failed ({})", e),
+            }
+        } else {
+            String::new()
+        };
+
+        // 7. Report
+        let report = format!(
+            "ca --merge: {} merged, {} skipped{}",
+            merged.len(),
+            skipped.len(),
+            crystal_note
+        );
+        Ok(report)
     }
 
     // -----------------------------------------------------------------------
@@ -1478,5 +1694,132 @@ mod tests {
         let text = Cli::help_text();
         assert!(text.contains("verify"), "help should mention verify");
         assert!(text.contains("--sign"), "help should mention --sign");
+    }
+
+    // -----------------------------------------------------------------------
+    // ca --merge tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn ca_merge_flag_detected() {
+        // Verify --merge routes to cmd_ca_merge (not cmd_ca).
+        // cmd_ca without a path arg gives "usage: mirror ca <path>".
+        // cmd_ca_merge without being on main gives "must be run from main".
+        // If we get the ca_merge error, the flag routing works.
+        let cli = Cli::default();
+        let result = cli.dispatch("ca", &["--merge".to_string()]);
+        // We're not on main in tests (or we are — either way the output
+        // should NOT be the ca usage error about <path>).
+        match &result {
+            Ok(msg) => {
+                // If on main with no branches: "nothing to merge"
+                assert!(
+                    msg.contains("nothing to merge") || msg.contains("ca --merge"),
+                    "should route to ca_merge, got: {}",
+                    msg
+                );
+            }
+            Err(e) => {
+                let err = format!("{}", e);
+                // ca_merge error: "must be run from main"
+                // ca error: "usage: mirror ca <path>"
+                assert!(
+                    err.contains("must be run from main"),
+                    "should route to ca_merge, got ca error: {}",
+                    err
+                );
+            }
+        }
+    }
+
+    /// Helper: create a temp git repo with main branch and initial commit.
+    fn make_test_repo() -> tempfile::TempDir {
+        let dir = tempfile::TempDir::new().unwrap();
+        let p = dir.path();
+        std::process::Command::new("git")
+            .args(["init"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        std::process::Command::new("git")
+            .args(["checkout", "-b", "main"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        // Set local git config so commits work
+        std::process::Command::new("git")
+            .args(["config", "user.email", "test@test"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        std::process::Command::new("git")
+            .args(["config", "user.name", "Test"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        std::fs::write(p.join("file.txt"), "hello").unwrap();
+        std::process::Command::new("git")
+            .args(["add", "."])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        std::process::Command::new("git")
+            .args(["commit", "--no-verify", "--no-gpg-sign", "-m", "init"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        dir
+    }
+
+    #[test]
+    fn ca_merge_list_branches_finds_feature_branch() {
+        let dir = make_test_repo();
+        let p = dir.path();
+
+        // Create a feature branch with a commit
+        std::process::Command::new("git")
+            .args(["checkout", "-b", "feature-a"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        std::fs::write(p.join("feature.txt"), "feature").unwrap();
+        std::process::Command::new("git")
+            .args(["add", "."])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        std::process::Command::new("git")
+            .args(["commit", "--no-verify", "--no-gpg-sign", "-m", "feature"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+
+        // Back to main
+        std::process::Command::new("git")
+            .args(["checkout", "main"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+
+        // list_branches should find feature-a
+        let branches = Cli::list_branches(p).unwrap();
+        assert!(
+            branches.contains(&"feature-a".to_string()),
+            "should find feature-a branch, got: {:?}",
+            branches
+        );
+    }
+
+    #[test]
+    fn ca_merge_on_clean_repo_reports_nothing() {
+        let dir = make_test_repo();
+        let cli = Cli::default();
+        let result = cli.cmd_ca_merge_in(dir.path());
+        assert!(result.is_ok());
+        assert_eq!(
+            result.unwrap(),
+            "nothing to merge",
+            "repo with only main should report nothing to merge"
+        );
     }
 }
