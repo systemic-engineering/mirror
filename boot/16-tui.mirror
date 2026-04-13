@@ -1,0 +1,82 @@
+in @prism
+in @meta
+in @config
+in @code
+in @ci
+in @ca
+in @lsp
+in @time
+
+type key(string)
+type chord = key | [key]
+
+type binding {
+  chord: chord,
+  action: action,
+}
+
+default(leader) = key(" ")
+
+type panel = gutter | source | agents | timeline | repl
+type color = green | amber | red | dim | ghost
+type dot(color, oid)
+type gutter_line(color, line: u32)
+
+grammar @tui {
+
+  -- panels
+  action render(panel) -> imperfect
+  action layout([panel]) -> imperfect
+  action resize(panel, width: u32, height: u32) -> imperfect
+
+  -- gutter
+  action gutter(source, loss) -> [gutter_line]
+
+  -- agent dots
+  action dots(agents) -> [dot]
+
+  -- timeline
+  action timeline(cursor) -> imperfect
+  action scroll(cursor, direction: i32) -> imperfect
+
+  -- repl
+  action prompt(input: string) -> imperfect
+  action complete(input: string, position: u32) -> [completion]
+
+  -- bindings: optics (leader + key)
+  binding(leader, key("f")) = focus
+  binding(leader, key("p")) = project
+  binding(leader, key("s")) = split
+  binding(leader, key("z")) = zoom
+  binding(leader, key("r")) = refract
+
+  -- bindings: agents (leader + a + key)
+  binding(leader, key("a"), key("a")) = abyss
+  binding(leader, key("a"), key("f")) = fate
+  binding(leader, key("a"), key("c")) = cartographer
+  binding(leader, key("a"), key("e")) = explorer
+  binding(leader, key("a"), key("i")) = introject
+
+  -- bindings: meta
+  binding(leader, leader) = repl
+  binding(leader, key("t")) = time
+
+  recover |frame, loss| {
+    -- partial render: show what we have, dim what's missing
+    frame
+  }
+
+  rescue |error| {
+    -- render error in repl panel, keep the rest
+    render(repl, error)
+  }
+}
+
+out key
+out chord
+out binding
+out panel
+out color
+out dot
+out gutter_line
+out @tui

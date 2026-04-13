@@ -14,8 +14,27 @@ use std::path::PathBuf;
 
 use serde_json::Value;
 
-use crate::resolve::ResolveError;
 use crate::{ContentAddressed, Oid, Trace, Vector};
+
+// ---------------------------------------------------------------------------
+// FilterError — local error type (formerly from resolve.rs)
+// ---------------------------------------------------------------------------
+
+/// An error from filter resolution or application.
+#[derive(Debug, Clone)]
+pub struct ResolveError {
+    pub message: String,
+    pub span: Option<(usize, usize)>,
+    pub hints: Vec<String>,
+}
+
+impl std::fmt::Display for ResolveError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl std::error::Error for ResolveError {}
 
 // ---------------------------------------------------------------------------
 // Sha — content hash as pipeline operator
