@@ -66,11 +66,7 @@ fn dashdash_help_shows_help() {
 
 #[test]
 fn per_command_help() {
-    let output = mirror_bin()
-        .arg("compile")
-        .arg("--help")
-        .output()
-        .unwrap();
+    let output = mirror_bin().arg("compile").arg("--help").output().unwrap();
     assert!(output.status.success(), "compile --help should exit zero");
     let stdout = String::from_utf8_lossy(&output.stdout);
     assert!(

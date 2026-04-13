@@ -97,7 +97,7 @@ impl Cli {
     /// The help text. Matches the grammar declared in boot/20-cli.mirror.
     pub fn help_text() -> &'static str {
         "\
-mirror -- BROKEN FOR RED
+mirror -- an honest compiler
 
 usage: mirror <command> [args]
 
@@ -378,13 +378,9 @@ flags:
     // -----------------------------------------------------------------------
 
     fn cmd_registry(&self, args: &[String]) -> Result<String, CliError> {
-        let boot_dir_arg = args
-            .first()
-            .ok_or_else(|| {
-                CliError::Usage(
-                    "usage: mirror registry <boot-dir> [--store <frgmnt-dir>]".to_string(),
-                )
-            })?;
+        let boot_dir_arg = args.first().ok_or_else(|| {
+            CliError::Usage("usage: mirror registry <boot-dir> [--store <frgmnt-dir>]".to_string())
+        })?;
 
         let boot_dir = std::path::PathBuf::from(boot_dir_arg);
 
@@ -398,18 +394,12 @@ flags:
                 std::env::temp_dir().join(format!("mirror-registry-{}", std::process::id()))
             });
 
-        let boot = self
-            .runtime
-            .compile_boot_dir(&boot_dir, &store_path)?;
+        let boot = self.runtime.compile_boot_dir(&boot_dir, &store_path)?;
 
         let mut out = String::new();
         out.push_str(&format!("registry {}\n", store_path.display()));
         for (name, compiled) in &boot.resolved {
-            out.push_str(&format!(
-                "  {} OK {}\n",
-                name,
-                compiled.crystal().as_str()
-            ));
+            out.push_str(&format!("  {} OK {}\n", name, compiled.crystal().as_str()));
         }
         for (name, err) in &boot.failed {
             out.push_str(&format!("  {} FAIL {}\n", name, err));
@@ -779,7 +769,11 @@ mod tests {
         let cli = Cli::default();
         for cmd in ["focus", "project", "split", "zoom", "refract"] {
             let result = cli.dispatch(cmd, &[]);
-            assert!(result.is_err(), "{} with no args should be usage error", cmd);
+            assert!(
+                result.is_err(),
+                "{} with no args should be usage error",
+                cmd
+            );
         }
     }
 
