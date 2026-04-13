@@ -56,8 +56,8 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use crate::declaration::{
-    fragment as build_fragment, DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, MirrorHash,
-    OpticOp,
+    fragment as build_fragment, DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt,
+    MirrorHash, OpticOp,
 };
 use fragmentation::frgmnt_store::FrgmntStore;
 use fragmentation::sha::HashAlg;

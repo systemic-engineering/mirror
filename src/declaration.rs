@@ -131,10 +131,8 @@ pub enum OpticOp {
 impl OpticOp {
     /// Classify an operator token as an optic operation.
     pub fn from_token(token: &str) -> Option<OpticOp> {
-        // DELIBERATE BUG: returns wrong variant for "=" to prove tests are real.
-        // TDD red phase: the test must catch this.
         match token {
-            "=" => Some(OpticOp::Split), // BUG: should be Iso
+            "=" => Some(OpticOp::Iso),
             "|" => Some(OpticOp::Split),
             "->" | "|>" | "<|" | "/" => Some(OpticOp::Zoom),
             ".." => Some(OpticOp::Refract),
@@ -404,10 +402,22 @@ mod tests {
 
     #[test]
     fn optic_op_from_decl_kind() {
-        assert_eq!(OpticOp::from_decl_kind(&DeclKind::Split), Some(OpticOp::Split));
-        assert_eq!(OpticOp::from_decl_kind(&DeclKind::Zoom), Some(OpticOp::Zoom));
-        assert_eq!(OpticOp::from_decl_kind(&DeclKind::Refract), Some(OpticOp::Refract));
-        assert_eq!(OpticOp::from_decl_kind(&DeclKind::Focus), Some(OpticOp::Focus));
+        assert_eq!(
+            OpticOp::from_decl_kind(&DeclKind::Split),
+            Some(OpticOp::Split)
+        );
+        assert_eq!(
+            OpticOp::from_decl_kind(&DeclKind::Zoom),
+            Some(OpticOp::Zoom)
+        );
+        assert_eq!(
+            OpticOp::from_decl_kind(&DeclKind::Refract),
+            Some(OpticOp::Refract)
+        );
+        assert_eq!(
+            OpticOp::from_decl_kind(&DeclKind::Focus),
+            Some(OpticOp::Focus)
+        );
         assert_eq!(OpticOp::from_decl_kind(&DeclKind::Type), None);
         assert_eq!(OpticOp::from_decl_kind(&DeclKind::Grammar), None);
     }
