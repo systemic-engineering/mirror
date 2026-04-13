@@ -11,6 +11,9 @@ refract ..(ref)
 
 type loss(f64)
 type precision(f64)
+type grammar
+type block(grammar)
+type imperfect(type, type, loss)
 
 type beam(result) {
   result: result,
@@ -36,4 +39,7 @@ out ..
 out loss
 out precision
 out beam
+out grammar
+out block
+out imperfect
 out @meta

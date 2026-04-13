@@ -1,8 +1,6 @@
 in @prism
+in @meta
 in @actor
-
-type grammar
-type block(grammar)
 
 prism action {
   focus  type -> grammar
@@ -20,6 +18,4 @@ action action(receiver: type, in: grammar, body: block(grammar)) {
   refract imperfect
 }
 
-out grammar
-out block
 out action
