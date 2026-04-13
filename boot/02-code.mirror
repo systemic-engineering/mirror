@@ -29,13 +29,13 @@ type token {
   kind: type,
 }
 
-grammar @code {
-  action complete(position) -> [completion]
-  action diagnose(range) -> [diagnostic]
-  action hover(position) -> string
-  action definition(position) -> position
-  action references(position) -> [position]
-  action tokens(range) -> [token]
+abstract grammar @code {
+  abstract action complete(position) -> [completion]
+  abstract action diagnose(range) -> [diagnostic]
+  abstract action hover(position) -> string
+  abstract action definition(position) -> position
+  abstract action references(position) -> [position]
+  abstract action tokens(range) -> [token]
 }
 
 out position
