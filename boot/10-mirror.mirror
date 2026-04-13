@@ -9,6 +9,8 @@ form @mirror {
   requires unique_variants
   requires every_type_reachable
   requires no_dead_variants
+  requires types_lowercase
+  requires action_is_named_type
   invariant dual_partition
   invariant idempotent
   invariant deterministic
