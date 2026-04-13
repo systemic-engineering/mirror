@@ -4,12 +4,14 @@
 //! Compilation as Transport.
 //! The bundle tower IS the compiler.
 
+use std::convert::Infallible;
+
+use crate::declaration::{MirrorFragment, MirrorFragmentExt, MirrorHash};
+use crate::loss::{Convergence, MirrorLoss, Phase, PhaseRecord};
 use crate::mirror_runtime::{CompiledShatter, MirrorRuntime, MirrorRuntimeError};
-use coincidence::declaration::{MirrorFragment, MirrorFragmentExt, MirrorHash};
 use fragmentation::sha::HashAlg;
 use prism::{
-    Closure, Connection, Decomposition, Fiber, Gauge, Imperfect, KernelSpec, Precision,
-    ShannonLoss, Transport,
+    Closure, Connection, Decomposition, Fiber, Gauge, Imperfect, KernelSpec, Precision, Transport,
 };
 
 /// Compilation target.
@@ -91,37 +93,65 @@ impl Gauge for MirrorCompiler {
 }
 
 impl Transport for MirrorCompiler {
-    type Holonomy = ShannonLoss;
-    fn transport(&self, source: &String) -> Imperfect<String, ShannonLoss> {
+    type Holonomy = MirrorLoss;
+    fn transport(&self, source: &String) -> Imperfect<String, Infallible, MirrorLoss> {
         if source.is_empty() {
             return Imperfect::Success(String::new());
         }
+
+        let source_oid = crate::kernel::Oid::hash(source.as_bytes());
 
         match self.runtime.compile_source(source) {
             Ok(compiled) => {
                 // Structural loss: source tokens vs fragment nodes.
                 let source_nodes = count_structural_tokens(source);
                 let fragment_nodes = count_fragment_nodes(&compiled.fragment);
-                let loss = if source_nodes > fragment_nodes {
+                let structural_loss = if source_nodes > fragment_nodes {
                     (source_nodes - fragment_nodes) as f64
                 } else {
                     0.0
                 };
 
                 let oid_str = compiled.crystal().as_str().to_string();
+                let output_oid = crate::kernel::Oid::new(&oid_str);
 
-                if loss == 0.0 {
+                let phase_record = PhaseRecord {
+                    phase: Phase::Emit,
+                    input_oid: source_oid,
+                    output_oid,
+                    structural_loss,
+                };
+
+                if structural_loss == 0.0 {
                     Imperfect::Success(oid_str)
                 } else {
-                    Imperfect::Partial(oid_str, ShannonLoss::new(loss))
+                    let loss = MirrorLoss {
+                        phases: vec![phase_record],
+                        resolution_ratio: 1.0,
+                        unresolved_refs: Vec::new(),
+                        staleness: 0,
+                        convergence: Convergence::Settled,
+                        dark_dims: Vec::new(),
+                        crystal: Some(crate::kernel::Oid::new(&oid_str)),
+                        recovered: false,
+                    };
+                    Imperfect::Partial(oid_str, loss)
                 }
             }
             Err(_) => {
-                // Compilation failure = total loss
-                Imperfect::Partial(
-                    String::new(),
-                    ShannonLoss::new(count_structural_tokens(source) as f64),
-                )
+                // Compilation failure IS failure now, not partial with max loss.
+                // Infallible error type means we express this as Partial with total-ish loss.
+                let loss = MirrorLoss {
+                    phases: Vec::new(),
+                    resolution_ratio: 0.0,
+                    unresolved_refs: Vec::new(),
+                    staleness: 0,
+                    convergence: Convergence::BudgetExhausted,
+                    dark_dims: Vec::new(),
+                    crystal: None,
+                    recovered: false,
+                };
+                Imperfect::Partial(String::new(), loss)
             }
         }
     }
@@ -236,7 +266,11 @@ mod tests {
         match result {
             Imperfect::Partial(oid, loss) => {
                 assert!(!oid.is_empty(), "should produce an OID");
-                assert!(loss.as_f64() > 0.0, "compilation should have loss");
+                assert!(!loss.phases.is_empty(), "should have phase records");
+                assert!(
+                    loss.phases[0].structural_loss > 0.0,
+                    "compilation should have loss"
+                );
             }
             _ => panic!("expected Partial"),
         }

@@ -46,6 +46,7 @@ pub use fragmentation::repo::Repo;
 pub use fragmentation::store::Store;
 
 pub mod bundle;
+pub mod declaration;
 pub mod gestalt;
 pub mod loss;
 pub mod mirror_runtime;

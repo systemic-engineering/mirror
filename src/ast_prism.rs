@@ -10,7 +10,7 @@
 //! another prism — it's hardcoded in Rust. It knows the nine tokens
 //! and can refract a .mirror source into a MirrorPrism.
 
-use prism::{Beam, Prism, PureBeam};
+use prism::{Beam, Optic, Prism};
 
 use crate::ast::{Ast, Atom, Body, Ref};
 
@@ -38,10 +38,10 @@ pub enum Token {
 pub struct ASTPrism;
 
 impl Prism for ASTPrism {
-    type Input = PureBeam<(), String>;
-    type Focused = PureBeam<String, Vec<Token>>;
-    type Projected = PureBeam<Vec<Token>, Ast>;
-    type Refracted = PureBeam<Ast, ASTPrism>;
+    type Input = Optic<(), String>;
+    type Focused = Optic<String, Vec<Token>>;
+    type Projected = Optic<Vec<Token>, Ast>;
+    type Refracted = Optic<Ast, ASTPrism>;
 
     /// Focus: source text → token stream.
     ///
@@ -79,7 +79,7 @@ impl ASTPrism {
 
     /// Convenience: source → AST in one call (focus then project).
     pub fn parse(&self, source: &str) -> Ast {
-        let seed = PureBeam::ok((), source.to_string());
+        let seed = Optic::ok((), source.to_string());
         let focused = self.focus(seed);
         let projected = self.project(focused);
         projected.result().ok().expect("parse: Err beam").clone()
@@ -485,7 +485,7 @@ mod tests {
 
     #[test]
     fn prism_trait_focus_produces_tokens() {
-        let seed = PureBeam::ok((), "focus id".to_string());
+        let seed = Optic::ok((), "focus id".to_string());
         let beam = ASTPrism.focus(seed);
         let tokens = beam.result().ok().expect("focus failed");
         assert_eq!(tokens.len(), 2);
@@ -495,7 +495,7 @@ mod tests {
 
     #[test]
     fn prism_trait_project_produces_ast() {
-        let seed = PureBeam::ok((), "focus id".to_string());
+        let seed = Optic::ok((), "focus id".to_string());
         let focused = ASTPrism.focus(seed);
         let projected = ASTPrism.project(focused);
         assert_eq!(

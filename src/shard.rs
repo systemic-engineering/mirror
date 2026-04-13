@@ -6,7 +6,7 @@
 //! The .shard IS the NakedSingularity seed.
 //! No parent. Just IS.
 
-use coincidence::declaration::MirrorHash;
+use crate::declaration::MirrorHash;
 use prism::{Decomposition, KernelSpec};
 
 use super::bundle::Target;

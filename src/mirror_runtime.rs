@@ -55,12 +55,12 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use coincidence::declaration::{
+use crate::declaration::{
     fragment as build_fragment, DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, MirrorHash,
 };
 use fragmentation::frgmnt_store::FrgmntStore;
 use fragmentation::sha::HashAlg;
-use prism::{Beam, Prism, PureBeam};
+use prism::{Beam, Optic, Prism};
 
 // ---------------------------------------------------------------------------
 // Errors
@@ -164,10 +164,10 @@ impl Form {
 pub struct Shatter;
 
 impl Prism for Shatter {
-    type Input = PureBeam<(), Form>;
-    type Focused = PureBeam<Form, MirrorData>;
-    type Projected = PureBeam<MirrorData, MirrorFragment>;
-    type Refracted = PureBeam<MirrorFragment, Shatter>;
+    type Input = Optic<(), Form>;
+    type Focused = Optic<Form, MirrorData>;
+    type Projected = Optic<MirrorData, MirrorFragment>;
+    type Refracted = Optic<MirrorFragment, Shatter>;
 
     /// Focus: read the top-level eigenvalues (kind/name/params/variants).
     fn focus(&self, beam: Self::Input) -> Self::Focused {
@@ -952,7 +952,7 @@ mod tests {
         let shatter = Shatter;
 
         // Trait-level focus carries the top eigenvalues.
-        let seed: PureBeam<(), Form> = PureBeam::ok((), compiled.form.clone());
+        let seed: Optic<(), Form> = Optic::ok((), compiled.form.clone());
         let focused = shatter.focus(seed);
         let eigen = focused.result().ok().expect("focus failed");
         assert_eq!(eigen.kind, DeclKind::Form);
@@ -961,7 +961,7 @@ mod tests {
 
         // Trait-level project produces a content-addressed (childless) frag.
         // Re-seed because focus consumed the previous beam.
-        let seed2: PureBeam<(), Form> = PureBeam::ok((), compiled.form.clone());
+        let seed2: Optic<(), Form> = Optic::ok((), compiled.form.clone());
         let focused2 = shatter.focus(seed2);
         let projected = shatter.project(focused2);
         let frag_result = projected.result().ok().expect("project failed");

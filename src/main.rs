@@ -6,7 +6,7 @@ use std::process;
 
 use fragmentation::sha::HashAlg;
 use mirror::ast_prism::ASTPrism;
-use prism::{Beam, Prism, PureBeam};
+use prism::{Beam, Optic, Prism};
 
 const USAGE: &str = "\
 mirror — focus | project | refract
@@ -122,7 +122,7 @@ fn cmd_query(args: &[String]) -> ! {
     // The parsing pipeline IS the ASTPrism.
     // focus: source → tokens.  project: tokens → AST.
     let prism = ASTPrism;
-    let seed = PureBeam::ok((), query.clone());
+    let seed = Optic::ok((), query.clone());
     let focused = prism.focus(seed);
     let projected = prism.project(focused);
 

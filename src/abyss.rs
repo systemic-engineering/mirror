@@ -9,7 +9,7 @@
 //!
 //! ~3K parameters classify tension. Everything else is structural.
 
-use prism::{Beam, Oid, Precision, Prism, ShannonLoss};
+use prism::{Beam, Oid, Precision, Prism, ScalarLoss};
 
 // ---------------------------------------------------------------------------
 // Convergence
@@ -23,7 +23,7 @@ pub enum Termination {
     /// Tension budget exhausted before convergence.
     BudgetExhausted {
         cycles: usize,
-        remaining_loss: ShannonLoss,
+        remaining_loss: ScalarLoss,
     },
     /// Hash oscillates between attractors. Gödelian boundary.
     Oscillation { cycles: usize, attractors: Vec<Oid> },
@@ -93,7 +93,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use prism::{Beam, Precision, ShannonLoss};
+    use prism::{Beam, Precision, ScalarLoss};
 
     #[test]
     fn default_config() {
@@ -109,7 +109,7 @@ mod tests {
 
         let exhausted = Termination::BudgetExhausted {
             cycles: 64,
-            remaining_loss: ShannonLoss::new(1.0),
+            remaining_loss: ScalarLoss::new(1.0),
         };
         assert!(matches!(exhausted, Termination::BudgetExhausted { .. }));
 
