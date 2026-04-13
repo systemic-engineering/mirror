@@ -1,0 +1,88 @@
+in @prism
+in @meta
+in @time
+
+-- a timed result: what was measured, how long, what it cost
+type duration(u64)
+type measurement {
+  name: ref,
+  duration: duration,
+  loss: loss,
+  tick: tick,
+}
+
+-- a reference point to compare against
+type baseline {
+  measurement: measurement,
+  label: ref,
+}
+
+-- the ratio between two measurements
+-- >1.0 means faster than baseline. <1.0 means slower.
+type speedup {
+  ratio: precision,
+  measurement: measurement,
+  baseline: baseline,
+}
+
+-- a set of measurements over a full grammar pipeline
+type profile {
+  grammar: ref,
+  measurements: [measurement],
+  total: duration,
+  total_loss: loss,
+}
+
+-- what can go wrong when measuring
+type bench_error = timeout | missing_action | empty_grammar
+
+-- the overhead of measuring itself
+-- bench_loss IS the cost of observation
+type bench_loss(loss)
+
+grammar @benchmark {
+  in @time
+
+  -- time a single action, return measurement
+  -- the result is imperfect: bench_loss carries the overhead
+  abstract action bench(action) -> imperfect(measurement, bench_error, bench_loss)
+
+  -- compare a measurement against a baseline
+  -- speedup.ratio = baseline.duration / measurement.duration
+  abstract action compare(measurement, baseline) -> speedup
+
+  -- measure every action in a grammar
+  -- returns the full profile: each action timed, total accumulated
+  abstract action profile(grammar) -> imperfect(profile, bench_error, bench_loss)
+
+  -- format results for display
+  abstract action report([measurement]) -> imperfect
+
+  -- establish a baseline from a measurement
+  abstract action baseline(measurement, label: ref) -> baseline
+
+  -- run a measurement n times, return the median
+  abstract action sample(action, n: u64) -> imperfect(measurement, bench_error, bench_loss)
+
+  recover |result, loss| {
+    -- partial measurement: the timing completed but with overhead
+    -- bench_loss IS the honesty about observation cost
+    log_drift(loss)
+    result
+  }
+
+  rescue |error| {
+    -- the action timed out or doesn't exist
+    -- return a zero-duration measurement with maximum loss
+    measurement(error, duration(0), loss(1.0), tick(0))
+  }
+}
+
+out duration
+out measurement
+out baseline
+out speedup
+out profile
+out bench_error
+out bench_loss
+out @benchmark

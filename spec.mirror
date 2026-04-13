@@ -1,0 +1,52 @@
+in @spec
+in @config
+in @code/rust
+in @ai
+
+grammar @mirror/project {
+  -- store
+  store in fragmentation-git {
+    path = .git/mirror
+  }
+
+  -- defaults
+  default(target) = native
+  default(visibility) = protected
+  default(aperture) = golden
+
+  -- properties
+  requires types_lowercase
+  requires action_is_named_type
+  requires unique_variants
+  requires every_type_reachable
+  requires no_dead_variants
+  invariant deterministic
+  invariant pure
+  invariant no_cycles
+  ensures always_halts
+
+  -- grammars
+  in @code/rust
+
+  -- boot
+  boot = [
+    00-prism,
+    01-meta,
+    01a-config,
+    02-code,
+    02a-code-rust,
+    03-actor,
+    04-action,
+    05-property,
+    06-ai,
+    10-mirror,
+    11-spec,
+    12-ci,
+    13-ca,
+    14-lsp,
+    20-cli,
+  ]
+
+  -- the cli this project builds
+  deploy @cli
+}

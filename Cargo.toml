@@ -23,11 +23,10 @@ slow = []
 spectral = []  # kept for backward compat; coincidence is now always required
 
 [dependencies]
-prism = { path = "../prism" }
+prism = { package = "prism-core", path = "../prism/core", features = ["bundle"] }
 fragmentation = { path = "../fragmentation" }
 fragmentation-git = { path = "../fragmentation-git" }
 coincidence = { path = "../coincidence" }
-fate = { path = "../fate" }
 serde_json = "1"
 sha2 = "0.10"
 hex = "0.4"
@@ -39,3 +38,8 @@ ssh-key = { version = "0.6", features = ["std", "ed25519", "crypto"], optional =
 
 [dev-dependencies]
 tempfile = "3"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "mirror"
+harness = false
