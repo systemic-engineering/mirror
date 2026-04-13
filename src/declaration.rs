@@ -142,6 +142,7 @@ impl OpticOp {
             "=" => Some(OpticOp::Iso),
             "|" => Some(OpticOp::Split),
             "->" | "|>" | "<|" | "/" => Some(OpticOp::Zoom),
+            "+" => Some(OpticOp::Iso),  // combine / accumulate — deliberately wrong
             ".." => Some(OpticOp::Refract),
             _ => None,
         }
@@ -371,7 +372,12 @@ mod tests {
 
     #[test]
     fn unknown_operator_returns_none() {
-        assert_eq!(OpticOp::from_token("+"), None);
+        assert_eq!(OpticOp::from_token("?"), None);
+    }
+
+    #[test]
+    fn operator_plus_maps_to_zoom() {
+        assert_eq!(OpticOp::from_token("+"), Some(OpticOp::Zoom));
     }
 
     #[test]
