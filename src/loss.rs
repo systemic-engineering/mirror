@@ -121,8 +121,7 @@ impl Loss for MirrorLoss {
     }
 
     fn is_zero(&self) -> bool {
-        // BUG: ignores resolution_ratio — tests will catch this
-        self.phases.is_empty()
+        self.phases.is_empty() && self.resolution_ratio == 1.0
     }
 
     fn combine(self, other: Self) -> Self {
