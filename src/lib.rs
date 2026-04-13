@@ -50,6 +50,7 @@ pub mod declaration;
 pub mod gestalt;
 pub mod loss;
 pub mod mirror_runtime;
+pub mod optic;
 pub mod parse;
 pub mod runtime;
 pub mod session;
