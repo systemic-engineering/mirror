@@ -47,6 +47,7 @@ pub use fragmentation::store::Store;
 
 pub mod bundle;
 pub mod gestalt;
+pub mod loss;
 pub mod mirror_runtime;
 pub mod runtime;
 pub mod session;
