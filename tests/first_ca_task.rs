@@ -73,8 +73,5 @@ fn first_ca_task_crystal_materializes() {
     );
 
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(
-        !stdout.trim().is_empty(),
-        "crystal OID should not be empty"
-    );
+    assert!(!stdout.trim().is_empty(), "crystal OID should not be empty");
 }
