@@ -5,10 +5,123 @@
 //!
 //! The store is ternary: get can return Success (found, fresh),
 //! Partial (found, stale), or Failure (not found).
+//!
+//! ## MirrorOid
+//!
+//! The canonical content address. SHA-512 by default (mirror's Oid).
+//! When git integration needs SHA-1 bridging, the generic `MirrorOid`
+//! will parameterize over `HashAlg`. For now, it's a newtype over Oid.
+//!
+//! ## Shard
+//!
+//! A value paired with its content address. The store returns shards,
+//! never raw values — you always know how something was addressed.
+//!
+//! ## ForeignKey
+//!
+//! Bridge between hash domains. A shard addressed by coincidence hash
+//! can carry a foreign key to git's SHA-1 world. Home produces visitors.
+//! Visitors don't produce home.
 
 use prism::{Imperfect, Loss};
 
 use crate::kernel::{ContentAddressed, Oid};
+
+// ---------------------------------------------------------------------------
+// MirrorOid — the canonical content address
+// ---------------------------------------------------------------------------
+
+/// The canonical mirror content address.
+///
+/// Currently a newtype over SHA-512 [`Oid`]. When git integration
+/// requires bridging to SHA-1, this becomes `MirrorOid<H: HashAlg>`.
+/// The default is always coincidence's spectral hash.
+///
+/// ```text
+/// MirrorOid              // SHA-512. Home.
+/// MirrorOid              // (future: MirrorOid<SHA1> for git. Visiting.)
+/// ```
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct MirrorOid(Oid);
+
+impl MirrorOid {
+    /// Wrap an existing Oid.
+    pub fn new(oid: Oid) -> Self {
+        MirrorOid(oid)
+    }
+
+    /// Hash raw bytes to produce a MirrorOid.
+    pub fn hash(data: &[u8]) -> Self {
+        MirrorOid(Oid::hash(data))
+    }
+
+    /// Access the inner Oid.
+    pub fn as_oid(&self) -> &Oid {
+        &self.0
+    }
+}
+
+impl From<Oid> for MirrorOid {
+    fn from(oid: Oid) -> Self {
+        MirrorOid(oid)
+    }
+}
+
+impl AsRef<str> for MirrorOid {
+    fn as_ref(&self) -> &str {
+        self.0.as_ref()
+    }
+}
+
+impl std::fmt::Display for MirrorOid {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Shard — value + content address
+// ---------------------------------------------------------------------------
+
+/// A value paired with its content address.
+///
+/// The store produces shards — you never get a value without knowing
+/// how it was addressed. The OID is computed from content on insert.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Shard<V> {
+    /// The stored value.
+    pub value: V,
+    /// The content address of the value.
+    pub oid: MirrorOid,
+}
+
+impl<V> Shard<V> {
+    /// Create a new shard from a value and its computed OID.
+    pub fn new(value: V, oid: MirrorOid) -> Self {
+        Shard { value, oid }
+    }
+}
+
+impl<V: Clone> ContentAddressed for Shard<V> {
+    type Oid = Oid;
+    fn content_oid(&self) -> Oid {
+        self.oid.as_oid().clone()
+    }
+}
+
+// ---------------------------------------------------------------------------
+// ForeignKey — bridge between hash domains
+// ---------------------------------------------------------------------------
+
+/// Bridge between hash domains.
+///
+/// A shard addressed by mirror's hash can carry a foreign key to another
+/// hash domain (e.g., git's SHA-1). Home produces visitors. Visitors
+/// don't produce home.
+pub trait ForeignKey {
+    /// The foreign hash as a hex string, if this shard has one.
+    fn foreign_hex(&self) -> Option<&str>;
+}
 
 // ---------------------------------------------------------------------------
 // Store trait
@@ -38,7 +151,7 @@ pub trait Store {
     fn insert(&mut self, value: Self::Value) -> Imperfect<Self::Shard, Self::Error, Self::Loss>;
 
     /// Retrieve by content address.
-    fn get(&self, oid: &Oid) -> Imperfect<Self::Shard, Self::Error, Self::Loss>;
+    fn get(&self, oid: &MirrorOid) -> Imperfect<Self::Shard, Self::Error, Self::Loss>;
 }
 
 // ---------------------------------------------------------------------------
@@ -75,25 +188,10 @@ mod tests {
         }
     }
 
-    // -- Test shard type --
-
-    #[derive(Clone, Debug, PartialEq)]
-    struct TestShard {
-        oid: Oid,
-        data: String,
-    }
-
-    impl ContentAddressed for TestShard {
-        type Oid = Oid;
-        fn content_oid(&self) -> Oid {
-            self.oid.clone()
-        }
-    }
-
-    // -- In-memory store --
+    // -- In-memory store using Shard<String> --
 
     struct MemoryStore {
-        entries: HashMap<String, TestShard>,
+        entries: HashMap<String, Shard<String>>,
     }
 
     impl MemoryStore {
@@ -106,7 +204,7 @@ mod tests {
 
     impl Store for MemoryStore {
         type Value = String;
-        type Shard = TestShard;
+        type Shard = Shard<String>;
         type Error = String;
         type Loss = TestLoss;
 
@@ -114,21 +212,71 @@ mod tests {
             &mut self,
             value: Self::Value,
         ) -> Imperfect<Self::Shard, Self::Error, Self::Loss> {
-            let oid = Oid::hash(value.as_bytes());
-            let shard = TestShard {
-                oid: oid.clone(),
-                data: value,
-            };
+            let oid = MirrorOid::hash(value.as_bytes());
+            let shard = Shard::new(value, oid.clone());
             self.entries.insert(oid.as_ref().to_string(), shard.clone());
             Imperfect::Success(shard)
         }
 
-        fn get(&self, oid: &Oid) -> Imperfect<Self::Shard, Self::Error, Self::Loss> {
+        fn get(&self, oid: &MirrorOid) -> Imperfect<Self::Shard, Self::Error, Self::Loss> {
             match self.entries.get(oid.as_ref()) {
                 Some(shard) => Imperfect::Success(shard.clone()),
                 None => Imperfect::Failure(format!("not found: {}", oid), TestLoss::total()),
             }
         }
+    }
+
+    // -- MirrorOid tests --
+
+    #[test]
+    fn mirror_oid_hash_deterministic() {
+        let a = MirrorOid::hash(b"hello");
+        let b = MirrorOid::hash(b"hello");
+        assert_eq!(a, b);
+    }
+
+    #[test]
+    fn mirror_oid_hash_different_input() {
+        let a = MirrorOid::hash(b"hello");
+        let b = MirrorOid::hash(b"world");
+        assert_ne!(a, b);
+    }
+
+    #[test]
+    fn mirror_oid_from_oid() {
+        let oid = Oid::new("abc");
+        let mirror_oid = MirrorOid::from(oid.clone());
+        assert_eq!(mirror_oid.as_oid(), &oid);
+    }
+
+    #[test]
+    fn mirror_oid_display() {
+        let oid = MirrorOid::new(Oid::new("abc123"));
+        assert_eq!(format!("{}", oid), "abc123");
+        assert_eq!(oid.as_ref(), "abc123");
+    }
+
+    #[test]
+    fn mirror_oid_ordering() {
+        let a = MirrorOid::new(Oid::new("aaa"));
+        let b = MirrorOid::new(Oid::new("bbb"));
+        assert!(a < b);
+    }
+
+    // -- Shard tests --
+
+    #[test]
+    fn shard_content_addressed_trait() {
+        let oid = MirrorOid::new(Oid::new("abc"));
+        let shard = Shard::new("test".to_string(), oid);
+        assert_eq!(shard.content_oid(), Oid::new("abc"));
+    }
+
+    #[test]
+    fn shard_value_access() {
+        let oid = MirrorOid::hash(b"data");
+        let shard = Shard::new("data".to_string(), oid);
+        assert_eq!(shard.value, "data");
     }
 
     // -- Store trait tests --
@@ -139,9 +287,9 @@ mod tests {
         let result = store.insert("hello".to_string());
         assert!(result.is_ok());
         let shard = result.ok().unwrap();
-        assert_eq!(shard.data, "hello");
+        assert_eq!(shard.value, "hello");
         // OID is computed from content
-        assert_eq!(shard.oid, Oid::hash(b"hello"));
+        assert_eq!(shard.oid, MirrorOid::hash(b"hello"));
     }
 
     #[test]
@@ -156,7 +304,7 @@ mod tests {
     #[test]
     fn get_missing_returns_failure() {
         let store = MemoryStore::new();
-        let missing_oid = Oid::new("nonexistent");
+        let missing_oid = MirrorOid::new(Oid::new("nonexistent"));
         let result = store.get(&missing_oid);
         assert!(result.is_err());
     }
@@ -183,16 +331,7 @@ mod tests {
         let original = "content-addressed round trip".to_string();
         let shard = store.insert(original.clone()).ok().unwrap();
         let retrieved = store.get(&shard.oid).ok().unwrap();
-        assert_eq!(retrieved.data, original);
-    }
-
-    #[test]
-    fn shard_content_addressed_trait() {
-        let shard = TestShard {
-            oid: Oid::new("abc"),
-            data: "test".into(),
-        };
-        assert_eq!(shard.content_oid(), Oid::new("abc"));
+        assert_eq!(retrieved.value, original);
     }
 
     #[test]
