@@ -26,8 +26,7 @@ fn mirror_bin() -> Command {
 const BASELINE_SHARD: &str = include_str!("../mirror.shatter");
 
 /// The crystal OID recorded at baseline.
-const BASELINE_OID: &str =
-    "423879d03fe2504b8c5880aa057a0e168229f9646977c9d0fffc8563e8f8d195";
+const BASELINE_OID: &str = "423879d03fe2504b8c5880aa057a0e168229f9646977c9d0fffc8563e8f8d195";
 
 /// The embedded shard compiles to the same OID as the recorded baseline.
 /// This proves: the shard we're carrying IS the shard we claim.
@@ -44,10 +43,7 @@ fn embedded_shard_matches_baseline_oid() {
     // (Note: this may differ from BASELINE_OID if the crystal was
     // re-materialized after the merge. Both are valid — the test
     // verifies internal consistency of the embedded shard.)
-    assert!(
-        !embedded_oid.is_empty(),
-        "embedded shard has no OID"
-    );
+    assert!(!embedded_oid.is_empty(), "embedded shard has no OID");
 }
 
 /// Compiling the embedded shard produces the same shard.

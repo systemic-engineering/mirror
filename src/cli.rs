@@ -494,9 +494,11 @@ flags:
             .output()
             .map_err(CliError::Io)?;
         let stdout = String::from_utf8_lossy(&output.stdout);
-        // DELIBERATE BUG: return empty vec always (for red phase)
-        let _ = stdout;
-        Ok(Vec::new())
+        Ok(stdout
+            .lines()
+            .map(|s| s.trim().to_string())
+            .filter(|b| !b.is_empty() && b != "main")
+            .collect())
     }
 
     /// Count commits on `branch` that are not on main.
@@ -1821,5 +1823,195 @@ mod tests {
             "nothing to merge",
             "repo with only main should report nothing to merge"
         );
+    }
+
+    #[test]
+    fn ca_merge_not_on_main_is_error() {
+        let dir = make_test_repo();
+        let p = dir.path();
+        // Switch to a non-main branch
+        std::process::Command::new("git")
+            .args(["checkout", "-b", "other"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+
+        let cli = Cli::default();
+        let result = cli.cmd_ca_merge_in(p);
+        assert!(result.is_err());
+        let err = format!("{}", result.unwrap_err());
+        assert!(
+            err.contains("must be run from main"),
+            "should require main, got: {}",
+            err
+        );
+    }
+
+    #[test]
+    fn ca_merge_commits_ahead_counts_correctly() {
+        let dir = make_test_repo();
+        let p = dir.path();
+
+        // Create feature branch with 2 commits
+        std::process::Command::new("git")
+            .args(["checkout", "-b", "feat"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        for i in 0..2 {
+            std::fs::write(p.join(format!("f{}.txt", i)), format!("{}", i)).unwrap();
+            std::process::Command::new("git")
+                .args(["add", "."])
+                .current_dir(p)
+                .output()
+                .unwrap();
+            std::process::Command::new("git")
+                .args([
+                    "commit",
+                    "--no-verify",
+                    "--no-gpg-sign",
+                    "-m",
+                    &format!("feat {}", i),
+                ])
+                .current_dir(p)
+                .output()
+                .unwrap();
+        }
+
+        std::process::Command::new("git")
+            .args(["checkout", "main"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+
+        let ahead = Cli::commits_ahead(p, "feat").unwrap();
+        assert_eq!(ahead, 2, "feat should be 2 commits ahead of main");
+    }
+
+    #[test]
+    fn ca_merge_analyze_detects_clean_branch() {
+        let dir = make_test_repo();
+        let p = dir.path();
+
+        // Create a clean feature branch
+        std::process::Command::new("git")
+            .args(["checkout", "-b", "clean-feat"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        std::fs::write(p.join("new.txt"), "new").unwrap();
+        std::process::Command::new("git")
+            .args(["add", "."])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        std::process::Command::new("git")
+            .args(["commit", "--no-verify", "--no-gpg-sign", "-m", "add new"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+
+        std::process::Command::new("git")
+            .args(["checkout", "main"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+
+        let info = Cli::analyze_branch(p, "clean-feat").unwrap();
+        assert_eq!(info.name, "clean-feat");
+        assert_eq!(info.commits_ahead, 1);
+        assert!(
+            !info.has_conflicts,
+            "clean branch should not have conflicts"
+        );
+    }
+
+    #[test]
+    fn ca_merge_analyze_detects_conflicting_branch() {
+        let dir = make_test_repo();
+        let p = dir.path();
+
+        // Modify file.txt on a branch
+        std::process::Command::new("git")
+            .args(["checkout", "-b", "conflict-feat"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        std::fs::write(p.join("file.txt"), "branch version").unwrap();
+        std::process::Command::new("git")
+            .args(["add", "."])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        std::process::Command::new("git")
+            .args([
+                "commit",
+                "--no-verify",
+                "--no-gpg-sign",
+                "-m",
+                "branch change",
+            ])
+            .current_dir(p)
+            .output()
+            .unwrap();
+
+        // Modify same file on main
+        std::process::Command::new("git")
+            .args(["checkout", "main"])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        std::fs::write(p.join("file.txt"), "main version").unwrap();
+        std::process::Command::new("git")
+            .args(["add", "."])
+            .current_dir(p)
+            .output()
+            .unwrap();
+        std::process::Command::new("git")
+            .args([
+                "commit",
+                "--no-verify",
+                "--no-gpg-sign",
+                "-m",
+                "main change",
+            ])
+            .current_dir(p)
+            .output()
+            .unwrap();
+
+        let info = Cli::analyze_branch(p, "conflict-feat").unwrap();
+        assert!(info.has_conflicts, "should detect merge conflict");
+    }
+
+    #[test]
+    fn ca_merge_sorts_by_readiness() {
+        // Verify sort order: no-conflict first, then by commits ahead
+        let mut infos = vec![
+            BranchInfo {
+                name: "conflict".to_string(),
+                commits_ahead: 1,
+                has_conflicts: true,
+            },
+            BranchInfo {
+                name: "big-clean".to_string(),
+                commits_ahead: 5,
+                has_conflicts: false,
+            },
+            BranchInfo {
+                name: "small-clean".to_string(),
+                commits_ahead: 1,
+                has_conflicts: false,
+            },
+        ];
+
+        infos.sort_by(|a, b| {
+            a.has_conflicts
+                .cmp(&b.has_conflicts)
+                .then(a.commits_ahead.cmp(&b.commits_ahead))
+        });
+
+        assert_eq!(infos[0].name, "small-clean");
+        assert_eq!(infos[1].name, "big-clean");
+        assert_eq!(infos[2].name, "conflict");
     }
 }
