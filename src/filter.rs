@@ -233,6 +233,7 @@ fn resolve_ci_key(value: &str) -> Option<String> {
         .decode(value)
         .ok()
         .and_then(|bytes| String::from_utf8(bytes).ok())
+        .map(|s| s.trim().to_string())
 }
 
 // ---------------------------------------------------------------------------
@@ -1081,6 +1082,14 @@ mod tests {
         let key_content = EncryptKey::Public.resolve().unwrap();
         // Should read from fallback_key (CONVERSATION_KEYS_PUBLIC)
         assert_eq!(key_content, "ssh-ed25519 FALL fallback@key");
+
+        // CI Sign 4: base64 with trailing newline should be trimmed
+        let key_with_newline = "ssh-ed25519 AAAA inline@ci\n";
+        let encoded = base64::engine::general_purpose::STANDARD.encode(key_with_newline);
+        std::env::set_var("MIRROR_CI_SIGN_KEY", &encoded);
+        let filter = SignFilter::from_env().unwrap();
+        assert_eq!(filter.signer, "inline@ci");
+        // Signature would be empty in CI context where key has no password
 
         // Clean up
         std::env::remove_var("MIRROR_CI_SIGN_KEY");
