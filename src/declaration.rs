@@ -62,7 +62,7 @@ impl DeclKind {
             "refract" => Some(DeclKind::Refract),
             "traversal" => Some(DeclKind::Traversal),
             "lens" => Some(DeclKind::Lens),
-            "action" => None, // 🔴 deliberately broken
+            "action" => Some(DeclKind::Action),
             _ => None,
         }
     }
