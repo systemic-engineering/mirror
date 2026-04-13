@@ -23,8 +23,8 @@ mod tests {
     }
 
     #[test]
-    fn conversation_token_is_ast_node() {
-        fn assert_token<C: Setting<Token = crate::ast::AstNode>>() {}
+    fn conversation_token_is_ast() {
+        fn assert_token<C: Setting<Token = crate::ast::Ast>>() {}
         assert_token::<conversation::Script>();
     }
 }

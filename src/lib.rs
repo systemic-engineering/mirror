@@ -4,12 +4,11 @@
 //!
 //! ## Architecture
 //!
-//! - **parse** — Source → AST tree (frozen bootstrap parser)
-//! - **resolve** — Grammar type checking, namespace validation
+//! - **ast** — The mirror AST (Atom/Ref/Body/Call/Prism)
 //! - **mirror_runtime** — Spectral content-addressed compilation pipeline
 //! - **kernel** — Content addressing, Oid, Trace, Vector trait hierarchy
-//! - **runtime** — Runtime trait (sync compilation interface)
-//! - **dispatch** — Value, Args, Response, InferenceSchedule
+//! - **runtime** — MetalRuntime trait (Metal compilation interface)
+//! - **dispatch** — Value, Args, Response
 //! - **artifact** — Bounded storage for compiled modules (Pressure-based eviction)
 //!
 //! ## Re-exports
@@ -24,22 +23,14 @@ pub use prism_crate as beam;
 pub mod kernel;
 pub mod abyss;
 pub mod ast;
+pub mod ast_prism;
 pub mod bounded;
-pub mod check;
 pub mod classifier;
 pub mod dispatch;
 pub mod domain;
-pub mod emit;
 pub mod filter;
-pub mod generate;
-pub mod logic;
 pub mod mirror_bf;
-pub mod packages;
-pub mod parse;
 pub mod prism;
-pub mod property;
-pub mod resolve;
-pub mod spectral;
 
 // Kernel types at the crate root.
 pub use kernel::{
@@ -48,28 +39,25 @@ pub use kernel::{
 };
 
 pub use domain::filesystem::{Filesystem, Folder, FolderOid};
-pub use parse::{Parse, ParseError};
 pub use prism::Prism;
-pub use resolve::{
-    Conversation, ConversationOid, Namespace, OutputNode, Resolve, ResolveError, Template,
-    TemplateProvider,
-};
+pub use store::{ForeignKey, MirrorOid, Shard};
 
 // Fragmentation traits for content-addressed storage.
 pub use fragmentation::repo::Repo;
 pub use fragmentation::store::Store;
 
-pub mod db;
-pub mod domain_dispatch;
-
-pub mod features;
+pub mod bundle;
+pub mod cli;
+pub mod declaration;
 pub mod gestalt;
-pub mod ghost;
+pub mod loss;
+pub mod lsp;
 pub mod mirror_runtime;
-pub mod model;
+pub mod optic;
+pub mod parse;
 pub mod runtime;
 pub mod session;
-pub mod training;
-
-pub use model::Mirror;
-pub use runtime::Runtime;
+pub mod shard;
+#[cfg(feature = "git")]
+pub mod sign;
+pub mod store;

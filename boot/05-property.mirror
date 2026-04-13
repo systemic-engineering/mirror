@@ -66,4 +66,18 @@ form @property {
     lens topological
     refract verdict
   }
+
+  property types_lowercase(form) {
+    fold input
+    traversal types
+    lens lowercase
+    refract verdict
+  }
+
+  property action_is_named_type(form) {
+    fold input
+    traversal actions
+    lens receiver_is_type
+    refract verdict
+  }
 }

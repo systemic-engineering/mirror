@@ -26,7 +26,7 @@ pub enum Kind {
 }
 
 impl Setting for Script {
-    type Token = crate::ast::AstNode;
+    type Token = crate::ast::Ast;
 
     fn id() -> &'static str {
         "conversation"

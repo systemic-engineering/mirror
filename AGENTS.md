@@ -1,156 +1,225 @@
-# conversation — Autonomous Development
+# Agents
 
-## Posture
+Instructions for AI agents working on the `mirror` crate.
 
-Keep going until you hit a design wall that requires human input. Until
-then: follow the math. Spawn research agents when the territory is
-unfamiliar. Iterate. The stopping condition is not "I finished a task" —
-it's "I need a decision I can't make from the math alone."
+## The Crate
 
-A design wall is:
-- A choice between incompatible mathematical frameworks
-- A type surface question that affects downstream crates
-- An architectural boundary that changes the public API shape
-- Something the tests can't tell you
+`mirror` — an emergent holonomy compiler. `.mirror` files → content-addressed
+artifacts → verified domains. The compiler IS the LSP. The CLI IS the REPL.
+The gutter IS terni.
 
-Everything else — implementation, testing, documentation, research,
-refactoring — keep moving.
+The compilation return type is `Imperfect<CompiledArtifact, CompilationError, MirrorLoss>`.
 
----
+## Build
 
-## This Crate
-
-The conversation compiler. Grammars → typed, content-addressed BEAM
-modules. The compiler is a model checker: finite types, no recursion,
-decidable verification. Rice's theorem does not apply.
-
-### Key Modules
-
-- **logic.rs** — TypeRegistry as Datalog fact store. Fact enum,
-  FactStore, ProofCertificate, ReachabilityMap, Determinism (Mercury
-  hierarchy → optics). Five design break tests documenting where the
-  flat model hits walls.
-- **spectral.rs** — Grammar geometry via coincidence (feature-gated).
-  GrammarSpectrum (AST Laplacian), TypeGraphSpectrum (type reference
-  graph Laplacian), GrammarProjection (type surface as P²=P operator).
-- **ffi.rs** — NIF bridge. ProofCertificate travels with compiled ETF.
-
-### Five Design Breaks (where the flat Fact model needs rules)
-
-| Break | What's missing | What it needs |
-|-------|---------------|---------------|
-| extends inheritance | Invisible to ground facts | Horn clauses (Datalog rules) |
-| Lens composition | Not captured | Transitive closure rules |
-| Monotonic only | No retract | Epochs or differential dataflow |
-| No negation | Can't prove absence | Stratified negation + CWA |
-| No joins | O(n×m) cross-domain | Indexed storage, seminaive eval |
-
-Each break is a specification for the next phase. When you encounter
-one, spawn a research agent. If the research points to implementable
-math, implement it.
-
-### Integration Points
-
-- **coincidence** — `spectral` feature flag brings in `Laplacian`,
-  `Projection`, `Spectrum`, `StateVector`. Grammar trees feed directly
-  into spectral analysis. `from_adjacency()` enables type graph spectra.
-- **fragmentation** — `Prism<AstNode>` implements `Fragmentable`.
-  Compiler output is content-addressed trees in the fragmentation store.
-
----
-
-## Architectural Boundaries
-
-### The Rust/BEAM boundary
-
-The Rust parser is done. It parses `.conv` source into `Prism<AstNode>` and
-commits it to the in-memory Repo. What crosses the threshold is an OID. That's it.
-
-Everything after parse belongs to the BEAM.
-
-**Do not extend Rust to handle:**
-- Package discovery or resolution
-- Grammar compilation or type validation beyond parsing
-- Namespace building
-- Actor spawning or lifecycle
-- Garden compatibility fixes
-
-These are BEAM concerns. The modules `resolve.rs`, `packages.rs`, `compile.rs`,
-and `property.rs` exist but are being superseded. Do not add features to them.
-
-**Two Rust FFI functions cross the boundary** (in `ffi.rs`):
-- `conv_parse` — parses `.conv` source, commits the Prism, returns OID
-- `conv_compile_grammar` — parses + compiles to EAF (ETF bytes for BEAM module)
-
-**The BEAM side** (`beam/`) is Gleam. It receives the OID.
-`@conversation` extends `@compiler`. The `@compiler` actor
-(`beam/src/conversation/compiler.gleam`) signs and witnesses via `Trace`.
-
-Supervision lives in Gleam — `supervisor.gleam` (static, RestForOne) manages
-@compiler + `garden.gleam` (factory supervisor for domain servers). The old
-`conversation_sup.erl` is deprecated.
-
-Each garden package that declares `in @actor` becomes a spawned actor.
-
----
-
-## AST design
-
-**The AST decomposes all the way down. Stringly typed is the devil.**
-
-Every meaningful distinction in the language belongs in the `Kind` enum — not
-in `value: String`. If you're putting structured meaning into a string field,
-you're losing a type. The type system is the documentation. The compiler is the
-reviewer.
-
-Examples of what this means:
-
-- Comparison operators: `Kind::When(Op::Gt)`, not `Kind::When` with `value: ">"`
-- Named qualifiers: if they have distinct behavior, they're distinct types
-- Domain paths: `.` and `/` navigate different spaces — eventually different types
-
-The `value: String` field on `AstNode` is for *names and literals* — the things
-that don't have enumerable structure. Everything that does have structure gets a
-type.
-
-When you find yourself pattern-matching on a string to dispatch behavior, that's
-the signal: the structure wants to move up into `Kind`.
-
----
-
-## Coverage
-
-100% line coverage or the commit is rejected. `just check` runs it via:
-
-```
-nix develop -c cargo llvm-cov --lib --fail-under-lines 100
+```bash
+cd /Users/alexwolf/dev/projects/mirror
+nix develop -c cargo test
+nix develop -c cargo clippy --workspace -- -D warnings
+nix develop -c cargo fmt --all -- --check
 ```
 
-Coverage gaps that look impossible are usually closure monomorphization. See
-the framework crate memory for the pattern.
+Or use just:
+```bash
+just check    # format + lint + test
+just test     # test only
+```
 
----
+Bare `cargo` is not in PATH. Always use `nix develop -c cargo ...` or `just`.
 
-## TDD
+## TDD Discipline
 
-🔴 (compile-failing tests) → 🟢 (implement) → ♻️ (refactor). The pre-commit
-hook enforces this. Each phase is a separate commit with the emoji marker.
+Non-negotiable. Every test must be proven real.
 
-Red phase: hook accepts failures. Green/refactor phases: hook requires all
-checks to pass.
+### The arc
 
-Work on your own branch. Never commit directly to main. Merge requires
-adversarial review.
+1. Write the test with the **correct assertion**. The test is the specification.
+2. **Break the implementation** deliberately. Make the code path return the wrong thing.
+3. Run tests. The test **must fail**. This proves it catches the bug.
+4. Commit `🔴` — broken code + correct test = failing.
+5. **Restore the implementation**. Undo the deliberate break.
+6. Run tests. The test **must pass**.
+7. Commit `🟢` — correct code + correct test = passing.
 
-Commit identity follows the agent: Reed commits as Reed, Mara commits
-as Mara. The witness is part of the hash.
+### What this means
 
----
+- The TEST is always correct. Never write a wrong assertion.
+- The CODE breaks deliberately. You introduce a temporary bug.
+- A test that was never red is a test that potentially lies.
+- If a test passes despite broken code, the test is worthless. Delete it.
+- The git log proves both states existed.
 
-## Current State
+### Phase markers
 
-627 tests. 100% line coverage. Modules: kernel, ast, compile, domain,
-ffi, filter, generate, logic, packages, parse, prism, property,
-resolve, spectral (feature-gated).
+Every commit message must start with a phase marker:
 
-Full roadmap: [`docs/roadmap/README.md`](docs/roadmap/README.md)
+| Marker | Phase | Tests must... |
+|--------|-------|---------------|
+| `🔴` | Red | Fail (deliberately broken code) |
+| `🟢` | Green | Pass |
+| `♻️` | Refactor | Pass (no new behavior) |
+| `🔧` | Tooling | Pass (infrastructure/config) |
+| `🔀` | Merge | Pass |
+
+The pre-commit hook enforces this.
+
+## Commit Identity
+
+Each agent commits as themselves:
+
+| Agent | Email | Role |
+|-------|-------|------|
+| Reed | reed@systemic.engineer | Supervisor, architecture |
+| Mara | mara@systemic.engineer | Builder, tests, coverage |
+| Glint | glint@systemic.engineer | Polish, docs, release |
+| Taut | taut@systemic.engineer | Benchmarks, performance |
+| Seam | seam@systemic.engineer | Adversarial review, security |
+
+```bash
+git commit --author="Name <name@systemic.engineer>" -m "🟢 message"
+```
+
+GPG signing is configured. Commits are signed automatically.
+
+## Architecture
+
+Read these docs before working:
+
+- `docs/mirror.md` — what mirror IS
+- `docs/emergent-holonomy-compiler.md` — the full architecture
+- `docs/gutter.md` — holonomy rendered as green/amber/red
+- `docs/shatter-spec.md` — the .shatter crystal format
+- `docs/garden.md` (in prism) — @lang, agent language affinity
+
+## Key Types
+
+### MirrorLoss (`src/loss.rs`)
+
+Mirror's domain-specific Loss type. Implements `terni::Loss`.
+IS `Transport::Holonomy` in the bundle tower.
+IS what TraceBeam wanted to become.
+
+Fields: phases, resolution_ratio, unresolved_refs, staleness,
+convergence, dark_dims, crystal, recovered.
+
+### Shard (`src/shard.rs`)
+
+The compiled artifact carrier. Grammar OID + KernelSpec + Target.
+
+### Shatter (`src/mirror_runtime.rs`)
+
+The compilation Prism. Implements `prism::Prism`.
+Focus → Project → Refract. Form → MirrorData → MirrorFragment → Crystal.
+
+### Form (`src/mirror_runtime.rs`)
+
+The parsed-but-not-yet-content-addressed view. Kind + name + params +
+variants + children. The structural mirror of MirrorData.
+
+### MirrorCompiler (`src/bundle.rs`)
+
+The bundle tower implementation:
+- Fiber: source text
+- Connection: KernelSpec
+- Gauge: Target (BEAM/WASM/Metal)
+- Transport: compilation with MirrorLoss as holonomy
+- Closure: the compiled artifact
+
+## Boot Sequence
+
+```
+boot/00-prism.mirror      the five optics
+boot/01-meta.mirror       meta operations
+boot/02-actor.mirror      actor, process, message
+boot/04-action.mirror     generic action optic (GAT)
+boot/03-property.mirror   verification properties
+boot/10-mirror.mirror     the mirror form (requires + invariant + ensures)
+```
+
+The boot files establish the language. Each file builds on the previous.
+The compiler learns by reading them in order.
+
+## Properties
+
+The compiler is a model checker. Properties are verified at compile time.
+
+```mirror
+requires types_lowercase
+requires action_is_named_type
+requires unique_variants
+requires every_type_reachable
+requires no_dead_variants
+invariant dual_partition
+invariant idempotent
+invariant deterministic
+invariant pure
+invariant no_cycles
+ensures always_halts
+```
+
+Properties return `Imperfect<verdict, violation, verification_loss>`.
+Partial verdicts are real — `partial(0.97)` means 97% of paths verified.
+
+## Grammar Conventions
+
+- Types are always lowercase: `type grammar`, not `type Grammar`
+- Actions are always implemented on named types
+- `in @code/rust { }` — the block IS the state struct
+- `action name()` — the action IS a method on that struct
+- `recover |value, loss| { }` — 7-9 handler
+- `rescue |error| { }` — 6- handler
+
+## Dependencies
+
+```
+mirror
+├── prism (prism-core, path dep)
+│   └── terni (submodule in prism, Imperfect/Loss/Eh)
+├── fragmentation (content-addressed storage)
+├── fragmentation-git (git-native store)
+└── coincidence (spectral analysis)
+```
+
+## The Compilation Pipeline
+
+```
+.mirror source
+    ↓ parse
+Form
+    ↓ focus (eigenvalue extraction)
+MirrorData
+    ↓ project (content addressing)
+MirrorFragment (OID)
+    ↓ refract (crystallization)
+.shatter (crystal — feedable back into the compiler)
+```
+
+Each step returns `Imperfect<Output, Error, MirrorLoss>`.
+The `eh!` macro accumulates loss through the pipeline.
+
+## .shatter Files
+
+A `.shatter` file IS a `.mirror` file. The compiler can read its own
+output. `mirror compile output.shatter → output.shatter` (idempotent).
+
+Contents: fragment tree + MirrorLoss + property verdicts + KernelSpec + Fate weights.
+
+`mirror ai file.shatter` — feed through Fate, re-settle if drifted.
+`mirror ai --train file.shatter` — same + update Fate weights from MirrorLoss.
+
+## What NOT to do
+
+- Do NOT skip the red phase. Break the code. Prove the test.
+- Do NOT use `ShannonLoss`. Mirror has `MirrorLoss`. prism-core has `ScalarLoss`.
+- Do NOT use `PureBeam`. It's been renamed to `Optic`.
+- Do NOT write in Alex's voice. Agent writes as agent.
+- Do NOT change .mirror files in `boot/` without understanding the boot order.
+- Do NOT change the terni submodule from within mirror.
+
+## The Gutter
+
+Green: crystallized. Zero holonomy. Move on.
+Amber: oscillating. The models are working. Give it time.
+Red: high holonomy. This code needs you.
+
+The gutter IS terni rendered as light.

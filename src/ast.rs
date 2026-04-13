@@ -1,284 +1,297 @@
-//! AST primitives. Span + AstNode.
+//! The mirror AST.
 //!
-//! The AST is `Prism<AstNode>`. A .mirror file parsed is a tree
-//! in the conversation domain. Same type as everything else.
-
-use crate::domain::conversation::Kind;
-use crate::prism::{self, Prism};
-use crate::{ContentAddressed, Oid};
-use fragmentation::encoding::Encode;
-use fragmentation::ref_::Ref;
-use fragmentation::sha;
+//! Four types, one enum. Mirror is a prism under the hood.
+//!
+//! - `Atom` — a symbol
+//! - `Ref`  — @symbol (a reference to a named form)
+//! - `Body` — { children } (a block scope)
+//! - `Call` — name(args) (a name applied to arguments)
+//! - `Prism` — @name { body } (a named block — the `prism` keyword)
+//!
+//! The AST is what `ASTPrism.split` yields as parts. Each part is one
+//! of these five. The tree structure IS the split structure. Parsing
+//! a .mirror file refracts it through the ASTPrism; the crystal is a
+//! MirrorPrism — the compiled thing.
 
 domain_oid!(/// Content address for AST nodes.
 pub AstOid);
 
-impl Encode for AstNode {
-    fn encode(&self) -> Vec<u8> {
-        self.label().into_bytes()
+/// A symbol. The leaf of every expression.
+///
+/// Atoms are identifiers, operators, keywords, type names — anything
+/// that isn't prefixed with `@` or wrapped in `{}`.
+///
+/// Examples: `id`, `type`, `focus`, `|>`, `f64`, `loss`
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct Atom(pub String);
+
+impl Atom {
+    pub fn new(s: impl Into<String>) -> Self {
+        Atom(s.into())
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
     }
 }
 
-impl ContentAddressed for AstNode {
-    type Oid = AstOid;
-    fn content_oid(&self) -> AstOid {
-        AstOid::from(Oid::hash(self.label().as_bytes()))
+/// A reference to a named form. The `@` sigil.
+///
+/// `@prism` is `Ref(Atom("prism"))`, not `Atom("@prism")`.
+/// The sigil is structural, not textual.
+///
+/// Examples: `@prism`, `@meta`, `@actor`, `@property`
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct Ref(pub Atom);
+
+impl Ref {
+    pub fn new(s: impl Into<String>) -> Self {
+        Ref(Atom::new(s))
+    }
+
+    pub fn atom(&self) -> &Atom {
+        &self.0
+    }
+
+    pub fn as_str(&self) -> &str {
+        self.0.as_str()
     }
 }
 
-/// Byte offset range in source. Every AST node carries one.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct Span {
-    pub start: u32,
-    pub end: u32,
-}
+/// A block scope. The `{ }` delimiters.
+///
+/// Body is a newtype around `Vec<Ast>`, giving braces structural
+/// meaning in the type system — you can't accidentally confuse a
+/// list of call arguments with a block body.
+///
+/// Examples: `{ focus type(id) }`, `{ result: result, loss: loss }`
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Body(pub Vec<Ast>);
 
-impl Span {
-    pub fn new(start: u32, end: u32) -> Self {
-        Span { start, end }
+impl Body {
+    pub fn new(children: Vec<Ast>) -> Self {
+        Body(children)
     }
 
-    /// Merge two spans into one covering both.
-    pub fn merge(&self, other: &Span) -> Span {
-        Span {
-            start: self.start.min(other.start),
-            end: self.end.max(other.end),
+    pub fn children(&self) -> &[Ast] {
+        &self.0
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+}
+
+/// The mirror AST.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Ast {
+    /// A symbol.
+    Atom(Atom),
+
+    /// A reference to a named form: `@foo`
+    Ref(Ref),
+
+    /// A block scope: `{ children }`
+    Body(Body),
+
+    /// A name applied to arguments: `name(args)` or `name arg1 arg2`
+    Call { name: Atom, args: Vec<Ast> },
+
+    /// A named block: `prism @name { body }`
+    Prism { name: Ref, body: Body },
+}
+
+// ---------------------------------------------------------------------------
+// Emit — print an AST back as mirror source
+// ---------------------------------------------------------------------------
+
+impl std::fmt::Display for Atom {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl std::fmt::Display for Ref {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "@{}", self.0)
+    }
+}
+
+impl std::fmt::Display for Ast {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        emit(self, 0, f)
+    }
+}
+
+fn emit(ast: &Ast, indent: usize, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    let pad = "  ".repeat(indent);
+    match ast {
+        Ast::Atom(a) => write!(f, "{}{}", pad, a),
+        Ast::Ref(r) => write!(f, "{}{}", pad, r),
+        Ast::Body(body) => {
+            writeln!(f, "{}{{", pad)?;
+            for child in body.children() {
+                emit(child, indent + 1, f)?;
+                writeln!(f)?;
+            }
+            write!(f, "{}}}", pad)
+        }
+        Ast::Call { name, args } => {
+            write!(f, "{}{}", pad, name)?;
+            if !args.is_empty() {
+                // Check if the last arg is a Body — if so, print it as a block
+                let (regular, block) = split_body_arg(args);
+                if !regular.is_empty() {
+                    write!(f, "(")?;
+                    for (i, arg) in regular.iter().enumerate() {
+                        if i > 0 {
+                            write!(f, ", ")?;
+                        }
+                        emit(arg, 0, f)?;
+                    }
+                    write!(f, ")")?;
+                }
+                if let Some(body) = block {
+                    writeln!(f, " {{")?;
+                    for child in body.children() {
+                        emit(child, indent + 1, f)?;
+                        writeln!(f)?;
+                    }
+                    write!(f, "{}}}", pad)?;
+                }
+            }
+            Ok(())
+        }
+        Ast::Prism { name, body } => {
+            write!(f, "{}prism {} {{", pad, name)?;
+            if body.is_empty() {
+                write!(f, "}}")
+            } else {
+                writeln!(f)?;
+                for child in body.children() {
+                    emit(child, indent + 1, f)?;
+                    writeln!(f)?;
+                }
+                write!(f, "{}}}", pad)
+            }
         }
     }
 }
 
-/// A node in the AST. Carries syntax kind, semantic name, raw text, and source location.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct AstNode {
-    pub kind: Kind,
-    pub name: String,
-    pub value: String,
-    pub span: Span,
-}
-
-impl AstNode {
-    /// Canonical identity string: `Kind:name:value`. Single source of truth
-    /// for content addressing (Encode, ContentAddressed) and tree refs.
-    fn label(&self) -> String {
-        format!("{:?}:{}:{}", self.kind, self.name, self.value)
-    }
-
-    pub fn is_decl(&self, name: &str) -> bool {
-        self.kind == Kind::Decl && self.name == name
-    }
-    pub fn is_atom(&self, name: &str) -> bool {
-        self.kind == Kind::Atom && self.name == name
-    }
-    pub fn is_ref(&self, name: &str) -> bool {
-        self.kind == Kind::Ref && self.name == name
-    }
-    pub fn is_form(&self, name: &str) -> bool {
-        self.kind == Kind::Form && self.name == name
+/// Split the args list into regular args and an optional trailing Body.
+fn split_body_arg(args: &[Ast]) -> (&[Ast], Option<&Body>) {
+    if let Some(Ast::Body(body)) = args.last() {
+        (&args[..args.len() - 1], Some(body))
+    } else {
+        (args, None)
     }
 }
 
-/// Content-addressed ref from an AstNode's label.
-fn node_ref(node: &AstNode) -> Ref {
-    let label = node.label();
-    Ref::new(sha::hash(&label), &label)
+// ---------------------------------------------------------------------------
+// ContentAddressed — content-address by display form
+// ---------------------------------------------------------------------------
+
+impl crate::kernel::ContentAddressed for Ast {
+    type Oid = crate::Oid;
+    fn content_oid(&self) -> crate::Oid {
+        crate::Oid::hash(format!("{}", self).as_bytes())
+    }
 }
 
-/// Build a leaf AST node. Ref is content-addressed from `kind:name:value`.
-pub fn ast_leaf(
-    kind: Kind,
-    name: impl Into<String>,
-    value: impl Into<String>,
-    span: Span,
-) -> Prism<AstNode> {
-    let node = AstNode {
-        kind,
-        name: name.into(),
-        value: value.into(),
-        span,
-    };
-    let ref_ = node_ref(&node);
-    prism::shard(ref_, node)
-}
-
-/// Build a branch AST node. Ref is content-addressed from `kind:name:value`.
-pub fn ast_branch(
-    kind: Kind,
-    name: impl Into<String>,
-    value: impl Into<String>,
-    span: Span,
-    children: Vec<Prism<AstNode>>,
-) -> Prism<AstNode> {
-    let node = AstNode {
-        kind,
-        name: name.into(),
-        value: value.into(),
-        span,
-    };
-    let ref_ = node_ref(&node);
-    prism::fractal(ref_, node, children)
-}
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    // -- ContentAddressed --
 
     #[test]
-    fn ast_node_content_addressed() {
-        let a = AstNode {
-            kind: Kind::Atom,
-            name: "field".into(),
-            value: "slug".into(),
-            span: Span::new(0, 4),
+    fn atom_displays() {
+        assert_eq!(format!("{}", Atom::new("id")), "id");
+        assert_eq!(format!("{}", Atom::new("|>")), "|>");
+    }
+
+    #[test]
+    fn ref_displays_with_sigil() {
+        assert_eq!(format!("{}", Ref::new("prism")), "@prism");
+    }
+
+    #[test]
+    fn simple_call_displays() {
+        let ast = Ast::Call {
+            name: Atom::new("focus"),
+            args: vec![Ast::Atom(Atom::new("id"))],
         };
-        let b = AstNode {
-            kind: Kind::Atom,
-            name: "field".into(),
-            value: "slug".into(),
-            span: Span::new(100, 104),
+        assert_eq!(format!("{}", ast), "focus(id)");
+    }
+
+    #[test]
+    fn nested_call_displays() {
+        let ast = Ast::Call {
+            name: Atom::new("focus"),
+            args: vec![Ast::Call {
+                name: Atom::new("type"),
+                args: vec![Ast::Atom(Atom::new("id"))],
+            }],
         };
-        // Same kind + value = same OID, regardless of span
-        assert_eq!(a.content_oid(), b.content_oid());
+        assert_eq!(format!("{}", ast), "focus(type(id))");
     }
 
     #[test]
-    fn ast_node_different_kind_different_oid() {
-        let a = AstNode {
-            kind: Kind::Atom,
-            name: "field".into(),
-            value: "html".into(),
-            span: Span::new(0, 4),
+    fn call_with_ref_arg() {
+        let ast = Ast::Call {
+            name: Atom::new("in"),
+            args: vec![Ast::Ref(Ref::new("prism"))],
         };
-        let b = AstNode {
-            kind: Kind::Atom,
-            name: "qualifier".into(),
-            value: "html".into(),
-            span: Span::new(0, 4),
+        assert_eq!(format!("{}", ast), "in(@prism)");
+    }
+
+    #[test]
+    fn call_with_body_arg() {
+        let ast = Ast::Call {
+            name: Atom::new("type"),
+            args: vec![
+                Ast::Call {
+                    name: Atom::new("beam"),
+                    args: vec![Ast::Atom(Atom::new("result"))],
+                },
+                Ast::Body(Body::new(vec![
+                    Ast::Atom(Atom::new("loss")),
+                    Ast::Atom(Atom::new("precision")),
+                ])),
+            ],
         };
-        assert_ne!(a.content_oid(), b.content_oid());
+        let out = format!("{}", ast);
+        assert!(out.contains("type(beam(result))"));
+        assert!(out.contains("loss"));
+        assert!(out.contains("precision"));
     }
 
     #[test]
-    fn content_address_includes_name() {
-        // Same kind + value but different name → different OID
-        let a = AstNode {
-            kind: Kind::Atom,
-            name: "field".into(),
-            value: "x".into(),
-            span: Span::new(0, 1),
+    fn prism_displays() {
+        let ast = Ast::Prism {
+            name: Ref::new("meta"),
+            body: Body::new(vec![Ast::Call {
+                name: Atom::new("focus"),
+                args: vec![Ast::Ref(Ref::new(""))],
+            }]),
         };
-        let b = AstNode {
-            kind: Kind::Atom,
-            name: "custom".into(),
-            value: "x".into(),
-            span: Span::new(0, 1),
+        let out = format!("{}", ast);
+        assert!(out.starts_with("prism @meta {"));
+        assert!(out.contains("focus(@)"));
+    }
+
+    #[test]
+    fn empty_prism_displays() {
+        let ast = Ast::Prism {
+            name: Ref::new("empty"),
+            body: Body::new(vec![]),
         };
-        assert_ne!(a.content_oid(), b.content_oid());
-    }
-
-    // -- Span tests --
-
-    #[test]
-    fn span_new() {
-        let s = Span::new(0, 10);
-        assert_eq!(s.start, 0);
-        assert_eq!(s.end, 10);
-    }
-
-    #[test]
-    fn span_merge_covers_both() {
-        let a = Span::new(5, 10);
-        let b = Span::new(2, 7);
-        let merged = a.merge(&b);
-        assert_eq!(merged.start, 2);
-        assert_eq!(merged.end, 10);
-    }
-
-    #[test]
-    fn span_merge_is_commutative() {
-        let a = Span::new(5, 10);
-        let b = Span::new(2, 7);
-        assert_eq!(a.merge(&b), b.merge(&a));
-    }
-
-    // -- AstNode + tree construction --
-
-    #[test]
-    fn ast_leaf_is_terminal() {
-        let node = ast_leaf(Kind::Atom, "field", "slug", Span::new(0, 4));
-        assert!(node.is_shard());
-        assert_eq!(node.data().kind, Kind::Atom);
-        assert_eq!(node.data().value, "slug");
-        assert_eq!(node.data().span, Span::new(0, 4));
-    }
-
-    #[test]
-    fn ast_branch_has_children() {
-        let children = vec![
-            ast_leaf(Kind::Atom, "field", "slug", Span::new(10, 14)),
-            ast_leaf(Kind::Atom, "field", "excerpt", Span::new(16, 23)),
-        ];
-        let node = ast_branch(
-            Kind::Decl,
-            "template",
-            "$corpus",
-            Span::new(0, 25),
-            children,
-        );
-        assert!(node.is_fractal());
-        assert_eq!(node.children().len(), 2);
-        assert_eq!(node.data().kind, Kind::Decl);
-        assert_eq!(node.data().value, "$corpus");
-    }
-
-    #[test]
-    fn ast_node_has_name() {
-        let node = ast_leaf(Kind::Atom, "field", "slug", Span::new(0, 4));
-        assert_eq!(node.data().name, "field");
-    }
-
-    #[test]
-    fn ast_node_structural_kind_helpers() {
-        let decl = AstNode {
-            kind: Kind::Decl,
-            name: "in".into(),
-            value: "@filesystem".into(),
-            span: Span::new(0, 14),
-        };
-        assert!(decl.is_decl("in"));
-        assert!(!decl.is_atom("in"));
-        assert!(!decl.is_ref("in"));
-        assert!(!decl.is_form("in"));
-
-        let atom = AstNode {
-            kind: Kind::Atom,
-            name: "field".into(),
-            value: "slug".into(),
-            span: Span::new(0, 4),
-        };
-        assert!(atom.is_atom("field"));
-        assert!(!atom.is_decl("field"));
-    }
-
-    #[test]
-    fn ast_ref_is_content_addressed() {
-        let a = ast_leaf(Kind::Atom, "field", "slug", Span::new(0, 4));
-        let b = ast_leaf(Kind::Atom, "field", "slug", Span::new(100, 104));
-        // Same kind + value = same ref, regardless of span
-        assert_eq!(a.self_ref(), b.self_ref());
-    }
-
-    #[test]
-    fn different_kind_different_ref() {
-        let a = ast_leaf(Kind::Atom, "field", "html", Span::new(0, 4));
-        let b = ast_leaf(Kind::Atom, "qualifier", "html", Span::new(0, 4));
-        assert_ne!(a.self_ref(), b.self_ref());
-    }
-
-    #[test]
-    fn different_value_different_ref() {
-        let a = ast_leaf(Kind::Atom, "field", "slug", Span::new(0, 4));
-        let b = ast_leaf(Kind::Atom, "field", "excerpt", Span::new(0, 7));
-        assert_ne!(a.self_ref(), b.self_ref());
+        assert_eq!(format!("{}", ast), "prism @empty {}");
     }
 }

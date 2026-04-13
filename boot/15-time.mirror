@@ -1,0 +1,107 @@
+in @prism
+in @meta
+in @actor
+
+-- a point-in-time capture of spectral state
+-- every tick produces an oid. every oid is in the store.
+type tick(u64)
+type snapshot {
+  oid: ref,
+  tick: tick,
+  loss: loss,
+}
+
+-- ordered sequence of snapshots — the full history
+type timeline {
+  head: snapshot,
+  snapshots: [snapshot],
+}
+
+-- position in the timeline — where the observer stands
+type cursor {
+  current: snapshot,
+  timeline: timeline,
+}
+
+-- structural diff between two snapshots
+-- not textual. the delta is a set of oid mutations.
+type mutation = insert(ref) | remove(ref) | replace(ref, ref)
+type delta {
+  from: snapshot,
+  to: snapshot,
+  mutations: [mutation],
+  holonomy: loss,
+}
+
+-- re-execution of the pipeline from a past state
+type replay {
+  origin: snapshot,
+  result: snapshot,
+  delta: delta,
+}
+
+-- a branch from a past state — new timeline, shared ancestry
+type fork {
+  origin: snapshot,
+  branch: timeline,
+}
+
+grammar @time {
+  in @actor
+
+  -- visit a past state (read-only observation)
+  -- the present is not lost. the cursor moves. the state does not.
+  action enter(snapshot) -> imperfect
+
+  -- bring a specific ref from the past to the present
+  -- the ref is content-addressed. if it exists, it restores.
+  -- if the ref conflicts with present state, the result is partial.
+  action restore(snapshot, ref) -> imperfect
+
+  -- navigate the timeline — scroll through snapshots
+  -- returns the cursor at the requested position
+  action browse(timeline) -> cursor
+
+  -- structural diff between two points in time
+  -- returns the set of oid mutations, not a textual diff
+  action compare(snapshot, snapshot) -> delta
+
+  -- re-run the pipeline from this state
+  -- deterministic: same oids in, same oids out
+  -- the new holonomy measures drift from original execution
+  action replay(snapshot) -> replay
+
+  -- create a branch from a past state
+  -- the fork shares ancestry. the branch diverges.
+  -- like git branch, but for spectral state, not files.
+  action fork(snapshot) -> fork
+
+  -- move the cursor forward or backward by n ticks
+  action step(cursor, n: i64) -> cursor
+
+  -- return to the present — release the time travel view
+  action present(cursor) -> snapshot
+
+  recover |result, loss| {
+    -- time travel is read-only observation of immutable oids
+    -- partial loss means the restore conflicted with present state
+    log_drift(loss)
+    result
+  }
+
+  rescue |error| {
+    -- the oid is missing from the store, or the timeline is empty
+    -- return the cursor at HEAD — the present is always reachable
+    present(cursor)
+  }
+}
+
+out tick
+out snapshot
+out timeline
+out cursor
+out mutation
+out delta
+out replay
+out fork
+out @time
