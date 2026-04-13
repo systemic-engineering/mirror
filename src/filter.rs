@@ -164,6 +164,44 @@ impl Vector<Value, Value> for SignFilter {
 }
 
 // ---------------------------------------------------------------------------
+// Visibility — consent boundary for CI pipelines
+// ---------------------------------------------------------------------------
+
+/// Visibility level for CI pipeline output.
+///
+/// Read from `MIRROR_CI_VISIBILITY` env var. Defaults to `Public`.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Visibility {
+    Public,
+    Protected,
+    Private,
+}
+
+impl Visibility {
+    /// Read visibility from `MIRROR_CI_VISIBILITY` env var.
+    ///
+    /// Case-insensitive. Unset or unrecognized values default to `Public`.
+    pub fn from_env() -> Self {
+        // TODO: implement — always returns Public for now
+        Visibility::Public
+    }
+}
+
+// ---------------------------------------------------------------------------
+// CI key resolution helper
+// ---------------------------------------------------------------------------
+
+/// Resolve a CI key env var value to key content.
+///
+/// The value is either:
+/// - A path to a key file (if a file exists at that path)
+/// - Base64-encoded key content (otherwise)
+fn resolve_ci_key(_value: &str) -> Option<String> {
+    // TODO: implement
+    None
+}
+
+// ---------------------------------------------------------------------------
 // EncryptKey — argument union for @encrypt
 // ---------------------------------------------------------------------------
 
@@ -891,5 +929,118 @@ mod tests {
 
         let filter = SignFilter::from_keys_dir(dir.path()).unwrap();
         assert_eq!(filter.signer, "first@key");
+    }
+
+    // -- Visibility --
+
+    #[test]
+    fn visibility_default_is_public() {
+        std::env::remove_var("MIRROR_CI_VISIBILITY");
+        assert_eq!(Visibility::from_env(), Visibility::Public);
+    }
+
+    #[test]
+    fn visibility_from_env_public() {
+        std::env::set_var("MIRROR_CI_VISIBILITY", "public");
+        assert_eq!(Visibility::from_env(), Visibility::Public);
+        std::env::remove_var("MIRROR_CI_VISIBILITY");
+    }
+
+    #[test]
+    fn visibility_from_env_protected() {
+        std::env::set_var("MIRROR_CI_VISIBILITY", "protected");
+        assert_eq!(Visibility::from_env(), Visibility::Protected);
+        std::env::remove_var("MIRROR_CI_VISIBILITY");
+    }
+
+    #[test]
+    fn visibility_from_env_private() {
+        std::env::set_var("MIRROR_CI_VISIBILITY", "private");
+        assert_eq!(Visibility::from_env(), Visibility::Private);
+        std::env::remove_var("MIRROR_CI_VISIBILITY");
+    }
+
+    #[test]
+    fn visibility_from_env_case_insensitive() {
+        std::env::set_var("MIRROR_CI_VISIBILITY", "Protected");
+        assert_eq!(Visibility::from_env(), Visibility::Protected);
+        std::env::set_var("MIRROR_CI_VISIBILITY", "PRIVATE");
+        assert_eq!(Visibility::from_env(), Visibility::Private);
+        std::env::remove_var("MIRROR_CI_VISIBILITY");
+    }
+
+    #[test]
+    fn visibility_from_env_unknown_defaults_public() {
+        std::env::set_var("MIRROR_CI_VISIBILITY", "bogus");
+        assert_eq!(Visibility::from_env(), Visibility::Public);
+        std::env::remove_var("MIRROR_CI_VISIBILITY");
+    }
+
+    // -- MIRROR_CI_SIGN_KEY / MIRROR_CI_ENCRYPT_KEY --
+
+    #[test]
+    fn mirror_ci_env_var_scenarios() {
+        // ALL MIRROR_CI env-var tests in one function to avoid parallel race.
+
+        // === MIRROR_CI_SIGN_KEY ===
+
+        // CI Sign 1: MIRROR_CI_SIGN_KEY as file path takes priority
+        let ci_dir = tempfile::tempdir().unwrap();
+        let ci_key = ci_dir.path().join("ci.pub");
+        std::fs::write(&ci_key, "ssh-ed25519 CICI ci@runner\n").unwrap();
+
+        // Also set CONVERSATION_KEYS_PUBLIC to prove CI takes priority
+        let fallback_dir = tempfile::tempdir().unwrap();
+        let fallback_key = fallback_dir.path().join("fallback.pub");
+        std::fs::write(&fallback_key, "ssh-ed25519 FALL fallback@key\n").unwrap();
+        std::env::set_var("CONVERSATION_KEYS_PUBLIC", fallback_key.as_os_str());
+
+        std::env::set_var("MIRROR_CI_SIGN_KEY", ci_key.to_str().unwrap());
+        let filter = SignFilter::from_env().unwrap();
+        assert_eq!(filter.signer, "ci@runner");
+
+        // CI Sign 2: MIRROR_CI_SIGN_KEY as inline base64 content
+        use base64::Engine;
+        let key_content = "ssh-ed25519 AAAA inline@ci";
+        let encoded = base64::engine::general_purpose::STANDARD.encode(key_content);
+        std::env::set_var("MIRROR_CI_SIGN_KEY", &encoded);
+        let filter = SignFilter::from_env().unwrap();
+        assert_eq!(filter.signer, "inline@ci");
+
+        // CI Sign 3: Unset MIRROR_CI_SIGN_KEY, falls back to CONVERSATION_KEYS_PUBLIC
+        std::env::remove_var("MIRROR_CI_SIGN_KEY");
+        let filter = SignFilter::from_env().unwrap();
+        assert_eq!(filter.signer, "fallback@key");
+
+        // === MIRROR_CI_ENCRYPT_KEY ===
+
+        // CI Encrypt 1: MIRROR_CI_ENCRYPT_KEY as file path takes priority
+        let ci_enc_dir = tempfile::tempdir().unwrap();
+        let ci_enc_key = ci_enc_dir.path().join("ci_enc.pub");
+        std::fs::write(&ci_enc_key, TEST_SSH_PUB).unwrap();
+
+        std::env::set_var("MIRROR_CI_ENCRYPT_KEY", ci_enc_key.to_str().unwrap());
+        let key_content = EncryptKey::Public.resolve().unwrap();
+        assert_eq!(key_content, TEST_SSH_PUB);
+
+        // CI Encrypt 2: MIRROR_CI_ENCRYPT_KEY as inline base64 content
+        let encoded = base64::engine::general_purpose::STANDARD.encode(TEST_SSH_PUB);
+        std::env::set_var("MIRROR_CI_ENCRYPT_KEY", &encoded);
+        let key_content = EncryptKey::Public.resolve().unwrap();
+        assert_eq!(key_content, TEST_SSH_PUB);
+
+        // CI Encrypt 3: Unset MIRROR_CI_ENCRYPT_KEY, falls back to CONVERSATION_KEYS_PUBLIC
+        std::env::remove_var("MIRROR_CI_ENCRYPT_KEY");
+        // CONVERSATION_KEYS_PUBLIC is still set from sign tests
+        let key_content = EncryptKey::Public.resolve().unwrap();
+        // Should read from fallback_key (CONVERSATION_KEYS_PUBLIC)
+        assert_eq!(key_content, "ssh-ed25519 FALL fallback@key");
+
+        // Clean up
+        std::env::remove_var("MIRROR_CI_SIGN_KEY");
+        std::env::remove_var("MIRROR_CI_ENCRYPT_KEY");
+        std::env::remove_var("CONVERSATION_KEYS_PUBLIC");
+        std::env::remove_var("CONVERSATION_KEYS_PRIVATE");
+        std::env::remove_var("CONVERSATION_KEYS");
     }
 }
