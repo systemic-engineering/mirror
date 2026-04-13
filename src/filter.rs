@@ -427,16 +427,57 @@ impl EncryptFilter {
 /// Decrypt base64-encoded age ciphertext using an age identity (x25519 or SSH private key).
 ///
 /// Returns the decrypted plaintext as a UTF-8 string, or an error message.
-pub fn age_decrypt(_identity_key: &str, _ciphertext_b64: &str) -> Result<String, String> {
-    todo!("age_decrypt not yet implemented")
+pub fn age_decrypt(identity_key: &str, ciphertext_b64: &str) -> Result<String, String> {
+    use base64::Engine;
+    use std::io::Read;
+
+    let ciphertext = base64::engine::general_purpose::STANDARD
+        .decode(ciphertext_b64)
+        .map_err(|e| format!("invalid base64 ciphertext: {}", e))?;
+
+    // Try x25519 identity first, then SSH
+    let identities: Vec<Box<dyn age::Identity>> =
+        if let Ok(id) = identity_key.parse::<age::x25519::Identity>() {
+            vec![Box::new(id)]
+        } else {
+            let id = age::ssh::Identity::from_buffer(
+                std::io::Cursor::new(identity_key.as_bytes()),
+                None,
+            )
+            .map_err(|e| format!("invalid identity key: {:?}", e))?;
+            vec![Box::new(id) as Box<dyn age::Identity>]
+        };
+
+    let decryptor = age::Decryptor::new(&ciphertext[..])
+        .map_err(|e| format!("cannot parse age ciphertext: {:?}", e))?;
+
+    let mut reader = decryptor
+        .decrypt(identities.iter().map(|i| &**i as &dyn age::Identity))
+        .map_err(|e| format!("decryption failed: {:?}", e))?;
+
+    let mut plaintext = String::new();
+    reader
+        .read_to_string(&mut plaintext)
+        .map_err(|e| format!("cannot read decrypted content: {}", e))?;
+
+    Ok(plaintext)
 }
 
 /// Verify that decrypted ciphertext matches the expected OID.
 ///
 /// Decrypts the ciphertext, computes the OID of the decrypted value,
 /// and returns true if it matches the provided OID.
-pub fn verify_encrypted(_oid: &Oid, _identity_key: &str, _ciphertext_b64: &str) -> bool {
-    todo!("verify_encrypted not yet implemented")
+pub fn verify_encrypted(oid: &Oid, identity_key: &str, ciphertext_b64: &str) -> bool {
+    match age_decrypt(identity_key, ciphertext_b64) {
+        Ok(plaintext) => {
+            // The OID was computed from source.to_string() in EncryptFilter::trace,
+            // which is the JSON string representation. The decrypted plaintext IS
+            // that JSON string, so we hash it directly.
+            let decrypted_oid = Oid::hash(plaintext.as_bytes());
+            decrypted_oid == *oid
+        }
+        Err(_) => false,
+    }
 }
 
 /// Encrypt plaintext bytes to a recipient key, returning base64-encoded ciphertext.
@@ -1130,7 +1171,10 @@ mod tests {
         use age::secrecy::ExposeSecret;
         let identity = age::x25519::Identity::generate();
         let recipient = identity.to_public();
-        (identity.to_string().expose_secret().to_string(), recipient.to_string())
+        (
+            identity.to_string().expose_secret().to_string(),
+            recipient.to_string(),
+        )
     }
 
     #[test]
@@ -1153,7 +1197,11 @@ mod tests {
         let plaintext_json = input.to_string();
 
         let ciphertext_b64 = age_encrypt(&recipient_str, plaintext_json.as_bytes()).unwrap();
-        assert!(verify_encrypted(&source_oid, &identity_str, &ciphertext_b64));
+        assert!(verify_encrypted(
+            &source_oid,
+            &identity_str,
+            &ciphertext_b64
+        ));
     }
 
     #[test]
@@ -1181,7 +1229,11 @@ mod tests {
         let ciphertext_b64 = age_encrypt(&recipient_str, plaintext_json.as_bytes()).unwrap();
 
         let wrong_oid = Oid::hash(b"different content");
-        assert!(!verify_encrypted(&wrong_oid, &identity_str, &ciphertext_b64));
+        assert!(!verify_encrypted(
+            &wrong_oid,
+            &identity_str,
+            &ciphertext_b64
+        ));
     }
 
     #[test]
@@ -1195,7 +1247,11 @@ mod tests {
         let ciphertext_b64 = age_encrypt(&recipient_str, plaintext_json.as_bytes()).unwrap();
 
         // Wrong key → decryption fails → verify returns false
-        assert!(!verify_encrypted(&source_oid, &wrong_identity, &ciphertext_b64));
+        assert!(!verify_encrypted(
+            &source_oid,
+            &wrong_identity,
+            &ciphertext_b64
+        ));
     }
 
     #[test]
