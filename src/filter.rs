@@ -129,14 +129,30 @@ impl SignFilter {
     /// Load signing identity from environment.
     ///
     /// Resolution order:
-    /// 1. `CONVERSATION_KEYS_PUBLIC` — path to a specific `.pub` file
-    /// 2. `CONVERSATION_KEYS` — path to a directory containing `.pub` files
-    /// 3. `~/.ssh` — default keys directory
+    /// 1. `MIRROR_CI_SIGN_KEY` — CI key (file path or base64 content)
+    /// 2. `CONVERSATION_KEYS_PUBLIC` — path to a specific `.pub` file
+    /// 3. `CONVERSATION_KEYS` — path to a directory containing `.pub` files
+    /// 4. `~/.ssh` — default keys directory
     ///
     /// `CONVERSATION_KEYS_PRIVATE` is recognized but reserved for future
     /// cryptographic signing (GPG/SSH). `@sign` currently uses the public
     /// key as a structural witness, not a cryptographic signature.
     pub fn from_env() -> Option<Self> {
+        if let Ok(ci_key) = std::env::var("MIRROR_CI_SIGN_KEY") {
+            if let Some(content) = resolve_ci_key(&ci_key) {
+                let content = content.trim().to_string();
+                let parts: Vec<&str> = content.splitn(3, ' ').collect();
+                let signer = if parts.len() >= 3 {
+                    parts[2].to_string()
+                } else {
+                    "ci".to_string()
+                };
+                return Some(SignFilter {
+                    signer,
+                    signature: content.as_bytes().to_vec(),
+                });
+            }
+        }
         if let Ok(pub_path) = std::env::var("CONVERSATION_KEYS_PUBLIC") {
             return Self::from_pub_file(std::path::Path::new(&pub_path));
         }
@@ -161,6 +177,63 @@ impl Vector<Value, Value> for SignFilter {
         let oid = result.content_oid();
         Trace::success(result, oid.into(), None)
     }
+}
+
+// ---------------------------------------------------------------------------
+// Visibility — consent boundary for CI pipelines
+// ---------------------------------------------------------------------------
+
+/// Visibility level for CI pipeline output.
+///
+/// Read from `MIRROR_CI_VISIBILITY` env var. Defaults to `Public`.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Visibility {
+    Public,
+    Protected,
+    Private,
+}
+
+impl Visibility {
+    /// Read visibility from `MIRROR_CI_VISIBILITY` env var.
+    ///
+    /// Case-insensitive. Unset or unrecognized values default to `Public`.
+    pub fn from_env() -> Self {
+        match std::env::var("MIRROR_CI_VISIBILITY") {
+            Ok(val) => match val.to_lowercase().as_str() {
+                "public" => Visibility::Public,
+                "protected" => Visibility::Protected,
+                "private" => Visibility::Private,
+                _ => Visibility::Public,
+            },
+            Err(_) => Visibility::Public,
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// CI key resolution helper
+// ---------------------------------------------------------------------------
+
+/// Resolve a CI key env var value to key content.
+///
+/// The value is either:
+/// - A path to a key file (if a file exists at that path)
+/// - Base64-encoded key content (otherwise)
+fn resolve_ci_key(value: &str) -> Option<String> {
+    // Try as file path first
+    let path = std::path::Path::new(value);
+    if path.exists() {
+        return std::fs::read_to_string(path)
+            .ok()
+            .map(|s| s.trim().to_string());
+    }
+    // Try base64 decode
+    use base64::Engine;
+    base64::engine::general_purpose::STANDARD
+        .decode(value)
+        .ok()
+        .and_then(|bytes| String::from_utf8(bytes).ok())
+        .map(|s| s.trim().to_string())
 }
 
 // ---------------------------------------------------------------------------
@@ -212,9 +285,21 @@ impl EncryptKey {
     }
 
     /// Resolve the key to SSH public key content for encryption.
+    ///
+    /// Resolution order for `Public`:
+    /// 1. `MIRROR_CI_ENCRYPT_KEY` — CI key (file path or base64 content)
+    /// 2. `CONVERSATION_KEYS_PUBLIC` — path to a specific `.pub` file
+    /// 3. `CONVERSATION_KEYS` — path to a directory containing `.pub` files
+    /// 4. `~/.ssh` — default keys directory
     pub fn resolve(&self) -> Result<String, ResolveError> {
         match self {
             EncryptKey::Public => {
+                // CI key takes priority
+                if let Ok(ci_key) = std::env::var("MIRROR_CI_ENCRYPT_KEY") {
+                    if let Some(content) = resolve_ci_key(&ci_key) {
+                        return Ok(content);
+                    }
+                }
                 // Same hierarchy as SignFilter: CONVERSATION_KEYS_PUBLIC → CONVERSATION_KEYS dir → ~/.ssh
                 if let Ok(pub_path) = std::env::var("CONVERSATION_KEYS_PUBLIC") {
                     return read_key_file(&pub_path);
@@ -339,15 +424,79 @@ impl EncryptFilter {
     }
 }
 
-/// Encrypt plaintext bytes to an SSH recipient key, returning base64-encoded ciphertext.
+/// Decrypt base64-encoded age ciphertext using an age identity (x25519 or SSH private key).
+///
+/// Returns the decrypted plaintext as a UTF-8 string, or an error message.
+pub fn age_decrypt(identity_key: &str, ciphertext_b64: &str) -> Result<String, String> {
+    use base64::Engine;
+    use std::io::Read;
+
+    let ciphertext = base64::engine::general_purpose::STANDARD
+        .decode(ciphertext_b64)
+        .map_err(|e| format!("invalid base64 ciphertext: {}", e))?;
+
+    // Try x25519 identity first, then SSH
+    let identities: Vec<Box<dyn age::Identity>> = if let Ok(id) =
+        identity_key.parse::<age::x25519::Identity>()
+    {
+        vec![Box::new(id)]
+    } else {
+        let id =
+            age::ssh::Identity::from_buffer(std::io::Cursor::new(identity_key.as_bytes()), None)
+                .map_err(|e| format!("invalid identity key: {:?}", e))?;
+        vec![Box::new(id) as Box<dyn age::Identity>]
+    };
+
+    let decryptor = age::Decryptor::new(&ciphertext[..])
+        .map_err(|e| format!("cannot parse age ciphertext: {:?}", e))?;
+
+    let mut reader = decryptor
+        .decrypt(identities.iter().map(|i| &**i as &dyn age::Identity))
+        .map_err(|e| format!("decryption failed: {:?}", e))?;
+
+    let mut plaintext = String::new();
+    reader
+        .read_to_string(&mut plaintext)
+        .map_err(|e| format!("cannot read decrypted content: {}", e))?;
+
+    Ok(plaintext)
+}
+
+/// Verify that decrypted ciphertext matches the expected OID.
+///
+/// Decrypts the ciphertext, computes the OID of the decrypted value,
+/// and returns true if it matches the provided OID.
+pub fn verify_encrypted(oid: &Oid, identity_key: &str, ciphertext_b64: &str) -> bool {
+    match age_decrypt(identity_key, ciphertext_b64) {
+        Ok(plaintext) => {
+            // The OID was computed from source.to_string() in EncryptFilter::trace,
+            // which is the JSON string representation. The decrypted plaintext IS
+            // that JSON string, so we hash it directly.
+            let decrypted_oid = Oid::hash(plaintext.as_bytes());
+            decrypted_oid == *oid
+        }
+        Err(_) => false,
+    }
+}
+
+/// Encrypt plaintext bytes to a recipient key, returning base64-encoded ciphertext.
+///
+/// Accepts both SSH public keys (`ssh-ed25519 ...`) and age x25519 recipients
+/// (`age1...`).
 fn age_encrypt(recipient_key: &str, plaintext: &[u8]) -> Result<String, String> {
-    let recipient = recipient_key
-        .parse::<age::ssh::Recipient>()
-        .map_err(|e| format!("invalid SSH public key for encryption: {:?}", e))?;
+    let recipient: Box<dyn age::Recipient + Send> =
+        if let Ok(r) = recipient_key.parse::<age::x25519::Recipient>() {
+            Box::new(r)
+        } else {
+            let r = recipient_key
+                .parse::<age::ssh::Recipient>()
+                .map_err(|e| format!("invalid recipient key for encryption: {:?}", e))?;
+            Box::new(r)
+        };
 
     // These operations cannot fail: with_recipients has a valid recipient,
     // and wrap_output/write_all/finish target a Vec<u8> (infallible I/O).
-    let recipients: Vec<&dyn age::Recipient> = vec![&recipient];
+    let recipients: Vec<&dyn age::Recipient> = vec![recipient.as_ref()];
     let encryptor = age::Encryptor::with_recipients(recipients.into_iter())
         .expect("single valid recipient should not fail");
     let mut encrypted = vec![];
@@ -770,7 +919,7 @@ mod tests {
         let filter = EncryptFilter::new("not-a-key");
         let input = Value::String("hello".into());
         let err = filter.trace(input).into_result().unwrap_err();
-        assert!(err.message.contains("invalid SSH public key"));
+        assert!(err.message.contains("invalid recipient key"));
     }
 
     #[test]
@@ -891,5 +1040,230 @@ mod tests {
 
         let filter = SignFilter::from_keys_dir(dir.path()).unwrap();
         assert_eq!(filter.signer, "first@key");
+    }
+
+    // -- Visibility --
+
+    #[test]
+    fn visibility_default_is_public() {
+        std::env::remove_var("MIRROR_CI_VISIBILITY");
+        assert_eq!(Visibility::from_env(), Visibility::Public);
+    }
+
+    #[test]
+    fn visibility_from_env_public() {
+        std::env::set_var("MIRROR_CI_VISIBILITY", "public");
+        assert_eq!(Visibility::from_env(), Visibility::Public);
+        std::env::remove_var("MIRROR_CI_VISIBILITY");
+    }
+
+    #[test]
+    fn visibility_from_env_protected() {
+        std::env::set_var("MIRROR_CI_VISIBILITY", "protected");
+        assert_eq!(Visibility::from_env(), Visibility::Protected);
+        std::env::remove_var("MIRROR_CI_VISIBILITY");
+    }
+
+    #[test]
+    fn visibility_from_env_private() {
+        std::env::set_var("MIRROR_CI_VISIBILITY", "private");
+        assert_eq!(Visibility::from_env(), Visibility::Private);
+        std::env::remove_var("MIRROR_CI_VISIBILITY");
+    }
+
+    #[test]
+    fn visibility_from_env_case_insensitive() {
+        std::env::set_var("MIRROR_CI_VISIBILITY", "Protected");
+        assert_eq!(Visibility::from_env(), Visibility::Protected);
+        std::env::set_var("MIRROR_CI_VISIBILITY", "PRIVATE");
+        assert_eq!(Visibility::from_env(), Visibility::Private);
+        std::env::remove_var("MIRROR_CI_VISIBILITY");
+    }
+
+    #[test]
+    fn visibility_from_env_unknown_defaults_public() {
+        std::env::set_var("MIRROR_CI_VISIBILITY", "bogus");
+        assert_eq!(Visibility::from_env(), Visibility::Public);
+        std::env::remove_var("MIRROR_CI_VISIBILITY");
+    }
+
+    // -- MIRROR_CI_SIGN_KEY / MIRROR_CI_ENCRYPT_KEY --
+
+    #[test]
+    #[ignore = "env var race with filter_env_var_scenarios — run with --test-threads=1"]
+    fn mirror_ci_env_var_scenarios() {
+        // ALL MIRROR_CI env-var tests in one function to avoid parallel race.
+
+        // === MIRROR_CI_SIGN_KEY ===
+
+        // CI Sign 1: MIRROR_CI_SIGN_KEY as file path takes priority
+        let ci_dir = tempfile::tempdir().unwrap();
+        let ci_key = ci_dir.path().join("ci.pub");
+        std::fs::write(&ci_key, "ssh-ed25519 CICI ci@runner\n").unwrap();
+
+        // Also set CONVERSATION_KEYS_PUBLIC to prove CI takes priority
+        let fallback_dir = tempfile::tempdir().unwrap();
+        let fallback_key = fallback_dir.path().join("fallback.pub");
+        std::fs::write(&fallback_key, "ssh-ed25519 FALL fallback@key\n").unwrap();
+        std::env::set_var("CONVERSATION_KEYS_PUBLIC", fallback_key.as_os_str());
+
+        std::env::set_var("MIRROR_CI_SIGN_KEY", ci_key.to_str().unwrap());
+        let filter = SignFilter::from_env().unwrap();
+        assert_eq!(filter.signer, "ci@runner");
+
+        // CI Sign 2: MIRROR_CI_SIGN_KEY as inline base64 content
+        use base64::Engine;
+        let key_content = "ssh-ed25519 AAAA inline@ci";
+        let encoded = base64::engine::general_purpose::STANDARD.encode(key_content);
+        std::env::set_var("MIRROR_CI_SIGN_KEY", &encoded);
+        let filter = SignFilter::from_env().unwrap();
+        assert_eq!(filter.signer, "inline@ci");
+
+        // CI Sign 3: Unset MIRROR_CI_SIGN_KEY, falls back to CONVERSATION_KEYS_PUBLIC
+        std::env::remove_var("MIRROR_CI_SIGN_KEY");
+        let filter = SignFilter::from_env().unwrap();
+        assert_eq!(filter.signer, "fallback@key");
+
+        // === MIRROR_CI_ENCRYPT_KEY ===
+
+        // CI Encrypt 1: MIRROR_CI_ENCRYPT_KEY as file path takes priority
+        let ci_enc_dir = tempfile::tempdir().unwrap();
+        let ci_enc_key = ci_enc_dir.path().join("ci_enc.pub");
+        std::fs::write(&ci_enc_key, TEST_SSH_PUB).unwrap();
+
+        std::env::set_var("MIRROR_CI_ENCRYPT_KEY", ci_enc_key.to_str().unwrap());
+        let key_content = EncryptKey::Public.resolve().unwrap();
+        assert_eq!(key_content, TEST_SSH_PUB);
+
+        // CI Encrypt 2: MIRROR_CI_ENCRYPT_KEY as inline base64 content
+        let encoded = base64::engine::general_purpose::STANDARD.encode(TEST_SSH_PUB);
+        std::env::set_var("MIRROR_CI_ENCRYPT_KEY", &encoded);
+        let key_content = EncryptKey::Public.resolve().unwrap();
+        assert_eq!(key_content, TEST_SSH_PUB);
+
+        // CI Encrypt 3: Unset MIRROR_CI_ENCRYPT_KEY, falls back to CONVERSATION_KEYS_PUBLIC
+        std::env::remove_var("MIRROR_CI_ENCRYPT_KEY");
+        // CONVERSATION_KEYS_PUBLIC is still set from sign tests
+        let key_content = EncryptKey::Public.resolve().unwrap();
+        // Should read from fallback_key (CONVERSATION_KEYS_PUBLIC)
+        assert_eq!(key_content, "ssh-ed25519 FALL fallback@key");
+
+        // CI Sign 4: base64 with trailing newline should be trimmed
+        let key_with_newline = "ssh-ed25519 AAAA inline@ci\n";
+        let encoded = base64::engine::general_purpose::STANDARD.encode(key_with_newline);
+        std::env::set_var("MIRROR_CI_SIGN_KEY", &encoded);
+        let filter = SignFilter::from_env().unwrap();
+        assert_eq!(filter.signer, "inline@ci");
+        // Signature would be empty in CI context where key has no password
+
+        // Clean up
+        std::env::remove_var("MIRROR_CI_SIGN_KEY");
+        std::env::remove_var("MIRROR_CI_ENCRYPT_KEY");
+        std::env::remove_var("CONVERSATION_KEYS_PUBLIC");
+        std::env::remove_var("CONVERSATION_KEYS_PRIVATE");
+        std::env::remove_var("CONVERSATION_KEYS");
+    }
+
+    // -- age_decrypt + verify_encrypted round-trip --
+
+    /// Helper: generate an x25519 identity and recipient string pair for testing.
+    fn test_x25519_keypair() -> (String, String) {
+        use age::secrecy::ExposeSecret;
+        let identity = age::x25519::Identity::generate();
+        let recipient = identity.to_public();
+        (
+            identity.to_string().expose_secret().to_string(),
+            recipient.to_string(),
+        )
+    }
+
+    #[test]
+    fn decrypt_round_trip() {
+        let (identity_str, recipient_str) = test_x25519_keypair();
+
+        let plaintext = b"hello, round trip";
+        let ciphertext_b64 = age_encrypt(&recipient_str, plaintext).unwrap();
+        let decrypted = age_decrypt(&identity_str, &ciphertext_b64).unwrap();
+
+        assert_eq!(decrypted.as_bytes(), plaintext);
+    }
+
+    #[test]
+    fn verify_encrypted_round_trip() {
+        let (identity_str, recipient_str) = test_x25519_keypair();
+
+        let input = Value::String("verify me".into());
+        let source_oid = input.content_oid();
+        let plaintext_json = input.to_string();
+
+        let ciphertext_b64 = age_encrypt(&recipient_str, plaintext_json.as_bytes()).unwrap();
+        assert!(verify_encrypted(
+            &source_oid,
+            &identity_str,
+            &ciphertext_b64
+        ));
+    }
+
+    #[test]
+    fn verify_encrypted_full_pipeline() {
+        // End-to-end: EncryptFilter → envelope → extract → verify
+        let (identity_str, recipient_str) = test_x25519_keypair();
+
+        let filter = EncryptFilter::new(&recipient_str);
+        let input = Value::String("pipeline test".into());
+        let result = filter.trace(input).into_result().unwrap();
+
+        let oid_str = result["oid"].as_str().unwrap();
+        let oid = Oid::new(oid_str);
+        let ciphertext_b64 = result["encrypted"].as_str().unwrap();
+
+        assert!(verify_encrypted(&oid, &identity_str, ciphertext_b64));
+    }
+
+    #[test]
+    fn verify_encrypted_wrong_oid_fails() {
+        let (identity_str, recipient_str) = test_x25519_keypair();
+
+        let input = Value::String("original".into());
+        let plaintext_json = input.to_string();
+        let ciphertext_b64 = age_encrypt(&recipient_str, plaintext_json.as_bytes()).unwrap();
+
+        let wrong_oid = Oid::hash(b"different content");
+        assert!(!verify_encrypted(
+            &wrong_oid,
+            &identity_str,
+            &ciphertext_b64
+        ));
+    }
+
+    #[test]
+    fn verify_encrypted_wrong_key_fails() {
+        let (_identity_str, recipient_str) = test_x25519_keypair();
+        let (wrong_identity, _) = test_x25519_keypair();
+
+        let input = Value::String("secret".into());
+        let source_oid = input.content_oid();
+        let plaintext_json = input.to_string();
+        let ciphertext_b64 = age_encrypt(&recipient_str, plaintext_json.as_bytes()).unwrap();
+
+        // Wrong key → decryption fails → verify returns false
+        assert!(!verify_encrypted(
+            &source_oid,
+            &wrong_identity,
+            &ciphertext_b64
+        ));
+    }
+
+    #[test]
+    fn decrypt_invalid_base64_fails() {
+        let (identity_str, _) = test_x25519_keypair();
+        let err = age_decrypt(&identity_str, "not-valid-base64!!!").unwrap_err();
+        assert!(err.contains("invalid base64"));
+    }
+
+    #[test]
+    fn decrypt_invalid_identity_fails() {
+        let err = age_decrypt("not-a-key", "dGVzdA==").unwrap_err();
+        assert!(err.contains("invalid identity key") || err.contains("cannot parse"));
     }
 }
