@@ -18,7 +18,10 @@ fn mirror_bin() -> Command {
 #[test]
 fn no_args_shows_usage() {
     let output = mirror_bin().output().unwrap();
-    assert!(!output.status.success(), "should exit non-zero with no args");
+    assert!(
+        !output.status.success(),
+        "should exit non-zero with no args"
+    );
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(
         stderr.contains("usage:"),
@@ -173,16 +176,38 @@ fn crystal_prints_oid_to_stdout() {
     );
 }
 
+#[test]
+fn crystal_oid_flag_prints_oid() {
+    // spec.mirror exists in the project root, so --oid should print it
+    let output = mirror_bin()
+        .current_dir(project_root())
+        .arg("crystal")
+        .arg("--oid")
+        .output()
+        .unwrap();
+
+    assert!(
+        output.status.success(),
+        "crystal --oid should succeed, stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let oid = stdout.trim();
+    assert!(
+        oid.len() == 64 && oid.chars().all(|c| c.is_ascii_hexdigit()),
+        "crystal --oid should print hex OID, got: {}",
+        oid
+    );
+}
+
 // ---------------------------------------------------------------------------
 // Query command (the fallback — parse and print AST)
 // ---------------------------------------------------------------------------
 
 #[test]
 fn query_parses_type_declaration() {
-    let output = mirror_bin()
-        .arg("type greeting")
-        .output()
-        .unwrap();
+    let output = mirror_bin().arg("type greeting").output().unwrap();
 
     assert!(
         output.status.success(),
@@ -200,18 +225,11 @@ fn query_parses_type_declaration() {
 
 #[test]
 fn query_parses_ref() {
-    let output = mirror_bin()
-        .arg("@prism")
-        .output()
-        .unwrap();
+    let output = mirror_bin().arg("@prism").output().unwrap();
 
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(
-        stdout.contains("@prism"),
-        "should contain ref: {}",
-        stdout
-    );
+    assert!(stdout.contains("@prism"), "should contain ref: {}", stdout);
 }
 
 // ---------------------------------------------------------------------------
@@ -328,7 +346,9 @@ fn crystal_compile_roundtrip_same_oid() {
         .unwrap();
 
     assert!(crystal_output.status.success());
-    let crystal_oid = String::from_utf8_lossy(&crystal_output.stdout).trim().to_string();
+    let crystal_oid = String::from_utf8_lossy(&crystal_output.stdout)
+        .trim()
+        .to_string();
 
     // Step 2: compile the crystal back
     let compile_output = mirror_bin()
@@ -338,7 +358,9 @@ fn crystal_compile_roundtrip_same_oid() {
         .unwrap();
 
     assert!(compile_output.status.success());
-    let compile_oid = String::from_utf8_lossy(&compile_output.stdout).trim().to_string();
+    let compile_oid = String::from_utf8_lossy(&compile_output.stdout)
+        .trim()
+        .to_string();
 
     // The OIDs must match — the compiler can read its own output
     assert_eq!(
@@ -365,11 +387,7 @@ fn ai_no_model_shows_usage() {
 
 #[test]
 fn ai_known_model_exits_zero() {
-    let output = mirror_bin()
-        .arg("ai")
-        .arg("abyss")
-        .output()
-        .unwrap();
+    let output = mirror_bin().arg("ai").arg("abyss").output().unwrap();
 
     assert!(output.status.success());
     let stderr = String::from_utf8_lossy(&output.stderr);
