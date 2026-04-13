@@ -1,0 +1,47 @@
+in @prism
+in @meta
+
+type position {
+  line: u32,
+  character: u32,
+}
+
+type range {
+  start: position,
+  end: position,
+}
+
+type severity = error | warning | info | hint
+
+type diagnostic {
+  range: range,
+  severity: severity,
+  message: string,
+}
+
+type completion {
+  label: string,
+  kind: type,
+}
+
+type token {
+  range: range,
+  kind: type,
+}
+
+grammar @code {
+  action complete(position) -> [completion]
+  action diagnose(range) -> [diagnostic]
+  action hover(position) -> string
+  action definition(position) -> position
+  action references(position) -> [position]
+  action tokens(range) -> [token]
+}
+
+out position
+out range
+out severity
+out diagnostic
+out completion
+out token
+out @code
