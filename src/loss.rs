@@ -87,6 +87,24 @@ pub struct MirrorLoss {
     pub recovered: bool,
 }
 
+impl MirrorLoss {
+    /// Single f64 summarizing total holonomy.
+    /// Higher = more curvature = less settled.
+    pub fn holonomy(&self) -> f64 {
+        let phase_loss: f64 = self.phases.iter().map(|p| p.structural_loss).sum();
+        let unresolved_penalty = self.unresolved_refs.len() as f64;
+        let convergence_penalty = match &self.convergence {
+            Convergence::Settled => 0.0,
+            Convergence::Converging(n) => *n as f64,
+            Convergence::Oscillating(n) => *n as f64 * 2.0,
+            Convergence::BudgetExhausted => f64::INFINITY,
+        };
+
+        // DELIBERATE BUG: multiply instead of add
+        phase_loss * unresolved_penalty * convergence_penalty
+    }
+}
+
 impl Default for MirrorLoss {
     fn default() -> Self {
         Self::zero()
@@ -452,5 +470,76 @@ mod tests {
         assert_eq!(Phase::Resolve, Phase::Resolve);
         assert_eq!(Phase::Emit, Phase::Emit);
         assert_ne!(Phase::Tokenize, Phase::Parse);
+    }
+
+    // -- holonomy --
+
+    #[test]
+    fn holonomy_zero_for_zero_loss() {
+        let z = MirrorLoss::zero();
+        assert_eq!(z.holonomy(), 0.0, "zero loss should have zero holonomy");
+    }
+
+    #[test]
+    fn holonomy_includes_phase_loss() {
+        let loss = MirrorLoss {
+            phases: vec![PhaseRecord {
+                phase: Phase::Emit,
+                input_oid: Oid::new("in"),
+                output_oid: Oid::new("out"),
+                structural_loss: 3.5,
+            }],
+            ..MirrorLoss::zero()
+        };
+        assert!((loss.holonomy() - 3.5).abs() < 1e-10, "holonomy should be 3.5, got {}", loss.holonomy());
+    }
+
+    #[test]
+    fn holonomy_includes_unresolved_penalty() {
+        let loss = MirrorLoss {
+            unresolved_refs: vec![
+                ("@missing".into(), TraceOid::new("a")),
+                ("@also_missing".into(), TraceOid::new("b")),
+            ],
+            ..MirrorLoss::zero()
+        };
+        assert!((loss.holonomy() - 2.0).abs() < 1e-10, "holonomy should be 2.0, got {}", loss.holonomy());
+    }
+
+    #[test]
+    fn holonomy_includes_convergence_penalty() {
+        let converging = MirrorLoss {
+            convergence: Convergence::Converging(5),
+            ..MirrorLoss::zero()
+        };
+        assert!((converging.holonomy() - 5.0).abs() < 1e-10, "Converging(5) should be 5.0, got {}", converging.holonomy());
+
+        let oscillating = MirrorLoss {
+            convergence: Convergence::Oscillating(3),
+            ..MirrorLoss::zero()
+        };
+        assert!((oscillating.holonomy() - 6.0).abs() < 1e-10, "Oscillating(3) should be 6.0, got {}", oscillating.holonomy());
+
+        let exhausted = MirrorLoss {
+            convergence: Convergence::BudgetExhausted,
+            ..MirrorLoss::zero()
+        };
+        assert!(exhausted.holonomy().is_infinite(), "BudgetExhausted should be infinite, got {}", exhausted.holonomy());
+    }
+
+    #[test]
+    fn holonomy_is_sum_of_components() {
+        let loss = MirrorLoss {
+            phases: vec![PhaseRecord {
+                phase: Phase::Parse,
+                input_oid: Oid::new("i"),
+                output_oid: Oid::new("o"),
+                structural_loss: 2.0,
+            }],
+            unresolved_refs: vec![("@x".into(), TraceOid::new("t"))],
+            convergence: Convergence::Converging(3),
+            ..MirrorLoss::zero()
+        };
+        assert!((loss.holonomy() - 6.0).abs() < 1e-10, "holonomy should be sum 6.0, got {}", loss.holonomy());
     }
 }
