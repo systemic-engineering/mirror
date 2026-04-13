@@ -34,8 +34,8 @@ fn mirror_registry_command_lists_resolved_forms() {
         stdout
     );
     assert!(
-        stdout.contains("03-property") && stdout.contains("FAIL"),
-        "stdout should mark 03-property as FAIL: {}",
+        stdout.contains("05-property") && stdout.contains("FAIL"),
+        "stdout should mark 05-property as FAIL: {}",
         stdout
     );
     assert!(

@@ -16,7 +16,7 @@ fn mirror_bin() -> Command {
 // ---------------------------------------------------------------------------
 
 #[test]
-fn no_args_shows_usage() {
+fn no_args_shows_help() {
     let output = mirror_bin().output().unwrap();
     assert!(
         !output.status.success(),
@@ -24,22 +24,54 @@ fn no_args_shows_usage() {
     );
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(
+        stderr.contains("mirror -- an honest compiler"),
+        "should print help on stderr: {}",
+        stderr
+    );
+    assert!(
         stderr.contains("usage:"),
-        "should print usage on stderr: {}",
+        "should contain usage section: {}",
         stderr
     );
 }
 
 #[test]
-fn help_falls_through_to_query() {
-    // "help" is not a subcommand — it falls through to cmd_query,
-    // which parses it as a bare atom and prints it.
+fn help_subcommand_shows_help() {
     let output = mirror_bin().arg("help").output().unwrap();
-    assert!(output.status.success());
+    assert!(output.status.success(), "help should exit zero");
     let stdout = String::from_utf8_lossy(&output.stdout);
     assert!(
-        stdout.contains("help"),
-        "should parse 'help' as an atom: {}",
+        stdout.contains("mirror -- an honest compiler"),
+        "help should print help text: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("focus"),
+        "help should list focus: {}",
+        stdout
+    );
+}
+
+#[test]
+fn dashdash_help_shows_help() {
+    let output = mirror_bin().arg("--help").output().unwrap();
+    assert!(output.status.success(), "--help should exit zero");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("mirror -- an honest compiler"),
+        "--help should print help text: {}",
+        stdout
+    );
+}
+
+#[test]
+fn per_command_help() {
+    let output = mirror_bin().arg("compile").arg("--help").output().unwrap();
+    assert!(output.status.success(), "compile --help should exit zero");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("compile"),
+        "compile --help should describe compile: {}",
         stdout
     );
 }
@@ -411,11 +443,10 @@ fn ai_unknown_model_exits_zero() {
 }
 
 // ---------------------------------------------------------------------------
-// Focus subcommand — not yet implemented (would be `mirror focus <file>`)
+// Focus subcommand
 // ---------------------------------------------------------------------------
 
 #[test]
-#[ignore = "focus subcommand not yet implemented — falls through to query"]
 fn focus_on_mirror_file_prints_nodes() {
     let dir = tempfile::TempDir::new().unwrap();
     let file = dir.path().join("test.mirror");
@@ -434,7 +465,6 @@ fn focus_on_mirror_file_prints_nodes() {
 }
 
 #[test]
-#[ignore = "focus subcommand not yet implemented — falls through to query"]
 fn focus_on_boot_prism_succeeds() {
     let output = mirror_bin()
         .current_dir(project_root())
