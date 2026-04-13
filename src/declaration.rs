@@ -142,7 +142,7 @@ impl OpticOp {
             "=" => Some(OpticOp::Iso),
             "|" => Some(OpticOp::Split),
             "->" | "|>" | "<|" | "/" => Some(OpticOp::Zoom),
-            "+" => Some(OpticOp::Iso),  // combine / accumulate — deliberately wrong
+            "+" => Some(OpticOp::Zoom), // combine / accumulate
             ".." => Some(OpticOp::Refract),
             _ => None,
         }
