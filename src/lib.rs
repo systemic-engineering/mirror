@@ -51,10 +51,13 @@ pub mod cli;
 pub mod declaration;
 pub mod gestalt;
 pub mod loss;
+pub mod lsp;
 pub mod mirror_runtime;
 pub mod optic;
 pub mod parse;
 pub mod runtime;
 pub mod session;
 pub mod shard;
+#[cfg(feature = "git")]
+pub mod sign;
 pub mod store;

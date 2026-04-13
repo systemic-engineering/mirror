@@ -85,6 +85,8 @@ impl Cli {
             "crystal" => self.cmd_crystal(args),
             "ai" => self.cmd_ai(args),
             "ci" => self.cmd_ci(args),
+            "lsp" => self.cmd_lsp(args),
+            "ca" => self.cmd_ca(args),
             "bench" => self.cmd_bench(args),
             "init" => self.cmd_init(args),
             "repl" => self.cmd_repl(args),
@@ -112,6 +114,7 @@ compiler:
   compile <path>     compile a .mirror file
   crystal [output]   materialize the standard library
   ci <path>          measure holonomy
+  ca <path>          observe, suggest, enforce
 
 session:
   init               initialize .git/mirror/
@@ -140,6 +143,7 @@ flags:
             "init" => Some("init -- initialize .git/mirror/\n\nSets up the mirror store in the current git repository."),
             "repl" => Some("repl -- interactive shard> prompt\n\nStarts an interactive session.\nType .mirror expressions and see them compiled live."),
             "ai" => Some("ai <model> [path] -- run a Fate model\n\nModels: abyss | introject | cartographer | explorer | fate\n\nReads from <path> or stdin. Routes through the named model."),
+            "ca" => Some("ca <path> [--enforce] -- observe, suggest, enforce\n\nRuns CI, then if holonomy > 0, produces suggestions.\nWith --enforce: applies suggestions (not yet implemented)."),
             "bench" => Some("bench <path> -- benchmark compilation\n\nMeasures compilation time and structural loss.\nPrints timing and MirrorLoss summary."),
             _ => None,
         }
@@ -291,32 +295,145 @@ flags:
     // ci -- measure holonomy
     // -----------------------------------------------------------------------
 
-    fn cmd_ci(&self, args: &[String]) -> Result<String, CliError> {
-        if args.iter().any(|a| a == "--help" || a == "-h") {
-            return Ok(Self::command_help("ci").unwrap_or("").to_string());
-        }
-        let file = args
-            .first()
-            .ok_or_else(|| CliError::Usage("usage: mirror ci <path>".to_string()))?;
-
-        let source = std::fs::read_to_string(file)?;
+    fn ci_single_file(&self, path: &str) -> Result<(String, crate::loss::MirrorLoss), CliError> {
+        use prism::{Loss, Transport};
+        let source = std::fs::read_to_string(path)?;
         let compiler = crate::bundle::MirrorCompiler::new();
-        use prism::Transport;
         let result = compiler.transport(&source);
         match result {
-            prism::Imperfect::Success(oid) => Ok(format!("crystal {}\nholonomy: 0", oid)),
-            prism::Imperfect::Partial(oid, loss) => {
-                let phase_count = loss.phases.len();
-                let structural: f64 = loss.phases.iter().map(|p| p.structural_loss).sum();
-                Ok(format!(
-                    "partial {}\nholonomy: {:.2}\nphases: {}\nresolution: {:.2}",
-                    oid, structural, phase_count, loss.resolution_ratio
-                ))
-            }
+            prism::Imperfect::Success(oid) => Ok((oid, crate::loss::MirrorLoss::zero())),
+            prism::Imperfect::Partial(oid, loss) => Ok((oid, loss)),
             prism::Imperfect::Failure(_, _) => Err(CliError::Runtime(MirrorRuntimeError(
                 "compilation failed".to_string(),
             ))),
         }
+    }
+
+    fn cmd_ci(&self, args: &[String]) -> Result<String, CliError> {
+        if args.iter().any(|a| a == "--help" || a == "-h") {
+            return Ok(Self::command_help("ci").unwrap_or("").to_string());
+        }
+        let path = args
+            .first()
+            .ok_or_else(|| CliError::Usage("usage: mirror ci <path>".to_string()))?;
+        use prism::Loss;
+        let p = Path::new(path);
+        if p.is_dir() {
+            let mut entries: Vec<_> = std::fs::read_dir(p)?
+                .filter_map(|e| e.ok())
+                .filter(|e| e.path().extension().is_some_and(|ext| ext == "mirror"))
+                .collect();
+            entries.sort_by_key(|e| e.file_name());
+            if entries.is_empty() {
+                return Err(CliError::Usage(format!("no .mirror files in {}", path)));
+            }
+            let mut total_loss = crate::loss::MirrorLoss::zero();
+            let mut file_count = 0usize;
+            let mut out = String::new();
+            for entry in &entries {
+                let file_path = entry.path();
+                let name = file_path.file_name().unwrap().to_string_lossy();
+                match self.ci_single_file(file_path.to_str().unwrap()) {
+                    Ok((_oid, loss)) => {
+                        let h = loss.holonomy();
+                        out.push_str(&format!("  {} holonomy: {:.4}\n", name, h));
+                        total_loss = total_loss.combine(loss);
+                        file_count += 1;
+                    }
+                    Err(e) => {
+                        out.push_str(&format!("  {} FAIL: {}\n", name, e));
+                    }
+                }
+            }
+            let total_h = total_loss.holonomy();
+            out.insert_str(
+                0,
+                &format!(
+                    "ci {} ({} files)\nholonomy: {:.4}\n",
+                    path, file_count, total_h
+                ),
+            );
+            Ok(out)
+        } else {
+            let (_oid, loss) = self.ci_single_file(path)?;
+            let holonomy = loss.holonomy();
+            let mut out = String::new();
+            if loss.is_zero() {
+                out.push_str(&format!("crystal\nholonomy: {:.4}", holonomy));
+            } else {
+                out.push_str(&format!(
+                    "partial\nholonomy: {:.4}\nphases: {}\nresolution: {:.2}",
+                    holonomy,
+                    loss.phases.len(),
+                    loss.resolution_ratio
+                ));
+                if !loss.unresolved_refs.is_empty() {
+                    out.push_str(&format!("\nunresolved: {}", loss.unresolved_refs.len()));
+                    for (name, _oid) in &loss.unresolved_refs {
+                        out.push_str(&format!("\n  - {}", name));
+                    }
+                }
+            }
+            Ok(out)
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // ca -- observe + suggest + enforce
+    // -----------------------------------------------------------------------
+
+    fn cmd_ca(&self, args: &[String]) -> Result<String, CliError> {
+        if args.iter().any(|a| a == "--help" || a == "-h") {
+            return Ok(Self::command_help("ca").unwrap_or("").to_string());
+        }
+        let path = args
+            .first()
+            .ok_or_else(|| CliError::Usage("usage: mirror ca <path> [--enforce]".to_string()))?;
+        use prism::Loss;
+        let ci_result = self.cmd_ci(args)?;
+        let p = Path::new(path);
+        let loss = if p.is_dir() {
+            let mut total = crate::loss::MirrorLoss::zero();
+            if let Ok(entries) = std::fs::read_dir(p) {
+                for entry in entries.filter_map(|e| e.ok()) {
+                    if entry.path().extension().is_some_and(|ext| ext == "mirror") {
+                        if let Ok((_oid, l)) = self.ci_single_file(entry.path().to_str().unwrap()) {
+                            total = total.combine(l);
+                        }
+                    }
+                }
+            }
+            total
+        } else {
+            match self.ci_single_file(path) {
+                Ok((_oid, l)) => l,
+                Err(_) => crate::loss::MirrorLoss::total(),
+            }
+        };
+        if loss.is_zero() {
+            return Ok("crystal. nothing to do.".to_string());
+        }
+        let mut out = ci_result;
+        out.push_str("\n---\nsuggestions:");
+        for phase in &loss.phases {
+            if phase.structural_loss > 0.0 {
+                out.push_str(&format!(
+                    "\n  {:?} phase: loss {:.4}",
+                    phase.phase, phase.structural_loss
+                ));
+            }
+        }
+        if !loss.unresolved_refs.is_empty() {
+            out.push_str(&format!(
+                "\n  unresolved refs: {}",
+                loss.unresolved_refs.len()
+            ));
+        }
+        let enforce = args.iter().any(|a| a == "--enforce");
+        if enforce {
+            out.push_str("\nenforce: not yet implemented");
+        }
+        Ok(out)
     }
 
     // -----------------------------------------------------------------------
@@ -413,6 +530,119 @@ flags:
         }
 
         Ok(out)
+    }
+
+    // -----------------------------------------------------------------------
+    // lsp -- language server protocol integration
+    // -----------------------------------------------------------------------
+
+    fn cmd_lsp(&self, args: &[String]) -> Result<String, CliError> {
+        if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
+            return Ok("\
+mirror lsp -- language server protocol integration
+
+usage: mirror lsp learn @code/<language> [files...]
+
+subcommands:
+  learn @code/<language>   generate a @code grammar from tree-sitter + LSP
+
+options:
+  --node-types <path>      path to node-types.json (overrides auto-detection)
+  --out <path>             write grammar to <path> instead of garden
+  --no-lsp                 skip LSP capability detection"
+                .to_string());
+        }
+        match args[0].as_str() {
+            "learn" => self.cmd_lsp_learn(&args[1..]),
+            other => Err(CliError::Usage(format!(
+                "mirror lsp: unknown subcommand '{}'\nusage: mirror lsp learn @code/<language>",
+                other
+            ))),
+        }
+    }
+
+    fn cmd_lsp_learn(&self, args: &[String]) -> Result<String, CliError> {
+        use crate::lsp::{generate, language, node_types};
+        let mut node_types_path: Option<String> = None;
+        let mut out_path: Option<String> = None;
+        let mut no_lsp = false;
+        let mut positional: Vec<&str> = Vec::new();
+        let mut i = 0;
+        while i < args.len() {
+            match args[i].as_str() {
+                "--node-types" => {
+                    node_types_path = args.get(i + 1).cloned();
+                    i += 2;
+                }
+                "--out" => {
+                    out_path = args.get(i + 1).cloned();
+                    i += 2;
+                }
+                "--no-lsp" => {
+                    no_lsp = true;
+                    i += 1;
+                }
+                other => {
+                    positional.push(other);
+                    i += 1;
+                }
+            }
+        }
+        let domain = positional
+            .first()
+            .ok_or_else(|| CliError::Usage("usage: mirror lsp learn @code/<language>".into()))?;
+        let lang_name = domain.strip_prefix("@code/").ok_or_else(|| {
+            CliError::Usage(format!("expected @code/<language>, got '{}'", domain))
+        })?;
+        let config = language::detect(lang_name).ok_or_else(|| {
+            CliError::Usage(format!(
+                "unknown language '{}'. supported: python, rust, gleam, javascript, typescript, nix",
+                lang_name
+            ))
+        })?;
+        let json = match &node_types_path {
+            Some(path) => std::fs::read_to_string(path)
+                .map_err(|e| CliError::Usage(format!("read {}: {}", path, e)))?,
+            None => {
+                return Err(CliError::Usage(
+                    "auto-detection of node-types.json not yet implemented.\nuse --node-types <path> to provide it manually.".into()
+                ));
+            }
+        };
+        let types = node_types::parse_node_types(&json)
+            .map_err(|e| CliError::Usage(format!("parse node-types.json: {}", e)))?;
+        let capabilities = if no_lsp {
+            language::LspCapabilities::default()
+        } else {
+            language::LspCapabilities::all()
+        };
+        let grammar = generate::generate_grammar(&config, &types, &capabilities);
+        match &out_path {
+            Some(path) => {
+                if let Some(parent) = std::path::Path::new(path).parent() {
+                    std::fs::create_dir_all(parent)?;
+                }
+                std::fs::write(path, &grammar)?;
+                Ok(format!("wrote @code/{} grammar to {}", config.name, path))
+            }
+            None => {
+                let garden_path = format!(
+                    ".git/mirror/garden/@code/{}/{}.mirror",
+                    config.name, config.name
+                );
+                let garden_dir = std::path::Path::new(&garden_path).parent().unwrap();
+                if std::path::Path::new(".git/mirror").exists() {
+                    std::fs::create_dir_all(garden_dir)?;
+                    std::fs::write(&garden_path, &grammar)?;
+                    Ok(format!(
+                        "wrote @code/{} grammar to {}",
+                        config.name, garden_path
+                    ))
+                } else {
+                    Ok(grammar)
+                }
+            }
+        }
     }
 
     // -----------------------------------------------------------------------
@@ -703,8 +933,8 @@ mod tests {
     #[test]
     fn command_help_returns_per_command_help() {
         for cmd in [
-            "focus", "project", "split", "zoom", "refract", "compile", "crystal", "ci", "init",
-            "repl", "ai", "bench",
+            "focus", "project", "split", "zoom", "refract", "compile", "crystal", "ci", "ca",
+            "init", "repl", "ai", "bench",
         ] {
             assert!(
                 Cli::command_help(cmd).is_some(),
@@ -814,5 +1044,168 @@ mod tests {
         let output = result.unwrap();
         assert!(output.contains("compiled"));
         assert!(output.contains("oid:"));
+    }
+
+    // -----------------------------------------------------------------------
+    // CI holonomy tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn ci_on_simple_file_reports_holonomy_value() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let file = dir.path().join("test.mirror");
+        std::fs::write(&file, "type greeting\n").unwrap();
+        let cli = Cli::default();
+        let result = cli.dispatch("ci", &[file.to_str().unwrap().to_string()]);
+        assert!(result.is_ok());
+        let output = result.unwrap();
+        assert!(
+            output.contains("holonomy:"),
+            "should report holonomy value, got: {}",
+            output
+        );
+    }
+
+    #[test]
+    fn ci_on_long_file_reports_nonzero_holonomy() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let file = dir.path().join("test.mirror");
+        let block = "form @test {\n  prism focus\n  prism split\n  prism zoom\n  prism project\n  prism refract\n}\n";
+        let source = block.repeat(20);
+        std::fs::write(&file, &source).unwrap();
+        let cli = Cli::default();
+        let result = cli.dispatch("ci", &[file.to_str().unwrap().to_string()]);
+        assert!(result.is_ok());
+        let output = result.unwrap();
+        assert!(
+            output.contains("partial"),
+            "long source should report partial, got: {}",
+            output
+        );
+        assert!(
+            output.contains("holonomy:"),
+            "should contain holonomy value, got: {}",
+            output
+        );
+    }
+
+    #[test]
+    fn ci_on_directory_aggregates() {
+        let dir = tempfile::TempDir::new().unwrap();
+        std::fs::write(dir.path().join("a.mirror"), "type alpha\n").unwrap();
+        std::fs::write(dir.path().join("b.mirror"), "type beta\n").unwrap();
+        std::fs::write(dir.path().join("c.txt"), "not mirror\n").unwrap();
+        let cli = Cli::default();
+        let result = cli.dispatch("ci", &[dir.path().to_str().unwrap().to_string()]);
+        assert!(result.is_ok());
+        let output = result.unwrap();
+        assert!(
+            output.contains("2 files"),
+            "should report 2 files, got: {}",
+            output
+        );
+        assert!(
+            output.contains("holonomy:"),
+            "should contain holonomy, got: {}",
+            output
+        );
+    }
+
+    #[test]
+    fn ci_empty_dir_is_usage_error() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let cli = Cli::default();
+        let result = cli.dispatch("ci", &[dir.path().to_str().unwrap().to_string()]);
+        assert!(result.is_err(), "ci on empty dir should fail");
+    }
+
+    // -----------------------------------------------------------------------
+    // CA tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn ca_on_crystal_file() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let file = dir.path().join("test.mirror");
+        // Empty file: transport returns Success with zero loss
+        std::fs::write(&file, "").unwrap();
+        let cli = Cli::default();
+        let result = cli.dispatch("ca", &[file.to_str().unwrap().to_string()]);
+        assert!(result.is_ok());
+        let output = result.unwrap();
+        assert!(
+            output.contains("nothing to do"),
+            "crystal file should say nothing to do, got: {}",
+            output
+        );
+    }
+
+    #[test]
+    fn ca_on_file_with_holonomy_produces_suggestions() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let file = dir.path().join("test.mirror");
+        let block = "form @test {\n  prism focus\n  prism split\n  prism zoom\n  prism project\n  prism refract\n}\n";
+        let source = block.repeat(20);
+        std::fs::write(&file, &source).unwrap();
+        let cli = Cli::default();
+        let result = cli.dispatch("ca", &[file.to_str().unwrap().to_string()]);
+        assert!(result.is_ok());
+        let output = result.unwrap();
+        assert!(
+            output.contains("suggestions"),
+            "file with holonomy should produce suggestions, got: {}",
+            output
+        );
+    }
+
+    #[test]
+    fn ca_enforce_flag_prints_stub() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let file = dir.path().join("test.mirror");
+        let block = "form @test {\n  prism focus\n  prism split\n  prism zoom\n  prism project\n  prism refract\n}\n";
+        let source = block.repeat(20);
+        std::fs::write(&file, &source).unwrap();
+        let cli = Cli::default();
+        let result = cli.dispatch(
+            "ca",
+            &[file.to_str().unwrap().to_string(), "--enforce".to_string()],
+        );
+        assert!(result.is_ok());
+        let output = result.unwrap();
+        assert!(
+            output.contains("enforce: not yet implemented"),
+            "enforce flag should report stub, got: {}",
+            output
+        );
+    }
+
+    #[test]
+    fn ca_no_args_is_usage_error() {
+        let cli = Cli::default();
+        let result = cli.dispatch("ca", &[]);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn ca_help_flag() {
+        let cli = Cli::default();
+        let result = cli.dispatch("ca", &["--help".to_string()]);
+        assert!(result.is_ok());
+        let output = result.unwrap();
+        assert!(
+            output.contains("observe, suggest, enforce"),
+            "ca --help should describe the command, got: {}",
+            output
+        );
+    }
+
+    #[test]
+    fn help_text_includes_ca() {
+        let text = Cli::help_text();
+        assert!(
+            text.contains("ca"),
+            "help text should include ca command, got: {}",
+            text
+        );
     }
 }
