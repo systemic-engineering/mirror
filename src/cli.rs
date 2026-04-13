@@ -92,9 +92,9 @@ impl Cli {
     // -----------------------------------------------------------------------
 
     fn cmd_compile(&self, args: &[String]) -> Result<String, CliError> {
-        let file = args.first().ok_or_else(|| {
-            CliError::Usage("usage: mirror compile <file>".to_string())
-        })?;
+        let file = args
+            .first()
+            .ok_or_else(|| CliError::Usage("usage: mirror compile <file>".to_string()))?;
 
         let source = std::fs::read_to_string(file)?;
         let mut compiler = crate::bundle::MirrorCompiler::new();
@@ -114,9 +114,10 @@ impl Cli {
                 );
                 Ok(shard.grammar_oid.as_str().to_string())
             }
-            Err(e) => Err(CliError::Runtime(
-                MirrorRuntimeError(format!("compile {}: {}", file, e)),
-            )),
+            Err(e) => Err(CliError::Runtime(MirrorRuntimeError(format!(
+                "compile {}: {}",
+                file, e
+            )))),
         }
     }
 
@@ -144,11 +145,13 @@ impl Cli {
             None => default_output,
         };
 
-        let store_dir =
-            std::env::temp_dir().join(format!("mirror-crystal-{}", std::process::id()));
+        let store_dir = std::env::temp_dir().join(format!("mirror-crystal-{}", std::process::id()));
         let _ = std::fs::create_dir_all(&store_dir);
 
-        match self.runtime.materialize_crystal(&boot_dir, &store_dir, &output) {
+        match self
+            .runtime
+            .materialize_crystal(&boot_dir, &store_dir, &output)
+        {
             Ok(oid) => {
                 eprintln!("crystal {} → {}", oid.as_str(), output.display());
                 let _ = std::fs::remove_dir_all(&store_dir);
@@ -337,8 +340,7 @@ mod tests {
 
     #[test]
     fn cli_error_is_error() {
-        let e: Box<dyn std::error::Error> =
-            Box::new(CliError::Usage("test".to_string()));
+        let e: Box<dyn std::error::Error> = Box::new(CliError::Usage("test".to_string()));
         assert_eq!(format!("{}", e), "test");
     }
 
@@ -392,9 +394,7 @@ mod tests {
             .materialize_crystal(&boot_dir, &store_dir, &shatter)
             .expect("materialize crystal");
 
-        let compiled = runtime
-            .compile_file(&shatter)
-            .expect("compile shatter");
+        let compiled = runtime.compile_file(&shatter).expect("compile shatter");
 
         let _ = std::fs::remove_dir_all(&store_dir);
         let _ = std::fs::remove_file(&shatter);

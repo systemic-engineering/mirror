@@ -5,6 +5,7 @@ in @ci
 in @ca
 in @spec
 in @lsp
+in @benchmark
 
 type exit_code = success | failure | partial(loss)
 
@@ -60,6 +61,10 @@ grammar @cli {
   -- ai
   action ai(path: string) -> imperfect
   action train(path: string) -> imperfect
+
+  -- benchmark
+  action bench(path: string) -> imperfect
+  action profile() -> imperfect
 
   -- every command returns imperfect
   -- the exit code IS the imperfect
