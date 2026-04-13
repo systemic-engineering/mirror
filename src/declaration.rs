@@ -70,8 +70,7 @@ impl DeclKind {
             "action" => Some(DeclKind::Action),
             "recover" => Some(DeclKind::Recover),
             "rescue" => Some(DeclKind::Rescue),
-            // DELIBERATE BUG: "grammar" removed to prove test catches it
-            // "grammar" => Some(DeclKind::Grammar),
+            "grammar" => Some(DeclKind::Grammar),
             _ => None,
         }
     }
