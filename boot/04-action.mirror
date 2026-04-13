@@ -2,24 +2,24 @@ in @prism
 in @actor
 
 type grammar
-type action(grammar)
+type block(grammar)
 
-type invocation(grammar, action) {
-  grammar: grammar,
-  action: action(grammar),
-  input: imperfect,
-  output: imperfect,
-}
-
-prism @action(grammar, action) {
-  focus  grammar -> action
-  project action(input) -> output
-  split  output -> imperfect
+prism action {
+  focus  type -> grammar
+  project grammar -> block
+  split  block(grammar) -> imperfect
   zoom   imperfect -> transport
   refract transport -> crystal
 }
 
+action action(receiver: type, in: grammar, body: block(grammar)) {
+  focus  receiver
+  project in
+  split  body(in)
+  zoom   body -> imperfect
+  refract imperfect
+}
+
 out grammar
+out block
 out action
-out invocation
-out @action
