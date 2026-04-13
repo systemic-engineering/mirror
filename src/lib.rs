@@ -58,4 +58,6 @@ pub mod parse;
 pub mod runtime;
 pub mod session;
 pub mod shard;
+#[cfg(feature = "git")]
+pub mod sign;
 pub mod store;
