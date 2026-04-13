@@ -938,6 +938,49 @@ pub struct BootResolution {
 pub type BootShatter = BootResolution;
 
 // ---------------------------------------------------------------------------
+// emit_shatter — serialize a compiled boot to .mirror-syntax .shatter file
+// ---------------------------------------------------------------------------
+
+/// Emit a `.shatter` file from a compiled boot sequence.
+///
+/// The output is valid `.mirror` syntax. The compiler can read its own output.
+/// Round-trip: `parse(emit_shatter(boot)) → compile → same OID`.
+pub fn emit_shatter(
+    collapsed: &CompiledShatter,
+    resolved: &BTreeMap<String, CompiledShatter>,
+    failed: &BTreeMap<String, MirrorResolveError>,
+) -> String {
+    let mut out = String::new();
+    out.push_str("# mirror.shatter\n");
+    out.push_str(&format!("# oid: {}\n", collapsed.crystal().as_str()));
+    out.push_str(&format!(
+        "# resolved: {} | failed: {}\n",
+        resolved.len(),
+        failed.len()
+    ));
+    out.push('\n');
+
+    // DELIBERATELY BROKEN: emit nothing — will cause OID mismatch on round-trip
+    out
+}
+
+impl MirrorRuntime {
+    /// Compile the boot directory and emit mirror.shatter.
+    pub fn materialize_crystal(
+        &self,
+        boot_dir: &Path,
+        store_dir: &Path,
+        output: &Path,
+    ) -> Result<MirrorHash, MirrorRuntimeError> {
+        let boot = self.compile_boot_dir(boot_dir, store_dir)?;
+        let content = emit_shatter(&boot.collapsed, &boot.resolved, &boot.failed);
+        std::fs::write(output, &content)
+            .map_err(|e| err(format!("write {}: {}", output.display(), e)))?;
+        Ok(boot.collapsed.crystal().clone())
+    }
+}
+
+// ---------------------------------------------------------------------------
 // MirrorRegistry — content-addressed store backed by FrgmntStore
 // ---------------------------------------------------------------------------
 
@@ -1676,6 +1719,88 @@ mod tests {
         assert!(
             !has_named_receiver,
             "action with no params should fail action_is_named_type"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // materialize_crystal — .shatter emission and round-trip
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn mirror_shatter_materializes_and_roundtrips() {
+        let runtime = MirrorRuntime::new();
+        let store_dir = tempdir_for_test("materialize_crystal");
+        let output = store_dir.join("mirror.shatter");
+
+        let oid = runtime
+            .materialize_crystal(&boot_dir(), &store_dir, &output)
+            .unwrap();
+
+        // The file exists and is non-empty
+        assert!(output.exists(), "mirror.shatter must be written to disk");
+        let content = std::fs::read_to_string(&output).unwrap();
+        assert!(!content.is_empty(), "mirror.shatter must not be empty");
+
+        // Parse it back — the content IS valid .mirror syntax
+        let reparsed = parse_form(&content).unwrap();
+
+        // Compile the reparsed form
+        let shatter = Shatter;
+        let fragment = shatter.compile_form(&reparsed);
+
+        // Same OID — round-trip exact
+        assert_eq!(
+            fragment.oid(),
+            &oid,
+            "round-trip OID mismatch: emitted shatter must parse back to same crystal"
+        );
+    }
+
+    #[test]
+    fn mirror_shatter_is_valid_mirror_syntax() {
+        let runtime = MirrorRuntime::new();
+        let store_dir = tempdir_for_test("shatter_valid_syntax");
+        let output = store_dir.join("mirror.shatter");
+
+        runtime
+            .materialize_crystal(&boot_dir(), &store_dir, &output)
+            .unwrap();
+
+        let content = std::fs::read_to_string(&output).unwrap();
+
+        // Must parse without error
+        let form = parse_form(&content).unwrap();
+
+        // Must contain the boot forms (all 7 boot files collapsed)
+        assert_eq!(
+            form.children.len(),
+            7,
+            "shatter must contain all 7 boot file forms"
+        );
+    }
+
+    #[test]
+    fn mirror_shatter_deterministic_across_runs() {
+        let runtime = MirrorRuntime::new();
+        let store_dir1 = tempdir_for_test("shatter_deterministic_1");
+        let store_dir2 = tempdir_for_test("shatter_deterministic_2");
+        let output1 = store_dir1.join("mirror.shatter");
+        let output2 = store_dir2.join("mirror.shatter");
+
+        let oid1 = runtime
+            .materialize_crystal(&boot_dir(), &store_dir1, &output1)
+            .unwrap();
+        let oid2 = runtime
+            .materialize_crystal(&boot_dir(), &store_dir2, &output2)
+            .unwrap();
+
+        assert_eq!(oid1, oid2, "same boot dir must produce same crystal OID");
+
+        let content1 = std::fs::read_to_string(&output1).unwrap();
+        let content2 = std::fs::read_to_string(&output2).unwrap();
+        assert_eq!(
+            content1, content2,
+            "same boot dir must produce identical .shatter content"
         );
     }
 }
