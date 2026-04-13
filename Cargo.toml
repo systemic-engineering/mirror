@@ -38,3 +38,8 @@ ssh-key = { version = "0.6", features = ["std", "ed25519", "crypto"], optional =
 
 [dev-dependencies]
 tempfile = "3"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "mirror"
+harness = false
