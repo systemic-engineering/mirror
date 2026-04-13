@@ -13,6 +13,7 @@ mirror — focus | project | refract
 
 usage:
   mirror compile <file>             compile a .mirror file
+  mirror crystal [output]           materialize mirror.shatter from boot/
   mirror ai <model> [file|-]        run a fate model
   mirror <query>                    parse and print the AST
 
@@ -29,6 +30,7 @@ fn main() {
 
     match args[1].as_str() {
         "compile" => cmd_compile(&args[2..]),
+        "crystal" => cmd_crystal(&args[2..]),
         "ai" => cmd_ai(&args[2..]),
         _ => cmd_query(&args[1..]),
     }
@@ -75,6 +77,43 @@ fn cmd_compile(args: &[String]) -> ! {
         }
         Err(e) => {
             eprintln!("error: compile {}: {}", file, e);
+            process::exit(1);
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// crystal — materialize mirror.shatter
+// ---------------------------------------------------------------------------
+
+fn cmd_crystal(args: &[String]) -> ! {
+    let manifest_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let boot_dir = manifest_dir.join("boot");
+    let default_output = manifest_dir.join("mirror.shatter");
+
+    let output = match args.first() {
+        Some(f) => std::path::PathBuf::from(f),
+        None => default_output,
+    };
+
+    let store_dir = std::env::temp_dir().join(format!("mirror-crystal-{}", process::id()));
+    let _ = std::fs::create_dir_all(&store_dir);
+
+    let runtime = mirror::mirror_runtime::MirrorRuntime::new();
+    match runtime.materialize_crystal(&boot_dir, &store_dir, &output) {
+        Ok(oid) => {
+            println!("{}", oid.as_str());
+            eprintln!(
+                "crystal {} → {}",
+                oid.as_str(),
+                output.display(),
+            );
+            let _ = std::fs::remove_dir_all(&store_dir);
+            process::exit(0);
+        }
+        Err(e) => {
+            eprintln!("error: materialize crystal: {}", e);
+            let _ = std::fs::remove_dir_all(&store_dir);
             process::exit(1);
         }
     }

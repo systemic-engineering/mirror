@@ -1,0 +1,218 @@
+# mirror.shatter
+# oid: 4244dcaf15bc6637ccd1f60bb5c31eff1889d78e98c8f6b625590b812fcc4ed4
+# resolved: 5 | failed: 2
+
+form mirror {
+  form {
+    focus id
+    prism @(id) {
+      focus prism
+      project prism
+      split prism
+      zoom prism
+      refract prism
+    }
+    prism @prism {
+      focus focus
+      project project
+      split split
+      zoom zoom
+      refract refract
+    }
+    project in(prism)
+    project out(prism)
+    out in
+    out id
+    out @
+    out @prism
+  }
+  form {
+    in @prism
+    focus type(id)
+    project ref(type)
+    split |(ref, ref)
+    zoom |>(ref, prism)
+    zoom <|(prism, ref)
+    zoom /(ref, focus)
+    refract ..(ref)
+    type loss(f64)
+    type precision(f64)
+    type grammar
+    type block(grammar)
+    type imperfect(type, type, loss)
+    type beam(result)
+    form @meta {
+      focus @
+      project |>
+      split |
+      zoom /
+      refract ..
+    }
+    out type
+    out ref
+    out |
+    out |>
+    out /
+    out ..
+    out loss
+    out precision
+    out beam
+    out grammar
+    out block
+    out imperfect
+    out @meta
+  }
+  form {
+    in @prism
+    in @meta
+    type position
+    type range
+    type severity = error | warning | info | hint
+    type diagnostic
+    type completion
+    type token
+    grammar @code {
+      action complete(position)
+      action diagnose(range)
+      action hover(position)
+      action definition(position)
+      action references(position)
+      action tokens(range)
+    }
+    out position
+    out range
+    out severity
+    out diagnostic
+    out completion
+    out token
+    out @code
+  }
+  form {
+    in @prism
+    in @meta
+    type actor(id)
+    type state(type)
+    type process(actor, state)
+    type message = call | cast
+    prism @actor {
+      type start_opts(tbd)
+      focus actor
+      project process(actor)
+      split start(process, start_opts)
+      zoom send(process, message)
+      refract exit(process)
+    }
+    out actor
+    out state
+    out process
+    out message
+    out @actor
+  }
+  form {
+    in @prism
+    in @meta
+    in @actor
+    prism action {
+      focus type
+      project grammar
+      split block(grammar)
+      zoom imperfect
+      refract transport
+    }
+    action action(receiver, :, type, in, :, grammar, body, :, block(grammar)) {
+      focus receiver
+      project in
+      split body(in)
+      zoom body
+      refract imperfect
+    }
+    out action
+  }
+  form @property {
+    in @form
+    traversal verdict = pass | fail
+    traversal lifecycle = requires | invariant | ensures
+    traversal assertion = has | eq
+    property unique_variants(form) {
+      fold input
+      traversal variants
+      lens shannon
+      refract verdict
+    }
+    property every_type_reachable(form) {
+      fold input
+      traversal types
+      lens connected
+      refract verdict
+    }
+    property dual_partition(form) {
+      fold input
+      traversal types
+      lens bipartite
+      refract verdict
+    }
+    property no_dead_variants(form) {
+      fold input
+      traversal variants
+      lens exhaustive
+      refract verdict
+    }
+    property idempotent(form) {
+      fold input
+      lens twice
+      refract verdict
+    }
+    property always_halts(form) {
+      fold input
+      lens bounded_steps
+      refract verdict
+    }
+    property deterministic(form) {
+      fold input
+      lens replay
+      refract verdict
+    }
+    property pure(form) {
+      fold input
+      lens effects
+      refract verdict
+    }
+    property no_cycles(form) {
+      fold input
+      traversal dependencies
+      lens topological
+      refract verdict
+    }
+    property types_lowercase(form) {
+      fold input
+      traversal types
+      lens lowercase
+      refract verdict
+    }
+    property action_is_named_type(form) {
+      fold input
+      traversal actions
+      lens receiver_is_type
+      refract verdict
+    }
+  }
+  form @mirror {
+    in @form
+    in @prism
+    in @type
+    in @boundary
+    in @lens
+    in @property
+    requires unique_variants
+    requires every_type_reachable
+    requires no_dead_variants
+    requires types_lowercase
+    requires action_is_named_type
+    invariant dual_partition
+    invariant idempotent
+    invariant deterministic
+    invariant pure
+    invariant no_cycles
+    ensures always_halts
+  }
+}
