@@ -127,17 +127,21 @@ pub fn resolve_private_key() -> Result<PrivateKey, SignError> {
 /// Resolve a public key for verification from environment variables.
 ///
 /// Resolution order:
-/// 1. `MIRROR_CI_SIGN_KEY` — if it contains a public key (file path or base64)
+/// 1. `MIRROR_CI_SIGN_KEY` — public key directly, or derived from private key
 /// 2. `CONVERSATION_KEYS_PUBLIC` — path to a specific public key file
 /// 3. First `.pub` file in `CONVERSATION_KEYS` directory
 /// 4. First `.pub` file in `~/.ssh`
 #[cfg(feature = "git")]
 pub fn resolve_public_key() -> Result<PublicKey, SignError> {
-    // 1. MIRROR_CI_SIGN_KEY (might be a public key)
+    // 1. MIRROR_CI_SIGN_KEY — try as public key first, then derive from private key
     if let Ok(val) = std::env::var("MIRROR_CI_SIGN_KEY") {
         if let Some(content) = resolve_key_content(&val) {
             if let Ok(key) = load_public_key(&content) {
                 return Ok(key);
+            }
+            // If it's a private key, derive the public key from it
+            if let Ok(priv_key) = load_private_key(&content) {
+                return Ok(priv_key.public_key().clone());
             }
         }
     }
@@ -429,6 +433,20 @@ mod tests {
         assert_eq!(
             resolved.public_key().to_bytes(),
             key.public_key().to_bytes()
+        );
+        std::env::remove_var("MIRROR_CI_SIGN_KEY");
+
+        // 4b. MIRROR_CI_SIGN_KEY with private key → resolve_public_key derives public key
+        // Isolate from host keys to prove this resolves from MIRROR_CI_SIGN_KEY alone
+        std::env::remove_var("CONVERSATION_KEYS_PUBLIC");
+        std::env::set_var("CONVERSATION_KEYS", "/nonexistent");
+        std::env::set_var("MIRROR_CI_SIGN_KEY", priv_path.to_str().unwrap());
+        let resolved_pub = resolve_public_key()
+            .expect("should derive public key from MIRROR_CI_SIGN_KEY private key");
+        assert_eq!(
+            resolved_pub.to_bytes(),
+            key.public_key().to_bytes(),
+            "public key derived from MIRROR_CI_SIGN_KEY should match"
         );
         std::env::remove_var("MIRROR_CI_SIGN_KEY");
 
