@@ -85,6 +85,7 @@ impl Cli {
             "crystal" => self.cmd_crystal(args),
             "ai" => self.cmd_ai(args),
             "ci" => self.cmd_ci(args),
+            "lsp" => self.cmd_lsp(args),
             "ca" => self.cmd_ca(args),
             "bench" => self.cmd_bench(args),
             "init" => self.cmd_init(args),
@@ -529,6 +530,119 @@ flags:
         }
 
         Ok(out)
+    }
+
+    // -----------------------------------------------------------------------
+    // lsp -- language server protocol integration
+    // -----------------------------------------------------------------------
+
+    fn cmd_lsp(&self, args: &[String]) -> Result<String, CliError> {
+        if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
+            return Ok("\
+mirror lsp -- language server protocol integration
+
+usage: mirror lsp learn @code/<language> [files...]
+
+subcommands:
+  learn @code/<language>   generate a @code grammar from tree-sitter + LSP
+
+options:
+  --node-types <path>      path to node-types.json (overrides auto-detection)
+  --out <path>             write grammar to <path> instead of garden
+  --no-lsp                 skip LSP capability detection"
+                .to_string());
+        }
+        match args[0].as_str() {
+            "learn" => self.cmd_lsp_learn(&args[1..]),
+            other => Err(CliError::Usage(format!(
+                "mirror lsp: unknown subcommand '{}'\nusage: mirror lsp learn @code/<language>",
+                other
+            ))),
+        }
+    }
+
+    fn cmd_lsp_learn(&self, args: &[String]) -> Result<String, CliError> {
+        use crate::lsp::{generate, language, node_types};
+        let mut node_types_path: Option<String> = None;
+        let mut out_path: Option<String> = None;
+        let mut no_lsp = false;
+        let mut positional: Vec<&str> = Vec::new();
+        let mut i = 0;
+        while i < args.len() {
+            match args[i].as_str() {
+                "--node-types" => {
+                    node_types_path = args.get(i + 1).cloned();
+                    i += 2;
+                }
+                "--out" => {
+                    out_path = args.get(i + 1).cloned();
+                    i += 2;
+                }
+                "--no-lsp" => {
+                    no_lsp = true;
+                    i += 1;
+                }
+                other => {
+                    positional.push(other);
+                    i += 1;
+                }
+            }
+        }
+        let domain = positional
+            .first()
+            .ok_or_else(|| CliError::Usage("usage: mirror lsp learn @code/<language>".into()))?;
+        let lang_name = domain.strip_prefix("@code/").ok_or_else(|| {
+            CliError::Usage(format!("expected @code/<language>, got '{}'", domain))
+        })?;
+        let config = language::detect(lang_name).ok_or_else(|| {
+            CliError::Usage(format!(
+                "unknown language '{}'. supported: python, rust, gleam, javascript, typescript, nix",
+                lang_name
+            ))
+        })?;
+        let json = match &node_types_path {
+            Some(path) => std::fs::read_to_string(path)
+                .map_err(|e| CliError::Usage(format!("read {}: {}", path, e)))?,
+            None => {
+                return Err(CliError::Usage(
+                    "auto-detection of node-types.json not yet implemented.\nuse --node-types <path> to provide it manually.".into()
+                ));
+            }
+        };
+        let types = node_types::parse_node_types(&json)
+            .map_err(|e| CliError::Usage(format!("parse node-types.json: {}", e)))?;
+        let capabilities = if no_lsp {
+            language::LspCapabilities::default()
+        } else {
+            language::LspCapabilities::all()
+        };
+        let grammar = generate::generate_grammar(&config, &types, &capabilities);
+        match &out_path {
+            Some(path) => {
+                if let Some(parent) = std::path::Path::new(path).parent() {
+                    std::fs::create_dir_all(parent)?;
+                }
+                std::fs::write(path, &grammar)?;
+                Ok(format!("wrote @code/{} grammar to {}", config.name, path))
+            }
+            None => {
+                let garden_path = format!(
+                    ".git/mirror/garden/@code/{}/{}.mirror",
+                    config.name, config.name
+                );
+                let garden_dir = std::path::Path::new(&garden_path).parent().unwrap();
+                if std::path::Path::new(".git/mirror").exists() {
+                    std::fs::create_dir_all(garden_dir)?;
+                    std::fs::write(&garden_path, &grammar)?;
+                    Ok(format!(
+                        "wrote @code/{} grammar to {}",
+                        config.name, garden_path
+                    ))
+                } else {
+                    Ok(grammar)
+                }
+            }
+        }
     }
 
     // -----------------------------------------------------------------------

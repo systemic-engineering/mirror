@@ -51,6 +51,7 @@ pub mod cli;
 pub mod declaration;
 pub mod gestalt;
 pub mod loss;
+pub mod lsp;
 pub mod mirror_runtime;
 pub mod optic;
 pub mod parse;
