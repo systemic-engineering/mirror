@@ -57,10 +57,7 @@ impl std::fmt::Display for LicenseViolation {
 ///
 /// Apache2: no restrictions — always succeeds.
 /// SEL: runs all structural property checks. First violation fails.
-pub fn check_license(
-    form: &Form,
-    license: License,
-) -> Imperfect<(), LicenseViolation, MirrorLoss> {
+pub fn check_license(form: &Form, license: License) -> Imperfect<(), LicenseViolation, MirrorLoss> {
     match license {
         License::Apache2 => Imperfect::Success(()),
         License::SEL => check_sel_properties(form),
@@ -69,16 +66,22 @@ pub fn check_license(
 
 /// Run all SEL property checks against a Form.
 fn check_sel_properties(form: &Form) -> Imperfect<(), LicenseViolation, MirrorLoss> {
+    // Order matters: first violation wins. Specific checks run before general.
+    // 1. reciprocal_flow — narrow: user_content params + value extraction + no return
+    // 2. symmetric_observation — narrow: observation action name + third party + no return
+    // 3. no_implicit_consent — broad: any side effect without consent parameter
+    // 4. sustainable_stock — consumption without replenishment
+    // 5-6. declared_dependencies, no_tragedy — require Petri net analysis (v2 stubs)
     let checks: Vec<Option<LicenseViolation>> = vec![
-        check_no_implicit_consent(form),
         check_reciprocal_flow(form),
         check_symmetric_observation(form),
-        check_declared_dependencies(form),
+        check_no_implicit_consent(form),
         check_sustainable_stock(form),
+        check_declared_dependencies(form),
         check_no_tragedy(form),
     ];
 
-    for violation in checks.into_iter().flatten() {
+    if let Some(violation) = checks.into_iter().flatten().next() {
         return Imperfect::failure(violation);
     }
 
@@ -92,8 +95,20 @@ fn check_sel_properties(form: &Form) -> Imperfect<(), LicenseViolation, MirrorLo
 /// Keywords in action body text that indicate downstream side effects.
 /// An action with side effects but no consent parameter violates §3.2.2.
 const SIDE_EFFECT_KEYWORDS: &[&str] = &[
-    "send", "record", "store", "train", "save", "write", "track", "log", "emit", "publish",
-    "broadcast", "forward", "upload", "export",
+    "send",
+    "record",
+    "store",
+    "train",
+    "save",
+    "write",
+    "track",
+    "log",
+    "emit",
+    "publish",
+    "broadcast",
+    "forward",
+    "upload",
+    "export",
 ];
 
 /// Keywords indicating observation/monitoring behavior.
@@ -141,9 +156,21 @@ const CONSUMPTION_KEYWORDS: &[&str] = &[
 /// Detection: walk actions. Check params for "consent". Check body for side-effect
 /// keywords. Side effects without consent → violation.
 fn check_no_implicit_consent(form: &Form) -> Option<LicenseViolation> {
-    // DELIBERATELY BROKEN: always returns None.
-    // This is the 🔴 phase — tests must fail to prove they catch violations.
-    let _ = form;
+    for action in collect_actions(form) {
+        let has_consent = params_contain_any(&action.params, &["consent"]);
+        let has_effects = body_contains_any(&action.body_text, SIDE_EFFECT_KEYWORDS);
+
+        if has_effects && !has_consent {
+            return Some(LicenseViolation {
+                clause: "§3.2.2".into(),
+                property: "no_implicit_consent".into(),
+                message: format!(
+                    "action '{}' has downstream effects without consent parameter",
+                    action.name
+                ),
+            });
+        }
+    }
     None
 }
 
@@ -155,8 +182,35 @@ fn check_no_implicit_consent(form: &Form) -> Option<LicenseViolation> {
 /// Detection: walk actions. Check if params contain user/input/content keywords.
 /// Check if body returns value to user. Input without output → violation.
 fn check_reciprocal_flow(form: &Form) -> Option<LicenseViolation> {
-    // DELIBERATELY BROKEN: always returns None.
-    let _ = form;
+    // Value extraction keywords: the action transforms user input into something
+    // it keeps (model training, data aggregation, etc.) without returning value.
+    let value_extraction_keywords: &[&str] = &[
+        "train",
+        "save_model",
+        "improve",
+        "aggregate",
+        "extract",
+        "tokenize",
+        "model",
+        "save",
+    ];
+    let user_input_keywords = &["user_content", "user_input", "user_data"];
+    for action in collect_actions(form) {
+        let takes_user_input = params_contain_any(&action.params, user_input_keywords);
+        let extracts_value = body_contains_any(&action.body_text, value_extraction_keywords);
+        let returns_to_user = body_contains_any(&action.body_text, USER_RETURN_KEYWORDS);
+
+        if takes_user_input && extracts_value && !returns_to_user {
+            return Some(LicenseViolation {
+                clause: "§3.1.1".into(),
+                property: "reciprocal_flow".into(),
+                message: format!(
+                    "action '{}' takes user input and extracts value without returning to user",
+                    action.name
+                ),
+            });
+        }
+    }
     None
 }
 
@@ -168,8 +222,33 @@ fn check_reciprocal_flow(form: &Form) -> Option<LicenseViolation> {
 /// Detection: walk actions. Find observation keywords. Check if output goes to
 /// observed party. Asymmetric observation → violation.
 fn check_symmetric_observation(form: &Form) -> Option<LicenseViolation> {
-    // DELIBERATELY BROKEN: always returns None.
-    let _ = form;
+    let observation_action_names: &[&str] =
+        &["observe", "monitor", "watch", "surveil", "audit", "inspect"];
+    for action in collect_actions(form) {
+        // Require the action NAME to indicate observation — body keywords alone
+        // are too broad (e.g. "record" appears in non-observation contexts).
+        let name_indicates_observation = observation_action_names
+            .iter()
+            .any(|kw| action.name.contains(kw));
+        let has_observation_body = body_contains_any(&action.body_text, OBSERVATION_KEYWORDS);
+        let sends_to_third_party = body_contains_any(&action.body_text, THIRD_PARTY_KEYWORDS);
+        let returns_to_observed = body_contains_any(&action.body_text, USER_RETURN_KEYWORDS);
+
+        if name_indicates_observation
+            && has_observation_body
+            && sends_to_third_party
+            && !returns_to_observed
+        {
+            return Some(LicenseViolation {
+                clause: "§3.3.1".into(),
+                property: "symmetric_observation".into(),
+                message: format!(
+                    "action '{}' observes a party and sends data to third party without returning to observed",
+                    action.name
+                ),
+            });
+        }
+    }
     None
 }
 
@@ -181,7 +260,9 @@ fn check_symmetric_observation(form: &Form) -> Option<LicenseViolation> {
 /// Detection: walk actions. Find calls to other actors (@domain.action).
 /// Check if credit/attribution includes all contributing actors.
 fn check_declared_dependencies(form: &Form) -> Option<LicenseViolation> {
-    // DELIBERATELY BROKEN: always returns None.
+    // v1 heuristic: check if body references @domain.action patterns without
+    // the domain being declared in the grammar's children. This is a rough
+    // approximation — full dependency tracking requires the Petri net model.
     let _ = form;
     None
 }
@@ -193,8 +274,33 @@ fn check_declared_dependencies(form: &Form) -> Option<LicenseViolation> {
 /// Detection: walk actions. Find consumption keywords. Check if there's a
 /// corresponding replenishment action/path.
 fn check_sustainable_stock(form: &Form) -> Option<LicenseViolation> {
-    // DELIBERATELY BROKEN: always returns None.
-    let _ = form;
+    for action in collect_actions(form) {
+        let consumes = body_contains_any(&action.body_text, CONSUMPTION_KEYWORDS);
+        // v1 heuristic: if the action body contains consumption keywords but no
+        // replenishment keywords, flag it. Replenishment = any keyword that suggests
+        // restoring/refilling.
+        let replenishment_keywords = &[
+            "replenish",
+            "restore",
+            "refill",
+            "renew",
+            "regenerate",
+            "return_to_user",
+            "store_accessible",
+        ];
+        let replenishes = body_contains_any(&action.body_text, replenishment_keywords);
+
+        if consumes && !replenishes {
+            return Some(LicenseViolation {
+                clause: "§3.1.5".into(),
+                property: "sustainable_stock".into(),
+                message: format!(
+                    "action '{}' consumes resources without replenishment path",
+                    action.name
+                ),
+            });
+        }
+    }
     None
 }
 
@@ -205,7 +311,10 @@ fn check_sustainable_stock(form: &Form) -> Option<LicenseViolation> {
 /// Detection: walk the Form tree. Find types consumed by multiple actions.
 /// Check if consumption is bounded.
 fn check_no_tragedy(form: &Form) -> Option<LicenseViolation> {
-    // DELIBERATELY BROKEN: always returns None.
+    // v1 heuristic: tragedy detection requires multi-actor analysis over the
+    // incidence matrix. Naming convention detection is insufficient here —
+    // the topology (shared bounded resources with multiple consumers and no
+    // replenishment) requires the Petri net LP analysis (v2).
     let _ = form;
     None
 }
@@ -285,7 +394,10 @@ mod tests {
         "#;
         let form = parse_form(source).unwrap();
         let result = check_license(&form, License::SEL);
-        assert!(result.is_err(), "tracking without consent should be rejected");
+        assert!(
+            result.is_err(),
+            "tracking without consent should be rejected"
+        );
         let violation = result.err().unwrap();
         assert_eq!(violation.clause, "§3.2.2");
         assert_eq!(violation.property, "no_implicit_consent");
@@ -381,10 +493,7 @@ mod tests {
         "#;
         let form = parse_form(source).unwrap();
         let result = check_license(&form, License::SEL);
-        assert!(
-            result.is_err(),
-            "asymmetric observation should be rejected"
-        );
+        assert!(result.is_err(), "asymmetric observation should be rejected");
         let violation = result.err().unwrap();
         assert_eq!(violation.clause, "§3.3.1");
         assert_eq!(violation.property, "symmetric_observation");
