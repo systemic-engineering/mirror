@@ -1,0 +1,45 @@
+in @prism
+in @meta
+in @git
+
+type version
+type semver(version) = major(u32) | minor(u32) | patch(u32)
+
+type surface = observation | action
+
+type mirver(grammar, @mirror(surface)) = {
+  oid: oid,
+  semver: semver,
+}
+
+default(version) = mirver
+
+type change {
+  added: [type],
+  removed: [type],
+  modified: [type],
+}
+
+type package {
+  name: string,
+  repo: repo,
+  version: mirver,
+  license: license,
+  dependencies: [package],
+}
+
+abstract grammar @package {
+  abstract action resolve(package) -> imperfect
+  abstract action install(package) -> imperfect
+  abstract action publish(package) -> imperfect
+  abstract action diff(mirver, mirver) -> change
+  abstract action compatible(mirver, mirver) -> imperfect
+}
+
+out version
+out semver
+out surface
+out mirver
+out change
+out package
+out @package

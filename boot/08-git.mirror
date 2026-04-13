@@ -1,0 +1,23 @@
+in @prism
+in @meta
+in @code
+
+type repo(url)
+type commit(oid)
+type branch(string)
+type tag(string, commit)
+
+abstract grammar @git {
+  abstract action clone(repo) -> imperfect
+  abstract action fetch(repo) -> imperfect
+  abstract action checkout(commit) -> imperfect
+  abstract action tag(commit, string) -> imperfect
+  abstract action branches(repo) -> [branch]
+  abstract action merge(branch) -> imperfect
+}
+
+out repo
+out commit
+out branch
+out tag
+out @git
