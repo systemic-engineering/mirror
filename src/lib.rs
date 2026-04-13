@@ -50,6 +50,7 @@ pub mod bundle;
 pub mod cli;
 pub mod declaration;
 pub mod gestalt;
+pub mod license;
 pub mod loss;
 pub mod lsp;
 pub mod mirror_runtime;
