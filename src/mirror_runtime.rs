@@ -1183,9 +1183,9 @@ mod tests {
         let runtime = MirrorRuntime::new();
         let store_dir = tempdir_for_test("compiles_full_boot_dir");
         let boot = runtime.compile_boot_dir(&boot_dir(), &store_dir).unwrap();
-        assert_eq!(boot.resolved.len() + boot.failed.len(), 6);
+        assert_eq!(boot.resolved.len() + boot.failed.len(), 7);
         assert_eq!(boot.collapsed.form_name(), "mirror");
-        assert_eq!(boot.collapsed.form.children.len(), 6);
+        assert_eq!(boot.collapsed.form.children.len(), 7);
 
         let store_dir2 = tempdir_for_test("compiles_full_boot_dir_2");
         let again = runtime.compile_boot_dir(&boot_dir(), &store_dir2).unwrap();
@@ -1196,7 +1196,7 @@ mod tests {
     fn mirror_runtime_property_file_compiles() {
         let runtime = MirrorRuntime::new();
         let compiled = runtime
-            .compile_file(&boot_dir().join("03-property.mirror"))
+            .compile_file(&boot_dir().join("05-property.mirror"))
             .unwrap();
         assert_eq!(compiled.form_name(), "@property");
         let prop_count = compiled
@@ -1432,15 +1432,17 @@ mod tests {
 
         assert!(boot.resolved.contains_key("00-prism"));
         assert!(boot.resolved.contains_key("01-meta"));
-        assert!(boot.resolved.contains_key("02-actor"));
+        assert!(boot.resolved.contains_key("02-code"));
+        assert!(boot.resolved.contains_key("03-actor"));
         assert!(boot.resolved.contains_key("04-action"));
 
-        assert!(boot.failed.contains_key("03-property"));
+        assert!(boot.failed.contains_key("05-property"));
         assert!(boot.failed.contains_key("10-mirror"));
 
         let reopened = MirrorRegistry::open(&store_dir).unwrap();
         assert!(reopened.lookup("@prism").is_some());
         assert!(reopened.lookup("@meta").is_some());
+        assert!(reopened.lookup("@code").is_some());
         assert!(reopened.lookup("@actor").is_some());
         // 04-action.mirror declares types/prism/action at top level without @-prefix,
         // so no @action ref is created. The file resolves but exports nothing named.

@@ -39,6 +39,8 @@ pub enum DeclKind {
     Lens,
     // Actions
     Action,
+    // Grammar
+    Grammar,
 }
 
 impl DeclKind {
@@ -63,6 +65,7 @@ impl DeclKind {
             "traversal" => Some(DeclKind::Traversal),
             "lens" => Some(DeclKind::Lens),
             "action" => Some(DeclKind::Action),
+            "grammar" => Some(DeclKind::Grammar),
             _ => None,
         }
     }
@@ -88,6 +91,7 @@ impl DeclKind {
             DeclKind::Traversal => "traversal",
             DeclKind::Lens => "lens",
             DeclKind::Action => "action",
+            DeclKind::Grammar => "grammar",
         }
     }
 }
@@ -241,6 +245,7 @@ mod tests {
             DeclKind::In,
             DeclKind::Out,
             DeclKind::Action,
+            DeclKind::Grammar,
         ] {
             assert_eq!(DeclKind::parse(kind.as_str()), Some(kind));
         }
