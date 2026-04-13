@@ -127,10 +127,11 @@ form @cli {
     fn from_compiled_extracts_actions() {
         let compiled = compile_with_actions();
         let optic = MirrorOptic::from_compiled(&compiled).unwrap();
-        assert!(
-            optic.actions().len() >= 3,
-            "expected at least 3 actions, got {}",
-            optic.actions().len()
+        assert_eq!(
+            optic.actions().len(),
+            3,
+            "expected exactly 3 actions (focus, compile, repl), got {:?}",
+            optic.actions().keys().collect::<Vec<_>>()
         );
         assert!(optic.actions().contains_key("focus"));
         assert!(optic.actions().contains_key("compile"));
@@ -142,6 +143,8 @@ form @cli {
         let compiled = compile_with_actions();
         let optic = MirrorOptic::from_compiled(&compiled).unwrap();
         assert!(optic.has_action("focus"));
+        // Also verify grammar_name is correctly extracted
+        assert_eq!(optic.grammar_name(), "@cli");
     }
 
     #[test]
@@ -159,21 +162,31 @@ form @cli {
     }
 
     #[test]
-    fn action_preserves_grammar_ref() {
+    fn action_preserves_grammar_ref_and_receiver() {
         let compiled = compile_with_actions();
         let optic = MirrorOptic::from_compiled(&compiled).unwrap();
         let compile_action = optic.actions().get("compile").expect("compile action");
         assert_eq!(compile_action.grammar_ref.as_deref(), Some("@code/rust"));
+        assert_eq!(compile_action.receiver, "self", "receiver should be 'self'");
+        assert!(
+            !compile_action.is_abstract,
+            "compile should not be abstract"
+        );
     }
 
     #[test]
-    fn action_preserves_body() {
+    fn action_preserves_body_content() {
         let compiled = compile_with_actions();
         let optic = MirrorOptic::from_compiled(&compiled).unwrap();
         let focus_action = optic.actions().get("focus").expect("focus action");
+        let body = focus_action
+            .body
+            .as_ref()
+            .expect("focus action should have a body");
         assert!(
-            focus_action.body.is_some(),
-            "focus action should have a body"
+            body.contains("parse_and_print"),
+            "body should contain 'parse_and_print', got: {}",
+            body
         );
     }
 

@@ -249,16 +249,29 @@ mod tests {
     fn cli_open_valid_spec_produces_oid() {
         let dir = tempfile::TempDir::new().unwrap();
         let spec = dir.path().join("spec.mirror");
-        std::fs::write(&spec, "type greeting\n").unwrap();
+        std::fs::write(
+            &spec,
+            "grammar @test {\n  type greeting\n  type farewell\n  action speak(self)\n}\n",
+        )
+        .unwrap();
         let cli = Cli::open(spec.to_str().unwrap()).unwrap();
-        assert!(cli.crystal_oid().is_some());
+        let oid = cli.crystal_oid().expect("should produce crystal OID");
+        assert!(
+            oid.as_str().len() == 64 && oid.as_str().chars().all(|c| c.is_ascii_hexdigit()),
+            "OID should be 64-char hex, got: {}",
+            oid.as_str()
+        );
     }
 
     #[test]
     fn dispatch_compile_valid_file() {
         let dir = tempfile::TempDir::new().unwrap();
         let file = dir.path().join("test.mirror");
-        std::fs::write(&file, "type greeting\n").unwrap();
+        std::fs::write(
+            &file,
+            "grammar @deploy {\n  type state\n  action transform(self) in @code/rust {\n    self.apply()\n  }\n}\n",
+        )
+        .unwrap();
 
         let cli = Cli::default();
         let result = cli.dispatch("compile", &[file.to_str().unwrap().to_string()]);
@@ -269,6 +282,11 @@ mod tests {
             "should be hex OID: {}",
             oid
         );
+        // Compile again: deterministic — same OID
+        let oid2 = cli
+            .dispatch("compile", &[file.to_str().unwrap().to_string()])
+            .unwrap();
+        assert_eq!(oid, oid2, "compile must be deterministic");
     }
 
     #[test]
@@ -284,7 +302,20 @@ mod tests {
         let result = cli.dispatch("type greeting", &[]);
         assert!(result.is_ok());
         let output = result.unwrap();
-        assert!(output.contains("greeting"));
+        assert!(
+            output.contains("greeting"),
+            "query output should contain the type name 'greeting', got: {}",
+            output
+        );
+        // Also test a more complex query
+        let result2 = cli.dispatch("grammar @test { type id }", &[]);
+        assert!(result2.is_ok());
+        let output2 = result2.unwrap();
+        assert!(
+            output2.contains("@test"),
+            "complex query should parse and return form name, got: {}",
+            output2
+        );
     }
 
     #[test]

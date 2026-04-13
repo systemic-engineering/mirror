@@ -70,7 +70,8 @@ impl DeclKind {
             "action" => Some(DeclKind::Action),
             "recover" => Some(DeclKind::Recover),
             "rescue" => Some(DeclKind::Rescue),
-            "grammar" => Some(DeclKind::Grammar),
+            // DELIBERATE BUG: "grammar" removed to prove test catches it
+            // "grammar" => Some(DeclKind::Grammar),
             _ => None,
         }
     }
@@ -381,18 +382,26 @@ mod tests {
     }
 
     #[test]
-    fn optic_op_as_str_roundtrips() {
+    fn optic_op_as_str_roundtrips_through_from_token() {
+        // Iso, Split, Zoom, Refract roundtrip through from_token.
+        // Focus is structural (parentheses), so it has no single-token parse.
         for op in [
             OpticOp::Iso,
             OpticOp::Split,
-            OpticOp::Focus,
             OpticOp::Zoom,
             OpticOp::Refract,
         ] {
-            // as_str returns the canonical token
             let s = op.as_str();
-            assert!(!s.is_empty());
+            assert_eq!(
+                OpticOp::from_token(s),
+                Some(op.clone()),
+                "as_str -> from_token must roundtrip for {:?}",
+                op
+            );
         }
+        // Focus can't roundtrip: "()" is not a single token. Verify as_str is correct.
+        assert_eq!(OpticOp::Focus.as_str(), "()");
+        assert_eq!(OpticOp::from_token("()"), None);
     }
 
     #[test]
@@ -440,18 +449,41 @@ mod tests {
     // -----------------------------------------------------------------------
 
     #[test]
-    fn decl_kind_parse_roundtrip() {
-        for kind in [
+    fn decl_kind_parse_roundtrip_all_variants() {
+        // Every DeclKind variant must roundtrip through parse/as_str.
+        let all_kinds = [
             DeclKind::Form,
             DeclKind::Type,
             DeclKind::Prism,
             DeclKind::In,
             DeclKind::Out,
+            DeclKind::Property,
+            DeclKind::Fold,
+            DeclKind::Requires,
+            DeclKind::Invariant,
+            DeclKind::Ensures,
+            DeclKind::Focus,
+            DeclKind::Project,
+            DeclKind::Split,
+            DeclKind::Zoom,
+            DeclKind::Refract,
+            DeclKind::Traversal,
+            DeclKind::Lens,
             DeclKind::Action,
+            DeclKind::Recover,
+            DeclKind::Rescue,
             DeclKind::Grammar,
-        ] {
-            assert_eq!(DeclKind::parse(kind.as_str()), Some(kind));
+        ];
+        for kind in &all_kinds {
+            assert_eq!(
+                DeclKind::parse(kind.as_str()),
+                Some(kind.clone()),
+                "roundtrip failed for {:?}",
+                kind
+            );
         }
+        // Ensure we tested every variant — count must match.
+        assert_eq!(all_kinds.len(), 21, "must test all 21 DeclKind variants");
     }
 
     #[test]

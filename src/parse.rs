@@ -160,6 +160,9 @@ mod tests {
         // Top-level form should be a grammar declaration
         assert!(tree.data().is_decl("grammar"));
         assert_eq!(tree.data().value, "@test");
+        // Should have one child: type id
+        assert_eq!(tree.children().len(), 1, "grammar should have 1 child");
+        assert_eq!(tree.children()[0].data().value, "id");
     }
 
     #[test]
@@ -229,11 +232,16 @@ mod tests {
         let result = Parse.trace(source);
         assert!(result.is_ok());
         let tree = result.unwrap();
-        assert!(tree.children().len() >= 2);
-        // Children should be type declarations
-        for child in tree.children() {
-            assert!(child.data().is_decl("type"));
-        }
+        assert_eq!(
+            tree.children().len(),
+            2,
+            "expected exactly 2 type children, got {}",
+            tree.children().len()
+        );
+        assert!(tree.children()[0].data().is_decl("type"));
+        assert_eq!(tree.children()[0].data().value, "id");
+        assert!(tree.children()[1].data().is_decl("type"));
+        assert_eq!(tree.children()[1].data().value, "name");
     }
 
     #[test]
@@ -249,6 +257,33 @@ mod tests {
             .collect();
         assert_eq!(actions.len(), 1);
         assert_eq!(actions[0].data().value, "greet");
+    }
+
+    #[test]
+    fn parse_complex_grammar_with_actions_and_properties() {
+        let source = r#"grammar @deploy {
+  type state
+  type visibility = private | protected | public
+  action transform(self) in @code/rust {
+    self.apply()
+  }
+  abstract action validate(self)
+  requires types_lowercase
+  invariant pure
+}"#
+        .to_string();
+        let result = Parse.trace(source);
+        assert!(result.is_ok(), "complex grammar should parse");
+        let tree = result.unwrap();
+        assert!(tree.data().is_decl("grammar"));
+        assert_eq!(tree.data().value, "@deploy");
+        // Should have children for: type state, type visibility, action transform,
+        // abstract action validate, requires types_lowercase, invariant pure
+        assert!(
+            tree.children().len() >= 5,
+            "complex grammar should have at least 5 children, got {}",
+            tree.children().len()
+        );
     }
 
     #[test]
