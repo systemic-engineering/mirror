@@ -39,6 +39,9 @@ pub enum DeclKind {
     Lens,
     // Actions
     Action,
+    // Error handling
+    Recover,
+    Rescue,
     // Grammar
     Grammar,
 }
@@ -65,6 +68,8 @@ impl DeclKind {
             "traversal" => Some(DeclKind::Traversal),
             "lens" => Some(DeclKind::Lens),
             "action" => Some(DeclKind::Action),
+            "recover" => Some(DeclKind::Recover),
+            "rescue" => Some(DeclKind::Rescue),
             "grammar" => Some(DeclKind::Grammar),
             _ => None,
         }
@@ -91,6 +96,8 @@ impl DeclKind {
             DeclKind::Traversal => "traversal",
             DeclKind::Lens => "lens",
             DeclKind::Action => "action",
+            DeclKind::Recover => "recover",
+            DeclKind::Rescue => "rescue",
             DeclKind::Grammar => "grammar",
         }
     }

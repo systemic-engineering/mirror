@@ -48,16 +48,32 @@ impl MirrorOptic {
     /// Build from a `CompiledShatter` — extract actions from the form tree.
     pub fn from_compiled(compiled: &CompiledShatter) -> Result<Self, MirrorRuntimeError> {
         let mut actions = BTreeMap::new();
-
-        // DELIBERATELY BROKEN: skip action extraction to prove tests fail.
-        // The correct implementation walks compiled.form.children.
-        let _ = &compiled.form;
+        Self::collect_actions(&compiled.form, &mut actions);
 
         Ok(MirrorOptic {
             grammar_name: compiled.form_name().to_string(),
             actions,
             crystal_oid: compiled.crystal().clone(),
         })
+    }
+
+    /// Recursively walk the form tree and collect all Action declarations.
+    fn collect_actions(form: &Form, actions: &mut BTreeMap<String, ActionDef>) {
+        for child in &form.children {
+            if child.kind == DeclKind::Action {
+                let receiver = child.params.first().cloned().unwrap_or_default();
+                let def = ActionDef {
+                    name: child.name.clone(),
+                    receiver,
+                    grammar_ref: child.grammar_ref.clone(),
+                    body: child.body_text.clone(),
+                    is_abstract: child.is_abstract,
+                };
+                actions.insert(child.name.clone(), def);
+            }
+            // Recurse into nested forms to find actions at any depth.
+            Self::collect_actions(child, actions);
+        }
     }
 
     /// List available actions.
@@ -166,7 +182,13 @@ form @cli {
         let compiled = compile_with_actions();
         let optic = MirrorOptic::from_compiled(&compiled).unwrap();
         let repl_action = optic.actions().get("repl").expect("repl action");
-        assert!(repl_action.body.is_none(), "abstract action should have no body");
-        assert!(repl_action.is_abstract, "abstract action should be marked abstract");
+        assert!(
+            repl_action.body.is_none(),
+            "abstract action should have no body"
+        );
+        assert!(
+            repl_action.is_abstract,
+            "abstract action should be marked abstract"
+        );
     }
 }

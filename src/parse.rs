@@ -85,6 +85,8 @@ fn decl_to_ast(kind: &DeclKind) -> (Kind, &'static str) {
         DeclKind::Traversal => (Kind::Decl, "traversal"),
         DeclKind::Lens => (Kind::Decl, "lens"),
         DeclKind::Action => (Kind::Decl, "action-def"),
+        DeclKind::Recover => (Kind::Decl, "recover"),
+        DeclKind::Rescue => (Kind::Decl, "rescue"),
         DeclKind::Grammar => (Kind::Decl, "grammar"),
     }
 }
