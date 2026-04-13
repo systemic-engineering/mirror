@@ -1,0 +1,81 @@
+in @prism
+in @meta
+in @code
+in @ci
+in @ca
+in @spec
+in @lsp
+
+type exit_code = success | failure | partial(loss)
+
+type command {
+  name: string,
+  args: [string],
+  result: imperfect,
+}
+
+grammar @cli {
+
+  -- five optics as commands
+  action focus(path: string) -> imperfect
+  action project(path: string) -> imperfect
+  action split(path: string) -> imperfect
+  action zoom(path: string) -> imperfect
+  action refract(path: string) -> imperfect
+
+  -- session
+  action init(path: string) -> imperfect
+  action tick() -> imperfect
+  action tock() -> imperfect
+  action shatter(path: string) -> imperfect
+
+  -- compiler
+  action compile(path: string) -> imperfect
+  action crystal(output: string) -> imperfect
+
+  -- ci/ca
+  action ci(path: string) -> imperfect
+  action ca(path: string) -> imperfect
+
+  -- deployment
+  action plan() -> imperfect
+  action apply() -> imperfect
+  action drift() -> imperfect
+  action rollback(oid: string) -> imperfect
+
+  -- navigation
+  action diff(a: string, b: string) -> imperfect
+  action log() -> imperfect
+  action blame(path: string) -> imperfect
+
+  -- lsp
+  action lsp() -> imperfect
+  action repl() -> imperfect
+
+  -- garden
+  action add(package: string) -> imperfect
+  action remove(package: string) -> imperfect
+  action list() -> imperfect
+
+  -- ai
+  action ai(path: string) -> imperfect
+  action train(path: string) -> imperfect
+
+  -- every command returns imperfect
+  -- the exit code IS the imperfect
+  -- success = 0, partial = 0 (with warnings), failure = 1
+
+  recover |result, loss| {
+    print(loss)
+    result
+  }
+
+  rescue |error| {
+    print(error)
+    exit(1)
+  }
+}
+
+out exit_code
+out command
+out @cli

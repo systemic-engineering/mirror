@@ -126,10 +126,7 @@ mod tests {
         fn get(&self, oid: &Oid) -> Imperfect<Self::Shard, Self::Error, Self::Loss> {
             match self.entries.get(oid.as_ref()) {
                 Some(shard) => Imperfect::Success(shard.clone()),
-                None => Imperfect::Failure(
-                    format!("not found: {}", oid),
-                    TestLoss::total(),
-                ),
+                None => Imperfect::Failure(format!("not found: {}", oid), TestLoss::total()),
             }
         }
     }

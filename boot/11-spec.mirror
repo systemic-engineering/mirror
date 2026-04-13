@@ -1,0 +1,38 @@
+in @mirror
+in @config
+in @ai
+in @code
+
+type target = beam | wasm | metal | native
+type region(string)
+type env_var(string)
+
+type environment {
+  target: target,
+  region: region,
+}
+
+type secret = env_var
+
+type deployment {
+  grammar: grammar,
+  environment: environment,
+  crystal: imperfect,
+}
+
+grammar @spec {
+  abstract action plan(spec) -> [deployment]
+  abstract action apply(deployment) -> imperfect
+  abstract action drift(spec) -> loss
+  abstract action rollback(spec, oid) -> imperfect
+  abstract action promote(spec, from: environment, to: environment) -> imperfect
+  abstract action seal(spec) -> crystal
+}
+
+out target
+out region
+out env_var
+out secret
+out environment
+out deployment
+out @spec
