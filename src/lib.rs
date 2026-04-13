@@ -54,3 +54,4 @@ pub mod parse;
 pub mod runtime;
 pub mod session;
 pub mod shard;
+pub mod store;
