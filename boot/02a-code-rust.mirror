@@ -21,6 +21,13 @@ grammar @code/rust {
   type hashmap(k, v)
   type imperfect(t, e, l)
 
+  # shared operators (same on both sides of the glass wall)
+  # iso    =     structural equality / assertion
+  # split  |     superposition / enum variants
+  # focus  ()    grouping / function call
+  # zoom   ->    flow / return type / transformation
+  # refract ..   spread / range / settlement
+
   action complete(position) in @code/rust { }
   action diagnose(range) in @code/rust { }
   action hover(position) in @code/rust { }
