@@ -12,8 +12,11 @@ refract ..(ref)
 type loss(f64)
 type precision(f64)
 type grammar
+type action
 type block(grammar)
 type imperfect(type, type, loss)
+type abstract(grammar)
+type abstract(action)
 
 type beam(result) {
   result: result,
@@ -22,7 +25,7 @@ type beam(result) {
   precision: precision
 }
 
-form @meta {
+grammar @meta {
   focus @
   project |>
   split |
@@ -40,6 +43,8 @@ out loss
 out precision
 out beam
 out grammar
+out action
 out block
 out imperfect
+out abstract
 out @meta

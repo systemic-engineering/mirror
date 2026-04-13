@@ -103,11 +103,7 @@ fn cmd_crystal(args: &[String]) -> ! {
     match runtime.materialize_crystal(&boot_dir, &store_dir, &output) {
         Ok(oid) => {
             println!("{}", oid.as_str());
-            eprintln!(
-                "crystal {} → {}",
-                oid.as_str(),
-                output.display(),
-            );
+            eprintln!("crystal {} → {}", oid.as_str(), output.display(),);
             let _ = std::fs::remove_dir_all(&store_dir);
             process::exit(0);
         }
