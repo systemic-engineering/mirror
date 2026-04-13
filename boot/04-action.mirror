@@ -1,0 +1,25 @@
+in @prism
+in @actor
+
+type Grammar
+type Action(Grammar)
+
+type Invocation(Grammar, Action) {
+  grammar: Grammar,
+  action: Action(Grammar),
+  input: Imperfect,
+  output: Imperfect,
+}
+
+prism @action(Grammar, Action) {
+  focus  grammar -> action
+  project action(input) -> output
+  split  output -> Imperfect
+  zoom   Imperfect -> transport
+  refract transport -> crystal
+}
+
+out Grammar
+out Action
+out Invocation
+out @action
