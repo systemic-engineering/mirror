@@ -380,14 +380,23 @@ pub fn parse_form(source: &str) -> Imperfect<Form, MirrorRuntimeError, MirrorLos
         let form = if decls.len() == 1 {
             decls.into_iter().next().unwrap()
         } else {
-            Form::new(DeclKind::Form, "".to_string(), Vec::new(), Vec::new(), decls)
+            Form::new(
+                DeclKind::Form,
+                "".to_string(),
+                Vec::new(),
+                Vec::new(),
+                decls,
+            )
         };
 
         if unrecognized.is_empty() {
             Imperfect::Success(form)
         } else {
-            // DELIBERATELY BROKEN — red phase: discard loss, return Success
-            Imperfect::Success(form)
+            let loss = MirrorLoss {
+                unrecognized,
+                ..MirrorLoss::zero()
+            };
+            Imperfect::Partial(form, loss)
         }
     }
 }
@@ -401,8 +410,8 @@ fn count_line_at(tokens: &[Tok], pos: usize) -> usize {
     newlines + 1
 }
 
-/// Collect tokens from current position until the next recognized declaration keyword
-/// or end-of-tokens. Returns the collected content as a string.
+/// Collect tokens from current position until the next newline or end-of-tokens.
+/// Each unrecognized line is captured as one `UnrecognizedDecl`.
 fn collect_until_next_decl(tokens: &[Tok], cursor: &mut usize) -> String {
     let mut content = String::new();
     // Skip the keyword itself (already captured)
@@ -410,37 +419,40 @@ fn collect_until_next_decl(tokens: &[Tok], cursor: &mut usize) -> String {
     while *cursor < tokens.len() {
         match tokens.get(*cursor) {
             Some(Tok::Newline) => {
-                // Check if next non-trivia token is a declaration keyword
-                let mut peek = *cursor + 1;
-                while peek < tokens.len() && matches!(tokens[peek], Tok::Newline) {
-                    peek += 1;
-                }
-                if peek >= tokens.len() {
-                    *cursor = peek;
-                    break;
-                }
-                if let Some(Tok::Word(w)) = tokens.get(peek) {
-                    if DeclKind::parse(w).is_some() || w == "abstract" {
-                        *cursor += 1; // consume the newline
-                        break;
-                    }
-                }
-                content.push('\n');
                 *cursor += 1;
+                break;
             }
             Some(Tok::Word(w)) => {
-                if !content.is_empty() && !content.ends_with('\n') {
+                if !content.is_empty() {
                     content.push(' ');
                 }
                 content.push_str(w);
                 *cursor += 1;
             }
-            Some(Tok::LBrace) => { content.push('{'); *cursor += 1; }
-            Some(Tok::RBrace) => { content.push('}'); *cursor += 1; }
-            Some(Tok::LParen) => { content.push('('); *cursor += 1; }
-            Some(Tok::RParen) => { content.push(')'); *cursor += 1; }
-            Some(Tok::Comma) => { content.push(','); *cursor += 1; }
-            Some(Tok::Equals) => { content.push('='); *cursor += 1; }
+            Some(Tok::LBrace) => {
+                content.push('{');
+                *cursor += 1;
+            }
+            Some(Tok::RBrace) => {
+                content.push('}');
+                *cursor += 1;
+            }
+            Some(Tok::LParen) => {
+                content.push('(');
+                *cursor += 1;
+            }
+            Some(Tok::RParen) => {
+                content.push(')');
+                *cursor += 1;
+            }
+            Some(Tok::Comma) => {
+                content.push(',');
+                *cursor += 1;
+            }
+            Some(Tok::Equals) => {
+                content.push('=');
+                *cursor += 1;
+            }
             None => break,
         }
     }
@@ -2276,7 +2288,11 @@ mod tests {
         let result = parse_form(src);
         assert!(result.is_err(), "only unrecognized keywords should fail");
         let loss = result.loss();
-        assert_eq!(loss.unrecognized.len(), 2, "both unrecognized should be tracked");
+        assert_eq!(
+            loss.unrecognized.len(),
+            2,
+            "both unrecognized should be tracked"
+        );
     }
 
     fn mirror_shatter_deterministic_across_runs() {
