@@ -67,6 +67,38 @@ impl MirrorGitStore {
         self.inner.get_ref(&format!("heads/{}", branch))
     }
 
+    /// Store a compiled .shatter artifact by its OID.
+    ///
+    /// The content is encoded as a Fractal<String> and stored persistently
+    /// in the namespaced git store under the given OID key.
+    pub fn store_shatter(&self, oid: &str, content: &str) {
+        let fragment = fragmentation::encoding::encode(content);
+        let size = content.len();
+        self.inner
+            .insert_persistent(oid.to_string(), fragment, size);
+    }
+
+    /// Set a file-path → OID mapping in the refs index.
+    ///
+    /// Hashes the path to a short key under `files/` so arbitrary filesystem
+    /// paths (including slashes) can be stored as ref names.
+    pub fn set_file_ref(
+        &self,
+        path: &str,
+        oid: &str,
+    ) -> Result<(), fragmentation::frgmnt_store::Error> {
+        let files_dir = self.inner.path().join("refs").join("files");
+        let _ = std::fs::create_dir_all(&files_dir);
+        let key = format!("files/{}", path_hash(path));
+        self.inner.set_ref(&key, oid)
+    }
+
+    /// Get the OID for a file path, if one was previously stored.
+    pub fn get_file_ref(&self, path: &str) -> Option<String> {
+        let key = format!("files/{}", path_hash(path));
+        self.inner.get_ref(&key)
+    }
+
     /// Flush cached entries to disk.
     pub fn flush(&self) {
         self.inner.flush();
@@ -81,6 +113,16 @@ impl MirrorGitStore {
     pub fn inner(&self) -> &NamespacedGitStore {
         &self.inner
     }
+}
+
+/// Deterministic short key for a filesystem path.
+///
+/// SHA-256 of the path bytes, hex-encoded, first 16 chars.
+/// Stable — same path always maps to the same key.
+fn path_hash(path: &str) -> String {
+    use fragmentation::sha::HashAlg;
+    let hash = fragmentation::sha::Sha::hash(path.as_bytes());
+    hash.as_str()[..16].to_string()
 }
 
 /// The backend for mirror's store.
@@ -216,7 +258,10 @@ mod tests {
         store.store_shatter("test123", content);
 
         let got = store.get_crystal("test123");
-        assert!(got.is_some(), "shatter artifact should be retrievable by oid");
+        assert!(
+            got.is_some(),
+            "shatter artifact should be retrievable by oid"
+        );
         assert_eq!(got.unwrap().data(), content);
     }
 

@@ -1475,6 +1475,34 @@ impl MirrorRuntime {
         })
     }
 
+    /// Compile source and store the resulting `.shatter` artifact in the git store.
+    ///
+    /// On success (or partial), emits a `.shatter` file into `.git/mirror/` via the
+    /// provided store. Also updates the file→OID ref index. Best-effort: failures
+    /// to write to the store are silently discarded — the compiled result is returned
+    /// regardless.
+    pub fn compile_to_shatter(
+        &self,
+        source: &str,
+        store: &crate::git_store::MirrorGitStore,
+    ) -> Imperfect<(crate::shatter_format::ShatterMeta, String), MirrorRuntimeError, MirrorLoss>
+    {
+        let result = self.compile_source(source);
+        let loss = result.loss().clone();
+
+        result.map(|compiled| {
+            use crate::shatter_format::{emit_shatter_with_frontmatter, ShatterMeta};
+
+            let meta = ShatterMeta::from_compiled(&compiled, &loss);
+            let body = source.to_string();
+            let shatter_content = emit_shatter_with_frontmatter(&meta, &body);
+
+            store.store_shatter(&meta.oid, &shatter_content);
+
+            (meta, body)
+        })
+    }
+
     pub fn compile_file(&self, path: &Path) -> Result<CompiledShatter, MirrorRuntimeError> {
         let src = std::fs::read_to_string(path)
             .map_err(|e| err(format!("read {}: {}", path.display(), e)))?;
@@ -4180,16 +4208,27 @@ grammar @ai {
         let runtime = MirrorRuntime::new();
 
         let result = runtime.compile_to_shatter("type color = red | blue", &store);
-        let (meta, _body) = result.ok().expect("compile_to_shatter must produce a value");
+        let (meta, _body) = result
+            .ok()
+            .expect("compile_to_shatter must produce a value");
 
         // The shatter artifact should be in the store under the meta OID
         let artifact = store.get_crystal(&meta.oid);
-        assert!(artifact.is_some(), "shatter artifact must be retrievable by OID");
+        assert!(
+            artifact.is_some(),
+            "shatter artifact must be retrievable by OID"
+        );
 
         // Verify the stored content starts with the frontmatter delimiter
         let content = artifact.unwrap();
-        assert!(content.data().starts_with("---\n"), "stored shatter must have frontmatter");
-        assert!(content.data().contains("type color = red | blue"), "source preserved in body");
+        assert!(
+            content.data().starts_with("---\n"),
+            "stored shatter must have frontmatter"
+        );
+        assert!(
+            content.data().contains("type color = red | blue"),
+            "source preserved in body"
+        );
     }
 
     #[test]

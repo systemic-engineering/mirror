@@ -28,10 +28,10 @@
 //!
 //! No serde. No YAML crate. Line-by-line parsing only.
 
-use crate::loss::{Convergence, MirrorLoss};
-use crate::mirror_runtime::CompiledShatter;
 #[cfg(test)]
 use crate::loss::UnrecognizedDecl;
+use crate::loss::{Convergence, MirrorLoss};
+use crate::mirror_runtime::CompiledShatter;
 #[cfg(test)]
 use crate::mirror_runtime::MirrorRuntime;
 use crate::prism_crate::Loss;
@@ -288,6 +288,24 @@ pub fn parse_shatter_frontmatter(source: &str) -> Result<(ShatterMeta, &str), St
     };
 
     Ok((meta, body))
+}
+
+// ---------------------------------------------------------------------------
+// ShatterNotification — Phase 3 (LSP) handoff type
+// ---------------------------------------------------------------------------
+
+/// Notification that a `.shatter` artifact was updated in the store.
+///
+/// Phase 3 (LSP) will consume these notifications to push diagnostics
+/// back to the editor. Produced by `compile_to_shatter` / `cmd_compile`.
+#[derive(Clone, Debug)]
+pub struct ShatterNotification {
+    /// Absolute or workspace-relative path to the source `.mirror` file.
+    pub file_path: String,
+    /// Content-address of the stored `.shatter` artifact.
+    pub oid: String,
+    /// Compilation health summary.
+    pub luminosity: Luminosity,
 }
 
 /// Split `"key: value"` → `("key", "value")`.

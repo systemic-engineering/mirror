@@ -224,6 +224,21 @@ flags:
                 let shatter_path = std::path::Path::new(file.as_str()).with_extension("shatter");
                 std::fs::write(&shatter_path, &source)?;
 
+                // Best-effort: store .shatter artifact in .git/mirror/ if we're in a git repo.
+                // Silently skips if there's no git repo or the store can't be opened.
+                if let Ok(git_store) = crate::git_store::MirrorGitStore::open(
+                    &std::env::current_dir().unwrap_or_default(),
+                ) {
+                    use crate::loss::MirrorLoss;
+                    use crate::shatter_format::{emit_shatter_with_frontmatter, ShatterMeta};
+                    use prism::Loss as _;
+                    let loss = MirrorLoss::zero();
+                    let meta = ShatterMeta::from_compiled(&compiled, &loss);
+                    let shatter_content = emit_shatter_with_frontmatter(&meta, &source);
+                    git_store.store_shatter(&meta.oid, &shatter_content);
+                    let _ = git_store.set_file_ref(file.as_str(), &meta.oid);
+                }
+
                 eprintln!(
                     "compiled {} -> {} (rank {}, {:?})",
                     file,
