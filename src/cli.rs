@@ -316,7 +316,8 @@ flags:
             .ok_or_else(|| CliError::Usage(format!("usage: mirror {} <path>", optic)))?;
 
         let source = std::fs::read_to_string(file)?;
-        let compiled = self.runtime.compile_source(&source)?;
+        let compiled: Result<_, _> = self.runtime.compile_source(&source).into();
+        let compiled = compiled?;
 
         match optic {
             "focus" => {
@@ -701,7 +702,8 @@ flags:
 
         let source = std::fs::read_to_string(file)?;
         let start = std::time::Instant::now();
-        let compiled = self.runtime.compile_source(&source)?;
+        let compiled: Result<_, _> = self.runtime.compile_source(&source).into();
+        let compiled = compiled?;
         let elapsed = start.elapsed();
         Ok(format!(
             "compiled {} in {:.3}ms\noid: {}",

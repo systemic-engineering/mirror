@@ -68,7 +68,9 @@ impl MirrorCompiler {
     /// Compile .mirror source through the full pipeline.
     /// Updates last_hash (for Closure::close).
     pub fn compile(&mut self, source: &str) -> Result<CompiledShatter, MirrorRuntimeError> {
-        let compiled = self.runtime.compile_source(source)?;
+        let compiled: Result<CompiledShatter, MirrorRuntimeError> =
+            self.runtime.compile_source(source).into();
+        let compiled = compiled?;
         self.last_hash = Some(compiled.crystal().clone());
         Ok(compiled)
     }
@@ -101,7 +103,11 @@ impl Transport for MirrorCompiler {
 
         let source_oid = crate::kernel::Oid::hash(source.as_bytes());
 
-        match self.runtime.compile_source(source) {
+        // Convert Imperfect to Result for the existing match arms.
+        // Parse-level loss is folded into the structural loss below.
+        let compile_result: Result<CompiledShatter, MirrorRuntimeError> =
+            self.runtime.compile_source(source).into();
+        match compile_result {
             Ok(compiled) => {
                 // Structural loss: source tokens vs fragment nodes.
                 let source_nodes = count_structural_tokens(source);

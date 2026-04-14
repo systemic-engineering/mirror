@@ -1167,18 +1167,23 @@ impl MirrorRuntime {
         MirrorRuntime
     }
 
-    pub fn compile_source(&self, source: &str) -> Result<CompiledShatter, MirrorRuntimeError> {
-        let parsed = parse_form(source);
-        let form = Result::from(parsed)?;
-        let shatter = Shatter;
-        let fragment = shatter.compile_form(&form);
-        Ok(CompiledShatter { form, fragment })
+    pub fn compile_source(
+        &self,
+        source: &str,
+    ) -> Imperfect<CompiledShatter, MirrorRuntimeError, MirrorLoss> {
+        // DELIBERATELY BROKEN — red phase: discard loss via Result conversion
+        let form = match Result::from(parse_form(source)) {
+            Ok(f) => f,
+            Err(e) => return Imperfect::failure(e),
+        };
+        let fragment = Shatter.compile_form(&form);
+        Imperfect::Success(CompiledShatter { form, fragment })
     }
 
     pub fn compile_file(&self, path: &Path) -> Result<CompiledShatter, MirrorRuntimeError> {
         let src = std::fs::read_to_string(path)
             .map_err(|e| err(format!("read {}: {}", path.display(), e)))?;
-        self.compile_source(&src)
+        Result::from(self.compile_source(&src))
     }
 
     pub fn compile_boot_dir(
@@ -1613,7 +1618,7 @@ mod tests {
             }
             let s1 = runtime.compile_file(&path).unwrap();
             let text = emit_form(&s1.form);
-            let s2 = runtime.compile_source(&text).unwrap_or_else(|e| {
+            let s2 = Result::from(runtime.compile_source(&text)).unwrap_or_else(|e| {
                 panic!(
                     "round-trip parse failed for {}:\nemitted:\n{}\nerror: {}",
                     path.display(),
@@ -2293,6 +2298,34 @@ mod tests {
             2,
             "both unrecognized should be tracked"
         );
+    }
+
+    // -----------------------------------------------------------------------
+    // compile_source propagates Imperfect
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn compile_source_returns_partial_on_unrecognized() {
+        let runtime = MirrorRuntime::new();
+        let src = "widget foo\ntype bar";
+        let result = runtime.compile_source(src);
+        assert!(
+            result.is_partial(),
+            "compile_source should propagate Partial from parse_form"
+        );
+        let loss = result.loss();
+        assert!(!loss.unrecognized.is_empty(), "loss should contain unrecognized decls");
+        // The recognized part should still compile
+        assert!(result.is_ok(), "partial result should still have a value");
+    }
+
+    #[test]
+    fn compile_source_returns_success_on_clean_source() {
+        let runtime = MirrorRuntime::new();
+        let src = "type visibility = private | public";
+        let result = runtime.compile_source(src);
+        assert!(!result.is_partial(), "clean source should not be Partial");
+        assert!(result.is_ok());
     }
 
     fn mirror_shatter_deterministic_across_runs() {
