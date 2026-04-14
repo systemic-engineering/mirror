@@ -104,6 +104,7 @@ impl Cli {
             "verify" => self.cmd_verify(args),
             "init" => self.cmd_init(args),
             "repl" => self.cmd_repl(args),
+            "kintsugi" => self.cmd_kintsugi(args),
             "focus" | "project" | "split" | "zoom" | "refract" => self.cmd_optic(command, args),
             "registry" => self.cmd_registry(args),
             _ => self.cmd_query(command, args),
@@ -172,13 +173,27 @@ flags:
 
     fn cmd_compile(&self, args: &[String]) -> Result<String, CliError> {
         let sign = args.iter().any(|a| a == "--sign");
+        let strict = args.iter().any(|a| a == "--strict");
         let file_args: Vec<&String> = args.iter().filter(|a| !a.starts_with("--")).collect();
         let file = file_args
             .first()
-            .ok_or_else(|| CliError::Usage("usage: mirror compile <file> [--sign]".to_string()))?;
+            .ok_or_else(|| CliError::Usage("usage: mirror compile <file> [--sign] [--strict]".to_string()))?;
 
         let source = std::fs::read_to_string(file.as_str())?;
         let mut compiler = crate::bundle::MirrorCompiler::new();
+
+        // --strict: Partial becomes Failure (the Prism applied to the result)
+        if strict {
+            let result = self.runtime.compile_source(&source);
+            if result.is_partial() {
+                return Err(CliError::Runtime(MirrorRuntimeError(format!(
+                    "compile {} --strict: partial result rejected (holonomy: {:.4})",
+                    file,
+                    result.loss().holonomy()
+                ))));
+            }
+        }
+
         match compiler.compile(&source) {
             Ok(compiled) => {
                 let shard = crate::shard::Shard::new(
@@ -335,6 +350,36 @@ flags:
                 let text = crate::mirror_runtime::emit_form(&compiled.form);
                 Ok(text)
             }
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // kintsugi -- canonical ordering (the formatter)
+    // -----------------------------------------------------------------------
+
+    fn cmd_kintsugi(&self, args: &[String]) -> Result<String, CliError> {
+        let check = args.iter().any(|a| a == "--check");
+        let file_args: Vec<&String> = args.iter().filter(|a| !a.starts_with("--")).collect();
+        let file = file_args
+            .first()
+            .ok_or_else(|| CliError::Usage("usage: mirror kintsugi <file> [--check]".to_string()))?;
+
+        let source = std::fs::read_to_string(file.as_str())?;
+        let compiled: Result<_, _> = self.runtime.compile_source(&source).into();
+        let compiled = compiled?;
+
+        let canonical = crate::mirror_runtime::kintsugi(&compiled.form);
+        let output = crate::mirror_runtime::emit_form(&canonical);
+
+        if check {
+            let original = crate::mirror_runtime::emit_form(&compiled.form);
+            if output == original {
+                Ok("ok".to_string())
+            } else {
+                Err(CliError::Usage("kintsugi --check: source is not canonical".to_string()))
+            }
+        } else {
+            Ok(output)
         }
     }
 
@@ -2018,5 +2063,101 @@ mod tests {
         assert_eq!(infos[0].name, "small-clean");
         assert_eq!(infos[1].name, "big-clean");
         assert_eq!(infos[2].name, "conflict");
+    }
+
+    // -----------------------------------------------------------------------
+    // --strict flag
+    // -----------------------------------------------------------------------
+
+    /// --strict on compile turns Partial into Failure (exit code 1).
+    #[test]
+    fn strict_flag_rejects_partial() {
+        let dir = std::env::temp_dir().join(format!("mirror-strict-{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let file = dir.join("test.mirror");
+        // Source with unrecognized keyword → Partial
+        std::fs::write(&file, "widget foo\ntype bar\n").unwrap();
+
+        let cli = Cli::open("/nonexistent/spec.mirror").unwrap();
+        let result = cli.dispatch(
+            "compile",
+            &[file.to_string_lossy().to_string(), "--strict".to_string()],
+        );
+        assert!(result.is_err(), "--strict must reject Partial compilation");
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    // -----------------------------------------------------------------------
+    // kintsugi command
+    // -----------------------------------------------------------------------
+
+    /// kintsugi command reorders declarations to canonical order.
+    #[test]
+    fn kintsugi_command_reorders() {
+        let dir = std::env::temp_dir().join(format!("mirror-kintsugi-{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let file = dir.join("test.mirror");
+        std::fs::write(&file, "type x\nin @prism\naction do_thing\n").unwrap();
+
+        let cli = Cli::open("/nonexistent/spec.mirror").unwrap();
+        let result = cli.dispatch("kintsugi", &[file.to_string_lossy().to_string()]);
+        assert!(result.is_ok(), "kintsugi command must succeed");
+        let output = result.unwrap();
+        // in @prism must come before type x in the output
+        let in_pos = output.find("in @prism");
+        let type_pos = output.find("type x");
+        assert!(
+            in_pos.is_some() && type_pos.is_some(),
+            "output must contain both declarations"
+        );
+        assert!(
+            in_pos.unwrap() < type_pos.unwrap(),
+            "in @prism must come before type x in canonical order"
+        );
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// kintsugi --check passes for already-canonical source.
+    #[test]
+    fn kintsugi_check_passes_canonical() {
+        let dir =
+            std::env::temp_dir().join(format!("mirror-kintsugi-chk-{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let file = dir.join("test.mirror");
+        // Already in canonical order: in, type, action
+        std::fs::write(&file, "in @prism\ntype x\naction do_thing\n").unwrap();
+
+        let cli = Cli::open("/nonexistent/spec.mirror").unwrap();
+        let result = cli.dispatch(
+            "kintsugi",
+            &[file.to_string_lossy().to_string(), "--check".to_string()],
+        );
+        assert!(
+            result.is_ok(),
+            "kintsugi --check must pass for canonical source"
+        );
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// kintsugi --check fails for non-canonical source.
+    #[test]
+    fn kintsugi_check_fails_non_canonical() {
+        let dir =
+            std::env::temp_dir().join(format!("mirror-kintsugi-chk2-{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let file = dir.join("test.mirror");
+        // Not canonical: type before in
+        std::fs::write(&file, "type x\nin @prism\n").unwrap();
+
+        let cli = Cli::open("/nonexistent/spec.mirror").unwrap();
+        let result = cli.dispatch(
+            "kintsugi",
+            &[file.to_string_lossy().to_string(), "--check".to_string()],
+        );
+        assert!(
+            result.is_err(),
+            "kintsugi --check must fail for non-canonical source"
+        );
+        let _ = std::fs::remove_dir_all(&dir);
     }
 }
