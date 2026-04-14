@@ -402,6 +402,87 @@ impl MirrorFragmentExt for MirrorFragment {
     }
 }
 
+impl MirrorData {
+    /// Encode the extra metadata fields into params/variants for content-addressing.
+    /// Returns a new MirrorData with the encoded params/variants suitable for
+    /// hashing, plus the original extra fields preserved.
+    pub fn encode_for_fragment(&self) -> MirrorData {
+        let mut params = self.params.clone();
+        let mut variants = self.variants.clone();
+        if self.kind == DeclKind::Action {
+            if let Some(ref gr) = self.grammar_ref {
+                params.push(format!("in:{}", gr));
+            }
+            if let Some(ref rt) = self.return_type {
+                params.push(format!("returns:{}", rt));
+            }
+            if let Some(ref bt) = self.body_text {
+                variants.push(format!("body:{}", bt));
+            }
+        }
+        if self.is_abstract {
+            params.push("modifier:abstract".to_string());
+        }
+        if let Some(ref pr) = self.parent_ref {
+            params.push(format!("parent:{}", pr));
+        }
+        MirrorData {
+            kind: self.kind.clone(),
+            name: self.name.clone(),
+            params,
+            variants,
+            grammar_ref: self.grammar_ref.clone(),
+            body_text: self.body_text.clone(),
+            is_abstract: self.is_abstract,
+            return_type: self.return_type.clone(),
+            parent_ref: self.parent_ref.clone(),
+        }
+    }
+
+    /// Decode extra metadata fields from the encoded params/variants of a fragment.
+    /// Returns a MirrorData with clean params/variants and the extra fields populated.
+    pub fn decode_from_fragment(raw: &MirrorData) -> MirrorData {
+        let mut params = Vec::new();
+        let mut grammar_ref = None;
+        let mut return_type = None;
+        let mut is_abstract = false;
+        let mut parent_ref = None;
+        for p in &raw.params {
+            if let Some(gr) = p.strip_prefix("in:") {
+                grammar_ref = Some(gr.to_string());
+            } else if let Some(rt) = p.strip_prefix("returns:") {
+                return_type = Some(rt.to_string());
+            } else if p == "modifier:abstract" {
+                is_abstract = true;
+            } else if let Some(pr) = p.strip_prefix("parent:") {
+                parent_ref = Some(pr.to_string());
+            } else {
+                params.push(p.clone());
+            }
+        }
+        let mut variants = Vec::new();
+        let mut body_text = None;
+        for v in &raw.variants {
+            if let Some(bt) = v.strip_prefix("body:") {
+                body_text = Some(bt.to_string());
+            } else {
+                variants.push(v.clone());
+            }
+        }
+        MirrorData {
+            kind: raw.kind.clone(),
+            name: raw.name.clone(),
+            params,
+            variants,
+            grammar_ref,
+            body_text,
+            is_abstract,
+            return_type,
+            parent_ref,
+        }
+    }
+}
+
 /// Build a MirrorFragment from data and children.
 pub fn fragment(data: MirrorData, children: Vec<MirrorFragment>) -> MirrorFragment {
     let encoded = data.encode();
@@ -412,6 +493,15 @@ pub fn fragment(data: MirrorData, children: Vec<MirrorFragment>) -> MirrorFragme
     } else {
         Fractal::new_typed(ref_, data, children)
     }
+}
+
+/// Build a MirrorFragment from data with extra fields encoded into params/variants.
+/// This is the primary constructor when building from parsed declarations —
+/// it encodes grammar_ref, body_text, is_abstract, return_type, parent_ref
+/// into the content-addressable params/variants before hashing.
+pub fn fragment_encoded(data: MirrorData, children: Vec<MirrorFragment>) -> MirrorFragment {
+    let encoded_data = data.encode_for_fragment();
+    fragment(encoded_data, children)
 }
 
 #[cfg(test)]

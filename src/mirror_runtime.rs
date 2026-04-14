@@ -193,86 +193,47 @@ impl Form {
     }
 
     fn to_fragment(&self) -> MirrorFragment {
-        // Encode action-specific and modifier fields into the fragment's
-        // params and variants so they survive content-addressing round-trips.
-        let mut params = self.params.clone();
-        let mut variants = self.variants.clone();
-        if self.kind == DeclKind::Action {
-            if let Some(ref gr) = self.grammar_ref {
-                params.push(format!("in:{}", gr));
-            }
-            if let Some(ref rt) = self.return_type {
-                params.push(format!("returns:{}", rt));
-            }
-            if let Some(ref bt) = self.body_text {
-                variants.push(format!("body:{}", bt));
-            }
-        }
-        if self.is_abstract {
-            params.push("modifier:abstract".to_string());
-        }
-        if let Some(ref pr) = self.parent_ref {
-            params.push(format!("parent:{}", pr));
-        }
-        let data = MirrorData::new(self.kind.clone(), self.name.clone(), params, variants);
+        let data = self.to_mirror_data();
         let children: Vec<MirrorFragment> = self.children.iter().map(|c| c.to_fragment()).collect();
-        build_fragment(data, children)
+        crate::declaration::fragment_encoded(data, children)
+    }
+
+    /// Convert this Form's core fields to a MirrorData (without encoding
+    /// extra fields into params/variants — that's done by fragment_encoded).
+    pub fn to_mirror_data(&self) -> MirrorData {
+        let mut data = MirrorData::new(
+            self.kind.clone(),
+            self.name.clone(),
+            self.params.clone(),
+            self.variants.clone(),
+        );
+        data.grammar_ref = self.grammar_ref.clone();
+        data.body_text = self.body_text.clone();
+        data.is_abstract = self.is_abstract;
+        data.return_type = self.return_type.clone();
+        data.parent_ref = self.parent_ref.clone();
+        data
     }
 
     fn from_fragment(frag: &MirrorFragment) -> Form {
-        let d = frag.mirror_data();
+        let decoded = MirrorData::decode_from_fragment(frag.mirror_data());
         let children: Vec<Form> = frag
             .mirror_children()
             .iter()
             .map(Form::from_fragment)
             .collect();
-        // Decode encoded params: in:, returns:, modifier:abstract
-        let mut params = Vec::new();
-        let mut grammar_ref = None;
-        let mut return_type = None;
-        let mut is_abstract = false;
-        for p in &d.params {
-            if let Some(gr) = p.strip_prefix("in:") {
-                grammar_ref = Some(gr.to_string());
-            } else if let Some(rt) = p.strip_prefix("returns:") {
-                return_type = Some(rt.to_string());
-            } else if p == "modifier:abstract" {
-                is_abstract = true;
-            } else {
-                params.push(p.clone());
-            }
-        }
-        let mut variants = Vec::new();
-        let mut body_text = None;
-        for v in &d.variants {
-            if let Some(bt) = v.strip_prefix("body:") {
-                body_text = Some(bt.to_string());
-            } else {
-                variants.push(v.clone());
-            }
-        }
-        // Decode parent_ref from params
-        let mut final_params = Vec::new();
-        let mut parent_ref = None;
-        for p in &params {
-            if let Some(pr) = p.strip_prefix("parent:") {
-                parent_ref = Some(pr.to_string());
-            } else {
-                final_params.push(p.clone());
-            }
-        }
         Form {
-            kind: d.kind.clone(),
-            name: d.name.clone(),
-            params: final_params,
-            variants,
+            kind: decoded.kind,
+            name: decoded.name,
+            params: decoded.params,
+            variants: decoded.variants,
             children,
-            grammar_ref,
-            body_text,
-            is_abstract,
-            return_type,
+            grammar_ref: decoded.grammar_ref,
+            body_text: decoded.body_text,
+            is_abstract: decoded.is_abstract,
+            return_type: decoded.return_type,
             optic_ops: Vec::new(),
-            parent_ref,
+            parent_ref: decoded.parent_ref,
         }
     }
 }
