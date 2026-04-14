@@ -549,8 +549,8 @@ fn tokenize(source: &str) -> Vec<Tok> {
                 out.push(Tok::Comma);
                 i += 1;
             }
-            '|' | '.' | '/' | '<' | '>' | ':' | '-' => {
-                // Operator sequences like |, |>, <|, /, .., etc. can be declaration names.
+            '|' | '.' | '/' | '<' | '>' | ':' | '-' | '!' => {
+                // Operator sequences like |, |>, <|, /, .., !=, etc. can be declaration names.
                 // Try to collect them as a word if they form a contiguous symbol sequence.
                 let start = i;
                 while i < bytes.len() {
@@ -562,6 +562,7 @@ fn tokenize(source: &str) -> Vec<Tok> {
                         || cc == '>'
                         || cc == ':'
                         || cc == '-'
+                        || cc == '!'
                     {
                         i += 1;
                     } else {
@@ -3079,6 +3080,136 @@ grammar @ai {
             "property check(grammar) <= verdict must produce OpticOp::Fold. Got: {:?}",
             compiled.form
         );
+    }
+
+    // -----------------------------------------------------------------------
+    // Recover/Rescue method tests — imperfect type methods
+    // -----------------------------------------------------------------------
+
+    /// `recover` inside a type block with fold operator should produce
+    /// a child with DeclKind::Recover and OpticOp::Fold.
+    #[test]
+    fn imperfect_type_has_recover_method() {
+        let source = "type imperfect(observation, error(observation), loss) {\n  recover |observation, loss| <= imperfect\n}\n";
+        let form = parse_form(source).ok().unwrap();
+        assert_eq!(form.kind, DeclKind::Type);
+        assert_eq!(form.name, "imperfect");
+        assert!(!form.children.is_empty(), "imperfect must have children");
+        let recover = form.children.iter().find(|c| c.kind == DeclKind::Recover);
+        assert!(recover.is_some(), "imperfect must have a recover child");
+        let recover = recover.unwrap();
+        assert!(
+            recover.optic_ops.contains(&OpticOp::Fold),
+            "recover must have OpticOp::Fold (from <=), got: {:?}",
+            recover.optic_ops
+        );
+    }
+
+    /// `rescue` inside a type block with fold operator should produce
+    /// a child with DeclKind::Rescue and OpticOp::Fold.
+    #[test]
+    fn imperfect_type_has_rescue_method() {
+        let source = "type imperfect(observation, error(observation), loss) {\n  rescue |error(observation), loss| <= imperfect\n}\n";
+        let form = parse_form(source).ok().unwrap();
+        assert_eq!(form.kind, DeclKind::Type);
+        let rescue = form.children.iter().find(|c| c.kind == DeclKind::Rescue);
+        assert!(rescue.is_some(), "imperfect must have a rescue child");
+        let rescue = rescue.unwrap();
+        assert!(
+            rescue.optic_ops.contains(&OpticOp::Fold),
+            "rescue must have OpticOp::Fold (from <=), got: {:?}",
+            rescue.optic_ops
+        );
+    }
+
+    /// `recover` with fold operator parses correctly.
+    #[test]
+    fn recover_returns_imperfect() {
+        let source = "type result(t, e, l) {\n  recover |t, l| <= result\n}\n";
+        let form = parse_form(source).ok().unwrap();
+        let recover = form.children.iter().find(|c| c.kind == DeclKind::Recover);
+        assert!(recover.is_some(), "result must have recover child");
+        let recover = recover.unwrap();
+        assert!(
+            recover.optic_ops.contains(&OpticOp::Fold),
+            "recover must have fold operator"
+        );
+        // The fold target should reference the enclosing type
+        assert!(
+            recover.variants.contains(&"result".to_string()),
+            "recover fold target should be 'result', got variants: {:?}",
+            recover.variants
+        );
+    }
+
+    /// `rescue` with fold operator parses correctly.
+    #[test]
+    fn rescue_returns_imperfect() {
+        let source = "type result(t, e, l) {\n  rescue |e, l| <= result\n}\n";
+        let form = parse_form(source).ok().unwrap();
+        let rescue = form.children.iter().find(|c| c.kind == DeclKind::Rescue);
+        assert!(rescue.is_some(), "result must have rescue child");
+        let rescue = rescue.unwrap();
+        assert!(
+            rescue.optic_ops.contains(&OpticOp::Fold),
+            "rescue must have fold operator"
+        );
+        assert!(
+            rescue.variants.contains(&"result".to_string()),
+            "rescue fold target should be 'result', got variants: {:?}",
+            rescue.variants
+        );
+    }
+
+    /// Inline relation markers: `<` for subset inside type body.
+    #[test]
+    fn inline_relation_markers_parsed() {
+        // Superset marker
+        let source = "type admin {\n  >user\n}\n";
+        let form = parse_form(source).ok().unwrap();
+        assert_eq!(form.kind, DeclKind::Type);
+        assert_eq!(form.name, "admin");
+        // The `>user` should be parsed — either as a child or as a variant
+        // with OpticOp::Superset in the type's optic_ops
+        let has_superset = form.optic_ops.contains(&OpticOp::Superset)
+            || form.children.iter().any(|c| c.optic_ops.contains(&OpticOp::Superset));
+        assert!(
+            has_superset,
+            "admin type must have Superset marker, got form: {:?}",
+            form
+        );
+
+        // Subset marker
+        let source2 = "type contact {\n  <user\n}\n";
+        let form2 = parse_form(source2).ok().unwrap();
+        let has_subset = form2.optic_ops.contains(&OpticOp::Subset)
+            || form2.children.iter().any(|c| c.optic_ops.contains(&OpticOp::Subset));
+        assert!(
+            has_subset,
+            "contact type must have Subset marker, got form: {:?}",
+            form2
+        );
+    }
+
+    /// Combined: type with inline relation marker AND recover method.
+    #[test]
+    fn type_with_inline_relation_and_recover() {
+        let source = "type contact {\n  <user\n  recover |user, contact, loss| <= contact\n}\n";
+        let form = parse_form(source).ok().unwrap();
+        assert_eq!(form.kind, DeclKind::Type);
+        assert_eq!(form.name, "contact");
+
+        // Must have subset marker
+        let has_subset = form.optic_ops.contains(&OpticOp::Subset)
+            || form.children.iter().any(|c| c.optic_ops.contains(&OpticOp::Subset));
+        assert!(
+            has_subset,
+            "contact must have Subset marker"
+        );
+
+        // Must have recover child
+        let recover = form.children.iter().find(|c| c.kind == DeclKind::Recover);
+        assert!(recover.is_some(), "contact must have recover child");
     }
 
     /// Double operator: `type x = = y`. Malformed.

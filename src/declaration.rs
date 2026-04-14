@@ -154,6 +154,14 @@ pub enum OpticOp {
     Zoom,
     /// `..` — spread / range / settlement. The refract: scatter and reconverge.
     Refract,
+    /// `<` — subset relation. The type is contained in the referenced type.
+    Subset,
+    /// `>` — superset relation. The type contains the referenced type.
+    Superset,
+    /// `!=` — not-iso. The types are related but not equivalent.
+    NotIso,
+    /// `>=` — unfold. The dual of fold: one-directional expansion.
+    Unfold,
 }
 
 impl OpticOp {
@@ -166,6 +174,10 @@ impl OpticOp {
             "->" | "|>" | "<|" | "/" => Some(OpticOp::Zoom),
             "+" => Some(OpticOp::Zoom), // combine / accumulate
             ".." => Some(OpticOp::Refract),
+            "<" => Some(OpticOp::Subset),
+            ">" => Some(OpticOp::Superset),
+            "!=" => Some(OpticOp::NotIso),
+            ">=" => Some(OpticOp::Unfold),
             _ => None,
         }
     }
@@ -179,6 +191,10 @@ impl OpticOp {
             OpticOp::Focus => "()",
             OpticOp::Zoom => "->",
             OpticOp::Refract => "..",
+            OpticOp::Subset => "<",
+            OpticOp::Superset => ">",
+            OpticOp::NotIso => "!=",
+            OpticOp::Unfold => ">=",
         }
     }
 
@@ -192,6 +208,10 @@ impl OpticOp {
             OpticOp::Refract => Some(DeclKind::Refract),
             OpticOp::Focus => Some(DeclKind::Focus),
             OpticOp::Iso => None, // Iso is structural (=), not a declaration keyword
+            OpticOp::Subset => None,
+            OpticOp::Superset => None,
+            OpticOp::NotIso => None,
+            OpticOp::Unfold => None,
         }
     }
 }
@@ -411,8 +431,29 @@ mod tests {
     }
 
     #[test]
+    fn operator_subset_maps_to_less_than() {
+        assert_eq!(OpticOp::from_token("<"), Some(OpticOp::Subset));
+    }
+
+    #[test]
+    fn operator_superset_maps_to_greater_than() {
+        assert_eq!(OpticOp::from_token(">"), Some(OpticOp::Superset));
+    }
+
+    #[test]
+    fn operator_not_iso_maps_to_bang_equals() {
+        assert_eq!(OpticOp::from_token("!="), Some(OpticOp::NotIso));
+    }
+
+    #[test]
+    fn operator_unfold_maps_to_greater_equals() {
+        assert_eq!(OpticOp::from_token(">="), Some(OpticOp::Unfold));
+    }
+
+    #[test]
     fn optic_op_as_str_roundtrips_through_from_token() {
-        // Iso, Split, Fold, Zoom, Refract roundtrip through from_token.
+        // Iso, Split, Fold, Zoom, Refract, Subset, Superset, NotIso, Unfold
+        // roundtrip through from_token.
         // Focus is structural (parentheses), so it has no single-token parse.
         for op in [
             OpticOp::Iso,
@@ -420,6 +461,10 @@ mod tests {
             OpticOp::Fold,
             OpticOp::Zoom,
             OpticOp::Refract,
+            OpticOp::Subset,
+            OpticOp::Superset,
+            OpticOp::NotIso,
+            OpticOp::Unfold,
         ] {
             let s = op.as_str();
             assert_eq!(
@@ -442,6 +487,10 @@ mod tests {
         assert_eq!(format!("{}", OpticOp::Focus), "()");
         assert_eq!(format!("{}", OpticOp::Zoom), "->");
         assert_eq!(format!("{}", OpticOp::Refract), "..");
+        assert_eq!(format!("{}", OpticOp::Subset), "<");
+        assert_eq!(format!("{}", OpticOp::Superset), ">");
+        assert_eq!(format!("{}", OpticOp::NotIso), "!=");
+        assert_eq!(format!("{}", OpticOp::Unfold), ">=");
     }
 
     #[test]
@@ -452,6 +501,10 @@ mod tests {
         assert_eq!(OpticOp::Focus.to_decl_kind(), Some(DeclKind::Focus));
         assert_eq!(OpticOp::Fold.to_decl_kind(), Some(DeclKind::Fold));
         assert_eq!(OpticOp::Iso.to_decl_kind(), None);
+        assert_eq!(OpticOp::Subset.to_decl_kind(), None);
+        assert_eq!(OpticOp::Superset.to_decl_kind(), None);
+        assert_eq!(OpticOp::NotIso.to_decl_kind(), None);
+        assert_eq!(OpticOp::Unfold.to_decl_kind(), None);
     }
 
     #[test]
