@@ -446,8 +446,20 @@ mod tests {
     }
 
     #[test]
-    fn operator_unfold_maps_to_greater_equals() {
-        assert_eq!(OpticOp::from_token(">="), Some(OpticOp::Unfold));
+    fn operator_unfold_maps_to_fat_arrow() {
+        // Design spec: => is Unfold (not >=)
+        assert_eq!(OpticOp::from_token("=>"), Some(OpticOp::Unfold));
+    }
+
+    #[test]
+    fn operator_reverse_zoom_maps_to_left_arrow() {
+        assert_eq!(OpticOp::from_token("<-"), Some(OpticOp::Zoom));
+    }
+
+    #[test]
+    fn old_unfold_token_no_longer_matches() {
+        // >= was the old Unfold token, now retired
+        assert_eq!(OpticOp::from_token(">="), None);
     }
 
     #[test]
