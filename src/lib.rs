@@ -51,6 +51,7 @@ pub mod cli;
 pub mod declaration;
 pub mod emit_rust;
 pub mod generate_crate;
+pub mod generated;
 pub mod gestalt;
 pub mod git_prism;
 pub mod git_store;
