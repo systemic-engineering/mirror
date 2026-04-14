@@ -175,9 +175,9 @@ flags:
         let sign = args.iter().any(|a| a == "--sign");
         let strict = args.iter().any(|a| a == "--strict");
         let file_args: Vec<&String> = args.iter().filter(|a| !a.starts_with("--")).collect();
-        let file = file_args
-            .first()
-            .ok_or_else(|| CliError::Usage("usage: mirror compile <file> [--sign] [--strict]".to_string()))?;
+        let file = file_args.first().ok_or_else(|| {
+            CliError::Usage("usage: mirror compile <file> [--sign] [--strict]".to_string())
+        })?;
 
         let source = std::fs::read_to_string(file.as_str())?;
         let mut compiler = crate::bundle::MirrorCompiler::new();
@@ -360,9 +360,9 @@ flags:
     fn cmd_kintsugi(&self, args: &[String]) -> Result<String, CliError> {
         let check = args.iter().any(|a| a == "--check");
         let file_args: Vec<&String> = args.iter().filter(|a| !a.starts_with("--")).collect();
-        let file = file_args
-            .first()
-            .ok_or_else(|| CliError::Usage("usage: mirror kintsugi <file> [--check]".to_string()))?;
+        let file = file_args.first().ok_or_else(|| {
+            CliError::Usage("usage: mirror kintsugi <file> [--check]".to_string())
+        })?;
 
         let source = std::fs::read_to_string(file.as_str())?;
         let compiled: Result<_, _> = self.runtime.compile_source(&source).into();
@@ -376,7 +376,9 @@ flags:
             if output == original {
                 Ok("ok".to_string())
             } else {
-                Err(CliError::Usage("kintsugi --check: source is not canonical".to_string()))
+                Err(CliError::Usage(
+                    "kintsugi --check: source is not canonical".to_string(),
+                ))
             }
         } else {
             Ok(output)
@@ -2120,8 +2122,7 @@ mod tests {
     /// kintsugi --check passes for already-canonical source.
     #[test]
     fn kintsugi_check_passes_canonical() {
-        let dir =
-            std::env::temp_dir().join(format!("mirror-kintsugi-chk-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("mirror-kintsugi-chk-{}", std::process::id()));
         let _ = std::fs::create_dir_all(&dir);
         let file = dir.join("test.mirror");
         // Already in canonical order: in, type, action
@@ -2142,8 +2143,7 @@ mod tests {
     /// kintsugi --check fails for non-canonical source.
     #[test]
     fn kintsugi_check_fails_non_canonical() {
-        let dir =
-            std::env::temp_dir().join(format!("mirror-kintsugi-chk2-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("mirror-kintsugi-chk2-{}", std::process::id()));
         let _ = std::fs::create_dir_all(&dir);
         let file = dir.join("test.mirror");
         // Not canonical: type before in

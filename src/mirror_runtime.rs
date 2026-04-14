@@ -1332,8 +1332,50 @@ fn emit_form_into(form: &Form, indent: usize, out: &mut String) {
 /// Canonical order: in, type, traversal, lens, grammar, property, action.
 /// Observation before action. Pure before impure.
 pub fn kintsugi(form: &Form) -> Form {
-    // TODO: implement canonical ordering
-    form.clone()
+    // Only reorder children of wrapper forms (multi-decl sources).
+    // Single declarations pass through unchanged.
+    if form.children.is_empty() {
+        return form.clone();
+    }
+
+    let mut children = form.children.clone();
+    children.sort_by_key(|c| kintsugi_sort_key(&c.kind));
+
+    Form {
+        kind: form.kind.clone(),
+        name: form.name.clone(),
+        params: form.params.clone(),
+        variants: form.variants.clone(),
+        children,
+        grammar_ref: form.grammar_ref.clone(),
+        body_text: form.body_text.clone(),
+        is_abstract: form.is_abstract,
+        return_type: form.return_type.clone(),
+        optic_ops: form.optic_ops.clone(),
+    }
+}
+
+/// Sort key for kintsugi canonical order.
+/// Lower numbers sort first. Stable sort preserves order within same kind.
+fn kintsugi_sort_key(kind: &DeclKind) -> u8 {
+    match kind {
+        DeclKind::In => 0,
+        DeclKind::Type => 1,
+        DeclKind::Traversal => 2,
+        DeclKind::Lens => 3,
+        DeclKind::Grammar | DeclKind::Form => 4,
+        DeclKind::Property => 5,
+        DeclKind::Action => 6,
+        // Optic operations used as declarations
+        DeclKind::Focus | DeclKind::Project | DeclKind::Split
+        | DeclKind::Fold | DeclKind::Zoom | DeclKind::Refract => 1, // group with types
+        // Other structural keywords
+        DeclKind::Out => 7,
+        DeclKind::Prism => 1,
+        DeclKind::Requires | DeclKind::Invariant | DeclKind::Ensures => 5,
+        DeclKind::Recover | DeclKind::Rescue => 6,
+        DeclKind::Default | DeclKind::Binding => 7,
+    }
 }
 
 // ---------------------------------------------------------------------------
