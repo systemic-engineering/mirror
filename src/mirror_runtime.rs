@@ -1212,8 +1212,11 @@ impl MirrorRuntime {
                 .map_err(|e| err(format!("read {}: {}", path.display(), e)))?;
             let compile_result = self.compile_source(&src);
 
-            // DELIBERATELY BROKEN — red phase: discard loss
-            let _file_loss = compile_result.loss();
+            // Accumulate loss from partial compilations
+            let file_loss = compile_result.loss();
+            if !file_loss.is_zero() {
+                total_loss = total_loss.combine(file_loss);
+            }
 
             // Extract the compiled result (Success or Partial both have a value)
             let compiled = match compile_result {
@@ -2357,11 +2360,7 @@ mod tests {
         let store = tempdir_for_test("boot_loss_store");
 
         // Write a .mirror file with an unrecognized keyword
-        std::fs::write(
-            boot.join("00-test.mirror"),
-            "widget foo\ntype bar",
-        )
-        .unwrap();
+        std::fs::write(boot.join("00-test.mirror"), "widget foo\ntype bar").unwrap();
 
         let result = runtime.compile_boot_dir(&boot, &store).unwrap();
         assert!(

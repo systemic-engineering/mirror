@@ -163,7 +163,7 @@ impl Loss for MirrorLoss {
     }
 
     fn is_zero(&self) -> bool {
-        self.phases.is_empty() && self.resolution_ratio == 1.0
+        self.phases.is_empty() && self.resolution_ratio == 1.0 && self.unrecognized.is_empty()
     }
 
     fn combine(self, other: Self) -> Self {
