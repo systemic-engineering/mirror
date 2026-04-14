@@ -88,6 +88,8 @@ fn decl_to_ast(kind: &DeclKind) -> (Kind, &'static str) {
         DeclKind::Recover => (Kind::Decl, "recover"),
         DeclKind::Rescue => (Kind::Decl, "rescue"),
         DeclKind::Grammar => (Kind::Decl, "grammar"),
+        DeclKind::Default => (Kind::Decl, "default"),
+        DeclKind::Binding => (Kind::Decl, "binding"),
     }
 }
 

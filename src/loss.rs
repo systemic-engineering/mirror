@@ -9,6 +9,25 @@ use prism::Loss;
 use crate::kernel::{Oid, TraceOid};
 
 // ---------------------------------------------------------------------------
+// UnrecognizedDecl — a declaration the parser did not know how to parse
+// ---------------------------------------------------------------------------
+
+/// A declaration keyword the parser encountered but could not parse.
+///
+/// Instead of silently dropping it, the parser records what it saw and where.
+/// This is measured loss: the information existed in the source but did not
+/// survive the parse phase.
+#[derive(Clone, Debug, PartialEq)]
+pub struct UnrecognizedDecl {
+    /// The keyword that was not recognized (e.g., "widget", "route").
+    pub keyword: String,
+    /// The 1-based line number where the keyword appeared.
+    pub line: usize,
+    /// The raw content from the keyword to the next declaration or end of block.
+    pub content: String,
+}
+
+// ---------------------------------------------------------------------------
 // Phase — which compilation step
 // ---------------------------------------------------------------------------
 
@@ -75,6 +94,9 @@ pub struct MirrorLoss {
     pub resolution_ratio: f64,
     /// Symbols that didn't resolve, with their trace OIDs.
     pub unresolved_refs: Vec<(String, TraceOid)>,
+    /// Declarations the parser encountered but could not parse.
+    /// Each entry is measured loss: the information existed but did not survive.
+    pub unrecognized: Vec<UnrecognizedDecl>,
     /// Ticks since this artifact was produced. Zero = fresh.
     pub staleness: usize,
     /// Convergence status of the abyss loop.
@@ -93,6 +115,7 @@ impl MirrorLoss {
     pub fn holonomy(&self) -> f64 {
         let phase_loss: f64 = self.phases.iter().map(|p| p.structural_loss).sum();
         let unresolved_penalty = self.unresolved_refs.len() as f64;
+        let unrecognized_penalty = self.unrecognized.len() as f64;
         let convergence_penalty = match &self.convergence {
             Convergence::Settled => 0.0,
             Convergence::Converging(n) => *n as f64,
@@ -100,7 +123,7 @@ impl MirrorLoss {
             Convergence::BudgetExhausted => f64::INFINITY,
         };
 
-        phase_loss + unresolved_penalty + convergence_penalty
+        phase_loss + unresolved_penalty + unrecognized_penalty + convergence_penalty
     }
 }
 
@@ -116,6 +139,7 @@ impl Loss for MirrorLoss {
             phases: Vec::new(),
             resolution_ratio: 1.0,
             unresolved_refs: Vec::new(),
+            unrecognized: Vec::new(),
             staleness: 0,
             convergence: Convergence::Settled,
             dark_dims: Vec::new(),
@@ -129,6 +153,7 @@ impl Loss for MirrorLoss {
             phases: Vec::new(),
             resolution_ratio: 0.0,
             unresolved_refs: Vec::new(),
+            unrecognized: Vec::new(),
             staleness: 0,
             convergence: Convergence::BudgetExhausted,
             dark_dims: Vec::new(),
@@ -148,6 +173,9 @@ impl Loss for MirrorLoss {
         let mut unresolved = self.unresolved_refs;
         unresolved.extend(other.unresolved_refs);
 
+        let mut unrecognized = self.unrecognized;
+        unrecognized.extend(other.unrecognized);
+
         let mut dark = self.dark_dims;
         for d in other.dark_dims {
             if !dark.contains(&d) {
@@ -159,6 +187,7 @@ impl Loss for MirrorLoss {
             phases,
             resolution_ratio: self.resolution_ratio.min(other.resolution_ratio),
             unresolved_refs: unresolved,
+            unrecognized,
             staleness: self.staleness.max(other.staleness),
             convergence: other.convergence,
             dark_dims: dark,
@@ -212,6 +241,7 @@ mod tests {
             phases: Vec::new(),
             resolution_ratio: 1.0,
             unresolved_refs: vec![("@missing".into(), TraceOid::new("abc"))],
+            unrecognized: Vec::new(),
             staleness: 5,
             convergence: Convergence::Converging(3),
             dark_dims: vec![0, 1],

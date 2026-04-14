@@ -44,6 +44,9 @@ pub enum DeclKind {
     Rescue,
     // Grammar
     Grammar,
+    // Assertion / configuration
+    Default,
+    Binding,
 }
 
 impl DeclKind {
@@ -71,6 +74,8 @@ impl DeclKind {
             "recover" => Some(DeclKind::Recover),
             "rescue" => Some(DeclKind::Rescue),
             "grammar" => Some(DeclKind::Grammar),
+            "default" => None, // DELIBERATELY BROKEN — red phase
+            "binding" => Some(DeclKind::Binding),
             _ => None,
         }
     }
@@ -99,6 +104,8 @@ impl DeclKind {
             DeclKind::Recover => "recover",
             DeclKind::Rescue => "rescue",
             DeclKind::Grammar => "grammar",
+            DeclKind::Default => "default",
+            DeclKind::Binding => "binding",
         }
     }
 }

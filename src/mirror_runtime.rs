@@ -2097,6 +2097,71 @@ mod tests {
     }
 
     #[test]
+    // -----------------------------------------------------------------------
+    // DeclKind::Default and DeclKind::Binding — no longer silently dropped
+    // -----------------------------------------------------------------------
+    #[test]
+    fn parse_default_declaration() {
+        let src = "default(visibility) = public";
+        let form = parse_form(src).unwrap();
+        assert_eq!(form.kind, DeclKind::Default);
+        assert_eq!(form.name, "");
+        assert_eq!(form.params, vec!["visibility".to_string()]);
+        assert_eq!(form.variants, vec!["public".to_string()]);
+        assert!(
+            form.optic_ops.contains(&OpticOp::Iso),
+            "= should classify as Iso"
+        );
+    }
+
+    #[test]
+    fn parse_binding_declaration() {
+        let src = "binding(leader, key) = focus";
+        let form = parse_form(src).unwrap();
+        assert_eq!(form.kind, DeclKind::Binding);
+        assert_eq!(form.name, "");
+        assert_eq!(form.params, vec!["leader".to_string(), "key".to_string()]);
+        assert_eq!(form.variants, vec!["focus".to_string()]);
+    }
+
+    #[test]
+    fn parse_default_inside_block() {
+        let src = "form @test {\n  type visibility = private | public\n  default(visibility) = public\n}\n";
+        let form = parse_form(src).unwrap();
+        assert_eq!(form.kind, DeclKind::Form);
+        // Both children should be present — default is NOT silently dropped
+        assert_eq!(
+            form.children.len(),
+            2,
+            "default should not be silently dropped: got {:?}",
+            form.children
+                .iter()
+                .map(|c| c.kind.as_str())
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(form.children[0].kind, DeclKind::Type);
+        assert_eq!(form.children[1].kind, DeclKind::Default);
+    }
+
+    // -----------------------------------------------------------------------
+    // UnrecognizedDecl — parser tracks what it cannot parse
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn parse_unrecognized_keyword_tracked_in_loss() {
+        // "widget" is not a known DeclKind — should produce loss, not silence
+        let src = "widget foo\ntype bar";
+        let result = parse_form(src);
+        // With Imperfect, this would be Partial. For now, parse_form returns
+        // Result and silently drops the widget line. This test documents the
+        // current (broken) behavior and will be updated in Phase 2.
+        let form = result.unwrap();
+        // Currently only "type bar" survives — widget is silently dropped.
+        // After Phase 2, the loss will be measured.
+        assert_eq!(form.kind, DeclKind::Type);
+        assert_eq!(form.name, "bar");
+    }
+
     fn mirror_shatter_deterministic_across_runs() {
         let runtime = MirrorRuntime::new();
         let store_dir1 = tempdir_for_test("shatter_deterministic_1");
