@@ -81,14 +81,11 @@ impl SpecBlock {
         if !self.flags.is_empty() {
             format!("flags: {}", self.flags.join(", "))
         } else if !self.settings.is_empty() {
-            format!(
-                "{}",
-                self.settings
-                    .iter()
-                    .map(|(k, v)| format!("{} = {}", k, v))
-                    .collect::<Vec<_>>()
-                    .join(", ")
-            )
+            self.settings
+                .iter()
+                .map(|(k, v)| format!("{} = {}", k, v))
+                .collect::<Vec<_>>()
+                .join(", ")
         } else {
             String::new()
         }
@@ -105,6 +102,25 @@ impl SpecBlock {
             .iter()
             .find(|(k, _)| k == key)
             .map(|(_, v)| v.as_str())
+    }
+
+    /// Detailed help text for this command, generated from the block's
+    /// flags and settings. The spec IS the documentation.
+    pub fn detail_help(&self) -> String {
+        let mut out = format!("{} -- spec-declared command\n", self.name);
+        if !self.flags.is_empty() {
+            out.push_str("\nflags:\n");
+            for flag in &self.flags {
+                out.push_str(&format!("  {}\n", flag));
+            }
+        }
+        if !self.settings.is_empty() {
+            out.push_str("\nsettings:\n");
+            for (k, v) in &self.settings {
+                out.push_str(&format!("  {} = {}\n", k, v));
+            }
+        }
+        out
     }
 }
 
@@ -393,15 +409,18 @@ pub fn parse_spec(path: &str) -> Result<SpecConfig, SpecParseError> {
 // Generic block parser — extracts flags and settings from any `{ ... }` block
 // ---------------------------------------------------------------------------
 
+/// Result of parsing a generic block: (flags, settings).
+type GenericBlockResult = (Vec<String>, Vec<(String, String)>);
+
 /// Parse a generic block starting at `{`. Returns (flags, settings).
 /// Does NOT consume the tokens — used alongside the specific parser.
 fn parse_generic_block(
     tokens: &[String],
     pos: usize,
-) -> Result<(Vec<String>, Vec<(String, String)>), SpecParseError> {
+) -> Result<GenericBlockResult, SpecParseError> {
     let mut pos = skip_token(tokens, pos, "{")?;
     let mut flags = Vec::new();
-    let mut settings = Vec::new();
+    let mut settings: Vec<(String, String)> = Vec::new();
     let mut depth = 1;
 
     while pos < tokens.len() && depth > 0 {
@@ -1176,10 +1195,7 @@ infer {
             help.contains("kintsugi"),
             "detail help should include command name"
         );
-        assert!(
-            help.contains("--hoist"),
-            "detail help should list flags"
-        );
+        assert!(help.contains("--hoist"), "detail help should list flags");
         assert!(
             help.contains("naming = snake_case"),
             "detail help should list settings"
