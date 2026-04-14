@@ -1,14 +1,311 @@
 //! ShatterFormat — frontmatter serialization for `.shatter` files.
 //!
-//! Phase 1 of the mirror LSP plan. See task: Tick 3 LSP server.
+//! A `.shatter` file is valid `.mirror` syntax with a YAML-like frontmatter
+//! header. The frontmatter carries the compilation trace (OID, luminosity,
+//! holonomy, per-fold loss breakdown, and beam identity). The body is the
+//! `.mirror` source.
+//!
+//! ## Format
+//!
+//! ```text
+//! ---
+//! oid: <content-hash>
+//! luminosity: light | dimmed | dark
+//! holonomy: <f64>
+//! loss:
+//!   parse: <f64>
+//!   resolution: <f64>
+//!   properties: <f64>
+//!   emit: <f64>
+//! beam:
+//!   compiler: mirror-v<semver>
+//!   prism: shatter
+//!   target: mirror
+//! ---
+//!
+//! <body>
+//! ```
+//!
+//! No serde. No YAML crate. Line-by-line parsing only.
 
-use crate::loss::{Convergence, MirrorLoss, UnrecognizedDecl};
-use crate::mirror_runtime::{CompiledShatter, MirrorRuntime};
+use crate::loss::{Convergence, MirrorLoss};
+use crate::mirror_runtime::CompiledShatter;
+#[cfg(test)]
+use crate::loss::UnrecognizedDecl;
+#[cfg(test)]
+use crate::mirror_runtime::MirrorRuntime;
 use crate::prism_crate::Loss;
 use fragmentation::sha::HashAlg;
 
 // ---------------------------------------------------------------------------
-// Tests — written first (TDD 🔴 phase)
+// Luminosity — compilation health in a single word
+// ---------------------------------------------------------------------------
+
+/// Luminosity summarises compilation health.
+///
+/// - `Light` — zero loss, crystal settled.
+/// - `Dimmed` — partial success, loss measured.
+/// - `Dark` — failure, `BudgetExhausted` convergence.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Luminosity {
+    Light,
+    Dimmed,
+    Dark,
+}
+
+impl Luminosity {
+    pub fn from_loss(loss: &MirrorLoss) -> Self {
+        if loss.convergence == Convergence::BudgetExhausted {
+            Luminosity::Dark
+        } else if loss.is_zero() {
+            Luminosity::Light
+        } else {
+            Luminosity::Dimmed
+        }
+    }
+
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Luminosity::Light => "light",
+            Luminosity::Dimmed => "dimmed",
+            Luminosity::Dark => "dark",
+        }
+    }
+
+    pub fn parse(s: &str) -> Option<Self> {
+        match s {
+            "light" => Some(Luminosity::Light),
+            "dimmed" => Some(Luminosity::Dimmed),
+            "dark" => Some(Luminosity::Dark),
+            _ => None,
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// ShatterLossBreakdown — per-fold holonomy values
+// ---------------------------------------------------------------------------
+
+/// Per-fold holonomy values from the four compilation phases.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ShatterLossBreakdown {
+    pub parse: f64,
+    pub resolution: f64,
+    pub properties: f64,
+    pub emit: f64,
+}
+
+// ---------------------------------------------------------------------------
+// ShatterBeamInfo — compiler identity
+// ---------------------------------------------------------------------------
+
+/// Identity of the compiler that produced this artifact.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ShatterBeamInfo {
+    pub compiler: String,
+    pub prism: String,
+    pub target: String,
+}
+
+// ---------------------------------------------------------------------------
+// ShatterMeta — the complete frontmatter payload
+// ---------------------------------------------------------------------------
+
+/// Full frontmatter for a `.shatter` file.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ShatterMeta {
+    pub oid: String,
+    pub luminosity: Luminosity,
+    pub holonomy: f64,
+    pub loss: ShatterLossBreakdown,
+    pub beam: ShatterBeamInfo,
+}
+
+impl ShatterMeta {
+    pub fn from_compiled(compiled: &CompiledShatter, loss: &MirrorLoss) -> Self {
+        ShatterMeta {
+            oid: compiled.crystal().as_str().to_string(),
+            luminosity: Luminosity::from_loss(loss),
+            holonomy: loss.holonomy(),
+            loss: ShatterLossBreakdown {
+                parse: loss.parse.holonomy(),
+                resolution: loss.resolution.holonomy(),
+                properties: loss.properties.holonomy(),
+                emit: loss.emit.holonomy(),
+            },
+            beam: ShatterBeamInfo {
+                compiler: format!("mirror-v{}", env!("CARGO_PKG_VERSION")),
+                prism: "shatter".into(),
+                target: "mirror".into(),
+            },
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// emit_shatter_with_frontmatter — serialize
+// ---------------------------------------------------------------------------
+
+/// Emit a `.shatter` file: YAML-like frontmatter followed by the body.
+pub fn emit_shatter_with_frontmatter(meta: &ShatterMeta, body: &str) -> String {
+    let mut out = String::new();
+    out.push_str("---\n");
+    out.push_str(&format!("oid: {}\n", meta.oid));
+    out.push_str(&format!("luminosity: {}\n", meta.luminosity.as_str()));
+    out.push_str(&format!("holonomy: {}\n", meta.holonomy));
+    out.push_str("loss:\n");
+    out.push_str(&format!("  parse: {}\n", meta.loss.parse));
+    out.push_str(&format!("  resolution: {}\n", meta.loss.resolution));
+    out.push_str(&format!("  properties: {}\n", meta.loss.properties));
+    out.push_str(&format!("  emit: {}\n", meta.loss.emit));
+    out.push_str("beam:\n");
+    out.push_str(&format!("  compiler: {}\n", meta.beam.compiler));
+    out.push_str(&format!("  prism: {}\n", meta.beam.prism));
+    out.push_str(&format!("  target: {}\n", meta.beam.target));
+    out.push_str("---\n\n");
+    out.push_str(body);
+    out
+}
+
+// ---------------------------------------------------------------------------
+// parse_shatter_frontmatter — deserialize
+// ---------------------------------------------------------------------------
+
+/// Parse a `.shatter` file into `(ShatterMeta, body)`.
+///
+/// Returns `Err(String)` if the frontmatter is missing, malformed, or a
+/// required field is absent. No serde, no YAML crate — line-by-line only.
+pub fn parse_shatter_frontmatter(source: &str) -> Result<(ShatterMeta, &str), String> {
+    // Must start with "---\n"
+    if !source.starts_with("---\n") {
+        return Err("shatter file must start with '---'".into());
+    }
+
+    // Find the closing "---\n" (starting after the opening delimiter)
+    let after_open = &source[4..];
+    let close_pos = after_open
+        .find("\n---\n")
+        .ok_or_else(|| "shatter file has no closing '---'".to_string())?;
+
+    let frontmatter = &after_open[..close_pos];
+    // body starts after "\n---\n" + optional blank line
+    let body_start = 4 + close_pos + 5; // skip "\n---\n"
+    let body = if source.len() > body_start && source.as_bytes()[body_start] == b'\n' {
+        &source[body_start + 1..]
+    } else {
+        &source[body_start..]
+    };
+
+    // Parse the frontmatter line by line.
+    let mut oid: Option<String> = None;
+    let mut luminosity: Option<Luminosity> = None;
+    let mut holonomy: Option<f64> = None;
+    let mut loss_parse: Option<f64> = None;
+    let mut loss_resolution: Option<f64> = None;
+    let mut loss_properties: Option<f64> = None;
+    let mut loss_emit: Option<f64> = None;
+    let mut beam_compiler: Option<String> = None;
+    let mut beam_prism: Option<String> = None;
+    let mut beam_target: Option<String> = None;
+
+    // Track which section we're in for indented sub-keys
+    #[derive(PartialEq)]
+    enum Section {
+        Top,
+        Loss,
+        Beam,
+    }
+    let mut section = Section::Top;
+
+    for line in frontmatter.lines() {
+        if line.is_empty() {
+            continue;
+        }
+
+        if line.starts_with("  ") {
+            // Indented sub-key
+            let trimmed = line.trim();
+            let (key, val) = split_kv(trimmed)?;
+            match section {
+                Section::Loss => match key {
+                    "parse" => loss_parse = Some(parse_f64(val)?),
+                    "resolution" => loss_resolution = Some(parse_f64(val)?),
+                    "properties" => loss_properties = Some(parse_f64(val)?),
+                    "emit" => loss_emit = Some(parse_f64(val)?),
+                    _ => {} // unknown sub-key — tolerate
+                },
+                Section::Beam => match key {
+                    "compiler" => beam_compiler = Some(val.to_string()),
+                    "prism" => beam_prism = Some(val.to_string()),
+                    "target" => beam_target = Some(val.to_string()),
+                    _ => {}
+                },
+                Section::Top => {
+                    return Err(format!("unexpected indented key '{}' outside section", key))
+                }
+            }
+        } else {
+            // Top-level key
+            if line == "loss:" {
+                section = Section::Loss;
+                continue;
+            }
+            if line == "beam:" {
+                section = Section::Beam;
+                continue;
+            }
+            section = Section::Top;
+            let (key, val) = split_kv(line)?;
+            match key {
+                "oid" => oid = Some(val.to_string()),
+                "luminosity" => {
+                    luminosity = Some(
+                        Luminosity::parse(val)
+                            .ok_or_else(|| format!("unknown luminosity '{}'", val))?,
+                    )
+                }
+                "holonomy" => holonomy = Some(parse_f64(val)?),
+                _ => {} // tolerate unknown top-level keys
+            }
+        }
+    }
+
+    let meta = ShatterMeta {
+        oid: oid.ok_or("missing 'oid' in frontmatter")?,
+        luminosity: luminosity.ok_or("missing 'luminosity' in frontmatter")?,
+        holonomy: holonomy.ok_or("missing 'holonomy' in frontmatter")?,
+        loss: ShatterLossBreakdown {
+            parse: loss_parse.ok_or("missing 'loss.parse' in frontmatter")?,
+            resolution: loss_resolution.ok_or("missing 'loss.resolution' in frontmatter")?,
+            properties: loss_properties.ok_or("missing 'loss.properties' in frontmatter")?,
+            emit: loss_emit.ok_or("missing 'loss.emit' in frontmatter")?,
+        },
+        beam: ShatterBeamInfo {
+            compiler: beam_compiler.ok_or("missing 'beam.compiler' in frontmatter")?,
+            prism: beam_prism.ok_or("missing 'beam.prism' in frontmatter")?,
+            target: beam_target.ok_or("missing 'beam.target' in frontmatter")?,
+        },
+    };
+
+    Ok((meta, body))
+}
+
+/// Split `"key: value"` → `("key", "value")`.
+fn split_kv(line: &str) -> Result<(&str, &str), String> {
+    let colon = line
+        .find(": ")
+        .ok_or_else(|| format!("expected 'key: value', got '{}'", line))?;
+    Ok((&line[..colon], &line[colon + 2..]))
+}
+
+/// Parse a `&str` as `f64`.
+fn parse_f64(s: &str) -> Result<f64, String> {
+    s.parse::<f64>()
+        .map_err(|_| format!("expected f64, got '{}'", s))
+}
+
+// ---------------------------------------------------------------------------
+// Tests
 // ---------------------------------------------------------------------------
 
 #[cfg(test)]
