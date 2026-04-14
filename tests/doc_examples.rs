@@ -269,7 +269,7 @@ fn doc_examples_round_trip() {
         let compiled = compiled
             .unwrap_or_else(|e| panic!("doc example failed to compile:\n{}\nerror: {}", source, e));
         // Round-trip: compile -> emit -> compile should produce same OID
-        let emitted = mirror::mirror_runtime::emit_form(&compiled.form);
+        let emitted = mirror::mirror_runtime::emit_fragment(&compiled.fragment);
         let recompiled: Result<_, _> = runtime.compile_source(&emitted).into();
         let recompiled = recompiled.unwrap_or_else(|e| {
             panic!(

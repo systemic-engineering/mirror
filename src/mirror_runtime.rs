@@ -1417,11 +1417,15 @@ fn kintsugi_sort_key(kind: &DeclKind) -> u8 {
 // MirrorRuntime — the operation.
 // ---------------------------------------------------------------------------
 
-/// Compiled artifact: a top-level Form, its content-addressed MirrorFragment,
-/// and the crystal hash (root OID).
+/// Compiled artifact: the content-addressed MirrorFragment is the primary
+/// representation. Form is retained internally for parser/Prism trait use.
 #[derive(Clone, Debug)]
 pub struct CompiledShatter {
-    pub form: Form,
+    /// Internal Form — parser output. Access through `data()` or `fragment`.
+    /// Retained for Prism trait round-trip tests; production callers use fragment.
+    #[allow(dead_code)]
+    pub(crate) form: Form,
+    /// The content-addressed fragment tree. Primary public interface.
     pub fragment: MirrorFragment,
 }
 
@@ -1430,7 +1434,7 @@ impl CompiledShatter {
         self.fragment.oid()
     }
     pub fn form_name(&self) -> &str {
-        &self.form.name
+        &self.fragment.mirror_data().name
     }
     /// Get the decoded MirrorData from the fragment (decodes extra fields).
     pub fn data(&self) -> MirrorData {
@@ -2125,14 +2129,10 @@ mod tests {
         // `grammar @property { ... }`, so the form is a synthetic wrapper.
         assert_eq!(compiled.data().name, "");
         // The @property grammar block is a child of the wrapper.
-        let grammar = compiled
-            .fragment
-            .mirror_children()
-            .iter()
-            .find(|f| {
-                let d = f.mirror_data();
-                d.kind == DeclKind::Grammar && d.name == "@property"
-            });
+        let grammar = compiled.fragment.mirror_children().iter().find(|f| {
+            let d = f.mirror_data();
+            d.kind == DeclKind::Grammar && d.name == "@property"
+        });
         assert!(grammar.is_some(), "@property grammar must exist");
         // The kernel defines types, not properties. Properties moved to std/properties.mirror.
         let type_count = grammar
@@ -3630,7 +3630,10 @@ grammar @ai {
         .ok()
         .unwrap();
         let has_fold = form.optic_ops.contains(&OpticOp::Fold)
-            || form.children.iter().any(|ch| ch.optic_ops.contains(&OpticOp::Fold));
+            || form
+                .children
+                .iter()
+                .any(|ch| ch.optic_ops.contains(&OpticOp::Fold));
         assert!(
             has_fold,
             "property check(grammar) <= verdict must produce OpticOp::Fold. Got: {:?}",
