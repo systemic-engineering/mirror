@@ -74,7 +74,7 @@ impl DeclKind {
             "recover" => Some(DeclKind::Recover),
             "rescue" => Some(DeclKind::Rescue),
             "grammar" => Some(DeclKind::Grammar),
-            "default" => None, // DELIBERATELY BROKEN — red phase
+            "default" => Some(DeclKind::Default),
             "binding" => Some(DeclKind::Binding),
             _ => None,
         }
