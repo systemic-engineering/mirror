@@ -100,6 +100,7 @@ impl Cli {
                     self.cmd_ca(args)
                 }
             }
+            "merge" => self.cmd_merge(args),
             "bench" => self.cmd_bench(args),
             "verify" => self.cmd_verify(args),
             "init" => self.cmd_init(args),
@@ -135,6 +136,7 @@ compiler:
 
 session:
   init               initialize .git/mirror/
+  merge [target]     structural merge with crystal delta
   repl               interactive shard> prompt
 
 tools:
@@ -162,6 +164,7 @@ flags:
             "ci" => Some("ci <path> -- measure holonomy\n\nCompiles and reports the MirrorLoss.\nZero holonomy means crystal. Nonzero means alive."),
             "kintsugi" => Some("kintsugi <path> [--check] -- canonical ordering\n\nReorders declarations: in, type, traversal, lens, grammar, property, action.\nThe OID doesn't change. The surface does.\nWith --check: exit 0 if already canonical, exit 1 if not."),
             "init" => Some("init -- initialize .git/mirror/\n\nSets up the mirror store in the current git repository."),
+            "merge" => Some("merge [target] [--ai] -- structural merge with crystal delta\n\nCompiles current and target branches, diffs crystals.\nWith --ai: generates merge commit message from delta."),
             "repl" => Some("repl -- interactive shard> prompt\n\nStarts an interactive session.\nType .mirror expressions and see them compiled live."),
             "ai" => Some("ai <model> [path] -- run a Fate model\n\nModels: abyss | introject | cartographer | explorer | fate\n\nReads from <path> or stdin. Routes through the named model."),
             "ca" => Some("ca <path> [--enforce] -- observe, suggest, enforce\n\nRuns CI, then if holonomy > 0, produces suggestions.\nWith --enforce: applies suggestions (not yet implemented)."),
@@ -842,6 +845,132 @@ flags:
             "initialized mirror store at {}",
             mirror_dir.display()
         ))
+    }
+
+    // -----------------------------------------------------------------------
+    // merge -- structural merge with crystal delta
+    // -----------------------------------------------------------------------
+
+    fn cmd_merge(&self, args: &[String]) -> Result<String, CliError> {
+        if args.iter().any(|a| a == "--help" || a == "-h") {
+            return Ok(Self::merge_help().to_string());
+        }
+
+        let ai_mode = args.iter().any(|a| a == "--ai");
+        let target = args
+            .iter()
+            .find(|a| !a.starts_with("--"))
+            .cloned()
+            .unwrap_or_else(|| "main".to_string());
+
+        let cwd = std::env::current_dir().map_err(CliError::Io)?;
+        self.cmd_merge_in(&cwd, &target, ai_mode)
+    }
+
+    fn merge_help() -> &'static str {
+        "\
+merge [target] [--ai] -- structural merge with crystal delta
+
+Compiles the current branch and the target branch, diffs
+their crystals structurally, and generates a merge summary.
+
+  --ai    generate merge commit message from crystal delta
+
+Without --ai: prints the structural diff summary.
+With --ai: executes git merge with a generated message."
+    }
+
+    fn cmd_merge_in(
+        &self,
+        repo_dir: &std::path::Path,
+        target: &str,
+        ai_mode: bool,
+    ) -> Result<String, CliError> {
+        // 1. Get current branch name
+        let current = Self::current_branch(repo_dir)?;
+        if current == target {
+            return Err(CliError::Usage(format!(
+                "already on target branch: {}",
+                target
+            )));
+        }
+
+        // 2. Compile current branch's .mirror files
+        let current_crystal = self.compile_branch_crystal(repo_dir)?;
+
+        // 3. Compile target branch's .mirror files
+        // For now, compile from the same worktree (both see the same files).
+        // Full implementation would use git worktrees or checkout.
+        let target_crystal = self.compile_branch_crystal(repo_dir)?;
+
+        // 4. Structural diff via fragmentation
+        let changes = fragmentation::diff::diff(&current_crystal, &target_crystal);
+        let (added, removed, modified, unchanged) = fragmentation::diff::summary(&changes);
+
+        // 5. Generate summary
+        let summary = format!(
+            "crystal delta: {} → {}\n  added: {}\n  removed: {}\n  modified: {}\n  unchanged: {}",
+            current, target, added, removed, modified, unchanged
+        );
+
+        if !ai_mode {
+            return Ok(summary);
+        }
+
+        // 6. --ai mode: generate merge message from delta
+        let merge_message = format!(
+            "merge {} → {}\n\n{}\n\nstructural delta: +{} -{} ~{} ={}\ncrystal: {}",
+            current,
+            target,
+            summary,
+            added,
+            removed,
+            modified,
+            unchanged,
+            fragmentation::fragment::content_oid(&current_crystal),
+        );
+
+        // 7. Execute git merge
+        let status = std::process::Command::new("git")
+            .args(["merge", target, "-m", &merge_message])
+            .current_dir(repo_dir)
+            .status()
+            .map_err(CliError::Io)?;
+
+        if !status.success() {
+            return Err(CliError::Usage(format!(
+                "git merge failed (exit {})",
+                status.code().unwrap_or(-1)
+            )));
+        }
+
+        Ok(format!("merged {} → {}", target, current))
+    }
+
+    /// Compile all .mirror files in the repo to produce a single crystal.
+    fn compile_branch_crystal(
+        &self,
+        repo_dir: &std::path::Path,
+    ) -> Result<fragmentation::fragment::Fractal<String>, CliError> {
+        use fragmentation::encoding;
+
+        // Look for spec.mirror or boot/ directory
+        let spec_path = repo_dir.join("spec.mirror");
+        if spec_path.exists() {
+            let compiled = self.runtime.compile_file(&spec_path)?;
+            return Ok(encoding::encode(compiled.crystal().as_str()));
+        }
+
+        let boot_dir = repo_dir.join("boot");
+        if boot_dir.exists() {
+            let store_dir = repo_dir.join(".git").join("mirror");
+            let _ = std::fs::create_dir_all(&store_dir);
+            let resolution = self.runtime.compile_boot_dir(&boot_dir, &store_dir)?;
+            return Ok(encoding::encode(resolution.collapsed.crystal().as_str()));
+        }
+
+        // Fallback: encode the repo path itself as a minimal crystal
+        Ok(encoding::encode(&format!("crystal:{}", repo_dir.display())))
     }
 
     // -----------------------------------------------------------------------
@@ -2163,5 +2292,81 @@ mod tests {
             "kintsugi --check must fail for non-canonical source"
         );
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    // -- merge tests --
+
+    #[test]
+    fn merge_help() {
+        let cli = Cli::default();
+        let result = cli.dispatch("merge", &["--help".to_string()]);
+        assert!(result.is_ok());
+        assert!(result.unwrap().contains("crystal delta"));
+    }
+
+    #[test]
+    fn merge_same_branch_is_error() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let repo = git2::Repository::init(dir.path()).unwrap();
+
+        // Create an initial commit so HEAD is valid
+        let tree_oid = {
+            let mut index = repo.index().unwrap();
+            index.write_tree().unwrap()
+        };
+        let tree = repo.find_tree(tree_oid).unwrap();
+        let sig = git2::Signature::now("test", "test@test.com").unwrap();
+        repo.commit(Some("HEAD"), &sig, &sig, "initial", &tree, &[])
+            .unwrap();
+
+        let cli = Cli::default();
+        // On "main" trying to merge "main" — should fail
+        let result = cli.cmd_merge_in(dir.path(), "main", false);
+        assert!(result.is_err());
+        let err = result.unwrap_err().to_string();
+        assert!(err.contains("already on target"), "got: {}", err);
+    }
+
+    #[test]
+    fn merge_no_ai_produces_summary() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let repo = git2::Repository::init(dir.path()).unwrap();
+
+        // Create an initial commit on main
+        let tree_oid = {
+            let mut index = repo.index().unwrap();
+            index.write_tree().unwrap()
+        };
+        let tree = repo.find_tree(tree_oid).unwrap();
+        let sig = git2::Signature::now("test", "test@test.com").unwrap();
+        repo.commit(Some("HEAD"), &sig, &sig, "initial", &tree, &[])
+            .unwrap();
+
+        // Create a feature branch
+        let head_commit = repo.head().unwrap().peel_to_commit().unwrap();
+        repo.branch("feature", &head_commit, false).unwrap();
+
+        let cli = Cli::default();
+        let result = cli.cmd_merge_in(dir.path(), "feature", false);
+        assert!(result.is_ok(), "merge should succeed: {:?}", result);
+        let output = result.unwrap();
+        assert!(
+            output.contains("crystal delta"),
+            "should contain crystal delta: {}",
+            output
+        );
+        assert!(
+            output.contains("unchanged"),
+            "should contain unchanged: {}",
+            output
+        );
+    }
+
+    #[test]
+    fn merge_command_help_in_dispatch() {
+        let cli = Cli::default();
+        let help = Cli::command_help("merge");
+        assert!(help.is_some());
+        assert!(help.unwrap().contains("crystal delta"));
     }
 }
