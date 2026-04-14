@@ -2061,17 +2061,17 @@ mod tests {
             .unwrap();
         // 00-prism.mirror has multiple declarations, so they're wrapped in a
         // synthetic file-level Form.
-        assert_eq!(compiled.form.kind, DeclKind::Form);
-        assert!(compiled.form.children.len() >= 2);
+        assert_eq!(compiled.data().kind, DeclKind::Form);
+        assert!(compiled.fragment.mirror_children().len() >= 2);
         // Look for @prism declaration
         let prism_decl = compiled
-            .form
-            .children
+            .fragment
+            .mirror_children()
             .iter()
-            .find(|f| f.name == "@prism")
+            .find(|f| f.mirror_data().name == "@prism")
             .expect("@prism declaration present");
-        assert_eq!(prism_decl.kind, DeclKind::Prism);
-        assert_eq!(prism_decl.children.len(), 5);
+        assert_eq!(prism_decl.mirror_data().kind, DeclKind::Prism);
+        assert_eq!(prism_decl.mirror_children().len(), 5);
     }
 
     #[test]
@@ -2083,7 +2083,7 @@ mod tests {
                 continue;
             }
             let s1 = runtime.compile_file(&path).unwrap();
-            let text = emit_form(&s1.form);
+            let text = emit_fragment(&s1.fragment);
             let s2 = Result::from(runtime.compile_source(&text)).unwrap_or_else(|e| {
                 panic!(
                     "round-trip parse failed for {}:\nemitted:\n{}\nerror: {}",
@@ -2107,8 +2107,8 @@ mod tests {
         let store_dir = tempdir_for_test("compiles_full_boot_dir");
         let boot = runtime.compile_boot_dir(&boot_dir(), &store_dir).unwrap();
         assert!(boot.resolved.len() + boot.failed.len() >= 8);
-        assert_eq!(boot.collapsed.form_name(), "mirror");
-        assert!(boot.collapsed.form.children.len() >= 8);
+        assert_eq!(boot.collapsed.data().name, "mirror");
+        assert!(boot.collapsed.fragment.mirror_children().len() >= 8);
 
         let store_dir2 = tempdir_for_test("compiles_full_boot_dir_2");
         let again = runtime.compile_boot_dir(&boot_dir(), &store_dir2).unwrap();
@@ -2123,28 +2123,31 @@ mod tests {
             .unwrap();
         // The property kernel now has `out` statements at top level alongside
         // `grammar @property { ... }`, so the form is a synthetic wrapper.
-        assert_eq!(compiled.form_name(), "");
+        assert_eq!(compiled.data().name, "");
         // The @property grammar block is a child of the wrapper.
         let grammar = compiled
-            .form
-            .children
+            .fragment
+            .mirror_children()
             .iter()
-            .find(|f| f.kind == DeclKind::Grammar && f.name == "@property");
+            .find(|f| {
+                let d = f.mirror_data();
+                d.kind == DeclKind::Grammar && d.name == "@property"
+            });
         assert!(grammar.is_some(), "@property grammar must exist");
         // The kernel defines types, not properties. Properties moved to std/properties.mirror.
         let type_count = grammar
             .unwrap()
-            .children
+            .mirror_children()
             .iter()
-            .filter(|f| f.kind == DeclKind::Type)
+            .filter(|f| f.mirror_data().kind == DeclKind::Type)
             .count();
         assert_eq!(type_count, 4, "kernel should have 4 type declarations");
         // Out statements at top level
         let out_count = compiled
-            .form
-            .children
+            .fragment
+            .mirror_children()
             .iter()
-            .filter(|f| f.kind == DeclKind::Out)
+            .filter(|f| f.mirror_data().kind == DeclKind::Out)
             .count();
         assert_eq!(out_count, 5, "kernel should have 5 out declarations");
     }
@@ -2155,11 +2158,16 @@ mod tests {
         let compiled = runtime
             .compile_file(&boot_dir().join("std/mirror.mirror"))
             .unwrap();
-        let kinds: Vec<&DeclKind> = compiled.form.children.iter().map(|f| &f.kind).collect();
-        assert!(kinds.contains(&&DeclKind::Requires));
-        assert!(kinds.contains(&&DeclKind::Invariant));
-        assert!(kinds.contains(&&DeclKind::Ensures));
-        assert!(kinds.contains(&&DeclKind::In));
+        let kinds: Vec<DeclKind> = compiled
+            .fragment
+            .mirror_children()
+            .iter()
+            .map(|f| f.mirror_data().kind.clone())
+            .collect();
+        assert!(kinds.contains(&DeclKind::Requires));
+        assert!(kinds.contains(&DeclKind::Invariant));
+        assert!(kinds.contains(&DeclKind::Ensures));
+        assert!(kinds.contains(&DeclKind::In));
     }
 
     #[test]
@@ -2564,25 +2572,25 @@ mod tests {
             .compile_file(&boot_dir().join("01a-meta-action.mirror"))
             .unwrap();
         // 01a-meta-action.mirror has multiple top-level declarations, wrapped in synthetic Form
-        assert_eq!(compiled.form.kind, DeclKind::Form);
+        assert_eq!(compiled.data().kind, DeclKind::Form);
         // Should contain: in @prism, in @meta, in @actor, prism action, action action, out action/collapse
-        let action_decls: Vec<&Form> = compiled
-            .form
-            .children
+        let action_decls: Vec<&MirrorFragment> = compiled
+            .fragment
+            .mirror_children()
             .iter()
-            .filter(|f| f.kind == DeclKind::Action)
+            .filter(|f| f.mirror_data().kind == DeclKind::Action)
             .collect();
         assert_eq!(
             action_decls.len(),
             1,
             "01a-meta-action.mirror has one action declaration"
         );
-        let action = action_decls[0];
-        assert_eq!(action.name, "action");
+        let action_data = MirrorData::decode_from_fragment(action_decls[0].mirror_data());
+        assert_eq!(action_data.name, "action");
         // The action body contains mirror declaration keywords (focus, project, etc.)
         // so it's parsed as structured children, not raw body text.
         assert!(
-            !action.children.is_empty(),
+            !action_decls[0].mirror_children().is_empty(),
             "action body with mirror keywords should be parsed as children"
         );
     }
@@ -3614,17 +3622,19 @@ grammar @ai {
             Imperfect::Failure(e, _) => panic!("property with <= failed: {}", e),
         };
 
-        // The property must have OpticOp::Fold
-        let has_fold = compiled.form.optic_ops.contains(&OpticOp::Fold)
-            || compiled
-                .form
-                .children
-                .iter()
-                .any(|ch| ch.optic_ops.contains(&OpticOp::Fold));
+        // The property must have OpticOp::Fold — check via parse_form since
+        // optic_ops is a parser annotation, not stored in the fragment.
+        let form = parse_form(
+            "property check(grammar) <= verdict {\n  traversal types\n  refract verdict\n}\n",
+        )
+        .ok()
+        .unwrap();
+        let has_fold = form.optic_ops.contains(&OpticOp::Fold)
+            || form.children.iter().any(|ch| ch.optic_ops.contains(&OpticOp::Fold));
         assert!(
             has_fold,
             "property check(grammar) <= verdict must produce OpticOp::Fold. Got: {:?}",
-            compiled.form
+            form
         );
     }
 
@@ -3840,7 +3850,7 @@ grammar @ai {
         // Currently it's Option<String> — this test documents the gap.
         // When grammar_ref becomes Imperfect, this assertion flips.
         assert!(
-            compiled.form.grammar_ref.is_none(),
+            compiled.data().grammar_ref.is_none(),
             "BASELINE: grammar_ref is still Option (should become Imperfect)"
         );
     }
@@ -3870,19 +3880,19 @@ grammar @ai {
         // The Fractal IS the AST. The optics navigate it.
 
         // The fragment should be navigable with the same data as the form
-        let form_name = &compiled.form.name;
+        let data = compiled.data();
         let fragment_name = &compiled.fragment.mirror_data().name;
         assert_eq!(
-            form_name, fragment_name,
-            "form and fragment carry the same name — one is redundant"
+            &data.name, fragment_name,
+            "data() and fragment carry the same name"
         );
 
-        // GOAL TEST: when Form is dissolved, CompiledShatter becomes just MirrorFragment
-        // and this field access changes from compiled.form.name to compiled.data().name
-        // Until then, this test documents the duplication.
+        // PROGRESS: callers now use compiled.data() instead of compiled.form.
+        // Form still exists internally for parsing and Prism trait, but the
+        // external API routes through MirrorFragment.
         assert!(
-            true, // placeholder — the real assertion is the existence of compiled.form
-            "BASELINE: compile still returns Form + Fragment (should be Fragment only)"
+            true,
+            "PROGRESS: compile API routes through fragment, Form is internal"
         );
     }
 
@@ -4022,22 +4032,25 @@ grammar @ai {
             Imperfect::Failure(e, _) => panic!("property with effect pattern must parse: {}", e),
         };
 
-        // Single declaration → the form IS the property (no wrapper)
-        assert_eq!(compiled.form.kind, DeclKind::Property);
-        assert_eq!(compiled.form.name, "consent");
+        // Single declaration → the data IS the property (no wrapper)
+        let data = compiled.data();
+        assert_eq!(data.kind, DeclKind::Property);
+        assert_eq!(data.name, "consent");
 
         // The parser preserves the effect pattern in params.
         // effect(a=>b) is stored as a single param string.
-        let has_effect = compiled.form.params.iter().any(|p| p.contains("effect"));
+        let has_effect = data.params.iter().any(|p| p.contains("effect"));
         assert!(
             has_effect,
             "consent property must have effect pattern in params, got: {:?}",
-            compiled.form.params
+            data.params
         );
 
-        // The fold operator must be recorded
+        // The fold operator must be recorded — check via parse_form since
+        // optic_ops is a parser annotation, not stored in the fragment.
+        let form = parse_form(src).ok().unwrap();
         assert!(
-            compiled.form.optic_ops.contains(&OpticOp::Fold),
+            form.optic_ops.contains(&OpticOp::Fold),
             "consent property must have OpticOp::Fold from <= verdict"
         );
     }
@@ -4161,7 +4174,7 @@ grammar @ai {
         };
 
         assert_eq!(
-            compiled.form.parent_ref.as_deref(),
+            compiled.data().parent_ref.as_deref(),
             Some("@sigil"),
             "parent_ref must be @sigil"
         );
@@ -4173,7 +4186,7 @@ grammar @ai {
         let result = runtime.compile_source("grammar @test {\n  type x\n}\n");
         let compiled = result.ok().unwrap();
         assert!(
-            compiled.form.parent_ref.is_none(),
+            compiled.data().parent_ref.is_none(),
             "grammar without < should have no parent_ref"
         );
     }
