@@ -411,12 +411,15 @@ flags:
                 out.push_str(&format!(
                     "partial\nholonomy: {:.4}\nphases: {}\nresolution: {:.2}",
                     holonomy,
-                    loss.phases.len(),
-                    loss.resolution_ratio
+                    loss.emit.phases.len(),
+                    loss.resolution.resolution_ratio
                 ));
-                if !loss.unresolved_refs.is_empty() {
-                    out.push_str(&format!("\nunresolved: {}", loss.unresolved_refs.len()));
-                    for (name, _oid) in &loss.unresolved_refs {
+                if !loss.resolution.unresolved_refs.is_empty() {
+                    out.push_str(&format!(
+                        "\nunresolved: {}",
+                        loss.resolution.unresolved_refs.len()
+                    ));
+                    for (name, _oid) in &loss.resolution.unresolved_refs {
                         out.push_str(&format!("\n  - {}", name));
                     }
                 }
@@ -462,7 +465,7 @@ flags:
         }
         let mut out = ci_result;
         out.push_str("\n---\nsuggestions:");
-        for phase in &loss.phases {
+        for phase in &loss.emit.phases {
             if phase.structural_loss > 0.0 {
                 out.push_str(&format!(
                     "\n  {:?} phase: loss {:.4}",
@@ -470,10 +473,10 @@ flags:
                 ));
             }
         }
-        if !loss.unresolved_refs.is_empty() {
+        if !loss.resolution.unresolved_refs.is_empty() {
             out.push_str(&format!(
                 "\n  unresolved refs: {}",
-                loss.unresolved_refs.len()
+                loss.resolution.unresolved_refs.len()
             ));
         }
         let enforce = args.iter().any(|a| a == "--enforce");

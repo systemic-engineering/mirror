@@ -4,17 +4,21 @@ focus type(id)
 project ref(type)
 
 split |(ref, ref)
+fold <=(ref, imperfect)
 zoom |>(ref, prism)
 zoom <|(prism, ref)
 zoom /(ref, focus)
 refract ..(ref)
 
+type observation = ast
+type action = collapse(block)
+type error(observation)
+
 type loss(f64)
 type precision(f64)
 type grammar
-type action
 type block(grammar)
-type imperfect(type, type, loss)
+type imperfect(observation, error(observation), loss)
 type abstract(grammar)
 type abstract(action)
 
@@ -29,6 +33,7 @@ grammar @meta {
   focus @
   project |>
   split |
+  fold <=
   zoom /
   refract ..
 }
@@ -36,14 +41,17 @@ grammar @meta {
 out type
 out ref
 out |
+out <=
 out |>
 out /
 out ..
+out observation
+out action
+out error
 out loss
 out precision
 out beam
 out grammar
-out action
 out block
 out imperfect
 out abstract

@@ -63,7 +63,7 @@ use fragmentation::frgmnt_store::FrgmntStore;
 use fragmentation::sha::HashAlg;
 use prism::{Beam, Imperfect, Loss, Optic, Prism};
 
-use crate::loss::{MirrorLoss, UnrecognizedDecl};
+use crate::loss::{MirrorLoss, ParseLoss, UnrecognizedDecl};
 
 // ---------------------------------------------------------------------------
 // Errors
@@ -372,7 +372,7 @@ pub fn parse_form(source: &str) -> Imperfect<Form, MirrorRuntimeError, MirrorLos
     } else if decls.is_empty() {
         // Only unrecognized decls — nothing survived
         let loss = MirrorLoss {
-            unrecognized,
+            parse: ParseLoss { unrecognized },
             ..MirrorLoss::zero()
         };
         Imperfect::failure_with_loss(err("no recognized declarations found"), loss)
@@ -393,7 +393,7 @@ pub fn parse_form(source: &str) -> Imperfect<Form, MirrorRuntimeError, MirrorLos
             Imperfect::Success(form)
         } else {
             let loss = MirrorLoss {
-                unrecognized,
+                parse: ParseLoss { unrecognized },
                 ..MirrorLoss::zero()
             };
             Imperfect::Partial(form, loss)
@@ -1538,6 +1538,17 @@ mod tests {
     }
 
     #[test]
+    fn fold_decl_keyword_classified_as_optic() {
+        let source = "fold <=(ref, imperfect)";
+        let form = parse_form(source).ok().unwrap();
+        assert_eq!(form.kind, DeclKind::Fold);
+        assert!(
+            form.optic_ops.contains(&OpticOp::Fold),
+            "fold keyword should be classified as OpticOp::Fold"
+        );
+    }
+
+    #[test]
     fn focus_decl_with_params_classified_as_optic() {
         let source = "focus type(id)";
         let form = parse_form(source).ok().unwrap();
@@ -2288,10 +2299,10 @@ mod tests {
         let src = "widget foo\ntype bar";
         let result = parse_form(src);
         let loss = result.loss();
-        assert_eq!(loss.unrecognized.len(), 1);
-        assert_eq!(loss.unrecognized[0].keyword, "widget");
-        assert_eq!(loss.unrecognized[0].line, 1);
-        assert!(loss.unrecognized[0].content.contains("foo"));
+        assert_eq!(loss.parse.unrecognized.len(), 1);
+        assert_eq!(loss.parse.unrecognized[0].keyword, "widget");
+        assert_eq!(loss.parse.unrecognized[0].line, 1);
+        assert!(loss.parse.unrecognized[0].content.contains("foo"));
     }
 
     #[test]
@@ -2312,7 +2323,7 @@ mod tests {
         assert!(result.is_err(), "only unrecognized keywords should fail");
         let loss = result.loss();
         assert_eq!(
-            loss.unrecognized.len(),
+            loss.parse.unrecognized.len(),
             2,
             "both unrecognized should be tracked"
         );
@@ -2333,7 +2344,7 @@ mod tests {
         );
         let loss = result.loss();
         assert!(
-            !loss.unrecognized.is_empty(),
+            !loss.parse.unrecognized.is_empty(),
             "loss should contain unrecognized decls"
         );
         // The recognized part should still compile
@@ -2364,10 +2375,10 @@ mod tests {
 
         let result = runtime.compile_boot_dir(&boot, &store).unwrap();
         assert!(
-            !result.total_loss.unrecognized.is_empty(),
+            !result.total_loss.parse.unrecognized.is_empty(),
             "boot dir should accumulate unrecognized loss from partial files"
         );
-        assert_eq!(result.total_loss.unrecognized[0].keyword, "widget");
+        assert_eq!(result.total_loss.parse.unrecognized[0].keyword, "widget");
     }
 
     #[test]
@@ -2410,6 +2421,128 @@ mod tests {
         assert_eq!(
             content1, content2,
             "same boot dir must produce identical .shatter content"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // mirror ci: boot baseline — the warnings ARE the specification
+    // -----------------------------------------------------------------------
+
+    /// The boot sequence as it IS right now: what resolves, what fails,
+    /// what loss accumulates. This test captures the training data.
+    /// Every warning is a property the compiler doesn't enforce yet.
+    /// Fix the grammar AFTER this test documents the current state.
+    #[test]
+    fn mirror_ci_boot_baseline() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("ci_boot_baseline");
+        let boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+
+        // --- What resolves (the compiler CAN parse these) ---
+        let resolved: Vec<&str> = boot.resolved.keys().map(|s| s.as_str()).collect();
+        assert!(resolved.contains(&"00-prism"), "prism must resolve");
+        assert!(resolved.contains(&"01-meta"), "meta must resolve");
+        assert!(resolved.contains(&"02-code"), "code must resolve");
+        assert!(
+            resolved.contains(&"02a-code-rust"),
+            "code-rust must resolve"
+        );
+        assert!(resolved.contains(&"03-actor"), "actor must resolve");
+        assert!(resolved.contains(&"04-action"), "action must resolve");
+
+        // --- What fails resolution (in @X references something missing) ---
+        let failed: Vec<&str> = boot.failed.keys().map(|s| s.as_str()).collect();
+        assert!(
+            failed.contains(&"05-property"),
+            "property fails: in @form — @form is not defined in boot"
+        );
+        assert!(
+            failed.contains(&"10-mirror"),
+            "mirror fails: in @form, in @type, in @boundary, in @lens — none defined"
+        );
+
+        // --- The loss: what the compiler saw but couldn't land ---
+        let loss = &boot.total_loss;
+        let holonomy = loss.holonomy();
+
+        // --- Parse-level loss: currently zero ---
+        // The parser has no unrecognized keywords or unresolved refs.
+        // All loss is in RESOLUTION (the failed bucket), not in parsing.
+        assert_eq!(
+            holonomy, 0.0,
+            "parse holonomy baseline is 0.0 — all loss is in resolution"
+        );
+
+        // --- Resolution failures: the real loss ---
+        // These files parse fine but fail `in @X` reference checks.
+        // This loss is NOT in holonomy — it should be.
+        // That's the gap: resolution failures need to become MirrorLoss.
+        assert_eq!(boot.failed.len(), 5, "5 boot files fail resolution");
+        assert!(
+            failed.contains(&"05-property"),
+            "in @form — @form undefined"
+        );
+        assert!(
+            failed.contains(&"10-mirror"),
+            "in @form, @type, @boundary, @lens — undefined"
+        );
+        assert!(failed.contains(&"11-spec"), "missing refs");
+        assert!(failed.contains(&"16-tui"), "missing refs");
+        assert!(failed.contains(&"20-cli"), "missing refs");
+
+        // --- Resolved file count: progress toward Success(Mirror) ---
+        assert_eq!(boot.resolved.len(), 10, "10 of 18 boot files resolve");
+
+        // --- The crystal still forms despite failures ---
+        // The compiler produces a crystal from what DID resolve.
+        // This is Partial, not Failure. The observation happened.
+        let crystal_oid = boot.collapsed.crystal();
+        assert!(
+            !crystal_oid.as_str().is_empty(),
+            "crystal must form even with partial resolution"
+        );
+    }
+
+    /// The goal: boot compiles with zero loss, zero failures.
+    /// Success(Mirror). No warnings. Strict passes.
+    ///
+    /// This test is ignored until the grammar and compiler enforce all properties.
+    /// When this test passes without #[ignore], we ship.
+    #[test]
+    #[ignore = "goal: Success(Mirror) — boot compiles with zero loss"]
+    fn mirror_ci_boot_success() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("ci_boot_success");
+        let boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+
+        // Zero failures: every boot file resolves
+        assert!(
+            boot.failed.is_empty(),
+            "Success(Mirror) requires zero resolution failures, got: {:?}",
+            boot.failed.keys().collect::<Vec<_>>()
+        );
+
+        // Zero loss: the compiler found nothing to warn about
+        assert!(
+            boot.total_loss.is_zero(),
+            "Success(Mirror) requires zero loss, got holonomy: {}",
+            boot.total_loss.holonomy()
+        );
+
+        // Zero holonomy: the crystal is settled
+        assert_eq!(
+            boot.total_loss.holonomy(),
+            0.0,
+            "Success(Mirror) requires zero holonomy"
+        );
+
+        // The crystal identity law: compile(compile(boot)) = compile(boot)
+        let store2 = tempdir_for_test("ci_boot_success_idempotent");
+        let boot2 = runtime.compile_boot_dir(&boot_dir(), &store2).unwrap();
+        assert_eq!(
+            boot.collapsed.crystal().as_str(),
+            boot2.collapsed.crystal().as_str(),
+            "crystal identity law: same boot → same crystal"
         );
     }
 }

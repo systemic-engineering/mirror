@@ -114,23 +114,37 @@ impl DeclKind {
 // OpticOp — the five prism operations as operator tokens
 // ---------------------------------------------------------------------------
 
-/// The five prism optics, classified by their operator token.
+/// The six optics, classified by their operator token.
 ///
-/// These are the shared kernel between Rust and .mirror: the same five
+/// These are the shared kernel between Rust and .mirror: the same six
 /// operators mean the same thing on both sides of the glass wall.
 ///
+/// The three core operators declare superpositions:
+///
 /// ```text
-/// =    Iso      structural equality / assertion
-/// |    Split    superposition / enum variants
+/// =    Iso      superposition preserved  (bidirectional, lossless)
+/// <=   Fold     superposition collapsed  (one-directional, loss accumulates)
+/// |    Split    superposition branched   (variants)
+/// ```
+///
+/// The three structural operators navigate them:
+///
+/// ```text
 /// ()   Focus    grouping / function call (structural, not a single token)
 /// ->   Zoom     flow / return type / transformation
 /// ..   Refract  spread / range / settlement
 /// ```
+///
+/// Every `<=` in a `.mirror` file is an observation that returns `Imperfect`:
+/// the fold IS the measurement, and the measurement carries loss.
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum OpticOp {
-    /// `=` — structural equality. The iso: what goes in comes out unchanged.
+    /// `=` — superposition preserved. The iso: what goes in comes out unchanged.
     Iso,
-    /// `|` — superposition. The split: one of many.
+    /// `<=` — superposition collapsed. The fold: one-directional, loss accumulates.
+    /// Every fold returns `Imperfect` — the observation IS the measurement.
+    Fold,
+    /// `|` — superposition branched. The split: one of many.
     Split,
     /// `()` — grouping / function call. The focus: look closer.
     /// Note: parentheses are delimiters in the tokenizer, not a single token.
@@ -147,6 +161,7 @@ impl OpticOp {
     pub fn from_token(token: &str) -> Option<OpticOp> {
         match token {
             "=" => Some(OpticOp::Iso),
+            "<=" => Some(OpticOp::Fold),
             "|" => Some(OpticOp::Split),
             "->" | "|>" | "<|" | "/" => Some(OpticOp::Zoom),
             "+" => Some(OpticOp::Zoom), // combine / accumulate
@@ -159,6 +174,7 @@ impl OpticOp {
     pub fn as_str(&self) -> &'static str {
         match self {
             OpticOp::Iso => "=",
+            OpticOp::Fold => "<=",
             OpticOp::Split => "|",
             OpticOp::Focus => "()",
             OpticOp::Zoom => "->",
@@ -170,6 +186,7 @@ impl OpticOp {
     /// Focus and Project are DeclKind variants; Iso has no direct DeclKind.
     pub fn to_decl_kind(&self) -> Option<DeclKind> {
         match self {
+            OpticOp::Fold => Some(DeclKind::Fold),
             OpticOp::Split => Some(DeclKind::Split),
             OpticOp::Zoom => Some(DeclKind::Zoom),
             OpticOp::Refract => Some(DeclKind::Refract),
@@ -183,6 +200,7 @@ impl OpticOp {
     /// Classify a declaration keyword as its corresponding optic operation.
     pub fn from_decl_kind(kind: &DeclKind) -> Option<OpticOp> {
         match kind {
+            DeclKind::Fold => Some(OpticOp::Fold),
             DeclKind::Focus => Some(OpticOp::Focus),
             DeclKind::Split => Some(OpticOp::Split),
             DeclKind::Zoom => Some(OpticOp::Zoom),
@@ -353,6 +371,11 @@ mod tests {
     }
 
     #[test]
+    fn operator_fold_maps_to_arrow_left() {
+        assert_eq!(OpticOp::from_token("<="), Some(OpticOp::Fold));
+    }
+
+    #[test]
     fn operator_zoom_maps_to_arrow() {
         assert_eq!(OpticOp::from_token("->"), Some(OpticOp::Zoom));
     }
@@ -389,11 +412,12 @@ mod tests {
 
     #[test]
     fn optic_op_as_str_roundtrips_through_from_token() {
-        // Iso, Split, Zoom, Refract roundtrip through from_token.
+        // Iso, Split, Fold, Zoom, Refract roundtrip through from_token.
         // Focus is structural (parentheses), so it has no single-token parse.
         for op in [
             OpticOp::Iso,
             OpticOp::Split,
+            OpticOp::Fold,
             OpticOp::Zoom,
             OpticOp::Refract,
         ] {
@@ -414,6 +438,7 @@ mod tests {
     fn optic_op_display() {
         assert_eq!(format!("{}", OpticOp::Iso), "=");
         assert_eq!(format!("{}", OpticOp::Split), "|");
+        assert_eq!(format!("{}", OpticOp::Fold), "<=");
         assert_eq!(format!("{}", OpticOp::Focus), "()");
         assert_eq!(format!("{}", OpticOp::Zoom), "->");
         assert_eq!(format!("{}", OpticOp::Refract), "..");
@@ -425,6 +450,7 @@ mod tests {
         assert_eq!(OpticOp::Zoom.to_decl_kind(), Some(DeclKind::Zoom));
         assert_eq!(OpticOp::Refract.to_decl_kind(), Some(DeclKind::Refract));
         assert_eq!(OpticOp::Focus.to_decl_kind(), Some(DeclKind::Focus));
+        assert_eq!(OpticOp::Fold.to_decl_kind(), Some(DeclKind::Fold));
         assert_eq!(OpticOp::Iso.to_decl_kind(), None);
     }
 
@@ -445,6 +471,10 @@ mod tests {
         assert_eq!(
             OpticOp::from_decl_kind(&DeclKind::Focus),
             Some(OpticOp::Focus)
+        );
+        assert_eq!(
+            OpticOp::from_decl_kind(&DeclKind::Fold),
+            Some(OpticOp::Fold)
         );
         assert_eq!(OpticOp::from_decl_kind(&DeclKind::Type), None);
         assert_eq!(OpticOp::from_decl_kind(&DeclKind::Grammar), None);
@@ -479,6 +509,8 @@ mod tests {
             DeclKind::Recover,
             DeclKind::Rescue,
             DeclKind::Grammar,
+            DeclKind::Default,
+            DeclKind::Binding,
         ];
         for kind in &all_kinds {
             assert_eq!(
@@ -489,7 +521,7 @@ mod tests {
             );
         }
         // Ensure we tested every variant — count must match.
-        assert_eq!(all_kinds.len(), 21, "must test all 21 DeclKind variants");
+        assert_eq!(all_kinds.len(), 23, "must test all 23 DeclKind variants");
     }
 
     #[test]

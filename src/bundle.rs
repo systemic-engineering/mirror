@@ -7,11 +7,12 @@
 use std::convert::Infallible;
 
 use crate::declaration::{MirrorFragment, MirrorFragmentExt, MirrorHash};
-use crate::loss::{Convergence, MirrorLoss, Phase, PhaseRecord};
+use crate::loss::{Convergence, EmitLoss, MirrorLoss, Phase, PhaseRecord, ResolutionLoss};
 use crate::mirror_runtime::{CompiledShatter, MirrorRuntime, MirrorRuntimeError};
 use fragmentation::sha::HashAlg;
 use prism::{
-    Closure, Connection, Decomposition, Fiber, Gauge, Imperfect, KernelSpec, Precision, Transport,
+    Closure, Connection, Decomposition, Fiber, Gauge, Imperfect, KernelSpec, Loss, Precision,
+    Transport,
 };
 
 /// Compilation target.
@@ -132,15 +133,13 @@ impl Transport for MirrorCompiler {
                     Imperfect::Success(oid_str)
                 } else {
                     let loss = MirrorLoss {
-                        phases: vec![phase_record],
-                        resolution_ratio: 1.0,
-                        unresolved_refs: Vec::new(),
-                        unrecognized: Vec::new(),
-                        staleness: 0,
-                        convergence: Convergence::Settled,
-                        dark_dims: Vec::new(),
+                        emit: EmitLoss {
+                            phases: vec![phase_record],
+                            staleness: 0,
+                            dark_dims: Vec::new(),
+                        },
                         crystal: Some(crate::kernel::Oid::new(&oid_str)),
-                        recovered: false,
+                        ..MirrorLoss::zero()
                     };
                     Imperfect::Partial(oid_str, loss)
                 }
@@ -149,15 +148,12 @@ impl Transport for MirrorCompiler {
                 // Compilation failure IS failure now, not partial with max loss.
                 // Infallible error type means we express this as Partial with total-ish loss.
                 let loss = MirrorLoss {
-                    phases: Vec::new(),
-                    resolution_ratio: 0.0,
-                    unresolved_refs: Vec::new(),
-                    unrecognized: Vec::new(),
-                    staleness: 0,
+                    resolution: ResolutionLoss {
+                        resolution_ratio: 0.0,
+                        unresolved_refs: Vec::new(),
+                    },
                     convergence: Convergence::BudgetExhausted,
-                    dark_dims: Vec::new(),
-                    crystal: None,
-                    recovered: false,
+                    ..MirrorLoss::zero()
                 };
                 Imperfect::Partial(String::new(), loss)
             }
@@ -274,9 +270,9 @@ mod tests {
         match result {
             Imperfect::Partial(oid, loss) => {
                 assert!(!oid.is_empty(), "should produce an OID");
-                assert!(!loss.phases.is_empty(), "should have phase records");
+                assert!(!loss.emit.phases.is_empty(), "should have phase records");
                 assert!(
-                    loss.phases[0].structural_loss > 0.0,
+                    loss.emit.phases[0].structural_loss > 0.0,
                     "compilation should have loss"
                 );
             }
