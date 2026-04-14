@@ -1482,6 +1482,59 @@ impl MirrorRuntime {
             }
         }
 
+        // --- Phase 2: Standard library (boot/std/) ---
+        // The std is the first consumer of the package system.
+        // Files resolve against the kernel registry.
+        // TODO: Replace alphabetical sort with @package.resolve() once
+        // the package resolver is implemented. For now, sort alphabetically
+        // as a placeholder — the package system determines the real order.
+        let std_dir = dir.join("std");
+        if std_dir.is_dir() {
+            let mut std_entries: Vec<_> = std::fs::read_dir(&std_dir)
+                .map_err(|e| err(format!("read_dir {}: {}", std_dir.display(), e)))?
+                .filter_map(|e| e.ok())
+                .map(|e| e.path())
+                .filter(|p| p.extension().and_then(|x| x.to_str()) == Some("mirror"))
+                .collect();
+            // Alphabetical sort as placeholder until @package.resolve works
+            std_entries.sort();
+
+            for path in std_entries {
+                let stem = format!(
+                    "std/{}",
+                    path.file_stem()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or("unknown")
+                );
+                let src = std::fs::read_to_string(&path)
+                    .map_err(|e| err(format!("read {}: {}", path.display(), e)))?;
+                let compile_result = self.compile_source(&src);
+
+                let file_loss = compile_result.loss();
+                if !file_loss.is_zero() {
+                    total_loss = total_loss.combine(file_loss);
+                }
+
+                let compiled = match compile_result {
+                    Imperfect::Success(c) => c,
+                    Imperfect::Partial(c, _) => c,
+                    Imperfect::Failure(e, _) => return Err(e),
+                };
+
+                all_forms.push(compiled.form.clone());
+
+                match registry.resolve(&compiled.form) {
+                    Ok(()) => {
+                        registry.register(&compiled.form);
+                        resolved.insert(stem, compiled);
+                    }
+                    Err(e) => {
+                        failed.insert(stem, e);
+                    }
+                }
+            }
+        }
+
         registry.flush();
 
         let collapsed_form = Form::new(DeclKind::Form, "mirror", Vec::new(), Vec::new(), all_forms);
@@ -2185,8 +2238,8 @@ mod tests {
         assert!(reopened.lookup("@actor").is_some());
         // @property now resolves (in @meta instead of in @form)
         assert!(reopened.lookup("@property").is_some());
-        // @mirror is in std/ — not loaded by kernel compilation
-        assert!(reopened.lookup("@mirror").is_none());
+        // @mirror resolves from std/mirror.mirror (in @meta, @prism, @property)
+        assert!(reopened.lookup("@mirror").is_some());
     }
 
     #[test]
@@ -2746,7 +2799,10 @@ mod tests {
         );
         // 06-package and 06a-package-git resolve (in @prism, @meta, @package)
         assert!(resolved.contains(&"06-package"), "package must resolve");
-        assert!(resolved.contains(&"06a-package-git"), "package-git must resolve");
+        assert!(
+            resolved.contains(&"06a-package-git"),
+            "package-git must resolve"
+        );
 
         // --- The loss: what the compiler saw but couldn't land ---
         let loss = &boot.total_loss;
@@ -2766,9 +2822,10 @@ mod tests {
             holonomy
         );
 
-        // --- Resolution failures: the real loss ---
-        // Kernel-only compilation (std/ not loaded yet).
-        assert_eq!(boot.failed.len(), 4, "4 of 12 kernel files fail resolution");
+        // --- Resolution failures: kernel + std ---
+        // Kernel failures: 01a, 01b, 02-shatter (dependency ordering), 06b-package-spec (missing refs)
+        // Std failures: benchmark (needs @time before it), cli (needs @spec, @shatter), tui (needs @config etc)
+        assert_eq!(boot.failed.len(), 7, "7 of 17 files fail resolution (4 kernel + 3 std)");
         assert!(
             failed.contains(&"01a-meta-action"),
             "01a needs @actor which sorts after it"
@@ -2781,10 +2838,20 @@ mod tests {
             failed.contains(&"02-shatter"),
             "02-shatter needs @io which itself failed"
         );
-        assert!(failed.contains(&"06b-package-spec"), "missing refs (@mirror, @config, @ai)");
+        assert!(
+            failed.contains(&"06b-package-spec"),
+            "missing refs (@mirror, @config, @ai)"
+        );
+        // std failures
+        assert!(failed.contains(&"std/benchmark"), "benchmark needs @time before it alphabetically");
+        assert!(failed.contains(&"std/cli"), "cli needs @spec, @shatter — not in registry");
+        assert!(failed.contains(&"std/tui"), "tui needs @config, @ci, @ca, @lsp — not in registry");
 
-        // --- Resolved file count: kernel only ---
-        assert_eq!(boot.resolved.len(), 8, "8 of 12 kernel files resolve");
+        // --- Resolved: kernel(8) + std(2) = 10 ---
+        assert_eq!(boot.resolved.len(), 10, "10 of 17 files resolve (8 kernel + 2 std)");
+        // std files that resolve
+        assert!(resolved.contains(&"std/mirror"), "std/mirror resolves (in @meta, @prism, @property)");
+        assert!(resolved.contains(&"std/time"), "std/time resolves (in @prism, @meta, @actor)");
 
         // --- The crystal still forms despite failures ---
         // The compiler produces a crystal from what DID resolve.
@@ -2794,6 +2861,54 @@ mod tests {
             !crystal_oid.as_str().is_empty(),
             "crystal must form even with partial resolution"
         );
+    }
+
+    /// The reorganized boot: kernel (12 sorted) + std (5 package-resolved).
+    #[test]
+    fn boot_kernel_and_std() {
+        let boot = boot_dir();
+
+        // Kernel: sorted, numbered
+        let mut kernel: Vec<String> = std::fs::read_dir(&boot)
+            .unwrap()
+            .filter_map(|e| e.ok())
+            .filter(|e| e.file_type().map(|t| t.is_file()).unwrap_or(false))
+            .map(|e| e.file_name().to_string_lossy().to_string())
+            .filter(|f| f.ends_with(".mirror"))
+            .collect();
+        kernel.sort();
+
+        // std: unsorted, package-resolved
+        let std_dir = boot.join("std");
+        let mut std_files: Vec<String> = std::fs::read_dir(&std_dir)
+            .unwrap()
+            .filter_map(|e| e.ok())
+            .map(|e| e.file_name().to_string_lossy().to_string())
+            .filter(|f| f.ends_with(".mirror"))
+            .collect();
+        std_files.sort(); // sort for assertion stability only
+
+        // Kernel: 12 files (00 through 06b)
+        assert_eq!(kernel.len(), 12, "kernel needs 12 files: {:?}", kernel);
+        assert!(kernel.contains(&"00-prism.mirror".to_string()));
+        assert!(kernel.contains(&"06b-package-spec.mirror".to_string()));
+
+        // Std: 5 files (mirror, time, tui, benchmark, cli)
+        assert_eq!(std_files.len(), 5, "std needs 5 files: {:?}", std_files);
+        assert!(std_files.contains(&"mirror.mirror".to_string()));
+        assert!(std_files.contains(&"cli.mirror".to_string()));
+        assert!(std_files.contains(&"time.mirror".to_string()));
+        assert!(std_files.contains(&"benchmark.mirror".to_string()));
+        assert!(std_files.contains(&"tui.mirror".to_string()));
+
+        // Compiler loads both phases
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("boot_kernel_std");
+        let result = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+
+        // std/mirror and std/time resolve against kernel registry
+        assert!(result.resolved.contains_key("std/mirror"), "std/mirror should resolve");
+        assert!(result.resolved.contains_key("std/time"), "std/time should resolve");
     }
 
     /// Success(Mirror). Zero loss. Zero failures. Strict passes.
