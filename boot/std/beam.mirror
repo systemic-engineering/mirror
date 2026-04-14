@@ -1,0 +1,94 @@
+in @prism
+in @meta
+in @actor
+
+-- luminosity: the carrier type of the beam
+-- three states: light (success), dimmed (partial), dark (failure)
+-- luminosity IS imperfect — same structure, same variants, same meaning
+type luminosity(t, e, l) = light(t, l) | dimmed(t, e, l) | dark(e, l)
+luminosity = imperfect
+
+-- the beam: a value carrier through a pipeline
+-- carries luminosity, a path of prisms traversed, and wavelength (precision)
+type beam(t) {
+  luminosity: luminosity,
+  path: [prism],
+  wavelength: precision,
+}
+
+-- process: an actor with state — the OTP primitive
+type process(actor, state)
+
+-- message: the two OTP dispatch modes
+type message = call(actor, ref) | cast(actor, ref)
+
+-- callbacks: the gen_server contract
+-- four functions that define a process's behavior
+type callbacks(state) {
+  init: state,
+  handle_call: ref,
+  handle_cast: ref,
+  terminate: ref,
+}
+
+-- gen_server: a process that responds to messages via callbacks
+type gen_server(state, message) {
+  <process,
+  callbacks: callbacks(state),
+}
+
+-- supervisor: a process that manages child processes
+-- children are restarted according to strategy
+type strategy = one_for_one | one_for_all | rest_for_one
+type supervisor(children) {
+  <process,
+  children: [process],
+  strategy: strategy,
+}
+
+-- what can go wrong in the beam runtime
+type beam_error = noproc | timeout | badrpc | noconnection
+
+grammar @beam {
+  in @actor
+
+  -- start a gen_server from callbacks and initial state
+  abstract action start(callbacks, state) -> imperfect(gen_server, beam_error, loss)
+
+  -- send a synchronous call to a gen_server
+  abstract action call(gen_server, ref) -> imperfect(ref, beam_error, loss)
+
+  -- send an asynchronous cast to a gen_server
+  abstract action cast(gen_server, ref) -> imperfect
+
+  -- start a supervisor with a list of child specs
+  abstract action supervise([process], strategy) -> imperfect(supervisor, beam_error, loss)
+
+  -- stop a process gracefully
+  abstract action stop(process) -> imperfect
+
+  recover |result, loss| {
+    -- partial: the process responded but with degraded state
+    -- luminosity dimmed — value present, information lost
+    log_drift(loss)
+    result
+  }
+
+  rescue |error| {
+    -- dark: the process is unreachable
+    -- noproc, timeout, badrpc — the beam went dark
+    -- return dark luminosity with the error
+    dark(error, loss(1.0))
+  }
+}
+
+out luminosity
+out beam
+out process
+out message
+out callbacks
+out gen_server
+out strategy
+out supervisor
+out beam_error
+out @beam

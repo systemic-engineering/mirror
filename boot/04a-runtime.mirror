@@ -1,0 +1,18 @@
+in @prism
+in @meta
+in @actor
+
+type effect(actor)
+type runtime(prism)
+
+abstract grammar @runtime {
+  in @actor
+
+  abstract action enact(actor, effect) => process
+  abstract action observe(process) -> imperfect
+  abstract action halt(process) -> imperfect
+}
+
+out effect
+out runtime
+out @runtime

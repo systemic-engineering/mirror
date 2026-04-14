@@ -123,6 +123,9 @@ pub struct Form {
     /// For example, `type visibility = private | protected | public` would
     /// have `[OpticOp::Iso, OpticOp::Split]`.
     pub optic_ops: Vec<OpticOp>,
+    /// For `grammar` declarations: the parent grammar reference (e.g. `@actor`).
+    /// Set when `grammar @name < @parent { ... }` is used.
+    pub parent_ref: Option<String>,
 }
 
 /// `optic_ops` is excluded from equality: it's a parser annotation about which
@@ -139,6 +142,7 @@ impl PartialEq for Form {
             && self.body_text == other.body_text
             && self.is_abstract == other.is_abstract
             && self.return_type == other.return_type
+            && self.parent_ref == other.parent_ref
     }
 }
 
@@ -161,6 +165,7 @@ impl Form {
             is_abstract: false,
             return_type: None,
             optic_ops: Vec::new(),
+            parent_ref: None,
         }
     }
 
@@ -183,6 +188,7 @@ impl Form {
             is_abstract: false,
             return_type: None,
             optic_ops: Vec::new(),
+            parent_ref: None,
         }
     }
 
@@ -204,6 +210,9 @@ impl Form {
         }
         if self.is_abstract {
             params.push("modifier:abstract".to_string());
+        }
+        if let Some(ref pr) = self.parent_ref {
+            params.push(format!("parent:{}", pr));
         }
         let data = MirrorData::new(self.kind.clone(), self.name.clone(), params, variants);
         let children: Vec<MirrorFragment> = self.children.iter().map(|c| c.to_fragment()).collect();
@@ -242,10 +251,20 @@ impl Form {
                 variants.push(v.clone());
             }
         }
+        // Decode parent_ref from params
+        let mut final_params = Vec::new();
+        let mut parent_ref = None;
+        for p in &params {
+            if let Some(pr) = p.strip_prefix("parent:") {
+                parent_ref = Some(pr.to_string());
+            } else {
+                final_params.push(p.clone());
+            }
+        }
         Form {
             kind: d.kind.clone(),
             name: d.name.clone(),
-            params,
+            params: final_params,
             variants,
             children,
             grammar_ref,
@@ -253,6 +272,7 @@ impl Form {
             is_abstract,
             return_type,
             optic_ops: Vec::new(),
+            parent_ref,
         }
     }
 }
@@ -793,6 +813,25 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
         _ => String::new(),
     };
 
+    // Check for grammar inheritance: `grammar @name < @parent`
+    // `<` is tokenized as Word("<"). If followed by a Word starting with `@`,
+    // it's inheritance, not a fold operator (which is `<` + `=`).
+    let mut parent_ref = None;
+    if kind == DeclKind::Grammar {
+        if let Some(Tok::Word(w)) = tokens.get(*cursor) {
+            if w == "<" {
+                // Peek at next token: if it's a @-prefixed word, it's inheritance
+                if let Some(Tok::Word(next)) = tokens.get(*cursor + 1) {
+                    if next.starts_with('@') {
+                        *cursor += 1; // skip `<`
+                        parent_ref = Some(next.clone());
+                        *cursor += 1; // skip parent name
+                    }
+                }
+            }
+        }
+    }
+
     let mut has_parens = false;
     let mut params: Vec<String> = Vec::new();
     if matches!(tokens.get(*cursor), Some(Tok::LParen)) {
@@ -1048,6 +1087,7 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
     let mut form = Form::new(kind, name, params, variants, children);
     form.is_abstract = modifier;
     form.optic_ops = optic_ops;
+    form.parent_ref = parent_ref;
     Ok(form)
 }
 
@@ -1365,6 +1405,7 @@ pub fn kintsugi(form: &Form) -> Form {
         is_abstract: form.is_abstract,
         return_type: form.return_type.clone(),
         optic_ops: form.optic_ops.clone(),
+        parent_ref: form.parent_ref.clone(),
     }
 }
 
@@ -1761,6 +1802,16 @@ impl MirrorRegistry {
                 return Err(MirrorResolveError(format!(
                     "unresolved `in {}`: no such ref in registry store at {}",
                     target,
+                    self.root.display()
+                )));
+            }
+        }
+        // Check grammar inheritance: `grammar @name < @parent`
+        if let Some(ref parent) = node.parent_ref {
+            if self.store.get_ref(parent).is_none() {
+                return Err(MirrorResolveError(format!(
+                    "unresolved parent `{}`: no such ref in registry store at {}",
+                    parent,
                     self.root.display()
                 )));
             }
@@ -2774,14 +2825,14 @@ mod tests {
             .collect();
         files.sort();
 
-        assert_eq!(files.len(), 12, "boot kernel file count: {:?}", files);
+        assert_eq!(files.len(), 13, "boot kernel file count: {:?}", files);
         assert!(files.contains(&"00-prism.mirror".to_string()));
         assert!(files.contains(&"01a-meta-action.mirror".to_string()));
         assert!(files.contains(&"01b-meta-io.mirror".to_string()));
         assert!(files.contains(&"02-shatter.mirror".to_string()));
         assert!(files.contains(&"06-package.mirror".to_string()));
 
-        // std/ exists with 6 files
+        // std/ exists with 7 files
         let std_dir = boot.join("std");
         assert!(std_dir.exists(), "std/ should exist");
         let mut std_files: Vec<String> = std::fs::read_dir(&std_dir)
@@ -2791,7 +2842,7 @@ mod tests {
             .filter(|f| f.ends_with(".mirror"))
             .collect();
         std_files.sort();
-        assert_eq!(std_files.len(), 6, "std file count: {:?}", std_files);
+        assert_eq!(std_files.len(), 7, "std file count: {:?}", std_files);
         assert!(std_files.contains(&"mirror.mirror".to_string()));
         assert!(std_files.contains(&"cli.mirror".to_string()));
         assert!(std_files.contains(&"properties.mirror".to_string()));
@@ -2859,11 +2910,12 @@ mod tests {
 
         // --- Resolution failures: kernel + std ---
         // Kernel failures: 01a, 01b, 02-shatter (dependency ordering), 06b-package-spec (missing refs)
-        // Std failures: benchmark (needs @time before it), cli (needs @spec, @shatter), tui (needs @config etc)
+        // Std failures: benchmark (needs @time before it), cli (needs @spec, @shatter), tui (needs @config etc),
+        //               beam (needs @io which itself failed)
         assert_eq!(
             boot.failed.len(),
-            7,
-            "7 of 18 files fail resolution (4 kernel + 3 std)"
+            8,
+            "8 of 20 files fail resolution (4 kernel + 4 std)"
         );
         assert!(
             failed.contains(&"01a-meta-action"),
@@ -2894,12 +2946,16 @@ mod tests {
             failed.contains(&"std/tui"),
             "tui needs @config, @ci, @ca, @lsp — not in registry"
         );
+        assert!(
+            failed.contains(&"std/beam"),
+            "beam needs @actor which resolves but in @io not in registry"
+        );
 
-        // --- Resolved: kernel(8) + std(3) = 11 ---
+        // --- Resolved: kernel(9) + std(3) = 12 ---
         assert_eq!(
             boot.resolved.len(),
-            11,
-            "11 of 18 files resolve (8 kernel + 3 std)"
+            12,
+            "12 of 20 files resolve (9 kernel + 3 std)"
         );
         // std files that resolve
         assert!(
@@ -2950,13 +3006,13 @@ mod tests {
             .collect();
         std_files.sort(); // sort for assertion stability only
 
-        // Kernel: 12 files (00 through 06b)
-        assert_eq!(kernel.len(), 12, "kernel needs 12 files: {:?}", kernel);
+        // Kernel: 13 files (00 through 06b, plus 04a-runtime)
+        assert_eq!(kernel.len(), 13, "kernel needs 13 files: {:?}", kernel);
         assert!(kernel.contains(&"00-prism.mirror".to_string()));
         assert!(kernel.contains(&"06b-package-spec.mirror".to_string()));
 
-        // Std: 6 files (mirror, time, tui, benchmark, cli, properties)
-        assert_eq!(std_files.len(), 6, "std needs 6 files: {:?}", std_files);
+        // Std: 7 files (mirror, time, tui, benchmark, cli, properties, beam)
+        assert_eq!(std_files.len(), 7, "std needs 7 files: {:?}", std_files);
         assert!(std_files.contains(&"mirror.mirror".to_string()));
         assert!(std_files.contains(&"cli.mirror".to_string()));
         assert!(std_files.contains(&"time.mirror".to_string()));
@@ -4005,6 +4061,95 @@ grammar @ai {
         assert!(
             registry.lookup("@property").is_some(),
             "@property must be registered by kernel boot"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Grammar inheritance: `grammar @name < @parent { ... }`
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn grammar_inheritance_parses() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("grammar @html < @sigil {\n  type element\n}\n");
+        assert!(
+            result.is_ok(),
+            "grammar with inheritance must compile: {:?}",
+            result
+        );
+
+        let compiled = match result {
+            Imperfect::Success(c) => c,
+            Imperfect::Partial(c, _) => c,
+            Imperfect::Failure(e, _) => panic!("failed: {}", e),
+        };
+
+        assert_eq!(
+            compiled.form.parent_ref.as_deref(),
+            Some("@sigil"),
+            "parent_ref must be @sigil"
+        );
+    }
+
+    #[test]
+    fn grammar_without_inheritance_has_no_parent() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("grammar @test {\n  type x\n}\n");
+        let compiled = result.ok().unwrap();
+        assert!(
+            compiled.form.parent_ref.is_none(),
+            "grammar without < should have no parent_ref"
+        );
+    }
+
+    #[test]
+    fn grammar_inheritance_resolves_parent() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("inheritance_resolve");
+
+        // Boot to get @actor in registry
+        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+        let registry = MirrorRegistry::open(&store).unwrap();
+
+        // Grammar that inherits from @actor (which exists)
+        let src = "grammar @test < @actor {\n  type x\n}\n";
+        let compiled = runtime.compile_source(src);
+        let form = compiled.ok().unwrap();
+
+        let result = registry.resolve(&form.form);
+        assert!(result.is_ok(), "< @actor should resolve: {:?}", result);
+    }
+
+    #[test]
+    fn grammar_inheritance_fails_missing_parent() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("inheritance_missing");
+
+        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+        let registry = MirrorRegistry::open(&store).unwrap();
+
+        let src = "grammar @test < @nonexistent {\n  type x\n}\n";
+        let compiled = runtime.compile_source(src);
+        let form = compiled.ok().unwrap();
+
+        let result = registry.resolve(&form.form);
+        assert!(result.is_err(), "< @nonexistent should fail resolution");
+        assert!(
+            result.unwrap_err().0.contains("@nonexistent"),
+            "error must name the missing parent"
+        );
+    }
+
+    #[test]
+    fn runtime_boot_file_compiles() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("runtime_boot");
+        let boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+
+        // 04a-runtime should be in the boot results
+        assert!(
+            boot.resolved.contains_key("04a-runtime") || boot.failed.contains_key("04a-runtime"),
+            "04a-runtime.mirror must be loaded"
         );
     }
 }
