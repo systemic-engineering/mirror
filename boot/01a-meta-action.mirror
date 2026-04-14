@@ -1,0 +1,25 @@
+in @prism
+in @meta
+in @actor
+
+type action(grammar, effect) != iso
+type collapse(block) != iso
+
+prism action {
+  focus  type -> grammar
+  project grammar -> block
+  split  block(grammar) -> imperfect
+  zoom   imperfect -> transport
+  refract transport -> crystal
+}
+
+action action(receiver: type, in: grammar, body: block(grammar)) {
+  focus  receiver
+  project in
+  split  body(in)
+  zoom   body -> imperfect
+  refract imperfect
+}
+
+out action
+out collapse

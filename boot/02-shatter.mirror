@@ -1,0 +1,11 @@
+in @prism
+in @meta
+in @io
+
+grammar @shatter {
+  io materialize(grammar, loss) => shatter
+  io crystallize(boot) => crystal
+  io learn(path, grammar) => grammar
+}
+
+out @shatter

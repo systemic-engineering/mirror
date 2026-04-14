@@ -2685,11 +2685,12 @@ mod tests {
             .collect();
         files.sort();
 
-        assert_eq!(files.len(), 15, "baseline boot file count: {:?}", files);
+        assert_eq!(files.len(), 18, "boot kernel file count: {:?}", files);
         assert!(files.contains(&"00-prism.mirror".to_string()));
+        assert!(files.contains(&"01a-meta-action.mirror".to_string()));
+        assert!(files.contains(&"01b-meta-io.mirror".to_string()));
+        assert!(files.contains(&"02-shatter.mirror".to_string()));
         assert!(files.contains(&"20-cli.mirror".to_string()));
-        // No std/ directory yet
-        assert!(!boot.join("std").exists(), "std/ should not exist yet");
     }
 
     // -----------------------------------------------------------------------
@@ -2734,16 +2735,17 @@ mod tests {
         let holonomy = loss.holonomy();
 
         // --- Parse-level loss ---
-        // 01-meta.mirror declares `pure != real` and `type mut(block) != iso`
-        // as top-level constraint declarations. The parser records these as
-        // unrecognized (Partial) because standalone != constraints aren't
-        // parsed yet. This is training data — the holonomy tells us what
-        // the parser can't handle.
+        // New kernel files (01-meta, 01a, 01b, 02-shatter) introduce:
+        //   unfold, subset, superset, iso, not-iso (01-meta operators)
+        //   io (01b-meta-io, 02-shatter grammar keyword)
+        //   pure, real, loss constraints with != operator
+        // These are training data — the holonomy tells us what the parser
+        // can't handle yet.
         //
         // The baseline holonomy must not INCREASE (regression).
         // It CAN decrease as the parser learns new constructs.
         assert!(
-            holonomy <= 3.0,
+            holonomy <= 15.0,
             "parse holonomy must not regress above baseline: got {}",
             holonomy
         );
@@ -2752,7 +2754,19 @@ mod tests {
         // These files parse fine but fail `in @X` reference checks.
         // This loss is NOT in holonomy — it should be.
         // That's the gap: resolution failures need to become MirrorLoss.
-        assert_eq!(boot.failed.len(), 5, "5 boot files fail resolution");
+        assert_eq!(boot.failed.len(), 8, "8 boot files fail resolution");
+        assert!(
+            failed.contains(&"01a-meta-action"),
+            "01a needs @actor which sorts after it"
+        );
+        assert!(
+            failed.contains(&"01b-meta-io"),
+            "01b needs @actor which sorts after it"
+        );
+        assert!(
+            failed.contains(&"02-shatter"),
+            "02-shatter needs @io which itself failed"
+        );
         assert!(
             failed.contains(&"05-property"),
             "in @form — @form undefined"

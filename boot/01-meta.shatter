@@ -5,16 +5,26 @@ project ref(type)
 
 split |(ref, ref)
 fold <=(ref, imperfect)
+unfold =>(ref, ref)
+subset <(ref, ref)
+superset >(ref, ref)
+iso =(ref, ref)
+not-iso !=(ref, ref)
 zoom |>(ref, prism)
 zoom <|(prism, ref)
 zoom /(ref, focus)
+zoom ->(ref, ref)
+zoom <-(ref, ref)
 refract ..(ref)
 
-type observation = ast
-type action = collapse(block)
-type error(observation)
+type pure = iso
+type real != pure
 
-type loss(f64)
+type observation = pure
+type template(grammar, block) = pure
+type error(observation)
+type loss = pure - real
+
 type precision(f64)
 type grammar
 type block(grammar)
@@ -37,6 +47,11 @@ grammar @meta {
   project |>
   split |
   fold <=
+  unfold =>
+  subset <
+  superset >
+  iso =
+  not-iso !=
   zoom /
   refract ..
 }
@@ -45,11 +60,18 @@ out type
 out ref
 out |
 out <=
+out =>
+out <
+out >
+out =
+out !=
 out |>
 out /
 out ..
+out pure
+out real
 out observation
-out action
+out template
 out error
 out loss
 out precision
