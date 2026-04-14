@@ -1506,7 +1506,7 @@ impl MirrorRuntime {
         let mut registry = MirrorRegistry::open(store_dir)?;
         let mut resolved: BTreeMap<String, CompiledShatter> = BTreeMap::new();
         let mut failed: BTreeMap<String, MirrorResolveError> = BTreeMap::new();
-        let mut all_forms: Vec<Form> = Vec::new();
+        let mut all_fragments: Vec<MirrorFragment> = Vec::new();
         let mut total_loss = MirrorLoss::zero();
 
         for path in entries {
@@ -1532,11 +1532,11 @@ impl MirrorRuntime {
                 Imperfect::Failure(e, _) => return Err(e),
             };
 
-            all_forms.push(compiled.form.clone());
+            all_fragments.push(compiled.fragment.clone());
 
-            match registry.resolve(&compiled.form) {
+            match registry.resolve_fragment(&compiled.fragment) {
                 Ok(()) => {
-                    registry.register(&compiled.form);
+                    registry.register_fragment(&compiled.fragment);
                     resolved.insert(stem, compiled);
                 }
                 Err(e) => {
@@ -1584,11 +1584,11 @@ impl MirrorRuntime {
                     Imperfect::Failure(e, _) => return Err(e),
                 };
 
-                all_forms.push(compiled.form.clone());
+                all_fragments.push(compiled.fragment.clone());
 
-                match registry.resolve(&compiled.form) {
+                match registry.resolve_fragment(&compiled.fragment) {
                     Ok(()) => {
-                        registry.register(&compiled.form);
+                        registry.register_fragment(&compiled.fragment);
                         resolved.insert(stem, compiled);
                     }
                     Err(e) => {
@@ -1600,9 +1600,10 @@ impl MirrorRuntime {
 
         registry.flush();
 
-        let collapsed_form = Form::new(DeclKind::Form, "mirror", Vec::new(), Vec::new(), all_forms);
-        let shatter = Shatter;
-        let collapsed_fragment = shatter.compile_form(&collapsed_form);
+        // Build the collapsed fragment: a wrapper containing all file fragments as children.
+        let collapsed_data = MirrorData::new(DeclKind::Form, "mirror", Vec::new(), Vec::new());
+        let collapsed_fragment = build_fragment(collapsed_data, all_fragments);
+        let collapsed_form = Form::from_fragment(&collapsed_fragment);
         let collapsed = CompiledShatter {
             form: collapsed_form,
             fragment: collapsed_fragment,
@@ -1829,6 +1830,72 @@ impl MirrorRegistry {
             self.resolve_node(child)?;
         }
         Ok(())
+    }
+
+    /// Resolve a MirrorFragment tree — fragment-native version of `resolve`.
+    pub fn resolve_fragment(&self, frag: &MirrorFragment) -> Result<(), MirrorResolveError> {
+        let data = MirrorData::decode_from_fragment(frag.mirror_data());
+        if data.kind == DeclKind::In && self.store.get_ref(&data.name).is_none() {
+            return Err(MirrorResolveError(format!(
+                "unresolved `in {}`: no such ref in registry store at {}",
+                data.name,
+                self.root.display()
+            )));
+        }
+        if let Some(ref parent) = data.parent_ref {
+            if self.store.get_ref(parent).is_none() {
+                return Err(MirrorResolveError(format!(
+                    "unresolved parent `{}`: no such ref in registry store at {}",
+                    parent,
+                    self.root.display()
+                )));
+            }
+        }
+        for child in frag.mirror_children() {
+            self.resolve_fragment(child)?;
+        }
+        Ok(())
+    }
+
+    /// Register a MirrorFragment tree — fragment-native version of `register`.
+    pub fn register_fragment(&mut self, frag: &MirrorFragment) -> Vec<String> {
+        let data = frag.mirror_data();
+        let mut oids = Vec::new();
+        if data.name.is_empty() {
+            for child in frag.mirror_children() {
+                oids.extend(self.register_fragment_decl(child));
+            }
+        } else {
+            oids.extend(self.register_fragment_decl(frag));
+        }
+        oids
+    }
+
+    fn register_fragment_decl(&mut self, frag: &MirrorFragment) -> Option<String> {
+        let data = frag.mirror_data();
+        if !data.name.starts_with('@') {
+            return None;
+        }
+        let oid = frag.oid().as_str().to_string();
+        let size = self.estimate_fragment_size(frag);
+        self.store
+            .insert_persistent(oid.clone(), frag.clone(), size);
+        if let Err(e) = self.store.set_ref(&data.name, &oid) {
+            eprintln!("warning: set_ref({} -> {}) failed: {}", data.name, oid, e);
+        }
+        Some(oid)
+    }
+
+    fn estimate_fragment_size(&self, frag: &MirrorFragment) -> usize {
+        let data = frag.mirror_data();
+        let mut bytes = data.name.len()
+            + data.params.iter().map(|s| s.len()).sum::<usize>()
+            + data.variants.iter().map(|s| s.len()).sum::<usize>()
+            + 64;
+        for child in frag.mirror_children() {
+            bytes += self.estimate_fragment_size(child);
+        }
+        bytes
     }
 }
 
