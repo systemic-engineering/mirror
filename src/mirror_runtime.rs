@@ -1829,8 +1829,14 @@ mod tests {
         );
 
         // Renumbered files
-        assert!(boot.resolved.contains_key("03-code"), "03-code (was 02-code) must resolve");
-        assert!(boot.resolved.contains_key("06-action"), "06-action (was 04-action) must resolve");
+        assert!(
+            boot.resolved.contains_key("03-code"),
+            "03-code (was 02-code) must resolve"
+        );
+        assert!(
+            boot.resolved.contains_key("06-action"),
+            "06-action (was 04-action) must resolve"
+        );
     }
 
     #[test]
