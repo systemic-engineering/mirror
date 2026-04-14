@@ -2354,12 +2354,12 @@ mod tests {
             boot.resolved.contains_key("03a-code-rust"),
             "03a-code-rust should resolve"
         );
-        assert!(boot.resolved.contains_key("04-actor"));
+        assert!(boot.resolved.contains_key("01a-meta-actor"));
 
-        // 01a, 01b, 02-shatter fail: depend on @actor/@io which sort after them
-        assert!(boot.failed.contains_key("01a-meta-action"));
-        assert!(boot.failed.contains_key("01b-meta-io"));
-        assert!(boot.failed.contains_key("02-shatter"));
+        // 01b, 01c, 02-shatter now resolve: actor (01a) loads before them
+        assert!(boot.resolved.contains_key("01b-meta-action"));
+        assert!(boot.resolved.contains_key("01c-meta-io"));
+        assert!(boot.resolved.contains_key("02-shatter"));
         // 05-property now resolves (in @meta, not in @form)
         assert!(boot.resolved.contains_key("05-property"));
         // 10-mirror moved to std/ — not loaded by kernel compilation
@@ -2537,9 +2537,9 @@ mod tests {
     fn action_file_01a_parses_and_resolves() {
         let runtime = MirrorRuntime::new();
         let compiled = runtime
-            .compile_file(&boot_dir().join("01a-meta-action.mirror"))
+            .compile_file(&boot_dir().join("01b-meta-action.mirror"))
             .unwrap();
-        // 01a-meta-action.mirror has multiple top-level declarations, wrapped in synthetic Form
+        // 01b-meta-action.mirror has multiple top-level declarations, wrapped in synthetic Form
         assert_eq!(compiled.data().kind, DeclKind::Form);
         // Should contain: in @prism, in @meta, in @actor, prism action, action action, out action/collapse
         let action_decls: Vec<&MirrorFragment> = compiled
@@ -2551,7 +2551,7 @@ mod tests {
         assert_eq!(
             action_decls.len(),
             1,
-            "01a-meta-action.mirror has one action declaration"
+            "01b-meta-action.mirror has one action declaration"
         );
         let action_data = MirrorData::decode_from_fragment(action_decls[0].mirror_data());
         assert_eq!(action_data.name, "action");
@@ -2879,8 +2879,9 @@ mod tests {
 
         assert_eq!(files.len(), 13, "boot kernel file count: {:?}", files);
         assert!(files.contains(&"00-prism.mirror".to_string()));
-        assert!(files.contains(&"01a-meta-action.mirror".to_string()));
-        assert!(files.contains(&"01b-meta-io.mirror".to_string()));
+        assert!(files.contains(&"01a-meta-actor.mirror".to_string()));
+        assert!(files.contains(&"01b-meta-action.mirror".to_string()));
+        assert!(files.contains(&"01c-meta-io.mirror".to_string()));
         assert!(files.contains(&"02-shatter.mirror".to_string()));
         assert!(files.contains(&"06-package.mirror".to_string()));
 
@@ -2923,7 +2924,26 @@ mod tests {
             resolved.contains(&"03a-code-rust"),
             "code-rust must resolve"
         );
-        assert!(resolved.contains(&"04-actor"), "actor must resolve");
+        assert!(
+            resolved.contains(&"01a-meta-actor"),
+            "actor must resolve (loads first at 01a)"
+        );
+        assert!(
+            resolved.contains(&"01b-meta-action"),
+            "action must resolve (actor loads before it)"
+        );
+        assert!(
+            resolved.contains(&"01c-meta-io"),
+            "io must resolve (actor loads before it)"
+        );
+        assert!(
+            resolved.contains(&"02-shatter"),
+            "shatter must resolve (io loads before it)"
+        );
+        assert!(
+            resolved.contains(&"04a-runtime"),
+            "runtime must resolve (actor loads before it)"
+        );
 
         // --- What fails resolution (in @X references something missing) ---
         let failed: Vec<&str> = boot.failed.keys().map(|s| s.as_str()).collect();
@@ -2946,7 +2966,7 @@ mod tests {
         // --- Parse-level loss ---
         // Kernel files introduce unrecognized keywords (training data):
         //   unfold, subset, superset, iso, not-iso (01-meta operators)
-        //   io (01b-meta-io, 02-shatter grammar keyword)
+        //   io (01c-meta-io, 02-shatter grammar keyword)
         //   pure, real, loss constraints with != operator
         // Std files introduce unrecognized keywords:
         //   template (8 declarations in std/properties.mirror)
@@ -2961,31 +2981,24 @@ mod tests {
         );
 
         // --- Resolution failures: kernel + std ---
-        // Kernel failures: 01a, 01b, 02-shatter (dependency ordering), 06b-package-spec (missing refs)
-        // Std failures: benchmark (needs @time before it), cli (needs @spec, @shatter), tui (needs @config etc),
-        //               beam (needs @io which itself failed)
+        // Kernel failures: 06b-package-spec (missing refs: @mirror, @config, @ai)
+        // Std failures: beam (grammar @beam body refs fail), benchmark (needs @time), cli (needs @spec, @shatter), tui (needs @config etc)
+        // actor(01a) now loads first → action(01b), io(01c), shatter(02), runtime(04a) all resolve
         assert_eq!(
             boot.failed.len(),
-            8,
-            "8 of 20 files fail resolution (4 kernel + 4 std)"
-        );
-        assert!(
-            failed.contains(&"01a-meta-action"),
-            "01a needs @actor which sorts after it"
-        );
-        assert!(
-            failed.contains(&"01b-meta-io"),
-            "01b needs @actor which sorts after it"
-        );
-        assert!(
-            failed.contains(&"02-shatter"),
-            "02-shatter needs @io which itself failed"
+            5,
+            "5 of 20 files fail resolution (1 kernel + 4 std): {:?}",
+            boot.failed.keys().collect::<Vec<_>>()
         );
         assert!(
             failed.contains(&"06b-package-spec"),
             "missing refs (@mirror, @config, @ai)"
         );
         // std failures
+        assert!(
+            failed.contains(&"std/beam"),
+            "beam grammar body fails resolution"
+        );
         assert!(
             failed.contains(&"std/benchmark"),
             "benchmark needs @time before it alphabetically"
@@ -2998,16 +3011,13 @@ mod tests {
             failed.contains(&"std/tui"),
             "tui needs @config, @ci, @ca, @lsp — not in registry"
         );
-        assert!(
-            failed.contains(&"std/beam"),
-            "beam needs @actor which resolves but in @io not in registry"
-        );
 
-        // --- Resolved: kernel(9) + std(3) = 12 ---
+        // --- Resolved: kernel(12) + std(3) = 15 ---
         assert_eq!(
             boot.resolved.len(),
-            12,
-            "12 of 20 files resolve (9 kernel + 3 std)"
+            15,
+            "15 of 20 files resolve (12 kernel + 3 std): {:?}",
+            boot.resolved.keys().collect::<Vec<_>>()
         );
         // std files that resolve
         assert!(
@@ -3058,7 +3068,7 @@ mod tests {
             .collect();
         std_files.sort(); // sort for assertion stability only
 
-        // Kernel: 13 files (00 through 06b, plus 04a-runtime)
+        // Kernel: 13 files (00, 01, 01a-actor, 01b-action, 01c-io, 02, 03, 03a, 04a-runtime, 05, 06, 06a, 06b)
         assert_eq!(kernel.len(), 13, "kernel needs 13 files: {:?}", kernel);
         assert!(kernel.contains(&"00-prism.mirror".to_string()));
         assert!(kernel.contains(&"06b-package-spec.mirror".to_string()));
@@ -4294,9 +4304,11 @@ grammar @ai {
         let files = [
             "00-prism.mirror",
             "01-meta.mirror",
+            "01a-meta-actor.mirror",
+            "01b-meta-action.mirror",
+            "01c-meta-io.mirror",
             "02-shatter.mirror",
             "03-code.mirror",
-            "04-actor.mirror",
             "05-property.mirror",
         ];
         let iterations = 1000;
