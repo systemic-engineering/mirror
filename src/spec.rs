@@ -15,6 +15,97 @@ pub struct SpecConfig {
     pub craft: CraftConfig,
     pub kintsugi: KintsugiConfig,
     pub properties: PropertiesConfig,
+    /// Every top-level block, in declaration order. The command registry.
+    pub blocks: Vec<SpecBlock>,
+}
+
+/// A generic spec block — one top-level `name { ... }` entry.
+/// Each block IS a CLI command. The block's contents ARE the command's config.
+#[derive(Clone, Debug)]
+pub struct SpecBlock {
+    /// Block name (e.g. "craft", "kintsugi", "properties").
+    pub name: String,
+    /// Flags declared with `--flag` syntax.
+    pub flags: Vec<String>,
+    /// Key-value settings declared with `key = value` syntax.
+    pub settings: Vec<(String, String)>,
+}
+
+impl SpecConfig {
+    /// Resolve a command name to its spec block.
+    /// The spec IS the command registry.
+    pub fn resolve_command(&self, name: &str) -> Option<&SpecBlock> {
+        self.blocks.iter().find(|b| b.name == name)
+    }
+
+    /// All command names declared in the spec, in declaration order.
+    pub fn command_names(&self) -> Vec<&str> {
+        self.blocks.iter().map(|b| b.name.as_str()).collect()
+    }
+
+    /// Generate help text from spec blocks. The help IS the spec rendered.
+    pub fn help_text(&self) -> String {
+        let mut out = String::new();
+        out.push_str("mirror -- an honest compiler\n\n");
+        out.push_str("commands:\n");
+        for block in &self.blocks {
+            let summary = block.summary();
+            if summary.is_empty() {
+                out.push_str(&format!("  {}\n", block.name));
+            } else {
+                out.push_str(&format!("  {:16}{}\n", block.name, summary));
+            }
+        }
+        out
+    }
+
+    /// Discover and parse the nearest `mirror.spec` file.
+    /// Walks up from the current directory looking for `mirror.spec`.
+    /// Returns `Default` if no spec file is found.
+    pub fn discover() -> Self {
+        let mut dir = std::env::current_dir().ok();
+        while let Some(d) = dir {
+            let candidate = d.join("mirror.spec");
+            if candidate.exists() {
+                return parse_spec(candidate.to_str().unwrap_or("mirror.spec")).unwrap_or_default();
+            }
+            dir = d.parent().map(|p| p.to_path_buf());
+        }
+        Self::default()
+    }
+}
+
+impl SpecBlock {
+    /// Brief summary for help text — first flag or setting, or empty.
+    pub fn summary(&self) -> String {
+        if !self.flags.is_empty() {
+            format!("flags: {}", self.flags.join(", "))
+        } else if !self.settings.is_empty() {
+            format!(
+                "{}",
+                self.settings
+                    .iter()
+                    .map(|(k, v)| format!("{} = {}", k, v))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )
+        } else {
+            String::new()
+        }
+    }
+
+    /// Check if a flag is declared in this block.
+    pub fn accepts_flag(&self, flag: &str) -> bool {
+        self.flags.iter().any(|f| f == flag)
+    }
+
+    /// Look up a setting value by key.
+    pub fn setting(&self, key: &str) -> Option<&str> {
+        self.settings
+            .iter()
+            .find(|(k, _)| k == key)
+            .map(|(_, v)| v.as_str())
+    }
 }
 
 #[derive(Clone, Debug, Default)]
@@ -209,31 +300,81 @@ pub fn parse_spec_source(source: &str) -> Result<SpecConfig, SpecParseError> {
                 pos = skip_token(&tokens, pos, ")")?;
             }
             "store" => {
+                let block_name = tokens[pos].clone();
                 pos += 1;
+                let block_start = pos;
                 let (store, new_pos) = parse_store_block(&tokens, pos)?;
                 spec.store = store;
+                let block = parse_generic_block(&tokens, block_start)?;
+                spec.blocks.push(SpecBlock {
+                    name: block_name,
+                    flags: block.0,
+                    settings: block.1,
+                });
                 pos = new_pos;
             }
             "craft" => {
+                let block_name = tokens[pos].clone();
                 pos += 1;
+                let block_start = pos;
                 let (craft, new_pos) = parse_craft_block(&tokens, pos)?;
                 spec.craft = craft;
+                let block = parse_generic_block(&tokens, block_start)?;
+                spec.blocks.push(SpecBlock {
+                    name: block_name,
+                    flags: block.0,
+                    settings: block.1,
+                });
                 pos = new_pos;
             }
             "kintsugi" => {
+                let block_name = tokens[pos].clone();
                 pos += 1;
+                let block_start = pos;
                 let (kintsugi, new_pos) = parse_kintsugi_block(&tokens, pos)?;
                 spec.kintsugi = kintsugi;
+                let block = parse_generic_block(&tokens, block_start)?;
+                spec.blocks.push(SpecBlock {
+                    name: block_name,
+                    flags: block.0,
+                    settings: block.1,
+                });
                 pos = new_pos;
             }
             "properties" => {
+                let block_name = tokens[pos].clone();
                 pos += 1;
+                let block_start = pos;
                 let (properties, new_pos) = parse_properties_block(&tokens, pos)?;
                 spec.properties = properties;
+                let block = parse_generic_block(&tokens, block_start)?;
+                spec.blocks.push(SpecBlock {
+                    name: block_name,
+                    flags: block.0,
+                    settings: block.1,
+                });
                 pos = new_pos;
             }
             _ => {
-                pos += 1;
+                // Unknown top-level token: if followed by `{`, parse as generic block
+                let tok = tokens[pos].clone();
+                if !tok.starts_with('@')
+                    && !tok.starts_with('-')
+                    && pos + 1 < tokens.len()
+                    && tokens[pos + 1] == "{"
+                {
+                    pos += 1;
+                    let block = parse_generic_block(&tokens, pos)?;
+                    spec.blocks.push(SpecBlock {
+                        name: tok,
+                        flags: block.0,
+                        settings: block.1,
+                    });
+                    // Skip past the block
+                    pos = skip_block(&tokens, pos)?;
+                } else {
+                    pos += 1;
+                }
             }
         }
     }
@@ -246,6 +387,72 @@ pub fn parse_spec(path: &str) -> Result<SpecConfig, SpecParseError> {
     let source = std::fs::read_to_string(path)
         .map_err(|e| SpecParseError(format!("cannot read {}: {}", path, e)))?;
     parse_spec_source(&source)
+}
+
+// ---------------------------------------------------------------------------
+// Generic block parser — extracts flags and settings from any `{ ... }` block
+// ---------------------------------------------------------------------------
+
+/// Parse a generic block starting at `{`. Returns (flags, settings).
+/// Does NOT consume the tokens — used alongside the specific parser.
+fn parse_generic_block(
+    tokens: &[String],
+    pos: usize,
+) -> Result<(Vec<String>, Vec<(String, String)>), SpecParseError> {
+    let mut pos = skip_token(tokens, pos, "{")?;
+    let mut flags = Vec::new();
+    let mut settings = Vec::new();
+    let mut depth = 1;
+
+    while pos < tokens.len() && depth > 0 {
+        if tokens[pos] == "{" {
+            depth += 1;
+            pos += 1;
+            continue;
+        }
+        if tokens[pos] == "}" {
+            depth -= 1;
+            if depth == 0 {
+                break;
+            }
+            pos += 1;
+            continue;
+        }
+        // Only collect flags/settings at depth 1
+        if depth == 1 {
+            let tok = &tokens[pos];
+            if tok.starts_with("--") {
+                flags.push(tok.clone());
+                pos += 1;
+            } else if pos + 2 < tokens.len() && tokens[pos + 1] == "=" {
+                let key = tok.clone();
+                let value = tokens[pos + 2].clone();
+                settings.push((key, value));
+                pos += 3;
+            } else {
+                pos += 1;
+            }
+        } else {
+            pos += 1;
+        }
+    }
+
+    Ok((flags, settings))
+}
+
+/// Skip past a `{ ... }` block, handling nested braces.
+fn skip_block(tokens: &[String], pos: usize) -> Result<usize, SpecParseError> {
+    let mut pos = skip_token(tokens, pos, "{")?;
+    let mut depth = 1;
+    while pos < tokens.len() && depth > 0 {
+        if tokens[pos] == "{" {
+            depth += 1;
+        } else if tokens[pos] == "}" {
+            depth -= 1;
+        }
+        pos += 1;
+    }
+    Ok(pos)
 }
 
 // ---------------------------------------------------------------------------
@@ -819,5 +1026,177 @@ craft {
             "should have cli target"
         );
         assert!(!spec.properties.requires.is_empty());
+    }
+
+    // -----------------------------------------------------------------------
+    // Phase 1: SpecConfig as command registry
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn spec_blocks_populated_from_known_blocks() {
+        let spec = parse_spec_source(
+            r#"
+store { path = .git/mirror }
+craft { default boot }
+kintsugi { --hoist naming = snake_case }
+properties { requires { unique_variants } }
+"#,
+        )
+        .unwrap();
+        assert_eq!(spec.blocks.len(), 4);
+        assert_eq!(spec.blocks[0].name, "store");
+        assert_eq!(spec.blocks[1].name, "craft");
+        assert_eq!(spec.blocks[2].name, "kintsugi");
+        assert_eq!(spec.blocks[3].name, "properties");
+    }
+
+    #[test]
+    fn spec_blocks_capture_flags_and_settings() {
+        let spec = parse_spec_source(
+            r#"
+kintsugi {
+  --hoist
+  --sort-deps
+  naming = snake_case
+  indent = 2
+}
+"#,
+        )
+        .unwrap();
+        let block = spec.resolve_command("kintsugi").unwrap();
+        assert_eq!(block.flags, vec!["--hoist", "--sort-deps"]);
+        assert_eq!(block.settings.len(), 2);
+        assert_eq!(block.setting("naming"), Some("snake_case"));
+        assert_eq!(block.setting("indent"), Some("2"));
+    }
+
+    #[test]
+    fn resolve_command_returns_none_for_unknown() {
+        let spec = parse_spec_source("store { path = .git/mirror }").unwrap();
+        assert!(spec.resolve_command("nonexistent").is_none());
+    }
+
+    #[test]
+    fn command_names_returns_all_block_names() {
+        let spec = parse_spec_source(
+            r#"
+store { path = .git/mirror }
+craft { default boot }
+kintsugi { --hoist }
+"#,
+        )
+        .unwrap();
+        let names = spec.command_names();
+        assert_eq!(names, vec!["store", "craft", "kintsugi"]);
+    }
+
+    #[test]
+    fn spec_block_summary_with_flags() {
+        let block = SpecBlock {
+            name: "kintsugi".into(),
+            flags: vec!["--hoist".into(), "--sort-deps".into()],
+            settings: vec![],
+        };
+        assert_eq!(block.summary(), "flags: --hoist, --sort-deps");
+    }
+
+    #[test]
+    fn spec_block_summary_with_settings() {
+        let block = SpecBlock {
+            name: "store".into(),
+            flags: vec![],
+            settings: vec![("path".into(), ".git/mirror".into())],
+        };
+        assert_eq!(block.summary(), "path = .git/mirror");
+    }
+
+    #[test]
+    fn spec_block_summary_empty() {
+        let block = SpecBlock {
+            name: "empty".into(),
+            flags: vec![],
+            settings: vec![],
+        };
+        assert_eq!(block.summary(), "");
+    }
+
+    #[test]
+    fn spec_block_accepts_flag() {
+        let block = SpecBlock {
+            name: "kintsugi".into(),
+            flags: vec!["--hoist".into(), "--sort-deps".into()],
+            settings: vec![],
+        };
+        assert!(block.accepts_flag("--hoist"));
+        assert!(!block.accepts_flag("--unknown"));
+    }
+
+    #[test]
+    fn unknown_block_parsed_generically() {
+        let spec = parse_spec_source(
+            r#"
+infer {
+  --classify
+  --learn
+}
+"#,
+        )
+        .unwrap();
+        let block = spec.resolve_command("infer").unwrap();
+        assert_eq!(block.flags, vec!["--classify", "--learn"]);
+    }
+
+    #[test]
+    fn real_spec_has_blocks() {
+        let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("mirror.spec");
+        let spec = parse_spec(path.to_str().unwrap()).unwrap();
+        let names = spec.command_names();
+        assert!(names.contains(&"store"), "should have store block");
+        assert!(names.contains(&"craft"), "should have craft block");
+        assert!(names.contains(&"kintsugi"), "should have kintsugi block");
+        assert!(
+            names.contains(&"properties"),
+            "should have properties block"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Phase 2: Help from spec
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn spec_block_detail_help() {
+        let block = SpecBlock {
+            name: "kintsugi".into(),
+            flags: vec!["--hoist".into(), "--sort-deps".into()],
+            settings: vec![("naming".into(), "snake_case".into())],
+        };
+        let help = block.detail_help();
+        assert!(
+            help.contains("kintsugi"),
+            "detail help should include command name"
+        );
+        assert!(
+            help.contains("--hoist"),
+            "detail help should list flags"
+        );
+        assert!(
+            help.contains("naming = snake_case"),
+            "detail help should list settings"
+        );
+    }
+
+    #[test]
+    fn spec_help_text_from_blocks() {
+        let spec = parse_spec_source(
+            r#"
+craft { default boot }
+kintsugi { --hoist }
+"#,
+        )
+        .unwrap();
+        let help = spec.help_text();
+        assert!(help.contains("craft"), "help should list craft");
+        assert!(help.contains("kintsugi"), "help should list kintsugi");
     }
 }

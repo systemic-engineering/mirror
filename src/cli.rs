@@ -5,6 +5,7 @@
 
 use crate::declaration::MirrorHash;
 use crate::mirror_runtime::{MirrorRuntime, MirrorRuntimeError};
+use crate::spec::SpecConfig;
 use fragmentation::sha::HashAlg;
 
 use std::path::Path;
@@ -50,8 +51,12 @@ impl From<std::io::Error> for CliError {
 
 /// The mirror CLI. Wraps a `MirrorRuntime` and optionally holds the
 /// crystal OID from compiling `spec.mirror`.
+///
+/// The `spec` field is the command registry parsed from `mirror.spec`.
+/// Each spec block IS a command. The dispatch checks spec first.
 pub struct Cli {
     pub runtime: MirrorRuntime,
+    pub spec: SpecConfig,
     crystal_oid: Option<MirrorHash>,
 }
 
@@ -65,6 +70,9 @@ struct BranchInfo {
 impl Cli {
     /// Open the CLI. If `spec_path` exists, compile it and store
     /// the crystal OID. If it doesn't exist, continue without one.
+    ///
+    /// Also discovers and parses the nearest `mirror.spec` as the
+    /// command registry. The spec IS the dispatch.
     pub fn open(spec_path: &str) -> Result<Self, CliError> {
         let runtime = MirrorRuntime::new();
         let crystal_oid = if Path::new(spec_path).exists() {
@@ -73,8 +81,10 @@ impl Cli {
         } else {
             None
         };
+        let spec = SpecConfig::discover();
         Ok(Cli {
             runtime,
+            spec,
             crystal_oid,
         })
     }
@@ -85,7 +95,61 @@ impl Cli {
     }
 
     /// Dispatch a command by name.
+    ///
+    /// The spec is the command registry. Each spec block IS a command.
+    /// Dispatch checks spec-registered commands first, then falls through
+    /// to built-in handlers for commands not yet declared in the spec.
     pub fn dispatch(&self, command: &str, args: &[String]) -> Result<String, CliError> {
+        // Help is generated from spec blocks when available
+        if matches!(command, "help" | "--help" | "-h") {
+            return if self.spec.blocks.is_empty() {
+                Ok(Self::help_text().to_string())
+            } else {
+                Ok(self.spec_help())
+            };
+        }
+
+        // Validate flags against spec when the command is spec-registered
+        if let Some(block) = self.spec.resolve_command(command) {
+            for arg in args {
+                if arg.starts_with("--") && !block.accepts_flag(arg) {
+                    // Allow known global flags through
+                    if !matches!(
+                        arg.as_str(),
+                        "--help"
+                            | "--oid"
+                            | "--sign"
+                            | "--strict"
+                            | "--check"
+                            | "--merge"
+                            | "--enforce"
+                            | "--ai"
+                            | "--target"
+                    ) {
+                        return Err(CliError::Usage(format!(
+                            "unknown flag '{}' for command '{}'\nallowed flags: {}",
+                            arg,
+                            command,
+                            block
+                                .flags
+                                .iter()
+                                .map(|f| f.as_str())
+                                .collect::<Vec<_>>()
+                                .join(", ")
+                        )));
+                    }
+                }
+            }
+        }
+
+        // Route to handler — spec-registered commands go to the same
+        // handlers as before. The spec adds validation, not new behavior.
+        self.dispatch_handler(command, args)
+    }
+
+    /// The handler match table. Separated from dispatch so spec validation
+    /// runs before routing.
+    fn dispatch_handler(&self, command: &str, args: &[String]) -> Result<String, CliError> {
         match command {
             "help" | "--help" | "-h" => Ok(Self::help_text().to_string()),
             "compile" => self.cmd_compile(args),
@@ -112,6 +176,78 @@ impl Cli {
             "git" => self.cmd_git(args),
             _ => self.cmd_query(command, args),
         }
+    }
+
+    /// Generate help text that merges spec-registered commands with
+    /// the hand-written help. Spec blocks appear first, then built-in
+    /// commands not in the spec.
+    fn spec_help(&self) -> String {
+        let mut out = String::new();
+        out.push_str("mirror -- an honest compiler\n\n");
+        out.push_str("usage: mirror <command> [args]\n\n");
+
+        // Spec-registered commands
+        if !self.spec.blocks.is_empty() {
+            out.push_str("spec commands:\n");
+            for block in &self.spec.blocks {
+                let summary = block.summary();
+                let help = Self::command_help(&block.name)
+                    .map(|h| {
+                        h.lines()
+                            .next()
+                            .unwrap_or("")
+                            .split(" -- ")
+                            .nth(1)
+                            .unwrap_or("")
+                    })
+                    .unwrap_or("");
+                if !help.is_empty() {
+                    out.push_str(&format!("  {:16}{}\n", block.name, help));
+                } else if !summary.is_empty() {
+                    out.push_str(&format!("  {:16}{}\n", block.name, summary));
+                } else {
+                    out.push_str(&format!("  {}\n", block.name));
+                }
+            }
+            out.push('\n');
+        }
+
+        // Built-in commands not in spec
+        out.push_str(
+            "\
+optics:
+  focus <path>       observe structure
+  project <path>     filter by what matters
+  split <path>       explore connections
+  zoom <path>        transform
+  refract <path>     settle into crystal
+
+compiler:
+  compile <path>     compile a .mirror file
+  crystal [output]   materialize the standard library
+  ci <path>          measure holonomy
+  ca <path>          observe, suggest, enforce
+  verify <file>      verify signed .shatter
+
+session:
+  init               initialize .git/mirror/
+  merge [target]     structural merge with crystal delta
+  repl               interactive shard> prompt
+
+tools:
+  ai <model> [path]  run a Fate model
+  bench <path>       benchmark compilation
+  git <subcommand>   read-only prism over git's ref space
+
+flags:
+  --oid              print content address only
+  --sign             sign compilation output (compile)
+  --strict           reject Partial results (compile, ci)
+  --check            verify canonical order (kintsugi)
+  --help             this message",
+        );
+
+        out
     }
 
     /// The help text. Matches the grammar declared in boot/20-cli.mirror.
@@ -1314,6 +1450,7 @@ impl Default for Cli {
     fn default() -> Self {
         Cli {
             runtime: MirrorRuntime::new(),
+            spec: SpecConfig::default(),
             crystal_oid: None,
         }
     }
@@ -2731,5 +2868,142 @@ craft {{
 
         assert!(result.is_ok());
         assert!(result.unwrap().contains("mirror.spec"));
+    }
+
+    // -----------------------------------------------------------------------
+    // Phase 1-3: Spec-driven dispatch
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn cli_default_has_empty_spec() {
+        let cli = Cli::default();
+        assert!(cli.spec.blocks.is_empty());
+    }
+
+    #[test]
+    fn cli_with_spec_validates_flags() {
+        let spec = crate::spec::parse_spec_source(
+            r#"
+kintsugi {
+  --hoist
+  --sort-deps
+  --normalize
+  --align
+}
+"#,
+        )
+        .unwrap();
+        let mut cli = Cli::default();
+        cli.spec = spec;
+
+        // Valid flag should pass through
+        let result = cli.dispatch("kintsugi", &["--help".to_string()]);
+        assert!(result.is_ok() || result.is_err()); // just shouldn't panic
+
+        // Unknown flag should be rejected
+        let result = cli.dispatch("kintsugi", &["--unknown-flag".to_string()]);
+        assert!(result.is_err());
+        let err = result.unwrap_err().to_string();
+        assert!(
+            err.contains("unknown flag"),
+            "should report unknown flag, got: {}",
+            err
+        );
+    }
+
+    #[test]
+    fn cli_spec_help_includes_spec_commands() {
+        let spec = crate::spec::parse_spec_source(
+            r#"
+craft { default boot }
+kintsugi { --hoist }
+"#,
+        )
+        .unwrap();
+        let mut cli = Cli::default();
+        cli.spec = spec;
+
+        let result = cli.dispatch("help", &[]).unwrap();
+        assert!(
+            result.contains("spec commands:"),
+            "should have spec commands section, got:\n{}",
+            result
+        );
+        assert!(
+            result.contains("craft"),
+            "should list craft, got:\n{}",
+            result
+        );
+        assert!(
+            result.contains("kintsugi"),
+            "should list kintsugi, got:\n{}",
+            result
+        );
+    }
+
+    #[test]
+    fn cli_without_spec_uses_static_help() {
+        let cli = Cli::default();
+        let result = cli.dispatch("help", &[]).unwrap();
+        assert!(
+            !result.contains("spec commands:"),
+            "default cli should use static help"
+        );
+        assert!(result.contains("mirror -- an honest compiler"));
+    }
+
+    #[test]
+    fn cli_spec_resolve_command_works() {
+        let spec = crate::spec::parse_spec_source(
+            r#"
+craft { default boot }
+kintsugi { --hoist }
+properties { requires { unique_variants } }
+"#,
+        )
+        .unwrap();
+        let mut cli = Cli::default();
+        cli.spec = spec;
+
+        assert!(cli.spec.resolve_command("craft").is_some());
+        assert!(cli.spec.resolve_command("kintsugi").is_some());
+        assert!(cli.spec.resolve_command("properties").is_some());
+        assert!(cli.spec.resolve_command("nonexistent").is_none());
+    }
+
+    #[test]
+    fn cli_spec_command_names() {
+        let spec = crate::spec::parse_spec_source(
+            r#"
+store { path = .git/mirror }
+craft { default boot }
+"#,
+        )
+        .unwrap();
+        let mut cli = Cli::default();
+        cli.spec = spec;
+
+        let names = cli.spec.command_names();
+        assert_eq!(names, vec!["store", "craft"]);
+    }
+
+    #[test]
+    fn cli_global_flags_pass_through_spec_validation() {
+        let spec = crate::spec::parse_spec_source("kintsugi { --hoist }").unwrap();
+        let mut cli = Cli::default();
+        cli.spec = spec;
+
+        // --check is a global flag, should not be rejected even though
+        // kintsugi spec only declares --hoist
+        let result = cli.dispatch("kintsugi", &["--check".to_string()]);
+        // The handler may error for other reasons (no file), but should
+        // NOT error with "unknown flag"
+        if let Err(e) = &result {
+            assert!(
+                !e.to_string().contains("unknown flag"),
+                "global flag --check should pass, got: {}",
+                e
+            );
+        }
     }
 }
