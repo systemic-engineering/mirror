@@ -50,6 +50,8 @@ pub mod bundle;
 pub mod cli;
 pub mod declaration;
 pub mod gestalt;
+#[cfg(feature = "git")]
+pub mod git_store;
 pub mod loss;
 pub mod lsp;
 pub mod mirror_runtime;
