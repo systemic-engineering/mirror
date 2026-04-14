@@ -1,7 +1,8 @@
 in @prism
 in @meta
+in @identity
 
-type actor(id)
+type actor(identity)
 type state(type)
 type process(actor, state)
 type message = call(actor, ref) | cast(actor, ref)

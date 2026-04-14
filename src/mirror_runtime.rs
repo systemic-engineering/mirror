@@ -827,7 +827,7 @@ fn parse_return_type(tokens: &[Tok], cursor: &mut usize) -> Option<String> {
 
 /// Parse the body of an action declaration. The body is collected as raw text
 /// (brace-balanced but not parsed by the mirror compiler). If the body contains
-/// mirror declarations (like in `04-action.mirror`'s meta-actions), they are
+/// mirror declarations (like in `06-action.mirror`'s meta-actions), they are
 /// parsed as children instead.
 fn parse_action_body(
     tokens: &[Tok],
@@ -840,7 +840,7 @@ fn parse_action_body(
     *cursor += 1;
 
     // Peek ahead: if the body contains mirror declaration keywords, parse as
-    // structured children (this handles `04-action.mirror`'s meta-action bodies).
+    // structured children (this handles `06-action.mirror`'s meta-action bodies).
     // Otherwise, collect as raw text.
     let start_cursor = *cursor;
     let mut has_decl_keywords = false;
@@ -1551,7 +1551,7 @@ mod tests {
     fn mirror_runtime_property_file_compiles() {
         let runtime = MirrorRuntime::new();
         let compiled = runtime
-            .compile_file(&boot_dir().join("05-property.mirror"))
+            .compile_file(&boot_dir().join("07-property.mirror"))
             .unwrap();
         assert_eq!(compiled.form_name(), "@property");
         let prop_count = compiled
@@ -1787,15 +1787,16 @@ mod tests {
 
         assert!(boot.resolved.contains_key("00-prism"));
         assert!(boot.resolved.contains_key("01-meta"));
-        assert!(boot.resolved.contains_key("02-code"));
+        assert!(boot.resolved.contains_key("02-identity"));
+        assert!(boot.resolved.contains_key("03-code"));
         assert!(
-            boot.resolved.contains_key("02a-code-rust"),
-            "02a-code-rust should resolve"
+            boot.resolved.contains_key("03a-code-rust"),
+            "03a-code-rust should resolve"
         );
-        assert!(boot.resolved.contains_key("03-actor"));
-        assert!(boot.resolved.contains_key("04-action"));
+        assert!(boot.resolved.contains_key("05-actor"));
+        assert!(boot.resolved.contains_key("06-action"));
 
-        assert!(boot.failed.contains_key("05-property"));
+        assert!(boot.failed.contains_key("07-property"));
         assert!(boot.failed.contains_key("10-mirror"));
 
         let reopened = MirrorRegistry::open(&store_dir).unwrap();
@@ -1803,7 +1804,7 @@ mod tests {
         assert!(reopened.lookup("@meta").is_some());
         assert!(reopened.lookup("@code").is_some());
         assert!(reopened.lookup("@actor").is_some());
-        // 04-action.mirror declares types/prism/action at top level without @-prefix,
+        // 06-action.mirror declares types/prism/action at top level without @-prefix,
         // so no @action ref is created. The file resolves but exports nothing named.
         assert!(reopened.lookup("@property").is_none());
         assert!(reopened.lookup("@mirror").is_none());
@@ -1990,12 +1991,12 @@ mod tests {
     }
 
     #[test]
-    fn action_file_04_parses_and_resolves() {
+    fn action_file_06_parses_and_resolves() {
         let runtime = MirrorRuntime::new();
         let compiled = runtime
-            .compile_file(&boot_dir().join("04-action.mirror"))
+            .compile_file(&boot_dir().join("06-action.mirror"))
             .unwrap();
-        // 04-action.mirror has multiple top-level declarations, wrapped in synthetic Form
+        // 06-action.mirror has multiple top-level declarations, wrapped in synthetic Form
         assert_eq!(compiled.form.kind, DeclKind::Form);
         // Should contain: in @prism, in @meta, in @actor, prism action, action action, out action
         let action_decls: Vec<&Form> = compiled
@@ -2007,7 +2008,7 @@ mod tests {
         assert_eq!(
             action_decls.len(),
             1,
-            "04-action.mirror has one action declaration"
+            "06-action.mirror has one action declaration"
         );
         let action = action_decls[0];
         assert_eq!(action.name, "action");
