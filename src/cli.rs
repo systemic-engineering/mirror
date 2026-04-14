@@ -376,18 +376,18 @@ flags:
 
         match optic {
             "focus" => {
-                let text = crate::mirror_runtime::emit_form(&compiled.form);
+                let text = crate::mirror_runtime::emit_fragment(&compiled.fragment);
                 Ok(text)
             }
             "project" => {
                 let mut out = String::new();
-                project_form(&compiled.form, 0, &mut out);
+                project_fragment(&compiled.fragment, 0, &mut out);
                 Ok(out)
             }
             "refract" => Ok(compiled.crystal().as_str().to_string()),
             _ => {
                 // split, zoom -- same as focus for now
-                let text = crate::mirror_runtime::emit_form(&compiled.form);
+                let text = crate::mirror_runtime::emit_fragment(&compiled.fragment);
                 Ok(text)
             }
         }
@@ -408,11 +408,11 @@ flags:
         let compiled: Result<_, _> = self.runtime.compile_source(&source).into();
         let compiled = compiled?;
 
-        let canonical = crate::mirror_runtime::kintsugi(&compiled.form);
-        let output = crate::mirror_runtime::emit_form(&canonical);
+        let canonical = crate::mirror_runtime::kintsugi_fragment(&compiled.fragment);
+        let output = crate::mirror_runtime::emit_fragment(&canonical);
 
         if check {
-            let original = crate::mirror_runtime::emit_form(&compiled.form);
+            let original = crate::mirror_runtime::emit_fragment(&compiled.fragment);
             if output == original {
                 Ok("ok".to_string())
             } else {
@@ -1284,25 +1284,27 @@ options:
     }
 }
 
-/// Print eigenvalues of a form tree (kind, name, params, variants).
-fn project_form(form: &crate::mirror_runtime::Form, depth: usize, out: &mut String) {
+/// Print eigenvalues of a fragment tree (kind, name, params, variants).
+fn project_fragment(frag: &crate::declaration::MirrorFragment, depth: usize, out: &mut String) {
+    use crate::declaration::{MirrorData, MirrorFragmentExt};
+    let data = MirrorData::decode_from_fragment(frag.mirror_data());
     for _ in 0..depth {
         out.push_str("  ");
     }
-    out.push_str(form.kind.as_str());
-    if !form.name.is_empty() {
+    out.push_str(data.kind.as_str());
+    if !data.name.is_empty() {
         out.push(' ');
-        out.push_str(&form.name);
+        out.push_str(&data.name);
     }
-    if !form.params.is_empty() {
-        out.push_str(&format!("({})", form.params.join(", ")));
+    if !data.params.is_empty() {
+        out.push_str(&format!("({})", data.params.join(", ")));
     }
-    if !form.variants.is_empty() {
-        out.push_str(&format!(" = {}", form.variants.join(" | ")));
+    if !data.variants.is_empty() {
+        out.push_str(&format!(" = {}", data.variants.join(" | ")));
     }
     out.push('\n');
-    for child in &form.children {
-        project_form(child, depth + 1, out);
+    for child in frag.mirror_children() {
+        project_fragment(child, depth + 1, out);
     }
 }
 

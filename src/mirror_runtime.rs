@@ -215,7 +215,7 @@ impl Form {
         data
     }
 
-    fn from_fragment(frag: &MirrorFragment) -> Form {
+    pub fn from_fragment(frag: &MirrorFragment) -> Form {
         let decoded = MirrorData::decode_from_fragment(frag.mirror_data());
         let children: Vec<Form> = frag
             .mirror_children()
@@ -1248,6 +1248,22 @@ pub fn emit_form(form: &Form) -> String {
     out
 }
 
+/// Emit `.mirror` text from a `MirrorFragment`. Delegates to `emit_form`
+/// via `Form::from_fragment`. This is the fragment-native emit path —
+/// callers that have a fragment don't need to manually convert.
+pub fn emit_fragment(frag: &MirrorFragment) -> String {
+    let form = Form::from_fragment(frag);
+    emit_form(&form)
+}
+
+/// Reorder a MirrorFragment's children into canonical (kintsugi) order.
+/// Delegates to `kintsugi` via Form round-trip.
+pub fn kintsugi_fragment(frag: &MirrorFragment) -> MirrorFragment {
+    let form = Form::from_fragment(frag);
+    let sorted = kintsugi(&form);
+    sorted.to_fragment()
+}
+
 fn emit_form_into(form: &Form, indent: usize, out: &mut String) {
     for _ in 0..indent {
         out.push_str("  ");
@@ -1415,6 +1431,10 @@ impl CompiledShatter {
     }
     pub fn form_name(&self) -> &str {
         &self.form.name
+    }
+    /// Get the decoded MirrorData from the fragment (decodes extra fields).
+    pub fn data(&self) -> MirrorData {
+        MirrorData::decode_from_fragment(self.fragment.mirror_data())
     }
 }
 
@@ -1636,9 +1656,9 @@ pub fn emit_shatter(
     ));
     out.push('\n');
 
-    // Emit the collapsed form as valid .mirror syntax.
-    // emit_form is already proven to round-trip exactly (same OIDs).
-    out.push_str(&emit_form(&collapsed.form));
+    // Emit the collapsed fragment as valid .mirror syntax.
+    // emit_fragment is already proven to round-trip exactly (same OIDs).
+    out.push_str(&emit_fragment(&collapsed.fragment));
     out
 }
 

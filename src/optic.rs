@@ -7,8 +7,8 @@
 
 use std::collections::BTreeMap;
 
-use crate::declaration::{DeclKind, MirrorHash};
-use crate::mirror_runtime::{CompiledShatter, Form, MirrorRuntimeError};
+use crate::declaration::{DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, MirrorHash};
+use crate::mirror_runtime::{CompiledShatter, MirrorRuntimeError};
 
 // ---------------------------------------------------------------------------
 // ActionDef — one action extracted from the grammar
@@ -47,32 +47,41 @@ pub struct MirrorOptic {
 impl MirrorOptic {
     /// Build from a `CompiledShatter` — extract actions from the form tree.
     pub fn from_compiled(compiled: &CompiledShatter) -> Result<Self, MirrorRuntimeError> {
+        Self::from_fragment(&compiled.fragment)
+    }
+
+    /// Build from a `MirrorFragment` — extract actions from the fragment tree.
+    pub fn from_fragment(frag: &MirrorFragment) -> Result<Self, MirrorRuntimeError> {
         let mut actions = BTreeMap::new();
-        Self::collect_actions(&compiled.form, &mut actions);
+        let data = MirrorData::decode_from_fragment(frag.mirror_data());
+        Self::collect_actions_from_fragment(frag, &mut actions);
 
         Ok(MirrorOptic {
-            grammar_name: compiled.form_name().to_string(),
+            grammar_name: data.name.clone(),
             actions,
-            crystal_oid: compiled.crystal().clone(),
+            crystal_oid: frag.oid().clone(),
         })
     }
 
-    /// Recursively walk the form tree and collect all Action declarations.
-    fn collect_actions(form: &Form, actions: &mut BTreeMap<String, ActionDef>) {
-        for child in &form.children {
-            if child.kind == DeclKind::Action {
-                let receiver = child.params.first().cloned().unwrap_or_default();
+    /// Recursively walk the fragment tree and collect all Action declarations.
+    fn collect_actions_from_fragment(
+        frag: &MirrorFragment,
+        actions: &mut BTreeMap<String, ActionDef>,
+    ) {
+        for child in frag.mirror_children() {
+            let data = MirrorData::decode_from_fragment(child.mirror_data());
+            if data.kind == DeclKind::Action {
+                let receiver = data.params.first().cloned().unwrap_or_default();
                 let def = ActionDef {
-                    name: child.name.clone(),
+                    name: data.name.clone(),
                     receiver,
-                    grammar_ref: child.grammar_ref.clone(),
-                    body: child.body_text.clone(),
-                    is_abstract: child.is_abstract,
+                    grammar_ref: data.grammar_ref.clone(),
+                    body: data.body_text.clone(),
+                    is_abstract: data.is_abstract,
                 };
-                actions.insert(child.name.clone(), def);
+                actions.insert(data.name.clone(), def);
             }
-            // Recurse into nested forms to find actions at any depth.
-            Self::collect_actions(child, actions);
+            Self::collect_actions_from_fragment(child, actions);
         }
     }
 

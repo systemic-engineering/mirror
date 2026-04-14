@@ -500,7 +500,7 @@ mod tests {
         };
 
         let meta = ShatterMeta::from_compiled(&compiled, &loss);
-        let body = crate::mirror_runtime::emit_form(&compiled.form);
+        let body = crate::mirror_runtime::emit_fragment(&compiled.fragment);
         let shatter = emit_shatter_with_frontmatter(&meta, &body);
 
         let (parsed_meta, parsed_body) = parse_shatter_frontmatter(&shatter).unwrap();

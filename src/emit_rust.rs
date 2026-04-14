@@ -12,7 +12,7 @@
 //! - `action boot(identity)`    →  `pub fn boot(identity: Identity) { todo!() }`
 //! - `property p(g) <= verdict` →  `pub fn p(g: &Grammar) -> Verdict { todo!() }`
 
-use crate::declaration::{DeclKind, OpticOp};
+use crate::declaration::{DeclKind, MirrorFragment, OpticOp};
 use crate::mirror_runtime::{CompiledShatter, Form};
 
 // ---------------------------------------------------------------------------
@@ -37,6 +37,13 @@ pub fn emit_rust_form(form: &Form) -> String {
 
     emit_form(form, &mut output, 0);
     output
+}
+
+/// Emit Rust source code from a MirrorFragment.
+/// Delegates to `emit_rust_form` via Form::from_fragment.
+pub fn emit_rust_fragment(frag: &MirrorFragment) -> String {
+    let form = Form::from_fragment(frag);
+    emit_rust_form(&form)
 }
 
 // ---------------------------------------------------------------------------
