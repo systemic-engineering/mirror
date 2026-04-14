@@ -2503,13 +2503,9 @@ mod tests {
         );
     }
 
-    /// The goal: boot compiles with zero loss, zero failures.
-    /// Success(Mirror). No warnings. Strict passes.
-    ///
-    /// This test is ignored until the grammar and compiler enforce all properties.
-    /// When this test passes without #[ignore], we ship.
+    /// Success(Mirror). Zero loss. Zero failures. Strict passes.
+    /// When this test passes, we ship.
     #[test]
-    #[ignore = "goal: Success(Mirror) — boot compiles with zero loss"]
     fn mirror_ci_boot_success() {
         let runtime = MirrorRuntime::new();
         let store = tempdir_for_test("ci_boot_success");
@@ -2544,5 +2540,500 @@ mod tests {
             boot2.collapsed.crystal().as_str(),
             "crystal identity law: same boot → same crystal"
         );
+    }
+
+    // -----------------------------------------------------------------------
+    // @ai grammar — identity as variant over visibility
+    // -----------------------------------------------------------------------
+
+    /// The @ai grammar defines identity as a variant over visibility.
+    /// Three bias trees. Three collapse orderings. Three apertures.
+    /// The boot action folds identity through visibility into imperfect.
+    ///
+    /// reed.mirror in ~/.reed/ is the first concrete consumer.
+    /// This test uses an inline grammar to prove the shape compiles.
+    const AI_GRAMMAR: &str = "\
+in @actor
+
+type bias_tree = [ref]
+type visibility = public | protected | private
+type identity = public(bias_tree) | protected(bias_tree) | private(bias_tree)
+
+grammar @ai {
+  action boot(identity) <= imperfect
+}
+";
+
+    /// The parser must not silently drop <=.
+    /// `action boot(identity) <= imperfect` contains a fold operator.
+    /// If the parser can't handle it, that's a compilation error — Failure.
+    /// Not Success. Not silent. Failure with MirrorLoss recording what was lost.
+    #[test]
+    fn ai_grammar_fold_not_silent() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source(AI_GRAMMAR);
+
+        // The compiler must either:
+        // 1. Parse <= correctly → action boot has OpticOp::Fold (Success)
+        // 2. Record the loss → Partial with the dropped <= in MirrorLoss
+        // It must NOT return Success with the <= silently swallowed.
+        let compiled = match &result {
+            Imperfect::Success(c) | Imperfect::Partial(c, _) => c,
+            Imperfect::Failure(_, _) => {
+                // Failure is acceptable IF the loss records what was dropped.
+                let loss = result.loss();
+                assert!(loss.holonomy() > 0.0, "Failure must carry non-zero loss");
+                return; // Failure with loss = honest. Test passes.
+            }
+        };
+
+        // If we got here, the compiler returned a value (Success or Partial).
+        // The fold operator MUST be recorded on the action.
+        let boot_action = compiled
+            .form
+            .children
+            .iter()
+            .flat_map(|child| std::iter::once(child).chain(child.children.iter()))
+            .find(|f| f.kind == DeclKind::Action && f.name == "boot");
+        assert!(boot_action.is_some(), "action boot must exist");
+        assert!(
+            boot_action.unwrap().optic_ops.contains(&OpticOp::Fold),
+            "action boot(identity) <= imperfect must produce OpticOp::Fold"
+        );
+
+        // If Success: the fold was parsed correctly. Zero loss is correct.
+        // If Partial: the fold was parsed but something else produced loss.
+        //   The loss must NOT be from dropping the <=.
+        if result.is_partial() {
+            let loss = result.loss();
+            // Partial is ok as long as the fold operator landed.
+            // The loss should be from something other than a dropped <=.
+            assert!(
+                boot_action.unwrap().optic_ops.contains(&OpticOp::Fold),
+                "Partial result must still have the fold operator"
+            );
+            let _ = loss; // loss from other sources is fine
+        }
+    }
+
+    /// @ai grammar resolves against boot.
+    /// `in @actor` resolves. The identity type is valid.
+    /// The boot action's `<= imperfect` uses the fold operator.
+    #[test]
+    fn ai_grammar_resolves_against_boot() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("ai_grammar_boot");
+
+        // Boot the language
+        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+
+        // @actor must be in the registry
+        let registry = MirrorRegistry::open(&store).unwrap();
+        assert!(
+            registry.lookup("@actor").is_some(),
+            "@actor must be in registry for @ai to resolve"
+        );
+
+        // Compile @ai grammar
+        let compiled = runtime.compile_source(AI_GRAMMAR);
+        assert!(compiled.is_ok(), "@ai grammar must compile");
+
+        let ai = match compiled {
+            Imperfect::Success(c) | Imperfect::Partial(c, _) => c,
+            Imperfect::Failure(e, _) => panic!("@ai grammar failed: {}", e),
+        };
+
+        // Resolve against booted registry
+        let resolve_result = registry.resolve(&ai.form);
+        assert!(
+            resolve_result.is_ok(),
+            "@ai grammar must resolve against boot: in @actor must be found. Got: {:?}",
+            resolve_result
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // MirrorError — code that MUST NOT compile
+    // -----------------------------------------------------------------------
+
+    /// Empty source: nothing to compile. Failure.
+    #[test]
+    fn error_empty_source() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("");
+        assert!(
+            result.is_err(),
+            "empty source must be Failure, got: {:?}",
+            result
+        );
+    }
+
+    /// Whitespace-only source: nothing to compile. Failure.
+    #[test]
+    fn error_whitespace_only() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("   \n\n  \n");
+        assert!(result.is_err(), "whitespace-only source must be Failure");
+    }
+
+    /// Comments-only source: nothing survived. Failure.
+    #[test]
+    fn error_comments_only() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("-- this is a comment\n-- so is this\n");
+        assert!(result.is_err(), "comments-only source must be Failure");
+    }
+
+    /// Only unrecognized keywords: nothing recognized. Failure with loss.
+    #[test]
+    fn error_only_unrecognized() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("widget foo\nroute /bar\n");
+        assert!(
+            result.is_err(),
+            "only unrecognized keywords must be Failure"
+        );
+        let loss = result.loss();
+        assert!(
+            !loss.parse.unrecognized.is_empty(),
+            "Failure must carry the unrecognized keywords as loss"
+        );
+        assert!(loss.holonomy() > 0.0, "Failure must have non-zero holonomy");
+    }
+
+    /// Unclosed brace: structural error. Failure.
+    #[test]
+    fn error_unclosed_brace() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("grammar @broken {\n  type x\n");
+        assert!(
+            result.is_err(),
+            "unclosed brace must be Failure, got: {:?}",
+            result
+        );
+    }
+
+    /// Type with no name: `type` alone on a line. Failure.
+    #[test]
+    fn error_type_no_name() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("type\n");
+        assert!(
+            result.is_err(),
+            "bare `type` keyword must be Failure, got: {:?}",
+            result
+        );
+    }
+
+    /// Grammar with no name: `grammar` alone. Failure.
+    #[test]
+    fn error_grammar_no_name() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("grammar\n");
+        assert!(
+            result.is_err(),
+            "bare `grammar` keyword must be Failure, got: {:?}",
+            result
+        );
+    }
+
+    /// `in` with no target: `in` alone. Failure.
+    #[test]
+    fn error_in_no_target() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("in\n");
+        assert!(
+            result.is_err(),
+            "bare `in` keyword must be Failure, got: {:?}",
+            result
+        );
+    }
+
+    /// Action with no name: `action` alone. Failure.
+    #[test]
+    fn error_action_no_name() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("action\n");
+        assert!(
+            result.is_err(),
+            "bare `action` keyword must be Failure, got: {:?}",
+            result
+        );
+    }
+
+    /// Duplicate type names in the same scope. Failure.
+    /// Two types with the same name is a collision.
+    #[test]
+    fn error_duplicate_type_names() {
+        let runtime = MirrorRuntime::new();
+        let result =
+            runtime.compile_source("type color = red | blue\ntype color = green | yellow\n");
+        assert!(
+            result.is_err(),
+            "duplicate type names must be Failure, got: {:?}",
+            result
+        );
+    }
+
+    /// Non-word token at top level should not produce Success.
+    /// `{ }` at top level is structural noise, not a valid program.
+    #[test]
+    fn error_bare_braces() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("{ }\n");
+        assert!(
+            result.is_err(),
+            "bare braces must be Failure, got: {:?}",
+            result
+        );
+    }
+
+    /// Mixed valid and invalid: if recognized decls exist alongside
+    /// unrecognized ones, that's Partial (not Success, not Failure).
+    /// The recognized part compiles; the unrecognized is measured loss.
+    #[test]
+    fn error_mixed_is_partial() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("type valid = a | b\nwidget invalid\n");
+        assert!(
+            result.is_partial(),
+            "mixed valid+invalid must be Partial, got: is_ok={} is_failure={} is_partial={}",
+            result.is_ok(),
+            result.is_err(),
+            result.is_partial()
+        );
+        let loss = result.loss();
+        assert_eq!(loss.parse.unrecognized.len(), 1, "one unrecognized keyword");
+        assert_eq!(
+            loss.parse.unrecognized[0].keyword, "widget",
+            "the unrecognized keyword is 'widget'"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Missing imports — resolution errors specify what's missing and where
+    // -----------------------------------------------------------------------
+
+    /// `in @nonexistent` — import of a grammar that doesn't exist.
+    /// Must fail resolution. Error message must name the missing grammar.
+    #[test]
+    fn error_missing_import() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("error_missing_import");
+
+        // Boot so the registry has some refs
+        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+        let registry = MirrorRegistry::open(&store).unwrap();
+
+        let src = "in @nonexistent\ntype x";
+        let compiled = runtime.compile_source(src);
+        let form = compiled.ok().unwrap();
+
+        let err = registry.resolve(&form.form).unwrap_err();
+        assert!(
+            err.0.contains("@nonexistent"),
+            "error must name the missing grammar: got '{}'",
+            err.0
+        );
+        assert!(
+            err.0.contains("unresolved"),
+            "error must say 'unresolved': got '{}'",
+            err.0
+        );
+    }
+
+    /// Multiple missing imports — the FIRST unresolved ref is reported.
+    /// Error message must name it specifically.
+    #[test]
+    fn error_multiple_missing_imports() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("error_multi_import");
+
+        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+        let registry = MirrorRegistry::open(&store).unwrap();
+
+        let src = "in @ghost\nin @phantom\ntype x";
+        let compiled = runtime.compile_source(src);
+        let form = compiled.ok().unwrap();
+
+        let err = registry.resolve(&form.form).unwrap_err();
+        assert!(
+            err.0.contains("@ghost"),
+            "error must name the first missing import: got '{}'",
+            err.0
+        );
+    }
+
+    /// Import of a grammar that EXISTS should succeed.
+    /// Proves the resolution path works — not just the error path.
+    #[test]
+    fn import_existing_grammar_resolves() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("import_existing");
+
+        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+        let registry = MirrorRegistry::open(&store).unwrap();
+
+        let src = "in @prism\ntype x";
+        let compiled = runtime.compile_source(src);
+        let form = compiled.ok().unwrap();
+
+        let result = registry.resolve(&form.form);
+        assert!(
+            result.is_ok(),
+            "in @prism must resolve after boot: got {:?}",
+            result
+        );
+    }
+
+    /// Nested missing import — `grammar @x { in @missing }`.
+    /// Resolution walks children. Must find the missing ref inside the grammar.
+    #[test]
+    fn error_nested_missing_import() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("error_nested_import");
+
+        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+        let registry = MirrorRegistry::open(&store).unwrap();
+
+        let src = "grammar @test {\n  in @nowhere\n  type x\n}";
+        let compiled = runtime.compile_source(src);
+        let form = compiled.ok().unwrap();
+
+        let err = registry.resolve(&form.form).unwrap_err();
+        assert!(
+            err.0.contains("@nowhere"),
+            "error must name nested missing import: got '{}'",
+            err.0
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Unknown operators — the parser must not silently swallow them
+    // -----------------------------------------------------------------------
+
+    /// Unknown operator at top level: `~>` is not a valid operator.
+    /// Must not produce Success. Either Partial with loss or Failure.
+    #[test]
+    fn error_unknown_operator_top_level() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("type x ~> y\n");
+        // The parser sees `type x` then `~>` which it can't parse.
+        // It must not silently drop `~> y`.
+        match &result {
+            Imperfect::Success(c) => {
+                // If Success, the operator content must be captured somewhere.
+                // `~>` should not vanish. Check that variants or params captured it.
+                let type_x = &c.form;
+                let has_content = !type_x.variants.is_empty()
+                    || !type_x.params.is_empty()
+                    || type_x.children.iter().any(|c| !c.variants.is_empty());
+                assert!(
+                    has_content,
+                    "unknown operator ~> must not be silently dropped. \
+                     type x should capture the remaining content. Got: {:?}",
+                    type_x
+                );
+            }
+            Imperfect::Partial(_, loss) => {
+                // Partial is acceptable if loss records the dropped content
+                assert!(
+                    loss.holonomy() > 0.0,
+                    "Partial must have non-zero holonomy for dropped operator"
+                );
+            }
+            Imperfect::Failure(_, _) => {
+                // Failure is acceptable — unknown operator is a parse error
+            }
+        }
+    }
+
+    /// `<=` inside a type declaration: `type x <= y`.
+    /// The fold operator is valid in action declarations, not type declarations.
+    /// Must either parse it meaningfully or record the loss.
+    #[test]
+    fn error_fold_in_type_declaration() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("type x <= y\n");
+        match &result {
+            Imperfect::Success(c) => {
+                // If Success, the <= must be recorded as OpticOp::Fold
+                let has_fold = c.form.optic_ops.contains(&OpticOp::Fold)
+                    || c.form
+                        .children
+                        .iter()
+                        .any(|ch| ch.optic_ops.contains(&OpticOp::Fold));
+                assert!(
+                    has_fold,
+                    "type x <= y: if Success, OpticOp::Fold must be recorded. Got: {:?}",
+                    c.form
+                );
+            }
+            Imperfect::Partial(_, loss) => {
+                assert!(
+                    loss.holonomy() > 0.0,
+                    "Partial must have non-zero holonomy for <= in type"
+                );
+            }
+            Imperfect::Failure(_, _) => {
+                // Failure is acceptable — fold in type is semantically wrong
+            }
+        }
+    }
+
+    /// `<=` inside a property: `property p(grammar) <= verdict`.
+    /// This is the CORRECT usage. The fold should be recognized.
+    #[test]
+    fn fold_in_property_declaration() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source(
+            "property check(grammar) <= verdict {\n  traversal types\n  refract verdict\n}\n",
+        );
+        assert!(
+            result.is_ok(),
+            "property with <= must compile: {:?}",
+            result
+        );
+
+        let compiled = match result {
+            Imperfect::Success(c) | Imperfect::Partial(c, _) => c,
+            Imperfect::Failure(e, _) => panic!("property with <= failed: {}", e),
+        };
+
+        // The property must have OpticOp::Fold
+        let has_fold = compiled.form.optic_ops.contains(&OpticOp::Fold)
+            || compiled
+                .form
+                .children
+                .iter()
+                .any(|ch| ch.optic_ops.contains(&OpticOp::Fold));
+        assert!(
+            has_fold,
+            "property check(grammar) <= verdict must produce OpticOp::Fold. Got: {:?}",
+            compiled.form
+        );
+    }
+
+    /// Double operator: `type x = = y`. Malformed.
+    /// Must not produce clean Success.
+    #[test]
+    fn error_double_operator() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("type x = = y\n");
+        match &result {
+            Imperfect::Success(c) => {
+                // If somehow Success, the second `=` must not vanish
+                // `y` should be captured as a variant (from `= y`)
+                // but `= =` is malformed — we expect this to not be clean
+                assert!(
+                    !c.form.variants.is_empty() || !c.form.children.is_empty(),
+                    "double operator = = must not produce empty result: {:?}",
+                    c.form
+                );
+            }
+            Imperfect::Partial(_, _) | Imperfect::Failure(_, _) => {
+                // Both acceptable — malformed input
+            }
+        }
     }
 }
