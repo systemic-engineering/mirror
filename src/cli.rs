@@ -108,6 +108,7 @@ impl Cli {
             "kintsugi" => self.cmd_kintsugi(args),
             "focus" | "project" | "split" | "zoom" | "refract" => self.cmd_optic(command, args),
             "registry" => self.cmd_registry(args),
+            "git" => self.cmd_git(args),
             _ => self.cmd_query(command, args),
         }
     }
@@ -142,6 +143,7 @@ session:
 tools:
   ai <model> [path]  run a Fate model
   bench <path>       benchmark compilation
+  git <subcommand>   read-only prism over git's ref space
 
 flags:
   --oid              print content address only
@@ -170,6 +172,7 @@ flags:
             "ca" => Some("ca <path> [--enforce] -- observe, suggest, enforce\n\nRuns CI, then if holonomy > 0, produces suggestions.\nWith --enforce: applies suggestions (not yet implemented)."),
             "bench" => Some("bench <path> -- benchmark compilation\n\nMeasures compilation time and structural loss.\nPrints timing and MirrorLoss summary."),
             "verify" => Some("verify <file> -- verify a signed .shatter file\n\nChecks the Ed25519 signature (.shatter.sig) against the content.\nUses the public key from CONVERSATION_KEYS hierarchy.\nExits 0 if valid, nonzero if tampered or unsigned."),
+            "git" => Some("git <subcommand> -- read-only prism over git's ref space\n\nSubcommands:\n  refs              list all refs (branches, tags, HEAD)\n  tree <ref>        show the tree at a ref\n  show <ref>:<path> read a blob without checkout\n  diff <a> <b>      structural diff between two refs\n  log               commit history (short)"),
             _ => None,
         }
     }
@@ -1136,6 +1139,96 @@ options:
                     Ok(grammar)
                 }
             }
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // git -- read-only prism over git's ref space
+    // -----------------------------------------------------------------------
+
+    fn cmd_git(&self, args: &[String]) -> Result<String, CliError> {
+        use crate::git_prism::GitPrism;
+
+        let cwd = std::env::current_dir()?;
+        let prism = GitPrism::open(&cwd)
+            .map_err(|e| CliError::Usage(format!("not a git repository: {}", e)))?;
+
+        match args.first().map(|s| s.as_str()) {
+            Some("refs") => {
+                let refs = prism.refs();
+                let mut out = String::new();
+                for (name, oid) in &refs {
+                    out.push_str(&format!("{} {}\n", &oid[..12.min(oid.len())], name));
+                }
+                Ok(out)
+            }
+            Some("tree") => {
+                let refname = args.get(1).map(|s| s.as_str()).unwrap_or("HEAD");
+                let tree = prism.tree_at(refname).map_err(|e| {
+                    CliError::Usage(format!("cannot read tree at '{}': {}", refname, e))
+                })?;
+                let mut out = String::new();
+                for entry in &tree {
+                    out.push_str(&format!("{} {} {}\n", entry.kind, entry.oid, entry.name));
+                }
+                Ok(out)
+            }
+            Some("show") => {
+                let spec = args.get(1).ok_or_else(|| {
+                    CliError::Usage("usage: mirror git show <ref>:<path>".to_string())
+                })?;
+                let (refname, path) = spec.split_once(':').ok_or_else(|| {
+                    CliError::Usage(
+                        "expected <ref>:<path> (e.g., main:boot/00-prism.mirror)".to_string(),
+                    )
+                })?;
+                let content = prism.show(refname, path).map_err(|e| {
+                    CliError::Usage(format!("cannot show '{}:{}': {}", refname, path, e))
+                })?;
+                Ok(content)
+            }
+            Some("diff") => {
+                let a = args.get(1).ok_or_else(|| {
+                    CliError::Usage("usage: mirror git diff <ref-a> <ref-b>".to_string())
+                })?;
+                let b = args.get(2).ok_or_else(|| {
+                    CliError::Usage("usage: mirror git diff <ref-a> <ref-b>".to_string())
+                })?;
+                let diff = prism.diff(a, b).map_err(|e| {
+                    CliError::Usage(format!("cannot diff '{}' vs '{}': {}", a, b, e))
+                })?;
+                if diff.is_empty() {
+                    Ok("no differences\n".to_string())
+                } else {
+                    let mut out = String::new();
+                    for entry in &diff {
+                        out.push_str(&format!("{} {}\n", entry.status, entry.path));
+                    }
+                    Ok(out)
+                }
+            }
+            Some("log") => {
+                let count = args
+                    .get(1)
+                    .and_then(|s| s.parse::<usize>().ok())
+                    .unwrap_or(20);
+                let log = prism
+                    .log(count)
+                    .map_err(|e| CliError::Usage(format!("cannot read log: {}", e)))?;
+                let mut out = String::new();
+                for entry in &log {
+                    out.push_str(&format!(
+                        "{} {} — {}\n",
+                        &entry.oid[..12.min(entry.oid.len())],
+                        entry.author,
+                        entry.message
+                    ));
+                }
+                Ok(out)
+            }
+            _ => Ok(Self::command_help("git")
+                .unwrap_or("mirror git <subcommand>")
+                .to_string()),
         }
     }
 

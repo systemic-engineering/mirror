@@ -78,29 +78,144 @@ impl GitPrism {
         Ok(GitPrism { repo })
     }
 
+    /// Resolve a ref string (branch name, tag, HEAD, full ref) to an Oid.
+    fn resolve_ref(&self, refname: &str) -> Result<git2::Oid, git2::Error> {
+        // Try as a revision first (handles HEAD, branch names, tags, short SHAs)
+        match self.repo.revparse_single(refname) {
+            Ok(obj) => Ok(obj.id()),
+            Err(_) => {
+                // Try as a full ref path
+                let reference = self.repo.find_reference(refname)?;
+                reference
+                    .target()
+                    .ok_or_else(|| git2::Error::from_str("symbolic ref without target"))
+            }
+        }
+    }
+
     /// List all refs (branches, tags, HEAD).
     pub fn refs(&self) -> Vec<(String, String)> {
-        todo!("implement refs listing")
+        let mut result = Vec::new();
+
+        // Add HEAD
+        if let Ok(head) = self.repo.head() {
+            if let Some(target) = head.target() {
+                result.push(("HEAD".to_string(), target.to_string()));
+            }
+        }
+
+        // Iterate all references
+        if let Ok(refs) = self.repo.references() {
+            for reference in refs.flatten() {
+                if let (Some(name), Some(target)) = (reference.name(), reference.target()) {
+                    result.push((name.to_string(), target.to_string()));
+                }
+            }
+        }
+
+        result
     }
 
     /// Get tree entries at a ref.
-    pub fn tree_at(&self, _refname: &str) -> Result<Vec<TreeEntry>, git2::Error> {
-        todo!("implement tree listing")
+    pub fn tree_at(&self, refname: &str) -> Result<Vec<TreeEntry>, git2::Error> {
+        let oid = self.resolve_ref(refname)?;
+        let commit = self.repo.find_commit(oid)?;
+        let tree = commit.tree()?;
+
+        let mut entries = Vec::new();
+        for entry in tree.iter() {
+            let kind = match entry.kind() {
+                Some(git2::ObjectType::Blob) => TreeEntryKind::Blob,
+                Some(git2::ObjectType::Tree) => TreeEntryKind::Tree,
+                Some(git2::ObjectType::Commit) => TreeEntryKind::Commit,
+                _ => continue,
+            };
+            entries.push(TreeEntry {
+                name: entry.name().unwrap_or("").to_string(),
+                oid: entry.id().to_string(),
+                kind,
+            });
+        }
+
+        Ok(entries)
     }
 
     /// Read a blob at ref:path.
-    pub fn show(&self, _refname: &str, _path: &str) -> Result<String, git2::Error> {
-        todo!("implement blob reading")
+    pub fn show(&self, refname: &str, path: &str) -> Result<String, git2::Error> {
+        let oid = self.resolve_ref(refname)?;
+        let commit = self.repo.find_commit(oid)?;
+        let tree = commit.tree()?;
+        let entry = tree.get_path(Path::new(path))?;
+        let object = entry.to_object(&self.repo)?;
+        let blob = object
+            .as_blob()
+            .ok_or_else(|| git2::Error::from_str("not a blob"))?;
+        String::from_utf8(blob.content().to_vec())
+            .map_err(|_| git2::Error::from_str("blob is not valid UTF-8"))
     }
 
     /// Diff two refs' trees.
-    pub fn diff(&self, _a: &str, _b: &str) -> Result<Vec<DiffEntry>, git2::Error> {
-        todo!("implement tree diff")
+    pub fn diff(&self, a: &str, b: &str) -> Result<Vec<DiffEntry>, git2::Error> {
+        let oid_a = self.resolve_ref(a)?;
+        let oid_b = self.resolve_ref(b)?;
+
+        let tree_a = self.repo.find_commit(oid_a)?.tree()?;
+        let tree_b = self.repo.find_commit(oid_b)?.tree()?;
+
+        let diff = self
+            .repo
+            .diff_tree_to_tree(Some(&tree_a), Some(&tree_b), None)?;
+
+        let mut entries = Vec::new();
+        diff.foreach(
+            &mut |delta, _| {
+                let status = match delta.status() {
+                    git2::Delta::Added => DiffStatus::Added,
+                    git2::Delta::Deleted => DiffStatus::Deleted,
+                    git2::Delta::Modified => DiffStatus::Modified,
+                    git2::Delta::Renamed => DiffStatus::Renamed,
+                    _ => return true,
+                };
+                let path = delta
+                    .new_file()
+                    .path()
+                    .or_else(|| delta.old_file().path())
+                    .map(|p| p.to_string_lossy().to_string())
+                    .unwrap_or_default();
+                entries.push(DiffEntry { path, status });
+                true
+            },
+            None,
+            None,
+            None,
+        )?;
+
+        Ok(entries)
     }
 
     /// Commit log, most recent first.
-    pub fn log(&self, _count: usize) -> Result<Vec<LogEntry>, git2::Error> {
-        todo!("implement commit log")
+    pub fn log(&self, count: usize) -> Result<Vec<LogEntry>, git2::Error> {
+        let head = self.repo.head()?;
+        let head_oid = head
+            .target()
+            .ok_or_else(|| git2::Error::from_str("HEAD has no target"))?;
+
+        let mut revwalk = self.repo.revwalk()?;
+        revwalk.push(head_oid)?;
+        revwalk.set_sorting(git2::Sort::TIME)?;
+
+        let mut entries = Vec::new();
+        for oid in revwalk.take(count) {
+            let oid = oid?;
+            let commit = self.repo.find_commit(oid)?;
+            entries.push(LogEntry {
+                oid: oid.to_string(),
+                message: commit.summary().unwrap_or("").to_string(),
+                author: commit.author().name().unwrap_or("").to_string(),
+            });
+        }
+
+        Ok(entries)
     }
 }
 
@@ -154,7 +269,11 @@ mod tests {
     #[test]
     fn git_diff_main_vs_head() {
         let prism = GitPrism::open(&project_root()).unwrap();
+        // On the feature branch, HEAD differs from main
         let diff = prism.diff("main", "HEAD").unwrap();
+        // If we're ahead of main, there should be changes.
+        // If we're on main, diff is empty — both are valid.
+        // The structural assertion is that the call succeeds.
         assert!(
             diff.is_empty() || !diff.is_empty(),
             "diff should return without error"
@@ -167,6 +286,7 @@ mod tests {
         let log = prism.log(10).unwrap();
         assert!(!log.is_empty(), "mirror repo must have commits");
         assert!(log.len() <= 10, "log should respect count limit");
+        // Every entry should have a non-empty OID
         for entry in &log {
             assert!(!entry.oid.is_empty(), "log entry must have an OID");
         }
@@ -183,9 +303,11 @@ mod tests {
     fn git_tree_entry_kinds() {
         let prism = GitPrism::open(&project_root()).unwrap();
         let tree = prism.tree_at("main").unwrap();
+        // boot/ and src/ are trees
         let boot = tree.iter().find(|e| e.name == "boot");
         assert!(boot.is_some());
         assert_eq!(boot.unwrap().kind, TreeEntryKind::Tree);
+        // Cargo.toml is a blob
         let cargo = tree.iter().find(|e| e.name == "Cargo.toml");
         assert!(cargo.is_some());
         assert_eq!(cargo.unwrap().kind, TreeEntryKind::Blob);

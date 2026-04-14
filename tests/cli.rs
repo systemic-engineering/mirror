@@ -503,19 +503,24 @@ fn merge_summary_on_self() {
     // Both are valid — the tool ran on itself.
     if output.status.success() {
         assert!(
-            stdout.contains("crystal delta") || stdout.contains("added")
-                || stdout.contains("removed") || stdout.contains("unchanged"),
+            stdout.contains("crystal delta")
+                || stdout.contains("added")
+                || stdout.contains("removed")
+                || stdout.contains("unchanged"),
             "merge summary must contain structural diff info.\nstdout: {}\nstderr: {}",
-            stdout, stderr
+            stdout,
+            stderr
         );
     } else {
         // If we're ON main, it should say so
         let combined = format!("{}{}", stdout, stderr);
         assert!(
-            combined.contains("already on") || combined.contains("same branch")
+            combined.contains("already on")
+                || combined.contains("same branch")
                 || combined.contains("main"),
             "merge failure must explain why.\nstdout: {}\nstderr: {}",
-            stdout, stderr
+            stdout,
+            stderr
         );
     }
 }
@@ -532,6 +537,109 @@ fn merge_help() {
     assert!(
         stdout.contains("merge") && stdout.contains("crystal delta"),
         "merge help must describe the command.\nstdout: {}",
+        stdout
+    );
+}
+
+// ---------------------------------------------------------------------------
+// git subcommands
+// ---------------------------------------------------------------------------
+
+#[test]
+fn cli_git_refs() {
+    let output = mirror_bin()
+        .current_dir(project_root())
+        .args(["git", "refs"])
+        .output()
+        .unwrap();
+    assert!(output.status.success(), "git refs should succeed");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("main"),
+        "git refs must show main: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("HEAD"),
+        "git refs must show HEAD: {}",
+        stdout
+    );
+}
+
+#[test]
+fn cli_git_tree() {
+    let output = mirror_bin()
+        .current_dir(project_root())
+        .args(["git", "tree", "main"])
+        .output()
+        .unwrap();
+    assert!(output.status.success(), "git tree should succeed");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("boot"),
+        "git tree must show boot/: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("src"),
+        "git tree must show src/: {}",
+        stdout
+    );
+}
+
+#[test]
+fn cli_git_show_from_main() {
+    let output = mirror_bin()
+        .current_dir(project_root())
+        .args(["git", "show", "main:boot/00-prism.mirror"])
+        .output()
+        .unwrap();
+    assert!(output.status.success(), "git show should succeed");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("focus id"),
+        "must read prism.mirror from main: {}",
+        stdout
+    );
+}
+
+#[test]
+fn cli_git_log() {
+    let output = mirror_bin()
+        .current_dir(project_root())
+        .args(["git", "log"])
+        .output()
+        .unwrap();
+    assert!(output.status.success(), "git log should succeed");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(!stdout.is_empty(), "git log must produce output");
+}
+
+#[test]
+fn cli_git_diff() {
+    let output = mirror_bin()
+        .current_dir(project_root())
+        .args(["git", "diff", "main", "HEAD"])
+        .output()
+        .unwrap();
+    assert!(output.status.success(), "git diff should succeed");
+}
+
+#[test]
+fn cli_git_no_subcommand_shows_help() {
+    let output = mirror_bin()
+        .current_dir(project_root())
+        .args(["git"])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "git with no subcommand should show help"
+    );
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("refs"),
+        "git help must mention refs: {}",
         stdout
     );
 }
