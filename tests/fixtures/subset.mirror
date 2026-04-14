@@ -1,0 +1,14 @@
+-- subset: inline relation markers
+-- proves: <, >, = on type declarations
+
+in @meta
+
+type user {
+  name: text,
+  email: text,
+  age: nat,
+}
+
+type contact { <user, name: text, email: text }
+type admin { >user, name: text, email: text, age: nat, role: text }
+type alias { =user }

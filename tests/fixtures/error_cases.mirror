@@ -1,0 +1,13 @@
+-- error_cases: code that should produce Partial or Failure
+-- each section is separated by --- and tagged with expected outcome
+
+-- Partial: mixed recognized + unrecognized
+type valid = a | b
+widget invalid
+
+---
+
+-- Failure: form keyword deprecated
+form @old {
+  type x
+}

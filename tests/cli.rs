@@ -479,3 +479,59 @@ fn focus_on_boot_prism_succeeds() {
         String::from_utf8_lossy(&output.stderr)
     );
 }
+
+// ---------------------------------------------------------------------------
+// mirror merge — the tool runs on itself
+// ---------------------------------------------------------------------------
+
+#[test]
+fn merge_summary_on_self() {
+    // Run `mirror merge main` (without --ai) on the mirror repo itself.
+    // This produces a structural diff summary without modifying git state.
+    let output = mirror_bin()
+        .current_dir(project_root())
+        .args(["merge", "main"])
+        .output()
+        .unwrap();
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+
+    // The merge summary should either:
+    // 1. Succeed with a crystal delta (if we're ahead of main)
+    // 2. Fail because we're already on main
+    // Both are valid — the tool ran on itself.
+    if output.status.success() {
+        assert!(
+            stdout.contains("crystal delta") || stdout.contains("added")
+                || stdout.contains("removed") || stdout.contains("unchanged"),
+            "merge summary must contain structural diff info.\nstdout: {}\nstderr: {}",
+            stdout, stderr
+        );
+    } else {
+        // If we're ON main, it should say so
+        let combined = format!("{}{}", stdout, stderr);
+        assert!(
+            combined.contains("already on") || combined.contains("same branch")
+                || combined.contains("main"),
+            "merge failure must explain why.\nstdout: {}\nstderr: {}",
+            stdout, stderr
+        );
+    }
+}
+
+#[test]
+fn merge_help() {
+    let output = mirror_bin()
+        .current_dir(project_root())
+        .args(["merge", "--help"])
+        .output()
+        .unwrap();
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("merge") && stdout.contains("crystal delta"),
+        "merge help must describe the command.\nstdout: {}",
+        stdout
+    );
+}

@@ -1,0 +1,24 @@
+-- sigil: abstract grammar with prefix parameter
+-- proves: meta grammar, subset relation, abstract template
+
+in @meta
+
+abstract grammar @sigil(grammar, prefix: text) {
+  type prefix = prefix | grammar
+  type sigil(grammar, prefix, block(grammar))
+
+  abstract template render(sigil) = iso
+}
+
+grammar @html < @sigil(@html, "h") {
+  type element = tag(name, [attribute], [element]) | text(string)
+  type attribute = { name: string, value: string }
+
+  template render(sigil) = iso
+}
+
+grammar @sql < @sigil(@sql, "q") {
+  type query = select | insert | update | delete
+
+  template render(sigil) = iso
+}

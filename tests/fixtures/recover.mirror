@@ -1,0 +1,17 @@
+-- recover: imperfect methods
+-- proves: recover/rescue as fold methods on types
+
+in @meta
+
+type result(a, e, l) {
+  recover |a, l| <= result
+  rescue |e, l| <= result
+}
+
+type validated(input) {
+  <result,
+  recover |input, loss| <= validated {
+    -- recovery is itself imperfect
+    -- the measurement measures itself
+  }
+}

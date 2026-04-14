@@ -1,0 +1,14 @@
+-- cli_flags: flags as optics
+-- proves: flag declarations, command compositions
+
+in @meta
+
+grammar @cli {
+  flag strict = prism(imperfect => success | failure)
+  flag format(json | human) = lens(imperfect => text)
+  flag check = prism(imperfect => pass | fail)
+
+  command compile = parse . resolve . emit
+  command kintsugi = parse . resolve . canonical_order
+  command ci = parse . resolve . properties . emit
+}

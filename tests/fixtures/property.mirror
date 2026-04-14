@@ -1,0 +1,24 @@
+-- property: fold-based verification
+-- proves: property <= verdict, optic pipeline in property body
+
+in @meta
+
+type verdict = pass | partial | fail
+
+property types_lowercase(grammar) <= verdict {
+  traversal types
+  lens lowercase
+  refract verdict
+}
+
+property no_cycles(grammar) <= verdict {
+  traversal dependencies
+  lens topological
+  refract verdict
+}
+
+property kintsugi(grammar) <= verdict {
+  template fmt
+  iso equal
+  refract verdict
+}

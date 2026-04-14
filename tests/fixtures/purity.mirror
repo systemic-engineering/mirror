@@ -1,0 +1,12 @@
+-- purity: the pure/real boundary
+-- proves: != constraint, template vs action
+
+in @meta
+
+type pure_transform = iso
+type real_effect != iso
+
+template fmt(grammar, block) = iso
+action compile(grammar, effect) != iso
+
+pure_transform != real_effect

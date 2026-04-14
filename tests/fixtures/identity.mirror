@@ -1,0 +1,12 @@
+-- identity: the simplest grammar
+-- proves: type declaration, split, grammar declaration
+
+in @meta
+
+type visibility = public | protected | private
+type bias_tree = [ref]
+type identity = public(bias_tree) | protected(bias_tree) | private(bias_tree)
+
+grammar @identity {
+  action boot(identity) <= imperfect
+}
