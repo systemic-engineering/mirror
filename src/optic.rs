@@ -120,7 +120,9 @@ form @cli {
 }
 "#;
         let rt = MirrorRuntime::new();
-        rt.compile_source(source).ok().expect("compile_with_actions")
+        rt.compile_source(source)
+            .ok()
+            .expect("compile_with_actions")
     }
 
     #[test]

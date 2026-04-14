@@ -1171,13 +1171,10 @@ impl MirrorRuntime {
         &self,
         source: &str,
     ) -> Imperfect<CompiledShatter, MirrorRuntimeError, MirrorLoss> {
-        // DELIBERATELY BROKEN — red phase: discard loss via Result conversion
-        let form = match Result::from(parse_form(source)) {
-            Ok(f) => f,
-            Err(e) => return Imperfect::failure(e),
-        };
-        let fragment = Shatter.compile_form(&form);
-        Imperfect::Success(CompiledShatter { form, fragment })
+        parse_form(source).map(|form| {
+            let fragment = Shatter.compile_form(&form);
+            CompiledShatter { form, fragment }
+        })
     }
 
     pub fn compile_file(&self, path: &Path) -> Result<CompiledShatter, MirrorRuntimeError> {
@@ -2314,7 +2311,10 @@ mod tests {
             "compile_source should propagate Partial from parse_form"
         );
         let loss = result.loss();
-        assert!(!loss.unrecognized.is_empty(), "loss should contain unrecognized decls");
+        assert!(
+            !loss.unrecognized.is_empty(),
+            "loss should contain unrecognized decls"
+        );
         // The recognized part should still compile
         assert!(result.is_ok(), "partial result should still have a value");
     }
