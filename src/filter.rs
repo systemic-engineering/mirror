@@ -180,32 +180,33 @@ impl Vector<Value, Value> for SignFilter {
 }
 
 // ---------------------------------------------------------------------------
-// Visibility — consent boundary for CI pipelines
+// CiVisibility — consent boundary for CI pipelines
 // ---------------------------------------------------------------------------
 
 /// Visibility level for CI pipeline output.
 ///
 /// Read from `MIRROR_CI_VISIBILITY` env var. Defaults to `Public`.
+/// Named `CiVisibility` to reserve `Visibility` for identity-keys consent.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub enum Visibility {
+pub enum CiVisibility {
     Public,
     Protected,
     Private,
 }
 
-impl Visibility {
+impl CiVisibility {
     /// Read visibility from `MIRROR_CI_VISIBILITY` env var.
     ///
     /// Case-insensitive. Unset or unrecognized values default to `Public`.
     pub fn from_env() -> Self {
         match std::env::var("MIRROR_CI_VISIBILITY") {
             Ok(val) => match val.to_lowercase().as_str() {
-                "public" => Visibility::Public,
-                "protected" => Visibility::Protected,
-                "private" => Visibility::Private,
-                _ => Visibility::Public,
+                "public" => CiVisibility::Public,
+                "protected" => CiVisibility::Protected,
+                "private" => CiVisibility::Private,
+                _ => CiVisibility::Public,
             },
-            Err(_) => Visibility::Public,
+            Err(_) => CiVisibility::Public,
         }
     }
 }
@@ -1042,48 +1043,48 @@ mod tests {
         assert_eq!(filter.signer, "first@key");
     }
 
-    // -- Visibility --
+    // -- CiVisibility --
 
     #[test]
-    fn visibility_default_is_public() {
+    fn ci_visibility_default_is_public() {
         std::env::remove_var("MIRROR_CI_VISIBILITY");
-        assert_eq!(Visibility::from_env(), Visibility::Public);
+        assert_eq!(CiVisibility::from_env(), CiVisibility::Public);
     }
 
     #[test]
-    fn visibility_from_env_public() {
+    fn ci_visibility_from_env_public() {
         std::env::set_var("MIRROR_CI_VISIBILITY", "public");
-        assert_eq!(Visibility::from_env(), Visibility::Public);
+        assert_eq!(CiVisibility::from_env(), CiVisibility::Public);
         std::env::remove_var("MIRROR_CI_VISIBILITY");
     }
 
     #[test]
-    fn visibility_from_env_protected() {
+    fn ci_visibility_from_env_protected() {
         std::env::set_var("MIRROR_CI_VISIBILITY", "protected");
-        assert_eq!(Visibility::from_env(), Visibility::Protected);
+        assert_eq!(CiVisibility::from_env(), CiVisibility::Protected);
         std::env::remove_var("MIRROR_CI_VISIBILITY");
     }
 
     #[test]
-    fn visibility_from_env_private() {
+    fn ci_visibility_from_env_private() {
         std::env::set_var("MIRROR_CI_VISIBILITY", "private");
-        assert_eq!(Visibility::from_env(), Visibility::Private);
+        assert_eq!(CiVisibility::from_env(), CiVisibility::Private);
         std::env::remove_var("MIRROR_CI_VISIBILITY");
     }
 
     #[test]
-    fn visibility_from_env_case_insensitive() {
+    fn ci_visibility_from_env_case_insensitive() {
         std::env::set_var("MIRROR_CI_VISIBILITY", "Protected");
-        assert_eq!(Visibility::from_env(), Visibility::Protected);
+        assert_eq!(CiVisibility::from_env(), CiVisibility::Protected);
         std::env::set_var("MIRROR_CI_VISIBILITY", "PRIVATE");
-        assert_eq!(Visibility::from_env(), Visibility::Private);
+        assert_eq!(CiVisibility::from_env(), CiVisibility::Private);
         std::env::remove_var("MIRROR_CI_VISIBILITY");
     }
 
     #[test]
-    fn visibility_from_env_unknown_defaults_public() {
+    fn ci_visibility_from_env_unknown_defaults_public() {
         std::env::set_var("MIRROR_CI_VISIBILITY", "bogus");
-        assert_eq!(Visibility::from_env(), Visibility::Public);
+        assert_eq!(CiVisibility::from_env(), CiVisibility::Public);
         std::env::remove_var("MIRROR_CI_VISIBILITY");
     }
 
