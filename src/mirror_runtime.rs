@@ -1810,6 +1810,29 @@ mod tests {
     }
 
     #[test]
+    fn boot_dir_resolves_identity_before_actor() {
+        let runtime = MirrorRuntime::new();
+        let store_dir = tempdir_for_test("boot_dir_identity");
+        let boot = runtime.compile_boot_dir(&boot_dir(), &store_dir).unwrap();
+
+        // Identity must be in the boot resolution (02-identity.mirror)
+        assert!(
+            boot.resolved.contains_key("02-identity"),
+            "02-identity must resolve in the boot dir"
+        );
+
+        // Actor (now at 05) must still resolve and depend on identity
+        assert!(
+            boot.resolved.contains_key("05-actor"),
+            "05-actor must resolve after identity"
+        );
+
+        // Renumbered files
+        assert!(boot.resolved.contains_key("03-code"), "03-code (was 02-code) must resolve");
+        assert!(boot.resolved.contains_key("06-action"), "06-action (was 04-action) must resolve");
+    }
+
+    #[test]
     fn meta_fails_to_resolve_without_prism_in_registry() {
         let runtime = MirrorRuntime::new();
         let tmp = tempdir_for_test("meta_without_prism");

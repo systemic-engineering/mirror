@@ -29,6 +29,7 @@ pub mod classifier;
 pub mod dispatch;
 pub mod domain;
 pub mod filter;
+pub mod identity;
 pub mod mirror_bf;
 pub mod prism;
 
