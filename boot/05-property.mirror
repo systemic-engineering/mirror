@@ -1,5 +1,5 @@
-form @property {
-  in @form
+grammar @property {
+  in @meta
 
   traversal verdict = pass | fail
   traversal lifecycle = requires | invariant | ensures

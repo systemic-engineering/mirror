@@ -2173,7 +2173,8 @@ mod tests {
         assert!(boot.failed.contains_key("01a-meta-action"));
         assert!(boot.failed.contains_key("01b-meta-io"));
         assert!(boot.failed.contains_key("02-shatter"));
-        assert!(boot.failed.contains_key("05-property"));
+        // 05-property now resolves (in @meta, not in @form)
+        assert!(boot.resolved.contains_key("05-property"));
         assert!(boot.failed.contains_key("10-mirror"));
 
         let reopened = MirrorRegistry::open(&store_dir).unwrap();
@@ -2181,7 +2182,8 @@ mod tests {
         assert!(reopened.lookup("@meta").is_some());
         assert!(reopened.lookup("@code").is_some());
         assert!(reopened.lookup("@actor").is_some());
-        assert!(reopened.lookup("@property").is_none());
+        // @property now resolves (in @meta instead of in @form)
+        assert!(reopened.lookup("@property").is_some());
         assert!(reopened.lookup("@mirror").is_none());
     }
 
@@ -2721,9 +2723,10 @@ mod tests {
 
         // --- What fails resolution (in @X references something missing) ---
         let failed: Vec<&str> = boot.failed.keys().map(|s| s.as_str()).collect();
+        // 05-property now resolves: in @meta (was in @form)
         assert!(
-            failed.contains(&"05-property"),
-            "property fails: in @form — @form is not defined in boot"
+            resolved.contains(&"05-property"),
+            "property must resolve after in @form -> in @meta"
         );
         assert!(
             failed.contains(&"10-mirror"),
@@ -2754,7 +2757,7 @@ mod tests {
         // These files parse fine but fail `in @X` reference checks.
         // This loss is NOT in holonomy — it should be.
         // That's the gap: resolution failures need to become MirrorLoss.
-        assert_eq!(boot.failed.len(), 8, "8 of 17 boot files fail resolution");
+        assert_eq!(boot.failed.len(), 7, "7 of 17 boot files fail resolution");
         assert!(
             failed.contains(&"01a-meta-action"),
             "01a needs @actor which sorts after it"
@@ -2768,10 +2771,6 @@ mod tests {
             "02-shatter needs @io which itself failed"
         );
         assert!(
-            failed.contains(&"05-property"),
-            "in @form — @form undefined"
-        );
-        assert!(
             failed.contains(&"10-mirror"),
             "in @form, @type, @boundary, @lens — undefined"
         );
@@ -2780,7 +2779,7 @@ mod tests {
         assert!(failed.contains(&"20-cli"), "missing refs");
 
         // --- Resolved file count: progress toward Success(Mirror) ---
-        assert_eq!(boot.resolved.len(), 9, "9 of 17 boot files resolve");
+        assert_eq!(boot.resolved.len(), 10, "10 of 17 boot files resolve");
 
         // --- The crystal still forms despite failures ---
         // The compiler produces a crystal from what DID resolve.
