@@ -177,7 +177,8 @@ impl OpticOp {
             "<" => Some(OpticOp::Subset),
             ">" => Some(OpticOp::Superset),
             "!=" => Some(OpticOp::NotIso),
-            ">=" => Some(OpticOp::Unfold),
+            "=>" => Some(OpticOp::Unfold),
+            "<-" => Some(OpticOp::Zoom),
             _ => None,
         }
     }
@@ -194,7 +195,7 @@ impl OpticOp {
             OpticOp::Subset => "<",
             OpticOp::Superset => ">",
             OpticOp::NotIso => "!=",
-            OpticOp::Unfold => ">=",
+            OpticOp::Unfold => "=>",
         }
     }
 
@@ -502,7 +503,7 @@ mod tests {
         assert_eq!(format!("{}", OpticOp::Subset), "<");
         assert_eq!(format!("{}", OpticOp::Superset), ">");
         assert_eq!(format!("{}", OpticOp::NotIso), "!=");
-        assert_eq!(format!("{}", OpticOp::Unfold), ">=");
+        assert_eq!(format!("{}", OpticOp::Unfold), "=>");
     }
 
     #[test]
