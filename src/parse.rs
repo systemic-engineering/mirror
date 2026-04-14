@@ -134,7 +134,7 @@ impl Vector<String, Prism<AstNode>> for Parse {
     type Error = String;
 
     fn trace(&self, source: String) -> Trace<Prism<AstNode>, String> {
-        match parse_form(&source) {
+        match Result::from(parse_form(&source)) {
             Ok(form) => {
                 let tree = form_to_prism(&form);
                 let oid = tree.content_oid();

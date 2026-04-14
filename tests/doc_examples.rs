@@ -30,7 +30,7 @@ fn doc_mirror_grammar_deploy() {
     invariant pure
     ensures always_halts
 }"#;
-    let form = parse_form(source).unwrap();
+    let form = parse_form(source).ok().unwrap();
     assert_eq!(form.kind, DeclKind::Grammar);
     assert_eq!(form.name, "@deploy");
     let action_count = form
@@ -66,7 +66,7 @@ fn doc_mirror_grammar_with_in_ref() {
         apply(data)
     }
 }"#;
-    let form = parse_form(source).unwrap();
+    let form = parse_form(source).ok().unwrap();
     assert_eq!(form.kind, DeclKind::Grammar);
     assert_eq!(form.name, "@deploy");
     let in_count = form
@@ -83,13 +83,13 @@ fn doc_mirror_grammar_with_in_ref() {
 fn doc_mirror_cross_grammar_actions() {
     // These are standalone action declarations from the docs
     let source1 = "action ingest(data) in @code/python { parse(data) }";
-    let form1 = parse_form(source1).unwrap();
+    let form1 = parse_form(source1).ok().unwrap();
     assert_eq!(form1.kind, DeclKind::Action);
     assert_eq!(form1.name, "ingest");
     assert_eq!(form1.grammar_ref, Some("@code/python".to_string()));
 
     let source2 = "action transform(data) in @code/rust { transform(data) }";
-    let form2 = parse_form(source2).unwrap();
+    let form2 = parse_form(source2).ok().unwrap();
     assert_eq!(form2.kind, DeclKind::Action);
     assert_eq!(form2.grammar_ref, Some("@code/rust".to_string()));
 }
@@ -98,7 +98,7 @@ fn doc_mirror_cross_grammar_actions() {
 #[test]
 fn doc_mirror_invariant_declaration() {
     let source = "invariant deterministic";
-    let form = parse_form(source).unwrap();
+    let form = parse_form(source).ok().unwrap();
     assert_eq!(form.kind, DeclKind::Invariant);
     assert_eq!(form.name, "deterministic");
 }
@@ -111,7 +111,7 @@ fn doc_mirror_invariant_declaration() {
 #[test]
 fn doc_witnessed_consent_type() {
     let source = "type consent = granted | withdrawn | silent";
-    let form = parse_form(source).unwrap();
+    let form = parse_form(source).ok().unwrap();
     assert_eq!(form.kind, DeclKind::Type);
     assert_eq!(form.name, "consent");
     assert_eq!(
@@ -132,7 +132,7 @@ fn doc_witnessed_action_proceed() {
     withdrawn -> Failure(consent_withdrawn, accumulated_loss)
     granted   -> Partial(result, exchange_loss)
 }"#;
-    let form = parse_form(source).unwrap();
+    let form = parse_form(source).ok().unwrap();
     assert_eq!(form.kind, DeclKind::Action);
     assert_eq!(form.name, "proceed");
     assert_eq!(form.params, vec!["consent".to_string()]);
@@ -161,7 +161,7 @@ fn doc_ehc_pipeline_form() {
         fallback(error)
     }
 }"#;
-    let form = parse_form(source).unwrap();
+    let form = parse_form(source).ok().unwrap();
     assert_eq!(form.kind, DeclKind::Form);
     assert_eq!(form.name, "@pipeline");
     // Should have prism, lens, recover, rescue children
@@ -210,7 +210,7 @@ fn doc_shatter_grammar_deploy() {
         operation()
     }
 }"#;
-    let form = parse_form(source).unwrap();
+    let form = parse_form(source).ok().unwrap();
     assert_eq!(form.kind, DeclKind::Grammar);
     assert_eq!(form.name, "@deploy");
     let action_count = form
@@ -229,7 +229,7 @@ fn doc_shatter_recover_rescue() {
     log_drift(loss)
     shatter
 }"#;
-    let form = parse_form(source).unwrap();
+    let form = parse_form(source).ok().unwrap();
     assert_eq!(form.kind, DeclKind::Recover);
     assert!(form.body_text.is_some());
     assert_eq!(form.params.len(), 2);
@@ -237,7 +237,7 @@ fn doc_shatter_recover_rescue() {
     let source2 = r#"rescue |error| {
     annotate(old_shatter, error)
 }"#;
-    let form2 = parse_form(source2).unwrap();
+    let form2 = parse_form(source2).ok().unwrap();
     assert_eq!(form2.kind, DeclKind::Rescue);
     assert!(form2.body_text.is_some());
 }
@@ -308,9 +308,9 @@ fn aspirational_shatter_sections_do_not_parse_as_declarations() {
         // a structured declaration. The point is: the docs describe a format
         // that doesn't exist in the parser yet.
         let result = parse_form(source);
-        // We don't assert is_err because the parser may skip unknown tokens.
+        // We don't assert is_err because the parser may return Partial for unknown tokens.
         // We DO assert that if it parses, it's not a meaningful structure.
-        if let Ok(form) = result {
+        if let Some(form) = result.ok() {
             // If it parsed, it shouldn't have the keyword as a DeclKind
             // (loss, properties, kernel, fate aren't DeclKind variants)
             assert!(

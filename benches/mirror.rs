@@ -73,11 +73,11 @@ fn bench_parse(c: &mut Criterion) {
     let mut group = c.benchmark_group("parse");
 
     group.bench_function("minimal", |b| {
-        b.iter(|| parse_form(black_box(MINIMAL_SOURCE)).unwrap())
+        b.iter(|| parse_form(black_box(MINIMAL_SOURCE)).ok().unwrap())
     });
 
     group.bench_function("grammar", |b| {
-        b.iter(|| parse_form(black_box(GRAMMAR_SOURCE)).unwrap())
+        b.iter(|| parse_form(black_box(GRAMMAR_SOURCE)).ok().unwrap())
     });
 
     // Parse each boot file individually
@@ -95,7 +95,7 @@ fn bench_parse(c: &mut Criterion) {
             let stem = path.file_stem().unwrap().to_str().unwrap().to_string();
             let source = std::fs::read_to_string(path).unwrap();
             group.bench_function(&format!("boot/{}", stem), |b| {
-                b.iter(|| parse_form(black_box(&source)).unwrap())
+                b.iter(|| parse_form(black_box(&source)).ok().unwrap())
             });
         }
     }

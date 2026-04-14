@@ -61,7 +61,9 @@ use crate::declaration::{
 };
 use fragmentation::frgmnt_store::FrgmntStore;
 use fragmentation::sha::HashAlg;
-use prism::{Beam, Optic, Prism};
+use prism::{Beam, Imperfect, Loss, Optic, Prism};
+
+use crate::loss::{MirrorLoss, UnrecognizedDecl};
 
 // ---------------------------------------------------------------------------
 // Errors
@@ -317,10 +319,15 @@ impl Shatter {
 /// Parse a `.mirror` source string. The top-level may contain one or more
 /// declarations. If there is exactly one, return it as-is. If there are
 /// multiple, wrap them in a synthetic file-level Form.
-pub fn parse_form(source: &str) -> Result<Form, MirrorRuntimeError> {
+///
+/// Returns `Imperfect`: `Success` if all input was recognized,
+/// `Partial` if unrecognized keywords were encountered (measured loss),
+/// `Failure` if no declarations could be parsed.
+pub fn parse_form(source: &str) -> Imperfect<Form, MirrorRuntimeError, MirrorLoss> {
     let tokens = tokenize(source);
     let mut cursor = 0usize;
     let mut decls = Vec::new();
+    let mut unrecognized = Vec::new();
 
     loop {
         skip_trivia(&tokens, &mut cursor);
@@ -328,13 +335,27 @@ pub fn parse_form(source: &str) -> Result<Form, MirrorRuntimeError> {
             break;
         }
         // Only parse tokens that start with a known declaration keyword
-        // or the `abstract` modifier. Skip unrecognized top-level tokens.
+        // or the `abstract` modifier. Collect unrecognized top-level tokens as loss.
         match tokens.get(cursor) {
             Some(Tok::Word(w)) if DeclKind::parse(w).is_some() || w == "abstract" => {
-                decls.push(parse_decl(&tokens, &mut cursor)?);
+                match parse_decl(&tokens, &mut cursor) {
+                    Ok(form) => decls.push(form),
+                    Err(e) => return Imperfect::failure(e),
+                }
+            }
+            Some(Tok::Word(w)) => {
+                // Unrecognized keyword — collect instead of dropping
+                let keyword = w.clone();
+                let line = count_line_at(&tokens, cursor);
+                let content = collect_until_next_decl(&tokens, &mut cursor);
+                unrecognized.push(UnrecognizedDecl {
+                    keyword,
+                    line,
+                    content,
+                });
             }
             Some(_) => {
-                // Skip unrecognized token and any following tokens until newline
+                // Non-word token at top level — skip to newline
                 while cursor < tokens.len() && !matches!(tokens.get(cursor), Some(Tok::Newline)) {
                     cursor += 1;
                 }
@@ -346,21 +367,84 @@ pub fn parse_form(source: &str) -> Result<Form, MirrorRuntimeError> {
         }
     }
 
-    if decls.is_empty() {
-        Err(err("no declarations found".to_string()))
-    } else if decls.len() == 1 {
-        Ok(decls.into_iter().next().unwrap())
+    if decls.is_empty() && unrecognized.is_empty() {
+        Imperfect::failure(err("no declarations found"))
+    } else if decls.is_empty() {
+        // Only unrecognized decls — nothing survived
+        let loss = MirrorLoss {
+            unrecognized,
+            ..MirrorLoss::zero()
+        };
+        Imperfect::failure_with_loss(err("no recognized declarations found"), loss)
     } else {
-        // Multiple declarations: wrap in a synthetic file-level Form
-        let wrapped = Form::new(
-            DeclKind::Form,
-            "".to_string(),
-            Vec::new(),
-            Vec::new(),
-            decls,
-        );
-        Ok(wrapped)
+        let form = if decls.len() == 1 {
+            decls.into_iter().next().unwrap()
+        } else {
+            Form::new(DeclKind::Form, "".to_string(), Vec::new(), Vec::new(), decls)
+        };
+
+        if unrecognized.is_empty() {
+            Imperfect::Success(form)
+        } else {
+            // DELIBERATELY BROKEN — red phase: discard loss, return Success
+            Imperfect::Success(form)
+        }
     }
+}
+
+/// Count the 1-based line number at a token position by counting Newline tokens before it.
+fn count_line_at(tokens: &[Tok], pos: usize) -> usize {
+    let newlines = tokens[..pos]
+        .iter()
+        .filter(|t| matches!(t, Tok::Newline))
+        .count();
+    newlines + 1
+}
+
+/// Collect tokens from current position until the next recognized declaration keyword
+/// or end-of-tokens. Returns the collected content as a string.
+fn collect_until_next_decl(tokens: &[Tok], cursor: &mut usize) -> String {
+    let mut content = String::new();
+    // Skip the keyword itself (already captured)
+    *cursor += 1;
+    while *cursor < tokens.len() {
+        match tokens.get(*cursor) {
+            Some(Tok::Newline) => {
+                // Check if next non-trivia token is a declaration keyword
+                let mut peek = *cursor + 1;
+                while peek < tokens.len() && matches!(tokens[peek], Tok::Newline) {
+                    peek += 1;
+                }
+                if peek >= tokens.len() {
+                    *cursor = peek;
+                    break;
+                }
+                if let Some(Tok::Word(w)) = tokens.get(peek) {
+                    if DeclKind::parse(w).is_some() || w == "abstract" {
+                        *cursor += 1; // consume the newline
+                        break;
+                    }
+                }
+                content.push('\n');
+                *cursor += 1;
+            }
+            Some(Tok::Word(w)) => {
+                if !content.is_empty() && !content.ends_with('\n') {
+                    content.push(' ');
+                }
+                content.push_str(w);
+                *cursor += 1;
+            }
+            Some(Tok::LBrace) => { content.push('{'); *cursor += 1; }
+            Some(Tok::RBrace) => { content.push('}'); *cursor += 1; }
+            Some(Tok::LParen) => { content.push('('); *cursor += 1; }
+            Some(Tok::RParen) => { content.push(')'); *cursor += 1; }
+            Some(Tok::Comma) => { content.push(','); *cursor += 1; }
+            Some(Tok::Equals) => { content.push('='); *cursor += 1; }
+            None => break,
+        }
+    }
+    content.trim().to_string()
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1072,7 +1156,8 @@ impl MirrorRuntime {
     }
 
     pub fn compile_source(&self, source: &str) -> Result<CompiledShatter, MirrorRuntimeError> {
-        let form = parse_form(source)?;
+        let parsed = parse_form(source);
+        let form = Result::from(parsed)?;
         let shatter = Shatter;
         let fragment = shatter.compile_form(&form);
         Ok(CompiledShatter { form, fragment })
@@ -1370,7 +1455,7 @@ mod tests {
     #[test]
     fn type_declaration_uses_iso_and_split() {
         let source = "type visibility = private | protected | public";
-        let form = parse_form(source).unwrap();
+        let form = parse_form(source).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Type);
         assert!(
             form.optic_ops.contains(&OpticOp::Iso),
@@ -1387,7 +1472,7 @@ mod tests {
     #[test]
     fn split_decl_keyword_classified_as_optic() {
         let source = "split |(ref, ref)";
-        let form = parse_form(source).unwrap();
+        let form = parse_form(source).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Split);
         assert!(
             form.optic_ops.contains(&OpticOp::Split),
@@ -1398,7 +1483,7 @@ mod tests {
     #[test]
     fn zoom_decl_keyword_classified_as_optic() {
         let source = "zoom |>(ref, prism)";
-        let form = parse_form(source).unwrap();
+        let form = parse_form(source).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Zoom);
         assert!(
             form.optic_ops.contains(&OpticOp::Zoom),
@@ -1409,7 +1494,7 @@ mod tests {
     #[test]
     fn refract_decl_keyword_classified_as_optic() {
         let source = "refract ..(ref)";
-        let form = parse_form(source).unwrap();
+        let form = parse_form(source).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Refract);
         assert!(
             form.optic_ops.contains(&OpticOp::Refract),
@@ -1420,7 +1505,7 @@ mod tests {
     #[test]
     fn focus_decl_with_params_classified_as_optic() {
         let source = "focus type(id)";
-        let form = parse_form(source).unwrap();
+        let form = parse_form(source).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Focus);
         assert!(
             form.optic_ops.contains(&OpticOp::Focus),
@@ -1431,7 +1516,7 @@ mod tests {
     #[test]
     fn type_without_variants_has_no_split() {
         let source = "type grammar";
-        let form = parse_form(source).unwrap();
+        let form = parse_form(source).ok().unwrap();
         assert!(!form.optic_ops.contains(&OpticOp::Split));
         assert!(!form.optic_ops.contains(&OpticOp::Iso));
     }
@@ -1439,7 +1524,7 @@ mod tests {
     #[test]
     fn parens_classified_as_focus() {
         let source = "type beam(result)";
-        let form = parse_form(source).unwrap();
+        let form = parse_form(source).ok().unwrap();
         assert!(
             form.optic_ops.contains(&OpticOp::Focus),
             "parenthesized params should classify as Focus"
@@ -1453,7 +1538,7 @@ mod tests {
     #[test]
     fn mirror_runtime_parses_atom_decl() {
         let src = "form @form {\n  prism focus\n}\n";
-        let form = parse_form(src).unwrap();
+        let form = parse_form(src).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Form);
         assert_eq!(form.name, "@form");
         assert_eq!(form.children.len(), 1);
@@ -1464,7 +1549,7 @@ mod tests {
     #[test]
     fn mirror_runtime_parses_params_and_variants() {
         let src = "form @x {\n  prism eigenvalues(precision)\n  traversal kind = a | b | c\n}\n";
-        let form = parse_form(src).unwrap();
+        let form = parse_form(src).ok().unwrap();
         assert_eq!(form.children[0].params, vec!["precision".to_string()]);
         assert_eq!(
             form.children[1].variants,
@@ -1475,7 +1560,7 @@ mod tests {
     #[test]
     fn mirror_runtime_parses_nested_property() {
         let src = "form @property {\n  property unique_variants(form) {\n    fold input\n  }\n}\n";
-        let form = parse_form(src).unwrap();
+        let form = parse_form(src).ok().unwrap();
         assert_eq!(form.children.len(), 1);
         let prop = &form.children[0];
         assert_eq!(prop.kind, DeclKind::Property);
@@ -1886,7 +1971,7 @@ mod tests {
     #[test]
     fn parse_action_with_grammar_ref() {
         let src = "action transform(state) in @code/rust {\n    fn transform(&mut self) { }\n}\n";
-        let form = parse_form(src).unwrap();
+        let form = parse_form(src).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Action);
         assert_eq!(form.name, "transform");
         assert_eq!(form.params, vec!["state".to_string()]);
@@ -1903,7 +1988,7 @@ mod tests {
     #[test]
     fn parse_action_without_grammar_ref() {
         let src = "action update(state) {\n    state.apply()\n}\n";
-        let form = parse_form(src).unwrap();
+        let form = parse_form(src).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Action);
         assert_eq!(form.name, "update");
         assert_eq!(form.params, vec!["state".to_string()]);
@@ -1914,7 +1999,7 @@ mod tests {
     #[test]
     fn parse_action_receiver_stored() {
         let src = "action send(process, message) in @actor {\n    dispatch(message)\n}\n";
-        let form = parse_form(src).unwrap();
+        let form = parse_form(src).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Action);
         assert_eq!(form.name, "send");
         assert_eq!(
@@ -1927,7 +2012,7 @@ mod tests {
     #[test]
     fn parse_action_body_stored_as_raw() {
         let src = "action compute(x) in @code/rust {\n    let y = x * 2;\n    y + 1\n}\n";
-        let form = parse_form(src).unwrap();
+        let form = parse_form(src).ok().unwrap();
         assert!(form.body_text.is_some());
         let body = form.body_text.unwrap();
         // Body should contain the raw text, not parsed mirror declarations
@@ -1941,7 +2026,7 @@ mod tests {
     #[test]
     fn parse_action_empty_body() {
         let src = "action noop(state) { }\n";
-        let form = parse_form(src).unwrap();
+        let form = parse_form(src).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Action);
         assert_eq!(form.name, "noop");
         assert_eq!(form.body_text, None, "empty body should be None");
@@ -2058,7 +2143,7 @@ mod tests {
         assert!(!content.is_empty(), "mirror.shatter must not be empty");
 
         // Parse it back — the content IS valid .mirror syntax
-        let reparsed = parse_form(&content).unwrap();
+        let reparsed = parse_form(&content).ok().unwrap();
 
         // Compile the reparsed form
         let shatter = Shatter;
@@ -2085,7 +2170,7 @@ mod tests {
         let content = std::fs::read_to_string(&output).unwrap();
 
         // Must parse without error
-        let form = parse_form(&content).unwrap();
+        let form = parse_form(&content).ok().unwrap();
 
         // Must contain the boot forms (all boot files collapsed).
         // Count changes as parser learns new declaration kinds.
@@ -2103,7 +2188,7 @@ mod tests {
     #[test]
     fn parse_default_declaration() {
         let src = "default(visibility) = public";
-        let form = parse_form(src).unwrap();
+        let form = parse_form(src).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Default);
         assert_eq!(form.name, "");
         assert_eq!(form.params, vec!["visibility".to_string()]);
@@ -2117,7 +2202,7 @@ mod tests {
     #[test]
     fn parse_binding_declaration() {
         let src = "binding(leader, key) = focus";
-        let form = parse_form(src).unwrap();
+        let form = parse_form(src).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Binding);
         assert_eq!(form.name, "");
         assert_eq!(form.params, vec!["leader".to_string(), "key".to_string()]);
@@ -2127,7 +2212,7 @@ mod tests {
     #[test]
     fn parse_default_inside_block() {
         let src = "form @test {\n  type visibility = private | public\n  default(visibility) = public\n}\n";
-        let form = parse_form(src).unwrap();
+        let form = parse_form(src).ok().unwrap();
         assert_eq!(form.kind, DeclKind::Form);
         // Both children should be present — default is NOT silently dropped
         assert_eq!(
@@ -2148,18 +2233,50 @@ mod tests {
     // -----------------------------------------------------------------------
 
     #[test]
-    fn parse_unrecognized_keyword_tracked_in_loss() {
-        // "widget" is not a known DeclKind — should produce loss, not silence
+    fn parse_unrecognized_keyword_returns_partial() {
+        // "widget" is not a known DeclKind — parser should return Partial with loss
         let src = "widget foo\ntype bar";
         let result = parse_form(src);
-        // With Imperfect, this would be Partial. For now, parse_form returns
-        // Result and silently drops the widget line. This test documents the
-        // current (broken) behavior and will be updated in Phase 2.
-        let form = result.unwrap();
-        // Currently only "type bar" survives — widget is silently dropped.
-        // After Phase 2, the loss will be measured.
+        assert!(
+            result.is_partial(),
+            "unrecognized keyword should produce Partial, got {:?}",
+            if result.is_ok() { "Success" } else { "Failure" }
+        );
+        // The recognized declaration survives
+        let form = result.as_ref().ok().unwrap();
         assert_eq!(form.kind, DeclKind::Type);
         assert_eq!(form.name, "bar");
+    }
+
+    #[test]
+    fn parse_unrecognized_keyword_loss_contains_keyword() {
+        let src = "widget foo\ntype bar";
+        let result = parse_form(src);
+        let loss = result.loss();
+        assert_eq!(loss.unrecognized.len(), 1);
+        assert_eq!(loss.unrecognized[0].keyword, "widget");
+        assert_eq!(loss.unrecognized[0].line, 1);
+        assert!(loss.unrecognized[0].content.contains("foo"));
+    }
+
+    #[test]
+    fn parse_all_recognized_returns_success() {
+        let src = "type visibility = private | public";
+        let result = parse_form(src);
+        assert!(
+            !result.is_partial(),
+            "fully recognized source should not be Partial"
+        );
+        assert!(result.is_ok(), "fully recognized source should succeed");
+    }
+
+    #[test]
+    fn parse_only_unrecognized_returns_failure() {
+        let src = "widget foo\ngadget bar";
+        let result = parse_form(src);
+        assert!(result.is_err(), "only unrecognized keywords should fail");
+        let loss = result.loss();
+        assert_eq!(loss.unrecognized.len(), 2, "both unrecognized should be tracked");
     }
 
     fn mirror_shatter_deterministic_across_runs() {
