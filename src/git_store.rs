@@ -203,4 +203,53 @@ mod tests {
         store.set_head(&oid).unwrap();
         assert_eq!(store.head().as_deref(), Some(oid.as_str()));
     }
+
+    #[test]
+    fn store_shatter_roundtrip() {
+        use fragmentation::fragment::Fragmentable;
+
+        let dir = tempfile::tempdir().unwrap();
+        git2::Repository::init(dir.path()).unwrap();
+
+        let store = MirrorGitStore::open(dir.path()).unwrap();
+        let content = "---\noid: test123\nluminosity: light\n---\n\ntype color = red | blue\n";
+        store.store_shatter("test123", content);
+
+        let got = store.get_crystal("test123");
+        assert!(got.is_some(), "shatter artifact should be retrievable by oid");
+        assert_eq!(got.unwrap().data(), content);
+    }
+
+    #[test]
+    fn store_file_ref_and_lookup() {
+        let dir = tempfile::tempdir().unwrap();
+        git2::Repository::init(dir.path()).unwrap();
+
+        let store = MirrorGitStore::open(dir.path()).unwrap();
+        store.set_file_ref("src/main.mirror", "abc123").unwrap();
+        assert_eq!(
+            store.get_file_ref("src/main.mirror").as_deref(),
+            Some("abc123")
+        );
+    }
+
+    #[test]
+    fn file_ref_different_paths_independent() {
+        let dir = tempfile::tempdir().unwrap();
+        git2::Repository::init(dir.path()).unwrap();
+
+        let store = MirrorGitStore::open(dir.path()).unwrap();
+        store.set_file_ref("src/foo.mirror", "oid-foo").unwrap();
+        store.set_file_ref("src/bar.mirror", "oid-bar").unwrap();
+
+        assert_eq!(
+            store.get_file_ref("src/foo.mirror").as_deref(),
+            Some("oid-foo")
+        );
+        assert_eq!(
+            store.get_file_ref("src/bar.mirror").as_deref(),
+            Some("oid-bar")
+        );
+        assert_eq!(store.get_file_ref("src/unknown.mirror"), None);
+    }
 }

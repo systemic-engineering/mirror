@@ -4152,4 +4152,56 @@ grammar @ai {
             "04a-runtime.mirror must be loaded"
         );
     }
+
+    // -----------------------------------------------------------------------
+    // compile_to_shatter — Task 2.1
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn compile_to_shatter_produces_artifact() {
+        let dir = tempfile::tempdir().unwrap();
+        git2::Repository::init(dir.path()).unwrap();
+
+        let store = crate::git_store::MirrorGitStore::open(dir.path()).unwrap();
+        let runtime = MirrorRuntime::new();
+
+        let result = runtime.compile_to_shatter("type color = red | blue", &store);
+        assert!(result.is_ok(), "compile_to_shatter must succeed");
+    }
+
+    #[test]
+    fn compile_to_shatter_artifact_retrievable_from_store() {
+        use fragmentation::fragment::Fragmentable;
+
+        let dir = tempfile::tempdir().unwrap();
+        git2::Repository::init(dir.path()).unwrap();
+
+        let store = crate::git_store::MirrorGitStore::open(dir.path()).unwrap();
+        let runtime = MirrorRuntime::new();
+
+        let result = runtime.compile_to_shatter("type color = red | blue", &store);
+        let (meta, _body) = result.ok().expect("compile_to_shatter must produce a value");
+
+        // The shatter artifact should be in the store under the meta OID
+        let artifact = store.get_crystal(&meta.oid);
+        assert!(artifact.is_some(), "shatter artifact must be retrievable by OID");
+
+        // Verify the stored content starts with the frontmatter delimiter
+        let content = artifact.unwrap();
+        assert!(content.data().starts_with("---\n"), "stored shatter must have frontmatter");
+        assert!(content.data().contains("type color = red | blue"), "source preserved in body");
+    }
+
+    #[test]
+    fn compile_to_shatter_luminosity_light_for_valid_source() {
+        let dir = tempfile::tempdir().unwrap();
+        git2::Repository::init(dir.path()).unwrap();
+
+        let store = crate::git_store::MirrorGitStore::open(dir.path()).unwrap();
+        let runtime = MirrorRuntime::new();
+
+        let result = runtime.compile_to_shatter("type signal = on | off", &store);
+        let (meta, _body) = result.ok().unwrap();
+        assert_eq!(meta.luminosity, crate::shatter_format::Luminosity::Light);
+    }
 }
