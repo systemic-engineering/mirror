@@ -174,6 +174,7 @@ flags:
             "bench" => Some("bench <path> -- benchmark compilation\n\nMeasures compilation time and structural loss.\nPrints timing and MirrorLoss summary."),
             "verify" => Some("verify <file> -- verify a signed .shatter file\n\nChecks the Ed25519 signature (.shatter.sig) against the content.\nUses the public key from CONVERSATION_KEYS hierarchy.\nExits 0 if valid, nonzero if tampered or unsigned."),
             "git" => Some("git <subcommand> -- read-only prism over git's ref space\n\nSubcommands:\n  refs              list all refs (branches, tags, HEAD)\n  tree <ref>        show the tree at a ref\n  show <ref>:<path> read a blob without checkout\n  diff <a> <b>      structural diff between two refs\n  log               commit history (short)"),
+            "craft" => Some("craft [targets] -- build from mirror.spec\n\nReads mirror.spec, compiles source grammars, generates output crates.\nWith no arguments, builds default targets from the spec.\n\nTargets are declared in the craft { } block of mirror.spec."),
             _ => None,
         }
     }
@@ -1326,11 +1327,11 @@ impl Cli {
     fn cmd_craft(&self, args: &[String]) -> Result<String, CliError> {
         // Find mirror.spec by walking up from cwd
         let spec_path = find_spec_file()?;
-        let spec = crate::spec::parse_spec(&spec_path).map_err(|e| {
-            CliError::Usage(format!("failed to parse {}: {}", spec_path, e))
-        })?;
+        let spec = crate::spec::parse_spec(&spec_path)
+            .map_err(|e| CliError::Usage(format!("failed to parse {}: {}", spec_path, e)))?;
 
-        let target_names: Vec<&str> = if args.is_empty() || args.iter().all(|a| a.starts_with('-')) {
+        let target_names: Vec<&str> = if args.is_empty() || args.iter().all(|a| a.starts_with('-'))
+        {
             if spec.craft.default.is_empty() {
                 return Err(CliError::Usage(
                     "no default targets in mirror.spec, specify targets explicitly".to_string(),

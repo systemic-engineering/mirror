@@ -795,4 +795,26 @@ craft {
         assert!(result.is_err());
         assert!(result.unwrap_err().0.contains("cannot read"));
     }
+
+    #[test]
+    fn parse_real_mirror_spec() {
+        let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("mirror.spec");
+        let spec = parse_spec(path.to_str().unwrap()).unwrap();
+        assert_eq!(spec.oid, "@mirror-lang");
+        assert_eq!(spec.store.path.as_deref(), Some(".git/mirror"));
+        assert!(spec.craft.targets.len() >= 4, "should have at least 4 targets");
+        assert!(
+            spec.craft.targets.iter().any(|t| t.name == "boot"),
+            "should have boot target"
+        );
+        assert!(
+            spec.craft.targets.iter().any(|t| t.name == "mirror"),
+            "should have mirror target"
+        );
+        assert!(
+            spec.craft.targets.iter().any(|t| t.name == "cli"),
+            "should have cli target"
+        );
+        assert!(!spec.properties.requires.is_empty());
+    }
 }
