@@ -241,14 +241,45 @@ impl std::fmt::Display for OpticOp {
 // MirrorData — the focused eigenvalues of a declaration
 // ---------------------------------------------------------------------------
 
-/// The data payload of a mirror fragment: kind, name, params, variants.
+/// The data payload of a mirror fragment: kind, name, params, variants,
+/// plus action/modifier metadata absorbed from the former `Form` struct.
 /// These are the eigenvalues of a declaration — what survives projection.
-#[derive(Clone, Debug, PartialEq, Eq)]
+///
+/// The extra fields (`grammar_ref`, `body_text`, `is_abstract`, `return_type`,
+/// `parent_ref`) are NOT included in `Encode`/`Decode` — they are encoded into
+/// `params` and `variants` with prefixes (e.g. `in:@code/rust`, `body:...`,
+/// `modifier:abstract`, `returns:...`, `parent:@actor`) for content-addressing.
+/// The decode side reconstructs them from those prefixed entries.
+#[derive(Clone, Debug, Eq)]
 pub struct MirrorData {
     pub kind: DeclKind,
     pub name: String,
     pub params: Vec<String>,
     pub variants: Vec<String>,
+    // -- absorbed from Form --
+    /// For `action` declarations: the grammar reference (e.g. `@code/rust`).
+    pub grammar_ref: Option<String>,
+    /// For `action` declarations: the raw body text, brace-balanced but unparsed.
+    pub body_text: Option<String>,
+    /// Whether this declaration has the `abstract` modifier.
+    pub is_abstract: bool,
+    /// Optional return type annotation (e.g. `-> [completion]`).
+    pub return_type: Option<String>,
+    /// For `grammar` declarations: the parent grammar reference (e.g. `@actor`).
+    pub parent_ref: Option<String>,
+}
+
+/// The extra metadata fields (grammar_ref, body_text, is_abstract, return_type,
+/// parent_ref) are excluded from equality because they are encoded into
+/// params/variants for content-addressing. Structural equality compares the
+/// content-addressable surface only.
+impl PartialEq for MirrorData {
+    fn eq(&self, other: &Self) -> bool {
+        self.kind == other.kind
+            && self.name == other.name
+            && self.params == other.params
+            && self.variants == other.variants
+    }
 }
 
 impl MirrorData {
@@ -263,6 +294,11 @@ impl MirrorData {
             name: name.into(),
             params,
             variants,
+            grammar_ref: None,
+            body_text: None,
+            is_abstract: false,
+            return_type: None,
+            parent_ref: None,
         }
     }
 }
@@ -320,6 +356,11 @@ impl Decode for MirrorData {
             name,
             params,
             variants,
+            grammar_ref: None,
+            body_text: None,
+            is_abstract: false,
+            return_type: None,
+            parent_ref: None,
         })
     }
 }
