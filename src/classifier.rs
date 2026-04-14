@@ -662,9 +662,12 @@ mod tests {
             examples.push(Example { features, label });
         }
 
+        // 50 epochs * 12 classes * 6 augmented = 4,320 passes.
+        // Clearly separable data converges fast. No need for 126k passes.
         let config = TrainConfig {
-            epochs: 500,
-            augmentation_factor: 20,
+            epochs: 50,
+            augmentation_factor: 5,
+            learning_rate: 0.1,
             ..Default::default()
         };
         let (_, _, accuracy) = train(&examples, &config);

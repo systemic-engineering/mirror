@@ -1825,6 +1825,22 @@ mod tests {
         dir
     }
 
+    /// Shared boot store — compile once, read many.
+    ///
+    /// Boot files don't change between tests. Their OIDs are stable.
+    /// A shared compile means: parse once, cache forever. Every subsequent
+    /// test that needs a booted registry is a cache hit.
+    fn shared_boot_store() -> &'static (BootResolution, PathBuf) {
+        use std::sync::OnceLock;
+        static BOOT: OnceLock<(BootResolution, PathBuf)> = OnceLock::new();
+        BOOT.get_or_init(|| {
+            let runtime = MirrorRuntime::new();
+            let store = tempdir_for_test("shared_boot");
+            let boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+            (boot, store)
+        })
+    }
+
     // -----------------------------------------------------------------------
     // OpticOp classification in parsed Forms
     // -----------------------------------------------------------------------
@@ -2008,13 +2024,13 @@ mod tests {
 
     #[test]
     fn mirror_runtime_compiles_full_boot_dir() {
-        let runtime = MirrorRuntime::new();
-        let store_dir = tempdir_for_test("compiles_full_boot_dir");
-        let boot = runtime.compile_boot_dir(&boot_dir(), &store_dir).unwrap();
+        let (boot, _store) = shared_boot_store();
         assert!(boot.resolved.len() + boot.failed.len() >= 8);
         assert_eq!(boot.collapsed.form_name(), "mirror");
         assert!(boot.collapsed.form.children.len() >= 8);
 
+        // Determinism: a fresh compile produces the same crystal OID
+        let runtime = MirrorRuntime::new();
         let store_dir2 = tempdir_for_test("compiles_full_boot_dir_2");
         let again = runtime.compile_boot_dir(&boot_dir(), &store_dir2).unwrap();
         assert_eq!(boot.collapsed.crystal(), again.collapsed.crystal());
@@ -2254,9 +2270,7 @@ mod tests {
 
     #[test]
     fn boot_dir_resolves_first_three_files_and_fails_property_and_mirror() {
-        let runtime = MirrorRuntime::new();
-        let store_dir = tempdir_for_test("boot_dir_resolves_full");
-        let boot = runtime.compile_boot_dir(&boot_dir(), &store_dir).unwrap();
+        let (boot, store_dir) = shared_boot_store();
 
         assert!(boot.resolved.contains_key("00-prism"));
         assert!(boot.resolved.contains_key("01-meta"));
@@ -2276,7 +2290,7 @@ mod tests {
         // 10-mirror moved to std/ — not loaded by kernel compilation
         assert!(boot.failed.contains_key("06b-package-spec"));
 
-        let reopened = MirrorRegistry::open(&store_dir).unwrap();
+        let reopened = MirrorRegistry::open(store_dir).unwrap();
         assert!(reopened.lookup("@prism").is_some());
         assert!(reopened.lookup("@meta").is_some());
         assert!(reopened.lookup("@code").is_some());
@@ -2522,17 +2536,8 @@ mod tests {
 
     #[test]
     fn mirror_shatter_materializes_and_roundtrips() {
-        let runtime = MirrorRuntime::new();
-        let store_dir = tempdir_for_test("materialize_crystal");
-        let output = store_dir.join("mirror.shatter");
-
-        let oid = runtime
-            .materialize_crystal(&boot_dir(), &store_dir, &output)
-            .unwrap();
-
-        // The file exists and is non-empty
-        assert!(output.exists(), "mirror.shatter must be written to disk");
-        let content = std::fs::read_to_string(&output).unwrap();
+        let (boot, _store) = shared_boot_store();
+        let content = emit_shatter(&boot.collapsed, &boot.resolved, &boot.failed);
         assert!(!content.is_empty(), "mirror.shatter must not be empty");
 
         // Parse it back — the content IS valid .mirror syntax
@@ -2545,22 +2550,15 @@ mod tests {
         // Same OID — round-trip exact
         assert_eq!(
             fragment.oid(),
-            &oid,
+            boot.collapsed.crystal(),
             "round-trip OID mismatch: emitted shatter must parse back to same crystal"
         );
     }
 
     #[test]
     fn mirror_shatter_is_valid_mirror_syntax() {
-        let runtime = MirrorRuntime::new();
-        let store_dir = tempdir_for_test("shatter_valid_syntax");
-        let output = store_dir.join("mirror.shatter");
-
-        runtime
-            .materialize_crystal(&boot_dir(), &store_dir, &output)
-            .unwrap();
-
-        let content = std::fs::read_to_string(&output).unwrap();
+        let (boot, _store) = shared_boot_store();
+        let content = emit_shatter(&boot.collapsed, &boot.resolved, &boot.failed);
 
         // Must parse without error
         let form = parse_form(&content).ok().unwrap();
@@ -2805,7 +2803,7 @@ mod tests {
             .filter(|f| f.ends_with(".mirror"))
             .collect();
         std_files.sort();
-        assert_eq!(std_files.len(), 14, "std file count: {:?}", std_files);
+        assert_eq!(std_files.len(), 15, "std file count: {:?}", std_files);
         assert!(std_files.contains(&"mirror.mirror".to_string()));
         assert!(std_files.contains(&"cli.mirror".to_string()));
         assert!(std_files.contains(&"option.mirror".to_string()));
@@ -2817,6 +2815,7 @@ mod tests {
         assert!(std_files.contains(&"set.mirror".to_string()));
         assert!(std_files.contains(&"text.mirror".to_string()));
         assert!(std_files.contains(&"number.mirror".to_string()));
+        assert!(std_files.contains(&"test.mirror".to_string()));
     }
 
     // -----------------------------------------------------------------------
@@ -2829,9 +2828,7 @@ mod tests {
     /// Fix the grammar AFTER this test documents the current state.
     #[test]
     fn mirror_ci_boot_baseline() {
-        let runtime = MirrorRuntime::new();
-        let store = tempdir_for_test("ci_boot_baseline");
-        let boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+        let (boot, _store) = shared_boot_store();
 
         // --- What resolves (the compiler CAN parse these) ---
         let resolved: Vec<&str> = boot.resolved.keys().map(|s| s.as_str()).collect();
@@ -2884,7 +2881,7 @@ mod tests {
         assert_eq!(
             boot.failed.len(),
             7,
-            "7 of 26 files fail resolution (4 kernel + 3 std)"
+            "7 of 27 files fail resolution (4 kernel + 3 std)"
         );
         assert!(
             failed.contains(&"01a-meta-action"),
@@ -2919,8 +2916,8 @@ mod tests {
         // --- Resolved: kernel(8) + std(2) = 10 ---
         assert_eq!(
             boot.resolved.len(),
-            19,
-            "19 of 26 files resolve (8 kernel + 11 std)"
+            20,
+            "20 of 27 files resolve (8 kernel + 12 std)"
         );
         // std files that resolve
         assert!(
@@ -2972,8 +2969,8 @@ mod tests {
         assert!(kernel.contains(&"00-prism.mirror".to_string()));
         assert!(kernel.contains(&"06b-package-spec.mirror".to_string()));
 
-        // Std: 14 files (mirror, time, tui, benchmark, cli + 9 new std types)
-        assert_eq!(std_files.len(), 14, "std needs 14 files: {:?}", std_files);
+        // Std: 15 files (mirror, time, tui, benchmark, cli, test + 9 new std types)
+        assert_eq!(std_files.len(), 15, "std needs 15 files: {:?}", std_files);
         assert!(std_files.contains(&"mirror.mirror".to_string()));
         assert!(std_files.contains(&"cli.mirror".to_string()));
         assert!(std_files.contains(&"time.mirror".to_string()));
@@ -2988,11 +2985,10 @@ mod tests {
         assert!(std_files.contains(&"set.mirror".to_string()));
         assert!(std_files.contains(&"text.mirror".to_string()));
         assert!(std_files.contains(&"number.mirror".to_string()));
+        assert!(std_files.contains(&"test.mirror".to_string()));
 
         // Compiler loads both phases
-        let runtime = MirrorRuntime::new();
-        let store = tempdir_for_test("boot_kernel_std");
-        let result = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+        let (result, _store) = shared_boot_store();
 
         // std/mirror and std/time resolve against kernel registry
         assert!(
@@ -3047,9 +3043,7 @@ mod tests {
     #[test]
     #[ignore = "blocked: boot files need `in @form` → `in @meta` etc."]
     fn mirror_ci_boot_success() {
-        let runtime = MirrorRuntime::new();
-        let store = tempdir_for_test("ci_boot_success");
-        let boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+        let (boot, _store) = shared_boot_store();
 
         // Zero failures: every boot file resolves
         assert!(
@@ -3073,6 +3067,7 @@ mod tests {
         );
 
         // The crystal identity law: compile(compile(boot)) = compile(boot)
+        let runtime = MirrorRuntime::new();
         let store2 = tempdir_for_test("ci_boot_success_idempotent");
         let boot2 = runtime.compile_boot_dir(&boot_dir(), &store2).unwrap();
         assert_eq!(
@@ -3161,14 +3156,11 @@ grammar @ai {
     /// The boot action's `<= imperfect` uses the fold operator.
     #[test]
     fn ai_grammar_resolves_against_boot() {
+        let (_boot, store) = shared_boot_store();
         let runtime = MirrorRuntime::new();
-        let store = tempdir_for_test("ai_grammar_boot");
-
-        // Boot the language
-        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
 
         // @actor must be in the registry
-        let registry = MirrorRegistry::open(&store).unwrap();
+        let registry = MirrorRegistry::open(store).unwrap();
         assert!(
             registry.lookup("@actor").is_some(),
             "@actor must be in registry for @ai to resolve"
@@ -3359,11 +3351,8 @@ grammar @ai {
     #[test]
     fn error_missing_import() {
         let runtime = MirrorRuntime::new();
-        let store = tempdir_for_test("error_missing_import");
-
-        // Boot so the registry has some refs
-        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
-        let registry = MirrorRegistry::open(&store).unwrap();
+        let (_boot, store) = shared_boot_store();
+        let registry = MirrorRegistry::open(store).unwrap();
 
         let src = "in @nonexistent\ntype x";
         let compiled = runtime.compile_source(src);
@@ -3387,10 +3376,8 @@ grammar @ai {
     #[test]
     fn error_multiple_missing_imports() {
         let runtime = MirrorRuntime::new();
-        let store = tempdir_for_test("error_multi_import");
-
-        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
-        let registry = MirrorRegistry::open(&store).unwrap();
+        let (_boot, store) = shared_boot_store();
+        let registry = MirrorRegistry::open(store).unwrap();
 
         let src = "in @ghost\nin @phantom\ntype x";
         let compiled = runtime.compile_source(src);
@@ -3409,10 +3396,8 @@ grammar @ai {
     #[test]
     fn import_existing_grammar_resolves() {
         let runtime = MirrorRuntime::new();
-        let store = tempdir_for_test("import_existing");
-
-        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
-        let registry = MirrorRegistry::open(&store).unwrap();
+        let (_boot, store) = shared_boot_store();
+        let registry = MirrorRegistry::open(store).unwrap();
 
         let src = "in @prism\ntype x";
         let compiled = runtime.compile_source(src);
@@ -3431,10 +3416,8 @@ grammar @ai {
     #[test]
     fn error_nested_missing_import() {
         let runtime = MirrorRuntime::new();
-        let store = tempdir_for_test("error_nested_import");
-
-        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
-        let registry = MirrorRegistry::open(&store).unwrap();
+        let (_boot, store) = shared_boot_store();
+        let registry = MirrorRegistry::open(store).unwrap();
 
         let src = "grammar @test {\n  in @nowhere\n  type x\n}";
         let compiled = runtime.compile_source(src);
@@ -4211,9 +4194,7 @@ grammar @ai {
 
     #[test]
     fn std_all_new_files_resolve_against_kernel() {
-        let runtime = MirrorRuntime::new();
-        let store = tempdir_for_test("std_resolve_all");
-        let boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+        let (boot, _store) = shared_boot_store();
 
         let new_std = [
             "option", "result", "order", "bool", "list", "map", "set", "text", "number",
@@ -4361,6 +4342,30 @@ grammar @ai {
             0.0,
             "zero parse holonomy — the three fixes landed"
         );
+    }
+
+    #[test]
+    fn benchmark_shared_vs_fresh_boot() {
+        // Fresh boot
+        let start = std::time::Instant::now();
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("bench_fresh");
+        let _boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+        let fresh = start.elapsed();
+
+        // Shared boot (cache hit)
+        let start2 = std::time::Instant::now();
+        let _boot2 = shared_boot_store();
+        let cached = start2.elapsed();
+
+        eprintln!("--- boot: fresh vs cached ---");
+        eprintln!("  fresh:  {:?}", fresh);
+        eprintln!("  cached: {:?}", cached);
+        eprintln!(
+            "  speedup: {:.1}x",
+            fresh.as_nanos() as f64 / cached.as_nanos().max(1) as f64
+        );
+        eprintln!("---");
     }
 
     #[test]

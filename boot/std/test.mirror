@@ -1,0 +1,81 @@
+in @prism
+in @meta
+in @property
+
+-- an assertion: eq, neq, ok, err, partial
+-- assertion IS a prism — it focuses on a specific outcome
+type assertion = eq | neq | ok | err | partial
+
+-- a test verdict: pass, fail, skip
+-- same shape as imperfect: success | failure | partial
+type verdict = pass | fail | skip
+
+-- a test case: name + verdict + optional loss
+type test_case {
+  name: ref,
+  verdict: verdict,
+  loss: loss,
+}
+
+-- a fixture: a path to a .mirror file used as test input
+type fixture(ref)
+
+-- a test suite: a set of test cases with a summary
+type suite {
+  name: ref,
+  cases: [test_case],
+  total: u64,
+  passed: u64,
+  failed: u64,
+  skipped: u64,
+}
+
+-- what can go wrong when testing
+type test_error = compile_error | fixture_missing | assertion_failed | timeout
+
+-- the cost of testing itself
+type test_loss(loss)
+
+grammar @test {
+  in @meta
+  in @property
+
+  -- assert that two values are equal
+  abstract action assert_eq(a, a) -> imperfect(verdict, test_error, test_loss)
+
+  -- assert that a result is ok (Success)
+  abstract action assert_ok(imperfect) -> imperfect(verdict, test_error, test_loss)
+
+  -- assert that a result is err (Failure)
+  abstract action assert_err(imperfect) -> imperfect(verdict, test_error, test_loss)
+
+  -- compile a fixture and check it succeeds
+  abstract action compile(fixture) -> imperfect(verdict, test_error, test_loss)
+
+  -- run all tests in a suite
+  abstract action run(suite) -> imperfect(suite, test_error, test_loss)
+
+  -- a property test: generate inputs, check property holds
+  abstract action property(property, [fixture]) -> imperfect(verdict, test_error, test_loss)
+
+  recover |result, loss| {
+    -- partial test: the assertion ran but with overhead
+    -- test_loss carries the cost
+    log_drift(loss)
+    result
+  }
+
+  rescue |error| {
+    -- the test failed structurally
+    test_case(error, fail, loss(1.0))
+  }
+}
+
+out assertion
+out verdict
+out test_case
+out fixture
+out suite
+out test_error
+out test_loss
+out @test
