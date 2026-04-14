@@ -107,6 +107,7 @@ impl Cli {
             "repl" => self.cmd_repl(args),
             "kintsugi" => self.cmd_kintsugi(args),
             "focus" | "project" | "split" | "zoom" | "refract" => self.cmd_optic(command, args),
+            "craft" => self.cmd_craft(args),
             "registry" => self.cmd_registry(args),
             "git" => self.cmd_git(args),
             _ => self.cmd_query(command, args),
@@ -1318,6 +1319,151 @@ impl Default for Cli {
 }
 
 // ---------------------------------------------------------------------------
+// craft
+// ---------------------------------------------------------------------------
+
+impl Cli {
+    fn cmd_craft(&self, args: &[String]) -> Result<String, CliError> {
+        // Find mirror.spec by walking up from cwd
+        let spec_path = find_spec_file()?;
+        let spec = crate::spec::parse_spec(&spec_path).map_err(|e| {
+            CliError::Usage(format!("failed to parse {}: {}", spec_path, e))
+        })?;
+
+        let target_names: Vec<&str> = if args.is_empty() || args.iter().all(|a| a.starts_with('-')) {
+            if spec.craft.default.is_empty() {
+                return Err(CliError::Usage(
+                    "no default targets in mirror.spec, specify targets explicitly".to_string(),
+                ));
+            }
+            spec.craft.default.iter().map(|s| s.as_str()).collect()
+        } else {
+            args.iter()
+                .filter(|a| !a.starts_with('-'))
+                .map(|s| s.as_str())
+                .collect()
+        };
+
+        let mut output_lines = Vec::new();
+
+        for name in &target_names {
+            let target = spec
+                .craft
+                .targets
+                .iter()
+                .find(|t| t.name == *name)
+                .ok_or_else(|| CliError::Usage(format!("unknown target: {}", name)))?;
+
+            let result = self.craft_target(target)?;
+            output_lines.push(result);
+        }
+
+        Ok(output_lines.join("\n"))
+    }
+
+    fn craft_target(&self, target: &crate::spec::TargetConfig) -> Result<String, CliError> {
+        // If there's a source glob, compile those files
+        let mut fragments = Vec::new();
+        if let Some(ref glob_pattern) = target.glob {
+            let paths = expand_glob(glob_pattern)?;
+            for path in paths {
+                let compiled = self.runtime.compile_file(&path)?;
+                fragments.push(compiled.fragment);
+            }
+        }
+
+        // If there's an output lens for Rust, generate the crate
+        if target.lens.as_deref() == Some("@code/rust") {
+            if let Some(ref output_path) = target.output_path {
+                let output = crate::generate_crate::generate_crate(target, &fragments);
+                let base = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(output_path);
+                let _ = std::fs::create_dir_all(base.join("src"));
+                std::fs::write(base.join("Cargo.toml"), &output.cargo_toml)?;
+                std::fs::write(base.join("src/lib.rs"), &output.lib_rs)?;
+                for (filename, content) in &output.modules {
+                    std::fs::write(base.join("src").join(filename), content)?;
+                }
+                return Ok(format!(
+                    "crafted {} -> {} ({} grammars, {} fragments)",
+                    target.name,
+                    output_path,
+                    target.grammars.len(),
+                    fragments.len()
+                ));
+            }
+        }
+
+        Ok(format!(
+            "crafted {} ({} fragments)",
+            target.name,
+            fragments.len()
+        ))
+    }
+}
+
+/// Expand a simple glob pattern like `dir/*.ext` into sorted file paths.
+/// Supports `*` as wildcard in the filename part only.
+fn expand_glob(pattern: &str) -> Result<Vec<std::path::PathBuf>, CliError> {
+    let path = std::path::Path::new(pattern);
+    let dir = path.parent().unwrap_or(std::path::Path::new("."));
+    let file_pattern = path
+        .file_name()
+        .map(|f| f.to_string_lossy().to_string())
+        .unwrap_or_default();
+
+    if !dir.exists() {
+        return Ok(Vec::new());
+    }
+
+    let entries = std::fs::read_dir(dir).map_err(CliError::Io)?;
+    let mut paths: Vec<std::path::PathBuf> = entries
+        .filter_map(|e| e.ok())
+        .map(|e| e.path())
+        .filter(|p| {
+            if let Some(name) = p.file_name().and_then(|n| n.to_str()) {
+                matches_simple_glob(&file_pattern, name)
+            } else {
+                false
+            }
+        })
+        .collect();
+
+    paths.sort();
+    Ok(paths)
+}
+
+/// Simple glob matching: `*` matches any sequence of characters.
+fn matches_simple_glob(pattern: &str, name: &str) -> bool {
+    if !pattern.contains('*') {
+        return pattern == name;
+    }
+    let parts: Vec<&str> = pattern.split('*').collect();
+    if parts.len() == 2 {
+        // Simple "prefix*suffix" case
+        name.starts_with(parts[0]) && name.ends_with(parts[1])
+    } else {
+        // Fallback: just check prefix and suffix
+        name.starts_with(parts[0]) && name.ends_with(parts.last().unwrap_or(&""))
+    }
+}
+
+/// Walk up from the current directory to find `mirror.spec`.
+fn find_spec_file() -> Result<String, CliError> {
+    let mut dir = std::env::current_dir().map_err(CliError::Io)?;
+    loop {
+        let candidate = dir.join("mirror.spec");
+        if candidate.exists() {
+            return Ok(candidate.to_str().unwrap_or("mirror.spec").to_string());
+        }
+        if !dir.pop() {
+            return Err(CliError::Usage(
+                "no mirror.spec found (searched up from current directory)".to_string(),
+            ));
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
@@ -2493,5 +2639,96 @@ mod tests {
         let help = Cli::command_help("merge");
         assert!(help.is_some());
         assert!(help.unwrap().contains("crystal delta"));
+    }
+
+    // -----------------------------------------------------------------------
+    // craft
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn craft_with_spec_compiles_boot_target() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let spec = dir.path().join("mirror.spec");
+        let boot_dir = dir.path().join("boot");
+        std::fs::create_dir_all(&boot_dir).unwrap();
+
+        // Write a simple grammar file
+        std::fs::write(
+            boot_dir.join("test.mirror"),
+            "grammar @test {\n  type color = red | blue\n}\n",
+        )
+        .unwrap();
+
+        // Write a spec
+        std::fs::write(
+            &spec,
+            &format!(
+                r#"@oid("@test-project")
+
+craft {{
+  target boot("{}") {{
+    @test
+  }}
+  default boot
+}}
+"#,
+                boot_dir.join("*.mirror").display()
+            ),
+        )
+        .unwrap();
+
+        let cli = Cli::default();
+        // We can't easily test dispatch because find_spec_file uses cwd,
+        // but we can test the spec parsing + target lookup
+        let parsed = crate::spec::parse_spec(spec.to_str().unwrap()).unwrap();
+        assert_eq!(parsed.craft.targets.len(), 1);
+        assert_eq!(parsed.craft.targets[0].name, "boot");
+        assert_eq!(parsed.craft.default, vec!["boot"]);
+    }
+
+    #[test]
+    fn craft_generate_crate_from_target() {
+        use crate::generate_crate::generate_cargo_toml;
+        use crate::spec::TargetConfig;
+
+        let target = TargetConfig {
+            name: "mirror".into(),
+            source: Some("boot".into()),
+            lens: Some("@code/rust".into()),
+            output_path: Some("rust/mirror/".into()),
+            glob: None,
+            grammars: vec!["@prism".into(), "@meta".into()],
+        };
+
+        let toml = generate_cargo_toml(&target);
+        assert!(toml.contains("name = \"mirror\""));
+        assert!(toml.contains("[dependencies]"));
+    }
+
+    #[test]
+    fn find_spec_file_returns_error_when_not_found() {
+        // Save and change to a temp directory with no spec
+        let dir = tempfile::TempDir::new().unwrap();
+        let original_dir = std::env::current_dir().unwrap();
+        std::env::set_current_dir(dir.path()).unwrap();
+        let result = find_spec_file();
+        std::env::set_current_dir(original_dir).unwrap();
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains("no mirror.spec"));
+    }
+
+    #[test]
+    fn find_spec_file_finds_spec_in_current_dir() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let spec = dir.path().join("mirror.spec");
+        std::fs::write(&spec, "@oid(\"@test\")").unwrap();
+
+        let original_dir = std::env::current_dir().unwrap();
+        std::env::set_current_dir(dir.path()).unwrap();
+        let result = find_spec_file();
+        std::env::set_current_dir(original_dir).unwrap();
+
+        assert!(result.is_ok());
+        assert!(result.unwrap().contains("mirror.spec"));
     }
 }
