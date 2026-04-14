@@ -2162,14 +2162,17 @@ mod tests {
 
         assert!(boot.resolved.contains_key("00-prism"));
         assert!(boot.resolved.contains_key("01-meta"));
-        assert!(boot.resolved.contains_key("02-code"));
+        assert!(boot.resolved.contains_key("03-code"));
         assert!(
-            boot.resolved.contains_key("02a-code-rust"),
-            "02a-code-rust should resolve"
+            boot.resolved.contains_key("03a-code-rust"),
+            "03a-code-rust should resolve"
         );
-        assert!(boot.resolved.contains_key("03-actor"));
-        assert!(boot.resolved.contains_key("04-action"));
+        assert!(boot.resolved.contains_key("04-actor"));
 
+        // 01a, 01b, 02-shatter fail: depend on @actor/@io which sort after them
+        assert!(boot.failed.contains_key("01a-meta-action"));
+        assert!(boot.failed.contains_key("01b-meta-io"));
+        assert!(boot.failed.contains_key("02-shatter"));
         assert!(boot.failed.contains_key("05-property"));
         assert!(boot.failed.contains_key("10-mirror"));
 
@@ -2178,8 +2181,6 @@ mod tests {
         assert!(reopened.lookup("@meta").is_some());
         assert!(reopened.lookup("@code").is_some());
         assert!(reopened.lookup("@actor").is_some());
-        // 04-action.mirror declares types/prism/action at top level without @-prefix,
-        // so no @action ref is created. The file resolves but exports nothing named.
         assert!(reopened.lookup("@property").is_none());
         assert!(reopened.lookup("@mirror").is_none());
     }
@@ -2342,14 +2343,14 @@ mod tests {
     }
 
     #[test]
-    fn action_file_04_parses_and_resolves() {
+    fn action_file_01a_parses_and_resolves() {
         let runtime = MirrorRuntime::new();
         let compiled = runtime
-            .compile_file(&boot_dir().join("04-action.mirror"))
+            .compile_file(&boot_dir().join("01a-meta-action.mirror"))
             .unwrap();
-        // 04-action.mirror has multiple top-level declarations, wrapped in synthetic Form
+        // 01a-meta-action.mirror has multiple top-level declarations, wrapped in synthetic Form
         assert_eq!(compiled.form.kind, DeclKind::Form);
-        // Should contain: in @prism, in @meta, in @actor, prism action, action action, out action
+        // Should contain: in @prism, in @meta, in @actor, prism action, action action, out action/collapse
         let action_decls: Vec<&Form> = compiled
             .form
             .children
@@ -2359,7 +2360,7 @@ mod tests {
         assert_eq!(
             action_decls.len(),
             1,
-            "04-action.mirror has one action declaration"
+            "01a-meta-action.mirror has one action declaration"
         );
         let action = action_decls[0];
         assert_eq!(action.name, "action");
@@ -2685,7 +2686,7 @@ mod tests {
             .collect();
         files.sort();
 
-        assert_eq!(files.len(), 18, "boot kernel file count: {:?}", files);
+        assert_eq!(files.len(), 17, "boot kernel file count: {:?}", files);
         assert!(files.contains(&"00-prism.mirror".to_string()));
         assert!(files.contains(&"01a-meta-action.mirror".to_string()));
         assert!(files.contains(&"01b-meta-io.mirror".to_string()));
@@ -2711,13 +2712,12 @@ mod tests {
         let resolved: Vec<&str> = boot.resolved.keys().map(|s| s.as_str()).collect();
         assert!(resolved.contains(&"00-prism"), "prism must resolve");
         assert!(resolved.contains(&"01-meta"), "meta must resolve");
-        assert!(resolved.contains(&"02-code"), "code must resolve");
+        assert!(resolved.contains(&"03-code"), "code must resolve");
         assert!(
-            resolved.contains(&"02a-code-rust"),
+            resolved.contains(&"03a-code-rust"),
             "code-rust must resolve"
         );
-        assert!(resolved.contains(&"03-actor"), "actor must resolve");
-        assert!(resolved.contains(&"04-action"), "action must resolve");
+        assert!(resolved.contains(&"04-actor"), "actor must resolve");
 
         // --- What fails resolution (in @X references something missing) ---
         let failed: Vec<&str> = boot.failed.keys().map(|s| s.as_str()).collect();
@@ -2754,7 +2754,7 @@ mod tests {
         // These files parse fine but fail `in @X` reference checks.
         // This loss is NOT in holonomy — it should be.
         // That's the gap: resolution failures need to become MirrorLoss.
-        assert_eq!(boot.failed.len(), 8, "8 boot files fail resolution");
+        assert_eq!(boot.failed.len(), 8, "8 of 17 boot files fail resolution");
         assert!(
             failed.contains(&"01a-meta-action"),
             "01a needs @actor which sorts after it"
@@ -2780,7 +2780,7 @@ mod tests {
         assert!(failed.contains(&"20-cli"), "missing refs");
 
         // --- Resolved file count: progress toward Success(Mirror) ---
-        assert_eq!(boot.resolved.len(), 10, "10 of 18 boot files resolve");
+        assert_eq!(boot.resolved.len(), 9, "9 of 17 boot files resolve");
 
         // --- The crystal still forms despite failures ---
         // The compiler produces a crystal from what DID resolve.
