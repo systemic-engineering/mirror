@@ -1,0 +1,43 @@
+in @prism
+in @meta
+
+-- bool IS the simplest split: two variants, no parameters.
+-- true and false. the binary case of |.
+-- derived from the split operator in the kernel.
+
+type bool = true | false
+
+-- bool -> order: true > false
+-- this gives bool a total ordering for free.
+
+grammar @bool {
+  in @meta
+
+  -- logical operators
+  action and(bool, bool) -> bool
+  action or(bool, bool) -> bool
+  action not(bool) -> bool
+
+  -- exclusive or: true when exactly one is true
+  action xor(bool, bool) -> bool
+
+  -- conditional: if true then a else b
+  action guard(bool, then: a, else: a) -> a
+
+  -- lazy conditional: defers evaluation of branches
+  action lazy_guard(bool, then: ref, else: ref) -> a
+
+  -- convert to order: true => gt, false => lt
+  action to_order(bool) -> order
+
+  recover |result, loss| {
+    result
+  }
+
+  rescue |error| {
+    false
+  }
+}
+
+out bool
+out @bool

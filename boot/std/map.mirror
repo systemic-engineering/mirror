@@ -1,0 +1,57 @@
+in @prism
+in @meta
+
+-- map is the key-value store.
+-- content-addressed by construction: the oid of a map
+-- is the oid of its sorted key-value pairs.
+-- empty is the identity for merge.
+
+type entry(k, v) = entry(k, v)
+type map(k, v) = empty | entries([entry(k, v)])
+
+grammar @map {
+  in @meta
+
+  -- construction
+  action empty() -> map(k, v)
+  action singleton(k, v) -> map(k, v)
+  action from_list(list: [entry(k, v)]) -> map(k, v)
+
+  -- access
+  action get(map(k, v), k) -> imperfect
+  action has_key(map(k, v), k) -> bool
+
+  -- mutation (returns new map — immutable)
+  action insert(map(k, v), k, v) -> map(k, v)
+  action delete(map(k, v), k) -> map(k, v)
+  action update(map(k, v), k, f: v -> v) -> map(k, v)
+
+  -- traversal
+  action map_values(map(k, v), f: v -> v2) -> map(k, v2)
+  action filter(map(k, v), f: k -> v -> bool) -> map(k, v)
+  action fold(map(k, v), init: a, f: a -> k -> v -> a) -> a
+
+  -- combination
+  action merge(map(k, v), map(k, v)) -> map(k, v)
+
+  -- conversion
+  action keys(map(k, v)) -> [k]
+  action values(map(k, v)) -> [v]
+  action to_list(map(k, v)) -> [entry(k, v)]
+
+  -- measurement
+  action size(map(k, v)) -> u64
+  action is_empty(map(k, v)) -> bool
+
+  recover |result, loss| {
+    result
+  }
+
+  rescue |error| {
+    empty
+  }
+}
+
+out entry
+out map
+out @map

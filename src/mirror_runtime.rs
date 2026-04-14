@@ -2760,9 +2760,18 @@ mod tests {
             .filter(|f| f.ends_with(".mirror"))
             .collect();
         std_files.sort();
-        assert_eq!(std_files.len(), 5, "std file count: {:?}", std_files);
+        assert_eq!(std_files.len(), 14, "std file count: {:?}", std_files);
         assert!(std_files.contains(&"mirror.mirror".to_string()));
         assert!(std_files.contains(&"cli.mirror".to_string()));
+        assert!(std_files.contains(&"option.mirror".to_string()));
+        assert!(std_files.contains(&"result.mirror".to_string()));
+        assert!(std_files.contains(&"order.mirror".to_string()));
+        assert!(std_files.contains(&"bool.mirror".to_string()));
+        assert!(std_files.contains(&"list.mirror".to_string()));
+        assert!(std_files.contains(&"map.mirror".to_string()));
+        assert!(std_files.contains(&"set.mirror".to_string()));
+        assert!(std_files.contains(&"text.mirror".to_string()));
+        assert!(std_files.contains(&"number.mirror".to_string()));
     }
 
     // -----------------------------------------------------------------------
@@ -2825,7 +2834,11 @@ mod tests {
         // --- Resolution failures: kernel + std ---
         // Kernel failures: 01a, 01b, 02-shatter (dependency ordering), 06b-package-spec (missing refs)
         // Std failures: benchmark (needs @time before it), cli (needs @spec, @shatter), tui (needs @config etc)
-        assert_eq!(boot.failed.len(), 7, "7 of 17 files fail resolution (4 kernel + 3 std)");
+        assert_eq!(
+            boot.failed.len(),
+            7,
+            "7 of 26 files fail resolution (4 kernel + 3 std)"
+        );
         assert!(
             failed.contains(&"01a-meta-action"),
             "01a needs @actor which sorts after it"
@@ -2843,15 +2856,34 @@ mod tests {
             "missing refs (@mirror, @config, @ai)"
         );
         // std failures
-        assert!(failed.contains(&"std/benchmark"), "benchmark needs @time before it alphabetically");
-        assert!(failed.contains(&"std/cli"), "cli needs @spec, @shatter — not in registry");
-        assert!(failed.contains(&"std/tui"), "tui needs @config, @ci, @ca, @lsp — not in registry");
+        assert!(
+            failed.contains(&"std/benchmark"),
+            "benchmark needs @time before it alphabetically"
+        );
+        assert!(
+            failed.contains(&"std/cli"),
+            "cli needs @spec, @shatter — not in registry"
+        );
+        assert!(
+            failed.contains(&"std/tui"),
+            "tui needs @config, @ci, @ca, @lsp — not in registry"
+        );
 
         // --- Resolved: kernel(8) + std(2) = 10 ---
-        assert_eq!(boot.resolved.len(), 10, "10 of 17 files resolve (8 kernel + 2 std)");
+        assert_eq!(
+            boot.resolved.len(),
+            19,
+            "19 of 26 files resolve (8 kernel + 11 std)"
+        );
         // std files that resolve
-        assert!(resolved.contains(&"std/mirror"), "std/mirror resolves (in @meta, @prism, @property)");
-        assert!(resolved.contains(&"std/time"), "std/time resolves (in @prism, @meta, @actor)");
+        assert!(
+            resolved.contains(&"std/mirror"),
+            "std/mirror resolves (in @meta, @prism, @property)"
+        );
+        assert!(
+            resolved.contains(&"std/time"),
+            "std/time resolves (in @prism, @meta, @actor)"
+        );
 
         // --- The crystal still forms despite failures ---
         // The compiler produces a crystal from what DID resolve.
@@ -2863,7 +2895,7 @@ mod tests {
         );
     }
 
-    /// The reorganized boot: kernel (12 sorted) + std (5 package-resolved).
+    /// The reorganized boot: kernel (12 sorted) + std (14 package-resolved).
     #[test]
     fn boot_kernel_and_std() {
         let boot = boot_dir();
@@ -2893,13 +2925,22 @@ mod tests {
         assert!(kernel.contains(&"00-prism.mirror".to_string()));
         assert!(kernel.contains(&"06b-package-spec.mirror".to_string()));
 
-        // Std: 5 files (mirror, time, tui, benchmark, cli)
-        assert_eq!(std_files.len(), 5, "std needs 5 files: {:?}", std_files);
+        // Std: 14 files (mirror, time, tui, benchmark, cli + 9 new std types)
+        assert_eq!(std_files.len(), 14, "std needs 14 files: {:?}", std_files);
         assert!(std_files.contains(&"mirror.mirror".to_string()));
         assert!(std_files.contains(&"cli.mirror".to_string()));
         assert!(std_files.contains(&"time.mirror".to_string()));
         assert!(std_files.contains(&"benchmark.mirror".to_string()));
         assert!(std_files.contains(&"tui.mirror".to_string()));
+        assert!(std_files.contains(&"option.mirror".to_string()));
+        assert!(std_files.contains(&"result.mirror".to_string()));
+        assert!(std_files.contains(&"order.mirror".to_string()));
+        assert!(std_files.contains(&"bool.mirror".to_string()));
+        assert!(std_files.contains(&"list.mirror".to_string()));
+        assert!(std_files.contains(&"map.mirror".to_string()));
+        assert!(std_files.contains(&"set.mirror".to_string()));
+        assert!(std_files.contains(&"text.mirror".to_string()));
+        assert!(std_files.contains(&"number.mirror".to_string()));
 
         // Compiler loads both phases
         let runtime = MirrorRuntime::new();
@@ -2907,8 +2948,51 @@ mod tests {
         let result = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
 
         // std/mirror and std/time resolve against kernel registry
-        assert!(result.resolved.contains_key("std/mirror"), "std/mirror should resolve");
-        assert!(result.resolved.contains_key("std/time"), "std/time should resolve");
+        assert!(
+            result.resolved.contains_key("std/mirror"),
+            "std/mirror should resolve"
+        );
+        assert!(
+            result.resolved.contains_key("std/time"),
+            "std/time should resolve"
+        );
+        // new std types resolve (in @prism, in @meta — both in registry)
+        assert!(
+            result.resolved.contains_key("std/option"),
+            "std/option should resolve"
+        );
+        assert!(
+            result.resolved.contains_key("std/result"),
+            "std/result should resolve"
+        );
+        assert!(
+            result.resolved.contains_key("std/order"),
+            "std/order should resolve"
+        );
+        assert!(
+            result.resolved.contains_key("std/bool"),
+            "std/bool should resolve"
+        );
+        assert!(
+            result.resolved.contains_key("std/list"),
+            "std/list should resolve"
+        );
+        assert!(
+            result.resolved.contains_key("std/map"),
+            "std/map should resolve"
+        );
+        assert!(
+            result.resolved.contains_key("std/set"),
+            "std/set should resolve"
+        );
+        assert!(
+            result.resolved.contains_key("std/text"),
+            "std/text should resolve"
+        );
+        assert!(
+            result.resolved.contains_key("std/number"),
+            "std/number should resolve"
+        );
     }
 
     /// Success(Mirror). Zero loss. Zero failures. Strict passes.
@@ -3721,6 +3805,474 @@ grammar @ai {
         assert_eq!(
             oid_before, oid_after,
             "kintsugi must not change the content-addressed OID"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // std library — type parsing and resolution
+    // -----------------------------------------------------------------------
+
+    /// Helper: compile a std file and assert it parses without failure.
+    fn compile_std_file(name: &str) -> CompiledShatter {
+        let runtime = MirrorRuntime::new();
+        let path = boot_dir().join("std").join(format!("{}.mirror", name));
+        runtime
+            .compile_file(&path)
+            .unwrap_or_else(|e| panic!("std/{}.mirror failed to compile: {}", name, e))
+    }
+
+    #[test]
+    fn std_option_parses_and_has_types() {
+        let compiled = compile_std_file("option");
+        let type_names: Vec<&str> = compiled
+            .form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Type)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(
+            type_names.contains(&"option"),
+            "option type must be defined"
+        );
+    }
+
+    #[test]
+    fn std_option_has_grammar() {
+        let compiled = compile_std_file("option");
+        let grammars: Vec<&str> = compiled
+            .form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Grammar)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(
+            grammars.contains(&"@option"),
+            "grammar @option must be defined"
+        );
+    }
+
+    #[test]
+    fn std_option_grammar_has_actions() {
+        let compiled = compile_std_file("option");
+        let grammar = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Grammar && f.name == "@option")
+            .expect("@option grammar must exist");
+        let action_count = grammar
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Action)
+            .count();
+        assert!(
+            action_count >= 5,
+            "@option should have at least 5 actions, got {}",
+            action_count
+        );
+    }
+
+    #[test]
+    fn std_result_parses_and_has_types() {
+        let compiled = compile_std_file("result");
+        let type_names: Vec<&str> = compiled
+            .form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Type)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(
+            type_names.contains(&"result"),
+            "result type must be defined"
+        );
+    }
+
+    #[test]
+    fn std_result_grammar_has_actions() {
+        let compiled = compile_std_file("result");
+        let grammar = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Grammar && f.name == "@result")
+            .expect("@result grammar must exist");
+        let action_count = grammar
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Action)
+            .count();
+        assert!(
+            action_count >= 8,
+            "@result should have at least 8 actions, got {}",
+            action_count
+        );
+    }
+
+    #[test]
+    fn std_order_parses_and_has_variants() {
+        let compiled = compile_std_file("order");
+        let order_type = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Type && f.name == "order")
+            .expect("order type must exist");
+        assert!(
+            order_type.variants.contains(&"lt".to_string()),
+            "order must have lt"
+        );
+        assert!(
+            order_type.variants.contains(&"eq".to_string()),
+            "order must have eq"
+        );
+        assert!(
+            order_type.variants.contains(&"gt".to_string()),
+            "order must have gt"
+        );
+    }
+
+    #[test]
+    fn std_bool_parses_and_has_variants() {
+        let compiled = compile_std_file("bool");
+        let bool_type = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Type && f.name == "bool")
+            .expect("bool type must exist");
+        assert!(
+            bool_type.variants.contains(&"true".to_string()),
+            "bool must have true"
+        );
+        assert!(
+            bool_type.variants.contains(&"false".to_string()),
+            "bool must have false"
+        );
+    }
+
+    #[test]
+    fn std_bool_grammar_has_logic_actions() {
+        let compiled = compile_std_file("bool");
+        let grammar = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Grammar && f.name == "@bool")
+            .expect("@bool grammar must exist");
+        let action_names: Vec<&str> = grammar
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Action)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(action_names.contains(&"and"), "@bool must have and");
+        assert!(action_names.contains(&"or"), "@bool must have or");
+        assert!(action_names.contains(&"not"), "@bool must have not");
+    }
+
+    #[test]
+    fn std_list_parses_and_has_type() {
+        let compiled = compile_std_file("list");
+        let type_names: Vec<&str> = compiled
+            .form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Type)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(type_names.contains(&"list"), "list type must be defined");
+    }
+
+    #[test]
+    fn std_list_grammar_has_traversal_actions() {
+        let compiled = compile_std_file("list");
+        let grammar = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Grammar && f.name == "@list")
+            .expect("@list grammar must exist");
+        let action_names: Vec<&str> = grammar
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Action)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(action_names.contains(&"map"), "@list must have map");
+        assert!(action_names.contains(&"filter"), "@list must have filter");
+        assert!(action_names.contains(&"fold"), "@list must have fold");
+        assert!(action_names.contains(&"sort"), "@list must have sort");
+    }
+
+    #[test]
+    fn std_map_parses_and_has_types() {
+        let compiled = compile_std_file("map");
+        let type_names: Vec<&str> = compiled
+            .form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Type)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(type_names.contains(&"entry"), "entry type must be defined");
+        assert!(type_names.contains(&"map"), "map type must be defined");
+    }
+
+    #[test]
+    fn std_map_grammar_has_access_actions() {
+        let compiled = compile_std_file("map");
+        let grammar = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Grammar && f.name == "@map")
+            .expect("@map grammar must exist");
+        let action_names: Vec<&str> = grammar
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Action)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(action_names.contains(&"get"), "@map must have get");
+        assert!(action_names.contains(&"insert"), "@map must have insert");
+        assert!(action_names.contains(&"delete"), "@map must have delete");
+        assert!(action_names.contains(&"merge"), "@map must have merge");
+    }
+
+    #[test]
+    fn std_set_parses_and_has_type() {
+        let compiled = compile_std_file("set");
+        let type_names: Vec<&str> = compiled
+            .form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Type)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(type_names.contains(&"set"), "set type must be defined");
+    }
+
+    #[test]
+    fn std_set_grammar_has_algebra_actions() {
+        let compiled = compile_std_file("set");
+        let grammar = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Grammar && f.name == "@set")
+            .expect("@set grammar must exist");
+        let action_names: Vec<&str> = grammar
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Action)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(action_names.contains(&"union"), "@set must have union");
+        assert!(
+            action_names.contains(&"intersection"),
+            "@set must have intersection"
+        );
+        assert!(
+            action_names.contains(&"difference"),
+            "@set must have difference"
+        );
+        assert!(
+            action_names.contains(&"contains"),
+            "@set must have contains"
+        );
+    }
+
+    #[test]
+    fn std_text_parses_and_has_grammar() {
+        let compiled = compile_std_file("text");
+        let grammars: Vec<&str> = compiled
+            .form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Grammar)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(grammars.contains(&"@text"), "grammar @text must be defined");
+    }
+
+    #[test]
+    fn std_text_grammar_has_string_actions() {
+        let compiled = compile_std_file("text");
+        let grammar = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Grammar && f.name == "@text")
+            .expect("@text grammar must exist");
+        let action_names: Vec<&str> = grammar
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Action)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(action_names.contains(&"length"), "@text must have length");
+        assert!(
+            action_names.contains(&"contains"),
+            "@text must have contains"
+        );
+        assert!(action_names.contains(&"split"), "@text must have split");
+        assert!(action_names.contains(&"join"), "@text must have join");
+    }
+
+    #[test]
+    fn std_number_parses_and_has_types() {
+        let compiled = compile_std_file("number");
+        let type_names: Vec<&str> = compiled
+            .form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Type)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(type_names.contains(&"nat"), "nat type must be defined");
+    }
+
+    #[test]
+    fn std_number_grammar_has_arithmetic_actions() {
+        let compiled = compile_std_file("number");
+        let grammar = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Grammar && f.name == "@number")
+            .expect("@number grammar must exist");
+        let action_names: Vec<&str> = grammar
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Action)
+            .map(|f| f.name.as_str())
+            .collect();
+        assert!(action_names.contains(&"add"), "@number must have add");
+        assert!(
+            action_names.contains(&"multiply"),
+            "@number must have multiply"
+        );
+        assert!(action_names.contains(&"divide"), "@number must have divide");
+        assert!(
+            action_names.contains(&"compare_int"),
+            "@number must have compare_int"
+        );
+    }
+
+    #[test]
+    fn std_all_new_files_resolve_against_kernel() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("std_resolve_all");
+        let boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+
+        let new_std = [
+            "option", "result", "order", "bool", "list", "map", "set", "text", "number",
+        ];
+        for name in &new_std {
+            let key = format!("std/{}", name);
+            assert!(
+                boot.resolved.contains_key(key.as_str()),
+                "std/{} should resolve against kernel, but failed. Failed files: {:?}",
+                name,
+                boot.failed.keys().collect::<Vec<_>>()
+            );
+        }
+    }
+
+    #[test]
+    fn std_option_is_imperfect_surface() {
+        // option type has two variants: some | none
+        // this mirrors imperfect(a, (), ()) — success or failure without error/loss
+        let compiled = compile_std_file("option");
+        let option_type = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Type && f.name == "option")
+            .expect("option type must exist");
+        assert_eq!(
+            option_type.variants.len(),
+            2,
+            "option must have exactly 2 variants"
+        );
+        assert!(option_type.variants.contains(&"some".to_string()));
+        assert!(option_type.variants.contains(&"none".to_string()));
+    }
+
+    #[test]
+    fn std_result_is_imperfect_surface() {
+        // result type has two variants: ok | error
+        // this mirrors imperfect(a, e, ()) — success or failure without loss
+        let compiled = compile_std_file("result");
+        let result_type = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Type && f.name == "result")
+            .expect("result type must exist");
+        assert_eq!(
+            result_type.variants.len(),
+            2,
+            "result must have exactly 2 variants"
+        );
+        assert!(result_type.variants.contains(&"ok".to_string()));
+        assert!(result_type.variants.contains(&"error".to_string()));
+    }
+
+    #[test]
+    fn std_order_has_exactly_three_variants() {
+        // order = lt | eq | gt — the total ordering trichotomy
+        let compiled = compile_std_file("order");
+        let order_type = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Type && f.name == "order")
+            .expect("order type must exist");
+        assert_eq!(
+            order_type.variants.len(),
+            3,
+            "order must have exactly 3 variants (lt, eq, gt)"
+        );
+    }
+
+    #[test]
+    fn std_bool_has_exactly_two_variants() {
+        // bool = true | false — the binary split
+        let compiled = compile_std_file("bool");
+        let bool_type = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Type && f.name == "bool")
+            .expect("bool type must exist");
+        assert_eq!(
+            bool_type.variants.len(),
+            2,
+            "bool must have exactly 2 variants (true, false)"
+        );
+    }
+
+    #[test]
+    fn std_list_has_recursive_type() {
+        // list(a) = empty | cons(a, list(a)) — recursive definition
+        let compiled = compile_std_file("list");
+        let list_type = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Type && f.name == "list")
+            .expect("list type must exist");
+        assert!(
+            list_type.variants.contains(&"empty".to_string()),
+            "list must have empty variant"
+        );
+        assert!(
+            list_type.variants.contains(&"cons".to_string()),
+            "list must have cons variant"
         );
     }
 }

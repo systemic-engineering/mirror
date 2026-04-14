@@ -1,0 +1,61 @@
+in @prism
+in @meta
+
+-- result IS imperfect without loss.
+-- ok(a) = observation succeeded, no loss.
+-- error(e) = observation failed with reason.
+-- this is the naming surface over imperfect(a, e, ()).
+
+type result(a, e) = ok(a) | error(e)
+
+-- result -> imperfect: lift into the kernel type
+-- ok(a) => imperfect.success(a)
+-- error(e) => imperfect.failure(e, ())
+zoom lift(result(a, e)) -> imperfect
+
+-- imperfect -> result: collapse loss into the error
+-- success(a) => ok(a)
+-- partial(a, loss) => ok(a) (loss is discarded — result has no loss channel)
+-- failure(e, _) => error(e)
+fold collapse(imperfect) <= result
+
+grammar @result {
+  in @meta
+
+  -- unwrap with a default: ok(a) => a, error(_) => default
+  action unwrap(result(a, e), default: a) -> a
+
+  -- map over the ok value
+  action map(result(a, e), f: a -> b) -> result(b, e)
+
+  -- map over the error value
+  action map_error(result(a, e), f: e -> e2) -> result(a, e2)
+
+  -- chain: ok(a) => f(a), error(e) => error(e)
+  action and_then(result(a, e), f: a -> result(b, e)) -> result(b, e)
+
+  -- the dual: error(_) => fallback, ok(a) => ok(a)
+  action or_else(result(a, e), fallback: result(a, e)) -> result(a, e)
+
+  -- test
+  action is_ok(result(a, e)) -> bool
+  action is_error(result(a, e)) -> bool
+
+  -- flatten: result(result(a, e), e) => result(a, e)
+  action flatten(result(result(a, e), e)) -> result(a, e)
+
+  -- collect: [result(a, e)] => result([a], e)
+  -- stops at first error
+  action all(list: [result(a, e)]) -> result([a], e)
+
+  recover |result, loss| {
+    result
+  }
+
+  rescue |error| {
+    error(error)
+  }
+}
+
+out result
+out @result
