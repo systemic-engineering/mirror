@@ -658,14 +658,17 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
     };
     // modifier is used below when constructing the Form
 
-    // Recover/Rescue: pipe-delimited params, no name.
-    // `recover |result, loss| { body }` or `rescue |error| { body }`
+    // Recover/Rescue: pipe-delimited params, optional fold operator, optional body.
+    // `recover |result, loss| <= imperfect` or `rescue |error(observation), loss| <= imperfect`
+    // `recover |result, loss| { body }` (legacy form)
     if kind == DeclKind::Recover || kind == DeclKind::Rescue {
         let mut params = Vec::new();
+        let mut optic_ops = Vec::new();
+        let mut variants = Vec::new();
         // Consume `|`
         if matches!(tokens.get(*cursor), Some(Tok::Word(w)) if w == "|") {
             *cursor += 1;
-            // Collect params until closing `|`
+            // Collect params until closing `|`, handling nested parens like error(observation)
             loop {
                 match tokens.get(*cursor) {
                     Some(Tok::Word(w)) if w == "|" => {
@@ -675,6 +678,30 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
                     Some(Tok::Word(w)) => {
                         params.push(w.clone());
                         *cursor += 1;
+                        // Handle nested parens: error(observation) → "error(observation)"
+                        if matches!(tokens.get(*cursor), Some(Tok::LParen)) {
+                            *cursor += 1;
+                            if let Some(last) = params.last_mut() {
+                                last.push('(');
+                                let mut depth = 1;
+                                while *cursor < tokens.len() && depth > 0 {
+                                    match tokens.get(*cursor) {
+                                        Some(Tok::LParen) => {
+                                            last.push('(');
+                                            depth += 1;
+                                        }
+                                        Some(Tok::RParen) => {
+                                            depth -= 1;
+                                            last.push(')');
+                                        }
+                                        Some(Tok::Word(w)) => last.push_str(w),
+                                        Some(Tok::Comma) => last.push(','),
+                                        _ => {}
+                                    }
+                                    *cursor += 1;
+                                }
+                            }
+                        }
                     }
                     Some(Tok::Comma) => {
                         *cursor += 1;
@@ -683,11 +710,36 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
                 }
             }
         }
-        // Parse body block
+        // Check for fold operator: `<= target`
+        // `<` is tokenized as Word("<"), `=` as Tok::Equals
+        let is_fold = matches!(tokens.get(*cursor), Some(Tok::Word(w)) if w == "<")
+            && matches!(tokens.get(*cursor + 1), Some(Tok::Equals));
+        if is_fold {
+            optic_ops.push(OpticOp::Fold);
+            *cursor += 2; // consume `<` and `=`
+                          // Collect the fold target until newline or brace
+            loop {
+                match tokens.get(*cursor) {
+                    Some(Tok::Newline) => {
+                        *cursor += 1;
+                        break;
+                    }
+                    Some(Tok::LBrace) => break,
+                    Some(Tok::Word(w)) => {
+                        variants.push(w.clone());
+                        *cursor += 1;
+                    }
+                    _ => break,
+                }
+            }
+        }
+        // Parse body block (if present)
         let (body_text, children) = parse_action_body(tokens, cursor)?;
         let mut form = Form::action(kind.as_str(), params, None, body_text, children);
         form.kind = kind;
         form.is_abstract = modifier;
+        form.optic_ops = optic_ops;
+        form.variants = variants;
         return Ok(form);
     }
 
@@ -781,7 +833,7 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
     if is_fold {
         optic_ops.push(OpticOp::Fold);
         *cursor += 2; // consume `<` and `=`
-        // Collect the fold target (e.g. `verdict`, `imperfect`) until newline or brace
+                      // Collect the fold target (e.g. `verdict`, `imperfect`) until newline or brace
         loop {
             match tokens.get(*cursor) {
                 Some(Tok::Newline) => {
@@ -883,6 +935,46 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
                     if DeclKind::parse(w).is_some() || w == "abstract" {
                         let child = parse_decl(tokens, cursor)?;
                         children.push(child);
+                    } else if w == "<" || w == ">" {
+                        // Relation marker: `<type` (subset) or `>type` (superset)
+                        let op = if w == "<" {
+                            OpticOp::Subset
+                        } else {
+                            OpticOp::Superset
+                        };
+                        *cursor += 1;
+                        // Collect the target type name
+                        let target = match tokens.get(*cursor) {
+                            Some(Tok::Word(t)) => {
+                                let name = t.clone();
+                                *cursor += 1;
+                                name
+                            }
+                            _ => String::new(),
+                        };
+                        // Create a synthetic child carrying the relation marker
+                        let mut child =
+                            Form::new(DeclKind::In, target, Vec::new(), Vec::new(), Vec::new());
+                        child.optic_ops.push(op);
+                        children.push(child);
+                        // Skip rest of line
+                        while *cursor < tokens.len() {
+                            match tokens.get(*cursor) {
+                                Some(Tok::RBrace) | Some(Tok::Newline) => break,
+                                Some(Tok::Comma) => {
+                                    *cursor += 1;
+                                }
+                                Some(Tok::Word(_)) => {
+                                    *cursor += 1;
+                                }
+                                _ => {
+                                    *cursor += 1;
+                                }
+                            }
+                        }
+                        if matches!(tokens.get(*cursor), Some(Tok::Newline)) {
+                            *cursor += 1;
+                        }
                     } else {
                         // Unrecognized keyword - skip tokens until we find a newline
                         // or something that looks like the start of a new declaration
@@ -3172,7 +3264,10 @@ grammar @ai {
         // The `>user` should be parsed — either as a child or as a variant
         // with OpticOp::Superset in the type's optic_ops
         let has_superset = form.optic_ops.contains(&OpticOp::Superset)
-            || form.children.iter().any(|c| c.optic_ops.contains(&OpticOp::Superset));
+            || form
+                .children
+                .iter()
+                .any(|c| c.optic_ops.contains(&OpticOp::Superset));
         assert!(
             has_superset,
             "admin type must have Superset marker, got form: {:?}",
@@ -3183,7 +3278,10 @@ grammar @ai {
         let source2 = "type contact {\n  <user\n}\n";
         let form2 = parse_form(source2).ok().unwrap();
         let has_subset = form2.optic_ops.contains(&OpticOp::Subset)
-            || form2.children.iter().any(|c| c.optic_ops.contains(&OpticOp::Subset));
+            || form2
+                .children
+                .iter()
+                .any(|c| c.optic_ops.contains(&OpticOp::Subset));
         assert!(
             has_subset,
             "contact type must have Subset marker, got form: {:?}",
@@ -3201,11 +3299,11 @@ grammar @ai {
 
         // Must have subset marker
         let has_subset = form.optic_ops.contains(&OpticOp::Subset)
-            || form.children.iter().any(|c| c.optic_ops.contains(&OpticOp::Subset));
-        assert!(
-            has_subset,
-            "contact must have Subset marker"
-        );
+            || form
+                .children
+                .iter()
+                .any(|c| c.optic_ops.contains(&OpticOp::Subset));
+        assert!(has_subset, "contact must have Subset marker");
 
         // Must have recover child
         let recover = form.children.iter().find(|c| c.kind == DeclKind::Recover);
