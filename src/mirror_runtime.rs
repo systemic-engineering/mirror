@@ -1200,6 +1200,7 @@ impl MirrorRuntime {
         let mut resolved: BTreeMap<String, CompiledShatter> = BTreeMap::new();
         let mut failed: BTreeMap<String, MirrorResolveError> = BTreeMap::new();
         let mut all_forms: Vec<Form> = Vec::new();
+        let mut total_loss = MirrorLoss::zero();
 
         for path in entries {
             let stem = path
@@ -1207,7 +1208,20 @@ impl MirrorRuntime {
                 .and_then(|s| s.to_str())
                 .unwrap_or("unknown")
                 .to_string();
-            let compiled = self.compile_file(&path)?;
+            let src = std::fs::read_to_string(&path)
+                .map_err(|e| err(format!("read {}: {}", path.display(), e)))?;
+            let compile_result = self.compile_source(&src);
+
+            // DELIBERATELY BROKEN — red phase: discard loss
+            let _file_loss = compile_result.loss();
+
+            // Extract the compiled result (Success or Partial both have a value)
+            let compiled = match compile_result {
+                Imperfect::Success(c) => c,
+                Imperfect::Partial(c, _) => c,
+                Imperfect::Failure(e, _) => return Err(e),
+            };
+
             all_forms.push(compiled.form.clone());
 
             match registry.resolve(&compiled.form) {
@@ -1237,6 +1251,7 @@ impl MirrorRuntime {
             failed,
             store_root,
             collapsed,
+            total_loss,
         })
     }
 }
@@ -1247,6 +1262,9 @@ pub struct BootResolution {
     pub failed: BTreeMap<String, MirrorResolveError>,
     pub store_root: PathBuf,
     pub collapsed: CompiledShatter,
+    /// Accumulated loss from all files in the boot sequence.
+    /// Includes unrecognized declarations from any file that parsed partially.
+    pub total_loss: MirrorLoss,
 }
 
 // Retain BootShatter as a type alias for transitional callers.
@@ -2326,6 +2344,50 @@ mod tests {
         let result = runtime.compile_source(src);
         assert!(!result.is_partial(), "clean source should not be Partial");
         assert!(result.is_ok());
+    }
+
+    // -----------------------------------------------------------------------
+    // compile_boot_dir propagates Partial loss
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn compile_boot_dir_accumulates_loss() {
+        let runtime = MirrorRuntime::new();
+        let boot = tempdir_for_test("boot_loss");
+        let store = tempdir_for_test("boot_loss_store");
+
+        // Write a .mirror file with an unrecognized keyword
+        std::fs::write(
+            boot.join("00-test.mirror"),
+            "widget foo\ntype bar",
+        )
+        .unwrap();
+
+        let result = runtime.compile_boot_dir(&boot, &store).unwrap();
+        assert!(
+            !result.total_loss.unrecognized.is_empty(),
+            "boot dir should accumulate unrecognized loss from partial files"
+        );
+        assert_eq!(result.total_loss.unrecognized[0].keyword, "widget");
+    }
+
+    #[test]
+    fn compile_boot_dir_clean_has_zero_loss() {
+        let runtime = MirrorRuntime::new();
+        let boot = tempdir_for_test("boot_clean");
+        let store = tempdir_for_test("boot_clean_store");
+
+        std::fs::write(
+            boot.join("00-test.mirror"),
+            "type visibility = private | public",
+        )
+        .unwrap();
+
+        let result = runtime.compile_boot_dir(&boot, &store).unwrap();
+        assert!(
+            result.total_loss.is_zero(),
+            "clean boot dir should have zero loss"
+        );
     }
 
     fn mirror_shatter_deterministic_across_runs() {
