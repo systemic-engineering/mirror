@@ -24,12 +24,18 @@ fn main() {
 
     let cli = Cli::open("spec.mirror").unwrap_or_default();
 
+    use prism::Imperfect;
     match cli.dispatch(&args[1], &args[2..]) {
-        Ok(output) => {
+        Imperfect::Success(output) => {
             println!("{}", output);
             process::exit(0);
         }
-        Err(e) => {
+        Imperfect::Partial(output, _loss) => {
+            println!("{}", output);
+            // Partial is still ok — value present, some loss measured
+            process::exit(0);
+        }
+        Imperfect::Failure(e, _loss) => {
             eprintln!("error: {}", e);
             process::exit(1);
         }
