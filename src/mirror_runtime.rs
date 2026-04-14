@@ -2860,7 +2860,11 @@ mod tests {
         // --- Resolution failures: kernel + std ---
         // Kernel failures: 01a, 01b, 02-shatter (dependency ordering), 06b-package-spec (missing refs)
         // Std failures: benchmark (needs @time before it), cli (needs @spec, @shatter), tui (needs @config etc)
-        assert_eq!(boot.failed.len(), 7, "7 of 18 files fail resolution (4 kernel + 3 std)");
+        assert_eq!(
+            boot.failed.len(),
+            7,
+            "7 of 18 files fail resolution (4 kernel + 3 std)"
+        );
         assert!(
             failed.contains(&"01a-meta-action"),
             "01a needs @actor which sorts after it"
@@ -2878,16 +2882,38 @@ mod tests {
             "missing refs (@mirror, @config, @ai)"
         );
         // std failures
-        assert!(failed.contains(&"std/benchmark"), "benchmark needs @time before it alphabetically");
-        assert!(failed.contains(&"std/cli"), "cli needs @spec, @shatter — not in registry");
-        assert!(failed.contains(&"std/tui"), "tui needs @config, @ci, @ca, @lsp — not in registry");
+        assert!(
+            failed.contains(&"std/benchmark"),
+            "benchmark needs @time before it alphabetically"
+        );
+        assert!(
+            failed.contains(&"std/cli"),
+            "cli needs @spec, @shatter — not in registry"
+        );
+        assert!(
+            failed.contains(&"std/tui"),
+            "tui needs @config, @ci, @ca, @lsp — not in registry"
+        );
 
         // --- Resolved: kernel(8) + std(3) = 11 ---
-        assert_eq!(boot.resolved.len(), 11, "11 of 18 files resolve (8 kernel + 3 std)");
+        assert_eq!(
+            boot.resolved.len(),
+            11,
+            "11 of 18 files resolve (8 kernel + 3 std)"
+        );
         // std files that resolve
-        assert!(resolved.contains(&"std/mirror"), "std/mirror resolves (in @meta, @property)");
-        assert!(resolved.contains(&"std/time"), "std/time resolves (in @prism, @meta, @actor)");
-        assert!(resolved.contains(&"std/properties"), "std/properties resolves (in @meta, @property)");
+        assert!(
+            resolved.contains(&"std/mirror"),
+            "std/mirror resolves (in @meta, @property)"
+        );
+        assert!(
+            resolved.contains(&"std/time"),
+            "std/time resolves (in @prism, @meta, @actor)"
+        );
+        assert!(
+            resolved.contains(&"std/properties"),
+            "std/properties resolves (in @meta, @property)"
+        );
 
         // --- The crystal still forms despite failures ---
         // The compiler produces a crystal from what DID resolve.
@@ -2944,9 +2970,18 @@ mod tests {
         let result = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
 
         // std/mirror, std/time, and std/properties resolve against kernel registry
-        assert!(result.resolved.contains_key("std/mirror"), "std/mirror should resolve");
-        assert!(result.resolved.contains_key("std/time"), "std/time should resolve");
-        assert!(result.resolved.contains_key("std/properties"), "std/properties should resolve");
+        assert!(
+            result.resolved.contains_key("std/mirror"),
+            "std/mirror should resolve"
+        );
+        assert!(
+            result.resolved.contains_key("std/time"),
+            "std/time should resolve"
+        );
+        assert!(
+            result.resolved.contains_key("std/properties"),
+            "std/properties should resolve"
+        );
     }
 
     /// Success(Mirror). Zero loss. Zero failures. Strict passes.
@@ -3759,6 +3794,217 @@ grammar @ai {
         assert_eq!(
             oid_before, oid_after,
             "kintsugi must not change the content-addressed OID"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // @properties package — template/property split (RED)
+    // -----------------------------------------------------------------------
+
+    /// The property kernel declares types, not properties.
+    /// verdict, property_error, property_loss, effect_pattern must be declared.
+    #[test]
+    fn property_type_is_verdict() {
+        let runtime = MirrorRuntime::new();
+        let compiled = runtime
+            .compile_file(&boot_dir().join("05-property.mirror"))
+            .unwrap();
+
+        // Find the @property grammar block
+        let grammar = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.kind == DeclKind::Grammar && f.name == "@property")
+            .expect("@property grammar must exist");
+
+        let type_names: Vec<&str> = grammar
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Type)
+            .map(|f| f.name.as_str())
+            .collect();
+
+        assert!(
+            type_names.contains(&"verdict"),
+            "verdict type must be declared"
+        );
+        assert!(
+            type_names.contains(&"property_error"),
+            "property_error type must be declared"
+        );
+        assert!(
+            type_names.contains(&"property_loss"),
+            "property_loss type must be declared"
+        );
+        assert!(
+            type_names.contains(&"effect_pattern"),
+            "effect_pattern type must be declared"
+        );
+    }
+
+    /// Templates in std/properties.mirror must NOT have OpticOp::Fold.
+    /// They are iso, not fold. The parser doesn't know `template` yet,
+    /// so these lines are unrecognized — this test is RED until the parser
+    /// learns `template` as a DeclKind.
+    #[test]
+    #[should_panic(expected = "template DeclKind not yet recognized")]
+    fn template_declared_as_iso() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime
+            .compile_source("in @meta\nin @property\ntemplate types_lowercase(grammar) = iso\n");
+        let compiled = match result {
+            Imperfect::Success(c) | Imperfect::Partial(c, _) => c,
+            Imperfect::Failure(_, _) => panic!("template DeclKind not yet recognized"),
+        };
+
+        // If we get here, the parser parsed it. Check that it's NOT Fold.
+        let template = compiled
+            .form
+            .children
+            .iter()
+            .find(|f| f.name == "types_lowercase");
+        // RED: template should exist as a recognized DeclKind
+        assert!(template.is_some(), "template DeclKind not yet recognized");
+        let t = template.unwrap();
+        assert!(
+            !t.optic_ops.contains(&OpticOp::Fold),
+            "template must be iso, not fold"
+        );
+        assert!(
+            t.optic_ops.contains(&OpticOp::Iso),
+            "template must carry OpticOp::Iso"
+        );
+    }
+
+    /// Properties like consent(effect(a => b)) must have a recognizable
+    /// effect pattern. The parser should preserve `effect(a=>b)` in params.
+    #[test]
+    fn property_has_effect_pattern() {
+        let runtime = MirrorRuntime::new();
+        let src = "property consent(effect(a => b)) <= verdict\n";
+        let result = runtime.compile_source(src);
+
+        let compiled = match result {
+            Imperfect::Success(c) | Imperfect::Partial(c, _) => c,
+            Imperfect::Failure(e, _) => panic!("property with effect pattern must parse: {}", e),
+        };
+
+        // Single declaration → the form IS the property (no wrapper)
+        assert_eq!(compiled.form.kind, DeclKind::Property);
+        assert_eq!(compiled.form.name, "consent");
+
+        // The parser preserves the effect pattern in params.
+        // effect(a=>b) is stored as a single param string.
+        let has_effect = compiled.form.params.iter().any(|p| p.contains("effect"));
+        assert!(
+            has_effect,
+            "consent property must have effect pattern in params, got: {:?}",
+            compiled.form.params
+        );
+
+        // The fold operator must be recorded
+        assert!(
+            compiled.form.optic_ops.contains(&OpticOp::Fold),
+            "consent property must have OpticOp::Fold from <= verdict"
+        );
+    }
+
+    /// The `where` clause is new syntax. The parser doesn't handle it yet.
+    /// consent(effect(a => b)) where a != b — the `where` line is unrecognized.
+    /// This test documents that gap. RED until the parser learns `where`.
+    #[test]
+    fn boundary_property_has_where_clause() {
+        let runtime = MirrorRuntime::new();
+        let src = "property consent(effect(a => b)) <= verdict\n  where a != b\n";
+        let result = runtime.compile_source(src);
+
+        // Grab the loss before consuming the result
+        let loss = result.loss();
+
+        let _compiled = match result {
+            Imperfect::Success(c) | Imperfect::Partial(c, _) => c,
+            Imperfect::Failure(e, _) => panic!("property with where clause must parse: {}", e),
+        };
+
+        // The `where` line is currently unrecognized — it shows up as parse loss.
+        let has_where_loss = loss.parse.unrecognized.iter().any(|u| u.keyword == "where");
+        // RED: `where` is unrecognized training data
+        assert!(
+            has_where_loss,
+            "where clause should be unrecognized (training data) until parser learns it"
+        );
+    }
+
+    /// std/properties.mirror must declare security properties:
+    /// sanitize, escape, consent_boundary, audit_trail, deploy_gate, classify.
+    /// Each has an effect pattern argument.
+    #[test]
+    fn security_properties_exist() {
+        let runtime = MirrorRuntime::new();
+        let compiled = runtime
+            .compile_file(&boot_dir().join("std/properties.mirror"))
+            .unwrap();
+
+        let property_names: Vec<&str> = compiled
+            .form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Property)
+            .map(|f| f.name.as_str())
+            .collect();
+
+        let expected = [
+            "sanitize",
+            "escape",
+            "consent_boundary",
+            "audit_trail",
+            "deploy_gate",
+            "classify",
+        ];
+        for name in &expected {
+            assert!(
+                property_names.contains(name),
+                "security property '{}' must exist in std/properties.mirror, found: {:?}",
+                name,
+                property_names
+            );
+        }
+
+        // Each security property should have an effect pattern in params
+        for child in compiled
+            .form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Property && expected.contains(&f.name.as_str()))
+        {
+            let has_effect = child.params.iter().any(|p| p.contains("effect"));
+            assert!(
+                has_effect,
+                "security property '{}' must have effect pattern in params, got: {:?}",
+                child.name, child.params
+            );
+        }
+    }
+
+    /// All properties in std/properties.mirror resolve against the kernel.
+    /// in @meta and in @property must both resolve.
+    #[test]
+    fn all_std_properties_resolve() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("std_properties_resolve");
+        let boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+
+        assert!(
+            boot.resolved.contains_key("std/properties"),
+            "std/properties must resolve against kernel (in @meta, in @property)"
+        );
+
+        // Verify @property is in the registry
+        let registry = MirrorRegistry::open(&store).unwrap();
+        assert!(
+            registry.lookup("@property").is_some(),
+            "@property must be registered by kernel boot"
         );
     }
 }
