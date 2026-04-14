@@ -6,8 +6,9 @@
 //!
 //! The tower-lsp adapter (Phase 3 Task 3.5) will wrap these.
 
-use crate::loss::MirrorLoss;
+use crate::loss::{Convergence, MirrorLoss};
 use crate::shatter_format::Luminosity;
+use prism::Imperfect;
 
 // ---------------------------------------------------------------------------
 // DiagnosticSeverity
@@ -38,15 +39,103 @@ pub struct MirrorDiagnostic {
 }
 
 // ---------------------------------------------------------------------------
-// loss_to_diagnostics — STUB (red)
+// loss_to_diagnostics
 // ---------------------------------------------------------------------------
 
-pub fn loss_to_diagnostics(_loss: &MirrorLoss) -> Vec<MirrorDiagnostic> {
-    Vec::new() // intentionally empty — tests will fail
+/// Map a `MirrorLoss` into a flat list of diagnostics.
+///
+/// Code scheme:
+/// - M1xxx = parse phase
+/// - M3xxx = resolution phase
+/// - M4xxx = property phase
+/// - M9xxx = convergence / budget
+pub fn loss_to_diagnostics(loss: &MirrorLoss) -> Vec<MirrorDiagnostic> {
+    let mut diags = Vec::new();
+
+    // Parse: unrecognized keywords → Warning M1001
+    for unrec in &loss.parse.unrecognized {
+        diags.push(MirrorDiagnostic {
+            line: unrec.line.saturating_sub(1),
+            col: 0,
+            end_col: unrec.keyword.len(),
+            severity: DiagnosticSeverity::Warning,
+            message: format!("unrecognized keyword '{}'", unrec.keyword),
+            code: Some("M1001".into()),
+        });
+    }
+
+    // Resolution: unresolved refs → Error M3001
+    for (name, _trace) in &loss.resolution.unresolved_refs {
+        diags.push(MirrorDiagnostic {
+            line: 0,
+            col: 0,
+            end_col: name.len(),
+            severity: DiagnosticSeverity::Error,
+            message: format!("unresolved reference '{}'", name),
+            code: Some("M3001".into()),
+        });
+    }
+
+    // Properties: verdicts
+    for verdict in &loss.properties.verdicts {
+        match &verdict.verdict {
+            Imperfect::Success(_) => {}
+            Imperfect::Partial(_, loss_val) => {
+                diags.push(MirrorDiagnostic {
+                    line: 0,
+                    col: 0,
+                    end_col: 0,
+                    severity: DiagnosticSeverity::Warning,
+                    message: format!(
+                        "property '{}' partial (loss: {})",
+                        verdict.property, loss_val
+                    ),
+                    code: Some("M4001".into()),
+                });
+            }
+            Imperfect::Failure(obs, _) => {
+                diags.push(MirrorDiagnostic {
+                    line: 0,
+                    col: 0,
+                    end_col: 0,
+                    severity: DiagnosticSeverity::Error,
+                    message: format!("property '{}' failed: {}", verdict.property, obs),
+                    code: Some("M4002".into()),
+                });
+            }
+        }
+    }
+
+    // Convergence
+    match &loss.convergence {
+        Convergence::BudgetExhausted => {
+            diags.push(MirrorDiagnostic {
+                line: 0,
+                col: 0,
+                end_col: 0,
+                severity: DiagnosticSeverity::Error,
+                message: "compilation budget exhausted".into(),
+                code: Some("M9002".into()),
+            });
+        }
+        Convergence::Oscillating(n) => {
+            diags.push(MirrorDiagnostic {
+                line: 0,
+                col: 0,
+                end_col: 0,
+                severity: DiagnosticSeverity::Warning,
+                message: format!("oscillating between {} attractors", n),
+                code: Some("M9003".into()),
+            });
+        }
+        _ => {}
+    }
+
+    diags
 }
 
 // ---------------------------------------------------------------------------
-// CompletionItem / CompletionKind — STUB (red)
+// CompletionItem / CompletionKind
 // ---------------------------------------------------------------------------
 
 #[derive(Clone, Debug)]
@@ -62,17 +151,74 @@ pub enum CompletionKind {
     Operator,
 }
 
+/// Return the full set of mirror completion items: keywords + operators.
 pub fn mirror_completion_items() -> Vec<CompletionItem> {
-    Vec::new() // intentionally empty — tests will fail
+    let mut items = Vec::new();
+
+    // All DeclKind keywords (matches declaration.rs DeclKind::parse)
+    let keywords = [
+        "form",
+        "type",
+        "prism",
+        "in",
+        "out",
+        "property",
+        "fold",
+        "requires",
+        "invariant",
+        "ensures",
+        "focus",
+        "project",
+        "split",
+        "zoom",
+        "refract",
+        "traversal",
+        "lens",
+        "action",
+        "recover",
+        "rescue",
+        "grammar",
+        "default",
+        "binding",
+    ];
+    for kw in keywords {
+        items.push(CompletionItem {
+            label: kw.to_string(),
+            detail: format!("{} keyword", kw),
+            kind: CompletionKind::Keyword,
+        });
+    }
+
+    // OpticOp operators (matches declaration.rs OpticOp)
+    let operators = ["=", "<=", "|", "->", "..", "<", ">", "!=", ">="];
+    for op in operators {
+        items.push(CompletionItem {
+            label: op.to_string(),
+            detail: format!("{} operator", op),
+            kind: CompletionKind::Operator,
+        });
+    }
+
+    items
 }
 
 // ---------------------------------------------------------------------------
-// MirrorLspBackend — STUB (red)
+// MirrorLspBackend
 // ---------------------------------------------------------------------------
 
+/// Pure LSP backend — compiles source and returns diagnostics.
+///
+/// No tower-lsp dependency. This struct holds the runtime and a cache
+/// of shatter metadata. The tower-lsp adapter will wrap this.
 pub struct MirrorLspBackend {
     pub shatter_cache: std::collections::HashMap<String, crate::shatter_format::ShatterMeta>,
     runtime: crate::mirror_runtime::MirrorRuntime,
+}
+
+impl Default for MirrorLspBackend {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl MirrorLspBackend {
@@ -83,8 +229,13 @@ impl MirrorLspBackend {
         }
     }
 
-    pub fn compile_and_diagnose(&self, _source: &str) -> (Luminosity, Vec<MirrorDiagnostic>) {
-        (Luminosity::Dark, Vec::new()) // intentionally wrong — tests will fail
+    /// Compile source and return luminosity + diagnostics.
+    pub fn compile_and_diagnose(&self, source: &str) -> (Luminosity, Vec<MirrorDiagnostic>) {
+        let result = self.runtime.compile_source(source);
+        let loss = result.loss();
+        let luminosity = Luminosity::from_loss(&loss);
+        let diagnostics = loss_to_diagnostics(&loss);
+        (luminosity, diagnostics)
     }
 }
 
@@ -96,7 +247,7 @@ impl MirrorLspBackend {
 mod tests {
     use super::*;
     use crate::kernel::TraceOid;
-    use crate::loss::{Convergence, PropertyVerdict, UnrecognizedDecl};
+    use crate::loss::{PropertyVerdict, UnrecognizedDecl};
     use prism::{Imperfect, Loss};
 
     // -- loss_to_diagnostics --
