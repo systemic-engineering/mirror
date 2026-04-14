@@ -151,9 +151,7 @@ fn tokenize(source: &str) -> Vec<String> {
         // Word (identifier, @ref, --flag, path with dots/slashes)
         let mut word = String::new();
         while let Some(&ch) = chars.peek() {
-            if ch.is_whitespace()
-                || matches!(ch, '{' | '}' | '(' | ')' | '[' | ']' | '#')
-            {
+            if ch.is_whitespace() || matches!(ch, '{' | '}' | '(' | ')' | '[' | ']' | '#') {
                 break;
             }
             if ch == '=' {
@@ -451,10 +449,7 @@ fn parse_properties_block(
     Ok((props, pos))
 }
 
-fn parse_name_block(
-    tokens: &[String],
-    pos: usize,
-) -> Result<(Vec<String>, usize), SpecParseError> {
+fn parse_name_block(tokens: &[String], pos: usize) -> Result<(Vec<String>, usize), SpecParseError> {
     let mut pos = skip_token(tokens, pos, "{")?;
     let mut items = Vec::new();
 
