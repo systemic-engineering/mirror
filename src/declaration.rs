@@ -34,6 +34,12 @@ pub enum DeclKind {
     Split,
     Zoom,
     Refract,
+    // Optic operators (completing OpticOp symmetry)
+    Unfold,
+    Subset,
+    Superset,
+    Iso,
+    NotIso,
     // Optics
     Traversal,
     Lens,
@@ -68,6 +74,11 @@ impl DeclKind {
             "split" => Some(DeclKind::Split),
             "zoom" => Some(DeclKind::Zoom),
             "refract" => Some(DeclKind::Refract),
+            "unfold" => Some(DeclKind::Unfold),
+            "subset" => Some(DeclKind::Subset),
+            "superset" => Some(DeclKind::Superset),
+            "iso" => Some(DeclKind::Iso),
+            "not-iso" => Some(DeclKind::NotIso),
             "traversal" => Some(DeclKind::Traversal),
             "lens" => Some(DeclKind::Lens),
             "action" => Some(DeclKind::Action),
@@ -98,6 +109,11 @@ impl DeclKind {
             DeclKind::Split => "split",
             DeclKind::Zoom => "zoom",
             DeclKind::Refract => "refract",
+            DeclKind::Unfold => "unfold",
+            DeclKind::Subset => "subset",
+            DeclKind::Superset => "superset",
+            DeclKind::Iso => "iso",
+            DeclKind::NotIso => "not-iso",
             DeclKind::Traversal => "traversal",
             DeclKind::Lens => "lens",
             DeclKind::Action => "action",
@@ -208,11 +224,11 @@ impl OpticOp {
             OpticOp::Zoom => Some(DeclKind::Zoom),
             OpticOp::Refract => Some(DeclKind::Refract),
             OpticOp::Focus => Some(DeclKind::Focus),
-            OpticOp::Iso => None, // Iso is structural (=), not a declaration keyword
-            OpticOp::Subset => None,
-            OpticOp::Superset => None,
-            OpticOp::NotIso => None,
-            OpticOp::Unfold => None,
+            OpticOp::Iso => Some(DeclKind::Iso),
+            OpticOp::Subset => Some(DeclKind::Subset),
+            OpticOp::Superset => Some(DeclKind::Superset),
+            OpticOp::NotIso => Some(DeclKind::NotIso),
+            OpticOp::Unfold => Some(DeclKind::Unfold),
         }
     }
 }
@@ -226,6 +242,11 @@ impl OpticOp {
             DeclKind::Split => Some(OpticOp::Split),
             DeclKind::Zoom => Some(OpticOp::Zoom),
             DeclKind::Refract => Some(OpticOp::Refract),
+            DeclKind::Unfold => Some(OpticOp::Unfold),
+            DeclKind::Subset => Some(OpticOp::Subset),
+            DeclKind::Superset => Some(OpticOp::Superset),
+            DeclKind::Iso => Some(OpticOp::Iso),
+            DeclKind::NotIso => Some(OpticOp::NotIso),
             _ => None,
         }
     }
@@ -513,11 +534,11 @@ mod tests {
         assert_eq!(OpticOp::Refract.to_decl_kind(), Some(DeclKind::Refract));
         assert_eq!(OpticOp::Focus.to_decl_kind(), Some(DeclKind::Focus));
         assert_eq!(OpticOp::Fold.to_decl_kind(), Some(DeclKind::Fold));
-        assert_eq!(OpticOp::Iso.to_decl_kind(), None);
-        assert_eq!(OpticOp::Subset.to_decl_kind(), None);
-        assert_eq!(OpticOp::Superset.to_decl_kind(), None);
-        assert_eq!(OpticOp::NotIso.to_decl_kind(), None);
-        assert_eq!(OpticOp::Unfold.to_decl_kind(), None);
+        assert_eq!(OpticOp::Iso.to_decl_kind(), Some(DeclKind::Iso));
+        assert_eq!(OpticOp::Subset.to_decl_kind(), Some(DeclKind::Subset));
+        assert_eq!(OpticOp::Superset.to_decl_kind(), Some(DeclKind::Superset));
+        assert_eq!(OpticOp::NotIso.to_decl_kind(), Some(DeclKind::NotIso));
+        assert_eq!(OpticOp::Unfold.to_decl_kind(), Some(DeclKind::Unfold));
     }
 
     #[test]
@@ -541,6 +562,23 @@ mod tests {
         assert_eq!(
             OpticOp::from_decl_kind(&DeclKind::Fold),
             Some(OpticOp::Fold)
+        );
+        assert_eq!(
+            OpticOp::from_decl_kind(&DeclKind::Unfold),
+            Some(OpticOp::Unfold)
+        );
+        assert_eq!(
+            OpticOp::from_decl_kind(&DeclKind::Subset),
+            Some(OpticOp::Subset)
+        );
+        assert_eq!(
+            OpticOp::from_decl_kind(&DeclKind::Superset),
+            Some(OpticOp::Superset)
+        );
+        assert_eq!(OpticOp::from_decl_kind(&DeclKind::Iso), Some(OpticOp::Iso));
+        assert_eq!(
+            OpticOp::from_decl_kind(&DeclKind::NotIso),
+            Some(OpticOp::NotIso)
         );
         assert_eq!(OpticOp::from_decl_kind(&DeclKind::Type), None);
         assert_eq!(OpticOp::from_decl_kind(&DeclKind::Grammar), None);
@@ -569,6 +607,11 @@ mod tests {
             DeclKind::Split,
             DeclKind::Zoom,
             DeclKind::Refract,
+            DeclKind::Unfold,
+            DeclKind::Subset,
+            DeclKind::Superset,
+            DeclKind::Iso,
+            DeclKind::NotIso,
             DeclKind::Traversal,
             DeclKind::Lens,
             DeclKind::Action,
@@ -587,7 +630,7 @@ mod tests {
             );
         }
         // Ensure we tested every variant — count must match.
-        assert_eq!(all_kinds.len(), 23, "must test all 23 DeclKind variants");
+        assert_eq!(all_kinds.len(), 28, "must test all 28 DeclKind variants");
     }
 
     #[test]

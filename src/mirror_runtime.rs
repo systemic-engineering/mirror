@@ -597,6 +597,13 @@ fn tokenize(source: &str) -> Vec<Tok> {
                 if i == start {
                     i += 1;
                 } else {
+                    // Absorb trailing `=` after `!` to form `!=` as a single token.
+                    // Other operators (`<`, `>`) keep `=` separate so the parser
+                    // can detect `<=` as Word("<") + Equals (fold operator).
+                    let sym_so_far = &source[start..i];
+                    if sym_so_far == "!" && i < bytes.len() && bytes[i] == b'=' {
+                        i += 1; // absorb `=` into `!=`
+                    }
                     let sym = &source[start..i];
                     // `--` is a line comment: skip to end of line.
                     if sym == "--" {
@@ -625,6 +632,12 @@ fn tokenize(source: &str) -> Vec<Tok> {
                         let cc = bytes[i] as char;
                         if cc.is_ascii_alphanumeric() || cc == '_' || cc == '@' {
                             i += 1;
+                        } else if cc == '-'
+                            && i + 1 < bytes.len()
+                            && (bytes[i + 1] as char).is_ascii_alphabetic()
+                        {
+                            // Hyphenated identifier: `not-iso`, `meta-action`
+                            i += 1; // absorb the `-`
                         } else {
                             break;
                         }
@@ -873,6 +886,25 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
                 _ => break,
             }
         }
+    } else if matches!(tokens.get(*cursor), Some(Tok::Word(w)) if w == "!=") {
+        // NotIso operator: `type real != pure`
+        optic_ops.push(OpticOp::NotIso);
+        *cursor += 1;
+        // Collect variants until newline or brace
+        loop {
+            match tokens.get(*cursor) {
+                Some(Tok::Newline) => {
+                    *cursor += 1;
+                    break;
+                }
+                Some(Tok::LBrace) => break,
+                Some(Tok::Word(w)) => {
+                    variants.push(w.clone());
+                    *cursor += 1;
+                }
+                _ => break,
+            }
+        }
     } else if matches!(tokens.get(*cursor), Some(Tok::Equals)) {
         optic_ops.push(OpticOp::Iso);
         *cursor += 1;
@@ -939,6 +971,13 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
         form.optic_ops = optic_ops;
         return Ok(form);
     }
+
+    // Parse optional `-> return_type` for any declaration with params
+    let return_type = if has_parens {
+        parse_return_type(tokens, cursor)
+    } else {
+        None
+    };
 
     let mut children = Vec::new();
     skip_inline_trivia(tokens, cursor);
@@ -1034,6 +1073,7 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
 
     let mut form = Form::new(kind, name, params, variants, children);
     form.is_abstract = modifier;
+    form.return_type = return_type;
     form.optic_ops = optic_ops;
     Ok(form)
 }
@@ -1372,7 +1412,12 @@ fn kintsugi_sort_key(kind: &DeclKind) -> u8 {
         | DeclKind::Split
         | DeclKind::Fold
         | DeclKind::Zoom
-        | DeclKind::Refract => 1, // group with types
+        | DeclKind::Refract
+        | DeclKind::Unfold
+        | DeclKind::Subset
+        | DeclKind::Superset
+        | DeclKind::Iso
+        | DeclKind::NotIso => 1, // group with types
         // Other structural keywords
         DeclKind::Out => 7,
         DeclKind::Prism => 1,
@@ -2818,16 +2863,18 @@ mod tests {
         let holonomy = loss.holonomy();
 
         // --- Parse-level loss ---
-        // Kernel files introduce unrecognized keywords (training data):
-        //   unfold, subset, superset, iso, not-iso (01-meta operators)
-        //   io (01b-meta-io, 02-shatter grammar keyword)
-        //   pure, real, loss constraints with != operator
-        //
-        // The baseline holonomy must not INCREASE (regression).
-        // It CAN decrease as the parser learns new constructs.
+        // Zero parse holonomy: all keywords recognized, tokenizer handles
+        // `!=` and hyphenated identifiers (`not-iso`), `->` return types
+        // parsed for all declaration kinds.
+        assert_eq!(
+            loss.parse.holonomy(),
+            0.0,
+            "parse holonomy must be zero: got {}",
+            loss.parse.holonomy()
+        );
         assert!(
             holonomy <= 15.0,
-            "parse holonomy must not regress above baseline: got {}",
+            "total holonomy must not regress above baseline: got {}",
             holonomy
         );
 
@@ -4274,5 +4321,93 @@ grammar @ai {
             list_type.variants.contains(&"cons".to_string()),
             "list must have cons variant"
         );
+    }
+
+    // -----------------------------------------------------------------------
+    // Taut: benchmark — boot compilation
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn benchmark_boot_compilation() {
+        let runtime = MirrorRuntime::new();
+        let store = tempdir_for_test("benchmark_boot");
+
+        let start = std::time::Instant::now();
+        let boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
+        let cold = start.elapsed();
+
+        let store2 = tempdir_for_test("benchmark_boot_warm");
+        let start2 = std::time::Instant::now();
+        let _boot2 = runtime.compile_boot_dir(&boot_dir(), &store2).unwrap();
+        let warm = start2.elapsed();
+
+        eprintln!("--- mirror benchmark: boot compilation ---");
+        eprintln!("  cold: {:?}", cold);
+        eprintln!("  warm: {:?}", warm);
+        eprintln!("  files: {}", boot.resolved.len() + boot.failed.len());
+        eprintln!("  resolved: {}", boot.resolved.len());
+        eprintln!("  failed: {}", boot.failed.len());
+        eprintln!("  holonomy: {}", boot.total_loss.holonomy());
+        eprintln!("  parse holonomy: {}", boot.total_loss.parse.holonomy());
+        eprintln!(
+            "  resolution holonomy: {}",
+            boot.total_loss.resolution.holonomy()
+        );
+        eprintln!("---");
+
+        // The cascade: parse holonomy should be zero after the three fixes
+        assert_eq!(
+            boot.total_loss.parse.holonomy(),
+            0.0,
+            "zero parse holonomy — the three fixes landed"
+        );
+    }
+
+    #[test]
+    fn benchmark_per_file() {
+        let runtime = MirrorRuntime::new();
+
+        eprintln!("--- mirror benchmark: per file ---");
+        let boot = boot_dir();
+        let mut paths: Vec<_> = Vec::new();
+        // Collect kernel files
+        for entry in std::fs::read_dir(&boot).unwrap() {
+            let path = entry.unwrap().path();
+            if path.extension().map(|x| x == "mirror").unwrap_or(false) {
+                paths.push(path);
+            }
+        }
+        // Collect std files
+        let std_dir = boot.join("std");
+        if std_dir.is_dir() {
+            for entry in std::fs::read_dir(&std_dir).unwrap() {
+                let path = entry.unwrap().path();
+                if path.extension().map(|x| x == "mirror").unwrap_or(false) {
+                    paths.push(path);
+                }
+            }
+        }
+        paths.sort();
+
+        for path in &paths {
+            let src = std::fs::read_to_string(path).unwrap();
+            let start = std::time::Instant::now();
+            let result = runtime.compile_source(&src);
+            let elapsed = start.elapsed();
+            let holonomy = result.loss().holonomy();
+            let status = match &result {
+                Imperfect::Success(_) => "ok",
+                Imperfect::Partial(_, _) => "partial",
+                Imperfect::Failure(_, _) => "FAIL",
+            };
+            eprintln!(
+                "  {:35} {:>8?}  holonomy: {:5.1}  {}",
+                path.file_name().unwrap().to_str().unwrap(),
+                elapsed,
+                holonomy,
+                status
+            );
+        }
+        eprintln!("---");
     }
 }
