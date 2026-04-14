@@ -61,6 +61,7 @@ pub mod parse;
 pub mod runtime;
 pub mod session;
 pub mod shard;
+pub mod shatter_format;
 #[cfg(feature = "git")]
 pub mod sign;
 pub mod store;
