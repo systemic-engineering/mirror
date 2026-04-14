@@ -3006,4 +3006,30 @@ craft { default boot }
             );
         }
     }
+
+    // -----------------------------------------------------------------------
+    // Imperfect dispatch — RED: dispatch must return Imperfect, not Result
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn dispatch_returns_imperfect_success() {
+        use prism::Imperfect;
+        let cli = Cli::default();
+        let result = cli.dispatch("help", &[]);
+        // This asserts the return type IS Imperfect, not Result.
+        assert!(matches!(result, Imperfect::Success(_)));
+    }
+
+    #[test]
+    fn dispatch_unimplemented_spec_block_is_partial() {
+        use prism::Imperfect;
+        let spec = crate::spec::parse_spec_source(
+            "future_command { --some-flag }",
+        )
+        .unwrap();
+        let mut cli = Cli::default();
+        cli.spec = spec;
+        let result = cli.dispatch("future_command", &[]);
+        assert!(matches!(result, Imperfect::Partial(_, _)));
+    }
 }
