@@ -4,9 +4,10 @@
 //! consumers use `Parse.trace(source)` to get a content-addressed parse tree.
 
 use crate::declaration::DeclKind;
+use crate::declaration::{MirrorData, MirrorFragment, MirrorFragmentExt};
 use crate::domain::conversation::Kind;
 use crate::kernel::{ContentAddressed, Oid, Trace, TraceOid, Vector};
-use crate::mirror_runtime::{parse_form, Form};
+use crate::mirror_runtime::parse_form;
 use crate::prism::{self, Prism};
 use fragmentation::encoding::Encode;
 use fragmentation::ref_::Ref;
@@ -93,19 +94,24 @@ fn decl_to_ast(kind: &DeclKind) -> (Kind, &'static str) {
     }
 }
 
-/// Convert a Form tree into a Prism<AstNode> tree.
-fn form_to_prism(form: &Form) -> Prism<AstNode> {
-    let (kind, name) = decl_to_ast(&form.kind);
+/// Convert a MirrorFragment tree into a Prism<AstNode> tree.
+fn fragment_to_prism(frag: &MirrorFragment) -> Prism<AstNode> {
+    let data = MirrorData::decode_from_fragment(frag.mirror_data());
+    let (kind, name) = decl_to_ast(&data.kind);
     let node = AstNode {
         kind,
         name: name.to_string(),
-        value: form.name.clone(),
+        value: data.name.clone(),
     };
     let ref_ = {
         let label = node.label();
         Ref::new(sha::hash(&label), &label)
     };
-    let children: Vec<Prism<AstNode>> = form.children.iter().map(form_to_prism).collect();
+    let children: Vec<Prism<AstNode>> = frag
+        .mirror_children()
+        .iter()
+        .map(fragment_to_prism)
+        .collect();
     if children.is_empty() {
         prism::shard(ref_, node)
     } else {
@@ -135,8 +141,8 @@ impl Vector<String, Prism<AstNode>> for Parse {
 
     fn trace(&self, source: String) -> Trace<Prism<AstNode>, String> {
         match Result::from(parse_form(&source)) {
-            Ok(form) => {
-                let tree = form_to_prism(&form);
+            Ok(frag) => {
+                let tree = fragment_to_prism(&frag);
                 let oid = tree.content_oid();
                 Trace::success(tree, oid.into(), None)
             }

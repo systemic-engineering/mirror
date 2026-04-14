@@ -1819,7 +1819,19 @@ dependencies = [
 name = "prism-core"
 version = "0.1.0"
 dependencies = [
+ "hex",
+ "prism-derive",
+ "sha2",
  "terni",
+]
+
+[[package]]
+name = "prism-derive"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

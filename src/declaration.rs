@@ -409,7 +409,10 @@ impl MirrorData {
     pub fn encode_for_fragment(&self) -> MirrorData {
         let mut params = self.params.clone();
         let mut variants = self.variants.clone();
-        if self.kind == DeclKind::Action {
+        if self.kind == DeclKind::Action
+            || self.kind == DeclKind::Recover
+            || self.kind == DeclKind::Rescue
+        {
             if let Some(ref gr) = self.grammar_ref {
                 params.push(format!("in:{}", gr));
             }

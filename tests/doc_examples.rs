@@ -5,8 +5,13 @@
 //! expected structure. If a doc example doesn't compile, the doc is wrong.
 
 use fragmentation::sha::HashAlg;
-use mirror::declaration::DeclKind;
+use mirror::declaration::{DeclKind, MirrorData, MirrorFragmentExt};
 use mirror::mirror_runtime::{parse_form, MirrorRuntime};
+
+/// Helper: decode MirrorData from a fragment (extracts encoded fields).
+fn decode(frag: &mirror::declaration::MirrorFragment) -> MirrorData {
+    MirrorData::decode_from_fragment(frag.mirror_data())
+}
 
 // ---------------------------------------------------------------------------
 // docs/mirror.md
@@ -17,9 +22,6 @@ use mirror::mirror_runtime::{parse_form, MirrorRuntime};
 /// which the parser wraps. We test with the raw body form.
 #[test]
 fn doc_mirror_grammar_deploy() {
-    // Simplified from mirror.md — the `in @code/rust { struct ... }` block
-    // uses non-mirror syntax inside the braces. The parser handles this by
-    // skipping unrecognized tokens inside the in-block.
     let source = r#"grammar @deploy {
     action transform(data) {
         let result = serde_json::from_str(data)?;
@@ -30,34 +32,31 @@ fn doc_mirror_grammar_deploy() {
     invariant pure
     ensures always_halts
 }"#;
-    let form = parse_form(source).ok().unwrap();
-    assert_eq!(form.kind, DeclKind::Grammar);
-    assert_eq!(form.name, "@deploy");
-    let action_count = form
-        .children
+    let frag = parse_form(source).ok().unwrap();
+    let data = decode(&frag);
+    assert_eq!(data.kind, DeclKind::Grammar);
+    assert_eq!(data.name, "@deploy");
+    let action_count = frag
+        .mirror_children()
         .iter()
-        .filter(|c| c.kind == DeclKind::Action)
+        .filter(|c| c.mirror_data().kind == DeclKind::Action)
         .count();
     assert_eq!(action_count, 1, "should have 1 action");
-    let invariant_count = form
-        .children
+    let invariant_count = frag
+        .mirror_children()
         .iter()
-        .filter(|c| c.kind == DeclKind::Invariant)
+        .filter(|c| c.mirror_data().kind == DeclKind::Invariant)
         .count();
     assert_eq!(invariant_count, 1, "should have invariant");
-    let ensures_count = form
-        .children
+    let ensures_count = frag
+        .mirror_children()
         .iter()
-        .filter(|c| c.kind == DeclKind::Ensures)
+        .filter(|c| c.mirror_data().kind == DeclKind::Ensures)
         .count();
     assert_eq!(ensures_count, 1, "should have ensures");
 }
 
 /// mirror.md: grammar with `in @code/rust` reference (no nested struct block)
-/// Note: the doc example `in @code/rust { struct State { ... } }` uses
-/// nested braces that interfere with the parser's brace balancing when
-/// `struct` is not a DeclKind. The correct .mirror form is `in @code/rust`
-/// as a flat declaration.
 #[test]
 fn doc_mirror_grammar_with_in_ref() {
     let source = r#"grammar @deploy {
@@ -66,41 +65,44 @@ fn doc_mirror_grammar_with_in_ref() {
         apply(data)
     }
 }"#;
-    let form = parse_form(source).ok().unwrap();
-    assert_eq!(form.kind, DeclKind::Grammar);
-    assert_eq!(form.name, "@deploy");
-    let in_count = form
-        .children
+    let frag = parse_form(source).ok().unwrap();
+    let data = decode(&frag);
+    assert_eq!(data.kind, DeclKind::Grammar);
+    assert_eq!(data.name, "@deploy");
+    let in_count = frag
+        .mirror_children()
         .iter()
-        .filter(|c| c.kind == DeclKind::In)
+        .filter(|c| c.mirror_data().kind == DeclKind::In)
         .count();
     assert_eq!(in_count, 1, "should have 1 'in' child");
-    assert_eq!(form.children[0].name, "@code/rust");
+    assert_eq!(frag.mirror_children()[0].mirror_data().name, "@code/rust");
 }
 
 /// mirror.md: action declarations with grammar refs
 #[test]
 fn doc_mirror_cross_grammar_actions() {
-    // These are standalone action declarations from the docs
     let source1 = "action ingest(data) in @code/python { parse(data) }";
-    let form1 = parse_form(source1).ok().unwrap();
-    assert_eq!(form1.kind, DeclKind::Action);
-    assert_eq!(form1.name, "ingest");
-    assert_eq!(form1.grammar_ref, Some("@code/python".to_string()));
+    let frag1 = parse_form(source1).ok().unwrap();
+    let data1 = decode(&frag1);
+    assert_eq!(data1.kind, DeclKind::Action);
+    assert_eq!(data1.name, "ingest");
+    assert_eq!(data1.grammar_ref, Some("@code/python".to_string()));
 
     let source2 = "action transform(data) in @code/rust { transform(data) }";
-    let form2 = parse_form(source2).ok().unwrap();
-    assert_eq!(form2.kind, DeclKind::Action);
-    assert_eq!(form2.grammar_ref, Some("@code/rust".to_string()));
+    let frag2 = parse_form(source2).ok().unwrap();
+    let data2 = decode(&frag2);
+    assert_eq!(data2.kind, DeclKind::Action);
+    assert_eq!(data2.grammar_ref, Some("@code/rust".to_string()));
 }
 
 /// mirror.md: invariant across grammars
 #[test]
 fn doc_mirror_invariant_declaration() {
     let source = "invariant deterministic";
-    let form = parse_form(source).ok().unwrap();
-    assert_eq!(form.kind, DeclKind::Invariant);
-    assert_eq!(form.name, "deterministic");
+    let frag = parse_form(source).ok().unwrap();
+    let data = decode(&frag);
+    assert_eq!(data.kind, DeclKind::Invariant);
+    assert_eq!(data.name, "deterministic");
 }
 
 // ---------------------------------------------------------------------------
@@ -111,11 +113,12 @@ fn doc_mirror_invariant_declaration() {
 #[test]
 fn doc_witnessed_consent_type() {
     let source = "type consent = granted | withdrawn | silent";
-    let form = parse_form(source).ok().unwrap();
-    assert_eq!(form.kind, DeclKind::Type);
-    assert_eq!(form.name, "consent");
+    let frag = parse_form(source).ok().unwrap();
+    let data = decode(&frag);
+    assert_eq!(data.kind, DeclKind::Type);
+    assert_eq!(data.name, "consent");
     assert_eq!(
-        form.variants,
+        data.variants,
         vec![
             "granted".to_string(),
             "withdrawn".to_string(),
@@ -132,12 +135,13 @@ fn doc_witnessed_action_proceed() {
     withdrawn -> Failure(consent_withdrawn, accumulated_loss)
     granted   -> Partial(result, exchange_loss)
 }"#;
-    let form = parse_form(source).ok().unwrap();
-    assert_eq!(form.kind, DeclKind::Action);
-    assert_eq!(form.name, "proceed");
-    assert_eq!(form.params, vec!["consent".to_string()]);
-    assert_eq!(form.return_type, Some("imperfect".to_string()));
-    assert!(form.body_text.is_some(), "action should have body");
+    let frag = parse_form(source).ok().unwrap();
+    let data = decode(&frag);
+    assert_eq!(data.kind, DeclKind::Action);
+    assert_eq!(data.name, "proceed");
+    assert_eq!(data.params, vec!["consent".to_string()]);
+    assert_eq!(data.return_type, Some("imperfect".to_string()));
+    assert!(data.body_text.is_some(), "action should have body");
 }
 
 // ---------------------------------------------------------------------------
@@ -161,32 +165,32 @@ fn doc_ehc_pipeline_form() {
         fallback(error)
     }
 }"#;
-    let form = parse_form(source).ok().unwrap();
-    assert_eq!(form.kind, DeclKind::Form);
-    assert_eq!(form.name, "@pipeline");
-    // Should have prism, lens, recover, rescue children
-    let prism_count = form
-        .children
+    let frag = parse_form(source).ok().unwrap();
+    let data = decode(&frag);
+    assert_eq!(data.kind, DeclKind::Form);
+    assert_eq!(data.name, "@pipeline");
+    let prism_count = frag
+        .mirror_children()
         .iter()
-        .filter(|c| c.kind == DeclKind::Prism)
+        .filter(|c| c.mirror_data().kind == DeclKind::Prism)
         .count();
     assert_eq!(prism_count, 2, "should have 2 prism children");
-    let lens_count = form
-        .children
+    let lens_count = frag
+        .mirror_children()
         .iter()
-        .filter(|c| c.kind == DeclKind::Lens)
+        .filter(|c| c.mirror_data().kind == DeclKind::Lens)
         .count();
     assert_eq!(lens_count, 1, "should have 1 lens child");
-    let recover_count = form
-        .children
+    let recover_count = frag
+        .mirror_children()
         .iter()
-        .filter(|c| c.kind == DeclKind::Recover)
+        .filter(|c| c.mirror_data().kind == DeclKind::Recover)
         .count();
     assert_eq!(recover_count, 1, "should have 1 recover child");
-    let rescue_count = form
-        .children
+    let rescue_count = frag
+        .mirror_children()
         .iter()
-        .filter(|c| c.kind == DeclKind::Rescue)
+        .filter(|c| c.mirror_data().kind == DeclKind::Rescue)
         .count();
     assert_eq!(rescue_count, 1, "should have 1 rescue child");
 }
@@ -210,13 +214,14 @@ fn doc_shatter_grammar_deploy() {
         operation()
     }
 }"#;
-    let form = parse_form(source).ok().unwrap();
-    assert_eq!(form.kind, DeclKind::Grammar);
-    assert_eq!(form.name, "@deploy");
-    let action_count = form
-        .children
+    let frag = parse_form(source).ok().unwrap();
+    let data = decode(&frag);
+    assert_eq!(data.kind, DeclKind::Grammar);
+    assert_eq!(data.name, "@deploy");
+    let action_count = frag
+        .mirror_children()
         .iter()
-        .filter(|c| c.kind == DeclKind::Action)
+        .filter(|c| c.mirror_data().kind == DeclKind::Action)
         .count();
     assert_eq!(action_count, 2, "should have 2 actions (transform, retry)");
 }
@@ -224,22 +229,23 @@ fn doc_shatter_grammar_deploy() {
 /// shatter-spec.md: recover and rescue blocks (standalone)
 #[test]
 fn doc_shatter_recover_rescue() {
-    // These appear as standalone blocks in the shatter-spec docs
     let source = r#"recover |shatter, loss| {
     log_drift(loss)
     shatter
 }"#;
-    let form = parse_form(source).ok().unwrap();
-    assert_eq!(form.kind, DeclKind::Recover);
-    assert!(form.body_text.is_some());
-    assert_eq!(form.params.len(), 2);
+    let frag = parse_form(source).ok().unwrap();
+    let data = decode(&frag);
+    assert_eq!(data.kind, DeclKind::Recover);
+    assert!(data.body_text.is_some());
+    assert_eq!(data.params.len(), 2);
 
     let source2 = r#"rescue |error| {
     annotate(old_shatter, error)
 }"#;
-    let form2 = parse_form(source2).ok().unwrap();
-    assert_eq!(form2.kind, DeclKind::Rescue);
-    assert!(form2.body_text.is_some());
+    let frag2 = parse_form(source2).ok().unwrap();
+    let data2 = decode(&frag2);
+    assert_eq!(data2.kind, DeclKind::Rescue);
+    assert!(data2.body_text.is_some());
 }
 
 // ---------------------------------------------------------------------------
@@ -296,7 +302,6 @@ fn doc_examples_round_trip() {
 /// These should NOT parse as valid .mirror today.
 #[test]
 fn aspirational_shatter_sections_do_not_parse_as_declarations() {
-    // These blocks use { key: value } syntax that isn't part of .mirror grammar
     let aspirational = vec![
         "loss { phases: [] }",
         "properties { types_lowercase: pass }",
@@ -305,17 +310,11 @@ fn aspirational_shatter_sections_do_not_parse_as_declarations() {
     ];
 
     for source in &aspirational {
-        // These should either fail to parse or parse as something other than
-        // a structured declaration. The point is: the docs describe a format
-        // that doesn't exist in the parser yet.
         let result = parse_form(source);
-        // We don't assert is_err because the parser may return Partial for unknown tokens.
-        // We DO assert that if it parses, it's not a meaningful structure.
-        if let Some(form) = result.ok() {
-            // If it parsed, it shouldn't have the keyword as a DeclKind
-            // (loss, properties, kernel, fate aren't DeclKind variants)
+        if let Some(frag) = result.ok() {
+            let data = decode(&frag);
             assert!(
-                form.kind != DeclKind::Grammar,
+                data.kind != DeclKind::Grammar,
                 "aspirational block '{}' should not parse as Grammar",
                 source
             );
