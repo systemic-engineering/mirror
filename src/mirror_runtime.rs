@@ -1942,7 +1942,7 @@ mod tests {
     fn mirror_runtime_mirror_form_has_property_applications() {
         let runtime = MirrorRuntime::new();
         let compiled = runtime
-            .compile_file(&boot_dir().join("10-mirror.mirror"))
+            .compile_file(&boot_dir().join("std/mirror.mirror"))
             .unwrap();
         let kinds: Vec<&DeclKind> = compiled.form.children.iter().map(|f| &f.kind).collect();
         assert!(kinds.contains(&&DeclKind::Requires));
@@ -2175,7 +2175,8 @@ mod tests {
         assert!(boot.failed.contains_key("02-shatter"));
         // 05-property now resolves (in @meta, not in @form)
         assert!(boot.resolved.contains_key("05-property"));
-        assert!(boot.failed.contains_key("10-mirror"));
+        // 10-mirror moved to std/ — not loaded by kernel compilation
+        assert!(boot.failed.contains_key("06b-package-spec"));
 
         let reopened = MirrorRegistry::open(&store_dir).unwrap();
         assert!(reopened.lookup("@prism").is_some());
@@ -2184,6 +2185,7 @@ mod tests {
         assert!(reopened.lookup("@actor").is_some());
         // @property now resolves (in @meta instead of in @form)
         assert!(reopened.lookup("@property").is_some());
+        // @mirror is in std/ — not loaded by kernel compilation
         assert!(reopened.lookup("@mirror").is_none());
     }
 
@@ -2688,12 +2690,26 @@ mod tests {
             .collect();
         files.sort();
 
-        assert_eq!(files.len(), 17, "boot kernel file count: {:?}", files);
+        assert_eq!(files.len(), 12, "boot kernel file count: {:?}", files);
         assert!(files.contains(&"00-prism.mirror".to_string()));
         assert!(files.contains(&"01a-meta-action.mirror".to_string()));
         assert!(files.contains(&"01b-meta-io.mirror".to_string()));
         assert!(files.contains(&"02-shatter.mirror".to_string()));
-        assert!(files.contains(&"20-cli.mirror".to_string()));
+        assert!(files.contains(&"06-package.mirror".to_string()));
+
+        // std/ exists with 5 files
+        let std_dir = boot.join("std");
+        assert!(std_dir.exists(), "std/ should exist");
+        let mut std_files: Vec<String> = std::fs::read_dir(&std_dir)
+            .unwrap()
+            .filter_map(|e| e.ok())
+            .map(|e| e.file_name().to_string_lossy().to_string())
+            .filter(|f| f.ends_with(".mirror"))
+            .collect();
+        std_files.sort();
+        assert_eq!(std_files.len(), 5, "std file count: {:?}", std_files);
+        assert!(std_files.contains(&"mirror.mirror".to_string()));
+        assert!(std_files.contains(&"cli.mirror".to_string()));
     }
 
     // -----------------------------------------------------------------------
@@ -2728,22 +2744,19 @@ mod tests {
             resolved.contains(&"05-property"),
             "property must resolve after in @form -> in @meta"
         );
-        assert!(
-            failed.contains(&"10-mirror"),
-            "mirror fails: in @form, in @type, in @boundary, in @lens — none defined"
-        );
+        // 06-package and 06a-package-git resolve (in @prism, @meta, @package)
+        assert!(resolved.contains(&"06-package"), "package must resolve");
+        assert!(resolved.contains(&"06a-package-git"), "package-git must resolve");
 
         // --- The loss: what the compiler saw but couldn't land ---
         let loss = &boot.total_loss;
         let holonomy = loss.holonomy();
 
         // --- Parse-level loss ---
-        // New kernel files (01-meta, 01a, 01b, 02-shatter) introduce:
+        // Kernel files introduce unrecognized keywords (training data):
         //   unfold, subset, superset, iso, not-iso (01-meta operators)
         //   io (01b-meta-io, 02-shatter grammar keyword)
         //   pure, real, loss constraints with != operator
-        // These are training data — the holonomy tells us what the parser
-        // can't handle yet.
         //
         // The baseline holonomy must not INCREASE (regression).
         // It CAN decrease as the parser learns new constructs.
@@ -2754,10 +2767,8 @@ mod tests {
         );
 
         // --- Resolution failures: the real loss ---
-        // These files parse fine but fail `in @X` reference checks.
-        // This loss is NOT in holonomy — it should be.
-        // That's the gap: resolution failures need to become MirrorLoss.
-        assert_eq!(boot.failed.len(), 7, "7 of 17 boot files fail resolution");
+        // Kernel-only compilation (std/ not loaded yet).
+        assert_eq!(boot.failed.len(), 4, "4 of 12 kernel files fail resolution");
         assert!(
             failed.contains(&"01a-meta-action"),
             "01a needs @actor which sorts after it"
@@ -2770,16 +2781,10 @@ mod tests {
             failed.contains(&"02-shatter"),
             "02-shatter needs @io which itself failed"
         );
-        assert!(
-            failed.contains(&"10-mirror"),
-            "in @form, @type, @boundary, @lens — undefined"
-        );
-        assert!(failed.contains(&"06b-package-spec"), "missing refs");
-        assert!(failed.contains(&"16-tui"), "missing refs");
-        assert!(failed.contains(&"20-cli"), "missing refs");
+        assert!(failed.contains(&"06b-package-spec"), "missing refs (@mirror, @config, @ai)");
 
-        // --- Resolved file count: progress toward Success(Mirror) ---
-        assert_eq!(boot.resolved.len(), 10, "10 of 17 boot files resolve");
+        // --- Resolved file count: kernel only ---
+        assert_eq!(boot.resolved.len(), 8, "8 of 12 kernel files resolve");
 
         // --- The crystal still forms despite failures ---
         // The compiler produces a crystal from what DID resolve.

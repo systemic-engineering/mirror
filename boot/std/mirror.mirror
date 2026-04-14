@@ -1,9 +1,6 @@
-form @mirror {
-  in @form
+grammar @mirror {
+  in @meta
   in @prism
-  in @type
-  in @boundary
-  in @lens
   in @property
 
   requires unique_variants

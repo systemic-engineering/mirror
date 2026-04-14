@@ -1,11 +1,8 @@
 in @prism
 in @meta
 in @code
-in @ci
-in @ca
 in @spec
-in @lsp
-in @benchmark
+in @shatter
 
 type exit_code = success | failure | partial(loss)
 
@@ -17,6 +14,19 @@ type command {
 
 grammar @cli {
 
+  -- flags as optics
+  flag strict = prism(imperfect => success | failure)
+  flag format(json | human) = lens(imperfect => text)
+  flag check = prism(imperfect => pass | fail)
+  flag verbose = lens(loss => text)
+
+  -- commands as optic compositions
+  command compile = parse . resolve . emit
+  command kintsugi = parse . resolve . canonical_order
+  command ci = parse . resolve . properties . emit
+  command focus = parse
+  command explain(code) = catalog . render
+
   -- five optics as commands
   action focus(path: string) -> imperfect
   action project(path: string) -> imperfect
@@ -24,11 +34,8 @@ grammar @cli {
   action zoom(path: string) -> imperfect
   action refract(path: string) -> imperfect
 
-  -- session
-  action init(path: string) -> imperfect
-  action tick() -> imperfect
-  action tock() -> imperfect
-  action shatter(path: string) -> imperfect
+  -- formatter
+  action kintsugi(path: string) -> imperfect
 
   -- compiler
   action compile(path: string) -> imperfect
@@ -37,6 +44,12 @@ grammar @cli {
   -- ci/ca
   action ci(path: string) -> imperfect
   action ca(path: string) -> imperfect
+
+  -- session
+  action init(path: string) -> imperfect
+  action tick() -> imperfect
+  action tock() -> imperfect
+  action shatter(path: string) -> imperfect
 
   -- deployment
   action plan() -> imperfect
@@ -65,10 +78,6 @@ grammar @cli {
   -- benchmark
   action bench(path: string) -> imperfect
   action profile() -> imperfect
-
-  -- every command returns imperfect
-  -- the exit code IS the imperfect
-  -- success = 0, partial = 0 (with warnings), failure = 1
 
   recover |result, loss| {
     print(loss)
