@@ -130,6 +130,7 @@ compiler:
   crystal [output]   materialize the standard library
   ci <path>          measure holonomy
   ca <path>          observe, suggest, enforce
+  kintsugi <path>    canonical ordering (the formatter)
   verify <file>      verify signed .shatter
 
 session:
@@ -143,6 +144,8 @@ tools:
 flags:
   --oid              print content address only
   --sign             sign compilation output (compile)
+  --strict           reject Partial results (compile, ci)
+  --check            verify canonical order (kintsugi)
   --help             this message"
     }
 
@@ -157,6 +160,7 @@ flags:
             "compile" => Some("compile <path> [--sign] -- compile a .mirror file\n\nParses, resolves, and content-addresses the source.\nPrints the crystal OID to stdout.\nWith --sign: produces .shatter.sig alongside .shatter."),
             "crystal" => Some("crystal [output] -- materialize the standard library\n\nCompiles boot/ in order and emits mirror.shatter.\nWith --oid: prints the loaded crystal OID."),
             "ci" => Some("ci <path> -- measure holonomy\n\nCompiles and reports the MirrorLoss.\nZero holonomy means crystal. Nonzero means alive."),
+            "kintsugi" => Some("kintsugi <path> [--check] -- canonical ordering\n\nReorders declarations: in, type, traversal, lens, grammar, property, action.\nThe OID doesn't change. The surface does.\nWith --check: exit 0 if already canonical, exit 1 if not."),
             "init" => Some("init -- initialize .git/mirror/\n\nSets up the mirror store in the current git repository."),
             "repl" => Some("repl -- interactive shard> prompt\n\nStarts an interactive session.\nType .mirror expressions and see them compiled live."),
             "ai" => Some("ai <model> [path] -- run a Fate model\n\nModels: abyss | introject | cartographer | explorer | fate\n\nReads from <path> or stdin. Routes through the named model."),

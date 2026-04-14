@@ -1367,8 +1367,12 @@ fn kintsugi_sort_key(kind: &DeclKind) -> u8 {
         DeclKind::Property => 5,
         DeclKind::Action => 6,
         // Optic operations used as declarations
-        DeclKind::Focus | DeclKind::Project | DeclKind::Split
-        | DeclKind::Fold | DeclKind::Zoom | DeclKind::Refract => 1, // group with types
+        DeclKind::Focus
+        | DeclKind::Project
+        | DeclKind::Split
+        | DeclKind::Fold
+        | DeclKind::Zoom
+        | DeclKind::Refract => 1, // group with types
         // Other structural keywords
         DeclKind::Out => 7,
         DeclKind::Prism => 1,
