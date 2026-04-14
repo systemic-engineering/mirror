@@ -2774,7 +2774,7 @@ mod tests {
             failed.contains(&"10-mirror"),
             "in @form, @type, @boundary, @lens — undefined"
         );
-        assert!(failed.contains(&"11-spec"), "missing refs");
+        assert!(failed.contains(&"06b-package-spec"), "missing refs");
         assert!(failed.contains(&"16-tui"), "missing refs");
         assert!(failed.contains(&"20-cli"), "missing refs");
 

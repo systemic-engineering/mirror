@@ -1,10 +1,8 @@
 in @prism
 in @meta
-in @git
 
 type version
 type semver(version) = major(u32) | minor(u32) | patch(u32)
-
 type surface = observation | action
 
 type mirver(grammar, @mirror(surface)) = {

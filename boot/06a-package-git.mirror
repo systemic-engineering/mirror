@@ -1,6 +1,6 @@
 in @prism
 in @meta
-in @code
+in @package
 
 type repo(url)
 type commit(oid)
