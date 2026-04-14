@@ -1,14 +1,15 @@
 grammar @mirror {
   in @meta
-  in @prism
   in @property
 
+  -- templates (structural)
   requires unique_variants
   requires every_type_reachable
   requires no_dead_variants
   requires types_lowercase
-  requires action_is_named_type
-  invariant dual_partition
+  requires canonical_order
+
+  -- properties (effects)
   invariant idempotent
   invariant deterministic
   invariant pure

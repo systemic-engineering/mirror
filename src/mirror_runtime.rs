@@ -844,6 +844,19 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
                     // At depth 1, comma is just a separator — skip it
                     *cursor += 1;
                 }
+                Some(Tok::Equals) => {
+                    if paren_depth > 1 {
+                        // Equals inside nested parens: append to previous param.
+                        // Supports `effect(a => b)` patterns where `=>` tokenizes
+                        // as Equals + Word(">").
+                        if let Some(last) = params.last_mut() {
+                            last.push('=');
+                        }
+                        *cursor += 1;
+                    } else {
+                        return Err(err(format!("malformed params: {:?}", Some(Tok::Equals))));
+                    }
+                }
                 other => return Err(err(format!("malformed params: {:?}", other))),
             }
         }
@@ -1981,14 +1994,32 @@ mod tests {
         let compiled = runtime
             .compile_file(&boot_dir().join("05-property.mirror"))
             .unwrap();
-        assert_eq!(compiled.form_name(), "@property");
-        let prop_count = compiled
+        // The property kernel now has `out` statements at top level alongside
+        // `grammar @property { ... }`, so the form is a synthetic wrapper.
+        assert_eq!(compiled.form_name(), "");
+        // The @property grammar block is a child of the wrapper.
+        let grammar = compiled
             .form
             .children
             .iter()
-            .filter(|f| f.kind == DeclKind::Property)
+            .find(|f| f.kind == DeclKind::Grammar && f.name == "@property");
+        assert!(grammar.is_some(), "@property grammar must exist");
+        // The kernel defines types, not properties. Properties moved to std/properties.mirror.
+        let type_count = grammar
+            .unwrap()
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Type)
             .count();
-        assert_eq!(prop_count, 11);
+        assert_eq!(type_count, 4, "kernel should have 4 type declarations");
+        // Out statements at top level
+        let out_count = compiled
+            .form
+            .children
+            .iter()
+            .filter(|f| f.kind == DeclKind::Out)
+            .count();
+        assert_eq!(out_count, 5, "kernel should have 5 out declarations");
     }
 
     #[test]
@@ -2750,7 +2781,7 @@ mod tests {
         assert!(files.contains(&"02-shatter.mirror".to_string()));
         assert!(files.contains(&"06-package.mirror".to_string()));
 
-        // std/ exists with 5 files
+        // std/ exists with 6 files
         let std_dir = boot.join("std");
         assert!(std_dir.exists(), "std/ should exist");
         let mut std_files: Vec<String> = std::fs::read_dir(&std_dir)
@@ -2760,9 +2791,10 @@ mod tests {
             .filter(|f| f.ends_with(".mirror"))
             .collect();
         std_files.sort();
-        assert_eq!(std_files.len(), 5, "std file count: {:?}", std_files);
+        assert_eq!(std_files.len(), 6, "std file count: {:?}", std_files);
         assert!(std_files.contains(&"mirror.mirror".to_string()));
         assert!(std_files.contains(&"cli.mirror".to_string()));
+        assert!(std_files.contains(&"properties.mirror".to_string()));
     }
 
     // -----------------------------------------------------------------------
@@ -2813,11 +2845,14 @@ mod tests {
         //   unfold, subset, superset, iso, not-iso (01-meta operators)
         //   io (01b-meta-io, 02-shatter grammar keyword)
         //   pure, real, loss constraints with != operator
+        // Std files introduce unrecognized keywords:
+        //   template (8 declarations in std/properties.mirror)
+        //   where (2 boundary property constraints in std/properties.mirror)
         //
         // The baseline holonomy must not INCREASE (regression).
         // It CAN decrease as the parser learns new constructs.
         assert!(
-            holonomy <= 15.0,
+            holonomy <= 25.0,
             "parse holonomy must not regress above baseline: got {}",
             holonomy
         );
@@ -2825,7 +2860,7 @@ mod tests {
         // --- Resolution failures: kernel + std ---
         // Kernel failures: 01a, 01b, 02-shatter (dependency ordering), 06b-package-spec (missing refs)
         // Std failures: benchmark (needs @time before it), cli (needs @spec, @shatter), tui (needs @config etc)
-        assert_eq!(boot.failed.len(), 7, "7 of 17 files fail resolution (4 kernel + 3 std)");
+        assert_eq!(boot.failed.len(), 7, "7 of 18 files fail resolution (4 kernel + 3 std)");
         assert!(
             failed.contains(&"01a-meta-action"),
             "01a needs @actor which sorts after it"
@@ -2847,11 +2882,12 @@ mod tests {
         assert!(failed.contains(&"std/cli"), "cli needs @spec, @shatter — not in registry");
         assert!(failed.contains(&"std/tui"), "tui needs @config, @ci, @ca, @lsp — not in registry");
 
-        // --- Resolved: kernel(8) + std(2) = 10 ---
-        assert_eq!(boot.resolved.len(), 10, "10 of 17 files resolve (8 kernel + 2 std)");
+        // --- Resolved: kernel(8) + std(3) = 11 ---
+        assert_eq!(boot.resolved.len(), 11, "11 of 18 files resolve (8 kernel + 3 std)");
         // std files that resolve
-        assert!(resolved.contains(&"std/mirror"), "std/mirror resolves (in @meta, @prism, @property)");
+        assert!(resolved.contains(&"std/mirror"), "std/mirror resolves (in @meta, @property)");
         assert!(resolved.contains(&"std/time"), "std/time resolves (in @prism, @meta, @actor)");
+        assert!(resolved.contains(&"std/properties"), "std/properties resolves (in @meta, @property)");
 
         // --- The crystal still forms despite failures ---
         // The compiler produces a crystal from what DID resolve.
@@ -2893,22 +2929,24 @@ mod tests {
         assert!(kernel.contains(&"00-prism.mirror".to_string()));
         assert!(kernel.contains(&"06b-package-spec.mirror".to_string()));
 
-        // Std: 5 files (mirror, time, tui, benchmark, cli)
-        assert_eq!(std_files.len(), 5, "std needs 5 files: {:?}", std_files);
+        // Std: 6 files (mirror, time, tui, benchmark, cli, properties)
+        assert_eq!(std_files.len(), 6, "std needs 6 files: {:?}", std_files);
         assert!(std_files.contains(&"mirror.mirror".to_string()));
         assert!(std_files.contains(&"cli.mirror".to_string()));
         assert!(std_files.contains(&"time.mirror".to_string()));
         assert!(std_files.contains(&"benchmark.mirror".to_string()));
         assert!(std_files.contains(&"tui.mirror".to_string()));
+        assert!(std_files.contains(&"properties.mirror".to_string()));
 
         // Compiler loads both phases
         let runtime = MirrorRuntime::new();
         let store = tempdir_for_test("boot_kernel_std");
         let result = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
 
-        // std/mirror and std/time resolve against kernel registry
+        // std/mirror, std/time, and std/properties resolve against kernel registry
         assert!(result.resolved.contains_key("std/mirror"), "std/mirror should resolve");
         assert!(result.resolved.contains_key("std/time"), "std/time should resolve");
+        assert!(result.resolved.contains_key("std/properties"), "std/properties should resolve");
     }
 
     /// Success(Mirror). Zero loss. Zero failures. Strict passes.

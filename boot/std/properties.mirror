@@ -1,0 +1,39 @@
+in @meta
+in @property
+
+-- TEMPLATES: observe structure (iso)
+
+template types_lowercase(grammar) = iso
+template no_cycles(grammar) = iso
+template unique_variants(grammar) = iso
+template every_type_reachable(grammar) = iso
+template no_dead_variants(grammar) = iso
+template dual_partition(grammar) = iso
+template canonical_order(grammar) = iso
+template kintsugi(grammar) = iso
+
+-- PROPERTIES: observe effects (<= verdict)
+
+property idempotent(effect(a => a)) <= verdict
+property deterministic(effect(a => a)) <= verdict
+property pure(effect(any => any)) <= verdict
+property always_halts(effect(any => any)) <= verdict
+
+-- BOUNDARY PROPERTIES: observe partition crossings
+
+property consent(effect(a => b)) <= verdict
+  where a != b
+
+property witnessed(effect(a => b)) <= verdict
+  where a != b
+
+property human_intervention(effect(ai => human)) <= verdict
+
+-- SECURITY PROPERTIES: specific boundary checks
+
+property sanitize(effect(user => database)) <= verdict
+property escape(effect(user => html)) <= verdict
+property consent_boundary(effect(private => public)) <= verdict
+property audit_trail(effect(internal => external)) <= verdict
+property deploy_gate(effect(test => production)) <= verdict
+property classify(effect(classified => unclassified)) <= verdict
