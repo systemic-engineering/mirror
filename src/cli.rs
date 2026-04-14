@@ -161,7 +161,7 @@ flags:
             "split" => Some("split <path> -- explore connections\n\nShows the branches: variants, forks, alternatives.\nThe split optic maps one-to-many."),
             "zoom" => Some("zoom <path> -- transform\n\nMoves between levels of abstraction.\nThe zoom optic changes coordinates."),
             "refract" => Some("refract <path> -- settle into crystal\n\nRuns the full compilation loop until the OID stabilizes.\nThe refract optic scatters and reconverges."),
-            "compile" => Some("compile <path> [--sign] -- compile a .mirror file\n\nParses, resolves, and content-addresses the source.\nPrints the crystal OID to stdout.\nWith --sign: produces .shatter.sig alongside .shatter."),
+            "compile" => Some("compile <path> [--sign] [--target rust] -- compile a .mirror file\n\nParses, resolves, and content-addresses the source.\nPrints the crystal OID to stdout.\nWith --sign: produces .shatter.sig alongside .shatter.\nWith --target rust: emits .rs file alongside .shatter."),
             "crystal" => Some("crystal [output] -- materialize the standard library\n\nCompiles boot/ in order and emits mirror.shatter.\nWith --oid: prints the loaded crystal OID."),
             "ci" => Some("ci <path> -- measure holonomy\n\nCompiles and reports the MirrorLoss.\nZero holonomy means crystal. Nonzero means alive."),
             "kintsugi" => Some("kintsugi <path> [--check] -- canonical ordering\n\nReorders declarations: in, type, traversal, lens, grammar, property, action.\nThe OID doesn't change. The surface does.\nWith --check: exit 0 if already canonical, exit 1 if not."),
@@ -184,9 +184,16 @@ flags:
     fn cmd_compile(&self, args: &[String]) -> Result<String, CliError> {
         let sign = args.iter().any(|a| a == "--sign");
         let strict = args.iter().any(|a| a == "--strict");
-        let file_args: Vec<&String> = args.iter().filter(|a| !a.starts_with("--")).collect();
+        let target_rust = args.iter().any(|a| a == "--target" || a == "--rust");
+        let file_args: Vec<&String> = args
+            .iter()
+            .filter(|a| !a.starts_with("--"))
+            .filter(|a| a.as_str() != "rust") // skip target value after --target
+            .collect();
         let file = file_args.first().ok_or_else(|| {
-            CliError::Usage("usage: mirror compile <file> [--sign] [--strict]".to_string())
+            CliError::Usage(
+                "usage: mirror compile <file> [--sign] [--strict] [--target rust]".to_string(),
+            )
         })?;
 
         let source = std::fs::read_to_string(file.as_str())?;
@@ -224,6 +231,14 @@ flags:
                     shard.rank(),
                     shard.target,
                 );
+
+                // --target rust: emit Rust source alongside .shatter
+                if target_rust {
+                    let rust_code = crate::emit_rust::emit_rust(&compiled);
+                    let rs_path = std::path::Path::new(file.as_str()).with_extension("rs");
+                    std::fs::write(&rs_path, &rust_code)?;
+                    eprintln!("emitted {}", rs_path.display());
+                }
 
                 if sign {
                     #[cfg(feature = "git")]

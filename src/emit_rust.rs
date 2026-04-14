@@ -1,0 +1,735 @@
+//! emit_rust — Rust code emitter for compiled .mirror declarations.
+//!
+//! Crystal → .rs files. Takes a compiled `Form` (or `CompiledShatter`)
+//! and produces Rust source code.
+//!
+//! ## Mapping
+//!
+//! - `type color = red | blue`  →  `pub enum Color { Red, Blue }`
+//! - `type user { name: text }` →  `pub struct User { pub name: String }`
+//! - `type point`               →  `pub struct Point;`
+//! - `grammar @test { ... }`    →  `pub mod test { ... }`
+//! - `action boot(identity)`    →  `pub fn boot(identity: Identity) { todo!() }`
+//! - `property p(g) <= verdict` →  `pub fn p(g: &Grammar) -> Verdict { todo!() }`
+
+use crate::declaration::{DeclKind, OpticOp};
+use crate::mirror_runtime::{CompiledShatter, Form};
+
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
+/// Emit Rust source code from a compiled shatter artifact.
+pub fn emit_rust(_compiled: &CompiledShatter) -> String {
+    // TODO: implement crystal → Rust emission
+    String::new()
+}
+
+/// Emit Rust source code from a single Form.
+pub fn emit_rust_form(_form: &Form) -> String {
+    // TODO: implement Form → Rust emission
+    String::new()
+}
+
+// ---------------------------------------------------------------------------
+// Form dispatch
+// ---------------------------------------------------------------------------
+
+fn emit_form(form: &Form, out: &mut String, indent: usize) {
+    match form.kind {
+        DeclKind::Type => emit_type(form, out, indent),
+        DeclKind::Grammar => emit_module(form, out, indent),
+        DeclKind::Action => emit_function(form, out, indent),
+        DeclKind::Property => emit_property(form, out, indent),
+        DeclKind::In => { /* use statement — skip for now */ }
+        DeclKind::Out => { /* pub export — skip for now */ }
+        DeclKind::Form => emit_form_container(form, out, indent),
+        _ => {
+            // Other kinds: emit as a comment
+            write_indent(out, indent);
+            out.push_str(&format!("// {}: {}\n", form.kind.as_str(), form.name));
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Type emission
+// ---------------------------------------------------------------------------
+
+fn emit_type(form: &Form, out: &mut String, indent: usize) {
+    let name = to_pascal_case(&form.name);
+
+    if !form.variants.is_empty() {
+        // Enum: `type color = red | blue`
+        emit_enum(form, &name, out, indent);
+    } else if has_typed_fields(form) {
+        // Struct with fields: `type user { name: text, email: text }`
+        emit_struct_with_fields(form, &name, out, indent);
+    } else if !form.params.is_empty() {
+        // Parameterized type without variants or fields — generic struct
+        emit_generic_struct(form, &name, out, indent);
+    } else if !form.children.is_empty() {
+        // Struct with child declarations (has block, but children are decls not fields)
+        emit_struct_with_children(form, &name, out, indent);
+    } else {
+        // Unit struct: `type point`
+        write_indent(out, indent);
+        out.push_str(&format!("pub struct {};\n", name));
+    }
+}
+
+fn emit_enum(form: &Form, name: &str, out: &mut String, indent: usize) {
+    write_indent(out, indent);
+    out.push_str(&format!("pub enum {} {{\n", name));
+    for variant in &form.variants {
+        write_indent(out, indent + 1);
+        out.push_str(&format!("{},\n", to_pascal_case(variant)));
+    }
+    write_indent(out, indent);
+    out.push_str("}\n");
+}
+
+fn emit_struct_with_fields(form: &Form, name: &str, out: &mut String, indent: usize) {
+    // Extract subset relation if present
+    let subset_ref = extract_subset_ref(form);
+
+    write_indent(out, indent);
+    out.push_str(&format!("pub struct {} {{\n", name));
+
+    // Parse params as `name: type` pairs
+    for param in &form.params {
+        if let Some((field_name, field_type)) = parse_field(param) {
+            write_indent(out, indent + 1);
+            out.push_str(&format!(
+                "pub {}: {},\n",
+                to_snake_case(&field_name),
+                map_type(&field_type)
+            ));
+        }
+    }
+
+    // Also check children for field-like declarations
+    for child in &form.children {
+        if child.kind == DeclKind::Type || child.kind == DeclKind::Binding {
+            // child.name is the field name, child.params[0] or child.variants[0] is the type
+            let field_type = if !child.params.is_empty() {
+                child.params[0].clone()
+            } else if !child.variants.is_empty() {
+                child.variants[0].clone()
+            } else {
+                continue;
+            };
+            write_indent(out, indent + 1);
+            out.push_str(&format!(
+                "pub {}: {},\n",
+                to_snake_case(&child.name),
+                map_type(&field_type)
+            ));
+        }
+    }
+
+    write_indent(out, indent);
+    out.push_str("}\n");
+
+    // Emit From impl for subset relations
+    if let Some(parent_type) = subset_ref {
+        out.push('\n');
+        write_indent(out, indent);
+        let parent_name = to_pascal_case(&parent_type);
+        out.push_str(&format!("impl From<{}> for {} {{\n", parent_name, name));
+        write_indent(out, indent + 1);
+        out.push_str(&format!("fn from(_value: {}) -> Self {{\n", parent_name));
+        write_indent(out, indent + 2);
+        out.push_str("todo!()\n");
+        write_indent(out, indent + 1);
+        out.push_str("}\n");
+        write_indent(out, indent);
+        out.push_str("}\n");
+    }
+}
+
+fn emit_generic_struct(form: &Form, name: &str, out: &mut String, indent: usize) {
+    write_indent(out, indent);
+    let generics: Vec<String> = form.params.iter().map(|p| to_pascal_case(p)).collect();
+    out.push_str(&format!("pub struct {}<{}>;\n", name, generics.join(", ")));
+}
+
+fn emit_struct_with_children(form: &Form, name: &str, out: &mut String, indent: usize) {
+    // Type with children that aren't simple fields — emit struct + nested items
+    write_indent(out, indent);
+    out.push_str(&format!("pub struct {};\n", name));
+
+    // Emit child declarations
+    for child in &form.children {
+        emit_form(child, out, indent);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Grammar → module
+// ---------------------------------------------------------------------------
+
+fn emit_module(form: &Form, out: &mut String, indent: usize) {
+    let mod_name = strip_grammar_prefix(&form.name);
+    write_indent(out, indent);
+    out.push_str(&format!("pub mod {} {{\n", to_snake_case(&mod_name)));
+
+    for child in &form.children {
+        emit_form(child, out, indent + 1);
+    }
+
+    write_indent(out, indent);
+    out.push_str("}\n");
+}
+
+// ---------------------------------------------------------------------------
+// Action → function
+// ---------------------------------------------------------------------------
+
+fn emit_function(form: &Form, out: &mut String, indent: usize) {
+    write_indent(out, indent);
+    let fn_name = to_snake_case(&form.name);
+
+    // Build parameter list
+    let params_str = if form.params.is_empty() {
+        String::new()
+    } else {
+        form.params
+            .iter()
+            .map(|p| {
+                if let Some((name, typ)) = parse_field(p) {
+                    format!("{}: {}", to_snake_case(&name), map_type(&typ))
+                } else {
+                    format!("{}: {}", to_snake_case(p), to_pascal_case(p))
+                }
+            })
+            .collect::<Vec<_>>()
+            .join(", ")
+    };
+
+    // Determine return type
+    let return_type = if let Some(ref rt) = form.return_type {
+        format!(" -> {}", map_type(rt))
+    } else if form.optic_ops.contains(&OpticOp::Fold) {
+        // <= means fold, returns Imperfect
+        " -> Imperfect<Crystal, Error, Loss>".to_string()
+    } else {
+        String::new()
+    };
+
+    out.push_str(&format!(
+        "pub fn {}({}){} {{\n",
+        fn_name, params_str, return_type
+    ));
+    write_indent(out, indent + 1);
+    out.push_str("todo!()\n");
+    write_indent(out, indent);
+    out.push_str("}\n");
+}
+
+// ---------------------------------------------------------------------------
+// Property → function
+// ---------------------------------------------------------------------------
+
+fn emit_property(form: &Form, out: &mut String, indent: usize) {
+    write_indent(out, indent);
+    let fn_name = to_snake_case(&form.name);
+
+    let params_str = if form.params.is_empty() {
+        String::new()
+    } else {
+        form.params
+            .iter()
+            .map(|p| {
+                if let Some((name, typ)) = parse_field(p) {
+                    format!("{}: &{}", to_snake_case(&name), to_pascal_case(&typ))
+                } else {
+                    format!("{}: &{}", to_snake_case(p), to_pascal_case(p))
+                }
+            })
+            .collect::<Vec<_>>()
+            .join(", ")
+    };
+
+    out.push_str(&format!(
+        "pub fn {}({}) -> Imperfect<(), PropertyError, PropertyLoss> {{\n",
+        fn_name, params_str
+    ));
+    write_indent(out, indent + 1);
+    out.push_str("todo!()\n");
+    write_indent(out, indent);
+    out.push_str("}\n");
+}
+
+// ---------------------------------------------------------------------------
+// Form container (top-level form @name { ... })
+// ---------------------------------------------------------------------------
+
+fn emit_form_container(form: &Form, out: &mut String, indent: usize) {
+    // A top-level form acts like a module
+    if form.name.starts_with('@') || !form.children.is_empty() {
+        let mod_name = strip_grammar_prefix(&form.name);
+        if !mod_name.is_empty() {
+            write_indent(out, indent);
+            out.push_str(&format!("pub mod {} {{\n", to_snake_case(&mod_name)));
+            for child in &form.children {
+                emit_form(child, out, indent + 1);
+            }
+            write_indent(out, indent);
+            out.push_str("}\n");
+        } else {
+            for child in &form.children {
+                emit_form(child, out, indent);
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+fn write_indent(out: &mut String, indent: usize) {
+    for _ in 0..indent {
+        out.push_str("    ");
+    }
+}
+
+/// Check whether a form's params look like typed fields (`name: type`).
+fn has_typed_fields(form: &Form) -> bool {
+    form.params.iter().any(|p| p.contains(':'))
+        || form.children.iter().any(|c| {
+            (c.kind == DeclKind::Type || c.kind == DeclKind::Binding)
+                && (!c.params.is_empty() || !c.variants.is_empty())
+        })
+}
+
+/// Parse `"name: type"` → `Some(("name", "type"))`, or `None` if no colon.
+fn parse_field(s: &str) -> Option<(String, String)> {
+    let parts: Vec<&str> = s.splitn(2, ':').collect();
+    if parts.len() == 2 {
+        Some((parts[0].trim().to_string(), parts[1].trim().to_string()))
+    } else {
+        None
+    }
+}
+
+/// Extract a subset reference from optic_ops.
+fn extract_subset_ref(form: &Form) -> Option<String> {
+    if form.optic_ops.contains(&OpticOp::Subset) {
+        // The subset target is typically stored in the first param that looks like a ref
+        form.params
+            .iter()
+            .find(|p| p.starts_with('<'))
+            .map(|p| p.trim_start_matches('<').trim().to_string())
+    } else {
+        None
+    }
+}
+
+/// Strip `@` prefix and path components for grammar names.
+/// `@code/rust` → `code_rust`, `@test` → `test`.
+fn strip_grammar_prefix(name: &str) -> String {
+    let stripped = name.trim_start_matches('@');
+    stripped.replace('/', "_")
+}
+
+/// Map a mirror type name to a Rust type.
+fn map_type(mirror_type: &str) -> String {
+    let t = mirror_type.trim();
+
+    // Handle parameterized types: option(t), result(t, e), vec(t), etc.
+    if let Some(idx) = t.find('(') {
+        let base = &t[..idx];
+        let inner = &t[idx + 1..t.len() - 1]; // strip parens
+        let params: Vec<&str> = inner.split(',').map(|s| s.trim()).collect();
+        let mapped_params: Vec<String> = params.iter().map(|p| map_type(p)).collect();
+
+        return match base {
+            "option" => format!("Option<{}>", mapped_params.join(", ")),
+            "result" => format!("Result<{}>", mapped_params.join(", ")),
+            "vec" => format!("Vec<{}>", mapped_params.join(", ")),
+            "hashmap" => format!("HashMap<{}>", mapped_params.join(", ")),
+            "imperfect" => format!("Imperfect<{}>", mapped_params.join(", ")),
+            _ => format!("{}<{}>", to_pascal_case(base), mapped_params.join(", ")),
+        };
+    }
+
+    // Handle list syntax: [t]
+    if t.starts_with('[') && t.ends_with(']') {
+        let inner = &t[1..t.len() - 1];
+        return format!("Vec<{}>", map_type(inner));
+    }
+
+    // Primitive mappings
+    match t {
+        "text" | "string" => "String".to_string(),
+        "nat" => "u64".to_string(),
+        "f64" => "f64".to_string(),
+        "f32" => "f32".to_string(),
+        "u8" => "u8".to_string(),
+        "u16" => "u16".to_string(),
+        "u32" => "u32".to_string(),
+        "u64" => "u64".to_string(),
+        "usize" => "usize".to_string(),
+        "i8" => "i8".to_string(),
+        "i16" => "i16".to_string(),
+        "i32" => "i32".to_string(),
+        "i64" => "i64".to_string(),
+        "bool" => "bool".to_string(),
+        "str" => "&str".to_string(),
+        "ref" => "String".to_string(),
+        "oid" => "Oid".to_string(),
+        "loss" => "Loss".to_string(),
+        "prism" => "Prism".to_string(),
+        "verdict" => "Verdict".to_string(),
+        "imperfect" => "Imperfect<Crystal, Error, Loss>".to_string(),
+        _ => to_pascal_case(t),
+    }
+}
+
+/// Convert `snake_case` or `kebab-case` to `PascalCase`.
+fn to_pascal_case(s: &str) -> String {
+    s.split(|c: char| c == '_' || c == '-' || c == '/')
+        .filter(|part| !part.is_empty())
+        .map(|part| {
+            let mut chars = part.chars();
+            match chars.next() {
+                None => String::new(),
+                Some(first) => {
+                    let mut s = first.to_uppercase().to_string();
+                    s.extend(chars);
+                    s
+                }
+            }
+        })
+        .collect()
+}
+
+/// Convert `PascalCase` or `kebab-case` to `snake_case`.
+fn to_snake_case(s: &str) -> String {
+    // If already snake_case or lowercase, return as-is (but replace hyphens and slashes)
+    let s = s.replace('-', "_").replace('/', "_");
+    if s.chars()
+        .all(|c| c.is_lowercase() || c == '_' || c.is_numeric())
+    {
+        return s;
+    }
+
+    let mut result = String::new();
+    let mut prev_was_upper = false;
+    for (i, c) in s.chars().enumerate() {
+        if c.is_uppercase() {
+            if i > 0 && !prev_was_upper {
+                result.push('_');
+            }
+            result.push(c.to_lowercase().next().unwrap());
+            prev_was_upper = true;
+        } else {
+            prev_was_upper = false;
+            result.push(c);
+        }
+    }
+    result
+}
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::mirror_runtime::MirrorRuntime;
+    use std::path::PathBuf;
+
+    // -------------------------------------------------------------------
+    // Unit tests for helpers
+    // -------------------------------------------------------------------
+
+    #[test]
+    fn to_pascal_case_snake() {
+        assert_eq!(to_pascal_case("bias_tree"), "BiasTree");
+    }
+
+    #[test]
+    fn to_pascal_case_kebab() {
+        assert_eq!(to_pascal_case("bias-tree"), "BiasTree");
+    }
+
+    #[test]
+    fn to_pascal_case_single() {
+        assert_eq!(to_pascal_case("color"), "Color");
+    }
+
+    #[test]
+    fn to_pascal_case_already() {
+        assert_eq!(to_pascal_case("Color"), "Color");
+    }
+
+    #[test]
+    fn to_snake_case_pascal() {
+        assert_eq!(to_snake_case("BiasTree"), "bias_tree");
+    }
+
+    #[test]
+    fn to_snake_case_already() {
+        assert_eq!(to_snake_case("bias_tree"), "bias_tree");
+    }
+
+    #[test]
+    fn to_snake_case_kebab() {
+        assert_eq!(to_snake_case("bias-tree"), "bias_tree");
+    }
+
+    #[test]
+    fn map_type_text() {
+        assert_eq!(map_type("text"), "String");
+    }
+
+    #[test]
+    fn map_type_nat() {
+        assert_eq!(map_type("nat"), "u64");
+    }
+
+    #[test]
+    fn map_type_option() {
+        assert_eq!(map_type("option(text)"), "Option<String>");
+    }
+
+    #[test]
+    fn map_type_result() {
+        assert_eq!(map_type("result(text, error)"), "Result<String, Error>");
+    }
+
+    #[test]
+    fn map_type_list() {
+        assert_eq!(map_type("[text]"), "Vec<String>");
+    }
+
+    #[test]
+    fn map_type_vec() {
+        assert_eq!(map_type("vec(u32)"), "Vec<u32>");
+    }
+
+    #[test]
+    fn map_type_imperfect() {
+        assert_eq!(
+            map_type("imperfect(observation, error, loss)"),
+            "Imperfect<Observation, Error, Loss>"
+        );
+    }
+
+    #[test]
+    fn map_type_unknown() {
+        assert_eq!(map_type("widget"), "Widget");
+    }
+
+    #[test]
+    fn strip_grammar_prefix_at() {
+        assert_eq!(strip_grammar_prefix("@test"), "test");
+    }
+
+    #[test]
+    fn strip_grammar_prefix_path() {
+        assert_eq!(strip_grammar_prefix("@code/rust"), "code_rust");
+    }
+
+    #[test]
+    fn parse_field_with_type() {
+        assert_eq!(
+            parse_field("name: text"),
+            Some(("name".to_string(), "text".to_string()))
+        );
+    }
+
+    #[test]
+    fn parse_field_no_type() {
+        assert_eq!(parse_field("identity"), None);
+    }
+
+    // -------------------------------------------------------------------
+    // Integration tests — compile .mirror source → Rust
+    // -------------------------------------------------------------------
+
+    #[test]
+    fn emit_rust_simple_enum() {
+        let runtime = MirrorRuntime::new();
+        let compiled: Result<CompiledShatter, _> =
+            runtime.compile_source("type color = red | blue").into();
+        let compiled = compiled.unwrap();
+        let rust = emit_rust(&compiled);
+        assert!(rust.contains("pub enum Color"), "got:\n{}", rust);
+        assert!(rust.contains("Red"), "got:\n{}", rust);
+        assert!(rust.contains("Blue"), "got:\n{}", rust);
+    }
+
+    #[test]
+    fn emit_rust_unit_struct() {
+        let runtime = MirrorRuntime::new();
+        let compiled: Result<CompiledShatter, _> = runtime.compile_source("type point").into();
+        let compiled = compiled.unwrap();
+        let rust = emit_rust(&compiled);
+        assert!(rust.contains("pub struct Point;"), "got:\n{}", rust);
+    }
+
+    #[test]
+    fn emit_rust_struct_with_fields() {
+        let runtime = MirrorRuntime::new();
+        let compiled: Result<CompiledShatter, _> = runtime
+            .compile_source("type user {\n  name: text,\n  email: text,\n}")
+            .into();
+        let compiled = compiled.unwrap();
+        let rust = emit_rust(&compiled);
+        assert!(rust.contains("pub struct User"), "got:\n{}", rust);
+    }
+
+    #[test]
+    fn emit_rust_grammar_becomes_module() {
+        let runtime = MirrorRuntime::new();
+        let compiled: Result<CompiledShatter, _> = runtime
+            .compile_source("grammar @test {\n  type x\n}")
+            .into();
+        let compiled = compiled.unwrap();
+        let rust = emit_rust(&compiled);
+        assert!(rust.contains("pub mod test"), "got:\n{}", rust);
+    }
+
+    #[test]
+    fn emit_rust_action_becomes_function() {
+        let runtime = MirrorRuntime::new();
+        let compiled: Result<CompiledShatter, _> =
+            runtime.compile_source("action boot(identity)").into();
+        let compiled = compiled.unwrap();
+        let rust = emit_rust(&compiled);
+        assert!(rust.contains("pub fn boot"), "got:\n{}", rust);
+        assert!(rust.contains("todo!()"), "got:\n{}", rust);
+    }
+
+    #[test]
+    fn emit_rust_property_becomes_function() {
+        let runtime = MirrorRuntime::new();
+        let compiled: Result<CompiledShatter, _> = runtime
+            .compile_source("property types_lowercase(grammar)")
+            .into();
+        let compiled = compiled.unwrap();
+        let rust = emit_rust(&compiled);
+        assert!(rust.contains("pub fn types_lowercase"), "got:\n{}", rust);
+        assert!(rust.contains("PropertyError"), "got:\n{}", rust);
+    }
+
+    #[test]
+    fn emit_rust_parameterized_type() {
+        let runtime = MirrorRuntime::new();
+        let compiled: Result<CompiledShatter, _> =
+            runtime.compile_source("type error(observation)").into();
+        let compiled = compiled.unwrap();
+        let rust = emit_rust(&compiled);
+        assert!(
+            rust.contains("Error") && (rust.contains("Observation") || rust.contains("struct")),
+            "got:\n{}",
+            rust
+        );
+    }
+
+    #[test]
+    fn emit_rust_from_boot_meta() {
+        let runtime = MirrorRuntime::new();
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot/01-meta.mirror");
+        let compiled = runtime.compile_file(&path).unwrap();
+        let rust = emit_rust(&compiled);
+
+        // Meta should produce types for pure, real, observation, etc.
+        assert!(rust.contains("pub"), "meta must produce public items");
+        assert!(!rust.is_empty(), "meta must produce some Rust");
+    }
+
+    #[test]
+    fn emit_rust_from_boot_code_rust() {
+        let runtime = MirrorRuntime::new();
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot/03a-code-rust.mirror");
+        let compiled = runtime.compile_file(&path).unwrap();
+        let rust = emit_rust(&compiled);
+
+        // Should produce a module for @code/rust
+        assert!(
+            rust.contains("pub mod") || rust.contains("pub struct") || rust.contains("pub fn"),
+            "code/rust must produce public items, got:\n{}",
+            rust
+        );
+    }
+
+    #[test]
+    fn emit_rust_header_present() {
+        let runtime = MirrorRuntime::new();
+        let compiled: Result<CompiledShatter, _> = runtime.compile_source("type x").into();
+        let compiled = compiled.unwrap();
+        let rust = emit_rust(&compiled);
+        assert!(
+            rust.starts_with("// Generated by mirror craft --target rust"),
+            "should have header"
+        );
+    }
+
+    #[test]
+    fn emit_rust_form_api() {
+        // Test the emit_rust_form API directly
+        let form = Form::new(
+            DeclKind::Type,
+            "widget",
+            vec![],
+            vec!["small".to_string(), "large".to_string()],
+            vec![],
+        );
+        let rust = emit_rust_form(&form);
+        assert!(rust.contains("pub enum Widget"), "got:\n{}", rust);
+        assert!(rust.contains("Small"), "got:\n{}", rust);
+        assert!(rust.contains("Large"), "got:\n{}", rust);
+    }
+
+    #[test]
+    fn emit_rust_nested_grammar_types() {
+        let inner_type = Form::new(
+            DeclKind::Type,
+            "status",
+            vec![],
+            vec!["active".to_string(), "inactive".to_string()],
+            vec![],
+        );
+        let grammar = Form::new(DeclKind::Grammar, "@test", vec![], vec![], vec![inner_type]);
+        let rust = emit_rust_form(&grammar);
+        assert!(rust.contains("pub mod test"), "got:\n{}", rust);
+        assert!(rust.contains("pub enum Status"), "got:\n{}", rust);
+        assert!(rust.contains("Active"), "got:\n{}", rust);
+    }
+
+    #[test]
+    fn emit_rust_map_type_f64() {
+        assert_eq!(map_type("f64"), "f64");
+    }
+
+    #[test]
+    fn emit_rust_map_type_bool() {
+        assert_eq!(map_type("bool"), "bool");
+    }
+
+    #[test]
+    fn emit_rust_map_type_ref() {
+        assert_eq!(map_type("ref"), "String");
+    }
+
+    #[test]
+    fn emit_rust_map_type_oid() {
+        assert_eq!(map_type("oid"), "Oid");
+    }
+
+    #[test]
+    fn emit_rust_map_type_loss() {
+        assert_eq!(map_type("loss"), "Loss");
+    }
+
+    #[test]
+    fn emit_rust_map_type_hashmap() {
+        assert_eq!(map_type("hashmap(text, u32)"), "HashMap<String, u32>");
+    }
+}

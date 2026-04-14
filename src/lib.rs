@@ -49,6 +49,7 @@ pub use fragmentation::store::Store;
 pub mod bundle;
 pub mod cli;
 pub mod declaration;
+pub mod emit_rust;
 pub mod gestalt;
 pub mod git_prism;
 pub mod git_store;
