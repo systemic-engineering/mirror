@@ -2669,6 +2669,30 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
+    // boot file inventory — captures filesystem state before reorganization
+    // -----------------------------------------------------------------------
+
+    /// Captures the current boot inventory before reorganization.
+    /// This is training data — we measure before we change.
+    #[test]
+    fn boot_file_inventory_before_reorg() {
+        let boot = boot_dir();
+        let mut files: Vec<String> = std::fs::read_dir(&boot)
+            .unwrap()
+            .filter_map(|e| e.ok())
+            .map(|e| e.file_name().to_string_lossy().to_string())
+            .filter(|f| f.ends_with(".mirror"))
+            .collect();
+        files.sort();
+
+        assert_eq!(files.len(), 15, "baseline boot file count: {:?}", files);
+        assert!(files.contains(&"00-prism.mirror".to_string()));
+        assert!(files.contains(&"20-cli.mirror".to_string()));
+        // No std/ directory yet
+        assert!(!boot.join("std").exists(), "std/ should not exist yet");
+    }
+
+    // -----------------------------------------------------------------------
     // mirror ci: boot baseline — the warnings ARE the specification
     // -----------------------------------------------------------------------
 
