@@ -2851,7 +2851,7 @@ mod tests {
 
     #[test]
     fn merge_command_help_in_dispatch() {
-        let cli = Cli::default();
+        let _cli = Cli::default();
         let help = Cli::command_help("merge");
         assert!(help.is_some());
         assert!(help.unwrap().contains("crystal delta"));
@@ -2893,7 +2893,7 @@ craft {{
         )
         .unwrap();
 
-        let cli = Cli::default();
+        let _cli = Cli::default();
         // We can't easily test dispatch because find_spec_file uses cwd,
         // but we can test the spec parsing + target lookup
         let parsed = crate::spec::parse_spec(spec.to_str().unwrap()).unwrap();

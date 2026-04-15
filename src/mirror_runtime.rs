@@ -2705,29 +2705,6 @@ mod tests {
         );
     }
 
-    fn mirror_shatter_deterministic_across_runs() {
-        let runtime = MirrorRuntime::new();
-        let store_dir1 = tempdir_for_test("shatter_deterministic_1");
-        let store_dir2 = tempdir_for_test("shatter_deterministic_2");
-        let output1 = store_dir1.join("mirror.shatter");
-        let output2 = store_dir2.join("mirror.shatter");
-
-        let oid1 = runtime
-            .materialize_crystal(&boot_dir(), &store_dir1, &output1)
-            .unwrap();
-        let oid2 = runtime
-            .materialize_crystal(&boot_dir(), &store_dir2, &output2)
-            .unwrap();
-
-        assert_eq!(oid1, oid2, "same boot dir must produce same crystal OID");
-
-        let content1 = std::fs::read_to_string(&output1).unwrap();
-        let content2 = std::fs::read_to_string(&output2).unwrap();
-        assert_eq!(
-            content1, content2,
-            "same boot dir must produce identical .shatter content"
-        );
-    }
 
     // -----------------------------------------------------------------------
     // boot file inventory — captures filesystem state before reorganization
@@ -3459,11 +3436,6 @@ grammar @ai {
             "property with <= must compile: {:?}",
             result
         );
-
-        let compiled = match result {
-            Imperfect::Success(c) | Imperfect::Partial(c, _) => c,
-            Imperfect::Failure(e, _) => panic!("property with <= failed: {}", e),
-        };
 
         // The property must have OpticOp::Fold — check via parse_form since
         // optic_ops is a parser annotation, not stored in the fragment.
