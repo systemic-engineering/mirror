@@ -173,8 +173,8 @@ mod tests {
 
     #[test]
     fn parser_oid_vs_generated_oid() {
-        use crate::declaration::MirrorFragmentExt;
         use crate::mirror_runtime::MirrorRuntime;
+        use fragmentation::fragment::Fragmentable;
 
         let runtime = MirrorRuntime::new();
         let src = std::fs::read_to_string(
@@ -182,7 +182,7 @@ mod tests {
         )
         .unwrap();
         let compiled = Result::from(runtime.compile_source(&src)).unwrap();
-        let parser_oid = format!("{:?}", compiled.fragment.oid());
+        let parser_oid = { use fragmentation::fragment::Fragmentable as _; format!("{:?}", compiled.fragment.self_ref().sha) };
         let generated_oid = format!("{}", PrismGrammar.oid());
 
         eprintln!("parser oid:    {}", parser_oid);

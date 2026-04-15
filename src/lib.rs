@@ -49,7 +49,7 @@ pub use fragmentation::store::Store;
 pub mod bundle;
 pub mod cli;
 pub mod declaration;
-pub mod emit_rust;
+pub mod emit_code;pub mod emit_rust;
 pub mod generate_crate;
 pub mod generated;
 pub mod gestalt;
