@@ -78,8 +78,15 @@ impl Cli {
     pub fn open(spec_path: &str) -> Result<Self, CliError> {
         let runtime = MirrorRuntime::new();
         let crystal_oid = if Path::new(spec_path).exists() {
-            let compiled = runtime.compile_file(Path::new(spec_path))?;
-            Some(compiled.crystal().clone())
+            let source = std::fs::read_to_string(spec_path)?;
+            let parsed = Parse.reduce(SourceText(source));
+            match parsed.ok() {
+                Some(fragment) => {
+                    let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+                    Some(compiled.crystal().clone())
+                }
+                None => None,
+            }
         } else {
             None
         };
