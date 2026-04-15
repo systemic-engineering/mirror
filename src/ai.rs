@@ -93,7 +93,7 @@ pub fn ai_loop(file: &Path, budget: usize) -> Result<AiLoopResult, AiError> {
         });
     }
 
-    let fate = Fate::untrained();
+    let fate = Fate::excited();
     let output = fate.tick(&features);
     let health = match output.health {
         fate::feature::HolonomyHealth::TooShallow => "too_shallow",
