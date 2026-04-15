@@ -9,9 +9,23 @@ use fate::Features;
 use prism::lambda::LambdaFn;
 use prism::Loss;
 
-use crate::declaration::{DeclKind, MirrorData, MirrorFragmentExt};
 use crate::lambda_phases::{Parse, SourceText};
 use crate::loss::MirrorLoss;
+use crate::mirror_ast::MirrorAST;
+use prism::MerkleTree;
+
+/// Count children of a MirrorAST node (top-level declarations).
+fn ast_child_count(ast: &MirrorAST) -> usize {
+    ast.children().len()
+}
+
+/// Count import nodes (`in @X`) in a MirrorAST's children.
+fn ast_import_count(ast: &MirrorAST) -> usize {
+    ast.children()
+        .iter()
+        .filter(|c| matches!(c, MirrorAST::Import(_)))
+        .count()
+}
 
 /// Extract Fate features from a .mirror file.
 ///
@@ -28,16 +42,8 @@ pub fn extract_features(source: &str) -> (Features, MirrorLoss) {
 
     match parsed {
         prism::Imperfect::Success(ast) => {
-            let fragment = &ast.0;
-            let decl_count = fragment.mirror_children().len();
-            let grammar_ref_count = fragment
-                .mirror_children()
-                .iter()
-                .filter(|c| {
-                    let data = MirrorData::decode_from_fragment(c.mirror_data());
-                    data.kind == DeclKind::In
-                })
-                .count();
+            let decl_count = ast_child_count(&ast.0);
+            let grammar_ref_count = ast_import_count(&ast.0);
 
             let mut features = [0.0_f64; 16];
             features[0] = 0.0; // holonomy: zero for crystal
@@ -50,16 +56,8 @@ pub fn extract_features(source: &str) -> (Features, MirrorLoss) {
             (features, MirrorLoss::zero())
         }
         prism::Imperfect::Partial(ast, loss) => {
-            let fragment = &ast.0;
-            let decl_count = fragment.mirror_children().len();
-            let grammar_ref_count = fragment
-                .mirror_children()
-                .iter()
-                .filter(|c| {
-                    let data = MirrorData::decode_from_fragment(c.mirror_data());
-                    data.kind == DeclKind::In
-                })
-                .count();
+            let decl_count = ast_child_count(&ast.0);
+            let grammar_ref_count = ast_import_count(&ast.0);
 
             let holonomy = loss.holonomy();
             let unrecognized = loss.parse.warnings.len();
@@ -112,7 +110,7 @@ mod tests {
 
     #[test]
     fn partial_file_has_positive_holonomy() {
-        // 'io' is not a recognized DeclKind, so it generates parse warnings
+        // 'io' is not a recognized keyword, so it generates parse warnings
         let source = "in @mirror\nio tick(features) => imperfect\ntype x = a\n";
         let (features, _loss) = extract_features(source);
         assert!(

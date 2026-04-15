@@ -14,8 +14,9 @@ use fragmentation::sha::{HashAlg, Sha};
 // ---------------------------------------------------------------------------
 
 /// The structural kind of a declaration in the mirror grammar.
+/// Internal: use MirrorAST variants instead.
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum DeclKind {
+pub(crate) enum DeclKind {
     // Structural
     Form,
     Type,
@@ -49,11 +50,15 @@ pub enum DeclKind {
     // Assertion / configuration
     Default,
     Binding,
+    // Dark dimension — parser failure preserved verbatim.
+    // The parser saw this line but couldn't parse it.
+    // Raw text in `name`. Loss = 1.0. Holonomy contribution.
+    Fragment,
 }
 
 impl DeclKind {
     /// Parse a keyword string into a DeclKind.
-    pub fn parse(s: &str) -> Option<DeclKind> {
+    pub(crate) fn parse(s: &str) -> Option<DeclKind> {
         match s {
             "form" => Some(DeclKind::Form),
             "type" => Some(DeclKind::Type),
@@ -84,7 +89,7 @@ impl DeclKind {
     }
 
     /// The keyword string for this kind.
-    pub fn as_str(&self) -> &'static str {
+    pub(crate) fn as_str(&self) -> &'static str {
         match self {
             DeclKind::Form => "form",
             DeclKind::Type => "type",
@@ -110,6 +115,7 @@ impl DeclKind {
             DeclKind::Template => "template",
             DeclKind::Default => "default",
             DeclKind::Binding => "binding",
+            DeclKind::Fragment => "fragment",
         }
     }
 }
@@ -205,7 +211,7 @@ impl OpticOp {
 
     /// The DeclKind that corresponds to this optic operation, if any.
     /// Focus and Project are DeclKind variants; Iso has no direct DeclKind.
-    pub fn to_decl_kind(&self) -> Option<DeclKind> {
+    pub(crate) fn to_decl_kind(&self) -> Option<DeclKind> {
         match self {
             OpticOp::Fold => Some(DeclKind::Fold),
             OpticOp::Split => Some(DeclKind::Split),
@@ -223,7 +229,7 @@ impl OpticOp {
 
 impl OpticOp {
     /// Classify a declaration keyword as its corresponding optic operation.
-    pub fn from_decl_kind(kind: &DeclKind) -> Option<OpticOp> {
+    pub(crate) fn from_decl_kind(kind: &DeclKind) -> Option<OpticOp> {
         match kind {
             DeclKind::Fold => Some(OpticOp::Fold),
             DeclKind::Focus => Some(OpticOp::Focus),
@@ -255,7 +261,7 @@ impl std::fmt::Display for OpticOp {
 /// `modifier:abstract`, `returns:...`, `parent:@actor`) for content-addressing.
 /// The decode side reconstructs them from those prefixed entries.
 #[derive(Clone, Debug, Eq)]
-pub struct MirrorData {
+pub(crate) struct MirrorData {
     pub kind: DeclKind,
     pub name: String,
     pub params: Vec<String>,
@@ -290,7 +296,7 @@ impl PartialEq for MirrorData {
 }
 
 impl MirrorData {
-    pub fn new(
+    pub(crate) fn new(
         kind: DeclKind,
         name: impl Into<String>,
         params: Vec<String>,
@@ -379,13 +385,14 @@ impl Decode for MirrorData {
 // ---------------------------------------------------------------------------
 
 /// A content-addressed mirror declaration: `Fractal<MirrorData>`.
-pub type MirrorFragment = Fractal<MirrorData>;
+/// Internal storage type — use MirrorAST for the public API.
+pub(crate) type MirrorFragment = Fractal<MirrorData>;
 
 /// The hash type used for mirror fragments.
-pub type MirrorHash = Sha;
+pub(crate) type MirrorHash = Sha;
 
 /// Extension trait for accessing mirror-specific data on fragments.
-pub trait MirrorFragmentExt {
+pub(crate) trait MirrorFragmentExt {
     /// Get the MirrorData payload.
     fn mirror_data(&self) -> &MirrorData;
     /// Get the child fragments.
@@ -416,7 +423,7 @@ impl MirrorData {
     /// Encode the extra metadata fields into params/variants for content-addressing.
     /// Returns a new MirrorData with the encoded params/variants suitable for
     /// hashing, plus the original extra fields preserved.
-    pub fn encode_for_fragment(&self) -> MirrorData {
+    pub(crate) fn encode_for_fragment(&self) -> MirrorData {
         let mut params = self.params.clone();
         let mut variants = self.variants.clone();
         if self.kind == DeclKind::Action
@@ -455,7 +462,7 @@ impl MirrorData {
 
     /// Decode extra metadata fields from the encoded params/variants of a fragment.
     /// Returns a MirrorData with clean params/variants and the extra fields populated.
-    pub fn decode_from_fragment(raw: &MirrorData) -> MirrorData {
+    pub(crate) fn decode_from_fragment(raw: &MirrorData) -> MirrorData {
         let mut params = Vec::new();
         let mut grammar_ref = None;
         let mut return_type = None;
@@ -499,7 +506,7 @@ impl MirrorData {
 }
 
 /// Build a MirrorFragment from data and children.
-pub fn fragment(data: MirrorData, children: Vec<MirrorFragment>) -> MirrorFragment {
+pub(crate) fn fragment(data: MirrorData, children: Vec<MirrorFragment>) -> MirrorFragment {
     let encoded = data.encode();
     let hash = Sha::hash(&encoded);
     let ref_ = Ref::new(hash, data.kind.as_str());
@@ -514,7 +521,7 @@ pub fn fragment(data: MirrorData, children: Vec<MirrorFragment>) -> MirrorFragme
 /// This is the primary constructor when building from parsed declarations —
 /// it encodes grammar_ref, body_text, is_abstract, return_type, parent_ref
 /// into the content-addressable params/variants before hashing.
-pub fn fragment_encoded(data: MirrorData, children: Vec<MirrorFragment>) -> MirrorFragment {
+pub(crate) fn fragment_encoded(data: MirrorData, children: Vec<MirrorFragment>) -> MirrorFragment {
     let encoded_data = data.encode_for_fragment();
     fragment(encoded_data, children)
 }
@@ -733,8 +740,8 @@ mod tests {
                 kind
             );
         }
-        // Ensure we tested every variant — count must match.
-        assert_eq!(all_kinds.len(), 24, "must test all 24 DeclKind variants");
+        // Ensure we tested every variant — count must match (Fragment is not keyword-parseable).
+        assert_eq!(all_kinds.len(), 24, "must test all 24 keyword-parseable DeclKind variants");
     }
 
     #[test]

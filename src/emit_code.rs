@@ -502,14 +502,14 @@ impl CodeGrammar {
 // ---------------------------------------------------------------------------
 
 /// Emit code from a compiled shatter artifact using the given grammar templates.
-pub fn emit_code(compiled: &CompiledShatter, grammar: &CodeGrammar) -> IoList {
+pub(crate) fn emit_code(compiled: &CompiledShatter, grammar: &CodeGrammar) -> IoList {
     let header = (grammar.templates.emit_header)(grammar.name);
     let body = emit_frag_code(&compiled.fragment, grammar);
     IoList::join(vec![header, body])
 }
 
 /// Emit code from a fragment tree using grammar templates.
-pub fn emit_code_fragment(frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
+pub(crate) fn emit_code_fragment(frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
     let header = (grammar.templates.emit_header)(grammar.name);
     let body = emit_frag_code(frag, grammar);
     IoList::join(vec![header, body])
@@ -525,6 +525,10 @@ fn emit_frag_code(frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
         DeclKind::In => IoList::Empty,
         DeclKind::Out => IoList::Empty,
         DeclKind::Form => emit_form_code(&data, frag, grammar),
+        DeclKind::Fragment => {
+            // Dark dimension: emit as comment preserving the raw text
+            (grammar.templates.emit_comment)("fragment", &data.name)
+        }
         _ => (grammar.templates.emit_comment)(data.kind.as_str(), &data.name),
     }
 }

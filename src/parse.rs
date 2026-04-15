@@ -92,6 +92,7 @@ fn decl_to_ast(kind: &DeclKind) -> (Kind, &'static str) {
         DeclKind::Template => (Kind::Decl, "template"),
         DeclKind::Default => (Kind::Decl, "default"),
         DeclKind::Binding => (Kind::Decl, "binding"),
+        DeclKind::Fragment => (Kind::Atom, "fragment"),
     }
 }
 

@@ -109,7 +109,7 @@ impl std::error::Error for MirrorResolveError {}
 /// the `Prism` trait: three operations move a `Form` into and out of its
 /// content-addressed representation.
 #[derive(Clone, Debug, Default)]
-pub struct Shatter;
+pub(crate) struct Shatter;
 
 impl Prism for Shatter {
     type Input = Optic<(), MirrorFragment>;
@@ -144,12 +144,131 @@ impl Prism for Shatter {
 // Parser — line-oriented, brace-balanced.
 // ---------------------------------------------------------------------------
 
+/// Parse a `.mirror` source string into a `MirrorAST`.
+///
+/// Returns `Imperfect`: `Success` if all input was recognized,
+/// `Partial` if unrecognized keywords were encountered (measured loss),
+/// `Failure` if no declarations could be parsed.
+pub fn parse_mirror(source: &str) -> Imperfect<MirrorAST, MirrorRuntimeError, MirrorLoss> {
+    let tokens = tokenize(source);
+    let mut cursor = 0usize;
+    let mut decls: Vec<MirrorAST> = Vec::new();
+    let mut warnings: Vec<ParseWarning> = Vec::new();
+
+    loop {
+        skip_trivia(&tokens, &mut cursor);
+        if cursor >= tokens.len() {
+            break;
+        }
+        match tokens.get(cursor) {
+            Some(Tok::Word(w)) if DeclKind::parse(w).is_some() || w == "abstract" => {
+                match parse_decl_ast(&tokens, &mut cursor, AstPosition::TopLevel) {
+                    Ok((ast, child_warnings)) => {
+                        // M2001: top-level type/grammar/action require a name
+                        match &ast {
+                            MirrorAST::Type(t) if t.name.as_str().is_empty() => {
+                                return Imperfect::failure(err("M2001: `type` requires a name"));
+                            }
+                            MirrorAST::Grammar(g) if g.name.as_str() == "@" || g.name.as_str().is_empty() => {
+                                return Imperfect::failure(err("M2001: `grammar` requires a name"));
+                            }
+                            MirrorAST::Action(a) if a.name.as_str().is_empty() => {
+                                return Imperfect::failure(err("M2001: `action` requires a name"));
+                            }
+                            // M2002: top-level `in` requires a target
+                            MirrorAST::Import(i) if i.target.as_str() == "@" || i.target.as_str().is_empty() => {
+                                return Imperfect::failure(err("M2002: `in` requires a target"));
+                            }
+                            _ => {}
+                        }
+                        decls.push(ast);
+                        warnings.extend(child_warnings);
+                    }
+                    Err(e) => return Imperfect::failure(e),
+                }
+            }
+            Some(Tok::Word(w)) => {
+                let line = count_line_at(&tokens, cursor);
+                let raw = collect_until_next_decl(&tokens, &mut cursor);
+                // Preserve dark dimension: the parser saw it but couldn't parse it
+                decls.push(MirrorAST::Fragment(format!("{} {}", w, raw).trim().to_string()));
+                warnings.push(ParseWarning::UnknownToken {
+                    at: AstPosition::TopLevel,
+                    line,
+                });
+            }
+            Some(_) => {
+                while cursor < tokens.len() && !matches!(tokens.get(cursor), Some(Tok::Newline)) {
+                    cursor += 1;
+                }
+                if matches!(tokens.get(cursor), Some(Tok::Newline)) {
+                    cursor += 1;
+                }
+            }
+            None => break,
+        }
+    }
+
+    // M2003: duplicate type names in the same scope
+    {
+        let mut seen_types: Vec<&str> = Vec::new();
+        for d in &decls {
+            if let MirrorAST::Type(t) = d {
+                let name = t.name.as_str();
+                if !name.is_empty() {
+                    if seen_types.iter().any(|n| *n == name) {
+                        return Imperfect::failure(err(format!(
+                            "M2003: duplicate type name `{}`",
+                            name
+                        )));
+                    }
+                    seen_types.push(name);
+                }
+            }
+        }
+    }
+
+    // Filter out Fragment nodes for counting — they're dark dimensions, not real decls
+    let real_decls: Vec<&MirrorAST> = decls.iter().filter(|d| !matches!(d, MirrorAST::Fragment(_))).collect();
+
+    if real_decls.is_empty() && warnings.is_empty() {
+        Imperfect::failure(err("no declarations found"))
+    } else if real_decls.is_empty() {
+        let loss = MirrorLoss {
+            parse: ParseLoss { warnings },
+            ..MirrorLoss::zero()
+        };
+        Imperfect::failure_with_loss(err("no recognized declarations found"), loss)
+    } else {
+        collect_ast_form_deprecations(&decls, &mut warnings);
+
+        let ast = if decls.len() == 1 {
+            decls.into_iter().next().unwrap()
+        } else {
+            MirrorAST::Module(ModuleNode {
+                name: Identifier::new(""),
+                children: decls,
+            })
+        };
+
+        if warnings.is_empty() {
+            Imperfect::Success(ast)
+        } else {
+            let loss = MirrorLoss {
+                parse: ParseLoss { warnings },
+                ..MirrorLoss::zero()
+            };
+            Imperfect::Partial(ast, loss)
+        }
+    }
+}
+
 /// Parse a `.mirror` source string into a content-addressed `MirrorFragment`.
 ///
 /// Returns `Imperfect`: `Success` if all input was recognized,
 /// `Partial` if unrecognized keywords were encountered (measured loss),
 /// `Failure` if no declarations could be parsed.
-pub fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError, MirrorLoss> {
+pub(crate) fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError, MirrorLoss> {
     let tokens = tokenize(source);
     let mut cursor = 0usize;
     let mut decls: Vec<MirrorFragment> = Vec::new();
@@ -262,7 +381,7 @@ pub fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError,
     }
 }
 
-/// Detect deprecated `form` keyword usage and add deprecation warnings.
+/// Detect deprecated `form` keyword usage and add deprecation warnings (fragment version).
 fn collect_fragment_form_deprecations(
     decls: &[MirrorFragment],
     warnings: &mut Vec<ParseWarning>,
@@ -278,6 +397,31 @@ fn collect_fragment_form_deprecations(
             });
         }
         collect_fragment_form_deprecations(decl.mirror_children(), warnings);
+    }
+}
+
+/// Detect deprecated `form` keyword usage (MirrorAST version).
+fn collect_ast_form_deprecations(
+    decls: &[MirrorAST],
+    warnings: &mut Vec<ParseWarning>,
+) {
+    for decl in decls {
+        if let MirrorAST::Module(m) = decl {
+            if !m.name.as_str().is_empty() {
+                // Module with a name was parsed from `form` keyword — deprecated
+                warnings.push(ParseWarning::DeprecatedKind {
+                    kind: DeclKind::Form,
+                    replacement: DeclKind::Grammar,
+                    at: AstPosition::TopLevel,
+                    line: 0,
+                });
+            }
+            collect_ast_form_deprecations(&m.children, warnings);
+        }
+        // Recurse into Grammar children too
+        if let MirrorAST::Grammar(g) = decl {
+            collect_ast_form_deprecations(&g.children, warnings);
+        }
     }
 }
 
@@ -1053,6 +1197,7 @@ fn build_ast_node(
         DeclKind::Default | DeclKind::Binding => MirrorAST::Export(ExportNode {
             name: Identifier::new(name),
         }),
+        DeclKind::Fragment => MirrorAST::Fragment(name.to_string()),
     }
 }
 
@@ -1247,14 +1392,14 @@ fn skip_inline_trivia(tokens: &[Tok], cursor: &mut usize) {
 // ---------------------------------------------------------------------------
 
 /// Emit `.mirror` text from a `MirrorFragment`.
-pub fn emit_fragment(frag: &MirrorFragment) -> String {
+pub(crate) fn emit_fragment(frag: &MirrorFragment) -> String {
     let mut out = String::new();
     emit_fragment_into(frag, 0, &mut out);
     out
 }
 
 /// Reorder a MirrorFragment's children into canonical (kintsugi) order.
-pub fn kintsugi_fragment(frag: &MirrorFragment) -> MirrorFragment {
+pub(crate) fn kintsugi_fragment(frag: &MirrorFragment) -> MirrorFragment {
     let data = MirrorData::decode_from_fragment(frag.mirror_data());
     if frag.mirror_children().is_empty() {
         return frag.clone();
@@ -1388,6 +1533,7 @@ fn kintsugi_sort_key(kind: &DeclKind) -> u8 {
         DeclKind::Recover | DeclKind::Rescue => 6,
         DeclKind::Template => 6, // group with actions
         DeclKind::Default | DeclKind::Binding => 7,
+        DeclKind::Fragment => 8, // dark dimensions sort last
     }
 }
 
@@ -1396,21 +1542,22 @@ fn kintsugi_sort_key(kind: &DeclKind) -> u8 {
 // ---------------------------------------------------------------------------
 
 /// Compiled artifact: the content-addressed MirrorFragment.
+/// Internal — use MirrorAST for the public API.
 #[derive(Clone, Debug)]
-pub struct CompiledShatter {
-    /// The content-addressed fragment tree. Primary public interface.
-    pub fragment: MirrorFragment,
+pub(crate) struct CompiledShatter {
+    /// The content-addressed fragment tree.
+    pub(crate) fragment: MirrorFragment,
 }
 
 impl CompiledShatter {
-    pub fn crystal(&self) -> Oid {
+    pub(crate) fn crystal(&self) -> Oid {
         Oid::new(self.fragment.content_hash().as_str())
     }
-    pub fn form_name(&self) -> &str {
+    pub(crate) fn form_name(&self) -> &str {
         &self.fragment.mirror_data().name
     }
     /// Get the decoded MirrorData from the fragment (decodes extra fields).
-    pub fn data(&self) -> MirrorData {
+    pub(crate) fn data(&self) -> MirrorData {
         MirrorData::decode_from_fragment(self.fragment.mirror_data())
     }
 }
@@ -1791,6 +1938,17 @@ impl MirrorRegistry {
 }
 
 // Form-based registry methods removed — Form is dead.
+
+/// Parse a declaration into a MirrorAST node.
+/// Wraps parse_decl (fragment-based) and converts the result.
+fn parse_decl_ast(
+    tokens: &[Tok],
+    cursor: &mut usize,
+    position: AstPosition,
+) -> Result<(MirrorAST, Vec<ParseWarning>), MirrorRuntimeError> {
+    let (frag, warnings) = parse_decl(tokens, cursor, position)?;
+    Ok((MirrorAST::from_fragment(&frag), warnings))
+}
 
 // ---------------------------------------------------------------------------
 // Tests

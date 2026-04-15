@@ -82,7 +82,7 @@ impl Cli {
             let parsed = Parse.reduce(SourceText(source));
             match parsed.ok() {
                 Some(fragment) => {
-                    let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+                    let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0.to_fragment() };
                     Some(compiled.crystal().clone())
                 }
                 None => None,
@@ -441,7 +441,7 @@ flags:
                 let fragment = Parse.reduce(SourceText(source.clone()))
                     .ok()
                     .expect("parse succeeded in pipeline, must succeed again");
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+                let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0.to_fragment() };
                 let oid = compiled.crystal();
 
                 // Write .shatter output alongside the source
@@ -636,21 +636,23 @@ flags:
 
         match optic {
             "focus" => {
-                let text = crate::mirror_runtime::emit_fragment(&fragment.0);
+                let frag = fragment.0.to_fragment();
+                let text = crate::mirror_runtime::emit_fragment(&frag);
                 Ok(text)
             }
             "project" => {
                 let mut out = String::new();
-                project_fragment(&fragment.0, 0, &mut out);
+                project_ast(&fragment.0, 0, &mut out);
                 Ok(out)
             }
             "refract" => {
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+                let frag = fragment.0.to_fragment();
+                let compiled = crate::mirror_runtime::CompiledShatter { fragment: frag };
                 Ok(compiled.crystal().as_str().to_string())
             }
             _ => {
                 // split, zoom -- same as focus for now
-                let text = crate::mirror_runtime::emit_fragment(&fragment.0);
+                let text = crate::mirror_runtime::emit_fragment(&fragment.0.to_fragment());
                 Ok(text)
             }
         }
@@ -673,11 +675,11 @@ flags:
             .ok()
             .ok_or_else(|| CliError::Runtime(MirrorRuntimeError("parse failed".into())))?;
 
-        let canonical = crate::mirror_runtime::kintsugi_fragment(&fragment.0);
+        let canonical = crate::mirror_runtime::kintsugi_fragment(&fragment.0.to_fragment());
         let output = crate::mirror_runtime::emit_fragment(&canonical);
 
         if check {
-            let original = crate::mirror_runtime::emit_fragment(&fragment.0);
+            let original = crate::mirror_runtime::emit_fragment(&fragment.0.to_fragment());
             if output == original {
                 Ok("ok".to_string())
             } else {
@@ -706,11 +708,11 @@ flags:
         let result = pipeline.reduce(SourceText(source));
         match result {
             Imperfect::Success(checked) => {
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: checked.0 };
+                let compiled = crate::mirror_runtime::CompiledShatter { fragment: checked.0.to_fragment() };
                 Ok((compiled.crystal().as_str().to_string(), MirrorLoss::zero()))
             }
             Imperfect::Partial(checked, loss) => {
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: checked.0 };
+                let compiled = crate::mirror_runtime::CompiledShatter { fragment: checked.0.to_fragment() };
                 Ok((compiled.crystal().as_str().to_string(), loss))
             }
             Imperfect::Failure(err, _) => Err(CliError::Runtime(MirrorRuntimeError(
@@ -1073,7 +1075,7 @@ flags:
             .ok()
             .ok_or_else(|| CliError::Runtime(MirrorRuntimeError("parse failed".into())))?;
         let elapsed = start.elapsed();
-        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0.to_fragment() };
         Ok(format!(
             "compiled {} in {:.3}ms\noid: {}",
             file,
@@ -1274,7 +1276,7 @@ With --ai: executes git merge with a generated message."
             let fragment = parsed.ok().ok_or_else(|| {
                 CliError::Runtime(MirrorRuntimeError("parse failed".into()))
             })?;
-            let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+            let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0.to_fragment() };
             return Ok(encoding::encode(compiled.crystal().as_str()));
         }
 
@@ -1568,27 +1570,98 @@ options:
     }
 }
 
-/// Print eigenvalues of a fragment tree (kind, name, params, variants).
-fn project_fragment(frag: &crate::declaration::MirrorFragment, depth: usize, out: &mut String) {
-    use crate::declaration::{MirrorData, MirrorFragmentExt};
-    let data = MirrorData::decode_from_fragment(frag.mirror_data());
+/// Print eigenvalues of an AST tree (kind, name, details).
+fn project_ast(ast: &crate::mirror_ast::MirrorAST, depth: usize, out: &mut String) {
+    use crate::mirror_ast::MirrorAST;
+    use prism::MerkleTree;
+
     for _ in 0..depth {
         out.push_str("  ");
     }
-    out.push_str(data.kind.as_str());
-    if !data.name.is_empty() {
-        out.push(' ');
-        out.push_str(&data.name);
-    }
-    if !data.params.is_empty() {
-        out.push_str(&format!("({})", data.params.join(", ")));
-    }
-    if !data.variants.is_empty() {
-        out.push_str(&format!(" = {}", data.variants.join(" | ")));
+    // Emit kind + name + details based on variant
+    match ast {
+        MirrorAST::Grammar(g) => {
+            out.push_str("grammar ");
+            out.push_str(g.name.as_str());
+            if let Some(ref p) = g.parent {
+                out.push_str(&format!(" < {}", p.as_str()));
+            }
+        }
+        MirrorAST::Type(t) => {
+            out.push_str("type ");
+            out.push_str(t.name.as_str());
+            if !t.params.is_empty() {
+                let ps: Vec<&str> = t.params.iter().map(|p| p.as_str()).collect();
+                out.push_str(&format!("({})", ps.join(", ")));
+            }
+            match &t.body {
+                crate::mirror_ast::TypeBody::Enum(vs) => {
+                    let vs: Vec<&str> = vs.iter().map(|v| v.as_str()).collect();
+                    out.push_str(&format!(" = {}", vs.join(" | ")));
+                }
+                _ => {}
+            }
+        }
+        MirrorAST::Action(a) => {
+            out.push_str("action ");
+            out.push_str(a.name.as_str());
+            if !a.params.is_empty() {
+                let ps: Vec<String> = a.params.iter().map(|p| {
+                    if p.type_ref.as_str() == "_" { p.name.as_str().to_string() }
+                    else { format!("{}:{}", p.name.as_str(), p.type_ref.as_str()) }
+                }).collect();
+                out.push_str(&format!("({})", ps.join(", ")));
+            }
+        }
+        MirrorAST::Property(p) => {
+            out.push_str("property ");
+            out.push_str(p.name.as_str());
+        }
+        MirrorAST::Import(i) => {
+            out.push_str("in ");
+            out.push_str(i.target.as_str());
+        }
+        MirrorAST::Export(e) => {
+            out.push_str("out ");
+            out.push_str(e.name.as_str());
+        }
+        MirrorAST::Focus(f) => {
+            out.push_str("focus ");
+            out.push_str(f.name.as_str());
+        }
+        MirrorAST::Project(p) => {
+            out.push_str("project ");
+            out.push_str(p.name.as_str());
+        }
+        MirrorAST::Split(s) => {
+            out.push_str("split ");
+            out.push_str(s.name.as_str());
+        }
+        MirrorAST::Zoom(z) => {
+            out.push_str("zoom ");
+            out.push_str(z.name.as_str());
+        }
+        MirrorAST::Refract(r) => {
+            out.push_str("refract ");
+            out.push_str(r.name.as_str());
+        }
+        MirrorAST::Abstract(inner) => {
+            out.push_str("abstract ");
+            // Don't recurse, just show kind
+            out.push_str(inner.kind_name());
+        }
+        MirrorAST::Module(m) => {
+            out.push_str("form ");
+            out.push_str(m.name.as_str());
+        }
+        MirrorAST::Fragment(raw) => {
+            out.push_str("fragment ");
+            out.push_str(raw);
+        }
     }
     out.push('\n');
-    for child in frag.mirror_children() {
-        project_fragment(child, depth + 1, out);
+    for child in ast.children() {
+        project_ast(child, depth + 1, out);
     }
 }
 
@@ -1660,7 +1733,7 @@ impl Cli {
                         path.display()
                     )))
                 })?;
-                fragments.push(fragment.0);
+                fragments.push(fragment.0.to_fragment());
             }
         }
 
@@ -2364,7 +2437,7 @@ mod tests {
         // OID from CLI must match OID from Parse
         let parsed = Parse.reduce(SourceText(source.into()));
         let fragment = parsed.ok().unwrap();
-        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0.to_fragment() };
         assert_eq!(cli_oid, compiled.crystal().as_str(), "CLI OID must match pipeline OID");
 
         // --target rust output must match pipeline emit
@@ -2392,7 +2465,7 @@ mod tests {
             crate::lambda_phases::SourceText(source.into()),
         );
         let fragment = parsed.ok().expect("parse should succeed");
-        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0.to_fragment() };
         let crystal_oid = compiled.crystal().clone();
 
         // Sign the content OID

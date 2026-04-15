@@ -16,6 +16,7 @@
 use prism::{Imperfect, Loss};
 
 use crate::declaration::{DeclKind, OpticOp};
+// DeclKind and OpticOp are pub(crate) — used here for typed warnings
 use crate::kernel::{Oid, TraceOid};
 
 // ---------------------------------------------------------------------------
@@ -45,7 +46,7 @@ pub enum AstPosition {
 /// line information. These are measured loss: information that existed in the
 /// source but did not survive the parse fold.
 #[derive(Clone, Debug, PartialEq)]
-pub enum ParseWarning {
+pub(crate) enum ParseWarning {
     /// A token the parser did not recognize as a declaration keyword.
     UnknownToken { at: AstPosition, line: usize },
     /// A declaration keyword that has been deprecated in favor of another.

@@ -19,10 +19,10 @@ use prism as prism_core;
 use prism::lambda::{Composable, Lambda, LambdaFn};
 use prism::{DeriveLambda, Imperfect, Loss};
 
-use crate::declaration::MirrorFragment;
 use crate::emit_code::{emit_code_fragment, CodeGrammar};
 use crate::loss::{MirrorLoss, ResolutionLoss};
-use crate::mirror_runtime::{parse_form, MirrorRegistry, MirrorRuntimeError};
+use crate::mirror_ast::MirrorAST;
+use crate::mirror_runtime::{parse_mirror, MirrorRegistry, MirrorRuntimeError};
 
 use std::path::PathBuf;
 use std::sync::LazyLock;
@@ -78,20 +78,20 @@ pub struct Properties;
 // ---------------------------------------------------------------------------
 
 /// The standard compilation pipeline: parse -> resolve -> properties -> emit.
-pub static CRAFT: LazyLock<Lambda<MirrorFragment>> = LazyLock::new(|| {
-    Composable::<MirrorFragment>::then(Parse, Resolve::pass_through())
+pub static CRAFT: LazyLock<Lambda<MirrorAST>> = LazyLock::new(|| {
+    Composable::<MirrorAST>::then(Parse, Resolve::pass_through())
         .then(Properties)
         .then(Emit)
 });
 
 /// Kintsugi pipeline: parse -> resolve -> kintsugi (loss-tolerant emit).
-pub static KINTSUGI_PIPELINE: LazyLock<Lambda<MirrorFragment>> = LazyLock::new(|| {
-    Composable::<MirrorFragment>::then(Parse, Resolve::pass_through()).then(Kintsugi)
+pub static KINTSUGI_PIPELINE: LazyLock<Lambda<MirrorAST>> = LazyLock::new(|| {
+    Composable::<MirrorAST>::then(Parse, Resolve::pass_through()).then(Kintsugi)
 });
 
 /// CI pipeline: parse -> resolve -> properties (no emit).
-pub static CI: LazyLock<Lambda<MirrorFragment>> = LazyLock::new(|| {
-    Composable::<MirrorFragment>::then(Parse, Resolve::pass_through()).then(Properties)
+pub static CI: LazyLock<Lambda<MirrorAST>> = LazyLock::new(|| {
+    Composable::<MirrorAST>::then(Parse, Resolve::pass_through()).then(Properties)
 });
 
 // ---------------------------------------------------------------------------
@@ -104,15 +104,15 @@ pub struct SourceText(pub String);
 
 /// AST after parsing.
 #[derive(Debug)]
-pub struct ParsedAst(pub MirrorFragment);
+pub struct ParsedAst(pub MirrorAST);
 
 /// AST after resolution (currently same as parsed — resolution is inside parse_form).
 #[derive(Debug)]
-pub struct ResolvedAst(pub MirrorFragment);
+pub struct ResolvedAst(pub MirrorAST);
 
 /// AST after property checking.
 #[derive(Debug)]
-pub struct CheckedAst(pub MirrorFragment);
+pub struct CheckedAst(pub MirrorAST);
 
 /// Emitted Rust source code.
 #[derive(Debug)]
@@ -127,7 +127,7 @@ impl LambdaFn for Parse {
     type Loss = MirrorLoss;
 
     fn reduce(self, input: SourceText) -> Imperfect<ParsedAst, MirrorRuntimeError, MirrorLoss> {
-        parse_form(&input.0).map(ParsedAst)
+        parse_mirror(&input.0).map(ParsedAst)
     }
 }
 
@@ -157,7 +157,9 @@ impl LambdaFn for Resolve {
             }
         };
 
-        match registry.resolve_fragment(&input.0) {
+        // Convert to fragment for registry resolution, then discard the fragment
+        let frag = input.0.to_fragment();
+        match registry.resolve_fragment(&frag) {
             Ok(()) => Imperfect::Success(ResolvedAst(input.0)),
             Err(e) => {
                 // Resolution failed but the AST is still usable — record as loss
@@ -206,7 +208,8 @@ impl LambdaFn for Emit {
         input: CheckedAst,
     ) -> Imperfect<EmittedCode, MirrorRuntimeError, MirrorLoss> {
         let grammar = CodeGrammar::rust();
-        let rust_code = emit_code_fragment(&input.0, &grammar).to_string_lossy();
+        let frag = input.0.to_fragment();
+        let rust_code = emit_code_fragment(&frag, &grammar).to_string_lossy();
         Imperfect::Success(EmittedCode(rust_code))
     }
 }
@@ -233,16 +236,16 @@ mod tests {
 
     #[test]
     fn parse_then_resolve() {
-        let pipeline: Lambda<MirrorFragment> =
-            Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
+        let pipeline: Lambda<MirrorAST> =
+            Composable::<MirrorAST>::then(Parse, Resolve::pass_through());
         assert!(matches!(pipeline, Lambda::Abs(_)));
         assert!(!pipeline.oid().is_dark());
     }
 
     #[test]
     fn craft_pipeline_composes_four_phases() {
-        let craft: Lambda<MirrorFragment> =
-            Composable::<MirrorFragment>::then(Parse, Resolve::pass_through())
+        let craft: Lambda<MirrorAST> =
+            Composable::<MirrorAST>::then(Parse, Resolve::pass_through())
                 .then(Properties)
                 .then(Emit);
         assert!(!craft.oid().is_dark());
@@ -250,15 +253,15 @@ mod tests {
 
     #[test]
     fn same_composition_same_oid() {
-        let a: Lambda<MirrorFragment> = Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
-        let b: Lambda<MirrorFragment> = Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
+        let a: Lambda<MirrorAST> = Composable::<MirrorAST>::then(Parse, Resolve::pass_through());
+        let b: Lambda<MirrorAST> = Composable::<MirrorAST>::then(Parse, Resolve::pass_through());
         assert_eq!(a.oid(), b.oid());
     }
 
     #[test]
     fn different_composition_different_oid() {
-        let a: Lambda<MirrorFragment> = Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
-        let b: Lambda<MirrorFragment> = Composable::<MirrorFragment>::then(Parse, Emit);
+        let a: Lambda<MirrorAST> = Composable::<MirrorAST>::then(Parse, Resolve::pass_through());
+        let b: Lambda<MirrorAST> = Composable::<MirrorAST>::then(Parse, Emit);
         assert_ne!(a.oid(), b.oid());
     }
 
@@ -271,8 +274,8 @@ mod tests {
     #[test]
     fn craft_static_is_deterministic() {
         let craft_oid = CRAFT.oid();
-        let manual: Lambda<MirrorFragment> =
-            Composable::<MirrorFragment>::then(Parse, Resolve::pass_through())
+        let manual: Lambda<MirrorAST> =
+            Composable::<MirrorAST>::then(Parse, Resolve::pass_through())
                 .then(Properties)
                 .then(Emit);
         assert_eq!(craft_oid, manual.oid());
@@ -291,8 +294,8 @@ mod tests {
     #[test]
     fn ci_static_is_deterministic() {
         let ci_oid = CI.oid();
-        let manual: Lambda<MirrorFragment> =
-            Composable::<MirrorFragment>::then(Parse, Resolve::pass_through()).then(Properties);
+        let manual: Lambda<MirrorAST> =
+            Composable::<MirrorAST>::then(Parse, Resolve::pass_through()).then(Properties);
         assert_eq!(ci_oid, manual.oid());
     }
 
@@ -327,8 +330,8 @@ mod tests {
 
     #[test]
     fn order_matters_for_pipeline() {
-        let ab: Lambda<MirrorFragment> = Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
-        let ba: Lambda<MirrorFragment> = Composable::<MirrorFragment>::then(Resolve::pass_through(), Parse);
+        let ab: Lambda<MirrorAST> = Composable::<MirrorAST>::then(Parse, Resolve::pass_through());
+        let ba: Lambda<MirrorAST> = Composable::<MirrorAST>::then(Resolve::pass_through(), Parse);
         assert_ne!(ab.oid(), ba.oid());
     }
 

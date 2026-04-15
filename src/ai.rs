@@ -85,11 +85,11 @@ fn model_name(m: Model) -> &'static str {
 /// Dark dimensions are preserved because fragment::merge keeps
 /// children from both sides.
 fn apply_optic_transform(source: &str, _model: Model) -> Option<String> {
-    // Parse original
+    // Parse original → MirrorAST → fragment for tree merge
     let original_result = Parse.reduce(SourceText(source.to_string()));
     let original_fragment = match &original_result {
         Imperfect::Success(_) => return None, // already crystal
-        Imperfect::Partial(parsed, _) => parsed.0.clone(),
+        Imperfect::Partial(parsed, _) => parsed.0.to_fragment(),
         Imperfect::Failure(_, _) => return None, // can't transform
     };
 
@@ -100,8 +100,8 @@ fn apply_optic_transform(source: &str, _model: Model) -> Option<String> {
     }
     let candidate_result = Parse.reduce(SourceText(emitted));
     let candidate_fragment = match candidate_result {
-        Imperfect::Success(parsed) => parsed.0,
-        Imperfect::Partial(parsed, _) => parsed.0,
+        Imperfect::Success(parsed) => parsed.0.to_fragment(),
+        Imperfect::Partial(parsed, _) => parsed.0.to_fragment(),
         Imperfect::Failure(_, _) => return None,
     };
 
