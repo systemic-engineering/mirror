@@ -2737,7 +2737,7 @@ mod tests {
             .collect();
         files.sort();
 
-        assert_eq!(files.len(), 13, "boot kernel file count: {:?}", files);
+        assert_eq!(files.len(), 14, "boot kernel file count: {:?}", files);
         assert!(files.contains(&"00-prism.mirror".to_string()));
         assert!(files.contains(&"01a-meta-actor.mirror".to_string()));
         assert!(files.contains(&"01b-meta-action.mirror".to_string()));
@@ -2881,11 +2881,11 @@ mod tests {
             "tui needs @config, @ci, @ca, @lsp — not in registry"
         );
 
-        // --- Resolved: kernel(12) + std(4) = 16 ---
+        // --- Resolved: kernel(13) + std(4) = 17 ---
         assert_eq!(
             boot.resolved.len(),
-            16,
-            "16 of 23 files resolve (12 kernel + 4 std): {:?}",
+            17,
+            "17 of 24 files resolve (13 kernel + 4 std): {:?}",
             boot.resolved.keys().collect::<Vec<_>>()
         );
         // std files that resolve
@@ -2938,7 +2938,7 @@ mod tests {
         std_files.sort(); // sort for assertion stability only
 
         // Kernel: 13 files (00, 01, 01a-actor, 01b-action, 01c-io, 02, 03, 03a, 04a-runtime, 05, 06, 06a, 06b)
-        assert_eq!(kernel.len(), 13, "kernel needs 13 files: {:?}", kernel);
+        assert_eq!(kernel.len(), 14, "kernel needs 14 files: {:?}", kernel);
         assert!(kernel.contains(&"00-prism.mirror".to_string()));
         assert!(kernel.contains(&"06b-package-spec.mirror".to_string()));
 

@@ -1,0 +1,23 @@
+in @code
+
+grammar @code/gleam {
+  type int
+  type float
+  type string
+  type bool
+  type bit_array
+  type list(t)
+  type result(t, e)
+  type option(t)
+  type nil
+  type dynamic
+
+  action complete(position) in @code/gleam { }
+  action diagnose(range) in @code/gleam { }
+  action hover(position) in @code/gleam { }
+  action definition(position) in @code/gleam { }
+  action references(position) in @code/gleam { }
+  action tokens(range) in @code/gleam { }
+}
+
+out @code/gleam
