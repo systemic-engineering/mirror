@@ -4331,4 +4331,87 @@ grammar @ai {
             );
         }
     }
+
+    // -----------------------------------------------------------------------
+    // Seam: unknown keywords INSIDE blocks must produce Partial (not Success)
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn unknown_keyword_inside_grammar_block_produces_partial() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("grammar @test {\n  flag strict\n  type x\n}\n");
+        assert!(
+            result.is_partial(),
+            "unknown keyword 'flag' inside grammar block must produce Partial, not Success"
+        );
+        let loss = result.loss();
+        assert!(
+            !loss.parse.unrecognized.is_empty(),
+            "loss must contain the unrecognized 'flag' keyword"
+        );
+        assert_eq!(loss.parse.unrecognized[0].keyword, "flag");
+    }
+
+    #[test]
+    fn unknown_keyword_inside_type_block_produces_partial() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("type user {\n  widget foo\n  type name\n}\n");
+        assert!(
+            result.is_partial(),
+            "unknown keyword 'widget' inside type block must produce Partial"
+        );
+    }
+
+    #[test]
+    fn multiple_unknown_keywords_inside_block_all_recorded() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source(
+            "grammar @test {\n  flag strict\n  command compile\n  type x\n}\n",
+        );
+        assert!(result.is_partial());
+        let loss = result.loss();
+        assert!(
+            loss.parse.unrecognized.len() >= 2,
+            "both 'flag' and 'command' must be recorded as unrecognized"
+        );
+    }
+
+    #[test]
+    fn known_keywords_inside_block_still_success() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("grammar @test {\n  type x\n  action y\n}\n");
+        assert!(
+            !result.is_partial(),
+            "known keywords inside block should be Success, not Partial"
+        );
+    }
+
+    #[test]
+    fn nested_unknown_keywords_produce_partial() {
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source(
+            "grammar @outer {\n  grammar @inner {\n    widget foo\n  }\n}\n",
+        );
+        assert!(
+            result.is_partial(),
+            "unknown keyword in nested block must bubble up as Partial"
+        );
+    }
+
+    #[test]
+    fn boot_cli_mirror_has_unrecognized_flag_and_command() {
+        let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("boot/std/cli.mirror");
+        if path.exists() {
+            let runtime = MirrorRuntime::new();
+            let src = std::fs::read_to_string(&path).unwrap();
+            let result = runtime.compile_source(&src);
+            if result.is_ok() && !result.is_partial() {
+                panic!(
+                    "boot/std/cli.mirror uses flag and command keywords which are not \
+                     in DeclKind -- the parser should return Partial with loss, not Success"
+                );
+            }
+        }
+    }
 }
