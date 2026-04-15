@@ -31,6 +31,8 @@ craft {
     @properties
     @time
     @tui
+    @fate
+    @ai
   }
 
   target boot => mirror out @code/rust("rust/mirror/") {
@@ -83,4 +85,10 @@ new {
 
 run {
   default boot
+}
+
+ai {
+  grammar = boot/std/ai.mirror
+  default abyss
+  --budget 1000
 }
