@@ -7,9 +7,8 @@
 //! - **ast** — The mirror AST (Atom/Ref/Body/Call/Prism)
 //! - **mirror_runtime** — Spectral content-addressed compilation pipeline
 //! - **kernel** — Content addressing, Oid, Trace, Vector trait hierarchy
-//! - **runtime** — MetalRuntime trait (Metal compilation interface)
+//! - **lambda_phases** — Parse.then(Resolve).then(Properties).then(Emit)
 //! - **dispatch** — Value, Args, Response
-//! - **artifact** — Bounded storage for compiled modules (Pressure-based eviction)
 //!
 //! ## Re-exports
 //!
@@ -21,15 +20,10 @@ pub use prism_crate as beam;
 
 #[macro_use]
 pub mod kernel;
-pub mod abyss;
 pub mod ast;
 pub mod ast_prism;
-pub mod bounded;
-pub mod classifier;
 pub mod dispatch;
 pub mod domain;
-pub mod filter;
-pub mod mirror_bf;
 pub mod prism;
 
 // Kernel types at the crate root.
@@ -52,17 +46,14 @@ pub mod declaration;
 pub mod emit_rust;
 pub mod generate_crate;
 pub mod generated;
-pub mod gestalt;
+pub mod lambda_phases;
 pub mod git_prism;
 pub mod git_store;
 pub mod loss;
 pub mod lsp;
 pub mod mirror_ast;
 pub mod mirror_runtime;
-pub mod optic;
 pub mod parse;
-pub mod runtime;
-pub mod session;
 pub mod shard;
 pub mod shatter_format;
 #[cfg(feature = "git")]
