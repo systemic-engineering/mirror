@@ -29,7 +29,7 @@
 //! No serde. No YAML crate. Line-by-line parsing only.
 
 #[cfg(test)]
-use crate::loss::UnrecognizedDecl;
+use crate::loss::{AstPosition, ParseWarning};
 use crate::loss::{Convergence, MirrorLoss};
 use crate::mirror_runtime::CompiledShatter;
 #[cfg(test)]
@@ -342,10 +342,9 @@ mod tests {
     #[test]
     fn luminosity_from_loss_partial() {
         let mut loss = MirrorLoss::zero();
-        loss.parse.unrecognized.push(UnrecognizedDecl {
-            keyword: "widget".into(),
+        loss.parse.warnings.push(ParseWarning::UnknownToken {
+            at: AstPosition::TopLevel,
             line: 1,
-            content: "foo".into(),
         });
         assert_eq!(Luminosity::from_loss(&loss), Luminosity::Dimmed);
     }

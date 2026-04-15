@@ -15,25 +15,71 @@
 
 use prism::{Imperfect, Loss};
 
+use crate::declaration::{DeclKind, OpticOp};
 use crate::kernel::{Oid, TraceOid};
 
 // ---------------------------------------------------------------------------
-// UnrecognizedDecl — a declaration the parser did not know how to parse
+// AstPosition — where in the tree a warning occurred
 // ---------------------------------------------------------------------------
 
-/// A declaration keyword the parser encountered but could not parse.
-///
-/// Instead of silently dropping it, the parser records what it saw and where.
-/// This is measured loss: the information existed in the source but did not
-/// survive the parse phase.
+/// Position in the AST where a parse warning was generated.
 #[derive(Clone, Debug, PartialEq)]
-pub struct UnrecognizedDecl {
-    /// The keyword that was not recognized (e.g., "widget", "route").
-    pub keyword: String,
-    /// The 1-based line number where the keyword appeared.
-    pub line: usize,
-    /// The raw content from the keyword to the next declaration or end of block.
-    pub content: String,
+pub enum AstPosition {
+    TopLevel,
+    Grammar(Oid),
+    Type(Oid),
+    Action(Oid),
+    Property(Oid),
+    Prism(Oid),
+    Fold(Oid),
+    Split(Oid),
+    Zoom(Oid),
+    Refract(Oid),
+}
+
+// ---------------------------------------------------------------------------
+// ParseWarning — typed parse-phase warnings (replaces UnrecognizedDecl)
+// ---------------------------------------------------------------------------
+
+/// A typed warning from the parse phase. Each variant carries position and
+/// line information. These are measured loss: information that existed in the
+/// source but did not survive the parse fold.
+#[derive(Clone, Debug, PartialEq)]
+pub enum ParseWarning {
+    /// A token the parser did not recognize as a declaration keyword.
+    UnknownToken { at: AstPosition, line: usize },
+    /// A declaration keyword that has been deprecated in favor of another.
+    DeprecatedKind {
+        kind: DeclKind,
+        replacement: DeclKind,
+        at: AstPosition,
+        line: usize,
+    },
+    /// A declaration keyword that requires a name but has none.
+    MissingName {
+        kind: DeclKind,
+        at: AstPosition,
+        line: usize,
+    },
+    /// Two declarations of the same kind share the same name in the same scope.
+    DuplicateName {
+        kind: DeclKind,
+        first_line: usize,
+        second_line: usize,
+        at: AstPosition,
+    },
+    /// A parent reference that could not be resolved.
+    UnresolvedParent {
+        parent_name: String,
+        at: AstPosition,
+        line: usize,
+    },
+    /// An operator token that is syntactically malformed.
+    MalformedOperator {
+        operator: OpticOp,
+        at: AstPosition,
+        line: usize,
+    },
 }
 
 // ---------------------------------------------------------------------------
@@ -89,30 +135,30 @@ pub enum Convergence {
 
 /// Loss from the parse fold: source <= ast.
 ///
-/// Unrecognized keywords are measured loss: the information existed in
+/// Typed warnings are measured loss: the information existed in
 /// the source but did not survive the parse phase.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Default)]
 pub struct ParseLoss {
-    pub unrecognized: Vec<UnrecognizedDecl>,
+    pub warnings: Vec<ParseWarning>,
 }
 
 impl ParseLoss {
     pub fn zero() -> Self {
         ParseLoss {
-            unrecognized: Vec::new(),
+            warnings: Vec::new(),
         }
     }
 
     pub fn holonomy(&self) -> f64 {
-        self.unrecognized.len() as f64
+        self.warnings.len() as f64
     }
 
     pub fn is_zero(&self) -> bool {
-        self.unrecognized.is_empty()
+        self.warnings.is_empty()
     }
 
     pub fn combine(mut self, other: Self) -> Self {
-        self.unrecognized.extend(other.unrecognized);
+        self.warnings.extend(other.warnings);
         self
     }
 }
@@ -391,14 +437,13 @@ mod tests {
     #[test]
     fn is_zero_checks_parse() {
         let mut loss = MirrorLoss::zero();
-        loss.parse.unrecognized.push(UnrecognizedDecl {
-            keyword: "widget".into(),
+        loss.parse.warnings.push(ParseWarning::UnknownToken {
+            at: AstPosition::TopLevel,
             line: 1,
-            content: "foo".into(),
         });
         assert!(
             !loss.is_zero(),
-            "unrecognized parse decl should break is_zero"
+            "parse warning should break is_zero"
         );
     }
 
@@ -838,10 +883,9 @@ mod tests {
     fn holonomy_includes_parse_loss() {
         let loss = MirrorLoss {
             parse: ParseLoss {
-                unrecognized: vec![UnrecognizedDecl {
-                    keyword: "widget".into(),
+                warnings: vec![ParseWarning::UnknownToken {
+                    at: AstPosition::TopLevel,
                     line: 1,
-                    content: "foo".into(),
                 }],
             },
             ..MirrorLoss::zero()
@@ -861,10 +905,9 @@ mod tests {
         assert_eq!(p.holonomy(), 0.0);
 
         let p2 = ParseLoss {
-            unrecognized: vec![UnrecognizedDecl {
-                keyword: "w".into(),
+            warnings: vec![ParseWarning::UnknownToken {
+                at: AstPosition::TopLevel,
                 line: 1,
-                content: "x".into(),
             }],
         };
         assert_eq!(p2.holonomy(), 1.0);
@@ -925,21 +968,19 @@ mod tests {
     #[test]
     fn combine_parse_loss() {
         let a = ParseLoss {
-            unrecognized: vec![UnrecognizedDecl {
-                keyword: "a".into(),
+            warnings: vec![ParseWarning::UnknownToken {
+                at: AstPosition::TopLevel,
                 line: 1,
-                content: "x".into(),
             }],
         };
         let b = ParseLoss {
-            unrecognized: vec![UnrecognizedDecl {
-                keyword: "b".into(),
+            warnings: vec![ParseWarning::UnknownToken {
+                at: AstPosition::TopLevel,
                 line: 2,
-                content: "y".into(),
             }],
         };
         let c = a.combine(b);
-        assert_eq!(c.unrecognized.len(), 2);
+        assert_eq!(c.warnings.len(), 2);
     }
 
     // -- combine: properties --

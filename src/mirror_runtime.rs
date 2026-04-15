@@ -62,7 +62,7 @@ use fragmentation::frgmnt_store::FrgmntStore;
 use fragmentation::sha::HashAlg;
 use prism::{Beam, Imperfect, Loss, Optic, Oid, Prism};
 
-use crate::loss::{MirrorLoss, ParseLoss, UnrecognizedDecl};
+use crate::loss::{AstPosition, MirrorLoss, ParseLoss, ParseWarning};
 
 // ---------------------------------------------------------------------------
 // Errors
@@ -148,7 +148,7 @@ pub fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError,
     let tokens = tokenize(source);
     let mut cursor = 0usize;
     let mut decls: Vec<MirrorFragment> = Vec::new();
-    let mut unrecognized = Vec::new();
+    let mut warnings: Vec<ParseWarning> = Vec::new();
 
     loop {
         skip_trivia(&tokens, &mut cursor);
@@ -157,8 +157,8 @@ pub fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError,
         }
         match tokens.get(cursor) {
             Some(Tok::Word(w)) if DeclKind::parse(w).is_some() || w == "abstract" => {
-                match parse_decl(&tokens, &mut cursor) {
-                    Ok((frag, child_unrecognized)) => {
+                match parse_decl(&tokens, &mut cursor, AstPosition::TopLevel) {
+                    Ok((frag, child_warnings)) => {
                         let data = frag.mirror_data();
                         // M2001: top-level type/grammar/action require a name
                         if data.name.is_empty()
@@ -177,19 +177,17 @@ pub fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError,
                             return Imperfect::failure(err("M2002: `in` requires a target"));
                         }
                         decls.push(frag);
-                        unrecognized.extend(child_unrecognized);
+                        warnings.extend(child_warnings);
                     }
                     Err(e) => return Imperfect::failure(e),
                 }
             }
-            Some(Tok::Word(w)) => {
-                let keyword = w.clone();
+            Some(Tok::Word(_w)) => {
                 let line = count_line_at(&tokens, cursor);
-                let content = collect_until_next_decl(&tokens, &mut cursor);
-                unrecognized.push(UnrecognizedDecl {
-                    keyword,
+                collect_until_next_decl(&tokens, &mut cursor);
+                warnings.push(ParseWarning::UnknownToken {
+                    at: AstPosition::TopLevel,
                     line,
-                    content,
                 });
             }
             Some(_) => {
@@ -224,16 +222,16 @@ pub fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError,
         }
     }
 
-    if decls.is_empty() && unrecognized.is_empty() {
+    if decls.is_empty() && warnings.is_empty() {
         Imperfect::failure(err("no declarations found"))
     } else if decls.is_empty() {
         let loss = MirrorLoss {
-            parse: ParseLoss { unrecognized },
+            parse: ParseLoss { warnings },
             ..MirrorLoss::zero()
         };
         Imperfect::failure_with_loss(err("no recognized declarations found"), loss)
     } else {
-        collect_fragment_form_deprecations(&decls, &mut unrecognized);
+        collect_fragment_form_deprecations(&decls, &mut warnings);
 
         let frag = if decls.len() == 1 {
             decls.into_iter().next().unwrap()
@@ -247,11 +245,11 @@ pub fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError,
             build_fragment(wrapper_data, decls)
         };
 
-        if unrecognized.is_empty() {
+        if warnings.is_empty() {
             Imperfect::Success(frag)
         } else {
             let loss = MirrorLoss {
-                parse: ParseLoss { unrecognized },
+                parse: ParseLoss { warnings },
                 ..MirrorLoss::zero()
             };
             Imperfect::Partial(frag, loss)
@@ -259,24 +257,22 @@ pub fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError,
     }
 }
 
-/// Detect deprecated `form` keyword usage and add deprecation entries.
+/// Detect deprecated `form` keyword usage and add deprecation warnings.
 fn collect_fragment_form_deprecations(
     decls: &[MirrorFragment],
-    unrecognized: &mut Vec<UnrecognizedDecl>,
+    warnings: &mut Vec<ParseWarning>,
 ) {
     for decl in decls {
         let data = decl.mirror_data();
         if data.kind == DeclKind::Form && !data.name.is_empty() {
-            unrecognized.push(UnrecognizedDecl {
-                keyword: "form".to_string(),
+            warnings.push(ParseWarning::DeprecatedKind {
+                kind: DeclKind::Form,
+                replacement: DeclKind::Grammar,
+                at: AstPosition::TopLevel,
                 line: 0,
-                content: format!(
-                    "deprecated: use `grammar {}` instead of `form {}`",
-                    data.name, data.name
-                ),
             });
         }
-        collect_fragment_form_deprecations(decl.mirror_children(), unrecognized);
+        collect_fragment_form_deprecations(decl.mirror_children(), warnings);
     }
 }
 
@@ -290,7 +286,7 @@ fn count_line_at(tokens: &[Tok], pos: usize) -> usize {
 }
 
 /// Collect tokens from current position until the next newline or end-of-tokens.
-/// Each unrecognized line is captured as one `UnrecognizedDecl`.
+/// Returns the collected content as a string.
 fn collect_until_next_decl(tokens: &[Tok], cursor: &mut usize) -> String {
     let mut content = String::new();
     // Skip the keyword itself (already captured)
@@ -462,10 +458,28 @@ fn skip_trivia(tokens: &[Tok], cursor: &mut usize) {
     }
 }
 
+/// Map a DeclKind + name to an AstPosition for child warnings.
+fn ast_position_for_kind(kind: &DeclKind, name: &str) -> AstPosition {
+    let oid = crate::kernel::Oid::new(name);
+    match kind {
+        DeclKind::Grammar | DeclKind::Form => AstPosition::Grammar(oid),
+        DeclKind::Type => AstPosition::Type(oid),
+        DeclKind::Action => AstPosition::Action(oid),
+        DeclKind::Property => AstPosition::Property(oid),
+        DeclKind::Prism => AstPosition::Prism(oid),
+        DeclKind::Fold => AstPosition::Fold(oid),
+        DeclKind::Split => AstPosition::Split(oid),
+        DeclKind::Zoom => AstPosition::Zoom(oid),
+        DeclKind::Refract => AstPosition::Refract(oid),
+        _ => AstPosition::TopLevel,
+    }
+}
+
 fn parse_decl(
     tokens: &[Tok],
     cursor: &mut usize,
-) -> Result<(MirrorFragment, Vec<UnrecognizedDecl>), MirrorRuntimeError> {
+    _position: AstPosition,
+) -> Result<(MirrorFragment, Vec<ParseWarning>), MirrorRuntimeError> {
     skip_trivia(tokens, cursor);
     let kind_word = match tokens.get(*cursor) {
         Some(Tok::Word(w)) => w.clone(),
@@ -763,7 +777,9 @@ fn parse_decl(
     }
 
     let mut children = Vec::new();
-    let mut block_unrecognized: Vec<UnrecognizedDecl> = Vec::new();
+    let mut block_warnings: Vec<ParseWarning> = Vec::new();
+    // Compute the child position based on the kind and name we just parsed
+    let child_position = ast_position_for_kind(&kind, &name);
     skip_inline_trivia(tokens, cursor);
     if matches!(tokens.get(*cursor), Some(Tok::LBrace)) {
         *cursor += 1;
@@ -777,9 +793,9 @@ fn parse_decl(
                 None => return Err(err("unterminated block".to_string())),
                 Some(Tok::Word(w)) => {
                     if DeclKind::parse(w).is_some() || w == "abstract" {
-                        let (child, child_unrecognized) = parse_decl(tokens, cursor)?;
+                        let (child, child_warnings) = parse_decl(tokens, cursor, child_position.clone())?;
                         children.push(child);
-                        block_unrecognized.extend(child_unrecognized);
+                        block_warnings.extend(child_warnings);
                     } else if w == "<" || w == ">" {
                         let op = if w == "<" {
                             OpticOp::Subset
@@ -813,13 +829,11 @@ fn parse_decl(
                             *cursor += 1;
                         }
                     } else {
-                        let keyword = w.clone();
                         let line = count_line_at(tokens, *cursor);
-                        let content = collect_until_next_decl(tokens, cursor);
-                        block_unrecognized.push(UnrecognizedDecl {
-                            keyword,
+                        collect_until_next_decl(tokens, cursor);
+                        block_warnings.push(ParseWarning::UnknownToken {
+                            at: child_position.clone(),
                             line,
-                            content,
                         });
                     }
                 }
@@ -842,7 +856,7 @@ fn parse_decl(
     data.optic_ops = optic_ops;
     data.parent_ref = parent_ref;
     let frag = crate::declaration::fragment_encoded(data, children);
-    Ok((frag, block_unrecognized))
+    Ok((frag, block_warnings))
 }
 
 /// Parse an optional `in @grammar/path` after action params.
@@ -961,7 +975,7 @@ fn parse_action_body(
                 None => return Err(err("unterminated action block")),
                 Some(Tok::Word(w)) => {
                     if DeclKind::parse(w).is_some() {
-                        let (child, _child_unrecognized) = parse_decl(tokens, cursor)?;
+                        let (child, _child_warnings) = parse_decl(tokens, cursor, AstPosition::TopLevel)?;
                         children.push(child);
                     } else {
                         // Skip unrecognized tokens to next line or brace
@@ -2377,7 +2391,7 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // UnrecognizedDecl — parser tracks what it cannot parse
+    // ParseWarning — parser tracks what it cannot parse
     // -----------------------------------------------------------------------
 
     #[test]
@@ -2397,14 +2411,16 @@ mod tests {
     }
 
     #[test]
-    fn parse_unrecognized_keyword_loss_contains_keyword() {
+    fn parse_unrecognized_keyword_loss_contains_warning() {
+        use crate::loss::{AstPosition, ParseWarning};
         let src = "widget foo\ntype bar";
         let result = parse_form(src);
         let loss = result.loss();
-        assert_eq!(loss.parse.unrecognized.len(), 1);
-        assert_eq!(loss.parse.unrecognized[0].keyword, "widget");
-        assert_eq!(loss.parse.unrecognized[0].line, 1);
-        assert!(loss.parse.unrecognized[0].content.contains("foo"));
+        assert_eq!(loss.parse.warnings.len(), 1);
+        assert!(matches!(
+            &loss.parse.warnings[0],
+            ParseWarning::UnknownToken { at: AstPosition::TopLevel, line: 1 }
+        ));
     }
 
     #[test]
@@ -2425,7 +2441,7 @@ mod tests {
         assert!(result.is_err(), "only unrecognized keywords should fail");
         let loss = result.loss();
         assert_eq!(
-            loss.parse.unrecognized.len(),
+            loss.parse.warnings.len(),
             2,
             "both unrecognized should be tracked"
         );
@@ -2446,8 +2462,8 @@ mod tests {
         );
         let loss = result.loss();
         assert!(
-            !loss.parse.unrecognized.is_empty(),
-            "loss should contain unrecognized decls"
+            !loss.parse.warnings.is_empty(),
+            "loss should contain parse warnings"
         );
         // The recognized part should still compile
         assert!(result.is_ok(), "partial result should still have a value");
@@ -2477,10 +2493,13 @@ mod tests {
 
         let result = runtime.compile_boot_dir(&boot, &store).unwrap();
         assert!(
-            !result.total_loss.parse.unrecognized.is_empty(),
-            "boot dir should accumulate unrecognized loss from partial files"
+            !result.total_loss.parse.warnings.is_empty(),
+            "boot dir should accumulate parse warnings from partial files"
         );
-        assert_eq!(result.total_loss.parse.unrecognized[0].keyword, "widget");
+        assert!(matches!(
+            &result.total_loss.parse.warnings[0],
+            crate::loss::ParseWarning::UnknownToken { .. }
+        ));
     }
 
     #[test]
@@ -2953,8 +2972,8 @@ grammar @ai {
         );
         let loss = result.loss();
         assert!(
-            !loss.parse.unrecognized.is_empty(),
-            "Failure must carry the unrecognized keywords as loss"
+            !loss.parse.warnings.is_empty(),
+            "Failure must carry the parse warnings as loss"
         );
         assert!(loss.holonomy() > 0.0, "Failure must have non-zero holonomy");
     }
@@ -3061,10 +3080,10 @@ grammar @ai {
             result.is_partial()
         );
         let loss = result.loss();
-        assert_eq!(loss.parse.unrecognized.len(), 1, "one unrecognized keyword");
-        assert_eq!(
-            loss.parse.unrecognized[0].keyword, "widget",
-            "the unrecognized keyword is 'widget'"
+        assert_eq!(loss.parse.warnings.len(), 1, "one parse warning");
+        assert!(
+            matches!(&loss.parse.warnings[0], crate::loss::ParseWarning::UnknownToken { .. }),
+            "the warning should be UnknownToken"
         );
     }
 
@@ -3706,7 +3725,7 @@ grammar @ai {
         };
 
         // The `where` line is currently unrecognized — it shows up as parse loss.
-        let has_where_loss = loss.parse.unrecognized.iter().any(|u| u.keyword == "where");
+        let has_where_loss = loss.parse.warnings.iter().any(|w| matches!(w, crate::loss::ParseWarning::UnknownToken { .. }));
         // RED: `where` is unrecognized training data
         assert!(
             has_where_loss,
@@ -3990,10 +4009,13 @@ grammar @ai {
         );
         let loss = result.loss();
         assert!(
-            !loss.parse.unrecognized.is_empty(),
-            "loss must contain the unrecognized 'flag' keyword"
+            !loss.parse.warnings.is_empty(),
+            "loss must contain the unknown 'flag' token warning"
         );
-        assert_eq!(loss.parse.unrecognized[0].keyword, "flag");
+        assert!(matches!(
+            &loss.parse.warnings[0],
+            crate::loss::ParseWarning::UnknownToken { .. }
+        ));
     }
 
     #[test]
@@ -4014,8 +4036,8 @@ grammar @ai {
         assert!(result.is_partial());
         let loss = result.loss();
         assert!(
-            loss.parse.unrecognized.len() >= 2,
-            "both 'flag' and 'command' must be recorded as unrecognized"
+            loss.parse.warnings.len() >= 2,
+            "both 'flag' and 'command' must be recorded as parse warnings"
         );
     }
 
@@ -4054,5 +4076,76 @@ grammar @ai {
                 );
             }
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // Typed ParseWarning tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn unknown_token_inside_grammar_is_typed_warning() {
+        use crate::loss::{AstPosition, ParseWarning};
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("grammar @test {\n  flag strict\n}\n");
+        let loss = result.loss();
+        assert!(loss.parse.warnings.iter().any(|w| matches!(w,
+            ParseWarning::UnknownToken { at: AstPosition::Grammar(_), .. }
+        )));
+    }
+
+    #[test]
+    fn deprecated_form_is_typed_warning() {
+        use crate::loss::ParseWarning;
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source("form @old {\n  type x\n}\n");
+        let loss = result.loss();
+        assert!(loss.parse.warnings.iter().any(|w| matches!(w,
+            ParseWarning::DeprecatedKind {
+                kind: DeclKind::Form,
+                replacement: DeclKind::Grammar,
+                ..
+            }
+        )));
+    }
+
+    #[test]
+    fn warning_categories_group_by_variant() {
+        use crate::loss::ParseWarning;
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source(
+            "grammar @test {\n  flag a\n  flag b\n  command c\n  type x\n}\n",
+        );
+        let loss = result.loss();
+
+        let unknown_count = loss
+            .parse
+            .warnings
+            .iter()
+            .filter(|w| matches!(w, ParseWarning::UnknownToken { .. }))
+            .count();
+        assert_eq!(unknown_count, 3); // flag, flag, command
+    }
+
+    #[test]
+    fn ast_position_tracks_nesting() {
+        use crate::loss::{AstPosition, ParseWarning};
+        let runtime = MirrorRuntime::new();
+        let result = runtime.compile_source(
+            "grammar @outer {\n  grammar @inner {\n    widget foo\n  }\n}\n",
+        );
+        let loss = result.loss();
+
+        // The warning should be inside @inner, not @outer
+        assert!(loss.parse.warnings.iter().any(|w| match w {
+            ParseWarning::UnknownToken {
+                at: AstPosition::Grammar(oid),
+                ..
+            } => {
+                // The oid should be @inner's
+                let inner_oid = crate::kernel::Oid::new("@inner");
+                *oid == inner_oid
+            }
+            _ => false,
+        }));
     }
 }

@@ -6,7 +6,7 @@
 //!
 //! The tower-lsp adapter (Phase 3 Task 3.5) will wrap these.
 
-use crate::loss::{Convergence, MirrorLoss};
+use crate::loss::{Convergence, MirrorLoss, ParseWarning};
 use crate::shatter_format::Luminosity;
 use prism::Imperfect;
 
@@ -52,16 +52,90 @@ pub struct MirrorDiagnostic {
 pub fn loss_to_diagnostics(loss: &MirrorLoss) -> Vec<MirrorDiagnostic> {
     let mut diags = Vec::new();
 
-    // Parse: unrecognized keywords → Warning M1001
-    for unrec in &loss.parse.unrecognized {
-        diags.push(MirrorDiagnostic {
-            line: unrec.line.saturating_sub(1),
-            col: 0,
-            end_col: unrec.keyword.len(),
-            severity: DiagnosticSeverity::Warning,
-            message: format!("unrecognized keyword '{}'", unrec.keyword),
-            code: Some("M1001".into()),
-        });
+    // Parse warnings
+    for warning in &loss.parse.warnings {
+        match warning {
+            ParseWarning::UnknownToken { at, line } => {
+                diags.push(MirrorDiagnostic {
+                    line: line.saturating_sub(1),
+                    col: 0,
+                    end_col: 0,
+                    severity: DiagnosticSeverity::Warning,
+                    message: format!("unknown token at {:?}", at),
+                    code: Some("M1001".into()),
+                });
+            }
+            ParseWarning::DeprecatedKind {
+                kind,
+                replacement,
+                line,
+                ..
+            } => {
+                diags.push(MirrorDiagnostic {
+                    line: line.saturating_sub(1),
+                    col: 0,
+                    end_col: 0,
+                    severity: DiagnosticSeverity::Warning,
+                    message: format!(
+                        "'{}' is deprecated, use '{}' instead",
+                        kind.as_str(),
+                        replacement.as_str()
+                    ),
+                    code: Some("M1002".into()),
+                });
+            }
+            ParseWarning::MissingName { kind, line, .. } => {
+                diags.push(MirrorDiagnostic {
+                    line: line.saturating_sub(1),
+                    col: 0,
+                    end_col: 0,
+                    severity: DiagnosticSeverity::Warning,
+                    message: format!("'{}' requires a name", kind.as_str()),
+                    code: Some("M1003".into()),
+                });
+            }
+            ParseWarning::DuplicateName {
+                kind,
+                first_line,
+                second_line,
+                ..
+            } => {
+                diags.push(MirrorDiagnostic {
+                    line: second_line.saturating_sub(1),
+                    col: 0,
+                    end_col: 0,
+                    severity: DiagnosticSeverity::Warning,
+                    message: format!(
+                        "duplicate '{}' name (first at line {})",
+                        kind.as_str(),
+                        first_line
+                    ),
+                    code: Some("M1004".into()),
+                });
+            }
+            ParseWarning::UnresolvedParent {
+                parent_name, line, ..
+            } => {
+                diags.push(MirrorDiagnostic {
+                    line: line.saturating_sub(1),
+                    col: 0,
+                    end_col: parent_name.len(),
+                    severity: DiagnosticSeverity::Warning,
+                    message: format!("unresolved parent '{}'", parent_name),
+                    code: Some("M1005".into()),
+                });
+            }
+            ParseWarning::MalformedOperator { operator, line, .. } => {
+                diags.push(MirrorDiagnostic {
+                    line: line.saturating_sub(1),
+                    col: 0,
+                    end_col: 0,
+                    severity: DiagnosticSeverity::Warning,
+                    message: format!("malformed operator '{}'", operator.as_str()),
+                    code: Some("M1006".into()),
+                });
+            }
+        }
     }
 
     // Resolution: unresolved refs → Error M3001
@@ -247,7 +321,7 @@ impl MirrorLspBackend {
 mod tests {
     use super::*;
     use crate::kernel::TraceOid;
-    use crate::loss::{PropertyVerdict, UnrecognizedDecl};
+    use crate::loss::{AstPosition, ParseWarning, PropertyVerdict};
     use prism::{Imperfect, Loss};
 
     // -- loss_to_diagnostics --
@@ -260,17 +334,16 @@ mod tests {
     }
 
     #[test]
-    fn loss_to_diagnostics_warning_for_unrecognized() {
+    fn loss_to_diagnostics_warning_for_unknown_token() {
         let mut loss = MirrorLoss::zero();
-        loss.parse.unrecognized.push(UnrecognizedDecl {
-            keyword: "widget".into(),
+        loss.parse.warnings.push(ParseWarning::UnknownToken {
+            at: AstPosition::TopLevel,
             line: 5,
-            content: "foo".into(),
         });
         let diags = loss_to_diagnostics(&loss);
         assert_eq!(diags.len(), 1);
         assert_eq!(diags[0].severity, DiagnosticSeverity::Warning);
-        assert!(diags[0].message.contains("widget"));
+        assert!(diags[0].message.contains("unknown token"));
         assert_eq!(diags[0].line, 4); // 0-indexed
         assert_eq!(diags[0].code.as_deref(), Some("M1001"));
     }
@@ -359,17 +432,16 @@ mod tests {
     #[test]
     fn loss_to_diagnostics_multiple_sources() {
         let mut loss = MirrorLoss::zero();
-        loss.parse.unrecognized.push(UnrecognizedDecl {
-            keyword: "widget".into(),
+        loss.parse.warnings.push(ParseWarning::UnknownToken {
+            at: AstPosition::TopLevel,
             line: 1,
-            content: "x".into(),
         });
         loss.resolution
             .unresolved_refs
             .push(("@missing".into(), TraceOid::new("t")));
         loss.convergence = Convergence::BudgetExhausted;
         let diags = loss_to_diagnostics(&loss);
-        // 1 unrecognized + 1 unresolved + 1 budget = 3
+        // 1 unknown token + 1 unresolved + 1 budget = 3
         assert_eq!(diags.len(), 3);
     }
 
@@ -469,7 +541,7 @@ mod tests {
         let (lum, diags) = backend.compile_and_diagnose("type color = red | blue\nwidget foo");
         assert_eq!(lum, Luminosity::Dimmed);
         assert!(!diags.is_empty());
-        assert!(diags[0].message.contains("widget"));
+        assert!(diags[0].message.contains("unknown token"));
     }
 
     #[test]
@@ -530,24 +602,22 @@ mod tests {
     }
 
     #[test]
-    fn unrecognized_at_line_one_gives_line_zero() {
+    fn unknown_token_at_line_one_gives_line_zero() {
         let mut loss = MirrorLoss::zero();
-        loss.parse.unrecognized.push(UnrecognizedDecl {
-            keyword: "foo".into(),
+        loss.parse.warnings.push(ParseWarning::UnknownToken {
+            at: AstPosition::TopLevel,
             line: 1,
-            content: "bar".into(),
         });
         let diags = loss_to_diagnostics(&loss);
         assert_eq!(diags[0].line, 0);
     }
 
     #[test]
-    fn unrecognized_at_line_zero_saturates() {
+    fn unknown_token_at_line_zero_saturates() {
         let mut loss = MirrorLoss::zero();
-        loss.parse.unrecognized.push(UnrecognizedDecl {
-            keyword: "foo".into(),
+        loss.parse.warnings.push(ParseWarning::UnknownToken {
+            at: AstPosition::TopLevel,
             line: 0,
-            content: "bar".into(),
         });
         let diags = loss_to_diagnostics(&loss);
         assert_eq!(diags[0].line, 0); // saturating_sub(1) on 0 = 0
