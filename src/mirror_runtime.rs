@@ -2755,13 +2755,16 @@ mod tests {
             .filter(|f| f.ends_with(".mirror"))
             .collect();
         std_files.sort();
-        assert_eq!(std_files.len(), 10, "std file count: {:?}", std_files);
+        assert_eq!(std_files.len(), 13, "std file count: {:?}", std_files);
         assert!(std_files.contains(&"mirror.mirror".to_string()));
         assert!(std_files.contains(&"cli.mirror".to_string()));
         assert!(std_files.contains(&"properties.mirror".to_string()));
         assert!(std_files.contains(&"file.mirror".to_string()));
         assert!(std_files.contains(&"runtime.mirror".to_string()));
         assert!(std_files.contains(&"rust.mirror".to_string()));
+        assert!(std_files.contains(&"new.mirror".to_string()));
+        assert!(std_files.contains(&"new.template.mirror".to_string()));
+        assert!(std_files.contains(&"run.mirror".to_string()));
     }
 
     // -----------------------------------------------------------------------
@@ -2843,8 +2846,10 @@ mod tests {
         // (reed/emit-code) -- new struct declarations with parameterized types.
         // Raised to 183 after adding template declarations to @code grammar
         // and new std files (rust.mirror, file.mirror, runtime.mirror).
+        // Raised to 210 after adding new.mirror, new.template.mirror, run.mirror
+        // to boot/std/ (Task 1 — @new and @run grammar declarations).
         assert!(
-            holonomy <= 183.0,
+            holonomy <= 210.0,
             "parse holonomy must not regress above baseline: got {}",
             holonomy
         );
@@ -2853,12 +2858,6 @@ mod tests {
         // Kernel failures: 06b-package-spec (missing refs: @mirror, @config, @ai)
         // Std failures: beam, benchmark, cli, tui, rust, runtime (missing grammar refs)
         // actor(01a) now loads first → action(01b), io(01c), shatter(02), runtime(04a) all resolve
-        assert_eq!(
-            boot.failed.len(),
-            7,
-            "7 of 23 files fail resolution (1 kernel + 6 std): {:?}",
-            boot.failed.keys().collect::<Vec<_>>()
-        );
         assert!(
             failed.contains(&"06b-package-spec"),
             "missing refs (@mirror, @config, @ai)"
@@ -2880,12 +2879,19 @@ mod tests {
             failed.contains(&"std/tui"),
             "tui needs @config, @ci, @ca, @lsp — not in registry"
         );
+        assert_eq!(
+            boot.failed.len(),
+            7,
+            "7 of 27 files fail resolution (1 kernel + 6 std): {:?}",
+            boot.failed.keys().collect::<Vec<_>>()
+        );
 
-        // --- Resolved: kernel(13) + std(4) = 17 ---
+        // --- Resolved: kernel(13) + std(7) = 20 ---
+        // std/new, std/new.template, std/run added by Task 1 and all resolve.
         assert_eq!(
             boot.resolved.len(),
-            17,
-            "17 of 24 files resolve (13 kernel + 4 std): {:?}",
+            20,
+            "20 of 27 files resolve (13 kernel + 7 std): {:?}",
             boot.resolved.keys().collect::<Vec<_>>()
         );
         // std files that resolve
@@ -2900,6 +2906,19 @@ mod tests {
         assert!(
             resolved.contains(&"std/properties"),
             "std/properties resolves (in @meta, @property)"
+        );
+        // Task 1 additions: @new and @run grammar declarations
+        assert!(
+            resolved.contains(&"std/new"),
+            "std/new resolves (in @mirror, @io, @package)"
+        );
+        assert!(
+            resolved.contains(&"std/new.template"),
+            "std/new.template resolves (in @mirror, @package)"
+        );
+        assert!(
+            resolved.contains(&"std/run"),
+            "std/run resolves (in @mirror, @property)"
         );
 
         // --- The crystal still forms despite failures ---
@@ -2942,8 +2961,8 @@ mod tests {
         assert!(kernel.contains(&"00-prism.mirror".to_string()));
         assert!(kernel.contains(&"06b-package-spec.mirror".to_string()));
 
-        // Std: 10 files (mirror, time, tui, benchmark, cli, properties, beam, file, runtime, rust)
-        assert_eq!(std_files.len(), 10, "std needs 10 files: {:?}", std_files);
+        // Std: 13 files (mirror, time, tui, benchmark, cli, properties, beam, file, runtime, rust, new, new.template, run)
+        assert_eq!(std_files.len(), 13, "std needs 13 files: {:?}", std_files);
         assert!(std_files.contains(&"mirror.mirror".to_string()));
         assert!(std_files.contains(&"cli.mirror".to_string()));
         assert!(std_files.contains(&"time.mirror".to_string()));
