@@ -2224,6 +2224,46 @@ mod tests {
         );
     }
 
+    #[test]
+    fn cli_compile_uses_lambda_pipeline() {
+        use crate::lambda_phases::Emit;
+
+        let dir = tempfile::TempDir::new().unwrap();
+        let file = dir.path().join("test.mirror");
+        let source = "type color = red | blue\n";
+        std::fs::write(&file, source).unwrap();
+
+        // CLI compile
+        let cli = Cli::default();
+        let result = cli.dispatch(
+            "compile",
+            &[file.to_str().unwrap().to_string(), "--target".into(), "rust".into()],
+        );
+        assert!(result.is_ok(), "CLI compile should succeed");
+        let cli_oid = result.ok().unwrap();
+
+        // Direct lambda pipeline
+        let pipeline = LambdaFn::then(
+            LambdaFn::then(LambdaFn::then(Parse, Resolve::pass_through()), Properties),
+            Emit,
+        );
+        let pipeline_result = pipeline.reduce(SourceText(source.into()));
+        assert!(pipeline_result.is_ok(), "pipeline should succeed");
+
+        // OID from CLI must match OID from Parse
+        let parsed = Parse.reduce(SourceText(source.into()));
+        let fragment = parsed.ok().unwrap();
+        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+        assert_eq!(cli_oid, compiled.crystal().as_str(), "CLI OID must match pipeline OID");
+
+        // --target rust output must match pipeline emit
+        let rs_path = dir.path().join("test.rs");
+        assert!(rs_path.exists(), ".rs file should be written with --target rust");
+        let rs_content = std::fs::read_to_string(&rs_path).unwrap();
+        let emitted = pipeline_result.ok().unwrap();
+        assert_eq!(rs_content, emitted.0, "CLI rust output must match pipeline emit");
+    }
+
     /// Sign+verify round trip using direct API (no env vars = no races).
     /// Tests the full flow: sign content, verify untampered, fail on tampered.
     #[cfg(feature = "git")]
