@@ -30,6 +30,26 @@ type token {
 }
 
 abstract grammar @code {
+  -- The translate template: map from one grammar's ast to another's.
+  -- The type annotation IS the constraint. c: @code means c in @code.
+  abstract template translate(p: @prism, c: @code, p -> c)
+
+  -- Render: ast to io_list. The terminal template.
+  abstract template render(g: @code, ast(g) -> io_list)
+
+  -- Naming conventions
+  abstract template map_type(ref) -> type_ref
+  abstract template type_name(ref) -> ref
+  abstract template field_name(ref) -> ref
+  abstract template function_name(ref) -> ref
+  abstract template module_name(ref) -> ref
+  abstract template variant_name(ref) -> ref
+
+  -- Structural templates with defaults
+  template emit_comment(text) -> io_list
+  template emit_header(ref) -> io_list
+
+  -- LSP actions (existing, kept)
   abstract action complete(position) -> [completion]
   abstract action diagnose(range) -> [diagnostic]
   abstract action hover(position) -> string
