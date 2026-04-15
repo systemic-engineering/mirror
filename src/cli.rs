@@ -3,9 +3,11 @@
 //! Wraps `MirrorRuntime` and tracks the crystal OID for the loaded spec.
 //! Dispatch routes commands to the appropriate handler.
 
+use crate::lambda_phases::{Parse, Properties, Resolve, SourceText};
 use crate::loss::MirrorLoss;
 use crate::mirror_runtime::{MirrorRuntime, MirrorRuntimeError};
 use crate::spec::{SpecBlock, SpecConfig};
+use prism::lambda::LambdaFn;
 use prism::{Imperfect, Loss, Oid};
 
 use std::path::Path;
@@ -388,62 +390,62 @@ flags:
         })?;
 
         let source = std::fs::read_to_string(file.as_str())?;
-        let mut compiler = crate::bundle::MirrorCompiler::new();
 
-        // --strict: Partial becomes Failure (the Prism applied to the result)
-        if strict {
-            let result = self.runtime.compile_source(&source);
-            if result.is_partial() {
-                return Err(CliError::Runtime(MirrorRuntimeError(format!(
-                    "compile {} --strict: partial result rejected (holonomy: {:.4})",
-                    file,
-                    result.loss().holonomy()
-                ))));
-            }
+        // Lambda pipeline: Parse -> Resolve -> Properties -> Emit
+        let pipeline = LambdaFn::then(
+            LambdaFn::then(LambdaFn::then(Parse, Resolve::pass_through()), Properties),
+            crate::lambda_phases::Emit,
+        );
+        let result = pipeline.reduce(SourceText(source.clone()));
+
+        // --strict: Partial becomes Failure
+        if strict && result.is_partial() {
+            return Err(CliError::Runtime(MirrorRuntimeError(format!(
+                "compile {} --strict: partial result rejected (holonomy: {:.4})",
+                file,
+                result.loss().holonomy()
+            ))));
         }
 
-        match compiler.compile(&source) {
-            Ok(compiled) => {
-                let shard = crate::shard::Shard::new(
-                    compiled.crystal().clone(),
-                    compiler.kernel_spec.clone(),
-                    compiler.target,
-                );
-                let oid = shard.grammar_oid.clone();
+        match result {
+            Imperfect::Failure(err, _) => Err(CliError::Runtime(MirrorRuntimeError(format!(
+                "compile {}: {}",
+                file, err
+            )))),
+            result => {
+                // Get the fragment for OID computation — re-parse (cheap, deterministic)
+                let fragment = Parse.reduce(SourceText(source.clone()))
+                    .ok()
+                    .expect("parse succeeded in pipeline, must succeed again");
+                let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+                let oid = compiled.crystal();
 
                 // Write .shatter output alongside the source
                 let shatter_path = std::path::Path::new(file.as_str()).with_extension("shatter");
                 std::fs::write(&shatter_path, &source)?;
 
                 // Best-effort: store .shatter artifact in .git/mirror/ if we're in a git repo.
-                // Silently skips if there's no git repo or the store can't be opened.
                 if let Ok(git_store) = crate::git_store::MirrorGitStore::open(
                     &std::env::current_dir().unwrap_or_default(),
                 ) {
-                    use crate::loss::MirrorLoss;
                     use crate::shatter_format::{emit_shatter_with_frontmatter, ShatterMeta};
-                    use prism::Loss as _;
-                    let loss = MirrorLoss::zero();
+                    let loss = result.loss();
                     let meta = ShatterMeta::from_compiled(&compiled, &loss);
                     let shatter_content = emit_shatter_with_frontmatter(&meta, &source);
                     git_store.store_shatter(&meta.oid, &shatter_content);
                     let _ = git_store.set_file_ref(file.as_str(), &meta.oid);
                 }
 
-                eprintln!(
-                    "compiled {} -> {} (rank {}, {:?})",
-                    file,
-                    oid.as_str(),
-                    shard.rank(),
-                    shard.target,
-                );
+                eprintln!("compiled {} -> {}", file, oid.as_str());
 
                 // --target rust: emit Rust source alongside .shatter
                 if target_rust {
-                    let rust_code = crate::emit_rust::emit_rust(&compiled);
-                    let rs_path = std::path::Path::new(file.as_str()).with_extension("rs");
-                    std::fs::write(&rs_path, &rust_code)?;
-                    eprintln!("emitted {}", rs_path.display());
+                    let emitted = result.ok();
+                    if let Some(code) = emitted {
+                        let rs_path = std::path::Path::new(file.as_str()).with_extension("rs");
+                        std::fs::write(&rs_path, &code.0)?;
+                        eprintln!("emitted {}", rs_path.display());
+                    }
                 }
 
                 if sign {
@@ -468,10 +470,6 @@ flags:
 
                 Ok(oid.as_str().to_string())
             }
-            Err(e) => Err(CliError::Runtime(MirrorRuntimeError(format!(
-                "compile {}: {}",
-                file, e
-            )))),
         }
     }
 
@@ -562,23 +560,28 @@ flags:
             .ok_or_else(|| CliError::Usage(format!("usage: mirror {} <path>", optic)))?;
 
         let source = std::fs::read_to_string(file)?;
-        let compiled: Result<_, _> = self.runtime.compile_source(&source).into();
-        let compiled = compiled?;
+        let parsed = Parse.reduce(SourceText(source));
+        let fragment = parsed
+            .ok()
+            .ok_or_else(|| CliError::Runtime(MirrorRuntimeError("parse failed".into())))?;
 
         match optic {
             "focus" => {
-                let text = crate::mirror_runtime::emit_fragment(&compiled.fragment);
+                let text = crate::mirror_runtime::emit_fragment(&fragment.0);
                 Ok(text)
             }
             "project" => {
                 let mut out = String::new();
-                project_fragment(&compiled.fragment, 0, &mut out);
+                project_fragment(&fragment.0, 0, &mut out);
                 Ok(out)
             }
-            "refract" => Ok(compiled.crystal().as_str().to_string()),
+            "refract" => {
+                let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+                Ok(compiled.crystal().as_str().to_string())
+            }
             _ => {
                 // split, zoom -- same as focus for now
-                let text = crate::mirror_runtime::emit_fragment(&compiled.fragment);
+                let text = crate::mirror_runtime::emit_fragment(&fragment.0);
                 Ok(text)
             }
         }
@@ -596,14 +599,16 @@ flags:
         })?;
 
         let source = std::fs::read_to_string(file.as_str())?;
-        let compiled: Result<_, _> = self.runtime.compile_source(&source).into();
-        let compiled = compiled?;
+        let parsed = Parse.reduce(SourceText(source));
+        let fragment = parsed
+            .ok()
+            .ok_or_else(|| CliError::Runtime(MirrorRuntimeError("parse failed".into())))?;
 
-        let canonical = crate::mirror_runtime::kintsugi_fragment(&compiled.fragment);
+        let canonical = crate::mirror_runtime::kintsugi_fragment(&fragment.0);
         let output = crate::mirror_runtime::emit_fragment(&canonical);
 
         if check {
-            let original = crate::mirror_runtime::emit_fragment(&compiled.fragment);
+            let original = crate::mirror_runtime::emit_fragment(&fragment.0);
             if output == original {
                 Ok("ok".to_string())
             } else {
@@ -621,15 +626,26 @@ flags:
     // -----------------------------------------------------------------------
 
     fn ci_single_file(&self, path: &str) -> Result<(String, crate::loss::MirrorLoss), CliError> {
-        use prism::{Loss, Transport};
         let source = std::fs::read_to_string(path)?;
-        let compiler = crate::bundle::MirrorCompiler::new();
-        let result = compiler.transport(&source);
+        if source.trim().is_empty() {
+            return Ok((String::new(), MirrorLoss::zero()));
+        }
+        let pipeline = LambdaFn::then(
+            LambdaFn::then(Parse, Resolve::pass_through()),
+            Properties,
+        );
+        let result = pipeline.reduce(SourceText(source));
         match result {
-            prism::Imperfect::Success(oid) => Ok((oid, crate::loss::MirrorLoss::zero())),
-            prism::Imperfect::Partial(oid, loss) => Ok((oid, loss)),
-            prism::Imperfect::Failure(_, _) => Err(CliError::Runtime(MirrorRuntimeError(
-                "compilation failed".to_string(),
+            Imperfect::Success(checked) => {
+                let compiled = crate::mirror_runtime::CompiledShatter { fragment: checked.0 };
+                Ok((compiled.crystal().as_str().to_string(), MirrorLoss::zero()))
+            }
+            Imperfect::Partial(checked, loss) => {
+                let compiled = crate::mirror_runtime::CompiledShatter { fragment: checked.0 };
+                Ok((compiled.crystal().as_str().to_string(), loss))
+            }
+            Imperfect::Failure(err, _) => Err(CliError::Runtime(MirrorRuntimeError(
+                format!("compilation failed: {}", err),
             ))),
         }
     }
@@ -983,9 +999,12 @@ flags:
 
         let source = std::fs::read_to_string(file)?;
         let start = std::time::Instant::now();
-        let compiled: Result<_, _> = self.runtime.compile_source(&source).into();
-        let compiled = compiled?;
+        let parsed = Parse.reduce(SourceText(source));
+        let fragment = parsed
+            .ok()
+            .ok_or_else(|| CliError::Runtime(MirrorRuntimeError("parse failed".into())))?;
         let elapsed = start.elapsed();
+        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
         Ok(format!(
             "compiled {} in {:.3}ms\noid: {}",
             file,
@@ -1553,13 +1572,21 @@ impl Cli {
     }
 
     fn craft_target(&self, target: &crate::spec::TargetConfig) -> Result<String, CliError> {
-        // If there's a source glob, compile those files
+        // If there's a source glob, compile those files via the lambda pipeline
         let mut fragments = Vec::new();
         if let Some(ref glob_pattern) = target.glob {
             let paths = expand_glob(glob_pattern)?;
             for path in paths {
-                let compiled = self.runtime.compile_file(&path)?;
-                fragments.push(compiled.fragment);
+                let source = std::fs::read_to_string(&path)
+                    .map_err(|e| CliError::Io(e))?;
+                let parsed = Parse.reduce(SourceText(source));
+                let fragment = parsed.ok().ok_or_else(|| {
+                    CliError::Runtime(MirrorRuntimeError(format!(
+                        "parse failed: {}",
+                        path.display()
+                    )))
+                })?;
+                fragments.push(fragment.0);
             }
         }
 
@@ -2196,10 +2223,13 @@ mod tests {
         )
         .unwrap();
 
-        // Compile some content
+        // Compile some content via lambda pipeline
         let source = "type greeting\n";
-        let mut compiler = crate::bundle::MirrorCompiler::new();
-        let compiled = compiler.compile(source).expect("compile should succeed");
+        let parsed = crate::lambda_phases::Parse.reduce(
+            crate::lambda_phases::SourceText(source.into()),
+        );
+        let fragment = parsed.ok().expect("parse should succeed");
+        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
         let crystal_oid = compiled.crystal().clone();
 
         // Sign the content OID
@@ -2247,8 +2277,11 @@ mod tests {
         assert!(result.is_err(), "wrong key must fail verification");
 
         // Crystal OID is deterministic
-        let mut compiler2 = crate::bundle::MirrorCompiler::new();
-        let compiled2 = compiler2.compile(source).unwrap();
+        let parsed2 = crate::lambda_phases::Parse.reduce(
+            crate::lambda_phases::SourceText(source.into()),
+        );
+        let fragment2 = parsed2.ok().expect("parse should succeed");
+        let compiled2 = crate::mirror_runtime::CompiledShatter { fragment: fragment2.0 };
         assert_eq!(
             crystal_oid.as_str(),
             compiled2.crystal().as_str(),
