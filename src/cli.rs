@@ -171,6 +171,7 @@ impl Cli {
             "craft" => self.handle_craft(args),
             "kintsugi" => self.handle_kintsugi(args),
             "properties" => self.handle_properties(args),
+            "ai" => self.handle_ai(args),
             _ => {
                 // Unknown spec block — it compiles (it's in the spec) but
                 // we don't have a handler yet. Partial: the command is
@@ -194,6 +195,14 @@ impl Cli {
     /// Wrap cmd_kintsugi as Imperfect.
     fn handle_kintsugi(&self, args: &[String]) -> Imperfect<String, CliError, MirrorLoss> {
         match self.cmd_kintsugi(args) {
+            Ok(s) => Imperfect::Success(s),
+            Err(e) => Imperfect::Failure(e, MirrorLoss::zero()),
+        }
+    }
+
+    /// Wrap cmd_ai as Imperfect.
+    fn handle_ai(&self, args: &[String]) -> Imperfect<String, CliError, MirrorLoss> {
+        match self.cmd_ai(args) {
             Ok(s) => Imperfect::Success(s),
             Err(e) => Imperfect::Failure(e, MirrorLoss::zero()),
         }
@@ -539,26 +548,71 @@ flags:
     // -----------------------------------------------------------------------
 
     fn cmd_ai(&self, args: &[String]) -> Result<String, CliError> {
-        let model = match args.first().map(|s| s.as_str()) {
-            Some("abyss") => "abyss",
-            Some("introject") => "introject",
-            Some("cartographer") => "cartographer",
-            Some("explorer") => "explorer",
-            Some("fate") => "fate",
+        let _model = match args.first().map(|s| s.as_str()) {
+            Some("abyss") | Some("introject") | Some("cartographer") | Some("explorer")
+            | Some("fate") => args[0].as_str(),
             Some(other) => {
-                eprintln!("ai fate {}", other);
-                return Ok(format!("ai fate {}", other));
+                return Err(CliError::Usage(format!(
+                    "unknown model: {}. expected: abyss | introject | cartographer | explorer | fate",
+                    other
+                )));
             }
             None => {
                 return Err(CliError::Usage(
-                    "usage: mirror ai <model> [file|-]".to_string(),
+                    "usage: mirror ai <model> <file> [--budget N]".to_string(),
                 ));
             }
         };
 
-        let file = args.get(1).map(|s| s.as_str());
-        eprintln!("ai {} {}", model, file.unwrap_or("<stdin>"));
-        Ok(format!("ai {} {}", model, file.unwrap_or("<stdin>")))
+        // Parse file path (required)
+        let file_arg = args.get(1).ok_or_else(|| {
+            CliError::Usage("usage: mirror ai <model> <file> [--budget N]".to_string())
+        })?;
+        let file = std::path::Path::new(file_arg);
+
+        // Parse optional --budget N
+        let mut budget: usize = 1000;
+        let mut i = 2;
+        while i < args.len() {
+            if args[i] == "--budget" {
+                if let Some(val) = args.get(i + 1) {
+                    budget = val.parse().map_err(|_| {
+                        CliError::Usage(format!("invalid budget: {}", val))
+                    })?;
+                    i += 2;
+                    continue;
+                }
+            }
+            i += 1;
+        }
+
+        let result = crate::ai::ai_loop(file, budget).map_err(|e| {
+            CliError::Runtime(MirrorRuntimeError(format!("{}", e)))
+        })?;
+
+        let status = if result.holonomy_end == 0.0 {
+            "crystal".to_string()
+        } else {
+            format!("partial (loss: {:.4})", result.holonomy_end)
+        };
+
+        let models = if result.models_used.is_empty() {
+            "none".to_string()
+        } else {
+            result.models_used.join(", ")
+        };
+
+        Ok(format!(
+            "@ai {} {}\n  holonomy: {:.4} -> {:.4}\n  steps: {}\n  models: {}\n  health: {}\n  status: {}",
+            _model,
+            file.display(),
+            result.holonomy_start,
+            result.holonomy_end,
+            result.steps,
+            models,
+            result.health,
+            status,
+        ))
     }
 
     // -----------------------------------------------------------------------
@@ -1854,11 +1908,26 @@ mod tests {
     }
 
     #[test]
-    fn dispatch_ai_known_model() {
+    fn dispatch_ai_model_without_file_is_usage_error() {
         let cli = Cli::default();
         let result = cli.dispatch("ai", &["abyss".to_string()]);
-        assert!(result.is_ok());
-        assert!(result.ok().unwrap().contains("abyss"));
+        assert!(result.is_err(), "ai without file should be usage error");
+    }
+
+    #[test]
+    fn dispatch_ai_known_model_with_file() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let file = dir.path().join("test.mirror");
+        std::fs::write(&file, "in @mirror\ntype x = a | b\n").unwrap();
+        let cli = Cli::default();
+        let result = cli.dispatch(
+            "ai",
+            &["abyss".to_string(), file.to_str().unwrap().to_string()],
+        );
+        assert!(result.is_ok(), "dispatch failed: {:?}", result);
+        let output = result.ok().unwrap();
+        assert!(output.contains("abyss"), "output should contain model name: {}", output);
+        assert!(output.contains("crystal"), "clean file should be crystal: {}", output);
     }
 
     #[test]
