@@ -15,6 +15,7 @@ pub struct SpecConfig {
     pub craft: CraftConfig,
     pub kintsugi: KintsugiConfig,
     pub properties: PropertiesConfig,
+    pub run: RunConfig,
     /// Every top-level block, in declaration order. The command registry.
     pub blocks: Vec<SpecBlock>,
 }
@@ -156,6 +157,11 @@ pub struct PropertiesConfig {
     pub requires: Vec<String>,
     pub invariant: Vec<String>,
     pub ensures: Vec<String>,
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct RunConfig {
+    pub default: Vec<String>,
 }
 
 // ---------------------------------------------------------------------------
@@ -307,14 +313,28 @@ pub fn parse_spec_source(source: &str) -> Result<SpecConfig, SpecParseError> {
     let mut pos = 0;
 
     while pos < tokens.len() {
+        let tok = &tokens[pos];
+
+        // Legacy: @oid("name")
+        if tok == "@oid" {
+            pos += 1;
+            pos = skip_token(&tokens, pos, "(")?;
+            spec.oid = unquote(&tokens[pos]);
+            pos += 1;
+            pos = skip_token(&tokens, pos, ")")?;
+            continue;
+        }
+
+        // Bare @name as project identity (first @-token when oid is empty)
+        if tok.starts_with('@') && spec.oid.is_empty()
+            && (pos + 1 >= tokens.len() || tokens[pos + 1] != "(")
+        {
+            spec.oid = tok.clone();
+            pos += 1;
+            continue;
+        }
+
         match tokens[pos].as_str() {
-            "@oid" => {
-                pos += 1;
-                pos = skip_token(&tokens, pos, "(")?;
-                spec.oid = unquote(&tokens[pos]);
-                pos += 1;
-                pos = skip_token(&tokens, pos, ")")?;
-            }
             "store" => {
                 let block_name = tokens[pos].clone();
                 pos += 1;
@@ -363,6 +383,20 @@ pub fn parse_spec_source(source: &str) -> Result<SpecConfig, SpecParseError> {
                 let block_start = pos;
                 let (properties, new_pos) = parse_properties_block(&tokens, pos)?;
                 spec.properties = properties;
+                let block = parse_generic_block(&tokens, block_start)?;
+                spec.blocks.push(SpecBlock {
+                    name: block_name,
+                    flags: block.0,
+                    settings: block.1,
+                });
+                pos = new_pos;
+            }
+            "run" => {
+                let block_name = tokens[pos].clone();
+                pos += 1;
+                let block_start = pos;
+                let (run, new_pos) = parse_run_block(&tokens, pos)?;
+                spec.run = run;
                 let block = parse_generic_block(&tokens, block_start)?;
                 spec.blocks.push(SpecBlock {
                     name: block_name,
@@ -686,6 +720,31 @@ fn parse_name_block(tokens: &[String], pos: usize) -> Result<(Vec<String>, usize
 
     pos = skip_token(tokens, pos, "}")?;
     Ok((items, pos))
+}
+
+fn parse_run_block(
+    tokens: &[String],
+    pos: usize,
+) -> Result<(RunConfig, usize), SpecParseError> {
+    let mut pos = skip_token(tokens, pos, "{")?;
+    let mut run = RunConfig::default();
+
+    while pos < tokens.len() && tokens[pos] != "}" {
+        if tokens[pos] == "default" {
+            pos += 1;
+            while pos < tokens.len() && tokens[pos] != "}" {
+                run.default.push(tokens[pos].clone());
+                pos += 1;
+            }
+        } else {
+            pos += 1;
+        }
+    }
+
+    if pos < tokens.len() {
+        pos += 1; // skip }
+    }
+    Ok((run, pos))
 }
 
 // ---------------------------------------------------------------------------
@@ -1214,5 +1273,43 @@ kintsugi { --hoist }
         let help = spec.help_text();
         assert!(help.contains("craft"), "help should list craft");
         assert!(help.contains("kintsugi"), "help should list kintsugi");
+    }
+
+    // -----------------------------------------------------------------------
+    // Task 2: bare @name identity + run {} block
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn bare_at_name_as_identity() {
+        let spec = parse_spec_source("@my-project\n").unwrap();
+        assert_eq!(spec.oid, "@my-project");
+    }
+
+    #[test]
+    fn bare_at_name_with_blocks() {
+        let source = "@my-project\n\ncraft {\n  default mirror/*.mirror\n}\n";
+        let spec = parse_spec_source(source).unwrap();
+        assert_eq!(spec.oid, "@my-project");
+        assert_eq!(spec.craft.default, vec!["mirror/*.mirror"]);
+    }
+
+    #[test]
+    fn legacy_oid_still_works() {
+        let spec = parse_spec_source("@oid(\"@old-style\")\n").unwrap();
+        assert_eq!(spec.oid, "@old-style");
+    }
+
+    #[test]
+    fn run_block_parses() {
+        let source = "@test\n\nrun {\n  default mirror/*.mirror\n}\n";
+        let spec = parse_spec_source(source).unwrap();
+        assert_eq!(spec.run.default, vec!["mirror/*.mirror"]);
+    }
+
+    #[test]
+    fn run_block_in_command_registry() {
+        let source = "@test\n\nrun {\n  default mirror/*.mirror\n}\n";
+        let spec = parse_spec_source(source).unwrap();
+        assert!(spec.resolve_command("run").is_some());
     }
 }

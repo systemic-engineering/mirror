@@ -1,6 +1,6 @@
 # mirror.spec — the CLI IS the spec IS the config
 
-@oid("@mirror-lang")
+@mirror-lang
 
 store {
   path = .git/mirror
@@ -74,4 +74,13 @@ properties {
   ensures {
     always_halts
   }
+}
+
+new {
+  template = boot/std/new.template.mirror
+  grammar = boot/std/new.mirror
+}
+
+run {
+  default boot
 }
