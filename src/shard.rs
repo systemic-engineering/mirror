@@ -6,8 +6,7 @@
 //! The .shard IS the NakedSingularity seed.
 //! No parent. Just IS.
 
-use crate::declaration::MirrorHash;
-use prism::{Decomposition, KernelSpec};
+use prism::{Decomposition, KernelSpec, Oid};
 
 use super::bundle::Target;
 
@@ -16,7 +15,7 @@ use super::bundle::Target;
 #[derive(Clone, Debug)]
 pub struct Shard {
     /// Content-addressed OID of the compiled grammar.
-    pub grammar_oid: MirrorHash,
+    pub grammar_oid: Oid,
     /// The kernel specification for runtime dispatch.
     pub kernel_spec: KernelSpec,
     /// The compilation target.
@@ -24,7 +23,7 @@ pub struct Shard {
 }
 
 impl Shard {
-    pub fn new(grammar_oid: MirrorHash, kernel_spec: KernelSpec, target: Target) -> Self {
+    pub fn new(grammar_oid: Oid, kernel_spec: KernelSpec, target: Target) -> Self {
         Shard {
             grammar_oid,
             kernel_spec,
@@ -46,7 +45,6 @@ impl Shard {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use fragmentation::sha::HashAlg;
     use prism::Precision;
 
     #[test]
@@ -56,7 +54,7 @@ mod tests {
             Decomposition::Eigenvalue,
             Precision::new(0.01),
         );
-        let oid = MirrorHash::from_hex("abc123");
+        let oid = Oid::new("abc123");
         let shard = Shard::new(oid, spec, Target::Beam);
         assert_eq!(shard.rank(), 4);
         assert_eq!(shard.decomposition(), Decomposition::Eigenvalue);
@@ -70,7 +68,7 @@ mod tests {
             Decomposition::Svd,
             Precision::new(0.001),
         );
-        let oid = MirrorHash::from_hex("def456");
+        let oid = Oid::new("def456");
         let shard = Shard::new(oid, spec, Target::Wasm);
         assert_eq!(shard.rank(), 8);
         assert_eq!(shard.target, Target::Wasm);

@@ -56,12 +56,11 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use crate::declaration::{
-    fragment as build_fragment, DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt,
-    MirrorHash, OpticOp,
+    fragment as build_fragment, DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, OpticOp,
 };
 use fragmentation::frgmnt_store::FrgmntStore;
 use fragmentation::sha::HashAlg;
-use prism::{Beam, Imperfect, Loss, Optic, Prism};
+use prism::{Beam, Imperfect, Loss, Optic, Oid, Prism};
 
 use crate::loss::{MirrorLoss, ParseLoss, UnrecognizedDecl};
 
@@ -1428,8 +1427,8 @@ pub struct CompiledShatter {
 }
 
 impl CompiledShatter {
-    pub fn crystal(&self) -> &MirrorHash {
-        self.fragment.oid()
+    pub fn crystal(&self) -> Oid {
+        Oid::new(self.fragment.content_hash().as_str())
     }
     pub fn form_name(&self) -> &str {
         &self.fragment.mirror_data().name
@@ -1667,12 +1666,12 @@ impl MirrorRuntime {
         boot_dir: &Path,
         store_dir: &Path,
         output: &Path,
-    ) -> Result<MirrorHash, MirrorRuntimeError> {
+    ) -> Result<Oid, MirrorRuntimeError> {
         let boot = self.compile_boot_dir(boot_dir, store_dir)?;
         let content = emit_shatter(&boot.collapsed, &boot.resolved, &boot.failed);
         std::fs::write(output, &content)
             .map_err(|e| err(format!("write {}: {}", output.display(), e)))?;
-        Ok(boot.collapsed.crystal().clone())
+        Ok(boot.collapsed.crystal())
     }
 }
 
@@ -1792,7 +1791,7 @@ impl MirrorRegistry {
         if !data.name.starts_with('@') {
             return None;
         }
-        let oid = frag.oid().as_str().to_string();
+        let oid = frag.content_hash().as_str().to_string();
         let size = self.estimate_fragment_size(frag);
         self.store
             .insert_persistent(oid.clone(), frag.clone(), size);
@@ -1835,7 +1834,7 @@ impl MirrorRegistry {
             return None;
         }
         let fragment = decl.to_fragment();
-        let oid = fragment.oid().as_str().to_string();
+        let oid = fragment.content_hash().as_str().to_string();
         let size = self.estimate_fragment_size(&fragment);
         self.store.insert_persistent(oid.clone(), fragment, size);
         if let Err(e) = self.store.set_ref(&decl.name, &oid) {
@@ -2166,14 +2165,14 @@ mod tests {
         let focused2 = shatter.focus(seed2);
         let projected = shatter.project(focused2);
         let frag_result = projected.result().ok().expect("project failed");
-        assert!(!frag_result.oid().as_str().is_empty());
+        assert!(!frag_result.content_hash().as_str().is_empty());
 
         // Stable OID across runs (CoincidenceHash<5> determinism).
         let source = std::fs::read_to_string(boot_dir().join("00-prism.mirror")).unwrap();
         let frag = parse_form(&source).ok().unwrap();
         let frag2 = parse_form(&source).ok().unwrap();
-        assert_eq!(frag.oid(), frag2.oid());
-        assert_eq!(compiled.fragment.oid(), frag.oid());
+        assert_eq!(frag.content_hash(), frag2.content_hash());
+        assert_eq!(compiled.fragment.content_hash(), frag.content_hash());
     }
 
     #[test]
@@ -2634,8 +2633,8 @@ mod tests {
 
         // Same OID — round-trip exact
         assert_eq!(
-            fragment.oid(),
-            &oid,
+            fragment.content_hash().as_str(),
+            oid.as_str(),
             "round-trip OID mismatch: emitted shatter must parse back to same crystal"
         );
     }
@@ -3911,8 +3910,8 @@ grammar @ai {
         let canonical = kintsugi(&parsed);
 
         let shatter = Shatter;
-        let oid_before = shatter.compile_form(&parsed).oid().clone();
-        let oid_after = shatter.compile_form(&canonical).oid().clone();
+        let oid_before = shatter.compile_form(&parsed).content_hash().clone();
+        let oid_after = shatter.compile_form(&canonical).content_hash().clone();
         assert_eq!(
             oid_before, oid_after,
             "kintsugi must not change the content-addressed OID"
@@ -4368,9 +4367,8 @@ grammar @ai {
     #[test]
     fn multiple_unknown_keywords_inside_block_all_recorded() {
         let runtime = MirrorRuntime::new();
-        let result = runtime.compile_source(
-            "grammar @test {\n  flag strict\n  command compile\n  type x\n}\n",
-        );
+        let result = runtime
+            .compile_source("grammar @test {\n  flag strict\n  command compile\n  type x\n}\n");
         assert!(result.is_partial());
         let loss = result.loss();
         assert!(
@@ -4392,9 +4390,8 @@ grammar @ai {
     #[test]
     fn nested_unknown_keywords_produce_partial() {
         let runtime = MirrorRuntime::new();
-        let result = runtime.compile_source(
-            "grammar @outer {\n  grammar @inner {\n    widget foo\n  }\n}\n",
-        );
+        let result = runtime
+            .compile_source("grammar @outer {\n  grammar @inner {\n    widget foo\n  }\n}\n");
         assert!(
             result.is_partial(),
             "unknown keyword in nested block must bubble up as Partial"
@@ -4403,8 +4400,7 @@ grammar @ai {
 
     #[test]
     fn boot_cli_mirror_has_unrecognized_flag_and_command() {
-        let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("boot/std/cli.mirror");
+        let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot/std/cli.mirror");
         if path.exists() {
             let runtime = MirrorRuntime::new();
             let src = std::fs::read_to_string(&path).unwrap();

@@ -381,8 +381,9 @@ pub trait MirrorFragmentExt {
     fn mirror_data(&self) -> &MirrorData;
     /// Get the child fragments.
     fn mirror_children(&self) -> &[MirrorFragment];
-    /// Get the content OID.
-    fn oid(&self) -> &MirrorHash;
+    /// Get the node-level content hash (SHA-256 of the node's encoded data).
+    /// Renamed from `oid()` to avoid ambiguity with `prism_core::Addressable::oid()`.
+    fn content_hash(&self) -> &MirrorHash;
 }
 
 impl MirrorFragmentExt for MirrorFragment {
@@ -396,7 +397,7 @@ impl MirrorFragmentExt for MirrorFragment {
         self.children()
     }
 
-    fn oid(&self) -> &MirrorHash {
+    fn content_hash(&self) -> &MirrorHash {
         use fragmentation::fragment::Fragmentable;
         &self.self_ref().sha
     }
@@ -762,6 +763,6 @@ mod tests {
         let data = MirrorData::new(DeclKind::Type, "id", Vec::new(), Vec::new());
         let a = fragment(data.clone(), Vec::new());
         let b = fragment(data, Vec::new());
-        assert_eq!(a.oid(), b.oid());
+        assert_eq!(a.content_hash(), b.content_hash());
     }
 }

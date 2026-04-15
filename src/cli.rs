@@ -3,12 +3,10 @@
 //! Wraps `MirrorRuntime` and tracks the crystal OID for the loaded spec.
 //! Dispatch routes commands to the appropriate handler.
 
-use crate::declaration::MirrorHash;
 use crate::loss::MirrorLoss;
 use crate::mirror_runtime::{MirrorRuntime, MirrorRuntimeError};
 use crate::spec::{SpecBlock, SpecConfig};
-use fragmentation::sha::HashAlg;
-use prism::{Imperfect, Loss};
+use prism::{Imperfect, Loss, Oid};
 
 use std::path::Path;
 
@@ -59,7 +57,7 @@ impl From<std::io::Error> for CliError {
 pub struct Cli {
     pub runtime: MirrorRuntime,
     pub spec: SpecConfig,
-    crystal_oid: Option<MirrorHash>,
+    crystal_oid: Option<Oid>,
 }
 
 /// Information about a branch's merge readiness.
@@ -92,7 +90,7 @@ impl Cli {
     }
 
     /// Return the loaded crystal's OID, if any.
-    pub fn crystal_oid(&self) -> Option<&MirrorHash> {
+    pub fn crystal_oid(&self) -> Option<&Oid> {
         self.crystal_oid.as_ref()
     }
 

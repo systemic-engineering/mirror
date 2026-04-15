@@ -7,8 +7,10 @@
 
 use std::collections::BTreeMap;
 
-use crate::declaration::{DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, MirrorHash};
+use crate::declaration::{DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt};
 use crate::mirror_runtime::{CompiledShatter, MirrorRuntimeError};
+use fragmentation::sha::HashAlg;
+use prism::Oid;
 
 // ---------------------------------------------------------------------------
 // ActionDef — one action extracted from the grammar
@@ -41,7 +43,7 @@ pub struct ActionDef {
 pub struct MirrorOptic {
     grammar_name: String,
     actions: BTreeMap<String, ActionDef>,
-    crystal_oid: MirrorHash,
+    crystal_oid: Oid,
 }
 
 impl MirrorOptic {
@@ -59,7 +61,7 @@ impl MirrorOptic {
         Ok(MirrorOptic {
             grammar_name: data.name.clone(),
             actions,
-            crystal_oid: frag.oid().clone(),
+            crystal_oid: Oid::new(frag.content_hash().as_str()),
         })
     }
 
@@ -96,7 +98,7 @@ impl MirrorOptic {
     }
 
     /// Get the crystal OID this optic was loaded from.
-    pub fn crystal_oid(&self) -> &MirrorHash {
+    pub fn crystal_oid(&self) -> &Oid {
         &self.crystal_oid
     }
 
@@ -169,7 +171,7 @@ form @cli {
     fn crystal_oid_matches_compiled() {
         let compiled = compile_with_actions();
         let optic = MirrorOptic::from_compiled(&compiled).unwrap();
-        assert_eq!(optic.crystal_oid(), compiled.crystal());
+        assert_eq!(optic.crystal_oid(), &compiled.crystal());
     }
 
     #[test]

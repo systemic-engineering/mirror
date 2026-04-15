@@ -6,12 +6,11 @@
 
 use std::convert::Infallible;
 
-use crate::declaration::{MirrorFragment, MirrorFragmentExt, MirrorHash};
+use crate::declaration::{MirrorFragment, MirrorFragmentExt};
 use crate::loss::{Convergence, EmitLoss, MirrorLoss, Phase, PhaseRecord, ResolutionLoss};
 use crate::mirror_runtime::{CompiledShatter, MirrorRuntime, MirrorRuntimeError};
-use fragmentation::sha::HashAlg;
 use prism::{
-    Closure, Connection, Decomposition, Fiber, Gauge, Imperfect, KernelSpec, Loss, Precision,
+    Closure, Connection, Decomposition, Fiber, Gauge, Imperfect, KernelSpec, Loss, Oid, Precision,
     Transport,
 };
 
@@ -37,7 +36,7 @@ pub enum Target {
 pub struct MirrorCompiler {
     pub kernel_spec: KernelSpec,
     pub target: Target,
-    pub last_hash: Option<MirrorHash>,
+    pub last_hash: Option<Oid>,
     runtime: MirrorRuntime,
 }
 
@@ -162,8 +161,8 @@ impl Transport for MirrorCompiler {
 }
 
 impl Closure for MirrorCompiler {
-    type Fixed = Option<MirrorHash>; // artifact hash, None if not yet compiled
-    fn close(&self) -> &Option<MirrorHash> {
+    type Fixed = Option<Oid>; // artifact hash, None if not yet compiled
+    fn close(&self) -> &Option<Oid> {
         &self.last_hash
     }
 }
@@ -296,7 +295,7 @@ mod tests {
             .compile("form @test {\n  prism focus\n}\n")
             .unwrap();
         assert!(compiler.last_hash.is_some());
-        assert_eq!(compiler.last_hash.as_ref().unwrap(), compiled.crystal());
+        assert_eq!(compiler.last_hash.as_ref().unwrap(), &compiled.crystal());
     }
 
     #[test]

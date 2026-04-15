@@ -35,7 +35,6 @@ use crate::mirror_runtime::CompiledShatter;
 #[cfg(test)]
 use crate::mirror_runtime::MirrorRuntime;
 use crate::prism_crate::Loss;
-use fragmentation::sha::HashAlg;
 
 // ---------------------------------------------------------------------------
 // Luminosity — compilation health in a single word
