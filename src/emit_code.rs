@@ -316,6 +316,183 @@ impl CodeGrammar {
 }
 
 // ---------------------------------------------------------------------------
+// Gleam type mapping
+// ---------------------------------------------------------------------------
+
+fn map_type_gleam(mirror_type: &str) -> IoList {
+    IoList::text(&map_type_gleam_string(mirror_type))
+}
+
+fn map_type_gleam_string(mirror_type: &str) -> String {
+    let t = mirror_type.trim();
+
+    if let Some(idx) = t.find('(') {
+        let base = &t[..idx];
+        let inner = &t[idx + 1..t.len() - 1];
+        let params: Vec<&str> = inner.split(',').map(|s| s.trim()).collect();
+        let mapped_params: Vec<String> = params.iter().map(|p| map_type_gleam_string(p)).collect();
+
+        return match base {
+            "option" => format!("Option({}))", mapped_params.join(", ")),
+            "result" => format!("Result({}))", mapped_params.join(", ")),
+            "list" => format!("List({})", mapped_params.join(", ")),
+            "vec" => format!("List({})", mapped_params.join(", ")),
+            _ => format!("{}({})", to_pascal_case(base), mapped_params.join(", ")),
+        };
+    }
+
+    if t.starts_with('[') && t.ends_with(']') {
+        let inner = &t[1..t.len() - 1];
+        return format!("List({})", map_type_gleam_string(inner));
+    }
+
+    match t {
+        "text" | "string" | "str" | "ref" => "String".to_string(),
+        "nat" | "u8" | "u16" | "u32" | "u64" | "i8" | "i16" | "i32" | "i64" | "usize" => {
+            "Int".to_string()
+        }
+        "f32" | "f64" => "Float".to_string(),
+        "bool" => "Bool".to_string(),
+        "nil" => "Nil".to_string(),
+        "dynamic" => "Dynamic".to_string(),
+        "bit_array" => "BitArray".to_string(),
+        _ => to_pascal_case(t),
+    }
+}
+
+// ---------------------------------------------------------------------------
+// CodeGrammar::gleam()
+// ---------------------------------------------------------------------------
+
+impl CodeGrammar {
+    pub fn gleam() -> Self {
+        CodeGrammar {
+            name: "gleam",
+            templates: TemplateSet {
+                map_type: Box::new(map_type_gleam),
+                type_name: Box::new(to_pascal_case),
+                field_name: Box::new(to_snake_case),
+                emit_enum: Box::new(|name, _params, variants| {
+                    let pascal = to_pascal_case(name);
+                    let mut parts = vec![IoList::text(&format!("pub type {} {{\n", pascal))];
+                    for v in variants {
+                        parts.push(IoList::text(&format!("  {}\n", to_pascal_case(v))));
+                    }
+                    parts.push(IoList::text("}\n"));
+                    IoList::join(parts)
+                }),
+                emit_struct: Box::new(|name, fields, _params| {
+                    let pascal = to_pascal_case(name);
+                    let mut parts = vec![IoList::text(&format!("pub type {} {{\n", pascal))];
+                    parts.push(IoList::text(&format!("  {}(\n", pascal)));
+                    for (fname, ftype) in fields {
+                        parts.push(IoList::text(&format!(
+                            "    {}: {},\n",
+                            to_snake_case(fname),
+                            map_type_gleam_string(ftype)
+                        )));
+                    }
+                    parts.push(IoList::text("  )\n"));
+                    parts.push(IoList::text("}\n"));
+                    IoList::join(parts)
+                }),
+                emit_unit_type: Box::new(|name| {
+                    let pascal = to_pascal_case(name);
+                    IoList::text(&format!("pub type {} {{\n  {}\n}}\n", pascal, pascal))
+                }),
+                emit_function: Box::new(|name, params, return_type| {
+                    let fn_name = to_snake_case(name);
+                    let params_str = if params.is_empty() {
+                        String::new()
+                    } else {
+                        params
+                            .iter()
+                            .map(|(n, t)| {
+                                format!("{}: {}", to_snake_case(n), map_type_gleam_string(t))
+                            })
+                            .collect::<Vec<_>>()
+                            .join(", ")
+                    };
+                    let ret = match return_type {
+                        Some(rt) => format!(" -> {}", map_type_gleam_string(rt)),
+                        None => String::new(),
+                    };
+                    IoList::join(vec![
+                        IoList::text(&format!(
+                            "pub fn {}({}){} {{\n",
+                            fn_name, params_str, ret
+                        )),
+                        IoList::text("  todo\n"),
+                        IoList::text("}\n"),
+                    ])
+                }),
+                emit_property: Box::new(|name, params| {
+                    let fn_name = to_snake_case(name);
+                    let params_str = if params.is_empty() {
+                        String::new()
+                    } else {
+                        params
+                            .iter()
+                            .map(|(n, t)| {
+                                format!("{}: {}", to_snake_case(n), to_pascal_case(t))
+                            })
+                            .collect::<Vec<_>>()
+                            .join(", ")
+                    };
+                    IoList::join(vec![
+                        IoList::text(&format!(
+                            "pub fn {}({}) -> Result(Nil, PropertyError) {{\n",
+                            fn_name, params_str
+                        )),
+                        IoList::text("  todo\n"),
+                        IoList::text("}\n"),
+                    ])
+                }),
+                emit_module: Box::new(|name, children| {
+                    // Gleam doesn't have inline modules, emit as a section comment
+                    let mod_name = to_snake_case(&strip_grammar_prefix(name));
+                    let mut parts = vec![IoList::text(&format!(
+                        "// --- module: {} ---\n\n",
+                        mod_name
+                    ))];
+                    for child in children {
+                        parts.push(child);
+                    }
+                    IoList::join(parts)
+                }),
+                emit_header: Box::new(|target| {
+                    IoList::join(vec![
+                        IoList::text(&format!(
+                            "// Generated by mirror craft --target {}\n",
+                            target
+                        )),
+                        IoList::text(
+                            "// Do not edit \u{2014} this file is derived from .mirror source\n\n",
+                        ),
+                    ])
+                }),
+                emit_comment: Box::new(|kind, name| {
+                    IoList::text(&format!("// {}: {}\n", kind, name))
+                }),
+                emit_generic_struct: Box::new(|name, params| {
+                    let pascal = to_pascal_case(name);
+                    let generics: Vec<String> =
+                        params.iter().map(|p| to_snake_case(p)).collect();
+                    IoList::text(&format!(
+                        "pub type {}({}) {{\n  {}({})\n}}\n",
+                        pascal,
+                        generics.join(", "),
+                        pascal,
+                        generics.join(", ")
+                    ))
+                }),
+                todo_expr: "todo",
+            },
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
@@ -395,5 +572,50 @@ mod tests {
         let g = CodeGrammar::rust();
         let r = (g.templates.emit_unit_type)("point");
         assert_eq!(r.to_string_lossy(), "pub struct Point;\n");
+    }
+
+    // CodeGrammar::gleam() tests
+    #[test]
+    fn gleam_map_type_nat() {
+        let g = CodeGrammar::gleam();
+        assert_eq!((g.templates.map_type)("nat").to_string_lossy(), "Int");
+    }
+
+    #[test]
+    fn gleam_all_ints_are_int() {
+        let g = CodeGrammar::gleam();
+        for t in ["u8", "u16", "u32", "u64", "i8", "i16", "i32", "i64", "usize"] {
+            assert_eq!((g.templates.map_type)(t).to_string_lossy(), "Int");
+        }
+    }
+
+    #[test]
+    fn gleam_emit_enum() {
+        let g = CodeGrammar::gleam();
+        let r = (g.templates.emit_enum)("color", &[], &["red".into(), "blue".into()]);
+        let s = r.to_string_lossy();
+        assert!(s.contains("pub type Color"), "got:\n{}", s);
+        assert!(s.contains("Red"), "got:\n{}", s);
+        assert!(!s.contains("enum"), "got:\n{}", s);
+    }
+
+    #[test]
+    fn gleam_emit_struct() {
+        let g = CodeGrammar::gleam();
+        let r = (g.templates.emit_struct)("user", &[("name".into(), "text".into())], &[]);
+        let s = r.to_string_lossy();
+        assert!(s.contains("pub type User"), "got:\n{}", s);
+        assert!(s.contains("User("), "got:\n{}", s);
+        assert!(s.contains("name: String"), "got:\n{}", s);
+    }
+
+    #[test]
+    fn gleam_emit_function() {
+        let g = CodeGrammar::gleam();
+        let r = (g.templates.emit_function)("boot", &[("id".into(), "text".into())], None);
+        let s = r.to_string_lossy();
+        assert!(s.contains("pub fn boot"), "got:\n{}", s);
+        assert!(s.contains("todo"), "got:\n{}", s);
+        assert!(!s.contains("todo!()"), "got:\n{}", s);
     }
 }
