@@ -11,6 +11,7 @@
 use std::path::Path;
 
 use prism::lambda::LambdaFn;
+use prism::Imperfect;
 
 use fate::{Fate, Model};
 
@@ -72,23 +73,82 @@ fn model_name(m: Model) -> &'static str {
     }
 }
 
-/// Apply the optic transformation: parse → emit round-trip.
+/// Apply the optic transformation: parse → emit round-trip, preserving
+/// unrecognized content.
 ///
-/// The round-trip drops what the parser couldn't see, which reduces holonomy.
-/// Different Fate models will eventually produce different views; for now
-/// all models do the same round-trip. The model parameter is accepted for
-/// future differentiation.
+/// Information may not be destroyed, only refined. The round-trip emits what
+/// the parser recognized (possibly restructured), then preserves every source
+/// line the parser could not see. Holonomy decreases by making recognized
+/// content more structured, NOT by deleting unrecognized content.
 fn apply_optic_transform(source: &str, _model: Model) -> Option<String> {
     let result = Parse.reduce(SourceText(source.to_string()));
-    let fragment = result.ok()?;
-    let emitted = emit_fragment(&fragment.0);
 
-    // Only return if non-empty and actually different from input
-    if emitted.is_empty() || emitted == source {
-        None
-    } else {
-        Some(emitted)
+    match result {
+        Imperfect::Success(_) => {
+            // Already crystal — nothing to transform
+            None
+        }
+        Imperfect::Partial(parsed, _loss) => {
+            // Emit what was recognized
+            let recognized = emit_fragment(&parsed.0);
+
+            // Find unrecognized lines: lines in source that did not survive
+            // the parse → emit round-trip
+            let unrecognized = find_unrecognized_lines(source, &recognized);
+
+            // Merge: recognized structure + unrecognized content preserved
+            let merged = if unrecognized.is_empty() {
+                recognized
+            } else {
+                merge_with_unrecognized(&recognized, &unrecognized)
+            };
+
+            if merged.is_empty() || merged == source {
+                None
+            } else {
+                Some(merged)
+            }
+        }
+        Imperfect::Failure(_, _) => {
+            // Complete parse failure — can't transform
+            None
+        }
     }
+}
+
+/// Find lines from the original source that did not make it into the
+/// emitted (recognized) output. These are the "dark dimensions" — content
+/// the parser cannot yet see.
+fn find_unrecognized_lines(source: &str, recognized: &str) -> Vec<String> {
+    let recognized_lines: std::collections::HashSet<&str> = recognized
+        .lines()
+        .map(|l| l.trim())
+        .filter(|l| !l.is_empty())
+        .collect();
+
+    source
+        .lines()
+        .filter(|line| {
+            let trimmed = line.trim();
+            !trimmed.is_empty() && !recognized_lines.contains(trimmed)
+        })
+        .map(|l| l.to_string())
+        .collect()
+}
+
+/// Merge recognized (possibly restructured) content with unrecognized lines.
+/// Unrecognized lines are appended after the recognized content, preserving
+/// them verbatim.
+fn merge_with_unrecognized(recognized: &str, unrecognized: &[String]) -> String {
+    let mut merged = recognized.trim_end().to_string();
+    if !merged.is_empty() {
+        merged.push('\n');
+    }
+    for line in unrecognized {
+        merged.push_str(line);
+        merged.push('\n');
+    }
+    merged
 }
 
 /// Number of candidates per tournament round.
@@ -239,18 +299,45 @@ mod tests {
     }
 
     #[test]
-    fn apply_optic_transform_drops_unrecognized() {
+    fn apply_optic_transform_preserves_unrecognized() {
         let source = "type x = a | b\nwidget foo\n";
         let result = apply_optic_transform(source, Model::Abyss);
-        // If the parser produces a fragment, the round-trip should drop "widget foo"
+        // If transformation happens, unrecognized content must survive
         if let Some(transformed) = result {
             assert!(
-                !transformed.contains("widget"),
-                "round-trip should drop unrecognized content, got: {}",
+                transformed.contains("widget foo"),
+                "unrecognized content must be preserved, got: {}",
                 transformed
             );
         }
-        // If parse fails entirely (returns None), that's also acceptable
+    }
+
+    #[test]
+    fn transform_preserves_io_declarations() {
+        let source = "type x = a | b\nio tick(features) => imperfect\n";
+        let result = apply_optic_transform(source, Model::Abyss);
+        if let Some(transformed) = result {
+            assert!(
+                transformed.contains("io") || transformed.contains("tick"),
+                "unrecognized content must be preserved, got: {}",
+                transformed
+            );
+        }
+    }
+
+    #[test]
+    fn transform_never_reduces_line_count() {
+        let source = "type x = a | b\nwidget foo\ngarbage bar\ntype y\n";
+        let result = apply_optic_transform(source, Model::Abyss);
+        if let Some(transformed) = result {
+            let original_lines = source.lines().filter(|l| !l.trim().is_empty()).count();
+            let new_lines = transformed.lines().filter(|l| !l.trim().is_empty()).count();
+            assert!(
+                new_lines >= original_lines,
+                "transformation must not delete lines: {} -> {}",
+                original_lines, new_lines
+            );
+        }
     }
 
     #[test]
@@ -285,22 +372,47 @@ mod tests {
     }
 
     #[test]
-    fn ai_loop_reduces_holonomy_on_mixed_content() {
+    fn ai_loop_preserves_unrecognized_on_mixed_content() {
         let dir = tempfile::tempdir().unwrap();
         let file = dir.path().join("mixed.mirror");
         // Source with recognized and unrecognized content
         std::fs::write(&file, "type x = a | b\nwidget foo\ntype y\ngarbage bar\n").unwrap();
         let result = ai_loop(&file, 10).unwrap();
-        // The round-trip should drop widget and garbage, reducing holonomy
-        if result.health == "improved" || result.health == "crystal" {
-            assert!(result.holonomy_end < result.holonomy_start);
-            // Verify file was actually modified
-            let new_content = std::fs::read_to_string(dir.path().join("mixed.mirror")).unwrap();
-            assert!(
-                !new_content.contains("widget"),
-                "unrecognized content should be dropped"
-            );
-        }
+        // If the loop modified the file, unrecognized content must survive
+        let new_content = std::fs::read_to_string(dir.path().join("mixed.mirror")).unwrap();
+        assert!(
+            new_content.contains("widget foo"),
+            "unrecognized content must be preserved, got: {}",
+            new_content
+        );
+        assert!(
+            new_content.contains("garbage bar"),
+            "unrecognized content must be preserved, got: {}",
+            new_content
+        );
+        // health can be improved, stuck, or crystal — all are valid
+        assert!(
+            result.health == "improved" || result.health == "stuck" || result.health == "crystal"
+        );
+    }
+
+    #[test]
+    fn ai_loop_preserves_dark_dimensions() {
+        let dir = tempfile::tempdir().unwrap();
+        let file = dir.path().join("dark.mirror");
+        std::fs::write(
+            &file,
+            "type x = a | b\nio tick(features) => imperfect\ntype y\n",
+        )
+        .unwrap();
+        let _result = ai_loop(&file, 5).unwrap();
+        let content = std::fs::read_to_string(&file).unwrap();
+        // io line must survive even after transformation
+        assert!(
+            content.contains("io") || content.contains("tick"),
+            "dark dimensions must be preserved: {}",
+            content
+        );
     }
 
     #[test]
