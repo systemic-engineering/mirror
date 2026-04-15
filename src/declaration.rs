@@ -44,6 +44,8 @@ pub enum DeclKind {
     Rescue,
     // Grammar
     Grammar,
+    // Templates
+    Template,
     // Assertion / configuration
     Default,
     Binding,
@@ -74,6 +76,7 @@ impl DeclKind {
             "recover" => Some(DeclKind::Recover),
             "rescue" => Some(DeclKind::Rescue),
             "grammar" => Some(DeclKind::Grammar),
+            "template" => Some(DeclKind::Template),
             "default" => Some(DeclKind::Default),
             "binding" => Some(DeclKind::Binding),
             _ => None,
@@ -104,6 +107,7 @@ impl DeclKind {
             DeclKind::Recover => "recover",
             DeclKind::Rescue => "rescue",
             DeclKind::Grammar => "grammar",
+            DeclKind::Template => "template",
             DeclKind::Default => "default",
             DeclKind::Binding => "binding",
         }
@@ -717,6 +721,7 @@ mod tests {
             DeclKind::Recover,
             DeclKind::Rescue,
             DeclKind::Grammar,
+            DeclKind::Template,
             DeclKind::Default,
             DeclKind::Binding,
         ];
@@ -729,7 +734,7 @@ mod tests {
             );
         }
         // Ensure we tested every variant — count must match.
-        assert_eq!(all_kinds.len(), 23, "must test all 23 DeclKind variants");
+        assert_eq!(all_kinds.len(), 24, "must test all 24 DeclKind variants");
     }
 
     #[test]

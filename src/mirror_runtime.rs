@@ -1037,6 +1037,19 @@ fn build_ast_node(
             target: params.first().map(|p| Identifier::new(p)),
             children: Vec::new(),
         }),
+        DeclKind::Template => MirrorAST::Action(ActionNode {
+            name: Identifier::new(name),
+            params: params.iter().map(|p| {
+                if let Some((n, t)) = p.split_once(':') {
+                    Field { name: Identifier::new(n.trim()), type_ref: Identifier::new(t.trim()) }
+                } else {
+                    Field { name: Identifier::new(p), type_ref: Identifier::new("_") }
+                }
+            }).collect(),
+            return_type: None,
+            grammar_ref: None,
+            body: None,
+        }),
         DeclKind::Default | DeclKind::Binding => MirrorAST::Export(ExportNode {
             name: Identifier::new(name),
         }),
@@ -1373,6 +1386,7 @@ fn kintsugi_sort_key(kind: &DeclKind) -> u8 {
         DeclKind::Prism => 1,
         DeclKind::Requires | DeclKind::Invariant | DeclKind::Ensures => 5,
         DeclKind::Recover | DeclKind::Rescue => 6,
+        DeclKind::Template => 6, // group with actions
         DeclKind::Default | DeclKind::Binding => 7,
     }
 }
@@ -3787,11 +3801,8 @@ grammar @ai {
     }
 
     /// Templates in std/properties.mirror must NOT have OpticOp::Fold.
-    /// They are iso, not fold. The parser doesn't know `template` yet,
-    /// so these lines are unrecognized — this test is RED until the parser
-    /// learns `template` as a DeclKind.
+    /// They are iso, not fold. The parser now knows `template` as a DeclKind.
     #[test]
-    #[should_panic(expected = "template DeclKind not yet recognized")]
     fn template_declared_as_iso() {
         let runtime = MirrorRuntime::new();
         let result = runtime
