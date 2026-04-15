@@ -1,0 +1,10 @@
+in @meta
+in @lambda
+
+abstract grammar @runtime {
+  template infer(crystal) => observation
+  io craft(input) => crystal
+  action enact(crystal) => effect
+}
+
+out @runtime

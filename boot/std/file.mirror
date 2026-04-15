@@ -1,0 +1,31 @@
+in @meta
+in @io
+
+type path = text
+
+grammar @file(path) {
+  io read(path) => imperfect in @code/rust {
+    std::fs::read_to_string(path.as_str())
+      .map(Imperfect::Success)
+      .unwrap_or_else(|e| Imperfect::Failure(e.to_string(), IoLoss::zero()))
+  }
+
+  io write(path, content) => imperfect in @code/rust {
+    std::fs::write(path.as_str(), content.as_bytes())
+      .map(|_| Imperfect::Success(()))
+      .unwrap_or_else(|e| Imperfect::Failure(e.to_string(), IoLoss::zero()))
+  }
+
+  io exists(path) => imperfect in @code/rust {
+    Imperfect::Success(std::path::Path::new(path.as_str()).exists())
+  }
+
+  io mkdir(path) => imperfect in @code/rust {
+    std::fs::create_dir_all(path.as_str())
+      .map(|_| Imperfect::Success(()))
+      .unwrap_or_else(|e| Imperfect::Failure(e.to_string(), IoLoss::zero()))
+  }
+}
+
+out path
+out @file

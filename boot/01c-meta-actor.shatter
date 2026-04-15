@@ -1,0 +1,19 @@
+in @prism
+in @meta
+
+type actor(id)
+type state(type)
+type process(actor, state)
+type message = call(actor, ref) | cast(actor, ref)
+
+abstract grammar @actor {
+  abstract action start(actor) -> process
+  abstract action send(process, message) -> imperfect
+  abstract action stop(process) -> imperfect
+}
+
+out actor
+out state
+out process
+out message
+out @actor

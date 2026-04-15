@@ -1,0 +1,23 @@
+in @runtime
+in @code/rust
+in @file
+in @shatter
+
+grammar @rust < @runtime {
+  template infer(crystal) => observation in @code/rust {
+    crystal.data().clone()
+  }
+
+  io craft(source) => crystal in @code/rust {
+    Parse.then(Resolve).then(Properties).then(Emit).reduce(source)
+  }
+
+  action enact(shard) => effect in @code/rust {
+    std::process::Command::new(shard.path())
+      .status()
+      .map(|s| if s.success() { Imperfect::Success(()) } else { Imperfect::Failure("exit non-zero".into(), Loss::zero()) })
+      .unwrap_or_else(|e| Imperfect::Failure(e.to_string(), Loss::zero()))
+  }
+}
+
+out @rust
