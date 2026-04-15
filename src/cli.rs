@@ -236,6 +236,8 @@ impl Cli {
             "craft" => self.cmd_craft(args),
             "registry" => self.cmd_registry(args),
             "git" => self.cmd_git(args),
+            "new" => self.cmd_new(args),
+            "run" => self.cmd_run(args),
             _ => self.cmd_query(command, args),
         }
     }
@@ -292,9 +294,11 @@ compiler:
   verify <file>      verify signed .shatter
 
 session:
+  new <path>         create a new mirror project
   init               initialize .git/mirror/
   merge [target]     structural merge with crystal delta
   repl               interactive shard> prompt
+  run                compile and verify current project
 
 tools:
   ai <model> [path]  run a Fate model
@@ -335,9 +339,11 @@ compiler:
   verify <file>      verify signed .shatter
 
 session:
+  new <path>         create a new mirror project
   init               initialize .git/mirror/
   merge [target]     structural merge with crystal delta
   repl               interactive shard> prompt
+  run                compile and verify current project
 
 tools:
   ai <model> [path]  run a Fate model
@@ -373,6 +379,8 @@ flags:
             "verify" => Some("verify <file> -- verify a signed .shatter file\n\nChecks the Ed25519 signature (.shatter.sig) against the content.\nUses the public key from CONVERSATION_KEYS hierarchy.\nExits 0 if valid, nonzero if tampered or unsigned."),
             "git" => Some("git <subcommand> -- read-only prism over git's ref space\n\nSubcommands:\n  refs              list all refs (branches, tags, HEAD)\n  tree <ref>        show the tree at a ref\n  show <ref>:<path> read a blob without checkout\n  diff <a> <b>      structural diff between two refs\n  log               commit history (short)"),
             "craft" => Some("craft [targets] -- build from mirror.spec\n\nReads mirror.spec, compiles source grammars, generates output crates.\nWith no arguments, builds default targets from the spec.\n\nTargets are declared in the craft { } block of mirror.spec."),
+            "new" => Some("new <path> -- create a new mirror project\n\nScaffolds mirror.spec, mirror/ source directory, .gitignore.\nRuns git init and initializes .git/mirror/ store.\nThe directory name becomes the project identity (@name).\nConsumer projects are pure .mirror — no Rust.\n\nGrammar: boot/std/new.mirror"),
+            "run" => Some("run -- compile and verify the current project\n\nReads mirror.spec, compiles .mirror files from the run {} block,\nverifies properties, reports results.\nRunning IS verifying. The proof chain is the program.\n\nGrammar: boot/std/run.mirror"),
             _ => None,
         }
     }
@@ -1628,6 +1636,40 @@ impl Cli {
             target.name,
             fragments.len()
         ))
+    }
+
+    // -----------------------------------------------------------------------
+    // new -- create a new mirror project
+    // -----------------------------------------------------------------------
+
+    /// Codegen dispatch for `@new.new(name, root)`.
+    fn cmd_new(&self, args: &[String]) -> Result<String, CliError> {
+        let path_str = args.first().ok_or_else(|| {
+            CliError::Usage("usage: mirror new <path>".to_string())
+        })?;
+        let path = std::path::Path::new(path_str);
+        let name = path
+            .file_name()
+            .and_then(|n| n.to_str())
+            .ok_or_else(|| CliError::Usage("invalid path".to_string()))?;
+
+        crate::scaffold::scaffold_project(path, name)
+            .map_err(|e| CliError::Usage(e.to_string()))?;
+
+        Ok(format!("@{} created at {}", name, path.display()))
+    }
+
+    // -----------------------------------------------------------------------
+    // run -- compile and verify the current project
+    // -----------------------------------------------------------------------
+
+    /// Codegen dispatch for `@run.run(targets)`.
+    fn cmd_run(&self, _args: &[String]) -> Result<String, CliError> {
+        let cwd = std::env::current_dir()
+            .map_err(|e| CliError::Io(e))?;
+
+        crate::run::run_project(&cwd)
+            .map_err(|e| CliError::Usage(e.to_string()))
     }
 }
 
