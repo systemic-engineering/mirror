@@ -1207,7 +1207,12 @@ With --ai: executes git merge with a generated message."
         // Look for spec.mirror or boot/ directory
         let spec_path = repo_dir.join("spec.mirror");
         if spec_path.exists() {
-            let compiled = self.runtime.compile_file(&spec_path)?;
+            let source = std::fs::read_to_string(&spec_path)?;
+            let parsed = Parse.reduce(SourceText(source));
+            let fragment = parsed.ok().ok_or_else(|| {
+                CliError::Runtime(MirrorRuntimeError("parse failed".into()))
+            })?;
+            let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
             return Ok(encoding::encode(compiled.crystal().as_str()));
         }
 
