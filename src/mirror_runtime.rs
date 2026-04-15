@@ -322,7 +322,7 @@ pub(crate) fn parse_form_raw(source: &str) -> Imperfect<Form, MirrorRuntimeError
         match tokens.get(cursor) {
             Some(Tok::Word(w)) if DeclKind::parse(w).is_some() || w == "abstract" => {
                 match parse_decl(&tokens, &mut cursor) {
-                    Ok(form) => {
+                    Ok((form, child_unrecognized)) => {
                         // M2001: top-level type/grammar/action require a name
                         if form.name.is_empty()
                             && matches!(
@@ -340,6 +340,7 @@ pub(crate) fn parse_form_raw(source: &str) -> Imperfect<Form, MirrorRuntimeError
                             return Imperfect::failure(err("M2002: `in` requires a target"));
                         }
                         decls.push(form);
+                        unrecognized.extend(child_unrecognized);
                     }
                     Err(e) => return Imperfect::failure(e),
                 }
@@ -630,7 +631,10 @@ fn skip_trivia(tokens: &[Tok], cursor: &mut usize) {
     }
 }
 
-fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeError> {
+fn parse_decl(
+    tokens: &[Tok],
+    cursor: &mut usize,
+) -> Result<(Form, Vec<UnrecognizedDecl>), MirrorRuntimeError> {
     skip_trivia(tokens, cursor);
     let kind_word = match tokens.get(*cursor) {
         Some(Tok::Word(w)) => w.clone(),
@@ -748,7 +752,7 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
         form.is_abstract = modifier;
         form.optic_ops = optic_ops;
         form.variants = variants;
-        return Ok(form);
+        return Ok((form, Vec::new()));
     }
 
     let name = match tokens.get(*cursor) {
@@ -952,10 +956,11 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
         form.is_abstract = modifier;
         form.return_type = return_type;
         form.optic_ops = optic_ops;
-        return Ok(form);
+        return Ok((form, Vec::new()));
     }
 
     let mut children = Vec::new();
+    let mut block_unrecognized: Vec<UnrecognizedDecl> = Vec::new();
     skip_inline_trivia(tokens, cursor);
     if matches!(tokens.get(*cursor), Some(Tok::LBrace)) {
         *cursor += 1;
@@ -973,8 +978,9 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
                     // next recognized declaration or closing brace.
                     // `abstract` is a modifier keyword that precedes a DeclKind.
                     if DeclKind::parse(w).is_some() || w == "abstract" {
-                        let child = parse_decl(tokens, cursor)?;
+                        let (child, child_unrecognized) = parse_decl(tokens, cursor)?;
                         children.push(child);
+                        block_unrecognized.extend(child_unrecognized);
                     } else if w == "<" || w == ">" {
                         // Relation marker: `<type` (subset) or `>type` (superset)
                         let op = if w == "<" {
@@ -1016,20 +1022,15 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
                             *cursor += 1;
                         }
                     } else {
-                        // Unrecognized keyword - skip tokens until we find a newline
-                        // or something that looks like the start of a new declaration
-                        while *cursor < tokens.len() {
-                            match tokens.get(*cursor) {
-                                Some(Tok::RBrace) | Some(Tok::Newline) => break,
-                                _ => {
-                                    *cursor += 1;
-                                }
-                            }
-                        }
-                        // Consume the newline if present
-                        if matches!(tokens.get(*cursor), Some(Tok::Newline)) {
-                            *cursor += 1;
-                        }
+                        // Unrecognized keyword inside block -- collect as loss
+                        let keyword = w.clone();
+                        let line = count_line_at(tokens, *cursor);
+                        let content = collect_until_next_decl(tokens, cursor);
+                        block_unrecognized.push(UnrecognizedDecl {
+                            keyword,
+                            line,
+                            content,
+                        });
                     }
                 }
                 _ => {
@@ -1051,7 +1052,7 @@ fn parse_decl(tokens: &[Tok], cursor: &mut usize) -> Result<Form, MirrorRuntimeE
     form.is_abstract = modifier;
     form.optic_ops = optic_ops;
     form.parent_ref = parent_ref;
-    Ok(form)
+    Ok((form, block_unrecognized))
 }
 
 /// Parse an optional `in @grammar/path` after action params.
@@ -1170,7 +1171,7 @@ fn parse_action_body(
                 None => return Err(err("unterminated action block")),
                 Some(Tok::Word(w)) => {
                     if DeclKind::parse(w).is_some() {
-                        let child = parse_decl(tokens, cursor)?;
+                        let (child, _child_unrecognized) = parse_decl(tokens, cursor)?;
                         children.push(child);
                     } else {
                         // Skip unrecognized tokens to next line or brace
@@ -2974,8 +2975,10 @@ mod tests {
         //
         // The baseline holonomy must not INCREASE (regression).
         // It CAN decrease as the parser learns new constructs.
+        // Baseline raised from 25 to 130 after fixing block-level loss detection
+        // (seam/block-unrecognized-loss) -- keywords inside blocks are now measured.
         assert!(
-            holonomy <= 25.0,
+            holonomy <= 130.0,
             "parse holonomy must not regress above baseline: got {}",
             holonomy
         );
