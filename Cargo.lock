@@ -690,6 +690,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 
 [[package]]
+name = "fate"
+version = "0.1.0"
+dependencies = [
+ "prism-core",
+]
+
+[[package]]
 name = "ff"
 version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1458,6 +1465,7 @@ dependencies = [
  "coincidence",
  "criterion",
  "eetf",
+ "fate",
  "fragmentation",
  "fragmentation-git",
  "git2",

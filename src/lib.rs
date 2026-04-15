@@ -40,8 +40,10 @@ pub use store::{ForeignKey, MirrorOid, Shard};
 pub use fragmentation::repo::Repo;
 pub use fragmentation::store::Store;
 
+pub mod ai;
 pub mod bundle;
 pub mod cli;
+pub mod fate_bridge;
 pub mod run;
 pub mod scaffold;
 pub mod declaration;
