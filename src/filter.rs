@@ -40,7 +40,7 @@ impl std::error::Error for ResolveError {}
 // Sha — content hash as pipeline operator
 // ---------------------------------------------------------------------------
 
-/// SHA-512 of the Value's JSON string representation.
+/// CoincidenceHash<3> of the Value's JSON string representation.
 /// Same hash as `ContentAddressed for Value`, surfaced as a filter.
 pub struct Sha;
 
@@ -587,7 +587,7 @@ mod tests {
     fn sha_hashes_string_value() {
         let input = Value::String("hello".into());
         let result = Sha.trace(input).unwrap();
-        // SHA-512 of the JSON string representation: "\"hello\""
+        // CoincidenceHash<3> of the JSON string representation: "\"hello\""
         let expected = crate::Oid::hash(b"\"hello\"");
         assert_eq!(result, Value::String(expected.as_ref().to_string()));
     }
@@ -599,7 +599,7 @@ mod tests {
         let input = Value::Object(map);
         let result = Sha.trace(input).unwrap();
         assert!(result.is_string());
-        assert_eq!(result.as_str().unwrap().len(), 128); // hex SHA-512
+        assert_eq!(result.as_str().unwrap().len(), 64); // hex CoincidenceHash<3>
     }
 
     #[test]

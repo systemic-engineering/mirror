@@ -792,6 +792,7 @@ dependencies = [
  "dashmap",
  "git2",
  "hex",
+ "prism-core",
  "serde",
  "serde_json",
  "sha1",
@@ -1463,7 +1464,6 @@ dependencies = [
  "hex",
  "prism-core",
  "serde_json",
- "sha2",
  "ssh-key",
  "tempfile",
 ]

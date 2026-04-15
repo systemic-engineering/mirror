@@ -58,6 +58,11 @@ use std::path::{Path, PathBuf};
 use crate::declaration::{
     fragment as build_fragment, DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, OpticOp,
 };
+use crate::mirror_ast::{
+    ActionNode, ExportNode, Field, FocusNode, GrammarNode, GrammarRef, Identifier, ImportNode,
+    MirrorAST, ModuleNode, ProjectNode, PropertyNode, RefractNode, SplitNode, TypeBody, TypeNode,
+    ZoomNode,
+};
 use fragmentation::frgmnt_store::FrgmntStore;
 use fragmentation::sha::HashAlg;
 use prism::{Beam, Imperfect, Loss, Optic, Oid, Prism};
@@ -583,6 +588,20 @@ fn parse_decl(
             }
         }
         let (body_text, children) = parse_action_body(tokens, cursor)?;
+        // Build MirrorAST node — typed representation
+        let _ast = MirrorAST::Action(ActionNode {
+            name: Identifier::new(kind.as_str()),
+            params: params.iter().map(|p| {
+                if let Some((n, t)) = p.split_once(':') {
+                    Field { name: Identifier::new(n.trim()), type_ref: Identifier::new(t.trim()) }
+                } else {
+                    Field { name: Identifier::new(p), type_ref: Identifier::new("_") }
+                }
+            }).collect(),
+            return_type: None,
+            grammar_ref: None,
+            body: None,
+        });
         let mut data = MirrorData::new(kind.clone(), kind.as_str(), params, variants);
         data.body_text = body_text;
         data.is_abstract = modifier;
@@ -761,11 +780,27 @@ fn parse_decl(
         }
     }
 
-    // Action declarations
+    // Action declarations — build MirrorAST first
     if kind == DeclKind::Action {
         let grammar_ref = parse_action_grammar_ref(tokens, cursor);
         let return_type = parse_return_type(tokens, cursor);
         let (body_text, children) = parse_action_body(tokens, cursor)?;
+        // Build MirrorAST node — typed representation
+        let _ast = MirrorAST::Action(ActionNode {
+            name: Identifier::new(&name),
+            params: params.iter().map(|p| {
+                if let Some((n, t)) = p.split_once(':') {
+                    Field { name: Identifier::new(n.trim()), type_ref: Identifier::new(t.trim()) }
+                } else {
+                    Field { name: Identifier::new(p), type_ref: Identifier::new("_") }
+                }
+            }).collect(),
+            return_type: return_type.as_deref().map(Identifier::new),
+            grammar_ref: grammar_ref.as_deref().map(|gr| {
+                GrammarRef::new(if gr.starts_with('@') { gr.to_string() } else { format!("@{}", gr) })
+            }),
+            body: None,
+        });
         let mut data = MirrorData::new(DeclKind::Action, name, params, Vec::new());
         data.grammar_ref = grammar_ref;
         data.body_text = body_text;
@@ -811,8 +846,12 @@ fn parse_decl(
                             }
                             _ => String::new(),
                         };
-                        let mut child_data =
-                            MirrorData::new(DeclKind::In, target, Vec::new(), Vec::new());
+                        // Build MirrorAST → MirrorData → fragment
+                        let target_ref = if target.starts_with('@') { target.clone() } else { format!("@{}", target) };
+                        let child_ast = MirrorAST::Import(ImportNode {
+                            target: GrammarRef::new(target_ref),
+                        });
+                        let mut child_data = child_ast.to_mirror_data();
                         child_data.optic_ops.push(op);
                         let child_frag =
                             crate::declaration::fragment_encoded(child_data, Vec::new());
@@ -851,12 +890,157 @@ fn parse_decl(
         }
     }
 
-    let mut data = MirrorData::new(kind, name, params, variants);
+    // Build MirrorAST node — the parser produces typed AST directly.
+    // Then convert to MirrorData for content-addressed fragment storage,
+    // preserving the original DeclKind (MirrorAST has fewer variants than DeclKind).
+    let _ast = build_ast_node(&kind, &name, &params, &variants, &parent_ref);
+    let mut data = MirrorData::new(kind, &name, params, variants);
     data.is_abstract = modifier;
     data.optic_ops = optic_ops;
     data.parent_ref = parent_ref;
     let frag = crate::declaration::fragment_encoded(data, children);
     Ok((frag, block_warnings))
+}
+
+/// Build a MirrorAST node from parsed declaration components.
+/// This is the canonical entry point: the parser builds typed AST nodes,
+/// not flat MirrorData. The AST node is then converted to MirrorData
+/// for content-addressed fragment storage.
+fn build_ast_node(
+    kind: &DeclKind,
+    name: &str,
+    params: &[String],
+    variants: &[String],
+    parent_ref: &Option<String>,
+) -> MirrorAST {
+    match kind {
+        DeclKind::Grammar => {
+            let grammar_name = if name.starts_with('@') {
+                GrammarRef::new(name)
+            } else {
+                GrammarRef::new(format!("@{}", name))
+            };
+            let parent = parent_ref.as_ref().map(|p| {
+                if p.starts_with('@') { GrammarRef::new(p) } else { GrammarRef::new(format!("@{}", p)) }
+            });
+            MirrorAST::Grammar(GrammarNode {
+                name: grammar_name,
+                parent,
+                children: Vec::new(),
+            })
+        }
+        DeclKind::Type => {
+            let type_params: Vec<Identifier> = params.iter().map(|p| Identifier::new(p)).collect();
+            let body = if !variants.is_empty() {
+                TypeBody::Enum(variants.iter().map(|v| Identifier::new(v)).collect())
+            } else {
+                TypeBody::Unit
+            };
+            MirrorAST::Type(TypeNode {
+                name: Identifier::new(name),
+                params: type_params,
+                body,
+                children: Vec::new(),
+            })
+        }
+        DeclKind::In => {
+            let target = if name.starts_with('@') {
+                GrammarRef::new(name)
+            } else {
+                GrammarRef::new(format!("@{}", name))
+            };
+            MirrorAST::Import(ImportNode { target })
+        }
+        DeclKind::Out => MirrorAST::Export(ExportNode {
+            name: Identifier::new(name),
+        }),
+        DeclKind::Property => {
+            let ast_params: Vec<Field> = params.iter().map(|p| {
+                if let Some((n, t)) = p.split_once(':') {
+                    Field { name: Identifier::new(n.trim()), type_ref: Identifier::new(t.trim()) }
+                } else {
+                    Field { name: Identifier::new(p), type_ref: Identifier::new("_") }
+                }
+            }).collect();
+            MirrorAST::Property(PropertyNode {
+                name: Identifier::new(name),
+                params: ast_params,
+                fold_target: None,
+                body: Vec::new(),
+            })
+        }
+        DeclKind::Focus => MirrorAST::Focus(FocusNode {
+            name: Identifier::new(name),
+            target: params.first().map(|p| Identifier::new(p)),
+            children: Vec::new(),
+        }),
+        DeclKind::Project => MirrorAST::Project(ProjectNode {
+            name: Identifier::new(name),
+            target: params.first().map(|p| Identifier::new(p)),
+            children: Vec::new(),
+        }),
+        DeclKind::Split => MirrorAST::Split(SplitNode {
+            name: Identifier::new(name),
+            variants: variants.iter().map(|v| Identifier::new(v)).collect(),
+            children: Vec::new(),
+        }),
+        DeclKind::Zoom => MirrorAST::Zoom(ZoomNode {
+            name: Identifier::new(name),
+            target: params.first().map(|p| Identifier::new(p)),
+            children: Vec::new(),
+        }),
+        DeclKind::Refract => MirrorAST::Refract(RefractNode {
+            name: Identifier::new(name),
+            target: params.first().map(|p| Identifier::new(p)),
+            children: Vec::new(),
+        }),
+        DeclKind::Form | DeclKind::Prism => MirrorAST::Module(ModuleNode {
+            name: Identifier::new(name),
+            children: Vec::new(),
+        }),
+        DeclKind::Fold => MirrorAST::Property(PropertyNode {
+            name: Identifier::new(name),
+            params: Vec::new(),
+            fold_target: params.first().map(|p| Identifier::new(p)),
+            body: Vec::new(),
+        }),
+        DeclKind::Requires | DeclKind::Invariant | DeclKind::Ensures => {
+            MirrorAST::Property(PropertyNode {
+                name: Identifier::new(name),
+                params: Vec::new(),
+                fold_target: None,
+                body: Vec::new(),
+            })
+        }
+        DeclKind::Recover | DeclKind::Rescue => MirrorAST::Action(ActionNode {
+            name: Identifier::new(name),
+            params: Vec::new(),
+            return_type: None,
+            grammar_ref: None,
+            body: None,
+        }),
+        DeclKind::Action => MirrorAST::Action(ActionNode {
+            name: Identifier::new(name),
+            params: params.iter().map(|p| {
+                if let Some((n, t)) = p.split_once(':') {
+                    Field { name: Identifier::new(n.trim()), type_ref: Identifier::new(t.trim()) }
+                } else {
+                    Field { name: Identifier::new(p), type_ref: Identifier::new("_") }
+                }
+            }).collect(),
+            return_type: None,
+            grammar_ref: None,
+            body: None,
+        }),
+        DeclKind::Traversal | DeclKind::Lens => MirrorAST::Focus(FocusNode {
+            name: Identifier::new(name),
+            target: params.first().map(|p| Identifier::new(p)),
+            children: Vec::new(),
+        }),
+        DeclKind::Default | DeclKind::Binding => MirrorAST::Export(ExportNode {
+            name: Identifier::new(name),
+        }),
+    }
 }
 
 /// Parse an optional `in @grammar/path` after action params.

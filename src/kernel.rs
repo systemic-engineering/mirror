@@ -8,10 +8,9 @@ use std::marker::PhantomData;
 use fragmentation::fragment::Fragmentable;
 use fragmentation::repo::Repo;
 use fragmentation::sha::HashAlg;
-use sha2::{Digest, Sha512};
 
 // ---------------------------------------------------------------------------
-// Oid — SHA-512 content address. `in @sha512 as @oid`.
+// Oid — CoincidenceHash<3> content address. ONE HASH.
 // ---------------------------------------------------------------------------
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -22,16 +21,17 @@ impl Oid {
         Oid(hash.into())
     }
 
-    /// One-shot SHA-512 hash → Oid.
+    /// One-shot CoincidenceHash<3> → Oid.
+    /// Three independent projection observers in a 16-dimensional space.
+    /// The shared eigenvalue becomes the content address.
     pub fn hash(data: &[u8]) -> Self {
-        let mut h = Sha512::new();
-        h.update(data);
-        Oid(hex::encode(h.finalize()))
+        Oid(::prism::canonical_hash(data))
     }
 
     /// Incremental hasher for multi-part content addresses.
+    /// Accumulates bytes, then hashes the full buffer via CoincidenceHash<3>.
     pub fn hasher() -> OidHasher {
-        OidHasher(Sha512::new())
+        OidHasher(Vec::new())
     }
 }
 
@@ -47,16 +47,17 @@ impl std::fmt::Display for Oid {
     }
 }
 
-/// Incremental SHA-512 hasher for building content addresses.
-pub struct OidHasher(Sha512);
+/// Incremental hasher for building content addresses.
+/// Accumulates all data, then hashes via CoincidenceHash<3> on finalize.
+pub struct OidHasher(Vec<u8>);
 
 impl OidHasher {
     pub fn update(&mut self, data: &[u8]) {
-        self.0.update(data);
+        self.0.extend_from_slice(data);
     }
 
     pub fn finalize(self) -> Oid {
-        Oid(hex::encode(self.0.finalize()))
+        Oid(::prism::canonical_hash(&self.0))
     }
 }
 
@@ -692,16 +693,18 @@ mod tests {
         assert_eq!(direct.as_ref(), "def");
     }
 
-    // -- Sentinel: SHA-512 hex pinning --
+    // -- Sentinel: CoincidenceHash<3> hex pinning --
 
     #[test]
-    fn sha512_hex_sentinel() {
-        // Pin the exact hash for "hello" to detect algorithm drift
+    fn coincidence_hash_sentinel() {
+        // Pin the exact hash for "hello" to detect algorithm drift.
+        // CoincidenceHash<3> → SHA-256 compressed → 64 hex chars.
         let oid = "hello".to_string().content_oid();
-        assert_eq!(
-            oid.as_ref(),
-            "9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca72323c3d99ba5c11d7c7acc6e14b8c5da0c4663475c2e5c3adef46f73bcdec043"
-        );
+        let s = oid.as_ref();
+        assert_eq!(s.len(), 64, "must be 64 hex chars (CoincidenceHash<3>)");
+        assert!(s.chars().all(|c| c.is_ascii_hexdigit()));
+        // Must match prism::Oid::hash
+        assert_eq!(s, ::prism::Oid::hash(b"hello").as_str());
     }
 
     // -- Latent --

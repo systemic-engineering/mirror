@@ -11,7 +11,6 @@
 
 use crate::declaration::{DeclKind, MirrorData};
 use crate::kernel::Oid;
-use sha2::{Digest, Sha512};
 
 // ---------------------------------------------------------------------------
 // Identifier — a user-written name. Not a String.
@@ -257,17 +256,17 @@ pub struct ModuleNode {
 // Content addressing for MirrorAST
 // ---------------------------------------------------------------------------
 
-/// Hash helper: SHA-512 of tagged content → kernel Oid.
+/// Hash helper: CoincidenceHash<3> of tagged content → kernel Oid.
 fn hash_tagged(tag: &str, content: &[u8]) -> Oid {
-    let mut h = Sha512::new();
-    h.update(tag.as_bytes());
-    h.update(b":");
-    h.update(content);
-    Oid::new(hex::encode(h.finalize()))
+    let mut buf = Vec::with_capacity(tag.len() + 1 + content.len());
+    buf.extend_from_slice(tag.as_bytes());
+    buf.push(b':');
+    buf.extend_from_slice(content);
+    Oid::hash(&buf)
 }
 
 impl MirrorAST {
-    /// Content-address this AST node using SHA-512.
+    /// Content-address this AST node using CoincidenceHash<3>.
     /// Returns the kernel Oid (mirror's native content address).
     pub fn content_oid(&self) -> Oid {
         match self {
@@ -503,212 +502,145 @@ impl prism::MerkleTree for MirrorAST {
 }
 
 // ---------------------------------------------------------------------------
-// Bridge: MirrorData → MirrorAST (temporary)
+// MirrorAST → MirrorData — the parser builds MirrorAST, this converts for
+// fragment storage. The canonical direction: AST first, data second.
 // ---------------------------------------------------------------------------
 
-/// Convert a MirrorData (from the existing parser) into a MirrorAST node.
-///
-/// This bridge is TEMPORARY. When the parser produces MirrorAST directly,
-/// this conversion is deleted.
-///
-/// The conversion is lossy in structure: MirrorData carries flat string vectors
-/// for params/variants, while MirrorAST carries typed fields. The bridge does
-/// its best to parse the string data into typed form.
-impl From<&MirrorData> for MirrorAST {
-    fn from(data: &MirrorData) -> Self {
-        match data.kind {
-            DeclKind::Grammar => {
-                let name = GrammarRef::new(if data.name.starts_with('@') {
-                    data.name.clone()
-                } else {
-                    format!("@{}", data.name)
-                });
-                let parent = data.parent_ref.as_ref().map(|p| {
-                    GrammarRef::new(if p.starts_with('@') {
-                        p.clone()
-                    } else {
-                        format!("@{}", p)
-                    })
-                });
-                MirrorAST::Grammar(GrammarNode {
-                    name,
-                    parent,
-                    children: Vec::new(), // children must be converted separately
-                })
+impl MirrorAST {
+    /// Convert a MirrorAST node into MirrorData for fragment construction.
+    ///
+    /// This is the canonical direction: the parser builds MirrorAST nodes
+    /// directly, then converts to MirrorData for content-addressed storage.
+    pub fn to_mirror_data(&self) -> MirrorData {
+        match self {
+            MirrorAST::Grammar(g) => {
+                let mut data = MirrorData::new(
+                    DeclKind::Grammar,
+                    g.name.as_str(),
+                    Vec::new(),
+                    Vec::new(),
+                );
+                data.parent_ref = g.parent.as_ref().map(|p| p.as_str().to_string());
+                data
             }
-            DeclKind::Type => {
-                let name = Identifier::new(&data.name);
-                let params: Vec<Identifier> =
-                    data.params.iter().map(|p| Identifier::new(p)).collect();
-                let body = if !data.variants.is_empty() {
-                    TypeBody::Enum(data.variants.iter().map(|v| Identifier::new(v)).collect())
-                } else {
-                    TypeBody::Unit
+            MirrorAST::Type(t) => {
+                let params: Vec<String> = t.params.iter().map(|p| p.as_str().to_string()).collect();
+                let variants: Vec<String> = match &t.body {
+                    TypeBody::Enum(vs) => vs.iter().map(|v| v.as_str().to_string()).collect(),
+                    TypeBody::Struct(fields) => fields
+                        .iter()
+                        .map(|f| format!("{}:{}", f.name.as_str(), f.type_ref.as_str()))
+                        .collect(),
+                    TypeBody::Alias(a) => vec![a.as_str().to_string()],
+                    TypeBody::Unit => Vec::new(),
                 };
-                MirrorAST::Type(TypeNode {
-                    name,
-                    params,
-                    body,
-                    children: Vec::new(),
-                })
+                MirrorData::new(DeclKind::Type, t.name.as_str(), params, variants)
             }
-            DeclKind::Action => {
-                let name = Identifier::new(&data.name);
-                let params: Vec<Field> = data
+            MirrorAST::Action(a) => {
+                let params: Vec<String> = a
                     .params
                     .iter()
-                    .map(|p| {
-                        // Try to split "name:type", fallback to untyped
-                        if let Some((n, t)) = p.split_once(':') {
-                            Field {
-                                name: Identifier::new(n.trim()),
-                                type_ref: Identifier::new(t.trim()),
-                            }
+                    .map(|f| {
+                        if f.type_ref.as_str() == "_" {
+                            f.name.as_str().to_string()
                         } else {
-                            Field {
-                                name: Identifier::new(p),
-                                type_ref: Identifier::new("_"),
-                            }
+                            format!("{}:{}", f.name.as_str(), f.type_ref.as_str())
                         }
                     })
                     .collect();
-                let return_type = data.return_type.as_ref().map(|rt| Identifier::new(rt));
-                let grammar_ref = data.grammar_ref.as_ref().map(|gr| {
-                    GrammarRef::new(if gr.starts_with('@') {
-                        gr.clone()
-                    } else {
-                        format!("@{}", gr)
-                    })
-                });
-                MirrorAST::Action(ActionNode {
-                    name,
-                    params,
-                    return_type,
-                    grammar_ref,
-                    body: None, // body_text is unparsed, can't convert to AST nodes
-                })
+                let mut data = MirrorData::new(DeclKind::Action, a.name.as_str(), params, Vec::new());
+                data.return_type = a.return_type.as_ref().map(|rt| rt.as_str().to_string());
+                data.grammar_ref = a.grammar_ref.as_ref().map(|gr| gr.as_str().to_string());
+                data
             }
-            DeclKind::Property => {
-                let name = Identifier::new(&data.name);
-                let params: Vec<Field> = data
+            MirrorAST::Property(p) => {
+                let params: Vec<String> = p
                     .params
                     .iter()
-                    .map(|p| {
-                        if let Some((n, t)) = p.split_once(':') {
-                            Field {
-                                name: Identifier::new(n.trim()),
-                                type_ref: Identifier::new(t.trim()),
-                            }
+                    .map(|f| {
+                        if f.type_ref.as_str() == "_" {
+                            f.name.as_str().to_string()
                         } else {
-                            Field {
-                                name: Identifier::new(p),
-                                type_ref: Identifier::new("_"),
-                            }
+                            format!("{}:{}", f.name.as_str(), f.type_ref.as_str())
                         }
                     })
                     .collect();
-                MirrorAST::Property(PropertyNode {
-                    name,
-                    params,
-                    fold_target: None,
-                    body: Vec::new(),
-                })
+                let mut data = MirrorData::new(DeclKind::Property, p.name.as_str(), params, Vec::new());
+                // fold_target is stored as a variant for round-trip
+                if let Some(ref ft) = p.fold_target {
+                    data.variants.push(ft.as_str().to_string());
+                }
+                data
             }
-            DeclKind::In => {
-                let target = GrammarRef::new(if data.name.starts_with('@') {
-                    data.name.clone()
-                } else {
-                    format!("@{}", data.name)
-                });
-                MirrorAST::Import(ImportNode { target })
+            MirrorAST::Import(i) => {
+                MirrorData::new(DeclKind::In, i.target.as_str(), Vec::new(), Vec::new())
             }
-            DeclKind::Out => {
-                let name = Identifier::new(&data.name);
-                MirrorAST::Export(ExportNode { name })
+            MirrorAST::Export(e) => {
+                MirrorData::new(DeclKind::Out, e.name.as_str(), Vec::new(), Vec::new())
             }
-            DeclKind::Focus => MirrorAST::Focus(FocusNode {
-                name: Identifier::new(&data.name),
-                target: data.params.first().map(|p| Identifier::new(p)),
-                children: Vec::new(),
-            }),
-            DeclKind::Project => MirrorAST::Project(ProjectNode {
-                name: Identifier::new(&data.name),
-                target: data.params.first().map(|p| Identifier::new(p)),
-                children: Vec::new(),
-            }),
-            DeclKind::Split => MirrorAST::Split(SplitNode {
-                name: Identifier::new(&data.name),
-                variants: data.variants.iter().map(|v| Identifier::new(v)).collect(),
-                children: Vec::new(),
-            }),
-            DeclKind::Zoom => MirrorAST::Zoom(ZoomNode {
-                name: Identifier::new(&data.name),
-                target: data.params.first().map(|p| Identifier::new(p)),
-                children: Vec::new(),
-            }),
-            DeclKind::Refract => MirrorAST::Refract(RefractNode {
-                name: Identifier::new(&data.name),
-                target: data.params.first().map(|p| Identifier::new(p)),
-                children: Vec::new(),
-            }),
-            // For kinds that don't have direct MirrorAST variants yet,
-            // map to the closest structural equivalent.
-            DeclKind::Form | DeclKind::Prism => {
-                // Form and Prism are structural containers — map to Module
-                MirrorAST::Module(ModuleNode {
-                    name: Identifier::new(&data.name),
-                    children: Vec::new(),
-                })
+            MirrorAST::Focus(f) => {
+                let params = f.target.as_ref().map(|t| vec![t.as_str().to_string()]).unwrap_or_default();
+                MirrorData::new(DeclKind::Focus, f.name.as_str(), params, Vec::new())
             }
-            DeclKind::Fold => {
-                // Fold is an optic op used as declaration — closest is Property with fold_target
-                MirrorAST::Property(PropertyNode {
-                    name: Identifier::new(&data.name),
-                    params: Vec::new(),
-                    fold_target: data.params.first().map(|p| Identifier::new(p)),
-                    body: Vec::new(),
-                })
+            MirrorAST::Project(p) => {
+                let params = p.target.as_ref().map(|t| vec![t.as_str().to_string()]).unwrap_or_default();
+                MirrorData::new(DeclKind::Project, p.name.as_str(), params, Vec::new())
             }
-            DeclKind::Requires | DeclKind::Invariant | DeclKind::Ensures => {
-                // Property-system sub-declarations: map to Property
-                MirrorAST::Property(PropertyNode {
-                    name: Identifier::new(&data.name),
-                    params: Vec::new(),
-                    fold_target: None,
-                    body: Vec::new(),
-                })
+            MirrorAST::Split(s) => {
+                let variants: Vec<String> = s.variants.iter().map(|v| v.as_str().to_string()).collect();
+                MirrorData::new(DeclKind::Split, s.name.as_str(), Vec::new(), variants)
             }
-            DeclKind::Recover | DeclKind::Rescue => {
-                // Error handling: map to Action (they have similar structure)
-                MirrorAST::Action(ActionNode {
-                    name: Identifier::new(&data.name),
-                    params: Vec::new(),
-                    return_type: None,
-                    grammar_ref: data.grammar_ref.as_ref().map(|gr| {
-                        GrammarRef::new(if gr.starts_with('@') {
-                            gr.clone()
-                        } else {
-                            format!("@{}", gr)
-                        })
-                    }),
-                    body: None,
-                })
+            MirrorAST::Zoom(z) => {
+                let params = z.target.as_ref().map(|t| vec![t.as_str().to_string()]).unwrap_or_default();
+                MirrorData::new(DeclKind::Zoom, z.name.as_str(), params, Vec::new())
             }
-            DeclKind::Traversal | DeclKind::Lens => {
-                // Optic declarations: map to Focus (structural optic)
-                MirrorAST::Focus(FocusNode {
-                    name: Identifier::new(&data.name),
-                    target: data.params.first().map(|p| Identifier::new(p)),
-                    children: Vec::new(),
-                })
+            MirrorAST::Refract(r) => {
+                let params = r.target.as_ref().map(|t| vec![t.as_str().to_string()]).unwrap_or_default();
+                MirrorData::new(DeclKind::Refract, r.name.as_str(), params, Vec::new())
             }
-            DeclKind::Default | DeclKind::Binding => {
-                // Configuration declarations: map to Export (name binding)
-                MirrorAST::Export(ExportNode {
-                    name: Identifier::new(&data.name),
-                })
+            MirrorAST::Abstract(inner) => {
+                let mut data = inner.to_mirror_data();
+                data.is_abstract = true;
+                data
+            }
+            MirrorAST::Module(m) => {
+                MirrorData::new(DeclKind::Form, m.name.as_str(), Vec::new(), Vec::new())
             }
         }
+    }
+
+    /// Build a content-addressed MirrorFragment from this AST node.
+    ///
+    /// Converts to MirrorData, then wraps in a Fractal with content hash.
+    /// Child AST nodes are recursively converted to child fragments.
+    pub fn to_fragment(&self) -> crate::declaration::MirrorFragment {
+        let mut data = self.to_mirror_data();
+        let children: Vec<crate::declaration::MirrorFragment> = match self {
+            MirrorAST::Grammar(g) => g.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Type(t) => t.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Action(a) => a.body.as_ref()
+                .map(|b| b.iter().map(|c| c.to_fragment()).collect())
+                .unwrap_or_default(),
+            MirrorAST::Property(p) => p.body.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Module(m) => m.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Focus(f) => f.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Project(p) => p.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Split(s) => s.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Zoom(z) => z.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Refract(r) => r.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Abstract(inner) => {
+                // Abstract wraps another node — the inner node's fragment IS the child
+                return inner.to_fragment();
+            }
+            MirrorAST::Import(_) | MirrorAST::Export(_) => Vec::new(),
+        };
+        // Preserve optic_ops from the DeclKind
+        if let Some(op) = crate::declaration::OpticOp::from_decl_kind(&data.kind) {
+            if !data.optic_ops.contains(&op) {
+                data.optic_ops.push(op);
+            }
+        }
+        crate::declaration::fragment_encoded(data, children)
     }
 }
 
@@ -1233,300 +1165,269 @@ mod tests {
         assert!(!d.is_empty());
     }
 
-    // -- Bridge tests: MirrorData → MirrorAST --
+    // -- to_mirror_data tests: MirrorAST → MirrorData --
 
     #[test]
-    fn bridge_grammar() {
-        let data = MirrorData::new(DeclKind::Grammar, "@test", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "grammar");
-        if let MirrorAST::Grammar(g) = &ast {
-            assert_eq!(g.name.as_str(), "@test");
-            assert!(g.parent.is_none());
-        } else {
-            panic!("expected Grammar");
-        }
+    fn to_data_grammar() {
+        let ast = MirrorAST::Grammar(GrammarNode {
+            name: GrammarRef::new("@test"),
+            parent: None,
+            children: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Grammar);
+        assert_eq!(data.name, "@test");
+        assert!(data.parent_ref.is_none());
     }
 
     #[test]
-    fn bridge_grammar_with_parent() {
-        let mut data = MirrorData::new(DeclKind::Grammar, "@test", vec![], vec![]);
-        data.parent_ref = Some("@actor".to_string());
-        let ast = MirrorAST::from(&data);
-        if let MirrorAST::Grammar(g) = &ast {
-            assert_eq!(g.parent.as_ref().unwrap().as_str(), "@actor");
-        } else {
-            panic!("expected Grammar");
-        }
+    fn to_data_grammar_with_parent() {
+        let ast = MirrorAST::Grammar(GrammarNode {
+            name: GrammarRef::new("@test"),
+            parent: Some(GrammarRef::new("@actor")),
+            children: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.parent_ref.as_deref(), Some("@actor"));
     }
 
     #[test]
-    fn bridge_grammar_without_at_prefix() {
-        let data = MirrorData::new(DeclKind::Grammar, "test", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        if let MirrorAST::Grammar(g) = &ast {
-            assert_eq!(g.name.as_str(), "@test");
-        } else {
-            panic!("expected Grammar");
-        }
+    fn to_data_type_enum() {
+        let ast = MirrorAST::Type(TypeNode {
+            name: Identifier::new("color"),
+            params: vec![],
+            body: TypeBody::Enum(vec![
+                Identifier::new("red"),
+                Identifier::new("blue"),
+            ]),
+            children: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Type);
+        assert_eq!(data.name, "color");
+        assert_eq!(data.variants, vec!["red", "blue"]);
     }
 
     #[test]
-    fn bridge_type_enum() {
-        let data = MirrorData::new(
-            DeclKind::Type,
-            "color",
-            vec![],
-            vec!["red".into(), "blue".into()],
-        );
-        let ast = MirrorAST::from(&data);
-        if let MirrorAST::Type(t) = &ast {
-            assert_eq!(t.name.as_str(), "color");
-            match &t.body {
-                TypeBody::Enum(variants) => {
-                    assert_eq!(variants.len(), 2);
-                    assert_eq!(variants[0].as_str(), "red");
-                    assert_eq!(variants[1].as_str(), "blue");
-                }
-                _ => panic!("expected Enum body"),
-            }
-        } else {
-            panic!("expected Type");
-        }
+    fn to_data_type_unit() {
+        let ast = MirrorAST::Type(TypeNode {
+            name: Identifier::new("token"),
+            params: vec![],
+            body: TypeBody::Unit,
+            children: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Type);
+        assert!(data.variants.is_empty());
     }
 
     #[test]
-    fn bridge_type_unit() {
-        let data = MirrorData::new(DeclKind::Type, "token", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        if let MirrorAST::Type(t) = &ast {
-            assert_eq!(t.body, TypeBody::Unit);
-        } else {
-            panic!("expected Type");
-        }
+    fn to_data_type_with_params() {
+        let ast = MirrorAST::Type(TypeNode {
+            name: Identifier::new("list"),
+            params: vec![Identifier::new("t")],
+            body: TypeBody::Unit,
+            children: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.params, vec!["t"]);
     }
 
     #[test]
-    fn bridge_type_with_params() {
-        let data = MirrorData::new(DeclKind::Type, "list", vec!["t".into()], vec![]);
-        let ast = MirrorAST::from(&data);
-        if let MirrorAST::Type(t) = &ast {
-            assert_eq!(t.params.len(), 1);
-            assert_eq!(t.params[0].as_str(), "t");
-        } else {
-            panic!("expected Type");
-        }
+    fn to_data_action() {
+        let ast = MirrorAST::Action(ActionNode {
+            name: Identifier::new("send"),
+            params: vec![Field {
+                name: Identifier::new("to"),
+                type_ref: Identifier::new("string"),
+            }],
+            return_type: Some(Identifier::new("result")),
+            grammar_ref: Some(GrammarRef::new("@email")),
+            body: None,
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Action);
+        assert_eq!(data.name, "send");
+        assert_eq!(data.params, vec!["to:string"]);
+        assert_eq!(data.return_type.as_deref(), Some("result"));
+        assert_eq!(data.grammar_ref.as_deref(), Some("@email"));
     }
 
     #[test]
-    fn bridge_action() {
-        let mut data = MirrorData::new(DeclKind::Action, "send", vec!["to:string".into()], vec![]);
-        data.return_type = Some("result".to_string());
-        data.grammar_ref = Some("@email".to_string());
-        let ast = MirrorAST::from(&data);
-        if let MirrorAST::Action(a) = &ast {
-            assert_eq!(a.name.as_str(), "send");
-            assert_eq!(a.params.len(), 1);
-            assert_eq!(a.params[0].name.as_str(), "to");
-            assert_eq!(a.params[0].type_ref.as_str(), "string");
-            assert_eq!(a.return_type.as_ref().unwrap().as_str(), "result");
-            assert_eq!(a.grammar_ref.as_ref().unwrap().as_str(), "@email");
-        } else {
-            panic!("expected Action");
-        }
+    fn to_data_action_untyped_param() {
+        let ast = MirrorAST::Action(ActionNode {
+            name: Identifier::new("run"),
+            params: vec![Field {
+                name: Identifier::new("cmd"),
+                type_ref: Identifier::new("_"),
+            }],
+            return_type: None,
+            grammar_ref: None,
+            body: None,
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.params, vec!["cmd"]);
     }
 
     #[test]
-    fn bridge_action_untyped_param() {
-        let data = MirrorData::new(DeclKind::Action, "run", vec!["cmd".into()], vec![]);
-        let ast = MirrorAST::from(&data);
-        if let MirrorAST::Action(a) = &ast {
-            assert_eq!(a.params[0].name.as_str(), "cmd");
-            assert_eq!(a.params[0].type_ref.as_str(), "_");
-        } else {
-            panic!("expected Action");
-        }
+    fn to_data_property() {
+        let ast = MirrorAST::Property(PropertyNode {
+            name: Identifier::new("valid"),
+            params: vec![],
+            fold_target: None,
+            body: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Property);
+        assert_eq!(data.name, "valid");
     }
 
     #[test]
-    fn bridge_property() {
-        let data = MirrorData::new(DeclKind::Property, "valid", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "property");
+    fn to_data_import() {
+        let ast = MirrorAST::Import(ImportNode {
+            target: GrammarRef::new("@tools"),
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::In);
+        assert_eq!(data.name, "@tools");
     }
 
     #[test]
-    fn bridge_import() {
-        let data = MirrorData::new(DeclKind::In, "@tools", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        if let MirrorAST::Import(i) = &ast {
-            assert_eq!(i.target.as_str(), "@tools");
-        } else {
-            panic!("expected Import");
-        }
+    fn to_data_export() {
+        let ast = MirrorAST::Export(ExportNode {
+            name: Identifier::new("send"),
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Out);
+        assert_eq!(data.name, "send");
     }
 
     #[test]
-    fn bridge_import_without_at() {
-        let data = MirrorData::new(DeclKind::In, "tools", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        if let MirrorAST::Import(i) = &ast {
-            assert_eq!(i.target.as_str(), "@tools");
-        } else {
-            panic!("expected Import");
-        }
+    fn to_data_focus() {
+        let ast = MirrorAST::Focus(FocusNode {
+            name: Identifier::new("details"),
+            target: Some(Identifier::new("user")),
+            children: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Focus);
+        assert_eq!(data.name, "details");
+        assert_eq!(data.params, vec!["user"]);
     }
 
     #[test]
-    fn bridge_export() {
-        let data = MirrorData::new(DeclKind::Out, "send", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        if let MirrorAST::Export(e) = &ast {
-            assert_eq!(e.name.as_str(), "send");
-        } else {
-            panic!("expected Export");
-        }
+    fn to_data_split() {
+        let ast = MirrorAST::Split(SplitNode {
+            name: Identifier::new("route"),
+            variants: vec![Identifier::new("left"), Identifier::new("right")],
+            children: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Split);
+        assert_eq!(data.name, "route");
+        assert_eq!(data.variants, vec!["left", "right"]);
     }
 
     #[test]
-    fn bridge_focus() {
-        let data = MirrorData::new(DeclKind::Focus, "details", vec!["user".into()], vec![]);
-        let ast = MirrorAST::from(&data);
-        if let MirrorAST::Focus(f) = &ast {
-            assert_eq!(f.name.as_str(), "details");
-            assert_eq!(f.target.as_ref().unwrap().as_str(), "user");
-        } else {
-            panic!("expected Focus");
-        }
+    fn to_data_zoom() {
+        let ast = MirrorAST::Zoom(ZoomNode {
+            name: Identifier::new("transform"),
+            target: None,
+            children: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Zoom);
     }
 
     #[test]
-    fn bridge_split() {
-        let data = MirrorData::new(
-            DeclKind::Split,
-            "route",
-            vec![],
-            vec!["left".into(), "right".into()],
-        );
-        let ast = MirrorAST::from(&data);
-        if let MirrorAST::Split(s) = &ast {
-            assert_eq!(s.name.as_str(), "route");
-            assert_eq!(s.variants.len(), 2);
-        } else {
-            panic!("expected Split");
-        }
+    fn to_data_refract() {
+        let ast = MirrorAST::Refract(RefractNode {
+            name: Identifier::new("spread"),
+            target: None,
+            children: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Refract);
     }
 
     #[test]
-    fn bridge_zoom() {
-        let data = MirrorData::new(DeclKind::Zoom, "transform", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "zoom");
+    fn to_data_project() {
+        let ast = MirrorAST::Project(ProjectNode {
+            name: Identifier::new("summary"),
+            target: None,
+            children: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Project);
     }
 
     #[test]
-    fn bridge_refract() {
-        let data = MirrorData::new(DeclKind::Refract, "spread", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "refract");
+    fn to_data_module() {
+        let ast = MirrorAST::Module(ModuleNode {
+            name: Identifier::new("@test"),
+            children: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Form);
+        assert_eq!(data.name, "@test");
     }
 
     #[test]
-    fn bridge_project() {
-        let data = MirrorData::new(DeclKind::Project, "summary", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "project");
-    }
-
-    // -- Bridge: remaining DeclKind variants --
-
-    #[test]
-    fn bridge_form_maps_to_module() {
-        let data = MirrorData::new(DeclKind::Form, "@test", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "module");
-    }
-
-    #[test]
-    fn bridge_prism_maps_to_module() {
-        let data = MirrorData::new(DeclKind::Prism, "focus", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "module");
+    fn to_data_abstract() {
+        let inner = MirrorAST::Action(ActionNode {
+            name: Identifier::new("retry"),
+            params: vec![],
+            return_type: None,
+            grammar_ref: None,
+            body: None,
+        });
+        let ast = MirrorAST::Abstract(Box::new(inner));
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Action);
+        assert!(data.is_abstract);
     }
 
     #[test]
-    fn bridge_fold_maps_to_property() {
-        let data = MirrorData::new(DeclKind::Fold, "collapse", vec!["target".into()], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "property");
-        if let MirrorAST::Property(p) = &ast {
-            assert_eq!(p.fold_target.as_ref().unwrap().as_str(), "target");
-        } else {
-            panic!("expected Property");
-        }
+    fn to_data_property_with_fold_target() {
+        let ast = MirrorAST::Property(PropertyNode {
+            name: Identifier::new("collapse"),
+            params: vec![],
+            fold_target: Some(Identifier::new("target")),
+            body: vec![],
+        });
+        let data = ast.to_mirror_data();
+        assert_eq!(data.kind, DeclKind::Property);
+        assert_eq!(data.variants, vec!["target"]);
+    }
+
+    // -- to_fragment round-trip --
+
+    #[test]
+    fn to_fragment_grammar() {
+        let ast = MirrorAST::Grammar(GrammarNode {
+            name: GrammarRef::new("@test"),
+            parent: None,
+            children: vec![],
+        });
+        let frag = ast.to_fragment();
+        use crate::declaration::MirrorFragmentExt;
+        assert_eq!(frag.mirror_data().kind, DeclKind::Grammar);
     }
 
     #[test]
-    fn bridge_requires_maps_to_property() {
-        let data = MirrorData::new(DeclKind::Requires, "precond", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "property");
-    }
-
-    #[test]
-    fn bridge_invariant_maps_to_property() {
-        let data = MirrorData::new(DeclKind::Invariant, "stable", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "property");
-    }
-
-    #[test]
-    fn bridge_ensures_maps_to_property() {
-        let data = MirrorData::new(DeclKind::Ensures, "postcond", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "property");
-    }
-
-    #[test]
-    fn bridge_recover_maps_to_action() {
-        let data = MirrorData::new(DeclKind::Recover, "retry", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "action");
-    }
-
-    #[test]
-    fn bridge_rescue_maps_to_action() {
-        let data = MirrorData::new(DeclKind::Rescue, "fallback", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "action");
-    }
-
-    #[test]
-    fn bridge_traversal_maps_to_focus() {
-        let data = MirrorData::new(DeclKind::Traversal, "walk", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "focus");
-    }
-
-    #[test]
-    fn bridge_lens_maps_to_focus() {
-        let data = MirrorData::new(DeclKind::Lens, "view", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "focus");
-    }
-
-    #[test]
-    fn bridge_default_maps_to_export() {
-        let data = MirrorData::new(DeclKind::Default, "timeout", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "export");
-    }
-
-    #[test]
-    fn bridge_binding_maps_to_export() {
-        let data = MirrorData::new(DeclKind::Binding, "port", vec![], vec![]);
-        let ast = MirrorAST::from(&data);
-        assert_eq!(ast.kind_name(), "export");
+    fn to_fragment_type_with_children() {
+        let child = MirrorAST::Import(ImportNode {
+            target: GrammarRef::new("@tools"),
+        });
+        let ast = MirrorAST::Type(TypeNode {
+            name: Identifier::new("color"),
+            params: vec![],
+            body: TypeBody::Unit,
+            children: vec![child],
+        });
+        let frag = ast.to_fragment();
+        use crate::declaration::MirrorFragmentExt;
+        assert_eq!(frag.mirror_children().len(), 1);
     }
 
     // -- Oid tests for all node types --
