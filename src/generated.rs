@@ -182,7 +182,7 @@ mod tests {
         )
         .unwrap();
         let compiled = Result::from(runtime.compile_source(&src)).unwrap();
-        let parser_oid = format!("{:?}", compiled.fragment.oid());
+        let parser_oid = format!("{:?}", compiled.fragment.content_hash());
         let generated_oid = format!("{}", PrismGrammar.oid());
 
         eprintln!("parser oid:    {}", parser_oid);

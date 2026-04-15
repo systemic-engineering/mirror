@@ -376,13 +376,19 @@ pub type MirrorFragment = Fractal<MirrorData>;
 pub type MirrorHash = Sha;
 
 /// Extension trait for accessing mirror-specific data on fragments.
+///
+/// `mirror_data()` and `mirror_children()` delegate to `Fragmentable`.
+/// For content addressing, use `prism::Addressable::oid()` (returns `prism::Oid`)
+/// or `content_hash()` (returns `&MirrorHash` / `&Sha`).
 pub trait MirrorFragmentExt {
     /// Get the MirrorData payload.
     fn mirror_data(&self) -> &MirrorData;
     /// Get the child fragments.
     fn mirror_children(&self) -> &[MirrorFragment];
-    /// Get the content OID.
-    fn oid(&self) -> &MirrorHash;
+    /// Get the content hash (fragmentation's Sha).
+    ///
+    /// For prism-core's `Oid`, use `prism::Addressable::oid()` instead.
+    fn content_hash(&self) -> &MirrorHash;
 }
 
 impl MirrorFragmentExt for MirrorFragment {
@@ -396,7 +402,7 @@ impl MirrorFragmentExt for MirrorFragment {
         self.children()
     }
 
-    fn oid(&self) -> &MirrorHash {
+    fn content_hash(&self) -> &MirrorHash {
         use fragmentation::fragment::Fragmentable;
         &self.self_ref().sha
     }
@@ -762,6 +768,81 @@ mod tests {
         let data = MirrorData::new(DeclKind::Type, "id", Vec::new(), Vec::new());
         let a = fragment(data.clone(), Vec::new());
         let b = fragment(data, Vec::new());
-        assert_eq!(a.oid(), b.oid());
+        assert_eq!(a.content_hash(), b.content_hash());
+    }
+
+    // -----------------------------------------------------------------------
+    // prism-core bridge tests — MerkleTree, Addressable, diff
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn mirror_fragment_is_merkle_tree() {
+        use prism::merkle::MerkleTree;
+        let data = MirrorData::new(DeclKind::Type, "color", Vec::new(), vec!["red".into(), "blue".into()]);
+        let frag = fragment(data, Vec::new());
+
+        // MerkleTree trait methods work on MirrorFragment
+        assert!(!MerkleTree::data(&frag).name.is_empty());
+        assert!(frag.is_leaf());
+        assert_eq!(frag.degree(), 0);
+    }
+
+    #[test]
+    fn mirror_fragment_merkle_tree_with_children() {
+        use prism::merkle::MerkleTree;
+        let child = fragment(
+            MirrorData::new(DeclKind::Type, "inner", Vec::new(), Vec::new()),
+            Vec::new(),
+        );
+        let parent = fragment(
+            MirrorData::new(DeclKind::Form, "@test", Vec::new(), Vec::new()),
+            vec![child],
+        );
+        assert!(!parent.is_leaf());
+        assert_eq!(parent.degree(), 1);
+        assert_eq!(MerkleTree::children(&parent).len(), 1);
+    }
+
+    #[test]
+    fn mirror_fragment_addressable() {
+        use prism::oid::Addressable;
+        let data = MirrorData::new(DeclKind::Type, "color", Vec::new(), vec!["red".into(), "blue".into()]);
+        let frag = fragment(data, Vec::new());
+
+        let oid = Addressable::oid(&frag);
+        assert!(!oid.is_dark());
+    }
+
+    #[test]
+    fn same_fragment_same_prism_oid() {
+        use prism::oid::Addressable;
+        let data = MirrorData::new(DeclKind::Type, "x", Vec::new(), Vec::new());
+        let a = fragment(data.clone(), Vec::new());
+        let b = fragment(data, Vec::new());
+        assert_eq!(Addressable::oid(&a), Addressable::oid(&b));
+    }
+
+    #[test]
+    fn prism_core_diff_on_mirror_fragments() {
+        use prism::merkle::MerkleTree;
+        let a = fragment(
+            MirrorData::new(DeclKind::Type, "color", Vec::new(), vec!["red".into(), "blue".into()]),
+            Vec::new(),
+        );
+        let b = fragment(
+            MirrorData::new(DeclKind::Type, "color", Vec::new(), vec!["red".into(), "green".into()]),
+            Vec::new(),
+        );
+        let deltas = prism::diff(&a, &b);
+        assert!(!deltas.is_empty(), "different content should produce deltas");
+    }
+
+    #[test]
+    fn prism_core_diff_identical_fragments_empty() {
+        let data = MirrorData::new(DeclKind::Type, "x", Vec::new(), Vec::new());
+        let a = fragment(data.clone(), Vec::new());
+        let b = fragment(data, Vec::new());
+        let deltas = prism::diff(&a, &b);
+        assert!(deltas.is_empty(), "identical fragments should produce no deltas");
     }
 }

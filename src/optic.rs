@@ -59,7 +59,7 @@ impl MirrorOptic {
         Ok(MirrorOptic {
             grammar_name: data.name.clone(),
             actions,
-            crystal_oid: frag.oid().clone(),
+            crystal_oid: frag.content_hash().clone(),
         })
     }
 

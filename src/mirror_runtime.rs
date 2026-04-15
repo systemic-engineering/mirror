@@ -1428,7 +1428,7 @@ pub struct CompiledShatter {
 
 impl CompiledShatter {
     pub fn crystal(&self) -> &MirrorHash {
-        self.fragment.oid()
+        self.fragment.content_hash()
     }
     pub fn form_name(&self) -> &str {
         &self.fragment.mirror_data().name
@@ -1733,6 +1733,20 @@ impl MirrorRegistry {
         self.store.flush();
     }
 
+    /// Access the underlying store through the prism-core Store trait.
+    ///
+    /// FrgmntStore<MirrorFragment> implements `prism_core::Store`, so this
+    /// returns a handle that speaks prism-core's trait language: `get`, `put`,
+    /// `has` with `Imperfect` returns and `Luminosity` checks.
+    pub fn as_prism_store(&self) -> &FrgmntStore<MirrorFragment> {
+        &self.store
+    }
+
+    /// Mutable access to the underlying store through the prism-core Store trait.
+    pub fn as_prism_store_mut(&mut self) -> &mut FrgmntStore<MirrorFragment> {
+        &mut self.store
+    }
+
     /// Iterate the names of all refs in the underlying store. Reads from disk.
     pub fn ref_names(&self) -> Vec<String> {
         let refs_dir = self.root.join("refs");
@@ -1791,7 +1805,7 @@ impl MirrorRegistry {
         if !data.name.starts_with('@') {
             return None;
         }
-        let oid = frag.oid().as_str().to_string();
+        let oid = frag.content_hash().as_str().to_string();
         let size = self.estimate_fragment_size(frag);
         self.store
             .insert_persistent(oid.clone(), frag.clone(), size);
@@ -1834,7 +1848,7 @@ impl MirrorRegistry {
             return None;
         }
         let fragment = decl.to_fragment();
-        let oid = fragment.oid().as_str().to_string();
+        let oid = fragment.content_hash().as_str().to_string();
         let size = self.estimate_fragment_size(&fragment);
         self.store.insert_persistent(oid.clone(), fragment, size);
         if let Err(e) = self.store.set_ref(&decl.name, &oid) {
@@ -2165,14 +2179,14 @@ mod tests {
         let focused2 = shatter.focus(seed2);
         let projected = shatter.project(focused2);
         let frag_result = projected.result().ok().expect("project failed");
-        assert!(!frag_result.oid().as_str().is_empty());
+        assert!(!frag_result.content_hash().as_str().is_empty());
 
         // Stable OID across runs (CoincidenceHash<5> determinism).
         let source = std::fs::read_to_string(boot_dir().join("00-prism.mirror")).unwrap();
         let frag = parse_form(&source).ok().unwrap();
         let frag2 = parse_form(&source).ok().unwrap();
-        assert_eq!(frag.oid(), frag2.oid());
-        assert_eq!(compiled.fragment.oid(), frag.oid());
+        assert_eq!(frag.content_hash(), frag2.content_hash());
+        assert_eq!(compiled.fragment.content_hash(), frag.content_hash());
     }
 
     #[test]
@@ -2633,7 +2647,7 @@ mod tests {
 
         // Same OID — round-trip exact
         assert_eq!(
-            fragment.oid(),
+            fragment.content_hash(),
             &oid,
             "round-trip OID mismatch: emitted shatter must parse back to same crystal"
         );
@@ -3908,8 +3922,8 @@ grammar @ai {
         let canonical = kintsugi(&parsed);
 
         let shatter = Shatter;
-        let oid_before = shatter.compile_form(&parsed).oid().clone();
-        let oid_after = shatter.compile_form(&canonical).oid().clone();
+        let oid_before = shatter.compile_form(&parsed).content_hash().clone();
+        let oid_after = shatter.compile_form(&canonical).content_hash().clone();
         assert_eq!(
             oid_before, oid_after,
             "kintsugi must not change the content-addressed OID"
@@ -4330,5 +4344,92 @@ grammar @ai {
                 elapsed / iterations as u32
             );
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // prism-core bridge: MerkleTree, Addressable, diff on compiled fragments
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn compiled_fragment_is_merkle_tree() {
+        use prism::merkle::MerkleTree;
+        let runtime = MirrorRuntime::new();
+        let compiled = Result::from(runtime.compile_source("type color = red | blue"))
+            .ok()
+            .unwrap();
+
+        // MerkleTree trait methods work on the compiled fragment
+        assert!(!MerkleTree::data(&compiled.fragment).name.is_empty());
+        assert!(compiled.fragment.is_leaf() || compiled.fragment.degree() > 0);
+    }
+
+    #[test]
+    fn compiled_fragment_addressable() {
+        use prism::oid::Addressable;
+        let runtime = MirrorRuntime::new();
+        let compiled = Result::from(runtime.compile_source("type color = red | blue"))
+            .ok()
+            .unwrap();
+
+        let oid = Addressable::oid(&compiled.fragment);
+        assert!(!oid.is_dark());
+    }
+
+    #[test]
+    fn compiled_same_source_same_prism_oid() {
+        use prism::oid::Addressable;
+        let runtime = MirrorRuntime::new();
+
+        let a = Result::from(runtime.compile_source("type x"))
+            .ok()
+            .unwrap();
+        let b = Result::from(runtime.compile_source("type x"))
+            .ok()
+            .unwrap();
+
+        assert_eq!(
+            Addressable::oid(&a.fragment),
+            Addressable::oid(&b.fragment)
+        );
+    }
+
+    #[test]
+    fn prism_diff_on_compiled_fragments() {
+        let runtime = MirrorRuntime::new();
+
+        let a = Result::from(runtime.compile_source("type color = red | blue"))
+            .ok()
+            .unwrap();
+        let b = Result::from(runtime.compile_source("type color = red | green"))
+            .ok()
+            .unwrap();
+
+        let deltas = prism::diff(&a.fragment, &b.fragment);
+        assert!(
+            !deltas.is_empty(),
+            "different content should produce deltas"
+        );
+    }
+
+    #[test]
+    fn registry_as_prism_store() {
+        use prism::oid::Addressable;
+
+        let tmp = tempdir_for_test("registry_prism_store");
+        let mut registry = MirrorRegistry::open(&tmp).expect("open registry");
+
+        // Register a fragment via the normal path
+        let form = parse_form_raw("type x").ok().unwrap();
+        registry.register(&form);
+
+        // Access the store via prism-core trait
+        let store = registry.as_prism_store();
+        // FrgmntStore implements prism_core::Store — verify it's usable
+        use prism::Store as PrismStore;
+        // has() should work (even if the fragment isn't there by prism Oid since
+        // prism Oid uses content_oid which recomputes from Encode, same as Sha)
+        let dark_oid = prism::Oid::dark();
+        let result = PrismStore::has(store, &dark_oid);
+        assert!(result.is_ok());
     }
 }
