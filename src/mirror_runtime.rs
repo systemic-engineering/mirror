@@ -94,148 +94,7 @@ impl std::fmt::Display for MirrorResolveError {
 
 impl std::error::Error for MirrorResolveError {}
 
-// ---------------------------------------------------------------------------
-// Form — the runtime structure that Shatter compiles to/from.
-// ---------------------------------------------------------------------------
-
-/// `Form` is the parsed-but-not-yet-content-addressed view: kind / name /
-/// params / variants / nested children. Parser-internal intermediate.
-/// The public API returns `MirrorFragment` via `parse_form`.
-#[derive(Clone, Debug, Eq)]
-pub(crate) struct Form {
-    pub kind: DeclKind,
-    pub name: String,
-    pub params: Vec<String>,
-    pub variants: Vec<String>,
-    pub children: Vec<Form>,
-    /// For `action` declarations: the grammar reference (e.g. `@code/rust`).
-    /// `None` means inherit the grammar from the enclosing form's `in` declaration.
-    pub grammar_ref: Option<String>,
-    /// For `action` declarations: the raw body text, brace-balanced but unparsed.
-    /// The mirror compiler stores it as-is; the target grammar's parser handles it.
-    pub body_text: Option<String>,
-    /// Whether this declaration has the `abstract` modifier.
-    pub is_abstract: bool,
-    /// Optional return type annotation (e.g. `-> [completion]`).
-    pub return_type: Option<String>,
-    /// Optic operators found in this declaration.
-    /// For example, `type visibility = private | protected | public` would
-    /// have `[OpticOp::Iso, OpticOp::Split]`.
-    pub optic_ops: Vec<OpticOp>,
-    /// For `grammar` declarations: the parent grammar reference (e.g. `@actor`).
-    /// Set when `grammar @name < @parent { ... }` is used.
-    pub parent_ref: Option<String>,
-}
-
-/// `optic_ops` is excluded from equality: it's a parser annotation about which
-/// optic operators were used, not structural content. Content-addressed round-trips
-/// (Form → MirrorFragment → Form) don't preserve it.
-impl PartialEq for Form {
-    fn eq(&self, other: &Self) -> bool {
-        self.kind == other.kind
-            && self.name == other.name
-            && self.params == other.params
-            && self.variants == other.variants
-            && self.children == other.children
-            && self.grammar_ref == other.grammar_ref
-            && self.body_text == other.body_text
-            && self.is_abstract == other.is_abstract
-            && self.return_type == other.return_type
-            && self.parent_ref == other.parent_ref
-    }
-}
-
-impl Form {
-    pub fn new(
-        kind: DeclKind,
-        name: impl Into<String>,
-        params: Vec<String>,
-        variants: Vec<String>,
-        children: Vec<Form>,
-    ) -> Self {
-        Form {
-            kind,
-            name: name.into(),
-            params,
-            variants,
-            children,
-            grammar_ref: None,
-            body_text: None,
-            is_abstract: false,
-            return_type: None,
-            optic_ops: Vec::new(),
-            parent_ref: None,
-        }
-    }
-
-    /// Create an action Form with grammar reference and raw body text.
-    pub fn action(
-        name: impl Into<String>,
-        params: Vec<String>,
-        grammar_ref: Option<String>,
-        body_text: Option<String>,
-        children: Vec<Form>,
-    ) -> Self {
-        Form {
-            kind: DeclKind::Action,
-            name: name.into(),
-            params,
-            variants: Vec::new(),
-            children,
-            grammar_ref,
-            body_text,
-            is_abstract: false,
-            return_type: None,
-            optic_ops: Vec::new(),
-            parent_ref: None,
-        }
-    }
-
-    fn to_fragment(&self) -> MirrorFragment {
-        let data = self.to_mirror_data();
-        let children: Vec<MirrorFragment> = self.children.iter().map(|c| c.to_fragment()).collect();
-        crate::declaration::fragment_encoded(data, children)
-    }
-
-    /// Convert this Form's core fields to a MirrorData (without encoding
-    /// extra fields into params/variants — that's done by fragment_encoded).
-    pub fn to_mirror_data(&self) -> MirrorData {
-        let mut data = MirrorData::new(
-            self.kind.clone(),
-            self.name.clone(),
-            self.params.clone(),
-            self.variants.clone(),
-        );
-        data.grammar_ref = self.grammar_ref.clone();
-        data.body_text = self.body_text.clone();
-        data.is_abstract = self.is_abstract;
-        data.return_type = self.return_type.clone();
-        data.parent_ref = self.parent_ref.clone();
-        data
-    }
-
-    pub fn from_fragment(frag: &MirrorFragment) -> Form {
-        let decoded = MirrorData::decode_from_fragment(frag.mirror_data());
-        let children: Vec<Form> = frag
-            .mirror_children()
-            .iter()
-            .map(Form::from_fragment)
-            .collect();
-        Form {
-            kind: decoded.kind,
-            name: decoded.name,
-            params: decoded.params,
-            variants: decoded.variants,
-            children,
-            grammar_ref: decoded.grammar_ref,
-            body_text: decoded.body_text,
-            is_abstract: decoded.is_abstract,
-            return_type: decoded.return_type,
-            optic_ops: Vec::new(),
-            parent_ref: decoded.parent_ref,
-        }
-    }
-}
+// Form is dead. Long live MirrorFragment.
 
 // ---------------------------------------------------------------------------
 // Shatter — the compilation artifact, a Prism implementation.
@@ -274,19 +133,7 @@ impl Prism for Shatter {
     }
 }
 
-#[cfg(test)]
-impl Shatter {
-    /// Full structural compile: Form → MirrorFragment with all children
-    /// content-addressed. Used by tests.
-    pub(crate) fn compile_form(&self, form: &Form) -> MirrorFragment {
-        form.to_fragment()
-    }
-
-    /// Inverse: MirrorFragment → Form. Used by tests.
-    pub(crate) fn decompile(&self, frag: &MirrorFragment) -> Form {
-        Form::from_fragment(frag)
-    }
-}
+// Shatter test methods removed — Form is dead.
 
 // ---------------------------------------------------------------------------
 // Parser — line-oriented, brace-balanced.
@@ -298,17 +145,9 @@ impl Shatter {
 /// `Partial` if unrecognized keywords were encountered (measured loss),
 /// `Failure` if no declarations could be parsed.
 pub fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError, MirrorLoss> {
-    parse_form_raw(source).map(|form| form.to_fragment())
-}
-
-/// Internal parser: returns the intermediate `Form` representation.
-/// Used by tests that need access to parser annotations like `optic_ops`
-/// which are not content-addressed. The primary public API is `parse_form`
-/// which returns `MirrorFragment`.
-pub(crate) fn parse_form_raw(source: &str) -> Imperfect<Form, MirrorRuntimeError, MirrorLoss> {
     let tokens = tokenize(source);
     let mut cursor = 0usize;
-    let mut decls = Vec::new();
+    let mut decls: Vec<MirrorFragment> = Vec::new();
     let mut unrecognized = Vec::new();
 
     loop {
@@ -316,36 +155,34 @@ pub(crate) fn parse_form_raw(source: &str) -> Imperfect<Form, MirrorRuntimeError
         if cursor >= tokens.len() {
             break;
         }
-        // Only parse tokens that start with a known declaration keyword
-        // or the `abstract` modifier. Collect unrecognized top-level tokens as loss.
         match tokens.get(cursor) {
             Some(Tok::Word(w)) if DeclKind::parse(w).is_some() || w == "abstract" => {
                 match parse_decl(&tokens, &mut cursor) {
-                    Ok((form, child_unrecognized)) => {
+                    Ok((frag, child_unrecognized)) => {
+                        let data = frag.mirror_data();
                         // M2001: top-level type/grammar/action require a name
-                        if form.name.is_empty()
+                        if data.name.is_empty()
                             && matches!(
-                                form.kind,
+                                data.kind,
                                 DeclKind::Type | DeclKind::Grammar | DeclKind::Action
                             )
                         {
                             return Imperfect::failure(err(format!(
                                 "M2001: `{}` requires a name",
-                                form.kind.as_str()
+                                data.kind.as_str()
                             )));
                         }
                         // M2002: top-level `in` requires a target
-                        if form.name.is_empty() && form.kind == DeclKind::In {
+                        if data.name.is_empty() && data.kind == DeclKind::In {
                             return Imperfect::failure(err("M2002: `in` requires a target"));
                         }
-                        decls.push(form);
+                        decls.push(frag);
                         unrecognized.extend(child_unrecognized);
                     }
                     Err(e) => return Imperfect::failure(e),
                 }
             }
             Some(Tok::Word(w)) => {
-                // Unrecognized keyword — collect instead of dropping
                 let keyword = w.clone();
                 let line = count_line_at(&tokens, cursor);
                 let content = collect_until_next_decl(&tokens, &mut cursor);
@@ -356,7 +193,6 @@ pub(crate) fn parse_form_raw(source: &str) -> Imperfect<Form, MirrorRuntimeError
                 });
             }
             Some(_) => {
-                // Non-word token at top level — skip to newline
                 while cursor < tokens.len() && !matches!(tokens.get(cursor), Some(Tok::Newline)) {
                     cursor += 1;
                 }
@@ -369,22 +205,21 @@ pub(crate) fn parse_form_raw(source: &str) -> Imperfect<Form, MirrorRuntimeError
     }
 
     // M2003: duplicate type names in the same scope
-    // Parameterized types (e.g. `type abstract(grammar)`) can share a name
-    // with different params — those are specializations, not collisions.
     {
         let mut seen_types: Vec<(&str, &[String])> = Vec::new();
         for d in &decls {
-            if d.kind == DeclKind::Type && !d.name.is_empty() {
+            let data = d.mirror_data();
+            if data.kind == DeclKind::Type && !data.name.is_empty() {
                 if seen_types
                     .iter()
-                    .any(|(n, p)| *n == d.name && *p == d.params.as_slice())
+                    .any(|(n, p)| *n == data.name && *p == data.params.as_slice())
                 {
                     return Imperfect::failure(err(format!(
                         "M2003: duplicate type name `{}`",
-                        d.name
+                        data.name
                     )));
                 }
-                seen_types.push((&d.name, &d.params));
+                seen_types.push((&data.name, &data.params));
             }
         }
     }
@@ -392,59 +227,56 @@ pub(crate) fn parse_form_raw(source: &str) -> Imperfect<Form, MirrorRuntimeError
     if decls.is_empty() && unrecognized.is_empty() {
         Imperfect::failure(err("no declarations found"))
     } else if decls.is_empty() {
-        // Only unrecognized decls — nothing survived
         let loss = MirrorLoss {
             parse: ParseLoss { unrecognized },
             ..MirrorLoss::zero()
         };
         Imperfect::failure_with_loss(err("no recognized declarations found"), loss)
     } else {
-        // Detect deprecated `form` keyword usage.
-        // A named DeclKind::Form means the user wrote `form @name { ... }`.
-        // The unnamed Form wrapper (synthesized for multi-decl sources) is not deprecated.
-        collect_form_deprecations(&decls, &mut unrecognized);
+        collect_fragment_form_deprecations(&decls, &mut unrecognized);
 
-        let form = if decls.len() == 1 {
+        let frag = if decls.len() == 1 {
             decls.into_iter().next().unwrap()
         } else {
-            Form::new(
+            let wrapper_data = MirrorData::new(
                 DeclKind::Form,
                 "".to_string(),
                 Vec::new(),
                 Vec::new(),
-                decls,
-            )
+            );
+            build_fragment(wrapper_data, decls)
         };
 
         if unrecognized.is_empty() {
-            Imperfect::Success(form)
+            Imperfect::Success(frag)
         } else {
             let loss = MirrorLoss {
                 parse: ParseLoss { unrecognized },
                 ..MirrorLoss::zero()
             };
-            Imperfect::Partial(form, loss)
+            Imperfect::Partial(frag, loss)
         }
     }
 }
 
 /// Detect deprecated `form` keyword usage and add deprecation entries.
-/// A named `DeclKind::Form` means the user wrote `form @name { ... }` —
-/// they should use `grammar` instead. The unnamed Form wrapper is synthetic.
-fn collect_form_deprecations(decls: &[Form], unrecognized: &mut Vec<UnrecognizedDecl>) {
+fn collect_fragment_form_deprecations(
+    decls: &[MirrorFragment],
+    unrecognized: &mut Vec<UnrecognizedDecl>,
+) {
     for decl in decls {
-        if decl.kind == DeclKind::Form && !decl.name.is_empty() {
+        let data = decl.mirror_data();
+        if data.kind == DeclKind::Form && !data.name.is_empty() {
             unrecognized.push(UnrecognizedDecl {
                 keyword: "form".to_string(),
-                line: 0, // line tracking not available post-parse
+                line: 0,
                 content: format!(
                     "deprecated: use `grammar {}` instead of `form {}`",
-                    decl.name, decl.name
+                    data.name, data.name
                 ),
             });
         }
-        // Recurse into children for nested form declarations
-        collect_form_deprecations(&decl.children, unrecognized);
+        collect_fragment_form_deprecations(decl.mirror_children(), unrecognized);
     }
 }
 
@@ -633,7 +465,7 @@ fn skip_trivia(tokens: &[Tok], cursor: &mut usize) {
 fn parse_decl(
     tokens: &[Tok],
     cursor: &mut usize,
-) -> Result<(Form, Vec<UnrecognizedDecl>), MirrorRuntimeError> {
+) -> Result<(MirrorFragment, Vec<UnrecognizedDecl>), MirrorRuntimeError> {
     skip_trivia(tokens, cursor);
     let kind_word = match tokens.get(*cursor) {
         Some(Tok::Word(w)) => w.clone(),
@@ -667,11 +499,8 @@ fn parse_decl(
             .ok_or_else(|| err(format!("unknown declaration kind: {}", kind_word)))?;
         (k, false)
     };
-    // modifier is used below when constructing the Form
 
     // Recover/Rescue: pipe-delimited params, optional fold operator, optional body.
-    // `recover |result, loss| <= imperfect` or `rescue |error(observation), loss| <= imperfect`
-    // `recover |result, loss| { body }` (legacy form)
     if kind == DeclKind::Recover || kind == DeclKind::Rescue {
         let mut params = Vec::new();
         let mut optic_ops = Vec::new();
@@ -679,7 +508,6 @@ fn parse_decl(
         // Consume `|`
         if matches!(tokens.get(*cursor), Some(Tok::Word(w)) if w == "|") {
             *cursor += 1;
-            // Collect params until closing `|`, handling nested parens like error(observation)
             loop {
                 match tokens.get(*cursor) {
                     Some(Tok::Word(w)) if w == "|" => {
@@ -689,7 +517,6 @@ fn parse_decl(
                     Some(Tok::Word(w)) => {
                         params.push(w.clone());
                         *cursor += 1;
-                        // Handle nested parens: error(observation) → "error(observation)"
                         if matches!(tokens.get(*cursor), Some(Tok::LParen)) {
                             *cursor += 1;
                             if let Some(last) = params.last_mut() {
@@ -721,14 +548,11 @@ fn parse_decl(
                 }
             }
         }
-        // Check for fold operator: `<= target`
-        // `<` is tokenized as Word("<"), `=` as Tok::Equals
         let is_fold = matches!(tokens.get(*cursor), Some(Tok::Word(w)) if w == "<")
             && matches!(tokens.get(*cursor + 1), Some(Tok::Equals));
         if is_fold {
             optic_ops.push(OpticOp::Fold);
-            *cursor += 2; // consume `<` and `=`
-                          // Collect the fold target until newline or brace
+            *cursor += 2;
             loop {
                 match tokens.get(*cursor) {
                     Some(Tok::Newline) => {
@@ -744,26 +568,23 @@ fn parse_decl(
                 }
             }
         }
-        // Parse body block (if present)
         let (body_text, children) = parse_action_body(tokens, cursor)?;
-        let mut form = Form::action(kind.as_str(), params, None, body_text, children);
-        form.kind = kind;
-        form.is_abstract = modifier;
-        form.optic_ops = optic_ops;
-        form.variants = variants;
-        return Ok((form, Vec::new()));
+        let mut data = MirrorData::new(kind.clone(), kind.as_str(), params, variants);
+        data.body_text = body_text;
+        data.is_abstract = modifier;
+        data.optic_ops = optic_ops;
+        let frag = crate::declaration::fragment_encoded(data, children);
+        return Ok((frag, Vec::new()));
     }
 
     let name = match tokens.get(*cursor) {
         Some(Tok::Word(w)) => {
             let mut n = w.clone();
             *cursor += 1;
-            // Absorb path segments: `@code/rust` → `@code` `/` `rust`
             while let Some(Tok::Word(seg)) = tokens.get(*cursor) {
                 if seg.starts_with('/') || seg == "/" {
                     n.push_str(seg);
                     *cursor += 1;
-                    // If `/` was standalone, absorb the next segment too
                     if seg == "/" {
                         if let Some(Tok::Word(next)) = tokens.get(*cursor) {
                             n.push_str(next);
@@ -780,18 +601,15 @@ fn parse_decl(
     };
 
     // Check for grammar inheritance: `grammar @name < @parent`
-    // `<` is tokenized as Word("<"). If followed by a Word starting with `@`,
-    // it's inheritance, not a fold operator (which is `<` + `=`).
     let mut parent_ref = None;
     if kind == DeclKind::Grammar {
         if let Some(Tok::Word(w)) = tokens.get(*cursor) {
             if w == "<" {
-                // Peek at next token: if it's a @-prefixed word, it's inheritance
                 if let Some(Tok::Word(next)) = tokens.get(*cursor + 1) {
                     if next.starts_with('@') {
-                        *cursor += 1; // skip `<`
+                        *cursor += 1;
                         parent_ref = Some(next.clone());
-                        *cursor += 1; // skip parent name
+                        *cursor += 1;
                     }
                 }
             }
@@ -812,7 +630,6 @@ fn parse_decl(
                         *cursor += 1;
                         break;
                     }
-                    // Nested closing paren: include as part of the previous param
                     if let Some(last) = params.last_mut() {
                         last.push(')');
                     }
@@ -820,7 +637,6 @@ fn parse_decl(
                 }
                 Some(Tok::LParen) => {
                     paren_depth += 1;
-                    // Nested opening paren: append to the previous param
                     if let Some(last) = params.last_mut() {
                         last.push('(');
                     }
@@ -828,7 +644,6 @@ fn parse_decl(
                 }
                 Some(Tok::Word(w)) => {
                     if paren_depth > 1 {
-                        // Inside nested parens: append to previous param
                         if let Some(last) = params.last_mut() {
                             last.push_str(w);
                         } else {
@@ -841,19 +656,14 @@ fn parse_decl(
                 }
                 Some(Tok::Comma) => {
                     if paren_depth > 1 {
-                        // Comma inside nested parens: append to previous param
                         if let Some(last) = params.last_mut() {
                             last.push(',');
                         }
                     }
-                    // At depth 1, comma is just a separator — skip it
                     *cursor += 1;
                 }
                 Some(Tok::Equals) => {
                     if paren_depth > 1 {
-                        // Equals inside nested parens: append to previous param.
-                        // Supports `effect(a => b)` patterns where `=>` tokenizes
-                        // as Equals + Word(">").
                         if let Some(last) = params.last_mut() {
                             last.push('=');
                         }
@@ -869,21 +679,18 @@ fn parse_decl(
 
     let mut variants = Vec::new();
     let mut optic_ops = Vec::new();
-    // Fold operator: `<=` is tokenized as Word("<") + Equals.
-    // Check for it before the Iso (`=`) check.
     let is_fold = matches!(tokens.get(*cursor), Some(Tok::Word(w)) if w == "<")
         && matches!(tokens.get(*cursor + 1), Some(Tok::Equals));
     if is_fold {
         optic_ops.push(OpticOp::Fold);
-        *cursor += 2; // consume `<` and `=`
-                      // Collect the fold target (e.g. `verdict`, `imperfect`) until newline or brace
+        *cursor += 2;
         loop {
             match tokens.get(*cursor) {
                 Some(Tok::Newline) => {
                     *cursor += 1;
                     break;
                 }
-                Some(Tok::LBrace) => break, // body follows
+                Some(Tok::LBrace) => break,
                 Some(Tok::Word(w)) => {
                     variants.push(w.clone());
                     *cursor += 1;
@@ -895,7 +702,6 @@ fn parse_decl(
         optic_ops.push(OpticOp::Iso);
         *cursor += 1;
         loop {
-            // Don't skip newlines here - they terminate the variant list
             match tokens.get(*cursor) {
                 Some(Tok::Newline) => {
                     *cursor += 1;
@@ -905,13 +711,11 @@ fn parse_decl(
                     if !optic_ops.contains(&OpticOp::Split) {
                         optic_ops.push(OpticOp::Split);
                     }
-                    // Pipe separator in variant list
                     *cursor += 1;
                 }
                 Some(Tok::Word(w)) => {
                     variants.push(w.clone());
                     *cursor += 1;
-                    // If variant is followed by params like call(...), consume them
                     if matches!(tokens.get(*cursor), Some(Tok::LParen)) {
                         *cursor += 1;
                         let mut paren_depth = 1;
@@ -926,7 +730,6 @@ fn parse_decl(
                     }
                 }
                 Some(Tok::Equals) => {
-                    // Double operator: `type x = = y` — the second `=` is malformed
                     return Err(err("M2004: double operator `=`"));
                 }
                 _ => break,
@@ -934,28 +737,29 @@ fn parse_decl(
         }
     }
 
-    // Classify parentheses as Focus.
     if has_parens && !optic_ops.contains(&OpticOp::Focus) {
         optic_ops.push(OpticOp::Focus);
     }
 
-    // Classify the declaration keyword itself as an optic if applicable.
     if let Some(op) = OpticOp::from_decl_kind(&kind) {
         if !optic_ops.contains(&op) {
             optic_ops.push(op);
         }
     }
 
-    // Action declarations: parse optional `in @grammar`, optional `-> return_type`, and raw body block.
+    // Action declarations
     if kind == DeclKind::Action {
         let grammar_ref = parse_action_grammar_ref(tokens, cursor);
         let return_type = parse_return_type(tokens, cursor);
         let (body_text, children) = parse_action_body(tokens, cursor)?;
-        let mut form = Form::action(name, params, grammar_ref, body_text, children);
-        form.is_abstract = modifier;
-        form.return_type = return_type;
-        form.optic_ops = optic_ops;
-        return Ok((form, Vec::new()));
+        let mut data = MirrorData::new(DeclKind::Action, name, params, Vec::new());
+        data.grammar_ref = grammar_ref;
+        data.body_text = body_text;
+        data.is_abstract = modifier;
+        data.return_type = return_type;
+        data.optic_ops = optic_ops;
+        let frag = crate::declaration::fragment_encoded(data, children);
+        return Ok((frag, Vec::new()));
     }
 
     let mut children = Vec::new();
@@ -972,23 +776,17 @@ fn parse_decl(
                 }
                 None => return Err(err("unterminated block".to_string())),
                 Some(Tok::Word(w)) => {
-                    // Try to parse as a declaration. If the word is not a recognized
-                    // declaration kind, skip it and any following tokens until the
-                    // next recognized declaration or closing brace.
-                    // `abstract` is a modifier keyword that precedes a DeclKind.
                     if DeclKind::parse(w).is_some() || w == "abstract" {
                         let (child, child_unrecognized) = parse_decl(tokens, cursor)?;
                         children.push(child);
                         block_unrecognized.extend(child_unrecognized);
                     } else if w == "<" || w == ">" {
-                        // Relation marker: `<type` (subset) or `>type` (superset)
                         let op = if w == "<" {
                             OpticOp::Subset
                         } else {
                             OpticOp::Superset
                         };
                         *cursor += 1;
-                        // Collect the target type name
                         let target = match tokens.get(*cursor) {
                             Some(Tok::Word(t)) => {
                                 let name = t.clone();
@@ -997,21 +795,15 @@ fn parse_decl(
                             }
                             _ => String::new(),
                         };
-                        // Create a synthetic child carrying the relation marker
-                        let mut child =
-                            Form::new(DeclKind::In, target, Vec::new(), Vec::new(), Vec::new());
-                        child.optic_ops.push(op);
-                        children.push(child);
-                        // Skip rest of line
+                        let mut child_data =
+                            MirrorData::new(DeclKind::In, target, Vec::new(), Vec::new());
+                        child_data.optic_ops.push(op);
+                        let child_frag =
+                            crate::declaration::fragment_encoded(child_data, Vec::new());
+                        children.push(child_frag);
                         while *cursor < tokens.len() {
                             match tokens.get(*cursor) {
                                 Some(Tok::RBrace) | Some(Tok::Newline) => break,
-                                Some(Tok::Comma) => {
-                                    *cursor += 1;
-                                }
-                                Some(Tok::Word(_)) => {
-                                    *cursor += 1;
-                                }
                                 _ => {
                                     *cursor += 1;
                                 }
@@ -1021,7 +813,6 @@ fn parse_decl(
                             *cursor += 1;
                         }
                     } else {
-                        // Unrecognized keyword inside block -- collect as loss
                         let keyword = w.clone();
                         let line = count_line_at(tokens, *cursor);
                         let content = collect_until_next_decl(tokens, cursor);
@@ -1033,7 +824,6 @@ fn parse_decl(
                     }
                 }
                 _ => {
-                    // Unexpected token - skip to next line
                     while *cursor < tokens.len()
                         && !matches!(tokens.get(*cursor), Some(Tok::Newline | Tok::RBrace))
                     {
@@ -1047,11 +837,12 @@ fn parse_decl(
         }
     }
 
-    let mut form = Form::new(kind, name, params, variants, children);
-    form.is_abstract = modifier;
-    form.optic_ops = optic_ops;
-    form.parent_ref = parent_ref;
-    Ok((form, block_unrecognized))
+    let mut data = MirrorData::new(kind, name, params, variants);
+    data.is_abstract = modifier;
+    data.optic_ops = optic_ops;
+    data.parent_ref = parent_ref;
+    let frag = crate::declaration::fragment_encoded(data, children);
+    Ok((frag, block_unrecognized))
 }
 
 /// Parse an optional `in @grammar/path` after action params.
@@ -1128,7 +919,7 @@ fn parse_return_type(tokens: &[Tok], cursor: &mut usize) -> Option<String> {
 fn parse_action_body(
     tokens: &[Tok],
     cursor: &mut usize,
-) -> Result<(Option<String>, Vec<Form>), MirrorRuntimeError> {
+) -> Result<(Option<String>, Vec<MirrorFragment>), MirrorRuntimeError> {
     skip_inline_trivia(tokens, cursor);
     if !matches!(tokens.get(*cursor), Some(Tok::LBrace)) {
         return Ok((None, Vec::new()));
@@ -1241,57 +1032,58 @@ fn skip_inline_trivia(tokens: &[Tok], cursor: &mut usize) {
 }
 
 // ---------------------------------------------------------------------------
-// Emitter — Form → text. Round-trip stable.
+// Emitter — MirrorFragment → text. Round-trip stable.
 // ---------------------------------------------------------------------------
 
-pub(crate) fn emit_form(form: &Form) -> String {
+/// Emit `.mirror` text from a `MirrorFragment`.
+pub fn emit_fragment(frag: &MirrorFragment) -> String {
     let mut out = String::new();
-    emit_form_into(form, 0, &mut out);
+    emit_fragment_into(frag, 0, &mut out);
     out
 }
 
-/// Emit `.mirror` text from a `MirrorFragment`. Delegates to `emit_form`
-/// via `Form::from_fragment`. This is the fragment-native emit path —
-/// callers that have a fragment don't need to manually convert.
-pub fn emit_fragment(frag: &MirrorFragment) -> String {
-    let form = Form::from_fragment(frag);
-    emit_form(&form)
-}
-
 /// Reorder a MirrorFragment's children into canonical (kintsugi) order.
-/// Delegates to `kintsugi` via Form round-trip.
 pub fn kintsugi_fragment(frag: &MirrorFragment) -> MirrorFragment {
-    let form = Form::from_fragment(frag);
-    let sorted = kintsugi(&form);
-    sorted.to_fragment()
+    let data = MirrorData::decode_from_fragment(frag.mirror_data());
+    if frag.mirror_children().is_empty() {
+        return frag.clone();
+    }
+
+    let mut children: Vec<MirrorFragment> = frag.mirror_children().to_vec();
+    children.sort_by_key(|c| kintsugi_sort_key(&c.mirror_data().kind));
+
+    crate::declaration::fragment_encoded(data, children)
 }
 
-fn emit_form_into(form: &Form, indent: usize, out: &mut String) {
+fn emit_fragment_into(frag: &MirrorFragment, indent: usize, out: &mut String) {
+    let data = MirrorData::decode_from_fragment(frag.mirror_data());
+    let children = frag.mirror_children();
+
     for _ in 0..indent {
         out.push_str("  ");
     }
-    if form.is_abstract {
+    if data.is_abstract {
         out.push_str("abstract ");
     }
-    out.push_str(form.kind.as_str());
-    if !form.name.is_empty() {
+    out.push_str(data.kind.as_str());
+    if !data.name.is_empty() {
         out.push(' ');
-        out.push_str(&form.name);
+        out.push_str(&data.name);
     }
-    // Recover/Rescue use pipe-delimited params: `recover |result, loss| { ... }`
-    if (form.kind == DeclKind::Recover || form.kind == DeclKind::Rescue) && !form.params.is_empty()
+    // Recover/Rescue use pipe-delimited params
+    if (data.kind == DeclKind::Recover || data.kind == DeclKind::Rescue) && !data.params.is_empty()
     {
         out.push_str(" |");
-        for (i, p) in form.params.iter().enumerate() {
+        for (i, p) in data.params.iter().enumerate() {
             if i > 0 {
                 out.push_str(", ");
             }
             out.push_str(p);
         }
         out.push('|');
-    } else if !form.params.is_empty() {
+    } else if !data.params.is_empty() {
         out.push('(');
-        for (i, p) in form.params.iter().enumerate() {
+        for (i, p) in data.params.iter().enumerate() {
             if i > 0 {
                 out.push_str(", ");
             }
@@ -1300,19 +1092,19 @@ fn emit_form_into(form: &Form, indent: usize, out: &mut String) {
         out.push(')');
     }
     // Action-specific: emit `in @grammar` and `-> return_type` before the body.
-    if form.kind == DeclKind::Action {
-        if let Some(ref gr) = form.grammar_ref {
+    if data.kind == DeclKind::Action {
+        if let Some(ref gr) = data.grammar_ref {
             out.push_str(" in ");
             out.push_str(gr);
         }
-        if let Some(ref rt) = form.return_type {
+        if let Some(ref rt) = data.return_type {
             out.push_str(" -> ");
             out.push_str(rt);
         }
     }
-    if !form.variants.is_empty() {
+    if !data.variants.is_empty() {
         out.push_str(" = ");
-        for (i, v) in form.variants.iter().enumerate() {
+        for (i, v) in data.variants.iter().enumerate() {
             if i > 0 {
                 out.push_str(" | ");
             }
@@ -1320,11 +1112,11 @@ fn emit_form_into(form: &Form, indent: usize, out: &mut String) {
         }
     }
     // Action/Recover/Rescue with raw body text: emit the body block.
-    if form.kind == DeclKind::Action
-        || form.kind == DeclKind::Recover
-        || form.kind == DeclKind::Rescue
+    if data.kind == DeclKind::Action
+        || data.kind == DeclKind::Recover
+        || data.kind == DeclKind::Rescue
     {
-        if let Some(ref bt) = form.body_text {
+        if let Some(ref bt) = data.body_text {
             out.push_str(" {\n");
             for line in bt.lines() {
                 for _ in 0..=indent {
@@ -1340,10 +1132,10 @@ fn emit_form_into(form: &Form, indent: usize, out: &mut String) {
             return;
         }
     }
-    if !form.children.is_empty() {
+    if !children.is_empty() {
         out.push_str(" {\n");
-        for child in &form.children {
-            emit_form_into(child, indent + 1, out);
+        for child in children {
+            emit_fragment_into(child, indent + 1, out);
         }
         for _ in 0..indent {
             out.push_str("  ");
@@ -1358,35 +1150,7 @@ fn emit_form_into(form: &Form, indent: usize, out: &mut String) {
 // Kintsugi — canonical ordering (the formatter)
 // ---------------------------------------------------------------------------
 
-/// Reorder declarations into canonical order. The spectral hash
-/// doesn't change — same eigenvalues, same OID. The surface changes.
-///
-/// Canonical order: in, type, traversal, lens, grammar, property, action.
-/// Observation before action. Pure before impure.
-pub(crate) fn kintsugi(form: &Form) -> Form {
-    // Only reorder children of wrapper forms (multi-decl sources).
-    // Single declarations pass through unchanged.
-    if form.children.is_empty() {
-        return form.clone();
-    }
-
-    let mut children = form.children.clone();
-    children.sort_by_key(|c| kintsugi_sort_key(&c.kind));
-
-    Form {
-        kind: form.kind.clone(),
-        name: form.name.clone(),
-        params: form.params.clone(),
-        variants: form.variants.clone(),
-        children,
-        grammar_ref: form.grammar_ref.clone(),
-        body_text: form.body_text.clone(),
-        is_abstract: form.is_abstract,
-        return_type: form.return_type.clone(),
-        optic_ops: form.optic_ops.clone(),
-        parent_ref: form.parent_ref.clone(),
-    }
-}
+// kintsugi is now kintsugi_fragment above
 
 /// Sort key for kintsugi canonical order.
 /// Lower numbers sort first. Stable sort preserves order within same kind.
@@ -1814,65 +1578,7 @@ impl MirrorRegistry {
     }
 }
 
-// Form-based registry methods — test-only, kept for internal parser tests.
-#[cfg(test)]
-impl MirrorRegistry {
-    pub(crate) fn register(&mut self, form: &Form) -> Vec<String> {
-        let mut oids = Vec::new();
-        if form.name.is_empty() {
-            for child in &form.children {
-                oids.extend(self.register_decl(child));
-            }
-        } else {
-            oids.extend(self.register_decl(form));
-        }
-        oids
-    }
-
-    fn register_decl(&mut self, decl: &Form) -> Option<String> {
-        if !decl.name.starts_with('@') {
-            return None;
-        }
-        let fragment = decl.to_fragment();
-        let oid = fragment.content_hash().as_str().to_string();
-        let size = self.estimate_fragment_size(&fragment);
-        self.store.insert_persistent(oid.clone(), fragment, size);
-        if let Err(e) = self.store.set_ref(&decl.name, &oid) {
-            eprintln!("warning: set_ref({} -> {}) failed: {}", decl.name, oid, e);
-        }
-        Some(oid)
-    }
-
-    pub(crate) fn resolve(&self, form: &Form) -> Result<(), MirrorResolveError> {
-        self.resolve_node(form)
-    }
-
-    fn resolve_node(&self, node: &Form) -> Result<(), MirrorResolveError> {
-        if node.kind == DeclKind::In {
-            let target = &node.name;
-            if self.store.get_ref(target).is_none() {
-                return Err(MirrorResolveError(format!(
-                    "unresolved `in {}`: no such ref in registry store at {}",
-                    target,
-                    self.root.display()
-                )));
-            }
-        }
-        if let Some(ref parent) = node.parent_ref {
-            if self.store.get_ref(parent).is_none() {
-                return Err(MirrorResolveError(format!(
-                    "unresolved parent `{}`: no such ref in registry store at {}",
-                    parent,
-                    self.root.display()
-                )));
-            }
-        }
-        for child in &node.children {
-            self.resolve_node(child)?;
-        }
-        Ok(())
-    }
-}
+// Form-based registry methods removed — Form is dead.
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -1881,6 +1587,7 @@ impl MirrorRegistry {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::declaration::fragment_encoded;
     use fragmentation::sha::HashAlg;
     use std::path::PathBuf;
 
@@ -1895,34 +1602,65 @@ mod tests {
         dir
     }
 
+    /// Decode a fragment's data for test assertions.
+    fn decoded(frag: &MirrorFragment) -> MirrorData {
+        MirrorData::decode_from_fragment(frag.mirror_data())
+    }
+
+    /// Build a test fragment from kind, name, params, variants, and children.
+    fn test_frag(
+        kind: DeclKind,
+        name: impl Into<String>,
+        params: Vec<String>,
+        variants: Vec<String>,
+        children: Vec<MirrorFragment>,
+    ) -> MirrorFragment {
+        let data = MirrorData::new(kind, name, params, variants);
+        fragment_encoded(data, children)
+    }
+
+    /// Build a test action fragment.
+    fn test_action_frag(
+        name: impl Into<String>,
+        params: Vec<String>,
+        grammar_ref: Option<String>,
+        body_text: Option<String>,
+        children: Vec<MirrorFragment>,
+    ) -> MirrorFragment {
+        let mut data = MirrorData::new(DeclKind::Action, name, params, Vec::new());
+        data.grammar_ref = grammar_ref;
+        data.body_text = body_text;
+        fragment_encoded(data, children)
+    }
+
     // -----------------------------------------------------------------------
-    // OpticOp classification in parsed Forms
+    // OpticOp classification in parsed fragments
     // -----------------------------------------------------------------------
 
     #[test]
     fn type_declaration_uses_iso_and_split() {
         let source = "type visibility = private | protected | public";
-        let form = parse_form_raw(source).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Type);
+        let frag = parse_form(source).ok().unwrap();
+        assert_eq!(frag.mirror_data().kind, DeclKind::Type);
         assert!(
-            form.optic_ops.contains(&OpticOp::Iso),
+            frag.mirror_data().optic_ops.contains(&OpticOp::Iso),
             "= should classify as Iso, got {:?}",
-            form.optic_ops
+            frag.mirror_data().optic_ops
         );
         assert!(
-            form.optic_ops.contains(&OpticOp::Split),
+            frag.mirror_data().optic_ops.contains(&OpticOp::Split),
             "| should classify as Split, got {:?}",
-            form.optic_ops
+            frag.mirror_data().optic_ops
         );
     }
 
     #[test]
     fn split_decl_keyword_classified_as_optic() {
         let source = "split |(ref, ref)";
-        let form = parse_form_raw(source).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Split);
+        let frag = parse_form(source).ok().unwrap();
+        assert_eq!(frag.mirror_data().kind, DeclKind::Split);
         assert!(
-            form.optic_ops.contains(&OpticOp::Split),
+            frag.mirror_data().optic_ops.contains(&OpticOp::Split),
             "split keyword should be classified as OpticOp::Split"
         );
     }
@@ -1930,10 +1668,10 @@ mod tests {
     #[test]
     fn zoom_decl_keyword_classified_as_optic() {
         let source = "zoom |>(ref, prism)";
-        let form = parse_form_raw(source).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Zoom);
+        let frag = parse_form(source).ok().unwrap();
+        assert_eq!(frag.mirror_data().kind, DeclKind::Zoom);
         assert!(
-            form.optic_ops.contains(&OpticOp::Zoom),
+            frag.mirror_data().optic_ops.contains(&OpticOp::Zoom),
             "zoom keyword should be classified as OpticOp::Zoom"
         );
     }
@@ -1941,10 +1679,10 @@ mod tests {
     #[test]
     fn refract_decl_keyword_classified_as_optic() {
         let source = "refract ..(ref)";
-        let form = parse_form_raw(source).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Refract);
+        let frag = parse_form(source).ok().unwrap();
+        assert_eq!(frag.mirror_data().kind, DeclKind::Refract);
         assert!(
-            form.optic_ops.contains(&OpticOp::Refract),
+            frag.mirror_data().optic_ops.contains(&OpticOp::Refract),
             "refract keyword should be classified as OpticOp::Refract"
         );
     }
@@ -1952,10 +1690,10 @@ mod tests {
     #[test]
     fn fold_decl_keyword_classified_as_optic() {
         let source = "fold <=(ref, imperfect)";
-        let form = parse_form_raw(source).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Fold);
+        let frag = parse_form(source).ok().unwrap();
+        assert_eq!(frag.mirror_data().kind, DeclKind::Fold);
         assert!(
-            form.optic_ops.contains(&OpticOp::Fold),
+            frag.mirror_data().optic_ops.contains(&OpticOp::Fold),
             "fold keyword should be classified as OpticOp::Fold"
         );
     }
@@ -1963,10 +1701,10 @@ mod tests {
     #[test]
     fn focus_decl_with_params_classified_as_optic() {
         let source = "focus type(id)";
-        let form = parse_form_raw(source).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Focus);
+        let frag = parse_form(source).ok().unwrap();
+        assert_eq!(frag.mirror_data().kind, DeclKind::Focus);
         assert!(
-            form.optic_ops.contains(&OpticOp::Focus),
+            frag.mirror_data().optic_ops.contains(&OpticOp::Focus),
             "focus keyword with params should be classified as OpticOp::Focus"
         );
     }
@@ -1974,17 +1712,17 @@ mod tests {
     #[test]
     fn type_without_variants_has_no_split() {
         let source = "type grammar";
-        let form = parse_form_raw(source).ok().unwrap();
-        assert!(!form.optic_ops.contains(&OpticOp::Split));
-        assert!(!form.optic_ops.contains(&OpticOp::Iso));
+        let frag = parse_form(source).ok().unwrap();
+        assert!(!frag.mirror_data().optic_ops.contains(&OpticOp::Split));
+        assert!(!frag.mirror_data().optic_ops.contains(&OpticOp::Iso));
     }
 
     #[test]
     fn parens_classified_as_focus() {
         let source = "type beam(result)";
-        let form = parse_form_raw(source).ok().unwrap();
+        let frag = parse_form(source).ok().unwrap();
         assert!(
-            form.optic_ops.contains(&OpticOp::Focus),
+            frag.mirror_data().optic_ops.contains(&OpticOp::Focus),
             "parenthesized params should classify as Focus"
         );
     }
@@ -1996,21 +1734,22 @@ mod tests {
     #[test]
     fn mirror_runtime_parses_atom_decl() {
         let src = "form @form {\n  prism focus\n}\n";
-        let form = parse_form_raw(src).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Form);
-        assert_eq!(form.name, "@form");
-        assert_eq!(form.children.len(), 1);
-        assert_eq!(form.children[0].kind, DeclKind::Prism);
-        assert_eq!(form.children[0].name, "focus");
+        let frag = parse_form(src).ok().unwrap();
+        let data = decoded(&frag);
+        assert_eq!(data.kind, DeclKind::Form);
+        assert_eq!(data.name, "@form");
+        assert_eq!(frag.mirror_children().len(), 1);
+        assert_eq!(frag.mirror_children()[0].mirror_data().kind, DeclKind::Prism);
+        assert_eq!(decoded(&frag.mirror_children()[0]).name, "focus");
     }
 
     #[test]
     fn mirror_runtime_parses_params_and_variants() {
         let src = "form @x {\n  prism eigenvalues(precision)\n  traversal kind = a | b | c\n}\n";
-        let form = parse_form_raw(src).ok().unwrap();
-        assert_eq!(form.children[0].params, vec!["precision".to_string()]);
+        let frag = parse_form(src).ok().unwrap();
+        assert_eq!(decoded(&frag.mirror_children()[0]).params, vec!["precision".to_string()]);
         assert_eq!(
-            form.children[1].variants,
+            decoded(&frag.mirror_children()[1]).variants,
             vec!["a".to_string(), "b".to_string(), "c".to_string()]
         );
     }
@@ -2018,14 +1757,15 @@ mod tests {
     #[test]
     fn mirror_runtime_parses_nested_property() {
         let src = "form @property {\n  property unique_variants(form) {\n    fold input\n  }\n}\n";
-        let form = parse_form_raw(src).ok().unwrap();
-        assert_eq!(form.children.len(), 1);
-        let prop = &form.children[0];
-        assert_eq!(prop.kind, DeclKind::Property);
-        assert_eq!(prop.name, "unique_variants");
-        assert_eq!(prop.params, vec!["form".to_string()]);
-        assert_eq!(prop.children.len(), 1);
-        assert_eq!(prop.children[0].kind, DeclKind::Fold);
+        let frag = parse_form(src).ok().unwrap();
+        assert_eq!(frag.mirror_children().len(), 1);
+        let prop = &frag.mirror_children()[0];
+        let pd = decoded(prop);
+        assert_eq!(pd.kind, DeclKind::Property);
+        assert_eq!(pd.name, "unique_variants");
+        assert_eq!(pd.params, vec!["form".to_string()]);
+        assert_eq!(prop.mirror_children().len(), 1);
+        assert_eq!(prop.mirror_children()[0].mirror_data().kind, DeclKind::Fold);
     }
 
     #[test]
@@ -2191,27 +1931,15 @@ mod tests {
         let tmp = tempdir_for_test("registry_registers_named");
         let mut registry = MirrorRegistry::open(&tmp).unwrap();
 
-        let form = Form::new(
-            DeclKind::Prism,
-            "@prism",
-            Vec::new(),
-            Vec::new(),
-            vec![Form::new(
-                DeclKind::Prism,
-                "focus",
-                Vec::new(),
-                Vec::new(),
-                Vec::new(),
-            )],
-        );
-        registry.register(&form);
+        let child = test_frag(DeclKind::Prism, "focus", Vec::new(), Vec::new(), Vec::new());
+        let frag = test_frag(DeclKind::Prism, "@prism", Vec::new(), Vec::new(), vec![child]);
+        registry.register_fragment(&frag);
 
         let stored = registry.lookup("@prism").expect("@prism in registry");
-        let shatter = Shatter;
-        let restored = shatter.decompile(&stored);
+        let restored = decoded(&stored);
         assert_eq!(restored.name, "@prism");
-        assert_eq!(restored.children.len(), 1);
-        assert_eq!(restored.children[0].name, "focus");
+        assert_eq!(stored.mirror_children().len(), 1);
+        assert_eq!(decoded(&stored.mirror_children()[0]).name, "focus");
     }
 
     #[test]
@@ -2219,9 +1947,8 @@ mod tests {
         let tmp = tempdir_for_test("registry_registers_only_at");
         let mut registry = MirrorRegistry::open(&tmp).unwrap();
 
-        // A name without @-prefix should NOT become a form binding.
-        let form = Form::new(DeclKind::Prism, "id", Vec::new(), Vec::new(), Vec::new());
-        registry.register(&form);
+        let frag = test_frag(DeclKind::Prism, "id", Vec::new(), Vec::new(), Vec::new());
+        registry.register_fragment(&frag);
         assert!(registry.lookup("id").is_none());
         assert!(registry.lookup("@id").is_none());
     }
@@ -2231,24 +1958,15 @@ mod tests {
         let tmp = tempdir_for_test("registry_persists");
         {
             let mut registry = MirrorRegistry::open(&tmp).unwrap();
-            let form = Form::new(
-                DeclKind::Prism,
-                "@prism",
-                Vec::new(),
-                Vec::new(),
-                Vec::new(),
-            );
-            registry.register(&form);
+            let frag = test_frag(DeclKind::Prism, "@prism", Vec::new(), Vec::new(), Vec::new());
+            registry.register_fragment(&frag);
             registry.flush();
         }
-        // Reopen — cache is gone, but the disk + refs persist.
         let registry = MirrorRegistry::open(&tmp).unwrap();
         let stored = registry
             .lookup("@prism")
             .expect("@prism survives reopen via disk");
-        let shatter = Shatter;
-        let restored = shatter.decompile(&stored);
-        assert_eq!(restored.name, "@prism");
+        assert_eq!(decoded(&stored).name, "@prism");
     }
 
     #[test]
@@ -2256,49 +1974,21 @@ mod tests {
         let tmp = tempdir_for_test("registry_resolves_in");
         let mut registry = MirrorRegistry::open(&tmp).unwrap();
 
-        let prism_form = Form::new(
-            DeclKind::Prism,
-            "@prism",
-            Vec::new(),
-            Vec::new(),
-            Vec::new(),
-        );
-        registry.register(&prism_form);
+        let prism_frag = test_frag(DeclKind::Prism, "@prism", Vec::new(), Vec::new(), Vec::new());
+        registry.register_fragment(&prism_frag);
 
-        let file = Form::new(
-            DeclKind::Form,
-            "",
-            Vec::new(),
-            Vec::new(),
-            vec![Form::new(
-                DeclKind::In,
-                "@prism",
-                Vec::new(),
-                Vec::new(),
-                Vec::new(),
-            )],
-        );
-        assert!(registry.resolve(&file).is_ok());
+        let in_child = test_frag(DeclKind::In, "@prism", Vec::new(), Vec::new(), Vec::new());
+        let file = test_frag(DeclKind::Form, "", Vec::new(), Vec::new(), vec![in_child]);
+        assert!(registry.resolve_fragment(&file).is_ok());
     }
 
     #[test]
     fn registry_resolve_fails_when_in_target_missing() {
         let tmp = tempdir_for_test("registry_resolve_missing");
         let registry = MirrorRegistry::open(&tmp).unwrap();
-        let file = Form::new(
-            DeclKind::Form,
-            "",
-            Vec::new(),
-            Vec::new(),
-            vec![Form::new(
-                DeclKind::In,
-                "@nonexistent",
-                Vec::new(),
-                Vec::new(),
-                Vec::new(),
-            )],
-        );
-        let err = registry.resolve(&file).unwrap_err();
+        let in_child = test_frag(DeclKind::In, "@nonexistent", Vec::new(), Vec::new(), Vec::new());
+        let file = test_frag(DeclKind::Form, "", Vec::new(), Vec::new(), vec![in_child]);
+        let err = registry.resolve_fragment(&file).unwrap_err();
         assert!(
             err.0.contains("@nonexistent"),
             "error message should mention the missing form: {}",
@@ -2311,32 +2001,15 @@ mod tests {
         let tmp = tempdir_for_test("registry_resolve_disk");
         {
             let mut registry = MirrorRegistry::open(&tmp).unwrap();
-            let prism_form = Form::new(
-                DeclKind::Prism,
-                "@prism",
-                Vec::new(),
-                Vec::new(),
-                Vec::new(),
-            );
-            registry.register(&prism_form);
+            let prism_frag = test_frag(DeclKind::Prism, "@prism", Vec::new(), Vec::new(), Vec::new());
+            registry.register_fragment(&prism_frag);
             registry.flush();
         }
         let registry = MirrorRegistry::open(&tmp).unwrap();
-        let file = Form::new(
-            DeclKind::Form,
-            "",
-            Vec::new(),
-            Vec::new(),
-            vec![Form::new(
-                DeclKind::In,
-                "@prism",
-                Vec::new(),
-                Vec::new(),
-                Vec::new(),
-            )],
-        );
+        let in_child = test_frag(DeclKind::In, "@prism", Vec::new(), Vec::new(), Vec::new());
+        let file = test_frag(DeclKind::Form, "", Vec::new(), Vec::new(), vec![in_child]);
         assert!(
-            registry.resolve(&file).is_ok(),
+            registry.resolve_fragment(&file).is_ok(),
             "resolve must use store ref lookup, not in-memory state"
         );
     }
@@ -2453,13 +2126,14 @@ mod tests {
     #[test]
     fn parse_action_with_grammar_ref() {
         let src = "action transform(state) in @code/rust {\n    fn transform(&mut self) { }\n}\n";
-        let form = parse_form_raw(src).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Action);
-        assert_eq!(form.name, "transform");
-        assert_eq!(form.params, vec!["state".to_string()]);
-        assert_eq!(form.grammar_ref, Some("@code/rust".to_string()));
-        assert!(form.body_text.is_some(), "body text should be captured");
-        let body = form.body_text.as_ref().unwrap();
+        let frag = parse_form(src).ok().unwrap();
+        let data = decoded(&frag);
+        assert_eq!(data.kind, DeclKind::Action);
+        assert_eq!(data.name, "transform");
+        assert_eq!(data.params, vec!["state".to_string()]);
+        assert_eq!(data.grammar_ref, Some("@code/rust".to_string()));
+        assert!(data.body_text.is_some(), "body text should be captured");
+        let body = data.body_text.as_ref().unwrap();
         assert!(
             body.contains("transform"),
             "body should contain the raw text: {}",
@@ -2470,34 +2144,36 @@ mod tests {
     #[test]
     fn parse_action_without_grammar_ref() {
         let src = "action update(state) {\n    state.apply()\n}\n";
-        let form = parse_form_raw(src).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Action);
-        assert_eq!(form.name, "update");
-        assert_eq!(form.params, vec!["state".to_string()]);
-        assert_eq!(form.grammar_ref, None, "no `in @grammar` means None");
-        assert!(form.body_text.is_some());
+        let frag = parse_form(src).ok().unwrap();
+        let data = decoded(&frag);
+        assert_eq!(data.kind, DeclKind::Action);
+        assert_eq!(data.name, "update");
+        assert_eq!(data.params, vec!["state".to_string()]);
+        assert_eq!(data.grammar_ref, None, "no `in @grammar` means None");
+        assert!(data.body_text.is_some());
     }
 
     #[test]
     fn parse_action_receiver_stored() {
         let src = "action send(process, message) in @actor {\n    dispatch(message)\n}\n";
-        let form = parse_form_raw(src).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Action);
-        assert_eq!(form.name, "send");
+        let frag = parse_form(src).ok().unwrap();
+        let data = decoded(&frag);
+        assert_eq!(data.kind, DeclKind::Action);
+        assert_eq!(data.name, "send");
         assert_eq!(
-            form.params,
+            data.params,
             vec!["process".to_string(), "message".to_string()]
         );
-        assert_eq!(form.grammar_ref, Some("@actor".to_string()));
+        assert_eq!(data.grammar_ref, Some("@actor".to_string()));
     }
 
     #[test]
     fn parse_action_body_stored_as_raw() {
         let src = "action compute(x) in @code/rust {\n    let y = x * 2;\n    y + 1\n}\n";
-        let form = parse_form_raw(src).ok().unwrap();
-        assert!(form.body_text.is_some());
-        let body = form.body_text.unwrap();
-        // Body should contain the raw text, not parsed mirror declarations
+        let frag = parse_form(src).ok().unwrap();
+        let data = decoded(&frag);
+        assert!(data.body_text.is_some());
+        let body = data.body_text.unwrap();
         assert!(
             body.contains("let"),
             "raw body should be preserved: {}",
@@ -2508,24 +2184,23 @@ mod tests {
     #[test]
     fn parse_action_empty_body() {
         let src = "action noop(state) { }\n";
-        let form = parse_form_raw(src).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Action);
-        assert_eq!(form.name, "noop");
-        assert_eq!(form.body_text, None, "empty body should be None");
+        let frag = parse_form(src).ok().unwrap();
+        let data = decoded(&frag);
+        assert_eq!(data.kind, DeclKind::Action);
+        assert_eq!(data.name, "noop");
+        assert_eq!(data.body_text, None, "empty body should be None");
     }
 
     #[test]
-    fn action_form_round_trip_fragment() {
-        let form = Form::action(
+    fn action_fragment_round_trip() {
+        let frag = test_action_frag(
             "transform",
             vec!["state".to_string()],
             Some("@code/rust".to_string()),
             Some("fn transform() {}".to_string()),
             Vec::new(),
         );
-        let shatter = Shatter;
-        let frag = shatter.compile_form(&form);
-        let restored = shatter.decompile(&frag);
+        let restored = decoded(&frag);
         assert_eq!(restored.kind, DeclKind::Action);
         assert_eq!(restored.name, "transform");
         assert_eq!(restored.params, vec!["state".to_string()]);
@@ -2565,40 +2240,36 @@ mod tests {
 
     #[test]
     fn action_is_named_type_property_passes_for_named_receiver() {
-        // Simulate checking `action_is_named_type`: all actions have named type receivers
-        let form = Form::new(
-            DeclKind::Form,
-            "@test",
+        let action = test_action_frag(
+            "transform",
+            vec!["state".to_string()],
+            Some("@code/rust".to_string()),
+            Some("body".to_string()),
             Vec::new(),
-            Vec::new(),
-            vec![Form::action(
-                "transform",
-                vec!["state".to_string()],
-                Some("@code/rust".to_string()),
-                Some("body".to_string()),
-                Vec::new(),
-            )],
         );
-        // Check: every action's first param (receiver) is a non-empty named type
-        let all_named = form
-            .children
+        let frag = test_frag(DeclKind::Form, "@test", Vec::new(), Vec::new(), vec![action]);
+        let all_named = frag
+            .mirror_children()
             .iter()
-            .filter(|f| f.kind == DeclKind::Action)
-            .all(|f| !f.params.is_empty() && !f.params[0].is_empty());
+            .filter(|f| f.mirror_data().kind == DeclKind::Action)
+            .all(|f| {
+                let d = decoded(f);
+                !d.params.is_empty() && !d.params[0].is_empty()
+            });
         assert!(all_named, "all action receivers should be named types");
     }
 
     #[test]
     fn action_is_named_type_property_fails_for_empty_receiver() {
-        // An action with no params = no receiver = anonymous = property violation
-        let form = Form::action(
+        let frag = test_action_frag(
             "bad",
             Vec::new(),
             None,
             Some("body".to_string()),
             Vec::new(),
         );
-        let has_named_receiver = !form.params.is_empty() && !form.params[0].is_empty();
+        let data = decoded(&frag);
+        let has_named_receiver = !data.params.is_empty() && !data.params[0].is_empty();
         assert!(
             !has_named_receiver,
             "action with no params should fail action_is_named_type"
@@ -2625,15 +2296,11 @@ mod tests {
         assert!(!content.is_empty(), "mirror.shatter must not be empty");
 
         // Parse it back — the content IS valid .mirror syntax
-        let reparsed = parse_form_raw(&content).ok().unwrap();
+        let reparsed = parse_form(&content).ok().unwrap();
 
-        // Compile the reparsed form
-        let shatter = Shatter;
-        let fragment = shatter.compile_form(&reparsed);
-
-        // Same OID — round-trip exact
+        // The reparsed fragment IS already content-addressed
         assert_eq!(
-            fragment.content_hash().as_str(),
+            reparsed.content_hash().as_str(),
             oid.as_str(),
             "round-trip OID mismatch: emitted shatter must parse back to same crystal"
         );
@@ -2652,31 +2319,30 @@ mod tests {
         let content = std::fs::read_to_string(&output).unwrap();
 
         // Must parse without error
-        let form = parse_form_raw(&content).ok().unwrap();
+        let frag = parse_form(&content).ok().unwrap();
 
         // Must contain the boot forms (all boot files collapsed).
-        // Count changes as parser learns new declaration kinds.
         assert!(
-            form.children.len() >= 8,
+            frag.mirror_children().len() >= 8,
             "shatter must contain at least 8 boot file forms, got {}",
-            form.children.len()
+            frag.mirror_children().len()
         );
     }
 
-    #[test]
     // -----------------------------------------------------------------------
     // DeclKind::Default and DeclKind::Binding — no longer silently dropped
     // -----------------------------------------------------------------------
     #[test]
     fn parse_default_declaration() {
         let src = "default(visibility) = public";
-        let form = parse_form_raw(src).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Default);
-        assert_eq!(form.name, "");
-        assert_eq!(form.params, vec!["visibility".to_string()]);
-        assert_eq!(form.variants, vec!["public".to_string()]);
+        let frag = parse_form(src).ok().unwrap();
+        let data = decoded(&frag);
+        assert_eq!(data.kind, DeclKind::Default);
+        assert_eq!(data.name, "");
+        assert_eq!(data.params, vec!["visibility".to_string()]);
+        assert_eq!(data.variants, vec!["public".to_string()]);
         assert!(
-            form.optic_ops.contains(&OpticOp::Iso),
+            frag.mirror_data().optic_ops.contains(&OpticOp::Iso),
             "= should classify as Iso"
         );
     }
@@ -2684,30 +2350,30 @@ mod tests {
     #[test]
     fn parse_binding_declaration() {
         let src = "binding(leader, key) = focus";
-        let form = parse_form_raw(src).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Binding);
-        assert_eq!(form.name, "");
-        assert_eq!(form.params, vec!["leader".to_string(), "key".to_string()]);
-        assert_eq!(form.variants, vec!["focus".to_string()]);
+        let frag = parse_form(src).ok().unwrap();
+        let data = decoded(&frag);
+        assert_eq!(data.kind, DeclKind::Binding);
+        assert_eq!(data.name, "");
+        assert_eq!(data.params, vec!["leader".to_string(), "key".to_string()]);
+        assert_eq!(data.variants, vec!["focus".to_string()]);
     }
 
     #[test]
     fn parse_default_inside_block() {
         let src = "form @test {\n  type visibility = private | public\n  default(visibility) = public\n}\n";
-        let form = parse_form_raw(src).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Form);
-        // Both children should be present — default is NOT silently dropped
+        let frag = parse_form(src).ok().unwrap();
+        assert_eq!(frag.mirror_data().kind, DeclKind::Form);
         assert_eq!(
-            form.children.len(),
+            frag.mirror_children().len(),
             2,
             "default should not be silently dropped: got {:?}",
-            form.children
+            frag.mirror_children()
                 .iter()
-                .map(|c| c.kind.as_str())
+                .map(|c| c.mirror_data().kind.as_str())
                 .collect::<Vec<_>>()
         );
-        assert_eq!(form.children[0].kind, DeclKind::Type);
-        assert_eq!(form.children[1].kind, DeclKind::Default);
+        assert_eq!(frag.mirror_children()[0].mirror_data().kind, DeclKind::Type);
+        assert_eq!(frag.mirror_children()[1].mirror_data().kind, DeclKind::Default);
     }
 
     // -----------------------------------------------------------------------
@@ -2718,22 +2384,22 @@ mod tests {
     fn parse_unrecognized_keyword_returns_partial() {
         // "widget" is not a known DeclKind — parser should return Partial with loss
         let src = "widget foo\ntype bar";
-        let result = parse_form_raw(src);
+        let result = parse_form(src);
         assert!(
             result.is_partial(),
             "unrecognized keyword should produce Partial, got {:?}",
             if result.is_ok() { "Success" } else { "Failure" }
         );
         // The recognized declaration survives
-        let form = result.as_ref().ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Type);
-        assert_eq!(form.name, "bar");
+        let frag = result.as_ref().ok().unwrap();
+        assert_eq!(frag.mirror_data().kind, DeclKind::Type);
+        assert_eq!(decoded(frag).name, "bar");
     }
 
     #[test]
     fn parse_unrecognized_keyword_loss_contains_keyword() {
         let src = "widget foo\ntype bar";
-        let result = parse_form_raw(src);
+        let result = parse_form(src);
         let loss = result.loss();
         assert_eq!(loss.parse.unrecognized.len(), 1);
         assert_eq!(loss.parse.unrecognized[0].keyword, "widget");
@@ -2744,7 +2410,7 @@ mod tests {
     #[test]
     fn parse_all_recognized_returns_success() {
         let src = "type visibility = private | public";
-        let result = parse_form_raw(src);
+        let result = parse_form(src);
         assert!(
             !result.is_partial(),
             "fully recognized source should not be Partial"
@@ -2755,7 +2421,7 @@ mod tests {
     #[test]
     fn parse_only_unrecognized_returns_failure() {
         let src = "widget foo\ngadget bar";
-        let result = parse_form_raw(src);
+        let result = parse_form(src);
         assert!(result.is_err(), "only unrecognized keywords should fail");
         let loss = result.loss();
         assert_eq!(
@@ -3191,16 +2857,16 @@ grammar @ai {
 
         // If we got here, the compiler returned a value (Success or Partial).
         // The fold operator MUST be recorded on the action.
-        // optic_ops is a parser annotation, not content-addressed — check via parse_form_raw.
-        let form = parse_form_raw(AI_GRAMMAR).ok().unwrap();
-        let boot_action = form
-            .children
+        // optic_ops is a parser annotation — check via parse_form.
+        let frag = parse_form(AI_GRAMMAR).ok().unwrap();
+        let boot_action = frag
+            .mirror_children()
             .iter()
-            .flat_map(|child| std::iter::once(child).chain(child.children.iter()))
-            .find(|f| f.kind == DeclKind::Action && f.name == "boot");
+            .flat_map(|child| std::iter::once(child).chain(child.mirror_children().iter()))
+            .find(|f| f.mirror_data().kind == DeclKind::Action && decoded(f).name == "boot");
         assert!(boot_action.is_some(), "action boot must exist");
         assert!(
-            boot_action.unwrap().optic_ops.contains(&OpticOp::Fold),
+            boot_action.unwrap().mirror_data().optic_ops.contains(&OpticOp::Fold),
             "action boot(identity) <= imperfect must produce OpticOp::Fold"
         );
 
@@ -3554,16 +3220,15 @@ grammar @ai {
             Imperfect::Success(_c) => {
                 // If Success, the <= must be recorded as OpticOp::Fold.
                 // optic_ops is a parser annotation — check via parse_form_raw.
-                let form = parse_form_raw("type x <= y\n").ok().unwrap();
-                let has_fold = form.optic_ops.contains(&OpticOp::Fold)
-                    || form
-                        .children
+                let frag = parse_form("type x <= y\n").ok().unwrap();
+                let has_fold = frag.mirror_data().optic_ops.contains(&OpticOp::Fold)
+                    || frag
+                        .mirror_children()
                         .iter()
-                        .any(|ch| ch.optic_ops.contains(&OpticOp::Fold));
+                        .any(|ch| ch.mirror_data().optic_ops.contains(&OpticOp::Fold));
                 assert!(
                     has_fold,
-                    "type x <= y: if Success, OpticOp::Fold must be recorded. Got: {:?}",
-                    form
+                    "type x <= y: if Success, OpticOp::Fold must be recorded."
                 );
             }
             Imperfect::Partial(_, loss) => {
@@ -3599,20 +3264,19 @@ grammar @ai {
 
         // The property must have OpticOp::Fold — check via parse_form since
         // optic_ops is a parser annotation, not stored in the fragment.
-        let form = parse_form_raw(
+        let frag = parse_form(
             "property check(grammar) <= verdict {\n  traversal types\n  refract verdict\n}\n",
         )
         .ok()
         .unwrap();
-        let has_fold = form.optic_ops.contains(&OpticOp::Fold)
-            || form
-                .children
+        let has_fold = frag.mirror_data().optic_ops.contains(&OpticOp::Fold)
+            || frag
+                .mirror_children()
                 .iter()
-                .any(|ch| ch.optic_ops.contains(&OpticOp::Fold));
+                .any(|ch| ch.mirror_data().optic_ops.contains(&OpticOp::Fold));
         assert!(
             has_fold,
-            "property check(grammar) <= verdict must produce OpticOp::Fold. Got: {:?}",
-            form
+            "property check(grammar) <= verdict must produce OpticOp::Fold."
         );
     }
 
@@ -3625,130 +3289,109 @@ grammar @ai {
     #[test]
     fn imperfect_type_has_recover_method() {
         let source = "type imperfect(observation, error(observation), loss) {\n  recover |observation, loss| <= imperfect\n}\n";
-        let form = parse_form_raw(source).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Type);
-        assert_eq!(form.name, "imperfect");
-        assert!(!form.children.is_empty(), "imperfect must have children");
-        let recover = form.children.iter().find(|c| c.kind == DeclKind::Recover);
+        let frag = parse_form(source).ok().unwrap();
+        assert_eq!(frag.mirror_data().kind, DeclKind::Type);
+        assert_eq!(decoded(&frag).name, "imperfect");
+        assert!(!frag.mirror_children().is_empty(), "imperfect must have children");
+        let recover = frag.mirror_children().iter().find(|c| c.mirror_data().kind == DeclKind::Recover);
         assert!(recover.is_some(), "imperfect must have a recover child");
         let recover = recover.unwrap();
         assert!(
-            recover.optic_ops.contains(&OpticOp::Fold),
+            recover.mirror_data().optic_ops.contains(&OpticOp::Fold),
             "recover must have OpticOp::Fold (from <=), got: {:?}",
-            recover.optic_ops
+            recover.mirror_data().optic_ops
         );
     }
 
-    /// `rescue` inside a type block with fold operator should produce
-    /// a child with DeclKind::Rescue and OpticOp::Fold.
     #[test]
     fn imperfect_type_has_rescue_method() {
         let source = "type imperfect(observation, error(observation), loss) {\n  rescue |error(observation), loss| <= imperfect\n}\n";
-        let form = parse_form_raw(source).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Type);
-        let rescue = form.children.iter().find(|c| c.kind == DeclKind::Rescue);
+        let frag = parse_form(source).ok().unwrap();
+        assert_eq!(frag.mirror_data().kind, DeclKind::Type);
+        let rescue = frag.mirror_children().iter().find(|c| c.mirror_data().kind == DeclKind::Rescue);
         assert!(rescue.is_some(), "imperfect must have a rescue child");
         let rescue = rescue.unwrap();
         assert!(
-            rescue.optic_ops.contains(&OpticOp::Fold),
+            rescue.mirror_data().optic_ops.contains(&OpticOp::Fold),
             "rescue must have OpticOp::Fold (from <=), got: {:?}",
-            rescue.optic_ops
+            rescue.mirror_data().optic_ops
         );
     }
 
-    /// `recover` with fold operator parses correctly.
     #[test]
     fn recover_returns_imperfect() {
         let source = "type result(t, e, l) {\n  recover |t, l| <= result\n}\n";
-        let form = parse_form_raw(source).ok().unwrap();
-        let recover = form.children.iter().find(|c| c.kind == DeclKind::Recover);
+        let frag = parse_form(source).ok().unwrap();
+        let recover = frag.mirror_children().iter().find(|c| c.mirror_data().kind == DeclKind::Recover);
         assert!(recover.is_some(), "result must have recover child");
         let recover = recover.unwrap();
         assert!(
-            recover.optic_ops.contains(&OpticOp::Fold),
+            recover.mirror_data().optic_ops.contains(&OpticOp::Fold),
             "recover must have fold operator"
         );
-        // The fold target should reference the enclosing type
         assert!(
-            recover.variants.contains(&"result".to_string()),
+            decoded(recover).variants.contains(&"result".to_string()),
             "recover fold target should be 'result', got variants: {:?}",
-            recover.variants
+            decoded(recover).variants
         );
     }
 
-    /// `rescue` with fold operator parses correctly.
     #[test]
     fn rescue_returns_imperfect() {
         let source = "type result(t, e, l) {\n  rescue |e, l| <= result\n}\n";
-        let form = parse_form_raw(source).ok().unwrap();
-        let rescue = form.children.iter().find(|c| c.kind == DeclKind::Rescue);
+        let frag = parse_form(source).ok().unwrap();
+        let rescue = frag.mirror_children().iter().find(|c| c.mirror_data().kind == DeclKind::Rescue);
         assert!(rescue.is_some(), "result must have rescue child");
         let rescue = rescue.unwrap();
         assert!(
-            rescue.optic_ops.contains(&OpticOp::Fold),
+            rescue.mirror_data().optic_ops.contains(&OpticOp::Fold),
             "rescue must have fold operator"
         );
         assert!(
-            rescue.variants.contains(&"result".to_string()),
+            decoded(rescue).variants.contains(&"result".to_string()),
             "rescue fold target should be 'result', got variants: {:?}",
-            rescue.variants
+            decoded(rescue).variants
         );
     }
 
-    /// Inline relation markers: `<` for subset inside type body.
     #[test]
     fn inline_relation_markers_parsed() {
-        // Superset marker
         let source = "type admin {\n  >user\n}\n";
-        let form = parse_form_raw(source).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Type);
-        assert_eq!(form.name, "admin");
-        // The `>user` should be parsed — either as a child or as a variant
-        // with OpticOp::Superset in the type's optic_ops
-        let has_superset = form.optic_ops.contains(&OpticOp::Superset)
-            || form
-                .children
+        let frag = parse_form(source).ok().unwrap();
+        assert_eq!(frag.mirror_data().kind, DeclKind::Type);
+        assert_eq!(decoded(&frag).name, "admin");
+        let has_superset = frag.mirror_data().optic_ops.contains(&OpticOp::Superset)
+            || frag
+                .mirror_children()
                 .iter()
-                .any(|c| c.optic_ops.contains(&OpticOp::Superset));
-        assert!(
-            has_superset,
-            "admin type must have Superset marker, got form: {:?}",
-            form
-        );
+                .any(|c| c.mirror_data().optic_ops.contains(&OpticOp::Superset));
+        assert!(has_superset, "admin type must have Superset marker");
 
-        // Subset marker
         let source2 = "type contact {\n  <user\n}\n";
-        let form2 = parse_form_raw(source2).ok().unwrap();
-        let has_subset = form2.optic_ops.contains(&OpticOp::Subset)
-            || form2
-                .children
+        let frag2 = parse_form(source2).ok().unwrap();
+        let has_subset = frag2.mirror_data().optic_ops.contains(&OpticOp::Subset)
+            || frag2
+                .mirror_children()
                 .iter()
-                .any(|c| c.optic_ops.contains(&OpticOp::Subset));
-        assert!(
-            has_subset,
-            "contact type must have Subset marker, got form: {:?}",
-            form2
-        );
+                .any(|c| c.mirror_data().optic_ops.contains(&OpticOp::Subset));
+        assert!(has_subset, "contact type must have Subset marker");
     }
 
-    /// Combined: type with inline relation marker AND recover method.
     #[test]
     fn type_with_inline_relation_and_recover() {
         let source = "type contact {\n  <user\n  recover |user, contact, loss| <= contact\n}\n";
-        let form = parse_form_raw(source).ok().unwrap();
-        assert_eq!(form.kind, DeclKind::Type);
-        assert_eq!(form.name, "contact");
+        let frag = parse_form(source).ok().unwrap();
+        assert_eq!(frag.mirror_data().kind, DeclKind::Type);
+        assert_eq!(decoded(&frag).name, "contact");
 
-        // Must have subset marker
-        let has_subset = form.optic_ops.contains(&OpticOp::Subset)
-            || form
-                .children
+        let has_subset = frag.mirror_data().optic_ops.contains(&OpticOp::Subset)
+            || frag
+                .mirror_children()
                 .iter()
-                .any(|c| c.optic_ops.contains(&OpticOp::Subset));
+                .any(|c| c.mirror_data().optic_ops.contains(&OpticOp::Subset));
         assert!(has_subset, "contact must have Subset marker");
 
-        // Must have recover child
-        let recover = form.children.iter().find(|c| c.kind == DeclKind::Recover);
+        let recover = frag.mirror_children().iter().find(|c| c.mirror_data().kind == DeclKind::Recover);
         assert!(recover.is_some(), "contact must have recover child");
     }
 
@@ -3883,10 +3526,10 @@ grammar @ai {
     #[test]
     fn kintsugi_hoists_imports() {
         let src = "type x\nin @prism\ntype y\n";
-        let parsed = parse_form_raw(src).ok().unwrap();
-        let canonical = kintsugi(&parsed);
+        let parsed = parse_form(src).ok().unwrap();
+        let canonical = kintsugi_fragment(&parsed);
         assert_eq!(
-            canonical.children[0].kind,
+            canonical.mirror_children()[0].mirror_data().kind,
             DeclKind::In,
             "in @prism must be first after kintsugi"
         );
@@ -3896,22 +3539,21 @@ grammar @ai {
     #[test]
     fn kintsugi_is_idempotent() {
         let src = "action do_thing\ntype x\nin @prism\ngrammar @test {\n  type y\n}\n";
-        let parsed = parse_form_raw(src).ok().unwrap();
-        let once = kintsugi(&parsed);
-        let twice = kintsugi(&once);
-        assert_eq!(once, twice, "kintsugi must be idempotent");
+        let parsed = parse_form(src).ok().unwrap();
+        let once = kintsugi_fragment(&parsed);
+        let twice = kintsugi_fragment(&once);
+        assert_eq!(once.content_hash(), twice.content_hash(), "kintsugi must be idempotent");
     }
 
     /// Kintsugi preserves OID: the content-addressed hash is order-invariant.
     #[test]
     fn kintsugi_preserves_oid() {
         let src = "action do_thing\ntype x\nin @prism\n";
-        let parsed = parse_form_raw(src).ok().unwrap();
-        let canonical = kintsugi(&parsed);
+        let parsed = parse_form(src).ok().unwrap();
+        let canonical = kintsugi_fragment(&parsed);
 
-        let shatter = Shatter;
-        let oid_before = shatter.compile_form(&parsed).content_hash().clone();
-        let oid_after = shatter.compile_form(&canonical).content_hash().clone();
+        let oid_before = parsed.content_hash().clone();
+        let oid_after = canonical.content_hash().clone();
         assert_eq!(
             oid_before, oid_after,
             "kintsugi must not change the content-addressed OID"
@@ -3990,22 +3632,22 @@ grammar @ai {
             .find(|f| f.mirror_data().name == "types_lowercase");
         // RED: template should exist as a recognized DeclKind
         assert!(template.is_some(), "template DeclKind not yet recognized");
-        // Check optic_ops via parse_form_raw since they're parser annotations
-        let form =
-            parse_form_raw("in @meta\nin @property\ntemplate types_lowercase(grammar) = iso\n")
+        // Check optic_ops via parse_form since they're parser annotations
+        let frag =
+            parse_form("in @meta\nin @property\ntemplate types_lowercase(grammar) = iso\n")
                 .ok()
                 .unwrap();
-        let t = form
-            .children
+        let t = frag
+            .mirror_children()
             .iter()
-            .find(|f| f.name == "types_lowercase")
+            .find(|f| decoded(f).name == "types_lowercase")
             .unwrap();
         assert!(
-            !t.optic_ops.contains(&OpticOp::Fold),
+            !t.mirror_data().optic_ops.contains(&OpticOp::Fold),
             "template must be iso, not fold"
         );
         assert!(
-            t.optic_ops.contains(&OpticOp::Iso),
+            t.mirror_data().optic_ops.contains(&OpticOp::Iso),
             "template must carry OpticOp::Iso"
         );
     }
@@ -4039,9 +3681,9 @@ grammar @ai {
 
         // The fold operator must be recorded — check via parse_form since
         // optic_ops is a parser annotation, not stored in the fragment.
-        let form = parse_form_raw(src).ok().unwrap();
+        let frag = parse_form(src).ok().unwrap();
         assert!(
-            form.optic_ops.contains(&OpticOp::Fold),
+            frag.mirror_data().optic_ops.contains(&OpticOp::Fold),
             "consent property must have OpticOp::Fold from <= verdict"
         );
     }

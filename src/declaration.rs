@@ -267,6 +267,9 @@ pub struct MirrorData {
     pub return_type: Option<String>,
     /// For `grammar` declarations: the parent grammar reference (e.g. `@actor`).
     pub parent_ref: Option<String>,
+    /// Optic operators found in this declaration.
+    /// Parser annotation — not included in Encode/Decode or PartialEq.
+    pub optic_ops: Vec<OpticOp>,
 }
 
 /// The extra metadata fields (grammar_ref, body_text, is_abstract, return_type,
@@ -299,6 +302,7 @@ impl MirrorData {
             is_abstract: false,
             return_type: None,
             parent_ref: None,
+            optic_ops: Vec::new(),
         }
     }
 }
@@ -361,6 +365,7 @@ impl Decode for MirrorData {
             is_abstract: false,
             return_type: None,
             parent_ref: None,
+            optic_ops: Vec::new(),
         })
     }
 }
@@ -440,6 +445,7 @@ impl MirrorData {
             is_abstract: self.is_abstract,
             return_type: self.return_type.clone(),
             parent_ref: self.parent_ref.clone(),
+            optic_ops: self.optic_ops.clone(),
         }
     }
 
@@ -483,6 +489,7 @@ impl MirrorData {
             is_abstract,
             return_type,
             parent_ref,
+            optic_ops: raw.optic_ops.clone(),
         }
     }
 }
