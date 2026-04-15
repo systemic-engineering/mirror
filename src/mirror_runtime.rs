@@ -2755,10 +2755,13 @@ mod tests {
             .filter(|f| f.ends_with(".mirror"))
             .collect();
         std_files.sort();
-        assert_eq!(std_files.len(), 7, "std file count: {:?}", std_files);
+        assert_eq!(std_files.len(), 10, "std file count: {:?}", std_files);
         assert!(std_files.contains(&"mirror.mirror".to_string()));
         assert!(std_files.contains(&"cli.mirror".to_string()));
         assert!(std_files.contains(&"properties.mirror".to_string()));
+        assert!(std_files.contains(&"file.mirror".to_string()));
+        assert!(std_files.contains(&"runtime.mirror".to_string()));
+        assert!(std_files.contains(&"rust.mirror".to_string()));
     }
 
     // -----------------------------------------------------------------------
@@ -2838,20 +2841,22 @@ mod tests {
         // (seam/block-unrecognized-loss) -- keywords inside blocks are now measured.
         // Raised to 165 after adding ast(g) type hierarchy to 01-meta.mirror
         // (reed/emit-code) -- new struct declarations with parameterized types.
+        // Raised to 183 after adding template declarations to @code grammar
+        // and new std files (rust.mirror, file.mirror, runtime.mirror).
         assert!(
-            holonomy <= 165.0,
+            holonomy <= 183.0,
             "parse holonomy must not regress above baseline: got {}",
             holonomy
         );
 
         // --- Resolution failures: kernel + std ---
         // Kernel failures: 06b-package-spec (missing refs: @mirror, @config, @ai)
-        // Std failures: beam (grammar @beam body refs fail), benchmark (needs @time), cli (needs @spec, @shatter), tui (needs @config etc)
+        // Std failures: beam, benchmark, cli, tui, rust, runtime (missing grammar refs)
         // actor(01a) now loads first → action(01b), io(01c), shatter(02), runtime(04a) all resolve
         assert_eq!(
             boot.failed.len(),
-            5,
-            "5 of 20 files fail resolution (1 kernel + 4 std): {:?}",
+            7,
+            "7 of 23 files fail resolution (1 kernel + 6 std): {:?}",
             boot.failed.keys().collect::<Vec<_>>()
         );
         assert!(
@@ -2876,11 +2881,11 @@ mod tests {
             "tui needs @config, @ci, @ca, @lsp — not in registry"
         );
 
-        // --- Resolved: kernel(12) + std(3) = 15 ---
+        // --- Resolved: kernel(12) + std(4) = 16 ---
         assert_eq!(
             boot.resolved.len(),
-            15,
-            "15 of 20 files resolve (12 kernel + 3 std): {:?}",
+            16,
+            "16 of 23 files resolve (12 kernel + 4 std): {:?}",
             boot.resolved.keys().collect::<Vec<_>>()
         );
         // std files that resolve
@@ -2937,14 +2942,17 @@ mod tests {
         assert!(kernel.contains(&"00-prism.mirror".to_string()));
         assert!(kernel.contains(&"06b-package-spec.mirror".to_string()));
 
-        // Std: 7 files (mirror, time, tui, benchmark, cli, properties, beam)
-        assert_eq!(std_files.len(), 7, "std needs 7 files: {:?}", std_files);
+        // Std: 10 files (mirror, time, tui, benchmark, cli, properties, beam, file, runtime, rust)
+        assert_eq!(std_files.len(), 10, "std needs 10 files: {:?}", std_files);
         assert!(std_files.contains(&"mirror.mirror".to_string()));
         assert!(std_files.contains(&"cli.mirror".to_string()));
         assert!(std_files.contains(&"time.mirror".to_string()));
         assert!(std_files.contains(&"benchmark.mirror".to_string()));
         assert!(std_files.contains(&"tui.mirror".to_string()));
         assert!(std_files.contains(&"properties.mirror".to_string()));
+        assert!(std_files.contains(&"file.mirror".to_string()));
+        assert!(std_files.contains(&"runtime.mirror".to_string()));
+        assert!(std_files.contains(&"rust.mirror".to_string()));
 
         // Compiler loads both phases
         let runtime = MirrorRuntime::new();

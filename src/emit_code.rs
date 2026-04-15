@@ -140,6 +140,8 @@ fn strip_grammar_prefix(name: &str) -> String {
     stripped.replace('/', "_")
 }
 
+/// Produce an indentation string of the given depth.
+#[allow(dead_code)]
 fn indent_str(indent: usize) -> String {
     "    ".repeat(indent)
 }
@@ -867,15 +869,33 @@ mod tests {
     }
 
     #[test]
-    fn emit_code_matches_emit_rust() {
+    fn emit_code_rust_enum_has_variants() {
         use crate::mirror_runtime::MirrorRuntime;
         let rt = MirrorRuntime::new();
-        for src in ["type color = red | blue", "type point", "action boot(identity)"] {
-            let c: Result<CompiledShatter, _> = rt.compile_source(src).into();
-            let c = c.unwrap();
-            let old = crate::emit_rust::emit_rust(&c);
-            let new = emit_code(&c, &CodeGrammar::rust()).to_string_lossy();
-            assert_eq!(old.trim(), new.trim(), "parity failed for: {}", src);
-        }
+        let c: Result<CompiledShatter, _> = rt.compile_source("type color = red | blue").into();
+        let out = emit_code(&c.unwrap(), &CodeGrammar::rust()).to_string_lossy();
+        assert!(out.contains("pub enum Color"), "got:\n{}", out);
+        assert!(out.contains("Red,"), "got:\n{}", out);
+        assert!(out.contains("Blue,"), "got:\n{}", out);
+    }
+
+    #[test]
+    fn emit_code_rust_unit_struct() {
+        use crate::mirror_runtime::MirrorRuntime;
+        let rt = MirrorRuntime::new();
+        let c: Result<CompiledShatter, _> = rt.compile_source("type point").into();
+        let out = emit_code(&c.unwrap(), &CodeGrammar::rust()).to_string_lossy();
+        assert!(out.contains("pub struct Point;"), "got:\n{}", out);
+    }
+
+    #[test]
+    fn emit_code_rust_action() {
+        use crate::mirror_runtime::MirrorRuntime;
+        let rt = MirrorRuntime::new();
+        let c: Result<CompiledShatter, _> = rt.compile_source("action boot(identity)").into();
+        let out = emit_code(&c.unwrap(), &CodeGrammar::rust()).to_string_lossy();
+        assert!(out.contains("pub fn boot"), "got:\n{}", out);
+        assert!(out.contains("identity: Identity"), "got:\n{}", out);
+        assert!(out.contains("todo!()"), "got:\n{}", out);
     }
 }

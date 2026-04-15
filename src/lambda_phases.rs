@@ -20,7 +20,7 @@ use prism::lambda::{Composable, Lambda, LambdaFn};
 use prism::{DeriveLambda, Imperfect, Loss};
 
 use crate::declaration::MirrorFragment;
-use crate::emit_rust::emit_rust_fragment;
+use crate::emit_code::{emit_code_fragment, CodeGrammar};
 use crate::loss::{MirrorLoss, ResolutionLoss};
 use crate::mirror_runtime::{parse_form, MirrorRegistry, MirrorRuntimeError};
 
@@ -205,7 +205,8 @@ impl LambdaFn for Emit {
         self,
         input: CheckedAst,
     ) -> Imperfect<EmittedCode, MirrorRuntimeError, MirrorLoss> {
-        let rust_code = emit_rust_fragment(&input.0);
+        let grammar = CodeGrammar::rust();
+        let rust_code = emit_code_fragment(&input.0, &grammar).to_string_lossy();
         Imperfect::Success(EmittedCode(rust_code))
     }
 }
@@ -485,7 +486,8 @@ mod tests {
         let runtime = MirrorRuntime::new();
         let old_result = runtime.compile_source(source);
         let old_fragment = old_result.ok().unwrap();
-        let old_rust = emit_rust_fragment(&old_fragment.fragment);
+        let grammar = CodeGrammar::rust();
+        let old_rust = emit_code_fragment(&old_fragment.fragment, &grammar).to_string_lossy();
 
         // New path
         let pipeline = LambdaFn::then(

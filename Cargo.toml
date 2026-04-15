@@ -23,7 +23,7 @@ slow = []
 spectral = []  # kept for backward compat; coincidence is now always required
 
 [dependencies]
-prism = { package = "prism-core", path = "../prism/core", features = ["bundle"] }
+prism = { package = "prism-core", path = "../prism/core", features = ["bundle", "lambda"] }
 fragmentation = { path = "../fragmentation" }
 fragmentation-git = { path = "../fragmentation-git" }
 coincidence = { path = "../coincidence" }
