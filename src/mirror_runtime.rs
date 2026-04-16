@@ -66,6 +66,21 @@ use prism::{Beam, Imperfect, Loss, Optic, Oid, Prism};
 use crate::loss::{AstPosition, MirrorLoss, ParseLoss, ParseWarning};
 
 // ---------------------------------------------------------------------------
+// Node counting — recursive AST size for tension normalization
+// ---------------------------------------------------------------------------
+
+/// Count all nodes in a list of AST trees, recursively.
+/// Each node counts as 1, plus all its children. This ensures `total_nodes`
+/// reflects the full AST depth, not just top-level declarations.
+fn count_all_nodes(decls: &[MirrorAST]) -> usize {
+    use prism::MerkleTree;
+    decls
+        .iter()
+        .map(|d| 1 + count_all_nodes(d.children()))
+        .sum()
+}
+
+// ---------------------------------------------------------------------------
 // Errors
 // ---------------------------------------------------------------------------
 
@@ -228,14 +243,14 @@ pub fn parse_mirror(source: &str) -> Imperfect<MirrorAST, MirrorRuntimeError, Mi
         Imperfect::failure(err("no declarations found"))
     } else if real_decls.is_empty() {
         let loss = MirrorLoss {
-            parse: ParseLoss { warnings, total_nodes: decls.len() },
+            parse: ParseLoss { warnings, total_nodes: count_all_nodes(&decls) },
             ..MirrorLoss::zero()
         };
         Imperfect::failure_with_loss(err("no recognized declarations found"), loss)
     } else {
         collect_ast_form_deprecations(&decls, &mut warnings);
 
-        let total_nodes = decls.len();
+        let total_nodes = count_all_nodes(&decls);
         let ast = if decls.len() == 1 {
             decls.into_iter().next().unwrap()
         } else {
@@ -348,14 +363,14 @@ pub(crate) fn parse_form(source: &str) -> Imperfect<MirrorAST, MirrorRuntimeErro
         Imperfect::failure(err("no declarations found"))
     } else if decls.is_empty() {
         let loss = MirrorLoss {
-            parse: ParseLoss { warnings, total_nodes: decls.len() },
+            parse: ParseLoss { warnings, total_nodes: count_all_nodes(&decls) },
             ..MirrorLoss::zero()
         };
         Imperfect::failure_with_loss(err("no recognized declarations found"), loss)
     } else {
         collect_ast_form_deprecations(&decls, &mut warnings);
 
-        let total_nodes = decls.len();
+        let total_nodes = count_all_nodes(&decls);
         let ast = if decls.len() == 1 {
             decls.into_iter().next().unwrap()
         } else {
