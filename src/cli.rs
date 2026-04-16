@@ -82,7 +82,7 @@ impl Cli {
             let parsed = Parse.reduce(SourceText(source));
             match parsed.ok() {
                 Some(fragment) => {
-                    let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0.to_fragment() };
+                    let compiled = crate::mirror_runtime::CompiledShatter { ast: fragment.0.clone() };
                     Some(compiled.crystal().clone())
                 }
                 None => None,
@@ -441,7 +441,7 @@ flags:
                 let fragment = Parse.reduce(SourceText(source.clone()))
                     .ok()
                     .expect("parse succeeded in pipeline, must succeed again");
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0.to_fragment() };
+                let compiled = crate::mirror_runtime::CompiledShatter { ast: fragment.0.clone() };
                 let oid = compiled.crystal();
 
                 // Write .shatter output alongside the source
@@ -590,10 +590,10 @@ flags:
             CliError::Runtime(MirrorRuntimeError(format!("{}", e)))
         })?;
 
-        let status = if result.holonomy_end == 0.0 {
+        let status = if result.tension_end == 0.0 {
             "crystal".to_string()
         } else {
-            format!("partial (loss: {:.4})", result.holonomy_end)
+            format!("partial (tension: {:.4})", result.tension_end)
         };
 
         let models = if result.models_used.is_empty() {
@@ -603,11 +603,11 @@ flags:
         };
 
         Ok(format!(
-            "@ai {} {}\n  holonomy: {:.4} -> {:.4}\n  steps: {}\n  models: {}\n  health: {}\n  status: {}",
+            "@ai {} {}\n  tension: {:.4} -> {:.4}\n  steps: {}\n  models: {}\n  health: {}\n  status: {}",
             _model,
             file.display(),
-            result.holonomy_start,
-            result.holonomy_end,
+            result.tension_start,
+            result.tension_end,
             result.steps,
             models,
             result.health,
@@ -636,8 +636,7 @@ flags:
 
         match optic {
             "focus" => {
-                let frag = fragment.0.to_fragment();
-                let text = crate::mirror_runtime::emit_fragment(&frag);
+                let text = crate::mirror_runtime::emit_fragment(&fragment.0);
                 Ok(text)
             }
             "project" => {
@@ -646,13 +645,12 @@ flags:
                 Ok(out)
             }
             "refract" => {
-                let frag = fragment.0.to_fragment();
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: frag };
+                let compiled = crate::mirror_runtime::CompiledShatter { ast: fragment.0.clone() };
                 Ok(compiled.crystal().as_str().to_string())
             }
             _ => {
                 // split, zoom -- same as focus for now
-                let text = crate::mirror_runtime::emit_fragment(&fragment.0.to_fragment());
+                let text = crate::mirror_runtime::emit_fragment(&fragment.0);
                 Ok(text)
             }
         }
@@ -675,11 +673,11 @@ flags:
             .ok()
             .ok_or_else(|| CliError::Runtime(MirrorRuntimeError("parse failed".into())))?;
 
-        let canonical = crate::mirror_runtime::kintsugi_fragment(&fragment.0.to_fragment());
+        let canonical = crate::mirror_runtime::kintsugi_ast(&fragment.0);
         let output = crate::mirror_runtime::emit_fragment(&canonical);
 
         if check {
-            let original = crate::mirror_runtime::emit_fragment(&fragment.0.to_fragment());
+            let original = crate::mirror_runtime::emit_fragment(&fragment.0);
             if output == original {
                 Ok("ok".to_string())
             } else {
@@ -708,11 +706,11 @@ flags:
         let result = pipeline.reduce(SourceText(source));
         match result {
             Imperfect::Success(checked) => {
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: checked.0.to_fragment() };
+                let compiled = crate::mirror_runtime::CompiledShatter { ast: checked.0.clone() };
                 Ok((compiled.crystal().as_str().to_string(), MirrorLoss::zero()))
             }
             Imperfect::Partial(checked, loss) => {
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: checked.0.to_fragment() };
+                let compiled = crate::mirror_runtime::CompiledShatter { ast: checked.0.clone() };
                 Ok((compiled.crystal().as_str().to_string(), loss))
             }
             Imperfect::Failure(err, _) => Err(CliError::Runtime(MirrorRuntimeError(
@@ -1075,7 +1073,7 @@ flags:
             .ok()
             .ok_or_else(|| CliError::Runtime(MirrorRuntimeError("parse failed".into())))?;
         let elapsed = start.elapsed();
-        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0.to_fragment() };
+        let compiled = crate::mirror_runtime::CompiledShatter { ast: fragment.0.clone() };
         Ok(format!(
             "compiled {} in {:.3}ms\noid: {}",
             file,
@@ -1276,7 +1274,7 @@ With --ai: executes git merge with a generated message."
             let fragment = parsed.ok().ok_or_else(|| {
                 CliError::Runtime(MirrorRuntimeError("parse failed".into()))
             })?;
-            let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0.to_fragment() };
+            let compiled = crate::mirror_runtime::CompiledShatter { ast: fragment.0.clone() };
             return Ok(encoding::encode(compiled.crystal().as_str()));
         }
 
@@ -1733,7 +1731,7 @@ impl Cli {
                         path.display()
                     )))
                 })?;
-                fragments.push(fragment.0.to_fragment());
+                fragments.push(fragment.0.clone());
             }
         }
 
@@ -2437,7 +2435,7 @@ mod tests {
         // OID from CLI must match OID from Parse
         let parsed = Parse.reduce(SourceText(source.into()));
         let fragment = parsed.ok().unwrap();
-        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0.to_fragment() };
+        let compiled = crate::mirror_runtime::CompiledShatter { ast: fragment.0.clone() };
         assert_eq!(cli_oid, compiled.crystal().as_str(), "CLI OID must match pipeline OID");
 
         // --target rust output must match pipeline emit
@@ -2465,7 +2463,7 @@ mod tests {
             crate::lambda_phases::SourceText(source.into()),
         );
         let fragment = parsed.ok().expect("parse should succeed");
-        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0.to_fragment() };
+        let compiled = crate::mirror_runtime::CompiledShatter { ast: fragment.0.clone() };
         let crystal_oid = compiled.crystal().clone();
 
         // Sign the content OID

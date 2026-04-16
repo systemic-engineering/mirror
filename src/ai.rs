@@ -15,7 +15,7 @@ use prism::Imperfect;
 
 use fate::{Fate, Model};
 
-use crate::declaration::MirrorFragment;
+use crate::mirror_ast::MirrorAST;
 use crate::fate_bridge;
 use crate::lambda_phases::{Parse, SourceText};
 use crate::mirror_runtime::emit_fragment;
@@ -54,8 +54,9 @@ impl From<std::io::Error> for AiError {
 /// Output of the AI loop.
 pub struct AiLoopResult {
     pub steps: usize,
-    pub holonomy_start: f64,
-    pub holonomy_end: f64,
+    /// Tension [0,1]. 0 = crystal, 1 = opaque.
+    pub tension_start: f64,
+    pub tension_end: f64,
     pub models_used: Vec<String>,
     pub health: String,
 }
@@ -85,32 +86,28 @@ fn model_name(m: Model) -> &'static str {
 /// Dark dimensions are preserved because fragment::merge keeps
 /// children from both sides.
 fn apply_optic_transform(source: &str, _model: Model) -> Option<String> {
-    // Parse original → MirrorAST → fragment for tree merge
+    // Parse original → MirrorAST
     let original_result = Parse.reduce(SourceText(source.to_string()));
-    let original_fragment = match &original_result {
+    let original_ast = match &original_result {
         Imperfect::Success(_) => return None, // already crystal
-        Imperfect::Partial(parsed, _) => parsed.0.to_fragment(),
+        Imperfect::Partial(parsed, _) => &parsed.0,
         Imperfect::Failure(_, _) => return None, // can't transform
     };
 
     // Round-trip: emit recognized content, re-parse it
-    let emitted = emit_fragment(&original_fragment);
+    let emitted = emit_fragment(original_ast);
     if emitted.is_empty() {
         return None;
     }
     let candidate_result = Parse.reduce(SourceText(emitted));
-    let candidate_fragment = match candidate_result {
-        Imperfect::Success(parsed) => parsed.0.to_fragment(),
-        Imperfect::Partial(parsed, _) => parsed.0.to_fragment(),
+    let candidate_ast = match &candidate_result {
+        Imperfect::Success(parsed) => &parsed.0,
+        Imperfect::Partial(parsed, _) => &parsed.0,
         Imperfect::Failure(_, _) => return None,
     };
 
-    // Tree merge: keep the node with lower holonomy at each position
-    let merged = fragmentation::fragment::merge(
-        &original_fragment,
-        &candidate_fragment,
-        &holonomy_resolve,
-    );
+    // Tree merge: keep the node with lower holonomy
+    let merged = holonomy_resolve(original_ast, candidate_ast);
 
     // Emit merged tree back to source
     let merged_source = emit_fragment(&merged);
@@ -142,25 +139,18 @@ fn apply_optic_transform(source: &str, _model: Model) -> Option<String> {
 ///
 /// This is the resolve lambda for fragment::merge.
 /// It's the `greedy` tournament rule applied at the tree level.
-fn holonomy_resolve(old: &MirrorFragment, new: &MirrorFragment) -> MirrorFragment {
-    use fragmentation::fragment::Fragmentable;
+fn holonomy_resolve(old: &MirrorAST, new: &MirrorAST) -> MirrorAST {
+    use prism::MerkleTree;
 
     // Compare child counts as a proxy for information preservation.
-    // The node with MORE children has more structure = keep it.
-    // (Real holonomy comparison comes when loss is tracked per-node.)
     let old_children = old.children().len();
     let new_children = new.children().len();
 
     if new_children > old_children {
-        // New has more structure — take it
         new.clone()
     } else if old_children > new_children {
-        // Old has more structure — keep dark dimensions
         old.clone()
     } else {
-        // Same child count — prefer the one the parser understood better.
-        // For now: prefer new (the round-tripped version) since the
-        // parser produced it from what it could see.
         new.clone()
     }
 }
@@ -193,26 +183,26 @@ pub fn ai_loop(file: &Path, budget: usize) -> Result<AiLoopResult, AiError> {
     let mut source = std::fs::read_to_string(file)?;
 
     let (_, initial_loss) = fate_bridge::extract_features(&source);
-    let holonomy_start = initial_loss.holonomy();
+    let tension_start = initial_loss.tension();
 
-    // Crystal: holonomy 0, nothing to do
-    if holonomy_start == 0.0 {
+    // Crystal: tension 0, nothing to do
+    if tension_start == 0.0 {
         return Ok(AiLoopResult {
             steps: 0,
-            holonomy_start: 0.0,
-            holonomy_end: 0.0,
+            tension_start: 0.0,
+            tension_end: 0.0,
             models_used: vec![],
             health: "crystal".to_string(),
         });
     }
 
-    let mut current_holonomy = holonomy_start;
+    let mut current_tension = tension_start;
     let mut models_used = Vec::new();
 
     for _step in 0..budget {
         // Tournament: spawn N excited instances, each tries a transformation
         let mut best_source = None;
-        let mut best_holonomy = current_holonomy;
+        let mut best_tension = current_tension;
         let mut best_model = Model::Abyss;
 
         for _ in 0..CANDIDATES_PER_ROUND {
@@ -223,10 +213,10 @@ pub fn ai_loop(file: &Path, budget: usize) -> Result<AiLoopResult, AiError> {
             // Apply transformation: parse → emit round-trip
             if let Some(transformed) = apply_optic_transform(&source, output.decision.model) {
                 let (_, new_loss) = fate_bridge::extract_features(&transformed);
-                let new_holonomy = new_loss.holonomy();
+                let new_tension = new_loss.tension();
 
-                if new_holonomy < best_holonomy {
-                    best_holonomy = new_holonomy;
+                if new_tension < best_tension {
+                    best_tension = new_tension;
                     best_source = Some(transformed);
                     best_model = output.decision.model;
                 }
@@ -236,16 +226,16 @@ pub fn ai_loop(file: &Path, budget: usize) -> Result<AiLoopResult, AiError> {
         match best_source {
             Some(better) => {
                 source = better;
-                current_holonomy = best_holonomy;
+                current_tension = best_tension;
                 models_used.push(model_name(best_model).to_string());
 
-                if current_holonomy == 0.0 {
+                if current_tension == 0.0 {
                     // Crystal achieved
                     std::fs::write(file, &source)?;
                     return Ok(AiLoopResult {
                         steps: models_used.len(),
-                        holonomy_start,
-                        holonomy_end: 0.0,
+                        tension_start,
+                        tension_end: 0.0,
                         models_used,
                         health: "crystal".to_string(),
                     });
@@ -259,16 +249,16 @@ pub fn ai_loop(file: &Path, budget: usize) -> Result<AiLoopResult, AiError> {
     }
 
     // Write best result back if improved
-    if current_holonomy < holonomy_start {
+    if current_tension < tension_start {
         std::fs::write(file, &source)?;
     }
 
     Ok(AiLoopResult {
         steps: models_used.len(),
-        holonomy_start,
-        holonomy_end: current_holonomy,
+        tension_start,
+        tension_end: current_tension,
         models_used,
-        health: if current_holonomy < holonomy_start {
+        health: if current_tension < tension_start {
             "improved"
         } else {
             "stuck"
@@ -342,7 +332,7 @@ mod tests {
         let file = dir.path().join("crystal.mirror");
         std::fs::write(&file, "type color = red | blue\n").unwrap();
         let result = ai_loop(&file, 10).unwrap();
-        assert_eq!(result.holonomy_start, 0.0);
+        assert_eq!(result.tension_start, 0.0);
         assert_eq!(result.steps, 0);
         assert_eq!(result.health, "crystal");
     }
@@ -353,7 +343,7 @@ mod tests {
         let file = dir.path().join("partial.mirror");
         std::fs::write(&file, "type x = a | b\nwidget foo\ngarbage bar\n").unwrap();
         let result = ai_loop(&file, 5).unwrap();
-        assert!(result.holonomy_start > 0.0);
+        assert!(result.tension_start > 0.0);
         // Should either improve or report stuck
         assert!(
             result.health == "improved" || result.health == "stuck" || result.health == "crystal"

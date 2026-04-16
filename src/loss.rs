@@ -141,17 +141,29 @@ pub enum Convergence {
 #[derive(Clone, Debug, PartialEq, Default)]
 pub struct ParseLoss {
     pub warnings: Vec<ParseWarning>,
+    /// Total nodes parsed (including fragments). Set by the parser.
+    /// Tension = warnings.len() / total_nodes.
+    pub total_nodes: usize,
 }
 
 impl ParseLoss {
     pub fn zero() -> Self {
         ParseLoss {
             warnings: Vec::new(),
+            total_nodes: 0,
         }
     }
 
     pub fn holonomy(&self) -> f64 {
         self.warnings.len() as f64
+    }
+
+    /// Tension [0,1]. warnings / total_nodes. 0 = crystal, 1 = opaque.
+    pub fn tension(&self) -> f64 {
+        if self.total_nodes == 0 {
+            return 0.0;
+        }
+        (self.warnings.len() as f64 / self.total_nodes as f64).min(1.0)
     }
 
     pub fn is_zero(&self) -> bool {
@@ -160,6 +172,7 @@ impl ParseLoss {
 
     pub fn combine(mut self, other: Self) -> Self {
         self.warnings.extend(other.warnings);
+        self.total_nodes += other.total_nodes;
         self
     }
 }
@@ -188,6 +201,12 @@ impl ResolutionLoss {
 
     pub fn holonomy(&self) -> f64 {
         self.unresolved_refs.len() as f64
+    }
+
+    /// Tension [0,1]. 1 - resolution_ratio.
+    /// 0 = all refs resolved, 1 = nothing resolved.
+    pub fn tension(&self) -> f64 {
+        1.0 - self.resolution_ratio
     }
 
     pub fn is_zero(&self) -> bool {
@@ -238,6 +257,15 @@ impl PropertyLoss {
                 Imperfect::Failure(_, loss) => *loss,
             })
             .sum()
+    }
+
+    /// Tension [0,1]. Fraction of properties that are not Success.
+    pub fn tension(&self) -> f64 {
+        if self.verdicts.is_empty() {
+            return 0.0;
+        }
+        let failing = self.verdicts.iter().filter(|v| !v.verdict.is_ok()).count();
+        failing as f64 / self.verdicts.len() as f64
     }
 
     pub fn is_zero(&self) -> bool {
@@ -325,8 +353,52 @@ pub struct MirrorLoss {
 }
 
 impl MirrorLoss {
-    /// Single f64 summarizing total holonomy.
+    /// Tension [0,1]. The normalized, multi-dimensional measurement.
+    /// 0.0 = crystal. 1.0 = opaque. Combines all four folds.
+    ///
+    /// Each dimension contributes equally:
+    ///   parse tension     = fragments / total_nodes
+    ///   resolve tension   = 1 - resolution_ratio
+    ///   property tension  = failing / total_properties
+    ///   convergence       = 0 if settled, 1 if not
+    ///
+    /// Combined: average of active dimensions (those with data).
+    pub fn tension(&self) -> f64 {
+        let mut dims = Vec::new();
+
+        // Parse tension: fragments / total
+        dims.push(self.parse.tension());
+
+        // Resolve tension: 1 - resolution_ratio
+        if !self.resolution.is_zero() || self.resolution.resolution_ratio < 1.0 {
+            dims.push(self.resolution.tension());
+        }
+
+        // Property tension: failing / total
+        if !self.properties.verdicts.is_empty() {
+            dims.push(self.properties.tension());
+        }
+
+        // Convergence tension
+        let conv = match &self.convergence {
+            Convergence::Settled => 0.0,
+            Convergence::Converging(_) => 0.5,
+            Convergence::Oscillating(_) => 0.8,
+            Convergence::BudgetExhausted => 1.0,
+        };
+        if conv > 0.0 {
+            dims.push(conv);
+        }
+
+        if dims.is_empty() {
+            return 0.0;
+        }
+        dims.iter().sum::<f64>() / dims.len() as f64
+    }
+
+    /// Single f64 summarizing total holonomy (raw, unbounded).
     /// Higher = more curvature = less settled.
+    /// Prefer tension() for normalized [0,1] measurement.
     pub fn holonomy(&self) -> f64 {
         let convergence_penalty = match &self.convergence {
             Convergence::Settled => 0.0,
@@ -888,6 +960,7 @@ mod tests {
                     at: AstPosition::TopLevel,
                     line: 1,
                 }],
+                total_nodes: 1,
             },
             ..MirrorLoss::zero()
         };
@@ -910,6 +983,7 @@ mod tests {
                 at: AstPosition::TopLevel,
                 line: 1,
             }],
+            total_nodes: 1,
         };
         assert_eq!(p2.holonomy(), 1.0);
     }
@@ -973,12 +1047,14 @@ mod tests {
                 at: AstPosition::TopLevel,
                 line: 1,
             }],
+            total_nodes: 1,
         };
         let b = ParseLoss {
             warnings: vec![ParseWarning::UnknownToken {
                 at: AstPosition::TopLevel,
                 line: 2,
             }],
+            total_nodes: 1,
         };
         let c = a.combine(b);
         assert_eq!(c.warnings.len(), 2);
