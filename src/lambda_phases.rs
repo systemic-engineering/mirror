@@ -157,9 +157,7 @@ impl LambdaFn for Resolve {
             }
         };
 
-        // Convert to fragment for registry resolution, then discard the fragment
-        let frag = input.0.to_fragment();
-        match registry.resolve_fragment(&frag) {
+        match registry.resolve_ast(&input.0) {
             Ok(()) => Imperfect::Success(ResolvedAst(input.0)),
             Err(e) => {
                 // Resolution failed but the AST is still usable — record as loss
@@ -208,8 +206,7 @@ impl LambdaFn for Emit {
         input: CheckedAst,
     ) -> Imperfect<EmittedCode, MirrorRuntimeError, MirrorLoss> {
         let grammar = CodeGrammar::rust();
-        let frag = input.0.to_fragment();
-        let rust_code = emit_code_fragment(&frag, &grammar).to_string_lossy();
+        let rust_code = emit_code_fragment(&input.0, &grammar).to_string_lossy();
         Imperfect::Success(EmittedCode(rust_code))
     }
 }
@@ -490,7 +487,7 @@ mod tests {
         let old_result = runtime.compile_source(source);
         let old_fragment = old_result.ok().unwrap();
         let grammar = CodeGrammar::rust();
-        let old_rust = emit_code_fragment(&old_fragment.fragment, &grammar).to_string_lossy();
+        let old_rust = emit_code_fragment(&old_fragment.ast, &grammar).to_string_lossy();
 
         // New path
         let pipeline = LambdaFn::then(

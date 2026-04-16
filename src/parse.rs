@@ -4,9 +4,9 @@
 //! consumers use `Parse.trace(source)` to get a content-addressed parse tree.
 
 use crate::declaration::DeclKind;
-use crate::declaration::{MirrorData, MirrorFragment, MirrorFragmentExt};
 use crate::domain::conversation::Kind;
 use crate::kernel::{ContentAddressed, Oid, Trace, TraceOid, Vector};
+use crate::mirror_ast::MirrorAST;
 use crate::mirror_runtime::parse_form;
 use crate::prism::{self, Prism};
 use fragmentation::encoding::Encode;
@@ -96,24 +96,25 @@ fn decl_to_ast(kind: &DeclKind) -> (Kind, &'static str) {
     }
 }
 
-/// Convert a MirrorFragment tree into a Prism<AstNode> tree.
-fn fragment_to_prism(frag: &MirrorFragment) -> Prism<AstNode> {
-    let data = MirrorData::decode_from_fragment(frag.mirror_data());
-    let (kind, name) = decl_to_ast(&data.kind);
+/// Convert a MirrorAST tree into a Prism<AstNode> tree.
+fn ast_to_prism(ast: &MirrorAST) -> Prism<AstNode> {
+    let (kind, name) = decl_to_ast(&ast.decl_kind());
     let node = AstNode {
         kind,
         name: name.to_string(),
-        value: data.name.clone(),
+        value: ast.name_str().to_string(),
     };
     let ref_ = {
         let label = node.label();
         Ref::new(sha::hash(&label), &label)
     };
-    let children: Vec<Prism<AstNode>> = frag
-        .mirror_children()
-        .iter()
-        .map(fragment_to_prism)
-        .collect();
+    let children: Vec<Prism<AstNode>> = {
+        use prism_crate::MerkleTree as _;
+        ast.children()
+            .iter()
+            .map(ast_to_prism)
+            .collect()
+    };
     if children.is_empty() {
         prism::shard(ref_, node)
     } else {
@@ -143,8 +144,8 @@ impl Vector<String, Prism<AstNode>> for Parse {
 
     fn trace(&self, source: String) -> Trace<Prism<AstNode>, String> {
         match Result::from(parse_form(&source)) {
-            Ok(frag) => {
-                let tree = fragment_to_prism(&frag);
+            Ok(ast) => {
+                let tree = ast_to_prism(&ast);
                 let oid = tree.content_oid();
                 Trace::success(tree, oid.into(), None)
             }

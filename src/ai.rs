@@ -18,7 +18,7 @@ use fate::{Fate, Model};
 use crate::mirror_ast::MirrorAST;
 use crate::fate_bridge;
 use crate::lambda_phases::{Parse, SourceText};
-use crate::mirror_runtime::emit_fragment;
+use crate::mirror_runtime::{emit_fragment, kintsugi_ast};
 
 // ---------------------------------------------------------------------------
 // Error

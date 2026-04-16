@@ -173,7 +173,6 @@ mod tests {
 
     #[test]
     fn parser_oid_vs_generated_oid() {
-        use crate::declaration::MirrorFragmentExt;
         use crate::mirror_runtime::MirrorRuntime;
 
         let runtime = MirrorRuntime::new();
@@ -182,18 +181,15 @@ mod tests {
         )
         .unwrap();
         let compiled = Result::from(runtime.compile_source(&src)).unwrap();
-        let parser_oid = format!("{:?}", MirrorFragmentExt::content_hash(&compiled.fragment));
+        let parser_oid = format!("{}", compiled.crystal());
         let generated_oid = format!("{}", PrismGrammar.oid());
 
         eprintln!("parser oid:    {}", parser_oid);
         eprintln!("generated oid: {}", generated_oid);
 
         // These are DIFFERENT by design:
-        // - parser_oid is content-addressed (hash of MirrorData bytes)
+        // - parser_oid is content-addressed (hash of MirrorAST)
         // - generated_oid is name-addressed (hash of "@prism" string)
-        // The bridge: grammar_oid("@prism") gives the name-addressed Oid
-        // for O(1) lookup. The content-addressed Oid is what the store uses.
-        // Both are valid identities for the same grammar — different projections.
         assert_ne!(
             parser_oid, generated_oid,
             "parser oid is content-addressed, generated oid is name-addressed — they should differ"
