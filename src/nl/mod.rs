@@ -246,7 +246,7 @@ mod tests {
         match &children[0] {
             Prism::Fractal { data, children: sub, .. } => {
                 assert_eq!(data.text, "approx_lambda_2");
-                assert_eq!(sub.len(), 3); // "approx" + "lambda" + "2"
+                assert_eq!(sub.len(), 2); // "approx" + branch("lambda_2", [lambda, 2])
             }
             _ => panic!("expected compound Fractal"),
         }
@@ -280,8 +280,13 @@ mod tests {
             Prism::Fractal { children, .. } => {
                 match &children[0] {
                     Prism::Fractal { children: sub, .. } => {
-                        // sub[1] should be "lambda" (stemmed)
-                        sub[1].data().content_oid()
+                        // sub[1] is branch("lambda_2", [lambda, 2]); descend to get "lambda" leaf
+                        match &sub[1] {
+                            Prism::Fractal { children: lambda_2_sub, .. } => {
+                                lambda_2_sub[0].data().content_oid()
+                            }
+                            _ => panic!("expected lambda_2 branch"),
+                        }
                     }
                     _ => panic!("expected compound"),
                 }
@@ -359,9 +364,9 @@ mod tests {
     fn all_oids_includes_compounds() {
         let tree = tokenize("approx_lambda_2");
         let all = all_oids(&tree);
-        // Root compound + approx_lambda_2 compound + approx + lambda + 2
-        // = 5 OIDs minimum
-        assert!(all.len() >= 5, "expected >= 5 OIDs, got {}", all.len());
+        // Root compound + approx_lambda_2 compound + approx + lambda_2 compound + lambda + 2
+        // = 6 OIDs minimum (nested decomposition adds lambda_2 as an intermediate branch)
+        assert!(all.len() >= 6, "expected >= 6 OIDs, got {}", all.len());
     }
 
     #[test]

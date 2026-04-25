@@ -1,10 +1,14 @@
 //! Compound decomposition — recursive splitting of compound tokens.
 //!
 //! Rules:
-//! - Underscore splits: `approx_lambda_2` -> `[approx, lambda_2]`
+//! - Underscore splits: `approx_lambda_2` -> `[approx, branch(lambda_2, [lambda, 2])]`
 //! - CamelCase splits: `SpectralIndex` -> `[Spectral, Index]`
 //! - Dot splits: `self.eigenvalues` -> `[self, eigenvalues]`
 //! - Recursive: `lambda_2` -> `[lambda, 2]`
+//!
+//! Splitting is right-recursive binary: split at the FIRST delimiter,
+//! recurse on both halves. This preserves shared compound subtrees —
+//! `approx_lambda_2` and `lambda_2` share the `lambda_2` branch node.
 //!
 //! Each split level becomes a tree level. The tree structure IS the
 //! compound decomposition.
@@ -37,27 +41,27 @@ impl CompoundNode {
 /// Splits on underscores, CamelCase boundaries, and dots. Recursive:
 /// each part is further decomposed until no more splits are possible.
 pub fn decompose(token: &str) -> CompoundNode {
-    // Try underscore split first
-    let parts: Vec<&str> = token.split('_').collect();
-    if parts.len() > 1 {
-        let children: Vec<CompoundNode> = parts.iter()
-            .filter(|p| !p.is_empty())
-            .map(|p| decompose(p))
-            .collect();
-        if children.len() > 1 {
-            return CompoundNode::branch(token, children);
+    // Try underscore split first (right-recursive binary: split at first '_')
+    if let Some(pos) = token.find('_') {
+        let left = &token[..pos];
+        let right = &token[pos + 1..];
+        if !left.is_empty() && !right.is_empty() {
+            return CompoundNode::branch(token, vec![
+                decompose(left),
+                decompose(right),
+            ]);
         }
     }
 
-    // Try dot split
-    let parts: Vec<&str> = token.split('.').collect();
-    if parts.len() > 1 {
-        let children: Vec<CompoundNode> = parts.iter()
-            .filter(|p| !p.is_empty())
-            .map(|p| decompose(p))
-            .collect();
-        if children.len() > 1 {
-            return CompoundNode::branch(token, children);
+    // Try dot split (right-recursive binary: split at first '.')
+    if let Some(pos) = token.find('.') {
+        let left = &token[..pos];
+        let right = &token[pos + 1..];
+        if !left.is_empty() && !right.is_empty() {
+            return CompoundNode::branch(token, vec![
+                decompose(left),
+                decompose(right),
+            ]);
         }
     }
 
@@ -128,8 +132,10 @@ mod tests {
         let node = decompose("approx_lambda_2");
         assert_eq!(node, CompoundNode::branch("approx_lambda_2", vec![
             CompoundNode::leaf("approx"),
-            CompoundNode::leaf("lambda"),
-            CompoundNode::leaf("2"),
+            CompoundNode::branch("lambda_2", vec![
+                CompoundNode::leaf("lambda"),
+                CompoundNode::leaf("2"),
+            ]),
         ]));
     }
 

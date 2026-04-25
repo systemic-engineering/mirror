@@ -80,10 +80,10 @@ fn token_tree_is_fractal() {
     }
 
     let depth = max_depth(&tree);
-    // Root -> approx_lambda_2 (compound) -> approx/lambda/2 (leaves) = depth 3
+    // Root -> approx_lambda_2 (compound) -> lambda_2 (compound) -> lambda/2 (leaves) = depth 4
     assert!(
-        depth >= 3,
-        "expected depth >= 3 for compound, got {}",
+        depth >= 4,
+        "expected depth >= 4 for nested compound, got {}",
         depth
     );
 }
