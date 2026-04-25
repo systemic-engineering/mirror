@@ -42,6 +42,7 @@ pub use fragmentation::store::Store;
 
 pub mod bundle;
 pub mod cli;
+pub mod nl;
 pub mod declaration;
 pub mod emit_code;
 pub mod generate_crate;
