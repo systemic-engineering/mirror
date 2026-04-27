@@ -234,6 +234,7 @@ impl Cli {
             "init" => self.cmd_init(args),
             "repl" => self.cmd_repl(args),
             "kintsugi" => self.cmd_kintsugi(args),
+            "check" => self.cmd_check(args),
             "focus" | "project" | "split" | "zoom" | "refract" => self.cmd_optic(command, args),
             "craft" => self.cmd_craft(args),
             "registry" => self.cmd_registry(args),
@@ -288,6 +289,7 @@ optics:
 
 compiler:
   compile <path>     compile a .mirror file
+  check <path>       run star detection battery (eigentest)
   crystal [output]   materialize the standard library
   ci <path>          measure holonomy
   ca <path>          observe, suggest, enforce
@@ -330,6 +332,7 @@ optics:
 
 compiler:
   compile <path>     compile a .mirror file
+  check <path>       run star detection battery (eigentest)
   crystal [output]   materialize the standard library
   ci <path>          measure holonomy
   ca <path>          observe, suggest, enforce
@@ -375,6 +378,7 @@ flags:
             "verify" => Some("verify <file> -- verify a signed .shatter file\n\nChecks the Ed25519 signature (.shatter.sig) against the content.\nUses the public key from CONVERSATION_KEYS hierarchy.\nExits 0 if valid, nonzero if tampered or unsigned."),
             "git" => Some("git <subcommand> -- read-only prism over git's ref space\n\nSubcommands:\n  refs              list all refs (branches, tags, HEAD)\n  tree <ref>        show the tree at a ref\n  show <ref>:<path> read a blob without checkout\n  diff <a> <b>      structural diff between two refs\n  log               commit history (short)"),
             "craft" => Some("craft [targets] -- build from mirror.spec\n\nReads mirror.spec, compiles source grammars, generates output crates.\nWith no arguments, builds default targets from the spec.\n\nTargets are declared in the craft { } block of mirror.spec."),
+            "check" => Some("check <path> [--star] [--expander] -- run star detection battery\n\nParses the .mirror file and runs the eigentest battery on the type graph.\nDefault: runs full battery (star + expander).\n\nWith --star: just star detection (3+ violations = star topology).\nWith --expander: just the expander health verification."),
             _ => None,
         }
     }
@@ -664,6 +668,81 @@ flags:
                 err
             )))),
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // check — star detection battery (eigentest)
+    // -----------------------------------------------------------------------
+
+    fn cmd_check(&self, args: &[String]) -> Result<String, CliError> {
+        if args.iter().any(|a| a == "--help" || a == "-h") {
+            return Ok(Self::command_help("check").unwrap_or("").to_string());
+        }
+
+        let star_only = args.iter().any(|a| a == "--star");
+        let expander_only = args.iter().any(|a| a == "--expander");
+        let file_args: Vec<&String> = args
+            .iter()
+            .filter(|a| !a.starts_with("--"))
+            .collect();
+        let file = file_args.first().ok_or_else(|| {
+            CliError::Usage(
+                "usage: mirror check <file> [--star] [--expander]".to_string(),
+            )
+        })?;
+
+        let source = std::fs::read_to_string(file.as_str())?;
+
+        // Parse the file using the low-level parser that produces Prism<AstNode>
+        use crate::kernel::Vector;
+        let ast = crate::parse::Parse
+            .trace(source)
+            .into_result()
+            .map_err(|e| {
+                CliError::Runtime(MirrorRuntimeError(format!(
+                    "check {}: parse failed: {}",
+                    file, e
+                )))
+            })?;
+
+        // Run the eigentest battery
+        let result = crate::eigentest::eigentest(&ast);
+
+        let mut out = String::new();
+        out.push_str(&format!(
+            "check {}\n  type graph: {} nodes, {} edges\n",
+            file, result.node_count, result.edge_count,
+        ));
+
+        if !star_only && !expander_only {
+            // Full report
+            out.push_str(&format!(
+                "  star battery: {} violations ({})\n",
+                result.violation_count(),
+                if result.is_star() { "STAR DETECTED" } else { "healthy" },
+            ));
+            for v in &result.violations {
+                out.push_str(&format!(
+                    "    [{}] {} — measured: {:.4}, threshold: {:.4}\n",
+                    v.test_id, v.name, v.measured, v.threshold,
+                ));
+            }
+        } else if star_only {
+            out.push_str(&format!(
+                "  star: {} violations ({})\n",
+                result.violation_count(),
+                if result.is_star() { "STAR DETECTED" } else { "healthy" },
+            ));
+        } else if expander_only {
+            // Expander reports health based on the eigentest results
+            let healthy = !result.is_star();
+            out.push_str(&format!(
+                "  expander: {}\n",
+                if healthy { "healthy" } else { "unhealthy — star topology" },
+            ));
+        }
+
+        Ok(out)
     }
 
     fn cmd_ci(&self, args: &[String]) -> Result<String, CliError> {
@@ -1703,6 +1782,8 @@ fn is_global_flag(flag: &str) -> bool {
             | "--enforce"
             | "--ai"
             | "--target"
+            | "--star"
+            | "--expander"
     )
 }
 
