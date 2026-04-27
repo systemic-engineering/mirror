@@ -1,10 +1,10 @@
-//! Eigentest — compile-time narcissus detection on the mirror grammar's type graph.
+//! Eigentest — compile-time star detection on the mirror grammar's type graph.
 //!
 //! When mirror compiles a `.mirror` file, it builds a parse tree (`Prism<AstNode>`).
 //! This module converts that tree into a small adjacency graph and runs a simplified
-//! Narcissus battery.
+//! star battery.
 //!
-//! If three or more tests fail, the grammar has narcissistic topology. The SEL is
+//! If three or more tests fail, the grammar has star topology. The SEL is
 //! enforced by eigenvalues, not policy.
 //!
 //! The eight tests (adapted for type graphs):
@@ -42,7 +42,7 @@ pub struct EigentestResult {
 }
 
 impl EigentestResult {
-    pub fn is_narcissistic(&self) -> bool {
+    pub fn is_star(&self) -> bool {
         self.violations.len() >= 3
     }
 
@@ -264,14 +264,14 @@ fn test_von_neumann_entropy(graph: &TypeGraph) -> Option<EigenViolation> {
 // ---------------------------------------------------------------------------
 
 /// Minimum type-graph size for meaningful eigentest.
-/// Below this threshold, all grammars pass — small grammars can't be narcissistic.
+/// Below this threshold, all grammars pass — small grammars can't form star topology.
 /// The AST is inherently hierarchical, and small trees are always star-like.
 const EIGENTEST_MIN_NODES: usize = 10;
 
 /// Run the eigentest battery on a parsed `.mirror` AST.
 ///
-/// The AST is converted to a type graph and the eight Narcissus tests
-/// are run. If `is_narcissistic()` returns true, the grammar should
+/// The AST is converted to a type graph and the eight star tests
+/// are run. If `is_star()` returns true, the grammar should
 /// not compile — the topology indicates extraction.
 ///
 /// Grammars with fewer than 10 type-graph nodes are exempt — small
@@ -429,12 +429,12 @@ mod tests {
     }
 
     #[test]
-    fn eigentest_simple_grammar_not_narcissistic() {
+    fn eigentest_simple_grammar_not_star() {
         let ast = parse("grammar @test {\n  type = request | response | error\n  type direction = inbound | outbound\n}");
         let result = eigentest(&ast);
         assert!(
-            !result.is_narcissistic(),
-            "simple grammar should not be narcissistic, got {} violations: {:?}",
+            !result.is_star(),
+            "simple grammar should not be star topology, got {} violations: {:?}",
             result.violation_count(),
             result.violations,
         );
@@ -444,14 +444,14 @@ mod tests {
     fn eigentest_empty_grammar() {
         let ast = parse("grammar @empty {}");
         let result = eigentest(&ast);
-        assert!(!result.is_narcissistic());
+        assert!(!result.is_star());
     }
 
     #[test]
     fn eigentest_single_type() {
         let ast = parse("grammar @single {\n  type = alpha\n}");
         let result = eigentest(&ast);
-        assert!(!result.is_narcissistic());
+        assert!(!result.is_star());
     }
 
     #[test]
