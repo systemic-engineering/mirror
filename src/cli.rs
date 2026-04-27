@@ -82,7 +82,9 @@ impl Cli {
             let parsed = Parse.reduce(SourceText(source));
             match parsed.ok() {
                 Some(fragment) => {
-                    let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+                    let compiled = crate::mirror_runtime::CompiledShatter {
+                        fragment: fragment.0,
+                    };
                     Some(compiled.crystal().clone())
                 }
                 None => None,
@@ -421,10 +423,13 @@ flags:
             )))),
             result => {
                 // Get the fragment for OID computation — re-parse (cheap, deterministic)
-                let fragment = Parse.reduce(SourceText(source.clone()))
+                let fragment = Parse
+                    .reduce(SourceText(source.clone()))
                     .ok()
                     .expect("parse succeeded in pipeline, must succeed again");
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+                let compiled = crate::mirror_runtime::CompiledShatter {
+                    fragment: fragment.0,
+                };
                 let oid = compiled.crystal();
 
                 // Write .shatter output alongside the source
@@ -583,7 +588,9 @@ flags:
                 Ok(out)
             }
             "refract" => {
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+                let compiled = crate::mirror_runtime::CompiledShatter {
+                    fragment: fragment.0,
+                };
                 Ok(compiled.crystal().as_str().to_string())
             }
             _ => {
@@ -637,23 +644,25 @@ flags:
         if source.trim().is_empty() {
             return Ok((String::new(), MirrorLoss::zero()));
         }
-        let pipeline = LambdaFn::then(
-            LambdaFn::then(Parse, Resolve::pass_through()),
-            Properties,
-        );
+        let pipeline = LambdaFn::then(LambdaFn::then(Parse, Resolve::pass_through()), Properties);
         let result = pipeline.reduce(SourceText(source));
         match result {
             Imperfect::Success(checked) => {
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: checked.0 };
+                let compiled = crate::mirror_runtime::CompiledShatter {
+                    fragment: checked.0,
+                };
                 Ok((compiled.crystal().as_str().to_string(), MirrorLoss::zero()))
             }
             Imperfect::Partial(checked, loss) => {
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: checked.0 };
+                let compiled = crate::mirror_runtime::CompiledShatter {
+                    fragment: checked.0,
+                };
                 Ok((compiled.crystal().as_str().to_string(), loss))
             }
-            Imperfect::Failure(err, _) => Err(CliError::Runtime(MirrorRuntimeError(
-                format!("compilation failed: {}", err),
-            ))),
+            Imperfect::Failure(err, _) => Err(CliError::Runtime(MirrorRuntimeError(format!(
+                "compilation failed: {}",
+                err
+            )))),
         }
     }
 
@@ -1011,7 +1020,9 @@ flags:
             .ok()
             .ok_or_else(|| CliError::Runtime(MirrorRuntimeError("parse failed".into())))?;
         let elapsed = start.elapsed();
-        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+        let compiled = crate::mirror_runtime::CompiledShatter {
+            fragment: fragment.0,
+        };
         Ok(format!(
             "compiled {} in {:.3}ms\noid: {}",
             file,
@@ -1209,10 +1220,12 @@ With --ai: executes git merge with a generated message."
         if spec_path.exists() {
             let source = std::fs::read_to_string(&spec_path)?;
             let parsed = Parse.reduce(SourceText(source));
-            let fragment = parsed.ok().ok_or_else(|| {
-                CliError::Runtime(MirrorRuntimeError("parse failed".into()))
-            })?;
-            let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+            let fragment = parsed
+                .ok()
+                .ok_or_else(|| CliError::Runtime(MirrorRuntimeError("parse failed".into())))?;
+            let compiled = crate::mirror_runtime::CompiledShatter {
+                fragment: fragment.0,
+            };
             return Ok(encoding::encode(compiled.crystal().as_str()));
         }
 
@@ -1589,8 +1602,7 @@ impl Cli {
         if let Some(ref glob_pattern) = target.glob {
             let paths = expand_glob(glob_pattern)?;
             for path in paths {
-                let source = std::fs::read_to_string(&path)
-                    .map_err(|e| CliError::Io(e))?;
+                let source = std::fs::read_to_string(&path).map_err(|e| CliError::Io(e))?;
                 let parsed = Parse.reduce(SourceText(source));
                 let fragment = parsed.ok().ok_or_else(|| {
                     CliError::Runtime(MirrorRuntimeError(format!(
@@ -2237,7 +2249,11 @@ mod tests {
         let cli = Cli::default();
         let result = cli.dispatch(
             "compile",
-            &[file.to_str().unwrap().to_string(), "--target".into(), "rust".into()],
+            &[
+                file.to_str().unwrap().to_string(),
+                "--target".into(),
+                "rust".into(),
+            ],
         );
         assert!(result.is_ok(), "CLI compile should succeed");
         let cli_oid = result.ok().unwrap();
@@ -2253,15 +2269,27 @@ mod tests {
         // OID from CLI must match OID from Parse
         let parsed = Parse.reduce(SourceText(source.into()));
         let fragment = parsed.ok().unwrap();
-        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
-        assert_eq!(cli_oid, compiled.crystal().as_str(), "CLI OID must match pipeline OID");
+        let compiled = crate::mirror_runtime::CompiledShatter {
+            fragment: fragment.0,
+        };
+        assert_eq!(
+            cli_oid,
+            compiled.crystal().as_str(),
+            "CLI OID must match pipeline OID"
+        );
 
         // --target rust output must match pipeline emit
         let rs_path = dir.path().join("test.rs");
-        assert!(rs_path.exists(), ".rs file should be written with --target rust");
+        assert!(
+            rs_path.exists(),
+            ".rs file should be written with --target rust"
+        );
         let rs_content = std::fs::read_to_string(&rs_path).unwrap();
         let emitted = pipeline_result.ok().unwrap();
-        assert_eq!(rs_content, emitted.0, "CLI rust output must match pipeline emit");
+        assert_eq!(
+            rs_content, emitted.0,
+            "CLI rust output must match pipeline emit"
+        );
     }
 
     /// Sign+verify round trip using direct API (no env vars = no races).
@@ -2277,11 +2305,12 @@ mod tests {
 
         // Compile some content via lambda pipeline
         let source = "type greeting\n";
-        let parsed = crate::lambda_phases::Parse.reduce(
-            crate::lambda_phases::SourceText(source.into()),
-        );
+        let parsed =
+            crate::lambda_phases::Parse.reduce(crate::lambda_phases::SourceText(source.into()));
         let fragment = parsed.ok().expect("parse should succeed");
-        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+        let compiled = crate::mirror_runtime::CompiledShatter {
+            fragment: fragment.0,
+        };
         let crystal_oid = compiled.crystal().clone();
 
         // Sign the content OID
@@ -2329,11 +2358,12 @@ mod tests {
         assert!(result.is_err(), "wrong key must fail verification");
 
         // Crystal OID is deterministic
-        let parsed2 = crate::lambda_phases::Parse.reduce(
-            crate::lambda_phases::SourceText(source.into()),
-        );
+        let parsed2 =
+            crate::lambda_phases::Parse.reduce(crate::lambda_phases::SourceText(source.into()));
         let fragment2 = parsed2.ok().expect("parse should succeed");
-        let compiled2 = crate::mirror_runtime::CompiledShatter { fragment: fragment2.0 };
+        let compiled2 = crate::mirror_runtime::CompiledShatter {
+            fragment: fragment2.0,
+        };
         assert_eq!(
             crystal_oid.as_str(),
             compiled2.crystal().as_str(),
@@ -3270,7 +3300,40 @@ craft { default boot }
         assert!(is_global_flag("--enforce"));
         assert!(is_global_flag("--ai"));
         assert!(is_global_flag("--target"));
+        assert!(is_global_flag("--star"));
+        assert!(is_global_flag("--expander"));
         assert!(!is_global_flag("--bogus"));
         assert!(!is_global_flag("--unknown"));
+    }
+
+    // --- check command tests ---
+
+    #[test]
+    fn check_command_dispatches() {
+        let cli = Cli::default();
+        let result = cli.dispatch(
+            "check",
+            &["tests/fixtures/simple.mirror".to_string()],
+        );
+        // Should succeed or partial — not fail with "unknown command"
+        assert!(
+            !matches!(&result, Imperfect::Failure(CliError::Usage(msg), _) if msg.contains("unknown")),
+            "check should be a recognized command"
+        );
+    }
+
+    #[test]
+    fn check_command_help_exists() {
+        let help = Cli::command_help("check");
+        assert!(help.is_some(), "check should have help text");
+        let text = help.unwrap();
+        assert!(text.contains("star"), "check help should mention star");
+        assert!(text.contains("expander"), "check help should mention expander");
+    }
+
+    #[test]
+    fn check_command_in_help_text() {
+        let help = Cli::help_text();
+        assert!(help.contains("check <"), "main help should list check command with args");
     }
 }
