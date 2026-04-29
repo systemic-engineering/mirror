@@ -1,0 +1,18 @@
+-- Supersedes prism/gestalt.mirror (grammar @gestalt in @language — reader profile/eigenvalue grammar, unrelated)
+in @prism
+
+grammar @gestalt < @prism {
+  type = domain | node | gestalt | line | annotation | lens | meta
+
+  type meta       = {}
+  type domain     = { grammar: ref }
+  type gestalt    = { grammar: ref, head: meta[], body: node[] }
+  type node       = { kind: ref, meta: meta[], children: node[] }
+  type line       = { context: render-context, content: node, annotations: annotation[] }
+  type annotation = { name: ref, content: gestalt }
+  type lens       = { name: ref, query: string }
+
+  action render(g: gestalt) -> output
+  action linearize(g: gestalt) -> line[]
+  action refract(lines: line[]) -> output
+}

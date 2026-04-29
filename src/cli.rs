@@ -82,7 +82,9 @@ impl Cli {
             let parsed = Parse.reduce(SourceText(source));
             match parsed.ok() {
                 Some(fragment) => {
-                    let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+                    let compiled = crate::mirror_runtime::CompiledShatter {
+                        fragment: fragment.0,
+                    };
                     Some(compiled.crystal().clone())
                 }
                 None => None,
@@ -232,6 +234,7 @@ impl Cli {
             "init" => self.cmd_init(args),
             "repl" => self.cmd_repl(args),
             "kintsugi" => self.cmd_kintsugi(args),
+            "check" => self.cmd_check(args),
             "focus" | "project" | "split" | "zoom" | "refract" => self.cmd_optic(command, args),
             "craft" => self.cmd_craft(args),
             "registry" => self.cmd_registry(args),
@@ -286,6 +289,7 @@ optics:
 
 compiler:
   compile <path>     compile a .mirror file
+  check <path>       run star detection battery (eigentest)
   crystal [output]   materialize the standard library
   ci <path>          measure holonomy
   ca <path>          observe, suggest, enforce
@@ -328,6 +332,7 @@ optics:
 
 compiler:
   compile <path>     compile a .mirror file
+  check <path>       run star detection battery (eigentest)
   crystal [output]   materialize the standard library
   ci <path>          measure holonomy
   ca <path>          observe, suggest, enforce
@@ -373,6 +378,7 @@ flags:
             "verify" => Some("verify <file> -- verify a signed .shatter file\n\nChecks the Ed25519 signature (.shatter.sig) against the content.\nUses the public key from CONVERSATION_KEYS hierarchy.\nExits 0 if valid, nonzero if tampered or unsigned."),
             "git" => Some("git <subcommand> -- read-only prism over git's ref space\n\nSubcommands:\n  refs              list all refs (branches, tags, HEAD)\n  tree <ref>        show the tree at a ref\n  show <ref>:<path> read a blob without checkout\n  diff <a> <b>      structural diff between two refs\n  log               commit history (short)"),
             "craft" => Some("craft [targets] -- build from mirror.spec\n\nReads mirror.spec, compiles source grammars, generates output crates.\nWith no arguments, builds default targets from the spec.\n\nTargets are declared in the craft { } block of mirror.spec."),
+            "check" => Some("check <path> [--star] [--expander] -- run star detection battery\n\nParses the .mirror file and runs the eigentest battery on the type graph.\nDefault: runs full battery (star + expander).\n\nWith --star: just star detection (3+ violations = star topology).\nWith --expander: just the expander health verification."),
             _ => None,
         }
     }
@@ -421,10 +427,13 @@ flags:
             )))),
             result => {
                 // Get the fragment for OID computation — re-parse (cheap, deterministic)
-                let fragment = Parse.reduce(SourceText(source.clone()))
+                let fragment = Parse
+                    .reduce(SourceText(source.clone()))
                     .ok()
                     .expect("parse succeeded in pipeline, must succeed again");
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+                let compiled = crate::mirror_runtime::CompiledShatter {
+                    fragment: fragment.0,
+                };
                 let oid = compiled.crystal();
 
                 // Write .shatter output alongside the source
@@ -583,7 +592,9 @@ flags:
                 Ok(out)
             }
             "refract" => {
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+                let compiled = crate::mirror_runtime::CompiledShatter {
+                    fragment: fragment.0,
+                };
                 Ok(compiled.crystal().as_str().to_string())
             }
             _ => {
@@ -637,24 +648,101 @@ flags:
         if source.trim().is_empty() {
             return Ok((String::new(), MirrorLoss::zero()));
         }
-        let pipeline = LambdaFn::then(
-            LambdaFn::then(Parse, Resolve::pass_through()),
-            Properties,
-        );
+        let pipeline = LambdaFn::then(LambdaFn::then(Parse, Resolve::pass_through()), Properties);
         let result = pipeline.reduce(SourceText(source));
         match result {
             Imperfect::Success(checked) => {
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: checked.0 };
+                let compiled = crate::mirror_runtime::CompiledShatter {
+                    fragment: checked.0,
+                };
                 Ok((compiled.crystal().as_str().to_string(), MirrorLoss::zero()))
             }
             Imperfect::Partial(checked, loss) => {
-                let compiled = crate::mirror_runtime::CompiledShatter { fragment: checked.0 };
+                let compiled = crate::mirror_runtime::CompiledShatter {
+                    fragment: checked.0,
+                };
                 Ok((compiled.crystal().as_str().to_string(), loss))
             }
-            Imperfect::Failure(err, _) => Err(CliError::Runtime(MirrorRuntimeError(
-                format!("compilation failed: {}", err),
-            ))),
+            Imperfect::Failure(err, _) => Err(CliError::Runtime(MirrorRuntimeError(format!(
+                "compilation failed: {}",
+                err
+            )))),
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // check — star detection battery (eigentest)
+    // -----------------------------------------------------------------------
+
+    fn cmd_check(&self, args: &[String]) -> Result<String, CliError> {
+        if args.iter().any(|a| a == "--help" || a == "-h") {
+            return Ok(Self::command_help("check").unwrap_or("").to_string());
+        }
+
+        let star_only = args.iter().any(|a| a == "--star");
+        let expander_only = args.iter().any(|a| a == "--expander");
+        let file_args: Vec<&String> = args
+            .iter()
+            .filter(|a| !a.starts_with("--"))
+            .collect();
+        let file = file_args.first().ok_or_else(|| {
+            CliError::Usage(
+                "usage: mirror check <file> [--star] [--expander]".to_string(),
+            )
+        })?;
+
+        let source = std::fs::read_to_string(file.as_str())?;
+
+        // Parse the file using the low-level parser that produces Prism<AstNode>
+        use crate::kernel::Vector;
+        let ast = crate::parse::Parse
+            .trace(source)
+            .into_result()
+            .map_err(|e| {
+                CliError::Runtime(MirrorRuntimeError(format!(
+                    "check {}: parse failed: {}",
+                    file, e
+                )))
+            })?;
+
+        // Run the eigentest battery
+        let result = crate::eigentest::eigentest(&ast);
+
+        let mut out = String::new();
+        out.push_str(&format!(
+            "check {}\n  type graph: {} nodes, {} edges\n",
+            file, result.node_count, result.edge_count,
+        ));
+
+        if !star_only && !expander_only {
+            // Full report
+            out.push_str(&format!(
+                "  star battery: {} violations ({})\n",
+                result.violation_count(),
+                if result.is_star() { "STAR DETECTED" } else { "healthy" },
+            ));
+            for v in &result.violations {
+                out.push_str(&format!(
+                    "    [{}] {} — measured: {:.4}, threshold: {:.4}\n",
+                    v.test_id, v.name, v.measured, v.threshold,
+                ));
+            }
+        } else if star_only {
+            out.push_str(&format!(
+                "  star: {} violations ({})\n",
+                result.violation_count(),
+                if result.is_star() { "STAR DETECTED" } else { "healthy" },
+            ));
+        } else if expander_only {
+            // Expander reports health based on the eigentest results
+            let healthy = !result.is_star();
+            out.push_str(&format!(
+                "  expander: {}\n",
+                if healthy { "healthy" } else { "unhealthy — star topology" },
+            ));
+        }
+
+        Ok(out)
     }
 
     fn cmd_ci(&self, args: &[String]) -> Result<String, CliError> {
@@ -1011,7 +1099,9 @@ flags:
             .ok()
             .ok_or_else(|| CliError::Runtime(MirrorRuntimeError("parse failed".into())))?;
         let elapsed = start.elapsed();
-        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+        let compiled = crate::mirror_runtime::CompiledShatter {
+            fragment: fragment.0,
+        };
         Ok(format!(
             "compiled {} in {:.3}ms\noid: {}",
             file,
@@ -1209,10 +1299,12 @@ With --ai: executes git merge with a generated message."
         if spec_path.exists() {
             let source = std::fs::read_to_string(&spec_path)?;
             let parsed = Parse.reduce(SourceText(source));
-            let fragment = parsed.ok().ok_or_else(|| {
-                CliError::Runtime(MirrorRuntimeError("parse failed".into()))
-            })?;
-            let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+            let fragment = parsed
+                .ok()
+                .ok_or_else(|| CliError::Runtime(MirrorRuntimeError("parse failed".into())))?;
+            let compiled = crate::mirror_runtime::CompiledShatter {
+                fragment: fragment.0,
+            };
             return Ok(encoding::encode(compiled.crystal().as_str()));
         }
 
@@ -1589,8 +1681,7 @@ impl Cli {
         if let Some(ref glob_pattern) = target.glob {
             let paths = expand_glob(glob_pattern)?;
             for path in paths {
-                let source = std::fs::read_to_string(&path)
-                    .map_err(|e| CliError::Io(e))?;
+                let source = std::fs::read_to_string(&path).map_err(|e| CliError::Io(e))?;
                 let parsed = Parse.reduce(SourceText(source));
                 let fragment = parsed.ok().ok_or_else(|| {
                     CliError::Runtime(MirrorRuntimeError(format!(
@@ -1691,6 +1782,8 @@ fn is_global_flag(flag: &str) -> bool {
             | "--enforce"
             | "--ai"
             | "--target"
+            | "--star"
+            | "--expander"
     )
 }
 
@@ -2237,7 +2330,11 @@ mod tests {
         let cli = Cli::default();
         let result = cli.dispatch(
             "compile",
-            &[file.to_str().unwrap().to_string(), "--target".into(), "rust".into()],
+            &[
+                file.to_str().unwrap().to_string(),
+                "--target".into(),
+                "rust".into(),
+            ],
         );
         assert!(result.is_ok(), "CLI compile should succeed");
         let cli_oid = result.ok().unwrap();
@@ -2253,15 +2350,27 @@ mod tests {
         // OID from CLI must match OID from Parse
         let parsed = Parse.reduce(SourceText(source.into()));
         let fragment = parsed.ok().unwrap();
-        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
-        assert_eq!(cli_oid, compiled.crystal().as_str(), "CLI OID must match pipeline OID");
+        let compiled = crate::mirror_runtime::CompiledShatter {
+            fragment: fragment.0,
+        };
+        assert_eq!(
+            cli_oid,
+            compiled.crystal().as_str(),
+            "CLI OID must match pipeline OID"
+        );
 
         // --target rust output must match pipeline emit
         let rs_path = dir.path().join("test.rs");
-        assert!(rs_path.exists(), ".rs file should be written with --target rust");
+        assert!(
+            rs_path.exists(),
+            ".rs file should be written with --target rust"
+        );
         let rs_content = std::fs::read_to_string(&rs_path).unwrap();
         let emitted = pipeline_result.ok().unwrap();
-        assert_eq!(rs_content, emitted.0, "CLI rust output must match pipeline emit");
+        assert_eq!(
+            rs_content, emitted.0,
+            "CLI rust output must match pipeline emit"
+        );
     }
 
     /// Sign+verify round trip using direct API (no env vars = no races).
@@ -2277,11 +2386,12 @@ mod tests {
 
         // Compile some content via lambda pipeline
         let source = "type greeting\n";
-        let parsed = crate::lambda_phases::Parse.reduce(
-            crate::lambda_phases::SourceText(source.into()),
-        );
+        let parsed =
+            crate::lambda_phases::Parse.reduce(crate::lambda_phases::SourceText(source.into()));
         let fragment = parsed.ok().expect("parse should succeed");
-        let compiled = crate::mirror_runtime::CompiledShatter { fragment: fragment.0 };
+        let compiled = crate::mirror_runtime::CompiledShatter {
+            fragment: fragment.0,
+        };
         let crystal_oid = compiled.crystal().clone();
 
         // Sign the content OID
@@ -2329,11 +2439,12 @@ mod tests {
         assert!(result.is_err(), "wrong key must fail verification");
 
         // Crystal OID is deterministic
-        let parsed2 = crate::lambda_phases::Parse.reduce(
-            crate::lambda_phases::SourceText(source.into()),
-        );
+        let parsed2 =
+            crate::lambda_phases::Parse.reduce(crate::lambda_phases::SourceText(source.into()));
         let fragment2 = parsed2.ok().expect("parse should succeed");
-        let compiled2 = crate::mirror_runtime::CompiledShatter { fragment: fragment2.0 };
+        let compiled2 = crate::mirror_runtime::CompiledShatter {
+            fragment: fragment2.0,
+        };
         assert_eq!(
             crystal_oid.as_str(),
             compiled2.crystal().as_str(),
@@ -3270,7 +3381,40 @@ craft { default boot }
         assert!(is_global_flag("--enforce"));
         assert!(is_global_flag("--ai"));
         assert!(is_global_flag("--target"));
+        assert!(is_global_flag("--star"));
+        assert!(is_global_flag("--expander"));
         assert!(!is_global_flag("--bogus"));
         assert!(!is_global_flag("--unknown"));
+    }
+
+    // --- check command tests ---
+
+    #[test]
+    fn check_command_dispatches() {
+        let cli = Cli::default();
+        let result = cli.dispatch(
+            "check",
+            &["tests/fixtures/simple.mirror".to_string()],
+        );
+        // Should succeed or partial — not fail with "unknown command"
+        assert!(
+            !matches!(&result, Imperfect::Failure(CliError::Usage(msg), _) if msg.contains("unknown")),
+            "check should be a recognized command"
+        );
+    }
+
+    #[test]
+    fn check_command_help_exists() {
+        let help = Cli::command_help("check");
+        assert!(help.is_some(), "check should have help text");
+        let text = help.unwrap();
+        assert!(text.contains("star"), "check help should mention star");
+        assert!(text.contains("expander"), "check help should mention expander");
+    }
+
+    #[test]
+    fn check_command_in_help_text() {
+        let help = Cli::help_text();
+        assert!(help.contains("check <"), "main help should list check command with args");
     }
 }

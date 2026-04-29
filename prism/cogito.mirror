@@ -1,0 +1,47 @@
+in @ai
+
+grammar @cogito {
+  type = thought | awareness | proposal
+
+  type thought = observation | reflection | decision
+
+  type awareness = trace | loop_detected | holonomy
+
+  type proposal = act | defer | escalate
+
+  action think(graph)
+  action reflect(thought: thought)
+  action decide(awareness: awareness)
+}
+
+---
+
+test "cogito types" {
+  @cogito has thought
+  @cogito has awareness
+  @cogito has proposal
+}
+
+test "cogito thought subtypes" {
+  @cogito.thought has observation
+  @cogito.thought has reflection
+  @cogito.thought has decision
+}
+
+test "cogito awareness subtypes" {
+  @cogito.awareness has trace
+  @cogito.awareness has loop_detected
+  @cogito.awareness has holonomy
+}
+
+test "cogito proposal subtypes" {
+  @cogito.proposal has act
+  @cogito.proposal has defer
+  @cogito.proposal has escalate
+}
+
+test "cogito actions" {
+  @cogito has act think
+  @cogito has act reflect
+  @cogito has act decide
+}

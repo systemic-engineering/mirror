@@ -1,0 +1,73 @@
+in @coincidence
+in @ai
+
+grammar @observation {
+  type = gap | holonomy | dark_vector
+
+  type observation_type = focus | project | bridge
+
+  type gap = {
+    coordinates: vec,
+    eigenvalue_index: u32,
+    magnitude: f64,
+    boundary_nodes: vec,
+    oid: sha512
+  }
+
+  type holonomy = {
+    eigenvalue_delta: vec,
+    magnitude: f64,
+    within_berry_bound: bool
+  }
+
+  type dark_vector = {
+    dimension_count: u32,
+    precision_floor: f64,
+    implicit_ratio: f64
+  }
+
+  type boundary = dirichlet | neumann
+
+  action observe(gap: gap) -> observation_type
+  action measure_holonomy(before: measurement, after: measurement) -> holonomy
+  action extract_dark(spectrum: spectrum) -> dark_vector
+  action tag_boundary(node: node, kind: boundary)
+}
+
+---
+
+test "observation types" {
+  @observation has gap
+  @observation has holonomy
+  @observation has dark_vector
+}
+
+test "observation type classification" {
+  @observation.observation_type has focus
+  @observation.observation_type has project
+  @observation.observation_type has bridge
+}
+
+test "gap fields" {
+  @observation has gap
+}
+
+test "holonomy fields" {
+  @observation has holonomy
+}
+
+test "dark vector fields" {
+  @observation has dark_vector
+}
+
+test "boundary kinds" {
+  @observation.boundary has dirichlet
+  @observation.boundary has neumann
+}
+
+test "observation actions" {
+  @observation has act observe
+  @observation has act measure_holonomy
+  @observation has act extract_dark
+  @observation has act tag_boundary
+}
