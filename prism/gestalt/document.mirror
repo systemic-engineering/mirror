@@ -1,0 +1,28 @@
+in @gestalt
+
+grammar @gestalt/document < @gestalt {
+  type = section | paragraph | code-block | quote | callout
+       | list | list-item | definition-list | table | figure
+       | separator | breath | raw | embedded
+
+  type section         = { level: int, title: spans }
+  type paragraph       = { content: spans }
+  type code-block      = { language: string, content: string }
+  type quote           = { attribution: spans? }
+  type callout         = { kind: callout-kind, title: string }
+  type list            = { style: list-style, start: int }
+  type list-item       = { checked: bool? }
+  type definition-list = {}
+  type table           = { columns: column-align[] }
+  type figure          = { caption: spans? }
+  type separator       = {}
+  type breath          = {}
+  type raw             = { content: string, format: string }
+  type embedded        = { content: gestalt }
+
+  action render(node: section)    -> html
+  action render(node: paragraph)  -> html
+  action render(node: code-block) -> html
+  action refract(node: section)   -> string
+  action refract(node: paragraph) -> string
+}

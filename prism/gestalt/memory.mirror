@@ -1,0 +1,15 @@
+in @gestalt
+
+grammar @gestalt/memory < @gestalt {
+  type = observation | gap | crystal | edge | eigenboard
+
+  type observation = { content: string, source: ref? }
+  type gap         = { description: string, fiedler: float }
+  type crystal     = { content: string, settled_at: timestamp }
+  type edge        = { from: ref, to: ref, weight: float }
+  type eigenboard  = { fiedler: float, lambda: float[], updated_at: timestamp }
+
+  action blame(node: ref)            -> gestalt<@gestalt/git>
+  action diff(from: ref, to: ref)    -> gestalt<@gestalt/git>
+  action gestalt(query: string, lenses: lens[]) -> gestalt<@gestalt/memory>
+}
