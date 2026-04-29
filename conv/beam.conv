@@ -1,3 +1,0 @@
-grammar @beam {
-  type = process | supervision | module
-}
