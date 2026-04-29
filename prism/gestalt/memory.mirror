@@ -9,6 +9,7 @@ grammar @gestalt/memory < @gestalt {
   type edge        = { from: ref, to: ref, weight: float }
   type eigenboard  = { fiedler: float, lambda: float[], updated_at: timestamp }
 
+  -- @gestalt/git: forthcoming grammar wrapping @git for blame/diff operations
   action blame(node: ref)            -> gestalt<@gestalt/git>
   action diff(from: ref, to: ref)    -> gestalt<@gestalt/git>
   action gestalt(query: string, lenses: lens[]) -> gestalt<@gestalt/memory>
