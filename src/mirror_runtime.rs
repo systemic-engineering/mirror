@@ -65,7 +65,7 @@ use crate::mirror_ast::{
 };
 use fragmentation::frgmnt_store::FrgmntStore;
 use fragmentation::sha::HashAlg;
-use prism::{Beam, Imperfect, Loss, Optic, Oid, Prism};
+use prism::{Beam, Imperfect, Loss, Oid, Optic, Prism};
 
 use crate::loss::{AstPosition, MirrorLoss, ParseLoss, ParseWarning};
 
@@ -241,12 +241,8 @@ pub fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError,
         let frag = if decls.len() == 1 {
             decls.into_iter().next().unwrap()
         } else {
-            let wrapper_data = MirrorData::new(
-                DeclKind::Form,
-                "".to_string(),
-                Vec::new(),
-                Vec::new(),
-            );
+            let wrapper_data =
+                MirrorData::new(DeclKind::Form, "".to_string(), Vec::new(), Vec::new());
             build_fragment(wrapper_data, decls)
         };
 
@@ -263,10 +259,7 @@ pub fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError,
 }
 
 /// Detect deprecated `form` keyword usage and add deprecation warnings.
-fn collect_fragment_form_deprecations(
-    decls: &[MirrorFragment],
-    warnings: &mut Vec<ParseWarning>,
-) {
+fn collect_fragment_form_deprecations(decls: &[MirrorFragment], warnings: &mut Vec<ParseWarning>) {
     for decl in decls {
         let data = decl.mirror_data();
         if data.kind == DeclKind::Form && !data.name.is_empty() {
@@ -591,13 +584,22 @@ fn parse_decl(
         // Build MirrorAST node — typed representation
         let _ast = MirrorAST::Action(ActionNode {
             name: Identifier::new(kind.as_str()),
-            params: params.iter().map(|p| {
-                if let Some((n, t)) = p.split_once(':') {
-                    Field { name: Identifier::new(n.trim()), type_ref: Identifier::new(t.trim()) }
-                } else {
-                    Field { name: Identifier::new(p), type_ref: Identifier::new("_") }
-                }
-            }).collect(),
+            params: params
+                .iter()
+                .map(|p| {
+                    if let Some((n, t)) = p.split_once(':') {
+                        Field {
+                            name: Identifier::new(n.trim()),
+                            type_ref: Identifier::new(t.trim()),
+                        }
+                    } else {
+                        Field {
+                            name: Identifier::new(p),
+                            type_ref: Identifier::new("_"),
+                        }
+                    }
+                })
+                .collect(),
             return_type: None,
             grammar_ref: None,
             body: None,
@@ -788,16 +790,29 @@ fn parse_decl(
         // Build MirrorAST node — typed representation
         let _ast = MirrorAST::Action(ActionNode {
             name: Identifier::new(&name),
-            params: params.iter().map(|p| {
-                if let Some((n, t)) = p.split_once(':') {
-                    Field { name: Identifier::new(n.trim()), type_ref: Identifier::new(t.trim()) }
-                } else {
-                    Field { name: Identifier::new(p), type_ref: Identifier::new("_") }
-                }
-            }).collect(),
+            params: params
+                .iter()
+                .map(|p| {
+                    if let Some((n, t)) = p.split_once(':') {
+                        Field {
+                            name: Identifier::new(n.trim()),
+                            type_ref: Identifier::new(t.trim()),
+                        }
+                    } else {
+                        Field {
+                            name: Identifier::new(p),
+                            type_ref: Identifier::new("_"),
+                        }
+                    }
+                })
+                .collect(),
             return_type: return_type.as_deref().map(Identifier::new),
             grammar_ref: grammar_ref.as_deref().map(|gr| {
-                GrammarRef::new(if gr.starts_with('@') { gr.to_string() } else { format!("@{}", gr) })
+                GrammarRef::new(if gr.starts_with('@') {
+                    gr.to_string()
+                } else {
+                    format!("@{}", gr)
+                })
             }),
             body: None,
         });
@@ -828,7 +843,8 @@ fn parse_decl(
                 None => return Err(err("unterminated block".to_string())),
                 Some(Tok::Word(w)) => {
                     if DeclKind::parse(w).is_some() || w == "abstract" {
-                        let (child, child_warnings) = parse_decl(tokens, cursor, child_position.clone())?;
+                        let (child, child_warnings) =
+                            parse_decl(tokens, cursor, child_position.clone())?;
                         children.push(child);
                         block_warnings.extend(child_warnings);
                     } else if w == "<" || w == ">" {
@@ -847,7 +863,11 @@ fn parse_decl(
                             _ => String::new(),
                         };
                         // Build MirrorAST → MirrorData → fragment
-                        let target_ref = if target.starts_with('@') { target.clone() } else { format!("@{}", target) };
+                        let target_ref = if target.starts_with('@') {
+                            target.clone()
+                        } else {
+                            format!("@{}", target)
+                        };
                         let child_ast = MirrorAST::Import(ImportNode {
                             target: GrammarRef::new(target_ref),
                         });
@@ -921,7 +941,11 @@ fn build_ast_node(
                 GrammarRef::new(format!("@{}", name))
             };
             let parent = parent_ref.as_ref().map(|p| {
-                if p.starts_with('@') { GrammarRef::new(p) } else { GrammarRef::new(format!("@{}", p)) }
+                if p.starts_with('@') {
+                    GrammarRef::new(p)
+                } else {
+                    GrammarRef::new(format!("@{}", p))
+                }
             });
             MirrorAST::Grammar(GrammarNode {
                 name: grammar_name,
@@ -955,13 +979,22 @@ fn build_ast_node(
             name: Identifier::new(name),
         }),
         DeclKind::Property => {
-            let ast_params: Vec<Field> = params.iter().map(|p| {
-                if let Some((n, t)) = p.split_once(':') {
-                    Field { name: Identifier::new(n.trim()), type_ref: Identifier::new(t.trim()) }
-                } else {
-                    Field { name: Identifier::new(p), type_ref: Identifier::new("_") }
-                }
-            }).collect();
+            let ast_params: Vec<Field> = params
+                .iter()
+                .map(|p| {
+                    if let Some((n, t)) = p.split_once(':') {
+                        Field {
+                            name: Identifier::new(n.trim()),
+                            type_ref: Identifier::new(t.trim()),
+                        }
+                    } else {
+                        Field {
+                            name: Identifier::new(p),
+                            type_ref: Identifier::new("_"),
+                        }
+                    }
+                })
+                .collect();
             MirrorAST::Property(PropertyNode {
                 name: Identifier::new(name),
                 params: ast_params,
@@ -1021,13 +1054,22 @@ fn build_ast_node(
         }),
         DeclKind::Action => MirrorAST::Action(ActionNode {
             name: Identifier::new(name),
-            params: params.iter().map(|p| {
-                if let Some((n, t)) = p.split_once(':') {
-                    Field { name: Identifier::new(n.trim()), type_ref: Identifier::new(t.trim()) }
-                } else {
-                    Field { name: Identifier::new(p), type_ref: Identifier::new("_") }
-                }
-            }).collect(),
+            params: params
+                .iter()
+                .map(|p| {
+                    if let Some((n, t)) = p.split_once(':') {
+                        Field {
+                            name: Identifier::new(n.trim()),
+                            type_ref: Identifier::new(t.trim()),
+                        }
+                    } else {
+                        Field {
+                            name: Identifier::new(p),
+                            type_ref: Identifier::new("_"),
+                        }
+                    }
+                })
+                .collect(),
             return_type: None,
             grammar_ref: None,
             body: None,
@@ -1039,13 +1081,22 @@ fn build_ast_node(
         }),
         DeclKind::Template => MirrorAST::Action(ActionNode {
             name: Identifier::new(name),
-            params: params.iter().map(|p| {
-                if let Some((n, t)) = p.split_once(':') {
-                    Field { name: Identifier::new(n.trim()), type_ref: Identifier::new(t.trim()) }
-                } else {
-                    Field { name: Identifier::new(p), type_ref: Identifier::new("_") }
-                }
-            }).collect(),
+            params: params
+                .iter()
+                .map(|p| {
+                    if let Some((n, t)) = p.split_once(':') {
+                        Field {
+                            name: Identifier::new(n.trim()),
+                            type_ref: Identifier::new(t.trim()),
+                        }
+                    } else {
+                        Field {
+                            name: Identifier::new(p),
+                            type_ref: Identifier::new("_"),
+                        }
+                    }
+                })
+                .collect(),
             return_type: None,
             grammar_ref: None,
             body: None,
@@ -1172,7 +1223,8 @@ fn parse_action_body(
                 None => return Err(err("unterminated action block")),
                 Some(Tok::Word(w)) => {
                     if DeclKind::parse(w).is_some() {
-                        let (child, _child_warnings) = parse_decl(tokens, cursor, AstPosition::TopLevel)?;
+                        let (child, _child_warnings) =
+                            parse_decl(tokens, cursor, AstPosition::TopLevel)?;
                         children.push(child);
                     } else {
                         // Skip unrecognized tokens to next line or brace
@@ -1951,7 +2003,10 @@ mod tests {
         assert_eq!(data.kind, DeclKind::Form);
         assert_eq!(data.name, "@form");
         assert_eq!(frag.mirror_children().len(), 1);
-        assert_eq!(frag.mirror_children()[0].mirror_data().kind, DeclKind::Prism);
+        assert_eq!(
+            frag.mirror_children()[0].mirror_data().kind,
+            DeclKind::Prism
+        );
         assert_eq!(decoded(&frag.mirror_children()[0]).name, "focus");
     }
 
@@ -1959,7 +2014,10 @@ mod tests {
     fn mirror_runtime_parses_params_and_variants() {
         let src = "form @x {\n  prism eigenvalues(precision)\n  traversal kind = a | b | c\n}\n";
         let frag = parse_form(src).ok().unwrap();
-        assert_eq!(decoded(&frag.mirror_children()[0]).params, vec!["precision".to_string()]);
+        assert_eq!(
+            decoded(&frag.mirror_children()[0]).params,
+            vec!["precision".to_string()]
+        );
         assert_eq!(
             decoded(&frag.mirror_children()[1]).variants,
             vec!["a".to_string(), "b".to_string(), "c".to_string()]
@@ -2144,7 +2202,13 @@ mod tests {
         let mut registry = MirrorRegistry::open(&tmp).unwrap();
 
         let child = test_frag(DeclKind::Prism, "focus", Vec::new(), Vec::new(), Vec::new());
-        let frag = test_frag(DeclKind::Prism, "@prism", Vec::new(), Vec::new(), vec![child]);
+        let frag = test_frag(
+            DeclKind::Prism,
+            "@prism",
+            Vec::new(),
+            Vec::new(),
+            vec![child],
+        );
         registry.register_fragment(&frag);
 
         let stored = registry.lookup("@prism").expect("@prism in registry");
@@ -2170,7 +2234,13 @@ mod tests {
         let tmp = tempdir_for_test("registry_persists");
         {
             let mut registry = MirrorRegistry::open(&tmp).unwrap();
-            let frag = test_frag(DeclKind::Prism, "@prism", Vec::new(), Vec::new(), Vec::new());
+            let frag = test_frag(
+                DeclKind::Prism,
+                "@prism",
+                Vec::new(),
+                Vec::new(),
+                Vec::new(),
+            );
             registry.register_fragment(&frag);
             registry.flush();
         }
@@ -2186,7 +2256,13 @@ mod tests {
         let tmp = tempdir_for_test("registry_resolves_in");
         let mut registry = MirrorRegistry::open(&tmp).unwrap();
 
-        let prism_frag = test_frag(DeclKind::Prism, "@prism", Vec::new(), Vec::new(), Vec::new());
+        let prism_frag = test_frag(
+            DeclKind::Prism,
+            "@prism",
+            Vec::new(),
+            Vec::new(),
+            Vec::new(),
+        );
         registry.register_fragment(&prism_frag);
 
         let in_child = test_frag(DeclKind::In, "@prism", Vec::new(), Vec::new(), Vec::new());
@@ -2198,7 +2274,13 @@ mod tests {
     fn registry_resolve_fails_when_in_target_missing() {
         let tmp = tempdir_for_test("registry_resolve_missing");
         let registry = MirrorRegistry::open(&tmp).unwrap();
-        let in_child = test_frag(DeclKind::In, "@nonexistent", Vec::new(), Vec::new(), Vec::new());
+        let in_child = test_frag(
+            DeclKind::In,
+            "@nonexistent",
+            Vec::new(),
+            Vec::new(),
+            Vec::new(),
+        );
         let file = test_frag(DeclKind::Form, "", Vec::new(), Vec::new(), vec![in_child]);
         let err = registry.resolve_fragment(&file).unwrap_err();
         assert!(
@@ -2213,7 +2295,13 @@ mod tests {
         let tmp = tempdir_for_test("registry_resolve_disk");
         {
             let mut registry = MirrorRegistry::open(&tmp).unwrap();
-            let prism_frag = test_frag(DeclKind::Prism, "@prism", Vec::new(), Vec::new(), Vec::new());
+            let prism_frag = test_frag(
+                DeclKind::Prism,
+                "@prism",
+                Vec::new(),
+                Vec::new(),
+                Vec::new(),
+            );
             registry.register_fragment(&prism_frag);
             registry.flush();
         }
@@ -2459,7 +2547,13 @@ mod tests {
             Some("body".to_string()),
             Vec::new(),
         );
-        let frag = test_frag(DeclKind::Form, "@test", Vec::new(), Vec::new(), vec![action]);
+        let frag = test_frag(
+            DeclKind::Form,
+            "@test",
+            Vec::new(),
+            Vec::new(),
+            vec![action],
+        );
         let all_named = frag
             .mirror_children()
             .iter()
@@ -2585,7 +2679,10 @@ mod tests {
                 .collect::<Vec<_>>()
         );
         assert_eq!(frag.mirror_children()[0].mirror_data().kind, DeclKind::Type);
-        assert_eq!(frag.mirror_children()[1].mirror_data().kind, DeclKind::Default);
+        assert_eq!(
+            frag.mirror_children()[1].mirror_data().kind,
+            DeclKind::Default
+        );
     }
 
     // -----------------------------------------------------------------------
@@ -2617,7 +2714,10 @@ mod tests {
         assert_eq!(loss.parse.warnings.len(), 1);
         assert!(matches!(
             &loss.parse.warnings[0],
-            ParseWarning::UnknownToken { at: AstPosition::TopLevel, line: 1 }
+            ParseWarning::UnknownToken {
+                at: AstPosition::TopLevel,
+                line: 1
+            }
         ));
     }
 
@@ -2718,7 +2818,6 @@ mod tests {
             "clean boot dir should have zero loss"
         );
     }
-
 
     // -----------------------------------------------------------------------
     // boot file inventory — captures filesystem state before reorganization
@@ -3070,7 +3169,11 @@ grammar @ai {
             .find(|f| f.mirror_data().kind == DeclKind::Action && decoded(f).name == "boot");
         assert!(boot_action.is_some(), "action boot must exist");
         assert!(
-            boot_action.unwrap().mirror_data().optic_ops.contains(&OpticOp::Fold),
+            boot_action
+                .unwrap()
+                .mirror_data()
+                .optic_ops
+                .contains(&OpticOp::Fold),
             "action boot(identity) <= imperfect must produce OpticOp::Fold"
         );
 
@@ -3267,7 +3370,10 @@ grammar @ai {
         let loss = result.loss();
         assert_eq!(loss.parse.warnings.len(), 1, "one parse warning");
         assert!(
-            matches!(&loss.parse.warnings[0], crate::loss::ParseWarning::UnknownToken { .. }),
+            matches!(
+                &loss.parse.warnings[0],
+                crate::loss::ParseWarning::UnknownToken { .. }
+            ),
             "the warning should be UnknownToken"
         );
     }
@@ -3491,8 +3597,14 @@ grammar @ai {
         let frag = parse_form(source).ok().unwrap();
         assert_eq!(frag.mirror_data().kind, DeclKind::Type);
         assert_eq!(decoded(&frag).name, "imperfect");
-        assert!(!frag.mirror_children().is_empty(), "imperfect must have children");
-        let recover = frag.mirror_children().iter().find(|c| c.mirror_data().kind == DeclKind::Recover);
+        assert!(
+            !frag.mirror_children().is_empty(),
+            "imperfect must have children"
+        );
+        let recover = frag
+            .mirror_children()
+            .iter()
+            .find(|c| c.mirror_data().kind == DeclKind::Recover);
         assert!(recover.is_some(), "imperfect must have a recover child");
         let recover = recover.unwrap();
         assert!(
@@ -3507,7 +3619,10 @@ grammar @ai {
         let source = "type imperfect(observation, error(observation), loss) {\n  rescue |error(observation), loss| <= imperfect\n}\n";
         let frag = parse_form(source).ok().unwrap();
         assert_eq!(frag.mirror_data().kind, DeclKind::Type);
-        let rescue = frag.mirror_children().iter().find(|c| c.mirror_data().kind == DeclKind::Rescue);
+        let rescue = frag
+            .mirror_children()
+            .iter()
+            .find(|c| c.mirror_data().kind == DeclKind::Rescue);
         assert!(rescue.is_some(), "imperfect must have a rescue child");
         let rescue = rescue.unwrap();
         assert!(
@@ -3521,7 +3636,10 @@ grammar @ai {
     fn recover_returns_imperfect() {
         let source = "type result(t, e, l) {\n  recover |t, l| <= result\n}\n";
         let frag = parse_form(source).ok().unwrap();
-        let recover = frag.mirror_children().iter().find(|c| c.mirror_data().kind == DeclKind::Recover);
+        let recover = frag
+            .mirror_children()
+            .iter()
+            .find(|c| c.mirror_data().kind == DeclKind::Recover);
         assert!(recover.is_some(), "result must have recover child");
         let recover = recover.unwrap();
         assert!(
@@ -3539,7 +3657,10 @@ grammar @ai {
     fn rescue_returns_imperfect() {
         let source = "type result(t, e, l) {\n  rescue |e, l| <= result\n}\n";
         let frag = parse_form(source).ok().unwrap();
-        let rescue = frag.mirror_children().iter().find(|c| c.mirror_data().kind == DeclKind::Rescue);
+        let rescue = frag
+            .mirror_children()
+            .iter()
+            .find(|c| c.mirror_data().kind == DeclKind::Rescue);
         assert!(rescue.is_some(), "result must have rescue child");
         let rescue = rescue.unwrap();
         assert!(
@@ -3590,7 +3711,10 @@ grammar @ai {
                 .any(|c| c.mirror_data().optic_ops.contains(&OpticOp::Subset));
         assert!(has_subset, "contact must have Subset marker");
 
-        let recover = frag.mirror_children().iter().find(|c| c.mirror_data().kind == DeclKind::Recover);
+        let recover = frag
+            .mirror_children()
+            .iter()
+            .find(|c| c.mirror_data().kind == DeclKind::Recover);
         assert!(recover.is_some(), "contact must have recover child");
     }
 
@@ -3741,7 +3865,11 @@ grammar @ai {
         let parsed = parse_form(src).ok().unwrap();
         let once = kintsugi_fragment(&parsed);
         let twice = kintsugi_fragment(&once);
-        assert_eq!(once.content_hash(), twice.content_hash(), "kintsugi must be idempotent");
+        assert_eq!(
+            once.content_hash(),
+            twice.content_hash(),
+            "kintsugi must be idempotent"
+        );
     }
 
     /// Kintsugi preserves OID: the content-addressed hash is order-invariant.
@@ -3829,10 +3957,9 @@ grammar @ai {
         // RED: template should exist as a recognized DeclKind
         assert!(template.is_some(), "template DeclKind not yet recognized");
         // Check optic_ops via parse_form since they're parser annotations
-        let frag =
-            parse_form("in @meta\nin @property\ntemplate types_lowercase(grammar) = iso\n")
-                .ok()
-                .unwrap();
+        let frag = parse_form("in @meta\nin @property\ntemplate types_lowercase(grammar) = iso\n")
+            .ok()
+            .unwrap();
         let t = frag
             .mirror_children()
             .iter()
@@ -3902,7 +4029,11 @@ grammar @ai {
         };
 
         // The `where` line is currently unrecognized — it shows up as parse loss.
-        let has_where_loss = loss.parse.warnings.iter().any(|w| matches!(w, crate::loss::ParseWarning::UnknownToken { .. }));
+        let has_where_loss = loss
+            .parse
+            .warnings
+            .iter()
+            .any(|w| matches!(w, crate::loss::ParseWarning::UnknownToken { .. }));
         // RED: `where` is unrecognized training data
         assert!(
             has_where_loss,
@@ -4265,8 +4396,12 @@ grammar @ai {
         let runtime = MirrorRuntime::new();
         let result = runtime.compile_source("grammar @test {\n  flag strict\n}\n");
         let loss = result.loss();
-        assert!(loss.parse.warnings.iter().any(|w| matches!(w,
-            ParseWarning::UnknownToken { at: AstPosition::Grammar(_), .. }
+        assert!(loss.parse.warnings.iter().any(|w| matches!(
+            w,
+            ParseWarning::UnknownToken {
+                at: AstPosition::Grammar(_),
+                ..
+            }
         )));
     }
 
@@ -4276,7 +4411,8 @@ grammar @ai {
         let runtime = MirrorRuntime::new();
         let result = runtime.compile_source("form @old {\n  type x\n}\n");
         let loss = result.loss();
-        assert!(loss.parse.warnings.iter().any(|w| matches!(w,
+        assert!(loss.parse.warnings.iter().any(|w| matches!(
+            w,
             ParseWarning::DeprecatedKind {
                 kind: DeclKind::Form,
                 replacement: DeclKind::Grammar,
@@ -4289,9 +4425,8 @@ grammar @ai {
     fn warning_categories_group_by_variant() {
         use crate::loss::ParseWarning;
         let runtime = MirrorRuntime::new();
-        let result = runtime.compile_source(
-            "grammar @test {\n  flag a\n  flag b\n  command c\n  type x\n}\n",
-        );
+        let result = runtime
+            .compile_source("grammar @test {\n  flag a\n  flag b\n  command c\n  type x\n}\n");
         let loss = result.loss();
 
         let unknown_count = loss
@@ -4307,9 +4442,8 @@ grammar @ai {
     fn ast_position_tracks_nesting() {
         use crate::loss::{AstPosition, ParseWarning};
         let runtime = MirrorRuntime::new();
-        let result = runtime.compile_source(
-            "grammar @outer {\n  grammar @inner {\n    widget foo\n  }\n}\n",
-        );
+        let result = runtime
+            .compile_source("grammar @outer {\n  grammar @inner {\n    widget foo\n  }\n}\n");
         let loss = result.loss();
 
         // The warning should be inside @inner, not @outer

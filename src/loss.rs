@@ -441,10 +441,7 @@ mod tests {
             at: AstPosition::TopLevel,
             line: 1,
         });
-        assert!(
-            !loss.is_zero(),
-            "parse warning should break is_zero"
-        );
+        assert!(!loss.is_zero(), "parse warning should break is_zero");
     }
 
     #[test]

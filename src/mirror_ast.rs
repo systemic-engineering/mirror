@@ -370,12 +370,8 @@ impl MirrorAST {
                 }
                 hash_tagged("property", &buf)
             }
-            MirrorAST::Import(i) => {
-                hash_tagged("import", i.target.as_str().as_bytes())
-            }
-            MirrorAST::Export(e) => {
-                hash_tagged("export", e.name.as_str().as_bytes())
-            }
+            MirrorAST::Import(i) => hash_tagged("import", i.target.as_str().as_bytes()),
+            MirrorAST::Export(e) => hash_tagged("export", e.name.as_str().as_bytes()),
             MirrorAST::Focus(f) => {
                 let mut buf = Vec::new();
                 buf.extend_from_slice(f.name.as_str().as_bytes());
@@ -514,12 +510,8 @@ impl MirrorAST {
     pub fn to_mirror_data(&self) -> MirrorData {
         match self {
             MirrorAST::Grammar(g) => {
-                let mut data = MirrorData::new(
-                    DeclKind::Grammar,
-                    g.name.as_str(),
-                    Vec::new(),
-                    Vec::new(),
-                );
+                let mut data =
+                    MirrorData::new(DeclKind::Grammar, g.name.as_str(), Vec::new(), Vec::new());
                 data.parent_ref = g.parent.as_ref().map(|p| p.as_str().to_string());
                 data
             }
@@ -548,7 +540,8 @@ impl MirrorAST {
                         }
                     })
                     .collect();
-                let mut data = MirrorData::new(DeclKind::Action, a.name.as_str(), params, Vec::new());
+                let mut data =
+                    MirrorData::new(DeclKind::Action, a.name.as_str(), params, Vec::new());
                 data.return_type = a.return_type.as_ref().map(|rt| rt.as_str().to_string());
                 data.grammar_ref = a.grammar_ref.as_ref().map(|gr| gr.as_str().to_string());
                 data
@@ -565,7 +558,8 @@ impl MirrorAST {
                         }
                     })
                     .collect();
-                let mut data = MirrorData::new(DeclKind::Property, p.name.as_str(), params, Vec::new());
+                let mut data =
+                    MirrorData::new(DeclKind::Property, p.name.as_str(), params, Vec::new());
                 // fold_target is stored as a variant for round-trip
                 if let Some(ref ft) = p.fold_target {
                     data.variants.push(ft.as_str().to_string());
@@ -579,23 +573,40 @@ impl MirrorAST {
                 MirrorData::new(DeclKind::Out, e.name.as_str(), Vec::new(), Vec::new())
             }
             MirrorAST::Focus(f) => {
-                let params = f.target.as_ref().map(|t| vec![t.as_str().to_string()]).unwrap_or_default();
+                let params = f
+                    .target
+                    .as_ref()
+                    .map(|t| vec![t.as_str().to_string()])
+                    .unwrap_or_default();
                 MirrorData::new(DeclKind::Focus, f.name.as_str(), params, Vec::new())
             }
             MirrorAST::Project(p) => {
-                let params = p.target.as_ref().map(|t| vec![t.as_str().to_string()]).unwrap_or_default();
+                let params = p
+                    .target
+                    .as_ref()
+                    .map(|t| vec![t.as_str().to_string()])
+                    .unwrap_or_default();
                 MirrorData::new(DeclKind::Project, p.name.as_str(), params, Vec::new())
             }
             MirrorAST::Split(s) => {
-                let variants: Vec<String> = s.variants.iter().map(|v| v.as_str().to_string()).collect();
+                let variants: Vec<String> =
+                    s.variants.iter().map(|v| v.as_str().to_string()).collect();
                 MirrorData::new(DeclKind::Split, s.name.as_str(), Vec::new(), variants)
             }
             MirrorAST::Zoom(z) => {
-                let params = z.target.as_ref().map(|t| vec![t.as_str().to_string()]).unwrap_or_default();
+                let params = z
+                    .target
+                    .as_ref()
+                    .map(|t| vec![t.as_str().to_string()])
+                    .unwrap_or_default();
                 MirrorData::new(DeclKind::Zoom, z.name.as_str(), params, Vec::new())
             }
             MirrorAST::Refract(r) => {
-                let params = r.target.as_ref().map(|t| vec![t.as_str().to_string()]).unwrap_or_default();
+                let params = r
+                    .target
+                    .as_ref()
+                    .map(|t| vec![t.as_str().to_string()])
+                    .unwrap_or_default();
                 MirrorData::new(DeclKind::Refract, r.name.as_str(), params, Vec::new())
             }
             MirrorAST::Abstract(inner) => {
@@ -618,7 +629,9 @@ impl MirrorAST {
         let children: Vec<crate::declaration::MirrorFragment> = match self {
             MirrorAST::Grammar(g) => g.children.iter().map(|c| c.to_fragment()).collect(),
             MirrorAST::Type(t) => t.children.iter().map(|c| c.to_fragment()).collect(),
-            MirrorAST::Action(a) => a.body.as_ref()
+            MirrorAST::Action(a) => a
+                .body
+                .as_ref()
                 .map(|b| b.iter().map(|c| c.to_fragment()).collect())
                 .unwrap_or_default(),
             MirrorAST::Property(p) => p.body.iter().map(|c| c.to_fragment()).collect(),
@@ -789,10 +802,7 @@ mod tests {
         let node = MirrorAST::Type(TypeNode {
             name: Identifier::new("color"),
             params: vec![],
-            body: TypeBody::Enum(vec![
-                Identifier::new("red"),
-                Identifier::new("blue"),
-            ]),
+            body: TypeBody::Enum(vec![Identifier::new("red"), Identifier::new("blue")]),
             children: vec![],
         });
         assert_eq!(node.kind_name(), "type");
@@ -934,10 +944,7 @@ mod tests {
     fn split_node() {
         let node = MirrorAST::Split(SplitNode {
             name: Identifier::new("route"),
-            variants: vec![
-                Identifier::new("left"),
-                Identifier::new("right"),
-            ],
+            variants: vec![Identifier::new("left"), Identifier::new("right")],
             children: vec![],
         });
         assert_eq!(node.kind_name(), "split");
@@ -970,19 +977,13 @@ mod tests {
         let a = MirrorAST::Type(TypeNode {
             name: Identifier::new("color"),
             params: vec![],
-            body: TypeBody::Enum(vec![
-                Identifier::new("red"),
-                Identifier::new("blue"),
-            ]),
+            body: TypeBody::Enum(vec![Identifier::new("red"), Identifier::new("blue")]),
             children: vec![],
         });
         let b = MirrorAST::Type(TypeNode {
             name: Identifier::new("color"),
             params: vec![],
-            body: TypeBody::Enum(vec![
-                Identifier::new("red"),
-                Identifier::new("blue"),
-            ]),
+            body: TypeBody::Enum(vec![Identifier::new("red"), Identifier::new("blue")]),
             children: vec![],
         });
         assert_eq!(a.oid(), b.oid());
@@ -1196,10 +1197,7 @@ mod tests {
         let ast = MirrorAST::Type(TypeNode {
             name: Identifier::new("color"),
             params: vec![],
-            body: TypeBody::Enum(vec![
-                Identifier::new("red"),
-                Identifier::new("blue"),
-            ]),
+            body: TypeBody::Enum(vec![Identifier::new("red"), Identifier::new("blue")]),
             children: vec![],
         });
         let data = ast.to_mirror_data();
@@ -1545,17 +1543,19 @@ mod tests {
         let a = MirrorAST::Type(TypeNode {
             name: Identifier::new("point"),
             params: vec![],
-            body: TypeBody::Struct(vec![
-                Field { name: Identifier::new("x"), type_ref: Identifier::new("int") },
-            ]),
+            body: TypeBody::Struct(vec![Field {
+                name: Identifier::new("x"),
+                type_ref: Identifier::new("int"),
+            }]),
             children: vec![],
         });
         let b = MirrorAST::Type(TypeNode {
             name: Identifier::new("point"),
             params: vec![],
-            body: TypeBody::Struct(vec![
-                Field { name: Identifier::new("x"), type_ref: Identifier::new("int") },
-            ]),
+            body: TypeBody::Struct(vec![Field {
+                name: Identifier::new("x"),
+                type_ref: Identifier::new("int"),
+            }]),
             children: vec![],
         });
         assert_eq!(a.oid(), b.oid());
@@ -1563,9 +1563,10 @@ mod tests {
         let c = MirrorAST::Type(TypeNode {
             name: Identifier::new("point"),
             params: vec![],
-            body: TypeBody::Struct(vec![
-                Field { name: Identifier::new("x"), type_ref: Identifier::new("float") },
-            ]),
+            body: TypeBody::Struct(vec![Field {
+                name: Identifier::new("x"),
+                type_ref: Identifier::new("float"),
+            }]),
             children: vec![],
         });
         assert_ne!(a.oid(), c.oid());

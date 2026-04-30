@@ -12,7 +12,7 @@ pub mod compound;
 pub mod stop_words;
 pub mod token;
 
-pub use compound::{CompoundNode, decompose};
+pub use compound::{decompose, CompoundNode};
 pub use token::{Token, TokenKind};
 
 use crate::kernel::{ContentAddressed, Oid};
@@ -132,12 +132,18 @@ fn compound_to_prism(node: &CompoundNode, stemmer: &Stemmer) -> Prism<Token> {
         Prism::Shard { ref_, data }
     } else {
         // Branch: compound node with children
-        let children: Vec<Prism<Token>> = node.children.iter()
+        let children: Vec<Prism<Token>> = node
+            .children
+            .iter()
             .map(|child| compound_to_prism(child, stemmer))
             .collect();
         let data = Token::compound(&node.text.to_lowercase());
         let ref_ = make_ref(&data);
-        Prism::Fractal { ref_, data, children }
+        Prism::Fractal {
+            ref_,
+            data,
+            children,
+        }
     }
 }
 
@@ -244,7 +250,11 @@ mod tests {
 
         // First child should be a Fractal (compound)
         match &children[0] {
-            Prism::Fractal { data, children: sub, .. } => {
+            Prism::Fractal {
+                data,
+                children: sub,
+                ..
+            } => {
                 assert_eq!(data.text, "approx_lambda_2");
                 assert_eq!(sub.len(), 3); // "approx" + "lambda" + "2"
             }
@@ -291,9 +301,7 @@ mod tests {
 
         // Extract "lambda" from the leaf tree
         let lambda_direct = match &tree_leaf {
-            Prism::Fractal { children, .. } => {
-                children[0].data().content_oid()
-            }
+            Prism::Fractal { children, .. } => children[0].data().content_oid(),
             _ => panic!("expected root"),
         };
 
@@ -320,7 +328,11 @@ mod tests {
         };
         assert_eq!(children.len(), 1);
         match &children[0] {
-            Prism::Fractal { data, children: sub, .. } => {
+            Prism::Fractal {
+                data,
+                children: sub,
+                ..
+            } => {
                 assert_eq!(data.kind, TokenKind::Compound);
                 assert_eq!(sub.len(), 2);
                 assert_eq!(sub[0].data().text, "spectral");

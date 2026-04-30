@@ -20,11 +20,17 @@ pub struct CompoundNode {
 
 impl CompoundNode {
     pub fn leaf(text: impl Into<String>) -> Self {
-        CompoundNode { text: text.into(), children: vec![] }
+        CompoundNode {
+            text: text.into(),
+            children: vec![],
+        }
     }
 
     pub fn branch(text: impl Into<String>, children: Vec<CompoundNode>) -> Self {
-        CompoundNode { text: text.into(), children }
+        CompoundNode {
+            text: text.into(),
+            children,
+        }
     }
 
     pub fn is_leaf(&self) -> bool {
@@ -40,7 +46,8 @@ pub fn decompose(token: &str) -> CompoundNode {
     // Try underscore split first
     let parts: Vec<&str> = token.split('_').collect();
     if parts.len() > 1 {
-        let children: Vec<CompoundNode> = parts.iter()
+        let children: Vec<CompoundNode> = parts
+            .iter()
             .filter(|p| !p.is_empty())
             .map(|p| decompose(p))
             .collect();
@@ -52,7 +59,8 @@ pub fn decompose(token: &str) -> CompoundNode {
     // Try dot split
     let parts: Vec<&str> = token.split('.').collect();
     if parts.len() > 1 {
-        let children: Vec<CompoundNode> = parts.iter()
+        let children: Vec<CompoundNode> = parts
+            .iter()
             .filter(|p| !p.is_empty())
             .map(|p| decompose(p))
             .collect();
@@ -64,9 +72,7 @@ pub fn decompose(token: &str) -> CompoundNode {
     // Try CamelCase split
     let camel_parts = split_camel_case(token);
     if camel_parts.len() > 1 {
-        let children: Vec<CompoundNode> = camel_parts.iter()
-            .map(|p| decompose(p))
-            .collect();
+        let children: Vec<CompoundNode> = camel_parts.iter().map(|p| decompose(p)).collect();
         return CompoundNode::branch(token, children);
     }
 
@@ -117,38 +123,56 @@ mod tests {
     #[test]
     fn underscore_split() {
         let node = decompose("lambda_2");
-        assert_eq!(node, CompoundNode::branch("lambda_2", vec![
-            CompoundNode::leaf("lambda"),
-            CompoundNode::leaf("2"),
-        ]));
+        assert_eq!(
+            node,
+            CompoundNode::branch(
+                "lambda_2",
+                vec![CompoundNode::leaf("lambda"), CompoundNode::leaf("2"),]
+            )
+        );
     }
 
     #[test]
     fn nested_underscore_split() {
         let node = decompose("approx_lambda_2");
-        assert_eq!(node, CompoundNode::branch("approx_lambda_2", vec![
-            CompoundNode::leaf("approx"),
-            CompoundNode::leaf("lambda"),
-            CompoundNode::leaf("2"),
-        ]));
+        assert_eq!(
+            node,
+            CompoundNode::branch(
+                "approx_lambda_2",
+                vec![
+                    CompoundNode::leaf("approx"),
+                    CompoundNode::leaf("lambda"),
+                    CompoundNode::leaf("2"),
+                ]
+            )
+        );
     }
 
     #[test]
     fn camel_case_split() {
         let node = decompose("SpectralIndex");
-        assert_eq!(node, CompoundNode::branch("SpectralIndex", vec![
-            CompoundNode::leaf("Spectral"),
-            CompoundNode::leaf("Index"),
-        ]));
+        assert_eq!(
+            node,
+            CompoundNode::branch(
+                "SpectralIndex",
+                vec![CompoundNode::leaf("Spectral"), CompoundNode::leaf("Index"),]
+            )
+        );
     }
 
     #[test]
     fn dot_split() {
         let node = decompose("self.eigenvalues");
-        assert_eq!(node, CompoundNode::branch("self.eigenvalues", vec![
-            CompoundNode::leaf("self"),
-            CompoundNode::leaf("eigenvalues"),
-        ]));
+        assert_eq!(
+            node,
+            CompoundNode::branch(
+                "self.eigenvalues",
+                vec![
+                    CompoundNode::leaf("self"),
+                    CompoundNode::leaf("eigenvalues"),
+                ]
+            )
+        );
     }
 
     #[test]

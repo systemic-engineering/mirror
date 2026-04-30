@@ -141,10 +141,7 @@ impl LambdaFn for Resolve {
     type Error = MirrorRuntimeError;
     type Loss = MirrorLoss;
 
-    fn reduce(
-        self,
-        input: ParsedAst,
-    ) -> Imperfect<ResolvedAst, MirrorRuntimeError, MirrorLoss> {
+    fn reduce(self, input: ParsedAst) -> Imperfect<ResolvedAst, MirrorRuntimeError, MirrorLoss> {
         let Some(store_path) = self.store_path else {
             // No registry — pass through
             return Imperfect::Success(ResolvedAst(input.0));
@@ -163,10 +160,7 @@ impl LambdaFn for Resolve {
                 // Resolution failed but the AST is still usable — record as loss
                 let mut loss = MirrorLoss::zero();
                 loss.resolution = ResolutionLoss {
-                    unresolved_refs: vec![(
-                        e.0.clone(),
-                        crate::kernel::TraceOid::new("resolve"),
-                    )],
+                    unresolved_refs: vec![(e.0.clone(), crate::kernel::TraceOid::new("resolve"))],
                     resolution_ratio: 0.0,
                 };
                 Imperfect::Partial(ResolvedAst(input.0), loss)
@@ -184,10 +178,7 @@ impl LambdaFn for Properties {
     type Error = MirrorRuntimeError;
     type Loss = MirrorLoss;
 
-    fn reduce(
-        self,
-        input: ResolvedAst,
-    ) -> Imperfect<CheckedAst, MirrorRuntimeError, MirrorLoss> {
+    fn reduce(self, input: ResolvedAst) -> Imperfect<CheckedAst, MirrorRuntimeError, MirrorLoss> {
         Imperfect::Success(CheckedAst(input.0))
     }
 }
@@ -201,10 +192,7 @@ impl LambdaFn for Emit {
     type Error = MirrorRuntimeError;
     type Loss = MirrorLoss;
 
-    fn reduce(
-        self,
-        input: CheckedAst,
-    ) -> Imperfect<EmittedCode, MirrorRuntimeError, MirrorLoss> {
+    fn reduce(self, input: CheckedAst) -> Imperfect<EmittedCode, MirrorRuntimeError, MirrorLoss> {
         let grammar = CodeGrammar::rust();
         let rust_code = emit_code_fragment(&input.0, &grammar).to_string_lossy();
         Imperfect::Success(EmittedCode(rust_code))
@@ -250,14 +238,17 @@ mod tests {
 
     #[test]
     fn same_composition_same_oid() {
-        let a: Lambda<MirrorFragment> = Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
-        let b: Lambda<MirrorFragment> = Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
+        let a: Lambda<MirrorFragment> =
+            Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
+        let b: Lambda<MirrorFragment> =
+            Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
         assert_eq!(a.oid(), b.oid());
     }
 
     #[test]
     fn different_composition_different_oid() {
-        let a: Lambda<MirrorFragment> = Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
+        let a: Lambda<MirrorFragment> =
+            Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
         let b: Lambda<MirrorFragment> = Composable::<MirrorFragment>::then(Parse, Emit);
         assert_ne!(a.oid(), b.oid());
     }
@@ -327,8 +318,10 @@ mod tests {
 
     #[test]
     fn order_matters_for_pipeline() {
-        let ab: Lambda<MirrorFragment> = Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
-        let ba: Lambda<MirrorFragment> = Composable::<MirrorFragment>::then(Resolve::pass_through(), Parse);
+        let ab: Lambda<MirrorFragment> =
+            Composable::<MirrorFragment>::then(Parse, Resolve::pass_through());
+        let ba: Lambda<MirrorFragment> =
+            Composable::<MirrorFragment>::then(Resolve::pass_through(), Parse);
         assert_ne!(ab.oid(), ba.oid());
     }
 
@@ -372,11 +365,7 @@ mod tests {
         assert!(
             result.is_partial(),
             "unrecognized 'widget' should produce Partial, got {:?}",
-            if result.is_ok() {
-                "Success"
-            } else {
-                "Failure"
-            }
+            if result.is_ok() { "Success" } else { "Failure" }
         );
     }
 
@@ -434,9 +423,21 @@ mod tests {
         let result = Emit.reduce(CheckedAst(fragment));
         assert!(result.is_ok());
         let code = result.ok().unwrap();
-        assert!(code.0.contains("pub enum Color"), "should contain enum Color, got: {}", code.0);
-        assert!(code.0.contains("Red"), "should contain Red variant, got: {}", code.0);
-        assert!(code.0.contains("Blue"), "should contain Blue variant, got: {}", code.0);
+        assert!(
+            code.0.contains("pub enum Color"),
+            "should contain enum Color, got: {}",
+            code.0
+        );
+        assert!(
+            code.0.contains("Red"),
+            "should contain Red variant, got: {}",
+            code.0
+        );
+        assert!(
+            code.0.contains("Blue"),
+            "should contain Blue variant, got: {}",
+            code.0
+        );
     }
 
     // -------------------------------------------------------------------
@@ -446,10 +447,7 @@ mod tests {
     #[test]
     fn craft_pipeline_compiles_real_source() {
         let craft = LambdaFn::then(
-            LambdaFn::then(
-                LambdaFn::then(Parse, Resolve::pass_through()),
-                Properties,
-            ),
+            LambdaFn::then(LambdaFn::then(Parse, Resolve::pass_through()), Properties),
             Emit,
         );
         let result = craft.reduce(SourceText("type color = red | blue".into()));
@@ -463,10 +461,7 @@ mod tests {
     #[test]
     fn craft_pipeline_with_warnings_is_partial() {
         let craft = LambdaFn::then(
-            LambdaFn::then(
-                LambdaFn::then(Parse, Resolve::pass_through()),
-                Properties,
-            ),
+            LambdaFn::then(LambdaFn::then(Parse, Resolve::pass_through()), Properties),
             Emit,
         );
         let result = craft.reduce(SourceText("type color = red | blue\nwidget foo".into()));
@@ -474,7 +469,10 @@ mod tests {
         // Loss should propagate through the whole chain
         assert!(result.is_ok(), "pipeline should still produce output");
         let loss = result.loss();
-        assert!(loss.holonomy() > 0.0, "unrecognized widget should produce loss");
+        assert!(
+            loss.holonomy() > 0.0,
+            "unrecognized widget should produce loss"
+        );
     }
 
     #[test]
@@ -491,16 +489,16 @@ mod tests {
 
         // New path
         let pipeline = LambdaFn::then(
-            LambdaFn::then(
-                LambdaFn::then(Parse, Resolve::pass_through()),
-                Properties,
-            ),
+            LambdaFn::then(LambdaFn::then(Parse, Resolve::pass_through()), Properties),
             Emit,
         );
         let new_result = pipeline.reduce(SourceText(source.into()));
         let new_rust = new_result.ok().unwrap();
 
-        assert_eq!(old_rust, new_rust.0, "pipeline must produce same output as old compiler");
+        assert_eq!(
+            old_rust, new_rust.0,
+            "pipeline must produce same output as old compiler"
+        );
     }
 
     #[test]
@@ -512,14 +510,18 @@ mod tests {
         let parsed = Parse.reduce(SourceText("type x".into()));
         let fragment = parsed.ok().unwrap().0;
         let result = Resolve::with_store(&tmp).reduce(ParsedAst(fragment));
-        assert!(result.is_ok(), "simple type should resolve against empty store");
+        assert!(
+            result.is_ok(),
+            "simple type should resolve against empty store"
+        );
         let _ = std::fs::remove_dir_all(&tmp);
     }
 
     #[test]
     fn resolve_with_store_partial_for_unresolved_ref() {
         // `in @missing` should produce Partial (unresolved ref as loss)
-        let tmp = std::env::temp_dir().join(format!("mirror-test-unresolved-{}", std::process::id()));
+        let tmp =
+            std::env::temp_dir().join(format!("mirror-test-unresolved-{}", std::process::id()));
         let _ = std::fs::create_dir_all(&tmp);
         let parsed = Parse.reduce(SourceText("in @missing\ntype x".into()));
         let fragment = parsed.ok().unwrap().0;
