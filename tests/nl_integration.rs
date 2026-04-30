@@ -1,8 +1,8 @@
 //! Integration test: tokenize real spectral-db node text and verify
 //! that structural connections emerge from shared content.
 
-use mirror::nl::{tokenize, shared_oid_count, all_oids, leaf_oids, Token};
 use mirror::kernel::ContentAddressed;
+use mirror::nl::{all_oids, leaf_oids, shared_oid_count, tokenize, Token};
 
 #[test]
 fn mara_finding_connects_to_mara_fix() {
@@ -10,11 +10,11 @@ fn mara_finding_connects_to_mara_fix() {
     let finding = tokenize(
         "approx_lambda_2 does NOT compute lambda_2. It returns \
          min_degree*n/(n-1), which is an UPPER bound on the largest \
-         eigenvalue via Gershgorin, not a lower bound on lambda_2."
+         eigenvalue via Gershgorin, not a lower bound on lambda_2.",
     );
     let fix = tokenize(
         "Fixed approx_lambda_2 — now uses Jacobi eigenvalue iteration \
-         for real Fiedler value. P3: 1.0 (was 1.5). 10 tests pass."
+         for real Fiedler value. P3: 1.0 (was 1.5). 10 tests pass.",
     );
 
     let shared = shared_oid_count(&finding, &fix);
@@ -29,12 +29,10 @@ fn mara_finding_connects_to_mara_fix() {
 
 #[test]
 fn unrelated_nodes_no_connection() {
-    let spectral_node = tokenize(
-        "Jacobi algorithm clones the ENTIRE matrix every iteration."
-    );
+    let spectral_node = tokenize("Jacobi algorithm clones the ENTIRE matrix every iteration.");
     let pressure_node = tokenize(
         "shed() never actually evicts nodes. Pressure shedding is \
-         informational only."
+         informational only.",
     );
 
     let shared = shared_oid_count(&spectral_node, &pressure_node);
@@ -97,7 +95,10 @@ fn leaf_oids_are_content_addressed() {
     // Each leaf OID should match the content_oid of the stemmed token
     let eigenvalu_oid = Token::word("eigenvalu").content_oid();
     let comput_oid = Token::word("comput").content_oid();
-    assert!(oids.contains(&eigenvalu_oid), "should contain 'eigenvalu' OID");
+    assert!(
+        oids.contains(&eigenvalu_oid),
+        "should contain 'eigenvalu' OID"
+    );
     assert!(oids.contains(&comput_oid), "should contain 'comput' OID");
 }
 

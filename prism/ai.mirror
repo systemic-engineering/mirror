@@ -1,17 +1,27 @@
 in @actor
 
 grammar @ai {
-  type = collapse | tension | branch
+  type = collapse | tension | branch | observation | proposal | crystal
 
   type collapse = clear | partial | ambiguous
 
   type tension = competing | complementary | contradictory
+
+  type observation = focus | project | bridge
+
+  type proposal = plan | build | spawn
+
+  type crystal = settled | promoted | archived
 
   action project(input: collapse)
   action coherence(input)
   action settle(input)
   action branch(tension: tension)
   action escalate(tension: tension)
+
+  action observe(graph: observation)
+  action propose(observation: observation)
+  action decide(proposal: proposal)
 }
 
 ---
@@ -22,8 +32,35 @@ test "ai types" {
   @ai has branch
 }
 
+test "ai observation types" {
+  @ai has observation
+  @ai.observation has focus
+  @ai.observation has project
+  @ai.observation has bridge
+}
+
+test "ai proposal types" {
+  @ai has proposal
+  @ai.proposal has plan
+  @ai.proposal has build
+  @ai.proposal has spawn
+}
+
+test "ai crystal types" {
+  @ai has crystal
+  @ai.crystal has settled
+  @ai.crystal has promoted
+  @ai.crystal has archived
+}
+
 test "ai actions" {
   @ai has act project
   @ai has act coherence
   @ai has act settle
+}
+
+test "ai memory actions" {
+  @ai has act observe
+  @ai has act propose
+  @ai has act decide
 }

@@ -21,11 +21,17 @@ pub struct Token {
 
 impl Token {
     pub fn word(text: impl Into<String>) -> Self {
-        Token { text: text.into(), kind: TokenKind::Word }
+        Token {
+            text: text.into(),
+            kind: TokenKind::Word,
+        }
     }
 
     pub fn compound(text: impl Into<String>) -> Self {
-        Token { text: text.into(), kind: TokenKind::Compound }
+        Token {
+            text: text.into(),
+            kind: TokenKind::Compound,
+        }
     }
 
     /// Content address label: "token:{text}"

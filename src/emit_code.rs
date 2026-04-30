@@ -271,9 +271,7 @@ impl CodeGrammar {
                     } else {
                         params
                             .iter()
-                            .map(|(n, t)| {
-                                format!("{}: &{}", to_snake_case(n), to_pascal_case(t))
-                            })
+                            .map(|(n, t)| format!("{}: &{}", to_snake_case(n), to_pascal_case(t)))
                             .collect::<Vec<_>>()
                             .join(", ")
                     };
@@ -312,7 +310,11 @@ impl CodeGrammar {
                 emit_generic_struct: Box::new(|name, params| {
                     let pascal = to_pascal_case(name);
                     let generics: Vec<String> = params.iter().map(|p| to_pascal_case(p)).collect();
-                    IoList::text(&format!("pub struct {}<{}>;\n", pascal, generics.join(", ")))
+                    IoList::text(&format!(
+                        "pub struct {}<{}>;\n",
+                        pascal,
+                        generics.join(", ")
+                    ))
                 }),
                 todo_expr: "todo!()",
             },
@@ -423,10 +425,7 @@ impl CodeGrammar {
                         None => String::new(),
                     };
                     IoList::join(vec![
-                        IoList::text(&format!(
-                            "pub fn {}({}){} {{\n",
-                            fn_name, params_str, ret
-                        )),
+                        IoList::text(&format!("pub fn {}({}){} {{\n", fn_name, params_str, ret)),
                         IoList::text("  todo\n"),
                         IoList::text("}\n"),
                     ])
@@ -438,9 +437,7 @@ impl CodeGrammar {
                     } else {
                         params
                             .iter()
-                            .map(|(n, t)| {
-                                format!("{}: {}", to_snake_case(n), to_pascal_case(t))
-                            })
+                            .map(|(n, t)| format!("{}: {}", to_snake_case(n), to_pascal_case(t)))
                             .collect::<Vec<_>>()
                             .join(", ")
                     };
@@ -481,8 +478,7 @@ impl CodeGrammar {
                 }),
                 emit_generic_struct: Box::new(|name, params| {
                     let pascal = to_pascal_case(name);
-                    let generics: Vec<String> =
-                        params.iter().map(|p| to_snake_case(p)).collect();
+                    let generics: Vec<String> = params.iter().map(|p| to_snake_case(p)).collect();
                     IoList::text(&format!(
                         "pub type {}({}) {{\n  {}({})\n}}\n",
                         pascal,
@@ -676,11 +672,7 @@ fn emit_property_code(data: &MirrorData, grammar: &CodeGrammar) -> IoList {
     (grammar.templates.emit_property)(&data.name, &params)
 }
 
-fn emit_module_code(
-    data: &MirrorData,
-    frag: &MirrorFragment,
-    grammar: &CodeGrammar,
-) -> IoList {
+fn emit_module_code(data: &MirrorData, frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
     let children: Vec<IoList> = frag
         .mirror_children()
         .iter()
@@ -689,11 +681,7 @@ fn emit_module_code(
     (grammar.templates.emit_module)(&data.name, children)
 }
 
-fn emit_form_code(
-    data: &MirrorData,
-    frag: &MirrorFragment,
-    grammar: &CodeGrammar,
-) -> IoList {
+fn emit_form_code(data: &MirrorData, frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
     if data.name.starts_with('@') || !frag.mirror_children().is_empty() {
         let mod_name = strip_grammar_prefix(&data.name);
         if !mod_name.is_empty() {
@@ -808,7 +796,9 @@ mod tests {
     #[test]
     fn gleam_all_ints_are_int() {
         let g = CodeGrammar::gleam();
-        for t in ["u8", "u16", "u32", "u64", "i8", "i16", "i32", "i64", "usize"] {
+        for t in [
+            "u8", "u16", "u32", "u64", "i8", "i16", "i32", "i64", "usize",
+        ] {
             assert_eq!((g.templates.map_type)(t).to_string_lossy(), "Int");
         }
     }

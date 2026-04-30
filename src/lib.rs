@@ -51,6 +51,7 @@ pub mod git_prism;
 pub mod git_store;
 pub mod lambda_phases;
 pub mod loss;
+pub mod mirver;
 pub mod lsp;
 pub mod mirror_ast;
 pub mod mirror_runtime;
