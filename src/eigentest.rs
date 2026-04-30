@@ -495,4 +495,43 @@ mod tests {
         let max_idx = bc.iter().enumerate().max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap()).unwrap().0;
         assert_eq!(max_idx, 0);
     }
+
+    #[test]
+    fn eigentest_ai_grammar_parses_and_runs() {
+        // The @ai grammar with observation/proposal/crystal types.
+        // Grammars parsed as ASTs are inherently hierarchical (one grammar root
+        // with many type/action children), which looks star-shaped to the
+        // eigentest battery. This is structural truth about AST shape, not
+        // extraction. The eigentest proves the graph IS analyzed — the star
+        // detection is correct for a tree-shaped AST.
+        let source = r#"grammar @ai {
+  type = collapse | tension | branch | observation | proposal | crystal
+  type collapse = clear | partial | ambiguous
+  type tension = competing | complementary | contradictory
+  type observation = focus | project | bridge
+  type proposal = plan | build | spawn
+  type crystal = settled | promoted | archived
+  action project(input: collapse)
+  action coherence(input)
+  action settle(input)
+  action branch(tension: tension)
+  action escalate(tension: tension)
+  action observe(graph: observation)
+  action propose(observation: observation)
+  action decide(proposal: proposal)
+}"#;
+        let ast = parse(source);
+        let result = eigentest(&ast);
+        // Grammar parses successfully and eigentest runs
+        assert!(result.node_count > 10, "@ai grammar should have >10 type-graph nodes, got {}", result.node_count);
+        assert!(result.edge_count > 0, "@ai grammar should have edges, got {}", result.edge_count);
+        // AST-derived grammars are tree-shaped (star from root). This is not
+        // extraction — it's the structure of a flat grammar declaration.
+        // When the eigentest moves to cross-reference type graphs (not AST
+        // parent-child), this will change.
+        assert!(
+            result.violation_count() > 0,
+            "@ai grammar AST is hierarchical — eigentest should detect star shape"
+        );
+    }
 }
