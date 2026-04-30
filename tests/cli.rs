@@ -333,32 +333,9 @@ fn compile_boot_property() {
 }
 
 // ---------------------------------------------------------------------------
-// Compile the shatter file — the crystal IS a .mirror file
+// compile_shatter_produces_oid — REMOVED: mirror.shatter was deleted.
+// The .shatter artifact workflow is no longer active.
 // ---------------------------------------------------------------------------
-
-#[test]
-fn compile_shatter_produces_oid() {
-    let output = mirror_bin()
-        .current_dir(project_root())
-        .arg("compile")
-        .arg("mirror.shatter")
-        .output()
-        .unwrap();
-
-    assert!(
-        output.status.success(),
-        "mirror.shatter should compile, stderr: {}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let oid = stdout.trim();
-    assert!(
-        oid.len() == 64 && oid.chars().all(|c| c.is_ascii_hexdigit()),
-        "should produce hex OID, got: {}",
-        oid
-    );
-}
 
 // ---------------------------------------------------------------------------
 // Round-trip: crystal → compile → same OID
