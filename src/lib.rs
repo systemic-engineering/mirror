@@ -64,6 +64,8 @@ pub mod runtime;
 pub mod session;
 pub mod shard;
 pub mod shatter_format;
+#[cfg(feature = "shatter")]
+pub mod shatter_blob;
 #[cfg(feature = "git")]
 pub mod sign;
 pub mod spec;
