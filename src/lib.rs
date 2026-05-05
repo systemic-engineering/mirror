@@ -70,3 +70,8 @@ pub mod shatter_blob;
 pub mod sign;
 pub mod spec;
 pub mod store;
+
+#[deprecated(
+    note = "Will be replaced by AST-based tokenization when nodes store Ast instead of Vec<u8>"
+)]
+pub mod nl;

@@ -39,6 +39,8 @@ base64 = "0.22"
 eetf = "0.11"
 git2 = "0.19"
 ssh-key = { version = "0.6", features = ["std", "ed25519", "crypto"], optional = true }
+unicode-segmentation = "1"
+rust-stemmers = "1"
 
 [dev-dependencies]
 tempfile = "3"
