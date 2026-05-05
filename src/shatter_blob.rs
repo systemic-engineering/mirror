@@ -11,6 +11,7 @@
 //! The blob IS the AST. The content_oid of the deserialized AST
 //! matches the content_oid of the original — same geometry, same address.
 
+use bincode::Options;
 use crate::ast::Ast;
 
 /// Magic bytes for the .shatter binary format.
@@ -18,6 +19,13 @@ const SHATTER_MAGIC: &[u8; 4] = b"SHTR";
 
 /// Current format version.
 const SHATTER_VERSION: u8 = 1;
+
+/// Maximum payload size for deserialization (64 MiB).
+///
+/// Prevents unbounded allocation from malicious or corrupted blobs.
+/// Both the raw byte length and bincode's internal length-prefixed
+/// allocations are bounded by this limit.
+const MAX_SHATTER_PAYLOAD: usize = 64 * 1024 * 1024;
 
 // ---------------------------------------------------------------------------
 // Errors
@@ -30,6 +38,8 @@ pub enum ShatterError {
     InvalidMagic,
     /// The version byte is not supported.
     UnsupportedVersion(u8),
+    /// Payload exceeds MAX_SHATTER_PAYLOAD bytes.
+    PayloadTooLarge(usize),
     /// bincode deserialization failed.
     Deserialize(bincode::Error),
 }
@@ -40,6 +50,15 @@ impl std::fmt::Display for ShatterError {
             ShatterError::InvalidMagic => write!(f, "invalid shatter magic (expected b\"SHTR\")"),
             ShatterError::UnsupportedVersion(v) => {
                 write!(f, "unsupported shatter version: {} (expected {})", v, SHATTER_VERSION)
+            }
+            ShatterError::PayloadTooLarge(size) => {
+                write!(
+                    f,
+                    "shatter payload too large: {} bytes (max {} bytes / {} MiB)",
+                    size,
+                    MAX_SHATTER_PAYLOAD,
+                    MAX_SHATTER_PAYLOAD / (1024 * 1024)
+                )
             }
             ShatterError::Deserialize(e) => write!(f, "shatter deserialize error: {}", e),
         }
@@ -52,6 +71,18 @@ impl std::error::Error for ShatterError {}
 // Serialize / Deserialize
 // ---------------------------------------------------------------------------
 
+/// Bincode options for SHATTER_VERSION 1.
+///
+/// Must match on both serialize and deserialize sides. Uses the legacy
+/// bincode 1.3 config: fixint encoding, little-endian, no trailing byte
+/// rejection on the write side.
+fn shatter_bincode_options() -> impl Options {
+    bincode::DefaultOptions::new()
+        .with_fixint_encoding()
+        .with_limit(MAX_SHATTER_PAYLOAD as u64)
+        .allow_trailing_bytes()
+}
+
 /// Serialize an optic AST to a .shatter blob.
 ///
 /// Format: `SHTR` magic (4 bytes) + version (1 byte) + bincode payload.
@@ -59,13 +90,19 @@ pub fn serialize_shatter(ast: &Ast) -> Vec<u8> {
     let mut buf = Vec::new();
     buf.extend_from_slice(SHATTER_MAGIC);
     buf.push(SHATTER_VERSION);
-    buf.extend(bincode::serialize(ast).expect("AST serialization cannot fail"));
+    buf.extend(
+        shatter_bincode_options()
+            .serialize(ast)
+            .expect("AST serialization cannot fail"),
+    );
     buf
 }
 
 /// Deserialize a .shatter blob back to an optic AST.
 ///
-/// Validates magic bytes and version before deserializing the payload.
+/// Validates magic bytes, version, and payload size before deserializing.
+/// Uses `bincode::options().with_limit()` to cap internal allocations,
+/// preventing denial-of-service from crafted length prefixes.
 pub fn deserialize_shatter(bytes: &[u8]) -> Result<Ast, ShatterError> {
     if bytes.len() < 5 || &bytes[0..4] != SHATTER_MAGIC {
         return Err(ShatterError::InvalidMagic);
@@ -73,7 +110,13 @@ pub fn deserialize_shatter(bytes: &[u8]) -> Result<Ast, ShatterError> {
     if bytes[4] != SHATTER_VERSION {
         return Err(ShatterError::UnsupportedVersion(bytes[4]));
     }
-    bincode::deserialize(&bytes[5..]).map_err(ShatterError::Deserialize)
+    let payload = &bytes[5..];
+    if payload.len() > MAX_SHATTER_PAYLOAD {
+        return Err(ShatterError::PayloadTooLarge(payload.len()));
+    }
+    shatter_bincode_options()
+        .deserialize(payload)
+        .map_err(ShatterError::Deserialize)
 }
 
 // ---------------------------------------------------------------------------
@@ -234,5 +277,24 @@ mod tests {
     fn error_display() {
         assert!(format!("{}", ShatterError::InvalidMagic).contains("SHTR"));
         assert!(format!("{}", ShatterError::UnsupportedVersion(42)).contains("42"));
+        let too_large = format!("{}", ShatterError::PayloadTooLarge(999));
+        assert!(too_large.contains("999"), "PayloadTooLarge should display the size");
+        assert!(too_large.contains("64"), "PayloadTooLarge should mention the limit");
+    }
+
+    #[test]
+    fn oversized_payload_rejected() {
+        // A blob with valid magic+version but payload exceeding MAX_SHATTER_PAYLOAD
+        // must be rejected before bincode even tries to deserialize.
+        let mut blob = Vec::new();
+        blob.extend_from_slice(SHATTER_MAGIC);
+        blob.push(SHATTER_VERSION);
+        // Append a payload larger than MAX_SHATTER_PAYLOAD
+        blob.extend(vec![0u8; MAX_SHATTER_PAYLOAD + 1]);
+        let err = deserialize_shatter(&blob).unwrap_err();
+        assert!(
+            matches!(err, ShatterError::PayloadTooLarge(size) if size == MAX_SHATTER_PAYLOAD + 1),
+            "expected PayloadTooLarge, got {:?}", err
+        );
     }
 }
