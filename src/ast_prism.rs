@@ -706,4 +706,23 @@ mod tests {
         let ast = parse("type(x) { y }");
         assert!(matches!(ast, Ast::Call { .. }), "non-optic name should stay as Call");
     }
+
+    #[test]
+    fn focus_with_body_in_args_stays_call() {
+        // focus(x, { y }) — body inside the argument list as second arg → Call, NOT Focus.
+        // The optic detection only triggers for name(single_arg) { body }, not name(arg1, arg2).
+        let ast = parse("focus(x, { y })");
+        match &ast {
+            Ast::Call { name, args } => {
+                assert_eq!(name, &Atom::new("focus"));
+                assert_eq!(args.len(), 2);
+                assert_eq!(args[0], Ast::Atom(Atom::new("x")));
+                assert!(
+                    matches!(&args[1], Ast::Body(body) if body.children() == &[Ast::Atom(Atom::new("y"))]),
+                    "second arg should be Body([y]), got {:?}", args[1]
+                );
+            }
+            other => panic!("expected Call, got {:?}", other),
+        }
+    }
 }
