@@ -288,6 +288,9 @@ fn parse_expr(tokens: &[Token], cursor: &mut usize) -> Ast {
             if matches!(tokens.get(*cursor), Some(Token::LBrace)) {
                 *cursor += 1;
                 let body = parse_body(tokens, cursor);
+                if is_optic {
+                    return make_bare_optic(&name, body);
+                }
                 return Ast::Call {
                     name: Atom::new(name),
                     args: vec![Ast::Body(body)],
@@ -423,11 +426,11 @@ fn is_optic_name(name: &str) -> bool {
     OPTIC_NAMES.contains(&name)
 }
 
-/// Build the optic AST variant for the given name.
+/// Build the optic AST variant for the given name with an argument.
 ///
 /// Panics if name is not an optic name (caller must check first).
 fn make_optic(name: &str, arg: Ast, body: Body) -> Ast {
-    let boxed = Box::new(arg);
+    let boxed = Some(Box::new(arg));
     match name {
         "focus" => Ast::Focus { target: boxed, body },
         "project" => Ast::Project { query: boxed, body },
@@ -435,6 +438,20 @@ fn make_optic(name: &str, arg: Ast, body: Body) -> Ast {
         "zoom" => Ast::Zoom { perspective: boxed, body },
         "refract" => Ast::Refract { mutation: boxed, body },
         _ => unreachable!("make_optic called with non-optic name: {}", name),
+    }
+}
+
+/// Build the optic AST variant for the given name without an argument (bare optic).
+///
+/// Panics if name is not an optic name (caller must check first).
+fn make_bare_optic(name: &str, body: Body) -> Ast {
+    match name {
+        "focus" => Ast::Focus { target: None, body },
+        "project" => Ast::Project { query: None, body },
+        "split" => Ast::Split { root: None, body },
+        "zoom" => Ast::Zoom { perspective: None, body },
+        "refract" => Ast::Refract { mutation: None, body },
+        _ => unreachable!("make_bare_optic called with non-optic name: {}", name),
     }
 }
 
@@ -597,7 +614,7 @@ mod tests {
         assert_eq!(
             ast,
             Ast::Focus {
-                target: Box::new(Ast::Atom(Atom::new("x"))),
+                target: Some(Box::new(Ast::Atom(Atom::new("x")))),
                 body: Body::new(vec![Ast::Atom(Atom::new("y"))]),
             }
         );
@@ -609,7 +626,7 @@ mod tests {
         assert_eq!(
             ast,
             Ast::Project {
-                query: Box::new(Ast::Atom(Atom::new("active"))),
+                query: Some(Box::new(Ast::Atom(Atom::new("active")))),
                 body: Body::new(vec![Ast::Atom(Atom::new("filtered"))]),
             }
         );
@@ -621,7 +638,7 @@ mod tests {
         assert_eq!(
             ast,
             Ast::Split {
-                root: Box::new(Ast::Atom(Atom::new("origin"))),
+                root: Some(Box::new(Ast::Atom(Atom::new("origin")))),
                 body: Body::new(vec![Ast::Atom(Atom::new("component"))]),
             }
         );
@@ -633,7 +650,7 @@ mod tests {
         assert_eq!(
             ast,
             Ast::Zoom {
-                perspective: Box::new(Ast::Ref(Ref::new("user"))),
+                perspective: Some(Box::new(Ast::Ref(Ref::new("user")))),
                 body: Body::new(vec![Ast::Atom(Atom::new("view"))]),
             }
         );
@@ -645,7 +662,7 @@ mod tests {
         assert_eq!(
             ast,
             Ast::Refract {
-                mutation: Box::new(Ast::Atom(Atom::new("settle"))),
+                mutation: Some(Box::new(Ast::Atom(Atom::new("settle")))),
                 body: Body::new(vec![Ast::Atom(Atom::new("proof"))]),
             }
         );
@@ -671,7 +688,7 @@ mod tests {
         assert_eq!(
             ast,
             Ast::Focus {
-                target: Box::new(Ast::Atom(Atom::new("x"))),
+                target: Some(Box::new(Ast::Atom(Atom::new("x")))),
                 body: Body::new(vec![Ast::Atom(Atom::new("y"))]),
             }
         );
@@ -683,7 +700,7 @@ mod tests {
         assert_eq!(
             ast,
             Ast::Focus {
-                target: Box::new(Ast::Atom(Atom::new("x"))),
+                target: Some(Box::new(Ast::Atom(Atom::new("x")))),
                 body: Body::new(vec![]),
             }
         );
@@ -724,5 +741,43 @@ mod tests {
             }
             other => panic!("expected Call, got {:?}", other),
         }
+    }
+
+    #[test]
+    fn parse_bare_refract_is_optic() {
+        // refract { settle } — bare optic (no argument, just body) → Refract with None mutation
+        let ast = parse("refract { settle }");
+        assert_eq!(
+            ast,
+            Ast::Refract {
+                mutation: None,
+                body: Body::new(vec![Ast::Atom(Atom::new("settle"))]),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_bare_focus_is_optic() {
+        // focus { x } — bare optic (no argument, just body) → Focus with None target
+        let ast = parse("focus { x }");
+        assert_eq!(
+            ast,
+            Ast::Focus {
+                target: None,
+                body: Body::new(vec![Ast::Atom(Atom::new("x"))]),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_bare_optic_round_trip() {
+        // Bare optics should round-trip through display and re-parse
+        let ast = Ast::Refract {
+            mutation: None,
+            body: Body::new(vec![Ast::Atom(Atom::new("settle"))]),
+        };
+        let emitted = format!("{}", ast);
+        let reparsed = parse(&emitted);
+        assert_eq!(ast, reparsed, "bare optic round-trip failed: emitted={}", emitted);
     }
 }

@@ -131,7 +131,7 @@ mod tests {
 
     fn sample_optic() -> Ast {
         Ast::Focus {
-            target: Box::new(Ast::Atom(Atom::new("eigenboard"))),
+            target: Some(Box::new(Ast::Atom(Atom::new("eigenboard")))),
             body: Body::new(vec![
                 Ast::Atom(Atom::new("fiedler")),
                 Ast::Atom(Atom::new("loss")),
@@ -144,18 +144,18 @@ mod tests {
             name: Ref::new("meta"),
             body: Body::new(vec![
                 Ast::Focus {
-                    target: Box::new(Ast::Ref(Ref::new("graph"))),
+                    target: Some(Box::new(Ast::Ref(Ref::new("graph")))),
                     body: Body::new(vec![Ast::Atom(Atom::new("nodes"))]),
                 },
                 Ast::Split {
-                    root: Box::new(Ast::Atom(Atom::new("origin"))),
+                    root: Some(Box::new(Ast::Atom(Atom::new("origin")))),
                     body: Body::new(vec![
                         Ast::Atom(Atom::new("component_a")),
                         Ast::Atom(Atom::new("component_b")),
                     ]),
                 },
                 Ast::Refract {
-                    mutation: Box::new(Ast::Atom(Atom::new("settle"))),
+                    mutation: Some(Box::new(Ast::Atom(Atom::new("settle")))),
                     body: Body::new(vec![Ast::Atom(Atom::new("proof"))]),
                 },
             ]),
@@ -245,23 +245,23 @@ mod tests {
     fn all_optic_variants_round_trip() {
         let asts = vec![
             Ast::Focus {
-                target: Box::new(Ast::Atom(Atom::new("t"))),
+                target: Some(Box::new(Ast::Atom(Atom::new("t")))),
                 body: Body::new(vec![Ast::Atom(Atom::new("b"))]),
             },
             Ast::Project {
-                query: Box::new(Ast::Atom(Atom::new("q"))),
+                query: Some(Box::new(Ast::Atom(Atom::new("q")))),
                 body: Body::new(vec![]),
             },
             Ast::Split {
-                root: Box::new(Ast::Ref(Ref::new("r"))),
+                root: Some(Box::new(Ast::Ref(Ref::new("r")))),
                 body: Body::new(vec![Ast::Atom(Atom::new("c"))]),
             },
             Ast::Zoom {
-                perspective: Box::new(Ast::Atom(Atom::new("p"))),
+                perspective: Some(Box::new(Ast::Atom(Atom::new("p")))),
                 body: Body::new(vec![]),
             },
             Ast::Refract {
-                mutation: Box::new(Ast::Atom(Atom::new("m"))),
+                mutation: Some(Box::new(Ast::Atom(Atom::new("m")))),
                 body: Body::new(vec![Ast::Atom(Atom::new("proof"))]),
             },
         ];

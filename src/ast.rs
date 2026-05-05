@@ -116,24 +116,24 @@ pub enum Ast {
     // -- Optics --
 
     /// Focus: observe a subgraph. Read-only projection.
-    /// `focus(target) { observations }`
-    Focus { target: Box<Ast>, body: Body },
+    /// `focus(target) { observations }` or `focus { observations }`
+    Focus { target: Option<Box<Ast>>, body: Body },
 
     /// Project: filter by what matters. Reduce dimensionality.
-    /// `project(query) { filtered results }`
-    Project { query: Box<Ast>, body: Body },
+    /// `project(query) { filtered results }` or `project { filtered results }`
+    Project { query: Option<Box<Ast>>, body: Body },
 
     /// Split: explore connectivity. Follow edges.
-    /// `split(root) { connected components }`
-    Split { root: Box<Ast>, body: Body },
+    /// `split(root) { connected components }` or `split { connected components }`
+    Split { root: Option<Box<Ast>>, body: Body },
 
     /// Zoom: shift perspective without acting.
-    /// `zoom(perspective) { view from there }`
-    Zoom { perspective: Box<Ast>, body: Body },
+    /// `zoom(perspective) { view from there }` or `zoom { view from there }`
+    Zoom { perspective: Option<Box<Ast>>, body: Body },
 
     /// Refract: the one write. Settle.
-    /// `refract(mutation) { proof }`
-    Refract { mutation: Box<Ast>, body: Body },
+    /// `refract(mutation) { proof }` or `refract { proof }`
+    Refract { mutation: Option<Box<Ast>>, body: Body },
 }
 
 // ---------------------------------------------------------------------------
@@ -212,11 +212,11 @@ fn emit(ast: &Ast, indent: usize, f: &mut std::fmt::Formatter<'_>) -> std::fmt::
         }
 
         // -- Optics --
-        Ast::Focus { target, body } => emit_optic("focus", target, body, indent, &pad, f),
-        Ast::Project { query, body } => emit_optic("project", query, body, indent, &pad, f),
-        Ast::Split { root, body } => emit_optic("split", root, body, indent, &pad, f),
-        Ast::Zoom { perspective, body } => emit_optic("zoom", perspective, body, indent, &pad, f),
-        Ast::Refract { mutation, body } => emit_optic("refract", mutation, body, indent, &pad, f),
+        Ast::Focus { target, body } => emit_optic("focus", target.as_deref(), body, indent, &pad, f),
+        Ast::Project { query, body } => emit_optic("project", query.as_deref(), body, indent, &pad, f),
+        Ast::Split { root, body } => emit_optic("split", root.as_deref(), body, indent, &pad, f),
+        Ast::Zoom { perspective, body } => emit_optic("zoom", perspective.as_deref(), body, indent, &pad, f),
+        Ast::Refract { mutation, body } => emit_optic("refract", mutation.as_deref(), body, indent, &pad, f),
     }
 }
 
@@ -229,18 +229,21 @@ fn split_body_arg(args: &[Ast]) -> (&[Ast], Option<&Body>) {
     }
 }
 
-/// Emit an optic variant: `name(arg) { body }` or `name(arg) {}`.
+/// Emit an optic variant: `name(arg) { body }`, `name(arg) {}`, or `name { body }`.
 fn emit_optic(
     name: &str,
-    arg: &Ast,
+    arg: Option<&Ast>,
     body: &Body,
     indent: usize,
     pad: &str,
     f: &mut std::fmt::Formatter<'_>,
 ) -> std::fmt::Result {
-    write!(f, "{}{}(", pad, name)?;
-    emit(arg, 0, f)?;
-    write!(f, ")")?;
+    write!(f, "{}{}", pad, name)?;
+    if let Some(a) = arg {
+        write!(f, "(")?;
+        emit(a, 0, f)?;
+        write!(f, ")")?;
+    }
     if body.is_empty() {
         write!(f, " {{}}")
     } else {
@@ -362,7 +365,7 @@ mod tests {
     #[test]
     fn focus_displays() {
         let ast = Ast::Focus {
-            target: Box::new(Ast::Ref(Ref::new("graph"))),
+            target: Some(Box::new(Ast::Ref(Ref::new("graph")))),
             body: Body::new(vec![Ast::Atom(Atom::new("nodes"))]),
         };
         let out = format!("{}", ast);
@@ -373,7 +376,7 @@ mod tests {
     #[test]
     fn project_displays() {
         let ast = Ast::Project {
-            query: Box::new(Ast::Atom(Atom::new("active"))),
+            query: Some(Box::new(Ast::Atom(Atom::new("active")))),
             body: Body::new(vec![Ast::Atom(Atom::new("filtered"))]),
         };
         let out = format!("{}", ast);
@@ -384,7 +387,7 @@ mod tests {
     #[test]
     fn split_displays() {
         let ast = Ast::Split {
-            root: Box::new(Ast::Atom(Atom::new("origin"))),
+            root: Some(Box::new(Ast::Atom(Atom::new("origin")))),
             body: Body::new(vec![Ast::Atom(Atom::new("component_a"))]),
         };
         let out = format!("{}", ast);
@@ -395,7 +398,7 @@ mod tests {
     #[test]
     fn zoom_displays() {
         let ast = Ast::Zoom {
-            perspective: Box::new(Ast::Ref(Ref::new("user"))),
+            perspective: Some(Box::new(Ast::Ref(Ref::new("user")))),
             body: Body::new(vec![Ast::Atom(Atom::new("view"))]),
         };
         let out = format!("{}", ast);
@@ -406,7 +409,7 @@ mod tests {
     #[test]
     fn refract_displays() {
         let ast = Ast::Refract {
-            mutation: Box::new(Ast::Atom(Atom::new("settle"))),
+            mutation: Some(Box::new(Ast::Atom(Atom::new("settle")))),
             body: Body::new(vec![Ast::Atom(Atom::new("proof"))]),
         };
         let out = format!("{}", ast);
@@ -417,7 +420,7 @@ mod tests {
     #[test]
     fn optic_empty_body_displays() {
         let ast = Ast::Focus {
-            target: Box::new(Ast::Atom(Atom::new("x"))),
+            target: Some(Box::new(Ast::Atom(Atom::new("x")))),
             body: Body::new(vec![]),
         };
         let out = format!("{}", ast);
@@ -427,11 +430,11 @@ mod tests {
     #[test]
     fn optic_content_addressed_deterministic() {
         let a = Ast::Focus {
-            target: Box::new(Ast::Atom(Atom::new("x"))),
+            target: Some(Box::new(Ast::Atom(Atom::new("x")))),
             body: Body::new(vec![Ast::Atom(Atom::new("y"))]),
         };
         let b = Ast::Focus {
-            target: Box::new(Ast::Atom(Atom::new("x"))),
+            target: Some(Box::new(Ast::Atom(Atom::new("x")))),
             body: Body::new(vec![Ast::Atom(Atom::new("y"))]),
         };
         use crate::kernel::ContentAddressed;
@@ -442,11 +445,11 @@ mod tests {
     fn optic_different_variants_different_oid() {
         use crate::kernel::ContentAddressed;
         let focus = Ast::Focus {
-            target: Box::new(Ast::Atom(Atom::new("x"))),
+            target: Some(Box::new(Ast::Atom(Atom::new("x")))),
             body: Body::new(vec![]),
         };
         let project = Ast::Project {
-            query: Box::new(Ast::Atom(Atom::new("x"))),
+            query: Some(Box::new(Ast::Atom(Atom::new("x")))),
             body: Body::new(vec![]),
         };
         assert_ne!(focus.content_oid(), project.content_oid());
@@ -460,7 +463,7 @@ mod tests {
 
         fn sample_focus() -> Ast {
             Ast::Focus {
-                target: Box::new(Ast::Atom(Atom::new("eigenboard"))),
+                target: Some(Box::new(Ast::Atom(Atom::new("eigenboard")))),
                 body: Body::new(vec![
                     Ast::Atom(Atom::new("fiedler")),
                     Ast::Atom(Atom::new("loss")),
@@ -473,11 +476,11 @@ mod tests {
                 name: Ref::new("meta"),
                 body: Body::new(vec![
                     Ast::Focus {
-                        target: Box::new(Ast::Ref(Ref::new("graph"))),
+                        target: Some(Box::new(Ast::Ref(Ref::new("graph")))),
                         body: Body::new(vec![Ast::Atom(Atom::new("nodes"))]),
                     },
                     Ast::Project {
-                        query: Box::new(Ast::Atom(Atom::new("active"))),
+                        query: Some(Box::new(Ast::Atom(Atom::new("active")))),
                         body: Body::new(vec![]),
                     },
                 ]),
@@ -515,23 +518,23 @@ mod tests {
                     body: Body::new(vec![]),
                 },
                 Ast::Focus {
-                    target: Box::new(Ast::Atom(Atom::new("t"))),
+                    target: Some(Box::new(Ast::Atom(Atom::new("t")))),
                     body: Body::new(vec![]),
                 },
                 Ast::Project {
-                    query: Box::new(Ast::Atom(Atom::new("q"))),
+                    query: Some(Box::new(Ast::Atom(Atom::new("q")))),
                     body: Body::new(vec![]),
                 },
                 Ast::Split {
-                    root: Box::new(Ast::Atom(Atom::new("r"))),
+                    root: Some(Box::new(Ast::Atom(Atom::new("r")))),
                     body: Body::new(vec![]),
                 },
                 Ast::Zoom {
-                    perspective: Box::new(Ast::Atom(Atom::new("p"))),
+                    perspective: Some(Box::new(Ast::Atom(Atom::new("p")))),
                     body: Body::new(vec![]),
                 },
                 Ast::Refract {
-                    mutation: Box::new(Ast::Atom(Atom::new("m"))),
+                    mutation: Some(Box::new(Ast::Atom(Atom::new("m")))),
                     body: Body::new(vec![]),
                 },
             ];
@@ -551,7 +554,7 @@ mod tests {
                 name: Ref::new("eigenboard"),
                 body: Body::new(vec![
                     Ast::Focus {
-                        target: Box::new(Ast::Atom(Atom::new("fiedler_vector"))),
+                        target: Some(Box::new(Ast::Atom(Atom::new("fiedler_vector")))),
                         body: Body::new(vec![
                             Ast::Atom(Atom::new("algebraic_connectivity")),
                             Ast::Atom(Atom::new("spectral_gap")),
@@ -559,14 +562,14 @@ mod tests {
                         ]),
                     },
                     Ast::Project {
-                        query: Box::new(Ast::Atom(Atom::new("settlement"))),
+                        query: Some(Box::new(Ast::Atom(Atom::new("settlement")))),
                         body: Body::new(vec![
                             Ast::Atom(Atom::new("convergence")),
                             Ast::Atom(Atom::new("holonomy")),
                         ]),
                     },
                     Ast::Refract {
-                        mutation: Box::new(Ast::Atom(Atom::new("crystal"))),
+                        mutation: Some(Box::new(Ast::Atom(Atom::new("crystal")))),
                         body: Body::new(vec![
                             Ast::Atom(Atom::new("proof")),
                         ]),
