@@ -23,6 +23,7 @@ pub AstOid);
 ///
 /// Examples: `id`, `type`, `focus`, `|>`, `f64`, `loss`
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "shatter", derive(serde::Serialize, serde::Deserialize))]
 pub struct Atom(pub String);
 
 impl Atom {
@@ -42,6 +43,7 @@ impl Atom {
 ///
 /// Examples: `@prism`, `@meta`, `@actor`, `@property`
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "shatter", derive(serde::Serialize, serde::Deserialize))]
 pub struct Ref(pub Atom);
 
 impl Ref {
@@ -66,6 +68,7 @@ impl Ref {
 ///
 /// Examples: `{ focus type(id) }`, `{ result: result, loss: loss }`
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "shatter", derive(serde::Serialize, serde::Deserialize))]
 pub struct Body(pub Vec<Ast>);
 
 impl Body {
@@ -94,6 +97,7 @@ impl Body {
 /// of optics IS the Dirac operator. Serialization of the AST IS the
 /// .shatter artifact.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "shatter", derive(serde::Serialize, serde::Deserialize))]
 pub enum Ast {
     // -- Syntax --
 
@@ -449,5 +453,152 @@ mod tests {
             body: Body::new(vec![]),
         };
         assert_ne!(focus.content_oid(), project.content_oid());
+    }
+
+    // -- Phase 5: Serde serialization (shatter feature) --
+
+    #[cfg(feature = "shatter")]
+    mod shatter_tests {
+        use super::*;
+
+        fn sample_focus() -> Ast {
+            Ast::Focus {
+                target: Box::new(Ast::Atom(Atom::new("eigenboard"))),
+                body: Body::new(vec![
+                    Ast::Atom(Atom::new("fiedler")),
+                    Ast::Atom(Atom::new("loss")),
+                ]),
+            }
+        }
+
+        fn sample_nested() -> Ast {
+            Ast::Prism {
+                name: Ref::new("meta"),
+                body: Body::new(vec![
+                    Ast::Focus {
+                        target: Box::new(Ast::Ref(Ref::new("graph"))),
+                        body: Body::new(vec![Ast::Atom(Atom::new("nodes"))]),
+                    },
+                    Ast::Project {
+                        query: Box::new(Ast::Atom(Atom::new("active"))),
+                        body: Body::new(vec![]),
+                    },
+                ]),
+            }
+        }
+
+        #[test]
+        fn bincode_round_trip_focus() {
+            let ast = sample_focus();
+            let bytes = bincode::serialize(&ast).expect("serialize");
+            let back: Ast = bincode::deserialize(&bytes).expect("deserialize");
+            assert_eq!(ast, back);
+        }
+
+        #[test]
+        fn bincode_round_trip_nested() {
+            let ast = sample_nested();
+            let bytes = bincode::serialize(&ast).expect("serialize");
+            let back: Ast = bincode::deserialize(&bytes).expect("deserialize");
+            assert_eq!(ast, back);
+        }
+
+        #[test]
+        fn bincode_round_trip_all_variants() {
+            let asts = vec![
+                Ast::Atom(Atom::new("x")),
+                Ast::Ref(Ref::new("y")),
+                Ast::Body(Body::new(vec![Ast::Atom(Atom::new("z"))])),
+                Ast::Call {
+                    name: Atom::new("f"),
+                    args: vec![Ast::Atom(Atom::new("a"))],
+                },
+                Ast::Prism {
+                    name: Ref::new("p"),
+                    body: Body::new(vec![]),
+                },
+                Ast::Focus {
+                    target: Box::new(Ast::Atom(Atom::new("t"))),
+                    body: Body::new(vec![]),
+                },
+                Ast::Project {
+                    query: Box::new(Ast::Atom(Atom::new("q"))),
+                    body: Body::new(vec![]),
+                },
+                Ast::Split {
+                    root: Box::new(Ast::Atom(Atom::new("r"))),
+                    body: Body::new(vec![]),
+                },
+                Ast::Zoom {
+                    perspective: Box::new(Ast::Atom(Atom::new("p"))),
+                    body: Body::new(vec![]),
+                },
+                Ast::Refract {
+                    mutation: Box::new(Ast::Atom(Atom::new("m"))),
+                    body: Body::new(vec![]),
+                },
+            ];
+            for ast in asts {
+                let bytes = bincode::serialize(&ast).expect("serialize");
+                let back: Ast = bincode::deserialize(&bytes).expect("deserialize");
+                assert_eq!(ast, back, "round-trip failed for {:?}", back);
+            }
+        }
+
+        #[test]
+        fn bincode_compact_for_deep_trees() {
+            // Bincode has per-field overhead (enum tags, length prefixes)
+            // that exceeds text for tiny ASTs. For deeper/wider trees the
+            // binary format wins because it avoids indentation and keywords.
+            let ast = Ast::Prism {
+                name: Ref::new("eigenboard"),
+                body: Body::new(vec![
+                    Ast::Focus {
+                        target: Box::new(Ast::Atom(Atom::new("fiedler_vector"))),
+                        body: Body::new(vec![
+                            Ast::Atom(Atom::new("algebraic_connectivity")),
+                            Ast::Atom(Atom::new("spectral_gap")),
+                            Ast::Atom(Atom::new("laplacian")),
+                        ]),
+                    },
+                    Ast::Project {
+                        query: Box::new(Ast::Atom(Atom::new("settlement"))),
+                        body: Body::new(vec![
+                            Ast::Atom(Atom::new("convergence")),
+                            Ast::Atom(Atom::new("holonomy")),
+                        ]),
+                    },
+                    Ast::Refract {
+                        mutation: Box::new(Ast::Atom(Atom::new("crystal"))),
+                        body: Body::new(vec![
+                            Ast::Atom(Atom::new("proof")),
+                        ]),
+                    },
+                ]),
+            };
+            let text = format!("{}", ast);
+            let bytes = bincode::serialize(&ast).expect("serialize");
+            // The binary form should be reasonably compact — not orders of
+            // magnitude larger than text for real-world ASTs.
+            assert!(
+                bytes.len() < text.len() * 2,
+                "bincode ({} bytes) should be < 2x text ({} bytes)",
+                bytes.len(),
+                text.len()
+            );
+        }
+
+        #[test]
+        fn bincode_content_oid_preserved() {
+            use crate::kernel::ContentAddressed;
+            let ast = sample_focus();
+            let bytes = bincode::serialize(&ast).expect("serialize");
+            let back: Ast = bincode::deserialize(&bytes).expect("deserialize");
+            assert_eq!(
+                ast.content_oid(),
+                back.content_oid(),
+                "content_oid must survive serialization"
+            );
+        }
     }
 }
