@@ -683,7 +683,7 @@ mod tests {
 
     #[test]
     fn domain_oid_full_coverage() {
-        use crate::ast::AstOid;
+        use crate::parse::AstOid;
         let base = Oid::new("abc");
         let ast = AstOid::from(base); // From<Oid>
         assert_eq!(ast.as_ref(), "abc"); // AsRef<str>

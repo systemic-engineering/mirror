@@ -13,9 +13,6 @@
 //! a .mirror file refracts it through the ASTPrism; the crystal is a
 //! MirrorPrism — the compiled thing.
 
-domain_oid!(/// Content address for AST nodes.
-pub AstOid);
-
 /// A symbol. The leaf of every expression.
 ///
 /// Atoms are identifiers, operators, keywords, type names — anything
