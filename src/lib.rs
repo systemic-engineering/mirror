@@ -54,6 +54,7 @@ pub mod emit_rust;
 pub mod generate_crate;
 pub mod generated;
 pub mod gestalt;
+pub mod grammar_regions;
 pub mod git_prism;
 pub mod git_store;
 pub mod loss;
@@ -71,6 +72,10 @@ pub mod shatter_blob;
 pub mod sign;
 pub mod spec;
 pub mod store;
+pub mod eigentest;
+pub mod emit_code;
+pub mod lambda_phases;
+pub mod mirror_ast;
 
 #[deprecated(
     note = "Will be replaced by AST-based tokenization when nodes store Ast instead of Vec<u8>"
