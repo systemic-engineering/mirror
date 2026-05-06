@@ -220,6 +220,35 @@ fn emit_canonical(ast: &Ast, out: &mut Vec<u8>) {
             }
             out.push(b'}');
         }
+        // Optic variants: emit as O:<opname>(<target>){<body>}
+        Ast::Focus { target, body }
+        | Ast::Project { query: target, body }
+        | Ast::Split { root: target, body }
+        | Ast::Zoom { perspective: target, body }
+        | Ast::Refract { mutation: target, body } => {
+            let tag = match ast {
+                Ast::Focus { .. } => b"focus".as_slice(),
+                Ast::Project { .. } => b"project".as_slice(),
+                Ast::Split { .. } => b"split".as_slice(),
+                Ast::Zoom { .. } => b"zoom".as_slice(),
+                Ast::Refract { .. } => b"refract".as_slice(),
+                _ => unreachable!(),
+            };
+            out.extend_from_slice(b"O:");
+            out.extend_from_slice(tag);
+            out.push(b'(');
+            if let Some(t) = target {
+                emit_canonical(t, out);
+            }
+            out.extend_from_slice(b"){");
+            for (i, c) in body.children().iter().enumerate() {
+                if i > 0 {
+                    out.push(b';');
+                }
+                emit_canonical(c, out);
+            }
+            out.push(b'}');
+        }
     }
 }
 
