@@ -4,6 +4,9 @@
 //! Each token is a `Prism<Token>` node. Compound tokens
 //! (underscore-joined, CamelCase) become Fractal nodes whose
 //! children are their decomposed parts.
+//!
+//! **Deprecated:** Will be replaced by AST-based tokenization when nodes
+//! store `Ast` instead of `Vec<u8>`.
 
 use rust_stemmers::{Algorithm, Stemmer};
 use unicode_segmentation::UnicodeSegmentation;

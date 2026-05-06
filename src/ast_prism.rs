@@ -256,6 +256,8 @@ fn parse_expr(tokens: &[Token], cursor: &mut usize) -> Ast {
                 }
             }
 
+            let is_optic = is_optic_name(&name);
+
             // name(args) possibly followed by { body }
             if matches!(tokens.get(*cursor), Some(Token::LParen)) {
                 *cursor += 1;
@@ -264,6 +266,10 @@ fn parse_expr(tokens: &[Token], cursor: &mut usize) -> Ast {
                 if matches!(tokens.get(*cursor), Some(Token::LBrace)) {
                     *cursor += 1;
                     let body = parse_body(tokens, cursor);
+                    // Optic: single arg + body + optic name → optic variant
+                    if is_optic && args.len() == 1 {
+                        return make_optic(&name, args.into_iter().next().unwrap(), body);
+                    }
                     let mut all_args = args;
                     all_args.push(Ast::Body(body));
                     return Ast::Call {
@@ -282,6 +288,9 @@ fn parse_expr(tokens: &[Token], cursor: &mut usize) -> Ast {
             if matches!(tokens.get(*cursor), Some(Token::LBrace)) {
                 *cursor += 1;
                 let body = parse_body(tokens, cursor);
+                if is_optic {
+                    return make_bare_optic(&name, body);
+                }
                 return Ast::Call {
                     name: Atom::new(name),
                     args: vec![Ast::Body(body)],
@@ -289,13 +298,24 @@ fn parse_expr(tokens: &[Token], cursor: &mut usize) -> Ast {
             }
 
             // name followed by another expression (space-separated arg)
+            //
+            // For optic names, parse only a primary expression (atom, ref,
+            // or paren-call) so we don't greedily consume the body block.
             match tokens.get(*cursor) {
                 Some(Token::Word(_)) | Some(Token::At) => {
-                    let arg = parse_expr(tokens, cursor);
+                    let arg = if is_optic {
+                        parse_primary(tokens, cursor)
+                    } else {
+                        parse_expr(tokens, cursor)
+                    };
                     skip_trivia(tokens, cursor);
                     if matches!(tokens.get(*cursor), Some(Token::LBrace)) {
                         *cursor += 1;
                         let body = parse_body(tokens, cursor);
+                        // Optic: space-separated arg + body + optic name → optic variant
+                        if is_optic {
+                            return make_optic(&name, arg, body);
+                        }
                         return Ast::Call {
                             name: Atom::new(name),
                             args: vec![arg, Ast::Body(body)],
@@ -338,6 +358,46 @@ fn parse_args(tokens: &[Token], cursor: &mut usize) -> Vec<Ast> {
     args
 }
 
+/// Parse a primary expression: atom, ref, or name(args).
+///
+/// Does NOT consume a trailing body block — used by optic parsing
+/// so that the body is left for the optic variant to consume.
+fn parse_primary(tokens: &[Token], cursor: &mut usize) -> Ast {
+    skip_trivia(tokens, cursor);
+    match tokens.get(*cursor) {
+        Some(Token::At) => {
+            *cursor += 1;
+            let name = match tokens.get(*cursor) {
+                Some(Token::Word(w)) => {
+                    *cursor += 1;
+                    w.clone()
+                }
+                _ => String::new(),
+            };
+            Ast::Ref(Ref::new(name))
+        }
+        Some(Token::Word(w)) => {
+            let name = w.clone();
+            *cursor += 1;
+            // name(args) — parse paren-args if present
+            if matches!(tokens.get(*cursor), Some(Token::LParen)) {
+                *cursor += 1;
+                let args = parse_args(tokens, cursor);
+                Ast::Call {
+                    name: Atom::new(name),
+                    args,
+                }
+            } else {
+                Ast::Atom(Atom::new(name))
+            }
+        }
+        _ => {
+            *cursor += 1;
+            Ast::Atom(Atom::new(""))
+        }
+    }
+}
+
 fn parse_body(tokens: &[Token], cursor: &mut usize) -> Body {
     let mut children = Vec::new();
     loop {
@@ -354,6 +414,45 @@ fn parse_body(tokens: &[Token], cursor: &mut usize) -> Body {
         }
     }
     Body::new(children)
+}
+
+// ---------------------------------------------------------------------------
+// Optic detection — promote Call to optic variant when name matches
+// ---------------------------------------------------------------------------
+
+const OPTIC_NAMES: &[&str] = &["focus", "project", "split", "zoom", "refract"];
+
+fn is_optic_name(name: &str) -> bool {
+    OPTIC_NAMES.contains(&name)
+}
+
+/// Build the optic AST variant for the given name with an argument.
+///
+/// Panics if name is not an optic name (caller must check first).
+fn make_optic(name: &str, arg: Ast, body: Body) -> Ast {
+    let boxed = Some(Box::new(arg));
+    match name {
+        "focus" => Ast::Focus { target: boxed, body },
+        "project" => Ast::Project { query: boxed, body },
+        "split" => Ast::Split { root: boxed, body },
+        "zoom" => Ast::Zoom { perspective: boxed, body },
+        "refract" => Ast::Refract { mutation: boxed, body },
+        _ => unreachable!("make_optic called with non-optic name: {}", name),
+    }
+}
+
+/// Build the optic AST variant for the given name without an argument (bare optic).
+///
+/// Panics if name is not an optic name (caller must check first).
+fn make_bare_optic(name: &str, body: Body) -> Ast {
+    match name {
+        "focus" => Ast::Focus { target: None, body },
+        "project" => Ast::Project { query: None, body },
+        "split" => Ast::Split { root: None, body },
+        "zoom" => Ast::Zoom { perspective: None, body },
+        "refract" => Ast::Refract { mutation: None, body },
+        _ => unreachable!("make_bare_optic called with non-optic name: {}", name),
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -505,5 +604,180 @@ mod tests {
                 args: vec![Ast::Atom(Atom::new("id"))],
             }
         );
+    }
+
+    // -- Phase 4: Parser produces optic variants --
+
+    #[test]
+    fn parse_focus_optic_with_parens_and_body() {
+        let ast = parse("focus(x) { y }");
+        assert_eq!(
+            ast,
+            Ast::Focus {
+                target: Some(Box::new(Ast::Atom(Atom::new("x")))),
+                body: Body::new(vec![Ast::Atom(Atom::new("y"))]),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_project_optic() {
+        let ast = parse("project(active) { filtered }");
+        assert_eq!(
+            ast,
+            Ast::Project {
+                query: Some(Box::new(Ast::Atom(Atom::new("active")))),
+                body: Body::new(vec![Ast::Atom(Atom::new("filtered"))]),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_split_optic() {
+        let ast = parse("split(origin) { component }");
+        assert_eq!(
+            ast,
+            Ast::Split {
+                root: Some(Box::new(Ast::Atom(Atom::new("origin")))),
+                body: Body::new(vec![Ast::Atom(Atom::new("component"))]),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_zoom_optic() {
+        let ast = parse("zoom(@user) { view }");
+        assert_eq!(
+            ast,
+            Ast::Zoom {
+                perspective: Some(Box::new(Ast::Ref(Ref::new("user")))),
+                body: Body::new(vec![Ast::Atom(Atom::new("view"))]),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_refract_optic() {
+        let ast = parse("refract(settle) { proof }");
+        assert_eq!(
+            ast,
+            Ast::Refract {
+                mutation: Some(Box::new(Ast::Atom(Atom::new("settle")))),
+                body: Body::new(vec![Ast::Atom(Atom::new("proof"))]),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_optic_without_body_stays_call() {
+        // No body → stays as Call, not an optic variant
+        let ast = parse("focus(x)");
+        assert_eq!(
+            ast,
+            Ast::Call {
+                name: Atom::new("focus"),
+                args: vec![Ast::Atom(Atom::new("x"))],
+            }
+        );
+    }
+
+    #[test]
+    fn parse_optic_space_arg_with_body() {
+        // focus x { y } — space-separated arg, then body → optic
+        let ast = parse("focus x { y }");
+        assert_eq!(
+            ast,
+            Ast::Focus {
+                target: Some(Box::new(Ast::Atom(Atom::new("x")))),
+                body: Body::new(vec![Ast::Atom(Atom::new("y"))]),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_optic_empty_body() {
+        let ast = parse("focus(x) {}");
+        assert_eq!(
+            ast,
+            Ast::Focus {
+                target: Some(Box::new(Ast::Atom(Atom::new("x")))),
+                body: Body::new(vec![]),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_optic_round_trip() {
+        // parse → display → parse produces the same AST
+        let source = "focus(eigenboard) {\n  fiedler\n  loss\n}";
+        let ast = parse(source);
+        assert!(matches!(ast, Ast::Focus { .. }), "should parse as Focus optic");
+        let emitted = format!("{}", ast);
+        let reparsed = parse(&emitted);
+        assert_eq!(ast, reparsed, "round-trip failed: emitted={}", emitted);
+    }
+
+    #[test]
+    fn parse_non_optic_name_with_body_stays_call() {
+        // "type(x) { y }" — not an optic name, stays as Call
+        let ast = parse("type(x) { y }");
+        assert!(matches!(ast, Ast::Call { .. }), "non-optic name should stay as Call");
+    }
+
+    #[test]
+    fn focus_with_body_in_args_stays_call() {
+        // focus(x, { y }) — body inside the argument list as second arg → Call, NOT Focus.
+        // The optic detection only triggers for name(single_arg) { body }, not name(arg1, arg2).
+        let ast = parse("focus(x, { y })");
+        match &ast {
+            Ast::Call { name, args } => {
+                assert_eq!(name, &Atom::new("focus"));
+                assert_eq!(args.len(), 2);
+                assert_eq!(args[0], Ast::Atom(Atom::new("x")));
+                assert!(
+                    matches!(&args[1], Ast::Body(body) if body.children() == &[Ast::Atom(Atom::new("y"))]),
+                    "second arg should be Body([y]), got {:?}", args[1]
+                );
+            }
+            other => panic!("expected Call, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn parse_bare_refract_is_optic() {
+        // refract { settle } — bare optic (no argument, just body) → Refract with None mutation
+        let ast = parse("refract { settle }");
+        assert_eq!(
+            ast,
+            Ast::Refract {
+                mutation: None,
+                body: Body::new(vec![Ast::Atom(Atom::new("settle"))]),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_bare_focus_is_optic() {
+        // focus { x } — bare optic (no argument, just body) → Focus with None target
+        let ast = parse("focus { x }");
+        assert_eq!(
+            ast,
+            Ast::Focus {
+                target: None,
+                body: Body::new(vec![Ast::Atom(Atom::new("x"))]),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_bare_optic_round_trip() {
+        // Bare optics should round-trip through display and re-parse
+        let ast = Ast::Refract {
+            mutation: None,
+            body: Body::new(vec![Ast::Atom(Atom::new("settle"))]),
+        };
+        let emitted = format!("{}", ast);
+        let reparsed = parse(&emitted);
+        assert_eq!(ast, reparsed, "bare optic round-trip failed: emitted={}", emitted);
     }
 }
