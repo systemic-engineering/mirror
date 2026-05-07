@@ -3147,13 +3147,14 @@ mod tests {
             .collect();
         files.sort();
 
-        assert_eq!(files.len(), 14, "boot kernel file count: {:?}", files);
+        assert_eq!(files.len(), 15, "boot kernel file count: {:?}", files);
         assert!(files.contains(&"00-prism.mirror".to_string()));
         assert!(files.contains(&"01a-meta-actor.mirror".to_string()));
         assert!(files.contains(&"01b-meta-action.mirror".to_string()));
         assert!(files.contains(&"01c-meta-io.mirror".to_string()));
         assert!(files.contains(&"02-shatter.mirror".to_string()));
         assert!(files.contains(&"06-package.mirror".to_string()));
+        assert!(files.contains(&"07-runtime.mirror".to_string()));
 
         // std/ exists with 7 files
         let std_dir = boot.join("std");
@@ -3217,6 +3218,10 @@ mod tests {
             resolved.contains(&"04a-runtime"),
             "runtime must resolve (actor loads before it)"
         );
+        assert!(
+            resolved.contains(&"07-runtime"),
+            "07-runtime must resolve (prism, meta, actor all available)"
+        );
 
         // --- What fails resolution (in @X references something missing) ---
         let failed: Vec<&str> = boot.failed.keys().map(|s| s.as_str()).collect();
@@ -3253,8 +3258,9 @@ mod tests {
         // (reed/emit-code) -- new struct declarations with parameterized types.
         // Raised to 183 after adding template declarations to @code grammar
         // and new std files (rust.mirror, file.mirror, runtime.mirror).
+        // Raised to 246 after adding 07-runtime.mirror (SpectralRuntime grammar).
         assert!(
-            holonomy <= 183.0,
+            holonomy <= 246.0,
             "parse holonomy must not regress above baseline: got {}",
             holonomy
         );
@@ -3266,7 +3272,7 @@ mod tests {
         assert_eq!(
             boot.failed.len(),
             7,
-            "7 of 23 files fail resolution (1 kernel + 6 std): {:?}",
+            "7 of 25 files fail resolution (1 kernel + 6 std): {:?}",
             boot.failed.keys().collect::<Vec<_>>()
         );
         assert!(
@@ -3291,11 +3297,12 @@ mod tests {
             "tui needs @config, @ci, @ca, @lsp — not in registry"
         );
 
-        // --- Resolved: kernel(13) + std(4) = 17 ---
+        // --- Resolved: kernel(14) + std(4) = 18 ---
+        // 07-runtime resolves: in @prism, @meta, @actor all available.
         assert_eq!(
             boot.resolved.len(),
-            17,
-            "17 of 24 files resolve (13 kernel + 4 std): {:?}",
+            18,
+            "18 of 25 files resolve (14 kernel + 4 std): {:?}",
             boot.resolved.keys().collect::<Vec<_>>()
         );
         // std files that resolve

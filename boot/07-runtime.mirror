@@ -1,0 +1,21 @@
+in @prism
+in @meta
+in @actor
+
+grammar @runtime {
+  in @actor
+  in @io
+
+  type pid
+  type supervisor(children: [pid])
+  type strategy = eigenvalue_order | one_for_one | rest_for_one
+
+  io spawn(triple: @shatter) -> pid
+  io send(pid, message) -> Measurement
+  io receive(pattern) -> message
+  io supervise(children: [pid], strategy: strategy) -> supervisor
+  io restart(pid) -> Measurement
+  io stop(pid) -> Measurement
+}
+
+out @runtime
