@@ -1933,6 +1933,68 @@ impl MirrorRuntime {
                     }
                 }
             }
+
+            // --- Phase 2b: Standard library subdirectories (boot/std/<family>/) ---
+            // Grammar families like @trace live in subdirectories of std/.
+            // Files in subdirectories are loaded after flat files, sorted alphabetically.
+            // Key format: "std/<family>/<stem>" (e.g., "std/trace/mod").
+            let mut subdirs: Vec<_> = std::fs::read_dir(&std_dir)
+                .map_err(|e| err(format!("read_dir {}: {}", std_dir.display(), e)))?
+                .filter_map(|e| e.ok())
+                .map(|e| e.path())
+                .filter(|p| p.is_dir())
+                .collect();
+            subdirs.sort();
+
+            for subdir in subdirs {
+                let family = subdir
+                    .file_name()
+                    .and_then(|s| s.to_str())
+                    .unwrap_or("unknown");
+                let mut sub_entries: Vec<_> = std::fs::read_dir(&subdir)
+                    .map_err(|e| err(format!("read_dir {}: {}", subdir.display(), e)))?
+                    .filter_map(|e| e.ok())
+                    .map(|e| e.path())
+                    .filter(|p| p.extension().and_then(|x| x.to_str()) == Some("mirror"))
+                    .collect();
+                sub_entries.sort();
+
+                for path in sub_entries {
+                    let stem = format!(
+                        "std/{}/{}",
+                        family,
+                        path.file_stem()
+                            .and_then(|s| s.to_str())
+                            .unwrap_or("unknown")
+                    );
+                    let src = std::fs::read_to_string(&path)
+                        .map_err(|e| err(format!("read {}: {}", path.display(), e)))?;
+                    let compile_result = self.compile_source(&src);
+
+                    let file_loss = compile_result.loss();
+                    if !file_loss.is_zero() {
+                        total_loss = total_loss.combine(file_loss);
+                    }
+
+                    let compiled = match compile_result {
+                        Imperfect::Success(c) => c,
+                        Imperfect::Partial(c, _) => c,
+                        Imperfect::Failure(e, _) => return Err(e),
+                    };
+
+                    all_fragments.push(compiled.fragment.clone());
+
+                    match registry.resolve_fragment(&compiled.fragment) {
+                        Ok(()) => {
+                            registry.register_fragment(&compiled.fragment);
+                            resolved.insert(stem, compiled);
+                        }
+                        Err(e) => {
+                            failed.insert(stem, e);
+                        }
+                    }
+                }
+            }
         }
 
         registry.flush();
