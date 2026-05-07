@@ -780,4 +780,111 @@ mod tests {
         let reparsed = parse(&emitted);
         assert_eq!(ast, reparsed, "bare optic round-trip failed: emitted={}", emitted);
     }
+
+    // -- Phase: Sigil syntax --
+
+    #[test]
+    fn tokenize_sigil_short_form() {
+        let tokens = tokenize("~f'flake.nix'");
+        assert_eq!(tokens, vec![
+            Token::Tilde,
+            Token::Word("f".to_string()),
+            Token::SigilValue("flake.nix".to_string()),
+        ]);
+    }
+
+    #[test]
+    fn tokenize_sigil_qualified_form() {
+        let tokens = tokenize("~io/file'flake.nix'");
+        assert_eq!(tokens, vec![
+            Token::Tilde,
+            Token::Word("io/file".to_string()),
+            Token::SigilValue("flake.nix".to_string()),
+        ]);
+    }
+
+    #[test]
+    fn parse_sigil_short_form() {
+        let ast = parse("~f'flake.nix'");
+        assert_eq!(
+            ast,
+            Ast::Sigil {
+                prefix: Atom::new("f"),
+                value: Atom::new("flake.nix"),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_sigil_qualified_form() {
+        let ast = parse("~io/file'flake.nix'");
+        assert_eq!(
+            ast,
+            Ast::Sigil {
+                prefix: Atom::new("io/file"),
+                value: Atom::new("flake.nix"),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_sigil_dir() {
+        let ast = parse("~d'boot/'");
+        assert_eq!(
+            ast,
+            Ast::Sigil {
+                prefix: Atom::new("d"),
+                value: Atom::new("boot/"),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_sigil_uri() {
+        let ast = parse("~u'github:systemic-engineer/spectral'");
+        assert_eq!(
+            ast,
+            Ast::Sigil {
+                prefix: Atom::new("u"),
+                value: Atom::new("github:systemic-engineer/spectral"),
+            }
+        );
+    }
+
+    #[test]
+    fn parse_sigil_in_call() {
+        // out @code/nix -> ~f'flake.nix'
+        let ast = parse("out ~f'flake.nix'");
+        assert_eq!(
+            ast,
+            Ast::Call {
+                name: Atom::new("out"),
+                args: vec![Ast::Sigil {
+                    prefix: Atom::new("f"),
+                    value: Atom::new("flake.nix"),
+                }],
+            }
+        );
+    }
+
+    #[test]
+    fn sigil_round_trip() {
+        let ast = Ast::Sigil {
+            prefix: Atom::new("f"),
+            value: Atom::new("flake.nix"),
+        };
+        let emitted = format!("{}", ast);
+        assert_eq!(emitted, "~f'flake.nix'");
+        let reparsed = parse(&emitted);
+        assert_eq!(ast, reparsed, "sigil round-trip failed: emitted={}", emitted);
+    }
+
+    #[test]
+    fn sigil_display() {
+        let ast = Ast::Sigil {
+            prefix: Atom::new("io/file"),
+            value: Atom::new("path/to/thing"),
+        };
+        assert_eq!(format!("{}", ast), "~io/file'path/to/thing'");
+    }
 }

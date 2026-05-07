@@ -182,7 +182,7 @@ mod tests {
         )
         .unwrap();
         let compiled = Result::from(runtime.compile_source(&src)).unwrap();
-        let parser_oid = format!("{:?}", MirrorFragmentExt::oid(&compiled.fragment));
+        let parser_oid = format!("{:?}", MirrorFragmentExt::content_hash(&compiled.fragment));
         let generated_oid = format!("{}", PrismGrammar.oid());
 
         eprintln!("parser oid:    {}", parser_oid);
