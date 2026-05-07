@@ -1,0 +1,57 @@
+in @prism
+in @meta
+in @trace
+
+-- @trace/memory: memory dimension for kintsugi reduce.
+--
+-- Observations: alloc, dealloc, resident, pressure.
+-- Types: cache, eviction.
+-- Slots: budget (resident vs threshold).
+-- Reduce: evict unbounded allocations from the AST.
+
+grammar @trace/memory {
+  in @trace
+
+  -- allocation observed: ref allocated N bytes
+  type alloc {
+    ref: ref,
+    bytes: u64,
+  }
+
+  -- deallocation observed: ref freed N bytes
+  type dealloc {
+    ref: ref,
+    bytes: u64,
+  }
+
+  -- current resident memory in bytes
+  type resident {
+    bytes: u64,
+  }
+
+  -- memory pressure as a ratio (0.0 = idle, 1.0 = full)
+  type pressure {
+    ratio: f64,
+  }
+
+  -- a cache: bounded container with occupancy tracking
+  type cache {
+    ref: ref,
+    capacity: u64,
+    occupancy: u64,
+  }
+
+  -- eviction: remove a ref from a cache to free memory
+  action eviction(ref: ref, cache: cache) -> ref
+
+  -- the reduce action: given an ast and memory observations,
+  -- evict unbounded allocations
+  action reduce(ast: ref, memory: ref) -> ref
+}
+
+out alloc
+out dealloc
+out resident
+out pressure
+out cache
+out @trace/memory

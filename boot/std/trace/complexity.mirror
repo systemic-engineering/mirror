@@ -1,0 +1,34 @@
+in @prism
+in @meta
+in @trace
+
+-- @trace/complexity: cyclomatic/nesting complexity dimension for kintsugi.
+--
+-- Observations: increment (per node), total (per function).
+-- Threshold: default 15 (matches common lint rules).
+-- Reduce: flatten excessive nesting.
+
+grammar @trace/complexity {
+  in @trace
+
+  -- a single complexity increment at a given depth
+  type increment {
+    ast_node: ref,
+    depth: u32,
+    cost: u32,
+  }
+
+  -- total complexity for a function
+  type total {
+    function_ref: ref,
+    value: u32,
+  }
+
+  -- the reduce action: given an ast and complexity observations,
+  -- flatten excessive nesting
+  action reduce(ast: ref, complexity: ref) -> ref
+}
+
+out increment
+out total
+out @trace/complexity

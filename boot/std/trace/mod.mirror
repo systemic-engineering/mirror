@@ -1,0 +1,54 @@
+in @prism
+in @meta
+
+-- @trace: the base grammar for observable dimensions.
+--
+-- Every trace dimension inherits @trace. The base provides:
+--   observation — a point-in-time measurement
+--   eigenvalue  — a dimension's current value
+--   slot        — a threshold for a dimension
+--   drift       — an observation that crosses a slot
+--   reduce      — the action: ast in, ast out, dimension-aware
+--
+-- The trace grammar is the spine of kintsugi. Each dimension
+-- grammar adds its own observations and reduce logic.
+
+grammar @trace {
+  in @prism
+
+  -- a point-in-time measurement of something
+  type observation {
+    ref: ref,
+    tick: u64,
+    value: ref,
+  }
+
+  -- the current eigenvalue for a dimension
+  type eigenvalue {
+    dimension: ref,
+    value: f64,
+  }
+
+  -- a threshold: when the eigenvalue exceeds this, drift fires
+  type slot {
+    dimension: ref,
+    eigenvalue: eigenvalue,
+    threshold: f64,
+  }
+
+  -- an observation that a slot boundary was crossed
+  type drift {
+    observation: observation,
+    slot: slot,
+    direction: rising | falling,
+  }
+
+  -- the core action: take an ast and a dimension, return a reduced ast
+  action reduce(ast: ref, dimension: ref) -> ref
+}
+
+out observation
+out eigenvalue
+out slot
+out drift
+out @trace
