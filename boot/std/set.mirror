@@ -1,0 +1,60 @@
+in @prism
+in @meta
+
+-- set IS map(a, ()) — unique collection without values.
+-- like gleam: Set = Dict(a, Nil).
+-- the content address of a set is the oid of its sorted elements.
+-- empty is the identity for union.
+-- insert is idempotent: insert(insert(s, a), a) = insert(s, a).
+
+type set(a) = empty | elements([a])
+
+grammar @set {
+  in @meta
+
+  -- construction
+  action empty() -> set(a)
+  action singleton(a) -> set(a)
+  action from_list(list: [a]) -> set(a)
+
+  -- membership
+  action contains(set(a), a) -> bool
+
+  -- mutation (returns new set — immutable)
+  action insert(set(a), a) -> set(a)
+  action delete(set(a), a) -> set(a)
+
+  -- set algebra
+  action union(set(a), set(a)) -> set(a)
+  action intersection(set(a), set(a)) -> set(a)
+  action difference(set(a), set(a)) -> set(a)
+  action symmetric_difference(set(a), set(a)) -> set(a)
+
+  -- predicates
+  action is_subset(set(a), set(a)) -> bool
+  action is_superset(set(a), set(a)) -> bool
+  action is_disjoint(set(a), set(a)) -> bool
+
+  -- traversal
+  action map(set(a), f: a -> b) -> set(b)
+  action filter(set(a), f: a -> bool) -> set(a)
+  action fold(set(a), init: b, f: b -> a -> b) -> b
+
+  -- conversion
+  action to_list(set(a)) -> [a]
+
+  -- measurement
+  action size(set(a)) -> u64
+  action is_empty(set(a)) -> bool
+
+  recover |result, loss| {
+    result
+  }
+
+  rescue |error| {
+    empty
+  }
+}
+
+out set
+out @set

@@ -1,0 +1,51 @@
+in @mirror
+in @package
+
+-- Default mirror.spec for new projects.
+-- This IS mirror's own spec, folded.
+-- Craft collapses to a single default.
+-- Run compiles and verifies.
+-- Everything else passes through.
+
+grammar @new_template {
+
+  template spec(name: project_name) = "
+@{name}
+
+store {
+  path = .git/mirror
+}
+
+craft {
+  default mirror/*.mirror
+}
+
+run {
+  default mirror/*.mirror
+}
+
+kintsugi {
+  naming = snake_case
+  indent = 2
+}
+
+properties {
+  requires {
+    types_lowercase
+    unique_variants
+    every_type_reachable
+    no_dead_variants
+  }
+  invariant {
+    deterministic
+    pure
+    no_cycles
+  }
+  ensures {
+    always_halts
+  }
+}
+"
+
+  out @new_template
+}

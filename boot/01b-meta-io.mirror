@@ -1,0 +1,27 @@
+in @prism
+in @meta
+in @actor
+
+type mut(block) != iso
+type effect = mut(block)
+type io(effect) != observation
+
+type path(text)
+type content(block)
+type channel(actor, actor)
+
+grammar @io {
+  io read(path) => imperfect
+  io write(path, content) => imperfect
+  io send(channel, message) => imperfect
+  io spawn(actor) => process
+  io stop(process) => imperfect
+}
+
+out io
+out effect
+out mut
+out path
+out content
+out channel
+out @io

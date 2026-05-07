@@ -1,0 +1,75 @@
+in @prism
+in @meta
+
+-- numeric types.
+-- u32, u64, i64, f64 are already kernel primitives.
+-- this grammar names the operations that hold for each.
+
+type nat = zero | succ(nat)
+
+grammar @number {
+  in @meta
+
+  -- integer operations
+  action add(i64, i64) -> i64
+  action subtract(i64, i64) -> i64
+  action multiply(i64, i64) -> i64
+  action divide(i64, i64) -> imperfect
+  action remainder(i64, i64) -> imperfect
+  action negate(i64) -> i64
+  action absolute(i64) -> i64
+
+  -- comparison
+  action compare_int(i64, i64) -> order
+  action min_int(i64, i64) -> i64
+  action max_int(i64, i64) -> i64
+  action clamp_int(i64, min: i64, max: i64) -> i64
+
+  -- float operations
+  action add_float(f64, f64) -> f64
+  action subtract_float(f64, f64) -> f64
+  action multiply_float(f64, f64) -> f64
+  action divide_float(f64, f64) -> imperfect
+  action negate_float(f64) -> f64
+  action absolute_float(f64) -> f64
+
+  -- float rounding
+  action floor(f64) -> i64
+  action ceiling(f64) -> i64
+  action round(f64) -> i64
+  action truncate(f64) -> i64
+
+  -- float comparison
+  action compare_float(f64, f64) -> order
+  action min_float(f64, f64) -> f64
+  action max_float(f64, f64) -> f64
+  action clamp_float(f64, min: f64, max: f64) -> f64
+
+  -- conversion
+  action to_float(i64) -> f64
+  action to_string(i64) -> string
+  action float_to_string(f64) -> string
+  action parse_int(string) -> imperfect
+  action parse_float(string) -> imperfect
+
+  -- bitwise (integer only)
+  action bitwise_and(i64, i64) -> i64
+  action bitwise_or(i64, i64) -> i64
+  action bitwise_xor(i64, i64) -> i64
+  action bitwise_not(i64) -> i64
+  action shift_left(i64, by: i64) -> i64
+  action shift_right(i64, by: i64) -> i64
+
+  recover |result, loss| {
+    result
+  }
+
+  rescue |error| {
+    -- division by zero or parse failure
+    -- return 0 as absorbing element
+    0
+  }
+}
+
+out nat
+out @number

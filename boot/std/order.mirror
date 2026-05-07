@@ -1,0 +1,41 @@
+in @prism
+in @meta
+
+-- order names the <, =, > operators as a type.
+-- lt = the left is smaller.
+-- eq = the values are equal.
+-- gt = the left is larger.
+-- these ARE the kernel operators, given a surface.
+
+type order = lt | eq | gt
+
+-- order is its own algebra:
+-- reverse(lt) = gt, reverse(eq) = eq, reverse(gt) = lt
+-- this is the involution: reverse(reverse(x)) = x
+
+grammar @order {
+  in @meta
+
+  -- flip the ordering
+  action reverse(order) -> order
+
+  -- compare two orders (lexicographic on the enum)
+  action compare(order, order) -> order
+
+  -- convert to numeric: lt => -1, eq => 0, gt => 1
+  action to_int(order) -> i64
+
+  -- break ties: if first is eq, use second
+  action break_tie(order, tiebreaker: order) -> order
+
+  recover |result, loss| {
+    result
+  }
+
+  rescue |error| {
+    eq
+  }
+}
+
+out order
+out @order

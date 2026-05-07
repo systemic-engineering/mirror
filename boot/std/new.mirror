@@ -1,0 +1,44 @@
+in @mirror
+in @io
+in @package
+
+-- A new mirror project, scaffolded from self.
+-- Consumer projects are pure .mirror — no Rust wrapper.
+
+type project_name = text
+
+type scaffold {
+  name: project_name,
+  root: path,
+}
+
+grammar @new {
+  in @io
+  in @package
+
+  -- Scaffold a mirror project.
+  -- Each io operation becomes a filesystem write in codegen.
+  action new(name: project_name, root: path) -> imperfect {
+    focus  scaffold(name, root)
+    split  |
+      io write(root, "mirror.spec", template_spec(name))
+      io mkdir(root, "mirror")
+      io write(root, "mirror/.gitkeep", "")
+      io write(root, ".gitignore", gitignore)
+    zoom   git_init(root)
+    refract store_init(root)
+  }
+
+  template gitignore = "
+# mirror artifacts
+*.shatter
+*.shatter.sig
+
+# build
+target/
+"
+
+  out project_name
+  out scaffold
+  out @new
+}

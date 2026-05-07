@@ -1,0 +1,64 @@
+in @prism
+in @meta
+
+-- list is the ordered sequence.
+-- [a] is already kernel syntax — this grammar names its operations.
+-- empty is the identity for append.
+-- cons(a, [a]) is the recursive case.
+-- structurally: a fold from the right.
+
+type list(a) = empty | cons(a, list(a))
+
+grammar @list {
+  in @meta
+
+  -- construction
+  action empty() -> list(a)
+  action cons(head: a, tail: list(a)) -> list(a)
+  action singleton(a) -> list(a)
+
+  -- destruction
+  action head(list(a)) -> imperfect
+  action tail(list(a)) -> imperfect
+  action last(list(a)) -> imperfect
+
+  -- traversal (these ARE optic operations)
+  action map(list(a), f: a -> b) -> list(b)
+  action filter(list(a), f: a -> bool) -> list(a)
+  action fold(list(a), init: b, f: b -> a -> b) -> b
+  action fold_right(list(a), init: b, f: a -> b -> b) -> b
+
+  -- combination
+  action append(list(a), list(a)) -> list(a)
+  action flatten(list(list(a))) -> list(a)
+  action flat_map(list(a), f: a -> list(b)) -> list(b)
+  action zip(list(a), list(b)) -> list(a, b)
+
+  -- search
+  action find(list(a), f: a -> bool) -> imperfect
+  action contains(list(a), a) -> bool
+  action index(list(a), i: u64) -> imperfect
+
+  -- ordering
+  action sort(list(a), compare: a -> a -> order) -> list(a)
+  action reverse(list(a)) -> list(a)
+
+  -- measurement
+  action length(list(a)) -> u64
+  action is_empty(list(a)) -> bool
+
+  -- slicing
+  action take(list(a), n: u64) -> list(a)
+  action drop(list(a), n: u64) -> list(a)
+
+  recover |result, loss| {
+    result
+  }
+
+  rescue |error| {
+    empty
+  }
+}
+
+out list
+out @list
