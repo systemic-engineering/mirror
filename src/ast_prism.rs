@@ -22,6 +22,8 @@ use crate::ast::{Ast, Atom, Body, Ref};
 pub enum Token {
     Word(String),
     At,
+    Tilde,
+    SigilValue(String),
     LParen,
     RParen,
     LBrace,
