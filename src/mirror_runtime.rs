@@ -99,7 +99,94 @@ impl std::fmt::Display for MirrorResolveError {
 
 impl std::error::Error for MirrorResolveError {}
 
-// Form is dead. Long live MirrorFragment.
+// ---------------------------------------------------------------------------
+// Form — parser-internal intermediate, kept for emit_rust compatibility.
+// ---------------------------------------------------------------------------
+
+/// `Form` is the parsed-but-not-yet-content-addressed view: kind / name /
+/// params / variants / nested children. Parser-internal intermediate.
+/// The public API returns `MirrorFragment` via `parse_form`.
+#[derive(Clone, Debug, Eq)]
+pub(crate) struct Form {
+    pub kind: DeclKind,
+    pub name: String,
+    pub params: Vec<String>,
+    pub variants: Vec<String>,
+    pub children: Vec<Form>,
+    /// For `action` declarations: the grammar reference (e.g. `@code/rust`).
+    pub grammar_ref: Option<String>,
+    /// For `action` declarations: the raw body text, brace-balanced but unparsed.
+    pub body_text: Option<String>,
+    /// Whether this declaration has the `abstract` modifier.
+    pub is_abstract: bool,
+    /// Optional return type annotation (e.g. `-> [completion]`).
+    pub return_type: Option<String>,
+    /// Optic operators found in this declaration.
+    pub optic_ops: Vec<OpticOp>,
+    /// For `grammar` declarations: the parent grammar reference (e.g. `@actor`).
+    pub parent_ref: Option<String>,
+}
+
+impl PartialEq for Form {
+    fn eq(&self, other: &Self) -> bool {
+        self.kind == other.kind
+            && self.name == other.name
+            && self.params == other.params
+            && self.variants == other.variants
+            && self.children == other.children
+            && self.grammar_ref == other.grammar_ref
+            && self.body_text == other.body_text
+            && self.is_abstract == other.is_abstract
+            && self.return_type == other.return_type
+            && self.parent_ref == other.parent_ref
+    }
+}
+
+impl Form {
+    pub fn new(
+        kind: DeclKind,
+        name: impl Into<String>,
+        params: Vec<String>,
+        variants: Vec<String>,
+        children: Vec<Form>,
+    ) -> Self {
+        Form {
+            kind,
+            name: name.into(),
+            params,
+            variants,
+            children,
+            grammar_ref: None,
+            body_text: None,
+            is_abstract: false,
+            return_type: None,
+            optic_ops: Vec::new(),
+            parent_ref: None,
+        }
+    }
+
+    pub fn from_fragment(frag: &MirrorFragment) -> Form {
+        let decoded = MirrorData::decode_from_fragment(frag.mirror_data());
+        let children: Vec<Form> = frag
+            .mirror_children()
+            .iter()
+            .map(Form::from_fragment)
+            .collect();
+        Form {
+            kind: decoded.kind,
+            name: decoded.name,
+            params: decoded.params,
+            variants: decoded.variants,
+            children,
+            grammar_ref: decoded.grammar_ref,
+            body_text: decoded.body_text,
+            is_abstract: decoded.is_abstract,
+            return_type: decoded.return_type,
+            optic_ops: Vec::new(),
+            parent_ref: decoded.parent_ref,
+        }
+    }
+}
 
 // ---------------------------------------------------------------------------
 // Shatter — the compilation artifact, a Prism implementation.
@@ -1316,6 +1403,230 @@ pub fn kintsugi_fragment(frag: &MirrorFragment) -> MirrorFragment {
     children.sort_by_key(|c| kintsugi_sort_key(&c.mirror_data().kind));
 
     crate::declaration::fragment_encoded(data, children)
+}
+
+/// Simplify a MirrorFragment by running the three-pass pipeline:
+///   1. collapse_aliases — merge type declarations with identical variants
+///   2. flatten_wrappers — inline types with a single param referencing another type
+///   3. eliminate_dead — remove type declarations not referenced by any action
+///
+/// Returns `(simplified, before_count, after_count)`.
+pub fn simplify_fragment(
+    frag: &MirrorFragment,
+) -> (MirrorFragment, usize, usize) {
+    let data = MirrorData::decode_from_fragment(frag.mirror_data());
+    let children: Vec<MirrorFragment> = frag.mirror_children().to_vec();
+    let before_count = children.len();
+
+    if children.is_empty() {
+        return (frag.clone(), 0, 0);
+    }
+
+    // --- Pass 1: collapse_aliases ---
+    // Group type declarations by their variant signature. If two types have
+    // identical variants, keep the first (canonical) and rename refs to the others.
+    let mut signatures: std::collections::HashMap<String, String> =
+        std::collections::HashMap::new();
+    let mut renames: std::collections::HashMap<String, String> =
+        std::collections::HashMap::new();
+
+    for child in &children {
+        let cd = MirrorData::decode_from_fragment(child.mirror_data());
+        if cd.kind == DeclKind::Type && !cd.variants.is_empty() {
+            let sig = cd.variants.join("|");
+            if let Some(canonical) = signatures.get(&sig) {
+                renames.insert(cd.name.clone(), canonical.clone());
+            } else {
+                signatures.insert(sig, cd.name.clone());
+            }
+        }
+    }
+
+    // Remove aliased type decls and rename params in actions
+    let children: Vec<MirrorFragment> = children
+        .into_iter()
+        .filter(|c| {
+            let cd = MirrorData::decode_from_fragment(c.mirror_data());
+            if cd.kind == DeclKind::Type {
+                return !renames.contains_key(&cd.name);
+            }
+            true
+        })
+        .map(|c| {
+            let cd = MirrorData::decode_from_fragment(c.mirror_data());
+            if cd.kind == DeclKind::Action && !renames.is_empty() {
+                // Rename params that reference aliased types
+                let new_params: Vec<String> = cd
+                    .params
+                    .iter()
+                    .map(|p| {
+                        // Params are like "input: status" — check if the type part matches
+                        if let Some(colon_pos) = p.find(':') {
+                            let (param_name, type_part) = p.split_at(colon_pos);
+                            let type_name = type_part[1..].trim();
+                            if let Some(canonical) = renames.get(type_name) {
+                                return format!("{}:{}", param_name, canonical);
+                            }
+                        }
+                        // Also check bare type references
+                        if let Some(canonical) = renames.get(p.as_str()) {
+                            return canonical.clone();
+                        }
+                        p.clone()
+                    })
+                    .collect();
+                let mut new_data = cd;
+                new_data.params = new_params;
+                crate::declaration::fragment_encoded(new_data, c.mirror_children().to_vec())
+            } else {
+                c
+            }
+        })
+        .collect();
+
+    // --- Pass 2: flatten_wrappers ---
+    // Types with a single param that is a @ref to another type are wrappers.
+    // Inline them: replace references to the wrapper with references to the inner type.
+    let mut wrappers: std::collections::HashMap<String, String> =
+        std::collections::HashMap::new();
+
+    for child in &children {
+        let cd = MirrorData::decode_from_fragment(child.mirror_data());
+        if cd.kind == DeclKind::Type && cd.variants.is_empty() {
+            // Single param referencing another type = wrapper
+            if cd.params.len() == 1 {
+                let p = &cd.params[0];
+                // Check for "field: @type" pattern
+                if let Some(colon_pos) = p.find(':') {
+                    let type_ref = p[colon_pos + 1..].trim();
+                    if type_ref.starts_with('@') {
+                        wrappers.insert(cd.name.clone(), type_ref[1..].to_string());
+                    }
+                }
+            }
+        }
+    }
+
+    // Resolve chains: if wrapper A -> B and B -> C, then A -> C
+    for _ in 0..10 {
+        let mut changed = false;
+        let snapshot = wrappers.clone();
+        for (_, inner) in wrappers.iter_mut() {
+            if let Some(deeper) = snapshot.get(inner.as_str()) {
+                *inner = deeper.clone();
+                changed = true;
+            }
+        }
+        if !changed {
+            break;
+        }
+    }
+
+    let children: Vec<MirrorFragment> = if wrappers.is_empty() {
+        children
+    } else {
+        children
+            .into_iter()
+            .filter(|c| {
+                let cd = MirrorData::decode_from_fragment(c.mirror_data());
+                if cd.kind == DeclKind::Type {
+                    return !wrappers.contains_key(&cd.name);
+                }
+                true
+            })
+            .map(|c| {
+                let cd = MirrorData::decode_from_fragment(c.mirror_data());
+                if cd.kind == DeclKind::Action {
+                    let new_params: Vec<String> = cd
+                        .params
+                        .iter()
+                        .map(|p| {
+                            if let Some(colon_pos) = p.find(':') {
+                                let (param_name, type_part) = p.split_at(colon_pos);
+                                let type_name = type_part[1..].trim();
+                                if let Some(inner) = wrappers.get(type_name) {
+                                    return format!("{}:{}", param_name, inner);
+                                }
+                            }
+                            if let Some(inner) = wrappers.get(p.as_str()) {
+                                return inner.clone();
+                            }
+                            p.clone()
+                        })
+                        .collect();
+                    let mut new_data = cd;
+                    new_data.params = new_params;
+                    crate::declaration::fragment_encoded(new_data, c.mirror_children().to_vec())
+                } else {
+                    c
+                }
+            })
+            .collect()
+    };
+
+    // --- Pass 3: eliminate_dead ---
+    // Collect all type names referenced by action params.
+    let mut referenced: std::collections::HashSet<String> =
+        std::collections::HashSet::new();
+
+    for child in &children {
+        let cd = MirrorData::decode_from_fragment(child.mirror_data());
+        if cd.kind == DeclKind::Action {
+            for p in &cd.params {
+                // Extract type references from params like "input: status"
+                if let Some(colon_pos) = p.find(':') {
+                    let type_name = p[colon_pos + 1..].trim();
+                    referenced.insert(type_name.to_string());
+                    // Also handle @ref format
+                    if type_name.starts_with('@') {
+                        referenced.insert(type_name[1..].to_string());
+                    }
+                }
+                // Bare type references
+                referenced.insert(p.clone());
+            }
+        }
+    }
+
+    // Transitive closure: if type A references type B in its params, keep B too
+    let mut changed = true;
+    while changed {
+        changed = false;
+        for child in &children {
+            let cd = MirrorData::decode_from_fragment(child.mirror_data());
+            if cd.kind == DeclKind::Type && referenced.contains(&cd.name) {
+                for p in &cd.params {
+                    if let Some(colon_pos) = p.find(':') {
+                        let type_name = p[colon_pos + 1..].trim().to_string();
+                        if referenced.insert(type_name) {
+                            changed = true;
+                        }
+                    }
+                }
+                // Type variants can reference other types
+                for v in &cd.variants {
+                    if referenced.insert(v.clone()) {
+                        changed = true;
+                    }
+                }
+            }
+        }
+    }
+
+    let children: Vec<MirrorFragment> = children
+        .into_iter()
+        .filter(|c| {
+            let cd = MirrorData::decode_from_fragment(c.mirror_data());
+            if cd.kind == DeclKind::Type {
+                return referenced.contains(&cd.name);
+            }
+            true // keep non-type declarations
+        })
+        .collect();
+
+    let after_count = children.len();
+    let result = crate::declaration::fragment_encoded(data, children);
+    (result, before_count, after_count)
 }
 
 fn emit_fragment_into(frag: &MirrorFragment, indent: usize, out: &mut String) {
@@ -3885,6 +4196,51 @@ grammar @ai {
             oid_before, oid_after,
             "kintsugi must not change the content-addressed OID"
         );
+    }
+
+    // -----------------------------------------------------------------------
+    // simplify_fragment tests
+    // -----------------------------------------------------------------------
+
+    /// simplify_fragment removes dead types.
+    #[test]
+    fn simplify_eliminates_dead_types() {
+        let src = "type used = active | inactive\ntype dead = x | y\naction check(s: used)\n";
+        let parsed = parse_form(src).ok().unwrap();
+        let (simplified, before, after) = simplify_fragment(&parsed);
+        assert!(after < before, "simplify should reduce count: {} -> {}", before, after);
+        let output = emit_fragment(&simplified);
+        assert!(!output.contains("dead"), "dead type should be removed from: {}", output);
+        assert!(output.contains("used"), "used type should survive in: {}", output);
+    }
+
+    /// simplify_fragment collapses type aliases with identical variants.
+    #[test]
+    fn simplify_collapses_aliases() {
+        let src = "type status = active | inactive\ntype state = active | inactive\naction check(s: status)\n";
+        let parsed = parse_form(src).ok().unwrap();
+        let (simplified, before, after) = simplify_fragment(&parsed);
+        assert!(after < before, "simplify should reduce count: {} -> {}", before, after);
+        let output = emit_fragment(&simplified);
+        assert!(!output.contains("type state"), "state alias should be collapsed from: {}", output);
+        assert!(output.contains("status"), "canonical status should survive in: {}", output);
+    }
+
+    /// simplify_fragment composes all three passes.
+    #[test]
+    fn simplify_composes_all_passes() {
+        let src = "type status = active | inactive\ntype state = active | inactive\ntype orphan = x | y\naction process(s: status)\n";
+        let parsed = parse_form(src).ok().unwrap();
+        let (simplified, before, after) = simplify_fragment(&parsed);
+        // Before: status, state (alias), orphan (dead), action = 4 decls
+        // After: status, action = 2 decls
+        assert_eq!(before, 4, "should have 4 declarations");
+        assert_eq!(after, 2, "should have 2 declarations after simplify");
+        let output = emit_fragment(&simplified);
+        assert!(!output.contains("orphan"), "orphan removed");
+        assert!(!output.contains("type state"), "state alias collapsed");
+        assert!(output.contains("status"), "status kept");
+        assert!(output.contains("action"), "action kept");
     }
 
     // -----------------------------------------------------------------------
