@@ -1,0 +1,20 @@
+//// Loader — compiles ETF to BEAM modules and loads them.
+////
+//// Takes the ETF bytes from the Rust NIF (Erlang Abstract Format),
+//// compiles them via compile:forms/1, and loads with code:load_binary/3.
+
+/// Load ETF bytes as a BEAM module. Returns the module name on success.
+@external(erlang, "loader_ffi", "load_etf_module")
+pub fn load_etf_module(etf: BitArray) -> Result(String, String)
+
+/// Check if a module is loaded on the BEAM.
+@external(erlang, "loader_ffi", "is_loaded")
+pub fn is_loaded(module: String) -> Bool
+
+/// Get a loaded module's Lens dependencies.
+@external(erlang, "loader_ffi", "get_lenses")
+pub fn get_lenses(module: String) -> Result(List(String), String)
+
+/// Get a loaded module's extends (parent domains).
+@external(erlang, "loader_ffi", "get_extends")
+pub fn get_extends(module: String) -> Result(List(String), String)

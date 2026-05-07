@@ -1,0 +1,54 @@
+in @prism
+in @meta
+
+-- option IS imperfect without error and without loss.
+-- some(a) = a observed, no error, no loss.
+-- none = no observation, no error, no loss.
+-- this is the naming surface over imperfect(a, (), ()).
+
+type option(a) = some(a) | none
+
+-- option -> imperfect: lift into the kernel type
+-- some(a) => imperfect.success(a)
+-- none => imperfect.failure((), ())
+zoom lift(option(a)) -> imperfect
+
+-- imperfect -> option: collapse loss and error into none
+-- success(a) => some(a)
+-- partial(a, _) => some(a)
+-- failure(_, _) => none
+fold collapse(imperfect) <= option
+
+-- the identity: some(a) |> lift |> collapse = some(a)
+-- the absorption: none |> lift |> collapse = none
+
+grammar @option {
+  in @meta
+
+  -- unwrap with a default: some(a) => a, none => default
+  action unwrap(option(a), default: a) -> a
+
+  -- map over the contained value
+  action map(option(a), f: a -> b) -> option(b)
+
+  -- chain: some(a) => f(a), none => none
+  action and_then(option(a), f: a -> option(b)) -> option(b)
+
+  -- the dual: none => fallback, some(a) => some(a)
+  action or_else(option(a), fallback: option(a)) -> option(a)
+
+  -- test presence
+  action is_some(option(a)) -> bool
+  action is_none(option(a)) -> bool
+
+  recover |result, loss| {
+    result
+  }
+
+  rescue |error| {
+    none
+  }
+}
+
+out option
+out @option

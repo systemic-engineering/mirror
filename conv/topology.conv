@@ -1,0 +1,51 @@
+grammar @topology {
+  type = graph | node | edge | subgraph | actor
+
+  type measure = spectrum | entropy | curvature | fiedler | eigengap | heat_kernel
+
+  type phase = stable | transition | critical
+
+  type partition = connected | disconnected | fragmented
+
+  type boundary = internal | external | ghost
+}
+
+in @property
+in @actor
+
+---
+
+test "topology types" {
+  @topology has graph
+  @topology has node
+  @topology has edge
+  @topology has subgraph
+  @topology has actor
+}
+
+test "measures" {
+  @topology.measure has spectrum
+  @topology.measure has entropy
+  @topology.measure has curvature
+  @topology.measure has fiedler
+  @topology.measure has eigengap
+  @topology.measure has heat_kernel
+}
+
+test "phases" {
+  @topology.phase has stable
+  @topology.phase has transition
+  @topology.phase has critical
+}
+
+test "partition kinds" {
+  @topology.partition has connected
+  @topology.partition has disconnected
+  @topology.partition has fragmented
+}
+
+test "boundary kinds" {
+  @topology.boundary has internal
+  @topology.boundary has external
+  @topology.boundary has ghost
+}

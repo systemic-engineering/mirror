@@ -1,0 +1,28 @@
+in @mirror
+in @fate
+in @io
+in @property
+
+-- AI: measure → select → report.
+-- The compiler measuring its own grammars.
+
+grammar @ai {
+  in @fate
+  in @io
+
+  type ai_result {
+    file: path,
+    before: loss,
+    after: loss,
+    steps: [decision],
+    health: health,
+  }
+
+  io measure(file: path) => features
+  io apply(model, file: path) => imperfect
+  io ai(file: path) => imperfect
+  io ai(file: path, budget: int) => imperfect
+
+  out ai_result
+  out @ai
+}

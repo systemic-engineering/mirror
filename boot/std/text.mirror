@@ -1,0 +1,59 @@
+in @prism
+in @meta
+
+-- text operations on string.
+-- string is already a kernel type — this grammar names its operations.
+-- all operations work on grapheme clusters, not bytes.
+
+grammar @text {
+  in @meta
+
+  -- measurement
+  action length(string) -> u64
+  action is_empty(string) -> bool
+
+  -- access
+  action slice(string, start: u64, length: u64) -> string
+  action first(string) -> imperfect
+  action last(string) -> imperfect
+
+  -- search
+  action contains(string, pattern: string) -> bool
+  action starts_with(string, prefix: string) -> bool
+  action ends_with(string, suffix: string) -> bool
+
+  -- transformation
+  action lowercase(string) -> string
+  action uppercase(string) -> string
+  action trim(string) -> string
+  action trim_start(string) -> string
+  action trim_end(string) -> string
+  action replace(string, pattern: string, replacement: string) -> string
+
+  -- combination
+  action append(string, string) -> string
+  action join(list: [string], separator: string) -> string
+
+  -- splitting
+  action split(string, separator: string) -> [string]
+  action lines(string) -> [string]
+  action graphemes(string) -> [string]
+
+  -- conversion
+  action to_int(string) -> imperfect
+  action to_float(string) -> imperfect
+  action inspect(ref) -> string
+
+  -- comparison
+  action compare(string, string) -> order
+
+  recover |result, loss| {
+    result
+  }
+
+  rescue |error| {
+    inspect(error)
+  }
+}
+
+out @text

@@ -113,6 +113,13 @@ pub enum Ast {
     /// A named block: `prism @name { body }`
     Prism { name: Ref, body: Body },
 
+    // -- Sigils --
+
+    /// A typed prefix literal: `~f'path'` or `~io/file'path'`
+    /// prefix is the short form (e.g. "f") or qualified form (e.g. "io/file").
+    /// value is the content between single quotes.
+    Sigil { prefix: Atom, value: Atom },
+
     // -- Optics --
 
     /// Focus: observe a subgraph. Read-only projection.
@@ -163,6 +170,7 @@ fn emit(ast: &Ast, indent: usize, f: &mut std::fmt::Formatter<'_>) -> std::fmt::
     match ast {
         Ast::Atom(a) => write!(f, "{}{}", pad, a),
         Ast::Ref(r) => write!(f, "{}{}", pad, r),
+        Ast::Sigil { prefix, value } => write!(f, "{}~{}'{}'" , pad, prefix, value),
         Ast::Body(body) => {
             writeln!(f, "{}{{", pad)?;
             for child in body.children() {
@@ -254,6 +262,379 @@ fn emit_optic(
         }
         write!(f, "{}}}", pad)
     }
+}
+
+// ---------------------------------------------------------------------------
+// Transformation primitives — walk/map/fold on the AST
+// ---------------------------------------------------------------------------
+
+impl Ast {
+    /// Walk: visit every node depth-first, calling `visitor` on each.
+    /// This is the split operation on the AST — enumerate all parts.
+    pub fn walk<F: FnMut(&Ast)>(&self, visitor: &mut F) {
+        visitor(self);
+        for child in self.children() {
+            child.walk(visitor);
+        }
+    }
+
+    /// Map: transform every node bottom-up (children first, then parent).
+    /// This is the zoom operation — shift perspective at every level.
+    pub fn map<F: FnMut(Ast) -> Ast>(self, f: &mut F) -> Ast {
+        let mapped = match self {
+            Ast::Atom(_) | Ast::Ref(_) | Ast::Sigil { .. } => self,
+            Ast::Body(body) => {
+                let children = body.0.into_iter().map(|c| c.map(f)).collect();
+                Ast::Body(Body(children))
+            }
+            Ast::Call { name, args } => {
+                let args = args.into_iter().map(|a| a.map(f)).collect();
+                Ast::Call { name, args }
+            }
+            Ast::Prism { name, body } => {
+                let children = body.0.into_iter().map(|c| c.map(f)).collect();
+                Ast::Prism { name, body: Body(children) }
+            }
+            Ast::Focus { target, body } => {
+                let target = target.map(|t| Box::new(t.map(f)));
+                let children = body.0.into_iter().map(|c| c.map(f)).collect();
+                Ast::Focus { target, body: Body(children) }
+            }
+            Ast::Project { query, body } => {
+                let query = query.map(|q| Box::new(q.map(f)));
+                let children = body.0.into_iter().map(|c| c.map(f)).collect();
+                Ast::Project { query, body: Body(children) }
+            }
+            Ast::Split { root, body } => {
+                let root = root.map(|r| Box::new(r.map(f)));
+                let children = body.0.into_iter().map(|c| c.map(f)).collect();
+                Ast::Split { root, body: Body(children) }
+            }
+            Ast::Zoom { perspective, body } => {
+                let perspective = perspective.map(|p| Box::new(p.map(f)));
+                let children = body.0.into_iter().map(|c| c.map(f)).collect();
+                Ast::Zoom { perspective, body: Body(children) }
+            }
+            Ast::Refract { mutation, body } => {
+                let mutation = mutation.map(|m| Box::new(m.map(f)));
+                let children = body.0.into_iter().map(|c| c.map(f)).collect();
+                Ast::Refract { mutation, body: Body(children) }
+            }
+        };
+        f(mapped)
+    }
+
+    /// Fold: accumulate a value over every node depth-first.
+    /// This is the fold operation — collapse structure into a single value.
+    pub fn fold<A, F: FnMut(A, &Ast) -> A>(&self, init: A, f: &mut F) -> A {
+        let acc = f(init, self);
+        self.children().into_iter().fold(acc, |a, child| child.fold(a, f))
+    }
+
+    /// Substitute: replace all `Ref(name)` with `replacement`.
+    /// This is the refract operation — the one write on the AST.
+    pub fn substitute(self, name: &str, replacement: &Ast) -> Ast {
+        self.map(&mut |node| {
+            if let Ast::Ref(ref r) = node {
+                if r.as_str() == name {
+                    return replacement.clone();
+                }
+            }
+            node
+        })
+    }
+
+    /// Direct child nodes (non-recursive).
+    pub fn children(&self) -> Vec<&Ast> {
+        match self {
+            Ast::Atom(_) | Ast::Ref(_) | Ast::Sigil { .. } => vec![],
+            Ast::Body(body) => body.0.iter().collect(),
+            Ast::Call { args, .. } => args.iter().collect(),
+            Ast::Prism { body, .. } => body.0.iter().collect(),
+            Ast::Focus { target, body } => {
+                let mut v: Vec<&Ast> = target.as_deref().into_iter().collect();
+                v.extend(body.0.iter());
+                v
+            }
+            Ast::Project { query, body } => {
+                let mut v: Vec<&Ast> = query.as_deref().into_iter().collect();
+                v.extend(body.0.iter());
+                v
+            }
+            Ast::Split { root, body } => {
+                let mut v: Vec<&Ast> = root.as_deref().into_iter().collect();
+                v.extend(body.0.iter());
+                v
+            }
+            Ast::Zoom { perspective, body } => {
+                let mut v: Vec<&Ast> = perspective.as_deref().into_iter().collect();
+                v.extend(body.0.iter());
+                v
+            }
+            Ast::Refract { mutation, body } => {
+                let mut v: Vec<&Ast> = mutation.as_deref().into_iter().collect();
+                v.extend(body.0.iter());
+                v
+            }
+        }
+    }
+
+    /// Maximum nesting depth of the tree.
+    pub fn depth(&self) -> usize {
+        let child_depth = self.children().iter()
+            .map(|c| c.depth())
+            .max()
+            .unwrap_or(0);
+        1 + child_depth
+    }
+
+    /// Total number of nodes in the tree (recursive).
+    pub fn node_count(&self) -> usize {
+        let mut count = 0;
+        self.walk(&mut |_| count += 1);
+        count
+    }
+
+    /// Collect all `Ref` names referenced anywhere in the tree.
+    pub fn referenced_names(&self) -> std::collections::HashSet<String> {
+        let mut names = std::collections::HashSet::new();
+        self.walk(&mut |node| {
+            if let Ast::Ref(r) = node {
+                names.insert(r.as_str().to_string());
+            }
+        });
+        names
+    }
+
+    /// Check if this node is a Call with the given name.
+    pub fn is_call(&self, name: &str) -> bool {
+        matches!(self, Ast::Call { name: n, .. } if n.as_str() == name)
+    }
+
+    /// If this is a Call, return its name.
+    pub fn call_name(&self) -> Option<&str> {
+        if let Ast::Call { name, .. } = self {
+            Some(name.as_str())
+        } else {
+            None
+        }
+    }
+
+    /// If this is a Call, return the first Atom argument's value (the declaration name).
+    pub fn decl_name(&self) -> Option<&str> {
+        if let Ast::Call { args, .. } = self {
+            if let Some(Ast::Atom(a)) = args.first() {
+                return Some(a.as_str());
+            }
+        }
+        None
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Simplification operations — compose walk/map/fold
+// ---------------------------------------------------------------------------
+
+impl Ast {
+    /// Remove top-level declarations that are never referenced by other nodes.
+    ///
+    /// Works on a Body of declarations. Finds all `@ref` names used inside
+    /// action bodies, then removes type declarations whose name does not
+    /// appear in that set.
+    ///
+    /// This is the Introject strategy: keep only what actions need.
+    pub fn eliminate_dead(self) -> Ast {
+        if let Ast::Body(body) = &self {
+            // Phase 1: collect all names referenced in action bodies
+            let mut referenced = std::collections::HashSet::new();
+            for child in body.children() {
+                if child.is_call("action") {
+                    let refs = child.referenced_names();
+                    referenced.extend(refs);
+                }
+            }
+            // Phase 2: also collect refs from type bodies that are themselves referenced
+            // (transitive closure: if action uses type A, and A references @B, keep B)
+            let mut changed = true;
+            while changed {
+                changed = false;
+                for child in body.children() {
+                    if child.is_call("type") {
+                        if let Some(name) = child.decl_name() {
+                            if referenced.contains(name) {
+                                let type_refs = child.referenced_names();
+                                for r in type_refs {
+                                    if referenced.insert(r) {
+                                        changed = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // Phase 3: filter — keep non-type decls, and type decls that are referenced
+            let filtered: Vec<Ast> = body.0.iter().filter(|child| {
+                if child.is_call("type") {
+                    if let Some(name) = child.decl_name() {
+                        return referenced.contains(name);
+                    }
+                }
+                true // keep non-type declarations
+            }).cloned().collect();
+            Ast::Body(Body::new(filtered))
+        } else {
+            self
+        }
+    }
+
+    /// Collapse type aliases that have identical definitions.
+    ///
+    /// When multiple type declarations have the same body (same args after
+    /// the name), keep the first one and substitute all references to the
+    /// others with the kept name.
+    ///
+    /// This is the Cartographer strategy: merge redundant structure.
+    pub fn collapse_aliases(self) -> Ast {
+        if let Ast::Body(body) = &self {
+            // Phase 1: group type declarations by their body signature
+            let mut signatures: std::collections::HashMap<String, String> =
+                std::collections::HashMap::new();
+            let mut renames: std::collections::HashMap<String, String> =
+                std::collections::HashMap::new();
+
+            for child in body.children() {
+                if child.is_call("type") {
+                    if let Some(name) = child.decl_name() {
+                        // The signature is the Display form of args[1..] (everything after the name)
+                        if let Ast::Call { args, .. } = child {
+                            let sig: String = args.iter().skip(1)
+                                .map(|a| format!("{}", a))
+                                .collect::<Vec<_>>()
+                                .join(",");
+                            if let Some(canonical) = signatures.get(&sig) {
+                                // This is a duplicate — rename to canonical
+                                renames.insert(name.to_string(), canonical.clone());
+                            } else {
+                                signatures.insert(sig, name.to_string());
+                            }
+                        }
+                    }
+                }
+            }
+
+            if renames.is_empty() {
+                return self;
+            }
+
+            // Phase 2: remove duplicate type declarations
+            let filtered: Vec<Ast> = body.0.iter().filter(|child| {
+                if child.is_call("type") {
+                    if let Some(name) = child.decl_name() {
+                        return !renames.contains_key(name);
+                    }
+                }
+                true
+            }).cloned().collect();
+
+            // Phase 3: substitute references to removed types
+            let mut result = Ast::Body(Body::new(filtered));
+            for (old_name, new_name) in &renames {
+                result = result.substitute(old_name, &Ast::Ref(Ref::new(new_name.as_str())));
+            }
+            result
+        } else {
+            self
+        }
+    }
+
+    /// Flatten wrapper types — types with a single field that just forward
+    /// to an inner type.
+    ///
+    /// A wrapper type looks like: `type wrapped_id { inner: id }`
+    /// After flattening, all references to `@wrapped_id` become `@id`
+    /// (or the inner type name), and the wrapper declaration is removed.
+    ///
+    /// This is the Explorer strategy: remove unnecessary indirection.
+    pub fn flatten_wrappers(self) -> Ast {
+        if let Ast::Body(body) = &self {
+            // Phase 1: identify wrapper types (single-field struct types)
+            let mut wrappers: std::collections::HashMap<String, String> =
+                std::collections::HashMap::new();
+
+            for child in body.children() {
+                if child.is_call("type") {
+                    if let (Some(name), Some(inner)) = (child.decl_name(), detect_wrapper(child)) {
+                        wrappers.insert(name.to_string(), inner);
+                    }
+                }
+            }
+
+            if wrappers.is_empty() {
+                return self;
+            }
+
+            // Phase 2: remove wrapper type declarations
+            let filtered: Vec<Ast> = body.0.iter().filter(|child| {
+                if child.is_call("type") {
+                    if let Some(name) = child.decl_name() {
+                        return !wrappers.contains_key(name);
+                    }
+                }
+                true
+            }).cloned().collect();
+
+            // Phase 3: substitute references to wrappers with their inner type
+            let mut result = Ast::Body(Body::new(filtered));
+            // Iteratively resolve chains: wrapped_a -> wrapped_b -> id
+            let mut resolved = wrappers.clone();
+            for _ in 0..10 {
+                let mut changed = false;
+                for (_, inner) in resolved.iter_mut() {
+                    if let Some(deeper) = wrappers.get(inner.as_str()) {
+                        *inner = deeper.clone();
+                        changed = true;
+                    }
+                }
+                if !changed { break; }
+            }
+            for (wrapper_name, inner_name) in &resolved {
+                result = result.substitute(wrapper_name, &Ast::Ref(Ref::new(inner_name.as_str())));
+            }
+            result
+        } else {
+            self
+        }
+    }
+}
+
+/// Detect if a type Call is a wrapper — has exactly one Body child with one field.
+/// Returns the inner type name if it's a wrapper.
+fn detect_wrapper(ast: &Ast) -> Option<String> {
+    if let Ast::Call { name, args } = ast {
+        if name.as_str() != "type" { return None; }
+        // Look for a Body arg with exactly one child that's a Call or has a Ref
+        for arg in args.iter().skip(1) {
+            if let Ast::Body(body) = arg {
+                if body.len() == 1 {
+                    // The single child should reference a type name
+                    if let Some(child) = body.children().first() {
+                        // Look for a Ref in the child
+                        let mut refs = Vec::new();
+                        child.walk(&mut |node| {
+                            if let Ast::Ref(r) = node {
+                                refs.push(r.as_str().to_string());
+                            }
+                        });
+                        if refs.len() == 1 {
+                            return Some(refs.into_iter().next().unwrap());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    None
 }
 
 // ---------------------------------------------------------------------------
@@ -453,6 +834,508 @@ mod tests {
             body: Body::new(vec![]),
         };
         assert_ne!(focus.content_oid(), project.content_oid());
+    }
+
+    // -- Phase 6: AST transformation primitives --
+
+    /// Helper: build a nested AST for transform tests.
+    /// focus(@graph) { project(active) { @leaf } }
+    fn nested_fixture() -> Ast {
+        Ast::Focus {
+            target: Some(Box::new(Ast::Ref(Ref::new("graph")))),
+            body: Body::new(vec![
+                Ast::Project {
+                    query: Some(Box::new(Ast::Atom(Atom::new("active")))),
+                    body: Body::new(vec![
+                        Ast::Ref(Ref::new("leaf")),
+                    ]),
+                },
+            ]),
+        }
+    }
+
+    #[test]
+    fn walk_visits_all_nodes() {
+        let ast = nested_fixture();
+        let mut count = 0;
+        ast.walk(&mut |_| count += 1);
+        // focus(@graph) { project(active) { @leaf } }
+        // Nodes: Focus, @graph, Project, active, @leaf = 5
+        assert_eq!(count, 5, "walk should visit all 5 nodes");
+    }
+
+    #[test]
+    fn map_transforms_atoms() {
+        let ast = Ast::Call {
+            name: Atom::new("hello"),
+            args: vec![
+                Ast::Atom(Atom::new("world")),
+                Ast::Atom(Atom::new("foo")),
+            ],
+        };
+        let mapped = ast.map(&mut |node| {
+            if let Ast::Atom(a) = &node {
+                Ast::Atom(Atom::new(a.as_str().to_uppercase()))
+            } else {
+                node
+            }
+        });
+        // The Call's args should be uppercased Atoms
+        if let Ast::Call { args, .. } = &mapped {
+            assert_eq!(args[0], Ast::Atom(Atom::new("WORLD")));
+            assert_eq!(args[1], Ast::Atom(Atom::new("FOO")));
+        } else {
+            panic!("map should preserve Call structure");
+        }
+    }
+
+    #[test]
+    fn fold_counts_refs() {
+        let ast = nested_fixture();
+        let ref_count = ast.fold(0usize, &mut |acc, node| {
+            if matches!(node, Ast::Ref(_)) { acc + 1 } else { acc }
+        });
+        // @graph and @leaf = 2 refs
+        assert_eq!(ref_count, 2, "fold should count 2 @references");
+    }
+
+    #[test]
+    fn substitute_replaces_ref() {
+        let ast = nested_fixture();
+        let replaced = ast.substitute("leaf", &Ast::Atom(Atom::new("crystal")));
+        // The @leaf should now be Atom("crystal")
+        let mut found_crystal = false;
+        replaced.walk(&mut |node| {
+            if let Ast::Atom(a) = node {
+                if a.as_str() == "crystal" {
+                    found_crystal = true;
+                }
+            }
+        });
+        assert!(found_crystal, "substitute should replace @leaf with crystal");
+        // And @leaf should be gone
+        let ref_count = replaced.fold(0usize, &mut |acc, node| {
+            if let Ast::Ref(r) = node {
+                if r.as_str() == "leaf" { acc + 1 } else { acc }
+            } else {
+                acc
+            }
+        });
+        assert_eq!(ref_count, 0, "@leaf should be fully substituted");
+    }
+
+    #[test]
+    fn children_of_call() {
+        let ast = Ast::Call {
+            name: Atom::new("type"),
+            args: vec![
+                Ast::Atom(Atom::new("id")),
+                Ast::Ref(Ref::new("prism")),
+            ],
+        };
+        let children = ast.children();
+        assert_eq!(children.len(), 2);
+        assert_eq!(children[0], &Ast::Atom(Atom::new("id")));
+        assert_eq!(children[1], &Ast::Ref(Ref::new("prism")));
+    }
+
+    #[test]
+    fn children_of_focus() {
+        let ast = Ast::Focus {
+            target: Some(Box::new(Ast::Ref(Ref::new("graph")))),
+            body: Body::new(vec![Ast::Atom(Atom::new("nodes"))]),
+        };
+        let children = ast.children();
+        // target + body children
+        assert_eq!(children.len(), 2);
+        assert_eq!(children[0], &Ast::Ref(Ref::new("graph")));
+        assert_eq!(children[1], &Ast::Atom(Atom::new("nodes")));
+    }
+
+    #[test]
+    fn depth_of_nested() {
+        // focus(@graph) { project(active) { @leaf } }
+        // depth: focus(1) -> body -> project(3) -> body -> @leaf(5)
+        // Actually: focus=1, children are @graph(depth=1) and project.
+        // project=1, children are active(depth=1) and @leaf(depth=1).
+        // So: focus -> project -> @leaf = depth 3 for the body path,
+        // but the target @graph is depth 1.
+        // focus depth = 1 + max(depth(@graph), depth(project(...)))
+        //             = 1 + max(1, 1 + max(depth(active), depth(@leaf)))
+        //             = 1 + max(1, 1 + max(1, 1))
+        //             = 1 + max(1, 2)
+        //             = 1 + 2 = 3
+        let ast = nested_fixture();
+        assert_eq!(ast.depth(), 3);
+    }
+
+    #[test]
+    fn node_count_matches_walk() {
+        let ast = nested_fixture();
+        let nc = ast.node_count();
+        let mut walk_count = 0;
+        ast.walk(&mut |_| walk_count += 1);
+        assert_eq!(nc, walk_count, "node_count should agree with walk count");
+    }
+
+    #[test]
+    fn children_of_atom_is_empty() {
+        let ast = Ast::Atom(Atom::new("leaf"));
+        assert!(ast.children().is_empty());
+    }
+
+    #[test]
+    fn depth_of_atom_is_one() {
+        let ast = Ast::Atom(Atom::new("x"));
+        assert_eq!(ast.depth(), 1);
+    }
+
+    #[test]
+    fn map_is_bottom_up() {
+        // map processes children first, then the parent.
+        // If we wrap every Atom in a Call, the Atoms inside Calls
+        // should also be wrapped (because children are mapped first).
+        let ast = Ast::Body(Body::new(vec![
+            Ast::Atom(Atom::new("a")),
+            Ast::Atom(Atom::new("b")),
+        ]));
+        let mapped = ast.map(&mut |node| {
+            if let Ast::Atom(ref a) = node {
+                Ast::Call {
+                    name: Atom::new("wrap"),
+                    args: vec![node.clone()],
+                }
+            } else {
+                node
+            }
+        });
+        // Each Atom("a") becomes Call("wrap", [Atom("a")])
+        // Then the Body contains those Calls.
+        if let Ast::Body(body) = &mapped {
+            assert_eq!(body.len(), 2);
+            for child in body.children() {
+                assert!(matches!(child, Ast::Call { name, .. } if name.as_str() == "wrap"));
+            }
+        } else {
+            panic!("map should preserve Body at top level");
+        }
+    }
+
+    #[test]
+    fn substitute_is_idempotent_on_missing_ref() {
+        let ast = nested_fixture();
+        let original_count = ast.node_count();
+        let result = ast.substitute("nonexistent", &Ast::Atom(Atom::new("x")));
+        assert_eq!(result.node_count(), original_count,
+            "substitute of missing ref should not change the tree");
+    }
+
+    // -- Phase 7: Simplification operations --
+
+    /// Helper: build a Body of declarations for simplification tests.
+    /// Simulates a grammar with:
+    ///   type status = active | inactive
+    ///   type orphan = { x: f64 }
+    ///   action process(input: @status) { emit result }
+    fn decl_fixture() -> Ast {
+        Ast::Body(Body::new(vec![
+            // type status ...
+            Ast::Call {
+                name: Atom::new("type"),
+                args: vec![
+                    Ast::Atom(Atom::new("status")),
+                    Ast::Atom(Atom::new("active")),
+                    Ast::Atom(Atom::new("inactive")),
+                ],
+            },
+            // type orphan { x: f64 } — dead type, not referenced by action
+            Ast::Call {
+                name: Atom::new("type"),
+                args: vec![
+                    Ast::Atom(Atom::new("orphan")),
+                    Ast::Body(Body::new(vec![
+                        Ast::Atom(Atom::new("x")),
+                    ])),
+                ],
+            },
+            // action process(input: @status) { emit result }
+            Ast::Call {
+                name: Atom::new("action"),
+                args: vec![
+                    Ast::Atom(Atom::new("process")),
+                    Ast::Ref(Ref::new("status")),
+                    Ast::Body(Body::new(vec![
+                        Ast::Atom(Atom::new("result")),
+                    ])),
+                ],
+            },
+        ]))
+    }
+
+    #[test]
+    fn eliminate_dead_removes_unreferenced_types() {
+        let ast = decl_fixture();
+        let original_count = ast.node_count();
+        let simplified = ast.eliminate_dead();
+        assert!(simplified.node_count() < original_count,
+            "eliminate_dead should remove the orphan type");
+        // The orphan type should be gone
+        let mut found_orphan = false;
+        simplified.walk(&mut |node| {
+            if let Ast::Atom(a) = node {
+                if a.as_str() == "orphan" { found_orphan = true; }
+            }
+        });
+        assert!(!found_orphan, "orphan type should be eliminated");
+        // The status type should remain
+        let mut found_status = false;
+        simplified.walk(&mut |node| {
+            if let Ast::Atom(a) = node {
+                if a.as_str() == "status" { found_status = true; }
+            }
+        });
+        assert!(found_status, "status type should be kept (referenced by action)");
+    }
+
+    #[test]
+    fn eliminate_dead_keeps_transitively_referenced() {
+        // type base = { id: id }
+        // type wrapper = { inner: @base }
+        // action use_it(x: @wrapper) { emit done }
+        // base is transitively referenced through wrapper
+        let ast = Ast::Body(Body::new(vec![
+            Ast::Call {
+                name: Atom::new("type"),
+                args: vec![
+                    Ast::Atom(Atom::new("base")),
+                    Ast::Body(Body::new(vec![Ast::Atom(Atom::new("id"))])),
+                ],
+            },
+            Ast::Call {
+                name: Atom::new("type"),
+                args: vec![
+                    Ast::Atom(Atom::new("wrapper")),
+                    Ast::Body(Body::new(vec![Ast::Ref(Ref::new("base"))])),
+                ],
+            },
+            Ast::Call {
+                name: Atom::new("action"),
+                args: vec![
+                    Ast::Atom(Atom::new("use_it")),
+                    Ast::Ref(Ref::new("wrapper")),
+                    Ast::Body(Body::new(vec![Ast::Atom(Atom::new("done"))])),
+                ],
+            },
+        ]));
+        let simplified = ast.eliminate_dead();
+        // Both base and wrapper should survive
+        let mut found_base = false;
+        let mut found_wrapper = false;
+        simplified.walk(&mut |node| {
+            if let Ast::Atom(a) = node {
+                if a.as_str() == "base" { found_base = true; }
+                if a.as_str() == "wrapper" { found_wrapper = true; }
+            }
+        });
+        assert!(found_base, "base should be kept (transitively referenced)");
+        assert!(found_wrapper, "wrapper should be kept (directly referenced)");
+    }
+
+    #[test]
+    fn collapse_aliases_merges_duplicates() {
+        // type status = active | inactive
+        // type state = active | inactive   <-- duplicate of status
+        // action check(s: @state) { ok }
+        let ast = Ast::Body(Body::new(vec![
+            Ast::Call {
+                name: Atom::new("type"),
+                args: vec![
+                    Ast::Atom(Atom::new("status")),
+                    Ast::Atom(Atom::new("active")),
+                    Ast::Atom(Atom::new("inactive")),
+                ],
+            },
+            Ast::Call {
+                name: Atom::new("type"),
+                args: vec![
+                    Ast::Atom(Atom::new("state")),
+                    Ast::Atom(Atom::new("active")),
+                    Ast::Atom(Atom::new("inactive")),
+                ],
+            },
+            Ast::Call {
+                name: Atom::new("action"),
+                args: vec![
+                    Ast::Atom(Atom::new("check")),
+                    Ast::Ref(Ref::new("state")),
+                    Ast::Body(Body::new(vec![Ast::Atom(Atom::new("ok"))])),
+                ],
+            },
+        ]));
+        let original_count = ast.node_count();
+        let simplified = ast.collapse_aliases();
+        assert!(simplified.node_count() < original_count,
+            "collapse should remove the duplicate type");
+        // @state should be replaced with @status in the action
+        let mut found_state_ref = false;
+        let mut found_status_ref = false;
+        simplified.walk(&mut |node| {
+            if let Ast::Ref(r) = node {
+                if r.as_str() == "state" { found_state_ref = true; }
+                if r.as_str() == "status" { found_status_ref = true; }
+            }
+        });
+        assert!(!found_state_ref, "@state ref should be replaced");
+        assert!(found_status_ref, "@status ref should appear (substituted)");
+    }
+
+    #[test]
+    fn flatten_wrappers_inlines_single_field() {
+        // type wrapped_id { inner: @id }
+        // action get(x: @wrapped_id) { done }
+        let ast = Ast::Body(Body::new(vec![
+            Ast::Call {
+                name: Atom::new("type"),
+                args: vec![
+                    Ast::Atom(Atom::new("wrapped_id")),
+                    Ast::Body(Body::new(vec![
+                        Ast::Call {
+                            name: Atom::new("inner"),
+                            args: vec![Ast::Ref(Ref::new("id"))],
+                        },
+                    ])),
+                ],
+            },
+            Ast::Call {
+                name: Atom::new("action"),
+                args: vec![
+                    Ast::Atom(Atom::new("get")),
+                    Ast::Ref(Ref::new("wrapped_id")),
+                    Ast::Body(Body::new(vec![Ast::Atom(Atom::new("done"))])),
+                ],
+            },
+        ]));
+        let original_count = ast.node_count();
+        let simplified = ast.flatten_wrappers();
+        assert!(simplified.node_count() < original_count,
+            "flatten should remove the wrapper type");
+        // @wrapped_id should be replaced with @id
+        let mut found_wrapped = false;
+        let mut found_id = false;
+        simplified.walk(&mut |node| {
+            if let Ast::Ref(r) = node {
+                if r.as_str() == "wrapped_id" { found_wrapped = true; }
+                if r.as_str() == "id" { found_id = true; }
+            }
+        });
+        assert!(!found_wrapped, "@wrapped_id ref should be inlined");
+        assert!(found_id, "@id ref should appear (substituted)");
+    }
+
+    #[test]
+    fn simplification_pipeline_composes() {
+        // Build a fixture with all three anti-patterns:
+        // - dead type (orphan)
+        // - duplicate alias (state = status)
+        // - wrapper type (wrapped_id -> id)
+        let ast = Ast::Body(Body::new(vec![
+            Ast::Call {
+                name: Atom::new("type"),
+                args: vec![
+                    Ast::Atom(Atom::new("status")),
+                    Ast::Atom(Atom::new("active")),
+                ],
+            },
+            Ast::Call {
+                name: Atom::new("type"),
+                args: vec![
+                    Ast::Atom(Atom::new("state")),
+                    Ast::Atom(Atom::new("active")),
+                ],
+            },
+            Ast::Call {
+                name: Atom::new("type"),
+                args: vec![
+                    Ast::Atom(Atom::new("orphan")),
+                    Ast::Body(Body::new(vec![Ast::Atom(Atom::new("unused"))])),
+                ],
+            },
+            Ast::Call {
+                name: Atom::new("type"),
+                args: vec![
+                    Ast::Atom(Atom::new("wrapped_id")),
+                    Ast::Body(Body::new(vec![
+                        Ast::Call {
+                            name: Atom::new("inner"),
+                            args: vec![Ast::Ref(Ref::new("id"))],
+                        },
+                    ])),
+                ],
+            },
+            Ast::Call {
+                name: Atom::new("action"),
+                args: vec![
+                    Ast::Atom(Atom::new("process")),
+                    Ast::Ref(Ref::new("state")),
+                    Ast::Ref(Ref::new("wrapped_id")),
+                    Ast::Body(Body::new(vec![Ast::Atom(Atom::new("done"))])),
+                ],
+            },
+        ]));
+        let original_count = ast.node_count();
+        // Order: collapse aliases first (canonical name survives),
+        // flatten wrappers (inline indirection),
+        // eliminate dead last (remove what's no longer needed).
+        let simplified = ast
+            .collapse_aliases()
+            .flatten_wrappers()
+            .eliminate_dead();
+        assert!(simplified.node_count() < original_count,
+            "pipeline should reduce node count: {} -> {}",
+            original_count, simplified.node_count());
+        assert!(simplified.depth() <= 4,
+            "pipeline should keep depth bounded");
+    }
+
+    #[test]
+    fn kintsugi_simplification_reduces_complexity() {
+        // The kintsugi test: a complex grammar simplified through the pipeline
+        // should have fewer nodes and shallower depth.
+        let complex = Ast::Body(Body::new(vec![
+            // redundant aliases
+            Ast::Call { name: Atom::new("type"), args: vec![
+                Ast::Atom(Atom::new("status")), Ast::Atom(Atom::new("active")),
+            ]},
+            Ast::Call { name: Atom::new("type"), args: vec![
+                Ast::Atom(Atom::new("state")), Ast::Atom(Atom::new("active")),
+            ]},
+            Ast::Call { name: Atom::new("type"), args: vec![
+                Ast::Atom(Atom::new("condition")), Ast::Atom(Atom::new("active")),
+            ]},
+            // dead types
+            Ast::Call { name: Atom::new("type"), args: vec![
+                Ast::Atom(Atom::new("orphan_a")),
+                Ast::Body(Body::new(vec![Ast::Atom(Atom::new("x"))])),
+            ]},
+            Ast::Call { name: Atom::new("type"), args: vec![
+                Ast::Atom(Atom::new("orphan_b")),
+                Ast::Body(Body::new(vec![Ast::Atom(Atom::new("y"))])),
+            ]},
+            // action referencing status
+            Ast::Call { name: Atom::new("action"), args: vec![
+                Ast::Atom(Atom::new("process")),
+                Ast::Ref(Ref::new("status")),
+                Ast::Body(Body::new(vec![Ast::Atom(Atom::new("ok"))])),
+            ]},
+        ]));
+        let complex_nodes = complex.node_count();
+        let simplified = complex
+            .collapse_aliases()
+            .flatten_wrappers()
+            .eliminate_dead();
+        let simplified_nodes = simplified.node_count();
+        assert!(simplified_nodes < complex_nodes,
+            "kintsugi: {} -> {} nodes", complex_nodes, simplified_nodes);
     }
 
     // -- Phase 5: Serde serialization (shatter feature) --

@@ -1,0 +1,33 @@
+in @mirror
+in @property
+
+-- Fate: five models, one selector, zero dependencies.
+-- The holonomy reduction loop declared in mirror.
+
+grammar @fate {
+  in @property
+
+  type model = abyss | introject | cartographer | explorer | fate
+
+  type features([f64; 16])
+
+  type decision {
+    model: model,
+    confidence: f64,
+  }
+
+  type health = too_shallow | healthy | over_cutting
+
+  io tick(features) => imperfect
+  io resolve(features, max_depth) => imperfect
+  io select(model, features) => decision
+
+  property casimir_conserved(tick) = iso
+  property berry_phase(tick) <= verdict
+
+  out model
+  out features
+  out decision
+  out health
+  out @fate
+}

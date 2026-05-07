@@ -368,7 +368,7 @@ flags:
             "compile" => Some("compile <path> [--sign] [--target rust] -- compile a .mirror file\n\nParses, resolves, and content-addresses the source.\nPrints the crystal OID to stdout.\nWith --sign: produces .shatter.sig alongside .shatter.\nWith --target rust: emits .rs file alongside .shatter."),
             "crystal" => Some("crystal [output] -- materialize the standard library\n\nCompiles boot/ in order and emits mirror.shatter.\nWith --oid: prints the loaded crystal OID."),
             "ci" => Some("ci <path> -- measure holonomy\n\nCompiles and reports the MirrorLoss.\nZero holonomy means crystal. Nonzero means alive."),
-            "kintsugi" => Some("kintsugi <path> [--check] -- canonical ordering\n\nReorders declarations: in, type, traversal, lens, grammar, property, action.\nThe OID doesn't change. The surface does.\nWith --check: exit 0 if already canonical, exit 1 if not."),
+            "kintsugi" => Some("kintsugi <path> [--check] [--simplify] -- canonical ordering and simplification\n\nReorders declarations: in, type, traversal, lens, grammar, property, action.\nThe OID doesn't change. The surface does.\nWith --check: exit 0 if already canonical, exit 1 if not.\nWith --simplify: run the simplification pipeline (eliminate_dead, collapse_aliases, flatten_wrappers)."),
             "init" => Some("init -- initialize .git/mirror/\n\nSets up the mirror store in the current git repository."),
             "merge" => Some("merge [target] [--ai] -- structural merge with crystal delta\n\nCompiles current and target branches, diffs crystals.\nWith --ai: generates merge commit message from delta."),
             "repl" => Some("repl -- interactive shard> prompt\n\nStarts an interactive session.\nType .mirror expressions and see them compiled live."),
@@ -611,16 +611,33 @@ flags:
 
     fn cmd_kintsugi(&self, args: &[String]) -> Result<String, CliError> {
         let check = args.iter().any(|a| a == "--check");
+        let simplify = args.iter().any(|a| a == "--simplify");
         let file_args: Vec<&String> = args.iter().filter(|a| !a.starts_with("--")).collect();
         let file = file_args.first().ok_or_else(|| {
-            CliError::Usage("usage: mirror kintsugi <file> [--check]".to_string())
+            CliError::Usage(
+                "usage: mirror kintsugi <file> [--check] [--simplify]".to_string(),
+            )
         })?;
 
         let source = std::fs::read_to_string(file.as_str())?;
+
         let parsed = Parse.reduce(SourceText(source));
         let fragment = parsed
             .ok()
             .ok_or_else(|| CliError::Runtime(MirrorRuntimeError("parse failed".into())))?;
+
+        // --simplify: run the fragment simplification pipeline
+        // (collapse_aliases -> flatten_wrappers -> eliminate_dead)
+        if simplify {
+            let (simplified, before, after) =
+                crate::mirror_runtime::simplify_fragment(&fragment.0);
+            let output = crate::mirror_runtime::emit_fragment(&simplified);
+            eprintln!(
+                "kintsugi --simplify: {} -> {} declarations",
+                before, after
+            );
+            return Ok(output);
+        }
 
         let canonical = crate::mirror_runtime::kintsugi_fragment(&fragment.0);
         let output = crate::mirror_runtime::emit_fragment(&canonical);
@@ -1784,6 +1801,7 @@ fn is_global_flag(flag: &str) -> bool {
             | "--target"
             | "--star"
             | "--expander"
+            | "--simplify"
     )
 }
 
@@ -2973,6 +2991,98 @@ mod tests {
         assert!(
             result.is_err(),
             "kintsugi --check must fail for non-canonical source"
+        );
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// kintsugi --simplify runs the simplification pipeline:
+    /// collapse_aliases -> flatten_wrappers -> eliminate_dead.
+    #[test]
+    fn kintsugi_simplify_removes_dead_types() {
+        let dir = std::env::temp_dir().join(format!("mirror-kintsugi-simp-{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let file = dir.join("complex.mirror");
+        // Source with dead type (orphan) and duplicate alias (state = status).
+        // Uses the parser-compatible single-line format.
+        std::fs::write(
+            &file,
+            "\
+type status = active | inactive
+type state = active | inactive
+type orphan = x | y | z
+action process(input: status)
+",
+        )
+        .unwrap();
+
+        let cli = Cli::open("/nonexistent/spec.mirror").unwrap();
+        let result = cli.dispatch(
+            "kintsugi",
+            &[file.to_string_lossy().to_string(), "--simplify".to_string()],
+        );
+        if result.is_err() {
+            let err = result.err().unwrap();
+            panic!("kintsugi --simplify failed: {}", err);
+        }
+        let output = result.ok().unwrap();
+        // The orphan type should be eliminated (dead type — no action uses it)
+        assert!(
+            !output.contains("orphan"),
+            "orphan type should be eliminated, got:\n{}",
+            output
+        );
+        // The state alias should be collapsed into status (identical variants)
+        assert!(
+            !output.contains("type state"),
+            "state alias should be collapsed, got:\n{}",
+            output
+        );
+        // status and action should remain
+        assert!(
+            output.contains("status"),
+            "status type should survive, got:\n{}",
+            output
+        );
+        assert!(
+            output.contains("action"),
+            "action should survive, got:\n{}",
+            output
+        );
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// kintsugi --simplify removes dead types that no action references.
+    #[test]
+    fn kintsugi_simplify_eliminates_dead() {
+        let dir = std::env::temp_dir().join(format!("mirror-kintsugi-dead-{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let file = dir.join("dead.mirror");
+        std::fs::write(
+            &file,
+            "\
+type used = active | inactive
+type dead = x | y
+action check(s: used)
+",
+        )
+        .unwrap();
+
+        let cli = Cli::open("/nonexistent/spec.mirror").unwrap();
+        let result = cli.dispatch(
+            "kintsugi",
+            &[file.to_string_lossy().to_string(), "--simplify".to_string()],
+        );
+        assert!(result.is_ok(), "kintsugi --simplify must succeed");
+        let output = result.ok().unwrap();
+        assert!(
+            !output.contains("dead"),
+            "dead type should be removed, got:\n{}",
+            output
+        );
+        assert!(
+            output.contains("used"),
+            "used type should survive, got:\n{}",
+            output
         );
         let _ = std::fs::remove_dir_all(&dir);
     }

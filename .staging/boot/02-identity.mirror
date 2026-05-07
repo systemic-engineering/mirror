@@ -1,0 +1,13 @@
+in @prism
+in @meta
+
+type identity {
+    name: string,
+    oid: oid,
+}
+
+grammar @identity {
+}
+
+out identity
+out @identity

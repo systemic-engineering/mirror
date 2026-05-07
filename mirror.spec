@@ -1,4 +1,24 @@
 # mirror.spec — the CLI IS the spec IS the config
+#
+# spec @mirror {
+#   grammars: [@mirror, @code/rust, @nl]
+#
+#   build {
+#     tool: cargo
+#     features: [shatter]
+#     target: release
+#   }
+#
+#   test {
+#     command: "cargo test --lib"
+#     post: kintsugi boot/*.mirror
+#   }
+#
+#   deploy {
+#     binary: mirror
+#     target: ~/.local/bin/mirror
+#   }
+# }
 
 @oid("@mirror-lang")
 
@@ -54,6 +74,7 @@ kintsugi {
   --sort-deps
   --normalize
   --align
+  --simplify
   naming = snake_case
   indent = 2
 }

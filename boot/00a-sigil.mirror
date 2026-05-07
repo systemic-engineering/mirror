@@ -1,0 +1,9 @@
+in @prism
+
+abstract grammar @sigil(grammar, prefix: text) {
+  type prefix = prefix | grammar
+  type sigil(grammar, prefix, block(grammar))
+  abstract template render(sigil) = iso
+}
+
+out @sigil
