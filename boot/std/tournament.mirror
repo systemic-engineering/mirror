@@ -1,0 +1,17 @@
+in @fate
+in @git
+
+-- @fate/tournament: competitive model selection grammar.
+-- Uses both @fate and @git. Tournament selects, git commits.
+-- Licensed Apache-2.0 (SPDX: Apache-2.0).
+
+grammar @fate/tournament {
+  in @fate
+  in @git
+
+  io compete(task: text, candidates: [model]) -> [artifact]
+  template select(artifacts: [artifact]) -> artifact
+  io commit(winner: artifact) -> @git.commit
+}
+
+out @fate/tournament

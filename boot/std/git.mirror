@@ -1,0 +1,31 @@
+in @io
+
+-- @git: version control grammar.
+-- Reads are templates. Writes are io. All within grammar boundary.
+-- Licensed Apache-2.0 (SPDX: Apache-2.0).
+
+grammar @git {
+  in @io
+
+  type oid(SHA256)
+  type ref(name: text)
+  type commit { message: text, oid: oid, parent: option(oid) }
+  type diff { from: ref, to: ref, changes: [change] }
+  type change = added(~f) | modified(~f) | deleted(~f)
+  type annotation { line: u32, commit: oid, author: text }
+  type status = clean | dirty([~f])
+
+  io add(files: [~f]) -> Measurement
+  io commit(message: text) -> commit
+  io push(remote: text, ref: ref) -> Measurement
+  io pull(remote: text, ref: ref) -> Measurement
+
+  template status() -> status
+  template diff(from: ref, to: ref) -> diff
+  template log(limit: u32) -> [commit]
+  template blame(file: ~f) -> [annotation]
+  template branch() -> [ref]
+  template show(oid: oid) -> commit
+}
+
+out @git

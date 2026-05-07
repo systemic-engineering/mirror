@@ -1,0 +1,18 @@
+in @git
+
+-- @ci: continuous integration grammar.
+-- Uses @git (not inherits). Reads are templates. Writes are io.
+-- Licensed Apache-2.0 (SPDX: Apache-2.0).
+
+grammar @ci {
+  in @git
+
+  template lint(source: ~d) -> Measurement
+  template test(source: ~d) -> Measurement
+  template coverage(source: ~d, threshold: f64) -> Measurement
+
+  io build(spec: @spec) -> artifact
+  io format(source: ~d) -> Measurement
+}
+
+out @ci
