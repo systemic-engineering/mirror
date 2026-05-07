@@ -1,8 +1,28 @@
+# Build artifacts
 build/
 target/
+target-break/
 .nix-cargo/
+
+# Compiled objects
+*.o
+*.d
+*.rlib
+*.rmeta
+*.dylib
+*.so
+*.fingerprint
+
+# Runtime
 erl_crash.dump
-target/llvm-cov/
-.worktrees/
+mirror.weights
+mirror.shatter
+
+# Nix / direnv
 .direnv/
 
+# Git worktrees
+.worktrees/
+
+# Coverage
+target/llvm-cov/

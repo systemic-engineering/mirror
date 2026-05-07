@@ -1,0 +1,34 @@
+grammar @prism {
+  type operation = fold | prism | traversal | lens | iso
+
+  type input = source | graph | domain
+  type eigenvalues = spectrum | features | decomposition
+  type projection = filtered | selected | narrowed
+  type convergence = settled | oscillating | exhausted
+  type crystal = fixed_point | terminal
+
+  action fold(input)
+  action project(eigenvalues, precision)
+  action split(projection)
+  action zoom(projection, transform)
+  action refract(convergence)
+}
+
+---
+
+test "prism operations" {
+  @prism has operation
+  @prism.operation has fold
+  @prism.operation has prism
+  @prism.operation has traversal
+  @prism.operation has lens
+  @prism.operation has iso
+}
+
+test "prism actions" {
+  @prism has act fold
+  @prism has act project
+  @prism has act split
+  @prism has act zoom
+  @prism has act refract
+}

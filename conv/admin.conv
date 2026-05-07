@@ -1,0 +1,17 @@
+in @beam
+
+grammar @admin {
+  type = route | panel | api
+
+  type route = path | handler
+
+  type panel = dashboard | garden | prism
+
+  type api = state | grammar | cluster
+
+  action serve(port: route)
+
+  action mount(panel: panel)
+
+  action respond(endpoint: api)
+}

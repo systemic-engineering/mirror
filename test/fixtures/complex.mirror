@@ -1,0 +1,119 @@
+-- complex.mirror -- deliberately overly complex grammar for kintsugi test
+--
+-- Anti-patterns present:
+--   1. Redundant type aliases (status = state = condition)
+--   2. Unnecessary wrapper types around primitives
+--   3. Dead types (defined but never referenced by actions)
+--   4. Duplicate action signatures (same emit, different names)
+--   5. Deep unnecessary nesting (base -> level1 -> level2 -> level3)
+--   6. Double-optional wrapping (maybe(maybe(x)))
+
+in @prism
+
+-- Anti-pattern 1: redundant type aliases
+type status = active | inactive | pending | dormant
+type state = active | inactive | pending | dormant
+type condition = active | inactive | pending | dormant
+
+-- Anti-pattern 2: unnecessary wrapper types
+type wrapped_id {
+  inner: id
+}
+type wrapped_name {
+  inner: name
+}
+type wrapped_value {
+  inner: f64
+}
+
+-- Anti-pattern 3: dead types (never referenced by any action)
+type orphan_alpha {
+  x: f64,
+  y: f64,
+  z: f64
+}
+type orphan_beta {
+  a: string,
+  b: string,
+  c: string
+}
+type orphan_gamma {
+  p: bool,
+  q: bool,
+  r: bool
+}
+
+-- Anti-pattern 4: bloated action with redundant params
+action process(
+  input: wrapped_id,
+  name: wrapped_name,
+  status: status,
+  state: state,
+  condition: condition,
+  value: wrapped_value,
+  priority: f64,
+  timestamp: u64,
+  source: string,
+  target: string,
+  metadata: string,
+  flags: string
+) {
+  emit result {
+    id: input,
+    processed: true
+  }
+}
+
+-- Anti-pattern 4 continued: duplicate actions (same emit block)
+action do_process(
+  input: wrapped_id,
+  name: wrapped_name,
+  status: status,
+  value: wrapped_value
+) {
+  emit result {
+    id: input,
+    processed: true
+  }
+}
+
+action perform_process(
+  input: wrapped_id,
+  name: wrapped_name,
+  state: state,
+  value: wrapped_value
+) {
+  emit result {
+    id: input,
+    processed: true
+  }
+}
+
+-- Anti-pattern 5: deep unnecessary nesting
+type base {
+  id: id
+}
+type level1 {
+  base: @base,
+  name: string
+}
+type level2 {
+  parent: @level1,
+  description: string
+}
+type level3 {
+  parent: @level2,
+  metadata: string
+}
+
+-- Anti-pattern 6: double-optional wrapping
+type maybe_id {
+  value: maybe {
+    value: id
+  }
+}
+type maybe_name {
+  value: maybe {
+    value: name
+  }
+}

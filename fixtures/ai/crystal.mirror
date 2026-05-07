@@ -1,0 +1,4 @@
+-- Pure crystal. No tension. The AI should do nothing.
+type color = red | blue
+type size = small | medium | large
+type weight = light | heavy
