@@ -13,6 +13,7 @@
 //! - `property p(g) <= verdict` →  `pub fn p(g: &Grammar) -> Verdict { todo!() }`
 
 use crate::declaration::{DeclKind, MirrorFragment, OpticOp};
+use crate::mirror_ast::MirrorAST;
 use crate::mirror_runtime::{CompiledShatter, Form};
 // Note: Form is pub(crate) — used only as an intermediate for the emit functions.
 
@@ -23,6 +24,15 @@ use crate::mirror_runtime::{CompiledShatter, Form};
 /// Emit Rust source code from a compiled shatter artifact.
 pub fn emit_rust(compiled: &CompiledShatter) -> String {
     emit_rust_fragment(&compiled.fragment)
+}
+
+/// Emit Rust source code from a MirrorAST node.
+///
+/// This is the canonical entry point: takes a typed AST and produces Rust code.
+/// Internally converts to Form for now; will be replaced by direct AST traversal.
+pub fn emit_rust_ast(ast: &MirrorAST) -> String {
+    let frag = ast.to_fragment();
+    emit_rust_fragment(&frag)
 }
 
 /// Emit Rust source code from a single Form (internal).
@@ -742,5 +752,74 @@ mod tests {
     #[test]
     fn emit_rust_map_type_hashmap() {
         assert_eq!(map_type("hashmap(text, u32)"), "HashMap<String, u32>");
+    }
+
+    // -------------------------------------------------------------------
+    // emit_rust_ast — typed AST to Rust code
+    // -------------------------------------------------------------------
+
+    #[test]
+    fn emit_rust_ast_enum() {
+        use crate::mirror_ast::{Identifier, TypeBody, TypeNode};
+        let ast = MirrorAST::Type(TypeNode {
+            name: Identifier::new("color"),
+            params: vec![],
+            body: TypeBody::Enum(vec![Identifier::new("red"), Identifier::new("blue")]),
+            children: vec![],
+        });
+        let rust = emit_rust_ast(&ast);
+        assert!(rust.contains("pub enum Color"), "got:\n{}", rust);
+        assert!(rust.contains("Red"), "got:\n{}", rust);
+        assert!(rust.contains("Blue"), "got:\n{}", rust);
+    }
+
+    #[test]
+    fn emit_rust_ast_action() {
+        use crate::mirror_ast::{ActionNode, Field, Identifier};
+        let ast = MirrorAST::Action(ActionNode {
+            name: Identifier::new("boot"),
+            params: vec![Field {
+                name: Identifier::new("identity"),
+                type_ref: Identifier::new("_"),
+            }],
+            return_type: None,
+            grammar_ref: None,
+            body: None,
+        });
+        let rust = emit_rust_ast(&ast);
+        assert!(rust.contains("pub fn boot"), "got:\n{}", rust);
+        assert!(rust.contains("todo!()"), "got:\n{}", rust);
+    }
+
+    #[test]
+    fn emit_rust_ast_grammar() {
+        use crate::mirror_ast::{GrammarNode, GrammarRef, Identifier, TypeBody, TypeNode};
+        let child = MirrorAST::Type(TypeNode {
+            name: Identifier::new("status"),
+            params: vec![],
+            body: TypeBody::Enum(vec![Identifier::new("active"), Identifier::new("inactive")]),
+            children: vec![],
+        });
+        let ast = MirrorAST::Grammar(GrammarNode {
+            name: GrammarRef::new("@test"),
+            parent: None,
+            children: vec![child],
+        });
+        let rust = emit_rust_ast(&ast);
+        assert!(rust.contains("pub mod test"), "got:\n{}", rust);
+        assert!(rust.contains("pub enum Status"), "got:\n{}", rust);
+    }
+
+    #[test]
+    fn emit_rust_ast_matches_fragment_path() {
+        // parse_ast → emit_rust_ast should produce the same output as
+        // parse_form → emit_rust_fragment
+        let source = "type widget = small | large";
+        use crate::mirror_runtime::{parse_ast, parse_form};
+        let ast = parse_ast(source).ok().unwrap();
+        let frag = parse_form(source).ok().unwrap();
+        let rust_ast = emit_rust_ast(&ast);
+        let rust_frag = emit_rust_fragment(&frag);
+        assert_eq!(rust_ast, rust_frag);
     }
 }
