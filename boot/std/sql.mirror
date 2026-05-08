@@ -1,0 +1,67 @@
+in @code
+in @meta
+
+-- @code/sql: SQL grammar for spectral-db.
+--
+-- / IS inheritance. @code/sql inherits @code (and @sigil) automatically.
+-- The grammar IS the parser. The mirror compiler parses SQL through
+-- this grammar. The `compile` template maps query -> pipeline.
+
+grammar @code/sql {
+
+  -- ── Query AST ────────────────────────────────────────────────────
+
+  type query = select_query {
+    columns: [column],
+    source: source,
+    predicates: [predicate],
+    ordering: [order],
+    limit: option(u32)
+  }
+
+  type column = star | named(ref) | function(ref, [ref])
+
+  type source = table(ref) | near(ref, f64)
+
+  type predicate = eq(ref, value) | gt(ref, value) | lt(ref, value)
+                 | gte(ref, value) | lte(ref, value)
+
+  type order {
+    column: ref,
+    direction: asc | desc
+  }
+
+  type value = text(string) | number(f64)
+
+  -- ── Tokens (lexer surface) ───────────────────────────────────────
+
+  type token = kw_select | kw_from | kw_where | kw_and | kw_or
+             | kw_order_by | kw_limit | kw_asc | kw_desc | kw_as
+             | kw_near | kw_count
+             | op_eq | op_gt | op_lt | op_gte | op_lte
+             | tok_star | tok_comma | tok_lparen | tok_rparen | tok_dot
+             | tok_ident(string) | tok_string(string) | tok_number(f64)
+
+  -- ── Templates: parse and compile ─────────────────────────────────
+  --
+  -- parse: text -> query.  The grammar IS the parser.
+  -- compile: query -> @meta.pipeline.  SQL semantics -> spectral-db.
+  --
+  -- When the mirror compiler can execute templates at runtime, these
+  -- replace the Rust substrate in spectral-db/src/sql.rs.
+
+  template parse(input: text) -> query
+  template compile(query) -> @meta.pipeline
+
+  -- ── Spectral extensions ──────────────────────────────────────────
+  --
+  -- eigenvalue: a column reference (field on spectral nodes)
+  -- loss: terminal operation (Shannon loss of the query)
+  -- spectral_distance(ref, ref): function in SELECT
+  -- NEAR(oid, distance): source (FROM clause)
+
+  template eigenvalue(ref) -> column
+  template loss(query) -> f64
+}
+
+out @code/sql
