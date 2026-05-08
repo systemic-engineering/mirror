@@ -658,6 +658,249 @@ impl MirrorAST {
 }
 
 // ---------------------------------------------------------------------------
+// MirrorFragment → MirrorAST — reconstruct typed AST from fragment storage
+// ---------------------------------------------------------------------------
+
+impl MirrorAST {
+    /// Reconstruct a MirrorAST node from a MirrorFragment.
+    ///
+    /// This is the inverse of `to_fragment()`: it reads the MirrorData payload
+    /// and converts it back into typed AST nodes with proper Identifier/GrammarRef
+    /// fields instead of raw strings.
+    pub fn from_fragment(frag: &crate::declaration::MirrorFragment) -> MirrorAST {
+        use crate::declaration::{MirrorData, MirrorFragmentExt};
+        let data = MirrorData::decode_from_fragment(frag.mirror_data());
+        let children: Vec<MirrorAST> = frag
+            .mirror_children()
+            .iter()
+            .map(MirrorAST::from_fragment)
+            .collect();
+
+        let node = Self::from_data_and_children(&data, children);
+
+        if data.is_abstract {
+            MirrorAST::Abstract(Box::new(node))
+        } else {
+            node
+        }
+    }
+
+    /// Rejoin tokenizer-split params: ["to", ":", "string"] → ["to:string"].
+    ///
+    /// The mirror tokenizer splits `:` into its own Word token, so typed
+    /// params like `(to: string)` become three separate param entries.
+    /// This function reassembles them before constructing typed Fields.
+    fn rejoin_params(raw: &[String]) -> Vec<String> {
+        let mut result = Vec::new();
+        let mut i = 0;
+        while i < raw.len() {
+            if i + 2 < raw.len() && raw[i + 1] == ":" {
+                // name : type → "name:type"
+                result.push(format!("{}:{}", raw[i], raw[i + 2]));
+                i += 3;
+            } else if i + 1 < raw.len() && raw[i].ends_with(':') {
+                // "name:" "type" → "name:type"
+                result.push(format!("{}{}", raw[i], raw[i + 1]));
+                i += 2;
+            } else if i + 1 < raw.len() && raw[i + 1].starts_with(':') {
+                // "name" ":type" → "name:type"
+                result.push(format!("{}{}", raw[i], raw[i + 1]));
+                i += 2;
+            } else {
+                result.push(raw[i].clone());
+                i += 1;
+            }
+        }
+        result
+    }
+
+    /// Parse a string param list into typed Fields.
+    fn params_to_fields(raw: &[String]) -> Vec<Field> {
+        let joined = Self::rejoin_params(raw);
+        joined
+            .iter()
+            .map(|p| {
+                if let Some((n, t)) = p.split_once(':') {
+                    Field {
+                        name: Identifier::new(n.trim()),
+                        type_ref: Identifier::new(t.trim()),
+                    }
+                } else {
+                    Field {
+                        name: Identifier::new(p),
+                        type_ref: Identifier::new("_"),
+                    }
+                }
+            })
+            .collect()
+    }
+
+    /// Build a MirrorAST from decoded MirrorData + children.
+    fn from_data_and_children(data: &crate::declaration::MirrorData, children: Vec<MirrorAST>) -> MirrorAST {
+        use crate::declaration::DeclKind;
+        match data.kind {
+            DeclKind::Grammar | DeclKind::Form => {
+                if data.name.starts_with('@') || data.kind == DeclKind::Grammar {
+                    let grammar_name = if data.name.starts_with('@') {
+                        GrammarRef::new(&data.name)
+                    } else {
+                        GrammarRef::new(format!("@{}", data.name))
+                    };
+                    let parent = data.parent_ref.as_ref().map(|p| {
+                        if p.starts_with('@') {
+                            GrammarRef::new(p)
+                        } else {
+                            GrammarRef::new(format!("@{}", p))
+                        }
+                    });
+                    MirrorAST::Grammar(GrammarNode {
+                        name: grammar_name,
+                        parent,
+                        children,
+                    })
+                } else {
+                    MirrorAST::Module(ModuleNode {
+                        name: Identifier::new(&data.name),
+                        children,
+                    })
+                }
+            }
+            DeclKind::Type => {
+                let body = if !data.variants.is_empty() {
+                    // Check if variants contain ":" — if so, it's struct fields
+                    if data.variants.iter().any(|v| v.contains(':')) {
+                        TypeBody::Struct(
+                            data.variants
+                                .iter()
+                                .map(|v| {
+                                    if let Some((n, t)) = v.split_once(':') {
+                                        Field {
+                                            name: Identifier::new(n.trim()),
+                                            type_ref: Identifier::new(t.trim()),
+                                        }
+                                    } else {
+                                        Field {
+                                            name: Identifier::new(v),
+                                            type_ref: Identifier::new("_"),
+                                        }
+                                    }
+                                })
+                                .collect(),
+                        )
+                    } else if data.variants.len() == 1 && data.params.is_empty() {
+                        // Could be alias — single variant, no params
+                        // But enum with one variant is also possible.
+                        // Use Enum for consistency with the parser.
+                        TypeBody::Enum(data.variants.iter().map(|v| Identifier::new(v)).collect())
+                    } else {
+                        TypeBody::Enum(data.variants.iter().map(|v| Identifier::new(v)).collect())
+                    }
+                } else {
+                    TypeBody::Unit
+                };
+                let params: Vec<Identifier> =
+                    data.params.iter().map(|p| Identifier::new(p)).collect();
+                MirrorAST::Type(TypeNode {
+                    name: Identifier::new(&data.name),
+                    params,
+                    body,
+                    children,
+                })
+            }
+            DeclKind::Action | DeclKind::Recover | DeclKind::Rescue | DeclKind::Template => {
+                let params = Self::params_to_fields(&data.params);
+                let body = if children.is_empty() { None } else { Some(children) };
+                MirrorAST::Action(ActionNode {
+                    name: Identifier::new(&data.name),
+                    params,
+                    return_type: data.return_type.as_deref().map(Identifier::new),
+                    grammar_ref: data.grammar_ref.as_deref().map(|gr| {
+                        if gr.starts_with('@') {
+                            GrammarRef::new(gr)
+                        } else {
+                            GrammarRef::new(format!("@{}", gr))
+                        }
+                    }),
+                    body,
+                })
+            }
+            DeclKind::Property | DeclKind::Requires | DeclKind::Invariant | DeclKind::Ensures => {
+                let params = Self::params_to_fields(&data.params);
+                let fold_target = data.variants.first().map(|v| Identifier::new(v));
+                MirrorAST::Property(PropertyNode {
+                    name: Identifier::new(&data.name),
+                    params,
+                    fold_target,
+                    body: children,
+                })
+            }
+            DeclKind::Fold => {
+                MirrorAST::Property(PropertyNode {
+                    name: Identifier::new(&data.name),
+                    params: Vec::new(),
+                    fold_target: data.params.first().map(|p| Identifier::new(p)),
+                    body: children,
+                })
+            }
+            DeclKind::In => {
+                let target = if data.name.starts_with('@') {
+                    GrammarRef::new(&data.name)
+                } else {
+                    GrammarRef::new(format!("@{}", data.name))
+                };
+                MirrorAST::Import(ImportNode { target })
+            }
+            DeclKind::Out | DeclKind::Default | DeclKind::Binding => {
+                MirrorAST::Export(ExportNode {
+                    name: Identifier::new(&data.name),
+                })
+            }
+            DeclKind::Focus | DeclKind::Traversal | DeclKind::Lens => {
+                MirrorAST::Focus(FocusNode {
+                    name: Identifier::new(&data.name),
+                    target: data.params.first().map(|p| Identifier::new(p)),
+                    children,
+                })
+            }
+            DeclKind::Project => {
+                MirrorAST::Project(ProjectNode {
+                    name: Identifier::new(&data.name),
+                    target: data.params.first().map(|p| Identifier::new(p)),
+                    children,
+                })
+            }
+            DeclKind::Split => {
+                MirrorAST::Split(SplitNode {
+                    name: Identifier::new(&data.name),
+                    variants: data.variants.iter().map(|v| Identifier::new(v)).collect(),
+                    children,
+                })
+            }
+            DeclKind::Zoom => {
+                MirrorAST::Zoom(ZoomNode {
+                    name: Identifier::new(&data.name),
+                    target: data.params.first().map(|p| Identifier::new(p)),
+                    children,
+                })
+            }
+            DeclKind::Refract => {
+                MirrorAST::Refract(RefractNode {
+                    name: Identifier::new(&data.name),
+                    target: data.params.first().map(|p| Identifier::new(p)),
+                    children,
+                })
+            }
+            DeclKind::Prism => {
+                MirrorAST::Module(ModuleNode {
+                    name: Identifier::new(&data.name),
+                    children,
+                })
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
 // MirrorAST → kind name (for debugging / display)
 // ---------------------------------------------------------------------------
 

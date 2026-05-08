@@ -345,6 +345,18 @@ pub fn parse_form(source: &str) -> Imperfect<MirrorFragment, MirrorRuntimeError,
     }
 }
 
+/// Parse a `.mirror` source string into a `MirrorAST` node.
+///
+/// This is the canonical parser: it returns typed AST nodes directly.
+/// Use `MirrorAST::to_fragment()` to convert to content-addressed fragments.
+///
+/// Returns `Imperfect`: `Success` if all input was recognized,
+/// `Partial` if unrecognized keywords were encountered (measured loss),
+/// `Failure` if no declarations could be parsed.
+pub fn parse_ast(source: &str) -> Imperfect<MirrorAST, MirrorRuntimeError, MirrorLoss> {
+    parse_form(source).map(|frag| MirrorAST::from_fragment(&frag))
+}
+
 /// Detect deprecated `form` keyword usage and add deprecation warnings.
 fn collect_fragment_form_deprecations(decls: &[MirrorFragment], warnings: &mut Vec<ParseWarning>) {
     for decl in decls {
