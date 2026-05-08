@@ -18,6 +18,7 @@
 //! 8. Von Neumann entropy < log2(n)/2 + 1 — low structural complexity
 
 use crate::declaration::{DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt};
+// MirrorData is used as a projection of MirrorAST for stringly-typed access
 use crate::parse::AstNode;
 use crate::prism::Prism;
 
@@ -170,7 +171,7 @@ impl TypeGraph {
             frag: &MirrorFragment,
             types: &mut std::collections::HashSet<String>,
         ) {
-            let data = frag.mirror_data();
+            let data = MirrorData::from_ast(frag.mirror_ast());
             if data.kind == DeclKind::Type && !data.name.is_empty() {
                 types.insert(data.name.clone());
             }
@@ -212,7 +213,7 @@ impl TypeGraph {
             next_idx: &mut usize,
             edges: &mut Vec<(usize, usize)>,
         ) {
-            let data = frag.mirror_data();
+            let data = MirrorData::from_ast(frag.mirror_ast());
 
             match data.kind {
                 DeclKind::Type => {

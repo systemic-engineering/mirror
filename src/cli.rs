@@ -1618,7 +1618,7 @@ options:
 /// Print eigenvalues of a fragment tree (kind, name, params, variants).
 fn project_fragment(frag: &crate::declaration::MirrorFragment, depth: usize, out: &mut String) {
     use crate::declaration::{MirrorData, MirrorFragmentExt};
-    let data = MirrorData::decode_from_fragment(frag.mirror_data());
+    let data = MirrorData::from_ast(frag.mirror_ast());
     for _ in 0..depth {
         out.push_str("  ");
     }

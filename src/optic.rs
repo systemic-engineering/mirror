@@ -53,7 +53,7 @@ impl MirrorOptic {
     /// Build from a `MirrorFragment` — extract actions from the fragment tree.
     pub fn from_fragment(frag: &MirrorFragment) -> Result<Self, MirrorRuntimeError> {
         let mut actions = BTreeMap::new();
-        let data = MirrorData::decode_from_fragment(frag.mirror_data());
+        let data = MirrorData::from_ast(frag.mirror_ast());
         Self::collect_actions_from_fragment(frag, &mut actions);
 
         Ok(MirrorOptic {
@@ -69,7 +69,7 @@ impl MirrorOptic {
         actions: &mut BTreeMap<String, ActionDef>,
     ) {
         for child in frag.mirror_children() {
-            let data = MirrorData::decode_from_fragment(child.mirror_data());
+            let data = MirrorData::from_ast(child.mirror_ast());
             if data.kind == DeclKind::Action {
                 let receiver = data.params.first().cloned().unwrap_or_default();
                 let def = ActionDef {

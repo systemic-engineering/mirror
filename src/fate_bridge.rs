@@ -23,7 +23,7 @@ fn ast_child_count(ast: &MirrorAST) -> usize {
 fn ast_import_count(ast: &MirrorAST) -> usize {
     ast.children()
         .iter()
-        .filter(|c| matches!(c, MirrorAST::Import(_)))
+        .filter(|c| matches!(c, MirrorAST::Project(p) if p.target.is_some()))
         .count()
 }
 

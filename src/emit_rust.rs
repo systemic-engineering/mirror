@@ -31,7 +31,7 @@ pub fn emit_rust(compiled: &CompiledShatter) -> String {
 /// This is the canonical entry point: takes a typed AST and produces Rust code.
 /// Internally converts to Form for now; will be replaced by direct AST traversal.
 pub fn emit_rust_ast(ast: &MirrorAST) -> String {
-    let frag = ast.to_fragment();
+    let frag = crate::declaration::fragment(ast.clone(), vec![]);
     emit_rust_fragment(&frag)
 }
 
@@ -760,11 +760,12 @@ mod tests {
 
     #[test]
     fn emit_rust_ast_enum() {
-        use crate::mirror_ast::{Identifier, TypeBody, TypeNode};
-        let ast = MirrorAST::Type(TypeNode {
+        use crate::mirror_ast::{Identifier, SplitNode, TypeBody};
+        let ast = MirrorAST::Split(SplitNode {
             name: Identifier::new("color"),
+            variants: vec![],
             params: vec![],
-            body: TypeBody::Enum(vec![Identifier::new("red"), Identifier::new("blue")]),
+            body: Some(TypeBody::Enum(vec![Identifier::new("red"), Identifier::new("blue")])),
             children: vec![],
         });
         let rust = emit_rust_ast(&ast);
@@ -775,15 +776,16 @@ mod tests {
 
     #[test]
     fn emit_rust_ast_action() {
-        use crate::mirror_ast::{ActionNode, Field, Identifier};
-        let ast = MirrorAST::Action(ActionNode {
+        use crate::mirror_ast::{Field, Identifier, ZoomNode};
+        let ast = MirrorAST::Zoom(ZoomNode {
             name: Identifier::new("boot"),
             params: vec![Field {
                 name: Identifier::new("identity"),
                 type_ref: Identifier::new("_"),
             }],
-            return_type: None,
+            target: None,
             grammar_ref: None,
+            children: vec![],
             body: None,
         });
         let rust = emit_rust_ast(&ast);
@@ -793,16 +795,17 @@ mod tests {
 
     #[test]
     fn emit_rust_ast_grammar() {
-        use crate::mirror_ast::{GrammarNode, GrammarRef, Identifier, TypeBody, TypeNode};
-        let child = MirrorAST::Type(TypeNode {
+        use crate::mirror_ast::{FocusNode, Identifier, SplitNode, TypeBody};
+        let child = MirrorAST::Split(SplitNode {
             name: Identifier::new("status"),
+            variants: vec![],
             params: vec![],
-            body: TypeBody::Enum(vec![Identifier::new("active"), Identifier::new("inactive")]),
+            body: Some(TypeBody::Enum(vec![Identifier::new("active"), Identifier::new("inactive")])),
             children: vec![],
         });
-        let ast = MirrorAST::Grammar(GrammarNode {
-            name: GrammarRef::new("@test"),
-            parent: None,
+        let ast = MirrorAST::Focus(FocusNode {
+            name: Identifier::new("@test"),
+            target: None,
             children: vec![child],
         });
         let rust = emit_rust_ast(&ast);

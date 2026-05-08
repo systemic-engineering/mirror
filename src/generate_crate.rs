@@ -96,11 +96,11 @@ pub fn generate_bridge_module(grammars: &[MirrorFragment]) -> String {
     out.push_str("use prism::DerivePrism as Prism;\n\n");
     out.push_str("use std::sync::LazyLock;\n\n");
 
-    let mut names: Vec<&str> = Vec::new();
+    let mut names: Vec<String> = Vec::new();
     collect_grammar_names_from_fragments(grammars, &mut names);
     // Deduplicate while preserving order
     let mut seen = std::collections::HashSet::new();
-    names.retain(|n| seen.insert(*n));
+    names.retain(|n| seen.insert(n.clone()));
 
     for name in &names {
         let struct_name = grammar_name_to_struct(name);
@@ -148,16 +148,16 @@ pub fn generate_bridge_module(grammars: &[MirrorFragment]) -> String {
 }
 
 /// Recursively collect grammar names (starting with `@`) from fragment trees.
-fn collect_grammar_names_from_fragments<'a>(
-    fragments: &'a [MirrorFragment],
-    names: &mut Vec<&'a str>,
+fn collect_grammar_names_from_fragments(
+    fragments: &[MirrorFragment],
+    names: &mut Vec<String>,
 ) {
     use crate::declaration::MirrorFragmentExt;
     for frag in fragments {
-        let data = frag.mirror_data();
+        let name = frag.mirror_ast().name().to_string();
         // Skip bare `@` — it's a structural reference, not a grammar name
-        if data.name.starts_with('@') && data.name.len() > 1 {
-            names.push(&data.name);
+        if name.starts_with('@') && name.len() > 1 {
+            names.push(name);
         }
         collect_grammar_names_from_fragments(frag.mirror_children(), names);
     }

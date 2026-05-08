@@ -3,6 +3,7 @@
 //! NO STRINGS for typed things. IoList for output. One function for any grammar.
 
 use crate::declaration::{DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, OpticOp};
+// MirrorData is a projection of MirrorAST for stringly-typed access
 use crate::mirror_runtime::CompiledShatter;
 
 // ---------------------------------------------------------------------------
@@ -512,7 +513,7 @@ pub fn emit_code_fragment(frag: &MirrorFragment, grammar: &CodeGrammar) -> IoLis
 }
 
 fn emit_frag_code(frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
-    let data = MirrorData::decode_from_fragment(frag.mirror_data());
+    let data = MirrorData::from_ast(frag.mirror_ast());
     match data.kind {
         DeclKind::Type => emit_type_code(&data, frag, grammar),
         DeclKind::Grammar => emit_module_code(&data, frag, grammar),
@@ -537,7 +538,7 @@ fn parse_field(s: &str) -> Option<(String, String)> {
 fn has_typed_fields(data: &MirrorData, frag: &MirrorFragment) -> bool {
     data.params.iter().any(|p| p.contains(':'))
         || frag.mirror_children().iter().any(|c| {
-            let cd = c.mirror_data();
+            let cd = MirrorData::from_ast(c.mirror_ast());
             (cd.kind == DeclKind::Type || cd.kind == DeclKind::Binding)
                 && (!cd.params.is_empty() || !cd.variants.is_empty())
         })
@@ -590,7 +591,7 @@ fn emit_struct_fields_code(
     }
 
     for child in frag.mirror_children() {
-        let cd = MirrorData::decode_from_fragment(child.mirror_data());
+        let cd = MirrorData::from_ast(child.mirror_ast());
         if cd.kind == DeclKind::Type || cd.kind == DeclKind::Binding {
             let field_type = if !cd.params.is_empty() {
                 cd.params[0].clone()

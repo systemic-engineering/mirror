@@ -97,7 +97,7 @@ fn decl_to_ast(kind: &DeclKind) -> (Kind, &'static str) {
 
 /// Convert a MirrorFragment tree into a Prism<AstNode> tree.
 fn fragment_to_prism(frag: &MirrorFragment) -> Prism<AstNode> {
-    let data = MirrorData::decode_from_fragment(frag.mirror_data());
+    let data = MirrorData::from_ast(frag.mirror_ast());
     let (kind, name) = decl_to_ast(&data.kind);
     let node = AstNode {
         kind,
