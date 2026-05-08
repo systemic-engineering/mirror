@@ -1009,7 +1009,10 @@ fn parse_decl(
         }
     }
 
-    // Build MirrorAST node with children — the parser produces typed AST directly.
+    // Build MirrorAST node with children — the parser produces typed AST.
+    // The AST is the primary representation; MirrorData is derived for fragment storage.
+    // Note: we use MirrorData::new() directly because to_mirror_data() doesn't
+    // preserve all DeclKind-specific params (e.g. prism params, default params).
     let _ast = build_ast_node_with_children(&kind, &name, &params, &variants, &parent_ref, children.clone());
     let mut data = MirrorData::new(kind, &name, params, variants);
     data.is_abstract = modifier;
