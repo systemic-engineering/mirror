@@ -4884,4 +4884,173 @@ grammar @ai {
             _ => false,
         }));
     }
+
+    // -----------------------------------------------------------------------
+    // parse_ast — the new parser API (emits MirrorAST directly)
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn parse_ast_type_enum() {
+        let source = "type color = red | blue";
+        let ast = parse_ast(source).ok().unwrap();
+        match &ast {
+            MirrorAST::Type(t) => {
+                assert_eq!(t.name.as_str(), "color");
+                assert_eq!(t.body, TypeBody::Enum(vec![
+                    Identifier::new("red"),
+                    Identifier::new("blue"),
+                ]));
+            }
+            other => panic!("expected Type, got {:?}", other.kind_name()),
+        }
+    }
+
+    #[test]
+    fn parse_ast_type_unit() {
+        let source = "type token";
+        let ast = parse_ast(source).ok().unwrap();
+        match &ast {
+            MirrorAST::Type(t) => {
+                assert_eq!(t.name.as_str(), "token");
+                assert_eq!(t.body, TypeBody::Unit);
+            }
+            other => panic!("expected Type, got {:?}", other.kind_name()),
+        }
+    }
+
+    #[test]
+    fn parse_ast_grammar() {
+        let source = "grammar @test {\n  type id\n}";
+        let ast = parse_ast(source).ok().unwrap();
+        match &ast {
+            MirrorAST::Grammar(g) => {
+                assert_eq!(g.name.as_str(), "@test");
+                assert!(g.parent.is_none());
+                assert_eq!(g.children.len(), 1);
+                match &g.children[0] {
+                    MirrorAST::Type(t) => assert_eq!(t.name.as_str(), "id"),
+                    other => panic!("expected Type child, got {:?}", other.kind_name()),
+                }
+            }
+            other => panic!("expected Grammar, got {:?}", other.kind_name()),
+        }
+    }
+
+    #[test]
+    fn parse_ast_grammar_with_parent() {
+        let source = "grammar @test < @actor {\n  type id\n}";
+        let ast = parse_ast(source).ok().unwrap();
+        match &ast {
+            MirrorAST::Grammar(g) => {
+                assert_eq!(g.name.as_str(), "@test");
+                assert_eq!(g.parent.as_ref().unwrap().as_str(), "@actor");
+            }
+            other => panic!("expected Grammar, got {:?}", other.kind_name()),
+        }
+    }
+
+    #[test]
+    fn parse_ast_action() {
+        let source = "action send(to: string) -> result";
+        let ast = parse_ast(source).ok().unwrap();
+        match &ast {
+            MirrorAST::Action(a) => {
+                assert_eq!(a.name.as_str(), "send");
+                assert_eq!(a.params.len(), 1);
+                assert_eq!(a.params[0].name.as_str(), "to");
+                assert_eq!(a.params[0].type_ref.as_str(), "string");
+                assert_eq!(a.return_type.as_ref().unwrap().as_str(), "result");
+            }
+            other => panic!("expected Action, got {:?}", other.kind_name()),
+        }
+    }
+
+    #[test]
+    fn parse_ast_import() {
+        let source = "in @tools";
+        let ast = parse_ast(source).ok().unwrap();
+        match &ast {
+            MirrorAST::Import(i) => {
+                assert_eq!(i.target.as_str(), "@tools");
+            }
+            other => panic!("expected Import, got {:?}", other.kind_name()),
+        }
+    }
+
+    #[test]
+    fn parse_ast_export() {
+        let source = "out send";
+        let ast = parse_ast(source).ok().unwrap();
+        match &ast {
+            MirrorAST::Export(e) => {
+                assert_eq!(e.name.as_str(), "send");
+            }
+            other => panic!("expected Export, got {:?}", other.kind_name()),
+        }
+    }
+
+    #[test]
+    fn parse_ast_property() {
+        let source = "property valid(x: int)";
+        let ast = parse_ast(source).ok().unwrap();
+        match &ast {
+            MirrorAST::Property(p) => {
+                assert_eq!(p.name.as_str(), "valid");
+                assert_eq!(p.params.len(), 1);
+                assert_eq!(p.params[0].name.as_str(), "x");
+                assert_eq!(p.params[0].type_ref.as_str(), "int");
+            }
+            other => panic!("expected Property, got {:?}", other.kind_name()),
+        }
+    }
+
+    #[test]
+    fn parse_ast_focus() {
+        let source = "focus details(user)";
+        let ast = parse_ast(source).ok().unwrap();
+        match &ast {
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.name.as_str(), "details");
+                assert_eq!(f.target.as_ref().unwrap().as_str(), "user");
+            }
+            other => panic!("expected Focus, got {:?}", other.kind_name()),
+        }
+    }
+
+    #[test]
+    fn parse_ast_split() {
+        let source = "split route = left | right";
+        let ast = parse_ast(source).ok().unwrap();
+        match &ast {
+            MirrorAST::Split(s) => {
+                assert_eq!(s.name.as_str(), "route");
+                assert_eq!(s.variants.len(), 2);
+                assert_eq!(s.variants[0].as_str(), "left");
+                assert_eq!(s.variants[1].as_str(), "right");
+            }
+            other => panic!("expected Split, got {:?}", other.kind_name()),
+        }
+    }
+
+    #[test]
+    fn parse_ast_module_multiple_decls() {
+        let source = "type a\ntype b\n";
+        let ast = parse_ast(source).ok().unwrap();
+        match &ast {
+            MirrorAST::Module(m) => {
+                assert_eq!(m.children.len(), 2);
+            }
+            other => panic!("expected Module for multiple decls, got {:?}", other.kind_name()),
+        }
+    }
+
+    #[test]
+    fn parse_ast_roundtrip_through_fragment() {
+        let source = "type color = red | blue";
+        let ast = parse_ast(source).ok().unwrap();
+        let frag = ast.to_fragment();
+        // The fragment from parse_ast should match the old parse_form
+        let old_frag = parse_form(source).ok().unwrap();
+        assert_eq!(frag.content_hash(), old_frag.content_hash());
+    }
 }
