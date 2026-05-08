@@ -1,0 +1,41 @@
+in @prism
+in @trace
+
+-- @code/rust: grammar for Rust source code kintsugi.
+--
+-- Maps Rust constructs to the five operations:
+--   fn       -> zoom   (transform, cross levels)
+--   struct   -> split  (one of many, variants)
+--   enum     -> split  (one of many, variants)
+--   impl     -> focus  (look closer, namespace)
+--   mod      -> focus  (look closer, namespace)
+--   use      -> project (extract a view, import)
+--   trait    -> refract (scatter, verify, settle)
+--
+-- Kintsugi reductions operate on the MirrorAST representation.
+
+grammar @code/rust {
+  in @code
+  in @trace
+
+  -- Keyword-to-operation mappings for Rust source evaluation.
+  -- evaluate() reads these to know which Rust keywords map to which operations.
+  zoom fn
+  split struct
+  split enum
+  focus impl
+  focus mod
+  project use
+  refract trait
+
+  -- Kintsugi reductions for Rust code
+  action compile(self) -> artifact
+  action test(self) -> result
+  action lint(self) -> [diagnostic]
+  action flatten_nesting(ast) -> ast
+  action extract_function(ast, region) -> ast
+  action simplify_match(ast) -> ast
+  action remove_dead_code(ast) -> ast
+}
+
+out @code/rust

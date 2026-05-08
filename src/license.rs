@@ -171,22 +171,43 @@ impl<'a> ActionView<'a> {
 }
 
 /// Collect body text from a fragment for keyword detection.
-/// Actions store their body as raw text in the original Form, but in the
-/// fragment tree this becomes structured children or is lost. We reconstruct
-/// it by walking children and collecting names.
+///
+/// Actions store raw body text as a Focus node in the ZoomNode's body field.
+/// Structured children (mirror declarations) are in the fragment's children.
+/// We check both sources.
 fn collect_body_text(frag: &MirrorFragment) -> Option<String> {
+    use crate::mirror_ast::MirrorAST;
+    let ast = frag.mirror_ast();
+
+    // First check the AST body field (raw body text stored as Focus node)
+    if let MirrorAST::Zoom(z) = ast {
+        if let Some(ref body) = z.body {
+            let mut text = String::new();
+            for node in body {
+                if !text.is_empty() {
+                    text.push(' ');
+                }
+                text.push_str(node.name());
+            }
+            if !text.is_empty() {
+                return Some(text);
+            }
+        }
+    }
+
+    // Fall back to fragment children
     let children = frag.mirror_children();
     if children.is_empty() {
         return None;
     }
     let mut text = String::new();
     for child in children {
-        let ast = child.mirror_ast();
+        let child_ast = child.mirror_ast();
         if !text.is_empty() {
             text.push(' ');
         }
-        text.push_str(ast.name());
-        for p in ast.params_as_strings() {
+        text.push_str(child_ast.name());
+        for p in child_ast.params_as_strings() {
             text.push(' ');
             text.push_str(&p);
         }

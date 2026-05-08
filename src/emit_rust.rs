@@ -28,8 +28,15 @@ pub fn emit_rust(compiled: &CompiledShatter) -> String {
 /// Emit Rust source code from a MirrorAST node.
 ///
 /// This is the canonical entry point: takes a typed AST and produces Rust code.
+/// Inline children (e.g. FocusNode.children) are converted to fragment children.
 pub fn emit_rust_ast(ast: &MirrorAST) -> String {
-    let frag = crate::declaration::fragment(ast.clone(), vec![]);
+    use prism::MerkleTree;
+    let child_frags: Vec<MirrorFragment> = ast
+        .children()
+        .iter()
+        .map(|c| crate::declaration::fragment(c.clone(), vec![]))
+        .collect();
+    let frag = crate::declaration::fragment(ast.clone(), child_frags);
     emit_rust_fragment(&frag)
 }
 

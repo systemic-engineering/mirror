@@ -93,7 +93,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use prism::{Beam, Precision, ScalarLoss};
+    use prism::ScalarLoss;
 
     #[test]
     fn default_config() {
