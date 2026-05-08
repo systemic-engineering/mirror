@@ -2,11 +2,11 @@
 //!
 //! SEL (Systemic Ethics License) properties are compile-time checks derived from
 //! the systemic.engineering corpus. Each property maps a named extraction pattern
-//! to a structural invariant on the parsed Form tree.
+//! to a structural invariant on the parsed MirrorFragment tree.
 //!
 //! ## Honesty
 //!
-//! v1 detection is heuristic, based on naming conventions in the parsed Form.
+//! v1 detection is heuristic, based on naming conventions in the parsed fragment.
 //! This catches obvious cases: an action named `track` that calls `record` without
 //! a `consent` parameter. It does NOT catch obfuscated extraction. The structural
 //! Petri net LP analysis (v2) will cover those cases.
@@ -14,8 +14,8 @@
 //! A heuristic that names what it checks honestly is more useful than a perfect
 //! system that doesn't exist yet.
 
+use crate::declaration::{MirrorFragment, MirrorFragmentExt};
 use crate::loss::MirrorLoss;
-use crate::mirror_runtime::Form;
 use prism::Imperfect;
 
 // ---------------------------------------------------------------------------
@@ -25,16 +25,16 @@ use prism::Imperfect;
 /// Which license governs the grammar.
 #[derive(Clone, Debug, PartialEq)]
 pub enum License {
-    /// Apache 2.0 — no restrictions on observation or action.
+    /// Apache 2.0 -- no restrictions on observation or action.
     Apache2,
-    /// Systemic Ethics License — structural property checks enforced.
+    /// Systemic Ethics License -- structural property checks enforced.
     SEL,
 }
 
 /// A license property violation detected during compilation.
 #[derive(Clone, Debug, PartialEq)]
 pub struct LicenseViolation {
-    /// SEL clause reference (e.g. "§3.2.2").
+    /// SEL clause reference (e.g. "S3.2.2").
     pub clause: String,
     /// Property name (e.g. "no_implicit_consent").
     pub property: String,
@@ -52,32 +52,32 @@ impl std::fmt::Display for LicenseViolation {
 // Top-level check
 // ---------------------------------------------------------------------------
 
-/// Check a parsed Form against license properties.
+/// Check a parsed MirrorFragment against license properties.
 ///
-/// Apache2: no restrictions — always succeeds.
+/// Apache2: no restrictions -- always succeeds.
 /// SEL: runs all structural property checks. First violation fails.
-pub fn check_license(form: &Form, license: License) -> Imperfect<(), LicenseViolation, MirrorLoss> {
+pub fn check_license(frag: &MirrorFragment, license: License) -> Imperfect<(), LicenseViolation, MirrorLoss> {
     match license {
         License::Apache2 => Imperfect::Success(()),
-        License::SEL => check_sel_properties(form),
+        License::SEL => check_sel_properties(frag),
     }
 }
 
-/// Run all SEL property checks against a Form.
-fn check_sel_properties(form: &Form) -> Imperfect<(), LicenseViolation, MirrorLoss> {
+/// Run all SEL property checks against a MirrorFragment.
+fn check_sel_properties(frag: &MirrorFragment) -> Imperfect<(), LicenseViolation, MirrorLoss> {
     // Order matters: first violation wins. Specific checks run before general.
-    // 1. reciprocal_flow — narrow: user_content params + value extraction + no return
-    // 2. symmetric_observation — narrow: observation action name + third party + no return
-    // 3. no_implicit_consent — broad: any side effect without consent parameter
-    // 4. sustainable_stock — consumption without replenishment
-    // 5-6. declared_dependencies, no_tragedy — require Petri net analysis (v2 stubs)
+    // 1. reciprocal_flow -- narrow: user_content params + value extraction + no return
+    // 2. symmetric_observation -- narrow: observation action name + third party + no return
+    // 3. no_implicit_consent -- broad: any side effect without consent parameter
+    // 4. sustainable_stock -- consumption without replenishment
+    // 5-6. declared_dependencies, no_tragedy -- require Petri net analysis (v2 stubs)
     let checks: Vec<Option<LicenseViolation>> = vec![
-        check_reciprocal_flow(form),
-        check_symmetric_observation(form),
-        check_no_implicit_consent(form),
-        check_sustainable_stock(form),
-        check_declared_dependencies(form),
-        check_no_tragedy(form),
+        check_reciprocal_flow(frag),
+        check_symmetric_observation(frag),
+        check_no_implicit_consent(frag),
+        check_sustainable_stock(frag),
+        check_declared_dependencies(frag),
+        check_no_tragedy(frag),
     ];
 
     if let Some(violation) = checks.into_iter().flatten().next() {
@@ -92,7 +92,7 @@ fn check_sel_properties(form: &Form) -> Imperfect<(), LicenseViolation, MirrorLo
 // ---------------------------------------------------------------------------
 
 /// Keywords in action body text that indicate downstream side effects.
-/// An action with side effects but no consent parameter violates §3.2.2.
+/// An action with side effects but no consent parameter violates S3.2.2.
 const SIDE_EFFECT_KEYWORDS: &[&str] = &[
     "send",
     "record",
@@ -144,24 +144,80 @@ const CONSUMPTION_KEYWORDS: &[&str] = &[
 ];
 
 // ---------------------------------------------------------------------------
-// Property checks — v1 heuristic (naming conventions)
+// Action view -- lightweight projection of a fragment for license checks
 // ---------------------------------------------------------------------------
 
-/// §3.2.2 — No implicit consent.
+/// Lightweight view of an action fragment for license checking.
+/// Replaces the old Form-based approach.
+struct ActionView<'a> {
+    name: &'a str,
+    params: Vec<String>,
+    body_text: Option<String>,
+}
+
+impl<'a> ActionView<'a> {
+    fn from_fragment(frag: &'a MirrorFragment) -> Self {
+        let ast = frag.mirror_ast();
+        // Reconstruct body_text from children names (for action bodies stored as raw text).
+        // Actions parsed with raw body text have it stored in the fragment's body field,
+        // but since we only do keyword detection, checking child names is sufficient.
+        let body_text = collect_body_text(frag);
+        ActionView {
+            name: ast.name(),
+            params: ast.params_as_strings(),
+            body_text,
+        }
+    }
+}
+
+/// Collect body text from a fragment for keyword detection.
+/// Actions store their body as raw text in the original Form, but in the
+/// fragment tree this becomes structured children or is lost. We reconstruct
+/// it by walking children and collecting names.
+fn collect_body_text(frag: &MirrorFragment) -> Option<String> {
+    let children = frag.mirror_children();
+    if children.is_empty() {
+        return None;
+    }
+    let mut text = String::new();
+    for child in children {
+        let ast = child.mirror_ast();
+        if !text.is_empty() {
+            text.push(' ');
+        }
+        text.push_str(ast.name());
+        for p in ast.params_as_strings() {
+            text.push(' ');
+            text.push_str(&p);
+        }
+        // Recurse into grandchildren
+        if let Some(inner) = collect_body_text(child) {
+            text.push(' ');
+            text.push_str(&inner);
+        }
+    }
+    if text.is_empty() { None } else { Some(text) }
+}
+
+// ---------------------------------------------------------------------------
+// Property checks -- v1 heuristic (naming conventions)
+// ---------------------------------------------------------------------------
+
+/// S3.2.2 -- No implicit consent.
 ///
 /// An action that has downstream effects (calls to send, record, store, train, etc.)
 /// without a `consent` parameter is a consent violation. Silence is never agreement.
 ///
 /// Detection: walk actions. Check params for "consent". Check body for side-effect
-/// keywords. Side effects without consent → violation.
-fn check_no_implicit_consent(form: &Form) -> Option<LicenseViolation> {
-    for action in collect_actions(form) {
+/// keywords. Side effects without consent -> violation.
+fn check_no_implicit_consent(frag: &MirrorFragment) -> Option<LicenseViolation> {
+    for action in collect_actions(frag) {
         let has_consent = params_contain_any(&action.params, &["consent"]);
         let has_effects = body_contains_any(&action.body_text, SIDE_EFFECT_KEYWORDS);
 
         if has_effects && !has_consent {
             return Some(LicenseViolation {
-                clause: "§3.2.2".into(),
+                clause: "\u{00a7}3.2.2".into(),
                 property: "no_implicit_consent".into(),
                 message: format!(
                     "action '{}' has downstream effects without consent parameter",
@@ -173,14 +229,14 @@ fn check_no_implicit_consent(form: &Form) -> Option<LicenseViolation> {
     None
 }
 
-/// §3.1.1 — Reciprocal flow.
+/// S3.1.1 -- Reciprocal flow.
 ///
 /// An action that takes user input and produces output without returning anything
 /// to the user is one-way value extraction.
 ///
 /// Detection: walk actions. Check if params contain user/input/content keywords.
-/// Check if body returns value to user. Input without output → violation.
-fn check_reciprocal_flow(form: &Form) -> Option<LicenseViolation> {
+/// Check if body returns value to user. Input without output -> violation.
+fn check_reciprocal_flow(frag: &MirrorFragment) -> Option<LicenseViolation> {
     // Value extraction keywords: the action transforms user input into something
     // it keeps (model training, data aggregation, etc.) without returning value.
     let value_extraction_keywords: &[&str] = &[
@@ -194,14 +250,14 @@ fn check_reciprocal_flow(form: &Form) -> Option<LicenseViolation> {
         "save",
     ];
     let user_input_keywords = &["user_content", "user_input", "user_data"];
-    for action in collect_actions(form) {
+    for action in collect_actions(frag) {
         let takes_user_input = params_contain_any(&action.params, user_input_keywords);
         let extracts_value = body_contains_any(&action.body_text, value_extraction_keywords);
         let returns_to_user = body_contains_any(&action.body_text, USER_RETURN_KEYWORDS);
 
         if takes_user_input && extracts_value && !returns_to_user {
             return Some(LicenseViolation {
-                clause: "§3.1.1".into(),
+                clause: "\u{00a7}3.1.1".into(),
                 property: "reciprocal_flow".into(),
                 message: format!(
                     "action '{}' takes user input and extracts value without returning to user",
@@ -213,18 +269,18 @@ fn check_reciprocal_flow(form: &Form) -> Option<LicenseViolation> {
     None
 }
 
-/// §3.3.1 — Symmetric observation.
+/// S3.3.1 -- Symmetric observation.
 ///
 /// Observation data collected about a party without that party having access.
 /// If you observe someone, they get to see the observation.
 ///
 /// Detection: walk actions. Find observation keywords. Check if output goes to
-/// observed party. Asymmetric observation → violation.
-fn check_symmetric_observation(form: &Form) -> Option<LicenseViolation> {
+/// observed party. Asymmetric observation -> violation.
+fn check_symmetric_observation(frag: &MirrorFragment) -> Option<LicenseViolation> {
     let observation_action_names: &[&str] =
         &["observe", "monitor", "watch", "surveil", "audit", "inspect"];
-    for action in collect_actions(form) {
-        // Require the action NAME to indicate observation — body keywords alone
+    for action in collect_actions(frag) {
+        // Require the action NAME to indicate observation -- body keywords alone
         // are too broad (e.g. "record" appears in non-observation contexts).
         let name_indicates_observation = observation_action_names
             .iter()
@@ -239,7 +295,7 @@ fn check_symmetric_observation(form: &Form) -> Option<LicenseViolation> {
             && !returns_to_observed
         {
             return Some(LicenseViolation {
-                clause: "§3.3.1".into(),
+                clause: "\u{00a7}3.3.1".into(),
                 property: "symmetric_observation".into(),
                 message: format!(
                     "action '{}' observes a party and sends data to third party without returning to observed",
@@ -251,29 +307,29 @@ fn check_symmetric_observation(form: &Form) -> Option<LicenseViolation> {
     None
 }
 
-/// §3.1.2 — Declared dependencies.
+/// S3.1.2 -- Declared dependencies.
 ///
 /// Actions that use inputs from other actors without attributing them.
 /// Invisible labor is a structural precondition for extraction.
 ///
 /// Detection: walk actions. Find calls to other actors (@domain.action).
 /// Check if credit/attribution includes all contributing actors.
-fn check_declared_dependencies(form: &Form) -> Option<LicenseViolation> {
+fn check_declared_dependencies(frag: &MirrorFragment) -> Option<LicenseViolation> {
     // v1 heuristic: check if body references @domain.action patterns without
     // the domain being declared in the grammar's children. This is a rough
-    // approximation — full dependency tracking requires the Petri net model.
-    let _ = form;
+    // approximation -- full dependency tracking requires the Petri net model.
+    let _ = frag;
     None
 }
 
-/// §3.1.5 — Sustainable stock.
+/// S3.1.5 -- Sustainable stock.
 ///
 /// Resources consumed without replenishment. If you drain it, you must refill it.
 ///
 /// Detection: walk actions. Find consumption keywords. Check if there's a
 /// corresponding replenishment action/path.
-fn check_sustainable_stock(form: &Form) -> Option<LicenseViolation> {
-    for action in collect_actions(form) {
+fn check_sustainable_stock(frag: &MirrorFragment) -> Option<LicenseViolation> {
+    for action in collect_actions(frag) {
         let consumes = body_contains_any(&action.body_text, CONSUMPTION_KEYWORDS);
         // v1 heuristic: if the action body contains consumption keywords but no
         // replenishment keywords, flag it. Replenishment = any keyword that suggests
@@ -291,7 +347,7 @@ fn check_sustainable_stock(form: &Form) -> Option<LicenseViolation> {
 
         if consumes && !replenishes {
             return Some(LicenseViolation {
-                clause: "§3.1.5".into(),
+                clause: "\u{00a7}3.1.5".into(),
                 property: "sustainable_stock".into(),
                 message: format!(
                     "action '{}' consumes resources without replenishment path",
@@ -303,18 +359,18 @@ fn check_sustainable_stock(form: &Form) -> Option<LicenseViolation> {
     None
 }
 
-/// §3.1.3 — No tragedy of the commons.
+/// S3.1.3 -- No tragedy of the commons.
 ///
 /// Shared resources consumed by multiple actors without bounds.
 ///
-/// Detection: walk the Form tree. Find types consumed by multiple actions.
+/// Detection: walk the fragment tree. Find types consumed by multiple actions.
 /// Check if consumption is bounded.
-fn check_no_tragedy(form: &Form) -> Option<LicenseViolation> {
+fn check_no_tragedy(frag: &MirrorFragment) -> Option<LicenseViolation> {
     // v1 heuristic: tragedy detection requires multi-actor analysis over the
-    // incidence matrix. Naming convention detection is insufficient here —
+    // incidence matrix. Naming convention detection is insufficient here --
     // the topology (shared bounded resources with multiple consumers and no
     // replenishment) requires the Petri net LP analysis (v2).
-    let _ = form;
+    let _ = frag;
     None
 }
 
@@ -322,13 +378,14 @@ fn check_no_tragedy(form: &Form) -> Option<LicenseViolation> {
 // Helpers
 // ---------------------------------------------------------------------------
 
-/// Collect all action Forms from a Form tree (recursive).
-fn collect_actions(form: &Form) -> Vec<&Form> {
+/// Collect all action views from a MirrorFragment tree (recursive).
+fn collect_actions(frag: &MirrorFragment) -> Vec<ActionView<'_>> {
     let mut actions = Vec::new();
-    if form.kind == "action" {
-        actions.push(form);
+    let ast = frag.mirror_ast();
+    if ast.decl_tag() == "action" {
+        actions.push(ActionView::from_fragment(frag));
     }
-    for child in &form.children {
+    for child in frag.mirror_children() {
         actions.extend(collect_actions(child));
     }
     actions
@@ -359,7 +416,7 @@ mod tests {
     use crate::mirror_runtime::parse_form;
 
     // -----------------------------------------------------------------------
-    // Apache2 — no restrictions
+    // Apache2 -- no restrictions
     // -----------------------------------------------------------------------
 
     #[test]
@@ -372,13 +429,14 @@ mod tests {
                 }
             }
         "#;
-        let form = parse_form(source).unwrap();
-        let result = check_license(&form, License::Apache2);
+        let frag: Result<_, _> = parse_form(source).into();
+        let frag = frag.unwrap();
+        let result = check_license(&frag, License::Apache2);
         assert!(result.is_ok(), "Apache2 should impose no restrictions");
     }
 
     // -----------------------------------------------------------------------
-    // §3.2.2 — no_implicit_consent
+    // S3.2.2 -- no_implicit_consent
     // -----------------------------------------------------------------------
 
     #[test]
@@ -391,14 +449,15 @@ mod tests {
                 }
             }
         "#;
-        let form = parse_form(source).unwrap();
-        let result = check_license(&form, License::SEL);
+        let frag: Result<_, _> = parse_form(source).into();
+        let frag = frag.unwrap();
+        let result = check_license(&frag, License::SEL);
         assert!(
             result.is_err(),
             "tracking without consent should be rejected"
         );
         let violation = result.err().unwrap();
-        assert_eq!(violation.clause, "§3.2.2");
+        assert_eq!(violation.clause, "\u{00a7}3.2.2");
         assert_eq!(violation.property, "no_implicit_consent");
     }
 
@@ -412,8 +471,9 @@ mod tests {
                 }
             }
         "#;
-        let form = parse_form(source).unwrap();
-        let result = check_license(&form, License::SEL);
+        let frag: Result<_, _> = parse_form(source).into();
+        let frag = frag.unwrap();
+        let result = check_license(&frag, License::SEL);
         // With consent parameter present, no_implicit_consent should pass.
         // Other checks might still fail, but consent is not the issue.
         let no_consent_violation = match &result {
@@ -427,7 +487,7 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // §3.1.1 — reciprocal_flow
+    // S3.1.1 -- reciprocal_flow
     // -----------------------------------------------------------------------
 
     #[test]
@@ -441,14 +501,15 @@ mod tests {
                 }
             }
         "#;
-        let form = parse_form(source).unwrap();
-        let result = check_license(&form, License::SEL);
+        let frag: Result<_, _> = parse_form(source).into();
+        let frag = frag.unwrap();
+        let result = check_license(&frag, License::SEL);
         assert!(
             result.is_err(),
             "one-way value extraction should be rejected"
         );
         let violation = result.err().unwrap();
-        assert_eq!(violation.clause, "§3.1.1");
+        assert_eq!(violation.clause, "\u{00a7}3.1.1");
         assert_eq!(violation.property, "reciprocal_flow");
     }
 
@@ -463,8 +524,9 @@ mod tests {
                 }
             }
         "#;
-        let form = parse_form(source).unwrap();
-        let result = check_license(&form, License::SEL);
+        let frag: Result<_, _> = parse_form(source).into();
+        let frag = frag.unwrap();
+        let result = check_license(&frag, License::SEL);
         let reciprocal_violation = match &result {
             Imperfect::Failure(v, _) => v.property == "reciprocal_flow",
             _ => false,
@@ -476,7 +538,7 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // §3.3.1 — symmetric_observation
+    // S3.3.1 -- symmetric_observation
     // -----------------------------------------------------------------------
 
     #[test]
@@ -490,11 +552,12 @@ mod tests {
                 }
             }
         "#;
-        let form = parse_form(source).unwrap();
-        let result = check_license(&form, License::SEL);
+        let frag: Result<_, _> = parse_form(source).into();
+        let frag = frag.unwrap();
+        let result = check_license(&frag, License::SEL);
         assert!(result.is_err(), "asymmetric observation should be rejected");
         let violation = result.err().unwrap();
-        assert_eq!(violation.clause, "§3.3.1");
+        assert_eq!(violation.clause, "\u{00a7}3.3.1");
         assert_eq!(violation.property, "symmetric_observation");
     }
 
@@ -509,8 +572,9 @@ mod tests {
                 }
             }
         "#;
-        let form = parse_form(source).unwrap();
-        let result = check_license(&form, License::SEL);
+        let frag: Result<_, _> = parse_form(source).into();
+        let frag = frag.unwrap();
+        let result = check_license(&frag, License::SEL);
         let observation_violation = match &result {
             Imperfect::Failure(v, _) => v.property == "symmetric_observation",
             _ => false,
@@ -522,7 +586,7 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // §3.1.5 — sustainable_stock
+    // S3.1.5 -- sustainable_stock
     // -----------------------------------------------------------------------
 
     #[test]
@@ -535,19 +599,20 @@ mod tests {
                 }
             }
         "#;
-        let form = parse_form(source).unwrap();
-        let result = check_license(&form, License::SEL);
+        let frag: Result<_, _> = parse_form(source).into();
+        let frag = frag.unwrap();
+        let result = check_license(&frag, License::SEL);
         assert!(
             result.is_err(),
             "consumption without replenishment should be rejected"
         );
         let violation = result.err().unwrap();
-        assert_eq!(violation.clause, "§3.1.5");
+        assert_eq!(violation.clause, "\u{00a7}3.1.5");
         assert_eq!(violation.property, "sustainable_stock");
     }
 
     // -----------------------------------------------------------------------
-    // Full ethical grammar — all checks pass
+    // Full ethical grammar -- all checks pass
     // -----------------------------------------------------------------------
 
     #[test]
@@ -561,8 +626,9 @@ mod tests {
                 }
             }
         "#;
-        let form = parse_form(source).unwrap();
-        let result = check_license(&form, License::SEL);
+        let frag: Result<_, _> = parse_form(source).into();
+        let frag = frag.unwrap();
+        let result = check_license(&frag, License::SEL);
         assert!(result.is_ok(), "ethical code should compile under SEL");
     }
 
@@ -580,12 +646,12 @@ mod tests {
     #[test]
     fn license_violation_display() {
         let v = LicenseViolation {
-            clause: "§3.2.2".into(),
+            clause: "\u{00a7}3.2.2".into(),
             property: "no_implicit_consent".into(),
             message: "action 'track' has downstream effects without consent".into(),
         };
         let s = format!("{}", v);
-        assert!(s.contains("§3.2.2"));
+        assert!(s.contains("\u{00a7}3.2.2"));
         assert!(s.contains("no_implicit_consent"));
         assert!(s.contains("track"));
     }
@@ -593,7 +659,7 @@ mod tests {
     #[test]
     fn license_violation_clone() {
         let v = LicenseViolation {
-            clause: "§3.1.1".into(),
+            clause: "\u{00a7}3.1.1".into(),
             property: "reciprocal_flow".into(),
             message: "one-way extraction".into(),
         };
@@ -617,8 +683,9 @@ mod tests {
                 }
             }
         "#;
-        let form = parse_form(source).unwrap();
-        let actions = collect_actions(&form);
+        let frag: Result<_, _> = parse_form(source).into();
+        let frag = frag.unwrap();
+        let actions = collect_actions(&frag);
         assert_eq!(actions.len(), 2);
     }
 

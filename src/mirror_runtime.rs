@@ -14,14 +14,14 @@
 //! else is learned by reading boot files in order.
 //!
 //! `MirrorRegistry` is the shared state between Rust and Mirror, backed by
-//! `FrgmntStore<MirrorFragment>` from the fragmentation crate. Form names
+//! `FrgmntStore<MirrorFragment>` from the fragmentation crate. Fragment names
 //! (`@prism`, `@meta`, `@actor`) are stored as named refs pointing at the
 //! OIDs of the MirrorFragments that declared them. The store IS the registry;
 //! the registry is just a typed surface over it.
 //!
 //! As each boot file is compiled:
 //!
-//! 1. Parse → `Form` (structural).
+//! 1. Parse → `MirrorAST` (structural).
 //! 2. `registry.resolve(&form)` checks every `in @X` reference against the
 //!    store's named refs. Failure means missing prerequisite.
 //! 3. `registry.register(&form)` compiles each top-level `@X` declaration to
@@ -43,7 +43,7 @@
 //!
 //! ## Pipeline
 //!
-//! - parse `.mirror` source → `Form` tree
+//! - parse `.mirror` source → `MirrorAST` tree
 //! - resolve against accumulated `MirrorRegistry`
 //! - register the file's top-level forms into the registry's store
 //! - wrap into `Shatter`, the runtime artifact
@@ -99,118 +99,14 @@ impl std::fmt::Display for MirrorResolveError {
 
 impl std::error::Error for MirrorResolveError {}
 
-// ---------------------------------------------------------------------------
-// Form — parser-internal intermediate, kept for emit_rust compatibility.
-// ---------------------------------------------------------------------------
-
-/// `Form` is the parsed-but-not-yet-content-addressed view: kind / name /
-/// params / variants / nested children. Parser-internal intermediate.
-/// The public API returns `MirrorFragment` via `parse_form`.
-#[derive(Clone, Debug, Eq)]
-pub(crate) struct Form {
-    pub kind: &'static str,
-    pub name: String,
-    pub params: Vec<String>,
-    pub variants: Vec<String>,
-    pub children: Vec<Form>,
-    /// For `action` declarations: the grammar reference (e.g. `@code/rust`).
-    pub grammar_ref: Option<String>,
-    /// For `action` declarations: the raw body text, brace-balanced but unparsed.
-    pub body_text: Option<String>,
-    /// Whether this declaration has the `abstract` modifier.
-    pub is_abstract: bool,
-    /// Optional return type annotation (e.g. `-> [completion]`).
-    pub return_type: Option<String>,
-    /// Optic operators found in this declaration.
-    pub optic_ops: Vec<OpticOp>,
-    /// For `grammar` declarations: the parent grammar reference (e.g. `@actor`).
-    pub parent_ref: Option<String>,
-}
-
-impl PartialEq for Form {
-    fn eq(&self, other: &Self) -> bool {
-        self.kind == other.kind
-            && self.name == other.name
-            && self.params == other.params
-            && self.variants == other.variants
-            && self.children == other.children
-            && self.grammar_ref == other.grammar_ref
-            && self.body_text == other.body_text
-            && self.is_abstract == other.is_abstract
-            && self.return_type == other.return_type
-            && self.parent_ref == other.parent_ref
-    }
-}
-
-impl Form {
-    pub fn new(
-        kind: &'static str,
-        name: impl Into<String>,
-        params: Vec<String>,
-        variants: Vec<String>,
-        children: Vec<Form>,
-    ) -> Self {
-        Form {
-            kind,
-            name: name.into(),
-            params,
-            variants,
-            children,
-            grammar_ref: None,
-            body_text: None,
-            is_abstract: false,
-            return_type: None,
-            optic_ops: Vec::new(),
-            parent_ref: None,
-        }
-    }
-
-    pub fn from_fragment(frag: &MirrorFragment) -> Form {
-        let ast = frag.mirror_ast();
-        let children: Vec<Form> = frag
-            .mirror_children()
-            .iter()
-            .map(Form::from_fragment)
-            .collect();
-        Form {
-            kind: ast.decl_tag(),
-            name: ast.name().to_string(),
-            params: ast.params_as_strings(),
-            variants: ast.variants_as_strings(),
-            children,
-            grammar_ref: ast.grammar_ref_str(),
-            body_text: None,
-            is_abstract: ast.is_abstract(),
-            return_type: ast.return_type_str(),
-            optic_ops: Vec::new(),
-            parent_ref: ast.parent_ref_str(),
-        }
-    }
-
-    /// Project a MirrorAST into a Form view (replaces MirrorData::from_ast).
-    pub fn from_ast_projection(ast: &MirrorAST) -> Form {
-        Form {
-            kind: ast.decl_tag(),
-            name: ast.name().to_string(),
-            params: ast.params_as_strings(),
-            variants: ast.variants_as_strings(),
-            children: vec![],
-            grammar_ref: ast.grammar_ref_str(),
-            body_text: None,
-            is_abstract: ast.is_abstract(),
-            return_type: ast.return_type_str(),
-            optic_ops: Vec::new(),
-            parent_ref: ast.parent_ref_str(),
-        }
-    }
-}
+// Form struct removed — parser emits MirrorAST directly.
 
 // ---------------------------------------------------------------------------
 // Shatter — the compilation artifact, a Prism implementation.
 // ---------------------------------------------------------------------------
 
 /// `Shatter` is the compilation artifact of `MirrorRuntime`. It implements
-/// the `Prism` trait: three operations move a `Form` into and out of its
+/// the `Prism` trait: three operations move a `MirrorFragment` into and out of its
 /// content-addressed representation.
 #[derive(Clone, Debug, Default)]
 pub struct Shatter;
@@ -239,7 +135,7 @@ impl Prism for Shatter {
     }
 }
 
-// Shatter test methods removed — Form is dead.
+// Shatter test methods removed.
 
 // ---------------------------------------------------------------------------
 // Parser — line-oriented, brace-balanced.
@@ -1792,9 +1688,9 @@ impl CompiledShatter {
     pub fn form_name(&self) -> &str {
         self.fragment.mirror_ast().name()
     }
-    /// Get the Form projection from the fragment.
-    pub fn data(&self) -> Form {
-        Form::from_fragment(&self.fragment)
+    /// Get the AST from the fragment.
+    pub fn ast(&self) -> &MirrorAST {
+        self.fragment.mirror_ast()
     }
 }
 
@@ -2240,7 +2136,7 @@ impl MirrorRegistry {
     }
 }
 
-// Form-based registry methods removed — Form is dead.
+// Form-based registry methods removed.
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -2447,8 +2343,8 @@ mod tests {
             .compile_file(&boot_dir().join("00-prism.mirror"))
             .unwrap();
         // 00-prism.mirror has multiple declarations, so they're wrapped in a
-        // synthetic file-level Form.
-        assert_eq!(compiled.data().kind, "form");
+        // synthetic file-level Module.
+        assert_eq!(compiled.ast().decl_tag(), "form");
         assert!(compiled.fragment.mirror_children().len() >= 2);
         // Look for @prism declaration
         let prism_decl = compiled
@@ -2494,7 +2390,7 @@ mod tests {
         let store_dir = tempdir_for_test("compiles_full_boot_dir");
         let boot = runtime.compile_boot_dir(&boot_dir(), &store_dir).unwrap();
         assert!(boot.resolved.len() + boot.failed.len() >= 8);
-        assert_eq!(boot.collapsed.data().name, "mirror");
+        assert_eq!(boot.collapsed.ast().name(), "mirror");
         assert!(boot.collapsed.fragment.mirror_children().len() >= 8);
 
         let store_dir2 = tempdir_for_test("compiles_full_boot_dir_2");
@@ -2510,7 +2406,7 @@ mod tests {
             .unwrap();
         // The property kernel now has `out` statements at top level alongside
         // `grammar @property { ... }`, so the form is a synthetic wrapper.
-        assert_eq!(compiled.data().name, "");
+        assert_eq!(compiled.ast().name(), "");
         // The @property grammar block is a child of the wrapper.
         let grammar = compiled.fragment.mirror_children().iter().find(|f| {
             let d = f.mirror_ast();
@@ -2916,8 +2812,8 @@ mod tests {
         let compiled = runtime
             .compile_file(&boot_dir().join("01b-meta-action.mirror"))
             .unwrap();
-        // 01b-meta-action.mirror has multiple top-level declarations, wrapped in synthetic Form
-        assert_eq!(compiled.data().kind, "form");
+        // 01b-meta-action.mirror has multiple top-level declarations, wrapped in synthetic Module
+        assert_eq!(compiled.ast().decl_tag(), "form");
         // Should contain: in @prism, in @meta, in @actor, prism action, action action, out action/collapse
         let action_decls: Vec<&MirrorFragment> = compiled
             .fragment
@@ -2930,8 +2826,8 @@ mod tests {
             1,
             "01b-meta-action.mirror has one action declaration"
         );
-        let action_data = Form::from_ast_projection(action_decls[0].mirror_ast());
-        assert_eq!(action_data.name, "action");
+        let action_ast = action_decls[0].mirror_ast();
+        assert_eq!(action_ast.name(), "action");
         // The action body contains mirror declaration keywords (focus, project, etc.)
         // so it's parsed as structured children, not raw body text.
         assert!(
@@ -3901,18 +3797,17 @@ grammar @ai {
             Imperfect::Success(c) => {
                 // If Success, the operator content must be captured somewhere.
                 // `~>` should not vanish. Check that variants or params captured it.
-                let data = c.data();
-                let has_content = !data.variants.is_empty()
-                    || !data.params.is_empty()
+                let ast = c.ast();
+                let has_content = !ast.variants_as_strings().is_empty()
+                    || !ast.params_as_strings().is_empty()
                     || c.fragment.mirror_children().iter().any(|ch| {
-                        let d = Form::from_ast_projection(ch.mirror_ast());
-                        !d.variants.is_empty()
+                        !ch.mirror_ast().variants_as_strings().is_empty()
                     });
                 assert!(
                     has_content,
                     "unknown operator ~> must not be silently dropped. \
                      type x should capture the remaining content. Got: {:?}",
-                    data
+                    ast
                 );
             }
             Imperfect::Partial(_, loss) => {
@@ -4138,11 +4033,11 @@ grammar @ai {
                 // If somehow Success, the second `=` must not vanish
                 // `y` should be captured as a variant (from `= y`)
                 // but `= =` is malformed — we expect this to not be clean
-                let data = c.data();
+                let ast = c.ast();
                 assert!(
-                    !data.variants.is_empty() || !c.fragment.mirror_children().is_empty(),
+                    !ast.variants_as_strings().is_empty() || !c.fragment.mirror_children().is_empty(),
                     "double operator = = must not produce empty result: {:?}",
-                    data
+                    ast
                 );
             }
             Imperfect::Partial(_, _) | Imperfect::Failure(_, _) => {
@@ -4204,50 +4099,29 @@ grammar @ai {
         // Currently it's Option<String> — this test documents the gap.
         // When grammar_ref becomes Imperfect, this assertion flips.
         assert!(
-            compiled.data().grammar_ref.is_none(),
+            compiled.ast().grammar_ref_str().is_none(),
             "BASELINE: grammar_ref is still Option (should become Imperfect)"
         );
     }
 
     // -----------------------------------------------------------------------
-    // Fractal as AST — Form dissolves into Fractal<MirrorData>
+    // Fractal as AST — Form is dead, Fractal<MirrorAST> is the one representation
     // -----------------------------------------------------------------------
 
-    /// The compile result should be a Fractal, not a Form.
-    /// Form is a parallel AST. Fractal<MirrorData> is the content-addressed
-    /// tree. There should be one representation, not two.
-    ///
-    /// When this passes, compile_source returns Imperfect<MirrorFragment, ...>
-    /// and the separate Form struct is gone. The optics navigate the Fractal
-    /// directly. The OID is computed during parsing, not after.
+    /// compile_source returns Imperfect<CompiledShatter, ...> where
+    /// CompiledShatter wraps MirrorFragment (Fractal<MirrorAST>).
+    /// The AST is the content-addressed tree. One representation.
     #[test]
-    fn compile_returns_fractal_not_form() {
+    fn compile_returns_fractal_directly() {
         let runtime = MirrorRuntime::new();
         let result = runtime.compile_source("type color = red | blue\n");
         let compiled = result.ok().unwrap();
 
-        // Currently: CompiledShatter has both form and fragment.
-        // The fragment IS the content-addressed version of the form.
-        // They carry the same information — one is redundant.
-        //
-        // Goal: compile returns the fragment directly. No intermediate Form.
-        // The Fractal IS the AST. The optics navigate it.
-
-        // The fragment should be navigable with the same data as the form
-        let data = compiled.data();
-        let fragment_name = &compiled.fragment.mirror_ast().name();
-        assert_eq!(
-            &data.name, fragment_name,
-            "data() and fragment carry the same name"
-        );
-
-        // Form is now an internal parser intermediate only.
-        // The external API returns MirrorFragment directly.
-        // parse_form returns MirrorFragment. CompiledShatter wraps MirrorFragment.
-        assert!(
-            true,
-            "DONE: compile API returns fragment directly, Form is parser-internal"
-        );
+        // The fragment IS the AST. The optics navigate it.
+        let ast = compiled.ast();
+        assert_eq!(ast.name(), "color");
+        assert_eq!(ast.decl_tag(), "type");
+        assert!(!ast.variants_as_strings().is_empty());
     }
 
     // -----------------------------------------------------------------------
@@ -4360,8 +4234,8 @@ grammar @ai {
             .mirror_children()
             .iter()
             .find(|f| {
-                let d = Form::from_ast_projection(f.mirror_ast());
-                d.kind == "grammar" && d.name == "@property"
+                let a = f.mirror_ast();
+                a.decl_tag() == "grammar" && a.name() == "@property"
             })
             .expect("@property grammar must exist");
 
@@ -4442,14 +4316,14 @@ grammar @ai {
             Imperfect::Failure(e, _) => panic!("property with effect pattern must parse: {}", e),
         };
 
-        // Single declaration → the data IS the property (no wrapper)
-        let data = compiled.data();
-        assert_eq!(data.kind, "property");
-        assert_eq!(data.name, "consent");
+        // Single declaration -> the AST IS the property (no wrapper)
+        let ast = compiled.ast();
+        assert_eq!(ast.decl_tag(), "property");
+        assert_eq!(ast.name(), "consent");
 
         // The parser preserves the effect pattern in params.
         // effect(a=>b) is stored as a single param string.
-        let has_effect = data.params.iter().any(|p| p.contains("effect"));
+        let has_effect = ast.params_as_strings().iter().any(|p| p.contains("effect"));
         assert!(
             has_effect,
             "consent property must have effect pattern in params, got: {:?}",
@@ -4532,15 +4406,16 @@ grammar @ai {
 
         // Each security property should have an effect pattern in params
         for child in compiled.fragment.mirror_children().iter().filter(|f| {
-            let d = Form::from_ast_projection(f.mirror_ast());
-            d.kind == "property" && expected.contains(&d.name.as_str())
+            let a = f.mirror_ast();
+            a.decl_tag() == "property" && expected.contains(&a.name())
         }) {
-            let data = Form::from_ast_projection(child.mirror_ast());
-            let has_effect = data.params.iter().any(|p| p.contains("effect"));
+            let child_ast = child.mirror_ast();
+            let child_params = child_ast.params_as_strings();
+            let has_effect = child_params.iter().any(|p| p.contains("effect"));
             assert!(
                 has_effect,
                 "security property '{}' must have effect pattern in params, got: {:?}",
-                data.name, data.params
+                child_ast.name(), child_params
             );
         }
     }
@@ -4587,7 +4462,7 @@ grammar @ai {
         };
 
         assert_eq!(
-            compiled.data().parent_ref.as_deref(),
+            compiled.ast().parent_ref_str().as_deref(),
             Some("@sigil"),
             "parent_ref must be @sigil"
         );
@@ -4599,7 +4474,7 @@ grammar @ai {
         let result = runtime.compile_source("grammar @test {\n  type x\n}\n");
         let compiled = result.ok().unwrap();
         assert!(
-            compiled.data().parent_ref.is_none(),
+            compiled.ast().parent_ref_str().is_none(),
             "grammar without < should have no parent_ref"
         );
     }
