@@ -658,6 +658,54 @@ impl MirrorAST {
 }
 
 // ---------------------------------------------------------------------------
+// ParsedNode — AST node with parser metadata (DeclKind, optic_ops)
+// ---------------------------------------------------------------------------
+
+/// A parsed AST node that preserves the original DeclKind and optic_ops.
+///
+/// MirrorAST has fewer variants than DeclKind (e.g. fold/property/requires all
+/// become Property). This wrapper preserves the original kind for round-trip
+/// fidelity when converting back to MirrorData/MirrorFragment.
+#[derive(Clone, Debug)]
+pub struct ParsedNode {
+    pub ast: MirrorAST,
+    pub original_kind: crate::declaration::DeclKind,
+    pub optic_ops: Vec<crate::declaration::OpticOp>,
+}
+
+impl ParsedNode {
+    /// Convert to a MirrorFragment using the original DeclKind and optic_ops.
+    pub fn to_fragment(&self) -> crate::declaration::MirrorFragment {
+        use crate::declaration::{MirrorData, OpticOp};
+        let mut data = self.ast.to_mirror_data();
+        // Override the kind with the original (preserves fold vs property, etc.)
+        data.kind = self.original_kind.clone();
+        data.optic_ops = self.optic_ops.clone();
+
+        // Build children from the AST node's children
+        let children: Vec<crate::declaration::MirrorFragment> = match &self.ast {
+            MirrorAST::Grammar(g) => g.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Type(t) => t.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Action(a) => a
+                .body
+                .as_ref()
+                .map(|b| b.iter().map(|c| c.to_fragment()).collect())
+                .unwrap_or_default(),
+            MirrorAST::Property(p) => p.body.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Module(m) => m.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Focus(f) => f.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Project(p) => p.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Split(s) => s.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Zoom(z) => z.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Refract(r) => r.children.iter().map(|c| c.to_fragment()).collect(),
+            MirrorAST::Abstract(inner) => return inner.to_fragment(),
+            MirrorAST::Import(_) | MirrorAST::Export(_) => Vec::new(),
+        };
+        crate::declaration::fragment_encoded(data, children)
+    }
+}
+
+// ---------------------------------------------------------------------------
 // MirrorFragment → MirrorAST — reconstruct typed AST from fragment storage
 // ---------------------------------------------------------------------------
 
@@ -690,7 +738,7 @@ impl MirrorAST {
     /// The mirror tokenizer splits `:` into its own Word token, so typed
     /// params like `(to: string)` become three separate param entries.
     /// This function reassembles them before constructing typed Fields.
-    fn rejoin_params(raw: &[String]) -> Vec<String> {
+    pub fn rejoin_params(raw: &[String]) -> Vec<String> {
         let mut result = Vec::new();
         let mut i = 0;
         while i < raw.len() {
@@ -715,7 +763,7 @@ impl MirrorAST {
     }
 
     /// Parse a string param list into typed Fields.
-    fn params_to_fields(raw: &[String]) -> Vec<Field> {
+    pub fn params_to_fields(raw: &[String]) -> Vec<Field> {
         let joined = Self::rejoin_params(raw);
         joined
             .iter()

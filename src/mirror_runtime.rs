@@ -1009,10 +1009,8 @@ fn parse_decl(
         }
     }
 
-    // Build MirrorAST node — the parser produces typed AST directly.
-    // Then convert to MirrorData for content-addressed fragment storage,
-    // preserving the original DeclKind (MirrorAST has fewer variants than DeclKind).
-    let _ast = build_ast_node(&kind, &name, &params, &variants, &parent_ref);
+    // Build MirrorAST node with children — the parser produces typed AST directly.
+    let _ast = build_ast_node_with_children(&kind, &name, &params, &variants, &parent_ref, children.clone());
     let mut data = MirrorData::new(kind, &name, params, variants);
     data.is_abstract = modifier;
     data.optic_ops = optic_ops;
@@ -1022,15 +1020,44 @@ fn parse_decl(
 }
 
 /// Build a MirrorAST node from parsed declaration components.
-/// This is the canonical entry point: the parser builds typed AST nodes,
-/// not flat MirrorData. The AST node is then converted to MirrorData
-/// for content-addressed fragment storage.
+///
+/// Accepts fragment children and converts them to MirrorAST children,
+/// producing a fully populated typed AST node. The `DeclKind` determines
+/// the MirrorAST variant; children are placed in the appropriate field.
 fn build_ast_node(
     kind: &DeclKind,
     name: &str,
     params: &[String],
     variants: &[String],
     parent_ref: &Option<String>,
+) -> MirrorAST {
+    build_ast_node_with_children(kind, name, params, variants, parent_ref, Vec::new())
+}
+
+/// Build a MirrorAST node with children from fragment children.
+fn build_ast_node_with_children(
+    kind: &DeclKind,
+    name: &str,
+    params: &[String],
+    variants: &[String],
+    parent_ref: &Option<String>,
+    frag_children: Vec<MirrorFragment>,
+) -> MirrorAST {
+    let children: Vec<MirrorAST> = frag_children
+        .iter()
+        .map(MirrorAST::from_fragment)
+        .collect();
+    build_ast_node_direct(kind, name, params, variants, parent_ref, children)
+}
+
+/// Build a MirrorAST node with pre-converted MirrorAST children.
+fn build_ast_node_direct(
+    kind: &DeclKind,
+    name: &str,
+    params: &[String],
+    variants: &[String],
+    parent_ref: &Option<String>,
+    children: Vec<MirrorAST>,
 ) -> MirrorAST {
     match kind {
         DeclKind::Grammar => {
@@ -1049,7 +1076,7 @@ fn build_ast_node(
             MirrorAST::Grammar(GrammarNode {
                 name: grammar_name,
                 parent,
-                children: Vec::new(),
+                children,
             })
         }
         DeclKind::Type => {
@@ -1063,7 +1090,7 @@ fn build_ast_node(
                 name: Identifier::new(name),
                 params: type_params,
                 body,
-                children: Vec::new(),
+                children,
             })
         }
         DeclKind::In => {
@@ -1078,128 +1105,92 @@ fn build_ast_node(
             name: Identifier::new(name),
         }),
         DeclKind::Property => {
-            let ast_params: Vec<Field> = params
-                .iter()
-                .map(|p| {
-                    if let Some((n, t)) = p.split_once(':') {
-                        Field {
-                            name: Identifier::new(n.trim()),
-                            type_ref: Identifier::new(t.trim()),
-                        }
-                    } else {
-                        Field {
-                            name: Identifier::new(p),
-                            type_ref: Identifier::new("_"),
-                        }
-                    }
-                })
-                .collect();
+            let ast_params: Vec<Field> = MirrorAST::params_to_fields(params);
             MirrorAST::Property(PropertyNode {
                 name: Identifier::new(name),
                 params: ast_params,
                 fold_target: None,
-                body: Vec::new(),
+                body: children,
             })
         }
         DeclKind::Focus => MirrorAST::Focus(FocusNode {
             name: Identifier::new(name),
             target: params.first().map(|p| Identifier::new(p)),
-            children: Vec::new(),
+            children,
         }),
         DeclKind::Project => MirrorAST::Project(ProjectNode {
             name: Identifier::new(name),
             target: params.first().map(|p| Identifier::new(p)),
-            children: Vec::new(),
+            children,
         }),
         DeclKind::Split => MirrorAST::Split(SplitNode {
             name: Identifier::new(name),
             variants: variants.iter().map(|v| Identifier::new(v)).collect(),
-            children: Vec::new(),
+            children,
         }),
         DeclKind::Zoom => MirrorAST::Zoom(ZoomNode {
             name: Identifier::new(name),
             target: params.first().map(|p| Identifier::new(p)),
-            children: Vec::new(),
+            children,
         }),
         DeclKind::Refract => MirrorAST::Refract(RefractNode {
             name: Identifier::new(name),
             target: params.first().map(|p| Identifier::new(p)),
-            children: Vec::new(),
+            children,
         }),
         DeclKind::Form | DeclKind::Prism => MirrorAST::Module(ModuleNode {
             name: Identifier::new(name),
-            children: Vec::new(),
+            children,
         }),
         DeclKind::Fold => MirrorAST::Property(PropertyNode {
             name: Identifier::new(name),
             params: Vec::new(),
             fold_target: params.first().map(|p| Identifier::new(p)),
-            body: Vec::new(),
+            body: children,
         }),
         DeclKind::Requires | DeclKind::Invariant | DeclKind::Ensures => {
             MirrorAST::Property(PropertyNode {
                 name: Identifier::new(name),
                 params: Vec::new(),
                 fold_target: None,
-                body: Vec::new(),
+                body: children,
             })
         }
-        DeclKind::Recover | DeclKind::Rescue => MirrorAST::Action(ActionNode {
-            name: Identifier::new(name),
-            params: Vec::new(),
-            return_type: None,
-            grammar_ref: None,
-            body: None,
-        }),
-        DeclKind::Action => MirrorAST::Action(ActionNode {
-            name: Identifier::new(name),
-            params: params
-                .iter()
-                .map(|p| {
-                    if let Some((n, t)) = p.split_once(':') {
-                        Field {
-                            name: Identifier::new(n.trim()),
-                            type_ref: Identifier::new(t.trim()),
-                        }
-                    } else {
-                        Field {
-                            name: Identifier::new(p),
-                            type_ref: Identifier::new("_"),
-                        }
-                    }
-                })
-                .collect(),
-            return_type: None,
-            grammar_ref: None,
-            body: None,
-        }),
+        DeclKind::Recover | DeclKind::Rescue => {
+            let body = if children.is_empty() { None } else { Some(children) };
+            MirrorAST::Action(ActionNode {
+                name: Identifier::new(name),
+                params: MirrorAST::params_to_fields(params),
+                return_type: None,
+                grammar_ref: None,
+                body,
+            })
+        }
+        DeclKind::Action => {
+            let body = if children.is_empty() { None } else { Some(children) };
+            MirrorAST::Action(ActionNode {
+                name: Identifier::new(name),
+                params: MirrorAST::params_to_fields(params),
+                return_type: None,
+                grammar_ref: None,
+                body,
+            })
+        }
         DeclKind::Traversal | DeclKind::Lens => MirrorAST::Focus(FocusNode {
             name: Identifier::new(name),
             target: params.first().map(|p| Identifier::new(p)),
-            children: Vec::new(),
+            children,
         }),
-        DeclKind::Template => MirrorAST::Action(ActionNode {
-            name: Identifier::new(name),
-            params: params
-                .iter()
-                .map(|p| {
-                    if let Some((n, t)) = p.split_once(':') {
-                        Field {
-                            name: Identifier::new(n.trim()),
-                            type_ref: Identifier::new(t.trim()),
-                        }
-                    } else {
-                        Field {
-                            name: Identifier::new(p),
-                            type_ref: Identifier::new("_"),
-                        }
-                    }
-                })
-                .collect(),
-            return_type: None,
-            grammar_ref: None,
-            body: None,
-        }),
+        DeclKind::Template => {
+            let body = if children.is_empty() { None } else { Some(children) };
+            MirrorAST::Action(ActionNode {
+                name: Identifier::new(name),
+                params: MirrorAST::params_to_fields(params),
+                return_type: None,
+                grammar_ref: None,
+                body,
+            })
+        }
         DeclKind::Default | DeclKind::Binding => MirrorAST::Export(ExportNode {
             name: Identifier::new(name),
         }),
