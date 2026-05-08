@@ -15,7 +15,7 @@
 
 use prism::{Imperfect, Loss};
 
-use crate::declaration::{DeclKind, OpticOp};
+use crate::declaration::OpticOp;
 use crate::kernel::{Oid, TraceOid};
 
 // ---------------------------------------------------------------------------
@@ -50,20 +50,20 @@ pub enum ParseWarning {
     UnknownToken { at: AstPosition, line: usize },
     /// A declaration keyword that has been deprecated in favor of another.
     DeprecatedKind {
-        kind: DeclKind,
-        replacement: DeclKind,
+        kind: &'static str,
+        replacement: &'static str,
         at: AstPosition,
         line: usize,
     },
     /// A declaration keyword that requires a name but has none.
     MissingName {
-        kind: DeclKind,
+        kind: &'static str,
         at: AstPosition,
         line: usize,
     },
     /// Two declarations of the same kind share the same name in the same scope.
     DuplicateName {
-        kind: DeclKind,
+        kind: &'static str,
         first_line: usize,
         second_line: usize,
         at: AstPosition,

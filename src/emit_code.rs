@@ -2,8 +2,8 @@
 //!
 //! NO STRINGS for typed things. IoList for output. One function for any grammar.
 
-use crate::declaration::{DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, OpticOp};
-// MirrorData is a projection of MirrorAST for stringly-typed access
+use crate::declaration::{MirrorFragment, MirrorFragmentExt, OpticOp};
+use crate::mirror_ast::MirrorAST;
 use crate::mirror_runtime::CompiledShatter;
 
 // ---------------------------------------------------------------------------
@@ -513,16 +513,20 @@ pub fn emit_code_fragment(frag: &MirrorFragment, grammar: &CodeGrammar) -> IoLis
 }
 
 fn emit_frag_code(frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
-    let data = MirrorData::from_ast(frag.mirror_ast());
-    match data.kind {
-        DeclKind::Type => emit_type_code(&data, frag, grammar),
-        DeclKind::Grammar => emit_module_code(&data, frag, grammar),
-        DeclKind::Action | DeclKind::Template => emit_function_code(&data, grammar),
-        DeclKind::Property => emit_property_code(&data, grammar),
-        DeclKind::In => IoList::Empty,
-        DeclKind::Out => IoList::Empty,
-        DeclKind::Form => emit_form_code(&data, frag, grammar),
-        _ => (grammar.templates.emit_comment)(data.kind.as_str(), &data.name),
+    let ast = frag.mirror_ast();
+    let tag = ast.decl_tag();
+    let name = ast.name().to_string();
+    let params = ast.params_as_strings();
+    let variants = ast.variants_as_strings();
+    match tag {
+        "type" => emit_type_code(&name, &params, &variants, frag, grammar),
+        "grammar" => emit_module_code(&name, frag, grammar),
+        "action" => emit_function_code(&name, &params, ast, grammar),
+        "property" => emit_property_code(&name, &params, grammar),
+        "in" => IoList::Empty,
+        "out" => IoList::Empty,
+        "form" => emit_form_code(&name, frag, grammar),
+        _ => (grammar.templates.emit_comment)(tag, &name),
     }
 }
 
@@ -535,18 +539,19 @@ fn parse_field(s: &str) -> Option<(String, String)> {
     }
 }
 
-fn has_typed_fields(data: &MirrorData, frag: &MirrorFragment) -> bool {
-    data.params.iter().any(|p| p.contains(':'))
+fn has_typed_fields(params: &[String], frag: &MirrorFragment) -> bool {
+    params.iter().any(|p| p.contains(':'))
         || frag.mirror_children().iter().any(|c| {
-            let cd = MirrorData::from_ast(c.mirror_ast());
-            (cd.kind == DeclKind::Type || cd.kind == DeclKind::Binding)
-                && (!cd.params.is_empty() || !cd.variants.is_empty())
+            let ca = c.mirror_ast();
+            let ct = ca.decl_tag();
+            (ct == "type" || ct == "binding")
+                && (!ca.params_as_strings().is_empty() || !ca.variants_as_strings().is_empty())
         })
 }
 
-fn extract_subset_ref(data: &MirrorData) -> Option<String> {
-    if data.optic_ops.contains(&OpticOp::Subset) {
-        data.params
+fn extract_subset_ref(params: &[String], optic_ops: &[OpticOp]) -> Option<String> {
+    if optic_ops.contains(&OpticOp::Subset) {
+        params
             .iter()
             .find(|p| p.starts_with('<'))
             .map(|p| p.trim_start_matches('<').trim().to_string())
@@ -555,66 +560,67 @@ fn extract_subset_ref(data: &MirrorData) -> Option<String> {
     }
 }
 
-fn emit_type_code(data: &MirrorData, frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
-    if !data.variants.is_empty() {
-        (grammar.templates.emit_enum)(&data.name, &data.params, &data.variants)
-    } else if has_typed_fields(data, frag) {
-        emit_struct_fields_code(data, frag, grammar)
-    } else if !data.params.is_empty() {
-        (grammar.templates.emit_generic_struct)(&data.name, &data.params)
+fn emit_type_code(name: &str, params: &[String], variants: &[String], frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
+    if !variants.is_empty() {
+        (grammar.templates.emit_enum)(name, params, variants)
+    } else if has_typed_fields(params, frag) {
+        emit_struct_fields_code(name, params, &[], frag, grammar)
+    } else if !params.is_empty() {
+        (grammar.templates.emit_generic_struct)(name, params)
     } else if !frag.mirror_children().is_empty() {
-        // Struct with children but no typed fields — emit unit + children
-        let mut parts = vec![(grammar.templates.emit_unit_type)(&data.name)];
+        let mut parts = vec![(grammar.templates.emit_unit_type)(name)];
         for child in frag.mirror_children() {
             parts.push(emit_frag_code(child, grammar));
         }
         IoList::join(parts)
     } else {
-        (grammar.templates.emit_unit_type)(&data.name)
+        (grammar.templates.emit_unit_type)(name)
     }
 }
 
 fn emit_struct_fields_code(
-    data: &MirrorData,
+    name: &str,
+    params: &[String],
+    optic_ops: &[OpticOp],
     frag: &MirrorFragment,
     grammar: &CodeGrammar,
 ) -> IoList {
-    let subset_ref = extract_subset_ref(data);
+    let subset_ref = extract_subset_ref(params, optic_ops);
 
-    // Collect all fields: from params and children
     let mut fields: Vec<(String, String)> = Vec::new();
 
-    for param in &data.params {
+    for param in params {
         if let Some((field_name, field_type)) = parse_field(param) {
             fields.push((field_name, field_type));
         }
     }
 
     for child in frag.mirror_children() {
-        let cd = MirrorData::from_ast(child.mirror_ast());
-        if cd.kind == DeclKind::Type || cd.kind == DeclKind::Binding {
-            let field_type = if !cd.params.is_empty() {
-                cd.params[0].clone()
-            } else if !cd.variants.is_empty() {
-                cd.variants[0].clone()
+        let ca = child.mirror_ast();
+        let ct = ca.decl_tag();
+        if ct == "type" || ct == "binding" {
+            let cp = ca.params_as_strings();
+            let cv = ca.variants_as_strings();
+            let field_type = if !cp.is_empty() {
+                cp[0].clone()
+            } else if !cv.is_empty() {
+                cv[0].clone()
             } else {
                 continue;
             };
-            fields.push((cd.name.clone(), field_type));
+            fields.push((ca.name().to_string(), field_type));
         }
     }
 
-    let struct_io = (grammar.templates.emit_struct)(&data.name, &fields, &data.params);
+    let struct_io = (grammar.templates.emit_struct)(name, &fields, params);
 
     if let Some(parent_type) = subset_ref {
-        // For Rust: emit From impl. For other targets this may differ.
-        // Currently hardcoded for Rust-style From impl.
         if grammar.name == "rust" {
             let parent_name = to_pascal_case(&parent_type);
-            let name = to_pascal_case(&data.name);
+            let pascal_name = to_pascal_case(name);
             let from_impl = IoList::join(vec![
                 IoList::text("\n"),
-                IoList::text(&format!("impl From<{}> for {} {{\n", parent_name, name)),
+                IoList::text(&format!("impl From<{}> for {} {{\n", parent_name, pascal_name)),
                 IoList::text(&format!(
                     "    fn from(_value: {}) -> Self {{\n",
                     parent_name
@@ -632,66 +638,62 @@ fn emit_struct_fields_code(
     }
 }
 
-fn emit_function_code(data: &MirrorData, grammar: &CodeGrammar) -> IoList {
-    // Convert params: untyped params get PascalCase type name
-    let params: Vec<(String, String)> = data
-        .params
+fn emit_function_code(name: &str, params: &[String], ast: &MirrorAST, grammar: &CodeGrammar) -> IoList {
+    let typed_params: Vec<(String, String)> = params
         .iter()
         .map(|p| {
-            if let Some((name, typ)) = parse_field(p) {
-                (name, typ)
+            if let Some((n, t)) = parse_field(p) {
+                (n, t)
             } else {
                 (p.clone(), to_pascal_case(p))
             }
         })
         .collect();
 
-    let return_type = if let Some(ref rt) = data.return_type {
-        Some(rt.as_str())
-    } else if data.optic_ops.contains(&OpticOp::Fold) {
-        Some("imperfect")
+    let return_type = if let Some(rt) = ast.return_type_str() {
+        Some(rt)
     } else {
         None
     };
+    let rt_ref = return_type.as_deref();
 
-    (grammar.templates.emit_function)(&data.name, &params, return_type)
+    (grammar.templates.emit_function)(name, &typed_params, rt_ref)
 }
 
-fn emit_property_code(data: &MirrorData, grammar: &CodeGrammar) -> IoList {
-    let params: Vec<(String, String)> = data
-        .params
+fn emit_property_code(name: &str, params: &[String], grammar: &CodeGrammar) -> IoList {
+    let typed_params: Vec<(String, String)> = params
         .iter()
         .map(|p| {
-            if let Some((name, typ)) = parse_field(p) {
-                (name, typ)
+            if let Some((n, t)) = parse_field(p) {
+                (n, t)
             } else {
                 (p.clone(), p.clone())
             }
         })
         .collect();
 
-    (grammar.templates.emit_property)(&data.name, &params)
+    (grammar.templates.emit_property)(name, &typed_params)
 }
 
-fn emit_module_code(data: &MirrorData, frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
+fn emit_module_code(name: &str, frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
     let children: Vec<IoList> = frag
         .mirror_children()
         .iter()
         .map(|child| emit_frag_code(child, grammar))
         .collect();
-    (grammar.templates.emit_module)(&data.name, children)
+    (grammar.templates.emit_module)(name, children)
 }
 
-fn emit_form_code(data: &MirrorData, frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
-    if data.name.starts_with('@') || !frag.mirror_children().is_empty() {
-        let mod_name = strip_grammar_prefix(&data.name);
+fn emit_form_code(name: &str, frag: &MirrorFragment, grammar: &CodeGrammar) -> IoList {
+    if name.starts_with('@') || !frag.mirror_children().is_empty() {
+        let mod_name = strip_grammar_prefix(name);
         if !mod_name.is_empty() {
             let children: Vec<IoList> = frag
                 .mirror_children()
                 .iter()
                 .map(|child| emit_frag_code(child, grammar))
                 .collect();
-            (grammar.templates.emit_module)(&data.name, children)
+            (grammar.templates.emit_module)(name, children)
         } else {
             let parts: Vec<IoList> = frag
                 .mirror_children()

@@ -14,7 +14,6 @@
 //! A heuristic that names what it checks honestly is more useful than a perfect
 //! system that doesn't exist yet.
 
-use crate::declaration::DeclKind;
 use crate::loss::MirrorLoss;
 use crate::mirror_runtime::Form;
 use prism::Imperfect;
@@ -326,7 +325,7 @@ fn check_no_tragedy(form: &Form) -> Option<LicenseViolation> {
 /// Collect all action Forms from a Form tree (recursive).
 fn collect_actions(form: &Form) -> Vec<&Form> {
     let mut actions = Vec::new();
-    if form.kind == DeclKind::Action {
+    if form.kind == "action" {
         actions.push(form);
     }
     for child in &form.children {

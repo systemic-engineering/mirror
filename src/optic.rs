@@ -7,7 +7,8 @@
 
 use std::collections::BTreeMap;
 
-use crate::declaration::{DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt, MirrorHash};
+use crate::declaration::{MirrorFragment, MirrorFragmentExt, MirrorHash};
+use crate::mirror_ast::MirrorAST;
 use crate::mirror_runtime::{CompiledShatter, MirrorRuntimeError};
 
 // ---------------------------------------------------------------------------
@@ -36,7 +37,7 @@ pub struct ActionDef {
 /// A compiled grammar loaded from the store, with named actions and a crystal OID.
 ///
 /// Built from a `CompiledShatter`. Walks the form tree to extract all
-/// `DeclKind::Action` children into a `BTreeMap` for O(log n) lookup.
+/// Zoom (action) children into a `BTreeMap` for O(log n) lookup.
 #[derive(Clone, Debug)]
 pub struct MirrorOptic {
     grammar_name: String,
@@ -53,33 +54,49 @@ impl MirrorOptic {
     /// Build from a `MirrorFragment` — extract actions from the fragment tree.
     pub fn from_fragment(frag: &MirrorFragment) -> Result<Self, MirrorRuntimeError> {
         let mut actions = BTreeMap::new();
-        let data = MirrorData::from_ast(frag.mirror_ast());
+        let ast = frag.mirror_ast();
         Self::collect_actions_from_fragment(frag, &mut actions);
 
         Ok(MirrorOptic {
-            grammar_name: data.name.clone(),
+            grammar_name: ast.name().to_string(),
             actions,
             crystal_oid: frag.content_hash().clone(),
         })
     }
 
-    /// Recursively walk the fragment tree and collect all Action declarations.
+    /// Recursively walk the fragment tree and collect all Zoom (action) declarations.
     fn collect_actions_from_fragment(
         frag: &MirrorFragment,
         actions: &mut BTreeMap<String, ActionDef>,
     ) {
         for child in frag.mirror_children() {
-            let data = MirrorData::from_ast(child.mirror_ast());
-            if data.kind == DeclKind::Action {
-                let receiver = data.params.first().cloned().unwrap_or_default();
+            let ast = child.mirror_ast();
+            if let MirrorAST::Zoom(z) = ast {
+                let params = ast.params_as_strings();
+                let receiver = params.first().cloned().unwrap_or_default();
+                let name = z.name.as_str().to_string();
                 let def = ActionDef {
-                    name: data.name.clone(),
+                    name: name.clone(),
                     receiver,
-                    grammar_ref: data.grammar_ref.clone(),
-                    body: data.body_text.clone(),
-                    is_abstract: data.is_abstract,
+                    grammar_ref: ast.grammar_ref_str(),
+                    body: None,
+                    is_abstract: false,
                 };
-                actions.insert(data.name.clone(), def);
+                actions.insert(name, def);
+            } else if let MirrorAST::Abstract(inner) = ast {
+                if let MirrorAST::Zoom(z) = inner.as_ref() {
+                    let params = inner.params_as_strings();
+                    let receiver = params.first().cloned().unwrap_or_default();
+                    let name = z.name.as_str().to_string();
+                    let def = ActionDef {
+                        name: name.clone(),
+                        receiver,
+                        grammar_ref: inner.grammar_ref_str(),
+                        body: None,
+                        is_abstract: true,
+                    };
+                    actions.insert(name, def);
+                }
             }
             Self::collect_actions_from_fragment(child, actions);
         }

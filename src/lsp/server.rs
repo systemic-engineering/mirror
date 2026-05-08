@@ -78,8 +78,8 @@ pub fn loss_to_diagnostics(loss: &MirrorLoss) -> Vec<MirrorDiagnostic> {
                     severity: DiagnosticSeverity::Warning,
                     message: format!(
                         "'{}' is deprecated, use '{}' instead",
-                        kind.as_str(),
-                        replacement.as_str()
+                        kind,
+                        replacement
                     ),
                     code: Some("M1002".into()),
                 });
@@ -90,7 +90,7 @@ pub fn loss_to_diagnostics(loss: &MirrorLoss) -> Vec<MirrorDiagnostic> {
                     col: 0,
                     end_col: 0,
                     severity: DiagnosticSeverity::Warning,
-                    message: format!("'{}' requires a name", kind.as_str()),
+                    message: format!("'{}' requires a name", kind),
                     code: Some("M1003".into()),
                 });
             }
@@ -107,7 +107,7 @@ pub fn loss_to_diagnostics(loss: &MirrorLoss) -> Vec<MirrorDiagnostic> {
                     severity: DiagnosticSeverity::Warning,
                     message: format!(
                         "duplicate '{}' name (first at line {})",
-                        kind.as_str(),
+                        kind,
                         first_line
                     ),
                     code: Some("M1004".into()),

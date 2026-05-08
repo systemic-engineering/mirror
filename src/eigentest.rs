@@ -17,8 +17,8 @@
 //! 7. Any single type in > 50% of edges
 //! 8. Von Neumann entropy < log2(n)/2 + 1 — low structural complexity
 
-use crate::declaration::{DeclKind, MirrorData, MirrorFragment, MirrorFragmentExt};
-// MirrorData is used as a projection of MirrorAST for stringly-typed access
+use crate::declaration::{MirrorFragment, MirrorFragmentExt};
+use crate::mirror_ast::MirrorAST;
 use crate::parse::AstNode;
 use crate::prism::Prism;
 
@@ -171,15 +171,16 @@ impl TypeGraph {
             frag: &MirrorFragment,
             types: &mut std::collections::HashSet<String>,
         ) {
-            let data = MirrorData::from_ast(frag.mirror_ast());
-            if data.kind == DeclKind::Type && !data.name.is_empty() {
-                types.insert(data.name.clone());
-            }
-            // Also collect variant names as types
-            if data.kind == DeclKind::Type {
-                for v in &data.variants {
+            let ast = frag.mirror_ast();
+            if matches!(ast, MirrorAST::Split(_)) {
+                let name = ast.name();
+                if !name.is_empty() {
+                    types.insert(name.to_string());
+                }
+                // Also collect variant names as types
+                for v in ast.variants_as_strings() {
                     if !v.is_empty() {
-                        types.insert(v.clone());
+                        types.insert(v);
                     }
                 }
             }
@@ -213,15 +214,18 @@ impl TypeGraph {
             next_idx: &mut usize,
             edges: &mut Vec<(usize, usize)>,
         ) {
-            let data = MirrorData::from_ast(frag.mirror_ast());
+            let ast = frag.mirror_ast();
+            let name = ast.name().to_string();
+            let variants = ast.variants_as_strings();
+            let params = ast.params_as_strings();
 
-            match data.kind {
-                DeclKind::Type => {
+            match ast {
+                MirrorAST::Split(_) => {
                     // Named type with variants: type -> variant edges
-                    if !data.name.is_empty() {
+                    if !name.is_empty() {
                         let type_idx =
-                            get_or_insert(&data.name, name_to_idx, next_idx);
-                        for v in &data.variants {
+                            get_or_insert(&name, name_to_idx, next_idx);
+                        for v in &variants {
                             if !v.is_empty() {
                                 let v_idx =
                                     get_or_insert(v, name_to_idx, next_idx);
@@ -232,19 +236,19 @@ impl TypeGraph {
                         // Unnamed root type (type = a | b | c): add all
                         // variants as nodes, connect them to each other
                         // since they're siblings in the same declaration
-                        for v in &data.variants {
+                        for v in &variants {
                             if !v.is_empty() {
                                 let _ = get_or_insert(v, name_to_idx, next_idx);
                             }
                         }
                     }
                 }
-                DeclKind::Action => {
+                MirrorAST::Zoom(_) | MirrorAST::Abstract(_) if ast.decl_tag() == "action" => {
                     // Action -> type reference edges from parameters
                     let action_idx =
-                        get_or_insert(&data.name, name_to_idx, next_idx);
+                        get_or_insert(&name, name_to_idx, next_idx);
 
-                    for param in &data.params {
+                    for param in &params {
                         // Params can be "name:type" or just "name"
                         let type_ref = if param.contains(':') {
                             param.split(':').last().map(|s| s.trim())
@@ -448,7 +452,7 @@ pub fn eigentest(ast: &Prism<AstNode>) -> EigentestResult {
 /// Same eight tests. Different input graph.
 ///
 /// Takes source as `&str` and parses to MirrorFragment internally,
-/// because the type reference graph requires params/variants from MirrorData
+/// because the type reference graph requires params/variants from MirrorAST
 /// (not available in the thin Prism<AstNode> projection).
 pub fn eigentest_type_graph(source: &str) -> EigentestResult {
     use crate::mirror_runtime::parse_form;

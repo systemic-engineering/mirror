@@ -623,6 +623,109 @@ impl MirrorAST {
             MirrorAST::Module(m) => m.name.as_str(),
         }
     }
+
+    /// The declaration-level tag for this AST node.
+    ///
+    /// Returns the keyword string the parser originally used to create this node.
+    /// Focus(@name) -> "grammar", Focus(name) -> "focus",
+    /// Project(with target) -> "in", Project(without target) -> "out",
+    /// Split -> "type", Zoom -> "action", Refract -> "property",
+    /// Module -> "form", Abstract -> delegates to inner.
+    pub fn decl_tag(&self) -> &'static str {
+        match self {
+            MirrorAST::Focus(f) => {
+                if f.name.as_str().starts_with('@') { "grammar" } else { "focus" }
+            }
+            MirrorAST::Project(p) => {
+                if p.target.is_some() { "in" } else { "out" }
+            }
+            MirrorAST::Split(_) => "type",
+            MirrorAST::Zoom(_) => "action",
+            MirrorAST::Refract(_) => "property",
+            MirrorAST::Abstract(inner) => inner.decl_tag(),
+            MirrorAST::Module(_) => "form",
+        }
+    }
+
+    /// Is this node abstract?
+    pub fn is_abstract(&self) -> bool {
+        matches!(self, MirrorAST::Abstract(_))
+    }
+
+    /// Stringly-typed params projection (for consumers that need Vec<String>).
+    pub fn params_as_strings(&self) -> Vec<String> {
+        match self {
+            MirrorAST::Split(s) => s.params.iter().map(|p| p.as_str().to_string()).collect(),
+            MirrorAST::Zoom(z) => z.params.iter().map(|f| {
+                if f.type_ref.as_str() == "_" {
+                    f.name.as_str().to_string()
+                } else {
+                    format!("{}:{}", f.name.as_str(), f.type_ref.as_str())
+                }
+            }).collect(),
+            MirrorAST::Refract(r) => r.params.iter().map(|f| {
+                if f.type_ref.as_str() == "_" {
+                    f.name.as_str().to_string()
+                } else {
+                    format!("{}:{}", f.name.as_str(), f.type_ref.as_str())
+                }
+            }).collect(),
+            MirrorAST::Abstract(inner) => inner.params_as_strings(),
+            _ => Vec::new(),
+        }
+    }
+
+    /// Stringly-typed variants projection (for consumers that need Vec<String>).
+    pub fn variants_as_strings(&self) -> Vec<String> {
+        match self {
+            MirrorAST::Split(s) => {
+                if let Some(ref body) = s.body {
+                    match body {
+                        TypeBody::Enum(vs) => vs.iter().map(|v| v.as_str().to_string()).collect(),
+                        TypeBody::Struct(fields) => fields.iter().map(|f| {
+                            format!("{}:{}", f.name.as_str(), f.type_ref.as_str())
+                        }).collect(),
+                        TypeBody::Alias(a) => vec![a.as_str().to_string()],
+                        TypeBody::Unit => Vec::new(),
+                    }
+                } else {
+                    s.variants.iter().map(|v| v.as_str().to_string()).collect()
+                }
+            }
+            MirrorAST::Refract(r) => {
+                r.target.as_ref().map(|t| vec![t.as_str().to_string()]).unwrap_or_default()
+            }
+            MirrorAST::Abstract(inner) => inner.variants_as_strings(),
+            _ => Vec::new(),
+        }
+    }
+
+    /// Grammar reference as string (for Zoom nodes).
+    pub fn grammar_ref_str(&self) -> Option<String> {
+        match self {
+            MirrorAST::Zoom(z) => z.grammar_ref.as_ref().map(|gr| gr.as_str().to_string()),
+            MirrorAST::Abstract(inner) => inner.grammar_ref_str(),
+            _ => None,
+        }
+    }
+
+    /// Return type as string (for Zoom nodes).
+    pub fn return_type_str(&self) -> Option<String> {
+        match self {
+            MirrorAST::Zoom(z) => z.target.as_ref().map(|t| t.as_str().to_string()),
+            MirrorAST::Abstract(inner) => inner.return_type_str(),
+            _ => None,
+        }
+    }
+
+    /// Parent reference as string (for Focus nodes with targets).
+    pub fn parent_ref_str(&self) -> Option<String> {
+        match self {
+            MirrorAST::Focus(f) => f.target.as_ref().map(|t| t.as_str().to_string()),
+            MirrorAST::Abstract(inner) => inner.parent_ref_str(),
+            _ => None,
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------

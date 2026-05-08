@@ -3,8 +3,7 @@
 //! `Parse` implements `Vector<String, Prism<AstNode>>`. Spectral and other
 //! consumers use `Parse.trace(source)` to get a content-addressed parse tree.
 
-use crate::declaration::DeclKind;
-use crate::declaration::{MirrorData, MirrorFragment, MirrorFragmentExt};
+use crate::declaration::{MirrorFragment, MirrorFragmentExt};
 use crate::domain::conversation::Kind;
 use crate::kernel::{ContentAddressed, Oid, Trace, TraceOid, Vector};
 use crate::mirror_runtime::parse_form;
@@ -65,44 +64,47 @@ domain_oid!(
 // Form → Prism<AstNode> conversion
 // ---------------------------------------------------------------------------
 
-/// Map a DeclKind to the (Kind, name) pair for AstNode.
-fn decl_to_ast(kind: &DeclKind) -> (Kind, &'static str) {
-    match kind {
-        DeclKind::Form => (Kind::Form, "form"),
-        DeclKind::Type => (Kind::Decl, "type"),
-        DeclKind::Prism => (Kind::Decl, "prism"),
-        DeclKind::In => (Kind::Decl, "in"),
-        DeclKind::Out => (Kind::Decl, "out"),
-        DeclKind::Property => (Kind::Decl, "property"),
-        DeclKind::Fold => (Kind::Decl, "fold"),
-        DeclKind::Requires => (Kind::Decl, "requires"),
-        DeclKind::Invariant => (Kind::Decl, "invariant"),
-        DeclKind::Ensures => (Kind::Decl, "ensures"),
-        DeclKind::Focus => (Kind::Decl, "focus"),
-        DeclKind::Project => (Kind::Decl, "project"),
-        DeclKind::Split => (Kind::Decl, "split"),
-        DeclKind::Zoom => (Kind::Decl, "zoom"),
-        DeclKind::Refract => (Kind::Decl, "refract"),
-        DeclKind::Traversal => (Kind::Decl, "traversal"),
-        DeclKind::Lens => (Kind::Decl, "lens"),
-        DeclKind::Action => (Kind::Decl, "action-def"),
-        DeclKind::Recover => (Kind::Decl, "recover"),
-        DeclKind::Rescue => (Kind::Decl, "rescue"),
-        DeclKind::Grammar => (Kind::Decl, "grammar"),
-        DeclKind::Template => (Kind::Decl, "template"),
-        DeclKind::Default => (Kind::Decl, "default"),
-        DeclKind::Binding => (Kind::Decl, "binding"),
+/// Map a decl_tag to the (Kind, name) pair for AstNode.
+fn tag_to_ast(tag: &str) -> (Kind, &'static str) {
+    match tag {
+        "form" => (Kind::Form, "form"),
+        "type" => (Kind::Decl, "type"),
+        "action" => (Kind::Decl, "action-def"),
+        "grammar" => (Kind::Decl, "grammar"),
+        "in" => (Kind::Decl, "in"),
+        "out" => (Kind::Decl, "out"),
+        "property" => (Kind::Decl, "property"),
+        "focus" => (Kind::Decl, "focus"),
+        "split" => (Kind::Decl, "split"),
+        "zoom" => (Kind::Decl, "zoom"),
+        "refract" => (Kind::Decl, "refract"),
+        other => (Kind::Decl, match other {
+            "prism" => "prism",
+            "fold" => "fold",
+            "requires" => "requires",
+            "invariant" => "invariant",
+            "ensures" => "ensures",
+            "project" => "project",
+            "traversal" => "traversal",
+            "lens" => "lens",
+            "recover" => "recover",
+            "rescue" => "rescue",
+            "template" => "template",
+            "default" => "default",
+            "binding" => "binding",
+            _ => "unknown",
+        }),
     }
 }
 
 /// Convert a MirrorFragment tree into a Prism<AstNode> tree.
 fn fragment_to_prism(frag: &MirrorFragment) -> Prism<AstNode> {
-    let data = MirrorData::from_ast(frag.mirror_ast());
-    let (kind, name) = decl_to_ast(&data.kind);
+    let ast = frag.mirror_ast();
+    let (kind, name) = tag_to_ast(ast.decl_tag());
     let node = AstNode {
         kind,
         name: name.to_string(),
-        value: data.name.clone(),
+        value: ast.name().to_string(),
     };
     let ref_ = {
         let label = node.label();

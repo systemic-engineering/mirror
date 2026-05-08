@@ -12,7 +12,7 @@
 //! - `action boot(identity)`    →  `pub fn boot(identity: Identity) { todo!() }`
 //! - `property p(g) <= verdict` →  `pub fn p(g: &Grammar) -> Verdict { todo!() }`
 
-use crate::declaration::{DeclKind, MirrorFragment, OpticOp};
+use crate::declaration::{MirrorFragment, OpticOp};
 use crate::mirror_ast::MirrorAST;
 use crate::mirror_runtime::{CompiledShatter, Form};
 // Note: Form is pub(crate) — used only as an intermediate for the emit functions.
@@ -58,17 +58,17 @@ pub fn emit_rust_fragment(frag: &MirrorFragment) -> String {
 
 fn emit_form(form: &Form, out: &mut String, indent: usize) {
     match form.kind {
-        DeclKind::Type => emit_type(form, out, indent),
-        DeclKind::Grammar => emit_module(form, out, indent),
-        DeclKind::Action => emit_function(form, out, indent),
-        DeclKind::Property => emit_property(form, out, indent),
-        DeclKind::In => { /* use statement — skip for now */ }
-        DeclKind::Out => { /* pub export — skip for now */ }
-        DeclKind::Form => emit_form_container(form, out, indent),
+        "type" => emit_type(form, out, indent),
+        "grammar" => emit_module(form, out, indent),
+        "action" => emit_function(form, out, indent),
+        "property" => emit_property(form, out, indent),
+        "in" => { /* use statement — skip for now */ }
+        "out" => { /* pub export — skip for now */ }
+        "form" => emit_form_container(form, out, indent),
         _ => {
             // Other kinds: emit as a comment
             write_indent(out, indent);
-            out.push_str(&format!("// {}: {}\n", form.kind.as_str(), form.name));
+            out.push_str(&format!("// {}: {}\n", form.kind, form.name));
         }
     }
 }
@@ -131,7 +131,7 @@ fn emit_struct_with_fields(form: &Form, name: &str, out: &mut String, indent: us
 
     // Also check children for field-like declarations
     for child in &form.children {
-        if child.kind == DeclKind::Type || child.kind == DeclKind::Binding {
+        if child.kind == "type" || child.kind == "binding" {
             // child.name is the field name, child.params[0] or child.variants[0] is the type
             let field_type = if !child.params.is_empty() {
                 child.params[0].clone()
@@ -320,7 +320,7 @@ fn write_indent(out: &mut String, indent: usize) {
 fn has_typed_fields(form: &Form) -> bool {
     form.params.iter().any(|p| p.contains(':'))
         || form.children.iter().any(|c| {
-            (c.kind == DeclKind::Type || c.kind == DeclKind::Binding)
+            (c.kind == "type" || c.kind == "binding")
                 && (!c.params.is_empty() || !c.variants.is_empty())
         })
 }
@@ -696,7 +696,7 @@ mod tests {
     fn emit_rust_form_api() {
         // Test the emit_rust_form API directly
         let form = Form::new(
-            DeclKind::Type,
+            "type",
             "widget",
             vec![],
             vec!["small".to_string(), "large".to_string()],
@@ -711,13 +711,13 @@ mod tests {
     #[test]
     fn emit_rust_nested_grammar_types() {
         let inner_type = Form::new(
-            DeclKind::Type,
+            "type",
             "status",
             vec![],
             vec!["active".to_string(), "inactive".to_string()],
             vec![],
         );
-        let grammar = Form::new(DeclKind::Grammar, "@test", vec![], vec![], vec![inner_type]);
+        let grammar = Form::new("grammar", "@test", vec![], vec![], vec![inner_type]);
         let rust = emit_rust_form(&grammar);
         assert!(rust.contains("pub mod test"), "got:\n{}", rust);
         assert!(rust.contains("pub enum Status"), "got:\n{}", rust);

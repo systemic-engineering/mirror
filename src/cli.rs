@@ -1617,21 +1617,24 @@ options:
 
 /// Print eigenvalues of a fragment tree (kind, name, params, variants).
 fn project_fragment(frag: &crate::declaration::MirrorFragment, depth: usize, out: &mut String) {
-    use crate::declaration::{MirrorData, MirrorFragmentExt};
-    let data = MirrorData::from_ast(frag.mirror_ast());
+    use crate::declaration::MirrorFragmentExt;
+    let ast = frag.mirror_ast();
     for _ in 0..depth {
         out.push_str("  ");
     }
-    out.push_str(data.kind.as_str());
-    if !data.name.is_empty() {
+    out.push_str(ast.decl_tag());
+    let name = ast.name();
+    if !name.is_empty() {
         out.push(' ');
-        out.push_str(&data.name);
+        out.push_str(name);
     }
-    if !data.params.is_empty() {
-        out.push_str(&format!("({})", data.params.join(", ")));
+    let params = ast.params_as_strings();
+    if !params.is_empty() {
+        out.push_str(&format!("({})", params.join(", ")));
     }
-    if !data.variants.is_empty() {
-        out.push_str(&format!(" = {}", data.variants.join(" | ")));
+    let variants = ast.variants_as_strings();
+    if !variants.is_empty() {
+        out.push_str(&format!(" = {}", variants.join(" | ")));
     }
     out.push('\n');
     for child in frag.mirror_children() {
