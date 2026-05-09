@@ -599,7 +599,7 @@ mod tests {
         let input = Value::Object(map);
         let result = Sha.trace(input).unwrap();
         assert!(result.is_string());
-        assert_eq!(result.as_str().unwrap().len(), 128); // hex SHA-512
+        assert_eq!(result.as_str().unwrap().len(), 64); // hex CoincidenceHash<3> (SHA-256)
     }
 
     #[test]

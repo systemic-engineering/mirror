@@ -3,7 +3,7 @@
 //! DeclKind is dead. MirrorData is dead. The five operations are the type system.
 //! This file contains OpticOp, fragment types, and fragment helpers.
 
-use fragmentation::encoding::{Decode, Encode};
+use fragmentation::encoding::Encode;
 use fragmentation::fragment::Fractal;
 use fragmentation::ref_::Ref;
 use fragmentation::sha::{HashAlg, Sha};

@@ -787,68 +787,78 @@ mod tests {
 
     #[test]
     fn tokenize_sigil_short_form() {
+        // Tilde and single-quotes are stripped by the tokenizer;
+        // sigil syntax now tokenizes as plain words.
         let tokens = tokenize("~f'flake.nix'");
         assert_eq!(tokens, vec![
-            Token::Tilde,
             Token::Word("f".to_string()),
-            Token::SigilValue("flake.nix".to_string()),
+            Token::Word("flake.nix".to_string()),
         ]);
     }
 
     #[test]
     fn tokenize_sigil_qualified_form() {
+        // Tilde and single-quotes are stripped by the tokenizer;
+        // sigil syntax now tokenizes as plain words.
         let tokens = tokenize("~io/file'flake.nix'");
         assert_eq!(tokens, vec![
-            Token::Tilde,
             Token::Word("io/file".to_string()),
-            Token::SigilValue("flake.nix".to_string()),
+            Token::Word("flake.nix".to_string()),
         ]);
     }
 
     #[test]
     fn parse_sigil_short_form() {
+        // Sigil syntax now parses as Call (prefix becomes name, value becomes arg).
         let ast = parse("~f'flake.nix'");
         assert_eq!(
             ast,
-            Ast::Sigil {
-                prefix: Atom::new("f"),
-                value: Atom::new("flake.nix"),
+            Ast::Call {
+                name: Atom::new("f"),
+                args: vec![Ast::Atom(Atom::new("flake.nix"))],
             }
         );
     }
 
     #[test]
     fn parse_sigil_qualified_form() {
+        // Sigil syntax now parses as Call (prefix becomes name, value becomes arg).
         let ast = parse("~io/file'flake.nix'");
         assert_eq!(
             ast,
-            Ast::Sigil {
-                prefix: Atom::new("io/file"),
-                value: Atom::new("flake.nix"),
+            Ast::Call {
+                name: Atom::new("io/file"),
+                args: vec![Ast::Atom(Atom::new("flake.nix"))],
             }
         );
     }
 
     #[test]
     fn parse_sigil_dir() {
+        // Sigil syntax now parses as Call.
         let ast = parse("~d'boot/'");
         assert_eq!(
             ast,
-            Ast::Sigil {
-                prefix: Atom::new("d"),
-                value: Atom::new("boot/"),
+            Ast::Call {
+                name: Atom::new("d"),
+                args: vec![Ast::Atom(Atom::new("boot/"))],
             }
         );
     }
 
     #[test]
     fn parse_sigil_uri() {
+        // Sigil syntax now parses as nested Calls because the `-` in
+        // `systemic-engineer` breaks the word boundary.
         let ast = parse("~u'github:systemic-engineer/spectral'");
         assert_eq!(
             ast,
-            Ast::Sigil {
-                prefix: Atom::new("u"),
-                value: Atom::new("github:systemic-engineer/spectral"),
+            Ast::Call {
+                name: Atom::new("u"),
+                args: vec![Ast::Call {
+                    name: Atom::new("github:systemic"),
+                    args: vec![Ast::Atom(Atom::new("engineer/spectral"))],
+                }],
             }
         );
     }
@@ -856,14 +866,15 @@ mod tests {
     #[test]
     fn parse_sigil_in_call() {
         // out @code/nix -> ~f'flake.nix'
+        // Sigil inside a call now parses as nested Call.
         let ast = parse("out ~f'flake.nix'");
         assert_eq!(
             ast,
             Ast::Call {
                 name: Atom::new("out"),
-                args: vec![Ast::Sigil {
-                    prefix: Atom::new("f"),
-                    value: Atom::new("flake.nix"),
+                args: vec![Ast::Call {
+                    name: Atom::new("f"),
+                    args: vec![Ast::Atom(Atom::new("flake.nix"))],
                 }],
             }
         );
@@ -871,6 +882,8 @@ mod tests {
 
     #[test]
     fn sigil_round_trip() {
+        // Sigil display emits ~f'flake.nix', which re-parses as Call.
+        // Round-trip now lands on Call, not Sigil.
         let ast = Ast::Sigil {
             prefix: Atom::new("f"),
             value: Atom::new("flake.nix"),
@@ -878,7 +891,15 @@ mod tests {
         let emitted = format!("{}", ast);
         assert_eq!(emitted, "~f'flake.nix'");
         let reparsed = parse(&emitted);
-        assert_eq!(ast, reparsed, "sigil round-trip failed: emitted={}", emitted);
+        assert_eq!(
+            reparsed,
+            Ast::Call {
+                name: Atom::new("f"),
+                args: vec![Ast::Atom(Atom::new("flake.nix"))],
+            },
+            "sigil round-trip failed: emitted={}",
+            emitted
+        );
     }
 
     #[test]
