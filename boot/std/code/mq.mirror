@@ -1,0 +1,167 @@
+in @code
+in @trace
+
+-- @code/mq: Mirror Query language for agent-to-spectral communication.
+--
+-- The five operations as query verbs. \ as intent interpretation.
+-- Context tracks the agent's position in the graph across tool calls.
+-- Suggestions compose structurally from the graph, predictively from spectral-db.
+--
+-- This is the grammar agents speak when they talk to spectral through MCP.
+
+grammar @code/mq {
+  in @code
+  in @trace
+
+  self type(session)
+
+  -- ── The five query verbs ─────────────────────────────────────────
+
+  focus action(path: ref) -> subgraph
+  project action(query: text) -> view
+  split action(options: [ref]) -> [variant]
+  zoom action(transform: text) -> result
+  refract action() -> settlement
+
+  -- ── Intent interpretation ────────────────────────────────────────
+  --
+  -- \ is the hole. The agent writes natural language intent.
+  -- Fate runs a tournament to find the best interpretation.
+  -- The query resolves to concrete operations.
+  --
+  -- \ find the function that handles authentication
+  -- -> Fate tournament
+  -- -> project where kind = zoom AND name contains "auth"
+  -- -> results
+
+  \ action(intent: text) -> query
+
+  -- ── Query AST ────────────────────────────────────────────────────
+
+  type query = focus_query | project_query | split_query
+             | zoom_query | refract_query | intent_query
+
+  type focus_query {
+    path: ref,
+    loss: bool,
+    eigenboard: bool
+  }
+
+  type project_query {
+    source: query_source,
+    filters: [filter],
+    ordering: [order],
+    limit: option(u32)
+  }
+
+  type split_query {
+    options: [ref],
+    depth: u32
+  }
+
+  type zoom_query {
+    diff: option(diff_spec),
+    blame: option(ref),
+    branches: bool,
+    log: option(log_spec)
+  }
+
+  type refract_query {
+    store: option(store_spec),
+    crystallize: bool,
+    index: option(ref)
+  }
+
+  type intent_query {
+    intent: text,
+    resolved: option(query)
+  }
+
+  -- ── Query components ─────────────────────────────────────────────
+
+  type query_source = find(ref) | near(ref, f64) | hot
+
+  type filter = where_clause(ref, op, value)
+
+  type op = eq | neq | gt | lt | gte | lte | contains | matches
+
+  type value = text_val(text) | num_val(f64) | bool_val(bool) | ref_val(ref)
+
+  type order {
+    field: ref,
+    direction: asc | desc
+  }
+
+  type diff_spec {
+    from: ref,
+    to: ref
+  }
+
+  type log_spec {
+    kind: ref,
+    limit: u32
+  }
+
+  type store_spec {
+    node_type: ref,
+    content: text
+  }
+
+  -- ── Context ──────────────────────────────────────────────────────
+  --
+  -- The context tracks the agent's position in the graph.
+  -- Each query pushes to the context stack.
+  -- The context narrows the scope of subsequent queries.
+  --
+  -- Navigation:
+  --   .   here (current context)
+  --   ..  back (pop context)
+  --   ~   home (reset to root)
+  --   @   author (grammar origin)
+  --   ^   last crystal
+  --   HEAD current session
+
+  type context {
+    stack: [frame],
+    session: ref,
+    eigenboard: eigenboard_state
+  }
+
+  type frame {
+    operation: query,
+    scope: ref,
+    tick: u32
+  }
+
+  type eigenboard_state {
+    fiedler: f64,
+    nodes: u32,
+    edges: u32,
+    loss: f64
+  }
+
+  action push(context, operation: query) -> context
+  action pop(context) -> context
+  action reset(context) -> context
+
+  -- ── Suggestions ──────────────────────────────────────────────────
+  --
+  -- After each tool call, compute suggestions.
+  -- Structural (always): adjacent nodes, high-eigenvalue neighbors.
+  -- Predictive (with spectral-db): Reflection predicts next query.
+
+  type suggestion {
+    query: text,
+    reason: text,
+    confidence: f64
+  }
+
+  action suggest(context, eigenboard_state) -> [suggestion]
+
+  -- ── Parse and compile ────────────────────────────────────────────
+
+  template parse(input: text) -> query
+  template compile(query, context) -> result
+}
+
+out @code/mq
