@@ -6,10 +6,12 @@ in @craft
 -- Two targets. Kintsugi collapses them.
 -- The loss measures drift between grammar and implementation.
 
-type target = boot | cargo
+type target = boot | cargo | binary
 
 craft(target) -> crystal {
   focus(target) |> split |> zoom |> refract |> project
 }
+
+target binary <| @code/llvm <| std
 
 collapse(target(boot), target(cargo)) -> imperfect { \ }
