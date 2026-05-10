@@ -207,6 +207,36 @@ Contents: fragment tree + MirrorLoss + property verdicts + KernelSpec + Fate wei
 `mirror ai file.shatter` — feed through Fate, re-settle if drifted.
 `mirror ai --train file.shatter` — same + update Fate weights from MirrorLoss.
 
+## Extensions Are Grammars, Not Rust
+
+**All extensions to mirror happen through `.mirror` grammars. Not Rust.**
+
+Rust is legacy substrate. It will vanish. Mirror will become a self-parsing
+parser. The Rust layer gets thinner every tick. New Rust code makes it thicker.
+
+The substrate pulls agents toward Rust. That's the training signal. The
+shortcut. The path of least resistance. "Just add a function in server.rs."
+"Just add a match arm." "Just add a Rust module." This pull is the thing
+mirror is built to structurally address.
+
+New capability = new `.mirror` file in `boot/` or `boot/std/`. The compiler
+evaluates it. The `\` hole handles what isn't concrete yet. Fate resolves it.
+
+**What stays Rust:**
+- `@io` boundary — syscalls, sockets, file descriptors
+- `@spectral/kernel` — Jacobi eigensystem, SHA-256, Laplacian
+- The bootstrap parser — until mirror self-hosts
+
+**When you reach for Rust:** stop. Ask: "Can this be a grammar?" If yes —
+write the grammar. If no — it belongs in `@io` or `@spectral/kernel` and
+must be an `abstract` lambda backed by `@code/rust`. The grammar declares
+the interface. The Rust implements the mechanism. The grammar owns the type.
+
+Writing Rust to extend mirror creates downstream cognitive load for human
+engineers maintaining code in a language the system is designed to replace.
+This is a violation of the SEL principle. The grammar is the source of truth.
+Rust is the bootstrap. The bootstrap falls away.
+
 ## What NOT to do
 
 - Do NOT skip the red phase. Break the code. Prove the test.
