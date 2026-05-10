@@ -243,7 +243,7 @@ impl TypeGraph {
                         }
                     }
                 }
-                MirrorAST::Zoom(_) | MirrorAST::Abstract(_) if ast.decl_tag() == "action" => {
+                MirrorAST::Zoom(_) | MirrorAST::Abstract { .. } if ast.decl_tag() == "action" => {
                     // Action -> type reference edges from parameters
                     let action_idx =
                         get_or_insert(&name, name_to_idx, next_idx);

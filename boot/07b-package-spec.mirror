@@ -1,7 +1,7 @@
-in @mirror
-in @config
-in @ai
+in @prism
+in @meta
 in @code
+in @actor
 
 type target = beam | wasm | metal | native
 type region(string)

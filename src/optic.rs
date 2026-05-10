@@ -83,7 +83,7 @@ impl MirrorOptic {
                     is_abstract: false,
                 };
                 actions.insert(name, def);
-            } else if let MirrorAST::Abstract(inner) = ast {
+            } else if let MirrorAST::Abstract { inner, .. } = ast {
                 if let MirrorAST::Zoom(z) = inner.as_ref() {
                     let params = inner.params_as_strings();
                     let receiver = params.first().cloned().unwrap_or_default();

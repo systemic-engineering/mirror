@@ -693,7 +693,7 @@ mod tests {
     #[test]
     fn emit_rust_from_boot_code_rust() {
         let runtime = MirrorRuntime::new();
-        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot/03a-code-rust.mirror");
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("boot/04a-code-rust.mirror");
         let compiled = runtime.compile_file(&path).unwrap();
         let rust = emit_rust(&compiled);
 

@@ -60,8 +60,8 @@ use crate::declaration::{
     MirrorFragmentExt, OpticOp,
 };
 use crate::mirror_ast::{
-    Field, FocusNode, GrammarRef, Identifier, MirrorAST, ModuleNode, ProjectNode, RefractNode,
-    SplitNode, TypeBody, ZoomNode,
+    AbstractDefault, Field, FocusNode, GrammarRef, Identifier, MirrorAST, ModuleNode, ProjectNode,
+    RefractNode, SplitNode, TypeBody, ZoomNode,
 };
 use fragmentation::frgmnt_store::FrgmntStore;
 use fragmentation::sha::HashAlg;
@@ -147,7 +147,8 @@ fn is_decl_keyword(s: &str) -> bool {
         "form" | "type" | "prism" | "in" | "out" | "property" | "fold" |
         "requires" | "invariant" | "ensures" | "focus" | "project" |
         "split" | "zoom" | "refract" | "traversal" | "lens" | "action" |
-        "recover" | "rescue" | "grammar" | "template" | "default" | "binding"
+        "recover" | "rescue" | "grammar" | "template" | "default" | "binding" |
+        "io"
     )
 }
 
@@ -630,7 +631,7 @@ fn parse_decl(
             children: vec![],
             body: None,
         });
-        let ast = if modifier { MirrorAST::Abstract(Box::new(ast)) } else { ast };
+        let ast = if modifier { MirrorAST::Abstract { inner: Box::new(ast), default_body: AbstractDefault::IntentHole } } else { ast };
         let frag = build_fragment(ast, children);
         return Ok((frag, Vec::new()));
     }
@@ -861,7 +862,7 @@ fn parse_decl(
             children: vec![],
             body: body_nodes,
         });
-        let ast = if modifier { MirrorAST::Abstract(Box::new(ast)) } else { ast };
+        let ast = if modifier { MirrorAST::Abstract { inner: Box::new(ast), default_body: AbstractDefault::IntentHole } } else { ast };
         let frag = build_fragment(ast, children);
         return Ok((frag, Vec::new()));
     }
@@ -950,7 +951,7 @@ fn parse_decl(
 
     // Build MirrorAST node with children — the parser produces typed AST.
     let ast = build_ast_node_with_children(kind, &name, &params, &variants, &parent_ref, children.clone());
-    let ast = if modifier { MirrorAST::Abstract(Box::new(ast)) } else { ast };
+    let ast = if modifier { MirrorAST::Abstract { inner: Box::new(ast), default_body: AbstractDefault::IntentHole } } else { ast };
     let frag = build_fragment(ast, children);
     Ok((frag, block_warnings))
 }
@@ -2203,7 +2204,7 @@ mod tests {
                     }
                 })
             })
-        } else if let MirrorAST::Abstract(ref inner) = ast {
+        } else if let MirrorAST::Abstract { ref inner, .. } = ast {
             if let MirrorAST::Zoom(ref z) = **inner {
                 z.body.as_ref().and_then(|body| {
                     body.iter().find_map(|node| {
@@ -2675,21 +2676,19 @@ mod tests {
 
         assert!(boot.resolved.contains_key("00-prism"));
         assert!(boot.resolved.contains_key("01-meta"));
-        assert!(boot.resolved.contains_key("03-code"));
+        assert!(boot.resolved.contains_key("04-code"));
         assert!(
-            boot.resolved.contains_key("03a-code-rust"),
-            "03a-code-rust should resolve"
+            boot.resolved.contains_key("04a-code-rust"),
+            "04a-code-rust should resolve"
         );
-        assert!(boot.resolved.contains_key("01a-meta-actor"));
+        assert!(boot.resolved.contains_key("02-actor"));
 
-        // 01b, 01c, 02-shatter now resolve: actor (01a) loads before them
-        assert!(boot.resolved.contains_key("01b-meta-action"));
-        assert!(boot.resolved.contains_key("01c-meta-io"));
-        assert!(boot.resolved.contains_key("02-shatter"));
+        // io, shatter, action all resolve: actor (02) loads before them
+        assert!(boot.resolved.contains_key("06-action"));
+        assert!(boot.resolved.contains_key("02a-io"));
+        assert!(boot.resolved.contains_key("03-shatter"));
         // 05-property now resolves (in @meta, not in @form)
         assert!(boot.resolved.contains_key("05-property"));
-        // 10-mirror moved to std/ — not loaded by kernel compilation
-        assert!(boot.failed.contains_key("06b-package-spec"));
 
         let reopened = MirrorRegistry::open(&store_dir).unwrap();
         assert!(reopened.lookup("@prism").is_some());
@@ -2866,9 +2865,9 @@ mod tests {
     fn action_file_01a_parses_and_resolves() {
         let runtime = MirrorRuntime::new();
         let compiled = runtime
-            .compile_file(&boot_dir().join("01b-meta-action.mirror"))
+            .compile_file(&boot_dir().join("06-action.mirror"))
             .unwrap();
-        // 01b-meta-action.mirror has multiple top-level declarations, wrapped in synthetic Module
+        // 06-action.mirror has multiple top-level declarations, wrapped in synthetic Module
         assert_eq!(compiled.ast().decl_tag(), "form");
         // Should contain: in @prism, in @meta, in @actor, prism action, action action, out action/collapse
         let action_decls: Vec<&MirrorFragment> = compiled
@@ -2880,7 +2879,7 @@ mod tests {
         assert_eq!(
             action_decls.len(),
             1,
-            "01b-meta-action.mirror has one action declaration"
+            "06-action.mirror has one action declaration"
         );
         let action_ast = action_decls[0].mirror_ast();
         assert_eq!(action_ast.name(), "action");
@@ -3187,14 +3186,14 @@ mod tests {
             .collect();
         files.sort();
 
-        assert_eq!(files.len(), 19, "boot kernel file count: {:?}", files);
+        assert_eq!(files.len(), 15, "boot kernel file count: {:?}", files);
         assert!(files.contains(&"00-prism.mirror".to_string()));
-        assert!(files.contains(&"01a-meta-actor.mirror".to_string()));
-        assert!(files.contains(&"01b-meta-action.mirror".to_string()));
-        assert!(files.contains(&"01c-meta-io.mirror".to_string()));
-        assert!(files.contains(&"02-shatter.mirror".to_string()));
-        assert!(files.contains(&"06-package.mirror".to_string()));
-        assert!(files.contains(&"07-runtime.mirror".to_string()));
+        assert!(files.contains(&"02-actor.mirror".to_string()));
+        assert!(files.contains(&"06-action.mirror".to_string()));
+        assert!(files.contains(&"02a-io.mirror".to_string()));
+        assert!(files.contains(&"03-shatter.mirror".to_string()));
+        assert!(files.contains(&"07-package.mirror".to_string()));
+        assert!(files.contains(&"02b-runtime.mirror".to_string()));
 
         // std/ exists with 25 files
         let std_dir = boot.join("std");
@@ -3247,34 +3246,30 @@ mod tests {
         let resolved: Vec<&str> = boot.resolved.keys().map(|s| s.as_str()).collect();
         assert!(resolved.contains(&"00-prism"), "prism must resolve");
         assert!(resolved.contains(&"01-meta"), "meta must resolve");
-        assert!(resolved.contains(&"03-code"), "code must resolve");
+        assert!(resolved.contains(&"04-code"), "code must resolve");
         assert!(
-            resolved.contains(&"03a-code-rust"),
+            resolved.contains(&"04a-code-rust"),
             "code-rust must resolve"
         );
         assert!(
-            resolved.contains(&"01a-meta-actor"),
-            "actor must resolve (loads first at 01a)"
+            resolved.contains(&"02-actor"),
+            "actor must resolve (loads at 02)"
         );
         assert!(
-            resolved.contains(&"01b-meta-action"),
+            resolved.contains(&"06-action"),
             "action must resolve (actor loads before it)"
         );
         assert!(
-            resolved.contains(&"01c-meta-io"),
+            resolved.contains(&"02a-io"),
             "io must resolve (actor loads before it)"
         );
         assert!(
-            resolved.contains(&"02-shatter"),
+            resolved.contains(&"03-shatter"),
             "shatter must resolve (io loads before it)"
         );
         assert!(
-            resolved.contains(&"04a-runtime"),
-            "runtime must resolve (actor loads before it)"
-        );
-        assert!(
-            resolved.contains(&"07-runtime"),
-            "07-runtime must resolve (prism, meta, actor all available)"
+            resolved.contains(&"02b-runtime"),
+            "runtime must resolve (actor, io load before it)"
         );
 
         // --- What fails resolution (in @X references something missing) ---
@@ -3284,11 +3279,16 @@ mod tests {
             resolved.contains(&"05-property"),
             "property must resolve after in @form -> in @meta"
         );
-        // 06-package and 06a-package-git resolve (in @prism, @meta, @package)
-        assert!(resolved.contains(&"06-package"), "package must resolve");
+        // 07-package and 07a-package-git resolve (in @prism, @meta, @package)
+        assert!(resolved.contains(&"07-package"), "package must resolve");
         assert!(
-            resolved.contains(&"06a-package-git"),
+            resolved.contains(&"07a-package-git"),
             "package-git must resolve"
+        );
+        // 07b-package-spec now resolves (fixed imports: @prism, @meta, @code, @actor)
+        assert!(
+            resolved.contains(&"07b-package-spec"),
+            "package-spec must resolve (imports fixed)"
         );
 
         // --- The loss: what the compiler saw but couldn't land ---
@@ -3298,7 +3298,7 @@ mod tests {
         // --- Parse-level loss ---
         // Kernel files introduce unrecognized keywords (training data):
         //   unfold, subset, superset, iso, not-iso (01-meta operators)
-        //   io (01c-meta-io, 02-shatter grammar keyword)
+        //   io (02a-io, 03-shatter grammar keyword)
         //   pure, real, loss constraints with != operator
         // Std files introduce unrecognized keywords:
         //   template (8 declarations in std/properties.mirror)
@@ -3312,32 +3312,26 @@ mod tests {
         // (reed/emit-code) -- new struct declarations with parameterized types.
         // Raised to 183 after adding template declarations to @code grammar
         // and new std files (rust.mirror, file.mirror, runtime.mirror).
-        // Raised to 246 after adding 07-runtime.mirror (SpectralRuntime grammar).
+        // Raised to 246 after adding 02b-runtime.mirror (SpectralRuntime grammar).
         // Raised to 292 after adding 15 new std files (sql, bool, list, map, set,
         // text, number, option, order, result, ai, fate, new, run, new.template).
+        // Raised to 305 after boot reorg: io keyword recognized, tick/tock added,
+        // 07b-package-spec now resolves (fixed imports), 4 duplicates removed.
         assert!(
-            holonomy <= 292.0,
+            holonomy <= 305.0,
             "parse holonomy must not regress above baseline: got {}",
             holonomy
         );
 
-        // --- Resolution failures: kernel + std + subdirs ---
-        // Kernel failures: 01a-meta-action, 06b-package-spec
+        // --- Resolution failures: std + subdirs ---
+        // Kernel failures: none (all kernel files now resolve)
         // Std failures: ai, beam, benchmark, cli, fate, runtime, rust, tui
         // Subdir failures: code/rust, trace/complexity, trace/memory
         assert_eq!(
             boot.failed.len(),
-            13,
-            "13 of 48 files fail resolution (2 kernel + 8 std + 3 subdir): {:?}",
+            11,
+            "11 of 45 files fail resolution (0 kernel + 7 std + 4 subdir): {:?}",
             boot.failed.keys().collect::<Vec<_>>()
-        );
-        assert!(
-            failed.contains(&"06b-package-spec"),
-            "missing refs (@mirror, @config, @ai)"
-        );
-        assert!(
-            failed.contains(&"01a-meta-action"),
-            "01a-meta-action fails resolution"
         );
         // std failures
         assert!(
@@ -3348,20 +3342,21 @@ mod tests {
             failed.contains(&"std/benchmark"),
             "benchmark needs @time before it alphabetically"
         );
+        // std/cli now resolves (@spec and @shatter in registry after boot reorg)
         assert!(
-            failed.contains(&"std/cli"),
-            "cli needs @spec, @shatter — not in registry"
+            resolved.contains(&"std/cli"),
+            "cli resolves now (@spec, @shatter available)"
         );
         assert!(
             failed.contains(&"std/tui"),
             "tui needs @config, @ci, @ca, @lsp — not in registry"
         );
 
-        // --- Resolved: 35 of 48 files ---
+        // --- Resolved: 34 of 45 files ---
         assert_eq!(
             boot.resolved.len(),
-            35,
-            "35 of 48 files resolve: {:?}",
+            34,
+            "34 of 45 files resolve: {:?}",
             boot.resolved.keys().collect::<Vec<_>>()
         );
         // std files that resolve
@@ -3413,11 +3408,10 @@ mod tests {
             .collect();
         std_files.sort(); // sort for assertion stability only
 
-        // Kernel: 19 files (00, 00a, 01, 01a-action, 01a-actor, 01b-action, 01b-io, 01c-io,
-        // 02, 03, 03a, 03b, 04, 04a, 05, 06, 06a, 06b, 07)
-        assert_eq!(kernel.len(), 19, "kernel needs 19 files: {:?}", kernel);
+        // Kernel: 15 files (00, 00a, 01, 02, 02a, 02b, 03, 04, 04a, 04b, 05, 06, 07, 07a, 07b)
+        assert_eq!(kernel.len(), 15, "kernel needs 15 files: {:?}", kernel);
         assert!(kernel.contains(&"00-prism.mirror".to_string()));
-        assert!(kernel.contains(&"06b-package-spec.mirror".to_string()));
+        assert!(kernel.contains(&"07b-package-spec.mirror".to_string()));
 
         // Std: 25 files
         assert_eq!(std_files.len(), 25, "std needs 25 files: {:?}", std_files);
@@ -4568,10 +4562,10 @@ grammar @ai {
         let store = tempdir_for_test("runtime_boot");
         let boot = runtime.compile_boot_dir(&boot_dir(), &store).unwrap();
 
-        // 04a-runtime should be in the boot results
+        // 02b-runtime should be in the boot results
         assert!(
-            boot.resolved.contains_key("04a-runtime") || boot.failed.contains_key("04a-runtime"),
-            "04a-runtime.mirror must be loaded"
+            boot.resolved.contains_key("02b-runtime") || boot.failed.contains_key("02b-runtime"),
+            "02b-runtime.mirror must be loaded"
         );
     }
 
@@ -4649,11 +4643,11 @@ grammar @ai {
         let files = [
             "00-prism.mirror",
             "01-meta.mirror",
-            "01a-meta-actor.mirror",
-            "01b-meta-action.mirror",
-            "01c-meta-io.mirror",
-            "02-shatter.mirror",
-            "03-code.mirror",
+            "02-actor.mirror",
+            "06-action.mirror",
+            "02a-io.mirror",
+            "03-shatter.mirror",
+            "04-code.mirror",
             "05-property.mirror",
         ];
         let iterations = 1000;
