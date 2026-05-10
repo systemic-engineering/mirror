@@ -305,13 +305,13 @@ fn compile_boot_actor() {
     let output = mirror_bin()
         .current_dir(project_root())
         .arg("compile")
-        .arg("boot/01a-meta-actor.mirror")
+        .arg("boot/02-actor.mirror")
         .output()
         .unwrap();
 
     assert!(
         output.status.success(),
-        "boot/01a-meta-actor.mirror should compile, stderr: {}",
+        "boot/02-actor.mirror should compile, stderr: {}",
         String::from_utf8_lossy(&output.stderr)
     );
 }

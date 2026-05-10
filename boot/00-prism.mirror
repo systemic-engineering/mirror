@@ -16,6 +16,8 @@ prism @prism {
   refract refract
 }
 
+abstract io tick(type) -> tock(type) { \ }
+
 project in(prism)
 project out(prism)
 
