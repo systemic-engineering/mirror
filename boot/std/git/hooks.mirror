@@ -1,0 +1,90 @@
+in @prism
+in @meta
+in @git
+
+-- @git/hooks: git hook verification as grammar.
+--
+-- Hooks are checkpoints in the git workflow.
+-- Each hook observes, verifies, and reports loss.
+
+-- ── Hook types ───────────────────────────────────────────────────
+
+type hook = pre_commit | commit_msg | pre_push | post_commit
+
+type hook_result = imperfect(hook, hook_error, loss)
+
+type hook_error {
+  hook: hook,
+  message: text,
+}
+
+-- ── Check ────────────────────────────────────────────────────────
+--
+-- Run a hook's verification. Returns imperfect because hooks
+-- can partially succeed (warnings are loss, not failure).
+
+zoom check(h: hook) -> imperfect {
+  focus  h
+  split  h -> [verification]
+  zoom   |verification| -> result
+  refract collect(results)
+}
+
+-- ── Untracked loss ───────────────────────────────────────────────
+--
+-- Untracked files are information outside the crystal.
+-- Shannon loss: -sum(p * log2(p)) over the distribution of
+-- tracked vs untracked content.
+--
+-- High untracked loss = the repo doesn't know what it contains.
+-- Zero untracked loss = everything is committed.
+
+zoom untracked_loss(repo) -> loss {
+  focus  repo
+  split  repo -> [tracked, untracked]
+  zoom   |tracked, untracked| -> shannon_entropy
+  refract loss
+}
+
+-- ── Format ───────────────────────────────────────────────────────
+--
+-- Format check for a specific hook context.
+-- Returns imperfect: the formatted result with formatting loss.
+
+zoom format(h: hook) -> imperfect {
+  focus  h
+  zoom   kintsugi(grammar)
+  refract settle
+}
+
+-- ── Pre-commit pipeline ──────────────────────────────────────────
+--
+-- The standard pre-commit: check formatting, run properties,
+-- compute untracked loss.
+
+zoom pre_commit(repo) -> imperfect {
+  focus  repo
+  zoom   format(pre_commit)
+  zoom   check(pre_commit)
+  zoom   untracked_loss(repo)
+  refract collect(results)
+}
+
+-- ── Commit message ───────────────────────────────────────────────
+--
+-- Verify commit message structure.
+
+zoom commit_msg(message: text) -> imperfect {
+  focus  message
+  zoom   check(commit_msg)
+  refract settle
+}
+
+out hook
+out hook_result
+out hook_error
+out check
+out untracked_loss
+out format
+out pre_commit
+out commit_msg

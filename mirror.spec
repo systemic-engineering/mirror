@@ -1,98 +1,64 @@
-# mirror.spec — the CLI IS the spec IS the config
-#
-# spec @mirror {
-#   grammars: [@mirror, @code/rust, @nl]
-#
-#   build {
-#     tool: cargo
-#     features: [shatter]
-#     target: release
-#   }
-#
-#   test {
-#     command: "cargo test --lib"
-#     post: kintsugi boot/*.mirror
-#   }
-#
-#   deploy {
-#     binary: mirror
-#     target: ~/.local/bin/mirror
-#   }
-# }
+in @prism
+in @meta
+in @code/rust
+in @git
 
-@oid("@mirror-lang")
+-- mirror.spec: the mirror binary describes itself.
+--
+-- Two targets: boot (the grammar layer) and cargo (the Rust layer).
+-- Kintsugi collapses them against each other.
+-- The spec is the proof that they agree.
 
-store {
-  path = .git/mirror
+-- ── Targets ──────────────────────────────────────────────────────
+
+type target = boot | cargo
+
+-- boot: the grammar layer.
+-- Everything in boot/ is a prism. The import graph is the build order.
+prism @boot {
+  focus  boot -> [grammar]
+  split  grammar -> import_graph
+  zoom   import_graph -> build_order
+  refract compile(build_order) -> crystal
 }
 
-craft {
-  target boot("boot/*.mirror") {
-    @prism
-    @meta
-    @meta/action
-    @meta/io
-    @shatter
-    @code
-    @code/rust
-    @actor
-    @runtime
-    @property
-    @package
-    @package/git
-    @package/spec
-  }
-
-  target std("boot/std/*.mirror") {
-    @beam
-    @benchmark
-    @cli
-    @mirror
-    @properties
-    @time
-    @tui
-  }
-
-  target boot => mirror out @code/rust("rust/mirror/") {
-    @prism
-    @meta
-    @property
-    @package
-  }
-
-  target boot => cli out @code/rust("rust/mirror-cli/") {
-    @code
-    @shatter
-    @actor
-  }
-
-  default boot
+-- cargo: the Rust layer.
+-- Five crates: prism, mirror, lens, spectral-db, spectral.
+prism @cargo {
+  focus  src -> [crate]
+  split  crate -> dependency_graph
+  zoom   dependency_graph -> build_order
+  refract compile(build_order) -> artifact
 }
 
-kintsugi {
-  --hoist
-  --sort-deps
-  --normalize
-  --align
-  --simplify
-  naming = snake_case
-  indent = 2
+-- ── The collapse ─────────────────────────────────────────────────
+--
+-- Boot and cargo must agree. Where they disagree, the seam is gold.
+-- The loss measures drift between grammar and implementation.
+--
+-- When loss reaches zero, the Rust is generated from the grammar.
+-- Until then, kintsugi holds them together.
+
+zoom mirror(spec) -> imperfect {
+  focus  spec
+  split  spec -> [@boot, @cargo]
+  zoom   collapse(@boot, @cargo) -> imperfect(mirror)
+  refract settle
 }
 
-properties {
-  requires {
-    types_lowercase
-    action_is_named_type
-    unique_variants
-    every_type_reachable
-    no_dead_variants
-  }
-  invariant {
-    deterministic
-    pure
-    no_cycles
-  }
-  ensures {
-    always_halts
-  }
-}
+-- ── Properties ───────────────────────────────────────────────────
+
+requires canonical_order
+requires every_type_reachable
+invariant deterministic
+invariant pure
+ensures always_halts
+
+-- ── Build ────────────────────────────────────────────────────────
+
+default(target) = native
+
+out target
+out @boot
+out @cargo
+out mirror

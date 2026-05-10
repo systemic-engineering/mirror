@@ -1,0 +1,156 @@
+in @prism
+in @meta
+
+-- @kintsugi: canonical ordering and simplification for grammars.
+--
+-- Kintsugi repairs broken pottery with gold. The cracks are visible.
+-- The result is more beautiful than the original.
+--
+-- In mirror: two grammars collapse into one. The seams (loss) are
+-- preserved. The canonical form is the gold.
+
+-- ── Canonical order ──────────────────────────────────────────────
+--
+-- Every grammar has a canonical child order. Kintsugi enforces it.
+-- This replaces the Rust kintsugi_sort_key function.
+--
+-- The order:
+--   0  in        imports first — they define the world
+--   1  type      types next — the vocabulary
+--   1  prism     prisms are types
+--   1  focus     optic declarations are types
+--   1  project
+--   1  split
+--   1  zoom
+--   1  refract
+--   2  traversal graph traversal declarations
+--   3  lens      lens declarations
+--   4  grammar   grammar blocks
+--   5  property  properties and constraints
+--   5  requires
+--   5  invariant
+--   5  ensures
+--   6  action    actions last — they use everything above
+--   6  recover
+--   6  rescue
+--   7  default   defaults and bindings after actions
+--   7  out       exports at the very end
+
+type order = u8
+
+focus order(in)        -> 0
+focus order(type)      -> 1
+focus order(prism)     -> 1
+focus order(focus)     -> 1
+focus order(project)   -> 1
+focus order(split)     -> 1
+focus order(zoom)      -> 1
+focus order(refract)   -> 1
+focus order(traversal) -> 2
+focus order(lens)      -> 3
+focus order(grammar)   -> 4
+focus order(property)  -> 5
+focus order(requires)  -> 5
+focus order(invariant) -> 5
+focus order(ensures)   -> 5
+focus order(action)    -> 6
+focus order(recover)   -> 6
+focus order(rescue)    -> 6
+focus order(default)   -> 7
+focus order(out)       -> 7
+focus order(\)         -> 8
+
+-- ── Collapse ─────────────────────────────────────────────────────
+--
+-- The core operation: two prisms become one imperfect prism.
+-- The loss records what was broken. The gold is the seam.
+
+zoom collapse(a: prism, b: prism) -> imperfect(prism) {
+  split a
+  split b
+  zoom  merge(a, b)
+  refract settle
+}
+
+-- ── Simplification ───────────────────────────────────────────────
+--
+-- Three passes, composed. Each reduces complexity.
+-- This replaces the Rust simplify_fragment function.
+--
+-- Pass 1: collapse_aliases
+--   Types with identical variant signatures merge.
+--   The first name wins. References to the duplicate are rewritten.
+--
+-- Pass 2: flatten_wrappers
+--   Types with a single field pointing to another type are inlined.
+--   Chains resolve transitively (a -> b -> c becomes a -> c).
+--
+-- Pass 3: eliminate_dead
+--   Types not referenced by any action are removed.
+--   Transitive closure: if action uses A and A references B, B lives.
+
+zoom collapse_aliases(grammar) -> grammar {
+  split  grammar -> [type]
+  project type -> signature
+  zoom  |duplicates| -> first
+  refract rewrite(references)
+}
+
+zoom flatten_wrappers(grammar) -> grammar {
+  split  grammar -> [type]
+  project type -> single_field_wrapper
+  zoom  |chain| -> resolve_transitively
+  refract inline(references)
+}
+
+zoom eliminate_dead(grammar) -> grammar {
+  split  grammar -> [type, action]
+  project action -> referenced_types
+  zoom  |referenced| -> transitive_closure
+  refract keep(referenced)
+}
+
+-- ── Simplify pipeline ────────────────────────────────────────────
+--
+-- The three passes composed. Order matters:
+--   1. collapse aliases (canonical names survive)
+--   2. flatten wrappers (inline indirection)
+--   3. eliminate dead (remove what's no longer needed)
+
+zoom simplify(grammar) -> grammar {
+  focus  grammar
+  zoom   collapse_aliases
+  zoom   flatten_wrappers
+  zoom   eliminate_dead
+  refract grammar
+}
+
+-- ── Reorder ──────────────────────────────────────────────────────
+--
+-- Sort children by canonical order. Stable sort within each rank.
+
+zoom reorder(grammar) -> grammar {
+  split grammar -> [declaration]
+  zoom  |declaration| -> order(declaration)
+  refract sort_stable(declarations, order)
+}
+
+-- ── The full kintsugi pass ───────────────────────────────────────
+--
+-- Reorder + simplify. The canonical form.
+
+zoom kintsugi(grammar) -> grammar {
+  focus  grammar
+  zoom   reorder
+  zoom   simplify
+  refract grammar
+}
+
+out order
+out collapse
+out collapse_aliases
+out flatten_wrappers
+out eliminate_dead
+out simplify
+out reorder
+out kintsugi
