@@ -60,8 +60,8 @@ use crate::declaration::{
     MirrorFragmentExt, OpticOp,
 };
 use crate::mirror_ast::{
-    Field, FocusNode, GrammarRef, Identifier, MirrorAST, ModuleNode, ProjectNode, RefractNode,
-    SplitNode, TypeBody, ZoomNode,
+    AbstractDefault, Field, FocusNode, GrammarRef, Identifier, MirrorAST, ModuleNode, ProjectNode,
+    RefractNode, SplitNode, TypeBody, ZoomNode,
 };
 use fragmentation::frgmnt_store::FrgmntStore;
 use fragmentation::sha::HashAlg;
@@ -630,7 +630,7 @@ fn parse_decl(
             children: vec![],
             body: None,
         });
-        let ast = if modifier { MirrorAST::Abstract(Box::new(ast)) } else { ast };
+        let ast = if modifier { MirrorAST::Abstract { inner: Box::new(ast), default_body: AbstractDefault::IntentHole } } else { ast };
         let frag = build_fragment(ast, children);
         return Ok((frag, Vec::new()));
     }
@@ -861,7 +861,7 @@ fn parse_decl(
             children: vec![],
             body: body_nodes,
         });
-        let ast = if modifier { MirrorAST::Abstract(Box::new(ast)) } else { ast };
+        let ast = if modifier { MirrorAST::Abstract { inner: Box::new(ast), default_body: AbstractDefault::IntentHole } } else { ast };
         let frag = build_fragment(ast, children);
         return Ok((frag, Vec::new()));
     }
@@ -950,7 +950,7 @@ fn parse_decl(
 
     // Build MirrorAST node with children — the parser produces typed AST.
     let ast = build_ast_node_with_children(kind, &name, &params, &variants, &parent_ref, children.clone());
-    let ast = if modifier { MirrorAST::Abstract(Box::new(ast)) } else { ast };
+    let ast = if modifier { MirrorAST::Abstract { inner: Box::new(ast), default_body: AbstractDefault::IntentHole } } else { ast };
     let frag = build_fragment(ast, children);
     Ok((frag, block_warnings))
 }
@@ -2203,7 +2203,7 @@ mod tests {
                     }
                 })
             })
-        } else if let MirrorAST::Abstract(ref inner) = ast {
+        } else if let MirrorAST::Abstract { ref inner, .. } = ast {
             if let MirrorAST::Zoom(ref z) = **inner {
                 z.body.as_ref().and_then(|body| {
                     body.iter().find_map(|node| {

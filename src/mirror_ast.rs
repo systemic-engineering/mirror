@@ -105,6 +105,26 @@ pub struct Field {
 }
 
 // ---------------------------------------------------------------------------
+// AbstractDefault — what happens when an abstract action has no override.
+// ---------------------------------------------------------------------------
+
+/// What happens when an abstract action is called without concrete override.
+#[derive(Clone, Debug, PartialEq)]
+pub enum AbstractDefault {
+    /// Route through Fate intent resolution (the \ hole).
+    /// This is the default for all abstract declarations.
+    IntentHole,
+    /// A concrete body was provided (overrides the hole).
+    Concrete(Vec<MirrorAST>),
+}
+
+impl Default for AbstractDefault {
+    fn default() -> Self {
+        AbstractDefault::IntentHole
+    }
+}
+
+// ---------------------------------------------------------------------------
 // MirrorAST — the AST. Seven variants. Five operations.
 // ---------------------------------------------------------------------------
 
@@ -134,8 +154,13 @@ pub enum MirrorAST {
     /// `refract` — scatter and reconverge. Property, settlement.
     /// Was: Refract + Property
     Refract(RefractNode),
-    /// `abstract` wraps any node
-    Abstract(Box<MirrorAST>),
+    /// `abstract` wraps any node with a default body.
+    /// IntentHole = route through Fate (the \ hole).
+    /// Concrete = a body was provided.
+    Abstract {
+        inner: Box<MirrorAST>,
+        default_body: AbstractDefault,
+    },
     /// Top-level module containing multiple declarations
     Module(ModuleNode),
 }
@@ -287,9 +312,16 @@ impl Encode for MirrorAST {
                 }
                 s.into_bytes()
             }
-            MirrorAST::Abstract(inner) => {
+            MirrorAST::Abstract { inner, default_body } => {
                 let mut s = b"abstract:".to_vec();
                 s.extend_from_slice(&inner.encode());
+                if let AbstractDefault::Concrete(body) = default_body {
+                    s.extend_from_slice(b":body:");
+                    for (i, node) in body.iter().enumerate() {
+                        if i > 0 { s.push(b','); }
+                        s.extend_from_slice(&node.encode());
+                    }
+                }
                 s
             }
             MirrorAST::Module(m) => {
@@ -365,7 +397,10 @@ impl Decode for MirrorAST {
             }
             "abstract" => {
                 let inner = MirrorAST::decode(rest.as_bytes())?;
-                MirrorAST::Abstract(Box::new(inner))
+                MirrorAST::Abstract {
+                    inner: Box::new(inner),
+                    default_body: AbstractDefault::IntentHole,
+                }
             }
             "module" => {
                 MirrorAST::Module(ModuleNode {
@@ -524,9 +559,17 @@ impl MirrorAST {
                 }
                 hash_tagged("refract", &buf)
             }
-            MirrorAST::Abstract(inner) => {
-                let inner_oid = inner.content_oid();
-                hash_tagged("abstract", inner_oid.as_ref().as_bytes())
+            MirrorAST::Abstract { inner, default_body } => {
+                let mut buf = Vec::new();
+                buf.extend_from_slice(inner.content_oid().as_ref().as_bytes());
+                if let AbstractDefault::Concrete(body) = default_body {
+                    buf.extend_from_slice(b":body");
+                    for node in body {
+                        buf.push(b':');
+                        buf.extend_from_slice(node.content_oid().as_ref().as_bytes());
+                    }
+                }
+                hash_tagged("abstract", &buf)
             }
             MirrorAST::Module(m) => {
                 let mut buf = Vec::new();
@@ -579,7 +622,7 @@ impl prism::MerkleTree for MirrorAST {
                 }
             }
             MirrorAST::Refract(r) => &r.children,
-            MirrorAST::Abstract(inner) => inner.children(),
+            MirrorAST::Abstract { inner, .. } => inner.children(),
             MirrorAST::Module(m) => &m.children,
         }
     }
@@ -598,7 +641,7 @@ impl MirrorAST {
             MirrorAST::Split(_) => "split",
             MirrorAST::Zoom(_) => "zoom",
             MirrorAST::Refract(_) => "refract",
-            MirrorAST::Abstract(_) => "abstract",
+            MirrorAST::Abstract { .. } => "abstract",
             MirrorAST::Module(_) => "module",
         }
     }
@@ -619,7 +662,7 @@ impl MirrorAST {
             MirrorAST::Split(s) => s.name.as_str(),
             MirrorAST::Zoom(z) => z.name.as_str(),
             MirrorAST::Refract(r) => r.name.as_str(),
-            MirrorAST::Abstract(inner) => inner.name(),
+            MirrorAST::Abstract { inner, .. } => inner.name(),
             MirrorAST::Module(m) => m.name.as_str(),
         }
     }
@@ -642,14 +685,14 @@ impl MirrorAST {
             MirrorAST::Split(_) => "type",
             MirrorAST::Zoom(_) => "action",
             MirrorAST::Refract(_) => "property",
-            MirrorAST::Abstract(inner) => inner.decl_tag(),
+            MirrorAST::Abstract { inner, .. } => inner.decl_tag(),
             MirrorAST::Module(_) => "form",
         }
     }
 
     /// Is this node abstract?
     pub fn is_abstract(&self) -> bool {
-        matches!(self, MirrorAST::Abstract(_))
+        matches!(self, MirrorAST::Abstract { .. })
     }
 
     /// Stringly-typed params projection (for consumers that need Vec<String>).
@@ -670,7 +713,7 @@ impl MirrorAST {
                     format!("{}:{}", f.name.as_str(), f.type_ref.as_str())
                 }
             }).collect(),
-            MirrorAST::Abstract(inner) => inner.params_as_strings(),
+            MirrorAST::Abstract { inner, .. } => inner.params_as_strings(),
             _ => Vec::new(),
         }
     }
@@ -695,7 +738,7 @@ impl MirrorAST {
             MirrorAST::Refract(r) => {
                 r.target.as_ref().map(|t| vec![t.as_str().to_string()]).unwrap_or_default()
             }
-            MirrorAST::Abstract(inner) => inner.variants_as_strings(),
+            MirrorAST::Abstract { inner, .. } => inner.variants_as_strings(),
             _ => Vec::new(),
         }
     }
@@ -704,7 +747,7 @@ impl MirrorAST {
     pub fn grammar_ref_str(&self) -> Option<String> {
         match self {
             MirrorAST::Zoom(z) => z.grammar_ref.as_ref().map(|gr| gr.as_str().to_string()),
-            MirrorAST::Abstract(inner) => inner.grammar_ref_str(),
+            MirrorAST::Abstract { inner, .. } => inner.grammar_ref_str(),
             _ => None,
         }
     }
@@ -713,7 +756,7 @@ impl MirrorAST {
     pub fn return_type_str(&self) -> Option<String> {
         match self {
             MirrorAST::Zoom(z) => z.target.as_ref().map(|t| t.as_str().to_string()),
-            MirrorAST::Abstract(inner) => inner.return_type_str(),
+            MirrorAST::Abstract { inner, .. } => inner.return_type_str(),
             _ => None,
         }
     }
@@ -722,7 +765,7 @@ impl MirrorAST {
     pub fn parent_ref_str(&self) -> Option<String> {
         match self {
             MirrorAST::Focus(f) => f.target.as_ref().map(|t| t.as_str().to_string()),
-            MirrorAST::Abstract(inner) => inner.parent_ref_str(),
+            MirrorAST::Abstract { inner, .. } => inner.parent_ref_str(),
             _ => None,
         }
     }
@@ -971,7 +1014,10 @@ mod tests {
             body: Some(TypeBody::Unit),
             children: vec![],
         });
-        let wrapped = MirrorAST::Abstract(Box::new(inner.clone()));
+        let wrapped = MirrorAST::Abstract {
+            inner: Box::new(inner.clone()),
+            default_body: AbstractDefault::IntentHole,
+        };
         assert_eq!(wrapped.kind_name(), "abstract");
         assert_eq!(wrapped.children(), inner.children());
     }
@@ -1035,7 +1081,10 @@ mod tests {
             body: Some(TypeBody::Unit),
             children: vec![],
         });
-        let wrapped = MirrorAST::Abstract(Box::new(inner.clone()));
+        let wrapped = MirrorAST::Abstract {
+            inner: Box::new(inner.clone()),
+            default_body: AbstractDefault::IntentHole,
+        };
         assert_ne!(inner.oid(), wrapped.oid());
     }
 
@@ -1135,5 +1184,51 @@ mod tests {
         let decoded = MirrorAST::decode(&encoded).unwrap();
         assert_eq!(decoded.kind_name(), "module");
         assert_eq!(decoded.name(), "test");
+    }
+
+    // -- AbstractDefault tests --
+
+    #[test]
+    fn abstract_default_is_intent_hole() {
+        let inner = MirrorAST::Zoom(ZoomNode {
+            name: Identifier::new("test"),
+            target: None,
+            params: vec![],
+            grammar_ref: None,
+            children: vec![],
+            body: None,
+        });
+        let abs = MirrorAST::Abstract {
+            inner: Box::new(inner),
+            default_body: AbstractDefault::IntentHole,
+        };
+        assert!(abs.is_abstract());
+        if let MirrorAST::Abstract { default_body, .. } = &abs {
+            assert_eq!(*default_body, AbstractDefault::IntentHole);
+        }
+    }
+
+    #[test]
+    fn abstract_concrete_overrides_hole() {
+        let inner = MirrorAST::Zoom(ZoomNode {
+            name: Identifier::new("test"),
+            target: None,
+            params: vec![],
+            grammar_ref: None,
+            children: vec![],
+            body: None,
+        });
+        let body = vec![MirrorAST::Focus(FocusNode {
+            name: Identifier::new("result"),
+            target: None,
+            children: vec![],
+        })];
+        let abs = MirrorAST::Abstract {
+            inner: Box::new(inner),
+            default_body: AbstractDefault::Concrete(body),
+        };
+        if let MirrorAST::Abstract { default_body, .. } = &abs {
+            assert!(matches!(default_body, AbstractDefault::Concrete(_)));
+        }
     }
 }
