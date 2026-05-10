@@ -1,78 +1,9 @@
 in @prism
-in @meta
 
--- @craft: the standard compilation pipeline as grammar.
---
--- Five operations, composed. Each stage is a lambda.
--- The pipeline IS a lambda — content-addressed, deterministic.
---
--- focus  |> split |> zoom |> refract |> project
--- parse  |> resolve |> transform |> settle |> emit
-
--- ── Pipeline stages ──────────────────────────────────────────────
-
-type stage = focus | split | zoom | refract | project
-
-type pipeline {
-  stages: [stage],
-  loss: loss,
+grammar @craft {
+  craft(target) -> crystal {
+    focus(target) |> split |> zoom |> refract |> project
+  }
 }
 
--- ── Craft: source -> crystal ─────────────────────────────────────
---
--- The standard pipeline: parse, resolve, check, emit.
--- Maps to the five operations:
---   focus   = parse (observe the source)
---   split   = resolve (find what's connected)
---   zoom    = properties (shift to verification perspective)
---   refract = emit (settle into code)
---   project = crystal (filter to the final artifact)
-
-zoom craft(target) -> crystal {
-  focus   target
-  split   resolve(target)
-  zoom    properties(resolved)
-  refract emit(checked)
-  project crystal
-}
-
--- ── Kintsugi pipeline: loss-tolerant ─────────────────────────────
---
--- Like craft but stops at refract. No emit — kintsugi tolerates
--- partial results. The loss is the information.
-
-zoom kintsugi(target) -> imperfect {
-  focus   target
-  split   resolve(target)
-  refract settle(resolved)
-}
-
--- ── CI pipeline: verify only ─────────────────────────────────────
---
--- Parse, resolve, check properties. No emit.
--- Returns the property verdict, not code.
-
-zoom ci(target) -> verdict {
-  focus   target
-  split   resolve(target)
-  zoom    properties(resolved)
-  project verdict
-}
-
--- ── Pipeline composition ─────────────────────────────────────────
---
--- Pipelines compose: a |> b produces a new pipeline.
--- The loss of the composition is the sum of losses.
-
-zoom compose(a: pipeline, b: pipeline) -> pipeline {
-  focus  a
-  zoom   a |> b
-  refract pipeline
-}
-
-out stage
-out pipeline
 out craft
-out kintsugi
-out ci
-out compose
