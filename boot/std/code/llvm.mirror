@@ -1,8 +1,0 @@
-in @prism
-in @code
-
-grammar @code/llvm {
-  compile(ast) -> artifact { \ }
-}
-
-out @code/llvm

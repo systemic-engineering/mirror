@@ -365,7 +365,7 @@ flags:
             "split" => Some("split <path> -- explore connections\n\nShows the branches: variants, forks, alternatives.\nThe split optic maps one-to-many."),
             "zoom" => Some("zoom <path> -- transform\n\nMoves between levels of abstraction.\nThe zoom optic changes coordinates."),
             "refract" => Some("refract <path> -- settle into crystal\n\nRuns the full compilation loop until the OID stabilizes.\nThe refract optic scatters and reconverges."),
-            "compile" => Some("compile <path> [--sign] [--target rust|llvm] [-o output] -- compile a .mirror file\n\nParses, resolves, and content-addresses the source.\nPrints the crystal OID to stdout.\nWith --sign: produces .shatter.sig alongside .shatter.\nWith --target rust: emits .rs file alongside .shatter.\nWith --target llvm: compiles to a native binary (requires llvm feature)."),
+            "compile" => Some("compile <path> [--sign] [--target rust] -- compile a .mirror file\n\nParses, resolves, and content-addresses the source.\nPrints the crystal OID to stdout.\nWith --sign: produces .shatter.sig alongside .shatter.\nWith --target rust: emits .rs file alongside .shatter."),
             "crystal" => Some("crystal [output] -- materialize the standard library\n\nCompiles boot/ in order and emits mirror.shatter.\nWith --oid: prints the loaded crystal OID."),
             "ci" => Some("ci <path> -- measure holonomy\n\nCompiles and reports the MirrorLoss.\nZero holonomy means crystal. Nonzero means alive."),
             "kintsugi" => Some("kintsugi <path> [--check] [--simplify] -- canonical ordering and simplification\n\nReorders declarations: in, type, traversal, lens, grammar, property, action.\nThe OID doesn't change. The surface does.\nWith --check: exit 0 if already canonical, exit 1 if not.\nWith --simplify: run the simplification pipeline (eliminate_dead, collapse_aliases, flatten_wrappers)."),
@@ -390,26 +390,15 @@ flags:
     fn cmd_compile(&self, args: &[String]) -> Result<String, CliError> {
         let sign = args.iter().any(|a| a == "--sign");
         let strict = args.iter().any(|a| a == "--strict");
-        // Detect --target <value>: find the value after --target
-        let target_value = args.windows(2)
-            .find(|w| w[0] == "--target")
-            .map(|w| w[1].as_str());
-        let target_rust = target_value == Some("rust") || args.iter().any(|a| a == "--rust");
-        #[cfg(feature = "llvm")]
-        let target_llvm = target_value == Some("llvm");
-        // Extract -o value before filtering
-        let output_value = args.windows(2)
-            .find(|w| w[0] == "-o")
-            .map(|w| w[1].as_str());
+        let target_rust = args.iter().any(|a| a == "--target" || a == "--rust");
         let file_args: Vec<&String> = args
             .iter()
-            .filter(|a| !a.starts_with("--") && a.as_str() != "-o")
-            .filter(|a| a.as_str() != "rust" && a.as_str() != "llvm") // skip target values
-            .filter(|a| output_value.map_or(true, |o| a.as_str() != o)) // skip -o value
+            .filter(|a| !a.starts_with("--"))
+            .filter(|a| a.as_str() != "rust") // skip target value after --target
             .collect();
         let file = file_args.first().ok_or_else(|| {
             CliError::Usage(
-                "usage: mirror compile <file> [--sign] [--strict] [--target rust|llvm] [-o output]".to_string(),
+                "usage: mirror compile <file> [--sign] [--strict] [--target rust]".to_string(),
             )
         })?;
 
@@ -473,28 +462,6 @@ flags:
                         std::fs::write(&rs_path, &code.0)?;
                         eprintln!("emitted {}", rs_path.display());
                     }
-                }
-
-                // --target llvm: compile to native binary
-                #[cfg(feature = "llvm")]
-                if target_llvm {
-                    // Determine output path: -o <path> or default to stem of input
-                    let output_path = args.windows(2)
-                        .find(|w| w[0] == "-o")
-                        .map(|w| std::path::PathBuf::from(&w[1]))
-                        .unwrap_or_else(|| {
-                            let stem = std::path::Path::new(file.as_str())
-                                .file_stem()
-                                .unwrap_or_default()
-                                .to_string_lossy()
-                                .to_string();
-                            std::path::PathBuf::from(&stem)
-                        });
-                    crate::code_llvm::compile_to_binary(&compiled, &output_path)
-                        .map_err(|e| CliError::Runtime(MirrorRuntimeError(format!(
-                            "llvm: {}", e
-                        ))))?;
-                    eprintln!("binary {}", output_path.display());
                 }
 
                 if sign {

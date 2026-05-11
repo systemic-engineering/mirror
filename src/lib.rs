@@ -25,8 +25,6 @@ pub mod abyss;
 pub mod ast;
 pub mod ast_prism;
 pub mod code_rust;
-#[cfg(feature = "llvm")]
-pub mod code_llvm;
 pub mod bounded;
 pub mod classifier;
 pub mod dispatch;
