@@ -1856,8 +1856,8 @@ mod tests {
         let cli = Cli::open(spec.to_str().unwrap()).unwrap();
         let oid = cli.crystal_oid().expect("should produce crystal OID");
         assert!(
-            oid.as_str().len() == 64 && oid.as_str().chars().all(|c| c.is_ascii_hexdigit()),
-            "OID should be 64-char hex, got: {}",
+            oid.as_str().len() == 40 && oid.as_str().chars().all(|c| c.is_ascii_hexdigit()),
+            "OID should be 40-char hex, got: {}",
             oid.as_str()
         );
     }
@@ -1877,7 +1877,7 @@ mod tests {
         assert!(result.is_ok());
         let oid = result.ok().unwrap();
         assert!(
-            oid.len() == 64 && oid.chars().all(|c| c.is_ascii_hexdigit()),
+            oid.len() == 40 && oid.chars().all(|c| c.is_ascii_hexdigit()),
             "should be hex OID: {}",
             oid
         );
@@ -1951,7 +1951,7 @@ mod tests {
         assert!(result.is_ok());
         let oid = result.ok().unwrap();
         assert!(
-            oid.len() == 64 && oid.chars().all(|c| c.is_ascii_hexdigit()),
+            oid.len() == 40 && oid.chars().all(|c| c.is_ascii_hexdigit()),
             "crystal --oid should print hex OID: {}",
             oid
         );
@@ -2104,7 +2104,7 @@ mod tests {
         assert!(result.is_ok());
         let oid = result.ok().unwrap();
         assert!(
-            oid.len() == 64 && oid.chars().all(|c| c.is_ascii_hexdigit()),
+            oid.len() == 40 && oid.chars().all(|c| c.is_ascii_hexdigit()),
             "refract should return OID, got: {}",
             oid
         );

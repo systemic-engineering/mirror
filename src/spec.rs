@@ -1024,8 +1024,24 @@ craft {
 
     #[test]
     fn parse_real_mirror_spec() {
-        let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("mirror.spec");
-        let spec = parse_spec(path.to_str().unwrap()).unwrap();
+        // mirror.spec was rewritten in mirror grammar format (in @prism, craft(target), etc.)
+        // which the block-based spec parser cannot parse. Test the parser with an inline spec
+        // that preserves the old block format for parser coverage.
+        let spec = parse_spec_source(
+            r#"
+@oid(@mirror-lang)
+store { path = .git/mirror }
+craft {
+  target boot("boot/*.mirror") { @prism @meta }
+  target mirror("src/*.mirror") { @mirror }
+  target cli("cli/*.mirror") { @cli }
+  target cargo { @code/rust }
+  default boot
+}
+properties { requires { unique_variants } }
+"#,
+        )
+        .unwrap();
         assert_eq!(spec.oid, "@mirror-lang");
         assert_eq!(spec.store.path.as_deref(), Some(".git/mirror"));
         assert!(
@@ -1167,8 +1183,18 @@ infer {
 
     #[test]
     fn real_spec_has_blocks() {
-        let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("mirror.spec");
-        let spec = parse_spec(path.to_str().unwrap()).unwrap();
+        // mirror.spec was rewritten in mirror grammar format (in @prism, craft(target), etc.)
+        // which the block-based spec parser cannot parse. Test the parser with an inline spec
+        // that preserves the old block format for parser coverage.
+        let spec = parse_spec_source(
+            r#"
+store { path = .git/mirror }
+craft { default boot }
+kintsugi { --hoist }
+properties { requires { unique_variants } }
+"#,
+        )
+        .unwrap();
         let names = spec.command_names();
         assert!(names.contains(&"store"), "should have store block");
         assert!(names.contains(&"craft"), "should have craft block");
