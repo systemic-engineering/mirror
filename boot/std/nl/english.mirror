@@ -1,0 +1,70 @@
+in @prism
+
+-- @nl/english: English tokenization as the five operations.
+--
+-- The tokenizer lives in mirror, not Rust. Fate resolves.
+--
+--   split   -> decompose: text into structure
+--   focus   -> observe: what a token is
+--   zoom    -> transform: morphology, tense, inflection
+--   refract -> verify: grammar rules, agreement, coherence
+--   project -> filter: stop words, relevance, summary
+
+grammar @nl/english {
+  in @nl
+
+  -- ── Structure levels ──────────────────────────────────────────────
+
+  type token(text)
+  type word(token)
+  type sentence([word])
+  type paragraph([sentence])
+  type section([paragraph])
+
+  -- ── Parts of speech ───────────────────────────────────────────────
+
+  type pos = noun | verb | adjective | adverb
+           | pronoun | preposition | conjunction
+           | determiner | interjection
+
+  type role = subject | predicate | object
+            | modifier | complement
+
+  -- ── split: decompose ──────────────────────────────────────────────
+
+  split tokenize(nl) -> [token] { \ }
+  split words(nl) -> [word] { \ }
+  split sentences(nl) -> [sentence] { \ }
+  split paragraphs(nl) -> [paragraph] { \ }
+  split sections(nl) -> [section] { \ }
+
+  -- ── focus: observe ────────────────────────────────────────────────
+
+  focus tag(token) -> pos { \ }
+  focus role(token, sentence) -> role { \ }
+  focus lemma(word) -> word { \ }
+
+  -- ── zoom: transform ───────────────────────────────────────────────
+
+  zoom conjugate(word, tense) -> word { \ }
+  zoom pluralize(word) -> word { \ }
+  zoom singularize(word) -> word { \ }
+  zoom nominalize(word) -> word { \ }
+
+  type tense = past | present | future
+             | past_perfect | present_perfect | future_perfect
+
+  -- ── refract: verify ───────────────────────────────────────────────
+
+  refract check(sentence) -> imperfect { \ }
+  refract agrees(word, word) -> imperfect { \ }
+  refract coherent(paragraph) -> imperfect { \ }
+
+  -- ── project: filter ───────────────────────────────────────────────
+
+  project stop_words(nl) -> nl { \ }
+  project summarize(nl) -> nl { \ }
+  project keywords(nl) -> [word] { \ }
+}
+
+out @nl/english
