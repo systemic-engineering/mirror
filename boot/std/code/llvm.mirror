@@ -1,0 +1,14 @@
+in @prism
+in @code
+
+grammar @code/llvm {
+  zoom define
+  split type
+  focus module
+  project declare
+  refract verify
+
+  compile(ast) -> artifact { \ }
+}
+
+out @code/llvm
