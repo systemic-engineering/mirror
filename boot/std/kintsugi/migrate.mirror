@@ -1,0 +1,13 @@
+in @prism
+in @kintsugi
+in @nl
+
+grammar @kintsugi/migrate {
+  # migrate old grammar to new form
+  # template → lambda. action → lambda. property → lambda.
+  # -- → #. keywords → import graph.
+  # the migration IS the collapse.
+  migrate(ast) -> imperfect { \ }
+}
+
+out migrate
