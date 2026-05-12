@@ -1,0 +1,11 @@
+in @prism
+in @kintsugi
+in @code
+
+grammar @kintsugi/translate {
+  # translate AST from source grammar to target grammar
+  # the source lens reads. the target lens writes. Fate settles.
+  translate(ast, grammar) -> imperfect { \ }
+}
+
+out translate
