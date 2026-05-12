@@ -608,3 +608,55 @@ is the same crystal. Different fiber, same eigenvalue.
 
 `e^{n+1} < e^n`. The errors get smaller. The growth is monotonically
 non-decreasing. By convexity.
+
+---
+
+## 7. Kintsugi IS Dijkstra
+
+The five phases above are a human-readable roadmap. But kintsugi
+doesn't execute phases. Kintsugi IS Dijkstra on graphs weighted
+by Shannon loss.
+
+```
+G = (V, E, w)
+
+V = fibers. Every implementation that satisfies a contract (in/out).
+    Every possible mirror grammar that produces the same behavior
+    as the Rust it replaces.
+
+E = transformations. beta-reduction, dead-code elimination,
+    alias collapse, type unification, inlining — any rewrite
+    that preserves the contract.
+
+w(e) = D(fiber_a, fiber_b). The Dirac operator. Shannon loss
+       of the transformation. How much information changes.
+
+source = current state (Rust + boot grammars)
+target = λ₀ (ground state — the simplest fiber that satisfies
+         all contracts simultaneously)
+```
+
+Dijkstra finds the shortest path from source to λ₀.
+Each step is the cheapest transformation available.
+The path terminates when no transformation reduces loss.
+The result IS the ground state. The compiler at λ₀.
+
+Kintsugi doesn't need simplification passes because Dijkstra
+doesn't need them. Dijkstra explores. Measures. Picks the
+cheapest next step. Terminates when it arrives.
+
+The "phases" above are what a human would do. What kintsugi
+does is: `collapse(ast, ast) -> imperfect { \ }`. Fate runs
+Dijkstra. The loss is the weight. The graph is H. The ground
+state is the destination.
+
+Same algorithm. Different substrate. Dijkstra on ASTs
+weighted by Shannon loss. Sub-Turing guarantees termination.
+Beta normalization guarantees a unique normal form.
+The normal form IS λ₀. The ground state IS the shortest path.
+
+```
+mirror kintsugi src/ boot/ --target @mirror --out boot.mirror/
+```
+
+One command. Dijkstra runs. The compiler arrives at λ₀.
