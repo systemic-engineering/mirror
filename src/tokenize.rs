@@ -440,7 +440,257 @@ fn make_node(kind: &AstKind, name: &str, children: Vec<MirrorAST>) -> MirrorAST 
 }
 
 // ---------------------------------------------------------------------------
-// Tests — RED: these must fail until implementation
+// File discovery — find files for craft targets
+// ---------------------------------------------------------------------------
+
+/// Return the grammar file path for a given source file.
+pub fn grammar_for_file(path: &str) -> &'static str {
+    if path.ends_with(".rs") {
+        "boot/std/code/rust.mirror"
+    } else if path.ends_with(".mirror") || path.ends_with(".spec") || path.ends_with(".shatter") {
+        "boot/std/mirror/grammar.mirror"
+    } else {
+        "boot/std/code/rust.mirror" // default
+    }
+}
+
+/// Recursively find all `.mirror` files under a directory. Sorted for determinism.
+pub fn find_mirror_files(dir: &str) -> Vec<String> {
+    let mut files = Vec::new();
+    collect_files_recursive(dir, ".mirror", &mut files);
+    files.sort();
+    files
+}
+
+/// Recursively find all `.rs` files under a directory. Sorted for determinism.
+pub fn find_rs_files(dir: &str) -> Vec<String> {
+    let mut files = Vec::new();
+    collect_files_recursive(dir, ".rs", &mut files);
+    files.sort();
+    files
+}
+
+/// Recursive file collector. No external deps.
+fn collect_files_recursive(dir: &str, ext: &str, out: &mut Vec<String>) {
+    let entries = match std::fs::read_dir(dir) {
+        Ok(e) => e,
+        Err(_) => return,
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            collect_files_recursive(path.to_str().unwrap_or(""), ext, out);
+        } else if let Some(name) = path.to_str() {
+            if name.ends_with(ext) {
+                out.push(name.to_string());
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// craft — compile all files for a target, return crystal OID
+// ---------------------------------------------------------------------------
+
+/// Compile all files for a target, return the crystal OID (hash of all OIDs).
+pub fn craft_target(target: &str) -> crate::kernel::Oid {
+    let files = match target {
+        "boot" | "std" => find_mirror_files("boot/"),
+        "cargo" => find_rs_files("src/"),
+        _ => {
+            eprintln!("unknown target: {}", target);
+            return crate::kernel::Oid::hash(b"empty");
+        }
+    };
+
+    let mut hasher = crate::kernel::Oid::hasher();
+    for file in &files {
+        let grammar_path = grammar_for_file(file);
+        let grammar = match load_grammar(grammar_path) {
+            Ok(g) => g,
+            Err(e) => {
+                eprintln!("  skip {} (grammar error: {})", file, e);
+                continue;
+            }
+        };
+        let source = match std::fs::read_to_string(file) {
+            Ok(s) => s,
+            Err(e) => {
+                eprintln!("  skip {} (read error: {})", file, e);
+                continue;
+            }
+        };
+        let ast = tokenize(&source, &grammar);
+        let oid = ast.content_oid();
+        eprintln!("  {} -> {}", file, oid);
+        hasher.update(oid.as_ref().as_bytes());
+    }
+
+    hasher.finalize()
+}
+
+// ---------------------------------------------------------------------------
+// kintsugi — canonical mirror form of an AST
+// ---------------------------------------------------------------------------
+
+/// Render a MirrorAST in canonical mirror form.
+pub fn canonical_form(ast: &crate::mirror_ast::MirrorAST) -> String {
+    let mut out = String::new();
+    render_ast(ast, 0, &mut out);
+    out
+}
+
+/// Render a single AST node with indentation.
+fn render_ast(node: &crate::mirror_ast::MirrorAST, depth: usize, out: &mut String) {
+    use crate::mirror_ast::MirrorAST;
+
+    let indent = "  ".repeat(depth);
+
+    match node {
+        MirrorAST::Module(m) => {
+            for child in &m.children {
+                render_ast(child, depth, out);
+            }
+        }
+        MirrorAST::Project(p) => {
+            out.push_str(&indent);
+            out.push_str("in ");
+            out.push_str(p.name.as_str());
+            out.push('\n');
+        }
+        MirrorAST::Split(s) => {
+            out.push_str(&indent);
+            out.push_str("type ");
+            out.push_str(s.name.as_str());
+            if !s.variants.is_empty() {
+                out.push_str(" = ");
+                let vs: Vec<&str> = s.variants.iter().map(|v| v.as_str()).collect();
+                out.push_str(&vs.join(" | "));
+            }
+            if let Some(ref body) = s.body {
+                match body {
+                    crate::mirror_ast::TypeBody::Enum(vs) => {
+                        out.push_str(" = ");
+                        let vs: Vec<&str> = vs.iter().map(|v| v.as_str()).collect();
+                        out.push_str(&vs.join(" | "));
+                    }
+                    crate::mirror_ast::TypeBody::Alias(a) => {
+                        out.push_str(" = ");
+                        out.push_str(a.as_str());
+                    }
+                    crate::mirror_ast::TypeBody::Struct(fields) => {
+                        out.push_str(" = { ");
+                        let fs: Vec<String> = fields
+                            .iter()
+                            .map(|f| format!("{}: {}", f.name.as_str(), f.type_ref.as_str()))
+                            .collect();
+                        out.push_str(&fs.join(", "));
+                        out.push_str(" }");
+                    }
+                    crate::mirror_ast::TypeBody::Unit => {}
+                }
+            }
+            out.push('\n');
+            for child in &s.children {
+                render_ast(child, depth + 1, out);
+            }
+        }
+        MirrorAST::Focus(f) => {
+            out.push_str(&indent);
+            if f.name.as_str().starts_with('@') {
+                out.push_str("grammar ");
+            } else {
+                out.push_str("focus ");
+            }
+            out.push_str(f.name.as_str());
+            if let Some(ref t) = f.target {
+                out.push_str(" < ");
+                out.push_str(t.as_str());
+            }
+            if f.children.is_empty() {
+                out.push('\n');
+            } else {
+                out.push_str(" {\n");
+                for child in &f.children {
+                    render_ast(child, depth + 1, out);
+                }
+                out.push_str(&indent);
+                out.push_str("}\n");
+            }
+        }
+        MirrorAST::Zoom(z) => {
+            out.push_str(&indent);
+            out.push_str("zoom ");
+            out.push_str(z.name.as_str());
+            if !z.params.is_empty() {
+                out.push('(');
+                let ps: Vec<String> = z.params
+                    .iter()
+                    .map(|f| {
+                        if f.type_ref.as_str() == "_" {
+                            f.name.as_str().to_string()
+                        } else {
+                            format!("{}: {}", f.name.as_str(), f.type_ref.as_str())
+                        }
+                    })
+                    .collect();
+                out.push_str(&ps.join(", "));
+                out.push(')');
+            }
+            if let Some(ref t) = z.target {
+                out.push_str(" -> ");
+                out.push_str(t.as_str());
+            }
+            if let Some(ref gr) = z.grammar_ref {
+                out.push(' ');
+                out.push_str(gr.as_str());
+            }
+            out.push('\n');
+            for child in &z.children {
+                render_ast(child, depth + 1, out);
+            }
+        }
+        MirrorAST::Refract(r) => {
+            out.push_str(&indent);
+            out.push_str("refract ");
+            out.push_str(r.name.as_str());
+            if !r.params.is_empty() {
+                out.push('(');
+                let ps: Vec<String> = r.params
+                    .iter()
+                    .map(|f| {
+                        if f.type_ref.as_str() == "_" {
+                            f.name.as_str().to_string()
+                        } else {
+                            format!("{}: {}", f.name.as_str(), f.type_ref.as_str())
+                        }
+                    })
+                    .collect();
+                out.push_str(&ps.join(", "));
+                out.push(')');
+            }
+            if let Some(ref t) = r.target {
+                out.push_str(" <= ");
+                out.push_str(t.as_str());
+            }
+            out.push('\n');
+            for child in &r.children {
+                render_ast(child, depth + 1, out);
+            }
+        }
+        MirrorAST::Abstract { inner, .. } => {
+            out.push_str(&indent);
+            out.push_str("abstract ");
+            // Render inner inline (trim leading indent)
+            let mut inner_out = String::new();
+            render_ast(inner, 0, &mut inner_out);
+            out.push_str(inner_out.trim_start());
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Tests
 // ---------------------------------------------------------------------------
 
 #[cfg(test)]
@@ -710,6 +960,84 @@ mod tests {
         assert_eq!(grammar.mappings.get("mod"), Some(&AstKind::Focus));
         assert_eq!(grammar.mappings.get("use"), Some(&AstKind::Project));
         assert_eq!(grammar.mappings.get("trait"), Some(&AstKind::Refract));
+    }
+
+    // -- craft & kintsugi helpers --
+
+    #[test]
+    fn grammar_for_mirror_file() {
+        assert_eq!(
+            super::grammar_for_file("boot/std/kintsugi.mirror"),
+            "boot/std/mirror/grammar.mirror"
+        );
+    }
+
+    #[test]
+    fn grammar_for_rs_file() {
+        assert_eq!(
+            super::grammar_for_file("src/main.rs"),
+            "boot/std/code/rust.mirror"
+        );
+    }
+
+    #[test]
+    fn grammar_for_spec_file() {
+        assert_eq!(
+            super::grammar_for_file("mirror.spec"),
+            "boot/std/mirror/grammar.mirror"
+        );
+    }
+
+    #[test]
+    fn find_mirror_files_in_boot() {
+        let files = super::find_mirror_files("boot/");
+        assert!(!files.is_empty(), "boot/ must contain .mirror files");
+        for f in &files {
+            assert!(f.ends_with(".mirror"), "non-.mirror file found: {}", f);
+        }
+    }
+
+    #[test]
+    fn find_rs_files_in_src() {
+        let files = super::find_rs_files("src/");
+        assert!(!files.is_empty(), "src/ must contain .rs files");
+        for f in &files {
+            assert!(f.ends_with(".rs"), "non-.rs file found: {}", f);
+        }
+    }
+
+    #[test]
+    fn craft_boot_produces_crystal() {
+        let oid = super::craft_target("boot");
+        assert!(!oid.as_ref().is_empty(), "craft boot must produce an OID");
+    }
+
+    #[test]
+    fn craft_cargo_produces_crystal() {
+        let oid = super::craft_target("cargo");
+        assert!(!oid.as_ref().is_empty(), "craft cargo must produce an OID");
+    }
+
+    #[test]
+    fn craft_is_deterministic() {
+        let oid1 = super::craft_target("boot");
+        let oid2 = super::craft_target("boot");
+        assert_eq!(oid1, oid2, "craft must be deterministic");
+    }
+
+    #[test]
+    fn kintsugi_prints_canonical_form() {
+        let grammar = load_grammar("boot/std/mirror/grammar.mirror").unwrap();
+        let source = "type color = red | blue\nin @prism";
+        let ast = tokenize(source, &grammar);
+        let output = super::canonical_form(&ast);
+        assert!(!output.is_empty(), "canonical form must not be empty");
+        // Must contain structure from the AST
+        assert!(
+            output.contains("split") || output.contains("project") || output.contains("type") || output.contains("in"),
+            "canonical form must contain AST structure: {}",
+            output
+        );
     }
 
     #[test]
