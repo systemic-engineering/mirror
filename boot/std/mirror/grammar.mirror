@@ -1,0 +1,12 @@
+in @prism
+
+grammar @mirror/grammar {
+  # mirror keywords -> operations
+  focus grammar    # grammar block = look closer
+  split type       # type declaration = one of many
+  project in       # import = extract a view
+  project out      # export = extract a view
+  zoom abstract    # abstract = transform
+}
+
+out @mirror/grammar

@@ -672,4 +672,85 @@ mod tests {
         // but no keyword-to-operation lines like `zoom fn`
         assert!(grammar.mappings.is_empty());
     }
+
+    // -- Mirror grammar tests (self-tokenization) --
+
+    #[test]
+    fn load_mirror_grammar_extracts_mappings() {
+        let grammar = load_grammar("boot/std/mirror/grammar.mirror").unwrap();
+        assert_eq!(grammar.mappings.get("grammar"), Some(&AstKind::Focus));
+        assert_eq!(grammar.mappings.get("type"), Some(&AstKind::Split));
+        assert_eq!(grammar.mappings.get("in"), Some(&AstKind::Project));
+        assert_eq!(grammar.mappings.get("out"), Some(&AstKind::Project));
+        assert_eq!(grammar.mappings.get("abstract"), Some(&AstKind::Zoom));
+    }
+
+    #[test]
+    fn tokenize_mirror_grammar_block() {
+        let grammar = load_grammar("boot/std/mirror/grammar.mirror").unwrap();
+        let source = "grammar @test { type foo = bar }";
+        let ast = tokenize(source, &grammar);
+        match &ast {
+            MirrorAST::Module(m) => {
+                assert!(!m.children.is_empty(), "must find grammar block");
+            }
+            _ => panic!("expected Module"),
+        }
+    }
+
+    #[test]
+    fn tokenize_mirror_imports() {
+        let grammar = load_grammar("boot/std/mirror/grammar.mirror").unwrap();
+        let source = "in @prism\nin @nl\ngrammar @test { }";
+        let ast = tokenize(source, &grammar);
+        match &ast {
+            MirrorAST::Module(m) => {
+                // Should find: 2 imports (Project) + 1 grammar (Focus)
+                assert!(m.children.len() >= 3, "expected >= 3 children, got {}", m.children.len());
+            }
+            _ => panic!("expected Module"),
+        }
+    }
+
+    #[test]
+    fn tokenize_mirror_type_produces_split() {
+        let grammar = load_grammar("boot/std/mirror/grammar.mirror").unwrap();
+        let source = "type color = red | blue | green";
+        let ast = tokenize(source, &grammar);
+        match &ast {
+            MirrorAST::Module(m) => {
+                assert!(!m.children.is_empty(), "must find type declaration");
+                assert!(matches!(m.children[0], MirrorAST::Split(_)),
+                    "expected Split, got {:?}", m.children[0].kind_name());
+            }
+            _ => panic!("expected Module"),
+        }
+    }
+
+    #[test]
+    fn compile_real_mirror_file() {
+        let grammar = load_grammar("boot/std/mirror/grammar.mirror").unwrap();
+        let source = std::fs::read_to_string("boot/std/kintsugi.mirror").unwrap();
+        let ast = tokenize(&source, &grammar);
+        match &ast {
+            MirrorAST::Module(m) => {
+                assert!(!m.children.is_empty(), "kintsugi.mirror must produce children");
+            }
+            _ => panic!("expected Module"),
+        }
+    }
+
+    #[test]
+    fn self_compile_mirror_grammar() {
+        // The compiler compiles its own grammar definition
+        let grammar = load_grammar("boot/std/mirror/grammar.mirror").unwrap();
+        let source = std::fs::read_to_string("boot/std/mirror/grammar.mirror").unwrap();
+        let ast = tokenize(&source, &grammar);
+        match &ast {
+            MirrorAST::Module(m) => {
+                assert!(!m.children.is_empty(), "grammar.mirror compiles itself");
+            }
+            _ => panic!("expected Module"),
+        }
+    }
 }
