@@ -239,3 +239,53 @@ Everything above the socket is sub-Turing. Bounded. Terminates.
 The grammar controls. The runtime navigates. The spec orders.
 
 `eⁿ⁺¹ < eⁿ`. The compiler at λ₀.
+
+---
+
+## 8. Execution Layer Speedups (all in mirror)
+
+### 8.1 .shatter cache — don't recompile what settled
+
+```mirror
+grammar @shatter {
+  cache(file, oid) -> ast { \ }
+}
+```
+
+Content-addressed. If file hash matches a `.shatter`, AST is already there.
+No tokenization. O(1) lookup. Import graph becomes a DAG of cached crystals.
+Second compile of same file: nanoseconds, not milliseconds.
+
+### 8.2 Fortran eigenvalue precomputation
+
+Spectral analysis (Fiedler, Cheeger, entropy) is LAPACK. Fortran.
+Eigenvalues of a settled grammar don't change until the grammar changes.
+Compute once, store in `.shatter`. The `@io` socket to LAPACK.
+
+### 8.3 Import graph as compilation order
+
+`in @prism` means: load `@prism`'s `.shatter` first.
+Import graph IS the topological sort. Parallel compilation of
+independent branches. The graph tells you what compiles simultaneously.
+
+### 8.4 Incremental crystallization
+
+When one grammar changes, only recompute grammars that import it.
+Merkle tree tells you exactly which OIDs changed.
+Everything downstream recompiles. Everything else: cached crystal.
+
+### 8.5 The .spec as execution plan
+
+```mirror
+craft(target) -> crystal {
+  focus(target)     # resolve imports → load .shatter cache
+    |> split        # partition into independent compilation units
+    |> zoom         # tokenize only what changed
+    |> refract      # settle eigenvalues (Fortran)
+    |> project      # emit crystal
+}
+```
+
+Five operations ARE the execution strategy.
+Focus loads cache. Split parallelizes. Zoom does the work.
+Refract settles. Project emits. All grammar.
