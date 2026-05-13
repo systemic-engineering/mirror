@@ -21,15 +21,11 @@ pub use prism_crate as beam;
 
 #[macro_use]
 pub mod kernel;
-pub mod abyss;
 pub mod ast;
 pub mod ast_prism;
-pub mod code_rust;
 pub mod bounded;
-pub mod classifier;
 pub mod dispatch;
 pub mod domain;
-pub mod filter;
 pub mod mirror_bf;
 pub mod prism;
 
@@ -52,25 +48,18 @@ pub mod cli;
 pub mod declaration;
 pub mod dirac;
 pub mod eigentest;
-pub mod emit_code;
-pub mod emit_rust;
-pub mod evaluate;
 pub mod generate_crate;
 pub mod generated;
 pub mod gestalt;
-pub mod grammar_regions;
 pub mod git_prism;
 pub mod git_store;
-pub mod lambda_phases;
 pub mod license;
 pub mod loss;
 pub mod lsp;
 pub mod mirror_ast;
 pub mod mirror_runtime;
-pub mod optic;
 pub mod parse;
 pub mod runtime;
-pub mod session;
 pub mod shard;
 pub mod shatter_format;
 #[cfg(feature = "shatter")]
