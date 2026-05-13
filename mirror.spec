@@ -5,6 +5,7 @@ in @kintsugi/migrate
 in @craft
 in @code/rust
 in @code/llvm
+in @mirror/evaluate
 in @nl
 in @git/hooks
 

@@ -1,0 +1,11 @@
+in @prism
+in @nl
+in @code
+
+grammar @mirror/evaluate {
+  # the evaluator IS a grammar lens
+  # take a @code grammar + source text, produce AST
+  evaluate(grammar, text) -> ast { \ }
+}
+
+out evaluate
