@@ -12,7 +12,7 @@ fn main() {
 
     if args.len() < 2 {
         eprintln!("usage: mirror <command> [flags...] [args...]");
-        eprintln!("commands: compile <file>, craft <target>, kintsugi <file>");
+        eprintln!("commands: compile <file>, craft <target>, kintsugi <file>, bench <path>");
         eprintln!();
         eprintln!("flags are grammar references:");
         eprintln!("  --strict      = @cli/strict      (nullary)");
@@ -34,6 +34,7 @@ fn main() {
         "compile" => cmd_compile(&cmd),
         "craft" => cmd_craft(&cmd),
         "kintsugi" => cmd_kintsugi(&cmd),
+        "bench" => cmd_bench(&cmd),
         _ => {
             eprintln!("unknown command: {}", cmd.name);
             process::exit(1);
@@ -96,4 +97,76 @@ fn cmd_kintsugi(cmd: &mirror::cli::ParsedCommand) {
     let ast = mirror::tokenize::tokenize(&source, &grammar);
     let output = mirror::tokenize::canonical_form(&ast);
     print!("{}", output);
+}
+
+fn cmd_bench(cmd: &mirror::cli::ParsedCommand) {
+    // Check for --cascade flag
+    let is_cascade = cmd.flags.iter().any(|f| f.grammar_ref == "@cli/cascade");
+    // Check for --compare flag
+    let is_compare = cmd.flags.iter().any(|f| f.grammar_ref == "@cli/compare");
+
+    if is_cascade {
+        // mirror bench --cascade <dir>
+        let dir = if cmd.positional.is_empty() { "boot/" } else { &cmd.positional[0] };
+        let result = mirror::bench::cascade(dir);
+        print!("{}", mirror::bench::format_cascade(&result));
+        return;
+    }
+
+    if is_compare && cmd.positional.len() >= 2 {
+        // mirror bench --compare <a> <b>
+        let a = &cmd.positional[0];
+        let b = &cmd.positional[1];
+
+        let result_a = if is_dir(a) {
+            mirror::bench::bench_dir(a)
+        } else {
+            mirror::bench::BenchSuite {
+                results: vec![mirror::bench::bench_file(a)],
+                total_time_ns: mirror::bench::bench_file(a).time_ns,
+            }
+        };
+        let result_b = if is_dir(b) {
+            mirror::bench::bench_dir(b)
+        } else {
+            mirror::bench::BenchSuite {
+                results: vec![mirror::bench::bench_file(b)],
+                total_time_ns: mirror::bench::bench_file(b).time_ns,
+            }
+        };
+
+        println!("--- {} ---", a);
+        print!("{}", mirror::bench::format_suite(&result_a));
+        println!("--- {} ---", b);
+        print!("{}", mirror::bench::format_suite(&result_b));
+
+        let ratio = result_b.total_time_ns as f64 / result_a.total_time_ns as f64;
+        println!("speedup: {:.2}x ({} vs {})", ratio, a, b);
+        return;
+    }
+
+    if cmd.positional.is_empty() {
+        eprintln!("usage: mirror bench [flags] <path>");
+        eprintln!("       mirror bench boot/std/kintsugi.mirror");
+        eprintln!("       mirror bench boot/");
+        eprintln!("       mirror bench --cascade boot/");
+        eprintln!("       mirror bench --compare boot/ src/");
+        process::exit(1);
+    }
+
+    let path = &cmd.positional[0];
+
+    if is_dir(path) {
+        // Bench all files in directory
+        let suite = mirror::bench::bench_dir(path);
+        print!("{}", mirror::bench::format_suite(&suite));
+    } else {
+        // Bench single file
+        let result = mirror::bench::bench_file(path);
+        println!("{}", mirror::bench::format_result(&result));
+    }
+}
+
+fn is_dir(path: &str) -> bool {
+    std::fs::metadata(path).map(|m| m.is_dir()).unwrap_or(false)
 }

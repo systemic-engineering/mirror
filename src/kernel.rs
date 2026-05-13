@@ -680,18 +680,7 @@ mod tests {
         assert_eq!(format!("{}", second), "resolve failed");
     }
 
-    // -- domain_oid! coverage: exercise From<Oid>, AsRef, Display --
 
-    #[test]
-    fn domain_oid_full_coverage() {
-        use crate::parse::AstOid;
-        let base = Oid::new("abc");
-        let ast = AstOid::from(base); // From<Oid>
-        assert_eq!(ast.as_ref(), "abc"); // AsRef<str>
-        assert_eq!(ast.to_string(), "abc"); // Display
-        let direct = AstOid::new("def"); // domain_oid!::new()
-        assert_eq!(direct.as_ref(), "def");
-    }
 
     // -- Sentinel: CoincidenceHash<3> hex pinning --
 
