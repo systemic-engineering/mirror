@@ -33,6 +33,8 @@ fn main() {
             // Detect grammar from file extension
             let grammar_path = if file.ends_with(".rs") {
                 "boot/std/code/rust.mirror"
+            } else if file.ends_with(".mirror") || file.ends_with(".spec") || file.ends_with(".shatter") {
+                "boot/std/mirror/grammar.mirror"
             } else {
                 "boot/std/code/rust.mirror" // default for now
             };

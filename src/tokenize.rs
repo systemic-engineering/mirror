@@ -90,7 +90,17 @@ fn parse_grammar(source: &str) -> Grammar {
             continue;
         }
 
-        let words: Vec<&str> = trimmed.split_whitespace().collect();
+        // Strip inline comments (# ... or -- ...) before extracting words
+        let content = trimmed
+            .find('#')
+            .or_else(|| {
+                // Find standalone -- (not inside a word like `--flag`)
+                trimmed.find(" --").map(|i| i)
+            })
+            .map(|i| trimmed[..i].trim())
+            .unwrap_or(trimmed);
+
+        let words: Vec<&str> = content.split_whitespace().collect();
         if words.len() == 2 {
             let kind = match words[0] {
                 "focus" => Some(AstKind::Focus),
@@ -142,8 +152,10 @@ fn scan_items(source: &str, grammar: &Grammar) -> Vec<MirrorAST> {
             break;
         }
 
-        // Handle line comments: skip to end of line
-        if pos + 1 < len && bytes[pos] == b'/' && bytes[pos + 1] == b'/' {
+        // Handle line comments: // (Rust) and -- (mirror)
+        if (pos + 1 < len && bytes[pos] == b'/' && bytes[pos + 1] == b'/')
+            || (pos + 1 < len && bytes[pos] == b'-' && bytes[pos + 1] == b'-')
+        {
             while pos < len && bytes[pos] != b'\n' {
                 pos += 1;
             }
@@ -177,13 +189,14 @@ fn scan_items(source: &str, grammar: &Grammar) -> Vec<MirrorAST> {
             continue;
         }
 
-        // Handle attributes: #[...] or #![...]
+        // Handle # — attributes in Rust (#[...]), line comments in mirror (# ...)
         if bytes[pos] == b'#' {
             pos += 1;
             if pos < len && bytes[pos] == b'!' {
                 pos += 1;
             }
             if pos < len && bytes[pos] == b'[' {
+                // Rust attribute: #[...] or #![...]
                 pos += 1;
                 let mut bracket_depth = 1i32;
                 while pos < len && bracket_depth > 0 {
@@ -192,6 +205,11 @@ fn scan_items(source: &str, grammar: &Grammar) -> Vec<MirrorAST> {
                         b']' => bracket_depth -= 1,
                         _ => {}
                     }
+                    pos += 1;
+                }
+            } else {
+                // Mirror line comment: # ... (skip to end of line)
+                while pos < len && bytes[pos] != b'\n' {
                     pos += 1;
                 }
             }
@@ -245,29 +263,21 @@ fn scan_items(source: &str, grammar: &Grammar) -> Vec<MirrorAST> {
             continue;
         }
 
-        // Skip other non-keyword modifiers
-        if word == "async" || word == "unsafe" || word == "const" || word == "extern"
-            || word == "crate" || word == "super" || word == "self" || word == "where"
-            || word == "mut" || word == "ref" || word == "static" || word == "let"
-            || word == "if" || word == "else" || word == "for" || word == "while"
-            || word == "loop" || word == "match" || word == "return" || word == "break"
-            || word == "continue" || word == "as" || word == "in" || word == "type"
-            || word == "dyn" || word == "move"
-        {
-            continue;
-        }
-
-        // Check if this word is a grammar keyword
+        // Check if this word is a grammar keyword FIRST (grammar takes precedence
+        // over hardcoded skip lists — `in` and `type` are Rust modifiers but mirror keywords)
         if let Some(kind) = grammar.mappings.get(word) {
             // Skip whitespace after keyword
             while pos < len && bytes[pos].is_ascii_whitespace() {
                 pos += 1;
             }
 
-            // Extract the name (next identifier)
+            // Extract the name (next identifier, allowing @ prefix and / for grammar refs)
             let name_start = pos;
+            if pos < len && bytes[pos] == b'@' {
+                pos += 1; // consume @
+            }
             while pos < len
-                && (bytes[pos].is_ascii_alphanumeric() || bytes[pos] == b'_')
+                && (bytes[pos].is_ascii_alphanumeric() || bytes[pos] == b'_' || bytes[pos] == b'/')
             {
                 pos += 1;
             }
@@ -277,7 +287,7 @@ fn scan_items(source: &str, grammar: &Grammar) -> Vec<MirrorAST> {
                 "_"
             };
 
-            // For `use` (Project), the item ends at semicolon, no brace body
+            // For Project (use/in/out), the item ends at semicolon or newline, no brace body
             if *kind == AstKind::Project {
                 while pos < len && bytes[pos] != b';' && bytes[pos] != b'\n' {
                     pos += 1;
@@ -293,14 +303,40 @@ fn scan_items(source: &str, grammar: &Grammar) -> Vec<MirrorAST> {
                 continue;
             }
 
+            // For Split (struct/enum/type), check for newline-terminated (no braces)
+            // e.g. `type color = red | blue | green`
+            if *kind == AstKind::Split {
+                // Peek ahead: if there's no '{' before the next newline, it's newline-terminated
+                let peek = pos;
+                let mut has_brace = false;
+                let mut nl = len;
+                let mut p = peek;
+                while p < len && bytes[p] != b'\n' {
+                    if bytes[p] == b'{' {
+                        has_brace = true;
+                        break;
+                    }
+                    p += 1;
+                }
+                if p < len && bytes[p] == b'\n' {
+                    nl = p;
+                }
+                if !has_brace {
+                    // newline-terminated type declaration
+                    pos = if nl < len { nl } else { len };
+                    items.push(make_node(kind, name, vec![]));
+                    continue;
+                }
+            }
+
             // Skip to opening brace or semicolon (declarations without bodies)
-            while pos < len && bytes[pos] != b'{' && bytes[pos] != b';' {
+            while pos < len && bytes[pos] != b'{' && bytes[pos] != b';' && bytes[pos] != b'\n' {
                 pos += 1;
             }
 
-            if pos >= len || bytes[pos] == b';' {
-                // Declaration without body (e.g., `fn foo();` in trait)
-                if pos < len {
+            if pos >= len || bytes[pos] == b';' || bytes[pos] == b'\n' {
+                // Declaration without body
+                if pos < len && bytes[pos] == b';' {
                     pos += 1;
                 }
                 items.push(make_node(kind, name, vec![]));
@@ -331,6 +367,17 @@ fn scan_items(source: &str, grammar: &Grammar) -> Vec<MirrorAST> {
             };
 
             items.push(make_node(kind, name, children));
+
+        // Skip other non-keyword modifiers (only when NOT a grammar keyword)
+        } else if word == "async" || word == "unsafe" || word == "const" || word == "extern"
+            || word == "crate" || word == "super" || word == "self" || word == "where"
+            || word == "mut" || word == "ref" || word == "static" || word == "let"
+            || word == "if" || word == "else" || word == "for" || word == "while"
+            || word == "loop" || word == "match" || word == "return" || word == "break"
+            || word == "continue" || word == "as" || word == "in" || word == "type"
+            || word == "dyn" || word == "move"
+        {
+            continue;
         } else {
             // Not a grammar keyword. If next char is '{', skip the brace block.
             while pos < len && bytes[pos].is_ascii_whitespace() {
