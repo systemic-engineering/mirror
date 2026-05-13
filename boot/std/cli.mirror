@@ -1,83 +1,132 @@
 in @prism
 in @meta
-in @code
-in @spec
-in @shatter
+in @cli/args
+
+# @cli: the CLI grammar. Flags are typed lambdas.
+# Every --flag is a grammar reference. The grammar IS the parser.
 
 type exit_code = success | failure | partial(loss)
 
 type command {
-  name: string,
-  args: [string],
+  name: ref,
+  args: [text],
+  flags: [flag],
   result: imperfect,
 }
 
 grammar @cli {
 
-  -- flags as optics
-  flag strict = prism(imperfect => success | failure)
-  flag format(json | human) = lens(imperfect => text)
-  flag check = prism(imperfect => pass | fail)
-  flag verbose = lens(loss => text)
+  # --- Flags as typed lambdas ---
+  # Arity comes from the parameter list.
+  # Optic type comes from the body.
+  # --name maps to @cli/name. --x/y maps to @x/y.
 
-  -- commands as optic compositions
+  # nullary: --strict is a prism. It either passes or fails.
+  flag strict = prism(imperfect => success | failure)
+    # only emit on full success
+
+  # unary: --format takes an argument from an enum.
+  flag format(json | human) = lens(imperfect => text)
+    # output format
+
+  # unary: --target takes a grammar reference.
+  flag target(ref) = lens(grammar => grammar)
+    # target grammar for code emission
+
+  # unary: --indent takes a number.
+  flag indent(int) = lens(text => text)
+    # indentation width
+
+  # nullary: --check is a prism.
+  flag check = prism(imperfect => pass | fail)
+    # check mode (no output, just verify)
+
+  # nullary: --verbose is a lens that renders loss as text.
+  flag verbose = lens(loss => text)
+    # show loss details
+
+  # nullary: --lift is a prism.
+  flag lift = prism(imperfect => imperfect)
+    # hoist nested declarations to top level
+
+  # optional: --color defaults to auto.
+  flag color(always | never | auto) = lens(text => text)
+    # color output
+    default auto
+
+  # --- Commands as optic compositions ---
+
   command compile = parse . resolve . emit
   command kintsugi = parse . resolve . canonical_order
   command ci = parse . resolve . properties . emit
   command focus = parse
   command explain(code) = catalog . render
 
-  -- five optics as commands
-  action focus(path: string) -> imperfect
-  action project(path: string) -> imperfect
-  action split(path: string) -> imperfect
-  action zoom(path: string) -> imperfect
-  action refract(path: string) -> imperfect
+  # --- Five optics as commands ---
 
-  -- formatter
-  action kintsugi(path: string) -> imperfect
+  action focus(path: text) -> imperfect
+  action project(path: text) -> imperfect
+  action split(path: text) -> imperfect
+  action zoom(path: text) -> imperfect
+  action refract(path: text) -> imperfect
 
-  -- compiler
-  action compile(path: string) -> imperfect
-  action crystal(output: string) -> imperfect
+  # --- Compiler commands ---
 
-  -- ci/ca
-  action ci(path: string) -> imperfect
-  action ca(path: string) -> imperfect
+  action kintsugi(path: text) -> imperfect
+  action compile(path: text) -> imperfect
+  action crystal(output: text) -> imperfect
 
-  -- session
-  action init(path: string) -> imperfect
+  # --- CI/CA ---
+
+  action ci(path: text) -> imperfect
+  action ca(path: text) -> imperfect
+
+  # --- Session ---
+
+  action init(path: text) -> imperfect
   action tick() -> imperfect
   action tock() -> imperfect
-  action shatter(path: string) -> imperfect
+  action shatter(path: text) -> imperfect
 
-  -- deployment
+  # --- Deployment ---
+
   action plan() -> imperfect
   action apply() -> imperfect
   action drift() -> imperfect
-  action rollback(oid: string) -> imperfect
+  action rollback(oid: text) -> imperfect
 
-  -- navigation
-  action diff(a: string, b: string) -> imperfect
+  # --- Navigation ---
+
+  action diff(a: text, b: text) -> imperfect
   action log() -> imperfect
-  action blame(path: string) -> imperfect
+  action blame(path: text) -> imperfect
 
-  -- lsp
+  # --- LSP ---
+
   action lsp() -> imperfect
   action repl() -> imperfect
 
-  -- garden
-  action add(package: string) -> imperfect
-  action remove(package: string) -> imperfect
+  # --- Garden ---
+
+  action add(package: text) -> imperfect
+  action remove(package: text) -> imperfect
   action list() -> imperfect
 
-  -- ai
-  action ai(path: string) -> imperfect
-  action train(path: string) -> imperfect
+  # --- AI ---
 
-  -- benchmark
-  action bench(path: string) -> imperfect
+  action ai(path: text) -> imperfect
+  action train(path: text) -> imperfect
+
+  # --- Benchmark ---
+
+  action bench(path: text) -> imperfect
   action profile() -> imperfect
+
+  # --- Help generation ---
+  # --help is derived from grammar declarations.
+  # Each flag's doc comment becomes a line in --help.
+
+  action help(grammar: ref) -> text { \ }
 
   recover |result, loss| {
     print(loss)

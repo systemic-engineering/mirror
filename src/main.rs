@@ -1,6 +1,7 @@
 //! mirror — the compiler entry point.
 //!
 //! Opens the socket. Reads args. Dispatches through grammar.
+//! Every `--flag` is a grammar reference: `--strict` = `@cli/strict`.
 //! Everything else is grammar. This is @io.
 
 use std::env;
@@ -10,30 +11,42 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     if args.len() < 2 {
-        eprintln!("usage: mirror <command> [args...]");
+        eprintln!("usage: mirror <command> [flags...] [args...]");
         eprintln!("commands: compile <file>, craft <target>, kintsugi <file>");
+        eprintln!();
+        eprintln!("flags are grammar references:");
+        eprintln!("  --strict      = @cli/strict      (nullary)");
+        eprintln!("  --format json = @cli/format       (unary)");
+        eprintln!("  --git/commit  = @git/commit       (namespaced)");
         process::exit(1);
     }
 
-    let command = &args[1];
+    // Parse the full command: name + flags + positional args
+    let cmd = mirror::cli::parse_command(&args[1..]);
 
-    match command.as_str() {
-        "compile" => cmd_compile(&args[2..]),
-        "craft" => cmd_craft(&args[2..]),
-        "kintsugi" => cmd_kintsugi(&args[2..]),
+    // Print the flag pipeline if flags are present
+    if !cmd.flags.is_empty() {
+        let pipeline = mirror::cli::format_pipeline(&cmd.flags);
+        eprintln!("pipeline: {}", pipeline);
+    }
+
+    match cmd.name.as_str() {
+        "compile" => cmd_compile(&cmd),
+        "craft" => cmd_craft(&cmd),
+        "kintsugi" => cmd_kintsugi(&cmd),
         _ => {
-            eprintln!("unknown command: {}", command);
+            eprintln!("unknown command: {}", cmd.name);
             process::exit(1);
         }
     }
 }
 
-fn cmd_compile(args: &[String]) {
-    if args.is_empty() {
-        eprintln!("usage: mirror compile <file>");
+fn cmd_compile(cmd: &mirror::cli::ParsedCommand) {
+    if cmd.positional.is_empty() {
+        eprintln!("usage: mirror compile [flags] <file>");
         process::exit(1);
     }
-    let file = &args[0];
+    let file = &cmd.positional[0];
 
     let source = std::fs::read_to_string(file).unwrap_or_else(|e| {
         eprintln!("cannot read file {}: {}", file, e);
@@ -51,23 +64,23 @@ fn cmd_compile(args: &[String]) {
     println!("{}", oid);
 }
 
-fn cmd_craft(args: &[String]) {
-    if args.is_empty() {
-        eprintln!("usage: mirror craft <target>");
+fn cmd_craft(cmd: &mirror::cli::ParsedCommand) {
+    if cmd.positional.is_empty() {
+        eprintln!("usage: mirror craft [flags] <target>");
         eprintln!("targets: boot, cargo, std");
         process::exit(1);
     }
-    let target = &args[0];
+    let target = &cmd.positional[0];
     let crystal = mirror::tokenize::craft_target(target);
     println!("{}", crystal);
 }
 
-fn cmd_kintsugi(args: &[String]) {
-    if args.is_empty() {
-        eprintln!("usage: mirror kintsugi <file>");
+fn cmd_kintsugi(cmd: &mirror::cli::ParsedCommand) {
+    if cmd.positional.is_empty() {
+        eprintln!("usage: mirror kintsugi [flags] <file>");
         process::exit(1);
     }
-    let file = &args[0];
+    let file = &cmd.positional[0];
 
     let source = std::fs::read_to_string(file).unwrap_or_else(|e| {
         eprintln!("cannot read file {}: {}", file, e);

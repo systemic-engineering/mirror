@@ -2,16 +2,21 @@ in @prism
 in @kintsugi
 in @kintsugi/translate
 in @kintsugi/migrate
+in @kintsugi/lift
 in @craft
 in @code/rust
 in @code/llvm
 in @mirror/evaluate
 in @nl
 in @git/hooks
+in @cli
 
 # mirror.spec: the mirror binary describes itself.
 
 type target = boot | cargo | binary
+
+# all CLI flags from all imported grammars
+out @cli/*
 
 cli = @mirror/cli {
   kintsugi = @kintsugi {

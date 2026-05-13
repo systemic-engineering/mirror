@@ -16,6 +16,7 @@ pub use prism_crate as beam;
 
 #[macro_use]
 pub mod kernel;
+pub mod cli;
 pub mod dirac;
 pub mod mirror_ast;
 pub mod prism;
