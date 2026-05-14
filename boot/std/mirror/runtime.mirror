@@ -1,0 +1,22 @@
+in @prism
+in @io
+in @git
+in @mirror/interpreter
+in @mirror/resolve
+in @mirror/check
+
+# @mirror/runtime: the full compilation pipeline.
+# resolve imports -> check -> interpret. grammar composition. no Rust.
+
+grammar @mirror/runtime {
+  # the full compilation: resolve imports, check, interpret
+  compile(file) -> imperfect {
+    @io.read(file) |> @mirror/resolve.resolve |> @mirror/check.check |> @mirror/interpreter.interpret
+  }
+
+  # the pipeline
+  run(command, args) -> imperfect { \ }
+}
+
+out compile
+out run

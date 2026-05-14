@@ -6,9 +6,12 @@ in @kintsugi/lift
 in @craft
 in @code/rust
 in @code/llvm
+in @io
 in @mirror/evaluate
 in @mirror/resolve
 in @mirror/check
+in @mirror/interpreter
+in @mirror/runtime
 in @nl
 in @git/hooks
 in @cli

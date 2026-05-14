@@ -1,0 +1,30 @@
+in @prism
+in @error
+in @imperfect
+
+# @io: the socket layer. everything is a socket.
+# four syscalls. the only door to reality.
+# io_exec in interpreter.rs is the backing Rust.
+
+grammar @io {
+  type socket(ref)
+  type stream(socket)
+
+  # four syscalls. open, read, write, close.
+  io open(socket) -> stream { \ }
+  io read(stream) -> imperfect { \ }
+  io write(stream, bytes) -> imperfect { \ }
+  io close(stream) -> imperfect { \ }
+
+  # process execution — the thinnest @io
+  io exec(command, [arg]) -> imperfect { \ }
+}
+
+out socket
+out stream
+out open
+out read
+out write
+out close
+out exec
+out @io

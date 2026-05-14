@@ -1,0 +1,29 @@
+in @prism
+in @io
+in @fate
+in @error
+in @imperfect
+in @mirror/resolve
+
+# @mirror/interpreter: the interpreter loop.
+# walk AST, execute operations, resolve \ via @fate.
+# bounded. each node visited once. sub-Turing.
+
+grammar @mirror/interpreter {
+  # the interpreter loop: walk AST, execute operations
+  interpret(ast) -> imperfect { \ }
+
+  # resolve a \ hole via @fate tournament
+  resolve_hole(hole, context) -> ast { \ }
+
+  # execute an @io reference
+  execute_io(ref, args) -> imperfect { \ }
+
+  # walk: recursive descent bounded by AST depth
+  walk(ast) -> imperfect { \ }
+}
+
+out interpret
+out resolve_hole
+out execute_io
+out walk
