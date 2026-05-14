@@ -1,0 +1,32 @@
+in @prism
+in @git
+in @io
+
+grammar @mirror/spectral {
+  # the beta-normalized normal form of the spectral triple.
+  # replaces .shatter. IS the crystal. lives in git.
+
+  type crystal(oid)
+
+  # compile and store the crystal in git
+  crystallize(ast) -> crystal {
+    @git.store(ast) -> oid
+  }
+
+  # lookup a crystal from git
+  recall(crystal) -> imperfect { \ }
+
+  # check if a source file's crystal is cached in git
+  cached(file) -> imperfect {
+    @git.exists(@git.crystal(file))
+  }
+
+  # invalidate: not needed. content-addressed.
+  # if the source changed, the OID changed, the old crystal is still there.
+  # git gc handles cleanup. we don't.
+}
+
+out crystal
+out crystallize
+out recall
+out cached

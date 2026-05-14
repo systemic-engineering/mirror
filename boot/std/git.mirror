@@ -1,0 +1,32 @@
+in @prism
+in @io
+
+grammar @git {
+  type oid(ref)
+  type blob(bytes)
+  type tree([oid])
+
+  # store a blob in the git object database
+  store(blob) -> oid { \ }
+
+  # lookup an object by OID
+  lookup(oid) -> imperfect { \ }
+
+  # check if an OID exists
+  exists(oid) -> bool { \ }
+
+  # write a tree from a list of OIDs
+  write_tree([oid]) -> oid { \ }
+
+  # the crystal: hash of all child OIDs
+  crystal([oid]) -> oid { \ }
+}
+
+out oid
+out blob
+out tree
+out store
+out lookup
+out exists
+out write_tree
+out crystal
