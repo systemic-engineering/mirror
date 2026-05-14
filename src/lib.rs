@@ -17,7 +17,6 @@ pub use prism_crate as beam;
 #[macro_use]
 pub mod kernel;
 pub mod bench;
-pub mod cache;
 pub mod cli;
 pub mod interpreter;
 pub mod dirac;

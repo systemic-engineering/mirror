@@ -535,7 +535,7 @@ fn craft_target_impl(target: &str, use_cache: bool) -> (crate::kernel::Oid, usiz
         };
 
         let (oid, cached) = if use_cache {
-            crate::cache::compile_cached(&source, &grammar)
+            crate::interpreter::compile_cached(&source, &grammar)
         } else {
             let ast = tokenize(&source, &grammar);
             (ast.content_oid(), false)

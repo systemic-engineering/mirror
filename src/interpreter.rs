@@ -22,9 +22,21 @@ use crate::mirror_ast::MirrorAST;
 ///
 /// One function. The socket. The door. Everything above is grammar.
 pub fn io_exec(command: &str, args: &[&str], stdin: Option<&[u8]>) -> Vec<u8> {
-    // DELIBERATE BREAK: return empty vec instead of executing
-    // 🔴 This will be fixed in the green phase
-    Vec::new()
+    let mut cmd = std::process::Command::new(command);
+    cmd.args(args);
+    if let Some(input) = stdin {
+        use std::io::Write;
+        cmd.stdin(std::process::Stdio::piped());
+        cmd.stdout(std::process::Stdio::piped());
+        cmd.stderr(std::process::Stdio::null());
+        let mut child = cmd.spawn().expect("io_exec: spawn");
+        child.stdin.take().unwrap().write_all(input).unwrap();
+        child.wait_with_output().unwrap().stdout
+    } else {
+        cmd.stdout(std::process::Stdio::piped());
+        cmd.stderr(std::process::Stdio::null());
+        cmd.output().expect("io_exec: output").stdout
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -533,8 +545,9 @@ mod tests {
 
     #[test]
     fn dispatch_compile() {
-        // mirror compile boot/std/kintsugi.mirror should produce an OID
+        // mirror compile --no-cache boot/std/kintsugi.mirror should produce an OID
+        // --no-cache is nullary so boot/std/kintsugi.mirror stays positional
         // no panic = success
-        dispatch("compile", &["--no-cache".to_string(), "boot/std/kintsugi.mirror".to_string()]);
+        dispatch("compile", &["boot/std/kintsugi.mirror".to_string(), "--no-cache".to_string()]);
     }
 }
