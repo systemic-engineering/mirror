@@ -494,16 +494,29 @@ fn collect_files_recursive(dir: &str, ext: &str, out: &mut Vec<String>) {
 
 /// Compile all files for a target, return the crystal OID (hash of all OIDs).
 pub fn craft_target(target: &str) -> crate::kernel::Oid {
+    craft_target_impl(target, false).0
+}
+
+/// Compile all files for a target with optional caching.
+/// Returns (crystal OID, cache hits, total files).
+pub fn craft_target_cached(target: &str, use_cache: bool) -> (crate::kernel::Oid, usize, usize) {
+    craft_target_impl(target, use_cache)
+}
+
+fn craft_target_impl(target: &str, use_cache: bool) -> (crate::kernel::Oid, usize, usize) {
     let files = match target {
         "boot" | "std" => find_mirror_files("boot/"),
         "cargo" => find_rs_files("src/"),
         _ => {
             eprintln!("unknown target: {}", target);
-            return crate::kernel::Oid::hash(b"empty");
+            return (crate::kernel::Oid::hash(b"empty"), 0, 0);
         }
     };
 
     let mut hasher = crate::kernel::Oid::hasher();
+    let mut hits = 0usize;
+    let total = files.len();
+
     for file in &files {
         let grammar_path = grammar_for_file(file);
         let grammar = match load_grammar(grammar_path) {
@@ -520,13 +533,24 @@ pub fn craft_target(target: &str) -> crate::kernel::Oid {
                 continue;
             }
         };
-        let ast = tokenize(&source, &grammar);
-        let oid = ast.content_oid();
-        eprintln!("  {} -> {}", file, oid);
+
+        let (oid, cached) = if use_cache {
+            crate::cache::compile_cached(&source, &grammar)
+        } else {
+            let ast = tokenize(&source, &grammar);
+            (ast.content_oid(), false)
+        };
+
+        if cached {
+            hits += 1;
+            eprintln!("  {} -> {} (cached)", file, oid);
+        } else {
+            eprintln!("  {} -> {}", file, oid);
+        }
         hasher.update(oid.as_ref().as_bytes());
     }
 
-    hasher.finalize()
+    (hasher.finalize(), hits, total)
 }
 
 // ---------------------------------------------------------------------------

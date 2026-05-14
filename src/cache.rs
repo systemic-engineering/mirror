@@ -66,9 +66,24 @@ pub fn git_store_crystal(source_hash: &str, crystal_oid: &str) -> Option<String>
 ///
 /// Returns Some(crystal_oid) on hit, None on miss.
 pub fn git_crystal_exists(source_hash: &str) -> Option<String> {
-    // DELIBERATELY BROKEN: always returns None to prove tests catch cache misses
-    let _ = source_hash;
-    None
+    // git cat-file -p refs/crystals/<source_hash>
+    let output = Command::new("git")
+        .args(["cat-file", "-p", &format!("refs/crystals/{}", source_hash)])
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::null())
+        .output()
+        .ok()?;
+
+    if output.status.success() {
+        let crystal_oid = String::from_utf8_lossy(&output.stdout).trim().to_string();
+        if crystal_oid.is_empty() {
+            None
+        } else {
+            Some(crystal_oid)
+        }
+    } else {
+        None
+    }
 }
 
 /// Delete a crystal ref (for cleanup in tests).

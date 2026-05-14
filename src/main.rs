@@ -60,9 +60,20 @@ fn cmd_compile(cmd: &mirror::cli::ParsedCommand) {
         process::exit(1);
     });
 
-    let ast = mirror::tokenize::tokenize(&source, &grammar);
-    let oid = ast.content_oid();
-    println!("{}", oid);
+    // Check --no-cache flag
+    let no_cache = cmd.flags.iter().any(|f| f.grammar_ref == "@cli/no-cache");
+
+    if no_cache {
+        let ast = mirror::tokenize::tokenize(&source, &grammar);
+        let oid = ast.content_oid();
+        println!("{}", oid);
+    } else {
+        let (oid, cached) = mirror::cache::compile_cached(&source, &grammar);
+        if cached {
+            eprintln!("(cached)");
+        }
+        println!("{}", oid);
+    }
 }
 
 fn cmd_craft(cmd: &mirror::cli::ParsedCommand) {
@@ -72,8 +83,18 @@ fn cmd_craft(cmd: &mirror::cli::ParsedCommand) {
         process::exit(1);
     }
     let target = &cmd.positional[0];
-    let crystal = mirror::tokenize::craft_target(target);
-    println!("{}", crystal);
+    let no_cache = cmd.flags.iter().any(|f| f.grammar_ref == "@cli/no-cache");
+
+    if no_cache {
+        let crystal = mirror::tokenize::craft_target(target);
+        println!("{}", crystal);
+    } else {
+        let (crystal, hits, total) = mirror::tokenize::craft_target_cached(target, true);
+        if hits > 0 {
+            eprintln!("cache: {}/{} hits", hits, total);
+        }
+        println!("{}", crystal);
+    }
 }
 
 fn cmd_kintsugi(cmd: &mirror::cli::ParsedCommand) {
@@ -104,6 +125,8 @@ fn cmd_bench(cmd: &mirror::cli::ParsedCommand) {
     let is_cascade = cmd.flags.iter().any(|f| f.grammar_ref == "@cli/cascade");
     // Check for --compare flag
     let is_compare = cmd.flags.iter().any(|f| f.grammar_ref == "@cli/compare");
+    // Check for --no-cache flag
+    let _no_cache = cmd.flags.iter().any(|f| f.grammar_ref == "@cli/no-cache");
 
     if is_cascade {
         // mirror bench --cascade <dir>
