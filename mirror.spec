@@ -7,6 +7,8 @@ in @craft
 in @code/rust
 in @code/llvm
 in @mirror/evaluate
+in @mirror/resolve
+in @mirror/check
 in @nl
 in @git/hooks
 in @cli

@@ -1,0 +1,12 @@
+in @prism
+in @git
+in @error
+in @imperfect
+
+grammar @mirror/resolve {
+  # walk AST. for each In node, check git for the crystal.
+  # if missing -> diagnostic. if found -> load.
+  resolve(ast) -> imperfect(ast) { \ }
+}
+
+out resolve

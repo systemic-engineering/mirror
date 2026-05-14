@@ -1,0 +1,17 @@
+in @prism
+in @error
+in @imperfect
+in @mirror/resolve
+
+grammar @mirror/check {
+  # resolve imports. collect diagnostics. return imperfect.
+  check(file) -> imperfect { \ }
+
+  # the static lens: read loss from crystal without executing
+  errors(ast) -> [diagnostic] { \ }
+  loss(ast) -> loss { \ }
+}
+
+out check
+out errors
+out loss
