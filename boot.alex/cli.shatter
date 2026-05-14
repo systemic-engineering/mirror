@@ -1,0 +1,15 @@
+in @prism
+in @io
+in @kintsugi
+in @craft
+in @code/rust
+in @git/hooks
+
+grammar @mirror/cli {
+  type command = compile | kintsugi | craft | check | ci | crystal | optic
+
+  run(command, [arg]) -> imperfect { \ }
+}
+
+out command
+out run
