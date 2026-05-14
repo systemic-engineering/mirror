@@ -1,0 +1,52 @@
+in @prism
+in @nl
+
+grammar @loss {
+  type loss = {
+    bits: f64,
+    source: ref,
+    measurement: measurement,
+  }
+
+  type measurement = shannon | fiedler | cheeger | entropy | mixing
+}
+
+grammar @error {
+  type error = {
+    grammar: ref,
+    name: ref,
+    message: nl,
+    location: location,
+    loss: loss,
+  }
+
+  type location = {
+    file: ref,
+    line: u64,
+    column: u64,
+  }
+
+  type severity = fatal | warning | info
+
+  type diagnostic = {
+    error: error,
+    severity: severity,
+    suggestion: nl,
+  }
+}
+
+grammar @imperfect {
+  type imperfect(value, loss = loss, error = error) = {
+    value: value,
+    loss: loss,
+    errors: [error],
+  }
+}
+
+out loss
+out measurement
+out error
+out location
+out severity
+out diagnostic
+out imperfect

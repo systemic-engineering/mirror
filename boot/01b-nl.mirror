@@ -1,0 +1,14 @@
+in @prism
+
+grammar @nl {
+  type nl(text)
+  type #(nl)
+
+  doc(ast) -> nl { \ }
+  commit_message(imperfect) -> nl { \ }
+}
+
+out nl
+out #
+out doc
+out commit_message
