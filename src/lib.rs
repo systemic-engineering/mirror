@@ -19,6 +19,7 @@ pub mod kernel;
 pub mod bench;
 pub mod cache;
 pub mod cli;
+pub mod interpreter;
 pub mod dirac;
 pub mod mirror_ast;
 pub mod prism;
