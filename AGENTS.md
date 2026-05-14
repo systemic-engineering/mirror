@@ -253,3 +253,30 @@ Amber: oscillating. The models are working. Give it time.
 Red: high holonomy. This code needs you.
 
 The gutter IS terni rendered as light.
+
+## Git IS the Content Store
+
+**Never create a separate cache, store, or artifact directory.**
+
+The compiler produces git-native SHA-1 OIDs via `content_oid()`. The
+fragmentation crate writes git objects. `.spectral/` uses git as its
+backend. Git IS the crystal store.
+
+- Compiled artifact → git blob (`git hash-object -w`)
+- Lookup crystal → `git cat-file -p <oid>`
+- Check if cached → `git cat-file --batch-check`
+- Distribute → `git push`
+
+**Do NOT create:**
+- `.shatter/` directories
+- `.cache/` directories
+- Any filesystem cache alongside git
+- Any content-addressed store that isn't git
+
+**Why:** Git already does content-addressing, deduplication, and
+distribution. Building a second store next to git is redundant,
+violates the architecture, and creates drift between two sources
+of truth. There is one store. It's git. Always has been.
+
+**The test:** If your code creates a directory to store compiled
+artifacts, you're wrong. Write a git blob instead.
