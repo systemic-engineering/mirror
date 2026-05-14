@@ -1,4 +1,8 @@
-//! @benchmark — performance as grammar. Optimization as the five operations.
+// FROZEN -- see AGENTS.md. Do not modify without explicit approval.
+// This file is Rust substrate. All extensions happen through .mirror grammars.
+// If you're adding code here, you're probably wrong. Write a grammar instead.
+
+//! @benchmark -- performance as grammar. Optimization as the five operations.
 //!
 //! Contract:
 //! - in: file path(s)

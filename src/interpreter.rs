@@ -1,4 +1,8 @@
-//! The mirror interpreter — one Rust function, grammars all the way down.
+// FROZEN -- see AGENTS.md. Do not modify without explicit approval.
+// This file is Rust substrate. All extensions happen through .mirror grammars.
+// If you're adding code here, you're probably wrong. Write a grammar instead.
+
+//! The mirror interpreter -- one Rust function, grammars all the way down.
 //!
 //! Contract:
 //! - `io_exec` is ONE function. The only door to reality.
@@ -12,7 +16,7 @@ use crate::kernel::Oid;
 use crate::mirror_ast::MirrorAST;
 
 // ---------------------------------------------------------------------------
-// @io — one function. The only door to reality.
+// @io -- one function. The only door to reality.
 // ---------------------------------------------------------------------------
 
 /// Execute an external command. This is ALL the Rust that touches the outside world.
@@ -40,67 +44,65 @@ pub fn io_exec(command: &str, args: &[&str], stdin: Option<&[u8]>) -> Vec<u8> {
 }
 
 // ---------------------------------------------------------------------------
-// Prism executor — five operations on MirrorAST
+// Prism executor -- five operations on MirrorAST
 // ---------------------------------------------------------------------------
 
-/// `focus` — look closer. Descend into a named child.
+/// `focus` -- look closer. Descend into a named child.
 pub fn focus<'a>(ast: &'a MirrorAST, name: &str) -> Option<&'a MirrorAST> {
     let children = match ast {
         MirrorAST::Focus(f) => &f.children,
-        MirrorAST::Module(m) => &m.children,
         MirrorAST::Split(s) => &s.children,
         MirrorAST::Zoom(z) => &z.children,
         MirrorAST::Refract(r) => &r.children,
         MirrorAST::Project(p) => &p.children,
-        MirrorAST::Abstract { inner, .. } => return focus(inner, name),
+        MirrorAST::In(_) | MirrorAST::Out(_) => return None,
     };
     children.iter().find(|child| child.name() == name)
 }
 
-/// `project` — extract a view. Filter children matching a predicate.
+/// `project` -- extract a view. Filter children matching a predicate.
 pub fn project(ast: &MirrorAST, predicate: fn(&MirrorAST) -> bool) -> Vec<&MirrorAST> {
     let children = match ast {
         MirrorAST::Focus(f) => &f.children,
-        MirrorAST::Module(m) => &m.children,
         MirrorAST::Split(s) => &s.children,
         MirrorAST::Zoom(z) => &z.children,
         MirrorAST::Refract(r) => &r.children,
         MirrorAST::Project(p) => &p.children,
-        MirrorAST::Abstract { inner, .. } => return project(inner, predicate),
+        MirrorAST::In(_) | MirrorAST::Out(_) => return vec![],
     };
     children.iter().filter(|child| predicate(child)).collect()
 }
 
-/// `split` — enumerate. List all children.
+/// `split` -- enumerate. List all children.
 pub fn split(ast: &MirrorAST) -> &[MirrorAST] {
     match ast {
         MirrorAST::Focus(f) => &f.children,
-        MirrorAST::Module(m) => &m.children,
         MirrorAST::Split(s) => &s.children,
         MirrorAST::Zoom(z) => &z.children,
         MirrorAST::Refract(r) => &r.children,
         MirrorAST::Project(p) => &p.children,
-        MirrorAST::Abstract { inner, .. } => split(inner),
+        MirrorAST::In(_) | MirrorAST::Out(_) => &[],
     }
 }
 
-/// `zoom` — transform. Apply a function to each child, return new Module.
+/// `zoom` -- transform. Apply a function to each child, return new Focus.
 pub fn zoom(ast: &MirrorAST, transform: fn(&MirrorAST) -> MirrorAST) -> MirrorAST {
     let children = split(ast);
     let transformed: Vec<MirrorAST> = children.iter().map(|c| transform(c)).collect();
-    MirrorAST::Module(crate::mirror_ast::ModuleNode {
+    MirrorAST::Focus(crate::mirror_ast::FocusNode {
         name: crate::mirror_ast::Identifier::new(ast.name()),
+        target: None,
         children: transformed,
     })
 }
 
-/// `refract` — settle. Compute OID (content-address).
+/// `refract` -- settle. Compute OID (content-address).
 pub fn refract(ast: &MirrorAST) -> Oid {
     ast.content_oid()
 }
 
 // ---------------------------------------------------------------------------
-// @git/crystal — compilation cache backed by git, via io_exec
+// @git/crystal -- compilation cache backed by git, via io_exec
 // ---------------------------------------------------------------------------
 
 /// Store a blob in git via `io_exec`. Returns the git blob OID.
@@ -181,14 +183,14 @@ pub fn compile_cached(
 }
 
 // ---------------------------------------------------------------------------
-// Grammar dispatch — CLI commands are grammar refs (@mirror/<command>)
+// Grammar dispatch -- CLI commands are grammar refs (@mirror/<command>)
 // ---------------------------------------------------------------------------
 
 /// Dispatch a CLI command through the interpreter.
 ///
 /// Each command maps to a grammar ref: `@mirror/<command>`.
 /// For now, this is a scaffold that calls existing functions.
-/// When grammar execution lands, this match disappears — the grammar does the dispatch.
+/// When grammar execution lands, this match disappears -- the grammar does the dispatch.
 ///
 /// TODO(grammar): replace this match with grammar ref resolution via @fate.
 pub fn dispatch(command: &str, args: &[String]) {
@@ -398,8 +400,9 @@ mod tests {
             body: None,
             children: vec![],
         });
-        let parent = MirrorAST::Module(ModuleNode {
+        let parent = MirrorAST::Focus(FocusNode {
             name: Identifier::new("root"),
+            target: None,
             children: vec![child],
         });
         let found = focus(&parent, "color");
@@ -409,8 +412,9 @@ mod tests {
 
     #[test]
     fn focus_returns_none_for_missing() {
-        let parent = MirrorAST::Module(ModuleNode {
+        let parent = MirrorAST::Focus(FocusNode {
             name: Identifier::new("root"),
+            target: None,
             children: vec![],
         });
         assert!(focus(&parent, "missing").is_none());
@@ -425,6 +429,7 @@ mod tests {
             grammar_ref: None,
             children: vec![],
             body: None,
+            is_abstract: false,
         });
         let split_child = MirrorAST::Split(SplitNode {
             name: Identifier::new("type1"),
@@ -433,8 +438,9 @@ mod tests {
             body: None,
             children: vec![],
         });
-        let parent = MirrorAST::Module(ModuleNode {
+        let parent = MirrorAST::Focus(FocusNode {
             name: Identifier::new("root"),
+            target: None,
             children: vec![zoom_child, split_child],
         });
         let zooms = project(&parent, |node| matches!(node, MirrorAST::Zoom(_)));
@@ -458,8 +464,9 @@ mod tests {
             body: None,
             children: vec![],
         });
-        let parent = MirrorAST::Module(ModuleNode {
+        let parent = MirrorAST::Focus(FocusNode {
             name: Identifier::new("root"),
+            target: None,
             children: vec![child1, child2],
         });
         assert_eq!(split(&parent).len(), 2);
@@ -474,8 +481,9 @@ mod tests {
             body: None,
             children: vec![],
         });
-        let parent = MirrorAST::Module(ModuleNode {
+        let parent = MirrorAST::Focus(FocusNode {
             name: Identifier::new("root"),
+            target: None,
             children: vec![child],
         });
         let result = zoom(&parent, |node| {

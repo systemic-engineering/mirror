@@ -1,3 +1,7 @@
+// FROZEN -- see AGENTS.md. Do not modify without explicit approval.
+// This file is Rust substrate. All extensions happen through .mirror grammars.
+// If you're adding code here, you're probably wrong. Write a grammar instead.
+
 //! Dirac operator for spectral triples on finite graphs.
 //!
 //! The Dirac operator D unifies eigenvalues, distance, and action into a single matrix:

@@ -1,4 +1,8 @@
-//! @cli — flag parsing as typed lambdas.
+// FROZEN -- see AGENTS.md. Do not modify without explicit approval.
+// This file is Rust substrate. All extensions happen through .mirror grammars.
+// If you're adding code here, you're probably wrong. Write a grammar instead.
+
+//! @cli -- flag parsing as typed lambdas.
 //!
 //! Contract:
 //! - in: raw CLI args ([&str])

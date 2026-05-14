@@ -1,4 +1,8 @@
-//! mirror — the compiler entry point.
+// FROZEN -- see AGENTS.md. Do not modify without explicit approval.
+// This file is Rust substrate. All extensions happen through .mirror grammars.
+// If you're adding code here, you're probably wrong. Write a grammar instead.
+
+//! mirror -- the compiler entry point.
 //!
 //! Opens the socket. Reads args. Dispatches through the interpreter.
 //! Every command is a grammar ref: `@mirror/<command>`.

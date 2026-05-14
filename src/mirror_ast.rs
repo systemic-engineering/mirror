@@ -1,12 +1,17 @@
-//! MirrorAST — the typed AST where each variant IS an optic.
+// FROZEN -- see AGENTS.md. Do not modify without explicit approval.
+// This file is Rust substrate. All extensions happen through .mirror grammars.
+// If you're adding code here, you're probably wrong. Write a grammar instead.
+
+//! MirrorAST -- the typed AST where each variant IS an optic.
 //!
-//! Seven variants. Five operations + Abstract + Module.
+//! Seven variants. Five operations + In + Out.
 //! Grammar, Type, Action, Property, Import, Export are GONE.
-//! They collapse into Focus, Split, Zoom, Refract, Project.
+//! They collapse into Focus, Split, Zoom, Refract, Project, In, Out.
 //!
-//! - `Identifier` — user-written names (e.g. `color`, `red`, `blue`)
-//! - `GrammarRef` — grammar references (e.g. `@test`, `@code/rust`)
-//! - `Oid` — content addresses (computed, not written)
+//! - `Identifier` -- user-written names (e.g. `color`, `red`, `blue`)
+//! - `GrammarOid` -- grammar identity (stores without @, renders with @)
+//! - `GrammarRef` -- grammar reference with optional identifier (e.g. `@code/rust`)
+//! - `Oid` -- content addresses (computed, not written)
 //!
 //! `String` appears NOWHERE in the AST.
 
@@ -14,7 +19,7 @@ use crate::kernel::Oid;
 use fragmentation::encoding::{Decode, Encode};
 
 // ---------------------------------------------------------------------------
-// Identifier — a user-written name. Not a String.
+// Identifier -- a user-written name. Not a String.
 // ---------------------------------------------------------------------------
 
 /// An identifier in mirror source. Not a String. A typed token.
@@ -46,42 +51,103 @@ impl std::fmt::Display for Identifier {
 }
 
 // ---------------------------------------------------------------------------
-// GrammarRef — a grammar reference. Always starts with @.
+// GrammarOid -- grammar identity. Stores without @, renders with @.
 // ---------------------------------------------------------------------------
 
-/// A grammar reference in mirror source. Always starts with `@`.
+/// A grammar identity. Stores the name without `@`, renders with `@`.
 ///
-/// Examples: `@test`, `@code/rust`, `@actor`.
-/// The `@` prefix is structural — it distinguishes grammar refs from identifiers.
+/// Examples: `GrammarOid::new("code")` -> displays as `@code`.
+/// `GrammarOid::new("@test")` strips the @ -> stores `test`.
 #[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct GrammarRef(String);
+pub struct GrammarOid(String);
 
-impl GrammarRef {
-    /// Create a new grammar reference. Panics if `s` does not start with `@`.
+impl GrammarOid {
     pub fn new(s: impl Into<String>) -> Self {
         let s = s.into();
-        assert!(s.starts_with('@'), "grammar ref must start with @: {}", s);
-        GrammarRef(s)
+        GrammarOid(s.strip_prefix('@').unwrap_or(&s).to_string())
     }
-
-    pub fn as_str(&self) -> &str {
+    pub fn name(&self) -> &str {
         &self.0
     }
-
-    /// Content-address this grammar reference.
     pub fn to_oid(&self) -> Oid {
         Oid::hash(self.0.as_bytes())
     }
 }
 
-impl std::fmt::Display for GrammarRef {
+impl std::fmt::Display for GrammarOid {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&self.0)
+        write!(f, "@{}", self.0)
     }
 }
 
 // ---------------------------------------------------------------------------
-// TypeBody — what a type declaration contains
+// GrammarRef -- a grammar reference with optional identifier.
+// ---------------------------------------------------------------------------
+
+/// A grammar reference in mirror source. Always renders with `@`.
+///
+/// Examples: `@test`, `@code/rust`, `@actor`.
+/// `GrammarRef { grammar: GrammarOid("code"), identifier: Some("rust") }` -> `@code/rust`
+#[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct GrammarRef {
+    pub grammar: GrammarOid,
+    pub identifier: Option<String>,
+}
+
+impl GrammarRef {
+    pub fn new(grammar: impl Into<String>, identifier: Option<String>) -> Self {
+        GrammarRef {
+            grammar: GrammarOid::new(grammar),
+            identifier,
+        }
+    }
+
+    /// Parse "@code/rust" into GrammarRef { grammar: "code", identifier: Some("rust") }
+    pub fn parse(s: &str) -> Self {
+        let s = s.strip_prefix('@').unwrap_or(s);
+        if let Some((g, id)) = s.split_once('/') {
+            GrammarRef {
+                grammar: GrammarOid::new(g),
+                identifier: Some(id.to_string()),
+            }
+        } else {
+            GrammarRef {
+                grammar: GrammarOid::new(s),
+                identifier: None,
+            }
+        }
+    }
+
+    /// The grammar name without @.
+    pub fn grammar_name(&self) -> &str {
+        self.grammar.name()
+    }
+
+    /// Content-address this grammar reference.
+    pub fn to_oid(&self) -> Oid {
+        // Hash the full display form for uniqueness
+        Oid::hash(self.to_string().as_bytes())
+    }
+
+    /// Legacy as_str() -- returns the full @grammar/identifier string.
+    /// Used by existing code that expects a string representation.
+    pub fn as_str_owned(&self) -> String {
+        self.to_string()
+    }
+}
+
+impl std::fmt::Display for GrammarRef {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.grammar)?;
+        if let Some(id) = &self.identifier {
+            write!(f, "/{}", id)?;
+        }
+        Ok(())
+    }
+}
+
+// ---------------------------------------------------------------------------
+// TypeBody -- what a type declaration contains
 // ---------------------------------------------------------------------------
 
 /// The body of a type declaration. Enum, struct, alias, or unit.
@@ -105,88 +171,71 @@ pub struct Field {
 }
 
 // ---------------------------------------------------------------------------
-// AbstractDefault — what happens when an abstract action has no override.
+// MirrorAST -- the AST. Seven variants. Five operations + In + Out.
 // ---------------------------------------------------------------------------
 
-/// What happens when an abstract action is called without concrete override.
-#[derive(Clone, Debug, PartialEq)]
-pub enum AbstractDefault {
-    /// Route through Fate intent resolution (the \ hole).
-    /// This is the default for all abstract declarations.
-    IntentHole,
-    /// A concrete body was provided (overrides the hole).
-    Concrete(Vec<MirrorAST>),
-}
-
-impl Default for AbstractDefault {
-    fn default() -> Self {
-        AbstractDefault::IntentHole
-    }
-}
-
-// ---------------------------------------------------------------------------
-// MirrorAST — the AST. Seven variants. Five operations.
-// ---------------------------------------------------------------------------
-
-/// The Mirror AST. Seven variants. Five operations + Abstract + Module.
+/// The Mirror AST. Seven variants. Five operations + the doors.
 ///
-/// Grammar → Focus (focus on a namespace)
-/// Type → Split (split into variants)
-/// Action → Zoom (transform, cross levels)
-/// Property → Refract (scatter, verify, settle)
-/// Import/Export → Project (extract view)
+/// Grammar -> Focus (focus on a namespace)
+/// Type -> Split (split into variants)
+/// Action -> Zoom (transform, cross levels)
+/// Property -> Refract (scatter, verify, settle)
+/// Import -> In (the door in)
+/// Export -> Out (the door out)
+/// View/Filter -> Project (extract view)
 ///
 /// No `String` anywhere. `Identifier` for names. `GrammarRef` for `@references`.
+///
+/// Module and Abstract are GONE. Focus replaces Module.
+/// `\` (the intent hole) is a body value on ZoomNode, not a wrapper.
 #[derive(Clone, Debug, PartialEq)]
 pub enum MirrorAST {
-    /// `focus` — look closer. Grammar, namespace, grouping.
-    /// Was: Focus + Grammar
+    /// `focus` -- look closer. Grammar, namespace, grouping.
+    /// Was: Focus + Grammar + Module
     Focus(FocusNode),
-    /// `project` — extract a view. Import, export.
-    /// Was: Project + Import + Export
+    /// `project` -- extract a view. Filter, query.
+    /// Was: Project
     Project(ProjectNode),
-    /// `split` — one of many. Type with variants.
+    /// `split` -- one of many. Type with variants.
     /// Was: Split + Type
     Split(SplitNode),
-    /// `zoom` — move between levels. Action, io, transformation.
+    /// `zoom` -- move between levels. Action, io, transformation.
     /// Was: Zoom + Action
     Zoom(ZoomNode),
-    /// `refract` — scatter and reconverge. Property, settlement.
+    /// `refract` -- scatter and reconverge. Property, settlement.
     /// Was: Refract + Property
     Refract(RefractNode),
-    /// `abstract` wraps any node with a default body.
-    /// IntentHole = route through Fate (the \ hole).
-    /// Concrete = a body was provided.
-    Abstract {
-        inner: Box<MirrorAST>,
-        default_body: AbstractDefault,
-    },
-    /// Top-level module containing multiple declarations
-    Module(ModuleNode),
+    /// `in` -- the door in. Grammar import.
+    /// Was: Project with target (import)
+    In(GrammarRef),
+    /// `out` -- the door out. Grammar export.
+    /// Was: Project without target (export)
+    Out(GrammarRef),
 }
 
 // ---------------------------------------------------------------------------
-// Node structs — carry what the deleted variants carried
+// Node structs -- carry what the deleted variants carried
 // ---------------------------------------------------------------------------
 
 /// `grammar @X < @parent { ... }` or `focus X` or `form @X { ... }`
 ///
 /// A Focus that's a grammar has `grammar_ref` (the @name) and optionally `parent`.
 /// A Focus that's just grouping has only `name`.
+/// Replaces ModuleNode -- top-level modules are now Focus with name "root".
 #[derive(Clone, Debug, PartialEq)]
 pub struct FocusNode {
     pub name: Identifier,
-    pub target: Option<GrammarRef>,  // parent grammar ref (was: parent in GrammarNode)
+    pub target: Option<GrammarRef>, // parent grammar ref (was: parent in GrammarNode)
     pub children: Vec<MirrorAST>,
 }
 
-/// `in @X` or `out X` or `project X`
+/// `project X` -- extract a view.
 ///
-/// A Project with `target` is an import. A Project without is an export/view.
+/// A Project filters or queries. No import/export semantics (those are In/Out).
 #[derive(Clone, Debug, PartialEq)]
 pub struct ProjectNode {
     pub name: Identifier,
-    pub target: Option<GrammarRef>,  // import target (was: target in ImportNode)
+    pub target: Option<GrammarRef>, // optional target ref
     pub children: Vec<MirrorAST>,
 }
 
@@ -207,6 +256,7 @@ pub struct SplitNode {
 ///
 /// A Zoom with `params` and `body` is an action/template/io.
 /// A Zoom with just `target` is a simple transformation.
+/// `is_abstract` replaces the old Abstract wrapper -- `\` is a flag, not a wrapper.
 #[derive(Clone, Debug, PartialEq)]
 pub struct ZoomNode {
     pub name: Identifier,
@@ -215,6 +265,7 @@ pub struct ZoomNode {
     pub grammar_ref: Option<GrammarRef>,
     pub children: Vec<MirrorAST>,
     pub body: Option<Vec<MirrorAST>>,
+    pub is_abstract: bool,           // true = \ (intent hole), was Abstract wrapper
 }
 
 /// `property valid(x: int) <= verdict { ... }` or `refract X`
@@ -229,15 +280,8 @@ pub struct RefractNode {
     pub children: Vec<MirrorAST>,
 }
 
-/// Top-level module.
-#[derive(Clone, Debug, PartialEq)]
-pub struct ModuleNode {
-    pub name: Identifier,
-    pub children: Vec<MirrorAST>,
-}
-
 // ---------------------------------------------------------------------------
-// Encode/Decode for MirrorAST — deterministic serialization
+// Encode/Decode for MirrorAST -- deterministic serialization
 // ---------------------------------------------------------------------------
 
 impl Encode for MirrorAST {
@@ -246,14 +290,14 @@ impl Encode for MirrorAST {
             MirrorAST::Focus(f) => {
                 let mut s = format!("focus:{}", f.name.as_str());
                 if let Some(ref t) = f.target {
-                    s.push_str(&format!(":{}", t.as_str()));
+                    s.push_str(&format!(":{}", t));
                 }
                 s.into_bytes()
             }
             MirrorAST::Project(p) => {
                 let mut s = format!("project:{}", p.name.as_str());
                 if let Some(ref t) = p.target {
-                    s.push_str(&format!(":{}", t.as_str()));
+                    s.push_str(&format!(":{}", t));
                 }
                 s.into_bytes()
             }
@@ -297,7 +341,10 @@ impl Encode for MirrorAST {
                     s.push_str(&format!("->{}", t.as_str()));
                 }
                 if let Some(ref gr) = z.grammar_ref {
-                    s.push_str(&format!("@{}", gr.as_str()));
+                    s.push_str(&format!("@{}", gr));
+                }
+                if z.is_abstract {
+                    s.push_str(":abstract");
                 }
                 s.into_bytes()
             }
@@ -312,20 +359,11 @@ impl Encode for MirrorAST {
                 }
                 s.into_bytes()
             }
-            MirrorAST::Abstract { inner, default_body } => {
-                let mut s = b"abstract:".to_vec();
-                s.extend_from_slice(&inner.encode());
-                if let AbstractDefault::Concrete(body) = default_body {
-                    s.extend_from_slice(b":body:");
-                    for (i, node) in body.iter().enumerate() {
-                        if i > 0 { s.push(b','); }
-                        s.extend_from_slice(&node.encode());
-                    }
-                }
-                s
+            MirrorAST::In(gr) => {
+                format!("in:{}", gr).into_bytes()
             }
-            MirrorAST::Module(m) => {
-                format!("module:{}", m.name.as_str()).into_bytes()
+            MirrorAST::Out(gr) => {
+                format!("out:{}", gr).into_bytes()
             }
         }
     }
@@ -345,7 +383,11 @@ impl Decode for MirrorAST {
                 let name_parts: Vec<&str> = rest.splitn(2, ':').collect();
                 let name = name_parts[0];
                 let target = name_parts.get(1).and_then(|t| {
-                    if t.starts_with('@') { Some(GrammarRef::new(*t)) } else { None }
+                    if t.starts_with('@') {
+                        Some(GrammarRef::parse(t))
+                    } else {
+                        None
+                    }
                 });
                 MirrorAST::Focus(FocusNode {
                     name: Identifier::new(name),
@@ -357,7 +399,11 @@ impl Decode for MirrorAST {
                 let name_parts: Vec<&str> = rest.splitn(2, ':').collect();
                 let name = name_parts[0];
                 let target = name_parts.get(1).and_then(|t| {
-                    if t.starts_with('@') { Some(GrammarRef::new(*t)) } else { None }
+                    if t.starts_with('@') {
+                        Some(GrammarRef::parse(t))
+                    } else {
+                        None
+                    }
                 });
                 MirrorAST::Project(ProjectNode {
                     name: Identifier::new(name),
@@ -376,7 +422,7 @@ impl Decode for MirrorAST {
                 })
             }
             "zoom" => {
-                let name = rest.split(['(', '-', '@']).next().unwrap_or(rest);
+                let name = rest.split(['(', '-', '@', ':']).next().unwrap_or(rest);
                 MirrorAST::Zoom(ZoomNode {
                     name: Identifier::new(name),
                     target: None,
@@ -384,6 +430,7 @@ impl Decode for MirrorAST {
                     grammar_ref: None,
                     children: vec![],
                     body: None,
+                    is_abstract: rest.ends_with(":abstract"),
                 })
             }
             "refract" => {
@@ -395,18 +442,11 @@ impl Decode for MirrorAST {
                     children: vec![],
                 })
             }
-            "abstract" => {
-                let inner = MirrorAST::decode(rest.as_bytes())?;
-                MirrorAST::Abstract {
-                    inner: Box::new(inner),
-                    default_body: AbstractDefault::IntentHole,
-                }
+            "in" => {
+                MirrorAST::In(GrammarRef::parse(rest))
             }
-            "module" => {
-                MirrorAST::Module(ModuleNode {
-                    name: Identifier::new(rest),
-                    children: vec![],
-                })
+            "out" => {
+                MirrorAST::Out(GrammarRef::parse(rest))
             }
             _ => {
                 // Fallback: treat as focus
@@ -443,7 +483,7 @@ impl MirrorAST {
                 buf.extend_from_slice(f.name.as_str().as_bytes());
                 if let Some(ref t) = f.target {
                     buf.extend_from_slice(b"<");
-                    buf.extend_from_slice(t.as_str().as_bytes());
+                    buf.extend_from_slice(t.to_string().as_bytes());
                 }
                 for child in &f.children {
                     buf.extend_from_slice(b":");
@@ -456,7 +496,7 @@ impl MirrorAST {
                 buf.extend_from_slice(p.name.as_str().as_bytes());
                 if let Some(ref t) = p.target {
                     buf.extend_from_slice(b"->");
-                    buf.extend_from_slice(t.as_str().as_bytes());
+                    buf.extend_from_slice(t.to_string().as_bytes());
                 }
                 for child in &p.children {
                     buf.extend_from_slice(b":");
@@ -526,7 +566,10 @@ impl MirrorAST {
                 }
                 if let Some(ref gr) = z.grammar_ref {
                     buf.extend_from_slice(b"@");
-                    buf.extend_from_slice(gr.as_str().as_bytes());
+                    buf.extend_from_slice(gr.to_string().as_bytes());
+                }
+                if z.is_abstract {
+                    buf.extend_from_slice(b":abstract");
                 }
                 if let Some(ref body) = z.body {
                     for child in body {
@@ -559,33 +602,18 @@ impl MirrorAST {
                 }
                 hash_tagged("refract", &buf)
             }
-            MirrorAST::Abstract { inner, default_body } => {
-                let mut buf = Vec::new();
-                buf.extend_from_slice(inner.content_oid().as_ref().as_bytes());
-                if let AbstractDefault::Concrete(body) = default_body {
-                    buf.extend_from_slice(b":body");
-                    for node in body {
-                        buf.push(b':');
-                        buf.extend_from_slice(node.content_oid().as_ref().as_bytes());
-                    }
-                }
-                hash_tagged("abstract", &buf)
+            MirrorAST::In(gr) => {
+                hash_tagged("in", gr.to_string().as_bytes())
             }
-            MirrorAST::Module(m) => {
-                let mut buf = Vec::new();
-                buf.extend_from_slice(m.name.as_str().as_bytes());
-                for child in &m.children {
-                    buf.extend_from_slice(b":");
-                    buf.extend_from_slice(child.content_oid().as_ref().as_bytes());
-                }
-                hash_tagged("module", &buf)
+            MirrorAST::Out(gr) => {
+                hash_tagged("out", gr.to_string().as_bytes())
             }
         }
     }
 }
 
 // ---------------------------------------------------------------------------
-// prism::Addressable — bridge to prism's Oid type for MerkleTree
+// prism::Addressable -- bridge to prism's Oid type for MerkleTree
 // ---------------------------------------------------------------------------
 
 impl prism::Addressable for MirrorAST {
@@ -596,7 +624,7 @@ impl prism::Addressable for MirrorAST {
 }
 
 // ---------------------------------------------------------------------------
-// MerkleTree — content-addressed tree traversal
+// MerkleTree -- content-addressed tree traversal
 // ---------------------------------------------------------------------------
 
 /// Empty children slice for leaf nodes.
@@ -622,8 +650,26 @@ impl prism::MerkleTree for MirrorAST {
                 }
             }
             MirrorAST::Refract(r) => &r.children,
-            MirrorAST::Abstract { inner, .. } => inner.children(),
-            MirrorAST::Module(m) => &m.children,
+            MirrorAST::In(_) => EMPTY_CHILDREN,
+            MirrorAST::Out(_) => EMPTY_CHILDREN,
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Display for MirrorAST
+// ---------------------------------------------------------------------------
+
+impl std::fmt::Display for MirrorAST {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            MirrorAST::Focus(node) => write!(f, "focus {}", node.name),
+            MirrorAST::Project(node) => write!(f, "project {}", node.name),
+            MirrorAST::Split(node) => write!(f, "split {}", node.name),
+            MirrorAST::Zoom(node) => write!(f, "zoom {}", node.name),
+            MirrorAST::Refract(node) => write!(f, "refract {}", node.name),
+            MirrorAST::In(gr) => write!(f, "in {}", gr),
+            MirrorAST::Out(gr) => write!(f, "out {}", gr),
         }
     }
 }
@@ -641,8 +687,8 @@ impl MirrorAST {
             MirrorAST::Split(_) => "split",
             MirrorAST::Zoom(_) => "zoom",
             MirrorAST::Refract(_) => "refract",
-            MirrorAST::Abstract { .. } => "abstract",
-            MirrorAST::Module(_) => "module",
+            MirrorAST::In(_) => "in",
+            MirrorAST::Out(_) => "out",
         }
     }
 
@@ -662,8 +708,8 @@ impl MirrorAST {
             MirrorAST::Split(s) => s.name.as_str(),
             MirrorAST::Zoom(z) => z.name.as_str(),
             MirrorAST::Refract(r) => r.name.as_str(),
-            MirrorAST::Abstract { inner, .. } => inner.name(),
-            MirrorAST::Module(m) => m.name.as_str(),
+            MirrorAST::In(gr) => gr.grammar_name(),
+            MirrorAST::Out(gr) => gr.grammar_name(),
         }
     }
 
@@ -671,28 +717,28 @@ impl MirrorAST {
     ///
     /// Returns the keyword string the parser originally used to create this node.
     /// Focus(@name) -> "grammar", Focus(name) -> "focus",
-    /// Project(with target) -> "in", Project(without target) -> "out",
     /// Split -> "type", Zoom -> "action", Refract -> "property",
-    /// Module -> "form", Abstract -> delegates to inner.
+    /// In -> "in", Out -> "out", Project -> "project".
     pub fn decl_tag(&self) -> &'static str {
         match self {
             MirrorAST::Focus(f) => {
                 if f.name.as_str().starts_with('@') { "grammar" } else { "focus" }
             }
-            MirrorAST::Project(p) => {
-                if p.target.is_some() { "in" } else { "out" }
-            }
+            MirrorAST::Project(_) => "project",
             MirrorAST::Split(_) => "type",
             MirrorAST::Zoom(_) => "action",
             MirrorAST::Refract(_) => "property",
-            MirrorAST::Abstract { inner, .. } => inner.decl_tag(),
-            MirrorAST::Module(_) => "form",
+            MirrorAST::In(_) => "in",
+            MirrorAST::Out(_) => "out",
         }
     }
 
-    /// Is this node abstract?
+    /// Is this node abstract? (has the \ intent hole)
     pub fn is_abstract(&self) -> bool {
-        matches!(self, MirrorAST::Abstract { .. })
+        match self {
+            MirrorAST::Zoom(z) => z.is_abstract,
+            _ => false,
+        }
     }
 
     /// Stringly-typed params projection (for consumers that need Vec<String>).
@@ -713,7 +759,6 @@ impl MirrorAST {
                     format!("{}:{}", f.name.as_str(), f.type_ref.as_str())
                 }
             }).collect(),
-            MirrorAST::Abstract { inner, .. } => inner.params_as_strings(),
             _ => Vec::new(),
         }
     }
@@ -738,7 +783,6 @@ impl MirrorAST {
             MirrorAST::Refract(r) => {
                 r.target.as_ref().map(|t| vec![t.as_str().to_string()]).unwrap_or_default()
             }
-            MirrorAST::Abstract { inner, .. } => inner.variants_as_strings(),
             _ => Vec::new(),
         }
     }
@@ -746,8 +790,7 @@ impl MirrorAST {
     /// Grammar reference as string (for Zoom nodes).
     pub fn grammar_ref_str(&self) -> Option<String> {
         match self {
-            MirrorAST::Zoom(z) => z.grammar_ref.as_ref().map(|gr| gr.as_str().to_string()),
-            MirrorAST::Abstract { inner, .. } => inner.grammar_ref_str(),
+            MirrorAST::Zoom(z) => z.grammar_ref.as_ref().map(|gr| gr.to_string()),
             _ => None,
         }
     }
@@ -756,7 +799,6 @@ impl MirrorAST {
     pub fn return_type_str(&self) -> Option<String> {
         match self {
             MirrorAST::Zoom(z) => z.target.as_ref().map(|t| t.as_str().to_string()),
-            MirrorAST::Abstract { inner, .. } => inner.return_type_str(),
             _ => None,
         }
     }
@@ -764,15 +806,14 @@ impl MirrorAST {
     /// Parent reference as string (for Focus nodes with targets).
     pub fn parent_ref_str(&self) -> Option<String> {
         match self {
-            MirrorAST::Focus(f) => f.target.as_ref().map(|t| t.as_str().to_string()),
-            MirrorAST::Abstract { inner, .. } => inner.parent_ref_str(),
+            MirrorAST::Focus(f) => f.target.as_ref().map(|t| t.to_string()),
             _ => None,
         }
     }
 }
 
 // ---------------------------------------------------------------------------
-// Helpers — param parsing
+// Helpers -- param parsing
 // ---------------------------------------------------------------------------
 
 impl MirrorAST {
@@ -884,37 +925,85 @@ mod tests {
         assert!(Identifier::new("a") < Identifier::new("b"));
     }
 
+    // -- GrammarOid tests --
+
+    #[test]
+    fn grammar_oid_strips_at() {
+        let g = GrammarOid::new("@test");
+        assert_eq!(g.name(), "test");
+        assert_eq!(g.to_string(), "@test");
+    }
+
+    #[test]
+    fn grammar_oid_no_at() {
+        let g = GrammarOid::new("code");
+        assert_eq!(g.name(), "code");
+        assert_eq!(g.to_string(), "@code");
+    }
+
+    #[test]
+    fn grammar_oid_equality() {
+        assert_eq!(GrammarOid::new("test"), GrammarOid::new("@test"));
+        assert_ne!(GrammarOid::new("a"), GrammarOid::new("b"));
+    }
+
+    #[test]
+    fn grammar_oid_to_oid_deterministic() {
+        let a = GrammarOid::new("@test").to_oid();
+        let b = GrammarOid::new("test").to_oid();
+        assert_eq!(a, b);
+    }
+
     // -- GrammarRef tests --
 
     #[test]
-    fn grammar_ref_new_and_as_str() {
-        let gr = GrammarRef::new("@test");
-        assert_eq!(gr.as_str(), "@test");
+    fn grammar_ref_parse_simple() {
+        let r = GrammarRef::parse("@prism");
+        assert_eq!(r.grammar.name(), "prism");
+        assert_eq!(r.identifier, None);
+        assert_eq!(r.to_string(), "@prism");
+    }
+
+    #[test]
+    fn grammar_ref_parse_with_identifier() {
+        let r = GrammarRef::parse("@code/rust");
+        assert_eq!(r.grammar.name(), "code");
+        assert_eq!(r.identifier, Some("rust".to_string()));
+        assert_eq!(r.to_string(), "@code/rust");
+    }
+
+    #[test]
+    fn grammar_ref_parse_without_at() {
+        let r = GrammarRef::parse("prism");
+        assert_eq!(r.grammar.name(), "prism");
+        assert_eq!(r.identifier, None);
+    }
+
+    #[test]
+    fn grammar_ref_new_constructor() {
+        let r = GrammarRef::new("@code", Some("rust".to_string()));
+        assert_eq!(r.grammar.name(), "code");
+        assert_eq!(r.identifier, Some("rust".to_string()));
+        assert_eq!(r.to_string(), "@code/rust");
     }
 
     #[test]
     fn grammar_ref_display() {
-        let gr = GrammarRef::new("@code/rust");
+        let gr = GrammarRef::parse("@code/rust");
         assert_eq!(format!("{}", gr), "@code/rust");
     }
 
     #[test]
-    #[should_panic(expected = "grammar ref must start with @")]
-    fn grammar_ref_panics_without_at() {
-        GrammarRef::new("test");
-    }
-
-    #[test]
     fn grammar_ref_to_oid_deterministic() {
-        let a = GrammarRef::new("@test").to_oid();
-        let b = GrammarRef::new("@test").to_oid();
+        let a = GrammarRef::parse("@test").to_oid();
+        let b = GrammarRef::parse("@test").to_oid();
         assert_eq!(a, b);
     }
 
     #[test]
     fn grammar_ref_to_oid_different_for_different_refs() {
-        let a = GrammarRef::new("@test").to_oid();
-        let b = GrammarRef::new("@code").to_oid();
+        let a = GrammarRef::parse("@test").to_oid();
+        let b = GrammarRef::parse("@code").to_oid();
         assert_ne!(a, b);
     }
 
@@ -922,12 +1011,93 @@ mod tests {
     fn grammar_ref_hash_and_ord() {
         use std::collections::HashSet;
         let mut set = HashSet::new();
-        set.insert(GrammarRef::new("@a"));
-        set.insert(GrammarRef::new("@a"));
-        set.insert(GrammarRef::new("@b"));
+        set.insert(GrammarRef::parse("@a"));
+        set.insert(GrammarRef::parse("@a"));
+        set.insert(GrammarRef::parse("@b"));
         assert_eq!(set.len(), 2);
 
-        assert!(GrammarRef::new("@a") < GrammarRef::new("@b"));
+        assert!(GrammarRef::parse("@a") < GrammarRef::parse("@b"));
+    }
+
+    // -- In/Out node tests --
+
+    #[test]
+    fn in_node_construction() {
+        let node = MirrorAST::In(GrammarRef::parse("@prism"));
+        assert_eq!(node.name(), "prism");
+        assert_eq!(node.kind_name(), "in");
+        assert_eq!(node.decl_tag(), "in");
+    }
+
+    #[test]
+    fn out_node_construction() {
+        let node = MirrorAST::Out(GrammarRef::parse("@cli"));
+        assert_eq!(format!("{}", node), "out @cli");
+        assert_eq!(node.kind_name(), "out");
+        assert_eq!(node.decl_tag(), "out");
+    }
+
+    #[test]
+    fn in_node_with_identifier() {
+        let node = MirrorAST::In(GrammarRef::parse("@code/rust"));
+        assert_eq!(node.name(), "code");
+        assert_eq!(format!("{}", node), "in @code/rust");
+    }
+
+    #[test]
+    fn in_out_are_leaves() {
+        let in_node = MirrorAST::In(GrammarRef::parse("@prism"));
+        let out_node = MirrorAST::Out(GrammarRef::parse("@cli"));
+        assert!(in_node.is_leaf());
+        assert!(out_node.is_leaf());
+        assert_eq!(in_node.degree(), 0);
+        assert_eq!(out_node.degree(), 0);
+    }
+
+    #[test]
+    fn in_out_content_oid_deterministic() {
+        let a = MirrorAST::In(GrammarRef::parse("@prism"));
+        let b = MirrorAST::In(GrammarRef::parse("@prism"));
+        assert_eq!(a.content_oid(), b.content_oid());
+    }
+
+    #[test]
+    fn in_out_different_oids() {
+        let in_node = MirrorAST::In(GrammarRef::parse("@prism"));
+        let out_node = MirrorAST::Out(GrammarRef::parse("@prism"));
+        assert_ne!(in_node.content_oid(), out_node.content_oid());
+    }
+
+    #[test]
+    fn encode_decode_in() {
+        let ast = MirrorAST::In(GrammarRef::parse("@prism"));
+        let encoded = ast.encode();
+        let decoded = MirrorAST::decode(&encoded).unwrap();
+        assert_eq!(decoded.kind_name(), "in");
+        assert_eq!(decoded.name(), "prism");
+    }
+
+    #[test]
+    fn encode_decode_out() {
+        let ast = MirrorAST::Out(GrammarRef::parse("@cli/format"));
+        let encoded = ast.encode();
+        let decoded = MirrorAST::decode(&encoded).unwrap();
+        assert_eq!(decoded.kind_name(), "out");
+        assert_eq!(decoded.name(), "cli");
+    }
+
+    // -- No Module variant test --
+
+    #[test]
+    fn no_module_variant() {
+        // Module is gone. Focus replaces it.
+        let node = MirrorAST::Focus(FocusNode {
+            name: Identifier::new("test"),
+            target: None,
+            children: vec![],
+        });
+        assert_eq!(node.name(), "test");
+        assert_eq!(node.kind_name(), "focus");
     }
 
     // -- MirrorAST construction tests --
@@ -967,10 +1137,27 @@ mod tests {
                 type_ref: Identifier::new("string"),
             }],
             target: Some(Identifier::new("result")),
-            grammar_ref: Some(GrammarRef::new("@email")),
+            grammar_ref: Some(GrammarRef::parse("@email")),
             children: vec![],
             body: None,
+            is_abstract: false,
         });
+        assert_eq!(node.kind_name(), "zoom");
+    }
+
+    #[test]
+    fn zoom_abstract_flag() {
+        // abstract action -> zoom with is_abstract = true
+        let node = MirrorAST::Zoom(ZoomNode {
+            name: Identifier::new("resolve"),
+            params: vec![],
+            target: None,
+            grammar_ref: None,
+            children: vec![],
+            body: None,
+            is_abstract: true,
+        });
+        assert!(node.is_abstract());
         assert_eq!(node.kind_name(), "zoom");
     }
 
@@ -987,43 +1174,20 @@ mod tests {
     }
 
     #[test]
-    fn project_import_construction() {
-        // in @tools -> Project with target
-        let imp = MirrorAST::Project(ProjectNode {
-            name: Identifier::new("@tools"),
-            target: Some(GrammarRef::new("@tools")),
-            children: vec![],
-        });
-        assert_eq!(imp.kind_name(), "project");
-
-        // out send -> Project without target
-        let exp = MirrorAST::Project(ProjectNode {
-            name: Identifier::new("send"),
+    fn project_construction() {
+        // project X -- extract a view
+        let proj = MirrorAST::Project(ProjectNode {
+            name: Identifier::new("items"),
             target: None,
             children: vec![],
         });
-        assert_eq!(exp.kind_name(), "project");
+        assert_eq!(proj.kind_name(), "project");
     }
 
-    #[test]
-    fn abstract_wraps_any_node() {
-        let inner = MirrorAST::Split(SplitNode {
-            name: Identifier::new("token"),
-            variants: vec![],
-            params: vec![],
-            body: Some(TypeBody::Unit),
-            children: vec![],
-        });
-        let wrapped = MirrorAST::Abstract {
-            inner: Box::new(inner.clone()),
-            default_body: AbstractDefault::IntentHole,
-        };
-        assert_eq!(wrapped.kind_name(), "abstract");
-        assert_eq!(wrapped.children(), inner.children());
-    }
+    // -- Focus replacing Module --
 
     #[test]
-    fn module_with_children() {
+    fn focus_as_root_module() {
         let child = MirrorAST::Split(SplitNode {
             name: Identifier::new("id"),
             variants: vec![],
@@ -1031,11 +1195,13 @@ mod tests {
             body: Some(TypeBody::Unit),
             children: vec![],
         });
-        let module = MirrorAST::Module(ModuleNode {
-            name: Identifier::new("test"),
+        let root = MirrorAST::Focus(FocusNode {
+            name: Identifier::new("root"),
+            target: None,
             children: vec![child],
         });
-        assert_eq!(module.children().len(), 1);
+        assert_eq!(root.children().len(), 1);
+        assert_eq!(root.name(), "root");
     }
 
     // -- Addressable tests: deterministic Oids --
@@ -1072,44 +1238,21 @@ mod tests {
         assert_ne!(a.oid(), b.oid());
     }
 
-    #[test]
-    fn abstract_oid_differs_from_inner() {
-        let inner = MirrorAST::Split(SplitNode {
-            name: Identifier::new("x"),
-            variants: vec![],
-            params: vec![],
-            body: Some(TypeBody::Unit),
-            children: vec![],
-        });
-        let wrapped = MirrorAST::Abstract {
-            inner: Box::new(inner.clone()),
-            default_body: AbstractDefault::IntentHole,
-        };
-        assert_ne!(inner.oid(), wrapped.oid());
-    }
-
     // -- MerkleTree tests --
 
     #[test]
     fn leaf_has_no_children() {
-        let leaf = MirrorAST::Project(ProjectNode {
-            name: Identifier::new("@x"),
-            target: Some(GrammarRef::new("@x")),
-            children: vec![],
-        });
+        let leaf = MirrorAST::In(GrammarRef::parse("@x"));
         assert!(leaf.is_leaf());
         assert_eq!(leaf.degree(), 0);
     }
 
     #[test]
     fn branch_has_children() {
-        let child = MirrorAST::Project(ProjectNode {
-            name: Identifier::new("x"),
-            target: None,
-            children: vec![],
-        });
-        let parent = MirrorAST::Module(ModuleNode {
+        let child = MirrorAST::In(GrammarRef::parse("@x"));
+        let parent = MirrorAST::Focus(FocusNode {
             name: Identifier::new("mod"),
+            target: None,
             children: vec![child],
         });
         assert!(!parent.is_leaf());
@@ -1172,63 +1315,5 @@ mod tests {
         let decoded = MirrorAST::decode(&encoded).unwrap();
         assert_eq!(decoded.kind_name(), "focus");
         assert_eq!(decoded.name(), "@test");
-    }
-
-    #[test]
-    fn encode_decode_module() {
-        let ast = MirrorAST::Module(ModuleNode {
-            name: Identifier::new("test"),
-            children: vec![],
-        });
-        let encoded = ast.encode();
-        let decoded = MirrorAST::decode(&encoded).unwrap();
-        assert_eq!(decoded.kind_name(), "module");
-        assert_eq!(decoded.name(), "test");
-    }
-
-    // -- AbstractDefault tests --
-
-    #[test]
-    fn abstract_default_is_intent_hole() {
-        let inner = MirrorAST::Zoom(ZoomNode {
-            name: Identifier::new("test"),
-            target: None,
-            params: vec![],
-            grammar_ref: None,
-            children: vec![],
-            body: None,
-        });
-        let abs = MirrorAST::Abstract {
-            inner: Box::new(inner),
-            default_body: AbstractDefault::IntentHole,
-        };
-        assert!(abs.is_abstract());
-        if let MirrorAST::Abstract { default_body, .. } = &abs {
-            assert_eq!(*default_body, AbstractDefault::IntentHole);
-        }
-    }
-
-    #[test]
-    fn abstract_concrete_overrides_hole() {
-        let inner = MirrorAST::Zoom(ZoomNode {
-            name: Identifier::new("test"),
-            target: None,
-            params: vec![],
-            grammar_ref: None,
-            children: vec![],
-            body: None,
-        });
-        let body = vec![MirrorAST::Focus(FocusNode {
-            name: Identifier::new("result"),
-            target: None,
-            children: vec![],
-        })];
-        let abs = MirrorAST::Abstract {
-            inner: Box::new(inner),
-            default_body: AbstractDefault::Concrete(body),
-        };
-        if let MirrorAST::Abstract { default_body, .. } = &abs {
-            assert!(matches!(default_body, AbstractDefault::Concrete(_)));
-        }
     }
 }

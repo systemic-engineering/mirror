@@ -1,4 +1,8 @@
-//! @io/tokenize — the door from text to AST.
+// FROZEN -- see AGENTS.md. Do not modify without explicit approval.
+// This file is Rust substrate. All extensions happen through .mirror grammars.
+// If you're adding code here, you're probably wrong. Write a grammar instead.
+
+//! @io/tokenize -- the door from text to AST.
 //!
 //! Contract:
 //! - in: source text (bytes) + grammar keyword mappings
@@ -10,7 +14,7 @@
 use std::collections::HashMap;
 
 use crate::mirror_ast::{
-    FocusNode, Identifier, MirrorAST, ModuleNode, ProjectNode, RefractNode, SplitNode, ZoomNode,
+    FocusNode, GrammarRef, Identifier, MirrorAST, ProjectNode, RefractNode, SplitNode, ZoomNode,
 };
 
 /// Which AST variant a keyword maps to.
@@ -121,14 +125,15 @@ fn parse_grammar(source: &str) -> Grammar {
 
 /// Tokenize source text using grammar keyword mappings.
 ///
-/// Single pass, O(n). Returns a Module wrapping all top-level items.
+/// Single pass, O(n). Returns a Focus wrapping all top-level items.
 /// Scans for grammar keywords at each brace depth level.
 /// For container keywords (Focus: impl/mod, Refract: trait), the body is
 /// scanned for child items.
 pub fn tokenize(source: &str, grammar: &Grammar) -> MirrorAST {
     let children = scan_items(source, grammar);
-    MirrorAST::Module(ModuleNode {
+    MirrorAST::Focus(FocusNode {
         name: Identifier::new("root"),
+        target: None,
         children,
     })
 }
@@ -189,7 +194,7 @@ fn scan_items(source: &str, grammar: &Grammar) -> Vec<MirrorAST> {
             continue;
         }
 
-        // Handle # — attributes in Rust (#[...]), line comments in mirror (# ...)
+        // Handle # -- attributes in Rust (#[...]), line comments in mirror (# ...)
         if bytes[pos] == b'#' {
             pos += 1;
             if pos < len && bytes[pos] == b'!' {
@@ -240,7 +245,7 @@ fn scan_items(source: &str, grammar: &Grammar) -> Vec<MirrorAST> {
 
         // Skip visibility modifiers to find the actual keyword
         if word == "pub" {
-            // Might be followed by (crate) or (super) — skip the parens
+            // Might be followed by (crate) or (super) -- skip the parens
             let saved = pos;
             while pos < len && bytes[pos].is_ascii_whitespace() {
                 pos += 1;
@@ -264,7 +269,7 @@ fn scan_items(source: &str, grammar: &Grammar) -> Vec<MirrorAST> {
         }
 
         // Check if this word is a grammar keyword FIRST (grammar takes precedence
-        // over hardcoded skip lists — `in` and `type` are Rust modifiers but mirror keywords)
+        // over hardcoded skip lists -- `in` and `type` are Rust modifiers but mirror keywords)
         if let Some(kind) = grammar.mappings.get(word) {
             // Skip whitespace after keyword
             while pos < len && bytes[pos].is_ascii_whitespace() {
@@ -295,11 +300,20 @@ fn scan_items(source: &str, grammar: &Grammar) -> Vec<MirrorAST> {
                 if pos < len && bytes[pos] == b';' {
                     pos += 1;
                 }
-                items.push(MirrorAST::Project(ProjectNode {
-                    name: Identifier::new(name),
-                    target: None,
-                    children: vec![],
-                }));
+
+                // Determine if this is In or Out based on the keyword
+                if word == "in" && name.starts_with('@') {
+                    items.push(MirrorAST::In(GrammarRef::parse(name)));
+                } else if word == "out" {
+                    items.push(MirrorAST::Out(GrammarRef::parse(name)));
+                } else {
+                    // Generic project (e.g. `use` in Rust)
+                    items.push(MirrorAST::Project(ProjectNode {
+                        name: Identifier::new(name),
+                        target: None,
+                        children: vec![],
+                    }));
+                }
                 continue;
             }
 
@@ -424,6 +438,7 @@ fn make_node(kind: &AstKind, name: &str, children: Vec<MirrorAST>) -> MirrorAST 
             grammar_ref: None,
             children,
             body: None,
+            is_abstract: false,
         }),
         AstKind::Project => MirrorAST::Project(ProjectNode {
             name: Identifier::new(name),
@@ -440,7 +455,7 @@ fn make_node(kind: &AstKind, name: &str, children: Vec<MirrorAST>) -> MirrorAST 
 }
 
 // ---------------------------------------------------------------------------
-// File discovery — find files for craft targets
+// File discovery -- find files for craft targets
 // ---------------------------------------------------------------------------
 
 /// Return the grammar file path for a given source file.
@@ -489,7 +504,7 @@ fn collect_files_recursive(dir: &str, ext: &str, out: &mut Vec<String>) {
 }
 
 // ---------------------------------------------------------------------------
-// craft — compile all files for a target, return crystal OID
+// craft -- compile all files for a target, return crystal OID
 // ---------------------------------------------------------------------------
 
 /// Compile all files for a target, return the crystal OID (hash of all OIDs).
@@ -554,7 +569,7 @@ fn craft_target_impl(target: &str, use_cache: bool) -> (crate::kernel::Oid, usiz
 }
 
 // ---------------------------------------------------------------------------
-// kintsugi — canonical mirror form of an AST
+// kintsugi -- canonical mirror form of an AST
 // ---------------------------------------------------------------------------
 
 /// Render a MirrorAST in canonical mirror form.
@@ -571,14 +586,27 @@ fn render_ast(node: &crate::mirror_ast::MirrorAST, depth: usize, out: &mut Strin
     let indent = "  ".repeat(depth);
 
     match node {
-        MirrorAST::Module(m) => {
-            for child in &m.children {
+        MirrorAST::Focus(f) if f.name.as_str() == "root" && f.target.is_none() => {
+            // Root focus (was Module) -- just render children
+            for child in &f.children {
                 render_ast(child, depth, out);
             }
         }
-        MirrorAST::Project(p) => {
+        MirrorAST::In(gr) => {
             out.push_str(&indent);
             out.push_str("in ");
+            out.push_str(&gr.to_string());
+            out.push('\n');
+        }
+        MirrorAST::Out(gr) => {
+            out.push_str(&indent);
+            out.push_str("out ");
+            out.push_str(&gr.to_string());
+            out.push('\n');
+        }
+        MirrorAST::Project(p) => {
+            out.push_str(&indent);
+            out.push_str("project ");
             out.push_str(p.name.as_str());
             out.push('\n');
         }
@@ -629,7 +657,7 @@ fn render_ast(node: &crate::mirror_ast::MirrorAST, depth: usize, out: &mut Strin
             out.push_str(f.name.as_str());
             if let Some(ref t) = f.target {
                 out.push_str(" < ");
-                out.push_str(t.as_str());
+                out.push_str(&t.to_string());
             }
             if f.children.is_empty() {
                 out.push('\n');
@@ -644,6 +672,9 @@ fn render_ast(node: &crate::mirror_ast::MirrorAST, depth: usize, out: &mut Strin
         }
         MirrorAST::Zoom(z) => {
             out.push_str(&indent);
+            if z.is_abstract {
+                out.push_str("abstract ");
+            }
             out.push_str("zoom ");
             out.push_str(z.name.as_str());
             if !z.params.is_empty() {
@@ -667,7 +698,7 @@ fn render_ast(node: &crate::mirror_ast::MirrorAST, depth: usize, out: &mut Strin
             }
             if let Some(ref gr) = z.grammar_ref {
                 out.push(' ');
-                out.push_str(gr.as_str());
+                out.push_str(&gr.to_string());
             }
             out.push('\n');
             for child in &z.children {
@@ -702,14 +733,6 @@ fn render_ast(node: &crate::mirror_ast::MirrorAST, depth: usize, out: &mut Strin
                 render_ast(child, depth + 1, out);
             }
         }
-        MirrorAST::Abstract { inner, .. } => {
-            out.push_str(&indent);
-            out.push_str("abstract ");
-            // Render inner inline (trim leading indent)
-            let mut inner_out = String::new();
-            render_ast(inner, 0, &mut inner_out);
-            out.push_str(inner_out.trim_start());
-        }
     }
 }
 
@@ -726,11 +749,11 @@ mod tests {
         let grammar = load_grammar("boot/std/code/rust.mirror").unwrap();
         let ast = tokenize("fn hello() { }", &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 1);
-                assert!(matches!(m.children[0], MirrorAST::Zoom(_)));
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 1);
+                assert!(matches!(f.children[0], MirrorAST::Zoom(_)));
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -739,11 +762,11 @@ mod tests {
         let grammar = load_grammar("boot/std/code/rust.mirror").unwrap();
         let ast = tokenize("struct Point { x: f64 }", &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 1);
-                assert!(matches!(m.children[0], MirrorAST::Split(_)));
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 1);
+                assert!(matches!(f.children[0], MirrorAST::Split(_)));
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -752,11 +775,11 @@ mod tests {
         let grammar = load_grammar("boot/std/code/rust.mirror").unwrap();
         let ast = tokenize("enum Color { Red, Blue }", &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 1);
-                assert!(matches!(m.children[0], MirrorAST::Split(_)));
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 1);
+                assert!(matches!(f.children[0], MirrorAST::Split(_)));
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -765,11 +788,11 @@ mod tests {
         let grammar = load_grammar("boot/std/code/rust.mirror").unwrap();
         let ast = tokenize("impl Point { fn x(&self) -> f64 { self.x } }", &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 1);
-                assert!(matches!(m.children[0], MirrorAST::Focus(_)));
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 1);
+                assert!(matches!(f.children[0], MirrorAST::Focus(_)));
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -778,11 +801,11 @@ mod tests {
         let grammar = load_grammar("boot/std/code/rust.mirror").unwrap();
         let ast = tokenize("trait Display { fn fmt(&self); }", &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 1);
-                assert!(matches!(m.children[0], MirrorAST::Refract(_)));
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 1);
+                assert!(matches!(f.children[0], MirrorAST::Refract(_)));
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -791,11 +814,11 @@ mod tests {
         let grammar = load_grammar("boot/std/code/rust.mirror").unwrap();
         let ast = tokenize("use std::collections::HashMap;", &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 1);
-                assert!(matches!(m.children[0], MirrorAST::Project(_)));
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 1);
+                assert!(matches!(f.children[0], MirrorAST::Project(_)));
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -804,11 +827,11 @@ mod tests {
         let grammar = load_grammar("boot/std/code/rust.mirror").unwrap();
         let ast = tokenize("mod tests { fn test_one() {} }", &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 1);
-                assert!(matches!(m.children[0], MirrorAST::Focus(_)));
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 1);
+                assert!(matches!(f.children[0], MirrorAST::Focus(_)));
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -818,13 +841,13 @@ mod tests {
         let source = "struct A {}\nfn b() {}\nenum C {}";
         let ast = tokenize(source, &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 3);
-                assert!(matches!(m.children[0], MirrorAST::Split(_)));
-                assert!(matches!(m.children[1], MirrorAST::Zoom(_)));
-                assert!(matches!(m.children[2], MirrorAST::Split(_)));
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 3);
+                assert!(matches!(f.children[0], MirrorAST::Split(_)));
+                assert!(matches!(f.children[1], MirrorAST::Zoom(_)));
+                assert!(matches!(f.children[2], MirrorAST::Split(_)));
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -833,10 +856,10 @@ mod tests {
         let grammar = load_grammar("boot/std/code/rust.mirror").unwrap();
         let ast = tokenize("fn hello() { }", &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children[0].name(), "hello");
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children[0].name(), "hello");
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -846,11 +869,11 @@ mod tests {
         let source = "fn outer() { if true { nested() } }";
         let ast = tokenize(source, &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 1);
-                assert_eq!(m.children[0].name(), "outer");
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 1);
+                assert_eq!(f.children[0].name(), "outer");
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -860,19 +883,19 @@ mod tests {
         let source = "impl Foo { fn bar() {} fn baz() {} }";
         let ast = tokenize(source, &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 1);
-                match &m.children[0] {
-                    MirrorAST::Focus(f) => {
-                        assert_eq!(f.name.as_str(), "Foo");
-                        assert_eq!(f.children.len(), 2);
-                        assert!(matches!(f.children[0], MirrorAST::Zoom(_)));
-                        assert!(matches!(f.children[1], MirrorAST::Zoom(_)));
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 1);
+                match &f.children[0] {
+                    MirrorAST::Focus(inner) => {
+                        assert_eq!(inner.name.as_str(), "Foo");
+                        assert_eq!(inner.children.len(), 2);
+                        assert!(matches!(inner.children[0], MirrorAST::Zoom(_)));
+                        assert!(matches!(inner.children[1], MirrorAST::Zoom(_)));
                     }
                     _ => panic!("expected Focus for impl"),
                 }
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -882,10 +905,10 @@ mod tests {
         let source = "fn f() {}\n".repeat(100_000);
         let ast = tokenize(&source, &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 100_000);
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 100_000);
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -896,10 +919,10 @@ mod tests {
         let ast = tokenize(&source, &grammar);
         // Must not OOM. Must produce children.
         match &ast {
-            MirrorAST::Module(m) => {
-                assert!(!m.children.is_empty());
+            MirrorAST::Focus(f) => {
+                assert!(!f.children.is_empty());
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -913,11 +936,11 @@ mod tests {
         let kintsugi_ast = tokenize(source, &kintsugi_grammar);
         // Rust grammar recognizes fn. Kintsugi grammar doesn't.
         let rust_count = match &rust_ast {
-            MirrorAST::Module(m) => m.children.len(),
+            MirrorAST::Focus(f) => f.children.len(),
             _ => 0,
         };
         let kintsugi_count = match &kintsugi_ast {
-            MirrorAST::Module(m) => m.children.len(),
+            MirrorAST::Focus(f) => f.children.len(),
             _ => 0,
         };
         assert!(rust_count > kintsugi_count);
@@ -928,10 +951,10 @@ mod tests {
         let grammar = load_grammar("boot/std/code/rust.mirror").unwrap();
         let ast = tokenize("", &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert!(m.children.is_empty());
+            MirrorAST::Focus(f) => {
+                assert!(f.children.is_empty());
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -949,12 +972,12 @@ mod tests {
         let grammar = load_grammar("boot/std/code/rust.mirror").unwrap();
         let ast = tokenize("pub fn hello() { }", &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 1);
-                assert!(matches!(m.children[0], MirrorAST::Zoom(_)));
-                assert_eq!(m.children[0].name(), "hello");
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 1);
+                assert!(matches!(f.children[0], MirrorAST::Zoom(_)));
+                assert_eq!(f.children[0].name(), "hello");
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -965,12 +988,12 @@ mod tests {
         let source = "use std::io;\nfn main() {}";
         let ast = tokenize(source, &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert_eq!(m.children.len(), 2);
-                assert!(matches!(m.children[0], MirrorAST::Project(_)));
-                assert!(matches!(m.children[1], MirrorAST::Zoom(_)));
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 2);
+                assert!(matches!(f.children[0], MirrorAST::Project(_)));
+                assert!(matches!(f.children[1], MirrorAST::Zoom(_)));
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -1090,10 +1113,10 @@ mod tests {
         let source = "grammar @test { type foo = bar }";
         let ast = tokenize(source, &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert!(!m.children.is_empty(), "must find grammar block");
+            MirrorAST::Focus(f) => {
+                assert!(!f.children.is_empty(), "must find grammar block");
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -1103,11 +1126,11 @@ mod tests {
         let source = "in @prism\nin @nl\ngrammar @test { }";
         let ast = tokenize(source, &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                // Should find: 2 imports (Project) + 1 grammar (Focus)
-                assert!(m.children.len() >= 3, "expected >= 3 children, got {}", m.children.len());
+            MirrorAST::Focus(f) => {
+                // Should find: 2 In nodes + 1 grammar (Focus)
+                assert!(f.children.len() >= 3, "expected >= 3 children, got {}", f.children.len());
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -1117,12 +1140,12 @@ mod tests {
         let source = "type color = red | blue | green";
         let ast = tokenize(source, &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert!(!m.children.is_empty(), "must find type declaration");
-                assert!(matches!(m.children[0], MirrorAST::Split(_)),
-                    "expected Split, got {:?}", m.children[0].kind_name());
+            MirrorAST::Focus(f) => {
+                assert!(!f.children.is_empty(), "must find type declaration");
+                assert!(matches!(f.children[0], MirrorAST::Split(_)),
+                    "expected Split, got {:?}", f.children[0].kind_name());
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -1132,10 +1155,10 @@ mod tests {
         let source = std::fs::read_to_string("boot/std/kintsugi.mirror").unwrap();
         let ast = tokenize(&source, &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert!(!m.children.is_empty(), "kintsugi.mirror must produce children");
+            MirrorAST::Focus(f) => {
+                assert!(!f.children.is_empty(), "kintsugi.mirror must produce children");
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
         }
     }
 
@@ -1146,10 +1169,44 @@ mod tests {
         let source = std::fs::read_to_string("boot/std/mirror/grammar.mirror").unwrap();
         let ast = tokenize(&source, &grammar);
         match &ast {
-            MirrorAST::Module(m) => {
-                assert!(!m.children.is_empty(), "grammar.mirror compiles itself");
+            MirrorAST::Focus(f) => {
+                assert!(!f.children.is_empty(), "grammar.mirror compiles itself");
             }
-            _ => panic!("expected Module"),
+            _ => panic!("expected Focus"),
+        }
+    }
+
+    // -- In/Out tokenization from mirror grammar --
+
+    #[test]
+    fn tokenize_in_produces_in_node() {
+        let grammar = load_grammar("boot/std/mirror/grammar.mirror").unwrap();
+        let source = "in @prism";
+        let ast = tokenize(source, &grammar);
+        match &ast {
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 1);
+                assert!(matches!(f.children[0], MirrorAST::In(_)),
+                    "expected In, got {:?}", f.children[0].kind_name());
+                assert_eq!(f.children[0].name(), "prism");
+            }
+            _ => panic!("expected Focus"),
+        }
+    }
+
+    #[test]
+    fn tokenize_out_produces_out_node() {
+        let grammar = load_grammar("boot/std/mirror/grammar.mirror").unwrap();
+        let source = "out @cli";
+        let ast = tokenize(source, &grammar);
+        match &ast {
+            MirrorAST::Focus(f) => {
+                assert_eq!(f.children.len(), 1);
+                assert!(matches!(f.children[0], MirrorAST::Out(_)),
+                    "expected Out, got {:?}", f.children[0].kind_name());
+                assert_eq!(f.children[0].name(), "cli");
+            }
+            _ => panic!("expected Focus"),
         }
     }
 }

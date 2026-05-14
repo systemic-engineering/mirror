@@ -1,4 +1,8 @@
-//! mirror — fold | prism | traversal | lens | iso — the thing you look into that looks back.
+// FROZEN -- see AGENTS.md. Do not modify without explicit approval.
+// This file is Rust substrate. All extensions happen through .mirror grammars.
+// If you're adding code here, you're probably wrong. Write a grammar instead.
+
+//! mirror -- fold | prism | traversal | lens | iso -- the thing you look into that looks back.
 //!
 //! `.mirror` files → content-addressed AST → compiled modules → verified domains.
 //!
