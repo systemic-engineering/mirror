@@ -1,0 +1,43 @@
+in @prism
+in @property
+in @loss
+in @nl
+
+# @epistemologic: the grammar where the thing means what it says.
+# not more, not less.
+# the name IS the operation. the compiler verifies the isomorphism.
+
+grammar @epistemologic {
+  # literal checks: does the declared identity hold under measurement?
+  # the verdict carries the loss between name and reality.
+  property literal(declaration) -> verdict { \ }
+
+  # the but/and ratio as Narcissus coefficient.
+  # high ratio = many overrides = epistemic uncertainty.
+  # low ratio = settled = the grammar knows what it is.
+  property override_ratio(grammar) -> loss { \ }
+
+  # the three epistemologic operators.
+  # every natural language discourse relation reduces to one of these.
+  # every logical connective reduces to one of these.
+  # every graph operation reduces to one of these.
+
+  # and: both hold. additive. edge. split.
+  type and(a, b)
+
+  # or: either holds. branch. disjunction. project.
+  type or(a, b)
+
+  # but: override. the second clause corrects the first.
+  # what follows "but" IS what the speaker means.
+  # what precedes "but" IS the concession.
+  # the star operator. refract.
+  type but(a, b)
+}
+
+out literal
+out override_ratio
+out and
+out or
+out but
+out @epistemologic

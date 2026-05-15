@@ -1,0 +1,45 @@
+in @prism
+in @epistemologic
+in @io
+
+# @fate/connectome: the Fate model as a graph of neurons.
+# 450 nodes. 5 ganglia. 18 sensory / 54 inter / 18 motor per ganglion.
+# identical architecture to C. elegans (302 neurons, ~7000 synapses).
+# the worm IS the algorithm. the algorithm IS a graph.
+
+grammar @fate/connectome {
+  type neuron(ref)
+  type synapse(neuron, neuron, f64)
+  type ganglion = abyss | introject | cartographer | explorer | fate
+
+  # 450 nodes. 5 ganglia.
+  # the connectome IS the model. the topology IS the weights.
+  type connectome = {
+    ganglia: [ganglion],
+    neurons: [neuron],
+    synapses: [synapse],
+  }
+
+  # inference IS graph walk.
+  # not matrix multiplication. not softmax. Dijkstra on the model's
+  # own topology. follow the eigenvalue gradient through 450 nodes.
+  infer(connectome, [f64]) -> ganglion { \ }
+
+  # training IS edge selection.
+  # change a connection -> change the OID -> change the model.
+  evolve(connectome, loss) -> connectome { \ }
+
+  # crystallize: SCF loop until convergence.
+  # eigendecompose -> derive weights -> recompile -> repeat.
+  # the fixed point IS the trained model.
+  crystallize(connectome) -> connectome { \ }
+}
+
+out neuron
+out synapse
+out ganglion
+out connectome
+out infer
+out evolve
+out crystallize
+out @fate/connectome

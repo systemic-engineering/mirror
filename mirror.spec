@@ -1,4 +1,6 @@
 in @prism
+in @epistemologic
+in @fate/connectome
 in @kintsugi
 in @kintsugi/translate
 in @kintsugi/migrate
