@@ -504,3 +504,68 @@ The model IS the graph. The eigenvalues ARE the weights. Selection IS the traini
 *The eigenvalues settle. The holonomy decreases. The crystal forms.*
 *1,031 parameters. One kilobyte. The model fits in a TCP packet.*
 *e^(n+1) < e^(n). By construction. By proof. By selection.*
+
+---
+
+## 8. The Connectome: Parameters as Neurons
+
+Fate's 450 parameters are not weights in a matrix. They are neurons
+in a graph. The topology IS the model. Identical architecture to
+C. elegans (302 neurons, ~7000 synapses).
+
+### 8.1 Structure
+
+```
+Fate connectome: 450 nodes, 5 ganglia
+
+Ganglion 1: Abyss       (90 nodes) — depth detection
+Ganglion 2: Introject    (90 nodes) — pattern matching
+Ganglion 3: Cartographer (90 nodes) — mapping
+Ganglion 4: Explorer     (90 nodes) — search
+Ganglion 5: Fate         (90 nodes) — selection
+
+Per ganglion:
+  18 sensory  — graph features in (Fiedler, Cheeger, entropy, ...)
+  54 inter    — the computation
+  18 motor    — score out
+```
+
+### 8.2 Inference IS graph walk
+
+Not matrix multiplication. Not softmax. Dijkstra on the model's
+own topology. Follow the eigenvalue gradient through 450 nodes.
+The winning path IS the selected model.
+
+### 8.3 Training IS edge selection
+
+The connectome lives in spectral-db. Content-addressed.
+The model's OID IS its topology.
+
+Change a connection → change the OID → change the model.
+Training = changing edges = evolution of the connectome.
+Inference = walking the graph = the worm navigating.
+Selection = which topology produces lowest loss = which connectome survives.
+
+### 8.4 The grammar
+
+```mirror
+in @prism
+in @epistemologic/bio/elegans
+
+grammar @fate/connectome {
+  type neuron(ref)
+  type synapse(neuron, neuron, f64)
+  type ganglion = abyss | introject | cartographer | explorer | fate
+
+  infer(graph, features) -> ganglion { \ }
+  evolve(connectome, fitness) -> connectome { \ }
+}
+```
+
+The model IS a Prism in spectral-db.
+mirror compile — compile the connectome.
+mirror kintsugi — find the shortest connectome that still navigates.
+mirror bench — 450 nodes, L1 cache, nanosecond inference.
+
+The worm IS the algorithm. The algorithm IS a graph.
+The graph IS a Prism. The Prism IS the compiler.
