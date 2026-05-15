@@ -414,3 +414,65 @@ Ticks 0-1 are sequential prerequisites. Ticks 2-3 can overlap. Tick 4 depends on
 
 *The spec is the gap. The gap is the spec. What we cannot yet do is precisely what remains to build.*
 *e^(n+1) < e^(n). By construction. By proof. By the work that follows.*
+
+---
+
+## 6. @prism/rust — the root of execution
+
+`@prism` is the contract. `@prism/rust` is the binding. The metal.
+
+```
+@prism          — the five operations. Pure declaration.
+@prism/rust     — binds to Rust executor. THIS runs.
+@prism/beam     — binds to BEAM. Future.
+@prism/metal    — binds to GPU. Future.
+@prism/fortran  — binds to LAPACK. Future.
+```
+
+`in @prism` gives the contract. `in @prism/rust` gives execution.
+No IO crossing. No socket. Direct function calls on the AST.
+
+`@prism/rust` is the ONE grammar with embedded Rust. Not @io.
+@io imports @prism/rust for exec. Everything traces back to
+five operations bound to Rust.
+
+### Execution model
+
+```
+@prism/rust = five Rust functions (the metal)
+|> = composition of those functions (no IO)
+{ \ } = Fate selects which composition (in-process)
+@io = uses @prism/rust for the ONE boundary crossing
+```
+
+Grammar executes because it IS the prism. The prism IS the Rust.
+The Rust IS the five operations. Same process. Same memory. Same L1.
+
+### All five ticks become pure mirror
+
+```
+0. Grammar execution  → |> composes @prism/rust operations. No IO.
+1. Import resolution  → @mirror/resolve walks In nodes via focus/split
+2. Grammar graph      → @mirror/spectral builds graph via split/zoom
+3. Wire \ to Fate     → @fate/connectome.infer via @prism/rust
+4. LLVM emitter       → @code/llvm.compile via @io.exec("llc", ...)
+```
+
+Only tick 4 crosses IO (calling llc). Ticks 0-3 are pure prism
+composition. In-process. Bounded. Sub-Turing. Fast.
+
+### The binding pattern
+
+```mirror
+in @prism
+
+grammar @prism/rust {
+  focus(ast, name) -> ast in @code/rust { /* interpreter::focus */ }
+  project(ast, predicate) -> [ast] in @code/rust { /* interpreter::project */ }
+  split(ast) -> [ast] in @code/rust { /* interpreter::split */ }
+  zoom(ast, transform) -> ast in @code/rust { /* interpreter::zoom */ }
+  refract(ast) -> oid in @code/rust { /* interpreter::refract */ }
+}
+```
+
+One grammar with Rust. One. The root. Everything else composes.
