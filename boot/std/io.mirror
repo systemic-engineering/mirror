@@ -1,10 +1,11 @@
 in @prism
+in @prism/rust
 in @error
 in @imperfect
 
 # @io: the socket layer. everything is a socket.
 # four syscalls. the only door to reality.
-# io_exec in interpreter.rs is the backing Rust.
+# exec binds through @prism/rust to interpreter::io_exec.
 
 grammar @io {
   type socket(ref)

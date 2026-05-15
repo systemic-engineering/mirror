@@ -1,0 +1,46 @@
+in @prism
+in @code/rust
+
+# @prism/rust: the ONE grammar with Rust bindings.
+# five operations bound to interpreter.rs. the metal.
+# in @prism gives the contract. in @prism/rust gives execution.
+# everything else composes these five. everything else is pure mirror.
+
+grammar @prism/rust {
+  # focus: navigate to a named child in the AST.
+  # binds to interpreter::focus(ast, name) -> Option<&MirrorAST>
+  focus(ast, name) -> ast in @code/rust {
+    # interpreter::focus
+  }
+
+  # project: filter children by predicate.
+  # binds to interpreter::project(ast, predicate) -> Vec<&MirrorAST>
+  project(ast, predicate) -> [ast] in @code/rust {
+    # interpreter::project
+  }
+
+  # split: enumerate all children.
+  # binds to interpreter::split(ast) -> &[MirrorAST]
+  split(ast) -> [ast] in @code/rust {
+    # interpreter::split
+  }
+
+  # zoom: transform each child.
+  # binds to interpreter::zoom(ast, transform) -> MirrorAST
+  zoom(ast, transform) -> ast in @code/rust {
+    # interpreter::zoom
+  }
+
+  # refract: content-address the AST. settle. done. crystal.
+  # binds to interpreter::refract(ast) -> Oid
+  refract(ast) -> oid in @code/rust {
+    # interpreter::refract
+  }
+}
+
+out focus
+out project
+out split
+out zoom
+out refract
+out @prism/rust

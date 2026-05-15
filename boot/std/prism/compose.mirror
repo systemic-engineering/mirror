@@ -1,0 +1,20 @@
+in @prism
+in @prism/rust
+
+# @prism/compose: |> as prism composition.
+# a |> b = apply a, then apply b to the result.
+# bounded: each operation visits each node once.
+# sub-Turing: the composition terminates.
+
+grammar @prism/compose {
+  # compose two prism operations sequentially.
+  # a runs first. its output feeds b.
+  compose(a, b) -> prism { \ }
+
+  # compose a list of prism operations into one.
+  # left to right. pipe([f, g, h]) = f |> g |> h.
+  pipe([prism]) -> prism { \ }
+}
+
+out compose
+out pipe
