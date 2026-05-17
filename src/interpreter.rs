@@ -96,9 +96,24 @@ pub fn zoom(ast: &MirrorAST, transform: fn(&MirrorAST) -> MirrorAST) -> MirrorAS
     })
 }
 
-/// `refract` -- settle. Compute OID (content-address).
+/// `refract` — settle. Compute OID (content-address).
+/// On abstract nodes (\ holes): resolve through Fate via eigenboard.
 pub fn refract(ast: &MirrorAST) -> Oid {
-    ast.content_oid()
+    if ast.is_abstract() {
+        // The \ resolution: eigenboard weight for this node
+        // Stored in git as refs/fate/<node_oid>
+        let node_oid = ast.content_oid();
+        let ref_name = format!("refs/fate/{}", node_oid.as_ref());
+        if let Some(resolved) = git_lookup(&ref_name) {
+            Oid::new(resolved)
+        } else {
+            // No resolution yet — return the hole's own OID
+            // The property layer will flag this as unresolved
+            node_oid
+        }
+    } else {
+        ast.content_oid()
+    }
 }
 
 // ---------------------------------------------------------------------------
