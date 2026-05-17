@@ -8,24 +8,21 @@ Instructions for AI agents working on the `mirror` crate.
 artifacts → verified domains. The compiler IS the LSP. The CLI IS the REPL.
 The gutter IS terni.
 
-The compilation return type is `Imperfect<CompiledArtifact, CompilationError, MirrorLoss>`.
+The compilation return type is `Oid` — a content-addressed SHA-256 hash stored as a git blob.
 
 ## Build
 
 ```bash
 cd /Users/alexwolf/dev/projects/mirror
-nix develop -c cargo test
-nix develop -c cargo clippy --workspace -- -D warnings
-nix develop -c cargo fmt --all -- --check
+cargo build --release
+cargo test --lib
+cargo clippy --workspace -- -D warnings
+cargo fmt --all -- --check
 ```
 
-Or use just:
-```bash
-just check    # format + lint + test
-just test     # test only
-```
+direnv keeps the shell warm. Use `cargo` directly. No `nix develop -c` prefix needed.
 
-Bare `cargo` is not in PATH. Always use `nix develop -c cargo ...` or `just`.
+Release binary: `$CARGO_TARGET_DIR/release/mirror` (currently `/Users/alexwolf/dev/.cargo-target/release/mirror`).
 
 ## TDD Discipline
 
@@ -93,49 +90,57 @@ Read these docs before working:
 
 ## Key Types
 
-### MirrorLoss (`src/loss.rs`)
+### MirrorAST (`src/mirror_ast.rs`)
 
-Mirror's domain-specific Loss type. Implements `terni::Loss`.
-IS `Transport::Holonomy` in the bundle tower.
-IS what TraceBeam wanted to become.
+The AST. 7 node types: Grammar, Type, Action, Property, Boundary, Use, Abstract.
+Plus structural nodes: FocusNode, ProjectNode, SplitNode, ZoomNode, RefractNode.
+Content-addressable via `Oid::hash()`.
 
-Fields: phases, resolution_ratio, unresolved_refs, staleness,
-convergence, dark_dims, crystal, recovered.
+### Oid (`src/kernel.rs`)
 
-### Shard (`src/shard.rs`)
+Content address. SHA-256 of tokenized eigenvalue record.
+`Oid::hash(bytes)` → 64 hex chars. Deterministic. Idempotent.
 
-The compiled artifact carrier. Grammar OID + KernelSpec + Target.
+### Prism<V> (`src/prism.rs`)
 
-### Shatter (`src/mirror_runtime.rs`)
+The tree structure. Variants: Shard (leaf), Fractal (branch), Lens (reference),
+Optics (branch + references). Every compiled artifact is a `Prism<V>`.
 
-The compilation Prism. Implements `prism::Prism`.
-Focus → Project → Refract. Form → MirrorData → MirrorFragment → Crystal.
+### SpectralTriple (`src/dirac.rs`)
 
-### Form (`src/mirror_runtime.rs`)
+Jacobi eigenvalues from graph Laplacian. Pure Rust. No LAPACK.
+Nodes + edges → Dirac operator → eigenvalues → spectral embedding.
 
-The parsed-but-not-yet-content-addressed view. Kind + name + params +
-variants + children. The structural mirror of MirrorData.
+### interpreter (`src/interpreter.rs`)
 
-### MirrorCompiler (`src/bundle.rs`)
-
-The bundle tower implementation:
-- Fiber: source text
-- Connection: KernelSpec
-- Gauge: Target (BEAM/WASM/Metal)
-- Transport: compilation with MirrorLoss as holonomy
-- Closure: the compiled artifact
+The five operations: focus, project, split, zoom, refract.
+Plus: io_exec (the ONE door to reality), git_store, compile_cached, dispatch.
 
 ## Boot Sequence
 
 ```
-boot/00-prism.mirror      the five optics
-boot/01-meta.mirror       meta operations
-boot/02-actor.mirror      actor, process, message
-boot/04-action.mirror     generic action optic (GAT)
-boot/03-property.mirror   verification properties
-boot/10-mirror.mirror     the mirror form (requires + invariant + ensures)
+boot/00-prism.mirror        the five optics
+boot/00a-sigil.mirror       navigation sigils (. .. ... ~ @ ^ HEAD)
+boot/01-meta.mirror         meta operations
+boot/01a-error.mirror       error handling (recover/rescue)
+boot/01b-nl.mirror          natural language interface
+boot/02-actor.mirror        actor model
+boot/02-epistemologic.mirror epistemology
+boot/02a-io.mirror          IO boundary
+boot/02b-runtime.mirror     runtime primitives
+boot/03-shatter.mirror      crystal format
+boot/04-code.mirror         code generation
+boot/04a-code-rust.mirror   Rust target
+boot/04b-code-gleam.mirror  Gleam target
+boot/05-property.mirror     verification properties
+boot/06-action.mirror       action optic (GAT)
+boot/07-package.mirror      package management
+boot/07a-package-git.mirror git packages
+boot/07b-package-spec.mirror package specs
+boot/std/                   63 library grammars
 ```
 
+18 boot files + 63 std grammars = 81 total.
 The boot files establish the language. Each file builds on the previous.
 The compiler learns by reading them in order.
 
@@ -184,28 +189,29 @@ mirror
 
 ```
 .mirror source
-    ↓ parse
-Form
-    ↓ focus (eigenvalue extraction)
-MirrorData
-    ↓ project (content addressing)
-MirrorFragment (OID)
-    ↓ refract (crystallization)
-.shatter (crystal — feedable back into the compiler)
+    ↓ tokenize (tokenize.rs)
+Token stream
+    ↓ parse (mirror_ast.rs)
+MirrorAST
+    ↓ eigenvalue extraction (dirac.rs)
+SpectralEmbedding
+    ↓ content addressing (kernel.rs)
+Oid (SHA-256, 64 hex chars)
+    ↓ git store (interpreter.rs → io_exec → git hash-object -w)
+Git blob
 ```
 
-Each step returns `Imperfect<Output, Error, MirrorLoss>`.
-The `eh!` macro accumulates loss through the pipeline.
+The pipeline is: tokenize → parse → hash → store. Four steps.
+`compile_cached` checks git first, skips if OID already exists.
 
-## .shatter Files
+## Content Store
 
-A `.shatter` file IS a `.mirror` file. The compiler can read its own
-output. `mirror compile output.shatter → output.shatter` (idempotent).
+The compiler produces SHA-256 OIDs via `Oid::hash()` and stores them as git blobs.
+`compile_cached` in `src/interpreter.rs` handles the cold/warm path:
+- Cold: tokenize → hash → `git hash-object -w` → store ref
+- Warm: check ref via `git cat-file --batch-check` → return cached OID
 
-Contents: fragment tree + MirrorLoss + property verdicts + KernelSpec + Fate weights.
-
-`mirror ai file.shatter` — feed through Fate, re-settle if drifted.
-`mirror ai --train file.shatter` — same + update Fate weights from MirrorLoss.
+The compilation is idempotent. Same source, same OID, forever.
 
 ## Extensions Are Grammars, Not Rust
 
@@ -240,11 +246,11 @@ Rust is the bootstrap. The bootstrap falls away.
 ## What NOT to do
 
 - Do NOT skip the red phase. Break the code. Prove the test.
-- Do NOT use `ShannonLoss`. Mirror has `MirrorLoss`. prism-core has `ScalarLoss`.
-- Do NOT use `PureBeam`. It's been renamed to `Optic`.
+- Do NOT modify .rs files. The Rust substrate is FROZEN. The pre-commit hook rejects .rs changes.
 - Do NOT write in Alex's voice. Agent writes as agent.
 - Do NOT change .mirror files in `boot/` without understanding the boot order.
 - Do NOT change the terni submodule from within mirror.
+- Do NOT create filesystem caches or directories. Git IS the store.
 
 ## The Gutter
 
@@ -258,9 +264,9 @@ The gutter IS terni rendered as light.
 
 **Never create a separate cache, store, or artifact directory.**
 
-The compiler produces git-native SHA-1 OIDs via `content_oid()`. The
-fragmentation crate writes git objects. `.spectral/` uses git as its
-backend. Git IS the crystal store.
+The compiler produces SHA-256 OIDs via `Oid::hash()` and stores them
+as git blobs via `git hash-object -w`. Lookup via `git cat-file`.
+Git IS the crystal store.
 
 - Compiled artifact → git blob (`git hash-object -w`)
 - Lookup crystal → `git cat-file -p <oid>`
