@@ -25,6 +25,7 @@ in @mirror/resolve
 in @mirror/check
 in @mirror/interpreter
 in @mirror/runtime
+in @mirror/refract
 in @nl
 in @git/hooks
 in @cli

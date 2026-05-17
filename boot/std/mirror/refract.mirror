@@ -1,0 +1,26 @@
+in @prism
+in @epistemologic
+in @epistemologic/property
+in @io
+
+grammar @mirror/refract {
+  # measure the topology. settle. the spectrum.
+  # refract IS bench wearing its real name.
+
+  # measure a single file
+  measure(file) -> verdict { \ }
+
+  # measure a directory (suite)
+  suite(path) -> [verdict] { \ }
+
+  # measure through a lens
+  lens(file, lens) -> verdict { \ }
+
+  # measure with an mq query
+  query(path, mq) -> verdict { \ }
+}
+
+out measure
+out suite
+out lens
+out query
