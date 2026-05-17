@@ -1,0 +1,62 @@
+in @prism
+in @code/llvm
+in @io
+in @fragmentation
+
+# @code/llvm/emit: emit LLVM IR from MirrorAST.
+#
+# the grammar that produces the LLVM IR that IS the mirror binary.
+# three computational kernels. 10 syscall wrappers. one tokenizer.
+# ~700 lines of LLVM IR. no Rust. no dependencies. 50KB.
+#
+# the AST nodes become LLVM functions.
+# the five operations become LLVM calls.
+# @fragmentation provides the Merkle substrate.
+
+grammar @code/llvm/emit {
+
+  # emit LLVM IR from a MirrorAST node.
+  # each AST node maps to an LLVM function definition.
+  # the five operations map to LLVM call instructions.
+  emit(ast) -> text { \ }
+
+  # the three computational kernels as LLVM IR.
+  #
+  # jacobi: ~150 lines of arithmetic.
+  # eigenvalue solver. pure rotation. no LAPACK.
+  # sqrt, cos, sin, atan — four math intrinsics.
+  emit_jacobi(matrix_size) -> text { \ }
+
+  # SHA-256: ~120 lines of bitwise arithmetic.
+  # content addressing. every OID. every crystal.
+  # the hash pipeline: encode -> project -> compress.
+  emit_sha256(block_size) -> text { \ }
+
+  # SHA-1: ~80 lines of bitwise arithmetic.
+  # git-compatible blob/tree OIDs.
+  # blob {len}\0{data} format. git IS the store.
+  emit_sha1(block_size) -> text { \ }
+
+  # the 10 syscall wrappers as LLVM IR.
+  # read, write, open, close, execve, pipe, waitpid, exit, brk, stat.
+  # the only door to reality. everything above is grammar.
+  emit_syscalls -> text { \ }
+
+  # the tokenizer as LLVM IR.
+  # byte scanning. keyword matching. ~300 lines.
+  # the bootstrap parser that reads .mirror source.
+  emit_tokenizer(grammar) -> text { \ }
+
+  # the complete binary.
+  # wires kernels + syscalls + tokenizer + AST.
+  # spec -> LLVM IR -> 50KB binary.
+  emit_binary(spec) -> text { \ }
+}
+
+out emit
+out emit_jacobi
+out emit_sha256
+out emit_sha1
+out emit_syscalls
+out emit_tokenizer
+out emit_binary

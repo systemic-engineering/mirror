@@ -1,0 +1,40 @@
+in @prism
+
+# @fragmentation: the AST IS the Merkle tree.
+#
+# not stored as. IS. each node's OID is computed from
+# content + children's OIDs. the content-addressing
+# isn't a layer. it's the substrate.
+#
+# shard: a leaf. an AST node with no children.
+# fractal: a node with children. the tree recurses.
+# oid: SHA. the identity of the content.
+# verify: SHA + compare. integrity from the bottom up.
+#
+# SHA IS how the AST exists. not a layer. the substrate.
+
+grammar @fragmentation {
+  type shard(ast)
+  type fractal(ast, [oid])
+
+  # compute the content-addressed OID for an AST node.
+  # SHA-256 for spectral OIDs (64 hex chars).
+  # SHA-1 for git-compatible OIDs (blob {len}\0{data}).
+  oid(ast) -> ref { \ }
+
+  # enumerate the children of a fractal node.
+  # each child is either a shard (leaf) or fractal (branch).
+  # the tree IS the AST. walking children IS walking the AST.
+  children(fractal) -> [shard | fractal] { \ }
+
+  # verify integrity: recompute OID from content, compare.
+  # if oid(ast) == expected_oid, the content hasn't drifted.
+  # the Merkle property: verify a leaf, verify the tree.
+  verify(ast, oid) -> verdict { \ }
+}
+
+out shard
+out fractal
+out oid
+out children
+out verify

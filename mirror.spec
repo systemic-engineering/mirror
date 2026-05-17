@@ -17,7 +17,9 @@ in @kintsugi/lift
 in @craft
 in @code/rust
 in @code/llvm
+in @code/llvm/emit
 in @io
+in @fragmentation
 in @mirror/evaluate
 in @mirror/resolve
 in @mirror/check
