@@ -2,6 +2,7 @@ in @prism
 in @prism/rust
 in @prism/compose
 in @epistemologic
+in @epistemologic/property
 in @fate/connectome
 in @kintsugi
 in @kintsugi/translate

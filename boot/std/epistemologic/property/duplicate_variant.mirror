@@ -1,0 +1,13 @@
+in @prism
+in @epistemologic/property
+
+grammar @epistemologic/property/duplicate_variant {
+  # E001: detect duplicate variants in a type declaration
+  # walks Split nodes, checks variant list for duplicates
+  # the tokenizer already produces Split("color", variants: ["red", "blue", "red"])
+  # this grammar checks the list
+
+  duplicate_variant(ast) -> verdict { \ }
+}
+
+out duplicate_variant

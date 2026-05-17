@@ -1,0 +1,24 @@
+in @prism
+in @epistemologic
+in @error
+in @nl
+
+grammar @epistemologic/property {
+  # verdict: the return type of all property checks
+  # not pass/fail. a position on the manifold.
+  type verdict = pass | fail(diagnostic) | partial(f64, [diagnostic])
+
+  # a property check: takes an AST node, returns verdict.
+  # every concrete check is a named lambda.
+  type check = (ast) -> verdict
+
+  # run all properties inherited through `in`
+  reflect(ast) -> [verdict] { \ }
+
+  # check a single property
+  check(ast, property) -> verdict { \ }
+}
+
+out verdict
+out reflect
+out check
