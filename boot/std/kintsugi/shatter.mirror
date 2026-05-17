@@ -1,0 +1,59 @@
+in @prism
+in @kintsugi
+in @ai/fate
+in @epistemologic
+
+# @kintsugi/shatter: recursive fracture and repair.
+#
+# Two operations, one pipeline:
+#
+#   shatter(ast, level) → break at Fiedler zero crossings, recurse.
+#   settle_up([ast])    → tournament per piece, compose, settle.
+#   fracture_and_repair → the full pipeline: shatter → tournament → settle → reassemble.
+#
+# The Sollbruchstellen are not imposed. They are found.
+# The Fiedler vector of the grammar graph's Laplacian locates them.
+# Zero crossings are the natural fault lines. That is where we cut.
+#
+# At the bottom level: Fate fills each atom's \ holes independently.
+# Local optima. Best-in-atom. Then settle_up reconciles.
+# The difference between local and global settlement IS the seam loss.
+# The seam loss IS the gold. The information in the joins.
+#
+# Default depth: 3. Eight atoms. O(n log n).
+# mirror kintsugi boot/* --shatter     → depth 3 (default)
+# mirror kintsugi boot/* --shatter 5   → depth 5, 32 atoms
+# mirror kintsugi boot/* --shatter 1   → one bisection, two atoms
+
+grammar @kintsugi/shatter {
+  # shatter: break the grammar graph at Fiedler zero crossings.
+  # level = recursion depth. level=0 returns [ast] unchanged.
+  # level=n bisects n times → 2^n atoms at the bottom.
+  # each atom is a sub-graph with its own spectral structure.
+  # atoms are repaired independently by Fate before settle_up.
+  shatter(ast, level) -> [ast] { \ }
+
+  # settle_up: bottom-up tournament and composition.
+  # given a list of atoms (already locally repaired by Fate),
+  # compose them and run a tournament on the composition.
+  # the tournament checks: do local resolutions compose globally?
+  # where they conflict: Fate decides. the conflict IS the seam.
+  # returns imperfect: the composed grammar + seam loss measured.
+  settle_up([ast]) -> imperfect { \ }
+
+  # fracture_and_repair: the full --shatter pipeline.
+  #
+  # 1. shatter(ast, level) → [atom]
+  # 2. foreach atom: collapse(atom, atom) → repaired atom (local tournament)
+  # 3. settle_up([repaired atoms]) → composed + seam loss
+  # 4. final collapse on the whole → global tournament
+  # 5. return imperfect with seam_loss = global_loss - sum(local_losses)
+  #
+  # seam_loss = 0 → pieces were already globally optimal. real modularity.
+  # seam_loss > 0 → local repairs conflict at joins. Fate reconciles. gold fills.
+  fracture_and_repair(ast, level) -> imperfect { \ }
+}
+
+out shatter
+out settle_up
+out fracture_and_repair
