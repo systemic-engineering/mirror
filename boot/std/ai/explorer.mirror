@@ -1,0 +1,19 @@
+in @prism
+in @ai/fate
+in @epistemologic
+
+# @ai/explorer: search. what's reachable.
+# Dijkstra on the graph. the path finder.
+# explorer is zoom applied to computation:
+# recover meaning at the boundary. follow the eigenvalue gradient.
+# when explorer wins, the system tests counterfactual paths.
+
+grammar @ai/explorer {
+  # explore: given an AST and a target ref,
+  # what paths lead from here to there?
+  # returns the refs along the shortest eigenvalue-gradient path.
+  # empty list = target unreachable from current spectral position.
+  explore(ast, target) -> [ref] { \ }
+}
+
+out explore

@@ -1,0 +1,19 @@
+in @prism
+in @ai/fate
+in @epistemologic
+
+# @ai/abyss: depth detection. how deep to go.
+# knows when to stop. the convergence detector.
+# abyss is focus applied to computation:
+# observe the spectral state, report how much further to descend.
+# when abyss wins the tournament, the system goes narrow and deep.
+
+grammar @ai/abyss {
+  # depth: given an AST and the current compilation context,
+  # how many more levels of inference are justified?
+  # u64 = 0 means stop here. crystal is stable. don't recurse.
+  # u64 = n means n more levels remain before forced crystallization.
+  depth(ast, context) -> u64 { \ }
+}
+
+out depth

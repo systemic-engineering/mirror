@@ -1,0 +1,19 @@
+in @prism
+in @ai/fate
+in @epistemologic
+
+# @ai/introject: pattern matching. what patterns recur.
+# finds the repeating structure in the graph.
+# introject is project applied to computation:
+# selective internalization. what survives the precision cut?
+# when introject wins, the system preserves structure across the boundary.
+
+grammar @ai/introject {
+  # pattern: given an AST and compilation history,
+  # which structural patterns recur across this grammar's lifetime?
+  # returns refs — content-addressed handles to recurring patterns.
+  # the refs ARE the patterns. git IS the pattern store.
+  pattern(ast, history) -> [ref] { \ }
+}
+
+out pattern

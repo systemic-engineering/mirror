@@ -1,0 +1,18 @@
+in @prism
+in @ai/fate
+in @epistemologic
+
+# @ai/cartographer: mapping. what's connected.
+# builds the topology from the local view.
+# cartographer is split applied to computation:
+# walk every node. enumerate the neighborhood. draw the map.
+# when cartographer wins, the system goes wide before going deep.
+
+grammar @ai/cartographer {
+  # map: given an AST and its neighborhood (visible imports, in-scope types),
+  # produce the topology — which nodes connect to which, with what weight.
+  # topology is the grammar graph as a content-addressed crystal.
+  map(ast, neighborhood) -> topology { \ }
+}
+
+out map

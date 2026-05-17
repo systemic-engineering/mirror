@@ -4,6 +4,12 @@ in @prism/compose
 in @epistemologic
 in @epistemologic/property
 in @fate/connectome
+in @ai/fate
+in @ai/abyss
+in @ai/introject
+in @ai/cartographer
+in @ai/explorer
+in @compose/weighted
 in @kintsugi
 in @kintsugi/translate
 in @kintsugi/migrate

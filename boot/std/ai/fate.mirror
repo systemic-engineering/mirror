@@ -1,0 +1,18 @@
+in @prism
+in @fate/connectome
+in @epistemologic
+
+# @ai/fate: the selector. which model wins the tournament.
+# 450 parameters. five ganglia. one winner.
+# not a committee. a tournament. the eigenvalue gradient picks.
+# the connectome IS the ballot. the infer walk IS the vote.
+
+grammar @ai/fate {
+  # select: given features and candidates, which ganglion wins?
+  # features: [f64; 16] — the spectral embedding of the current context.
+  # candidates: which ganglia are eligible for this hole.
+  # returns: the winning ganglion. one. not a distribution.
+  select(features, candidates) -> ganglion { \ }
+}
+
+out select

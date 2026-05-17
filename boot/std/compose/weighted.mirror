@@ -1,0 +1,42 @@
+in @prism
+in @ai/fate
+in @epistemologic
+
+# @compose/weighted: eigenboard-inferred weighted composition.
+# three operators. one source of truth: the eigenboard.
+#
+# |>  — unweighted. programmer knows the path. weight = 1.0.
+# |\> — eigenboard-inferred. Fate fills the weight.
+#       the \ inside the pipe IS Fate choosing.
+#       the weight IS the probability this step reduces loss.
+# <\| — eigenboard-inferred feedback. reverse flow with Fate weight.
+#
+# the weight is NOT a probability of correctness.
+# it is the Connes distance between adjacent types in the spectral embedding,
+# normalized: weight = 1.0 / (1.0 + distance).
+# low distance = high weight. the types are close. the transition is natural.
+# high distance = low weight. the types are far. the transition costs.
+
+grammar @compose/weighted {
+  # |\> — eigenboard-inferred weighted composition.
+  # Fate observes the spectral distance between a and b.
+  # the \ IS the resolution. the weight IS what Fate returns.
+  # imperfect because the weight is inferred, not declared.
+  weighted_pipe(a, b) -> imperfect { \ }
+
+  # |.N> — explicit weighted composition.
+  # the programmer declares the weight (f64 in [0.0, 1.0]).
+  # weight = 1.0 is identical to |>.
+  # weight = 0.0 means: skip this step.
+  explicit_pipe(a, b, f64) -> imperfect { \ }
+
+  # <\| — eigenboard-inferred feedback.
+  # reverse flow. Fate fills the weight on the backward pass.
+  # used when the output type collapses toward a weighted union.
+  # the distribution IS the <| weight carried backward.
+  weighted_feedback(a, b) -> imperfect { \ }
+}
+
+out weighted_pipe
+out explicit_pipe
+out weighted_feedback
