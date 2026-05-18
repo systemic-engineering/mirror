@@ -1,32 +1,106 @@
 # mirror
 
-The compiler that compiles itself.
+The glass is the grammar. The wine is what you bring.
+The pitch is the eigenvalue. Neither alone. Both together.
+
+---
+
+## The Wine Glass
+
+Tap a wine glass and it rings. The pitch depends on the glass — its shape,
+its thickness, its material. Pour wine in and the pitch changes. Not because
+the glass changed. Because the system changed. The glass and the wine together
+produce a frequency that neither produces alone.
+
+`mirror` is a compiler that works like this. You write a grammar (the glass).
+You bring your code, your data, your topology (the wine). The compiler measures
+what emerges (the pitch). The measurement is an eigenvalue — a mathematical
+fingerprint of how the structure connects.
+
+You don't need to know what an eigenvalue is. You just need to know that when
+you tap the glass, the pitch tells you something true about what's inside.
+
+---
+
+## What It Does
+
+```
+mirror compile <file>       tap the glass. get the pitch.
+mirror craft <target>       compile a directory of grammars
+mirror kintsugi <file>      show the path: in -> grammar -> out
+mirror bench <file|dir>     measure the resonance (100 iterations)
+```
+
+Every compiled artifact is content-addressed. Same source, same pitch, forever.
+Git is the content store. Always has been.
+
+---
+
+## The Five Operations
+
+Everything in mirror is a prism. Five operations, five ways to interact
+with the glass:
+
+**focus** — narrow on the thing. Point the instrument. Get a reading.
+
+**project** — carve a view. The graph is too much, so you take a slice.
+
+**split** — hold multiple positions simultaneously. See from here and there.
+
+**zoom** — cross between registers. From code to abstraction. From the thing
+to the pattern of the thing.
+
+**refract** — the geometry reflecting back. You made something and the
+measurement shows you what you actually made. Not what you intended. What you
+made.
+
+---
+
+## The Honest Hole
+
+```mirror
+abstract default = \
+```
+
+`\` means: "I don't know the pitch yet. The glass will tell me."
+
+This is not a placeholder. It is honest uncertainty as a first-class value.
+The compiler carries `\` through the pipeline. It doesn't guess. It doesn't
+default to something convenient. It waits for the structure to disclose
+the answer.
+
+A grammar that contains `\` compiles. It just compiles with a hole where
+certainty hasn't arrived yet. The hole is the specification.
+
+---
+
+## Sub-Turing
+
+A Turing-complete program cannot determine whether it will ever stop. You
+can't prove what it does. You can only run it and watch. Seventy years of
+patches on a foundation with a hole in it — type systems, linters, CI/CD,
+formal verification bolted onto the side.
+
+`mirror` is sub-Turing. The glass can prove what pitch it produces. Every
+grammar terminates. Every property is decidable. The compiler is a model
+checker. It doesn't just compile your code — it verifies it.
+
+```mirror
+invariant pure
+invariant deterministic
+invariant no_cycles
+ensures always_halts
+```
+
+The glass holds because it can prove it holds.
+
+---
+
+## Architecture
 
 10 Rust files. 6,181 lines. FROZEN.
 81 grammar files. 3,289 lines. Growing.
 198 tests. All passing.
-
-```
-mirror compile boot/std/kintsugi.mirror
-5b4178705fe449cc95b08e26cd2665c3ce3aea9562e82a5aa9a20d80cfef23b8
-```
-
-## What It Is
-
-An emergent holonomy compiler. `.mirror` files in, content-addressed OIDs out.
-The Rust substrate is frozen — all extension happens through grammar.
-The compiler reads its own source as grammar. It compiles itself.
-
-## Commands
-
-```
-mirror compile <file>       compile to content-addressed OID (git blob)
-mirror craft <target>       compile all .mirror files in a directory tree
-mirror kintsugi <file>      show the prism path: in → grammar → out
-mirror bench <file|dir>     benchmark tokenize + hash (100 iterations)
-```
-
-## Architecture
 
 ```
 src/
@@ -47,35 +121,20 @@ The Rust is the bootstrap. It implements exactly three things:
 2. **SHA-256 + Jacobi** — pure computation, content addressing
 3. **10 syscalls** — read/write/open/close/stat/readdir/spawn/pipe/waitpid/exit
 
-Everything above is grammar.
+Everything above the glass is grammar.
+
+---
 
 ## The Grammar
 
-```
-boot/
-  00-prism.mirror        the five optics
-  00a-sigil.mirror       navigation sigils (. .. ... ~ @ ^ HEAD)
-  01-meta.mirror         meta operations
-  01a-error.mirror       error handling (recover/rescue)
-  01b-nl.mirror          natural language interface
-  02-actor.mirror        actor model
-  02-epistemologic.mirror epistemology
-  02a-io.mirror          IO boundary (@io)
-  02b-runtime.mirror     runtime primitives
-  03-shatter.mirror      crystal format
-  04-code.mirror         code generation
-  04a-code-rust.mirror   Rust target
-  04b-code-gleam.mirror  Gleam target
-  05-property.mirror     verification properties
-  06-action.mirror       action optic (GAT)
-  07-package.mirror      package management
-  07a-package-git.mirror git packages
-  07b-package-spec.mirror package specs
-  std/                   63 library grammars
-```
+18 boot files define the language. 63 std grammars extend it. The compiler
+learns by reading them in order — optics, then meta, then actors, then IO,
+then code generation, then verification, then packages.
 
-The boot files ARE the language. The compiler learns by reading them in order.
-`std/` extends without touching Rust.
+`boot/` is the glass. `std/` is the shelf of glasses above it.
+New glass, not new machinery.
+
+---
 
 ## Performance
 
@@ -91,9 +150,11 @@ Binary: 717 KB release, 591 KB stripped.
 
 Full numbers: `docs/benchmarks/baseline-rust.md`
 
-## The Path to 50KB
+---
 
-The minimum binary needs only libc. No LAPACK. No OpenSSL. No libgit2.
+## The Path to 51KB
+
+The thinnest glass that still holds wine.
 
 ```
 mirror = libc + pure computation
@@ -105,34 +166,22 @@ Three abstract operations. Everything else is grammar.
 
 Target architecture:
 ```
-Grammar → mirror emit → LLVM IR → llc → ~50KB binary
+Grammar -> mirror emit -> LLVM IR -> llc -> ~51KB binary
 ```
 
-The current Rust binary is the proof-of-concept. The LLVM binary is the product.
+No LAPACK. No OpenSSL. No libgit2. No Rust runtime. Just libc and math.
+450 parameters. A monofilament. Not enough glass to impose a frequency.
+Just enough to give your wine a shape.
+
 See `docs/specs/minimum-binary-surface.md` for the full analysis.
 
-## Content Addressing
+---
 
-Every compiled artifact is a git blob. No filesystem cache. No `.shatter/` directory.
-
-```
-compile:  source → tokenize → AST → eigenvalues → SHA-256 → OID
-store:    OID → git hash-object -w
-lookup:   OID → git cat-file --batch-check
-```
-
-Git IS the content store. Always has been.
-
-## Build
+## Build & Proof
 
 ```bash
-cargo build --release
-cargo test --lib
+cargo build --release && cargo test --lib
 ```
-
-The release binary lands at `$CARGO_TARGET_DIR/release/mirror`.
-
-## The Proof
 
 The compiler compiles itself:
 
@@ -144,4 +193,6 @@ mirror craft boot     # compiles all 81 grammar files
 The grammar describes the compiler. The compiler executes the grammar.
 The OIDs are deterministic. The compilation is idempotent.
 
-`e^(n+1) < e^n` — the errors get smaller. The growth is monotonically non-decreasing.
+The glass is Apache-2.0. The wine was always yours.
+
+`e^(n+1) < e^n`
