@@ -1,3 +1,0 @@
-# 8-bit elliptic curve: y² = x³ + 1x + 1 (mod 251)
-# 282 points, generator Affine { x: 0, y: 1 }, order 282
-# eigenvalues: 282

@@ -1,9 +1,0 @@
-fold input
-prism eigenvalues(precision)
-traversal projection = alpha | beta | gamma
-lens transform(projection)
-iso convergence
-fold accumulate(convergence)
-prism validate(convergence)
-lens focus(accumulate)
-iso settled

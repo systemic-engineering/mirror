@@ -1,2 +1,0 @@
-traversal items = c | a | b | d
-lens sort(items)

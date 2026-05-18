@@ -1,3 +1,0 @@
-fold self
-lens self(self)
-iso self

@@ -1,9 +1,0 @@
--- Mostly unrecognized. Only a few types.
-widget main
-gadget header
-component nav
-service auth
-middleware logger
-plugin cache
-type id
-handler request

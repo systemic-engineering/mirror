@@ -1,3 +1,0 @@
-grammar @git {
-  type = ref | commit | entry | blob
-}

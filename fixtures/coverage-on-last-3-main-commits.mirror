@@ -1,3 +1,0 @@
-in @git(branch: "main")
-
-HEAD..@~3 | map(@exec "just coverage")

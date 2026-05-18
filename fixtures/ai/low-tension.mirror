@@ -1,6 +1,0 @@
--- Mostly understood. A few unrecognized constructs.
-type color = red | blue
-type size = small | large
-widget dashboard
-type weight = light | heavy
-type shape = circle | square

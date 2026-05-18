@@ -1,5 +1,0 @@
-traversal emotion = calm | reflective | desperate | curious | joyful | anxious
-prism regulate(emotion)
-lens observe(emotion)
-lens express(emotion)
-iso settled

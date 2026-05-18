@@ -1,7 +1,0 @@
--- Half understood, half not.
-type status = active | inactive
-widget panel
-gadget toolbar
-type role = admin | user
-component sidebar
-service api
