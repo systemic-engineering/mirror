@@ -1,0 +1,12 @@
+in @prism
+in @io
+in @mirror/compile
+in @mirror/refract
+
+grammar @mirror/serve {
+  # MCP server over stdio
+  # reads JSON-RPC, dispatches to grammar operations
+  serve -> imperfect { \ }
+}
+
+out serve

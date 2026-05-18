@@ -1,0 +1,247 @@
+#!/usr/bin/env python3
+"""
+mirror MCP server — the compiler in the conversation.
+
+JSON-RPC over stdio. Five tools: compile, craft, kintsugi, refract, trace.
+Dispatches to ~/.local/bin/mirror (the 51KB C binary).
+"""
+
+import json
+import os
+import subprocess
+import sys
+
+MIRROR_HOME = os.environ.get("MIRROR_HOME", "/Users/alexwolf/dev/projects/mirror")
+MIRROR_BIN = os.path.expanduser("~/.local/bin/mirror")
+
+TOOLS = [
+    {
+        "name": "mirror_compile",
+        "description": "Compile a .mirror or .rs file through grammar lens. Returns content-addressed OID.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "file": {
+                    "type": "string",
+                    "description": "Path to the file to compile (relative to MIRROR_HOME or absolute)"
+                }
+            },
+            "required": ["file"]
+        }
+    },
+    {
+        "name": "mirror_craft",
+        "description": "Compile all files for a target (boot/cargo/std). Returns crystal OID.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "target": {
+                    "type": "string",
+                    "description": "Target to craft (e.g. boot, cargo, std)"
+                }
+            },
+            "required": ["target"]
+        }
+    },
+    {
+        "name": "mirror_kintsugi",
+        "description": "Print canonical form of a .mirror file. The golden joins.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "file": {
+                    "type": "string",
+                    "description": "Path to the .mirror file"
+                }
+            },
+            "required": ["file"]
+        }
+    },
+    {
+        "name": "mirror_refract",
+        "description": "Measure topology of a file or directory. Eigenvalues. Settlement.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Path to measure"
+                }
+            },
+            "required": ["path"]
+        }
+    },
+    {
+        "name": "mirror_trace",
+        "description": "Observe \\ holes, topology, and fractures in a file or directory.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Path to trace"
+                }
+            },
+            "required": ["path"]
+        }
+    }
+]
+
+SERVER_INFO = {
+    "name": "mirror",
+    "version": "0.1.0"
+}
+
+CAPABILITIES = {
+    "tools": {}
+}
+
+
+def run_mirror(command, arg):
+    """Run mirror binary with given command and argument."""
+    try:
+        result = subprocess.run(
+            [MIRROR_BIN, command, arg],
+            capture_output=True,
+            text=True,
+            cwd=MIRROR_HOME,
+            timeout=30
+        )
+        stdout = result.stdout.strip()
+        stderr = result.stderr.strip()
+        if result.returncode != 0:
+            # include both streams — the binary puts useful info in both
+            msg = stderr or stdout or f"mirror {command} exited {result.returncode}"
+            return False, msg
+        # combine output: some info goes to stderr (like "cached"), result to stdout
+        output = stdout
+        if stderr:
+            output = stderr + "\n" + stdout if stdout else stderr
+        return True, output or "(no output)"
+    except FileNotFoundError:
+        return False, f"mirror binary not found at {MIRROR_BIN}"
+    except subprocess.TimeoutExpired:
+        return False, f"mirror {command} timed out after 30s"
+    except Exception as e:
+        return False, str(e)
+
+
+def handle_initialize(req_id, params):
+    return {
+        "jsonrpc": "2.0",
+        "id": req_id,
+        "result": {
+            "protocolVersion": "2024-11-05",
+            "serverInfo": SERVER_INFO,
+            "capabilities": CAPABILITIES
+        }
+    }
+
+
+def handle_tools_list(req_id, params):
+    return {
+        "jsonrpc": "2.0",
+        "id": req_id,
+        "result": {
+            "tools": TOOLS
+        }
+    }
+
+
+def handle_tools_call(req_id, params):
+    name = params.get("name", "")
+    arguments = params.get("arguments", {})
+
+    dispatch = {
+        "mirror_compile": ("compile", arguments.get("file", "")),
+        "mirror_craft": ("craft", arguments.get("target", "")),
+        "mirror_kintsugi": ("kintsugi", arguments.get("file", "")),
+        "mirror_refract": ("refract", arguments.get("path", "")),
+        "mirror_trace": ("trace", arguments.get("path", "")),
+    }
+
+    if name not in dispatch:
+        return {
+            "jsonrpc": "2.0",
+            "id": req_id,
+            "result": {
+                "content": [{"type": "text", "text": f"unknown tool: {name}"}],
+                "isError": True
+            }
+        }
+
+    command, arg = dispatch[name]
+    if not arg:
+        return {
+            "jsonrpc": "2.0",
+            "id": req_id,
+            "result": {
+                "content": [{"type": "text", "text": f"missing required argument for {name}"}],
+                "isError": True
+            }
+        }
+
+    ok, output = run_mirror(command, arg)
+
+    return {
+        "jsonrpc": "2.0",
+        "id": req_id,
+        "result": {
+            "content": [{"type": "text", "text": output}],
+            "isError": not ok
+        }
+    }
+
+
+def handle_notifications_initialized(params):
+    """Handle notifications/initialized — no response needed."""
+    return None
+
+
+def main():
+    """MCP server main loop. Reads JSON-RPC from stdin, writes to stdout."""
+    for line in sys.stdin:
+        line = line.strip()
+        if not line:
+            continue
+
+        try:
+            req = json.loads(line)
+        except json.JSONDecodeError:
+            # bad JSON — skip
+            continue
+
+        method = req.get("method", "")
+        req_id = req.get("id")
+        params = req.get("params", {})
+
+        # notifications have no id
+        if method == "notifications/initialized":
+            resp = handle_notifications_initialized(params)
+        elif method == "initialize":
+            resp = handle_initialize(req_id, params)
+        elif method == "tools/list":
+            resp = handle_tools_list(req_id, params)
+        elif method == "tools/call":
+            resp = handle_tools_call(req_id, params)
+        else:
+            if req_id is not None:
+                resp = {
+                    "jsonrpc": "2.0",
+                    "id": req_id,
+                    "error": {
+                        "code": -32601,
+                        "message": f"method not found: {method}"
+                    }
+                }
+            else:
+                # unknown notification — ignore
+                resp = None
+
+        if resp is not None:
+            sys.stdout.write(json.dumps(resp) + "\n")
+            sys.stdout.flush()
+
+
+if __name__ == "__main__":
+    main()
