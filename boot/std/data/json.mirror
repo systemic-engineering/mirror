@@ -1,0 +1,15 @@
+in @prism
+in @io
+in @nl
+
+grammar @data/json {
+  # JSON as grammar. Parse and emit.
+  type json = null | bool(bool) | number(f64) | string(text) | array([json]) | object([(text, json)])
+
+  parse(text) -> json { \ }
+  emit(json) -> text { \ }
+}
+
+out json
+out parse
+out emit

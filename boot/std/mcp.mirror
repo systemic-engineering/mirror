@@ -1,0 +1,25 @@
+in @prism
+in @io
+in @data/json
+in @mirror/compile
+in @mirror/refract
+
+grammar @mcp {
+  # MCP server as mirror grammar
+  # reads JSON-RPC from stdin, dispatches, writes to stdout
+  type request = { method: text, params: json, id: json }
+  type response = { result: json, id: json }
+
+  serve -> imperfect {
+    @io.read(stdin) |> @data/json.parse |> dispatch |> @data/json.emit |> @io.write(stdout)
+  }
+
+  dispatch(request) -> response { \ }
+
+  # tool listing
+  tools -> json { \ }
+}
+
+out serve
+out dispatch
+out tools

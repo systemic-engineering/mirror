@@ -1,0 +1,12 @@
+in @prism
+in @code/kernel
+
+grammar @code/kernel/x86_64 {
+  # Linux x86_64: syscall instruction, number in rax
+  read(fd, buf, len) -> i64 { syscall 0 }
+  write(fd, buf, len) -> i64 { syscall 1 }
+  open(path, flags) -> i64 { syscall 2 }
+  close(fd) -> i64 { syscall 3 }
+}
+
+out @code/kernel/x86_64

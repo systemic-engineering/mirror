@@ -1,0 +1,15 @@
+in @prism
+
+grammar @code/kernel {
+  # the contract. architecture-independent. four doors to reality.
+  # no libc. no runtime. direct kernel interrupt.
+  read(fd, buf, len) -> i64 { \ }
+  write(fd, buf, len) -> i64 { \ }
+  open(path, flags) -> i64 { \ }
+  close(fd) -> i64 { \ }
+}
+
+out read
+out write
+out open
+out close

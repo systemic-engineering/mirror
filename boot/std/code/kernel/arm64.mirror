@@ -1,0 +1,12 @@
+in @prism
+in @code/kernel
+
+grammar @code/kernel/arm64 {
+  # macOS arm64: svc #0x80, syscall number in x16
+  read(fd, buf, len) -> i64 { svc 3 }
+  write(fd, buf, len) -> i64 { svc 4 }
+  open(path, flags) -> i64 { svc 5 }
+  close(fd) -> i64 { svc 6 }
+}
+
+out @code/kernel/arm64

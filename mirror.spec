@@ -19,6 +19,11 @@ in @code/rust
 in @code/llvm
 in @code/llvm/emit
 in @io
+in @code/kernel
+in @code/kernel/arm64
+in @code/kernel/x86_64
+in @data/json
+in @mcp
 in @fragmentation
 in @mirror/evaluate
 in @mirror/resolve

@@ -1,24 +1,22 @@
 in @prism
-in @prism/rust
-in @error
-in @imperfect
+in @code/kernel
 
 # @io: the socket layer. everything is a socket.
 # four syscalls. the only door to reality.
-# exec binds through @prism/rust to interpreter::io_exec.
+# sits on @code/kernel. direct kernel interrupt. no libc.
 
 grammar @io {
   type socket(ref)
   type stream(socket)
 
-  # four syscalls. open, read, write, close.
-  io open(socket) -> stream { \ }
-  io read(stream) -> imperfect { \ }
-  io write(stream, bytes) -> imperfect { \ }
-  io close(stream) -> imperfect { \ }
+  # four syscalls. routed through @code/kernel.
+  open(socket) -> stream { @code/kernel.open(socket) }
+  read(stream) -> imperfect { @code/kernel.read(stream) }
+  write(stream, bytes) -> imperfect { @code/kernel.write(stream, bytes) }
+  close(stream) -> imperfect { @code/kernel.close(stream) }
 
   # process execution — the thinnest @io
-  io exec(command, [arg]) -> imperfect { \ }
+  exec(command, [arg]) -> imperfect { \ }
 }
 
 out socket
