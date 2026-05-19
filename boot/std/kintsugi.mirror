@@ -1,7 +1,25 @@
 in @prism
+in @mirror/liquid
+in @kintsugi/shatter
 
 grammar @kintsugi {
+  # collapse two ASTs into one canonical form.
+  # the gold in the cracks. the spectrum settles.
   collapse(ast, ast) -> imperfect { \ }
+
+  # the public-facing refract verb: settle a file, write canonical.
+  # invoked by `mirror kintsugi <file>`.
+  kintsugi(file) -> imperfect { \ }
+
+  # --liquid flag: settle and write inferred properties below ---
+  # absorbs the settling half of the dissolved @mirror/refract.
+  liquid(file) -> imperfect { @mirror/liquid.liquid(file) }
+
+  # --shatter N flag: recursive settle at Fiedler zero crossings, N levels deep
+  shatter(file, level) -> imperfect { @kintsugi/shatter.fracture_and_repair(file, level) }
 }
 
 out collapse
+out kintsugi
+out liquid
+out shatter

@@ -2,8 +2,8 @@ in @prism
 in @meta
 in @cli/args
 
-# @cli: the CLI grammar. Flags are typed lambdas.
-# Every --flag is a grammar reference. The grammar IS the parser.
+# @cli: the CLI grammar. Five commands. Five operations. Flags compose.
+# Every --flag is a typed lambda. The grammar IS the parser.
 
 type exit_code = success | failure | partial(loss)
 
@@ -16,117 +16,63 @@ type command {
 
 grammar @cli {
 
-  # --- Flags as typed lambdas ---
-  # Arity comes from the parameter list.
-  # Optic type comes from the body.
-  # --name maps to @cli/name. --x/y maps to @x/y.
+  # --- The five operations as the five verbs ---
 
-  # nullary: --strict is a prism. It either passes or fails.
-  flag strict = prism(imperfect => success | failure)
-    # only emit on full success
-
-  # unary: --format takes an argument from an enum.
-  flag format(json | human) = lens(imperfect => text)
-    # output format
-
-  # unary: --target takes a grammar reference.
-  flag target(ref) = lens(grammar => grammar)
-    # target grammar for code emission
-
-  # unary: --indent takes a number.
-  flag indent(int) = lens(text => text)
-    # indentation width
-
-  # nullary: --check is a prism.
-  flag check = prism(imperfect => pass | fail)
-    # check mode (no output, just verify)
-
-  # nullary: --verbose is a lens that renders loss as text.
-  flag verbose = lens(loss => text)
-    # show loss details
-
-  # nullary: --lift is a prism.
-  flag lift = prism(imperfect => imperfect)
-    # hoist nested declarations to top level
-
-  # optional: --color defaults to auto.
-  flag color(always | never | auto) = lens(text => text)
-    # color output
-    default auto
-
-  # --- Commands as optic compositions ---
-
-  command compile = parse . resolve . emit
-  command kintsugi = parse . resolve . canonical_order
-  command ci = parse . resolve . properties . emit
-  command focus = parse
-  command explain(code) = catalog . render
-
-  # --- Five optics as commands ---
-
-  action focus(path: text) -> imperfect
-  action project(path: text) -> imperfect
-  action split(path: text) -> imperfect
-  action zoom(path: text) -> imperfect
-  action refract(path: text) -> imperfect
-
-  # --- Compiler commands ---
-
-  action kintsugi(path: text) -> imperfect
+  # focus: tokenize one file — emit a beam.
   action compile(path: text) -> imperfect
-  action crystal(output: text) -> imperfect
 
-  # --- CI/CA ---
+  # project: execute with holes — the beam shows what's missing.
+  action run(path: text) -> imperfect
 
-  action ci(path: text) -> imperfect
-  action ca(path: text) -> imperfect
+  # split: enumerate the suite, converge to lambda_0.
+  action craft(target: text) -> imperfect
 
-  # --- Session ---
+  # zoom: cross levels — resolve \ with concrete.
+  action fate(oid: text, resolution: text) -> imperfect
 
-  action init(path: text) -> imperfect
-  action tick() -> imperfect
-  action tock() -> imperfect
-  action shatter(path: text) -> imperfect
+  # refract: settle, write canonical.
+  action kintsugi(path: text) -> imperfect
 
-  # --- Deployment ---
+  # --- Transport (one verb, two dispatches) ---
 
-  action plan() -> imperfect
-  action apply() -> imperfect
-  action drift() -> imperfect
-  action rollback(oid: text) -> imperfect
+  # serve is not a sixth operation — it is project over the JSON-RPC stream.
+  # --mcp dispatches to mirror tools. --lsp dispatches to LSP methods.
+  action serve() -> imperfect
 
-  # --- Navigation ---
-
-  action diff(a: text, b: text) -> imperfect
-  action log() -> imperfect
-  action blame(path: text) -> imperfect
-
-  # --- LSP ---
-
-  action lsp() -> imperfect
-  action repl() -> imperfect
-
-  # --- Garden ---
-
-  action add(package: text) -> imperfect
-  action remove(package: text) -> imperfect
-  action list() -> imperfect
-
-  # --- AI ---
-
-  action ai(path: text) -> imperfect
-  action train(path: text) -> imperfect
-
-  # --- Benchmark ---
-
-  action bench(path: text) -> imperfect
-  action profile() -> imperfect
-
-  # --- Help generation ---
-  # --help is derived from grammar declarations.
-  # Each flag's doc comment becomes a line in --help.
+  # --- Help derived from grammar ---
 
   action help(grammar: ref) -> text { \ }
+
+  # --- Flags as typed lambdas ---
+  # Arity comes from the parameter list. Optic type comes from the body.
+
+  # --target: emit code for a chosen target after convergence.
+  # composes on `craft`. replaces the dissolved @mirror/build.
+  flag target(binary | rust | gleam) = lens(grammar => grammar)
+
+  # --reflect: verify properties, no emission.
+  # composes on `craft`. replaces the dissolved @mirror/check + ci + ca.
+  flag reflect = prism(imperfect => pass | fail)
+
+  # --liquid: write inferred properties below ---.
+  # composes on `kintsugi`. invokes @mirror/liquid.project.
+  flag liquid = prism(imperfect => imperfect)
+
+  # --shatter N: recursive settle at Fiedler zero crossings.
+  # composes on `kintsugi`. invokes @kintsugi/shatter.
+  flag shatter(int) = lens(imperfect => imperfect)
+
+  # --beam: emit the observation (replaces bench, profile, trace).
+  flag beam = lens(imperfect => beam)
+
+  # --format: choose output rendering.
+  flag format(json | human) = lens(imperfect => text)
+
+  # --mcp: dispatch `serve` to MCP tools.
+  flag mcp = prism(imperfect => imperfect)
+
+  # --lsp: dispatch `serve` to LSP methods.
+  flag lsp = prism(imperfect => imperfect)
 
   recover |result, loss| {
     print(loss)

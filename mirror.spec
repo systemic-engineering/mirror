@@ -28,14 +28,15 @@ in @code/kernel/x86_64
 in @data/json
 in @mcp
 in @fragmentation
+in @beam
+in @mirror/compile
 in @mirror/evaluate
 in @mirror/resolve
-in @mirror/check
 in @mirror/interpreter
 in @mirror/runtime
-in @mirror/refract
 in @mirror/execute
 in @mirror/liquid
+in @mirror/spectral
 in @nl
 in @git/hooks
 in @cli

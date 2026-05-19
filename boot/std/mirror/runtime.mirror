@@ -3,18 +3,21 @@ in @io
 in @git
 in @mirror/interpreter
 in @mirror/resolve
-in @mirror/check
+in @craft
 
 # @mirror/runtime: the full compilation pipeline.
-# resolve imports -> check -> interpret. grammar composition. no Rust.
+# resolve imports -> reflect -> interpret. grammar composition. no Rust.
+# absorbs the dissolved @run grammar — run IS runtime.run.
 
 grammar @mirror/runtime {
-  # the full compilation: resolve imports, check, interpret
+  # the full compilation: resolve imports, reflect (no emit), interpret.
+  # @craft.craft with --reflect replaces @mirror/check.check.
   compile(file) -> imperfect {
-    @io.read(file) |> @mirror/resolve.resolve |> @mirror/check.check |> @mirror/interpreter.interpret
+    @io.read(file) |> @mirror/resolve.resolve |> @craft.craft |> @mirror/interpreter.interpret
   }
 
-  # the pipeline
+  # the public-facing project verb: dispatched by `mirror run <file>`.
+  # absorbs the dissolved top-level @run grammar.
   run(command, args) -> imperfect { \ }
 }
 

@@ -1,7 +1,7 @@
 in @runtime
 in @code/rust
 in @file
-in @shatter
+in @mirror/spectral
 
 grammar @rust < @runtime {
   template infer(crystal) => observation in @code/rust {

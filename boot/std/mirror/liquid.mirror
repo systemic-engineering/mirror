@@ -2,7 +2,7 @@ in @prism
 in @epistemologic
 in @epistemologic/property
 in @epistemologic/resolve
-in @mirror/refract
+in @beam
 in @mirror/execute
 
 grammar @mirror/liquid {
@@ -13,15 +13,24 @@ grammar @mirror/liquid {
   type separator
 
   # infer which @epistemologic properties apply
-  # from the grammar's measured topology
+  # from the grammar's measured topology (read from the beam)
   infer(ast) -> [ref] { \ }
+
+  # match measured topology against @epistemologic/* property thresholds.
+  # absorbs @mirror/refract.match_properties.
+  match_properties(topology) -> [ref] { \ }
+
+  # infer .spec from project topology.
+  # absorbs @mirror/refract.infer_spec.
+  infer_spec(path) -> imperfect { \ }
 
   # project inferred properties below --- in the source
   project(file, [ref]) -> imperfect { \ }
 
-  # the full liquid pass: measure -> infer -> project
+  # the full liquid pass: observe the beam -> infer -> project.
+  # invoked by `mirror kintsugi --liquid <file>`.
   liquid(file) -> imperfect {
-    @mirror/refract.measure |> infer |> project
+    @beam.observe |> infer |> project
   }
 }
 

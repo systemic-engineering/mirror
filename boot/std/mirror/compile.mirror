@@ -1,0 +1,13 @@
+in @prism
+in @mirror/evaluate
+in @beam
+
+grammar @mirror/compile {
+  # focus: tokenize one file, emit a beam.
+  # the public-facing focus operation. one file in, one beam out.
+  compile(file) -> beam {
+    @mirror/evaluate.evaluate |> @beam.emit
+  }
+}
+
+out compile

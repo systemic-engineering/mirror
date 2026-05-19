@@ -2,11 +2,11 @@ in @prism
 in @io
 in @data/json
 in @mirror/compile
-in @mirror/refract
+in @beam
 
 grammar @mcp {
-  # MCP server as mirror grammar
-  # reads JSON-RPC from stdin, dispatches, writes to stdout
+  # MCP server as mirror grammar.
+  # reads JSON-RPC from stdin, dispatches, writes to stdout.
   type request = { method: text, params: json, id: json }
   type response = { result: json, id: json }
 
@@ -19,8 +19,8 @@ grammar @mcp {
   # tool listing
   tools -> json { \ }
 
-  # fate: resolve a \ hole, store at refs/fate/<hole_oid>
-  # Reflection's perturbation surface — any agent with MCP can seed the eigenboard
+  # fate: resolve a \ hole, store at refs/fate/<hole_oid>.
+  # Reflection's perturbation surface — any agent with MCP can seed the eigenboard.
   fate(hole_oid: text, resolution: text) -> imperfect { \ }
 }
 

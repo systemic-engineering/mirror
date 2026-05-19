@@ -1,6 +1,8 @@
 in @prism
 in @meta
 in @actor
+in @time
+in @fragmentation
 
 -- luminosity: the carrier type of the beam
 -- three states: light (success), dimmed (partial), dark (failure)
@@ -8,12 +10,67 @@ in @actor
 type luminosity(t, e, l) = light(t, l) | dimmed(t, e, l) | dark(e, l)
 luminosity = imperfect
 
+-- topology: the structural fingerprint of an AST
+-- eigenvalue-style summary the beam saw passing through
+type topology {
+  fiedler: precision,
+  cheeger: precision,
+  entropy: precision,
+  mixing: precision,
+  ricci: precision,
+}
+
+-- loss: aggregated drift along the beam path
+-- holes contribute. dimmed contributes. dark = 1.0.
+type loss(precision)
+
+-- a Shannon-style measurement: name, topology, loss, tick
+type measurement {
+  name: ref,
+  topology: topology,
+  loss: loss,
+  tick: tick,
+}
+
+-- duration: how long the beam took to traverse the prism
+type duration(u64)
+
 -- the beam: a value carrier through a pipeline
--- carries luminosity, a path of prisms traversed, and wavelength (precision)
+-- carries luminosity, path of prisms traversed, wavelength (precision),
+-- the holes encountered, topology fingerprint, aggregated loss,
+-- timing (emitted + duration), and fractures (Sollbruchstellen).
 type beam(t) {
   luminosity: luminosity,
   path: [prism],
   wavelength: precision,
+  holes: [oid],
+  topology: topology,
+  loss: loss,
+  emitted: tick,
+  duration: duration,
+  fractures: [oid],
+}
+
+-- speedup: the ratio between two beams' durations
+-- >1.0 means the second beam is faster than the first.
+type speedup {
+  ratio: precision,
+  before: beam,
+  after: beam,
+}
+
+-- baseline: a beam pinned as the reference for future comparisons
+type baseline {
+  beam: beam,
+  label: ref,
+}
+
+-- a profile: a set of beams collected over a full grammar pipeline
+type profile {
+  grammar: ref,
+  beams: [beam],
+  total: duration,
+  total_loss: loss,
 }
 
 -- process: an actor with state — the OTP primitive
@@ -47,10 +104,49 @@ type supervisor(children) {
 }
 
 -- what can go wrong in the beam runtime
-type beam_error = noproc | timeout | badrpc | noconnection
+type beam_error = noproc | timeout | badrpc | noconnection | missing_action | empty_grammar
 
 grammar @beam {
   in @actor
+  in @time
+
+  -- emit a beam from an AST + execution result
+  -- this is what every operation produces as a byproduct.
+  -- absorbs @mirror/trace.trace — a trace IS a beam record.
+  abstract action emit(ast, imperfect) -> beam
+
+  -- observe a beam: read its contents.
+  -- used by Reflection (@cogito), kintsugi, liquid.
+  -- absorbs @mirror/refract.measure — measurement IS observation.
+  abstract action observe(beam) -> imperfect
+
+  -- compare two beams: did the loss decrease? (e^(n+1) < e^(n))
+  -- used by @craft to detect settlement.
+  abstract action compare(beam, beam) -> speedup
+
+  -- profile: collect beams over many actions across a grammar.
+  -- absorbs @benchmark.profile.
+  abstract action profile(grammar) -> imperfect(profile, beam_error, loss)
+
+  -- baseline: pin a beam as the reference for future comparisons.
+  -- absorbs @benchmark.baseline.
+  abstract action baseline(beam, label: ref) -> baseline
+
+  -- sample: emit n beams, return the median.
+  -- absorbs @benchmark.sample.
+  abstract action sample(action, n: u64) -> imperfect(beam, beam_error, loss)
+
+  -- suite: emit one beam per file in a directory.
+  -- absorbs @mirror/refract.suite.
+  abstract action suite(path) -> [beam]
+
+  -- lens: emit a beam observed through a specific lens.
+  -- absorbs @mirror/refract.lens.
+  abstract action lens(ast, lens) -> beam
+
+  -- query: emit a beam for the subset matched by an mq query.
+  -- absorbs @mirror/refract.query.
+  abstract action query(path, mq) -> beam
 
   -- start a gen_server from callbacks and initial state
   abstract action start(callbacks, state) -> imperfect(gen_server, beam_error, loss)
@@ -68,22 +164,29 @@ grammar @beam {
   abstract action stop(process) -> imperfect
 
   recover |result, loss| {
-    -- partial: the process responded but with degraded state
-    -- luminosity dimmed — value present, information lost
+    -- partial: the beam came through dimmed.
+    -- luminosity dimmed — value present, information lost.
     log_drift(loss)
     result
   }
 
   rescue |error| {
-    -- dark: the process is unreachable
-    -- noproc, timeout, badrpc — the beam went dark
-    -- return dark luminosity with the error
+    -- dark: the beam never arrived.
+    -- noproc, timeout, badrpc, missing_action — the beam went dark.
+    -- return dark luminosity with the error.
     dark(error, loss(1.0))
   }
 }
 
 out luminosity
+out topology
+out loss
+out measurement
+out duration
 out beam
+out speedup
+out baseline
+out profile
 out process
 out message
 out callbacks

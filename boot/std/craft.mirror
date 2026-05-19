@@ -2,9 +2,11 @@ in @prism
 in @cogito
 in @fate/tournament
 in @mirror/execute
-in @mirror/runtime
+in @mirror/compile
+in @code/llvm/emit
+in @beam
 
-# @mirror/craft: the convergence loop.
+# @craft: the convergence loop.
 # compile + reflect + tournament + compile + ... + lambda_0.
 # craft IS the loop. not a step. the whole thing.
 #
@@ -14,22 +16,50 @@ in @mirror/runtime
 #            compile again (fewer holes, lower loss).
 # repeat until settled. settled = loss stopped decreasing.
 # e^(n+1) = e^(n). lambda_0. crystal.
+#
+# absorbs @mirror/build (--target) and @mirror/check (--reflect).
 
-grammar @mirror/craft {
+grammar @craft {
   # craft IS the convergence loop.
   # compile + reflect + tournament + compile + ... + lambda_0.
   craft(spec) -> crystal {
-    compile(spec)
+    @mirror/compile.compile(spec)
       |\> @cogito.reflect
       |\> @fate/tournament.tournament
-      |\> compile
+      |\> @mirror/compile.compile
       |\> repeat_until(settled)
   }
 
+  # --target flag: emit code for a target after convergence.
+  # absorbs @mirror/build — build IS craft with binary emission.
+  # targets: binary, rust, gleam
+  target(spec, target) -> imperfect {
+    craft(spec) |\> emit(target) |\> assemble |\> link
+  }
+
+  # --reflect flag: suppress emission, return verdict only.
+  # absorbs @mirror/check — check IS craft without emission.
+  reflect(spec) -> imperfect { craft(spec) |\> @beam.observe }
+
+  # emit code for the chosen target (binary, rust, gleam).
+  emit(crystal, target) -> text { @code/llvm/emit.emit_binary }
+
+  # assemble emitted text into object code.
+  assemble(text) -> bytes { \ }
+
+  # link object code into the final artifact.
+  link(bytes) -> imperfect { \ }
+
   # settled = e^(n+1) = e^(n). loss stopped decreasing.
   # two consecutive imperfects with equal loss = convergence.
-  settled(imperfect, imperfect) -> bool { \ }
+  # measured by @beam.compare returning ratio 1.0.
+  settled(imperfect, imperfect) -> bool { @beam.compare }
 }
 
 out craft
+out target
+out reflect
+out emit
+out assemble
+out link
 out settled

@@ -2,8 +2,7 @@ in @prism
 in @epistemologic
 in @ai/fate
 in @mirror/execute
-in @mirror/trace
-in @mirror/refract
+in @beam
 
 # @cogito: second-order observation. looks at holes. decides strategy.
 # runs AFTER a compile tick. BEFORE the tournament.
@@ -13,11 +12,11 @@ in @mirror/refract
 # compile -> reflect -> tournament -> compile -> ... -> lambda_0
 
 grammar @cogito {
-  observe(imperfect) -> observation { @mirror/trace.trace }
+  observe(imperfect) -> observation { @beam.emit }
 
   strategy(observation) -> tournament { elite(1).beam(8).halving(3) }
 
-  perturb(observation, tournament_result) -> eigenboard { @mirror/refract.measure }
+  perturb(observation, tournament_result) -> eigenboard { @beam.observe }
 
   reflect(imperfect) -> imperfect {
     observe |> strategy |> perturb
