@@ -12,11 +12,22 @@ The compilation return type is `Oid` — a content-addressed SHA-256 hash stored
 
 ## The Bootstrap Seed
 
-The bootstrap seed is a 68KB arm64 binary at `~/.local/bin/mirror`.
-It is the only non-mirror artifact in the system.
+The bootstrap seed is a small Rust binary built from `bootstrap/`. The
+installed binary lives at `~/.local/bin/mirror` (~370KB arm64). It is the
+only non-mirror artifact in the system.
 
-There are no Rust files. No C files. No Cargo files. No `src/` directory.
-The Rust substrate was deleted. The repo is pure grammar now.
+```
+bootstrap/Cargo.toml
+bootstrap/src/        # tokenizer, hash, content, render, pipeline, git wiring
+bootstrap/tests/      # OID smoke tests
+```
+
+The bootstrap implements only what the language cannot yet describe of
+itself: tokenization, the CoincidenceHash<3>+SHA-256 content address, the
+bidirectional renderer, and `git hash-object -w` storage. Everything above
+that — grammars, properties, the compilation loop — is `.mirror` in `boot/`.
+Cluster D of the road to 1.0 lets `craft --target binary boot` regenerate
+the seed; at that point the Rust source becomes vestigial.
 
 All extensions happen through `.mirror` grammars in `boot/` or `boot/std/`.
 The compiler evaluates them. The `\` hole handles what isn't concrete yet.
@@ -26,27 +37,31 @@ Fate resolves it.
 
 ```bash
 cd /Users/alexwolf/dev/projects/mirror
-~/.local/bin/mirror compile <file>              # compile a single grammar
-~/.local/bin/mirror craft <target>              # compile a directory of grammars
-~/.local/bin/mirror kintsugi <file>             # show holes and resolutions
-~/.local/bin/mirror run <file>                  # execute a grammar, measure loss
-~/.local/bin/mirror run --fate-store <oid> <r>  # seed a resolution into Fate store
+~/.local/bin/mirror compile <file>     # compile a single grammar
+~/.local/bin/mirror craft <target>     # compile a directory of grammars
+~/.local/bin/mirror kintsugi <file>    # render the AST back as canonical source
+~/.local/bin/mirror '<mq>' < input     # mq pipeline over stdin
+~/.local/bin/mirror <input> '<mq>'     # mq pipeline over a file
 ```
 
 direnv keeps the shell warm. Use `~/.local/bin/mirror` directly.
 
+`mirror run` and `mirror fate` are on the road to 1.0 — the bootstrap does
+not yet implement them. See `docs/specs/road-to-1.0.md`.
+
 ## The Kintsugi Workflow
 
-This is how grammars evolve:
+This is how grammars evolve. Steps 1–3 are planned for the 1.0 cycle; today,
+step 4 is the working surface:
 
-1. `mirror run <file>` — execute the grammar. See the `\` holes. Measure the loss.
-2. Fate proposes resolutions through tournament selection.
-3. `mirror run --fate-store <oid> <resolution>` — seed a resolution.
-4. `mirror kintsugi <file>` — write resolutions back into the source file.
+1. `mirror run <file>` — execute the grammar. See the `\` holes. Measure the loss. *(future)*
+2. Fate proposes resolutions through tournament selection. *(future)*
+3. `mirror fate <hole_oid> <resolution>` — seed a resolution. *(future)*
+4. `mirror kintsugi <file>` — render the AST back as canonical source.
 5. `git add` + `git commit` — the gold is in the cracks.
 
-The compiler runs WITH holes. The result IS imperfect. Kintsugi writes the
-gold back. The commit captures the resolution. Git IS the store.
+The compiler reads grammars WITH holes. The result IS imperfect. Kintsugi
+writes the gold back. The commit captures the resolution. Git IS the store.
 
 ## TDD Discipline
 
@@ -54,11 +69,15 @@ Non-negotiable. Every test must be proven real.
 
 For grammars, TDD means:
 1. Write the grammar with the correct structure. The grammar is the specification.
-2. `mirror run <file>` — execution loss must match expectation.
-3. If there are `\` holes, that's the red state. The grammar compiles but isn't resolved.
-4. Resolve holes through Fate or manual resolution.
-5. `mirror run <file>` — execution loss 0.00 is green.
-6. Commit.
+2. `mirror compile <file>` — confirm the grammar tokenizes and produces a stable OID.
+3. `mirror craft boot` — confirm the crystal OID over the boot tree is unchanged or matches expectation.
+4. If there are `\` holes, that's the red state. The grammar compiles but isn't resolved.
+5. Resolve holes through Fate (planned) or manual resolution writing the body inline.
+6. Re-run `mirror compile`/`craft`. Commit when the OIDs match expectation.
+
+For the bootstrap (Rust): `cargo test --release --manifest-path bootstrap/Cargo.toml`.
+The smoke tests pin the OID of two small constructs — they catch drift in
+tokenization, content-addressing, or CoincidenceHash.
 
 ### Phase markers
 
@@ -183,7 +202,10 @@ Partial verdicts are real — `partial(0.97)` means 97% of paths verified.
 
 ## What NOT to do
 
-- Do NOT create code files (.rs, .c, .py, etc.). The repo is pure grammar.
+- Do NOT add new Rust modules to `bootstrap/` to grow features. New capability
+  belongs in `.mirror` grammars; the bootstrap is the seed, not the platform.
+- Do NOT create code files anywhere else in the repo. Above the bootstrap,
+  it's pure grammar.
 - Do NOT skip the red phase. Write the grammar with holes first.
 - Do NOT write in Alex's voice. Agent writes as agent.
 - Do NOT change .mirror files in `boot/` without understanding the boot order.

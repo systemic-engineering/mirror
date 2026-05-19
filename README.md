@@ -24,18 +24,21 @@ you tap the glass, the pitch tells you something true about what's inside.
 
 ## What It Does
 
-Five commands. Five operations. Everything settles.
+Three commands today. Five operations. Everything settles.
 
 ```
 mirror compile <file>              tap the glass. get the pitch.
 mirror craft <target>              compile a directory of grammars.
-mirror kintsugi <file>             show the path: holes -> resolutions -> crystal.
-mirror run <file>                  execute a grammar. measure the loss.
-mirror run --fate-store <oid> <r>  seed a resolution into the Fate store.
+mirror kintsugi <file>             render the AST back as canonical source.
+mirror '<mq-query>' < input        mq pipeline over stdin.
+mirror <input> '<mq-query>'        mq pipeline over a file.
 ```
 
 Every compiled artifact is content-addressed. Same source, same pitch, forever.
 Git is the content store. Always has been.
+
+`mirror run` and `mirror fate` are the next subcommands on the road to 1.0 —
+see `docs/specs/road-to-1.0.md`.
 
 ---
 
@@ -105,25 +108,27 @@ The glass holds because it can prove it holds.
 
 ## Architecture
 
-Pure grammar. Zero code files. One bootstrap binary.
+Pure grammar above the bootstrap.
 
 ```
-~/.local/bin/mirror    68KB arm64 binary (the bootstrap seed)
+bootstrap/             Rust source for the bootstrap seed (cargo)
+~/.local/bin/mirror    the installed seed (~370KB arm64, built from bootstrap/)
 boot/                  18 boot files define the language
 boot/std/              79 library grammars extend it
+prism/                 24 grammars (the prism ontology)
 mirror.spec            the binary describes itself
-prism/                 24 grammars (submodule — the prism ontology)
 ```
 
-97 grammar files. 4,562 lines. Growing.
-The bootstrap seed is the only non-mirror artifact.
+97 grammar files. The bootstrap is the only non-mirror artifact, and it
+implements exactly three things:
 
-The bootstrap implements exactly three things:
-1. **Tokenizer** — state machine, no external deps
-2. **SHA-256 + Jacobi** — pure computation, content addressing
-3. **10 syscalls** — read/write/open/close/stat/readdir/spawn/pipe/waitpid/exit
+1. **Tokenizer** — state machine over `.mirror` source, body-capturing for keyword forms
+2. **SHA-256 + CoincidenceHash<3>** — content addressing for AST nodes
+3. **Git wiring** — `git hash-object -w` writes crystals; `refs/crystals/<source>` indexes them
 
-Everything above the glass is grammar.
+Everything above the glass is grammar. Cluster D of the road to 1.0 makes
+the bootstrap regenerate itself from `craft --target binary boot`, at which
+point the Rust source becomes a seed that can be discarded.
 
 ---
 
@@ -148,21 +153,22 @@ Key grammars at execution loss 0.00:
 ## The Kintsugi Workflow
 
 ```
-mirror run <file>                    see the holes. measure the loss.
-mirror run --fate-store <oid> <res>  seed a resolution.
-mirror kintsugi <file>               write resolutions back into source.
-git add + git commit                 the gold is in the cracks.
+mirror kintsugi <file>     render the AST back as canonical source.
+git add + git commit       the gold is in the cracks.
 ```
 
-The compiler executes grammars with holes. `\` marks what isn't known yet.
+The compiler reads grammars with `\` holes. The hole is the specification.
 Fate proposes resolutions through tournament selection (elite 1, beam 8,
 halving 3). Kintsugi writes the gold back into the source file. Commit.
+
+`mirror run` (execute the grammar, observe the loss) and `mirror fate`
+(seed a resolution at `refs/fate/<oid>`) are next — see road-to-1.0.md.
 
 ---
 
 ## Performance
 
-Binary: 68KB (bootstrap seed, arm64).
+Bootstrap seed: ~370KB (arm64, release).
 
 ```
 mirror craft boot: 97 files, 95 cached, 2 recompiled.
@@ -173,13 +179,19 @@ Key grammars: all at execution loss 0.00.
 
 ## Build
 
-The bootstrap seed lives at `~/.local/bin/mirror`. There is no build step
-for users — run the binary against grammars. The compiler extends itself
-through grammar, not through recompilation.
+```bash
+cargo build --release --manifest-path bootstrap/Cargo.toml
+cp $(cargo metadata --no-deps --manifest-path bootstrap/Cargo.toml \
+     --format-version=1 | jq -r .target_directory)/release/mirror \
+   ~/.local/bin/mirror
+```
+
+Once installed, users do not rebuild the seed. The compiler extends itself
+through grammar:
 
 ```bash
 mirror craft boot     # compile all 97 grammar files
-mirror run <file>     # execute a grammar, measure the loss
+mirror compile <f>    # compile one grammar, return its OID
 ```
 
 The grammar describes the compiler. The compiler executes the grammar.

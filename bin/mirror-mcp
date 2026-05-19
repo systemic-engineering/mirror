@@ -25,7 +25,11 @@ while IFS= read -r line; do
       # no response needed
       ;;
     "tools/list")
-      echo '{"jsonrpc":"2.0","id":'"$id"',"result":{"tools":[{"name":"mirror_compile","description":"focus: tokenize one .mirror file through grammar lens. Returns SHA-256 hash on success.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_run","description":"project: execute a .mirror grammar. Holes produce imperfect.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_craft","description":"split: converge a target to lambda_0. --target emits code (binary|rust|gleam). --reflect verifies properties without emission.","inputSchema":{"type":"object","properties":{"target":{"type":"string","description":"Build target directory (e.g. boot)"},"emit_target":{"type":"string","description":"Optional --target value: binary, rust, or gleam","enum":["binary","rust","gleam"]},"reflect":{"type":"boolean","description":"If true, pass --reflect (verify only, no emission)"}},"required":["target"]}},{"name":"mirror_kintsugi","description":"refract: settle a .mirror file, write canonical. --liquid writes inferred properties below ---. --shatter N recursively settles N levels deep.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"},"liquid":{"type":"boolean","description":"If true, pass --liquid (project inferred properties below ---)"},"shatter":{"type":"integer","description":"If set, pass --shatter N (recursive settle N levels)"}},"required":["file"]}},{"name":"mirror_fate","description":"zoom: resolve a \\ hole. Stores resolution at refs/fate/<hole_oid>. Reflection'"'"'s perturbation surface.","inputSchema":{"type":"object","properties":{"hole_oid":{"type":"string","description":"The OID of the \\ hole (from mirror_run output)"},"resolution":{"type":"string","description":"The resolution to store (e.g. '"'"'focus(a) |> split |> refract'"'"')"}},"required":["hole_oid","resolution"]}}]}}'
+      # Only mirror_compile, mirror_craft, and mirror_kintsugi are advertised
+      # here — those are what the Rust bootstrap actually implements. mirror_run
+      # and mirror_fate will return once the bootstrap supports `run` and
+      # `fate` subcommands (see road-to-1.0.md, Cluster D).
+      echo '{"jsonrpc":"2.0","id":'"$id"',"result":{"tools":[{"name":"mirror_compile","description":"focus: tokenize one .mirror file through grammar lens. Returns SHA-256 hash on success.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_craft","description":"split: converge a target to lambda_0. --target emits code (binary|rust|gleam). --reflect verifies properties without emission.","inputSchema":{"type":"object","properties":{"target":{"type":"string","description":"Build target directory (e.g. boot)"},"emit_target":{"type":"string","description":"Optional --target value: binary, rust, or gleam","enum":["binary","rust","gleam"]},"reflect":{"type":"boolean","description":"If true, pass --reflect (verify only, no emission)"}},"required":["target"]}},{"name":"mirror_kintsugi","description":"refract: settle a .mirror file, write canonical. --liquid writes inferred properties below ---. --shatter N recursively settles N levels deep.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"},"liquid":{"type":"boolean","description":"If true, pass --liquid (project inferred properties below ---)"},"shatter":{"type":"integer","description":"If set, pass --shatter N (recursive settle N levels)"}},"required":["file"]}}]}}'
       ;;
     "tools/call")
       tool=$(echo "$line" | grep -o '"name":"[^"]*"' | head -1 | cut -d'"' -f4 || true)
@@ -35,15 +39,10 @@ while IFS= read -r line; do
       reflect=$(echo "$line" | grep -o '"reflect":[a-z]*' | cut -d: -f2 || true)
       liquid=$(echo "$line" | grep -o '"liquid":[a-z]*' | cut -d: -f2 || true)
       shatter=$(echo "$line" | grep -o '"shatter":[0-9]*' | cut -d: -f2 || true)
-      hole_oid=$(echo "$line" | grep -o '"hole_oid":"[^"]*"' | cut -d'"' -f4 || true)
-      resolution=$(echo "$line" | grep -o '"resolution":"[^"]*"' | cut -d'"' -f4 || true)
 
       case "$tool" in
         "mirror_compile")
           result=$("$MIRROR" compile "$file" 2>&1) || true
-          ;;
-        "mirror_run")
-          result=$("$MIRROR" run "$file" 2>&1) || true
           ;;
         "mirror_craft")
           craft_args=("craft" "$target")
@@ -56,9 +55,6 @@ while IFS= read -r line; do
           [ "$liquid" = "true" ] && kintsugi_args+=("--liquid")
           [ -n "$shatter" ] && kintsugi_args+=("--shatter" "$shatter")
           result=$("$MIRROR" "${kintsugi_args[@]}" 2>&1) || true
-          ;;
-        "mirror_fate")
-          result=$("$MIRROR" run --fate-store "$hole_oid" "$resolution" 2>&1) || true
           ;;
         *)
           result="unknown tool: $tool"
