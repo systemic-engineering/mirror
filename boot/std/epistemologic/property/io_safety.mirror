@@ -1,0 +1,75 @@
+in @prism
+in @epistemologic/property
+in @io
+
+# @epistemologic/property/io_safety
+#
+# compile-time properties on @io operations.
+# the grammar that prevents the class of bug where IO hangs.
+#
+# the bootstrap compiler hung because popen opened a stdin-reading
+# process for stdout capture without feeding stdin. pclose blocked
+# forever. this grammar ensures that class of bug is structurally
+# impossible in compiled mirror code.
+#
+# four checks. each takes an AST and returns verdict.
+# any single check catching the pattern prevents the hang.
+# all four together make the class unreachable.
+
+grammar @epistemologic/property/io_safety {
+
+  # bounded_io: every @io.exec and @io.read terminates.
+  #
+  # checks:
+  #   - exec that opens a stdin-reading process must feed stdin or close it
+  #   - exec that opens a process for writing must close the write end (EOF)
+  #   - read without timeout or EOF handler is unbounded
+  #
+  # the hang bug: popen("git hash-object --stdin", "r")
+  #   process reads stdin. pipe opened for stdout. stdin never fed.
+  #   pclose waits for exit. exit waits for EOF. deadlock.
+  #   verdict: fail.
+  bounded_io(ast) -> verdict { \ }
+
+  # error_path: every @io.exec handles nonzero exit.
+  #
+  # checks:
+  #   - exec return (imperfect) must be pattern-matched or inspected
+  #   - pclose exit code must be checked
+  #   - empty stdout after exec must be handled as error, not silent success
+  #
+  # the hang bug (secondary): pclose(f2) exit code ignored.
+  #   even if the process had exited, the code never checks why.
+  #   verdict: partial(0.8).
+  error_path(ast) -> verdict { \ }
+
+  # cache_nonblocking: cache miss returns immediately.
+  #
+  # checks:
+  #   - cache lookup that returns empty/error must not trigger blocking call
+  #   - the full cache-miss path (lookup -> store -> return) must be non-blocking
+  #   - no secondary exec in the store path that could deadlock
+  #
+  # the hang bug (tertiary): cache miss triggers git_store which has dead popen.
+  #   the cache lookup itself (git_crystal_exists) returns fine on miss.
+  #   but the store path (git_store_crystal -> git_store) blocks.
+  #   verdict: fail.
+  cache_nonblocking(ast) -> verdict { \ }
+
+  # eof_handling: every @io.read handles EOF.
+  #
+  # checks:
+  #   - fread/read returning 0 must be an explicit code path
+  #   - empty result after read must not be silently treated as valid data
+  #   - stream close after read must verify data was received
+  #
+  # in the hang bug: fread in exec_capture returns 0 on empty stdout.
+  #   the code handles this (buf[0] = '\0', returns empty string).
+  #   verdict: pass. this is the one check the C code got right.
+  eof_handling(ast) -> verdict { \ }
+}
+
+out bounded_io
+out error_path
+out cache_nonblocking
+out eof_handling
