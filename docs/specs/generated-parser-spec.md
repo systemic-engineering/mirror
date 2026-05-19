@@ -1,3 +1,5 @@
+> **Superseded (2026-05-19).** The Rust substrate was deleted. Parser generation now targets the bootstrap seed via `@code/llvm/emit`, not Rust code generation.
+
 # Generated Parser Spec
 
 **Taut** (benchmark) + **Seam** (adversarial review)

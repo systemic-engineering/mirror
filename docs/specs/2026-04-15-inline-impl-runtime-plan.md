@@ -1,3 +1,5 @@
+> **Superseded (2026-05-19).** The Rust substrate was deleted. Inline implementation is now the only mode — all implementation is grammar.
+
 # Inline Implementation + @runtime Grammar
 
 **Date:** 2026-04-15

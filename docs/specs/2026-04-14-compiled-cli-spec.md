@@ -1,3 +1,5 @@
+> **Superseded (2026-05-19).** The Rust substrate was deleted. CLI dispatch is now defined in `mirror.spec` and `boot/std/cli.mirror`, not Rust match arms.
+
 # Compiled CLI: The Dispatch IS the Grammar
 
 **Author:** Reed + Alex

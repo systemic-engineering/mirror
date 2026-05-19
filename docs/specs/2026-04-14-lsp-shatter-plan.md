@@ -1,3 +1,5 @@
+> **Superseded (2026-05-19).** The Rust substrate was deleted. LSP implementation path is now through grammar, not Rust modules. See `boot/std/mirror/serve.mirror` for the MCP/serve grammar.
+
 # Mirror LSP: .shatter-Powered Language Server
 
 **Author:** Mara

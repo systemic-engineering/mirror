@@ -1,3 +1,5 @@
+> **Superseded (2026-05-19).** Kintsugi is now a grammar-level workflow (`mirror kintsugi`). The unified surface concept was realized through the bootstrap binary, not the Rust compiler.
+
 # Kintsugi: Unified Compiler Surface
 
 **Author:** Reed + Alex

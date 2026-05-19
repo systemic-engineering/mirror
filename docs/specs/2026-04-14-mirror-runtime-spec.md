@@ -1,3 +1,5 @@
+> **Superseded (2026-05-19).** The Rust substrate was deleted. Runtime is now `boot/std/mirror/runtime.mirror` and `boot/std/runtime.mirror`, not Rust modules.
+
 # `grammar @mirror < @runtime` — The Runtime Spec
 
 **Author:** Glint

@@ -1,3 +1,5 @@
+> **Completed (2026-05-19).** The boot reorganization described here was implemented. 18 boot files + 79 std grammars. The Rust parser reference is historical — repo is pure grammar now.
+
 # Boot Sequence Reorganization Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

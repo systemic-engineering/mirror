@@ -24,11 +24,14 @@ you tap the glass, the pitch tells you something true about what's inside.
 
 ## What It Does
 
+Five commands. Five operations. Everything settles.
+
 ```
-mirror compile <file>       tap the glass. get the pitch.
-mirror craft <target>       compile a directory of grammars
-mirror kintsugi <file>      show the path: in -> grammar -> out
-mirror bench <file|dir>     measure the resonance (100 iterations)
+mirror compile <file>              tap the glass. get the pitch.
+mirror craft <target>              compile a directory of grammars.
+mirror kintsugi <file>             show the path: holes -> resolutions -> crystal.
+mirror run <file>                  execute a grammar. measure the loss.
+mirror run --fate-store <oid> <r>  seed a resolution into the Fate store.
 ```
 
 Every compiled artifact is content-addressed. Same source, same pitch, forever.
@@ -72,6 +75,10 @@ the answer.
 A grammar that contains `\` compiles. It just compiles with a hole where
 certainty hasn't arrived yet. The hole is the specification.
 
+Kintsugi resolves holes: `mirror run` shows them, Fate proposes resolutions,
+`mirror run --fate-store` seeds a resolution, `mirror kintsugi` writes it
+back into source. The gold in the cracks.
+
 ---
 
 ## Sub-Turing
@@ -98,25 +105,20 @@ The glass holds because it can prove it holds.
 
 ## Architecture
 
-10 Rust files. 6,181 lines. FROZEN.
-81 grammar files. 3,289 lines. Growing.
-198 tests. All passing.
+Pure grammar. Zero code files. One bootstrap binary.
 
 ```
-src/
-  tokenize.rs     1,212 lines   tokenizer (state machine)
-  mirror_ast.rs   1,319 lines   AST (7 node types)
-  kernel.rs         856 lines   Oid, SHA-256, content addressing
-  dirac.rs          928 lines   Jacobi eigenvalues, spectral embedding
-  interpreter.rs    576 lines   five operations (focus/project/split/zoom/refract)
-  prism.rs          435 lines   Prism<V> tree structure
-  bench.rs          522 lines   benchmarking harness
-  cli.rs            270 lines   command dispatch
-  lib.rs             37 lines   crate root
-  main.rs            26 lines   entry point
+~/.local/bin/mirror    68KB arm64 binary (the bootstrap seed)
+boot/                  18 boot files define the language
+boot/std/              79 library grammars extend it
+mirror.spec            the binary describes itself
+prism/                 24 grammars (submodule — the prism ontology)
 ```
 
-The Rust is the bootstrap. It implements exactly three things:
+97 grammar files. 4,562 lines. Growing.
+The bootstrap seed is the only non-mirror artifact.
+
+The bootstrap implements exactly three things:
 1. **Tokenizer** — state machine, no external deps
 2. **SHA-256 + Jacobi** — pure computation, content addressing
 3. **10 syscalls** — read/write/open/close/stat/readdir/spawn/pipe/waitpid/exit
@@ -127,67 +129,57 @@ Everything above the glass is grammar.
 
 ## The Grammar
 
-18 boot files define the language. 63 std grammars extend it. The compiler
+18 boot files define the language. 79 std grammars extend it. The compiler
 learns by reading them in order — optics, then meta, then actors, then IO,
 then code generation, then verification, then packages.
 
-`boot/` is the glass. `std/` is the shelf of glasses above it.
+`boot/` is the glass. `boot/std/` is the shelf of glasses above it.
 New glass, not new machinery.
+
+Key grammars at execution loss 0.00:
+- `@cogito` — the Reflection loop (observe, strategy, perturb, reflect)
+- `@mirror/craft` — the compiler compiles itself
+- `@mirror/build` — collect, evaluate, emit, assemble, link, store
+- `@kintsugi/shatter` — fracture IS the five operations
+- `@code/llvm/emit` — LLVM IR emission from grammar
+
+---
+
+## The Kintsugi Workflow
+
+```
+mirror run <file>                    see the holes. measure the loss.
+mirror run --fate-store <oid> <res>  seed a resolution.
+mirror kintsugi <file>               write resolutions back into source.
+git add + git commit                 the gold is in the cracks.
+```
+
+The compiler executes grammars with holes. `\` marks what isn't known yet.
+Fate proposes resolutions through tournament selection (elite 1, beam 8,
+halving 3). Kintsugi writes the gold back into the source file. Commit.
 
 ---
 
 ## Performance
 
-Binary: 717 KB release, 591 KB stripped.
+Binary: 68KB (bootstrap seed, arm64).
 
-| File | Compile Time | Throughput |
-|------|-------------|------------|
-| kintsugi.mirror (tiny) | 1.3ms | 778 ops/s |
-| 00-prism.mirror (small) | 2.4ms | 423 ops/s |
-| kernel.rs (dense) | 75.0ms | 13 ops/s |
-| **craft boot** (81 files) | **1.42s wall** | 80/81 cached |
-| **craft cargo** (10 files) | **1.22s wall** | cold compile |
-
-Full numbers: `docs/benchmarks/baseline-rust.md`
+```
+mirror craft boot: 97 files, 95 cached, 2 recompiled.
+Key grammars: all at execution loss 0.00.
+```
 
 ---
 
-## The Path to 51KB
+## Build
 
-The thinnest glass that still holds wine.
-
-```
-mirror = libc + pure computation
-       = 10 syscalls + SHA-256 + SHA-1 + Jacobi eigenvalues
-       = @io + @hash + @eigen
-
-Three abstract operations. Everything else is grammar.
-```
-
-Target architecture:
-```
-Grammar -> mirror emit -> LLVM IR -> llc -> ~51KB binary
-```
-
-No LAPACK. No OpenSSL. No libgit2. No Rust runtime. Just libc and math.
-450 parameters. A monofilament. Not enough glass to impose a frequency.
-Just enough to give your wine a shape.
-
-See `docs/specs/minimum-binary-surface.md` for the full analysis.
-
----
-
-## Build & Proof
+The bootstrap seed lives at `~/.local/bin/mirror`. There is no build step
+for users — run the binary against grammars. The compiler extends itself
+through grammar, not through recompilation.
 
 ```bash
-cargo build --release && cargo test --lib
-```
-
-The compiler compiles itself:
-
-```
-mirror craft cargo    # tokenizes + hashes all 10 source files
-mirror craft boot     # compiles all 81 grammar files
+mirror craft boot     # compile all 97 grammar files
+mirror run <file>     # execute a grammar, measure the loss
 ```
 
 The grammar describes the compiler. The compiler executes the grammar.

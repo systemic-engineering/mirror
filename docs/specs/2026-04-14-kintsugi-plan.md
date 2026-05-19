@@ -1,3 +1,5 @@
+> **Superseded (2026-05-19).** Kintsugi was implemented as a grammar-level workflow. The Rust operator table changes described here no longer apply. See `boot/std/kintsugi/` for the current implementation.
+
 # Kintsugi Implementation Plan
 
 **Author:** Mara

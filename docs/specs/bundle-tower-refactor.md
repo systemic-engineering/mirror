@@ -1,3 +1,5 @@
+> **Superseded (2026-05-19).** The Rust substrate was deleted. The repo is pure grammar now. The bundle tower concepts remain valid but the implementation path described here (Rust refactoring) no longer applies.
+
 # Bundle Tower Refactor: mirror → prism-core
 
 The principal bundle tower from differential geometry IS the type hierarchy in

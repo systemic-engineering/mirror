@@ -1,3 +1,5 @@
+> **Superseded (2026-05-19).** The Rust substrate was deleted. The repo is pure grammar now. The fold concept lives in `@mirror/evaluate` grammar, not in Rust.
+
 # Compiler Surface Plan — The Unified Fold
 
 **Author:** Mara
