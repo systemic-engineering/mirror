@@ -4,12 +4,15 @@
 //! port — they catch byte-level drift in tokenization, content_oid, and
 //! CoincidenceHash going forward.
 //!
-//! The EXPECTED hashes are the Rust bootstrap's own canonical outputs as
-//! of 2026-05-19. The earlier C binary produced different OIDs for some
-//! of these forms; the divergence was accepted because the Rust AST
-//! captures more structure (keyword, body, sigils). When OID generation
-//! moves into mirror itself as @hash/coincidence (Cluster C), these
-//! values become the canonical reference.
+//! POST-CLUSTER-D PINNED VALUES (2026-05-20).
+//!
+//! The bootstrap now implements CoincidenceHash<5,5> as declared in
+//! `boot/std/hash/coincidence.mirror` — 5 dimensions (one per Prism
+//! operation) and 5 projections (one per gutter-lens duality). The earlier
+//! pre-Cluster-D values were computed under CoincidenceHash<3,16>, the
+//! C-era seed; they are gone. The OIDs below are the canonical reference
+//! under <5,5>. `@epistemologic/property/coincidence_matches` is the
+//! grammar-side mirror of these pins.
 
 use std::process::Command;
 
@@ -42,7 +45,7 @@ fn out_collapse_oid() {
     let oid = run_compile(path.to_str().unwrap());
     assert_eq!(
         oid,
-        "d3e99e14db24fcc8238c1b93ea54f49a4324ff869d0e002126a2d310c30aca7d"
+        "a8312da6335d4471ac0fe1f815421ab00778b45a6be70781324490934c5572b3"
     );
 }
 
@@ -53,6 +56,6 @@ fn in_prism_oid() {
     let oid = run_compile(path.to_str().unwrap());
     assert_eq!(
         oid,
-        "9836a8ba693f236e974673addbf5c5fd73f922b8d827532676e2ab6541d6c6a2"
+        "3ba4c79d158b06e0ce9998525dca5d5a61f8da9bd9579ba6039250d33b609a66"
     );
 }

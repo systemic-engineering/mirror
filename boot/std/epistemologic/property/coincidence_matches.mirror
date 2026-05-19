@@ -9,12 +9,9 @@ in @io
 # address the grammar predicts. The bootstrap implements the hash; the
 # grammar declares it; this property verifies they agree.
 #
-# Currently RED. The bootstrap implements CoincidenceHash<3,16> (the C-era
-# seed). The grammar @hash/coincidence declares CoincidenceHash<5,5>. The
-# gap is the spec.
-#
-# Cluster D's `craft --target binary` regenerates the bootstrap from the
-# grammar; that closes the gap and turns this property green.
+# Cluster D landed the hash rewrite: the bootstrap now implements
+# CoincidenceHash<5,5> matching the grammar. The corpus below is the
+# post-Cluster-D pinned values.
 
 grammar @epistemologic/property/coincidence_matches {
 
@@ -30,10 +27,9 @@ grammar @epistemologic/property/coincidence_matches {
   # sides agree on the same OID for the same input, the bootstrap and the
   # grammar describe the same hash.
   #
-  # Today the smoke tests pin CoincidenceHash<3,16> outputs:
-  #   "out collapse\n" -> d3e99e14db24fcc8238c1b93ea54f49a4324ff869d0e002126a2d310c30aca7d
-  #   "in @prism\n"   -> 9836a8ba693f236e974673addbf5c5fd73f922b8d827532676e2ab6541d6c6a2
-  # under CoincidenceHash<5,5> the OIDs will change. Cluster D regenerates both.
+  # Post-Cluster-D, under CoincidenceHash<5,5>:
+  #   "out collapse\n" -> a8312da6335d4471ac0fe1f815421ab00778b45a6be70781324490934c5572b3
+  #   "in @prism\n"   -> 3ba4c79d158b06e0ce9998525dca5d5a61f8da9bd9579ba6039250d33b609a66
   corpus() -> [sample] { \ }
 
   # for every sample in the corpus, the bootstrap's `mirror compile` output

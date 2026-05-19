@@ -1,16 +1,36 @@
-//! SHA-256 helpers + CoincidenceHash<3>.
+//! SHA-256 helpers + CoincidenceHash<5,5>.
 //!
-//! Bit-exact compatibility with native/mirror.c. See CRITICAL notes below.
+//! This is the Cluster D rewrite. The bootstrap now implements the geometry
+//! declared in `boot/std/hash/coincidence.mirror`:
+//!
+//!   DIM = 5             — one dimension per Prism operation:
+//!                         [0]=focus, [1]=project, [2]=split, [3]=zoom, [4]=refract
+//!   NUM_PROJECTIONS = 5 — one projection per gutter-lens duality:
+//!                         [0]=entropy, [1]=spectral, [2]=cheeger,
+//!                         [3]=ricci,  [4]=mixing
+//!   LEX_ORDER = [0,1,2,3,4]
+//!                       — lex-of-decimal-strings ordering collapses to identity
+//!                         when there are 5 elements (only single-digit indices).
+//!   EPSILON   unchanged — IEEE-754 double machine epsilon.
+//!
+//! The seed format `coincidence:projection:{i}:{NUM_PROJECTIONS}` is unchanged.
+//! The index `i` implicitly references the duality at the same position in the
+//! grammar's `duality = entropy | spectral | cheeger | ricci | mixing` axis.
+//!
+//! Tags (`prism-core:dark:`, `prism-core:coincidence:`, `coincidence:`) are
+//! unchanged. Verification: @epistemologic/property/coincidence_matches.
 
 use sha2::{Digest, Sha256};
 
-pub const DIM: usize = 16;
-pub const NUM_PROJECTIONS: usize = 3;
+pub const DIM: usize = 5;
+pub const NUM_PROJECTIONS: usize = 5;
 pub const EPSILON: f64 = 2.2204460492503131e-16;
 
-/// LEX_ORDER from the C source. The order used to compute the norm of seeded
-/// components AND the row/col iteration order in projection_apply. MUST match.
-pub const LEX_ORDER: [usize; DIM] = [0, 1, 10, 11, 12, 13, 14, 15, 2, 3, 4, 5, 6, 7, 8, 9];
+/// LEX_ORDER: the canonical traversal order. For 5 elements the
+/// lex-of-decimal-strings ordering collapses to identity. This order is what
+/// `for &j in LEX_ORDER` walks — the canonical traversal of vectors and
+/// matrices so different impls agree byte-for-byte.
+pub const LEX_ORDER: [usize; DIM] = [0, 1, 2, 3, 4];
 
 /// Pack 8 little-endian bytes of `v` into out.
 fn u64_le(v: u64, out: &mut [u8; 8]) {
@@ -34,8 +54,8 @@ impl Projection {
     }
 }
 
-/// Build a Projection from the canonical seed string. Matches C
-/// `projection_from_seed` byte-for-byte.
+/// Build a Projection from the canonical seed string. Structurally identical
+/// to the C `projection_from_seed`; only the dimensions shrink.
 pub fn projection_from_seed(seed: &str) -> Projection {
     let seed_bytes = seed.as_bytes();
     let mut components = [0.0_f64; DIM];
@@ -57,7 +77,7 @@ pub fn projection_from_seed(seed: &str) -> Projection {
         components[j] = val;
     }
 
-    // Norm in LEX_ORDER iteration order (matches C precisely).
+    // Norm in LEX_ORDER iteration order.
     let mut norm = 0.0_f64;
     for &j in LEX_ORDER.iter() {
         norm += components[j] * components[j];
@@ -87,8 +107,8 @@ pub fn projection_from_seed(seed: &str) -> Projection {
     proj
 }
 
-/// Apply projection to v, write result into out. Matches C
-/// `projection_apply` in iteration order and conditional behaviour.
+/// Apply projection to v, write result into out. Iteration order in LEX_ORDER
+/// for both row and column so different impls agree byte-for-byte.
 pub fn projection_apply(proj: &Projection, v: &[f64; DIM], out: &mut [f64; DIM]) {
     for i in 0..DIM {
         out[i] = 0.0;
@@ -122,7 +142,7 @@ pub fn vec_is_zero(v: &[f64; DIM]) -> bool {
     true
 }
 
-/// Encode data bytes into 16-dim coefficient vector. Matches C.
+/// Encode data bytes into the DIM-dimensional coefficient vector.
 pub fn encode_into_basis(data: &[u8]) -> [f64; DIM] {
     let mut coeffs = [0.0_f64; DIM];
     if data.is_empty() {
@@ -161,12 +181,18 @@ pub fn encode_into_basis(data: &[u8]) -> [f64; DIM] {
     coeffs
 }
 
-/// Lazy initialisation of canonical projections (matches C `init_projections`).
+/// Lazy initialisation of canonical projections.
 fn canonical_projections() -> &'static [Projection; NUM_PROJECTIONS] {
     use std::sync::OnceLock;
     static PROJ: OnceLock<[Projection; NUM_PROJECTIONS]> = OnceLock::new();
     PROJ.get_or_init(|| {
-        let mut arr = [Projection::zero(), Projection::zero(), Projection::zero()];
+        let mut arr = [
+            Projection::zero(),
+            Projection::zero(),
+            Projection::zero(),
+            Projection::zero(),
+            Projection::zero(),
+        ];
         for i in 0..NUM_PROJECTIONS {
             let seed = format!("coincidence:projection:{}:{}", i, NUM_PROJECTIONS);
             arr[i] = projection_from_seed(&seed);
@@ -175,8 +201,7 @@ fn canonical_projections() -> &'static [Projection; NUM_PROJECTIONS] {
     })
 }
 
-/// CoincidenceHash<3>. Returns a 64-char hex string.
-/// Matches C `canonical_hash` byte-for-byte.
+/// CoincidenceHash<5,5>. Returns a 64-char hex string.
 pub fn canonical_hash(data: &[u8]) -> String {
     let projs = canonical_projections();
     let coeffs = encode_into_basis(data);
@@ -205,7 +230,7 @@ pub fn canonical_hash(data: &[u8]) -> String {
         return hex_str(&h.finalize());
     }
 
-    // Build eigenvalue_bytes exactly as in C:
+    // Build eigenvalue_bytes:
     //   "coincidence:" (12 bytes)
     //   NUM_PROJECTIONS as little-endian u64 (8 bytes)
     //   for each p,j: f64 bits as little-endian u64 (8 bytes)
@@ -238,7 +263,7 @@ fn hex_str(hash: &[u8]) -> String {
     s
 }
 
-/// `<tag>:<content>` -> canonical_hash. Matches C `hash_tagged`.
+/// `<tag>:<content>` -> canonical_hash.
 pub fn hash_tagged(tag: &str, content: &[u8]) -> String {
     let mut buf: Vec<u8> = Vec::with_capacity(tag.len() + 1 + content.len());
     buf.extend_from_slice(tag.as_bytes());
