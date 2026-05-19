@@ -1,0 +1,26 @@
+in @prism
+in @epistemologic/property
+in @io
+
+# Property: the FILE that defines a canonical keyword
+# (like boot/std/mirror/grammar.mirror defining "grammar")
+# should be NAMED after that canonical keyword.
+#
+# After the glass migration, the canonical keyword becomes 'glass'.
+# Therefore boot/std/mirror/grammar.mirror (which defines glass as canonical)
+# fails this property — it should be glass.mirror.
+
+grammar @epistemologic/property/filename_matches_glass {
+  # the canonical keyword this file defines (if any)
+  canonical_keyword(file) -> ref { \ }
+
+  # the filename's stem (without .mirror)
+  filename_stem(file) -> ref { \ }
+
+  # do they match?
+  filename_matches_glass(file) -> verdict { \ }
+}
+
+out canonical_keyword
+out filename_stem
+out filename_matches_glass

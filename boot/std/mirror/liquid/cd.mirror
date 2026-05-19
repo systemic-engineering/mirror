@@ -1,0 +1,40 @@
+in @prism
+in @mirror/liquid
+in @mirror/liquid/ci
+in @mirror/store
+in @mirror/spectral
+in @io
+in @git
+in @craft
+
+# Continuous deployment as grammar.
+#
+# CD = continuous deployment. When CI gates pass, write the crystal
+# to a durable store. Deploy = persist the gold where consumers can read it.
+#
+# CD is craft --target binary + store.store(crystal) when gate(commit) is true.
+# The store backend is swappable (git default, nix optional, spectral-db endgame).
+# CD does not care which store. The contract IS @mirror/store.
+
+grammar @mirror/liquid/cd {
+  # deploy the crystal to a store.
+  # the store backend (git / nix / spectral-db) decides the path.
+  # returns the OID where the crystal now lives.
+  deploy(crystal, store) -> imperfect { @mirror/store.store(crystal) }
+
+  # release: the full CD pipeline.
+  # CI passes -> craft --target binary -> deploy(crystal, store).
+  # the |\> propagates the gate: if gate is false, the release is dimmed.
+  release(commit, store) -> imperfect {
+    @mirror/liquid/ci.gate(commit) |\> deploy(crystal, store)
+  }
+
+  # rollback: deploy a previous crystal by OID.
+  # content-addressed, so rollback IS just deploy with an older OID.
+  # the rollback never overwrites; it republishes.
+  rollback(commit, store) -> imperfect { \ }
+}
+
+out deploy
+out release
+out rollback

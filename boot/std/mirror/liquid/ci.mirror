@@ -1,0 +1,52 @@
+in @prism
+in @mirror/liquid
+in @epistemologic
+in @io
+in @git
+in @beam
+in @craft
+
+# Continuous integration as grammar.
+#
+# CI = continuous verification. Properties checked on every commit.
+# The verdict (pass / partial / fail) IS the CI result.
+# Liquid in a loop, indexed by commit.
+#
+# @craft --reflect runs the convergence loop without emission.
+# That verdict IS the CI gate. CI is craft scheduled over time.
+
+grammar @mirror/liquid/ci {
+  # watch a ref. on every change, run the verdict.
+  # the ref IS the input. the verdict IS the output.
+  # imperfect carries the verdict + violation + loss per tick.
+  watch(ref) -> imperfect { \ }
+
+  # the verdict for a commit (or HEAD).
+  # @mirror/liquid.infer projects inferred properties from the topology.
+  # the inferred properties form the verdict against @epistemologic thresholds.
+  verdict(commit) -> verdict { @mirror/liquid.infer(commit) }
+
+  # gate: did the properties pass?
+  # bool — true if the verdict is light or dimmed above threshold,
+  # false if dark or below threshold.
+  # consumed by @mirror/liquid/cd.release to decide whether to deploy.
+  gate(commit) -> bool { \ }
+
+  # report: render the verdict for humans.
+  # text — the beam observed and serialized.
+  # absorbs the human-readable side of @benchmark.report.
+  report(verdict) -> text { \ }
+
+  # the loop: watch -> verdict -> gate -> report -> loop.
+  # the IS the CI service. one grammar. one pipeline.
+  # imperfect propagates: if any tick fails the gate, the loop emits dimmed.
+  run -> imperfect {
+    watch(HEAD) |> verdict |> gate |> report
+  }
+}
+
+out watch
+out verdict
+out gate
+out report
+out run

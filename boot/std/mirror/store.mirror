@@ -1,0 +1,28 @@
+in @prism
+in @git
+
+# @mirror/store: content-addressed storage as grammar.
+#
+# Three operations. Same interface. Swappable backends.
+# The `\` is the backend. Swap one `in` line, the entire storage changes.
+# The grammars above don't notice. The contract holds.
+#
+# Backends:
+#   @mirror/store/git         — today. git IS the store. refs/crystals/<oid>.
+#   @mirror/store/nix         — when mirror is a nix provider. /nix/store/<oid>-name.
+#   @mirror/store/spectral-db — endgame. the graph IS the store. eigenvalues ARE addresses.
+
+grammar @mirror/store {
+  # store a crystal. return its content-addressed OID.
+  store(crystal) -> oid { \ }
+
+  # fetch a crystal by OID. imperfect carries the bytes or dark.
+  fetch(oid) -> imperfect { \ }
+
+  # exists: is this OID resolvable in the backend?
+  exists(oid) -> bool { \ }
+}
+
+out store
+out fetch
+out exists

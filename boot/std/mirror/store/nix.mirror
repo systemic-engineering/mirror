@@ -1,0 +1,44 @@
+in @prism
+in @mirror/store
+in @io
+
+# Nix store as crystal backend.
+#
+# /nix/store IS a content-addressed store. mirror produces content-addressed
+# artifacts. The OID maps to /nix/store/<oid>-<name>.
+#
+# mirror.spec IS flake.nix. `in` IS dependency declaration.
+# `mirror craft` IS `nix build`. The OID IS the lock.
+# No flake.lock. No Cargo.lock. The lock IS the content address.
+#
+# This is the @mirror/store backend that activates when mirror is a nix provider.
+
+grammar @mirror/store/nix {
+  # store a crystal: write to /nix/store, return the OID.
+  # nix store add computes its own hash; we cross-check against the crystal's OID.
+  store(crystal) -> oid { @io.exec("nix", ["store", "add"]) }
+
+  # fetch a crystal by OID. Read /nix/store/<oid>-<name>.
+  # imperfect carries the bytes if present, dark if missing.
+  fetch(oid) -> imperfect { @io.read(path(oid)) }
+
+  # exists: does /nix/store/<oid> have a deriver?
+  # nix-store --query --deriver is the canonical existence check.
+  exists(oid) -> bool { @io.exec("nix-store", ["--query", "--deriver", path(oid)]) }
+
+  # path: render the /nix/store path for an OID.
+  # /nix/store/<oid>-<name>. The name defaults to "mirror" for binaries,
+  # to the grammar ref for crystals.
+  path(oid) -> text { \ }
+
+  # adopt: import an existing /nix/store path as a crystal.
+  # used when bootstrapping from a nix-built binary or when migrating
+  # third-party artifacts into the crystal graph.
+  adopt(path) -> oid { \ }
+}
+
+out store
+out fetch
+out exists
+out path
+out adopt

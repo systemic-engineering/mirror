@@ -3,6 +3,7 @@ in @prism/rust
 in @prism/compose
 in @epistemologic
 in @epistemologic/property
+in @epistemologic/property/filename_matches_glass
 in @epistemologic/resolve
 in @fate/connectome
 in @ai/fate
@@ -36,7 +37,11 @@ in @mirror/interpreter
 in @mirror/runtime
 in @mirror/execute
 in @mirror/liquid
+in @mirror/liquid/ci
+in @mirror/liquid/cd
 in @mirror/spectral
+in @mirror/store
+in @mirror/store/nix
 in @nl
 in @git/hooks
 in @cli
