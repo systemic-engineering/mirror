@@ -1,0 +1,24 @@
+in @prism
+in @mirror/evaluate
+in @fragmentation
+in @code/kernel
+in @fate/connectome
+
+grammar @mirror/bootstrap {
+  # the minimum viable binary
+  # tokenizer + SHA + four syscalls + Fate inference
+  # everything else is grammar evaluated at runtime
+
+  type binary = {
+    tokenizer: ref,
+    hash: ref,
+    kernel: ref,
+    fate: ref,
+  }
+
+  # the bootstrap builds itself from these four components
+  bootstrap -> binary { \ }
+}
+
+out binary
+out bootstrap

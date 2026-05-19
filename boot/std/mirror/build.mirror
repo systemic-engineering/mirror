@@ -1,0 +1,34 @@
+in @prism
+in @io
+in @mirror/runtime
+in @mirror/store
+in @code/llvm/emit
+in @code/kernel
+in @fragmentation
+
+grammar @mirror/build {
+  # the self-build pipeline
+  # grammars → LLVM IR → object → binary
+
+  build(spec, target) -> imperfect {
+    collect(spec) |\> evaluate |\> emit(target) |\> assemble |\> link |\> store
+  }
+
+  # gather all .mirror files from the spec's in graph
+  collect(spec) -> [ast] { \ }
+
+  # emit LLVM IR for a target architecture
+  emit([ast], target) -> text { \ }
+
+  # compile IR to object code
+  assemble(text) -> bytes { @io.exec("llc", ["-filetype=obj"]) }
+
+  # link objects into a binary
+  link(bytes) -> binary { @io.exec("ld", ["-o", "mirror"]) }
+}
+
+out build
+out collect
+out emit
+out assemble
+out link
