@@ -1,0 +1,105 @@
+in @prism
+in @epistemologic/property
+in @mirror/liquid
+
+# @epistemologic/property/benchmark
+#
+# performance properties as verdicts. not numbers.
+#
+# the timer IS the instrument. the benchmark IS the game.
+# each property takes an artifact and returns verdict.
+# pass means the architecture holds. fail means it doesn't.
+# partial means the cascade isn't complete yet.
+#
+# seven checks. the line through the state space.
+# the cascade finder's domain.
+
+grammar @epistemologic/property/benchmark {
+
+  # no_hang: the binary doesn't hang (bounded IO).
+  #
+  # checks:
+  #   - every exec completes within wall-clock bound
+  #   - no unbounded stdin reads without EOF
+  #   - pclose returns within timeout
+  #
+  # if the binary hangs, nothing else matters.
+  # this is the gate. everything downstream depends on it.
+  no_hang(ast) -> verdict { \ }
+
+  # linear_compile: compilation completes within O(n) of input size.
+  #
+  # checks:
+  #   - parse is O(n) in token count
+  #   - content_oid is O(n) in AST node count
+  #   - no quadratic loops in scan_items
+  #
+  # the proof says O(1/t) convergence. but the compiler itself
+  # must be linear or the proof is academic.
+  linear_compile(ast) -> verdict { \ }
+
+  # binary_size: the binary is smaller than threshold.
+  #
+  # checks:
+  #   - stripped binary < 64KB (L1 cache resident on most x86)
+  #   - LLVM IR < 16K lines (human-auditable)
+  #   - no dead code (every defined function is reachable from main)
+  #
+  # 50KB today. the threshold is the game.
+  # smaller binary = faster cold start = faster cascade.
+  binary_size(binary, threshold) -> verdict { \ }
+
+  # deterministic_oid: same input produces same hash. always.
+  #
+  # checks:
+  #   - canonical_hash is pure (no global state mutation between calls)
+  #   - sha256 rounds are deterministic (no FP contraction)
+  #   - content_oid for identical ASTs produces identical OIDs
+  #
+  # -ffp-contract=off is load-bearing. without it, FMA fusion
+  # changes intermediate values and the OIDs diverge.
+  # this property IS the content-addressing guarantee.
+  deterministic_oid(ast) -> verdict { \ }
+
+  # cache_speedup: cache hit is faster than cold compile.
+  #
+  # checks:
+  #   - git_crystal_exists returns in O(1) (ref lookup, not tree walk)
+  #   - cache hit skips parse + tokenize + content_oid
+  #   - speedup factor > 2x (the cascade pays for itself)
+  #
+  # if the cache doesn't help, the crystal store is decoration.
+  # the speedup IS the proof that persistence works.
+  cache_speedup(file) -> verdict { \ }
+
+  # incremental_speedup: incremental craft is faster than full craft.
+  #
+  # checks:
+  #   - DAG dependency tracking is correct (changed file + dependents only)
+  #   - unchanged files hit crystal cache
+  #   - incremental time < full time * (changed / total)
+  #
+  # the cascade: change one grammar, recompile its subgraph.
+  # not the whole world. the subgraph. that's the line.
+  incremental_speedup(spec) -> verdict { \ }
+
+  # l1_resident: the binary fits in L1 cache.
+  #
+  # checks:
+  #   - text section < 32KB (conservative L1i on modern x86)
+  #   - hot path (tokenize -> content_oid -> crystal check) fits in 16KB
+  #   - no cold function pulled into hot path by inlining
+  #
+  # L1 residency is the ultimate speedrun.
+  # if the hot path fits in L1, the timer becomes the memory bus.
+  # that's where the cascade lives.
+  l1_resident(binary) -> verdict { \ }
+}
+
+out no_hang
+out linear_compile
+out binary_size
+out deterministic_oid
+out cache_speedup
+out incremental_speedup
+out l1_resident
