@@ -19,7 +19,7 @@ in @code/llvm
 -- This grammar is the correct mapping. Extension routing is a
 -- bootstrap constraint, not a grammar constraint.
 
-grammar @code/llvm/ir {
+grammar @code/llvm/ir("ll") {
   in @code/llvm
 
   -- ── Module level ─────────────────────────────────────────────────

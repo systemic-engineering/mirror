@@ -14,7 +14,7 @@ in @trace
 --
 -- Kintsugi reductions operate on the MirrorAST representation.
 
-grammar @code/rust {
+grammar @code/rust("rs") {
   in @code
   in @trace
 

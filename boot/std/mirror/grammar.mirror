@@ -1,6 +1,6 @@
 in @prism
 
-grammar @mirror/grammar {
+grammar @mirror/grammar("mirror", "spec", "shatter") {
   # mirror keywords -> operations
   focus grammar    # grammar block = look closer
   split type       # type declaration = one of many

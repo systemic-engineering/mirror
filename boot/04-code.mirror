@@ -29,7 +29,7 @@ type token {
   kind: type,
 }
 
-abstract grammar @code {
+abstract grammar @code(extensions: text | [text]) {
   -- The translate template: map from one grammar's ast to another's.
   -- The type annotation IS the constraint. c: @code means c in @code.
   abstract template translate(p: @prism, c: @code, p -> c)
