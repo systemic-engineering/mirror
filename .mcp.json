@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "mirror": {
+      "type": "stdio",
+      "command": "/Users/alexwolf/dev/projects/mirror/bin/mirror-mcp",
+      "args": []
+    }
+  }
+}
