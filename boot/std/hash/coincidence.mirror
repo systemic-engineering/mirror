@@ -1,0 +1,94 @@
+in @prism
+
+# @hash/coincidence: the content address, declared as grammar.
+#
+# CoincidenceHash<5,5>. The hash IS the Void geometry:
+#   5 dimensions — one per operation (focus, project, split, zoom, refract)
+#   5 projections — one per duality lens (entropy, spectral, cheeger, ricci, mixing)
+#   λ₀ = 0       — the dark fallback. Void. The generative zero.
+#
+# The bootstrap currently implements CoincidenceHash<3,16> (the C-era seed).
+# @epistemologic/property/coincidence_matches declares the contract; Cluster D's
+# `craft --target binary` regenerates the bootstrap from this grammar and the
+# contract goes green.
+#
+# References:
+#   visibility/protected/practice/insights/coincidence/void-dual-geometry.md
+#   docs/specs/gutter-lenses.md (5 dualities rendered as light)
+
+grammar @hash/coincidence {
+
+  # --- shape constants -------------------------------------------------------
+
+  # one dimension per Prism operation
+  type dim = 5
+
+  # one projection per gutter-lens duality
+  type projections = 5
+
+  # IEEE-754 double machine epsilon
+  type epsilon = 2.2204460492503131e-16
+
+  # the dimension axis: which operation each row/column carries.
+  # the order is the order of the Prism trait methods.
+  type dimension = focus | project | split | zoom | refract
+
+  # the projection axis: which gutter-lens duality each projection encodes.
+  type duality = entropy | spectral | cheeger | ricci | mixing
+
+  # lex_order: lexicographic ordering of single-digit decimals.
+  # for 5 elements this is identity, [0, 1, 2, 3, 4]. The order is what
+  # iterations of `for &j in LEX_ORDER` walk — the canonical traversal of
+  # vectors and matrices so different impls agree byte-for-byte.
+  type lex_order = [0, 1, 2, 3, 4]
+
+  # --- prism-core: prefixes -------------------------------------------------
+
+  # tag for the dark fallback: when projected coefficients are zero or any
+  # projection collapses to zero, the address is SHA-256 of (dark_tag, data).
+  # Void. λ₀. The honest "this had no observable structure."
+  type dark_tag = "prism-core:dark:"
+
+  # tag for the live fallback: when projections produce a non-zero eigenvector
+  # field, the address is SHA-256 of (coincidence_tag, eigenvalue_bytes).
+  type coincidence_tag = "prism-core:coincidence:"
+
+  # internal prefix on the eigenvalue buffer (precedes the projection count
+  # and the 16-or-5 f64 components per projection).
+  type eigenvalue_prefix = "coincidence:"
+
+  # seed format for each projection. one seed per duality. the seed strings
+  # ARE the projections — deterministic, content-addressed, replayable.
+  type projection_seed = "coincidence:projection:{i}:{projections}"
+
+  # --- operations ------------------------------------------------------------
+
+  # hash arbitrary bytes through CoincidenceHash<5,5>.
+  # bootstrap-implemented today.
+  hash(bytes) -> oid { \ }
+
+  # hash bytes after prepending a tag and colon: `<tag>:<content>`.
+  # used by content_oid to distinguish AST kinds without colliding addresses.
+  hash_tagged(tag, bytes) -> oid { \ }
+
+  # content_oid: the recursive address of an AST node.
+  # the body bytes plus child OIDs are buffered and run through hash_tagged
+  # with the AST kind name (focus|project|split|zoom|refract|in|out).
+  # the tree IS the Merkle tree (see @fragmentation).
+  content_oid(ast) -> oid { \ }
+}
+
+out dim
+out projections
+out epsilon
+out dimension
+out duality
+out lex_order
+out dark_tag
+out coincidence_tag
+out eigenvalue_prefix
+out projection_seed
+out hash
+out hash_tagged
+out content_oid
+out @hash/coincidence

@@ -1,0 +1,54 @@
+in @prism
+in @epistemologic/property
+in @hash/coincidence
+in @io
+
+# @epistemologic/property/coincidence_matches
+#
+# The contract: for any input, the bootstrap's content address equals the
+# address the grammar predicts. The bootstrap implements the hash; the
+# grammar declares it; this property verifies they agree.
+#
+# Currently RED. The bootstrap implements CoincidenceHash<3,16> (the C-era
+# seed). The grammar @hash/coincidence declares CoincidenceHash<5,5>. The
+# gap is the spec.
+#
+# Cluster D's `craft --target binary` regenerates the bootstrap from the
+# grammar; that closes the gap and turns this property green.
+
+grammar @epistemologic/property/coincidence_matches {
+
+  # a single (input, expected) sample.
+  type sample {
+    input: text,
+    expected: oid,
+  }
+
+  # the corpus pinned in bootstrap/tests/oid_smoke.rs.
+  # the smoke tests assert these against the running bootstrap; the property
+  # asserts the same pairs against the grammar's predicted output. When both
+  # sides agree on the same OID for the same input, the bootstrap and the
+  # grammar describe the same hash.
+  #
+  # Today the smoke tests pin CoincidenceHash<3,16> outputs:
+  #   "out collapse\n" -> d3e99e14db24fcc8238c1b93ea54f49a4324ff869d0e002126a2d310c30aca7d
+  #   "in @prism\n"   -> 9836a8ba693f236e974673addbf5c5fd73f922b8d827532676e2ab6541d6c6a2
+  # under CoincidenceHash<5,5> the OIDs will change. Cluster D regenerates both.
+  corpus() -> [sample] { \ }
+
+  # for every sample in the corpus, the bootstrap's `mirror compile` output
+  # for `sample.input` equals `sample.expected`. The expected OID is what
+  # @hash/coincidence.content_oid would compute for the same input under the
+  # grammar's declared CoincidenceHash<5,5>.
+  #
+  # verdict:
+  #   pass        — every sample agrees
+  #   partial(r)  — r fraction of samples agree
+  #   fail(diag)  — the first disagreement, with both OIDs
+  coincidence_matches() -> verdict { \ }
+}
+
+out sample
+out corpus
+out coincidence_matches
+out @epistemologic/property/coincidence_matches
