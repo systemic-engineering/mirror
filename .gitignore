@@ -2,6 +2,7 @@
 build/
 target/
 target-break/
+bootstrap/target/
 .nix-cargo/
 
 # Compiled objects
