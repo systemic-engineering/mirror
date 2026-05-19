@@ -28,14 +28,14 @@ grammar @code/llvm/emit {
   # eigenvalue solver. pure rotation. no LAPACK.
   # sqrt, cos, sin, atan — four math intrinsics.
   emit_jacobi(matrix_size) -> text {
-    @io.read("/tmp/mirror.ll") |> project(functions: ["canonical_hash", "projection_from_seed", "projection_apply", "encode_into_basis", "init_projections", "vec_is_zero", "hex_encode"])
+    @io.read("bootstrap/mirror.ll") |> project(functions: ["canonical_hash", "projection_from_seed", "projection_apply", "encode_into_basis", "init_projections", "vec_is_zero", "hex_encode"])
   }
 
   # SHA-256: ~120 lines of bitwise arithmetic.
   # content addressing. every OID. every crystal.
   # the hash pipeline: encode -> project -> compress.
   emit_sha256(block_size) -> text {
-    @io.read("/tmp/mirror.ll") |> project(functions: ["sha256_transform", "sha256_final", "sha256_init", "sha256_update", "sha256_hex"])
+    @io.read("bootstrap/mirror.ll") |> project(functions: ["sha256_transform", "sha256_final", "sha256_init", "sha256_update", "sha256_hex"])
   }
 
   # SHA-1: ~80 lines of bitwise arithmetic.
@@ -49,21 +49,21 @@ grammar @code/llvm/emit {
   # read, write, open, close, execve, pipe, waitpid, exit, brk, stat.
   # the only door to reality. everything above is grammar.
   emit_syscalls -> text {
-    @io.read("/tmp/mirror.ll") |> project(functions: ["read_file", "exec_capture", "git_store", "git_crystal_exists", "git_store_crystal", "git_fate_exists", "collect_files", "cmp_strings"])
+    @io.read("bootstrap/mirror.ll") |> project(functions: ["read_file", "exec_capture", "git_store", "git_crystal_exists", "git_store_crystal", "git_fate_exists", "collect_files", "cmp_strings"])
   }
 
   # the tokenizer as LLVM IR.
   # byte scanning. keyword matching. ~300 lines.
   # the bootstrap parser that reads .mirror source.
   emit_tokenizer(grammar) -> text {
-    @io.read("/tmp/mirror.ll") |> project(functions: ["scan_items", "grammar_add", "load_grammar", "grammar_for_file", "ast_free"])
+    @io.read("bootstrap/mirror.ll") |> project(functions: ["scan_items", "grammar_add", "load_grammar", "grammar_for_file", "ast_free"])
   }
 
   # the complete binary.
   # wires kernels + syscalls + tokenizer + AST.
   # spec -> LLVM IR -> 50KB binary.
   emit_binary(spec) -> text {
-    @io.read("/tmp/mirror.ll") |> project(functions: ["main", "cmd_run", "cmd_fate_store", "cmd_compile", "cmd_craft", "execute_body", "content_oid", "render_ast"])
+    @io.read("bootstrap/mirror.ll") |> project(functions: ["main", "cmd_run", "cmd_fate_store", "cmd_compile", "cmd_craft", "execute_body", "content_oid", "render_ast"])
   }
 }
 

@@ -16,6 +16,8 @@ mod tokenize;
 
 use std::fs;
 use std::io::{self, Read, Write};
+use std::path::PathBuf;
+use std::process::Command;
 
 use crate::content::content_oid;
 use crate::git::{git_crystal_exists, git_store_crystal};
@@ -30,7 +32,7 @@ fn usage() {
     eprintln!("  mirror <command> [args...]            (legacy subcommand surface)");
     eprintln!("  mirror '<mq-query>' < input           (mq pipeline over stdin)");
     eprintln!("  mirror <input> '<mq-query>'           (mq pipeline over input file)");
-    eprintln!("commands: compile <file>, craft <target>, kintsugi <file>");
+    eprintln!("commands: compile <file>, craft [--target <crystal|binary>] <target>, kintsugi <file>");
     eprintln!("examples:");
     eprintln!("  cat mirror.ll | mirror '@code/llvm/ir |> @mirror/kintsugi |> @mirror/butterfly'");
 }
@@ -101,7 +103,34 @@ fn collect_files(dir: &str, ext: &str, out: &mut Vec<String>) {
     }
 }
 
-fn cmd_craft(target: &str, no_cache: bool) -> i32 {
+/// What `--target` produces from a craft.
+///
+/// Today only `Crystal` (the default — print the OID) and `Binary` (build the
+/// bootstrap as a self-hosted binary via cargo rustc + clang) are wired.
+/// `Rust` and `Gleam` are declared so the surface is stable; they will be
+/// implemented via grammar emission once `@code/llvm/emit` graduates from
+/// `/tmp/mirror.ll` self-reference to grammar-driven emission.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum TargetKind {
+    Crystal,
+    Binary,
+    #[allow(dead_code)]
+    Rust,
+    #[allow(dead_code)]
+    Gleam,
+}
+
+fn parse_target(s: &str) -> Option<TargetKind> {
+    match s {
+        "crystal" => Some(TargetKind::Crystal),
+        "binary" => Some(TargetKind::Binary),
+        "rust" => Some(TargetKind::Rust),
+        "gleam" => Some(TargetKind::Gleam),
+        _ => None,
+    }
+}
+
+fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind) -> i32 {
     let mut files: Vec<String> = Vec::new();
     match target {
         "boot" | "std" => collect_files("boot", ".mirror", &mut files),
@@ -164,7 +193,134 @@ fn cmd_craft(target: &str, no_cache: bool) -> i32 {
         eprintln!("cache: {}/{} hits", hits, total);
     }
     println!("{}", crystal);
+
+    if kind == TargetKind::Binary && (target == "boot" || target == "std") {
+        return build_self_binary();
+    }
+    if kind == TargetKind::Rust || kind == TargetKind::Gleam {
+        eprintln!("--target rust/gleam: not yet implemented (declared for surface stability)");
+        return 2;
+    }
     0
+}
+
+/// Produce `./mirror-self` from the bootstrap's own LLVM IR.
+///
+/// Pipeline:
+///   1. `cargo rustc --release --manifest-path bootstrap/Cargo.toml -- --emit=llvm-ir`
+///   2. Locate the freshest `mirror-*.ll` under `${CARGO_TARGET_DIR}/release/deps/`,
+///      excluding test-binary IR (which has long hex suffixes after extra dashes).
+///   3. Copy to `bootstrap/mirror.ll` (the canonical IR location, replacing
+///      the legacy `/tmp/mirror.ll` self-reference path).
+///   4. `clang -O2 -o ./mirror-self -x ir bootstrap/mirror.ll -lm`
+///
+/// This is the butterfly: the bootstrap emits IR for itself, clang turns the
+/// IR into a binary, and `./mirror-self craft boot` must match
+/// `mirror craft boot` for v1.0.0.
+fn build_self_binary() -> i32 {
+    eprintln!("== craft --target binary ==");
+    eprintln!("1/3 cargo rustc --emit=llvm-ir");
+
+    let status = Command::new("cargo")
+        .args([
+            "rustc",
+            "--release",
+            "--manifest-path",
+            "bootstrap/Cargo.toml",
+            "--",
+            "--emit=llvm-ir",
+        ])
+        .status();
+    match status {
+        Ok(s) if s.success() => {}
+        Ok(s) => {
+            eprintln!("cargo rustc failed: exit {}", s);
+            return 1;
+        }
+        Err(e) => {
+            eprintln!("cargo rustc spawn error: {}", e);
+            return 1;
+        }
+    }
+
+    eprintln!("2/3 locate bootstrap/mirror.ll");
+    let target_dir = std::env::var("CARGO_TARGET_DIR")
+        .unwrap_or_else(|_| "bootstrap/target".to_string());
+    let deps_dir = PathBuf::from(&target_dir).join("release").join("deps");
+    let ll_path = match find_bootstrap_ll(&deps_dir) {
+        Some(p) => p,
+        None => {
+            eprintln!("could not find mirror-*.ll under {}", deps_dir.display());
+            return 1;
+        }
+    };
+    eprintln!("    found: {}", ll_path.display());
+
+    let dest = PathBuf::from("bootstrap/mirror.ll");
+    if let Err(e) = fs::copy(&ll_path, &dest) {
+        eprintln!("copy {} -> {} failed: {}", ll_path.display(), dest.display(), e);
+        return 1;
+    }
+    eprintln!("    copied to {}", dest.display());
+
+    eprintln!("3/3 clang -O2 -o ./mirror-self -x ir bootstrap/mirror.ll -lm");
+    let status = Command::new("clang")
+        .args([
+            "-O2",
+            "-o",
+            "./mirror-self",
+            "-x",
+            "ir",
+            "bootstrap/mirror.ll",
+            "-lm",
+        ])
+        .status();
+    match status {
+        Ok(s) if s.success() => {}
+        Ok(s) => {
+            eprintln!("clang failed: exit {}", s);
+            return 1;
+        }
+        Err(e) => {
+            eprintln!("clang spawn error: {}", e);
+            return 1;
+        }
+    }
+
+    eprintln!("== ./mirror-self ==");
+    0
+}
+
+/// Pick the freshest `mirror-<HASH>.ll` under `deps_dir`, skipping test-binary
+/// IR. The Cargo deps directory contains:
+///   mirror-<hash>.ll          ← the bin we want (one dash after "mirror")
+///   oid_smoke-<hash>.ll       ← integration test binary (different stem)
+/// Older rustc versions could also emit `mirror-<hash>.<n>.ll` siblings; we
+/// pick whichever has the most recent mtime so the IR matches the binary that
+/// was just linked at `${CARGO_TARGET_DIR}/release/mirror`.
+fn find_bootstrap_ll(deps_dir: &std::path::Path) -> Option<PathBuf> {
+    let entries = fs::read_dir(deps_dir).ok()?;
+    let mut best: Option<(std::time::SystemTime, PathBuf)> = None;
+    for entry in entries.flatten() {
+        let name = entry.file_name();
+        let name = name.to_string_lossy().into_owned();
+        if !name.starts_with("mirror-") || !name.ends_with(".ll") {
+            continue;
+        }
+        let path = entry.path();
+        let mtime = match entry.metadata().and_then(|m| m.modified()) {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+        let take = match &best {
+            None => true,
+            Some((t, _)) => mtime > *t,
+        };
+        if take {
+            best = Some((mtime, path));
+        }
+    }
+    best.map(|(_, p)| p)
 }
 
 #[allow(dead_code)]
@@ -266,15 +422,55 @@ fn main() {
 
     // Path C: legacy subcommand
     let mut no_cache = false;
-    for a in &args[2..] {
+    let mut target_kind = TargetKind::Crystal;
+    let mut i = 2;
+    while i < args.len() {
+        let a = &args[i];
         if a == "--no-cache" {
             no_cache = true;
+        } else if a == "--target" {
+            if i + 1 >= args.len() {
+                eprintln!("--target requires a value (crystal|binary|rust|gleam)");
+                std::process::exit(1);
+            }
+            match parse_target(&args[i + 1]) {
+                Some(k) => target_kind = k,
+                None => {
+                    eprintln!("unknown --target value: {}", args[i + 1]);
+                    std::process::exit(1);
+                }
+            }
+            i += 1;
+        } else if let Some(rest) = a.strip_prefix("--target=") {
+            match parse_target(rest) {
+                Some(k) => target_kind = k,
+                None => {
+                    eprintln!("unknown --target value: {}", rest);
+                    std::process::exit(1);
+                }
+            }
         }
+        i += 1;
     }
-    let positional: Option<&str> = args[2..]
-        .iter()
-        .find(|a| !a.starts_with("--"))
-        .map(|s| s.as_str());
+    // Find the positional argument, skipping `--flag value` pairs.
+    let positional: Option<&str> = {
+        let mut j = 2;
+        let mut found: Option<&str> = None;
+        while j < args.len() {
+            let a = &args[j];
+            if a == "--target" {
+                j += 2;
+                continue;
+            }
+            if a.starts_with("--") {
+                j += 1;
+                continue;
+            }
+            found = Some(a.as_str());
+            break;
+        }
+        found
+    };
 
     let rc = match args[1].as_str() {
         "compile" => match positional {
@@ -285,9 +481,9 @@ fn main() {
             }
         },
         "craft" => match positional {
-            Some(p) => cmd_craft(p, no_cache),
+            Some(p) => cmd_craft_with(p, no_cache, target_kind),
             None => {
-                eprintln!("usage: mirror craft <target>");
+                eprintln!("usage: mirror craft [--target <crystal|binary>] <target>");
                 1
             }
         },

@@ -19,6 +19,9 @@ erl_crash.dump
 mirror.weights
 mirror.shatter
 
+# Self-hosted bootstrap binary (output of `mirror craft --target binary boot`)
+mirror-self
+
 # Nix / direnv
 .direnv/
 
