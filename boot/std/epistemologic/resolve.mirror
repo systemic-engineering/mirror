@@ -1,0 +1,58 @@
+in @prism
+in @epistemologic
+in @epistemologic/property
+in @error
+
+# @epistemologic/resolve: imports are properties, not file paths.
+#
+# the / in @epistemologic/math/hodge is a property inheritance chain.
+# each level inherits all properties from levels above.
+# in @X means: I require the properties that @X declares.
+#
+# the property graph IS the dependency graph IS the compilation order.
+# boot file numbers become irrelevant. the DAG is the order.
+#
+# @epistemologic.literal does the verification:
+# does the grammar provide what the / chain promises?
+# resolution IS verification IS the same operation.
+
+grammar @epistemologic/resolve {
+
+  # resolve imports by property inheritance.
+  # takes a grammar and its in declarations.
+  # returns the grammar with all imports resolved through the property DAG.
+  # the / chain determines inheritance. literal verifies each link.
+  resolve(grammar, [in]) -> imperfect {
+    chain(in) |> verify_literal |> topological_sort
+  }
+
+  # extract the property chain from a / path.
+  # @epistemologic/math/hodge -> [@prism, @epistemologic, @epistemologic/math, @epistemologic/math/hodge]
+  # the chain is the inheritance path. each level is a parent.
+  # the root @prism is always implicit.
+  chain(ref) -> [ref] { \ }
+
+  # verify each level in the chain satisfies literal.
+  # literal: the thing IS what it says. the import IS what it provides.
+  # if any level fails literal, the import is invalid.
+  # returns verdict per level. partial verdicts propagate.
+  verify_literal(ref) -> verdict { \ }
+
+  # compute compilation order from the property DAG.
+  # the DAG emerges from / chains across all grammars.
+  # topological sort = no grammar compiles before its imports.
+  # cycles are a property violation (not a special case).
+  topological_sort([grammar]) -> [grammar] { \ }
+
+  # check whether a ref is a parent of another ref in the / chain.
+  # @epistemologic is parent of @epistemologic/math.
+  # @epistemologic/math is parent of @epistemologic/math/hodge.
+  # parentage is transitive through the chain.
+  is_parent(ref, ref) -> verdict { \ }
+}
+
+out resolve
+out chain
+out verify_literal
+out topological_sort
+out is_parent

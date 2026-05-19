@@ -3,6 +3,7 @@ in @prism/rust
 in @prism/compose
 in @epistemologic
 in @epistemologic/property
+in @epistemologic/resolve
 in @fate/connectome
 in @ai/fate
 in @ai/abyss
