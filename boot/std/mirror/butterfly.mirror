@@ -1,0 +1,43 @@
+in @prism
+in @code/llvm
+in @io
+
+# @mirror/butterfly: the metamorphosis.
+#
+# AST -> LLVM IR -> object -> binary.
+# the final emission step. the chrysalis dissolves. the butterfly flies.
+#
+# invoked through the mq pipeline:
+#   cat mirror.ll | mirror '@code/llvm/ir |> @mirror/kintsugi |> @mirror/butterfly'
+#
+# emit:     AST -> LLVM IR text (reverse of @code/llvm/ir tokenization)
+# assemble: LLVM IR text -> object bytes (via llc)
+# link:     object bytes -> binary (via ld)
+# butterfly: the whole pipeline.
+
+grammar @mirror/butterfly {
+  # AST -> LLVM IR text.
+  # the Fate resolution renders the AST back as LLVM IR
+  # using @code/llvm/ir's reverse mapping. kintsugi has already
+  # settled the AST; this projects it back to IR text.
+  emit(ast) -> text { \ }
+
+  # LLVM IR text -> object bytes.
+  # llc compiles IR to a native object file.
+  assemble(text) -> bytes { @io.exec("llc", ["-filetype=obj", "-o", "-", "-"]) }
+
+  # object bytes -> linked binary.
+  # ld links the object against libc + libm and produces an executable.
+  link(bytes) -> binary { @io.exec("clang", ["-o", "mirror-butterfly", "-x", "ir", "-", "-lm"]) }
+
+  # the whole metamorphosis: AST -> binary.
+  # the three stages composed through |>.
+  butterfly(ast) -> binary {
+    emit |> assemble |> link
+  }
+}
+
+out emit
+out assemble
+out link
+out butterfly

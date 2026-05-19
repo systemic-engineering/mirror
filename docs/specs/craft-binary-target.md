@@ -1,0 +1,206 @@
+# craft --target binary
+
+*2026-05-19. Reed. The binary production pipeline as grammar.*
+
+---
+
+## The Pipeline
+
+```
+mirror craft --target binary [--store git|nix]
+```
+
+Eight stages. Each stage IS a grammar action. The convergence loop (`@craft`)
+wraps the emission stages — emission only fires after `e^(n+1) = e^(n)`.
+
+```
+1. collect    — walk the `in` graph, load all reachable grammars
+2. resolve    — chain inheritance, build property DAG, content-address each node
+3. evaluate   — tokenize each grammar (cached as crystal if unchanged)
+4. emit       — @code/llvm/emit produces LLVM IR per grammar
+5. concat     — link IR modules into one translation unit
+6. assemble   — @io.exec("llc") → object code (.o)
+7. link       — @io.exec("ld") → executable
+8. store      — write to backend (git crystal default, nix store optional)
+```
+
+The Prism mapping:
+
+| Stage | Operation | Why |
+|---|---|---|
+| collect | focus | look at the `in` graph |
+| resolve | split | enumerate the DAG bottom-up |
+| evaluate | refract | settle each grammar to a crystal |
+| emit | zoom | cross levels: AST → LLVM IR |
+| concat | project | filter and combine IR |
+| assemble | zoom | cross levels: IR → object code |
+| link | refract | settle the artifact |
+| store | refract | persist the gold |
+
+Five operations cover the eight stages. No new verbs.
+
+---
+
+## The Output
+
+The output of `craft --target binary` is a content-addressed crystal. Where the
+crystal lives depends on the store backend.
+
+| Store | Path | Mechanism |
+|---|---|---|
+| **git** (default) | `refs/crystals/<oid>` | `git hash-object -w` + `git update-ref` |
+| **nix** | `/nix/store/<oid>-mirror` | `nix store add` |
+| **spectral-db** | the graph IS the store | `refract(crystal)` |
+
+The binary IS a git blob (default) or a nix store path. The OID IS the version.
+There is no separate "release tag" — the OID is the release.
+
+### Crystal OID
+
+The OID is `SHA-256(LLVM IR text)`. The IR is deterministic — same grammar
+graph, same IR, same OID, always. The binary's OID is computed from the IR,
+not from the assembled output, so the OID survives different `llc` versions
+producing functionally equivalent code.
+
+### Verification
+
+```
+mirror compile <binary> --target binary
+```
+
+If the binary is a crystal, compiling it again produces the same OID. This is
+the self-hosting check — the binary that compiled itself produces itself.
+
+---
+
+## The Bootstrap Question
+
+The C bootstrap seed at `~/.local/bin/mirror` cannot yet emit LLVM IR from
+arbitrary grammars. It has the tokenizer, the AST walker, the kernel, and the
+hash. It does not have the LLVM emission backend in pure mirror.
+
+Resolution path:
+
+1. **Seed**: `@code/llvm/emit` already declares the emission actions
+   (`emit_jacobi`, `emit_sha256`, `emit_sha1`, `emit_syscalls`,
+   `emit_tokenizer`, `emit_binary`). The holes are seeded by reading
+   `/tmp/mirror.ll` — the bootstrap binary's own LLVM IR — and projecting the
+   relevant functions.
+
+2. **Bootstrap run**: `@code/llvm/emit.emit_binary(spec)` returns the IR text.
+   The IR text is the bootstrap binary's own IR plus any grammar-level
+   additions resolved through the convergence loop.
+
+3. **Assemble**: `@io.exec("llc", ["-O2", "-filetype=obj", "-o", obj, ll])`
+   produces the object file.
+
+4. **Link**: `@io.exec("ld", ["-o", bin, obj, "-lc"])` produces the
+   executable. The only external library is `libc` (see
+   `minimum-binary-surface.md` — 24 external symbols, all libc).
+
+5. **Store**: `@mirror/store.store(binary)` writes the OID to the chosen
+   backend. Default is git (`refs/crystals/<oid>`).
+
+6. **Verify**: re-run the new binary against the same `mirror.spec`. The OID
+   must match the bootstrap's emitted OID. Equal OIDs prove self-hosting.
+
+### The Bootstrap Holes
+
+`@code/llvm/emit` currently seeds emission by reading `/tmp/mirror.ll` and
+projecting functions by name. This is honest — the hole is named, the seed is
+named, the convergence happens through Fate when the seed shifts.
+
+```mirror
+emit_binary(spec) -> text {
+  @io.read("/tmp/mirror.ll") |> project(functions: ["main", "cmd_run", ...])
+}
+```
+
+When `@code/llvm/emit` becomes self-resolving — when the grammar emits LLVM IR
+from AST nodes directly without reading a file — the `\` holes close. Until
+then, the seed file IS the gold in the crack. Kintsugi has written it.
+
+---
+
+## The Hosted Binary IS the Bootstrap
+
+After successful self-host:
+
+```
+bin/mirror              = ~/.local/bin/mirror
+~/.local/bin/mirror     = the crystal OID
+crystal OID             = refs/crystals/<oid> (or /nix/store/<oid>-mirror)
+```
+
+The C source is dead. Only LLVM IR + grammar remain. The IR is regenerable
+from the grammar. The grammar is content-addressed. The OID is the version.
+
+```
+nothing to build but the grammar
+nothing to ship but the OID
+nothing to verify but the loss
+```
+
+When `craft --target binary` produces a binary whose OID matches the bootstrap,
+the bootstrap is no longer special. It is one crystal among many. The new
+crystal is also a bootstrap. The system has reproduced itself.
+
+`eⁿ⁺¹ < eⁿ`. The binary at λ₀.
+
+---
+
+## Composition with the Convergence Loop
+
+`craft` IS the convergence loop. `--target binary` is one shape the converged
+crystal can take. The loop runs first:
+
+```
+craft(spec)
+  |\> @cogito.reflect
+  |\> @fate/tournament.tournament
+  |\> @mirror/compile.compile
+  |\> repeat_until(settled)
+  |\> emit(target)        ← binary, rust, gleam, or none (--reflect)
+  |\> assemble
+  |\> link
+  |\> store
+```
+
+If `--reflect` is set, emission is suppressed and the verdict alone is
+returned. If `--target binary` is set, the emission pipeline fires after
+settlement. If `--store nix` is set, the final crystal is written to the nix
+store instead of git.
+
+The convergence loop does not care which store. The store does not care which
+target. The target does not care which loop. Each layer's only contract is its
+own grammar's `out` list. The composition is the architecture.
+
+---
+
+## CI/CD Integration
+
+`@mirror/liquid/ci` is the convergence loop scheduled per commit. CI's
+`verdict(commit)` IS `craft --reflect` on the commit's working tree.
+
+`@mirror/liquid/cd` runs `craft --target binary` when CI's `gate(commit)`
+passes, then calls `@mirror/store.store(crystal)` to deploy. The deployed
+artifact IS the binary crystal at the store's path.
+
+```
+ci  = craft --reflect over commits
+cd  = craft --target binary + store.store(crystal) when gate passes
+```
+
+CI and CD are not new pipelines. They are `craft` scheduled and gated.
+
+---
+
+## Constraints
+
+- No subprocess except via `@io.exec`. The kernel surface is fixed
+  (`read`, `write`, `open`, `close`, `execve`, `pipe`, `waitpid`, `exit`).
+- No filesystem cache outside the store backend. Git IS the store. Nix IS the
+  store. The spectral-db IS the store. Pick one.
+- No conditional logic outside the grammar. The pipeline is declarative. The
+  `\` holes are honest; Fate resolves them through the convergence loop.
+- The OID is the version. There is no version string.

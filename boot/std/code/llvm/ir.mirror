@@ -3,90 +3,78 @@ in @code/llvm
 
 -- @code/llvm/ir: LLVM IR syntax mapped to the five operations.
 --
--- Maps LLVM IR constructs to the five operations:
---   define   -> zoom    (function definition — transform, cross levels)
---   type     -> split   (type definition — one of many, structural variants)
---   module   -> focus   (module-level metadata — source_filename, target, datalayout)
---   declare  -> project (external declaration — extract a view, import boundary)
---   global   -> project (@name = ... global/constant — named projection into memory)
---   call     -> zoom    (function call — transform within a body, cross levels)
---   br       -> split   (branch — control flow fork, one of many paths)
---   ret      -> refract (return — settle, produce result, done)
+-- Top-level structural tokenization. Function bodies are preserved
+-- verbatim (opaque to kintsugi). The kintsugi reductions operate
+-- at the module level: reorder, deduplicate, eliminate.
 --
--- The grammar detection gap: the bootstrap seed's grammar_for_file()
--- does not map the .ll extension. LLVM IR files currently tokenize
--- through the default grammar (which catches 'type' only).
--- This grammar is the correct mapping. Extension routing is a
--- bootstrap constraint, not a grammar constraint.
+-- Maps LLVM IR top-level constructs to the five operations:
+--   define          -> zoom    (function definition — transform, cross levels)
+--   declare         -> project (external declaration — extract a view)
+--   type            -> split   (%name = type { ... } — structural variant)
+--   global          -> project (@name = ... — synthetic, sigil-driven)
+--   metadata        -> split   (!name = !{...} — synthetic, sigil-driven)
+--   target          -> focus   (target datalayout, target triple)
+--   source_filename -> focus   (source provenance)
+--   module          -> focus   (module asm and other module-level forms)
+--   attributes      -> split   (attributes #N = { ... } groups)
+--
+-- The C tokenizer recognises three sigil prefixes at line start:
+--   @<id> = ...     -> project (mapped to the `global` keyword)
+--   %<id> = type    -> split   (mapped to the `type` keyword)
+--   !<id> = ...     -> split   (mapped to the `metadata` keyword)
+--
+-- Lines starting with `;` are LLVM IR comments and are skipped.
 
 grammar @code/llvm/ir("ll") {
   in @code/llvm
 
-  -- ── Module level ─────────────────────────────────────────────────
-  --
-  -- Module metadata is a lens on the compilation context.
-  -- source_filename, target datalayout, target triple.
-  -- Focus narrows: look closer at where this IR came from.
+  -- ── Module-level metadata (focus: look closer at provenance) ─────
 
+  focus target
+  focus source_filename
   focus module
 
-  -- ── Type definitions ──────────────────────────────────────────────
+  -- ── Type definitions (split: structural variants) ────────────────
   --
-  -- %struct.foo = type { ... }
-  -- Type definitions enumerate structural variants.
-  -- Split: one of many possible shapes in the type universe.
+  -- %struct.foo = type { i32, ptr, [16 x i8] }
+  -- Recognised via the % sigil at line start.
 
   split type
 
-  -- ── External declarations ─────────────────────────────────────────
+  -- ── External declarations (project: import boundary) ─────────────
   --
   -- declare noundef i32 @printf(ptr, ...) local_unnamed_addr
-  -- Declarations project an external interface into local scope.
-  -- The function exists elsewhere; this is the view from here.
 
   project declare
 
-  -- ── Global constants and variables ───────────────────────────────
+  -- ── Function definitions (zoom: cross levels) ────────────────────
   --
-  -- @.str = private unnamed_addr constant [4 x i8] c"run\00", align 1
-  -- @__stderrp = external local_unnamed_addr global ptr, align 8
-  -- Globals project named memory locations into the module's scope.
-
-  project global
-
-  -- ── Function definitions ──────────────────────────────────────────
-  --
-  -- define dso_local void @main(i32 %0, ptr %1) { ... }
-  -- A function definition crosses levels: source intent → machine ops.
-  -- Zoom: transform at scale.
+  -- define dso_local void @main(i32 %0, ptr %1) { ... body ... }
+  -- The body between { } is preserved verbatim.
 
   zoom define
 
-  -- ── Function calls ────────────────────────────────────────────────
+  -- ── Globals and constants (project: named memory) ────────────────
   --
-  -- %42 = call i32 @strcmp(ptr %40, ptr %41)
-  -- A call site invokes a transformation within a function body.
-  -- Zoom: the same crossing, recursively applied.
+  -- @.str = private unnamed_addr constant [4 x i8] c"run\00", align 1
+  -- @__stderrp = external local_unnamed_addr global ptr, align 8
+  -- Recognised via the @ sigil at line start.
 
-  zoom call
+  project global
 
-  -- ── Branches ─────────────────────────────────────────────────────
+  -- ── Attribute groups (split: enumerated groups) ──────────────────
   --
-  -- br i1 %cond, label %bb.true, label %bb.false
-  -- br label %bb.next
-  -- Branches fork control flow into one of many paths.
-  -- Split: the structural fork, the choice point.
+  -- attributes #0 = { nounwind ssp uwtable(sync) ... }
 
-  split br
+  split attributes
 
-  -- ── Returns ───────────────────────────────────────────────────────
+  -- ── Module metadata (split: named metadata records) ──────────────
   --
-  -- ret i32 0
-  -- ret void
-  -- A return settles the function: result produced, frame closed.
-  -- Refract: done. crystal.
+  -- !llvm.module.flags = !{!0, !1, !2}
+  -- !0 = !{i32 2, !"SDK Version", [2 x i32] [i32 14, i32 4]}
+  -- Recognised via the ! sigil at line start.
 
-  refract ret
+  split metadata
 }
 
 out @code/llvm/ir
