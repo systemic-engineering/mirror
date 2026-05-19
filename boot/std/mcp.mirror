@@ -18,8 +18,13 @@ grammar @mcp {
 
   # tool listing
   tools -> json { \ }
+
+  # fate: resolve a \ hole, store at refs/fate/<hole_oid>
+  # Reflection's perturbation surface — any agent with MCP can seed the eigenboard
+  fate(hole_oid: text, resolution: text) -> imperfect { \ }
 }
 
 out serve
 out dispatch
 out tools
+out fate

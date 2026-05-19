@@ -25,12 +25,14 @@ while IFS= read -r line; do
       # no response needed
       ;;
     "tools/list")
-      echo '{"jsonrpc":"2.0","id":'"$id"',"result":{"tools":[{"name":"mirror_compile","description":"Compile a .mirror file through grammar lens. Returns SHA-256 hash on success.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_run","description":"Execute a .mirror grammar with Fate resolution.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_craft","description":"Compile all files for a target (boot or cargo).","inputSchema":{"type":"object","properties":{"target":{"type":"string","description":"Build target: boot or cargo"}},"required":["target"]}},{"name":"mirror_kintsugi","description":"Print canonical form of a .mirror file. Golden joins visible.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}}]}}'
+      echo '{"jsonrpc":"2.0","id":'"$id"',"result":{"tools":[{"name":"mirror_compile","description":"Compile a .mirror file through grammar lens. Returns SHA-256 hash on success.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_run","description":"Execute a .mirror grammar with Fate resolution.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_craft","description":"Compile all files for a target (boot or cargo).","inputSchema":{"type":"object","properties":{"target":{"type":"string","description":"Build target: boot or cargo"}},"required":["target"]}},{"name":"mirror_kintsugi","description":"Print canonical form of a .mirror file. Golden joins visible.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_fate","description":"Invoke Fate to resolve a \\ hole. Stores resolution at refs/fate/<hole_oid>. Reflection'"'"'s perturbation surface.","inputSchema":{"type":"object","properties":{"hole_oid":{"type":"string","description":"The OID of the \\ hole (from mirror_run output)"},"resolution":{"type":"string","description":"The resolution to store (e.g. '"'"'focus(a) |> split |> refract'"'"')"}},"required":["hole_oid","resolution"]}}]}}'
       ;;
     "tools/call")
       tool=$(echo "$line" | grep -o '"name":"[^"]*"' | head -1 | cut -d'"' -f4 || true)
       file=$(echo "$line" | grep -o '"file":"[^"]*"' | cut -d'"' -f4 || true)
       target=$(echo "$line" | grep -o '"target":"[^"]*"' | cut -d'"' -f4 || true)
+      hole_oid=$(echo "$line" | grep -o '"hole_oid":"[^"]*"' | cut -d'"' -f4 || true)
+      resolution=$(echo "$line" | grep -o '"resolution":"[^"]*"' | cut -d'"' -f4 || true)
 
       case "$tool" in
         "mirror_compile")
@@ -44,6 +46,9 @@ while IFS= read -r line; do
           ;;
         "mirror_kintsugi")
           result=$("$MIRROR" kintsugi "$file" 2>&1) || true
+          ;;
+        "mirror_fate")
+          result=$("$MIRROR" run --fate-store "$hole_oid" "$resolution" 2>&1) || true
           ;;
         *)
           result="unknown tool: $tool"
