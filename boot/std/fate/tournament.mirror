@@ -1,0 +1,51 @@
+in @prism
+in @ai/fate
+in @ai/abyss
+in @ai/introject
+in @ai/cartographer
+in @ai/explorer
+
+# @fate/tournament: the tournament as grammar. named lenses that compose.
+# elite(1).beam(8).halving(3). the rules ARE lenses. they compose with dot.
+# holonomy is the fitness function. lower is better.
+#
+# five ganglia as candidates for each hole.
+# the tournament selects which resolution survives.
+
+grammar @fate/tournament {
+  # tournament rules -- named lenses that compose with .
+  # greedy: pick lowest holonomy. period.
+  # beam(k): sample k candidates per round. the primary dial.
+  # elite(k): unconditionally preserve the k best across rounds.
+  # halving(eta): successive halving. start many, keep top 1/eta.
+  # tabu(tenure): remember last tenure types. don't repeat.
+  # anneal(T): accept worse solutions with probability exp(-delta/T).
+  # ucb(c): upper confidence bound. explore under-tried types.
+  type rule = greedy | beam(u64) | elite(u64) | halving(u64)
+            | tabu(u64) | anneal(f64) | ucb(f64)
+
+  # run a tournament with given rules on a set of holes.
+  # rules compose: elite(1).beam(8).halving(3).
+  # each hole gets candidates from the five ganglia.
+  # the tournament selects which resolution survives.
+  tournament(rules, [hole]) -> [resolution] { \ }
+
+  # the five ganglia as candidates for each hole.
+  # each ganglion proposes a resolution. the tournament picks.
+  candidates(hole) -> [resolution] {
+    @ai/abyss.depth(hole)
+    @ai/introject.pattern(hole)
+    @ai/cartographer.map(hole)
+    @ai/explorer.explore(hole)
+    @ai/fate.select(hole)
+  }
+
+  # compose tournament rules. left-to-right: outer wraps inner.
+  # elite(1).beam(8) = keep best, sample 8.
+  compose(rule, rule) -> rule { \ }
+}
+
+out rule
+out tournament
+out candidates
+out compose

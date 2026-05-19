@@ -1,9 +1,35 @@
 in @prism
+in @cogito
+in @fate/tournament
+in @mirror/execute
+in @mirror/runtime
 
-grammar @craft {
-  craft(target) -> crystal {
-    focus(target) |> split |> zoom |> refract |> project
+# @mirror/craft: the convergence loop.
+# compile + reflect + tournament + compile + ... + lambda_0.
+# craft IS the loop. not a step. the whole thing.
+#
+# each tick: compile (report holes + loss),
+#            reflect (observe holes, pick strategy, perturb eigenboard),
+#            tournament (five ganglia compete, resolutions survive),
+#            compile again (fewer holes, lower loss).
+# repeat until settled. settled = loss stopped decreasing.
+# e^(n+1) = e^(n). lambda_0. crystal.
+
+grammar @mirror/craft {
+  # craft IS the convergence loop.
+  # compile + reflect + tournament + compile + ... + lambda_0.
+  craft(spec) -> crystal {
+    compile(spec)
+      |\> @cogito.reflect
+      |\> @fate/tournament.tournament
+      |\> compile
+      |\> repeat_until(settled)
   }
+
+  # settled = e^(n+1) = e^(n). loss stopped decreasing.
+  # two consecutive imperfects with equal loss = convergence.
+  settled(imperfect, imperfect) -> bool { \ }
 }
 
 out craft
+out settled

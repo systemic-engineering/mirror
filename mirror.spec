@@ -16,6 +16,8 @@ in @kintsugi/translate
 in @kintsugi/migrate
 in @kintsugi/lift
 in @craft
+in @cogito
+in @fate/tournament
 in @code/rust
 in @code/llvm
 in @code/llvm/emit
