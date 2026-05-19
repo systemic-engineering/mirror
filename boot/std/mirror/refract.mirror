@@ -1,7 +1,10 @@
 in @prism
 in @epistemologic
 in @epistemologic/property
+in @epistemologic/resolve
 in @io
+in @separator
+in @mirror/project
 
 grammar @mirror/refract {
   # measure the topology. settle. the spectrum.
@@ -18,9 +21,31 @@ grammar @mirror/refract {
 
   # measure with an mq query
   query(path, mq) -> verdict { \ }
+
+  # infer .spec from project topology.
+  # scans source, detects language, measures eigenvalues,
+  # matches property thresholds, writes mirror.spec
+  # with inferred properties below ---.
+  infer_spec(path) -> imperfect { \ }
+
+  # match measured topology against @epistemologic/* property thresholds.
+  # each property declares its threshold. when the measurement exceeds
+  # the threshold, the property is imported below ---.
+  # returns refs to the matching @epistemologic/* grammars.
+  match_properties(topology) -> [ref] { \ }
+
+  # the full refract: measure + infer + project.
+  # measure the topology. match against properties.
+  # infer the spec. project below ---.
+  refract(path) -> imperfect {
+    measure(path) |> match_properties |> infer_spec |> @mirror/project.project
+  }
 }
 
 out measure
 out suite
 out lens
 out query
+out infer_spec
+out match_properties
+out refract
