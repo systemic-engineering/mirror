@@ -1,0 +1,20 @@
+in @prism
+in @mirror/evaluate
+in @imperfect
+
+grammar @mirror/execute {
+  # execute a grammar body. holes produce imperfect.
+  # concrete nodes execute. \ returns imperfect(hole, loss: 1.0).
+  # |> composes results, propagating imperfect.
+  execute(ast) -> imperfect { \ }
+
+  # execute a pipeline. each step may be imperfect.
+  pipe(ast, [step]) -> imperfect { \ }
+
+  # measure execution loss: holes / total_nodes
+  execution_loss(imperfect) -> loss { \ }
+}
+
+out execute
+out pipe
+out execution_loss
