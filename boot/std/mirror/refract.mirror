@@ -3,8 +3,7 @@ in @epistemologic
 in @epistemologic/property
 in @epistemologic/resolve
 in @io
-in @separator
-in @mirror/project
+in @mirror/liquid
 
 grammar @mirror/refract {
   # measure the topology. settle. the spectrum.
@@ -38,7 +37,7 @@ grammar @mirror/refract {
   # measure the topology. match against properties.
   # infer the spec. project below ---.
   refract(path) -> imperfect {
-    measure(path) |> match_properties |> infer_spec |> @mirror/project.project
+    measure(path) |> match_properties |> infer_spec |> @mirror/liquid.project
   }
 }
 

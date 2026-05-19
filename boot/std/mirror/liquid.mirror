@@ -1,0 +1,31 @@
+in @prism
+in @epistemologic
+in @epistemologic/property
+in @epistemologic/resolve
+in @mirror/refract
+in @mirror/execute
+
+grammar @mirror/liquid {
+  # --- is owned by liquid inference.
+  # above: declaration (the programmer's).
+  # below: inferred properties (the compiler's).
+  # the separator appears when the compiler has something to say.
+  type separator
+
+  # infer which @epistemologic properties apply
+  # from the grammar's measured topology
+  infer(ast) -> [ref] { \ }
+
+  # project inferred properties below --- in the source
+  project(file, [ref]) -> imperfect { \ }
+
+  # the full liquid pass: measure -> infer -> project
+  liquid(file) -> imperfect {
+    @mirror/refract.measure |> infer |> project
+  }
+}
+
+out separator
+out infer
+out project
+out liquid

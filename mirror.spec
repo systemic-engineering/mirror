@@ -35,8 +35,7 @@ in @mirror/interpreter
 in @mirror/runtime
 in @mirror/refract
 in @mirror/execute
-in @mirror/project
-in @separator
+in @mirror/liquid
 in @nl
 in @git/hooks
 in @cli
