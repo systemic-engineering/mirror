@@ -1,6 +1,7 @@
 in @prism
 in @io
-in @mirror/runtime
+in @epistemologic/resolve
+in @mirror/evaluate
 in @mirror/store
 in @code/llvm/emit
 in @code/kernel
@@ -11,19 +12,19 @@ grammar @mirror/build {
   # grammars → LLVM IR → object → binary
 
   build(spec, target) -> imperfect {
-    collect(spec) |\> evaluate |\> emit(target) |\> assemble |\> link |\> store
+    collect(spec) |> evaluate |> emit(target) |> assemble |> link |> store
   }
 
-  # gather all .mirror files from the spec's in graph
-  collect(spec) -> [ast] { \ }
+  collect(spec) -> [ast] {
+    @epistemologic/resolve.chain(spec) |> @mirror/evaluate.evaluate
+  }
 
-  # emit LLVM IR for a target architecture
-  emit([ast], target) -> text { \ }
+  emit([ast], target) -> text {
+    @code/llvm/emit.emit_binary(ast, target)
+  }
 
-  # compile IR to object code
   assemble(text) -> bytes { @io.exec("llc", ["-filetype=obj"]) }
 
-  # link objects into a binary
   link(bytes) -> binary { @io.exec("ld", ["-o", "mirror"]) }
 }
 
