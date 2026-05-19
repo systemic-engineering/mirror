@@ -2,6 +2,8 @@ in @prism
 in @epistemologic
 in @ai/fate
 in @mirror/execute
+in @mirror/trace
+in @mirror/refract
 
 # @cogito: second-order observation. looks at holes. decides strategy.
 # runs AFTER a compile tick. BEFORE the tournament.
@@ -11,25 +13,14 @@ in @mirror/execute
 # compile -> reflect -> tournament -> compile -> ... -> lambda_0
 
 grammar @cogito {
-  # observe the current state: which holes, what loss, what patterns.
-  # the imperfect carries everything: unresolved holes, partial pipelines,
-  # loss measurements. observation extracts what matters.
-  observe(imperfect) -> observation { \ }
+  observe(imperfect) -> observation { @mirror/trace.trace }
 
-  # decide tournament composition based on observation.
-  # returns a tournament rule like elite(1).beam(8).halving(3).
-  # the strategy IS a named lens composition from @fate/tournament.
-  strategy(observation) -> tournament { \ }
+  strategy(observation) -> tournament { elite(1).beam(8).halving(3) }
 
-  # perturb the eigenboard for the next tick.
-  # observation says what happened. tournament_result says what worked.
-  # the new eigenboard biases the next compile tick.
-  perturb(observation, tournament_result) -> eigenboard { \ }
+  perturb(observation, tournament_result) -> eigenboard { @mirror/refract.measure }
 
-  # the full reflection: observe -> strategy -> perturb.
-  # one function. three steps. second-order.
   reflect(imperfect) -> imperfect {
-    observe |\> strategy |\> perturb
+    observe |> strategy |> perturb
   }
 }
 
