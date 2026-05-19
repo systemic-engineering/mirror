@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# MCP server for Claude Code — thin wrapper around mirror binary
+# Reads JSON-RPC from stdin, dispatches through mirror commands.
+# When mirror supports `mirror <input> <mq>`, this becomes:
+#   exec ~/.local/bin/mirror /dev/stdin "@mcp.serve"
+set -euo pipefail
+
+MIRROR_HOME="${MIRROR_HOME:-/Users/alexwolf/dev/projects/mirror}"
+cd "$MIRROR_HOME"
+
+MIRROR="${MIRROR_BIN:-$HOME/.local/bin/mirror}"
+
+while IFS= read -r line; do
+  # Skip empty lines
+  [ -z "$line" ] && continue
+
+  method=$(echo "$line" | grep -o '"method":"[^"]*"' | cut -d'"' -f4 || true)
+  id=$(echo "$line" | grep -o '"id":[0-9]*' | cut -d: -f2 || true)
+
+  case "$method" in
+    "initialize")
+      echo '{"jsonrpc":"2.0","id":'"$id"',"result":{"capabilities":{"tools":{"listChanged":false}},"serverInfo":{"name":"mirror","version":"0.1.0"},"protocolVersion":"2024-11-05"}}'
+      ;;
+    "notifications/initialized")
+      # no response needed
+      ;;
+    "tools/list")
+      echo '{"jsonrpc":"2.0","id":'"$id"',"result":{"tools":[{"name":"mirror_compile","description":"Compile a .mirror file through grammar lens. Returns SHA-256 hash on success.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_run","description":"Execute a .mirror grammar with Fate resolution.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_craft","description":"Compile all files for a target (boot or cargo).","inputSchema":{"type":"object","properties":{"target":{"type":"string","description":"Build target: boot or cargo"}},"required":["target"]}},{"name":"mirror_kintsugi","description":"Print canonical form of a .mirror file. Golden joins visible.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}}]}}'
+      ;;
+    "tools/call")
+      tool=$(echo "$line" | grep -o '"name":"[^"]*"' | head -1 | cut -d'"' -f4 || true)
+      file=$(echo "$line" | grep -o '"file":"[^"]*"' | cut -d'"' -f4 || true)
+      target=$(echo "$line" | grep -o '"target":"[^"]*"' | cut -d'"' -f4 || true)
+
+      case "$tool" in
+        "mirror_compile")
+          result=$("$MIRROR" compile "$file" 2>&1) || true
+          ;;
+        "mirror_run")
+          result=$("$MIRROR" run "$file" 2>&1) || true
+          ;;
+        "mirror_craft")
+          result=$("$MIRROR" craft "$target" 2>&1) || true
+          ;;
+        "mirror_kintsugi")
+          result=$("$MIRROR" kintsugi "$file" 2>&1) || true
+          ;;
+        *)
+          result="unknown tool: $tool"
+          ;;
+      esac
+
+      # Escape for JSON
+      result_escaped=$(printf '%s' "$result" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g' | tr '\n' '\r' | sed 's/\r/\\n/g')
+      echo '{"jsonrpc":"2.0","id":'"$id"',"result":{"content":[{"type":"text","text":"'"$result_escaped"'"}]}}'
+      ;;
+  esac
+done

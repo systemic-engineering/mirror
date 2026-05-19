@@ -1,0 +1,38 @@
+in @prism
+in @mcp
+in @code/mq
+in @mirror/execute
+in @mirror/liquid
+in @mirror/refract
+in @mirror/trace
+
+grammar @mirror/lsp {
+  # LSP IS MCP with language-server dispatch
+  # same stdin |> json |> dispatch |> json |> stdout
+  # the dispatch routes LSP methods to mirror operations
+
+  # LSP method dispatch
+  dispatch(request) -> response { \ }
+
+  # textDocument/didOpen -> compile + trace
+  did_open(file) -> imperfect { @mirror/trace.trace(file) }
+
+  # textDocument/didChange -> recompile + liquid
+  did_change(file) -> imperfect { @mirror/liquid.liquid(file) }
+
+  # textDocument/hover -> refract at position
+  hover(file, position) -> response { @mirror/refract.measure(file) }
+
+  # textDocument/diagnostics -> liquid verdicts
+  diagnostics(file) -> [verdict] { @mirror/liquid.infer(file) }
+
+  # textDocument/completion -> suggest from grammar
+  completion(file, position) -> [suggestion] { \ }
+}
+
+out dispatch
+out did_open
+out did_change
+out hover
+out diagnostics
+out completion
