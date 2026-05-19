@@ -141,12 +141,12 @@ then code generation, then verification, then packages.
 `boot/` is the glass. `boot/std/` is the shelf of glasses above it.
 New glass, not new machinery.
 
-Key grammars at execution loss 0.00:
+Key grammars:
 - `@cogito` — the Reflection loop (observe, strategy, perturb, reflect)
-- `@mirror/craft` — the compiler compiles itself
-- `@mirror/build` — collect, evaluate, emit, assemble, link, store
+- `@craft` — the convergence loop: compile + reflect + tournament → λ₀
 - `@kintsugi/shatter` — fracture IS the five operations
 - `@code/llvm/emit` — LLVM IR emission from grammar
+- `@beam` — the observation surface (absorbs trace + benchmark + measurement)
 
 ---
 
