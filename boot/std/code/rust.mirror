@@ -28,6 +28,35 @@ grammar @code/rust("rs") {
   project use
   refract trait
 
+  -- ── Body-lens contract (Spec A Implication 3) ───────────────────────
+  --
+  -- @code/rust is a body lens: it parses bytes into a typed Rust AST
+  -- that selectors can narrow. @mirror/compile/bootstrap drives this
+  -- through `> fn[name="..."]` selectors.
+  --
+  -- The body is \ — the bootstrap implements parsing today; kintsugi
+  -- closes the obligation once @epistemologic/property/total_parse
+  -- discharges totality.
+
+  parse(bytes) -> rust_ast { \ }
+
+  -- ── Rust AST type fragments ─────────────────────────────────────────
+  --
+  -- The selector surface @mirror/compile/bootstrap references. Declared
+  -- here so `> fn[name=$x]` typechecks against a known node kind. All
+  -- bodies / fields stay opaque until the parsing rules land in
+  -- @mirror/compile/parse.
+
+  type rust_ast
+  type fn
+  type impl
+  type type
+  type mod
+  type use
+  type trait
+  type struct
+  type enum
+
   -- Kintsugi reductions for Rust code
   action compile(self) -> artifact
   action test(self) -> result
