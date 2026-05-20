@@ -143,7 +143,7 @@ fn usage() {
     eprintln!("  mirror <command> [args...]            (legacy subcommand surface)");
     eprintln!("  mirror '<mq-query>' < input           (mq pipeline over stdin)");
     eprintln!("  mirror <input> '<mq-query>'           (mq pipeline over input file)");
-    eprintln!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi <file>");
+    eprintln!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi [--shatter N] <file>");
     eprintln!("examples:");
     eprintln!("  cat mirror.ll | mirror '@code/llvm/ir |> @mirror/kintsugi |> @mirror/butterfly'");
 }
@@ -494,7 +494,86 @@ fn cmd_dump(file: &str) -> i32 {
     0
 }
 
-fn cmd_kintsugi(file: &str) -> i32 {
+/// Count Dark AST nodes — the cheapest loss surface for the kintsugi loop.
+///
+/// Per `docs/specs/strict-and-total-classification.md` §"dark_count as loss
+/// surface" and `docs/specs/kintsugi-formatter.md` stage 2 (the conductivity
+/// measurement reduces, in this no-op scaffold, to a count of unresolved
+/// dark regions). Body-equivalent to the grammar action
+/// `@epistemologic/property/total_classification.dark_count` whose `\` body
+/// is the obligation this Rust function discharges today.
+fn count_dark(ast: &AstNode) -> usize {
+    let mut darks: Vec<&AstNode> = Vec::new();
+    collect_dark(ast, &mut darks);
+    darks.len()
+}
+
+/// One tick of the kintsugi formatter loop — the five iteration stages
+/// from `docs/specs/kintsugi-formatter.md`.
+///
+/// Every body is no-op for this scaffold. The structural shape — propose,
+/// measure, elect, verify, fixed-point — is in place so subsequent commits
+/// can replace one stage's `\` at a time without disturbing the loop.
+///
+/// Returns `true` iff the fixed-point check passed (the loop should
+/// terminate). The Banach contraction's Δ is vacuously 0 today because
+/// every stage is the identity, so this always returns `true` on tick 1.
+fn kintsugi_tick(tick: u64, prior_ast: &AstNode, current_ast: &AstNode) -> bool {
+    // Stage 1 — propose. Fate's five models fan out and return au
+    // candidates. No-op scaffold: zero candidates.
+    let candidates: Vec<()> = Vec::new();
+
+    // Stage 2 — measure. Cycle-averaged holonomy (Magnot 2025) of each
+    // candidate. No candidates ⇒ no measurement. The loss surface today
+    // is the dark count of the current AST (read-only).
+    let dark_count = count_dark(current_ast);
+    let loss: f64 = 1.0; // no candidate resolved ⇒ full residue
+
+    // Stage 3 — elect. argmin over κ. No-op scaffold: no proposal.
+    let _winner: Option<()> = if candidates.is_empty() {
+        None
+    } else {
+        candidates.into_iter().next()
+    };
+
+    // Stage 4 — verify. Walk the obligation set and discharge each. With no
+    // candidate there is no obligation to discharge; the verifier trivially
+    // passes.
+    let verify_pass: bool = true;
+
+    // Stage 5 — fixed-point check (Lawvere). One more tick produces the
+    // same section ⇔ the OIDs of prior and current ASTs agree. With no
+    // candidate spliced in, prior == current by construction, so the
+    // fixed point is reached vacuously on tick 1.
+    let prior_oid = content_oid(prior_ast);
+    let current_oid = content_oid(current_ast);
+    let fixed_point = prior_oid == current_oid && verify_pass;
+    let delta: f64 = if fixed_point { 0.0 } else { 1.0 };
+
+    let suffix = if fixed_point {
+        "  \u{2190} Lawvere fixed-point (vacuously)"
+    } else {
+        ""
+    };
+    eprintln!(
+        "tick {}  dark_count: {}  loss: {:.1}  \u{0394}: {:.1}{}",
+        tick, dark_count, loss, delta, suffix
+    );
+
+    fixed_point
+}
+
+/// `mirror kintsugi [--shatter N] <file>`
+///
+/// `N == 0` (default): preserve historical behavior — tokenize, render
+/// canonically to stdout. No tick lines.
+///
+/// `N >= 1`: enter the formatter loop. Each tick walks the five stages
+/// declared in `docs/specs/kintsugi-formatter.md`. Every stage body is
+/// no-op for this commit; the loop terminates on tick 1 because the
+/// Banach contraction's Δ is vacuously zero (nothing changes). The
+/// canonical render still goes to stdout after the loop.
+fn cmd_kintsugi(file: &str, shatter: u64) -> i32 {
     let source = match fs::read(file) {
         Ok(s) => s,
         Err(e) => {
@@ -508,6 +587,21 @@ fn cmd_kintsugi(file: &str) -> i32 {
         Err(_) => return 1,
     };
     let ast = tokenize(&source, &grammar);
+
+    if shatter >= 1 {
+        // The loop. `prior_ast` is the section before this tick's stage 1;
+        // `current_ast` is the section after stage 4's splice. With every
+        // stage no-op, prior == current and stage 5 returns true on tick 1.
+        let mut prior = ast.clone();
+        for i in 1..=shatter {
+            let fixed = kintsugi_tick(i, &prior, &ast);
+            if fixed {
+                break;
+            }
+            prior = ast.clone();
+        }
+    }
+
     let mut out = Vec::new();
     render_ast(&ast, 0, &mut out);
     let _ = io::stdout().write_all(&out);
@@ -564,6 +658,7 @@ fn main() {
     let mut no_cache = false;
     let mut strict = false;
     let mut target_kind = TargetKind::Crystal;
+    let mut shatter: u64 = 0;
     let mut i = 2;
     while i < args.len() {
         let a = &args[i];
@@ -592,6 +687,27 @@ fn main() {
                     std::process::exit(1);
                 }
             }
+        } else if a == "--shatter" {
+            if i + 1 >= args.len() {
+                eprintln!("--shatter requires a non-negative integer");
+                std::process::exit(1);
+            }
+            match args[i + 1].parse::<u64>() {
+                Ok(n) => shatter = n,
+                Err(_) => {
+                    eprintln!("--shatter requires a non-negative integer, got: {}", args[i + 1]);
+                    std::process::exit(1);
+                }
+            }
+            i += 1;
+        } else if let Some(rest) = a.strip_prefix("--shatter=") {
+            match rest.parse::<u64>() {
+                Ok(n) => shatter = n,
+                Err(_) => {
+                    eprintln!("--shatter requires a non-negative integer, got: {}", rest);
+                    std::process::exit(1);
+                }
+            }
         }
         i += 1;
     }
@@ -601,7 +717,7 @@ fn main() {
         let mut found: Option<&str> = None;
         while j < args.len() {
             let a = &args[j];
-            if a == "--target" {
+            if a == "--target" || a == "--shatter" {
                 j += 2;
                 continue;
             }
@@ -631,9 +747,9 @@ fn main() {
             }
         },
         "kintsugi" => match positional {
-            Some(p) => cmd_kintsugi(p),
+            Some(p) => cmd_kintsugi(p, shatter),
             None => {
-                eprintln!("usage: mirror kintsugi <file>");
+                eprintln!("usage: mirror kintsugi [--shatter N] <file>");
                 1
             }
         },
