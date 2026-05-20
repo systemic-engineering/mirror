@@ -1,0 +1,43 @@
+in @prism
+in @epistemologic/property
+in @beam
+
+# @epistemologic/property/total_classification
+#
+# An AST is totally classified iff every byte in its source falls
+# into a recognized AST node — no Dark children, no opaque body
+# bytes the parser couldn't structure.
+#
+# A grammar that compiles without this property is honest about loss:
+# the dark regions are measured, the beam carries them, the gutter
+# renders them. A grammar that compiles WITH this property has been
+# proved fully understood by the parser.
+#
+# The bootstrap walks the AST directly in Rust to enforce --strict
+# (counting Dark children). The grammar body here is \ — the
+# obligation closes when the bootstrap can be queried for dark
+# children structurally rather than via a direct AST walk.
+#
+# Spec: docs/specs/strict-and-total-classification.md
+
+grammar @epistemologic/property/total_classification {
+  # walk the AST. count Dark children. return verdict accordingly.
+  # pass    — zero Dark children in the AST
+  # fail    — one or more Dark children present
+  # partial — reserved for grammars that mix recognized and dark
+  total_classification(ast) -> verdict { \ }
+
+  # the count of dark regions in the AST. zero ⇔ verdict.pass.
+  dark_count(ast) -> u64 { \ }
+
+  # the dark regions themselves, for diagnostics.
+  # each carries the verbatim bytes and a source span (line/col
+  # start + end) so the compiler can point at the unrecognized
+  # construct and name the parser rule that would have closed it.
+  dark_regions(ast) -> [dark_range] { \ }
+}
+
+out total_classification
+out dark_count
+out dark_regions
+out @epistemologic/property/total_classification
