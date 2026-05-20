@@ -19,6 +19,30 @@ pub enum AstKind {
     /// `select |<binder>| { <variant> => <body>, ... }` — Spec B.
     /// Closure-style sum-type dispatch. Slots in next to recover/rescue.
     SelectExpr,
+    /// A span of unrecognized bytes — `total_classification` failure.
+    ///
+    /// The bytes are preserved verbatim in `body` (for round-trip rendering)
+    /// and the source span (line/column start + end) is recorded in
+    /// `dark_span` for diagnostics. `content_oid` hashes these bytes with a
+    /// `"dark"` tag so the silent-absorption mode dies: changes to the dark
+    /// region produce different OIDs.
+    ///
+    /// Per `docs/specs/strict-and-total-classification.md`.
+    Dark,
+}
+
+/// 1-based source position. (0, 0) means "unknown".
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct SrcPos {
+    pub line: u32,
+    pub col: u32,
+}
+
+/// Half-open source span `[start, end)`. (Default = unknown.)
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct DarkSpan {
+    pub start: SrcPos,
+    pub end: SrcPos,
 }
 
 #[derive(Debug, Clone)]
@@ -32,8 +56,14 @@ pub struct AstNode {
     pub keyword: String,
     /// Verbatim body text for opaque nodes (LLVM IR function bodies,
     /// global declarations, attribute groups). None when not used.
+    ///
+    /// For `AstKind::Dark`, this holds the verbatim unrecognized bytes —
+    /// the renderer round-trips them as-is and `content_oid` hashes them
+    /// with a `"dark"` tag so the silent-absorption mode dies.
     pub body: Option<String>,
     pub children: Vec<AstNode>,
+    /// Source span — populated for `AstKind::Dark` for diagnostics.
+    pub dark_span: DarkSpan,
 }
 
 impl AstNode {
@@ -51,7 +81,18 @@ impl AstNode {
             keyword: String::new(),
             body: None,
             children: Vec::new(),
+            dark_span: DarkSpan::default(),
         }
+    }
+
+    /// Construct a Dark child carrying the verbatim unrecognized bytes and
+    /// a source span pointing at the region. The bytes feed `content_oid`
+    /// (under a `"dark"` tag) and the renderer (verbatim round-trip).
+    pub fn dark(bytes: &str, span: DarkSpan) -> Self {
+        let mut node = AstNode::new(AstKind::Dark, "");
+        node.body = Some(bytes.to_string());
+        node.dark_span = span;
+        node
     }
 
     pub fn add_child(&mut self, child: AstNode) {

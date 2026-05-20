@@ -117,6 +117,12 @@ fn render_ast_mirror(node: &AstNode, depth: i32, out: &mut Vec<u8>) {
             }
             out.push(b'\n');
         }
+        AstKind::Dark => {
+            // Verbatim round-trip of unrecognized bytes — source preservation.
+            if let Some(body) = &node.body {
+                out.extend_from_slice(body.as_bytes());
+            }
+        }
     }
 }
 
@@ -229,6 +235,13 @@ fn render_ast_with_grammar(node: &AstNode, depth: i32, g: &Grammar, out: &mut Ve
                 out.extend_from_slice(body.as_bytes());
             }
             out.push(b'\n');
+            return;
+        }
+        AstKind::Dark => {
+            // Verbatim round-trip of unrecognized bytes — source preservation.
+            if let Some(body) = &node.body {
+                out.extend_from_slice(body.as_bytes());
+            }
             return;
         }
         _ => {}

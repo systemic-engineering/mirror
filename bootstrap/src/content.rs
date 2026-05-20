@@ -122,5 +122,17 @@ pub fn content_oid(node: &AstNode) -> String {
             }
             hash_tagged("select_expr", &buf)
         }
+        AstKind::Dark => {
+            // Silent-absorption mode dies: hash the verbatim bytes under a
+            // "dark" tag. Changes to a dark region produce a different OID
+            // rather than silently folding into the parent's body.
+            // Per `docs/specs/strict-and-total-classification.md`.
+            let bytes: &[u8] = node
+                .body
+                .as_deref()
+                .map(str::as_bytes)
+                .unwrap_or(&[]);
+            hash_tagged("dark", bytes)
+        }
     }
 }
