@@ -1,0 +1,163 @@
+in @prism
+in @epistemologic
+in @epistemologic/math/bundle
+
+# @epistemologic/math/lawvere — autopoietic closure as a Lawvere fixed point.
+#
+# The fixed-point theorem (Lawvere 1969, "Diagonal Arguments and Cartesian
+# Closed Categories", Lecture Notes in Mathematics 92, 134-145): if there
+# exists a point-surjective map X → X^X, then X has the fixed-point property
+# — every endomap of X has a fixed point. The diagonal argument re-stated
+# constructively. Russell's paradox, Cantor's theorem, Gödel's incompleteness,
+# Tarski's undefinability, the Y combinator: all instances of one structural
+# move. The grammar names that move.
+#
+# The autopoiesis bridge (Soto-Andrade & Varela 1984, "Self-reference and
+# fixed points: a discussion and an extension of Lawvere's theorem." Acta
+# Applicandae Mathematicae 2:1, 1-19. DOI 10.1007/BF00046985): autopoiesis
+# IS the Lawvere fixed-point condition applied to the self-production map.
+# A system is autopoietic iff its tick → tick map has a Lawvere fixed point.
+# The system reproduces the conditions of its own reproduction. The closure
+# is structural, not behavioral.
+#
+# Why this grammar exists now: the bundle tower's Closure level
+# (@epistemologic/math/bundle, level 4) is currently abstract with a `\`
+# verifier. Mirror's @cogito.reflect loop, @hash/coincidence's dark fallback
+# (λ₀), kintsugi's settlement criterion, and the Refract operation all
+# converge on the same structural object: the self-referential ground state
+# of a self-producing process. This grammar gives that object a verifier.
+#
+# Worked example, untyped lambda calculus: the Y combinator
+#   Y = λf. (λx. f (x x)) (λx. f (x x))
+# has the property Y f = f (Y f) for every f. Y is the Lawvere fixed-point
+# operator for the term algebra: every endomap f on the (untyped) term set
+# has a fixed point Y f. The diagonal step IS the self-application (x x).
+#
+# Worked example, mirror's compiler: `mirror compile` reads a grammar,
+# emits a crystal. `mirror compile` IS a grammar. Therefore there is a
+# crystal of `mirror compile`. The fixed point of the compile-the-compiler
+# loop IS the bootstrap crystal mirror is compiling toward. The loop
+# terminates iff a Lawvere fixed point exists; mirror's self-hosting is
+# the constructive proof that one does.
+#
+# Worked example, the @cogito tick: observe |> strategy |> perturb returns
+# a new eigenboard. Applying the tick to the new eigenboard returns another.
+# The loop terminates when the section reaches a fixed point of this map
+# — when one more tick produces the section that went in. That is the
+# Lawvere fixed point of the kintsugi reduction. Autopoiesis at the level
+# of the compiler: the system reproduces the conditions of its own
+# reproduction by closing its own holes.
+#
+# References:
+#   Lawvere, F. W. (1969). "Diagonal arguments and Cartesian closed
+#     categories." Lecture Notes in Mathematics 92, 134-145.
+#   Soto-Andrade, J. & Varela, F. (1984). "Self-reference and fixed
+#     points: a discussion and an extension of Lawvere's theorem."
+#     Acta Applicandae Mathematicae 2:1, 1-19.
+#     DOI 10.1007/BF00046985.
+#   Maturana, H. & Varela, F. (1980). Autopoiesis and Cognition: The
+#     Realization of the Living. D. Reidel.
+#   Yanofsky, N. (2003). "A Universal Approach to Self-Referential
+#     Paradoxes, Incompleteness and Fixed Points." Bull. Symbolic Logic
+#     9(3), 362-386. arXiv:math/0305282.
+#   Survey: "A Survey on Lawvere's Fixed-Point Theorem." arXiv:2503.13536.
+#
+# Spec: docs/specs/lawvere-grammar.md
+
+grammar @epistemologic/math/lawvere {
+
+  # the carriers ------------------------------------------------------
+  # the grammar reasons about Lawvere structure without caring what the
+  # carriers concretely are. mirror's eigenboard, the BEAM runtime, and
+  # the Fate chip each instantiate the same shape with different state.
+
+  type point            # a position in the space the endomap acts on.
+                        # for the eigenboard: a section of the bundle.
+                        # for an autopoietic system: a tick-state.
+                        # for untyped lambda: a term.
+
+  type endomap          # a structure-preserving self-map X → X.
+                        # for the eigenboard: the kintsugi tick.
+                        # for an autopoietic system: the self-production map.
+                        # for untyped lambda: a function term.
+
+  type fixed_point      # a point x such that endomap(x) = x.
+                        # the generative zero, not absence zero.
+                        # at the closure level of the bundle tower.
+                        # the section that returns identity under the
+                        # connection-induced action.
+
+  type closure          # the autopoietic stable state.
+                        # a grammar's Closure trait realizes this type.
+                        # the system reproduces the conditions of its own
+                        # reproduction. the structural ground.
+
+  type self_reference   # the diagonal argument's structural object
+                        # (Lawvere 1969). a function from X to X^X that
+                        # exhibits the fixed-point property: if it is
+                        # point-surjective, every endomap of X has a
+                        # fixed point. Y combinator is the canonical
+                        # instance for untyped lambda.
+
+  # actions -----------------------------------------------------------
+
+  # is_fixed_point: does x satisfy endomap(x) = x under the bundle's
+  # connection-induced action? sub-Turing decidable for finite x and
+  # finite endomap; for the eigenboard's 5-node bundle, the check is
+  # one section comparison.
+  abstract action is_fixed_point(x: point, f: endomap) -> verdict
+
+  # is_autopoietic: does this grammar's tick → tick map have a Lawvere
+  # fixed point? per Soto-Andrade & Varela 1984: a system is autopoietic
+  # iff the self-production map has a Lawvere fixed point. the verdict
+  # is the autopoietic closure verdict.
+  abstract action is_autopoietic(grammar) -> verdict
+
+  # diagonalize: construct the diagonal argument object (Lawvere 1969)
+  # for a given endomap. the constructive heart of the theorem.
+  # for the term algebra, this is Y f.
+  abstract action diagonalize(f: endomap) -> self_reference
+
+  # close: the closure-level action, lifted from @epistemologic/math/bundle.
+  # returns the fixed point witnessing autopoietic closure.
+  # this is the Closure trait of the bundle tower (level 4); the bundle
+  # grammar's `close()` returns `fixed`, this grammar's `close()` returns
+  # the same value typed as the Lawvere fixed point.
+  abstract action close(f: endomap) -> fixed_point
+
+  # the literal property ----------------------------------------------
+  # does this implementation's Closure trait actually return a Lawvere
+  # fixed point under measurement? the IS-relationship.
+  # for the eigenboard: does close() return a section that the next
+  # tick maps to itself?
+  # for the compiler: does `mirror compile` of the bootstrap return a
+  # crystal whose recompilation produces the same crystal?
+  # mirror's epistemologic discipline measures the claim.
+  property literal(implementation) -> verdict { \ }
+
+  # the autopoietic property ------------------------------------------
+  # does the grammar's tick → tick map have a Lawvere fixed point?
+  # the bridge from Lawvere 1969 to Soto-Andrade & Varela 1984:
+  # autopoietic IS having-a-Lawvere-fixed-point.
+  property autopoietic(grammar) -> verdict { \ }
+
+  # the fixed-point property ------------------------------------------
+  # does the carrier X have the fixed-point property? per Lawvere 1969:
+  # X has the fixed-point property iff there is a point-surjective map
+  # X → X^X. the constructive condition for autopoiesis.
+  property has_fixed_point_property(carrier) -> verdict { \ }
+}
+
+out point
+out endomap
+out fixed_point
+out closure
+out self_reference
+out is_fixed_point
+out is_autopoietic
+out diagonalize
+out close
+out literal
+out autopoietic
+out has_fixed_point_property
+out @epistemologic/math/lawvere
