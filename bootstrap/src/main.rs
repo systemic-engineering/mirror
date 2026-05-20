@@ -19,6 +19,7 @@ use std::io::{self, Read, Write};
 use std::path::PathBuf;
 use std::process::Command;
 
+use crate::ast::{line_col_at, AstKind, AstNode};
 use crate::content::content_oid;
 use crate::git::{git_crystal_exists, git_store_crystal};
 use crate::grammar::{grammar_for_file, load_grammar};
@@ -27,12 +28,122 @@ use crate::pipeline::{execute_pipeline, is_mq_query, split_pipeline};
 use crate::render::render_ast;
 use crate::tokenize::tokenize;
 
+/// Walk an AST, collecting every `AstKind::Dark` node in source order.
+fn collect_dark<'a>(node: &'a AstNode, out: &mut Vec<&'a AstNode>) {
+    if node.kind == AstKind::Dark {
+        out.push(node);
+    }
+    for c in &node.children {
+        collect_dark(c, out);
+    }
+}
+
+/// Print a `total_classification` diagnostic for a single dark region.
+///
+/// Format (per docs/specs/strict-and-total-classification.md):
+///   error[total_classification]: <N> dark region(s) in <file>
+///     --> line <L>, col <C>
+///      |
+///   <L> | <source line>
+///      | <caret>
+///      |
+///      = hint: the parser has no rule for this construct
+fn print_dark_diag(file: &str, source: &[u8], dark: &AstNode, total: usize) {
+    let span = dark.dark_span;
+    let (mut line, mut col) = line_col_at(source, span.start);
+    // Skip leading whitespace lines inside the dark region so the caret
+    // points at the first real content rather than the bare `{\n`.
+    let mut content_start = span.start.min(source.len());
+    while content_start < span.end
+        && matches!(
+            source.get(content_start).copied().unwrap_or(0),
+            b' ' | b'\t' | b'\n' | b'\r'
+        )
+    {
+        content_start += 1;
+    }
+    if content_start < span.end {
+        let (l, c) = line_col_at(source, content_start);
+        line = l;
+        col = c;
+    }
+
+    // Find the start/end of the line containing `content_start`.
+    let line_start = {
+        let mut i = content_start.min(source.len());
+        while i > 0 && source[i - 1] != b'\n' {
+            i -= 1;
+        }
+        i
+    };
+    let line_end = {
+        let mut i = content_start.min(source.len());
+        while i < source.len() && source[i] != b'\n' {
+            i += 1;
+        }
+        i
+    };
+    let src_line = String::from_utf8_lossy(&source[line_start..line_end]);
+
+    // Caret width: the run of non-whitespace bytes starting at content_start.
+    let mut tok_end = content_start;
+    while tok_end < line_end
+        && !matches!(source[tok_end], b' ' | b'\t')
+    {
+        tok_end += 1;
+    }
+    let caret_width = (tok_end - content_start).max(1);
+
+    let line_str = format!("{}", line);
+    let gutter_w = line_str.len();
+    let pad = " ".repeat(gutter_w);
+
+    eprintln!(
+        "error[total_classification]: {} dark region{} in {}",
+        total,
+        if total == 1 { "" } else { "s" },
+        file
+    );
+    eprintln!("  --> line {}, col {}", line, col);
+    eprintln!("   {} |", pad);
+    eprintln!("   {} | {}", line_str, src_line);
+    // Caret line: spaces up to (col-1), then ^^^.
+    let leading = (col as usize).saturating_sub(1);
+    let mut caret_line = String::with_capacity(leading + caret_width);
+    for _ in 0..leading {
+        caret_line.push(' ');
+    }
+    for _ in 0..caret_width {
+        caret_line.push('^');
+    }
+    eprintln!("   {} | {}", pad, caret_line);
+    eprintln!("   {} |", pad);
+    eprintln!(
+        "   {} = hint: the parser has no rule for this construct",
+        pad
+    );
+}
+
+/// Returns (dark_count, diagnostic exit code).
+/// Prints one diagnostic per dark region. Exit code 2 if any dark.
+fn enforce_strict(file: &str, source: &[u8], ast: &AstNode) -> usize {
+    let mut darks: Vec<&AstNode> = Vec::new();
+    collect_dark(ast, &mut darks);
+    if darks.is_empty() {
+        return 0;
+    }
+    for d in &darks {
+        print_dark_diag(file, source, d, darks.len());
+    }
+    darks.len()
+}
+
 fn usage() {
     eprintln!("usage:");
     eprintln!("  mirror <command> [args...]            (legacy subcommand surface)");
     eprintln!("  mirror '<mq-query>' < input           (mq pipeline over stdin)");
     eprintln!("  mirror <input> '<mq-query>'           (mq pipeline over input file)");
-    eprintln!("commands: compile <file>, craft [--target <crystal|binary>] <target>, kintsugi <file>");
+    eprintln!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi <file>");
     eprintln!("examples:");
     eprintln!("  cat mirror.ll | mirror '@code/llvm/ir |> @mirror/kintsugi |> @mirror/butterfly'");
 }
@@ -43,7 +154,7 @@ fn read_stdin_all() -> io::Result<Vec<u8>> {
     Ok(buf)
 }
 
-fn cmd_compile(file: &str, no_cache: bool) -> i32 {
+fn cmd_compile(file: &str, no_cache: bool, strict: bool) -> i32 {
     let source = match fs::read(file) {
         Ok(s) => s,
         Err(e) => {
@@ -60,7 +171,8 @@ fn cmd_compile(file: &str, no_cache: bool) -> i32 {
         }
     };
 
-    if !no_cache {
+    // --strict bypasses the OID cache: we need the AST to count Dark.
+    if !no_cache && !strict {
         let source_oid = canonical_hash(&source);
         if let Some(cached) = git_crystal_exists(&source_oid) {
             eprintln!("(cached)");
@@ -71,9 +183,15 @@ fn cmd_compile(file: &str, no_cache: bool) -> i32 {
 
     let ast = tokenize(&source, &grammar);
     let oid = content_oid(&ast);
-    if !no_cache {
+    if !no_cache && !strict {
         let source_oid = canonical_hash(&source);
         git_store_crystal(&source_oid, &oid);
+    }
+    if strict {
+        let dark_count = enforce_strict(file, &source, &ast);
+        if dark_count > 0 {
+            return 2;
+        }
     }
     println!("{}", oid);
     0
@@ -130,7 +248,12 @@ fn parse_target(s: &str) -> Option<TargetKind> {
     }
 }
 
-fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind) -> i32 {
+fn cmd_craft_with(
+    target: &str,
+    no_cache: bool,
+    kind: TargetKind,
+    strict: bool,
+) -> i32 {
     let mut files: Vec<String> = Vec::new();
     match target {
         "boot" | "std" => collect_files("boot", ".mirror", &mut files),
@@ -145,6 +268,8 @@ fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind) -> i32 {
     let mut hasher_buf: Vec<u8> = Vec::new();
     let mut hits = 0;
     let total = files.len();
+    let mut total_dark: usize = 0;
+    let mut files_with_dark: usize = 0;
 
     for file in &files {
         let grammar_path = grammar_for_file(file);
@@ -164,7 +289,8 @@ fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind) -> i32 {
         };
         let mut oid = String::new();
         let mut cached = false;
-        if !no_cache {
+        // --strict needs the AST every time — skip the OID-only cache hit.
+        if !no_cache && !strict {
             let source_oid = canonical_hash(&source);
             if let Some(c) = git_crystal_exists(&source_oid) {
                 oid = c;
@@ -175,9 +301,16 @@ fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind) -> i32 {
         if !cached {
             let ast = tokenize(&source, &grammar);
             oid = content_oid(&ast);
-            if !no_cache {
+            if !no_cache && !strict {
                 let source_oid = canonical_hash(&source);
                 git_store_crystal(&source_oid, &oid);
+            }
+            if strict {
+                let dc = enforce_strict(file, &source, &ast);
+                if dc > 0 {
+                    total_dark += dc;
+                    files_with_dark += 1;
+                }
             }
         }
         if cached {
@@ -191,6 +324,13 @@ fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind) -> i32 {
     let crystal = canonical_hash(&hasher_buf);
     if hits > 0 {
         eprintln!("cache: {}/{} hits", hits, total);
+    }
+    if strict && total_dark > 0 {
+        eprintln!(
+            "error[total_classification]: {} dark region(s) across {} file(s)",
+            total_dark, files_with_dark
+        );
+        return 2;
     }
     println!("{}", crystal);
 
@@ -422,12 +562,15 @@ fn main() {
 
     // Path C: legacy subcommand
     let mut no_cache = false;
+    let mut strict = false;
     let mut target_kind = TargetKind::Crystal;
     let mut i = 2;
     while i < args.len() {
         let a = &args[i];
         if a == "--no-cache" {
             no_cache = true;
+        } else if a == "--strict" {
+            strict = true;
         } else if a == "--target" {
             if i + 1 >= args.len() {
                 eprintln!("--target requires a value (crystal|binary|rust|gleam)");
@@ -474,16 +617,16 @@ fn main() {
 
     let rc = match args[1].as_str() {
         "compile" => match positional {
-            Some(p) => cmd_compile(p, no_cache),
+            Some(p) => cmd_compile(p, no_cache, strict),
             None => {
-                eprintln!("usage: mirror compile <file>");
+                eprintln!("usage: mirror compile [--strict] <file>");
                 1
             }
         },
         "craft" => match positional {
-            Some(p) => cmd_craft_with(p, no_cache, target_kind),
+            Some(p) => cmd_craft_with(p, no_cache, target_kind, strict),
             None => {
-                eprintln!("usage: mirror craft [--target <crystal|binary>] <target>");
+                eprintln!("usage: mirror craft [--strict] [--target <crystal|binary>] <target>");
                 1
             }
         },
