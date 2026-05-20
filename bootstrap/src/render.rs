@@ -90,6 +90,33 @@ fn render_ast_mirror(node: &AstNode, depth: i32, out: &mut Vec<u8>) {
                 render_ast(c, depth + 1, out);
             }
         }
+        AstKind::IoBinding => {
+            append_indent(out, depth);
+            out.extend_from_slice(b"io ");
+            out.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                out.extend_from_slice(body.as_bytes());
+            }
+            out.push(b'\n');
+        }
+        AstKind::MatchExpr => {
+            append_indent(out, depth);
+            out.extend_from_slice(b"match ");
+            out.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                out.extend_from_slice(body.as_bytes());
+            }
+            out.push(b'\n');
+        }
+        AstKind::SelectExpr => {
+            append_indent(out, depth);
+            out.extend_from_slice(b"select ");
+            out.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                out.extend_from_slice(body.as_bytes());
+            }
+            out.push(b'\n');
+        }
     }
 }
 
@@ -171,6 +198,36 @@ fn render_ast_with_grammar(node: &AstNode, depth: i32, g: &Grammar, out: &mut Ve
                 out.push(b'@');
             }
             out.extend_from_slice(node.name.as_bytes());
+            out.push(b'\n');
+            return;
+        }
+        AstKind::IoBinding => {
+            append_indent(out, depth);
+            out.extend_from_slice(b"io ");
+            out.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                out.extend_from_slice(body.as_bytes());
+            }
+            out.push(b'\n');
+            return;
+        }
+        AstKind::MatchExpr => {
+            append_indent(out, depth);
+            out.extend_from_slice(b"match ");
+            out.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                out.extend_from_slice(body.as_bytes());
+            }
+            out.push(b'\n');
+            return;
+        }
+        AstKind::SelectExpr => {
+            append_indent(out, depth);
+            out.extend_from_slice(b"select ");
+            out.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                out.extend_from_slice(body.as_bytes());
+            }
             out.push(b'\n');
             return;
         }

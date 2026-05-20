@@ -9,6 +9,16 @@ pub enum AstKind {
     Refract,
     In,
     Out,
+    /// `io <name>(<args>) = <lens-call> > <selector>` — Spec A.
+    /// The Turing-complete escape hatch. Body lives behind a `~f` reference
+    /// resolved through a body lens and narrowed by a CSS-style selector.
+    IoBinding,
+    /// `match <subject> { <arm> => <body>, ... }` — Spec B.
+    /// Structural dispatch. Patterns are mq queries over the subject's type.
+    MatchExpr,
+    /// `select |<binder>| { <variant> => <body>, ... }` — Spec B.
+    /// Closure-style sum-type dispatch. Slots in next to recover/rescue.
+    SelectExpr,
 }
 
 #[derive(Debug, Clone)]

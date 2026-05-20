@@ -52,6 +52,13 @@ impl Grammar {
     pub fn is_llvm_ir(&self) -> bool {
         self.r#ref == "@code/llvm/ir"
     }
+
+    /// True when this grammar tokenizes `.mirror` source — used to gate the
+    /// Spec A / Spec B forms (`io`, `match`, `select`, `~f`, etc.) so they
+    /// only activate where the language actually defines them.
+    pub fn is_mirror(&self) -> bool {
+        self.r#ref == "@mirror/grammar"
+    }
 }
 
 /// Parse a .mirror grammar source. Mirrors C `parse_grammar` semantics.

@@ -50,6 +50,94 @@ fn is_name_char(c: u8) -> bool {
     matches!(c, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'/')
 }
 
+/// Identifier characters for io binding / match / select names.
+/// Same as `is_name_char` minus `/` — io binding names are bare identifiers.
+fn is_io_name_char(c: u8) -> bool {
+    matches!(c, b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_')
+}
+
+/// Skip horizontal whitespace (spaces, tabs). Does NOT consume newlines.
+fn skip_hspace(bytes: &[u8], mut pos: usize) -> usize {
+    while pos < bytes.len() && (bytes[pos] == b' ' || bytes[pos] == b'\t') {
+        pos += 1;
+    }
+    pos
+}
+
+/// Scan a balanced `(...)` block starting at the opening `(`. Returns index
+/// of the closing `)` + 1, or len if unbalanced. Used for io-binding args
+/// and match/select subjects.
+fn scan_paren_block(bytes: &[u8], mut pos: usize) -> usize {
+    let len = bytes.len();
+    if pos >= len || bytes[pos] != b'(' {
+        return pos;
+    }
+    pos += 1;
+    let mut depth = 1;
+    while pos < len && depth > 0 {
+        if bytes[pos] == b'(' {
+            depth += 1;
+        } else if bytes[pos] == b')' {
+            depth -= 1;
+        }
+        pos += 1;
+    }
+    pos
+}
+
+/// Scan a balanced `{...}` block starting at the opening `{`. Returns the
+/// index ONE PAST the closing `}` (or len if unbalanced). Differs from
+/// `scan_brace_block` which returns the closing index itself.
+fn scan_brace_block_past(bytes: &[u8], mut pos: usize) -> usize {
+    let len = bytes.len();
+    if pos >= len || bytes[pos] != b'{' {
+        return pos;
+    }
+    pos += 1;
+    let mut depth = 1;
+    while pos < len && depth > 0 {
+        if bytes[pos] == b'{' {
+            depth += 1;
+        } else if bytes[pos] == b'}' {
+            depth -= 1;
+        }
+        pos += 1;
+    }
+    pos
+}
+
+/// Last non-whitespace byte in `bytes[start..end]`, or 0 if none.
+fn last_non_ws(bytes: &[u8], start: usize, end: usize) -> u8 {
+    let mut i = end;
+    while i > start {
+        i -= 1;
+        if !matches!(bytes[i], b' ' | b'\t' | b'\r') {
+            return bytes[i];
+        }
+    }
+    0
+}
+
+/// Capture an io-binding body that may span multiple lines. Starts at the
+/// `=` (consumed inclusive). Returns end position (just past final newline,
+/// or at EOF). A line that ends with `=` or `,` continues onto the next.
+fn capture_io_body_end(bytes: &[u8], mut pos: usize) -> usize {
+    let len = bytes.len();
+    loop {
+        let line_start = pos;
+        while pos < len && bytes[pos] != b'\n' {
+            pos += 1;
+        }
+        let cont = matches!(last_non_ws(bytes, line_start, pos), b'=' | b',');
+        if pos < len {
+            pos += 1; // consume newline
+        }
+        if !cont || pos >= len {
+            return pos;
+        }
+    }
+}
+
 /// Truncate a byte slice to at most 255 bytes and copy into a String
 /// (matching the C `name[256]` field semantics).
 fn name_string(slice: &[u8]) -> String {
@@ -244,6 +332,169 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode) {
             } else {
                 pos = saved;
             }
+            continue;
+        }
+
+        // Spec A — io lambda binding.
+        //
+        //   io <name>(<args>) = <lens-call> > <selector>[<attr>="literal"]
+        //
+        // The whole form, identifier through the selector tail, becomes a
+        // single `IoBinding` AstNode. Active only inside @mirror/grammar so
+        // it doesn't disturb other languages' tokenizations (Rust skip_words
+        // still drop `io` everywhere it isn't a binding).
+        if word == "io" && grammar.is_mirror() && word_at_line_start {
+            let body_start_for_name = pos; // already past the `io` keyword
+            let name_scan_start = skip_hspace(bytes, pos);
+            let mut name_end = name_scan_start;
+            while name_end < len && is_io_name_char(bytes[name_end]) {
+                name_end += 1;
+            }
+            if name_end > name_scan_start {
+                let name = name_string(&bytes[name_scan_start..name_end]);
+                // Args list, if present.
+                let after_args = if name_end < len && bytes[name_end] == b'(' {
+                    scan_paren_block(bytes, name_end)
+                } else {
+                    name_end
+                };
+                // Look for the `=` that introduces the body. Allow it on the
+                // current line or the next. Don't go past two newlines.
+                let mut scan = after_args;
+                let mut nl_seen = 0;
+                while scan < len {
+                    match bytes[scan] {
+                        b'=' => break,
+                        b'\n' => {
+                            nl_seen += 1;
+                            if nl_seen > 1 {
+                                break;
+                            }
+                            scan += 1;
+                        }
+                        b' ' | b'\t' | b'\r' => scan += 1,
+                        _ => break,
+                    }
+                }
+                if scan < len && bytes[scan] == b'=' {
+                    let end = capture_io_body_end(bytes, scan + 1);
+                    // Verbatim body text: everything between (inclusive) the
+                    // gap after the name and the final newline, minus the
+                    // trailing newline itself for clean round-trip.
+                    let mut body_end = end;
+                    while body_end > body_start_for_name
+                        && matches!(bytes[body_end - 1], b'\n' | b'\r')
+                    {
+                        body_end -= 1;
+                    }
+                    let body = String::from_utf8_lossy(
+                        &bytes[name_end..body_end],
+                    )
+                    .into_owned();
+                    let mut node = AstNode::new(AstKind::IoBinding, &name);
+                    node.set_keyword("io");
+                    node.set_body(&body);
+                    parent.add_child(node);
+                    pos = end;
+                    continue;
+                }
+                // No `=` found within a reasonable window: fall through and
+                // let the unknown-word path handle the leftovers.
+                pos = after_args;
+                continue;
+            }
+            // Bare `io` with no identifier after — drop and continue.
+            continue;
+        }
+
+        // Spec B — match expression.
+        //
+        //   match <subject> { <pattern> => <body>, ... }
+        //
+        // The subject runs up to the opening `{`; the arms are captured as
+        // the verbatim body of a single `MatchExpr` AstNode.
+        if word == "match" && grammar.is_mirror() && word_at_line_start {
+            let subj_start = skip_hspace(bytes, pos);
+            // Find the opening `{` that introduces the arm list.
+            let mut scan = subj_start;
+            let mut depth_paren = 0i32;
+            while scan < len {
+                match bytes[scan] {
+                    b'(' => {
+                        depth_paren += 1;
+                        scan += 1;
+                    }
+                    b')' => {
+                        depth_paren -= 1;
+                        scan += 1;
+                    }
+                    b'{' if depth_paren == 0 => break,
+                    b'\n' if depth_paren == 0 => break,
+                    _ => scan += 1,
+                }
+            }
+            if scan < len && bytes[scan] == b'{' {
+                let subj_end = {
+                    let mut e = scan;
+                    while e > subj_start
+                        && matches!(bytes[e - 1], b' ' | b'\t' | b'\r')
+                    {
+                        e -= 1;
+                    }
+                    e
+                };
+                let subject = name_string(&bytes[subj_start..subj_end]);
+                let block_end = scan_brace_block_past(bytes, scan);
+                let body = String::from_utf8_lossy(
+                    &bytes[subj_end..block_end],
+                )
+                .into_owned();
+                let mut node = AstNode::new(AstKind::MatchExpr, &subject);
+                node.set_keyword("match");
+                node.set_body(&body);
+                parent.add_child(node);
+                pos = block_end;
+                continue;
+            }
+            // No brace — let the rest of the line be reprocessed.
+            pos = subj_start;
+            continue;
+        }
+
+        // Spec B — select closure form.
+        //
+        //   select |<binder>| { <variant>(args) => <body>, ... }
+        //
+        // The binder is captured as the AST node's name. Body is verbatim.
+        if word == "select" && grammar.is_mirror() && word_at_line_start {
+            let after = skip_hspace(bytes, pos);
+            let mut scan = after;
+            // Find the opening `{`.
+            while scan < len && bytes[scan] != b'{' && bytes[scan] != b'\n' {
+                scan += 1;
+            }
+            if scan < len && bytes[scan] == b'{' {
+                // The header between `select` and `{` is `|x|` (or empty).
+                let mut header_end = scan;
+                while header_end > after
+                    && matches!(bytes[header_end - 1], b' ' | b'\t' | b'\r')
+                {
+                    header_end -= 1;
+                }
+                let binder = name_string(&bytes[after..header_end]);
+                let block_end = scan_brace_block_past(bytes, scan);
+                let body = String::from_utf8_lossy(
+                    &bytes[header_end..block_end],
+                )
+                .into_owned();
+                let mut node = AstNode::new(AstKind::SelectExpr, &binder);
+                node.set_keyword("select");
+                node.set_body(&body);
+                parent.add_child(node);
+                pos = block_end;
+                continue;
+            }
+            pos = after;
             continue;
         }
 

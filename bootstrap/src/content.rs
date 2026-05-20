@@ -77,5 +77,50 @@ pub fn content_oid(node: &AstNode) -> String {
         }
         AstKind::In => hash_tagged("in", node.name.as_bytes()),
         AstKind::Out => hash_tagged("out", node.name.as_bytes()),
+        AstKind::IoBinding => {
+            buf.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                if !body.is_empty() {
+                    buf.extend_from_slice(b"\0body:");
+                    buf.extend_from_slice(body.as_bytes());
+                }
+            }
+            for c in &node.children {
+                let child = content_oid(c);
+                buf.push(b':');
+                buf.extend_from_slice(child.as_bytes());
+            }
+            hash_tagged("io_binding", &buf)
+        }
+        AstKind::MatchExpr => {
+            buf.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                if !body.is_empty() {
+                    buf.extend_from_slice(b"\0body:");
+                    buf.extend_from_slice(body.as_bytes());
+                }
+            }
+            for c in &node.children {
+                let child = content_oid(c);
+                buf.push(b':');
+                buf.extend_from_slice(child.as_bytes());
+            }
+            hash_tagged("match_expr", &buf)
+        }
+        AstKind::SelectExpr => {
+            buf.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                if !body.is_empty() {
+                    buf.extend_from_slice(b"\0body:");
+                    buf.extend_from_slice(body.as_bytes());
+                }
+            }
+            for c in &node.children {
+                let child = content_oid(c);
+                buf.push(b':');
+                buf.extend_from_slice(child.as_bytes());
+            }
+            hash_tagged("select_expr", &buf)
+        }
     }
 }
