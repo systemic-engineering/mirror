@@ -300,6 +300,139 @@ thing |\> match {
 
 ---
 
+## Match modifiers — the prism applied to arms
+
+`match` has been implicitly *focus* the whole time: pick one arm, the
+first that fits. That's the default. Making the modifier explicit
+opens the other four operations as alternative arm semantics, and
+(more generally) lets any mq query parameterize how arms relate.
+
+```mirror
+match(focus)    expr { p1 => a1, p2 => a2, ... }   # one arm wins (default)
+match(split)    expr { p1 => a1, p2 => a2, ... }   # every matching arm executes
+match(refract)  expr { p1 => a1, p2 => a2, ... }   # result is content-addressed (au)
+match(project)  expr { p1 => a1, p2 => a2, ... }   # arms are filtered first
+match(zoom)     expr { p1 => a1, p2 => a2, ... }   # arms cross levels of resolution
+```
+
+The bare form `match expr { ... }` is the same as `match(focus) expr { ... }`.
+The default keeps existing match sites valid; the explicit form is
+available when a different arm semantics is wanted.
+
+### What each modifier does
+
+**`match(focus)`** — default. First arm whose pattern matches wins; the
+rest are silent. Returns the body of the winning arm. The JSON-RPC
+dispatch pattern in `@mirror/serve.dispatch`, the variant routing in
+`@mirror/runtime/gen_prism.tick`, any one-arm-wins use case.
+
+**`match(split)`** — every arm whose pattern matches executes. Bodies
+run in declaration order; results collect into a list. The arms are
+parallel readings of the same subject, not alternatives. Use cases:
+
+- Linting (every applicable check fires; collect all diagnostics).
+- Observability (every applicable hook emits a beam; collect all beams).
+- Fate's tournament: the five-model fan-out IS `match(split)` over the
+  hole, where each arm is one model proposing an au candidate. The
+  return is `[au]` — the candidate list the conductivity contest then
+  reduces.
+
+**`match(refract)`** — the result is content-addressed. The matched-arm
+plus its body's output becomes a crystal; the crystal's OID is the
+return value. **This is how `match` produces `au`.** Use cases:
+
+- Memoization. The next call with the same subject reads from the
+  crystal cache; no body executes again.
+- Kintsugi acceptance. The `\` resolution that conducts becomes the
+  refracted output of a `match(refract)` over the hole's context.
+- Stable identity for dispatch results. Two semantically identical
+  dispatches produce the same OID even if the source files differ in
+  whitespace or comment ordering.
+
+**`match(project)`** — arms are filtered before any are tried. The
+project lens carves a view over the arm collection: only the arms that
+pass the lens's predicate are eligible. Use cases:
+
+- Feature flags: only arms whose feature is enabled are reachable.
+- Capability scoping: only arms whose effects are permitted in the
+  current context get tried.
+- Multi-tenant dispatch: only arms registered to this tenant apply.
+
+**`match(zoom)`** — arms operate at different resolutions of the
+subject. The zoom lens lifts/lowers the subject for each arm. Use cases:
+
+- One arm matches the AST shape; another the gestalt eigenvalue;
+  another the type signature. The match dispatches across the levels.
+- Refinement: a coarse arm catches the general case, a fine arm
+  catches the specific case within it.
+
+### Any mq query as a modifier
+
+The modifier slot accepts more than the five operation names. Any mq
+query that can read the arm collection works:
+
+```mirror
+match(@beam.observe)        expr { ... }   # each arm emits a beam alongside its body
+match(@fate/tournament)     expr { ... }   # arms compete; the conductive one wins
+match(@mirror/liquid.infer) expr { ... }   # arms produce property verdicts
+```
+
+`@fate/tournament` as modifier is the load-bearing case. The arms are
+candidate au values; the tournament's elite/beam/halving reduction
+selects the one whose conductivity clears highest in the current
+context. This is what the kintsugi formatter does internally; making
+it a match modifier exposes the mechanism at the source level.
+
+### Return types
+
+Different modifiers return different shapes:
+
+| Modifier | Returns |
+|---|---|
+| `match(focus)` (default) | the winning arm's body, type `T` |
+| `match(split)` | list of all matching arms' bodies, `[T]` |
+| `match(refract)` | content-addressed, `au` |
+| `match(project)` | as `focus`, but over the filtered subset |
+| `match(zoom)` | as `focus`, but the bodies may differ in type — returns `union(T1, T2, ...)` |
+| `match(@fate/tournament)` | the winning candidate, `au` |
+| `match(@beam.observe)` | the body's value alongside `[beam]` |
+
+The typechecker uses the modifier to compute the match's return type.
+A `match(split)` whose arms all return `oid` returns `[oid]`. A
+`match(refract)` whose body's content-address is well-defined returns
+`au`. Type incoherence (e.g. `match(split)` with arms of incompatible
+types) is a compile error.
+
+### Exhaustiveness under modifiers
+
+Exhaustiveness still holds for all modifiers:
+
+- `focus` requires every reachable shape covered or `_` (same as today).
+- `split` requires every reachable shape covered by *at least one* arm.
+  A shape with zero matching arms is an error.
+- `refract` requires `focus`-style exhaustiveness (one winning arm per
+  subject so the OID is well-defined).
+- `project` requires exhaustiveness over the projected subset (the
+  arms filtered out by the lens don't count toward coverage).
+- `zoom` requires exhaustiveness at every level the lens lifts/lowers
+  to.
+
+The model checker reads the modifier to pick the right coverage rule.
+No wildcard fallthrough; every match site is total.
+
+### Why `select` doesn't take the modifier
+
+Sum-type variants are mutually exclusive. A `select` arm matches at
+most one shape of the subject; `focus` and `split` collapse for it.
+`refract` is reachable via a separate `select` → `crystallize`
+pipeline (`select |v| { ... } |> @mirror/spectral.crystallize`); a
+dedicated modifier would just be sugar over that.
+
+If a real grammar later wants `select(...)`, we add it then. Today the
+modifier is `match`'s tool.
+
+---
+
 ## `#(nl)` annotations on arms
 
 Comments aren't trivia. A `#` line attached to a match arm becomes a
@@ -348,6 +481,8 @@ the `io tokenize` binding in `@mirror/compile/bootstrap`) needs to
 learn:
 
 - `match`, `select` as keywords
+- `match(<modifier>)` — parens after `match` introduce a modifier
+  expression (one of the five operation names, or any mq query)
 - `=>` as a punctuator
 - `>` as a child-relationship punctuator inside io bindings AND patterns
 - `[`, `]` as attribute brackets
@@ -379,6 +514,8 @@ grammar @mirror/match {
 
   type match_expr {
     subject: ast,
+    modifier: mq_query,     # focus | project | split | zoom | refract | <any mq query>
+                            # default: focus
     arms: [arm],
     exhaustive: bool,       # proved by the model checker
   }
