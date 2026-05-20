@@ -119,19 +119,34 @@ fn last_non_ws(bytes: &[u8], start: usize, end: usize) -> u8 {
 }
 
 /// Capture an io-binding body that may span multiple lines. Starts at the
-/// `=` (consumed inclusive). Returns end position (just past final newline,
-/// or at EOF). A line that ends with `=` or `,` continues onto the next.
+/// position just past the `=`. Returns end position (just past final
+/// newline, or at EOF).
+///
+/// Continuation rules: a line that ends with `=`, `,`, `(`, `[`, or `>`
+/// continues onto the next; a blank-content line (after the introducing
+/// `=`) also continues so the body's actual content can land on the next
+/// line. Stops at the first line that completes the binding.
 fn capture_io_body_end(bytes: &[u8], mut pos: usize) -> usize {
     let len = bytes.len();
+    let mut saw_content = false;
     loop {
         let line_start = pos;
         while pos < len && bytes[pos] != b'\n' {
             pos += 1;
         }
-        let cont = matches!(last_non_ws(bytes, line_start, pos), b'=' | b',');
+        let last = last_non_ws(bytes, line_start, pos);
+        let line_blank = last == 0;
+        let cont_marker = matches!(last, b'=' | b',' | b'(' | b'[' | b'>');
+        if !line_blank {
+            saw_content = true;
+        }
         if pos < len {
             pos += 1; // consume newline
         }
+        // Continue if:
+        //   - we haven't seen any content yet (the `=` was at end of intro line)
+        //   - or the just-finished line ends with a continuation marker
+        let cont = (!saw_content) || cont_marker;
         if !cont || pos >= len {
             return pos;
         }
@@ -396,6 +411,9 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode) {
                     node.set_body(&body);
                     parent.add_child(node);
                     pos = end;
+                    // We consumed up to and past a newline; next token is at
+                    // line start.
+                    at_line_start = true;
                     continue;
                 }
                 // No `=` found within a reasonable window: fall through and
@@ -454,6 +472,7 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode) {
                 node.set_body(&body);
                 parent.add_child(node);
                 pos = block_end;
+                at_line_start = true;
                 continue;
             }
             // No brace — let the rest of the line be reprocessed.
@@ -492,6 +511,7 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode) {
                 node.set_body(&body);
                 parent.add_child(node);
                 pos = block_end;
+                at_line_start = true;
                 continue;
             }
             pos = after;
