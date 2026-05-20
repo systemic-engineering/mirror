@@ -1,0 +1,55 @@
+in @mirror/runtime/gen_prism
+in @mcp
+in @hash/coincidence
+
+# @mirror/reload: the reload contract as a gen_prism.
+#
+# Every MCP/LSP request must check whether the live grammars hash has drifted
+# since the last notification, and push `tools/list_changed` if so.
+#
+# As a gen_prism, the state crystal records `last_emitted_hash`. Every incoming
+# request — any request, not just `tools/list` — triggers a tick. No watcher.
+# No daemon. No spectral dependency. The trigger is the next message on the
+# wire. Drift is detected piggy-back on traffic the client was already sending.
+#
+# Spec: docs/specs/mirror-runtime-gen-prism.md (Example 1)
+# Spec: docs/specs/lsp-and-mcp.md (auto-reload section)
+
+grammar @mirror/reload {
+  # the state crystal carries one field: the hash we last told the client about.
+  type state = {
+    last_emitted_hash: oid,
+  }
+
+  # the message is any incoming MCP/LSP request — we don't care about content,
+  # we only care that *some* request arrived (the trigger).
+  type message = {
+    method: text,
+  }
+
+  # the tick: compute current hash, compare to stored, emit if drifted.
+  #
+  # intended behaviour (kintsugi resolution — mirror grammar lacks if/else as
+  # a primitive today, so the body is a \ hole until conditional forms land):
+  #
+  #   let current = @mcp.grammars_hash;
+  #   let prior   = @mirror/spectral.recall(state).last_emitted_hash;
+  #
+  #   if current == prior {
+  #     tick_result { state, emissions: [], loss: 0.0 }
+  #   } else {
+  #     tick_result {
+  #       state: @mirror/spectral.crystallize(state { last_emitted_hash: current }),
+  #       emissions: [
+  #         json { method: "notifications/tools/list_changed", params: {} },
+  #       ],
+  #       loss: 0.0
+  #     }
+  #   }
+  tick(state: oid, message: message) -> tick_result { \ }
+}
+
+out state
+out message
+out tick
+out @mirror/reload

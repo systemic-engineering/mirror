@@ -1,0 +1,103 @@
+in @prism
+in @mirror/spectral
+in @hash/coincidence
+in @beam
+in @io
+
+# @mirror/runtime/gen_prism: content-addressed actors.
+#
+# A gen_prism is a name. The name points at a ref. The ref points at a crystal.
+# The crystal is the current state. Sending a message reads the crystal,
+# computes a new crystal, and advances the ref. The ancestor chain IS the
+# history. The ref IS the identity. The crystal IS the state.
+#
+# No heap. No process. No supervisor. Liveness is the existence of the ref.
+# A tick is a function: (state, message) -> (state, emissions). Pure.
+# Replayable. Reproducible.
+#
+# This is the substrate beneath @spectral/spawn. Most things that want
+# "a process" only need this — reload contracts, LSP buffers, MCP sessions,
+# mirror-internal state.
+#
+# Spec: docs/specs/mirror-runtime-gen-prism.md
+
+grammar @mirror/runtime/gen_prism {
+
+  # --- types ---------------------------------------------------------------
+
+  # the identity. a ref in refs/gen_prism/<name>. the head OID at that ref
+  # is the current state crystal.
+  type gen_prism = {
+    name: text,           # human-readable identifier
+    ref:  text,           # refs/gen_prism/<name>
+    head: oid,            # the current state crystal
+    tick: u64,            # number of messages applied (length of ancestor chain)
+  }
+
+  # a message is any content-addressable value. crystals all the way down.
+  # the receiver decides what to do with it.
+  type message = {
+    oid:  oid,            # content address of the message body
+    kind: text,           # discriminator the receiver pattern-matches on
+  }
+
+  # the result of applying a message to a state. the new state replaces
+  # the head; the emissions are notifications/beams pushed on the active
+  # transport (LSP/MCP stdio, the bus, stdout).
+  type tick_result = {
+    state:      oid,            # new state crystal (the new head)
+    emissions:  [json],         # JSON-RPC notifications or beams
+    loss:       loss,           # observation: did the tick improve coherence?
+  }
+
+  # --- operations ----------------------------------------------------------
+
+  # create a new gen_prism. fails if refs/gen_prism/<name> already exists.
+  # writes the initial state as a crystal and updates the ref.
+  spawn(name: text, initial_state: oid) -> gen_prism { \ }
+
+  # the pure tick. takes a state crystal and a message; returns the next
+  # state + emissions. resolves to grammar-defined behaviour at the \ —
+  # each concrete gen_prism overrides this in its own grammar.
+  tick(state: oid, message: message) -> tick_result { \ }
+
+  # fire-and-forget. read head, apply tick, advance ref. emit any emissions.
+  # CAS-safe: the ref update fails if head moved since we read it; the
+  # caller retries.
+  send(gp: gen_prism, message: message) -> imperfect {
+    tick(gp.head, message)
+      |> @mirror/spectral.crystallize
+      |> @io.git_update_ref(gp.ref)
+  }
+
+  # synchronous send. the caller blocks until the new state is durable.
+  # reply lives in the new state's body — the caller extracts it.
+  call(gp: gen_prism, message: message) -> imperfect { \ }
+
+  # walk the ancestor chain. each entry is one tick's state crystal.
+  # history(gp, 10) returns the last 10 ticks newest-first.
+  history(gp: gen_prism, depth: u64) -> [oid] {
+    @io.git_log(gp.ref, depth)
+  }
+
+  # read the current state without advancing.
+  observe(gp: gen_prism) -> oid { gp.head }
+
+  # terminate: delete the ref. the crystals remain in git (history is
+  # never lost; the gen_prism just ceases to exist as a live identity).
+  terminate(gp: gen_prism) -> imperfect {
+    @io.git_delete_ref(gp.ref)
+  }
+}
+
+out gen_prism
+out message
+out tick_result
+out spawn
+out tick
+out send
+out call
+out history
+out observe
+out terminate
+out @mirror/runtime/gen_prism

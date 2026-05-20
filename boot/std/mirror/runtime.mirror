@@ -3,6 +3,7 @@ in @io
 in @git
 in @mirror/interpreter
 in @mirror/resolve
+in @mirror/runtime/gen_prism
 in @craft
 
 # @mirror/runtime: the full compilation pipeline.

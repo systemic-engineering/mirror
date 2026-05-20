@@ -17,6 +17,29 @@ grammar @io {
 
   # process execution — the thinnest @io
   exec(command, [arg]) -> imperfect { \ }
+
+  # --- git plumbing --------------------------------------------------------
+  #
+  # Three git-ref operations the @mirror/runtime/gen_prism primitive leans on.
+  # They join @git as the content store and @io as the syscall boundary:
+  # @git owns the object database (blobs/trees/crystals); @io owns the ref
+  # namespace (refs/gen_prism/<name>) where actor identities live.
+  #
+  # All three are honest holes today — concrete bodies shell out to git
+  # plumbing once `mirror serve` lands. Contracts are stable.
+
+  # update-ref with compare-and-swap. Fails if the ref moved since `old`
+  # was read; the caller re-reads head and retries.
+  # Shells out to: `git update-ref <ref> <new_oid> <old_oid>`.
+  git_update_ref(ref, new_oid, old_oid) -> imperfect { \ }
+
+  # walk the ancestor chain at `ref` newest-first, return up to `depth` OIDs.
+  # Shells out to: `git log -n <depth> --format=%H <ref>`.
+  git_log(ref, depth: u64) -> [oid] { \ }
+
+  # delete the ref. Crystals on the ancestor chain remain in git — only the
+  # named identity goes away. Shells out to: `git update-ref -d <ref>`.
+  git_delete_ref(ref) -> imperfect { \ }
 }
 
 out socket
@@ -26,4 +49,7 @@ out read
 out write
 out close
 out exec
+out git_update_ref
+out git_log
+out git_delete_ref
 out @io
