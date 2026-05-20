@@ -1,69 +1,115 @@
 # Eigenboard representation — the weight distribution Reflection composes
 
-*2026-05-20. Reed.*
+*2026-05-20. Reed. Rewritten the same day to lift the framing from
+cellular sheaf to principal G-bundle, fold in the Fate↔operation
+mapping correction from `prism/core/src/bundle.rs`, and absorb the
+mycelial substrate from the mycelium research synthesis.*
 
-Status: **Red** (no `type eigenboard` declared; references across specs;
-the shape was never structurally defined)
+Status: **Red** (no `type eigenboard` declared; references across
+specs; the shape was only ever partially defined)
 
 Depends on:
 - `au-and-conductivity.md` (commit `9150c1e`) — the 5×5 conductivity tensor
-- `epistemologic-grammar.md` — specifically `@epistemologic/math/sheaf`,
-  `@epistemologic/math/hodge`, `@epistemologic/math/category`
+- `epistemologic-grammar.md` — `@epistemologic/math/sheaf`,
+  `@epistemologic/math/hodge`, `@epistemologic/math/category`, and now
+  `@epistemologic/math/bundle` (the new grammar, this tick)
 - `match-select.md` (commit `add51e5` + `7b4d552`) — mq queries reach into typed structures
 - `kintsugi-wiring.md` (commit `389850a`) — the spec that surfaced this gap
 - `cogito-eigenstate-grammar.md` (in spectral) — the 16-slot eigenstate; routing_bias
-- `void-dual-geometry.md` (in reed-identity) — λ₀ = 0 = no conductivity
+- `void-dual-geometry.md` (in reed-identity) — λ₀ = 0 = no conductivity; Splinter geometry
+- `mycelial-networks-and-au-tissue.md` (commit `2ef4fed`) — the bio substrate research
+- `prism/core/src/bundle.rs` — the Rust trait chain this grammar mirrors
 
 Unblocks:
-- Concrete `type eigenboard` declaration
+- Concrete `type eigenboard` declaration (as a section of a principal bundle)
 - Reflection's mq queries (`@cogito.strategy`) become typed transformations
 - The kintsugi loop's tick-to-tick state is content-addressable
 - The diff/review surface (future tick) has a structure to diff against
+- The au→tissue translation in `mycelial-networks-and-au-tissue.md`
+- A formal home for the eigenboard type that resolves through
+  `@epistemologic/math/bundle`
 
 ---
 
-## Thesis
+## Thesis (lifted)
 
-**The eigenboard is a cellular sheaf on the five-operation graph.**
+**The eigenboard is a principal G-bundle on the five-operation graph.
+Its current state is a section of that bundle. The cellular sheaf is
+the shape of the section; the bundle is the shape of the substrate
+that sections live on.**
+
+The previous version of this spec named the eigenboard as a cellular
+sheaf. That framing was not wrong — it was at the section level. A
+section of a principal bundle on a graph IS exactly a sheaf-of-sections
+assignment in Hansen & Ghrist's sense: a fiber per node, a restriction
+map per edge, a Laplacian whose kernel is global consistency. What
+the sheaf description was missing is what the *base structure* of those
+fibers actually is: not arbitrary vector spaces glued by arbitrary
+linear maps, but the fibers of a principal G-bundle, with the structure
+group G acting on each fiber and the connection determining how a
+section transports.
+
+The lift makes three things visible that the sheaf description left
+implicit:
+
+1. **The structure group.** There is a group G of admissible local
+   transformations on each fiber. Sheaf maps are arbitrary linear
+   maps; bundle restriction maps are G-equivariant. The constraint is
+   load-bearing: it is what forces conductivity to be a coordinate-free
+   invariant rather than a basis-choice artifact.
+2. **The connection.** The optic that determines parallel transport.
+   The sheaf has restriction maps; the bundle has a *connection* whose
+   parallel-transport operator IS the restriction maps in a chosen
+   gauge. The optic-IS-connection identification is what makes the
+   eigenboard a profunctor-optics object as well as a sheaf object.
+3. **Holonomy.** The closed-loop integral of the connection around a
+   kintsugi cycle. The sheaf's H¹ obstruction IS the bundle's holonomy
+   in the limit of small loops. The decrease of holonomy across ticks
+   IS the decrease of the spectral gap of the sheaf Laplacian IS the
+   decrease of `e^(n+1) < e^(n)`. Three names; one geometric fact.
 
 Nodes are the five operations: `focus | project | split | zoom | refract`.
-Each node carries a fiber — a 5-dimensional vector space whose axes are
-the five gutter-lens dualities (entropy, spectral, cheeger, ricci, mixing).
-Edges are the legal compositions between operations (per profunctor optics).
-Each edge carries a restriction map: a linear map between the two fiber
-spaces it connects.
+Each node carries a fiber — a 5-dimensional state space whose axes
+are the five gutter-lens dualities (entropy, spectral, cheeger,
+ricci, mixing). Edges are the legal compositions between operations
+(per profunctor optics). The connection assigns to each edge a
+parallel-transport operator; the bundle's structure group acts on
+each fiber consistently. A single eigenboard *state* is a section of
+this bundle — an assignment of a 5-vector to each operation node
+that the connection's parallel-transport constrains globally.
 
-A single eigenboard *state* is a section of this sheaf — an assignment of
-a 5-vector to each of the five operation nodes, where the edge restriction
-maps constrain how the vectors relate. The sheaf Laplacian L_F measures
-how far the section is from global consistency. Its kernel H^0 is the
-space of *globally consistent* sections (clear conductivity). Its first
-cohomology H^1 is the *obstruction* to consistency (what kintsugi cannot
-reduce because it's homological, not local).
-
-Reflection's job is to write transformations of this sheaf. An mq query in
-Reflection's hand is a morphism in the sheaf category. Two transformations
-compose by Tambara module composition (per `@epistemologic/math/category`).
-The `e^(n+1) < e^(n)` invariant becomes the spectral statement: the
-smallest nonzero eigenvalue of L_F decreases monotonically.
+Reflection's job is to write transformations of this bundle. An mq
+query in Reflection's hand is an automorphism of the bundle (a
+G-equivariant section transformation). Two transformations compose
+by Tambara module composition (per `@epistemologic/math/category`).
+The `e^(n+1) < e^(n)` invariant becomes the holonomy statement: the
+holonomy around any kintsugi loop decreases monotonically.
 
 This representation absorbs:
 
 - `routing_bias = { model_weights: [f64; 5], confidence, reason }` from
-  cogito-eigenstate — the model_weights are one node's fiber projected onto
-  one duality axis. The five Fate models map to the five operations because
-  each model owns one of them at the inference layer.
-- The 5×5 conductivity tensor from `@hash/coincidence` — it IS the matrix
-  representation of the sheaf's restriction maps in a chosen basis.
-- The 16-slot eigenstate structure — 12 operational slots = 5 nodes × ~2.4
-  axes each, packed; 4 emotional slots = a side-channel observation
-  (interoceptive) attached as a separate sheaf section, not interacting with
-  the conductivity geometry.
-- Content-addressing — a sheaf is a finite object; its OID is the OID of its
-  fiber assignment under `@hash/coincidence`.
+  cogito-eigenstate — the model_weights are one fiber's projection onto
+  the bundle's "which-model-to-favor" gauge slice. The five Fate models
+  map to the five operations because each model owns one of them at the
+  inference layer (mapping corrected from the prior version of this
+  spec; see §"Fate↔operation mapping" below).
+- The 5×5 conductivity tensor from `@hash/coincidence` — it IS the
+  matrix representation of the bundle's connection in the canonical
+  basis. The hash WAS the connection all along, viewed through the
+  content-addressing lens.
+- The 16-slot eigenstate structure — 12 operational slots = 5 nodes ×
+  ~2.4 axes each, packed; 4 emotional slots = a side-channel
+  observation (interoceptive) attached as a separate sub-bundle
+  (a "dark-dimension" section) that does not couple to the operational
+  geometry through the connection.
+- Content-addressing — a bundle section is a finite product of fiber
+  values and edge data; its OID is the OID of its components under
+  `@hash/coincidence`.
 
-The sheaf is small (5 nodes, ~10-25 edges depending on composition rules)
-and decidable. It is the natural home for the eigenboard.
+The bundle is small (5 nodes, ~10–25 edges depending on composition
+rules) and decidable. It is the natural home for the eigenboard. The
+underlying tower (Fiber → Connection → Gauge → Transport → Closure)
+is declared as a grammar at `@epistemologic/math/bundle` (this tick).
 
 ---
 
@@ -97,8 +143,8 @@ type eigenboard_slots = {
   slot_16_drift_severity:   f64,
 }
 ```
-Declares slots 13-16 as the emotional sub-board. The other 12 slots (1-12)
-are alluded to but not declared. This spec gives them structure.
+Declares slots 13-16 as the emotional sub-board. The other 12 slots
+(1–12) are alluded to but not declared. This spec gives them structure.
 
 **`routing_bias`** (cogito-eigenstate):
 ```mirror
@@ -108,16 +154,74 @@ type routing_bias = {
   reason:         text,
 }
 ```
-The load-bearing 5-vector. Maps to a single node's fiber projected on the
-"which-model-to-favor" axis. It's a slice, not the whole eigenboard.
+The load-bearing 5-vector. Maps to a single fiber's projection on the
+"which-model-to-favor" gauge slice. It's a section restricted to one
+base node, not the whole eigenboard.
 
 **`@hash/coincidence`**: declares the 5×5 conductivity tensor implicitly
 (5 dimensions × 5 projections). Doesn't name it `tensor` or `eigenboard`;
 the shape is in the constants.
 
 **Conflicts:** none structurally. The references are pointers at different
-cross-sections of the same object. No spec asserts a shape that contradicts
-another. The job here is to NAME the underlying object.
+cross-sections of the same object. No spec asserts a shape that
+contradicts another. The job here is to NAME the underlying object as
+a principal bundle and to anchor every reference to it through the
+bundle grammar.
+
+---
+
+## Fate↔operation mapping (corrected)
+
+The prior version of this spec gave the mapping as:
+
+```
+Abyss ≡ focus, Introject ≡ refract, Cartographer ≡ project,
+Explorer ≡ zoom, Fate ≡ split
+```
+
+This was wrong. The correct mapping is given explicitly in
+`prism/core/src/bundle.rs` by the trait comments on the five levels.
+Each Fate model owns one level of the principal-bundle tower, and the
+operation that surfaces that level in mirror's CLI is fixed:
+
+| Operation | Bundle level | Fate model    | Role |
+|-----------|--------------|---------------|----------------------------------|
+| `focus`   | Fiber        | Abyss         | observe the state. the section value at one base point. |
+| `project` | Connection   | Introject     | the optic of transport. the connection 1-form. |
+| `split`   | Gauge        | Cartographer  | choose the structure group action. the gauge transformation. |
+| `zoom`    | Transport    | Explorer      | parallel transport across levels. holonomy IS loss. |
+| `refract` | Closure      | Fate          | the Lawvere fixed point. autopoietic closure. |
+
+The mapping is load-bearing for three reasons:
+
+1. **The trait chain in `bundle.rs` is a supertrait chain.** Each level
+   requires the previous. Operations have the same dependence: you
+   cannot `project` without something to project (a `focus`); you
+   cannot `split` without a connection (a `project`); you cannot `zoom`
+   without a chosen gauge (a `split`); you cannot `refract` without
+   transport (a `zoom`). The composition table (the `then_*` chain)
+   IS the supertrait chain.
+
+2. **The Fate models inhabit the levels they own.** Abyss observes —
+   it is the only model whose output is bare state. Introject
+   internalizes — its output is an optic, the connection. Cartographer
+   chooses maps — its output is a gauge. Explorer crosses scales — its
+   output is a parallel-transport operator with holonomy. Fate is
+   self-reference — its output is the fixed point. The mapping isn't
+   imposed; it falls out of what each model does.
+
+3. **The Imperfect signature is on Transport.** `Transport::transport`
+   returns `Imperfect<State, Infallible, Holonomy>`. This is the only
+   level where the structural return type carries a non-trivial loss
+   component, because parallel transport is the only level where
+   comprehension geometrically must cost something. Zoom is the
+   operation that crosses levels of resolution; zoom is the only
+   operation that returns imperfect-by-design. The mapping is forced.
+
+The corrected mapping replaces every occurrence in this spec, in
+cogito-eigenstate, and (eventually) in any documentation that quoted
+the old assignment. Where this spec previously used the old mapping
+in worked examples, the examples have been corrected below.
 
 ---
 
@@ -128,16 +232,22 @@ another. The job here is to NAME the underlying object.
 | 1 | Five operations are the primary axis | `@prism`, `match-select.md` modifiers, `cogito-eigenstate.routing_bias` |
 | 2 | Five dualities as secondary axis | `gutter-lenses.md`, `@hash/coincidence` |
 | 3 | mq-queryable | `match-select.md`, `@code/mq` extended grammar |
-| 4 | Composable | `cogito.reflect` chains `observe │> strategy │> perturb`; `@epistemologic/math/category` |
+| 4 | Composable | `cogito.reflect` chains `observe \|> strategy \|> perturb`; `@epistemologic/math/category` |
 | 5 | Transformable by mq queries | implicit in Reflection's role; never typed |
 | 6 | Carries au | `au-and-conductivity.md` |
 | 7 | Fits `routing_bias` cleanly | `cogito-eigenstate-grammar.md` |
 | 8 | Fits 16-slot structure | `cogito-eigenstate.eigenboard_slots` |
 | 9 | Content-addressable | `@hash/coincidence`, the whole crystal story |
 | 10 | Supports `e^(n+1) < e^(n)` | `@beam.compare`, `road-to-1.0.md` release rule |
+| 11 | Carries a structure group | NEW: `@epistemologic/math/bundle`, `prism/core/src/bundle.rs` |
+| 12 | Holonomy decreases monotonically | NEW: bundle.rs `Transport::transport` signature |
+| 13 | Surfaces a Lawvere fixed point | NEW: bundle.rs `Closure` trait |
 
 None of these constraints contradict each other. The convergent
-representation needs to satisfy them all without awkwardness on any one.
+representation needs to satisfy them all without awkwardness on any
+one. The bundle framing adds three constraints (11–13) that the
+sheaf framing left implicit; satisfying them is automatic once the
+bundle structure is named.
 
 ---
 
@@ -145,348 +255,659 @@ representation needs to satisfy them all without awkwardness on any one.
 
 ### A. 5×5 stochastic matrix
 
-A Markov transition matrix on the five operations. Rows sum to 1. Entry
-`P[i][j]` = probability of transitioning from operation i to operation j.
+A Markov transition matrix on the five operations. Rows sum to 1.
 
 ```mirror
 type eigenboard = matrix(operation, operation, f64)
 ```
 
-**Composition:** matrix multiplication. Two eigenboards `P` and `Q` compose
-as `P @ Q` (the matrix product).
+**Composition:** matrix multiplication. **Satisfies:** 1, 3, 4, 9.
 
-**mq query shape:** `eigenboard[focus][project]` selects one entry;
-`eigenboard[focus, _]` selects a row; `eigenboard[_, refract]` selects a column.
-
-**Satisfies:** constraints 1, 3, 4, 9.
-
-**Awkward on:**
-- (2) the secondary duality axis is missing entirely
-- (6) au is a value relationally entangled with context; matrix entries
-  don't carry that relation
-- (7) `routing_bias = [f64; 5]` is one row of P, but the *reason* field
-  has no home
-- (8) the 16 slots don't fit in 25 entries cleanly
-
-**Prior art:** Markov decision processes, PageRank.
+**Awkward on:** (2) duality axis missing; (6) au's relational
+entanglement has no home in scalar entries; (7) `routing_bias`'s
+`reason` field has no home; (8) 16 slots don't fit in 25 entries
+cleanly; (11) no structure group; (12) Markov mixing is not bundle
+holonomy; (13) no fixed-point structure beyond steady state.
 
 ### B. 5×5 density matrix
 
-A Hermitian, positive semidefinite matrix with trace 1. The quantum-information
-shape. Operations are basis states; entries are coherences.
+A Hermitian, positive semidefinite matrix with trace 1.
 
 ```mirror
 type eigenboard = density_matrix(operation, complex)
 ```
 
-**Composition:** partial trace + tensor product. Two eigenboards compose by
-taking the tensor product and tracing out the joint system back to one factor.
+**Composition:** partial trace + tensor product. **Satisfies:** 1, 4,
+9, 10 (eigenvalue decrease).
 
-**mq query shape:** harder — entries are complex; coherences (off-diagonals)
-don't map cleanly to CSS-style selectors.
+**Awkward on:** (2, 3, 7, 8) — same complaints as A; (11) the unitary
+group is a structure group, but the bundle structure is then U(5),
+which doesn't match the real, conductivity-tensor data; (12, 13)
+density matrices admit holonomy in only a degenerate sense
+(Berry phase on parameter space, not the kintsugi loop).
 
-**Satisfies:** constraints 1, 4, 9, 10 (eigenvalues of a density matrix
-decreasing means decoherence; that's e^(n+1) < e^(n)).
+### C. Cellular sheaf on the five-operation graph (the prior pick)
 
-**Awkward on:**
-- (2) the duality axis is missing
-- (3) complex coherences don't lex-as-selectors
-- (7) routing_bias as a real 5-vector doesn't fit into a complex Hermitian shape
-- (8) the emotional slots have no quantum analogue
+The previous version of this spec selected C. It satisfies 1–10
+cleanly. It is what mirror referenced through `@epistemologic/math/sheaf`.
 
-**Prior art:** Braunstein-Ghosh-Severini (graphs as density matrices), Connes
-noncommutative geometry, quantum walk theory.
+**What C missed:** constraints 11–13 (structure group, holonomy, fixed
+point). C names the sections; C does not name what the sections live
+on. C is correct *given* a base structure, but C does not provide the
+base structure. That is why this spec is being rewritten.
 
-### C. Cellular sheaf on the five-operation graph (RECOMMENDED)
+### D. Principal G-bundle on the five-operation graph (RECOMMENDED)
 
-The sheaf shape from `@epistemologic/math/sheaf`. Each operation is a node;
-each node has a fiber (a 5-dim vector space, the dualities); each edge has
-a restriction map.
+A principal bundle whose base graph is the five-operation graph,
+whose structure group is G (a Lie group acting on each fiber; in the
+canonical eigenboard, G is the rotation group of the duality
+5-space), and whose sheaf-of-sections IS the cellular sheaf of C.
 
 ```mirror
 type operation = focus | project | split | zoom | refract
 type duality   = entropy | spectral | cheeger | ricci | mixing
 
-type fiber = [f64; 5]                                # one node's section
-type restriction = matrix(duality, duality, f64)     # one edge's transform
+# the fiber: one node's state vector (level 0)
+type fiber = [f64; 5]
 
+# the connection: one edge's parallel-transport operator (level 1)
+type connection_form = matrix(duality, duality, f64)
+
+# the gauge: structure-group element at one base point (level 2)
+type gauge_element  # G-valued; canonical G is SO(5) — see open questions
+
+# the holonomy: closed-loop integral of the connection (level 3 output)
+type holonomy = scalar_loss
+
+# the closure: the autopoietic fixed point (level 4)
+type closure_marker
+
+# a section: an assignment of fiber values across all base nodes
+type section = [(operation, fiber); 5]
+
+# the eigenboard: a bundle plus its current section plus metadata
 type eigenboard = {
-  fibers:        [(operation, fiber); 5],            # one fiber per op
-  restrictions:  [(edge, restriction)],              # one per composition edge
-  meta:          eigenboard_meta,                    # tick, agent, drift...
+  base:          [operation; 5],                       # nodes (fixed)
+  edges:         [edge],                               # composition graph
+  connection:    [(edge, connection_form)],            # one form per edge
+  section:       section,                              # current state
+  gauge:         [(operation, gauge_element)],         # local gauge choice
+  meta:          eigenboard_meta,
 }
 
-type edge = (operation, operation)                   # source → target
+type edge = (operation, operation)
 
 type eigenboard_meta = {
-  tick:          u64,
-  agent:         ref,
-  drift:         option(drift_warning),              # cogito-eigenstate carry
-  emotional:     option(eigenstate),                 # the side-channel
+  tick:        u64,
+  agent:       ref,
+  ancestor:    option(ref),     # the prior eigenboard (per-tick persistent)
+  drift:       option(drift_warning),
+  emotional:   option(eigenstate),  # the side-channel sub-bundle
 }
 ```
 
-**Composition:** sheaf morphism composition (Tambara module composition
-per `@epistemologic/math/category`). Two eigenboards compose by composing
-their fiber assignments along a shared structure; restriction maps compose
-as linear maps.
+**Composition:** bundle morphisms compose by stacking connection forms
+along shared base structure. Two eigenboards' connections compose as
+linear maps; their structure-group actions compose as group elements.
+This is the same composition as `@epistemologic/math/category` provides
+for Tambara modules.
 
 **mq query shape:**
 ```mirror
-eigenboard > fibers[op=focus]                       # one fiber
-eigenboard > restrictions[edge=(focus, refract)]    # one restriction
-eigenboard > fibers[op=focus] > [duality=entropy]   # one entry
-eigenboard :has(fibers[op=$op] > [duality=$d])      # has any high-conductivity entry
+eigenboard > section[op=focus]                       # one fiber's value
+eigenboard > connection[edge=(focus, refract)]       # one connection form
+eigenboard > section[op=focus] > [duality=entropy]   # one entry
+eigenboard :has(section[op=$op] > [duality=$d])      # any high-conductivity entry
+eigenboard > gauge[op=split]                         # the local gauge at split
 ```
 
-The selector grammar already does this (Spec B). The sheaf shape and the
-mq pattern grammar were designed for each other.
+The selector grammar already does this (Spec B). The bundle shape and
+the mq pattern grammar were designed for each other.
 
-**Satisfies:** all 10 constraints.
+**Satisfies:** all 13 constraints.
 
-**Cost:** more machinery than A or B. A sheaf is not a primitive; it's a
-functor. The grammar declaration adds three types where A added one.
+**Cost:** more machinery than A, B, or C. A principal bundle is not a
+primitive; it is the tower declared in `@epistemologic/math/bundle`
+(the new grammar). The eigenboard grammar declares ~6 types where A
+declared one.
 
-**Prior art:** Hansen & Ghrist (2019), `@epistemologic/math/sheaf` is
-already specified for typed edge transformations across grammar imports.
-Applying the same machinery to the operation graph isn't a new theory;
-it's a new instance.
+**Prior art:** Kobayashi & Nomizu *Foundations of Differential Geometry*
+(1963) for principal bundles; Hansen & Ghrist 2019 for the cellular
+sheaf realization of a bundle's sections on a graph; Bressan et al.
+2024 (arXiv:2402.00206) for the temporal/growing version; the trait
+chain in `prism/core/src/bundle.rs` for the operational form.
 
 ---
 
 ## Recommendation
 
-**C: the cellular sheaf representation.**
+**D: the principal G-bundle representation.**
 
-The sheaf shape is the only one that satisfies all ten constraints without
-awkwardness on any. Specifically:
+The bundle shape is the only one that satisfies all 13 constraints
+without awkwardness on any. Specifically:
 
-- Constraints 1 and 2 (the two axes) are STRUCTURAL in the sheaf:
-  the 5 nodes ARE the operations; the fiber dimension IS the dualities.
-  Neither needs to be encoded; both are present in the type.
-- Constraint 3 (mq-queryable) is satisfied because the fibers and
-  restrictions are typed records, exactly what the mq pattern grammar
-  was extended to navigate.
-- Constraints 4 and 5 (composition, transformation by mq queries)
-  inherit from `@epistemologic/math/category`. Sheaf morphisms ARE
-  Tambara module morphisms ARE composable optics. No new categorical
-  machinery.
-- Constraint 6 (carries au) holds because each fiber's vector is an au
-  candidate position; the relational entanglement is the sheaf's
-  restriction maps (the *context* binding the value).
-- Constraints 7 and 8 (routing_bias, 16 slots) fold in naturally:
-  routing_bias is a fiber's projection onto one duality axis; the 16
-  slots distribute as 5 fibers × ~2-3 visible duality axes + the
-  emotional carry.
-- Constraint 9 (content-addressable) is mechanical: a sheaf is a finite
-  product of vectors and matrices; its OID is the recursive
-  `@hash/coincidence` over those components.
-- Constraint 10 (monotonic loss) is the spectral statement: the
-  smallest nonzero eigenvalue of L_F decreases. This is well-defined
-  for finite sheaves and is what `@beam.compare` already measures
-  abstractly.
+- **Constraints 1 and 2** (the two axes) are STRUCTURAL: the 5 base
+  nodes ARE the operations; the fiber dimension IS the dualities.
+- **Constraints 3, 4, 5** (mq queries, composition, transformation)
+  inherit from `@code/mq` and `@epistemologic/math/category`.
+- **Constraint 6** (carries au): each fiber's vector is an au
+  candidate position; the relational entanglement is the bundle's
+  connection (the *context* binding the value to the rest of the
+  geometry).
+- **Constraints 7 and 8** (`routing_bias`, 16 slots): `routing_bias`
+  is a fiber projected onto one gauge slice; the 16 slots distribute
+  as 5 fibers × ~2.4 axes + the emotional sub-bundle.
+- **Constraint 9** (content-addressable): a bundle is a finite product
+  of fiber values, connection forms, and gauge choices; its OID is the
+  recursive `@hash/coincidence` over those components.
+- **Constraint 10** (monotonic loss): the holonomy decreases
+  monotonically by `bundle.rs`'s `Transport::transport` signature;
+  this implies the smallest nonzero eigenvalue of the sheaf Laplacian
+  decreases, since the Laplacian is the connection-squared.
+- **Constraint 11** (structure group): given by the bundle's G.
+- **Constraint 12** (holonomy monotonicity): IS the
+  `Imperfect<State, Infallible, Holonomy>` return of Transport.
+- **Constraint 13** (fixed point): IS the `Closure` trait's `fixed`
+  associated type.
 
-The cost of the extra machinery is paid back by reuse: the sheaf
-grammar already exists for grammar-graph type-checking. The eigenboard
-is a second instance of the same theory applied to a different graph.
+The cost of the extra machinery is paid back by reuse: the bundle
+grammar already exists for the Fate-chip / BEAM-runtime / mirror-compiler
+trio (per `bundle.rs`'s comment block). The eigenboard is another
+instance of the same tower applied to a different base graph. The
+sheaf-of-sections framing of C is recovered as a derived view — the
+section data IS the cellular sheaf assignment, but living on a bundle
+that constrains it.
 
 ---
 
-## How the sheaf threads through existing layers
+## Bundle structure (new section)
 
-### routing_bias → fiber projection
+### The tower, named
+
+`@epistemologic/math/bundle` (the new grammar) declares five abstract
+actions corresponding to the five levels in `prism/core/src/bundle.rs`:
+
+```
+fiber       : () -> state
+connection  : () -> optic
+gauge       : () -> group
+transport   : state -> imperfect(state, holonomy)
+close       : () -> fixed
+```
+
+A grammar that implements all five (with concrete carriers) IS a
+principal G-bundle. The `bundle(grammar)` property checks this; the
+`literal(implementation)` property checks the implementation matches
+the declared shape under measurement.
+
+### The eigenboard as an instance
+
+The eigenboard instantiates the tower with:
+
+```
+state       = fiber                                  ([f64; 5])
+optic       = connection_form                        (5×5 matrix)
+group       = gauge_element                          (SO(5)-valued)
+holonomy    = scalar_loss                            (the e_n value)
+fixed       = closure_marker                         (the settled section)
+```
+
+Each action becomes a concrete action on the eigenboard:
+
+- `fiber(op)` returns the section value at base node `op`.
+- `connection(edge)` returns the parallel-transport operator on `edge`.
+- `gauge(op)` returns the local gauge choice at `op`.
+- `transport(section, edge)` parallel-transports the section across the
+  edge, returning an imperfect-typed result whose holonomy IS the
+  per-edge loss.
+- `close(section)` returns the closure marker iff the section is at the
+  fixed point of repeated transport.
+
+### Why `Imperfect<State, Infallible, Holonomy>` IS `e^(n+1) < e^(n)`
+
+The Rust signature `Transport::transport` returns:
+
+```rust
+Imperfect<Self::State, Infallible, Self::Holonomy>
+```
+
+The three type parameters carry:
+1. The state (always recoverable — the transported section).
+2. The infallible error channel (transport never produces a hard error;
+   it can only produce *imperfect* results).
+3. The holonomy (a `Loss`-typed value; the residual that survived
+   transport).
+
+The `Imperfect::Partial(state, loss)` case is the typical return: the
+section transported correctly, but a non-zero holonomy accumulated. The
+`Imperfect::Success(state)` case is the boundary: holonomy = 0, the
+loop closed perfectly, the kintsugi tick discharged its obligation.
+
+`e^(n+1) < e^(n)` IS the geometric statement that the holonomy on
+successive ticks of the kintsugi loop strictly decreases until it
+hits zero. The bundle's Transport signature *encodes* this monotonic
+descent in the type system: a successful refract collapses
+Imperfect::Partial to Imperfect::Success, and the only way for the
+type to reach Success is for the Holonomy carrier to reach zero.
+
+This is what makes the eigenboard's spectral story a theorem rather
+than a heuristic. The Laplacian-spectral-gap argument and the
+holonomy-decrease argument are the same argument viewed in two
+different bases — sheaf cohomology (the L_F kernel) vs bundle
+geometry (the connection's curvature integral around closed loops).
+
+---
+
+## Mycelial substrate (new section)
+
+The bundle structure has a biological reading. Folding in the synthesis
+from `mycelial-networks-and-au-tissue.md`:
+
+### The structural correspondence
+
+| Bundle structure | Mycelial structure | Reference |
+|-----------------|--------------------|-----------|
+| Fiber at base node | Hyphal tip with current SPK state | Riquelme et al. 2018; Steinberg 2013 |
+| Connection on edge | Trunk-hypha bidirectional conduit | Schmieder et al. *Curr. Biol.* 2019 |
+| Parallel transport | Cytoplasmic bulk flow + signaling | Heaton et al. 2010; Schmieder et al. 2019 |
+| Gauge element | Local cord cross-section + Murray-equilibrium choice | Heaton et al. 2010; Haskovec et al. 2019 |
+| Holonomy = loss | Energy dissipated in flow + branching cost | Tero et al. 2010; Marbach et al. 2023 |
+| Closure | Autopoietic mycelium maintaining itself | Oyarte Galvez et al. 2025 (BARE) |
+| Bundle morphism (anastomosis) | Hyphal anastomosis (two networks fuse) | Dikec et al. 2020; Oyarte Galvez et al. 2025 |
+| Section growth tick | Apical extension by Spitzenkörper | Riquelme et al. 2018 |
+| Persistence diagram of section history | Persistence diagram of growth | Sakib 2025 (preprint, flagged) |
+
+The fit is precise enough to be more than metaphor. The Oyarte Galvez
+et al. (2025) BARE model — Branching and Annihilating Range Expansion —
+is the dynamics of a travelling wave of growth tips with anastomotic
+fusion, exactly the dynamics of the kintsugi loop on the eigenboard.
+
+The grammar can declare au-tissue IS mycelial under the BARE-model
+framing. Three honest qualifications go with this claim:
+
+### Qualification 1: math debt on sheaf cohomology of growing graphs
+
+The eigenboard's base graph is small (5 nodes, fixed). The au-tissue's
+base graph is *growing* — every kintsugi tick adds a resolved hole as
+a new node, plus edges to its conductivity neighbours. Static sheaf
+cohomology is solid (Hansen & Ghrist 2019). Sheaf cohomology on
+*growing* graphs is recent research; Bressan et al. (arXiv:2402.00206,
+2024) give the categorical framework, but the spectral monotonicity
+statements mirror would need are not yet proven in generality.
+
+This is the single largest mathematical risk. The grammar at this
+tick declares the bundle structure on the static 5-node eigenboard
+(safe); the au-tissue extension to a growing base graph inherits the
+math debt. Per the research synthesis §5.4: either restrict to growth
+modes for which monotonicity can be proven, or treat the monotonicity
+as empirical pending theorem.
+
+### Qualification 2: the Adamatzky overhype
+
+Fungal-electrical-signaling-as-language (Adamatzky 2022) is contested
+in the peer-reviewed literature (PMC11995700, 2024–2025; *Fungal Ecol.*
+68, 101326, 2024). The 2024 review is explicit: extracellular electrode
+measurements may pick up abiotic Donnan potentials and substrate
+artifacts; the linguistic-analysis claims have not been independently
+validated with the methodological controls the field requires.
+
+The grammar must not import any IS-claim that depends on
+fungi-computing-spikes-as-information. The well-substantiated signaling
+story is *trunk-hypha bidirectional transport* (Schmieder et al. 2019),
+which is what the bundle's connection imports. The grammar builds on
+the load-bearing biology and avoids the contested.
+
+### Qualification 3: the Mother-Tree mistake
+
+The popular "Wood Wide Web" / "Mother Tree" narrative is critiqued in
+Karst, Jones, Hoeksema *Nat. Ecol. Evol.* 2023 and Robinson et al.
+*Trends Plant Sci.* 2023. The peer-reviewed verdict: no load-bearing
+evidence for preferential kin-directed resource transfer through CMNs;
+"positive citation bias and overinterpreted results have led to
+misinformation" (Karst et al. 2023).
+
+The grammar must use the de-personified, network-first framing: flat,
+all-pairs, no central node — the Splinter topology of
+`void-dual-geometry.md`, not the Narcissus star with a Mother-Tree hub.
+The math and the biology agree on this; only the popular narrative
+diverges, and the grammar declines to follow it.
+
+### What this means for the spec
+
+The grammar can claim:
+
+- *au-tissue IS the section history of a principal G-bundle whose base
+  graph grows by branching-and-annihilating range expansion.* This is
+  the BARE-framed claim. It can pass `literal` measurement.
+- *kintsugi tick IS hyphal apical extension at a Spitzenkörper.*
+  Measurable: successive ticks show the BARE statistical signature.
+- *anastomosis IS bundle-morphism identification of two fibers under
+  connection-compatibility.* Measurable: the spectral gap increase
+  when two subtissues fuse.
+
+The grammar must not claim:
+
+- *fungi speak a language via electrical spikes.* Unproven; flagged
+  in the research synthesis as the load-bearing skepticism.
+- *trees raise their children through the network.* Critiqued in the
+  literature; flagged in the research synthesis as the load-bearing
+  skepticism.
+
+### The Splinter geometry as the topological match
+
+`void-dual-geometry.md` describes the Splinter graph K_n as: λ₀ = 0 at
+the ground state; no bottleneck; positive Ollivier-Ricci curvature;
+maximum entanglement; fast mixing; all-pairs reachable. This is the
+topological match for mycelial intelligence under the BARE model: a
+network that does network things without a hub.
+
+The eigenboard's 5-node base graph is small enough that the Splinter
+topology is a reasonable default (full directed graph minus self-loops
+is exactly the Splinter pattern). The growing au-tissue extension
+preserves the Splinter property in the BARE wake: behind the leading
+edge, anastomosis fills in cross-connections until the wake region is
+densely connected.
+
+The bundle's structure group acts consistently across this geometry
+because the Splinter topology has no preferred direction; G acts by
+rotation, not by translation; the eigenboard does not have a "front"
+or "back."
+
+---
+
+## How the bundle threads through existing layers
+
+### routing_bias → fiber projection through a gauge slice
 
 ```mirror
 routing_bias.model_weights : [f64; 5]
-# This is one fiber, projected onto the "which Fate model to favor" axis.
-# In sheaf terms:
-fiber_at(focus).projection_onto(model_axis) == routing_bias.model_weights
+# This is one fiber, projected onto the gauge slice that selects
+# the "which Fate model to favor" coordinate. In bundle terms:
+section_at(focus).projected_through(gauge_at(focus), model_axis)
+  == routing_bias.model_weights
 ```
 
-The five Fate models map one-to-one with the five operations because each
-model owns one operation at the inference layer:
-- Abyss ≡ focus (narrow on the thing; observe before acting)
-- Introject ≡ refract (settle, internalize)
-- Cartographer ≡ project (map a view of the graph)
-- Explorer ≡ zoom (cross levels)
-- Fate ≡ split (delegate, fan out)
+The five Fate models map one-to-one with the five operations because
+each model owns one operation at the inference layer:
 
-This mapping is implicit in cogito-eigenstate but is now structurally
-locked: the model_weights vector IS a fiber, indexed by the operation
-that fiber lives on.
+- **Abyss ≡ focus** (observe the state; the section value)
+- **Introject ≡ project** (the connection; the optic of transport)
+- **Cartographer ≡ split** (the gauge; the structure-group choice)
+- **Explorer ≡ zoom** (parallel transport; the imperfect-returning level)
+- **Fate ≡ refract** (the closure; the Lawvere fixed point)
 
-### 5×5 conductivity tensor → sheaf restriction maps
+This mapping is now structurally locked: the model_weights vector IS a
+fiber, indexed by the operation that fiber lives on, and the model
+that owns that fiber is the one whose Fate output gives the fiber its
+value.
 
-`@hash/coincidence`'s tensor is the matrix representation of the sheaf's
-restriction maps in the canonical basis. The entry T[op_i][duality_j] is
-the restriction value from `fiber(op_i)` to the duality-j axis at the
-adjacent fiber.
+### 5×5 conductivity tensor → connection matrix
 
-In other words: the 5×5 conductivity tensor IS the restriction-map matrix.
-The hash's 5 projections are 5 restrictions; the 5 dimensions are the 5
-operations. The hash WAS the sheaf all along, viewed through the
-content-addressing lens.
+`@hash/coincidence`'s tensor is the matrix representation of the
+bundle's connection in the canonical basis. The entry T[op_i][duality_j]
+is the connection-form value from `fiber(op_i)` to the duality-j axis
+at the adjacent fiber.
 
-### `@cogito.observe(beam_n, beam_n+1)` → sheaf section delta
+In other words: the 5×5 conductivity tensor IS the connection matrix.
+The hash's 5 projections are 5 components of the connection 1-form;
+the 5 dimensions are the 5 fibers. The hash WAS the connection all
+along, viewed through content-addressing.
 
-The two beams carry their conductivity tensors (the topology field). The
-observation IS the difference between the two sheaf sections:
+### `@cogito.observe(beam_n, beam_n+1)` → section delta + holonomy
+
+The two beams carry their conductivity tensors (the connection field).
+The observation IS the difference between the two sections PLUS the
+holonomy accumulated by the transport between them:
 
 ```mirror
 observe(beam_n, beam_n_plus_1) -> observation {
-  let s_n     = beam_n.topology.as_sheaf_section();
-  let s_n_p_1 = beam_n_plus_1.topology.as_sheaf_section();
-  let delta   = sheaf_section_diff(s_n, s_n_p_1);
-  observation { delta, loss_delta: beam_n_plus_1.loss - beam_n.loss, ... }
+  let s_n     = beam_n.topology.as_section();
+  let s_n_p_1 = beam_n_plus_1.topology.as_section();
+  let delta   = section_diff(s_n, s_n_p_1);
+  let h       = transport(s_n, beam_n.edge_to(beam_n_plus_1)).holonomy;
+  observation { delta, holonomy: h, loss_delta: beam_n_plus_1.loss - beam_n.loss }
 }
 ```
 
-### `@cogito.strategy()` → sheaf morphism
+The holonomy gives the geometric reading of the loss decrease; the
+section delta gives the kinematic reading. Both should agree —
+`literal(transport)` checks that they do.
 
-Reflection's strategy is a sheaf morphism: a transformation that takes
-one section and produces another. Written as an mq query that selects
-fibers or restrictions and rewrites their entries:
+### `@cogito.strategy()` → bundle automorphism
+
+Reflection's strategy is a bundle automorphism: a G-equivariant
+transformation that takes one section and produces another. Written
+as an mq query that selects fibers or connections and rewrites them:
 
 ```mirror
-strategy(obs) -> morphism {
-  # "if drift on the focus fiber's entropy axis exceeds threshold,
-  #  rebalance toward Cartographer (project)"
-  match obs.delta > fibers[op=focus] > [duality=entropy] {
-    high($v) => morphism.rebalance(focus, project, $v),
-    _        => morphism.identity,
+strategy(obs) -> automorphism {
+  # "if holonomy on the (zoom, refract) edge exceeds threshold,
+  #  rebalance toward Cartographer (split)"
+  match obs.holonomy > connection[edge=(zoom, refract)] {
+    high($v) => automorphism.rebalance(zoom, split, $v),
+    _        => automorphism.identity,
   }
 }
 ```
 
-The match modifier `match(zoom)` (from match-select.md) is the natural
-choice here — the strategy crosses levels of resolution (per-fiber to
-per-operation to global).
+The match modifier `match(zoom)` (from match-select.md) is the
+natural choice — the strategy crosses levels of resolution, which IS
+the operation `zoom` owns at the Transport level of the tower.
 
-### `@beam.topology: eigenvalues` → spectrum of L_F
+### `@beam.topology: eigenvalues` → spectrum of the connection-squared
 
-The beam's topology field carries the eigenvalues of the sheaf Laplacian
-L_F. The five values (one per operation) are the spectral signature of
-the current eigenboard state. The Fiedler value (the smallest nonzero
-eigenvalue) is the *spectral gap* — it's what `@beam.compare` checks to
-verify monotonic loss decrease.
+The beam's topology field carries the eigenvalues of the
+connection-squared operator (sheaf Laplacian L_F, in the
+sections basis). The Fiedler value (smallest nonzero eigenvalue) is
+the spectral gap and IS what `@beam.compare` checks to verify
+monotonic loss decrease.
 
-### au's relational entanglement → fiber + context
+### au's relational entanglement → fiber + connection
 
-An au value's meaning depends on its position. In the sheaf, that
-position IS the fiber it lives in PLUS the restriction maps that bind
-it to neighbors. Move au to a different fiber and the restrictions
-don't apply; conductivity collapses to λ₀. This is precisely the
-relational entanglement named in au-and-conductivity.md.
+An au value's meaning depends on its position. In the bundle, that
+position IS the fiber it lives in PLUS the connection that binds it
+to neighbors. Move au to a different fiber and the connection forms
+do not apply; the holonomy explodes; conductivity collapses to λ₀.
+This is precisely the relational entanglement named in
+au-and-conductivity.md.
+
+### Match modifiers → bundle automorphisms
+
+From match-select.md, match modifiers parameterize how a match
+behaves across the operation hierarchy: `match(refract)` returns one
+section; `match(split)` returns five candidate sections (one per Fate
+model); `match(zoom)` traverses levels. Under the bundle framing,
+each modifier IS a *specific kind of bundle automorphism*:
+
+- `match(focus)`   = automorphism restricted to one fiber.
+- `match(project)` = automorphism that respects the connection structure.
+- `match(split)`   = automorphism that respects the gauge.
+- `match(zoom)`    = automorphism with non-trivial holonomy.
+- `match(refract)` = automorphism preserving the closure.
+
+This is the cleanest unification — the match modifiers were always
+selecting which structural level of the bundle the rewrite applies
+to.
 
 ---
 
 ## Open questions
 
-1. **The composition edges.** The five operations have a composition
-   table (the `then_*` table mentioned in epistemologic-grammar.md). Does
-   the eigenboard's graph include EVERY composable pair (25 edges, fully
-   connected directed) or only the ones where composition is meaningful
-   (some subset)? The choice affects the sheaf's structure significantly.
-   My read: full directed graph minus self-loops, but verification needed.
+These are the choices Alex's prior input answered, integrated as
+present-tense decisions; plus new questions surfaced by the bundle
+framing.
 
-2. **Per-tick or persistent.** Does the eigenboard live in `refs/eigenboard/<agent>/`
-   (one ref per agent, advances per tick) or is it transient (one per tick,
-   discarded after Reflection observes the next)? The kintsugi-wiring spec
-   pulls toward persistent (so history is queryable); the cost is GC pressure.
-   The `@mirror/runtime/gen_prism` pattern would make eigenboards gen_prisms.
+1. **The composition edges** — *answered*: A-on-top-of-C — the full
+   directed graph minus self-loops, augmented with the composition-table
+   constraints from the operation type's category structure. 20 edges
+   for the canonical eigenboard. The bundle's connection has 20
+   non-trivial components plus the 5 trivial fiber identities.
 
-3. **The emotional sub-board's structural role.** The 4 emotional slots
-   (valence, arousal, dominant_cluster, drift_severity) are declared in
-   cogito-eigenstate. Are they a SECOND sheaf section on the same graph (a
-   separate observable that doesn't interact with the operational geometry),
-   or are they encoded inside the operational fibers as additional axes
-   (making fibers 9-dimensional)? My read: separate section, side-channel.
-   The interoceptive signal doesn't COMPETE with the operational signal;
-   it OBSERVES the agent's relation to it.
+2. **Per-tick or persistent** — *answered*: per-tick persistent. The
+   eigenboard advances by one section per kintsugi tick, with the
+   prior section recorded as `meta.ancestor`. Refs live at
+   `refs/eigenboard/<agent>/HEAD`; the ancestor chain IS the audit
+   trail Reflection walks for non-Markovian reasoning. GC is anti-
+   Hebbian decay (see `@epistemologic/math/hebbian`); long-dead
+   eigenboards get pruned by lack of use.
 
-4. **The connection to `@mirror/match` modifiers.** `match(refract)`
-   produces au; `match(split)` produces [au] for tournament. These
-   modifier semantics map onto the sheaf: refract returns one section;
-   split returns five candidate sections (one per Fate model). Is the
-   match modifier itself a sheaf morphism? My read: yes, but verification
-   needed; this is the cleanest unification if it holds.
+3. **The emotional sub-board's structural role** — *answered*: it is
+   a side-channel rendering of dark dimensions. The 4 emotional slots
+   (valence, arousal, dominant_cluster, drift_severity) form a
+   separate sub-bundle whose base graph is the same 5 operations but
+   whose connection is structurally independent of the operational
+   one. The two sub-bundles share the base graph and the gauge
+   choice but not the connection or the holonomy. The interoceptive
+   signal OBSERVES the agent's relation to the operational signal
+   without competing with it.
 
-5. **Hodge decomposition of the eigenboard.** The Hodge spec
-   (`@epistemologic/math/hodge`) decomposes edge flows into gradient,
-   curl, and harmonic. If the eigenboard's restriction maps form an edge
-   flow, the decomposition tells us: gradient = legitimate Reflection
-   progress; curl = oscillation between models; harmonic = irreducible
-   stuck patterns (kintsugi can't fix; needs grammar evolution). Is this
-   the natural way to read Reflection's effectiveness? My read: yes; this
-   should be its own grammar `@cogito/hodge` once the basic sheaf lands.
+4. **The connection to `@mirror/match` modifiers** — *answered*: match
+   modifiers ARE bundle automorphisms (see "Match modifiers → bundle
+   automorphisms" above). Each modifier selects which level of the
+   tower the automorphism acts at.
+
+5. **Hodge decomposition of the eigenboard** — *answered as follow-up*:
+   `@cogito/hodge` lands as a downstream tick. The Hodge decomposition
+   of the connection 1-form gives gradient (legitimate Reflection
+   progress), curl (oscillation between models), harmonic (irreducible
+   stuck pattern — kintsugi can't fix; needs grammar evolution). The
+   spec for this is its own tick.
+
+### New open questions (from the bundle lift)
+
+6. **What is the structure group G?** The canonical choice is SO(5)
+   (rotations of the duality 5-space); but it could be O(5) (allowing
+   reflections — useful if some dualities are signed), SU(5)
+   (complex unitary — useful if the connection is naturally
+   complex-valued), or GL(5) (general linear — useful if conductivity
+   amplitudes are not normalized). The choice affects which
+   conductivity quantities are invariants and which are
+   gauge-dependent. **Alex's call needed.** My read: SO(5) for the
+   first cut; revisit if Hodge decomposition wants signed flow.
+
+7. **How does the bundle on the 5-operation base graph extend to the
+   growing au-tissue base graph?** The static bundle is well-defined.
+   The growing version inherits the math debt of §"Mycelial substrate"
+   Qualification 1. Either: (a) declare au-tissue as a *family* of
+   bundles indexed by tick, with morphisms between consecutive ticks
+   = anastomosis events + apical extensions; or (b) declare a
+   *temporal* bundle whose base is the time-extended graph (Bressan
+   et al. 2024 categorical framework). **Alex's call needed.**
+
+8. **Does the closure level need its own grammar action, or is it
+   sufficient to declare `close()` and leave the body `\`?** Per the
+   minimum-grammar-cost rule, the action is enough; the closure
+   detection logic lives downstream. But the `Lawvere fixed point`
+   identification is precise (Lawvere 1969) and might warrant
+   `@epistemologic/math/lawvere` as its own follow-up tick.
+
+9. **The connection-form symmetry.** The connection is a 5×5 matrix
+   per edge. Is it constrained to be symmetric, antisymmetric, or
+   general? Each choice has a different geometric meaning:
+   symmetric → the connection is metric (preserves an inner product),
+   antisymmetric → the connection is symplectic (preserves a 2-form),
+   general → no extra structure. **Alex's call needed.** My read:
+   start with general; constrain only if `literal(transport)` fails
+   without the constraint.
 
 ---
 
 ## Implications — concrete next ticks
 
-1. **Declare `type eigenboard` as a sheaf.** Single grammar file, probably
-   `boot/std/cogito/eigenboard.mirror`. The grammar imports
-   `@epistemologic/math/sheaf`, declares the operation and duality types,
-   the fiber, the restriction, the meta. All higher-level lambdas (the
-   actions on the eigenboard) stay `\`.
+Reordered to put the bundle declarations first:
 
-2. **Retype `@cogito.perturb`'s return.** Today it returns `eigenboard`
+1. **Declare `@epistemologic/math/bundle`** — DONE in this tick.
+   `boot/std/epistemologic/math/bundle.mirror` declares the five
+   abstract actions, the five carrier types, and the two properties
+   (`bundle`, `literal`). The new grammar imports `@epistemologic`,
+   `@epistemologic/math/sheaf`, `@beam`. All action bodies are `\`.
+
+2. **Declare `type eigenboard` as a section of the bundle.** Single
+   grammar file, probably `boot/std/cogito/eigenboard.mirror` (new).
+   The grammar imports `@epistemologic/math/bundle` and instantiates
+   the tower with the concrete carriers (`fiber = [f64; 5]`,
+   `optic = connection_form`, `group = gauge_element`, etc.). All
+   higher-level lambdas stay `\`.
+
+3. **Retype `@cogito.perturb`'s return.** Today it returns `eigenboard`
    with body `@beam.observe`. After this spec lands, the type resolves
-   to the sheaf shape declared above. The body stays `\` until the
-   transformation logic is wired (kintsugi-wiring tick 7).
+   through `@epistemologic/math/bundle` (a section of the bundle). The
+   body stays `\` until the transformation logic is wired
+   (kintsugi-wiring tick 7).
 
-3. **Map `routing_bias` to a fiber projection.** Declare in
-   cogito-eigenstate (spectral) that `routing_bias.model_weights` IS
-   `eigenboard.fiber_at(op).projected(model_axis)` for the relevant op.
-   This is a documentation update + a small grammar action; no behaviour
+4. **Map `routing_bias` to a fiber projection through a gauge slice.**
+   Declare in cogito-eigenstate (spectral) that
+   `routing_bias.model_weights` IS the fiber at the relevant operation
+   projected through the local gauge onto the model-favor axis. This
+   is a documentation update + a small grammar action.
+
+5. **Equate the 5×5 conductivity tensor with the connection matrix.**
+   Update `@hash/coincidence` to declare that its 5×5 tensor IS the
+   matrix representation of an eigenboard's connection 1-form in the
+   canonical basis. This is a comment + type alias; no computation
    change.
 
-4. **Equate the 5×5 conductivity tensor with the sheaf restriction
-   matrix.** Update `@hash/coincidence` to declare that its 5×5 tensor
-   IS the matrix representation of an eigenboard's restriction maps in
-   the canonical basis. This is a comment + type alias; no computation
-   change.
+6. **Spec `@cogito/hodge`** — the Hodge decomposition of the
+   eigenboard's connection. Surfaces the harmonic component (the
+   irreducible stuck pattern). Future work; the path is open.
 
-5. **Spec `@cogito/hodge`** — the Hodge decomposition of eigenboard
-   transformations. Surfaces the harmonic component (the irreducible
-   stuck pattern). Future work, but worth flagging the path.
+7. **Wire `@beam.compare`** to read the connection-squared operator's
+   smallest nonzero eigenvalue (Fiedler) of the two beams' topology
+   fields. This is the concrete check that grounds `e^(n+1) < e^(n)`.
 
-6. **Wire `@beam.compare`** to read the sheaf Laplacian's smallest
-   nonzero eigenvalue (Fiedler) of the two beams' topology fields. This
-   is the concrete check that grounds `e^(n+1) < e^(n)`.
+8. **Persistent eigenboard refs.** Declare `refs/eigenboard/<agent>/HEAD`
+   convention. Each tick advances the ref. The ancestor chain is the
+   history Reflection can walk for non-Markovian reasoning.
 
-7. **Persistent eigenboard refs.** Declare `refs/eigenboard/<agent>/HEAD`
-   convention (per the gen_prism pattern). Each tick advances the ref.
-   The ancestor chain is the history Reflection can walk for
-   non-Markovian reasoning.
+9. **Au-tissue as the growing-base extension** — defer behind the
+   sheaf-on-growing-graphs math debt. Either land Bressan et al. 2024
+   as `@epistemologic/math/sheaf/growth` first (cleanest), or declare
+   au-tissue with the math-debt acknowledged in its `out of scope`
+   section.
+
+10. **`@epistemologic/bio/mycelium` as the BARE-framed sub-grammar.**
+    The sketch in `mycelial-networks-and-au-tissue.md` §"Synthesis" is
+    the starting point. It imports `@epistemologic/math/bundle`,
+    `@epistemologic/math/sheaf`, `@epistemologic/math/homology`,
+    `@epistemologic/math/tropical`. The three qualifications above
+    determine what it can and cannot claim.
 
 ---
 
 ## Out of scope
 
-- The actual computation of the sheaf Laplacian. The math lives in
-  `@epistemologic/math/sheaf`; the eigenboard inherits.
+- The actual computation of the connection-squared operator's
+  spectrum. The math lives in `@epistemologic/math/sheaf` and
+  `@epistemologic/math/bundle`; the eigenboard inherits.
 - The full implementation of Reflection's strategy logic. This spec
   declares the type; the strategy bodies stay `\` until kintsugi
   closes them.
 - The training of Fate's five models. They emit au into fibers; how
   they learn to do so is a separate concern.
 - The Anthropic 171-emotion vectors. They live in cogito-eigenstate as
-  the emotional side-channel; this spec doesn't touch them.
+  the emotional side-channel; this spec doesn't touch their shape.
 - The LSP / gutter rendering of eigenboard slots. The void color from
   gutter-lenses.md applies when conductivity is at λ₀ in any fiber;
   the visualization is downstream.
 - The diff/review surface for eigenboard transformations. Belongs in
   kintsugi-wiring's future tick section.
+- The au-tissue extension to a growing base graph. Math debt; see
+  Qualification 1 in the mycelial substrate section.
+- The detailed shape of `@epistemologic/bio/mycelium`. The research
+  synthesis sketches it; the spec is downstream.
+- The Lawvere-fixed-point grammar `@epistemologic/math/lawvere` (open
+  question 8). Possibly its own follow-up tick.
 
 ---
 
-*Five operations, five nodes.*
+*Five operations, five base nodes.*
 *Five dualities, five axes per fiber.*
-*Restriction maps bind the fibers.*
-*The Laplacian measures coherence.*
-*H⁰ is consistency; H¹ is the stuck place.*
-*Reflection writes morphisms; kintsugi closes the spectral gap.*
-*The eigenboard is the shape Reflection composes against.*
+*The connection binds the fibers; the gauge chooses the basis.*
+*Transport returns imperfect by design.*
+*Holonomy IS loss; holonomy decreases monotonically.*
+*The closure is the Lawvere fixed point.*
+*Reflection writes automorphisms; kintsugi closes the loop.*
+*The eigenboard is a section of the principal bundle Reflection composes against.*
+*The bundle is the shape; the section is the state; the holonomy is the cost.*
 
 Apache-2.0.
