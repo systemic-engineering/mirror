@@ -1,0 +1,102 @@
+in @prism
+in @code/mq
+
+# @mirror/match — structural dispatch as grammar.
+#
+# Two control-flow forms ride on the CSS-selector primitive declared
+# in @code/mq:
+#
+#   match expr { p1 => a1, p2 => a2, ... }                # focus default
+#   match(<modifier>) expr { p1 => a1, p2 => a2, ... }    # explicit modifier
+#   select |v| { variant => body, ... }                   # sum-type sugar
+#
+# Patterns are mq queries; the modifier is also an mq query (one of
+# the five operations by default, or any custom lens). All bodies are
+# \ until the kintsugi formatter discharges the parser's totality
+# obligations and emits the sub-Turing implementation.
+#
+# Spec: docs/specs/match-select.md
+
+grammar @mirror/match {
+
+  # ---- arm shape ---------------------------------------------------
+
+  # one match/select arm: pattern, body, optional doc annotations.
+  # the annotations are #(nl) AST nodes — documentation owned by @nl,
+  # not trivia. they contribute to the arm's content OID.
+  type arm {
+    pattern: mq_pattern,
+    body: ast,
+    annotations: [ref],
+  }
+
+  # ---- match: structural dispatch ---------------------------------
+
+  # the modifier slot. one of the five operations, or any mq query.
+  # default: focus (one arm wins; today's behaviour).
+  # the modifier picks the SEMANTICS of how arms relate — see
+  # match-select.md, "Match modifiers — the prism applied to arms".
+  type modifier = focus | project | split | zoom | refract | custom(mq_query)
+
+  type match_expr {
+    subject: ast,
+    modifier: modifier,
+    arms: [arm],
+    exhaustive: bool,
+  }
+
+  # parse and evaluate.
+  # parse_match is io-eligible (the bootstrap implements parsing);
+  # evaluate_match is sub-Turing once the model checker confirms
+  # exhaustiveness and per-arm body totality.
+  #
+  # the return type depends on the modifier:
+  #   focus    -> winning arm's body, type T
+  #   split    -> [T]
+  #   refract  -> au (content-addressed)
+  #   project  -> T (over filtered subset)
+  #   zoom     -> union(T1, T2, ...)
+  parse_match(tokens) -> match_expr { \ }
+  evaluate_match(expr, env) -> imperfect { \ }
+
+  # ---- select: sum-type sugar -------------------------------------
+
+  # select |v| { variant(...) => body, ... }
+  # the binder names the matched value in each arm's scope.
+  # no modifier — sum variants are mutually exclusive, so focus and
+  # split collapse to the same thing here.
+  type select_expr {
+    binder: ref,
+    arms: [arm],
+    exhaustive: bool,
+  }
+
+  parse_select(tokens) -> select_expr { \ }
+  evaluate_select(expr, env) -> imperfect { \ }
+
+  # ---- exhaustiveness obligations ---------------------------------
+
+  # the model checker enforces these at compile time. falsifying
+  # inputs: a sum variant unmentioned, a wildcard omitted in a
+  # structural match, an attribute predicate whose negation isn't
+  # covered.
+  #
+  # exhaustiveness adapts per modifier:
+  #   focus    every reachable shape covered (or _)
+  #   split    every reachable shape covered by >= 1 arm
+  #   refract  focus-style (one winner required for the OID)
+  #   project  exhaustiveness over the projected subset
+  #   zoom     exhaustiveness at every level the lens spans
+  requires exhaustive(match_expr)
+  requires exhaustive(select_expr)
+}
+
+out arm
+out modifier
+out match_expr
+out select_expr
+out parse_match
+out evaluate_match
+out parse_select
+out evaluate_select
+out @mirror/match

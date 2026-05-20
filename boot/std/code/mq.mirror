@@ -158,10 +158,123 @@ grammar @code/mq {
 
   action suggest(context, eigenboard_state) -> [suggestion]
 
-  -- ── Parse and compile ────────────────────────────────────────────
+  -- ── Parse and compile ─────────────────────────────────────────
 
   template parse(input: text) -> query
   template compile(query, context) -> result
+
+  -- ── Pattern selectors (CSS-flavored, typed) ────────────────────
+  --
+  -- Patterns query the SHAPE of a value. Same primitive used by:
+  --   io bindings in @mirror/compile/bootstrap:
+  --     @code/rust(~f"...") > fn[name="foo"]
+  --   match arms in @mirror/match:
+  --     match req { request[method="tools/list"] => ... }
+  --
+  -- CSS ↔ mirror:
+  --   tag                  type/variant head
+  --   *  or  _             wildcard
+  --   [k=v]                field-equals predicate (literal or $bound)
+  --   [k]                  has-field predicate
+  --   [k^="x"]             starts-with (string-typed fields only)
+  --   [k*="x"]             contains-substring
+  --   [k$="x"]             ends-with
+  --   #oid                 content-address match
+  --   .ns                  grammar-tag predicate (@code/llvm, etc.)
+  --   a > b                direct child
+  --   a b                  any descendant
+  --   a + b                immediately following sibling
+  --   a ~ b                any following sibling
+  --   :has(s)              contains-descendant
+  --   :not(s)              negation
+  --   :is(a, b)            union
+  --   :first :last :nth(n) position
+  --   a, b                 alternation (selector list)
+  --
+  -- $name binds; same-name-twice means equality. The pattern is typed
+  -- against the value's declared shape; the parser rejects patterns
+  -- that ask for node kinds the type doesn't have.
+
+  type mq_pattern = head_pattern
+                  | sequence_pattern
+                  | union_pattern
+                  | predicate_pattern
+
+  type head_pattern = type_ref(ref)
+                    | wildcard
+                    | binding(ref)
+
+  type child_relation = direct | descendant | next_sibling | any_sibling
+
+  type sequence_pattern {
+    left: mq_pattern,
+    relation: child_relation,
+    right: mq_pattern,
+  }
+
+  type union_pattern {
+    options: [mq_pattern],
+  }
+
+  type predicate_pattern {
+    head: mq_pattern,
+    predicates: [predicate],
+  }
+
+  type predicate = attribute_pred | pseudo_class
+
+  type attribute_pred = field_eq(ref, value)
+                      | field_eq_bound(ref, ref)
+                      | field_starts(ref, text)
+                      | field_contains(ref, text)
+                      | field_ends(ref, text)
+                      | field_present(ref)
+
+  type pseudo_class = has(mq_pattern)
+                    | not_(mq_pattern)
+                    | is_([mq_pattern])
+                    | first
+                    | last
+                    | nth(u32)
+
+  -- bindings: a pattern's $name captures bound during apply.
+  type binding_env {
+    bindings: [binding_entry],
+  }
+
+  type binding_entry {
+    name: ref,
+    value: ref,
+  }
+
+  -- parse a pattern from tokens (post-tokenizer).
+  -- io-eligible; rides the kintsugi ladder once the parser's totality
+  -- obligations close.
+  parse_pattern(tokens) -> mq_pattern { \ }
+
+  -- check whether a value matches a pattern, returning bindings on
+  -- success. sub-Turing once the model checker confirms termination
+  -- (patterns are finite trees; matching is bounded by depth).
+  apply_pattern(value, pattern) -> imperfect { \ }
+
+  -- exhaustiveness check: does this set of patterns cover every
+  -- reachable shape of the given type? used by @mirror/match to
+  -- discharge the `requires exhaustive(...)` obligation.
+  patterns_exhaustive(patterns: [mq_pattern], typ: ref) -> verdict { \ }
 }
 
+out mq_pattern
+out head_pattern
+out child_relation
+out sequence_pattern
+out union_pattern
+out predicate_pattern
+out predicate
+out attribute_pred
+out pseudo_class
+out binding_env
+out binding_entry
+out parse_pattern
+out apply_pattern
+out patterns_exhaustive
 out @code/mq
