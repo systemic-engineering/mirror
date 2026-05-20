@@ -40,15 +40,24 @@ fn collect_dark<'a>(node: &'a AstNode, out: &mut Vec<&'a AstNode>) {
 
 /// Print a `total_classification` diagnostic for a single dark region.
 ///
-/// Format (per docs/specs/strict-and-total-classification.md):
-///   error[total_classification]: <N> dark region(s) in <file>
+/// Emits only the location + caret + hint block. The per-file
+/// `error[total_classification]: N dark region(s) in <file>` header is
+/// printed once by `enforce_strict` before iterating over regions, so
+/// readers don't see the total multiplied by the region count.
+/// Per Seam T1.2 (docs/review/2026-05-20-seam-adversarial.md).
+///
+/// Per-region format:
 ///     --> line <L>, col <C>
 ///      |
 ///   <L> | <source line>
 ///      | <caret>
 ///      |
 ///      = hint: the parser has no rule for this construct
-fn print_dark_diag(file: &str, source: &[u8], dark: &AstNode, total: usize) {
+fn print_dark_diag(file: &str, source: &[u8], dark: &AstNode) {
+    // file is retained in the signature for future per-region cross-file
+    // diagnostics (e.g., grouped output, jump-to-location); currently unused
+    // because the header is emitted by `enforce_strict`.
+    let _ = file;
     let span = dark.dark_span;
     let (mut line, mut col) = line_col_at(source, span.start);
     // Skip leading whitespace lines inside the dark region so the caret
@@ -98,12 +107,6 @@ fn print_dark_diag(file: &str, source: &[u8], dark: &AstNode, total: usize) {
     let gutter_w = line_str.len();
     let pad = " ".repeat(gutter_w);
 
-    eprintln!(
-        "error[total_classification]: {} dark region{} in {}",
-        total,
-        if total == 1 { "" } else { "s" },
-        file
-    );
     eprintln!("  --> line {}, col {}", line, col);
     eprintln!("   {} |", pad);
     eprintln!("   {} | {}", line_str, src_line);
@@ -125,17 +128,27 @@ fn print_dark_diag(file: &str, source: &[u8], dark: &AstNode, total: usize) {
 }
 
 /// Returns (dark_count, diagnostic exit code).
-/// Prints one diagnostic per dark region. Exit code 2 if any dark.
+/// Print one header per file with the dark-region count, then one
+/// caret-block per region. Exit code 2 if any dark. Per Seam T1.2 the
+/// header is emitted once — the old shape printed it N times with the
+/// total embedded, making the count look multiplied.
 fn enforce_strict(file: &str, source: &[u8], ast: &AstNode) -> usize {
     let mut darks: Vec<&AstNode> = Vec::new();
     collect_dark(ast, &mut darks);
     if darks.is_empty() {
         return 0;
     }
+    let n = darks.len();
+    eprintln!(
+        "error[total_classification]: {} dark region{} in {}",
+        n,
+        if n == 1 { "" } else { "s" },
+        file
+    );
     for d in &darks {
-        print_dark_diag(file, source, d, darks.len());
+        print_dark_diag(file, source, d);
     }
-    darks.len()
+    n
 }
 
 fn usage() {

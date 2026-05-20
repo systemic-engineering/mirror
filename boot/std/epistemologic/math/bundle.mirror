@@ -1,7 +1,8 @@
 in @prism
 in @epistemologic
-in @epistemologic/math/sheaf
 in @beam
+# note: the sheaf description of sections is downstream of this grammar;
+# @epistemologic/math/sheaf is a future spec, not a prerequisite (per Seam T2.1).
 
 # @epistemologic/math/bundle — the principal G-bundle tower.
 #

@@ -300,8 +300,10 @@ base structure. That is why this spec is being rewritten.
 
 A principal bundle whose base graph is the five-operation graph,
 whose structure group is G (a Lie group acting on each fiber; in the
-canonical eigenboard, G is the rotation group of the duality
-5-space), and whose sheaf-of-sections IS the cellular sheaf of C.
+canonical eigenboard, **G = O(5)** — the full orthogonal group on the
+duality 5-space, admitting reflections because signed dualities
+(entropy, ricci) require them; see Q6 for the citation chain), and
+whose sheaf-of-sections IS the cellular sheaf of C.
 
 ```mirror
 type operation = focus | project | split | zoom | refract
@@ -314,7 +316,7 @@ type fiber = [f64; 5]
 type connection_form = matrix(duality, duality, f64)
 
 # the gauge: structure-group element at one base point (level 2)
-type gauge_element  # G-valued; canonical G is SO(5) — see open questions
+type gauge_element  # G-valued; canonical G = O(5) — see Q6
 
 # the holonomy: closed-loop integral of the connection (level 3 output)
 type holonomy = scalar_loss

@@ -615,10 +615,21 @@ fn scan_items(
             };
 
             if kind == AstKind::Project {
-                while pos < len && bytes[pos] != b';' && bytes[pos] != b'\n' {
+                // Skip only trailing whitespace and an optional `;`.
+                // The previous shape consumed everything to end of line,
+                // which silently swallowed same-line content (e.g.
+                // `in @y unknown_keyword { dark }` would lose the unknown
+                // construct). Per Seam T1.1: distinct sibling content on
+                // the same line must remain visible to the parser so the
+                // Dark branch can capture it. Comments and newlines are
+                // handled by the main loop on the next iteration.
+                while pos < len && matches!(bytes[pos], b' ' | b'\t') {
                     pos += 1;
                 }
                 if pos < len && bytes[pos] == b';' {
+                    pos += 1;
+                }
+                while pos < len && matches!(bytes[pos], b' ' | b'\t') {
                     pos += 1;
                 }
                 if word == "in" && name.starts_with('@') {
@@ -697,15 +708,20 @@ fn scan_items(
         } else {
             // Unknown word followed by a `{ ... }` block. Previously the
             // block was silently swallowed — the silent absorption mode.
-            // Now: capture the brace-block content as a Dark child unless
-            // it is just the `\` obligation marker.
+            // The Dark capture now spans from the unknown keyword's first
+            // byte through the matching `}` so that distinct keywords
+            // (and distinct brace shapes) produce distinct OIDs.
+            // Per Seam T1.1 (docs/review/2026-05-20-seam-adversarial.md):
+            // hashing only the inner bytes allowed three different source
+            // files to crystal-collide on the same OID. The Dark span now
+            // carries the leading keyword and the enclosing braces; the
+            // renderer round-trips them verbatim.
             while pos < len
                 && matches!(bytes[pos], b' ' | b'\t' | b'\n' | b'\r')
             {
                 pos += 1;
             }
             if pos < len && bytes[pos] == b'{' {
-                let block_start = pos; // at the `{`
                 pos += 1;
                 let content_start = pos; // first byte AFTER `{`
                 let mut depth = 1;
@@ -724,16 +740,17 @@ fn scan_items(
                     block_end
                 };
                 let inner = &bytes[content_start..content_end];
-                if !body_is_obligation(inner) && !inner.is_empty() {
-                    let dark_bytes = String::from_utf8_lossy(inner).into_owned();
+                if !body_is_obligation(inner) {
+                    // Dark span covers <keyword> + whitespace + `{` + inner + `}`,
+                    // not just inner. Distinct unknown constructs now hash to
+                    // distinct OIDs, and kintsugi round-trip preserves the
+                    // surrounding structure verbatim.
+                    let dark_range = &bytes[word_start..block_end];
+                    let dark_bytes = String::from_utf8_lossy(dark_range).into_owned();
                     let span = DarkSpan {
-                        start: base_off + content_start,
-                        end: base_off + content_end,
+                        start: base_off + word_start,
+                        end: base_off + block_end,
                     };
-                    // Silence the unused `block_start` lint when the span
-                    // happens to be empty after trimming — the variable is
-                    // kept for readability and future precise spans.
-                    let _ = block_start;
                     parent.add_child(AstNode::dark(&dark_bytes, span));
                 }
             }
