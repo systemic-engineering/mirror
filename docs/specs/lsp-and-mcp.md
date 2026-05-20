@@ -299,75 +299,32 @@ Given those, *something* must:
 2. Recompute `grammars_hash` on change.
 3. If the hash differs from the previously-emitted hash, send `notifications/tools/list_changed` (MCP) and the LSP equivalents (`workspace/configuration` invalidation, `client/registerCapability` re-issue).
 
-Mirror is process-per-invocation. Mirror cannot run the watch loop — a CLI
-invocation exits. The watch loop wants a persistent process.
+Mirror is process-per-invocation, but `mirror serve --mcp` and
+`mirror serve --lsp` *are* persistent within a single client session. The
+reload contract piggy-backs on traffic the client already sends: every
+incoming JSON-RPC request triggers a check. No watcher, no inotify, no
+daemon dependency.
 
-**Spectral is that process.** Spectral's daemon (per Reed's `04-TECH.md`
-and the glue-bus init flow) already holds session state across mirror
-invocations. The watch loop belongs there.
+The primitive that makes this work is `@mirror/runtime/gen_prism` — a
+content-addressed actor whose state lives in a crystal at a git ref. See
+`docs/specs/mirror-runtime-gen-prism.md`. The reload contract is implemented
+as one such actor.
 
-### What mirror declares
+### `@mirror/reload` as a gen_prism
 
-A grammar describing the contract — not the implementation. The contract
-lives in `boot/std/mirror/reload.mirror` (new):
+The state crystal records `last_emitted_hash`. Every incoming request — any
+request, not just `tools/list` — triggers a tick. The tick recomputes
+`@mcp.grammars_hash`, compares it to the stored value, and emits
+`notifications/tools/list_changed` if it drifted.
 
-```mirror
-in @prism
-in @mcp
-in @io
-in @hash/coincidence
-in @beam
+The grammar lives at `boot/std/mirror/reload.mirror` (see
+`docs/specs/mirror-runtime-gen-prism.md` Example 1 for the full body). It
+declares one state type (`{ last_emitted_hash: oid }`), one message type
+(any incoming method), and one `tick(state, message) -> tick_result`.
 
-# @mirror/reload: the contract the persistent host must honour
-# to keep MCP/LSP clients in sync with the live grammar set.
-#
-# mirror itself is one-shot. it provides the functions;
-# spectral (or any persistent host) runs the watch loop.
-
-grammar @mirror/reload {
-  # the watched filesystem region. defaults to the boot graph.
-  watch_root -> path { "boot/" }
-
-  # the change detector: returns the current hash of the grammar set.
-  # if this value differs from the last observed value, the tools list
-  # must be considered stale.
-  observe -> oid { @mcp.grammars_hash }
-
-  # what to emit when observe drifts. the persistent host calls this
-  # function to learn what notification to send.
-  notify_kind -> mcp_notification | lsp_notification | both {
-    both
-  }
-
-  # the actual notifications, pre-formatted as JSON-RPC.
-  notifications -> [json] {
-    [
-      { method: "notifications/tools/list_changed", params: {} },
-      { method: "workspace/didChangeConfiguration", params: { settings: {} } },
-    ]
-  }
-}
-```
-
-The grammar's only job: tell the persistent host *what to check* and *what
-to send when it changes*. No timers, no inotify, no process management.
-Those live in spectral.
-
-### What spectral implements
-
-From the mirror side, this is shape-painting only. The spectral side needs:
-
-- A daemon-resident `mirror_reload` actor that:
-  - On boot, runs `mirror '@mirror/reload.observe'` and caches the result.
-  - Watches `mirror/boot/**` via fsevents (macOS) or inotify (Linux).
-  - On change, re-runs `mirror '@mirror/reload.observe'`. If the hash differs, fetches `notifications` and pushes each onto the bus.
-  - Bus channel: `mirror:reload` on `hostname:repo:branch:reed`.
-- A bus-to-MCP-client bridge: when the actor publishes `notifications/tools/list_changed`, the spectral MCP server forwards the JSON-RPC notification to every connected client.
-- The LSP equivalent: the same actor publishes to the LSP server for connected editors.
-
-This spec doesn't define the spectral side in detail — it's spectral's home.
-It does define the contract spectral must satisfy: "call `@mirror/reload.observe`
-on file change, push `@mirror/reload.notifications` on hash drift."
+No cross-process bus is needed for the auto-reload concern. The session-local
+`mirror serve` runs the tick inline; the notification rides the same stdio
+the request arrived on.
 
 ### Boundary summary
 
@@ -375,14 +332,16 @@ on file change, push `@mirror/reload.notifications` on hash drift."
 |---|---|
 | Compute the tools list | mirror (`@mcp.tools`) |
 | Compute the grammars hash | mirror (`@mcp.grammars_hash`) |
-| Declare the reload contract | mirror (`@mirror/reload`) |
-| Watch the filesystem | spectral (daemon actor) |
-| Run mirror to recompute the hash | spectral (subprocess) |
-| Push `tools/list_changed` to clients | spectral (bus → MCP/LSP server) |
-| Persist the last-observed hash across mirror invocations | spectral (state) |
+| The actor primitive (state in crystals) | mirror (`@mirror/runtime/gen_prism`) |
+| The reload contract | mirror (`@mirror/reload` gen_prism) |
+| Run the tick on incoming requests | mirror (`mirror serve --mcp` / `--lsp`) |
+| Persist `last_emitted_hash` across ticks | mirror (crystal at `refs/gen_prism/mirror_reload`) |
+| Cross-session, cross-tool orchestration | spectral (daemon, the glue bus) |
+| Autonomous heartbeat for `@spectral/spawn` gen_prisms | spectral (the autonomous tick loop) |
 
-Mirror is declarative and ephemeral. Spectral is procedural and persistent.
-The boundary holds.
+Mirror owns the auto-reload concern end-to-end via the gen_prism primitive.
+Spectral retains the cross-session bus and the autonomous heartbeat for
+`@spectral/spawn` — those genuinely need a daemon.
 
 ---
 
@@ -400,25 +359,23 @@ Concrete follow-ups, ordered:
    surface tools via annotations on actions, and `@mcp.tools` should walk
    the gestalt to emit the list.
 
-3. **Mirror: `@mirror/reload` grammar.**
-   Codifies the contract for any persistent host that wants to keep MCP/LSP
-   clients in sync. Required *before* spectral implements the watch loop
-   — the grammar IS the spec.
+3. **Mirror: `@mirror/reload` gen_prism.**
+   Per `mirror-runtime-gen-prism.md` Example 1. Lives at
+   `boot/std/mirror/reload.mirror`. Ticks on every incoming request; emits
+   `tools/list_changed` when `@mcp.grammars_hash` drifts. The grammar IS
+   the spec.
 
 4. **Mirror: replace `bin/mirror-mcp` with `mirror serve --mcp`.**
    Drop the shell wrapper. The bootstrap binary handles JSON-RPC stdio
    directly. `.mcp.json` points at `~/.local/bin/mirror` with `args: ["serve", "--mcp"]`.
 
-5. **Spectral: the `mirror_reload` daemon actor.**
-   Watches `mirror/boot/`, re-invokes `mirror` on change, pushes
-   notifications onto the bus. Spectral's home, not mirror's.
+5. **Spectral: cross-tool bus only.**
+   The auto-reload concern moves into mirror via `@mirror/reload`. Spectral
+   keeps the glue bus for cross-session orchestration and the autonomous
+   heartbeat for `@spectral/spawn` gen_prisms.
 
-6. **Spectral: MCP/LSP server bridge.**
-   Subscribes to `mirror:reload` on the bus; forwards `tools/list_changed`
-   to every connected client. The persistent transport layer.
-
-Follow-ups (1)–(4) and (6) become candidate tasks. (5) belongs in the spectral
-repo's task list.
+Follow-ups (1)–(4) become candidate tasks. (5) is a scope reduction for
+spectral, not new work.
 
 ---
 
