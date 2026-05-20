@@ -1,6 +1,7 @@
 in @prism
 in @epistemologic
 in @epistemologic/math/bundle
+in @epistemologic/math/lawvere
 in @ai/fate
 in @mirror/execute
 in @beam
@@ -17,6 +18,14 @@ in @beam
 # G-bundle on the five-operation graph. see docs/specs/eigenboard-representation.md
 # for the full lift; the concrete `type eigenboard` declaration is a
 # follow-up tick (probably at boot/std/cogito/eigenboard.mirror).
+#
+# Reflection's correctness IS an autopoietic claim: the observe ->
+# strategy -> perturb tick has a Lawvere fixed point. Per Soto-Andrade
+# & Varela 1984 (the Lawvere<->autopoiesis bridge), this is equivalent
+# to the loop being autopoietic. The property `autopoietic` below
+# delegates to @epistemologic/math/lawvere.is_autopoietic; the verifier
+# is one decidable check. See docs/specs/lawvere-grammar.md and
+# docs/specs/kintsugi-formatter.md.
 
 grammar @cogito {
   observe(imperfect) -> observation { @beam.emit }
@@ -28,9 +37,18 @@ grammar @cogito {
   reflect(imperfect) -> imperfect {
     observe |> strategy |> perturb
   }
+
+  # the reflect loop is autopoietic iff its tick -> tick map has a
+  # Lawvere fixed point (Soto-Andrade & Varela 1984). when this
+  # property passes, the loop converges; when it fails, the loop
+  # has no stable closure and termination is not guaranteed.
+  property autopoietic() -> verdict {
+    @epistemologic/math/lawvere.is_autopoietic(@cogito)
+  }
 }
 
 out observe
 out strategy
 out perturb
 out reflect
+out autopoietic

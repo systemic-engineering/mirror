@@ -1,9 +1,21 @@
 # `kintsugi-wiring` — closing the eight `\` between kintsugi and conductivity
 
-*2026-05-20. Reed.*
+*2026-05-20. Reed. Partially superseded by `kintsugi-formatter.md`
+(commit `900eb40`, same day): that spec absorbs the eight wires into
+five iteration stages plus three failure-handling stages, with the
+Lawvere fixed-point check as the stopping criterion and the Banach
+contraction theorem as the convergence guarantee. This spec remains
+valid as the implementation guide — the wires are the moving parts
+the formatter drives — but the mathematical structure now lives in
+the formatter spec.*
 
 Status: **Red** (every wire is declared; every body is `\` or trivially
-pass-through; the loop does not yet observe itself)
+pass-through; the loop does not yet observe itself).
+
+**See also:** `docs/specs/kintsugi-formatter.md` for the iteration
+rule, the contraction-map analysis, and the Lawvere-fixed-point
+stopping criterion. The mapping from this spec's eight wires to the
+formatter's stages is in §"The eight wires retold" of that spec.
 
 Depends on:
 - `docs/specs/mirror-compile-bootstrap.md` (Spec A) — the staircase,
@@ -783,6 +795,15 @@ Spec A's table. Nothing in this spec changes that.
 ---
 
 ## Section 6 — Implications: concrete next ticks
+
+*The order below remains the implementation order. The mathematical
+structure these ticks implement is in `kintsugi-formatter.md`: the
+formatter's five iteration stages map to wires 1–3 (propose +
+measure + elect via wires 2 + 3 in tournament reduction), wire 4
+(write-back acceptance), wire 5 (the Banach contraction monitor),
+wire 6–7 (gestalt update + proposal-space adjustment), wire 8 (the
+outer loop). The eight wires below are eight aspects of one
+contraction map.*
 
 Ordered. Each tick is one wire or one piece of one wire. Each cites
 which existing spec carries the contract.
