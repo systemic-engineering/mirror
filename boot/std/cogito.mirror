@@ -1,5 +1,6 @@
 in @prism
 in @epistemologic
+in @epistemologic/math/bundle
 in @ai/fate
 in @mirror/execute
 in @beam
@@ -10,6 +11,12 @@ in @beam
 # perturb the eigenboard for the next tick.
 #
 # compile -> reflect -> tournament -> compile -> ... -> lambda_0
+#
+# the `eigenboard` type referenced by `perturb` resolves through
+# @epistemologic/math/bundle: an eigenboard IS a section of a principal
+# G-bundle on the five-operation graph. see docs/specs/eigenboard-representation.md
+# for the full lift; the concrete `type eigenboard` declaration is a
+# follow-up tick (probably at boot/std/cogito/eigenboard.mirror).
 
 grammar @cogito {
   observe(imperfect) -> observation { @beam.emit }
