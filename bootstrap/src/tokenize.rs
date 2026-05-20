@@ -1,7 +1,26 @@
 //! Tokenizer. Byte-for-byte equivalent to the C `scan_items`/`tokenize`.
 
-use crate::ast::{AstKind, AstNode};
+use crate::ast::{AstKind, AstNode, DarkSpan};
 use crate::grammar::{is_skip_word, Grammar};
+
+/// True iff a brace-block body's content (between but excluding the outer
+/// `{` and `}`) is, after trimming ASCII whitespace, exactly the `\` kintsugi
+/// obligation marker. Such bodies are explicit holes — NOT dark regions.
+fn body_is_obligation(bytes: &[u8]) -> bool {
+    let mut start = 0usize;
+    let mut end = bytes.len();
+    while start < end
+        && matches!(bytes[start], b' ' | b'\t' | b'\n' | b'\r')
+    {
+        start += 1;
+    }
+    while end > start
+        && matches!(bytes[end - 1], b' ' | b'\t' | b'\n' | b'\r')
+    {
+        end -= 1;
+    }
+    end - start == 1 && bytes[start] == b'\\'
+}
 
 fn is_ir_ident_char(c: u8) -> bool {
     matches!(c,
@@ -160,7 +179,12 @@ fn name_string(slice: &[u8]) -> String {
     String::from_utf8_lossy(&slice[..n]).into_owned()
 }
 
-fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode) {
+fn scan_items(
+    source: &[u8],
+    grammar: &Grammar,
+    parent: &mut AstNode,
+    base_off: usize,
+) {
     let bytes = source;
     let len = bytes.len();
     let mut pos = 0usize;
@@ -660,20 +684,30 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode) {
 
             let mut node = AstNode::new(kind, &name);
             if kind == AstKind::Focus || kind == AstKind::Refract {
-                scan_items(&bytes[body_start..body_end], grammar, &mut node);
+                scan_items(
+                    &bytes[body_start..body_end],
+                    grammar,
+                    &mut node,
+                    base_off + body_start,
+                );
             }
             parent.add_child(node);
         } else if is_skip_word(&word) {
             continue;
         } else {
-            // Unknown word: skip an optional `{ ... }` block.
+            // Unknown word followed by a `{ ... }` block. Previously the
+            // block was silently swallowed — the silent absorption mode.
+            // Now: capture the brace-block content as a Dark child unless
+            // it is just the `\` obligation marker.
             while pos < len
                 && matches!(bytes[pos], b' ' | b'\t' | b'\n' | b'\r')
             {
                 pos += 1;
             }
             if pos < len && bytes[pos] == b'{' {
+                let block_start = pos; // at the `{`
                 pos += 1;
+                let content_start = pos; // first byte AFTER `{`
                 let mut depth = 1;
                 while pos < len && depth > 0 {
                     if bytes[pos] == b'{' {
@@ -683,6 +717,25 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode) {
                     }
                     pos += 1;
                 }
+                let block_end = pos; // one PAST the matching `}`
+                let content_end = if block_end > 0 && bytes[block_end - 1] == b'}' {
+                    block_end - 1
+                } else {
+                    block_end
+                };
+                let inner = &bytes[content_start..content_end];
+                if !body_is_obligation(inner) && !inner.is_empty() {
+                    let dark_bytes = String::from_utf8_lossy(inner).into_owned();
+                    let span = DarkSpan {
+                        start: base_off + content_start,
+                        end: base_off + content_end,
+                    };
+                    // Silence the unused `block_start` lint when the span
+                    // happens to be empty after trimming — the variable is
+                    // kept for readability and future precise spans.
+                    let _ = block_start;
+                    parent.add_child(AstNode::dark(&dark_bytes, span));
+                }
             }
         }
     }
@@ -690,7 +743,7 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode) {
 
 pub fn tokenize(source: &[u8], grammar: &Grammar) -> AstNode {
     let mut root = AstNode::new(AstKind::Focus, "root");
-    scan_items(source, grammar, &mut root);
+    scan_items(source, grammar, &mut root, 0);
     if !grammar.r#ref.is_empty() {
         root.tag_recursive(&grammar.r#ref);
     }

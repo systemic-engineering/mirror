@@ -31,18 +31,32 @@ pub enum AstKind {
     Dark,
 }
 
-/// 1-based source position. (0, 0) means "unknown".
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
-pub struct SrcPos {
-    pub line: u32,
-    pub col: u32,
-}
-
-/// Half-open source span `[start, end)`. (Default = unknown.)
+/// Half-open byte span `[start, end)` into the source file. (0, 0) = unknown.
+///
+/// Line/column for diagnostics is computed on demand from the source bytes
+/// — the AST itself only carries byte offsets so multi-byte UTF-8 stays
+/// honest and the tokenizer doesn't pay for line counting it doesn't need.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct DarkSpan {
-    pub start: SrcPos,
-    pub end: SrcPos,
+    pub start: usize,
+    pub end: usize,
+}
+
+/// Resolve a byte offset into 1-based (line, col), counting `\n` as the line
+/// break. Column is 1-based bytes into the current line (ASCII assumed for
+/// the boot tree). Returns (1, 1) for offset 0 in any source.
+pub fn line_col_at(source: &[u8], offset: usize) -> (u32, u32) {
+    let off = offset.min(source.len());
+    let mut line: u32 = 1;
+    let mut last_nl: usize = 0;
+    for i in 0..off {
+        if source[i] == b'\n' {
+            line += 1;
+            last_nl = i + 1;
+        }
+    }
+    let col: u32 = (off - last_nl) as u32 + 1;
+    (line, col)
 }
 
 #[derive(Debug, Clone)]
