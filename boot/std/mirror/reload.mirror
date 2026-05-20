@@ -29,24 +29,28 @@ grammar @mirror/reload {
 
   # the tick: compute current hash, compare to stored, emit if drifted.
   #
-  # intended behaviour (kintsugi resolution — mirror grammar lacks if/else as
-  # a primitive today, so the body is a \ hole until conditional forms land):
+  # the conditional is encoded as a tuple-pattern match with same-name-twice
+  # equality — the first arm matches only when both hashes equal; the second
+  # arm catches everything else. exhaustiveness obligation discharges over
+  # the two-arm cover (equal | not-equal).
   #
-  #   let current = @mcp.grammars_hash;
-  #   let prior   = @mirror/spectral.recall(state).last_emitted_hash;
-  #
-  #   if current == prior {
-  #     tick_result { state, emissions: [], loss: 0.0 }
-  #   } else {
-  #     tick_result {
-  #       state: @mirror/spectral.crystallize(state { last_emitted_hash: current }),
-  #       emissions: [
-  #         json { method: "notifications/tools/list_changed", params: {} },
-  #       ],
-  #       loss: 0.0
-  #     }
-  #   }
-  tick(state: oid, message: message) -> tick_result { \ }
+  # the one remaining \ is the emission payload — constructing the JSON-RPC
+  # `notifications/tools/list_changed` envelope. @mcp doesn't declare a
+  # `notification` action yet; that's the next obligation on this body.
+  tick(state: oid, message: message) -> tick_result {
+    match (@mcp.grammars_hash, @mirror/spectral.recall(state).last_emitted_hash) {
+      ($h, $h) => tick_result {
+        state: state,
+        emissions: [],
+        loss: 0.0,
+      },
+      ($current, _) => tick_result {
+        state: @mirror/spectral.crystallize({ last_emitted_hash: $current }),
+        emissions: \,
+        loss: 0.0,
+      },
+    }
+  }
 }
 
 out state
