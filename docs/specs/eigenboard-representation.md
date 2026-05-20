@@ -239,9 +239,9 @@ in worked examples, the examples have been corrected below.
 | 8 | Fits 16-slot structure | `cogito-eigenstate.eigenboard_slots` |
 | 9 | Content-addressable | `@hash/coincidence`, the whole crystal story |
 | 10 | Supports `e^(n+1) < e^(n)` | `@beam.compare`, `road-to-1.0.md` release rule |
-| 11 | Carries a structure group | NEW: `@epistemologic/math/bundle`, `prism/core/src/bundle.rs` |
-| 12 | Holonomy decreases monotonically | NEW: bundle.rs `Transport::transport` signature |
-| 13 | Surfaces a Lawvere fixed point | NEW: bundle.rs `Closure` trait |
+| 11 | Carries a structure group | `@epistemologic/math/bundle`, `prism/core/src/bundle.rs`; **G = O(5)** per Barbero 2022 |
+| 12 | Holonomy decreases monotonically | bundle.rs `Transport::transport` signature; cycle-averaged holonomy IS Magnot 2025's κ |
+| 13 | Surfaces a Lawvere fixed point | bundle.rs `Closure` trait; Soto-Andrade & Varela 1984 give the Lawvere↔autopoiesis bridge |
 
 None of these constraints contradict each other. The convergent
 representation needs to satisfy them all without awkwardness on any
@@ -372,10 +372,20 @@ primitive; it is the tower declared in `@epistemologic/math/bundle`
 declared one.
 
 **Prior art:** Kobayashi & Nomizu *Foundations of Differential Geometry*
-(1963) for principal bundles; Hansen & Ghrist 2019 for the cellular
-sheaf realization of a bundle's sections on a graph; Bressan et al.
-2024 (arXiv:2402.00206) for the temporal/growing version; the trait
-chain in `prism/core/src/bundle.rs` for the operational form.
+(1963) for principal bundles; Hansen & Ghrist 2019
+([arXiv:1808.01513](https://arxiv.org/abs/1808.01513)) for the cellular
+sheaf realization of a bundle's sections on a graph; Hansen 2020
+(UPenn PhD) for the explicit identification *"a sheaf-like way to think
+of a gain graph is as a principal H-bundle over a graph"*; Barbero et al.
+2022 ([arXiv:2206.08702](https://arxiv.org/abs/2206.08702)) for the
+structure-group choice (G = O(d)) and the sheaf-Laplacian↔connection-
+Laplacian equivalence; Bressan et al. 2024
+([arXiv:2402.00206](https://arxiv.org/abs/2402.00206)) for the
+temporal/growing version; Magnot 2025
+([arXiv:2509.10536](https://arxiv.org/abs/2509.10536)) for cycle-
+averaged holonomy as the contextuality index κ (the formal name for the
+5×5 conductivity tensor's reduction); the trait chain in
+`prism/core/src/bundle.rs` for the operational form.
 
 ---
 
@@ -775,31 +785,45 @@ framing.
 
 ### New open questions (from the bundle lift)
 
-6. **What is the structure group G?** The canonical choice is SO(5)
-   (rotations of the duality 5-space); but it could be O(5) (allowing
-   reflections — useful if some dualities are signed), SU(5)
-   (complex unitary — useful if the connection is naturally
-   complex-valued), or GL(5) (general linear — useful if conductivity
-   amplitudes are not normalized). The choice affects which
-   conductivity quantities are invariants and which are
-   gauge-dependent. **Alex's call needed.** My read: SO(5) for the
-   first cut; revisit if Hodge decomposition wants signed flow.
+6. **What is the structure group G?** *Answered* by the wide-sweep
+   research synthesis: **G = O(5)**. Barbero et al. 2022
+   ([arXiv:2206.08702](https://arxiv.org/abs/2206.08702)): "The sheaf
+   Laplacian of the O(d)-bundle is equivalent to a connection
+   Laplacian." Hansen's 2020 PhD makes the equivalence between a
+   sheaf on a graph and a principal H-bundle on a graph explicit
+   verbatim. The O(5) choice (vs SO(5)) admits reflections, which
+   the conductivity geometry needs because some dualities (entropy,
+   ricci) are signed in practice. SU(5) is rejected because the
+   conductivity tensor is real-valued. GL(5) is over-permissive — the
+   constraint that conductivity be a coordinate-free invariant
+   demands the orthogonal group, not the general linear group.
 
 7. **How does the bundle on the 5-operation base graph extend to the
-   growing au-tissue base graph?** The static bundle is well-defined.
-   The growing version inherits the math debt of §"Mycelial substrate"
-   Qualification 1. Either: (a) declare au-tissue as a *family* of
-   bundles indexed by tick, with morphisms between consecutive ticks
-   = anastomosis events + apical extensions; or (b) declare a
-   *temporal* bundle whose base is the time-extended graph (Bressan
-   et al. 2024 categorical framework). **Alex's call needed.**
+   growing au-tissue base graph?** Path identified: Bressan et al.
+   2024 ([arXiv:2402.00206](https://arxiv.org/abs/2402.00206))
+   formalises sheaves on posets of time intervals — the categorical
+   framework for temporal sheaves over a growing base. Two
+   instantiations remain: (a) au-tissue as a *family* of bundles
+   indexed by tick, morphisms between consecutive ticks = anastomosis
+   events + apical extensions; or (b) a *single temporal bundle* whose
+   base is the time-extended graph, Bressan-style. **Alex's call
+   needed between (a) and (b).** The math debt named in the mycelial
+   research synthesis §3.3 / §5.4 narrows under Bressan but is not
+   eliminated; spectral monotonicity statements for growing-graph
+   sheaves are still emerging research.
 
 8. **Does the closure level need its own grammar action, or is it
    sufficient to declare `close()` and leave the body `\`?** Per the
    minimum-grammar-cost rule, the action is enough; the closure
    detection logic lives downstream. But the `Lawvere fixed point`
-   identification is precise (Lawvere 1969) and might warrant
-   `@epistemologic/math/lawvere` as its own follow-up tick.
+   identification is precise (Lawvere 1969) and *should* warrant
+   `@epistemologic/math/lawvere` as its own follow-up tick — the
+   wide-sweep research synthesis (commit `71f9527`) identifies
+   Soto-Andrade & Varela 1984
+   ([DOI 10.1007/BF00046985](https://doi.org/10.1007/BF00046985))
+   as the Lawvere↔autopoiesis bridge that grounds this grammar's
+   `literal` property. **Alex's call needed:** declare
+   `@epistemologic/math/lawvere` in the next tick, or defer.
 
 9. **The connection-form symmetry.** The connection is a 5×5 matrix
    per edge. Is it constrained to be symmetric, antisymmetric, or

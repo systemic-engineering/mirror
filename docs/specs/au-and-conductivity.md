@@ -150,11 +150,34 @@ au value in one context. `conduct(value, context)` reduces this tensor
 to a verdict. The reduction policy lives in @fate; the per-cell
 measurement lives in @hash/coincidence.
 
+### Formal statement: the tensor is cycle-averaged holonomy
+
+The 5×5 conductivity tensor is not an ad-hoc choice. Magnot 2025
+([arXiv:2509.10536](https://arxiv.org/abs/2509.10536)) defines a
+**contextuality index κ as the cycle-averaged holonomy of a discrete
+fiber bundle's connection**. Under the principal O(5)-bundle framing
+(see [eigenboard-representation.md](eigenboard-representation.md)),
+the tensor IS the matrix representation of this connection in the
+canonical basis. The reduction `conduct(value, context)` IS Magnot's
+κ evaluated on the cycle the au value would traverse if transported
+around the kintsugi loop from its hole to the closure and back.
+
+Magnot's framework predates this spec and is peer-reviewed; we are
+not inventing the structure. We are giving it grammar.
+
 Why this matters: the verification questions the property layer asks
 are not separate checks bolted onto a value. They are projections of
-one geometric predicate. When `conduct` returns `clear`, every property
-verdict will pass. When it returns `none`, the value is in the dark
-region of its 5×5 space — λ₀ = 0 — the Void.
+one geometric predicate that already has a name in the mathematics
+literature.
+
+When `conduct` returns `clear`, every property verdict will pass.
+When it returns `none`, the value is at the bundle's autopoietic
+closure point — the **Lawvere fixed point** (Soto-Andrade & Varela 1984,
+[*Acta Applicandae Mathematicae*](https://doi.org/10.1007/BF00046985)
+2:1) — traditionally denoted λ₀. This is the *generative zero* from
+`void-dual-geometry.md`, not the empty zero of absence. au at λ₀ is
+not "I have nothing" — it is the self-referential ground state of the
+bundle, the axis of rotation where all dualities meet.
 
 ---
 
@@ -332,9 +355,13 @@ for the whole pipeline.
   would let an au value be re-measured against a new context; this
   spec only declares that bare transport breaks conductivity.
 - The relationship between au and the dark fallback in
-  `@hash/coincidence`. λ₀ = 0 is the Void; au at λ₀ is the honest "I
-  have nothing to propose." The geometry is in void-dual-geometry.md;
-  its grammar form is future work.
+  `@hash/coincidence`. λ₀ is the *generative zero* — the Lawvere fixed
+  point of the bundle's spectrum, the axis where all dualities meet
+  (Soto-Andrade & Varela 1984). au at λ₀ is the self-referential ground
+  state of the bundle, not the absence-of-proposal that an earlier
+  draft of this spec named. The grammar form lives in a future
+  `@epistemologic/math/lawvere` spec; the geometric ground is in
+  void-dual-geometry.md.
 - The exact shape of the AI side that produces au. Fate has five
   models; each is its own grammar; the integration with external
   AI/LLM systems (if any) is a downstream consideration.

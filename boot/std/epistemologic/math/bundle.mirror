@@ -43,8 +43,22 @@ grammar @epistemologic/math/bundle {
   type state            # what a fiber holds (level 0)
   type optic            # what a connection is (level 1)
   type group            # what a gauge is (level 2)
-  type holonomy         # the loss carried by transport (level 3)
-  type fixed            # the closure's self-reference (level 4)
+                        # canonical G for mirror's eigenboard: O(5).
+                        # Barbero et al. 2022 (arXiv:2206.08702): the sheaf
+                        # Laplacian of the O(d)-bundle is equivalent to a
+                        # connection Laplacian. The O(5) choice (vs SO(5))
+                        # admits reflections, which the conductivity geometry
+                        # needs because some dualities are signed.
+  type holonomy         # the loss carried by transport (level 3).
+                        # cycle-averaged holonomy IS Magnot's contextuality
+                        # index κ (arXiv:2509.10536, 2025) for discrete fiber
+                        # bundles. au's conductivity verdict = κ reduced.
+  type fixed            # the closure's self-reference (level 4).
+                        # the Lawvere fixed point. λ₀ of the bundle's spectrum
+                        # is autopoietic closure, not absence — Soto-Andrade
+                        # & Varela 1984 give the Lawvere↔autopoiesis bridge.
+                        # the dark fallback in @hash/coincidence is the
+                        # generative zero, not the empty zero.
 
   # level 0: fiber ----------------------------------------------------
   # the observed state. the section of the bundle at one base point.
