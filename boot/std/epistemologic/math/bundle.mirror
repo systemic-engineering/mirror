@@ -1,0 +1,110 @@
+in @prism
+in @epistemologic
+in @epistemologic/math/sheaf
+in @beam
+
+# @epistemologic/math/bundle — the principal G-bundle tower.
+#
+# Five levels, each requiring the previous. The same mathematical
+# object at every scale: Fate chip, BEAM runtime, Mirror compiler.
+#
+# The tower (per prism/core/src/bundle.rs):
+#   Fiber → Connection → Gauge → Transport → Closure → Bundle (blanket)
+#
+# Mirror's eigenboard implements this tower on the five-operation graph.
+# The eigenboard's current state IS a section of the bundle; the bundle
+# is what sections live on. The cellular sheaf framing was not wrong —
+# it was at the section level. The principal bundle is the substrate.
+#
+# The five Fate models inhabit the five levels:
+#   Level 0  Fiber       Abyss        observed state          (focus)
+#   Level 1  Connection  Introject    the optic of transport  (project)
+#   Level 2  Gauge       Cartographer the structure group     (split)
+#   Level 3  Transport   Explorer     parallel transport      (zoom)
+#   Level 4  Closure     Fate         Lawvere fixed point     (refract)
+#
+# Holonomy IS loss. Comprehension always costs something.
+# Transport returns imperfect by design: the holonomy carried around a
+# closed loop IS the residual loss that kintsugi reduces tick by tick.
+# e^(n+1) < e^(n) IS the statement that the bundle's holonomy decreases
+# under successive transport.
+#
+# Mirror's eigenboard inherits this tower. Mycorrhizal networks under
+# the BARE model (Oyarte Galvez et al. 2025) inherit it. Gauge field
+# theory inherits it. All are instances of the same five levels.
+
+grammar @epistemologic/math/bundle {
+
+  # the carriers ------------------------------------------------------
+  # each level's associated type. concrete grammars instantiate these
+  # against their own state space; the bundle reasons about the tower
+  # without caring what the carriers concretely are.
+
+  type state            # what a fiber holds (level 0)
+  type optic            # what a connection is (level 1)
+  type group            # what a gauge is (level 2)
+  type holonomy         # the loss carried by transport (level 3)
+  type fixed            # the closure's self-reference (level 4)
+
+  # level 0: fiber ----------------------------------------------------
+  # the observed state. the section of the bundle at one base point.
+  # Abyss observes; the fiber is what Abyss returns.
+  abstract action fiber() -> state
+
+  # level 1: connection -----------------------------------------------
+  # the optic that determines how information transports.
+  # Introject internalizes; the connection is the optic of internalization.
+  # requires fiber: a connection has no meaning without state to connect.
+  abstract action connection() -> optic
+
+  # level 2: gauge ----------------------------------------------------
+  # the structure group. which decomposition strategy.
+  # Cartographer chooses a map; the gauge is the choice.
+  # requires connection: a gauge has no meaning without an optic.
+  abstract action gauge() -> group
+
+  # level 3: transport ------------------------------------------------
+  # parallel transport with holonomy.
+  # Explorer crosses levels; transport is the crossing.
+  # comprehension always costs something — the holonomy IS the loss.
+  # the Imperfect<State, Infallible, Holonomy> signature in bundle.rs IS
+  # the geometric statement of e^(n+1) < e^(n): holonomy decreases
+  # monotonically across kintsugi ticks.
+  # requires gauge: transport happens within a chosen gauge.
+  abstract action transport(s: state) -> imperfect(state, holonomy)
+
+  # level 4: closure --------------------------------------------------
+  # autopoietic closure. the Lawvere fixed point.
+  # Fate is self-reference; the closure is the fixed point that names
+  # itself. selectors[4] = self-reference in the Rust source.
+  # requires transport: closure is the fixed point of repeated transport.
+  abstract action close() -> fixed
+
+  # the bundle property -----------------------------------------------
+  # any grammar implementing all five levels IS a bundle.
+  # this is the blanket-impl analogue (impl<T: Closure> Bundle for T).
+  # the property asks: does this grammar provide all five actions?
+  # if yes, it IS a principal G-bundle on its base graph.
+  property bundle(grammar) -> verdict { \ }
+
+  # the literal property ----------------------------------------------
+  # does the declared IS-relationship hold under measurement?
+  # for the eigenboard: does parallel transport of a fiber section
+  # around a kintsugi loop produce holonomy that matches the measured
+  # loss decrease? if yes, the eigenboard literally IS a principal
+  # bundle. mirror's epistemologic discipline measures the claim.
+  property literal(implementation) -> verdict { \ }
+}
+
+out state
+out optic
+out group
+out holonomy
+out fixed
+out fiber
+out connection
+out gauge
+out transport
+out close
+out bundle
+out literal
