@@ -1,0 +1,170 @@
+in @prism
+in @epistemologic
+in @epistemologic/math/bundle
+in @beam
+
+# @epistemologic/math/spectral-triple — Connes' (A, H, D) as grammar.
+#
+# A spectral triple in Alain Connes' framework is the data (A, H, D):
+# an involutive algebra A acting on a Hilbert space H together with a
+# self-adjoint operator D (the Dirac operator) satisfying compactness
+# conditions on its resolvent and bounded-commutator conditions with A.
+# Given an appropriate spectral triple, Connes' reconstruction theorem
+# (Comm. Math. Phys. 182, 1996; refined J. NCG 7, 2013) recovers the
+# entire geometry of the underlying space — manifold, connection,
+# metric, all of it.
+#
+# Mirror's case: prism/core IS a spectral triple. The trait chain in
+# bundle.rs (Fiber → Connection → Gauge → Transport → Closure) realizes
+# (A, H, D) as follows:
+#
+#   A (algebra)      ←  the composition of Connection::connection() optics
+#                       under Tambara module composition. The five
+#                       operations (focus, project, split, zoom, refract)
+#                       and their composition rules generate A.
+#   H (Hilbert space) ← the Fiber::State associated type. Mirror's case:
+#                       5-dim vector spaces with the structure group
+#                       O(5) acting on them per eigenboard-representation.md.
+#                       au values are state vectors in H. beam.topology
+#                       IS the 5-dim eigenvalue summary of a state.
+#   D (Dirac op)     ←  Transport::transport, returning
+#                       Imperfect<State, Infallible, Holonomy>. The
+#                       holonomy IS the bounded-commutator residual.
+#                       conductivity = ⟨au│D│au⟩; Magnot's κ
+#                       (arXiv:2509.10536, 2025) IS the cycle-averaged
+#                       spectrum of D; kintsugi's e^(n+1) < e^(n) IS
+#                       monotonic decrease of D's Rayleigh quotient.
+#
+# ker(D) is the Lawvere fixed point (@epistemologic/math/lawvere) —
+# the autopoietic closure of the bundle tower. Closure::close() returns
+# a witness of this kernel.
+#
+# References:
+#   Connes, A. (1994). Noncommutative Geometry. Academic Press.
+#   Connes, A. (1996). Gravity coupled with matter and the foundation
+#     of non-commutative geometry. Comm. Math. Phys. 182, 155-176.
+#   Connes, A. (2013). On the spectral characterization of manifolds.
+#     J. Noncommutative Geometry 7, 1-82.
+#   Hansen & Ghrist (2019). arXiv:1808.01513. Discrete spectral structure
+#     over cellular sheaves.
+#   Barbero et al. (2022). arXiv:2206.08702. O(d)-bundle Laplacian =
+#     sheaf Laplacian. Mirror's D² for the discrete case.
+#   Magnot, J.-P. (2025). arXiv:2509.10536. Discrete fiber bundles and
+#     contextuality index κ as cycle-averaged holonomy.
+#
+# Spec: docs/specs/spectral-triple-grammar.md
+
+grammar @epistemologic/math/spectral-triple {
+
+  # the carriers ------------------------------------------------------
+  # the grammar reasons about (A, H, D) structure without caring what
+  # the carriers concretely are. prism/core's bundle.rs supplies one
+  # realization; Hansen-Ghrist's cellular sheaves supply another;
+  # Connes' canonical example (the Dirac operator on a spin manifold)
+  # supplies the continuum prototype.
+
+  type algebra          # A — the involutive algebra of operators.
+                        # for mirror: optics under Tambara composition.
+                        # bundle.rs's Connection::connection() returns
+                        # an element of A in a chosen basis.
+
+  type hilbert_space    # H — the Hilbert space the algebra acts on.
+                        # for mirror: fibers of the principal O(5)-bundle
+                        # over the five-operation graph. Fiber::State is
+                        # one such fiber. beam.topology summarises one.
+
+  type dirac_op         # D — the self-adjoint operator with compact
+                        # resolvent and bounded commutators with A.
+                        # for mirror: Transport::transport realizes D's
+                        # action; the matrix form is @hash/coincidence's
+                        # 5×5 conductivity tensor.
+
+  type spectral_triple  # the (A, H, D) tuple itself. a witness that
+                        # the three components satisfy Connes' axioms.
+                        # bundle.rs's full trait chain on a single type
+                        # IS such a witness.
+
+  type spectrum         # the eigendecomposition of D: a list of pairs
+                        # (eigenvalue, eigenvector). for mirror's case
+                        # the dimension is 5 and eigenvalues are roots
+                        # of a degree-5 characteristic polynomial.
+
+  type residual         # the bounded-commutator measure ‖[D, a]‖.
+                        # for mirror: a value of the bundle's Holonomy
+                        # type, lifted from terni::Loss. cycle-averaged
+                        # residual IS Magnot's κ.
+
+  # the operator -----------------------------------------------------
+  # the three primitive evaluator actions a spectral-triple realiser
+  # must expose. compose_a is the algebra law; apply_h is the operator
+  # action; eigen_d is the spectrum read-out.
+
+  # compose_a: algebra composition. takes two elements of A and returns
+  # their product in A. for prism/core: Tambara module composition over
+  # optics — the supertrait chain enforces the shape; the law lives in
+  # @epistemologic/math/category (future spec).
+  abstract action compose_a(op1: algebra, op2: algebra) -> algebra
+
+  # apply_h: operator action on a Hilbert-space vector. returns an
+  # imperfect carrier because D is in general unbounded: the partial
+  # branch records the residual when transport carries the state off
+  # the manifold. mirror's Transport::transport realizes this for one
+  # specific algebra element (the connection).
+  abstract action apply_h(op: algebra, state: hilbert_space) -> imperfect(hilbert_space, residual)
+
+  # eigen_d: Dirac operator eigendecomposition. for mirror's 5×5
+  # case this is a polynomial-root finder; for general continuous
+  # spectral triples this is functional-analytic and undecidable in
+  # finite time. the abstract action carries the obligation; concrete
+  # grammars discharge it with their dimension's solver.
+  abstract action eigen_d(op: dirac_op) -> spectrum
+
+  # the properties ----------------------------------------------------
+  # the four IS-questions a spectral-triple-typed implementation must
+  # answer to ride mirror's epistemologic discipline. bodies are `\`
+  # until the evaluator (bootstrap/src/spectral.rs, a future tick) is
+  # wired; the grammar exists for the model checker to reason about
+  # the structure before the evaluator lands.
+
+  # literal: does this implementation realize a spectral triple under
+  # Connes' axioms? the IS-relationship at the level of the whole
+  # triple. for prism/core: do Fiber + Connection + Gauge + Transport +
+  # Closure on a single type satisfy involutivity, compactness, and
+  # bounded commutators jointly?
+  property literal(implementation) -> verdict { \ }
+
+  # bounded_commutator: does [D, a] extend to a bounded operator for
+  # all a ∈ A? Connes' first axiom. for mirror: does Transport's
+  # Holonomy stay below a finite bound as algebra elements are applied
+  # in sequence? the answer depends on the Loss monoid's growth law
+  # (see audit, §"qualifications", in the spec).
+  property bounded_commutator(triple: spectral_triple) -> verdict { \ }
+
+  # compact_resolvent: is (D - λI)⁻¹ compact for λ outside the spectrum
+  # of D? Connes' second axiom. trivially true for finite-dimensional
+  # spectral triples (mirror's case: the 5×5 tensor); becomes the
+  # load-bearing condition for continuous extensions.
+  property compact_resolvent(triple: spectral_triple) -> verdict { \ }
+
+  # dimension_spectrum: does the triple have spectral dimension n?
+  # for mirror's case n = 5 (the principal O(5)-bundle's connection
+  # has at most 5 nonzero eigenvalues). the property is parametric
+  # over the claimed dimension so the same grammar serves discrete
+  # and continuous cases.
+  property dimension_spectrum(triple: spectral_triple, n: u64) -> verdict { \ }
+}
+
+out algebra
+out hilbert_space
+out dirac_op
+out spectral_triple
+out spectrum
+out residual
+out compose_a
+out apply_h
+out eigen_d
+out literal
+out bounded_commutator
+out compact_resolvent
+out dimension_spectrum
+out @epistemologic/math/spectral-triple
