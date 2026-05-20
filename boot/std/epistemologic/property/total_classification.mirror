@@ -28,12 +28,34 @@ grammar @epistemologic/property/total_classification {
   total_classification(ast) -> verdict { \ }
 
   # the count of dark regions in the AST. zero ⇔ verdict.pass.
+  #
+  # binding: the bootstrap's `count_dark` function in
+  #   bootstrap/src/main.rs (commit 8e6df9c)
+  # is the structural sibling of this body. It walks the AST and sums
+  # nodes with kind Dark. The kintsugi formatter loop (cmd_kintsugi,
+  # --shatter N) calls count_dark every tick and emits it on the beam
+  # line as the cheapest loss surface — wire 5 in
+  # docs/specs/kintsugi-wiring.md, the e^(n+1) < e^(n) monitor in
+  # docs/specs/kintsugi-formatter.md stage 2.
+  #
+  # The grammar body remains `\` because the in-grammar sub-Turing
+  # walk over [AstNode] is not yet declared — the AST type itself is
+  # carried in the bootstrap, not yet in grammar. When `type ast` lands
+  # as a structural declaration (Spec D's next tick), this body closes
+  # as a fold over children counting kind == Dark. Until then the
+  # bootstrap discharges the obligation; the Rust function IS the
+  # witness for the `\`.
   dark_count(ast) -> u64 { \ }
 
   # the dark regions themselves, for diagnostics.
   # each carries the verbatim bytes and a source span (line/col
   # start + end) so the compiler can point at the unrecognized
   # construct and name the parser rule that would have closed it.
+  #
+  # binding: the bootstrap's `collect_dark` / `print_dark_diag` in
+  # bootstrap/src/main.rs are the sibling functions. The grammar body
+  # closes when `type dark_range` is declared structurally and the
+  # walk is expressed as a fold.
   dark_regions(ast) -> [dark_range] { \ }
 }
 
