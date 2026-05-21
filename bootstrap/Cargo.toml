@@ -5,6 +5,14 @@ edition = "2021"
 
 [dependencies]
 sha2 = "0.10"
+# The spectral-triple substrate. `prism-core` provides the `Prism` trait
+# (the algebra A) and `IdentityPrism` (the identity element), with the
+# `bundle` feature surfacing the supertrait closure that realizes the
+# spectral-triple structure. `terni` provides `Imperfect` (the verdict
+# carrier for D's partially-defined action) and `Metric` (the residual
+# bound). Per docs/specs/prism-core-as-spectral-triple.md.
+prism-core = { path = "../../prism/core", features = ["bundle"] }
+terni = { path = "../../prism/imperfect", default-features = false }
 
 [profile.release]
 opt-level = "z"

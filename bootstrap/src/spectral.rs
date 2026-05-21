@@ -8,267 +8,165 @@
 //!
 //! Per `docs/specs/prism-core-as-spectral-triple.md` and the audit-
 //! closure commits `8c184e1` in mirror / `5d98c6e` in prism, the bootstrap
-//! IS the evaluator of a spectral triple `(A, H, D)`:
+//! IS the evaluator of a spectral triple `(A, H, D)` over
+//! `prism_core`'s verified spectral-triple substrate. The trait chain in
+//! `prism_core::bundle` (Fiber → Connection → Gauge → Transport →
+//! Closure) realizes the structure; this module names what the
+//! bootstrap evaluator does over it.
 //!
-//! - **A** — the involutive algebra of operations on H. Realized in
-//!   `prism/core/src/bundle.rs` by the supertrait chain
-//!   `Fiber → Connection → Gauge → Transport → Closure`, where
-//!   `Connection::Optic: Prism` makes the algebra a Tambara module.
-//!   In mirror's bootstrap, A's generators are the five Prism operations
+//! - **A** — the involutive algebra of operations on H. Realized by
+//!   `prism_core::Prism`: the Tambara-composable optic. In mirror's
+//!   bootstrap A's generators are the five Prism operations
 //!   (focus / project / split / zoom / refract) plus their compositions.
-//! - **H** — the Hilbert space the algebra acts on. Realized at the trait
-//!   level as `Fiber::State`. In the bootstrap H is the space of AST
-//!   nodes — each node a state vector, the recursive descent the
-//!   action of an algebra element.
+//!   The identity element is [`prism_core::IdentityPrism`] (the unit of
+//!   A as a monoid).
+//! - **H** — the Hilbert space the algebra acts on. The state type S
+//!   carried through a beam pipeline. In the bootstrap H is the space
+//!   of AST nodes — each node a state vector, the recursive descent
+//!   the action of an algebra element.
 //! - **D** — the Dirac operator. Realized by `Transport::transport`,
-//!   whose signature `Imperfect<State, _, Holonomy>` is precisely the
-//!   shape of `D`'s partially-defined action: success when the operator
-//!   sends a state in its domain, partial-with-holonomy when transport
-//!   carries the state off the manifold by a bounded residual. In the
-//!   bootstrap D's concrete matrix form is `CoincidenceHash<5,5>`
-//!   (see `bootstrap/src/hash.rs`); its scalar action on AST states is
-//!   `content_oid` (see `bootstrap/src/content.rs`).
+//!   whose `terni::Imperfect<State, _, Holonomy>` signature is precisely
+//!   the shape of D's partially-defined action: Success when the
+//!   operator sends a state in its domain, Partial-with-holonomy when
+//!   transport carries the state off the manifold by a bounded
+//!   residual. The holonomy is a [`terni::Metric`] (non-negative,
+//!   symmetric, triangle inequality) — Connes' bounded-commutator
+//!   condition `‖[D, a]‖ < ∞` is the type-level constraint. Domain
+//!   rejection is encoded as a Partial verdict carrying the absorbing
+//!   `ScalarLoss::total()`, not as a typed Failure (the algebra has
+//!   `Error = Infallible` so it remains closed under identity
+//!   composition). In the bootstrap D's concrete matrix form is
+//!   `CoincidenceHash<5,5>` (see `bootstrap/src/hash.rs`); its scalar
+//!   action on AST states is `content_oid` (see
+//!   `bootstrap/src/content.rs`).
 //!
 //! ## The three primitive operations
 //!
 //! Everything mirror does decomposes into a finite composition of three
 //! primitives over this triple:
 //!
-//! 1. [`compose_a`] — algebra composition. Combine two algebra elements
-//!    into their product. Reduces to function composition on the
-//!    `AlgebraElement` shape.
-//! 2. [`apply_h`] — operator action on a state vector. Returns a
-//!    [`Verdict`] that mirrors `terni::Imperfect`'s three-tier structure:
-//!    Success / Partial(residual) / Failure(residual).
+//! 1. [`compose_a`] — algebra composition. Run two algebra elements
+//!    sequentially on a state, accumulating loss via the `Metric` monoid
+//!    on the holonomy carrier. The composition is associative because
+//!    `terni::Loss::combine` is, and the [`IdentityPrism`] is its unit.
+//! 2. [`apply_h`] — operator action on a state vector. Wraps a single
+//!    `prism_core::Prism`'s focus / project / refract sweep and returns
+//!    the resulting [`Verdict`] in H. The function is intentionally a
+//!    thin wrapper around `prism_core::apply`: naming it `apply_h` ties
+//!    it to the spectral-triple framework and creates the call-site that
+//!    downstream retirements (tokenize.rs, render.rs) will dispatch
+//!    through.
 //! 3. [`eigen_d`] — Dirac eigendecomposition. Given an operator
 //!    represented in the canonical 5-d basis (one axis per Prism
 //!    operation), return its spectrum. For the 5×5 case this is power
 //!    iteration with deflation — no external linalg dependency, fitting
-//!    the bootstrap's intentionally minimal floor (`sha2` only).
+//!    the bootstrap's intentionally minimal floor (the only added
+//!    crates are `prism-core` and `terni`, themselves zero-IO).
 //!
-//! ## Why this lives in the bootstrap, not in `prism-core`
-//!
-//! The bootstrap is self-hosting via LLVM-IR emission (`mirror craft
-//! --target binary`). Pulling `prism-core` and `terni` into the
-//! dependency tree would expand the IR-emit surface dramatically and
-//! entangle the floor with the very crates the v1 architecture is
-//! reaching toward. So the evaluator's types mirror the prism-core
-//! shape *structurally* without importing it. The correspondence is
-//! named in this doc-comment and verified by property tests below;
-//! when v2 lands, `Verdict` becomes a re-export of `terni::Imperfect`
-//! and `AlgebraElement` becomes the Tambara-composable optic alias
-//! from `prism-core`. The shape doesn't change; the dependency
-//! direction inverts.
-//!
-//! ## Migration path
-//!
-//! This commit ADDS this module. It does NOT yet replace `tokenize.rs`,
-//! `render.rs`, `content.rs`, or `pipeline.rs`. The evaluator stands
-//! alone, exercised only by the tests below. Downstream retirements
-//! happen in subsequent ticks per the spec's Step 4:
-//!
-//! 1. `tokenize.rs` retires first: tokenization becomes a tree of
-//!    `AlgebraElement` values, evaluated by [`apply_h`].
-//! 2. `render.rs` retires next as the inverse composition.
-//! 3. `content.rs` mostly stays — its recursive walk IS [`apply_h`]
-//!    specialised to AST states under the discrete-D matrix.
-//! 4. `pipeline.rs`, `grammar.rs`, and the cmd_* in `main.rs` become
-//!    thin wrappers around the evaluator.
-//!
-//! After retirement the bootstrap is `git.rs` + `exec.rs` + `spectral.rs`
-//! + shell, ≈1200 lines. The Rust floor shrinks; the grammar grows;
-//! the operator algebra is what was there all along.
+//! [`prism_core::IdentityPrism`]: prism_core::IdentityPrism
+//! [`terni::Imperfect`]: terni::Imperfect
+//! [`terni::Metric`]: terni::Metric
+
+use prism_core::{apply as prism_apply, Optic, Prism, ScalarLoss};
+use terni::Imperfect;
 
 use crate::ast::AstNode;
 use crate::content::content_oid;
 
 // ---------------------------------------------------------------------------
-// Residual — the metric carrier (D's holonomy)
+// State carriers — the bootstrap's seed and verdict types.
 // ---------------------------------------------------------------------------
 
-/// A non-negative scalar residual measuring how far an operator action
-/// carried a state off the manifold. Structurally the bootstrap-local
-/// shape of `terni::Metric` for `ScalarLoss`: non-negative, symmetric
-/// under `distance_to`, satisfies the triangle inequality. Connes'
-/// bounded-commutator condition `‖[D, a]‖ < ∞` is enforced as
-/// `Residual::is_finite()`.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Residual(pub f64);
-
-impl Residual {
-    /// The zero residual: transport stayed on the manifold.
-    pub const ZERO: Residual = Residual(0.0);
-
-    /// Whether the residual is finite (bounded commutator condition).
-    pub fn is_finite(&self) -> bool {
-        self.0.is_finite() && self.0 >= 0.0
-    }
-
-    /// Combine two residuals associatively. Mirrors `Loss::combine`.
-    pub fn combine(self, other: Residual) -> Residual {
-        Residual(self.0 + other.0)
-    }
-
-    /// Symmetric metric distance. `a.distance_to(b) == b.distance_to(a)`.
-    pub fn distance_to(self, other: Residual) -> Residual {
-        Residual((self.0 - other.0).abs())
-    }
-}
-
-// ---------------------------------------------------------------------------
-// Verdict — bootstrap-local Imperfect
-// ---------------------------------------------------------------------------
-
-/// Three-tier outcome of an operator action. Mirrors `terni::Imperfect`'s
-/// Success / Partial(residual) / Failure(residual) shape without
-/// importing terni: the bootstrap stays at its sha2-only floor.
-#[derive(Clone, Debug, PartialEq)]
-pub enum Verdict<T> {
-    /// The operator's domain included the state; transport was exact.
-    Success(T),
-    /// Transport produced a value but carried a measured residual.
-    Partial(T, Residual),
-    /// The operator's domain rejected the state; the residual carries
-    /// the cost of reaching the failure.
-    Failure(Residual),
-}
-
-impl<T> Verdict<T> {
-    /// Whether a value was produced (Success or Partial).
-    pub fn is_ok(&self) -> bool {
-        matches!(self, Verdict::Success(_) | Verdict::Partial(_, _))
-    }
-
-    /// Extract the residual: zero for Success, carried for Partial / Failure.
-    pub fn residual(&self) -> Residual {
-        match self {
-            Verdict::Success(_) => Residual::ZERO,
-            Verdict::Partial(_, r) => *r,
-            Verdict::Failure(r) => *r,
-        }
-    }
-
-    /// Extract the value if present.
-    pub fn ok(self) -> Option<T> {
-        match self {
-            Verdict::Success(v) | Verdict::Partial(v, _) => Some(v),
-            Verdict::Failure(_) => None,
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// AlgebraElement — A's elements
-// ---------------------------------------------------------------------------
-
-/// An element of the operator algebra A acting on H.
+/// The seed beam type for an algebra element acting on a state of type
+/// `S`. We use `()` as the input position because the state vector is
+/// produced by the seed itself — there is no prior input. The error
+/// position is [`Infallible`] (matching `prism_core::IdentityPrism`'s
+/// shape): the evaluator's algebra elements model "domain rejection" as
+/// a Partial verdict with the absorbing `ScalarLoss::total()` (= ∞),
+/// not as a typed Failure. This keeps the algebra closed under
+/// composition with the identity element. Loss is carried as
+/// [`ScalarLoss`] (the bootstrap's [`terni::Metric`] carrier).
 ///
-/// The trait is intentionally minimal: every element knows how to apply
-/// itself to a state of type `S` and return a `Verdict<S>`. The
-/// supertrait closure on the prism-core side (Connection::Optic: Prism,
-/// etc.) reduces to *this* shape under monomorphisation — the bootstrap
-/// names what stays after the type machinery erases.
-pub trait AlgebraElement<S> {
-    /// Apply this operator to a state, returning the post-transport state
-    /// and any holonomy incurred.
-    fn act(&self, state: S) -> Verdict<S>;
-}
+/// [`Infallible`]: std::convert::Infallible
+pub type Seed<S> = Optic<(), S>;
 
-// ---------------------------------------------------------------------------
-// Identity — A's unit element
-// ---------------------------------------------------------------------------
-
-/// The identity element of A. Witness that A is a monoid (every algebra
-/// has a unit). Maps to `prism_core::IdentityPrism` under the
-/// correspondence.
-pub struct Identity;
-
-impl<S> AlgebraElement<S> for Identity {
-    fn act(&self, state: S) -> Verdict<S> {
-        Verdict::Success(state)
-    }
-}
-
-// ---------------------------------------------------------------------------
-// Composed — the result of compose_a
-// ---------------------------------------------------------------------------
-
-/// The product of two algebra elements under sequential composition.
-/// `Composed(p, q).act(s)` = `q.act(p.act(s))`, propagating residuals
-/// by `Residual::combine` (associative accumulation — the Loss monoid
-/// at the bootstrap level).
+/// The verdict an algebra element returns when acting on a state.
+/// Mirrors `prism_core::Transport::transport`'s signature exactly:
+/// `terni::Imperfect<S, Infallible, Holonomy>` where the Holonomy is a
+/// [`Metric`]. The `Infallible` error position witnesses that algebra
+/// elements are total on the algebra's *closure* (every operator is
+/// defined; the residual at the boundary of the domain is carried in
+/// `ScalarLoss`, which can be `total()` for the absorbing case).
 ///
-/// On the prism-core side this is Tambara module composition; for
-/// mirror's case it reduces to function composition because the
-/// underlying optic's input/output types align by construction.
-pub struct Composed<P, Q> {
-    pub first: P,
-    pub second: Q,
-}
+/// [`Metric`]: terni::Metric
+pub type Verdict<S> = Imperfect<S, std::convert::Infallible, ScalarLoss>;
 
-impl<S, P, Q> AlgebraElement<S> for Composed<P, Q>
-where
-    P: AlgebraElement<S>,
-    Q: AlgebraElement<S>,
-{
-    fn act(&self, state: S) -> Verdict<S> {
-        match self.first.act(state) {
-            Verdict::Success(s2) => self.second.act(s2),
-            Verdict::Partial(s2, r1) => match self.second.act(s2) {
-                Verdict::Success(s3) => Verdict::Partial(s3, r1),
-                Verdict::Partial(s3, r2) => Verdict::Partial(s3, r1.combine(r2)),
-                Verdict::Failure(r2) => Verdict::Failure(r1.combine(r2)),
-            },
-            Verdict::Failure(r1) => Verdict::Failure(r1),
-        }
-    }
+/// Seed a beam with a starting state value. The source position is `()`
+/// (no prior input); the value position carries the state.
+pub fn seed<S>(state: S) -> Seed<S> {
+    Optic::ok((), state)
 }
 
 // ---------------------------------------------------------------------------
-// 1. compose_a — algebra composition
-// ---------------------------------------------------------------------------
-
-/// Algebra composition. Combine two algebra elements into their product.
-///
-/// On the prism-core side this is Tambara module composition under the
-/// `Connection::Optic: Prism` supertrait; here it reduces to sequential
-/// function composition over a shared state type S. The bootstrap doesn't
-/// reinvent the algebra — it names what the algebra reduces to once the
-/// optic chain's input/output types align.
-pub fn compose_a<S, P, Q>(p: P, q: Q) -> Composed<P, Q>
-where
-    P: AlgebraElement<S>,
-    Q: AlgebraElement<S>,
-{
-    Composed { first: p, second: q }
-}
-
-// ---------------------------------------------------------------------------
-// 2. apply_h — operator action on H
+// 1. apply_h — operator action on H
 // ---------------------------------------------------------------------------
 
 /// Apply an algebra element to a state vector in H.
 ///
-/// On the prism-core side this delegates to `Transport::transport`,
-/// whose `Imperfect<State, _, Holonomy>` signature matches [`Verdict`]
-/// here. The function is intentionally a thin wrapper around
-/// `AlgebraElement::act`: naming it `apply_h` ties it to the
-/// spectral-triple framework and creates the call-site that downstream
-/// retirements (tokenize.rs, render.rs) will dispatch through.
-pub fn apply_h<S, P>(p: &P, state: S) -> Verdict<S>
+/// The element is any `prism_core::Prism` whose pipeline starts at
+/// `Seed<S>` and ends at an `Optic<_, S>` (i.e. the refracted beam
+/// still carries a state of type `S`, possibly with accumulated loss).
+/// The function runs `prism_core::apply` end-to-end and returns the
+/// resulting [`Verdict<S>`] — Success or Partial-with-`ScalarLoss`.
+///
+/// This wraps `prism_core::apply` rather than reinventing it: the
+/// bootstrap stands on prism-core's verified spectral-triple substrate
+/// rather than mirroring its shape.
+///
+/// The `Refracted` type is bound to `Optic<_, S>` (with default `Error`
+/// = Infallible and `Loss` = `ScalarLoss`) because the bootstrap
+/// evaluator's algebra elements operate uniformly on `H` (state in,
+/// state out) and carry their residual in `ScalarLoss` (the `Metric`
+/// carrier). The `In` position of the refracted beam holds the
+/// previous-stage output type, which is irrelevant after the last
+/// stage and dropped by `into_focus`.
+pub fn apply_h<S, In, P>(p: &P, state: S) -> Verdict<S>
 where
-    P: AlgebraElement<S>,
+    P: Prism<Input = Seed<S>, Refracted = Optic<In, S>>,
 {
-    p.act(state)
+    prism_apply(p, seed(state)).into_focus()
 }
 
 /// Specialisation of [`apply_h`] for AST states: apply the discrete
-/// Dirac operator (`content_oid`) to an AST node, returning the OID
-/// and a residual derived from the depth of recursion. This is the
-/// shape `content.rs`'s recursive walk takes once it retires into
-/// the evaluator.
+/// Dirac operator (`content_oid`) to an AST node, returning the OID.
+/// This is the shape `content.rs`'s recursive walk takes once it
+/// retires into the evaluator. The OID is the scalar action of D on
+/// the AST state vector.
 pub fn apply_h_content(node: &AstNode) -> Verdict<String> {
-    Verdict::Success(content_oid(node))
+    Imperfect::success(content_oid(node))
+}
+
+// ---------------------------------------------------------------------------
+// 2. compose_a — algebra composition
+// ---------------------------------------------------------------------------
+
+/// Algebra composition. Run two algebra elements sequentially on a
+/// state, accumulating loss via the [`Metric`] monoid on the residual.
+///
+/// On the prism-core side this is what the `Prism` trait already does
+/// internally via its associated-type chain (focus → project → refract);
+/// the bootstrap names the call-site for *cross-prism* composition and
+/// proves associativity / identity directly against the prism-core
+/// substrate (see the property tests below). The composition is
+/// equivalent to `q.act(p.act(state))` with `ScalarLoss::combine`
+/// accumulating residuals — i.e. the [`Imperfect::eh`] bind on the
+/// `Verdict<S>` monad.
+pub fn compose_a<S, InP, InQ, P, Q>(p: &P, q: &Q, state: S) -> Verdict<S>
+where
+    P: Prism<Input = Seed<S>, Refracted = Optic<InP, S>>,
+    Q: Prism<Input = Seed<S>, Refracted = Optic<InQ, S>>,
+{
+    apply_h(p, state).eh(|s| apply_h(q, s))
 }
 
 // ---------------------------------------------------------------------------
@@ -293,7 +191,7 @@ pub struct Spectrum<const N: usize> {
 /// focus / project / split / zoom / refract). We use power iteration
 /// with deflation: extract the dominant eigenpair, project it out,
 /// recurse. ~150 lines, no external linalg crate — fits the
-/// bootstrap's sha2-only dependency floor.
+/// bootstrap's minimal floor.
 ///
 /// Power iteration converges geometrically with rate `|λ₂/λ₁|` per
 /// step. For random 5×5 matrices ~60 iterations gives 1e-10 accuracy;
@@ -397,9 +295,16 @@ pub fn eigen_d<const N: usize>(matrix: [[f64; N]; N]) -> Spectrum<N> {
 mod tests {
     use super::*;
     use crate::ast::{AstKind, AstNode};
+    use prism_core::{Beam, IdentityPrism, Optic};
+    use terni::{Loss, Metric};
 
     // -----------------------------------------------------------------------
-    // Test fixtures — small concrete AlgebraElement impls.
+    // Test fixtures — small concrete `Prism` impls over the scalar state
+    // type `f64`. Each fixture performs its real work in `focus` and
+    // passes through unchanged in `project` and `refract` — the bootstrap
+    // doesn't distinguish phases at the algebra level; the three-phase
+    // chain of `Prism` is the spectral-triple's *internal* composition,
+    // and we only need a uniform-state algebra element here.
     // -----------------------------------------------------------------------
 
     /// Multiplies a scalar state by `factor`. Models a focus-like
@@ -408,9 +313,23 @@ mod tests {
         factor: f64,
     }
 
-    impl AlgebraElement<f64> for Scale {
-        fn act(&self, state: f64) -> Verdict<f64> {
-            Verdict::Success(state * self.factor)
+    impl Prism for Scale {
+        type Input = Seed<f64>;
+        type Focused = Optic<f64, f64>;
+        type Projected = Optic<f64, f64>;
+        type Refracted = Optic<f64, f64>;
+
+        fn focus(&self, beam: Self::Input) -> Self::Focused {
+            let v = *beam.value().expect("Scale::focus on dark beam");
+            beam.next(v * self.factor)
+        }
+        fn project(&self, beam: Self::Focused) -> Self::Projected {
+            let v = *beam.value().expect("Scale::project on dark beam");
+            beam.next(v)
+        }
+        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = *beam.value().expect("Scale::refract on dark beam");
+            beam.next(v)
         }
     }
 
@@ -419,30 +338,68 @@ mod tests {
     /// error. Mirrors the precision-cut semantics of project().
     struct Quantize;
 
-    impl AlgebraElement<f64> for Quantize {
-        fn act(&self, state: f64) -> Verdict<f64> {
+    impl Prism for Quantize {
+        type Input = Seed<f64>;
+        type Focused = Optic<f64, f64>;
+        type Projected = Optic<f64, f64>;
+        type Refracted = Optic<f64, f64>;
+
+        fn focus(&self, beam: Self::Input) -> Self::Focused {
+            let state = *beam.value().expect("Quantize::focus on dark beam");
             let rounded = state.round();
             let r = (state - rounded).abs();
             if r == 0.0 {
-                Verdict::Success(rounded)
+                beam.tick(Imperfect::success(rounded))
             } else {
-                Verdict::Partial(rounded, Residual(r))
+                beam.tick(Imperfect::partial(rounded, ScalarLoss::new(r)))
             }
+        }
+        fn project(&self, beam: Self::Focused) -> Self::Projected {
+            let v = *beam.value().expect("Quantize::project on dark beam");
+            beam.next(v)
+        }
+        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = *beam.value().expect("Quantize::refract on dark beam");
+            beam.next(v)
         }
     }
 
     /// Rejects negative inputs. Models an operator whose domain is the
-    /// non-negative reals; transporting a negative state produces
-    /// Failure with residual = |state|.
+    /// non-negative reals; transporting a negative state produces a
+    /// Partial verdict carrying the *boundary residual* (= |state|).
+    ///
+    /// Domain rejection is modelled as a Partial-with-finite-loss rather
+    /// than as a typed Failure: the bootstrap evaluator's algebra has
+    /// `Error = Infallible` (matching `prism_core::IdentityPrism`'s
+    /// signature so identity composition typechecks). The residual
+    /// witnesses the rejection — large residuals mark domain boundaries,
+    /// `ScalarLoss::total()` (= ∞) marks total rejection.
     struct Positive;
 
-    impl AlgebraElement<f64> for Positive {
-        fn act(&self, state: f64) -> Verdict<f64> {
+    impl Prism for Positive {
+        type Input = Seed<f64>;
+        type Focused = Optic<f64, f64>;
+        type Projected = Optic<f64, f64>;
+        type Refracted = Optic<f64, f64>;
+
+        fn focus(&self, beam: Self::Input) -> Self::Focused {
+            let state = *beam.value().expect("Positive::focus on dark beam");
             if state >= 0.0 {
-                Verdict::Success(state)
+                beam.tick(Imperfect::success(state))
             } else {
-                Verdict::Failure(Residual(-state))
+                // Domain rejection: produce a Partial carrying the
+                // boundary residual. The state value carried forward
+                // is the projection onto the domain (clamp to 0.0).
+                beam.tick(Imperfect::partial(0.0, ScalarLoss::new(-state)))
             }
+        }
+        fn project(&self, beam: Self::Focused) -> Self::Projected {
+            let v = *beam.value().expect("Positive::project on dark beam");
+            beam.next(v)
+        }
+        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = *beam.value().expect("Positive::refract on dark beam");
+            beam.next(v)
         }
     }
 
@@ -453,50 +410,78 @@ mod tests {
     #[test]
     fn compose_a_associates() {
         // (a ∘ b) ∘ c agrees with a ∘ (b ∘ c) on every input.
-        let lhs = compose_a(compose_a(Scale { factor: 2.0 }, Scale { factor: 3.0 }), Scale { factor: 5.0 });
-        let rhs = compose_a(Scale { factor: 2.0 }, compose_a(Scale { factor: 3.0 }, Scale { factor: 5.0 }));
+        //
+        // Grouped left:  apply (a then b), then c.
+        // Grouped right: apply a, then (b then c).
+        // `compose_a` is value-level eager composition; associativity
+        // follows because `ScalarLoss::combine` is associative (the Loss
+        // monoid law) and the underlying state operation is function
+        // composition.
+        let a = Scale { factor: 2.0 };
+        let b = Scale { factor: 3.0 };
+        let c = Scale { factor: 5.0 };
         for s in [-1.0_f64, 0.0, 0.5, 1.0, 7.25] {
-            assert_eq!(lhs.act(s), rhs.act(s), "associativity at {}", s);
+            let lhs = compose_a(&a, &b, s).eh(|v| apply_h(&c, v));
+            let rhs = apply_h(&a, s).eh(|v| compose_a(&b, &c, v));
+            assert_eq!(lhs, rhs, "associativity at {}", s);
         }
     }
 
     #[test]
     fn compose_a_with_identity_is_identity() {
-        // Identity is the unit: id ∘ p and p ∘ id behave like p.
+        // IdentityPrism is the unit element of A: id ∘ p and p ∘ id
+        // behave like p. Witnesses that prism_core::IdentityPrism is
+        // the A-monoid identity at the evaluator level.
+        let id: IdentityPrism<f64> = IdentityPrism::new();
         let p = Scale { factor: 4.0 };
-        let left = compose_a(Identity, Scale { factor: 4.0 });
-        let right = compose_a(Scale { factor: 4.0 }, Identity);
         for s in [-2.0_f64, 0.0, 1.5, 9.0] {
-            let direct = p.act(s);
-            assert_eq!(left.act(s), direct, "id ∘ p at {}", s);
-            assert_eq!(right.act(s), direct, "p ∘ id at {}", s);
+            let direct = apply_h(&p, s);
+            let left = compose_a(&id, &p, s);
+            let right = compose_a(&p, &id, s);
+            assert_eq!(left, direct, "id ∘ p at {}", s);
+            assert_eq!(right, direct, "p ∘ id at {}", s);
         }
     }
 
     #[test]
     fn compose_a_propagates_residuals() {
         // Composing two Partial-producing operators accumulates residuals
-        // via Residual::combine — the Loss monoid law at the bootstrap.
-        let pipeline = compose_a(Quantize, Quantize);
-        // Quantize(0.3) = 0 with residual 0.3; Quantize(0) = 0 with no extra residual.
-        let v = pipeline.act(0.3);
+        // via ScalarLoss::combine — the Loss monoid law at the bootstrap.
+        // Quantize(0.3) = 0 with residual 0.3; Quantize(0) = 0 with no
+        // extra residual.
+        let v = compose_a(&Quantize, &Quantize, 0.3);
         match v {
-            Verdict::Partial(value, r) => {
+            Imperfect::Partial(value, r) => {
                 assert_eq!(value, 0.0);
-                assert!((r.0 - 0.3).abs() < 1e-12);
+                assert!((r.as_f64() - 0.3).abs() < 1e-12);
             }
             other => panic!("expected Partial, got {:?}", other),
         }
     }
 
     #[test]
-    fn compose_a_failure_short_circuits() {
-        // A Failure in the first operator prevents the second from being
-        // applied; the failure's residual carries forward unchanged.
-        let pipeline = compose_a(Positive, Scale { factor: 10.0 });
-        match pipeline.act(-3.0) {
-            Verdict::Failure(r) => assert!((r.0 - 3.0).abs() < 1e-12),
-            other => panic!("expected Failure, got {:?}", other),
+    fn compose_a_propagates_domain_residual() {
+        // Domain rejection in the first operator carries its residual
+        // forward via `Imperfect::eh`'s propagate_loss law: Partial(0, r1)
+        // followed by Success(s) becomes Partial(s, r1). With Scale's
+        // pure-success action, the boundary residual from Positive
+        // accumulates as the only loss in the final verdict.
+        //
+        // (In the previous mirror-type framing this was framed as
+        // "Failure short-circuits"; under prism-core's algebra closed
+        // with `Error = Infallible`, the same semantics emerge via the
+        // Loss-monoid combine, with the chain remaining defined.)
+        let v = compose_a(&Positive, &Scale { factor: 10.0 }, -3.0);
+        match v {
+            Imperfect::Partial(value, r) => {
+                assert_eq!(value, 0.0, "clamped state at domain boundary");
+                assert!(
+                    (r.as_f64() - 3.0).abs() < 1e-12,
+                    "boundary residual carried, got {}",
+                    r.as_f64()
+                );
+            }
+            other => panic!("expected Partial, got {:?}", other),
         }
     }
 
@@ -505,12 +490,14 @@ mod tests {
     // -----------------------------------------------------------------------
 
     #[test]
-    fn apply_h_consistent_with_act() {
-        // apply_h is the named wrapper around AlgebraElement::act.
+    fn apply_h_consistent_with_prism_apply() {
+        // apply_h is the named wrapper around prism_core::apply.
         // The equivalence test: both routes produce the same Verdict.
         let p = Scale { factor: 7.0 };
         for s in [-1.0_f64, 0.0, 2.5] {
-            assert_eq!(apply_h(&p, s), p.act(s));
+            let via_apply_h = apply_h(&p, s);
+            let via_prism = prism_apply(&p, seed(s)).into_focus();
+            assert_eq!(via_apply_h, via_prism);
         }
     }
 
@@ -523,7 +510,7 @@ mod tests {
         let oid_direct = content_oid(&node);
         let v = apply_h_content(&node);
         match v {
-            Verdict::Success(oid) => assert_eq!(oid, oid_direct),
+            Imperfect::Success(oid) => assert_eq!(oid, oid_direct),
             other => panic!("expected Success, got {:?}", other),
         }
     }
@@ -550,9 +537,9 @@ mod tests {
         //
         // Degenerate-spectrum cases (mirror's kintsugi formatter operates
         // on these via Banach contraction toward ker(D)) require Jacobi
-        // rotations or QR; that's deferred to v2 along with the prism-core
-        // import. Power iteration is correct for the well-separated case
-        // and that's what the bootstrap floor needs today.
+        // rotations or QR; that's deferred to a richer linalg substrate.
+        // Power iteration is correct for the well-separated case and
+        // that's what the bootstrap floor needs today.
         let m = [
             [7.0, 0.0, 0.0],
             [0.0, 4.0, 0.0],
@@ -595,32 +582,37 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // Residual — metric-law smoke checks
+    // ScalarLoss / Metric — laws inherited from prism-core, smoke-checked
+    // at the evaluator boundary.
     // -----------------------------------------------------------------------
 
     #[test]
-    fn residual_is_finite_on_well_formed_inputs() {
-        assert!(Residual::ZERO.is_finite());
-        assert!(Residual(0.5).is_finite());
-        assert!(Residual(1e9).is_finite());
-        assert!(!Residual(f64::NAN).is_finite());
-        assert!(!Residual(-1.0).is_finite());
+    fn metric_non_negative_on_well_formed_inputs() {
+        // ScalarLoss::is_non_negative is the Metric-trait analog of the
+        // bootstrap-local `is_finite` check on the previous Residual
+        // type. The constructor itself panics on negatives; everything
+        // it admits is non-negative.
+        assert!(ScalarLoss::zero().is_non_negative());
+        assert!(ScalarLoss::new(0.5).is_non_negative());
+        assert!(ScalarLoss::new(1e9).is_non_negative());
     }
 
     #[test]
-    fn residual_distance_is_symmetric() {
-        let a = Residual(0.3);
-        let b = Residual(0.8);
-        assert_eq!(a.distance_to(b), b.distance_to(a));
+    fn metric_distance_is_symmetric() {
+        // Metric::distance_to is symmetric — D(a, b) = D(b, a).
+        let a = ScalarLoss::new(0.3);
+        let b = ScalarLoss::new(0.8);
+        assert_eq!(a.distance_to(&b).as_f64(), b.distance_to(&a).as_f64());
     }
 
     #[test]
-    fn residual_combine_associates() {
-        let a = Residual(0.1);
-        let b = Residual(0.2);
-        let c = Residual(0.3);
-        let left = a.combine(b).combine(c);
+    fn metric_combine_associates() {
+        // Loss::combine is associative — the Loss monoid law.
+        let a = ScalarLoss::new(0.1);
+        let b = ScalarLoss::new(0.2);
+        let c = ScalarLoss::new(0.3);
+        let left = a.clone().combine(b.clone()).combine(c.clone());
         let right = a.combine(b.combine(c));
-        assert!((left.0 - right.0).abs() < 1e-12);
+        assert!((left.as_f64() - right.as_f64()).abs() < 1e-12);
     }
 }
