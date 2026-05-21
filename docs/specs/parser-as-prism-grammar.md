@@ -37,8 +37,10 @@ Unblocks:
 - Tick 5 (`pipeline.rs` retirement) reuses the same surface for mq
   query parsing.
 - The mirror compiler becomes self-hosting at the parser level: the
-  parser for mirror's own grammar is the mirror-grammar combinator tree
-  loaded from `boot/std/mirror/grammar.mirror`.
+  seed encoded from `boot/00-prism.mirror` parses the file that
+  declares it (FP1). All other grammars — starting with
+  `boot/std/mirror/grammar.mirror` — load through one `apply_h(seed,
+  …)`.
 
 ---
 
@@ -78,61 +80,75 @@ with bespoke handlers for `io`/`match`/`select`/llvm-ir body capture.
 
 ### Trait or enum?
 
-**Decision: trait.** A `Combinator: Prism` supertrait, one impl per
-combinator kind. The surface is closed by spec rather than by enum
-variant; closure is enforced socially (this spec is the registry) and
-algebraically (`Combinator: Prism` inherits the closed `Optic`
-supertrait chain from `spectral-triple-grammar.md` Phase 1). Three
-load-bearing reasons:
+**Decision: enum.** `Combinator` is a closed enum, one variant per
+named combinator. A single `impl Prism for Combinator` dispatches via
+match. The surface is enforced syntactically — adding a combinator
+means editing the enum AND adding a match arm. Four load-bearing
+reasons:
 
-1. **`compose_a` already works on `Prism` impls.** An enum would
-   require a fat `apply_h` arm re-implementing composition per
-   variant. The trait form composes uniformly through the existing
-   `prism_apply` primitive.
-2. **The `on_other` resolution wants per-impl dispatch.** Each
-   combinator that produces an `AstKind` advertises it via its own
-   `Refracted` type. An enum re-introduces the catch-all match the
-   `on_other` reducer was the symptom of.
-3. **Algebra closure already covers enum honesty.** The named
-   vocabulary below IS the surface; new combinators require a spec
-   extension AND a new hand-coded impl. Closure is structural, not
-   syntactic.
+1. **The closed surface matches the philosophy.** The void pentagon
+   is closed; the five operations are closed; the combinator
+   vocabulary is closed. An enum is honest about this. A trait is
+   nominally open and needs a sealed-trait pattern to recover the
+   honesty.
+2. **The seed is data, not a tree of trait objects.** Per §"Bootstrap
+   loop" below, the seed is the Combinator-tree encoding of
+   `boot/00-prism.mirror`. Combinators-as-data wants an enum: the
+   seed is an enum literal, the tree is serializable, and
+   `combinator_tree_oid` is a straight Merkle hash over variants. A
+   trait-object tree would need vtable-pointer hashing or a separate
+   Repr type.
+3. **Binary size.** Per the Tick 3 measurement (`Fold5` added +9.5KB
+   from monomorphisation before claw-back), trait-per-combinator
+   risks a similar bloat at every `apply_h` site. The enum form is
+   one match — one dispatch point, no generic explosion. We are
+   optimising for ≤240KB; the +5–10KB matters.
+4. **`compose_a` integration is one wrap.** The trait-composes-
+   natively advantage is real but small: a single `impl Prism for
+   Combinator` makes the enum compose through `compose_a` the same
+   way. The cost is one match in `apply_h`, not per-variant
+   ceremony.
 
-If `cargo build --release` grows >10% in 4b.1 due to monomorphisation,
-fall back to the enum form (mechanical wrap: `CombinatorVariant::Foo(Foo)`
-arms + one match in `apply_h`). Surface stays closed either way.
+Fallback: if the match arm in `apply_h` exceeds ~200 lines as the
+vocabulary grows, split each variant's body into a free function the
+arm calls. The enum stays closed; the dispatch stays one match.
 
-The supertrait relationship:
+The enum shape:
 
 ```rust
-pub trait Combinator: Prism {
-    /// Source bytes consumed (or a slice carrying the remaining tail).
-    /// Specialisation of `Prism::Input`'s carried type; this binding is
-    /// what keeps the combinator algebra closed over bytes.
-    type ByteIn: ?Sized;
-
-    /// The AST fragment this combinator produces. For leaf combinators
-    /// (`literal`, `charset`) this may be `()` or a span; for compound
-    /// combinators (`seq`, `choice`) it composes upward to `AstNode`.
-    type Fragment;
-
-    /// The `AstKind` this combinator's fragment carries when it lifts
-    /// into an `AstNode`. Some combinators (`literal`, `charset`,
-    /// `repeat`) don't lift directly — they advertise `None`. The
-    /// kind is read by `apply_h` for diagnostic and bundle-terminal
-    /// placement.
-    fn ast_kind(&self) -> Option<AstKind>;
+pub enum Combinator {
+    // Primitives
+    Seq(Vec<Combinator>),
+    Choice(Vec<Combinator>),
+    Repeat { body: Box<Combinator>, min: usize, max: Option<usize> },
+    Capture { body: Box<Combinator>, kind: AstKind },
+    Literal(Vec<u8>),
+    Charset(CharsetKind),                  // closed enum, not a fn ptr
+    BraceBlock(Box<Combinator>),
+    ParenBlock(Box<Combinator>),
+    // Named compositions
+    IoBinding,
+    MatchArm,
+    SelectVariant,
+    KeywordFormBody { keyword: Vec<u8>, kind: AstKind },
+    // Fallback (named so strict classification has one home)
+    DarkFallback,
 }
 
-impl<C: Combinator> Prism for C { /* via supertrait */ }
+impl Prism for Combinator { /* one match in apply_h */ }
 ```
 
-The `Beam<In>` for any `Combinator` carries `(source: &[u8], offset:
+`CharsetKind` is a small named enum (`WordChar`, `NameChar`,
+`IrIdentChar`, `IoNameChar`, …) rather than a function pointer, so
+the combinator tree stays serializable. Adding a charset means
+adding a variant — same closure discipline as the outer `Combinator`.
+
+The `Beam<In>` for `Combinator` carries `(source: &[u8], offset:
 usize)`; the `Beam<Refracted>` carries `Imperfect<AstFragment,
 Infallible, ScalarLoss>` where `ScalarLoss` is the Dark-region
 accumulator (per `Transport::Holonomy: Metric`). The walker is
 `apply_h(combinator, (source, 0))`; the verdict's `Success` payload
-is an `AstNode` (after the root `seq` lifts its fragments).
+is an `AstNode` (after the root `Seq` lifts its fragments).
 
 ### The named vocabulary
 
@@ -293,44 +309,97 @@ spec collapses that catch-all in 4c. Supersedes:
 
 ## Bootstrap loop
 
-The mirror compiler is self-hosting at the parser level when this
-sequence reaches a fixed point:
+The seed IS `boot/00-prism.mirror`. The 306-byte file declares the
+five operations as projections of the identity prism — it IS the
+algebra A of the spectral triple, written as a `.mirror` file. The
+Rust seed encodes that file's combinator tree as a `Combinator` enum
+literal, ~25 lines:
 
+```rust
+fn prism_seed() -> Combinator {
+    // The Combinator-tree encoding of boot/00-prism.mirror.
+    // Five operation literals + the `prism @(<name>) { … }` body form
+    // + the abstract `io tick(type) -> tock(type)` declaration
+    // + the `project in(prism)` / `project out(prism)` bindings.
+    use Combinator::*;
+    Seq(vec![
+        Choice(vec![
+            literal_kind(b"focus",   AstKind::Focus),
+            literal_kind(b"project", AstKind::Project),
+            literal_kind(b"split",   AstKind::Split),
+            literal_kind(b"zoom",    AstKind::Zoom),
+            literal_kind(b"refract", AstKind::Refract),
+        ]),
+        // … prism-body form, abstract io form, in/out decls …
+    ])
+}
 ```
-# Cold start
-let seed: Combinator = mirror_grammar_seed();
-                       # ⤴ hand-written in `spectral.rs`. ~80 lines.
-                       # The trusted base.
 
-let grammar_bytes = read_file("boot/std/mirror/grammar.mirror");
-let seed_prime: Combinator =
-    apply_h(seed, (grammar_bytes, 0)).into_focus().unwrap();
+(Sketch only; the exact tree is the 4b.1 deliverable, derived
+mechanically from the 306-byte file.)
 
-# Self-hosting fixed point — load-bearing.
+The mirror compiler is self-hosting at the parser level when three
+fixed points hold:
+
+### FP1 — the algebra is self-hosting
+
+The seed parses the file that declares it:
+
+```rust
+let seed = prism_seed();
+let prism_mirror_bytes = read_file("boot/00-prism.mirror");
+let seed_prime =
+    apply_h(seed.clone(), (prism_mirror_bytes, 0))
+        .into_focus().unwrap();
 assert_eq!(combinator_tree_oid(&seed),
            combinator_tree_oid(&seed_prime));
 ```
 
-`combinator_tree_oid` is `compute_content_oid` extended to walk a
-`Combinator` tree (Merkle-OID over trait objects). The seed and its
-data-form must hash identical.
+This is the load-bearing equation. If the Rust seed and the parse of
+`00-prism.mirror` produce the same combinator tree, the algebra is
+self-hosting at the parser level. Mirror's grammar describes mirror's
+grammar; the description is the implementation.
 
-All other grammars then load through the seed:
+### FP2 — the grammar surface lifts the keyword mapping
 
+```rust
+let grammar_bytes = read_file("boot/std/mirror/grammar.mirror");
+let mirror_combinator =
+    apply_h(seed.clone(), (grammar_bytes, 0))
+        .into_focus().unwrap();
 ```
-let g = apply_h(seed, (rust_grammar_bytes, 0)).into_focus().unwrap();
-let ast = apply_h(g, (rust_source_bytes, 0)).into_focus().unwrap();
+
+`mirror/grammar.mirror` (356 bytes) is the keyword↔kind table from
+§"Keyword↔kind tables as data" below. `apply_h(seed, …)` reads the
+five `<op> <keyword>` lines and emits a `Choice` of `Capture(Literal
+(keyword), kind)` branches. No `parse_grammar` is needed because the
+seed IS the grammar parser.
+
+### FP3 — every other grammar lifts the same way
+
+```rust
+let rust_combinator =
+    apply_h(seed.clone(), (read_file("boot/std/code/rust.mirror"), 0))
+        .into_focus().unwrap();
+let llvm_combinator =
+    apply_h(seed.clone(), (read_file("boot/std/code/llvm/ir.mirror"), 0))
+        .into_focus().unwrap();
+// … one per grammar file in boot/std/
 ```
 
-Two `apply_h` calls — first lifts grammar bytes to a combinator tree,
-second lifts source bytes to an AST. No `parse_grammar`; no keyword
-table parsed at startup — the keyword↔kind mapping is data in the
-combinator tree, deposited there by the first call.
+Source files then parse through `apply_h(g_combinator, …)`. Two
+`apply_h` calls per source file: first lifts the grammar bytes to a
+combinator tree, second lifts source bytes to an AST.
 
-This is the heart of Tick 4. The Rust seed is ~80 lines; everything
-else is data. The 232 lines of `grammar.rs` retire because their work
-is `apply_h(seed, …)`. The 768 lines of `tokenize.rs` retire because
-their work is `apply_h(g_combinator, …)`.
+`combinator_tree_oid` is `compute_content_oid` extended to walk the
+`Combinator` enum — a straight Merkle hash over variants. The seed
+and `seed_prime` must hash byte-identical.
+
+This is the heart of Tick 4. The Rust seed is ~25 lines because
+`00-prism.mirror` is 306 bytes; everything else is data. The 232
+lines of `grammar.rs` retire because their work is `apply_h(seed,
+…)`. The 768 lines of `tokenize.rs` retire because their work is
+`apply_h(g_combinator, …)`.
 
 ---
 
@@ -501,12 +570,17 @@ smoke OIDs `a8312da6…` and `3ba4c79d…` byte-stable; boot crystal
 `41470e69f2…` stable; Dark count 58/23; full-corpus round-trip at
 depth 1.
 
-- **4b.1 — `@mirror/grammar` (the seed).** Five operation keywords,
-  `grammar {}` body form, plus `io_binding`/`match_arm`/`select_variant`
-  for `.mirror` bodies. The seed is hand-coded; the grammar file's
-  combinator tree is computed via `apply_h(seed, grammar.bytes)`; the
-  two must hash equal. Smoke check: tokenize every `.mirror` file in
-  `boot/` with the new combinator, compare AST byte-by-byte.
+- **4b.1 — `00-prism.mirror` + `@mirror/grammar` (the seed and its
+  self-hosting proof).** Hand-code `prism_seed()` as the
+  Combinator-tree encoding of `boot/00-prism.mirror`. Verify FP1:
+  `apply_h(seed, 00-prism.mirror.bytes) == seed` (OID-equal). Then
+  verify FP2: `apply_h(seed, mirror/grammar.mirror.bytes)` produces
+  the keyword↔kind combinator for `.mirror` source. The five
+  operation literals + `grammar {}` body form + `io_binding` /
+  `match_arm` / `select_variant` cover the `.mirror` body forms.
+  Smoke check: tokenize every `.mirror` file in `boot/` with
+  `apply_h(mirror_combinator, file.bytes)`, compare AST byte-by-byte
+  against today's `tokenize.rs` output.
 - **4b.2 — `@code/rust`.** Seven keywords with reverse-lookup
   collisions. `node.keyword` carries the original; no reverse table
   needed. Smoke: tokenize `bootstrap/src/*.rs`, compare ASTs and
@@ -567,10 +641,16 @@ Tick 4 lands when, against `reed/v1-floor`:
    (`In`/`Out`) and the Spec A/B extensions
    (`IoBinding`/`MatchExpr`/`SelectExpr`) no longer route through the
    catch-all.
-8. **Combinator-tree fixed point** for the seed:
-   `apply_h(seed, mirror.grammar.bytes)` produces a `Combinator`
-   tree whose OID equals the seed's OID. The mirror compiler is
+8. **Self-hosting fixed point** (FP1):
+   `apply_h(seed, boot/00-prism.mirror.bytes)` produces a
+   `Combinator` tree whose OID equals the Rust seed's OID. The
+   algebra parses the file that declares it. The mirror compiler is
    self-hosting at the parser level.
+9. **Keyword-mapping fixed point** (FP2):
+   `apply_h(seed, boot/std/mirror/grammar.mirror.bytes)` produces a
+   `Combinator::Choice` of `Capture(Literal(keyword), kind)` branches
+   whose OID equals the hand-derived expected combinator for the
+   `.mirror` keyword table.
 
 ---
 
@@ -592,14 +672,24 @@ plan did not enumerate:
   combinator's responsibility, not a per-choice property. Supersedes:
   `bootstrap-retirement-plan.md` §"`tokenize.rs` — RETIRE" paragraph
   on Dark semantics.
-- **`Combinator: Prism` supertrait** — the plan said "Each
-  combinator is a Prism impl over `Optic<&[u8], (AstNode, &[u8]_remaining)>`".
-  This spec promotes the `Combinator` trait to a supertrait with
-  associated types (`ByteIn`, `Fragment`, `ast_kind`) so the
-  algebra-closure inheritance from `spectral-triple-grammar.md` Phase
-  1 flows through. Supersedes:
-  `bootstrap-retirement-plan.md` §Tick 4 "Open question" paragraph
-  on trait-vs-enum.
+- **`Combinator` as closed enum** — the plan's open question on
+  trait-vs-enum is resolved as enum. The seed-as-`00-prism.mirror`
+  recognition forces the decision: combinators are data the seed
+  produces from bytes, and data wants an enum (serializable; one
+  Merkle hash over variants; no vtable pointers). Closed-surface
+  honesty, binary-size pressure (≤240KB target), and a single
+  `impl Prism for Combinator` dispatch site also point this way.
+  See §"Trait or enum?" above for the full tradeoff table.
+  Supersedes: `bootstrap-retirement-plan.md` §Tick 4 "Open question"
+  paragraph on trait-vs-enum.
+- **Seed shape — the Combinator-tree encoding of `boot/00-prism.mirror`.**
+  The plan said "~80 lines of hand-coded Rust". This spec recognises
+  that `00-prism.mirror` (306 bytes) IS the algebra A written as a
+  `.mirror` file; the seed is the Rust encoding of that file's
+  combinator tree (~25 lines, monomorphic). The fixed-point chain
+  gains a third equation (FP1 above): the seed parses the file that
+  declares it. Supersedes: `bootstrap-retirement-plan.md` §Tick 4
+  paragraph on the seed sizing.
 
 This spec also folds Tick 2 (kintsugi-loop scaffold) into Tick 4. The
 plan kept Tick 2 as a standalone tick; Alex's directive (in this
@@ -611,58 +701,47 @@ scaffold in `cmd_kintsugi`".
 
 ---
 
+## Decisions confirmed (2026-05-21)
+
+- **`Combinator` is a closed enum.** Resolved per the trade-off
+  table in §"Trait or enum?". The seed-as-`00-prism.mirror`
+  recognition was the deciding push: combinators are data.
+- **`Dark` survives as a marker `AstKind`.** Strict classification's
+  byte-stable Dark count is load-bearing; naming the failure mode
+  beats hiding it. `Fold5::on_other` collapses to `on_dark` (one arm,
+  one kind) per 4c.
+- **The seed lives in `spectral.rs`.** ~25 lines of monomorphic
+  Rust, the Combinator-tree encoding of `boot/00-prism.mirror`. No
+  separate `seed.rs`; the v1-floor keeps the trusted base inside the
+  evaluator. Revisit only if the `no_std` stretch's `bootstrap-io`
+  split needs seed isolation.
+- **mq-query gets its own `.mirror` grammar in Tick 5.**
+  `boot/std/mirror/mq.mirror` is the generalisation test for the
+  combinator surface: if the surface only ever parses `.mirror`
+  source it's a `.mirror`-specific parser, not a parser-as-prism. The
+  mq grammar's `.mirror` file proves the surface is grammar-agnostic.
+
 ## Open questions
 
-1. **Compile-time cost of trait-per-combinator.** Each combinator is
-   one impl with its own `apply_h` dispatch. For ~12 combinators that
-   compose into ~20 grammar combinator trees, the monomorphisation
-   surface is bounded but real. The plan flagged this as "revisit if
-   compile times suffer". Recommended: measure during 4b.1
-   (mirror-grammar implementation); if `cargo build --release` grows
-   by more than 10% relative to today's tokenize.rs, fall back to
-   the enum form. The fallback is mechanical: wrap each combinator
-   impl in a `CombinatorVariant::Foo(Foo)` arm and dispatch from one
-   match in `apply_h`. The surface stays closed either way.
-
-2. **Whether `Dark` survives as a marker or dissolves into `capture` +
-   sentinel.** This spec recommends keeping Dark as a separate
-   `AstKind`. The alternative is `capture(unknown_span_combinator,
-   AstKind::DarkSentinel_via_a_real_op_kind)` — e.g., a Project node
-   with a special name. The case for dissolution: one fewer enum
-   variant; the Fold5 dispatch becomes pure 5-operation + In/Out.
-   The case against: every `--strict` walker would need to detect
-   the sentinel name instead of matching on the kind tag. The cost
-   of the indirection outweighs the variant. Recommended: keep
-   `Dark`. Alex's call if the symmetry argument wins.
-
-3. **`@trace/*` grammar interaction.** The `@trace` grammars
+1. **`@trace/*` grammar interaction.** The `@trace` grammars
    (referenced from `code/rust.mirror`'s `in @trace`) may not load
    under the combinator surface in their current form — the
    `@trace/*` namespace mostly carries comments and type
    declarations, not body forms. If any `@trace/*` grammar uses a
-   body form not covered by the named combinators (io_binding,
-   match_arm, select_variant, keyword_form_body), the vocabulary
-   needs an extension. Recommended: enumerate the bodies in `@trace/*`
-   during 4b.4 and either add a named combinator or declare the
-   grammar tokenization-only (no executable body forms). Alex's call
-   if any `@trace/*` body needs a new combinator.
+   body form not covered by the named combinators (`io_binding`,
+   `match_arm`, `select_variant`, `keyword_form_body`), the
+   vocabulary needs an extension. Recommended: enumerate the bodies
+   in `@trace/*` during 4b.4 and either add a named combinator or
+   declare the grammar tokenization-only (no executable body forms).
+   Alex's call if any `@trace/*` body needs a new combinator.
 
-4. **Where the seed's hand-coded constructor lives.** Two options:
-   (a) inside `spectral.rs` as a `fn mirror_grammar_seed() ->
-   Combinator` (~80 lines of literal Rust); (b) inside a separate
-   `bootstrap/src/seed.rs` (one file, one job). The plan implies (a).
-   Recommended: (a) for Tick 4; revisit during the no_std stretch
-   when seed isolation might matter for a separate `bootstrap-io`
-   crate.
-
-5. **`pipeline.rs` reuse of the surface.** Tick 5 in the retirement
-   plan retires `pipeline.rs` (`split_pipeline`, `is_mq_query`). The
-   mq-query parser is "a tiny instance of the parser-as-Prism
-   surface". Whether the mq grammar gets its own `.mirror` file
-   (`boot/std/mirror/mq.mirror`?) or stays hand-coded as a special
-   case is open. Recommended: declare a `.mirror` file for the
-   mq-query grammar during Tick 5; it's the test that the combinator
-   surface generalises beyond `.mirror` source.
+2. **The exact `prism_seed()` tree.** The Combinator-tree encoding
+   of `boot/00-prism.mirror` is mechanical but not yet written.
+   4b.1's first deliverable is to produce it and verify FP1 hashes
+   match. If the encoding requires more than ~30 lines of Rust, the
+   `00-prism.mirror` file needs simplification first. The 306-byte
+   file is currently dense enough that ~25 lines should suffice;
+   confirmation belongs to 4b.1.
 
 ---
 
