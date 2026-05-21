@@ -1,12 +1,79 @@
 in @prism
 
-grammar @mirror/grammar("mirror", "spec", "shatter") {
-  # mirror keywords -> operations
-  focus grammar    # grammar block = look closer
-  split type       # type declaration = one of many
-  project in       # import = extract a view
-  project out      # export = extract a view
-  zoom abstract    # abstract = transform
+grammar @mirror/grammar("mirror", "spec", "meta", "glass") {
+  # the meta-glass: mirror's grammar declared in mirror itself.
+  # every syntactic form a .mirror file can take is one refract
+  # declaration in this file. apply_h(seed, glass.mirror.bytes)
+  # round-trips this file to itself — FP1.
+
+  # ===== lexical primitives =====
+  refract whitespace        = repeat(charset(whitespace), 0, none)
+  refract newline           = literal("\n")
+  refract identifier        = repeat(charset(word_char), 1, none)
+  refract name              = repeat(charset(name_char), 1, none)
+  refract reference         = seq(literal("@"), name)
+  refract until_newline     = until(literal("\n"))
+
+  # ===== comment = @nl lift =====
+  # a comment is `#` followed by a natural-language span. the body
+  # of the comment lifts to @nl, which carries inline backticks,
+  # fenced blocks, and doctest prompts (see nl.mirror).
+  refract comment           = seq(literal("#"), @nl(until_newline))
+
+  # ===== block structures =====
+  refract brace_block       = brace_block(repeat(form, 0, none))
+  refract paren_block       = paren_block(repeat(form, 0, none))
+
+  # ===== top-level forms =====
+  # `grammar @<name>(<tags>) { <body> }` — the file-level form.
+  refract grammar_form      = seq(literal("grammar"), whitespace, reference,
+                                  paren_block, whitespace, brace_block)
+
+  # `prism @<name> { <body> }` and `prism @(<arg>) { <body> }`.
+  refract prism_form        = seq(literal("prism"), whitespace, reference,
+                                  whitespace, brace_block)
+
+  # `abstract io <name>(<args>) -> <name>(<args>) { <body> }`.
+  refract abstract_form     = seq(literal("abstract"), whitespace, identifier,
+                                  whitespace, identifier, paren_block,
+                                  whitespace, literal("->"), whitespace,
+                                  identifier, paren_block, whitespace,
+                                  brace_block)
+
+  # `io <name>(<args>) = <body>` — the Spec A binding form.
+  refract io_form           = io_binding
+
+  # `match <subject> { <arms> }` — the Spec B match form.
+  refract match_form        = match_arm
+
+  # `select |<binder>| { <variants> }` — the Spec B select form.
+  refract select_form       = select_variant
+
+  # `in @<ref>` / `out @<ref>` — typed boundary terminals.
+  refract in_form           = seq(literal("in"), whitespace, reference)
+  refract out_form          = seq(literal("out"), whitespace, reference)
+
+  # `refract <name> = <combinator>` — the declaration form the
+  # meta-glass itself uses. recursive: every line above IS a
+  # refract_form.
+  refract refract_form      = seq(literal("refract"), whitespace,
+                                  identifier, whitespace, literal("="),
+                                  whitespace, until_newline)
+
+  # ===== op-keyword declarations =====
+  # `<op> <name>` inside a grammar block. five operations.
+  refract op_decl           = choice(literal("focus"), literal("project"),
+                                     literal("split"), literal("zoom"),
+                                     literal("refract"))
+
+  # ===== form = choice over all forms =====
+  refract form              = choice(comment, grammar_form, prism_form,
+                                     abstract_form, io_form, match_form,
+                                     select_form, in_form, out_form,
+                                     refract_form, op_decl, dark_fallback)
+
+  # ===== file root =====
+  refract file              = repeat(choice(whitespace, form), 0, none)
 }
 
 out @mirror/grammar
