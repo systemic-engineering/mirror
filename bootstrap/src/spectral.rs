@@ -238,145 +238,82 @@ impl Prism for ContentOidPrism {
     }
 }
 
-/// The per-kind dispatch — byte-exact equivalent of the recursive walk
-/// that used to live in `bootstrap/src/content.rs`. Each arm reproduces
-/// the prior buffer construction verbatim so the resulting OIDs are
-/// byte-stable across the retirement.
+/// Tick 3c collapse: compute_oid_inner IS a uniform-reducer Fold5 over
+/// the AST (the degenerate Fold1 case from `docs/specs/ast-as-bundle.md`
+/// §Fold5). The pre-Tick3c implementation was a 10-arm match dispatching
+/// per `AstKind`; this is structurally a `fold1` whose single reducer
+/// dispatches internally on `AstKind` via a kind-tag string (the spec's
+/// description of the uniform case verbatim).
 ///
-/// Recursion into children goes through [`apply_h_content`] so the
-/// `apply_h` call-site is exercised at every level of the AST.
+/// Output is byte-identical to the pre-Tick3c implementation — the
+/// closure body reproduces the same buffer construction (name + optional
+/// `\0body:` + body + `:`-joined child OIDs) under the same tag
+/// strings ("focus", "project", "split", "zoom", "refract", "in",
+/// "out", "io_binding", "match_expr", "select_expr", "dark"). The
+/// recursive walk now lives in the Fold5 walker rather than in this
+/// function's per-arm `compute_content_oid(c)` calls.
+///
+/// The `fold1` helper installs the same closure in all six Fold5
+/// reducer slots; the closure's internal match-on-kind chooses the
+/// kind-tag. This is the second-order shape the cybernetics-split
+/// recognition (`ast-as-bundle.md`) named: rather than a concrete
+/// `Prism` per operation, one catamorphism whose level is determined
+/// inside the reducer.
 fn compute_oid_inner(node: &AstNode) -> String {
-    let mut buf: Vec<u8> = Vec::new();
-    match node.kind {
-        AstKind::Focus => {
-            buf.extend_from_slice(node.name.as_bytes());
-            for c in &node.children {
-                let child = compute_content_oid(c);
-                buf.push(b':');
-                buf.extend_from_slice(child.as_bytes());
-            }
-            hash_tagged("focus", &buf)
+    let reducer = |n: &AstNode, child_oids: Vec<String>| -> String {
+        // Dark short-circuits: hash verbatim bytes under "dark". No
+        // name, no body-prefix, no child join. Per
+        // `docs/specs/strict-and-total-classification.md`.
+        if matches!(n.kind, AstKind::Dark) {
+            let bytes: &[u8] = n.body.as_deref().map(str::as_bytes).unwrap_or(&[]);
+            return hash_tagged("dark", bytes);
         }
-        AstKind::Project => {
-            buf.extend_from_slice(node.name.as_bytes());
-            if let Some(body) = &node.body {
+        // In / Out are leaf terminals: hash just the name under the
+        // kind tag. No body, no children.
+        match n.kind {
+            AstKind::In => return hash_tagged("in", n.name.as_bytes()),
+            AstKind::Out => return hash_tagged("out", n.name.as_bytes()),
+            _ => {}
+        }
+        // The eight remaining kinds (Focus / Project / Split / Zoom /
+        // Refract / IoBinding / MatchExpr / SelectExpr) all share the
+        // same buffer construction: name + optional "\0body:body" +
+        // ":"-joined child OIDs. Only the kind tag differs.
+        //
+        // Focus historically *skipped* the body-prefix even when
+        // node.body was present — the pre-Tick3c implementation's
+        // `AstKind::Focus` arm wrote only name + children, no body.
+        // Preserve that.
+        let kind_tag: &'static str = match n.kind {
+            AstKind::Focus => "focus",
+            AstKind::Project => "project",
+            AstKind::Split => "split",
+            AstKind::Zoom => "zoom",
+            AstKind::Refract => "refract",
+            AstKind::IoBinding => "io_binding",
+            AstKind::MatchExpr => "match_expr",
+            AstKind::SelectExpr => "select_expr",
+            // In / Out / Dark handled above.
+            AstKind::In | AstKind::Out | AstKind::Dark => unreachable!(),
+        };
+        let include_body = !matches!(n.kind, AstKind::Focus);
+        let mut buf: Vec<u8> = Vec::new();
+        buf.extend_from_slice(n.name.as_bytes());
+        if include_body {
+            if let Some(body) = &n.body {
                 if !body.is_empty() {
                     buf.extend_from_slice(b"\0body:");
                     buf.extend_from_slice(body.as_bytes());
                 }
             }
-            for c in &node.children {
-                let child = compute_content_oid(c);
-                buf.push(b':');
-                buf.extend_from_slice(child.as_bytes());
-            }
-            hash_tagged("project", &buf)
         }
-        AstKind::Split => {
-            buf.extend_from_slice(node.name.as_bytes());
-            if let Some(body) = &node.body {
-                if !body.is_empty() {
-                    buf.extend_from_slice(b"\0body:");
-                    buf.extend_from_slice(body.as_bytes());
-                }
-            }
-            for c in &node.children {
-                let child = compute_content_oid(c);
-                buf.push(b':');
-                buf.extend_from_slice(child.as_bytes());
-            }
-            hash_tagged("split", &buf)
+        for child in &child_oids {
+            buf.push(b':');
+            buf.extend_from_slice(child.as_bytes());
         }
-        AstKind::Zoom => {
-            buf.extend_from_slice(node.name.as_bytes());
-            if let Some(body) = &node.body {
-                if !body.is_empty() {
-                    buf.extend_from_slice(b"\0body:");
-                    buf.extend_from_slice(body.as_bytes());
-                }
-            }
-            for c in &node.children {
-                let child = compute_content_oid(c);
-                buf.push(b':');
-                buf.extend_from_slice(child.as_bytes());
-            }
-            hash_tagged("zoom", &buf)
-        }
-        AstKind::Refract => {
-            buf.extend_from_slice(node.name.as_bytes());
-            if let Some(body) = &node.body {
-                if !body.is_empty() {
-                    buf.extend_from_slice(b"\0body:");
-                    buf.extend_from_slice(body.as_bytes());
-                }
-            }
-            for c in &node.children {
-                let child = compute_content_oid(c);
-                buf.push(b':');
-                buf.extend_from_slice(child.as_bytes());
-            }
-            hash_tagged("refract", &buf)
-        }
-        AstKind::In => hash_tagged("in", node.name.as_bytes()),
-        AstKind::Out => hash_tagged("out", node.name.as_bytes()),
-        AstKind::IoBinding => {
-            buf.extend_from_slice(node.name.as_bytes());
-            if let Some(body) = &node.body {
-                if !body.is_empty() {
-                    buf.extend_from_slice(b"\0body:");
-                    buf.extend_from_slice(body.as_bytes());
-                }
-            }
-            for c in &node.children {
-                let child = compute_content_oid(c);
-                buf.push(b':');
-                buf.extend_from_slice(child.as_bytes());
-            }
-            hash_tagged("io_binding", &buf)
-        }
-        AstKind::MatchExpr => {
-            buf.extend_from_slice(node.name.as_bytes());
-            if let Some(body) = &node.body {
-                if !body.is_empty() {
-                    buf.extend_from_slice(b"\0body:");
-                    buf.extend_from_slice(body.as_bytes());
-                }
-            }
-            for c in &node.children {
-                let child = compute_content_oid(c);
-                buf.push(b':');
-                buf.extend_from_slice(child.as_bytes());
-            }
-            hash_tagged("match_expr", &buf)
-        }
-        AstKind::SelectExpr => {
-            buf.extend_from_slice(node.name.as_bytes());
-            if let Some(body) = &node.body {
-                if !body.is_empty() {
-                    buf.extend_from_slice(b"\0body:");
-                    buf.extend_from_slice(body.as_bytes());
-                }
-            }
-            for c in &node.children {
-                let child = compute_content_oid(c);
-                buf.push(b':');
-                buf.extend_from_slice(child.as_bytes());
-            }
-            hash_tagged("select_expr", &buf)
-        }
-        AstKind::Dark => {
-            // Per `docs/specs/strict-and-total-classification.md`: hash
-            // the verbatim bytes under a `"dark"` tag. Changes to a dark
-            // region produce a different OID rather than silently folding
-            // into the parent's body.
-            let bytes: &[u8] = node
-                .body
-                .as_deref()
-                .map(str::as_bytes)
-                .unwrap_or(&[]);
-            hash_tagged("dark", bytes)
-        }
-    }
+        hash_tagged(kind_tag, &buf)
+    };
+    fold1::<_, String>(reducer).run(node)
 }
 
 // ---------------------------------------------------------------------------
