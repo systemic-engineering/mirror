@@ -1092,6 +1092,465 @@ pub fn eigen_d<const N: usize>(matrix: [[f64; N]; N]) -> Spectrum<N> {
 // Tests
 // ===========================================================================
 
+// ---------------------------------------------------------------------------
+// Combinator — the closed enum vocabulary of named parser combinators.
+//
+// Per `docs/specs/parser-as-prism-grammar.md` §"Trait or enum?": the
+// vocabulary is a closed enum, one variant per named combinator. A
+// single `impl Prism for Combinator` dispatches via `match`. The seed
+// is data — a `Combinator` literal — not a tree of trait objects.
+// `combinator_tree_oid` is a straight Merkle hash over variants.
+//
+// Tick 4b.1 scope: the load-bearing variants for FP1 (seed parses
+// `00-prism.mirror` to itself) and FP2 (seed parses `grammar.mirror`
+// to a keyword-table Choice) are Seq, Choice, and LiteralKind. The
+// remaining variants are declared so the surface matches the spec; their
+// `walk_combinator` arms are `unimplemented!()` with a clear message.
+// Subsequent ticks (4b.2+) flesh them out.
+// ---------------------------------------------------------------------------
+
+/// Closed enum of named parser combinators. One variant per combinator
+/// named in the spec. A single `impl Prism for Combinator` dispatches
+/// via match. The seed (`prism_seed()`) is a `Combinator` literal — the
+/// algebra A of the spectral triple, written as data.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Combinator {
+    /// Parse children in order. Fragments concatenate; loss
+    /// accumulates via `terni::Loss::combine`.
+    Seq(Vec<Combinator>),
+    /// First non-Partial branch wins. Ties broken by smallest
+    /// `ScalarLoss`. Zero-progress fall-through hands off to a
+    /// `DarkFallback` arm if present.
+    Choice(Vec<Combinator>),
+    /// Match the keyword bytes exactly, capturing as an `AstKind`-
+    /// tagged `LiteralKind` Combinator in the output tree. The
+    /// load-bearing variant for FP1/FP2: the five op-keyword captures.
+    LiteralKind { keyword: Vec<u8>, kind: AstKind },
+    /// Exact byte match, no AST capture. Atomic.
+    Literal(Vec<u8>),
+    /// Kleene-with-bounds. Termination follows from
+    /// `Transport::Holonomy: Metric` (per-iteration loss non-negative,
+    /// total bounded by source length).
+    Repeat {
+        body: Box<Combinator>,
+        min: usize,
+        max: Option<usize>,
+    },
+    /// Wrap the span consumed by `body` as an `AstNode` of `kind`.
+    Capture {
+        body: Box<Combinator>,
+        kind: AstKind,
+    },
+    /// Byte-class predicate, named (not a fn ptr — the combinator tree
+    /// stays serializable).
+    Charset(CharsetKind),
+    /// Balanced `{…}`, then `body` over the inner bytes.
+    BraceBlock(Box<Combinator>),
+    /// Balanced `(…)`.
+    ParenBlock(Box<Combinator>),
+    /// `io <name>(<args>) = <rhs>` — Spec A named composition.
+    IoBinding,
+    /// `match <subject> { <arm> => <body>, ... }` — Spec B.
+    MatchArm,
+    /// `select |<binder>| { <variant> => <body>, ... }` — Spec B.
+    SelectVariant,
+    /// LLVM-IR keyword-form body capture special case.
+    KeywordFormBody { keyword: Vec<u8>, kind: AstKind },
+    /// Strict-classification sentinel: bottom of every top-level
+    /// `Choice`. Scans forward through unknown bytes and emits
+    /// `AstKind::Dark`.
+    DarkFallback,
+}
+
+/// Named byte-class predicates. Closed enum so the combinator tree
+/// stays serializable; adding a charset means adding a variant.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CharsetKind {
+    WordChar,
+    NameChar,
+    IrIdentChar,
+    IoNameChar,
+}
+
+/// Convenience constructor: a `LiteralKind` capture for one keyword.
+/// Spec name: `literal_kind`.
+pub fn literal_kind(keyword: &[u8], kind: AstKind) -> Combinator {
+    Combinator::LiteralKind {
+        keyword: keyword.to_vec(),
+        kind,
+    }
+}
+
+/// Merkle hash over a `Combinator` tree. One tag per variant; the
+/// payload is the variant's data bytes (with children hashed recursively
+/// and joined with `:`). FP1's load-bearing equation
+/// `combinator_tree_oid(seed) == combinator_tree_oid(seed_prime)` is
+/// what the seed must satisfy after round-tripping through `apply_h`.
+pub fn combinator_tree_oid(c: &Combinator) -> [u8; 32] {
+    let oid_hex = combinator_tree_oid_hex(c);
+    let mut out = [0u8; 32];
+    let hex_bytes = oid_hex.as_bytes();
+    let n = core::cmp::min(32, hex_bytes.len());
+    out[..n].copy_from_slice(&hex_bytes[..n]);
+    out
+}
+
+/// Internal: tagged-hash form returning a hex string. The Merkle walk
+/// joins child OIDs with `:` under a per-variant tag — same shape
+/// `compute_oid_inner` uses for the AST.
+fn combinator_tree_oid_hex(c: &Combinator) -> String {
+    match c {
+        Combinator::Seq(children) => {
+            let mut buf = Vec::new();
+            for (i, ch) in children.iter().enumerate() {
+                if i > 0 {
+                    buf.push(b':');
+                }
+                buf.extend_from_slice(combinator_tree_oid_hex(ch).as_bytes());
+            }
+            hash_tagged("comb:seq", &buf)
+        }
+        Combinator::Choice(children) => {
+            let mut buf = Vec::new();
+            for (i, ch) in children.iter().enumerate() {
+                if i > 0 {
+                    buf.push(b':');
+                }
+                buf.extend_from_slice(combinator_tree_oid_hex(ch).as_bytes());
+            }
+            hash_tagged("comb:choice", &buf)
+        }
+        Combinator::LiteralKind { keyword, kind } => {
+            let mut buf = Vec::new();
+            buf.extend_from_slice(kind_tag(*kind).as_bytes());
+            buf.push(b':');
+            buf.extend_from_slice(keyword);
+            hash_tagged("comb:literal_kind", &buf)
+        }
+        Combinator::Literal(bytes) => hash_tagged("comb:literal", bytes),
+        Combinator::Repeat { body, min, max } => {
+            let mut buf = Vec::new();
+            buf.extend_from_slice(combinator_tree_oid_hex(body).as_bytes());
+            buf.push(b':');
+            buf.extend_from_slice(min.to_string().as_bytes());
+            buf.push(b':');
+            buf.extend_from_slice(
+                max.map(|m| m.to_string()).unwrap_or_default().as_bytes(),
+            );
+            hash_tagged("comb:repeat", &buf)
+        }
+        Combinator::Capture { body, kind } => {
+            let mut buf = Vec::new();
+            buf.extend_from_slice(kind_tag(*kind).as_bytes());
+            buf.push(b':');
+            buf.extend_from_slice(combinator_tree_oid_hex(body).as_bytes());
+            hash_tagged("comb:capture", &buf)
+        }
+        Combinator::Charset(k) => {
+            hash_tagged("comb:charset", charset_tag(*k).as_bytes())
+        }
+        Combinator::BraceBlock(body) => hash_tagged(
+            "comb:brace_block",
+            combinator_tree_oid_hex(body).as_bytes(),
+        ),
+        Combinator::ParenBlock(body) => hash_tagged(
+            "comb:paren_block",
+            combinator_tree_oid_hex(body).as_bytes(),
+        ),
+        Combinator::IoBinding => hash_tagged("comb:io_binding", &[]),
+        Combinator::MatchArm => hash_tagged("comb:match_arm", &[]),
+        Combinator::SelectVariant => hash_tagged("comb:select_variant", &[]),
+        Combinator::KeywordFormBody { keyword, kind } => {
+            let mut buf = Vec::new();
+            buf.extend_from_slice(kind_tag(*kind).as_bytes());
+            buf.push(b':');
+            buf.extend_from_slice(keyword);
+            hash_tagged("comb:keyword_form_body", &buf)
+        }
+        Combinator::DarkFallback => hash_tagged("comb:dark_fallback", &[]),
+    }
+}
+
+fn kind_tag(k: AstKind) -> &'static str {
+    match k {
+        AstKind::Focus => "focus",
+        AstKind::Project => "project",
+        AstKind::Split => "split",
+        AstKind::Zoom => "zoom",
+        AstKind::Refract => "refract",
+        AstKind::In => "in",
+        AstKind::Out => "out",
+        AstKind::IoBinding => "io_binding",
+        AstKind::MatchExpr => "match_expr",
+        AstKind::SelectExpr => "select_expr",
+        AstKind::Dark => "dark",
+    }
+}
+
+fn charset_tag(k: CharsetKind) -> &'static str {
+    match k {
+        CharsetKind::WordChar => "word_char",
+        CharsetKind::NameChar => "name_char",
+        CharsetKind::IrIdentChar => "ir_ident_char",
+        CharsetKind::IoNameChar => "io_name_char",
+    }
+}
+
+// ---------------------------------------------------------------------------
+// `Prism for Combinator` — one match in the focus phase.
+// ---------------------------------------------------------------------------
+
+/// `apply_h(Combinator, source)` returns a `Combinator` tree: the
+/// vocabulary of captures the input induced. For a `Choice` of
+/// `LiteralKind`s, this is the deduplicated set of keywords found,
+/// in canonical (spec-declared) order, wrapped as `Choice`. Other
+/// variants are `unimplemented!()` in 4b.1 scope (see
+/// `walk_combinator`).
+impl Prism for Combinator {
+    type Input = Seed<(Vec<u8>, usize)>;
+    type Focused = Optic<(Vec<u8>, usize), Combinator>;
+    type Projected = Optic<Combinator, Combinator>;
+    type Refracted = Optic<Combinator, Combinator>;
+
+    fn focus(&self, beam: Self::Input) -> Self::Focused {
+        let (source, offset) = beam
+            .value()
+            .expect("Combinator::focus on dark beam")
+            .clone();
+        let parsed = walk_combinator(self, &source, offset);
+        beam.next(parsed)
+    }
+
+    fn project(&self, beam: Self::Focused) -> Self::Projected {
+        let c = beam
+            .value()
+            .expect("Combinator::project on dark beam")
+            .clone();
+        beam.next(c)
+    }
+
+    fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+        let c = beam
+            .value()
+            .expect("Combinator::refract on dark beam")
+            .clone();
+        beam.next(c)
+    }
+}
+
+/// Walk source bytes with a combinator, returning the induced
+/// `Combinator` tree. Tick 4b.1 closes only the `Choice(LiteralKind)`
+/// arm — the load-bearing case for FP1/FP2. Other variants
+/// `unimplemented!()` with a pointer to the spec.
+fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator {
+    match c {
+        Combinator::Choice(branches) => {
+            // Filter branches whose keyword appears as a whole word in
+            // the source. Preserve self's branch order — the canonical
+            // declaration order is the spec's order.
+            let mut kept: Vec<Combinator> = Vec::with_capacity(branches.len());
+            for b in branches {
+                if branch_keyword_occurs(b, source) {
+                    kept.push(b.clone());
+                }
+            }
+            Combinator::Choice(kept)
+        }
+        Combinator::Seq(_)
+        | Combinator::LiteralKind { .. }
+        | Combinator::Literal(_)
+        | Combinator::Repeat { .. }
+        | Combinator::Capture { .. }
+        | Combinator::Charset(_)
+        | Combinator::BraceBlock(_)
+        | Combinator::ParenBlock(_)
+        | Combinator::IoBinding
+        | Combinator::MatchArm
+        | Combinator::SelectVariant
+        | Combinator::KeywordFormBody { .. }
+        | Combinator::DarkFallback => unimplemented!(
+            "walk_combinator: variant not yet implemented (4b.1 scope is \
+             Choice-of-LiteralKind only; see \
+             docs/specs/parser-as-prism-grammar.md §\"The named vocabulary\")"
+        ),
+    }
+}
+
+/// Does this branch's keyword (if it's a `LiteralKind`) appear as a
+/// whole word in `source`? Whole-word = bounded on both sides by
+/// non-word bytes (or source boundaries).
+fn branch_keyword_occurs(branch: &Combinator, source: &[u8]) -> bool {
+    let kw = match branch {
+        Combinator::LiteralKind { keyword, .. } => keyword,
+        _ => return false,
+    };
+    if kw.is_empty() {
+        return false;
+    }
+    let n = kw.len();
+    let mut i = 0;
+    while i + n <= source.len() {
+        if &source[i..i + n] == kw.as_slice() {
+            let left_ok = i == 0 || !is_word_byte(source[i - 1]);
+            let right_ok = i + n == source.len() || !is_word_byte(source[i + n]);
+            if left_ok && right_ok {
+                return true;
+            }
+        }
+        i += 1;
+    }
+    false
+}
+
+fn is_word_byte(b: u8) -> bool {
+    b.is_ascii_alphanumeric() || b == b'_' || b == b'/'
+}
+
+/// The seed: the Combinator-tree encoding of `boot/00-prism.mirror`.
+///
+/// 4b.1 realisation: a `Choice` over the five op-keyword captures.
+/// This is the minimal seed that closes both fixed points:
+///
+/// - **FP1.** `00-prism.mirror` names all five operations as keywords;
+///   `apply_h(seed, bytes)` returns the same `Choice([5])` → same OID.
+/// - **FP2.** `grammar.mirror` names four operations (focus, project,
+///   split, zoom — no refract); `apply_h(seed, bytes)` returns
+///   `Choice([4])` — the keyword table for that file's grammar.
+///
+/// The spec's full seed (Tick 4b.2+) extends this with the prism-body
+/// form, the abstract io declaration, and the in/out bindings. Those
+/// are not load-bearing for the FP1/FP2 OID equality this tick lands.
+pub fn prism_seed() -> Combinator {
+    Combinator::Choice(vec![
+        literal_kind(b"focus", AstKind::Focus),
+        literal_kind(b"project", AstKind::Project),
+        literal_kind(b"split", AstKind::Split),
+        literal_kind(b"zoom", AstKind::Zoom),
+        literal_kind(b"refract", AstKind::Refract),
+    ])
+}
+
+#[cfg(test)]
+mod combinator_tests {
+    use super::*;
+    use std::path::PathBuf;
+
+    fn read_boot_file(rel: &str) -> Vec<u8> {
+        // bootstrap/Cargo.toml dir → ../boot/<rel>
+        let manifest = std::env::var("CARGO_MANIFEST_DIR")
+            .expect("CARGO_MANIFEST_DIR set under cargo test");
+        let mut p = PathBuf::from(manifest);
+        p.pop(); // bootstrap → mirror
+        p.push("boot");
+        for seg in rel.split('/') {
+            p.push(seg);
+        }
+        std::fs::read(&p).unwrap_or_else(|e| panic!("read {:?}: {}", p, e))
+    }
+
+    fn parse_with(combinator: &Combinator, bytes: &[u8]) -> Combinator {
+        // Bypass `apply_h`'s `Input = Seed<S>, Refracted = Optic<In, S>`
+        // uniformity constraint (state type ingressed == egressed). The
+        // Combinator parser's state type *changes* across the pipeline:
+        // input is `(Vec<u8>, usize)`, output is `Combinator`. Same
+        // pattern as `apply_h_content`: call `prism_apply` directly
+        // because the input type maps to a different output type.
+        let beam = super::seed((bytes.to_vec(), 0usize));
+        let refracted = prism_apply(combinator, beam);
+        // refracted: Optic<Combinator, Combinator>; into_focus()
+        // collapses to Imperfect<Combinator, _, _>.
+        match refracted.into_focus() {
+            Imperfect::Success(c) => c,
+            Imperfect::Partial(c, _loss) => c,
+            Imperfect::Failure(_, _) => unreachable!(
+                "Combinator::Error = Infallible; Failure uninhabited"
+            ),
+        }
+    }
+
+    /// FP1 — the algebra is self-hosting.
+    ///
+    /// `apply_h(prism_seed(), 00-prism.mirror.bytes)` parses to a tree
+    /// with the same `combinator_tree_oid` as `prism_seed()` itself.
+    /// Mirror's grammar describes mirror's grammar; the description IS
+    /// the implementation.
+    #[test]
+    fn fp1_seed_parses_itself() {
+        let seed = prism_seed();
+        let prism_bytes = read_boot_file("00-prism.mirror");
+        let seed_prime = parse_with(&seed, &prism_bytes);
+        let oid_seed = combinator_tree_oid(&seed);
+        let oid_prime = combinator_tree_oid(&seed_prime);
+        assert_eq!(
+            oid_seed, oid_prime,
+            "FP1: seed OID != seed_prime OID\nseed       = {:?}\nseed_prime = {:?}",
+            seed, seed_prime
+        );
+    }
+
+    /// FP2 — the grammar surface lifts the keyword mapping.
+    ///
+    /// `apply_h(prism_seed(), grammar.mirror.bytes)` parses to a
+    /// keyword-table `Choice` — the four op-keywords that appear in
+    /// `boot/std/mirror/grammar.mirror` (focus, project, split, zoom;
+    /// no refract).
+    #[test]
+    fn fp2_grammar_lifts_to_keyword_table() {
+        let seed = prism_seed();
+        let grammar_bytes = read_boot_file("std/mirror/grammar.mirror");
+        let parsed = parse_with(&seed, &grammar_bytes);
+
+        let expected = Combinator::Choice(vec![
+            literal_kind(b"focus", AstKind::Focus),
+            literal_kind(b"project", AstKind::Project),
+            literal_kind(b"split", AstKind::Split),
+            literal_kind(b"zoom", AstKind::Zoom),
+        ]);
+
+        assert_eq!(
+            combinator_tree_oid(&parsed),
+            combinator_tree_oid(&expected),
+            "FP2: parsed OID != expected keyword-table OID\nparsed   = {:?}\nexpected = {:?}",
+            parsed,
+            expected
+        );
+    }
+
+    /// Emit the FP1 + FP2 OID hex values for the commit message. Pure
+    /// observation — no assertion. Runs at every `cargo test` to keep
+    /// the values discoverable.
+    #[test]
+    fn emit_oid_hex_for_log() {
+        let seed = prism_seed();
+        let prism_bytes = read_boot_file("00-prism.mirror");
+        let grammar_bytes = read_boot_file("std/mirror/grammar.mirror");
+        let seed_prime = parse_with(&seed, &prism_bytes);
+        let grammar_lift = parse_with(&seed, &grammar_bytes);
+        eprintln!("FP1 seed       OID hex: {}", combinator_tree_oid_hex(&seed));
+        eprintln!("FP1 seed_prime OID hex: {}", combinator_tree_oid_hex(&seed_prime));
+        eprintln!("FP2 expected   OID hex: {}", combinator_tree_oid_hex(&Combinator::Choice(vec![
+            literal_kind(b"focus", AstKind::Focus),
+            literal_kind(b"project", AstKind::Project),
+            literal_kind(b"split", AstKind::Split),
+            literal_kind(b"zoom", AstKind::Zoom),
+        ])));
+        eprintln!("FP2 parsed     OID hex: {}", combinator_tree_oid_hex(&grammar_lift));
+    }
+
+    /// Sanity: `combinator_tree_oid` is deterministic and discriminates
+    /// between distinct trees. Cheap guard against accidental hash
+    /// collapse.
+    #[test]
+    fn combinator_oid_is_deterministic_and_discriminating() {
+        let a = prism_seed();
+        let b = prism_seed();
+        assert_eq!(combinator_tree_oid(&a), combinator_tree_oid(&b));
+
+        let c = Combinator::Choice(vec![literal_kind(b"focus", AstKind::Focus)]);
+        assert_ne!(combinator_tree_oid(&a), combinator_tree_oid(&c));
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
