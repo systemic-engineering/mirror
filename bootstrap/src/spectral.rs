@@ -37,8 +37,10 @@
 //!   `Error = Infallible` so it remains closed under identity
 //!   composition). In the bootstrap D's concrete matrix form is
 //!   `CoincidenceHash<5,5>` (see `bootstrap/src/hash.rs`); its scalar
-//!   action on AST states is `content_oid` (see
-//!   `bootstrap/src/content.rs`).
+//!   action on AST states is [`apply_h_content`] (dispatched through
+//!   [`ContentOidPrism`] — the retirement of the standalone
+//!   `content.rs` module, per `docs/specs/bootstrap-retirement-plan.md`
+//!   Tick 1).
 //!
 //! ## The three primitive operations
 //!
@@ -67,11 +69,11 @@
 //! [`terni::Imperfect`]: terni::Imperfect
 //! [`terni::Metric`]: terni::Metric
 
-use prism_core::{apply as prism_apply, Optic, Prism, ScalarLoss};
+use prism_core::{apply as prism_apply, Beam, Optic, Prism, ScalarLoss};
 use terni::Imperfect;
 
-use crate::ast::AstNode;
-use crate::content::content_oid;
+use crate::ast::{AstKind, AstNode};
+use crate::hash::hash_tagged;
 
 // ---------------------------------------------------------------------------
 // State carriers — the bootstrap's seed and verdict types.
@@ -138,12 +140,243 @@ where
 }
 
 /// Specialisation of [`apply_h`] for AST states: apply the discrete
-/// Dirac operator (`content_oid`) to an AST node, returning the OID.
-/// This is the shape `content.rs`'s recursive walk takes once it
-/// retires into the evaluator. The OID is the scalar action of D on
-/// the AST state vector.
+/// Dirac operator to an AST node, returning the OID. The canonical
+/// path is `prism_apply(&ContentOidPrism, seed(node.clone()))` —
+/// the Dirac operator's scalar action on the AST state vector,
+/// expressed as a Prism dispatched through `apply_h`.
+///
+/// Per `docs/specs/bootstrap-retirement-plan.md` (Tick 1), this is
+/// where the recursive walk that used to live in `content.rs` now
+/// dispatches. The walk is preserved verbatim — the Prism's `focus`
+/// phase carries the same per-AstKind dispatch the C original and
+/// the prior Rust port used; only the call-site idiom moves from
+/// hand-written recursion into `apply_h`.
 pub fn apply_h_content(node: &AstNode) -> Verdict<String> {
-    Imperfect::success(content_oid(node))
+    prism_apply(&ContentOidPrism, seed(node.clone())).into_focus()
+}
+
+/// Convenience wrapper for the common case: take an `AstNode` by
+/// reference and produce the OID `String` directly. Every call-site
+/// that used to read `content_oid(&ast)` now reads
+/// `compute_content_oid(&ast)`. The function unwraps the `Verdict`
+/// to its `Success` payload — `ContentOidPrism` is total over
+/// well-formed ASTs (`AstKind::Dark` nodes are hashed under the
+/// `"dark"` tag, not produced as Partial), so the unwrap is safe.
+pub fn compute_content_oid(node: &AstNode) -> String {
+    match apply_h_content(node) {
+        Imperfect::Success(oid) => oid,
+        // Defensive — `ContentOidPrism` never produces Partial today.
+        // If a future combinator does, treat it as a loss-bearing OID
+        // and surface the payload; callers concerned with strictness
+        // should call `apply_h_content` directly.
+        Imperfect::Partial(oid, _) => oid,
+        // `Verdict<String>` has `Error = Infallible`; this arm is
+        // structurally unreachable but the type system can't see it
+        // without `unreachable!()`.
+        Imperfect::Failure(_, _) => unreachable!(
+            "ContentOidPrism has Error = Infallible; Failure is uninhabited"
+        ),
+    }
+}
+
+// ---------------------------------------------------------------------------
+// ContentOidPrism — the discrete Dirac operator's scalar action on H.
+//
+// Parametric form (one Prism, internal dispatch on `AstKind`) rather than
+// per-kind composition (ten Prisms composed via `compose_a`). Rationale:
+//
+// - The current `content::content_oid` is one `match` over `AstKind`.
+//   A single Prism whose `focus` phase carries the same match is the
+//   smallest change with the same observable behaviour — the hash bytes
+//   are byte-stable by construction.
+// - The per-kind alternative would surface the algebra structure more
+//   honestly (ten elements of A, composed) but would multiply the
+//   trait-bound surface and triple the LOC for zero observable change.
+//   Parametric keeps the floor minimal; per-kind specialisation is a
+//   profile-driven decision once `cargo bloat` shows a hot path.
+// - Per `docs/specs/bootstrap-retirement-plan.md` §Tick 1 open question:
+//   Alex's recommendation is parametric for v1.
+// ---------------------------------------------------------------------------
+
+/// The discrete Dirac operator's scalar action on AST states. Its
+/// `focus` walks the node, dispatches on `AstKind`, recurses into
+/// children via [`apply_h_content`], and emits the OID string. The
+/// `project` and `refract` phases pass the OID through unchanged —
+/// the work happens in `focus`, matching the shape of the existing
+/// `Scale` / `Quantize` test fixtures in this module.
+pub struct ContentOidPrism;
+
+impl Prism for ContentOidPrism {
+    type Input = Seed<AstNode>;
+    type Focused = Optic<AstNode, String>;
+    type Projected = Optic<String, String>;
+    type Refracted = Optic<String, String>;
+
+    fn focus(&self, beam: Self::Input) -> Self::Focused {
+        let node = beam
+            .value()
+            .expect("ContentOidPrism::focus on dark beam")
+            .clone();
+        let oid = compute_oid_inner(&node);
+        beam.next(oid)
+    }
+
+    fn project(&self, beam: Self::Focused) -> Self::Projected {
+        let oid = beam
+            .value()
+            .expect("ContentOidPrism::project on dark beam")
+            .clone();
+        beam.next(oid)
+    }
+
+    fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+        let oid = beam
+            .value()
+            .expect("ContentOidPrism::refract on dark beam")
+            .clone();
+        beam.next(oid)
+    }
+}
+
+/// The per-kind dispatch — byte-exact equivalent of the recursive walk
+/// that used to live in `bootstrap/src/content.rs`. Each arm reproduces
+/// the prior buffer construction verbatim so the resulting OIDs are
+/// byte-stable across the retirement.
+///
+/// Recursion into children goes through [`apply_h_content`] so the
+/// `apply_h` call-site is exercised at every level of the AST.
+fn compute_oid_inner(node: &AstNode) -> String {
+    let mut buf: Vec<u8> = Vec::new();
+    match node.kind {
+        AstKind::Focus => {
+            buf.extend_from_slice(node.name.as_bytes());
+            for c in &node.children {
+                let child = compute_content_oid(c);
+                buf.push(b':');
+                buf.extend_from_slice(child.as_bytes());
+            }
+            hash_tagged("focus", &buf)
+        }
+        AstKind::Project => {
+            buf.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                if !body.is_empty() {
+                    buf.extend_from_slice(b"\0body:");
+                    buf.extend_from_slice(body.as_bytes());
+                }
+            }
+            for c in &node.children {
+                let child = compute_content_oid(c);
+                buf.push(b':');
+                buf.extend_from_slice(child.as_bytes());
+            }
+            hash_tagged("project", &buf)
+        }
+        AstKind::Split => {
+            buf.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                if !body.is_empty() {
+                    buf.extend_from_slice(b"\0body:");
+                    buf.extend_from_slice(body.as_bytes());
+                }
+            }
+            for c in &node.children {
+                let child = compute_content_oid(c);
+                buf.push(b':');
+                buf.extend_from_slice(child.as_bytes());
+            }
+            hash_tagged("split", &buf)
+        }
+        AstKind::Zoom => {
+            buf.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                if !body.is_empty() {
+                    buf.extend_from_slice(b"\0body:");
+                    buf.extend_from_slice(body.as_bytes());
+                }
+            }
+            for c in &node.children {
+                let child = compute_content_oid(c);
+                buf.push(b':');
+                buf.extend_from_slice(child.as_bytes());
+            }
+            hash_tagged("zoom", &buf)
+        }
+        AstKind::Refract => {
+            buf.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                if !body.is_empty() {
+                    buf.extend_from_slice(b"\0body:");
+                    buf.extend_from_slice(body.as_bytes());
+                }
+            }
+            for c in &node.children {
+                let child = compute_content_oid(c);
+                buf.push(b':');
+                buf.extend_from_slice(child.as_bytes());
+            }
+            hash_tagged("refract", &buf)
+        }
+        AstKind::In => hash_tagged("in", node.name.as_bytes()),
+        AstKind::Out => hash_tagged("out", node.name.as_bytes()),
+        AstKind::IoBinding => {
+            buf.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                if !body.is_empty() {
+                    buf.extend_from_slice(b"\0body:");
+                    buf.extend_from_slice(body.as_bytes());
+                }
+            }
+            for c in &node.children {
+                let child = compute_content_oid(c);
+                buf.push(b':');
+                buf.extend_from_slice(child.as_bytes());
+            }
+            hash_tagged("io_binding", &buf)
+        }
+        AstKind::MatchExpr => {
+            buf.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                if !body.is_empty() {
+                    buf.extend_from_slice(b"\0body:");
+                    buf.extend_from_slice(body.as_bytes());
+                }
+            }
+            for c in &node.children {
+                let child = compute_content_oid(c);
+                buf.push(b':');
+                buf.extend_from_slice(child.as_bytes());
+            }
+            hash_tagged("match_expr", &buf)
+        }
+        AstKind::SelectExpr => {
+            buf.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                if !body.is_empty() {
+                    buf.extend_from_slice(b"\0body:");
+                    buf.extend_from_slice(body.as_bytes());
+                }
+            }
+            for c in &node.children {
+                let child = compute_content_oid(c);
+                buf.push(b':');
+                buf.extend_from_slice(child.as_bytes());
+            }
+            hash_tagged("select_expr", &buf)
+        }
+        AstKind::Dark => {
+            // Per `docs/specs/strict-and-total-classification.md`: hash
+            // the verbatim bytes under a `"dark"` tag. Changes to a dark
+            // region produce a different OID rather than silently folding
+            // into the parent's body.
+            let bytes: &[u8] = node
+                .body
+                .as_deref()
+                .map(str::as_bytes)
+                .unwrap_or(&[]);
+            hash_tagged("dark", bytes)
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -502,15 +735,30 @@ mod tests {
     }
 
     #[test]
-    fn apply_h_content_matches_content_oid() {
+    fn apply_h_content_matches_compute_oid_inner() {
         // apply_h_content over an AST state agrees with the direct
-        // content_oid call. The evaluator route doesn't change the OID.
+        // `compute_oid_inner` call (the inner recursion). The evaluator
+        // route through `ContentOidPrism` doesn't change the OID.
         let mut node = AstNode::new(AstKind::Focus, "root");
         node.add_child(AstNode::new(AstKind::In, "@prism"));
-        let oid_direct = content_oid(&node);
+        let oid_direct = compute_oid_inner(&node);
         let v = apply_h_content(&node);
         match v {
             Imperfect::Success(oid) => assert_eq!(oid, oid_direct),
+            other => panic!("expected Success, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn compute_content_oid_matches_apply_h_content() {
+        // The thin-wrapper invariant: `compute_content_oid` IS
+        // `apply_h_content` unwrapped to its Success payload.
+        let mut node = AstNode::new(AstKind::Project, "project");
+        node.set_body("hello");
+        node.add_child(AstNode::new(AstKind::In, "@prism"));
+        let direct = compute_content_oid(&node);
+        match apply_h_content(&node) {
+            Imperfect::Success(oid) => assert_eq!(oid, direct),
             other => panic!("expected Success, got {:?}", other),
         }
     }

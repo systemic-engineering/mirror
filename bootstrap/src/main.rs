@@ -1,11 +1,13 @@
 //! mirror — the native binary, Rust port.
 //!
-//! Bit-exact CoincidenceHash<3> + content_oid compatibility with the C
+//! Bit-exact CoincidenceHash<3> + content-OID compatibility with the C
 //! original at native/mirror.c. The body-capture fix for LLVM IR keyword
 //! forms (target datalayout = "...", source_filename = "...") is shared.
+//! Content OIDs are computed by `spectral::compute_content_oid`, which
+//! dispatches the recursive AST walk through `apply_h(ContentOidPrism, ast)`
+//! per `docs/specs/bootstrap-retirement-plan.md` Tick 1.
 
 mod ast;
-mod content;
 mod exec;
 mod git;
 mod grammar;
@@ -21,12 +23,12 @@ use std::path::PathBuf;
 use std::process::Command;
 
 use crate::ast::{line_col_at, AstKind, AstNode};
-use crate::content::content_oid;
 use crate::git::{git_crystal_exists, git_store_crystal};
 use crate::grammar::{grammar_for_file, load_grammar};
 use crate::hash::canonical_hash;
 use crate::pipeline::{execute_pipeline, is_mq_query, split_pipeline};
 use crate::render::render_ast;
+use crate::spectral::compute_content_oid;
 use crate::tokenize::tokenize;
 
 /// Walk an AST, collecting every `AstKind::Dark` node in source order.
@@ -196,7 +198,7 @@ fn cmd_compile(file: &str, no_cache: bool, strict: bool) -> i32 {
     }
 
     let ast = tokenize(&source, &grammar);
-    let oid = content_oid(&ast);
+    let oid = compute_content_oid(&ast);
     if !no_cache && !strict {
         let source_oid = canonical_hash(&source);
         git_store_crystal(&source_oid, &oid);
@@ -314,7 +316,7 @@ fn cmd_craft_with(
         }
         if !cached {
             let ast = tokenize(&source, &grammar);
-            oid = content_oid(&ast);
+            oid = compute_content_oid(&ast);
             if !no_cache && !strict {
                 let source_oid = canonical_hash(&source);
                 git_store_crystal(&source_oid, &oid);
@@ -486,7 +488,7 @@ fn dump_ast(node: &crate::ast::AstNode, depth: usize) {
     let tag_marker = if node.grammar_tag.is_empty() { String::new() } else { format!(" tag={}", node.grammar_tag) };
     eprintln!("{}{} name={:?}{}{}{} oid={}",
         indent, kind_str, node.name, kw_marker, tag_marker, body_marker,
-        crate::content::content_oid(node));
+        compute_content_oid(node));
     for c in &node.children {
         dump_ast(c, depth + 1);
     }
@@ -559,8 +561,8 @@ fn kintsugi_tick(tick: u64, prior_ast: &AstNode, current_ast: &AstNode) -> bool 
     // same section ⇔ the OIDs of prior and current ASTs agree. With no
     // candidate spliced in, prior == current by construction, so the
     // fixed point is reached vacuously on tick 1.
-    let prior_oid = content_oid(prior_ast);
-    let current_oid = content_oid(current_ast);
+    let prior_oid = compute_content_oid(prior_ast);
+    let current_oid = compute_content_oid(current_ast);
     let fixed_point = prior_oid == current_oid && verify_pass;
     let delta: f64 = if fixed_point { 0.0 } else { 1.0 };
 

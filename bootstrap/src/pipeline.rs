@@ -1,10 +1,10 @@
 //! mq pipeline parser + executor. Mirrors C `split_pipeline` / `execute_pipeline`.
 
 use crate::ast::AstNode;
-use crate::content::content_oid;
 use crate::exec::io_exec;
 use crate::grammar::{grammar_path_for_ref, load_grammar};
 use crate::render::render_ast;
+use crate::spectral::compute_content_oid;
 use crate::tokenize::tokenize;
 use std::io::Write;
 
@@ -159,7 +159,7 @@ pub fn execute_pipeline(segs: &[Segment], source: &[u8]) -> i32 {
     } else if nseg >= 2 && (last == "@mirror/butterfly" || last == "@mirror/butterfly.butterfly") {
         // no stdout
     } else {
-        let oid = content_oid(&ast);
+        let oid = compute_content_oid(&ast);
         println!("{}", oid);
     }
     0
