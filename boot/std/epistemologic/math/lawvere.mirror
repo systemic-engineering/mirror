@@ -63,6 +63,17 @@ in @epistemologic/math/bundle
 #   Survey: "A Survey on Lawvere's Fixed-Point Theorem." arXiv:2503.13536.
 #
 # Spec: docs/specs/lawvere-grammar.md
+#
+# Cross-realisation in prism/core/src/bundle.rs (post-audit, 2026-05-21):
+#   prism_core::LawvereFixedPoint IS the Rust-side realisation of this
+#   grammar's fixed_point. The trait carries:
+#     - is_idempotent_under(endomap) — the f(f(x)) == f(x) law.
+#     - in_kernel()                  — ker(D) membership for D the
+#                                       bundle's connection-induced
+#                                       operator.
+#   prism_core::bundle::Closure::Fixed is constrained to implement
+#   LawvereFixedPoint, linking the bundle tower's level-4 closure to
+#   this grammar's fixed-point witness.
 
 grammar @epistemologic/math/lawvere {
 

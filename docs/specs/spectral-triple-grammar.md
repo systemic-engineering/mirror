@@ -320,22 +320,33 @@ ker(D) but does not enforce it.
 
 ### Audit summary
 
-| Claim | Verdict | Adjustment scope |
-|---|---|---|
-| 1. `Connection` → A | NEEDS-ADJUSTMENT | Document Tambara law placement; route through `@epistemologic/math/category`. |
-| 2. `Gauge` → structure group | GAP | Add group-axiom supertrait constraint or explicit `act_on` method. |
-| 3. `Transport` → Dψ | TIGHT | None (subject to Qualification 1). |
-| 4. `Closure` → ker(D) | NEEDS-ADJUSTMENT | Add idempotence law or link to `@epistemologic/math/lawvere.fixed_point`. |
+| Claim | Verdict (audit) | Status (2026-05-21) | Adjustment scope |
+|---|---|---|---|
+| 1. `Connection` → A | NEEDS-ADJUSTMENT | **CLOSED** | `Connection::Optic: Prism` supertrait constraint; `IdentityPrism<S>` witness. |
+| 2. `Gauge` → structure group | GAP | **CLOSED** | `GroupStructure` trait + `Gauge::act_on(&State) -> State`; tests on `Cyclic<N>`. |
+| 3. `Transport` → Dψ | TIGHT | TIGHT | None. |
+| 4. `Closure` → ker(D) | NEEDS-ADJUSTMENT | **CLOSED** | `LawvereFixedPoint` trait (`is_idempotent_under`, `in_kernel`); `Closure::Fixed: LawvereFixedPoint`. |
 
-The spec `prism-core-as-spectral-triple.md` should be updated with a
-"Qualifications" section reflecting these three findings (Claims 1,
-2, 4). The TIGHT claim 3 stands as written.
+**Resolution lands (2026-05-21):** the four gaps closed in
+`prism/core` via supertrait constraints. `Connection::Optic: Prism`,
+`Gauge::Group: GroupStructure` + `Gauge::act_on`,
+`Transport::Holonomy: Metric`, `Closure::Fixed: LawvereFixedPoint`.
+See `docs/specs/prism-core-as-spectral-triple.md` §Qualifications
+resolved for the full implementation summary; the bundle and
+lawvere grammars now carry comment blocks naming the Rust-side
+realisations.
 
 ---
 
 ## Qualifications — the `Loss` trait and the metric question
 
-### Qualification 1 — `terni::Loss` is a monoid, not a metric
+### Qualification 1 — `terni::Loss` is a monoid, not a metric  *[resolved 2026-05-21]*
+
+**Status:** addressed by adding a `terni::Metric` supertrait extending
+`Loss` with `is_non_negative`, `distance_to`, and `triangle`.
+`Transport::Holonomy: Metric` is now enforced at the trait level.
+`ScalarLoss` implements `Metric`; stringly losses deliberately do not.
+The original analysis is preserved below for historical reference.
 
 The spectral triple's bounded-commutator axiom `‖[D, a]‖ < ∞`
 requires a norm on operators: non-negative, scalar-homogeneous,

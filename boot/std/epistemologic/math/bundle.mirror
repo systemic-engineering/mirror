@@ -34,6 +34,31 @@ in @beam
 # the BARE model (Oyarte Galvez et al. 2025) inherit it. Gauge field
 # theory inherits it. All are instances of the same five levels.
 
+# ---------------------------------------------------------------------
+# Cross-realisation in prism/core/src/bundle.rs (post-audit, 2026-05-21):
+#
+#   Connection::Optic: Prism                  (Gap 1 closed)
+#       — the optic algebra A is enforced at the trait level via the
+#         Prism supertrait constraint. Identity element witnessed by
+#         IdentityPrism<S>.
+#
+#   Gauge::Group: GroupStructure              (Gap 2 closed)
+#       — identity / inverse / compose are trait methods. Gauge also
+#         supplies act_on(state) for the structure-group action on H.
+#         The action-consistency law g.act_on(h.act_on(s)) ==
+#         compose(g,h).act_on(s) is verified by property tests.
+#
+#   Transport::Holonomy: Metric               (Gap 4 closed)
+#       — terni::Metric extends terni::Loss with non-negativity,
+#         symmetry, and triangle inequality. ScalarLoss implements
+#         Metric; stringly losses deliberately do not.
+#
+#   Closure::Fixed: LawvereFixedPoint         (Gap 3 closed)
+#       — see @epistemologic/math/lawvere for the grammar-side mirror.
+#         The Rust trait carries is_idempotent_under(endomap) and
+#         in_kernel() as obligations on the fixed-point witness.
+# ---------------------------------------------------------------------
+
 grammar @epistemologic/math/bundle {
 
   # the carriers ------------------------------------------------------

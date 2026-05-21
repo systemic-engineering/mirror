@@ -329,6 +329,71 @@ readable question.
 
 ---
 
+## Qualifications resolved (2026-05-21)
+
+The four audit gaps from `docs/specs/spectral-triple-grammar.md` (Phase
+1 audit, commit `ea341d1` on `reed/spec-inference`) closed via
+supertrait constraints rather than method additions — the bundle
+traits stay minimal carriers; the algebraic structure lives in the
+carried type's traits.
+
+| Gap | Claim | Resolution | Status |
+|---|---|---|---|
+| 1 | `Connection::Optic` polymorphic; Tambara composition law not enforced at trait level | `Connection::Optic: Prism` supertrait constraint; `IdentityPrism<S>` witnesses the algebra identity element | CLOSED |
+| 2 | `Gauge::Group` has no group axioms; tests use `u8` | New `GroupStructure` trait (`identity`, `inverse`, `compose`); `Gauge::Group: GroupStructure`; `Gauge::act_on(&State) -> State` for the action on H; test bundle uses `Cyclic<N>` | CLOSED |
+| 3 | `Closure::Fixed` has no idempotence law, no kernel-projection, no link to `@epistemologic/math/lawvere` | New `LawvereFixedPoint` trait (`is_idempotent_under(endomap)`, `in_kernel()`); `Closure::Fixed: LawvereFixedPoint`; test bundle uses `StableFiber<S>`; cross-realisation noted in `lawvere.mirror` | CLOSED |
+| 4 | `terni::Loss` is a monoid, not a metric; non-negativity/symmetry/triangle not enforced | New `terni::Metric` supertrait extending `Loss`; `Transport::Holonomy: Metric`; `ScalarLoss` implements `Metric`; stringly Losses deliberately do not (per Seam's symmetry-failure note) | CLOSED |
+
+Implementation summary:
+
+- All four gaps closed via supertrait bounds on the bundle's
+  associated types. The bundle traits themselves gained no new
+  required methods except `Gauge::act_on` (the group action is data,
+  not derivable from the group structure alone).
+- The `where Self::Optic: Prism, <<Self::Optic as Prism>::Input as
+  Beam>::In: Sized` clauses propagate down the supertrait chain;
+  Rust 1.78+ syntax for trait-associated-type bounds was avoided in
+  favour of plain `where` clauses for clarity. The workspace is on
+  edition 2021; no bump required.
+- The `Loss → Metric` extension lives in `prism/imperfect` (terni
+  crate) alongside `Loss` itself. `ScalarLoss` (in prism-core)
+  implements `Metric`; this is the only `Metric` impl needed for
+  mirror's current Holonomy carrier.
+- Property tests verify each law: cyclic identity / inverse /
+  associativity (Gap 2), action-consistency `g.act_on(h.act_on(s))
+  == compose(g,h).act_on(s)` (Gap 2), fixed-point idempotence under
+  identity and under the bundle's transport-projection (Gap 3),
+  metric non-negativity / symmetry / triangle (Gap 4). The
+  identity-prism witness exercises Gap 1.
+- Test counts: prism-core went from 375 unit + 3 integration to 387
+  unit + 6 integration (+15 new property tests). All previously
+  passing tests continue to pass.
+- Mirror smoke OIDs `a8312da6…` and `3ba4c79d…` remain byte-stable
+  after the changes (the trait reshape did not affect content_oid
+  emission).
+- `Connection::Optic` was previously typed `String` in test code; now
+  typed `IdentityPrism<[f64; 4]>`. `Gauge::Group` was `u8`; now
+  `Cyclic<4>`. `Closure::Fixed` was `bool`; now `StableFiber<[f64;
+  4]>`. None of these were load-bearing for external code; the
+  internal `TestBundle` and external `bundle_integration.rs` test
+  both ported cleanly.
+
+Residual qualifications (deliberately *not* closed in this tick):
+
+- **The Tambara module composition law itself** (Qualification 2 of
+  the audit, the involutive-algebra `*`-operation) remains for
+  `@epistemologic/math/category` to declare.
+- **Lorentzian / causal extensions** (Qualification 3) remain a
+  future grammar; the discrete Euclidean Connes (A, H, D) covered
+  by this resolution suffices for mirror's case.
+
+The four CLOSED verdicts are falsifiable: each was witnessed by a
+property test that fails if the law fails, and by a compile error if
+the supertrait bound is violated. Anna reading this will be able to
+run `cargo test --release --all-features` in `prism/core` and confirm.
+
+---
+
 ## What this implies for `road-to-1.0.md`
 
 The spectral-triple recognition is *not* a blocker for v1.0. The
