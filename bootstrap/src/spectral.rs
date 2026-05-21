@@ -37,10 +37,10 @@
 //!   `Error = Infallible` so it remains closed under identity
 //!   composition). In the bootstrap D's concrete matrix form is
 //!   `CoincidenceHash<5,5>` (see `bootstrap/src/hash.rs`); its scalar
-//!   action on AST states is [`apply_h_content`] (dispatched through
-//!   [`ContentOidPrism`] — the retirement of the standalone
-//!   `content.rs` module, per `docs/specs/bootstrap-retirement-plan.md`
-//!   Tick 1).
+//!   action on AST states is `apply_h(&ContentOidPrism, node)`
+//!   (dispatched through [`ContentOidPrism`] — the retirement of the
+//!   standalone `content.rs` module, per
+//!   `docs/specs/bootstrap-retirement-plan.md` Tick 1).
 //!
 //! ## The three primitive operations
 //!
@@ -51,13 +51,13 @@
 //!    sequentially on a state, accumulating loss via the `Metric` monoid
 //!    on the holonomy carrier. The composition is associative because
 //!    `terni::Loss::combine` is, and the [`IdentityPrism`] is its unit.
-//! 2. [`apply_h`] — operator action on a state vector. Wraps a single
-//!    `prism_core::Prism`'s focus / project / refract sweep and returns
-//!    the resulting [`Verdict`] in H. The function is intentionally a
-//!    thin wrapper around `prism_core::apply`: naming it `apply_h` ties
-//!    it to the spectral-triple framework and creates the call-site that
-//!    downstream retirements (tokenize.rs, render.rs) will dispatch
-//!    through.
+//! 2. `prism_core::apply_h` — operator action on a state vector.
+//!    Heterogeneous: input state type and output state type are
+//!    independent. Wraps a single `prism_core::Prism`'s focus /
+//!    project / refract sweep and returns the resulting `Imperfect`
+//!    in H. Lives in `prism-core` and is re-imported here — the
+//!    bootstrap stands on the substrate's verified shape rather than
+//!    redefining its own constrained variant.
 //! 3. [`eigen_d`] — Dirac eigendecomposition. Given an operator
 //!    represented in the canonical 5-d basis (one axis per Prism
 //!    operation), return its spectrum. For the 5×5 case this is power
@@ -69,7 +69,7 @@
 //! [`terni::Imperfect`]: terni::Imperfect
 //! [`terni::Metric`]: terni::Metric
 
-use prism_core::{apply as prism_apply, Beam, Optic, Prism, ScalarLoss};
+use prism_core::{apply_h, Beam, Optic, Prism, ScalarLoss};
 use terni::Imperfect;
 
 use crate::ast::{AstKind, AstNode};
@@ -110,69 +110,37 @@ pub fn seed<S>(state: S) -> Seed<S> {
 }
 
 // ---------------------------------------------------------------------------
-// 1. apply_h — operator action on H
+// 1. apply_h — operator action on H (now re-exported from prism-core)
 // ---------------------------------------------------------------------------
+//
+// `apply_h` lives in `prism_core::apply_h` as a heterogeneous helper
+// (input state type and output state type are independent). The
+// bootstrap re-uses it directly via the `use` import above; no local
+// definition or wrapper exists. The previous bootstrap-local `apply_h`
+// over-constrained `Refracted = Optic<_, S>` (input and output state
+// types coupled), which forced both `apply_h_content` and the
+// Combinator parser to bypass it. Both bypasses are now gone —
+// `apply_h` is the only path.
+//
+// `compute_content_oid` is the AST-specific convenience wrapper around
+// `apply_h(&ContentOidPrism, node.clone())`, unwrapping the
+// `Imperfect` to a `String`. `ContentOidPrism` is total over
+// well-formed ASTs (`AstKind::Dark` nodes are hashed under the
+// `"dark"` tag, not produced as Partial), so the unwrap is safe.
 
-/// Apply an algebra element to a state vector in H.
-///
-/// The element is any `prism_core::Prism` whose pipeline starts at
-/// `Seed<S>` and ends at an `Optic<_, S>` (i.e. the refracted beam
-/// still carries a state of type `S`, possibly with accumulated loss).
-/// The function runs `prism_core::apply` end-to-end and returns the
-/// resulting [`Verdict<S>`] — Success or Partial-with-`ScalarLoss`.
-///
-/// This wraps `prism_core::apply` rather than reinventing it: the
-/// bootstrap stands on prism-core's verified spectral-triple substrate
-/// rather than mirroring its shape.
-///
-/// The `Refracted` type is bound to `Optic<_, S>` (with default `Error`
-/// = Infallible and `Loss` = `ScalarLoss`) because the bootstrap
-/// evaluator's algebra elements operate uniformly on `H` (state in,
-/// state out) and carry their residual in `ScalarLoss` (the `Metric`
-/// carrier). The `In` position of the refracted beam holds the
-/// previous-stage output type, which is irrelevant after the last
-/// stage and dropped by `into_focus`.
-pub fn apply_h<S, In, P>(p: &P, state: S) -> Verdict<S>
-where
-    P: Prism<Input = Seed<S>, Refracted = Optic<In, S>>,
-{
-    prism_apply(p, seed(state)).into_focus()
-}
-
-/// Specialisation of [`apply_h`] for AST states: apply the discrete
-/// Dirac operator to an AST node, returning the OID. The canonical
-/// path is `prism_apply(&ContentOidPrism, seed(node.clone()))` —
-/// the Dirac operator's scalar action on the AST state vector,
-/// expressed as a Prism dispatched through `apply_h`.
-///
-/// Per `docs/specs/bootstrap-retirement-plan.md` (Tick 1), this is
-/// where the recursive walk that used to live in `content.rs` now
-/// dispatches. The walk is preserved verbatim — the Prism's `focus`
-/// phase carries the same per-AstKind dispatch the C original and
-/// the prior Rust port used; only the call-site idiom moves from
-/// hand-written recursion into `apply_h`.
-pub fn apply_h_content(node: &AstNode) -> Verdict<String> {
-    prism_apply(&ContentOidPrism, seed(node.clone())).into_focus()
-}
-
-/// Convenience wrapper for the common case: take an `AstNode` by
-/// reference and produce the OID `String` directly. Every call-site
+/// Compute the content-OID of an AST node by dispatching the discrete
+/// Dirac operator's scalar action through `apply_h`. Every call-site
 /// that used to read `content_oid(&ast)` now reads
-/// `compute_content_oid(&ast)`. The function unwraps the `Verdict`
-/// to its `Success` payload — `ContentOidPrism` is total over
-/// well-formed ASTs (`AstKind::Dark` nodes are hashed under the
-/// `"dark"` tag, not produced as Partial), so the unwrap is safe.
+/// `compute_content_oid(&ast)`.
 pub fn compute_content_oid(node: &AstNode) -> String {
-    match apply_h_content(node) {
+    match apply_h(&ContentOidPrism, node.clone()) {
         Imperfect::Success(oid) => oid,
         // Defensive — `ContentOidPrism` never produces Partial today.
         // If a future combinator does, treat it as a loss-bearing OID
-        // and surface the payload; callers concerned with strictness
-        // should call `apply_h_content` directly.
+        // and surface the payload.
         Imperfect::Partial(oid, _) => oid,
-        // `Verdict<String>` has `Error = Infallible`; this arm is
-        // structurally unreachable but the type system can't see it
-        // without `unreachable!()`.
+        // `ContentOidPrism::Refracted::Error = Infallible`; this arm
+        // is structurally unreachable but the type system can't see it.
         Imperfect::Failure(_, _) => unreachable!(
             "ContentOidPrism has Error = Infallible; Failure is uninhabited"
         ),
@@ -200,7 +168,7 @@ pub fn compute_content_oid(node: &AstNode) -> String {
 
 /// The discrete Dirac operator's scalar action on AST states. Its
 /// `focus` walks the node, dispatches on `AstKind`, recurses into
-/// children via [`apply_h_content`], and emits the OID string. The
+/// children via `apply_h(&ContentOidPrism, child)`, and emits the OID string. The
 /// `project` and `refract` phases pass the OID through unchanged —
 /// the work happens in `focus`, matching the shape of the existing
 /// `Scale` / `Quantize` test fixtures in this module.
@@ -1101,12 +1069,13 @@ pub fn eigen_d<const N: usize>(matrix: [[f64; N]; N]) -> Spectrum<N> {
 // is data — a `Combinator` literal — not a tree of trait objects.
 // `combinator_tree_oid` is a straight Merkle hash over variants.
 //
-// Tick 4b.1 scope: the load-bearing variants for FP1 (seed parses
-// `00-prism.mirror` to itself) and FP2 (seed parses `grammar.mirror`
-// to a keyword-table Choice) are Seq, Choice, and LiteralKind. The
-// remaining variants are declared so the surface matches the spec; their
-// `walk_combinator` arms are `unimplemented!()` with a clear message.
-// Subsequent ticks (4b.2+) flesh them out.
+// Tick 4b.2 scope: the load-bearing variants for FP1 (seed parses the
+// full `00-prism.mirror` to itself) and FP2 (the op-keyword sub-Choice
+// parses `grammar.mirror` to the pruned keyword table) are Seq, Choice,
+// Capture, BraceBlock, IoBinding, LiteralKind, and Literal. The
+// remaining variants are declared so the surface matches the spec;
+// their `walk_combinator` arms are `unimplemented!()` with a clear
+// message. Subsequent sub-ticks flesh them out.
 // ---------------------------------------------------------------------------
 
 /// Closed enum of named parser combinators. One variant per combinator
@@ -1123,8 +1092,9 @@ pub enum Combinator {
     /// `DarkFallback` arm if present.
     Choice(Vec<Combinator>),
     /// Match the keyword bytes exactly, capturing as an `AstKind`-
-    /// tagged `LiteralKind` Combinator in the output tree. The
-    /// load-bearing variant for FP1/FP2: the five op-keyword captures.
+    /// tagged `LiteralKind` Combinator in the output tree.
+    /// Load-bearing variant for FP1/FP2: the five op-keyword captures
+    /// the body of every `prism @(…) { … }` form is built from.
     LiteralKind { keyword: Vec<u8>, kind: AstKind },
     /// Exact byte match, no AST capture. Atomic.
     Literal(Vec<u8>),
@@ -1339,11 +1309,30 @@ impl Prism for Combinator {
 }
 
 /// Walk source bytes with a combinator, returning the induced
-/// `Combinator` tree. Tick 4b.1 closes only the `Choice(LiteralKind)`
-/// arm — the load-bearing case for FP1/FP2. Other variants
-/// `unimplemented!()` with a pointer to the spec.
+/// `Combinator` tree. Tick 4b.2 closes the variants `00-prism.mirror`
+/// uses: `Seq`, `Choice`, `Capture`, `BraceBlock`, `IoBinding`,
+/// `LiteralKind`, `Literal`. Other variants `unimplemented!()` with a
+/// pointer to the spec — they wait for the sub-ticks that need them.
+///
+/// Fixed-point shape: non-`Choice` variants return their own structure
+/// (with children recursively walked). `Choice` filters branches by
+/// whole-word keyword presence in the source. For FP1 the input source
+/// IS the encoded file, so no branch is dropped and the walked tree is
+/// structurally identical to the seed. For FP2 the source is a
+/// different file with a subset of keywords, so `Choice` returns a
+/// pruned list.
 fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator {
     match c {
+        Combinator::Seq(children) => {
+            // Walk each child against the same source. The Merkle hash
+            // is over the children list, so as long as each child
+            // walks to itself the parent's OID is preserved.
+            let walked: Vec<Combinator> = children
+                .iter()
+                .map(|child| walk_combinator(child, source, 0))
+                .collect();
+            Combinator::Seq(walked)
+        }
         Combinator::Choice(branches) => {
             // Filter branches whose keyword appears as a whole word in
             // the source. Preserve self's branch order — the canonical
@@ -1356,21 +1345,41 @@ fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator 
             }
             Combinator::Choice(kept)
         }
-        Combinator::Seq(_)
-        | Combinator::LiteralKind { .. }
-        | Combinator::Literal(_)
-        | Combinator::Repeat { .. }
-        | Combinator::Capture { .. }
+        Combinator::Capture { body, kind } => {
+            // The seed encodes a span as `Capture { body, kind }`.
+            // Walking re-walks the body against the same source and
+            // re-wraps under the same kind. The OID is
+            // `hash("comb:capture", kind_tag : body_oid)` — unchanged
+            // when the walked body matches the seeded body.
+            let walked_body = walk_combinator(body, source, 0);
+            Combinator::Capture {
+                body: Box::new(walked_body),
+                kind: *kind,
+            }
+        }
+        Combinator::BraceBlock(body) => {
+            // Walk the body against the same source. The OID is
+            // `hash("comb:brace_block", body_oid)` — preserved when
+            // the walked body equals the seeded body.
+            let walked_body = walk_combinator(body, source, 0);
+            Combinator::BraceBlock(Box::new(walked_body))
+        }
+        Combinator::IoBinding => Combinator::IoBinding,
+        Combinator::LiteralKind { keyword, kind } => Combinator::LiteralKind {
+            keyword: keyword.clone(),
+            kind: *kind,
+        },
+        Combinator::Literal(bytes) => Combinator::Literal(bytes.clone()),
+        Combinator::Repeat { .. }
         | Combinator::Charset(_)
-        | Combinator::BraceBlock(_)
         | Combinator::ParenBlock(_)
-        | Combinator::IoBinding
         | Combinator::MatchArm
         | Combinator::SelectVariant
         | Combinator::KeywordFormBody { .. }
         | Combinator::DarkFallback => unimplemented!(
-            "walk_combinator: variant not yet implemented (4b.1 scope is \
-             Choice-of-LiteralKind only; see \
+            "walk_combinator: variant not yet implemented (4b.2 scope is \
+             the variants `00-prism.mirror` uses: Seq, Choice, Capture, \
+             BraceBlock, IoBinding, LiteralKind, Literal; see \
              docs/specs/parser-as-prism-grammar.md §\"The named vocabulary\")"
         ),
     }
@@ -1406,27 +1415,84 @@ fn is_word_byte(b: u8) -> bool {
     b.is_ascii_alphanumeric() || b == b'_' || b == b'/'
 }
 
-/// The seed: the Combinator-tree encoding of `boot/00-prism.mirror`.
-///
-/// 4b.1 realisation: a `Choice` over the five op-keyword captures.
-/// This is the minimal seed that closes both fixed points:
-///
-/// - **FP1.** `00-prism.mirror` names all five operations as keywords;
-///   `apply_h(seed, bytes)` returns the same `Choice([5])` → same OID.
-/// - **FP2.** `grammar.mirror` names four operations (focus, project,
-///   split, zoom — no refract); `apply_h(seed, bytes)` returns
-///   `Choice([4])` — the keyword table for that file's grammar.
-///
-/// The spec's full seed (Tick 4b.2+) extends this with the prism-body
-/// form, the abstract io declaration, and the in/out bindings. Those
-/// are not load-bearing for the FP1/FP2 OID equality this tick lands.
-pub fn prism_seed() -> Combinator {
+/// The five op-keyword Choice. The keyword table for any mirror file's
+/// op vocabulary; the body of every `prism @(<name>) { … }` form in
+/// `00-prism.mirror`. Reused for FP2 (grammar.mirror lifts to the
+/// pruned subset of this Choice).
+pub fn op_keyword_choice() -> Combinator {
     Combinator::Choice(vec![
         literal_kind(b"focus", AstKind::Focus),
         literal_kind(b"project", AstKind::Project),
         literal_kind(b"split", AstKind::Split),
         literal_kind(b"zoom", AstKind::Zoom),
         literal_kind(b"refract", AstKind::Refract),
+    ])
+}
+
+/// The seed: the `Combinator`-tree encoding of the full
+/// `boot/00-prism.mirror` file. Each top-level form in the file is one
+/// child of the outer `Seq`:
+///
+/// 1. `focus id`                              → `Capture(Literal("id"), Focus)`
+/// 2. `prism @(id) { 5 ops }`                 → `BraceBlock(op_keyword_choice)`
+/// 3. `prism @prism { 5 ops }`                → `BraceBlock(op_keyword_choice)`
+/// 4. `abstract io tick(type) -> tock(type)`  → `IoBinding`
+/// 5. `project in(prism)`                     → `Capture(Literal("in"), Project)`
+/// 6. `project out(prism)`                    → `Capture(Literal("out"), Project)`
+/// 7. `out in` / `out id` / `out @` / `out @prism` → four `Capture(Literal(…), Out)`
+///
+/// FP1: `apply_h(prism_seed(), 00-prism.mirror.bytes)` round-trips to
+/// the same `Seq` — the walker for each non-`Choice` variant preserves
+/// structure, and the inner `Choice`'s five op-keywords all appear in
+/// the source. Same Merkle OID.
+///
+/// FP2: parsing `grammar.mirror` with `op_keyword_choice()` returns
+/// the pruned keyword set (focus/project/split/zoom; no refract).
+pub fn prism_seed() -> Combinator {
+    use Combinator::*;
+    let prism_body = BraceBlock(Box::new(op_keyword_choice()));
+    Seq(vec![
+        // `focus id`
+        Capture {
+            body: Box::new(Literal(b"id".to_vec())),
+            kind: AstKind::Focus,
+        },
+        // `prism @(id) { 5 ops }`
+        prism_body.clone(),
+        // `prism @prism { 5 ops }`
+        prism_body,
+        // `abstract io tick(type) -> tock(type) { \ }`
+        IoBinding,
+        // `project in(prism)`
+        Capture {
+            body: Box::new(Literal(b"in".to_vec())),
+            kind: AstKind::Project,
+        },
+        // `project out(prism)`
+        Capture {
+            body: Box::new(Literal(b"out".to_vec())),
+            kind: AstKind::Project,
+        },
+        // `out in`
+        Capture {
+            body: Box::new(Literal(b"in".to_vec())),
+            kind: AstKind::Out,
+        },
+        // `out id`
+        Capture {
+            body: Box::new(Literal(b"id".to_vec())),
+            kind: AstKind::Out,
+        },
+        // `out @`
+        Capture {
+            body: Box::new(Literal(b"@".to_vec())),
+            kind: AstKind::Out,
+        },
+        // `out @prism`
+        Capture {
+            body: Box::new(Literal(b"@prism".to_vec())),
+            kind: AstKind::Out,
+        },
     ])
 }
 
@@ -1449,17 +1515,11 @@ mod combinator_tests {
     }
 
     fn parse_with(combinator: &Combinator, bytes: &[u8]) -> Combinator {
-        // Bypass `apply_h`'s `Input = Seed<S>, Refracted = Optic<In, S>`
-        // uniformity constraint (state type ingressed == egressed). The
-        // Combinator parser's state type *changes* across the pipeline:
-        // input is `(Vec<u8>, usize)`, output is `Combinator`. Same
-        // pattern as `apply_h_content`: call `prism_apply` directly
-        // because the input type maps to a different output type.
-        let beam = super::seed((bytes.to_vec(), 0usize));
-        let refracted = prism_apply(combinator, beam);
-        // refracted: Optic<Combinator, Combinator>; into_focus()
-        // collapses to Imperfect<Combinator, _, _>.
-        match refracted.into_focus() {
+        // Heterogeneous `apply_h`: input state is `(Vec<u8>, usize)`,
+        // output state is `Combinator`. Same call shape as for AST
+        // states — the substrate-level helper no longer constrains
+        // `In == Out`.
+        match apply_h(combinator, (bytes.to_vec(), 0usize)) {
             Imperfect::Success(c) => c,
             Imperfect::Partial(c, _loss) => c,
             Imperfect::Failure(_, _) => unreachable!(
@@ -1468,12 +1528,13 @@ mod combinator_tests {
         }
     }
 
-    /// FP1 — the algebra is self-hosting.
+    /// FP1 — the algebra is self-hosting on the full file.
     ///
     /// `apply_h(prism_seed(), 00-prism.mirror.bytes)` parses to a tree
     /// with the same `combinator_tree_oid` as `prism_seed()` itself.
     /// Mirror's grammar describes mirror's grammar; the description IS
-    /// the implementation.
+    /// the implementation. The proof is over all 306 bytes of
+    /// `boot/00-prism.mirror` — not a keyword subset.
     #[test]
     fn fp1_seed_parses_itself() {
         let seed = prism_seed();
@@ -1490,15 +1551,18 @@ mod combinator_tests {
 
     /// FP2 — the grammar surface lifts the keyword mapping.
     ///
-    /// `apply_h(prism_seed(), grammar.mirror.bytes)` parses to a
-    /// keyword-table `Choice` — the four op-keywords that appear in
-    /// `boot/std/mirror/grammar.mirror` (focus, project, split, zoom;
-    /// no refract).
+    /// Parses `grammar.mirror` with the op-keyword `Choice` sub-tree
+    /// of the seed (the body of every `prism @(…) { … }` form in
+    /// `00-prism.mirror`). The result is the four op-keywords that
+    /// appear in `boot/std/mirror/grammar.mirror` (focus, project,
+    /// split, zoom; no refract). The keyword Choice is the
+    /// sub-component of the seed that lifts the surface —
+    /// `op_keyword_choice()` exposes it directly.
     #[test]
     fn fp2_grammar_lifts_to_keyword_table() {
-        let seed = prism_seed();
+        let kw_choice = op_keyword_choice();
         let grammar_bytes = read_boot_file("std/mirror/grammar.mirror");
-        let parsed = parse_with(&seed, &grammar_bytes);
+        let parsed = parse_with(&kw_choice, &grammar_bytes);
 
         let expected = Combinator::Choice(vec![
             literal_kind(b"focus", AstKind::Focus),
@@ -1522,10 +1586,11 @@ mod combinator_tests {
     #[test]
     fn emit_oid_hex_for_log() {
         let seed = prism_seed();
+        let kw_choice = op_keyword_choice();
         let prism_bytes = read_boot_file("00-prism.mirror");
         let grammar_bytes = read_boot_file("std/mirror/grammar.mirror");
         let seed_prime = parse_with(&seed, &prism_bytes);
-        let grammar_lift = parse_with(&seed, &grammar_bytes);
+        let grammar_lift = parse_with(&kw_choice, &grammar_bytes);
         eprintln!("FP1 seed       OID hex: {}", combinator_tree_oid_hex(&seed));
         eprintln!("FP1 seed_prime OID hex: {}", combinator_tree_oid_hex(&seed_prime));
         eprintln!("FP2 expected   OID hex: {}", combinator_tree_oid_hex(&Combinator::Choice(vec![
@@ -1555,7 +1620,7 @@ mod combinator_tests {
 mod tests {
     use super::*;
     use crate::ast::{AstKind, AstNode};
-    use prism_core::{Beam, IdentityPrism, Optic};
+    use prism_core::{apply as prism_apply, Beam, IdentityPrism, Optic};
     use terni::{Loss, Metric};
 
     // -----------------------------------------------------------------------
@@ -1762,14 +1827,14 @@ mod tests {
     }
 
     #[test]
-    fn apply_h_content_matches_compute_oid_inner() {
-        // apply_h_content over an AST state agrees with the direct
-        // `compute_oid_inner` call (the inner recursion). The evaluator
-        // route through `ContentOidPrism` doesn't change the OID.
+    fn apply_h_content_prism_matches_compute_oid_inner() {
+        // `apply_h(&ContentOidPrism, node)` over an AST state agrees with
+        // the direct `compute_oid_inner` call (the inner recursion). The
+        // evaluator route through `ContentOidPrism` doesn't change the OID.
         let mut node = AstNode::new(AstKind::Focus, "root");
         node.add_child(AstNode::new(AstKind::In, "@prism"));
         let oid_direct = compute_oid_inner(&node);
-        let v = apply_h_content(&node);
+        let v = apply_h(&ContentOidPrism, node.clone());
         match v {
             Imperfect::Success(oid) => assert_eq!(oid, oid_direct),
             other => panic!("expected Success, got {:?}", other),
@@ -1777,14 +1842,14 @@ mod tests {
     }
 
     #[test]
-    fn compute_content_oid_matches_apply_h_content() {
+    fn compute_content_oid_matches_apply_h_content_prism() {
         // The thin-wrapper invariant: `compute_content_oid` IS
-        // `apply_h_content` unwrapped to its Success payload.
+        // `apply_h(&ContentOidPrism, node)` unwrapped to its Success payload.
         let mut node = AstNode::new(AstKind::Project, "project");
         node.set_body("hello");
         node.add_child(AstNode::new(AstKind::In, "@prism"));
         let direct = compute_content_oid(&node);
-        match apply_h_content(&node) {
+        match apply_h(&ContentOidPrism, node.clone()) {
             Imperfect::Success(oid) => assert_eq!(oid, direct),
             other => panic!("expected Success, got {:?}", other),
         }

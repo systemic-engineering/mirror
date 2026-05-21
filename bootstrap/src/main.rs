@@ -4,8 +4,9 @@
 //! original at native/mirror.c. The body-capture fix for LLVM IR keyword
 //! forms (target datalayout = "...", source_filename = "...") is shared.
 //! Content OIDs are computed by `spectral::compute_content_oid`, which
-//! dispatches the recursive AST walk through `apply_h(ContentOidPrism, ast)`
-//! per `docs/specs/bootstrap-retirement-plan.md` Tick 1.
+//! dispatches the recursive AST walk through
+//! `prism_core::apply_h(&ContentOidPrism, ast)` per
+//! `docs/specs/bootstrap-retirement-plan.md` Tick 1.
 
 mod ast;
 mod exec;
