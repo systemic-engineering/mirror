@@ -1616,6 +1616,22 @@ mod combinator_tests {
         );
     }
 
+    /// Well-formedness of the meta-glass lift on nl.mirror. The
+    /// bare-@nl grammar declaration parses cleanly through the
+    /// meta-glass.
+    #[test]
+    fn nl_mirror_lifts_cleanly() {
+        let seed = prism_seed();
+        let glass_bytes = read_boot_file(GLASS_PATH);
+        let meta_glass = parse_with(&seed, &glass_bytes);
+        let nl_bytes = read_boot_file("std/mirror/nl.mirror");
+        let nl_tree = parse_with(&meta_glass, &nl_bytes);
+        assert!(
+            no_dark_in_tree(&nl_tree),
+            "nl.mirror lift produced Dark fragments"
+        );
+    }
+
     /// Emit the FP1 OID hex values for the commit message. Pure
     /// observation — no assertion. Runs at every `cargo test` to keep
     /// the values discoverable.
