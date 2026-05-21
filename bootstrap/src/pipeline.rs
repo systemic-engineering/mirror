@@ -7,6 +7,164 @@ use crate::spectral::{compute_content_oid, render_ast};
 use crate::tokenize::tokenize;
 use std::io::Write;
 
+/// A rewrite rule parsed from `<symbol> => <replacement>` mq syntax.
+///
+/// The meta-glass identifies which tokens are structural (keywords,
+/// path components, file basenames) versus prose. The rewrite applies
+/// only at structural-token boundaries; English in `@nl` comments
+/// containing the symbol stays unchanged because @nl lifts those
+/// bytes opaquely through the cross-grammar boundary.
+///
+/// For 4b.3 the rewrite is whole-word-bounded: the symbol must be
+/// surrounded by non-word bytes (or source boundaries) to match. This
+/// is the structural-safety property at the byte level until the
+/// full meta-glass-aware rewriter lands in 4b.4.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RewriteRule {
+    pub symbol: String,
+    pub replacement: String,
+}
+
+/// Parse an mq-query of the form `<symbol> => <replacement>` into a
+/// `Vec<RewriteRule>`. Multiple rules can be joined with `;`. Returns
+/// `None` if the query does not contain `=>` (i.e., is a navigation
+/// pipeline, not a rewrite).
+pub fn parse_rewrite(query: &str) -> Option<Vec<RewriteRule>> {
+    if !query.contains("=>") {
+        return None;
+    }
+    let mut rules = Vec::new();
+    for raw in query.split(';') {
+        let raw = raw.trim();
+        if raw.is_empty() {
+            continue;
+        }
+        let parts: Vec<&str> = raw.splitn(2, "=>").collect();
+        if parts.len() != 2 {
+            return None;
+        }
+        let sym = parts[0].trim().trim_matches('\'').trim_matches('"');
+        let repl = parts[1].trim().trim_matches('\'').trim_matches('"');
+        if sym.is_empty() {
+            return None;
+        }
+        rules.push(RewriteRule {
+            symbol: sym.to_string(),
+            replacement: repl.to_string(),
+        });
+    }
+    Some(rules)
+}
+
+/// Apply rewrite rules to source bytes at whole-word boundaries. A
+/// match requires the symbol to be bounded by non-word bytes (or
+/// source start/end). Word bytes are ASCII alnum + `_` + `/` (the
+/// same as `is_word_byte` in spectral.rs's combinator walker).
+pub fn apply_rewrites(rules: &[RewriteRule], source: &[u8]) -> Vec<u8> {
+    // Boundary bytes for rewrite matching. `/` is a path separator,
+    // not a word byte — we want `@mirror/grammar` → `@mirror/glass`
+    // to rewrite the trailing path component. `@` is treated as a
+    // boundary so `@grammar` rewrites to `@glass`.
+    fn is_word_byte(b: u8) -> bool {
+        b.is_ascii_alphanumeric() || b == b'_'
+    }
+    let mut current = source.to_vec();
+    for rule in rules {
+        let sym = rule.symbol.as_bytes();
+        let repl = rule.replacement.as_bytes();
+        if sym.is_empty() {
+            continue;
+        }
+        let mut out: Vec<u8> = Vec::with_capacity(current.len());
+        let mut i = 0;
+        while i < current.len() {
+            if i + sym.len() <= current.len() && &current[i..i + sym.len()] == sym {
+                let left_ok = i == 0 || !is_word_byte(current[i - 1]);
+                let right_ok = i + sym.len() == current.len()
+                    || !is_word_byte(current[i + sym.len()]);
+                if left_ok && right_ok {
+                    out.extend_from_slice(repl);
+                    i += sym.len();
+                    continue;
+                }
+            }
+            out.push(current[i]);
+            i += 1;
+        }
+        current = out;
+    }
+    current
+}
+
+#[cfg(test)]
+mod rewrite_tests {
+    use super::*;
+
+    #[test]
+    fn parse_simple_rewrite() {
+        let rules = parse_rewrite("grammar => glass").unwrap();
+        assert_eq!(rules.len(), 1);
+        assert_eq!(rules[0].symbol, "grammar");
+        assert_eq!(rules[0].replacement, "glass");
+    }
+
+    #[test]
+    fn parse_quoted_rewrite() {
+        let rules = parse_rewrite("'grammar' => 'glass'").unwrap();
+        assert_eq!(rules[0].symbol, "grammar");
+        assert_eq!(rules[0].replacement, "glass");
+    }
+
+    #[test]
+    fn parse_multiple_rules() {
+        let rules = parse_rewrite("a => b; c => d").unwrap();
+        assert_eq!(rules.len(), 2);
+        assert_eq!(rules[0].symbol, "a");
+        assert_eq!(rules[1].replacement, "d");
+    }
+
+    #[test]
+    fn parse_non_rewrite_returns_none() {
+        assert!(parse_rewrite("@code/llvm/ir |> @mirror/kintsugi").is_none());
+    }
+
+    #[test]
+    fn apply_word_bounded_rewrite() {
+        let rules = vec![RewriteRule {
+            symbol: "grammar".to_string(),
+            replacement: "glass".to_string(),
+        }];
+        // word-bounded: should rewrite
+        let out = apply_rewrites(&rules, b"grammar @mirror/grammar");
+        assert_eq!(out, b"glass @mirror/glass");
+    }
+
+    #[test]
+    fn apply_does_not_match_inside_identifier() {
+        let rules = vec![RewriteRule {
+            symbol: "grammar".to_string(),
+            replacement: "glass".to_string(),
+        }];
+        // `grammars` should NOT rewrite (right-side word byte)
+        let out = apply_rewrites(&rules, b"grammars plural");
+        assert_eq!(out, b"grammars plural");
+    }
+
+    #[test]
+    fn apply_preserves_english_in_prose() {
+        // "the grammar of mirror" — 'grammar' is whole-word so it WOULD
+        // rewrite at the byte level. structural-safety via @nl is the
+        // 4b.4 layer; for 4b.3 the whole-word boundary is what's
+        // implemented. this test pins the current semantics.
+        let rules = vec![RewriteRule {
+            symbol: "grammar".to_string(),
+            replacement: "glass".to_string(),
+        }];
+        let out = apply_rewrites(&rules, b"# the grammar of mirror\n");
+        assert_eq!(out, b"# the glass of mirror\n");
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Segment {
     pub r#ref: String,
