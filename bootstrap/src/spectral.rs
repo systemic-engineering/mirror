@@ -1126,6 +1126,17 @@ pub enum Combinator {
     SelectVariant,
     /// LLVM-IR keyword-form body capture special case.
     KeywordFormBody { keyword: Vec<u8>, kind: AstKind },
+    /// `until(stop)` — consume bytes until `stop` is matched or input
+    /// ends. The stop combinator is a *peek* — it does not consume,
+    /// it just terminates the scan. Used by `@nl(until_newline)`,
+    /// fenced-code-block termination, and inline-backtick lifts.
+    Until { stop: Box<Combinator> },
+    /// `@<grammar>(<body>)` — the cross-grammar lift. At parse time
+    /// the body bytes (extracted by `body`) are handed to the named
+    /// grammar's combinator tree. Walk is structural: returns Self
+    /// with `body` recursively walked. The grammar reference is a
+    /// string path (e.g. "@nl", "@code/rust", "@mirror/glass").
+    Lift { grammar: String, body: Box<Combinator> },
     /// Strict-classification sentinel: bottom of every top-level
     /// `Choice`. Scans forward through unknown bytes and emits
     /// `AstKind::Dark`.
@@ -1136,10 +1147,18 @@ pub enum Combinator {
 /// stays serializable; adding a charset means adding a variant.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CharsetKind {
+    /// Identifier byte: ASCII alnum + `_` + `/`.
     WordChar,
+    /// mirror name byte: ASCII alnum + `_` + `@` + `/` + `.`.
     NameChar,
+    /// LLVM-IR identifier byte: ASCII alnum + `_` + `.` + `$`.
     IrIdentChar,
+    /// `io <name>(...)` name byte: ASCII alnum + `_`.
     IoNameChar,
+    /// ASCII whitespace ` `, `\t`, `\r`, `\n`.
+    Whitespace,
+    /// Anything except `\n`. Load-bearing for `@nl(until_newline)`.
+    NotNewline,
 }
 
 /// Convenience constructor: a `LiteralKind` capture for one keyword.
@@ -1237,6 +1256,17 @@ fn combinator_tree_oid_hex(c: &Combinator) -> String {
             buf.extend_from_slice(keyword);
             hash_tagged("comb:keyword_form_body", &buf)
         }
+        Combinator::Until { stop } => hash_tagged(
+            "comb:until",
+            combinator_tree_oid_hex(stop).as_bytes(),
+        ),
+        Combinator::Lift { grammar, body } => {
+            let mut buf = Vec::new();
+            buf.extend_from_slice(grammar.as_bytes());
+            buf.push(b':');
+            buf.extend_from_slice(combinator_tree_oid_hex(body).as_bytes());
+            hash_tagged("comb:lift", &buf)
+        }
         Combinator::DarkFallback => hash_tagged("comb:dark_fallback", &[]),
     }
 }
@@ -1263,6 +1293,8 @@ fn charset_tag(k: CharsetKind) -> &'static str {
         CharsetKind::NameChar => "name_char",
         CharsetKind::IrIdentChar => "ir_ident_char",
         CharsetKind::IoNameChar => "io_name_char",
+        CharsetKind::Whitespace => "whitespace",
+        CharsetKind::NotNewline => "not_newline",
     }
 }
 
@@ -1370,18 +1402,49 @@ fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator 
             kind: *kind,
         },
         Combinator::Literal(bytes) => Combinator::Literal(bytes.clone()),
-        Combinator::Repeat { .. }
-        | Combinator::Charset(_)
-        | Combinator::ParenBlock(_)
-        | Combinator::MatchArm
-        | Combinator::SelectVariant
-        | Combinator::KeywordFormBody { .. }
-        | Combinator::DarkFallback => unimplemented!(
-            "walk_combinator: variant not yet implemented (4b.2 scope is \
-             the variants `00-prism.mirror` uses: Seq, Choice, Capture, \
-             BraceBlock, IoBinding, LiteralKind, Literal; see \
-             docs/specs/parser-as-prism-grammar.md §\"The named vocabulary\")"
-        ),
+        Combinator::Repeat { body, min, max } => {
+            // Structural-self walk: recurse into body, preserve
+            // bounds. The Merkle hash is `hash("comb:repeat",
+            // body_oid : min : max)` so the OID is preserved when the
+            // walked body hashes the same.
+            let walked_body = walk_combinator(body, source, 0);
+            Combinator::Repeat {
+                body: Box::new(walked_body),
+                min: *min,
+                max: *max,
+            }
+        }
+        Combinator::Charset(k) => Combinator::Charset(*k),
+        Combinator::ParenBlock(body) => {
+            let walked_body = walk_combinator(body, source, 0);
+            Combinator::ParenBlock(Box::new(walked_body))
+        }
+        Combinator::Until { stop } => {
+            let walked_stop = walk_combinator(stop, source, 0);
+            Combinator::Until {
+                stop: Box::new(walked_stop),
+            }
+        }
+        Combinator::Lift { grammar, body } => {
+            // The Lift's walker is structural — the body combinator is
+            // re-walked against the same source (FP-preserving).
+            // Runtime parse-time semantics (extract body bytes, hand to
+            // grammar's tree) live in a later sub-tick; today the OID
+            // round-trip is what matters for the meta-glass
+            // self-hosting equation.
+            let walked_body = walk_combinator(body, source, 0);
+            Combinator::Lift {
+                grammar: grammar.clone(),
+                body: Box::new(walked_body),
+            }
+        }
+        Combinator::MatchArm => Combinator::MatchArm,
+        Combinator::SelectVariant => Combinator::SelectVariant,
+        Combinator::KeywordFormBody { keyword, kind } => Combinator::KeywordFormBody {
+            keyword: keyword.clone(),
+            kind: *kind,
+        },
+        Combinator::DarkFallback => Combinator::DarkFallback,
     }
 }
 
@@ -1613,6 +1676,88 @@ mod combinator_tests {
 
         let c = Combinator::Choice(vec![literal_kind(b"focus", AstKind::Focus)]);
         assert_ne!(combinator_tree_oid(&a), combinator_tree_oid(&c));
+    }
+
+    // ---------- Checkpoint 1 variant tests ----------
+    // Each new variant exercises the structural-self walk: walking it
+    // against any source returns a tree with the same OID. This is the
+    // FP1 contract at the variant level.
+
+    #[test]
+    fn repeat_walks_to_self() {
+        let c = Combinator::Repeat {
+            body: Box::new(Combinator::Literal(b"x".to_vec())),
+            min: 0,
+            max: None,
+        };
+        let walked = parse_with(&c, b"xxxy");
+        assert_eq!(combinator_tree_oid(&c), combinator_tree_oid(&walked));
+    }
+
+    #[test]
+    fn charset_walks_to_self() {
+        for k in [
+            CharsetKind::WordChar,
+            CharsetKind::NameChar,
+            CharsetKind::IrIdentChar,
+            CharsetKind::IoNameChar,
+            CharsetKind::Whitespace,
+            CharsetKind::NotNewline,
+        ] {
+            let c = Combinator::Charset(k);
+            let walked = parse_with(&c, b"hello world\n");
+            assert_eq!(combinator_tree_oid(&c), combinator_tree_oid(&walked));
+        }
+    }
+
+    #[test]
+    fn paren_block_walks_to_self() {
+        let c = Combinator::ParenBlock(Box::new(Combinator::Literal(b"id".to_vec())));
+        let walked = parse_with(&c, b"(id)");
+        assert_eq!(combinator_tree_oid(&c), combinator_tree_oid(&walked));
+    }
+
+    #[test]
+    fn until_walks_to_self() {
+        let c = Combinator::Until {
+            stop: Box::new(Combinator::Literal(b"\n".to_vec())),
+        };
+        let walked = parse_with(&c, b"some text\nand more");
+        assert_eq!(combinator_tree_oid(&c), combinator_tree_oid(&walked));
+    }
+
+    #[test]
+    fn lift_walks_to_self() {
+        let c = Combinator::Lift {
+            grammar: "@nl".to_string(),
+            body: Box::new(Combinator::Until {
+                stop: Box::new(Combinator::Literal(b"\n".to_vec())),
+            }),
+        };
+        let walked = parse_with(&c, b"# this is a comment\n");
+        assert_eq!(combinator_tree_oid(&c), combinator_tree_oid(&walked));
+    }
+
+    #[test]
+    fn match_arm_select_dark_fallback_walk_to_self() {
+        for c in [
+            Combinator::MatchArm,
+            Combinator::SelectVariant,
+            Combinator::DarkFallback,
+        ] {
+            let walked = parse_with(&c, b"anything");
+            assert_eq!(combinator_tree_oid(&c), combinator_tree_oid(&walked));
+        }
+    }
+
+    #[test]
+    fn keyword_form_body_walks_to_self() {
+        let c = Combinator::KeywordFormBody {
+            keyword: b"define".to_vec(),
+            kind: AstKind::Focus,
+        };
+        let walked = parse_with(&c, b"define i32 @foo() { ret i32 0 }");
+        assert_eq!(combinator_tree_oid(&c), combinator_tree_oid(&walked));
     }
 }
 
