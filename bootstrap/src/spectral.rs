@@ -380,6 +380,148 @@ fn compute_oid_inner(node: &AstNode) -> String {
 }
 
 // ---------------------------------------------------------------------------
+// Fold5 — the AST catamorphism. One reducer per bundle level.
+//
+// Per `docs/specs/ast-as-bundle.md`: a `.mirror` file's AST is a Bundle
+// morphism written as data. The five operation `AstKind`s
+// (Focus / Project / Split / Zoom / Refract) map to the five trait-chain
+// levels (Fiber / Connection / Gauge / Transport / Closure); the two IO
+// `AstKind`s (In / Out) are the bundle's typed terminals. Any AST-walking
+// operation is a fold over that bundle — five reducers, one per level.
+//
+// **Deviation from spec literal.** The spec shape is `Fold5<Ff, Fp, Fs,
+// Fz, Fr, In, Out>` with five `FnMut` closures and `In`/`Out` as
+// PhantomData type parameters. The realised shape here drops the `In`
+// type parameter (the walker always takes `&AstNode` — the AST is the
+// bundle's domain, not a separate `In` type at the Rust level) and adds
+// one extra `on_other` reducer to handle the four non-canonical kinds
+// (In, Out, Dark, IoBinding, MatchExpr, SelectExpr) — Dark is the
+// strict-classification marker; IoBinding/MatchExpr/SelectExpr are Spec
+// A/B extensions to the canonical five operations. Closures are `Fn`
+// rather than `FnMut` so the `Prism::focus(&self, …)` signature
+// typechecks without interior mutability — the bootstrap's two folds
+// (content OID, render) are both pure functions.
+//
+// The walker is post-order: children fold first, then the level
+// reducer combines them into the parent's `Out`. Terminal kinds
+// (In/Out/Dark) have no children — their `Vec<Out>` is empty.
+// ---------------------------------------------------------------------------
+
+/// Catamorphism over the AST. One reducer per bundle trait-chain level
+/// (Focus → Fiber, Project → Connection, Split → Gauge, Zoom →
+/// Transport, Refract → Closure) plus an `on_other` reducer for the
+/// non-canonical AST kinds (In, Out, Dark, IoBinding, MatchExpr,
+/// SelectExpr).
+///
+/// Each reducer takes the current `AstNode` and the `Vec<Out>` of
+/// already-folded child results, and returns the `Out` for this node.
+/// The walker recurses post-order: a parent's reducer sees its
+/// children's folded values, never the children themselves.
+///
+/// `Fold5` is the second-order shape; specific operations
+/// (`content_oid`, `render`, …) become instances. Uniform folds — same
+/// reducer at every level — are the degenerate `Fold1` case (see
+/// `Fold5::uniform`).
+pub struct Fold5<Ff, Fp, Fs, Fz, Fr, Fo, Out>
+where
+    Ff: Fn(&AstNode, Vec<Out>) -> Out,
+    Fp: Fn(&AstNode, Vec<Out>) -> Out,
+    Fs: Fn(&AstNode, Vec<Out>) -> Out,
+    Fz: Fn(&AstNode, Vec<Out>) -> Out,
+    Fr: Fn(&AstNode, Vec<Out>) -> Out,
+    Fo: Fn(&AstNode, Vec<Out>) -> Out,
+{
+    pub on_focus: Ff,
+    pub on_project: Fp,
+    pub on_split: Fs,
+    pub on_zoom: Fz,
+    pub on_refract: Fr,
+    /// Reducer for non-canonical kinds: In, Out, Dark, IoBinding,
+    /// MatchExpr, SelectExpr. The bundle terminals plus the Spec A/B
+    /// extensions all route through this one. Per
+    /// `ast-as-bundle.md` §"Why this matters" — these are not peers of
+    /// the five operations in the bundle algebra; they're the typed
+    /// boundary plus the dispatch-extensions.
+    pub on_other: Fo,
+    _out: core::marker::PhantomData<Out>,
+}
+
+impl<Ff, Fp, Fs, Fz, Fr, Fo, Out> Fold5<Ff, Fp, Fs, Fz, Fr, Fo, Out>
+where
+    Ff: Fn(&AstNode, Vec<Out>) -> Out,
+    Fp: Fn(&AstNode, Vec<Out>) -> Out,
+    Fs: Fn(&AstNode, Vec<Out>) -> Out,
+    Fz: Fn(&AstNode, Vec<Out>) -> Out,
+    Fr: Fn(&AstNode, Vec<Out>) -> Out,
+    Fo: Fn(&AstNode, Vec<Out>) -> Out,
+{
+    /// Construct a Fold5 from the six reducers.
+    pub fn new(
+        on_focus: Ff,
+        on_project: Fp,
+        on_split: Fs,
+        on_zoom: Fz,
+        on_refract: Fr,
+        on_other: Fo,
+    ) -> Self {
+        Fold5 {
+            on_focus,
+            on_project,
+            on_split,
+            on_zoom,
+            on_refract,
+            on_other,
+            _out: core::marker::PhantomData,
+        }
+    }
+
+    /// Post-order fold over an AST node. Children fold first; their
+    /// `Vec<Out>` then feeds the parent's level reducer.
+    pub fn run(&self, node: &AstNode) -> Out {
+        let child_outs: Vec<Out> = node.children.iter().map(|c| self.run(c)).collect();
+        match node.kind {
+            AstKind::Focus => (self.on_focus)(node, child_outs),
+            AstKind::Project => (self.on_project)(node, child_outs),
+            AstKind::Split => (self.on_split)(node, child_outs),
+            AstKind::Zoom => (self.on_zoom)(node, child_outs),
+            AstKind::Refract => (self.on_refract)(node, child_outs),
+            AstKind::In
+            | AstKind::Out
+            | AstKind::Dark
+            | AstKind::IoBinding
+            | AstKind::MatchExpr
+            | AstKind::SelectExpr => (self.on_other)(node, child_outs),
+        }
+    }
+}
+
+/// `Fold1<F, Out>` — the uniform-reducer Fold5. A single function is
+/// applied at every AST kind. This is the degenerate case the
+/// `content_oid` Merkle hash uses: the dispatch on `AstKind` happens
+/// *inside* the reducer (via a kind-tag string), so all six "slots" are
+/// the same closure.
+///
+/// Mechanically: builds a `Fold5` whose six reducers are all the same
+/// `F`. Rust's `Fold5` is generic over six distinct closure types, so
+/// for uniform folds we need a single closure type — that's what
+/// `Fold1` (a thin alias-like wrapper) gives us. The closure must be
+/// `Clone` so it can be installed in all six slots without moving;
+/// closures over captured references typically are.
+pub fn fold1<F, Out>(reducer: F) -> Fold5<F, F, F, F, F, F, Out>
+where
+    F: Fn(&AstNode, Vec<Out>) -> Out + Clone,
+{
+    Fold5::new(
+        reducer.clone(),
+        reducer.clone(),
+        reducer.clone(),
+        reducer.clone(),
+        reducer.clone(),
+        reducer,
+    )
+}
+
+// ---------------------------------------------------------------------------
 // 2. compose_a — algebra composition
 // ---------------------------------------------------------------------------
 
@@ -761,6 +903,81 @@ mod tests {
             Imperfect::Success(oid) => assert_eq!(oid, direct),
             other => panic!("expected Success, got {:?}", other),
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // Fold5 — catamorphism tests on tiny hand-built ASTs.
+    // -----------------------------------------------------------------------
+
+    /// Fold5 visits every node exactly once and feeds children to parents
+    /// post-order. A counting fold returns the total node count.
+    #[test]
+    fn fold5_counts_nodes_post_order() {
+        // Tree:  Focus(root) { In(@prism), Project(p) { In(@a) } }
+        // 4 nodes total.
+        let mut root = AstNode::new(AstKind::Focus, "root");
+        root.add_child(AstNode::new(AstKind::In, "@prism"));
+        let mut p = AstNode::new(AstKind::Project, "p");
+        p.add_child(AstNode::new(AstKind::In, "@a"));
+        root.add_child(p);
+
+        let count_node = |_: &AstNode, child_counts: Vec<usize>| -> usize {
+            1 + child_counts.into_iter().sum::<usize>()
+        };
+        let fold = fold1::<_, usize>(count_node);
+        assert_eq!(fold.run(&root), 4);
+    }
+
+    /// Fold5 dispatches on `AstKind` — each level reducer fires only for
+    /// its own kind. Witness: tag every node by which reducer saw it,
+    /// then check the trail.
+    #[test]
+    fn fold5_dispatches_per_level() {
+        let mut root = AstNode::new(AstKind::Focus, "root");
+        root.add_child(AstNode::new(AstKind::Project, "p"));
+        root.add_child(AstNode::new(AstKind::Split, "s"));
+        root.add_child(AstNode::new(AstKind::Zoom, "z"));
+        root.add_child(AstNode::new(AstKind::Refract, "r"));
+        root.add_child(AstNode::new(AstKind::In, "@in"));
+
+        // Each reducer returns a tag identifying which fired; the root's
+        // child_outs is then a sorted concat of those tags, prefixed by
+        // "F:".
+        let fold = Fold5::new(
+            |_n: &AstNode, mut c: Vec<String>| {
+                c.sort();
+                let mut s = String::from("F:");
+                s.push_str(&c.join(","));
+                s
+            },
+            |_n: &AstNode, _c: Vec<String>| String::from("P"),
+            |_n: &AstNode, _c: Vec<String>| String::from("S"),
+            |_n: &AstNode, _c: Vec<String>| String::from("Z"),
+            |_n: &AstNode, _c: Vec<String>| String::from("R"),
+            |n: &AstNode, _c: Vec<String>| format!("O({:?})", n.kind),
+        );
+        assert_eq!(fold.run(&root), "F:O(In),P,R,S,Z");
+    }
+
+    /// `fold1` (the uniform-reducer case) installs the same reducer at
+    /// every kind. Witness: a uniform reducer that concatenates child
+    /// strings sees both operation kinds and terminal kinds going
+    /// through the same path.
+    #[test]
+    fn fold1_uniform_at_every_kind() {
+        let mut root = AstNode::new(AstKind::Focus, "focus");
+        root.add_child(AstNode::new(AstKind::In, "in"));
+        root.add_child(AstNode::new(AstKind::Project, "project"));
+
+        let fold = fold1::<_, String>(|n: &AstNode, c: Vec<String>| {
+            let mut s = n.name.clone();
+            for child in c {
+                s.push('|');
+                s.push_str(&child);
+            }
+            s
+        });
+        assert_eq!(fold.run(&root), "focus|in|project");
     }
 
     // -----------------------------------------------------------------------
