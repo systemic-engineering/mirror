@@ -12,6 +12,7 @@ mod grammar;
 mod hash;
 mod pipeline;
 mod render;
+mod spectral;
 mod tokenize;
 
 use std::fs;
