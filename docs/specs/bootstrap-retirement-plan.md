@@ -477,29 +477,82 @@ fixed-point (vacuously)`). All OIDs stable.
 
 **Binary delta.** Net zero.
 
-### Tick 3 — retire `render.rs`
+### Tick 3 — extract `Fold5`, retire `render.rs`, collapse `ContentOidPrism`
 
-**Action.** Move `render_ast` + `render_ast_mirror` +
-`render_ast_with_grammar` into `spectral.rs` as a `RenderPrism`. The
-three entry points collapse into one parametric Prism keyed on
-"canonical" vs. "grammar-aware" output mode.
+**Reframing (2026-05-21).** The cybernetics-split conversation
+revealed that Tick 1's `ContentOidPrism` is a first-order workaround:
+it defines one concrete Prism per AST-walking operation. The
+second-order shape is a single catamorphism over the AST that takes
+one reducer per level of the bundle trait chain. The recognition
+spec is [`ast-as-bundle.md`](ast-as-bundle.md): the AST is a Bundle
+written as data; the 5 operation `AstKind`s map to the trait chain
+(Fiber/Connection/Gauge/Transport/Closure); the 2 IO `AstKind`s
+(`In`, `Out`) are the bundle's typed terminals. Any AST-walking
+operation is a `Fold5` instance.
+
+**Action.**
+
+**3a.** Extract `Fold5<Ff, Fp, Fs, Fz, Fr, In, Out>` in `spectral.rs`
+(shape in `ast-as-bundle.md` §Fold5). One reducer per AST kind
+(focus, project, split, zoom, refract), plus the two IO terminal
+types as type parameters. The walker is post-order, level-dispatched
+on `AstKind`.
+
+**3b.** Move `render_ast` + `render_ast_mirror` +
+`render_ast_with_grammar` into `spectral.rs` as a single `Fold5`
+instance whose reducers concatenate child strings into parent
+strings, keyed on "canonical" vs. "grammar-aware" output mode. The
+three entry points collapse into one parametric Fold5 application.
+
+**3c.** Retroactively collapse `ContentOidPrism` (landed in Tick 1)
+into a `Fold5` instance whose reducers compute Merkle-style OID
+hashes. The first-order Prism becomes a uniform second-order Fold5
+that happens to set all five reducers to the same hash-fold function
+(call this `Fold1`, the degenerate uniform case). This validates the
+shape: render needs five distinct reducers, content_oid needs one.
 
 **Why this order.** Reader before writer would be the alternative
 (retire tokenize first), but tokenize is multi-session work. Render
 is the smaller, lower-risk module and the round-trip property
 (`render(tokenize(f)) == render(tokenize(render(tokenize(f))))`) is
 the strongest equivalence check we have — running it across the boot
-corpus is essentially free.
+corpus is essentially free. Crucially, render gives us the second
+`Fold5` instance, which is what justifies extracting the
+catamorphism in the first place. With one instance (ContentOidPrism)
+we can't tell first-order from second-order; with two (render +
+content_oid), the right shape becomes structural.
 
-**Dependencies.** Tick 1 (uses the new AST-walker Prism idiom).
+**Dependencies.** Tick 1 (provides `ContentOidPrism` as the first
+fold candidate, to be collapsed retroactively).
 
-**Effort.** Medium.
+**Effort.** Medium. The Fold5 extraction is ~60 lines. Render
+rewrite is mechanical (each `render_*` function becomes a reducer
+closure). ContentOid collapse is a 10-line rewrite once Fold5
+lands.
 
 **Smoke check.** Round-trip property across all 109 boot files. The
 kintsugi formatter (`mirror kintsugi <file>`) produces byte-identical
 output. The kintsugi-shatter loop produces identical tick lines.
+Content OIDs unchanged across the boot corpus (proves the collapse
+is behavior-preserving). Crystal count unchanged. Dark span count
+unchanged.
 
-**Binary delta.** -10KB.
+**Binary delta.** -10KB (render.rs retirement) + ~0KB (Fold5 is
+zero-cost; closures monomorphise). Net -10KB.
+
+**Acceptance criteria.**
+
+1. `Fold5<…>` exists in `spectral.rs` with the shape in
+   `ast-as-bundle.md` §Fold5.
+2. `render.rs` is deleted; all three render entry points are Fold5
+   instances.
+3. `ContentOidPrism` is replaced by a `Fold5` instance (uniform
+   reducers = `Fold1`); call sites in `main.rs` / `pipeline.rs`
+   remain unchanged (compute_content_oid keeps its signature).
+4. Boot corpus OIDs unchanged.
+5. `mirror kintsugi` output byte-identical on the boot corpus.
+6. `cargo build --release` succeeds; `mirror-self` butterfly
+   completes.
 
 ### Tick 4 — retire `tokenize.rs` + `grammar.rs` (Parser-as-Prism)
 
