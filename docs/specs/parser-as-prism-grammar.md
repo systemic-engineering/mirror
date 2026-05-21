@@ -37,10 +37,26 @@ Unblocks:
 - Tick 5 (`pipeline.rs` retirement) reuses the same surface for mq
   query parsing.
 - The mirror compiler becomes self-hosting at the parser level: the
-  seed encoded from `boot/00-prism.mirror` parses the file that
-  declares it (FP1). All other grammars — starting with
-  `boot/std/mirror/grammar.mirror` — load through one `apply_h(seed,
-  …)`.
+  Rust seed encodes just-enough-meta-glass to parse
+  `mirror/glass.mirror`, the full grammar of `.mirror` files
+  (including its own form). `apply_h(meta_glass, glass.mirror.bytes)
+  == meta_glass` is the load-bearing fixed point. Every other
+  grammar — `mirror/00-prism.mirror`, `mirror/code/rust.mirror`,
+  `mirror/code/llvm/ir.mirror`, the entire boot tree — loads through
+  `apply_h(meta_glass, …)`.
+- The boot/ tree retires. `mirror/` is the only source folder. The
+  rename `grammar → glass` and the directory migration are one
+  kintsugi pass: `mirror kintsugi boot/ --transform='grammar =>
+  glass' --out=mirror/`. The transform is structural — only tokens
+  the meta-glass parses as the keyword `grammar` (and the file
+  basename derived from it) get rewritten.
+- Host grammars defer to other grammars via the cross-grammar lift
+  `@<grammar>(<body>)`. Comments in every host lift to `@nl` (the
+  natural-language grammar); fenced code blocks with language tags
+  dispatch back to the tagged host. The bare-`@nl` form (this tick)
+  recognises inline backticks, fenced blocks, and `mirror>` doctest
+  prompts. A full `@nl/markdown <@data/markdown` arrives in a
+  follow-up tick with `docs/specs/grammar-inheritance.md`.
 
 ---
 
@@ -309,11 +325,23 @@ spec collapses that catch-all in 4c. Supersedes:
 
 ## Bootstrap loop
 
-The seed IS `boot/00-prism.mirror`. The 306-byte file declares the
-five operations as projections of the identity prism — it IS the
-algebra A of the spectral triple, written as a `.mirror` file. The
-Rust seed encodes that file's combinator tree as a `Combinator` enum
-literal, ~25 lines:
+The seed encodes `mirror/glass.mirror` — the **meta-glass**, the full
+grammar of `.mirror` files. Not `00-prism.mirror`. The earlier
+framing in this document (seed = encoding of `00-prism.mirror`) is
+superseded: `00-prism.mirror` is a *consumer* of the meta-glass; it
+declares the Prism algebra but does not declare how to parse `.mirror`
+files. The meta-glass declares that, including its own form.
+
+The Rust seed is the just-enough-meta-glass to parse `glass.mirror`:
+the structural primitives (`Seq`, `Choice`, `Repeat`, `Capture`,
+`Literal`, `Charset`, `BraceBlock`, `ParenBlock`, `Until`, `Lift`)
+wired into a Combinator literal sized to the bootstrap need. The
+operation-specific knowledge (keyword names, kind tags, body forms,
+comment syntax) moves out of Rust and into `glass.mirror`. The seed
+shrinks from 47 LOC (4b.2's encoding of `00-prism.mirror`) to ~30 LOC
+(the encoding of just `glass.mirror`'s parser scaffolding).
+
+A pre-meta-glass version (the 4b.2 seed encoding `00-prism.mirror`):
 
 ```rust
 fn prism_seed() -> Combinator {
@@ -341,65 +369,72 @@ mechanically from the 306-byte file.)
 The mirror compiler is self-hosting at the parser level when three
 fixed points hold:
 
-### FP1 — the algebra is self-hosting
-
-The seed parses the file that declares it:
+### FP1 — the meta-glass parses itself
 
 ```rust
-let seed = prism_seed();
-let prism_mirror_bytes = read_file("boot/00-prism.mirror");
-let seed_prime =
-    apply_h(seed.clone(), (prism_mirror_bytes, 0))
+let seed = prism_seed();                       // ~30 LOC Rust encoding
+let glass_bytes = read_file("mirror/glass.mirror");
+let meta_glass =
+    apply_h(seed, (glass_bytes, 0))
         .into_focus().unwrap();
 assert_eq!(combinator_tree_oid(&seed),
-           combinator_tree_oid(&seed_prime));
+           combinator_tree_oid(&meta_glass));
 ```
 
-This is the load-bearing equation. If the Rust seed and the parse of
-`00-prism.mirror` produce the same combinator tree, the algebra is
-self-hosting at the parser level. Mirror's grammar describes mirror's
-grammar; the description is the implementation.
+**This is the load-bearing equation.** The Rust seed parses the file
+that declares it, and the two trees hash byte-identical. Mirror's
+grammar describes mirror's grammar; the description is the
+implementation. After FP1 holds, the Rust seed is structurally
+redundant — we could in principle compile from the `.mirror` file
+and discard the Rust copy. We keep the Rust copy as the trusted base
+(it's what runs before any `.mirror` file has been parsed), but the
+equation guarantees the two stay in lockstep.
 
-### FP2 — the grammar surface lifts the keyword mapping
+### FP2 — the algebra lifts cleanly
 
 ```rust
-let grammar_bytes = read_file("boot/std/mirror/grammar.mirror");
-let mirror_combinator =
-    apply_h(seed.clone(), (grammar_bytes, 0))
+let prism_tree =
+    apply_h(meta_glass.clone(), (read_file("mirror/00-prism.mirror"), 0))
         .into_focus().unwrap();
 ```
 
-`mirror/grammar.mirror` (356 bytes) is the keyword↔kind table from
-§"Keyword↔kind tables as data" below. `apply_h(seed, …)` reads the
-five `<op> <keyword>` lines and emits a `Choice` of `Capture(Literal
-(keyword), kind)` branches. No `parse_grammar` is needed because the
-seed IS the grammar parser.
+`00-prism.mirror` declares the Prism algebra (the five operations, the
+identity prism, the abstract io declaration). After the meta-glass
+lands, `00-prism.mirror` is a *consumer* of it — the algebra-declaration
+file, parsed by the meta-glass like any other `.mirror` file. The
+FP2 assertion is well-formedness: the parse succeeds, produces no
+Dark spans, and the resulting tree is a well-typed `Combinator`
+encoding of the five operations. The OID of `prism_tree` is not
+expected to equal the meta-glass's OID — they are different grammars.
 
 ### FP3 — every other grammar lifts the same way
 
 ```rust
 let rust_combinator =
-    apply_h(seed.clone(), (read_file("boot/std/code/rust.mirror"), 0))
+    apply_h(meta_glass.clone(),
+            (read_file("mirror/code/rust.mirror"), 0))
         .into_focus().unwrap();
 let llvm_combinator =
-    apply_h(seed.clone(), (read_file("boot/std/code/llvm/ir.mirror"), 0))
+    apply_h(meta_glass.clone(),
+            (read_file("mirror/code/llvm/ir.mirror"), 0))
         .into_focus().unwrap();
-// … one per grammar file in boot/std/
+// … one per grammar file in mirror/
 ```
 
 Source files then parse through `apply_h(g_combinator, …)`. Two
-`apply_h` calls per source file: first lifts the grammar bytes to a
-combinator tree, second lifts source bytes to an AST.
+`apply_h` calls per source file: first lifts the grammar declaration
+to a Combinator tree, second lifts source bytes to an AST.
 
 `combinator_tree_oid` is `compute_content_oid` extended to walk the
 `Combinator` enum — a straight Merkle hash over variants. The seed
-and `seed_prime` must hash byte-identical.
+and `meta_glass` must hash byte-identical (FP1). All other lifts
+(FP2, FP3) are well-formedness assertions, not OID equalities.
 
-This is the heart of Tick 4. The Rust seed is ~25 lines because
-`00-prism.mirror` is 306 bytes; everything else is data. The 232
-lines of `grammar.rs` retire because their work is `apply_h(seed,
-…)`. The 768 lines of `tokenize.rs` retire because their work is
-`apply_h(g_combinator, …)`.
+This is the heart of Tick 4. The Rust seed is ~30 lines because
+`glass.mirror` is ~2 KB and structural; everything else is data. The
+232 lines of `grammar.rs` retire because their work is
+`apply_h(meta_glass, …)`. The 768 lines of `tokenize.rs` retire
+because their work is `apply_h(g_combinator, …)`.
 
 ---
 
@@ -558,39 +593,205 @@ corpus, run once per `mirror kintsugi --shatter N` invocation.
 
 ---
 
+## The migration command
+
+Tick 4b.3 lands the meta-glass AND moves the file tree at the same
+moment. One command does the migration:
+
+```
+mirror kintsugi boot/ --transform='grammar => glass' --out=mirror/
+```
+
+Three things happen in one settle:
+
+1. **Symbol rewrite.** The mq-query `'grammar => glass'` is a
+   structural rewrite. Anywhere the meta-glass parses the symbol
+   `grammar` (as a keyword, identifier, or path component inside
+   `@<ref>`), the symbol becomes `glass`. English prose in `@nl`
+   comments containing the word "grammar" stays unchanged because
+   it parses through `@nl`, not through `@mirror/glass`. This is
+   what makes the rewrite safe — the meta-glass tells kintsugi
+   which tokens are structural vs prose.
+2. **File renames.** Files whose basename matches the rewritten
+   symbol are renamed in lockstep: `grammar.mirror` becomes
+   `glass.mirror`. The basename is the symbol the file declares.
+3. **Path canonicalisation.** `--out=mirror/` settles paths to
+   their canonical location under `mirror/`. Bootstrap-historical
+   prefixes (`std/mirror/`) drop because they have no semantic
+   content. Real namespace prefixes (`code/rust/`, `code/llvm/ir/`)
+   preserve. The resulting tree is the canonical mirror standard
+   library.
+
+The mapping:
+
+| From | To |
+|---|---|
+| `boot/00-prism.mirror` | `mirror/00-prism.mirror` |
+| `boot/std/mirror/grammar.mirror` | `mirror/glass.mirror` |
+| `boot/std/mirror/compile.mirror` | `mirror/compile.mirror` |
+| `boot/std/mirror/runtime/gen_prism.mirror` | `mirror/runtime/gen_prism.mirror` |
+| `boot/std/code/rust.mirror` | `mirror/code/rust.mirror` |
+| `boot/std/code/llvm/ir.mirror` | `mirror/code/llvm/ir.mirror` |
+
+Cross-file references update inside files: `in @mirror/grammar`
+becomes `in @mirror/glass`. The rewrite sees the path component
+structurally, not as text.
+
+**The chicken-and-egg.** The Rust seed loads the meta-glass at a
+path. Before the migration runs, that path is
+`boot/std/mirror/grammar.mirror`; after, `mirror/glass.mirror`. The
+same commit that lands the migration updates the path constant in
+`spectral.rs` (or moves it to a build-arg, which is the cleaner
+long-term shape). One commit, one settle.
+
+The transform mode itself is a Tick-5-adjacent feature folded
+forward to Tick 4b.3 because the meta-glass is the moment it
+becomes safe: without the meta-glass, the rewrite can't tell which
+`grammar` tokens are keywords vs identifiers vs path components.
+With the meta-glass, the rewrite is structural by construction.
+
+---
+
+## Cross-grammar lifts
+
+The `@<grammar>(<body>)` form lifts a body of bytes into another
+grammar's parser. This is the bridge that lets host grammars
+(`@mirror/glass`, `@code/rust`, `@code/llvm/ir`) defer to other
+grammars for embedded content. Three concrete uses:
+
+- **Comments lift to `@nl`.** `# operator = @nl(until_newline)` in
+  `mirror/glass.mirror`. Every `#`-prefixed line lifts the
+  rest-of-line into the natural-language grammar. Multi-line
+  comments are just chains of single-line lifts.
+- **Inline backticks lift back to the host.** `` `code` `` inside
+  `@nl` lifts into whichever host grammar invoked it (`@mirror/glass`
+  when called from a `.mirror` file's comment, `@code/rust` when
+  called from a `.rs` file's comment).
+- **Fenced code blocks dispatch by language tag.** ` ```rust ` lifts
+  to `@code/rust`; ` ```mirror ` lifts to `@mirror/glass`; no tag
+  lifts to `@<host>` (the calling grammar).
+- **Doctest prompts** (indented `mirror> `) lift the prompt body to
+  `@mirror/glass`; following non-prompt lines are expected output.
+
+The Combinator variant:
+
+```rust
+Combinator::Lift {
+    grammar: Reference,        // the @<path> reference
+    body: Box<Combinator>,     // body-extractor (Until, Capture, etc.)
+}
+```
+
+The walker resolves `grammar` to its loaded Combinator tree at parse
+time, extracts the body bytes via `body`, and applies the target
+grammar to those bytes. Recursion bottoms out because every lift has
+a bounded `until` terminator.
+
+---
+
+## `@nl` — the bare cross-grammar lift target
+
+`@nl` is the natural-language grammar. The **bare-`@nl`** form that
+lands in 4b.3 recognises three structural elements inside
+otherwise-opaque prose:
+
+1. **Inline backticks** lift back to the host grammar:
+   `code_inline = literal("\`") > @<host>(until "\`") > literal("\`")`.
+2. **Fenced code blocks** with a language tag dispatch by tag:
+   ` ```rust ` lifts to `@code/rust`, ` ```mirror ` to `@mirror/glass`,
+   no tag lifts to `@<host>`.
+3. **Doctest prompts** (indented `mirror> `) lift the prompt body to
+   `@<host>`; following non-prompt lines are expected output.
+
+`mirror/nl.mirror` is ~500 bytes, declares these three forms, and uses
+the same Combinator primitives the meta-glass already needs (`Choice`,
+`Repeat`, `Literal`, `Charset`, `Lift`, `Until`).
+
+**Deferred to a follow-up tick (4b.3.5 or later).**
+
+- The full `@nl/markdown` grammar with CommonMark structure
+  (headings, lists, paragraphs, links). That tick introduces the
+  `@data/*` namespace (`@data/markdown`, `@data/json`, etc.) and the
+  `<` subtyping operator. See `docs/specs/grammar-inheritance.md`
+  (to be written).
+- Doctest *execution*. 4b.3 lands the doctest grammar (the `mirror>`
+  prompt parses through the host). A separate tick lands the harness
+  that runs them and compares against expected output.
+
+---
+
 ## Sub-tick decomposition
 
-The retirement plan names sub-ticks 4a, 4b, 4c. This spec is 4a. Here
-is the refined ordering for 4b and 4c.
+The retirement plan names sub-ticks 4a, 4b, 4c. This spec is 4a.
 
-### 4b — combinator implementations, grammar by grammar
+### 4b — combinator implementations, sub-tick by sub-tick
 
-Land in four stages, simplest first. Smoke check between stages:
-smoke OIDs `a8312da6…` and `3ba4c79d…` byte-stable; boot crystal
-`41470e69f2…` stable; Dark count 58/23; full-corpus round-trip at
-depth 1.
+Land incrementally. Smoke check between stages: smoke OIDs
+`a8312da6…` and `3ba4c79d…` byte-stable; boot crystal `41470e69f2…`
+stable; Dark count 58/23; full-corpus round-trip at depth 1.
 
-- **4b.1 — `00-prism.mirror` + `@mirror/grammar` (the seed and its
-  self-hosting proof).** Hand-code `prism_seed()` as the
-  Combinator-tree encoding of `boot/00-prism.mirror`. Verify FP1:
-  `apply_h(seed, 00-prism.mirror.bytes) == seed` (OID-equal). Then
-  verify FP2: `apply_h(seed, mirror/grammar.mirror.bytes)` produces
-  the keyword↔kind combinator for `.mirror` source. The five
-  operation literals + `grammar {}` body form + `io_binding` /
-  `match_arm` / `select_variant` cover the `.mirror` body forms.
-  Smoke check: tokenize every `.mirror` file in `boot/` with
-  `apply_h(mirror_combinator, file.bytes)`, compare AST byte-by-byte
-  against today's `tokenize.rs` output.
-- **4b.2 — `@code/rust`.** Seven keywords with reverse-lookup
+- **4b.1 — `Combinator` enum + `prism_seed()` (partial FP1).**
+  [LANDED commit `8b2c490` on `reed/v1-floor`.] Hand-coded
+  `prism_seed()` as the encoding of `00-prism.mirror`'s
+  five-operation keyword choice (~8 LOC). FP1 holds over the
+  keyword subset; FP2 holds against the keyword Choice of
+  `grammar.mirror`. Variants `Seq`/`Choice`/`LiteralKind` real; the
+  rest `unimplemented!()`.
+- **4b.2 — heterogeneous `apply_h` + full seed.** [LANDED commits
+  prism `7b78778`, mirror `4366c25`.] Root fix to prism-core:
+  `apply_h` takes independent `SIn`/`Out` type parameters. Bypass
+  shims (`apply_h_content`, 4b.1's `parse_with` helper) deleted.
+  `prism_seed()` grew to 47 LOC encoding the full `00-prism.mirror`.
+  FP1 holds over the full file. Variants `Seq`/`Choice`/`Capture`/
+  `BraceBlock`/`Literal`/`LiteralKind`/`IoBinding` real.
+- **4b.3 — the meta-glass + bare `@nl` + migration to `mirror/`.**
+  [THIS TICK.] Five parts, one commit-graph:
+  1. Grow `boot/std/mirror/grammar.mirror` into the full meta-glass
+     form. The file declares every syntactic form mirror knows about
+     (block structures, operation declarations, references, the `#`
+     comment lift to `@nl`, the `<ast>`/backtick lifts, the doctest
+     prompt) using `refract` declarations.
+  2. Implement the Combinator variants the meta-glass references:
+     `Repeat`, `Charset` (with the `CharsetKind` enum filled in),
+     `ParenBlock`, `Until` (or extend `Capture` with a stop
+     condition), and `Lift` (the cross-grammar lift
+     `@<grammar>(<body>)`).
+  3. Shrink `prism_seed()` to ~30 LOC encoding just-enough-meta-glass
+     to parse `glass.mirror`. The seed is purely structural; no
+     operation-specific knowledge in Rust.
+  4. Write `mirror/nl.mirror` (~500 bytes) declaring the bare-`@nl`
+     grammar (inline backticks, fenced code blocks with language
+     tags, indented `mirror>` doctest prompts).
+  5. Extend mq-query with the `=>` rewrite operator; extend kintsugi
+     with `--transform <mq-query>` and `--out <path>` flags. Run the
+     migration:
+     `mirror kintsugi boot/ --transform='grammar => glass' --out=mirror/`.
+     Update the `spectral.rs` path constant in the same commit.
+  6. **FP1 promoted.** Assert
+     `apply_h(meta_glass_seed, glass.mirror.bytes) == meta_glass`
+     (OID-equal). The old FP1 (seed parses `00-prism.mirror` to
+     itself) is replaced by this stronger statement at the
+     meta-glass level. The new FP2 asserts well-formedness of
+     `00-prism.mirror`'s parse.
+  7. Smoke check: every `.mirror` file in `mirror/` parses with
+     `apply_h(meta_glass, file.bytes)`; resulting ASTs match
+     today's `tokenize.rs` output. Butterfly still produces a
+     working `./mirror-self`.
+- **4b.3.5 — `@data/markdown` + `@nl/markdown` + grammar inheritance.**
+  Introduces the `@data/*` namespace, the `<` subtyping operator,
+  and `mirror/data/markdown.mirror` + `mirror/nl/markdown.mirror`.
+  New spec: `docs/specs/grammar-inheritance.md`. Out of scope for
+  4b.3; explicit follow-up.
+- **4b.4 — `@code/rust`.** Seven keywords with reverse-lookup
   collisions. `node.keyword` carries the original; no reverse table
   needed. Smoke: tokenize `bootstrap/src/*.rs`, compare ASTs and
   rendered bytes.
-- **4b.3 — `@code/llvm/ir`.** The `keyword_form_body` special case
+- **4b.5 — `@code/llvm/ir`.** The `keyword_form_body` special case
   exercised. Smoke: tokenize `bootstrap/mirror.ll`; butterfly
   pipeline produces a working `./mirror-butterfly`.
-- **4b.4 — remaining grammars.** `@epistemologic/property/*`,
+- **4b.6 — remaining grammars.** `@epistemologic/property/*`,
   `@epistemologic/math/*`, `@mirror/kintsugi`, `@hash/coincidence`.
-  All share the mirror-grammar shape; smoke-clean once 4b.1 lands.
+  All share the meta-glass shape; smoke-clean once 4b.3 lands.
 
 "Smoke clean" per grammar: same files → same OIDs, same Dark count,
 same AST shape. Any divergence surfaces a missing combinator and
@@ -641,16 +842,27 @@ Tick 4 lands when, against `reed/v1-floor`:
    (`In`/`Out`) and the Spec A/B extensions
    (`IoBinding`/`MatchExpr`/`SelectExpr`) no longer route through the
    catch-all.
-8. **Self-hosting fixed point** (FP1):
-   `apply_h(seed, boot/00-prism.mirror.bytes)` produces a
-   `Combinator` tree whose OID equals the Rust seed's OID. The
-   algebra parses the file that declares it. The mirror compiler is
-   self-hosting at the parser level.
-9. **Keyword-mapping fixed point** (FP2):
-   `apply_h(seed, boot/std/mirror/grammar.mirror.bytes)` produces a
-   `Combinator::Choice` of `Capture(Literal(keyword), kind)` branches
-   whose OID equals the hand-derived expected combinator for the
-   `.mirror` keyword table.
+8. **Meta-glass self-hosting fixed point** (FP1):
+   `apply_h(prism_seed(), mirror/glass.mirror.bytes)` produces a
+   `Combinator` tree (`meta_glass`) whose OID equals the Rust seed's
+   OID. The meta-grammar parses the file that declares it. The
+   mirror compiler is self-hosting at the parser level.
+9. **Algebra lifts cleanly** (FP2):
+   `apply_h(meta_glass, mirror/00-prism.mirror.bytes)` produces a
+   well-typed Combinator tree with no Dark spans. The algebra
+   declaration parses cleanly through the meta-glass.
+10. **Every other grammar lifts the same way** (FP3): for each
+    `mirror/**/*.mirror`, `apply_h(meta_glass, file.bytes)`
+    produces a Combinator tree with no Dark spans (or only the Dark
+    spans the file genuinely declares).
+11. **Migration complete.** `boot/` is gone from the source tree;
+    every file is under `mirror/`. The symbol `grammar` no longer
+    appears as a keyword or path component anywhere in the corpus
+    (only as English in `@nl` comments).
+12. **Bare `@nl` grammar exists** at `mirror/nl.mirror`. The three
+    structural forms (inline backticks, fenced code blocks with
+    language tags, indented `mirror>` doctest prompts) parse
+    correctly inside any host grammar's comments.
 
 ---
 
@@ -704,22 +916,37 @@ scaffold in `cmd_kintsugi`".
 ## Decisions confirmed (2026-05-21)
 
 - **`Combinator` is a closed enum.** Resolved per the trade-off
-  table in §"Trait or enum?". The seed-as-`00-prism.mirror`
-  recognition was the deciding push: combinators are data.
+  table in §"Trait or enum?". Combinators are data the seed
+  produces from bytes.
 - **`Dark` survives as a marker `AstKind`.** Strict classification's
   byte-stable Dark count is load-bearing; naming the failure mode
   beats hiding it. `Fold5::on_other` collapses to `on_dark` (one arm,
   one kind) per 4c.
-- **The seed lives in `spectral.rs`.** ~25 lines of monomorphic
-  Rust, the Combinator-tree encoding of `boot/00-prism.mirror`. No
-  separate `seed.rs`; the v1-floor keeps the trusted base inside the
-  evaluator. Revisit only if the `no_std` stretch's `bootstrap-io`
-  split needs seed isolation.
-- **mq-query gets its own `.mirror` grammar in Tick 5.**
-  `boot/std/mirror/mq.mirror` is the generalisation test for the
-  combinator surface: if the surface only ever parses `.mirror`
-  source it's a `.mirror`-specific parser, not a parser-as-prism. The
-  mq grammar's `.mirror` file proves the surface is grammar-agnostic.
+- **The seed lives in `spectral.rs`.** ~30 lines of monomorphic Rust
+  after 4b.3 (the encoding of just-enough-meta-glass to parse
+  `glass.mirror`). No separate `seed.rs`. Revisit only if the
+  `no_std` stretch's `bootstrap-io` split needs seed isolation.
+- **Seed encodes the meta-glass, not `00-prism.mirror`.** [Reshape
+  2026-05-21 PM.] The earlier framing (seed = encoding of
+  `00-prism.mirror`) was a 4b.2 intermediate. The meta-glass IS the
+  full grammar of `.mirror` files; FP1 is now
+  `apply_h(seed, glass.mirror.bytes) == meta_glass`. `00-prism.mirror`
+  is a consumer of the meta-glass (algebra declaration), not a
+  seed-target.
+- **Cross-grammar lift `@<grammar>(<body>)` is a Combinator primitive.**
+  Required for `# = @nl(until_newline)` and every other host-defers-
+  to-grammar form. Added in 4b.3 as `Combinator::Lift`.
+- **The boot/ → mirror/ migration and the `grammar → glass` rename
+  are one kintsugi pass.** `mirror kintsugi boot/
+  --transform='grammar => glass' --out=mirror/`. Lands in 4b.3 with
+  the meta-glass.
+- **`mq-query` gets the `=>` rewrite operator in 4b.3.** Originally
+  scheduled for Tick 5 alongside the full `mq.mirror` grammar; the
+  meta-glass forces the operator forward because the migration
+  needs it. The full `mq.mirror` grammar declaration stays in
+  Tick 5.
+- **`<` is genuine subtyping, not just import.** Deferred to 4b.3.5
+  with `docs/specs/grammar-inheritance.md`. Out of scope for 4b.3.
 
 ## Open questions
 
