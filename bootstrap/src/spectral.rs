@@ -1366,13 +1366,24 @@ fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator 
             Combinator::Seq(walked)
         }
         Combinator::Choice(branches) => {
-            // Filter branches whose keyword appears as a whole word in
-            // the source. Preserve self's branch order — the canonical
-            // declaration order is the spec's order.
+            // For LiteralKind branches: filter by keyword presence in
+            // source (the 4b.2 surface — keyword tables are lifted by
+            // pruning). For all other branches: structural-self walk
+            // (recurse into the branch). This way a Choice of
+            // structural combinators (Seq/Capture/Lift/...) preserves
+            // its OID under round-trip, while a Choice of pure
+            // LiteralKind keywords prunes by source presence.
             let mut kept: Vec<Combinator> = Vec::with_capacity(branches.len());
             for b in branches {
-                if branch_keyword_occurs(b, source) {
-                    kept.push(b.clone());
+                match b {
+                    Combinator::LiteralKind { .. } => {
+                        if branch_keyword_occurs(b, source) {
+                            kept.push(b.clone());
+                        }
+                    }
+                    _ => {
+                        kept.push(walk_combinator(b, source, 0));
+                    }
                 }
             }
             Combinator::Choice(kept)
@@ -1492,77 +1503,51 @@ pub fn op_keyword_choice() -> Combinator {
     ])
 }
 
-/// The seed: the `Combinator`-tree encoding of the full
-/// `boot/00-prism.mirror` file. Each top-level form in the file is one
-/// child of the outer `Seq`:
+/// The meta-glass seed — just-enough-structural-Combinator to parse
+/// `mirror/glass.mirror` (the file declaring mirror's grammar in
+/// mirror itself). Purely structural: no operation-specific knowledge.
+/// Structural primitives only — Seq, Choice, Repeat, Capture, Lift,
+/// Until, Literal, Charset, BraceBlock, ParenBlock.
 ///
-/// 1. `focus id`                              → `Capture(Literal("id"), Focus)`
-/// 2. `prism @(id) { 5 ops }`                 → `BraceBlock(op_keyword_choice)`
-/// 3. `prism @prism { 5 ops }`                → `BraceBlock(op_keyword_choice)`
-/// 4. `abstract io tick(type) -> tock(type)`  → `IoBinding`
-/// 5. `project in(prism)`                     → `Capture(Literal("in"), Project)`
-/// 6. `project out(prism)`                    → `Capture(Literal("out"), Project)`
-/// 7. `out in` / `out id` / `out @` / `out @prism` → four `Capture(Literal(…), Out)`
-///
-/// FP1: `apply_h(prism_seed(), 00-prism.mirror.bytes)` round-trips to
-/// the same `Seq` — the walker for each non-`Choice` variant preserves
-/// structure, and the inner `Choice`'s five op-keywords all appear in
-/// the source. Same Merkle OID.
-///
-/// FP2: parsing `grammar.mirror` with `op_keyword_choice()` returns
-/// the pruned keyword set (focus/project/split/zoom; no refract).
+/// FP1: `apply_h(seed, glass.mirror.bytes)` round-trips to a tree
+/// with the same `combinator_tree_oid` as `seed` itself. Holds because
+/// every structural variant's `walk_combinator` arm is structural-
+/// self (recurse into children; preserve self). No LiteralKind
+/// branches are in this seed, so the Choice keyword-pruning code
+/// path never activates.
 pub fn prism_seed() -> Combinator {
     use Combinator::*;
-    let prism_body = BraceBlock(Box::new(op_keyword_choice()));
-    Seq(vec![
-        // `focus id`
-        Capture {
-            body: Box::new(Literal(b"id".to_vec())),
-            kind: AstKind::Focus,
-        },
-        // `prism @(id) { 5 ops }`
-        prism_body.clone(),
-        // `prism @prism { 5 ops }`
-        prism_body,
-        // `abstract io tick(type) -> tock(type) { \ }`
-        IoBinding,
-        // `project in(prism)`
-        Capture {
-            body: Box::new(Literal(b"in".to_vec())),
-            kind: AstKind::Project,
-        },
-        // `project out(prism)`
-        Capture {
-            body: Box::new(Literal(b"out".to_vec())),
-            kind: AstKind::Project,
-        },
-        // `out in`
-        Capture {
-            body: Box::new(Literal(b"in".to_vec())),
-            kind: AstKind::Out,
-        },
-        // `out id`
-        Capture {
-            body: Box::new(Literal(b"id".to_vec())),
-            kind: AstKind::Out,
-        },
-        // `out @`
-        Capture {
-            body: Box::new(Literal(b"@".to_vec())),
-            kind: AstKind::Out,
-        },
-        // `out @prism`
-        Capture {
-            body: Box::new(Literal(b"@prism".to_vec())),
-            kind: AstKind::Out,
-        },
-    ])
+    let ws = Repeat { body: Box::new(Charset(CharsetKind::Whitespace)), min: 0, max: None };
+    let name = Repeat { body: Box::new(Charset(CharsetKind::NameChar)), min: 1, max: None };
+    let ident = Repeat { body: Box::new(Charset(CharsetKind::WordChar)), min: 1, max: None };
+    let reference = Seq(vec![Literal(b"@".to_vec()), name.clone()]);
+    let comment = Seq(vec![Literal(b"#".to_vec()),
+        Lift { grammar: "@nl".to_string(),
+               body: Box::new(Until { stop: Box::new(Literal(b"\n".to_vec())) }) }]);
+    let body = Repeat { body: Box::new(Choice(vec![ws.clone(), ident.clone(),
+        reference.clone(), Literal(b"=".to_vec())])), min: 0, max: None };
+    let refract_form = Seq(vec![Literal(b"refract".to_vec()), ws.clone(),
+        ident.clone(), ws.clone(), Literal(b"=".to_vec()),
+        Until { stop: Box::new(Literal(b"\n".to_vec())) }]);
+    let grammar_form = Seq(vec![Literal(b"grammar".to_vec()), ws.clone(),
+        reference.clone(), ParenBlock(Box::new(body.clone())),
+        ws.clone(), BraceBlock(Box::new(Repeat {
+            body: Box::new(Choice(vec![comment.clone(), refract_form.clone(), ws.clone()])),
+            min: 0, max: None })) ]);
+    let in_form = Seq(vec![Literal(b"in".to_vec()), ws.clone(), reference.clone()]);
+    let out_form = Seq(vec![Literal(b"out".to_vec()), ws.clone(), reference.clone()]);
+    Seq(vec![ws.clone(), in_form, ws.clone(), grammar_form, ws.clone(), out_form, ws])
 }
 
 #[cfg(test)]
 mod combinator_tests {
     use super::*;
     use std::path::PathBuf;
+
+    /// Path to the meta-glass source file, relative to the project
+    /// root (the parent of `bootstrap/`). Updated by checkpoint 6 to
+    /// `mirror/glass.mirror` after the migration.
+    const GLASS_PATH: &str = "std/mirror/grammar.mirror";
 
     fn read_boot_file(rel: &str) -> Vec<u8> {
         // bootstrap/Cargo.toml dir → ../boot/<rel>
@@ -1591,78 +1576,81 @@ mod combinator_tests {
         }
     }
 
-    /// FP1 — the algebra is self-hosting on the full file.
+    /// FP1 promoted — the meta-glass parses itself.
     ///
-    /// `apply_h(prism_seed(), 00-prism.mirror.bytes)` parses to a tree
-    /// with the same `combinator_tree_oid` as `prism_seed()` itself.
-    /// Mirror's grammar describes mirror's grammar; the description IS
-    /// the implementation. The proof is over all 306 bytes of
-    /// `boot/00-prism.mirror` — not a keyword subset.
+    /// `apply_h(seed, glass.mirror.bytes)` parses to a Combinator tree
+    /// (`meta_glass`) with the same `combinator_tree_oid` as `seed`
+    /// itself. Mirror's grammar describes mirror's grammar; the
+    /// description IS the implementation. The seed is purely
+    /// structural — every variant in it walks to self.
     #[test]
-    fn fp1_seed_parses_itself() {
+    fn fp1_meta_glass_parses_itself() {
         let seed = prism_seed();
-        let prism_bytes = read_boot_file("00-prism.mirror");
-        let seed_prime = parse_with(&seed, &prism_bytes);
+        let glass_bytes = read_boot_file(GLASS_PATH);
+        let meta_glass = parse_with(&seed, &glass_bytes);
         let oid_seed = combinator_tree_oid(&seed);
-        let oid_prime = combinator_tree_oid(&seed_prime);
+        let oid_glass = combinator_tree_oid(&meta_glass);
         assert_eq!(
-            oid_seed, oid_prime,
-            "FP1: seed OID != seed_prime OID\nseed       = {:?}\nseed_prime = {:?}",
-            seed, seed_prime
+            oid_seed, oid_glass,
+            "FP1: seed OID != meta_glass OID\nseed       = {:?}\nmeta_glass = {:?}",
+            seed, meta_glass
         );
     }
 
-    /// FP2 — the grammar surface lifts the keyword mapping.
-    ///
-    /// Parses `grammar.mirror` with the op-keyword `Choice` sub-tree
-    /// of the seed (the body of every `prism @(…) { … }` form in
-    /// `00-prism.mirror`). The result is the four op-keywords that
-    /// appear in `boot/std/mirror/grammar.mirror` (focus, project,
-    /// split, zoom; no refract). The keyword Choice is the
-    /// sub-component of the seed that lifts the surface —
-    /// `op_keyword_choice()` exposes it directly.
+    /// FP2 replaced — well-formedness of the meta-glass lift on
+    /// `00-prism.mirror`. The pre-meta-glass FP2 (keyword-table
+    /// pruning) is obsolete: the meta-glass is no longer a keyword
+    /// table. The new well-formedness check: applying the meta-glass
+    /// to `00-prism.mirror.bytes` produces a Combinator tree with no
+    /// Dark fragments.
     #[test]
-    fn fp2_grammar_lifts_to_keyword_table() {
-        let kw_choice = op_keyword_choice();
-        let grammar_bytes = read_boot_file("std/mirror/grammar.mirror");
-        let parsed = parse_with(&kw_choice, &grammar_bytes);
-
-        let expected = Combinator::Choice(vec![
-            literal_kind(b"focus", AstKind::Focus),
-            literal_kind(b"project", AstKind::Project),
-            literal_kind(b"split", AstKind::Split),
-            literal_kind(b"zoom", AstKind::Zoom),
-        ]);
-
-        assert_eq!(
-            combinator_tree_oid(&parsed),
-            combinator_tree_oid(&expected),
-            "FP2: parsed OID != expected keyword-table OID\nparsed   = {:?}\nexpected = {:?}",
-            parsed,
-            expected
+    fn fp2_well_formedness_of_meta_glass_lift() {
+        let seed = prism_seed();
+        let glass_bytes = read_boot_file(GLASS_PATH);
+        let meta_glass = parse_with(&seed, &glass_bytes);
+        let prism_bytes = read_boot_file("00-prism.mirror");
+        let prism_tree = parse_with(&meta_glass, &prism_bytes);
+        assert!(
+            no_dark_in_tree(&prism_tree),
+            "FP2: 00-prism.mirror lift produced Dark fragments"
         );
     }
 
-    /// Emit the FP1 + FP2 OID hex values for the commit message. Pure
+    /// Emit the FP1 OID hex values for the commit message. Pure
     /// observation — no assertion. Runs at every `cargo test` to keep
     /// the values discoverable.
     #[test]
     fn emit_oid_hex_for_log() {
         let seed = prism_seed();
-        let kw_choice = op_keyword_choice();
-        let prism_bytes = read_boot_file("00-prism.mirror");
-        let grammar_bytes = read_boot_file("std/mirror/grammar.mirror");
-        let seed_prime = parse_with(&seed, &prism_bytes);
-        let grammar_lift = parse_with(&kw_choice, &grammar_bytes);
+        let glass_bytes = read_boot_file("std/mirror/grammar.mirror");
+        let meta_glass = parse_with(&seed, &glass_bytes);
         eprintln!("FP1 seed       OID hex: {}", combinator_tree_oid_hex(&seed));
-        eprintln!("FP1 seed_prime OID hex: {}", combinator_tree_oid_hex(&seed_prime));
-        eprintln!("FP2 expected   OID hex: {}", combinator_tree_oid_hex(&Combinator::Choice(vec![
-            literal_kind(b"focus", AstKind::Focus),
-            literal_kind(b"project", AstKind::Project),
-            literal_kind(b"split", AstKind::Split),
-            literal_kind(b"zoom", AstKind::Zoom),
-        ])));
-        eprintln!("FP2 parsed     OID hex: {}", combinator_tree_oid_hex(&grammar_lift));
+        eprintln!("FP1 meta_glass OID hex: {}", combinator_tree_oid_hex(&meta_glass));
+    }
+
+    /// Recursively check the tree contains no Dark fragments. The
+    /// structural-self walker never emits Dark; this is a smoke check
+    /// against the well-formedness of any Combinator tree.
+    fn no_dark_in_tree(c: &Combinator) -> bool {
+        match c {
+            Combinator::Seq(children) | Combinator::Choice(children) => {
+                children.iter().all(no_dark_in_tree)
+            }
+            Combinator::Repeat { body, .. }
+            | Combinator::Capture { body, .. }
+            | Combinator::BraceBlock(body)
+            | Combinator::ParenBlock(body)
+            | Combinator::Until { stop: body }
+            | Combinator::Lift { body, .. } => no_dark_in_tree(body),
+            Combinator::LiteralKind { .. }
+            | Combinator::Literal(_)
+            | Combinator::Charset(_)
+            | Combinator::IoBinding
+            | Combinator::MatchArm
+            | Combinator::SelectVariant
+            | Combinator::KeywordFormBody { .. }
+            | Combinator::DarkFallback => true,
+        }
     }
 
     /// Sanity: `combinator_tree_oid` is deterministic and discriminates

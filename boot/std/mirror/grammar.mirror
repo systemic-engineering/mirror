@@ -6,6 +6,16 @@ grammar @mirror/grammar("mirror", "spec", "meta", "glass") {
   # declaration in this file. apply_h(seed, glass.mirror.bytes)
   # round-trips this file to itself — FP1.
 
+  # ===== legacy keyword mappings (the 4b.2 surface) =====
+  # the hand-written tokenizer reads `<op> <keyword>` 2-word lines
+  # to build the keyword table. preserved verbatim during the
+  # meta-glass transition; retired with `grammar.rs` in tick 4c.
+  focus grammar
+  split type
+  project in
+  project out
+  zoom abstract
+
   # ===== lexical primitives =====
   refract whitespace        = repeat(charset(whitespace), 0, none)
   refract newline           = literal("\n")
