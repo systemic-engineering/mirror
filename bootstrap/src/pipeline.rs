@@ -3,8 +3,7 @@
 use crate::ast::AstNode;
 use crate::exec::io_exec;
 use crate::grammar::{grammar_path_for_ref, load_grammar};
-use crate::render::render_ast;
-use crate::spectral::compute_content_oid;
+use crate::spectral::{compute_content_oid, render_ast};
 use crate::tokenize::tokenize;
 use std::io::Write;
 

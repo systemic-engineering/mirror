@@ -13,7 +13,6 @@ mod git;
 mod grammar;
 mod hash;
 mod pipeline;
-mod render;
 mod spectral;
 mod tokenize;
 
@@ -27,8 +26,7 @@ use crate::git::{git_crystal_exists, git_store_crystal};
 use crate::grammar::{grammar_for_file, load_grammar};
 use crate::hash::canonical_hash;
 use crate::pipeline::{execute_pipeline, is_mq_query, split_pipeline};
-use crate::render::render_ast;
-use crate::spectral::compute_content_oid;
+use crate::spectral::{compute_content_oid, render_ast};
 use crate::tokenize::tokenize;
 
 /// Walk an AST, collecting every `AstKind::Dark` node in source order.

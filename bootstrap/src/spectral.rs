@@ -495,6 +495,495 @@ where
     }
 }
 
+// ---------------------------------------------------------------------------
+// Render-via-Fold5 — the AST → bytes pretty-printer as a catamorphism.
+//
+// The pre-retirement `bootstrap/src/render.rs` had three entry points
+// (`render_ast`, `render_ast_mirror`, `render_ast_with_grammar`), all
+// post-order recursive descents threading a `depth: i32` and a `&mut
+// Vec<u8>` accumulator through. Tick 3b collapses them into one Fold5
+// instance keyed on grammar availability.
+//
+// **Deviation: depth as inherited attribute.** A bare catamorphism
+// reducer sees only `&AstNode` and `Vec<Out>` — it has no `depth`
+// parameter (that's an inherited / top-down attribute, not a
+// synthesized / bottom-up one). The pre-retirement renderer's body
+// emits bytes verbatim from the source mid-line, which means "reindent
+// the whole child output at assembly time" does NOT preserve
+// byte-for-byte output: verbatim body content (carrying its own
+// source indentation) gets double-shifted.
+//
+// The honest fix is an attribute-grammar extension: Fold5At<…> is the
+// depth-threading sibling of Fold5, with reducer signature
+// `Fn(&AstNode, i32, Vec<Out>) -> Out` and a walker that passes depth
+// down. Each render reducer now applies `append_indent(depth)`
+// directly, matching the pre-retirement code's behavior 1:1. The
+// canonical Fold5 (no depth) is unchanged — content_oid (Tick 3c) is
+// depth-free and keeps using Fold5 / fold1.
+//
+// The grammar-aware path is keyed on `node.grammar_tag`: if it points
+// at a non-mirror grammar with a loadable `.mirror` file, the per-kind
+// reducer consults `Grammar::keyword_for_kind` for the reverse-lookup
+// keyword. Loading is per-fold (one `load_grammar` call captured in
+// the reducer closures), matching the pre-retirement dispatch in
+// `render_ast`.
+// ---------------------------------------------------------------------------
+
+use crate::grammar::{grammar_path_for_ref, load_grammar, Grammar};
+
+/// Append `depth` levels of two-space indent to `out`. Mirrors the
+/// pre-retirement `render::append_indent` byte-for-byte.
+fn append_indent(out: &mut Vec<u8>, depth: i32) {
+    for _ in 0..depth {
+        out.extend_from_slice(b"  ");
+    }
+}
+
+/// Catamorphism over the AST with an inherited *depth* attribute.
+/// Sibling of [`Fold5`]: same six reducers, but each one additionally
+/// receives the current depth from the walker. Used by render, which
+/// can't be expressed as a pure post-order catamorphism without
+/// double-shifting verbatim body bytes (the pre-retirement renderer
+/// emits body bytes mid-line without indent processing; preserving
+/// that requires knowing depth at the reducer).
+///
+/// The walker `run(node, depth)` recurses into children at `depth + 1`
+/// (children are conceptually one level deeper than their parent).
+/// Reducers decide their own indent + structural emission.
+pub struct Fold5At<Ff, Fp, Fs, Fz, Fr, Fo, Out>
+where
+    Ff: Fn(&AstNode, i32, Vec<Out>) -> Out,
+    Fp: Fn(&AstNode, i32, Vec<Out>) -> Out,
+    Fs: Fn(&AstNode, i32, Vec<Out>) -> Out,
+    Fz: Fn(&AstNode, i32, Vec<Out>) -> Out,
+    Fr: Fn(&AstNode, i32, Vec<Out>) -> Out,
+    Fo: Fn(&AstNode, i32, Vec<Out>) -> Out,
+{
+    pub on_focus: Ff,
+    pub on_project: Fp,
+    pub on_split: Fs,
+    pub on_zoom: Fz,
+    pub on_refract: Fr,
+    pub on_other: Fo,
+    _out: core::marker::PhantomData<Out>,
+}
+
+impl<Ff, Fp, Fs, Fz, Fr, Fo, Out> Fold5At<Ff, Fp, Fs, Fz, Fr, Fo, Out>
+where
+    Ff: Fn(&AstNode, i32, Vec<Out>) -> Out,
+    Fp: Fn(&AstNode, i32, Vec<Out>) -> Out,
+    Fs: Fn(&AstNode, i32, Vec<Out>) -> Out,
+    Fz: Fn(&AstNode, i32, Vec<Out>) -> Out,
+    Fr: Fn(&AstNode, i32, Vec<Out>) -> Out,
+    Fo: Fn(&AstNode, i32, Vec<Out>) -> Out,
+{
+    pub fn new(
+        on_focus: Ff,
+        on_project: Fp,
+        on_split: Fs,
+        on_zoom: Fz,
+        on_refract: Fr,
+        on_other: Fo,
+    ) -> Self {
+        Fold5At {
+            on_focus,
+            on_project,
+            on_split,
+            on_zoom,
+            on_refract,
+            on_other,
+            _out: core::marker::PhantomData,
+        }
+    }
+
+    /// Post-order fold over an AST with an inherited depth attribute.
+    /// Children fold at `depth + 1`, with two exceptions matching the
+    /// pre-retirement renderer's specific dispatch:
+    ///
+    /// - The synthetic root Focus (name == "root" at depth 0) does NOT
+    ///   bump depth for its children — they render at depth 0.
+    /// - Split/Zoom/Refract recurse at depth + 1 like Focus.
+    ///
+    /// Per-kind dispatch decisions about depth bumping happen inside
+    /// the reducers; the walker uniformly passes `depth + 1` to all
+    /// children and lets reducers re-shift if they need a different
+    /// convention. The render reducers below are written so that they
+    /// emit their own bytes at the depth they were called with, and
+    /// trust the walker to have fed children at depth + 1.
+    pub fn run(&self, node: &AstNode, depth: i32) -> Out {
+        // Children always render one level deeper. The pre-retirement
+        // renderer had a special case where the synthetic root Focus's
+        // children stayed at the same depth; that's expressed in the
+        // reducer for Focus by checking `node.name == "root"` and
+        // adjusting how it consumes children there (it discards its
+        // own indent and writes children verbatim).
+        let child_depth = depth + 1;
+        let child_outs: Vec<Out> =
+            node.children.iter().map(|c| self.run(c, child_depth)).collect();
+        match node.kind {
+            AstKind::Focus => (self.on_focus)(node, depth, child_outs),
+            AstKind::Project => (self.on_project)(node, depth, child_outs),
+            AstKind::Split => (self.on_split)(node, depth, child_outs),
+            AstKind::Zoom => (self.on_zoom)(node, depth, child_outs),
+            AstKind::Refract => (self.on_refract)(node, depth, child_outs),
+            AstKind::In
+            | AstKind::Out
+            | AstKind::Dark
+            | AstKind::IoBinding
+            | AstKind::MatchExpr
+            | AstKind::SelectExpr => (self.on_other)(node, depth, child_outs),
+        }
+    }
+}
+
+/// Render an AST to bytes in mirror canonical form, dispatching
+/// through the node's grammar tag for grammar-aware reverse lookup of
+/// keywords. Replacement for the pre-retirement
+/// `render::render_ast`. Public surface is preserved.
+///
+/// Per Tick 3b of `docs/specs/bootstrap-retirement-plan.md`: the three
+/// pre-retirement entry points (`render_ast`, `render_ast_mirror`,
+/// `render_ast_with_grammar`) collapse into one Fold5At application
+/// keyed on grammar availability.
+pub fn render_ast(node: &AstNode, depth: i32, out: &mut Vec<u8>) {
+    let tag = node.grammar_tag.as_str();
+    let grammar: Option<Grammar> =
+        if tag.is_empty() || tag == "@mirror/grammar" || tag == "@mirror" {
+            None
+        } else {
+            grammar_path_for_ref(tag).and_then(|p| load_grammar(&p).ok())
+        };
+    let rendered = match &grammar {
+        Some(g) => render_fold_grammar(g).run(node, depth),
+        None => render_fold_mirror().run(node, depth),
+    };
+    out.extend_from_slice(&rendered);
+}
+
+/// Fold5At instance for mirror-canonical rendering. The five operation
+/// reducers + `on_other` together cover every `AstKind` the renderer
+/// emits. Captures nothing — mirror canonical form is grammar-free.
+fn render_fold_mirror(
+) -> Fold5At<
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
+    Vec<u8>,
+> {
+    Fold5At::new(
+        // on_focus
+        |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
+            let mut out = Vec::new();
+            // Synthetic root Focus: children inherit depth (they were
+            // recursed at depth+1, but we want them at depth). We
+            // can't "un-recurse" them once they're rendered; instead,
+            // the pre-retirement code re-recursed at `depth` (same) in
+            // this case. To match: re-render children at this depth
+            // by re-invoking the renderer via a one-shot recursion.
+            // This is mechanically a Fold5At property exception: the
+            // synthetic-root Focus discards the walker-passed child
+            // outputs and re-renders. The output is byte-identical to
+            // the pre-retirement render_ast(c, depth, out) call.
+            if node.name == "root" && depth == 0 {
+                for c in &node.children {
+                    render_ast(c, depth, &mut out);
+                }
+                return out;
+            }
+            append_indent(&mut out, depth);
+            if node.name.as_bytes().first() == Some(&b'@') {
+                out.extend_from_slice(b"grammar ");
+            } else {
+                out.extend_from_slice(b"focus ");
+            }
+            out.extend_from_slice(node.name.as_bytes());
+            if !children.is_empty() {
+                out.extend_from_slice(b" {\n");
+                for c in children {
+                    out.extend_from_slice(&c);
+                }
+                append_indent(&mut out, depth);
+                out.extend_from_slice(b"}\n");
+            } else {
+                out.push(b'\n');
+            }
+            out
+        },
+        // on_project — mirror canonical: project lines render flat
+        // (no children path in the pre-retirement code).
+        |node: &AstNode, depth: i32, _children: Vec<Vec<u8>>| -> Vec<u8> {
+            let mut out = Vec::new();
+            append_indent(&mut out, depth);
+            out.extend_from_slice(b"project ");
+            out.extend_from_slice(node.name.as_bytes());
+            out.push(b'\n');
+            out
+        },
+        // on_split (`type` keyword)
+        |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
+            let mut out = Vec::new();
+            append_indent(&mut out, depth);
+            out.extend_from_slice(b"type ");
+            out.extend_from_slice(node.name.as_bytes());
+            out.push(b'\n');
+            for c in children {
+                out.extend_from_slice(&c);
+            }
+            out
+        },
+        // on_zoom
+        |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
+            let mut out = Vec::new();
+            append_indent(&mut out, depth);
+            out.extend_from_slice(b"zoom ");
+            out.extend_from_slice(node.name.as_bytes());
+            out.push(b'\n');
+            for c in children {
+                out.extend_from_slice(&c);
+            }
+            out
+        },
+        // on_refract
+        |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
+            let mut out = Vec::new();
+            append_indent(&mut out, depth);
+            out.extend_from_slice(b"refract ");
+            out.extend_from_slice(node.name.as_bytes());
+            out.push(b'\n');
+            for c in children {
+                out.extend_from_slice(&c);
+            }
+            out
+        },
+        // on_other — In / Out / Dark / IoBinding / MatchExpr / SelectExpr.
+        |node: &AstNode, depth: i32, _children: Vec<Vec<u8>>| -> Vec<u8> {
+            render_other_mirror(node, depth)
+        },
+    )
+}
+
+/// Mirror-canonical rendering for non-canonical kinds (In, Out, Dark,
+/// IoBinding, MatchExpr, SelectExpr). Shared by the mirror-canonical
+/// and grammar-aware folds.
+fn render_other_mirror(node: &AstNode, depth: i32) -> Vec<u8> {
+    let mut out = Vec::new();
+    match node.kind {
+        AstKind::In => {
+            append_indent(&mut out, depth);
+            out.extend_from_slice(b"in ");
+            if node.name.as_bytes().first() != Some(&b'@') {
+                out.push(b'@');
+            }
+            out.extend_from_slice(node.name.as_bytes());
+            out.push(b'\n');
+        }
+        AstKind::Out => {
+            append_indent(&mut out, depth);
+            out.extend_from_slice(b"out ");
+            if node.name.as_bytes().first() != Some(&b'@') {
+                out.push(b'@');
+            }
+            out.extend_from_slice(node.name.as_bytes());
+            out.push(b'\n');
+        }
+        AstKind::IoBinding => {
+            append_indent(&mut out, depth);
+            out.extend_from_slice(b"io ");
+            out.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                out.extend_from_slice(body.as_bytes());
+            }
+            out.push(b'\n');
+        }
+        AstKind::MatchExpr => {
+            append_indent(&mut out, depth);
+            out.extend_from_slice(b"match ");
+            out.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                out.extend_from_slice(body.as_bytes());
+            }
+            out.push(b'\n');
+        }
+        AstKind::SelectExpr => {
+            append_indent(&mut out, depth);
+            out.extend_from_slice(b"select ");
+            out.extend_from_slice(node.name.as_bytes());
+            if let Some(body) = &node.body {
+                out.extend_from_slice(body.as_bytes());
+            }
+            out.push(b'\n');
+        }
+        AstKind::Dark => {
+            if let Some(body) = &node.body {
+                out.extend_from_slice(body.as_bytes());
+            }
+        }
+        _ => unreachable!("render_other_mirror on canonical kind"),
+    }
+    out
+}
+
+/// Fold5At instance for grammar-aware rendering. Captures the loaded
+/// grammar by reference and consults it for the reverse-lookup
+/// keyword at each non-terminal kind. Falls through to the
+/// mirror-canonical fallback when the grammar has no keyword.
+fn render_fold_grammar<'g>(
+    g: &'g Grammar,
+) -> Fold5At<
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8> + 'g,
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8> + 'g,
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8> + 'g,
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8> + 'g,
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8> + 'g,
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8> + 'g,
+    Vec<u8>,
+> {
+    Fold5At::new(
+        // on_focus — grammar-aware
+        move |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
+            let mut out = Vec::new();
+            // Synthetic root Focus: children inherit depth.
+            if node.name == "root" && depth == 0 {
+                // Re-render at same depth via the top-level entry (which
+                // re-dispatches grammar). Matches the pre-retirement
+                // render_ast_with_grammar's recursive call at depth=0.
+                for c in &node.children {
+                    let sub = render_fold_grammar(g).run(c, depth);
+                    out.extend_from_slice(&sub);
+                }
+                return out;
+            }
+            // Verbatim-body path for LLVM-IR-style FOCUS nodes.
+            if let Some(body) = &node.body {
+                if !body.is_empty() {
+                    let fk: String = if !node.keyword.is_empty() {
+                        node.keyword.clone()
+                    } else if let Some(k) = g.keyword_for_kind(AstKind::Focus) {
+                        k.to_string()
+                    } else if node.name.as_bytes().first() == Some(&b'@') {
+                        "grammar".to_string()
+                    } else {
+                        "focus".to_string()
+                    };
+                    append_indent(&mut out, depth);
+                    out.extend_from_slice(fk.as_bytes());
+                    if !node.name.is_empty() {
+                        out.push(b' ');
+                        out.extend_from_slice(node.name.as_bytes());
+                    }
+                    out.extend_from_slice(body.as_bytes());
+                    out.push(b'\n');
+                    for c in children {
+                        out.extend_from_slice(&c);
+                    }
+                    return out;
+                }
+            }
+            let kw: String = g
+                .keyword_for_kind(AstKind::Focus)
+                .map(|s| s.to_string())
+                .unwrap_or_else(|| {
+                    if node.name.as_bytes().first() == Some(&b'@') {
+                        "grammar".to_string()
+                    } else {
+                        "focus".to_string()
+                    }
+                });
+            append_indent(&mut out, depth);
+            out.extend_from_slice(kw.as_bytes());
+            out.push(b' ');
+            out.extend_from_slice(node.name.as_bytes());
+            if !children.is_empty() {
+                out.extend_from_slice(b" {\n");
+                for c in children {
+                    out.extend_from_slice(&c);
+                }
+                append_indent(&mut out, depth);
+                out.extend_from_slice(b"}\n");
+            } else {
+                out.push(b'\n');
+            }
+            out
+        },
+        // on_project / on_split / on_zoom / on_refract — the four share
+        // one body via the grammar-keyword reverse lookup.
+        move |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
+            render_grammar_nonfocus(g, node, depth, children, "project")
+        },
+        move |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
+            render_grammar_nonfocus(g, node, depth, children, "type")
+        },
+        move |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
+            render_grammar_nonfocus(g, node, depth, children, "zoom")
+        },
+        move |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
+            render_grammar_nonfocus(g, node, depth, children, "refract")
+        },
+        // on_other — grammar-aware path falls through to
+        // mirror-canonical bytes for the bundle terminals + Spec A/B
+        // extensions.
+        |node: &AstNode, depth: i32, _children: Vec<Vec<u8>>| -> Vec<u8> {
+            render_other_mirror(node, depth)
+        },
+    )
+}
+
+/// Shared body for Project/Split/Zoom/Refract in the grammar-aware
+/// renderer. Reverse-looks-up the keyword via the grammar, falls
+/// through to the spec'd fallback, and handles the
+/// verbatim-body-with-sigil-name path used by LLVM IR.
+fn render_grammar_nonfocus(
+    g: &Grammar,
+    node: &AstNode,
+    depth: i32,
+    children: Vec<Vec<u8>>,
+    fallback: &str,
+) -> Vec<u8> {
+    let kw: String = if !node.keyword.is_empty() {
+        node.keyword.clone()
+    } else {
+        g.keyword_for_kind(node.kind)
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| fallback.to_string())
+    };
+    let mut out = Vec::new();
+    if let Some(body) = &node.body {
+        if !body.is_empty() {
+            let first = node.name.as_bytes().first().copied();
+            let sigil_name = !node.name.is_empty()
+                && matches!(first, Some(b'@') | Some(b'%') | Some(b'!') | Some(b'#'));
+            append_indent(&mut out, depth);
+            if !sigil_name {
+                out.extend_from_slice(kw.as_bytes());
+                if !node.name.is_empty() {
+                    out.push(b' ');
+                }
+            }
+            if !node.name.is_empty() {
+                out.extend_from_slice(node.name.as_bytes());
+            }
+            out.extend_from_slice(body.as_bytes());
+            out.push(b'\n');
+            for c in children {
+                out.extend_from_slice(&c);
+            }
+            return out;
+        }
+    }
+    append_indent(&mut out, depth);
+    out.extend_from_slice(kw.as_bytes());
+    out.push(b' ');
+    out.extend_from_slice(node.name.as_bytes());
+    out.push(b'\n');
+    for c in children {
+        out.extend_from_slice(&c);
+    }
+    out
+}
+
 /// `Fold1<F, Out>` — the uniform-reducer Fold5. A single function is
 /// applied at every AST kind. This is the degenerate case the
 /// `content_oid` Merkle hash uses: the dispatch on `AstKind` happens
