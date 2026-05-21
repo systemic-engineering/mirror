@@ -245,8 +245,9 @@ grammar @kintsugi/merge {
     | rename(path, path)
     | merge_into(path, [path])      # write a synthesised union
 
-  # the strategy vocabulary — CLOSED enum (one variant per named
-  # strategy). open extension requires a new grammar tick; this is
+  # the strategy vocabulary — CLOSED sum type (one variant per named
+  # strategy), expressed in mirror, not in Rust. open extension
+  # requires a kintsugi pass over this grammar itself; this is
   # deliberate (see §2.3).
   type strategy =
     | keep_both(path, path)
@@ -282,7 +283,7 @@ grammar @kintsugi/merge {
   apply(collision, strategy) -> imperfect(plan, loss) { \ }
 
   # the public-facing tournament entry. delegates to
-  # @fate/tournament.tournament with the kintsugi rule.
+  # @fate.infer with `config: tournament_bracket(...)` (§4).
   resolve(collision) -> imperfect(plan, no_winner, loss) { \ }
 }
 
@@ -368,40 +369,56 @@ is dead; ∞ when it's still referenced.
 
 ### 2.3 Closed vs open vocabulary — decision
 
-**Decision: closed enum, six variants, today.** Justification:
+**Decision: closed sum type, six variants, today.** The vocabulary
+is declared as `type strategy = | keep_both | delete_smaller | …`
+in `mirror/kintsugi/merge.mirror` — a closed Choice in the mirror
+grammar, not a Rust enum. The closure is grammatical: extending the
+variant set is a kintsugi pass over the merge grammar itself, not a
+Rust recompile. Justification:
 
 1. **The scoring function (§3) must be uniform across strategies.**
-   A closed enum lets the scoring function pattern-match per
+   A closed sum type lets the scoring function dispatch per
    variant and use strategy-specific loss components. An open
    combinator vocabulary requires every new strategy to teach the
    scorer about itself, which violates the formatter's
    contraction-map argument (the contraction factor `γ` would
    depend on the unboundedly-many open strategies).
 
-2. **Closed enums are content-addressable.** A `Combinator` enum
+2. **Closed sum types are content-addressable.** A `Combinator::Choice`
    over the strategies hashes to one OID; the bootstrap can verify
-   the strategy set with one comparison. Open combinator vocabularies
-   would require recursive hashing of arbitrary user-supplied
-   strategy trees.
+   the strategy set with one comparison. Open vocabularies would
+   require recursive hashing of arbitrary user-supplied strategy
+   trees.
 
 3. **The grammar is sub-Turing.** Per `mirror-compile-bootstrap.md`,
    all of mirror's bodies must be sub-Turing decidable. Open
    combinator vocabularies admit fixed-points whose decidability is
-   not guaranteed; closed enums always terminate (the strategy set
-   is finite).
+   not guaranteed; closed sum types always terminate (the variant
+   set is finite).
 
-4. **Open extension is available via a grammar tick.** Adding a
-   seventh strategy is a one-line grammar change plus a new
-   `walk_combinator` arm. The cost is a kintsugi pass over the
-   merge.mirror grammar itself — exactly the kintsugi-formatter
-   loop one level up. This is *correct*: a new strategy IS a
-   structural change to the merge vocabulary, and structural
-   changes go through kintsugi.
+4. **Open extension is available via a kintsugi pass on the merge
+   grammar itself.** Adding a seventh strategy is a one-line edit to
+   `mirror/kintsugi/merge.mirror` followed by a kintsugi settle.
+   The merge grammar is itself a `.mirror` file; structural changes
+   to it go through the same loop that resolves any other migration
+   — exactly the kintsugi-formatter property one level up. This is
+   *correct*: a new strategy IS a structural change to the merge
+   vocabulary, and structural changes go through kintsugi.
 
 The vocabulary is closed *at this kintsugi tick*. The next tick can
 extend it (per `kintsugi-formatter.md`'s autopoietic-closure
 property). The current six cover every collision pattern surfaced
 in the boot tree audit.
+
+> **Terminology note (2026-05-22).** Earlier drafts said "closed
+> enum." That phrase was Rust-flavoured shorthand. In mirror's own
+> language the strategy set is a **closed sum type** declared as
+> `type strategy = | … | …` and compiled into a `Combinator::Choice`
+> over the named variants. The closure is grammatical, not
+> implementation-level; the strategy vocabulary lives in
+> `mirror/kintsugi/merge.mirror`, not in Rust. Any remaining
+> appearances of "enum" in this document refer to that sum type,
+> not to a Rust language construct.
 
 ### 2.4 Strategy applicability — enumeration
 
@@ -625,6 +642,42 @@ but not yet implemented. The MCP wrapper script
 (`bin/mirror-mcp`) advertises `mirror_fate` but the subcommand does
 not exist in the binary (per `road-to-1.0.md` Tick 4).
 
+> **Reframe (2026-05-22).** Earlier drafts spoke of
+> `@fate.tournament.tournament` as a top-level call — the doubled
+> `tournament` reflected that today's grammar declares a `tournament`
+> action inside an `@fate/tournament` grammar. Alex's call: **Fate
+> has one public surface, `@fate.infer`.** Tournament is a
+> *configuration* of inference, not a separate action. The bracket
+> rule (`elite(1).beam(8).halving(3)`) is a value of type
+> `tournament_bracket` passed in the `config` slot of
+> `@fate.infer(query, config)`. The current `@fate/tournament`
+> grammar retires; its `rule` sum type migrates into
+> `@fate.tournament_bracket`. Beam, halving, elite, etc., become
+> values constructing a `tournament_bracket`, not separate actions.
+>
+> The unified surface:
+>
+> ```mirror
+> grammar @fate {
+>   type config =
+>     | single_shot
+>     | tournament_bracket(rule)
+>     | …                          # future strategies, same place
+>
+>   type rule = greedy | beam(u64) | elite(u64) | halving(u64)
+>             | tabu(u64) | anneal(f64) | ucb(f64)
+>
+>   compose(rule, rule) -> rule { \ }
+>
+>   infer(hole_oid, context, config) -> imperfect([candidate], no_proposal, loss) { \ }
+> }
+> ```
+>
+> Everywhere the rest of this spec says
+> `@fate.tournament.tournament`, read `@fate.infer(…, config:
+> tournament_bracket(…))`. The doubled-name was a transient
+> artefact of the staircase; the unified surface is what lands.
+
 The wiring needed for tournament merges:
 
 1. **A `mirror_fate` MCP tool implementation** (or equivalently a
@@ -709,7 +762,8 @@ still cover the round).
 |------|-------|-------|------------------|
 | `mirror fate` subcommand | `bootstrap/src/main.rs::cmd_fate` | none | accepts `<collision_oid>`; calls `@fate.infer`; emits `[strategy]` |
 | `mirror_fate` MCP tool | `bin/mirror-mcp` | advertised, unwired | wired to `cmd_fate` |
-| `@fate.infer` grammar | `boot/std/fate.mirror` | missing — only `@fate.tournament` exists | declared with signature above |
+| `@fate.infer` grammar | `boot/std/fate.mirror` | missing — only `@fate.tournament` exists (retires per §4.1 reframe) | declared with signature `(hole_oid, context, config) -> imperfect([candidate], no_proposal, loss)`; `config` carries `tournament_bracket(rule)` for the tournament case |
+| `@fate.tournament_bracket` config | `boot/std/fate.mirror` | does not exist | absorbs today's `@fate/tournament.rule` sum type as a config value, not a separate action |
 | Five models' `\` bodies | `boot/std/ai/*.mirror` | each is `\` | each returns its model-specific strategy proposal |
 | `@kintsugi/merge` grammar | `boot/std/kintsugi/merge.mirror` | does not exist | declared per §2.1 |
 | Strategy applicability filter | `@kintsugi/merge.enumerate` | does not exist | implements §2.4 matrix |
@@ -808,20 +862,25 @@ extended to combinators (open vocabulary) with hundreds of
 candidates. Today the closed enum keeps the candidate set ≤ 6;
 the tournament is a sort, not a bracket.
 
-**The `@fate/tournament.tournament` rule** (`elite(1).beam(8).halving(3)`)
-IS load-bearing for *au candidate selection within stage 1*, not for
-strategy elimination after stage 2. The two tournaments compose:
+**The bracket rule `elite(1).beam(8).halving(3)`** IS load-bearing
+for *au candidate selection within stage 1*, not for strategy
+elimination after stage 2. Two layers compose:
 
-- Inner tournament: Fate's five models tournament-select au
-  candidates within each model. This is the
-  `elite(1).beam(8).halving(3)` composition. Output: one strategy
-  proposal per model.
-- Outer tournament: the five-or-fewer model proposals + static
-  enumerations are gated and ranked. Output: one winner.
+- **Inner layer** (configured, not a separate call): each Fate
+  model tournament-selects au candidates inside its own search.
+  The bracket rule is the `config: tournament_bracket(...)` value
+  passed to `@fate.infer` — a per-call configuration parameter, not
+  a distinct API surface. Output: one strategy proposal per model.
+- **Outer layer** (this spec's algorithm): the five-or-fewer model
+  proposals + static enumerations are gated and ranked
+  lexicographically. Output: one winner.
 
-The outer tournament is *this spec*. The inner tournament is
-Fate's existing machinery (per `tournament.mirror` and
-`docs/ai/tournament.md`).
+The outer layer is *this spec*. The inner layer is a configuration
+field on `@fate.infer`; today's `@fate/tournament.tournament` action
+retires in favour of `@fate.infer(…, config: tournament_bracket(…))`
+per §4.1. The `elite/beam/halving/tabu/anneal/ucb` sum type that
+describes the bracket structure remains, just relocated as a value
+type inside `@fate`.
 
 ### 5.3 Termination
 
@@ -1136,11 +1195,17 @@ failure is success").
    too large. Alternative: `ε = 0.01` (one percent of the maximum
    possible κ). Which?
 
-3. **`@fate.infer` vs `@fate.tournament.tournament`.** The grammar
-   declares two action shapes. Should the tournament-merge spec use
-   `infer` (returns proposals) or `tournament` (returns reduced
-   set)? My read: `infer` for the proposal layer; `tournament` for
-   the elimination layer; this spec uses both. Confirm?
+3. **`@fate.infer` as the single surface.** [DECIDED 2026-05-22.]
+   Alex: "@fate.infer ought to be the single surface for running
+   fate. The tournament is a configuration concern in the type
+   passed to infer." The earlier framing of
+   `@fate.tournament.tournament` as a separate action retires;
+   today's `@fate/tournament` grammar collapses into a `config`
+   value (`tournament_bracket(rule)`) inside `@fate.infer`. The
+   doubled `tournament` was a structural redundancy. See §4.1's
+   reframe block for the unified grammar declaration; §4.4's wiring
+   table for the absorption tasks; §5.2 for the inner/outer-layer
+   reformulation. No follow-up needed on this question.
 
 4. **`mirror fate` subcommand vs `mirror_fate` MCP tool.** Are they
    strictly equivalent surfaces (the MCP tool wraps the subcommand)?
@@ -1385,8 +1450,9 @@ Fate's models close their `\` per §4.1's mapping.
 
 *A collision is an under-determined morphism.*
 *The tournament is the formatter applied to identity.*
-*Six strategies; one closed enum; the scorer is sub-Turing.*
+*Six strategies; one closed sum type in mirror; the scorer is sub-Turing.*
 *Lexicographic composition over gates and ranks.*
+*One Fate surface — `@fate.infer` — with the tournament as a config.*
 *Fate's five models propose; the static enumerator filters;*
 *the gates eliminate; the holonomy ranks; the OID tiebreaks.*
 *The winner is a bundle automorphism; the gestalt records it.*
