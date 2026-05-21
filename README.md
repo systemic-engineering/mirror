@@ -1,5 +1,7 @@
 # mirror
 
+![](./void.png)
+
 The glass is the grammar. The wine is what you bring.
 The pitch is the eigenvalue. Neither alone. Both together.
 
