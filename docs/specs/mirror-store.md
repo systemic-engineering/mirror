@@ -25,8 +25,12 @@ Depends on:
   the feature flags that gate the std touchpoints.
 - `fragmentation/src/{fragment,store,bounded_store,frgmnt_store,sha,
   ref_,cid,encoding}.rs` — the API surface considered.
-- `spectral/docs/specs/` — task #43 (spectral-db); this spec absorbs
-  its substrate.
+- `spectral/docs/specs/` — task #43 (spectral-db) is a separate
+  project that consumes the same fragmentation substrate. This spec
+  defines mirror's Layer-1 store — NOT spectral-db. spectral-db's
+  own surface (distribution, deltas, conflict resolution, the
+  MNESIA adapter, the garden's read+write path) lives in its own
+  spec.
 
 Unblocks:
 - F-2 (next checkpoint after F-1): wire the Lift dispatch through a
@@ -34,8 +38,12 @@ Unblocks:
   cross-grammar dispatch is a no-op.
 - Tick 4c of the retirement plan: `grammar.rs` retires once the
   store owns grammar loading.
-- spectral-db / task #43: the database is no longer a separate
-  project. Same primitives, broader content kinds.
+- spectral-db / task #43: remains a separate project. Shares
+  fragmentation as content-addressed substrate; does NOT inherit
+  from mirror's store. spectral-db owns distribution, deltas,
+  conflict resolution, the MNESIA adapter — the engine that
+  powers the garden. Sharing a substrate is not the same as being
+  the same artifact.
 - The `@mirror/store` grammar declaration (the existing
   three-backend sketch in this file's prior revision) gets a
   concrete Layer-1 implementation it can dispatch over.
@@ -82,11 +90,13 @@ Three things are needed before the structural FP1 lands:
 This spec lands the architecture. The implementation follows in F-2.
 
 The thing the types don't say: **the Lift registry IS the mirror
-store IS the spectral-db substrate.** All three names point at the
-same content-addressed key/value layer keyed on `@<ref>`. The Lift
-registry is the store restricted to grammar-typed entries.
-spectral-db is the store with broader content kinds. They are the
-same primitives at different type-restrictions.
+store.** Two names; one Layer-1 component, keyed on `@<ref>`, with
+a small closed `Entry` enum (Combinator + AstNode + Bytes).
+spectral-db (task #43) is a separate project that consumes the same
+fragmentation primitives the mirror store consumes — but adds an
+engine on top: distribution, deltas, conflict resolution, the
+MNESIA adapter. Sharing fragmentation is not being the same
+artifact. The car is not the fuel.
 
 ---
 
@@ -296,9 +306,10 @@ pub trait MirrorStore {
 }
 ```
 
-That's the total surface. Six functions. Two more get exposed in
-`v1.5` and `v2` for spectral-db's use cases (`list_by_kind`,
-`crystallize`); they live in §7, not here.
+That's the total surface. Six functions. The store stays small
+and Combinator-focused; it does NOT grow into spectral-db's
+content types. spectral-db declares its own typed entry surface in
+its own crate (see §7).
 
 ### 3.1 Reference, Oid, Entry, Witness
 
@@ -362,7 +373,9 @@ candidates considered and rejected:
   has compaction; the in-memory store doesn't, since process exit
   is the GC).
 - **`iter()` / `keys()`** — useful for diagnostics, not for the
-  Lift dispatch. Defer to v1.5 when spectral-db needs them.
+  Lift dispatch. Defer until a concrete diagnostic use lands; not
+  added speculatively for spectral-db (spectral-db has its own
+  storage layer).
 
 The `boot` function is the heavy lifter — it owns the load order
 (§5), the seed-vs-meta-glass dispatch, and the failure modes
@@ -402,15 +415,18 @@ Per `fragmentation/Cargo.toml` and `src/lib.rs`:
   reads, shard-locked writes, `Send + Sync` unconditional. The
   in-memory store the mirror Layer-1 needs.
 - **`FrgmntStore<N>`** (`frgmnt_store.rs`) — bounded cache +
-  on-disk spillover under `.frgmnt/objects/`. The persistence
-  story for spectral-db (§7).
+  on-disk spillover under `.frgmnt/objects/`. Useful for mirror's
+  own persistence when the boot set outgrows memory. spectral-db
+  has its own persistence story (MNESIA + sync); not this spec's
+  concern.
 - **`BoundedStore<N>`** (`bounded_store.rs`) — size-bounded cache
   with LIFO eviction. For the gestalt-tier cache mirror's LSP
   surface wants.
 - **`Cid<H>`** (`cid.rs`) — self-describing content identifier;
   wraps `Ref<H>` with codec + hash-algorithm metadata. The
-  forward-compatibility envelope for spectral-db's broader content
-  types.
+  forward-compatibility envelope for future content types if
+  mirror's `Entry` ever needs codec variation (it currently
+  doesn't).
 - **`Reconstructable` trait** (`fragment.rs:222`) — round-trip
   encode/decode. The serialization story for `boot()`'s persistence
   variant.
@@ -449,7 +465,8 @@ Default features: none. The git/ssh/gpg/fuse/cli features are not
 needed for Layer 1. The `cli` binary is irrelevant; the mirror
 bootstrap doesn't need a `frgmt` subcommand.
 
-For spectral-db's persistence story (§7), we eventually add:
+For any future on-disk mirror-store mode (mirror's own concern,
+separate from spectral-db's persistence), we add:
 
 ```toml
 fragmentation = { path = "../fragmentation",
@@ -758,13 +775,17 @@ relate as:
   implement the same outer grammar contract.
 
 The mapping: the Lift registry is `@mirror/store/memory` restricted
-to `Combinator`-typed entries. The full `@mirror/store` is broader
-— it stores arbitrary content. spectral-db is the broadest backend.
+to `Combinator`-typed entries (with AstNode + Bytes as v1
+conveniences). spectral-db's storage layer is NOT a backend of
+mirror's store — it's a peer system that consumes the same
+fragmentation substrate. The naming overlap (`@mirror/store/...`
+backend grammars vs spectral-db's storage) is historical; future
+revisions may rename the mirror-store backend variants so the
+substrate distinction is named in code.
 
-This is the unification the brief named: "the Lift registry IS the
-mirror store IS the spectral-db substrate." Three names; one
-content-addressed key/value layer; different type restrictions and
-different persistence backends.
+The correct unification: the Lift registry IS the mirror store —
+two names, one Layer-1 component. spectral-db shares fragmentation
+with mirror's store; it does not share its definition.
 
 ---
 
@@ -889,108 +910,94 @@ F-2 — the next Mara tick after this spec — implements:
 
 F-2 does NOT implement:
 
-- spectral-db's broader content kinds (§7 — v1.5).
-- On-disk persistence (§7 — v1.5).
+- On-disk persistence for mirror's store (§7; separate from
+  spectral-db's persistence). v1.5.
 - LSP integration (separate spec).
 - The `mirror boot --resolve` subcommand (separate tick).
 
 ---
 
-## 7. spectral-db implications
+## 7. Relationship to spectral-db
 
-The store IS the spectral-db substrate. Task #43 stops being a
-separate project.
+**The mirror store is NOT spectral-db.** It's a small Layer-1
+component of mirror's bootstrap. spectral-db (task #43) is a
+separate project that powers the garden, with its own scope:
+distribution, deltas, conflict resolution, the MNESIA adapter,
+and the read+write surface the systemic.engineering garden runs
+on. Earlier drafts of this spec collapsed the two; that collapse
+was wrong. The car is not the fuel.
 
-### 7.1 The Entry type's enum across versions
+What they share: **fragmentation as the content-addressed
+substrate.** Both depend on `fragmentation`'s `Shard` + `Fractal`
+primitives for content-OID computation and storage. Cut 1 (feature-
+gate `dashmap`) and Cut 2 (split `Fragmentable` into
+`ContentAddressed` + `TreeShaped`) land in fragmentation regardless
+of which consumer triggered them — they benefit both.
 
-**v1 (this tick — F-2):**
+What they don't share: the consumption pattern. Mirror's store is
+consumed by the walker via `apply_h`, restricted to a small closed
+set of entry types. spectral-db is consumed by the network, the
+CLI, and the garden — with its own typed surface, replication
+protocol, conflict-resolution machinery, and persistence model.
 
-```rust
-pub enum Entry {
-    Combinator(Combinator),
-    AstNode(AstNode),
-    Bytes(Vec<u8>),
-}
-```
-
-Layer-1 + Layer-2 use. Combinator for the Lift registry. AstNode
-for parsed source caches. Bytes for raw source.
-
-**v1.5 (basic spectral-db):**
-
-```rust
-pub enum Entry {
-    Combinator(Combinator),
-    AstNode(AstNode),
-    Bytes(Vec<u8>),
-    Project(Project),       // .spectral/sessions/ entries
-    Crystal(Crystal),       // crystallized subgraphs
-}
-```
-
-Two new variants for the spectral-db CLI surface. `Project` is
-session state (per `spectral/CLAUDE.md`'s `.spectral/` directory
-layout). `Crystal` is a settled subgraph — the output of `spectral
-refract`.
-
-The five-operation CLI (`focus`, `project`, `split`, `zoom`,
-`refract`) maps to the store:
-
-| CLI op | Store interaction |
-|---|---|
-| `focus` | `store.fetch(reference)` |
-| `project` | `store.fetch(reference)` filtered by a predicate (new API: `list_by_kind`) |
-| `split` | `store.fetch(reference)` then walk children |
-| `zoom` | `store.insert(reference, transformed_entry)` |
-| `refract` | `store.insert(crystallized, Entry::Crystal(crystal))` |
-
-The `list_by_kind` and `crystallize` functions are the v1.5
-additions to the API surface. They live alongside the six v1
-functions, not inside them.
-
-**v2 (full spectral-db):**
+### 7.1 The mirror store's Entry surface (stable, small)
 
 ```rust
 pub enum Entry {
-    Combinator(Combinator),
-    AstNode(AstNode),
-    Bytes(Vec<u8>),
-    Project(Project),
-    Crystal(Crystal),
-    Gestalt(Gestalt),       // .spectral/gestalt/ entries
-    Session(Session),       // .spectral/sessions/<timestamp>/
-    Eigenboard(Eigenboard), // settled eigenboard state
+    Combinator(Combinator),  // Lift registry; loaded grammars
+    AstNode(AstNode),        // parsed source caches
+    Bytes(Vec<u8>),          // raw source / opaque content
 }
 ```
 
-The full spectral-db with gestalt-rooted navigation, multi-session
-state, and eigenboard sheaves (per the memory note
-`project-eigenboard-is-sheaf.md`).
+This is the full surface. The mirror store does NOT grow `Project`
+/ `Crystal` / `Gestalt` / `Session` / `Eigenboard` variants — those
+are spectral-db's content types, declared in spectral-db's own
+crate on top of the same fragmentation primitives. The mirror
+store stays Combinator-focused; that focus is the point.
 
-### 7.2 The CLI surface rides the store
+New API surface beyond the six functions (`list_by_kind`,
+`crystallize`, etc.) belongs in spectral-db, not here.
 
-`spectral focus path/to/crystal`:
+### 7.2 What spectral-db owns (out of scope for this spec)
 
-```rust
-fn focus(args: &Args) -> Result<()> {
-    let store = MirrorStore::open(args.spectral_dir)?;
-    let entry = store.fetch(&args.reference)?;
-    println!("{}", render_entry(entry));
-}
-```
+The list, for honest naming — none of these belong in mirror's
+store; all of them belong in spectral-db's own scope:
 
-— no separate database layer. The store IS the database.
+- **Distribution.** Multi-node replication; the protocol for
+  eventually-consistent state across peers.
+- **Deltas.** Snapshot-to-snapshot diff at content-addressed
+  granularity; the bandwidth story for sync.
+- **Conflict resolution.** Likely a kintsugi-tournament shape
+  applied to data conflicts (distinct from file collisions in
+  `kintsugi-tournament.md`'s scope).
+- **The MNESIA adapter.** BEAM persistence — the garden's
+  read-traffic backend.
+- **The `spectral *` CLI surface.** `focus` / `project` / `split`
+  / `zoom` / `refract` dispatch into spectral-db's API, not into
+  mirror's store.
+- **Gestalt navigation, session state, eigenboard storage.**
+- **The garden's read+write path.** The thing the public
+  systemic.engineering surface is built on.
+
+When spectral-db's spec lands (`spectral/docs/specs/spectral-db.md`),
+this spec gets a one-line back-reference. They're peers.
 
 ### 7.3 Implication for the spec hierarchy
 
-- `mirror/docs/specs/mirror-store.md` — this spec; the store
-  architecture, the FP1 reframe, the fragmentation audit.
-- `spectral/docs/specs/spectral-db.md` (to be written) — the
-  CLI surface, the Entry variants for v1.5+, the persistence story.
+- `mirror/docs/specs/mirror-store.md` (this spec) — mirror's
+  Layer-1 store. Small. Combinator-focused.
+- `spectral/docs/specs/spectral-db.md` (to be written) —
+  spectral-db's full surface: distribution, deltas, conflict
+  resolution, MNESIA, CLI, the garden.
+- `fragmentation/docs/…` — the shared substrate's surface,
+  consumed by both.
 
-The spectral-db spec doesn't need to redeclare the substrate. It
-imports this one. Task #43's scope collapses to: "extend the store's
-Entry enum, add the v1.5 API functions, wire the five-op CLI."
+Three artifacts. Three scopes. One shared dependency.
+
+Task #43 stays a separate project. Earlier framing in this spec
+that had it "collapse" or "absorb" into mirror's store retires
+with this revision.
 
 ---
 
@@ -1153,9 +1160,10 @@ The store today: in-memory only. The brief mentions persistence to
 
 **Provisional answer.** v1 (F-2): in-memory only via
 `ConcurrentStore` (or its single-threaded equivalent post-Cut 1).
-v1.5: hybrid via `FrgmntStore` for the spectral-db state. The
-boot set stays in memory; only session/crystal/gestalt entries
-go to disk.
+v1.5 (mirror-store side): optional hybrid via `FrgmntStore` for
+large boot sets that outgrow memory. spectral-db's persistence
+(session/crystal/gestalt entries) is OUT of scope here — those
+live in spectral-db's own storage.
 
 ### 9.4 Concurrent access — read-during-write, snapshot semantics
 
@@ -1239,8 +1247,11 @@ Not in this tick's scope, but flagging for the follow-up:
    retirement gets the store as its successor. End-state file list
    gains `store.rs`. The Cargo.toml dependency table gains
    `fragmentation`.
-5. **`spectral/docs/specs/spectral-db.md`** (to be written) — task
-   #43 collapses to "extend Entry, add v1.5 API, wire CLI."
+5. **`spectral/docs/specs/spectral-db.md`** (to be written, by the
+   spectral side) — task #43 is a separate project; its spec
+   declares the distribution, delta, conflict-resolution, and
+   MNESIA surface, and notes that it shares fragmentation with
+   mirror's store. NOT a collapse.
 
 None of those updates happen in this tick. They're follow-up work
 once F-2 lands.
@@ -1268,8 +1279,9 @@ once F-2 lands.
 - `fragmentation/src/concurrent_store.rs` — `ConcurrentStore<N, H>`;
   the in-memory store mirror consumes.
 - `fragmentation/src/frgmnt_store.rs` — `FrgmntStore<N>`; the
-  hybrid in-memory + on-disk store spectral-db will consume in
-  v1.5.
+  hybrid in-memory + on-disk store. Available to both mirror (if
+  the boot set outgrows memory) and spectral-db (as one persistence
+  option among MNESIA and others) — each as a separate consumer.
 - `fragmentation/src/bounded_store.rs` — `BoundedStore<N>`; the
   LRU-bounded cache for the gestalt tier.
 - `fragmentation/src/sha.rs` — `HashAlg` trait; pluggable hash.
@@ -1283,9 +1295,10 @@ once F-2 lands.
 
 ---
 
-*Same shape. Three layers. The Lift registry IS the mirror store
-IS the spectral-db substrate. fragmentation is the substrate the
-substrate stands on. The thing the types don't say: the store is
-already what we've been calling three different names.*
+*Same shape. Three layers. The Lift registry IS the mirror store —
+two names, one Layer-1 component. spectral-db shares fragmentation
+with the mirror store; it does not share its definition.
+fragmentation is the substrate they both stand on. The thing the
+types don't say: a shared substrate is not a shared artifact.*
 
 *Apache-2.0.*
