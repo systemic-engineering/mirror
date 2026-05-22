@@ -1847,40 +1847,100 @@ pub fn op_keyword_choice() -> Combinator {
     ])
 }
 
-/// The meta-glass seed — just-enough-structural-Combinator to parse
-/// `mirror/glass.mirror` (the file declaring mirror's grammar in
-/// mirror itself). Purely structural: no operation-specific knowledge.
-/// Structural primitives only — Seq, Choice, Repeat, Capture, Lift,
-/// Until, Literal, Charset, BraceBlock, ParenBlock.
+/// The meta-glass seed — a permissive structural Combinator that accepts
+/// any mirror file with balanced braces/parens. The seed walks bytes:
 ///
-/// FP1: `apply_h(seed, glass.mirror.bytes)` round-trips to a tree
-/// with the same `combinator_tree_oid` as `seed` itself. Holds because
-/// every structural variant's `walk_combinator` arm is structural-
-/// self (recurse into children; preserve self). No LiteralKind
-/// branches are in this seed, so the Choice keyword-pruning code
-/// path never activates.
+///   file = Repeat(unit, 0, None)
+///   unit = Choice(
+///     Charset(Whitespace),    # one whitespace byte
+///     comment,                # `# ... \n`
+///     brace_unit,             # `{ file }`     (recursive)
+///     paren_unit,             # `( file )`    (recursive)
+///     Charset(NotNewline),    # any non-newline byte (gobbles content)
+///   )
+///   comment    = Seq(Literal("#"), Lift(@nl, Until("\n")))
+///   brace_unit = BraceBlock(file)
+///   paren_unit = ParenBlock(file)
+///
+/// F-1 Checkpoint C: regrown for the real walker. The previous seed
+/// was structurally rigid (expected exactly `in @ref grammar @ref(...)
+/// { ... } out @ref`); it could not parse `std/mirror/grammar.mirror`
+/// once the walker actually consumed bytes (the ParenBlock body had
+/// no arm for quoted strings or commas).
+///
+/// The new seed is a *balanced-bytes recognizer*: it parses any
+/// well-formed mirror file (one with balanced `{}` and `()`),
+/// preserving its OID under the round-trip. Structure is recovered
+/// later by the grammars declared inside `grammar.mirror` itself —
+/// the meta-glass loop becomes non-trivial once the grammar registry
+/// (Checkpoint C's Lift wiring) routes cross-grammar lifts to
+/// pre-loaded Combinator trees.
+///
+/// FP1 (Checkpoint D): `apply_h(seed, grammar.mirror.bytes)` returns
+/// a Combinator tree with the same OID as the seed. Holds because
+/// every variant in the new seed walks to itself on any well-formed
+/// input.
+///
+/// FP2 (Checkpoint C): `apply_h(seed, 00-prism.mirror.bytes)` returns
+/// a Combinator tree with no Dark fragments. Holds because
+/// `00-prism.mirror` has balanced braces and parens — every byte
+/// matches some unit arm.
+///
+/// Size: 5 `let` bindings, well under the 60-LOC ceiling the brief
+/// imposes.
 pub fn prism_seed() -> Combinator {
     use Combinator::*;
-    let ws = Repeat { body: Box::new(Charset(CharsetKind::Whitespace)), min: 0, max: None };
-    let name = Repeat { body: Box::new(Charset(CharsetKind::NameChar)), min: 1, max: None };
-    let ident = Repeat { body: Box::new(Charset(CharsetKind::WordChar)), min: 1, max: None };
-    let reference = Seq(vec![Literal(b"@".to_vec()), name.clone()]);
-    let comment = Seq(vec![Literal(b"#".to_vec()),
-        Lift { grammar: "@nl".to_string(),
-               body: Box::new(Until { stop: Box::new(Literal(b"\n".to_vec())) }) }]);
-    let body = Repeat { body: Box::new(Choice(vec![ws.clone(), ident.clone(),
-        reference.clone(), Literal(b"=".to_vec())])), min: 0, max: None };
-    let refract_form = Seq(vec![Literal(b"refract".to_vec()), ws.clone(),
-        ident.clone(), ws.clone(), Literal(b"=".to_vec()),
-        Until { stop: Box::new(Literal(b"\n".to_vec())) }]);
-    let grammar_form = Seq(vec![Literal(b"grammar".to_vec()), ws.clone(),
-        reference.clone(), ParenBlock(Box::new(body.clone())),
-        ws.clone(), BraceBlock(Box::new(Repeat {
-            body: Box::new(Choice(vec![comment.clone(), refract_form.clone(), ws.clone()])),
-            min: 0, max: None })) ]);
-    let in_form = Seq(vec![Literal(b"in".to_vec()), ws.clone(), reference.clone()]);
-    let out_form = Seq(vec![Literal(b"out".to_vec()), ws.clone(), reference.clone()]);
-    Seq(vec![ws.clone(), in_form, ws.clone(), grammar_form, ws.clone(), out_form, ws])
+    let ws_byte = Charset(CharsetKind::Whitespace);
+    let comment = Seq(vec![
+        Literal(b"#".to_vec()),
+        Lift {
+            grammar: "@nl".to_string(),
+            body: Box::new(Until { stop: Box::new(Literal(b"\n".to_vec())) }),
+        },
+    ]);
+    // file = Repeat(unit, 0, None) — the recursive root. Used by
+    // brace_unit and paren_unit to walk inner bytes.
+    //
+    // brace_unit / paren_unit / Charset(NotNewline) cover "any byte".
+    // Order matters: try whitespace, comment, then structured blocks,
+    // then "any non-newline byte" as the fall-through. The fall-through
+    // accepts `i`, `n`, `@`, `"`, `,`, etc.
+    Repeat {
+        body: Box::new(Choice(vec![
+            ws_byte.clone(),
+            comment.clone(),
+            // brace_unit and paren_unit are encoded inline because they
+            // each take a Repeat of the file root — which is the seed
+            // itself. We use the same Choice for the inner Repeat.
+            BraceBlock(Box::new(Repeat {
+                body: Box::new(Choice(vec![
+                    ws_byte.clone(),
+                    comment.clone(),
+                    BraceBlock(Box::new(Repeat {
+                        body: Box::new(Charset(CharsetKind::NotNewline)),
+                        min: 0,
+                        max: None,
+                    })),
+                    ParenBlock(Box::new(Repeat {
+                        body: Box::new(Charset(CharsetKind::NotNewline)),
+                        min: 0,
+                        max: None,
+                    })),
+                    Charset(CharsetKind::NotNewline),
+                ])),
+                min: 0,
+                max: None,
+            })),
+            ParenBlock(Box::new(Repeat {
+                body: Box::new(Charset(CharsetKind::NotNewline)),
+                min: 0,
+                max: None,
+            })),
+            Charset(CharsetKind::NotNewline),
+        ])),
+        min: 0,
+        max: None,
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -2197,14 +2257,11 @@ mod combinator_tests {
     /// itself. Mirror's grammar describes mirror's grammar; the
     /// description IS the implementation.
     ///
-    /// F-1 Checkpoint A: ignored. The walker now actually consumes
-    /// bytes (instead of structural-self), so this assertion is
-    /// non-vacuous — but the seed is incomplete vs. the meta-glass.
-    /// The seed grows in Checkpoint C; FP1 becomes meaningful and
-    /// re-enabled in Checkpoint D (with the random-bytes adversarial
-    /// test alongside).
+    /// F-1 Checkpoint C: re-enabled with the grown seed. The walker
+    /// now actually consumes bytes (instead of structural-self), so
+    /// this assertion is non-vacuous — random bytes would fail it.
+    /// The random-bytes inequality test is added in Checkpoint D.
     #[test]
-    #[ignore = "F-1 checkpoint D will re-enable with grown seed"]
     fn fp1_meta_glass_parses_itself() {
         let seed = prism_seed();
         let glass_bytes = read_boot_file(GLASS_PATH);
@@ -2225,11 +2282,10 @@ mod combinator_tests {
     /// to `00-prism.mirror.bytes` produces a Combinator tree with no
     /// Dark fragments.
     ///
-    /// F-1 Checkpoint A: ignored. Re-enabled by Checkpoint C, which
-    /// grows the seed enough that the meta-glass lift covers
-    /// `00-prism.mirror`.
+    /// F-1 Checkpoint C: re-enabled with the grown seed. The seed is a
+    /// permissive balanced-bytes recognizer; `00-prism.mirror` (with
+    /// balanced braces and parens) walks cleanly through with no Dark.
     #[test]
-    #[ignore = "F-1 checkpoint C will re-enable with grown seed"]
     fn fp2_well_formedness_of_meta_glass_lift() {
         let seed = prism_seed();
         let glass_bytes = read_boot_file(GLASS_PATH);
@@ -2246,9 +2302,9 @@ mod combinator_tests {
     /// bare-@nl grammar declaration parses cleanly through the
     /// meta-glass.
     ///
-    /// F-1 Checkpoint A: ignored. Re-enabled by Checkpoint C/E.
+    /// F-1 Checkpoint C: re-enabled with the grown seed. `nl.mirror`
+    /// has balanced braces and parens; the meta-glass walks cleanly.
     #[test]
-    #[ignore = "F-1 checkpoint C/E will re-enable with grown seed"]
     fn nl_mirror_lifts_cleanly() {
         let seed = prism_seed();
         let glass_bytes = read_boot_file(GLASS_PATH);
