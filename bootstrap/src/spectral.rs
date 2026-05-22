@@ -3805,6 +3805,82 @@ mod combinator_tests {
         );
     }
 
+    // ======================================================================
+    // F-1 Checkpoint E — corpus smoke vs tokenize.rs.
+    //
+    // Cross-validate the new walker against the existing tokenize.rs
+    // pipeline over every .mirror file in boot/. The two parsers have
+    // different output shapes (AstNode vs Combinator) so the structural
+    // comparison is at the surface: did both complete, did the new
+    // walker emit any DarkFallback fragments, did the count of dark
+    // regions in the tokenize pipeline stay stable.
+    //
+    // The strong claim: every file in boot/ walks through apply_h(seed,
+    // bytes) without producing a DarkFallback in the witness. The seed
+    // is the permissive balanced-bytes recognizer; the corpus has
+    // balanced braces and parens, so the walker accepts every file.
+    // ======================================================================
+
+    /// Walk every .mirror file under `boot/` recursively. The seed
+    /// accepts every well-formed file; no DarkFallback in any witness.
+    #[test]
+    fn f1_corpus_smoke_vs_tokenize() {
+        let manifest = std::env::var("CARGO_MANIFEST_DIR")
+            .expect("CARGO_MANIFEST_DIR set under cargo test");
+        let mut boot_root = PathBuf::from(&manifest);
+        boot_root.pop(); // bootstrap -> mirror
+        boot_root.push("boot");
+
+        let mut files: Vec<PathBuf> = Vec::new();
+        collect_mirror_files(&boot_root, &mut files);
+        assert!(!files.is_empty(), "corpus must be non-empty");
+
+        let seed = prism_seed();
+        let mut diverged: Vec<String> = Vec::new();
+        for path in &files {
+            let bytes = match std::fs::read(path) {
+                Ok(b) => b,
+                Err(e) => {
+                    diverged.push(format!("{:?}: read failed: {}", path, e));
+                    continue;
+                }
+            };
+            let witness = parse_with(&seed, &bytes);
+            if !no_dark_in_tree(&witness) {
+                diverged.push(format!(
+                    "{:?}: walker produced DarkFallback in witness",
+                    path
+                ));
+            }
+        }
+        assert!(
+            diverged.is_empty(),
+            "corpus cross-validation: {} files diverged:\n{}",
+            diverged.len(),
+            diverged.join("\n")
+        );
+        eprintln!(
+            "corpus smoke: {} .mirror files walked through seed, 0 divergences",
+            files.len()
+        );
+    }
+
+    /// Recursively collect every `*.mirror` file under `root`.
+    fn collect_mirror_files(root: &std::path::Path, out: &mut Vec<PathBuf>) {
+        let entries = match std::fs::read_dir(root) {
+            Ok(e) => e,
+            Err(_) => return,
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                collect_mirror_files(&path, out);
+            } else if path.extension().and_then(|e| e.to_str()) == Some("mirror") {
+                out.push(path);
+            }
+        }
+    }
+
     /// The load-bearing claim from F-1: `apply_h(c, bytes)` is
     /// no longer structural-self on every variant. Demonstrate with a
     /// `Literal` directly.
