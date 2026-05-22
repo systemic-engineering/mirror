@@ -1539,6 +1539,141 @@ pub fn prism_seed() -> Combinator {
     Seq(vec![ws.clone(), in_form, ws.clone(), grammar_form, ws.clone(), out_form, ws])
 }
 
+// ---------------------------------------------------------------------------
+// Beta tree normalization — phase 1 (non-charset structural redexes).
+//
+// Per `docs/specs/combinator-optimization.md` §2: the redex set E1–E13
+// (excluding E10/E11/E14 which are *not* redexes per the spec). Phase 1
+// covers the non-charset structural rewrites:
+//
+//   E1.  Seq associativity:        Seq([Seq([a, b]), c]) → Seq([a, b, c])
+//   E2.  Choice associativity:     Choice([Choice([a, b]), c]) → Choice([a, b, c])
+//   E3.  Singleton Seq:            Seq([a]) → a
+//   E4.  Singleton Choice:         Choice([a]) → a
+//   E5.  Empty literal in Seq:     Seq([…, Literal(""), …]) → Seq([…, …])
+//   E6.  Zero-bound Repeat:        Repeat { body, min: _, max: Some(0) } → Literal("")
+//   E7.  One-one Repeat:           Repeat { body, min: 1, max: Some(1) } → body
+//   E8.  Repeat of empty:          Repeat { body: Literal(""), … } → Literal("")
+//   E12. DarkFallback dominates:   Choice([…, a, DarkFallback, b, …]) → Choice([…, a, DarkFallback])
+//   E13. Empty Seq:                Seq([]) → Literal("")
+//
+// Bottom-up: children are normalized before parents. Per the spec's
+// termination argument (§2.3), each step strictly decreases the
+// well-founded measure (tree_size, seq_depth, choice_depth); the
+// algorithm terminates in O(tree_size²).
+//
+// Confluence within phase 1 is by the diamond lemma sketch in §2.4
+// cases 1–7 (the cases involving phase-1 redexes only); the critical
+// pair E9 × E2 — which would break confluence if charset compilation
+// ran interleaved — is fenced into phase 2.
+// ---------------------------------------------------------------------------
+
+/// Normalize a combinator tree under phase-1 redexes (E1–E8, E12–E13).
+/// Bottom-up: children are normalized before parents. Returns a fresh
+/// tree; the input is borrowed.
+///
+/// This is one half of [`normalize`]; the full normalization is
+/// `normalize_phase2(normalize_phase1(c))`. Splitting the phases buys
+/// confluence per the spec's §2.4 case 8 critical-pair analysis.
+pub fn normalize_phase1(c: &Combinator) -> Combinator {
+    use Combinator::*;
+    match c {
+        Seq(children) => {
+            // Recurse first.
+            let normalized: Vec<Combinator> =
+                children.iter().map(normalize_phase1).collect();
+            // E1: flatten nested Seq.
+            let mut flat: Vec<Combinator> = Vec::with_capacity(normalized.len());
+            for child in normalized {
+                match child {
+                    Seq(inner) => flat.extend(inner),
+                    other => flat.push(other),
+                }
+            }
+            // E5: drop empty literals.
+            let trimmed: Vec<Combinator> = flat
+                .into_iter()
+                .filter(|c| !matches!(c, Literal(b) if b.is_empty()))
+                .collect();
+            // E3 / E13.
+            match trimmed.len() {
+                0 => Literal(Vec::new()), // E13
+                1 => trimmed.into_iter().next().unwrap(), // E3
+                _ => Seq(trimmed),
+            }
+        }
+        Choice(arms) => {
+            // Recurse first.
+            let normalized: Vec<Combinator> =
+                arms.iter().map(normalize_phase1).collect();
+            // E2: flatten nested Choice.
+            let mut flat: Vec<Combinator> = Vec::with_capacity(normalized.len());
+            for arm in normalized {
+                match arm {
+                    Choice(inner) => flat.extend(inner),
+                    other => flat.push(other),
+                }
+            }
+            // E12: truncate after the first DarkFallback.
+            let mut truncated: Vec<Combinator> = Vec::with_capacity(flat.len());
+            for arm in flat {
+                let is_dark = matches!(arm, DarkFallback);
+                truncated.push(arm);
+                if is_dark {
+                    break;
+                }
+            }
+            // E4: singleton.
+            match truncated.len() {
+                1 => truncated.into_iter().next().unwrap(),
+                _ => Choice(truncated),
+            }
+        }
+        Repeat { body, min, max } => {
+            let body_n = normalize_phase1(body);
+            // E6: zero upper bound.
+            if matches!(max, Some(0)) {
+                return Literal(Vec::new());
+            }
+            // E7: exact-one bounds.
+            if *min == 1 && matches!(max, Some(1)) {
+                return body_n;
+            }
+            // E8: repeat of empty literal.
+            if matches!(&body_n, Literal(b) if b.is_empty()) {
+                return Literal(Vec::new());
+            }
+            Repeat {
+                body: Box::new(body_n),
+                min: *min,
+                max: *max,
+            }
+        }
+        Capture { body, kind } => Capture {
+            body: Box::new(normalize_phase1(body)),
+            kind: *kind,
+        },
+        BraceBlock(body) => BraceBlock(Box::new(normalize_phase1(body))),
+        ParenBlock(body) => ParenBlock(Box::new(normalize_phase1(body))),
+        Until { stop } => Until {
+            stop: Box::new(normalize_phase1(stop)),
+        },
+        Lift { grammar, body } => Lift {
+            grammar: grammar.clone(),
+            body: Box::new(normalize_phase1(body)),
+        },
+        // Leaves: no redex applies.
+        Literal(_)
+        | LiteralKind { .. }
+        | Charset(_)
+        | IoBinding
+        | MatchArm
+        | SelectVariant
+        | KeywordFormBody { .. }
+        | DarkFallback => c.clone(),
+    }
+}
+
 #[cfg(test)]
 mod combinator_tests {
     use super::*;
@@ -1762,6 +1897,166 @@ mod combinator_tests {
         };
         let walked = parse_with(&c, b"define i32 @foo() { ret i32 0 }");
         assert_eq!(combinator_tree_oid(&c), combinator_tree_oid(&walked));
+    }
+
+    // ---------- normalize_phase1 — one test per redex E1–E8, E12–E13 ----------
+
+    /// E1. Seq associativity flattens nested Seqs.
+    #[test]
+    fn e1_seq_associativity_flattens() {
+        let a = Combinator::Literal(b"a".to_vec());
+        let b = Combinator::Literal(b"b".to_vec());
+        let c = Combinator::Literal(b"c".to_vec());
+        let input = Combinator::Seq(vec![
+            Combinator::Seq(vec![a.clone(), b.clone()]),
+            c.clone(),
+        ]);
+        let expected = Combinator::Seq(vec![a, b, c]);
+        assert_eq!(normalize_phase1(&input), expected);
+    }
+
+    /// E2. Choice associativity flattens nested Choices.
+    #[test]
+    fn e2_choice_associativity_flattens() {
+        let a = Combinator::Literal(b"a".to_vec());
+        let b = Combinator::Literal(b"b".to_vec());
+        let c = Combinator::Literal(b"c".to_vec());
+        let input = Combinator::Choice(vec![
+            Combinator::Choice(vec![a.clone(), b.clone()]),
+            c.clone(),
+        ]);
+        let expected = Combinator::Choice(vec![a, b, c]);
+        assert_eq!(normalize_phase1(&input), expected);
+    }
+
+    /// E3. Singleton Seq collapses to its single element.
+    #[test]
+    fn e3_singleton_seq_collapses() {
+        let a = Combinator::Literal(b"a".to_vec());
+        let input = Combinator::Seq(vec![a.clone()]);
+        assert_eq!(normalize_phase1(&input), a);
+    }
+
+    /// E4. Singleton Choice collapses to its single arm.
+    #[test]
+    fn e4_singleton_choice_collapses() {
+        let a = Combinator::Literal(b"a".to_vec());
+        let input = Combinator::Choice(vec![a.clone()]);
+        assert_eq!(normalize_phase1(&input), a);
+    }
+
+    /// E5. Empty literals are dropped from Seq.
+    #[test]
+    fn e5_empty_literal_dropped_from_seq() {
+        let a = Combinator::Literal(b"a".to_vec());
+        let b = Combinator::Literal(b"b".to_vec());
+        let input = Combinator::Seq(vec![
+            a.clone(),
+            Combinator::Literal(Vec::new()),
+            b.clone(),
+        ]);
+        let expected = Combinator::Seq(vec![a, b]);
+        assert_eq!(normalize_phase1(&input), expected);
+    }
+
+    /// E6. Zero-bound Repeat collapses to empty Literal.
+    #[test]
+    fn e6_zero_bound_repeat_collapses() {
+        let input = Combinator::Repeat {
+            body: Box::new(Combinator::Literal(b"x".to_vec())),
+            min: 0,
+            max: Some(0),
+        };
+        let expected = Combinator::Literal(Vec::new());
+        assert_eq!(normalize_phase1(&input), expected);
+    }
+
+    /// E7. Exact-one Repeat collapses to its body.
+    #[test]
+    fn e7_one_one_repeat_collapses_to_body() {
+        let body = Combinator::Literal(b"x".to_vec());
+        let input = Combinator::Repeat {
+            body: Box::new(body.clone()),
+            min: 1,
+            max: Some(1),
+        };
+        assert_eq!(normalize_phase1(&input), body);
+    }
+
+    /// E8. Repeat of empty Literal collapses to empty Literal.
+    #[test]
+    fn e8_repeat_of_empty_collapses() {
+        let input = Combinator::Repeat {
+            body: Box::new(Combinator::Literal(Vec::new())),
+            min: 0,
+            max: None,
+        };
+        let expected = Combinator::Literal(Vec::new());
+        assert_eq!(normalize_phase1(&input), expected);
+    }
+
+    /// E12. DarkFallback dominates: arms after a DarkFallback are unreachable.
+    #[test]
+    fn e12_dark_fallback_dominates() {
+        let a = Combinator::Literal(b"a".to_vec());
+        let b = Combinator::Literal(b"b".to_vec());
+        let input = Combinator::Choice(vec![
+            a.clone(),
+            Combinator::DarkFallback,
+            b,
+        ]);
+        let expected = Combinator::Choice(vec![a, Combinator::DarkFallback]);
+        assert_eq!(normalize_phase1(&input), expected);
+    }
+
+    /// E13. Empty Seq collapses to empty Literal.
+    #[test]
+    fn e13_empty_seq_collapses() {
+        let input = Combinator::Seq(Vec::new());
+        let expected = Combinator::Literal(Vec::new());
+        assert_eq!(normalize_phase1(&input), expected);
+    }
+
+    /// Composite — multiple redexes in one tree.
+    ///
+    /// Exercises associativity flattening (E1), empty-literal drop (E5),
+    /// singleton-Seq collapse (E3), and Capture recursion together.
+    /// Input:
+    ///   Capture {
+    ///     body: Seq([
+    ///       Seq([Literal("a"), Literal("")]),
+    ///       Seq([Literal("b")]),
+    ///     ]),
+    ///     kind: Focus,
+    ///   }
+    /// Expected:
+    ///   Capture { body: Seq([Literal("a"), Literal("b")]), kind: Focus }
+    #[test]
+    fn composite_multi_redex_tree() {
+        let a = Combinator::Literal(b"a".to_vec());
+        let b = Combinator::Literal(b"b".to_vec());
+        let input = Combinator::Capture {
+            body: Box::new(Combinator::Seq(vec![
+                Combinator::Seq(vec![a.clone(), Combinator::Literal(Vec::new())]),
+                Combinator::Seq(vec![b.clone()]),
+            ])),
+            kind: AstKind::Focus,
+        };
+        let expected = Combinator::Capture {
+            body: Box::new(Combinator::Seq(vec![a, b])),
+            kind: AstKind::Focus,
+        };
+        assert_eq!(normalize_phase1(&input), expected);
+    }
+
+    /// Idempotence: normalize_phase1(normalize_phase1(c)) == normalize_phase1(c).
+    /// The phase is in normal form once one pass settles bottom-up.
+    #[test]
+    fn phase1_idempotent_on_seed() {
+        let seed = prism_seed();
+        let once = normalize_phase1(&seed);
+        let twice = normalize_phase1(&once);
+        assert_eq!(once, twice);
     }
 }
 
