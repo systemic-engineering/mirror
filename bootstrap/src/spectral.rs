@@ -1371,12 +1371,25 @@ impl Prism for Combinator {
     }
 }
 
+/// Maximum recursion depth for the walker, normalize phases, and the
+/// Fold5 / Fold5At catamorphisms. F-4 fix: bounds the attacker-
+/// controlled stack-overflow surface from deeply-nested input
+/// (`{{{...{ \ }...}}}`). 1024 is generous for any legitimate
+/// `.mirror` file (the seed bottoms out under 30 levels) and stops a
+/// hostile 50k-nested input well before the default Rust thread
+/// stack (8 MB) is exhausted.
+///
+/// When the bound is exceeded, the Combinator-typed walkers emit
+/// `Combinator::DarkFallback` carrying the failure mode implicitly;
+/// callers can re-render the dark span via standard tooling.
+pub(crate) const MAX_DEPTH: usize = 1024;
+
 /// Walk source bytes with a combinator, returning the induced
 /// `Combinator` tree. Tick 4b.2 closes the variants `00-prism.mirror`
 /// uses: `Seq`, `Choice`, `Capture`, `BraceBlock`, `IoBinding`,
 /// `LiteralKind`, `Literal`. Other variants `unimplemented!()` with a
 /// pointer to the spec — they wait for the sub-ticks that need them.
-///
+
 /// Fixed-point shape: non-`Choice` variants return their own structure
 /// (with children recursively walked). `Choice` filters branches by
 /// whole-word keyword presence in the source. For FP1 the input source
@@ -1384,7 +1397,23 @@ impl Prism for Combinator {
 /// structurally identical to the seed. For FP2 the source is a
 /// different file with a subset of keywords, so `Choice` returns a
 /// pruned list.
+///
+/// F-4 fix: bounded by `MAX_DEPTH`; on overflow emits
+/// `Combinator::DarkFallback` rather than panicking the thread.
 fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator {
+    walk_combinator_at(c, source, 0, 0)
+}
+
+fn walk_combinator_at(
+    c: &Combinator,
+    source: &[u8],
+    _offset: usize,
+    depth: usize,
+) -> Combinator {
+    if depth >= MAX_DEPTH {
+        return Combinator::DarkFallback;
+    }
+    let d = depth + 1;
     match c {
         Combinator::Seq(children) => {
             // Walk each child against the same source. The Merkle hash
@@ -1392,7 +1421,7 @@ fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator 
             // walks to itself the parent's OID is preserved.
             let walked: Vec<Combinator> = children
                 .iter()
-                .map(|child| walk_combinator(child, source, 0))
+                .map(|child| walk_combinator_at(child, source, 0, d))
                 .collect();
             Combinator::Seq(walked)
         }
@@ -1413,7 +1442,7 @@ fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator 
                         }
                     }
                     _ => {
-                        kept.push(walk_combinator(b, source, 0));
+                        kept.push(walk_combinator_at(b, source, 0, d));
                     }
                 }
             }
@@ -1425,7 +1454,7 @@ fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator 
             // re-wraps under the same kind. The OID is
             // `hash("comb:capture", kind_tag : body_oid)` — unchanged
             // when the walked body matches the seeded body.
-            let walked_body = walk_combinator(body, source, 0);
+            let walked_body = walk_combinator_at(body, source, 0, d);
             Combinator::Capture {
                 body: Box::new(walked_body),
                 kind: *kind,
@@ -1435,7 +1464,7 @@ fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator 
             // Walk the body against the same source. The OID is
             // `hash("comb:brace_block", body_oid)` — preserved when
             // the walked body equals the seeded body.
-            let walked_body = walk_combinator(body, source, 0);
+            let walked_body = walk_combinator_at(body, source, 0, d);
             Combinator::BraceBlock(Box::new(walked_body))
         }
         Combinator::IoBinding => Combinator::IoBinding,
@@ -1449,7 +1478,7 @@ fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator 
             // bounds. The Merkle hash is `hash("comb:repeat",
             // body_oid : min : max)` so the OID is preserved when the
             // walked body hashes the same.
-            let walked_body = walk_combinator(body, source, 0);
+            let walked_body = walk_combinator_at(body, source, 0, d);
             Combinator::Repeat {
                 body: Box::new(walked_body),
                 min: *min,
@@ -1458,11 +1487,11 @@ fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator 
         }
         Combinator::Charset(k) => Combinator::Charset(*k),
         Combinator::ParenBlock(body) => {
-            let walked_body = walk_combinator(body, source, 0);
+            let walked_body = walk_combinator_at(body, source, 0, d);
             Combinator::ParenBlock(Box::new(walked_body))
         }
         Combinator::Until { stop } => {
-            let walked_stop = walk_combinator(stop, source, 0);
+            let walked_stop = walk_combinator_at(stop, source, 0, d);
             Combinator::Until {
                 stop: Box::new(walked_stop),
             }
@@ -1474,7 +1503,7 @@ fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator 
             // grammar's tree) live in a later sub-tick; today the OID
             // round-trip is what matters for the meta-glass
             // self-hosting equation.
-            let walked_body = walk_combinator(body, source, 0);
+            let walked_body = walk_combinator_at(body, source, 0, d);
             Combinator::Lift {
                 grammar: grammar.clone(),
                 body: Box::new(walked_body),
@@ -1519,8 +1548,20 @@ fn branch_keyword_occurs(branch: &Combinator, source: &[u8]) -> bool {
     false
 }
 
-fn is_word_byte(b: u8) -> bool {
-    b.is_ascii_alphanumeric() || b == b'_' || b == b'/'
+/// Whole-word boundary check shared by the combinator walker and the
+/// byte-level rewrite path (`pipeline::apply_rewrites`). Word bytes
+/// are ASCII alnum + `_`. Path separator `/` and reference sigil `@`
+/// are boundaries — a keyword inside `@mirror/grammar` is whole-word
+/// bounded on both sides.
+///
+/// F-3 fix: previously this function differed from `apply_rewrites`'s
+/// local `is_word_byte` (the walker treated `/` as a word byte; the
+/// rewrite path did not). Unified to the rewrite's narrower form so
+/// the two surfaces agree on every byte in 0..=255; the migration's
+/// structural rewrite of path components requires `/` to be a
+/// boundary. Pinned by `pipeline::rewrite_tests::f3_is_word_byte_unified_across_surfaces`.
+pub(crate) fn is_word_byte(b: u8) -> bool {
+    b.is_ascii_alphanumeric() || b == b'_'
 }
 
 /// The five op-keyword Choice. The keyword table for any mirror file's
@@ -1602,20 +1643,33 @@ pub fn prism_seed() -> Combinator {
 // ran interleaved — is fenced into phase 2.
 // ---------------------------------------------------------------------------
 
-/// Normalize a combinator tree under phase-1 redexes (E1–E8, E12–E13).
+/// Normalize a combinator tree under phase-1 redexes (E1–E8, E12–E14).
 /// Bottom-up: children are normalized before parents. Returns a fresh
 /// tree; the input is borrowed.
 ///
 /// This is one half of [`normalize`]; the full normalization is
 /// `normalize_phase2(normalize_phase1(c))`. Splitting the phases buys
 /// confluence per the spec's §2.4 case 8 critical-pair analysis.
+///
+/// F-4 fix: bounded by `MAX_DEPTH`; on overflow returns
+/// `Combinator::DarkFallback`. F-5 fix: empty `Choice([])` collapses
+/// to `Combinator::DarkFallback` per spec E14 (instead of silently
+/// persisting as a malformed normal-form node).
 pub fn normalize_phase1(c: &Combinator) -> Combinator {
+    normalize_phase1_at(c, 0)
+}
+
+fn normalize_phase1_at(c: &Combinator, depth: usize) -> Combinator {
     use Combinator::*;
+    if depth >= MAX_DEPTH {
+        return DarkFallback;
+    }
+    let d = depth + 1;
     match c {
         Seq(children) => {
             // Recurse first.
             let normalized: Vec<Combinator> =
-                children.iter().map(normalize_phase1).collect();
+                children.iter().map(|c| normalize_phase1_at(c, d)).collect();
             // E1: flatten nested Seq.
             let mut flat: Vec<Combinator> = Vec::with_capacity(normalized.len());
             for child in normalized {
@@ -1639,7 +1693,7 @@ pub fn normalize_phase1(c: &Combinator) -> Combinator {
         Choice(arms) => {
             // Recurse first.
             let normalized: Vec<Combinator> =
-                arms.iter().map(normalize_phase1).collect();
+                arms.iter().map(|c| normalize_phase1_at(c, d)).collect();
             // E2: flatten nested Choice.
             let mut flat: Vec<Combinator> = Vec::with_capacity(normalized.len());
             for arm in normalized {
@@ -1657,14 +1711,21 @@ pub fn normalize_phase1(c: &Combinator) -> Combinator {
                     break;
                 }
             }
-            // E4: singleton.
+            // E4 + E14: singleton collapses to the arm; empty Choice
+            // collapses to `DarkFallback` (the canonical Dark-emitting
+            // combinator). `Choice([])` should never appear in well-
+            // formed input — if smuggled (e.g., by source pruning
+            // emptying a Choice in the walker), it lands in Dark
+            // explicitly rather than persisting as a malformed node.
+            // Pinned by `e14_empty_choice_collapses_to_dark_fallback`.
             match truncated.len() {
+                0 => DarkFallback, // E14
                 1 => truncated.into_iter().next().unwrap(),
                 _ => Choice(truncated),
             }
         }
         Repeat { body, min, max } => {
-            let body_n = normalize_phase1(body);
+            let body_n = normalize_phase1_at(body, d);
             // E6: zero upper bound.
             if matches!(max, Some(0)) {
                 return Literal(Vec::new());
@@ -1684,17 +1745,17 @@ pub fn normalize_phase1(c: &Combinator) -> Combinator {
             }
         }
         Capture { body, kind } => Capture {
-            body: Box::new(normalize_phase1(body)),
+            body: Box::new(normalize_phase1_at(body, d)),
             kind: *kind,
         },
-        BraceBlock(body) => BraceBlock(Box::new(normalize_phase1(body))),
-        ParenBlock(body) => ParenBlock(Box::new(normalize_phase1(body))),
+        BraceBlock(body) => BraceBlock(Box::new(normalize_phase1_at(body, d))),
+        ParenBlock(body) => ParenBlock(Box::new(normalize_phase1_at(body, d))),
         Until { stop } => Until {
-            stop: Box::new(normalize_phase1(stop)),
+            stop: Box::new(normalize_phase1_at(stop, d)),
         },
         Lift { grammar, body } => Lift {
             grammar: grammar.clone(),
-            body: Box::new(normalize_phase1(body)),
+            body: Box::new(normalize_phase1_at(body, d)),
         },
         // Leaves: no phase-1 redex applies.
         Literal(_)
@@ -1741,13 +1802,24 @@ pub fn normalize_phase1(c: &Combinator) -> Combinator {
 ///
 /// The expected calling pattern is `normalize_phase2(normalize_phase1(c))`
 /// — see [`normalize`].
+///
+/// F-4 fix: bounded by `MAX_DEPTH`; on overflow returns
+/// `Combinator::DarkFallback`.
 pub fn normalize_phase2(c: &Combinator) -> Combinator {
+    normalize_phase2_at(c, 0)
+}
+
+fn normalize_phase2_at(c: &Combinator, depth: usize) -> Combinator {
     use Combinator::*;
+    if depth >= MAX_DEPTH {
+        return DarkFallback;
+    }
+    let d = depth + 1;
     match c {
         Choice(arms) => {
             // Recurse first.
             let normalized: Vec<Combinator> =
-                arms.iter().map(normalize_phase2).collect();
+                arms.iter().map(|c| normalize_phase2_at(c, d)).collect();
             // E15 (and E9 as its single-byte special case): if every
             // arm is a Literal, collapse to MultiByteCharset.
             if !normalized.is_empty()
@@ -1767,25 +1839,25 @@ pub fn normalize_phase2(c: &Combinator) -> Combinator {
             Choice(normalized)
         }
         Seq(children) => {
-            Seq(children.iter().map(normalize_phase2).collect())
+            Seq(children.iter().map(|c| normalize_phase2_at(c, d)).collect())
         }
         Repeat { body, min, max } => Repeat {
-            body: Box::new(normalize_phase2(body)),
+            body: Box::new(normalize_phase2_at(body, d)),
             min: *min,
             max: *max,
         },
         Capture { body, kind } => Capture {
-            body: Box::new(normalize_phase2(body)),
+            body: Box::new(normalize_phase2_at(body, d)),
             kind: *kind,
         },
-        BraceBlock(body) => BraceBlock(Box::new(normalize_phase2(body))),
-        ParenBlock(body) => ParenBlock(Box::new(normalize_phase2(body))),
+        BraceBlock(body) => BraceBlock(Box::new(normalize_phase2_at(body, d))),
+        ParenBlock(body) => ParenBlock(Box::new(normalize_phase2_at(body, d))),
         Until { stop } => Until {
-            stop: Box::new(normalize_phase2(stop)),
+            stop: Box::new(normalize_phase2_at(stop, d)),
         },
         Lift { grammar, body } => Lift {
             grammar: grammar.clone(),
-            body: Box::new(normalize_phase2(body)),
+            body: Box::new(normalize_phase2_at(body, d)),
         },
         // Leaves and already-compiled forms: no phase-2 redex applies.
         Literal(_)
@@ -2513,6 +2585,171 @@ mod combinator_tests {
             combinator_tree_oid(&inner_flat),
             combinator_tree_oid(&inner_nested),
             "FP1: encoding-different but equivalent seeds must hash equal"
+        );
+    }
+
+    // ---------- F-4: depth bound on walker / normalize ----------
+
+    /// F-4 pin: a programmatically-generated nested-Seq input that
+    /// exceeds `MAX_DEPTH` returns `DarkFallback` rather than
+    /// panicking the thread with a stack overflow.
+    ///
+    /// Construction: build a Seq chain of length `MAX_DEPTH + 16`
+    /// where each level wraps the next in `Seq([_, Literal("x")])`.
+    /// The walker, normalize_phase1, and normalize_phase2 each
+    /// recurse one level per Seq; well above the bound. All three
+    /// surfaces collapse to `DarkFallback` at the bound.
+    ///
+    /// We run on a spawned thread with a generous stack because the
+    /// *construction* and *Drop* of a Combinator tree of depth >
+    /// MAX_DEPTH itself recurses through the nested `Box<Combinator>`
+    /// chain. The depth bound on the *traversals* (walker / normalize)
+    /// is what F-4 fixes; tree-construction and Drop are bounded by
+    /// the same stack and live outside the patch's contract.
+    #[test]
+    fn f4_walker_and_normalize_emit_dark_fallback_past_depth() {
+        // 16 MB thread stack — enough to construct, drop, and walk a
+        // tree of depth `MAX_DEPTH + 16` (per-Box frame is small).
+        let handle = std::thread::Builder::new()
+            .stack_size(16 * 1024 * 1024)
+            .spawn(|| {
+                let extra = 16;
+                let mut tree = Combinator::Literal(b"leaf".to_vec());
+                for _ in 0..(MAX_DEPTH + extra) {
+                    tree = Combinator::Seq(vec![
+                        tree,
+                        Combinator::Literal(b"x".to_vec()),
+                    ]);
+                }
+
+                // Walker: completes without panic; the deepest levels
+                // emit DarkFallback. The outer wrapper survives.
+                let walked = parse_with(&tree, b"anything");
+                assert!(
+                    contains_dark_fallback(&walked),
+                    "walker should emit DarkFallback past MAX_DEPTH"
+                );
+
+                // normalize_phase1: returns without panic; DarkFallback
+                // appears at the depth bound. The bound triggers BEFORE
+                // singleton-collapse, so the wrapping Seq is preserved.
+                let n1 = normalize_phase1(&tree);
+                assert!(
+                    contains_dark_fallback(&n1),
+                    "normalize_phase1 should emit DarkFallback past MAX_DEPTH"
+                );
+
+                // normalize_phase2 over the phase-1 result: also depth-
+                // bounded; finishes without panic.
+                let n2 = normalize_phase2(&n1);
+                assert!(
+                    contains_dark_fallback(&n2),
+                    "normalize_phase2 should preserve DarkFallback past depth"
+                );
+
+                // Drop `tree` iteratively to avoid a recursive Drop
+                // overflow when the thread unwinds.
+                drop_combinator_iteratively(tree);
+                drop_combinator_iteratively(n1);
+                drop_combinator_iteratively(n2);
+                drop_combinator_iteratively(walked);
+            })
+            .expect("spawn test thread");
+        handle.join().expect("test thread panicked");
+    }
+
+    /// Helper: structural check for any DarkFallback in a Combinator
+    /// tree. Walks iteratively to avoid stack-overflow on deep trees.
+    fn contains_dark_fallback(c: &Combinator) -> bool {
+        let mut stack: Vec<&Combinator> = vec![c];
+        while let Some(node) = stack.pop() {
+            match node {
+                Combinator::DarkFallback => return true,
+                Combinator::Seq(children) | Combinator::Choice(children) => {
+                    for ch in children {
+                        stack.push(ch);
+                    }
+                }
+                Combinator::Repeat { body, .. }
+                | Combinator::Capture { body, .. }
+                | Combinator::BraceBlock(body)
+                | Combinator::ParenBlock(body)
+                | Combinator::Until { stop: body }
+                | Combinator::Lift { body, .. } => stack.push(body),
+                _ => {}
+            }
+        }
+        false
+    }
+
+    /// Drop a deeply-nested Combinator tree iteratively. The default
+    /// recursive Drop on chained `Box<Combinator>` would overflow the
+    /// stack for trees of depth > a few thousand; this trampoline
+    /// walks the structure and breaks Box ownership level-by-level.
+    fn drop_combinator_iteratively(mut c: Combinator) {
+        let mut stack: Vec<Combinator> = Vec::new();
+        loop {
+            match c {
+                Combinator::Seq(mut children) | Combinator::Choice(mut children) => {
+                    stack.extend(children.drain(..));
+                }
+                Combinator::Repeat { body, .. }
+                | Combinator::Capture { body, .. }
+                | Combinator::BraceBlock(body)
+                | Combinator::ParenBlock(body)
+                | Combinator::Until { stop: body }
+                | Combinator::Lift { body, .. } => {
+                    stack.push(*body);
+                }
+                _ => {}
+            }
+            match stack.pop() {
+                Some(next) => c = next,
+                None => break,
+            }
+        }
+    }
+
+    // ---------- F-5: empty Choice([]) collapses to DarkFallback ----------
+
+    /// F-5 / spec E14 pin: `Choice([])` is not a well-defined
+    /// combinator (a Choice with no arms always fails). The pre-fix
+    /// behavior silently kept the malformed form; the audit demands
+    /// `normalize_phase1` collapse it to `DarkFallback` (the spec's
+    /// canonical Dark-emitting combinator).
+    ///
+    /// This protects downstream consumers from encountering a
+    /// `Choice([])` in normal-form trees — a source-pruning code path
+    /// in `walk_combinator`'s Choice arm could otherwise smuggle one
+    /// through.
+    #[test]
+    fn e14_empty_choice_collapses_to_dark_fallback() {
+        let input = Combinator::Choice(Vec::new());
+        let normalized = normalize_phase1(&input);
+        assert_eq!(
+            normalized,
+            Combinator::DarkFallback,
+            "Choice([]) should normalize to DarkFallback per spec E14"
+        );
+
+        // Round-trip through full normalize (phase 1 + phase 2)
+        // preserves the verdict.
+        let full = normalize(&input);
+        assert_eq!(full, Combinator::DarkFallback);
+
+        // Nested Choice([]) under a Capture also collapses (the
+        // bottom-up recurse hits the empty arm first).
+        let nested = Combinator::Capture {
+            body: Box::new(Combinator::Choice(Vec::new())),
+            kind: AstKind::Focus,
+        };
+        let n_nested = normalize_phase1(&nested);
+        assert_eq!(
+            n_nested,
+            Combinator::Capture {
+                body: Box::new(Combinator::DarkFallback),
+                kind: AstKind::Focus,
+            }
         );
     }
 }
