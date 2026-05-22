@@ -1141,6 +1141,17 @@ pub enum Combinator {
     /// `Choice`. Scans forward through unknown bytes and emits
     /// `AstKind::Dark`.
     DarkFallback,
+    /// Trie-compiled set of multi-byte literals. The phase-2
+    /// charset-compilation target for `Choice` of `Literal` arms (any
+    /// arm length); per `docs/specs/combinator-optimization.md` §3.2
+    /// the new variant is preferred over extending the closed
+    /// `CharsetKind`, because the literal set is open-ended (5 keywords
+    /// for the meta-glass, ~50 for LLVM IR, more for future grammars).
+    ///
+    /// Members are stored sorted lexicographically so the OID is
+    /// encoding-invariant under permutation. An empty set is the empty
+    /// charset (matches nothing).
+    MultiByteCharset(Vec<Vec<u8>>),
 }
 
 /// Named byte-class predicates. Closed enum so the combinator tree
@@ -1268,6 +1279,19 @@ fn combinator_tree_oid_hex(c: &Combinator) -> String {
             hash_tagged("comb:lift", &buf)
         }
         Combinator::DarkFallback => hash_tagged("comb:dark_fallback", &[]),
+        Combinator::MultiByteCharset(members) => {
+            // Members are stored sorted by construction. The OID joins
+            // them with `:` so a 5-keyword set hashes to a single
+            // 32-byte value, identical regardless of source encoding.
+            let mut buf = Vec::new();
+            for (i, m) in members.iter().enumerate() {
+                if i > 0 {
+                    buf.push(b':');
+                }
+                buf.extend_from_slice(m);
+            }
+            hash_tagged("comb:multi_byte_charset", &buf)
+        }
     }
 }
 
@@ -1456,6 +1480,9 @@ fn walk_combinator(c: &Combinator, source: &[u8], _offset: usize) -> Combinator 
             kind: *kind,
         },
         Combinator::DarkFallback => Combinator::DarkFallback,
+        Combinator::MultiByteCharset(members) => {
+            Combinator::MultiByteCharset(members.clone())
+        }
     }
 }
 
@@ -1662,7 +1689,7 @@ pub fn normalize_phase1(c: &Combinator) -> Combinator {
             grammar: grammar.clone(),
             body: Box::new(normalize_phase1(body)),
         },
-        // Leaves: no redex applies.
+        // Leaves: no phase-1 redex applies.
         Literal(_)
         | LiteralKind { .. }
         | Charset(_)
@@ -1670,8 +1697,112 @@ pub fn normalize_phase1(c: &Combinator) -> Combinator {
         | MatchArm
         | SelectVariant
         | KeywordFormBody { .. }
-        | DarkFallback => c.clone(),
+        | DarkFallback
+        | MultiByteCharset(_) => c.clone(),
     }
+}
+
+// ---------------------------------------------------------------------------
+// Beta tree normalization — phase 2 (charset compilation).
+//
+// Per `docs/specs/combinator-optimization.md` §3 and §2.4 case 8: the
+// E9/E15 redexes are deliberately fenced into a second phase so that
+// phase 1's Choice-flattening (E2) runs to completion before charset
+// compilation considers any Choice. This restores the confluence the
+// critical pair E9 × E2 would otherwise break (§2.4 case 8 resolution
+// option (a) — "restrict E9 to maximal Choices").
+//
+// Phase 2 covers:
+//
+//   E9 / E15. Choice([Literal(b1), Literal(b2), …]) → MultiByteCharset(
+//             [b1, b2, …]) where every arm is a Literal. Per the spec
+//             §3.2's closed-vs-open resolution, single-byte and
+//             multi-byte literals are handled uniformly by
+//             `MultiByteCharset`; the closed `Charset(CharsetKind)`
+//             stays for declared single-byte classes (whitespace,
+//             name-char, etc.).
+//
+// The members of the resulting MultiByteCharset are sorted
+// lexicographically and deduplicated so the OID is invariant under
+// arm permutation (the spec calls this out as making the OID a
+// gauge-invariant observable per §10.2).
+// ---------------------------------------------------------------------------
+
+/// Normalize a combinator tree under phase-2 redexes (E9 + E15 —
+/// charset compilation). Bottom-up: children compile before parents.
+/// Returns a fresh tree.
+///
+/// The expected calling pattern is `normalize_phase2(normalize_phase1(c))`
+/// — see [`normalize`].
+pub fn normalize_phase2(c: &Combinator) -> Combinator {
+    use Combinator::*;
+    match c {
+        Choice(arms) => {
+            // Recurse first.
+            let normalized: Vec<Combinator> =
+                arms.iter().map(normalize_phase2).collect();
+            // E15 (and E9 as its single-byte special case): if every
+            // arm is a Literal, collapse to MultiByteCharset.
+            if !normalized.is_empty()
+                && normalized.iter().all(|c| matches!(c, Literal(_)))
+            {
+                let mut members: Vec<Vec<u8>> = normalized
+                    .into_iter()
+                    .map(|c| match c {
+                        Literal(b) => b,
+                        _ => unreachable!("checked all-literal above"),
+                    })
+                    .collect();
+                members.sort();
+                members.dedup();
+                return MultiByteCharset(members);
+            }
+            Choice(normalized)
+        }
+        Seq(children) => {
+            Seq(children.iter().map(normalize_phase2).collect())
+        }
+        Repeat { body, min, max } => Repeat {
+            body: Box::new(normalize_phase2(body)),
+            min: *min,
+            max: *max,
+        },
+        Capture { body, kind } => Capture {
+            body: Box::new(normalize_phase2(body)),
+            kind: *kind,
+        },
+        BraceBlock(body) => BraceBlock(Box::new(normalize_phase2(body))),
+        ParenBlock(body) => ParenBlock(Box::new(normalize_phase2(body))),
+        Until { stop } => Until {
+            stop: Box::new(normalize_phase2(stop)),
+        },
+        Lift { grammar, body } => Lift {
+            grammar: grammar.clone(),
+            body: Box::new(normalize_phase2(body)),
+        },
+        // Leaves and already-compiled forms: no phase-2 redex applies.
+        Literal(_)
+        | LiteralKind { .. }
+        | Charset(_)
+        | IoBinding
+        | MatchArm
+        | SelectVariant
+        | KeywordFormBody { .. }
+        | DarkFallback
+        | MultiByteCharset(_) => c.clone(),
+    }
+}
+
+/// Full beta-normalization: phase 1 (structural redexes) followed by
+/// phase 2 (charset compilation). Per the spec §2.4 case 8, the two
+/// phases compose deterministically; the resulting normal form is
+/// unique up to E1–E13 + E9/E15.
+///
+/// Always-on: there is no flag. Per Q11 of the spec's open questions,
+/// flag-gating would re-introduce the encoding-choice fragility that
+/// normalization exists to fix.
+pub fn normalize(c: &Combinator) -> Combinator {
+    normalize_phase2(&normalize_phase1(c))
 }
 
 #[cfg(test)]
@@ -1800,7 +1931,8 @@ mod combinator_tests {
             | Combinator::MatchArm
             | Combinator::SelectVariant
             | Combinator::KeywordFormBody { .. }
-            | Combinator::DarkFallback => true,
+            | Combinator::DarkFallback
+            | Combinator::MultiByteCharset(_) => true,
         }
     }
 
@@ -2056,6 +2188,224 @@ mod combinator_tests {
         let seed = prism_seed();
         let once = normalize_phase1(&seed);
         let twice = normalize_phase1(&once);
+        assert_eq!(once, twice);
+    }
+
+    // ---------- normalize_phase2 — E9 + E15 charset compilation ----------
+
+    /// E15. Choice of multi-byte Literals compiles to MultiByteCharset.
+    #[test]
+    fn e15_choice_of_literals_to_multibyte_charset() {
+        let input = Combinator::Choice(vec![
+            Combinator::Literal(b"focus".to_vec()),
+            Combinator::Literal(b"project".to_vec()),
+            Combinator::Literal(b"split".to_vec()),
+            Combinator::Literal(b"zoom".to_vec()),
+            Combinator::Literal(b"refract".to_vec()),
+        ]);
+        let result = normalize_phase2(&input);
+        let mut expected_members: Vec<Vec<u8>> = vec![
+            b"focus".to_vec(),
+            b"project".to_vec(),
+            b"split".to_vec(),
+            b"zoom".to_vec(),
+            b"refract".to_vec(),
+        ];
+        expected_members.sort();
+        assert_eq!(result, Combinator::MultiByteCharset(expected_members));
+    }
+
+    /// E9 (single-byte special case): Choice of single-byte Literals
+    /// also compiles to MultiByteCharset — uniform treatment.
+    #[test]
+    fn e9_choice_of_single_byte_literals_to_multibyte_charset() {
+        let input = Combinator::Choice(vec![
+            Combinator::Literal(b"a".to_vec()),
+            Combinator::Literal(b"b".to_vec()),
+            Combinator::Literal(b"c".to_vec()),
+        ]);
+        let result = normalize_phase2(&input);
+        assert_eq!(
+            result,
+            Combinator::MultiByteCharset(vec![
+                b"a".to_vec(),
+                b"b".to_vec(),
+                b"c".to_vec(),
+            ])
+        );
+    }
+
+    /// MultiByteCharset members are sorted regardless of input arm order.
+    /// The OID is then a gauge-invariant observable (spec §10.2).
+    #[test]
+    fn multibyte_charset_sorts_members_for_oid_invariance() {
+        let order_a = Combinator::Choice(vec![
+            Combinator::Literal(b"zoom".to_vec()),
+            Combinator::Literal(b"focus".to_vec()),
+            Combinator::Literal(b"project".to_vec()),
+        ]);
+        let order_b = Combinator::Choice(vec![
+            Combinator::Literal(b"focus".to_vec()),
+            Combinator::Literal(b"project".to_vec()),
+            Combinator::Literal(b"zoom".to_vec()),
+        ]);
+        let na = normalize_phase2(&order_a);
+        let nb = normalize_phase2(&order_b);
+        assert_eq!(na, nb);
+        assert_eq!(
+            combinator_tree_oid(&na),
+            combinator_tree_oid(&nb),
+            "MultiByteCharset OID must be permutation-invariant"
+        );
+    }
+
+    /// A Choice with even one non-Literal arm stays a Choice. Phase 2
+    /// is conservative — it never breaks parser semantics by compiling
+    /// arms that aren't pure byte-literal matches.
+    #[test]
+    fn phase2_leaves_mixed_choice_alone() {
+        let input = Combinator::Choice(vec![
+            Combinator::Literal(b"a".to_vec()),
+            Combinator::Charset(CharsetKind::WordChar),
+        ]);
+        let result = normalize_phase2(&input);
+        assert_eq!(result, input);
+    }
+
+    /// Phase 2 recurses into Seq / Capture / BraceBlock — a Choice
+    /// nested inside another combinator still gets compiled.
+    #[test]
+    fn phase2_recurses_into_capture() {
+        let input = Combinator::Capture {
+            body: Box::new(Combinator::Choice(vec![
+                Combinator::Literal(b"a".to_vec()),
+                Combinator::Literal(b"b".to_vec()),
+            ])),
+            kind: AstKind::Focus,
+        };
+        let expected = Combinator::Capture {
+            body: Box::new(Combinator::MultiByteCharset(vec![
+                b"a".to_vec(),
+                b"b".to_vec(),
+            ])),
+            kind: AstKind::Focus,
+        };
+        assert_eq!(normalize_phase2(&input), expected);
+    }
+
+    /// Two-phase composition (full `normalize`) on a tree exercising
+    /// both phases: a nested-Choice-of-Literals collapses via phase 1
+    /// (flatten) then phase 2 (compile to MultiByteCharset).
+    #[test]
+    fn normalize_compose_phase1_then_phase2() {
+        let input = Combinator::Choice(vec![
+            Combinator::Choice(vec![
+                Combinator::Literal(b"focus".to_vec()),
+                Combinator::Literal(b"project".to_vec()),
+            ]),
+            Combinator::Literal(b"split".to_vec()),
+        ]);
+        let result = normalize(&input);
+        assert_eq!(
+            result,
+            Combinator::MultiByteCharset(vec![
+                b"focus".to_vec(),
+                b"project".to_vec(),
+                b"split".to_vec(),
+            ])
+        );
+    }
+
+    // ---------- Confluence tests — two redex orders → same normal form ----------
+    //
+    // Per `combinator-optimization.md` §2.4, beta normalization is
+    // confluent under the two-phase structure. The empirical tests
+    // below take a Combinator tree, construct two cosmetically-
+    // different encodings of the same equivalence class, normalize
+    // both, and assert structural equality.
+
+    /// Pair 1 — left-associated vs right-associated Seq.
+    /// `Seq([Seq([a, b]), c])` and `Seq([a, Seq([b, c])])` both
+    /// normalize to `Seq([a, b, c])`.
+    #[test]
+    fn confluence_seq_left_vs_right_associated() {
+        let a = Combinator::Literal(b"a".to_vec());
+        let b = Combinator::Literal(b"b".to_vec());
+        let c = Combinator::Literal(b"c".to_vec());
+        let left = Combinator::Seq(vec![
+            Combinator::Seq(vec![a.clone(), b.clone()]),
+            c.clone(),
+        ]);
+        let right = Combinator::Seq(vec![
+            a.clone(),
+            Combinator::Seq(vec![b.clone(), c.clone()]),
+        ]);
+        let n_left = normalize(&left);
+        let n_right = normalize(&right);
+        assert_eq!(n_left, n_right);
+        assert_eq!(n_left, Combinator::Seq(vec![a, b, c]));
+    }
+
+    /// Pair 2 — Choice of (nested Choice of Literals) vs flat Choice
+    /// of Literals. Both routes reach the same MultiByteCharset.
+    /// This is the §2.4 case 8 critical pair handled by the
+    /// two-phase structure: E2 (Choice flatten) precedes E15 (charset
+    /// compile), so encoding choice is invisible in the normal form.
+    #[test]
+    fn confluence_charset_under_choice_flattening() {
+        let nested = Combinator::Choice(vec![
+            Combinator::Choice(vec![
+                Combinator::Literal(b"a".to_vec()),
+                Combinator::Literal(b"b".to_vec()),
+            ]),
+            Combinator::Literal(b"c".to_vec()),
+        ]);
+        let flat = Combinator::Choice(vec![
+            Combinator::Literal(b"a".to_vec()),
+            Combinator::Literal(b"b".to_vec()),
+            Combinator::Literal(b"c".to_vec()),
+        ]);
+        let n_nested = normalize(&nested);
+        let n_flat = normalize(&flat);
+        assert_eq!(n_nested, n_flat);
+        assert_eq!(
+            n_flat,
+            Combinator::MultiByteCharset(vec![
+                b"a".to_vec(),
+                b"b".to_vec(),
+                b"c".to_vec(),
+            ])
+        );
+    }
+
+    /// Pair 3 — Repeat-of-empty under a Seq with empty siblings vs
+    /// a bare empty Literal. Both collapse to the empty Literal.
+    /// Exercises E5 (Seq drop-empty), E8 (Repeat-of-empty), and
+    /// E3/E13 (Seq singleton/empty) together.
+    #[test]
+    fn confluence_empty_literal_paths() {
+        let path_a = Combinator::Seq(vec![
+            Combinator::Repeat {
+                body: Box::new(Combinator::Literal(Vec::new())),
+                min: 0,
+                max: None,
+            },
+            Combinator::Literal(Vec::new()),
+        ]);
+        let path_b = Combinator::Literal(Vec::new());
+        let n_a = normalize(&path_a);
+        let n_b = normalize(&path_b);
+        assert_eq!(n_a, n_b);
+        assert_eq!(n_a, Combinator::Literal(Vec::new()));
+    }
+
+    /// Idempotence of full normalization: normalize(normalize(c)) ==
+    /// normalize(c) on the meta-glass seed.
+    #[test]
+    fn normalize_idempotent_on_seed() {
+        let seed = prism_seed();
+        let once = normalize(&seed);
+        let twice = normalize(&once);
         assert_eq!(once, twice);
     }
 }
