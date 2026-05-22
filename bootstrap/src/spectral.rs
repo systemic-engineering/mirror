@@ -1186,8 +1186,15 @@ pub fn literal_kind(keyword: &[u8], kind: AstKind) -> Combinator {
 /// and joined with `:`). FP1's load-bearing equation
 /// `combinator_tree_oid(seed) == combinator_tree_oid(seed_prime)` is
 /// what the seed must satisfy after round-tripping through `apply_h`.
+///
+/// Per `docs/specs/combinator-optimization.md` §9.1 ("always-on for
+/// OID computation") and §10.2 ("the OID over normal forms is a
+/// gauge-invariant observable"), the input is normalized via
+/// [`normalize`] before hashing. This makes FP1 robust against
+/// cosmetic encoding choices in the seed or in the parser output.
 pub fn combinator_tree_oid(c: &Combinator) -> [u8; 32] {
-    let oid_hex = combinator_tree_oid_hex(c);
+    let normal = normalize(c);
+    let oid_hex = combinator_tree_oid_hex(&normal);
     let mut out = [0u8; 32];
     let hex_bytes = oid_hex.as_bytes();
     let n = core::cmp::min(32, hex_bytes.len());
@@ -2407,6 +2414,106 @@ mod combinator_tests {
         let once = normalize(&seed);
         let twice = normalize(&once);
         assert_eq!(once, twice);
+    }
+
+    // ---------- Checkpoint 3 — OID over the normal form ----------
+    //
+    // The load-bearing regression test for normalization: two
+    // cosmetically-different but semantically-equivalent encodings of
+    // the same Combinator hash to the same OID. Without normalization,
+    // the seed and the parsed tree could drift on encoding choice;
+    // with normalization, the OID is encoding-invariant.
+
+    /// Input pair A — flat Seq vs left-nested Seq.
+    /// `Seq([a, b, c])` and `Seq([Seq([a, b]), c])` hash to the same
+    /// OID after normalization.
+    #[test]
+    fn oid_equivalent_under_seq_nesting() {
+        let a = Combinator::Literal(b"x".to_vec());
+        let b = Combinator::Literal(b"y".to_vec());
+        let c = Combinator::Literal(b"z".to_vec());
+        let flat = Combinator::Seq(vec![a.clone(), b.clone(), c.clone()]);
+        let nested = Combinator::Seq(vec![
+            Combinator::Seq(vec![a, b]),
+            c,
+        ]);
+        assert_eq!(
+            combinator_tree_oid(&flat),
+            combinator_tree_oid(&nested),
+            "OID must be invariant under Seq nesting choice"
+        );
+    }
+
+    /// Input pair B — Choice with empty-Literal padding vs bare arms.
+    /// `Seq([Literal(""), a, Literal("")])` and `a` hash to the same
+    /// OID (E5 + E3 collapses both to `a`).
+    #[test]
+    fn oid_equivalent_under_empty_literal_padding() {
+        let a = Combinator::Literal(b"x".to_vec());
+        let padded = Combinator::Seq(vec![
+            Combinator::Literal(Vec::new()),
+            a.clone(),
+            Combinator::Literal(Vec::new()),
+        ]);
+        assert_eq!(
+            combinator_tree_oid(&padded),
+            combinator_tree_oid(&a),
+            "OID must be invariant under empty-Literal padding"
+        );
+    }
+
+    /// Input pair C — Choice-of-Literals in two arm orders.
+    /// Both compile to the same MultiByteCharset and hash equal.
+    /// This is the spec §10.2 gauge-invariance witness at the OID level.
+    #[test]
+    fn oid_equivalent_under_choice_arm_permutation() {
+        let order_a = Combinator::Choice(vec![
+            Combinator::Literal(b"focus".to_vec()),
+            Combinator::Literal(b"project".to_vec()),
+            Combinator::Literal(b"split".to_vec()),
+        ]);
+        let order_b = Combinator::Choice(vec![
+            Combinator::Literal(b"split".to_vec()),
+            Combinator::Literal(b"focus".to_vec()),
+            Combinator::Literal(b"project".to_vec()),
+        ]);
+        assert_eq!(
+            combinator_tree_oid(&order_a),
+            combinator_tree_oid(&order_b),
+            "OID must be invariant under Choice-of-Literals permutation"
+        );
+    }
+
+    /// FP1 robustness — the spec's load-bearing claim (§2.5).
+    ///
+    /// Two structurally-equivalent encodings of a sub-Combinator
+    /// (one flat, one with empty-Literal padding) embedded into
+    /// otherwise-identical trees produce the same OID after
+    /// normalization. This is what makes FP1 robust against future
+    /// seed/parser drift.
+    #[test]
+    fn fp1_robust_against_equivalent_encoding() {
+        let inner_flat = Combinator::Seq(vec![
+            Combinator::Literal(b"grammar".to_vec()),
+            Combinator::Literal(b" ".to_vec()),
+            Combinator::Charset(CharsetKind::NameChar),
+        ]);
+        // Same parser, expressed with one extra nesting + an empty
+        // literal — the "ergonomic seed" vs "parser-constructed" gap
+        // the spec §2.6 worked example illustrates.
+        let inner_nested = Combinator::Seq(vec![
+            Combinator::Seq(vec![
+                Combinator::Literal(b"grammar".to_vec()),
+                Combinator::Literal(b" ".to_vec()),
+                Combinator::Literal(Vec::new()),
+            ]),
+            Combinator::Charset(CharsetKind::NameChar),
+        ]);
+        assert_eq!(
+            combinator_tree_oid(&inner_flat),
+            combinator_tree_oid(&inner_nested),
+            "FP1: encoding-different but equivalent seeds must hash equal"
+        );
     }
 }
 
