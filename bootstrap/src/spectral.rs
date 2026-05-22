@@ -3304,6 +3304,241 @@ mod combinator_tests {
         let out = walk_at(&in_form, b"\x00\x01\x02");
         assert!(!out.success);
     }
+
+    // ======================================================================
+    // F-1 Checkpoint B — Choice / Capture / BraceBlock / ParenBlock /
+    // Until byte-consumption tests.
+    // ======================================================================
+
+    // ---------- Choice ----------
+
+    /// `Choice([Literal("a"), Literal("b")])`: first arm matches — succeeds.
+    #[test]
+    fn f1_choice_first_arm_wins() {
+        let c = Combinator::Choice(vec![
+            Combinator::Literal(b"a".to_vec()),
+            Combinator::Literal(b"b".to_vec()),
+        ]);
+        let out = walk_at(&c, b"ab");
+        assert!(out.success);
+        assert_eq!(out.offset, 1, "first arm consumes one byte");
+    }
+
+    /// `Choice([Literal("a"), Literal("b")])`: second arm matches when
+    /// first doesn't.
+    #[test]
+    fn f1_choice_second_arm_wins_on_first_fail() {
+        let c = Combinator::Choice(vec![
+            Combinator::Literal(b"a".to_vec()),
+            Combinator::Literal(b"b".to_vec()),
+        ]);
+        let out = walk_at(&c, b"bc");
+        assert!(out.success);
+        assert_eq!(out.offset, 1);
+    }
+
+    /// All arms fail — the whole Choice dark-falls.
+    #[test]
+    fn f1_choice_all_arms_fail_dark() {
+        let c = Combinator::Choice(vec![
+            Combinator::Literal(b"a".to_vec()),
+            Combinator::Literal(b"b".to_vec()),
+        ]);
+        let out = walk_at(&c, b"xy");
+        assert!(!out.success);
+        assert_eq!(out.witness, Combinator::DarkFallback);
+    }
+
+    /// Choice of LiteralKind arms prunes by whole-word occurrence in source.
+    #[test]
+    fn f1_choice_literal_kind_pruning() {
+        let c = Combinator::Choice(vec![
+            literal_kind(b"focus", AstKind::Focus),
+            literal_kind(b"project", AstKind::Project),
+            literal_kind(b"split", AstKind::Split),
+        ]);
+        let out = walk_at(&c, b"focus and project, but no split");
+        // All three keywords occur — all kept.
+        if let Combinator::Choice(kept) = out.witness {
+            assert_eq!(kept.len(), 3);
+        } else {
+            panic!("expected Choice witness");
+        }
+
+        let out = walk_at(&c, b"focus only");
+        if let Combinator::Choice(kept) = out.witness {
+            assert_eq!(kept.len(), 1, "only `focus` survives pruning");
+        } else {
+            panic!("expected Choice witness");
+        }
+    }
+
+    // ---------- Capture ----------
+
+    /// `Capture { body: Literal("focus"), kind: Focus }` wraps the body
+    /// walk and preserves OID.
+    #[test]
+    fn f1_capture_wraps_body_witness() {
+        let c = Combinator::Capture {
+            body: Box::new(Combinator::Literal(b"focus".to_vec())),
+            kind: AstKind::Focus,
+        };
+        let out = walk_at(&c, b"focus rest");
+        assert!(out.success);
+        assert_eq!(out.offset, 5);
+        assert_eq!(combinator_tree_oid(&c), combinator_tree_oid(&out.witness));
+    }
+
+    /// Capture body failure dark-falls the capture.
+    #[test]
+    fn f1_capture_dark_on_body_failure() {
+        let c = Combinator::Capture {
+            body: Box::new(Combinator::Literal(b"focus".to_vec())),
+            kind: AstKind::Focus,
+        };
+        let out = walk_at(&c, b"split");
+        assert!(!out.success);
+        assert_eq!(out.witness, Combinator::DarkFallback);
+    }
+
+    // ---------- BraceBlock ----------
+
+    /// `BraceBlock(Literal("id"))` parses `{id}`.
+    #[test]
+    fn f1_brace_block_balanced() {
+        let c = Combinator::BraceBlock(Box::new(Combinator::Literal(b"id".to_vec())));
+        let out = walk_at(&c, b"{id}");
+        assert!(out.success);
+        assert_eq!(out.offset, 4, "consumes `{{id}}`");
+    }
+
+    /// Nested braces: `BraceBlock(BraceBlock(Literal("x")))` on `{{x}}`.
+    #[test]
+    fn f1_brace_block_nested() {
+        let inner = Combinator::BraceBlock(Box::new(Combinator::Literal(b"x".to_vec())));
+        let c = Combinator::BraceBlock(Box::new(inner));
+        let out = walk_at(&c, b"{{x}}");
+        assert!(out.success);
+        assert_eq!(out.offset, 5);
+    }
+
+    /// BraceBlock with unbalanced braces dark-falls.
+    #[test]
+    fn f1_brace_block_dark_on_unbalanced() {
+        let c = Combinator::BraceBlock(Box::new(Combinator::Literal(b"id".to_vec())));
+        let out = walk_at(&c, b"{id"); // no closing brace
+        assert!(!out.success);
+    }
+
+    /// BraceBlock with no opening brace dark-falls.
+    #[test]
+    fn f1_brace_block_dark_on_missing_open() {
+        let c = Combinator::BraceBlock(Box::new(Combinator::Literal(b"id".to_vec())));
+        let out = walk_at(&c, b"id}");
+        assert!(!out.success);
+    }
+
+    /// BraceBlock with trailing junk inside dark-falls.
+    #[test]
+    fn f1_brace_block_dark_on_trailing_junk() {
+        let c = Combinator::BraceBlock(Box::new(Combinator::Literal(b"id".to_vec())));
+        // Inner = "idXX", body only consumes "id".
+        let out = walk_at(&c, b"{idXX}");
+        assert!(!out.success);
+    }
+
+    // ---------- ParenBlock ----------
+
+    /// `ParenBlock(Literal("a,b"))` parses `(a,b)`.
+    #[test]
+    fn f1_paren_block_balanced() {
+        let c = Combinator::ParenBlock(Box::new(Combinator::Literal(b"a,b".to_vec())));
+        let out = walk_at(&c, b"(a,b)");
+        assert!(out.success);
+        assert_eq!(out.offset, 5);
+    }
+
+    /// ParenBlock with unbalanced parens dark-falls.
+    #[test]
+    fn f1_paren_block_dark_on_unbalanced() {
+        let c = Combinator::ParenBlock(Box::new(Combinator::Literal(b"id".to_vec())));
+        let out = walk_at(&c, b"(id");
+        assert!(!out.success);
+    }
+
+    // ---------- Until ----------
+
+    /// `Until(Literal("\n"))` consumes bytes up to (not including) the
+    /// terminator.
+    #[test]
+    fn f1_until_stops_at_terminator() {
+        let c = Combinator::Until {
+            stop: Box::new(Combinator::Literal(b"\n".to_vec())),
+        };
+        let out = walk_at(&c, b"some text\nand more");
+        assert!(out.success);
+        assert_eq!(out.offset, 9, "stops at the `\\n`, doesn't consume it");
+    }
+
+    /// Until at EOF without seeing terminator consumes to source end.
+    #[test]
+    fn f1_until_eof_without_terminator_consumes_all() {
+        let c = Combinator::Until {
+            stop: Box::new(Combinator::Literal(b"\n".to_vec())),
+        };
+        let out = walk_at(&c, b"no newline here");
+        assert!(out.success);
+        assert_eq!(out.offset, 15, "consumes to EOF");
+    }
+
+    /// Until with stop at offset 0 returns immediately.
+    #[test]
+    fn f1_until_stop_at_start_returns_zero() {
+        let c = Combinator::Until {
+            stop: Box::new(Combinator::Literal(b"\n".to_vec())),
+        };
+        let out = walk_at(&c, b"\nrest");
+        assert!(out.success);
+        assert_eq!(out.offset, 0, "stop at offset 0, no consumption");
+    }
+
+    // ---------- Mixed Checkpoint B: a comment parses correctly ----------
+
+    /// `Seq(Literal("#"), Lift(@nl, Until(Literal("\n"))))` — the seed's
+    /// comment form. Parses `# hello world\n`.
+    #[test]
+    fn f1_comment_form_parses() {
+        let comment = Combinator::Seq(vec![
+            Combinator::Literal(b"#".to_vec()),
+            Combinator::Lift {
+                grammar: "@nl".to_string(),
+                body: Box::new(Combinator::Until {
+                    stop: Box::new(Combinator::Literal(b"\n".to_vec())),
+                }),
+            },
+        ]);
+        let out = walk_at(&comment, b"# this is a comment\n");
+        assert!(out.success, "comment should parse; got {:?}", out);
+        assert_eq!(out.offset, 19, "`#` + 18 chars to before `\\n`");
+        // OID preserved by the structural witness.
+        assert_eq!(
+            combinator_tree_oid(&comment),
+            combinator_tree_oid(&out.witness)
+        );
+    }
+
+    /// Comment form fails when the source doesn't start with `#`.
+    #[test]
+    fn f1_comment_form_dark_on_no_hash() {
+        let comment = Combinator::Seq(vec![
+            Combinator::Literal(b"#".to_vec()),
+            Combinator::Until {
+                stop: Box::new(Combinator::Literal(b"\n".to_vec())),
+            },
+        ]);
+        let out = walk_at(&comment, b"not a comment\n");
+        assert!(!out.success);
+    }
 }
 
 #[cfg(test)]
