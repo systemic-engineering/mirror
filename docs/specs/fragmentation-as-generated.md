@@ -636,15 +636,26 @@ Concurrent with the codegen work. See §7 and §8.
 
 ---
 
-## 7. LapackPrism — status and shape
+## 7. NumericalPrism — status and shape
 
 **Status today:** does NOT exist in prism-core. Searched
 `prism/core/src/*.rs` and `prism/derive/src/*.rs` for "Lapack" /
-"LapackPrism" / "lapack" — zero hits. The LAPACK + Fortran wiring
-exists in `coincidence/build.rs` and `coincidence/src/ffi.rs` (cc
-crate compiling `gfortran`, linking `-llapack -lblas` on Linux,
-extern-C wrappers around dsyev / dgesvd in `ffi.rs`). That code is
-hand-written today and lives in `coincidence/`.
+"LapackPrism" / "NumericalPrism" — zero hits. The LAPACK + Fortran
+wiring exists in `prism/core/src/ffi.rs` (extern-C wrappers around
+dsyev / dgesvd / prism_preview / prism_review / prism_modify /
+prism_compose) and `prism/core/native/{prism,spectral}.f90` (the
+bind(c) Fortran kernels). That code is in place; what's missing is
+the **Prism layer + backend abstraction** that makes it dispatchable
+through a single trait.
+
+**Per the insight doc** at
+`/Users/reed/dev/systemic.engineering/practice/insights/coincidence/heterogeneous-numerical-prism.md`,
+the design is **one Prism, opaque backend, per-operation capability
+trait**, not five sibling Prisms. The LAPACK path is one
+backend (`LapackBackend`); the Metal path is another
+(`MetalBackend`, v1.5); a future OpenCL path is a third
+(`OpenCLBackend`, cross-vendor; modeled directly on Jakobs 2012's
+spin-dynamics OpenCL kernel architecture).
 
 **Per Alex's prior direction:** LapackPrism belongs in `prism-core`.
 The audit confirms this is feasible:
@@ -655,47 +666,73 @@ The audit confirms this is feasible:
   rendering substrate. **LapackPrism is the natural next member of
   the metal tier** — a Prism whose `refract` is a Fortran call.
 
-**Proposed shape:**
+**Proposed shape** (full design in insight doc §2–4):
 
 ```rust
-// prism/core/src/lapack.rs (new, behind feature = "lapack")
+// prism/core/src/numerical/mod.rs (new, behind feature = "numerical")
 
-use crate::{Prism, Beam, Imperfect, ScalarLoss};
+pub enum NumericalOp { Eigenvalues, Eigensystem, SingularValues, Svd, Cholesky }
 
-#[derive(Clone, Copy)]
-pub enum LapackOp {
-    Dsyev,    // eigensystem of symmetric real matrix
-    Dgesvd,   // SVD of general real matrix
-    Dpotrf,   // Cholesky of positive-definite real matrix
-    // … as needed
+pub trait NumericalBackend: Send + Sync {
+    type Buffer<'a> where Self: 'a;       // lifetime-scoped GAT — buffer cannot outlive backend
+    type Error: std::fmt::Debug;
+    fn name(&self) -> &'static str;
 }
 
-pub struct LapackPrism {
-    op:        LapackOp,
-    dimension: usize,
+pub trait Eigenvalues: NumericalBackend {                   // one trait per op
+    fn eigenvalues(&self, m: &SquareMatrix) -> Result<Vec<f64>, Self::Error>;
 }
+// … Eigensystem, SingularValues, Svd, Cholesky parallel
 
-impl Prism for LapackPrism {
-    type Input    = (Vec<f64>, usize);          // (matrix, n)
-    type Refracted = Imperfect<Vec<f64>, LapackError, ScalarLoss>;
-    type Loss     = ScalarLoss;
+pub struct NumericalPrism<B, Op> { backend: Arc<B>, _op: PhantomData<Op> }
 
-    fn refract(&self, beam: Self::Input) -> Self::Refracted {
-        match self.op {
-            LapackOp::Dsyev   => /* extern call */,
-            LapackOp::Dgesvd  => /* extern call */,
-            LapackOp::Dpotrf  => /* extern call */,
-        }
-    }
+impl<B: Eigenvalues> Prism for NumericalPrism<B, ops::Eigenvalues> {
+    type Input = SquareMatrix;
+    type Refracted = Imperfect<Vec<f64>, B::Error, ScalarLoss>;
+    type Loss = ScalarLoss;
+    fn refract(&self, beam: Self::Input) -> Self::Refracted { /* … */ }
 }
 ```
 
+**LapackBackend** (R-1; one line of contract):
+```rust
+pub struct LapackBackend;   // unit struct, no state
+impl NumericalBackend for LapackBackend { /* Buffer<'a> = &'a [f64]; */ }
+impl Eigenvalues for LapackBackend { fn eigenvalues(…) { ffi::eigenvalues(…) } }
+```
+
+**MetalBackend** (R-5b; v1.5 sketch):
+```rust
+pub struct MetalBackend { device: Device, queue: CommandQueue, pipelines: HashMap<NumericalOp, ComputePipelineState> }
+impl MetalBackend { pub fn try_new() -> Result<Self, NoMetalDevice> { /* Pattern: fate/src/metal_runtime.rs:35 */ } }
+```
+
+**Device selection.** Construct each available backend at startup via
+`try_new()`. Store in a `Registry` keyed by capability. At call time,
+query matrix size: `n ≤ 256` (tunable per-op) dispatches to
+LapackBackend (CPU overhead beats GPU upload + dispatch). `n > 256`
+prefers the highest-tier available backend implementing the required
+capability (Metal on Apple, OpenCL on Linux/AMD, LAPACK as universal
+fallback). Thresholds are measured via `cargo bench`, written into
+build-time constants. Same discipline as Jakobs 2012 §7.4
+(Kompilierung und Ausführung) where kernel-vs-CPU cross-over is
+benchmarked per platform.
+
 The build-side wiring (`cc::Build::new().compiler("gfortran")`, the
-LAPACK link directives) **moves into a `prism/core/build.rs`** gated
-on `feature = "lapack"`. `prism-core`'s baseline stays zero-deps;
-`lapack` is opt-in. fragmentation depends on prism-core with
-`features = ["lapack"]` once spectral-coordinate's Lanczos path
-lives in fragmentation.
+LAPACK link directives) lives in `prism/core/build.rs` gated on
+`feature = "lapack"`. The Metal MSL compilation gates on
+`feature = "metal"`. `prism-core`'s baseline stays zero-deps;
+everything heterogeneous is opt-in. fragmentation depends on prism-core
+with `features = ["numerical", "lapack"]` once spectral-coordinate's
+Lanczos path lands.
+
+**Cited prior art:** Jakobs 2012 (PGI/JCNS, FH Aachen Campus Jülich)
+— *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* —
+for the Host/Device split (§3), the Kernel + Workitem + Workgroup
+vocabulary (§3 + §7.1), the VBO-as-shared-memory pattern
+(§4.4 + §7.2.1), and the structural-error-bound discipline (Appendix B,
+`O(Δt^4 + ε²Δt²)`). Same lineage as Connes 1994 / Turing 1952 /
+Fiedler 1973 in the rest of the corpus.
 
 **Why this is fragmentation-relevant.** `SpectralCoordinate<N>::hash`
 today falls back to SHA-256 because the eigen-decomposition path
@@ -798,9 +835,9 @@ Acceptance:
   `toy_substrate/src/lib.rs` that `cargo build` accepts.
 - The output is byte-identical across two runs (determinism).
 
-### R-1 — `@code/rust` extensions for fragmentation
+### R-1 — `@code/rust` extensions for fragmentation + NumericalPrism
 
-**Size: large** (~3 sessions)
+**Size: large** (~3–4 sessions)
 
 Adds the four load-bearing renderers from §6.2: derive-attribute
 annotations, generic parameters with bounds + defaults, const generics,
@@ -808,11 +845,61 @@ where-clauses. Plus the medium-size match-expression renderer. Plus
 cfg-gate attribute rendering. Cargo-manifest rendering goes in here
 too (small, but couples to feature declarations).
 
+**Absorbed sub-tick: `NumericalPrism` foundation in prism-core.**
+Landing the LAPACK-backed eigensolve path for SpectralCoordinate
+requires more than just moving `coincidence/ffi.rs` — it requires
+the **backend abstraction** that v1.5's Metal path will plug into
+without re-architecture. Per
+`/Users/reed/dev/systemic.engineering/practice/insights/coincidence/heterogeneous-numerical-prism.md`,
+R-1 lands:
+
+- `prism/core/src/numerical/mod.rs` — the `NumericalOp` enum (the
+  algebraic operation: `Eigenvalues`, `Eigensystem`, `SingularValues`,
+  `Svd`, `Cholesky`) + the capability-trait family (`Eigenvalues`,
+  `Eigensystem`, …) + the `NumericalBackend` trait with
+  `Buffer<'a>` GAT.
+- `prism/core/src/numerical/lapack.rs` — `LapackBackend` impl,
+  one method per FFI wrapper in `prism/core/src/ffi.rs`.
+- `prism/core/src/numerical/dispatch.rs` — the operation-size
+  threshold + backend registry.
+- The `NumericalPrism<B, Op>` Prism trait impl, where `B: Op` is the
+  compile-time bound that makes "backend does not support operation"
+  unrepresentable.
+- `SquareMatrix::new(data, n) -> Option<Self>` as the only public
+  constructor (smart constructor; dimension validated at boundary).
+
+**Citation discipline.** Every wrapper comment in `numerical/lapack.rs`
+names the prior art: `// Pattern: Jakobs 2012 §X.Y (…)`, or
+`// Wraps prism::ffi::eigenvalues (dsyev('N','U',...))`, or
+`// Modeled on fate/src/metal_runtime.rs:N`. The lineage is visible
+at the place the code lives. (See insight doc §6 for the patterns
+table and §10 for the acceptance list.)
+
+**Five illegal-state patterns** the design makes unrepresentable
+(insight doc §3):
+1. Backend without operation → trait-per-operation.
+2. Matrix shape mismatch → `SquareMatrix::new` smart constructor.
+3. Device-bound backend without device → `MetalBackend::try_new`.
+4. Buffer outliving backend → `Backend::Buffer<'a>` GAT.
+5. Reading kernel output before completion → `Dispatched → Completed`
+   type-state.
+
 Acceptance:
 - A test grammar `@toy_lib.mirror` containing one struct with a
   derive annotation, one generic enum, one cfg-gated module compiles
   and `cargo build`s.
 - The generated `Cargo.toml` has the correct `[features]` section.
+- `prism/core/Cargo.toml` adds `feature = "numerical"` (gates the
+  module subtree); baseline zero-deps story unchanged when feature
+  is off.
+- `cargo test -p prism-core --features numerical,lapack` passes:
+  - one eigenvalue computation matches `ffi::eigenvalues` bytewise;
+  - one shape-mismatch returns `None` from `SquareMatrix::new`;
+  - one type-bound case fails to compile (verified via
+    `trybuild`/`compile_fail` doctest).
+- Every public function in `numerical/*` has a doc comment citing
+  Jakobs §X.Y or `ffi.rs:N` or `fate/src/metal_runtime.rs:N` for the
+  pattern it inherits.
 
 ### R-2 — `@fragmentation.mirror` written and parses
 
@@ -869,28 +956,54 @@ Acceptance:
   tests per the F-1 walker landing).
 - `cargo doc --all-features` builds without warnings.
 
-### R-5 — `LapackPrism` in prism-core
+### R-5 — SpectralCoordinate consumes NumericalPrism
 
-**Size: medium** (~1.5 sessions)
+**Size: small** (~1 session; collapses from medium because R-1
+absorbed the LapackBackend work)
 
-Per §7. Concurrent with R-4, not blocking. Lives in prism-core gated
-on `feature = "lapack"`. Fragmentation's spectral-coordinate Lanczos
-path consumes it once it lands.
-
-**Could fold into R-4** for the spectral-coordinate module — Mara's
-call after R-3 lands. If the codegen work in R-1 already covers the
-shape of LapackPrism's struct + Prism impl, then generating it via
-`@prism/lapack.mirror` is a natural sub-tick. If LapackPrism stays
-hand-written (it's not a derive target — §3.3), R-5 is a separate
-small ticket.
+Fragmentation's `SpectralCoordinate::from_eigenvalue` gains a
+helper constructor that calls into `prism_core::NumericalPrism`
+(LapackBackend, `Eigenvalues` capability) for the real Lanczos
+path. The placeholder SHA-256 fallback is retained for the
+zero-feature build; the eigen path is gated on `feature = "lapack"`
+from prism-core.
 
 Acceptance:
-- `LapackPrism` in prism-core, gated on feature.
-- `cargo test --features lapack` in prism-core passes.
-- `SpectralCoordinate::from_eigenvalue` in fragmentation gains a
-  helper constructor that uses LapackPrism for the real Lanczos
-  path; coincidence's `ffi.rs` is no longer referenced from
-  fragmentation.
+- `cargo test -p fragmentation --features lapack` exercises a
+  spectral-coordinate computation through `NumericalPrism`.
+- No remaining import of `coincidence::*` from fragmentation.
+- The bytewise hash matches what coincidence's `from_eigenvalue`
+  produced for the same input — regression check that the move did
+  not change the substrate hash.
+
+### R-5b — MetalBackend (v1.5)
+
+**Size: medium** (~2 sessions)
+
+Lands the GPU path under the NumericalPrism abstraction R-1 already
+put in place. Per insight doc §4.2 + §3 (illegal-state patterns 3,
+4, 5):
+
+- `prism/core/src/numerical/metal.rs` — `MetalBackend` with
+  `try_new() -> Result<Self, NoMetalDevice>` (pattern 3).
+- `Backend::Buffer<'a>` GAT instantiation tying GPU buffers to the
+  backend's lifetime (pattern 4).
+- `Dispatched<'a> → Completed<'a>` type-state for kernel dispatch
+  (pattern 5).
+- `prism/core/native/metal/{svd,eigensystem}.metal` — MSL kernel
+  sources, compiled by `prism/core/build.rs` to `OUT_DIR` and
+  `include_str!`'d (pattern: `fate/src/metal_runtime.rs:13`).
+- Initial capability set: `SingularValues` + `Svd`. Eigensolve
+  follows once a Metal-native symmetric eigensolver lands.
+
+Acceptance:
+- `cargo test -p prism-core --features metal` on Apple Silicon
+  passes: GPU output matches `LapackBackend::svd` bytewise (modulo
+  numerical tolerance per LAPACK's accuracy bound).
+- Linux build with `--features numerical` (no metal) still compiles
+  — MetalBackend is conditionally compiled.
+- Citation comments in every public function name Jakobs §X.Y or
+  `fate/src/metal_runtime.rs:N`.
 
 ### R-6 — Coincidence archive
 
@@ -908,7 +1021,11 @@ Acceptance:
 - Any remaining consumers of `coincidence` (mirror's bootstrap,
   spectral-db) have been ported to the new locations.
 
-### Estimated total: ~13–14 sessions
+### Estimated total: ~14–16 sessions
+
+(R-1 absorbed ~1 session of NumericalPrism foundation work; R-5
+dropped from ~1.5 to ~1 because the LapackBackend is now landed
+upstream in R-1; R-5b adds ~2 for the MetalBackend.)
 
 **Load-bearing tick: R-1.** Without `@code/rust`'s render extensions,
 nothing downstream lands. R-0 proves the architecture; R-1 proves
