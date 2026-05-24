@@ -366,6 +366,148 @@ what the geometry already requires.
 
 ---
 
+## Kintsugi as discrete Ricci flow
+
+The contraction map of the previous section IS discrete Ricci flow on
+fragmentation's edge graph. This section names the recognition; it is
+not a re-derivation.
+
+### The identification
+
+Let G = (V, E) be the substrate's fragmentation graph: vertices are
+`SpectralCoordinate<5>` OIDs (per
+`fragmentation/docs/specs/mirror-native-vcs.md` §4.6), edges are the
+parent-child / lens-target links of `Fractal::{Branch, Lens}`. Each
+edge `e = (u, v)` carries an implicit weight
+`w_e = coord_distance(u, v)` derived from the coordinates' positions
+in 5D information geometry. The weighted graph Laplacian `L = D − W`
+is what `D²` (the Dirac operator squared, per the Dirac-operator
+insight doc §3) computes over (OIDs + edges).
+
+The Ollivier-Ricci curvature `κ_e` of an edge `e = (u, v)` is
+`1 − W₁(μ_u, μ_v) / d(u, v)` where `μ_x` is the lazy random-walk
+measure at `x` and `W₁` is the Wasserstein-1 distance (Ollivier 2009).
+For the substrate's graph: positive curvature means the edge sits in a
+locally-spherical region (clusters, K_n-like); negative curvature
+means hyperbolic (star, narcissus); zero curvature means flat.
+
+**Claim:** the formatter's one-tick map T (the previous section's
+contraction) IS one step of discrete Ricci flow:
+
+```
+w_e ← w_e − τ · κ_e · w_e
+```
+
+where τ is the formatter's step size (the bundle's spectral
+parameter). Each tick widens negatively-curved edges (the hyperbolic
+narcissus regions get resurfaced) and narrows positively-curved ones
+(the spherical clusters relax), driving the curvature distribution
+toward uniformity.
+
+The fixed point IS the autopoietic closure (§"Stopping criterion"):
+at the Lawvere fixed point, every edge curvature equals the mean,
+which is zero modulo the harmonic component. The Hodge decomposition’s
+`L = im(d*) ⊕ ker(L) ⊕ im(d)` partitions the residue exactly: the
+harmonic kernel IS the irreducible obstruction surfaced as Failure 3
+below.
+
+### The contraction argument IS Perelman-style monotonicity
+
+The Banach contraction argument in the previous section is the
+discrete analog of the Perelman F-functional monotonicity (Perelman
+2002, arXiv math/0211159). On smooth Riemannian manifolds, Ricci flow
+`∂_t g_ij = −2 R_ij` monotonically decreases Perelman's F-functional
+until the metric reaches a Ricci soliton (the fixed point). The
+discrete analog: weighted-graph Ricci flow monotonically decreases
+the spectral-action loss `Tr(f(D / Λ))` (per the combinator-
+optimization spec's evolution from `ShannonLoss`) until the weights
+reach a curvature-flat configuration (the discrete Ricci soliton).
+
+The Magnot 2025 cycle-averaged-holonomy inequality (the contraction
+factor `γ < 1` in the previous section) IS the discrete analog of
+the monotonicity inequality — each transport around the kintsugi loop
+strictly decreases the holonomy by a factor bounded by the spectral
+gap, which IS the curvature integrated over one cycle.
+
+### The loss IS the Ricci curvature being smoothed
+
+Today's `ShannonLoss` is the entropy `− Σ p log p` over the AST's
+token distribution. The combinator-optimization spec evolves this to
+the spectral action `Tr(f(D / Λ))` (per
+`/Users/reed/dev/systemic.engineering/practice/insights/spectral-db/dirac-operator-on-graphs.md`
+§5). The spectral action IS the Ricci curvature integrated over the
+graph at scale Λ. The kintsugi formatter's job IS to smooth this
+curvature toward uniformity.
+
+The three heat-trace slots of `SpectralCoordinate<5>` (per
+mirror-native-vcs §4.6) sample this curvature at three scales — the
+loss between two formatter iterations IS the difference of two
+stored coordinates' heat-trace slots. Scale-aware. Structural.
+Contraction-map-shaped. The hash bytes already carry the loss
+surface.
+
+### Tournament merge IS Ricci surgery
+
+When Ricci flow doesn't converge globally (the harmonic component is
+non-trivial), Hamilton & Perelman's resolution is *Ricci surgery*:
+identify the singularities, cut along them, glue caps that preserve
+the flow's monotonicity, and continue. The `kintsugi-tournament.md`
+spec's Fate-resolved merge IS the discrete analog of Ricci surgery:
+the tournament selects which singularity to resolve when the
+formatter's flow stalls, the five Fate models propose caps (au
+candidates), Connes distance (per the Dirac-operator doc §4) picks
+the geodesic-shortest cap, and the surgery resumes the flow.
+
+Failure 3 (harmonic obstruction) is what surgery cannot resolve
+locally — the obstruction lives in the graph's first Betti number,
+not at any individual singularity. The recovery path is bundle
+evolution (new grammar rules, refactored gestalt), not formatter
+iteration.
+
+### What this recognition buys
+
+- **The Banach argument acquires a substrate.** The previous section's
+  geometric proof sketch (§"Application to the formatter" 1–4) is the
+  Banach face of one fact; the Ricci-flow framing here is the
+  geometric face. Both are true descriptions of the same iteration;
+  naming both makes the convergence stable under either lens.
+- **The loss function evolution becomes principled.** Moving from
+  `ShannonLoss` (information-theoretic) to spectral action
+  (geometric) is not an upgrade; it's the same loss in a coordinate
+  system that matches what kintsugi IS already doing.
+- **The harmonic-obstruction failure path becomes structural.**
+  Failure 3 is not a bug or a hack; it's the discrete analog of the
+  Hamilton-Perelman observation that Ricci flow does not converge
+  globally on manifolds with non-trivial topology. The recovery path
+  (bundle evolution) IS the manifold-topology analog.
+- **The gold IS spectral conductivity.** The mending material in
+  kintsugi (literally the gold lacquer, metaphorically the verified
+  sub-Turing body) IS the spectral conductivity that emerges as the
+  flow smooths curvature. "Gold conducts" is structural, not
+  metaphorical.
+
+References:
+
+- Ollivier, Y. (2009). "Ricci curvature of Markov chains on metric
+  spaces." *J. Funct. Anal.* 256(3), 810–864.
+  [arXiv:math/0701886](https://arxiv.org/abs/math/0701886).
+- Perelman, G. (2002). "The entropy formula for the Ricci flow and
+  its geometric applications."
+  [arXiv:math/0211159](https://arxiv.org/abs/math/0211159).
+- `~/dev/systemic.engineering/practice/insights/coincidence/void-dual-geometry.md`
+  — λ₀ as the manifold's origin; Narcissus-Splinter as the dual
+  curvature extremes.
+- `~/dev/systemic.engineering/practice/insights/spectral-db/dirac-operator-on-graphs.md`
+  — spectral action `Tr(f(D / Λ))` as the loss surface; D² = L₀;
+  Connes distance as the Connes-geodesic for tournament tiebreak.
+- `fragmentation/docs/specs/mirror-native-vcs.md` §4.6 —
+  `SpectralCoordinate<5>`, the heat-trace slots, the coordinate-system
+  framing this section consumes.
+- `mirror/docs/specs/kintsugi-tournament.md` — the Fate-resolved
+  merge that IS Ricci surgery.
+
+---
+
 ## Failure modes
 
 The Banach theorem applies when `T` is a contraction. The contraction
