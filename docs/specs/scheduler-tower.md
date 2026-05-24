@@ -376,6 +376,46 @@ See §5.4 for the decision table. Selection is at compose-time based on the prod
 
 See §8. The v1.5 design is network-extensible; v2 adds a `network` bus type and `slow-start` for cross-node `max_demand`. No protocol changes. The subscription OID becomes the wire identity. Replay-from-ancestor stays valid across nodes (mirror's content-addressing is location-independent).
 
+### 10.9 `Buffer<'a>` lifetime contagion — RESOLVED (option c: operations return owned values)
+
+Mara's research surfaced one new question after the resolutions above landed: how does `NumericalBackend::Buffer<'a>` (the GAT from `heterogeneous-numerical-prism.md`) interact with consumers that store results? Two surface options:
+
+- **(a)** Thread `'a` through `SpectralCoordinate::from_eigenvalue` and every downstream consumer. Pure type safety; viral lifetime contagion.
+- **(b)** Hold the backend behind `Arc<B>`; let the Arc's refcount enforce buffer-outlives-backend. Slight runtime cost; cleaner consumer API.
+
+**Reed's resolution: option (c) — the seam is at "results are owned, not borrowed."**
+
+The `Buffer<'a>` GAT correctly lives INSIDE backend implementations — it scopes kernel-dispatch lifecycle (allocate → dispatch → wait → copy out → drop). But operations RETURN owned values (`Vec<f64>`, `SquareMatrix`, `SpectralCoordinate`), not borrowed buffer references:
+
+```rust
+// Backend uses Buffer<'a> internally for kernel lifecycle
+pub trait NumericalBackend {
+    type Buffer<'a> where Self: 'a;
+    // ...
+}
+
+// Operations on NumericalPrism return owned results
+impl<B: Eigenvalues> NumericalPrism<B, ops::Eigenvalues> {
+    pub fn refract(&self, matrix: &SquareMatrix) -> Result<Vec<f64>, B::Error> {
+        // internally: allocate Buffer<'_> → dispatch → wait → copy out → drop
+        // externally: owned Vec<f64>; no lifetime exposed
+    }
+}
+
+// Consumers store owned values; no Buffer, no lifetime
+pub struct SpectralCoordinate<const N: usize>([f64; N]);
+
+impl<const N: usize> SpectralCoordinate<N> {
+    pub fn from_eigenvalues(eigenvalues: &[f64]) -> Self { /* sample top N */ }
+}
+```
+
+**Why this is right.** Anna Jakobs's OpenCL pattern (§7.2.1) does the same thing implicitly — the kernel writes to a buffer; the host reads it out into an owned data structure before the buffer drops or is reused. The visualization gets owned data via VBO sync. Substrate-internal code uses lifetimes for performance; substrate-consumer code sees owned values; the lifetime never escapes the backend boundary.
+
+**Cost.** One copy (GPU-buffer → owned Vec) at the end of each operation. For mirror's scale, free. For batched workloads, the API gains `refract_batch(&[SquareMatrix]) -> Result<Vec<Vec<f64>>, _>` — same shape, batch-internal buffer lifecycle, still owned outputs.
+
+**Update for `heterogeneous-numerical-prism.md`:** §"Type-safe construction" gains a note clarifying that `Buffer<'a>` is internal to backend implementations; operations return owned values; consumers store owned values with no lifetime contagion. Mechanical edit; not in this tick's scope but flagged for follow-up.
+
 ---
 
 ## 11. What this spec defers
