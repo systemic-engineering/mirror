@@ -2,6 +2,7 @@ in @prism
 in @meta
 in @io
 in @option
+in @time
 in @epistemologic
 in @epistemologic/property
 in @epistemologic/property/content_addressed
@@ -33,13 +34,21 @@ in @epistemologic/property/content_addressed
 
 grammar @epistemologic/silicon/compute_bound {
 
-  # Wall-clock time as milliseconds. Declared locally rather than
-  # imported from @beam.duration to keep the silicon carriers from
-  # pulling the full BEAM runtime grammar; compute_bound is a
-  # silicon-level concern, not a BEAM concern. Design call parked:
-  # promote to a shared @time.duration if a second silicon carrier
-  # needs the same representation.
-  type wall_time = u64
+  # Wall-clock time bound carrier. Resolved 2026-05-25: the locally-
+  # declared `type wall_time = u64` (milliseconds, undocumented frame)
+  # promoted to @time.wall, which IS zoom(duration) where duration =
+  # refract({ nanos: u64 }). The frame discipline is now structural
+  # rather than conventional; the substrate-level @epistemologic/property/
+  # frame_relativity verifier rejects any cross-shard compare that
+  # bypasses @time.convert. Precision is nanoseconds (PG's lesson §2.5:
+  # pick one convention and name it; nanoseconds matches CLOCK_MONOTONIC
+  # resolution and BEAM's native time unit).
+  #
+  # Downstream consumers (detect_max, admits, the shard's compute
+  # field) are unaffected: zoom(T) is annotation-only, so the bytes
+  # are unchanged. The structural halting argument inherits the frame
+  # discipline — the substrate cannot accidentally compare a budget
+  # in wall-time to elapsed monotonic reductions.
 
   # The compute_bound carrier. Five fields, all option-typed:
   #
@@ -48,7 +57,8 @@ grammar @epistemologic/silicon/compute_bound {
   #   max_gpu_memory_bytes upper bound on GPU/accelerator VRAM.
   #                       none on silicon without a GPU.
   #   max_wall_time       upper bound on wall-clock execution
-  #                       (in milliseconds). none = unbounded.
+  #                       (observer-relative @time.wall frame; the
+  #                       shard provides the frame). none = unbounded.
   #   max_reductions      upper bound on spectral-reductions before
   #                       the substrate forces a halt (per Task #74).
   #                       none = unbounded.
@@ -61,7 +71,7 @@ grammar @epistemologic/silicon/compute_bound {
     max_cpu_cores:        option(u32),
     max_memory_bytes:     option(u64),
     max_gpu_memory_bytes: option(u64),
-    max_wall_time:        option(wall_time),
+    max_wall_time:        option(wall),
     max_reductions:       option(u64),
   }
 
@@ -91,7 +101,6 @@ grammar @epistemologic/silicon/compute_bound {
 }
 
 out compute_bound
-out wall_time
 out detect_max
 out literal
 out @epistemologic/silicon/compute_bound

@@ -32,8 +32,16 @@ type measurement {
   tick: tick,
 }
 
--- duration: how long the beam took to traverse the prism
-type duration(u64)
+-- duration: how long the beam took to traverse the prism.
+-- Per substrate convergence 2026-05-25: this is @time.duration
+-- (refract({ nanos: u64 })), imported via `in @time` above. The
+-- local declaration is dropped to land the single-source-of-truth;
+-- the BEAM-local frame is @time.monotonic (BEAM's
+-- erlang:monotonic_time native unit IS nanoseconds, so the substrate
+-- and the BEAM runtime carry the same precision). Annotation-only
+-- via zoom; zero runtime change to BEAM interop.
+--
+-- Per docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md.
 
 -- the beam: a value carrier through a pipeline
 -- carries luminosity, path of prisms traversed, wavelength (precision),
@@ -182,7 +190,6 @@ out luminosity
 out topology
 out loss
 out measurement
-out duration
 out beam
 out speedup
 out baseline
