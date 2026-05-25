@@ -4,7 +4,7 @@ in @io
 in @file
 in @cogito
 in @code/mq
-in @mirror/spec
+in @mirror/shard
 in @mirror/evaluate
 in @mirror/spectral
 in @mirror/runtime/gen_prism
@@ -44,14 +44,14 @@ grammar @peer {
     identity:   mirror,        # focus(self): immutable manifold; mutating = fork
     gestalt:    mirror,        # project(self): the accumulated lens
     tensions:   mirror,        # split(self): open branches the peer carries
-    eigenboard: spec,          # zoom(self): @cogito.eigenboard surfaced as a spec file
+    eigenboard: shard,         # zoom(self): @cogito.eigenboard surfaced as a shard file
     shatter:    mirror,        # refract(self): rendered history; ancestor chain
   }
 
   # the canonical five filenames. one enum, one mapping; the validator
   # iterates the enum so the filenames stop being magic strings.
-  # `eigenboard.spec` is the only `.spec` — it rides the @mirror/spec
-  # glass (placeholder; ACL substrate is future work).
+  # `eigenboard.shard` rides the @mirror/shard glass — the observer-
+  # relative deployment description for this peer's eigenboard frame.
   type peer_file = identity | gestalt | tensions | eigenboard | shatter
 
   # filename: the canonical mapping from peer_file variant to filename.
@@ -71,7 +71,7 @@ grammar @peer {
     identity   => "identity.mirror",
     gestalt    => "gestalt.mirror",
     tensions   => "tensions.mirror",
-    eigenboard => "eigenboard.spec",
+    eigenboard => "eigenboard.shard",
     shatter    => "shatter.mirror",
   }
 
@@ -91,7 +91,7 @@ grammar @peer {
       identity:   @io.read(dir / filename(identity))   |> @mirror/evaluate.evaluate(@mirror/grammar),
       gestalt:    @io.read(dir / filename(gestalt))    |> @mirror/evaluate.evaluate(@mirror/grammar),
       tensions:   @io.read(dir / filename(tensions))   |> @mirror/evaluate.evaluate(@mirror/grammar),
-      eigenboard: @io.read(dir / filename(eigenboard)) |> @mirror/evaluate.evaluate(@mirror/spec),
+      eigenboard: @io.read(dir / filename(eigenboard)) |> @mirror/evaluate.evaluate(@mirror/shard),
       shatter:    @io.read(dir / filename(shatter))    |> @mirror/evaluate.evaluate(@mirror/grammar),
     }
   }
