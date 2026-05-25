@@ -1,0 +1,186 @@
+in @prism
+
+in @io
+in @fragmentation
+in @fragmentation/frame
+in @mirror/shard
+in @mirror/runtime/gen_prism
+
+in @epistemologic/property/content_addressed
+in @epistemologic/property/autopoietic
+in @epistemologic/property/halts
+in @epistemologic/property/frame_relativity
+
+# @spectral/portal
+#
+# Typed transport over a content-addressed subspace. A portal is
+# `@io.socket` typed against a fragmentation subspace OID, with a
+# `@mirror/shard` frame on each end. One primitive; six instances
+# (session, filesystem mount, BEAM connection, cross-system
+# integration, communication, identity) per the
+# `~/dev/systemic.engineering/practice/insights/fragmentation/
+# portals.md` table.
+#
+# Per docs/insights/2026-05-26-portal-as-io-socket-over-content-
+# addressed-subspace.md §"The composition":
+#
+#   1. @io.socket          — raw transport (TCP, unix, WS)
+#   2. fragmentation       — content-addressed subspace identity
+#   3. @mirror/shard       — observer-relative frame each end carries
+#   4. @mirror/runtime/    — the actor; the open portal IS a
+#      gen_prism             gen_prism whose ticks are the stream
+#
+# Wire protocol (the four fragments Alex named 2026-05-25):
+#
+#   a. WS handshake — socket.accept() over HTTP upgrade; frame-
+#      handshake between two shards.
+#   b. Single @fragmentation/frame full frame — the portal's
+#      `collapse`; same shape as delta-from-null, so full sync and
+#      reconnect-resync use one mechanism.
+#   c. Bidirectional eigenvalue stream — normalized observations in
+#      [0.0, 1.0] of the shared spectral state; bandwidth-minimal;
+#      content-addressable; replayable.
+#   d. Autopoietic close — halts when Reflection picks refract(self)
+#      OR the host shard's @epistemologic/silicon/compute_bound.
+#      max_reductions exhausts (per @epistemologic/property/halts
+#      from #74).
+#
+# Substrate decision (Alex 2026-05-26): the wire's middle step is a
+# `@fragmentation/frame` full-frame send, NOT git-patch. See
+# `boot/std/fragmentation/frame.mirror`.
+#
+# Four fields, three actions, four properties. Mirrors @peer's five-
+# axis pattern with four — the portal isn't itself an identity
+# manifold; it's the bridge between two.
+#
+# Insight: docs/insights/2026-05-26-portal-as-io-socket-over-
+#          content-addressed-subspace.md
+# Namespace placement: docs/insights/2026-05-25-spectral-namespace-
+#                       architecture.md (open, Apache-2.0; between
+#                       @spectral/mosaic and @spectral/db)
+# Corpus prior art: ~/dev/systemic.engineering/practice/insights/
+#                   fragmentation/portals.md (Alex + Reed + Mara,
+#                   2026-03-24)
+
+grammar @spectral/portal {
+
+  # ── the portal record ──────────────────────────────────────────
+  #
+  # Four fields. One per substrate layer the portal composes.
+  #
+  #   socket   -> the raw transport underneath. @io.socket gives the
+  #               wire (TCP / unix / WS); the portal types it against
+  #               the subspace + frame above.
+  #   subspace -> the content-addressed identity. zoom(oid,
+  #               fragmentation): the OID of the fragmentation
+  #               subspace this portal points at. The classical bit
+  #               per portals.md's "teleportation" framing —
+  #               receiver does socket.recv() |> @fragmentation.
+  #               observe and the state was never moved, only the
+  #               address.
+  #   frame    -> this end's observer frame. zoom(oid, shard): the
+  #               OID of @mirror/shard.self() at the time the portal
+  #               opened. Comparing observations across portals
+  #               walks the shard parent chain per @time.convert.
+  #   actor    -> the connection's gen_prism. zoom(oid, gen_prism):
+  #               each tick of this gen_prism is one bidirectional
+  #               update across the wire. The open portal IS this
+  #               gen_prism; autopoietic close fires when
+  #               Reflection picks refract(self).
+  type portal = {
+    socket:   @io.socket,
+    subspace: zoom(oid, fragmentation),
+    frame:    zoom(oid, shard),
+    actor:    zoom(oid, gen_prism),
+  }
+
+  # ── open: handshake + frame-negotiate + initial frame + stream ──
+  #
+  # Open a portal to a remote URI from this end's shard frame. The
+  # body runs the four-stage wire protocol (WS handshake → frame-
+  # negotiate → @fragmentation/frame initial → stream ticks); each
+  # stage may fail, so the result is imperfect.
+  #
+  # `remote: ~uri` uses the existing @io.uri sigil per boot/02a-io.
+  # mirror; `frame: shard` is the local observer's shard — typically
+  # @mirror/shard.self(). Body is a Fate-resolved hole; the
+  # tournament reads the shard's compute_bound, the URI's scheme,
+  # the host's auth posture, and dispatches the correct transport
+  # backend.
+  open(remote: ~uri, frame: shard) -> imperfect<portal> { \ }
+
+  # ── tick: one round-trip across the portal ──────────────────────
+  #
+  # One bidirectional update on the open portal. The portal's actor
+  # gen_prism applies (state, message) -> tick_result; the new state
+  # advances the gen_prism's HEAD; emissions ride the eigenvalue
+  # stream over the wire. Same `tick_result` shape @mirror/runtime/
+  # gen_prism.tick produces — portal ticks ARE gen_prism ticks at
+  # the wire altitude.
+  #
+  # Body is a Fate-resolved hole; the tournament composes
+  # @mirror/runtime/gen_prism.tick on the actor with the wire-side
+  # emissions encoder.
+  tick(p: portal, message: message) -> tick_result { \ }
+
+  # ── close: autopoietic termination ────────────────────────────────
+  #
+  # Close the portal. Two paths, both decidable per
+  # @epistemologic/property/halts:
+  #
+  #   (a) settlement — Reflection picks refract(self); the actor's
+  #       Lawvere fixed point is reached; the gen_prism crystallizes
+  #       a final state and the wire closes cleanly.
+  #   (b) budget exhaustion — the host shard's compute_bound.
+  #       max_reductions runs out; the substrate forces termination;
+  #       any partial state is crystallized; the wire closes with a
+  #       structured-reason payload.
+  #
+  # Returns imperfect because the wire close itself may fail (peer
+  # gone, socket already broken); diagnostics ride the standard
+  # recovery surface.
+  close(p: portal) -> imperfect { \ }
+
+  # ── properties: the math made load-bearing ───────────────────────
+  #
+  # All four substrate-level claims the portal makes structurally.
+  # These ARE the design: the math of the composition turned into
+  # type-level obligations the verifier checks at compile time.
+  #
+  #   content_addressed : identity IS the content hash. All four
+  #                       portal fields are content-addressed
+  #                       (socket -> ref; subspace/frame/actor ->
+  #                       zoom(oid, _)); the portal's OID is
+  #                       determined by the quadruple. Foundational.
+  #   autopoietic       : the connection's gen_prism is
+  #                       self-referential by construction —
+  #                       gen_prism's `name` field is itself
+  #                       zoom(oid, gen_prism), the Lawvere fixed
+  #                       point exhibits at construction time per
+  #                       Soto-Andrade & Varela 1984. The portal
+  #                       inherits the autopoietic claim through
+  #                       its `actor` field.
+  #   halts             : both ends terminate by construction (#74).
+  #                       Disjunction: autopoietic settlement OR
+  #                       reduction-budget exhaustion. Decidable
+  #                       because the language is sub-Turing;
+  #                       Rice's theorem does not apply. This is
+  #                       the is_copium thesis operationalized at
+  #                       the transport altitude.
+  #   frame_relativity  : observations are shard-relative.
+  #                       Comparing the same eigenvalue measured at
+  #                       two portal endpoints requires explicit
+  #                       @time.convert through the shard parent
+  #                       chain. PG §2.1 (timestamptz over
+  #                       timestamp) at the substrate altitude.
+  requires content_addressed(portal)
+  requires autopoietic(portal)
+  requires halts(portal)
+  requires frame_relativity(portal)
+}
+
+out portal
+out open
+out tick
+out close
+out @spectral/portal
