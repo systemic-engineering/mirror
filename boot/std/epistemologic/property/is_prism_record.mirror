@@ -1,0 +1,56 @@
+in @prism
+
+# @epistemologic/property/is_prism_record
+#
+# A type is a Prism record iff it has exactly five fields, one per
+# Prism operation, each with the algebraic shape that operation
+# produces when applied to the type itself.
+#
+# Per docs/insights/2026-05-25-parametric-types-and-fp-heritage.md
+# section 8 (open question on @peer's five-field shape):
+#
+#   The strongest form of the thesis: the parametric-type algebra
+#   IS the five operations, and a record that names a peer's identity
+#   has exactly one field per operation. Drop one and the algebra
+#   rejects the record.
+#
+# @peer.peer is the canonical example. Its five fields:
+#
+#   identity   -> focus(self)    -- the manifold
+#   gestalt    -> project(self)  -- the accumulated lens
+#   tensions   -> split(self)    -- open branches
+#   eigenboard -> zoom(self)     -- current spectral state
+#   shatter    -> refract(self)  -- rendered history
+#
+# This property verifies a type matches the Prism-record shape: five
+# fields, each tagged with the operation it represents. Structurally
+# enforced — the bootstrap walks the record's field list and checks
+# the count and the operation tags.
+
+grammar @epistemologic/property/is_prism_record {
+
+  # The field count must be exactly five.
+  five_fields(type) -> verdict { \ }
+
+  # One field per Prism operation. The five operation tags must each
+  # appear exactly once across the record's fields. Order-independent
+  # — the algebra has no canonical ordering; the closure at five is
+  # what matters.
+  one_per_operation(type) -> verdict { \ }
+
+  # Each field's type must be the operation applied to the record's
+  # self-type. For peer: identity's type is focus(peer), gestalt's
+  # type is project(peer), and so on. The operation IS the field's
+  # algebraic shape; the substrate enforces the correspondence.
+  shapes_match_operations(type) -> verdict { \ }
+
+  # The combined property: the type is a Prism record.
+  # Pass iff five_fields and one_per_operation and shapes_match_operations.
+  is_prism_record(type) -> verdict { \ }
+}
+
+out five_fields
+out one_per_operation
+out shapes_match_operations
+out is_prism_record
+out @epistemologic/property/is_prism_record

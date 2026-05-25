@@ -1,0 +1,49 @@
+in @prism
+
+# @epistemologic/property/functor_laws
+#
+# zoom(T) is the annotation-only parametric form (Functor-shaped).
+# Per docs/insights/2026-05-25-parametric-types-and-fp-heritage.md.
+#
+# Haskell's Functor laws lifted to mirror's type layer:
+#
+#   identity:     zoom(id) = id
+#   composition:  zoom(f . g) = zoom(f) . zoom(g)
+#
+# Mirror's contribution beyond Haskell: zoom is annotation-only by
+# construction, so the runtime cost of the laws is zero. The bytes
+# don't change under zoom; only the declared shape does. Identity is
+# byte-identity; composition is composition of declarations.
+#
+# When this property passes for a type T, T's use of zoom(T) is sound.
+# When it fails, the annotation is structural in a way that breaks
+# either identity (zoom(T) is not byte-identical to T) or composition
+# (nested zoom doesn't equal sequential zoom).
+
+grammar @epistemologic/property/functor_laws {
+
+  # The identity law: zoom(id) = id.
+  #
+  # For a type T, zoom(T) under the identity annotation must yield
+  # bytes identical to T. The content address of zoom_lift(T, id) must
+  # equal the content address of T. Verifier: compute both OIDs;
+  # compare.
+  identity_law(type) -> verdict { \ }
+
+  # The composition law: zoom(f . g) = zoom(f) . zoom(g).
+  #
+  # For a type T and two annotations f, g, zoom-ing T under (f . g) in
+  # one step must yield the same OID as zoom-ing T under g and then
+  # zoom-ing the result under f. The substrate's content-addressing
+  # makes this a single OID equality check.
+  composition_law(type) -> verdict { \ }
+
+  # The combined property: zoom(T) satisfies both Functor laws.
+  # Pass iff identity_law and composition_law both pass.
+  functor_laws(type) -> verdict { \ }
+}
+
+out identity_law
+out composition_law
+out functor_laws
+out @epistemologic/property/functor_laws
