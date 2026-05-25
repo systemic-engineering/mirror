@@ -706,6 +706,115 @@ fn scan_items(
         } else if is_skip_word(&word) {
             continue;
         } else {
+            // Action declaration form (only inside @mirror/grammar, only at
+            // line start). Surface shape:
+            //
+            //   <name>(<args>) -> <typename> { <body> }
+            //   <decorator> <name>(<args>) -> <typename> { <body> }
+            //
+            // Examples:
+            //   observe(imperfect) -> observation { @beam.emit }
+            //   load(dir: ~dir) -> peer { peer { ... } }
+            //   property autopoietic() -> verdict { @epistemologic/math/lawvere.is_autopoietic(@cogito) }
+            //   fn filename(p: peer_file) -> text { identity => "identity.mirror", ... }
+            //
+            // Before this rule the unknown-word path saw only `<name>` (no
+            // `{`), did nothing, and the `(`, args, `->`, return-type
+            // identifier, and body were processed piecewise. The return
+            // type identifier landed back here as a bare unknown word
+            // followed by `{ <body> }` and got captured as a Dark region.
+            // The full declaration becomes a single IoBinding node so the
+            // return-type identifier is no longer surfaced as an
+            // unrecognised construct.
+            if word_at_line_start && grammar.is_mirror() {
+                // Peek for the action-declaration shape. Three positions:
+                //   name_start ..= name_end   : the action's identifier
+                //   after_paren                : just past `(...)` (or =
+                //                                name_end when args omitted)
+                //   block_pos                  : opening `{` of the body
+                // We only commit (advance `pos`) when the entire shape
+                // matches. `word` itself may be either the action name
+                // (bare form) or a decorator (`property`, `fn`,
+                // `template`, `select`, ...). The `(<args>)` is optional
+                // — nullary actions like `serve -> imperfect { ... }`
+                // omit the parens.
+                let mut name_start = word_start;
+                let mut name_end = pos;
+                let mut peek = skip_hspace(bytes, pos);
+                // Decorator form: a second bare identifier separates the
+                // decorator from the `(` (or the `->`, for nullary).
+                if peek < len && is_word_char(bytes[peek]) {
+                    let id_start = peek;
+                    let mut id_end = id_start;
+                    while id_end < len && is_word_char(bytes[id_end]) {
+                        id_end += 1;
+                    }
+                    let after_id = skip_hspace(bytes, id_end);
+                    if after_id < len
+                        && (bytes[after_id] == b'('
+                            || (after_id + 1 < len
+                                && bytes[after_id] == b'-'
+                                && bytes[after_id + 1] == b'>'))
+                    {
+                        name_start = id_start;
+                        name_end = id_end;
+                        peek = after_id;
+                    }
+                }
+                let after_paren = if peek < len && bytes[peek] == b'(' {
+                    scan_paren_block(bytes, peek)
+                } else {
+                    peek
+                };
+                {
+                    let arrow = skip_hspace(bytes, after_paren);
+                    if arrow + 1 < len
+                        && bytes[arrow] == b'-'
+                        && bytes[arrow + 1] == b'>'
+                    {
+                        let ty_start = skip_hspace(bytes, arrow + 2);
+                        let mut ty_end = ty_start;
+                        while ty_end < len && is_name_char(bytes[ty_end]) {
+                            ty_end += 1;
+                        }
+                        if ty_end > ty_start {
+                            let mut block_pos = ty_end;
+                            while block_pos < len
+                                && matches!(
+                                    bytes[block_pos],
+                                    b' ' | b'\t' | b'\n' | b'\r'
+                                )
+                            {
+                                block_pos += 1;
+                            }
+                            if block_pos < len && bytes[block_pos] == b'{' {
+                                let block_end =
+                                    scan_brace_block_past(bytes, block_pos);
+                                let action_name =
+                                    name_string(&bytes[name_start..name_end]);
+                                // Body: everything after the action name
+                                // through the closing brace (args, arrow,
+                                // return type, brace block) — verbatim
+                                // for round-trip.
+                                let body = String::from_utf8_lossy(
+                                    &bytes[name_end..block_end],
+                                )
+                                .into_owned();
+                                let mut node = AstNode::new(
+                                    AstKind::IoBinding,
+                                    &action_name,
+                                );
+                                node.set_keyword(&word);
+                                node.set_body(&body);
+                                parent.add_child(node);
+                                pos = block_end;
+                                at_line_start = true;
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
             // Unknown word followed by a `{ ... }` block. Previously the
             // block was silently swallowed — the silent absorption mode.
             // The Dark capture now spans from the unknown keyword's first
