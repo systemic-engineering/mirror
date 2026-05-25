@@ -1,5 +1,6 @@
 in @prism
 in @epistemologic/property/autopoietic
+in @epistemologic/property/halts
 in @mirror/spectral
 in @hash/coincidence
 in @beam
@@ -58,6 +59,19 @@ grammar @mirror/runtime/gen_prism {
   property autopoietic() -> verdict {
     @epistemologic/property/autopoietic.autopoietic(gen_prism)
   }
+
+  # the substrate's halting claim made load-bearing on this actor.
+  # Per Alex's 2026-05-25 substrate decision: every reflexive
+  # trajectory of a sub-Turing grammar terminates by disjunction of
+  # (a) autopoietic settlement via @cogito.reflect's Lawvere fixed
+  # point and (b) reduction exhaustion via @scheduler.reduction_budget
+  # against the host shard's @epistemologic/silicon/compute_bound.
+  # max_reductions. The tick's `\` body remains the runtime resolution
+  # point; this contract is the structural condition any tick body
+  # must satisfy. The is_copium thesis operationalized: mirror is
+  # not Turing-complete, so Rice's theorem does not apply and the
+  # halting check is decidable by construction.
+  requires halts(gen_prism)
 
   # a message is any content-addressable value. crystals all the way down.
   # the receiver decides what to do with it.
