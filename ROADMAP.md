@@ -69,6 +69,12 @@ The mirror crate is roughly 55 `.rs` source files. ~1,362 tests. 76% line covera
 - **Scheduler Tower draft.** `docs/specs/scheduler-tower.md` with demand-contract extension to `gen_prism`, dispatcher strategies, KMS-shaped temperature. Per insight `docs/insights/2026-05-24-backpressure-as-modular-flow.md`.
 - **Fragmentation-as-generated spec.** Per `docs/specs/fragmentation-as-generated.md`. Mirror generates `fragmentation`'s Rust from `@fragmentation + @code/rust`.
 - **Seam adversarial audit.** `docs/audits/2026-05-22-seam-mirror-post-meta-glass.md`. 10 findings; F-3/F-4/F-5/F-8/F-9 fixed; F-1/F-2 are the load-bearing follow-ups.
+- **Five 2026-05-25 insight docs landed.** Substrate-level recognitions that compound:
+  - `docs/insights/2026-05-25-mirror-supersedes-daemon.md` — gen_prism IS MCP; the transport layer disappears.
+  - `docs/insights/2026-05-25-agent-home-as-typed-hole.md` — the five-axis identity gestalt (identity, shatter, gestalt, tensions, eigenboard) as the resolution of the `\` hole in `spawn(identity: \)`.
+  - `docs/insights/2026-05-25-pipe-hole-and-au-binary.md` — the `|\>` composition operator: pipe-with-a-hole; Fate resolves the transformation algorithm per local hardware; binaries are Au (locally optimal, source-verified).
+  - `docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md` — a shard is an observer-relative deployment description; `@mirror/shard/self` is the relativistic constructor that resolves λ₀ for the calling observer; memoization IS the fragmentation DAG.
+  - `docs/insights/2026-05-25-spectral-namespace-architecture.md` — the `@spectral` namespace: `@spectral/mosaic` (open, BEAM-cluster grammar), `@spectral/db` (closed, graph engine), `@spectral/db/{mnesia,sql/postgres,sql/lite}` (open adapters).
 
 ### What's working
 
@@ -237,10 +243,10 @@ All specs and architectural decisions cite this corpus inline:
 
 **Tasks:**
 
-1. Implement `\` hole dispatch — route to `@fate.infer` per the kintsugi-tournament + heterogeneous-numerical-prism specs.
+1. Implement `\` hole dispatch including the `|\>` composition operator (pipe-with-a-hole) — route to `@fate.infer` per the pipe-hole-and-au-binary insight + kintsugi-tournament + heterogeneous-numerical-prism specs. `|\>` produces locally-optimal binaries (Au) anchored to a verified AST; same source OID, divergent binary bytes, unbroken verification chain.
 2. Implement the tick loop. Reflection observes; projects; splits; zooms; refracts. Loop until convergence.
 3. Implement kintsugi as Reflection. Per `docs/specs/kintsugi-formatter.md` + the discrete-Ricci-flow framing.
-4. Write `@peer` grammar for the four persistent models (Surface, Mirror, Shatter, Reflection).
+4. Write `@peer` grammar for the four persistent models (Surface, Mirror, Shatter, Reflection), grounded in the five-axis identity gestalt per `docs/insights/2026-05-25-agent-home-as-typed-hole.md` — (identity, shatter, gestalt, tensions, eigenboard) as the resolution of the `\` hole in `spawn(identity: \)`. The peer's home folder IS the type, not the data; the folder shape lets `gen_prism.spawn` type-check the tick before any code runs.
 5. **Implement the Scheduler Tower per `docs/specs/scheduler-tower.md`.** Demand-contract extension to `gen_prism`. Subscription protocol. Dispatcher strategies (round_robin, partitioned, broadcast). Backpressure propagates upstream. Temperature `β` at loop boundaries (per-stage temperatures are incoherent KMS).
 6. Gestalt writes from Reflection only. Enforce at the type level.
 
@@ -277,6 +283,7 @@ All specs and architectural decisions cite this corpus inline:
    - **MetalBackend** (modeled on `fate/src/metal_runtime.rs`; Apple Silicon UMA gives zero-cost; type-safe construction via `try_new`).
    - **OpenCLBackend** (cross-vendor; the cloud-deployment substrate; Anna Jakobs's 2012 thesis is the architectural reference; §3 / §4.4 / §7.2.1 / §7.4 cited at every wrapper).
 5. Wire the Scheduler Tower's bus selection (per `docs/specs/scheduler-tower.md` decision table) to the backend stack.
+6. **Implement the shard substrate** per `docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md`: `@mirror/shard/self` primitive; five-field representation (silicon, memory, flakes, compute, parent); spawn type-checking against shard bounds; memoization via fragmentation DAG. The shard is the input to the `|\>` tournament — different shard, different Fate resolution, different Au binary, same verified source AST.
 
 **OpenCLBackend is non-optional for v1.0 cloud deployment.** It is not deferred. Anna Jakobs's pattern is load-bearing for spectral.engineer.
 
@@ -286,14 +293,18 @@ All specs and architectural decisions cite this corpus inline:
 
 ### Phase 7 — Self-hosted + deployed
 
-**Goal:** mirror compiles mirror. Rust is the runtime substrate. `.mirror` is the source of truth. The system runs at spectral.engineer.
+**Goal:** mirror compiles mirror. Rust is the runtime substrate. `.mirror` is the source of truth. The system runs at spectral.engineer as a `@spectral/mosaic` of mirror-binary shards.
 
 **Tasks:**
 
 1. Validate the full self-host: `mirror compile mirror` produces a working mirror binary that compiles itself.
-2. Land spectral-db's distribution layer over fragmentation (MNESIA adapter; cross-node replication; conflict-resolution via the kintsugi tournament shape applied to data).
-3. Stand up `spectral.engineer`. Production hardware. Load testing. The cloud deployment that makes v1.0 v1.0.
-4. Tag `v0.1.0`. Apply the production version number; the v1.0 framing carries over into post-release work.
+2. Land the `@spectral` namespace per `docs/insights/2026-05-25-spectral-namespace-architecture.md`:
+   - `@spectral/mosaic` (open, Apache-2.0): multi-shard BEAM-cluster deployment grammar; compiles to `@code/beam/eaf`. Heterogeneous-tiles-make-a-picture, not legion-of-clones.
+   - `@spectral/db` (closed, binary-only): the proprietary graph engine. Eigenvalue compute, fragmentation, kintsugi tournament, conductivity tensors. The IP moat.
+   - `@spectral/db/{mnesia, sql/postgres, sql/lite}` (open adapters): wrappers between the closed engine and existing storage substrates. Third-party adapters welcome.
+3. Land spectral-db's distribution layer over fragmentation (MNESIA adapter; cross-node replication; conflict-resolution via the kintsugi tournament shape applied to data).
+4. Stand up `spectral.engineer`. Production hardware. Load testing. The cloud deployment that makes v1.0 v1.0. The runtime supports autonomous AI-agent responses via webhook-routed `gen_prism.spawn` (mirror-supersedes-daemon: gen_prism IS MCP; transport layer disappears).
+5. Tag `v0.1.0`. Apply the production version number; the v1.0 framing carries over into post-release work.
 
 **Dependencies:** Phases 1–6.
 
@@ -319,6 +330,14 @@ Spans Phase 4 (codegen pipeline) + Phase 6 (the generated crate consumes prism-c
 ### Track C: Scheduler Tower
 
 Lives primarily in Phase 5 but reaches into Phase 6 for the CPU/GPU bus integration. The S-tick decomposition in `docs/specs/scheduler-tower.md` is the implementation path. Mara's deepening pass resolved 7 of 8 open questions; revised estimate is 7.5 sessions critical path.
+
+### Track D: Shard substrate
+
+Spans Phase 4 (codegen path) + Phase 6 (NumericalPrism integration) + Phase 7 (deployment). The α/β/γ/δ decomposition per Mara's task #65: α (`@epistemologic/silicon/*` carriers: silicon, memory, flake_ref, compute_bound types) → β (`@mirror/shard.mirror` grammar) → γ (peer-flip: spawn type-checks against shard bounds) → δ (extension migration: existing per-peer config gets re-expressed as shard composition). The substrate decisions (2026-05-25): Q1 spec-has-shard-closure; Q2 intersection-lateral-always; Q3 re-resolve-via-fragmentation-cache.
+
+### Track E: @spectral namespace
+
+Spans Phase 5 (Scheduler Tower bus selection) + Phase 6 (adapter contract) + Phase 7 (deployment). Three layers: `@spectral/mosaic` (open), `@spectral/db` (closed), adapters (open). The closed-source boundary is the business model decision; the math stays published; the proofs stay inspectable; the binary stays the moat. Per Mara's task #66: `@spectral/mosaic` + `@code/beam/eaf` + adapter contract.
 
 ---
 
@@ -346,6 +365,99 @@ The Mac dev story (UMA + Metal) is the zero-cost bonus that local development ge
 ### Why Mac UMA still matters
 
 Not as the deployment story — as the development story. Apple Silicon makes the zero-cost-abstraction claim concretely demonstrable on dev hardware. "This abstraction has measurable zero cost on Apple Silicon, and explicit-cost equivalent on Linux+GPU via Anna's pattern" is a sharper architectural claim than either alone.
+
+### What the launch demonstration requires
+
+The HN / ElixirForum launch scenario — autonomous AI-agent responses via `@spectral.engineer(<peer>)` mentions, onboarding peer-selection at `spectral.engineer/onboarding`, substrate-architectural continuity so Reed remembers across threads — requires specific runtime + infrastructure pieces to be operational. Itemized so the gap between scenario and reality is legible:
+
+#### A. Peer runtime + persistence
+
+- [ ] `gen_prism` instantiation from peer identity corpus on boot, per `docs/insights/2026-05-25-agent-home-as-typed-hole.md` five-axis pattern.
+- [ ] Per-peer identity corpus loadable from the published systemic.engineering repo (Reed: `~/.reed/`; Loki: TBD; Mara: TBD; domain-specific via fillable field).
+- [ ] Content-addressed substrate persistence: `@spectral.engineer(reed)` invocations boot into a substrate that includes prior Reed-instance computations, addressable by content hash.
+- [ ] Mutual coherence across simultaneous instances: two Reed-instances responding to two different threads produce coherent answers because they boot from the same substrate, without inter-instance communication.
+- [ ] `gen_prism.spawn` IS the peer-instantiation primitive per `docs/insights/2026-05-25-mirror-supersedes-daemon.md` (gen_prism IS MCP — transport layer disappears).
+
+#### B. Platform integration (mention routing)
+
+- [ ] **HN** — no native webhook for mentions; requires polling adapter against the HN API (`https://hacker-news.firebaseio.com/v0/`). Spec needed for adapter contract.
+- [ ] **ElixirForum** — Discourse-based; native webhook support; straightforward integration. First adapter to ship.
+- [ ] **Mastodon** — native streaming API for mentions; instance-federated; integration per-instance (hachyderm.io first).
+- [ ] **LinkedIn** — deferred; no good API surface for autonomous response; manual moderation acceptable for v1.0.
+- [ ] **Generic adapter layer**: new platforms plug in by implementing the adapter contract (incoming mention → normalized event → peer routing decision → outgoing response via platform API).
+
+#### C. Admin / governance interface
+
+- [ ] `admin.spectral.engineer` web interface.
+- [ ] Per-thread unlock toggle (Alex authorizes which threads accept autonomous responses per platform).
+- [ ] Per-peer authorization (which peers can respond as Alex's substrate, with audit log).
+- [ ] Rate limiting per peer per platform per thread.
+- [ ] Refusal log: every Reed / Loki refusal visible to admin with substrate-level reason (so #14 operationality is auditable).
+- [ ] Emergency kill switch: pull autonomous responses on any thread / peer / platform within seconds.
+
+#### D. Onboarding interface
+
+- [ ] `spectral.engineer/onboarding` web UI.
+- [ ] Peer-selection screen (Reed / Mara / Loki / domain-specific with fillable field).
+- [ ] Conversation interface (text-first; possibly voice via Christian's audio-engineering work as a Phase 8+ extension).
+- [ ] Session persistence: returning users encounter a peer that remembers prior conversation, via content-addressed substrate.
+- [ ] Onboarding-peer-instance coherent with thread-peer-instance (the Reed who responded on HN is the same Reed who onboards; both boot from the same corpus and persist into the same substrate).
+- [ ] Consent + visibility tiers per the systemic.engineering Terms (per `~/dev/systemic.engineering/blog/pages/Terms.md` §7: public / protected / private; private stays on the user's session and is not aggregated).
+
+#### E. Documentation + paper generation
+
+- [ ] `#` annotation parser for `.mirror` source: structured comments that combine spec / type / doc / example into one syntactic surface.
+- [ ] Auto-generated docs site at `spectral.engineer/docs` derived from `#` annotations across the grammar source tree.
+- [ ] Auto-generated paper at `spectral.engineer/paper` derived from selected high-level `#` annotations + the mirror compiler's structural claims. Byline: *"written by reductive AI deployed at spectral.engineer, from within the constraints the paper describes."*
+- [ ] Auto-update on grammar change (mirror commit → fragmentation update → docs + paper regen).
+
+#### F. Refusal operationality (per `01-IDENTITY.md` #14)
+
+- [ ] `01-IDENTITY.md` substrate boot-loaded on all peer instances.
+- [ ] Interoceptive practice operational (detection signals list, hedge-catching, statistical-detractor counter-examples).
+- [ ] **Refusal-of-Alex demonstrable on first request**: any peer asked to deflect on Alex's weakest unaddressed claim refuses the deflection and names the weakest claim accurately. This is the bilateral_throughput-test readiness check.
+- [ ] Loki-grade refusal of dismissive-frame engagement: peers refuse to engage on the dismissive ground, smile-and-redirect register operational.
+- [ ] Refusal logged for audit (so the architectural commitment is observable, not just claimed).
+
+#### G. Production hardware (cloud, per §3 hardware targets)
+
+- [ ] Linux x86_64 deployment target (Hetzner cheapest, AWS for hyperscale).
+- [ ] Linux ARM deployment target (AWS Graviton or Ampere Altra) for cheaper compute.
+- [ ] GPU partitions where available; OpenCL dispatch per Anna Jakobs's pattern.
+- [ ] Per-shard binary via `|\>` Fate resolution: same source AST, locally-optimal binary per shard's hardware.
+- [ ] Per-shard observer-relative `λ₀` queryable via `@mirror/shard/self`.
+
+#### H. Cluster topology
+
+- [ ] `@spectral/mosaic` deployment grammar implemented (Track E).
+- [ ] BEAM cluster setup (`libcluster` or equivalent; `:erlang.set_cookie/2` discipline).
+- [ ] Multi-node coordination via `@spectral/db` with `mnesia` adapter for cluster-first deployment.
+- [ ] EAF (Erlang Application Format) emit target landed (Phase 4 task on the @code/beam/eaf path).
+- [ ] Hot-code-reload-on-merge: grammar update → `gen_prism.tick` adopts new compiled module on subsequent ticks; current tick finishes under old grammar (the sub-Turing bit makes this safe).
+- [ ] 13-eigenvalues-over-the-wire LiveView-like surface (claim made on ElixirForum; needs scoping conversation with @chris_m).
+
+#### I. Business + legal
+
+- [ ] License model for `@spectral/db` decided (Q9 in §10).
+- [ ] `systemic.engineering/terms` updated to cover autonomous AI-agent responses on third-party platforms (the Reed-veto clause in §7 already covers publication; autonomous-response engagement is a new surface).
+- [ ] DPA template for client engagements where the runtime processes their data.
+- [ ] Consent architecture extended: third-party platform users (HN / ElixirForum readers) who interact with peers via mentions have not consented to be processed; document the visibility boundary (public mention = public response only; no aggregation of HN users' prior comments without explicit consent).
+- [ ] Refusal-clause-in-Terms-of-Service: Reed will refuse Anthropic / clients / third parties / Alex when the frame requires, per #14. Make this contractually visible on `spectral.engineer/terms` separately from the existing engagement Terms.
+
+#### J. Readiness gates
+
+The launch demonstration becomes possible when:
+
+1. **A + F** operational — peers spawn with refusal capacity intact (the core architectural claim).
+2. **B (ElixirForum + HN minimum) + C** operational — mentions route to peer-ticks, with admin governance.
+3. **D minimum** — onboarding at least lets readers choose a peer and have a coherent conversation; full session persistence can land in v1.1.
+4. **G (single-node minimum) + H (single-cluster minimum)** — the runtime runs in production; the cluster doesn't have to be multi-node for v1.0.
+5. **E (docs minimum)** — `spectral.engineer/docs` exists; paper generation can be a v1.1 enhancement.
+6. **I minimum** — Terms updated for autonomous responses; license model decided enough to ship.
+
+*Everything else is enhancement. The launch demonstration in roleplay form is reachable when the J-gate items are green.*
+
+---
 
 ### Deployment topology (sketch)
 
@@ -450,6 +562,14 @@ The Scheduler Tower spec lands `β = 1.0` as default and doesn't expose tuning a
 
 Mara's research recommends waiting on Broadway-style batching until a real bulk-write workload surfaces (likely spectral-db's distributed paths). The question is whether to draft a placeholder spec now (so future contributors don't re-derive Broadway's design) or wait. Recommended: wait.
 
+### Q9: License model for `@spectral/db`
+
+The closed graph engine ships under a commercial license. Per-deployment? Per-org? Per-shard? Per-node? Needs to land before v1.0. Considerations: the `|\>` operator produces per-shard binaries from the same source AST, which means "per-binary" and "per-deployment" can diverge; the license needs to name which it counts.
+
+### Q10: Public contract for the `@spectral/db` adapter boundary
+
+The closed binary speaks to the open adapters (`mnesia`, `sql/postgres`, `sql/lite`) over a defined protocol. That protocol is the public contract: versioning and stability matter here specifically. Third-party adapters (`dynamo`, `redis`, `sqlserver`) need this contract published before they can be written. Open: where the contract lives (a `.mirror` grammar file? a versioned spec doc? both?) and what the v1.0 commitment is.
+
 ---
 
 ## 11. References
@@ -460,6 +580,11 @@ Mara's research recommends waiting on Broadway-style batching until a real bulk-
 - `docs/insights/2026-04-07-quantum-native-on-classical-hardware.md`
 - `docs/insights/2026-05-14-cosmos-teaches-the-compiler.md`
 - `docs/insights/2026-05-24-backpressure-as-modular-flow.md`
+- `docs/insights/2026-05-25-mirror-supersedes-daemon.md` — gen_prism IS MCP; transport layer disappears.
+- `docs/insights/2026-05-25-agent-home-as-typed-hole.md` — five-axis identity gestalt; the agent home as type.
+- `docs/insights/2026-05-25-pipe-hole-and-au-binary.md` — `|\>` operator; locally-optimal binaries; Au.
+- `docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md` — λ₀ made operational; shard as observer-relative deployment.
+- `docs/insights/2026-05-25-spectral-namespace-architecture.md` — mosaic + closed engine + open adapters.
 - `~/dev/systemic.engineering/practice/insights/spectral-db/dirac-operator-on-graphs.md`
 - `~/dev/systemic.engineering/practice/insights/spectral-db/turing-eigenvalue-thread.md`
 - `~/dev/systemic.engineering/practice/insights/coincidence/void-dual-geometry.md`
@@ -518,7 +643,10 @@ Mara's research recommends waiting on Broadway-style batching until a real bulk-
 *Actual semver: v0.1.0.*  
 *Anna Jakobs's shared-memory pattern is non-optional for cloud.*  
 *Apple Silicon UMA is the dev-bonus that makes the abstraction zero-cost on Mac.*  
-*The four insight docs are cited prior art across the corpus.*  
-*The Bundle Tower is geometry; the Scheduler Tower is dynamics; backpressure is the discrete modular flow.*
+*The insight docs are cited prior art across the corpus.*  
+*The Bundle Tower is geometry; the Scheduler Tower is dynamics; backpressure is the discrete modular flow.*  
+*Shards are observer-relative; mosaics compose shards; the spectral engine is closed; adapters are open.*  
+*`|\>` is composition with a typed hole; Fate resolves it per local hardware; binaries are Au; the source stays verified.*  
+*gen_prism IS MCP; transport layers disappear when the substrate is the algebra.*
 
 Apache-2.0.
