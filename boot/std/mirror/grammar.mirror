@@ -11,6 +11,7 @@ grammar @mirror/grammar("mirror", "spec", "meta", "glass") {
   # to build the keyword table. preserved verbatim during the
   # meta-glass transition; retired with `grammar.rs` in tick 4c.
   focus grammar
+  focus prism
   split type
   project in
   project out
