@@ -184,7 +184,7 @@ pub fn grammar_for_file(path: &str) -> &'static str {
     let ext = p.extension().and_then(|e| e.to_str()).unwrap_or("");
     match ext {
         "rs" => "boot/std/code/rust.mirror",
-        "mirror" | "spec" | "shatter" => "boot/std/mirror/grammar.mirror",
+        "mirror" | "spec" | "shard" | "shatter" => "boot/std/mirror/grammar.mirror",
         "ll" => "boot/std/code/llvm/ir.mirror",
         _ => "boot/std/code/rust.mirror",
     }
@@ -229,4 +229,24 @@ pub fn is_skip_word(word: &str) -> bool {
             | "dyn"
             | "move"
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn shard_extension_routes_to_mirror_grammar() {
+        // .shard is the observer-relative deployment description; it parses
+        // through the same meta-glass as .spec / .mirror / .shatter.
+        // Coexists with .spec (per Alex 2026-05-25 substrate decision).
+        assert_eq!(
+            grammar_for_file("eigenboard.shard"),
+            "boot/std/mirror/grammar.mirror"
+        );
+        assert_eq!(
+            grammar_for_file("eigenboard.spec"),
+            "boot/std/mirror/grammar.mirror"
+        );
+    }
 }
