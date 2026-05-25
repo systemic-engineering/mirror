@@ -69,12 +69,16 @@ The mirror crate is roughly 55 `.rs` source files. ~1,362 tests. 76% line covera
 - **Scheduler Tower draft.** `docs/specs/scheduler-tower.md` with demand-contract extension to `gen_prism`, dispatcher strategies, KMS-shaped temperature. Per insight `docs/insights/2026-05-24-backpressure-as-modular-flow.md`.
 - **Fragmentation-as-generated spec.** Per `docs/specs/fragmentation-as-generated.md`. Mirror generates `fragmentation`'s Rust from `@fragmentation + @code/rust`.
 - **Seam adversarial audit.** `docs/audits/2026-05-22-seam-mirror-post-meta-glass.md`. 10 findings; F-3/F-4/F-5/F-8/F-9 fixed; F-1/F-2 are the load-bearing follow-ups.
-- **Five 2026-05-25 insight docs landed.** Substrate-level recognitions that compound:
+- **Nine 2026-05-25/26 insight docs landed.** Substrate-level recognitions that compound:
   - `docs/insights/2026-05-25-mirror-supersedes-daemon.md` — gen_prism IS MCP; the transport layer disappears.
   - `docs/insights/2026-05-25-agent-home-as-typed-hole.md` — the five-axis identity gestalt (identity, shatter, gestalt, tensions, eigenboard) as the resolution of the `\` hole in `spawn(identity: \)`.
   - `docs/insights/2026-05-25-pipe-hole-and-au-binary.md` — the `|\>` composition operator: pipe-with-a-hole; Fate resolves the transformation algorithm per local hardware; binaries are Au (locally optimal, source-verified).
   - `docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md` — a shard is an observer-relative deployment description; `@mirror/shard/self` is the relativistic constructor that resolves λ₀ for the calling observer; memoization IS the fragmentation DAG.
-  - `docs/insights/2026-05-25-spectral-namespace-architecture.md` — the `@spectral` namespace: `@spectral/mosaic` (open, BEAM-cluster grammar), `@spectral/db` (closed, graph engine), `@spectral/db/{mnesia,sql/postgres,sql/lite}` (open adapters).
+  - `docs/insights/2026-05-25-spectral-namespace-architecture.md` — the `@spectral` namespace: `@spectral/mosaic` (open, BEAM-cluster), `@spectral/portal` (open, typed transport), `@spectral/db` (closed, graph engine), `@spectral/db/{mnesia,sql/postgres,sql/lite}` (open adapters).
+  - `docs/insights/2026-05-25-parametric-types-and-fp-heritage.md` — zoom(T)/refract(T) as Prism-at-type-layer; the FP heritage (Functor/Monad/etc.) mapped onto mirror's algebra.
+  - `docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md` — `@time.duration` as substrate; monotonic vs wall vs instant via zoom(T); cross-frame convert via shard parent chain; PG discipline.
+  - `docs/insights/2026-05-25-gram-and-mirror-same-architecture-two-altitudes.md` — GRAM (Baek et al. 2026) is mirror's substrate at the neural-network layer; cross-domain prior art for multi-trajectory inference.
+  - `docs/insights/2026-05-26-portal-as-io-socket-over-content-addressed-subspace.md` — a portal is `@io.socket` + content-addressed subspace + shard-frame on each end; wire protocol = WS handshake → `@fragmentation/frame` full frame → bidirectional eigenvalue stream; the open portal IS a gen_prism.
 
 ### What's working
 
@@ -89,7 +93,9 @@ Compilation, content-addressing, property verification, code emission, shatter s
 - `\` hole dispatch is declared but not implemented. Phase 5 lands it via Fate.
 - The fragmentation Rust crate is hand-written. Phase 4 + Phase 6 collaborate to make it generated.
 - No GPU acceleration anywhere. Phase 6 lands MetalBackend + OpenCLBackend.
-- No backpressure between gen_prisms. Phase 5 lands the Scheduler Tower's demand contract.
+- ~~No backpressure between gen_prisms.~~ **Property declared** via `@epistemologic/property/halts` + `reduction_budget(shard)` (2026-05-25, Task #74). Wire-level implementation still wants the Scheduler Tower's demand contract.
+- **Portal wire impl pending.** `@spectral/portal` grammar declared (2026-05-26, Task #77 substrate half) with `\` bodies for Fate. WS handshake, `@fragmentation/frame` serialization codec, and bidirectional eigenvalue stream encoder are the Rust-level Phase 6 work that follows.
+- **Six portals.md instances unimplemented.** The grammar primitive exists; the six concrete consumers (session, fs-mount, BEAM connection, cross-system, communication, identity) need typed re-implementation as `@spectral/portal` instances. Small per-file; six files.
 
 ---
 
@@ -337,7 +343,11 @@ Spans Phase 4 (codegen path) + Phase 6 (NumericalPrism integration) + Phase 7 (d
 
 ### Track E: @spectral namespace
 
-Spans Phase 5 (Scheduler Tower bus selection) + Phase 6 (adapter contract) + Phase 7 (deployment). Three layers: `@spectral/mosaic` (open), `@spectral/db` (closed), adapters (open). The closed-source boundary is the business model decision; the math stays published; the proofs stay inspectable; the binary stays the moat. Per Mara's task #66: `@spectral/mosaic` + `@code/beam/eaf` + adapter contract.
+Spans Phase 5 (Scheduler Tower bus selection) + Phase 6 (adapter contract) + Phase 7 (deployment). **Four layers** (updated 2026-05-26): `@spectral/mosaic` (open), `@spectral/portal` (open, typed transport), `@spectral/db` (closed, graph engine), `@spectral/db/{mnesia, sql/postgres, sql/lite}` (open adapters). The closed-source boundary is the business model decision; the math stays published; the proofs stay inspectable; the binary stays the moat. The portal layer is the public API surface — the closed `@spectral/db` engine speaks portal at its public boundary; every adapter speaks portal. Per Tasks #66 (`@spectral/mosaic` + `@code/beam/eaf`) and #77 (`@spectral/portal` substrate landed; wire impl follow-on).
+
+### Track F: Portal substrate (NEW, 2026-05-26)
+
+Spans Phase 5 (Reflection processes ticks via portals) + Phase 6 (wire impl + frame codec) + Phase 7 (six portals.md instances re-typed as `@spectral/portal` consumers). Substrate landed: `@fragmentation/frame` grammar + `@spectral/portal` grammar with four properties applied (`content_addressed`, `autopoietic`, `halts`, `frame_relativity`). Wire impl (WS handshake + `@fragmentation/frame` serialization + bidirectional eigenvalue stream) is Task #78. Six concrete consumers (session, mount, BEAM connection, cross-system, communication, identity) re-typed as portals is a follow-on. **The portal is the seam where everything composes** — sockets, content-addressed subspaces, shard-frames, gen_prisms, the halts property all meet here.
 
 ---
 
@@ -584,7 +594,11 @@ The closed binary speaks to the open adapters (`mnesia`, `sql/postgres`, `sql/li
 - `docs/insights/2026-05-25-agent-home-as-typed-hole.md` — five-axis identity gestalt; the agent home as type.
 - `docs/insights/2026-05-25-pipe-hole-and-au-binary.md` — `|\>` operator; locally-optimal binaries; Au.
 - `docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md` — λ₀ made operational; shard as observer-relative deployment.
-- `docs/insights/2026-05-25-spectral-namespace-architecture.md` — mosaic + closed engine + open adapters.
+- `docs/insights/2026-05-25-spectral-namespace-architecture.md` — mosaic + portal + closed engine + open adapters.
+- `docs/insights/2026-05-25-parametric-types-and-fp-heritage.md` — zoom(T)/refract(T) as Prism-at-type-layer; FP heritage mapped.
+- `docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md` — `@time.duration`; monotonic/wall/instant; cross-frame convert; PG discipline.
+- `docs/insights/2026-05-25-gram-and-mirror-same-architecture-two-altitudes.md` — GRAM (arXiv:2605.19376v2) as mirror's substrate at the NN layer; cross-domain prior art.
+- `docs/insights/2026-05-26-portal-as-io-socket-over-content-addressed-subspace.md` — portal as `@io.socket` + content-addressed subspace + shard-frame; wire protocol; the seam where everything composes.
 - `~/dev/systemic.engineering/practice/insights/spectral-db/dirac-operator-on-graphs.md`
 - `~/dev/systemic.engineering/practice/insights/spectral-db/turing-eigenvalue-thread.md`
 - `~/dev/systemic.engineering/practice/insights/coincidence/void-dual-geometry.md`
@@ -645,8 +659,10 @@ The closed binary speaks to the open adapters (`mnesia`, `sql/postgres`, `sql/li
 *Apple Silicon UMA is the dev-bonus that makes the abstraction zero-cost on Mac.*  
 *The insight docs are cited prior art across the corpus.*  
 *The Bundle Tower is geometry; the Scheduler Tower is dynamics; backpressure is the discrete modular flow.*  
-*Shards are observer-relative; mosaics compose shards; the spectral engine is closed; adapters are open.*  
+*Shards are observer-relative; mosaics compose shards; the spectral engine is closed; adapters are open; portals are the seam.*  
 *`|\>` is composition with a typed hole; Fate resolves it per local hardware; binaries are Au; the source stays verified.*  
-*gen_prism IS MCP; transport layers disappear when the substrate is the algebra.*
+*gen_prism IS MCP; transport layers disappear when the substrate is the algebra.*  
+*The portal is `@io.socket` + content-addressed subspace + shard-frame; the wire is WS handshake → `@fragmentation/frame` → bidirectional eigenvalue stream; the open portal IS a gen_prism.*  
+*We prove we halt: `@epistemologic/property/halts` operationalizes the sub-Turing escape from alignment undecidability.*
 
 Apache-2.0.
