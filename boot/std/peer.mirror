@@ -1,5 +1,13 @@
 in @prism
+in @meta
+in @io
+in @file
 in @cogito
+in @code/mq
+in @mirror/spec
+in @mirror/evaluate
+in @mirror/spectral
+in @mirror/runtime/gen_prism
 
 # @peer: the typed surface for spawn. a peer is a five-axis identity
 # gestalt; its home directory is the manifest material form.
@@ -39,7 +47,78 @@ grammar @peer {
     eigenboard: spec,          # zoom(self): @cogito.eigenboard surfaced as a spec file
     shatter:    mirror,        # refract(self): rendered history; ancestor chain
   }
+
+  # the canonical five filenames. one enum, one mapping; the validator
+  # iterates the enum so the filenames stop being magic strings.
+  # `eigenboard.spec` is the only `.spec` — it rides the @mirror/spec
+  # glass (placeholder; ACL substrate is future work).
+  type peer_file = identity | gestalt | tensions | eigenboard | shatter
+  fn filename(p: peer_file) -> text {
+    identity   => "identity.mirror",
+    gestalt    => "gestalt.mirror",
+    tensions   => "tensions.mirror",
+    eigenboard => "eigenboard.spec",
+    shatter    => "shatter.mirror",
+  }
+
+  # ── load: structural boundary ──────────────────────────────────────
+  #
+  # Read the five files from the directory; parse each through its
+  # respective glass; return the typed peer record. Per Alex's
+  # 2026-05-25 substrate decision, `load` is the *structural* check —
+  # files exist + parse. The manifold check (validate) and the
+  # continuous autopoietic check (reflect) are separate boundaries.
+  #
+  # Failure mode: if any file is missing or fails to parse, the load
+  # fails with a precise error naming which file. `@io.read` returns
+  # `imperfect`; the failure carries through.
+  load(dir: ~dir) -> peer {
+    peer {
+      identity:   @io.read(dir / filename(identity))   |> @mirror/evaluate.evaluate(@mirror/grammar),
+      gestalt:    @io.read(dir / filename(gestalt))    |> @mirror/evaluate.evaluate(@mirror/grammar),
+      tensions:   @io.read(dir / filename(tensions))   |> @mirror/evaluate.evaluate(@mirror/grammar),
+      eigenboard: @io.read(dir / filename(eigenboard)) |> @mirror/evaluate.evaluate(@mirror/spec),
+      shatter:    @io.read(dir / filename(shatter))    |> @mirror/evaluate.evaluate(@mirror/grammar),
+    }
+  }
+
+  # ── validate: manifold boundary ────────────────────────────────────
+  #
+  # The autopoietic check (Soto-Andrade & Varela 1984, Lawvere fixed
+  # point) is exactly the manifold check the spec wants. `@cogito.reflect`
+  # runs `observe |> strategy |> perturb` — the tick-to-tick map whose
+  # fixed point IS the peer-on-its-manifold property.
+  #
+  # `p.tensions` is the imperfect surface (the open branches the peer
+  # carries); reflect feeds it through the second-order observer and
+  # returns the imperfect with the next eigenboard perturbation
+  # attached. Caller decides what to do with the result.
+  validate(p: peer) -> imperfect {
+    @cogito.reflect(p.tensions)
+  }
+
+  # ── spawn: instantiate ─────────────────────────────────────────────
+  #
+  # Wrap @mirror/runtime/gen_prism.spawn. The name is derived from the
+  # peer's identity crystal (the manifold); the initial_state is the
+  # crystal of the message body the peer is being asked to resolve.
+  #
+  # Continuous validation (per the third boundary) is the caller's
+  # concern: gen_prism already supports periodic reflection by calling
+  # @cogito.reflect after each tick. @peer.spawn returns the gen_prism;
+  # the caller wires the reflect cadence.
+  spawn(p: peer, q: ~mq) -> gen_prism {
+    @mirror/runtime/gen_prism.spawn(
+      name:          @mirror/spectral.crystallize(p.identity),
+      initial_state: @mirror/spectral.crystallize(q),
+    )
+  }
 }
 
 out peer
+out peer_file
+out filename
+out load
+out validate
+out spawn
 out @peer
