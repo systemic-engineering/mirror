@@ -1,0 +1,106 @@
+in @prism
+
+in @cogito
+in @time
+in @epistemologic/silicon/compute_bound
+in @epistemologic/property/autopoietic
+
+# @epistemologic/property/halts
+#
+# A type halts iff every reflexive trajectory of its tick map
+# terminates in bounded steps. Per Alex's 2026-05-25 substrate
+# decision, termination has TWO conditions joined by disjunction:
+#
+#   (a) AUTOPOIETIC SETTLEMENT.
+#       reflect(τ.state_n) == fixed_point. The trajectory reaches a
+#       Lawvere fixed point of @cogito.reflect (the observe |>
+#       strategy |> perturb tick). Per Soto-Andrade & Varela 1984:
+#       this is equivalent to the reflect loop being autopoietic.
+#       Per @cogito.autopoietic: the property that names this
+#       structural condition.
+#
+#   (b) REDUCTION EXHAUSTION.
+#       reductions(τ.steps_0..n) >= reduction_budget(shard). The
+#       trajectory consumed the budget allocated by the load
+#       topology (the host shard's @epistemologic/silicon/
+#       compute_bound.max_reductions, weighted by current load via
+#       the Scheduler Tower's KMS temperature β). When exhaustion
+#       fires, the substrate forces a halt; the gen_prism either
+#       crystallises a partial result or returns imperfect.
+#
+# Either condition suffices. The disjunction is decidable because:
+#
+#   - the trajectory τ is sub-Turing by construction (mirror's
+#     grammar class refuses unbounded reachable state spectra; see
+#     docs/specs/is-copium.md sections "Sub-Turing Grammar as
+#     Structural Escape" and "¬is_copium(mirror) — by construction");
+#   - @cogito.reflect is structurally computable on every tick;
+#   - reductions are countable per tick at the substrate;
+#   - reduction_budget(shard) is computable from a load-topology
+#     snapshot via @epistemologic/silicon/compute_bound.
+#
+# This is the is_copium thesis operationalized. Per docs/specs/
+# is-copium.md: AI alignment on Turing-complete substrates is
+# undecidable by Rice's theorem (1951). Mirror's sub-Turing escape
+# + this property = decidable termination by construction. Every
+# grammar that compiles, and every gen_prism that ticks inside one,
+# is proven-to-halt.
+#
+# Per docs/insights/2026-05-25-gram-and-mirror-same-architecture-
+# two-altitudes.md: GRAM's deep-supervision recursion + adaptive
+# computation time matches mirror's gen_prism ancestor chain +
+# reduction-budget exhaustion at the structural altitude. The halt
+# property is the substrate-level analog of GRAM's ACT (Adaptive
+# Computation Time): a structural budget that bounds inner
+# recursion when the autopoietic fixed point is not yet reached.
+#
+# Sibling properties: autopoietic(T) (clause (a) reduces to this on
+# the tick map), monotonicity(T) (tick deltas and the reduction
+# counter are both @time.monotonic-typed; non-decreasing is what
+# makes the budget comparison well-defined), causality(T) (the
+# trajectory's ancestor chain IS the causal DAG the budget walks).
+#
+# Spec: docs/specs/is-copium.md, docs/specs/scheduler-tower.md.
+
+grammar @epistemologic/property/halts {
+
+  # Clause (a): the autopoietic settlement check. The reflect loop
+  # reaches a Lawvere fixed point in bounded steps. Delegates to
+  # @epistemologic/property/autopoietic.autopoietic applied to the
+  # type's tick map. Per Soto-Andrade & Varela 1984: autopoiesis IS
+  # the existence of a Lawvere fixed point on the reflexive map.
+  # Verifier: the same decidable check autopoietic uses (Banach
+  # contraction on hash space, exhibited at construction time).
+  autopoietic_settles(type) -> verdict { \ }
+
+  # Clause (b): the reduction-exhaustion check. The trajectory
+  # consumes at most reduction_budget(shard) reductions before the
+  # substrate forces a halt. Verifier walks the type's tick map,
+  # counts the reductions per tick (countable at the substrate),
+  # and confirms the bound holds against the budget read from
+  # @epistemologic/silicon/compute_bound.max_reductions on the host
+  # shard. The budget is a @time.monotonic value when expressed as
+  # wall-time-equivalent; for raw reduction counts it is a u64.
+  reductions_bounded(type) -> verdict { \ }
+
+  # The disjunction is decidable. Both clauses are structurally
+  # computable; their union is the halting condition. This verifier
+  # confirms that AT LEAST ONE of (a) or (b) fires for every
+  # reachable trajectory of the type. Sub-Turing construction
+  # guarantees the reachable set is enumerable; the verifier walks
+  # it once. No oracle needed; Rice's theorem does not apply
+  # because the language is not Turing-complete.
+  disjunction_decidable(type) -> verdict { \ }
+
+  # The combined property: the type halts.
+  # Pass iff (autopoietic_settles or reductions_bounded) and
+  # disjunction_decidable. The substrate exhibits the witness at
+  # construction; the property records the structural contract.
+  halts(type) -> verdict { \ }
+}
+
+out autopoietic_settles
+out reductions_bounded
+out disjunction_decidable
+out halts
+out @epistemologic/property/halts
