@@ -78,8 +78,8 @@ Compilation, content-addressing, property verification, code emission, shatter s
 
 - The walker walks but the seed remains permissive (accepts balanced bytes). Structural FP1 at the loaded-grammar level (Layer 2) requires the Lift registry, which requires fragmentation as the store (per `docs/specs/mirror-store.md`).
 - `tokenize.rs` and `grammar.rs` are still 100% Rust. Phase 2 retires them via parser self-description.
-- Two AST types coexist (`ast.rs` and `mirror_ast.rs`). Phase 1 unifies.
-- Two resolvers coexist. Phase 1 collapses to one.
+- ~~Two AST types coexist (`ast.rs` and `mirror_ast.rs`). Phase 1 unifies.~~ **DONE** in the 2026-05-08/09 compiler collapse — single `AstKind` enum + `AstNode` struct in `bootstrap/src/ast.rs`. The remaining real question is grammar-driven regeneration (see Q1).
+- Two resolvers coexist. Phase 1 collapses to one. *(Status unverified post-collapse — needs re-audit before next Phase 1 spawn.)*
 - `\` hole dispatch is declared but not implemented. Phase 5 lands it via Fate.
 - The fragmentation Rust crate is hand-written. Phase 4 + Phase 6 collaborate to make it generated.
 - No GPU acceleration anywhere. Phase 6 lands MetalBackend + OpenCLBackend.
@@ -162,8 +162,8 @@ All specs and architectural decisions cite this corpus inline:
 3. Fix `->` return type on all declaration kinds — reduces holonomy by 2.0.
 4. Land singularity types (`@human = singularity`, `@ai = naked-singularity`) per `SINGULARITY.md`.
 5. `kintsugi --rebase`: collapse `boot.alex/` onto canonical boot via `@kintsugi/migrate`.
-6. Unify `ast.rs` and `mirror_ast.rs` into one `MirrorAST`.
-7. Clean up `resolve.rs`: remove the `conversation`-era naming; one resolution path.
+6. ~~Unify `ast.rs` and `mirror_ast.rs` into one `MirrorAST`.~~ **DONE** (landed 2026-05-08/09 compiler collapse). The repo has one `AstKind` enum + `AstNode` struct in `bootstrap/src/ast.rs`; no `mirror_ast.rs` exists. The real follow-up question moved to Q1 (regenerate Rust AST from `@mirror/ast`?) and is now Phase 4 work.
+7. Clean up `resolve.rs`: remove the `conversation`-era naming; one resolution path. *(Status post-collapse unverified — re-audit before spawning.)*
 
 **Exit criterion:** `mirror compile boot/` produces zero holonomy. All boot grammars parse, resolve, verify. One AST type. One resolver.
 
@@ -416,9 +416,11 @@ Phase 1 (the gate — zero holonomy, unified AST/resolver)
 
 The live ones that need design decisions before they unblock:
 
-### Q1: Which universal AST?
+### Q1: Should the Rust AST be regenerated from `@mirror/ast`?
 
-`01-meta.mirror` declares a full parameterized AST (`ast(g)`, `expression(g)`, `declaration(g)`, `pattern(g)`, `type_ref(g)`). The Rust `MirrorAST` enum has a different shape (fewer variants; flatter). Phase 1 unifies; the question is which target shape the unification converges on.
+The Rust unification landed in the 2026-05-08/09 compiler collapse — one `AstKind` enum + `AstNode` struct in `bootstrap/src/ast.rs`. But `01-meta.mirror` declares a parameterized AST (`ast(g)`, `expression(g)`, `declaration(g)`, `pattern(g)`, `type_ref(g)`) that's a different shape. The real open question: does the Rust `AstNode` converge to the parameterized `ast(g)` shape **by being regenerated from the `.mirror` grammar via `@code/rust`**, or does it stay hand-written and the `.mirror` grammar adapts to it?
+
+Mirror's overall direction (Phase 4's fragmentation-as-generated demonstration) points at the first answer: the Rust AST is the smallest piece of production Rust we own that's fully shaped by a `.mirror` grammar, which makes it the smallest proof target for `@code/rust` end-to-end. **Recommend: this becomes Phase 4 R-0-bis** — a smaller-than-fragmentation proof of `@code/rust`, ordered before R-2's full `@fragmentation.mirror` grammar.
 
 ### Q2: Self-teaching parser bootstrap
 

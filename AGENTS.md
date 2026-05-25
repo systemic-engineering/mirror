@@ -200,6 +200,34 @@ Partial verdicts are real — `partial(0.97)` means 97% of paths verified.
 - `recover |value, loss| { }` — 7-9 handler
 - `rescue |error| { }` — 6- handler
 
+### Sigil Naming
+
+Sigils name their type in full. Like Elixir's `~r/.../` but without the cryptic single letter.
+
+```
+~dir"/Users/alexwolf/.mara"                  # not ~d
+~file"~/notes.md"                            # not ~f
+~mirror_query"focus |> project @code/rust"   # not ~mq
+~date"2026-05-25"                            # not ~D
+~regex"^[a-z]+$"                             # not ~r
+```
+
+**The principle:** future engineers will thank us. Some experienced engineers will hate it; the experienced ones who've debugged unfamiliar codebases will recognize it. Early-career engineers won't have to learn cryptic abbreviations to read code. The single character saved at the write site costs years of friction at the read site, multiplied by every reader.
+
+**Single-character sigils are forbidden.** Short sigils (2-4 chars) are fine when they ARE the canonical name, not shorthand-for-a-longer-phrase. The test: is there a clearer long form, or IS this the name?
+
+- `~sql`, `~uri`, `~json`, `~html`, `~css` — names. Fine.
+- `~jq` — a name (the jq query language). Fine.
+- `~mq` — a name (the mirror query language). Fine. Engineers will understand `~mq` from `~jq`.
+- `~mirror` — a full mirror grammar literal. Different thing from `~mq`. Sibling, not synonym.
+- `~d` for directory — forbidden. `~dir` has a clearer long form.
+- `~f` for file — forbidden. `~file` has a clearer long form.
+- `~r` for regex — forbidden. `~regex` has a clearer long form.
+
+**All sigils validate at compile time.** The sigil name picks the validator; the validator returns the typed value or fails the compile with a precise error. Per Elixir's `~r`/`~D`/`~U` pattern, generalized.
+
+**Shape:** `~<sigil_name><separator><content><separator>`. Separators are matched pairs (`""`, `''`, `[]`, `{}`, `()`). Choose the separator that minimizes escaping for the content.
+
 ## What NOT to do
 
 - Do NOT add new Rust modules to `bootstrap/` to grow features. New capability
