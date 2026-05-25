@@ -53,7 +53,21 @@ grammar @peer {
   # `eigenboard.spec` is the only `.spec` — it rides the @mirror/spec
   # glass (placeholder; ACL substrate is future work).
   type peer_file = identity | gestalt | tensions | eigenboard | shatter
-  fn filename(p: peer_file) -> text {
+
+  # filename: the canonical mapping from peer_file variant to filename.
+  # Per the 2026-05-25 design call: no `fn` keyword in mirror. The
+  # `select` decorator on an action-declaration form is the canonical
+  # surface for sum-type-dispatch helpers — the same family as the
+  # `select |x| { ... }` closure form, but in declaration position
+  # because the dispatch is exhaustive over a closed sum.
+  #
+  # The `/` in `dir / filename(identity)` below is the existing zoom
+  # operator over (ref, focus) declared in @meta ("isomorphic to
+  # namespace /" per Alex 2026-05-25): namespace path concatenation,
+  # where `dir` is a `~dir` ref and `filename(identity)` resolves to
+  # text. The captured body delivers the path verbatim; the substrate
+  # discharges the / through @meta's zoom declaration.
+  select filename(p: peer_file) -> text {
     identity   => "identity.mirror",
     gestalt    => "gestalt.mirror",
     tensions   => "tensions.mirror",
