@@ -125,6 +125,27 @@ The existing `tick(state, message) -> tick_result` semantics don't change. The `
 
 **Bytes are not the unit.** GenStage uses message count; Broadway adds nothing on this axis; Anna's OpenCL command queue depth is also operation-count, not byte-count (§3). Mirror's message size is exposed as a separate observable on the message body (`size_hint: u64`), so dispatcher strategies CAN read it for byte-aware routing without changing the unit of demand. See §10.2.
 
+### 2.1 Two granularities of demand: supervision step vs inner iteration
+
+GRAM (Baek, Jo, Kim, Ren, Bengio, Ahn — [arXiv:2605.19376v2](https://arxiv.org/abs/2605.19376), May 2026) cleanly distinguishes **T inner transitions** per supervision step from **N_sup outer supervision steps** with deep supervision applied at each. Different granularities serve different purposes — inner refinement is gradient-flow contiguous within a step; outer steps are training-signal boundaries that mark a unit of supervised reasoning.
+
+Mirror has the structurally analogous two granularities, and the demand contract needs to name them because **backpressure semantics differ at each.**
+
+| GRAM | Mirror | What it bounds |
+|---|---|---|
+| Supervision step (one of `N_sup`) | `gen_prism.tick` boundary | one `(state, message) -> tick_result` transition the substrate reflects on; a unit of supervised reasoning |
+| Inner transition (one of `T` per step) | kintsugi inner loop iteration; one Fate-tournament round; one parallel-transport step inside a single `tick` | low-level refinement inside one supervision step; no `@cogito.reflect` between iterations |
+
+**Coarse-grained backpressure (tick boundary).** The `demand_window` on `gen_prism` (§2) bounds *supervision steps*: how many `tick` invocations the consumer can absorb before saturating. The producer's emissions are messages that drive consumer ticks; one message in the demand window equals one tick the consumer will execute. This is the GenStage-equivalent granularity: `max_demand: 1000` means "the consumer can absorb 1000 supervision steps before re-asking." `@cogito.reflect` runs at this granularity — once per tick, observing the result of one supervised transition.
+
+**Fine-grained backpressure (inner iteration).** Inside one `tick` the substrate may run a kintsugi inner loop (K iterations per `kintsugi-formatter.md` stage 2's `e^(n+1) < e^(n)` monitor), a Fate tournament round (per `kintsugi-tournament.md`'s elite/beam/halving sequence), or a parallel-transport sweep across the bundle (per `eigenboard-representation.md`'s holonomy descent). These iterations do NOT cross the supervision-step boundary; the substrate does NOT call `@cogito.reflect` between them. Backpressure here is bounded by the `reduction_budget` (§7.4): the shard's per-tick reduction ceiling, weighted by `β`. When the budget is hit mid-tick, the substrate clamps inner iteration to a partial result and crystallises what it has; the next supervision step resumes from the crystal.
+
+**Why the two need different controls.** A backpressure policy applied at the wrong granularity is a category error. Tick-granularity backpressure on inner iterations would stall the kintsugi inner loop on every step that exceeds `max_demand` — incoherent, because the inner loop has no consumer to ask for demand from. Inner-iteration-granularity backpressure on tick boundaries would forfeit the supervision boundary entirely — `@cogito.reflect` would never get a clean observation surface. The two granularities are independent: a gen_prism with `max_demand: 1000` (tick) and `reduction_budget: 10^9` (inner) can be configured for either fast-shallow (many cheap ticks) or slow-deep (few expensive ticks) operation by tuning each independently.
+
+**Temperature interaction.** β (§7) parameterizes BOTH granularities, but at the loop boundary: high β (cold) scales down both `max_demand` (fewer supervision steps in flight) and `reduction_budget` (smaller inner loop per step) — the system runs slow and precise at both altitudes. Low β (hot) scales up both — the system runs fast and exploratory at both altitudes. Per-granularity β would re-introduce the modular-flow incoherence §7.1 named; the single β keeps both granularities on the same KMS surface.
+
+**Validation.** A workload that pegs `reduction_budget` mid-tick should NOT signal `demand_starved` (which is a tick-boundary observation); it should crystallise a partial result and emit it as one supervision-step outcome. A workload that pegs `max_demand` at the consumer should NOT shrink `reduction_budget` (the budget belongs to the producer's per-tick capacity, not the demand window); the consumer simply withholds its re-ask until it has drained existing ticks. Cross-references: `docs/insights/2026-05-25-gram-and-mirror-same-architecture-two-altitudes.md` §"Where GRAM names what mirror should also name" item 3 (this section is the recommendation it names).
+
 ---
 
 ## 3. The subscription protocol
@@ -521,6 +542,76 @@ S-8 (OpenCLBackend, post-v1.5)
 ```
 
 S-3, S-4, S-7 can be done in parallel after S-2. S-5 needs S-3. S-6 has an external blocker (MetalBackend from the heterogeneous-numerical-prism roadmap).
+
+---
+
+## 13. `@glue/width(N)` and `@glue/depth(N)` — ensemble composition operators
+
+GRAM ([arXiv:2605.19376v2](https://arxiv.org/abs/2605.19376)) cleanly distinguishes two axes of inference-time scaling: **depth** (more recursion per trajectory — longer reasoning chains) and **width** (more parallel trajectories — ensemble inference). Mirror already has both at the substrate, but they have not been named structurally as composition operators. This section declares them, and names the @peer ensemble pattern as architecturally first-class.
+
+### 13.1 The two operators
+
+```mirror
+in @scheduler
+in @peer
+
+grammar @glue {
+
+  # spawn N peers in parallel on the SAME query. each peer ticks
+  # independently; their results are merged by the kintsugi
+  # tournament (per kintsugi-tournament.md). width is GRAM's
+  # parallel-trajectory dimension at the @peer altitude.
+  #
+  # the N peers may share an identity (literal fan-out) or carry
+  # distinct identity manifolds (Mara/Glint/Seam/Taut/Heath
+  # ensemble per peer.mirror); both shapes satisfy the operator.
+  # what makes it `width` is the parallel-on-same-query semantics,
+  # not the peers' identity overlap.
+  width(query: ref, n: u64) -> [peer_result] { \ }
+
+  # run N supervision steps on ONE peer for the same query.
+  # each step is a gen_prism tick that reflects on the previous
+  # step's result. depth is GRAM's deep-supervision dimension at
+  # the @peer altitude; sub-Turing bounded so it always halts
+  # (per @epistemologic/property/halts).
+  #
+  # this is NOT the same as the kintsugi inner loop (§2.1):
+  # inner iterations live inside ONE tick; depth iterations cross
+  # tick boundaries and @cogito.reflect runs between each.
+  depth(p: peer, query: ref, n: u64) -> [peer_result] { \ }
+
+  # compose width and depth. canonical form: width N peers,
+  # each tick depth M times. order matters — width-then-depth
+  # spawns N independent depth-chains; depth-then-width re-uses
+  # one chain across N peers (loses the parallel-trajectory
+  # property).
+  compose(w: u64, d: u64, query: ref) -> [peer_result] { \ }
+}
+```
+
+### 13.2 Composition semantics
+
+- `width(query, N)` spawns N peers in parallel on the same query; each peer ticks independently; results merge via the kintsugi tournament (per `kintsugi-tournament.md`). This is GRAM's N parallel trajectories sampled from the prior, but architecturally rather than statistically — each peer is a structurally distinct trajectory by virtue of their identity manifold (the per-peer bias_tree per `docs/insights/2026-05-25-agent-home-as-typed-hole.md`).
+- `depth(peer, query, N)` runs N supervision steps on one peer for the same query. Each step is a `gen_prism.tick` that reflects on the previous step's result (`@cogito.reflect` runs once per step). The chain is sub-Turing bounded (per `@epistemologic/property/halts`); the budget is the shard's `reduction_budget` per step.
+- `compose(w, d, query)` = `width(query, w)` then per peer `depth(peer, query, d)`. Composable in the algebraic sense: `compose(1, 1) = single peer tick`; `compose(N, 1) = width(query, N)`; `compose(1, M) = depth(peer, query, M)`. Two-dimensional dial.
+
+### 13.3 The @peer ensemble as architecturally first-class
+
+The load-bearing claim: **the @peer ensemble pattern — multiple peers, one query, tournament selection — is mirror's inference-time-scaling mechanism**. It is not a workflow built on top of the substrate; it IS the substrate's width axis. Naming `@glue/width(N)` makes this explicit. GRAM (§3.2) had to invent parallel trajectory sampling as a research contribution because the neural-network substrate doesn't surface it; mirror gets it free because @peer is already the right shape.
+
+The tournament's role becomes legible by the GRAM parallel: it IS the LPRM-equivalent selector at the ensemble altitude. Each peer's result carries the eigenboard's holonomy (per `eigenboard-representation.md` §"`eigenboard.holonomy` IS the LPRM equivalent"); the tournament reads holonomy across the N results and selects per `kintsugi-tournament.md`'s elite/beam/halving rule. One mechanism, two altitudes — holonomy at the trajectory tip, tournament at the ensemble.
+
+### 13.4 Backpressure interaction
+
+`width(N)` spawns N gen_prisms, each with its own `demand_window` (§2). The shard's `reduction_budget` (§7.4) is partitioned across them: with N peers and shard-level budget `B`, each peer gets `B / N` reductions per supervision step (modulo `β`-weighted topology). High width = thin per-peer budget; low width = thick per-peer budget. The dial is structural; the kintsugi tournament observes per-peer holonomy and reweights on the next step.
+
+`depth(N)` runs N ticks serially on one peer; each tick consumes the full per-peer reduction budget. Depth is bounded by `@epistemologic/property/halts` clause (b) (reduction exhaustion across the chain) and clause (a) (autopoietic settlement on `@cogito.reflect`); whichever fires first ends the chain. The two clauses are the structural analog of GRAM's Adaptive Computation Time (ACT) at the per-peer altitude (per `docs/insights/2026-05-25-gram-and-mirror-same-architecture-two-altitudes.md`).
+
+### 13.5 Where this lands
+
+`@glue` is a candidate top-level grammar; if/when a standalone `docs/specs/glue.md` ships, this section migrates there and stays cross-referenced from here. Until then, the operators are scoped to this spec because their backpressure semantics live entirely within the Scheduler Tower (per §2.1 and §7.4). The implementation tick is unscheduled — the operators are vocabulary work; the underlying mechanisms (peer ensembles, kintsugi tournament, reduction budget) already exist.
+
+Cross-references: `docs/insights/2026-05-25-gram-and-mirror-same-architecture-two-altitudes.md` (the GRAM parallel; this section is the recommendation it names); `boot/std/peer.mirror` (the peer carrier); `docs/specs/kintsugi-tournament.md` (the selection mechanism); `docs/specs/eigenboard-representation.md` (the per-peer holonomy that tournament reads).
 
 ---
 
