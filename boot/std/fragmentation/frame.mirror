@@ -1,6 +1,7 @@
 in @prism
 in @fragmentation
 in @epistemologic/property/content_addressed
+in @epistemologic/property/monoidal
 
 # @fragmentation/frame
 #
@@ -103,14 +104,19 @@ grammar @fragmentation/frame {
   #                            substrate's monoid structure rests on
   #                            it.
   #
-  # PARKED (design call): `requires monoidal(frame)` — compose +
-  # identity form a monoid (associativity + unit). The property
-  # @epistemologic/property/monoidal does not exist in the
-  # epistemologic/property/ tree as of this tick; declaring the
-  # property is its own substrate landing. Once the monoidal
-  # property lands, this grammar gains one line:
-  #     requires monoidal(frame)
+  # monoidal(frame)          : compose + identity form a monoid.
+  #                            compose(identity(s), f) == f when
+  #                            f.from == s; compose(f, identity(f.to))
+  #                            == f; compose is associative. Per
+  #                            @epistemologic/property/monoidal: the
+  #                            laws reduce to OID equality under
+  #                            content-addressing — hash composition
+  #                            is associative; the empty-delta frame's
+  #                            OID is the canonical unit. The parked
+  #                            design call from #77's commit body
+  #                            closes here.
   requires content_addressed(frame)
+  requires monoidal(frame)
 }
 
 out frame
