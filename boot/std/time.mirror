@@ -1,10 +1,74 @@
 in @prism
 in @meta
 in @actor
+in @option
+
+-- @time: the substrate's own time discipline.
+--
+-- Four carriers, three frames, one convention.
+--
+--   duration   -- non-negative scalar of nanoseconds (PG §2.5: pick
+--                 one, name it). The base carrier. Built via refract
+--                 so construction IS the proof of non-negativity.
+--   monotonic  -- zoom(duration): CLOCK_MONOTONIC-equivalent frame.
+--                 Substrate-internal. gen_prism tick deltas;
+--                 compute budgets; kintsugi flow time.
+--   wall       -- zoom(duration): CLOCK_REALTIME-equivalent frame.
+--                 Observer-relative. The shard provides the frame.
+--   instant    -- zoom(duration): wall-clock point-in-time for
+--                 human-facing scheduling/logs (PG's timestamptz
+--                 analogue measured from the frame's epoch).
+--
+-- Precision: nanoseconds. ~584 years of range from a u64. Matches
+-- BEAM's erlang:monotonic_time(:nanosecond) native unit and the
+-- CLOCK_MONOTONIC/CLOCK_REALTIME kernel resolution. PG uses
+-- microseconds; PG's lesson is "pick one and name it" not "use μs
+-- specifically." The existing @time.tick is spectral time (event
+-- count), not wall units; no clash. The existing wall_time = u64
+-- ms and @beam.duration u64 carriers converge here under one
+-- precision; downstream call sites that knew "ms" or "unspecified"
+-- get nanosecond discipline structurally.
+--
+-- Leap-second policy: duration is leap-second-free seconds (matches
+-- Unix epoch, BEAM, PG extract(epoch)). The @calendar/utc grammar
+-- (future) carries the leap-second-aware path at its adapter
+-- boundary. Per insight doc §2.5 / §8.6.
+--
+-- Per docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md.
+
+-- the base duration carrier. non-negative by construction (refract
+-- witness): constructors that would produce a negative duration
+-- return imperfect. u64 nanoseconds.
+type duration = refract({ nanos: u64 })
+
+-- the two frames PG distinguishes as CLOCK_MONOTONIC vs
+-- CLOCK_REALTIME. zoom(T): annotation-only. Same bytes, different
+-- declared shape; the type checker refuses to add a wall to a
+-- monotonic without going through an explicit convert(_) at a shard
+-- boundary. Per docs/insights/2026-05-25-parametric-types-and-fp-heritage.md
+-- §"zoom(T) = annotation form".
+type monotonic = zoom(duration)
+type wall = zoom(duration)
+
+-- wall-clock point-in-time. Same bytes as duration; the declared
+-- shape names "nanoseconds since the frame's epoch, observer-
+-- relative." Used for human-facing scheduling, log timestamps, the
+-- carrier any cross-shard compare resolves through. Per insight doc
+-- §8.1 (open question 1, resolved): instant is needed as a separate
+-- frame because cross-shard messaging surfaces points-in-time that
+-- a single shard's snapshot tick cannot name.
+type instant = zoom(duration)
 
 -- a point-in-time capture of spectral state
 -- every tick produces an oid. every oid is in the store.
-type tick(u64)
+--
+-- Promoted to `monotonic`: spectral ticks are the substrate's own
+-- monotonic time — every snapshot is one tick further from the
+-- root. The frame discipline is inherited; every existing consumer
+-- of `tick` (snapshots, deltas, replays, the gen_prism's tick
+-- field) gets the type-level guarantee that ticks compose only
+-- with ticks. Per insight doc §8.4 (open question 4, resolved).
+type tick = monotonic
 type snapshot {
   oid: ref,
   tick: tick,
@@ -82,6 +146,23 @@ grammar @time {
   -- return to the present — release the time travel view
   action present(cursor) -> snapshot
 
+  -- convert an instant from one shard's frame into another's.
+  -- Cross-frame `compare` is explicit per Alex's 2026-05-25
+  -- substrate decision: no hidden coercions; the relativistic
+  -- conversion cost stays visible. Holes resolved by Fate at
+  -- runtime via the shard's `parent: option(oid)` chain walk
+  -- (per docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md).
+  -- The result is imperfect because the chain may not connect (two
+  -- shards with no common ancestor cannot share an instant frame).
+  --
+  -- Within a single frame, instants and durations compose freely
+  -- (add(monotonic, monotonic) is total). Across frames, the type
+  -- system requires this convert call before any comparison; the
+  -- verifier rejects compare(a, b) where the frames differ without
+  -- a convert in scope. PG's lesson §2.1 (timestamptz over
+  -- timestamp) at the substrate altitude.
+  action convert(target_frame: oid, src: instant) -> imperfect { \ }
+
   recover |result, loss| {
     -- time travel is read-only observation of immutable oids
     -- partial loss means the restore conflicted with present state
@@ -96,6 +177,10 @@ grammar @time {
   }
 }
 
+out duration
+out monotonic
+out wall
+out instant
 out tick
 out snapshot
 out timeline
@@ -104,4 +189,5 @@ out mutation
 out delta
 out replay
 out fork
+out convert
 out @time
