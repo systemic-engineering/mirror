@@ -1,6 +1,7 @@
 grammar @mirror {
   in @meta
   in @property
+  in @epistemologic/property/glass_wall
 
   -- templates (structural)
   requires unique_variants
@@ -8,6 +9,13 @@ grammar @mirror {
   requires no_dead_variants
   requires types_lowercase
   requires canonical_order
+
+  -- substrate-pull (Task #79, AGENTS.md § The Glass Wall):
+  -- every grammar that compiles must be mirror-shaped OR live under
+  -- @io. The boundary becomes structural; convention stops being
+  -- load-bearing. See docs/insights/2026-05-26-glass-wall-and-
+  -- cross-wall-kintsugi.md.
+  requires glass_wall
 
   -- properties (effects)
   invariant idempotent

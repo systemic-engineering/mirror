@@ -85,6 +85,29 @@ grammar @mirror/grammar("mirror", "spec", "meta", "glass") {
 
   # ===== file root =====
   refract file              = repeat(choice(whitespace, form), 0, none)
+
+  # ===== meta-glass primitives =====
+  # Predicates the substrate exposes about a grammar as a value. Used
+  # by @epistemologic/property/glass_wall to enforce the substrate-
+  # pull discipline (non-mirror grammars must be under @io). The
+  # bootstrap exhibits the witness at construction time via
+  # `Grammar::is_mirror()` (`bootstrap/src/grammar.rs`); the meta-
+  # glass declares the queryable shape.
+  #
+  # is_mirror(g): true iff g parses through @mirror/grammar (this
+  # very grammar). Mirror grammars satisfy this by construction;
+  # everything else (Rust, LLVM IR, raw bytes, vendor SDKs) parses
+  # through some other surface and fails. The check is one ref
+  # equality at the substrate altitude — no parse re-attempt; the
+  # grammar already knows which meta-glass tokenised it.
+  #
+  # namespace(g): the @-ref the grammar was declared under, as text.
+  # Used by glass_wall to check the @io prefix. Same source as
+  # `Grammar::ref` in the bootstrap.
+  is_mirror(g: grammar) -> bool { \ }
+  namespace(g: grammar) -> text { \ }
 }
 
+out is_mirror
+out namespace
 out @mirror/grammar
