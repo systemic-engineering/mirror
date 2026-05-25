@@ -777,6 +777,21 @@ fn scan_items(
                         while ty_end < len && is_name_char(bytes[ty_end]) {
                             ty_end += 1;
                         }
+                        // Parametric return-type form: `T(U)`.
+                        //
+                        // Per the parametric-types-and-fp-heritage insight
+                        // (2026-05-25), the type-layer applications of the
+                        // five Prism operations — zoom(T), refract(T), and
+                        // their kin — must parse as return types. We admit
+                        // a single balanced `(...)` immediately following
+                        // the type-name identifier and absorb it into the
+                        // return-type span. The full verbatim form lives in
+                        // the IoBinding's body for round-trip; downstream
+                        // grammar lenses lift it into a ParametricType
+                        // node when they need the base/parameter split.
+                        if ty_end < len && bytes[ty_end] == b'(' {
+                            ty_end = scan_paren_block(bytes, ty_end);
+                        }
                         if ty_end > ty_start {
                             let mut block_pos = ty_end;
                             while block_pos < len

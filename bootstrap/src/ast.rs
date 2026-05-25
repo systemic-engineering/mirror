@@ -19,6 +19,19 @@ pub enum AstKind {
     /// `select |<binder>| { <variant> => <body>, ... }` — Spec B.
     /// Closure-style sum-type dispatch. Slots in next to recover/rescue.
     SelectExpr,
+    /// `T(U)` — parametric type application at the type layer.
+    ///
+    /// Per the parametric-types-and-fp-heritage insight (2026-05-25):
+    /// `T(U)` is the type-layer application of `T` to `U`. The type checker
+    /// treats `T(U1)` and `T(U2)` as distinct types (different content
+    /// hashes). Bare `T` (no parens) remains a non-parametric type ref.
+    ///
+    /// `name` carries the verbatim form `T(U)` (or `T(U, V)`, etc.) so
+    /// content addressing distinguishes parametric instances at the OID
+    /// layer. The shape is land-on-the-OID — the bootstrap doesn't carry
+    /// a structured base/parameter split because the verbatim form is
+    /// what hashes; downstream lenses extract the components from `name`.
+    ParametricType,
     /// A span of unrecognized bytes — `total_classification` failure.
     ///
     /// The bytes are preserved verbatim in `body` (for round-trip rendering)

@@ -261,6 +261,7 @@ fn compute_oid_inner(node: &AstNode) -> String {
             AstKind::IoBinding => "io_binding",
             AstKind::MatchExpr => "match_expr",
             AstKind::SelectExpr => "select_expr",
+            AstKind::ParametricType => "parametric_type",
             // In / Out / Dark handled above.
             AstKind::In | AstKind::Out | AstKind::Dark => unreachable!(),
         };
@@ -395,7 +396,8 @@ where
             | AstKind::Dark
             | AstKind::IoBinding
             | AstKind::MatchExpr
-            | AstKind::SelectExpr => (self.on_other)(node, child_outs),
+            | AstKind::SelectExpr
+            | AstKind::ParametricType => (self.on_other)(node, child_outs),
         }
     }
 }
@@ -536,7 +538,8 @@ where
             | AstKind::Dark
             | AstKind::IoBinding
             | AstKind::MatchExpr
-            | AstKind::SelectExpr => (self.on_other)(node, depth, child_outs),
+            | AstKind::SelectExpr
+            | AstKind::ParametricType => (self.on_other)(node, depth, child_outs),
         }
     }
 }
@@ -720,6 +723,13 @@ fn render_other_mirror(node: &AstNode, depth: i32) -> Vec<u8> {
                 out.extend_from_slice(body.as_bytes());
             }
             out.push(b'\n');
+        }
+        AstKind::ParametricType => {
+            // ParametricType nodes appear inline within other declarations
+            // (return-type positions, field types). The verbatim form lives
+            // in `name`; emit it as-is so round-trip preserves the surface
+            // exactly. No newline — the surrounding declaration owns layout.
+            out.extend_from_slice(node.name.as_bytes());
         }
         AstKind::Dark => {
             if let Some(body) = &node.body {
@@ -1388,6 +1398,7 @@ fn kind_tag(k: AstKind) -> &'static str {
         AstKind::IoBinding => "io_binding",
         AstKind::MatchExpr => "match_expr",
         AstKind::SelectExpr => "select_expr",
+        AstKind::ParametricType => "parametric_type",
         AstKind::Dark => "dark",
     }
 }
