@@ -228,6 +228,24 @@ Sigils name their type in full. Like Elixir's `~r/.../` but without the cryptic 
 
 **Shape:** `~<sigil_name><separator><content><separator>`. Separators are matched pairs (`""`, `''`, `[]`, `{}`, `()`). Choose the separator that minimizes escaping for the content.
 
+## The Glass Wall
+
+`@io` is the substrate's only legitimate non-mirror surface. Any grammar that isn't mirror — Rust, Python, Go, raw bytes, foreign binary blobs, vendor SDKs — must be under the `@io` namespace. Everything else is mirror grammar by definition.
+
+**Verified by property:** `@epistemologic/property/glass_wall(g)` asserts that non-mirror grammars are under `@io`. Applied at compile time across the boot tree. The discipline isn't held by convention; the compiler enforces it.
+
+**Self-minimizing via kintsugi:** `@kintsugi/cross_wall(g)` evaluates @io grammars for provable halts. When an @io grammar's behavior is verifiable, kintsugi can offer translation into mirror — pulling the grammar across the glass wall, out of @io. Over time, @io shrinks toward its irreducible minimum (blocking syscalls, hardware interrupts, opaque vendor primitives).
+
+**The pair with halts:**
+
+- `halts(g)` — mirror grammars terminate by construction (sub-Turing).
+- `glass_wall(g)` — non-mirror grammars must be under @io.
+- `cross_wall(g)` — kintsugi pulls @io grammars across when halts becomes provable.
+
+Together: mirror grows; @io shrinks; nothing escapes the boundary; every escape is auditable.
+
+See `docs/insights/2026-05-26-glass-wall-and-cross-wall-kintsugi.md`.
+
 ## What NOT to do
 
 - Do NOT add new Rust modules to `bootstrap/` to grow features. New capability
