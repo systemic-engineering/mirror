@@ -20,6 +20,10 @@ grammar @file(path) {
     Imperfect::Success(std::path::Path::new(path.as_str()).exists())
   }
 
+  io is_dir(path) => imperfect in @code/rust {
+    Imperfect::Success(std::path::Path::new(path.as_str()).is_dir())
+  }
+
   io mkdir(path) => imperfect in @code/rust {
     std::fs::create_dir_all(path.as_str())
       .map(|_| Imperfect::Success(()))

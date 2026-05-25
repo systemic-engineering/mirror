@@ -26,56 +26,56 @@ grammar @mirror/compile/bootstrap {
   # the bootstrap match. Kintsugi retires the io bindings once
   # @epistemologic/property/* discharges totality for each.
   io canonical_hash(bytes) =
-    @code/rust(~f"./bootstrap/src/hash.rs") > fn[name="canonical_hash"]
+    @code/rust(~file"./bootstrap/src/hash.rs") > fn[name="canonical_hash"]
   io hash_tagged(tag, content) =
-    @code/rust(~f"./bootstrap/src/hash.rs") > fn[name="hash_tagged"]
+    @code/rust(~file"./bootstrap/src/hash.rs") > fn[name="hash_tagged"]
 
   # ---- content addressing -----------------------------------------------
   io content_oid(ast) =
-    @code/rust(~f"./bootstrap/src/content.rs") > fn[name="content_oid"]
+    @code/rust(~file"./bootstrap/src/content.rs") > fn[name="content_oid"]
 
   # ---- tokenizer --------------------------------------------------------
   # Step 1 of the staircase. See @mirror/compile/tokenize when it lands.
   io tokenize(source, grammar) =
-    @code/rust(~f"./bootstrap/src/tokenize.rs") > fn[name="tokenize"]
+    @code/rust(~file"./bootstrap/src/tokenize.rs") > fn[name="tokenize"]
 
   # ---- renderer ---------------------------------------------------------
   io render_ast(ast, indent, out) =
-    @code/rust(~f"./bootstrap/src/render.rs") > fn[name="render_ast"]
+    @code/rust(~file"./bootstrap/src/render.rs") > fn[name="render_ast"]
 
   # ---- grammar loading --------------------------------------------------
   io load_grammar(path) =
-    @code/rust(~f"./bootstrap/src/grammar.rs") > fn[name="load_grammar"]
+    @code/rust(~file"./bootstrap/src/grammar.rs") > fn[name="load_grammar"]
   io grammar_for_file(path) =
-    @code/rust(~f"./bootstrap/src/grammar.rs") > fn[name="grammar_for_file"]
+    @code/rust(~file"./bootstrap/src/grammar.rs") > fn[name="grammar_for_file"]
 
   # ---- git wiring -------------------------------------------------------
   # Likely a permanent floor — these talk to git itself, which lives
   # outside mirror's totality-decidable space.
   io git_crystal_exists(source_oid) =
-    @code/rust(~f"./bootstrap/src/git.rs") > fn[name="git_crystal_exists"]
+    @code/rust(~file"./bootstrap/src/git.rs") > fn[name="git_crystal_exists"]
   io git_store_crystal(source_oid, crystal_oid) =
-    @code/rust(~f"./bootstrap/src/git.rs") > fn[name="git_store_crystal"]
+    @code/rust(~file"./bootstrap/src/git.rs") > fn[name="git_store_crystal"]
 
   # ---- pipeline ---------------------------------------------------------
   io is_mq_query(arg) =
-    @code/rust(~f"./bootstrap/src/pipeline.rs") > fn[name="is_mq_query"]
+    @code/rust(~file"./bootstrap/src/pipeline.rs") > fn[name="is_mq_query"]
   io split_pipeline(query) =
-    @code/rust(~f"./bootstrap/src/pipeline.rs") > fn[name="split_pipeline"]
+    @code/rust(~file"./bootstrap/src/pipeline.rs") > fn[name="split_pipeline"]
   io execute_pipeline(segments, source) =
-    @code/rust(~f"./bootstrap/src/pipeline.rs") > fn[name="execute_pipeline"]
+    @code/rust(~file"./bootstrap/src/pipeline.rs") > fn[name="execute_pipeline"]
 
   # ---- subprocess -------------------------------------------------------
   # Permanent floor. Spawning a subprocess is Turing-complete by definition.
   io exec(program, args) =
-    @code/rust(~f"./bootstrap/src/exec.rs") > fn[name="exec"]
+    @code/rust(~file"./bootstrap/src/exec.rs") > fn[name="exec"]
 
   # ---- butterfly --------------------------------------------------------
   # `craft --target binary boot` self-rebuild path. Cluster D landed this.
   io build_self_binary(target) =
-    @code/rust(~f"./bootstrap/src/main.rs") > fn[name="build_self_binary"]
+    @code/rust(~file"./bootstrap/src/main.rs") > fn[name="build_self_binary"]
   io find_bootstrap_ll() =
-    @code/rust(~f"./bootstrap/src/main.rs") > fn[name="find_bootstrap_ll"]
+    @code/rust(~file"./bootstrap/src/main.rs") > fn[name="find_bootstrap_ll"]
 }
 
 out @mirror/compile/bootstrap

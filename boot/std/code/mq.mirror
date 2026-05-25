@@ -1,5 +1,6 @@
 in @code
 in @trace
+in @sigil
 
 -- @code/mq: Mirror Query language for agent-to-spectral communication.
 --
@@ -167,7 +168,7 @@ grammar @code/mq {
   --
   -- Patterns query the SHAPE of a value. Same primitive used by:
   --   io bindings in @mirror/compile/bootstrap:
-  --     @code/rust(~f"...") > fn[name="foo"]
+  --     @code/rust(~file"...") > fn[name="foo"]
   --   match arms in @mirror/match:
   --     match req { request[method="tools/list"] => ... }
   --
@@ -247,6 +248,15 @@ grammar @code/mq {
     value: ref,
   }
 
+  -- ~mq"<query>": typed mq literal. The validator parses the content
+  -- against the @code/mq grammar at compile time; the literal carries
+  -- a parsed `query`, not a raw text blob. Per AGENTS.md § Sigil
+  -- Naming, ~mq is canonical (a name, not shorthand) -- siblings of
+  -- ~jq, ~sql, ~json.
+  type mq_literal(text) = @sigil("mq")
+
+  template render(s: mq_literal) -> query { parse(s.block) }
+
   -- parse a pattern from tokens (post-tokenizer).
   -- io-eligible; rides the kintsugi ladder once the parser's totality
   -- obligations close.
@@ -274,6 +284,7 @@ out attribute_pred
 out pseudo_class
 out binding_env
 out binding_entry
+out mq_literal
 out parse_pattern
 out apply_pattern
 out patterns_exhaustive
