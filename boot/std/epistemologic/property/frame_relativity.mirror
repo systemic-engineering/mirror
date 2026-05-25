@@ -1,0 +1,66 @@
+in @prism
+
+# @epistemologic/property/frame_relativity
+#
+# A type is frame-relative iff its values' meaning depends on an
+# observer's frame, and cross-frame comparison requires explicit
+# conversion. Timestamps are the canonical instance: a wall-clock
+# duration measured at one shard does not directly compare to a
+# wall-clock duration measured at another shard; both must be
+# converted to a shared frame first.
+#
+# Per docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md
+# §6 (the property table): this encodes PG §2.1 (timestamptz over
+# timestamp). PostgreSQL learned that storing local time without a
+# frame is almost always wrong; the substrate inherits the lesson
+# at the algebra layer. The load-bearing instance is @time.wall and
+# @time.instant; @mirror/shard.self provides the frame.
+#
+# Per docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md:
+# the shard IS the observer-relative λ₀; its parent: option(oid)
+# chain is the frame-conversion path. Comparing two wall durations
+# from different shards is a cross-observer operation that resolves
+# through the nearest common ancestor shard. This is
+# relativity-of-simultaneity at the substrate.
+#
+# Sibling properties: monotonicity(T) (within-frame total order —
+# the property that's free once you ARE in a single frame),
+# causality(T) (the partial order that cross-frame conversion must
+# preserve).
+
+grammar @epistemologic/property/frame_relativity {
+
+  # The type carries a frame: every value is annotated with the
+  # observer whose frame it lives in. For @time.wall/@time.instant
+  # this is the shard. Verifier checks the type's declaration
+  # exposes a frame field or is reachable through zoom(T) from a
+  # frame-bearing carrier.
+  carries_frame(type) -> verdict { \ }
+
+  # Cross-frame compare requires explicit conversion. The verifier
+  # walks every comparison callsite (==, <, >) of the type's values;
+  # any callsite where the two operands have differing frames
+  # without an intervening convert in scope fails the property.
+  # PG's lesson §2.1: never compare local-frame values silently.
+  cross_frame_compare_requires_convert(type) -> verdict { \ }
+
+  # The conversion path between any two frames is well-defined.
+  # For the shard-rooted frame system: any two shards reach a
+  # common ancestor through the parent: option(oid) chain, OR they
+  # don't (disjoint roots), in which case convert returns imperfect.
+  # The substrate guarantees the lookup terminates because the
+  # chain is finite (per @epistemologic/property/autopoietic: the
+  # ancestor chain is a content-addressed DAG with no cycles).
+  conversion_path_defined(type) -> verdict { \ }
+
+  # The combined property: the type is frame-relative.
+  # Pass iff carries_frame, cross_frame_compare_requires_convert,
+  # and conversion_path_defined.
+  frame_relativity(type) -> verdict { \ }
+}
+
+out carries_frame
+out cross_frame_compare_requires_convert
+out conversion_path_defined
+out frame_relativity
+out @epistemologic/property/frame_relativity

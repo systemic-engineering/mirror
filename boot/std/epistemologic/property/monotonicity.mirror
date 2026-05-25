@@ -1,0 +1,56 @@
+in @prism
+
+# @epistemologic/property/monotonicity
+#
+# A type is monotonic iff, within a single frame, time flows forward.
+# For any sequence of values of the type, ordered by construction
+# (the substrate's tick map, the gen_prism's send chain, the
+# snapshot's timeline), the values are non-decreasing.
+#
+# Per docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md
+# §6 (the property table): this encodes PG §2.4 (the monotonic-vs-
+# wall split that PG ships internally via clock_gettime). The load-
+# bearing instance is @time.monotonic and the @time.tick alias over
+# it: the spectral substrate's own time, the gen_prism's tick
+# counter, the compute budget's wall_time. Constructing t2 < t1
+# from a monotonic source returns fail.
+#
+# Per docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md
+# §2.4: PostgreSQL learned to never confuse CLOCK_MONOTONIC with
+# CLOCK_REALTIME; the verifier here keeps the substrate-level
+# guarantee structural rather than conventional.
+#
+# Sibling properties: causality(T) (the partial-order extension this
+# property is the total-order half of), frame_relativity(T) (the
+# cross-observer concern this property is intentionally silent on —
+# monotonicity is within-frame).
+
+grammar @epistemologic/property/monotonicity {
+
+  # The type's values admit a comparison that is reflexive,
+  # antisymmetric, and transitive (a partial order). Required
+  # baseline: without an order, monotonicity is undefined.
+  ordered(type) -> verdict { \ }
+
+  # Successive values in any construction sequence are non-decreasing.
+  # Verifier walks the type's canonical construction chain (the
+  # substrate's tick map for @time.tick, the send chain for
+  # gen_prism.tick) and checks no step decreases the value.
+  non_decreasing(type) -> verdict { \ }
+
+  # The order is total within a single frame. zoom(duration)-typed
+  # values share a frame structurally; cross-frame comparison is
+  # frame_relativity's concern, not this property's. Verifier checks
+  # any two values of the same frame are comparable.
+  total_within_frame(type) -> verdict { \ }
+
+  # The combined property: the type is monotonic within a frame.
+  # Pass iff ordered, non_decreasing, and total_within_frame.
+  monotonicity(type) -> verdict { \ }
+}
+
+out ordered
+out non_decreasing
+out total_within_frame
+out monotonicity
+out @epistemologic/property/monotonicity
