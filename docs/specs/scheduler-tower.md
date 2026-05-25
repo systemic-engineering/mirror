@@ -27,6 +27,7 @@ For v1.5, the Scheduler Tower's concrete shape is:
 4. **A shared-memory bus** for the CPU/GPU specialization — Anna's VBO pattern (§4.4, §7.2.1) adapted to Apple UMA, OpenCL command queues (§3), or generic Rust channels depending on backend topology.
 5. **Failure handling** — producer crashes propagate downstream via subscription; consumer crashes free demand at producers; mirror's content-addressing adds replay-from-ancestor recovery as a structural option.
 6. **A temperature parameter `β`** — the KMS-shaped scalar that controls system-wide settling aggression. The spec is precise about *where* `β` parameterizes: at loop boundaries, not at every stage.
+7. **A halting contract** — `@scheduler.reduction_budget(shard)` exposes the load-topology-derived per-tick ceiling; `@epistemologic/property/halts` makes the two-clause halting disjunction structural; `requires halts(gen_prism)` ties every actor's trajectory to the contract. The is_copium thesis operationalized (`docs/specs/is-copium.md`). See §7.4.
 
 This is **v1.5 work** (lands when MetalBackend lands, per the heterogeneous-numerical-prism roadmap). v1's gen_prism stays as-is; this spec describes the additive extension that makes the existing actor model demand-aware.
 
@@ -268,6 +269,51 @@ A system-wide parameter `β` (inverse temperature) regulates settling aggression
 For v1.5: ship `β = 1.0` as default; expose `--temperature` as a CLI flag on `mirror kintsugi` and `mirror migrate`. Per-workload optimal `β` is recorded in the gestalt as observations; post-v1.5, the runtime auto-adapts.
 
 The temperature `β` and the spectral-action's cutoff `Λ` (per `kintsugi-formatter.md` §6) are conjugate variables in the KMS framework. Specifying both is overdetermined; the v1.5 spec ships `β` user-facing and derives `Λ` from the kintsugi loop's structural depth (the formatter's existing knob).
+
+### 7.4 Halting — the two conditions and the reduction budget
+
+The demand contract makes WHEN explicit. The halting contract makes WHETHER explicit. Both live at the Scheduler altitude; both rest on the shard's load topology.
+
+**Substrate decision (Alex 2026-05-25).** For any reflexive trajectory `τ` of a sub-Turing grammar, there exists bounded `n` such that AT LEAST ONE of:
+
+- **(a) Autopoietic settlement.** `reflect(τ.state_n) == fixed_point`. The trajectory reaches a Lawvere fixed point of `@cogito.reflect`'s `observe |> strategy |> perturb` tick. Per Soto-Andrade & Varela 1984: this is equivalent to the reflect loop being autopoietic. Delegates to `@epistemologic/property/autopoietic.autopoietic(T)` applied to the type's tick map.
+- **(b) Reduction exhaustion.** `reductions(τ.steps_0..n) >= @scheduler.reduction_budget(shard)`. The trajectory consumed the budget allocated by the load topology. When exhaustion fires, the substrate forces a halt; the gen_prism either crystallises a partial result or returns `imperfect`.
+
+Either condition suffices. The disjunction is decidable because:
+
+- `τ` is sub-Turing by construction (mirror's grammar class refuses unbounded reachable state spectra; see `docs/specs/is-copium.md` §"Sub-Turing Grammar as Structural Escape");
+- `@cogito.reflect` is structurally computable on every tick;
+- reductions are countable per tick at the substrate;
+- `@scheduler.reduction_budget(shard)` is computable from a load-topology snapshot.
+
+**The reduction_budget primitive.** Lives in `boot/std/scheduler.mirror`:
+
+```mirror
+grammar @scheduler {
+  reduction_budget(s: shard) -> u64 { \ }
+}
+```
+
+Reads `s.compute.max_reductions` (the hardware carrier per `@epistemologic/silicon/compute_bound`) and weights by current load — queue depths from §3, in-flight demand windows from §2, KMS temperature `β` from §7.1. Same shard + same load fingerprint = same budget (deterministic against inputs; content-addressable through the fragmentation cache per `shard-design.md` Q3).
+
+Unit is `u64` (raw reductions, not `@time.monotonic` — reductions are countable events, not durations). Matches §10.2's resolution that demand-window units are messages; reductions are the per-tick analog inside one gen_prism.
+
+Body is a Fate-resolved hole. The tournament picks the weighting strategy that maximises throughput against the shard's load topology; the weighting logic stays in grammar, not in Rust (substrate pull).
+
+**The halts property.** Lives in `boot/std/epistemologic/property/halts.mirror`. Four actions match the existing nine `@epistemologic/property/*` files:
+
+- `autopoietic_settles(type) -> verdict` — clause (a) check.
+- `reductions_bounded(type) -> verdict` — clause (b) check.
+- `disjunction_decidable(type) -> verdict` — confirms the union of (a) and (b) fires for every reachable trajectory.
+- `halts(type) -> verdict` — the combined property.
+
+**Application.** `@mirror/runtime/gen_prism.gen_prism` declares `requires halts(gen_prism)` near its `property autopoietic()` block. The tick's `\` body remains the runtime resolution point; the requires clause is the structural contract every concrete tick must discharge.
+
+**KMS interaction.** Temperature `β` (§7) and the reduction budget compose at the load-topology weighting step. High `β` (cold) shrinks the budget proportionally — the Scheduler runs a slow, precise tempo; trajectories halt sooner via clause (b). Low `β` (hot) expands the budget — trajectories run longer and are more likely to halt via clause (a) (autopoietic settlement). The two conditions are not independent; `β` is the conjugate variable that biases which clause typically fires.
+
+**The is_copium thesis operationalized.** Per `docs/specs/is-copium.md`: AI alignment on Turing-complete substrates is undecidable (Rice's theorem, 1951). Mirror's sub-Turing escape + the halts property = decidable termination by construction. Every grammar that compiles, and every gen_prism that ticks inside one, is proven-to-halt.
+
+**GRAM equivalence.** Per `docs/insights/2026-05-25-gram-and-mirror-same-architecture-two-altitudes.md`: GRAM's deep-supervision recursion with Adaptive Computation Time (ACT) is the same architectural shape as mirror's gen_prism ancestor chain bounded by `reduction_budget`. GRAM adds ACT as a learned mechanism on top of a Turing-complete substrate; mirror gets it for free as a structural contract on a sub-Turing substrate. Different altitude, same recognition: deep recursion needs a budget.
 
 ---
 
