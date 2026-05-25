@@ -1,0 +1,45 @@
+in @prism
+in @cogito
+
+# @peer: the typed surface for spawn. a peer is a five-axis identity
+# gestalt; its home directory is the manifest material form.
+# `@peer(~dir"<path>")` resolves the directory into the typed fixed
+# point that `spawn` can call.
+#
+# This grammar declares only the type; `load`, `validate`, and `spawn`
+# land in tick 4. The five fields are the output of one Prism operation
+# applied to the peer's own bias_tree:
+#
+#   identity   -> focus(self)    -- the manifold the peer lives on
+#   gestalt    -> project(self)   -- the accumulated lens (what matters)
+#   tensions   -> split(self)     -- open branches; live derivatives
+#   eigenboard -> zoom(self)      -- current spectral state
+#   shatter    -> refract(self)   -- rendered history; the commit chain
+#
+# Spec: docs/specs/peer-glass.md
+# Audit: docs/audits/2026-05-25-peer-glass-audit.md
+# Tick 1 prior art: @cogito.eigenboard (boot/std/cogito.mirror).
+#
+# Prior art (Silicon Venue table mechanics):
+#   - INTEGRITY = Fiedler value as decidable sub-Turing measurement
+#     (cite: /Users/alexwolf/.loki/the-game/12-edge.md:55-58). This is
+#     the semantic backing @peer.eigenboard.holonomy carries.
+#   - Scheduler Tower as the pressure-release mechanic backpressure
+#     embodies (cite: /Users/alexwolf/.loki/the-game/08-pressure-and-release.md).
+#     The peer's tensions field IS the open backpressure surface.
+
+grammar @peer {
+  # the five-axis fixed point. exactly five — because the algebra has
+  # five. drop one and @peer cannot type-check; the load fails before
+  # any spawn runs.
+  type peer = {
+    identity:   mirror,        # focus(self): immutable manifold; mutating = fork
+    gestalt:    mirror,        # project(self): the accumulated lens
+    tensions:   mirror,        # split(self): open branches the peer carries
+    eigenboard: spec,          # zoom(self): @cogito.eigenboard surfaced as a spec file
+    shatter:    mirror,        # refract(self): rendered history; ancestor chain
+  }
+}
+
+out peer
+out @peer
