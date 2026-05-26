@@ -41,7 +41,7 @@ grammar @io/bytes {
   # because the input may be shorter than 8 bytes (length mismatch)
   # or encode a NaN bit-pattern the caller cares to flag. Standard
   # recovery surface carries the diagnostic.
-  to_f64(b: bytes) -> imperfect<f64> { \ }
+  to_f64(b: bytes) -> imperfect(f64) { \ }
 
   # ── from_f64: f64 → 8 bytes (big-endian) ────────────────────────
   #

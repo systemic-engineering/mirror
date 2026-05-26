@@ -79,7 +79,7 @@ grammar @io/uri {
   # `tcp://` requires an explicit port). Returns imperfect for
   # malformed URIs, unknown schemes without an explicit port, or
   # non-numeric port values.
-  port(u: ~uri) -> imperfect<u64> { \ }
+  port(u: ~uri) -> imperfect(u64) { \ }
 
   # ── path: extract the path component ────────────────────────────
   #
