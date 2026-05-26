@@ -1,0 +1,89 @@
+in @prism
+
+in @io
+in @io/socket
+
+# @io/network
+#
+# Berkeley-style network primitives on top of @io/socket. Three
+# actions — connect (outgoing), bind (start listening), accept (one
+# inbound) — that produce the connection / listener handle types
+# @io/socket declared. The thin layer between portal.open's URI
+# parsing and the raw byte-oriented socket actions.
+#
+# Per docs/insights/2026-05-26-portal-as-io-socket-over-content-
+# addressed-subspace.md §"open: handshake + frame-negotiate +
+# initial frame + stream": portal.open(remote: ~uri, frame: shard)
+# dispatches via the URI's scheme to one of these primitives. ws://
+# and tcp:// schemes flow through connect (or bind on the server
+# side); future unix:// and wss:// schemes extend the same shape
+# without breaking the contract.
+#
+# Lives under @io by construction so glass_wall (#79) validates
+# trivially. Permanent @io resident per insight 2026-05-26 glass-
+# wall §"What stays in @io permanently": connect blocks on the
+# remote TCP SYN/ACK; bind contends with the kernel's port-allocation
+# state; accept blocks on incoming connections. All three are
+# scheduled by the OS, not the structural analysis cross_wall (#80)
+# would need.
+#
+# Bootstrap-side dispatch (when @mirror/serve lands):
+#
+#   connect(addr) → std::net::TcpStream::connect(parsed_addr)
+#   bind(addr)    → std::net::TcpListener::bind(parsed_addr)
+#   accept(l)     → listener.accept().map(|(stream, _peer)| stream)
+#
+# Address parsing through std::net::SocketAddr (which already
+# accepts "host:port" strings). The total wrap stays under ~50
+# lines; no new crate dependency (std::net is std).
+#
+# Sibling grammars under @io: @io/socket (the handle types this
+# layer produces), @io/bytes (the data carrier flowing through
+# read_bytes/write_bytes once the connection is established),
+# @io/crypto (the eventual TLS layer between connect and write_bytes
+# once secure-transport lands).
+
+grammar @io/network {
+
+  # ── connect: outgoing TCP connection ────────────────────────────
+  #
+  # Open an outgoing connection to `addr` (e.g., "example.com:443"
+  # or "192.168.1.1:8080"). Returns imperfect because connection
+  # may fail at multiple stages: DNS resolution, TCP SYN timeout,
+  # connection refused, or address-format error. The standard
+  # recovery surface distinguishes between them in the diagnostic.
+  #
+  # On success, the returned `connection` is ready for read_bytes /
+  # write_bytes per @io/socket.
+  connect(addr: text) -> imperfect<connection> { \ }
+
+  # ── bind: start listening on a local address ──────────────────────
+  #
+  # Bind a TCP listener to `addr` (e.g., "0.0.0.0:8080" or
+  # "127.0.0.1:0" to let the OS pick a port). Returns imperfect for
+  # bind failures: port already in use, permission denied (binding
+  # below 1024 without privilege), or address-format error.
+  #
+  # On success, the returned `listener` is ready for accept per
+  # this grammar.
+  bind(addr: text) -> imperfect<listener> { \ }
+
+  # ── accept: receive one inbound connection ───────────────────────
+  #
+  # Block until one incoming connection is available on the listener,
+  # then return it as a `connection`. Returns imperfect because the
+  # listener may have been closed (Failure with EBADF or similar)
+  # or the syscall may have been interrupted (Failure with EINTR;
+  # caller decides whether to retry).
+  #
+  # The peer address (host:port the remote side connected from) is
+  # not surfaced through this primitive; callers needing it ride a
+  # separate @io/network.peer_of(connection) primitive that will
+  # land if/when consumer code requires it (YAGNI for now).
+  accept(l: listener) -> imperfect<connection> { \ }
+}
+
+out connect
+out bind
+out accept
+out @io/network
