@@ -23,6 +23,28 @@ No novel storage technology in this stack. Every tier uses a battle-tested subst
 
 Same pattern as @scene (didn't invent multi-actor interaction; typed what theater knew) and @kintsugi/fracture (didn't invent rewrites; typed what Credo+mix-format did). The cold tier doesn't invent content-addressed storage; it types what Nix already does.
 
+## Substrate placement — `@mirror/store` consumer vs `@fragmentation/store/*` implementations
+
+*Altitude: substrate convention; the namespace split surfaces the abstraction barrier.*
+
+The cross-namespace pattern:
+
+- **`@mirror/store`** — consumer-facing abstract substrate. What the rest of mirror imports and uses. Declares the interface (store, load, gc_roots, tombstone_check, etc.).
+- **`@fragmentation/store/{nix,git,bare,sqlite}`** — concrete implementations. Each adapter implements `@mirror/store`'s interface using a specific persistence layer.
+
+Mirror consumers don't import `@fragmentation/store/nix` directly. They import `@mirror/store` and the runtime dispatches to the right `@fragmentation/store/*` adapter based on the workspace's declared `--store` configuration.
+
+Four adapters in the family:
+
+| Adapter | When | Why |
+|---|---|---|
+| `@fragmentation/store/git` (DEFAULT) | Dev workspaces; rapid iteration; PR-shaped collaboration | Branches map to fracture experiments; PRs map to scene-dispatched fracture proposals; familiar tooling; lowest entry bar |
+| `@fragmentation/store/nix` | Production deployments; reproducible artifacts; CI/CD | Cryptographic content-addressing by construction; Nix store as the cold tier; binary caches for garden cross-pollination |
+| `@fragmentation/store/bare` | Embedded; tiny deployments; bootstrap; ephemeral | Bare filesystem; no external dependency; works on any machine |
+| `@fragmentation/store/sqlite` | Portable single-file deployments; mobile; offline-first | SQLite as content-addressed key-value store; single file artifact; standard library nearly everywhere |
+
+The iceberg tier (`@fragmentation/store/iceberg/{tape,glacier,filecoin,storj}` etc.) sits below all of these for deployments that need deep archival.
+
 ## Cold tier — Nix store + `@fragmentation`
 
 *Altitude: existing infrastructure (Nix) + declared substrate (`@fragmentation`); orchestration NOT implemented.*
@@ -105,13 +127,13 @@ For regulated industries that cannot forget. Below the cold tier; usually below 
 
 **Backend options (pluggable adapters):**
 
-- `@spectral/db/iceberg/tape` — LTO drives (LTO-9: 18TB compressed; multi-decade durability; air-gapped; physical custody)
-- `@spectral/db/iceberg/glacier` — AWS S3 Glacier Deep Archive (12-48hr restore; $0.00099/GB/month)
-- `@spectral/db/iceberg/azure-archive` / `@spectral/db/iceberg/coldline` — equivalent cloud archives
-- `@spectral/db/iceberg/filecoin` / `@spectral/db/iceberg/storj` — decentralized archival; geographic distribution; cryptographic verification across replicas
-- `@spectral/db/iceberg/local` — commodity disk for low-volume deployments that still want a fourth tier
+- `@fragmentation/store/iceberg/tape` — LTO drives (LTO-9: 18TB compressed; multi-decade durability; air-gapped; physical custody)
+- `@fragmentation/store/iceberg/glacier` — AWS S3 Glacier Deep Archive (12-48hr restore; $0.00099/GB/month)
+- `@fragmentation/store/iceberg/azure-archive` / `@fragmentation/store/iceberg/coldline` — equivalent cloud archives
+- `@fragmentation/store/iceberg/filecoin` / `@fragmentation/store/iceberg/storj` — decentralized archival; geographic distribution; cryptographic verification across replicas
+- `@fragmentation/store/iceberg/local` — commodity disk for low-volume deployments that still want a fourth tier
 
-All adapters speak `@spectral/portal`. The deployment chooses backend(s); the engine's orchestration is backend-agnostic.
+All `@fragmentation/store/*` adapters speak `@spectral/portal`. The deployment chooses store(s) via `--store` at `mirror init`; the engine's orchestration is store-agnostic.
 
 **When crystals enter the iceberg:**
 
@@ -330,15 +352,64 @@ When a crystal's retention policy expires:
 
 This gives mirror's iceberg substrate honest "right-to-erasure" support without trusting cloud providers' deletion claims.
 
+## CLI surface
+
+*Altitude: proposed; the substrate-pull-aligned CLI shape implied by `@mirror/store` + scene render-targets.*
+
+Every CLI verb is a scene render-target (per the scene-is-grammar deepening in `docs/insights/2026-05-26-scene-as-substrate-primitive-for-multi-actor-interaction.md`). The CLI's job is to render scenes for terminal output; the same scene renders differently at MCP, LSP, λsh.
+
+```
+mirror init [--store git]                  # default git; first kintsugi application refracts into .spec
+mirror init --store nix                    # production-shaped from day one
+mirror init --store sqlite                 # embedded / portable / mobile
+mirror init --store bare                   # tiny / no-deps / bootstrap
+mirror compile <file>                      # uses workspace's declared --store
+mirror compile --store <s> <file>          # one-off override (cross-store testing)
+mirror kintsugi <dir> --collapse [...]     # operates on the workspace's store
+mirror store status                        # tier health; pheromone state; tombstone counts
+mirror store migrate <to>                  # cross-store translation
+```
+
+### `mirror init` IS a kintsugi application
+
+Per Alex 2026-05-26: *"mirror init is what creates the projects .spec file through a first kintsugi application that refracts into the .spec."*
+
+The init isn't a template-writing operation. It runs the FIRST kintsugi application on the workspace; the fracture's `flow` refracts (the convergent Prism operation) into the project's `.spec`. The project's existence IS the settled crystal of the init scene.
+
+```mirror
+scene @mirror/init {
+  participants: [@peer/curator, @kintsugi/fracture, workspace]
+  setting: empty_workspace + user_intent
+  invariants: [
+    well_formed(spec),
+    store_declared,
+    consent_of_curator,
+  ]
+  close(verdict) -> crystal {
+    # the .spec lands here; refract is the settle operation
+    # the workspace config (with --store choice) is part of the closing crystal
+  }
+}
+```
+
+Properties this gives:
+
+- **Content-addressed by construction.** Same inputs produce same `.spec` (same OID). Different inputs produce different `.spec` (different OIDs). Audit trail starts at init.
+- **Provenance-tied.** Every later operation on the workspace can trace back to the init crystal.
+- **Curator-consented.** The developer running the command is the scene's curator; consent of curator is structurally required for the init to close.
+- **`refract` semantics.** The .spec is the convergent settle (per the body-altitude Prism operation); `fixed = refract` (the keyword landed at `229b25e`) means the .spec is structurally a `fixed` declaration of the project.
+
 ## Substrate dependencies
 
+- `@mirror/store` (declared in `mirror.spec` line 43-44) — consumer-facing abstract substrate
+- `@fragmentation/store/{nix,git,bare,sqlite}` (proposed) — the four base adapters
 - `@fragmentation/frame` (existing) — cold-tier crystal carriers
 - Nix / nix-darwin / NixOS (existing infrastructure) — cold-tier blob storage
 - Postgres + pgvector (existing infrastructure) — warm-tier vectors + pheromones
 - Mnesia (existing infrastructure) — hot-tier in-memory
 - LTO tape drives / AWS Glacier / Filecoin / Storj (existing infrastructure) — iceberg-tier deep archive backends
 - `@spectral/portal` (declared per #77; impl in #78) — wire protocol between adapters and engine
-- `@spectral/db/{mnesia, sql/postgres, sql/lite}` (declared in `@spectral` namespace insight) — the adapters
+- `@spectral/db/{mnesia, sql/postgres, sql/lite}` (declared in `@spectral` namespace insight) — the spectral-db engine adapters (different layer from the @fragmentation/store/* cold-tier adapters)
 - `@time.duration` (per #76) — evaporation curve timing
 - `@scene` (proposed per #92) — hot-tier scene state shape
 - `@fate` (proposed; baseline per #88) — active foraging agents
@@ -398,6 +469,8 @@ This gives mirror's iceberg substrate honest "right-to-erasure" support without 
 - Alex 2026-05-26 — "long tail we can have an iceberg type storage layer under nix"
 - Alex 2026-05-26 — "the layers need a tombstone mechanism. If we forget. We make it visible."
 - Research agent 2026-05-26 (`3a07753`) — independently surfaced "influence decay, not deletion (Merkle/OID architecture forbids the latter)"
+- Alex 2026-05-26 — "It's not backend. It's --store. @mirror/store = @fragmentation/store/{nix,git,bare,sqlite}. And by default it's git."
+- Alex 2026-05-26 — "mirror init is what creates the projects .spec file through a first kintsugi application that refracts into the .spec."
 - Earlier @spectral namespace insight (`docs/insights/2026-05-25-spectral-namespace-architecture.md`) — the open/closed split between portal, db, and adapters
 - `mirror.spec` line 44 — `@mirror/store/nix` already declared
 - Tasks #43, #48, #66, #76, #77, #78, #82, #83, #88, #92 — component dependencies
