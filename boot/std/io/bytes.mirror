@@ -1,0 +1,79 @@
+in @prism
+
+in @io
+
+# @io/bytes
+#
+# Byte-level primitives at the syscall boundary. These are the smallest
+# @io shape — no actual syscall touch, no foreign vendor surface, just
+# raw byte operations the rest of @io's extensions compose on top of.
+#
+# Per docs/insights/2026-05-26-portal-as-io-socket-over-content-
+# addressed-subspace.md §"The composition": the portal's eigenvalue
+# stream encodes/decodes normalized f64 observations as bytes on the
+# wire; the IEEE-754 big-endian conversion lives here so every socket
+# consumer (@io/socket, @io/network, @io/crypto, @io/encode) speaks
+# the same byte shape.
+#
+# Per docs/insights/2026-05-26-glass-wall-and-cross-wall-kintsugi.md:
+# this grammar lives under @io by construction, so glass_wall validates
+# it trivially. Cross-wall kintsugi (Task #80) is the eventual exit —
+# byte ops are structurally analyzable; halts is provable; the entire
+# grammar is a strong candidate for migration out of @io once the
+# cross_wall capability lands.
+#
+# Five actions. Pure logic; no I/O. Bodies are Fate-resolved holes per
+# the prevailing pattern at this altitude (see boot/std/fragmentation/
+# frame.mirror, boot/std/spectral/portal.mirror); the bootstrap-side
+# byte primitives are wired in when @mirror/serve lands the tournament-
+# to-bootstrap dispatch path.
+#
+# Sibling grammars under @io: @io/encode (base64/hex over bytes),
+# @io/random (entropy → bytes), @io/crypto (hash + signature over
+# bytes), @io/socket (read/write bytes over a connection), @io/network
+# (Berkeley primitives that produce sockets).
+
+grammar @io/bytes {
+
+  # ── to_f64: bytes → IEEE-754 f64 (big-endian) ───────────────────
+  #
+  # Read 8 bytes as a big-endian IEEE-754 double. Returns imperfect
+  # because the input may be shorter than 8 bytes (length mismatch)
+  # or encode a NaN bit-pattern the caller cares to flag. Standard
+  # recovery surface carries the diagnostic.
+  to_f64(b: bytes) -> imperfect<f64> { \ }
+
+  # ── from_f64: f64 → 8 bytes (big-endian) ────────────────────────
+  #
+  # Serialize an IEEE-754 double as 8 big-endian bytes. Total; no
+  # failure mode — every f64 has a canonical byte representation.
+  from_f64(v: f64) -> bytes { \ }
+
+  # ── concat: byte concatenation ──────────────────────────────────
+  #
+  # Concatenate two byte sequences. Total; the result's length is
+  # length(a) + length(b). Associative under composition;
+  # concat(b, empty) == b == concat(empty, b) at the substrate.
+  concat(a: bytes, b: bytes) -> bytes { \ }
+
+  # ── slice: bounded substring of bytes ───────────────────────────
+  #
+  # Extract the half-open range [start, end) from `b`. Returns
+  # imperfect because the range may be out of bounds: start > end,
+  # end > length(b), or either index past the buffer. Boundary
+  # checks live at the @io substrate so callers don't have to
+  # repeat them.
+  slice(b: bytes, start: u64, end: u64) -> imperfect<bytes> { \ }
+
+  # ── length: number of bytes ─────────────────────────────────────
+  #
+  # The byte count. Total; constant-time at the substrate.
+  length(b: bytes) -> u64 { \ }
+}
+
+out to_f64
+out from_f64
+out concat
+out slice
+out length
+out @io/bytes
