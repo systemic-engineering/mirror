@@ -1,6 +1,7 @@
 in @prism
 
 in @io
+in @io/socket
 in @fragmentation
 in @fragmentation/frame
 in @mirror/shard
@@ -72,9 +73,18 @@ grammar @spectral/portal {
   #
   # Four fields. One per substrate layer the portal composes.
   #
-  #   socket   -> the raw transport underneath. @io.socket gives the
-  #               wire (TCP / unix / WS); the portal types it against
-  #               the subspace + frame above.
+  #   socket   -> the raw transport underneath. @io/socket.connection
+  #               gives the duplex byte stream (TCP / unix / WS);
+  #               the portal types it against the subspace + frame
+  #               above. Re-typed from @io.socket (the lower
+  #               boot/02a-io.mirror altitude) to @io/socket.
+  #               connection (the connection-oriented handle from
+  #               #81) as #78's body-fill landing: connection IS
+  #               what the sibling grammars (handshake, codec,
+  #               stream) already operate on; the re-type collapses
+  #               two carrier types into one without breaking any
+  #               consumer (none of the portals.md instantiations
+  #               have landed yet).
   #   subspace -> the content-addressed identity. zoom(oid,
   #               fragmentation): the OID of the fragmentation
   #               subspace this portal points at. The classical bit
@@ -92,7 +102,7 @@ grammar @spectral/portal {
   #               gen_prism; autopoietic close fires when
   #               Reflection picks refract(self).
   type portal = {
-    socket:   @io.socket,
+    socket:   @io/socket.connection,
     subspace: zoom(oid, fragmentation),
     frame:    zoom(oid, shard),
     actor:    zoom(oid, gen_prism),
@@ -116,9 +126,8 @@ grammar @spectral/portal {
   #
   #   socket   <- the connection produced by @io/network.connect
   #               (or @io/network.accept on the listening side).
-  #               Typed @io.socket per the lower altitude; the
-  #               connection-oriented @io/socket.connection re-type
-  #               is parked per the close-body substrate gap.
+  #               Typed @io/socket.connection per the re-type that
+  #               landed with this body-fill tick.
   #   subspace <- f.to, the destination state OID of the initial
   #               frame. The handshake's frame exchange IS the
   #               subspace negotiation; both ends acknowledge f.to
@@ -135,7 +144,7 @@ grammar @spectral/portal {
   # Total at the signature level — record construction never fails;
   # the imperfect surfaces ride on the caller's compositions (the
   # connect/spawn/frame primitives that produce the field values).
-  new(socket:   @io.socket,
+  new(socket:   @io/socket.connection,
       subspace: zoom(oid, fragmentation),
       frame:    zoom(oid, shard),
       actor:    zoom(oid, gen_prism)) -> portal {
@@ -164,33 +173,59 @@ grammar @spectral/portal {
   # altitude is intact; Fate dispatches the leaves at runtime via
   # @mirror/serve.
   #
-  # ── substrate gap parked at this altitude (2026-05-26) ─────────
+  # ── substrate landing (2026-05-26): the three #78 gaps closed ───
   #
-  # The full composition needs three primitives that don't yet
-  # exist:
+  # The three primitives the previous gap-comment named as missing
+  # have landed:
   #
-  #   * uri -> (host: text, path: text) decomposition (@io.uri
-  #     parsing into host+path components).
-  #   * portal record construction from the four field values
-  #     (socket, subspace, frame, actor) once each is computed.
-  #     The substrate's record-literal syntax + zoom(oid, _) for
-  #     three of the fields exists; the `subspace` field needs to
-  #     be derived from the initial @fragmentation/frame the
-  #     handshake exchanges, which is its own design call.
-  #   * @mirror/runtime/gen_prism.spawn for the actor field needs
-  #     a fresh name OID; the autopoietic self-reference is
-  #     constructed at spawn time and not surfaceable in a one-
-  #     line composition until the @mirror/serve dispatch lands.
+  #   * @io/uri.{host, port, path, address}  (#78 gap 1)
+  #   * @spectral/portal.new                  (#78 gap 2)
+  #   * @mirror/runtime/gen_prism.            (#78 gap 3)
+  #       spawn_autopoietic
   #
-  # Body stays `\` pending these gaps. Each gap is small and
-  # independent; the portal's typed contract is intact — the
-  # four-stage composition shape is named in the grammar's header
-  # comment + the three sibling grammars (handshake, codec,
-  # stream) carry the per-stage substrate. The bottom-level
-  # primitives that DO exist (@io/network.connect, @io/socket.
-  # read_bytes, etc.) flow through the sibling grammars; this
-  # action stays `\` for Fate to pick the dispatch shape once
-  # @mirror/serve lands.
+  # The four-stage composition is fully namable through these
+  # primitives plus the sibling grammars:
+  #
+  #   1. address  <- @io/uri.address(remote)
+  #      socket   <- @io/network.connect(address)
+  #   2. host     <- @io/uri.host(remote)
+  #      path     <- @io/uri.path(remote)
+  #      key      <- @spectral/portal/handshake.send_upgrade(
+  #                    socket, host, path)
+  #      _        <- @spectral/portal/handshake.read_response(
+  #                    socket, key)
+  #   3. f        <- @spectral/portal/codec.read_frame(socket)
+  #   4. actor    <- @mirror/runtime/gen_prism.spawn_autopoietic(
+  #                    @mirror/spectral.crystallize(f.to))
+  #      portal   <- @spectral/portal.new(
+  #                    socket, f.to, @mirror/spectral.crystallize(
+  #                    frame), actor)
+  #
+  # ── what keeps the body as `\` (remaining design call) ─────────
+  #
+  # The four-stage pipeline is sequential: each stage's output is
+  # the next stage's input, and several stages have multiple
+  # outputs that downstream stages re-use (`socket` flows through
+  # stages 1-3; `f.to` flows through stages 3-4 as both `subspace`
+  # AND `actor`'s seed). Expressing this as one expression requires
+  # let-binding / do-notation at the body altitude — a substrate
+  # facility mirror does not yet expose. Today the closest pattern
+  # is `match (expr) { $name => ... }` (per @mirror/reload.tick),
+  # which nests linearly and grows quadratically with stage count;
+  # for the seven-stage pipeline above this would produce ~70 lines
+  # of nested matches that read worse than the current `\`.
+  #
+  # Decision: keep body as `\` pending the let-binding / do-notation
+  # design call. The composition is NAMED above (substrate-pull at
+  # full strictness; every step is a typed primitive); when the
+  # binding-syntax tick lands, this body fills in one line per
+  # stage and the body-shape comment above translates verbatim. The
+  # primitives are all in place; only the syntax to compose them
+  # cleanly is missing. That's the design call to park.
+  #
+  # Halts and autopoietic remain load-bearing without the body — the
+  # properties dispatch on the type-level claims, not on the body's
+  # form.
   open(remote: ~uri, frame: shard) -> imperfect<portal> { \ }
 
   # ── tick: one round-trip across the portal ──────────────────────
@@ -246,18 +281,21 @@ grammar @spectral/portal {
   # tick OR the host shard's compute_bound exhaustion is the
   # caller; both paths converge on this single action.
   #
-  # ── substrate gap parked at this altitude (2026-05-26) ─────────
+  # ── substrate landing (2026-05-26): close body fills ───────────
   #
-  # The portal's `socket` field is typed @io.socket (the lower,
-  # boot/02a-io.mirror altitude). @io/socket.close — the
-  # connection-oriented close from #81 — takes `connection`, the
-  # new opaque handle type. Re-typing portal.socket from @io.socket
-  # to @io/socket.connection is a structural change that touches
-  # every consumer (each portals.md row); it lands cleanly as a
-  # separate tick, not here. Body stays `\` until the re-type
-  # lands; the structural close-on-halts contract is intact via
-  # the requires halts(portal) declaration below.
-  close(p: portal) -> imperfect { \ }
+  # The previous gap on this action — `portal.socket` typed at the
+  # lower @io.socket altitude while @io/socket.close takes the
+  # connection-oriented handle from #81 — closes by the re-type
+  # that landed in this same tick: `portal.socket` is now typed
+  # @io/socket.connection, matching what @io/socket.close consumes.
+  # The re-type touched no consumer because none of the portals.md
+  # instantiations have landed yet; the substrate is single-source
+  # of truth and the re-type was the right move.
+  #
+  # Body composes cleanly: project the socket field; close it.
+  close(p: portal) -> imperfect {
+    @io/socket.close(p.socket)
+  }
 
   # ── properties: the math made load-bearing ───────────────────────
   #
