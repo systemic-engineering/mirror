@@ -244,6 +244,28 @@ This discipline is what makes "the substrate knew" recognitions possible. Each a
 
 **Why this works:** mirror's substrate compounds. Each recognition makes the next one cheaper. Deferred captures aren't lost work; they're seeded design. When demand surfaces, the implementation is faster because the design already exists, AND it's better-shaped because the demand sharpened the requirements.
 
+## The Local-Bounded Guarantees
+
+The substrate's mathematical commitments hold ONLY inside the local boundary. Cross the wire and the guarantees aren't weakened — they're voided.
+
+- `halts(g)` — sub-Turing termination. Requires the substrate to own the computation.
+- `autopoietic(g)` — Banach fixed-point in the local hash space.
+- `glass_wall(g)` — namespace check over the local substrate.
+- `content_addressed(g)` — OID computed locally over local bytes.
+- is-copium's sub-Turing alignment escape — undecidable cross-wire.
+
+`@fate` carries `local` as a universal property by construction. Any inference routed through `@fate` satisfies these guarantees. Remote inference goes through `@spectral/garden/*` packages — the substrate doesn't PREVENT the user from leaving the box; it refuses to PRETEND the guarantees still hold across the wire. Garden carries explicit curator signatures + audit trails where the structural proofs end.
+
+**The cultural pattern this refuses:** the *"magic wizard in the cloud"* default. LLM-adjacent engineering defaults to remote APIs as the natural inference layer; substantial pre-training plus convenience makes this near-invisible. The substrate's `local` discipline is the structural refusal of that default — not on style grounds; not on privacy grounds; on mathematical grounds.
+
+**Practical application:** when designing any new substrate piece that touches inference, ask:
+
+- Does it hold the local guarantees? → lives under `@fate`.
+- Does it cross the wire? → must live under `@spectral/garden/<curator>/*` with explicit provenance + signature attestation.
+- Never invent paths that pretend the guarantees survive remote routing. If you find yourself constructing a workaround that preserves remote-routing-as-@fate, stop — you're doing what the substrate exists to refuse.
+
+See `docs/insights/2026-05-26-lenses-fate-local-and-garden-catalogs.md` § "Why `local` is universal."
+
 ## The Glass Wall
 
 `@io` is the substrate's only legitimate non-mirror surface. Any grammar that isn't mirror — Rust, Python, Go, raw bytes, foreign binary blobs, vendor SDKs — must be under the `@io` namespace. Everything else is mirror grammar by definition.

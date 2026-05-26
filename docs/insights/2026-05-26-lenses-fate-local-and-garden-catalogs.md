@@ -80,6 +80,41 @@ The substrate-pull discipline applies at the agent altitude, not just the @io al
 
 ---
 
+## Why `local` is universal — the substrate's guarantees are local-bounded
+
+`@fate`'s `local` property isn't a preference layer or a privacy convenience. **It's the mathematical precondition for every structural commitment the substrate makes.** Each guarantee named so far requires local execution:
+
+- **`halts(g)`** — the sub-Turing termination proof from #74. The structural argument requires the substrate to OWN the computation. A remote service can hang on network failure, rate-limit, outage, vendor pause. The proof's bounds stop at the wire.
+- **`autopoietic(g)`** — the Banach contraction fixed-point. Requires the hash space the substrate controls. Remote inference doesn't compose into the autopoietic loop — its output isn't content-addressed by the substrate; it's content-addressed by whatever the remote service chose, on whatever schedule, with whatever versioning.
+- **`glass_wall(g)`** — the namespace check holds at compile time over the local substrate. A remote service is, structurally, just bytes coming in over a wire — the substrate can't introspect them.
+- **`content_addressed(g)`** — OID is computed locally over local bytes. Remote responses are bytes you didn't compute; their content-address is provisional until you locally hash them, at which point they're just data not provenance.
+- **The is-copium sub-Turing escape** — alignment-decidability requires local execution. Remote inference doesn't escape Rice's theorem; it submits to it. The architecture refuses to call remote-routed inference "aligned" because alignment can't be proven across the wire.
+
+**As soon as you leave the box, the guarantees aren't softened — they're voided.** Not "less strong." Not "approximately valid." Voided. The substrate's discipline is to name this honestly rather than pretend the proofs still hold.
+
+### Garden as the explicit boundary, not the soft fallback
+
+`@spectral/garden/*` for remote inference exists not because the substrate endorses remote, but because the substrate **refuses to pretend** the user isn't leaving the box. Garden makes the trade-off explicit:
+
+- Here's the remote service
+- Here's the curator's signature
+- Here's the audit trail of what you sent and what came back
+- These guarantees stop at the wire; the audit picks up where they stop
+
+The user CHOOSES to leave; the substrate marks the boundary precisely. No pretending.
+
+### The substrate-pull discipline at the network boundary
+
+`feedback-no-new-rust` minimizes the @io substrate boundary. `local(g)` over `@fate` minimizes the network substrate boundary. **Same discipline; different surface.** The substrate insists: name the boundaries; honor what holds only inside; refuse to pretend otherwise.
+
+### The cultural pattern this refuses
+
+The default assumption in LLM-adjacent engineering is *"remote API as the natural inference layer"* — what Alex calls the **"magic wizard in the cloud"** pattern. Substantial pre-training plus the practical convenience of remote inference makes this assumption nearly invisible — even to substrate-discipline-aware agents like the one writing this doc, who slipped into preserving remote-routing-as-@fate three times in one conversation before being caught.
+
+The substrate's `local` discipline is the **structural refusal of that default**. Not on style grounds; not on privacy grounds; on mathematical grounds. The guarantees the substrate makes only hold inside the box. The discipline reflects the math.
+
+---
+
 ## `@spectral/garden` as typed-catalog distributor
 
 Gardens distribute typed instances. Each instance carries properties; the substrate composes via property matching.
