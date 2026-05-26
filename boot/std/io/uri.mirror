@@ -1,0 +1,110 @@
+in @prism
+
+in @io
+
+# @io/uri
+#
+# URI decomposition primitives at the sigil layer. The `~uri` typed
+# sigil itself lives in boot/02a-io.mirror as a `@sigil("uri")`
+# instantiation; its block carries the URI's raw text. This grammar
+# is the substrate where that text gets pulled apart into the
+# component fields downstream callers — @io/network.connect chief
+# among them — actually consume.
+#
+# Per docs/insights/2026-05-26-portal-as-io-socket-over-content-
+# addressed-subspace.md §"open: handshake + frame-negotiate +
+# initial frame + stream": `@spectral/portal.open(remote: ~uri, ...)`
+# needs to extract the host + port + path from the URI before it can
+# call `@io/network.connect(addr: text)`. The primitive that bridges
+# `~uri` (sigil with raw text block) and `text` (the "host:port"
+# address shape @io/network expects) lives at exactly this altitude:
+# above the sigil declaration; below every consumer that wants typed
+# URI fields rather than raw text.
+#
+# Four accessors. Three field projections (host, port, path) plus
+# one address compositor (host:port) that matches what
+# @io/network.connect wants on the wire. The fourth exists because
+# the host:port concatenation IS a substrate concern — formatting
+# rules (IPv6 bracket escaping; default-port elision; etc.) are
+# small but real, and putting them in the URI grammar keeps every
+# consumer agreeing on the same shape.
+#
+# ── substrate gap closure (2026-05-26) ────────────────────────────
+#
+# Per the issue #78 plan: this grammar closes gap 1 (URI
+# decomposition) of @spectral/portal.open's body. The other two
+# gaps (record constructor + autopoietic spawn) close compositionally
+# from existing substrate (peer.load's `peer { ... }` literal +
+# peer.spawn's `crystallize(...)` autopoietic name) and land as the
+# final body-composition tick rather than as new primitives.
+#
+# Lives under @io by construction so glass_wall (#79) validates
+# trivially. The URI grammar itself doesn't touch a syscall — parsing
+# is pure text manipulation over the sigil's block. Cross_wall (#80)
+# could pull this grammar across the wall once the parsing bodies
+# prove halts structurally; the parsing is bounded by URI length, so
+# halts is naturally satisfied. Strong cross_wall candidate.
+#
+# Bootstrap-side dispatch (when @mirror/serve lands): standard URI
+# parsing — split on `://` for scheme, then on `/` for path, then on
+# `:` for host:port. Default ports per scheme (ws://80, wss://443,
+# http://80, https://443, tcp://0 → caller-error). The `url` crate
+# is the natural production choice; the bootstrap can wrap it or
+# stay on the four-line string-split if scheme support stays narrow.
+# No Cargo.toml addition in this commit; the crate pull lands with
+# the dispatch landing.
+#
+# Sibling grammars under @io: @io/network (connect/bind/accept that
+# CONSUME these primitives), @io/bytes (the byte layer underneath
+# every transport), @io/socket (the duplex handle types
+# @io/network produces).
+
+grammar @io/uri {
+
+  # ── host: extract the host component ─────────────────────────────
+  #
+  # The host part of the authority. For `ws://example.com:8080/path`
+  # returns `example.com`. For IPv6 literals like
+  # `ws://[::1]:8080/path` returns `::1` (brackets stripped).
+  # Returns imperfect because the URI may be malformed (no scheme
+  # separator, no authority, etc.); the standard recovery surface
+  # carries the diagnostic.
+  host(u: ~uri) -> imperfect<text> { \ }
+
+  # ── port: extract the port component ────────────────────────────
+  #
+  # The numeric port from the authority. Returns the explicit port
+  # if present (`:8080` → 8080); otherwise the scheme default
+  # (`ws://` → 80, `wss://` → 443, `http://` → 80, `https://` → 443,
+  # `tcp://` requires an explicit port). Returns imperfect for
+  # malformed URIs, unknown schemes without an explicit port, or
+  # non-numeric port values.
+  port(u: ~uri) -> imperfect<u64> { \ }
+
+  # ── path: extract the path component ────────────────────────────
+  #
+  # The path part following the authority. For
+  # `ws://example.com:8080/socket?q=1` returns `/socket` (query and
+  # fragment stripped). Empty authority-only URIs like `ws://host`
+  # return `/` (the canonical default path per RFC 3986 §6.2.3).
+  # Returns imperfect for malformed URIs.
+  path(u: ~uri) -> imperfect<text> { \ }
+
+  # ── address: host:port composite for @io/network.connect ────────
+  #
+  # Format the authority as `host:port` text — what
+  # @io/network.connect(addr: text) expects on the wire. Composes
+  # host + port through the scheme-default-port logic; for IPv6
+  # literals the host gets bracketed (`[::1]:8080`) per RFC 3986
+  # §3.2.2 so the colon-delimited parse on the receiving end
+  # disambiguates the address from the port. Returns imperfect
+  # because both host and port may fail to extract; the failure
+  # surfaces with the underlying diagnostic.
+  address(u: ~uri) -> imperfect<text> { \ }
+}
+
+out host
+out port
+out path
+out address
+out @io/uri
