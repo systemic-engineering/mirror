@@ -23,27 +23,32 @@ No novel storage technology in this stack. Every tier uses a battle-tested subst
 
 Same pattern as @scene (didn't invent multi-actor interaction; typed what theater knew) and @kintsugi/fracture (didn't invent rewrites; typed what Credo+mix-format did). The cold tier doesn't invent content-addressed storage; it types what Nix already does.
 
-## Substrate placement — `@mirror/store` consumer vs `@fragmentation/store/*` implementations
+## Substrate placement — `@fragmentation` pure; `@mirror/store` owns IO
 
 *Altitude: substrate convention; the namespace split surfaces the abstraction barrier.*
 
-The cross-namespace pattern:
+Alex 2026-05-26 (corrective, supersedes earlier draft): *"@fragmentation is pure. @mirror/store owns `io`."*
 
-- **`@mirror/store`** — consumer-facing abstract substrate. What the rest of mirror imports and uses. Declares the interface (store, load, gc_roots, tombstone_check, etc.).
-- **`@fragmentation/store/{nix,git,bare,sqlite}`** — concrete implementations. Each adapter implements `@mirror/store`'s interface using a specific persistence layer.
+The corrected placement:
 
-Mirror consumers don't import `@fragmentation/store/nix` directly. They import `@mirror/store` and the runtime dispatches to the right `@fragmentation/store/*` adapter based on the workspace's declared `--store` configuration.
+- **`@fragmentation`** — pure substrate. No IO. Frame shape, crystal semantics, OID structure. Substrate-altitude only; the bootstrap can verify halts on every `@fragmentation/*` grammar.
+- **`@mirror/store`** — the IO boundary. 3-op core interface (store/fetch/exists). The point where substrate crosses the glass wall into persistence.
+- **`@mirror/store/{nix,git,bare,sqlite}`** — concrete IO adapters. Each one implements the core interface using `@io.exec` / `@io.read` / etc. against a specific persistence layer.
+
+Mirror consumers import `@mirror/store`. The runtime dispatches to the right `@mirror/store/*` adapter based on the workspace's declared `--store` configuration. `@fragmentation` itself remains pure: it carries the typed crystal shape; nothing in it touches `@io`.
 
 Four adapters in the family:
 
 | Adapter | When | Why |
 |---|---|---|
-| `@fragmentation/store/git` (DEFAULT) | Dev workspaces; rapid iteration; PR-shaped collaboration | Branches map to fracture experiments; PRs map to scene-dispatched fracture proposals; familiar tooling; lowest entry bar |
-| `@fragmentation/store/nix` | Production deployments; reproducible artifacts; CI/CD | Cryptographic content-addressing by construction; Nix store as the cold tier; binary caches for garden cross-pollination |
-| `@fragmentation/store/bare` | Embedded; tiny deployments; bootstrap; ephemeral | Bare filesystem; no external dependency; works on any machine |
-| `@fragmentation/store/sqlite` | Portable single-file deployments; mobile; offline-first | SQLite as content-addressed key-value store; single file artifact; standard library nearly everywhere |
+| `@mirror/store/git` (DEFAULT) | Dev workspaces; rapid iteration; PR-shaped collaboration | Branches map to fracture experiments; PRs map to scene-dispatched fracture proposals; familiar tooling; lowest entry bar |
+| `@mirror/store/nix` | Production deployments; reproducible artifacts; CI/CD | Cryptographic content-addressing by construction; Nix store as the cold tier; binary caches for garden cross-pollination |
+| `@mirror/store/bare` | Embedded; tiny deployments; bootstrap; ephemeral | Bare filesystem; no external dependency; works on any machine |
+| `@mirror/store/sqlite` | Portable single-file deployments; mobile; offline-first | SQLite as content-addressed key-value store; single file artifact; standard library nearly everywhere |
 
-The iceberg tier (`@fragmentation/store/iceberg/{tape,glacier,filecoin,storj}` etc.) sits below all of these for deployments that need deep archival.
+The iceberg tier adapters (`@mirror/store/iceberg/{tape,glacier,filecoin,storj}` etc.) sit below all of these for deployments that need deep archival.
+
+**Richer actions belong to the IO boundary too:** pin, release, gc_roots, tombstone_check, promote, demote, last_referenced_at — these all touch the underlying store and live at the `@mirror/store/<adapter>` altitude per-backend, not in `@fragmentation`. Backends extend the core 3-op interface with the additional actions their persistence layer can support.
 
 ## Cold tier — Nix store + `@fragmentation`
 
@@ -127,13 +132,13 @@ For regulated industries that cannot forget. Below the cold tier; usually below 
 
 **Backend options (pluggable adapters):**
 
-- `@fragmentation/store/iceberg/tape` — LTO drives (LTO-9: 18TB compressed; multi-decade durability; air-gapped; physical custody)
-- `@fragmentation/store/iceberg/glacier` — AWS S3 Glacier Deep Archive (12-48hr restore; $0.00099/GB/month)
-- `@fragmentation/store/iceberg/azure-archive` / `@fragmentation/store/iceberg/coldline` — equivalent cloud archives
-- `@fragmentation/store/iceberg/filecoin` / `@fragmentation/store/iceberg/storj` — decentralized archival; geographic distribution; cryptographic verification across replicas
-- `@fragmentation/store/iceberg/local` — commodity disk for low-volume deployments that still want a fourth tier
+- `@mirror/store/iceberg/tape` — LTO drives (LTO-9: 18TB compressed; multi-decade durability; air-gapped; physical custody)
+- `@mirror/store/iceberg/glacier` — AWS S3 Glacier Deep Archive (12-48hr restore; $0.00099/GB/month)
+- `@mirror/store/iceberg/azure-archive` / `@mirror/store/iceberg/coldline` — equivalent cloud archives
+- `@mirror/store/iceberg/filecoin` / `@mirror/store/iceberg/storj` — decentralized archival; geographic distribution; cryptographic verification across replicas
+- `@mirror/store/iceberg/local` — commodity disk for low-volume deployments that still want a fourth tier
 
-All `@fragmentation/store/*` adapters speak `@spectral/portal`. The deployment chooses store(s) via `--store` at `mirror init`; the engine's orchestration is store-agnostic.
+All `@mirror/store/*` adapters speak `@spectral/portal`. The deployment chooses store(s) via `--store` at `mirror init`; the engine's orchestration is store-agnostic.
 
 **When crystals enter the iceberg:**
 
@@ -401,9 +406,9 @@ Properties this gives:
 
 ## Substrate dependencies
 
-- `@mirror/store` (declared in `mirror.spec` line 43-44) — consumer-facing abstract substrate
-- `@fragmentation/store/{nix,git,bare,sqlite}` (proposed) — the four base adapters
-- `@fragmentation/frame` (existing) — cold-tier crystal carriers
+- `@mirror/store` (declared in `mirror.spec` line 43-44) — the IO boundary; 3-op interface
+- `@mirror/store/{nix,git,bare,sqlite}` — the four base IO adapters (`@mirror/store/nix` exists, others proposed)
+- `@fragmentation/frame` (existing) — pure crystal carriers (no IO)
 - Nix / nix-darwin / NixOS (existing infrastructure) — cold-tier blob storage
 - Postgres + pgvector (existing infrastructure) — warm-tier vectors + pheromones
 - Mnesia (existing infrastructure) — hot-tier in-memory
@@ -469,8 +474,9 @@ Properties this gives:
 - Alex 2026-05-26 — "long tail we can have an iceberg type storage layer under nix"
 - Alex 2026-05-26 — "the layers need a tombstone mechanism. If we forget. We make it visible."
 - Research agent 2026-05-26 (`3a07753`) — independently surfaced "influence decay, not deletion (Merkle/OID architecture forbids the latter)"
-- Alex 2026-05-26 — "It's not backend. It's --store. @mirror/store = @fragmentation/store/{nix,git,bare,sqlite}. And by default it's git."
+- Alex 2026-05-26 — "It's not backend. It's --store." [Earlier framing with `@fragmentation/store/*` superseded by below.]
 - Alex 2026-05-26 — "mirror init is what creates the projects .spec file through a first kintsugi application that refracts into the .spec."
+- Alex 2026-05-26 (corrective) — "@fragmentation is pure. @mirror/store owns `io`." The IO adapters live at `@mirror/store/{nix,git,bare,sqlite}`, NOT under `@fragmentation`. `@fragmentation` stays pure substrate.
 - Earlier @spectral namespace insight (`docs/insights/2026-05-25-spectral-namespace-architecture.md`) — the open/closed split between portal, db, and adapters
 - `mirror.spec` line 44 — `@mirror/store/nix` already declared
 - Tasks #43, #48, #66, #76, #77, #78, #82, #83, #88, #92 — component dependencies
