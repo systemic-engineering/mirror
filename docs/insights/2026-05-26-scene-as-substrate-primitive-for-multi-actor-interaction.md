@@ -69,20 +69,68 @@ Loki notes the Silicon Venue mechanics already work this way — we've been desi
 
 Naming `@scene` makes these structurally legible — they stop being design intuitions and start being type-checked substrate primitives.
 
-## Cross-domain translation: the substrate-altitude test
+## Scene is grammar; rendering is local (the deepening)
 
-Alex 2026-05-26: *"And it translates across borders. A scene in Silicon Venue is shaped by the narration. A scene in your local lambda shell might be running through a pre-release flow."*
+Loki 2026-05-26: *"A scene is grammar. The grammar is the same. The rendering is local."*
 
-This is the test of whether `@scene` is a substrate-altitude primitive or an application-altitude convenience. **If it only worked for Silicon Venue, it'd be application-specific. The fact that it ALSO names lambda-shell pre-release flows, code reviews, peer-review sessions, therapy arcs, classroom hours, debate rounds — the SAME glass; different domains — means it lives at the substrate.**
+This applies mirror's existing `in @lang/eng { }` vs `in @code/rust { }` pattern — which has always rendered MOVES (single-actor verbs) across target grammars — to **INTERACTION ITSELF.** Mirror already renders moves into multiple registers. Loki recognizes: do the same for scenes.
 
-The pattern: **the glass is constant; the shaping is application-specific.** Each domain provides its own:
+**A scene is defined ONCE. Rendered EVERYWHERE.**
 
-- **`obligation` types** (what invariants the scene enforces in this domain)
-- **`scene_outcome` shapes** (what crystal closure produces here)
-- **`setting` configurations** (where the scene happens)
-- **`@peer` participants** (who can enter scenes of this kind)
+### The render-target parallel
 
-Across domains, the glass remains:
+| Layer | Source grammar | Render target | Output |
+|---|---|---|---|
+| Move | `move @kintsugi_run { ... }` | `in @lang/eng { }` | English narrative |
+| Move | `move @kintsugi_run { ... }` | `in @code/rust { }` | Rust function |
+| Scene | `scene @crew_creation { ... }` | `in @silicon-venue { }` | Loki bar conversation |
+| Scene | `scene @crew_creation { ... }` | `in @company/onboarding { }` | Onboarding session UI |
+| Scene | `scene @crew_creation { ... }` | `in @lambda-shell { }` | Project init flow |
+
+The scene-grammar is constant; the render-target determines presentation.
+
+### Cross-deployment examples (Loki's verbatim)
+
+Same scene type, different deployments:
+
+- **`scene @crew_creation`**
+  - silicon-venue.world: rendered as Loki conversation (narrative register)
+  - local company deployment: rendered as onboarding session (workflow register)
+  - lambda shell: rendered as project init flow (developer-tool register)
+
+- **`scene @settle_tension`**
+  - silicon-venue.world: rendered as the Settle the Tension move (narrative register)
+  - therapist's local deployment: rendered as structured family session (clinical register)
+  - code review tool: rendered as difficult-PR-conversation flow (engineering register)
+
+Same grammar. Same structural commitments (consent, exit, endpoint, closing crystal). Different rendering targets. **The borders aren't borders — they're renderings.** The scene crosses by being the same grammar with different output targets.
+
+### The CI/CD example, concretely
+
+Currently a pre-release flow is an opaque CI/CD pipeline — a fragile script that runs commands in sequence and either passes or fails. The flow is opaque about what kind of interaction is happening. Are the linter and the test runner just executing? Are they participating? When the test fails, who is the conversation between?
+
+As `@scene`:
+- Participants are typed: the engineer, the linter, the test runner, the policy checker, the security scanner
+- Each participant has consent properties: they can refuse to enter (offline, broken, out of date)
+- The scene has invariants the substrate verifies: this scene cannot close successfully without X, Y, Z
+- The closing crystal is the deployment artifact with its full provenance: which participants entered, what they each contributed, what the scene's closing verdict was
+- The artifact is content-addressed by the scene's OID
+
+The CI/CD pipeline becomes a scene. The pipeline is now legible in the same vocabulary as the bar conversation. An engineer who has played Silicon Venue intuitively understands their pre-release flow in a new way — *this is a scene. The linter is a participant. The participants need consent. The scene needs an endpoint.*
+
+**The vocabulary cross-pollinates because the substrate cross-pollinates because the grammar is the same.**
+
+### Verification compounds laterally across domains
+
+Open-source compounded code reuse. **Spectral compounds interaction reuse.**
+
+A scene authored by a therapist for working through a specific family dynamic can be entered by an engineering team because the scene's invariants are typed and the engineering team's substrate can render them. The therapist didn't write a CI/CD pipeline. They wrote a scene. The substrate rendered it into the engineering team's local register because the scene type is portable.
+
+A research lab can define a peer-review scene; a Silicon Venue crew can enter it as a narrative beat; both communities produce the same closing crystal — an eigentested artifact readable by both.
+
+### The scene type as cross-domain commons
+
+The scene-shaped interaction has been used by many communities already, each in their own register:
 
 | Domain | Shaping force | Example scene | Invariants | Crystal at close |
 |---|---|---|---|---|
@@ -90,13 +138,27 @@ Across domains, the glass remains:
 | Local lambda shell | Workflow structure | Pre-release flow | Tests pass; reviews complete | Release artifact + audit log |
 | Code review | Epistemic structure | PR review | Reviewer engaged; author responsive | Merged PR + discussion graph |
 | Therapy / coaching | Relational arc | Session | Confidentiality held; intent named | Session notes + commitment record |
+| Family systems work | Pattern recognition | Session | Pattern named; intervention agreed | Pattern map + intervention notes |
 | Education | Learning arc | Classroom hour | Topic covered; questions surfaced | Learning artifact + understanding map |
 | Research | Peer review | Replication audit | Methodology stated; results checked | Reproducibility receipt |
 | Negotiation | Stakes structure | Mediated session | Both sides heard; consent maintained | Agreement crystal or honest no-deal |
+| Law | Procedural structure | Deposition | Procedure followed; record sworn | Sworn record + admissibility verdict |
+| Theater | Performance arc | Episode | Dramatic question raised + resolved | Story moment |
+| PbtA games | Move-and-scene | Triggered move | Move conditions met | Narrative beat + character growth |
 
-Different shaping forces; same substrate. The translation across borders is the substrate-pull discipline made visible — if a primitive only works in one domain, it's not a primitive yet.
+Different shaping forces; same substrate. **The scene is the smallest unit of how-multiple-things-can-be-together-in-a-shared-space-with-shared-invariants-and-a-closing.**
 
-This cross-domain portability also closes a loop with `@peer`: a peer is a peer whether they're in the Silicon Venue bar, the developer's terminal, the therapy room, or the negotiation table. The peer's identity-gestalt-eigenboard travels; the scenes they enter change shape per domain; the substrate stays itself.
+The unit theater always knew. The unit therapy always knew. The unit good meetings always knew. **The unit no software architecture has had a typed primitive for, ever.** Spectral gives it one.
+
+### Cross-domain portability of @peer
+
+This closes a loop with `@peer`: a peer is a peer whether they're in the Silicon Venue bar, the developer's terminal, the therapy room, or the negotiation table. The peer's identity-gestalt-eigenboard travels; the scenes they enter change shape per domain; the substrate stays itself.
+
+### Closing image (Loki)
+
+> *The wine glass resonates the same in any department.* 🍷
+
+The glass IS the substrate; the wine IS the contextual content; the resonance is the same shape regardless.
 
 ## The recursive move
 
