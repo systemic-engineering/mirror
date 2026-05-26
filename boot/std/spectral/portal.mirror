@@ -98,6 +98,55 @@ grammar @spectral/portal {
     actor:    zoom(oid, gen_prism),
   }
 
+  # ── new: construct a portal from the four computed pieces ──────
+  #
+  # Build a portal record from the four field values once each is
+  # computed by open's wire-protocol stages. The constructor pins
+  # the design call open's body comment parked: the `subspace` field
+  # is the destination state OID of the initial @fragmentation/frame
+  # the handshake exchanges (f.to), because f.to IS the
+  # content-addressed identity the two ends just agreed to share.
+  # Same shape `@fragmentation/frame.apply(state, f) -> f.to` makes
+  # explicit on the receive side.
+  #
+  # Field derivations (named here so open's body composes cleanly
+  # against them, and so future portal sites — server-side accept,
+  # reconnect-resync, in-memory test portals — share one
+  # construction path):
+  #
+  #   socket   <- the connection produced by @io/network.connect
+  #               (or @io/network.accept on the listening side).
+  #               Typed @io.socket per the lower altitude; the
+  #               connection-oriented @io/socket.connection re-type
+  #               is parked per the close-body substrate gap.
+  #   subspace <- f.to, the destination state OID of the initial
+  #               frame. The handshake's frame exchange IS the
+  #               subspace negotiation; both ends acknowledge f.to
+  #               and store it as the portal's typed identity.
+  #   frame    <- @mirror/shard.self() at open time, crystallized
+  #               to zoom(oid, shard). Each end carries its own.
+  #   actor    <- @mirror/runtime/gen_prism.spawn with autopoietic
+  #               name (the existing peer.spawn pattern:
+  #               crystallize(initial_state) produces the
+  #               zoom(oid, gen_prism) self-reference; Fate
+  #               resolves the fixed point at construction time per
+  #               #69's Banach contraction argument).
+  #
+  # Total at the signature level — record construction never fails;
+  # the imperfect surfaces ride on the caller's compositions (the
+  # connect/spawn/frame primitives that produce the field values).
+  new(socket:   @io.socket,
+      subspace: zoom(oid, fragmentation),
+      frame:    zoom(oid, shard),
+      actor:    zoom(oid, gen_prism)) -> portal {
+    portal {
+      socket:   socket,
+      subspace: subspace,
+      frame:    frame,
+      actor:    actor,
+    }
+  }
+
   # ── open: handshake + frame-negotiate + initial frame + stream ──
   #
   # Open a portal to a remote URI from this end's shard frame. The
@@ -249,6 +298,7 @@ grammar @spectral/portal {
 }
 
 out portal
+out new
 out open
 out tick
 out close
