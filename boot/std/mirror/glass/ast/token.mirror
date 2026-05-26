@@ -27,14 +27,48 @@ grammar @mirror/glass/ast/token {
   # @mirror/grammar; the bootstrap reads the legacy file directly,
   # so these lines do not drive its behaviour from this file — they
   # declare the substrate-altitude truth alongside the legacy
-  # surface. The `glass` and `lambda` entries surface via
-  # @kintsugi/fracture/grammar-to-glass in a follow-up tick.
+  # surface.
   focus grammar
   focus prism
   split type
   project in
   project out
   zoom abstract
+
+  # ===== kintsugi/fracture/grammar-to-glass surface =====
+  # The substrate-altitude keyword vocabulary. These declarations
+  # land the new surface that downstream consumers (Stage 3's
+  # parse_grammar dispatch) read to decide which shape variant
+  # the substrate is parsing. Each line is a load-bearing
+  # substrate declaration — without them, parse_grammar has
+  # nothing real to dispatch on.
+  #
+  # Cross-reference (each entry):
+  #
+  #   focus glass    — @mirror/glass/ast/shape : the substrate
+  #                    primitive (was `grammar`; the file-level form).
+  #   focus lambda   — @mirror/glass/ast/shape/lambda : the binding
+  #                    form for an action / function-like surface
+  #                    (was `action`; FP-canonical naming).
+  #   focus fixed    — @mirror/glass/ast/shape/fixed : module-top
+  #                    binding that is fully settled, content-
+  #                    addressed, carries no holes (Cat 4 keyword).
+  #   focus property — @mirror/glass/ast/shape/property : the verdict-
+  #                    returning declaration. Pure by construction;
+  #                    return type fixed to `verdict`.
+  #   focus shape    — @mirror/glass/ast/shape : the canonical type-
+  #                    variant union (`glass | type | lambda | property
+  #                    | fixed | in | out`).
+  #
+  # Legacy keywords above (`focus grammar`, `focus prism`, ...) stay
+  # until @kintsugi/fracture/grammar-to-glass migrates every
+  # downstream call site; both surfaces co-exist during the
+  # transition.
+  focus glass
+  focus lambda
+  focus fixed
+  focus property
+  focus shape
 
   # ===== lexical primitives =====
   fixed whitespace        = repeat(charset(whitespace), 0, none)
