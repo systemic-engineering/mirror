@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# FROZEN — reject changes to Rust substrate files.
+# All extensions happen through .mirror grammars.
+# See AGENTS.md.
+#
+# Canonical content. Operators: copy to .git/hooks/pre-commit and chmod +x.
+# This file is not auto-installed — the hook is local-only by convention.
+#
+# Differences from the historical hook:
+#   - --diff-filter=AM covers additions AND modifications (was M only;
+#     new .rs files used to slip through).
+#   - Honors [bugfix:restore] and [substrate-pull:realize] markers in
+#     the prepared commit message: if either marker is present, the
+#     FROZEN check is bypassed (still requires explicit author intent
+#     via the marker — silent bypass via --no-verify remains an escape
+#     hatch for emergencies).
+
+set -euo pipefail
+
+MSG_FILE=".git/COMMIT_EDITMSG"
+if [ -f "$MSG_FILE" ] && grep -qE '\[(bugfix:restore|substrate-pull:realize)\]' "$MSG_FILE"; then
+  echo "ℹ️  marker present in commit message — FROZEN check bypassed."
+  exit 0
+fi
+
+RS_FILES=$(git diff --cached --name-only --diff-filter=AM | grep '\.rs$' || true)
+
+if [ -n "$RS_FILES" ]; then
+  echo "❌ FROZEN: Rust files are substrate. Do not modify or add."
+  echo ""
+  echo "Touched .rs files:"
+  echo "$RS_FILES" | sed 's/^/  /'
+  echo ""
+  echo "Write a .mirror grammar instead. See AGENTS.md."
+  echo ""
+  echo "If this is a bugfix restoring an existing substrate guarantee,"
+  echo "tag the commit message with [bugfix:restore]. If this is a"
+  echo "substrate-pull realization, tag with [substrate-pull:realize]."
+  exit 1
+fi
