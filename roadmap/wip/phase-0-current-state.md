@@ -45,7 +45,7 @@ Compilation, content-addressing, property verification, code emission, shatter s
 
 - The walker walks but the seed remains permissive (accepts balanced bytes). Structural FP1 at the loaded-grammar level (Layer 2) requires the Lift registry, which requires fragmentation as the store (per `docs/specs/mirror-store.md`).
 - `tokenize.rs` and `grammar.rs` are still 100% Rust. Phase 2 retires them via parser self-description. (`grammar.rs` is now substrate-pull-realized for keyword harvesting — it reads keyword declarations from `.mirror` companion sources, not hardcoded tables. The dispatch logic itself is still Rust; Phase 2 retires that.)
-- Two resolvers coexist. Phase 1 collapses to one. *(Status unverified post-collapse — needs re-audit before next Phase 1 spawn.)*
+- ~~Two resolvers coexist. Phase 1 collapses to one.~~ **Verified post-audit 2026-05-26:** `resolve.rs` does not exist in `bootstrap/src/`. The two-resolvers framing is obsolete; the resolver collapse already landed.
 - `\` hole dispatch is declared but not implemented. Phase 5 lands it via Fate.
 - The fragmentation Rust crate is hand-written. Phase 4 + Phase 6 collaborate to make it generated.
 - No GPU acceleration anywhere. Phase 6 lands MetalBackend + OpenCLBackend.
