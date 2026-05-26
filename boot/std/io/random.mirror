@@ -1,0 +1,57 @@
+in @prism
+
+in @io
+in @io/bytes
+
+# @io/random
+#
+# Cryptographically-strong entropy at the syscall boundary. One action;
+# the smallest @io extension that actually touches a syscall (or the
+# cross-platform equivalent surfaced by the `getrandom` crate). Lives
+# under @io by construction so glass_wall (#79) validates trivially.
+#
+# Per docs/insights/2026-05-26-glass-wall-and-cross-wall-kintsugi.md
+# §"What stays in @io permanently": random-number generation reads
+# /dev/urandom or equivalent; termination depends on the kernel's
+# entropy state, not structural analysis of the grammar. So this
+# grammar is a *permanent* @io resident — cross_wall (#80) will NOT
+# pull it across the wall, by design. The irreducible-minimum @io
+# surface is exactly things like this.
+#
+# Per docs/insights/2026-05-26-portal-as-io-socket-over-content-
+# addressed-subspace.md: portal handshakes generate ed25519 keys and
+# nonces; both ride this primitive. The bytes flow up through
+# @io/encode for display and through @io/crypto for signing.
+#
+# Bootstrap-side dispatch (when @mirror/serve lands): the `getrandom`
+# crate is the cross-platform surface (macOS getentropy(2), Linux
+# getrandom(2), BSD arc4random_buf, Windows BCryptGenRandom). A bare
+# std::fs::File::open("/dev/urandom") fallback is acceptable on Unix
+# but the crate is the right shape for the production binary. No
+# Cargo.toml addition in this commit; that lands with the dispatch.
+#
+# Sibling grammars under @io: @io/bytes (the carrier type), @io/crypto
+# (uses the entropy for key generation), @io/encode (renders the
+# bytes for display).
+
+grammar @io/random {
+
+  # ── bytes: n cryptographically-strong random bytes ─────────────────
+  #
+  # Read exactly n bytes from the platform CSPRNG. Returns imperfect
+  # because the underlying syscall may fail (entropy pool exhausted
+  # in pathological cases, /dev/urandom unreadable inside a chroot
+  # without proper bind-mount, etc.). The standard recovery surface
+  # carries the diagnostic.
+  #
+  # Termination: bounded by n (the kernel returns n bytes or a
+  # well-defined error). Halts by construction at the substrate;
+  # however, the grammar stays under @io because halts is observed
+  # via the kernel rather than proved structurally over the bytes
+  # themselves. Per docs/insights/2026-05-26-glass-wall-and-cross-
+  # wall-kintsugi.md §"irreducible minimum".
+  bytes(n: u64) -> imperfect<bytes> { \ }
+}
+
+out bytes
+out @io/random
