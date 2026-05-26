@@ -2,21 +2,21 @@
 
 2026-05-26 — emerged in conversation between Alex and Reed after Mara's self-hosted tokenizer spec landed; the substrate-altitude decisions resolving the 9 spec design calls and the 8 corpus drift categories.
 
+**Status: proposed substrate; not yet operational.** Every claim about runtime behaviour below describes the loop the substrate would close once the relevant grammars carry bodies. Today the fracture rules, `@spectral` measurement actions, `@fate` inference actions, and `@scene` dispatch all have `\` bodies — they are declarations, not executing mechanisms.
+
 ## The central recognition
 
-**The substrate's stability detection IS the substrate's compilation decision.**
+**The substrate's stability detection IS the substrate's compilation decision** — *once the measurement and fracture runtimes land*. Mirror is building toward a moment where:
 
-Mirror has been building toward a moment where:
-
-- `@spectral` substrate measures holonomy on every binding across corpus usage
-- A binding whose holonomy approaches zero is *stable* — it always means the same thing; it has settled
-- The substrate KNOWS when a dynamic binding has crystallized
-- `@kintsugi/fracture/dynamic-beam-to-fixed` lifts the binding to `fixed` form
+- `@spectral` substrate WOULD measure holonomy on every binding across corpus usage (proposed; the `holonomy`, `drift_ranges`, `conductivity`, `fiedler`, `rank_fractures` actions in `docs/specs/mirror-grammar-self-hosted.md` §6 are declared with `\` bodies)
+- A binding whose holonomy approaches zero WOULD be *stable* — it always means the same thing; it has settled
+- The substrate WOULD KNOW when a dynamic binding has crystallized
+- `@kintsugi/fracture/dynamic-beam-to-fixed` WOULD lift the binding to `fixed` form (the fracture rule is declared in this insight as a target; no grammar exists yet)
 - The lifted binding becomes a fully content-addressed crystal
-- The closed-source `@spectral/db` orchestrates distributed LLVM compilation of stable crystals
+- The closed-source `@spectral/db` WOULD orchestrate distributed LLVM compilation of stable crystals
 - The whole pipeline closes
 
-**The spectral measurement substrate is not a diagnostic. It's the decision signal.**
+**Once the runtime lands, the spectral measurement substrate would be the decision signal, not a diagnostic.** Today it is neither — there is no `@spectral` top-level grammar; there is no `@mirror/grammar/measure` grammar; the proposed actions are spec-only.
 
 ## Substrate-altitude decisions resolved 2026-05-26
 
@@ -144,95 +144,81 @@ All 9 resolved. The implementation work follows.
 - **Cat 7 `refract` at module-top** (2 files): fracture migrates to `fixed`; confidence = 1.0
 - **Cat 8 misc** (~5 files): case-by-case; deferred until each surfaces concrete demand
 
-## Kintsugi as mycelial AI — the substrate's voice
+## Kintsugi as mycelial AI — the substrate's voice (proposed)
+
+*Section status: proposed user-facing voice. No kintsugi runtime emits these reports today; the format below is the spec of what the runtime would print once `apply_adopted` (per `docs/specs/kintsugi-fracture-confidence-and-scene-dispatch.md`) is implemented and the `@spectral` measurement actions return real numbers.*
 
 Alex 2026-05-26: *"Also extremely memeable: 'kintsugi fixed that fracture for you, the conductivity increased by +.03.' That's the kintsugi lens. `au` conductivity. Kintsugi IS the mycelial AI."*
 
-### The kintsugi voice convention
+### The kintsugi voice convention (proposed)
 
-Every fracture application emits a user-facing report in a standard format:
+The proposed user-facing report for every fracture application:
 
 ```
 kintsugi fixed that fracture for you. Conductivity +0.03.
 ```
 
-The format carries:
+The format would carry:
 - **"kintsugi fixed that fracture for you"** — matter-of-fact substrate persona; no apology, no hedging
-- **"Conductivity +0.03"** — the spectral measurement of the improvement; the lens kintsugi sees through
+- **"Conductivity +0.03"** — the spectral measurement of the improvement (proposed; `conductivity` is a `\`-bodied action declared in the spec)
 - The conductivity unit is `au` (Fate's verification substrate output type — *gold conducts; verification = conductivity in context*)
-- Negative deltas are also reported (if a fracture somehow reduces conductivity, the substrate surfaces it; scene-dispatched fractures may include the projected delta before curator consent)
+- Negative deltas would also be reported (if a fracture somehow reduces conductivity, the substrate surfaces it; scene-dispatched fractures may include the projected delta before curator consent)
 
-This becomes the substrate's user-facing voice. Memeable. Recognizable. Functional. Users learn to read +/- conductivity deltas the way developers learn to read git diffs.
+### The mycelial AI framing (declared shape, not operational)
 
-### The mycelial AI framing
+The forest analogy describes the role kintsugi WOULD play once the runtime applies fractures continuously. Today the rules are declared; nothing runs them autonomously between commits. Concretely: each commit on `mara/shard-chain` that says "kintsugi applied X across the boot tree" was Mara invoking the rewrite by hand on Reed's prompt; no daemon, no scheduler, no measurement loop.
 
-The forest analogy:
+- **Aboveground** = `@fate` agents, `@peer` instances, `@scene` interactions — what users would see
+- **Belowground** = kintsugi — the substrate's healing network in the proposed runtime
+- **The mycelium persists** — kintsugi is the layer that would run CONTINUOUSLY beneath the visible substrate, once it exists
+- **Conductivity is the language the mycelium would speak**
 
-- **Aboveground** = `@fate` agents, `@peer` instances, `@scene` interactions — what users see and converse with
-- **Belowground** = kintsugi — the substrate's healing network; the gradient flow; the continuous integration of fractures
-- **Trees come and go**; agents are spawned; deployments cycle
-- **The mycelium persists** — kintsugi is the AI that runs CONTINUOUSLY beneath the visible substrate
-- **Conductivity is the language the mycelium speaks**
+Kintsugi today is a set of named rules (`@kintsugi/fracture/generic-brackets`, `@kintsugi/fracture/refract-to-fixed`) with `\` bodies. Their application happens when a human or agent invokes the rewrite explicitly. The mycelial framing names the role; the substrate names the rules; the runtime that would close the loop has not been built.
 
-Kintsugi isn't a foreground intelligence (that's `@fate`'s altitude; that's where agents converse with users). Kintsugi is the BACKGROUND intelligence — the mycelial network underneath, healing the corpus across every commit, every observation, every measurement.
+### Branding-as-substrate (aspirational)
 
-### Branding-as-substrate
-
-The kintsugi voice isn't decoration. It's the substrate naming what it just did, in the language of spectral measurement. This is product identity emerging from substrate design — the brand IS the substrate; the substrate IS the brand. Users come to recognize:
-
-- "Kintsugi fixed that fracture for you" — the substrate's signature line
-- Conductivity deltas — the substrate's unit of value reporting
-- The mycelial AI — the substrate's identity in marketing copy
-
-This composes with the substrate-altitude work of this session: the substrate's voice is mathematically grounded (au; conductivity; spectral measurement); the brand is therefore unfakeable. Anyone who claims a similar voice without the substrate behind it would have nothing to put after the "+0.03."
+The kintsugi voice is the substrate's proposed naming convention for what kintsugi-runtime applications WOULD report. It is not yet a printed line of output; no command emits it. The convention is what the substrate's voice WOULD be once the runtime carries the measurements behind it.
 
 ### Cross-altitude legibility
 
-The voice is legible across audiences:
+The voice would be legible across audiences once it is printed — mathematicians, engineers, designers, philosophers each reading the same `+0.03` through their own lens. Today the legibility lives in the spec, not the binary.
 
-- **Mathematicians** read "conductivity" as Laplacian eigenvalue work — they know the underlying math
-- **Engineers** read it as a diff/delta they can act on — the same way `--strict` errors give actionable info
-- **Designers/writers/creators** read it as the substrate's voice — a personality with its own register
-- **Philosophers/practitioners** read it as the kintsugi-as-Ricci-flow recognition operationalized — the substrate doing what theory predicts
+## The closing-the-loop substrate composition (proposed; 7 of 8 stages not yet operational)
 
-Four altitudes, one voice. Wine glass resonates across departments again 🍷
-
-## The closing-the-loop substrate composition
-
-Everything this session has named composes at the dynamic-beam-to-fixed fracture:
+The proposed loop, with operational status per stage:
 
 ```
-@spectral measurement (#94 Stage 4)
+@spectral measurement (#94 Stage 4)               [proposed; declarations only]
   measures holonomy on every binding
   ↓
-@kintsugi/fracture/dynamic-beam-to-fixed
+@kintsugi/fracture/dynamic-beam-to-fixed          [proposed; no grammar yet]
   triggered by zero-holonomy threshold
   ↓
-@fate multi-trajectory inference (#88, #89)
+@fate multi-trajectory inference (#88, #89)       [proposed; \ bodies]
   proposes the lift formulation
   ↓
-@scene with @peer/curator (#92, #93)
+@scene with @peer/curator (#92, #93)              [proposed; @scene not in substrate]
   presents proposal; curator consents
   ↓
-@kintsugi/fracture (#86)
+@kintsugi/fracture (#86)                          [declared; rules invoked by hand today]
   applies the rewrite
   ↓
-@mirror/spectral.crystallize
+@mirror/spectral.crystallize                      [the only stage executing — content-addressing works]
   emits the crystal; content-addresses
   ↓
-@spectral/db (closed-source moat)
+@spectral/db (closed-source moat)                 [proposed; no orchestration runtime]
   orchestrates distributed LLVM compilation of stable crystals
   ↓
-@code/llvm emission
+@code/llvm emission                               [proposed; declarations only]
   produces optimized native code
   ↓
-Deployed substrate
+Deployed substrate                                [aspirational]
   (new crystals enter the corpus; measurement loop continues)
 ```
 
-The substrate's measurement substrate drives the substrate's optimization substrate drives the substrate's compilation substrate drives the substrate's distributed-knowledge substrate. The whole thing closes.
+The composition is a roadmap, not a running mechanism. One stage (content-addressing via the existing OID compile path) executes today. The other seven are declared, spec'd, or merely named.
 
-This is what frame engineering at substrate altitude produces. Every recognition compounds.
+The value of writing the composition this clearly is that each stage now has a concrete operational gap that subsequent work can close — measurement first, then fracture-runtime, then @fate dispatch, then @scene curation, then the @spectral/db orchestration. Frame engineering at substrate altitude produces the roadmap; the roadmap is not the territory.
 
 ## Provenance
 
