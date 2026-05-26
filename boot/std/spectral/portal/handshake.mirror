@@ -1,0 +1,143 @@
+in @prism
+
+in @io
+in @io/bytes
+in @io/socket
+in @io/crypto
+in @io/encode
+in @io/random
+in @text
+
+# @spectral/portal/handshake
+#
+# WebSocket handshake as grammar composition. Five actions that
+# implement the four-stage open-portal wire protocol's first stage:
+# the HTTP upgrade dance that promotes a raw TCP connection into a
+# bidirectional WebSocket carrier. Per docs/insights/2026-05-26-
+# portal-as-io-socket-over-content-addressed-subspace.md §"The
+# composition" item (a): "WS handshake — socket.accept() over HTTP
+# upgrade; frame-handshake between two shards."
+#
+# Per the issue #78 plan: this grammar lifts the previously-`\`
+# body of @spectral/portal.open's handshake stage into a typed,
+# Fate-resolvable contract. Bodies compose @io primitives where
+# the underlying byte/text plumbing exists; remaining substrate
+# gaps stay as Fate-holes for runtime dispatch (via @mirror/serve,
+# later).
+#
+# ── substrate gap surfaced (2026-05-26) ─────────────────────────
+#
+# The handshake compositions all reach a text <-> bytes boundary:
+#
+#   * compute_accept(key)  — concatenates `key` + WS GUID (text),
+#                            hashes the result (bytes), base64-
+#                            encodes (back to text).
+#   * send_accept(c, hdr)  — serializes an HTTP response header
+#                            (text) to write_bytes (bytes).
+#   * send_upgrade(c, ...) — serializes an HTTP request line +
+#                            headers (text) to write_bytes (bytes).
+#   * parse_upgrade(c)     — reads bytes from the wire, parses HTTP
+#                            headers (text), extracts the
+#                            Sec-WebSocket-Key value.
+#   * read_response(c, k)  — symmetric to parse_upgrade.
+#
+# All five hit the missing `text -> bytes` (UTF-8 encode) and
+# `bytes -> text` (UTF-8 decode) primitives that @io/encode does
+# NOT yet expose. @io/encode covers base64/hex; UTF-8 codec is a
+# distinct substrate concern (boot/std/io/encode.mirror sibling)
+# that has not landed. Five action signatures declared here as
+# typed contracts; bodies remain `\` for Fate dispatch until the
+# UTF-8 substrate lands. The contract IS the landing — the next
+# tick can fill the bodies with pure composition once the gap
+# closes.
+#
+# Sibling grammars under @spectral/portal: @spectral/portal/codec
+# (@fragmentation/frame wire codec), @spectral/portal/stream
+# (bidirectional eigenvalue stream), @spectral/portal itself (the
+# four-stage composition that consumes all three).
+#
+# Per AGENTS.md § The Glass Wall + @epistemologic/property/
+# glass_wall: this grammar is itself mirror-shaped and validates
+# glass_wall trivially. Its `\` bodies dispatch through @io
+# primitives whose own glass_wall containment is structural.
+
+grammar @spectral/portal/handshake {
+
+  # ── parse_upgrade: server-side, parse a client's Upgrade request ─
+  #
+  # Read bytes from `c` until the CRLFCRLF that terminates the HTTP
+  # header block; parse the headers; extract `Sec-WebSocket-Key`
+  # (the client's nonce, 16 base64-encoded bytes) and the request
+  # path. Returns imperfect — the connection may close mid-header,
+  # the headers may be malformed, the required header may be
+  # missing, or the request may not be a valid WS upgrade at all.
+  #
+  # Body is `\` until the UTF-8 substrate lands (see header note).
+  # Then composes:
+  #   @io/socket.read_bytes(c, ...)  # read until \r\n\r\n
+  #     |> @io/encode.utf8.decode    # SUBSTRATE GAP
+  #     |> parse_http_headers        # SUBSTRATE GAP
+  #     |> extract_ws_key_and_path
+  parse_upgrade(c: connection) -> imperfect { \ }
+
+  # ── compute_accept: derive Sec-WebSocket-Accept from the key ────
+  #
+  # RFC 6455 §1.3: the server's Accept value is the base64-encoded
+  # SHA-1 of the concatenation of the client's Sec-WebSocket-Key
+  # and the WS GUID "258EAFA5-E914-47DA-95CA-C5AB0DC85B11". Total;
+  # every key has a canonical accept derivation.
+  #
+  # Body is `\` until the UTF-8 substrate lands. Then composes:
+  #   key |> @text.append("258EAFA5-...")  # text concat
+  #       |> @io/encode.utf8.encode        # SUBSTRATE GAP
+  #       |> @io/crypto.sha1               # text -> bytes
+  #       |> @io/encode.base64.encode      # bytes -> text
+  compute_accept(key: text) -> text { \ }
+
+  # ── send_accept: write the server's HTTP 101 response ────────────
+  #
+  # Format the WS handshake response (HTTP/1.1 101 Switching
+  # Protocols + Upgrade headers + Sec-WebSocket-Accept) and write
+  # it to `c`. Returns imperfect — the write may fail (peer reset,
+  # broken pipe, partial write).
+  #
+  # Body is `\` until the UTF-8 substrate lands. Then composes the
+  # HTTP response text + @io/encode.utf8.encode + @io/socket.
+  # write_bytes.
+  send_accept(c: connection, accept: text) -> imperfect { \ }
+
+  # ── send_upgrade: client-side, send an HTTP Upgrade request ──────
+  #
+  # Generate a 16-byte client nonce via @io/random.bytes(16),
+  # base64-encode it as the Sec-WebSocket-Key, format the HTTP
+  # Upgrade request line + headers, and write to `c`. Returns the
+  # key as text on success so the caller can pass it to
+  # read_response for the symmetric verification step.
+  #
+  # Body is `\` until the UTF-8 substrate lands. Then composes:
+  #   @io/random.bytes(16)
+  #     |> @io/encode.base64.encode
+  #     |> format_http_request(host, path)   # text formatting
+  #     |> @io/encode.utf8.encode            # SUBSTRATE GAP
+  #     |> @io/socket.write_bytes(c)
+  send_upgrade(c: connection, host: text, path: text) -> imperfect<text> { \ }
+
+  # ── read_response: client-side, verify the server's 101 response ─
+  #
+  # Read bytes from `c` until CRLFCRLF; parse the headers; verify
+  # the Sec-WebSocket-Accept value equals compute_accept(key).
+  # Returns imperfect on any failure (read error, malformed
+  # headers, missing Accept, mismatched Accept).
+  #
+  # Body is `\` until the UTF-8 substrate lands. Symmetric to
+  # parse_upgrade on the read side; adds the compute_accept
+  # cross-check.
+  read_response(c: connection, key: text) -> imperfect { \ }
+}
+
+out parse_upgrade
+out compute_accept
+out send_accept
+out send_upgrade
+out read_response
+out @spectral/portal/handshake
