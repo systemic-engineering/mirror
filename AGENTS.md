@@ -228,6 +228,22 @@ Sigils name their type in full. Like Elixir's `~r/.../` but without the cryptic 
 
 **Shape:** `~<sigil_name><separator><content><separator>`. Separators are matched pairs (`""`, `''`, `[]`, `{}`, `()`). Choose the separator that minimizes escaping for the content.
 
+## The Last Responsible Moment
+
+Don't build what we don't need yet. Recognition before implementation. The substrate teaches what to build through use.
+
+This discipline is what makes "the substrate knew" recognitions possible. Each architectural recognition (gen_prism IS MCP; @peer = Prism(self); shard = observer-relative λ₀; portal = `@io.socket` + content-addressed subspace; glass_wall as inverted halts; spectral triple as heuristic composition; lens as constructivism made structural; garden as vetted-corpus distribution) emerged because we held off on premature implementation until the shape became evident.
+
+**The rule:** if a piece of substrate has no current consumer, capture the design; defer the implementation. The capture stays useful; the implementation might miss-shape itself against future demand we haven't yet learned.
+
+**Apply via:**
+
+- Insight docs in `docs/insights/` capture recognitions without building.
+- Tasks in the task list track the deferred work; status `pending`; description carries the design + the trigger condition.
+- When a real consumer surfaces (a downstream task needing the deferred piece), pull the design from capture and implement against the now-clearer shape.
+
+**Why this works:** mirror's substrate compounds. Each recognition makes the next one cheaper. Deferred captures aren't lost work; they're seeded design. When demand surfaces, the implementation is faster because the design already exists, AND it's better-shaped because the demand sharpened the requirements.
+
 ## The Glass Wall
 
 `@io` is the substrate's only legitimate non-mirror surface. Any grammar that isn't mirror — Rust, Python, Go, raw bytes, foreign binary blobs, vendor SDKs — must be under the `@io` namespace. Everything else is mirror grammar by definition.
