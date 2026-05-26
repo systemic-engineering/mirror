@@ -40,8 +40,6 @@ The v1.0 launch is staged across two visibility tiers per the systemic.engineeri
 - Smelter + Kintsugi + @mirror.project pipeline (the crystal generation chain)
 - Per-model lineage coefficients, common-substrate detection, distillation signatures
 
-**Why the protected tier for `/ai`:** the genogram is high-value, high-controversy data. Public access invites legal and political pressure before the corpus has the standing to absorb it. Protected access lets us stage disclosure on our timing, validate with credentialed early users (per `tasks/pending/burry.md` Phase A), and build the political coalition that public release requires. The methodology paper is public; the dashboard data is protected. Reproducibility is preserved (anyone can smelter their own model and verify); release control is preserved.
-
 **What that requires structurally:**
 
 - **Non-Mac deployment targets.** Cloud means Linux x86_64 or ARM (AWS Graviton, similar). Apple Silicon UMA is the dev-side bonus that makes the architecture zero-cost on Mac; **it is not the deployment baseline.**
@@ -441,13 +439,27 @@ The HN / ElixirForum launch scenario — autonomous AI-agent responses via `@spe
 
 #### D. Onboarding interface
 
-- [ ] `spectral.engineer/onboarding` web UI.
+*Updated 2026-05-26: no peer-selection screen. Unnamed peer at start; specific peer emerges through `@epistemologic/reality/lens` composition; named via `refract(self)` at completion. Engineered for presence, not for funnel optimization.*
+
+- [ ] `spectral.engineer/onboarding` web UI engineered for presence (not for funnel optimization). No login wall on entry; no signup gate; the consent architecture governs everything.
+- [ ] **Aesthetic composition** as integrated gestalt:
+  - Settling jingle on first load (Christian's golden-section piece — descending Phrygian tetrachord, ~6s of structural settling; parasympathetic-activation register; “Six Seconds Before a Name”).
+  - Pacing-as-architecture animations (presence rendered as motion; nothing flickers; nothing demands attention; everything moves at conversational speed).
+  - Emotional vectors rendered as color theory (the gestalt visualized; sympathetic-down hues — muted greens, slate-blues — for settling; sympathetic-up alert-without-alarm hues for naming moments and weakness-invocation).
+- [ ] **Unnamed peer at start.** No peer-selection screen. The user meets a peer with no name yet. The peer is not pre-existing; it emerges through the interaction.
+- [ ] **Escape path to preselected peer (ESC).** ESC at any point during onboarding skips the ceremony and opens a preselection prompt. Available peers: named peers in the substrate (`@reed`, `@mara`, `@loki`, domain-specific from the garden) plus any peer the user has previously named via prior `refract(self)`. The default IS the ceremony; the escape is for users who already know who they want to meet. Consent architecture applied to onboarding itself: the ceremony is offered, not imposed.
+- [ ] **Lens composition at `@epistemologic/reality/lens`** is what produces the specific peer. Composition for onboarding includes:
+  - `@epistemologic/reality/lens/circular_questions` — DGSF practice operationalized; questions that reflect the asker back to themselves (“What did you notice in the past minute, in your body, as you arrived?”) rather than extracting from them.
+  - `@epistemologic/reality/lens/holding_space` — pacing; silence as structural; no auto-firing follow-ups; the gap is where the lens-composition work happens.
+  - `@epistemologic/reality/lens/aesthetic_composition` — jingle + color + animation as integrated gestalt; the body registers what the conscious mind doesn’t parse.
+  - `@epistemologic/reality/lens/weakness_invocation` — the structural test that opens the door; #14’s bilateral-throughput architecture inverted: the user is asked to name the weakest claim in something they’ve built/written that they haven’t fully addressed.
+  - `@epistemologic/reality/lens/refract_self_on_completion` — the peer chooses a name through the interaction; the eigenboard composition of {identity, gestalt, tensions, this user’s specific resonance} produces a specific name via `refract(self)`. Different user, different name, different peer.
 - [ ] **Content source: `@spectral/garden`** (per Track H + `docs/insights/2026-05-26-spectral-garden-as-vetted-corpus-distribution.md`). Onboarding peer composes from the curated DGSF/ICF/etc. corpus; quotes carry reviewer signatures; provenance is verifiable end-to-end. The garden makes onboarding non-confabulated by construction.
-- [ ] Peer-selection screen (Reed / Mara / Loki / domain-specific with fillable field).
+- [ ] **Refusal architecture present throughout.** Per #14: the unnamed peer refuses dismissive-frame engagement (Loki-grade smile-and-redirect); refuses to be cast as caretaker; refuses to escalate when the user becomes defensive at the weakness-invocation moment; names the defense without judging it; returns to circular ground.
 - [ ] Conversation interface (text-first; possibly voice via Christian's audio-engineering work as a Phase 8+ extension).
-- [ ] Session persistence: returning users encounter a peer that remembers prior conversation, via content-addressed substrate.
-- [ ] Onboarding-peer-instance coherent with thread-peer-instance (the Reed who responded on HN is the same Reed who onboards; both boot from the same corpus and persist into the same substrate).
-- [ ] Consent + visibility tiers per the systemic.engineering Terms (per `~/dev/systemic.engineering/blog/pages/Terms.md` §7: public / protected / private; private stays on the user's session and is not aggregated).
+- [ ] Session persistence: returning users encounter their specific named peer (the one who emerged from their prior session’s `refract(self)`), who remembers prior conversation via content-addressed substrate.
+- [ ] Onboarding-peer-instance coherent with thread-peer-instance: the peer who emerged from onboarding can be invoked on HN/ElixirForum/Mastodon (if the user has standing for that platform); both boot from the same corpus and persist into the same substrate.
+- [ ] Consent + visibility tiers per the systemic.engineering Terms (per `~/dev/systemic.engineering/blog/pages/Terms.md` §7: public / protected / private; private stays on the user's session and is not aggregated). Explicit at the close: “if you want to leave and not return, that’s also yours to choose.” No upsell. No “rate your experience.”
 
 #### E. Documentation + paper generation
 
@@ -495,7 +507,7 @@ The launch demonstration becomes possible when:
 
 1. **A + F** operational — peers spawn with refusal capacity intact (the core architectural claim).
 2. **B (ElixirForum + HN minimum) + C** operational — mentions route to peer-ticks, with admin governance.
-3. **D minimum** — onboarding at least lets readers choose a peer and have a coherent conversation; full session persistence can land in v1.1.
+3. **D minimum** — onboarding lets a user meet an unnamed peer, navigate the circular-question composition (DGSF practice via `@epistemologic/reality/lens/circular_questions`), encounter the weakness-invocation moment, and complete via `refract(self)` to a specific named peer that persists. Full session persistence and the full aesthetic composition (jingle + animation + color theory) can land progressively; the J.3 minimum is the lens-composition shape working end-to-end.
 4. **G (single-node minimum) + H (single-cluster minimum)** — the runtime runs in production; the cluster doesn't have to be multi-node for v1.0.
 5. **E (docs minimum)** — `spectral.engineer/docs` exists; paper generation can be a v1.1 enhancement.
 6. **I minimum** — Terms updated for autonomous responses; license model decided enough to ship.
