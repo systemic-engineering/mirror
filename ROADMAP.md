@@ -69,7 +69,7 @@ The mirror crate is roughly 55 `.rs` source files. ~1,362 tests. 76% line covera
 - **Scheduler Tower draft.** `docs/specs/scheduler-tower.md` with demand-contract extension to `gen_prism`, dispatcher strategies, KMS-shaped temperature. Per insight `docs/insights/2026-05-24-backpressure-as-modular-flow.md`.
 - **Fragmentation-as-generated spec.** Per `docs/specs/fragmentation-as-generated.md`. Mirror generates `fragmentation`'s Rust from `@fragmentation + @code/rust`.
 - **Seam adversarial audit.** `docs/audits/2026-05-22-seam-mirror-post-meta-glass.md`. 10 findings; F-3/F-4/F-5/F-8/F-9 fixed; F-1/F-2 are the load-bearing follow-ups.
-- **Nine 2026-05-25/26 insight docs landed.** Substrate-level recognitions that compound:
+- **Thirteen 2026-05-25/26 insight docs landed.** Substrate-level recognitions that compound:
   - `docs/insights/2026-05-25-mirror-supersedes-daemon.md` — gen_prism IS MCP; the transport layer disappears.
   - `docs/insights/2026-05-25-agent-home-as-typed-hole.md` — the five-axis identity gestalt (identity, shatter, gestalt, tensions, eigenboard) as the resolution of the `\` hole in `spawn(identity: \)`.
   - `docs/insights/2026-05-25-pipe-hole-and-au-binary.md` — the `|\>` composition operator: pipe-with-a-hole; Fate resolves the transformation algorithm per local hardware; binaries are Au (locally optimal, source-verified).
@@ -79,6 +79,10 @@ The mirror crate is roughly 55 `.rs` source files. ~1,362 tests. 76% line covera
   - `docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md` — `@time.duration` as substrate; monotonic vs wall vs instant via zoom(T); cross-frame convert via shard parent chain; PG discipline.
   - `docs/insights/2026-05-25-gram-and-mirror-same-architecture-two-altitudes.md` — GRAM (Baek et al. 2026) is mirror's substrate at the neural-network layer; cross-domain prior art for multi-trajectory inference.
   - `docs/insights/2026-05-26-portal-as-io-socket-over-content-addressed-subspace.md` — a portal is `@io.socket` + content-addressed subspace + shard-frame on each end; wire protocol = WS handshake → `@fragmentation/frame` full frame → bidirectional eigenvalue stream; the open portal IS a gen_prism.
+  - `docs/insights/2026-05-26-glass-wall-and-cross-wall-kintsugi.md` — `@epistemologic/property/glass_wall` makes substrate-pull structural (non-mirror must be under @io); `@kintsugi/cross_wall` pulls @io grammars across when halts becomes provable; @io self-minimizes toward its irreducible minimum.
+  - `docs/insights/2026-05-26-heuristic-termination-for-sub-turing-subgraphs.md` — confidence-valued termination property at sub-AST resolution; the spectral triple as composition substrate for heuristic operators; decades of termination-analysis literature integrate without picking winners.
+  - `docs/insights/2026-05-26-epistemologic-reality-constructivism-and-the-lens-that-makes-a-peer.md` — `@peer.eigenboard` = composition of `@epistemologic/reality/{lens, identity, gestalt}` into an autopoietic closure; the lens IS what makes this peer this peer; constructivism made structural.
+  - `docs/insights/2026-05-26-spectral-garden-as-vetted-corpus-distribution.md` — `@spectral/garden` as the content-addressed package manager for vetted corpora; ed25519 signatures + content-addressing + glass_wall close supply-chain attacks structurally; pluralism by composition.
 
 ### What's working
 
@@ -93,8 +97,10 @@ Compilation, content-addressing, property verification, code emission, shatter s
 - `\` hole dispatch is declared but not implemented. Phase 5 lands it via Fate.
 - The fragmentation Rust crate is hand-written. Phase 4 + Phase 6 collaborate to make it generated.
 - No GPU acceleration anywhere. Phase 6 lands MetalBackend + OpenCLBackend.
-- ~~No backpressure between gen_prisms.~~ **Property declared** via `@epistemologic/property/halts` + `reduction_budget(shard)` (2026-05-25, Task #74). Wire-level implementation still wants the Scheduler Tower's demand contract.
-- **Portal wire impl pending.** `@spectral/portal` grammar declared (2026-05-26, Task #77 substrate half) with `\` bodies for Fate. WS handshake, `@fragmentation/frame` serialization codec, and bidirectional eigenvalue stream encoder are the Rust-level Phase 6 work that follows.
+- ~~No backpressure between gen_prisms.~~ **Property declared** via `@epistemologic/property/halts` + `reduction_budget(shard)` (2026-05-25, Task #74). Wire-level dispatch is `@mirror/serve`'s concern; runtime dispatch not yet built.
+- **Portal wire impl partial.** `@spectral/portal` grammar landed (#77) with sub-grammars `handshake`, `codec`, `stream` landed (#78). Action bodies partial. **Three documented substrate gaps remain** (closes #78 fully): (a) URI decomposition primitive on `~uri` (`open(remote: ~uri, ...)` needs to extract scheme/host/port without a custom @io shim); (b) portal record constructor wiring (the `portal { socket, subspace, frame, actor }` literal needs to compose four `zoom(oid, T)` values into the typed record); (c) `gen_prism.spawn` autopoietic spawn shape for the tick actor (the `\` body needs to produce a `gen_prism` whose `name` equals `zoom(oid, gen_prism)` of itself).
+- **`@mirror/serve` runtime dispatch not yet built.** Backpressure is declared structurally (halts + reduction_budget); a serve-loop that consumes the demand contract on the wire is the natural Phase 5 consumer.
+- **Verified-construction `refract(T)` for pre-v1.0.** The structural-construction guarantee (sub-Turing source → verified generated code) needs a load-bearing end-to-end demonstration on at least one production target before v1.0. Phase 4's `@fragmentation + @code/rust` is the canonical first proof.
 - **Six portals.md instances unimplemented.** The grammar primitive exists; the six concrete consumers (session, fs-mount, BEAM connection, cross-system, communication, identity) need typed re-implementation as `@spectral/portal` instances. Small per-file; six files.
 
 ---
@@ -111,12 +117,15 @@ Mirror compiles mirror. The Rust crate becomes a thin runtime substrate: syscall
 ┌─────────────────────────────────────────────────┐
 │  Application layer (Phase 7)                   │
 │  spectral.engineer deployment;                 │
+│  @spectral/garden (open, vetted corpus dist.); │
+│  @spectral/portal (open, typed transport);     │
 │  spectral-db distribution; user-facing CLI    │
 ├─────────────────────────────────────────────────────┤
 │  Loaded grammars (Phase 2–4)                   │
 │  @mirror/glass; @fragmentation; @code/rust;   │
 │  @nl/markdown; @data/markdown; @code/llvm/ir; │
-│  @kintsugi; @fate; @peer/{reflection,...}     │
+│  @kintsugi; @fate; @peer/{reflection,...};    │
+│  @epistemologic/reality/{lens, identity, ...} │
 ├─────────────────────────────────────────────────────┤
 │  Scheduler Tower (Phase 5 — temporal)          │
 │  gen_prism with demand contracts;             │
@@ -252,8 +261,8 @@ All specs and architectural decisions cite this corpus inline:
 1. Implement `\` hole dispatch including the `|\>` composition operator (pipe-with-a-hole) — route to `@fate.infer` per the pipe-hole-and-au-binary insight + kintsugi-tournament + heterogeneous-numerical-prism specs. `|\>` produces locally-optimal binaries (Au) anchored to a verified AST; same source OID, divergent binary bytes, unbroken verification chain.
 2. Implement the tick loop. Reflection observes; projects; splits; zooms; refracts. Loop until convergence.
 3. Implement kintsugi as Reflection. Per `docs/specs/kintsugi-formatter.md` + the discrete-Ricci-flow framing.
-4. Write `@peer` grammar for the four persistent models (Surface, Mirror, Shatter, Reflection), grounded in the five-axis identity gestalt per `docs/insights/2026-05-25-agent-home-as-typed-hole.md` — (identity, shatter, gestalt, tensions, eigenboard) as the resolution of the `\` hole in `spawn(identity: \)`. The peer's home folder IS the type, not the data; the folder shape lets `gen_prism.spawn` type-check the tick before any code runs.
-5. **Implement the Scheduler Tower per `docs/specs/scheduler-tower.md`.** Demand-contract extension to `gen_prism`. Subscription protocol. Dispatcher strategies (round_robin, partitioned, broadcast). Backpressure propagates upstream. Temperature `β` at loop boundaries (per-stage temperatures are incoherent KMS).
+4. ~~Write `@peer` grammar for the four persistent models.~~ **Mostly landed** via Tasks #62/#65 — `@peer` grammar plus the five-axis identity gestalt per `docs/insights/2026-05-25-agent-home-as-typed-hole.md` (identity, shatter, gestalt, tensions, eigenboard) as the resolution of the `\` hole in `spawn(identity: \)`. Lens-altitude extension queued via the constructivism insight (`@epistemologic/reality/{lens, identity, gestalt}` composition; deferred per LRM). The peer's home folder IS the type, not the data; the folder shape lets `gen_prism.spawn` type-check the tick before any code runs.
+5. **Implement the Scheduler Tower per `docs/specs/scheduler-tower.md`.** Demand-contract extension to `gen_prism` (`halts` property declared #74; `reduction_budget` primitive declared). Subscription protocol. Dispatcher strategies (round_robin, partitioned, broadcast). Backpressure propagates upstream. Temperature `β` at loop boundaries (per-stage temperatures are incoherent KMS). Runtime dispatch via `@mirror/serve` is the wire-level consumer.
 6. Gestalt writes from Reflection only. Enforce at the type level.
 
 **Recent work this absorbs:**
@@ -289,7 +298,7 @@ All specs and architectural decisions cite this corpus inline:
    - **MetalBackend** (modeled on `fate/src/metal_runtime.rs`; Apple Silicon UMA gives zero-cost; type-safe construction via `try_new`).
    - **OpenCLBackend** (cross-vendor; the cloud-deployment substrate; Anna Jakobs's 2012 thesis is the architectural reference; §3 / §4.4 / §7.2.1 / §7.4 cited at every wrapper).
 5. Wire the Scheduler Tower's bus selection (per `docs/specs/scheduler-tower.md` decision table) to the backend stack.
-6. **Implement the shard substrate** per `docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md`: `@mirror/shard/self` primitive; five-field representation (silicon, memory, flakes, compute, parent); spawn type-checking against shard bounds; memoization via fragmentation DAG. The shard is the input to the `|\>` tournament — different shard, different Fate resolution, different Au binary, same verified source AST.
+6. ~~Implement the shard substrate~~ **LANDED via Task #65** per `docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md`: `@mirror/shard.mirror` grammar; `@epistemologic/silicon/*` carriers (arch/arm64, arch/x86_64, memory, flake_ref, compute_bound); spawn type-checks against shard bounds; memoization via fragmentation DAG. The shard is the input to the `|\>` tournament — different shard, different Fate resolution, different Au binary, same verified source AST. **Extension next:** wire the shard into the NumericalPrism backend selection.
 
 **OpenCLBackend is non-optional for v1.0 cloud deployment.** It is not deferred. Anna Jakobs's pattern is load-bearing for spectral.engineer.
 
@@ -347,7 +356,15 @@ Spans Phase 5 (Scheduler Tower bus selection) + Phase 6 (adapter contract) + Pha
 
 ### Track F: Portal substrate (NEW, 2026-05-26)
 
-Spans Phase 5 (Reflection processes ticks via portals) + Phase 6 (wire impl + frame codec) + Phase 7 (six portals.md instances re-typed as `@spectral/portal` consumers). Substrate landed: `@fragmentation/frame` grammar + `@spectral/portal` grammar with four properties applied (`content_addressed`, `autopoietic`, `halts`, `frame_relativity`). Wire impl (WS handshake + `@fragmentation/frame` serialization + bidirectional eigenvalue stream) is Task #78. Six concrete consumers (session, mount, BEAM connection, cross-system, communication, identity) re-typed as portals is a follow-on. **The portal is the seam where everything composes** — sockets, content-addressed subspaces, shard-frames, gen_prisms, the halts property all meet here.
+Spans Phase 5 (Reflection processes ticks via portals) + Phase 6 (wire impl + frame codec) + Phase 7 (six portals.md instances re-typed as `@spectral/portal` consumers). Substrate landed: `@fragmentation/frame` grammar (#77) + `@spectral/portal` grammar (#77) with four properties applied (`content_addressed`, `autopoietic`, `halts`, `frame_relativity`); sub-grammars `handshake` + `codec` + `stream` landed (#78). Action bodies partial — three documented substrate gaps remain (URI decomposition, portal record constructor, gen_prism autopoietic spawn shape). Six concrete consumers (session, mount, BEAM connection, cross-system, communication, identity) re-typed as portals is a follow-on. **The portal is the seam where everything composes** — sockets, content-addressed subspaces, shard-frames, gen_prisms, the halts property all meet here.
+
+### Track G: `@epistemologic/reality` substrate (NEW, 2026-05-26 — deferred per LRM)
+
+Spans Phase 5 (the peer's lens IS what makes this peer this peer) + Phase 7 (per-peer lens at onboarding). **Status: deferred per the Last Responsible Moment.** Recognition complete (`docs/insights/2026-05-26-epistemologic-reality-constructivism-and-the-lens-that-makes-a-peer.md`); no current consumer; substrate captured for when demand surfaces. The composition: `@epistemologic/reality/{lens, identity, gestalt}` → `@peer.eigenboard` via autopoietic closure. Connes spectral triple at the perception altitude: lens = D (Dirac), identity = A (algebra), gestalt = H (Hilbert space). Constructivism made structural. Trigger condition: when per-peer lens authoring surfaces a real consumer (probably Phase 7 onboarding or the garden's reviewer-lens chain).
+
+### Track H: `@spectral/garden` substrate (NEW, 2026-05-26 — deferred per LRM)
+
+Spans Phase 7 (onboarding + deployment). **Status: deferred per the Last Responsible Moment.** Recognition complete (`docs/insights/2026-05-26-spectral-garden-as-vetted-corpus-distribution.md`); no current consumer; substrate captured for when demand surfaces. The garden is a content-addressed package manager for vetted corpora deployed at `garden.spectral.engineer`; each package is a crystal in fragmentation carrying reviewer signature + lens-tags + context-tags; peers compose packages into conversation via spectral resonance with the user's eigenboard. Supply-chain attacks closed by construction (ed25519 + content-addressing + glass_wall). License lives per-package; curators choose; substrate verifies regardless. Trigger condition: Phase 7 onboarding needs a concrete content source.
 
 ---
 
@@ -408,6 +425,7 @@ The HN / ElixirForum launch scenario — autonomous AI-agent responses via `@spe
 #### D. Onboarding interface
 
 - [ ] `spectral.engineer/onboarding` web UI.
+- [ ] **Content source: `@spectral/garden`** (per Track H + `docs/insights/2026-05-26-spectral-garden-as-vetted-corpus-distribution.md`). Onboarding peer composes from the curated DGSF/ICF/etc. corpus; quotes carry reviewer signatures; provenance is verifiable end-to-end. The garden makes onboarding non-confabulated by construction.
 - [ ] Peer-selection screen (Reed / Mara / Loki / domain-specific with fillable field).
 - [ ] Conversation interface (text-first; possibly voice via Christian's audio-engineering work as a Phase 8+ extension).
 - [ ] Session persistence: returning users encounter a peer that remembers prior conversation, via content-addressed substrate.
@@ -448,7 +466,7 @@ The HN / ElixirForum launch scenario — autonomous AI-agent responses via `@spe
 
 #### I. Business + legal
 
-- [ ] License model for `@spectral/db` decided (Q9 in §10).
+- [ ] License model for `@spectral/db` decided (Q9 in §10). **The license model now layers cleanly:** compiler open (Apache-2.0); `@spectral/db` engine closed (binary-only); `@spectral/garden` per-package (curator-set; Q11); protocols open (`@spectral/portal`, adapter contracts). Each layer's license discipline is independent; the substrate verifies signatures regardless.
 - [ ] `systemic.engineering/terms` updated to cover autonomous AI-agent responses on third-party platforms (the Reed-veto clause in §7 already covers publication; autonomous-response engagement is a new surface).
 - [ ] DPA template for client engagements where the runtime processes their data.
 - [ ] Consent architecture extended: third-party platform users (HN / ElixirForum readers) who interact with peers via mentions have not consented to be processed; document the visibility boundary (public mention = public response only; no aggregation of HN users' prior comments without explicit consent).
@@ -580,6 +598,22 @@ The closed graph engine ships under a commercial license. Per-deployment? Per-or
 
 The closed binary speaks to the open adapters (`mnesia`, `sql/postgres`, `sql/lite`) over a defined protocol. That protocol is the public contract: versioning and stability matter here specifically. Third-party adapters (`dynamo`, `redis`, `sqlserver`) need this contract published before they can be written. Open: where the contract lives (a `.mirror` grammar file? a versioned spec doc? both?) and what the v1.0 commitment is.
 
+### Q11: License model for `@spectral/garden`
+
+Per-package: each curator chooses (Apache-2.0 / commercial / mixed). The substrate verifies signatures regardless of license; ed25519 + content-addressing closes tampering by construction. Open: which gardens ship at v1.0 launch, what minimum reviewer-credential discipline counts, and whether spectral.engineer hosts a canonical default-garden or stays neutral substrate.
+
+### Q12: Trigger conditions for LRM-deferred substrate
+
+Three pieces are captured-but-deferred per the Last Responsible Moment: `@kintsugi/cross_wall` (#80), `@epistemologic/reality` (Track G), `@spectral/garden` (Track H). Each has a natural demand signal that should trigger implementation. Document the triggers so the next session knows when to pull from capture:
+
+- **`cross_wall`** triggers when an `@io` grammar's halts becomes provable and a user-or-substrate asks to pull it. Likely first consumer: the fragmentation Rust crate as Phase 4 R-tick lands.
+- **`@epistemologic/reality`** triggers when per-peer lens authoring surfaces (Phase 7 onboarding; the garden's reviewer-lens chain; per-peer eigenboard customization).
+- **`@spectral/garden`** triggers when Phase 7 onboarding needs a concrete content source — the DGSF/ICF/practitioner corpus has nowhere else to live structurally.
+
+### Q13: The next-altitude recognition
+
+The 2026-05-25/26 session crossed multiple "the substrate knew" moments — gen_prism IS MCP; @peer = Prism(self); shard = observer-relative λ₀; portal = `@io.socket` + content-addressed subspace; glass_wall as inverted halts; spectral triple as heuristic composition; lens as constructivism made structural; garden as vetted-corpus distribution. The pattern itself suggests there's another altitude waiting to be recognized. Candidates: the relational topology of multi-peer composition (the *cluster as organism*, not as N independent peers); the substrate's gestalt-of-gestalts at the garden+peer composition layer; the meta-curator (what verifies the verifiers when multiple gardens disagree); or something not yet named. Open: what's the recognition the substrate is pulling toward next.
+
 ---
 
 ## 11. References
@@ -663,6 +697,10 @@ The closed binary speaks to the open adapters (`mnesia`, `sql/postgres`, `sql/li
 *`|\>` is composition with a typed hole; Fate resolves it per local hardware; binaries are Au; the source stays verified.*  
 *gen_prism IS MCP; transport layers disappear when the substrate is the algebra.*  
 *The portal is `@io.socket` + content-addressed subspace + shard-frame; the wire is WS handshake → `@fragmentation/frame` → bidirectional eigenvalue stream; the open portal IS a gen_prism.*  
-*We prove we halt: `@epistemologic/property/halts` operationalizes the sub-Turing escape from alignment undecidability.*
+*We prove we halt: `@epistemologic/property/halts` operationalizes the sub-Turing escape from alignment undecidability.*  
+*The glass wall is a property. Substrate-pull is self-enforcing.*  
+*Heuristics compose via the spectral triple. Decades of engineering wisdom integrate without picking winners.*  
+*The peer's lens is what makes this peer this peer. Constructivism, structurally.*  
+*The garden is the cellar. The curator is the vintner. The peer is the sommelier.*
 
 Apache-2.0.
