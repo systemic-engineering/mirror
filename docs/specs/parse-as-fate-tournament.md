@@ -1,12 +1,15 @@
-# parse-as-fate-tournament — `abstract` keyword, dual-direction bindings, engine collapse
+# parse-as-fate-tournament — `abstract` keyword, `\`-marker holes, engine collapse
 
 *2026-05-26. Mara. Spec — architecture, not implementation.*
 
-Status: **Yellow.** Two structural recognitions emerged together in conversation
-between Alex and Reed on 2026-05-26. This document captures the shape of the
-design surface, surfaces the load-bearing decisions, and identifies what is
-resolved vs what remains open. No code lands in this tick. The implementation
-sequence in §8 is the path; each step is a subsequent tick.
+Status: **Yellow-going-Green.** Two structural recognitions emerged together
+in conversation between Alex and Reed on 2026-05-26; five Alex corrections
+followed on the same day (loss-from-`@epistemologic/properties`, v0/v1/v2
+conductivity path, sub-Turing closes cardinality, no commit threshold,
+`\`-marker hole syntax). After the corrections, the open list collapses to
+one thread (learning loop scope) plus three named edge cases. No code lands
+in this tick. The implementation sequence in §8 is the path; each step is a
+subsequent tick.
 
 Depends on:
 - `boot/std/mirror/glass/ast/token.mirror` — the keyword surface where
@@ -78,9 +81,10 @@ The remaining Rust deletion candidates all need the same structural unlock:
 Two recognitions land together:
 
 1. **`abstract` block is quote/unquote semantics.** Same syntax for pattern
-   (parse capture) and constructor (AST interpolation). The header is a
-   unified binding ledger; references inside the block bind in or out
-   depending on call context.
+   (parse capture) and constructor (AST interpolation). Three-way syntax:
+   header inputs (`name: type`), body holes (`\name: type`), and body
+   literals (bare names). The `\` marker IS the typed hole — same
+   primitive as `\` in `boot/std/mirror/store/nix.mirror`: `\` = unfilled.
 
 2. **Parse backtracking IS a Fate tournament.** The parser combinator engine
    collapses into Fate. Multi-trajectory parse evaluation. Each
@@ -119,83 +123,79 @@ body altitude — change the scale of evaluation — only at shape altitude.
 
 ### 1.2 Semantics
 
-Inside `abstract { ... }`:
+Inside `abstract(<inputs>) { ... }`:
 
-- **Names refer to substrate-declared shapes.** A bare `identifier` inside
-  the body resolves through the normal type namespace (the same lookup
-  `shape.variant` resolution uses today). It does not name a runtime value.
-- **References become bindings.** Every name in the body that resolves to a
-  shape is a slot. The header declares the slots; the body wires them.
-- **Bindings are dual-direction.** Whether a slot is filled by the caller
-  (incoming) or by a match against input (outgoing) depends on the call
-  context. The same block works both ways.
-- **The block is not executed.** It is *measured*. Parsing measures the block
-  against input; constructing measures the block against a binding ledger.
-  Both readings are structural queries on the same shape.
+- **Inputs flow in from the call site.** The header declares them by name
+  and type; the caller supplies them at the specialisation site. Inputs
+  resolve like any other identifier in scope.
+- **Body holes are marked with `\`.** A `\name:type` in the body is a
+  typed hole — a slot the consumer fills. The parser captures it from
+  input; the constructor fills it from a caller-provided value. The
+  position decides direction; the syntax is uniform.
+- **Bare names in the body are literals.** A bare `zoom`, `(`, `->`, etc.
+  inside the body appears in the AST as itself. Literals do not bind.
+- **The block is not executed.** It is *measured*. Parsing measures the
+  block against input; constructing measures the block against a
+  hole-fill ledger. Both readings are structural queries on the same shape.
 
 This IS quote/unquote semantics. Lisp's backquote-comma split is the
-classical reference; mirror's contribution is making the *direction* contextual
-rather than syntactic. There is no `,` vs ``\``` distinction — the binding
-ledger names what flows where, and the call site decides the direction.
+classical reference; mirror's contribution is to make hole-and-literal a
+first-class three-way syntactic distinction (input / hole / literal) rather
+than an implicit ledger. The `\` mark on a hole IS the substrate's
+parked-action marker — same primitive, both contexts.
 
-### 1.3 Header syntax
-
-```
-abstract(<binding>, ..., <binding>: <type>, ...) { <body> }
-```
-
-Forms each binding may take:
-
-- **`foo`** — bare name. Equivalent to `foo: foo`. Binding name defaults to
-  the type name. The common case: "I want a slot of shape `foo` named `foo`."
-- **`baz: boing`** — explicit. Binding name `baz`, type `boing`. Used when
-  the body needs the same shape twice with different names, or when the
-  binding name is more legible than the type name at the call site.
-- **No casing convention.** Mirror is lowercase throughout. PascalCase is
-  foreign and rejected. Reed's lean is consistent with the rest of the
-  substrate: identifiers are lowercase; type names are lowercase; binding
-  names are lowercase. There is no PascalCase tier.
-
-The header is the **unified binding ledger**. Everything that flows into the
-block and everything that flows out of the block is named there. There is no
-implicit capture, no hidden output. If a slot is not in the header, it is
-not a slot.
-
-### 1.4 Dual-direction bindings
-
-The same `abstract` block has two readings depending on call context:
-
-**Outgoing (parse capture).** When the block is used as a parse pattern, the
-bindings not provided by the caller are filled from input match. The parser
-walks the body, recognises substrate primitives, accumulates a partial match,
-and binds each header slot to the captured fragment.
-
-**Incoming (AST construction).** When the block is used as a constructor, the
-bindings provided by the caller are interpolated into the block. The result
-is the body with each header slot replaced by the caller's value.
-
-Mirror's parser uses glass declarations as parse patterns (bindings outgoing).
-Metaprogramming and AST construction use them as constructors (bindings
-incoming). Mixed cases — some bindings incoming as priors, others outgoing
-as captures — are the general case. Pure-outgoing and pure-incoming are the
-degenerate ends of a spectrum.
-
-The call site decides direction per slot:
+### 1.3 Header syntax — three-way bindings
 
 ```
-lambda(name: "open", args: [], ret: portal, body: ...)
-  # all four slots incoming — pure construction
-
-lambda(input)
-  # all four slots outgoing — pure parse
-
-lambda(args: explicit_args, input)
-  # args incoming as prior; name, ret, body outgoing from input
-  # the parser uses args as a fixed constraint and captures the rest
+abstract(<input>: <type>, ...) {
+  <body referencing inputs, holes \name:type, and literals>
+}
 ```
 
-The substrate doesn't separate parser-altitude and constructor-altitude
-because they ARE the same shape, queried in different directions.
+Three syntactic forms inside an `abstract` block:
+
+| Form | Position | Meaning |
+|------|----------|---------|
+| `name: type` | header | **Input** — caller fills from scope at the call site |
+| `\name: type` | body | **Hole** — typed-hole; consumer captures (parse) or fills (construct) |
+| `name` (bare) | body | **Literal** — appears in the AST as itself |
+
+The `\` is the typed-hole marker. It already lives in the substrate as the
+parked-action marker — `boot/std/mirror/store/nix.mirror` declares `\` as
+the body of e.g. `path(oid) -> text { \ }`, `adopt(path) -> oid { \ }`,
+`tombstone_check(oid) -> option(tombstone) { \ }`, and others. Same
+primitive: `\` = unfilled. Reusing it across both contexts (parked action
+body, typed hole inside a shape) is consistent.
+
+**Naming.** Mirror is lowercase throughout. No PascalCase. Identifier names,
+type names, binding names — all lowercase.
+
+The header is the **input ledger**. Everything the caller is expected to
+supply is named there. Holes in the body are slots the *consumer* fills:
+the parser captures them from input; the constructor fills them from
+caller-provided continuations. There is no implicit capture and no hidden
+output — every slot is either an input in the header or a `\`-marked hole
+in the body.
+
+### 1.4 Direction
+
+The same `abstract` block has two readings:
+
+- **Parse capture.** Holes are outgoing; the parser walks the body, matches
+  literals positionally, and binds each `\name:type` to the matched
+  fragment.
+- **AST construction.** Holes are incoming; the caller fills each hole; the
+  result is the body with each `\name:type` substituted.
+
+The block doesn't change. The consumer changes. Parser-altitude and
+constructor-altitude are the same shape, queried in different directions.
+
+Inputs are direction-invariant — they always come from the call site
+(§1.6's parameterised binding uses this for the form keyword). Literals are
+also direction-invariant — they always appear in the AST as themselves.
+
+**Empty `abstract { ... }`** — no header, no `\` marks — is an empty quote:
+the AST literally. §7.5 records this as resolved.
 
 ### 1.5 Concrete example — `lambda`
 
@@ -216,51 +216,51 @@ grammar @mirror/glass/ast/shape/lambda {
 Under this spec, the same declaration as an `abstract` pattern:
 
 ```mirror
-glass lambda = abstract(
-  zoom,
-  name: identifier,
-  args: arg_list,
-  ret: type,
-  body: block,
-) {
-  zoom name(args) -> ret { body }
+glass lambda = abstract {
+  zoom \name:identifier(\args:arg_list) -> \ret:type { \body:block }
 }
 ```
 
-The body IS the surface syntax. Names inside (`zoom`, `name`, `args`, `ret`,
-`body`) are not runtime values — they are slots declared in the header. The
-parser uses this block as the parse pattern for a lambda; the constructor uses
-it as the AST emitter; they are the same shape.
+The body IS the surface syntax. The bare `zoom` is a literal — the `zoom`
+keyword as it appears in source. The `\name`, `\args`, `\ret`, `\body`
+are typed holes — the parser captures them from input; the constructor
+fills them from caller-provided values. The punctuation (`(`, `)`, `->`,
+`{`, `}`) is literal.
 
-Note: `io` becomes an outer attribute (`io glass lambda = abstract(...) { ... }`)
+Note: `io` becomes an outer attribute (`io glass lambda = abstract { ... }`)
 rather than a record field. This matches the legacy surface
 (`io action name(...) -> ret { ... }` — the `io` prefix is a posture, not a
 field), and aligns with lambda.mirror's own note: *"io is an attribute on
 lambda, not a separate variant."*
 
-### 1.6 Parameterised — one abstract pattern, four shape variants
+### 1.6 Parameterised — one abstract pattern, three shape variants
 
-The symmetry across `lambda`, `property`, `fixed`, and (sketched in the legacy
-grammar) `refract <name> = <combinator>` is structural. They share spine
-(`<form> <name>(<args>) -> <type> { <body> }`) and differ only in the leading
-form.
+The symmetry across `lambda`, `property`, `fixed` (and the legacy
+`refract <name> = <combinator>` line, which collapses to the same spine)
+is structural. They share spine
+(`<form> <name>(<args>) -> <type> { <body> }`) and differ only in the
+leading form. The form keyword is an **input** to the abstract — supplied
+at the specialisation site — while the spine itself is hole-and-literal:
 
 ```mirror
-glass binding = abstract(form, identifier, arg_list, type, block) {
-  form identifier(arg_list) -> type { block }
+glass binding = abstract(form: op) {
+  form \name:identifier(\args:arg_list) -> \ret:type { \body:block }
 }
 
-glass lambda    = binding(zoom)
-glass property  = binding(focus)
-glass fixed     = binding(refract)
-glass refractor = binding(refract)   # legacy refract <name> = <combinator>
-                                     # collapses to refract <name>(...) -> ret { body }
+glass lambda   = binding(zoom)
+glass property = binding(focus)
+glass fixed    = binding(refract)
 ```
 
-One abstract pattern; four shape variants; zero duplication. The five-op
-symmetry reaches into shape declarations themselves. The body of the
-parameterised binding IS the surface, and the parameter `form` carries the
-five-op posture.
+One abstract pattern; three shape variants from a single header input;
+zero duplication. The five-op symmetry reaches into shape declarations
+themselves. The body of the parameterised binding IS the surface; the
+input `form` carries the five-op posture into the literal-position of
+the spine.
+
+The legacy `refract <name> = <combinator>` line collapses to
+`refract <name>(...) -> ret { body }` — the same spine — and rides
+`binding(refract)`.
 
 This is the same compounding lambda.mirror notes: *"both share name + args +
 body structure; `lambda` adds `return` and `io`. The compounding from
@@ -315,8 +315,9 @@ per-trajectory primitive is the binary match.
 
 No BEAM runtime is required. The structural commitment is what transfers:
 pattern matching as a first-class operation that returns a structural verdict
-plus a binding ledger. Mirror's `abstract` block is the pattern; the input
-fragment is the binary; the header is the binding ledger.
+plus a hole-fill ledger. Mirror's `abstract` block is the pattern; the input
+fragment is the binary; the `\`-marked holes in the body are the ledger
+slots.
 
 ### 2.3 Recursive multi-trajectory backtracking — already named in Fate
 
@@ -354,8 +355,8 @@ proximity (§4.2 below).
 
 Parse-ambiguity. Type-inference-ambiguity. Dispatch-ambiguity. Kintsugi-
 fracture-resolution. All are tournament-shaped. One tournament algorithm.
-The substrate declares the tensor (loss + conductivity + commit threshold)
-per altitude.
+The substrate declares the tensor (loss + conductivity) per altitude;
+convergence is the commit.
 
 This is what makes Phase 2 and Phase 5 the same mechanism. The Scheduler
 Tower (Phase 5) coordinates which tournament runs when. Reflection (Phase 5)
@@ -367,114 +368,181 @@ phases — the same mechanism gains new altitudes of consumer.
 
 ## 3. Tournament configuration — substrate-declared
 
-For the **parse altitude**, the substrate declares five pieces. Each lives
-in a `.mirror` file under `boot/std/`; none lives in Rust. The shape below
-IS the parse-altitude tensor's declaration.
+For the **parse altitude**, the substrate declares two pieces — loss and
+conductivity. Each lives in a `.mirror` file under `boot/std/`; none lives
+in Rust. Cardinality is fixed by sub-Turing (§3.3); the stopping rule is
+Hajek convergence (§3.5); learning closes the loop (§3.4).
 
-### 3.1 Loss function — Shannon loss + Dark coverage
+### 3.1 Loss function — composite of `@epistemologic/properties`
 
-Candidate components (open to extension; §7.1 surfaces the design call):
+**The loss function at any altitude is a composite of the
+`@epistemologic/properties` declared at that altitude.** Not Shannon loss
+plus Dark coverage. Not a hand-invented metric. The substrate-pull discipline
+says facts the substrate can carry belong in the substrate; the loss
+function IS a substrate fact; the properties at the relevant altitude
+declare it.
 
-- **Unmatched-token count.** Tokens left over after the trajectory's match.
-  Direct, easy to measure, weakly informative.
-- **Dark-span coverage.** Per `docs/specs/parser-as-prism-grammar.md`'s
-  FP framing, a `Dark` span is input the parser cannot account for; the
-  coverage measure rewards trajectories that minimise Dark.
-- **Shannon loss on parse-forest entropy.** Per the project CLAUDE.md note:
-  the `prism` crate already exposes `ShannonLoss`. At parse altitude the
-  loss is computed over the parse-forest distribution: a forest collapsed
-  to one trajectory has zero entropy; a forest split equally across many
-  trajectories has high entropy. The tournament drives entropy down.
-- **Binding-arity mismatch.** Header slots that ended up unfilled or
-  overfilled. Direct surface for the `abstract` block's correctness.
-
-**First version: Shannon loss + Dark coverage.** Both are already named in
-the substrate (`prism::ShannonLoss`; `parser-as-prism-grammar.md` FP2). The
-other two terms (unmatched-token count, binding-arity mismatch) compose
-additively when needed (§7.1 carries this as open).
-
-The loss vector has the same shape as `kintsugi-tournament.md` §3.1's
-`κ ∈ ℝ⁵` — multi-criterion, with eliminable-on-first-axis behaviour. The
-first axis is a hard pass/fail (a trajectory that doesn't cover the input
-at all is infinite loss on the Dark axis); the remaining axes break ties.
-
-### 3.2 Conductivity tensor — the substrate hierarchy IS the prior
-
-Alternatives that are siblings under the same
-`@mirror/glass/ast/shape/*` parent conduct; alternatives across distant
-substrate paths do not.
-
-This is the cellular sheaf restriction map (`project-eigenboard-is-sheaf`).
-For two trajectories `T_a` and `T_b`:
-
-- Both rooted under the same `glass <type>` declaration → high conductivity
-  (close siblings in the same record union).
-- Rooted under different `glass <type>` declarations but same parent path
-  (e.g., both under `@mirror/glass/ast/shape/`) → medium conductivity.
-- Rooted under different parent paths → low conductivity.
-
-The substrate hierarchy is therefore the prior. Closely-related grammars
-conduct (lose strongly when one is ambiguous with the other and both
-produce the same artifact); distantly-related grammars do not.
-
-This re-uses `au-and-conductivity.md`'s tensor structure and
-`eigenboard-representation.md`'s G-bundle framing without modification. The
-parse-altitude tensor is one section of the substrate-wide bundle.
-
-### 3.3 Tournament cardinality
-
-Bounded by **active glass declarations at current parse state**. Substrate-
-determined, not Rust-constant. At any parse point, the substrate has a
-finite list of glass declarations whose first symbol could begin at the
-current token; that's the alternative set; that's the cardinality.
-
-Hajek 1988's convergence bound (transferred from
-`kintsugi-tournament.md`'s usage) requires this. The cooling schedule is
-defined over a finite alternative set per round; the bound is the schedule's
-asymptotic constant. Cardinality may vary per parse state — what matters is
-that it is finite at every state.
-
-### 3.4 Commit threshold — per-altitude
-
-Different altitudes commit at different conductivity confidences:
-
-- **Parse altitude — permissive.** Let many trajectories run; the parser is
-  often ambiguous (especially for incomplete input or new grammar
-  extensions). Conductivity threshold for commit: low. Trajectories survive
-  longer.
-- **Type altitude — strict.** Type inference can only commit one type per
-  binding; conductivity threshold for commit: high. Trajectories that don't
-  reach the threshold abort.
-- **Dispatch altitude — context-dependent.** Per the
-  `kintsugi-fracture-confidence-and-scene-dispatch.md` precedent; some
-  dispatches are autonomous, others go to the curator.
-
-**Substrate-declared as part of glass shape metadata.** The threshold lives
-in the glass declaration, not in a global Rust constant. Sketch:
+Mechanism. `@epistemologic/property` (declared in
+`boot/std/epistemologic/property.mirror`) gives the type:
 
 ```mirror
-glass lambda(commit: permissive) = abstract(...) { ... }
-glass type_inference(commit: strict) = abstract(...) { ... }
+type verdict = pass | fail(diagnostic) | partial(f64, [diagnostic])
+type check   = (ast) -> verdict
+reflect(ast) -> [verdict] { \ }
 ```
 
-Exact form open (§7.3). The structural commitment is: the threshold rides
-the declaration; the substrate decides; Rust is uninvolved.
+Every concrete property check is a `check`. `reflect(ast)` returns the
+verdict vector for every property inherited via `in` at the current
+altitude. The tournament's loss for a trajectory is the composite of those
+verdicts:
 
-### 3.5 Learning — `eⁿ⁺¹ < eⁿ` at parse altitude
+- `pass`             → contributes 0 to that axis
+- `partial(f, _)`    → contributes `1 - f` (confidence-weighted)
+- `fail(_)`          → contributes 1 (saturating)
+
+The composite is the vector of per-property contributions. Trajectory
+domination is component-wise on that vector. There is no separate
+"Shannon" axis and no separate "Dark" axis — if Shannon-style entropy or
+Dark-span coverage matter at parse altitude, they appear as properties
+under `@epistemologic/property/...` declared at parse altitude.
+
+Property composition is mechanical. The properties present in the
+substrate today (`@epistemologic/property/io_safety`, `monotonicity`,
+`causality`, `halts`, `total_classification`, `monoidal`, `functor_laws`,
+`monad_laws`, `frame_relativity`, `glass_wall`, `is_prism_record`,
+`autopoietic`, `coincidence_matches`, `content_addressed`,
+`filename_matches_glass`, `duration_algebra`, `duplicate_variant`,
+`benchmark`) are not specifically parse-altitude properties — they are the
+cross-altitude library. **What properties land at parse altitude is a
+substrate-design question, not a tournament-design question.** When
+parse-altitude property files appear under
+`boot/std/epistemologic/property/parse/...` (or wherever the substrate
+places them), `reflect` at parse altitude returns their verdicts, and
+those verdicts ARE the loss.
+
+Forward claim: the spec assumes parse-altitude properties will be declared.
+None exist yet. The implementation sequence (§8) does not unblock until
+they do — or until the substrate-design question of what they are is
+answered. This is the only remaining substrate work the loss function
+needs.
+
+### 3.2 Conductivity tensor — the v0 / v1 / v2 path
+
+Alternatives that are siblings under the same `@mirror/glass/ast/shape/*`
+parent conduct; alternatives across distant substrate paths do not. This is
+the cellular sheaf restriction map (`project-eigenboard-is-sheaf`).
+
+The research literature on graph-Laplacian / sheaf-Laplacian propagation
+has independently converged on a hybrid substrate-prior + learned-residual
+formulation; pure-learned conductivity is incoherent with the spec's Hajek
+convergence claim unless weights freeze per round. The path is staged:
+
+**v0 — substrate-hierarchy prior (the version that lands first).**
+
+`F_substrate(u ◁ e)` is computed from `@mirror/glass/ast/shape/*` path
+distance:
+
+- Trajectories rooted under the same `glass <type>` declaration → high
+  conductivity (close siblings in the same record union).
+- Rooted under different `glass <type>` declarations but same parent
+  substrate path (e.g., both under `@mirror/glass/ast/shape/`) → medium
+  conductivity.
+- Rooted under different parent paths → low conductivity.
+
+Hajek-trivial: stationary by construction (the substrate hierarchy doesn't
+change during a round). Substrate-pull aligned. Zero training data
+required. Auditable — the tensor's entries derive deterministically from
+file paths.
+
+**v1 — + corpus-frequency residual.**
+
+Once spectral-db has settled parses to count, a residual term is added:
+alternatives that historically co-occurred at the same parse position
+carry an additive bump. The residual is logged from settled parses and
+applied as `F = F_substrate + α · F_corpus`, with `α` frozen per round to
+preserve stationarity. Cheapest learned residual; lands when the corpus
+exists.
+
+**v2+ — + curvature-detected residual.**
+
+Narrow scope: only edges that Balanced-Forman curvature flags as
+over-squashing bottlenecks (Topping 2021; Nguyen PIORF 2024). The
+residual `ΔF` is computed per round on negatively-curved edges; elsewhere
+the tensor is unchanged. Hybrid stays stationary per round; only the
+curvature-flagged subset is touched.
+
+**Critical — pure-learned is forbidden.** A pure-learned conductivity
+tensor (no substrate base) would break the Hajek 1988 stationarity
+precondition cited in §2.1. The cooling schedule's asymptotic bound
+requires the per-round dynamics to be stationary; freely-updating weights
+are not stationary. The Bodnar / Topping / PIORF literature has
+independently converged on hybrid for exactly this reason; nobody in the
+cellular-sheaf community recommends pure-learned for new systems.
+
+Citations:
+
+- **Hajek 1988** — *Cooling Schedules for Optimal Annealing.* The
+  stationarity precondition; the convergence bound used in §2.1.
+- **Ford 2004** — *PEG: A Recognition-Based Syntactic Foundation.* The
+  underlying parse-tree shape over which the tournament runs.
+- **Bodnar et al. 2022** — *Neural Sheaf Diffusion* (arXiv 2202.04579).
+  The cellular-sheaf formulation our restriction maps follow.
+- **Topping et al. 2021** — *Understanding Over-Squashing via Curvature*
+  (arXiv 2111.14522). Balanced-Forman curvature; the diagnostic for v2's
+  narrow scope.
+- **Opedal et al. 2023** — *Efficient Semiring-Weighted Earley Parsing*
+  (arXiv 2307.02982). Semiring shape of per-trajectory loss aggregation.
+- **Nguyen et al. 2024** — *PIORF: Physics-Informed Ollivier-Ricci Flow.*
+  Curvature-targeted residual; v2's mechanism.
+
+This re-uses `au-and-conductivity.md`'s tensor structure and
+`eigenboard-representation.md`'s G-bundle framing without modification.
+The parse-altitude tensor is one section of the substrate-wide bundle;
+v0 is what lands at Step 8.
+
+### 3.3 Tournament cardinality — sub-Turing closes the question
+
+Bounded by **the active glass set at current parse state**. Period.
+
+Glass declarations are finite files; the active glass set at any state is
+finite by construction (sub-Turing commitment from
+`docs/insights/2026-05-26-mirror-sub-turing-substrate-with-emergent-turing-completeness.md`).
+Cardinality is always bounded — the substrate cannot declare an infinite
+alternative set, so the tournament cannot face one.
+
+Hajek 1988's convergence bound (cited in §2.1) requires finite cardinality
+per round. The substrate's sub-Turing commitment delivers it for free. No
+static cap is needed as a safety net; no dynamics question is open;
+pathological grammars in the substrate-pull-forbidden sense cannot exist.
+
+### 3.4 Learning — `eⁿ⁺¹ < eⁿ` at parse altitude
 
 Fate model parameters update from settled parses. A successful parse —
 where a winning trajectory survived the tournament and produced an AST
 that downstream consumers accepted — reinforces the winning trajectory's
-parameters. A failed parse (Dark coverage too high; downstream rejected
+parameters. A failed parse (loss composite saturated; downstream rejected
 the AST) does not reinforce.
 
 The project CLAUDE.md proof — *"eⁿ⁺¹ < eⁿ. The system learns from its
 errors. The errors get smaller."* — applies at parse altitude as elsewhere.
 Parses get easier as the system parses more, *for grammars it has seen
 before*. Novel grammars start from the substrate prior (the conductivity
-tensor's hierarchy structure) and learn from there.
+tensor's hierarchy structure, v0) and learn from there.
 
-Learning loop scope (which parses contribute) is open (§7.5).
+Learning loop scope (which parses contribute) is open (§7.3).
+
+### 3.5 Stopping rule — convergence IS the commit
+
+There is no separate commit threshold. The Hajek convergence already
+settles the winner; when the tournament converges, the winner commits.
+That is the whole story.
+
+Earlier drafts of this spec introduced a per-altitude "commit threshold"
+imported from PEG cut-point / Prolog cut vocabulary. That import was an
+error: tournament dynamics don't need a cut. The Lyapunov function
+descends per round; when no trajectory can catch the leader under the
+remaining cooling budget, the tournament has converged; that round is
+the commit.
 
 ---
 
@@ -537,8 +605,9 @@ from Phase 5 (#108 Reflection + Scheduler Tower). They are the same mechanism
 at different altitudes:
 
 - **Phase 2** declares the parse-altitude tournament. The substrate glass
-  forest is the tournament's alternative set; the loss is Shannon + Dark;
-  the commit threshold is permissive. The first tournament that runs.
+  forest is the tournament's alternative set; the loss is the composite
+  of `@epistemologic/properties` at parse altitude; the stopping rule is
+  Hajek convergence. The first tournament that runs.
 - **Phase 5** declares the Scheduler Tower (coordinator) and Reflection
   (observer-and-prior-adjuster). The tower decides which tournament runs
   when; Reflection observes outcomes and updates priors. The parse-altitude
@@ -569,8 +638,8 @@ gestalt entry for a parse run carries:
 - **Eliminated trajectories.** With the loss vector that eliminated each.
 - **Conductivity profile.** The tensor's restriction-map values at this
   parse state.
-- **Commit threshold reached.** Where the tournament committed (the parse
-  state at which the winner's lead became uncatchable).
+- **Convergence point.** The round at which the winner's lead became
+  uncatchable under the remaining cooling budget; the commit (§3.5).
 - **Settlement verdict.** Did downstream accept the produced AST?
 
 This is the same shape `kintsugi-tournament.md` §6 names for merge-altitude
@@ -583,81 +652,32 @@ prior.
 
 ---
 
-## 7. Load-bearing decisions — open
+## 7. Load-bearing decisions
 
-These are the design surfaces this spec **names but does not resolve**.
-Resolution requires Alex's eyes; the spec captures the shape of the
-question.
+After Alex's review of `9263ce5`, the open list collapses to **one open
+thread plus three edge cases**. The rest is resolved.
 
-### 7.1 Loss function composition
+### 7.1 Loss function composition — RESOLVED
 
-Which terms enter the loss; what weights. First-pass spec is **Shannon loss
-+ Dark coverage**. Further terms (binding-arity mismatch, type-altitude
-propagation, unmatched-token count) are open.
+The loss IS the composite of `@epistemologic/properties` at the relevant
+altitude (§3.1). Mechanism: `reflect(ast)` returns the verdict vector;
+`pass / partial / fail` map to per-axis contributions; trajectory
+domination is component-wise.
 
-Open sub-questions:
+What remains is a **substrate-design question, not a tournament-design
+question**: which specific properties land at parse altitude. The
+tournament reads whatever properties the substrate declares; the
+declaration is a separate (sub)spec.
 
-- Is the loss vector ℝ², ℝ³, ℝ⁴, or ℝ⁵? `kintsugi-tournament.md` settled on
-  ℝ⁵; parse altitude may differ.
-- Are the terms equally weighted, or does the substrate carry per-term
-  weights?
-- Does the weighting itself adapt over time (learning loop §3.5), or is it
-  fixed per altitude?
+### 7.2 Conductivity tensor formulation — RESOLVED at v0
 
-Reed's lean: ℝ² initial (Shannon + Dark); add terms one at a time as the
-corresponding hole surfaces in a real parse failure. Fixed weights to start;
-adaptive weights once Reflection has a meaningful sample.
+v0 (substrate-hierarchy prior) is the version that lands. v1 (+
+corpus-frequency residual) and v2+ (+ curvature-detected residual) are
+staged future work named in §3.2. Pure-learned is forbidden by the Hajek
+stationarity precondition cited in §2.1; the literature has independently
+converged on hybrid (Bodnar 2022, Topping 2021, Nguyen 2024).
 
-### 7.2 Conductivity tensor formulation
-
-The sheaf restriction map shape (§3.2 above). Substrate-hierarchy is the
-obvious prior; alternatives are open:
-
-- Substrate-hierarchy only (path proximity).
-- Substrate-hierarchy + corpus-frequency prior (grammars that historically
-  match together conduct more strongly).
-- Substrate-hierarchy + learned-prior-from-settled-parses (Reflection feeds
-  conductivity coefficients back).
-
-Reed's lean: substrate-hierarchy only at first. Corpus-frequency and
-learned-prior add only after the substrate-hierarchy version shows a
-specific failure mode.
-
-### 7.3 Commit threshold per altitude
-
-Parse-altitude vs type-altitude vs dispatch-altitude thresholds. How does
-the substrate declare these?
-
-Candidates:
-
-- **In the glass declaration:** `glass <name>(commit: <threshold>) = abstract { ... }`.
-- **In a sibling shape declaration:** `commit @<name> = <threshold>` at the
-  altitude root.
-- **In the conductivity tensor itself:** the tensor's diagonal carries the
-  threshold per cell.
-
-Reed's lean: in the glass declaration as a parameter. Same syntactic surface
-as other glass parameters; visible at the site that declares the shape;
-local to the altitude. The conductivity-diagonal alternative is structurally
-cleaner but harder to read.
-
-### 7.4 Tournament cardinality dynamics
-
-How does the bound change as parses succeed/fail? Hajek 1988 needs the
-bound; whether it's static-per-altitude or dynamic-per-state is open.
-
-- **Static per altitude:** parse altitude has cardinality bound `K_parse`;
-  type altitude has `K_type`; etc.
-- **Dynamic per state:** cardinality bound is the number of active glass
-  declarations whose first symbol could begin at the current token. Varies
-  per parse state.
-- **Hybrid:** dynamic per state with a static per-altitude cap.
-
-Reed's lean: dynamic per state. Matches the substrate-pull discipline (the
-substrate decides, not Rust). Static cap as a safety net only if a real
-pathological grammar surfaces.
-
-### 7.5 Learning loop scope
+### 7.3 Learning loop scope — open
 
 Which parses contribute to Fate parameter updates? Candidates:
 
@@ -670,31 +690,44 @@ Which parses contribute to Fate parameter updates? Candidates:
   spectral-db (i.e., the `mirror compile` artefact landed and was indexed)
   contribute. Strictest filter.
 
-Reed's lean: type-checked parses. The all-settled bucket admits noise (parses
-that look right but produce nonsense ASTs); the crystallised bucket is too
-sparse to learn from. Type-check is the structural filter that says "this
-parse produced a valid downstream artefact."
+Reed's lean: type-checked parses. The all-settled bucket admits noise
+(parses that look right but produce nonsense ASTs); the crystallised bucket
+is too sparse to learn from. Type-check is the structural filter that says
+"this parse produced a valid downstream artefact."
 
-### 7.6 Empty header semantics
+Resolution awaits the Phase 5 Reflection surface.
 
-`abstract { ... }` with no header — what does it mean?
+### 7.4 Three hole edge cases
 
-Candidates:
+The `\name:type` typed-hole syntax (§1.3) opens three sub-questions worth
+naming. Each is interesting enough to surface; none is blocking on v0.
 
-- **Every bare reference is an outgoing capture, named by its substrate
-  type.** A body that mentions `identifier` declares an implicit outgoing
-  binding `identifier: identifier`.
-- **The header is required.** Empty header is a compile-time error; the
-  block must declare its slots explicitly.
-- **Empty header is the substrate-shape literal.** The block is treated as
-  a pure pattern with no bindings; matching against it is a structural
-  pass/fail with no captures.
+- **Repeated holes.** `\name:identifier ... \name:identifier` — do the
+  two occurrences unify (Prolog-style, must match the same value) or are
+  they independent captures with a shared lexical name? Reed's lean:
+  unification. It matches the eigenboard-sheaf restriction shape (two
+  positions in the same shape are the same cell of the sheaf) and produces
+  the right semantics for patterns like "a binding whose name on the LHS
+  must equal the name on the RHS."
 
-Reed's lean: **empty header = all body references are captures**, named by
-their substrate type. Matches the substrate-pull discipline (the substrate
-infers; the writer doesn't repeat themselves). Pure-literal mode (the third
-candidate) is reachable by writing `abstract() { ... }` — an empty header
-with parentheses — without conflating the cases.
+- **Hierarchical holes.** `\node:expr` where `expr` is itself a glass
+  shape declared with internal holes. Holes nest; the parser recurses
+  through the nested shape; captured fragments are themselves abstract
+  blocks with bound holes. Worth naming as a design surface; the recursive
+  case falls out of the substrate-uniform parse loop without special-casing.
+
+- **Hole-typed-by-input.** `abstract(t: type) { \x:t }` — a hole whose
+  type is dynamically the value of the header input `t`. This probably
+  falls out of substrate-uniform name lookup (the type position resolves
+  the input the same way any other identifier does), but worth confirming
+  in the first implementation tick that exercises it.
+
+### 7.5 Empty header semantics — RESOLVED
+
+Resolved in §1.4: empty `abstract { ... }` = empty quote. No header, no
+`\` marks, all names literal; the block returns the AST literally. The
+resolution is the analogue Alex named in review: empty header = empty
+quote semantics.
 
 ---
 
@@ -832,69 +865,33 @@ This is architecture. The following are explicitly out of scope:
 
 The Phase 1 audit's recognition: most Phase 1 tasks are obsolete; the
 consumption tick is load-bearing; the remaining deletion candidates need
-a structural unlock.
-
-This spec is that unlock. The unlock has the shape of substrate-pull
-discipline:
-
-- **The substrate already declares the surface.** `zoom abstract` is in
-  `boot/std/mirror/glass/ast/token.mirror` (commit `7461782`). The five-op
-  symmetry already names the posture. The substrate is ahead of the parser;
-  the parser is catching up.
-- **The unlock is structural, not feature-shaped.** It does not add a new
-  primitive (`abstract` is `zoom abstract`); it does not add a new engine
-  (the engine is Fate, already on the substrate-pull-reflex path); it adds
-  one keyword recognition (~5 lines) and one loader (~50 lines), and it
-  deletes ~320 lines.
-- **Future additions cost zero Rust.** Once the unlock lands, every new
-  structural form is one substrate declaration. The Rust line count goes
-  monotonically down with substrate-declaration count.
-- **The math is already done.** Hajek 1988 (cooling schedule),
-  `kintsugi-tournament.md` (Lyapunov at tournament granularity),
-  `eigenboard-representation.md` (G-bundle + sheaf), `au-and-conductivity.md`
-  (conductivity tensor), `gap-tension-tensor-substrate.md` (sheaf Laplacian)
-  — all already cited, all already grounded. The parse-altitude tournament
-  re-uses the existing math; no new theorems required.
-- **The error shape is `eⁿ⁺¹ < eⁿ`.** Per the project CLAUDE.md proof, the
-  system learns from its errors; the errors get smaller; by convexity, the
-  growth is monotonically non-decreasing. At parse altitude, this means
-  parses get easier as the system parses more. The proof transfers without
-  modification.
+a structural unlock. This spec is that unlock. Substrate already declares
+`zoom abstract` (commit `7461782`); the engine is Fate, already on the
+substrate-pull-reflex path; the math is Hajek 1988 + Lyapunov + cellular
+sheaf, all already cited. Net: ~5 lines of keyword recognition + ~50 lines
+of loader; ~320 lines deleted; every future shape costs zero Rust. The
+error shape is `eⁿ⁺¹ < eⁿ` at parse altitude as elsewhere.
 
 The Phase 1 audit named the lie. This spec names the truth.
 
 ---
 
-## 11. Open thread — what to settle next
+## 11. Threads to track but not block on
 
-The spec's job is to capture the shape, not to resolve every question.
-Open threads that should land before Step 2 (the first Rust change in §8):
+Not open decisions — just surfaces that are sketched, not yet load-bearing,
+and will land when a real grammar demands them.
 
-1. **§7.1 loss function composition.** Confirm Shannon + Dark as the
-   first-pass loss. Decide whether unmatched-token count joins.
-2. **§7.3 commit threshold declaration.** Pick a syntax
-   (`glass <name>(commit: <threshold>) = abstract { ... }` is the lead).
-3. **§7.6 empty header semantics.** Confirm "all body references are
-   captures" as the default; `abstract() { ... }` as the literal-only
-   form.
-
-Threads that can land later (before Step 8):
-
-- §7.2 conductivity tensor formulation (substrate-hierarchy is the
-  obvious first cut; learned priors come later).
-- §7.4 tournament cardinality dynamics (dynamic per state is the lean;
-  static cap is a safety net).
-- §7.5 learning loop scope (type-checked parses is the lean; needs Phase 5
-  surface).
-
-Threads to track but not block on:
-
-- Mixed dual-direction call sites (§1.4) — the syntax for partial
-  incoming/outgoing call patterns. The general case is sketched; the
-  surface syntax is a later tick.
-- Multiple `abstract` blocks in one glass declaration — composability
+- **Mixed parse/construct call sites** (§1.4). The surface syntax for
+  partial hole-filling — some holes pre-filled by the caller, others
+  captured from input — is the general case. The pure-parse and
+  pure-construct ends are sketched; the mixed middle waits for a real
+  use site.
+- **Multiple `abstract` blocks in one glass declaration.** Composability
   rules for stacking patterns. Not surfaced yet; will land when a real
   grammar demands it.
+
+The §7 open list (one thread + three edge cases) is the canonical
+settle-next reference.
 
 ---
 
