@@ -337,7 +337,22 @@ guarantees are permitted in Rust. The bootstrap may not GROW capability,
 but it may be made HONEST about capability it already claims. The
 distinction: features ADD; bugs RESTORE. Reference the existing claim
 being restored in the commit message, and tag it `[bugfix:restore]` so
-the convention is greppable. The pre-commit hook honors this marker.
+the convention is greppable.
+
+The carveout is documented here; **the pre-commit hook does NOT currently
+recognize the marker programmatically**. Authors must use `--no-verify`
+with the marker in the commit message; future work: extend the hook to
+honor `[bugfix:restore]` and `[substrate-pull:realize]` markers
+automatically. Canonical hook content lives in
+`docs/hooks/pre-commit.sample` — operators copy it to `.git/hooks/pre-commit`
+(the hook is not git-tracked).
+
+**Known gap (additions slip through):** the current hook filters with
+`--diff-filter=M` only — it catches *modifications* to existing `.rs`
+files, but new `.rs` files (additions) bypass the FROZEN policy entirely.
+Future work: extend the filter to cover `A` (additions) too
+(`--diff-filter=AM`). The sample at `docs/hooks/pre-commit.sample`
+already does this.
 
 Example: `--strict` always *claimed* that every source byte enters the
 AST or errors; the implementation lied; restoring it is a bugfix, not
