@@ -14,19 +14,19 @@ grammar @nl("nl", "natural-language", "bare") {
   focus prose
 
   # ===== lexical primitives =====
-  refract whitespace        = repeat(charset(whitespace), 0, none)
-  refract not_newline       = repeat(charset(not_newline), 0, none)
-  refract until_newline     = until(literal("\n"))
-  refract until_backtick    = until(literal("`"))
-  refract until_fence       = until(literal("```"))
-  refract identifier        = repeat(charset(word_char), 1, none)
+  fixed whitespace        = repeat(charset(whitespace), 0, none)
+  fixed not_newline       = repeat(charset(not_newline), 0, none)
+  fixed until_newline     = until(literal("\n"))
+  fixed until_backtick    = until(literal("`"))
+  fixed until_fence       = until(literal("```"))
+  fixed identifier        = repeat(charset(word_char), 1, none)
 
   # ===== inline backticks =====
   # `code` inside @nl lifts to the calling host grammar. the host
   # is whichever grammar invoked @nl via the Lift combinator. for
   # the meta-glass comment lift this is @mirror/glass; for rust
   # doc comments it's @code/rust; etc.
-  refract code_inline       = seq(literal("`"),
+  fixed code_inline       = seq(literal("`"),
                                   @<host>(until_backtick),
                                   literal("`"))
 
@@ -34,23 +34,23 @@ grammar @nl("nl", "natural-language", "bare") {
   # ```rust ... ```  lifts to @code/rust
   # ```mirror ... ``` lifts to @mirror/glass
   # ```      ... ``` (no tag) lifts to @<host>
-  refract fence_open        = seq(literal("```"), identifier, until_newline)
-  refract fence_open_bare   = seq(literal("```"), until_newline)
-  refract fence_close       = literal("```")
-  refract fence_tagged      = seq(fence_open,
+  fixed fence_open        = seq(literal("```"), identifier, until_newline)
+  fixed fence_open_bare   = seq(literal("```"), until_newline)
+  fixed fence_close       = literal("```")
+  fixed fence_tagged      = seq(fence_open,
                                   @<tagged>(until_fence),
                                   fence_close)
-  refract fence_bare        = seq(fence_open_bare,
+  fixed fence_bare        = seq(fence_open_bare,
                                   @<host>(until_fence),
                                   fence_close)
-  refract fenced_block      = choice(fence_tagged, fence_bare)
+  fixed fenced_block      = choice(fence_tagged, fence_bare)
 
   # ===== doctest prompts =====
   # indented `mirror> <expr>` lifts the prompt body to the host
   # grammar; following non-prompt lines are expected output (kept
   # verbatim by @nl). the prompt indent must be at least 2 spaces.
-  refract doctest_indent    = repeat(literal(" "), 2, none)
-  refract doctest_prompt    = seq(doctest_indent, literal("mirror> "),
+  fixed doctest_indent    = repeat(literal(" "), 2, none)
+  fixed doctest_prompt    = seq(doctest_indent, literal("mirror> "),
                                   @<host>(until_newline))
 
   # ===== prose = everything that isn't structural =====
@@ -58,14 +58,14 @@ grammar @nl("nl", "natural-language", "bare") {
   # (lines after a prompt that don't themselves start with the
   # prompt) are prose by default — the doctest harness in a later
   # tick adds the expected-output comparison.
-  refract prose             = until_newline
+  fixed prose             = until_newline
 
   # ===== @nl element = the three structural forms + prose =====
-  refract element           = choice(code_inline, fenced_block,
+  fixed element           = choice(code_inline, fenced_block,
                                      doctest_prompt, prose)
 
   # ===== file root =====
-  refract file              = repeat(choice(whitespace, element), 0, none)
+  fixed file              = repeat(choice(whitespace, element), 0, none)
 }
 
 out @nl

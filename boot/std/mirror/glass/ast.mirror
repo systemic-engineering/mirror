@@ -40,14 +40,14 @@ grammar @mirror/glass/ast {
   # bracket shape itself. The body parameter is the abstract repeat
   # over `shape` (declared in @mirror/glass/ast/shape) — no `form`
   # choice-combinator detour; the type structure handles it.
-  refract brace_block      = brace_block(repeat(shape, 0, none))
-  refract paren_block      = paren_block(repeat(shape, 0, none))
+  fixed brace_block      = brace_block(repeat(shape, 0, none))
+  fixed paren_block      = paren_block(repeat(shape, 0, none))
 
   # ===== file root =====
   # The top-level `shape` repeated, interleaved with whitespace. A
   # `.mirror` file is a sequence of shape declarations; whitespace
   # between them is the lexical primitive declared in token.
-  refract file             = repeat(choice(whitespace, shape), 0, none)
+  fixed file             = repeat(choice(whitespace, shape), 0, none)
 
   # ===== file-level predicates =====
   # Substrate-altitude queries about a glass-value (moved from the

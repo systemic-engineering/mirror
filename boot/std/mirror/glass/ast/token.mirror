@@ -37,18 +37,18 @@ grammar @mirror/glass/ast/token {
   zoom abstract
 
   # ===== lexical primitives =====
-  refract whitespace        = repeat(charset(whitespace), 0, none)
-  refract newline           = literal("\n")
-  refract identifier        = repeat(charset(word_char), 1, none)
-  refract name              = repeat(charset(name_char), 1, none)
-  refract reference         = seq(literal("@"), name)
-  refract until_newline     = until(literal("\n"))
+  fixed whitespace        = repeat(charset(whitespace), 0, none)
+  fixed newline           = literal("\n")
+  fixed identifier        = repeat(charset(word_char), 1, none)
+  fixed name              = repeat(charset(name_char), 1, none)
+  fixed reference         = seq(literal("@"), name)
+  fixed until_newline     = until(literal("\n"))
 
   # ===== comment = @nl lift =====
   # A comment is `#` followed by a natural-language span. The body
   # of the comment lifts to @nl, which carries inline backticks,
   # fenced blocks, and doctest prompts (see nl.mirror).
-  refract comment           = seq(literal("#"), @nl(until_newline))
+  fixed comment           = seq(literal("#"), @nl(until_newline))
 }
 
 out whitespace
