@@ -44,7 +44,7 @@ project out(prism)
 #
 # Both are type-layer applications of the existing five Prism
 # operations. No new primitives — the algebra is closed at five.
-# The @epistemologic/property/{functor_laws,monad_laws} grammars
+# The @epistemologic/property/laws/{functor,monad} grammars
 # verify the laws structurally.
 zoom zoom(type) -> type { \ }
 refract refract(type) -> type { \ }

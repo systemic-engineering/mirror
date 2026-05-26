@@ -1,6 +1,6 @@
 in @prism
 
-# @epistemologic/property/causality
+# @epistemologic/property/laws/causality
 #
 # A type is causal iff its values carry a partial order under which
 # effects follow causes. For any two events e₁ → e₂ in a causal
@@ -26,7 +26,7 @@ in @prism
 # causality requires conversion through shard ancestry, just like
 # cross-frame comparison does).
 
-grammar @epistemologic/property/causality {
+grammar @epistemologic/property/laws/causality {
 
   # The type's values carry a happens-before relation: partial,
   # transitive, irreflexive. Baseline structural requirement; without
@@ -57,4 +57,4 @@ out happens_before
 out effects_follow_causes
 out content_preserves_order
 out causality
-out @epistemologic/property/causality
+out @epistemologic/property/laws/causality

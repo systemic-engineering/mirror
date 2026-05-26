@@ -407,11 +407,11 @@ Dark-span coverage matter at parse altitude, they appear as properties
 under `@epistemologic/property/...` declared at parse altitude.
 
 Property composition is mechanical. The properties present in the
-substrate today (`@epistemologic/property/io_safety`, `monotonicity`,
-`causality`, `halts`, `total_classification`, `monoidal`, `functor_laws`,
-`monad_laws`, `frame_relativity`, `glass_wall`, `is_prism_record`,
+substrate today (`@epistemologic/property/io_safety`, `laws/monotonicity`,
+`laws/causality`, `halts`, `total_classification`, `laws/monoidal`, `laws/functor`,
+`laws/monad`, `frame_relativity`, `glass_wall`, `is_prism_record`,
 `autopoietic`, `coincidence_matches`, `content_addressed`,
-`filename_matches_glass`, `duration_algebra`, `duplicate_variant`,
+`filename_matches_glass`, `laws/duration_algebra`, `duplicate_variant`,
 `benchmark`) are not specifically parse-altitude properties — they are the
 cross-altitude library. **What properties land at parse altitude is a
 substrate-design question, not a tournament-design question.** When

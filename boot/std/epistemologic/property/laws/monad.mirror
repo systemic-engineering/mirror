@@ -1,6 +1,6 @@
 in @prism
 
-# @epistemologic/property/monad_laws
+# @epistemologic/property/laws/monad
 #
 # refract(T) is the verified-construction parametric form (Monad-shaped).
 # Per docs/insights/2026-05-25-parametric-types-and-fp-heritage.md.
@@ -26,7 +26,7 @@ in @prism
 # checked when refract(T) appears in a composition, and the content-
 # addressed substrate enforces them structurally.
 
-grammar @epistemologic/property/monad_laws {
+grammar @epistemologic/property/laws/monad {
 
   # Left identity: crystallize(a) refracted through f equals f(a).
   #
@@ -62,4 +62,4 @@ out left_identity
 out right_identity
 out associativity
 out monad_laws
-out @epistemologic/property/monad_laws
+out @epistemologic/property/laws/monad

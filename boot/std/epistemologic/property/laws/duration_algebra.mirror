@@ -1,6 +1,6 @@
 in @prism
 
-# @epistemologic/property/duration_algebra
+# @epistemologic/property/laws/duration_algebra
 #
 # A type satisfies the duration algebra iff its values form a
 # commutative monoid under +, with zero identity; subtraction is
@@ -27,7 +27,7 @@ in @prism
 # frame_relativity(T) (the cross-frame concern this property is
 # silent on — algebra is within-frame).
 
-grammar @epistemologic/property/duration_algebra {
+grammar @epistemologic/property/laws/duration_algebra {
 
   # Addition is associative: (a + b) + c = a + (b + c). For
   # nanosecond-precision durations this is true unconditionally;
@@ -70,4 +70,4 @@ out zero_identity
 out sub_partial
 out scale_total_nonneg
 out duration_algebra
-out @epistemologic/property/duration_algebra
+out @epistemologic/property/laws/duration_algebra

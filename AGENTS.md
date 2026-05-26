@@ -321,6 +321,27 @@ at the syntax altitude: the bootstrap describes only what the language
 cannot yet describe of itself. Everything you can write as a substrate
 declaration, you must.
 
+## No `_<extension>` Filename Suffixes
+
+Avoid suffix-style naming on substrate files: `functor_laws.mirror`,
+`array_utils.mirror`, `string_helpers.mirror`, `*_types.mirror`. The
+suffix is substituting for directory structure. If `functor` the property
+needs to be disambiguated from the laws of functors, the directory does
+the disambiguating:
+
+- ❌ `property/functor_laws.mirror`
+- ✅ `property/laws/functor.mirror`
+
+Same principle for utility-shaped, helpers-shaped, types-shaped files —
+encode the kind as a directory, not as a suffix. The filename names the
+thing; the path names its kind. Sibling files in `laws/` keep their bare
+names (`monoidal.mirror`, `monotonicity.mirror`) — the directory already
+carries the law-shape; the name doesn't need to restate it.
+
+This is substrate-pull at the filename altitude: the structure carries
+the meaning; the name doesn't restate the structure. Same reflex as
+*"keywords are substrate declarations"* — paths ARE substrate structure.
+
 ## What NOT to do
 
 - Do NOT add new Rust modules to `bootstrap/` to grow features. New capability

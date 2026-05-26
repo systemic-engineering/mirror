@@ -1,6 +1,6 @@
 in @prism
 
-# @epistemologic/property/monoidal
+# @epistemologic/property/laws/monoidal
 #
 # A type is monoidal iff it carries a binary composition `compose`
 # and a distinguished `identity` element such that composition is
@@ -20,7 +20,8 @@ in @prism
 # pair forms a monoid under content-addressing (hash composition
 # is associative; the identity frame is the no-op delta). The
 # `requires monoidal(frame)` clause was held until this property
-# existed; it can now be applied.
+# existed; it can now be applied (now at @epistemologic/property/
+# laws/monoidal).
 #
 # Mirror's contribution: content-addressing makes associativity FREE
 # at the substrate. OID concatenation is associative; two frames whose
@@ -35,7 +36,7 @@ in @prism
 # composition respects when the carrier is a delta-shape like
 # fragmentation.frame).
 
-grammar @epistemologic/property/monoidal {
+grammar @epistemologic/property/laws/monoidal {
 
   # The identity law: there exists an element `e` such that
   # compose(e, x) == x == compose(x, e) for all x of the type.
@@ -61,4 +62,4 @@ grammar @epistemologic/property/monoidal {
 out identity
 out associativity
 out monoidal
-out @epistemologic/property/monoidal
+out @epistemologic/property/laws/monoidal

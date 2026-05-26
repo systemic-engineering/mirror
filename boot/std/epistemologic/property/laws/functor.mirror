@@ -1,6 +1,6 @@
 in @prism
 
-# @epistemologic/property/functor_laws
+# @epistemologic/property/laws/functor
 #
 # zoom(T) is the annotation-only parametric form (Functor-shaped).
 # Per docs/insights/2026-05-25-parametric-types-and-fp-heritage.md.
@@ -20,7 +20,7 @@ in @prism
 # either identity (zoom(T) is not byte-identical to T) or composition
 # (nested zoom doesn't equal sequential zoom).
 
-grammar @epistemologic/property/functor_laws {
+grammar @epistemologic/property/laws/functor {
 
   # The identity law: zoom(id) = id.
   #
@@ -46,4 +46,4 @@ grammar @epistemologic/property/functor_laws {
 out identity_law
 out composition_law
 out functor_laws
-out @epistemologic/property/functor_laws
+out @epistemologic/property/laws/functor

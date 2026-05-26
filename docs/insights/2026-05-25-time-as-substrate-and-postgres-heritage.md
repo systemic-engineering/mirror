@@ -65,8 +65,8 @@ grammar @time/duration {
   in @epistemologic
   in @epistemologic/property
   in @epistemologic/property/content_addressed
-  in @epistemologic/property/monotonicity
-  in @epistemologic/property/duration_algebra
+  in @epistemologic/property/laws/monotonicity
+  in @epistemologic/property/laws/duration_algebra
 
   # The base carrier. Non-negative by construction (refract witness):
   # constructors that would produce a negative duration return imperfect.

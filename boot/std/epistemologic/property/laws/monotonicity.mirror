@@ -1,6 +1,6 @@
 in @prism
 
-# @epistemologic/property/monotonicity
+# @epistemologic/property/laws/monotonicity
 #
 # A type is monotonic iff, within a single frame, time flows forward.
 # For any sequence of values of the type, ordered by construction
@@ -25,7 +25,7 @@ in @prism
 # cross-observer concern this property is intentionally silent on —
 # monotonicity is within-frame).
 
-grammar @epistemologic/property/monotonicity {
+grammar @epistemologic/property/laws/monotonicity {
 
   # The type's values admit a comparison that is reflexive,
   # antisymmetric, and transitive (a partial order). Required
@@ -53,4 +53,4 @@ out ordered
 out non_decreasing
 out total_within_frame
 out monotonicity
-out @epistemologic/property/monotonicity
+out @epistemologic/property/laws/monotonicity

@@ -1,7 +1,7 @@
 in @prism
 in @fragmentation
 in @epistemologic/property/content_addressed
-in @epistemologic/property/monoidal
+in @epistemologic/property/laws/monoidal
 
 # @fragmentation/frame
 #
@@ -108,7 +108,7 @@ grammar @fragmentation/frame {
   #                            compose(identity(s), f) == f when
   #                            f.from == s; compose(f, identity(f.to))
   #                            == f; compose is associative. Per
-  #                            @epistemologic/property/monoidal: the
+  #                            @epistemologic/property/laws/monoidal: the
   #                            laws reduce to OID equality under
   #                            content-addressing — hash composition
   #                            is associative; the empty-delta frame's

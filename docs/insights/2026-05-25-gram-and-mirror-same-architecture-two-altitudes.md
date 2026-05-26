@@ -52,7 +52,7 @@ Mirror's trajectories ARE the gen_prism ancestor chain — addressable, replayab
 
 GRAM checks via LPRM value head after the fact, against final prediction accuracy as the regression target.
 
-Mirror's `@epistemologic/property/{functor_laws, monad_laws, is_prism_record, autopoietic, content_addressed}` (landed 2026-05-25 in task #69) verifies at every transition. The laws hold structurally, not statistically.
+Mirror's `@epistemologic/property/{laws/functor, laws/monad, is_prism_record, autopoietic, content_addressed}` (landed 2026-05-25 in task #69; reorganized 2026-05-26 to surface the law-shape under `laws/`) verifies at every transition. The laws hold structurally, not statistically.
 
 ### 4. Width is architectural, not sampling
 
