@@ -1,0 +1,98 @@
+in @prism
+
+in @io/bytes
+in @io/socket
+in @fragmentation
+in @fragmentation/frame
+
+# @spectral/portal/codec
+#
+# @fragmentation/frame <-> bytes wire codec. Four actions that turn
+# the typed patch shape from @fragmentation/frame into the
+# length-prefixed byte sequence the portal's middle wire stage
+# carries, and back. Per docs/insights/2026-05-26-portal-as-io-
+# socket-over-content-addressed-subspace.md §"The composition" item
+# (b): "Single @fragmentation/frame full frame — the portal's
+# `collapse`; content-addressed initial projection."
+#
+# Per the issue #78 plan: this grammar lifts the previously-`\` body
+# of @spectral/portal.open's frame-initial stage into a typed,
+# Fate-resolvable contract. write_frame's body composes cleanly
+# (serialize |> @io/socket.write_bytes); the remaining three hit
+# substrate gaps surfaced below and stay `\` for Fate dispatch.
+#
+# ── substrate gap surfaced (2026-05-26) ─────────────────────────
+#
+# serialize / deserialize / read_frame need an `oid <-> bytes`
+# primitive (the OID is 32 bytes of SHA-256 digest; the substrate
+# already computes it but does not expose it as bytes through any
+# current grammar). Adding `oid.to_bytes(oid) -> bytes` and
+# `oid.from_bytes(b: bytes) -> imperfect<oid>` is the natural
+# pairing — likely under @fragmentation or a new @fragmentation/
+# oid grammar — but is OUT OF SCOPE here per the issue #78 plan's
+# "don't invent primitives" rule. write_frame composes cleanly the
+# moment serialize lands; read_frame composes cleanly the moment
+# deserialize lands. Two of four actions are pure plumbing once
+# the OID-bytes primitive ships.
+#
+# Wire shape (informal, for the body to follow once gaps close):
+#
+#   [from_oid: 32 bytes][to_oid: 32 bytes][delta_oid: 32 bytes]
+#
+# Three OIDs, fixed-size. The delta payload is identified by its
+# OID; the receiver fetches the delta body from the shared
+# content-addressed store (@fragmentation.observe). Bandwidth-
+# minimal; replayable; the same shape git-pack uses for ref
+# advertisements.
+#
+# Sibling grammars under @spectral/portal: @spectral/portal/
+# handshake (WS upgrade), @spectral/portal/stream (eigenvalue
+# stream), @spectral/portal itself (the four-stage composition).
+
+grammar @spectral/portal/codec {
+
+  # ── serialize: frame -> bytes ───────────────────────────────
+  #
+  # Flatten a frame's three OIDs into a 96-byte fixed-size payload.
+  # Total at the signature level; the body needs the oid -> bytes
+  # primitive (substrate gap; see header). Body composes once that
+  # primitive lands:
+  #   oid.to_bytes(f.from)
+  #     |> @io/bytes.concat(oid.to_bytes(f.to))
+  #     |> @io/bytes.concat(oid.to_bytes(f.delta))
+  serialize(f: frame) -> bytes { \ }
+
+  # ── deserialize: bytes -> frame ─────────────────────────────
+  #
+  # Reverse of serialize. Returns imperfect because the input may
+  # be the wrong length (not 96 bytes), contain a non-canonical OID
+  # encoding, or fail any per-OID sanity check at the substrate.
+  # Body needs the bytes -> oid primitive (substrate gap).
+  deserialize(b: bytes) -> imperfect { \ }
+
+  # ── write_frame: send a frame over a connection ───────────────
+  #
+  # serialize the frame, write the bytes. Composes cleanly: the
+  # only missing piece is serialize's body (deferred to the OID
+  # primitive landing), and the surface here is already typed
+  # against both. Returns imperfect because write_bytes can fail
+  # (peer reset, broken pipe).
+  write_frame(c: connection, f: frame) -> imperfect {
+    serialize(f) |> @io/socket.write_bytes(c)
+  }
+
+  # ── read_frame: receive a frame from a connection ──────────────
+  #
+  # Read 96 bytes, deserialize. Returns imperfect on read failure
+  # (EOF before 96 bytes, kernel error) or deserialize failure
+  # (malformed payload). Body composes the moment deserialize
+  # lands:
+  #   @io/socket.read_bytes(c, 96) |> deserialize
+  read_frame(c: connection) -> imperfect { \ }
+}
+
+out serialize
+out deserialize
+out write_frame
+out read_frame
+out @spectral/portal/codec
