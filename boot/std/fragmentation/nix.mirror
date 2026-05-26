@@ -1,0 +1,190 @@
+in @prism
+in @code/nix
+in @fragmentation
+in @fragmentation/frame
+in @mirror/spectral
+in @time
+
+# @fragmentation/nix
+#
+# Cold-tier storage adapter: `@fragmentation/frame` crystal carriers
+# above Nix store entries below. The typed substrate that orchestrates
+# `@spectral/db`'s cold tier with Nix as the blob backend.
+#
+# Per docs/specs/spectral-db-three-tier-architecture.md §"Cold tier":
+#
+#   @fragmentation/frame              — typed crystal carriers
+#            ↓
+#      Nix store entries              — content-addressed blob storage
+#            ↓
+#      Nix GC + binary caches         — promotion/demotion + cross-deployment
+#
+# This grammar IS the orchestration arrow between the typed layer
+# and the blob layer. `@code/nix` provides the render primitives;
+# `@fragmentation/nix` provides the cold-tier engine surface above
+# them. The adapter speaks `@spectral/portal` at its public boundary;
+# the body is the Fate-resolved hole that closes when the engine
+# lands (#43, #48).
+#
+# Substrate distinction from `@mirror/store/nix`:
+#
+#   @mirror/store/nix  — the *crystal store* backend. Three ops:
+#                        store / fetch / exists. The swap point that
+#                        switches mirror's storage from git to Nix.
+#                        Wire-level; OIDs in, bytes out.
+#
+#   @fragmentation/nix — the *cold-tier adapter* for the spectral-db
+#                        engine. Frame-shaped (zoom(oid, frame)
+#                        deltas); GC-root aware; pheromone-strength
+#                        aware; tombstone-aware. The engine reads
+#                        this through `@spectral/portal`.
+#
+# Same backend (Nix); different altitudes. @mirror/store/nix is
+# the storage primitive; @fragmentation/nix is the typed orchestration
+# that the engine bets against.
+#
+# Tombstone integration: when an OID lookup fails at the cold tier,
+# the engine queries the tombstone-index (per the tombstone mechanism
+# in the spec, commit 7907a0e). `tombstone_check` is the substrate
+# arrow that distinguishes Live / Tombstoned / Unknown — three states
+# the Merkle architecture demands be visible. The body is parked
+# behind the tombstone-index landing (separate task).
+#
+# Honesty marker: bodies are \. Substrate declaration only. The
+# orchestration engine (closed-source IP moat per the spec) reads
+# this surface but is not implemented.
+#
+# Spec: docs/specs/spectral-db-three-tier-architecture.md
+# Tasks: #43, #48 (cold-tier adapter); #77, #78 (`@spectral/portal`)
+
+grammar @fragmentation/nix {
+
+  # ── backend handle ──────────────────────────────────────────────
+  #
+  # The cold-tier deployment configuration. `store_root` is the
+  # /nix/store path (host-dependent; typically /nix/store on Linux
+  # + macOS, configurable for chroot / Nix-in-Docker / per-user
+  # store setups). `gc_root_dir` is where the engine pins its GC
+  # roots (per the substrate-pull discipline: Nix already owns GC
+  # root semantics; the engine just declares roots).
+  type backend = {
+    store_root:  text,
+    gc_root_dir: text,
+  }
+
+  # ── store: write a frame to the cold tier ───────────────────────
+  #
+  # Take a `@fragmentation/frame` (the typed crystal carrier) and
+  # write its delta payload as a Nix store entry. The frame's OID
+  # composes into a /nix/store path; the Nix store's hash cross-
+  # checks against the frame's content-addressing.
+  #
+  # The body unfolds into @code/nix.store(@code/nix.emit(frame));
+  # parked behind kintsugi until the translate path between
+  # @fragmentation/frame and @code/nix lands.
+  store(f: frame) -> imperfect(store_path) { \ }
+
+  # ── load: read a frame back from the cold tier by OID ───────────
+  #
+  # Resolve a frame OID to its /nix/store path and read the typed
+  # frame back. Imperfect because:
+  #   - the OID may not exist in the cold tier (lookup miss)
+  #   - the store entry may have been GC'd since
+  #   - the hash may not verify (substrate-level corruption — should
+  #     never happen under Nix semantics, but the type carries it)
+  #
+  # The miss-path delegates to tombstone_check: if the OID is
+  # tombstoned, the imperfect carries the tombstone; if neither,
+  # an unknown-OID error.
+  load(o: oid) -> imperfect(frame) { \ }
+
+  # ── gc_roots: enumerate the engine's pinned GC roots ────────────
+  #
+  # Returns the set of store_paths that mirror's engine has pinned
+  # via `nix-store --add-root`. The engine pins one root per crystal
+  # with non-zero pheromone strength; demotion to the iceberg tier
+  # (or cryptographic destruction, depending on retention class)
+  # releases the root and Nix GC collects.
+  gc_roots(b: backend) -> [store_path] { \ }
+
+  # ── pin: install a GC root for a crystal ────────────────────────
+  #
+  # Substrate arrow for promotion / reinforcement: when a crystal's
+  # pheromone strength crosses the threshold or a new fracture
+  # cites the crystal, the engine pins a GC root so Nix won't
+  # collect it. The body is `nix-store --add-root`; parked.
+  pin(o: oid, b: backend) -> imperfect(store_path) { \ }
+
+  # ── release: remove a GC root ───────────────────────────────────
+  #
+  # Substrate arrow for demotion / evaporation: when a crystal's
+  # pheromone strength drops below the threshold and the evaporation
+  # curve permits, the engine releases the GC root. The next Nix GC
+  # run collects the crystal from the cold tier (after iceberg-tier
+  # capture, if retention policy demands).
+  release(o: oid, b: backend) -> imperfect { \ }
+
+  # ── tombstone_check: distinguish forgotten from unknown ─────────
+  #
+  # When `load(o)` returns dark, the engine queries the tombstone-
+  # index: was this OID deleted (tombstone present), or was it
+  # never here (unknown)? The Merkle architecture demands these
+  # be distinguishable; the return type encodes the distinction.
+  #
+  # The body resolves through the tombstone-index crystal (separate
+  # substrate landing). Parked.
+  tombstone_check(o: oid) -> option(tombstone) { \ }
+
+  # ── promote: cold -> warm (engine surface) ──────────────────────
+  #
+  # The engine's promotion call: read the frame from the cold tier,
+  # project to vector, hand off to the warm-tier adapter. Returns
+  # the frame so the warm tier can write its projection in the
+  # same transaction. Body is the engine's responsibility; the
+  # adapter just exposes the surface.
+  promote(o: oid) -> imperfect(frame) { \ }
+
+  # ── demote: warm -> cold (engine surface) ───────────────────────
+  #
+  # The engine's demotion call: take a frame whose warm-tier vector
+  # is aging out, write it back to the cold tier with its updated
+  # pheromone metadata, drop the warm-tier row. Returns the cold-
+  # tier store_path.
+  demote(f: frame) -> imperfect(store_path) { \ }
+
+  # ── last_referenced_at: read the cold-tier access timestamp ─────
+  #
+  # Nix tracks atime on store entries; the engine reads it for the
+  # evaporation curve. `@time.instant` per the substrate's own time
+  # discipline (boot/std/time.mirror).
+  last_referenced_at(o: oid) -> imperfect(instant) { \ }
+
+  recover |result, loss| {
+    # cold-tier reads are immutable; partial loss means the closure
+    # was incomplete (a referenced crystal is missing). Log the
+    # drift; let the engine decide whether to escalate or proceed
+    # with the partial closure.
+    log_drift(loss)
+    result
+  }
+
+  rescue |error| {
+    # the cold tier is unreachable (Nix daemon down; store path
+    # corrupted; permission denied). The engine handles fallback
+    # to iceberg tier or surfaces the error to the operator. The
+    # adapter just signals dark.
+    dark
+  }
+}
+
+out backend
+out store
+out load
+out gc_roots
+out pin
+out release
+out tombstone_check
+out promote
+out demote
+out last_referenced_at
+out @fragmentation/nix

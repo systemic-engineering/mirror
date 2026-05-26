@@ -1,0 +1,132 @@
+in @prism
+in @code
+in @fragmentation
+
+# @code/nix: glass for the Nix expression language as a render target.
+#
+# Compiles mirror crystals to Nix derivations / store entries. Nix
+# IS content-addressed blob storage; mirror IS content-addressed
+# substrate above. The two address-spaces compose: a mirror crystal's
+# OID names what; the Nix store path names where. `@code/nix` is the
+# render bridge between them.
+#
+# Substrate decision (Alex 2026-05-26 per
+# docs/specs/spectral-db-three-tier-architecture.md §"Cold tier"):
+# the cold-tier blob layer IS Nix. `@code/nix` renders crystals into
+# the form Nix's store understands; `@fragmentation/nix` (sibling
+# substrate) is the typed orchestration above that wraps the cold
+# tier under `@spectral/portal`.
+#
+# Mirrors the shape of `@code/rust` and `@code/llvm`: a render-
+# target grammar in the @code lineage. Bodies are \ — this is the
+# substrate landing; the emit/store/hash paths resolve through Fate
+# at the kintsugi altitude that closes them.
+#
+# Five-operation mapping for the Nix language:
+#   derivation -> split   (one of many; the build variants)
+#   import     -> project (extract a view; pull a flake input)
+#   build      -> zoom    (transform; .drv -> /nix/store/<hash>-<name>)
+#   verify     -> refract (settle; the hash IS the verification)
+#   attrset    -> focus   (look closer; the record namespace)
+#
+# Honesty marker: bodies are \. Substrate declaration only; the
+# kintsugi rules that close the parsing + emission obligations are
+# parked behind the Fate-resolved altitude.
+
+grammar @code/nix("nix") {
+  # Five-operation mapping (Nix keywords -> mirror operations).
+  split derivation
+  project import
+  zoom build
+  refract verify
+  focus attrset
+
+  # ── render-target types ─────────────────────────────────────────
+  #
+  # The substrate primitives Nix exposes at its blob layer. Each
+  # one is a content-addressed handle into /nix/store. `derivation`
+  # is the build recipe; `store_path` is the realized output;
+  # `narinfo` is Nix's metadata format that carries the closure +
+  # signatures across binary caches.
+  type derivation
+  type store_path
+  type narinfo
+  type closure = [store_path]
+  type flake_input
+  type flake_output
+
+  # ── ast surface ─────────────────────────────────────────────────
+  #
+  # The Nix AST as a body-lens narrowing surface. Same shape as
+  # `@code/rust`'s rust_ast — selectors narrow against this; the
+  # parsing rules close once the parse template lands.
+  type nix_ast
+  parse(bytes) -> nix_ast { \ }
+
+  # ── render: emit a Nix expression from a mirror crystal ─────────
+  #
+  # The translate template: map a mirror crystal's AST into the
+  # Nix expression language. The kintsugi rule that closes this is
+  # the @kintsugi/translate path between @prism and @code/nix.
+  emit(crystal) -> derivation { \ }
+
+  # ── build: realize a derivation into the store ──────────────────
+  #
+  # `nix-store --realise` at the substrate altitude. The .drv goes
+  # in; the store_path comes out. Imperfect because the build can
+  # fail (sandbox violation; hash mismatch; network); the standard
+  # recovery surface carries the diagnostic.
+  build(d: derivation) -> imperfect(store_path) { \ }
+
+  # ── store: write a derivation file (.drv) to the store ──────────
+  #
+  # `nix-store --add` for the .drv itself. Returns the store_path
+  # of the derivation crystal (not its build output). Used when
+  # mirror's compiler emits a .drv that hasn't been built yet.
+  store(d: derivation) -> store_path { \ }
+
+  # ── hash_of: extract the content hash from a store path ─────────
+  #
+  # /nix/store/<hash>-<name> -> <hash> as an OID. Nix's hash IS
+  # the content address; mirror's OID IS the content address; the
+  # mapping is identity up to encoding (Nix uses base32; mirror
+  # uses hex). The body resolves the encoding bridge.
+  hash_of(path: store_path) -> oid { \ }
+
+  # ── path_of: render the /nix/store path for a crystal OID ───────
+  #
+  # Inverse direction of hash_of, when the crystal already lives in
+  # the store. Used by `@fragmentation/nix` to resolve a load() by
+  # OID into the concrete /nix/store path to read from.
+  path_of(oid: oid, name: text) -> store_path { \ }
+
+  # ── closure_of: enumerate the runtime reference closure ─────────
+  #
+  # `nix-store --query --requisites`. The cold-tier GC machinery
+  # reads this to compute reachability: a crystal's closure IS the
+  # set of crystals that must persist while it persists.
+  closure_of(path: store_path) -> closure { \ }
+
+  # ── LSP actions (mirror @code/rust's surface) ───────────────────
+  action complete(position) in @code/nix { \ }
+  action diagnose(range) in @code/nix { \ }
+  action hover(position) in @code/nix { \ }
+  action definition(position) in @code/nix { \ }
+  action references(position) in @code/nix { \ }
+  action tokens(range) in @code/nix { \ }
+}
+
+out derivation
+out store_path
+out narinfo
+out closure
+out flake_input
+out flake_output
+out nix_ast
+out emit
+out build
+out store
+out hash_of
+out path_of
+out closure_of
+out @code/nix
