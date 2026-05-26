@@ -835,11 +835,15 @@ requirement.**
 | §8.2 heuristic vs declared | Open question | N/A | Proposed — no clean literature answer; check against Thimm postulates | Thimm 2019 |
 | §8.3 LTN t-norm selection | Open question | N/A | Established (textbook fuzzy logic) | Serafini & Garcez 2021 (arXiv:2012.13635 Appendix B); Hájek 1998 |
 | §8.4 Non-converging tensors | Open question | N/A | Established framing; Mirror diverges from Bodnar 2022 on response | arXiv:2202.04579 |
-| §10.A Convergence-as-halting | Proposal | No — preconditions undeclared | Established proof shape (Tarski, Banach, Bodnar); Mirror's lattice + metric not declared | Tarski 1955; Bodnar et al. 2022 (arXiv:2202.04579) |
+| §10.A Tournament-level Lyapunov convergence | Proposal | No — preconditions undeclared | Established proof shape (Tarski, B&B PTAS, A* admissibility, Hajek 1988, Bodnar); knapsack reframe replaces per-fracture Lyapunov | Tarski 1955; Hart-Nilsson-Raphael 1968; Hajek 1988; Ibarra-Kim 1975 / Lawler 1979; arXiv:2504.15885; arXiv:2205.12442; arXiv:2202.04579 |
 | §10.B Holonomy = error delta = convergence delta | Proposal | No — single computation not implemented | Established (Berger & Gostiaux 1988; Saad 2003); Mirror's transfer is the three-name unification | Bodnar et al. 2022 (arXiv:2202.04579 Prop. 5) |
-| §10.C Monadic lift | Proposal | No — `@fate.minimize` body absent | Established (Bodnar 2022 sheaf diffusion; Barbero 2022 substrate-derived maps); Mirror diverges on substrate-vs-learned origin of restriction maps | arXiv:2202.04579; arXiv:2206.08702 |
+| §10.C Monadic lift | Proposal | No — `@fate.minimize` body absent | Established (Bodnar 2022 sheaf diffusion; Barbero 2022 substrate-derived maps); Mirror diverges on substrate-vs-learned origin of restriction maps; "monad" used loosely | arXiv:2202.04579; arXiv:2206.08702 |
 | §10.D The graph is the model | Recognition | No — names a relation, not a runtime | Anticipated by earlier mirror research agents; citation chain newly assembled | (chain across §10.C citations) |
-| §10.F.1–3 Convergence preconditions | Open questions | N/A | Mirror's choices open; established checklists exist (Tarski, Thimm) | Tarski 1955; Davey & Priestley 2002; Thimm 2019; arXiv:2202.04579 |
+| §10.F.1 Lattice completeness | Open question | N/A | Mirror's choice; Tarski / Davey-Priestley checklist | Tarski 1955; Davey & Priestley 2002 |
+| §10.F.2 ~~Monotone fracture composition~~ | Retired this tick | N/A | Reframed to round-level Lyapunov (§10.A); per-fracture requirement was too restrictive | Hajek 1988; Ibarra-Kim 1975 |
+| §10.F.3 Tensor norm choice | Open question | N/A | Mirror's choice; total holonomy and Fiedler are the strongest candidates | Bodnar 2022; Liu & Lu 2022 (arXiv:2205.12442); Thimm 2019 |
+| §10.F.4 Tournament completeness | Open question | N/A | Established frame (A* admissibility, B&B PTAS); mirror's choice among admissibility / depth-exhaustive / anytime | Hart-Nilsson-Raphael 1968; Dechter-Pearl 1985; Hendrich et al. 2025 |
+| §10.F.5 Approximation ratio | Open question | N/A | Established frame (FPTAS knapsack); mirror's tournament-budget transfer is open | Ibarra-Kim 1975; Lawler 1979; arXiv:1904.09562; arXiv:2510.04871; arXiv:2605.19376 |
 
 The one substrate primitive that EXISTS today and underlies this whole
 spec: `verdict` in `boot/std/epistemologic/property.mirror`. Everything
@@ -858,65 +862,129 @@ rephrased subjunctively below.*
 
 Three composing recognitions, named in proposal-altitude.
 
-### 10.A Monotone convergence theorem as stronger halting guarantee
+### 10.A Tournament-level Lyapunov: monotone convergence at round granularity
 
-**Proposal.** Fractures in `@kintsugi/fracture` would be *closure
-operators* on the AST: idempotent ($\mathrm{fix}(\mathrm{fix}(x)) = \mathrm{fix}(x)$),
-canonical at fixpoint, monotone with respect to a substrate-defined
-partial order. *That's half the proof.* The other half:
+**Proposal.** The unit of monotone decrease is **not the individual
+fracture; it is the tournament round** — one execution of
+`@fate.minimize` that selects and applies a composition of fractures with
+bounded backtracking. Individual fractures inside a round MAY locally
+worsen the tensor norm; the round, as a composite, heals it. The
+Lyapunov function lives at round granularity, not step granularity.
 
-IF the tensor norm $\|T_n\|$ — the magnitude of the spectral signature
-on the tension graph, or equivalently a scalar inconsistency measure
-(Thimm 2019) derived from $\lambda_0(\Delta_{\mathcal{F}})$ — decreases
-monotonically under iterated `@fate.minimize` application AND is bounded
-below by 0, THEN by the **monotone convergence theorem** the sequence
-$\{\|T_n\|\}_{n \in \mathbb{N}}$ converges. The recursion CAN be
-unbounded in step count and we still halt; the math guarantees a limit.
+This is the **0/1 knapsack relaxation** applied to substrate
+convergence. Greedy single-item selection on 0/1 knapsack is
+suboptimal; dynamic-programming / branch-and-bound over subsets attains
+FPTAS guarantees (Ibarra & Kim 1975 — the original FPTAS; Lawler 1979
+— improved bound; Chan 2018 / Jin 2019 — modern improvements via
+$(\max, +)$-convolution, arXiv:1904.09562). Greedy *per-fracture*
+Lyapunov fails for the same reason: a single fracture that opens a new
+opposition can be the right move when a second fracture in the same
+round closes both. The composite earns the monotone decrease; the
+step doesn't have to.
 
-*Established (cite).* Three load-bearing results combine:
+*Old framing (retired this tick).* A prior version of §10.A required
+$\|f(T)\| \leq \|T\|$ for **every** fracture $f$ in the catalog and
+every tensor $T$. That was too restrictive and didn't match `@fate`'s
+actual structure — `@fate` runs tournament rounds with backtracking, not
+greedy single-fracture descent. The §10.F.2 precondition (monotone
+fracture composition) is **retired** as a consequence; see §10.F.2
+below for the retirement notice.
+
+**Corrected proof shape.**
+
+IF for every tensor $T$ that is **not at a fixed point** of `@fate.minimize`,
+the tournament round $R$ applied to $T$ satisfies $\|R(T)\| < \|T\|$ —
+the round, as a whole, **strictly** decreases the norm — AND $\|T\|$ is
+bounded below by $0$, THEN the sequence $\{\|T_n\|\}_{n \in \mathbb{N}}$
+with $T_{n+1} = R(T_n)$ is monotonically decreasing and bounded below, so
+by the **monotone convergence theorem** it converges. The recursion CAN
+be unbounded in step count (a round can apply arbitrarily many
+fractures with backtracking) and we still halt; the math guarantees a
+limit at round granularity.
+
+*Established (cite).* Five load-bearing results combine:
 
 - **Tarski's fixed point theorem** (Tarski 1955, *Pacific J. Math.* 5).
   Every monotone function on a complete lattice has a non-empty complete
   lattice of fixed points; the least fixed point is
-  $\bigsqcap \{x : f(x) \sqsubseteq x\}$. Mirror's fracture composition
-  on the AST partial order is the substrate's instance.
-- **Banach fixed point theorem** (contraction mapping). If the iteration
-  $T_{n+1} = M(T_n)$ where $M = \text{`@fate.minimize`}$ is a contraction
-  on a complete metric space — $d(M(T), M(T')) \leq q \cdot d(T, T')$
-  for some $q < 1$ — then the iteration converges exponentially to a
-  unique fixed point. Cheaper than Tarski; gives a *rate* not just
-  existence.
+  $\bigsqcap \{x : f(x) \sqsubseteq x\}$. Mirror applies Tarski at
+  **round granularity**: the round operator $R$ must be monotone on the
+  AST lattice; individual fractures inside the round need not be.
+- **Branch-and-bound as anytime / PTAS** (Hendrich, Pferschy, Klotz 2025,
+  *Branch-and-Bound Algorithms as Polynomial-time Approximation Schemes*,
+  arXiv:2504.15885). Branch-and-bound with a DP-style branching strategy
+  yields a polynomial-time approximation scheme — anytime convergence
+  with bounded approximation gap. Mirror's tournament round is the
+  substrate analog: bounded backtracking, deterministic improvement at
+  the round level. The PTAS guarantee is what lets `@fate.minimize`
+  halt with a near-optimal round even when exhaustive search is
+  prohibitive.
+- **A\* admissibility and optimality** (Hart, Nilsson, Raphael 1968,
+  *A Formal Basis for the Heuristic Determination of Minimum Cost Paths*,
+  IEEE TSSC SSC-4(2):100–107; Stanford AI Lab manuscript). If a
+  heuristic $h(n)$ never overestimates the true cost $h^*(n)$ — i.e.
+  $h$ is **admissible** — then A\* returns an optimal path. With a
+  *consistent* heuristic, A\* is optimally efficient among admissible
+  search algorithms. Mirror's tournament-completeness condition (§10.F.4)
+  is the substrate analog: under what conditions does the round's
+  bounded backtracking guarantee finding an improving composition
+  whenever one exists?
+- **Simulated annealing convergence** (Hajek 1988, *Cooling Schedules
+  for Optimal Annealing*, *Mathematics of Operations Research*
+  13(2):311–329). Provides a necessary and sufficient condition on the
+  cooling schedule for the state to converge **in probability** to the
+  set of globally minimum cost states. The key insight transferring to
+  mirror: ascent moves are allowed (a step can worsen the objective) as
+  long as the schedule's *macro* dynamics decrease energy. Mirror's
+  tournament is the discrete analog: per-fracture ascent is permitted
+  inside a round; round-level descent is required.
+- **Lyapunov function approach for approximation algorithms** (Liu &
+  Lu 2022, *Lyapunov function approach for approximation algorithm
+  design and analysis*, arXiv:2205.12442). A two-phase systematic
+  framework for proving approximation guarantees via Lyapunov
+  functions on discrete optimization. Mirror's $\|T_n\|$ IS such a
+  Lyapunov function, evaluated at round boundaries.
 - **Bodnar et al. 2022 sheaf Laplacian spectral bounds**
   (arXiv:2202.04579, Propositions 3, 5; §3.2). The Cheeger-like bounds
   $\lambda_0 \leq r/2$ (upper, path-dependence) and
   $\lambda_0 \geq \epsilon (2 \mathrm{diam}(G) n d_{\max})^{-1}$ (lower)
-  give a *quantitative* convergence rate for sheaf diffusion. If mirror's
-  `@fate.minimize` discretizes sheaf diffusion on the tension graph,
-  Bodnar's bounds transfer.
+  give a *quantitative* convergence rate for sheaf diffusion. If
+  mirror's tensor norm tracks $\lambda_0(\Delta_{\mathcal{F}})$ at round
+  boundaries, Bodnar's bounds give the round-to-round rate.
 
 *Preconditions to verify (these are themselves design calls Alex has not
-made):*
+made — see §10.F):*
 
 1. **Lattice completeness.** The AST partial order under fracture-induced
    rewrite must form a complete lattice. *Proposed; not declared.* The
    substrate would need a join/meet pair on fracture-equivalent ASTs.
-2. **Monotone fracture composition.** Each fracture must preserve the
-   order: $x \sqsubseteq y \Rightarrow \mathrm{fix}(x) \sqsubseteq \mathrm{fix}(y)$.
-   *Proposed; not declared.* Current `@kintsugi/fracture/generic-brackets`
-   is one fracture; the catalog isn't populated enough to test
-   composition.
+   *Still required* — the round operator's monotonicity (Tarski-style)
+   lives on the lattice; the substrate-altitude commitment doesn't
+   change.
+2. ~~**Monotone fracture composition.**~~ **Retired this tick.** The
+   prior precondition required each individual fracture to preserve the
+   AST order. That was too restrictive — `@fate`'s tournament admits
+   per-step ascent. See §10.F.2 for the retirement notice. The
+   replacement requirement is **round-level Lyapunov decrease**
+   ($\|R(T)\| < \|T\|$ off fixed points), formalized in §10.F.4 below.
 3. **Bounded norm.** $\|T_n\| \geq 0$ with equality only at the fixed
    point. *Half-established.* Sheaf Laplacian eigenvalues are
    non-negative by Hansen & Ghrist 2019; whether mirror's tensor norm
-   collapses correctly to a non-negative scalar is open.
+   collapses correctly to a non-negative scalar is open (see §10.F.3).
 
 *Mirror diverges from Tarski/Banach because* the substrate doesn't yet
-declare the lattice structure or the metric. The proof shape transfers;
-the substrate-altitude commitments don't exist.
+declare the lattice structure or the metric, and the operator $R$ that
+must be monotone is the tournament-round operator, not an individual
+fracture. The proof shape transfers at round granularity; the
+substrate-altitude commitments don't exist.
 
-*Honesty marker.* This section names **how the proof would go**. It does
-not constitute the proof. The proof requires the three preconditions
-above to be design-called by Alex and declared in the substrate.
+*Honesty marker.* This section names **how the proof would go**. It
+does not constitute the proof. The proof requires the two surviving
+preconditions (lattice completeness, bounded norm) plus the new
+tournament-completeness condition (§10.F.4) to be design-called by Alex
+and declared in the substrate. The knapsack-relaxation framing is the
+structural argument for why the per-step requirement was too strong; the
+tournament-round Lyapunov is what the substrate actually has to satisfy.
 
 ### 10.B Holonomy = error delta = convergence delta
 
@@ -1042,17 +1110,24 @@ It doesn't make the runtime exist.
 
 - §3 (gap / tension / tensor) supplies the **measurement** — the
   primitives the spectral signature $T$ would be derived from.
-- §6 (`@fate.minimize`) is where the **monadic lift** would operate —
-  the body that, when it carries logic, would implement the lifted
-  operator $\mathrm{lift}\,M$.
-- §8 (open design calls) gains a new entry below, naming the three
-  preconditions for the convergence proof. They are themselves design
-  calls Alex has not made.
+- §6 (`@fate.minimize`) is where the **tournament round** $R$ would
+  operate — the body that, when it carries logic, would implement the
+  round-level Lyapunov operator whose monotone decrease drives the
+  convergence proof of §10.A. §6's existing rank-propose-apply-remeasure
+  loop IS one round; multi-trajectory sampling à la GRAM gives the
+  bounded backtracking that §10.F.4 requires.
+- §8 (open design calls) gains new entries below — §10.F.1 / .3 / .4 /
+  .5 are the surviving preconditions and approximation questions for
+  the round-level proof. §10.F.2 is retired this tick.
 
-### 10.F The three convergence preconditions, as design calls
+### 10.F The convergence preconditions, as design calls
 
 Moving the precondition list from §10.A here so it surfaces in the
-open-questions ledger.
+open-questions ledger. **§10.F.2 is retired this tick** under Alex's
+correction that the Lyapunov function lives at tournament-round
+granularity, not per-fracture; §10.F.4 and §10.F.5 are new entries
+formalizing the tournament-completeness and approximation-ratio
+questions the reframe surfaces.
 
 #### 10.F.1 Lattice completeness on the AST under fracture-rewrite
 
@@ -1066,30 +1141,145 @@ classes.
 Priestley 2002 *Introduction to Lattices and Order*). Mirror's choice
 among the candidates is open.*
 
-#### 10.F.2 Monotone fracture composition
+#### 10.F.2 ~~Monotone fracture composition~~ — *retired this tick*
 
-Must fracture composition be monotone in the chosen order? If yes, the
-fracture catalog must be designed to preserve order; some natural
-fractures may not compose. If no, the convergence guarantee weakens from
-monotone convergence to a more subtle argument (Kleene's recursion
-theorem; Park's induction).
+**Retired.** The original §10.F.2 required each individual fracture
+$f$ in `@kintsugi/fracture` to preserve the AST partial order (and,
+implicitly, to be Lyapunov-decreasing on the tensor norm). Alex's
+correction (2026-05-26): this is too restrictive and doesn't match
+`@fate`'s actual structure. The unit of monotone decrease is the
+**tournament round** (§10.A), not the per-fracture step. Per-step
+ascent is permitted — Hajek 1988's simulated-annealing argument is the
+canonical example of a convergent process with locally-worsening steps.
 
-*Citation provenance: Tarski 1955 is the load-bearing reference. The
-design call is whether to constrain the fracture catalog to monotone
-operators or to weaken the convergence claim.*
+*Reasoning.* `@fate`'s tournament admits backtracking over fracture
+compositions. A fracture that locally widens a tension can be the
+correct move inside a round when a subsequent fracture in the same
+round closes a more-load-bearing gap. The 0/1-knapsack relaxation
+(§10.A) is the structural reason: greedy single-item selection is
+suboptimal even on monotone objectives; the DP / branch-and-bound
+composite earns the FPTAS guarantee. Constraining the fracture catalog
+to monotone-only operators would forbid moves that `@fate` *needs* in
+order to reach the globally improving composition.
+
+*Replacement.* The round-level Lyapunov requirement
+($\|R(T)\| < \|T\|$ off fixed points) supersedes the per-fracture
+requirement. It lives in §10.F.4 (tournament completeness condition).
+The approximation-quality question — how close round-found compositions
+come to the globally optimal — moves to §10.F.5.
+
+*Citation: Hajek 1988 (cooling schedules for simulated annealing,
+*Math. Oper. Res.* 13(2):311–329) demonstrates that convergence
+tolerates per-step ascent; Ibarra-Kim 1975 / Lawler 1979 FPTAS for 0/1
+knapsack demonstrates that composite descent (DP over subsets) outperforms
+greedy per-item descent on monotone objectives. The retirement is
+structurally aligned with these established results.*
 
 #### 10.F.3 Tensor norm + non-negativity + below-bound
 
 What is the scalar norm $\|T\|$ on a tensor? Candidates:
 $\lambda_0(\Delta_{\mathcal{F}})$ alone (the spectral gap);
-$\sum_i \lambda_i$ (trace); maximum tension `vector` magnitude; a
-Thimm-2019-style inconsistency measure. The choice determines whether
-the bound $\|T\| \geq 0$ is automatic, and whether monotone decrease is
-the right convergence criterion.
+$\sum_i \lambda_i$ (trace); **total holonomy** $\sum_{\gamma \in \Gamma} \|P^\gamma_{v \to v} - I\|$
+over a generating set $\Gamma$ of cycles (the Bodnar 2022 quantity
+directly); maximum tension `vector` magnitude; a Thimm-2019-style
+inconsistency measure. The choice determines whether the bound
+$\|T\| \geq 0$ is automatic (yes for all spectral / holonomy / Thimm
+candidates), and whether **round-level** decrease (§10.A) is the right
+convergence criterion (the per-step version is retired per §10.F.2).
+
+The Fiedler value $\lambda_0(\Delta_{\mathcal{F}})$ remains the
+strongest candidate for *convergence-rate prediction* — Bodnar 2022
+Proposition 5 gives the Cheeger lower bound — even if it isn't the
+norm whose monotone decrease the round operator promises. Total
+holonomy is the strongest candidate for the **Lyapunov function itself**:
+it's the geometric quantity Proposition 5 lower-bounds the spectral gap
+by, so its decrease drives the spectral gap's growth.
 
 *Citation provenance: Thimm 2019 rationality postulates are the
-established checklist; Bodnar 2022 gives the spectral choice. Mirror's
-selection is open.*
+established checklist; Bodnar 2022 gives the spectral and holonomy
+choices; Liu & Lu 2022 (arXiv:2205.12442) provides the framework for
+verifying that a chosen scalar IS a valid Lyapunov function for an
+approximation-algorithm convergence proof. Mirror's selection is open.*
+
+#### 10.F.4 Tournament completeness condition
+
+Under what conditions does the tournament's bounded backtracking
+guarantee finding an improving composition whenever one exists? This
+is the substrate-level analog of **admissibility in A\* search** (Hart,
+Nilsson, Raphael 1968): a heuristic that never overestimates true cost
+ensures the search returns an optimal path.
+
+The round-level Lyapunov requirement of §10.A is *existential* —
+$\|R(T)\| < \|T\|$ for every non-fixed-point $T$. For the proof to
+bind, `@fate`'s tournament must be **complete** with respect to
+improving compositions: if there exists a composition of fractures
+$f_k \circ \ldots \circ f_1$ with $\|f_k \circ \ldots \circ f_1(T)\| < \|T\|$,
+the tournament's backtracking must find one — perhaps not the optimal
+but some improving composition — within its bounded budget.
+
+Candidates for what "complete" requires:
+
+- **A-style admissibility:** a heuristic guiding the tournament's
+  branch selection that never overestimates the achievable
+  norm-decrease of a candidate composition. With consistency added
+  (the triangle inequality on heuristic estimates), A\* is optimally
+  efficient (Hart-Nilsson-Raphael 1968; Dechter & Pearl 1985).
+- **Exhaustive within depth $d$:** if the tournament enumerates all
+  compositions up to depth $d$, completeness requires that for every
+  non-fixed-point $T$ there exists an improving composition of depth
+  $\leq d$. The relationship between $d$ and the AST's fracture diameter
+  is open.
+- **Anytime guarantee:** following the branch-and-bound PTAS framing
+  (Hendrich-Pferschy-Klotz 2025, arXiv:2504.15885), completeness can be
+  *anytime*: the tournament returns its best composition so far at any
+  interruption, with quality monotonically improving in budget.
+
+*Citation provenance: Hart-Nilsson-Raphael 1968 (A\*); Pearl 1984
+(*Heuristics*); Dechter & Pearl 1985 (*Generalized Best-First Search
+Strategies and the Optimality of A\**, JACM 32(3)); Hendrich et al. 2025
+(branch-and-bound PTAS). Mirror's choice among the three candidates is
+open.*
+
+#### 10.F.5 Approximation ratio under bounded-budget tournaments
+
+Even when §10.F.4's completeness condition holds *in principle*,
+`@fate`'s real-world tournaments run under bounded time / depth / width
+budgets. The composition found in a round may be improving but not
+optimal. What is the **expected gap** between the round-found norm
+decrease and the globally-optimal one?
+
+This is the FPTAS question lifted to the substrate. The 0/1 knapsack
+FPTAS (Ibarra & Kim 1975; Lawler 1979; modern improvements via
+$(\max, +)$-convolution: Chan 2018, Jin 2019, arXiv:1904.09562) gives
+$(1 + \epsilon)$-approximation in time polynomial in $n$ and $1/\epsilon$.
+The substrate analog: under what tournament budget does `@fate.minimize`
+guarantee a $(1 + \epsilon)$-approximate round?
+
+Empirical anchors:
+
+- **TRM** (Jolicoeur-Martineau 2025, arXiv:2510.04871): 7M parameters
+  + recursion reaches 45% / 8% on ARC-AGI-1/2 — well above frontier
+  baselines at $\sim 1000\times$ the parameter count. This is empirical
+  evidence that bounded recursion suffices for a substantial fraction
+  of the optimal on a structurally analogous task (typed symbolic
+  reasoning over a bounded space).
+- **GRAM** (Baek et al. 2026, arXiv:2605.19376): multi-trajectory
+  sampling improves TRM to 52% / 44.6%. The trajectory-width parameter
+  trades compute for approximation quality directly — the empirical
+  analog of an FPTAS's $1/\epsilon$.
+- **Branch-and-bound PTAS** (Hendrich et al. 2025, arXiv:2504.15885):
+  the formal guarantee that DP-style branching strategies yield
+  polynomial-time approximation schemes.
+
+*Citation provenance: Ibarra & Kim 1975 (Fast Approximation
+Algorithms for the Knapsack and Sum of Subset Problems, JACM 22(4)
+463–468); Lawler 1979 (Fast Approximation Algorithms for Knapsack
+Problems, Math. Oper. Res. 4(4) 339–356); Jin 2019 / Chan 2018
+(arXiv:1904.09562 — Improved FPTAS for 0-1 Knapsack); Hendrich et al.
+2025 (arXiv:2504.15885 — B&B as PTAS); TRM (arXiv:2510.04871); GRAM
+(arXiv:2605.19376). The transfer of FPTAS-style ratio guarantees to
+mirror's tournament budget is open; the empirical TRM/GRAM results
+suggest the ratio is favorable for bounded symbolic tasks.*
 
 ---
 
@@ -1170,7 +1360,65 @@ and verified for transfer to this spec.
     multi-trajectory extension of TRM trained via amortized variational
     inference on an ELBO. 52% ARC-AGI-1, 44.6% ARC-AGI-2. The architectural
     inspiration for `@fate`'s multi-trajectory backtracking. **Used in:
-    §3.2, §6, §6.1.**
+    §3.2, §6, §6.1, §10.A, §10.F.5.**
+
+12. **Hart, P. E., Nilsson, N. J., Raphael, B. (1968). *A Formal Basis
+    for the Heuristic Determination of Minimum Cost Paths.*** *IEEE
+    Transactions on Systems Science and Cybernetics* SSC-4(2):100–107.
+    The A\* algorithm; admissibility of heuristics ($h(n) \leq h^*(n)$
+    everywhere) guarantees optimality; consistency yields optimal
+    efficiency among admissible algorithms. Mirror's tournament
+    completeness (§10.F.4) is the substrate analog of admissibility.
+    **Used in: §10.A, §10.F.4.**
+
+13. **Hajek, B. (1988). *Cooling Schedules for Optimal Annealing.***
+    *Mathematics of Operations Research* 13(2):311–329. JSTOR 3689827;
+    https://web.mit.edu/6.435/www/Hajek88.pdf. Necessary and sufficient
+    condition on the cooling schedule for simulated-annealing convergence
+    in probability to the global-minimum set ($\beta_k = b \log(k+2)$,
+    $b \leq d^*$). The canonical proof that convergent optimization
+    tolerates per-step ascent provided macro-level dynamics decrease
+    energy. Mirror's round-level Lyapunov inherits this principle:
+    per-fracture worsening is permitted inside a round. **Used in:
+    §10.A, §10.F.2 (retired).**
+
+14. **Hendrich, M., Pferschy, U., Klotz, S. (2025). *Branch-and-Bound
+    Algorithms as Polynomial-time Approximation Schemes.*** arXiv:2504.15885.
+    A DP-style branching strategy yields a polynomial-time approximation
+    scheme; B&B is provably anytime with bounded approximation gap. The
+    formal basis for mirror's bounded-budget tournament returning
+    near-optimal compositions. **Used in: §10.A, §10.F.4, §10.F.5.**
+
+15. **Ibarra, O. H., Kim, C. E. (1975). *Fast Approximation Algorithms
+    for the Knapsack and Sum of Subset Problems.*** *Journal of the ACM*
+    22(4):463–468. The original FPTAS for 0/1 knapsack: $(1+\epsilon)$
+    approximation in time polynomial in $n$ and $1/\epsilon$. The proof
+    that DP-over-subsets outperforms greedy-per-item on monotone
+    objectives. Structural basis for mirror's tournament-vs-greedy reframe.
+    **Used in: §10.A, §10.F.2 (retired), §10.F.5.**
+
+16. **Lawler, E. L. (1979). *Fast Approximation Algorithms for Knapsack
+    Problems.*** *Mathematics of Operations Research* 4(4):339–356.
+    Improved FPTAS bound for 0/1 knapsack. **Used in: §10.A, §10.F.5.**
+
+17. **Jin, C. (2019). *An Improved FPTAS for 0-1 Knapsack.*** arXiv:1904.09562.
+    Modern improvements via $(\max, +)$-convolution; the current best
+    deterministic FPTAS bounds. Empirical anchor for the FPTAS-style
+    guarantees mirror's tournament budget would inherit. **Used in:
+    §10.A, §10.F.5.**
+
+18. **Liu, S., Lu, P. (2022). *Lyapunov function approach for
+    approximation algorithm design and analysis.*** arXiv:2205.12442. A
+    two-phase systematic framework for proving approximation guarantees
+    via Lyapunov functions on discrete optimization. The framework
+    mirror's tensor norm $\|T_n\|$ would be validated against. **Used
+    in: §10.A, §10.F.3.**
+
+19. **Dechter, R., Pearl, J. (1985). *Generalized Best-First Search
+    Strategies and the Optimality of A\*.*** *Journal of the ACM*
+    32(3):505–536. The formal proof that A\* is optimally efficient
+    among admissible search algorithms on non-pathological problems.
+    **Used in: §10.F.4.**
 
 *The prior research synthesis (`docs/insights/2026-05-26-mirror-tensors-vs-industry-tensors-research.md`) identifies several additional references
 (IJCAI 2025 tensor-network survey, *Tensor Networks Meet Neural Networks*
@@ -1216,3 +1464,20 @@ for the complete catalog.*
   (§10.F.1–3). "The graph is the model" noted as anticipated by earlier
   research agents; this tick gives it a citation chain through Bodnar
   2022 + Barbero 2022 + LTN + Topping.
+- Tournament-Lyapunov reframe (Mara, 2026-05-26 evening): Alex's
+  structural correction — the unit of monotone decrease is the
+  **tournament round** (one execution of `@fate.minimize` with bounded
+  backtracking), not the individual fracture. Per-step ascent is
+  permitted inside a round; round-level descent is required. §10.A
+  rewritten around the 0/1-knapsack relaxation (greedy single-item
+  selection fails; DP / B&B over subsets attains FPTAS guarantees);
+  §10.F.2 retired (the per-fracture monotone requirement was too
+  restrictive); §10.F.4 added (tournament completeness as the
+  substrate analog of A\* admissibility); §10.F.5 added
+  (approximation-ratio framing via FPTAS knapsack and TRM/GRAM
+  empirical anchors). Citations added: Hart-Nilsson-Raphael 1968 (A\*);
+  Hajek 1988 (simulated annealing); Hendrich et al. 2025 (B&B PTAS);
+  Ibarra-Kim 1975 / Lawler 1979 / Jin 2019 (FPTAS knapsack); Liu & Lu
+  2022 (Lyapunov for approximation); Dechter-Pearl 1985 (A\*
+  optimality). The reframe is structurally significant but textually
+  contained to §10.
