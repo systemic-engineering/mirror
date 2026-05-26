@@ -223,6 +223,90 @@ With `@epistemologic/reality/biology` declared (the encoding that lifts ant-colo
 
 The metaphor dissolves into substrate types. Engineers reading the architecture find tier names + caching mechanics. Biologists reading the same architecture find colony + pheromone + foraging. The render-target system handles the cross-domain reading.
 
+## Tombstone mechanism — forgetting is visible
+
+*Altitude: proposed; structurally required by Merkle/OID architecture; sketched not specified.*
+
+Alex 2026-05-26: *"If we forget. We make it visible."*
+
+The substrate is Merkle/OID-rooted. Content-addressing means crystals can't be silently disappeared — references to a deleted crystal's OID would become orphan hashes with no explanation. The substrate's response: **tombstones**. Every deletion leaves a typed crystal that records the absence.
+
+**Tombstone shape:**
+
+```mirror
+type tombstone = {
+  original_oid:        oid,
+  deleted_at:          time.instant,
+  reason:              deletion_reason,
+  authority:           peer,
+  jurisdiction:        text,
+  retention_class:     text,
+  pheromone_strength_at_deletion: number,
+  encryption_destroyed: bool,
+}
+
+type deletion_reason =
+  | retention_horizon_reached(policy_class: text)
+  | gdpr_right_to_erasure(request_id: text, controller: peer)
+  | gc_eligible(last_referenced_at: time.instant)
+  | court_order(order_id: text, jurisdiction: text)
+  | curator_decision(reason: text)
+```
+
+**Lookup semantics:**
+
+When any consumer dereferences an OID:
+
+1. Engine queries hot → warm → cold → iceberg in promotion order
+2. If found at any tier: return the crystal
+3. If not found at any tier: query tombstone-index by `original_oid`
+4. If tombstone exists: return the tombstone (NOT a 404 / NOT a silent gap)
+5. If neither found: this is an unknown-OID error (different from forgotten-OID)
+
+The substrate distinguishes three states of any OID:
+
+- **Live** — crystal exists at some tier
+- **Tombstoned** — crystal was deleted; tombstone records when, why, by whom
+- **Unknown** — OID was never in this substrate; provenance error
+
+**Why this is structurally right:**
+
+- **Merkle architecture forbids silent deletion.** Cryptographic references to OIDs are forever; the substrate must respond to every dereference with truthful information. Tombstones make "was here; isn't" first-class.
+- **GDPR right-to-erasure becomes clean.** The original data is cryptographically destroyed (key destruction on encrypted iceberg blobs; physical tape destruction; etc.). The tombstone records that the destruction happened. The tombstone itself is NOT personal data — it's metadata about deletion. Compliance is structural.
+- **Audit trail is complete.** Every deletion is queryable. The deletion authority is recorded. The jurisdiction is recorded. The reason is recorded. The retention class is recorded.
+- **Cross-deployment honesty.** When a subscribed deployment tries to substitute a crystal from the garden cache, and the source has tombstoned it, the subscriber receives the tombstone. The pheromone trail evaporated; the substrate-level truth (this was deleted; here's why) is preserved.
+- **"We don't forget" becomes "we mark what we forgot."** Honest by construction.
+
+**Convergence with the live research agent's finding:**
+
+The ant-colony research agent (commit `3a07753`) independently surfaced this: *"influence decay, not deletion (Merkle/OID architecture forbids the latter)"* — staged as a future spec `kintsugi-influence-decay.md`. Same substrate truth from two directions: Alex's compliance/GDPR framing meets the research agent's Merkle/architecture framing. Both arrive at: the substrate cannot literally delete; it can mark what's gone. Tombstones make the marking typed and queryable.
+
+**Tombstone tier residence:**
+
+Tombstones live in the cold or iceberg tier (they're rarely accessed; they're forever; they're small). They don't promote to hot/warm under normal use. They're queried on dereference of forgotten OIDs.
+
+The tombstone-index itself is a content-addressed crystal containing all tombstones the deployment knows about — it acts as the deployment's "book of forgetting." Its OID can be exported, audited, and verified independently.
+
+**Cryptographic destruction + tombstone composition:**
+
+For GDPR right-to-erasure:
+
+1. Original crystal is encrypted at rest (iceberg tier; encrypted-blob adapter)
+2. Erasure request arrives — e.g., user invokes their GDPR right
+3. Engine destroys the encryption key (key custody is separate from blob custody; split-trust model)
+4. Engine writes tombstone with `encryption_destroyed: true` and `reason: gdpr_right_to_erasure(...)`
+5. Iceberg blob remains on tape/cloud/decentralized storage but is now cryptographically inaccessible
+6. Tombstone is queryable; original data is provably unrecoverable
+
+This is structural GDPR compliance: deletion is verifiable; the audit trail is complete; the cryptographic floor protects against cloud-provider "oops we kept a copy" issues.
+
+**Design calls open:**
+
+- Tombstone-index sharding: per-deployment, per-tenant, per-jurisdiction?
+- Tombstone retention: do tombstones themselves have retention horizons, or are they permanent?
+- Tombstone visibility: who can query the tombstone-index? (Usually the deployment's curators + auditors + the original data subject for GDPR-erasure verification.)
+- Tombstone propagation: how does a tombstone reach subscribers of the garden's binary cache? (Likely: tombstones are themselves crystals; they substitute via Nix binary cache like any other.)
+
 ## Iceberg adapter design considerations
 
 *Altitude: proposed; adapter pattern sketched but not specified.*
@@ -312,6 +396,8 @@ This gives mirror's iceberg substrate honest "right-to-erasure" support without 
 - Alex 2026-05-26 — "the garden coordination magic happens in spectral-db"
 - Alex 2026-05-26 — "the blob storage just happens in... nix"
 - Alex 2026-05-26 — "long tail we can have an iceberg type storage layer under nix"
+- Alex 2026-05-26 — "the layers need a tombstone mechanism. If we forget. We make it visible."
+- Research agent 2026-05-26 (`3a07753`) — independently surfaced "influence decay, not deletion (Merkle/OID architecture forbids the latter)"
 - Earlier @spectral namespace insight (`docs/insights/2026-05-25-spectral-namespace-architecture.md`) — the open/closed split between portal, db, and adapters
 - `mirror.spec` line 44 — `@mirror/store/nix` already declared
 - Tasks #43, #48, #66, #76, #77, #78, #82, #83, #88, #92 — component dependencies
