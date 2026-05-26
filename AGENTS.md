@@ -284,6 +284,43 @@ Together: mirror grows; @io shrinks; nothing escapes the boundary; every escape 
 
 See `docs/insights/2026-05-26-glass-wall-and-cross-wall-kintsugi.md`.
 
+## Keywords Are Substrate Declarations
+
+When you find yourself reaching for *"the parser doesn't recognize X"*,
+*"we need new syntax for Y"*, or *"let me extend the bootstrap to handle Z"* —
+**stop**. The substrate-pull reflex is wrong-shaped. The shape that's right
+almost always is: **declare it in the substrate.**
+
+Mirror's keywords ARE substrate declarations. The bootstrap doesn't carry a
+hardcoded list of keywords beyond the absolute meta-grammar primitives.
+Everything else is an identifier that some grammar in the substrate has
+declared. To add a keyword, declare it. To rename a keyword, alias it.
+The *"parser learns new syntax"* framing is OOP-trained reflex; mirror's
+parser doesn't learn — the substrate accumulates.
+
+Examples of the right move:
+
+- New keyword `fixed`? Declare `type fixed = refract` (or whatever Prism op
+  it composes from) in a substrate grammar. Done.
+- Want `<T>` to work where `(T)` works? Use `(T)`; don't extend the parser.
+  Or write a `@kintsugi/fracture` rule for migration.
+- Need a new shape variant? Add it to `@mirror/glass/ast/shape`'s `=` union;
+  the substrate carries it forward.
+
+**The bootstrap stays minimal forever; the substrate grows.**
+
+When tempted to modify `bootstrap/src/*.rs` for anything that LOOKS like
+new syntax recognition, ask first: can this be a substrate declaration?
+The answer is almost always yes. If the answer turns out to be no — the
+requirement is a primitive the meta-grammar can't yet describe of itself —
+that's a substrate gap, not a parser feature. Surface the gap; don't paper
+over it in Rust.
+
+This is the same reflex as the FROZEN/bugfix-only policy below, applied
+at the syntax altitude: the bootstrap describes only what the language
+cannot yet describe of itself. Everything you can write as a substrate
+declaration, you must.
+
 ## What NOT to do
 
 - Do NOT add new Rust modules to `bootstrap/` to grow features. New capability
