@@ -199,6 +199,19 @@ mirror compile <f>    # compile one grammar, return its OID
 The grammar describes the compiler. The compiler executes the grammar.
 The OIDs are deterministic. The compilation is idempotent.
 
-The glass is Apache-2.0. The wine was always yours.
+## License
+
+Layered:
+
+- **The compiler + protocols + open adapters** — Apache 2.0 ([`license/APACHE2.md`](./license/APACHE2.md))
+- **Curated corpus + garden packages + operational deployment** — systemic.engineering License ([`license/SEL.md`](./license/SEL.md); v1.0 effective; v1.1 draft amendments included)
+- **`@spectral/db` engine** — closed-source (binary-only)
+- **`@spectral/garden` packages** — per-curator (substrate verifies signatures regardless)
+
+See [`LICENSE.md`](./LICENSE.md) for the layered model.
+
+SEL enforcement attaches at the `au + io` boundary via petri-net topology analysis at the `@mirror/property` layer. See SEL Part II.
+
+The glass is Apache-2.0. The wine governs itself per the curator's choice.
 
 `e^(n+1) < e^n`
