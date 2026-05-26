@@ -50,7 +50,7 @@ grammar @io/random {
   # via the kernel rather than proved structurally over the bytes
   # themselves. Per docs/insights/2026-05-26-glass-wall-and-cross-
   # wall-kintsugi.md §"irreducible minimum".
-  bytes(n: u64) -> imperfect<bytes> { \ }
+  bytes(n: u64) -> imperfect(bytes) { \ }
 }
 
 out bytes

@@ -43,7 +43,7 @@ grammar @io/encode {
   # Inverse of encode. Returns imperfect because the input may carry
   # non-alphabet characters, invalid padding, or a non-canonical
   # length. Standard recovery surface carries the diagnostic.
-  base64.decode(t: text) -> imperfect<bytes> { \ }
+  base64.decode(t: text) -> imperfect(bytes) { \ }
 
   # ── hex.encode: bytes → lowercase hex text ──────────────────────
   #
@@ -58,7 +58,7 @@ grammar @io/encode {
   # input may have odd length, contain non-hex characters, or fail
   # the round-trip with hex.encode. Standard recovery surface
   # carries the diagnostic.
-  hex.decode(t: text) -> imperfect<bytes> { \ }
+  hex.decode(t: text) -> imperfect(bytes) { \ }
 }
 
 out base64.encode

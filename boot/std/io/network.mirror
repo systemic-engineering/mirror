@@ -55,7 +55,7 @@ grammar @io/network {
   #
   # On success, the returned `connection` is ready for read_bytes /
   # write_bytes per @io/socket.
-  connect(addr: text) -> imperfect<connection> { \ }
+  connect(addr: text) -> imperfect(connection) { \ }
 
   # ── bind: start listening on a local address ──────────────────────
   #
@@ -66,7 +66,7 @@ grammar @io/network {
   #
   # On success, the returned `listener` is ready for accept per
   # this grammar.
-  bind(addr: text) -> imperfect<listener> { \ }
+  bind(addr: text) -> imperfect(listener) { \ }
 
   # ── accept: receive one inbound connection ───────────────────────
   #
@@ -80,7 +80,7 @@ grammar @io/network {
   # not surfaced through this primitive; callers needing it ride a
   # separate @io/network.peer_of(connection) primitive that will
   # land if/when consumer code requires it (YAGNI for now).
-  accept(l: listener) -> imperfect<connection> { \ }
+  accept(l: listener) -> imperfect(connection) { \ }
 }
 
 out connect

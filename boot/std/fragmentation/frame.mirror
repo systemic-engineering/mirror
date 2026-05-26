@@ -83,7 +83,7 @@ grammar @fragmentation/frame {
   # composition-domain diagnostic. The composition is associative
   # under content-addressing (hash composition is associative);
   # combined with `identity`, this is the monoid structure.
-  compose(a: frame, b: frame) -> imperfect<frame> { \ }
+  compose(a: frame, b: frame) -> imperfect(frame) { \ }
 
   # ── identity: the null frame ─────────────────────────────────────
   #

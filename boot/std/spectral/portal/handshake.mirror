@@ -120,7 +120,7 @@ grammar @spectral/portal/handshake {
   #     |> format_http_request(host, path)   # text formatting
   #     |> @io/encode.utf8.encode            # SUBSTRATE GAP
   #     |> @io/socket.write_bytes(c)
-  send_upgrade(c: connection, host: text, path: text) -> imperfect<text> { \ }
+  send_upgrade(c: connection, host: text, path: text) -> imperfect(text) { \ }
 
   # ── read_response: client-side, verify the server's 101 response ─
   #

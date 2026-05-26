@@ -69,7 +69,7 @@ grammar @io/uri {
   # Returns imperfect because the URI may be malformed (no scheme
   # separator, no authority, etc.); the standard recovery surface
   # carries the diagnostic.
-  host(u: ~uri) -> imperfect<text> { \ }
+  host(u: ~uri) -> imperfect(text) { \ }
 
   # ── port: extract the port component ────────────────────────────
   #
@@ -88,7 +88,7 @@ grammar @io/uri {
   # fragment stripped). Empty authority-only URIs like `ws://host`
   # return `/` (the canonical default path per RFC 3986 §6.2.3).
   # Returns imperfect for malformed URIs.
-  path(u: ~uri) -> imperfect<text> { \ }
+  path(u: ~uri) -> imperfect(text) { \ }
 
   # ── address: host:port composite for @io/network.connect ────────
   #
@@ -100,7 +100,7 @@ grammar @io/uri {
   # disambiguates the address from the port. Returns imperfect
   # because both host and port may fail to extract; the failure
   # surfaces with the underlying diagnostic.
-  address(u: ~uri) -> imperfect<text> { \ }
+  address(u: ~uri) -> imperfect(text) { \ }
 }
 
 out host

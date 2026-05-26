@@ -27,7 +27,7 @@ in @fragmentation/frame
 # primitive (the OID is 32 bytes of SHA-256 digest; the substrate
 # already computes it but does not expose it as bytes through any
 # current grammar). Adding `oid.to_bytes(oid) -> bytes` and
-# `oid.from_bytes(b: bytes) -> imperfect<oid>` is the natural
+# `oid.from_bytes(b: bytes) -> imperfect(oid)` is the natural
 # pairing — likely under @fragmentation or a new @fragmentation/
 # oid grammar — but is OUT OF SCOPE here per the issue #78 plan's
 # "don't invent primitives" rule. write_frame composes cleanly the

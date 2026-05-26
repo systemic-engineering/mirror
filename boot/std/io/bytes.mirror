@@ -63,7 +63,7 @@ grammar @io/bytes {
   # end > length(b), or either index past the buffer. Boundary
   # checks live at the @io substrate so callers don't have to
   # repeat them.
-  slice(b: bytes, start: u64, end: u64) -> imperfect<bytes> { \ }
+  slice(b: bytes, start: u64, end: u64) -> imperfect(bytes) { \ }
 
   # ── length: number of bytes ─────────────────────────────────────
   #

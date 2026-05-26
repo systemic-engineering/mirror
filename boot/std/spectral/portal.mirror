@@ -226,7 +226,7 @@ grammar @spectral/portal {
   # Halts and autopoietic remain load-bearing without the body — the
   # properties dispatch on the type-level claims, not on the body's
   # form.
-  open(remote: ~uri, frame: shard) -> imperfect<portal> { \ }
+  open(remote: ~uri, frame: shard) -> imperfect(portal) { \ }
 
   # ── tick: one round-trip across the portal ──────────────────────
   #

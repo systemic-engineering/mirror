@@ -70,7 +70,7 @@ grammar @io/socket {
   # than n bytes remaining (Failure with EOF diagnostic), the
   # underlying syscall may error (Failure with errno diagnostic),
   # or the handle may already be closed.
-  read_bytes(c: connection, n: u64) -> imperfect<bytes> { \ }
+  read_bytes(c: connection, n: u64) -> imperfect(bytes) { \ }
 
   # ── write_bytes: write all of b to a connection ──────────────────
   #
