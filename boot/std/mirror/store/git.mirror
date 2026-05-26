@@ -1,0 +1,147 @@
+in @prism
+in @mirror/store
+in @io
+in @time
+in @fragmentation/frame
+
+# Git plumbing as crystal backend.
+#
+# git IS a content-addressed object store. mirror produces
+# content-addressed artifacts. The crystal OID maps to a git
+# object (`hash-object`); pinned crystals get a ref under
+# `refs/crystals/pinned/<oid>` so they survive `git gc`.
+#
+# This is the default @mirror/store backend for dev workspaces
+# (per docs/specs/spectral-db-three-tier-architecture.md §
+# "Substrate placement"). Branches map to fracture experiments;
+# PRs map to scene-dispatched fracture proposals; familiar
+# tooling; lowest entry bar.
+#
+# Substrate placement (Alex 2026-05-26, corrective):
+#
+#   "@fragmentation is pure. @mirror/store owns `io`."
+#
+# `@fragmentation` stays pure substrate — no IO; just typed crystal
+# carriers. `@mirror/store` is the IO boundary; `@mirror/store/git`
+# is the concrete git adapter. The richer actions (pin, release,
+# gc_roots, tombstone_check, promote, demote, last_referenced_at)
+# extend the core 3-op interface where git's plumbing maps cleanly.
+#
+# Pin namespace: pinned crystals are kept alive via
+#
+#   refs/crystals/pinned/<oid>
+#
+# `git gc` follows refs; an indirect ref under this namespace is
+# the cheapest GC-root we can pin without invoking notes or stash.
+#
+# Spec: docs/specs/spectral-db-three-tier-architecture.md
+#       §"Substrate placement — @fragmentation pure; @mirror/store owns IO"
+
+grammar @mirror/store/git {
+  # ── core 3-op interface (LIVE) ──────────────────────────────────
+  #
+  # The swap point for git-backed dev workspaces. Real @io.exec
+  # bodies that shell out to git plumbing.
+
+  # store a crystal: write its bytes as a git blob, return the OID.
+  # `git hash-object -w --stdin` writes the object database entry and
+  # prints the SHA. The OID mirror computes cross-checks against
+  # git's hash; mismatch is a substrate-level corruption.
+  store(crystal) -> oid { @io.exec("git", ["hash-object", "-w", "--stdin"]) }
+
+  # fetch a crystal by OID. `git cat-file -p <oid>` streams the
+  # object contents. imperfect carries the bytes if present, dark
+  # if missing.
+  fetch(oid) -> imperfect { @io.exec("git", ["cat-file", "-p", oid]) }
+
+  # exists: does the OID resolve in the object database?
+  # `git cat-file -e <oid>` is the canonical existence check; exits
+  # 0 if the object is present, non-zero otherwise.
+  exists(oid) -> bool { @io.exec("git", ["cat-file", "-e", oid]) }
+
+  # path: render the ref path used to pin this crystal.
+  # refs/crystals/pinned/<oid>. The pin/release/last_referenced_at
+  # actions name this ref.
+  path(oid) -> text { \ }
+
+  # ── cold-tier engine extensions ─────────────────────────────────
+  #
+  # The richer actions the cold-tier engine reads through this
+  # adapter. Same shape as @mirror/store/nix's extensions; the
+  # bodies map to git plumbing wherever the mapping is clean.
+
+  # pin: install a GC root for a crystal so `git gc` won't collect.
+  # `git update-ref refs/crystals/pinned/<oid> <oid>` writes the ref.
+  # The next `git gc` walks this ref and keeps the object alive.
+  pin(oid) -> imperfect {
+    @io.exec("git", ["update-ref", path(oid), oid])
+  }
+
+  # release: remove the GC root. `git update-ref -d <ref>` deletes
+  # the ref; the next `git gc` collects the object (after any
+  # iceberg-tier capture the retention policy demands).
+  release(oid) -> imperfect {
+    @io.exec("git", ["update-ref", "-d", path(oid)])
+  }
+
+  # gc_roots: enumerate the engine's pinned crystals.
+  # `git for-each-ref --format=%(objectname) refs/crystals/pinned/`
+  # lists the OID of every pinned crystal.
+  gc_roots() -> [oid] {
+    @io.exec("git", ["for-each-ref", "--format=%(objectname)", "refs/crystals/pinned/"])
+  }
+
+  # tombstone_check: distinguish forgotten from unknown.
+  # When fetch(oid) returns dark, the engine queries the
+  # tombstone-index. Body parks behind the tombstone-index landing.
+  tombstone_check(oid) -> option(tombstone) { \ }
+
+  # promote: cold -> warm (engine surface).
+  # The engine's promotion call. Body is the engine's responsibility;
+  # the adapter just exposes the surface.
+  promote(oid) -> imperfect(frame) { \ }
+
+  # demote: warm -> cold (engine surface).
+  # Take a frame whose warm-tier vector is aging out, write it back
+  # to the cold tier with its updated pheromone metadata.
+  demote(crystal) -> imperfect { \ }
+
+  # last_referenced_at: read the pin ref's author date.
+  # `git for-each-ref --format=%(authordate:iso8601) <ref>` returns
+  # the pin ref's commit timestamp — a proxy for the last time the
+  # engine touched (re-pinned) this crystal. The evaporation curve
+  # reads it.
+  last_referenced_at(oid) -> imperfect(instant) {
+    @io.exec("git", ["for-each-ref", "--format=%(authordate:iso8601)", path(oid)])
+  }
+
+  recover |result, loss| {
+    # cold-tier reads are immutable; partial loss means the closure
+    # was incomplete (a referenced crystal is missing). Log the
+    # drift; let the engine decide whether to escalate or proceed
+    # with the partial closure.
+    log_drift(loss)
+    result
+  }
+
+  rescue |error| {
+    # the cold tier is unreachable (not a git repo; permission
+    # denied; object db corrupted). The engine handles fallback
+    # to iceberg tier or surfaces the error to the operator. The
+    # adapter just signals dark.
+    dark
+  }
+}
+
+out store
+out fetch
+out exists
+out path
+out pin
+out release
+out gc_roots
+out tombstone_check
+out promote
+out demote
+out last_referenced_at
+out @mirror/store/git
