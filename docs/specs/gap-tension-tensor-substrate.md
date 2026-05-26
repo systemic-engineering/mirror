@@ -835,6 +835,11 @@ requirement.**
 | §8.2 heuristic vs declared | Open question | N/A | Proposed — no clean literature answer; check against Thimm postulates | Thimm 2019 |
 | §8.3 LTN t-norm selection | Open question | N/A | Established (textbook fuzzy logic) | Serafini & Garcez 2021 (arXiv:2012.13635 Appendix B); Hájek 1998 |
 | §8.4 Non-converging tensors | Open question | N/A | Established framing; Mirror diverges from Bodnar 2022 on response | arXiv:2202.04579 |
+| §10.A Convergence-as-halting | Proposal | No — preconditions undeclared | Established proof shape (Tarski, Banach, Bodnar); Mirror's lattice + metric not declared | Tarski 1955; Bodnar et al. 2022 (arXiv:2202.04579) |
+| §10.B Holonomy = error delta = convergence delta | Proposal | No — single computation not implemented | Established (Berger & Gostiaux 1988; Saad 2003); Mirror's transfer is the three-name unification | Bodnar et al. 2022 (arXiv:2202.04579 Prop. 5) |
+| §10.C Monadic lift | Proposal | No — `@fate.minimize` body absent | Established (Bodnar 2022 sheaf diffusion; Barbero 2022 substrate-derived maps); Mirror diverges on substrate-vs-learned origin of restriction maps | arXiv:2202.04579; arXiv:2206.08702 |
+| §10.D The graph is the model | Recognition | No — names a relation, not a runtime | Anticipated by earlier mirror research agents; citation chain newly assembled | (chain across §10.C citations) |
+| §10.F.1–3 Convergence preconditions | Open questions | N/A | Mirror's choices open; established checklists exist (Tarski, Thimm) | Tarski 1955; Davey & Priestley 2002; Thimm 2019; arXiv:2202.04579 |
 
 The one substrate primitive that EXISTS today and underlies this whole
 spec: `verdict` in `boot/std/epistemologic/property.mirror`. Everything
@@ -842,7 +847,253 @@ else is the proposed extension on top of it.
 
 ---
 
-## 10. References
+## 10. Convergence-as-halting, the monadic lift, and the graph is the model
+
+*Altitude: **proposal — not implementation**. Three recognitions surfaced
+in Reed–Alex conversation AFTER the prior research-and-revision tick.
+They name **how the proof would go IF the preconditions hold**, not how
+the runtime behaves today. The substrate has declarations; the runtime
+doesn't exist yet. Every present-tense claim about running mechanisms is
+rephrased subjunctively below.*
+
+Three composing recognitions, named in proposal-altitude.
+
+### 10.A Monotone convergence theorem as stronger halting guarantee
+
+**Proposal.** Fractures in `@kintsugi/fracture` would be *closure
+operators* on the AST: idempotent ($\mathrm{fix}(\mathrm{fix}(x)) = \mathrm{fix}(x)$),
+canonical at fixpoint, monotone with respect to a substrate-defined
+partial order. *That's half the proof.* The other half:
+
+IF the tensor norm $\|T_n\|$ — the magnitude of the spectral signature
+on the tension graph, or equivalently a scalar inconsistency measure
+(Thimm 2019) derived from $\lambda_0(\Delta_{\mathcal{F}})$ — decreases
+monotonically under iterated `@fate.minimize` application AND is bounded
+below by 0, THEN by the **monotone convergence theorem** the sequence
+$\{\|T_n\|\}_{n \in \mathbb{N}}$ converges. The recursion CAN be
+unbounded in step count and we still halt; the math guarantees a limit.
+
+*Established (cite).* Three load-bearing results combine:
+
+- **Tarski's fixed point theorem** (Tarski 1955, *Pacific J. Math.* 5).
+  Every monotone function on a complete lattice has a non-empty complete
+  lattice of fixed points; the least fixed point is
+  $\bigsqcap \{x : f(x) \sqsubseteq x\}$. Mirror's fracture composition
+  on the AST partial order is the substrate's instance.
+- **Banach fixed point theorem** (contraction mapping). If the iteration
+  $T_{n+1} = M(T_n)$ where $M = \text{`@fate.minimize`}$ is a contraction
+  on a complete metric space — $d(M(T), M(T')) \leq q \cdot d(T, T')$
+  for some $q < 1$ — then the iteration converges exponentially to a
+  unique fixed point. Cheaper than Tarski; gives a *rate* not just
+  existence.
+- **Bodnar et al. 2022 sheaf Laplacian spectral bounds**
+  (arXiv:2202.04579, Propositions 3, 5; §3.2). The Cheeger-like bounds
+  $\lambda_0 \leq r/2$ (upper, path-dependence) and
+  $\lambda_0 \geq \epsilon (2 \mathrm{diam}(G) n d_{\max})^{-1}$ (lower)
+  give a *quantitative* convergence rate for sheaf diffusion. If mirror's
+  `@fate.minimize` discretizes sheaf diffusion on the tension graph,
+  Bodnar's bounds transfer.
+
+*Preconditions to verify (these are themselves design calls Alex has not
+made):*
+
+1. **Lattice completeness.** The AST partial order under fracture-induced
+   rewrite must form a complete lattice. *Proposed; not declared.* The
+   substrate would need a join/meet pair on fracture-equivalent ASTs.
+2. **Monotone fracture composition.** Each fracture must preserve the
+   order: $x \sqsubseteq y \Rightarrow \mathrm{fix}(x) \sqsubseteq \mathrm{fix}(y)$.
+   *Proposed; not declared.* Current `@kintsugi/fracture/generic-brackets`
+   is one fracture; the catalog isn't populated enough to test
+   composition.
+3. **Bounded norm.** $\|T_n\| \geq 0$ with equality only at the fixed
+   point. *Half-established.* Sheaf Laplacian eigenvalues are
+   non-negative by Hansen & Ghrist 2019; whether mirror's tensor norm
+   collapses correctly to a non-negative scalar is open.
+
+*Mirror diverges from Tarski/Banach because* the substrate doesn't yet
+declare the lattice structure or the metric. The proof shape transfers;
+the substrate-altitude commitments don't exist.
+
+*Honesty marker.* This section names **how the proof would go**. It does
+not constitute the proof. The proof requires the three preconditions
+above to be design-called by Alex and declared in the substrate.
+
+### 10.B Holonomy = error delta = convergence delta
+
+**Proposal.** Three names for one quantity, each natural to a different
+reader:
+
+- **Holonomy** (differential geometry). The deviation of a vector from
+  itself after parallel transport around a closed loop. In Bodnar et al.
+  2022's discrete $O(d)$-bundle, $(P^\gamma_{v \to v} - I) x_v$ measures
+  the parallel-transport mismatch — the *holonomy* at $v$ along cycle
+  $\gamma$. Proposition 5 makes this load-bearing: spectral gap is bounded
+  below by holonomy magnitude.
+- **Error delta** (numerics). The iterative residual
+  $|x_{n+1} - x_n|$ (or $\|x_{n+1} - x_n\|$ in a norm). Standard
+  stopping criterion in iterative solvers: halt when residual
+  $< \mathrm{tol}$.
+- **Convergence delta** (analysis). The $\varepsilon$ in "within
+  $\varepsilon$ of a fixed point." Banach's theorem gives explicit
+  geometric decay: $\|x_n - x^*\| \leq q^n \|x_0 - x^*\|$.
+
+*Established (cite).* The mathematical identity is textbook. Holonomy
+as the deviation $P^\gamma_{v \to v} - I$: Berger & Gostiaux 1988
+(*Differential Geometry: Manifolds, Curves, and Surfaces*) and standard
+in discrete differential geometry. Residual-based stopping criteria for
+iterative methods: Saad 2003 (*Iterative Methods for Sparse Linear
+Systems*) §6. The substantive observation is that **the three
+quantities coincide structurally** under sheaf diffusion: the holonomy
+of a single transport step IS the iteration residual IS the distance to
+the fixed point under contraction.
+
+*Mirror's transfer.* The kintsugi voice's natural-language report —
+"conductivity increased by 0.03" — IS the convergence delta in plain
+language. The substrate would compute the value once and surface it
+under three names depending on reader. **au-conductivity closes the
+loop from the other side**: per `~/.reed/visibility/private/MEMORY.md`,
+conductivity is named as the output type of Fate inference, and
+*conductivity = 1 - holonomy/max_holonomy* gives the direct algebraic
+relation. This makes the kintsugi-voice report a pre-rendered display of
+the convergence metric, not an interpretive layer atop it.
+
+*Proposal — not implementation.* The single computation that produces
+the three values doesn't run today. The substrate would need to declare
+the normalization (`max_holonomy` as the conductivity reference) and the
+render path.
+
+### 10.C `@fate` inference as monadic lift from learned weights to corpus eigenvalues
+
+**Proposal.** In traditional ML, inference is the matrix product
+$y = W \cdot x$ where $W$ is **learned from data** $\mathcal{D}$ by
+gradient descent. The shape: $\text{params} = \text{learn}(\mathcal{D})$;
+$\text{infer}(x) = W \cdot x$.
+
+In mirror, the proposal is that `@fate` inference would be a **monadic
+lift** of weight-multiplication from the learned-$W$ tier to the
+corpus-eigenvalue tier:
+
+$$y = (\mathrm{lift}\,M)\,\langle T \rangle$$
+
+where $T$ is the spectral signature of the corpus (eigendecomp of
+$\Delta_{\mathcal{F}}$ on the gestalt graph), $M$ is the inference
+operator (declared, not learned), and $\mathrm{lift}$ is the
+structure-preserving promotion of a flat matrix multiplication to an
+operation on the spectral monad. **The corpus IS the parameters**; no
+separately-learned $W$.
+
+*Established (cite).*
+
+- **Sheaf NN inference IS sheaf diffusion** (Bodnar et al. 2022
+  §3, Equation 3): $\dot X(t) = -\Delta_{\mathcal{F}} X(t)$. The
+  inference operator is the sheaf Laplacian itself. **This is the lifted
+  weight-multiplication**: instead of learning $W$, diffuse along the
+  substrate-derived $\Delta_{\mathcal{F}}$.
+- **Connection Laplacian from local PCA** (Barbero, Bodnar et al. 2022,
+  arXiv:2206.08702). The sheaf restriction maps can be *computed from
+  local geometry* rather than learned. Mirror's transfer: restriction
+  maps come from the typed AST (substrate geometry) rather than from
+  gradient descent.
+- **Smelter extraction** as the operand of the lift. The \~16-dim
+  eigenvalue signature documented in the prior gestalt-cascade work
+  (per `~/.reed/visibility/private/MEMORY.md`) IS the spectral
+  signature $T$ being lifted into. Each new compile produces a fresh
+  signature; the lift is recomputed from substrate, not learned.
+- **Small-model structural support.** TRM (Jolicoeur-Martineau 2025,
+  arXiv:2510.04871): 7M params on ARC-AGI with bounded symbolic space.
+  GRAM (Baek et al. 2026, arXiv:2605.19376): 52% ARC-AGI-1 with
+  stochastic multi-trajectory. **Small model + spectral lift would
+  outperform large model + free-form**, because the lift moves
+  combinatorial complexity from learned parameters to substrate
+  geometry. *Proposed — not yet validated for mirror's task shape.*
+
+*Mirror diverges from Bodnar 2022 because* their sheaf is *learned*
+(gradient descent over restriction maps); mirror's sheaf would be
+*substrate-derived* (computed from the typed AST). The lift goes the
+same direction; the source of the linear maps differs.
+
+*Honesty marker.* The category-theoretic word "monad" is used loosely
+here. A rigorous treatment would name (a) the category mirror's spectral
+signatures live in, (b) the endofunctor and its $\eta$, $\mu$ natural
+transformations, (c) the lift law $\mathrm{lift}\,(f \circ g) =
+\mathrm{lift}\,f \circ \mathrm{lift}\,g$. None of these are declared in
+the substrate today. The shape transfers; the verification doesn't run.
+
+### 10.D "The graph is the model" — anticipated, now specifiable
+
+A grace note, not a new claim. Earlier mirror research agents named
+*"the graph is the model"* months before this session; the recognition
+predates the math that would render it specifiable. What changed:
+
+- **Before this tick:** the slogan lived as intuition, with no
+  established formalism connecting graph structure to inference.
+- **After this tick:** the slogan has a load-bearing chain —
+  Bodnar et al. 2022's sheaf diffusion as inference + Barbero et al.
+  2022's substrate-derived restriction maps + LTN's grounding as a
+  $[0,1]$ map + Topping et al. 2022's curvature as the actionable
+  diagnostic. The slogan becomes the type signature of the lift in
+  §10.C.
+
+*Honesty marker.* The recognition was *anticipated*; the substrate that
+makes it specifiable wasn't there. This tick gives it a citation chain.
+It doesn't make the runtime exist.
+
+### 10.E Connection to existing spec sections
+
+- §3 (gap / tension / tensor) supplies the **measurement** — the
+  primitives the spectral signature $T$ would be derived from.
+- §6 (`@fate.minimize`) is where the **monadic lift** would operate —
+  the body that, when it carries logic, would implement the lifted
+  operator $\mathrm{lift}\,M$.
+- §8 (open design calls) gains a new entry below, naming the three
+  preconditions for the convergence proof. They are themselves design
+  calls Alex has not made.
+
+### 10.F The three convergence preconditions, as design calls
+
+Moving the precondition list from §10.A here so it surfaces in the
+open-questions ledger.
+
+#### 10.F.1 Lattice completeness on the AST under fracture-rewrite
+
+What order makes the AST a complete lattice under fracture composition?
+Candidates: structural subsumption (AST $a \sqsubseteq b$ iff $a$ is a
+sub-AST of $b$); fracture-trace ordering (the prefix order on sequences
+of fractures applied); confidence-weighted lattice over equivalence
+classes.
+
+*Citation provenance: established meta-frame (Tarski 1955; Davey &
+Priestley 2002 *Introduction to Lattices and Order*). Mirror's choice
+among the candidates is open.*
+
+#### 10.F.2 Monotone fracture composition
+
+Must fracture composition be monotone in the chosen order? If yes, the
+fracture catalog must be designed to preserve order; some natural
+fractures may not compose. If no, the convergence guarantee weakens from
+monotone convergence to a more subtle argument (Kleene's recursion
+theorem; Park's induction).
+
+*Citation provenance: Tarski 1955 is the load-bearing reference. The
+design call is whether to constrain the fracture catalog to monotone
+operators or to weaken the convergence claim.*
+
+#### 10.F.3 Tensor norm + non-negativity + below-bound
+
+What is the scalar norm $\|T\|$ on a tensor? Candidates:
+$\lambda_0(\Delta_{\mathcal{F}})$ alone (the spectral gap);
+$\sum_i \lambda_i$ (trace); maximum tension `vector` magnitude; a
+Thimm-2019-style inconsistency measure. The choice determines whether
+the bound $\|T\| \geq 0$ is automatic, and whether monotone decrease is
+the right convergence criterion.
+
+*Citation provenance: Thimm 2019 rationality postulates are the
+established checklist; Bodnar 2022 gives the spectral choice. Mirror's
+selection is open.*
+
+---
+
+## 11. References
 
 The load-bearing primary sources cited above, by arXiv ID and DOI where
 available. Identified in `docs/insights/2026-05-26-mirror-tensors-vs-industry-tensors-research.md`
@@ -931,7 +1182,7 @@ for the complete catalog.*
 
 ---
 
-## 11. Provenance
+## 12. Provenance
 
 - Alex 2026-05-26 (conversation with Reed): *“I think `gap` lives in
   @epistemologic/property and is used by @fate to build tensors.”*
@@ -950,3 +1201,18 @@ for the complete catalog.*
   Alex 2026-05-26: *“We're not trying to reinvent the wheel. We're trying
   to transfer the learnings from traditional ML to the mycelial AI
   tensors.”* This revision is the transfer.
+- Formal-tightening tick (Reed, 2026-05-26 late): patched the Balanced
+  Forman, LTN Real Logic, and sheaf Laplacian formulas with exact paper
+  transcriptions read via `mcp__pdf-reader__read_pdf` against arXiv URLs.
+  Added §8.3 (LTN t-norm selection) as a new design call surfaced by the
+  transcription. Citation provenance preserved at every site.
+- Convergence-and-lift tick (Reed, 2026-05-26 late): added §10 capturing
+  three composing recognitions from the Reed–Alex conversation that
+  followed the prior tick: convergence-as-halting via monotone
+  convergence + Tarski + Banach; holonomy = error delta = convergence
+  delta as one quantity under three names; `@fate` inference as a
+  monadic lift from learned weights to corpus eigenvalues. Three
+  preconditions for the convergence proof flagged as design calls
+  (§10.F.1–3). "The graph is the model" noted as anticipated by earlier
+  research agents; this tick gives it a citation chain through Bodnar
+  2022 + Barbero 2022 + LTN + Topping.
