@@ -10,6 +10,10 @@ The mirror crate is roughly 55 `.rs` source files. ~1,362 tests. 76% line covera
 
 17 kernel boot grammars + 36 std library grammars. The boot sequence is documented in `boot/std/mirror/grammar.mirror`.
 
+**Substrate-altitude keyword consumption (2026-05-26, `mara/shard-chain`).** `bootstrap/src/grammar.rs::load_grammar` now merges `<op> <keyword>` declarations from companion `.mirror` sources into the primary grammar's keyword table. First wiring: when the mirror grammar (`boot/std/mirror/grammar.mirror`) is loaded, the bootstrap also reads `boot/std/mirror/glass/ast/token.mirror`. The new vocabulary `glass`, `lambda`, `fixed`, `property`, `shape` (declared in `token.mirror` per the `@kintsugi/fracture/grammar-to-glass` surface) is recognized by `parse_grammar`. Both files coexist during the migration — additive, not replacement. Conflict path: same keyword + different op in primary vs companion = `io::Error` (stop-and-report).
+
+Empirical evidence the consumption is real: re-tokenizing the boot tree post-extension produces different OIDs for 17 files (out of 160), and every changed file uses one or more of the new keywords. Files that don't use them are byte-identical pre/post. The OID delta IS the substrate-pull realization landing in observable behavior.
+
 ## Working CLI commands
 
 `mirror compile`, `mirror craft`, `mirror kintsugi`, `mirror ai`, `mirror check`, `mirror ci`, `mirror eval`, `mirror lsp learn`, `mirror new`, `mirror spec`.
@@ -40,7 +44,7 @@ Compilation, content-addressing, property verification, code emission, shatter s
 ## What's NOT yet working (the honest gaps)
 
 - The walker walks but the seed remains permissive (accepts balanced bytes). Structural FP1 at the loaded-grammar level (Layer 2) requires the Lift registry, which requires fragmentation as the store (per `docs/specs/mirror-store.md`).
-- `tokenize.rs` and `grammar.rs` are still 100% Rust. Phase 2 retires them via parser self-description.
+- `tokenize.rs` and `grammar.rs` are still 100% Rust. Phase 2 retires them via parser self-description. (`grammar.rs` is now substrate-pull-realized for keyword harvesting — it reads keyword declarations from `.mirror` companion sources, not hardcoded tables. The dispatch logic itself is still Rust; Phase 2 retires that.)
 - Two resolvers coexist. Phase 1 collapses to one. *(Status unverified post-collapse — needs re-audit before next Phase 1 spawn.)*
 - `\` hole dispatch is declared but not implemented. Phase 5 lands it via Fate.
 - The fragmentation Rust crate is hand-written. Phase 4 + Phase 6 collaborate to make it generated.
