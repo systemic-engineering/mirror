@@ -6,6 +6,10 @@ in @fragmentation/frame
 in @mirror/shard
 in @mirror/runtime/gen_prism
 
+in @spectral/portal/handshake
+in @spectral/portal/codec
+in @spectral/portal/stream
+
 in @epistemologic/property/content_addressed
 in @epistemologic/property/autopoietic
 in @epistemologic/property/halts
@@ -103,10 +107,41 @@ grammar @spectral/portal {
   #
   # `remote: ~uri` uses the existing @io.uri sigil per boot/02a-io.
   # mirror; `frame: shard` is the local observer's shard — typically
-  # @mirror/shard.self(). Body is a Fate-resolved hole; the
-  # tournament reads the shard's compute_bound, the URI's scheme,
-  # the host's auth posture, and dispatches the correct transport
-  # backend.
+  # @mirror/shard.self(). Body composes the four wire stages from
+  # the @spectral/portal/{handshake,codec,stream} sub-grammars; each
+  # sub-grammar action is itself `\`-bodied where substrate gaps
+  # remain (text<->bytes UTF-8 codec for handshake; oid<->bytes for
+  # codec; bounded-iteration for stream). The composition at this
+  # altitude is intact; Fate dispatches the leaves at runtime via
+  # @mirror/serve.
+  #
+  # ── substrate gap parked at this altitude (2026-05-26) ─────────
+  #
+  # The full composition needs three primitives that don't yet
+  # exist:
+  #
+  #   * uri -> (host: text, path: text) decomposition (@io.uri
+  #     parsing into host+path components).
+  #   * portal record construction from the four field values
+  #     (socket, subspace, frame, actor) once each is computed.
+  #     The substrate's record-literal syntax + zoom(oid, _) for
+  #     three of the fields exists; the `subspace` field needs to
+  #     be derived from the initial @fragmentation/frame the
+  #     handshake exchanges, which is its own design call.
+  #   * @mirror/runtime/gen_prism.spawn for the actor field needs
+  #     a fresh name OID; the autopoietic self-reference is
+  #     constructed at spawn time and not surfaceable in a one-
+  #     line composition until the @mirror/serve dispatch lands.
+  #
+  # Body stays `\` pending these gaps. Each gap is small and
+  # independent; the portal's typed contract is intact — the
+  # four-stage composition shape is named in the grammar's header
+  # comment + the three sibling grammars (handshake, codec,
+  # stream) carry the per-stage substrate. The bottom-level
+  # primitives that DO exist (@io/network.connect, @io/socket.
+  # read_bytes, etc.) flow through the sibling grammars; this
+  # action stays `\` for Fate to pick the dispatch shape once
+  # @mirror/serve lands.
   open(remote: ~uri, frame: shard) -> imperfect<portal> { \ }
 
   # ── tick: one round-trip across the portal ──────────────────────
@@ -118,10 +153,24 @@ grammar @spectral/portal {
   # gen_prism.tick produces — portal ticks ARE gen_prism ticks at
   # the wire altitude.
   #
-  # Body is a Fate-resolved hole; the tournament composes
-  # @mirror/runtime/gen_prism.tick on the actor with the wire-side
-  # emissions encoder.
-  tick(p: portal, message: message) -> tick_result { \ }
+  # Body composes @mirror/runtime/gen_prism.tick on the actor's
+  # head crystal. The wire-side emissions encoder is implicit at
+  # this altitude: the returned tick_result.emissions list is what
+  # @spectral/portal/stream.write_value serializes onto the wire
+  # at the caller's altitude (one f64 per emission once normalized
+  # through the eigenvalue projection). The substrate-side
+  # composition here IS the actor advance; the wire serialization
+  # is the stream grammar's concern, not tick's.
+  #
+  # The `p.actor` field carries zoom(oid, gen_prism) — the actor's
+  # content-addressed self-reference. gen_prism.tick takes
+  # (state: oid, message): the substrate coerces zoom(oid, T) ->
+  # oid implicitly per the autopoietic-self-reference
+  # construction. Same coercion @mirror/runtime/gen_prism.send
+  # uses internally when it walks gp.head before calling tick.
+  tick(p: portal, message: message) -> tick_result {
+    @mirror/runtime/gen_prism.tick(p.actor, message)
+  }
 
   # ── close: autopoietic termination ────────────────────────────────
   #
@@ -139,6 +188,26 @@ grammar @spectral/portal {
   # Returns imperfect because the wire close itself may fail (peer
   # gone, socket already broken); diagnostics ride the standard
   # recovery surface.
+  #
+  # Body composes @io.close on the portal's socket field. The
+  # autopoietic settlement / budget-exhaustion disjunction from
+  # @epistemologic/property/halts (#74) determines WHEN this is
+  # called; the close action itself is the wire-level termination,
+  # not the structural halt condition. Reflection's refract(self)
+  # tick OR the host shard's compute_bound exhaustion is the
+  # caller; both paths converge on this single action.
+  #
+  # ── substrate gap parked at this altitude (2026-05-26) ─────────
+  #
+  # The portal's `socket` field is typed @io.socket (the lower,
+  # boot/02a-io.mirror altitude). @io/socket.close — the
+  # connection-oriented close from #81 — takes `connection`, the
+  # new opaque handle type. Re-typing portal.socket from @io.socket
+  # to @io/socket.connection is a structural change that touches
+  # every consumer (each portals.md row); it lands cleanly as a
+  # separate tick, not here. Body stays `\` until the re-type
+  # lands; the structural close-on-halts contract is intact via
+  # the requires halts(portal) declaration below.
   close(p: portal) -> imperfect { \ }
 
   # ── properties: the math made load-bearing ───────────────────────
