@@ -8,13 +8,14 @@ Status: **Yellow** — architectural recognition complete; namespace shape ready
 
 ## Thesis
 
-The `@spectral` namespace separates three layers cleanly:
+The `@spectral` namespace separates four layers cleanly:
 
 - **`@spectral/mosaic`** (open, Apache-2.0): the multi-shard BEAM-cluster deployment grammar. Composes individual mirror-binary shards into a coherent cluster. Compiles to `@code/beam/eaf`. Heterogeneous-tiles-make-a-picture, not legion-of-clones.
-- **`@spectral/db`** (closed, binary-only): the proprietary graph engine. Eigenvalue compute, fragmentation, kintsugi tournament implementation, conductivity tensors. The IP moat.
+- **`@spectral/portal`** (open, Apache-2.0): typed transport over content-addressed subspaces. The portal primitive — `@io.socket` + content-addressed subspace OID + shard-frame on each end. The wire protocol (WS handshake → `@fragmentation/frame` full frame → bidirectional eigenvalue stream) is the open-portal lifecycle. Public API surface for `@spectral/db`. See `docs/insights/2026-05-26-portal-as-io-socket-over-content-addressed-subspace.md`.
+- **`@spectral/db`** (closed, binary-only): the proprietary graph engine. Eigenvalue compute, fragmentation, kintsugi tournament implementation, conductivity tensors. The IP moat. *Speaks the `@spectral/portal` protocol at its public boundary.*
 - **`@spectral/db/{mnesia, sql/postgres, sql/lite}`** (open adapters): wrappers between the closed engine and existing storage substrates. Third-party adapters welcome.
 
-Each layer has a different relationship to commodity vs differentiation. The namespace honors the distinction.
+Each layer has a different relationship to commodity vs differentiation. The namespace honors the distinction. **The portal layer is what makes the adapter contract structurally defined rather than ad-hoc** — every adapter speaks portal; the engine implements portal; third-party tools (LSP, MCP, BEAM nodes, filesystem mounts) consume portal.
 
 ---
 
@@ -35,10 +36,14 @@ Naming the framing as "mosaic" instead of "legion" is structurally honest about 
 ## The Stack
 
 ```
-@code/llvm        → per-shard mirror binary (locally optimal via |\>)
-@code/beam/eaf    → multi-shard mosaic runtime (BEAM application format)
-@spectral/mosaic  → grammar composing shards into a deployment
+@io.socket                           → raw transport primitive (TCP/unix/WS)
+@spectral/portal                     → typed transport: socket + subspace + frame
+@code/llvm                           → per-shard mirror binary (locally optimal via |\>)
+@code/beam/eaf                       → multi-shard mosaic runtime (BEAM application format)
+@spectral/mosaic                     → grammar composing shards into a deployment
 ```
+
+The portal layer sits between raw transport and graph-engine concerns: every adapter, every cross-shard message, every spectral-db connection rides on `@spectral/portal`. The closed `@spectral/db` engine speaks portal at its public boundary; the open adapters speak portal at the storage end. Portal is the seam.
 
 Mirror compiles to LLVM for the per-shard binary; spectral compiles to BEAM for the cluster orchestration. The runtime layers are honest about what BEAM was designed for: distributed, fault-tolerant, multi-node coordination. Erlang/OTP/Mnesia have spent four decades getting this right; don't reimplement.
 
@@ -97,6 +102,7 @@ The adapter contract (what protocol the closed binary speaks to the open adapter
 - `mirror-supersedes-daemon` — mirror is the local-node substrate; spectral is the cluster substrate. Same separation principle.
 - `pipe-hole-and-au-binary` — `|\>` works the same for closed binaries; the AST is verifiable, the binary is locally optimal, the engine just ships as a sealed-source flake.
 - `shard-as-observer-relative-lambda-zero` — the shard composes adapters; the mosaic composes shards; the namespace separates the layers.
+- `2026-05-26-portal-as-io-socket-over-content-addressed-subspace` — names `@spectral/portal` as the typed transport primitive; the public API surface this namespace's closed engine speaks at its boundary.
 
 ---
 

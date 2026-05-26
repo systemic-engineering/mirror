@@ -25,6 +25,23 @@ None of these are aspirational. They're either landed or in the immediate path b
 
 v1.0 is **a deployment milestone, not a code milestone.** Mirror v1.0 means: the architecture runs in production at `spectral.engineer`, serving real workloads, on cloud hardware.
 
+### v1.0 launch tiers (2026-05-26)
+
+The v1.0 launch is staged across two visibility tiers per the systemic.engineering consent architecture:
+
+**Public access (`spectral.engineer/*`):**
+- `/paper` — the architecture paper with executable proofs in browser
+- `/onboarding` — peer-selection + first conversation via local runtime
+- `/docs` — documentation generated from `#` annotations
+- Local runtime (lambda shell in browser via PWA; the editor at `/loom` when Loom ships)
+
+**Protected access (founding-member tier per Terms §7):**
+- `/ai` — the eigenvalue genogram (smelter pipeline output; LLM lineage detection)
+- Smelter + Kintsugi + @mirror.project pipeline (the crystal generation chain)
+- Per-model lineage coefficients, common-substrate detection, distillation signatures
+
+**Why the protected tier for `/ai`:** the genogram is high-value, high-controversy data. Public access invites legal and political pressure before the corpus has the standing to absorb it. Protected access lets us stage disclosure on our timing, validate with credentialed early users (per `tasks/pending/burry.md` Phase A), and build the political coalition that public release requires. The methodology paper is public; the dashboard data is protected. Reproducibility is preserved (anyone can smelter their own model and verify); release control is preserved.
+
 **What that requires structurally:**
 
 - **Non-Mac deployment targets.** Cloud means Linux x86_64 or ARM (AWS Graviton, similar). Apple Silicon UMA is the dev-side bonus that makes the architecture zero-cost on Mac; **it is not the deployment baseline.**
@@ -484,6 +501,13 @@ The launch demonstration becomes possible when:
 6. **I minimum** — Terms updated for autonomous responses; license model decided enough to ship.
 
 *Everything else is enhancement. The launch demonstration in roleplay form is reachable when the J-gate items are green.*
+
+**Protected-tier launch (2026-05-26 addition):** The J 1–6 gates above govern the PUBLIC launch (paper + onboarding + local runtime + docs). The `/ai` eigenvalue genogram launches behind the founding-member access gate (Terms §7 protected tier), not publicly. Additional gating requirements for the protected tier:
+
+- Smelter pipeline operational; eigenvalue signatures for top-20 publicly-released LLMs computed and stored.
+- Reproducibility receipts public (methodology paper + smelter source; anyone can run smelter on a model they have and verify the methodology); dashboard data protected.
+- Founding-member access provisioning shipped (auth, audit log, refusal-on-policy-violation).
+- Strategic outreach plan operational — see `tasks/pending/burry.md` (two-phase: data first via `/ai` access, ask after quantum demo). Burry approach Phase A scheduled for launch +1 week. Other credentialed figures (Espejo, Doctorow, Schneier, Mitchell, Bender, Gebru) deferred per LRM until the protected/public tier split shows its first month of behavior.
 
 ---
 
