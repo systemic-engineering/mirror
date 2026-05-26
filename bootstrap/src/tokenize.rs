@@ -336,8 +336,44 @@ fn scan_items(
             pos += 1;
         }
         if pos == word_start {
-            // unrecognised char, advance one byte.
-            pos += 1;
+            // Unrecognized non-whitespace bytes. Previously this branch
+            // silently advanced a single byte, causing constructs like
+            // `imperfect<portal>` to vanish into the gaps between
+            // recognized tokens — `--strict` then saw zero darks and
+            // reported success on hidden drift (#91).
+            //
+            // Restore the `--strict` substrate guarantee that every
+            // source byte either enters an AST node, is comment/
+            // whitespace, OR triggers an error: coalesce the run of
+            // unrecognized non-whitespace bytes (up to the next
+            // whitespace, word-char, recognized punctuation, or EOF)
+            // into a Dark span so the existing strict-mode walker
+            // surfaces them.
+            //
+            // Per docs/specs/strict-and-total-classification.md and the
+            // RED test at bootstrap/tests/strict_byte_coverage.rs.
+            let dark_start = pos;
+            while pos < len
+                && !matches!(
+                    bytes[pos],
+                    b' ' | b'\t' | b'\n' | b'\r'
+                        | b'"' | b'#' | b';' | b'{'
+                        | b')' | b']' | b'}'
+                )
+                && !is_word_char(bytes[pos])
+            {
+                pos += 1;
+            }
+            if pos == dark_start {
+                // Defensive: shouldn't happen, but ensure forward progress.
+                pos += 1;
+            }
+            let dark_bytes = String::from_utf8_lossy(&bytes[dark_start..pos]).into_owned();
+            let span = DarkSpan {
+                start: base_off + dark_start,
+                end: base_off + pos,
+            };
+            parent.add_child(AstNode::dark(&dark_bytes, span));
             at_line_start = false;
             continue;
         }

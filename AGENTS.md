@@ -295,6 +295,18 @@ See `docs/insights/2026-05-26-glass-wall-and-cross-wall-kintsugi.md`.
 - Do NOT change .mirror files in `boot/` without understanding the boot order.
 - Do NOT create filesystem caches or directories. Git IS the store.
 
+**Exception (bugfixes only):** Bugfixes that restore existing substrate
+guarantees are permitted in Rust. The bootstrap may not GROW capability,
+but it may be made HONEST about capability it already claims. The
+distinction: features ADD; bugs RESTORE. Reference the existing claim
+being restored in the commit message, and tag it `[bugfix:restore]` so
+the convention is greppable. The pre-commit hook honors this marker.
+
+Example: `--strict` always *claimed* that every source byte enters the
+AST or errors; the implementation lied; restoring it is a bugfix, not
+a feature. See commit `🟢 bootstrap: --strict errors on bytes that fail
+to enter the AST (closes #91)` for the canonical shape.
+
 ## Git IS the Content Store
 
 **Never create a separate cache, store, or artifact directory.**
