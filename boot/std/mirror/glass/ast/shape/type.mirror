@@ -1,0 +1,76 @@
+in @prism
+
+in @mirror/glass/ast
+in @mirror/glass/ast/shape
+in @mirror/glass/ast/token
+
+# @mirror/glass/ast/shape/type — the `type` shape variant: a
+# named type declaration at the top of a glass block.
+#
+# Per the per-variant file pattern declared in @mirror/glass/ast/
+# shape: variants of `shape` may land in their own sub-file when
+# they want to declare structure of their own. `type` does — it
+# carries a name and a body, where the body altitude varies (sum,
+# record, alias, or abstract).
+#
+# The self-reference: `type type { ... }`
+#
+# The keyword `type` IS the variant being declared. The substrate
+# is recursive by construction — `type` is a valid lowercase
+# identifier and a valid type name, so `type type { ... }` reads
+# exactly as intended: "declare a type named `type` with the
+# following structure." The bootstrap tokenizer sees `type`
+# (keyword) then `type` (identifier name) and the parser settles
+# it cleanly. The substrate accumulates the meaning; the bootstrap
+# stays minimal.
+#
+# Legacy correspondence (corpus forms a `type` declaration takes):
+#
+#   type bool = true | false                     # sum / variant
+#   type arm { pattern, body, annotations }      # record
+#   type glass                                   # abstract
+#   type fixed = refract                         # alias to a Prism op
+#
+# At substrate altitude these are all the same variant — a name
+# plus a body. The body's altitude (sum-of-variants, record-of-
+# fields, alias-expression, abstract) is a downstream concern;
+# this declaration captures the shape-variant structure only.
+#
+# The body is `brace_block` at this altitude for record / abstract
+# forms; the sum / alias forms use `= <expression>` which is body-
+# altitude (downstream of tokenization). Stage 2 of #94 declares
+# the variant shape; later stages refine the body altitudes.
+#
+# Reed's stop-and-report on the self-reference: the natural form
+# works. The substrate is recursive by construction; `type` as a
+# keyword and `type` as a name are both legal at the bootstrap
+# altitude and resolve through this declaration to a shape variant.
+# No renaming needed.
+#
+# Distinction from `fixed`:
+#
+#   - `type`  : declares a NAMED TYPE (a structural shape); the
+#               name binds at the type altitude.
+#   - `fixed` : declares a NAMED VALUE (a settled crystal); the
+#               name binds at the value altitude.
+#
+# Both shape variants live at module-top; the altitude they bind
+# to differs (type-space vs value-space).
+
+grammar @mirror/glass/ast/shape/type {
+  # The `type` shape variant: a name plus an optional body. The
+  # body's altitude (sum / record / alias / abstract) is downstream
+  # of this declaration; the shape captured here is just "a typed
+  # binding in type-space."
+  #
+  # The self-reference is honest: `type type` reads as "declare
+  # a type named `type`"; the substrate's recursive nature handles
+  # the name = keyword collision by construction.
+  type type {
+    name: identifier,
+    body: brace_block,
+  }
+}
+
+out type
+out @mirror/glass/ast/shape/type
