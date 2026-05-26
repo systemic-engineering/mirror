@@ -1,0 +1,77 @@
+in @prism
+
+in @mirror/glass
+
+# @mirror/glass/ast — the AST glass: the data shape source bytes
+# settle into.
+#
+# Stage 1 of #94 (additive landing). The legacy declarations live
+# in boot/std/mirror/grammar.mirror; this file introduces the
+# canonical home without touching the legacy. The downstream rename
+# (`grammar => glass`) runs via @kintsugi/fracture/grammar-to-glass
+# in a later tick.
+#
+# Substrate-altitude decisions resolved 2026-05-26 (Alex + Reed):
+#
+#   - `grammar` keyword surfaces as `glass` at substrate altitude;
+#     downstream substrates speak in glass-language.
+#   - `action` keyword surfaces as `lambda` (FP-canonical; we already
+#     have `λsh`); `action` was OOP-ish drift.
+#   - The choice-combinator `form` dissolves entirely. The type
+#     structure of shape (declared in @mirror/glass/ast/shape)
+#     carries the meaning; the substrate does not need a separate
+#     choice-combinator abstraction.
+#   - `shape` replaces `form` as the type name for the canonical
+#     top-level declaration variants.
+#
+# This file declares the AST glass: block structures, the file root,
+# and the two file-level predicates the substrate exposes about a
+# glass-value (is_mirror, namespace). Per-node-type structure (token,
+# declaration, expression, ...) lands at @mirror/glass/ast/<node>/*
+# as concrete demand surfaces.
+#
+# Spec: docs/specs/mirror-grammar-self-hosted.md
+# Insight: docs/insights/2026-05-26-fixed-and-the-spectral-feedback-fracture.md
+
+grammar @mirror/glass/ast {
+  # ===== block structures =====
+  # The two structural brackets every glass shares. Concrete glasses
+  # decide what their bodies contain; the AST glass declares the
+  # bracket shape itself. The body parameter is the abstract repeat
+  # over `shape` (declared in @mirror/glass/ast/shape) — no `form`
+  # choice-combinator detour; the type structure handles it.
+  refract brace_block      = brace_block(repeat(shape, 0, none))
+  refract paren_block      = paren_block(repeat(shape, 0, none))
+
+  # ===== file root =====
+  # The top-level `shape` repeated, interleaved with whitespace. A
+  # `.mirror` file is a sequence of shape declarations; whitespace
+  # between them is the lexical primitive declared in token.
+  refract file             = repeat(choice(whitespace, shape), 0, none)
+
+  # ===== file-level predicates =====
+  # Substrate-altitude queries about a glass-value (moved from the
+  # legacy @mirror/grammar). Used by @epistemologic/property/
+  # glass_wall to enforce substrate-pull discipline: non-mirror
+  # glasses must live under @io.
+  #
+  # is_mirror(g): true iff g parses through the mirror meta-glass
+  # (this very glass). Mirror glasses satisfy this by construction;
+  # everything else (Rust, LLVM IR, raw bytes, vendor SDKs) parses
+  # through some other surface and fails. The check is one ref
+  # equality at the substrate altitude — no parse re-attempt; the
+  # glass already knows which meta-glass tokenised it.
+  #
+  # namespace(g): the @-ref the glass was declared under, as text.
+  # Used by glass_wall to check the @io prefix. Same source as
+  # `Grammar::ref` in the bootstrap.
+  is_mirror(g: glass) -> bool { \ }
+  namespace(g: glass) -> text { \ }
+}
+
+out brace_block
+out paren_block
+out file
+out is_mirror
+out namespace
+out @mirror/glass/ast
