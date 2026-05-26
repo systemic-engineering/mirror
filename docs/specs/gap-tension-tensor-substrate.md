@@ -117,11 +117,33 @@ measures what is; `@fate` decides what to do about it.
 - **State tier `heuristic(p)`**: established by Logic Tensor Networks
   (Serafini & Garcez, *Artificial Intelligence* 2021; arXiv:2012.13635).
   LTN's "Real Logic" assigns every closed formula $\varphi$ a satisfaction
-  value $\mathcal{G}(\varphi) \in [0,1]$ via a stable-product fuzzy
-  semantics. Mirror's `heuristic(p: probability)` is structurally the same
-  object: a $[0,1]$-valued grounding of a claim. Adopting LTN's notation
-  tightens mirror's semantics — `heuristic(p)` IS a grounding $\mathcal{G}$
-  applied to the claim's formula.
+  value $\mathcal{G}(\varphi) \in [0,1]$ via a fuzzy semantics. Exact
+  semantics (Serafini & Garcez 2021, §2.2): a grounding $\mathcal{G}$ is
+  a function on the signature satisfying (Def. 2):
+  *(1)* $\mathcal{G}(x) = \langle d_1, \ldots, d_k \rangle$ for every
+  variable $x$ (a sequence of tensors in $\mathcal{G}(D(x))$);
+  *(2)* $\mathcal{G}(f) : \mathcal{G}(D_{in}(f)) \to \mathcal{G}(D_{out}(f))$
+  for every function symbol $f$;
+  *(3)* $\mathcal{G}(p) : \mathcal{G}(D_{in}(p)) \to [0,1]$ for every
+  predicate symbol $p$. Connectives are grounded via fuzzy operators
+  (Serafini & Garcez 2021, §2.2.3, eq. 1–2):
+  $\mathcal{G}(\neg \varphi) = N(\mathcal{G}(\varphi))$,
+  $\mathcal{G}(\varphi \land \psi) = T(\mathcal{G}(\varphi), \mathcal{G}(\psi))$
+  for a t-norm $T$,
+  $\mathcal{G}(\varphi \lor \psi) = S(\mathcal{G}(\varphi), \mathcal{G}(\psi))$
+  for a t-conorm $S$,
+  $\mathcal{G}(\varphi \to \psi) = I(\mathcal{G}(\varphi), \mathcal{G}(\psi))$
+  for a fuzzy implication $I$.
+  Quantifiers use aggregation operators
+  $\mathrm{Agg} : \bigcup_{n \in \mathbb{N}} [0,1]^n \to [0,1]$ (eq. 3):
+  $\mathcal{G}(\forall x \,\varphi) = \mathrm{Agg}(\forall) \bigl\{\mathcal{G}(\varphi)_i : i = 1, \ldots, |\mathcal{G}(x)|\bigr\}$.
+  Mirror's `heuristic(p: probability)` is structurally the same object:
+  a $[0,1]$-valued grounding of a claim. Adopting LTN's notation tightens
+  mirror's semantics — `heuristic(p)` IS a grounding $\mathcal{G}(\varphi)$
+  applied to the claim's formula; composing two heuristic gaps under
+  $\land$ uses LTN's t-norm $T$. **The stable-product semantics is one
+  choice among several** (Gödel min/max, Łukasiewicz, product) and the
+  selection is itself a design call — see §8.4 below.
 - **State tier `verified` vs `declared`**: established by inconsistency
   measurement (Thimm 2019). Thimm distinguishes formulas that participate
   in a minimal unsatisfiable subset (MUS) from free formulas (those not in
@@ -284,9 +306,19 @@ grammar @fate {
   # (arXiv:1808.01513) extended to cellular sheaves; per Bodnar et al.
   # 2022 (Neural Sheaf Diffusion, arXiv:2202.04579) as the spectral
   # object whose gap controls diffusion/convergence on the graph.
+  #
+  # exact construction (Bodnar et al. 2022, §2): for cellular sheaf F over
+  # the tension graph with restriction maps F_{v ⊴ e} : F(v) → F(e), the
+  # sheaf Laplacian L_F is a positive semi-definite block matrix with
+  # diagonal blocks L_{F vv} = Σ_{v ⊴ e} F_{v ⊴ e}^⊤ F_{v ⊴ e}
+  # and off-diagonal blocks L_{F vu} = − F_{v ⊴ e}^⊤ F_{u ⊴ e}.
+  # the normalised sheaf Laplacian Δ_F = D_F^{-1/2} L_F D_F^{-1/2} is used
+  # in practice for its bounded spectrum. when d=1 and all maps are identity,
+  # Δ_F reduces to the standard normalised graph Laplacian Δ_0.
+  # mirror's `fiedler` = λ_0(Δ_F), the smallest non-trivial eigenvalue.
   type tensor = {
     tensions: [tension],
-    fiedler:  f64                      # λ₂(L_F); algebraic connectivity; ≥0
+    fiedler:  f64                      # λ₀(Δ_F); algebraic connectivity; ≥0
   }
 
   # build a tensor from the gaps surfaced by `mirror compile`. proposed;
@@ -476,12 +508,27 @@ the pairing of:*
   edges** under the **Balanced Forman curvature**. Mirror's `tension` with
   high `vector` magnitude is the structural analog of a negatively-curved
   edge; the SDRF removal step is the structural analog of the fracture
-  application. The mathematical content transfers exactly: an edge $(i,j)$
-  has Balanced Forman curvature $\mathrm{Ric}_{BF}(i,j) = \frac{2}{d_i} +
-  \frac{2}{d_j} - 2 + 2 |\sharp(i,j)| / \max(d_i, d_j) + 2 |\sharp(j,i)| /
-  \max(d_i, d_j) + \frac{\gamma_{\max}^{-1}(...)}{...}$ where $\sharp(i,j)$
-  counts triangles, $\gamma_{\max}$ four-cycles. Mirror would compute an
-  analogous local curvature on the tension graph.*
+  application. The exact formula (Topping et al. 2022, Definition 1,
+  equation (3)): for any edge $i \sim j$ in a simple, unweighted graph $G$,
+  $\mathrm{Ric}(i,j) := 0$ if $\min\{d_i, d_j\} = 1$; otherwise*
+
+  $$\mathrm{Ric}(i,j) := \frac{2}{d_i} + \frac{2}{d_j} - 2 + 2 \frac{|\sharp_\Delta(i,j)|}{\max\{d_i, d_j\}} + \frac{2|\sharp_\Delta(i,j)|}{\min\{d_i, d_j\}} + \frac{(\gamma_{\max})^{-1}}{\max\{d_i, d_j\}}\bigl(|\sharp^\square_i| + |\sharp^\square_j|\bigr)$$
+
+  *where $\sharp_\Delta(i,j) = S_1(i) \cap S_1(j)$ counts the triangles
+  based at edge $i \sim j$ (vertices in the 1-neighborhood of both
+  endpoints); $\sharp^\square_i(i,j) = \{k \in S_1(i) \setminus S_1(j),\
+  k \ne j : \exists w \in (S_1(k) \cap S_1(j)) \setminus S_1(i)\}$ counts
+  the 4-cycle-forming neighbors of $i$ without diagonals;
+  $\gamma_{\max}(i,j)$ is the maximal number of 4-cycles based at
+  $i \sim j$ traversing a common node (Topping et al. 2022, Definition 4);
+  and the final $\gamma_{\max}$ term is set to zero when
+  $|\sharp^\square_i| = |\sharp^\square_j| = 0$. Bound:
+  $\mathrm{Ric}(i,j) > -2$. The curvature is negative when $i \sim j$
+  behaves as a bridge between the neighborhoods; positive when the
+  neighborhoods stay connected after removing the edge. Mirror would
+  compute this exact quantity on the tension graph, with `tension`
+  vertices in place of $V$ and the gap-opposition relation in place of
+  $E$.*
 - *TRM (Jolicoeur-Martineau 2025, arXiv:2510.04871) — Tiny Recursive Model.
   A 2-layer network with $\sim7\mathrm{M}$ parameters and full
   back-propagation through a recursion outperforms DeepSeek R1, Gemini
@@ -501,9 +548,30 @@ the pairing of:*
 Proposed body sketch (declarative; not pseudocode for the runtime):
 
 1. **Rank tensions** by `vector` magnitude (highest-pull first).
-   *Established*: the SDRF ranking (Topping et al. 2022 §3) selects the
-   most-negatively-curved edge as the rewrite target. Mirror's ranking is
-   the structural mirror.
+   *Established*: the SDRF ranking (Topping et al. 2022 §4, Algorithm 1)
+   selects the most-negatively-curved edge as the rewrite target. The full
+   SDRF loop, in mirror's transfer:
+
+   > **Algorithm 1 (SDRF, Topping et al. 2022).** Input: graph $G$,
+   > temperature $\tau > 0$, max number of iterations, optional upper-bound
+   > $C^+$ on $\mathrm{Ric}$. Repeat:
+   >
+   > 1. For edge $i \sim j$ with **minimal** Ricci curvature $\mathrm{Ric}(i,j)$:
+   >    compute vector $x_{kl} = \mathrm{Ric}'(i,j) - \mathrm{Ric}(i,j)$,
+   >    the improvement to $\mathrm{Ric}(i,j)$ from adding edge $k \sim l$
+   >    where $k \in B_1(i), l \in B_1(j)$; sample index $(k, l)$ with
+   >    probability $\mathrm{softmax}(\tau \cdot x)_{kl}$ and add edge
+   >    $k \sim l$ to $G$.
+   > 2. Remove edge $i \sim j$ with **maximal** Ricci curvature
+   >    $\mathrm{Ric}(i,j)$ if $\mathrm{Ric}(i,j) > C^+$.
+   >
+   > Until convergence, or max iterations reached.
+
+   Mirror's ranking is the structural mirror of step 1's outer selection.
+   The inner $\mathrm{softmax}(\tau x)$ over candidate fractures is the
+   structural mirror of `@fate` tournament selection over candidate rewrites;
+   $\tau = \infty$ corresponds to mirror's deterministic high-confidence
+   apply path.
 2. **Propose the fracture rule** whose application closes the
    higher-confidence gap and reduces the lower-confidence gap's opposition.
    Confidence comes from `kintsugi/fracture` per the fracture-confidence
@@ -561,11 +629,27 @@ sequence. The substrate MUST surface non-convergence as a first-class
 signal — see §8 (design call).
 
 *Citation provenance: the high-fiedler-as-bottleneck framing is Bodnar et al.
-2022 (arXiv:2202.04579, Neural Sheaf Diffusion). Their Cheeger-type
-inequality bounds the spectral gap from below; when the gap is small, sheaf
-diffusion fails to synchronize. Mirror's non-convergence corresponds
+2022 (arXiv:2202.04579, Neural Sheaf Diffusion). The Cheeger-like inequality
+(Bodnar et al. 2022, Proposition 5): if $\mathcal{F}$ is a discrete $O(d)$
+bundle over a connected graph $G$ with $n$ nodes and
+$||(P^\gamma_{v \to v} - I) x_v||^2 \geq \epsilon ||x_v||^2$ for all cycles
+$\gamma$ based at $v$, then
+$\lambda_0 \geq \epsilon \bigl(2 \, \mathrm{diam}(G) \, n \, d_{\max}\bigr)^{-1}$,
+where $P^\gamma_{v \to v}$ is the cycle-transport operator composed from
+restriction maps $\mathcal{F}_{v \trianglelefteq e}^\top \mathcal{F}_{u \trianglelefteq e}$
+along $\gamma$. The complementary upper bound (Proposition 3):
+$\lambda_0 \leq r/2$ where $r = \max_{\gamma, \gamma'} ||P^\gamma - P^{\gamma'}||$
+measures path-dependence of transport. When the spectral gap is small, sheaf
+diffusion $\dot X(t) = -\Delta_{\mathcal{F}} X(t)$ fails to synchronize
+(converge to $\ker(\Delta_{\mathcal{F}})$). Mirror's non-convergence corresponds
 structurally to a small spectral gap on the tension graph. The proposed
-response — emit a scene rather than a fracture — is mirror's choice.*
+response — emit a scene rather than a fracture — is mirror's choice.
+
+Note: the classical (non-sheaf) Cheeger inequality used in Topping et al.
+2022 eq. (6) and Proposition 5 — $2h_G \geq \lambda_1 \geq h_G^2/2$, and
+if $\mathrm{Ric}(i,j) \geq k > 0$ for all edges then $\lambda_1/2 \geq h_G \geq k/2$
+— gives the lower-bound route via curvature on the underlying tension
+graph (when sheaf structure is trivial).*
 
 ---
 
@@ -677,7 +761,34 @@ choice should satisfy. Mirror should test its choice against the
 postulates; that is the established way to validate the decision. **No
 literature answer exists; mirror's choice is genuinely open.***
 
-### 8.3 Non-converging tensors
+### 8.3 LTN t-norm selection
+
+When composing two `heuristic(p_a)` and `heuristic(p_b)` gaps under
+conjunction (or any binary connective), the result depends on which fuzzy
+t-norm $T$ is chosen as the grounding of $\land$. The standard choices
+(Serafini & Garcez 2021, Appendix B):
+
+- **Gödel** (min): $T_G(a, b) = \min(a, b)$. Idempotent; preserves
+  pointwise pessimism; gradient zero almost everywhere (bad for learning).
+- **Product**: $T_P(a, b) = a \cdot b$. Differentiable; multiplicative;
+  shrinks fast under composition.
+- **Łukasiewicz**: $T_L(a, b) = \max(0, a + b - 1)$. Bilinear; truncated;
+  preserves more information at the boundary.
+- **Stable product** (LTN's default): a smoothed variant of $T_P$ that
+  avoids vanishing/exploding gradients during gradient-based satisfiability
+  search.
+
+*Default-not-chosen.* Mirror does not do gradient learning today, so LTN's
+stable-product default is not load-bearing. The pragmatic question is which
+t-norm composes naturally with mirror's heuristic ranking. Likely
+candidates: Gödel (interpretable, idempotent, matches "weakest-link"
+intuition) or product (multiplies confidences, decays under composition).
+
+*Citation provenance: established. The four t-norms above are textbook
+fuzzy logic (Hájek 1998); LTN's stable-product is Serafini & Garcez 2021
+§2.2.3 + Appendix B. Mirror's choice among them is open.*
+
+### 8.4 Non-converging tensors
 
 When `minimize` fails to lower energy, what does it return?
 
@@ -722,7 +833,8 @@ requirement.**
 | §7 Migration order | Roadmap | N/A — sequencing | Mirror's choice | n/a |
 | §8.1 `tension_vector` | Open question | N/A | Options A/B/C each ground in established work | Klein 2020; LTN; Tensor Logic |
 | §8.2 heuristic vs declared | Open question | N/A | Proposed — no clean literature answer; check against Thimm postulates | Thimm 2019 |
-| §8.3 Non-converging tensors | Open question | N/A | Established framing; Mirror diverges from Bodnar 2022 on response | arXiv:2202.04579 |
+| §8.3 LTN t-norm selection | Open question | N/A | Established (textbook fuzzy logic) | Serafini & Garcez 2021 (arXiv:2012.13635 Appendix B); Hájek 1998 |
+| §8.4 Non-converging tensors | Open question | N/A | Established framing; Mirror diverges from Bodnar 2022 on response | arXiv:2202.04579 |
 
 The one substrate primitive that EXISTS today and underlies this whole
 spec: `verdict` in `boot/std/epistemologic/property.mirror`. Everything
