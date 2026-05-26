@@ -13,9 +13,10 @@ in @fragmentation
 # Substrate decision (Alex 2026-05-26 per
 # docs/specs/spectral-db-three-tier-architecture.md §"Cold tier"):
 # the cold-tier blob layer IS Nix. `@code/nix` renders crystals into
-# the form Nix's store understands; `@fragmentation/nix` (sibling
-# substrate) is the typed orchestration above that wraps the cold
-# tier under `@spectral/portal`.
+# the form Nix's store understands; `@mirror/store/nix` (the IO
+# adapter, per the corrected "@fragmentation pure; @mirror/store
+# owns io" placement) carries the cold-tier orchestration surface
+# above the render bridge.
 #
 # Mirrors the shape of `@code/rust` and `@code/llvm`: a render-
 # target grammar in the @code lineage. Bodies are \ — this is the
@@ -96,7 +97,7 @@ grammar @code/nix("nix") {
   # ── path_of: render the /nix/store path for a crystal OID ───────
   #
   # Inverse direction of hash_of, when the crystal already lives in
-  # the store. Used by `@fragmentation/nix` to resolve a load() by
+  # the store. Used by `@mirror/store/nix` to resolve a fetch() by
   # OID into the concrete /nix/store path to read from.
   path_of(oid: oid, name: text) -> store_path { \ }
 
