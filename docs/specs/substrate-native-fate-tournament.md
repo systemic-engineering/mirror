@@ -269,6 +269,57 @@ type au {
 }
 ```
 
+**What `au` IS, sharpened (corpus grounding).** Two findings from the
+Fate corpus make the four-coordinate record concrete rather than
+nominal.
+
+*`au` is a geodesic endpoint on the spectral manifold* (cite
+`~/.reed/practice/insights/fate/net-equity-routing.md` +
+`~/.reed/practice/insights/fate/attnres-connection.md`, Reed + Alex
+2026-04-18). Source and target are both graphs with Laplacian spectra;
+the diff between them is not a patch but *a geodesic on the spectral
+manifold*. Fate infers the connection — the 16×16 matrix that
+transports source → target along that geodesic. This is a principal
+bundle: the **fiber stays fixed at 16×16**; the **base (the graph)
+scales independently**; you do not scale the connection, you scale
+what it connects. `au` is the *settled coordinate at the geodesic's
+endpoint* — where the transport along the spectral geodesic has come
+to rest.
+
+*The settling mechanism is a self-consistent-field iteration* (same
+sources; `crystallize()` in Fate's `derive.rs`). `crystallize()`
+derives weights from the eigendecomposition of the dark coupling and
+*iterates until the eigenvalues stabilise* — a textbook SCF loop
+(eigendecomposition repeated until the spectrum is a fixed point). The
+four coordinates of `au` — `(eigenvector, eigenvalue, fiedler,
+eigengap)` — are the settled state read off *at that SCF fixed point*.
+The eigenvalue stabilising IS settlement; `au` is what settlement
+leaves behind. (The damping term `(1-α)·old + α·new` is the SCF's
+two-point residual; the fixed point is reached when `α·new` no longer
+moves the spectrum.)
+
+This sharpens, it does not replace, the newtype discipline below: the
+record-of-newtypes is still the substrate shape; the corpus says what
+the shape *means* — the endpoint of a spectral geodesic, found by SCF.
+
+*The 16 → 5 lift has a physical reading* (cite
+`~/.reed/practice/insights/cosmology/eventually-consistent-universe.md`
+§4.4). The fiber is 16-dimensional; the base is the five-operation
+graph. The corpus reads the lowering `16 → 5` as spontaneous symmetry
+breaking: the **pre-SSB bosonic content is 12 gauge + 4 Higgs = 16**
+degrees of freedom, and **SSB IS eigenvalue splitting** on that
+16-dimensional space — the initially degenerate mass matrix splits,
+selecting which degrees of freedom become observable (the five-op
+base) and which stay in the bulk. The spectral action is the
+mechanism of the split. This grounds the monadic lift named in
+[[architecture-flang-mirror-numerical-split]]: the lift from the
+16×16 connection fiber down to the five-operation Prism base is
+SSB / the spectral action, not an arbitrary projection. (Per the
+source, the precise Standard-Model mapping is speculative; what is
+established is the structural triple — Higgs-as-connection,
+mass-as-holonomy, SSB-as-eigenvalue-splitting. This spec inherits that
+hedge and does not over-claim the gauge identification.)
+
 Why each component is load-bearing:
 
 - **`trajectory: eigenvector`** — without the state vector, there is no
@@ -395,6 +446,31 @@ spectral settlement. This is the §10 *non-reactive* property of Spectral
 Settlement Strategy concretised: the tournament doesn't "respond to"
 candidates by selecting one; it integrates the candidate set into the
 eigensystem; the settled state IS the response.
+
+**The loss IS the spectral action (corpus grounding).** This spec's
+loss — "the composite of `@epistemologic/properties` at the relevant
+altitude" (§10.5, inherited from `parse-as-fate-tournament` §3.1) — is
+realised concretely as a **spectral-action difference** (cite
+`~/.reed/practice/insights/spectral-db/dirac-operator-on-graphs.md`
+§5, Chamseddine–Connes 1996):
+
+```
+loss(transformation) = Tr(f(D_before/Λ)) − Tr(f(D_after/Λ))
+```
+
+where `D = d + d*` is the graph Dirac operator and `f` is a cutoff
+function at scale `Λ`. The spectral action `Tr(f(D/Λ))` IS the
+information content of the graph at scale `Λ`; a transformation that
+adds structure raises it, one that removes structure lowers it. **This
+replaces `ShannonLoss` principledly** — not a hand-computed entropy
+axis bolted on beside the property verdicts, but the same quantity the
+spectral triple already generates (`Tr(ρ ln ρ)` for `ρ = D²|₀/Tr(D²|₀)`
+IS the BGS / von Neumann entropy). The `depth: eigenvalue` coordinate
+of `au` is where this difference bottoms out; the loss table above
+ranks trajectories by it. So `argmin_loss` / `top_k_loss` /
+`halve_by_loss` are ranking by spectral-action difference, computed
+from the same `D` whose `dsyev` eigensystem the kernel already
+produces (see `numerical-substrate-via-fortran` §1.5).
 
 ### 3.2 The five-op posture per rule
 
@@ -970,6 +1046,14 @@ property-composite loss via a substrate action — likely
 `@fate.loss(candidate) -> [precision]` declared in `boot/std/fate.mirror`
 (or a new `boot/std/fate/loss.mirror`), with body composing
 `@epistemologic/property/reflect(ast)` into a verdict vector.
+
+The concrete numerical realisation of that composite is the
+spectral-action difference `Tr(f(D_before/Λ)) − Tr(f(D_after/Λ))` (§3.1,
+cite `dirac-operator-on-graphs.md` §5). The property verdicts give the
+per-axis *shape* of the loss vector; the spectral action gives the
+*scale-aware magnitude* on the structural axis. They compose; the
+spectral action is not a competing axis but the principled successor
+to the `ShannonLoss` the design otherwise leaves un-grounded.
 
 What needs confirmation: that the property reflect mechanism returns
 verdicts at parse altitude in the shape the tournament body expects.

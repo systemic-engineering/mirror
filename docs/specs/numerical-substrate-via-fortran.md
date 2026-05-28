@@ -246,6 +246,120 @@ compile via flang; verify the LLVM IR consumes cleanly through
 `@code/llvm/ir`). Same effort; different destination; the substrate
 grows instead of the bootstrap.
 
+### 1.4 The substrate is NOT greenfield
+
+**Correction to the framing above.** §1.3 and §4 talk about *writing*
+`eigen.f90`, the §8.3 *smoke tick* compiles a fresh `dot.f90`, and the
+migration source is the Rust `eigen_d` in `spectral.rs`. That framing
+is incomplete: the Fortran numerical floor already exists in
+prism-core, and has since 2026-04-11/14. Three files are on disk:
+
+- **`prism/core/native/spectral.f90`** (~5KB) — C-callable `bind(c)`
+  wrappers around LAPACK's `dsyev` (real symmetric eigensystem) and
+  `dgesvd` (SVD): `spectral_eigensystem`, `spectral_eigenvalues`,
+  `spectral_svd`, `spectral_singular_values`. The eigendecomposition
+  the bootstrap's `eigen_d` approximates via ~150 lines of power
+  iteration is *already* a 30-line LAPACK call here.
+- **`prism/core/native/prism.f90`** (~3KB) — the four-operation
+  projection prism (`prism_preview`/`review`/`modify`/`compose`) as
+  `matmul`-based `bind(c)` subroutines. A Prism IS a projection matrix,
+  in Fortran, today.
+- **`prism/core/src/ffi.rs`** (~12KB) — the LAPACK FFI layer:
+  `extern "C"` declarations plus `row_to_col_major` / `col_to_row_major`
+  conversion (Fortran is column-major; the Rust callers are row-major),
+  `eigenvalues` / `eigensystem` / `singular_values` / `svd` wrappers,
+  and `#[cfg(feature = "lapack")]` integration tests.
+
+**The flang work builds on these, not from scratch.** Tick A.1's
+`eigen.f90` is a port/relocation of `spectral.f90`, not a fresh
+implementation; the §8.3 smoke `dot.f90` re-proves an FFI pathway that
+`ffi.rs` already exercises against `spectral.f90`.
+
+**Reconciliation question to surface (do not resolve here).** The
+existing kernels are gfortran-built — `ffi.rs`'s tests are gated
+`#[cfg(feature = "lapack")]` and documented as requiring *gfortran +
+LAPACK*. The flang direction (this spec, §3) is chosen for
+LLVM-IR-as-substrate alignment, not for runtime parity. So the open
+decision is: **migrate the existing gfortran kernels to flang**
+(single compiler; LLVM-IR pathway for everything; risk: re-validating
+numerics under a different front-end) **vs. add flang kernels
+alongside the gfortran ones** (the proven gfortran floor keeps
+working; flang grows only where the IR pathway needs it; risk: two
+compilers, two runtimes — and §10.5's runtime-linkage choice gets
+fraught). §10 should carry this as an open decision; §8's Tick A.1
+should name `prism/core/native/spectral.f90` as the migration source
+rather than implying greenfield authorship.
+
+### 1.5 The kernel is a NumericalPrism, and the observables are Diracian
+
+Two corpus findings sharpen what the kernel *is* and what it should
+*compute*. Neither changes the flang pathway; both ground it.
+
+**The architecture is the NumericalPrism** (cite
+`~/.reed/practice/insights/coincidence/heterogeneous-numerical-prism.md`,
+Mara 2026-05-24; prior art: Jakobs 2012, PGI/JCNS). The Fortran floor
+is dispatched by *one* Prism — `Beam` flows in, `refract` returns the
+result, the backend is opaque to the caller. Capability is advertised
+per-operation via a trait-per-operation discipline
+(`Eigenvalues` / `Eigensystem` / `SingularValues` / `Svd` / `Cholesky`),
+so a backend missing `dsyev` is a *compile* error to use for
+eigenvalues, not a runtime `unimplemented!`. Five illegal states are
+made unrepresentable by type-state moves: backend-without-operation
+(trait-per-op bound), shape-mismatch (`SquareMatrix::new` smart
+constructor), device-without-device (`try_new -> Result`), buffer-
+outliving-backend (a `Buffer<'a>` GAT tied to the backend lifetime),
+and premature-read (a sealed `Dispatched -> Completed` type-state).
+The backend stack is staged: **LapackBackend** (today — wraps the
+existing `ffi.rs` one method per `ffi::*` function) → **MetalBackend**
+(v1.5) → **OpenCLBackend** (future, cross-vendor). **This is Track A
+(#111)** — the LapackBackend that R-1 lands IS the consumer of this
+spec's Fortran floor; the two tracks meet at `prism/core/src/ffi.rs`.
+
+**The structural observables are Diracian** (cite
+`~/.reed/practice/insights/spectral-db/dirac-operator-on-graphs.md`,
+Reed + Alex 2026-05-07). The kernel should not merely eigendecompose a
+Laplacian; it should compute the structural observables that the real
+Dirac operator generates from one matrix:
+
+- The **Dirac operator** `D = d + d* = [[0, Bᵀ], [B, 0]]`, built from
+  the signed incidence matrix `B` (weighted: `±√w`). One operator;
+  everything downstream derives from it.
+- `D² = [[L₀, 0], [0, L₁]]` — the **Hodge Laplacian**. The 0-form block
+  `L₀ = BᵀB` is the graph Laplacian the bootstrap already uses; the
+  1-form block `L₁ = BBᵀ` is the edge Laplacian, new and free.
+- `dim ker(D) = b₀ + b₁` — the **Betti numbers**: connected components
+  plus independent cycles. Topology, read straight off the kernel
+  dimension.
+- **Connes distance** = Dijkstra on edge length `1/√w` — a genuine
+  metric (triangle inequality), polynomial-time, *no SDP* (D'Andrea &
+  Martinetti 2021). Replaces the ad-hoc L2 spectral distance.
+- **Spectral action** `Tr(f(D/Λ))` — replaces `ShannonLoss` with a
+  principled, scale-aware information measure (Chamseddine–Connes
+  1996).
+
+This expands the Phase-B tick list (§8.2) from "add an
+eigendecomposition primitive" to "add the flang structural-observables
+kernel: `D = d + d*`, the `L₀`/`L₁` Hodge split, Betti numbers,
+Connes distance, spectral action" — all built on the *existing*
+`dsyev`/`dgesvd` in `spectral.f90` (for `D²`/`L₀`/`L₁` eigensystems)
+plus a sparse incidence builder and a Dijkstra. The §4.1 `Numerical`
+region grows in ambition, not in primitive count: one `D`, all five
+observables.
+
+**The 16×16 physical grounding** (cite
+`~/.reed/practice/insights/cosmology/eventually-consistent-universe.md`
+§4.4). The substrate-native-fate spec types the Fate fiber as 16×16.
+The corpus reads that number physically: the pre-SSB bosonic content
+is **12 gauge + 4 Higgs = 16** degrees of freedom, and spontaneous
+symmetry breaking *is* eigenvalue splitting on that 16-dimensional
+space — the initially degenerate mass matrix splits into the observed
+spectrum. The `16 → 5` lift (16-dim fiber down to the five-operation
+base) is read as SSB / the spectral action: the eigenvalue splitting
+selects which degrees of freedom become observable. (The paper flags
+the precise Standard-Model mapping as speculative; what is established
+is that the Higgs IS a connection, mass IS holonomy, and SSB IS
+eigenvalue splitting. This spec inherits that hedge.)
+
 ---
 
 ## 2. The `@code/fortran` substrate grammar
@@ -591,6 +705,19 @@ the Fortran pathway.
 **This is good news.** The Numerical migration is bounded and small:
 one function + one struct. The first tick is *the entire numerical
 migration*, not a slice of it.
+
+**Migration source is on disk, not greenfield (see §1.4).** The
+`eigen_d` at lines 957–1063 is the *Rust* eigendecomposition. Its
+Fortran replacement already exists at
+`prism/core/native/spectral.f90` (`spectral_eigensystem` over
+`dsyev`), with the FFI layer at `prism/core/src/ffi.rs`
+(`eigensystem`, plus `row_to_col_major`/`col_to_row_major`). Tick A.1
+is therefore *relocate + reconcile* (gfortran-built today; flang for
+the LLVM-IR pathway — §1.4's open decision), not *author from
+scratch*. `prism.f90` additionally already carries the four-operation
+projection prism (`prism_preview`/`review`/`modify`/`compose`) as
+`bind(c)` `matmul` subroutines — prior art for any future `@code/fortran`
+Projection work.
 
 ### 4.3 Migration ordering
 

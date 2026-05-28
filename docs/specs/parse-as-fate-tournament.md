@@ -364,6 +364,35 @@ observes outcomes and adjusts priors. The parser (Phase 2) is the first
 tournament that runs. The substrate doesn't gain a new mechanism between
 phases — the same mechanism gains new altitudes of consumer.
 
+### 2.6 Parse IS eigenmode selection — Turing 1952
+
+The claim "the parsed AST IS the eigenvalue minimum" has a concrete
+selection mechanism, and it predates spectral-db by seventy years
+(cite `~/.reed/practice/insights/spectral-db/turing-eigenvalue-thread.md`,
+Reed + Alex 2026-05-18; Turing, *The Chemical Basis of Morphogenesis*,
+Phil. Trans. Roy. Soc. B 237:37–72, 1952).
+
+Turing's morphogenesis analysis is linear stability analysis around a
+*homogeneous steady state*: perturbations are expanded in the
+eigenfunctions of the Laplacian, each eigenmode (wavevector `k`) has a
+growth rate `σ(k)` solving `det(J − D·k² − σI) = 0`, and **the pattern
+that emerges is the eigenmode with the largest growth rate.** Structure
+is *selected* out of the homogeneous state by spectral dominance — one
+eigenmode outgrows the rest and becomes the realised pattern.
+
+Parse is the same selection. The ambiguous input is the homogeneous
+state (every `abstract`-declared alternative latent, none yet
+realised). The tournament is the diffusion-driven instability: the
+conductivity Laplacian (§3.2) couples the alternatives, and the
+trajectory whose loss eigenmode dominates — the one the descent
+selects — is the realised parse. **The parsed AST IS the selected
+eigenmode**: the alternative that won the spectral competition, not
+a string match that happened to fire first. "Eigenvalue minimum" and
+"largest growth rate of the favoured mode" are the same selection seen
+from the loss side (minimise loss) and the dynamics side (maximise
+growth of the surviving pattern). The settlement (§3.5) is where that
+selected eigenmode stops changing.
+
 ---
 
 ## 3. Tournament configuration — substrate-declared
@@ -454,6 +483,20 @@ change during a round). Substrate-pull aligned. Zero training data
 required. Auditable — the tensor's entries derive deterministically from
 file paths.
 
+**The tensor's metric is Connes distance, and it is poly-time
+computable** (cite
+`~/.reed/practice/insights/spectral-db/dirac-operator-on-graphs.md`
+§4, D'Andrea & Martinetti 2021). The conductivity coefficient `F(u ◁ e)`
+on an edge of weight `w` is read geometrically as the Connes distance
+of the graph's Dirac operator — and for a commutative algebra on a
+graph, the Connes distance is *not* an SDP: it is shortest-path with
+edge length `1/√w`, i.e. **Dijkstra**. High-conductivity (high-weight)
+edges make alternatives close; low-conductivity edges make them far.
+This is the genuine-metric upgrade over the ad-hoc L2 spectral
+distance (triangle inequality holds), and it is `O((n+m) log n)` per
+pair — concrete computability for v0, no semidefinite solver in the
+parse hot path.
+
 **v1 — + corpus-frequency residual.**
 
 Once spectral-db has settled parses to count, a residual term is added:
@@ -529,6 +572,20 @@ Parses get easier as the system parses more, *for grammars it has seen
 before*. Novel grammars start from the substrate prior (the conductivity
 tensor's hierarchy structure, v0) and learn from there.
 
+**The monotone descent is RG flow** (cite
+`~/.reed/practice/insights/spectral/lambda-zero-theorem.md` §1;
+Zamolodchikov 1986, Perelman 2002). The per-round descent `eⁿ⁺¹ ≤ eⁿ`
+is not a heuristic about "errors getting smaller" — it is the same
+statement as the renormalization-group flow equation, the
+Zamolodchikov c-theorem applied to the candidate ecosystem, and the
+monotone of Perelman's `F`-functional under Ricci flow, all at
+different scales. Each parse round cannot make the topology worse; the
+Lyapunov function of §2.1 IS the c-function. (CLAUDE.md states the
+strict form `eⁿ⁺¹ < eⁿ` for the learning loop; the λ₀ theorem states the
+weak monotone `eⁿ⁺¹ ≤ eⁿ` for a single descent, with the fixed point at
+equality — see §3.5. Both hold: strict across the learning loop as
+grammars are re-seen, weak-with-fixed-point within one descent.)
+
 Learning loop scope (which parses contribute) is open (§7.3).
 
 ### 3.5 Stopping rule — convergence IS the commit
@@ -543,6 +600,29 @@ error: tournament dynamics don't need a cut. The Lyapunov function
 descends per round; when no trajectory can catch the leader under the
 remaining cooling budget, the tournament has converged; that round is
 the commit.
+
+**The convergence point is λ₀, and λ₀ is NOT zero loss** (cite
+`~/.reed/practice/insights/spectral/lambda-zero-theorem.md`, Alex +
+Reed 2026-05-19). The stopping rule is sharper than "convergence": it
+is the fixed point `λ₀` where `eⁿ⁺¹ = eⁿ` — the round at which the
+descent stops because nothing changes, not the round at which loss
+reaches zero. The descent terminates with **loss remaining**, and that
+residual is not optimizer failure:
+
+> The loss that remains at λ₀ is the projection of the system's state
+> onto its harmonic components — the eigenvectors of zero eigenvalue
+> of the Hodge Laplacian, `ker(L)`. These cannot be driven to zero by
+> any descent because they ARE the topology (the Betti numbers:
+> components + independent cycles). The non-harmonic part (exact +
+> co-exact) goes to zero; the harmonic part cannot.
+
+At parse altitude this is **topological debt**: the irreducible loss
+of an input whose ambiguity is structural, not resolvable by any
+further round. A grammar that admits two genuinely equivalent parses
+leaves harmonic debt at `λ₀`; the tournament commits the dominant
+eigenmode (§2.6) and the residual debt is the shape of the remaining
+ambiguity, recorded — not an error to retry. λ₀ is where the floor
+already was; the commit fires there, with the harmonic debt intact.
 
 ---
 
