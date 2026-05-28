@@ -78,7 +78,7 @@ Phase 1 (the gate — zero holonomy, unified AST/resolver)
 - [`pending/phase-5-reflection-scheduler.md`](./pending/phase-5-reflection-scheduler.md) — Reflection + Scheduler Tower
 - [`pending/phase-6-io-numerical-prism.md`](./pending/phase-6-io-numerical-prism.md) — @io boundary + backends
 - [`pending/phase-7-self-hosted-deployed.md`](./pending/phase-7-self-hosted-deployed.md) — self-hosted + deployed
-- [`pending/tracks.md`](./pending/tracks.md) — cross-cutting work tracks (A: NumericalPrism, B: fragmentation rewrite, C: Scheduler Tower, D: shard, E: spectral namespace, F: portal substrate, G: epistemologic/reality, H: spectral/garden)
+- [`pending/tracks.md`](./pending/tracks.md) — cross-cutting work tracks (A: NumericalPrism, B: fragmentation rewrite, C: Scheduler Tower, D: shard, E: spectral namespace, F: portal substrate, G: epistemologic/reality, H: spectral/garden, I: petri-net SEL, J: flang migration — deferred per LRM)
 - [`pending/open-questions.md`](./pending/open-questions.md) — Q1–Q13 design decisions
 - [`pending/references.md`](./pending/references.md) — insight docs, specs, collaborator prior art, foundational mathematics, protocol prior art, related projects
 
