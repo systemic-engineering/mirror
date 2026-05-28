@@ -1,10 +1,26 @@
 #!/usr/bin/env bash
+# ============================================================================
+# SUPERSEDED — DO NOT INSTALL. This file is documentation only.
+# ============================================================================
+#
+# The FROZEN .rs guard now lives in the git-tracked, executable
+#   .githooks/commit-msg
+# which the GLOBAL household commit-msg hook (~/.os git-hooks.nix) runs as a
+# PRELUDE before its own phase-marker + sequence policy. There is no local
+# core.hooksPath override and nothing to copy into .git/hooks/ — the policy
+# travels with the repo and is reviewable in git log.
+#
+# This .sample predates that arrangement (it documented the old
+# "copy to .git/hooks/commit-msg by hand" convention). It is retained as a
+# record of WHY the FROZEN check is a commit-msg hook (the bypass-marker
+# reasoning below is still accurate) and as a readable mirror of the logic
+# now carried by .githooks/commit-msg. The body below is illustrative; the
+# authoritative copy is .githooks/commit-msg.
+#
+# See AGENTS.md § "The hook honors the marker".
+#
 # FROZEN — reject changes to Rust substrate files.
 # All extensions happen through .mirror grammars.
-# See AGENTS.md.
-#
-# Canonical content. Operators: copy to .git/hooks/commit-msg and chmod +x.
-# This file is not auto-installed — the hook is local-only by convention.
 #
 # WHY commit-msg, not pre-commit:
 #   The FROZEN check must read the commit message to honor the
@@ -19,7 +35,8 @@
 #   `-m` and editor commits, so the marker recognition is reliable here.
 #
 #   The .rs detection (git diff --cached) is identical in either hook; only
-#   the message read differs. Install as commit-msg.
+#   the message read differs. (Historically this was installed as commit-msg;
+#   the guard now lives in the tracked .githooks/commit-msg — see header.)
 #
 # Behavior:
 #   - --diff-filter=AM covers additions AND modifications (was M only;
@@ -33,7 +50,8 @@ set -euo pipefail
 
 # $1 is the commit-message file (commit-msg hook). Fall back to
 # .git/COMMIT_EDITMSG only if invoked without it (best-effort; see WHY above —
-# that fallback is unreliable for `-m` commits, so install as commit-msg).
+# that fallback is unreliable for `-m` commits, which is why the guard is a
+# commit-msg-stage hook, invoked with the message file as $1).
 MSG_FILE="${1:-.git/COMMIT_EDITMSG}"
 if [ -f "$MSG_FILE" ] && grep -qE '\[(bugfix:restore|substrate-pull:realize)\]' "$MSG_FILE"; then
   echo "ℹ️  marker present in commit message — FROZEN check bypassed."
