@@ -3,21 +3,38 @@
 # All extensions happen through .mirror grammars.
 # See AGENTS.md.
 #
-# Canonical content. Operators: copy to .git/hooks/pre-commit and chmod +x.
+# Canonical content. Operators: copy to .git/hooks/commit-msg and chmod +x.
 # This file is not auto-installed — the hook is local-only by convention.
 #
-# Differences from the historical hook:
+# WHY commit-msg, not pre-commit:
+#   The FROZEN check must read the commit message to honor the
+#   [bugfix:restore] / [substrate-pull:realize] bypass markers. A pre-commit
+#   hook CANNOT see the message being composed: git passes it no argument,
+#   and with `git commit -m` the message is not written to
+#   .git/COMMIT_EDITMSG until AFTER pre-commit runs — at pre-commit time that
+#   file still holds the PREVIOUS commit's message. (Verified: a pre-commit
+#   reading COMMIT_EDITMSG would bypass based on the prior commit's marker,
+#   not the current one — a false bypass, and the reason the marker never
+#   worked.) A commit-msg hook receives the real message as $1 for both
+#   `-m` and editor commits, so the marker recognition is reliable here.
+#
+#   The .rs detection (git diff --cached) is identical in either hook; only
+#   the message read differs. Install as commit-msg.
+#
+# Behavior:
 #   - --diff-filter=AM covers additions AND modifications (was M only;
 #     new .rs files used to slip through).
-#   - Honors [bugfix:restore] and [substrate-pull:realize] markers in
-#     the prepared commit message: if either marker is present, the
-#     FROZEN check is bypassed (still requires explicit author intent
-#     via the marker — silent bypass via --no-verify remains an escape
-#     hatch for emergencies).
+#   - Honors [bugfix:restore] and [substrate-pull:realize] markers in the
+#     commit message: if either marker is present, the FROZEN check is
+#     bypassed (still requires explicit author intent via the marker —
+#     silent bypass via --no-verify remains an escape hatch for emergencies).
 
 set -euo pipefail
 
-MSG_FILE=".git/COMMIT_EDITMSG"
+# $1 is the commit-message file (commit-msg hook). Fall back to
+# .git/COMMIT_EDITMSG only if invoked without it (best-effort; see WHY above —
+# that fallback is unreliable for `-m` commits, so install as commit-msg).
+MSG_FILE="${1:-.git/COMMIT_EDITMSG}"
 if [ -f "$MSG_FILE" ] && grep -qE '\[(bugfix:restore|substrate-pull:realize)\]' "$MSG_FILE"; then
   echo "ℹ️  marker present in commit message — FROZEN check bypassed."
   exit 0
@@ -35,6 +52,7 @@ if [ -n "$RS_FILES" ]; then
   echo ""
   echo "If this is a bugfix restoring an existing substrate guarantee,"
   echo "tag the commit message with [bugfix:restore]. If this is a"
-  echo "substrate-pull realization, tag with [substrate-pull:realize]."
+  echo "substrate-pull realization (FFI / build.rs / @io boundary floor),"
+  echo "tag with [substrate-pull:realize]."
   exit 1
 fi

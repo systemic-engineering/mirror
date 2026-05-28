@@ -360,25 +360,67 @@ distinction: features ADD; bugs RESTORE. Reference the existing claim
 being restored in the commit message, and tag it `[bugfix:restore]` so
 the convention is greppable.
 
-The carveout is documented here; **the pre-commit hook does NOT currently
-recognize the marker programmatically**. Authors must use `--no-verify`
-with the marker in the commit message; future work: extend the hook to
-honor `[bugfix:restore]` and `[substrate-pull:realize]` markers
-automatically. Canonical hook content lives in
-`docs/hooks/pre-commit.sample` — operators copy it to `.git/hooks/pre-commit`
-(the hook is not git-tracked).
-
-**Known gap (additions slip through):** the current hook filters with
-`--diff-filter=M` only — it catches *modifications* to existing `.rs`
-files, but new `.rs` files (additions) bypass the FROZEN policy entirely.
-Future work: extend the filter to cover `A` (additions) too
-(`--diff-filter=AM`). The sample at `docs/hooks/pre-commit.sample`
-already does this.
-
 Example: `--strict` always *claimed* that every source byte enters the
 AST or errors; the implementation lied; restoring it is a bugfix, not
 a feature. See commit `🟢 bootstrap: --strict errors on bytes that fail
 to enter the AST (closes #91)` for the canonical shape.
+
+### Boundary Rust is not frozen capability
+
+The FROZEN policy prohibits adding **capability** to Rust — anything
+expressible as a `.mirror` grammar. It does NOT prohibit **boundary Rust**:
+the thin floor that lets substrate-declared actions cross into the world or
+into compiled numerical code. Boundary Rust is the substrate-pull reflex
+*realized* deliberately at the only altitude where it belongs — the floor —
+rather than papered over inside capability logic.
+
+The distinction is altitude, not language:
+
+- **Capability Rust (FROZEN):** parser logic, dispatch logic, keyword
+  recognition, evaluation rules — anything a grammar can describe of itself.
+  Declare it in the substrate. Never in Rust.
+- **Boundary / floor Rust (allowed, with marker):** FFI `extern` declarations,
+  build integration (`build.rs` invoking flang / the linker), the `@io`
+  execution boundary, and the FFI surface of the spectral-floor numerical
+  primitives (Fortran via flang). These are the floor the capability stands
+  on, not the capability. A grammar cannot declare a C ABI symbol or shell out
+  to a compiler; that is exactly the primitive the meta-grammar can't yet
+  describe of itself — a substrate floor, surfaced honestly.
+
+Boundary-Rust commits MUST carry the `[substrate-pull:realize]` marker. The
+marker is a **greppable, accountable assertion**: it says *this change is
+floor/boundary work, not capability creep*. Reference what is being realized
+(the FFI symbol, the build step, the `@io` wrapper) in the message. Abusing
+the marker to slip capability logic into Rust is a trust violation — and a
+visible one, permanently legible in `git log`. The marker does not hide the
+change; it signs it.
+
+When unsure which side of the line a change sits on, ask: *could a `.mirror`
+grammar express this?* If yes, it's capability — frozen. If no, and the
+reason is that the change crosses to the world (a symbol, a process, a link
+step), it's boundary — allowed, marked.
+
+### The hook honors the marker
+
+The canonical hook content lives in `docs/hooks/pre-commit.sample` —
+operators copy it to `.git/hooks/commit-msg` and `chmod +x` (the hook is not
+git-tracked). It enforces the `.rs` FROZEN policy and honors both
+`[bugfix:restore]` and `[substrate-pull:realize]`: a marked commit message
+lets a `.rs` change through without `--no-verify`.
+
+**Install it as `commit-msg`, not `pre-commit`.** A `pre-commit` hook cannot
+see the message being composed — git passes it no argument, and with
+`git commit -m` the message is not written to `.git/COMMIT_EDITMSG` until
+*after* pre-commit runs. At pre-commit time that file still holds the
+*previous* commit's message, so a pre-commit reading it would bypass based on
+the prior commit's marker, not the current one — a false bypass, and the
+reason earlier reports saw the marker "not honored." A `commit-msg` hook
+receives the real message as `$1` for both `-m` and editor commits, so the
+bypass is reliable. The `.rs` detection (`git diff --cached --diff-filter=AM`,
+covering additions AND modifications) is identical either way.
+
+`--no-verify` with the marker in the message remains an emergency escape
+hatch, but is no longer required — the marker works.
 
 ## Git IS the Content Store
 
