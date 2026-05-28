@@ -81,15 +81,28 @@ tokenization, content-addressing, or CoincidenceHash.
 
 ### Phase markers
 
-Every commit message must start with a phase marker:
+Every commit message must start with a phase marker. mirror commits run under
+the **global household commit-msg hook** (`~/.os` `git-hooks.nix`), which is now
+authoritative — there is no local `core.hooksPath` override. The global hook
+enforces exactly one marker, the 🔴→🟢 sequence rule, and (if a `Justfile` with
+a `pre-commit` recipe exists) a staged-only test run. mirror has **no Justfile**,
+so that test step short-circuits with `(no 'just pre-commit' recipe found —
+skipping test validation)`. The FROZEN `.rs` guard (below) is the real per-repo
+gate.
 
 | Marker | Phase | State |
 |--------|-------|-------|
 | `🔴` | Red | Holes present, loss > 0 |
-| `🟢` | Green | All holes resolved, loss 0.00 |
+| `🟢` | Green | All holes resolved, loss 0.00 — **must follow 🔴** |
 | `♻️` | Refactor | Structural only, loss unchanged |
-| `🔧` | Tooling | Infrastructure/config |
-| `🔀` | Merge | Merge commit |
+| `🔧` | Tooling | Infrastructure/config; bypasses the sequence rule |
+| `🔀` | Merge | Merge commit; bypasses the sequence rule |
+| `📝` | Docs | Markdown-only — valid ONLY when every staged path ends in `.md`; exempt from the sequence rule |
+
+**Sequence rule:** `🔴` must be immediately followed by `🟢`, and `🟢` requires a
+preceding `🔴`. Standalone work that isn't a red/green pair must NOT use `🟢` —
+it will be rejected ("declared 🟢 but previous commit was not 🔴"). Use `🔧`,
+`♻️`, or `📝` instead. Doc-only commits (every staged path `.md`) use `📝`.
 
 ## Commit Identity
 
@@ -395,6 +408,17 @@ the marker to slip capability logic into Rust is a trust violation — and a
 visible one, permanently legible in `git log`. The marker does not hide the
 change; it signs it.
 
+**Pair `[substrate-pull:realize]` with `🔧`, NOT `🟢` (real foot-gun).** The
+bracket marker is the FROZEN-bypass token; it is not a phase marker. The
+commit still needs exactly one phase marker for the global hook. Standalone
+boundary work — adding an FFI `extern` block, a `build.rs` link step, an `@io`
+wrapper — is not a red/green pair, so `🟢` is wrong: the global hook rejects a
+`🟢` that doesn't follow a `🔴` ("declared 🟢 but previous commit was not 🔴").
+Use `🔧 [substrate-pull:realize]` — tooling bypasses the sequence rule and is
+the right altitude for floor/build/FFI work. (`🟢 [substrate-pull:realize]` is
+only correct when the boundary change is the green half of an actual
+red-first FFI test pair — rare; the default is `🔧`.)
+
 When unsure which side of the line a change sits on, ask: *could a `.mirror`
 grammar express this?* If yes, it's capability — frozen. If no, and the
 reason is that the change crosses to the world (a symbol, a process, a link
@@ -402,25 +426,43 @@ step), it's boundary — allowed, marked.
 
 ### The hook honors the marker
 
-The canonical hook content lives in `docs/hooks/pre-commit.sample` —
-operators copy it to `.git/hooks/commit-msg` and `chmod +x` (the hook is not
-git-tracked). It enforces the `.rs` FROZEN policy and honors both
-`[bugfix:restore]` and `[substrate-pull:realize]`: a marked commit message
-lets a `.rs` change through without `--no-verify`.
+mirror runs under the **global household commit-msg hook** (`~/.os`
+`git-hooks.nix`); there is no local `core.hooksPath` override and nothing to
+install by hand. The FROZEN `.rs` guard lives in the **git-tracked**
+`.githooks/commit-msg` (mode `100755`), which the global hook runs as a
+**prelude** — first, before its own phase/sequence policy. The policy travels
+with the repo and is reviewable in `git log`; do NOT copy anything into
+`.git/hooks/`.
 
-**Install it as `commit-msg`, not `pre-commit`.** A `pre-commit` hook cannot
-see the message being composed — git passes it no argument, and with
-`git commit -m` the message is not written to `.git/COMMIT_EDITMSG` until
-*after* pre-commit runs. At pre-commit time that file still holds the
-*previous* commit's message, so a pre-commit reading it would bypass based on
-the prior commit's marker, not the current one — a false bypass, and the
-reason earlier reports saw the marker "not honored." A `commit-msg` hook
-receives the real message as `$1` for both `-m` and editor commits, so the
-bypass is reliable. The `.rs` detection (`git diff --cached --diff-filter=AM`,
-covering additions AND modifications) is identical either way.
+The prelude flow:
 
-`--no-verify` with the marker in the message remains an emergency escape
-hatch, but is no longer required — the marker works.
+1. Global hook resolves the repo root and, if `.githooks/commit-msg` is a
+   tracked executable, runs it with the message file as `$1`.
+2. The prelude scans staged `.rs` (`git diff --cached --diff-filter=AM`,
+   covering additions AND modifications). If any `.rs` is staged and the
+   message carries neither `[bugfix:restore]` nor `[substrate-pull:realize]`,
+   it rejects (exit 1) — the commit is blocked. A marked message bypasses the
+   FROZEN check ("marker present — FROZEN check bypassed").
+3. If the prelude passes, the global hook continues with the phase-marker,
+   sequence, and (Justfile-gated) test policy. mirror has no Justfile, so the
+   test step is skipped; the FROZEN prelude is the real per-repo gate.
+
+**Why commit-msg, not pre-commit.** The FROZEN check must read the message to
+honor the bypass markers. A `pre-commit` hook cannot see the message being
+composed — git passes it no argument, and with `git commit -m` the message is
+not written to `.git/COMMIT_EDITMSG` until *after* pre-commit runs; at
+pre-commit time that file still holds the *previous* commit's message, so a
+pre-commit reading it would bypass on the prior commit's marker — a false
+bypass. A `commit-msg` hook receives the real message as `$1` for both `-m`
+and editor commits, so the bypass is reliable.
+
+`docs/hooks/pre-commit.sample` is **superseded** by the tracked
+`.githooks/commit-msg` + the global prelude; it is retained only as
+documentation of the arrangement, not as install guidance.
+
+`--no-verify` is never the answer. A `.rs` change that genuinely belongs (a
+bugfix restoring an existing guarantee, or boundary/floor work) carries the
+correct marker in the message; that is the supported, accountable path.
 
 ## Git IS the Content Store
 
