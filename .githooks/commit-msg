@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Mirror repo commit-msg extension — FROZEN .rs substrate guard.
+#
+# Chained from the global commit-msg hook (~/.os git-hooks.nix) BEFORE the
+# household phase-marker + sequence policy. This file is git-tracked so the
+# policy travels with the repo and is reviewable.
+#
+# Scope: ONLY the FROZEN .rs check. Phase markers (🔴🟢♻️🔀🔧📝), the
+# sequence rule, and the markdown-only 📝 gate are enforced by the global
+# hook — do NOT re-check them here.
+#
+# WHY commit-msg (not pre-commit): the FROZEN check must read the message to
+# honor the [bugfix:restore] / [substrate-pull:realize] bypass markers. A
+# pre-commit hook cannot see the message being composed (with `git commit -m`,
+# .git/COMMIT_EDITMSG still holds the PREVIOUS message until after pre-commit).
+# A commit-msg hook receives the real message as $1 for both -m and editor
+# commits. See AGENTS.md.
+#
+# Must be executable: chmod +x .githooks/commit-msg
+
+set -euo pipefail
+
+# $1 is the commit-message file, forwarded by the global hook.
+# Fall back to .git/COMMIT_EDITMSG only if invoked standalone (best-effort).
+MSG_FILE="${1:-.git/COMMIT_EDITMSG}"
+if [ -f "$MSG_FILE" ] && grep -qE '\[(bugfix:restore|substrate-pull:realize)\]' "$MSG_FILE"; then
+  echo "ℹ️  marker present in commit message — FROZEN check bypassed."
+  exit 0
+fi
+
+# --diff-filter=AM covers additions AND modifications (new .rs files used to
+# slip through an M-only filter). build.rs is boundary Rust but still .rs —
+# its allowance is the [substrate-pull:realize] marker above, not an exemption.
+RS_FILES=$(git diff --cached --name-only --diff-filter=AM | grep '\.rs$' || true)
+
+if [ -n "$RS_FILES" ]; then
+  echo "❌ FROZEN: Rust files are substrate. Do not modify or add."
+  echo ""
+  echo "Touched .rs files:"
+  echo "$RS_FILES" | sed 's/^/  /'
+  echo ""
+  echo "Write a .mirror grammar instead. See AGENTS.md."
+  echo ""
+  echo "If this is a bugfix restoring an existing substrate guarantee,"
+  echo "tag the commit message with [bugfix:restore]. If this is a"
+  echo "substrate-pull realization (FFI / build.rs / @io boundary floor),"
+  echo "tag with [substrate-pull:realize]."
+  exit 1
+fi
+
+exit 0
