@@ -1,7 +1,7 @@
 # The systemic.engineering License (SEL)
 
-**Effective version:** v1.0 (effective 2026-03-01)
-**Draft amendments:** v1.1 (not yet effective; included below for visibility)
+**Effective version:** v1.1 (effective 2026-05-29)
+**Supersedes:** v1.0 (effective 2026-03-01; archived below for reference)
 **Author:** Alex Wolf (systemic.engineering)
 
 *Applies to: the curated corpus, the `@spectral/garden` reviewed packages, deployed instances of the `@spectral/db` engine, and any Covered System built on the `@mirror` substrate that exits the open Apache-2.0 surface into operational deployment. See `README.md` for the layered license model.*
@@ -10,7 +10,7 @@
 
 ---
 
-# Part I — SEL v1.0 (effective)
+# Part I — SEL v1.0 (superseded — archived for reference)
 
 **Version 1.0**
 **Effective Date:** 2026-03-01
@@ -157,12 +157,12 @@ Questions may be directed to me at systemic.engineering.
 
 ---
 
-# Part II — SEL v1.1 Draft Amendments (NOT YET EFFECTIVE)
+# Part II — SEL v1.1 (effective 2026-05-29)
 
-**Status:** DRAFT. Amendments below are NOT yet legally effective. Included here for visibility, comment period, and substrate-altitude transparency. The effective version is v1.0 above.
+**Status:** EFFECTIVE as of 2026-05-29. Supersedes v1.0 (archived above).
 
-**Draft date:** 2026-05-25
-**Supersedes:** v1.0 (when finalized)
+**Effective date:** 2026-05-29
+**Supersedes:** v1.0 (effective 2026-03-01)
 **Source:** `~/dev/systemic.engineering/LICENSE-v1.1-draft.md`
 
 ## Rationale (summary)
@@ -286,4 +286,4 @@ The classifications these signatures reference (occupied territory, indigenous t
 
 ---
 
-*End of License — systemic.engineering License (v1.0 effective; v1.1 draft amendments included for visibility)*
+*End of License — systemic.engineering License v1.1 (effective 2026-05-29); v1.0 archived above for reference*
