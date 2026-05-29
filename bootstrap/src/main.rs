@@ -9,6 +9,7 @@
 //! `docs/specs/bootstrap-retirement-plan.md` Tick 1.
 
 mod ast;
+mod crystallize;
 mod exec;
 mod git;
 mod grammar;
@@ -23,6 +24,7 @@ use std::path::PathBuf;
 use std::process::Command;
 
 use crate::ast::{line_col_at, AstKind, AstNode};
+use crate::crystallize::{floor_registry, Registry};
 use crate::git::{git_crystal_exists, git_store_crystal};
 use crate::grammar::{grammar_for_file, load_grammar};
 use crate::hash::canonical_hash;
@@ -533,9 +535,19 @@ fn count_dark(ast: &AstNode) -> usize {
 /// Returns `true` iff the fixed-point check passed (the loop should
 /// terminate). The Banach contraction's Δ is vacuously 0 today because
 /// every stage is the identity, so this always returns `true` on tick 1.
-fn kintsugi_tick(tick: u64, prior_ast: &AstNode, current_ast: &AstNode) -> bool {
+fn kintsugi_tick(
+    registry: &Registry,
+    tick: u64,
+    prior_ast: &AstNode,
+    current_ast: &AstNode,
+) -> bool {
     // Stage 1 — propose. Fate's five models fan out and return au
-    // candidates. No-op scaffold: zero candidates.
+    // candidates. No-op scaffold: zero candidates. The registry is
+    // consulted here in later ticks (B/C) — fracture refs resolve
+    // through `registry.crystallize(...)`; today the floor is empty
+    // so every dispatch would return `Uncrystallized`. Reference the
+    // parameter so the substrate-pull surface is real.
+    let _ = registry;
     let candidates: Vec<()> = Vec::new();
 
     // Stage 2 — measure. Cycle-averaged holonomy (Magnot 2025) of each
@@ -727,9 +739,10 @@ fn cmd_kintsugi_single(file: &str, shatter: u64, transform: Option<&str>, out_di
         // The loop. `prior_ast` is the section before this tick's stage 1;
         // `current_ast` is the section after stage 4's splice. With every
         // stage no-op, prior == current and stage 5 returns true on tick 1.
+        let registry = floor_registry();
         let mut prior = ast.clone();
         for i in 1..=shatter {
-            let fixed = kintsugi_tick(i, &prior, &ast);
+            let fixed = kintsugi_tick(&registry, i, &prior, &ast);
             if fixed {
                 break;
             }
