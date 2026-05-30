@@ -1,5 +1,60 @@
 # CoincidenceHash collapse — map the two parameterizations, propose unification, fix Splinter Oid
 
+---
+
+## SUPERSEDED 2026-05-30
+
+**This spec's RECOMMENDATION (the CHC collapse plan that unifies `<3>` and `<5,5>`
+into a single canonical CoincidenceHash backing `@mirror/store`) is SUPERSEDED.**
+The map, the usage audit, the diagnosis, and the existing-CoincidenceHash detail
+below (§2–§4) all remain accurate as a historical / structural record. Only the
+conclusion changed.
+
+What happened: same day this spec landed (commit `e9c259b`, 2026-05-30), Reed and
+Alex continued the conversation. The upstream framing spec
+(`docs/specs/spectral-hash-design.md`, commit `c3a01e3`) recommended a composite
+`ContentOid { storage, navigation }`. That recommendation in turn got LRM-collapsed
+the same day into the **generic-over-hash cascade**:
+
+1. **`@mirror/store`** is the open content-addressed storage gate. It uses
+   `Merkle<BLAKE3>` — NOT CoincidenceHash. Standard, fast, no float dependency,
+   sidesteps Attack 1 entirely. mirror MUST work without `@spectral/db`.
+2. **`@spectral/db`** is the engine on top (potentially closed source). Its
+   navigation primitive is **`VoidPointer`** — the spectral coordinate that
+   `SpectralCoordStore` + `coord_oids` + `spectral_distance_eigen` already compute,
+   renamed. NOT a hash function; a coordinate.
+3. **The Merkle tree is generic over the hash algorithm.** `Splinter<H>`,
+   `Content<H>`, `Body<H>`, `Crystallization<H>`, `Crystallizations<H>` (renamed
+   from `Registry`). Hash-blind types (`Ref`, `CrystallizeError`) stay concrete.
+   Each consumer picks its own `H`.
+4. **Verification belongs to `@mirror/store`**, not `@spectral/db` (correcting
+   c3a01e3's framing on the way through).
+
+**Consequence for CHC:** the collapse plan in §7 (CHC-1 through CHC-5) is
+**obsolete** in its original form. The consumer (storage) that motivated unifying
+`<3>` and `<5,5>` has moved away — `@mirror/store` is no longer a CoincidenceHash
+consumer. The two existing CoincidenceHash sites (`prism_core::Detector<3>` and
+`bootstrap::canonical_hash` `<5,5>`) stay where they are; whether they ever unify
+is a separate, now lower-priority concern. If they outlive their callers entirely,
+they get retired in a future hygiene tick.
+
+**Cross-references for the current architecture:**
+
+- `docs/specs/store-vs-db-and-the-cascade.md` — the LRM-collapsed architecture,
+  the landing-page spec to read first.
+- `docs/specs/spectral-hash-design.md` — the upstream framing spec, also amended
+  2026-05-30 with a top-of-file rewrite banner. §4–§5's research (LSH, spectral
+  hashing, Motwani-Naor-Panigrahy impossibility) stands; the recommendation in §6
+  is rewritten.
+- `docs/specs/kintsugi-minimum-runnable.md` — carries the cascade renames
+  (`Registry` → `Crystallizations`, `ActionPath` → `Ref`) in its amendment section.
+
+The rest of this spec is preserved as written. Treat §2–§4 as the substrate-pull
+map (still accurate); treat §5–§8 as the historical proposal (the recommendation
+is obsolete; the analysis is not).
+
+---
+
 **Status:** draft — substrate-pull spec. Read-only investigation +
 proposed migration ticks. Authored by Mara on `mara/shard-chain` after
 Alex pushed back on a Tick A architectural call that Reed and I made
