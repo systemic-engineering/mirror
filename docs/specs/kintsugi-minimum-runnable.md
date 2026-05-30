@@ -389,6 +389,11 @@ Concretely:
 
 ```rust
 // bootstrap/src/dispatch.rs (new — Tick A)
+// NOTE (amendment 2026-05-30): under the cascade,
+//   `Registry` → `Crystallizations` (the plural of `Crystallization`),
+//   `ActionPath` → `Ref`,
+//   and `Splinter` becomes `Splinter<H: MerkleHash = Blake3>`.
+// See §11 (amendment) and `docs/specs/store-vs-db-and-the-cascade.md`.
 pub type ActionImpl = fn(&[Value]) -> Result<Value, Error>;
 pub struct Registry { entries: BTreeMap<(Namespace, ActionName), ActionImpl> }
 
@@ -1245,3 +1250,89 @@ fracture happens, the engine exists, and the next fracture (multi-
 candidate, full tournament) extends what is real rather than
 inventing it. The proof is the rename — done, not by sed in fancy
 clothes, but by the engine that the rename forced into existence.*
+
+---
+
+## 11. Amendment — cascade renames (2026-05-30)
+
+Same day as commit `c3a01e3` (the SpectralHash design spec) and `e9c259b` (the
+CHC collapse spec), Alex and Reed continued the architecture conversation and
+LRM-collapsed several over-built proposals into a simpler shape. The four-piece
+structure (fracture / candidates / loss / application), the substrate-vs-floor
+split (§2), and the loss-from-`@epistemologic/properties` grounding (§3) **all
+stand verbatim**. What changes is naming + the underlying type generic, and one
+pinned next-tick item:
+
+### 11.1 Renames (apply throughout the cascade)
+
+- **`Registry` → `Crystallizations`.** The table that holds bound substrate
+  action implementations is the plural of `Crystallization` (the singular event).
+  Names the discipline; matches the kintsugi vocabulary. Affects §2.2's sketch
+  (`pub struct Registry { ... }` → `pub struct Crystallizations<H> { ... }`),
+  §2.4's "Dispatcher itself" row, Tick A's scope statement.
+- **`ActionPath` → `Ref`.** Matches mirror's nav-ref vocabulary (the `.`, `..`,
+  `...`, `~`, `@`, `^`, `HEAD` set). `action` is dead since we have prism / glass
+  / 5-ops, not "actions". Affects every internal use; the substrate-side
+  declaration syntax (`action enumerate { ... }`) is *not* part of this rename
+  (that's the substrate's own surface).
+
+### 11.2 Generic over hash backend
+
+The Merkle tree becomes generic over the hash algorithm. Per Alex: *"If we make
+the AST/MerkleTree generic over the hash algorithm... then everything else falls
+out."* Cascade:
+
+- `Splinter<H: MerkleHash = Blake3>`
+- `Content<H>`
+- `Body<H>`
+- `Crystallization<H>`
+- `Crystallizations<H>`
+- `kintsugi_tick<H>`
+
+Hash-blind types stay concrete: `Ref`, `CrystallizeError`, `IoError`, `ScalarLoss`
+(the last is pinned for rename — see §11.4).
+
+Default `H = Blake3` for `@mirror/store` (open content-addressed storage gate;
+standard, fast, no float dependency, sidesteps Attack 1 from `spectral-hash-design.md`
+§3.1). Other consumers (e.g. `@spectral/db`'s `VoidPointer` space) pick their own
+primitive — `VoidPointer` is NOT a hash function but a spectral coordinate, so it
+lives outside the `H` generic; see the new spec
+`docs/specs/store-vs-db-and-the-cascade.md`.
+
+A single bootstrap binary hosts multiple `H`-worlds. The dispatcher (Tick A) takes
+the consumer's `Crystallizations<H>` rather than a single global table; storage
+and engine consumers carry their own.
+
+### 11.3 `@mirror/store` vs `@spectral/db`
+
+The storage gate is `@mirror/store` (open foundation, content-addressed, git-backed
+by default, where verification on write lives). `@spectral/db` is the engine on
+top (potentially closed source, navigation / spectral graph). **mirror MUST work
+without `@spectral/db`.** Open-foundation / closed-engine = both the business
+model and the architecture. The kintsugi engine’s dispatcher belongs to the
+foundation; it does not depend on the engine being present.
+
+### 11.4 Pinned for next tick: `ScalarLoss` → `Transparency` (as a Lens)
+
+The `[verdict]`-vector loss of §3 currently has a `ScalarLoss` aggregation at the
+edges. After the cascade lands, `ScalarLoss` becomes **`Transparency`** as a Lens —
+positive-frame (light passes vs absence-of-light), optical-family-native, natural
+dual of Dark spans, lens-algebra-composable. **Not** baked in here; it is its own
+tick. Noted so a future reader has the direction.
+
+### 11.5 No structural changes
+
+The four-piece data flow, the substrate-vs-floor decision, the `@epistemologic/properties`
+grounding for loss, the dispatcher framing (b), the six verification checks of
+§6, and the tick ordering (A → B → C → D → E, with F deferred) are **unchanged**.
+The cascade is a naming + generic-parameter pass over the type tower; the
+engine's data flow is the same.
+
+### 11.6 Cross-references
+
+- `docs/specs/store-vs-db-and-the-cascade.md` — landing page for the LRM-collapsed
+  architecture.
+- `docs/specs/spectral-hash-design.md` (commit `c3a01e3`, amended 2026-05-30) —
+  upstream framing; recommendation rewritten same day.
+- `docs/specs/coincidence-hash-collapse.md` (commit `e9c259b`) — SUPERSEDED top-
+  banner.
