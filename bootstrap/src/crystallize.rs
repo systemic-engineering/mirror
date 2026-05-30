@@ -8,37 +8,63 @@
 #![allow(dead_code)]
 //! Crystallize — the substrate-execution dispatcher harness.
 //!
-//! Tick A of `docs/specs/kintsugi-minimum-runnable.md`. This module IS the
-//! floor primitive that binds substrate action declarations (the parked `\`
-//! bodies of `@kintsugi/fracture/*` and `@cli.*` actions) to Rust
-//! implementations. The capability stays in the substrate; the dispatcher
-//! carries only the binding. Per AGENTS.md §"Boundary Rust is not frozen
-//! capability" — `[substrate-pull:realize]`.
+//! Tick A of `docs/specs/kintsugi-minimum-runnable.md`, amended by the
+//! cascade landing in `docs/specs/store-vs-db-and-the-cascade.md`. This
+//! module IS the floor primitive that binds substrate action declarations
+//! (the parked `\` bodies of `@kintsugi/fracture/*` and `@cli.*` actions)
+//! to Rust implementations. The capability stays in the substrate; the
+//! dispatcher carries only the binding. Per AGENTS.md §"Boundary Rust is
+//! not frozen capability" — `[substrate-pull:realize]`.
 //!
 //! ## What lives here
 //!
-//! - [`Splinter`] — content-addressed, OID-proving, self-similar value.
-//!   The currency the dispatcher passes across the substrate boundary.
-//!   Merkle-style OID (each level hashes from its children's OIDs, not
-//!   the recursive content).
-//! - [`Body`] — a parked substrate action body realized as a Rust closure.
-//!   Prism-shaped: takes a seed Beam carrying a Splinter, returns an
-//!   [`Imperfect`] verdict (Success / Partial / Failure).
-//! - [`Crystallization`] — a (path, body) pair, the realisation of one
-//!   substrate action.
-//! - [`Registry`] — the static map from [`ActionPath`] to [`Body`]. The
-//!   only place "this substrate ref means this Rust function" lives.
+//! - [`MerkleHash`] — the trait that abstracts the hash backend. The
+//!   cascade pivots through this: anything content-addressed in the
+//!   floor parameterises over `H: MerkleHash`. Per the landing-page
+//!   spec §2.1.
+//! - [`Blake3`] — the default backend. `@mirror/store` (the open
+//!   content-addressed storage gate) is `Merkle<BLAKE3>` — standard,
+//!   fast, Merkle-native, sidesteps Attack 1 from
+//!   `spectral-hash-design.md` §3.1.
+//! - [`Splinter<H>`] (default `H = Blake3`) — content-addressed,
+//!   OID-proving, self-similar value. The currency the dispatcher
+//!   passes across the substrate boundary. Merkle-style OID (each
+//!   level hashes from its children's OIDs, not the recursive
+//!   content). Default `H` ONLY on Splinter; the other generic types
+//!   require explicit `H` so the type system prevents accidental
+//!   single-world coupling (per landing-page spec §2.1).
+//! - [`Body<H>`] — a parked substrate action body realized as a Rust
+//!   closure. Prism-shaped: takes a seed Beam carrying a `Splinter<H>`,
+//!   returns an [`Imperfect`] verdict (Success / Partial / Failure).
+//! - [`Crystallization<H>`] — a (path, body) pair, the realisation of
+//!   one substrate action.
+//! - [`Crystallizations<H>`] — the table from [`Ref`] to [`Body<H>`].
+//!   The only place "this substrate ref means this Rust function" lives.
+//!   Renamed from `Registry` per the cascade — the plural of
+//!   `Crystallization` names the discipline; `Registry` is generic
+//!   language.
+//! - [`Ref`] — substrate reference (`@`-prefixed nav-ref). Renamed
+//!   from `ActionPath` per the cascade — matches mirror's nav-ref
+//!   vocabulary (the `.`, `..`, `...`, `~`, `@`, `^`, `HEAD` set).
+//!   Hash-blind; stays concrete.
 //! - [`CrystallizeError`] — three shapes: [`Uncrystallized`] (the floor
 //!   doesn't realise this substrate claim yet), [`Boundary`] (an `@io`
 //!   call failed), [`Mismatch`] (substrate passed an unexpected shape).
+//!   Hash-blind; stays concrete.
+//! - [`kintsugi_tick`] — free function. Generic dispatcher consumer
+//!   that routes a `Ref` through a `Crystallizations<H>` and returns
+//!   the verdict.
 //!
 //! ## What does NOT live here
 //!
 //! - Concrete [`Crystallization`]s for `@kintsugi/fracture/rename` or
 //!   `@cli/new` — those are Ticks B/C/F.
-//! - Edge / graph structure on [`Splinter`] — that's @spectral/db's
-//!   domain, building on this content-addressed foundation.
-//! - CLI dispatch — `main.rs` is unchanged.
+//! - Edge / graph structure on [`Splinter`] — that's `@spectral/db`'s
+//!   domain, building on this content-addressed foundation. The
+//!   `VoidPointer` reclaim (spectral coordinate, NOT a hash function)
+//!   lives outside the `H` generic; see the landing-page spec §3.
+//! - CLI dispatch — `main.rs` carries the integration; this module is
+//!   the harness.
 //!
 //! ## Adaptation note — Body's exact shape
 //!
@@ -48,50 +74,112 @@
 //! (`apply_h`, `seed(...)`) is `Optic<(), S>`. We use:
 //!
 //! ```ignore
-//! Fn(Optic<(), Splinter>) -> Imperfect<Splinter, CrystallizeError, ScalarLoss>
+//! Fn(Optic<(), Splinter<H>>) -> Imperfect<Splinter<H>, CrystallizeError, ScalarLoss>
 //! ```
 //!
 //! — the input is the seed-beam-carrying-Splinter, the output is the
 //! verdict carrying the next Splinter. This matches `apply_h`'s shape
 //! exactly and is the only honest concrete instantiation of "Beam<T>"
-//! given how the trait surfaces in prism-core.
+//! given how the trait surfaces in prism-core. The shape carries
+//! through the cascade verbatim — only `Splinter` becomes `Splinter<H>`.
 //!
-//! ## Adaptation note — Splinter OID source
+//! ## Adaptation note — the hash backend
 //!
-//! The spec assumes plain `Sha256` for Splinter's Merkle OID computation
-//! (a standard content hash, distinct from the bootstrap's existing
-//! `canonical_hash` / `CoincidenceHash<5,5>` in `hash.rs`). The
-//! coincidence hash is the *spectral-triple Dirac action* on AST nodes
-//! — its inputs are eigenvalue-projected vectors in a 5-d basis, which
-//! is the wrong altitude for self-similar content addressing. Splinter
-//! gets its own Merkle SHA-256 — minimal floor, no overlap.
+//! The pre-cascade Tick A used plain `Sha256`. The cascade swaps the
+//! concrete hash for a trait-bound parameter. Default `H = Blake3` —
+//! BLAKE3 is Merkle-native by construction, fast, no float dependency,
+//! and sidesteps Attack 1 from `spectral-hash-design.md` §3.1. Other
+//! `H`-worlds (e.g. `MockHash` in tests, future engine-internal hash
+//! choices) coexist in the same binary because the type parameter
+//! prevents accidental mixing.
+//!
+//! The bootstrap's existing `canonical_hash` / `CoincidenceHash<5,5>`
+//! in `hash.rs` is unaffected: that is the *spectral-triple Dirac
+//! action* on AST nodes (eigenvalue-projected vectors in a 5-d basis),
+//! the wrong altitude for self-similar content addressing. Splinter
+//! retains its own Merkle backend.
 
 use std::collections::{BTreeMap, HashMap};
+use std::fmt;
+use std::marker::PhantomData;
 use std::sync::Arc;
 
 use prism_core::{Optic, ScalarLoss};
-use sha2::{Digest, Sha256};
 use terni::Imperfect;
 
 // ---------------------------------------------------------------------------
-// Newtypes — no-bare-types discipline (feedback-no-bare-types).
+// MerkleHash — the trait the cascade pivots through.
 // ---------------------------------------------------------------------------
 
-/// 32-byte content address. Distinct from `prism_core::Oid` (which is a
-/// 64-char hex string carrying CoincidenceHash<3>): this `Oid` is the
-/// raw SHA-256 digest of a Merkle node, the bootstrap's own
-/// content-addressing for [`Splinter`]. Splinter is the dispatcher's
-/// currency; the coincidence hash is the spectral-triple Dirac action.
-/// Different altitudes; different machinery.
-#[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct Oid([u8; 32]);
+/// Abstract hash backend for [`Splinter`]'s Merkle OID. Implementations
+/// supply an opaque `Oid` type (fixed-width content address) and a
+/// single byte-folding primitive.
+///
+/// The minimal surface is intentional: the cascade only needs
+/// `hash_bytes` because [`Splinter`] composes the bytes-to-hash itself
+/// (the Merkle encoding of `Content` — see [`compute_oid`]) and hashes
+/// the assembled buffer in one shot. Streaming `update` was considered
+/// and rejected as premature abstraction at this altitude; it can be
+/// added without breaking changes (default-method on `MerkleHash`)
+/// when a consumer demands it.
+///
+/// The `Oid` type carries an [`OidBytes`] supertrait bound so the
+/// Merkle recursion in [`compute_oid`] can fold a child OID into its
+/// parent's pre-hash byte buffer without per-call where-clauses.
+/// `OidBytes` is also `pub` — any out-of-crate `MerkleHash` impl must
+/// supply both — but consumers don't interact with it directly.
+///
+/// Per `docs/specs/store-vs-db-and-the-cascade.md` §2.1.
+///
+/// `Clone + Debug` are required on the backend itself (not just `Oid`)
+/// so derived traits on the generic types tower (`Splinter<H>`,
+/// `Content<H>`, `Crystallizations<H>`) compose without per-type
+/// manual impls. Concrete backends are zero-sized marker structs;
+/// satisfying both is `#[derive(Clone, Debug)]`.
+pub trait MerkleHash: Clone + fmt::Debug {
+    /// Fixed-width content address. Newtype to keep raw byte arrays
+    /// out of the floor surface (`feedback-no-bare-types`).
+    type Oid: Clone + fmt::Debug + Eq + std::hash::Hash + Ord + OidBytes;
 
-impl Oid {
-    /// Raw bytes view, for inclusion in a parent Merkle hash.
+    /// Hash a byte buffer to an [`Self::Oid`]. Deterministic.
+    fn hash_bytes(bytes: &[u8]) -> Self::Oid;
+}
+
+// ---------------------------------------------------------------------------
+// Blake3 — the default backend for @mirror/store.
+// ---------------------------------------------------------------------------
+
+/// 32-byte BLAKE3 content address.
+#[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct Blake3Oid([u8; 32]);
+
+impl Blake3Oid {
+    /// Raw bytes view.
     pub fn bytes(&self) -> &[u8; 32] {
         &self.0
     }
 }
+
+/// BLAKE3 backend. The default `H` for [`Splinter`]; the hash
+/// `@mirror/store` uses for its open content-addressed storage gate.
+/// Per the landing-page spec §1.1, §2.1. Zero-sized marker — the
+/// `Clone + Debug` derives satisfy [`MerkleHash`]'s supertrait bounds
+/// at no runtime cost.
+#[derive(Clone, Debug)]
+pub struct Blake3;
+
+impl MerkleHash for Blake3 {
+    type Oid = Blake3Oid;
+
+    fn hash_bytes(bytes: &[u8]) -> Self::Oid {
+        let digest = blake3::hash(bytes);
+        Blake3Oid(*digest.as_bytes())
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Hash-blind newtypes — no-bare-types discipline (feedback-no-bare-types).
+// ---------------------------------------------------------------------------
 
 /// A literal text leaf in a [`Splinter`]. Newtype to keep bare `String`
 /// out of the floor surface.
@@ -131,26 +219,36 @@ impl FieldName {
     }
 }
 
-/// A substrate action path, like `"@kintsugi/fracture/rename"`. Newtype
+/// A substrate reference, like `"@kintsugi/fracture/rename"`. Newtype
 /// with `@`-prefix and non-empty validation at construction.
+///
+/// Renamed from `ActionPath` per the cascade — matches mirror's
+/// nav-ref vocabulary (the `.`, `..`, `...`, `~`, `@`, `^`, `HEAD`
+/// set; see CLAUDE.md). `action` is dead since we have prism / glass /
+/// 5-operations, not "actions". The substrate-side declaration syntax
+/// (`action enumerate { ... }`) is *not* part of this rename — that's
+/// the substrate's own surface.
+///
+/// Hash-blind; stays concrete (does not embed an OID, does not call a
+/// hash function).
 #[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct ActionPath(String);
+pub struct Ref(String);
 
-impl ActionPath {
+impl Ref {
     /// Construct. Returns `Err` if `path` is empty, lacks a `@` prefix,
     /// or contains whitespace.
     pub fn new(path: impl Into<String>) -> Result<Self, &'static str> {
         let s = path.into();
         if s.is_empty() {
-            return Err("ActionPath must be non-empty");
+            return Err("Ref must be non-empty");
         }
         if !s.starts_with('@') {
-            return Err("ActionPath must start with '@'");
+            return Err("Ref must start with '@'");
         }
         if s.chars().any(|c| c.is_whitespace()) {
-            return Err("ActionPath must not contain whitespace");
+            return Err("Ref must not contain whitespace");
         }
-        Ok(ActionPath(s))
+        Ok(Ref(s))
     }
 
     pub fn as_str(&self) -> &str {
@@ -159,95 +257,120 @@ impl ActionPath {
 }
 
 // ---------------------------------------------------------------------------
-// Splinter — content-addressed self-similar value.
+// Splinter — content-addressed self-similar value, generic over H.
 // ---------------------------------------------------------------------------
 
 /// The shape of a [`Splinter`]'s payload. Three forms — leaf text, named
 /// record, ordered list — sufficient to carry substrate actions' inputs
 /// and outputs without inventing more.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Content {
+pub enum Content<H: MerkleHash> {
     Text(Text),
-    Record(BTreeMap<FieldName, Splinter>),
-    List(Vec<Splinter>),
+    Record(BTreeMap<FieldName, Splinter<H>>),
+    List(Vec<Splinter<H>>),
 }
 
 /// Content-addressed, OID-proving, self-similar.
 ///
 /// The OID is **Merkle-style**: each level computes from its children's
-/// OIDs, not the full recursive content. Three shapes:
+/// OIDs, not the full recursive content. Three shapes, hash-tag-prefixed
+/// for domain separation:
 ///
-/// - `Text(t)` — `sha256(b"T" || u64_le(t.len()) || t)`
-/// - `Record(m)` — `sha256(b"R" || u64_le(m.len())
+/// - `Text(t)` — `H::hash_bytes(b"T" || u64_le(t.len()) || t)`
+/// - `Record(m)` — `H::hash_bytes(b"R" || u64_le(m.len())
 ///                       || for each (key, sub) in sorted key order:
 ///                            u64_le(key.len()) || key || sub.oid().bytes())`
-/// - `List(items)` — `sha256(b"L" || u64_le(items.len())
+/// - `List(items)` — `H::hash_bytes(b"L" || u64_le(items.len())
 ///                       || for each sub: sub.oid().bytes())`
+///
+/// The encoding stays Tick-A's; only the underlying hash function
+/// changes with `H`. `H` defaults to [`Blake3`] — naive callers get the
+/// `@mirror/store` hash without ceremony. Per the landing-page spec §2.1.
 ///
 /// [`Splinter::new`] computes the OID at construction.
 /// [`Splinter::verify`] recomputes from content and compares — the
 /// symmetric N−1 integrity check.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Splinter {
-    content: Content,
-    oid: Oid,
+pub struct Splinter<H: MerkleHash = Blake3> {
+    content: Content<H>,
+    oid: H::Oid,
 }
 
-impl Splinter {
-    /// Construct, computing the Merkle OID.
-    pub fn new(content: Content) -> Self {
-        let oid = compute_oid(&content);
+impl<H: MerkleHash> Splinter<H> {
+    /// Construct, computing the Merkle OID under `H`.
+    pub fn new(content: Content<H>) -> Self {
+        let oid = compute_oid::<H>(&content);
         Splinter { content, oid }
     }
 
-    pub fn content(&self) -> &Content {
+    pub fn content(&self) -> &Content<H> {
         &self.content
     }
 
-    pub fn oid(&self) -> &Oid {
+    pub fn oid(&self) -> &H::Oid {
         &self.oid
     }
 
     /// Recompute the OID from content and compare to the stored one.
     /// True iff they agree. The floor's symmetric N−1 verification.
     pub fn verify(&self) -> bool {
-        compute_oid(&self.content) == self.oid
+        compute_oid::<H>(&self.content) == self.oid
     }
 }
 
-fn compute_oid(content: &Content) -> Oid {
-    let mut h = Sha256::new();
+/// Render `Content<H>` into the canonical Merkle bytes and hash them
+/// with `H::hash_bytes`. Encoding rules are documented on [`Splinter`].
+///
+/// Children's OIDs must be byte-accessible to be included in the
+/// parent hash. [`MerkleHash`]'s associated `Oid` type is opaque, so
+/// we route the bytes through [`OidBytes`] — an internal blanket
+/// trait every `Oid` implementation satisfies via [`BackendBytes`].
+fn compute_oid<H: MerkleHash>(content: &Content<H>) -> H::Oid {
+    let mut buf: Vec<u8> = Vec::new();
     match content {
         Content::Text(t) => {
-            h.update(b"T");
+            buf.push(b'T');
             let bytes = t.as_str().as_bytes();
-            h.update(u64_le(bytes.len() as u64));
-            h.update(bytes);
+            buf.extend_from_slice(&u64_le(bytes.len() as u64));
+            buf.extend_from_slice(bytes);
         }
         Content::Record(map) => {
-            h.update(b"R");
-            h.update(u64_le(map.len() as u64));
-            // BTreeMap iteration is sorted-by-key; sort order is part of
-            // the OID definition.
+            buf.push(b'R');
+            buf.extend_from_slice(&u64_le(map.len() as u64));
+            // BTreeMap iteration is sorted-by-key; sort order is part
+            // of the OID definition.
             for (key, sub) in map.iter() {
                 let kbytes = key.as_str().as_bytes();
-                h.update(u64_le(kbytes.len() as u64));
-                h.update(kbytes);
-                h.update(sub.oid().bytes());
+                buf.extend_from_slice(&u64_le(kbytes.len() as u64));
+                buf.extend_from_slice(kbytes);
+                buf.extend_from_slice(sub.oid().oid_bytes());
             }
         }
         Content::List(items) => {
-            h.update(b"L");
-            h.update(u64_le(items.len() as u64));
+            buf.push(b'L');
+            buf.extend_from_slice(&u64_le(items.len() as u64));
             for sub in items {
-                h.update(sub.oid().bytes());
+                buf.extend_from_slice(sub.oid().oid_bytes());
             }
         }
     }
-    let digest = h.finalize();
-    let mut out = [0u8; 32];
-    out.copy_from_slice(&digest);
-    Oid(out)
+    H::hash_bytes(&buf)
+}
+
+/// Surfaces an `Oid`'s raw bytes for inclusion in a parent Merkle
+/// hash. Carried as a [`MerkleHash::Oid`] supertrait bound so the
+/// Merkle recursion in [`compute_oid`] can fold a child OID without
+/// per-call where-clauses. Implemented for every concrete `Oid`
+/// defined in this module; out-of-crate `MerkleHash` impls must
+/// supply this too.
+pub trait OidBytes {
+    fn oid_bytes(&self) -> &[u8];
+}
+
+impl OidBytes for Blake3Oid {
+    fn oid_bytes(&self) -> &[u8] {
+        &self.0
+    }
 }
 
 fn u64_le(v: u64) -> [u8; 8] {
@@ -265,35 +388,45 @@ fn u64_le(v: u64) -> [u8; 8] {
 }
 
 // ---------------------------------------------------------------------------
-// Body, Crystallization, Registry, CrystallizeError.
+// Body, Crystallization, Crystallizations, CrystallizeError.
 // ---------------------------------------------------------------------------
 
 /// A realised substrate action body. Prism-shaped: takes a seed beam
-/// (input state in [`Optic<(), Splinter>`]), returns the verdict
-/// ([`Imperfect`]) carrying the next [`Splinter`].
+/// (input state in [`Optic<(), Splinter<H>>`]), returns the verdict
+/// ([`Imperfect`]) carrying the next [`Splinter<H>`].
 ///
 /// See the module-level "Adaptation note — Body's exact shape" for why
 /// this is the literal type and not the spec's nominal `Beam<Splinter>
 /// -> Imperfect<Beam<Splinter>, ...>`.
-pub type Body = Arc<
-    dyn Fn(Optic<(), Splinter>) -> Imperfect<Splinter, CrystallizeError, ScalarLoss>
+///
+/// No default on `H` — the binding is per-consumer; the registry's `H`
+/// determines the world its bodies inhabit, and the type system
+/// prevents cross-world mixing (landing-page spec §2.1, §2.4).
+pub type Body<H> = Arc<
+    dyn Fn(Optic<(), Splinter<H>>) -> Imperfect<Splinter<H>, CrystallizeError, ScalarLoss>
         + Send
         + Sync,
 >;
 
 /// (path, body) — one substrate action realized.
-pub struct Crystallization {
-    pub path: ActionPath,
-    pub body: Body,
+///
+/// Per the cascade, `Crystallization` is the singular event; the table
+/// holding many such events is [`Crystallizations<H>`].
+pub struct Crystallization<H: MerkleHash> {
+    pub path: Ref,
+    pub body: Body<H>,
 }
 
 /// Errors the dispatcher can surface. Three shapes — no more.
+///
+/// Hash-blind; stays concrete (no `H` parameter). Per landing-page
+/// spec §2.2.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CrystallizeError {
     /// The floor has no [`Body`] for this path. The substrate claim is
     /// not yet realized at this altitude. Returned by
-    /// [`Registry::crystallize`] for unknown paths.
-    Uncrystallized(ActionPath),
+    /// [`Crystallizations::crystallize`] for unknown paths.
+    Uncrystallized(Ref),
     /// An `@io` call failed at the boundary. The payload is a free-form
     /// string today (the existing bootstrap `@io` errors are
     /// `io::Error`-derived strings); when the substrate names its own
@@ -309,28 +442,47 @@ pub enum CrystallizeError {
     },
 }
 
-/// The dispatcher. Path → Body, with [`Registry::crystallize`] as the
-/// dispatch primitive. Empty by default; ticks B/F populate it.
-pub struct Registry {
-    table: HashMap<ActionPath, Body>,
+/// The dispatcher table. [`Ref`] → [`Body<H>`], with
+/// [`Crystallizations::crystallize`] as the dispatch primitive. Empty
+/// by default; ticks B/F populate it.
+///
+/// Renamed from `Registry` per the cascade — the plural of
+/// [`Crystallization`] names the discipline; `Registry` is generic
+/// language. Per landing-page spec §2.3 and
+/// `kintsugi-minimum-runnable.md` §11.1.
+///
+/// `H` has no default (deliberately — landing-page spec §2.1): each
+/// consumer (store, db, future engines) declares which `H`-world its
+/// crystallizations inhabit at construction. The type system then
+/// prevents accidentally registering a `Body<Blake3>` into a
+/// `Crystallizations<MockHash>` or dispatching a `Splinter<Blake3>`
+/// against a `Crystallizations<OtherHash>`.
+pub struct Crystallizations<H: MerkleHash> {
+    table: HashMap<Ref, Body<H>>,
+    // Mirrors `H` into the struct so the type parameter is genuinely
+    // load-bearing even when `table` is empty. `HashMap<Ref, Body<H>>`
+    // already references `H`, but the marker keeps the relationship
+    // explicit and resilient to future field changes.
+    _h: PhantomData<fn(H) -> H>,
 }
 
-impl Registry {
-    /// Empty registry. Used at startup by [`floor_registry`].
+impl<H: MerkleHash> Crystallizations<H> {
+    /// Empty crystallizations. Used at startup by [`floor_crystallizations`].
     pub fn new() -> Self {
-        Registry {
+        Crystallizations {
             table: HashMap::new(),
+            _h: PhantomData,
         }
     }
 
     /// Register one [`Crystallization`]. The dispatcher learns one
-    /// substrate-action → Rust-body binding.
-    pub fn register(&mut self, c: Crystallization) {
+    /// substrate-ref → Rust-body binding.
+    pub fn register(&mut self, c: Crystallization<H>) {
         self.table.insert(c.path, c.body);
     }
 
     /// True iff a [`Body`] is registered for `path`.
-    pub fn knows(&self, path: &ActionPath) -> bool {
+    pub fn knows(&self, path: &Ref) -> bool {
         self.table.contains_key(path)
     }
 
@@ -340,9 +492,9 @@ impl Registry {
     /// the substrate claim is not yet realised at this altitude.
     pub fn crystallize(
         &self,
-        path: &ActionPath,
-        input: Optic<(), Splinter>,
-    ) -> Imperfect<Splinter, CrystallizeError, ScalarLoss> {
+        path: &Ref,
+        input: Optic<(), Splinter<H>>,
+    ) -> Imperfect<Splinter<H>, CrystallizeError, ScalarLoss> {
         match self.table.get(path) {
             Some(body) => body(input),
             None => Imperfect::failure(CrystallizeError::Uncrystallized(path.clone())),
@@ -350,20 +502,42 @@ impl Registry {
     }
 }
 
-impl Default for Registry {
+impl<H: MerkleHash> Default for Crystallizations<H> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-/// The bootstrap's startup registry. Tick A leaves it empty; Ticks B
-/// and F populate it as their crystallizations land.
-pub fn floor_registry() -> Registry {
-    Registry::new()
+/// The bootstrap's startup crystallizations, generic over the consumer's
+/// `H`. Empty in Tick A; ticks B and F populate concrete instantiations
+/// as their crystallizations land.
+///
+/// Per the landing-page spec §2.4, the bootstrap binary may host
+/// multiple `H`-worlds. The startup picks one explicitly at the call
+/// site (`floor_crystallizations::<Blake3>()` is the default for the
+/// `@mirror/store` world).
+pub fn floor_crystallizations<H: MerkleHash>() -> Crystallizations<H> {
+    Crystallizations::new()
+}
+
+/// Free dispatcher consumer: route a [`Ref`] through a
+/// [`Crystallizations<H>`] and return the verdict. Equivalent to
+/// `crystallizations.crystallize(fracture, input)` — exists as a free
+/// function so the bootstrap's `kintsugi_tick` integration point can
+/// stay shallow.
+///
+/// Per `kintsugi-minimum-runnable.md` §11.2: the dispatcher takes the
+/// consumer's `Crystallizations<H>` rather than a single global table.
+pub fn kintsugi_tick<H: MerkleHash>(
+    crystallizations: &Crystallizations<H>,
+    fracture: &Ref,
+    input: Optic<(), Splinter<H>>,
+) -> Imperfect<Splinter<H>, CrystallizeError, ScalarLoss> {
+    crystallizations.crystallize(fracture, input)
 }
 
 // ---------------------------------------------------------------------------
-// Tests — Tick A red-first set.
+// Tests — Tick A red-first set, cascade-aware.
 // ---------------------------------------------------------------------------
 
 #[cfg(test)]
@@ -371,40 +545,40 @@ mod tests {
     use super::*;
     use prism_core::Beam;
 
-    // --- ActionPath validation ---
+    // --- Ref validation ---
 
     #[test]
-    fn action_path_no_bare_string() {
+    fn ref_no_bare_string() {
         // Valid.
-        let p = ActionPath::new("@kintsugi/fracture/rename").unwrap();
+        let p = Ref::new("@kintsugi/fracture/rename").unwrap();
         assert_eq!(p.as_str(), "@kintsugi/fracture/rename");
         // Empty rejected.
-        assert!(ActionPath::new("").is_err());
+        assert!(Ref::new("").is_err());
         // Missing '@' prefix rejected.
-        assert!(ActionPath::new("kintsugi/fracture").is_err());
+        assert!(Ref::new("kintsugi/fracture").is_err());
         // Whitespace rejected.
-        assert!(ActionPath::new("@kintsugi fracture").is_err());
+        assert!(Ref::new("@kintsugi fracture").is_err());
     }
 
-    // --- Splinter OID — Text leaf ---
+    // --- Splinter OID — Text leaf, default Blake3 ---
 
     #[test]
     fn splinter_oid_roundtrip() {
-        let s = Splinter::new(Content::Text(Text::new("hello")));
+        let s: Splinter = Splinter::new(Content::Text(Text::new("hello")));
         assert!(s.verify(), "freshly constructed Splinter must verify");
     }
 
     #[test]
     fn splinter_oid_deterministic() {
-        let a = Splinter::new(Content::Text(Text::new("hello")));
-        let b = Splinter::new(Content::Text(Text::new("hello")));
+        let a: Splinter = Splinter::new(Content::Text(Text::new("hello")));
+        let b: Splinter = Splinter::new(Content::Text(Text::new("hello")));
         assert_eq!(a.oid(), b.oid());
     }
 
     #[test]
     fn splinter_text_different_content_different_oid() {
-        let a = Splinter::new(Content::Text(Text::new("hello")));
-        let b = Splinter::new(Content::Text(Text::new("world")));
+        let a: Splinter = Splinter::new(Content::Text(Text::new("hello")));
+        let b: Splinter = Splinter::new(Content::Text(Text::new("world")));
         assert_ne!(a.oid(), b.oid());
     }
 
@@ -414,14 +588,14 @@ mod tests {
     fn splinter_record_merkle() {
         // A Record's OID changes if any sub-Splinter changes.
         let k = FieldName::new("name").unwrap();
-        let mut m1 = BTreeMap::new();
+        let mut m1: BTreeMap<FieldName, Splinter> = BTreeMap::new();
         m1.insert(
             k.clone(),
             Splinter::new(Content::Text(Text::new("alex"))),
         );
         let r1 = Splinter::new(Content::Record(m1));
 
-        let mut m2 = BTreeMap::new();
+        let mut m2: BTreeMap<FieldName, Splinter> = BTreeMap::new();
         m2.insert(k, Splinter::new(Content::Text(Text::new("reed"))));
         let r2 = Splinter::new(Content::Record(m2));
 
@@ -437,14 +611,14 @@ mod tests {
     #[test]
     fn splinter_record_key_change_changes_oid() {
         // Same value under a different field name → different OID.
-        let mut m1 = BTreeMap::new();
+        let mut m1: BTreeMap<FieldName, Splinter> = BTreeMap::new();
         m1.insert(
             FieldName::new("a").unwrap(),
             Splinter::new(Content::Text(Text::new("x"))),
         );
         let r1 = Splinter::new(Content::Record(m1));
 
-        let mut m2 = BTreeMap::new();
+        let mut m2: BTreeMap<FieldName, Splinter> = BTreeMap::new();
         m2.insert(
             FieldName::new("b").unwrap(),
             Splinter::new(Content::Text(Text::new("x"))),
@@ -458,11 +632,11 @@ mod tests {
 
     #[test]
     fn splinter_list_merkle() {
-        let l1 = Splinter::new(Content::List(vec![
+        let l1: Splinter = Splinter::new(Content::List(vec![
             Splinter::new(Content::Text(Text::new("a"))),
             Splinter::new(Content::Text(Text::new("b"))),
         ]));
-        let l2 = Splinter::new(Content::List(vec![
+        let l2: Splinter = Splinter::new(Content::List(vec![
             Splinter::new(Content::Text(Text::new("b"))),
             Splinter::new(Content::Text(Text::new("a"))),
         ]));
@@ -470,19 +644,19 @@ mod tests {
         assert!(l1.verify());
     }
 
-    // --- Registry — empty state ---
+    // --- Crystallizations — empty state ---
 
     #[test]
-    fn registry_empty_knows_nothing() {
-        let r = Registry::new();
-        let p = ActionPath::new("@kintsugi/fracture/rename").unwrap();
+    fn crystallizations_empty_knows_nothing() {
+        let r: Crystallizations<Blake3> = Crystallizations::new();
+        let p = Ref::new("@kintsugi/fracture/rename").unwrap();
         assert!(!r.knows(&p));
     }
 
     #[test]
-    fn registry_empty_returns_uncrystallized() {
-        let r = Registry::new();
-        let p = ActionPath::new("@kintsugi/fracture/rename").unwrap();
+    fn crystallizations_empty_returns_uncrystallized() {
+        let r: Crystallizations<Blake3> = Crystallizations::new();
+        let p = Ref::new("@kintsugi/fracture/rename").unwrap();
         let input = Optic::ok((), Splinter::new(Content::Text(Text::new("seed"))));
         let verdict = r.crystallize(&p, input);
         match verdict {
@@ -493,11 +667,11 @@ mod tests {
         }
     }
 
-    // --- Registry — register and dispatch ---
+    // --- Crystallizations — register and dispatch ---
 
     /// Echo body: return the input's value Splinter unchanged as Success.
-    fn echo_body() -> Body {
-        Arc::new(|input: Optic<(), Splinter>| {
+    fn echo_body() -> Body<Blake3> {
+        Arc::new(|input: Optic<(), Splinter<Blake3>>| {
             let splinter = input
                 .result()
                 .ok()
@@ -508,16 +682,16 @@ mod tests {
     }
 
     #[test]
-    fn registry_register_and_crystallize() {
-        let mut r = Registry::new();
-        let p = ActionPath::new("@test/echo").unwrap();
+    fn crystallizations_register_and_crystallize() {
+        let mut r: Crystallizations<Blake3> = Crystallizations::new();
+        let p = Ref::new("@test/echo").unwrap();
         r.register(Crystallization {
             path: p.clone(),
             body: echo_body(),
         });
         assert!(r.knows(&p));
 
-        let seed_splinter = Splinter::new(Content::Text(Text::new("hi")));
+        let seed_splinter: Splinter = Splinter::new(Content::Text(Text::new("hi")));
         let expected_oid = seed_splinter.oid().clone();
         let input = Optic::ok((), seed_splinter);
         let verdict = r.crystallize(&p, input);
@@ -531,11 +705,11 @@ mod tests {
     }
 
     #[test]
-    fn registry_unregistered_after_register() {
+    fn crystallizations_unregistered_after_register() {
         // Register one path; a DIFFERENT path still returns Uncrystallized.
-        let mut r = Registry::new();
-        let known = ActionPath::new("@test/echo").unwrap();
-        let unknown = ActionPath::new("@test/unknown").unwrap();
+        let mut r: Crystallizations<Blake3> = Crystallizations::new();
+        let known = Ref::new("@test/echo").unwrap();
+        let unknown = Ref::new("@test/unknown").unwrap();
         r.register(Crystallization {
             path: known.clone(),
             body: echo_body(),
@@ -553,37 +727,34 @@ mod tests {
         }
     }
 
-    // --- floor_registry — empty in Tick A ---
+    // --- floor_crystallizations — empty in Tick A ---
 
     #[test]
-    fn floor_registry_is_empty_in_tick_a() {
-        let r = floor_registry();
-        let kintsugi = ActionPath::new("@kintsugi/fracture/rename").unwrap();
-        let cli = ActionPath::new("@cli/new").unwrap();
+    fn floor_crystallizations_is_empty_in_tick_a() {
+        let r: Crystallizations<Blake3> = floor_crystallizations();
+        let kintsugi = Ref::new("@kintsugi/fracture/rename").unwrap();
+        let cli = Ref::new("@cli/new").unwrap();
         assert!(!r.knows(&kintsugi), "Tick A: no kintsugi crystallization");
         assert!(!r.knows(&cli), "Tick A: no @cli crystallization");
     }
 }
 
 // ---------------------------------------------------------------------------
-// Tick A cascade — generic-over-hash tests (RED).
+// Cascade tests — generic-over-hash surface (the +4 from the cascade).
 //
-// These tests target the not-yet-existent generic surface:
-//   - `MerkleHash` trait
-//   - `Blake3` backend (default `H` for `Splinter`)
-//   - `Crystallizations<H>` (the renamed `Registry`)
-//   - `Ref` (the renamed `ActionPath`)
-//   - `kintsugi_tick<H>` generic dispatcher consumer
+// These exercise the genericity that the existing tests' default-Blake3
+// path leaves implicit: a non-Blake3 backend (MockHash), recursive
+// Merkle structure under it, multiple H-worlds coexisting in one
+// binary, and the free `kintsugi_tick<H>` consumer routing across both.
 //
 // Per `docs/specs/store-vs-db-and-the-cascade.md` §2 and
-// `docs/specs/kintsugi-minimum-runnable.md` §11. Implementation lands in
-// the paired 🟢 commit; this commit ratchets the floor's type system by
-// declaring the tests that prove the cascade is real.
+// `docs/specs/kintsugi-minimum-runnable.md` §11.
 // ---------------------------------------------------------------------------
 
 #[cfg(test)]
 mod cascade_tests {
     use super::*;
+    use prism_core::Beam;
     use std::collections::BTreeMap;
 
     // --- MockHash: a trivial, test-only `MerkleHash` impl ---
@@ -595,6 +766,13 @@ mod cascade_tests {
     #[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
     pub struct MockOid([u8; 4]);
 
+    impl OidBytes for MockOid {
+        fn oid_bytes(&self) -> &[u8] {
+            &self.0
+        }
+    }
+
+    #[derive(Clone, Debug)]
     pub struct MockHash;
 
     impl MerkleHash for MockHash {
@@ -688,8 +866,7 @@ mod cascade_tests {
             body: echo_body_mock(),
         });
 
-        // Free `kintsugi_tick<H>` function (re-exported from this module
-        // alongside Crystallizations<H>) routes the dispatch generically.
+        // Free `kintsugi_tick<H>` function routes the dispatch generically.
         let blake3_seed = Splinter::<Blake3>::new(Content::Text(Text::new("hi")));
         let blake3_oid = blake3_seed.oid().clone();
         let blake3_input = Optic::ok((), blake3_seed);

@@ -24,7 +24,7 @@ use std::path::PathBuf;
 use std::process::Command;
 
 use crate::ast::{line_col_at, AstKind, AstNode};
-use crate::crystallize::{floor_registry, Registry};
+use crate::crystallize::{floor_crystallizations, Blake3, Crystallizations};
 use crate::git::{git_crystal_exists, git_store_crystal};
 use crate::grammar::{grammar_for_file, load_grammar};
 use crate::hash::canonical_hash;
@@ -536,18 +536,18 @@ fn count_dark(ast: &AstNode) -> usize {
 /// terminate). The Banach contraction's Δ is vacuously 0 today because
 /// every stage is the identity, so this always returns `true` on tick 1.
 fn kintsugi_tick(
-    registry: &Registry,
+    crystallizations: &Crystallizations<Blake3>,
     tick: u64,
     prior_ast: &AstNode,
     current_ast: &AstNode,
 ) -> bool {
     // Stage 1 — propose. Fate's five models fan out and return au
-    // candidates. No-op scaffold: zero candidates. The registry is
-    // consulted here in later ticks (B/C) — fracture refs resolve
-    // through `registry.crystallize(...)`; today the floor is empty
-    // so every dispatch would return `Uncrystallized`. Reference the
-    // parameter so the substrate-pull surface is real.
-    let _ = registry;
+    // candidates. No-op scaffold: zero candidates. The crystallizations
+    // table is consulted here in later ticks (B/C) — fracture refs
+    // resolve through `crystallizations.crystallize(...)`; today the
+    // floor is empty so every dispatch would return `Uncrystallized`.
+    // Reference the parameter so the substrate-pull surface is real.
+    let _ = crystallizations;
     let candidates: Vec<()> = Vec::new();
 
     // Stage 2 — measure. Cycle-averaged holonomy (Magnot 2025) of each
@@ -739,10 +739,12 @@ fn cmd_kintsugi_single(file: &str, shatter: u64, transform: Option<&str>, out_di
         // The loop. `prior_ast` is the section before this tick's stage 1;
         // `current_ast` is the section after stage 4's splice. With every
         // stage no-op, prior == current and stage 5 returns true on tick 1.
-        let registry = floor_registry();
+        // `Blake3` is explicit — the bootstrap startup declares which
+        // H-world its floor inhabits (landing-page spec §2.4).
+        let crystallizations = floor_crystallizations::<Blake3>();
         let mut prior = ast.clone();
         for i in 1..=shatter {
-            let fixed = kintsugi_tick(&registry, i, &prior, &ast);
+            let fixed = kintsugi_tick(&crystallizations, i, &prior, &ast);
             if fixed {
                 break;
             }
