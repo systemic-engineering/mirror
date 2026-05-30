@@ -3,22 +3,76 @@
 *2026-05-30. Mara. Research + design spec. Upstream of `coincidence-hash-collapse.md`
 (commit `e9c259b`). No implementation; markdown only.*
 
-**Status:** draft — Alex called the framing on 2026-05-30. This spec answers it.
+---
 
-**Scope:** the question "can one hash satisfy (1) collision-resistance, (2) speed,
-and (3) graph-navigability simultaneously, or does mirror need pluggable per-operation
-hashes?" The recommendation is **(B) pluggable**, with a specific shared canonicalization
-step that keeps the two hashes aligned. The CHC collapse plan (`e9c259b`) is upstream-
-paused on this; §7 states what changes for CHC.
+## RECOMMENDATION REWRITE — 2026-05-30 (LRM collapse, same day)
+
+**Status:** the §4–5 *research* still stands (the survey, the tradeoff matrix, the
+Motwani-Naor-Panigrahy 2006 impossibility result). The original §6 *recommendation* —
+a composite `ContentOid { storage, navigation }` carrying both fields on every
+content address — is **SUPERSEDED** as of 2026-05-30 by a conversation between Alex
+and Reed that LRM-collapsed several over-built proposals (this one included) into a
+simpler architecture. The new architecture is captured in
+`docs/specs/store-vs-db-and-the-cascade.md`. The headline:
+
+1. **`@mirror/store` is the storage gate** — open content-addressed foundation,
+   verification on write, git-backed by default, MUST work without `@spectral/db`.
+   Verification belongs HERE — the c3a01e3 framing that "verification belongs to
+   `@spectral/db`" (§1, §6.2, §10) is **wrong** and is corrected throughout this
+   amendment. Storage uses `Merkle<BLAKE3>` — sidesteps Attack 1 entirely.
+2. **`@spectral/db` is the engine on top** — potentially closed source, navigation
+   over a spectral graph, lives ABOVE the storage gate. Its navigation primitive is
+   **`VoidPointer`** (a name for the spectral coordinate that the existing
+   `SpectralCoordStore` + `coord_oids` + `spectral_distance_eigen` machinery already
+   computes). VoidPointer is NOT a hash function; it is a spectral coordinate.
+3. **No composite `ContentOid`.** Instead: the Merkle tree is **generic over the
+   hash algorithm** (`Splinter<H>`, `Content<H>`, `Body<H>`, `Crystallization<H>`,
+   `Crystallizations<H>`). Each consumer picks its own hash primitive; different
+   consumers can have structurally different trees. Per Alex: *"If we make the
+   AST/MerkleTree generic over the hash algorithm... then everything else falls
+   out."* This is a Rust change, expected and welcomed.
+4. **`ScalarLoss` → `Transparency` (as a Lens)** is pinned for the *next* tick
+   after the cascade. Positive-frame (light passes vs absence-of-light),
+   optical-family-native, natural dual of Dark spans, lens-algebra-composable.
+   Noted but not baked in here.
+5. **Attack 1 narrowing.** §3.1's Attack 1 verdict is *real* but **narrower than
+   originally stated**. Collisions require two inputs whose double-hashed-accumulated
+   5-D vectors project to coefficient vectors that round to the same bits under
+   EPSILON gating, all five times in parallel — not "two inputs that round the
+   same." Still cryptographically weaker than naked SHA-256, which is why
+   `@mirror/store` adopts BLAKE3 (sidesteps the surface).
+6. **CoincidenceHash sites stay where they are.** The two existing sites (`prism_core`'s
+   `Detector<3>` and `bootstrap`'s `<5,5>`) are no longer `@mirror/store`'s hash;
+   whether they ever unify is a separate (now lower-priority) concern. The CHC
+   collapse plan in `coincidence-hash-collapse.md` is itself SUPERSEDED.
+
+The inline §6/§7/§8.4/§9/§10 text below has been amended to reflect this. Sections
+§1–§5 (motivation, what "navigatable" means, current state, design space, lower
+bound) stand verbatim — that research is load-bearing for the new architecture too.
+
+Landing-page spec: **`docs/specs/store-vs-db-and-the-cascade.md`**.
+Cascade implementation tick: forthcoming.
+
+---
+
+**Original-status (pre-rewrite) summary:** draft — Alex called the framing on 2026-05-30.
+This spec answered it. The same-day conversation then collapsed the answer further;
+see the amendment above.
+
+**Scope (original):** the question "can one hash satisfy (1) collision-resistance,
+(2) speed, and (3) graph-navigability simultaneously, or does mirror need pluggable
+per-operation hashes?" The literature answer (one hash cannot) stands. The original
+recommendation packaged the pluggable answer as a single composite type; the new
+architecture refuses that packaging — see the rewrite above.
 
 **The Attack 1 verdict** (open question from the adversarial review of CHC):
 `canonical_hash` does **NOT** reduce to `sha256(canonical_byte_form)`. It SHA-256s the
 f64 bit patterns of the projected coordinates. IEEE-754 rounding under EPSILON is a
-live collision surface. §3 documents this with line references; §6 turns it into a
-requirement.
+live collision surface, but smaller than originally framed (see §3.1's narrowing
+note). `@mirror/store` adopts BLAKE3 to sidestep the question entirely.
 
-**Touches no `.rs`.** Markdown only. Migration shape stated in §7; commits there
-belong to CHC's tick stream.
+**Touches no `.rs` in this commit.** Markdown only. The cascade (generic-over-H)
+DOES touch `.rs` when it lands; that is its own tick stream.
 
 ---
 
@@ -59,15 +113,22 @@ The failure modes that produce the tension:
   weaknesses.
 - **The middle is what this spec is hunting.**
 
-Architectural context (separately settled today, 2026-05-30, with Alex):
+Architectural context (settled 2026-05-30 with Alex, **corrected later same day**):
 
-- **Verification belongs in the storage layer (`@spectral/db`), not in the data type.**
-  Splinter stays loose in flight; spectral-db is the gate. This spec considers how
-  each hash interacts with storage-gate verification — see §6.2.
+- **Verification belongs in `@mirror/store`, not in `@spectral/db` and not in the
+  data type.** `@mirror/store` is the open content-addressed storage gate — the
+  foundation that mirror MUST work without `@spectral/db`. `@spectral/db` is the
+  engine on top. Splinter stays loose in flight; the store is the gate; recompute
+  on write and reject on mismatch lives there. This corrects the earlier framing
+  (in this spec's pre-amendment §6.2 and §10) that placed verification in
+  `@spectral/db`. See `docs/specs/store-vs-db-and-the-cascade.md` for the full
+  store-vs-db distinction.
 - **Numerical computation belongs in the Fortran layer** (prism's gfortran kernels
   now, flang at LRM per Track J — see `docs/specs/numerical-substrate-via-fortran.md`).
-  If the navigation hash has real spectral structure, its computation lives there.
-  §8 specifies which Fortran kernel hosts what.
+  If `@spectral/db`'s `VoidPointer` (the spectral coordinate) has real spectral
+  structure, its computation lives there. §8 specifies which Fortran kernel hosts
+  what — note that under the rewrite, this concerns `@spectral/db`'s `VoidPointer`,
+  not `@mirror/store`'s storage hash (which is BLAKE3, no Fortran involvement).
 
 ---
 
@@ -262,19 +323,33 @@ When does this happen in practice?
   encoding is `Σ_i SHA-256-derived-projection(byte_i)` accumulating into 5 floats —
   cancellation in the f64 accumulator is achievable with crafted input.
 
-**Conclusion on (1):** `canonical_hash` is **strictly weaker than SHA-256** for
-collision-resistance. The projection step introduces a controllable collision surface;
-the collision-resistance is bounded by the smaller of (SHA-256 of the projection
-output) and (the size of the projection's null-space relative to the EPSILON
-quantization). Plain SHA-256 of the input bytes (or the Splinter raw-SHA-256
-approach) does NOT have this surface.
+**Conclusion on (1):** `canonical_hash` is **weaker than SHA-256** for collision-
+resistance — but the attack surface is narrower than first stated. The projection
+step introduces a controllable collision surface; the collision-resistance is bounded
+by the smaller of (SHA-256 of the projection output) and (the size of the
+projection's null-space relative to the EPSILON quantization). Plain SHA-256 of the
+input bytes (or the Splinter raw-SHA-256 approach) does NOT have this surface.
 
-This answers the open question in CHC's adversarial review: **Attack 1 is real, the
-coincidence-projection step IS a collision surface beyond SHA-256, and the
-collision-resistance is `min(SHA-256, projection-null-space)` which is dominated by
-the smaller term**. For SHA-256 to be the binding constraint, the projection's
-null-space modulo EPSILON has to be smaller than 2^128 — and a 5×5 linear map over
-floats with machine-epsilon quantization does not satisfy that.
+**Narrowing (2026-05-30, post-rewrite).** Re-reading the actual code carefully:
+`canonical_hash` DOES depend on float coordinates (the final SHA-256 consumes
+`focus_results[p][j].to_bits()`), but the projections come from `encode_into_basis`
+which already runs per-byte SHA-256 — so collisions require two inputs whose
+double-hashed-accumulated 5-D vectors project to coefficient vectors that round to
+the same bits under EPSILON gating, **all five times in parallel**. That is narrower
+than "two inputs that round the same after one projection." The original wording
+overstated the practical attack surface.
+
+This still answers the open question in CHC's adversarial review: **Attack 1 is real**,
+the coincidence-projection step IS a collision surface beyond SHA-256, but the
+adversarial construction must simultaneously satisfy five EPSILON-clamped equations
+over SHA-256-seeded random projections — not a single one. The collision-resistance
+bound stated above is correct as a bound; the *practical* exploitability sits well
+below what one might naively read.
+
+**Bottom line for the rewrite.** `@mirror/store` adopts `Merkle<BLAKE3>` and
+sidesteps this surface entirely. The question of whether the existing `<5,5>` or
+`<3,16>` coincidence sites are exploitable in practice becomes lower-priority—they
+are no longer the storage hash. See the amendment banner.
 
 ### 3.2 Property (2) — speed
 
@@ -590,7 +665,100 @@ see a single OID at the type level.
 
 ---
 
-## 6. Recommendation — (B) pluggable, with one shared canonicalization
+## 6. Recommendation — generic-over-hash cascade, NOT composite ContentOid
+
+**REWRITTEN 2026-05-30.** The original recommendation (composite `ContentOid` with
+`storage` and `navigation` sub-fields) is superseded. See the top-of-file banner
+and `docs/specs/store-vs-db-and-the-cascade.md` for the load-bearing distinctions.
+This section retains the original text below the rewrite header for record; only
+the RECOMMENDATION proper is replaced.
+
+### 6.0 The new recommendation
+
+**Verdict: generic-over-hash cascade.** Make the Merkle tree generic over the hash
+algorithm. Each consumer picks its own primitive. Different consumers can have
+structurally different trees. No composite type; no "navigation field" attached to
+storage OIDs.
+
+Concretely:
+
+- **`@mirror/store`** (open foundation, content-addressed storage gate, git-backed
+  by default) uses `Merkle<BLAKE3>`. BLAKE3 is standard, fast, Merkle-native by
+  construction, has no float dependency, and sidesteps Attack 1. Verification on
+  write lives in `@mirror/store`. mirror MUST work without `@spectral/db`.
+- **`@spectral/db`** (potentially closed-source engine on top, the spectral graph)
+  uses **`VoidPointer`** as its navigation primitive. `VoidPointer` is NOT a hash
+  function. It is the *spectral coordinate* (eigenvalue vector of the node's local
+  Laplacian) that spectral-db ALREADY computes and stores via `SpectralCoordStore` +
+  `coord_oids` + `spectral_distance_eigen`. The existing code IS the pattern; we
+  are naming it. `VoidPointer` is a reclaiming move — every engineer learns void
+  pointers are evil; in mirror they are the load-bearing thing that makes the
+  alignment math work. Full circle. Connects to void-dual-geometry
+  (`~/.reed/visibility/protected/practice/insights/coincidence/void-dual-geometry.md`)
+  — coordinates into the Void (λ₀=0 axis where all eight dualities meet).
+- These are **separate primitives serving separate consumers**. No `ContentOid`
+  newtype carries both. The Merkle generic parameter `H` is the architectural
+  enabler: `Splinter<BLAKE3>` is what the store uses; `@spectral/db` does not need
+  a Splinter at all (it stores spectral coordinates keyed by store-OIDs).
+
+### 6.0.1 The cascade
+
+Genericity goes fully through the type tower:
+
+- `Splinter<H: MerkleHash = Blake3>`
+- `Content<H>`
+- `Body<H>`
+- `Crystallization<H>` (singular event)
+- `Crystallizations<H>` (the table; renamed from `Registry`)
+- `kintsugi_tick<H>`
+
+Hash-blind types stay concrete:
+
+- `Ref` (renamed from `ActionPath`; matches mirror's nav-ref vocabulary; `action` is
+  dead since we have prism / glass / 5-ops, not "actions")
+- `CrystallizeError`
+- `IoError`
+- `ScalarLoss` (pinned to become `Transparency` as a Lens in the *next* tick after
+  the cascade; positive-frame, optical-family-native, dual of Dark spans, lens-
+  algebra-composable — not baked in here)
+
+A single bootstrap binary hosts multiple `H`-worlds. Each consumer (store, db,
+future engines) gets its own `Crystallizations<H>`. The store's tree and db's
+coordinate space are structurally independent; they share only the canonical bytes
+that keyed them.
+
+### 6.0.2 What the c3a01e3 recommendation got wrong
+
+- **"Verification belongs to `@spectral/db`."** Wrong direction. Verification
+  belongs to `@mirror/store` — the storage gate is where bytes enter; the gate
+  is the place that can refuse. `@spectral/db` is the engine on top; it consumes
+  verified bytes from `@mirror/store`. Putting verification in the engine couples
+  the open foundation to the (potentially closed) engine. The architecture refuses
+  that coupling.
+- **"Pack navigation into the OID."** Wrong altitude. The navigation primitive
+  belongs to `@spectral/db` and is a *coordinate*, not a hash. Forcing it into a
+  composite OID makes the open foundation know about the engine's geometry.
+- **"One canonical-byte serializer feeds two hashes."** Half-right. The canonical
+  bytes ARE shared (they have to be — the store-OID is the key the engine uses to
+  attach coordinates). What's not shared is the type carrying both — the store
+  hands out a `Splinter<BLAKE3>` OID and that's the address; the engine indexes
+  *by* that address into its own `VoidPointer` space.
+
+### 6.0.3 Cross-references
+
+- `docs/specs/store-vs-db-and-the-cascade.md` — the load-bearing landing-page spec.
+- `docs/specs/kintsugi-minimum-runnable.md` — carries the cascade renames
+  (`Registry` → `Crystallizations`, `ActionPath` → `Ref`) in its amendment section.
+- `docs/specs/coincidence-hash-collapse.md` — SUPERSEDED top-banner now points
+  here; the CHC tick plan is obsolete in its original form.
+
+The original §6 follows below for record. Skim it for the *shape* of the
+composite-OID design — useful to know what was considered and rejected; do NOT
+implement.
+
+---
+
+### ORIGINAL §6 (superseded; record only) — (B) pluggable, with one shared canonicalization
 
 **Verdict: (B).** Pluggable per-operation hashes, with a shared canonical byte
 representation and a typed OID that carries both. Not (A) because §5 forbids it.
@@ -746,6 +914,30 @@ makes the pluggable architecture coherent.
 ---
 
 ## 7. Implications for CHC (the upstream-paused collapse plan)
+
+**REWRITTEN 2026-05-30.** Under the new architecture (`@mirror/store` adopts
+`Merkle<BLAKE3>` and moves OFF CoincidenceHash entirely), the CHC tick plan is
+**obsolete in its original form**. CHC-1 through CHC-5 do not run.
+
+See `docs/specs/coincidence-hash-collapse.md`'s SUPERSEDED top-banner for the
+status. The brief version:
+
+- `bootstrap::crystallize::Oid` becomes `Splinter<BLAKE3>` OID under the cascade.
+  Splinter ticks live in the cascade implementation tick, not in CHC.
+- `prism_core::Oid` (`Detector<3>`) and `bootstrap::canonical_hash` (`<5,5>`) stay
+  where they are. They are no longer the storage hash. Whether they ever unify is
+  a separate, lower-priority concern — the consumer (storage) that motivated unification
+  has moved away.
+- The two CoincidenceHash sites continue to serve their existing purposes (whatever
+  remaining callers need). If they outlive their callers entirely, they get retired
+  in a future hygiene tick.
+
+The original §7 text (CHC-1' through CHC-5 rewrites under the composite-`ContentOid`
+recommendation) is retained below for record. Do NOT execute.
+
+---
+
+### ORIGINAL §7 (superseded; record only)
 
 The CHC migration in `coincidence-hash-collapse.md` §7 has five ticks (CHC-1
 through CHC-5). Under recommendation (B), the ticks change as follows:
@@ -908,8 +1100,17 @@ ecosystem ubiquity.
 
 ### 8.4 New substrate primitive declaration
 
+**REWRITE NOTE 2026-05-30.** Under the new architecture, the substrate primitive
+is not `@hash/navigation` (the navigation field of a composite OID). It is
+`@spectral/db`'s `VoidPointer` action surface (the spectral coordinate that
+`SpectralCoordStore` already computes). The grammar sketch below is retained for
+the *shape* it describes — a deterministic projection action surfaced at the
+substrate altitude — but the **name, namespace, and consumer change**: this
+belongs to `@spectral/db`'s grammar, not `@hash`. `@mirror/store` has no projection
+action; its hash is `Merkle<BLAKE3>`, pure cryptographic, no Fortran involvement.
+
 Proposed grammar at `boot/std/hash/navigation.mirror` (sketch, no implementation
-in this spec):
+in this spec, **under the original recommendation — superseded**):
 
 ```mirror
 grammar @hash/navigation {
@@ -929,6 +1130,14 @@ space, so cross-implementation byte-stability is guaranteed.
 ---
 
 ## 9. Open decisions for Alex
+
+**REWRITE NOTE 2026-05-30.** Under the cascade, decisions §9.1 (NAV_BYTES) and
+§9.3 (navigation projection design) no longer apply at the `@mirror/store` altitude
+— the store has no navigation field. Both questions reframe as `@spectral/db`'s
+`VoidPointer` design space and are scoped to that engine's spec (TBD). Decision
+§9.2 (BLAKE3 vs SHA-256) is resolved: **BLAKE3** for `@mirror/store`, per the
+rewrite (sidesteps Attack 1; Merkle-native; ~2-5× faster). The text below is
+retained for the research it carries.
 
 Decisions this research cannot make alone. Three named, with the recommendation
 Mara would default to in the absence of an override.
@@ -988,32 +1197,50 @@ speed cost?
 
 ## 10. Stop-and-report findings (per Mara's brief)
 
+**REWRITTEN 2026-05-30.** Findings updated to match the LRM-collapsed architecture.
+The research findings (§2, §3.1, §5, §4.1) stand verbatim; only the architectural
+verdict has changed.
+
 - **`spectral-db`'s `navigatable_oid` doesn't exist as a literal symbol.** The
   closest implementations are `SpectralIndex::near`, `SpectralIndex::spectral_distance_eigen`,
-  and `SpectralCoordStore`. The architecture today is OID + separate coordinate
-  store — two addresses per node. The "swap the hash function here" comment at
-  `src/index.rs#1-5` IS the open architectural slot this spec fills. (§2)
-- **Attack 1 verdict: `canonical_hash` is strictly weaker than SHA-256.** It
-  SHA-256s the f64 bit patterns of projected coordinates, and the EPSILON-clamped
-  projection step admits adversarially-constructed collisions via the projection's
-  null-space. The collision-resistance is `min(SHA-256, projection-null-space)`,
-  dominated by the projection term. The literature (Prokos 2024, Aamand-Indyk
-  2025) confirms this pattern empirically for related perceptual hashes. (§3.1)
+  and `SpectralCoordStore`. Under the rewrite, this existing pattern IS the
+  `VoidPointer` primitive that `@spectral/db` exposes — named, not invented. The
+  architecture today (OID + separate coordinate store keyed by OID) becomes the
+  architecture going forward; the two-address-per-node shape is correct. (§2)
+- **Attack 1 verdict: `canonical_hash` is weaker than SHA-256, narrower than
+  originally claimed.** It SHA-256s the f64 bit patterns of projected coordinates,
+  and the EPSILON-clamped projection step admits adversarially-constructed
+  collisions — but the construction must satisfy five SHA-256-seeded EPSILON-clamped
+  equations in parallel, not one. Still cryptographically weaker than naked SHA-256.
+  Made moot for `@mirror/store` by adopting BLAKE3. (§3.1 narrowing block)
 - **A unified hash IS impossible.** Motwani-Naor-Panigrahy 2006 establishes the
   ρ ≥ 1/c² lower bound for Euclidean LSH; the avalanche property of cryptographic
   hashes is constructively the opposite of locality-sensitivity. The literature
-  is clear; the bound is tight. **A unified output (composite OID with two
-  sub-fields) IS possible** and is the recommendation. (§5)
-- **The recommendation is (B) pluggable**, packaged as one typed `ContentOid`
-  with `storage` (BLAKE3 or SHA-256) and `navigation` (SimHash signed-hyperplane
-  or coincidence `<5,5>`, Alex's call) sub-fields, derived from a shared canonical
-  byte representation. (§6)
-- **CHC unpauses with wider scope.** Two new ticks (canonical bytes serializer,
-  `ContentOid` newtype introduction) prepend the existing CHC ticks; CHC-2's
-  specific `<3,16>` → `<5,5>` migration is deferred pending the §9.3 navigation
-  projection decision. (§7)
+  is clear; the bound is tight. The new architecture honors this differently from
+  the original recommendation — not by packing two hashes into one composite, but
+  by giving the two consumers (`@mirror/store`, `@spectral/db`) **separate
+  primitives entirely**, made tractable by making the Merkle tree generic over the
+  hash algorithm. (§5)
+- **The recommendation is the generic-over-hash cascade.** Not a composite OID.
+  `@mirror/store` uses `Merkle<BLAKE3>`; `@spectral/db` uses `VoidPointer` (the
+  existing `SpectralCoordStore` pattern, renamed). The Merkle tree (and its
+  `Splinter`, `Content`, `Body`, `Crystallization`, `Crystallizations`) is generic
+  over `H`. Hash-blind types stay concrete. See §6.0 and
+  `docs/specs/store-vs-db-and-the-cascade.md`. (§6)
+- **Verification belongs to `@mirror/store`, not `@spectral/db`.** The earlier
+  framing in this spec (§6.2, §1's architectural context) was wrong-direction.
+  Corrected in the amendment banner and §1's architectural-context block. mirror
+  MUST work without `@spectral/db`; verification on write therefore lives in the
+  open foundation.
+- **CHC is SUPERSEDED.** The original CHC tick plan does not run. The two existing
+  CoincidenceHash sites stay where they are; whether they ever unify is a separate
+  (now lower-priority) concern. See the SUPERSEDED banner on
+  `coincidence-hash-collapse.md`. (§7 rewrite)
+- **`ScalarLoss` → `Transparency` (as a Lens)** is pinned for the *next* tick
+  after the cascade. Positive-frame, optical-family-native, dual of Dark, lens-
+  algebra-composable. Noted; not baked in.
 - **No 2024-26 paper proposes exactly this hybrid with working implementation.**
   TopLoc (2025) is architecturally closest (LSH commitment + cryptographic
-  envelope for ML inference verification). The composite-OID-with-shared-
-  canonicalization pattern proposed here is novel for content-addressed graph
-  databases, but the components are off-the-shelf. (§4.1)
+  envelope for ML inference verification). The composite-OID design considered
+  here turned out to be the wrong packaging; the generic-over-hash cascade is the
+  packaging Alex called. (§4.1 — the research stands; the application changed.)
