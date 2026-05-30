@@ -564,3 +564,170 @@ mod tests {
         assert!(!r.knows(&cli), "Tick A: no @cli crystallization");
     }
 }
+
+// ---------------------------------------------------------------------------
+// Tick A cascade — generic-over-hash tests (RED).
+//
+// These tests target the not-yet-existent generic surface:
+//   - `MerkleHash` trait
+//   - `Blake3` backend (default `H` for `Splinter`)
+//   - `Crystallizations<H>` (the renamed `Registry`)
+//   - `Ref` (the renamed `ActionPath`)
+//   - `kintsugi_tick<H>` generic dispatcher consumer
+//
+// Per `docs/specs/store-vs-db-and-the-cascade.md` §2 and
+// `docs/specs/kintsugi-minimum-runnable.md` §11. Implementation lands in
+// the paired 🟢 commit; this commit ratchets the floor's type system by
+// declaring the tests that prove the cascade is real.
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod cascade_tests {
+    use super::*;
+    use std::collections::BTreeMap;
+
+    // --- MockHash: a trivial, test-only `MerkleHash` impl ---
+    //
+    // 4-byte Oid; `hash_bytes` returns the little-endian byte length of
+    // the input (folded into 4 bytes). Trivial by construction; the point
+    // is that it is *not* Blake3, so the generic-ness is testable rather
+    // than asserted.
+    #[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+    pub struct MockOid([u8; 4]);
+
+    pub struct MockHash;
+
+    impl MerkleHash for MockHash {
+        type Oid = MockOid;
+        fn hash_bytes(bytes: &[u8]) -> Self::Oid {
+            let n = bytes.len() as u32;
+            MockOid(n.to_le_bytes())
+        }
+    }
+
+    // --- Test 1: Splinter works with a non-Blake3 backend ---
+
+    #[test]
+    fn splinter_with_mock_hash() {
+        let s = Splinter::<MockHash>::new(Content::Text(Text::new("hello")));
+        // MockHash::hash_bytes returns LE u32 of input length.
+        // Text canonical bytes: "T" || u64_le(5) || "hello" = 1+8+5 = 14 bytes.
+        let expected = MockHash::hash_bytes(&[0u8; 14]);
+        assert_eq!(s.oid(), &expected);
+    }
+
+    // --- Test 2: Recursive Merkle structure under non-Blake3 backend ---
+
+    #[test]
+    fn content_record_recursive_with_mock_hash() {
+        let leaf = Splinter::<MockHash>::new(Content::Text(Text::new("leaf")));
+        let mut map: BTreeMap<FieldName, Splinter<MockHash>> = BTreeMap::new();
+        map.insert(FieldName::new("k").unwrap(), leaf);
+        let record = Splinter::<MockHash>::new(Content::Record(map));
+        assert!(
+            record.verify(),
+            "Record OID must be Merkle-correct under MockHash"
+        );
+    }
+
+    // --- Test 3: Multiple H-worlds coexist in one binary ---
+
+    #[test]
+    fn crystallizations_blake3_and_mock_coexist() {
+        let mut blake3_crys: Crystallizations<Blake3> = Crystallizations::new();
+        let mut mock_crys: Crystallizations<MockHash> = Crystallizations::new();
+
+        let p = Ref::new("@test/echo").unwrap();
+
+        blake3_crys.register(Crystallization {
+            path: p.clone(),
+            body: echo_body_blake3(),
+        });
+        mock_crys.register(Crystallization {
+            path: p.clone(),
+            body: echo_body_mock(),
+        });
+
+        // Both registries know the path; types prevent cross-mixing.
+        assert!(blake3_crys.knows(&p));
+        assert!(mock_crys.knows(&p));
+
+        // Dispatching through each returns a Splinter under its own H.
+        let blake3_seed = Splinter::<Blake3>::new(Content::Text(Text::new("hi")));
+        let blake3_oid = blake3_seed.oid().clone();
+        let blake3_input = Optic::ok((), blake3_seed);
+        match blake3_crys.crystallize(&p, blake3_input) {
+            Imperfect::Success(out) => assert_eq!(out.oid(), &blake3_oid),
+            other => panic!("expected Success<Blake3>, got {:?}", other),
+        }
+
+        let mock_seed = Splinter::<MockHash>::new(Content::Text(Text::new("hi")));
+        let mock_oid = mock_seed.oid().clone();
+        let mock_input = Optic::ok((), mock_seed);
+        match mock_crys.crystallize(&p, mock_input) {
+            Imperfect::Success(out) => assert_eq!(out.oid(), &mock_oid),
+            other => panic!("expected Success<MockHash>, got {:?}", other),
+        }
+    }
+
+    // --- Test 4: kintsugi_tick is generic over H ---
+
+    #[test]
+    fn kintsugi_tick_generic_over_h() {
+        let p = Ref::new("@test/echo").unwrap();
+
+        let mut blake3_crys: Crystallizations<Blake3> = Crystallizations::new();
+        blake3_crys.register(Crystallization {
+            path: p.clone(),
+            body: echo_body_blake3(),
+        });
+
+        let mut mock_crys: Crystallizations<MockHash> = Crystallizations::new();
+        mock_crys.register(Crystallization {
+            path: p.clone(),
+            body: echo_body_mock(),
+        });
+
+        // Free `kintsugi_tick<H>` function (re-exported from this module
+        // alongside Crystallizations<H>) routes the dispatch generically.
+        let blake3_seed = Splinter::<Blake3>::new(Content::Text(Text::new("hi")));
+        let blake3_oid = blake3_seed.oid().clone();
+        let blake3_input = Optic::ok((), blake3_seed);
+        match kintsugi_tick(&blake3_crys, &p, blake3_input) {
+            Imperfect::Success(out) => assert_eq!(out.oid(), &blake3_oid),
+            other => panic!("expected Success<Blake3>, got {:?}", other),
+        }
+
+        let mock_seed = Splinter::<MockHash>::new(Content::Text(Text::new("hi")));
+        let mock_oid = mock_seed.oid().clone();
+        let mock_input = Optic::ok((), mock_seed);
+        match kintsugi_tick(&mock_crys, &p, mock_input) {
+            Imperfect::Success(out) => assert_eq!(out.oid(), &mock_oid),
+            other => panic!("expected Success<MockHash>, got {:?}", other),
+        }
+    }
+
+    // --- Helpers ---
+
+    fn echo_body_blake3() -> Body<Blake3> {
+        std::sync::Arc::new(|input: Optic<(), Splinter<Blake3>>| {
+            let splinter = input
+                .result()
+                .ok()
+                .cloned()
+                .expect("echo body: input must carry a value");
+            Imperfect::success(splinter)
+        })
+    }
+
+    fn echo_body_mock() -> Body<MockHash> {
+        std::sync::Arc::new(|input: Optic<(), Splinter<MockHash>>| {
+            let splinter = input
+                .result()
+                .ok()
+                .cloned()
+                .expect("echo body: input must carry a value");
+            Imperfect::success(splinter)
+        })
+    }
+}
