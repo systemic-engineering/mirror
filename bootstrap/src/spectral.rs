@@ -28,13 +28,19 @@
 //!   whose `terni::Imperfect<State, _, Holonomy>` signature is precisely
 //!   the shape of D's partially-defined action: Success when the
 //!   operator sends a state in its domain, Partial-with-holonomy when
-//!   transport carries the state off the manifold by a bounded
-//!   residual. The holonomy is a [`terni::Metric`] (non-negative,
-//!   symmetric, triangle inequality) — Connes' bounded-commutator
-//!   condition `‖[D, a]‖ < ∞` is the type-level constraint. Domain
-//!   rejection is encoded as a Partial verdict carrying the absorbing
-//!   `ScalarLoss::total()`, not as a typed Failure (the algebra has
-//!   `Error = Infallible` so it remains closed under identity
+//!   transport carries the state off the manifold with a bounded
+//!   *located* opacity. The holonomy is a [`terni::Loss`]: the bootstrap
+//!   uses [`Transparency<Ref>`] — a `Clear`/`Opaque` enum whose `Opaque`
+//!   variant is a `BTreeMap` from substrate-ref to [`PropertyVerdict`].
+//!   `combine` unions the opacity maps at colliding refs via
+//!   [`PropertyVerdict::merge_with`] (Fail dominates; Partials accumulate
+//!   diagnostics and take the minimum confidence). Connes' bounded-
+//!   commutator condition `‖[D, a]‖ < ∞` becomes the type-level
+//!   constraint that every opacity is a structurally well-formed verdict
+//!   located at a named ref, never a faceless scalar. Domain rejection
+//!   is encoded as a Partial verdict carrying the absorbing
+//!   `Transparency::catastrophic()`, not as a typed Failure (the algebra
+//!   has `Error = Infallible` so it remains closed under identity
 //!   composition). In the bootstrap D's concrete matrix form is
 //!   `CoincidenceHash<5,5>` (see `bootstrap/src/hash.rs`); its scalar
 //!   action on AST states is `apply_h(&ContentOidPrism, node)`
@@ -42,15 +48,23 @@
 //!   standalone `content.rs` module, per
 //!   `docs/specs/bootstrap-retirement-plan.md` Tick 1).
 //!
+//! [`Transparency<Ref>`]: prism_core::Transparency
+//! [`PropertyVerdict`]: prism_core::PropertyVerdict
+//! [`PropertyVerdict::merge_with`]: prism_core::PropertyVerdict::merge_with
+//! [`terni::Loss`]: terni::Loss
+//!
 //! ## The three primitive operations
 //!
 //! Everything mirror does decomposes into a finite composition of three
 //! primitives over this triple:
 //!
 //! 1. [`compose_a`] — algebra composition. Run two algebra elements
-//!    sequentially on a state, accumulating loss via the `Metric` monoid
-//!    on the holonomy carrier. The composition is associative because
-//!    `terni::Loss::combine` is, and the [`IdentityPrism`] is its unit.
+//!    sequentially on a state, unioning located opacities via the
+//!    `Transparency<Ref>` Loss-monoid on the holonomy carrier. The
+//!    composition is associative because `terni::Loss::combine` is
+//!    (and on `Transparency<Ref>` it is set-union on opacity maps with
+//!    per-key `PropertyVerdict::merge_with`), and [`IdentityPrism`] is
+//!    its unit.
 //! 2. `prism_core::apply_h` — operator action on a state vector.
 //!    Heterogeneous: input state type and output state type are
 //!    independent. Wraps a single `prism_core::Prism`'s focus /
@@ -65,11 +79,33 @@
 //!    the bootstrap's intentionally minimal floor (the only added
 //!    crates are `prism-core` and `terni`, themselves zero-IO).
 //!
+//! ## Lineage — why Transparency, not ScalarLoss
+//!
+//! The Loss carrier moved from a scalar (`ScalarLoss`) to a structured
+//! `Transparency<Ref>` per a three-strand lineage. (i) R. Reyes' 2024
+//! reconstruction of Stafford Beer's Viable System Model formalises the
+//! audit channel (VSM System 3*) as a *sheaf of troubles* indexed by
+//! substrate locations rather than a single scalar of "how broken" —
+//! co-discovery with the prism `Transparency` design; see
+//! `cybernetics/beer-error-propagation.md` in the systemic.engineering
+//! corpus. (ii) Beer's 3* audit channel is the cybernetic primitive the
+//! sheaf encodes: trouble propagates with its *location* intact, so the
+//! engineer can intervene where the trouble lives rather than at the
+//! collapsed root. (iii) The engineering-continuity it follows ended on
+//! 1973-09-11 in Santiago, when Project Cybersyn's substrate-shared
+//! audit channels were extinguished by force; the discipline survived
+//! in the literature and is reconstituted here as the bootstrap's loss
+//! carrier — `@quantize` / `@positive` / `@kintsugi/fracture/validate`
+//! are the example refs at which the example prisms (`Quantize`,
+//! `Positive`, `fracture_validate_body`) open their structural verdicts.
+//!
 //! [`prism_core::IdentityPrism`]: prism_core::IdentityPrism
 //! [`terni::Imperfect`]: terni::Imperfect
 //! [`terni::Metric`]: terni::Metric
 
-use prism_core::{apply_h, Beam, Optic, Prism, ScalarLoss};
+use prism_core::{apply_h, Beam, Optic, Prism, Ref, Transparency};
+#[cfg(test)]
+use prism_core::{Diagnostic, PropertyVerdict};
 use terni::Imperfect;
 
 use crate::ast::{AstKind, AstNode};
@@ -84,24 +120,29 @@ use crate::hash::hash_tagged;
 /// produced by the seed itself — there is no prior input. The error
 /// position is [`Infallible`] (matching `prism_core::IdentityPrism`'s
 /// shape): the evaluator's algebra elements model "domain rejection" as
-/// a Partial verdict with the absorbing `ScalarLoss::total()` (= ∞),
-/// not as a typed Failure. This keeps the algebra closed under
-/// composition with the identity element. Loss is carried as
-/// [`ScalarLoss`] (the bootstrap's [`terni::Metric`] carrier).
+/// a Partial verdict with structured opacities (the absorbing case is
+/// `Transparency::catastrophic()`), not as a typed Failure. This keeps
+/// the algebra closed under composition with the identity element. Loss
+/// is carried as [`Transparency<Ref>`] — the structured Loss-monoid
+/// that names *where* each opacity lives rather than collapsing it to a
+/// scalar magnitude.
 ///
 /// [`Infallible`]: std::convert::Infallible
+/// [`Transparency<Ref>`]: prism_core::Transparency
 pub type Seed<S> = Optic<(), S>;
 
 /// The verdict an algebra element returns when acting on a state.
 /// Mirrors `prism_core::Transport::transport`'s signature exactly:
-/// `terni::Imperfect<S, Infallible, Holonomy>` where the Holonomy is a
-/// [`Metric`]. The `Infallible` error position witnesses that algebra
-/// elements are total on the algebra's *closure* (every operator is
-/// defined; the residual at the boundary of the domain is carried in
-/// `ScalarLoss`, which can be `total()` for the absorbing case).
+/// `terni::Imperfect<S, Infallible, Holonomy>` where the Holonomy is
+/// any [`terni::Loss`]. The `Infallible` error position witnesses that
+/// algebra elements are total on the algebra's *closure* (every
+/// operator is defined; the opacities at the boundary of the domain
+/// are carried in [`Transparency<Ref>`], which can be
+/// `Transparency::catastrophic()` for the absorbing case).
 ///
-/// [`Metric`]: terni::Metric
-pub type Verdict<S> = Imperfect<S, std::convert::Infallible, ScalarLoss>;
+/// [`terni::Loss`]: terni::Loss
+/// [`Transparency<Ref>`]: prism_core::Transparency
+pub type Verdict<S> = Imperfect<S, std::convert::Infallible, Transparency<Ref>>;
 
 /// Seed a beam with a starting state value. The source position is `()`
 /// (no prior input); the value position carries the state.
@@ -937,13 +978,19 @@ where
 /// the bootstrap names the call-site for *cross-prism* composition and
 /// proves associativity / identity directly against the prism-core
 /// substrate (see the property tests below). The composition is
-/// equivalent to `q.act(p.act(state))` with `ScalarLoss::combine`
-/// accumulating residuals — i.e. the [`Imperfect::eh`] bind on the
-/// `Verdict<S>` monad.
+/// equivalent to `q.act(p.act(state))` with
+/// `Transparency::<Ref>::combine` unioning located opacities — i.e.
+/// the [`Imperfect::eh`] bind on the `Verdict<S>` monad.
 pub fn compose_a<S, InP, InQ, P, Q>(p: &P, q: &Q, state: S) -> Verdict<S>
 where
-    P: Prism<Input = Seed<S>, Refracted = Optic<InP, S>>,
-    Q: Prism<Input = Seed<S>, Refracted = Optic<InQ, S>>,
+    P: Prism<
+        Input = Seed<S>,
+        Refracted = Optic<InP, S, std::convert::Infallible, Transparency<Ref>>,
+    >,
+    Q: Prism<
+        Input = Seed<S>,
+        Refracted = Optic<InQ, S, std::convert::Infallible, Transparency<Ref>>,
+    >,
 {
     apply_h(p, state).eh(|s| apply_h(q, s))
 }
@@ -3925,8 +3972,8 @@ mod combinator_tests {
 mod tests {
     use super::*;
     use crate::ast::{AstKind, AstNode};
-    use prism_core::{apply as prism_apply, Beam, IdentityPrism, Optic};
-    use terni::{Loss, Metric};
+    use prism_core::{apply as prism_apply, Beam, Optic};
+    use std::convert::Infallible;
 
     // -----------------------------------------------------------------------
     // Test fixtures — small concrete `Prism` impls over the scalar state
@@ -3935,23 +3982,72 @@ mod tests {
     // doesn't distinguish phases at the algebra level; the three-phase
     // chain of `Prism` is the spectral-triple's *internal* composition,
     // and we only need a uniform-state algebra element here.
+    //
+    // Loss carrier is [`Transparency<Ref>`] — every fixture's optic
+    // beams parameterise their loss position over the structured opacity
+    // monoid, so opacities flow through `compose_a` as a `BTreeMap` of
+    // located verdicts rather than a single scalar residual.
     // -----------------------------------------------------------------------
 
+    /// Identity prism over the bootstrap's `Transparency<Ref>` Loss
+    /// monoid. Functionally identical to [`prism_core::IdentityPrism`],
+    /// but with the `L` parameter fixed to `Transparency<Ref>` so it
+    /// satisfies `compose_a`'s bounds (the substrate's generic
+    /// `IdentityPrism` defaults `L = ScalarLoss` and cannot be reused
+    /// here without a heterogeneous-Loss `IdentityPrism<S, L>`, which
+    /// is a separate prism-core change).
+    struct IdentityT<S: Clone>(std::marker::PhantomData<S>);
+
+    impl<S: Clone> IdentityT<S> {
+        fn new() -> Self {
+            IdentityT(std::marker::PhantomData)
+        }
+    }
+
+    impl<S: Clone + 'static> Prism for IdentityT<S> {
+        type Input = Seed<S>;
+        type Focused = Optic<S, S, Infallible, Transparency<Ref>>;
+        type Projected = Optic<S, S, Infallible, Transparency<Ref>>;
+        type Refracted = Optic<S, S, Infallible, Transparency<Ref>>;
+
+        fn focus(&self, beam: Self::Input) -> Self::Focused {
+            let v = beam
+                .value()
+                .cloned()
+                .expect("IdentityT::focus on dark beam");
+            Optic::ok(v.clone(), v)
+        }
+        fn project(&self, beam: Self::Focused) -> Self::Projected {
+            let v = beam
+                .value()
+                .cloned()
+                .expect("IdentityT::project on dark beam");
+            beam.next(v)
+        }
+        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = beam
+                .value()
+                .cloned()
+                .expect("IdentityT::refract on dark beam");
+            beam.next(v)
+        }
+    }
+
     /// Multiplies a scalar state by `factor`. Models a focus-like
-    /// operator: pure success, no residual.
+    /// operator: pure success, no opacity opened.
     struct Scale {
         factor: f64,
     }
 
     impl Prism for Scale {
         type Input = Seed<f64>;
-        type Focused = Optic<f64, f64>;
-        type Projected = Optic<f64, f64>;
-        type Refracted = Optic<f64, f64>;
+        type Focused = Optic<f64, f64, Infallible, Transparency<Ref>>;
+        type Projected = Optic<f64, f64, Infallible, Transparency<Ref>>;
+        type Refracted = Optic<f64, f64, Infallible, Transparency<Ref>>;
 
         fn focus(&self, beam: Self::Input) -> Self::Focused {
             let v = *beam.value().expect("Scale::focus on dark beam");
-            beam.next(v * self.factor)
+            Optic::ok(v, v * self.factor)
         }
         fn project(&self, beam: Self::Focused) -> Self::Projected {
             let v = *beam.value().expect("Scale::project on dark beam");
@@ -3964,24 +4060,38 @@ mod tests {
     }
 
     /// Quantizes a scalar to the nearest integer. Models a project-like
-    /// operator: produces a value but carries a residual = the rounding
-    /// error. Mirrors the precision-cut semantics of project().
+    /// operator: produces a value but opens a *located* opacity at
+    /// `@quantize` (with `PropertyVerdict::Partial { confidence,
+    /// diagnostics }`) on non-integer inputs. The opacity's confidence
+    /// is `1.0 - |residual|.min(1.0)` — full confidence on integers,
+    /// zero confidence on rounding errors ≥ 1.0.
     struct Quantize;
 
     impl Prism for Quantize {
         type Input = Seed<f64>;
-        type Focused = Optic<f64, f64>;
-        type Projected = Optic<f64, f64>;
-        type Refracted = Optic<f64, f64>;
+        type Focused = Optic<f64, f64, Infallible, Transparency<Ref>>;
+        type Projected = Optic<f64, f64, Infallible, Transparency<Ref>>;
+        type Refracted = Optic<f64, f64, Infallible, Transparency<Ref>>;
 
         fn focus(&self, beam: Self::Input) -> Self::Focused {
             let state = *beam.value().expect("Quantize::focus on dark beam");
             let rounded = state.round();
             let r = (state - rounded).abs();
             if r == 0.0 {
-                beam.tick(Imperfect::success(rounded))
+                Optic::ok(state, rounded)
             } else {
-                beam.tick(Imperfect::partial(rounded, ScalarLoss::new(r)))
+                let confidence = 1.0 - r.abs().min(1.0);
+                let verdict = PropertyVerdict::Partial {
+                    confidence,
+                    diagnostics: vec![Diagnostic::new(format!(
+                        "rounding residual {r}"
+                    ))],
+                };
+                let transparency = Transparency::single(
+                    Ref::new("@quantize").expect("@quantize is a valid Ref"),
+                    verdict,
+                );
+                Optic::partial(state, rounded, transparency)
             }
         }
         fn project(&self, beam: Self::Focused) -> Self::Projected {
@@ -3995,32 +4105,40 @@ mod tests {
     }
 
     /// Rejects negative inputs. Models an operator whose domain is the
-    /// non-negative reals; transporting a negative state produces a
-    /// Partial verdict carrying the *boundary residual* (= |state|).
+    /// non-negative reals; transporting a negative state opens a
+    /// `PropertyVerdict::Fail` at `@positive` and clamps the state to
+    /// 0.0.
     ///
-    /// Domain rejection is modelled as a Partial-with-finite-loss rather
+    /// Domain rejection is modelled as a Partial-with-opacity rather
     /// than as a typed Failure: the bootstrap evaluator's algebra has
     /// `Error = Infallible` (matching `prism_core::IdentityPrism`'s
-    /// signature so identity composition typechecks). The residual
-    /// witnesses the rejection — large residuals mark domain boundaries,
-    /// `ScalarLoss::total()` (= ∞) marks total rejection.
+    /// signature so identity composition typechecks). The structural
+    /// verdict witnesses *where* the rejection lives —
+    /// `Transparency::catastrophic()` is reserved for absorbing total-
+    /// rejection cases that don't apply at this fixture.
     struct Positive;
 
     impl Prism for Positive {
         type Input = Seed<f64>;
-        type Focused = Optic<f64, f64>;
-        type Projected = Optic<f64, f64>;
-        type Refracted = Optic<f64, f64>;
+        type Focused = Optic<f64, f64, Infallible, Transparency<Ref>>;
+        type Projected = Optic<f64, f64, Infallible, Transparency<Ref>>;
+        type Refracted = Optic<f64, f64, Infallible, Transparency<Ref>>;
 
         fn focus(&self, beam: Self::Input) -> Self::Focused {
             let state = *beam.value().expect("Positive::focus on dark beam");
             if state >= 0.0 {
-                beam.tick(Imperfect::success(state))
+                Optic::ok(state, state)
             } else {
-                // Domain rejection: produce a Partial carrying the
-                // boundary residual. The state value carried forward
-                // is the projection onto the domain (clamp to 0.0).
-                beam.tick(Imperfect::partial(0.0, ScalarLoss::new(-state)))
+                // Domain rejection: open an Opaque @positive Fail and
+                // clamp the carried state to 0.0.
+                let verdict = PropertyVerdict::Fail(Diagnostic::new(format!(
+                    "negative state {state}"
+                )));
+                let transparency = Transparency::single(
+                    Ref::new("@positive").expect("@positive is a valid Ref"),
+                    verdict,
+                );
+                Optic::partial(state, 0.0, transparency)
             }
         }
         fn project(&self, beam: Self::Focused) -> Self::Projected {
@@ -4059,10 +4177,13 @@ mod tests {
 
     #[test]
     fn compose_a_with_identity_is_identity() {
-        // IdentityPrism is the unit element of A: id ∘ p and p ∘ id
-        // behave like p. Witnesses that prism_core::IdentityPrism is
-        // the A-monoid identity at the evaluator level.
-        let id: IdentityPrism<f64> = IdentityPrism::new();
+        // `IdentityT<f64>` is the unit element of A under
+        // `Transparency<Ref>` loss: id ∘ p and p ∘ id behave like p.
+        // Witnesses that the local identity prism is the A-monoid
+        // identity at the evaluator level — the analogue of
+        // prism_core::IdentityPrism specialised to the bootstrap's Loss
+        // carrier.
+        let id: IdentityT<f64> = IdentityT::new();
         let p = Scale { factor: 4.0 };
         for s in [-2.0_f64, 0.0, 1.5, 9.0] {
             let direct = apply_h(&p, s);
@@ -4074,42 +4195,60 @@ mod tests {
     }
 
     #[test]
-    fn compose_a_propagates_residuals() {
-        // Composing two Partial-producing operators accumulates residuals
-        // via ScalarLoss::combine — the Loss monoid law at the bootstrap.
-        // Quantize(0.3) = 0 with residual 0.3; Quantize(0) = 0 with no
-        // extra residual.
+    fn compose_a_unions_opacities() {
+        // Composing two opacity-opening operators unions their opacity
+        // maps via `Transparency::<Ref>::combine` (set-union with
+        // per-key `PropertyVerdict::merge_with`). Quantize(0.3) opaques
+        // @quantize with residual 0.3 → clamped value 0.0; Quantize(0.0)
+        // is integer-Clear. Result: a single opacity at @quantize.
         let v = compose_a(&Quantize, &Quantize, 0.3);
         match v {
-            Imperfect::Partial(value, r) => {
+            Imperfect::Partial(value, transparency) => {
                 assert_eq!(value, 0.0);
-                assert!((r.as_f64() - 0.3).abs() < 1e-12);
+                let q_path = Ref::new("@quantize").unwrap();
+                assert!(
+                    transparency.is_opaque_at(&q_path),
+                    "expected opacity at @quantize, got {:?}",
+                    transparency
+                );
             }
             other => panic!("expected Partial, got {:?}", other),
         }
     }
 
     #[test]
-    fn compose_a_propagates_domain_residual() {
-        // Domain rejection in the first operator carries its residual
-        // forward via `Imperfect::eh`'s propagate_loss law: Partial(0, r1)
-        // followed by Success(s) becomes Partial(s, r1). With Scale's
-        // pure-success action, the boundary residual from Positive
-        // accumulates as the only loss in the final verdict.
+    fn compose_a_propagates_domain_opacity() {
+        // Domain rejection in the first operator carries its located
+        // opacity forward via `Imperfect::eh`'s propagate_loss law:
+        // Partial(0, Opaque{@positive: Fail}) followed by
+        // Success(0 * 10 = 0) becomes Partial(0, Opaque{@positive:
+        // Fail}). With Scale's pure-success action, the @positive Fail
+        // is the only opacity in the final verdict.
         //
-        // (In the previous mirror-type framing this was framed as
-        // "Failure short-circuits"; under prism-core's algebra closed
-        // with `Error = Infallible`, the same semantics emerge via the
-        // Loss-monoid combine, with the chain remaining defined.)
+        // (Under prism-core's algebra closed with `Error = Infallible`,
+        // domain rejection emerges via the Transparency-monoid combine
+        // with the chain remaining defined.)
         let v = compose_a(&Positive, &Scale { factor: 10.0 }, -3.0);
         match v {
-            Imperfect::Partial(value, r) => {
+            Imperfect::Partial(value, transparency) => {
                 assert_eq!(value, 0.0, "clamped state at domain boundary");
+                let p_path = Ref::new("@positive").unwrap();
                 assert!(
-                    (r.as_f64() - 3.0).abs() < 1e-12,
-                    "boundary residual carried, got {}",
-                    r.as_f64()
+                    transparency.is_opaque_at(&p_path),
+                    "expected @positive opacity, got {:?}",
+                    transparency
                 );
+                let opacities = transparency.opacities().unwrap();
+                match &opacities[&p_path] {
+                    PropertyVerdict::Fail(d) => {
+                        let msg = d.as_str();
+                        assert!(
+                            msg.contains("-3") || msg.contains("negative"),
+                            "diagnostic mentions the offending state, got {msg:?}"
+                        );
+                    }
+                    other => panic!("expected Fail, got {:?}", other),
+                }
             }
             other => panic!("expected Partial, got {:?}", other),
         }
@@ -4302,72 +4441,83 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // ScalarLoss / Metric — laws inherited from prism-core, smoke-checked
-    // at the evaluator boundary.
+    // Transparency<Ref> / Loss — laws inherited from prism-core /
+    // terni, smoke-checked at the evaluator boundary.
     // -----------------------------------------------------------------------
 
     #[test]
-    fn metric_non_negative_on_well_formed_inputs() {
-        // ScalarLoss::is_non_negative is the Metric-trait analog of the
-        // bootstrap-local `is_finite` check on the previous Residual
-        // type. The constructor itself panics on negatives; everything
-        // it admits is non-negative.
-        assert!(ScalarLoss::zero().is_non_negative());
-        assert!(ScalarLoss::new(0.5).is_non_negative());
-        assert!(ScalarLoss::new(1e9).is_non_negative());
+    fn transparency_clear_is_loss_identity() {
+        // `Loss::zero()` on `Transparency<Ref>` is `Clear`; combining
+        // anything with Clear returns the other side unchanged. This is
+        // the structural identity for the bootstrap's Loss carrier.
+        use terni::Loss;
+        let clear: Transparency<Ref> = Transparency::clear();
+        assert!(clear.is_zero());
+        let single = Transparency::single(
+            Ref::new("@witness").unwrap(),
+            PropertyVerdict::Fail(Diagnostic::new("witness")),
+        );
+        let combined = single.clone().combine(Transparency::clear());
+        assert_eq!(combined, single);
     }
 
     #[test]
-    fn metric_distance_is_symmetric() {
-        // Metric::distance_to is symmetric — D(a, b) = D(b, a).
-        let a = ScalarLoss::new(0.3);
-        let b = ScalarLoss::new(0.8);
-        assert_eq!(a.distance_to(&b).as_f64(), b.distance_to(&a).as_f64());
-    }
-
-    #[test]
-    fn metric_combine_associates() {
-        // Loss::combine is associative — the Loss monoid law.
-        let a = ScalarLoss::new(0.1);
-        let b = ScalarLoss::new(0.2);
-        let c = ScalarLoss::new(0.3);
+    fn transparency_combine_associates() {
+        // `Loss::combine` is associative — the Loss monoid law on
+        // `Transparency<Ref>` (set-union of opacity maps with per-key
+        // `PropertyVerdict::merge_with`).
+        use terni::Loss;
+        let a = Transparency::single(
+            Ref::new("@a").unwrap(),
+            PropertyVerdict::Fail(Diagnostic::new("a")),
+        );
+        let b = Transparency::single(
+            Ref::new("@b").unwrap(),
+            PropertyVerdict::Fail(Diagnostic::new("b")),
+        );
+        let c = Transparency::single(
+            Ref::new("@c").unwrap(),
+            PropertyVerdict::Fail(Diagnostic::new("c")),
+        );
         let left = a.clone().combine(b.clone()).combine(c.clone());
         let right = a.combine(b.combine(c));
-        assert!((left.as_f64() - right.as_f64()).abs() < 1e-12);
+        assert_eq!(left, right);
     }
 }
 
 // ===========================================================================
-// Transparency cascade tests — Tick mirror/shard-chain 🔴.
+// Transparency cascade tests — the 🟢 of the TDD pair (mirror/shard-chain).
 //
-// These tests assert the new Transparency<Ref>-shaped verdict semantics that
-// the 🟢 cascade will deliver: Quantize / Positive return *structural*
-// verdicts (Clear on the success path, Opaque at @quantize / @positive on
-// the failure path) and compose_a unions opacities at colliding paths.
+// These tests assert the Transparency<Ref>-shaped verdict semantics the
+// 🟢 cascade now delivers: Quantize / Positive return *structural*
+// verdicts (Success on the success path, Opaque at @quantize / @positive
+// on the failure path) and compose_a unions opacities at colliding paths.
 //
-// The stubs below produce Clear unconditionally so the structural
-// assertions fail; the 🟢 commit replaces them with the real Transparency-
-// shaped impls and swaps the module-level Verdict<S>'s loss carrier from
-// ScalarLoss to Transparency<Ref>.
-//
-// Per the brief: "Replace Quantize", "Replace Positive",
-// "compose_a_propagates_residuals becomes compose_a_unions_opacities".
+// Per Option α (parallel-track-types-as-aliases): the original 🔴
+// commit defined `VerdictT<S>` / `QuantizeT` / `PositiveT` as parallel-
+// track types to specify the contract without touching the real types.
+// After the swap, those parallel-track types are structurally identical
+// to the real ones; `VerdictT<S>` aliases `Verdict<S>`, and the
+// `QuantizeT` / `PositiveT` structs are kept here as thin, locally-named
+// fixtures so the 🔴 commit's test bodies type-check verbatim. The
+// underlying semantics flow through the same Transparency<Ref> Loss
+// monoid.
 // ===========================================================================
 #[cfg(test)]
 mod transparency_cascade_tests {
     use super::*;
-    use prism_core::{Diagnostic, PropertyVerdict, Ref, Transparency};
     use std::convert::Infallible;
-    use terni::Imperfect;
 
-    /// The new verdict shape after the cascade. Loss carrier swaps from
-    /// `ScalarLoss` to `Transparency<Ref>` so verdicts carry *structural*,
-    /// located opacities instead of scalar magnitudes.
-    pub type VerdictT<S> = Imperfect<S, Infallible, Transparency<Ref>>;
+    /// Post-cascade alias for the module-level [`Verdict`]. Identical
+    /// shape; preserved so the 🔴 commit's tests compile verbatim
+    /// (Option α from the 🟢 brief).
+    pub type VerdictT<S> = Verdict<S>;
 
-    /// Quantize-with-Transparency. Returns `Clear` on integer states;
-    /// returns `Opaque(@quantize, Partial { confidence, diagnostic })` on
-    /// non-integer states.
+    /// Quantize-with-Transparency. Returns `Success` on integer states;
+    /// returns `Partial(rounded, Opaque(@quantize, PropertyVerdict::Partial { … }))`
+    /// on non-integer states. Structurally identical to the
+    /// `tests::Quantize` fixture above — kept under the `T`-suffixed
+    /// name so the 🔴's test bodies type-check verbatim.
     pub struct QuantizeT;
 
     impl Prism for QuantizeT {
@@ -4377,12 +4527,25 @@ mod transparency_cascade_tests {
         type Refracted = Optic<f64, f64, Infallible, Transparency<Ref>>;
 
         fn focus(&self, beam: Self::Input) -> Self::Focused {
-            // STUB — wrong on purpose. Always returns Success(rounded),
-            // dropping any opacity that should be opened at @quantize. The
-            // 🟢 returns Partial with Opaque-at-@quantize when non-integer.
-            let v = *beam.value().expect("QuantizeT::focus on dark beam");
-            let rounded = v.round();
-            Optic::ok(v, rounded)
+            let state = *beam.value().expect("QuantizeT::focus on dark beam");
+            let rounded = state.round();
+            let r = (state - rounded).abs();
+            if r == 0.0 {
+                Optic::ok(state, rounded)
+            } else {
+                let confidence = 1.0 - r.abs().min(1.0);
+                let verdict = PropertyVerdict::Partial {
+                    confidence,
+                    diagnostics: vec![Diagnostic::new(format!(
+                        "rounding residual {r}"
+                    ))],
+                };
+                let transparency = Transparency::single(
+                    Ref::new("@quantize").expect("@quantize is a valid Ref"),
+                    verdict,
+                );
+                Optic::partial(state, rounded, transparency)
+            }
         }
         fn project(&self, beam: Self::Focused) -> Self::Projected {
             let v = *beam.value().expect("QuantizeT::project on dark beam");
@@ -4394,8 +4557,10 @@ mod transparency_cascade_tests {
         }
     }
 
-    /// Positive-with-Transparency. Returns `Clear` on non-negative states;
-    /// returns `Opaque(@positive, Fail)` on negative states.
+    /// Positive-with-Transparency. Returns `Success` on non-negative
+    /// states; returns `Partial(0.0, Opaque(@positive, Fail))` on
+    /// negative states. Structurally identical to the `tests::Positive`
+    /// fixture above.
     pub struct PositiveT;
 
     impl Prism for PositiveT {
@@ -4405,11 +4570,19 @@ mod transparency_cascade_tests {
         type Refracted = Optic<f64, f64, Infallible, Transparency<Ref>>;
 
         fn focus(&self, beam: Self::Input) -> Self::Focused {
-            // STUB — wrong on purpose. Always returns Success(v), dropping
-            // any opacity that should be opened at @positive. The 🟢
-            // returns Partial with Opaque-at-@positive Fail on negatives.
-            let v = *beam.value().expect("PositiveT::focus on dark beam");
-            Optic::ok(v, v)
+            let state = *beam.value().expect("PositiveT::focus on dark beam");
+            if state >= 0.0 {
+                Optic::ok(state, state)
+            } else {
+                let verdict = PropertyVerdict::Fail(Diagnostic::new(format!(
+                    "negative state {state}"
+                )));
+                let transparency = Transparency::single(
+                    Ref::new("@positive").expect("@positive is a valid Ref"),
+                    verdict,
+                );
+                Optic::partial(state, 0.0, transparency)
+            }
         }
         fn project(&self, beam: Self::Focused) -> Self::Projected {
             let v = *beam.value().expect("PositiveT::project on dark beam");
@@ -4421,10 +4594,11 @@ mod transparency_cascade_tests {
         }
     }
 
-    /// Algebra composition under the new Transparency<Ref> verdict carrier.
-    /// Stub: drops the second prism's output. The 🟢 binds via `eh` exactly
-    /// like compose_a does — only the loss type swaps.
-    fn compose_a_t<S, InP, InQ, P, Q>(p: &P, _q: &Q, state: S) -> VerdictT<S>
+    /// Algebra composition under the Transparency<Ref> verdict carrier.
+    /// Identical to the module-level [`compose_a`], specialised to the
+    /// `_t`-suffixed fixtures so the 🔴 commit's test bodies type-check
+    /// verbatim.
+    fn compose_a_t<S, InP, InQ, P, Q>(p: &P, q: &Q, state: S) -> VerdictT<S>
     where
         P: Prism<
             Input = Optic<(), S>,
@@ -4435,8 +4609,7 @@ mod transparency_cascade_tests {
             Refracted = Optic<InQ, S, Infallible, Transparency<Ref>>,
         >,
     {
-        // STUB — drops `_q`. The 🟢 invokes both prisms and unions opacities.
-        prism_core::apply_h(p, state)
+        prism_core::apply_h(p, state).eh(|s| prism_core::apply_h(q, s))
     }
 
     // ------------------------------------------------------------------

@@ -69,19 +69,24 @@
 //! ## Adaptation note — Body's exact shape
 //!
 //! The spec says `Body: Fn(Beam<Splinter>) -> Imperfect<Beam<Splinter>,
-//! CrystallizeError, ScalarLoss>`. In `prism_core` [`Beam`] is a *trait*,
-//! not a type constructor; the concrete seed-beam shape used everywhere
-//! (`apply_h`, `seed(...)`) is `Optic<(), S>`. We use:
+//! CrystallizeError, Transparency<Ref>>`. In `prism_core` [`Beam`] is a
+//! *trait*, not a type constructor; the concrete seed-beam shape used
+//! everywhere (`apply_h`, `seed(...)`) is `Optic<(), S>`. We use:
 //!
 //! ```ignore
-//! Fn(Optic<(), Splinter<H>>) -> Imperfect<Splinter<H>, CrystallizeError, ScalarLoss>
+//! Fn(Optic<(), Splinter<H>>)
+//!     -> Imperfect<Splinter<H>, CrystallizeError, Transparency<Ref>>
 //! ```
 //!
 //! — the input is the seed-beam-carrying-Splinter, the output is the
 //! verdict carrying the next Splinter. This matches `apply_h`'s shape
 //! exactly and is the only honest concrete instantiation of "Beam<T>"
 //! given how the trait surfaces in prism-core. The shape carries
-//! through the cascade verbatim — only `Splinter` becomes `Splinter<H>`.
+//! through the cascade verbatim — `Splinter` becomes `Splinter<H>`,
+//! and the loss carrier is [`Transparency<Ref>`] (structured opacities
+//! located at `Ref`s) rather than a single scalar.
+//!
+//! [`Transparency<Ref>`]: prism_core::Transparency
 //!
 //! ## Adaptation note — the hash backend
 //!
@@ -104,8 +109,13 @@ use std::fmt;
 use std::marker::PhantomData;
 use std::sync::Arc;
 
-use prism_core::{Optic, ScalarLoss};
+use prism_core::{Optic, Transparency};
 use terni::Imperfect;
+
+// `Ref` is re-exported from prism-core so existing call sites continue to
+// read `crystallize::Ref` while the canonical definition lives one altitude
+// down (substrate-shared with the bundled `Transparency<Ref>` loss carrier).
+pub use prism_core::Ref;
 
 // ---------------------------------------------------------------------------
 // MerkleHash — the trait the cascade pivots through.
@@ -219,42 +229,13 @@ impl FieldName {
     }
 }
 
-/// A substrate reference, like `"@kintsugi/fracture/rename"`. Newtype
-/// with `@`-prefix and non-empty validation at construction.
-///
-/// Renamed from `ActionPath` per the cascade — matches mirror's
-/// nav-ref vocabulary (the `.`, `..`, `...`, `~`, `@`, `^`, `HEAD`
-/// set; see CLAUDE.md). `action` is dead since we have prism / glass /
-/// 5-operations, not "actions". The substrate-side declaration syntax
-/// (`action enumerate { ... }`) is *not* part of this rename — that's
-/// the substrate's own surface.
-///
-/// Hash-blind; stays concrete (does not embed an OID, does not call a
-/// hash function).
-#[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct Ref(String);
-
-impl Ref {
-    /// Construct. Returns `Err` if `path` is empty, lacks a `@` prefix,
-    /// or contains whitespace.
-    pub fn new(path: impl Into<String>) -> Result<Self, &'static str> {
-        let s = path.into();
-        if s.is_empty() {
-            return Err("Ref must be non-empty");
-        }
-        if !s.starts_with('@') {
-            return Err("Ref must start with '@'");
-        }
-        if s.chars().any(|c| c.is_whitespace()) {
-            return Err("Ref must not contain whitespace");
-        }
-        Ok(Ref(s))
-    }
-
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
+// `Ref` (substrate reference, `@`-prefixed nav-ref) is no longer defined
+// locally — it is re-exported from `prism_core` at the top of the module
+// (`pub use prism_core::Ref`). Renamed from `ActionPath` in an earlier
+// cascade; hoisted to prism in the Transparency cascade so the
+// `Transparency<Ref>` loss carrier shares the same `Ref` substrate
+// vocabulary across every prism consumer. Existing call sites that read
+// `crystallize::Ref` continue to work because of the re-export.
 
 // ---------------------------------------------------------------------------
 // Splinter — content-addressed self-similar value, generic over H.
@@ -402,8 +383,19 @@ fn u64_le(v: u64) -> [u8; 8] {
 /// No default on `H` — the binding is per-consumer; the registry's `H`
 /// determines the world its bodies inhabit, and the type system
 /// prevents cross-world mixing (landing-page spec §2.1, §2.4).
+///
+/// The loss carrier is [`Transparency<Ref>`] — structured opacities
+/// located at substrate refs (`@kintsugi/fracture/validate`,
+/// `@quantize`, `@positive`, …) rather than a single scalar. A `Body`
+/// that succeeds returns `Imperfect::Success(...)` (the `Clear`
+/// identity is the absence-of-loss); a `Body` that partially succeeds
+/// returns `Imperfect::Partial(splinter, Transparency::Opaque({path →
+/// verdict, ...}))`. Composition of bodies unions the opacity maps via
+/// [`PropertyVerdict::merge_with`] at colliding paths.
+///
+/// [`PropertyVerdict::merge_with`]: prism_core::PropertyVerdict::merge_with
 pub type Body<H> = Arc<
-    dyn Fn(Optic<(), Splinter<H>>) -> Imperfect<Splinter<H>, CrystallizeError, ScalarLoss>
+    dyn Fn(Optic<(), Splinter<H>>) -> Imperfect<Splinter<H>, CrystallizeError, Transparency<Ref>>
         + Send
         + Sync,
 >;
@@ -494,7 +486,7 @@ impl<H: MerkleHash> Crystallizations<H> {
         &self,
         path: &Ref,
         input: Optic<(), Splinter<H>>,
-    ) -> Imperfect<Splinter<H>, CrystallizeError, ScalarLoss> {
+    ) -> Imperfect<Splinter<H>, CrystallizeError, Transparency<Ref>> {
         match self.table.get(path) {
             Some(body) => body(input),
             None => Imperfect::failure(CrystallizeError::Uncrystallized(path.clone())),
@@ -532,7 +524,7 @@ pub fn kintsugi_tick<H: MerkleHash>(
     crystallizations: &Crystallizations<H>,
     fracture: &Ref,
     input: Optic<(), Splinter<H>>,
-) -> Imperfect<Splinter<H>, CrystallizeError, ScalarLoss> {
+) -> Imperfect<Splinter<H>, CrystallizeError, Transparency<Ref>> {
     crystallizations.crystallize(fracture, input)
 }
 
@@ -910,38 +902,36 @@ mod cascade_tests {
 }
 
 // ---------------------------------------------------------------------------
-// Transparency cascade tests — Tick mirror/shard-chain 🔴.
+// Transparency cascade tests — the 🟢 of the TDD pair opened in `a291b69`.
 //
-// After the 🟢 cascade, `Body<H>` returns
+// Post-cascade, `Body<H>` returns
 // `Imperfect<Splinter<H>, CrystallizeError, Transparency<Ref>>` (was:
-// `... ScalarLoss>`). The Ref local in this module disappears, replaced
-// by `pub use prism_core::Ref;` so existing call sites continue to read
-// `crystallize::Ref`.
+// `... ScalarLoss>`). The local `Ref` definition has been removed in
+// favour of `pub use prism_core::Ref` so the substrate-shared `Ref`
+// vocabulary is the single source of truth across mirror, cosmos-mirror,
+// spectral-db, and any future prism consumer.
 //
-// The stub `BodyT` type alias and test below stage the new shape; the
-// 🟢 commit collapses the prefix away by swapping `Body` to use
-// Transparency<Ref> directly.
+// The `BodyT` alias defined here is now structurally identical to
+// `Body` (Option α from the 🟢 brief): keeping the alias preserves the
+// 🔴 commit's executable-spec verbatim while unifying the implementation.
+// The `fracture_validate_body` helper inspects the input shape and opens
+// an opacity at `@kintsugi/fracture/validate` on non-Record payloads,
+// realising the cascade's structural-verdict semantics.
 // ---------------------------------------------------------------------------
 #[cfg(test)]
 mod transparency_cascade_tests {
     use super::*;
-    use prism_core::{Beam, PropertyVerdict, Transparency};
-    use std::sync::Arc;
+    use prism_core::{Beam, Diagnostic, PropertyVerdict, Transparency};
 
-    /// The new Body shape — loss carrier swaps from ScalarLoss to
-    /// Transparency<Ref>. Existing Body stays during 🔴 so the rest of
-    /// the crate still compiles.
-    pub type BodyT<H> = Arc<
-        dyn Fn(
-                Optic<(), Splinter<H>>,
-            )
-                -> Imperfect<Splinter<H>, CrystallizeError, Transparency<Ref>>
-            + Send
-            + Sync,
-    >;
+    /// Post-cascade alias for [`Body`]. Identical shape; preserved so the
+    /// 🔴 commit's test bodies type-check verbatim and the unifying step
+    /// is a one-line alias rather than a rewrite of the 🔴 spec.
+    pub type BodyT<H> = Body<H>;
 
-    /// A body that opens an opacity at @kintsugi/fracture/* on a
-    /// non-record input. Stub: always Success, dropping the opacity.
+    /// A body that opens an opacity at `@kintsugi/fracture/validate` on
+    /// any non-Record input. Real implementation (no longer a stub) — the
+    /// 🟢 of the cascade: inspect the content shape and surface a located
+    /// `PropertyVerdict::Fail` when the payload is not a Record.
     fn fracture_validate_body() -> BodyT<Blake3> {
         Arc::new(|input: Optic<(), Splinter<Blake3>>| {
             let splinter = input
@@ -949,10 +939,23 @@ mod transparency_cascade_tests {
                 .ok()
                 .cloned()
                 .expect("fracture_validate_body: input must carry a value");
-            // STUB — wrong on purpose. The 🟢 inspects the content shape
-            // and opens an Opaque at @kintsugi/fracture/validate when the
-            // payload is not a Record.
-            Imperfect::success(splinter)
+            match splinter.content() {
+                Content::Record(_) => Imperfect::success(splinter),
+                other => {
+                    let validate_path = Ref::new("@kintsugi/fracture/validate")
+                        .expect("@kintsugi/fracture/validate is a valid Ref");
+                    let shape_name = match other {
+                        Content::Text(_) => "Text",
+                        Content::List(_) => "List",
+                        Content::Record(_) => unreachable!(),
+                    };
+                    let verdict = PropertyVerdict::Fail(Diagnostic::new(format!(
+                        "fracture body requires Record, got {shape_name}"
+                    )));
+                    let transparency = Transparency::single(validate_path, verdict);
+                    Imperfect::partial(splinter, transparency)
+                }
+            }
         })
     }
 
