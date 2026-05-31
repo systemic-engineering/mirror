@@ -34,3 +34,4 @@ as content-addressed git objects.
 | [06](06-model-checker.md) | Model checker properties | Enforcement active |
 | [07](07-projection.md) | Projection: properties as plans | Design |
 | [08](08-oid-native-model.md) | OID-native model (experimental) | Idea |
+| [12](12-coherence-benchmark.md) | Coherence Benchmark — post-release | Planned |
