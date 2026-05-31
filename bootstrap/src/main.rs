@@ -23,8 +23,13 @@ use std::io::{self, Read, Write};
 use std::path::PathBuf;
 use std::process::Command;
 
+use prism_core::{Optic, Ref};
+use terni::Imperfect;
+
 use crate::ast::{line_col_at, AstKind, AstNode};
-use crate::crystallize::{floor_crystallizations, Blake3, Crystallizations};
+use crate::crystallize::{
+    floor_crystallizations, Blake3, Content, CrystallizeError, Crystallizations, Splinter, Text,
+};
 use crate::git::{git_crystal_exists, git_store_crystal};
 use crate::grammar::{grammar_for_file, load_grammar};
 use crate::hash::canonical_hash;
@@ -542,12 +547,36 @@ fn kintsugi_tick(
     current_ast: &AstNode,
 ) -> bool {
     // Stage 1 — propose. Fate's five models fan out and return au
-    // candidates. No-op scaffold: zero candidates. The crystallizations
-    // table is consulted here in later ticks (B/C) — fracture refs
-    // resolve through `crystallizations.crystallize(...)`; today the
-    // floor is empty so every dispatch would return `Uncrystallized`.
-    // Reference the parameter so the substrate-pull surface is real.
-    let _ = crystallizations;
+    // candidates. No-op scaffold: zero candidates. Before fanning out
+    // we dispatch one Ref through the crystallizations table to
+    // exercise the substrate-execution path end-to-end (per Seam C2,
+    // pre-merge adversarial review 2026-05-30). The floor is empty in
+    // Tick A, so this dispatch returns `Uncrystallized` and we report
+    // it visibly. Tick B will register `@kintsugi/tick` and the same
+    // call site will start receiving Success/Partial verdicts.
+    let tick_ref = Ref::new("@kintsugi/tick")
+        .expect("@kintsugi/tick is a valid Ref");
+    let seed_input: Optic<(), Splinter<Blake3>> =
+        Optic::ok((), Splinter::new(Content::Text(Text::new("tick"))));
+    let dispatch = crystallizations.crystallize(&tick_ref, seed_input);
+    match &dispatch {
+        Imperfect::Success(_) => {
+            eprintln!("  dispatch {}: Success", tick_ref.as_str());
+        }
+        Imperfect::Partial(_, _) => {
+            eprintln!("  dispatch {}: Partial (with Transparency)", tick_ref.as_str());
+        }
+        Imperfect::Failure(CrystallizeError::Uncrystallized(got), _) => {
+            eprintln!(
+                "  dispatch {}: Uncrystallized (floor has no body at {})",
+                tick_ref.as_str(),
+                got.as_str()
+            );
+        }
+        Imperfect::Failure(err, _) => {
+            eprintln!("  dispatch {}: Failure ({:?})", tick_ref.as_str(), err);
+        }
+    }
     let candidates: Vec<()> = Vec::new();
 
     // Stage 2 — measure. Cycle-averaged holonomy (Magnot 2025) of each
