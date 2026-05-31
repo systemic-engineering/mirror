@@ -79,6 +79,30 @@ For the bootstrap (Rust): `cargo test --release --manifest-path bootstrap/Cargo.
 The smoke tests pin the OID of two small constructs — they catch drift in
 tokenization, content-addressing, or CoincidenceHash.
 
+### TDD pair across agents
+
+Non-trivial 🔴/🟢 pairs are typically worked across two agents: the 🔴 in
+conversation with Reed (or by an earlier agent), the 🟢 by a separate
+implementation agent against the committed 🔴. Honor the TDD boundary at the
+agent boundary too — test-design and implementation are two distinct cognitive
+jobs, and the boundary between them is where stalls happen.
+
+- **If you're the 🟢 agent**, the committed 🔴 IS the executable spec. Don't
+  modify the tests, don't add new ones, don't second-guess them. Make them
+  pass. If a 🔴 test asserts something you believe contradicts the spec, stop
+  and report rather than "fixing" the test.
+- **If you receive a combined 🔴+🟢 brief**, scope is high-ambiguity. Stop and
+  report at the 🔴/🟢 boundary if scope shifts under you, rather than carrying
+  ambiguity from test-design into implementation.
+- **Recovery from a stalled run**: read the actual staged diff first; don't
+  assume from the brief what's there. If the staged diff is 🔴-only, commit
+  as 🔴 with `[substrate-pull:realize]` and a body naming what's deliberately
+  deferred. Do NOT synthesize a 🟢 that isn't in the staging. Refuse the
+  pretty pattern when the honest pattern is uglier and truer.
+
+This pattern was named on tick #126 (recovery agent's "Option C" — honest
+🔴-only commit when the brief had expected to find 🟢-ready staging).
+
 ### Phase markers
 
 Every commit message must start with a phase marker. mirror commits run under
