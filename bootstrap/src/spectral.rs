@@ -4730,6 +4730,119 @@ mod transparency_cascade_tests {
         }
     }
 
+    // ------------------------------------------------------------------
+    // 🔴 — Two-path union + Fail-dominance-in-merge. Per Seam C1a / C1b
+    // (pre-merge adversarial review, 2026-05-30): the existing
+    // `compose_a_unions_opacities_both_sides` / `compose_a_first_failure_dominates_in_merge`
+    // tests don't witness the laws their names assert. These three new
+    // tests do — they reference an `AlwaysOpaqueT` fixture that opens
+    // an opacity at a fixed Ref on every call (the manoeuvre needed to
+    // exercise compose_a's verdict-union semantics on a single threaded
+    // state). The fixture is added in 🟢; until then these tests fail
+    // to compile.
+    // ------------------------------------------------------------------
+
+    #[test]
+    fn compose_a_unions_opacities_two_sided() {
+        // Two prisms, each producing Opaque at a DIFFERENT Ref. The
+        // composed Transparency must be Opaque with BOTH entries
+        // present (BTreeMap union, no clobber, no drop).
+        let a_path = Ref::new("@two-sided/a").unwrap();
+        let b_path = Ref::new("@two-sided/b").unwrap();
+        let a = AlwaysOpaqueT {
+            path: a_path.clone(),
+            verdict: PropertyVerdict::Partial {
+                confidence: 0.8,
+                diagnostics: vec![Diagnostic::new("a-side")],
+            },
+        };
+        let b = AlwaysOpaqueT {
+            path: b_path.clone(),
+            verdict: PropertyVerdict::Fail(Diagnostic::new("b-side-boom")),
+        };
+        let v: VerdictT<f64> = compose_a_t(&a, &b, 7.0);
+        match v {
+            Imperfect::Partial(out, transparency) => {
+                assert_eq!(out, 7.0, "state threaded unchanged through composition");
+                let opacities = transparency.opacities().expect("Opaque");
+                assert_eq!(
+                    opacities.len(),
+                    2,
+                    "two-sided union must keep both entries, got {:?}",
+                    opacities.keys().collect::<Vec<_>>()
+                );
+                assert!(opacities.contains_key(&a_path));
+                assert!(opacities.contains_key(&b_path));
+            }
+            other => panic!("expected Partial after two-sided compose, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn compose_a_fail_dominates_in_merge() {
+        // Two prisms, BOTH producing Opaque at the SAME Ref but with
+        // different verdict shapes (Partial vs Fail). The merge inside
+        // verdict_union must pick Fail (per PropertyVerdict::merge_with
+        // semantics: Fail dominates Partial).
+        let shared = Ref::new("@dominance/shared").unwrap();
+        let a = AlwaysOpaqueT {
+            path: shared.clone(),
+            verdict: PropertyVerdict::Partial {
+                confidence: 0.9,
+                diagnostics: vec![Diagnostic::new("first-partial")],
+            },
+        };
+        let b = AlwaysOpaqueT {
+            path: shared.clone(),
+            verdict: PropertyVerdict::Fail(Diagnostic::new("second-fail")),
+        };
+        let v: VerdictT<f64> = compose_a_t(&a, &b, 0.0);
+        match v {
+            Imperfect::Partial(_out, transparency) => {
+                let opacities = transparency.opacities().expect("Opaque");
+                assert_eq!(opacities.len(), 1);
+                match &opacities[&shared] {
+                    PropertyVerdict::Fail(d) => {
+                        assert_eq!(d.as_str(), "second-fail");
+                    }
+                    other => panic!("expected Fail to dominate, got {:?}", other),
+                }
+            }
+            other => panic!("expected Partial, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn compose_a_fail_dominates_in_merge_partial_first() {
+        // Symmetric witness: existing Fail must absorb a later Partial.
+        let shared = Ref::new("@dominance/shared").unwrap();
+        let a = AlwaysOpaqueT {
+            path: shared.clone(),
+            verdict: PropertyVerdict::Fail(Diagnostic::new("first-fail")),
+        };
+        let b = AlwaysOpaqueT {
+            path: shared.clone(),
+            verdict: PropertyVerdict::Partial {
+                confidence: 0.5,
+                diagnostics: vec![Diagnostic::new("second-partial")],
+            },
+        };
+        let v: VerdictT<f64> = compose_a_t(&a, &b, 0.0);
+        match v {
+            Imperfect::Partial(_out, transparency) => {
+                let opacities = transparency.opacities().expect("Opaque");
+                assert_eq!(opacities.len(), 1);
+                match &opacities[&shared] {
+                    PropertyVerdict::Fail(d) => {
+                        assert_eq!(d.as_str(), "first-fail");
+                    }
+                    other => panic!("expected Fail to survive, got {:?}", other),
+                }
+            }
+            other => panic!("expected Partial, got {:?}", other),
+        }
+    }
+
     #[test]
     fn compose_a_unions_opacities_both_sides() {
         // The textbook union case: both prisms produce opacities at
