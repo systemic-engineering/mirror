@@ -4731,16 +4731,47 @@ mod transparency_cascade_tests {
     }
 
     // ------------------------------------------------------------------
-    // 🔴 — Two-path union + Fail-dominance-in-merge. Per Seam C1a / C1b
-    // (pre-merge adversarial review, 2026-05-30): the existing
-    // `compose_a_unions_opacities_both_sides` / `compose_a_first_failure_dominates_in_merge`
-    // tests don't witness the laws their names assert. These three new
-    // tests do — they reference an `AlwaysOpaqueT` fixture that opens
-    // an opacity at a fixed Ref on every call (the manoeuvre needed to
-    // exercise compose_a's verdict-union semantics on a single threaded
-    // state). The fixture is added in 🟢; until then these tests fail
-    // to compile.
+    // Two-path union + Fail-dominance-in-merge — the genuine cascade
+    // laws (per Seam C1a / C1b, pre-merge adversarial review,
+    // 2026-05-30). To witness these we need prisms that BOTH open
+    // opacity (at the same OR different refs), which the
+    // QuantizeT/PositiveT pair on a single threaded state cannot reach.
+    // `AlwaysOpaqueT(ref, verdict)` is an inline test fixture that
+    // opens an opacity at a fixed Ref on every invocation, threading
+    // the state through unchanged.
     // ------------------------------------------------------------------
+
+    /// Always-opens-opacity prism for f64. Returns `Partial(state,
+    /// Opaque {self.path: self.verdict})` on every call — a controlled
+    /// fixture for exercising compose_a's union / dominance semantics.
+    /// The state is threaded through unchanged so chained `compose_a_t`
+    /// calls keep operating on the same value.
+    struct AlwaysOpaqueT {
+        path: Ref,
+        verdict: PropertyVerdict,
+    }
+
+    impl Prism for AlwaysOpaqueT {
+        type Input = Optic<(), f64>;
+        type Focused = Optic<f64, f64, Infallible, Transparency<Ref>>;
+        type Projected = Optic<f64, f64, Infallible, Transparency<Ref>>;
+        type Refracted = Optic<f64, f64, Infallible, Transparency<Ref>>;
+
+        fn focus(&self, beam: Self::Input) -> Self::Focused {
+            let state = *beam.value().expect("AlwaysOpaqueT::focus on dark beam");
+            let transparency =
+                Transparency::single(self.path.clone(), self.verdict.clone());
+            Optic::partial(state, state, transparency)
+        }
+        fn project(&self, beam: Self::Focused) -> Self::Projected {
+            let v = *beam.value().expect("AlwaysOpaqueT::project on dark beam");
+            beam.next(v)
+        }
+        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = *beam.value().expect("AlwaysOpaqueT::refract on dark beam");
+            beam.next(v)
+        }
+    }
 
     #[test]
     fn compose_a_unions_opacities_two_sided() {
@@ -4844,32 +4875,21 @@ mod transparency_cascade_tests {
     }
 
     #[test]
-    fn compose_a_unions_opacities_both_sides() {
-        // The textbook union case: both prisms produce opacities at
-        // *different* paths. Compose QuantizeT (∂@quantize) ∘ PositiveT
-        // (∂@positive) on -0.3:
-        //   QuantizeT(-0.3) → -0.0 opaque @quantize
-        //   PositiveT(-0.0)... but PositiveT sees -0.0 as non-negative
-        //   under the >= 0.0 check, so Clear.
-        // Reverse the order to get a true union:
-        //   PositiveT(-0.3) → 0.0 opaque @positive
-        //   QuantizeT(0.0) → 0 Clear (integer)
-        // Still only one opacity. To get both: QuantizeT(0.7) opaques
-        // @quantize (residual 0.3 from rounding up to 1); then PositiveT
-        // would see 1.0, Clear. Not enough to trigger both.
+    fn compose_a_preserves_single_path_opacity() {
+        // Renamed from `compose_a_unions_opacities_both_sides` per Seam
+        // C1a (2026-05-30 pre-merge adversarial review). The original
+        // name overclaimed: this case does NOT exercise a two-path
+        // union, because QuantizeT ∘ QuantizeT on 0.7 opens @quantize
+        // exactly once (the second QuantizeT sees 1.0 — integer — and
+        // returns Clear). What this test ACTUALLY verifies is
+        // single-path-opacity preservation through composition.
         //
-        // We construct a true two-path union by composing QuantizeT and
-        // an inline PositiveT-derived prism that produces opacity
-        // unconditionally — done through the chain: QuantizeT(0.3) gives
-        // 0 with @quantize opacity, then composed with QuantizeT(0.7-ish)
-        // on a follow-up — but compose_a_t threads the state, not
-        // independent inputs. The 🟢 verifies the union law more
-        // mechanically; here we assert the precondition: the result
-        // carries the first prism's opacity.
+        // The genuine two-path-union law is now witnessed by
+        // `compose_a_unions_opacities_two_sided` above.
         let v: VerdictT<f64> = compose_a_t(&QuantizeT, &QuantizeT, 0.7);
         match v {
             Imperfect::Partial(out, transparency) => {
-                // After 🟢: QuantizeT(0.7) = 1.0 opaque @quantize; then
+                // QuantizeT(0.7) = 1.0 opaque @quantize; then
                 // QuantizeT(1.0) = 1.0 Clear; union = single @quantize.
                 assert_eq!(out, 1.0);
                 assert!(
@@ -4877,23 +4897,31 @@ mod transparency_cascade_tests {
                     "expected opacity at @quantize after compose, got {:?}",
                     transparency
                 );
+                let opacities = transparency.opacities().unwrap();
+                assert_eq!(
+                    opacities.len(),
+                    1,
+                    "single-path-opacity preservation: exactly one entry"
+                );
             }
             other => panic!("expected Partial, got {:?}", other),
         }
     }
 
     #[test]
-    fn compose_a_first_failure_dominates_in_merge() {
-        // PositiveT(-3) returns Opaque {@positive: Fail}.
-        // QuantizeT(0.0) returns Clear.
-        // Composition: Opaque {@positive: Fail} union Clear = Opaque
-        // {@positive: Fail}. The first failure's Fail verdict stays put;
-        // because the second prism returned Clear, there's nothing to
-        // merge with @positive. The "Fail-dominates-in-merge" surface
-        // manifests if both prisms write the same path with one Fail and
-        // one Partial — tested via direct merge_with in the imperfect
-        // suite. Here we assert the simpler invariant: PositiveT's Fail
-        // survives through composition.
+    fn compose_a_propagates_fail_through_clear() {
+        // Renamed from `compose_a_first_failure_dominates_in_merge` per
+        // Seam C1b (2026-05-30 pre-merge adversarial review). The
+        // original name claimed dominance-in-merge, but this test only
+        // exercises Fail surviving a Clear right-hand side: Clear has
+        // no contents to merge with, so the merge-dominance rule is
+        // never triggered. This is the right-identity law on combine,
+        // not the dominance law.
+        //
+        // The genuine dominance-in-merge law (Fail wins over Partial
+        // at the SAME path when both sides have opacities at that
+        // path) is now witnessed by `compose_a_fail_dominates_in_merge`
+        // above.
         let v: VerdictT<f64> = compose_a_t(&PositiveT, &QuantizeT, -3.0);
         match v {
             Imperfect::Partial(_out, transparency) => {
