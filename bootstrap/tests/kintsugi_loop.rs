@@ -97,3 +97,42 @@ fn shatter_negative_rejected() {
         "--shatter -1 must fail to parse, got success"
     );
 }
+
+#[test]
+/// Per Seam C2 (pre-merge adversarial review, 2026-05-30):
+/// `kintsugi_tick` must actually dispatch through the
+/// `Crystallizations<H>` table, not consume it with `let _ =`. The
+/// floor is empty in Tick A, so the dispatch should return
+/// `CrystallizeError::Uncrystallized` for whatever Ref the tick
+/// chooses (e.g. `@kintsugi/tick`). That failure must surface in the
+/// tick output — either in the tick stderr line or via a dedicated
+/// line — so the integration is exercised end-to-end. The empty-floor
+/// fact does NOT justify omitting the dispatch; every invocation
+/// should demonstrate one dispatch attempt against the empty registry.
+///
+/// This test asserts: with `--shatter 1`, stderr mentions the
+/// Uncrystallized dispatch outcome at the substrate Ref the tick
+/// resolves through.
+fn shatter_one_dispatches_through_crystallizations() {
+    let path = "boot/std/mirror/reload.mirror";
+    let out = run_kintsugi(&["--shatter", "1", path]);
+    assert!(
+        out.status.success(),
+        "--shatter 1 must exit 0, stderr: {}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("Uncrystallized"),
+        "shatter-1 stderr must surface the empty-floor dispatch outcome \
+         (CrystallizeError::Uncrystallized for the tick's resolved Ref); got:\n{}",
+        stderr
+    );
+    // The Ref the tick resolves through should appear in the dispatch
+    // diagnostic so the operator sees WHICH path was attempted.
+    assert!(
+        stderr.contains("@kintsugi"),
+        "shatter-1 stderr must name the resolved Ref (e.g. @kintsugi/tick); got:\n{}",
+        stderr
+    );
+}
