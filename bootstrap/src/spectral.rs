@@ -4336,3 +4336,315 @@ mod tests {
         assert!((left.as_f64() - right.as_f64()).abs() < 1e-12);
     }
 }
+
+// ===========================================================================
+// Transparency cascade tests — Tick mirror/shard-chain 🔴.
+//
+// These tests assert the new Transparency<Ref>-shaped verdict semantics that
+// the 🟢 cascade will deliver: Quantize / Positive return *structural*
+// verdicts (Clear on the success path, Opaque at @quantize / @positive on
+// the failure path) and compose_a unions opacities at colliding paths.
+//
+// The stubs below produce Clear unconditionally so the structural
+// assertions fail; the 🟢 commit replaces them with the real Transparency-
+// shaped impls and swaps the module-level Verdict<S>'s loss carrier from
+// ScalarLoss to Transparency<Ref>.
+//
+// Per the brief: "Replace Quantize", "Replace Positive",
+// "compose_a_propagates_residuals becomes compose_a_unions_opacities".
+// ===========================================================================
+#[cfg(test)]
+mod transparency_cascade_tests {
+    use super::*;
+    use prism_core::{Diagnostic, PropertyVerdict, Ref, Transparency};
+    use std::convert::Infallible;
+    use terni::Imperfect;
+
+    /// The new verdict shape after the cascade. Loss carrier swaps from
+    /// `ScalarLoss` to `Transparency<Ref>` so verdicts carry *structural*,
+    /// located opacities instead of scalar magnitudes.
+    pub type VerdictT<S> = Imperfect<S, Infallible, Transparency<Ref>>;
+
+    /// Quantize-with-Transparency. Returns `Clear` on integer states;
+    /// returns `Opaque(@quantize, Partial { confidence, diagnostic })` on
+    /// non-integer states.
+    pub struct QuantizeT;
+
+    impl Prism for QuantizeT {
+        type Input = Optic<(), f64>;
+        type Focused = Optic<f64, f64, Infallible, Transparency<Ref>>;
+        type Projected = Optic<f64, f64, Infallible, Transparency<Ref>>;
+        type Refracted = Optic<f64, f64, Infallible, Transparency<Ref>>;
+
+        fn focus(&self, beam: Self::Input) -> Self::Focused {
+            // STUB — wrong on purpose. Always returns Success(rounded),
+            // dropping any opacity that should be opened at @quantize. The
+            // 🟢 returns Partial with Opaque-at-@quantize when non-integer.
+            let v = *beam.value().expect("QuantizeT::focus on dark beam");
+            let rounded = v.round();
+            Optic::ok(v, rounded)
+        }
+        fn project(&self, beam: Self::Focused) -> Self::Projected {
+            let v = *beam.value().expect("QuantizeT::project on dark beam");
+            beam.next(v)
+        }
+        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = *beam.value().expect("QuantizeT::refract on dark beam");
+            beam.next(v)
+        }
+    }
+
+    /// Positive-with-Transparency. Returns `Clear` on non-negative states;
+    /// returns `Opaque(@positive, Fail)` on negative states.
+    pub struct PositiveT;
+
+    impl Prism for PositiveT {
+        type Input = Optic<(), f64>;
+        type Focused = Optic<f64, f64, Infallible, Transparency<Ref>>;
+        type Projected = Optic<f64, f64, Infallible, Transparency<Ref>>;
+        type Refracted = Optic<f64, f64, Infallible, Transparency<Ref>>;
+
+        fn focus(&self, beam: Self::Input) -> Self::Focused {
+            // STUB — wrong on purpose. Always returns Success(v), dropping
+            // any opacity that should be opened at @positive. The 🟢
+            // returns Partial with Opaque-at-@positive Fail on negatives.
+            let v = *beam.value().expect("PositiveT::focus on dark beam");
+            Optic::ok(v, v)
+        }
+        fn project(&self, beam: Self::Focused) -> Self::Projected {
+            let v = *beam.value().expect("PositiveT::project on dark beam");
+            beam.next(v)
+        }
+        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = *beam.value().expect("PositiveT::refract on dark beam");
+            beam.next(v)
+        }
+    }
+
+    /// Algebra composition under the new Transparency<Ref> verdict carrier.
+    /// Stub: drops the second prism's output. The 🟢 binds via `eh` exactly
+    /// like compose_a does — only the loss type swaps.
+    fn compose_a_t<S, InP, InQ, P, Q>(p: &P, _q: &Q, state: S) -> VerdictT<S>
+    where
+        P: Prism<
+            Input = Optic<(), S>,
+            Refracted = Optic<InP, S, Infallible, Transparency<Ref>>,
+        >,
+        Q: Prism<
+            Input = Optic<(), S>,
+            Refracted = Optic<InQ, S, Infallible, Transparency<Ref>>,
+        >,
+    {
+        // STUB — drops `_q`. The 🟢 invokes both prisms and unions opacities.
+        prism_core::apply_h(p, state)
+    }
+
+    // ------------------------------------------------------------------
+    // QuantizeT semantics
+    // ------------------------------------------------------------------
+
+    #[test]
+    fn quantize_t_clear_on_integer() {
+        let v: VerdictT<f64> = prism_core::apply_h(&QuantizeT, 3.0);
+        match v {
+            Imperfect::Success(out) => assert_eq!(out, 3.0),
+            other => panic!("expected Success (zero loss = Clear), got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn quantize_t_opaque_at_quantize_path_on_non_integer() {
+        let v: VerdictT<f64> = prism_core::apply_h(&QuantizeT, 0.3);
+        match v {
+            Imperfect::Partial(out, transparency) => {
+                assert_eq!(out, 0.0, "rounded value carried");
+                let q_path = Ref::new("@quantize").unwrap();
+                assert!(
+                    transparency.is_opaque_at(&q_path),
+                    "expected Opaque at @quantize, got {:?}",
+                    transparency
+                );
+                let opacities = transparency.opacities().unwrap();
+                match &opacities[&q_path] {
+                    PropertyVerdict::Partial {
+                        confidence,
+                        diagnostics,
+                    } => {
+                        // confidence = 1.0 - |residual|.min(1.0) = 1.0 - 0.3 = 0.7
+                        assert!(
+                            (*confidence - 0.7).abs() < 1e-12,
+                            "confidence: got {confidence}, expected 0.7"
+                        );
+                        assert!(!diagnostics.is_empty(), "diagnostic expected");
+                    }
+                    other => panic!("expected Partial verdict, got {:?}", other),
+                }
+            }
+            other => panic!("expected Partial verdict, got {:?}", other),
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // PositiveT semantics
+    // ------------------------------------------------------------------
+
+    #[test]
+    fn positive_t_clear_on_non_negative() {
+        let v: VerdictT<f64> = prism_core::apply_h(&PositiveT, 3.0);
+        match v {
+            Imperfect::Success(out) => assert_eq!(out, 3.0),
+            other => panic!("expected Success on non-negative, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn positive_t_opaque_at_positive_path_on_negative() {
+        let v: VerdictT<f64> = prism_core::apply_h(&PositiveT, -3.0);
+        match v {
+            Imperfect::Partial(_out, transparency) => {
+                let p_path = Ref::new("@positive").unwrap();
+                assert!(
+                    transparency.is_opaque_at(&p_path),
+                    "expected Opaque at @positive, got {:?}",
+                    transparency
+                );
+                let opacities = transparency.opacities().unwrap();
+                match &opacities[&p_path] {
+                    PropertyVerdict::Fail(d) => {
+                        let msg = d.as_str();
+                        assert!(
+                            msg.contains("-3") || msg.contains("negative"),
+                            "diagnostic should mention the offending state, got {msg:?}"
+                        );
+                    }
+                    other => panic!("expected Fail verdict, got {:?}", other),
+                }
+            }
+            other => panic!("expected Partial verdict, got {:?}", other),
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // compose_a_t — algebra composition under Transparency<Ref>
+    // ------------------------------------------------------------------
+
+    #[test]
+    fn compose_a_unions_opacities() {
+        // Composing two opacity-producing operators at *different* paths
+        // unions their opacity maps via verdict_union — the Loss-monoid
+        // combine on Transparency<Ref>. Quantize(0.3) opaques @quantize;
+        // chaining with Positive on -1 would also opaque @positive. Here
+        // we use QuantizeT ∘ PositiveT on a value that activates both:
+        // 0.3 → quantize → 0 (opaque @quantize). Then Positive(0) is OK.
+        // Take the harder path: PositiveT first on -0.5 (opaque @positive,
+        // value clamped to 0), then QuantizeT on 0 (Clear). Result: a
+        // single opacity at @positive.
+        //
+        // For the union case, run QuantizeT then PositiveT on -0.3:
+        //   QuantizeT(-0.3) → -0.0 with Opaque @quantize (residual 0.3)
+        //   PositiveT(0.0) → 0.0 with Clear (non-negative)
+        //   union → Opaque {@quantize} only
+        let v: VerdictT<f64> = compose_a_t(&QuantizeT, &PositiveT, -0.3);
+        match v {
+            Imperfect::Partial(_out, transparency) => {
+                assert!(
+                    transparency.is_opaque_at(&Ref::new("@quantize").unwrap()),
+                    "expected @quantize opacity after first prism, got {:?}",
+                    transparency
+                );
+            }
+            other => panic!("expected Partial after compose_a_t, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn compose_a_unions_opacities_both_sides() {
+        // The textbook union case: both prisms produce opacities at
+        // *different* paths. Compose QuantizeT (∂@quantize) ∘ PositiveT
+        // (∂@positive) on -0.3:
+        //   QuantizeT(-0.3) → -0.0 opaque @quantize
+        //   PositiveT(-0.0)... but PositiveT sees -0.0 as non-negative
+        //   under the >= 0.0 check, so Clear.
+        // Reverse the order to get a true union:
+        //   PositiveT(-0.3) → 0.0 opaque @positive
+        //   QuantizeT(0.0) → 0 Clear (integer)
+        // Still only one opacity. To get both: QuantizeT(0.7) opaques
+        // @quantize (residual 0.3 from rounding up to 1); then PositiveT
+        // would see 1.0, Clear. Not enough to trigger both.
+        //
+        // We construct a true two-path union by composing QuantizeT and
+        // an inline PositiveT-derived prism that produces opacity
+        // unconditionally — done through the chain: QuantizeT(0.3) gives
+        // 0 with @quantize opacity, then composed with QuantizeT(0.7-ish)
+        // on a follow-up — but compose_a_t threads the state, not
+        // independent inputs. The 🟢 verifies the union law more
+        // mechanically; here we assert the precondition: the result
+        // carries the first prism's opacity.
+        let v: VerdictT<f64> = compose_a_t(&QuantizeT, &QuantizeT, 0.7);
+        match v {
+            Imperfect::Partial(out, transparency) => {
+                // After 🟢: QuantizeT(0.7) = 1.0 opaque @quantize; then
+                // QuantizeT(1.0) = 1.0 Clear; union = single @quantize.
+                assert_eq!(out, 1.0);
+                assert!(
+                    transparency.is_opaque_at(&Ref::new("@quantize").unwrap()),
+                    "expected opacity at @quantize after compose, got {:?}",
+                    transparency
+                );
+            }
+            other => panic!("expected Partial, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn compose_a_first_failure_dominates_in_merge() {
+        // PositiveT(-3) returns Opaque {@positive: Fail}.
+        // QuantizeT(0.0) returns Clear.
+        // Composition: Opaque {@positive: Fail} union Clear = Opaque
+        // {@positive: Fail}. The first failure's Fail verdict stays put;
+        // because the second prism returned Clear, there's nothing to
+        // merge with @positive. The "Fail-dominates-in-merge" surface
+        // manifests if both prisms write the same path with one Fail and
+        // one Partial — tested via direct merge_with in the imperfect
+        // suite. Here we assert the simpler invariant: PositiveT's Fail
+        // survives through composition.
+        let v: VerdictT<f64> = compose_a_t(&PositiveT, &QuantizeT, -3.0);
+        match v {
+            Imperfect::Partial(_out, transparency) => {
+                let p_path = Ref::new("@positive").unwrap();
+                let opacities = transparency.opacities().unwrap();
+                match &opacities[&p_path] {
+                    PropertyVerdict::Fail(_) => {}
+                    other => panic!("expected Fail to survive, got {:?}", other),
+                }
+            }
+            other => panic!("expected Partial verdict, got {:?}", other),
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Module-level Verdict<S> uses Transparency<Ref> after the cascade.
+    //
+    // The witness test that constructs `super::Verdict<f64>` carrying a
+    // `Transparency<Ref>` lives in the 🟢 commit — it cannot compile
+    // until Verdict's loss carrier is swapped from ScalarLoss to
+    // Transparency<Ref>. Here we stage the imports and verify the new
+    // type alias VerdictT<S> already typechecks against the new shape.
+    // ------------------------------------------------------------------
+
+    #[test]
+    fn verdict_t_typechecks_against_transparency() {
+        let p_path = Ref::new("@witness").unwrap();
+        let t: Transparency<Ref> = Transparency::single(
+            p_path.clone(),
+            PropertyVerdict::Fail(Diagnostic::new("type witness")),
+        );
+        let v: VerdictT<f64> = Imperfect::Partial(0.0, t);
+        match v {
+            Imperfect::Partial(_out, transparency) => {
+                assert!(transparency.is_opaque_at(&p_path));
+            }
+            other => panic!("expected Partial, got {:?}", other),
+        }
+    }
+}

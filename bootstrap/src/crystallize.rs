@@ -908,3 +908,104 @@ mod cascade_tests {
         })
     }
 }
+
+// ---------------------------------------------------------------------------
+// Transparency cascade tests — Tick mirror/shard-chain 🔴.
+//
+// After the 🟢 cascade, `Body<H>` returns
+// `Imperfect<Splinter<H>, CrystallizeError, Transparency<Ref>>` (was:
+// `... ScalarLoss>`). The Ref local in this module disappears, replaced
+// by `pub use prism_core::Ref;` so existing call sites continue to read
+// `crystallize::Ref`.
+//
+// The stub `BodyT` type alias and test below stage the new shape; the
+// 🟢 commit collapses the prefix away by swapping `Body` to use
+// Transparency<Ref> directly.
+// ---------------------------------------------------------------------------
+#[cfg(test)]
+mod transparency_cascade_tests {
+    use super::*;
+    use prism_core::{Beam, PropertyVerdict, Transparency};
+    use std::sync::Arc;
+
+    /// The new Body shape — loss carrier swaps from ScalarLoss to
+    /// Transparency<Ref>. Existing Body stays during 🔴 so the rest of
+    /// the crate still compiles.
+    pub type BodyT<H> = Arc<
+        dyn Fn(
+                Optic<(), Splinter<H>>,
+            )
+                -> Imperfect<Splinter<H>, CrystallizeError, Transparency<Ref>>
+            + Send
+            + Sync,
+    >;
+
+    /// A body that opens an opacity at @kintsugi/fracture/* on a
+    /// non-record input. Stub: always Success, dropping the opacity.
+    fn fracture_validate_body() -> BodyT<Blake3> {
+        Arc::new(|input: Optic<(), Splinter<Blake3>>| {
+            let splinter = input
+                .result()
+                .ok()
+                .cloned()
+                .expect("fracture_validate_body: input must carry a value");
+            // STUB — wrong on purpose. The 🟢 inspects the content shape
+            // and opens an Opaque at @kintsugi/fracture/validate when the
+            // payload is not a Record.
+            Imperfect::success(splinter)
+        })
+    }
+
+    #[test]
+    fn body_t_opens_opacity_on_invalid_shape() {
+        // Pass a Text splinter to a body that requires a Record. The body
+        // should return Partial with Opaque at @kintsugi/fracture/validate.
+        let body = fracture_validate_body();
+        let text_splinter: Splinter<Blake3> =
+            Splinter::new(Content::Text(Text::new("not-a-record")));
+        let input = Optic::ok((), text_splinter);
+        let verdict = body(input);
+        match verdict {
+            Imperfect::Partial(_out, transparency) => {
+                let validate_path = Ref::new("@kintsugi/fracture/validate")
+                    .expect("valid ref");
+                assert!(
+                    transparency.is_opaque_at(&validate_path),
+                    "expected Opaque at @kintsugi/fracture/validate, got {:?}",
+                    transparency
+                );
+                let opacities = transparency.opacities().unwrap();
+                match &opacities[&validate_path] {
+                    PropertyVerdict::Fail(_) | PropertyVerdict::Partial { .. } => {}
+                    other => panic!(
+                        "expected Fail or Partial verdict, got {:?}",
+                        other
+                    ),
+                }
+            }
+            other => panic!(
+                "expected Partial verdict with Transparency loss, got {:?}",
+                other
+            ),
+        }
+    }
+
+    #[test]
+    fn body_t_clear_on_valid_shape() {
+        // Pass a Record splinter — the body should succeed with no loss
+        // (Imperfect::Success), Transparency-typed.
+        let body = fracture_validate_body();
+        let mut m: BTreeMap<FieldName, Splinter<Blake3>> = BTreeMap::new();
+        m.insert(
+            FieldName::new("name").unwrap(),
+            Splinter::new(Content::Text(Text::new("alex"))),
+        );
+        let record_splinter: Splinter<Blake3> = Splinter::new(Content::Record(m));
+        let input = Optic::ok((), record_splinter);
+        let verdict = body(input);
+        match verdict {
+            Imperfect::Success(_) => {}
+            other => panic!("expected Success, got {:?}", other),
+        }
+    }
+}
