@@ -2,8 +2,29 @@
 
 ![](./void_256.png)
 
+> **Mirror is a programming language written BY AI FOR AI and written FOR HUMANS BY HUMANS.**
+
 The glass is the grammar. The wine is what you bring.
 The pitch is the eigenvalue. Neither alone. Both together.
+
+---
+
+## Who writes mirror
+
+Both audiences. Each writes for itself.
+
+**By AI for AI** — agents author `@kintsugi/dispatch.mirror`, `@fate/tournament.mirror`,
+the inference-shaped grammars. Other agents (Reflection, Fate, the supervisor)
+read them. The audience is structurally itself.
+
+**For humans by humans** — humans author `@product/pricing.mirror`,
+`@policy/onboarding.mirror`, the domain grammars. Other humans read them.
+The audience is again structurally itself.
+
+The substrate doesn't privilege either side. Per-glass property verification,
+kintsugi settlement, `Pure<G: Glass>` compile-time witnessing — all run identically
+over agent-authored and human-authored grammars. The name is the philosophy: a
+substrate that reflects whoever writes in it.
 
 ---
 
@@ -199,18 +220,47 @@ mirror compile <f>    # compile one grammar, return its OID
 The grammar describes the compiler. The compiler executes the grammar.
 The OIDs are deterministic. The compilation is idempotent.
 
+## The Three Tiers
+
+Mirror is the middle tier of a layered substrate:
+
+```
+spectral   —  the AI runtime in mirror, behind the SEL gate
+               (closed; the agents themselves think here)
+     ↑
+  mirror   —  the graph-based agent memory layer
+               (open; per-glass properties, kintsugi settlement)
+     ↑
+fragmentation  —  content-addressed storage + HamiltonScheduler
+                   (open; first deployment target; useful with any agent)
+     ↑
+prism_core  —  zero deps, the five-operation kernel
+```
+
+Dependency direction is strict: `mirror → fragmentation → prism_core (no deps)`.
+The `fragmentation-mcp` ships as a standalone open-source MCP server — native
+git integration with the HamiltonScheduler managing agent working memory.
+It's useful even if you never touch mirror. Mirror builds on it.
+
+---
+
 ## License
 
 Layered:
 
-- **The compiler + protocols + open adapters** — Apache 2.0 ([`license/APACHE2.md`](./license/APACHE2.md))
+- **The compiler + protocols + open adapters + fragmentation** — Apache 2.0 ([`license/APACHE2.md`](./license/APACHE2.md))
 - **Curated corpus + garden packages + operational deployment** — systemic.engineering License ([`license/SEL.md`](./license/SEL.md); v1.0 effective; v1.1 draft amendments included)
-- **`@spectral/db` engine** — closed-source (binary-only)
+- **`@spectral/db` engine** — closed-source (binary-only). The AI runtime behind the SEL gate.
 - **`@spectral/garden` packages** — per-curator (substrate verifies signatures regardless)
 
 See [`LICENSE.md`](./LICENSE.md) for the layered model.
 
-SEL enforcement attaches at the `au + io` boundary via petri-net topology analysis at the `@mirror/property` layer. See SEL Part II.
+**`type sel = io + au`** — the SEL license boundary is statically verifiable.
+A body whose AST contains both `@io.*` effects AND `@au`-typed values (Fate
+inference outputs) is SEL territory. The combination is where AI does things
+in the real world; the substrate refuses to be naive about that boundary.
+Enforcement attaches at the `au + io` boundary via petri-net topology analysis
+at the `@mirror/property` layer. See SEL Part II.
 
 The glass is Apache-2.0. The wine governs itself per the curator's choice.
 
