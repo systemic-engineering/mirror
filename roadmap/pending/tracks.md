@@ -19,9 +19,11 @@ Spans Phase 4 (codegen pipeline) + Phase 6 (the generated crate consumes prism-c
 
 Lives primarily in Phase 5 but reaches into Phase 6 for the CPU/GPU bus integration. The S-tick decomposition in `docs/specs/scheduler-tower.md` is the implementation path. Mara's deepening pass resolved 7 of 8 open questions; revised estimate is 7.5 sessions critical path.
 
-## Track D: Shard substrate
+## Track D: Shard substrate — `@mirror/reality/shard` IS the CRDT layer
 
 Spans Phase 4 (codegen path) + Phase 6 (NumericalPrism integration) + Phase 7 (deployment). The α/β/γ/δ decomposition per Mara's task #65: α (`@epistemologic/silicon/*` carriers: silicon, memory, flake_ref, compute_bound types) → β (`@mirror/shard.mirror` grammar) → γ (peer-flip: spawn type-checks against shard bounds) → δ (extension migration: existing per-peer config gets re-expressed as shard composition). The substrate decisions (2026-05-25): Q1 spec-has-shard-closure; Q2 intersection-lateral-always; Q3 re-resolve-via-fragmentation-cache.
+
+**Architectural recognition (2026-06-01): `@mirror/reality/shard` is mirror's CRDT layer.** Shards form a bounded semilattice under content-addressed merge: associative + commutative + idempotent + identity (`fixed empty` at λ₀ = 0). The four laws are *structural consequences* of Merkle-trees-with-sorted-children, not added rules. SpectralUuid is a monoid homomorphism with respect to merge. The kintsugi loop is lattice ascent toward the join of all settled work. See [`../../docs/specs/reality-shard-as-crdt`](../../docs/specs/reality-shard-as-crdt.md). Per-glass property declarations (`identity_for`, `commutative`, `idempotent`) verify the algebraic laws at compile time. Strong eventual consistency by construction; parallel agent work joins deterministically without coordination.
 
 ## Track E: @spectral namespace
 
