@@ -233,13 +233,16 @@ A non-exhaustive list of primitives this spec resisted adding,
 deferring them as future chain extensions if real consumers surface
 (per [[../../AGENTS.md]] § "Deferral over premature implementation"):
 
-- `pure(type)` — *resisted*. The discipline is the conjunction of
-  existing primitives:
-  `halts ∧ ¬contains(@io.*) ∧ deterministic_oid ∧ ¬contains(@rand.*)`.
-  Glasses that need "pure" bind those four; if a real consumer
-  surfaces wanting a single name, the chain can later add
-  `@epistemologic/property/pure` as a conjunction primitive. The
-  conjunction is mechanical; the addition would be substrate-pull.
+- `pure(type)` — **elevated 2026-06-01** (Alex). The conjunction
+  `halts ∧ ¬contains(@io.*) ∧ deterministic_oid ∧ ¬contains(@rand.*)`
+  is clean enough that the named primitive earns chain residency.
+  Glasses may bind `property pure(type)` directly; the implementation
+  is the four-clause conjunction backed by the existing chain primitives.
+  See [[#10.3]] — this is the first deferred-addition to materialize
+  during the spec's own drafting cycle, and it surfaces because the
+  conjunction recurs across multiple canonical glasses. The substrate-pull
+  is real: name it once, use it everywhere. Chain residency at
+  `@epistemologic/property/pure` is owed.
 - `hermetic_no_remote` — *resisted*. The existing
   [[../../AGENTS.md]] § "The Local-Bounded Guarantees" plus the
   `glass_wall` namespace-check plus a hypothetical
@@ -611,6 +614,113 @@ back-projection) was considered and refused. Three reasons:
    content." Lifting the convention into `.mirror` files preserves
    the reading discipline. Above is what the human said; below is
    what the substrate inferred. The same instinct everywhere.
+
+### 4.6 The `---` is bi-directional — custom properties below, referenced above
+
+The `---` separator is not only the back-projection landing — it is
+also the **definition site for custom properties** that the file's
+own glasses can reference. Below `---` lives BOTH the back-projected
+implementations (settlement output) AND custom property definitions
+the contract above refers to. The flow is bi-directional:
+
+- **Top-to-bottom:** a glass above `---` binds `property X`; X is
+  either a chain primitive
+  ([[../../boot/std/epistemologic/property/X]]) or a custom property
+  defined below `---`.
+- **Bottom-to-top:** a custom property defined below `---` is
+  referenceable by any glass above `---` in the same file, and by
+  any descendant file through the `/` inheritance chain (see
+  [[#4.6.2]]).
+
+#### 4.6.1 Custom property syntax
+
+A custom property below `---` is a **named conjunction of chain
+primitives**. The substrate doesn't admit hand-written check bodies
+below `---` — only conjunctions. The substrate doesn't invent new
+check semantics; it gives a local name to a composition the chain
+already supports.
+
+```mirror
+in @epistemologic/property
+
+grammar @kintsugi/dispatch {
+  glass to @code/rust {
+    property halts
+    property tournament_safe   # custom, defined below
+  }
+}
+
+---
+
+# Custom property — local to this grammar's descendants.
+# Names a conjunction of @epistemologic chain primitives.
+property tournament_safe =
+    halts
+  ∧ deterministic_oid
+  ∧ glass_wall(@fate)
+  ∧ ¬contains(@io.*)
+```
+
+The custom property's name (`tournament_safe`) is local to the
+file's `/`-chain. Its definition is a pure conjunction of chain
+primitives. The right-hand side admits only:
+
+- Wikilinks into `@epistemologic/property/*` (chain primitives)
+- Other custom properties defined in the same file or its `/`-ancestors
+- The five Boolean combinators the chain already supports: `∧`, `∨`,
+  `¬`, `⇒`, `contains(…)` (the AST-walk predicate from
+  [[liquid-types-for-mirror]] §2.5)
+
+Hand-written check logic in any other form is a compile-time error.
+The substrate refuses to admit imperative property bodies; the
+bi-directionality of `---` only flows *named conjunctions*, never
+arbitrary code.
+
+#### 4.6.2 Cascading through `/` inheritance
+
+Per [[#3.3]], glasses inherit qualifier sets through the `/` chain.
+**Custom properties cascade the same way.** A grammar at
+`@kintsugi/dispatch/tick.mirror` sees custom properties defined in
+`@kintsugi/dispatch.mirror` (its parent) and `@kintsugi.mirror` (its
+grandparent), each visible below the respective file's `---`.
+
+```
+@kintsugi/dispatch/tick
+  ⊃ @kintsugi/dispatch       # tournament_safe defined here, visible
+  ⊃ @kintsugi                # parent grammar
+```
+
+This means **substrate-pull materializes per-glass through the `/`
+chain.** Each grammar can ratchet its discipline by adding a custom
+property below its `---`; that property is automatically available
+to all descendants without re-declaration. The substrate-pull
+discipline isn't a global decree imposed on every file — it's a
+local extension that propagates by the structural inheritance path
+the substrate already has. Each glass can have its own properties.
+Each grammar can extend the chain locally without forking it.
+
+#### 4.6.3 Custom properties cannot shadow chain primitives
+
+A custom property name that collides with an existing
+`@epistemologic/property/*` name is a compile-time error. The
+substrate refuses the file. This keeps the canonical chain
+canonical even as files extend it locally; the `/` cascade is
+*additive*, never *overriding*. The `literal` discipline at the
+file altitude verifies the non-collision.
+
+#### 4.6.4 The bi-directional `---` IS the per-glass substrate-pull mechanism
+
+The combination — per-glass property declarations above `---` +
+custom properties defined below `---` + `/`-chain cascade for both
+— is what makes per-glass substrate-pull operational. A glass at
+the child grammar can declare a property defined three levels up
+the chain; re-settlement re-verifies the conjunction against the
+child's bodies; ill-formed bodies get rejected at compile time.
+
+The substrate-pull discipline doesn't need a global enforcement; it
+lives at each glass, propagated by the file's location in the `/`
+chain. **The `---` separator is the smallest piece of syntax that
+makes the discipline material.**
 
 ---
 
@@ -1221,10 +1331,22 @@ update names the third pole: per-glass property binding as the
 @epistemologic/property/*."* Owner: agent landing the next AGENTS.md
 refresh.
 
-### 10.3 Deferred additions to the @epistemologic/property chain
+### 10.3 Active and deferred additions to the @epistemologic/property chain
 
-Two primitives surfaced during this spec's drafting that would let
-per-glass implementations share more structure:
+Three primitives surfaced during this spec's drafting. One is
+**active** (elevated 2026-06-01 by Alex); two are **deferred** with
+trigger conditions:
+
+- **`pure(type)` — ACTIVE.** Conjunction
+  `halts ∧ ¬contains(@io.*) ∧ deterministic_oid ∧ ¬contains(@rand.*)`.
+  Elevated from the refused list (see [[#2.3]]) because the
+  conjunction recurs across multiple canonical glasses and the named
+  primitive earns chain residency. Chain home:
+  `@epistemologic/property/pure`. Implementation is the conjunction;
+  no new semantics. Trigger condition: this spec landing. **First**
+  deferred-addition to materialize during the drafting cycle.
+
+The deferred two:
 
 1. **[[../../boot/std/epistemologic/property/has_decreasing_measure]]**
    — the structural-recursion clause every per-glass `halts`
