@@ -1,8 +1,23 @@
 ---
+superseded_by: docs/specs/error-as-question.md
+superseded_date: 2026-06-01
+superseded_note: |
+  Collapsed into the unified error-as-question discipline. The Milan
+  systemic insight ("the error message + question is the compiler
+  observing the codebase observing itself"), the eigentest taxonomy
+  (E1-E8, I1-I4, D2-D10), the HAL framing for substrate-critical errors,
+  and the full mapping table are preserved as the *natural-language*
+  rendering of the structured `answer` variants. The architectural
+  addition: the question is observed by Reflection (the meta-model),
+  not only by the human reader. The answer flows back as a typed
+  substrate adjustment, closing the loop.
+---
+
 # Compiler Error Language
 ## A Spec for Load-Bearing Questions in spectral/mirror
 
 *2026-05-08. Reed + Alex.*
+*Status: Superseded by docs/specs/error-as-question.md (2026-06-01)*
 
 ---
 

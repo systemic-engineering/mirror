@@ -1,8 +1,21 @@
+---
+superseded_by: docs/specs/error-as-question.md
+superseded_date: 2026-06-01
+superseded_note: |
+  Collapsed into the unified error-as-question discipline. The M-code
+  allocation table (§5), the CLI format (§4), the Imperfect optic chain
+  (§3), and the three-state output model (§2) are preserved verbatim in
+  the new spec as the *rendering surface*. The architectural addition
+  is the meta-model observation surface on the same payload —
+  errors become questions Reflection answers, not just measurements
+  the renderer displays.
+---
+
 # Mirror Compiler Error Surface Spec
 
 **Author:** Mara
 **Date:** 2026-04-14
-**Status:** Draft
+**Status:** Superseded by docs/specs/error-as-question.md (2026-06-01)
 
 ---
 

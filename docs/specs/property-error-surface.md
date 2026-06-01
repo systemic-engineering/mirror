@@ -1,6 +1,21 @@
+---
+superseded_by: docs/specs/error-as-question.md
+superseded_date: 2026-06-01
+superseded_note: |
+  Collapsed into the unified error-as-question discipline. The
+  `verdict = pass | fail(diagnostic) | partial(f64, [diagnostic])` algebra,
+  the sub-grammar layout under `@epistemologic/property/*`, the boot order,
+  the error code allocation (E001-E004, W001-W003), and the implementation
+  ticks are preserved as the *property-altitude* implementation plan. The
+  architectural addition: the property verdict's non-Pass case becomes a
+  `question` routed up the supervision tower to Reflection. The meta-model
+  observes; the substrate adjusts; the loop closes.
+---
+
 # The Property Layer + Error Surface
 
 *2026-05-16. Reed. Spec.*
+*Status: Superseded by docs/specs/error-as-question.md (2026-06-01)*
 
 Status: **Red**
 
