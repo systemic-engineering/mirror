@@ -11,6 +11,21 @@
 # These recipes close that gap.
 #
 # No `nix develop -c cargo` — the flake's direnv keeps the shell warm.
+#
+# direnv expectation: the repo's .envrc runs `use flake`, which populates
+# CARGO_TARGET_DIR, BLAS_DIR, FLANG, FC_FOR_TARGET, and the rest of the
+# Nix devShell env that the build needs (flang FFI linking in particular).
+# Recipes assume that env is inherited from the shell. If you've just
+# cloned the repo, run `just direnv-allow` first; otherwise `direnv allow`
+# auto-fires when you `cd` in.
+
+# Load .env files if present. .envrc → direnv → shell env is the primary
+# path for this repo; .env is an additional knob for per-developer overrides
+# (e.g. INSTALL_DIR=/usr/local/bin) without touching the Justfile.
+set dotenv-load := true
+
+# Cleaner positional-arg forwarding in *ARGS recipes.
+set positional-arguments
 
 # The workspace has no root Cargo.toml; bootstrap/ is the package.
 # Pass --manifest-path so recipes work from the repo root without `cd`.
@@ -151,3 +166,26 @@ doc:
 clean:
     cargo clean --manifest-path {{MANIFEST_PATH}}
     rm -f bootstrap/mirror.ll mirror-self
+
+# ──────────────────────────────────────────────────────────────────────────
+# direnv conveniences
+# ──────────────────────────────────────────────────────────────────────────
+
+# Approve the repo's .envrc — one-shot for fresh clones.
+# After this, direnv auto-loads the flake env on every `cd` in.
+direnv-allow:
+    @if ! command -v direnv >/dev/null 2>&1; then \
+        echo "direnv not installed — see https://direnv.net/docs/installation.html" >&2; \
+        exit 1; \
+    fi
+    direnv allow {{justfile_directory()}}
+
+# Check the flake env is loaded (warn-only — does not fail).
+# Useful as a pre-flight when a recipe is mysteriously failing on linker errors.
+direnv-check:
+    @if [ -z "${IN_NIX_SHELL:-}" ]; then \
+        echo "⚠️  IN_NIX_SHELL unset — flake env not loaded." >&2; \
+        echo "   Run 'just direnv-allow' or 'cd' out and back in." >&2; \
+    else \
+        echo "✓ flake env loaded (IN_NIX_SHELL=$IN_NIX_SHELL)"; \
+    fi
