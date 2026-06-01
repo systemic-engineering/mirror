@@ -78,7 +78,8 @@ Phase 1 (the gate — zero holonomy, unified AST/resolver)
 - [`pending/phase-5-reflection-scheduler.md`](./pending/phase-5-reflection-scheduler.md) — Reflection + Scheduler Tower
 - [`pending/phase-6-io-numerical-prism.md`](./pending/phase-6-io-numerical-prism.md) — @io boundary + backends
 - [`pending/phase-7-self-hosted-deployed.md`](./pending/phase-7-self-hosted-deployed.md) — self-hosted + deployed
-- [`pending/tracks.md`](./pending/tracks.md) — cross-cutting work tracks (A: NumericalPrism, B: fragmentation rewrite, C: Scheduler Tower, D: shard, E: spectral namespace, F: portal substrate, G: epistemologic/reality, H: spectral/garden, I: petri-net SEL, J: flang migration — deferred per LRM)
+- [`pending/tracks.md`](./pending/tracks.md) — cross-cutting work tracks (A: NumericalPrism, B: fragmentation rewrite, C: Scheduler Tower, D: shard, E: spectral namespace, F: portal substrate, G: epistemologic/reality, H: spectral/garden, I: petri-net SEL, J: flang migration — deferred per LRM, **K: runtime elevation — HamiltonScheduler + SpectralSupervisor**)
+- [`pending/runtime-elevation.md`](./pending/runtime-elevation.md) — (NEW 2026-06-01) the architectural shift from content-addressed compiler to BEAM-like runtime; HamiltonScheduler (per-shard, Margaret-Hamilton-named) + SpectralSupervisor (cross-shard, the closed engine); Body=prism+glass+AST restructure; Pure trait; `@mirror/lens/transit`; hard + soft realtime
 - [`pending/open-questions.md`](./pending/open-questions.md) — Q1–Q13 design decisions
 - [`pending/references.md`](./pending/references.md) — insight docs, specs, collaborator prior art, foundational mathematics, protocol prior art, related projects
 
@@ -108,6 +109,9 @@ Placeholder until Phase 1 lands. See [`archive/README.md`](./archive/README.md).
 *The peer's lens is what makes this peer this peer. Constructivism, structurally.*  
 *The garden is the cellar. The curator is the vintner. The peer is the sommelier.*  
 *Mirror is sub-Turing. The system that emerges is Turing-complete.*  
-*Holonomy = error = convergence delta. Three names; one number; standard numerical methods transfer.*
+*Holonomy = error = convergence delta. Three names; one number; standard numerical methods transfer.*  
+*HamiltonScheduler is the agent's content window manager — named for Margaret Hamilton, Apollo 1202.*  
+*SpectralSupervisor is the coordinator without authority — the closed engine that elevates mirror to a BEAM-like runtime.*  
+*Maximum mirror, minimal Rust.*
 
 Apache-2.0.
