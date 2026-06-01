@@ -1,0 +1,42 @@
+# Test fixture 15 — the back-projection format.
+#
+# Per spec §4.2: "When settlement runs (Fate-driven liquid-type
+# inference + kintsugi), it appends three things below `---`:
+# (1) the settlement header (date + Contract OID + settlement chain);
+# (2) custom property definitions [no change here unless settlement
+# refined them]; (3) implementation blocks per declared property,
+# one per (property, glass) pair."
+#
+# This fixture shows what a SETTLED file looks like — a contract
+# above `---`, then the canonical back-projection layout below. The
+# `\` holes inside `implementation` are Fate-filled at settlement;
+# this fixture leaves them as `\` (the seed shape).
+#
+# Expected: parse OK (above `---`); below-`---` parses as a settled
+#           region with a header, an `implementation` block, and a
+#           `\` hole inside the body. The Contract OID matches the
+#           hash of the above-`---` region (the staleness check, per
+#           spec §4.3).
+
+in @code/rust
+in @epistemologic/property/halts
+
+grammar @test/15/back_projection {
+  glass to @code/rust {
+    property halts
+  }
+}
+
+---
+
+# Back-projected after settlement on 2026-06-15.
+# Contract OID: 4a3f8b2c9d1e6f5a8b3c2d1e6f5a8b3c2d1e6f5a8b3c2d1e6f5a8b3c2d1e6f5a
+# Settlement: kintsugi(fate(liquid_inference(@code/rust AST)))
+# These implementations are mechanical artifacts. Re-settle to regenerate.
+
+implementation halts for @code/rust glass {
+  # Walks Rust AST: rejects unbounded `loop`, recursive calls without
+  # decreasing measure, async/await without timeout. Fate selects the
+  # concrete AST-walker body during settlement; the `\` is the hole.
+  \
+}

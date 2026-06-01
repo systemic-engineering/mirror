@@ -1,0 +1,13 @@
+# Test fixture 01 — the simplest possible glass.
+#
+# A glass with no properties declared. The qualifier set is empty.
+# Nothing to witness; nothing to verify. The parser must still accept
+# this shape (an empty qualifier set is well-formed).
+#
+# Expected: parse OK; resolve OK; qualifier set = {}.
+
+in @io
+
+grammar @test/01/bare {
+  glass to @io {}
+}

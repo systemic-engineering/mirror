@@ -1,0 +1,18 @@
+# Test fixture 06 — malformed `---` (wrong hyphen count).
+#
+# Per spec §4.1: the separator is EXACTLY three hyphens. Two hyphens
+# is a Rust-style range; four+ hyphens looks like a horizontal rule.
+# Neither is the settlement separator. The tokenizer must refuse.
+#
+# Expected: tokenize FAILS at the malformed line
+#           (`-- is not a recognized form; expected --- or other token`).
+
+in @io
+
+grammar @test/06/malformed_separator {
+  glass to @io {}
+}
+
+--
+
+# Two hyphens — the substrate refuses.

@@ -1,0 +1,21 @@
+# Test fixture 12 (grandparent file) — transitive cascade through `/`.
+#
+# The cascade is transitive: a custom property defined three levels
+# up the `/` chain is still visible at the leaf. This file is the
+# grandparent (@test/12/gp); it defines `tournament_safe` for ALL
+# `/`-descendants, transitively.
+#
+# Expected: parse OK; resolve OK; the property `tournament_safe` is
+#           registered at @test/12/gp's altitude.
+
+in @epistemologic/property/halts
+in @epistemologic/property/deterministic_oid
+
+grammar @test/12/gp {
+}
+
+---
+
+property tournament_safe =
+    halts
+  ∧ deterministic_oid

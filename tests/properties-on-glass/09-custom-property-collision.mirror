@@ -1,0 +1,31 @@
+# Test fixture 09 — custom property shadows a chain primitive.
+#
+# Per spec §4.6.3: "A custom property name that collides with an
+# existing @epistemologic/property/* name is a compile-time error.
+# The substrate refuses the file. This keeps the canonical chain
+# canonical even as files extend it locally; the `/` cascade is
+# additive, never overriding."
+#
+# This fixture tries to redefine `halts` locally. The substrate must
+# refuse: the chain stays canonical.
+#
+# Expected: parse OK; resolve FAILS with
+#           `property `halts` shadows @epistemologic/property/halts;
+#            custom properties cannot shadow chain primitives`.
+
+in @io
+in @epistemologic/property/halts
+in @epistemologic/property/deterministic_oid
+
+grammar @test/09/collision {
+  glass to @io {
+    property halts
+  }
+}
+
+---
+
+# Local definition of `halts` — collides with chain primitive.
+# Refused.
+property halts =
+    deterministic_oid

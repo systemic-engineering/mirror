@@ -1,0 +1,40 @@
+# Test fixture 14 — multiple glasses, different qualifier sets.
+#
+# Per spec §11.1's resolution: a grammar binds properties PER GLASS,
+# not per grammar. This was the load-bearing scoping decision — a
+# grammar commonly declares multiple glasses with different target
+# ASTs (a grammar with both `to @io` and `to @code/rust` needs
+# different qualifier sets because the ASTs differ).
+#
+# This fixture exercises that resolution: one grammar declares two
+# glasses with different qualifier sets. Each glass's qualifier set
+# is independent. The same grammar's bodies satisfy DIFFERENT
+# constraints depending on which glass they cross.
+#
+# Expected: parse OK; resolve OK; two glass entries with distinct
+#           qualifier sets:
+#             to @io          → {halts, io_safety}
+#             to @code/rust   → {halts, pure}
+
+in @io
+in @code/rust
+in @epistemologic/property/halts
+in @epistemologic/property/io_safety
+in @epistemologic/property/pure
+
+grammar @test/14/multi_glass {
+  # Each glass binds the qualifier set appropriate to its target AST.
+  # `halts` is universal (every body must terminate). `io_safety`
+  # makes sense at @io (where the @io discipline applies). `pure`
+  # makes sense at @code/rust (where the Rust AST can be walked for
+  # purity).
+  glass to @io {
+    property halts
+    property io_safety
+  }
+
+  glass to @code/rust {
+    property halts
+    property pure
+  }
+}

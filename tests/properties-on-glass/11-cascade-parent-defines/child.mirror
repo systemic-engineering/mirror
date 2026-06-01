@@ -1,0 +1,23 @@
+# Test fixture 11 (child file) — child references parent's custom property.
+#
+# The grammar @test/11/parent/child is a `/`-descendant of
+# @test/11/parent (fixture 11/parent.mirror). Per spec §4.6.2, the
+# child SEES custom properties defined below `---` in its parent.
+#
+# This file binds `tournament_safe` at a glass without re-declaring
+# it locally. The resolver walks the `/` chain to find the definition
+# in @test/11/parent's `---` region.
+#
+# Expected: parse OK; resolve OK (`tournament_safe` resolves through
+#           cascade to @test/11/parent's `---` definition); qualifier
+#           set = {halts, tournament_safe}.
+
+in @code/rust
+in @epistemologic/property/halts
+
+grammar @test/11/parent/child {
+  glass to @code/rust {
+    property halts
+    property tournament_safe   # inherited from @test/11/parent's `---`
+  }
+}
