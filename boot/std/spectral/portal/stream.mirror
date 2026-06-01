@@ -1,0 +1,102 @@
+in @prism
+
+in @io/bytes
+in @io/socket
+in @mirror/runtime/gen_prism
+
+# @spectral/portal/stream
+#
+# Bidirectional f64 eigenvalue stream over an open portal. Three
+# actions: read_value (one observation in), write_value (one
+# observation out), stream (the run-the-actor loop). Per docs/
+# insights/2026-05-26-portal-as-io-socket-over-content-addressed-
+# subspace.md §"The composition" item (c): "Bidirectional eigenvalue
+# stream — normalized observations in [0.0, 1.0] of the shared
+# spectral state; bandwidth-minimal; content-addressable;
+# replayable."
+#
+# Per the issue #78 plan: this grammar lifts the previously-`\` body
+# of @spectral/portal.open's stream stage into a typed, Fate-
+# resolvable contract. Two of three action bodies compose cleanly
+# today; the third (`stream`) is a Fate-hole pending the loop-
+# primitive question (see substrate gap below).
+#
+# Wire shape per value: 8 bytes IEEE-754 big-endian double. Same
+# byte order @io/bytes uses everywhere. Each tick of the actor
+# gen_prism reads one value, applies its tick map, writes one
+# value back. The stream IS the gen_prism's ancestor chain made
+# visible over the wire.
+#
+# ── substrate gap surfaced (2026-05-26) ─────────────────────────
+#
+# `stream(c, gp, budget)` needs a structural loop / recursion
+# primitive that the substrate at this altitude does not expose.
+# The natural composition is:
+#
+#   while budget > 0 and not autopoietic_settled(gp):
+#     read_value(c)
+#       |> message_of_value
+#       |> @mirror/runtime/gen_prism.tick(gp.head, _)
+#       |> advance_gp
+#       |> emit_observation
+#       |> write_value(c, _)
+#
+# The bounded-iteration primitive lands with the Scheduler Tower
+# (docs/specs/scheduler-tower.md) and the @epistemologic/property/
+# halts disjunction in #74. Until then, `stream` stays `\`; the
+# substrate contract is intact (in, out, budget, gen_prism advance);
+# only the loop body is parked. Halts is structurally satisfied by
+# the disjunction (a) autopoietic settlement OR (b) budget
+# exhaustion — the property landed in #74.
+#
+# Sibling grammars under @spectral/portal: @spectral/portal/
+# handshake (WS upgrade), @spectral/portal/codec (frame wire
+# codec), @spectral/portal itself (the four-stage composition).
+
+grammar @spectral/portal/stream {
+
+  # ── read_value: read one f64 observation from the wire ─────────
+  #
+  # Read 8 bytes from `c`, interpret as IEEE-754 big-endian double.
+  # Returns imperfect because the connection may close mid-read
+  # (EOF before 8 bytes), the kernel may error, or the bytes may
+  # encode a NaN bit-pattern the caller cares to flag.
+  #
+  # Body composes cleanly: read 8 bytes, decode. Two `\`-bodied
+  # primitives at the bottom; substrate-pull at full strictness.
+  read_value(c: connection) -> imperfect {
+    @io/socket.read_bytes(c, 8) |> @io/bytes.to_f64
+  }
+
+  # ── write_value: write one f64 observation to the wire ──────────
+  #
+  # Serialize an IEEE-754 double as 8 big-endian bytes; write to
+  # `c`. Returns imperfect because write_bytes can fail (peer
+  # reset, broken pipe).
+  #
+  # Body composes cleanly: encode, write. Two `\`-bodied primitives
+  # at the bottom; substrate-pull at full strictness.
+  write_value(c: connection, v: f64) -> imperfect {
+    v |> @io/bytes.from_f64 |> @io/socket.write_bytes(c)
+  }
+
+  # ── stream: drive the actor's tick loop over the open portal ───
+  #
+  # Run the bidirectional stream until either the actor's tick map
+  # reaches a Lawvere fixed point (autopoietic settlement, per
+  # @epistemologic/property/halts clause (a)) or the budget
+  # exhausts (per clause (b)). Returns the final gen_prism state
+  # (its head advances along the ancestor chain through the
+  # stream's lifetime).
+  #
+  # Body stays `\` pending the bounded-iteration primitive (see
+  # header). The halts disjunction guarantees termination by
+  # construction even with the body as a Fate-hole; the structural
+  # claim is load-bearing without the loop syntax landing here.
+  stream(c: connection, gp: gen_prism, budget: u64) -> imperfect { \ }
+}
+
+out read_value
+out write_value
+out stream
+out @spectral/portal/stream

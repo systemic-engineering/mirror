@@ -1,0 +1,60 @@
+in @prism
+
+in @mirror/glass/ast/shape
+
+# @mirror/glass/ast/shape/fixed — the `fixed` shape variant: a
+# module-top binding that is fully settled, content-addressed, and
+# carries no holes or inference.
+#
+# Per the per-variant file pattern declared in @mirror/glass/ast/
+# shape: variants of `shape` may land in their own sub-file when
+# they want to declare structure of their own. `fixed` does — it
+# is the substrate's first keyword declared not by hand-coding a
+# new token in the bootstrap, but by aliasing an existing Prism op
+# at the substrate altitude.
+#
+# `type fixed = refract`
+#
+# Reads: the `fixed` shape variant IS the `refract` Prism op,
+# applied at the binding altitude. Same operation; substrate-
+# altitude name. The bootstrap does not learn a new keyword;
+# the substrate accumulates one. Every property the substrate
+# already knows about `refract` (settled construction, monad
+# laws, content-addressing) transfers to `fixed` by alias.
+#
+# Per Alex 2026-05-26: *"`fixed`. Like `const`. But math. And a
+# `fixed` value cannot include any holes. No inference. It needs
+# to be a fully settled crystal. Becomes content addressed."*
+#
+# Properties of `fixed` (inherited via the alias):
+#
+#   - Cannot contain holes (`\`) — refract requires settled construction
+#   - Cannot contain `@fate` inference — settled at compile time
+#   - Must be a fully settled crystal — the monad laws guarantee it
+#   - Content-addressed on declaration — the OID is the binding
+#
+# Distinction from `beam` (body-altitude, dynamic):
+#
+#   - `beam x = expr` inside a lambda body: dynamic; carries Beam<T>
+#     metadata; may contain holes or inference; subject to spectral
+#     measurement; lifted to `fixed` by
+#     @kintsugi/fracture/dynamic-beam-to-fixed when holonomy settles.
+#   - `fixed x = expr` at module-top: static; fully settled;
+#     content-addressed; the OID IS the binding.
+#
+# Migration source for legacy `refract <name> = <combinator>`
+# bindings: @kintsugi/fracture/refract-to-fixed.
+#
+# Insight: docs/insights/2026-05-26-fixed-and-the-spectral-feedback-fracture.md
+
+grammar @mirror/glass/ast/shape/fixed {
+  # The substrate's declaration that the `fixed` keyword aliases
+  # the `refract` Prism op. No body needed — the alias IS the
+  # declaration. Every downstream substrate that mentions `fixed`
+  # resolves through this line to the refract Prism op at the
+  # binding altitude.
+  type fixed = refract
+}
+
+out fixed
+out @mirror/glass/ast/shape/fixed

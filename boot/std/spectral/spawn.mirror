@@ -1,0 +1,23 @@
+in @prism
+in @peer
+
+# @spectral/spawn — alias for @peer.spawn.
+#
+# Per the 2026-05-25 substrate decision (peer-glass audit §5, Q5),
+# @spectral/spawn is the heavyweight-autonomous-loop surface, and
+# @peer.spawn IS that surface today. Two specs reference
+# @spectral/spawn (mirror-runtime-gen-prism.md, peer-glass.md); zero
+# grammars defined it before this tick. This file closes the gap
+# without re-implementation — @spectral/spawn IS @peer.spawn.
+#
+# If a future tick adds genuinely-different autonomous-loop semantics
+# (a longer reflect cadence, a tournament-driven think loop, etc.),
+# replace the alias with a thin wrapper that calls through to
+# @peer.spawn and adds the loop.
+
+grammar @spectral/spawn {
+  spawn = @peer.spawn
+}
+
+out spawn
+out @spectral/spawn

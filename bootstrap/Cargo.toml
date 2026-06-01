@@ -4,7 +4,24 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# SHA-256 — still used by `hash.rs` (the canonical_hash / CoincidenceHash
+# substrate, distinct from Splinter's content hash). The cascade swaps
+# Splinter's hash to BLAKE3 (via the `MerkleHash` trait + the `Blake3`
+# default) but leaves `hash.rs` untouched — different altitude, different
+# machinery. Per docs/specs/store-vs-db-and-the-cascade.md §2.2.
 sha2 = "0.10"
+# BLAKE3 — the default `MerkleHash` backend for `Splinter`. Powers
+# `@mirror/store`'s open content-addressed storage gate per the
+# landing-page spec §1.1 (`docs/specs/store-vs-db-and-the-cascade.md`).
+blake3 = { version = "1", default-features = false }
+# The spectral-triple substrate. `prism-core` provides the `Prism` trait
+# (the algebra A) and `IdentityPrism` (the identity element), with the
+# `bundle` feature surfacing the supertrait closure that realizes the
+# spectral-triple structure. `terni` provides `Imperfect` (the verdict
+# carrier for D's partially-defined action) and `Metric` (the residual
+# bound). Per docs/specs/prism-core-as-spectral-triple.md.
+prism-core = { path = "../../prism/core", features = ["bundle"] }
+terni = { path = "../../prism/imperfect", default-features = false }
 
 [profile.release]
 opt-level = "z"

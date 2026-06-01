@@ -1,0 +1,127 @@
+in @prism
+in @fragmentation
+in @epistemologic/property/content_addressed
+in @epistemologic/property/laws/monoidal
+
+# @fragmentation/frame
+#
+# A frame is fragmentation's patch shape: a content-addressed delta
+# from one DAG state to another. Inspired by git's patch format, but
+# substrate-distinct — addressing rides @fragmentation's content-
+# addressed OID (SpectralCoordinate, beta-normalized AST shape), not
+# SHA-1 chains over text diffs. The patch payload itself is a
+# fragmentation node whose OID names the delta.
+#
+# Per docs/insights/2026-05-26-portal-as-io-socket-over-content-
+# addressed-subspace.md §"The composition" item 2 + the wire-protocol
+# description: the portal's middle wire step is a single
+# `@fragmentation/frame` full frame send — the content-addressed
+# initial projection. A full sync IS a frame from null state; a
+# reconnect-resync IS a frame from the last-seen state. Same shape;
+# one mechanism.
+#
+# Substrate decision (Alex 2026-05-26): the patch format is
+# `@fragmentation/frame`, NOT git-patch. Mirror's wire substrate is
+# native to fragmentation — same content-addressing primitives that
+# the AST, the crystal store, and the gen_prism ref chain already
+# ride.
+#
+# Three fields. Four actions. One property declared, one parked.
+#
+# Insight: docs/insights/2026-05-26-portal-as-io-socket-over-
+#          content-addressed-subspace.md
+
+grammar @fragmentation/frame {
+
+  # ── the patch shape ──────────────────────────────────────────────
+  #
+  # A frame names a content-addressed delta between two DAG states.
+  # All three fields are zoom(oid, fragmentation) — the OID of a
+  # fragmentation node typed against the fragmentation shape.
+  #
+  #   from  -> the source state. The DAG root the patch starts from.
+  #            For a full-sync frame, `from` is the OID of the empty
+  #            fragmentation (null state); for a reconnect-resync,
+  #            it is the last-acknowledged state on the receiver.
+  #   to    -> the destination state. The DAG root the patch advances
+  #            to. After successful apply(from, frame), the receiver's
+  #            HEAD equals `to`.
+  #   delta -> the patch payload, content-addressed. A fragmentation
+  #            node whose body encodes the structural difference
+  #            between `from` and `to`. The OID names the delta; the
+  #            delta names itself; substrate property.
+  type frame = {
+    from:  zoom(oid, fragmentation),
+    to:    zoom(oid, fragmentation),
+    delta: zoom(oid, fragmentation),
+  }
+
+  # ── compute: derive a frame between two states ───────────────────
+  #
+  # Given a source and destination OID under the fragmentation shape,
+  # produce the frame whose apply(from, _) advances from -> to. Body
+  # is a Fate-resolved hole; the tournament reads the two DAG roots
+  # and emits the minimal content-addressed delta payload.
+  compute(from: zoom(oid, fragmentation),
+          to:   zoom(oid, fragmentation)) -> frame { \ }
+
+  # ── apply: advance state by a frame ──────────────────────────────
+  #
+  # Apply a frame to a state OID; on success the new state equals
+  # `f.to`. Returns imperfect because the frame may not be applicable
+  # — `f.from` must match the input state, the delta must verify
+  # against fragmentation's content-addressing, and the resulting OID
+  # must equal `f.to` (cross-check). The standard recovery surface
+  # carries the diagnostic.
+  apply(state: zoom(oid, fragmentation),
+        f:     frame) -> imperfect<zoom(oid, fragmentation)> { \ }
+
+  # ── compose: chain two frames ────────────────────────────────────
+  #
+  # Compose a -> b into the frame that advances a.from -> b.to.
+  # Requires a.to == b.from; mismatch returns imperfect with a
+  # composition-domain diagnostic. The composition is associative
+  # under content-addressing (hash composition is associative);
+  # combined with `identity`, this is the monoid structure.
+  compose(a: frame, b: frame) -> imperfect(frame) { \ }
+
+  # ── identity: the null frame ─────────────────────────────────────
+  #
+  # The frame whose apply is a no-op: from == to, delta is the OID
+  # of the empty-delta fragmentation. For all f: compose(identity(s),
+  # f) == f when f.from == s, and compose(f, identity(f.to)) == f.
+  # The monoidal unit.
+  identity(state: zoom(oid, fragmentation)) -> frame { \ }
+
+  # ── properties ───────────────────────────────────────────────────
+  #
+  # content_addressed(frame) : the frame's identity IS its content
+  #                            hash. All three fields are zoom(oid,
+  #                            fragmentation); the frame's OID is
+  #                            determined by the triple; two frames
+  #                            with the same (from, to, delta) are
+  #                            the same frame. Foundational — the
+  #                            substrate's monoid structure rests on
+  #                            it.
+  #
+  # monoidal(frame)          : compose + identity form a monoid.
+  #                            compose(identity(s), f) == f when
+  #                            f.from == s; compose(f, identity(f.to))
+  #                            == f; compose is associative. Per
+  #                            @epistemologic/property/laws/monoidal: the
+  #                            laws reduce to OID equality under
+  #                            content-addressing — hash composition
+  #                            is associative; the empty-delta frame's
+  #                            OID is the canonical unit. The parked
+  #                            design call from #77's commit body
+  #                            closes here.
+  requires content_addressed(frame)
+  requires monoidal(frame)
+}
+
+out frame
+out compute
+out apply
+out compose
+out identity
+out @fragmentation/frame

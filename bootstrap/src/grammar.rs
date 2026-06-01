@@ -171,10 +171,71 @@ pub fn grammar_ref_from_path(path: &str) -> String {
     s
 }
 
+/// Companion grammar files whose `<op> <keyword>` declarations are merged
+/// into the keyword table when the primary grammar is loaded. Substrate-pull
+/// realization: keyword vocabulary accumulates from `.mirror` declarations,
+/// not from hardcoded Rust. See AGENTS.md "Keywords Are Substrate
+/// Declarations" and `boot/std/mirror/glass/ast/token.mirror`.
+///
+/// The mapping is keyed by the primary grammar path. Each entry lists
+/// additional `.mirror` files whose keyword declarations compose into the
+/// same table. Same keyword + same op in two files = no conflict (the
+/// substrate carries the same declaration from both sources). Same keyword
+/// + different op = conflict; `merge_keyword_sources` reports it.
+fn companion_keyword_sources(path: &str) -> &'static [&'static str] {
+    match path {
+        "boot/std/mirror/grammar.mirror" => &["boot/std/mirror/glass/ast/token.mirror"],
+        _ => &[],
+    }
+}
+
+/// Merge keyword mappings from a companion source into the primary grammar.
+/// Returns `Err` if a keyword is declared in both with conflicting ops; the
+/// caller surfaces this to the operator (stop-and-report per the
+/// keyword-harvester extension contract).
+fn merge_keyword_sources(g: &mut Grammar, companions: &[&str]) -> std::io::Result<()> {
+    for companion in companions {
+        let source = match fs::read_to_string(companion) {
+            Ok(s) => s,
+            // Missing companion file is not fatal — the legacy file alone
+            // remains a valid keyword source. This keeps the harvester
+            // extension additive: removing the companion regresses to the
+            // pre-extension behaviour.
+            Err(_) => continue,
+        };
+        let extra = parse_grammar(&source);
+        for m in extra.mappings {
+            match g.lookup(&m.keyword) {
+                Some(existing) if existing == m.kind => {
+                    // Same keyword + same op in both files. The substrate
+                    // carries the same declaration from both sources;
+                    // no-op. (Legacy `focus grammar` / `focus prism` /
+                    // etc. are mirrored verbatim in token.mirror.)
+                    continue;
+                }
+                Some(existing) => {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::InvalidData,
+                        format!(
+                            "keyword conflict: `{}` declared as {:?} in primary grammar but {:?} in companion `{}`",
+                            m.keyword, existing, m.kind, companion
+                        ),
+                    ));
+                }
+                None => {
+                    g.add(&m.keyword, m.kind);
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
 pub fn load_grammar(path: &str) -> std::io::Result<Grammar> {
     let source = fs::read_to_string(path)?;
     let mut g = parse_grammar(&source);
     g.r#ref = grammar_ref_from_path(path);
+    merge_keyword_sources(&mut g, companion_keyword_sources(path))?;
     Ok(g)
 }
 
@@ -184,7 +245,7 @@ pub fn grammar_for_file(path: &str) -> &'static str {
     let ext = p.extension().and_then(|e| e.to_str()).unwrap_or("");
     match ext {
         "rs" => "boot/std/code/rust.mirror",
-        "mirror" | "spec" | "shatter" => "boot/std/mirror/grammar.mirror",
+        "mirror" | "spec" | "shard" | "shatter" => "boot/std/mirror/grammar.mirror",
         "ll" => "boot/std/code/llvm/ir.mirror",
         _ => "boot/std/code/rust.mirror",
     }
@@ -229,4 +290,24 @@ pub fn is_skip_word(word: &str) -> bool {
             | "dyn"
             | "move"
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn shard_extension_routes_to_mirror_grammar() {
+        // .shard is the observer-relative deployment description; it parses
+        // through the same meta-glass as .spec / .mirror / .shatter.
+        // Coexists with .spec (per Alex 2026-05-25 substrate decision).
+        assert_eq!(
+            grammar_for_file("eigenboard.shard"),
+            "boot/std/mirror/grammar.mirror"
+        );
+        assert_eq!(
+            grammar_for_file("eigenboard.spec"),
+            "boot/std/mirror/grammar.mirror"
+        );
+    }
 }

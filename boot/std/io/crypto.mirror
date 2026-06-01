@@ -1,0 +1,98 @@
+in @prism
+
+in @io
+in @io/bytes
+
+# @io/crypto
+#
+# Hash + signature primitives over @io/bytes. Two hash functions
+# (sha1, sha256) and one signature scheme (ed25519, sign + verify).
+# Lives under @io by construction so glass_wall (#79) validates
+# trivially.
+#
+# Per docs/insights/2026-05-26-glass-wall-and-cross-wall-kintsugi.md
+# §"What stays in @io permanently": SHA-1 specifically is named as
+# needed for git interop and remains a permanent @io resident.
+# SHA-256 lives at the boundary because the canonical implementation
+# is vendor crypto (sha2 crate's intrinsics dispatch); cross_wall
+# (#80) may someday pull a structurally-verified Rust implementation
+# across, but for the bootstrap era SHA-256 stays @io. Ed25519 is
+# permanent @io — the underlying field arithmetic is opaque vendor
+# code by necessity (constant-time disciplines are crate-internal).
+#
+# Per docs/insights/2026-05-26-portal-as-io-socket-over-content-
+# addressed-subspace.md §"Open question 1: Authentication": the
+# natural answer is portal authentication by signing the subspace
+# OID with the shard's ed25519 key; receiver verifies against the
+# shard's published public key. ed25519_sign / ed25519_verify here
+# is the substrate that machinery uses.
+#
+# Important architectural note: @fragmentation's existing SHA-256
+# usage (the content-addressing primitive that names every crystal
+# in the store) can in a follow-up commit be re-routed to call
+# @io/crypto.sha256 here, collapsing two SHA-256 surfaces into one.
+# That re-routing is OUT OF SCOPE for this commit — it would touch
+# the crystal-store boundary which is hot, well-tested, and pinned
+# by oid_smoke.rs's OID values. This commit only declares the
+# primitive; the @fragmentation re-route is a separate landing.
+#
+# Bootstrap-side dispatch (when @mirror/serve lands the tournament-
+# to-bootstrap path):
+#
+#   sha1           → `sha1` crate
+#   sha256         → `sha2` crate (already in Cargo.toml)
+#   ed25519_sign   → `ed25519-dalek` crate
+#   ed25519_verify → `ed25519-dalek` crate
+#
+# No Cargo.toml addition in this commit. The new crate pulls
+# (sha1, ed25519-dalek) land with the dispatch landing. sha2 is
+# already present per Cargo.toml (it backs hash.rs's CoincidenceHash).
+#
+# Sibling grammars under @io: @io/bytes (the carrier type),
+# @io/random (entropy for key generation), @io/encode (rendering
+# hashes and signatures for display/transport).
+
+grammar @io/crypto {
+
+  # ── sha1: SHA-1 hash ────────────────────────────────────────
+  #
+  # 20-byte SHA-1 digest. Present for git interop — git's content
+  # store uses SHA-1 (transitioning to SHA-256 but not there yet),
+  # so the bootstrap needs to compute SHA-1 to interop with git
+  # plumbing (hash-object, cat-file, etc). Total; every byte input
+  # has a canonical SHA-1.
+  sha1(b: bytes) -> bytes { \ }
+
+  # ── sha256: SHA-256 hash ──────────────────────────────────────
+  #
+  # 32-byte SHA-256 digest. The hash function @fragmentation uses
+  # under the hood for content-addressing; this declaration makes
+  # the surface explicit so a future commit can re-route
+  # @fragmentation's internal SHA-256 calls through @io/crypto.
+  # Total.
+  sha256(b: bytes) -> bytes { \ }
+
+  # ── ed25519_sign: produce a signature ──────────────────────────
+  #
+  # Sign `msg` under the ed25519 secret key `key`. Output is 64
+  # bytes (R || s). The key encoding follows RFC 8032: 32 bytes
+  # for the secret scalar (the typical "secret key" surface from
+  # @io/random.bytes(32)). Total at the signature layer; the
+  # signature is deterministic given (key, msg).
+  ed25519_sign(key: bytes, msg: bytes) -> bytes { \ }
+
+  # ── ed25519_verify: verify a signature ─────────────────────────
+  #
+  # Verify `sig` against (pub_key, msg). Returns imperfect:
+  # Success() iff the signature is valid; Failure with diagnostic
+  # iff malformed inputs (wrong length pub_key/sig, non-canonical
+  # encoding) or invalid signature. The two failure modes — invalid
+  # input vs invalid signature — are distinguished in the diagnostic.
+  ed25519_verify(pub_key: bytes, sig: bytes, msg: bytes) -> imperfect { \ }
+}
+
+out sha1
+out sha256
+out ed25519_sign
+out ed25519_verify
+out @io/crypto

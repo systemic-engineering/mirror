@@ -1,0 +1,60 @@
+in @prism
+
+# @epistemologic/property/laws/causality
+#
+# A type is causal iff its values carry a partial order under which
+# effects follow causes. For any two events e₁ → e₂ in a causal
+# chain, e₁.tick ≤ e₂.tick within the same frame. Lamport's logical-
+# clock condition (Lamport 1978) at the type layer.
+#
+# Per docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md
+# §6 (the property table): causality is the partial-order extension
+# of monotonicity. Where monotonicity verifies a single chain is
+# non-decreasing, causality verifies that across all chains the
+# effect-follows-cause relation holds. The load-bearing instance is
+# @beam.beam: every beam in a path has emitted ≤ self.emitted; the
+# whole pipeline forms a causal DAG.
+#
+# Per Lamport (1978) "Time, Clocks, and the Ordering of Events in a
+# Distributed System": the happens-before relation is partial,
+# transitive, and irreflexive. This property encodes the
+# happens-before condition as a structural check on the type's
+# event graph.
+#
+# Sibling properties: monotonicity(T) (the total-order within-frame
+# baseline this builds on), frame_relativity(T) (cross-frame
+# causality requires conversion through shard ancestry, just like
+# cross-frame comparison does).
+
+grammar @epistemologic/property/laws/causality {
+
+  # The type's values carry a happens-before relation: partial,
+  # transitive, irreflexive. Baseline structural requirement; without
+  # happens-before, causality is undefined.
+  happens_before(type) -> verdict { \ }
+
+  # For every cause-effect pair (e₁, e₂) reachable in the type's
+  # event graph, e₁.tick ≤ e₂.tick. The verifier walks the graph;
+  # any back-edge in tick order fails the property. Lamport's
+  # clock-condition.
+  effects_follow_causes(type) -> verdict { \ }
+
+  # The causal order is preserved under the substrate's content
+  # addressing: if e₁ → e₂, then e₁'s oid appears in e₂'s ancestor
+  # chain. This is the structural condition that makes causality
+  # verifiable from the storage layer alone, without re-running the
+  # pipeline. Per @epistemologic/property/content_addressed: the
+  # ancestor chain IS the causal DAG.
+  content_preserves_order(type) -> verdict { \ }
+
+  # The combined property: the type is causal.
+  # Pass iff happens_before, effects_follow_causes, and
+  # content_preserves_order.
+  causality(type) -> verdict { \ }
+}
+
+out happens_before
+out effects_follow_causes
+out content_preserves_order
+out causality
+out @epistemologic/property/laws/causality

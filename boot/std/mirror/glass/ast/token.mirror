@@ -1,0 +1,95 @@
+in @prism
+in @nl
+
+in @mirror/glass/ast
+
+# @mirror/glass/ast/token — lexical primitives: the leaves of the
+# AST glass.
+#
+# Per the 2026-05-26 substrate-altitude placement (Alex + Reed),
+# tokenization lives under @mirror/glass/ast as a leaf node type —
+# `glass (substrate primitive) → ast (data structure) → token (leaf
+# node type)`. The grammar describes HOW you parse; ast/token is
+# the data shape being parsed.
+#
+# This file is a refactored copy of grammar.mirror's lexical
+# section. The legacy file STAYS — the downstream consumers
+# (@epistemologic/property/glass_wall, @peer, the Rust bootstrap)
+# keep working unchanged until the @kintsugi/fracture/grammar-to-
+# glass tick lands the migration.
+#
+# Spec: docs/specs/mirror-grammar-self-hosted.md
+
+grammar @mirror/glass/ast/token {
+  # ===== legacy keyword mappings (the 4b.2 surface) =====
+  # The hand-written tokenizer reads `<op> <keyword>` 2-word lines
+  # to build the keyword table. Mirrored verbatim from the legacy
+  # @mirror/grammar; the bootstrap reads the legacy file directly,
+  # so these lines do not drive its behaviour from this file — they
+  # declare the substrate-altitude truth alongside the legacy
+  # surface.
+  focus grammar
+  focus prism
+  split type
+  project in
+  project out
+  zoom abstract
+
+  # ===== kintsugi/fracture/grammar-to-glass surface =====
+  # The substrate-altitude keyword vocabulary. These declarations
+  # land the new surface that downstream consumers (Stage 3's
+  # parse_grammar dispatch) read to decide which shape variant
+  # the substrate is parsing. Each line is a load-bearing
+  # substrate declaration — without them, parse_grammar has
+  # nothing real to dispatch on.
+  #
+  # Cross-reference (each entry):
+  #
+  #   focus glass    — @mirror/glass/ast/shape : the substrate
+  #                    primitive (was `grammar`; the file-level form).
+  #   focus lambda   — @mirror/glass/ast/shape/lambda : the binding
+  #                    form for an action / function-like surface
+  #                    (was `action`; FP-canonical naming).
+  #   focus fixed    — @mirror/glass/ast/shape/fixed : module-top
+  #                    binding that is fully settled, content-
+  #                    addressed, carries no holes (Cat 4 keyword).
+  #   focus property — @mirror/glass/ast/shape/property : the verdict-
+  #                    returning declaration. Pure by construction;
+  #                    return type fixed to `verdict`.
+  #   focus shape    — @mirror/glass/ast/shape : the canonical type-
+  #                    variant union (`glass | type | lambda | property
+  #                    | fixed | in | out`).
+  #
+  # Legacy keywords above (`focus grammar`, `focus prism`, ...) stay
+  # until @kintsugi/fracture/grammar-to-glass migrates every
+  # downstream call site; both surfaces co-exist during the
+  # transition.
+  focus glass
+  focus lambda
+  focus fixed
+  focus property
+  focus shape
+
+  # ===== lexical primitives =====
+  fixed whitespace        = repeat(charset(whitespace), 0, none)
+  fixed newline           = literal("\n")
+  fixed identifier        = repeat(charset(word_char), 1, none)
+  fixed name              = repeat(charset(name_char), 1, none)
+  fixed reference         = seq(literal("@"), name)
+  fixed until_newline     = until(literal("\n"))
+
+  # ===== comment = @nl lift =====
+  # A comment is `#` followed by a natural-language span. The body
+  # of the comment lifts to @nl, which carries inline backticks,
+  # fenced blocks, and doctest prompts (see nl.mirror).
+  fixed comment           = seq(literal("#"), @nl(until_newline))
+}
+
+out whitespace
+out newline
+out identifier
+out name
+out reference
+out until_newline
+out comment
+out @mirror/glass/ast/token

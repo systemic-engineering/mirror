@@ -508,6 +508,21 @@ holonomy-decrease argument are the same argument viewed in two
 different bases — sheaf cohomology (the L_F kernel) vs bundle
 geometry (the connection's curvature integral around closed loops).
 
+### `eigenboard.holonomy` IS the LPRM equivalent
+
+GRAM (Baek, Jo, Kim, Ren, Bengio, Ahn — [arXiv:2605.19376v2](https://arxiv.org/abs/2605.19376), May 2026) trains a *Latent Process Reward Model* (LPRM): a value head over reasoning trajectories that predicts final-answer quality from the latent state at the trajectory tip. The LPRM is the selection signal — it tells the inference loop which of N parallel trajectories to keep alive and which to prune.
+
+The eigenboard's `holonomy` field is the spectral analog of the LPRM, derived from spectral graph theory on the agent's current bundle state rather than learned from accuracy regression. The Fiedler value at the trajectory tip — the smallest nonzero eigenvalue of the sheaf Laplacian on the current section, equivalently the cycle-averaged holonomy on the bundle's closed loops (Magnot 2025's contextuality index κ) — IS the spectral value head over reasoning paths. The substrate computes it; the kintsugi tournament reads it; selection follows the same downward-pointing arrow GRAM's LPRM provides, except the arrow is structural rather than learned.
+
+Where GRAM has to train the value head against final-answer accuracy as the regression target (and the value head is therefore only as good as the training data + the network capacity), mirror's holonomy is read directly off the bundle's geometric invariants — same number, different epistemology. The LPRM is a learned approximation of what the spectral substrate exposes by construction.
+
+This names the parallel explicitly. The eigenboard becomes legible to anyone arriving from the GRAM / process-reward-modeling literature: holonomy is the value head; the Fiedler value is the spectral quality of the trajectory tip; cycle-averaged holonomy is the contextuality index that bounds the value globally. Same object, three vocabularies.
+
+**Cross-references:**
+- `docs/insights/2026-05-25-gram-and-mirror-same-architecture-two-altitudes.md` (the full GRAM↔mirror correspondence; this is the recommendation it names);
+- GRAM paper: [arXiv:2605.19376v2](https://arxiv.org/abs/2605.19376) §3 (LPRM training objective);
+- Magnot 2025 ([arXiv:2509.10536](https://arxiv.org/abs/2509.10536)) §2 (cycle-averaged holonomy as κ).
+
 ---
 
 ## Mycelial substrate (new section)

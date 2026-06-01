@@ -1,6 +1,8 @@
 in @prism
 in @mirror/store
 in @io
+in @time
+in @fragmentation/frame
 
 # Nix store as crystal backend.
 #
@@ -12,8 +14,29 @@ in @io
 # No flake.lock. No Cargo.lock. The lock IS the content address.
 #
 # This is the @mirror/store backend that activates when mirror is a nix provider.
+#
+# Substrate placement (Alex 2026-05-26, corrective):
+#
+#   "@fragmentation is pure. @mirror/store owns `io`."
+#
+# `@fragmentation` stays pure substrate — no IO; just typed crystal
+# carriers. `@mirror/store` is the IO boundary; `@mirror/store/nix`
+# is the concrete Nix adapter. The richer actions (pin, release,
+# gc_roots, tombstone_check, promote, demote, last_referenced_at)
+# previously declared at `@fragmentation/nix` live HERE — they touch
+# the underlying store, so they belong at the IO boundary per-backend.
+#
+# Spec: docs/specs/spectral-db-three-tier-architecture.md
+#       §"Substrate placement — @fragmentation pure; @mirror/store owns IO"
+# Tasks: #43, #48 (cold-tier adapter); #77, #78 (`@spectral/portal`)
 
 grammar @mirror/store/nix {
+  # ── core 3-op interface (LIVE) ──────────────────────────────────
+  #
+  # The swap point that switches mirror's storage from git to Nix.
+  # Wire-level; OIDs in, bytes out. Real @io bodies; the substrate
+  # boundary is here.
+
   # store a crystal: write to /nix/store, return the OID.
   # nix store add computes its own hash; we cross-check against the crystal's OID.
   store(crystal) -> oid { @io.exec("nix", ["store", "add"]) }
@@ -35,6 +58,84 @@ grammar @mirror/store/nix {
   # used when bootstrapping from a nix-built binary or when migrating
   # third-party artifacts into the crystal graph.
   adopt(path) -> oid { \ }
+
+  # ── cold-tier engine extensions ─────────────────────────────────
+  #
+  # The richer actions the cold-tier engine reads through this
+  # adapter. Previously declared at `@fragmentation/nix`; moved
+  # here per the IO-boundary discipline. Each one touches the
+  # underlying Nix store — pin/release manipulate GC roots,
+  # gc_roots enumerates them, last_referenced_at reads atime,
+  # tombstone_check / promote / demote thread through engine
+  # orchestration (their bodies park behind that landing).
+
+  # pin: install a GC root for a crystal so Nix won't collect it.
+  # The cold-tier engine pins one root per crystal with non-zero
+  # pheromone strength; release+nix-gc collects on demotion.
+  pin(oid) -> imperfect {
+    @io.exec("nix-store", ["--add-root", path(oid), "--indirect"])
+  }
+
+  # release: remove a GC root. The next nix-gc collects the
+  # crystal from the cold tier (after iceberg-tier capture, if
+  # retention policy demands).
+  release(oid) -> imperfect {
+    @io.exec("rm", [path(oid)])
+  }
+
+  # gc_roots: enumerate the engine's pinned GC roots.
+  # `nix-store --gc --print-roots` lists every indirect root the
+  # daemon knows about; the engine filters to its own roots by
+  # the path prefix it manages.
+  gc_roots() -> [oid] {
+    @io.exec("nix-store", ["--gc", "--print-roots"])
+  }
+
+  # tombstone_check: distinguish forgotten from unknown.
+  # When fetch(oid) returns dark, the engine queries the
+  # tombstone-index: was this OID deleted (tombstone present),
+  # or was it never here (unknown)? The Merkle architecture
+  # demands these be distinguishable. Body parks behind the
+  # tombstone-index landing (separate task).
+  tombstone_check(oid) -> option(tombstone) { \ }
+
+  # promote: cold -> warm (engine surface).
+  # The engine's promotion call: read the frame from the cold
+  # tier, project to vector, hand off to the warm-tier adapter.
+  # Body is the engine's responsibility; the adapter just
+  # exposes the surface.
+  promote(oid) -> imperfect(frame) { \ }
+
+  # demote: warm -> cold (engine surface).
+  # Take a frame whose warm-tier vector is aging out, write it
+  # back to the cold tier with its updated pheromone metadata,
+  # drop the warm-tier row.
+  demote(crystal) -> imperfect { \ }
+
+  # last_referenced_at: read the cold-tier access timestamp.
+  # Nix tracks atime on store entries; the engine reads it for
+  # the evaporation curve. `@time.instant` per the substrate's
+  # own time discipline (boot/std/time.mirror).
+  last_referenced_at(oid) -> imperfect(instant) {
+    @io.exec("stat", ["-f", "%a", path(oid)])
+  }
+
+  recover |result, loss| {
+    # cold-tier reads are immutable; partial loss means the closure
+    # was incomplete (a referenced crystal is missing). Log the
+    # drift; let the engine decide whether to escalate or proceed
+    # with the partial closure.
+    log_drift(loss)
+    result
+  }
+
+  rescue |error| {
+    # the cold tier is unreachable (Nix daemon down; store path
+    # corrupted; permission denied). The engine handles fallback
+    # to iceberg tier or surfaces the error to the operator. The
+    # adapter just signals dark.
+    dark
+  }
 }
 
 out store
@@ -42,3 +143,11 @@ out fetch
 out exists
 out path
 out adopt
+out pin
+out release
+out gc_roots
+out tombstone_check
+out promote
+out demote
+out last_referenced_at
+out @mirror/store/nix

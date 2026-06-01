@@ -1,0 +1,79 @@
+in @prism
+in @kintsugi
+
+# @kintsugi/fracture — the glass for syntax-drift correction rules.
+#
+# A fracture is a closure operator on the AST lattice. Per the
+# 2026-05-26 design call (Alex + Reed), the FP collapse: detection
+# and transformation are the same operation viewed differently.
+# Closure operators satisfy idempotence (f(f(x)) == f(x)); their
+# fixed points are the "closed elements" (canonical forms); for any
+# input, f(x) returns the closest canonical form. Well-studied in
+# order theory (Birkhoff, Lattice Theory, 1940). Cleanly translatable
+# to mirror because the AST is content-addressed and Ricci-flow-
+# rewritable in place.
+#
+# Detection IS transformation:
+#   detect(f, x) = (f(x) == x)
+#   fill(f, x)   = f(x)
+# Measurement IS asking whether transformation is a no-op. One
+# function, two laws. No detect/fill split; the fracture function
+# determines its own altitude.
+#
+# A fracture is also a settled Prism. The five Prism operations are
+# already enough — refract IS the fracture's flow; the refraction
+# target is canonical-by-definition. @kintsugi/fracture is not a new
+# substrate primitive; it is a NAMED USAGE PATTERN of the existing
+# Prism trait.
+#
+# Cross-altitude correspondence (Kintsugi-as-Ricci-flow):
+#   1. Geometric    — Bunda et al. 2024: DNN dynamics ARE Ricci flow
+#   2. Architectural — GRAM + @fate: multi-trajectory backtracking
+#   3. Substrate    — @kintsugi/migrate: grammar version migration
+#   4. Syntax       — @kintsugi/fracture: source-level drift correction
+# Four altitudes, one shape.
+#
+# Prior art (load-bearing, see docs/insights/2026-05-26-kintsugi-as-
+# credo-and-formatter-unified.md): Elixir Credo + mix format plugin
+# ecosystems. What mirror takes: plugin-extensibility + per-project
+# config + accumulation pattern. What mirror rejects: two-tool split
+# + warning-only mode + out-of-band style guide. Mirror's twist: the
+# FP collapse — one function with laws, not separate check/format
+# modules.
+
+grammar @kintsugi/fracture {
+  # A fracture IS a function on the AST. The two laws below are what
+  # make it a closure operator. Each @kintsugi/fracture/<name>
+  # instance declares one such function plus the two `requires`
+  # clauses that bind it.
+  type fracture = ast -> ast
+
+  # Law 1 (idempotence). fill(fill(x)) == fill(x). Running the
+  # fracture twice produces the same result as running it once.
+  # Substrate verifies via OID equality: crystallize(f(f(x))) ==
+  # crystallize(f(x)). Defined inline at this altitude until a
+  # general @epistemologic/property/idempotent lands; the property's
+  # shape is the one consumers (e.g. @kintsugi/fracture/generic-
+  # brackets) bind via `requires`.
+  property idempotent(f: fracture) -> verdict { \ }
+
+  # Law 2 (canonical-at-fixpoint). f(x) == x iff x is canonical.
+  # The fixed points of f are exactly the canonical forms. Detection
+  # is derived from this: detect(f, x) = (f(x) == x). No separate
+  # detect operation; the fracture function determines its own
+  # altitude. Defined inline as with `idempotent` until a general
+  # property lands at @epistemologic.
+  property canonical_at_fixpoint(f: fracture) -> verdict { \ }
+
+  # Apply a fracture to a corpus to fixpoint. Iterates each ast
+  # under f until f(x) == x for every element. Individual fractures
+  # compose naturally because closure operators on a complete lattice
+  # compose into a closure operator. The body is a Fate-resolved
+  # hole — the downstream evaluator walks the corpus and reduces.
+  apply(f: fracture, corpus: [ast]) -> [ast] { \ }
+}
+
+out fracture
+out idempotent
+out canonical_at_fixpoint
+out apply

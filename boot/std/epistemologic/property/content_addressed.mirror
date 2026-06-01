@@ -1,0 +1,52 @@
+in @prism
+
+# @epistemologic/property/content_addressed
+#
+# A type is content-addressed iff its identity IS its content hash.
+# Not metadata. Not an attribute. Not derived. Identity equals hash.
+#
+# Per docs/insights/2026-05-25-parametric-types-and-fp-heritage.md
+# section 6 (second extension): content-addressing as a typing
+# primitive. Haskell's Data.Hashable produces hashes; the type system
+# does not depend on them. Nix derivations content-address but don't
+# expose this at the type layer. Mirror's crystal(oid) makes the
+# content hash the TYPING witness — the OID names what the value IS,
+# and the type system relies on that naming.
+#
+# This property is foundational. Other properties (autopoietic,
+# monad_laws, is_prism_record) rely on it: associativity comes from
+# hash composition, fixed points come from hash-space contractions,
+# the Prism-record shape gets type-checked by hashing the field
+# tuple.
+#
+# A type that fails content_addressed cannot satisfy the other four.
+# This is the substrate-level property the whole algebra rests on.
+
+grammar @epistemologic/property/content_addressed {
+
+  # The type has an OID. Every declaration in mirror produces an OID;
+  # this is the trivial half of the property.
+  has_oid(type) -> verdict { \ }
+
+  # The OID determines the identity. Two values that produce the same
+  # OID are the same value; two values with different OIDs are
+  # different. No external naming, no surrogate keys, no nominal
+  # equality outside content equality.
+  oid_determines_identity(type) -> verdict { \ }
+
+  # The OID is stable under render-round-trip. Render the type's
+  # declaration to bytes; re-tokenize; the OID is identical. This is
+  # the kintsugi convergence property at the type layer — type IDs
+  # don't drift across compile cycles.
+  oid_round_trips(type) -> verdict { \ }
+
+  # The combined property: the type is content-addressed.
+  # Pass iff has_oid and oid_determines_identity and oid_round_trips.
+  content_addressed(type) -> verdict { \ }
+}
+
+out has_oid
+out oid_determines_identity
+out oid_round_trips
+out content_addressed
+out @epistemologic/property/content_addressed

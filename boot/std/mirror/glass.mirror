@@ -1,0 +1,39 @@
+in @prism
+
+# @mirror/glass — the substrate-altitude primitive.
+#
+# A glass is the abstract type-pattern of a parseable surface in
+# mirror. The keyword `grammar` has been the bootstrap surface for
+# this notion since v0; the substrate-altitude truth surfaced in the
+# 2026-05-26 conversation (Alex + Reed) is that everything declared
+# as `grammar @X { ... }` was already a glass — a transparent,
+# refractive surface through which source bytes settle into AST.
+#
+# See docs/insights/2026-05-26-fixed-and-the-spectral-feedback-
+# fracture.md for the substrate-altitude decisions. The rename
+# `grammar => glass` runs via @kintsugi/fracture/grammar-to-glass
+# in a follow-up tick (Stage 2 of #94). For Stage 1, the substrate
+# stays bootstrap-parseable: `grammar` is the surface keyword; the
+# meaning is glass.
+#
+# This file declares the glass-type pattern itself — the abstract
+# shape every parseable surface in mirror inhabits. Concrete glasses
+# (@mirror/glass/ast, @mirror/match, @mirror/nl, @code/rust, ...)
+# instantiate the pattern; the substrate is what gives them all the
+# same algebra.
+#
+# The two file-level predicates `is_mirror(g)` and `namespace(g)`
+# that live in the legacy @mirror/grammar are NOT redeclared here —
+# they are operations on a glass, not part of the glass-type itself,
+# and land at @mirror/glass/ast.
+
+grammar @mirror/glass {
+  # A glass: the abstract type of a parseable surface. Today this is
+  # equivalent to the `grammar` keyword's denotation; the alias names
+  # the substrate-altitude truth so downstream substrates can speak
+  # in the language the corpus has been writing in all along.
+  type glass
+}
+
+out glass
+out @mirror/glass

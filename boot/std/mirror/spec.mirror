@@ -1,0 +1,35 @@
+in @prism
+in @meta
+
+# @mirror/spec — the glass for .spec files.
+#
+# Placeholder declaration (peer-glass tick 4, 2026-05-25).
+#
+# Today: a `spec` is structurally a `mirror` AST. `@mirror/grammar`
+# already registers the "spec" extension on the meta-glass
+# (boot/std/mirror/grammar.mirror:3 — `grammar @mirror/grammar("mirror",
+# "spec", "meta", "glass")`), so a .spec file parses through the
+# same surface as a .mirror file. The alias below makes that
+# typed: `peer.eigenboard: spec` type-checks because `spec` IS a
+# mirror AST sourced from a .spec file.
+#
+# Future work (Task #65 / Alex 2026-05-25 substrate decision):
+#   "the spec specifies which peers own what. We can even declare
+#    file boundaries. ACL. This IS the ACL layer."
+#
+# The full grammar — peers sub-grammar, ACL layer, file-boundary
+# declarations — lands in a separate task. Do NOT design the peers
+# sub-grammar or ACL semantics from this placeholder. When the full
+# substrate arrives, replace the alias with a structured record
+# (likely `{ owners: [peer], boundaries: [file_acl], content: mirror }`
+# or similar) and migrate call sites.
+
+grammar @mirror/spec {
+  # alias: a spec is a mirror AST, parsed from a .spec file via the
+  # meta-glass. structural placeholder; replace with the ACL-bearing
+  # record when the full grammar lands.
+  type spec = mirror
+}
+
+out spec
+out @mirror/spec

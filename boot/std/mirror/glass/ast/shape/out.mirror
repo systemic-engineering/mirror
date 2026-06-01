@@ -1,0 +1,62 @@
+in @prism
+
+in @mirror/glass/ast/shape
+in @mirror/glass/ast/token
+
+# @mirror/glass/ast/shape/out — the `out` shape variant: an export
+# boundary declaration.
+#
+# Per the per-variant file pattern declared in @mirror/glass/ast/
+# shape: variants of `shape` may land in their own sub-file when
+# they want to declare structure of their own. `out` does — it
+# carries the @-ref or short-name it exports.
+#
+# `type out = reference`
+#
+# Reads: the `out` shape variant IS a `reference` (the @-path or
+# name it exports). The variant carries no other data: the only
+# thing an export boundary needs is the ref it exposes. The
+# substrate already knows `reference` from @mirror/glass/ast/token
+# (`seq(literal("@"), name)`); every property already proven about
+# `reference` transfers to `out` by alias.
+#
+# Legacy correspondence (from @mirror/grammar):
+#
+#   fixed out_form = seq(literal("out"), whitespace, reference)
+#
+# The legacy form sequenced the literal keyword + the reference;
+# at substrate altitude, the keyword IS the variant name and the
+# variant data IS the reference. Same compounding pattern as `in`:
+# define the variant once at the substrate; the keyword surface
+# falls out.
+#
+# Note on `out <name>` vs `out @<ref>`:
+#
+#   - Both surfaces appear in the corpus: `out reflect` (short name)
+#     and `out @cogito` (full ref) both land valid at the bootstrap
+#     altitude. The substrate-altitude truth is one type: a
+#     reference. A short name resolves to the file's own namespace;
+#     the @-prefixed form is absolute. The substrate doesn't need
+#     to distinguish them at the shape-variant altitude —
+#     resolution lives one altitude above (@mirror/glass/ast at
+#     the file-level).
+#
+# Distinction from `in`:
+#
+#   - `in`  : import boundary — "this glass depends on @<ref>"
+#   - `out` : export boundary — "this glass exposes @<ref>"
+#
+# Same shape; opposite polarity. Both alias `reference` at this
+# altitude; the polarity is encoded in the variant name itself.
+
+grammar @mirror/glass/ast/shape/out {
+  # The substrate's declaration that the `out` shape variant aliases
+  # the `reference` lexical primitive. No record body needed —
+  # the variant data IS a `reference`. Every downstream substrate
+  # that mentions `out @<ref>` or `out <name>` resolves through
+  # this line to a reference at the @mirror/glass/ast/token altitude.
+  type out = reference
+}
+
+out out
+out @mirror/glass/ast/shape/out

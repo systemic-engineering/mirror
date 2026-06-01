@@ -1,0 +1,185 @@
+in @prism
+
+in @epistemologic/silicon/arch/arm64
+in @epistemologic/silicon/arch/x86_64
+in @epistemologic/silicon/memory
+in @epistemologic/silicon/flake_ref
+in @epistemologic/silicon/compute_bound
+in @epistemologic/property
+in @epistemologic/property/content_addressed
+in @epistemologic/property/autopoietic
+in @epistemologic/property/is_prism_record
+in @epistemologic/property/frame_relativity
+
+# @mirror/shard
+#
+# The observer-relative deployment description. A shard names what
+# the observer CAN SEE from inside the system they are running:
+# which silicon, which memory model, which flakes are reachable,
+# which compute budget is rationed, and which parent shard (if any)
+# this one nests inside. The shard is to mirror what flake.nix is
+# to nix — the manifest that closes the world — with one structural
+# difference: it is RELATIVISTIC. `self()` evaluated on bare metal
+# returns the host's shard; the same expression evaluated inside a
+# gen_prism returns the parent shard restricted to the spawn-time
+# budget. Same source AST + different shards = different Au binaries.
+#
+# Per docs/specs/shard-design.md: five fields, one per Prism
+# operation. Per docs/insights/2026-05-25-shard-as-observer-relative-
+# lambda-zero.md: the shard IS λ₀ — the autopoietic closure of the
+# deployment description; `parent: option(zoom(oid, shard))` is the
+# Lawvere fixed-point witness; the chain terminates at bare metal
+# (`parent: none`). Per docs/insights/2026-05-25-pipe-hole-and-au-
+# binary.md: the shard IS Fate's tournament input — `binary = a |\>
+# b` reads `@mirror/shard.self()` and picks the locally-optimal
+# instruction subset, memory pattern, GPU backend. Per docs/insights/
+# 2026-05-25-time-as-substrate-and-postgres-heritage.md: the parent
+# chain IS the frame-conversion path; comparing two wall durations
+# across shards walks to the nearest common ancestor.
+#
+# Substrate decisions (Alex 2026-05-25, prior tick):
+#
+#   Q1: spec coexists with shard. @mirror/spec describes what to
+#       build; @mirror/shard describes where to run. The placeholder
+#       at boot/std/mirror/spec.mirror is left alone.
+#   Q2: Inheritance is INTERSECTION, LATERAL, ALWAYS. Children
+#       narrow parents; siblings compose by intersection. No override.
+#       The lattice property is non-negotiable.
+#   Q3: self() re-resolves via the fragmentation cache. Same input
+#       fingerprint -> same key -> cache hit. Hot-reload on hardware
+#       change is structural.
+#
+# The four property declarations at the bottom are the math made
+# load-bearing: content-addressed (identity = hash), autopoietic
+# (the parent chain closes via Lawvere fixed point), is_prism_record
+# (five fields, one per operation; drop one and the algebra rejects
+# the record), frame_relativity (timestamps across shards require
+# explicit conversion through the parent chain).
+#
+# Spec: docs/specs/shard-design.md
+# Insights: docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md,
+#           docs/insights/2026-05-25-pipe-hole-and-au-binary.md,
+#           docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md
+
+grammar @mirror/shard {
+
+  # The shard record. Five fields. One per Prism operation. The
+  # algebra closes at five; drop one and is_prism_record rejects
+  # the type.
+  #
+  #   silicon  -> focus    : the manifold's hardware basis. The
+  #                          arch carrier the observer is running on.
+  #                          Sum over @epistemologic/silicon/arch/*
+  #                          because no abstract `silicon` root
+  #                          carrier has been declared yet (parked
+  #                          design call from Mara's α work); the
+  #                          sum directly addresses what exists.
+  #   memory   -> project  : the available state space. Memory model
+  #                          + budget + page size + cache hierarchy,
+  #                          per @epistemologic/silicon/memory.
+  #   flakes   -> split    : the composed nix flake stack. A list of
+  #                          flake_refs, each locked to a rev so the
+  #                          set is content-addressed-by-source.
+  #   compute  -> zoom     : the budget envelope. All five bounds
+  #                          (cores, host memory, GPU memory, wall
+  #                          time, reductions) per @epistemologic/
+  #                          silicon/compute_bound.
+  #   parent   -> refract  : λ₀ fixed-point witness. option(zoom(oid,
+  #                          shard)) — the OID of the enclosing
+  #                          shard, or none at bare metal. The chain
+  #                          IS the frame-conversion path; the
+  #                          terminator IS λ₀.
+  type shard = {
+    silicon: arm64 | x86_64,
+    memory:  memory,
+    flakes:  [flake_ref],
+    compute: compute_bound,
+    parent:  option(zoom(oid, shard)),
+  }
+
+  # ── self: the observer-relative constructor ─────────────────────
+  #
+  # The relativistic constructor. Resolves against the running
+  # observer's context. On bare metal: reads each silicon carrier's
+  # detect() and the compute_bound.detect_max(), fills `flakes` from
+  # `nix profile list`, sets `parent: none`. Inside a gen_prism:
+  # reads the parent shard and applies the spawn-time restriction
+  # overlay (intersection per Q2).
+  #
+  # Body is a Fate-resolved hole. Per Q3: re-resolution rides the
+  # fragmentation cache; same input fingerprint -> same OID -> cache
+  # hit. The observer IS the missing argument; Fate reads the runtime
+  # context as the tournament input and produces the typed shard.
+  self() -> shard { \ }
+
+  # ── to_flake: shard -> content-addressed flake_ref ──────────────
+  #
+  # The load-bearing morphism. Compiles a shard into a flake
+  # reference whose locked rev IS the content-address of the
+  # produced derivation. Return is zoom(oid, flake_ref): a flake_ref
+  # annotated with the OID that names this exact (shard, derivation)
+  # pair. The OID cross-checks against @fragmentation.oid(s) per the
+  # design doc §5 pipeline.
+  #
+  # Body is a Fate-resolved hole — the pipe-hole-and-au-binary.md
+  # pattern. The tournament reads the shard, picks the instruction
+  # subset, memory pattern, GPU backend, parallelism strategy that
+  # maximize conductivity against the shard, and emits the flake
+  # derivation. Same source AST + different shards = different Au
+  # binaries, same verification chain.
+  to_flake(s: shard) -> zoom(oid, flake_ref) { \ }
+
+  # ── admits: structural bounds check ─────────────────────────────
+  #
+  # Does this shard admit the requested compute? The boundary
+  # rejection per design §6: when a gen_prism asks to spawn, the
+  # caller runs admits(host_shard, request); a fail diagnostic
+  # names the violated bound ("child requests 32 GB; host budget is
+  # 16 GB" / "child requires AVX-512; host silicon is arm64"). The
+  # peer never starts running with infeasible resources.
+  #
+  # Returns imperfect so the failure path carries diagnostics
+  # through the standard recovery surface — same shape as @io.read
+  # and @time.convert. Body is a Fate-resolved hole; the tournament
+  # picks the per-field comparison strategy against the carrier
+  # types (intersection per Q2: every requested bound must fit
+  # inside the corresponding shard bound; missing request fields
+  # inherit the shard's value).
+  admits(s: shard, request: compute_bound) -> imperfect { \ }
+
+  # ── properties: the math made load-bearing ──────────────────────
+  #
+  # The four substrate-level claims the shard makes structurally:
+  #
+  #   content_addressed : identity IS the content hash. The shard's
+  #                       OID determines its identity; two shards with
+  #                       the same five-field content produce the same
+  #                       OID. Foundational — the other three rest on
+  #                       this one.
+  #   autopoietic       : the parent chain closes via a Lawvere fixed
+  #                       point. `parent: option(zoom(oid, shard))` is
+  #                       a content-addressed self-reference; Banach
+  #                       contraction on hash space guarantees the
+  #                       fixed point exists and is unique. The chain
+  #                       terminates at bare metal (parent: none) — λ₀.
+  #   is_prism_record   : five fields, one per Prism operation. Drop
+  #                       one and the type rejects. The contract is
+  #                       declared here; structural enforcement lands
+  #                       when the verifier wires up (parked Q from
+  #                       the parametric-types tick).
+  #   frame_relativity  : timestamps across shards are observer-
+  #                       relative; cross-shard compare requires
+  #                       @time.convert resolving through the parent
+  #                       chain. Per PG §2.1 (timestamptz over
+  #                       timestamp) at the substrate altitude.
+  requires content_addressed(shard)
+  requires autopoietic(shard)
+  requires is_prism_record(shard)
+  requires frame_relativity(shard)
+}
+
+out shard
+out self
+out to_flake
+out admits
+out @mirror/shard

@@ -1,0 +1,61 @@
+in @prism
+
+in @mirror/glass/ast
+
+# @mirror/glass/ast/shape — the canonical type for top-level
+# declarations inside a glass block.
+#
+# Substrate-altitude decisions resolved 2026-05-26 (Alex + Reed):
+#
+#   - `shape` replaces `form` as the type name for the canonical
+#     top-level declaration variants. `form` was overloaded:
+#     sometimes a noun ("the IO form"), sometimes a choice combinator
+#     ("refract form = choice(...)"). The split dissolves: the noun
+#     is `shape`; the choice combinator is gone (the type structure
+#     IS the choice).
+#
+# Variant rationale:
+#
+#   - `glass` (replaces `grammar`): the substrate primitive itself —
+#     `grammar @<name>(<tags>) { <body> }` at file root.
+#   - `type`: a `type <name>(...)` declaration body.
+#   - `lambda` (replaces `action`): the binding form for an action /
+#     function-like surface. `action` was OOP-ish drift; `lambda` is
+#     FP-canonical (we already write `λsh` for the shell lambda).
+#     `io` is an attribute on `lambda`, not a separate variant.
+#   - `property`: a `property <name>(...)` declaration (the verdict-
+#     returning checks at @epistemologic/property altitude).
+#   - `fixed` (new): the new module-top binding keyword. Per Alex
+#     2026-05-26: "`fixed`. Like `const`. But math. And a `fixed`
+#     value cannot include any holes. No inference. It needs to be
+#     a fully settled crystal. Becomes content addressed." The
+#     binding IS the crystal IS the OID. Distinct from `beam` (body-
+#     altitude, dynamic, may carry Beam<T> metadata).
+#   - `in`: import boundary declaration (`in @<ref>`).
+#   - `out`: export boundary declaration (`out @<ref>`).
+#
+# Dropped from the legacy variant list:
+#
+#   - `match_form` / `select_form`: per spec design call #87, these
+#     are body-altitude (expression position), not shape-altitude.
+#     They appear INSIDE a lambda body, not at the top of a glass.
+#   - `refract_form`: drift per the 8-category audit (Cat 7);
+#     migrates to `fixed` via @kintsugi/fracture/refract-to-fixed
+#     (#96). The legacy `refract <name> = <combinator>` lines in
+#     grammar.mirror and nl.mirror lift to `fixed` in that tick.
+#   - `op_decl`: `op` is not a keyword in mirror (Mara's notation
+#     in the legacy file; corrected per the 2026-05-26 audit). The
+#     five operations are recognized at lex time via the keyword
+#     table; they don't need a separate shape variant.
+#
+# Future structure for each variant (when its body becomes
+# substantial) lands under @mirror/glass/ast/shape/<variant>.
+
+grammar @mirror/glass/ast/shape {
+  # The seven canonical top-level declaration variants. No leading
+  # `|`; no Java-style redundant naming; each variant IS the keyword.
+  type shape = glass | type | lambda | property | fixed | in | out
+}
+
+out shape
+out @mirror/glass/ast/shape

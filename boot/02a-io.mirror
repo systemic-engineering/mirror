@@ -2,6 +2,7 @@ in @prism
 in @meta
 in @actor
 in @sigil
+in @file
 
 type mut(block) != iso
 type effect = mut(block)
@@ -12,9 +13,20 @@ type content(block)
 type channel(actor, actor)
 
 grammar @io < @sigil {
-  type file(path) = @sigil("f")
-  type dir(path)  = @sigil("d")
-  type uri(path)  = @sigil("u")
+  # Sigil naming follows AGENTS.md § Sigil Naming: no single-character
+  # sigils. The prefix IS the canonical name of the typed literal.
+  type file(path) = @sigil("file")
+  type dir(path)  = @sigil("dir")
+  type uri(path)  = @sigil("uri")
+
+  # ~file"<path>": validator asserts the path exists. Failure halts
+  # the compile with a precise error.
+  template render(s: file) -> path { @file.exists(s.block) }
+
+  # ~dir"<path>": validator asserts the path exists AND is a directory.
+  # Same failure mode as ~file. The directory check is one extra hop
+  # past @file.exists; both ride the same kintsugi ladder.
+  template render(s: dir) -> path { @file.exists(s.block) |> @file.is_dir }
 
   io read(path) => imperfect
   io write(path, content) => imperfect

@@ -1,0 +1,104 @@
+in @prism
+
+in @io
+in @io/bytes
+
+# @io/socket
+#
+# Connection-oriented socket primitives over @io/bytes. Refines the
+# lower @io.socket type (a bare `socket(ref)` per boot/std/io.mirror)
+# into two opaque handle types — `connection` (a duplex stream) and
+# `listener` (an accept queue) — plus byte-oriented read/write/close
+# actions. The shared abstraction @io/network builds on top of for
+# the Berkeley-style connect/bind/accept surface.
+#
+# Per docs/insights/2026-05-26-portal-as-io-socket-over-content-
+# addressed-subspace.md §"The composition" item 1: @io.socket is the
+# raw transport underneath every portal. This grammar makes the
+# duplex-stream shape explicit so portal.open / portal.tick / portal
+# .close can reason in terms of (connection, bytes-in, bytes-out)
+# rather than the lower (socket, syscall_id) primitive.
+#
+# Lives under @io by construction so glass_wall (#79) validates
+# trivially. Permanent @io resident per insight 2026-05-26 glass-
+# wall §"What stays in @io permanently": blocking syscall behaviour
+# (read on an empty connection blocks; accept on an idle listener
+# blocks until the kernel schedules a connect) is exactly the
+# irreducible non-mirror surface cross_wall (#80) cannot pull.
+#
+# Bootstrap-side dispatch (when @mirror/serve lands):
+#
+#   connection  → std::net::TcpStream (initially; later: enum over
+#                 TcpStream | UnixStream | wss::WebSocketStream once
+#                 the transport-multiplex layer lands)
+#   listener    → std::net::TcpListener (same later enum shape)
+#   read_bytes  → TcpStream::read_exact
+#   write_bytes → TcpStream::write_all
+#   close       → Drop
+#   close_listener → Drop
+#
+# All four primitives stay under ~30 lines wrapping std::net. No new
+# crate dependency in this commit — std::net is in the standard
+# library; the dispatch lands with @mirror/serve.
+#
+# Sibling grammars under @io: @io/bytes (the carrier), @io/network
+# (the Berkeley-primitive layer that PRODUCES connection / listener),
+# @io/crypto (TLS will eventually plug in here when secure-transport
+# lands).
+
+grammar @io/socket {
+
+  # ── connection: a duplex byte stream ────────────────────────────
+  #
+  # Opaque handle. The runtime owns the underlying file descriptor /
+  # socket object; the grammar only sees the handle. Two ends —
+  # bytes flow in via read_bytes, out via write_bytes; close
+  # terminates both directions atomically.
+  type connection
+
+  # ── listener: an accept queue ────────────────────────────────────
+  #
+  # Opaque handle. The runtime owns the listening socket; the grammar
+  # only sees the handle. accept (in @io/network) consumes one
+  # incoming connect attempt and produces a `connection`.
+  type listener
+
+  # ── read_bytes: read exactly n bytes from a connection ───────────
+  #
+  # Block until n bytes are available or the connection closes.
+  # Returns imperfect because the connection may close with fewer
+  # than n bytes remaining (Failure with EOF diagnostic), the
+  # underlying syscall may error (Failure with errno diagnostic),
+  # or the handle may already be closed.
+  read_bytes(c: connection, n: u64) -> imperfect(bytes) { \ }
+
+  # ── write_bytes: write all of b to a connection ──────────────────
+  #
+  # Block until length(b) bytes have been written or the connection
+  # closes. Returns imperfect for short writes (Failure with EPIPE
+  # or similar), kernel errors, or already-closed handles.
+  write_bytes(c: connection, b: bytes) -> imperfect { \ }
+
+  # ── close: terminate a connection ───────────────────────────────
+  #
+  # Shut down both directions and release the underlying file
+  # descriptor. Idempotent at the substrate (double-close returns
+  # Success); returns imperfect because the kernel may surface a
+  # late error (e.g., outstanding write buffered, peer reset).
+  close(c: connection) -> imperfect { \ }
+
+  # ── close_listener: stop accepting ──────────────────────────────
+  #
+  # Stop accepting new connections and release the listening socket.
+  # In-flight connections previously produced by accept are
+  # unaffected. Idempotent at the substrate.
+  close_listener(l: listener) -> imperfect { \ }
+}
+
+out connection
+out listener
+out read_bytes
+out write_bytes
+out close
+out close_listener
+out @io/socket

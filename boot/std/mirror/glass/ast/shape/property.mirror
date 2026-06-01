@@ -1,0 +1,69 @@
+in @prism
+
+in @mirror/glass/ast
+in @mirror/glass/ast/shape
+in @mirror/glass/ast/token
+in @epistemologic/property
+
+# @mirror/glass/ast/shape/property — the `property` shape variant:
+# a verdict-returning declaration that establishes a model-checked
+# check on AST values.
+#
+# Per the per-variant file pattern declared in @mirror/glass/ast/
+# shape: variants of `shape` may land in their own sub-file when
+# they want to declare structure of their own. `property` does —
+# it carries a name, optional args, and a body, with the disciplined
+# constraint that the return type is always `verdict`.
+#
+# Substrate-altitude reading: a `property` is a function-shaped
+# declaration whose return type is FIXED to `verdict` by
+# construction. Compare with `lambda`, which carries a free
+# `return` field; a `property` doesn't — that's what makes it a
+# property and not a generic lambda.
+#
+# Legacy correspondence (corpus examples):
+#
+#   property autopoietic() -> verdict { ... }
+#   property exhaustive(match_expr) -> verdict { ... }
+#   property halts() -> verdict { ... }
+#
+# The `-> verdict` is redundant at the substrate altitude — every
+# property returns a verdict by definition. The legacy form keeps
+# the arrow for surface symmetry with `lambda`; at the substrate-
+# altitude declaration, the return is structurally guaranteed.
+#
+# Verdict source:
+#
+#   verdict := pass | fail(diagnostic) | partial(f64, [diagnostic])
+#
+# Declared in @epistemologic/property; imported here so the field
+# type resolves.
+#
+# Distinction from `lambda`:
+#
+#   - `lambda`   : free return type; may be impure (`io` flag); the
+#                  general function-shaped declaration.
+#   - `property` : return is fixed to `verdict`; pure by construction
+#                  (no `io` flag); the model-checked dual of `lambda`.
+#
+# Both share name + args + body structure; the difference is the
+# return-type discipline and the IO posture. Properties live in
+# the verification altitude (@epistemologic/property/*); lambdas
+# live in the implementation altitude.
+
+grammar @mirror/glass/ast/shape/property {
+  # The `property` shape variant: name + args + body. The return
+  # type is structurally fixed to `verdict` and therefore does not
+  # appear as a field — it's a property OF the variant, not OF an
+  # instance. Args follow the lambda convention: name + type-name
+  # identifier pairs. Body is a brace_block (opaque-to-substrate at
+  # this altitude; downstream lifts).
+  type property {
+    name: identifier,
+    args: [(identifier, identifier)],
+    body: brace_block,
+  }
+}
+
+out property
+out @mirror/glass/ast/shape/property

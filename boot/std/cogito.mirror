@@ -16,8 +16,7 @@ in @beam
 # the `eigenboard` type referenced by `perturb` resolves through
 # @epistemologic/math/bundle: an eigenboard IS a section of a principal
 # G-bundle on the five-operation graph. see docs/specs/eigenboard-representation.md
-# for the full lift; the concrete `type eigenboard` declaration is a
-# follow-up tick (probably at boot/std/cogito/eigenboard.mirror).
+# for the full lift (candidate D, recommended).
 #
 # Reflection's correctness IS an autopoietic claim: the observe ->
 # strategy -> perturb tick has a Lawvere fixed point. Per Soto-Andrade
@@ -26,6 +25,33 @@ in @beam
 # delegates to @epistemologic/math/lawvere.is_autopoietic; the verifier
 # is one decidable check. See docs/specs/lawvere-grammar.md and
 # docs/specs/kintsugi-formatter.md.
+
+# the eigenboard: the agent's current spectral state. one snapshot of
+# the principal G-bundle tower at this tick. one field per level of
+# @epistemologic/math/bundle. each carrier comes from the bundle
+# grammar; nothing new is invented here.
+#
+#   level 0 fiber       -> state    (focus    / Abyss)
+#   level 1 connection  -> optic    (project  / Introject)
+#   level 2 gauge       -> group    (split    / Cartographer)
+#   level 3 transport   -> holonomy (zoom     / Explorer)
+#   level 4 closure     -> fixed    (refract  / Fate)
+#
+# this is the minimal shape that lets @cogito.perturb type-check and
+# matches docs/specs/eigenboard-representation.md candidate D at its
+# stripped core. extension points left open for follow-up ticks:
+#   - the per-base-node section ([(operation, state)]) once an
+#     `operation` enum lands in @prism;
+#   - the per-edge connection forms once an `edge` type lands;
+#   - the emotional sub-bundle (cogito-eigenstate slots 13-16);
+#   - the routing_bias projection onto the gauge slice.
+type eigenboard {
+  state:    state,         # the section value at the current base point
+  optic:    optic,         # the connection 1-form active this tick
+  group:    group,         # the gauge element in force
+  holonomy: holonomy,      # residual loss carried by transport this tick
+  closure:  fixed,         # the Lawvere fixed-point witness for the section
+}
 
 grammar @cogito {
   observe(imperfect) -> observation { @beam.emit }
@@ -47,6 +73,7 @@ grammar @cogito {
   }
 }
 
+out eigenboard
 out observe
 out strategy
 out perturb

@@ -1,17 +1,21 @@
 //! mirror — the native binary, Rust port.
 //!
-//! Bit-exact CoincidenceHash<3> + content_oid compatibility with the C
+//! Bit-exact CoincidenceHash<3> + content-OID compatibility with the C
 //! original at native/mirror.c. The body-capture fix for LLVM IR keyword
 //! forms (target datalayout = "...", source_filename = "...") is shared.
+//! Content OIDs are computed by `spectral::compute_content_oid`, which
+//! dispatches the recursive AST walk through
+//! `prism_core::apply_h(&ContentOidPrism, ast)` per
+//! `docs/specs/bootstrap-retirement-plan.md` Tick 1.
 
 mod ast;
-mod content;
+mod crystallize;
 mod exec;
 mod git;
 mod grammar;
 mod hash;
 mod pipeline;
-mod render;
+mod spectral;
 mod tokenize;
 
 use std::fs;
@@ -19,13 +23,18 @@ use std::io::{self, Read, Write};
 use std::path::PathBuf;
 use std::process::Command;
 
+use prism_core::{Optic, Ref};
+use terni::Imperfect;
+
 use crate::ast::{line_col_at, AstKind, AstNode};
-use crate::content::content_oid;
+use crate::crystallize::{
+    floor_crystallizations, Blake3, Content, CrystallizeError, Crystallizations, Splinter, Text,
+};
 use crate::git::{git_crystal_exists, git_store_crystal};
 use crate::grammar::{grammar_for_file, load_grammar};
 use crate::hash::canonical_hash;
-use crate::pipeline::{execute_pipeline, is_mq_query, split_pipeline};
-use crate::render::render_ast;
+use crate::pipeline::{apply_rewrites, execute_pipeline, is_mq_query, parse_rewrite, split_pipeline};
+use crate::spectral::{compute_content_oid, render_ast};
 use crate::tokenize::tokenize;
 
 /// Walk an AST, collecting every `AstKind::Dark` node in source order.
@@ -195,7 +204,7 @@ fn cmd_compile(file: &str, no_cache: bool, strict: bool) -> i32 {
     }
 
     let ast = tokenize(&source, &grammar);
-    let oid = content_oid(&ast);
+    let oid = compute_content_oid(&ast);
     if !no_cache && !strict {
         let source_oid = canonical_hash(&source);
         git_store_crystal(&source_oid, &oid);
@@ -313,7 +322,7 @@ fn cmd_craft_with(
         }
         if !cached {
             let ast = tokenize(&source, &grammar);
-            oid = content_oid(&ast);
+            oid = compute_content_oid(&ast);
             if !no_cache && !strict {
                 let source_oid = canonical_hash(&source);
                 git_store_crystal(&source_oid, &oid);
@@ -485,7 +494,7 @@ fn dump_ast(node: &crate::ast::AstNode, depth: usize) {
     let tag_marker = if node.grammar_tag.is_empty() { String::new() } else { format!(" tag={}", node.grammar_tag) };
     eprintln!("{}{} name={:?}{}{}{} oid={}",
         indent, kind_str, node.name, kw_marker, tag_marker, body_marker,
-        crate::content::content_oid(node));
+        compute_content_oid(node));
     for c in &node.children {
         dump_ast(c, depth + 1);
     }
@@ -531,9 +540,43 @@ fn count_dark(ast: &AstNode) -> usize {
 /// Returns `true` iff the fixed-point check passed (the loop should
 /// terminate). The Banach contraction's Δ is vacuously 0 today because
 /// every stage is the identity, so this always returns `true` on tick 1.
-fn kintsugi_tick(tick: u64, prior_ast: &AstNode, current_ast: &AstNode) -> bool {
+fn kintsugi_tick(
+    crystallizations: &Crystallizations<Blake3>,
+    tick: u64,
+    prior_ast: &AstNode,
+    current_ast: &AstNode,
+) -> bool {
     // Stage 1 — propose. Fate's five models fan out and return au
-    // candidates. No-op scaffold: zero candidates.
+    // candidates. No-op scaffold: zero candidates. Before fanning out
+    // we dispatch one Ref through the crystallizations table to
+    // exercise the substrate-execution path end-to-end (per Seam C2,
+    // pre-merge adversarial review 2026-05-30). The floor is empty in
+    // Tick A, so this dispatch returns `Uncrystallized` and we report
+    // it visibly. Tick B will register `@kintsugi/tick` and the same
+    // call site will start receiving Success/Partial verdicts.
+    let tick_ref = Ref::new("@kintsugi/tick")
+        .expect("@kintsugi/tick is a valid Ref");
+    let seed_input: Optic<(), Splinter<Blake3>> =
+        Optic::ok((), Splinter::new(Content::Text(Text::new("tick"))));
+    let dispatch = crystallizations.crystallize(&tick_ref, seed_input);
+    match &dispatch {
+        Imperfect::Success(_) => {
+            eprintln!("  dispatch {}: Success", tick_ref.as_str());
+        }
+        Imperfect::Partial(_, _) => {
+            eprintln!("  dispatch {}: Partial (with Transparency)", tick_ref.as_str());
+        }
+        Imperfect::Failure(CrystallizeError::Uncrystallized(got), _) => {
+            eprintln!(
+                "  dispatch {}: Uncrystallized (floor has no body at {})",
+                tick_ref.as_str(),
+                got.as_str()
+            );
+        }
+        Imperfect::Failure(err, _) => {
+            eprintln!("  dispatch {}: Failure ({:?})", tick_ref.as_str(), err);
+        }
+    }
     let candidates: Vec<()> = Vec::new();
 
     // Stage 2 — measure. Cycle-averaged holonomy (Magnot 2025) of each
@@ -558,8 +601,8 @@ fn kintsugi_tick(tick: u64, prior_ast: &AstNode, current_ast: &AstNode) -> bool 
     // same section ⇔ the OIDs of prior and current ASTs agree. With no
     // candidate spliced in, prior == current by construction, so the
     // fixed point is reached vacuously on tick 1.
-    let prior_oid = content_oid(prior_ast);
-    let current_oid = content_oid(current_ast);
+    let prior_oid = compute_content_oid(prior_ast);
+    let current_oid = compute_content_oid(current_ast);
     let fixed_point = prior_oid == current_oid && verify_pass;
     let delta: f64 = if fixed_point { 0.0 } else { 1.0 };
 
@@ -576,23 +619,143 @@ fn kintsugi_tick(tick: u64, prior_ast: &AstNode, current_ast: &AstNode) -> bool 
     fixed_point
 }
 
-/// `mirror kintsugi [--shatter N] <file>`
+/// `mirror kintsugi [--shatter N] [--transform <mq>] [--out <path>] <file|dir>`
 ///
-/// `N == 0` (default): preserve historical behavior — tokenize, render
-/// canonically to stdout. No tick lines.
+/// `--shatter N`: see kintsugi-formatter.md. `N == 0` (default) preserves
+/// historical behaviour — tokenize, render canonically to stdout.
 ///
-/// `N >= 1`: enter the formatter loop. Each tick walks the five stages
-/// declared in `docs/specs/kintsugi-formatter.md`. Every stage body is
-/// no-op for this commit; the loop terminates on tick 1 because the
-/// Banach contraction's Δ is vacuously zero (nothing changes). The
-/// canonical render still goes to stdout after the loop.
-fn cmd_kintsugi(file: &str, shatter: u64) -> i32 {
+/// `--transform <mq-query>`: apply a rewrite mq-query (the `=>` operator)
+/// to each file before rendering. The rewrite is whole-word-bounded;
+/// English in @nl prose lifts through unchanged at the parser level
+/// once 4b.4 lands the meta-glass-aware walker. For 4b.3 the byte-level
+/// whole-word bound is what's implemented.
+///
+/// `--out <path>`: redirect writes to a target directory. Real namespace
+/// prefixes (`code/rust/`, `code/llvm/ir/`) preserve; bootstrap-historical
+/// prefixes (`std/mirror/`) drop. When `<file>` is a directory, kintsugi
+/// walks it recursively and migrates every `.mirror` file inside.
+fn cmd_kintsugi(file: &str, shatter: u64, transform: Option<&str>, out_dir: Option<&str>) -> i32 {
+    // Migration mode: --out + a directory input — walk and migrate
+    // every .mirror file under the directory.
+    if let Some(out_root) = out_dir {
+        let md = match fs::metadata(file) {
+            Ok(m) => m,
+            Err(e) => {
+                eprintln!("cannot stat {}: {}", file, e);
+                return 1;
+            }
+        };
+        if md.is_dir() {
+            return cmd_kintsugi_migrate(file, out_root, transform);
+        }
+    }
+    cmd_kintsugi_single(file, shatter, transform, out_dir)
+}
+
+/// Migrate a directory tree: walk every `.mirror` file under `src_root`,
+/// apply the transform, canonicalise the path under `out_root`, write
+/// the result. Path canonicalisation drops `std/mirror/` prefix; other
+/// namespace prefixes (`std/code/`, `code/`) preserve via the same
+/// strip-leading-`std/` rule.
+fn cmd_kintsugi_migrate(src_root: &str, out_root: &str, transform: Option<&str>) -> i32 {
+    let rules = match transform {
+        Some(q) => match parse_rewrite(q) {
+            Some(r) => r,
+            None => {
+                eprintln!("kintsugi --transform: not a rewrite query (expected `<sym> => <repl>`): {}", q);
+                return 1;
+            }
+        },
+        None => Vec::new(),
+    };
+    let mut files: Vec<String> = Vec::new();
+    collect_files(src_root, ".mirror", &mut files);
+    files.sort();
+    let mut errs = 0;
+    for path in &files {
+        let source = match fs::read(path) {
+            Ok(s) => s,
+            Err(e) => {
+                eprintln!("  skip {} (read error: {})", path, e);
+                errs += 1;
+                continue;
+            }
+        };
+        // Apply rewrites to source bytes.
+        let rewritten = if rules.is_empty() {
+            source.clone()
+        } else {
+            apply_rewrites(&rules, &source)
+        };
+        // Canonicalise the destination path: drop the src_root prefix,
+        // drop `std/mirror/` (bootstrap-historical), and apply the
+        // basename rewrite from the rules (so `grammar.mirror` →
+        // `glass.mirror` when the rule is `grammar => glass`).
+        let rel = path.strip_prefix(src_root).unwrap_or(path).trim_start_matches('/');
+        // Strip `std/mirror/` and `std/` prefixes — bootstrap-historical
+        // namespacing that has no semantic content.
+        let rel = rel.strip_prefix("std/mirror/").or_else(|| rel.strip_prefix("std/")).unwrap_or(rel);
+        // Apply basename rewrite: each rule maps `<sym>.mirror` to
+        // `<repl>.mirror` when the file basename equals `<sym>.mirror`.
+        let mut rel_out = rel.to_string();
+        for r in &rules {
+            let src_base = format!("{}.mirror", r.symbol);
+            let dst_base = format!("{}.mirror", r.replacement);
+            // Only rewrite when the final path segment equals the
+            // source basename (so internal directory segments named
+            // `grammar` are not collateral-damaged).
+            if let Some(last_slash) = rel_out.rfind('/') {
+                let dir = &rel_out[..last_slash];
+                let base = &rel_out[last_slash + 1..];
+                if base == src_base {
+                    rel_out = format!("{}/{}", dir, dst_base);
+                }
+            } else if rel_out == src_base {
+                rel_out = dst_base;
+            }
+        }
+        let dest = format!("{}/{}", out_root.trim_end_matches('/'), rel_out);
+        if let Some(parent) = std::path::Path::new(&dest).parent() {
+            if let Err(e) = fs::create_dir_all(parent) {
+                eprintln!("  cannot mkdir {}: {}", parent.display(), e);
+                errs += 1;
+                continue;
+            }
+        }
+        if let Err(e) = fs::write(&dest, &rewritten) {
+            eprintln!("  cannot write {}: {}", dest, e);
+            errs += 1;
+            continue;
+        }
+        eprintln!("  {} -> {}", path, dest);
+    }
+    eprintln!("migration: {} file(s), {} error(s)", files.len(), errs);
+    if errs > 0 {
+        1
+    } else {
+        0
+    }
+}
+
+fn cmd_kintsugi_single(file: &str, shatter: u64, transform: Option<&str>, out_dir: Option<&str>) -> i32 {
     let source = match fs::read(file) {
         Ok(s) => s,
         Err(e) => {
             eprintln!("cannot read file {}: {}", file, e);
             return 1;
         }
+    };
+    // Apply --transform rewrites before tokenize.
+    let source = if let Some(q) = transform {
+        match parse_rewrite(q) {
+            Some(rules) => apply_rewrites(&rules, &source),
+            None => {
+                eprintln!("kintsugi --transform: not a rewrite query: {}", q);
+                return 1;
+            }
+        }
+    } else {
+        source
     };
     let grammar_path = grammar_for_file(file);
     let grammar = match load_grammar(grammar_path) {
@@ -605,9 +768,12 @@ fn cmd_kintsugi(file: &str, shatter: u64) -> i32 {
         // The loop. `prior_ast` is the section before this tick's stage 1;
         // `current_ast` is the section after stage 4's splice. With every
         // stage no-op, prior == current and stage 5 returns true on tick 1.
+        // `Blake3` is explicit — the bootstrap startup declares which
+        // H-world its floor inhabits (landing-page spec §2.4).
+        let crystallizations = floor_crystallizations::<Blake3>();
         let mut prior = ast.clone();
         for i in 1..=shatter {
-            let fixed = kintsugi_tick(i, &prior, &ast);
+            let fixed = kintsugi_tick(&crystallizations, i, &prior, &ast);
             if fixed {
                 break;
             }
@@ -617,7 +783,21 @@ fn cmd_kintsugi(file: &str, shatter: u64) -> i32 {
 
     let mut out = Vec::new();
     render_ast(&ast, 0, &mut out);
-    let _ = io::stdout().write_all(&out);
+    if let Some(dir) = out_dir {
+        let dest = format!("{}/{}", dir.trim_end_matches('/'),
+            std::path::Path::new(file).file_name()
+                .and_then(|n| n.to_str()).unwrap_or(file));
+        if let Some(parent) = std::path::Path::new(&dest).parent() {
+            let _ = fs::create_dir_all(parent);
+        }
+        if let Err(e) = fs::write(&dest, &out) {
+            eprintln!("cannot write {}: {}", dest, e);
+            return 1;
+        }
+        eprintln!("wrote {}", dest);
+    } else {
+        let _ = io::stdout().write_all(&out);
+    }
     0
 }
 
@@ -672,6 +852,8 @@ fn main() {
     let mut strict = false;
     let mut target_kind = TargetKind::Crystal;
     let mut shatter: u64 = 0;
+    let mut transform: Option<String> = None;
+    let mut out_dir: Option<String> = None;
     let mut i = 2;
     while i < args.len() {
         let a = &args[i];
@@ -721,6 +903,24 @@ fn main() {
                     std::process::exit(1);
                 }
             }
+        } else if a == "--transform" {
+            if i + 1 >= args.len() {
+                eprintln!("--transform requires an mq-query value");
+                std::process::exit(1);
+            }
+            transform = Some(args[i + 1].clone());
+            i += 1;
+        } else if let Some(rest) = a.strip_prefix("--transform=") {
+            transform = Some(rest.to_string());
+        } else if a == "--out" {
+            if i + 1 >= args.len() {
+                eprintln!("--out requires a path value");
+                std::process::exit(1);
+            }
+            out_dir = Some(args[i + 1].clone());
+            i += 1;
+        } else if let Some(rest) = a.strip_prefix("--out=") {
+            out_dir = Some(rest.to_string());
         }
         i += 1;
     }
@@ -730,7 +930,7 @@ fn main() {
         let mut found: Option<&str> = None;
         while j < args.len() {
             let a = &args[j];
-            if a == "--target" || a == "--shatter" {
+            if a == "--target" || a == "--shatter" || a == "--transform" || a == "--out" {
                 j += 2;
                 continue;
             }
@@ -760,9 +960,9 @@ fn main() {
             }
         },
         "kintsugi" => match positional {
-            Some(p) => cmd_kintsugi(p, shatter),
+            Some(p) => cmd_kintsugi(p, shatter, transform.as_deref(), out_dir.as_deref()),
             None => {
-                eprintln!("usage: mirror kintsugi [--shatter N] <file>");
+                eprintln!("usage: mirror kintsugi [--shatter N] [--transform <mq>] [--out <path>] <file|dir>");
                 1
             }
         },

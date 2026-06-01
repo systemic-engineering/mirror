@@ -1,0 +1,73 @@
+in @prism
+
+# @epistemologic/property/laws/duration_algebra
+#
+# A type satisfies the duration algebra iff its values form a
+# commutative monoid under +, with zero identity; subtraction is
+# partial (underflow returns imperfect.partial); multiplication by
+# a non-negative scalar is total.
+#
+# Per docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md
+# §6 (the property table): the load-bearing instance is @time.duration
+# and its zoom-annotated forms (@time.monotonic, @time.wall,
+# @time.instant). The property verifies the algebraic shape these
+# carriers must satisfy.
+#
+# Per PG §2.2 (the strongest of PG's time lessons): calendar interval
+# arithmetic is NOT associative across frames because months and
+# days have no fixed length in seconds. The duration_algebra property
+# is intentionally narrower than PG's interval: it covers only the
+# fixed-precision (nanosecond) base carrier, where associativity
+# IS total. Calendar arithmetic lives in @time/interval (future,
+# not in scope here) with its own properties that explicitly do
+# not require associativity.
+#
+# Sibling properties: monotonicity(T) (the order structure on the
+# monoid — "non-decreasing" is meaningful because + is well-defined),
+# frame_relativity(T) (the cross-frame concern this property is
+# silent on — algebra is within-frame).
+
+grammar @epistemologic/property/laws/duration_algebra {
+
+  # Addition is associative: (a + b) + c = a + (b + c). For
+  # nanosecond-precision durations this is true unconditionally;
+  # the verifier checks the substrate's + operation has no carry-
+  # dependent reordering.
+  add_associative(type) -> verdict { \ }
+
+  # Addition is commutative: a + b = b + a. The verifier checks the
+  # + operation does not depend on operand order.
+  add_commutative(type) -> verdict { \ }
+
+  # Zero is the identity: a + 0 = a = 0 + a. The verifier checks
+  # the zero-duration value exists and adding it leaves the operand
+  # unchanged. Together with associativity and commutativity this
+  # is the commutative-monoid axiom set.
+  zero_identity(type) -> verdict { \ }
+
+  # Subtraction is partial: sub(a, b) returns imperfect, partial on
+  # underflow (b > a; the result would be negative, which the refract
+  # witness on duration rejects). The verifier checks the sub action
+  # has an imperfect return type and that the partial branch is
+  # reachable from the type's construction surface.
+  sub_partial(type) -> verdict { \ }
+
+  # Scaling by a non-negative scalar is total: scale(d, n) is defined
+  # for all d: duration, n: u64. Signed scalars are deliberately not
+  # defined (the semantics would be ambiguous for a non-negative
+  # carrier). The verifier checks the scale action's signature.
+  scale_total_nonneg(type) -> verdict { \ }
+
+  # The combined property: the type satisfies the duration algebra.
+  # Pass iff add_associative, add_commutative, zero_identity,
+  # sub_partial, and scale_total_nonneg.
+  duration_algebra(type) -> verdict { \ }
+}
+
+out add_associative
+out add_commutative
+out zero_identity
+out sub_partial
+out scale_total_nonneg
+out duration_algebra
+out @epistemologic/property/laws/duration_algebra

@@ -1,0 +1,68 @@
+in @prism
+
+in @io
+in @io/bytes
+
+# @io/encode
+#
+# Text-encoding primitives over @io/bytes. Two encodings (base64, hex)
+# in two directions each. Pure logic above the byte layer; no syscall
+# touch on its own. Lives under @io by construction so glass_wall (#79)
+# validates trivially; a strong cross_wall (#80) candidate once the
+# encode/decode bodies prove halts structurally (which they will —
+# both encodings are bounded by input length).
+#
+# Per docs/insights/2026-05-26-portal-as-io-socket-over-content-
+# addressed-subspace.md: portal handshakes commonly carry base64-
+# encoded ed25519 signatures and hex-rendered OIDs; the encoders live
+# here so the wire and the CLI agree on shape. Per AGENTS.md § The
+# Glass Wall: the underlying crate dependencies (`base64`, `hex`) are
+# legitimate substrate at this layer because the encodings themselves
+# are commodity primitives whose halts behaviour is provable.
+#
+# Bootstrap-side dispatch (when @mirror/serve lands the tournament-to-
+# bootstrap path): base64 via the `base64` crate; hex via the `hex`
+# crate. No Cargo.toml addition in this commit — the grammar declares
+# the contract; the crate pull lands with the dispatch landing.
+#
+# Sibling grammars under @io: @io/bytes (the byte layer below),
+# @io/crypto (hash + signature; pairs with encode for wire shape),
+# @io/random (entropy that often gets base64-rendered for display).
+
+grammar @io/encode {
+
+  # ── base64.encode: bytes → RFC 4648 §4 text ─────────────────────
+  #
+  # Standard alphabet, with padding. Total; every byte sequence has
+  # a canonical base64 rendering. The output length is
+  # 4 * ceil(length(b) / 3).
+  base64.encode(b: bytes) -> text { \ }
+
+  # ── base64.decode: RFC 4648 §4 text → bytes ─────────────────────
+  #
+  # Inverse of encode. Returns imperfect because the input may carry
+  # non-alphabet characters, invalid padding, or a non-canonical
+  # length. Standard recovery surface carries the diagnostic.
+  base64.decode(t: text) -> imperfect(bytes) { \ }
+
+  # ── hex.encode: bytes → lowercase hex text ──────────────────────
+  #
+  # Two lowercase hex characters per byte. Total; output length is
+  # exactly 2 * length(b). Matches the OID display convention
+  # already used throughout the crystal store.
+  hex.encode(b: bytes) -> text { \ }
+
+  # ── hex.decode: hex text → bytes ───────────────────────────────
+  #
+  # Accepts both upper and lowercase. Returns imperfect because the
+  # input may have odd length, contain non-hex characters, or fail
+  # the round-trip with hex.encode. Standard recovery surface
+  # carries the diagnostic.
+  hex.decode(t: text) -> imperfect(bytes) { \ }
+}
+
+out base64.encode
+out base64.decode
+out hex.encode
+out hex.decode
+out @io/encode

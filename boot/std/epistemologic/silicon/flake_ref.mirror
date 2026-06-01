@@ -1,0 +1,75 @@
+in @prism
+in @meta
+in @option
+in @epistemologic
+in @epistemologic/property
+in @epistemologic/property/content_addressed
+
+# @epistemologic/silicon/flake_ref
+#
+# A typed reference to a nix flake. Three fields: the source URL
+# (github:/git:/path:/file:), the locked revision (oid), and an
+# optional sub-flake path for monorepos that ship multiple flakes
+# under one repo.
+#
+# Per docs/specs/shard-design.md §2: this is the carrier the shard's
+# `flakes: [flake_ref]` field holds — the installed flake set that
+# names what the observer can compose. The shard's nix-backend
+# compilation (shard → flake derivation, design §5) reads this list
+# as the dependency set; the locked rev is what makes the resulting
+# derivation content-addressed-by-source instead of just
+# content-addressed-by-output.
+#
+# Unlike the silicon arch and memory carriers, flake_ref has no
+# detect() primitive. flake_refs are declared by the user in the
+# shard manifest — not detected from the running system. They are
+# the substrate-level handles the user controls; the silicon
+# carriers are the substrate-level handles the hardware controls.
+# The asymmetry is structural and intentional.
+
+grammar @epistemologic/silicon/flake_ref {
+
+  # The flake source URL. text-typed because the URL surface is
+  # heterogeneous (github:owner/repo, git:host/path, path:/abs/path,
+  # file:/abs/path, tarball+https://...) and the substrate does not
+  # parse the schemes — nix does. The shard stores what the user
+  # wrote; the to_flake morphism hands it to nix as-is.
+  type url = text
+
+  # The flake's sub-path. Some monorepos ship multiple flakes under
+  # one repo root (e.g. github:foo/bar?dir=services/api). When this
+  # field is some(p), nix resolves the flake at <url>?dir=<p>. When
+  # none, the flake lives at the URL's root.
+  type subflake = option(text)
+
+  # The flake_ref carrier. Three fields: the URL the user wrote, the
+  # locked revision (the OID nix resolved the URL to at lock time),
+  # the optional sub-flake path.
+  #
+  # The `rev` field IS the verification anchor. Two flake_refs with
+  # the same rev resolve to the same nix derivation; the URL can
+  # change (renamed repo, mirror) without breaking the verification
+  # chain. Per @epistemologic/property/content_addressed: identity is
+  # the hash; the URL is metadata.
+  type flake_ref = {
+    url:      url,
+    rev:      oid,
+    subflake: subflake,
+  }
+
+  requires content_addressed(flake_ref)
+
+  # Literal property. A flake_ref IS what it says iff fetching the
+  # URL at the locked rev produces a derivation whose content-address
+  # matches the rev. The verifier is a nix operation, not a syscall
+  # — deferred to the to_flake tick when the nix backend is wired.
+  # The contract is stated here so the carrier is complete; the
+  # implementation lands later in the chain.
+  property literal(f: flake_ref) -> verdict { \ }
+}
+
+out flake_ref
+out url
+out subflake
+out literal
+out @epistemologic/silicon/flake_ref

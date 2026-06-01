@@ -1,0 +1,64 @@
+in @prism
+in @kintsugi/fracture
+
+# @kintsugi/fracture/refract-to-fixed — the second fracture rule.
+#
+# The drift: `refract <name> = <combinator>` appearing at module-top
+# binding position. Per the 2026-05-26 8-category corpus audit
+# (Cat 7), `refract` was overloaded — the Prism operation, the
+# substrate keyword, AND the binding form for named combinators
+# inside a grammar block. The triple-meaning was drift: the
+# binding form is its own shape (a settled value with no holes,
+# no inference) and deserves its own keyword.
+#
+# The canonical: `fixed <name> = <combinator>`. Per Alex 2026-05-26:
+# "`fixed`. Like `const`. But math. And a `fixed` value cannot
+# include any holes. No inference. It needs to be a fully settled
+# crystal. Becomes content addressed." The binding IS the crystal
+# IS the OID. Distinct from `beam` (body-altitude, dynamic, may
+# carry Beam<T> metadata). The keyword itself is declared in the
+# substrate as `type fixed = refract` — a typed alias for the
+# refract Prism op at the binding altitude.
+#
+# Confidence = 1.0. The migration is unambiguous: every
+# `refract <name> = <combinator>` line inside a grammar block
+# becomes `fixed <name> = <combinator>`. The `<op> <keyword>`
+# 2-word lines (e.g. `focus grammar`, `refract refract`) are NOT
+# bindings and are left untouched — they declare keyword
+# membership in the lexical table, not value bindings.
+#
+# Per @kintsugi/fracture: this declaration follows the FP collapse
+# — one function with two laws. Detection IS asking whether the
+# function is a no-op on the input.
+#
+# Spec: docs/specs/mirror-grammar-self-hosted.md
+# Insight: docs/insights/2026-05-26-fixed-and-the-spectral-feedback-fracture.md
+
+grammar @kintsugi/fracture/refract-to-fixed {
+  # The fracture function. Walks the ast; rewrites every
+  # `refract <name> = <combinator>` binding form to
+  # `fixed <name> = <combinator>`. Preserves all other bytes.
+  # The `<op> <keyword>` lines that declare keyword membership
+  # are NOT bindings and are structurally distinct (no `=` at the
+  # binding altitude) — they are left untouched. The body is a
+  # Fate-resolved hole; the actual rewrite logic lives at the
+  # downstream evaluator altitude. The substrate-pull discipline
+  # says: declare the function + the laws; the implementation is
+  # downstream.
+  flow(ast) -> ast { \ }
+
+  # Law 1: idempotent. Once `refract <name> = <combinator>` has
+  # been migrated to `fixed <name> = <combinator>`, running flow
+  # again is a no-op — there are no further refract-bindings to
+  # find. The canonical corpus is a fixed point. Bound via
+  # @kintsugi/fracture.
+  requires idempotent(flow)
+
+  # Law 2: canonical at fixpoint. flow(x) == x exactly when x has
+  # no refract-at-binding-position drift. This IS the detection:
+  # a file is canonical iff the fracture is a no-op on it. No
+  # separate detect operation.
+  requires canonical_at_fixpoint(flow)
+}
+
+out flow

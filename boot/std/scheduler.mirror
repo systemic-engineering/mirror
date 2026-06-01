@@ -1,0 +1,72 @@
+in @prism
+
+in @mirror/shard
+in @epistemologic/silicon/compute_bound
+
+# @scheduler: the Scheduler Tower's substrate primitives.
+#
+# Where @mirror/runtime/gen_prism is the actor, @mirror/shard is the
+# observer-relative deployment manifest, and @epistemologic/silicon/
+# compute_bound carries the budget envelope, @scheduler exposes the
+# load-topology-derived primitives the Tower reads at runtime.
+#
+# v1.5 of the Scheduler Tower (docs/specs/scheduler-tower.md) covers
+# the demand contract, dispatcher strategies, and the KMS
+# temperature β. This file lands one primitive: the reduction
+# budget. The budget IS the load-topology snapshot @epistemologic/
+# property/halts clause (b) reads when verifying termination. The
+# rest of the Tower's demand-contract surface lives on gen_prism
+# itself (the extension landed in tick S-1; see the scheduler-tower
+# spec §2).
+#
+# Per the 2026-05-25 substrate decision (Alex): halting has two
+# conditions joined by disjunction:
+#
+#   (a) autopoietic settlement (§clause-a in halts.mirror), and
+#   (b) reduction exhaustion (§clause-b in halts.mirror).
+#
+# Clause (b) is structurally bounded by `reduction_budget(shard)`.
+# This grammar declares that primitive. Bodies are Fate-resolved
+# holes; the tournament reads the shard's compute_bound at runtime,
+# weights by current load (the Scheduler's queue depths per the
+# Tower spec §3), and returns the per-tick reductions ceiling. Same
+# shard + same load fingerprint = same budget; the budget is
+# deterministic against its inputs and content-addressable through
+# the fragmentation cache (per shard-design.md Q3).
+#
+# Spec: docs/specs/scheduler-tower.md.
+# Insight: docs/insights/2026-05-25-gram-and-mirror-same-architecture-
+# two-altitudes.md (GRAM's ACT ↔ reduction budget at sub-Turing
+# altitude).
+
+grammar @scheduler {
+
+  # ── reduction_budget: load-topology-derived ceiling ───────────────
+  #
+  # The per-tick reduction ceiling for trajectories that run inside
+  # this shard. Reads from `s.compute.max_reductions` (the hardware
+  # carrier; per @epistemologic/silicon/compute_bound) and weights
+  # by current load (queue depths, in-flight demand windows, β).
+  #
+  # Return is u64 (raw reductions, not @time.monotonic; reductions
+  # are countable events, not durations). The unit lines up with
+  # the Scheduler's demand_window.capacity convention (§10.2 of the
+  # scheduler-tower spec resolves "units are messages"; reductions
+  # are the per-tick analog inside one gen_prism).
+  #
+  # Body is a Fate-resolved hole. The tournament picks the
+  # weighting strategy that maximises throughput against the
+  # shard's load topology; same shard + same load fingerprint =
+  # same budget. None of the weighting logic lives in Rust; the
+  # substrate pulls it into grammar.
+  #
+  # @epistemologic/property/halts clause (b) reads this primitive
+  # to verify termination. The property's `reductions_bounded`
+  # action walks the type's tick map, counts reductions per tick,
+  # and confirms the per-trajectory total stays below the budget
+  # this primitive returns.
+  reduction_budget(s: shard) -> u64 { \ }
+}
+
+out reduction_budget
+out @scheduler

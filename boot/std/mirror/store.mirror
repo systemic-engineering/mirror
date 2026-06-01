@@ -8,9 +8,20 @@ in @git
 # The grammars above don't notice. The contract holds.
 #
 # Backends:
-#   @mirror/store/git         — today. git IS the store. refs/crystals/<oid>.
+#   @mirror/store/git         — default. git IS the store. refs/crystals/pinned/<oid>.
 #   @mirror/store/nix         — when mirror is a nix provider. /nix/store/<oid>-name.
+#   @mirror/store/bare        — bare filesystem; tiny / ephemeral deployments.
+#   @mirror/store/sqlite      — single-file portable; mobile; offline-first.
 #   @mirror/store/spectral-db — endgame. the graph IS the store. eigenvalues ARE addresses.
+#
+# Substrate placement (Alex 2026-05-26, corrective):
+#
+#   "@fragmentation is pure. @mirror/store owns `io`."
+#
+# The richer per-backend actions (pin, release, gc_roots,
+# tombstone_check, promote, demote, last_referenced_at) live at
+# the concrete `@mirror/store/<adapter>` altitude, because each
+# touches the underlying persistence layer.
 
 grammar @mirror/store {
   # store a crystal. return its content-addressed OID.

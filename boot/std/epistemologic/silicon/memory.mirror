@@ -1,0 +1,85 @@
+in @prism
+in @meta
+in @io
+in @option
+in @epistemologic
+in @epistemologic/property
+in @epistemologic/property/content_addressed
+
+# @epistemologic/silicon/memory
+#
+# The memory model as a typed carrier. Names what an observer sees
+# when they look at the substrate's address space: which memory
+# model the silicon presents (UMA, separate host-device, NUMA),
+# how much memory is available in total, what the page size is,
+# and a summary of the cache hierarchy.
+#
+# Per docs/specs/shard-design.md §2/§4: this is the carrier the
+# shard's `memory` field holds. Per docs/insights/2026-05-25-pipe-
+# hole-and-au-binary.md: Fate's |\> tournament uses the memory
+# model to pick between UMA-aware codegen (zero-copy host↔device
+# transfers on Apple Silicon) and explicit-DMA codegen (cloud GPU
+# with PCIe). The model choice is load-bearing for performance and
+# verifiable from the running system.
+#
+# Same tick-1 discipline as the arch carriers: ship the carrier
+# now; detect() body is a Fate-resolved hole filled at boot.
+
+grammar @epistemologic/silicon/memory {
+
+  # Memory model. UMA (Apple Silicon: unified memory, GPU sees the
+  # same address space as CPU); separate (host CPU + discrete GPU,
+  # explicit transfers required); NUMA (multi-socket servers with
+  # per-node memory affinity, the u32 names the node count).
+  type memory_model = uma | separate | numa(u32)
+
+  # Cache level summary. Per-level size in bytes; the carrier ships
+  # the field set as `option(u64)` because not every level is
+  # populated on every silicon (some embedded cores have no L3;
+  # the AMX coprocessor's own L1 is not separately surfaced). Field
+  # presence reflects what the detection primitive could read.
+  type cache_level = {
+    l1: option(u64),
+    l2: option(u64),
+    l3: option(u64),
+  }
+
+  # The memory carrier. Four fields. `model` is the structural
+  # choice; `total_bytes` is the address-space cap; `page_size` is
+  # the granularity (4K / 16K on Apple Silicon / 64K on some ARM
+  # servers); `cache` is the hierarchy summary.
+  #
+  # Per-field nullability for cache is encoded inside cache_level;
+  # total_bytes and page_size are always populated by detect() on
+  # platforms the substrate supports.
+  type memory = {
+    model:       memory_model,
+    total_bytes: u64,
+    page_size:   u64,
+    cache:       cache_level,
+  }
+
+  requires content_addressed(memory)
+
+  # Detection primitive. Reads hw.memsize / hw.pagesize / hw.l*cachesize
+  # on Darwin via @io.exec("sysctl", ...). On Linux: /proc/meminfo for
+  # total, getconf PAGESIZE for page size, /sys/devices/system/cpu/cpu0/
+  # cache/index*/size for cache hierarchy. NUMA detection: presence of
+  # /sys/devices/system/node/ enumerates the nodes. Body is a Fate-
+  # resolved hole; the tournament picks the right detection chain for
+  # the running OS at boot.
+  detect() -> memory { \ }
+
+  # Literal property. Same discipline as the arch carriers: re-detect,
+  # content-address, compare. Memory configuration is stable across
+  # a kernel session (unless hotplug, which the property does not yet
+  # account for) so the OID equality holds.
+  property literal(m: memory) -> verdict { \ }
+}
+
+out memory
+out memory_model
+out cache_level
+out detect
+out literal
+out @epistemologic/silicon/memory

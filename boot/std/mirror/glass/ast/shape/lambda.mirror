@@ -1,0 +1,94 @@
+in @prism
+
+in @mirror/glass/ast
+in @mirror/glass/ast/shape
+in @mirror/glass/ast/token
+
+# @mirror/glass/ast/shape/lambda — the `lambda` shape variant: the
+# binding form for an action / function-like surface.
+#
+# Per the per-variant file pattern declared in @mirror/glass/ast/
+# shape: variants of `shape` may land in their own sub-file when
+# they want to declare structure of their own. `lambda` does —
+# it carries the full function shape: name, args, return type,
+# body, and an `io` annotation flag.
+#
+# `lambda` replaces the legacy `action` keyword (OOP-ish drift);
+# FP-canonical naming aligns with the corpus convention (`λsh`
+# already in use for the shell lambda). The `io` annotation rides
+# as a field rather than a separate variant per the Stage 1
+# decision in @mirror/glass/ast/shape:
+#
+#   "io is an attribute on lambda, not a separate variant."
+#
+# Legacy correspondence (corpus forms):
+#
+#   action name(arg: type) -> ret { ... }            # pure
+#   io action name(arg: type) -> ret { ... }         # io-flagged
+#   io serve -> imperfect { ... }                    # nullary, io
+#
+# At substrate altitude, all three collapse to the same variant
+# with the `io` flag distinguishing the IO posture. Nullary forms
+# carry an empty args list; the substrate doesn't need a separate
+# nullary variant.
+#
+# Field rationale:
+#
+#   - name   : the binding name (identifier).
+#   - args   : list of (name, type-name) pairs. The legacy combinator
+#              `args = repeat(seq(name, optional(literal(":"),
+#              whitespace, type_ref)), 0, none)` lifts here; the
+#              substrate-altitude form is the pair structure.
+#   - return : the return type as an identifier reference. Free
+#              (unlike `property`, where return is fixed to
+#              `verdict`). The identifier resolves through normal
+#              type-namespace lookup.
+#   - body   : a brace_block. Opaque-to-substrate at this altitude
+#              (per the legacy spec `body = brace_block(repeat(any,
+#              0, none))`); body-altitude lifts in later stages of
+#              #94.
+#   - io     : the annotation flag. `true` iff the legacy `io`
+#              prefix is present. Carries the substrate-pull
+#              discipline: io lambdas may touch @io; pure lambdas
+#              must not.
+#
+# Body altitude (Reed's stop-and-report #3):
+#
+#   The `expr` primitive Reed's sketch references doesn't exist as
+#   a typed substrate primitive yet. Reed's lean was "opaque bytes
+#   for now; body altitude lives in subsequent stages." The honest
+#   move: use `brace_block` (the existing @mirror/glass/ast
+#   primitive). The substrate already knows brace_block; it's the
+#   correct altitude for "the body's bracket-delimited bytes,
+#   opaque to this declaration's measurement."
+#
+# Distinction from `property`:
+#
+#   - `property` : return fixed to `verdict`; pure by construction;
+#                  no `io` field.
+#   - `lambda`   : free return type; may be `io`-flagged; the
+#                  general function-shaped declaration.
+#
+# Both share name + args + body structure; `lambda` adds `return`
+# and `io`. The compounding from `property` shows: same record
+# spine, additional fields where the surface demands them.
+
+grammar @mirror/glass/ast/shape/lambda {
+  # The `lambda` shape variant: full function declaration. The
+  # args list follows the legacy combinator shape: pairs of
+  # (identifier, identifier) where the first is the parameter name
+  # and the second is the type-name reference. Return is a free
+  # identifier (no verdict discipline); body is a brace_block
+  # (opaque-to-substrate at this altitude); io is the annotation
+  # flag.
+  type lambda {
+    name:   identifier,
+    args:   [(identifier, identifier)],
+    return: identifier,
+    body:   brace_block,
+    io:     bool,
+  }
+}
+
+out lambda
+out @mirror/glass/ast/shape/lambda

@@ -1,0 +1,65 @@
+in @prism
+
+# @epistemologic/property/laws/monoidal
+#
+# A type is monoidal iff it carries a binary composition `compose`
+# and a distinguished `identity` element such that composition is
+# associative and the identity is a two-sided unit:
+#
+#   identity:        compose(identity, x) == x == compose(x, identity)
+#   associativity:   compose(a, compose(b, c)) == compose(compose(a, b), c)
+#
+# Per Mac Lane (1971) "Categories for the Working Mathematician"
+# ch. VII §1: a monoid in a category is a pair (M, ·) with a unit
+# element e such that the unit and associativity diagrams commute.
+# This property encodes the diagram commutation as a structural check
+# on the type's compose / identity surface.
+#
+# Per #77's parked design call on @fragmentation/frame: the frame
+# grammar declared compose + identity actions and noted that the
+# pair forms a monoid under content-addressing (hash composition
+# is associative; the identity frame is the no-op delta). The
+# `requires monoidal(frame)` clause was held until this property
+# existed; it can now be applied (now at @epistemologic/property/
+# laws/monoidal).
+#
+# Mirror's contribution: content-addressing makes associativity FREE
+# at the substrate. OID concatenation is associative; two frames whose
+# (from, to, delta) triples compose to the same end state hash to the
+# same OID regardless of the parenthesization of the composition.
+# Identity likewise: the empty-delta frame's OID is the canonical
+# left/right unit. The verifier reduces to OID equality at every law.
+#
+# Sibling properties: content_addressed(T) (the substrate condition
+# that makes the laws free — without it, associativity would have to
+# be proved per-callsite), causality(T) (the partial order monoidal
+# composition respects when the carrier is a delta-shape like
+# fragmentation.frame).
+
+grammar @epistemologic/property/laws/monoidal {
+
+  # The identity law: there exists an element `e` such that
+  # compose(e, x) == x == compose(x, e) for all x of the type.
+  # The verifier locates the type's `identity` action, applies
+  # it on both sides of compose against an arbitrary x, and
+  # checks OID equality with x. Two-sided; failing either side
+  # fails the property.
+  identity(type) -> verdict { \ }
+
+  # The associativity law:
+  # compose(a, compose(b, c)) == compose(compose(a, b), c)
+  # for all a, b, c of the type. The verifier walks the type's
+  # compose action; under content-addressing the law reduces to
+  # OID equality between the two parenthesizations.
+  associativity(type) -> verdict { \ }
+
+  # The combined property: the type is monoidal.
+  # Pass iff identity and associativity both pass. Together these
+  # are the monoid axioms (Mac Lane 1971 ch. VII §1).
+  monoidal(type) -> verdict { \ }
+}
+
+out identity
+out associativity
+out monoidal
+out @epistemologic/property/laws/monoidal

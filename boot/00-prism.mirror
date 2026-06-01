@@ -21,7 +21,37 @@ abstract io tick(type) -> tock(type) { \ }
 project in(prism)
 project out(prism)
 
+# Parametric type forms — the five operations applied at the type layer.
+#
+# Per docs/insights/2026-05-25-parametric-types-and-fp-heritage.md:
+# the same five verbs that act on values also act on types, with the
+# same names one universe up. Two are declared here as first-class
+# parametric forms; the other three (focus(T), project(T), split(T))
+# fall out of the existing kernel forms (focus is type(id); project is
+# field selection; split is the | disjunction in `type x = a | b`).
+#
+# zoom(T): annotation-only parametric. Same bytes, different declared
+# shape. Functor-shaped: zoom satisfies identity (zoom id = id) and
+# composition (zoom (f . g) = zoom f . zoom g). The runtime cost is
+# zero by construction — the type checker distinguishes T(U1) from
+# T(U2) via content address; the bytes don't change.
+#
+# refract(T): verified-construction parametric. Building a refract(T)
+# value IS the proof that the construction settled. Monad-shaped:
+# refract satisfies left identity, right identity, and associativity.
+# Content-addressing gives associativity for free at composition time
+# (oid concatenation is associative; the substrate enforces it).
+#
+# Both are type-layer applications of the existing five Prism
+# operations. No new primitives — the algebra is closed at five.
+# The @epistemologic/property/laws/{functor,monad} grammars
+# verify the laws structurally.
+zoom zoom(type) -> type { \ }
+refract refract(type) -> type { \ }
+
 out in
 out id
 out @
 out @prism
+out zoom
+out refract

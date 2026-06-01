@@ -1,0 +1,50 @@
+in @prism
+
+in @mirror/glass/ast/shape
+in @mirror/glass/ast/token
+
+# @mirror/glass/ast/shape/in — the `in` shape variant: an import
+# boundary declaration.
+#
+# Per the per-variant file pattern declared in @mirror/glass/ast/
+# shape: variants of `shape` may land in their own sub-file when
+# they want to declare structure of their own. `in` does — it
+# carries the @-ref it imports.
+#
+# `type in = reference`
+#
+# Reads: the `in` shape variant IS a `reference` (the @-path it
+# imports). The variant carries no other data: the only thing an
+# import boundary needs is the ref it points to. The substrate
+# already knows `reference` from @mirror/glass/ast/token (`seq(
+# literal("@"), name)`); every property already proven about
+# `reference` transfers to `in` by alias.
+#
+# Legacy correspondence (from @mirror/grammar):
+#
+#   fixed in_form = seq(literal("in"), whitespace, reference)
+#
+# The legacy form sequenced the literal keyword + the reference;
+# at substrate altitude, the keyword IS the variant name (the file
+# path earns the meaning) and the variant data IS the reference.
+# The substrate accumulates; the bootstrap stays minimal.
+#
+# Distinction from `out`:
+#
+#   - `in`  : import boundary — "this glass depends on @<ref>"
+#   - `out` : export boundary — "this glass exposes @<ref>"
+#
+# Same shape; opposite polarity. Both alias `reference` at this
+# altitude; the polarity is encoded in the variant name itself.
+
+grammar @mirror/glass/ast/shape/in {
+  # The substrate's declaration that the `in` shape variant aliases
+  # the `reference` lexical primitive. No record body needed —
+  # the variant data IS a `reference`. Every downstream substrate
+  # that mentions `in @<ref>` resolves through this line to a
+  # reference at the @mirror/glass/ast/token altitude.
+  type in = reference
+}
+
+out in
+out @mirror/glass/ast/shape/in

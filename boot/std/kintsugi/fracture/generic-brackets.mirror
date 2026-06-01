@@ -1,0 +1,51 @@
+in @prism
+in @kintsugi/fracture
+
+# @kintsugi/fracture/generic-brackets — the first fracture rule.
+#
+# The drift: foreign-language angle-bracket parametric notation
+# (Type<Param>) appearing in mirror source files. Training data is
+# saturated with Rust/TypeScript/Java/C++ angle-bracket parametrics;
+# the pull will reassert every time a new file gets written by
+# someone whose fingers (or attention) remember a different language.
+# Reed introduced this drift across ~10 boot files in the
+# 2026-05-26 portal work; this fracture heals it and prevents
+# recurrence at the substrate level.
+#
+# The canonical: mirror's own parametric notation Type(Param),
+# already used throughout the boot tree (zoom(oid, gen_prism),
+# imperfect(portal), etc.). The (...) form works at any arity per
+# zoom(oid, gen_prism); there is no semantic reason for <> vs ()
+# in mirror (no Foo() constructor-call ambiguity to disambiguate;
+# types are first-class grammar declarations). Per Alex's 2026-05-26
+# substrate-pull test: "if a 15-year engineer can't articulate the
+# distinction, there isn't one." The <T> form is forty years of
+# cargo-culted C++ parser accident with no purpose here.
+#
+# Per @kintsugi/fracture: this declaration follows the FP collapse
+# — one function with two laws. Detection IS asking whether the
+# function is a no-op on the input.
+
+grammar @kintsugi/fracture/generic-brackets {
+  # The fracture function. Walks the ast; rewrites every <T> in type
+  # position to (T). Preserves all other bytes. Comparison/order
+  # operators (<, <=, >, =) are NOT in type position and are left
+  # untouched — the substrate's type-position check distinguishes
+  # them structurally. The body is a Fate-resolved hole; the actual
+  # rewrite logic lives at the downstream evaluator altitude. The
+  # substrate-pull discipline says: declare the function + the laws;
+  # the implementation is downstream.
+  flow(ast) -> ast { \ }
+
+  # Law 1: idempotent. Once <T> has been migrated to (T), running
+  # flow again is a no-op — there are no further <T>s to find. The
+  # canonical corpus is a fixed point. Bound via @kintsugi/fracture.
+  requires idempotent(flow)
+
+  # Law 2: canonical at fixpoint. flow(x) == x exactly when x has
+  # no <T> drift. This IS the detection: a file is canonical iff
+  # the fracture is a no-op on it. No separate detect operation.
+  requires canonical_at_fixpoint(flow)
+}
+
+out flow

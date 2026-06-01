@@ -1,0 +1,85 @@
+in @prism
+
+in @mirror/grammar
+in @text
+
+# @epistemologic/property/glass_wall
+#
+# Substrate-pull made structural. The discipline that has lived in
+# `feedback-no-new-rust.md` and AGENTS.md § The Glass Wall as a
+# stylistic rule becomes a verifiable property of every grammar that
+# compiles. The compiler enforces the boundary; convention stops
+# being load-bearing.
+#
+# Per docs/insights/2026-05-26-glass-wall-and-cross-wall-kintsugi.md:
+#
+#   `glass_wall(g)` asserts that any non-mirror grammar must be under
+#   the `@io` namespace. The inversion is structural: the property
+#   does not probe for Rust specifically; it checks whether g is
+#   mirror-shaped (parses through the meta-glass). Anything that
+#   ISN'T mirror — Rust, Python, Go, raw bytes, foreign binary
+#   blobs, vendor SDKs — must be under @io. The discipline is
+#   automatically extended to every non-mirror substrate, present
+#   and future. No per-substrate special cases.
+#
+# The structural pair with halts:
+#
+#   halts(g)       — mirror grammars terminate by construction
+#                    (sub-Turing escape from undecidability).
+#   glass_wall(g)  — non-mirror grammars must be under @io
+#                    (substrate-pull escape from undiscipline).
+#
+# Together: every escape is auditable. Cross-wall kintsugi (Task #80)
+# will then self-shrink @io toward its irreducible minimum (blocking
+# syscalls, hardware interrupts, opaque vendor primitives) by pulling
+# non-mirror grammars across the wall once their halting behaviour
+# becomes structurally provable.
+#
+# Decidability: both clauses are decidable at compile time.
+# `is_mirror(g)` is one ref equality at the meta-glass altitude;
+# `namespace(g)` is a substring check. No oracle needed; no parse re-
+# attempt; the substrate already knows which meta-glass tokenised g.
+#
+# Sibling properties: halts(T) (the structural pair this property
+# inverts — halts proves termination of mirror grammars; glass_wall
+# proves containment of non-mirror grammars), io_safety(ast) (the
+# per-call discipline at the @io boundary; glass_wall is the
+# namespace-level discipline that gates which grammars can even host
+# such calls).
+#
+# Spec: docs/insights/2026-05-26-glass-wall-and-cross-wall-kintsugi.md.
+# Convention: AGENTS.md § The Glass Wall.
+
+grammar @epistemologic/property/glass_wall {
+
+  # Clause (a): the grammar is mirror-shaped. Delegates to the meta-
+  # glass primitive @mirror/grammar.is_mirror(g): true iff g parses
+  # through @mirror/grammar. Mirror grammars satisfy this trivially;
+  # everything else fails. When this clause fires, the property
+  # succeeds without consulting clause (b) — mirror grammars are not
+  # required to live under @io.
+  is_mirror_shaped(g: grammar) -> verdict { \ }
+
+  # Clause (b): the grammar's namespace starts with "@io". The check
+  # is `@text.starts_with(@mirror/grammar.namespace(g), "@io")`.
+  # Required when clause (a) fails; trivially true for grammars
+  # already under @io. This is the structural condition that catches
+  # any non-mirror substrate trying to enter the boot tree outside
+  # the @io kernel.
+  under_io_namespace(g: grammar) -> verdict { \ }
+
+  # The disjunction: a grammar is glass-walled iff it is mirror-shaped
+  # OR it is under @io. Decidable by construction; both clauses are
+  # one substrate query each. Reed's slip on Task #78's earlier
+  # framing ("substantial Rust work in bootstrap") would have failed
+  # this property at compile time — the spec itself could not have
+  # put Rust above @io without being itself @io. The substrate
+  # catches discipline failures at the type-system level, not in code
+  # review.
+  glass_wall(g: grammar) -> verdict { \ }
+}
+
+out is_mirror_shaped
+out under_io_namespace
+out glass_wall
+out @epistemologic/property/glass_wall
