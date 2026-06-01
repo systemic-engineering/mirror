@@ -182,9 +182,9 @@ pub fn compute_content_oid(node: &AstNode) -> String {
         Imperfect::Partial(oid, _) => oid,
         // `ContentOidPrism::Refracted::Error = Infallible`; this arm
         // is structurally unreachable but the type system can't see it.
-        Imperfect::Failure(_, _) => unreachable!(
-            "ContentOidPrism has Error = Infallible; Failure is uninhabited"
-        ),
+        Imperfect::Failure(_, _) => {
+            unreachable!("ContentOidPrism has Error = Infallible; Failure is uninhabited")
+        }
     }
 }
 
@@ -566,8 +566,11 @@ where
         // adjusting how it consumes children there (it discards its
         // own indent and writes children verbatim).
         let child_depth = depth + 1;
-        let child_outs: Vec<Out> =
-            node.children.iter().map(|c| self.run(c, child_depth)).collect();
+        let child_outs: Vec<Out> = node
+            .children
+            .iter()
+            .map(|c| self.run(c, child_depth))
+            .collect();
         match node.kind {
             AstKind::Focus => (self.on_focus)(node, depth, child_outs),
             AstKind::Project => (self.on_project)(node, depth, child_outs),
@@ -596,12 +599,12 @@ where
 /// keyed on grammar availability.
 pub fn render_ast(node: &AstNode, depth: i32, out: &mut Vec<u8>) {
     let tag = node.grammar_tag.as_str();
-    let grammar: Option<Grammar> =
-        if tag.is_empty() || tag == "@mirror/grammar" || tag == "@mirror" {
-            None
-        } else {
-            grammar_path_for_ref(tag).and_then(|p| load_grammar(&p).ok())
-        };
+    let grammar: Option<Grammar> = if tag.is_empty() || tag == "@mirror/grammar" || tag == "@mirror"
+    {
+        None
+    } else {
+        grammar_path_for_ref(tag).and_then(|p| load_grammar(&p).ok())
+    };
     let rendered = match &grammar {
         Some(g) => render_fold_grammar(g).run(node, depth),
         None => render_fold_mirror().run(node, depth),
@@ -612,8 +615,7 @@ pub fn render_ast(node: &AstNode, depth: i32, out: &mut Vec<u8>) {
 /// Fold5At instance for mirror-canonical rendering. The five operation
 /// reducers + `on_other` together cover every `AstKind` the renderer
 /// emits. Captures nothing — mirror canonical form is grammar-free.
-fn render_fold_mirror(
-) -> Fold5At<
+fn render_fold_mirror() -> Fold5At<
     impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
     impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
     impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
@@ -1193,7 +1195,10 @@ pub enum Combinator {
     /// grammar's combinator tree. Walk is structural: returns Self
     /// with `body` recursively walked. The grammar reference is a
     /// string path (e.g. "@nl", "@code/rust", "@mirror/glass").
-    Lift { grammar: String, body: Box<Combinator> },
+    Lift {
+        grammar: String,
+        body: Box<Combinator>,
+    },
     /// Strict-classification sentinel: bottom of every top-level
     /// `Choice`. Scans forward through unknown bytes and emits
     /// `AstKind::Dark`.
@@ -1372,9 +1377,7 @@ fn combinator_tree_oid_hex(c: &Combinator) -> String {
             buf.push(b':');
             buf.extend_from_slice(min.to_string().as_bytes());
             buf.push(b':');
-            buf.extend_from_slice(
-                max.map(|m| m.to_string()).unwrap_or_default().as_bytes(),
-            );
+            buf.extend_from_slice(max.map(|m| m.to_string()).unwrap_or_default().as_bytes());
             hash_tagged("comb:repeat", &buf)
         }
         Combinator::Capture { body, kind } => {
@@ -1384,17 +1387,13 @@ fn combinator_tree_oid_hex(c: &Combinator) -> String {
             buf.extend_from_slice(combinator_tree_oid_hex(body).as_bytes());
             hash_tagged("comb:capture", &buf)
         }
-        Combinator::Charset(k) => {
-            hash_tagged("comb:charset", charset_tag(*k).as_bytes())
+        Combinator::Charset(k) => hash_tagged("comb:charset", charset_tag(*k).as_bytes()),
+        Combinator::BraceBlock(body) => {
+            hash_tagged("comb:brace_block", combinator_tree_oid_hex(body).as_bytes())
         }
-        Combinator::BraceBlock(body) => hash_tagged(
-            "comb:brace_block",
-            combinator_tree_oid_hex(body).as_bytes(),
-        ),
-        Combinator::ParenBlock(body) => hash_tagged(
-            "comb:paren_block",
-            combinator_tree_oid_hex(body).as_bytes(),
-        ),
+        Combinator::ParenBlock(body) => {
+            hash_tagged("comb:paren_block", combinator_tree_oid_hex(body).as_bytes())
+        }
         Combinator::IoBinding => hash_tagged("comb:io_binding", &[]),
         Combinator::MatchArm => hash_tagged("comb:match_arm", &[]),
         Combinator::SelectVariant => hash_tagged("comb:select_variant", &[]),
@@ -1405,10 +1404,9 @@ fn combinator_tree_oid_hex(c: &Combinator) -> String {
             buf.extend_from_slice(keyword);
             hash_tagged("comb:keyword_form_body", &buf)
         }
-        Combinator::Until { stop } => hash_tagged(
-            "comb:until",
-            combinator_tree_oid_hex(stop).as_bytes(),
-        ),
+        Combinator::Until { stop } => {
+            hash_tagged("comb:until", combinator_tree_oid_hex(stop).as_bytes())
+        }
         Combinator::Lift { grammar, body } => {
             let mut buf = Vec::new();
             buf.extend_from_slice(grammar.as_bytes());
@@ -1548,10 +1546,18 @@ pub(crate) struct WalkOut {
 
 impl WalkOut {
     fn ok(witness: Combinator, offset: usize) -> Self {
-        Self { witness, offset, success: true }
+        Self {
+            witness,
+            offset,
+            success: true,
+        }
     }
     fn dark(offset: usize) -> Self {
-        Self { witness: Combinator::DarkFallback, offset, success: false }
+        Self {
+            witness: Combinator::DarkFallback,
+            offset,
+            success: false,
+        }
     }
 }
 
@@ -1728,8 +1734,7 @@ pub(crate) fn walk_combinator_at(
             if &source[offset..offset + n] != keyword.as_slice() {
                 return WalkOut::dark(offset);
             }
-            let right_ok =
-                offset + n == source.len() || !is_word_byte(source[offset + n]);
+            let right_ok = offset + n == source.len() || !is_word_byte(source[offset + n]);
             if !right_ok {
                 return WalkOut::dark(offset);
             }
@@ -1756,17 +1761,13 @@ pub(crate) fn walk_combinator_at(
             )
         }
         // ----- BraceBlock: balanced `{ ... }`, then walk body on inner. -----
-        Combinator::BraceBlock(body) => {
-            walk_block(body, source, offset, b'{', b'}', d, |b| {
-                Combinator::BraceBlock(Box::new(b))
-            })
-        }
+        Combinator::BraceBlock(body) => walk_block(body, source, offset, b'{', b'}', d, |b| {
+            Combinator::BraceBlock(Box::new(b))
+        }),
         // ----- ParenBlock: balanced `( ... )`, then walk body on inner. -----
-        Combinator::ParenBlock(body) => {
-            walk_block(body, source, offset, b'(', b')', d, |b| {
-                Combinator::ParenBlock(Box::new(b))
-            })
-        }
+        Combinator::ParenBlock(body) => walk_block(body, source, offset, b'(', b')', d, |b| {
+            Combinator::ParenBlock(Box::new(b))
+        }),
         // ----- Until: scan to stop combinator's peek; don't consume stop. -----
         Combinator::Until { stop } => {
             let mut cur = offset;
@@ -1793,7 +1794,9 @@ pub(crate) fn walk_combinator_at(
                 w => w,
             };
             WalkOut::ok(
-                Combinator::Until { stop: Box::new(stop_witness) },
+                Combinator::Until {
+                    stop: Box::new(stop_witness),
+                },
                 cur,
             )
         }
@@ -1824,10 +1827,7 @@ pub(crate) fn walk_combinator_at(
                     && offset + n <= source.len()
                     && &source[offset..offset + n] == m.as_slice()
                 {
-                    return WalkOut::ok(
-                        Combinator::MultiByteCharset(members.clone()),
-                        offset + n,
-                    );
+                    return WalkOut::ok(Combinator::MultiByteCharset(members.clone()), offset + n);
                 }
             }
             WalkOut::dark(offset)
@@ -1857,11 +1857,7 @@ fn charset_matches(k: CharsetKind, b: u8) -> bool {
     match k {
         CharsetKind::WordChar => b.is_ascii_alphanumeric() || b == b'_',
         CharsetKind::NameChar => {
-            b.is_ascii_alphanumeric()
-                || b == b'_'
-                || b == b'@'
-                || b == b'/'
-                || b == b'.'
+            b.is_ascii_alphanumeric() || b == b'_' || b == b'@' || b == b'/' || b == b'.'
         }
         CharsetKind::IrIdentChar => {
             b.is_ascii_alphanumeric() || b == b'_' || b == b'.' || b == b'$'
@@ -2027,7 +2023,9 @@ pub fn prism_seed() -> Combinator {
         Literal(b"#".to_vec()),
         Lift {
             grammar: "@nl".to_string(),
-            body: Box::new(Until { stop: Box::new(Literal(b"\n".to_vec())) }),
+            body: Box::new(Until {
+                stop: Box::new(Literal(b"\n".to_vec())),
+            }),
         },
     ]);
     // file = Repeat(unit, 0, None) — the recursive root. Used by
@@ -2154,7 +2152,7 @@ fn normalize_phase1_at(c: &Combinator, depth: usize) -> Combinator {
                 .collect();
             // E3 / E13.
             match trimmed.len() {
-                0 => Literal(Vec::new()), // E13
+                0 => Literal(Vec::new()),                 // E13
                 1 => trimmed.into_iter().next().unwrap(), // E3
                 _ => Seq(trimmed),
             }
@@ -2293,9 +2291,7 @@ fn normalize_phase2_at(c: &Combinator, depth: usize) -> Combinator {
                 arms.iter().map(|c| normalize_phase2_at(c, d)).collect();
             // E15 (and E9 as its single-byte special case): if every
             // arm is a Literal, collapse to MultiByteCharset.
-            if !normalized.is_empty()
-                && normalized.iter().all(|c| matches!(c, Literal(_)))
-            {
+            if !normalized.is_empty() && normalized.iter().all(|c| matches!(c, Literal(_))) {
                 // E0509: Combinator impls Drop, so we can't move
                 // `b` out of `Literal(b)`. Use `std::mem::take` to
                 // swap the bytes out, leaving a hollow Literal that
@@ -2313,9 +2309,7 @@ fn normalize_phase2_at(c: &Combinator, depth: usize) -> Combinator {
             }
             Choice(normalized)
         }
-        Seq(children) => {
-            Seq(children.iter().map(|c| normalize_phase2_at(c, d)).collect())
-        }
+        Seq(children) => Seq(children.iter().map(|c| normalize_phase2_at(c, d)).collect()),
         Repeat { body, min, max } => Repeat {
             body: Box::new(normalize_phase2_at(body, d)),
             min: *min,
@@ -2371,8 +2365,8 @@ mod combinator_tests {
 
     fn read_boot_file(rel: &str) -> Vec<u8> {
         // bootstrap/Cargo.toml dir → ../boot/<rel>
-        let manifest = std::env::var("CARGO_MANIFEST_DIR")
-            .expect("CARGO_MANIFEST_DIR set under cargo test");
+        let manifest =
+            std::env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR set under cargo test");
         let mut p = PathBuf::from(manifest);
         p.pop(); // bootstrap → mirror
         p.push("boot");
@@ -2390,9 +2384,9 @@ mod combinator_tests {
         match apply_h(combinator, (bytes.to_vec(), 0usize)) {
             Imperfect::Success(c) => c,
             Imperfect::Partial(c, _loss) => c,
-            Imperfect::Failure(_, _) => unreachable!(
-                "Combinator::Error = Infallible; Failure uninhabited"
-            ),
+            Imperfect::Failure(_, _) => {
+                unreachable!("Combinator::Error = Infallible; Failure uninhabited")
+            }
         }
     }
 
@@ -2472,7 +2466,10 @@ mod combinator_tests {
         let glass_bytes = read_boot_file("std/mirror/grammar.mirror");
         let meta_glass = parse_with(&seed, &glass_bytes);
         eprintln!("FP1 seed       OID hex: {}", combinator_tree_oid_hex(&seed));
-        eprintln!("FP1 meta_glass OID hex: {}", combinator_tree_oid_hex(&meta_glass));
+        eprintln!(
+            "FP1 meta_glass OID hex: {}",
+            combinator_tree_oid_hex(&meta_glass)
+        );
     }
 
     /// Recursively check the tree contains no Dark fragments. The
@@ -2616,10 +2613,7 @@ mod combinator_tests {
         let a = Combinator::Literal(b"a".to_vec());
         let b = Combinator::Literal(b"b".to_vec());
         let c = Combinator::Literal(b"c".to_vec());
-        let input = Combinator::Seq(vec![
-            Combinator::Seq(vec![a.clone(), b.clone()]),
-            c.clone(),
-        ]);
+        let input = Combinator::Seq(vec![Combinator::Seq(vec![a.clone(), b.clone()]), c.clone()]);
         let expected = Combinator::Seq(vec![a, b, c]);
         assert_eq!(normalize_phase1(&input), expected);
     }
@@ -2659,11 +2653,7 @@ mod combinator_tests {
     fn e5_empty_literal_dropped_from_seq() {
         let a = Combinator::Literal(b"a".to_vec());
         let b = Combinator::Literal(b"b".to_vec());
-        let input = Combinator::Seq(vec![
-            a.clone(),
-            Combinator::Literal(Vec::new()),
-            b.clone(),
-        ]);
+        let input = Combinator::Seq(vec![a.clone(), Combinator::Literal(Vec::new()), b.clone()]);
         let expected = Combinator::Seq(vec![a, b]);
         assert_eq!(normalize_phase1(&input), expected);
     }
@@ -2709,11 +2699,7 @@ mod combinator_tests {
     fn e12_dark_fallback_dominates() {
         let a = Combinator::Literal(b"a".to_vec());
         let b = Combinator::Literal(b"b".to_vec());
-        let input = Combinator::Choice(vec![
-            a.clone(),
-            Combinator::DarkFallback,
-            b,
-        ]);
+        let input = Combinator::Choice(vec![a.clone(), Combinator::DarkFallback, b]);
         let expected = Combinator::Choice(vec![a, Combinator::DarkFallback]);
         assert_eq!(normalize_phase1(&input), expected);
     }
@@ -2804,11 +2790,7 @@ mod combinator_tests {
         let result = normalize_phase2(&input);
         assert_eq!(
             result,
-            Combinator::MultiByteCharset(vec![
-                b"a".to_vec(),
-                b"b".to_vec(),
-                b"c".to_vec(),
-            ])
+            Combinator::MultiByteCharset(vec![b"a".to_vec(), b"b".to_vec(), b"c".to_vec(),])
         );
     }
 
@@ -2909,14 +2891,8 @@ mod combinator_tests {
         let a = Combinator::Literal(b"a".to_vec());
         let b = Combinator::Literal(b"b".to_vec());
         let c = Combinator::Literal(b"c".to_vec());
-        let left = Combinator::Seq(vec![
-            Combinator::Seq(vec![a.clone(), b.clone()]),
-            c.clone(),
-        ]);
-        let right = Combinator::Seq(vec![
-            a.clone(),
-            Combinator::Seq(vec![b.clone(), c.clone()]),
-        ]);
+        let left = Combinator::Seq(vec![Combinator::Seq(vec![a.clone(), b.clone()]), c.clone()]);
+        let right = Combinator::Seq(vec![a.clone(), Combinator::Seq(vec![b.clone(), c.clone()])]);
         let n_left = normalize(&left);
         let n_right = normalize(&right);
         assert_eq!(n_left, n_right);
@@ -2947,11 +2923,7 @@ mod combinator_tests {
         assert_eq!(n_nested, n_flat);
         assert_eq!(
             n_flat,
-            Combinator::MultiByteCharset(vec![
-                b"a".to_vec(),
-                b"b".to_vec(),
-                b"c".to_vec(),
-            ])
+            Combinator::MultiByteCharset(vec![b"a".to_vec(), b"b".to_vec(), b"c".to_vec(),])
         );
     }
 
@@ -3003,10 +2975,7 @@ mod combinator_tests {
         let b = Combinator::Literal(b"y".to_vec());
         let c = Combinator::Literal(b"z".to_vec());
         let flat = Combinator::Seq(vec![a.clone(), b.clone(), c.clone()]);
-        let nested = Combinator::Seq(vec![
-            Combinator::Seq(vec![a, b]),
-            c,
-        ]);
+        let nested = Combinator::Seq(vec![Combinator::Seq(vec![a, b]), c]);
         assert_eq!(
             combinator_tree_oid(&flat),
             combinator_tree_oid(&nested),
@@ -3114,10 +3083,7 @@ mod combinator_tests {
                 let extra = 16;
                 let mut tree = Combinator::Literal(b"leaf".to_vec());
                 for _ in 0..(MAX_DEPTH + extra) {
-                    tree = Combinator::Seq(vec![
-                        tree,
-                        Combinator::Literal(b"x".to_vec()),
-                    ]);
+                    tree = Combinator::Seq(vec![tree, Combinator::Literal(b"x".to_vec())]);
                 }
 
                 // Walker: completes without panic; the deepest levels
@@ -3883,8 +3849,8 @@ mod combinator_tests {
     /// accepts every well-formed file; no DarkFallback in any witness.
     #[test]
     fn f1_corpus_smoke_vs_tokenize() {
-        let manifest = std::env::var("CARGO_MANIFEST_DIR")
-            .expect("CARGO_MANIFEST_DIR set under cargo test");
+        let manifest =
+            std::env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR set under cargo test");
         let mut boot_root = PathBuf::from(&manifest);
         boot_root.pop(); // bootstrap -> mirror
         boot_root.push("boot");
@@ -4083,9 +4049,7 @@ mod tests {
                 let confidence = 1.0 - r.abs().min(1.0);
                 let verdict = PropertyVerdict::Partial {
                     confidence,
-                    diagnostics: vec![Diagnostic::new(format!(
-                        "rounding residual {r}"
-                    ))],
+                    diagnostics: vec![Diagnostic::new(format!("rounding residual {r}"))],
                 };
                 let transparency = Transparency::single(
                     Ref::new("@quantize").expect("@quantize is a valid Ref"),
@@ -4131,9 +4095,8 @@ mod tests {
             } else {
                 // Domain rejection: open an Opaque @positive Fail and
                 // clamp the carried state to 0.0.
-                let verdict = PropertyVerdict::Fail(Diagnostic::new(format!(
-                    "negative state {state}"
-                )));
+                let verdict =
+                    PropertyVerdict::Fail(Diagnostic::new(format!("negative state {state}")));
                 let transparency = Transparency::single(
                     Ref::new("@positive").expect("@positive is a valid Ref"),
                     verdict,
@@ -4399,11 +4362,7 @@ mod tests {
         // rotations or QR; that's deferred to a richer linalg substrate.
         // Power iteration is correct for the well-separated case and
         // that's what the bootstrap floor needs today.
-        let m = [
-            [7.0, 0.0, 0.0],
-            [0.0, 4.0, 0.0],
-            [0.0, 0.0, 1.0],
-        ];
+        let m = [[7.0, 0.0, 0.0], [0.0, 4.0, 0.0], [0.0, 0.0, 1.0]];
         let s = eigen_d::<3>(m);
         // Trace = 12; dominant ≈ 7; smallest ≈ 1.
         let sum: f64 = s.eigenvalues.iter().sum();
@@ -4536,9 +4495,7 @@ mod transparency_cascade_tests {
                 let confidence = 1.0 - r.abs().min(1.0);
                 let verdict = PropertyVerdict::Partial {
                     confidence,
-                    diagnostics: vec![Diagnostic::new(format!(
-                        "rounding residual {r}"
-                    ))],
+                    diagnostics: vec![Diagnostic::new(format!("rounding residual {r}"))],
                 };
                 let transparency = Transparency::single(
                     Ref::new("@quantize").expect("@quantize is a valid Ref"),
@@ -4574,9 +4531,8 @@ mod transparency_cascade_tests {
             if state >= 0.0 {
                 Optic::ok(state, state)
             } else {
-                let verdict = PropertyVerdict::Fail(Diagnostic::new(format!(
-                    "negative state {state}"
-                )));
+                let verdict =
+                    PropertyVerdict::Fail(Diagnostic::new(format!("negative state {state}")));
                 let transparency = Transparency::single(
                     Ref::new("@positive").expect("@positive is a valid Ref"),
                     verdict,
@@ -4600,14 +4556,8 @@ mod transparency_cascade_tests {
     /// verbatim.
     fn compose_a_t<S, InP, InQ, P, Q>(p: &P, q: &Q, state: S) -> VerdictT<S>
     where
-        P: Prism<
-            Input = Optic<(), S>,
-            Refracted = Optic<InP, S, Infallible, Transparency<Ref>>,
-        >,
-        Q: Prism<
-            Input = Optic<(), S>,
-            Refracted = Optic<InQ, S, Infallible, Transparency<Ref>>,
-        >,
+        P: Prism<Input = Optic<(), S>, Refracted = Optic<InP, S, Infallible, Transparency<Ref>>>,
+        Q: Prism<Input = Optic<(), S>, Refracted = Optic<InQ, S, Infallible, Transparency<Ref>>>,
     {
         prism_core::apply_h(p, state).eh(|s| prism_core::apply_h(q, s))
     }
@@ -4759,8 +4709,7 @@ mod transparency_cascade_tests {
 
         fn focus(&self, beam: Self::Input) -> Self::Focused {
             let state = *beam.value().expect("AlwaysOpaqueT::focus on dark beam");
-            let transparency =
-                Transparency::single(self.path.clone(), self.verdict.clone());
+            let transparency = Transparency::single(self.path.clone(), self.verdict.clone());
             Optic::partial(state, state, transparency)
         }
         fn project(&self, beam: Self::Focused) -> Self::Projected {

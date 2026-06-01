@@ -9,14 +9,10 @@ use crate::grammar::{is_skip_word, Grammar};
 fn body_is_obligation(bytes: &[u8]) -> bool {
     let mut start = 0usize;
     let mut end = bytes.len();
-    while start < end
-        && matches!(bytes[start], b' ' | b'\t' | b'\n' | b'\r')
-    {
+    while start < end && matches!(bytes[start], b' ' | b'\t' | b'\n' | b'\r') {
         start += 1;
     }
-    while end > start
-        && matches!(bytes[end - 1], b' ' | b'\t' | b'\n' | b'\r')
-    {
+    while end > start && matches!(bytes[end - 1], b' ' | b'\t' | b'\n' | b'\r') {
         end -= 1;
     }
     end - start == 1 && bytes[start] == b'\\'
@@ -179,12 +175,7 @@ fn name_string(slice: &[u8]) -> String {
     String::from_utf8_lossy(&slice[..n]).into_owned()
 }
 
-fn scan_items(
-    source: &[u8],
-    grammar: &Grammar,
-    parent: &mut AstNode,
-    base_off: usize,
-) {
+fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: usize) {
     let bytes = source;
     let len = bytes.len();
     let mut pos = 0usize;
@@ -215,9 +206,7 @@ fn scan_items(
         }
 
         // LLVM IR sigil-prefix forms at line start: @id %id !id
-        if llvm
-            && at_line_start
-            && (bytes[pos] == b'@' || bytes[pos] == b'%' || bytes[pos] == b'!')
+        if llvm && at_line_start && (bytes[pos] == b'@' || bytes[pos] == b'%' || bytes[pos] == b'!')
         {
             let sigil = bytes[pos];
             let name_start = pos;
@@ -236,9 +225,7 @@ fn scan_items(
             let body_start = name_end;
             let eol = find_eol(bytes, body_start);
             let mut body_end = eol;
-            while body_end > body_start
-                && matches!(bytes[body_end - 1], b' ' | b'\t' | b'\r')
-            {
+            while body_end > body_start && matches!(bytes[body_end - 1], b' ' | b'\t' | b'\r') {
                 body_end -= 1;
             }
             let kind = if sigil == b'@' {
@@ -356,9 +343,7 @@ fn scan_items(
             while pos < len
                 && !matches!(
                     bytes[pos],
-                    b' ' | b'\t' | b'\n' | b'\r'
-                        | b'"' | b'#' | b';' | b'{'
-                        | b')' | b']' | b'}'
+                    b' ' | b'\t' | b'\n' | b'\r' | b'"' | b'#' | b';' | b'{' | b')' | b']' | b'}'
                 )
                 && !is_word_char(bytes[pos])
             {
@@ -388,9 +373,7 @@ fn scan_items(
         // `pub` followed by optional (...) — skip over it.
         if word == "pub" {
             let saved = pos;
-            while pos < len
-                && matches!(bytes[pos], b' ' | b'\t' | b'\n' | b'\r')
-            {
+            while pos < len && matches!(bytes[pos], b' ' | b'\t' | b'\n' | b'\r') {
                 pos += 1;
             }
             if pos < len && bytes[pos] == b'(' {
@@ -462,10 +445,7 @@ fn scan_items(
                     {
                         body_end -= 1;
                     }
-                    let body = String::from_utf8_lossy(
-                        &bytes[name_end..body_end],
-                    )
-                    .into_owned();
+                    let body = String::from_utf8_lossy(&bytes[name_end..body_end]).into_owned();
                     let mut node = AstNode::new(AstKind::IoBinding, &name);
                     node.set_keyword("io");
                     node.set_body(&body);
@@ -514,19 +494,14 @@ fn scan_items(
             if scan < len && bytes[scan] == b'{' {
                 let subj_end = {
                     let mut e = scan;
-                    while e > subj_start
-                        && matches!(bytes[e - 1], b' ' | b'\t' | b'\r')
-                    {
+                    while e > subj_start && matches!(bytes[e - 1], b' ' | b'\t' | b'\r') {
                         e -= 1;
                     }
                     e
                 };
                 let subject = name_string(&bytes[subj_start..subj_end]);
                 let block_end = scan_brace_block_past(bytes, scan);
-                let body = String::from_utf8_lossy(
-                    &bytes[subj_end..block_end],
-                )
-                .into_owned();
+                let body = String::from_utf8_lossy(&bytes[subj_end..block_end]).into_owned();
                 let mut node = AstNode::new(AstKind::MatchExpr, &subject);
                 node.set_keyword("match");
                 node.set_body(&body);
@@ -555,17 +530,12 @@ fn scan_items(
             if scan < len && bytes[scan] == b'{' {
                 // The header between `select` and `{` is `|x|` (or empty).
                 let mut header_end = scan;
-                while header_end > after
-                    && matches!(bytes[header_end - 1], b' ' | b'\t' | b'\r')
-                {
+                while header_end > after && matches!(bytes[header_end - 1], b' ' | b'\t' | b'\r') {
                     header_end -= 1;
                 }
                 let binder = name_string(&bytes[after..header_end]);
                 let block_end = scan_brace_block_past(bytes, scan);
-                let body = String::from_utf8_lossy(
-                    &bytes[header_end..block_end],
-                )
-                .into_owned();
+                let body = String::from_utf8_lossy(&bytes[header_end..block_end]).into_owned();
                 let mut node = AstNode::new(AstKind::SelectExpr, &binder);
                 node.set_keyword("select");
                 node.set_body(&body);
@@ -618,9 +588,7 @@ fn scan_items(
                     pos = scan; // leave '\n' for outer loop
                 }
                 let mut be = body_end;
-                while be > body_start
-                    && matches!(bytes[be - 1], b' ' | b'\t' | b'\r')
-                {
+                while be > body_start && matches!(bytes[be - 1], b' ' | b'\t' | b'\r') {
                     be -= 1;
                 }
                 let mut node = AstNode::new(kind, &name);
@@ -631,9 +599,7 @@ fn scan_items(
             }
 
             // Standard path: skip whitespace, read name.
-            while pos < len
-                && matches!(bytes[pos], b' ' | b'\t' | b'\n' | b'\r')
-            {
+            while pos < len && matches!(bytes[pos], b' ' | b'\t' | b'\n' | b'\r') {
                 pos += 1;
             }
             let name_start = pos;
@@ -699,11 +665,7 @@ fn scan_items(
                 }
             }
 
-            while pos < len
-                && bytes[pos] != b'{'
-                && bytes[pos] != b';'
-                && bytes[pos] != b'\n'
-            {
+            while pos < len && bytes[pos] != b'{' && bytes[pos] != b';' && bytes[pos] != b'\n' {
                 pos += 1;
             }
 
@@ -804,10 +766,7 @@ fn scan_items(
                 };
                 {
                     let arrow = skip_hspace(bytes, after_paren);
-                    if arrow + 1 < len
-                        && bytes[arrow] == b'-'
-                        && bytes[arrow + 1] == b'>'
-                    {
+                    if arrow + 1 < len && bytes[arrow] == b'-' && bytes[arrow + 1] == b'>' {
                         let ty_start = skip_hspace(bytes, arrow + 2);
                         let mut ty_end = ty_start;
                         while ty_end < len && is_name_char(bytes[ty_end]) {
@@ -831,30 +790,20 @@ fn scan_items(
                         if ty_end > ty_start {
                             let mut block_pos = ty_end;
                             while block_pos < len
-                                && matches!(
-                                    bytes[block_pos],
-                                    b' ' | b'\t' | b'\n' | b'\r'
-                                )
+                                && matches!(bytes[block_pos], b' ' | b'\t' | b'\n' | b'\r')
                             {
                                 block_pos += 1;
                             }
                             if block_pos < len && bytes[block_pos] == b'{' {
-                                let block_end =
-                                    scan_brace_block_past(bytes, block_pos);
-                                let action_name =
-                                    name_string(&bytes[name_start..name_end]);
+                                let block_end = scan_brace_block_past(bytes, block_pos);
+                                let action_name = name_string(&bytes[name_start..name_end]);
                                 // Body: everything after the action name
                                 // through the closing brace (args, arrow,
                                 // return type, brace block) — verbatim
                                 // for round-trip.
-                                let body = String::from_utf8_lossy(
-                                    &bytes[name_end..block_end],
-                                )
-                                .into_owned();
-                                let mut node = AstNode::new(
-                                    AstKind::IoBinding,
-                                    &action_name,
-                                );
+                                let body = String::from_utf8_lossy(&bytes[name_end..block_end])
+                                    .into_owned();
+                                let mut node = AstNode::new(AstKind::IoBinding, &action_name);
                                 node.set_keyword(&word);
                                 node.set_body(&body);
                                 parent.add_child(node);
@@ -876,9 +825,7 @@ fn scan_items(
             // files to crystal-collide on the same OID. The Dark span now
             // carries the leading keyword and the enclosing braces; the
             // renderer round-trips them verbatim.
-            while pos < len
-                && matches!(bytes[pos], b' ' | b'\t' | b'\n' | b'\r')
-            {
+            while pos < len && matches!(bytes[pos], b' ' | b'\t' | b'\n' | b'\r') {
                 pos += 1;
             }
             if pos < len && bytes[pos] == b'{' {

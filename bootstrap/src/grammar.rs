@@ -103,11 +103,7 @@ pub fn parse_grammar(source: &str) -> Grammar {
         }
 
         // Skip lines with (), <>, {}. These contain action/abstract syntax.
-        if line.contains('(')
-            || line.contains('>')
-            || line.contains('{')
-            || line.contains('}')
-        {
+        if line.contains('(') || line.contains('>') || line.contains('{') || line.contains('}') {
             continue;
         }
 

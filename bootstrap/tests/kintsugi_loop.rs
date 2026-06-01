@@ -72,7 +72,11 @@ fn shatter_five_terminates_on_tick_one() {
         tick_lines
     );
     let line = tick_lines[0];
-    assert!(line.contains("tick 1"), "first tick must be numbered 1: {}", line);
+    assert!(
+        line.contains("tick 1"),
+        "first tick must be numbered 1: {}",
+        line
+    );
     assert!(
         line.contains("\u{0394}: 0.0"),
         "\u{0394} must be 0.0 on the vacuous fixed point: {}",

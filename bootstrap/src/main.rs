@@ -28,12 +28,14 @@ use terni::Imperfect;
 
 use crate::ast::{line_col_at, AstKind, AstNode};
 use crate::crystallize::{
-    floor_crystallizations, Blake3, Content, CrystallizeError, Crystallizations, Splinter, Text,
+    floor_crystallizations, Blake3, Content, Crystallizations, CrystallizeError, Splinter, Text,
 };
 use crate::git::{git_crystal_exists, git_store_crystal};
 use crate::grammar::{grammar_for_file, load_grammar};
 use crate::hash::canonical_hash;
-use crate::pipeline::{apply_rewrites, execute_pipeline, is_mq_query, parse_rewrite, split_pipeline};
+use crate::pipeline::{
+    apply_rewrites, execute_pipeline, is_mq_query, parse_rewrite, split_pipeline,
+};
 use crate::spectral::{compute_content_oid, render_ast};
 use crate::tokenize::tokenize;
 
@@ -105,9 +107,7 @@ fn print_dark_diag(file: &str, source: &[u8], dark: &AstNode) {
 
     // Caret width: the run of non-whitespace bytes starting at content_start.
     let mut tok_end = content_start;
-    while tok_end < line_end
-        && !matches!(source[tok_end], b' ' | b'\t')
-    {
+    while tok_end < line_end && !matches!(source[tok_end], b' ' | b'\t') {
         tok_end += 1;
     }
     let caret_width = (tok_end - content_start).max(1);
@@ -270,12 +270,7 @@ fn parse_target(s: &str) -> Option<TargetKind> {
     }
 }
 
-fn cmd_craft_with(
-    target: &str,
-    no_cache: bool,
-    kind: TargetKind,
-    strict: bool,
-) -> i32 {
+fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind, strict: bool) -> i32 {
     let mut files: Vec<String> = Vec::new();
     match target {
         "boot" | "std" => collect_files("boot", ".mirror", &mut files),
@@ -406,8 +401,8 @@ fn build_self_binary() -> i32 {
     }
 
     eprintln!("2/3 locate bootstrap/mirror.ll");
-    let target_dir = std::env::var("CARGO_TARGET_DIR")
-        .unwrap_or_else(|_| "bootstrap/target".to_string());
+    let target_dir =
+        std::env::var("CARGO_TARGET_DIR").unwrap_or_else(|_| "bootstrap/target".to_string());
     let deps_dir = PathBuf::from(&target_dir).join("release").join("deps");
     let ll_path = match find_bootstrap_ll(&deps_dir) {
         Some(p) => p,
@@ -420,7 +415,12 @@ fn build_self_binary() -> i32 {
 
     let dest = PathBuf::from("bootstrap/mirror.ll");
     if let Err(e) = fs::copy(&ll_path, &dest) {
-        eprintln!("copy {} -> {} failed: {}", ll_path.display(), dest.display(), e);
+        eprintln!(
+            "copy {} -> {} failed: {}",
+            ll_path.display(),
+            dest.display(),
+            e
+        );
         return 1;
     }
     eprintln!("    copied to {}", dest.display());
@@ -489,12 +489,31 @@ fn find_bootstrap_ll(deps_dir: &std::path::Path) -> Option<PathBuf> {
 fn dump_ast(node: &crate::ast::AstNode, depth: usize) {
     let indent = "  ".repeat(depth);
     let kind_str = format!("{:?}", node.kind);
-    let body_marker = node.body.as_deref().map(|b| format!(" body={:?}", b)).unwrap_or_default();
-    let kw_marker = if node.keyword.is_empty() { String::new() } else { format!(" kw={}", node.keyword) };
-    let tag_marker = if node.grammar_tag.is_empty() { String::new() } else { format!(" tag={}", node.grammar_tag) };
-    eprintln!("{}{} name={:?}{}{}{} oid={}",
-        indent, kind_str, node.name, kw_marker, tag_marker, body_marker,
-        compute_content_oid(node));
+    let body_marker = node
+        .body
+        .as_deref()
+        .map(|b| format!(" body={:?}", b))
+        .unwrap_or_default();
+    let kw_marker = if node.keyword.is_empty() {
+        String::new()
+    } else {
+        format!(" kw={}", node.keyword)
+    };
+    let tag_marker = if node.grammar_tag.is_empty() {
+        String::new()
+    } else {
+        format!(" tag={}", node.grammar_tag)
+    };
+    eprintln!(
+        "{}{} name={:?}{}{}{} oid={}",
+        indent,
+        kind_str,
+        node.name,
+        kw_marker,
+        tag_marker,
+        body_marker,
+        compute_content_oid(node)
+    );
     for c in &node.children {
         dump_ast(c, depth + 1);
     }
@@ -504,7 +523,10 @@ fn dump_ast(node: &crate::ast::AstNode, depth: usize) {
 fn cmd_dump(file: &str) -> i32 {
     let source = match fs::read(file) {
         Ok(s) => s,
-        Err(e) => { eprintln!("cannot read {}: {}", file, e); return 1; }
+        Err(e) => {
+            eprintln!("cannot read {}: {}", file, e);
+            return 1;
+        }
     };
     let grammar_path = grammar_for_file(file);
     let grammar = match load_grammar(grammar_path) {
@@ -554,8 +576,7 @@ fn kintsugi_tick(
     // Tick A, so this dispatch returns `Uncrystallized` and we report
     // it visibly. Tick B will register `@kintsugi/tick` and the same
     // call site will start receiving Success/Partial verdicts.
-    let tick_ref = Ref::new("@kintsugi/tick")
-        .expect("@kintsugi/tick is a valid Ref");
+    let tick_ref = Ref::new("@kintsugi/tick").expect("@kintsugi/tick is a valid Ref");
     let seed_input: Optic<(), Splinter<Blake3>> =
         Optic::ok((), Splinter::new(Content::Text(Text::new("tick"))));
     let dispatch = crystallizations.crystallize(&tick_ref, seed_input);
@@ -564,7 +585,10 @@ fn kintsugi_tick(
             eprintln!("  dispatch {}: Success", tick_ref.as_str());
         }
         Imperfect::Partial(_, _) => {
-            eprintln!("  dispatch {}: Partial (with Transparency)", tick_ref.as_str());
+            eprintln!(
+                "  dispatch {}: Partial (with Transparency)",
+                tick_ref.as_str()
+            );
         }
         Imperfect::Failure(CrystallizeError::Uncrystallized(got), _) => {
             eprintln!(
@@ -659,13 +683,15 @@ fn cmd_kintsugi(file: &str, shatter: u64, transform: Option<&str>, out_dir: Opti
 /// strip-leading-`std/` rule.
 fn cmd_kintsugi_migrate(src_root: &str, out_root: &str, transform: Option<&str>) -> i32 {
     let rules = match transform {
-        Some(q) => match parse_rewrite(q) {
-            Some(r) => r,
-            None => {
-                eprintln!("kintsugi --transform: not a rewrite query (expected `<sym> => <repl>`): {}", q);
-                return 1;
+        Some(q) => {
+            match parse_rewrite(q) {
+                Some(r) => r,
+                None => {
+                    eprintln!("kintsugi --transform: not a rewrite query (expected `<sym> => <repl>`): {}", q);
+                    return 1;
+                }
             }
-        },
+        }
         None => Vec::new(),
     };
     let mut files: Vec<String> = Vec::new();
@@ -691,10 +717,16 @@ fn cmd_kintsugi_migrate(src_root: &str, out_root: &str, transform: Option<&str>)
         // drop `std/mirror/` (bootstrap-historical), and apply the
         // basename rewrite from the rules (so `grammar.mirror` →
         // `glass.mirror` when the rule is `grammar => glass`).
-        let rel = path.strip_prefix(src_root).unwrap_or(path).trim_start_matches('/');
+        let rel = path
+            .strip_prefix(src_root)
+            .unwrap_or(path)
+            .trim_start_matches('/');
         // Strip `std/mirror/` and `std/` prefixes — bootstrap-historical
         // namespacing that has no semantic content.
-        let rel = rel.strip_prefix("std/mirror/").or_else(|| rel.strip_prefix("std/")).unwrap_or(rel);
+        let rel = rel
+            .strip_prefix("std/mirror/")
+            .or_else(|| rel.strip_prefix("std/"))
+            .unwrap_or(rel);
         // Apply basename rewrite: each rule maps `<sym>.mirror` to
         // `<repl>.mirror` when the file basename equals `<sym>.mirror`.
         let mut rel_out = rel.to_string();
@@ -737,7 +769,12 @@ fn cmd_kintsugi_migrate(src_root: &str, out_root: &str, transform: Option<&str>)
     }
 }
 
-fn cmd_kintsugi_single(file: &str, shatter: u64, transform: Option<&str>, out_dir: Option<&str>) -> i32 {
+fn cmd_kintsugi_single(
+    file: &str,
+    shatter: u64,
+    transform: Option<&str>,
+    out_dir: Option<&str>,
+) -> i32 {
     let source = match fs::read(file) {
         Ok(s) => s,
         Err(e) => {
@@ -784,9 +821,14 @@ fn cmd_kintsugi_single(file: &str, shatter: u64, transform: Option<&str>, out_di
     let mut out = Vec::new();
     render_ast(&ast, 0, &mut out);
     if let Some(dir) = out_dir {
-        let dest = format!("{}/{}", dir.trim_end_matches('/'),
-            std::path::Path::new(file).file_name()
-                .and_then(|n| n.to_str()).unwrap_or(file));
+        let dest = format!(
+            "{}/{}",
+            dir.trim_end_matches('/'),
+            std::path::Path::new(file)
+                .file_name()
+                .and_then(|n| n.to_str())
+                .unwrap_or(file)
+        );
         if let Some(parent) = std::path::Path::new(&dest).parent() {
             let _ = fs::create_dir_all(parent);
         }
@@ -890,7 +932,10 @@ fn main() {
             match args[i + 1].parse::<u64>() {
                 Ok(n) => shatter = n,
                 Err(_) => {
-                    eprintln!("--shatter requires a non-negative integer, got: {}", args[i + 1]);
+                    eprintln!(
+                        "--shatter requires a non-negative integer, got: {}",
+                        args[i + 1]
+                    );
                     std::process::exit(1);
                 }
             }

@@ -56,7 +56,11 @@ fn main() {
         .arg(&obj)
         .status()
         .unwrap_or_else(|e| panic!("failed to invoke flang ({}): {e}", flang.display()));
-    assert!(status.success(), "flang failed to compile {}", src.display());
+    assert!(
+        status.success(),
+        "flang failed to compile {}",
+        src.display()
+    );
 
     // Archive: ar rcs $OUT_DIR/libdot.a $OUT_DIR/dot.o
     let lib = out_dir.join("libdot.a");

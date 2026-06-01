@@ -106,8 +106,8 @@ pub fn apply_rewrites(rules: &[RewriteRule], source: &[u8]) -> Vec<u8> {
         while i < current.len() {
             if i + sym.len() <= current.len() && &current[i..i + sym.len()] == sym {
                 let left_ok = i == 0 || !is_word_byte(current[i - 1]);
-                let right_ok = i + sym.len() == current.len()
-                    || !is_word_byte(current[i + sym.len()]);
+                let right_ok =
+                    i + sym.len() == current.len() || !is_word_byte(current[i + sym.len()]);
                 if left_ok && right_ok {
                     out.extend_from_slice(repl);
                     i += sym.len();
@@ -243,10 +243,7 @@ mod rewrite_tests {
         // Clause 1: forward chain.
         let rules = parse_rewrite("a => b; b => c").unwrap();
         let out = apply_rewrites(&rules, b"a");
-        assert_eq!(
-            out, b"c",
-            "rule 2 sees rule 1's output: a -> b -> c"
-        );
+        assert_eq!(out, b"c", "rule 2 sees rule 1's output: a -> b -> c");
 
         // Clause 2: order-asymmetry.
         let rules = parse_rewrite("b => c; a => b").unwrap();
@@ -395,7 +392,16 @@ pub fn execute_pipeline(segs: &[Segment], source: &[u8]) -> i32 {
         {
             let emit_only = r#ref == "@mirror/butterfly.emit";
             if !emit_only {
-                let args = ["-x", "ir", "-", "-O2", "-ffp-contract=off", "-o", "mirror-butterfly", "-lm"];
+                let args = [
+                    "-x",
+                    "ir",
+                    "-",
+                    "-O2",
+                    "-ffp-contract=off",
+                    "-o",
+                    "mirror-butterfly",
+                    "-lm",
+                ];
                 match io_exec("clang", &args, &current_text) {
                     Ok((rc, out)) => {
                         if !out.is_empty() {

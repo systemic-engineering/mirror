@@ -581,10 +581,7 @@ mod tests {
         // A Record's OID changes if any sub-Splinter changes.
         let k = FieldName::new("name").unwrap();
         let mut m1: BTreeMap<FieldName, Splinter> = BTreeMap::new();
-        m1.insert(
-            k.clone(),
-            Splinter::new(Content::Text(Text::new("alex"))),
-        );
+        m1.insert(k.clone(), Splinter::new(Content::Text(Text::new("alex"))));
         let r1 = Splinter::new(Content::Record(m1));
 
         let mut m2: BTreeMap<FieldName, Splinter> = BTreeMap::new();
@@ -970,8 +967,7 @@ mod transparency_cascade_tests {
         let verdict = body(input);
         match verdict {
             Imperfect::Partial(_out, transparency) => {
-                let validate_path = Ref::new("@kintsugi/fracture/validate")
-                    .expect("valid ref");
+                let validate_path = Ref::new("@kintsugi/fracture/validate").expect("valid ref");
                 assert!(
                     transparency.is_opaque_at(&validate_path),
                     "expected Opaque at @kintsugi/fracture/validate, got {:?}",
@@ -980,10 +976,7 @@ mod transparency_cascade_tests {
                 let opacities = transparency.opacities().unwrap();
                 match &opacities[&validate_path] {
                     PropertyVerdict::Fail(_) | PropertyVerdict::Partial { .. } => {}
-                    other => panic!(
-                        "expected Fail or Partial verdict, got {:?}",
-                        other
-                    ),
+                    other => panic!("expected Fail or Partial verdict, got {:?}", other),
                 }
             }
             other => panic!(
