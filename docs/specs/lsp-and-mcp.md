@@ -148,6 +148,8 @@ already exists or to a hole that's the spec for the next one.
 Three tools today. The road to 1.0 adds two; the five operations expose
 themselves directly.
 
+> **Wire-altitude reload.** When mirror-mcp lands per [[../../../fragmentation/docs/specs/fragmentation-mcp]] §8, the five tools below collapse into pq's three on the wire; the per-tool surface here becomes the typed DSL inside `focus`/`project`/`refract`. The table records the in-flight intermediate; the grounding altitude is pq.
+
 | Tool | Bootstrap subcommand | Status |
 |---|---|---|
 | `mirror_compile` | `compile <file>` | live |

@@ -40,15 +40,24 @@ See [[../../../systemic.engineering/practice/insights/math/numerics/requisite-va
 
 ## 3. The error delta at crossing time — Cramér–Rao
 
-When @mirror computation has accumulated Fisher information `I(t)` after `t` steps, the minimum achievable error at @io crossing is bounded by:
+At each @io crossing, an agent must commit to a point estimate from the @mirror posterior. We pin the four hooks the Cramér–Rao bound needs:
+
+- **What is estimated.** The committed value at the @io boundary — the agent's collapse from posterior to a single interpretation.
+- **Which estimator.** The MAP value of the @mirror posterior at the moment of commitment.
+- **Bias.** The MAP is biased in general; we use the biased Cramér–Rao form.
+- **Error metric.** `δ` is the standard deviation of the MAP estimator under the posterior.
+
+Under these hooks, the per-crossing bound is:
 
 ```
-δ_min(t)  ≥  1 / √I(t)
+δ_min²(t)  ≥  (∂_θ E[T])² / I(t)
 ```
 
-This is the Cramér–Rao bound. It tells us that **delaying @io crossing reduces the minimum committable error** — not as a heuristic, but as a theorem. Kintsugi's bias is precisely the policy that delays crossing until `I(t)` is large enough that `δ_min(t)` is below an acceptable threshold.
+where `T` is the MAP estimator, `I(t)` is the Fisher information accumulated through `t` @mirror computation steps, and `∂_θ E[T]` is the slope of the estimator's expected value. The asymptotic proportionality `δ ∝ 1/√I(t)` in §1's constraint absorbs the slope factor into a per-crossing constant. The formal bound is per-crossing; §1's constraint is the decay rate.
 
-The Fisher-Rao gradient flow machinery from Kerimkulov et al. (2023) IS the @fate inference update rule on the probability manifold. The natural gradient on the Fisher manifold is the mathematically-correct way to run @mirror computation steps in a way that maximally narrows the posterior per unit of compute.
+The implication: **delaying @io crossing reduces the minimum committable error** — not as heuristic, but as a theorem. Kintsugi's bias is precisely the policy that defers crossing until `I(t)` is large enough that `δ_min(t)` is below an acceptable threshold.
+
+The Fisher-Rao gradient flow machinery from Kerimkulov et al. (2023) provides the formal language for the @fate inference update rule: the natural gradient on the Fisher manifold is the geometrically-correct way to accumulate `I(t)` per unit of @mirror compute. The structural identification of @fate as a Fisher-Rao gradient flow is plausible; the precise correspondence between @fate's tournament dynamics and Kerimkulov's entropy-regularised MDP flow is §10's open question.
 
 See [[../../../systemic.engineering/practice/insights/math/numerics/information-geometry-variety-preserving]].
 
@@ -58,11 +67,11 @@ See [[../../../systemic.engineering/practice/insights/math/numerics/information-
 
 Items = operations in the computation graph. Weight = @io crossing cost. Value = variety maintained. Kintsugi packs the @mirror bag as tightly as possible; lifting `@code → @mirror` moves items from the "must cross" pile to the "stays in bag" pile.
 
-This framing is **structurally identical** to the I/O-optimal computation problem studied by Saha & Ye (ICML 2024). They proved that FlashAttention's I/O complexity is *optimal* and established the reduction from communication complexity to I/O complexity for transformer attention. The implication for mirror:
+This framing connects to the I/O-optimal computation problem studied by Saha & Ye (ICML 2024). They prove a tight I/O lower bound for transformer attention specifically (`IO(Attention) = Θ(N²d/√M)`) and — more importantly for our purposes — establish a *reduction technique* from communication complexity to I/O complexity that is applicable to any computation graph. The technique is a per-graph proof obligation, not a free corollary. The implications for mirror:
 
-- The Knapsack lower bound on @io crossings is *known to be achievable* for the class of computations mirror runs.
-- The red-blue pebble game machinery (Sobczyk 2024, partial-computation extension) gives us a concrete algorithmic framework for computing the optimal crossing schedule on a DAG.
-- The SP-DAG memory-peak minimization (Herrmann et al. 2025) gives us the algorithm for the special case where the op graph is series-parallel.
+- The Knapsack lower bound on @io crossings is **known to be tight for attention** and **amenable to the Saha–Ye reduction technique on other graphs**. Whether mirror's specific op graphs admit a matching upper bound via the technique is an open per-graph instantiation.
+- The red-blue pebble game machinery (Sobczyk 2024, partial-computation extension) gives a *model* for computing optimal crossing schedules on a DAG. The general problem is NP-hard; practical use depends on the SP-DAG special case or approximation.
+- The SP-DAG memory-peak minimization (Herrmann et al. 2025) gives a polynomial-time algorithm when the op graph is series-parallel. Whether mirror's op graphs satisfy SP in any regime is an open question.
 
 See [[../../../systemic.engineering/practice/insights/math/numerics/io-complexity-computation-graphs]].
 
@@ -77,9 +86,11 @@ posterior_i+1 = collapse(posterior_i, output_i)
 δ_{i+1}      = f(residual_variance(posterior_{i+1}))  with f monotone in variance
 ```
 
-Since `residual_variance(posterior_{i+1}) > residual_variance(posterior_i ∩ alt_branches)`, we get `δ_{i+1} > δ_i`. **Error accumulates super-linearly.**
+The claim is that `residual_variance(posterior_{i+1}) > residual_variance(posterior_i ∩ alt_branches)`, so `δ_{i+1} > δ_i`. **Error accumulates super-linearly.**
 
-The right penalty structure for the kintsugi objective is therefore not `∑ δ_i` but something like `∑ δ_i · e^{i · κ}` for some decoherence constant `κ` — or, more precisely, the Saha & Ye communication-complexity formulation, which already captures the sequential-dependence structure correctly.
+The right penalty structure for the kintsugi objective is therefore not `∑ δ_i` but something like `∑ δ_i · e^{i · κ}` for some decoherence constant `κ`.
+
+**Regime caveat.** §3 describes the residual variance under continued @mirror computation — where `I(t)` accumulates and `δ_min(t)` decreases. §5 here describes the residual variance after the @io collapse step — where the posterior is replaced by a degenerate distribution at the committed MAP and subsequent computation starts from a biased prior. These are different regimes; the compounding claim above is heuristic under this informal framing. A rigorous bias-propagation model that closes the gap is §10's open question (see §10.5).
 
 ---
 
@@ -116,13 +127,13 @@ property kintsugi_objective : scalar
 
 ---
 
-## 7. @fate tournament IS the variety-maintenance mechanism
+## 7. @fate tournament as a variety-maintenance instance
 
-The [[kintsugi-tournament]] machinery is not just "explore more interpretations." It is **structurally the requisite-variety apparatus**. Multiple agents running in parallel on the same glass = multiple posterior branches held simultaneously. The tournament does not collapse until the HAL line forces it to. The tournament's depth, width, and selection rule are tunable parameters of the variety-maintenance policy.
+The [[kintsugi-tournament]] machinery is scoped to one specific application: tournament-shaped resolution between competing glass morphisms at the migrate altitude (the runtime.mirror / nl.mirror duplicates in Tick 4b.3). What it does in that instance is hold multiple posterior branches in parallel and defer collapse until the HAL line forces it.
 
-This recontextualizes [[parse-as-fate-tournament]] and [[substrate-native-fate-tournament]]: the tournament is the mechanism by which mirror satisfies the Ashby constraint. Without the tournament, |R(@mirror)| collapses to 1 (a single interpretation) and Ashby fails for any ambiguous disturbance.
+The pattern itself — tournament-shaped structure holding multiple posterior branches and deferring collapse — generalises across mirror's altitudes. [[parse-as-fate-tournament]] and [[substrate-native-fate-tournament]] are sibling instantiations: the same pattern at parse altitude and substrate altitude respectively. The conjecture this spec defends as an open question (§10.6) is that tournament-shaped machinery is mirror's general requisite-variety apparatus — not just one tool among many. The conjecture is plausible; the proof is open.
 
-The tournament's loss function is the kintsugi objective from §1. The natural gradient on the Fisher-Rao manifold is the tournament's update rule. The HAL line is where @io crossing becomes mandatory.
+For each instance: the tournament's loss function is the kintsugi objective from §1. The natural gradient on the Fisher-Rao manifold is the tournament's update rule. The HAL line is where @io crossing becomes mandatory.
 
 ---
 
@@ -156,9 +167,9 @@ See [[../../../systemic.engineering/practice/insights/math/numerics/lazy-evaluat
 
 4. **Interaction with [[reality-shard-as-crdt]].** The CRDT layer is the bounded semilattice of shards. Kintsugi merging on shards is also a variety-preservation operation: two informed shards merged together preserve more variety than each alone. The kintsugi objective on the shard substrate is the join operation. This needs to be made precise.
 
-5. **The 16 = 12 gauge + 4 Higgs decomposition.** The noncommutative-geometry numerics work (Wulkenhaar / Dąbrowski 2023 / Khalkhali 2025) suggests that the flang 16-channel structure has a principled decomposition into gauge + Higgs channels. If true, the gauge channels are the variety-preserving (mirror-side) channels and the Higgs channels are the variety-collapsing (@io-side) channels. This would give a structural interpretation of the [[architecture-flang-mirror-numerical-split]].
+5. **Formal bias-propagation model.** §5's compounding claim `δ_{i+1} > δ_i` is heuristic. A rigorous bound on `δ_{i+1}/δ_i` under repeated @io collapses requires a bias-propagation model that tracks how the i-th crossing's MAP commitment biases the (i+1)-th posterior. This is a measurable quantity per [[../../../systemic.engineering/practice/insights/math/numerics/information-geometry-variety-preserving]] — pending instantiation.
 
-   See [[../../../systemic.engineering/practice/insights/math/numerics/noncommutative-geometry-standard-model]].
+6. **Tournament-as-variety-apparatus conjecture.** §7 conjectures that tournament-shaped machinery is mirror's general requisite-variety apparatus across all altitudes. The proof would either (a) exhibit a non-tournament variety-maintenance mechanism in mirror (falsification) or (b) show that all variety-maintenance instances reduce to tournament structure (confirmation). Either result sharpens the architecture.
 
 ---
 
@@ -169,11 +180,10 @@ Numerics sweep, 2026-06-02:
 | Cluster | Reference | Role |
 |---|---|---|
 | Requisite variety | Siegenfeld & Bar-Yam (2022) [[../../../systemic.engineering/practice/insights/math/numerics/requisite-variety-optimization]] | Multi-scale Ashby, computable `C(s)` |
-| Information geometry | Kerimkulov et al. (2023) [[../../../systemic.engineering/practice/insights/math/numerics/information-geometry-variety-preserving]] | Fisher-Rao gradient flows = @fate update rule |
+| Information geometry | Kerimkulov et al. (2023) [[../../../systemic.engineering/practice/insights/math/numerics/information-geometry-variety-preserving]] | Fisher-Rao gradient flows as formal language for @fate update; full identification open |
 | Spectral dimension | Villegas et al. (Nature Physics 2022) [[../../../systemic.engineering/practice/insights/math/numerics/spectral-graph-laplacian-dimension]] | LRG; numerical `d_s` |
-| I/O complexity | Saha & Ye (ICML 2024) [[../../../systemic.engineering/practice/insights/math/numerics/io-complexity-computation-graphs]] | Knapsack bound is achievable |
+| I/O complexity | Saha & Ye (ICML 2024) [[../../../systemic.engineering/practice/insights/math/numerics/io-complexity-computation-graphs]] | Reduction technique applicable per-graph; tight for attention; mirror-instance open |
 | Lazy evaluation | Xia et al. (ICFP 2024) [[../../../systemic.engineering/practice/insights/math/numerics/lazy-evaluation-deferred-computation]] | Operational deferred semantics |
-| Noncommutative geometry | Dąbrowski et al. (2023), Khalkhali et al. (2025) [[../../../systemic.engineering/practice/insights/math/numerics/noncommutative-geometry-standard-model]] | 16-channel structural interpretation |
 
 In-spec dependencies:
 
@@ -204,32 +214,11 @@ In-corpus dependencies:
 - The kintsugi bias is no longer "prefer @mirror." It is the minimum-variety-loss policy on the op graph. "Prefer @mirror" falls out as a consequence.
 - `variety_hold` becomes a first-class property in `@epistemologic/properties`. The verdict feeds the @fate loss composite directly. No invented loss term — it composes from declared properties per the [[../feedback-loss-from-epistemologic-properties]] discipline.
 - The @fate tournament's structural role is named: it IS Ashby's requisite-variety apparatus. Without the tournament, mirror cannot handle ambiguous inputs at all.
-- The numerics research is no longer background reading. The spec cites it directly: Saha-Ye gives the achievability of the Knapsack bound, Kerimkulov gives the gradient update rule, Villegas gives the `d_s(σ)` decay curve. These are the policy.
+- The numerics research is no longer background reading. The spec cites it directly: Saha-Ye gives the reduction technique that, instantiated per-graph, would prove Knapsack-achievability; Kerimkulov gives the gradient update rule's formal language; Villegas gives the `d_s(σ)` decay curve. These are the policy.
 
 ## 13. Where the verdict flows on the wire
 
-The variety verdict computed per §6 lives on every pq response
-at the wire altitude. Per [[../../../prism/docs/specs/pq]] §2.4,
-the Beam returned from `focus`/`project`/`refract` carries an
-`imperfect` field of shape `Success | Partial | Failure`. The
-Partial verdict's loss term IS `variety_loss(op)` for the op that
-produced the Beam; the kintsugi objective
-(`∑ variety_loss(op) · crossing_cost(op)`) accumulates monotonically
-as pq chains compose.
-
-**This is why pq is sub-Turing AND variety-aware at the wire.** The
-three-op algebra is closed (per pq §9), and each composition step
-carries the variety verdict through the `imperfect` channel into
-`@epistemologic/properties`. The agent reading the response sees
-the kintsugi objective's running cost; the substrate sees the same
-verdict in its property chain. The wire altitude does not invent
-the objective; it carries it.
-
-When the kintsugi loop (per [[kintsugi-tournament]]) iterates above
-pq, it invokes pq chains as primitives and reads back the
-`imperfect` field as the per-iteration variety loss. The loop's
-convergence is lattice ascent on the @mirror side; the wire
-provides the per-step measurement.
+The variety verdict computed per §6 rides every pq response through the `imperfect` channel — see [[../../../prism/docs/specs/pq]] §2.4 and §9 for the mechanism. The kintsugi loop ([[kintsugi-tournament]]) iterates above pq, invoking chains as primitives and reading back `imperfect` as the per-iteration variety loss. The wire altitude carries the objective; it doesn't invent it.
 
 ---
 
