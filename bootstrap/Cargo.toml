@@ -23,6 +23,13 @@ blake3 = { version = "1", default-features = false }
 prism-core = { path = "../../prism/core", features = ["bundle"] }
 terni = { path = "../../prism/imperfect", default-features = false }
 
+[dev-dependencies]
+# Used by tests/kintsugi_ci.rs to parse the `--ci` flag's JSON output.
+# Per T11.2 of `docs/specs/kintsugi-ci-v0.1.md`. The production `--ci`
+# serialiser writes JSON via the same crate; in T11.2 GREEN this moves
+# to [dependencies] as the impl lands.
+serde_json = "1"
+
 [profile.release]
 opt-level = "z"
 lto = true
