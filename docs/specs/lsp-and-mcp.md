@@ -133,8 +133,22 @@ already exists or to a hole that's the spec for the next one.
 
 ## The MCP dispatch table
 
+> **2026-06-02 reframe.** The MCP wire altitude has a name now: **pq**
+> ([[../../../prism/docs/specs/pq]]). The MCP server's tool surface
+> is the three `prism_core::Prism` operations (`focus`, `project`,
+> `refract`); the per-grammar `@mcp/tool` annotation extends the
+> typed DSL types (`Target`, `Filter`, `Output`) inside those three
+> calls, NOT new wire tools. Below: the in-flight five-tool framing
+> for the mirror-mcp surface; it's a useful intermediate, but the
+> grounding altitude is pq. When the reload contract
+> (`@mirror/reload`) emits `tools/list_changed`, what's changing is
+> the typed DSL surface, not the wire tool count. The MCP wire stays
+> at three.
+
 Three tools today. The road to 1.0 adds two; the five operations expose
 themselves directly.
+
+> **Wire-altitude reload.** When mirror-mcp lands per [[../../../fragmentation/docs/specs/fragmentation-mcp]] §8, the five tools below collapse into pq's three on the wire; the per-tool surface here becomes the typed DSL inside `focus`/`project`/`refract`. The table records the in-flight intermediate; the grounding altitude is pq.
 
 | Tool | Bootstrap subcommand | Status |
 |---|---|---|
