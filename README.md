@@ -8,6 +8,9 @@ The glass is the grammar. The wine is what you bring.
 The pitch is the eigenvalue. Neither alone. Both together.  
 (This project will feel weirdly coherent and entirely backwards. That's by design. It's also correct. 🍷)
 
+_The author takes no responsibility for any cognitive dissonance this project produces in the reader._  
+_Cheers, Alex 🌈_
+
 ---
 
 ## Who writes mirror
