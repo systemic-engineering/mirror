@@ -2,6 +2,8 @@
 
 *2026-06-02. Reed + Alex. Status: load-bearing recognition; spec.*
 
+*§3 and §4 tightened 2026-06-02. Reed + Alex + you. Status: load-bearing recognition — the precise correspondence per [[../../../prism/docs/specs/pq]] §6.5.*
+
 Kintsugi's bias is not a heuristic. It is the **minimum-variety-loss policy** on a computation graph whose crossings of the @io boundary are decoherence events. The objective is computable. Each piece of it now has prior art that turns the architecture from a design intuition into something grounded in current numerics literature.
 
 This spec formalizes the objective, names the implementation seam (the `variety_hold` property), connects it to [[kintsugi-tournament]] and [[parse-as-fate-tournament]], and records the four load-bearing references from the 2026-06-02 numerics sweep.
@@ -57,7 +59,7 @@ where `T` is the MAP estimator, `I(t)` is the Fisher information accumulated thr
 
 The implication: **delaying @io crossing reduces the minimum committable error** — not as heuristic, but as a theorem. Kintsugi's bias is precisely the policy that defers crossing until `I(t)` is large enough that `δ_min(t)` is below an acceptable threshold.
 
-The Fisher-Rao gradient flow machinery from Kerimkulov et al. (2023) provides the formal language for the @fate inference update rule: the natural gradient on the Fisher manifold is the geometrically-correct way to accumulate `I(t)` per unit of @mirror compute. The structural identification of @fate as a Fisher-Rao gradient flow is plausible; the precise correspondence between @fate's tournament dynamics and Kerimkulov's entropy-regularised MDP flow is §10's open question.
+The Fisher-Rao gradient flow machinery from Kerimkulov et al. (2023) is the @fate inference update rule. The natural gradient on the Fisher manifold is the geometrically-correct way to accumulate `I(t)` per unit of @mirror compute, and the precise correspondence is named in [[../../../prism/docs/specs/pq]] §6.5.4: **the Kerimkulov entropy-regularised policy mirror descent flow IS the `project({kintsugi})` Banach iteration `M_{n+1} = T(M_n)`** on the shard matrix held by the canonical `LAPACKPrism` impl. The substrate altitude reads off the bound at §6.5.5: `Beam.imperfect.loss` IS the per-iteration residual posterior variance — actual numbers, not metaphor. The remaining open question (§10) narrows to whether @fate's *tournament* dynamics above the per-iteration flow recover Kerimkulov's global-convergence guarantees end-to-end.
 
 See [[../../../systemic.engineering/practice/insights/math/numerics/information-geometry-variety-preserving]].
 
@@ -67,11 +69,11 @@ See [[../../../systemic.engineering/practice/insights/math/numerics/information-
 
 Items = operations in the computation graph. Weight = @io crossing cost. Value = variety maintained. Kintsugi packs the @mirror bag as tightly as possible; lifting `@code → @mirror` moves items from the "must cross" pile to the "stays in bag" pile.
 
-This framing connects to the I/O-optimal computation problem studied by Saha & Ye (ICML 2024). They prove a tight I/O lower bound for transformer attention specifically (`IO(Attention) = Θ(N²d/√M)`) and — more importantly for our purposes — establish a *reduction technique* from communication complexity to I/O complexity that is applicable to any computation graph. The technique is a per-graph proof obligation, not a free corollary. The implications for mirror:
+This framing connects to the I/O-optimal computation problem studied by Saha & Ye (ICML 2024). They prove a tight I/O lower bound for transformer attention specifically (`IO(Attention) = Θ(N²d/√M)`) and — more importantly for our purposes — establish a *reduction technique* from communication complexity to I/O complexity that is applicable to any computation graph. With LAPACKPrism named as the canonical Prism impl (see [[../../../prism/docs/specs/pq]] §6.5.3), **the Saha–Ye bound applies to LAPACKPrism's memory traffic literally, not metaphorically**: the shard matrix lives partly in HamiltonScheduler-governed fast memory and partly in `.frgmnt/` disk spillover; the pebble model is the cost model for pq chains. The implications for mirror sharpen:
 
-- The Knapsack lower bound on @io crossings is **known to be tight for attention** and **amenable to the Saha–Ye reduction technique on other graphs**. Whether mirror's specific op graphs admit a matching upper bound via the technique is an open per-graph instantiation.
-- The red-blue pebble game machinery (Sobczyk 2024, partial-computation extension) gives a *model* for computing optimal crossing schedules on a DAG. The general problem is NP-hard; practical use depends on the SP-DAG special case or approximation.
-- The SP-DAG memory-peak minimization (Herrmann et al. 2025) gives a polynomial-time algorithm when the op graph is series-parallel. Whether mirror's op graphs satisfy SP in any regime is an open question.
+- The Knapsack lower bound on @io crossings is **known to be tight for attention** and **applied to pq chains via the Saha–Ye reduction technique against LAPACKPrism's row/column-select / projection / rank-1-update operations** (per the operation table in [[../../../prism/docs/specs/pq]] §6.5.2). Whether mirror's compiled op graphs hit the bound is now a substrate-altitude measurement, not a philosophical open question.
+- The red-blue pebble game machinery (Sobczyk 2024, partial-computation extension) gives the formal cost model for the pq operation table: `focus` loads a row/column (red→blue if cold), `project` keeps red pebbles (in-cache LAPACK ops), `refract` commits red→blue (the rank-1 update materialises to durable storage). Partial computations are exactly the `Beam.imperfect = Partial` verdicts.
+- The SP-DAG memory-peak minimization (Herrmann et al. 2025) gives a polynomial-time algorithm when the op graph is series-parallel. Pq chains under the [[../../../prism/docs/specs/pq]] §9 sub-Turing closure are SP by construction (no fixed point at the wire altitude); the polynomial result applies.
 
 See [[../../../systemic.engineering/practice/insights/math/numerics/io-complexity-computation-graphs]].
 
@@ -159,7 +161,7 @@ See [[../../../systemic.engineering/practice/insights/math/numerics/lazy-evaluat
 
 ## 10. Open questions
 
-1. **The decoherence constant `κ`.** The compounding penalty `e^{i·κ}` needs an empirical anchor. The Saha & Ye communication-complexity formulation may already give it implicitly; we need to translate.
+1. **The decoherence constant `κ`.** The compounding penalty `e^{i·κ}` needs an empirical anchor. The Saha & Ye communication-complexity formulation may already give it implicitly via the pebble-game cost on LAPACKPrism's operation graph (per [[../../../prism/docs/specs/pq]] §6.5); the open question narrows to *which constant of the bound* `κ` corresponds to.
 
 2. **Per-operation vs. per-glass `variety_hold` resolution.** The chain discipline in [[properties-on-glass]] §2.3 suggests we wait until a concrete operation surfaces that needs the finer granularity. For now: per-operation in the type signature, but the property is declared at the glass altitude and cascades to its operations.
 
@@ -218,7 +220,7 @@ In-corpus dependencies:
 
 ## 13. Where the verdict flows on the wire
 
-The variety verdict computed per §6 rides every pq response through the `imperfect` channel — see [[../../../prism/docs/specs/pq]] §2.4 and §9 for the mechanism. The kintsugi loop ([[kintsugi-tournament]]) iterates above pq, invoking chains as primitives and reading back `imperfect` as the per-iteration variety loss. The wire altitude carries the objective; it doesn't invent it.
+The variety verdict computed per §6 rides every pq response through the `imperfect` channel — see [[../../../prism/docs/specs/pq]] §2.4, §6.5.5, and §9 for the mechanism. The `Beam.imperfect.loss` field carries the Cramér-Rao residual variance as an actual number; the canonical `LAPACKPrism` impl computes it from the rank-1 update's residual norm. The kintsugi loop ([[kintsugi-tournament]]) iterates above pq, invoking chains as primitives and reading back `imperfect` as the per-iteration variety loss. The wire altitude carries the objective; it doesn't invent it.
 
 ---
 

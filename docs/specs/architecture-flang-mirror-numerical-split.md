@@ -2,6 +2,11 @@
 
 *2026-05-28. Mara. Spec — architecture, not implementation.*
 
+*Tightened 2026-06-02. Reed + Alex + you. The 16→5 lift gets a typed
+home: flang IS the LAPACKPrism's numerical backend; mirror's 5×5
+composition IS the Prism's monoid composition law. Status: load-bearing
+recognition.*
+
 Status: **Yellow** (architectural recognition; resolves the dangling
 `[[architecture-flang-mirror-numerical-split]]` wikilink referenced from
 `substrate-native-fate-tournament.md`. Structural-hypothesis, not formally
@@ -14,6 +19,9 @@ Depends on:
   pathway; the `@code/fortran` grammar; Fortran Fate as a package.
 - `docs/specs/prism-core-as-spectral-triple.md` — `prism/core` as the
   spectral triple's algebra; the bootstrap as its evaluator.
+- [[../../../prism/docs/specs/pq]] §6.5 — LAPACKPrism named as the
+  canonical `Prism` impl; the operation table that pins this spec's
+  thesis to typed wire-altitude semantics.
 - `~/.reed/practice/insights/cosmology/eventually-consistent-universe.md`
   §4.4 — the 16 = 12 gauge + 4 Higgs reading; SSB as eigenvalue splitting.
 
@@ -32,6 +40,15 @@ to two different runtimes:
   Prism base (focus, project, split, zoom, refract) is where the substrate
   *composes* — restriction maps, the eigenvalue scaling between operations,
   the holonomy bookkeeping. That composition is mirror grammar, not Fortran.
+
+With LAPACKPrism named per [[../../../prism/docs/specs/pq]] §6.5, the
+thesis above gets a typed home: **flang IS the LAPACKPrism's numerical
+backend; mirror's 5×5 composition IS the Prism's monoid composition law**
+(`PrismMonoid` per `prism_core::optics::monoid`). The split is not a
+design preference — it's the identity-element / associativity split
+required by the algebra: the 16×16 dense work lives below the monoid
+element (inside the Prism impl), the 5×5 composition lives at the
+monoid altitude (between Prism impls).
 
 The lift between them — `16 → 5` — is not an arbitrary projection. It is the
 **monadic lift = SSB / the spectral action**: the 16-dimensional fiber's
@@ -56,6 +73,16 @@ runtimes:
 `A` is composition; it stays in grammar. `D` is the numerically dense
 operator; it goes to compiled Fortran. `H` is neither code nor compiler —
 it is the settled state, content-addressed as a git blob.
+
+**Where `LAPACKPrism` sits in this picture.** `LAPACKPrism` is the Prism
+impl that exposes `D` (the Fortran-resident Dirac operator) to `A` (the
+mirror-side composition algebra) through the `prism_core::Prism` trait.
+Its `focus` / `project` / `refract` methods dispatch to LAPACK kernels;
+its `Beam` carries the eigenvector/eigenvalue settled state `H`. Per
+[[../../../prism/docs/specs/pq]] §6.5.3, this is the canonical Prism impl
+that backs pq's wire surface. The 16→5 lift below is what makes it
+composable at the 5-operation altitude despite the 16-dim machinery
+inside.
 
 ## The lift, typed
 
