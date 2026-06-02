@@ -24,6 +24,7 @@ use std::path::PathBuf;
 use std::process::Command;
 
 use prism_core::{Optic, Ref};
+use serde::Serialize;
 use terni::Imperfect;
 
 use crate::ast::{line_col_at, AstKind, AstNode};
@@ -658,7 +659,26 @@ fn kintsugi_tick(
 /// prefixes (`code/rust/`, `code/llvm/ir/`) preserve; bootstrap-historical
 /// prefixes (`std/mirror/`) drop. When `<file>` is a directory, kintsugi
 /// walks it recursively and migrates every `.mirror` file inside.
-fn cmd_kintsugi(file: &str, shatter: u64, transform: Option<&str>, out_dir: Option<&str>) -> i32 {
+///
+/// `--ci`: emit a JSON verdict envelope to stdout (single line) suitable
+/// for the `actions/kintsugi` composite step to parse via `jq`. Schema:
+/// `{verdict, target, objective, iterations, dark_count}`. Per T11.2 of
+/// `docs/specs/kintsugi-ci-v0.1.md`. Exits 0 iff the JSON emits cleanly;
+/// the workflow decides what verdict counts as pass.
+fn cmd_kintsugi(
+    file: &str,
+    shatter: u64,
+    transform: Option<&str>,
+    out_dir: Option<&str>,
+    ci: bool,
+) -> i32 {
+    // CI mode: route through the verdict serialiser. Failure paths
+    // (file unreadable, grammar load error) emit a verdict with
+    // `verdict: "failure"` and still exit 0 — the workflow YAML, not
+    // the binary, decides what counts as pass.
+    if ci {
+        return cmd_kintsugi_ci_single(file, shatter, transform);
+    }
     // Migration mode: --out + a directory input — walk and migrate
     // every .mirror file under the directory.
     if let Some(out_root) = out_dir {
@@ -674,6 +694,113 @@ fn cmd_kintsugi(file: &str, shatter: u64, transform: Option<&str>, out_dir: Opti
         }
     }
     cmd_kintsugi_single(file, shatter, transform, out_dir)
+}
+
+/// JSON verdict envelope for `mirror kintsugi --ci`.
+///
+/// Per T11.2 of `docs/specs/kintsugi-ci-v0.1.md`. The wire altitude
+/// (GitHub Actions composite step) parses this via `jq` and writes the
+/// fields to `$GITHUB_OUTPUT`. Field semantics:
+///
+/// - `verdict`:    `success` if the loop converged with `dark_count == 0`
+///                 and `objective == 0`; `partial` if the loop completed
+///                 but residue remained; `failure` if the loop never
+///                 ran (file unreadable, grammar load error).
+/// - `target`:     the input path verbatim.
+/// - `objective`:  the non-negative loss scalar; in T11.2 this is
+///                 `dark_count as f64` — the cheapest loss surface per
+///                 `count_dark`'s docstring and `kintsugi-formatter.md`
+///                 stage 2. Deterministic by construction (pure AST walk).
+/// - `iterations`: how many kintsugi-loop ticks ran (≥ 1).
+/// - `dark_count`: residual `Dark` AST nodes after the loop fixpoint.
+#[derive(Serialize)]
+struct CiVerdict<'a> {
+    verdict: &'static str,
+    target: &'a str,
+    objective: f64,
+    iterations: u64,
+    dark_count: u64,
+}
+
+/// Emit a CI verdict for a single `.mirror` file. Always exits 0 when the
+/// JSON serialises cleanly; failure paths carry `verdict: "failure"` in
+/// the envelope rather than a nonzero exit. The workflow YAML decides
+/// pass/fail policy.
+fn cmd_kintsugi_ci_single(file: &str, shatter: u64, transform: Option<&str>) -> i32 {
+    // File read — failure here is a verdict, not an exit code.
+    let source = match fs::read(file) {
+        Ok(s) => s,
+        Err(_) => return emit_ci_verdict("failure", file, 0.0, 1, 0),
+    };
+    let source = if let Some(q) = transform {
+        match parse_rewrite(q) {
+            Some(rules) => apply_rewrites(&rules, &source),
+            None => return emit_ci_verdict("failure", file, 0.0, 1, 0),
+        }
+    } else {
+        source
+    };
+    let grammar_path = grammar_for_file(file);
+    let grammar = match load_grammar(grammar_path) {
+        Ok(g) => g,
+        Err(_) => return emit_ci_verdict("failure", file, 0.0, 1, 0),
+    };
+    let ast = tokenize(&source, &grammar);
+
+    // Always run at least one tick under --ci. The kintsugi loop's
+    // semantics in T11.2 are read-only (no candidate is spliced in;
+    // every stage is identity), so iterations is structurally bounded
+    // by max(1, shatter) and the result is deterministic.
+    let crystallizations = floor_crystallizations::<Blake3>();
+    let max_ticks = if shatter == 0 { 1 } else { shatter };
+    let mut iterations: u64 = 0;
+    let mut prior = ast.clone();
+    for i in 1..=max_ticks {
+        iterations = i;
+        let fixed = kintsugi_tick(&crystallizations, i, &prior, &ast);
+        if fixed {
+            break;
+        }
+        prior = ast.clone();
+    }
+
+    let dark_count = count_dark(&ast) as u64;
+    let objective = dark_count as f64;
+    let verdict = if dark_count == 0 && objective == 0.0 {
+        "success"
+    } else {
+        "partial"
+    };
+    emit_ci_verdict(verdict, file, objective, iterations, dark_count)
+}
+
+/// Serialise a `CiVerdict` to stdout (single line, newline-terminated).
+/// Returns exit code: 0 when serialisation + write succeed, 1 only when
+/// stdout itself fails.
+fn emit_ci_verdict(
+    verdict: &'static str,
+    target: &str,
+    objective: f64,
+    iterations: u64,
+    dark_count: u64,
+) -> i32 {
+    let v = CiVerdict {
+        verdict,
+        target,
+        objective,
+        iterations,
+        dark_count,
+    };
+    match serde_json::to_string(&v) {
+        Ok(json) => {
+            let mut out = io::stdout();
+            if writeln!(out, "{}", json).is_err() {
+                return 1;
+            }
+            0
+        }
+        Err(_) => 1,
+    }
 }
 
 /// Migrate a directory tree: walk every `.mirror` file under `src_root`,
@@ -896,6 +1023,7 @@ fn main() {
     let mut shatter: u64 = 0;
     let mut transform: Option<String> = None;
     let mut out_dir: Option<String> = None;
+    let mut ci = false;
     let mut i = 2;
     while i < args.len() {
         let a = &args[i];
@@ -966,10 +1094,15 @@ fn main() {
             i += 1;
         } else if let Some(rest) = a.strip_prefix("--out=") {
             out_dir = Some(rest.to_string());
+        } else if a == "--ci" {
+            ci = true;
         }
         i += 1;
     }
     // Find the positional argument, skipping `--flag value` pairs.
+    // `--ci` is a bare flag (no value), so it falls through to the
+    // `starts_with("--")` arm and is skipped without consuming the
+    // next argument.
     let positional: Option<&str> = {
         let mut j = 2;
         let mut found: Option<&str> = None;
@@ -1005,9 +1138,9 @@ fn main() {
             }
         },
         "kintsugi" => match positional {
-            Some(p) => cmd_kintsugi(p, shatter, transform.as_deref(), out_dir.as_deref()),
+            Some(p) => cmd_kintsugi(p, shatter, transform.as_deref(), out_dir.as_deref(), ci),
             None => {
-                eprintln!("usage: mirror kintsugi [--shatter N] [--transform <mq>] [--out <path>] <file|dir>");
+                eprintln!("usage: mirror kintsugi [--ci] [--shatter N] [--transform <mq>] [--out <path>] <file|dir>");
                 1
             }
         },
