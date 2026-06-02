@@ -75,6 +75,19 @@ Gated behind Phase 1 (the boot-grammar gate). Within this track, the order is:
 3. **Implementation**: HamiltonScheduler in fragmentation, then Body restructure in mirror+prism, then SpectralSupervisor in `@spectral/db`. Each tick discharges 1–2 points of the C-chain.
 4. **The kintsugi rename (task #122)** — Tick B + Tick C of `docs/specs/kintsugi-minimum-runnable.md` — lands as the first concrete substrate-pull realization into this fully-articulated architecture. The rename happens via the dispatcher; the dispatcher lives in a shard; the shard runs under HamiltonScheduler; the SpectralSupervisor observes the spectral signature of the rename completing. The first liturgy on the now-built stack.
 
+## The CRDT layer — named (2026-06-01)
+
+`@mirror/reality/shard` is mirror's **CRDT layer**, by structural consequence. Shards form a **bounded semilattice** under content-addressed merge — the algebra falls out of Merkle-trees-with-sorted-children + the canonical empty element. See [[../../docs/specs/reality-shard-as-crdt]] for the full articulation.
+
+What this unlocks for the SpectralSupervisor's coordination job:
+
+- Cross-shard merge is **commutative + idempotent** — the supervisor pushes shard state across the lattice without coordination ceremony; concurrent agents converge deterministically
+- **Convergence is provable** — monotonic lattice ascent with a fixed bottom guarantees termination; no infinite loops in the kintsugi tick
+- **SpectralUuid is a monoid homomorphism** — the supervisor can derive a shard's address from its constituents without re-hashing; range-scan queries compose with merge operations
+- **Fractal supervision** (machine → per-repo → per-session) is the **lattice extending vertically** — each altitude has its own bottom and join, related by inter-altitude homomorphisms
+
+The CRDT framing is the **formal foundation for the deployment story**: agent work converges to a coherent state because the substrate's algebra forces it to. Not engineering convention, not protocol enforcement — algebra.
+
 ## What this elevation does NOT do
 
 - Does **not** introduce remote AI inference. `@fate` refuses remote inference — mathematically. Pure hermeticity is preserved.

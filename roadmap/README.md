@@ -112,6 +112,7 @@ Placeholder until Phase 1 lands. See [`archive/README.md`](./archive/README.md).
 *Holonomy = error = convergence delta. Three names; one number; standard numerical methods transfer.*  
 *HamiltonScheduler is the agent's content window manager — named for Margaret Hamilton, Apollo 1202.*  
 *SpectralSupervisor is the coordinator without authority — the closed engine that elevates mirror to a BEAM-like runtime.*  
-*Maximum mirror, minimal Rust.*
+*Maximum mirror, minimal Rust.*  
+*`@mirror/reality/shard` IS mirror's CRDT layer — bounded semilattice, strong eventual consistency by construction.*
 
 Apache-2.0.
