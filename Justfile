@@ -99,6 +99,41 @@ install: build
     @echo "installed: {{INSTALL_DIR}}/mirror"
     @echo "ensure PATH contains {{INSTALL_DIR}}"
 
+# Merge the current branch into main.
+#
+# - Refuses if on main, or if working tree is dirty.
+# - Fast-forwards if possible; falls back to --no-ff merge commit.
+# - Runs the test suite after the merge.
+# - Rebuilds + installs the mirror binary.
+# - Push stays explicit — run `git push origin main` when ready.
+merge:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    branch=$(git rev-parse --abbrev-ref HEAD)
+    if [ "$branch" = "main" ]; then
+        echo "✖ error: already on main" >&2
+        exit 1
+    fi
+    dirty=$(git status --porcelain | grep -vE '^(\?\? |m  )' || true)
+    if [ -n "$dirty" ]; then
+        echo "✖ error: working tree dirty. Commit or stash first." >&2
+        git status --short >&2
+        exit 1
+    fi
+    echo "→ merging $branch into main"
+    git checkout main
+    git pull --ff-only origin main
+    if ! git merge --ff-only "$branch" 2>/dev/null; then
+        echo "→ ff-only failed; creating merge commit"
+        git merge --no-ff --no-gpg-sign "$branch" -m "🔀 merge $branch into main"
+    fi
+    echo "→ running pre-commit gate"
+    just pre-commit
+    echo "→ rebuilding and installing mirror"
+    just install
+    echo "✔ merged $branch into main; mirror reinstalled at {{INSTALL_DIR}}/mirror"
+    echo "  next: \`git push origin main\` when ready"
+
 # ──────────────────────────────────────────────────────────────────────────
 # Mirror-native recipes — build, then USE the binary
 # ──────────────────────────────────────────────────────────────────────────
