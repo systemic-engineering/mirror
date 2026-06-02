@@ -1,0 +1,31 @@
+# Test fixture 11 (parent file) — parent defines custom property below ---.
+#
+# Per spec §4.6.2: custom properties cascade through the `/` chain.
+# A grammar at @test/11/parent that defines `tournament_safe` below
+# its `---` makes that property visible to ALL `/`-descendants
+# (@test/11/parent/X, @test/11/parent/X/Y, etc.) without re-declaration.
+#
+# This file is the parent. The companion `child.mirror` references
+# `tournament_safe` via cascade.
+#
+# Expected: parse OK; resolve OK; the property `tournament_safe`
+#           defined below is registered as a custom property at
+#           @test/11/parent's altitude, visible to descendants.
+
+in @epistemologic/property/halts
+in @epistemologic/property/deterministic_oid
+in @epistemologic/property/glass_wall
+
+grammar @test/11/parent {
+  # The parent has no glass declarations of its own — just defines
+  # the property below `---` for descendants to inherit. This is a
+  # valid shape: a grammar can exist purely to provide custom
+  # properties to its `/`-descendants.
+}
+
+---
+
+property tournament_safe =
+    halts
+  ∧ deterministic_oid
+  ∧ glass_wall(@fate)

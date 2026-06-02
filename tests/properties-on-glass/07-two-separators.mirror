@@ -1,0 +1,22 @@
+# Test fixture 07 — two `---` separators in one file.
+#
+# Per spec §4.1: AT MOST ONE per file. A second `---` would imply two
+# back-projection regions, which the substrate doesn't admit. The
+# contract / back-projection split is binary.
+#
+# Expected: tokenize OK on the first `---`; tokenize FAILS at the
+#           second with `multiple settlement_separators not allowed`.
+
+in @io
+
+grammar @test/07/two_separators {
+  glass to @io {}
+}
+
+---
+
+# First separator: contract above, back-projection below.
+
+---
+
+# Second separator is the error: the file already split.

@@ -1,0 +1,21 @@
+# Test fixture 13 (parent file) — setup for no-shadow test.
+#
+# Per spec §4.6.2: "The `/` cascade is ADDITIVE, never OVERRIDING."
+# A custom property defined at a parent altitude cannot be redefined
+# by a child. This file declares `tournament_safe`; the companion
+# `child.mirror` tries to redefine it (which must fail).
+#
+# Expected: parse OK; resolve OK; `tournament_safe` registered at
+#           @test/13/p.
+
+in @epistemologic/property/halts
+in @epistemologic/property/deterministic_oid
+
+grammar @test/13/p {
+}
+
+---
+
+property tournament_safe =
+    halts
+  ∧ deterministic_oid

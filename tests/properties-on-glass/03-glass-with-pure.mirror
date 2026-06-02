@@ -1,0 +1,23 @@
+# Test fixture 03 — the elevated `pure` property (per spec §2.3, §10.3).
+#
+# `pure(type)` was elevated from the refused-list to ACTIVE chain
+# addition on 2026-06-01. It resolves to @epistemologic/property/pure,
+# which is the four-clause conjunction:
+#   halts ∧ ¬contains(@io.*) ∧ deterministic_oid ∧ ¬contains(@rand.*)
+#
+# This fixture WILL FAIL until G-5 lands the chain primitive at
+# @epistemologic/property/pure. The failure is the oracle: once G-5
+# lands, this test must pass.
+#
+# Expected (post-G-5): parse OK; resolve OK; qualifier set = {pure}.
+# Expected (pre-G-5):  resolve fails with `literal(pure) fails:
+#                      @epistemologic/property/pure does not resolve`.
+
+in @code/rust
+in @epistemologic/property/pure
+
+grammar @test/03/with_pure {
+  glass to @code/rust {
+    property pure
+  }
+}

@@ -1,0 +1,30 @@
+# Test fixture 13 (child file) — child tries to redefine; refused.
+#
+# Per spec §4.6.2: the `/` cascade is additive, not overriding. A
+# child grammar cannot redefine a custom property already declared
+# at a `/`-ancestor. The substrate refuses the redefinition; the
+# ancestor's definition wins.
+#
+# Expected: parse OK; resolve FAILS with
+#           `property `tournament_safe` already defined at
+#            @test/13/p (cascaded); cascade is additive, not
+#            overriding; cannot shadow`.
+
+in @code/rust
+in @epistemologic/property/halts
+in @epistemologic/property/deterministic_oid
+in @epistemologic/property/glass_wall
+
+grammar @test/13/p/child {
+  glass to @code/rust {
+    property halts
+  }
+}
+
+---
+
+# Attempt to redefine the inherited property — substrate refuses.
+property tournament_safe =
+    halts
+  ∧ deterministic_oid
+  ∧ glass_wall(@fate)

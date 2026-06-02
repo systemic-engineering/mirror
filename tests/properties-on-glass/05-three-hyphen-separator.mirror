@@ -1,0 +1,27 @@
+# Test fixture 05 — the canonical `---` separator.
+#
+# Per spec §4.1: a line containing exactly three hyphens, at most
+# once per file. The tokenizer recognizes it as `settlement_separator`.
+# Above: the contract (glass declarations). Below: back-projection +
+# custom property definitions.
+#
+# This fixture has the separator with nothing below it — a freshly
+# declared file that hasn't been settled yet. The substrate accepts
+# this (the contract is complete; settlement just hasn't run).
+#
+# Expected: tokenize OK (one settlement_separator at the documented
+#           line); parse OK; resolve OK.
+
+in @io
+in @epistemologic/property/halts
+
+grammar @test/05/separator {
+  glass to @io {
+    property halts
+  }
+}
+
+---
+
+# This file hasn't been settled yet. The below-`---` region is empty.
+# Re-settlement will fill it with back-projected implementations.

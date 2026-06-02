@@ -1,0 +1,16 @@
+# Test fixture 02 — a glass with the canonical `halts` property.
+#
+# The qualifier set is {halts}. The property name must resolve into
+# the @epistemologic chain at @epistemologic/property/halts.
+#
+# Expected: parse OK; resolve OK; qualifier set = {halts};
+#           halts resolves to @epistemologic/property/halts.
+
+in @io
+in @epistemologic/property/halts
+
+grammar @test/02/with_halts {
+  glass to @io {
+    property halts
+  }
+}

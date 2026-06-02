@@ -1,0 +1,14 @@
+# Test fixture 12 (parent file, middle of `/` chain).
+#
+# This intermediate grammar @test/12/gp/parent has NO custom property
+# of its own — it just sits in the chain between grandparent and
+# grandchild. The grandchild can still see grandparent's properties
+# THROUGH this intermediate; the cascade is transitive across empty
+# intermediates.
+#
+# Expected: parse OK; resolve OK; the property `tournament_safe` is
+#           visible here through cascade (from @test/12/gp) and is
+#           re-exported to descendants.
+
+grammar @test/12/gp/parent {
+}

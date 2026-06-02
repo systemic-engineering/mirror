@@ -1,0 +1,21 @@
+# Test fixture 12 (grandchild file) — references grandparent's property.
+#
+# Three levels of `/` cascade: grandparent defines `tournament_safe`;
+# parent re-exports without redefining; grandchild references it.
+# The resolver walks @test/12/gp/parent's chain up to @test/12/gp
+# and finds the definition there.
+#
+# Expected: parse OK; resolve OK; qualifier set =
+#           {halts, tournament_safe}; resolution path documented as
+#           "@test/12/gp/parent/grandchild → ≡ @test/12/gp/parent →
+#            @test/12/gp (tournament_safe defined here)".
+
+in @code/rust
+in @epistemologic/property/halts
+
+grammar @test/12/gp/parent/grandchild {
+  glass to @code/rust {
+    property halts
+    property tournament_safe   # cascaded from @test/12/gp (transitive)
+  }
+}

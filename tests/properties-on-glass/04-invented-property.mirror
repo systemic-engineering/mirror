@@ -1,0 +1,25 @@
+# Test fixture 04 — invented property names must fail.
+#
+# Per spec §2.2: "the per-glass qualifier set isn't just a list of
+# strings. It's a list of refs into the chain, each backed by
+# `literal`'s name-IS-operation discipline. A glass that binds
+# `property foobar` fails at compile time because
+# @epistemologic/property/foobar does not resolve — `literal(foobar)`
+# returns `fail(no_such_property)`."
+#
+# This locks down the grounding discipline. New property names cannot
+# be invented at the glass altitude; they must already exist in the
+# canonical chain (or below `---` as named conjunctions of chain
+# primitives — see fixture 08).
+#
+# Expected: parse OK; resolve FAILS with
+#           `literal(foobar): @epistemologic/property/foobar does not resolve`.
+
+in @io
+
+grammar @test/04/invented {
+  glass to @io {
+    property foobar    # not in the chain; not defined below ---;
+                       # therefore: invented; therefore: compile error.
+  }
+}

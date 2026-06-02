@@ -1,0 +1,37 @@
+# Test fixture 08 — custom property defined below, referenced above.
+#
+# Per spec §4.6.1: a custom property below `---` is a NAMED
+# CONJUNCTION of chain primitives. The right-hand side admits only:
+# wikilinks into @epistemologic/property/*, other custom properties,
+# and the Boolean combinators ∧ ∨ ¬ ⇒ contains(…).
+#
+# This fixture defines `tournament_safe` below the `---` and binds it
+# at a glass above. The bi-directional flow: above → below references;
+# below → above visibility.
+#
+# Expected: parse OK; tokenize OK (one settlement_separator);
+#           resolve OK (`tournament_safe` resolves to the conjunction
+#           defined below); qualifier set = {halts, tournament_safe}.
+
+in @code/rust
+in @epistemologic/property/halts
+in @epistemologic/property/deterministic_oid
+in @epistemologic/property/glass_wall
+in @epistemologic/property/io_safety
+
+grammar @test/08/custom {
+  glass to @code/rust {
+    property halts
+    property tournament_safe   # custom; defined below `---`
+  }
+}
+
+---
+
+# Custom property local to this grammar's `/`-descendants.
+# Named conjunction of chain primitives. No hand-written check body.
+property tournament_safe =
+    halts
+  ∧ deterministic_oid
+  ∧ glass_wall(@fate)
+  ∧ ¬contains(@io.*)

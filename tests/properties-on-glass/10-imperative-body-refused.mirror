@@ -1,0 +1,30 @@
+# Test fixture 10 — custom property with imperative body refused.
+#
+# Per spec §4.6.1: "The substrate doesn't admit hand-written check
+# bodies below `---` — only conjunctions. The substrate doesn't invent
+# new check semantics; it gives a local name to a composition the
+# chain already supports."
+#
+# This fixture attempts an imperative property body (curly-braced,
+# statements, conditional return). The parser must refuse.
+#
+# Expected: parse FAILS at the property definition with
+#           `custom property body must be a conjunction of chain
+#            primitives; imperative bodies are not admitted`.
+
+in @code/rust
+in @epistemologic/property/halts
+
+grammar @test/10/imperative {
+  glass to @code/rust {
+    property my_check
+  }
+}
+
+---
+
+# Imperative body — NOT a conjunction. The substrate refuses.
+property my_check = {
+  let result = check_something(ast);
+  if result.is_ok() { pass } else { fail }
+}
