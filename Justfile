@@ -114,7 +114,7 @@ merge:
         echo "✖ error: already on main" >&2
         exit 1
     fi
-    dirty=$(git status --porcelain | grep -vE '^(\?\? |m  )' || true)
+    dirty=$(git status --porcelain --ignore-submodules=all | grep -v '^?? ' || true)
     if [ -n "$dirty" ]; then
         echo "✖ error: working tree dirty. Commit or stash first." >&2
         git status --short >&2
