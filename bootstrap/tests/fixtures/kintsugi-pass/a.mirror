@@ -1,0 +1,10 @@
+in @prism
+
+grammar @fixture_a {
+  type foo(text)
+  type bar(text)
+}
+
+out @fixture_a
+out foo
+out bar
