@@ -285,7 +285,11 @@ fn ci_single_file_mode_unchanged() {
     let out = run_ci(&["--ci", "boot/std/nl.mirror"]);
     let stdout = String::from_utf8_lossy(&out.stdout);
     let records = split_records(&stdout);
-    assert_eq!(records.len(), 1, "single-file mode emits exactly one record");
+    assert_eq!(
+        records.len(),
+        1,
+        "single-file mode emits exactly one record"
+    );
     let r = &records[0];
     assert_eq!(r.get("verdict").map(String::as_str), Some("success"));
     assert!(

@@ -166,7 +166,7 @@ fn usage() {
     eprintln!("  mirror <command> [args...]            (legacy subcommand surface)");
     eprintln!("  mirror '<mq-query>' < input           (mq pipeline over stdin)");
     eprintln!("  mirror <input> '<mq-query>'           (mq pipeline over input file)");
-    eprintln!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi [--shatter N] <file>");
+    eprintln!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi [--ci [--format mirror|json]] [--shatter N] <file|dir>");
     eprintln!("examples:");
     eprintln!("  cat mirror.ll | mirror '@code/llvm/ir |> @mirror/kintsugi |> @mirror/butterfly'");
 }
@@ -660,17 +660,28 @@ fn kintsugi_tick(
 /// prefixes (`std/mirror/`) drop. When `<file>` is a directory, kintsugi
 /// walks it recursively and migrates every `.mirror` file inside.
 ///
-/// `--ci`: emit a JSON verdict envelope to stdout (single line) suitable
-/// for the `actions/kintsugi` composite step to parse via `jq`. Schema:
-/// `{verdict, target, objective, iterations, dark_count}`. Per T11.2 of
-/// `docs/specs/kintsugi-ci-v0.1.md`. Exits 0 iff the JSON emits cleanly;
-/// the workflow decides what verdict counts as pass.
+/// `--ci`: emit a verdict envelope to stdout suitable for the
+/// `actions/kintsugi` composite step. Default emission is the
+/// stringified mirror AST (a blank-line-separated sequence of
+/// `<key> <value>` lines) — the substrate-pull-correct shape per
+/// T11.2.5 of `docs/specs/kintsugi-ci-v0.1.md`. JSON is the @io
+/// boundary; under `--format=json`, the same fields emit as JSON for
+/// `jq` consumption (the action's `run.sh` invokes this when it needs
+/// to set `$GITHUB_OUTPUT`).
+///
+/// Fields (both formats): `verdict, target, objective, iterations,
+/// dark_count`. Corpus mode adds `files_processed` and per-file
+/// records (mirror-text) / `per_file` array (JSON).
+///
+/// Exits 0 iff the envelope emits cleanly; the workflow decides what
+/// verdict counts as pass.
 fn cmd_kintsugi(
     file: &str,
     shatter: u64,
     transform: Option<&str>,
     out_dir: Option<&str>,
     ci: bool,
+    format: CiFormat,
 ) -> i32 {
     // CI mode: route through the verdict serialiser. Failure paths
     // (file unreadable, grammar load error) emit a verdict with
@@ -682,10 +693,10 @@ fn cmd_kintsugi(
         // verdict: "failure") preserves T11.2 shape.
         if let Ok(md) = fs::metadata(file) {
             if md.is_dir() {
-                return cmd_kintsugi_ci_corpus(file, shatter, transform);
+                return cmd_kintsugi_ci_corpus(file, shatter, transform, format);
             }
         }
-        return cmd_kintsugi_ci_single(file, shatter, transform);
+        return cmd_kintsugi_ci_single(file, shatter, transform, format);
     }
     // Migration mode: --out + a directory input — walk and migrate
     // every .mirror file under the directory.
@@ -704,11 +715,42 @@ fn cmd_kintsugi(
     cmd_kintsugi_single(file, shatter, transform, out_dir)
 }
 
-/// JSON verdict envelope for `mirror kintsugi --ci`.
+/// Output format for `mirror kintsugi --ci`.
 ///
-/// Per T11.2 of `docs/specs/kintsugi-ci-v0.1.md`. The wire altitude
-/// (GitHub Actions composite step) parses this via `jq` and writes the
-/// fields to `$GITHUB_OUTPUT`. Field semantics:
+/// The substrate-pull-correct default is `MirrorText` — the verdict
+/// stays in mirror substrate until the @io boundary, where the action's
+/// `run.sh` invokes `--format=json` to feed `jq` and `$GITHUB_OUTPUT`.
+/// Per T11.2.5 of `docs/specs/kintsugi-ci-v0.1.md`.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum CiFormat {
+    /// Stringified mirror AST: blank-line-separated `<key> <value>`
+    /// records. Default. Substrate-native.
+    MirrorText,
+    /// JSON envelope. Only at the @io boundary.
+    Json,
+}
+
+impl Default for CiFormat {
+    fn default() -> Self {
+        CiFormat::MirrorText
+    }
+}
+
+fn parse_ci_format(s: &str) -> Option<CiFormat> {
+    match s {
+        "mirror" | "mirror-text" => Some(CiFormat::MirrorText),
+        "json" => Some(CiFormat::Json),
+        _ => None,
+    }
+}
+
+/// JSON verdict envelope for `mirror kintsugi --ci --format=json`.
+///
+/// Per T11.2.5 of `docs/specs/kintsugi-ci-v0.1.md` (corrects T11.2's
+/// default to mirror-text; preserves JSON behind `--format=json` for
+/// the @io boundary). The wire altitude (GitHub Actions composite
+/// step) parses this via `jq` and writes the fields to
+/// `$GITHUB_OUTPUT`. Field semantics:
 ///
 /// - `verdict`:    `success` if the loop converged with `dark_count == 0`
 ///                 and `objective == 0`; `partial` if the loop completed
@@ -831,21 +873,42 @@ fn kintsugi_ci_compute(
     (verdict, objective, iterations, dark_count)
 }
 
-/// Emit a CI verdict for a single `.mirror` file. Always exits 0 when the
-/// JSON serialises cleanly; failure paths carry `verdict: "failure"` in
-/// the envelope rather than a nonzero exit. The workflow YAML decides
+/// Emit a CI verdict for a single `.mirror` file. Always exits 0 when
+/// the envelope emits cleanly; failure paths carry `verdict: "failure"`
+/// in the record rather than a nonzero exit. The workflow YAML decides
 /// pass/fail policy.
-fn cmd_kintsugi_ci_single(file: &str, shatter: u64, transform: Option<&str>) -> i32 {
+///
+/// Default emission is mirror-text per T11.2.5; `--format=json` keeps
+/// the @io-boundary JSON path.
+fn cmd_kintsugi_ci_single(
+    file: &str,
+    shatter: u64,
+    transform: Option<&str>,
+    format: CiFormat,
+) -> i32 {
     let (verdict, objective, iterations, dark_count) =
         kintsugi_ci_compute(file, shatter, transform);
-    emit_ci_verdict(verdict, file, objective, iterations, dark_count)
+    match format {
+        CiFormat::MirrorText => {
+            emit_ci_verdict_mirror_text(verdict, file, objective, iterations, dark_count)
+        }
+        CiFormat::Json => emit_ci_verdict_json(verdict, file, objective, iterations, dark_count),
+    }
 }
 
 /// Emit an aggregate CI verdict for a directory of `.mirror` files
-/// (T11.3). Walks recursively via `collect_files`, sorts the list for
-/// determinism, computes a per-file verdict for each, and aggregates
-/// per the rules in `CorpusVerdict`'s docstring.
-fn cmd_kintsugi_ci_corpus(dir: &str, shatter: u64, transform: Option<&str>) -> i32 {
+/// (T11.3, T11.2.5). Walks recursively via `collect_files`, sorts the
+/// list for determinism, computes a per-file verdict for each, and
+/// aggregates per the rules in `CorpusVerdict`'s docstring.
+///
+/// Default emission is mirror-text per T11.2.5; `--format=json` keeps
+/// the @io-boundary JSON path.
+fn cmd_kintsugi_ci_corpus(
+    dir: &str,
+    shatter: u64,
+    transform: Option<&str>,
+    format: CiFormat,
+) -> i32 {
     let mut files: Vec<String> = Vec::new();
     collect_files(dir, ".mirror", &mut files);
     files.sort();
@@ -909,31 +972,45 @@ fn cmd_kintsugi_ci_corpus(dir: &str, shatter: u64, transform: Option<&str>) -> i
     };
 
     let files_processed = per_file.len() as u64;
-    let envelope = CorpusVerdict {
-        verdict: aggregate_verdict,
-        target: dir,
-        objective: total_objective,
-        iterations: max_iterations,
-        dark_count: total_dark,
-        files_processed,
-        per_file,
-    };
-    match serde_json::to_string(&envelope) {
-        Ok(json) => {
-            let mut out = io::stdout();
-            if writeln!(out, "{}", json).is_err() {
-                return 1;
+    match format {
+        CiFormat::MirrorText => emit_corpus_verdict_mirror_text(
+            aggregate_verdict,
+            dir,
+            total_objective,
+            max_iterations,
+            total_dark,
+            files_processed,
+            &per_file,
+        ),
+        CiFormat::Json => {
+            let envelope = CorpusVerdict {
+                verdict: aggregate_verdict,
+                target: dir,
+                objective: total_objective,
+                iterations: max_iterations,
+                dark_count: total_dark,
+                files_processed,
+                per_file,
+            };
+            match serde_json::to_string(&envelope) {
+                Ok(json) => {
+                    let mut out = io::stdout();
+                    if writeln!(out, "{}", json).is_err() {
+                        return 1;
+                    }
+                    0
+                }
+                Err(_) => 1,
             }
-            0
         }
-        Err(_) => 1,
     }
 }
 
-/// Serialise a `CiVerdict` to stdout (single line, newline-terminated).
-/// Returns exit code: 0 when serialisation + write succeed, 1 only when
-/// stdout itself fails.
-fn emit_ci_verdict(
+/// Serialise a `CiVerdict` to stdout as JSON (single line,
+/// newline-terminated). Returns exit code: 0 when serialisation + write
+/// succeed, 1 only when stdout itself fails. The @io-boundary path
+/// behind `--format=json`.
+fn emit_ci_verdict_json(
     verdict: &'static str,
     target: &str,
     objective: f64,
@@ -957,6 +1034,131 @@ fn emit_ci_verdict(
         }
         Err(_) => 1,
     }
+}
+
+/// Render an `f64` the way a substrate-native verdict expects: an
+/// integer-valued float prints as `<int>.0` (e.g. `0.0`, `1.0`); a
+/// non-integer prints via `{:?}` (Rust's shortest-round-trip repr).
+/// Deterministic across runs.
+fn render_f64(x: f64) -> String {
+    if x.is_finite() && x.fract() == 0.0 {
+        // Avoid scientific notation for very large integer-valued
+        // floats; the test corpus only hits small values, but be
+        // defensive.
+        format!("{:.1}", x)
+    } else {
+        format!("{:?}", x)
+    }
+}
+
+/// Emit a verdict as a mirror-text record: `<key> <value>` lines
+/// aligned, terminated by a trailing newline. The substrate-native
+/// default per T11.2.5. The format is keyed (not stringly): the
+/// downstream consumer parses `<key>[ws]+<value>` per line. Lossless
+/// round-trip is guaranteed for the field set we emit.
+///
+/// Key widths are chosen so the longest aggregate key (`files_processed`)
+/// aligns with the per-file shape (single-file mode uses `target`, so
+/// its longest key is `iterations` at width 10; corpus mode uses
+/// `files_processed` at width 15). The width is per-record.
+fn emit_ci_verdict_mirror_text(
+    verdict: &'static str,
+    target: &str,
+    objective: f64,
+    iterations: u64,
+    dark_count: u64,
+) -> i32 {
+    // Single-file record: longest key is `iterations` (10) or
+    // `dark_count` (10). Pad to 11 columns (key + at least one space).
+    let buf = format!(
+        "{:<11}{}\n{:<11}\"{}\"\n{:<11}{}\n{:<11}{}\n{:<11}{}\n",
+        "verdict",
+        verdict,
+        "target",
+        target,
+        "objective",
+        render_f64(objective),
+        "iterations",
+        iterations,
+        "dark_count",
+        dark_count,
+    );
+    let mut out = io::stdout();
+    if out.write_all(buf.as_bytes()).is_err() {
+        return 1;
+    }
+    0
+}
+
+/// Emit a corpus verdict as a mirror-text envelope: an aggregate
+/// record first, then one blank-line-separated record per file (sorted
+/// by path). Substrate-native default per T11.2.5.
+///
+/// Aggregate width: longest key is `files_processed` (15) → pad to 17.
+/// Per-file width: longest key is `iterations` (10) → pad to 13. The
+/// two widths differ so the visual hierarchy mirrors the structural
+/// one (envelope vs. element).
+fn emit_corpus_verdict_mirror_text(
+    aggregate_verdict: &'static str,
+    target: &str,
+    objective: f64,
+    iterations: u64,
+    dark_count: u64,
+    files_processed: u64,
+    per_file: &[PerFileVerdict],
+) -> i32 {
+    let mut buf = String::new();
+    // Aggregate record. Width = 17 (files_processed + 2 spaces).
+    let w = 17;
+    buf.push_str(&format!("{:<w$}{}\n", "verdict", aggregate_verdict, w = w));
+    buf.push_str(&format!("{:<w$}\"{}\"\n", "target", target, w = w));
+    buf.push_str(&format!(
+        "{:<w$}{}\n",
+        "objective",
+        render_f64(objective),
+        w = w
+    ));
+    buf.push_str(&format!("{:<w$}{}\n", "iterations", iterations, w = w));
+    buf.push_str(&format!("{:<w$}{}\n", "dark_count", dark_count, w = w));
+    buf.push_str(&format!(
+        "{:<w$}{}\n",
+        "files_processed",
+        files_processed,
+        w = w
+    ));
+
+    // Per-file records. Width = 13 (iterations + 3 spaces, matching
+    // single-file shape's 11+2 visual rhythm for `file` instead of
+    // `target`).
+    let pw = 13;
+    for entry in per_file {
+        buf.push('\n');
+        buf.push_str(&format!("{:<w$}\"{}\"\n", "file", entry.path, w = pw));
+        buf.push_str(&format!("{:<w$}{}\n", "verdict", entry.verdict, w = pw));
+        buf.push_str(&format!(
+            "{:<w$}{}\n",
+            "objective",
+            render_f64(entry.objective),
+            w = pw
+        ));
+        buf.push_str(&format!(
+            "{:<w$}{}\n",
+            "iterations",
+            entry.iterations,
+            w = pw
+        ));
+        buf.push_str(&format!(
+            "{:<w$}{}\n",
+            "dark_count",
+            entry.dark_count,
+            w = pw
+        ));
+    }
+    let mut out = io::stdout();
+    if out.write_all(buf.as_bytes()).is_err() {
+        return 1;
+    }
+    0
 }
 
 /// Migrate a directory tree: walk every `.mirror` file under `src_root`,
@@ -1180,6 +1382,7 @@ fn main() {
     let mut transform: Option<String> = None;
     let mut out_dir: Option<String> = None;
     let mut ci = false;
+    let mut ci_format: CiFormat = CiFormat::default();
     let mut i = 2;
     while i < args.len() {
         let a = &args[i];
@@ -1252,6 +1455,30 @@ fn main() {
             out_dir = Some(rest.to_string());
         } else if a == "--ci" {
             ci = true;
+        } else if a == "--format" {
+            if i + 1 >= args.len() {
+                eprintln!("--format requires a value (mirror|json)");
+                std::process::exit(1);
+            }
+            match parse_ci_format(&args[i + 1]) {
+                Some(f) => ci_format = f,
+                None => {
+                    eprintln!(
+                        "unknown --format value: {} (expected: mirror|json)",
+                        args[i + 1]
+                    );
+                    std::process::exit(1);
+                }
+            }
+            i += 1;
+        } else if let Some(rest) = a.strip_prefix("--format=") {
+            match parse_ci_format(rest) {
+                Some(f) => ci_format = f,
+                None => {
+                    eprintln!("unknown --format value: {} (expected: mirror|json)", rest);
+                    std::process::exit(1);
+                }
+            }
         }
         i += 1;
     }
@@ -1264,7 +1491,12 @@ fn main() {
         let mut found: Option<&str> = None;
         while j < args.len() {
             let a = &args[j];
-            if a == "--target" || a == "--shatter" || a == "--transform" || a == "--out" {
+            if a == "--target"
+                || a == "--shatter"
+                || a == "--transform"
+                || a == "--out"
+                || a == "--format"
+            {
                 j += 2;
                 continue;
             }
@@ -1294,9 +1526,16 @@ fn main() {
             }
         },
         "kintsugi" => match positional {
-            Some(p) => cmd_kintsugi(p, shatter, transform.as_deref(), out_dir.as_deref(), ci),
+            Some(p) => cmd_kintsugi(
+                p,
+                shatter,
+                transform.as_deref(),
+                out_dir.as_deref(),
+                ci,
+                ci_format,
+            ),
             None => {
-                eprintln!("usage: mirror kintsugi [--ci] [--shatter N] [--transform <mq>] [--out <path>] <file|dir>");
+                eprintln!("usage: mirror kintsugi [--ci [--format mirror|json]] [--shatter N] [--transform <mq>] [--out <path>] <file|dir>");
                 1
             }
         },

@@ -68,10 +68,14 @@ The step:
    [[../../../prism/imperfect/src/transparency]]) into a single workflow
    verdict: `pass | partial(min_confidence) | fail`.
 4. Emits the verdict three ways:
-   - **Stdout** as `imperfect`-shaped JSON (the wire shape of
-     [[../../../prism/docs/specs/pq]] §2.4).
+   - **Stdout** as **stringified mirror AST** by default — a
+     blank-line-separated sequence of `<key> <value>` records (the
+     substrate-pull-correct shape per §1.4). JSON is the @io boundary
+     and lives behind `--format=json`.
    - **GitHub step output** (`outputs.verdict`, `outputs.confidence`,
-     `outputs.objective`) for downstream steps.
+     `outputs.objective`) for downstream steps. The action's `run.sh`
+     invokes `mirror kintsugi --ci --format=json` and pipes through
+     `jq` to translate at the @io boundary.
    - **PR comment** (one per loop run, replacing the previous) with the
      `variety_loss` breakdown per glass / per op (see
      [[kintsugi-variety]] §6) — the visible-repair part of the kintsugi
@@ -133,6 +137,75 @@ v0.1. It is required to run the loop deterministically and emit the
 verdict shape. The wider grammar coverage is a follow-on; the wire is
 the deliverable.
 
+### 1.4 The substrate-pull correction (T11.2.5)
+
+T11.2 + T11.3 originally shipped JSON as the default `--ci` output
+format. That was wrong. `@io` crossings are decoherence events; the
+substrate stays in mirror as long as possible per
+[[kintsugi-variety]] §3. The default wire format is the stringified
+mirror AST — a blank-line-separated sequence of `<key> <value>`
+records, lossless and human-readable. JSON appears only at the @io
+boundary — i.e., in the action's `run.sh` when GitHub Actions needs to
+set `$GITHUB_OUTPUT`.
+
+#### Default (mirror-text) shape — single file
+
+```text
+verdict    success
+target     "boot/std/nl.mirror"
+objective  0.0
+iterations 1
+dark_count 0
+```
+
+#### Default (mirror-text) shape — corpus
+
+Aggregate record first; one blank-line-separated record per file,
+sorted by path. Per-file records key on `file` (not `target`):
+
+```text
+verdict          partial
+target           "bootstrap/tests/fixtures/kintsugi-partial"
+objective        3.0
+iterations       1
+dark_count       3
+files_processed  1
+
+file         "bootstrap/tests/fixtures/kintsugi-partial/dark.mirror"
+verdict      partial
+objective    3.0
+iterations   1
+dark_count   3
+```
+
+#### JSON shape (the @io boundary)
+
+Invoked via `mirror kintsugi --ci --format=json <target>`. Same field
+set; identical aggregation rules. The action's `run.sh` is the only
+place this should appear.
+
+#### Action's `run.sh` design (T11.4)
+
+The action runs the substrate-native path, then crosses to JSON only
+at the point of `$GITHUB_OUTPUT`:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+# Substrate-native verdict (mirror-text); kept around for debug / artifact upload.
+mirror kintsugi --ci --shatter "$SHATTER" "$TARGET" > /tmp/kintsugi-verdict.mirror
+# @io crossing: same verdict, JSON-shaped, for jq + $GITHUB_OUTPUT.
+mirror kintsugi --ci --format=json --shatter "$SHATTER" "$TARGET" > /tmp/kintsugi-verdict.json
+jq -r '"verdict=" + .verdict, "objective=" + (.objective|tostring)' \
+   /tmp/kintsugi-verdict.json >> "$GITHUB_OUTPUT"
+```
+
+The double invocation is cheap (the kintsugi loop is deterministic and
+cached at the OID layer) and keeps the substrate artifact available
+for download as a workflow artifact. The single-invocation path is
+also valid (`--format=json` only) for runners that don't want the
+substrate-native artifact.
+
 ---
 
 ## 2. Current state map
@@ -159,6 +232,7 @@ the deliverable.
 | `mirror kintsugi --ci` flag | `bootstrap/src/main.rs::cmd_kintsugi` | T11.2 |
 | Verdict-as-JSON serialiser | `bootstrap/src/main.rs` + `boot/std/kintsugi.mirror` | T11.2 |
 | Per-walk recursive driver | `bootstrap/src/main.rs::cmd_kintsugi` (`--target <dir>`) | T11.3 |
+| Substrate-pull correction: mirror-text default + `--format=json` | `bootstrap/src/main.rs::emit_*` | T11.2.5 |
 | `actions/kintsugi/action.yml` | `mirror/actions/kintsugi/` | T11.4 |
 | Fixture corpora | `mirror/fixtures/kintsugi-pass/`, `mirror/fixtures/kintsugi-partial/` | T11.4 |
 | Recursive self-host workflow | `mirror/.github/workflows/kintsugi.yml` | T11.5 |
@@ -353,6 +427,26 @@ shipped is **seven ticks**:
   opacity at the parked-body file.
 - **Artifact:** `bootstrap/src/main.rs` walker + `fixtures/`
   directories populated.
+
+### T11.2.5 — substrate-pull correction: mirror-text default + `--format=json`
+
+- **Scope:** correct T11.2 + T11.3 which shipped JSON as the default
+  `--ci` output. Make stringified mirror AST the default; gate JSON
+  behind `--format=json`. The aggregation rules and field set are
+  unchanged; only the *output format* changes. See §1.4 for the
+  shapes and the action's `run.sh` design.
+- **Marker:** 🔴/🟢 `[substrate-pull:realize]`. The default-format
+  choice is a substrate obligation; the JSON path is the @io
+  boundary, isolated to `--format=json`.
+- **Verification:** `mirror kintsugi --ci <file>` emits a mirror-text
+  record (no leading `{`); `mirror kintsugi --ci --format=json <file>`
+  emits the T11.2 JSON envelope verbatim. Both shapes deterministic
+  across runs. `bootstrap/tests/kintsugi_ci.rs` and
+  `bootstrap/tests/kintsugi_ci_target.rs` retrofit to assert the
+  mirror-text default while keeping the JSON subset behind
+  `--format=json`.
+- **Artifact:** `bootstrap/src/main.rs` (`CiFormat` enum, two
+  emitters, CLI flag); the two test files; this spec section.
 
 ### T11.4 — `actions/kintsugi/action.yml` composite action
 
@@ -566,14 +660,18 @@ A new Justfile recipe in `mirror/Justfile`:
 ```just
 # Run the kintsugi-ci action's logic locally against a target.
 # Same shell commands the action runs; same verdict shape.
+# Substrate-native artifact + JSON for the gate check.
 kintsugi-ci-local target shatter='4' threshold='0.8' fail_on='failure':
     {{MIRROR_BIN_RELEASE}} kintsugi --ci \
-        --target {{target}} \
         --shatter {{shatter}} \
-        --threshold {{threshold}} \
-        | tee /tmp/kintsugi-verdict.json
+        {{target}} \
+        | tee /tmp/kintsugi-verdict.mirror
+    {{MIRROR_BIN_RELEASE}} kintsugi --ci --format=json \
+        --shatter {{shatter}} \
+        {{target}} \
+        > /tmp/kintsugi-verdict.json
     @jq -e --arg fail_on {{fail_on}} \
-        'if .verdict == "fail" then false
+        'if .verdict == "failure" then false
          elif .verdict == "partial" and $fail_on == "partial" then false
          else true end' /tmp/kintsugi-verdict.json
 ```
