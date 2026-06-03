@@ -1,8 +1,3 @@
 in @prism
 
-grammar @fixture_partial {
-  action obscure_op() -> u64 { undefined_unknown_construct_xyz }
-}
-
-out @fixture_partial
-out obscure_op
+? ? ?

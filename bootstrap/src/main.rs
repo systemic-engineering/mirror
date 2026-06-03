@@ -677,6 +677,14 @@ fn cmd_kintsugi(
     // `verdict: "failure"` and still exit 0 — the workflow YAML, not
     // the binary, decides what counts as pass.
     if ci {
+        // Directory target → corpus walker (T11.3). Single-file target
+        // (or stat failure → treat as file path, let single-file emit
+        // verdict: "failure") preserves T11.2 shape.
+        if let Ok(md) = fs::metadata(file) {
+            if md.is_dir() {
+                return cmd_kintsugi_ci_corpus(file, shatter, transform);
+            }
+        }
         return cmd_kintsugi_ci_single(file, shatter, transform);
     }
     // Migration mode: --out + a directory input — walk and migrate
@@ -722,20 +730,65 @@ struct CiVerdict<'a> {
     dark_count: u64,
 }
 
-/// Emit a CI verdict for a single `.mirror` file. Always exits 0 when the
-/// JSON serialises cleanly; failure paths carry `verdict: "failure"` in
-/// the envelope rather than a nonzero exit. The workflow YAML decides
-/// pass/fail policy.
-fn cmd_kintsugi_ci_single(file: &str, shatter: u64, transform: Option<&str>) -> i32 {
-    // File read — failure here is a verdict, not an exit code.
+/// Per-file verdict entry inside a corpus envelope (T11.3).
+///
+/// Same shape as `CiVerdict` minus `target` (the enclosing envelope's
+/// `target` is the directory). `path` is the file's path verbatim as
+/// returned by `collect_files`.
+#[derive(Serialize)]
+struct PerFileVerdict {
+    path: String,
+    verdict: &'static str,
+    objective: f64,
+    iterations: u64,
+    dark_count: u64,
+}
+
+/// Aggregate verdict envelope for `mirror kintsugi --ci <directory>`.
+///
+/// Per T11.3 of `docs/specs/kintsugi-ci-v0.1.md`. Aggregation rules:
+///
+/// - `verdict`:        `success` iff every per-file verdict is
+///                     `success`; `partial` if any per-file is partial
+///                     OR has `dark_count > 0`; `failure` if any
+///                     per-file failed.
+/// - `objective`:      **sum** of per-file objectives (the
+///                     [[kintsugi-variety]] objective is additive).
+/// - `dark_count`:     **sum** of per-file dark counts (total residual
+///                     across the corpus).
+/// - `iterations`:     **max** of per-file iterations (the longest-
+///                     running file's tick count).
+/// - `files_processed`: number of `.mirror` files walked.
+/// - `per_file`:       sorted-by-path array of per-file verdicts.
+#[derive(Serialize)]
+struct CorpusVerdict<'a> {
+    verdict: &'static str,
+    target: &'a str,
+    objective: f64,
+    iterations: u64,
+    dark_count: u64,
+    files_processed: u64,
+    per_file: Vec<PerFileVerdict>,
+}
+
+/// Compute a per-file CI verdict for one `.mirror` file. Shared between
+/// single-file mode (`cmd_kintsugi_ci_single`) and the corpus walker
+/// (`cmd_kintsugi_ci_corpus`) so aggregation can't drift from the
+/// per-file shape T11.2 landed.
+///
+/// Returns `(verdict, objective, iterations, dark_count)`. Failure paths
+/// (file unreadable, transform-parse error, grammar load error) return
+/// `("failure", 0.0, 1, 0)` — identical to the single-file `failure`
+/// envelope.
+fn kintsugi_ci_compute(file: &str, shatter: u64, transform: Option<&str>) -> (&'static str, f64, u64, u64) {
     let source = match fs::read(file) {
         Ok(s) => s,
-        Err(_) => return emit_ci_verdict("failure", file, 0.0, 1, 0),
+        Err(_) => return ("failure", 0.0, 1, 0),
     };
     let source = if let Some(q) = transform {
         match parse_rewrite(q) {
             Some(rules) => apply_rewrites(&rules, &source),
-            None => return emit_ci_verdict("failure", file, 0.0, 1, 0),
+            None => return ("failure", 0.0, 1, 0),
         }
     } else {
         source
@@ -743,7 +796,7 @@ fn cmd_kintsugi_ci_single(file: &str, shatter: u64, transform: Option<&str>) -> 
     let grammar_path = grammar_for_file(file);
     let grammar = match load_grammar(grammar_path) {
         Ok(g) => g,
-        Err(_) => return emit_ci_verdict("failure", file, 0.0, 1, 0),
+        Err(_) => return ("failure", 0.0, 1, 0),
     };
     let ast = tokenize(&source, &grammar);
 
@@ -771,7 +824,106 @@ fn cmd_kintsugi_ci_single(file: &str, shatter: u64, transform: Option<&str>) -> 
     } else {
         "partial"
     };
+    (verdict, objective, iterations, dark_count)
+}
+
+/// Emit a CI verdict for a single `.mirror` file. Always exits 0 when the
+/// JSON serialises cleanly; failure paths carry `verdict: "failure"` in
+/// the envelope rather than a nonzero exit. The workflow YAML decides
+/// pass/fail policy.
+fn cmd_kintsugi_ci_single(file: &str, shatter: u64, transform: Option<&str>) -> i32 {
+    let (verdict, objective, iterations, dark_count) =
+        kintsugi_ci_compute(file, shatter, transform);
     emit_ci_verdict(verdict, file, objective, iterations, dark_count)
+}
+
+/// Emit an aggregate CI verdict for a directory of `.mirror` files
+/// (T11.3). Walks recursively via `collect_files`, sorts the list for
+/// determinism, computes a per-file verdict for each, and aggregates
+/// per the rules in `CorpusVerdict`'s docstring.
+fn cmd_kintsugi_ci_corpus(dir: &str, shatter: u64, transform: Option<&str>) -> i32 {
+    let mut files: Vec<String> = Vec::new();
+    collect_files(dir, ".mirror", &mut files);
+    files.sort();
+
+    let mut per_file: Vec<PerFileVerdict> = Vec::with_capacity(files.len());
+    let mut total_objective: f64 = 0.0;
+    let mut total_dark: u64 = 0;
+    let mut max_iterations: u64 = 0;
+    let mut any_failure = false;
+    let mut any_partial = false;
+    let mut all_success = true;
+
+    for path in &files {
+        let (verdict, objective, iterations, dark_count) =
+            kintsugi_ci_compute(path, shatter, transform);
+        total_objective += objective;
+        total_dark += dark_count;
+        if iterations > max_iterations {
+            max_iterations = iterations;
+        }
+        match verdict {
+            "success" => {
+                if dark_count > 0 {
+                    // Defensive: success with dark > 0 is contradictory
+                    // per the per-file rule, but aggregate semantics say
+                    // any dark > 0 demotes to partial.
+                    any_partial = true;
+                    all_success = false;
+                }
+            }
+            "partial" => {
+                any_partial = true;
+                all_success = false;
+            }
+            "failure" => {
+                any_failure = true;
+                all_success = false;
+            }
+            _ => {}
+        }
+        per_file.push(PerFileVerdict {
+            path: path.clone(),
+            verdict,
+            objective,
+            iterations,
+            dark_count,
+        });
+    }
+
+    let aggregate_verdict: &'static str = if any_failure {
+        "failure"
+    } else if any_partial || total_dark > 0 {
+        "partial"
+    } else if all_success {
+        "success"
+    } else {
+        // Empty corpus (files.is_empty()): no failure, no partial, no
+        // dark — treat as success per the v0.1 spec ("every per-file
+        // verdict is success" is vacuously true).
+        "success"
+    };
+
+    let files_processed = per_file.len() as u64;
+    let envelope = CorpusVerdict {
+        verdict: aggregate_verdict,
+        target: dir,
+        objective: total_objective,
+        iterations: max_iterations,
+        dark_count: total_dark,
+        files_processed,
+        per_file,
+    };
+    match serde_json::to_string(&envelope) {
+        Ok(json) => {
+            let mut out = io::stdout();
+            if writeln!(out, "{}", json).is_err() {
+                return 1;
+            }
+            0
+        }
+        Err(_) => 1,
+    }
 }
 
 /// Serialise a `CiVerdict` to stdout (single line, newline-terminated).

@@ -124,7 +124,9 @@ fn ci_dir_per_file_is_array() {
 fn ci_dir_files_processed_matches_per_file_length() {
     let out = run_ci(&["--ci", PASS_FIXTURE]);
     let v = parse_ci_json(&out);
-    let files_processed = v["files_processed"].as_u64().expect("files_processed is integer");
+    let files_processed = v["files_processed"]
+        .as_u64()
+        .expect("files_processed is integer");
     let per_file_len = v["per_file"].as_array().expect("per_file array").len() as u64;
     assert_eq!(
         files_processed, per_file_len,
@@ -137,7 +139,10 @@ fn ci_dir_per_file_entries_have_required_shape() {
     let out = run_ci(&["--ci", PASS_FIXTURE]);
     let v = parse_ci_json(&out);
     let arr = v["per_file"].as_array().expect("per_file array");
-    assert!(!arr.is_empty(), "per_file must not be empty for non-empty corpus");
+    assert!(
+        !arr.is_empty(),
+        "per_file must not be empty for non-empty corpus"
+    );
     for entry in arr {
         for field in ["path", "verdict", "objective", "iterations", "dark_count"] {
             assert!(
@@ -229,7 +234,10 @@ fn ci_dir_per_file_order_is_deterministic_across_runs() {
     let pb = vb["per_file"].as_array().expect("per_file array");
     assert_eq!(pa.len(), pb.len());
     for (ea, eb) in pa.iter().zip(pb.iter()) {
-        assert_eq!(ea["path"], eb["path"], "per_file order must be deterministic");
+        assert_eq!(
+            ea["path"], eb["path"],
+            "per_file order must be deterministic"
+        );
         assert_eq!(ea["verdict"], eb["verdict"]);
         assert_eq!(ea["objective"], eb["objective"]);
         assert_eq!(ea["dark_count"], eb["dark_count"]);
