@@ -36,8 +36,7 @@ fn repo_root() -> &'static Path {
 
 fn read_kintsugi_grammar() -> String {
     let path = repo_root().join("boot/std/kintsugi.mirror");
-    std::fs::read_to_string(&path)
-        .unwrap_or_else(|e| panic!("cannot read {}: {e}", path.display()))
+    std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("cannot read {}: {e}", path.display()))
 }
 
 fn run_ci(args: &[&str]) -> std::process::Output {
@@ -163,7 +162,9 @@ fn kintsugi_mirror_declares_verdict_entry_type() {
     // `verdict` only in the leading field name (`file`, not `target`).
     let src = read_kintsugi_grammar();
     let body = find_record_type_body(&src, "verdict_entry").unwrap_or_else(|| {
-        panic!("boot/std/kintsugi.mirror must declare `type verdict_entry = {{ ... }}`; got:\n{src}")
+        panic!(
+            "boot/std/kintsugi.mirror must declare `type verdict_entry = {{ ... }}`; got:\n{src}"
+        )
     });
     let fields = record_fields(body);
     let expected: HashSet<String> = ["file", "verdict", "objective", "iterations", "dark_count"]
@@ -184,7 +185,9 @@ fn kintsugi_mirror_declares_corpus_verdict_type() {
     // shape.
     let src = read_kintsugi_grammar();
     let body = find_record_type_body(&src, "corpus_verdict").unwrap_or_else(|| {
-        panic!("boot/std/kintsugi.mirror must declare `type corpus_verdict = {{ ... }}`; got:\n{src}")
+        panic!(
+            "boot/std/kintsugi.mirror must declare `type corpus_verdict = {{ ... }}`; got:\n{src}"
+        )
     });
     let fields = record_fields(body);
     let expected: HashSet<String> = [
@@ -241,7 +244,10 @@ fn emitted_corpus_aggregate_field_set_matches_declared_type() {
     let out = run_ci(&["--ci", PASS_FIXTURE]);
     let stdout = String::from_utf8_lossy(&out.stdout);
     let records = split_records(&stdout);
-    assert!(!records.is_empty(), "must emit at least an aggregate record");
+    assert!(
+        !records.is_empty(),
+        "must emit at least an aggregate record"
+    );
     let wire_fields: HashSet<String> = records[0].keys().cloned().collect();
 
     let src = read_kintsugi_grammar();
@@ -325,7 +331,12 @@ fn kintsugi_mirror_still_compiles_strict_after_verdict_declaration() {
     let exe = env!("CARGO_BIN_EXE_mirror");
     let out = Command::new(exe)
         .current_dir(repo_root())
-        .args(["compile", "--strict", "--no-cache", "boot/std/kintsugi.mirror"])
+        .args([
+            "compile",
+            "--strict",
+            "--no-cache",
+            "boot/std/kintsugi.mirror",
+        ])
         .output()
         .expect("binary did not run");
     let code = out.status.code();

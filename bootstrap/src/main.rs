@@ -744,18 +744,27 @@ fn parse_ci_format(s: &str) -> Option<CiFormat> {
     }
 }
 
-/// JSON verdict envelope for `mirror kintsugi --ci --format=json`.
+/// Rust-side mirror of the `type verdict = { ... }` record declared in
+/// `boot/std/kintsugi.mirror` (T11.2.6 substrate-pull closure).
 ///
 /// Per T11.2.5 of `docs/specs/kintsugi-ci-v0.1.md` (corrects T11.2's
 /// default to mirror-text; preserves JSON behind `--format=json` for
-/// the @io boundary). The wire altitude (GitHub Actions composite
-/// step) parses this via `jq` and writes the fields to
+/// the @io boundary). T11.2.6 closes the loop by adding the typed
+/// declaration in the substrate: the field set here MUST match
+/// `boot/std/kintsugi.mirror`'s `type verdict` exactly. The round-trip
+/// tests in `bootstrap/tests/kintsugi_ci_typed_verdict.rs` pin that
+/// equality — drift on either side fails the build.
+///
+/// The wire altitude (GitHub Actions composite step) parses this via
+/// `jq` (under `--format=json`) and writes the fields to
 /// `$GITHUB_OUTPUT`. Field semantics:
 ///
 /// - `verdict`:    `success` if the loop converged with `dark_count == 0`
 ///                 and `objective == 0`; `partial` if the loop completed
 ///                 but residue remained; `failure` if the loop never
-///                 ran (file unreadable, grammar load error).
+///                 ran (file unreadable, grammar load error). The three
+///                 positions match `type discrimination = success | partial
+///                 | failure` in `boot/std/kintsugi.mirror`.
 /// - `target`:     the input path verbatim.
 /// - `objective`:  the non-negative loss scalar; in T11.2 this is
 ///                 `dark_count as f64` — the cheapest loss surface per
@@ -772,11 +781,21 @@ struct CiVerdict<'a> {
     dark_count: u64,
 }
 
-/// Per-file verdict entry inside a corpus envelope (T11.3).
+/// Rust-side mirror of `type verdict_entry = { ... }` from
+/// `boot/std/kintsugi.mirror` (T11.2.6). Per-file entry inside a
+/// corpus envelope (T11.3); differs from `CiVerdict` only in the
+/// leading field name (`file`, not `target`) — the enclosing envelope
+/// already names the corpus root. Round-trip-tested for field-set
+/// equality against the substrate declaration.
 ///
-/// Same shape as `CiVerdict` minus `target` (the enclosing envelope's
-/// `target` is the directory). `path` is the file's path verbatim as
-/// returned by `collect_files`.
+/// Note: the struct field is named `path` here because of the
+/// `--format=json` wire contract pinned by T11.2/T11.3 (`per_file`
+/// entries serialize with key `"path"` in the JSON output). The
+/// mirror-text wire uses `"file"` as the leading key (per the
+/// emitter in `emit_corpus_verdict_mirror_text`), which matches the
+/// `verdict_entry.file` field declared in `boot/std/kintsugi.mirror`.
+/// The JSON `"path"` ↔ mirror-text `"file"` mapping is the @io
+/// boundary's responsibility; the substrate declares `file`.
 #[derive(Serialize)]
 struct PerFileVerdict {
     path: String,
@@ -786,7 +805,9 @@ struct PerFileVerdict {
     dark_count: u64,
 }
 
-/// Aggregate verdict envelope for `mirror kintsugi --ci <directory>`.
+/// Rust-side mirror of `type corpus_verdict = { ... }` from
+/// `boot/std/kintsugi.mirror` (T11.2.6). Aggregate envelope for
+/// `mirror kintsugi --ci <directory>`.
 ///
 /// Per T11.3 of `docs/specs/kintsugi-ci-v0.1.md`. Aggregation rules:
 ///
@@ -801,7 +822,11 @@ struct PerFileVerdict {
 /// - `iterations`:     **max** of per-file iterations (the longest-
 ///                     running file's tick count).
 /// - `files_processed`: number of `.mirror` files walked.
-/// - `per_file`:       sorted-by-path array of per-file verdicts.
+/// - `per_file`:       sorted-by-path array of per-file verdict_entry
+///                     values. On the mirror-text wire this list
+///                     flattens into one blank-line-separated record
+///                     per entry following the envelope; the JSON shape
+///                     keeps it as a nested array.
 #[derive(Serialize)]
 struct CorpusVerdict<'a> {
     verdict: &'static str,
@@ -1053,9 +1078,17 @@ fn render_f64(x: f64) -> String {
 
 /// Emit a verdict as a mirror-text record: `<key> <value>` lines
 /// aligned, terminated by a trailing newline. The substrate-native
-/// default per T11.2.5. The format is keyed (not stringly): the
-/// downstream consumer parses `<key>[ws]+<value>` per line. Lossless
-/// round-trip is guaranteed for the field set we emit.
+/// default per T11.2.5.
+///
+/// T11.2.6 substrate-pull closure: this output is a canonical
+/// instance of `type verdict = { ... }` declared in
+/// `boot/std/kintsugi.mirror`. The key set written here MUST match
+/// the field set declared there exactly. The round-trip tests in
+/// `bootstrap/tests/kintsugi_ci_typed_verdict.rs` pin that equality.
+///
+/// The format is keyed (not stringly): the downstream consumer parses
+/// `<key>[ws]+<value>` per line. Lossless round-trip is guaranteed for
+/// the field set we emit.
 ///
 /// Key widths are chosen so the longest aggregate key (`files_processed`)
 /// aligns with the per-file shape (single-file mode uses `target`, so
@@ -1093,6 +1126,13 @@ fn emit_ci_verdict_mirror_text(
 /// Emit a corpus verdict as a mirror-text envelope: an aggregate
 /// record first, then one blank-line-separated record per file (sorted
 /// by path). Substrate-native default per T11.2.5.
+///
+/// T11.2.6 substrate-pull closure: this output is a canonical instance
+/// of `type corpus_verdict = { ... }` declared in
+/// `boot/std/kintsugi.mirror`. The aggregate record's key set matches
+/// `corpus_verdict`'s field set (minus `per_file`, which flattens to
+/// records on the wire); each per-file record matches `type
+/// verdict_entry`'s field set exactly. Round-trip-tested.
 ///
 /// Aggregate width: longest key is `files_processed` (15) → pad to 17.
 /// Per-file width: longest key is `iterations` (10) → pad to 13. The

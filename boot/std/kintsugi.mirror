@@ -3,6 +3,63 @@ in @mirror/liquid
 in @kintsugi/shatter
 
 grammar @kintsugi {
+  # T11.2.6 — the typed verdict emitted by `mirror kintsugi --ci`.
+  #
+  # substrate-pull-correct closure: the substrate authoritatively
+  # declares what a verdict IS. the Rust emitter in bootstrap/src/main.rs
+  # writes mirror-text instances of these types; this file is the
+  # source of truth for the wire shape. drift between emitter and
+  # declaration is a substrate violation pinned by the round-trip
+  # tests in bootstrap/tests/kintsugi_ci_typed_verdict.rs.
+  #
+  # see docs/specs/kintsugi-ci-v0.1.md §1.4 — the @io boundary stays
+  # at the action's run.sh; everything above runs in mirror.
+
+  # how the kintsugi loop settled. three positions, no more.
+  # aggregation rules: corpus verdict is `success` iff every per-file
+  # entry is `success`; `partial` if any entry is `partial` or has
+  # dark > 0; `failure` if any entry failed.
+  type discrimination = success | partial | failure
+
+  # single-file verdict — emitted by `mirror kintsugi --ci <file>`.
+  # the canonical wire shape is a `<key> <value>` mirror-text record
+  # whose key set matches this field set exactly. the leading field
+  # is `verdict` (the discriminator); the next four describe what
+  # the loop did to converge on this file.
+  type verdict = {
+    verdict: discrimination,
+    target: text,
+    objective: f64,
+    iterations: u64,
+    dark_count: u64,
+  }
+
+  # per-file entry inside a corpus verdict. differs from `verdict`
+  # only in the leading field name (`file`, not `target`) — the
+  # outer envelope already names the corpus root via `target`.
+  type verdict_entry = {
+    file: text,
+    verdict: discrimination,
+    objective: f64,
+    iterations: u64,
+    dark_count: u64,
+  }
+
+  # corpus verdict — emitted by `mirror kintsugi --ci <dir>`. an
+  # aggregate envelope (one record), followed by one entry per file
+  # sorted by path. on the wire the entries are flattened into
+  # blank-line-separated records following the envelope; in the
+  # type they live in `per_file` for compositional access.
+  type corpus_verdict = {
+    verdict: discrimination,
+    target: text,
+    objective: f64,
+    iterations: u64,
+    dark_count: u64,
+    files_processed: u64,
+    per_file: [verdict_entry],
+  }
+
   # collapse two ASTs into one canonical form.
   # the gold in the cracks. the spectrum settles.
   collapse(ast, ast) -> imperfect { \ }
@@ -17,9 +74,22 @@ grammar @kintsugi {
 
   # --shatter N flag: recursive settle at Fiedler zero crossings, N levels deep
   shatter(file, level) -> imperfect { @kintsugi/shatter.fracture_and_repair(file, level) }
+
+  # --ci flag: emit a typed verdict for a file or a corpus directory.
+  # invoked by `mirror kintsugi --ci <target> [--format mirror|json]`.
+  # default emission is the substrate-native mirror-text record shape;
+  # JSON appears only at the @io boundary in the action's run.sh.
+  ci(target) -> verdict { \ }
+  ci_corpus(dir) -> corpus_verdict { \ }
 }
 
 out collapse
 out kintsugi
 out liquid
 out shatter
+out ci
+out ci_corpus
+out discrimination
+out verdict
+out verdict_entry
+out corpus_verdict

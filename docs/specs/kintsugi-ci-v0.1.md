@@ -206,6 +206,62 @@ for download as a workflow artifact. The single-invocation path is
 also valid (`--format=json` only) for runners that don't want the
 substrate-native artifact.
 
+### 1.5 The substrate-pull closure (T11.2.6)
+
+T11.2.5 shipped the right wire shape (mirror-text key-value records)
+but the substrate didn't yet know what a verdict IS — it just emitted
+text the tokenizer happened to parse as identifiers. The form was
+substrate-pull-aligned; the meaning wasn't yet.
+
+T11.2.6 closes the loop by declaring `verdict`, `verdict_entry`, and
+`corpus_verdict` as typed records in `boot/std/kintsugi.mirror`,
+plus the `discrimination = success | partial | failure` enum that
+names the three positions:
+
+```mirror
+type discrimination = success | partial | failure
+
+type verdict = {
+  verdict: discrimination,
+  target: text,
+  objective: f64,
+  iterations: u64,
+  dark_count: u64,
+}
+
+type verdict_entry = {
+  file: text,
+  verdict: discrimination,
+  objective: f64,
+  iterations: u64,
+  dark_count: u64,
+}
+
+type corpus_verdict = {
+  verdict: discrimination,
+  target: text,
+  objective: f64,
+  iterations: u64,
+  dark_count: u64,
+  files_processed: u64,
+  per_file: [verdict_entry],
+}
+```
+
+The Rust emitter's wire shape is **unchanged** from T11.2.5 — the
+canonical mirror-text record `<key> <value>` form is precisely the
+canonical instance form of these typed records. What T11.2.6 adds is
+the substrate-authoritative declaration of the type those records
+belong to. The substrate now knows what a verdict IS.
+
+The load-bearing invariant: **the field set declared in
+`boot/std/kintsugi.mirror` matches the field set the Rust emitter
+writes, byte-equal at the key level.** Drift on either side breaks
+the round-trip tests in
+`bootstrap/tests/kintsugi_ci_typed_verdict.rs` — that's the gate.
+The action's `run.sh` design from §1.4 is unchanged: mirror-text in
+the substrate, JSON only at the `@io` boundary.
+
 ---
 
 ## 2. Current state map
@@ -233,6 +289,7 @@ substrate-native artifact.
 | Verdict-as-JSON serialiser | `bootstrap/src/main.rs` + `boot/std/kintsugi.mirror` | T11.2 |
 | Per-walk recursive driver | `bootstrap/src/main.rs::cmd_kintsugi` (`--target <dir>`) | T11.3 |
 | Substrate-pull correction: mirror-text default + `--format=json` | `bootstrap/src/main.rs::emit_*` | T11.2.5 |
+| Typed `verdict`/`verdict_entry`/`corpus_verdict` records in substrate | `boot/std/kintsugi.mirror` | T11.2.6 |
 | `actions/kintsugi/action.yml` | `mirror/actions/kintsugi/` | T11.4 |
 | Fixture corpora | `mirror/fixtures/kintsugi-pass/`, `mirror/fixtures/kintsugi-partial/` | T11.4 |
 | Recursive self-host workflow | `mirror/.github/workflows/kintsugi.yml` | T11.5 |
