@@ -780,7 +780,11 @@ struct CorpusVerdict<'a> {
 /// (file unreadable, transform-parse error, grammar load error) return
 /// `("failure", 0.0, 1, 0)` — identical to the single-file `failure`
 /// envelope.
-fn kintsugi_ci_compute(file: &str, shatter: u64, transform: Option<&str>) -> (&'static str, f64, u64, u64) {
+fn kintsugi_ci_compute(
+    file: &str,
+    shatter: u64,
+    transform: Option<&str>,
+) -> (&'static str, f64, u64, u64) {
     let source = match fs::read(file) {
         Ok(s) => s,
         Err(_) => return ("failure", 0.0, 1, 0),
