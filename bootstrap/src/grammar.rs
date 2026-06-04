@@ -151,11 +151,18 @@ pub fn parse_grammar(source: &str) -> Grammar {
     g
 }
 
-/// Derive an @-ref from a grammar path like "boot/std/code/llvm/ir.mirror".
+/// Derive an @-ref from a grammar path like "boot/std/code/llvm/ir.mirror"
+/// or "shards/mirror/grammar.mirror". Both substrate roots strip to the
+/// same @-ref; `shards/` is the destination, `boot/std/` is the legacy
+/// fallback (per `bootstrap-retirement-plan.md` shrinkage contract).
 pub fn grammar_ref_from_path(path: &str) -> String {
     let mut p = path;
-    let pre = "boot/std/";
-    if let Some(stripped) = p.strip_prefix(pre) {
+    // shards/ wins; boot/std/ is the legacy fallback. Order matters only
+    // in that we try the more-specific path first; the two prefixes are
+    // disjoint so the order is interchangeable in practice.
+    if let Some(stripped) = p.strip_prefix("shards/") {
+        p = stripped;
+    } else if let Some(stripped) = p.strip_prefix("boot/std/") {
         p = stripped;
     }
     if let Some(stripped) = p.strip_suffix(".mirror") {
@@ -179,7 +186,15 @@ pub fn grammar_ref_from_path(path: &str) -> String {
 /// substrate carries the same declaration from both sources). Same keyword
 /// + different op = conflict; `merge_keyword_sources` reports it.
 fn companion_keyword_sources(path: &str) -> &'static [&'static str] {
+    // shards/-first resolution: when the primary grammar is loaded from
+    // shards/, prefer companion sources from shards/ as well. The merger
+    // already treats a missing companion file as a no-op (additive), so a
+    // shards/ companion that hasn't been ported yet falls through cleanly.
     match path {
+        "shards/mirror/grammar.mirror" => &[
+            "shards/mirror/glass/ast/token.mirror",
+            "boot/std/mirror/glass/ast/token.mirror",
+        ],
         "boot/std/mirror/grammar.mirror" => &["boot/std/mirror/glass/ast/token.mirror"],
         _ => &[],
     }
@@ -236,23 +251,63 @@ pub fn load_grammar(path: &str) -> std::io::Result<Grammar> {
 }
 
 /// Pick a grammar for a file based on extension. Mirrors C `grammar_for_file`.
+///
+/// Substrate-pull: `shards/` is source of truth; `boot/std/` is the
+/// transitional legacy fallback. For each extension we check whether the
+/// shards/ grammar exists on disk and prefer it; otherwise we return the
+/// boot/std/ path (which may itself be missing, in which case `load_grammar`
+/// surfaces the IO error to the caller — same contract as before).
 pub fn grammar_for_file(path: &str) -> &'static str {
     let p = Path::new(path);
     let ext = p.extension().and_then(|e| e.to_str()).unwrap_or("");
     match ext {
-        "rs" => "boot/std/code/rust.mirror",
-        "mirror" | "spec" | "shard" | "shatter" => "boot/std/mirror/grammar.mirror",
-        "ll" => "boot/std/code/llvm/ir.mirror",
-        _ => "boot/std/code/rust.mirror",
+        "rs" => {
+            if Path::new("shards/code/rust.mirror").exists() {
+                "shards/code/rust.mirror"
+            } else {
+                "boot/std/code/rust.mirror"
+            }
+        }
+        "mirror" | "spec" | "shard" | "shatter" => {
+            if Path::new("shards/mirror/grammar.mirror").exists() {
+                "shards/mirror/grammar.mirror"
+            } else {
+                "boot/std/mirror/grammar.mirror"
+            }
+        }
+        "ll" => {
+            if Path::new("shards/code/llvm/ir.mirror").exists() {
+                "shards/code/llvm/ir.mirror"
+            } else {
+                "boot/std/code/llvm/ir.mirror"
+            }
+        }
+        _ => {
+            if Path::new("shards/code/rust.mirror").exists() {
+                "shards/code/rust.mirror"
+            } else {
+                "boot/std/code/rust.mirror"
+            }
+        }
     }
 }
 
 /// Resolve a grammar ref like "@code/llvm/ir" to a .mirror path.
+///
+/// Substrate-pull: try `shards/<ref>.mirror` first; if that file exists,
+/// return that path. Otherwise fall back to `boot/std/<ref>.mirror`. This
+/// operationalizes the `bootstrap-retirement-plan.md` shrinkage contract:
+/// shards/ wins, boot/ is the legacy fallback.
 pub fn grammar_path_for_ref(r#ref: &str) -> Option<String> {
     if !r#ref.starts_with('@') {
         return None;
     }
-    Some(format!("boot/std/{}.mirror", &r#ref[1..]))
+    let tail = &r#ref[1..];
+    let shards_path = format!("shards/{}.mirror", tail);
+    if Path::new(&shards_path).exists() {
+        return Some(shards_path);
+    }
+    Some(format!("boot/std/{}.mirror", tail))
 }
 
 /// Words to silently skip during tokenisation (Rust-grammar noise).
