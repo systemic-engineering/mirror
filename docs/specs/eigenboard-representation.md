@@ -68,7 +68,7 @@ implicit:
    IS the decrease of the spectral gap of the sheaf Laplacian IS the
    decrease of `e^(n+1) < e^(n)`. Three names; one geometric fact.
 
-Nodes are the five operations: `focus | project | split | zoom | refract`.
+Nodes are the five operations: `focus | project | split | shift | settle`.
 Each node carries a fiber — a 5-dimensional state space whose axes
 are the five gutter-lens dualities (entropy, spectral, cheeger,
 ricci, mixing). Edges are the legal compositions between operations
@@ -175,8 +175,8 @@ bundle grammar.
 The prior version of this spec gave the mapping as:
 
 ```
-Abyss ≡ focus, Introject ≡ refract, Cartographer ≡ project,
-Explorer ≡ zoom, Fate ≡ split
+Abyss ≡ focus, Introject ≡ settle, Cartographer ≡ project,
+Explorer ≡ shift, Fate ≡ split
 ```
 
 This was wrong. The correct mapping is given explicitly in
@@ -189,17 +189,17 @@ operation that surfaces that level in mirror's CLI is fixed:
 | `focus`   | Fiber        | Abyss         | observe the state. the section value at one base point. |
 | `project` | Connection   | Introject     | the optic of transport. the connection 1-form. |
 | `split`   | Gauge        | Cartographer  | choose the structure group action. the gauge transformation. |
-| `zoom`    | Transport    | Explorer      | parallel transport across levels. holonomy IS loss. |
-| `refract` | Closure      | Fate          | the Lawvere fixed point. autopoietic closure. |
+| `shift`   | Transport    | Explorer      | parallel transport across levels. holonomy IS loss. |
+| `settle`  | Closure      | Fate          | the Lawvere fixed point. autopoietic closure. |
 
 The mapping is load-bearing for three reasons:
 
 1. **The trait chain in `bundle.rs` is a supertrait chain.** Each level
    requires the previous. Operations have the same dependence: you
    cannot `project` without something to project (a `focus`); you
-   cannot `split` without a connection (a `project`); you cannot `zoom`
-   without a chosen gauge (a `split`); you cannot `refract` without
-   transport (a `zoom`). The composition table (the `then_*` chain)
+   cannot `split` without a connection (a `project`); you cannot `shift`
+   without a chosen gauge (a `split`); you cannot `settle` without
+   transport (a `shift`). The composition table (the `then_*` chain)
    IS the supertrait chain.
 
 2. **The Fate models inhabit the levels they own.** Abyss observes —
@@ -306,7 +306,7 @@ duality 5-space, admitting reflections because signed dualities
 whose sheaf-of-sections IS the cellular sheaf of C.
 
 ```mirror
-type operation = focus | project | split | zoom | refract
+type operation = focus | project | split | shift | settle
 type duality   = entropy | spectral | cheeger | ricci | mixing
 
 # the fiber: one node's state vector (level 0)
@@ -357,7 +357,7 @@ for Tambara modules.
 **mq query shape:**
 ```mirror
 eigenboard > section[op=focus]                       # one fiber's value
-eigenboard > connection[edge=(focus, refract)]       # one connection form
+eigenboard > connection[edge=(focus, settle)]        # one connection form
 eigenboard > section[op=focus] > [duality=entropy]   # one entry
 eigenboard :has(section[op=$op] > [duality=$d])      # any high-conductivity entry
 eigenboard > gauge[op=split]                         # the local gauge at split
@@ -498,7 +498,7 @@ loop closed perfectly, the kintsugi tick discharged its obligation.
 `e^(n+1) < e^(n)` IS the geometric statement that the holonomy on
 successive ticks of the kintsugi loop strictly decreases until it
 hits zero. The bundle's Transport signature *encodes* this monotonic
-descent in the type system: a successful refract collapses
+descent in the type system: a successful settle collapses
 Imperfect::Partial to Imperfect::Success, and the only way for the
 type to reach Success is for the Holonomy carrier to reach zero.
 
@@ -660,8 +660,8 @@ each model owns one operation at the inference layer:
 - **Abyss ≡ focus** (observe the state; the section value)
 - **Introject ≡ project** (the connection; the optic of transport)
 - **Cartographer ≡ split** (the gauge; the structure-group choice)
-- **Explorer ≡ zoom** (parallel transport; the imperfect-returning level)
-- **Fate ≡ refract** (the closure; the Lawvere fixed point)
+- **Explorer ≡ shift** (parallel transport; the imperfect-returning level)
+- **Fate ≡ settle** (the closure; the Lawvere fixed point)
 
 This mapping is now structurally locked: the model_weights vector IS a
 fiber, indexed by the operation that fiber lives on, and the model
@@ -708,10 +708,10 @@ as an mq query that selects fibers or connections and rewrites them:
 
 ```mirror
 strategy(obs) -> automorphism {
-  # "if holonomy on the (zoom, refract) edge exceeds threshold,
+  # "if holonomy on the (shift, settle) edge exceeds threshold,
   #  rebalance toward Cartographer (split)"
-  match obs.holonomy > connection[edge=(zoom, refract)] {
-    high($v) => automorphism.rebalance(zoom, split, $v),
+  match obs.holonomy > connection[edge=(shift, settle)] {
+    high($v) => automorphism.rebalance(shift, split, $v),
     _        => automorphism.identity,
   }
 }
@@ -741,7 +741,7 @@ au-and-conductivity.md.
 ### Match modifiers → bundle automorphisms
 
 From match-select.md, match modifiers parameterize how a match
-behaves across the operation hierarchy: `match(refract)` returns one
+behaves across the operation hierarchy: `match(settle)` returns one
 section; `match(split)` returns five candidate sections (one per Fate
 model); `match(zoom)` traverses levels. Under the bundle framing,
 each modifier IS a *specific kind of bundle automorphism*:
@@ -749,8 +749,8 @@ each modifier IS a *specific kind of bundle automorphism*:
 - `match(focus)`   = automorphism restricted to one fiber.
 - `match(project)` = automorphism that respects the connection structure.
 - `match(split)`   = automorphism that respects the gauge.
-- `match(zoom)`    = automorphism with non-trivial holonomy.
-- `match(refract)` = automorphism preserving the closure.
+- `match(shift)`   = automorphism with non-trivial holonomy.
+- `match(settle)`  = automorphism preserving the closure.
 
 This is the cleanest unification — the match modifiers were always
 selecting which structural level of the bundle the rewrite applies

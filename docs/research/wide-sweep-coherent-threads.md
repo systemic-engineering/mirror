@@ -178,7 +178,7 @@ spectral loss function is monotonically non-increasing.
 **Open question (one of the bundle-lift questions: "closure as its own
 grammar"):** Should λ₀ / Lawvere closure be `@epistemologic/math/lawvere`
 or `@epistemologic/math/fixed_point`? The corpus already declares
-`@math/symplectic` (with `refract settle(phase_point) -> phase_point`)
+`@math/symplectic` (with `settle settle(phase_point) -> phase_point`)
 and `@math/renorm` (with `focus c_function(graph) -> loss`). The
 Lawvere closure layer would name what these grammars are doing IS
 finding a fixed point of a self-referential endomorphism. Naming this
@@ -314,7 +314,7 @@ program, not a spec.
   — explicit five-dimensional information manifold: Φ(G) = (λ₂, h,
   κ, S, t_mix). Each coordinate from a distinct branch of mathematics.
 - `mirror/docs/specs/au-and-conductivity.md` — the 5×5 conductivity
-  tensor: 5 dimensions (focus, project, split, zoom, refract) × 5
+  tensor: 5 dimensions (focus, project, split, shift, settle) × 5
   projections (entropy, spectral, cheeger, ricci, mixing).
 - `mirror/docs/specs/eigenboard-representation.md` — explicitly absorbs
   the gutter-lenses 5-tuple as the basis of each fiber.
@@ -721,7 +721,7 @@ is a single object viewed five different ways.
 
 **Recommendation:** The 5×5 conductivity tensor in `au-and-conductivity.md`
 deserves a paragraph identifying its row-and-column basis precisely:
-*operations basis* (focus, project, split, zoom, refract) is the
+*operations basis* (focus, project, split, shift, settle) is the
 gauge-slice axes; *dualities basis* (entropy, spectral, cheeger,
 ricci, mixing) is the coordinate axes of the information manifold.
 The tensor IS the connection 1-form expressed in this basis pair.

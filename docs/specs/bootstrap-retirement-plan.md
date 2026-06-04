@@ -151,7 +151,7 @@ feeds the parent's projection.
 **Replacement shape.** A combinator `ContentPrism { kind: AstKind,
 tag: &'static str }` whose `focus` writes the name bytes, whose
 `project` walks children via `apply_h_content` and accumulates them
-into the buffer, whose `refract` calls `hash_tagged(tag, buf)`. The
+into the buffer, whose `settle` calls `hash_tagged(tag, buf)`. The
 match-on-kind in current `content_oid` collapses to a kind-indexed
 dispatch (one `[ContentPrism; 10]` table indexed by `AstKind as u8`).
 
@@ -179,7 +179,7 @@ same shape: recursive walk dispatching per `AstKind` to bytes-out.
 
 The retirement: a `RenderPrism { grammar: &Grammar }` whose
 `focus` reads the AST kind, whose `project` writes the
-indent+keyword+name, whose `refract` walks children via
+indent+keyword+name, whose `settle` walks children via
 `apply_h(RenderPrism, child)` and emits the closing bytes. Output
 collected via the `Holonomy` accumulator (the renderer is a pure
 function of the AST, so the Verdict is always `Success(bytes)`).
@@ -456,7 +456,7 @@ if this matters.
 **Action.** The current `kintsugi_tick` in `main.rs` is a no-op
 scaffold across the five stages. Move it into `spectral.rs` as a
 `KintsugiPrism` whose `focus` measures dark_count, whose `project`
-runs Stage 3 (elect) — still no-op — and whose `refract` runs
+runs Stage 3 (elect) — still no-op — and whose `settle` runs
 Stage 5 (Lawvere fixed-point check). The five-stage decomposition
 becomes `compose_a` factors.
 
@@ -494,7 +494,7 @@ operation is a `Fold5` instance.
 
 **3a.** Extract `Fold5<Ff, Fp, Fs, Fz, Fr, In, Out>` in `spectral.rs`
 (shape in `ast-as-bundle.md` §Fold5). One reducer per AST kind
-(focus, project, split, zoom, refract), plus the two IO terminal
+(focus, project, split, shift, settle), plus the two IO terminal
 types as type parameters. The walker is post-order, level-dispatched
 on `AstKind`.
 

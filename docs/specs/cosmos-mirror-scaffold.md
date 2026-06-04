@@ -24,7 +24,7 @@ Depends on:
   `docs/specs/parse-as-fate-tournament.md` — the five-operations + Fate
   framing the scaffold honors.
 - `boot/00-prism.mirror` — the canonical five-operation grammar
-  (`focus / project / split / zoom / refract`), the algebra closed at five.
+  (`focus / project / split / shift / settle`), the algebra closed at five.
 - `cosmos/src/{rgg,quantum,tension,evolution}.rs` — the engine being ported;
   the source the mapping below was read against.
 - `~/.reed/practice/insights/cross-domain/spectral-tick-tock-game-theory.md`,
@@ -36,7 +36,7 @@ Unblocks:
   `../mirror`; it becomes a `.mirror` project that composes prism operations.
 - The "one spectrum, many physics" thesis becomes a *composition* statement
   in grammar, not a Rust convention: heat / Ricci / Schrödinger are three
-  `zoom`/`refract` readings of one `D`.
+  `shift`/`settle` readings of one `D`.
 - The d_s observable lands as a first-class `focus`, reusing prism's
   canonical kernel rather than a cosmos-local copy.
 
@@ -46,8 +46,8 @@ Unblocks:
 
 cosmos is a spectral triple wearing a Rust coat. Its whole engine is: build a
 graph from a field (`project`), diagonalise one Laplacian (`D`, the floor),
-read observables off the spectrum at a scale (`focus` after `zoom`), evolve the
-graph toward a fixed point (`refract`), and partition it (`split`). Four of
+read observables off the spectrum at a scale (`focus` after `shift`), evolve the
+graph toward a fixed point (`settle`), and partition it (`split`). Four of
 those five are clean five-operation maps. The fifth — eigendecomposition —
 **has no five-op home, and that is correct**: it is the `D` of the triple, the
 numerical floor the five operations are *read against*, not one of them.
@@ -71,7 +71,7 @@ the spec must keep visible.
 | Heat / Schrödinger propagation | `tension` (`e^{-Lσ}`), `quantum` (`e^{-iLt}`) | **`zoom`** | clean | `zoom` = scale change, annotation-only parametric (functor-shaped, `zoom id = id`). The diffusion time `σ` / real time `t` IS the zoom level. Same spectrum, different scale read. "One Laplacian, two physics" = two `zoom` readings of one `D`. |
 | Fiedler partition / LCC extraction | `tension::ComponentEigen::prepare`; `φ_2` | **`split`** | clean | `split` = "explore what's connected." The Fiedler vector partitions the graph; LCC extraction is `split` keeping the giant component. Also the `type x = a \| b` disjunction shape one universe up. |
 | d_s / Hubble-tension / arrival-prob readout | `spectral_dimension::ds_curve`; `tension::node_tension`; `quantum::arrival_probability` | **`focus`** | clean | `focus` = "observe the spectral state." Each is a scalar/vector observable read off the settled spectrum at a chosen scale. d_s(σ) is the headline `focus`. |
-| Forman-Ricci flow | `evolution::spectral_step` | **`refract`** | **partial** | `refract` = "settle. done. crystal" — monad-shaped verified construction. Forman flow IS a settlement dynamics (`dw/dt = -κ w` toward a fixed point), BUT the experiment found its fixed point is **degenerate**: the flow fragments the graph (2D shatters into ~9 components; 3D filaments toward d_s≈1). The settlement is real; the "crystal" is not. See §2. |
+| Forman-Ricci flow | `evolution::spectral_step` | **`settle`** | **partial** | `settle` = "settle. done. crystal" — monad-shaped verified construction. Forman flow IS a settlement dynamics (`dw/dt = -κ w` toward a fixed point), BUT the experiment found its fixed point is **degenerate**: the flow fragments the graph (2D shatters into ~9 components; 3D filaments toward d_s≈1). The settlement is real; the "crystal" is not. See §2. |
 | **Dense eigendecomposition** | `quantum::graph_eigensystem` → `coincidence::ffi` / `prism::ffi` dsyev | **none** | **no home** | This is the load-bearing finding. Eigendecomposition is not one of the five operations — it is the **`D` (Dirac operator)** of the spectral triple, the numerical floor the five ops are read against. It belongs to flang/prism, not the five-op grammar `A`. Forcing it into a verb would be capability-in-the-floor. See §3. |
 
 ### The completeness reading
@@ -86,10 +86,10 @@ vocabulary passing its own completeness test, not failing it.
 
 ---
 
-## 2. The `refract` caveat the experiment forced
+## 2. The `settle` caveat the experiment forced
 
-`refract` is specified (`boot/00-prism.mirror`) as monad-shaped verified
-construction — building a `refract(T)` value IS the proof the construction
+`settle` is specified (`boot/00-prism.mirror`) as monad-shaped verified
+construction — building a `settle(T)` value IS the proof the construction
 settled. Forman-Ricci flow on a cosmic graph does settle, but to a
 **fragmented** state, not a crystal:
 
@@ -97,17 +97,17 @@ settled. Forman-Ricci flow on a cosmic graph does settle, but to a
 - 3D RGG under flow: `d_s` curve collapses from peak ~4.5 to ~1.0 across the
   whole σ range by step 150 — filamentation toward a 1D-like skeleton.
 
-So `refract(cosmic_graph)` is honestly an `Imperfect`:
+So `settle(cosmic_graph)` is honestly an `Imperfect`:
 
 ```mirror
--- Ricci flow is refract, but its fixed point is partial: the holonomy IS
+-- Ricci flow is settle, but its fixed point is partial: the holonomy IS
 -- the fragmentation (clusters contract, voids expand to disconnection).
-refract ricci_flow(cosmic_graph) -> imperfect { \ }
+settle ricci_flow(cosmic_graph) -> imperfect { \ }
 ```
 
 The `Imperfect<settled_graph, fragmentation, holonomy>` verdict is the right
 shape: `Partial(skeleton, fragmentation)` when the flow shatters the graph;
-the fragmentation count IS the loss. This is exactly why `refract` returns
+the fragmentation count IS the loss. This is exactly why `settle` returns
 `Imperfect` and not a bare crystal — the substrate already had the right type
 for a settlement that doesn't fully crystallise. The experiment validated the
 type, not just the operation.
@@ -164,13 +164,13 @@ not the readout.
 ### `cosmos.spec` — the engine describes itself
 
 ```mirror
-in @prism                  -- the five operations: focus project split zoom refract
+in @prism                  -- the five operations: focus project split shift settle
 in @prism/rust             -- the LAPACK floor: eigensystem, spectral_dimension (D)
 in @code/fortran           -- aligned target for the eigendecompose primitive
 in @cosmos                 -- the cosmological operations, composed from the five
 in @cosmos/rgg             -- project: power spectrum -> graph
-in @cosmos/propagate       -- zoom: heat / Schrodinger at scale
-in @cosmos/flow            -- refract: Ricci settlement (Imperfect)
+in @cosmos/propagate       -- shift: heat / Schrodinger at scale
+in @cosmos/flow            -- settle: Ricci settlement (Imperfect)
 in @cosmos/observe         -- focus: d_s, tension, arrival probability
 in @cosmos/partition       -- split: Fiedler / LCC
 in @data/json              -- io boundary: config + curve output
@@ -186,7 +186,7 @@ type convention = l_sym | l_combinatorial   -- which Laplacian D diagonalises
 cosmos = @cosmos/cli {
   rgg     = @cosmos/rgg     { project(power_spectrum, seed) -> cosmic_graph { \ } }
   observe = @cosmos/observe { focus(cosmic_graph, sigma) -> spectral_dimension { \ } }
-  flow    = @cosmos/flow    { refract(cosmic_graph) -> imperfect { \ } }
+  flow    = @cosmos/flow    { settle(cosmic_graph) -> imperfect { \ } }
 }
 ```
 
@@ -239,16 +239,16 @@ focus spectral_dimension(cosmic_graph, sigma) -> spectral_dimension {
 ```
 
 ```mirror
-# boot/std/cosmos/flow.mirror  --  refract: Ricci settlement (Imperfect!)
+# boot/std/cosmos/flow.mirror  --  settle: Ricci settlement (Imperfect!)
 in @prism
 # Forman-Ricci flow. Settles, but the fixed point may fragment the graph,
 # so the verdict is Imperfect: Partial(skeleton, fragmentation_count).
-refract ricci_flow(cosmic_graph) -> imperfect { \ }
+settle ricci_flow(cosmic_graph) -> imperfect { \ }
 ```
 
 The `D` invocation (eigendecompose) appears only inside `in @prism/rust { \ }`
 floor blocks carrying `[substrate-pull:realize]`. Everything outside those
-blocks — the composition `focus . zoom`, the `refract` settlement loop, the
+blocks — the composition `focus . shift`, the `settle` settlement loop, the
 `project` graph build — is pure five-op grammar.
 
 ---
@@ -267,7 +267,7 @@ blocks — the composition `focus . zoom`, the `refract` settlement loop, the
    eigensystem floor; the partition is pure grammar over `φ_2`.
 4. **`@cosmos/observe` full (`focus`).** Hubble tension + arrival probability
    join d_s as `focus` readings — "one spectrum, many observables."
-5. **`@cosmos/flow` (`refract`, last).** Forman-Ricci is last because it is the
+5. **`@cosmos/flow` (`settle`, last).** Forman-Ricci is last because it is the
    `Imperfect` operation and the experiment showed its fixed point is
    degenerate — it needs the most care to type (fragmentation as holonomy).
 6. **Retire the Rust crate.** Once 1–5 compose the full pipeline in grammar,
@@ -315,7 +315,7 @@ spec states honestly what cosmos-mirror therefore proves:
   `l_combinatorial` reading (prism's lattice-PoC convention) is a second
   `focus` configuration, not a different operation — same `D`, different
   normalisation. Whether both ship is a `@cosmos/observe` concern.
-- `refract ricci_flow`'s `Imperfect` body (`\`) is parked. Typing the
+- `settle ricci_flow`'s `Imperfect` body (`\`) is parked. Typing the
   fragmentation-as-holonomy precisely (a component-count loss vs a continuous
   curvature loss) is downstream of the `@epistemologic/properties` loss
   composition, per [[feedback-loss-from-epistemologic-properties]].

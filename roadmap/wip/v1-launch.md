@@ -33,7 +33,7 @@ The v1.0 launch is staged across two visibility tiers per the systemic.engineeri
 
 1. **A + F** operational — peers spawn with refusal capacity intact (the core architectural claim).
 2. **B (ElixirForum + HN minimum) + C** operational — mentions route to peer-ticks, with admin governance.
-3. **D minimum** — onboarding lets a user meet an unnamed peer, navigate the circular-question composition (DGSF practice via `@epistemologic/reality/lens/circular_questions`), encounter the weakness-invocation moment, and complete via `refract(self)` to a specific named peer that persists. Full session persistence and the full aesthetic composition (jingle + animation + color theory) can land progressively; the J.3 minimum is the lens-composition shape working end-to-end.
+3. **D minimum** — onboarding lets a user meet an unnamed peer, navigate the circular-question composition (DGSF practice via `@epistemologic/reality/lens/circular_questions`), encounter the weakness-invocation moment, and complete via `settle(self)` to a specific named peer that persists. Full session persistence and the full aesthetic composition (jingle + animation + color theory) can land progressively; the J.3 minimum is the lens-composition shape working end-to-end.
 4. **G (single-node minimum) + H (single-cluster minimum)** — the runtime runs in production; the cluster doesn't have to be multi-node for v1.0.
 5. **E (docs minimum)** — `spectral.engineer/docs` exists; paper generation can be a v1.1 enhancement.
 6. **I minimum** — Terms updated for autonomous responses; license model decided enough to ship.

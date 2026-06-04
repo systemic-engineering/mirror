@@ -34,8 +34,8 @@ This document maps what exists today against what that command requires.
 | `lib.rs` | 38 | Module declarations. Re-exports kernel types + prism | Working |
 | `cli.rs` | 270 | `--flag` -> `@grammar/ref` mapping. Typed lambdas | Working |
 | `tokenize.rs` | 1213 | Grammar-driven tokenizer. Source text -> MirrorAST. O(n) single-pass. `craft_target()` compiles all files for a target. `canonical_form()` renders kintsugi | Working |
-| `mirror_ast.rs` | 1320 | 7-variant AST: Focus, Project, Split, Zoom, Refract, In, Out. Content-addressed via `Encode`/`Decode`. Implements `prism::MerkleTree` + `prism::Addressable` | Working |
-| `interpreter.rs` | 562 | `io_exec()` -- ONE function, the only door to reality. Five prism operations on AST (`focus`/`project`/`split`/`zoom`/`refract`). Git crystal cache. CLI dispatch scaffold | Working |
+| `mirror_ast.rs` | 1320 | 7-variant AST: Focus, Project, Split, Shift, Settle, In, Out. Content-addressed via `Encode`/`Decode`. Implements `prism::MerkleTree` + `prism::Addressable` | Working |
+| `interpreter.rs` | 562 | `io_exec()` -- ONE function, the only door to reality. Five prism operations on AST (`focus`/`project`/`split`/`shift`/`settle`). Git crystal cache. CLI dispatch scaffold | Working |
 | `kernel.rs` | 857 | `Oid` (CoincidenceHash<3>), `TraceOid`, `ContentAddressed` trait, `Vector` trait, `Composed` pipeline, `Latent` cached evaluation, `Setting`, `Addressable` | Working |
 | `dirac.rs` | 929 | `SpectralTriple` struct. `construct_dirac()` builds D from adjacency data. Jacobi eigenvalue solver. `SpectralEmbedding` (16-dim per node). `connes_distance()` (Dijkstra with 1/sqrt(w)) | Working |
 | `prism.rs` | 436 | `Prism<V>` -- 4-variant content-addressed tree (Shard/Fractal/Lens/Optics). Implements `Fragmentable`. Git-compatible OIDs | Working |
@@ -72,13 +72,13 @@ This document maps what exists today against what that command requires.
 
 | Grammar | What it declares | Key actions |
 |---------|-----------------|-------------|
-| `@code/rust` | Keyword mappings: fn->zoom, struct/enum->split, impl/mod->focus, use->project, trait->refract | `compile`, `test`, `lint`, refactoring actions |
-| `@code/llvm` | Keyword mappings: define->zoom, type->split, module->focus, declare->project, verify->refract | `compile(ast) -> artifact { \ }` |
+| `@code/rust` | Keyword mappings: fn->shift, struct/enum->split, impl/mod->focus, use->project, trait->settle | `compile`, `test`, `lint`, refactoring actions |
+| `@code/llvm` | Keyword mappings: define->shift, type->split, module->focus, declare->project, verify->settle | `compile(ast) -> artifact { \ }` |
 | `@code/mq` | Message queue grammar | LSP optics as named operations |
 | `@io` | Socket layer. `type socket(ref)`, `type stream(socket)`. Four syscalls: open/read/write/close + exec | All abstract (`{ \ }`) |
 | `@fate` | Five models enum (abyss\|introject\|cartographer\|explorer\|fate). `features([f64; 16])`. `decision`. `tick`, `resolve`, `select` | All abstract (`{ \ }`) |
 | `@fate/connectome` | 450-node connectome. neuron/synapse/ganglion types. connectome struct | `infer(connectome, [f64]) -> ganglion { \ }`, `evolve`, `crystallize` |
-| `@craft` | `craft(target) -> crystal { focus \|> split \|> zoom \|> refract \|> project }` | Pipeline composition |
+| `@craft` | `craft(target) -> crystal { focus \|> split \|> shift \|> settle \|> project }` | Pipeline composition |
 | `@kintsugi` | `collapse(ast, ast) -> imperfect { \ }` | Collapse |
 | `@kintsugi/lift` | Lift grammar | |
 | `@kintsugi/migrate` | Migration grammar | |
@@ -115,7 +115,7 @@ Imports all grammars. Declares `type target = boot \| cargo \| binary`. Declares
 
 ### 1.4 spectral/ -- the runtime (this repo)
 
-The `spectral` binary wires prism + mirror + lens + spectral-db together. Has MCP server (`spectral serve`), session management, diffing, logging, observation. The five CLI commands (focus/project/split/zoom/refract) are declared.
+The `spectral` binary wires prism + mirror + lens + spectral-db together. Has MCP server (`spectral serve`), session management, diffing, logging, observation. The five CLI commands (focus/project/split/shift/settle) are declared.
 
 ### 1.5 mirror/dirac.rs -- the Dirac operator
 
@@ -142,9 +142,9 @@ Already implemented:
 
 2. **Grammar evaluation is not implemented.** `@mirror/evaluate` declares `evaluate(grammar, text) -> ast { \ }`. The Rust tokenizer does this job today, but the grammar cannot invoke it. There is no mechanism for a grammar action body to call the Rust tokenizer.
 
-3. **Pipeline composition (`|>`) is not executed.** `@craft` declares `craft(target) -> crystal { focus |> split |> zoom |> refract |> project }`. The `|>` operator is declared in `01-meta.mirror` but the interpreter has no pipeline execution. The dispatch in `interpreter.rs` is a hardcoded `match` on command names.
+3. **Pipeline composition (`|>`) is not executed.** `@craft` declares `craft(target) -> crystal { focus |> split |> shift |> settle |> project }`. The `|>` operator is declared in `01-meta.mirror` but the interpreter has no pipeline execution. The dispatch in `interpreter.rs` is a hardcoded `match` on command names.
 
-4. **The algebra has the right shape but no execution engine.** The operations exist as Rust functions (`focus`, `project`, `split`, `zoom`, `refract` in interpreter.rs). The grammars declare them. But the bridge -- grammar action bodies that invoke these operations on AST subtrees -- does not exist.
+4. **The algebra has the right shape but no execution engine.** The operations exist as Rust functions (`focus`, `project`, `split`, `shift`, `settle` in interpreter.rs). The grammars declare them. But the bridge -- grammar action bodies that invoke these operations on AST subtrees -- does not exist.
 
 ### H -- The Fiber Space (the `/` space)
 
@@ -184,7 +184,7 @@ grammar @code/llvm {
   split type
   focus module
   project declare
-  refract verify
+  settle verify
 
   compile(ast) -> artifact { \ }
 }
@@ -199,7 +199,7 @@ Keyword mappings for LLVM IR tokenization (define->zoom, etc.) plus one abstract
    - Split (type) -> LLVM type definition (struct, enum as tagged union)
    - Zoom (function) -> LLVM function definition
    - Project (import) -> LLVM extern declaration
-   - Refract (property) -> LLVM assertion / contract check
+   - Settle (property) -> LLVM assertion / contract check
    - In/Out -> LLVM module import/export (visibility)
 
 2. **A code emitter grammar or Rust backend.** Two paths:
@@ -277,7 +277,7 @@ The interpreter must walk AST and execute grammar action bodies. Today, `dispatc
 4. For `|>` chains: output of left becomes input of right
 5. For `@io` references in bodies: call `io_exec`
 
-This replaces the hardcoded match with grammar-driven dispatch. The five Rust operations (`focus`/`project`/`split`/`zoom`/`refract`) remain the execution primitives. The grammar bodies compose them.
+This replaces the hardcoded match with grammar-driven dispatch. The five Rust operations (`focus`/`project`/`split`/`shift`/`settle`) remain the execution primitives. The grammar bodies compose them.
 
 **Gate:** Until this works, no grammar can execute. Everything else is blocked.
 
@@ -314,7 +314,7 @@ Initially: model selection routes to hardcoded strategies (Abyss = return empty,
 
 Implement `@code/llvm.compile(ast) -> artifact`:
 1. Walk MirrorAST, emit LLVM IR text for each node
-2. Focus -> module, Split -> type, Zoom -> function, Project -> declare, Refract -> assert
+2. Focus -> module, Split -> type, Shift -> function, Project -> declare, Settle -> assert
 3. Embed boot grammars as constant data arrays in the IR
 4. Embed the tokenizer loop as a native function
 5. Embed Fate weights as constant data
@@ -349,7 +349,7 @@ When the binary IS the spectral triple, what does that mean concretely?
 - The eigenvalue of the `\` hole (how much inference is needed)
 - The holonomy after Fate fills the hole (how much was lost in translation)
 
-**The convergence:** `spectral refract` shows the loss curve across ticks. Each tick's loss must be <= the previous tick's loss. `e^(n+1) < e^(n)`. The crystal forms when loss stabilizes. The binary IS the crystal.
+**The convergence:** `spectral settle` shows the loss curve across ticks. Each tick's loss must be <= the previous tick's loss. `e^(n+1) < e^(n)`. The crystal forms when loss stabilizes. The binary IS the crystal.
 
 ### What `spectral loss` shows for the self-hosting binary
 
@@ -470,8 +470,8 @@ grammar @prism/rust {
   focus(ast, name) -> ast in @code/rust { /* interpreter::focus */ }
   project(ast, predicate) -> [ast] in @code/rust { /* interpreter::project */ }
   split(ast) -> [ast] in @code/rust { /* interpreter::split */ }
-  zoom(ast, transform) -> ast in @code/rust { /* interpreter::zoom */ }
-  refract(ast) -> oid in @code/rust { /* interpreter::refract */ }
+  shift(ast, transform) -> ast in @code/rust { /* interpreter::shift */ }
+  settle(ast) -> oid in @code/rust { /* interpreter::settle */ }
 }
 ```
 

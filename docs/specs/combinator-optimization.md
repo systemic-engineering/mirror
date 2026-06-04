@@ -63,7 +63,7 @@ other optimizations by expected value:
 4. Hash-cons / structural sharing — medium value, medium cost.
 5. Bottom-up Merkle with cached sub-OIDs — medium value, low cost.
 6. Choice ordering by frequency — low-medium value, low cost.
-7. Inline expansion of small `Lift` calls — low value, low cost.
+7. Inline expansion of small `Shift` calls — low value, low cost.
 8. Constant folding — absorbed into beta normalization.
 9. Lazy/streaming parse — medium value, high cost.
 10. Tail-call optimization — low value, low cost.
@@ -96,7 +96,7 @@ pub enum Combinator {
     SelectVariant,
     KeywordFormBody { keyword: Vec<u8>, kind: AstKind },
     Until { stop: Box<Combinator> },
-    Lift { grammar: String, body: Box<Combinator> },
+    Shift { grammar: String, body: Box<Combinator> },
     DarkFallback,
 }
 ```
@@ -151,9 +151,9 @@ is NOT generally equivalent to `Capture { body, kind: k_outer }` —
 the inner capture produces an AST node the outer wraps. This is
 *not* a normalization opportunity.
 
-**E11. Lift commutativity with Repeat.** `Repeat { body: Lift { grammar: g, body: b }, n.. } ≡
-Lift { grammar: g, body: Repeat { body: b, n.. } }` IS NOT generally true —
-the lift's grammar boundary changes semantics. Not a normalization
+**E11. Shift commutativity with Repeat.** `Repeat { body: Shift { grammar: g, body: b }, n.. } ≡
+Shift { grammar: g, body: Repeat { body: b, n.. } }` IS NOT generally true —
+the shift's grammar boundary changes semantics. Not a normalization
 opportunity (this is one of the cases where the algebra is *not*
 free of context, by design).
 
@@ -465,7 +465,7 @@ The gap closes structurally, not by hand-tuning the seed.
   `Capture { body, kind } ≡ …` rewrites, which are NOT confluent
   (kind matters). Eta deferred indefinitely.
 - **Beta in the lambda-calculus sense:** the closest analog in this
-  algebra is the substitution of a `Lift { grammar, body }` with
+  algebra is the substitution of a `Shift { grammar, body }` with
   the inlined definition. Inline expansion (§6.7) is a controlled
   form of this; not a redex (would explode tree size).
 
@@ -476,7 +476,7 @@ The gap closes structurally, not by hand-tuning the seed.
 E9 is more than a normalization rule; it's a compile-time optimization
 with independent value. The mirror grammar (meta-glass) has
 `Choice([Literal("focus"), Literal("project"), Literal("split"),
-Literal("zoom"), Literal("refract")])` as the operation-keyword
+Literal("shift"), Literal("settle")])` as the operation-keyword
 choice. A `Choice` of N literals is O(N) per byte; a `Charset` is
 O(1) per byte (one lookup against the precomputed set).
 
@@ -491,7 +491,7 @@ Replaces `Choice([Literal(b1), Literal(b2), …, Literal(bN)])` with
 Today `CharsetKind` is a closed enum (six variants). Charset
 compilation can only match these six. For mirror's keyword tables,
 this is NOT general enough — the keyword sets `{focus, project,
-split, zoom, refract}` are not byte sets, they're multi-byte
+split, shift, settle}` are not byte sets, they're multi-byte
 literals; they don't fit `Charset` at all.
 
 **Decision: keep `Charset` closed; add `MultiByteCharset` separately.**
@@ -725,17 +725,17 @@ that are explicitly annotated as mutually exclusive (a new
 **Risk.** Without the annotation, reordering can break grammars.
 Defer until the annotation lands and grammars opt in.
 
-### 6.3 Inline expansion of small Lift calls
+### 6.3 Inline expansion of small Shift calls
 
-**What.** `Lift { grammar: g, body: small_b }` where `g` is a
-simple grammar (few combinators) gets inlined: the lift becomes the
+**What.** `Shift { grammar: g, body: small_b }` where `g` is a
+simple grammar (few combinators) gets inlined: the shift becomes the
 grammar's combinator tree directly.
 
 **Relevant.** `@nl` is small; lifting to it from every other grammar
 adds dispatch overhead.
 
-**Payoff.** Removes the lift's grammar-lookup cost. Estimated 5–10%
-on lift-heavy grammars (every grammar with comments).
+**Payoff.** Removes the shift's grammar-lookup cost. Estimated 5–10%
+on shift-heavy grammars (every grammar with comments).
 
 **Cost.** Medium. Tree-size grows; combinator-tree OIDs change
 (losing FP1-style equivalence between inlined and non-inlined
@@ -794,7 +794,7 @@ actually a problem.
 **What.** Recursive `apply_h` calls that are tail positions get
 transformed to iteration.
 
-**Relevant.** `Repeat` and recursive `Lift`. Rust's compiler does
+**Relevant.** `Repeat` and recursive `Shift`. Rust's compiler does
 some TCO; explicit TCO would catch more cases.
 
 **Payoff.** Stack depth for deeply-nested grammars. Marginal
@@ -831,11 +831,11 @@ in Rust; parallelism is firmly Rust-side and adds substrate weight.
 ### 6.8 Eta reductions / expansions
 
 **What.** A first-order analog of eta would be combinator-level
-reductions like `Capture { body: Lift { grammar: g, body: inner }, kind: k }
-≡ Lift { grammar: g, body: Capture { body: inner, kind: k } }`
-(commute Capture and Lift).
+reductions like `Capture { body: Shift { grammar: g, body: inner }, kind: k }
+≡ Shift { grammar: g, body: Capture { body: inner, kind: k } }`
+(commute Capture and Shift).
 
-**Relevant.** Rare in practice. Most grammars use Capture and Lift
+**Relevant.** Rare in practice. Most grammars use Capture and Shift
 in fixed compositions.
 
 **Payoff.** Unclear. The commutation might enable other
@@ -940,7 +940,7 @@ content-addressed section history.
 | Hash-cons | YES | YES | YES |
 | Bottom-up Merkle | YES | YES | YES |
 | Choice reordering | NO (changes which arm wins) | NO | NO |
-| Inline Lift expansion | subtle (need un-inline normalization) | subtle | subtle |
+| Inline Shift expansion | subtle (need un-inline normalization) | subtle | subtle |
 | Lazy parse | YES if implemented carefully | YES | YES |
 | Tail-call optimization | YES | YES | YES |
 | Parallelism | YES | YES | YES |
@@ -959,8 +959,8 @@ that are *semantically transparent* to the parser preserve it:
   yes.
 - Choice reordering: only if the reordering doesn't change parse
   results (requires the mutual-exclusion annotation).
-- Inline Lift expansion: yes if the inline preserves the parse
-  output (which it does for valid lifts).
+- Inline Shift expansion: yes if the inline preserves the parse
+  output (which it does for valid shifts).
 - Lazy parse: yes if lazy and eager produce the same AST.
 - Eta: depends on which eta.
 
@@ -1160,7 +1160,7 @@ impl Prism for Normalize {
     type Focused = Optic<Combinator, Combinator>;
     // focus: walk and apply redexes
     // project: identity (the body is the result)
-    // refract: identity
+    // settle: identity
 }
 ```
 
@@ -1349,7 +1349,7 @@ normalization, they look identical.
   sufficient for the spec; revisit if the redex set grows.
 - Choice ordering by frequency without the mutual-exclusion
   annotation. Defer.
-- Inline Lift expansion; sketched but not specified.
+- Inline Shift expansion; sketched but not specified.
 - Parallelism in `apply_h`; sketched but not specified.
 
 ---

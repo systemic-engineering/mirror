@@ -125,7 +125,7 @@ the coproduct (sum type).
 The first clause is negated by the second. In graph terms: an edge with
 negative weight (correction). In Hodge decomposition: the harmonic
 component (the irreducible residual that no local operation removes).
-In the five operations: `refract` -- settle, verify, the thing that
+In the five operations: `settle` -- settle, verify, the thing that
 costs something. Algebraically: the `but` of argumentation theory
 (Anscombre & Ducrot 1977): what follows `but` IS the speaker's
 conclusion. What precedes `but` is the concession.
@@ -431,7 +431,7 @@ out compose
 functions polymorphic over profunctors with Tambara module structure.
 A Tambara module is a profunctor p(A,B) equipped with a strength
 p(A,B) -> p(C tensor A, C tensor B). The five operations (focus,
-project, split, zoom, refract) ARE specific optics. Their composition
+project, split, shift, settle) ARE specific optics. Their composition
 IS Tambara module composition.
 
 **Operation mapping:** `zoom` -- composition IS transformation of
@@ -627,7 +627,7 @@ grammar @epistemologic/math/symplectic {
   type phase_point(eigenvalues, eigenvectors)
   type hamiltonian(phase_point) -> f64
 
-  refract settle(phase_point) -> phase_point { \ }
+  settle settle(phase_point) -> phase_point { \ }
 
   property literal(settle) -> verdict { \ }
   property trace_preserved(settle) -> verdict { \ }
@@ -644,7 +644,7 @@ Hamiltonian flow preserves the symplectic form omega = sum(dp_i ^ dq_i).
 Liouville's theorem: phase space volume is conserved. Noether's
 theorem: every symmetry gives a conserved quantity.
 
-**Operation mapping:** `refract` -- settlement IS the terminal
+**Operation mapping:** `settle` -- settlement IS the terminal
 operation. The system finds its energy minimum while preserving
 invariants.
 
@@ -684,8 +684,8 @@ grammar @epistemologic/math/hebbian {
   type weight(edge, f64)
 
   zoom strengthen(edge) -> edge { \ }
-  zoom weaken(edge) -> edge { \ }
-  refract crystallize(subgraph) -> crystal { \ }
+  shift weaken(edge) -> edge { \ }
+  settle crystallize(subgraph) -> crystal { \ }
   project prune(graph) -> graph { \ }
 
   property literal(strengthen) -> verdict { \ }
@@ -705,8 +705,8 @@ update delta_w = eta * x_pre * x_post. Anti-Hebbian learning weakens
 connections between uncorrelated activations. Long-term potentiation
 (LTP) IS the permanent strengthening -- the biological crystal.
 
-**Operation mapping:** `zoom` for strengthening/weakening (weight
-transformation), `refract` for crystallization (permanent settlement),
+**Operation mapping:** `shift` for strengthening/weakening (weight
+transformation), `settle` for crystallization (permanent settlement),
 `project` for pruning (filter out what is unused).
 
 **What it adds to `literal`:** The garden's grammar accumulation IS
@@ -787,8 +787,8 @@ grammar maps the five operations to English language processing:
 
 - `split` -> decompose (text into tokens, words, sentences)
 - `focus` -> observe (POS tagging, role assignment, lemmatization)
-- `zoom` -> transform (conjugation, pluralization, nominalization)
-- `refract` -> verify (grammar checking, agreement, coherence)
+- `shift` -> transform (conjugation, pluralization, nominalization)
+- `settle` -> verify (grammar checking, agreement, coherence)
 - `project` -> filter (stop words, summarization, keyword extraction)
 
 **What `literal` adds:** The existing `@nl/english` grammar makes
@@ -1158,7 +1158,7 @@ grammar @epistemologic/physics/symplectic {
   #
   # The compiler preserves what physics preserves.
 
-  refract hamiltonian_settle(graph) -> graph { \ }
+  settle hamiltonian_settle(graph) -> graph { \ }
 
   property literal(hamiltonian_settle) -> verdict { \ }
   property casimir_conserved(hamiltonian_settle) -> verdict { \ }
@@ -1175,7 +1175,7 @@ For eigenvalue settlement: the eigenvalues ARE the positions, their
 rates of change ARE the momenta. The spectral loss IS the Hamiltonian.
 Settlement IS the flow toward the energy minimum.
 
-**Operation mapping:** `refract` -- settlement IS the terminal operation.
+**Operation mapping:** `settle` -- settlement IS the terminal operation.
 
 **What it adds to `literal`:** The Casimir invariant in Fate (already
 implemented as `casimir_conserved` property) IS Noether's theorem

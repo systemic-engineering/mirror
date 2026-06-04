@@ -41,7 +41,7 @@ External crates used by the mirror binary:
 ### mirror_ast.rs (src/mirror_ast.rs)
 **Contract:** in: nothing (type definitions), out: `MirrorAST` enum (7 variants), `Identifier`, `GrammarRef`, `TypeBody`, `Field`, `AbstractDefault`
 **Status:** stays in Rust
-**Current:** The 7-variant AST: Focus, Project, Split, Zoom, Refract, Abstract, Module. Plus Identifier (not String), GrammarRef (always @-prefixed), TypeBody (Enum/Struct/Alias/Unit), Field (name+type_ref). Implements Encode/Decode, content_oid via CoincidenceHash, MerkleTree for prism, Addressable.
+**Current:** The 7-variant AST: Focus, Project, Split, Shift, Settle, Abstract, Module. Plus Identifier (not String), GrammarRef (always @-prefixed), TypeBody (Enum/Struct/Alias/Unit), Field (name+type_ref). Implements Encode/Decode, content_oid via CoincidenceHash, MerkleTree for prism, Addressable.
 **Target:** This IS the substrate. The AST definition stays in Rust because it IS the @io boundary between mirror grammars and the Rust type system. The five operations are defined here structurally.
 **Gap:** None. This is the glass wall. It stays.
 **Migration:** N/A — this is the anchor point everything else migrates toward.
@@ -61,7 +61,7 @@ External crates used by the mirror binary:
 ### declaration.rs (src/declaration.rs)
 **Contract:** in: `MirrorAST`, out: `MirrorFragment` (content-addressed AST tree), `OpticOp` (operator tokens)
 **Status:** can be grammar NOW
-**Current:** OpticOp enum (Iso, Fold, Split, Focus, Zoom, Refract, Subset, Superset, NotIso, Unfold) with from_token/as_str. MirrorFragment type alias (`Fractal<MirrorAST>`). MirrorFragmentExt trait for accessing ast/children/hash. `fragment()` helper builds Fractal from AST + children.
+**Current:** OpticOp enum (Iso, Fold, Split, Focus, Shift, Settle, Subset, Superset, NotIso, Unfold) with from_token/as_str. MirrorFragment type alias (`Fractal<MirrorAST>`). MirrorFragmentExt trait for accessing ast/children/hash. `fragment()` helper builds Fractal from AST + children.
 **Target:** OpticOp is already declared in `boot/01-meta.mirror` as operator tokens. The fragment construction is thin glue over fragmentation crate types.
 **Gap:** OpticOp's from_token/as_str mapping is pure logic that could be a grammar lookup table. The fragment() constructor is 10 lines of Fractal construction — stays as @io glue.
 **Migration:**
@@ -120,7 +120,7 @@ grammar @mirror/loss {
 ```
 grammar @craft {
   craft(target) -> crystal {
-    focus(target) |> split |> zoom |> refract |> project
+    focus(target) |> split |> shift |> settle |> project
   }
 }
 ```
@@ -128,7 +128,7 @@ The Rust structs are the substrate implementation of what the grammar declares. 
 **Gap:** The LambdaFn::reduce implementations contain the actual work: Parse calls parse_form, Resolve opens MirrorRegistry, Properties is pass-through, Emit calls emit_code_fragment. These are @io calls. The composition logic (`.then()`) is in prism-core.
 **Migration:**
 1. Phase declarations → already grammar (`@craft`)
-2. Pipeline composition → already grammar (`focus |> split |> zoom |> refract |> project`)
+2. Pipeline composition → already grammar (`focus |> split |> shift |> settle |> project`)
 3. LambdaFn::reduce implementations → stay as Rust @io (they call the parser, registry, emitter)
 4. The newtypes (SourceText, ParsedAst, etc.) → grammar types
 
@@ -173,7 +173,7 @@ The Rust structs are the substrate implementation of what the grammar declares. 
 ### cli.rs (src/cli.rs)
 **Contract:** in: command name + args, out: `Imperfect<String, CliError, MirrorLoss>`. Dispatch table for all CLI commands.
 **Status:** can be grammar NOW (partially)
-**Current:** ~1000 lines. Cli struct wraps MirrorRuntime + SpecConfig. dispatch() routes by command name. ~20 command handlers (compile, crystal, ai, ci, lsp, ca, merge, bench, verify, init, repl, kintsugi, check, focus/project/split/zoom/refract, craft, registry, git, query). Help text generation from spec blocks.
+**Current:** ~1000 lines. Cli struct wraps MirrorRuntime + SpecConfig. dispatch() routes by command name. ~20 command handlers (compile, crystal, ai, ci, lsp, ca, merge, bench, verify, init, repl, kintsugi, check, focus/project/split/shift/settle, craft, registry, git, query). Help text generation from spec blocks.
 **Target:** Already partially grammar — `boot.alex/cli.mirror` declares `@mirror/cli` with command types. `mirror.spec` IS the dispatch table as grammar. The Cli struct's dispatch_handler() is a match on command names → this IS an evaluate() over `@mirror/cli`.
 **Gap:**
 - Each cmd_* handler contains @io operations (fs reads, git operations, compilation orchestration).
@@ -185,7 +185,7 @@ The Rust structs are the substrate implementation of what the grammar declares. 
 3. **cmd_compile** → grammar action calling @io(read_file) + @parse + @emit
 4. **cmd_crystal** → grammar action calling @io(read_dir) + boot sequence
 5. **cmd_kintsugi** → grammar action calling @code/rust kintsugi operations
-6. **cmd_focus/project/split/zoom/refract** → grammar actions (already the five operations)
+6. **cmd_focus/project/split/shift/settle** → grammar actions (already the five operations)
 7. **cmd_git** → @io boundary (libgit2)
 8. **cmd_ai** → @io boundary (model invocation)
 9. **cmd_lsp** → @io boundary (stdio server)
@@ -197,7 +197,7 @@ The Rust structs are the substrate implementation of what the grammar declares. 
 **Status:** can be grammar NOW
 **Current:** ~1500 lines. Three layers:
 1. **Lightweight Rust parser**: `parse_rust_items()` — scans for keywords (fn, struct, enum, impl, use, trait, mod), matches braces, extracts names/params/fields. Pure string processing.
-2. **MirrorAST conversion**: `item_to_mirror_ast()` — maps RustItem → MirrorAST nodes (fn→Zoom, struct→Split, impl→Focus, use→Project, trait→Refract, mod→Module).
+2. **MirrorAST conversion**: `item_to_mirror_ast()` — maps RustItem → MirrorAST nodes (fn→Shift, struct→Split, impl→Focus, use→Project, trait→Settle, mod→Module).
 3. **Base AST conversion**: `rust_to_base_ast()` — maps to base AST for kintsugi operations (eliminate_dead, collapse_aliases, flatten_wrappers).
 4. **Metrics**: node_count, depth, fn/type/impl/use/trait counts.
 
@@ -210,7 +210,7 @@ grammar @code/rust {
   focus impl
   focus mod
   project use
-  refract trait
+  settle trait
 }
 ```
 The Rust parser and conversions are the implementation of that grammar. The keyword→operation mappings are already grammar declarations. evaluate.rs already has the grammar-parameterized evaluation that reads these mappings.
@@ -333,8 +333,8 @@ Each target language provides its own TemplateSet. The Rust templates produce Ru
 Idle → focus(question) → Focused
 Focused → project → Projected
 Projected → split(fork) → Forked
-Forked → zoom(merge) → Merged
-Merged → refract(train) → Trained
+Forked → shift(merge) → Merged
+Merged → settle(train) → Trained
 ```
 **Gap:** GestaltProfile.load is @io (disk). State machine logic is pure.
 **Migration:**
@@ -444,10 +444,10 @@ abstract action tokens(range) -> [token]
 | `kintsugi.mirror` | already grammar | `@kintsugi { collapse(ast, ast) -> imperfect { \ } }` |
 | `kintsugi/translate.mirror` | already grammar | `@kintsugi/translate { translate(ast, grammar) -> imperfect { \ } }` |
 | `kintsugi/migrate.mirror` | already grammar | `@kintsugi/migrate { migrate(ast) -> imperfect { \ } }` |
-| `craft.mirror` | already grammar | `@craft { craft(target) -> crystal { focus |> split |> zoom |> refract |> project } }` |
+| `craft.mirror` | already grammar | `@craft { craft(target) -> crystal { focus |> split |> shift |> settle |> project } }` |
 | `nl.mirror` | already grammar | `@nl { type nl(text), type #(nl), doc, commit_message }` |
-| `code/rust.mirror` | already grammar | `@code/rust { zoom fn, split struct/enum, focus impl/mod, project use, refract trait }` |
-| `code/llvm.mirror` | already grammar | `@code/llvm { zoom define, split type, focus module, project declare, refract verify }` |
+| `code/rust.mirror` | already grammar | `@code/rust { shift fn, split struct/enum, focus impl/mod, project use, settle trait }` |
+| `code/llvm.mirror` | already grammar | `@code/llvm { shift define, split type, focus module, project declare, settle verify }` |
 | `git/hooks.mirror` | already grammar | `@git/hooks { hook types, check, format }` |
 | Various std/*.mirror | already grammar | bool, list, map, number, option, order, result, run, set, text, time, etc. |
 

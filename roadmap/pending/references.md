@@ -11,7 +11,7 @@
 - `docs/insights/2026-05-25-pipe-hole-and-au-binary.md` — `|\>` operator; locally-optimal binaries; Au.
 - `docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md` — λ₀ made operational; shard as observer-relative deployment.
 - `docs/insights/2026-05-25-spectral-namespace-architecture.md` — mosaic + portal + closed engine + open adapters.
-- `docs/insights/2026-05-25-parametric-types-and-fp-heritage.md` — zoom(T)/refract(T) as Prism-at-type-layer; FP heritage mapped.
+- `docs/insights/2026-05-25-parametric-types-and-fp-heritage.md` — shift(T)/settle(T) as Prism-at-type-layer; FP heritage mapped.
 - `docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md` — `@time.duration`; monotonic/wall/instant; cross-frame convert; PG discipline.
 - `docs/insights/2026-05-25-gram-and-mirror-same-architecture-two-altitudes.md` — GRAM (arXiv:2605.19376v2) as mirror's substrate at the NN layer; cross-domain prior art.
 - `docs/insights/2026-05-26-portal-as-io-socket-over-content-addressed-subspace.md` — portal as `@io.socket` + content-addressed subspace + shard-frame.

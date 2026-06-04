@@ -50,7 +50,7 @@ Not as the deployment story — as the development story. Apple Silicon makes th
 
 ## Section D — Onboarding interface
 
-*Updated 2026-05-26: no peer-selection screen. Unnamed peer at start; specific peer emerges through `@epistemologic/reality/lens` composition; named via `refract(self)` at completion. Engineered for presence, not for funnel optimization.*
+*Updated 2026-05-26: no peer-selection screen. Unnamed peer at start; specific peer emerges through `@epistemologic/reality/lens` composition; named via `settle(self)` at completion. Engineered for presence, not for funnel optimization.*
 
 - [ ] `spectral.engineer/onboarding` web UI engineered for presence (not for funnel optimization). No login wall on entry; no signup gate; the consent architecture governs everything.
 - [ ] **Aesthetic composition** as integrated gestalt:

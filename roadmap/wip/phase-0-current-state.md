@@ -51,6 +51,6 @@ Compilation, content-addressing, property verification, code emission, shatter s
 - The fragmentation Rust crate is hand-written. Phase 4 + Phase 6 collaborate to make it generated.
 - No GPU acceleration anywhere. Phase 6 lands MetalBackend + OpenCLBackend.
 - **`@mirror/serve` runtime dispatch not yet built.** Backpressure is declared structurally (halts + reduction_budget); a serve-loop that consumes the demand contract on the wire is the natural Phase 5 consumer.
-- **Verified-construction `refract(T)` for pre-v1.0.** The structural-construction guarantee (sub-Turing source → verified generated code) needs a load-bearing end-to-end demonstration on at least one production target before v1.0. Phase 4's `@fragmentation + @code/rust` is the canonical first proof.
+- **Verified-construction `settle(T)` for pre-v1.0.** The structural-construction guarantee (sub-Turing source → verified generated code) needs a load-bearing end-to-end demonstration on at least one production target before v1.0. Phase 4's `@fragmentation + @code/rust` is the canonical first proof.
 - **Six portals.md instances unimplemented.** The grammar primitive exists; the six concrete consumers (session, fs-mount, BEAM connection, cross-system, communication, identity) need typed re-implementation as `@spectral/portal` instances.
 - **No live runtime for the substrate-altitude proposals.** Most of the 2026-05-26 spec stack is declarations + grounded math; nothing runs yet. The gap is operational, not theoretical.

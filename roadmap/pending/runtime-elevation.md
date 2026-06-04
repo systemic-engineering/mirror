@@ -92,7 +92,7 @@ The CRDT framing is the **formal foundation for the deployment story**: agent wo
 
 - Does **not** introduce remote AI inference. `@fate` refuses remote inference — mathematically. Pure hermeticity is preserved.
 - Does **not** require `@spectral/db` to be installed. Mirror works alone with simple LRU + default scheduler. The open foundation stands without the closed engine.
-- Does **not** change the 9-keyword floor. focus/project/split/zoom/refract + prism + glass + in + out. Lambda transitional.
+- Does **not** change the 9-keyword floor. focus/project/split/shift/settle + prism + glass + in + out. Lambda transitional.
 - Does **not** require Phase 1 to be complete to start work on Taut's pass. The spec work can land in parallel; the implementation tick waits for the gate.
 
 ## Footer

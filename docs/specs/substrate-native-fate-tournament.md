@@ -149,7 +149,7 @@ substrate can express*, so by the substrate-pull discipline
 
 The body is a fold over rules, dispatching each rule to its corresponding
 spectral operation on the candidate set. The five-op vocabulary —
-`focus / project / split / zoom / refract` — covers every rule. The
+`focus / project / split / shift / settle` — covers every rule. The
 spectral primitives the operations invoke (eigendecomposition, Fiedler
 computation, Laplacian construction) are substrate-pull-reflex floor:
 they must exist in Rust because the meta-grammar cannot yet describe them
@@ -418,11 +418,11 @@ apply_rule(candidates: [resolution], rule: rule) -> [resolution] {
   }
 }
 
--- settle: refract candidates to their spectral coordinate.
+-- settle: settle candidates to their spectral coordinate.
 -- this is where the eigendecomposition + Laplacian + Fiedler
 -- computation happens; the result IS the au coordinate.
 settle(candidates: [resolution]) -> au {
-  refract(candidates, eigendecompose, fiedler_of, eigengap_of)
+  settle(candidates, eigendecompose, fiedler_of, eigengap_of)
 }
 ```
 
@@ -486,7 +486,7 @@ completeness claim. Briefly:
 - **`anneal(t) / ucb(c)`** use `zoom` — change the scale of evaluation
   (temperature; exploration coefficient); this is the consensus operator,
   reweighting which eigenmodes are emphasized.
-- **`settle`** uses `refract` — settle to the eigenvalue minimum; the
+- **`settle`** uses `settle` — settle to the eigenvalue minimum; the
   fixed point IS the coordinate.
 - **`split`** appears in `apply_rule`'s rule-dispatch and in candidate
   partitioning by Fiedler vector at higher tournament altitudes (§7).
@@ -755,7 +755,7 @@ exception clause.
 
 ## 7. The five-op completeness claim
 
-The five-op vocabulary (`focus / project / split / zoom / refract`) is
+The five-op vocabulary (`focus / project / split / shift / settle`) is
 sufficient for the tournament body. This is not decoration; it's the
 complete set of spectral operations needed to run a tournament. The
 claim connects to `CLAUDE.md`'s *Everything is a Prism* commitment.
@@ -793,11 +793,11 @@ The mapping:
   exploration weight on under-tried trajectories). The five-op `zoom`
   is precisely the scale-change operation at the spectral altitude.
 
-- **`refract`** — settles to the eigenvalue minimum (the fixed point).
-  The tournament's `settle` step IS `refract`: drive the candidate set
+- **`settle`** — settles to the eigenvalue minimum (the fixed point).
+  The tournament's `settle` step IS `settle`: drive the candidate set
   to its loss minimum; the settled state IS the `au` coordinate. The
-  five-op `refract` is precisely this operation at the spectral
-  altitude. The `eⁿ⁺¹ < eⁿ` proof from `CLAUDE.md` rides on `refract`'s
+  five-op `settle` is precisely this operation at the spectral
+  altitude. The `eⁿ⁺¹ < eⁿ` proof from `CLAUDE.md` rides on `settle`'s
   monotone-non-increasing loss guarantee.
 
 No tournament mechanism requires an operation outside the five. Adding
@@ -808,7 +808,7 @@ asked to add operations to make new mechanisms work — new mechanisms
 must decompose into the five.
 
 **Connection to `CLAUDE.md`'s claim.** *"Everything is a Prism. Every
-command runs one or more of: focus, project, split, zoom, refract.
+command runs one or more of: focus, project, split, shift, settle.
 These are not metaphors. They are the trait methods."* The tournament
 is a command; it runs all five. The completeness is exhibited, not
 asserted.
@@ -848,8 +848,8 @@ from its operation's posture:
 | `@ai/abyss.depth(hole)` | focus | depth-first parse trajectory; commit to the dominant interpretation early; useful when grammar structure is unambiguous |
 | `@ai/introject.pattern(hole)` | project | pattern-matching parse from corpus; project onto known parse shapes; useful when the fragment matches a high-frequency pattern |
 | `@ai/cartographer.map(hole)` | split | topological alternative; partition the candidate space by structural features; useful when the parse forest branches widely |
-| `@ai/explorer.explore(hole)` | zoom | breadth-first alternative; sample candidates across the parse forest; useful when no single trajectory dominates |
-| `@ai/fate.select(hole)` | refract | meta-selected alternative; refract candidates through the eigenboard's gauge slice; useful when other ganglia produce conflicting proposals |
+| `@ai/explorer.explore(hole)` | shift | breadth-first alternative; sample candidates across the parse forest; useful when no single trajectory dominates |
+| `@ai/fate.select(hole)` | settle | meta-selected alternative; settle candidates through the eigenboard's gauge slice; useful when other ganglia produce conflicting proposals |
 
 The shapes are *postures*, not algorithms. The actual proposals at each
 ganglion are computed by the ganglion's substrate (its 90-neuron

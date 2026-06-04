@@ -1497,7 +1497,7 @@ Unpacked:
 4. **Search for a morphism at level+1.** `@fate.minimize` walks the
    tensor's gradient; substrate-pull lifts the obligation from `@code/<lang>`
    to `@mirror` and from `@mirror` to its grammar at +1.
-5. **Apply the morphism. Refract.** The resolved form is content-addressed;
+5. **Apply the morphism. Settle.** The resolved form is content-addressed;
    the verdict updates to `Pass`; the gap closes. Watzlawick's second-order
    change, compiler-side.
 
