@@ -1,0 +1,171 @@
+in @prism
+in @glass
+in @meta
+
+# @mirror/store — the fragmentation store interface.
+#
+# Recognition (docs/specs/mirror-store.md, 2026-06-04 reframe):
+# the substrate truth lives in the fragmentation store,
+# content-addressed via OIDs. No external dependency resolution;
+# no version conflict detection; no fetching. Same OID = same
+# shard, always. Composition is by OID, not by name resolution.
+#
+# Splinter IS the structural lockfile. The OID-graph of children
+# under a root shard IS the dependency closure; the closure is the
+# lockfile because the OIDs are the names. Nothing further pins
+# what the OIDs already pin.
+#
+# The store IS canonical. `.shatter` files on disk are ONE
+# OPTIONAL projection format of the store's content (per
+# docs/specs/mosaic.md §7 and docs/specs/shatter-spec.md). Other
+# projections are possible (binary, IR, language-specific
+# embeddings); the store does not require any particular on-disk
+# format. Whatever a tool projects FROM the store, the store's
+# content addressing is the canonical identity. The store comes
+# first; .shatter comes after.
+#
+# Substrate placement: per
+# [[architecture-fragmentation-is-the-rust-substrate]] the Rust
+# implementation lives in `fragmentation/src/*.rs` (Fragmentable,
+# Fractal, ConcurrentStore, HashAlg, Cid). This shard declares the
+# substrate-level surface those impls realize.
+#
+# Spec context: docs/specs/mirror-store.md §§3, 4, 5, 7
+# (surface, audit, boot, peer-to-spectral-db).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-fragmentation-is-the-rust-substrate]],
+#                      [[architecture-glass-wall-substrate-types]].
+# Related shards: glass.mirror (verdict / imperfect / transparency),
+#                 cli.mirror (uses `ref(@mirror/store/oid)`),
+#                 mosaic.mirror (the build that settles ON this store).
+# Path-namespace property: this file at `shards/mirror/store.mirror`
+# declares `@mirror/store` and only that.
+
+prism @mirror/store {
+  focus store
+  project store
+  split store
+  shift store
+  settle store
+}
+
+# === oid — the content-addressed identity primitive ===
+#
+# A sub-prism scoped to @mirror/store. `oid` IS the substrate's
+# identity carrier: a content address produced by the hash algebra
+# (today CoincidenceHash<5,5>, per shards/prism.mirror's spectral-
+# triple framing). Per the cli.mirror precedent — `type
+# content_address = ref(@mirror/store/oid)` — the oid is named at
+# this sub-prism path so call sites in other shards resolve it
+# unambiguously.
+#
+# `oid` is NOT a primitive scalar; it's a typed reference whose
+# content IS its identity. Construction is by hashing bytes;
+# equality is byte-equality of the resulting reference.
+glass @mirror/store/oid {
+  focus oid
+  project oid
+  split oid
+  shift oid
+  settle oid
+}
+
+# The oid type. `ref` is the substrate's content-reference carrier
+# (per boot/std/git.mirror's `type oid(ref)` precedent and
+# shards/glass.mirror's `file: ref` location form).
+type oid = ref
+
+# === splinter — the OID-graph; the structural lockfile ===
+#
+# Splinter is the graph of (oid -> [oid]) — a shard's content
+# address plus the content addresses of its children. Composition
+# is by OID: a shard references its dependencies by their oids
+# directly, not by name. The closure of children under a root IS
+# the dependency closure; that closure IS the lockfile. There is
+# no external file to pin versions; the OID-graph already pins
+# them by construction.
+#
+# Per docs/specs/mirror-store.md §1.2: "Splinter IS the structural
+# lockfile. Composition by OID, not name resolution."
+type splinter = {
+  root: oid,
+  children: [oid],
+}
+
+# === bytes — the raw payload type ===
+#
+# Substrate scalar. Used for read/write payloads at the store's
+# wire surface. Per cli.mirror's `type str = ref(scalar/string)`
+# precedent, declared here as a store-altitude reference so the
+# read/write actions have a typed body.
+type bytes = ref(scalar/bytes)
+
+# === shard_ref — the typed handle to a stored shard ===
+#
+# A shard reference resolves to its content at the bound oid.
+# Distinct from `oid` itself: a shard_ref carries the expectation
+# that the oid resolves to a shard (vs. an arbitrary blob).
+# Fetch failures emit `imperfect` (the @glass loss carrier).
+type shard_ref = oid
+
+# === the store's surface — six operations ===
+#
+# These are the @io contract the bootstrap's MirrorStore trait
+# (per docs/specs/mirror-store.md §3) realizes. They are also the
+# contract `mirror shatter` (plumbing CLI, per mosaic.md §7 and
+# spec §6) invokes when it cats content out of the store. No
+# porcelain here; the porcelain is in @mirror/mosaic and
+# @mirror/kintsugi.
+
+# read(oid) — fetch the content at an oid. `imperfect` carries
+# the bytes on success, opacity on failure (oid not present, oid
+# present but content drifted past verify, oid present but kind
+# mismatch). Per glass.mirror's `imperfect(a, e, l)` floor.
+read(o: oid) -> imperfect { \ }
+
+# write(bytes) — insert content; return the oid the substrate
+# computed for it. Idempotent by construction: writing the same
+# bytes twice returns the same oid and is a no-op on the second
+# call (the content-address is a function of the bytes).
+write(content: bytes) -> oid { \ }
+
+# exists(oid) — verdict on whether the oid resolves in this
+# store. `verdict` from @glass: pass | partial(confidence) |
+# failure(reason). `partial` is the case where the oid is in a
+# cache layer but the canonical backend has not confirmed
+# (rare; documented for completeness).
+exists(o: oid) -> verdict { \ }
+
+# diff(a, b) — the content-addressed delta between two oids.
+# `imperfect` because the diff carries opacity: when a and b
+# share no common ancestor in their splinter closures, the diff
+# is a full replacement (partial(opacity_map) reporting the
+# size and shape of the replacement). When they're identical,
+# success(empty). When one isn't in the store, failure(reason).
+diff(a: oid, b: oid) -> imperfect { \ }
+
+# walk(oid) — enumerate the splinter closure rooted at oid.
+# Returns the OID-graph as a flat list of (parent, child)
+# edges; the caller reconstructs the tree. The closure IS the
+# lockfile; walk IS the resolution.
+walk(root: oid) -> splinter { \ }
+
+# verify(oid, bytes) — re-hash the bytes; verdict on whether
+# the result equals the claimed oid. The substrate's integrity
+# check; the Merkle property per
+# [[architecture-fragmentation-is-the-rust-substrate]].
+verify(o: oid, content: bytes) -> verdict { \ }
+
+out @mirror/store
+out @mirror/store/oid
+out oid
+out splinter
+out bytes
+out shard_ref
+out read
+out write
+out exists
+out diff
+out walk
+out verify
