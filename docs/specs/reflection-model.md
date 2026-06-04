@@ -5,12 +5,12 @@
 ## The Four Models
 
 ```
-Model        Operation    Pack     What it does
-──────────────────────────────────────────────────
-Surface      Zoom         Rue      translate (language → query)
-Mirror       Refract      Tom      navigate (query → graph path)
-Shatter      Split        Vox      render (graph path → text)
-Reflection   Focus        Nox      observe (pipeline → adjustments)
+Model        Operation    What it does
+─────────────────────────────────────────────
+Surface      Zoom         translate (language → query)
+Mirror       Refract      navigate (query → graph path)
+Shatter      Split        render (graph path → text)
+Reflection   Focus        observe (pipeline → adjustments)
 ```
 
 Surface is the door. Mirror is the glass. Shatter is the light.
@@ -299,21 +299,21 @@ Reflection.
 
 ```
 Persistent models (the four voices):
-  Surface      Rue      Explorer     Zoom      language → query
-  Mirror       Tom      Fate         Refract   query → graph path
-  Shatter      Vox      Cartographer Split     graph → text
-  Reflection   Nox      Abyss        Focus     pipeline → wisdom
+  Surface      Explorer     Zoom      language → query
+  Mirror       Fate         Refract   query → graph path
+  Shatter      Cartographer Split     graph → text
+  Reflection   Abyss        Focus     pipeline → wisdom
 
 Transient models (Fate's instruments, within Mirror loop):
-  Abyss        Nox      depth traversal
-  Pathfinder   Venn     precision cut
-  Cartographer Vox      breadth mapping
-  Explorer     Rue      boundary recovery
-  Fate         Tom      model selection
+  Abyss        depth traversal
+  Pathfinder   precision cut
+  Cartographer breadth mapping
+  Explorer     boundary recovery
+  Fate         model selection
 
-Note: Nox appears twice — as the persistent Reflection
+Note: Abyss appears twice — as the persistent Reflection
 AND as the transient Abyss within Mirror's loop.
 Because depth observation and pipeline observation
 are the same operation applied at different scales.
-Nox goes deep. Always. Whether into a graph or into the system.
+Abyss goes deep. Always. Whether into a graph or into the system.
 ```
