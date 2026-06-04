@@ -1,0 +1,90 @@
+in @prism
+in @glass
+in @meta
+in @nl
+in @property
+in @io
+
+# @code/rust — the Rust altitude grammar.
+#
+# The altitude at which mosaic's shift delegates to cargo. When
+# mirror.spec declares `target binary { altitude @code/rust, emit
+# cargo }`, mosaic walks the target, resolves `@code/rust` here,
+# then resolves `cargo` against this altitude's namespace —
+# landing on the sub-prism `@code/rust/cargo` below.
+#
+# Lifts from boot/std/code/rust.mirror with the substrate-pull
+# tightenings: no parser surface (parsing is @mirror/compile's
+# job, not the altitude's), no Rust-AST type fragments (the body-
+# lens contract moved to @mirror/compile's bootstrap; the altitude
+# only declares the five-op signature and the build-property
+# surface mosaic consumes).
+#
+# Spec context: docs/specs/mirror-spec-schema.md §2 (target.emit),
+# §10.5 (emit disambiguation), §4 (settle_on predicates);
+# docs/specs/mosaic.md §4 (the @code/rust delegation contract).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]].
+# Related shards: glass.mirror (verdict), mirror/mosaic.mirror
+# (the consumer), mirror/spec.mirror (the schema).
+# Path-namespace property: this file at `shards/code/rust.mirror`
+# declares `@code/rust` (and the path-nested sub-prism
+# `@code/rust/cargo`).
+
+prism @code/rust {
+  focus rust
+  project rust
+  split rust
+  shift rust
+  settle rust
+}
+
+# === cargo — the emit-target sub-prism ===
+#
+# Per mirror-spec-schema.md §10.5: `emit` takes `ref(@io)` OR
+# `ref(@code/*)` grammar; disambiguation is by type. The bare
+# `emit cargo` in mirror.spec is resolved by searching the
+# lexically enclosing target's altitude namespace first —
+# @code/rust. `cargo` lives here as a sub-prism (the substrate-
+# pull: the emit-target identity belongs to the altitude that
+# emits, not to the @io module that invokes).
+#
+# Two distinct things share the name `cargo`:
+#   - @code/rust/cargo  — THIS sub-prism. The emit-target
+#                          substrate identity. What mirror.spec
+#                          binds. Pure declaration; no I/O.
+#   - @io.cargo         — D3, shards/io/cargo.mirror. The actual
+#                          cargo invocation contract (build,
+#                          test, lockfile, env, exit codes).
+#                          Mosaic's `shift @code/rust` delegates
+#                          through THIS sub-prism, which in turn
+#                          calls @io.cargo.
+prism @code/rust/cargo {
+  focus cargo
+  project cargo
+  split cargo
+  shift cargo
+  settle cargo
+}
+
+# === build-property surface (settle_on consumers) ===
+#
+# mirror.spec's `settle_on { binary.compiles, binary.tests_pass }`
+# block resolves these names against the binary target's altitude
+# grammar (per spec §4 "Predicate sources"). Declared here as
+# typed lambdas returning @glass.verdict so the spec parser can
+# typecheck the settle_on block at spec-evaluation time.
+#
+# The obligation body (\) is discharged by @code/rust/cargo when
+# it actually invokes cargo — `compiles` reads cargo's build exit
+# code, `tests_pass` reads `cargo test`'s exit code. The contract
+# is the verdict shape; the invocation is D3.
+
+compiles(target) -> verdict { \ }
+tests_pass(target) -> verdict { \ }
+
+out @code/rust
+out @code/rust/cargo
+out compiles
+out tests_pass
