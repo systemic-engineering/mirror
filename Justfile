@@ -148,6 +148,28 @@ run *ARGS: build
 kintsugi *ARGS: build
     {{MIRROR_BIN_RELEASE}} kintsugi {{ARGS}}
 
+# Run the kintsugi-ci action's logic locally against a target.
+# Same shell commands the action runs (actions/kintsugi/bin/run-kintsugi.sh);
+# same verdict shape. Substrate-native artifact + JSON for the gate check.
+#
+# Per kintsugi-ci-v0.1 §5.3 — local/CI parity bar.
+#
+# Example:  just kintsugi-ci-local fixtures/kintsugi-pass
+#           just kintsugi-ci-local ./src 4 0.8 partial
+kintsugi-ci-local target shatter='4' threshold='0.8' fail_on='failure': build
+    {{MIRROR_BIN_RELEASE}} kintsugi --ci \
+        --shatter {{shatter}} \
+        {{target}} \
+        | tee /tmp/kintsugi-verdict.mirror
+    {{MIRROR_BIN_RELEASE}} kintsugi --ci --format=json \
+        --shatter {{shatter}} \
+        {{target}} \
+        > /tmp/kintsugi-verdict.json
+    @jq -e --arg fail_on {{fail_on}} \
+        'if .verdict == "failure" then false \
+         elif .verdict == "partial" and $fail_on == "partial" then false \
+         else true end' /tmp/kintsugi-verdict.json
+
 # Dogfood mirror's own compiler against the boot/ grammar tree.
 # Equivalent to `mirror craft boot` — emits the crystal OID for the floor.
 compile: build

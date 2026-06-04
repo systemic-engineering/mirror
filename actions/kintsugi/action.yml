@@ -1,0 +1,133 @@
+name: 'mirror kintsugi'
+description: 'Run the kintsugi loop over a corpus; emit a typed verdict.'
+author: 'Reed <reed@systemic.engineer>'
+
+inputs:
+  target:
+    description: 'Path the loop walks (file or directory).'
+    required: true
+  threshold:
+    description: 'Acceptance threshold for partial verdicts (0.0–1.0).'
+    required: false
+    default: '0.8'
+  shatter:
+    description: 'Shatter-N iteration depth (per kintsugi-shatter spec).'
+    required: false
+    default: '4'
+  fail-on:
+    description: 'Severity that fails the gate: failure | partial | none.'
+    required: false
+    default: 'failure'
+  mirror-version:
+    description: 'Override the mirror binary version. Default: this action tag.'
+    required: false
+    default: ''
+  post-comment:
+    description: 'Post a PR comment with the verdict breakdown.'
+    required: false
+    default: 'true'
+
+outputs:
+  verdict:
+    description: 'pass | partial | fail'
+    value: ${{ steps.kintsugi.outputs.verdict }}
+  confidence:
+    description: 'Numeric confidence in [0.0, 1.0]'
+    value: ${{ steps.kintsugi.outputs.confidence }}
+  objective:
+    description: 'The kintsugi_objective scalar (see kintsugi-variety §6)'
+    value: ${{ steps.kintsugi.outputs.objective }}
+  opacities:
+    description: 'JSON array of located opacities (the gold-filled cracks)'
+    value: ${{ steps.kintsugi.outputs.opacities }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install mirror binary
+      shell: bash
+      run: |
+        ${{ github.action_path }}/bin/install-mirror.sh \
+          "${{ inputs.mirror-version || github.action_ref }}"
+
+    - name: Run kintsugi
+      id: kintsugi
+      shell: bash
+      run: |
+        ${{ github.action_path }}/bin/run-kintsugi.sh \
+          --target "${{ inputs.target }}" \
+          --threshold "${{ inputs.threshold }}" \
+          --shatter "${{ inputs.shatter }}" \
+          --fail-on "${{ inputs.fail-on }}"
+
+    - name: Upload kintsugi artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: kintsugi-verdict
+        path: |
+          /tmp/kintsugi-verdict.mirror
+          /tmp/kintsugi-verdict.json
+        if-no-files-found: warn
+        retention-days: 14
+
+    - name: Post PR comment
+      if: inputs.post-comment == 'true' && github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const verdict = '${{ steps.kintsugi.outputs.verdict }}';
+          const objective = '${{ steps.kintsugi.outputs.objective }}';
+          const confidence = '${{ steps.kintsugi.outputs.confidence }}';
+          const opacitiesRaw = '${{ steps.kintsugi.outputs.opacities }}';
+          let opacities = [];
+          try { opacities = JSON.parse(opacitiesRaw); } catch (e) { opacities = []; }
+
+          const emoji = verdict === 'pass' ? '✅' : verdict === 'partial' ? '⚠️' : '❌';
+          const opacityLines = opacities.slice(0, 10).map(o =>
+            `- \`${o.location || o.path || 'unknown'}\` — ${o.reason || o.kind || 'opacity'}`
+          ).join('\n');
+          const more = opacities.length > 10 ? `\n\n_(+${opacities.length - 10} more)_` : '';
+
+          const body = [
+            `<!-- kintsugi-verdict -->`,
+            `## ${emoji} kintsugi verdict: \`${verdict}\``,
+            ``,
+            `- objective: \`${objective}\``,
+            `- confidence: \`${confidence}\``,
+            `- opacities: \`${opacities.length}\``,
+            ``,
+            opacityLines ? `### Located opacities\n\n${opacityLines}${more}` : '',
+            ``,
+            `_Substrate-native verdict in the workflow artifacts: \`kintsugi-verdict.mirror\`._`,
+          ].filter(Boolean).join('\n');
+
+          // Sticky comment: replace any previous kintsugi-verdict comment on this PR.
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+          const existing = comments.find(c =>
+            c.user.type === 'Bot' && c.body && c.body.includes('<!-- kintsugi-verdict -->')
+          );
+          if (existing) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: existing.id,
+              body,
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+          }
+
+branding:
+  icon: 'check-circle'
+  color: 'yellow'
