@@ -1,13 +1,33 @@
 # properties-on-glass — qualifier binding at the structural edge
 
-*2026-06-01. Mara. Spec — design, not implementation. Markdown only;
-no Rust, no `.mirror` files land with this commit. Sibling to
-[[liquid-types-for-mirror]] (the inference framework this
-operationalizes); sibling to [[../cicd/kintsugi-thesis]] (the
-reproducibility chain this closes two claims of); spec correction
-is owed to `fragmentation/docs/specs/hamilton-scheduler.md` §4 (the
-`Pure` AST verdict — this spec narrows its scope from per-body to
-per-glass).*
+*2026-06-01. Mara. Updated 2026-06-04 (Reed + Alex). Spec — design,
+not implementation. Markdown only; no Rust, no `.mirror` files land
+with this commit. Sibling to [[liquid-types-for-mirror]] (the
+inference framework this operationalizes); sibling to
+[[../cicd/kintsugi-thesis]] (the reproducibility chain this closes
+two claims of); spec correction is owed to
+`fragmentation/docs/specs/hamilton-scheduler.md` §4 (the `Pure` AST
+verdict — this spec narrows its scope from per-body to per-glass).*
+
+> **2026-06-04 reframe (Reed + Alex, canonical).**
+>
+> - **`glass.mirror` is the floor** at `shards/glass.mirror` (@glass) —
+>   the types of the glass wall + the `glass` keyword. Per
+>   [[prism-floor-and-the-grammar-rename]].
+> - **`metalogue.mirror`** at `shards/metalogue.mirror` (@metalogue) is
+>   the language's self-conversation; uses @glass. **The metalogue IS
+>   the glass wall** — the act of self-conversation IS what makes the
+>   substrate transparent.
+> - **`MirrorLoss` is dead** (per task #126). Replaced by
+>   `transparency<p>` throughout — already used in this spec via
+>   `Transparency<Ref>` from `prism/imperfect/src/transparency.rs`.
+> - **Path-namespace property is NEW.** File at
+>   `shards/foo/bar.mirror` MUST declare in the `@foo/bar` namespace.
+>   Failing verdict → compile error. Self-correcting substrate.
+>   Generalizes the existing
+>   [[../../boot/std/epistemologic/property/filename_matches_glass]].
+>   The property's home: `shards/epistemologic/property/path_matches_namespace.mirror`
+>   (NEW; declared, not landed in this spec).
 
 Status: **Red** — the architectural shape is pinned; the
 back-projection mechanism is named; the per-glass qualifier set is
