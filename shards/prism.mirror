@@ -1,0 +1,109 @@
+focus id
+
+# @prism — the floor of the five-operation algebra.
+#
+# Root namespace. The five operations canonically named:
+# focus, project, split, shift, settle. Per the substrate-pull
+# rename (2026-06-04, Reed + Alex): zoom → shift; refract → settle.
+# See docs/specs/prism-floor-and-the-grammar-rename.md.
+#
+# Per [[architecture-prism-as-trait-as-everything]]: no `<= prism`
+# redundancy. The recursive `prism @(id) { ... }` base case below
+# is the canonical declaration form; `prism @prism { ... }`
+# applies that form to itself (the self-declaration that closes
+# the recursion).
+#
+# === The Connes spectral triple framing — the why ===
+#
+# Per [[prism-core-as-spectral-triple]] / [[spectral-triple-binary]]
+# and docs/specs/prism-floor-and-the-grammar-rename.md §the 2026-06-04
+# reframe: the five operations ARE the operational form of Connes'
+# (A, H, D) spectral triple.
+#
+#   A = the five operations (the algebra acting on H).
+#   H = the [[void-document]] (the substrate's Hilbert space:
+#       graph quantum information manifold; λ₀ = 0 ground state;
+#       eight dualities per Splinter/Narcissus).
+#   D = the kintsugi flow (the Dirac operator; eⁿ⁺¹ ≤ eⁿ
+#       monotone descent; c-theorem on graph Laplacians).
+#
+# Per-operation linear-algebraic meaning (canonical):
+#
+#   focus    = λ₀ eigenvalue identification (the ground state;
+#              the spectrum's bottom — what the prism resolves to).
+#   project  = orthogonal projection (idempotent restriction onto
+#              a subspace; what the prism selects).
+#   split    = orthogonal decomposition (the spectrum's partition;
+#              what the prism separates into eigenspaces).
+#   shift    = basis transformation (the functor; change of
+#              coordinates on H; same bytes, different declared
+#              shape). Per [[architecture-lift-as-load-bearing]]
+#              the substrate-pull rename closes the loop with
+#              `boot/std/{option,result}.mirror`'s `lift`.
+#   settle   = monad-close / measurement collapse (the spectrum
+#              read out; the verified-construction that the prism
+#              produces). What the kintsugi flow descends to.
+#
+# The algebra is closed at five. Nothing the substrate adds is a
+# sixth operation; everything composes from these.
+
+prism @(id) {
+  focus prism
+  project prism
+  split prism
+  shift prism
+  settle prism
+}
+
+prism @prism {
+  focus focus
+  project project
+  split split
+  shift shift
+  settle settle
+}
+
+io tick(type) -> tock(type) { \ }
+
+project in(prism)
+project out(prism)
+
+# === Parametric type forms — the five operations at the type layer ===
+#
+# Per docs/insights/2026-05-25-parametric-types-and-fp-heritage.md:
+# the same five verbs that act on values also act on types, with
+# the same names one universe up. Two are declared here as
+# first-class parametric forms; the other three (focus(T),
+# project(T), split(T)) fall out of the existing kernel forms
+# (focus is type(id); project is field selection; split is the |
+# disjunction in `type x = a | b`).
+#
+# shift(T): annotation-only parametric. Same bytes, different
+# declared shape. Functor-shaped (basis transformation on H):
+# shift satisfies identity (shift id = id) and composition
+# (shift (f . g) = shift f . shift g). The runtime cost is zero
+# by construction — the type checker distinguishes T(U1) from
+# T(U2) via content address; the bytes don't change. This is the
+# change-of-coordinates operation of A acting on H.
+#
+# settle(T): verified-construction parametric. Building a
+# settle(T) value IS the proof that the construction settled
+# (monad-close / measurement collapse). Monad-shaped: settle
+# satisfies left identity, right identity, and associativity.
+# Content-addressing gives associativity for free at composition
+# time (oid concatenation is associative; the substrate enforces
+# it). This is the readout under D's monotone descent.
+#
+# Both are type-layer applications of the existing five Prism
+# operations. No new primitives — the algebra is closed at five.
+# The @epistemologic/property/laws/{functor,monad} grammars
+# verify the laws structurally.
+shift shift(type) -> type { \ }
+settle settle(type) -> type { \ }
+
+out in
+out id
+out @
+out @prism
+out shift
+out settle
