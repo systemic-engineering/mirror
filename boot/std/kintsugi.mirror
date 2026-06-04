@@ -64,12 +64,12 @@ grammar @kintsugi {
   # the gold in the cracks. the spectrum settles.
   collapse(ast, ast) -> imperfect { \ }
 
-  # the public-facing refract verb: settle a file, write canonical.
+  # the public-facing settle verb: settle a file, write canonical.
   # invoked by `mirror kintsugi <file>`.
   kintsugi(file) -> imperfect { \ }
 
   # --liquid flag: settle and write inferred properties below ---
-  # absorbs the settling half of the dissolved @mirror/refract.
+  # absorbs the settling half of the dissolved @mirror/settle.
   liquid(file) -> imperfect { @mirror/liquid.liquid(file) }
 
   # --shatter N flag: recursive settle at Fiedler zero crossings, N levels deep

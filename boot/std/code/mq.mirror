@@ -21,8 +21,8 @@ grammar @code/mq {
   focus action(path: ref) -> subgraph
   project action(query: text) -> view
   split action(options: [ref]) -> [variant]
-  zoom action(transform: text) -> result
-  refract action() -> settlement
+  shift action(transform: text) -> result
+  settle action() -> settlement
 
   -- ── Intent interpretation ────────────────────────────────────────
   --
@@ -32,7 +32,7 @@ grammar @code/mq {
   --
   -- \ find the function that handles authentication
   -- -> Fate tournament
-  -- -> project where kind = zoom AND name contains "auth"
+  -- -> project where kind = shift AND name contains "auth"
   -- -> results
 
   \ action(intent: text) -> query

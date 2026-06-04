@@ -19,8 +19,8 @@ in @prism
 #   identity   -> focus(self)    -- the manifold
 #   gestalt    -> project(self)  -- the accumulated lens
 #   tensions   -> split(self)    -- open branches
-#   eigenboard -> zoom(self)     -- current spectral state
-#   shatter    -> refract(self)  -- rendered history
+#   eigenboard -> shift(self)     -- current spectral state
+#   shatter    -> settle(self)  -- rendered history
 #
 # This property verifies a type matches the Prism-record shape: five
 # fields, each tagged with the operation it represents. Structurally

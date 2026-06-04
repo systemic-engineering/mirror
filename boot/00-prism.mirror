@@ -4,16 +4,16 @@ prism @(id) {
   focus prism
   project prism
   split prism
-  zoom prism
-  refract prism
+  shift prism
+  settle prism
 }
 
 prism @prism {
   focus focus
   project project
   split split
-  zoom zoom
-  refract refract
+  shift shift
+  settle settle
 }
 
 abstract io tick(type) -> tock(type) { \ }
@@ -30,28 +30,31 @@ project out(prism)
 # fall out of the existing kernel forms (focus is type(id); project is
 # field selection; split is the | disjunction in `type x = a | b`).
 #
-# zoom(T): annotation-only parametric. Same bytes, different declared
-# shape. Functor-shaped: zoom satisfies identity (zoom id = id) and
-# composition (zoom (f . g) = zoom f . zoom g). The runtime cost is
-# zero by construction — the type checker distinguishes T(U1) from
-# T(U2) via content address; the bytes don't change.
+# shift(T): annotation-only parametric. Same bytes, different declared
+# shape. Functor-shaped (basis transformation on the Hilbert space H):
+# shift satisfies identity (shift id = id) and composition
+# (shift (f . g) = shift f . shift g). The runtime cost is zero by
+# construction — the type checker distinguishes T(U1) from T(U2) via
+# content address; the bytes don't change. Per the Connes spectral
+# triple's algebra A, shift is the change-of-coordinates operation.
 #
-# refract(T): verified-construction parametric. Building a refract(T)
-# value IS the proof that the construction settled. Monad-shaped:
-# refract satisfies left identity, right identity, and associativity.
-# Content-addressing gives associativity for free at composition time
-# (oid concatenation is associative; the substrate enforces it).
+# settle(T): verified-construction parametric. Building a settle(T)
+# value IS the proof that the construction settled (monad-close /
+# measurement collapse). Monad-shaped: settle satisfies left identity,
+# right identity, and associativity. Content-addressing gives
+# associativity for free at composition time (oid concatenation is
+# associative; the substrate enforces it).
 #
 # Both are type-layer applications of the existing five Prism
 # operations. No new primitives — the algebra is closed at five.
 # The @epistemologic/property/laws/{functor,monad} grammars
 # verify the laws structurally.
-zoom zoom(type) -> type { \ }
-refract refract(type) -> type { \ }
+shift shift(type) -> type { \ }
+settle settle(type) -> type { \ }
 
 out in
 out id
 out @
 out @prism
-out zoom
-out refract
+out shift
+out settle

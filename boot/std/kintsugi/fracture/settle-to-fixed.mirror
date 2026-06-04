@@ -1,11 +1,11 @@
 in @prism
 in @kintsugi/fracture
 
-# @kintsugi/fracture/refract-to-fixed — the second fracture rule.
+# @kintsugi/fracture/settle-to-fixed — the second fracture rule.
 #
-# The drift: `refract <name> = <combinator>` appearing at module-top
+# The drift: `settle <name> = <combinator>` appearing at module-top
 # binding position. Per the 2026-05-26 8-category corpus audit
-# (Cat 7), `refract` was overloaded — the Prism operation, the
+# (Cat 7), `settle` was overloaded — the Prism operation, the
 # substrate keyword, AND the binding form for named combinators
 # inside a grammar block. The triple-meaning was drift: the
 # binding form is its own shape (a settled value with no holes,
@@ -17,13 +17,13 @@ in @kintsugi/fracture
 # crystal. Becomes content addressed." The binding IS the crystal
 # IS the OID. Distinct from `beam` (body-altitude, dynamic, may
 # carry Beam<T> metadata). The keyword itself is declared in the
-# substrate as `type fixed = refract` — a typed alias for the
-# refract Prism op at the binding altitude.
+# substrate as `type fixed = settle` — a typed alias for the
+# settle Prism op at the binding altitude.
 #
 # Confidence = 1.0. The migration is unambiguous: every
-# `refract <name> = <combinator>` line inside a grammar block
+# `settle <name> = <combinator>` line inside a grammar block
 # becomes `fixed <name> = <combinator>`. The `<op> <keyword>`
-# 2-word lines (e.g. `focus grammar`, `refract refract`) are NOT
+# 2-word lines (e.g. `focus grammar`, `settle settle`) are NOT
 # bindings and are left untouched — they declare keyword
 # membership in the lexical table, not value bindings.
 #
@@ -34,9 +34,9 @@ in @kintsugi/fracture
 # Spec: docs/specs/mirror-grammar-self-hosted.md
 # Insight: docs/insights/2026-05-26-fixed-and-the-spectral-feedback-fracture.md
 
-grammar @kintsugi/fracture/refract-to-fixed {
+grammar @kintsugi/fracture/settle-to-fixed {
   # The fracture function. Walks the ast; rewrites every
-  # `refract <name> = <combinator>` binding form to
+  # `settle <name> = <combinator>` binding form to
   # `fixed <name> = <combinator>`. Preserves all other bytes.
   # The `<op> <keyword>` lines that declare keyword membership
   # are NOT bindings and are structurally distinct (no `=` at the
@@ -47,15 +47,15 @@ grammar @kintsugi/fracture/refract-to-fixed {
   # downstream.
   flow(ast) -> ast { \ }
 
-  # Law 1: idempotent. Once `refract <name> = <combinator>` has
+  # Law 1: idempotent. Once `settle <name> = <combinator>` has
   # been migrated to `fixed <name> = <combinator>`, running flow
-  # again is a no-op — there are no further refract-bindings to
+  # again is a no-op — there are no further settle-bindings to
   # find. The canonical corpus is a fixed point. Bound via
   # @kintsugi/fracture.
   requires idempotent(flow)
 
   # Law 2: canonical at fixpoint. flow(x) == x exactly when x has
-  # no refract-at-binding-position drift. This IS the detection:
+  # no settle-at-binding-position drift. This IS the detection:
   # a file is canonical iff the fracture is a no-op on it. No
   # separate detect operation.
   requires canonical_at_fixpoint(flow)

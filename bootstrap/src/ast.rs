@@ -5,8 +5,8 @@ pub enum AstKind {
     Focus,
     Project,
     Split,
-    Zoom,
-    Refract,
+    Shift,
+    Settle,
     In,
     Out,
     /// `io <name>(<args>) = <lens-call> > <selector>` — Spec A.

@@ -9,7 +9,7 @@ in @prism
 #
 # Per docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md
 # §6 (the property table): the load-bearing instance is @time.duration
-# and its zoom-annotated forms (@time.monotonic, @time.wall,
+# and its shift-annotated forms (@time.monotonic, @time.wall,
 # @time.instant). The property verifies the algebraic shape these
 # carriers must satisfy.
 #
@@ -46,7 +46,7 @@ grammar @epistemologic/property/laws/duration_algebra {
   zero_identity(type) -> verdict { \ }
 
   # Subtraction is partial: sub(a, b) returns imperfect, partial on
-  # underflow (b > a; the result would be negative, which the refract
+  # underflow (b > a; the result would be negative, which the settle
   # witness on duration rejects). The verifier checks the sub action
   # has an imperfect return type and that the partial branch is
   # reachable from the type's construction surface.

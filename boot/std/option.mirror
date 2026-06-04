@@ -8,10 +8,10 @@ in @meta
 
 type option(a) = some(a) | none
 
--- option -> imperfect: lift into the kernel type
+-- option -> imperfect: shift into the kernel type
 -- some(a) => imperfect.success(a)
 -- none => imperfect.failure((), ())
-zoom lift(option(a)) -> imperfect
+shift shift(option(a)) -> imperfect
 
 -- imperfect -> option: collapse loss and error into none
 -- success(a) => some(a)
@@ -19,8 +19,8 @@ zoom lift(option(a)) -> imperfect
 -- failure(_, _) => none
 fold collapse(imperfect) <= option
 
--- the identity: some(a) |> lift |> collapse = some(a)
--- the absorption: none |> lift |> collapse = none
+-- the identity: some(a) |> shift |> collapse = some(a)
+-- the absorption: none |> shift |> collapse = none
 
 grammar @option {
   in @meta

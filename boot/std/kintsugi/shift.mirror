@@ -1,0 +1,13 @@
+in @prism
+in @kintsugi
+in @code
+in @io
+
+grammar @kintsugi/shift {
+  # shift Rust into grammar. The inverse of migrate.
+  # read through @code lens. emit as .mirror.
+  # the loss is the @io residual.
+  shift(ast, target) -> imperfect { \ }
+}
+
+out shift

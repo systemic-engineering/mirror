@@ -20,7 +20,7 @@ in @beam
 #
 #   A (algebra)      ←  the composition of Connection::connection() optics
 #                       under Tambara module composition. The five
-#                       operations (focus, project, split, zoom, refract)
+#                       operations (focus, project, split, shift, settle)
 #                       and their composition rules generate A.
 #   H (Hilbert space) ← the Fiber::State associated type. Mirror's case:
 #                       5-dim vector spaces with the structure group

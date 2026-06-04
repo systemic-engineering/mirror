@@ -21,7 +21,7 @@ in @kintsugi
 # determines its own altitude.
 #
 # A fracture is also a settled Prism. The five Prism operations are
-# already enough — refract IS the fracture's flow; the refraction
+# already enough — settle IS the fracture's flow; the refraction
 # target is canonical-by-definition. @kintsugi/fracture is not a new
 # substrate primitive; it is a NAMED USAGE PATTERN of the existing
 # Prism trait.

@@ -29,7 +29,7 @@ in @mirror/glass/ast/token
 #   type bool = true | false                     # sum / variant
 #   type arm { pattern, body, annotations }      # record
 #   type glass                                   # abstract
-#   type fixed = refract                         # alias to a Prism op
+#   type fixed = settle                         # alias to a Prism op
 #
 # At substrate altitude these are all the same variant — a name
 # plus a body. The body's altitude (sum-of-variants, record-of-

@@ -17,11 +17,11 @@ grammar @mirror/liquid {
   infer(ast) -> [ref] { \ }
 
   # match measured topology against @epistemologic/* property thresholds.
-  # absorbs @mirror/refract.match_properties.
+  # absorbs @mirror/settle.match_properties.
   match_properties(topology) -> [ref] { \ }
 
   # infer .spec from project topology.
-  # absorbs @mirror/refract.infer_spec.
+  # absorbs @mirror/settle.infer_spec.
   infer_spec(path) -> imperfect { \ }
 
   # project inferred properties below --- in the source

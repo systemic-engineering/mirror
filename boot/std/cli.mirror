@@ -27,10 +27,10 @@ grammar @cli {
   # split: enumerate the suite, converge to lambda_0.
   action craft(target: text) -> imperfect
 
-  # zoom: cross levels — resolve \ with concrete.
+  # shift: cross levels — resolve \ with concrete.
   action fate(oid: text, resolution: text) -> imperfect
 
-  # refract: settle, write canonical.
+  # settle: settle, write canonical.
   action kintsugi(path: text) -> imperfect
 
   # --- Transport (one verb, two dispatches) ---

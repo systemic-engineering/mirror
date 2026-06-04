@@ -8,14 +8,14 @@ in @option
 -- Four carriers, three frames, one convention.
 --
 --   duration   -- non-negative scalar of nanoseconds (PG §2.5: pick
---                 one, name it). The base carrier. Built via refract
+--                 one, name it). The base carrier. Built via settle
 --                 so construction IS the proof of non-negativity.
---   monotonic  -- zoom(duration): CLOCK_MONOTONIC-equivalent frame.
+--   monotonic  -- shift(duration): CLOCK_MONOTONIC-equivalent frame.
 --                 Substrate-internal. gen_prism tick deltas;
 --                 compute budgets; kintsugi flow time.
---   wall       -- zoom(duration): CLOCK_REALTIME-equivalent frame.
+--   wall       -- shift(duration): CLOCK_REALTIME-equivalent frame.
 --                 Observer-relative. The shard provides the frame.
---   instant    -- zoom(duration): wall-clock point-in-time for
+--   instant    -- shift(duration): wall-clock point-in-time for
 --                 human-facing scheduling/logs (PG's timestamptz
 --                 analogue measured from the frame's epoch).
 --
@@ -36,19 +36,19 @@ in @option
 --
 -- Per docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md.
 
--- the base duration carrier. non-negative by construction (refract
+-- the base duration carrier. non-negative by construction (settle
 -- witness): constructors that would produce a negative duration
 -- return imperfect. u64 nanoseconds.
-type duration = refract({ nanos: u64 })
+type duration = settle({ nanos: u64 })
 
 -- the two frames PG distinguishes as CLOCK_MONOTONIC vs
--- CLOCK_REALTIME. zoom(T): annotation-only. Same bytes, different
+-- CLOCK_REALTIME. shift(T): annotation-only. Same bytes, different
 -- declared shape; the type checker refuses to add a wall to a
 -- monotonic without going through an explicit convert(_) at a shard
 -- boundary. Per docs/insights/2026-05-25-parametric-types-and-fp-heritage.md
--- §"zoom(T) = annotation form".
-type monotonic = zoom(duration)
-type wall = zoom(duration)
+-- §"shift(T) = annotation form".
+type monotonic = shift(duration)
+type wall = shift(duration)
 
 -- wall-clock point-in-time. Same bytes as duration; the declared
 -- shape names "nanoseconds since the frame's epoch, observer-
@@ -57,7 +57,7 @@ type wall = zoom(duration)
 -- §8.1 (open question 1, resolved): instant is needed as a separate
 -- frame because cross-shard messaging surfaces points-in-time that
 -- a single shard's snapshot tick cannot name.
-type instant = zoom(duration)
+type instant = shift(duration)
 
 -- a point-in-time capture of spectral state
 -- every tick produces an oid. every oid is in the store.

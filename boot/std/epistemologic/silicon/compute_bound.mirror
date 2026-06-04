@@ -36,8 +36,8 @@ grammar @epistemologic/silicon/compute_bound {
 
   # Wall-clock time bound carrier. Resolved 2026-05-25: the locally-
   # declared `type wall_time = u64` (milliseconds, undocumented frame)
-  # promoted to @time.wall, which IS zoom(duration) where duration =
-  # refract({ nanos: u64 }). The frame discipline is now structural
+  # promoted to @time.wall, which IS shift(duration) where duration =
+  # settle({ nanos: u64 }). The frame discipline is now structural
   # rather than conventional; the substrate-level @epistemologic/property/
   # frame_relativity verifier rejects any cross-shard compare that
   # bypasses @time.convert. Precision is nanoseconds (PG's lesson §2.5:
@@ -45,7 +45,7 @@ grammar @epistemologic/silicon/compute_bound {
   # resolution and BEAM's native time unit).
   #
   # Downstream consumers (detect_max, admits, the shard's compute
-  # field) are unaffected: zoom(T) is annotation-only, so the bytes
+  # field) are unaffected: shift(T) is annotation-only, so the bytes
   # are unchanged. The structural halting argument inherits the frame
   # discipline — the substrate cannot accidentally compare a budget
   # in wall-time to elapsed monotonic reductions.
@@ -66,7 +66,7 @@ grammar @epistemologic/silicon/compute_bound {
   # Five fields matches the Prism algebra's cardinality — each
   # bound corresponds to one axis of resource extraction the shard
   # rations: parallelism (split), memory (project), accelerator
-  # (zoom), time (focus), settlement (refract).
+  # (shift), time (focus), settlement (settle).
   type compute_bound = {
     max_cpu_cores:        option(u32),
     max_memory_bytes:     option(u64),

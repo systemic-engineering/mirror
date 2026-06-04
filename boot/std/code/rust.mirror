@@ -4,13 +4,13 @@ in @trace
 -- @code/rust: grammar for Rust source code kintsugi.
 --
 -- Maps Rust constructs to the five operations:
---   fn       -> zoom   (transform, cross levels)
+--   fn       -> shift   (transform, cross levels)
 --   struct   -> split  (one of many, variants)
 --   enum     -> split  (one of many, variants)
 --   impl     -> focus  (look closer, namespace)
 --   mod      -> focus  (look closer, namespace)
 --   use      -> project (extract a view, import)
---   trait    -> refract (scatter, verify, settle)
+--   trait    -> settle (scatter, verify, settle)
 --
 -- Kintsugi reductions operate on the MirrorAST representation.
 
@@ -20,13 +20,13 @@ grammar @code/rust("rs") {
 
   -- Keyword-to-operation mappings for Rust source evaluation.
   -- evaluate() reads these to know which Rust keywords map to which operations.
-  zoom fn
+  shift fn
   split struct
   split enum
   focus impl
   focus mod
   project use
-  refract trait
+  settle trait
 
   -- ── Body-lens contract (Spec A Implication 3) ───────────────────────
   --

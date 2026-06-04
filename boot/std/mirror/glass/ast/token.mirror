@@ -33,7 +33,7 @@ grammar @mirror/glass/ast/token {
   split type
   project in
   project out
-  zoom abstract
+  shift abstract
 
   # ===== kintsugi/fracture/grammar-to-glass surface =====
   # The substrate-altitude keyword vocabulary. These declarations
@@ -78,7 +78,7 @@ grammar @mirror/glass/ast/token {
   fixed reference         = seq(literal("@"), name)
   fixed until_newline     = until(literal("\n"))
 
-  # ===== comment = @nl lift =====
+  # ===== comment = @nl shift =====
   # A comment is `#` followed by a natural-language span. The body
   # of the comment lifts to @nl, which carries inline backticks,
   # fenced blocks, and doctest prompts (see nl.mirror).

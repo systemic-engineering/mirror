@@ -25,8 +25,8 @@ grammar @code/rust {
   # iso    =     structural equality / assertion
   # split  |     superposition / enum variants
   # focus  ()    grouping / function call
-  # zoom   ->    flow / return type / transformation
-  # refract ..   spread / range / settlement
+  # shift   ->    flow / return type / transformation
+  # settle ..   spread / range / settlement
 
   action complete(position) in @code/rust { }
   action diagnose(range) in @code/rust { }

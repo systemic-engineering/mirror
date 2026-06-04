@@ -31,7 +31,7 @@ grammar @epistemologic {
   # but: override. the second clause corrects the first.
   # what follows "but" IS what the speaker means.
   # what precedes "but" IS the concession.
-  # the star operator. refract.
+  # the star operator. settle.
   type but(a, b)
 }
 

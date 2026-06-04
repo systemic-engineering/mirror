@@ -26,8 +26,8 @@ in @fragmentation
 # Five-operation mapping for the Nix language:
 #   derivation -> split   (one of many; the build variants)
 #   import     -> project (extract a view; pull a flake input)
-#   build      -> zoom    (transform; .drv -> /nix/store/<hash>-<name>)
-#   verify     -> refract (settle; the hash IS the verification)
+#   build      -> shift    (transform; .drv -> /nix/store/<hash>-<name>)
+#   verify     -> settle (settle; the hash IS the verification)
 #   attrset    -> focus   (look closer; the record namespace)
 #
 # Honesty marker: bodies are \. Substrate declaration only; the
@@ -38,8 +38,8 @@ grammar @code/nix("nix") {
   # Five-operation mapping (Nix keywords -> mirror operations).
   split derivation
   project import
-  zoom build
-  refract verify
+  shift build
+  settle verify
   focus attrset
 
   # ── render-target types ─────────────────────────────────────────

@@ -36,7 +36,7 @@ grammar @mirror/match {
   # default: focus (one arm wins; today's behaviour).
   # the modifier picks the SEMANTICS of how arms relate — see
   # match-select.md, "Match modifiers — the prism applied to arms".
-  type modifier = focus | project | split | zoom | refract | custom(mq_query)
+  type modifier = focus | project | split | shift | settle | custom(mq_query)
 
   type match_expr {
     subject: ast,
@@ -53,9 +53,9 @@ grammar @mirror/match {
   # the return type depends on the modifier:
   #   focus    -> winning arm's body, type T
   #   split    -> [T]
-  #   refract  -> au (content-addressed)
+  #   settle  -> au (content-addressed)
   #   project  -> T (over filtered subset)
-  #   zoom     -> union(T1, T2, ...)
+  #   shift     -> union(T1, T2, ...)
   parse_match(tokens) -> match_expr { \ }
   evaluate_match(expr, env) -> imperfect { \ }
 
@@ -84,9 +84,9 @@ grammar @mirror/match {
   # exhaustiveness adapts per modifier:
   #   focus    every reachable shape covered (or _)
   #   split    every reachable shape covered by >= 1 arm
-  #   refract  focus-style (one winner required for the OID)
+  #   settle  focus-style (one winner required for the OID)
   #   project  exhaustiveness over the projected subset
-  #   zoom     exhaustiveness at every level the lens spans
+  #   shift     exhaustiveness at every level the lens spans
   requires exhaustive(match_expr)
   requires exhaustive(select_expr)
 }

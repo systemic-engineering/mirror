@@ -692,7 +692,7 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
             let body_end = if pos > 0 { pos - 1 } else { pos };
 
             let mut node = AstNode::new(kind, &name);
-            if kind == AstKind::Focus || kind == AstKind::Refract {
+            if kind == AstKind::Focus || kind == AstKind::Settle {
                 scan_items(
                     &bytes[body_start..body_end],
                     grammar,
@@ -776,13 +776,13 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
                         //
                         // Per the parametric-types-and-fp-heritage insight
                         // (2026-05-25), the type-layer applications of the
-                        // five Prism operations — zoom(T), refract(T), and
+                        // five Prism operations — shift(T), settle(T), and
                         // their kin — must parse as return types. We admit
                         // a single balanced `(...)` immediately following
                         // the type-name identifier and absorb it into the
                         // return-type span. The full verbatim form lives in
                         // the IoBinding's body for round-trip; downstream
-                        // grammar lenses lift it into a ParametricType
+                        // grammar lenses shift it into a ParametricType
                         // node when they need the base/parameter split.
                         if ty_end < len && bytes[ty_end] == b'(' {
                             ty_end = scan_paren_block(bytes, ty_end);

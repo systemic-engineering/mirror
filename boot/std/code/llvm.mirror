@@ -2,11 +2,11 @@ in @prism
 in @code
 
 grammar @code/llvm {
-  zoom define
+  shift define
   split type
   focus module
   project declare
-  refract verify
+  settle verify
 
   compile(ast) -> artifact { \ }
 }

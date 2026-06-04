@@ -27,7 +27,7 @@ in @epistemologic/property/frame_relativity
 # Per docs/specs/shard-design.md: five fields, one per Prism
 # operation. Per docs/insights/2026-05-25-shard-as-observer-relative-
 # lambda-zero.md: the shard IS λ₀ — the autopoietic closure of the
-# deployment description; `parent: option(zoom(oid, shard))` is the
+# deployment description; `parent: option(shift(oid, shard))` is the
 # Lawvere fixed-point witness; the chain terminates at bare metal
 # (`parent: none`). Per docs/insights/2026-05-25-pipe-hole-and-au-
 # binary.md: the shard IS Fate's tournament input — `binary = a |\>
@@ -80,11 +80,11 @@ grammar @mirror/shard {
   #   flakes   -> split    : the composed nix flake stack. A list of
   #                          flake_refs, each locked to a rev so the
   #                          set is content-addressed-by-source.
-  #   compute  -> zoom     : the budget envelope. All five bounds
+  #   compute  -> shift     : the budget envelope. All five bounds
   #                          (cores, host memory, GPU memory, wall
   #                          time, reductions) per @epistemologic/
   #                          silicon/compute_bound.
-  #   parent   -> refract  : λ₀ fixed-point witness. option(zoom(oid,
+  #   parent   -> settle  : λ₀ fixed-point witness. option(shift(oid,
   #                          shard)) — the OID of the enclosing
   #                          shard, or none at bare metal. The chain
   #                          IS the frame-conversion path; the
@@ -94,7 +94,7 @@ grammar @mirror/shard {
     memory:  memory,
     flakes:  [flake_ref],
     compute: compute_bound,
-    parent:  option(zoom(oid, shard)),
+    parent:  option(shift(oid, shard)),
   }
 
   # ── self: the observer-relative constructor ─────────────────────
@@ -116,7 +116,7 @@ grammar @mirror/shard {
   #
   # The load-bearing morphism. Compiles a shard into a flake
   # reference whose locked rev IS the content-address of the
-  # produced derivation. Return is zoom(oid, flake_ref): a flake_ref
+  # produced derivation. Return is shift(oid, flake_ref): a flake_ref
   # annotated with the OID that names this exact (shard, derivation)
   # pair. The OID cross-checks against @fragmentation.oid(s) per the
   # design doc §5 pipeline.
@@ -127,7 +127,7 @@ grammar @mirror/shard {
   # maximize conductivity against the shard, and emits the flake
   # derivation. Same source AST + different shards = different Au
   # binaries, same verification chain.
-  to_flake(s: shard) -> zoom(oid, flake_ref) { \ }
+  to_flake(s: shard) -> shift(oid, flake_ref) { \ }
 
   # ── admits: structural bounds check ─────────────────────────────
   #
@@ -157,7 +157,7 @@ grammar @mirror/shard {
   #                       OID. Foundational — the other three rest on
   #                       this one.
   #   autopoietic       : the parent chain closes via a Lawvere fixed
-  #                       point. `parent: option(zoom(oid, shard))` is
+  #                       point. `parent: option(shift(oid, shard))` is
   #                       a content-addressed self-reference; Banach
   #                       contraction on hash space guarantees the
   #                       fixed point exists and is unique. The chain

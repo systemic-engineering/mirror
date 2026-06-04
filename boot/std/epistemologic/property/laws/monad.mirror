@@ -2,7 +2,7 @@ in @prism
 
 # @epistemologic/property/laws/monad
 #
-# refract(T) is the verified-construction parametric form (Monad-shaped).
+# settle(T) is the verified-construction parametric form (Monad-shaped).
 # Per docs/insights/2026-05-25-parametric-types-and-fp-heritage.md.
 #
 # Haskell's Monad laws lifted to mirror's type layer:
@@ -18,42 +18,42 @@ in @prism
 #
 # Identity laws likewise: `return` is `crystallize` (the constructor),
 # `>>=` is composition through the content-addressed graph. Building
-# refract(T) IS the proof of having been T; the laws are properties
+# settle(T) IS the proof of having been T; the laws are properties
 # of how the witness composes.
 #
 # This is the Monad-laws-at-composition-time framing from the design
 # call: the laws are not checked per-callsite at v1.0; they are
-# checked when refract(T) appears in a composition, and the content-
+# checked when settle(T) appears in a composition, and the content-
 # addressed substrate enforces them structurally.
 
 grammar @epistemologic/property/laws/monad {
 
   # Left identity: crystallize(a) refracted through f equals f(a).
   #
-  # For a value `a` of type T and a function f: T -> refract(U),
-  # building refract(crystallize(a)) and threading through f must
+  # For a value `a` of type T and a function f: T -> settle(U),
+  # building settle(crystallize(a)) and threading through f must
   # yield the same OID as applying f directly to a. The substrate's
-  # crystallize is a left unit for refract composition.
+  # crystallize is a left unit for settle composition.
   left_identity(type) -> verdict { \ }
 
   # Right identity: m refracted through crystallize equals m.
   #
-  # For any refract(T) value m, refracting m through crystallize
+  # For any settle(T) value m, refracting m through crystallize
   # must yield m's OID unchanged. crystallize is a right unit.
   right_identity(type) -> verdict { \ }
 
   # Associativity: (m >>= f) >>= g = m >>= (x -> f(x) >>= g).
   #
-  # The composition of two refract steps is associative. Content-
+  # The composition of two settle steps is associative. Content-
   # addressing makes this free: oid concatenation is associative; the
   # storage layer cannot represent a non-associative composition
   # because the address of a chain depends only on its leaves.
   #
   # Per Alex 2026-05-25 design call: this is the "free at composition
-  # time" property the refract(T) framing leverages.
+  # time" property the settle(T) framing leverages.
   associativity(type) -> verdict { \ }
 
-  # The combined property: refract(T) satisfies all three Monad laws.
+  # The combined property: settle(T) satisfies all three Monad laws.
   # Pass iff left_identity, right_identity, and associativity all pass.
   monad_laws(type) -> verdict { \ }
 }

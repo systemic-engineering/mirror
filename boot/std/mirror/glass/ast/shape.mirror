@@ -10,7 +10,7 @@ in @mirror/glass/ast
 #   - `shape` replaces `form` as the type name for the canonical
 #     top-level declaration variants. `form` was overloaded:
 #     sometimes a noun ("the IO form"), sometimes a choice combinator
-#     ("refract form = choice(...)"). The split dissolves: the noun
+#     ("settle form = choice(...)"). The split dissolves: the noun
 #     is `shape`; the choice combinator is gone (the type structure
 #     IS the choice).
 #
@@ -40,9 +40,9 @@ in @mirror/glass/ast
 #     are body-altitude (expression position), not shape-altitude.
 #     They appear INSIDE a lambda body, not at the top of a glass.
 #   - `refract_form`: drift per the 8-category audit (Cat 7);
-#     migrates to `fixed` via @kintsugi/fracture/refract-to-fixed
-#     (#96). The legacy `refract <name> = <combinator>` lines in
-#     grammar.mirror and nl.mirror lift to `fixed` in that tick.
+#     migrates to `fixed` via @kintsugi/fracture/settle-to-fixed
+#     (#96). The legacy `settle <name> = <combinator>` lines in
+#     grammar.mirror and nl.mirror shift to `fixed` in that tick.
 #   - `op_decl`: `op` is not a keyword in mirror (Mara's notation
 #     in the legacy file; corrected per the 2026-05-26 audit). The
 #     five operations are recognized at lex time via the keyword

@@ -17,7 +17,7 @@
 //! - **A** — the involutive algebra of operations on H. Realized by
 //!   `prism_core::Prism`: the Tambara-composable optic. In mirror's
 //!   bootstrap A's generators are the five Prism operations
-//!   (focus / project / split / zoom / refract) plus their compositions.
+//!   (focus / project / split / shift / settle) plus their compositions.
 //!   The identity element is [`prism_core::IdentityPrism`] (the unit of
 //!   A as a monoid).
 //! - **H** — the Hilbert space the algebra acts on. The state type S
@@ -68,7 +68,7 @@
 //! 2. `prism_core::apply_h` — operator action on a state vector.
 //!    Heterogeneous: input state type and output state type are
 //!    independent. Wraps a single `prism_core::Prism`'s focus /
-//!    project / refract sweep and returns the resulting `Imperfect`
+//!    project / settle sweep and returns the resulting `Imperfect`
 //!    in H. Lives in `prism-core` and is re-imported here — the
 //!    bootstrap stands on the substrate's verified shape rather than
 //!    redefining its own constrained variant.
@@ -210,7 +210,7 @@ pub fn compute_content_oid(node: &AstNode) -> String {
 /// The discrete Dirac operator's scalar action on AST states. Its
 /// `focus` walks the node, dispatches on `AstKind`, recurses into
 /// children via `apply_h(&ContentOidPrism, child)`, and emits the OID string. The
-/// `project` and `refract` phases pass the OID through unchanged —
+/// `project` and `settle` phases pass the OID through unchanged —
 /// the work happens in `focus`, matching the shape of the existing
 /// `Scale` / `Quantize` test fixtures in this module.
 pub struct ContentOidPrism;
@@ -238,10 +238,10 @@ impl Prism for ContentOidPrism {
         beam.next(oid)
     }
 
-    fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+    fn settle(&self, beam: Self::Projected) -> Self::Refracted {
         let oid = beam
             .value()
-            .expect("ContentOidPrism::refract on dark beam")
+            .expect("ContentOidPrism::settle on dark beam")
             .clone();
         beam.next(oid)
     }
@@ -257,7 +257,7 @@ impl Prism for ContentOidPrism {
 /// Output is byte-identical to the pre-Tick3c implementation — the
 /// closure body reproduces the same buffer construction (name + optional
 /// `\0body:` + body + `:`-joined child OIDs) under the same tag
-/// strings ("focus", "project", "split", "zoom", "refract", "in",
+/// strings ("focus", "project", "split", "shift", "settle", "in",
 /// "out", "io_binding", "match_expr", "select_expr", "dark"). The
 /// recursive walk now lives in the Fold5 walker rather than in this
 /// function's per-arm `compute_content_oid(c)` calls.
@@ -284,8 +284,8 @@ fn compute_oid_inner(node: &AstNode) -> String {
             AstKind::Out => return hash_tagged("out", n.name.as_bytes()),
             _ => {}
         }
-        // The eight remaining kinds (Focus / Project / Split / Zoom /
-        // Refract / IoBinding / MatchExpr / SelectExpr) all share the
+        // The eight remaining kinds (Focus / Project / Split / Shift /
+        // Settle / IoBinding / MatchExpr / SelectExpr) all share the
         // same buffer construction: name + optional "\0body:body" +
         // ":"-joined child OIDs. Only the kind tag differs.
         //
@@ -297,8 +297,8 @@ fn compute_oid_inner(node: &AstNode) -> String {
             AstKind::Focus => "focus",
             AstKind::Project => "project",
             AstKind::Split => "split",
-            AstKind::Zoom => "zoom",
-            AstKind::Refract => "refract",
+            AstKind::Shift => "shift",
+            AstKind::Settle => "settle",
             AstKind::IoBinding => "io_binding",
             AstKind::MatchExpr => "match_expr",
             AstKind::SelectExpr => "select_expr",
@@ -331,7 +331,7 @@ fn compute_oid_inner(node: &AstNode) -> String {
 //
 // Per `docs/specs/ast-as-bundle.md`: a `.mirror` file's AST is a Bundle
 // morphism written as data. The five operation `AstKind`s
-// (Focus / Project / Split / Zoom / Refract) map to the five trait-chain
+// (Focus / Project / Split / Shift / Settle) map to the five trait-chain
 // levels (Fiber / Connection / Gauge / Transport / Closure); the two IO
 // `AstKind`s (In / Out) are the bundle's typed terminals. Any AST-walking
 // operation is a fold over that bundle — five reducers, one per level.
@@ -355,8 +355,8 @@ fn compute_oid_inner(node: &AstNode) -> String {
 // ---------------------------------------------------------------------------
 
 /// Catamorphism over the AST. One reducer per bundle trait-chain level
-/// (Focus → Fiber, Project → Connection, Split → Gauge, Zoom →
-/// Transport, Refract → Closure) plus an `on_other` reducer for the
+/// (Focus → Fiber, Project → Connection, Split → Gauge, Shift →
+/// Transport, Settle → Closure) plus an `on_other` reducer for the
 /// non-canonical AST kinds (In, Out, Dark, IoBinding, MatchExpr,
 /// SelectExpr).
 ///
@@ -430,8 +430,8 @@ where
             AstKind::Focus => (self.on_focus)(node, child_outs),
             AstKind::Project => (self.on_project)(node, child_outs),
             AstKind::Split => (self.on_split)(node, child_outs),
-            AstKind::Zoom => (self.on_zoom)(node, child_outs),
-            AstKind::Refract => (self.on_refract)(node, child_outs),
+            AstKind::Shift => (self.on_zoom)(node, child_outs),
+            AstKind::Settle => (self.on_refract)(node, child_outs),
             AstKind::In
             | AstKind::Out
             | AstKind::Dark
@@ -550,7 +550,7 @@ where
     ///
     /// - The synthetic root Focus (name == "root" at depth 0) does NOT
     ///   bump depth for its children — they render at depth 0.
-    /// - Split/Zoom/Refract recurse at depth + 1 like Focus.
+    /// - Split/Shift/Settle recurse at depth + 1 like Focus.
     ///
     /// Per-kind dispatch decisions about depth bumping happen inside
     /// the reducers; the walker uniformly passes `depth + 1` to all
@@ -575,8 +575,8 @@ where
             AstKind::Focus => (self.on_focus)(node, depth, child_outs),
             AstKind::Project => (self.on_project)(node, depth, child_outs),
             AstKind::Split => (self.on_split)(node, depth, child_outs),
-            AstKind::Zoom => (self.on_zoom)(node, depth, child_outs),
-            AstKind::Refract => (self.on_refract)(node, depth, child_outs),
+            AstKind::Shift => (self.on_zoom)(node, depth, child_outs),
+            AstKind::Settle => (self.on_refract)(node, depth, child_outs),
             AstKind::In
             | AstKind::Out
             | AstKind::Dark
@@ -689,7 +689,7 @@ fn render_fold_mirror() -> Fold5At<
         |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
             let mut out = Vec::new();
             append_indent(&mut out, depth);
-            out.extend_from_slice(b"zoom ");
+            out.extend_from_slice(b"shift ");
             out.extend_from_slice(node.name.as_bytes());
             out.push(b'\n');
             for c in children {
@@ -701,7 +701,7 @@ fn render_fold_mirror() -> Fold5At<
         |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
             let mut out = Vec::new();
             append_indent(&mut out, depth);
-            out.extend_from_slice(b"refract ");
+            out.extend_from_slice(b"settle ");
             out.extend_from_slice(node.name.as_bytes());
             out.push(b'\n');
             for c in children {
@@ -875,10 +875,10 @@ fn render_fold_grammar<'g>(
             render_grammar_nonfocus(g, node, depth, children, "type")
         },
         move |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
-            render_grammar_nonfocus(g, node, depth, children, "zoom")
+            render_grammar_nonfocus(g, node, depth, children, "shift")
         },
         move |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
-            render_grammar_nonfocus(g, node, depth, children, "refract")
+            render_grammar_nonfocus(g, node, depth, children, "settle")
         },
         // on_other — grammar-aware path falls through to
         // mirror-canonical bytes for the bundle terminals + Spec A/B
@@ -889,7 +889,7 @@ fn render_fold_grammar<'g>(
     )
 }
 
-/// Shared body for Project/Split/Zoom/Refract in the grammar-aware
+/// Shared body for Project/Split/Shift/Settle in the grammar-aware
 /// renderer. Reverse-looks-up the keyword via the grammar, falls
 /// through to the spec'd fallback, and handles the
 /// verbatim-body-with-sigil-name path used by LLVM IR.
@@ -976,7 +976,7 @@ where
 /// state, accumulating loss via the [`Metric`] monoid on the residual.
 ///
 /// On the prism-core side this is what the `Prism` trait already does
-/// internally via its associated-type chain (focus → project → refract);
+/// internally via its associated-type chain (focus → project → settle);
 /// the bootstrap names the call-site for *cross-prism* composition and
 /// proves associativity / identity directly against the prism-core
 /// substrate (see the property tests below). The composition is
@@ -1016,7 +1016,7 @@ pub struct Spectrum<const N: usize> {
 ///
 /// For mirror's `CoincidenceHash<5,5>` the operator is a 5×5 symmetric
 /// matrix in the canonical basis (one axis per Prism operation:
-/// focus / project / split / zoom / refract). We use power iteration
+/// focus / project / split / shift / settle). We use power iteration
 /// with deflation: extract the dominant eigenpair, project it out,
 /// recurse. ~150 lines, no external linalg crate — fits the
 /// bootstrap's minimal floor.
@@ -1190,12 +1190,12 @@ pub enum Combinator {
     /// it just terminates the scan. Used by `@nl(until_newline)`,
     /// fenced-code-block termination, and inline-backtick lifts.
     Until { stop: Box<Combinator> },
-    /// `@<grammar>(<body>)` — the cross-grammar lift. At parse time
+    /// `@<grammar>(<body>)` — the cross-grammar shift. At parse time
     /// the body bytes (extracted by `body`) are handed to the named
     /// grammar's combinator tree. Walk is structural: returns Self
     /// with `body` recursively walked. The grammar reference is a
     /// string path (e.g. "@nl", "@code/rust", "@mirror/glass").
-    Lift {
+    Shift {
         grammar: String,
         body: Box<Combinator>,
     },
@@ -1247,7 +1247,7 @@ pub fn literal_kind(keyword: &[u8], kind: AstKind) -> Combinator {
 // Iterative Drop for Combinator — F-1 Checkpoint D.
 //
 // Combinator chains nest arbitrarily through `Box<Combinator>`-carrying
-// variants (Repeat, Capture, Until, Lift, BraceBlock, ParenBlock). A
+// variants (Repeat, Capture, Until, Shift, BraceBlock, ParenBlock). A
 // pathologically deep chain (10,000+ levels, e.g. the F-4 depth-bound
 // test) on the default recursive Drop would overflow the thread stack
 // because each `Box<Combinator>` drop walks one frame deeper.
@@ -1293,7 +1293,7 @@ impl Combinator {
             | Capture { body, .. }
             | BraceBlock(body)
             | ParenBlock(body)
-            | Lift { body, .. } => {
+            | Shift { body, .. } => {
                 // Replace the box's contents with a leaf, then push the
                 // original contents onto the worklist.
                 let stolen = std::mem::replace(body.as_mut(), DarkFallback);
@@ -1407,12 +1407,12 @@ fn combinator_tree_oid_hex(c: &Combinator) -> String {
         Combinator::Until { stop } => {
             hash_tagged("comb:until", combinator_tree_oid_hex(stop).as_bytes())
         }
-        Combinator::Lift { grammar, body } => {
+        Combinator::Shift { grammar, body } => {
             let mut buf = Vec::new();
             buf.extend_from_slice(grammar.as_bytes());
             buf.push(b':');
             buf.extend_from_slice(combinator_tree_oid_hex(body).as_bytes());
-            hash_tagged("comb:lift", &buf)
+            hash_tagged("comb:shift", &buf)
         }
         Combinator::DarkFallback => hash_tagged("comb:dark_fallback", &[]),
         Combinator::MultiByteCharset(members) => {
@@ -1436,8 +1436,8 @@ fn kind_tag(k: AstKind) -> &'static str {
         AstKind::Focus => "focus",
         AstKind::Project => "project",
         AstKind::Split => "split",
-        AstKind::Zoom => "zoom",
-        AstKind::Refract => "refract",
+        AstKind::Shift => "shift",
+        AstKind::Settle => "settle",
         AstKind::In => "in",
         AstKind::Out => "out",
         AstKind::IoBinding => "io_binding",
@@ -1492,10 +1492,10 @@ impl Prism for Combinator {
         beam.next(c)
     }
 
-    fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+    fn settle(&self, beam: Self::Projected) -> Self::Refracted {
         let c = beam
             .value()
-            .expect("Combinator::refract on dark beam")
+            .expect("Combinator::settle on dark beam")
             .clone();
         beam.next(c)
     }
@@ -1711,7 +1711,7 @@ pub(crate) fn walk_combinator_at(
             //
             // If the Choice was pure-LiteralKind (no structural arms),
             // the walk succeeds with `offset' = offset` (the keyword
-            // table is a pruning lift, not a consuming parser).
+            // table is a pruning shift, not a consuming parser).
             let has_structural = branches
                 .iter()
                 .any(|b| !matches!(b, Combinator::LiteralKind { .. }));
@@ -1800,14 +1800,14 @@ pub(crate) fn walk_combinator_at(
                 cur,
             )
         }
-        // ----- Lift: structural for now; Checkpoint C wires registry. -----
-        Combinator::Lift { grammar, body } => {
+        // ----- Shift: structural for now; Checkpoint C wires registry. -----
+        Combinator::Shift { grammar, body } => {
             let out = walk_combinator_at(body, source, offset, d);
             if !out.success {
                 return WalkOut::dark(out.offset);
             }
             WalkOut::ok(
-                Combinator::Lift {
+                Combinator::Shift {
                     grammar: grammar.clone(),
                     body: Box::new(out.witness),
                 },
@@ -1970,8 +1970,8 @@ pub fn op_keyword_choice() -> Combinator {
         literal_kind(b"focus", AstKind::Focus),
         literal_kind(b"project", AstKind::Project),
         literal_kind(b"split", AstKind::Split),
-        literal_kind(b"zoom", AstKind::Zoom),
-        literal_kind(b"refract", AstKind::Refract),
+        literal_kind(b"shift", AstKind::Shift),
+        literal_kind(b"settle", AstKind::Settle),
     ])
 }
 
@@ -1986,7 +1986,7 @@ pub fn op_keyword_choice() -> Combinator {
 ///     paren_unit,             # `( file )`    (recursive)
 ///     Charset(NotNewline),    # any non-newline byte (gobbles content)
 ///   )
-///   comment    = Seq(Literal("#"), Lift(@nl, Until("\n")))
+///   comment    = Seq(Literal("#"), Shift(@nl, Until("\n")))
 ///   brace_unit = BraceBlock(file)
 ///   paren_unit = ParenBlock(file)
 ///
@@ -2001,7 +2001,7 @@ pub fn op_keyword_choice() -> Combinator {
 /// preserving its OID under the round-trip. Structure is recovered
 /// later by the grammars declared inside `grammar.mirror` itself —
 /// the meta-glass loop becomes non-trivial once the grammar registry
-/// (Checkpoint C's Lift wiring) routes cross-grammar lifts to
+/// (Checkpoint C's Shift wiring) routes cross-grammar lifts to
 /// pre-loaded Combinator trees.
 ///
 /// FP1 (Checkpoint D): `apply_h(seed, grammar.mirror.bytes)` returns
@@ -2021,7 +2021,7 @@ pub fn prism_seed() -> Combinator {
     let ws_byte = Charset(CharsetKind::Whitespace);
     let comment = Seq(vec![
         Literal(b"#".to_vec()),
-        Lift {
+        Shift {
             grammar: "@nl".to_string(),
             body: Box::new(Until {
                 stop: Box::new(Literal(b"\n".to_vec())),
@@ -2222,7 +2222,7 @@ fn normalize_phase1_at(c: &Combinator, depth: usize) -> Combinator {
         Until { stop } => Until {
             stop: Box::new(normalize_phase1_at(stop, d)),
         },
-        Lift { grammar, body } => Lift {
+        Shift { grammar, body } => Shift {
             grammar: grammar.clone(),
             body: Box::new(normalize_phase1_at(body, d)),
         },
@@ -2324,7 +2324,7 @@ fn normalize_phase2_at(c: &Combinator, depth: usize) -> Combinator {
         Until { stop } => Until {
             stop: Box::new(normalize_phase2_at(stop, d)),
         },
-        Lift { grammar, body } => Lift {
+        Shift { grammar, body } => Shift {
             grammar: grammar.clone(),
             body: Box::new(normalize_phase2_at(body, d)),
         },
@@ -2415,7 +2415,7 @@ mod combinator_tests {
         );
     }
 
-    /// FP2 replaced — well-formedness of the meta-glass lift on
+    /// FP2 replaced — well-formedness of the meta-glass shift on
     /// `00-prism.mirror`. The pre-meta-glass FP2 (keyword-table
     /// pruning) is obsolete: the meta-glass is no longer a keyword
     /// table. The new well-formedness check: applying the meta-glass
@@ -2434,11 +2434,11 @@ mod combinator_tests {
         let prism_tree = parse_with(&meta_glass, &prism_bytes);
         assert!(
             no_dark_in_tree(&prism_tree),
-            "FP2: 00-prism.mirror lift produced Dark fragments"
+            "FP2: 00-prism.mirror shift produced Dark fragments"
         );
     }
 
-    /// Well-formedness of the meta-glass lift on nl.mirror. The
+    /// Well-formedness of the meta-glass shift on nl.mirror. The
     /// bare-@nl grammar declaration parses cleanly through the
     /// meta-glass.
     ///
@@ -2453,7 +2453,7 @@ mod combinator_tests {
         let nl_tree = parse_with(&meta_glass, &nl_bytes);
         assert!(
             no_dark_in_tree(&nl_tree),
-            "nl.mirror lift produced Dark fragments"
+            "nl.mirror shift produced Dark fragments"
         );
     }
 
@@ -2485,7 +2485,7 @@ mod combinator_tests {
             | Combinator::BraceBlock(body)
             | Combinator::ParenBlock(body)
             | Combinator::Until { stop: body }
-            | Combinator::Lift { body, .. } => no_dark_in_tree(body),
+            | Combinator::Shift { body, .. } => no_dark_in_tree(body),
             Combinator::LiteralKind { .. }
             | Combinator::Literal(_)
             | Combinator::Charset(_)
@@ -2573,7 +2573,7 @@ mod combinator_tests {
 
     #[test]
     fn lift_walks_to_self() {
-        let c = Combinator::Lift {
+        let c = Combinator::Shift {
             grammar: "@nl".to_string(),
             body: Box::new(Combinator::Until {
                 stop: Box::new(Combinator::Literal(b"\n".to_vec())),
@@ -2763,16 +2763,16 @@ mod combinator_tests {
             Combinator::Literal(b"focus".to_vec()),
             Combinator::Literal(b"project".to_vec()),
             Combinator::Literal(b"split".to_vec()),
-            Combinator::Literal(b"zoom".to_vec()),
-            Combinator::Literal(b"refract".to_vec()),
+            Combinator::Literal(b"shift".to_vec()),
+            Combinator::Literal(b"settle".to_vec()),
         ]);
         let result = normalize_phase2(&input);
         let mut expected_members: Vec<Vec<u8>> = vec![
             b"focus".to_vec(),
             b"project".to_vec(),
             b"split".to_vec(),
-            b"zoom".to_vec(),
-            b"refract".to_vec(),
+            b"shift".to_vec(),
+            b"settle".to_vec(),
         ];
         expected_members.sort();
         assert_eq!(result, Combinator::MultiByteCharset(expected_members));
@@ -2799,14 +2799,14 @@ mod combinator_tests {
     #[test]
     fn multibyte_charset_sorts_members_for_oid_invariance() {
         let order_a = Combinator::Choice(vec![
-            Combinator::Literal(b"zoom".to_vec()),
+            Combinator::Literal(b"shift".to_vec()),
             Combinator::Literal(b"focus".to_vec()),
             Combinator::Literal(b"project".to_vec()),
         ]);
         let order_b = Combinator::Choice(vec![
             Combinator::Literal(b"focus".to_vec()),
             Combinator::Literal(b"project".to_vec()),
-            Combinator::Literal(b"zoom".to_vec()),
+            Combinator::Literal(b"shift".to_vec()),
         ]);
         let na = normalize_phase2(&order_a);
         let nb = normalize_phase2(&order_b);
@@ -3139,7 +3139,7 @@ mod combinator_tests {
                 | Combinator::BraceBlock(body)
                 | Combinator::ParenBlock(body)
                 | Combinator::Until { stop: body }
-                | Combinator::Lift { body, .. } => stack.push(body),
+                | Combinator::Shift { body, .. } => stack.push(body),
                 _ => {}
             }
         }
@@ -3659,13 +3659,13 @@ mod combinator_tests {
 
     // ---------- Mixed Checkpoint B: a comment parses correctly ----------
 
-    /// `Seq(Literal("#"), Lift(@nl, Until(Literal("\n"))))` — the seed's
+    /// `Seq(Literal("#"), Shift(@nl, Until(Literal("\n"))))` — the seed's
     /// comment form. Parses `# hello world\n`.
     #[test]
     fn f1_comment_form_parses() {
         let comment = Combinator::Seq(vec![
             Combinator::Literal(b"#".to_vec()),
-            Combinator::Lift {
+            Combinator::Shift {
                 grammar: "@nl".to_string(),
                 body: Box::new(Combinator::Until {
                     stop: Box::new(Combinator::Literal(b"\n".to_vec())),
@@ -3944,7 +3944,7 @@ mod tests {
     // -----------------------------------------------------------------------
     // Test fixtures — small concrete `Prism` impls over the scalar state
     // type `f64`. Each fixture performs its real work in `focus` and
-    // passes through unchanged in `project` and `refract` — the bootstrap
+    // passes through unchanged in `project` and `settle` — the bootstrap
     // doesn't distinguish phases at the algebra level; the three-phase
     // chain of `Prism` is the spectral-triple's *internal* composition,
     // and we only need a uniform-state algebra element here.
@@ -3990,11 +3990,11 @@ mod tests {
                 .expect("IdentityT::project on dark beam");
             beam.next(v)
         }
-        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
+        fn settle(&self, beam: Self::Projected) -> Self::Refracted {
             let v = beam
                 .value()
                 .cloned()
-                .expect("IdentityT::refract on dark beam");
+                .expect("IdentityT::settle on dark beam");
             beam.next(v)
         }
     }
@@ -4019,8 +4019,8 @@ mod tests {
             let v = *beam.value().expect("Scale::project on dark beam");
             beam.next(v)
         }
-        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
-            let v = *beam.value().expect("Scale::refract on dark beam");
+        fn settle(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = *beam.value().expect("Scale::settle on dark beam");
             beam.next(v)
         }
     }
@@ -4062,8 +4062,8 @@ mod tests {
             let v = *beam.value().expect("Quantize::project on dark beam");
             beam.next(v)
         }
-        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
-            let v = *beam.value().expect("Quantize::refract on dark beam");
+        fn settle(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = *beam.value().expect("Quantize::settle on dark beam");
             beam.next(v)
         }
     }
@@ -4108,8 +4108,8 @@ mod tests {
             let v = *beam.value().expect("Positive::project on dark beam");
             beam.next(v)
         }
-        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
-            let v = *beam.value().expect("Positive::refract on dark beam");
+        fn settle(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = *beam.value().expect("Positive::settle on dark beam");
             beam.next(v)
         }
     }
@@ -4293,8 +4293,8 @@ mod tests {
         let mut root = AstNode::new(AstKind::Focus, "root");
         root.add_child(AstNode::new(AstKind::Project, "p"));
         root.add_child(AstNode::new(AstKind::Split, "s"));
-        root.add_child(AstNode::new(AstKind::Zoom, "z"));
-        root.add_child(AstNode::new(AstKind::Refract, "r"));
+        root.add_child(AstNode::new(AstKind::Shift, "z"));
+        root.add_child(AstNode::new(AstKind::Settle, "r"));
         root.add_child(AstNode::new(AstKind::In, "@in"));
 
         // Each reducer returns a tag identifying which fired; the root's
@@ -4508,8 +4508,8 @@ mod transparency_cascade_tests {
             let v = *beam.value().expect("QuantizeT::project on dark beam");
             beam.next(v)
         }
-        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
-            let v = *beam.value().expect("QuantizeT::refract on dark beam");
+        fn settle(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = *beam.value().expect("QuantizeT::settle on dark beam");
             beam.next(v)
         }
     }
@@ -4544,8 +4544,8 @@ mod transparency_cascade_tests {
             let v = *beam.value().expect("PositiveT::project on dark beam");
             beam.next(v)
         }
-        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
-            let v = *beam.value().expect("PositiveT::refract on dark beam");
+        fn settle(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = *beam.value().expect("PositiveT::settle on dark beam");
             beam.next(v)
         }
     }
@@ -4716,8 +4716,8 @@ mod transparency_cascade_tests {
             let v = *beam.value().expect("AlwaysOpaqueT::project on dark beam");
             beam.next(v)
         }
-        fn refract(&self, beam: Self::Projected) -> Self::Refracted {
-            let v = *beam.value().expect("AlwaysOpaqueT::refract on dark beam");
+        fn settle(&self, beam: Self::Projected) -> Self::Refracted {
+            let v = *beam.value().expect("AlwaysOpaqueT::settle on dark beam");
             beam.next(v)
         }
     }

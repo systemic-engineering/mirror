@@ -21,8 +21,8 @@ in @beam
 #   Level 0  Fiber       Abyss        observed state          (focus)
 #   Level 1  Connection  Introject    the optic of transport  (project)
 #   Level 2  Gauge       Cartographer the structure group     (split)
-#   Level 3  Transport   Explorer     parallel transport      (zoom)
-#   Level 4  Closure     Fate         Lawvere fixed point     (refract)
+#   Level 3  Transport   Explorer     parallel transport      (shift)
+#   Level 4  Closure     Fate         Lawvere fixed point     (settle)
 #
 # Holonomy IS loss. Comprehension always costs something.
 # Transport returns imperfect by design: the holonomy carried around a

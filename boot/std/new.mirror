@@ -25,8 +25,8 @@ grammar @new {
       io mkdir(root, "mirror")
       io write(root, "mirror/.gitkeep", "")
       io write(root, ".gitignore", gitignore)
-    zoom   git_init(root)
-    refract store_init(root)
+    shift   git_init(root)
+    settle store_init(root)
   }
 
   template gitignore = "

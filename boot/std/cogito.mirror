@@ -16,7 +16,7 @@ in @beam
 # the `eigenboard` type referenced by `perturb` resolves through
 # @epistemologic/math/bundle: an eigenboard IS a section of a principal
 # G-bundle on the five-operation graph. see docs/specs/eigenboard-representation.md
-# for the full lift (candidate D, recommended).
+# for the full shift (candidate D, recommended).
 #
 # Reflection's correctness IS an autopoietic claim: the observe ->
 # strategy -> perturb tick has a Lawvere fixed point. Per Soto-Andrade
@@ -34,8 +34,8 @@ in @beam
 #   level 0 fiber       -> state    (focus    / Abyss)
 #   level 1 connection  -> optic    (project  / Introject)
 #   level 2 gauge       -> group    (split    / Cartographer)
-#   level 3 transport   -> holonomy (zoom     / Explorer)
-#   level 4 closure     -> fixed    (refract  / Fate)
+#   level 3 transport   -> holonomy (shift     / Explorer)
+#   level 4 closure     -> fixed    (settle  / Fate)
 #
 # this is the minimal shape that lets @cogito.perturb type-check and
 # matches docs/specs/eigenboard-representation.md candidate D at its

@@ -21,8 +21,8 @@ in @mirror/runtime/gen_prism
 #   identity   -> focus(self)    -- the manifold the peer lives on
 #   gestalt    -> project(self)   -- the accumulated lens (what matters)
 #   tensions   -> split(self)     -- open branches; live derivatives
-#   eigenboard -> zoom(self)      -- current spectral state
-#   shatter    -> refract(self)   -- rendered history; the commit chain
+#   eigenboard -> shift(self)      -- current spectral state
+#   shatter    -> settle(self)   -- rendered history; the commit chain
 #
 # Spec: docs/specs/peer-glass.md
 # Audit: docs/audits/2026-05-25-peer-glass-audit.md
@@ -44,8 +44,8 @@ grammar @peer {
     identity:   mirror,        # focus(self): immutable manifold; mutating = fork
     gestalt:    mirror,        # project(self): the accumulated lens
     tensions:   mirror,        # split(self): open branches the peer carries
-    eigenboard: shard,         # zoom(self): @cogito.eigenboard surfaced as a shard file
-    shatter:    mirror,        # refract(self): rendered history; ancestor chain
+    eigenboard: shard,         # shift(self): @cogito.eigenboard surfaced as a shard file
+    shatter:    mirror,        # settle(self): rendered history; ancestor chain
   }
 
   # the canonical five filenames. one enum, one mapping; the validator
@@ -61,12 +61,12 @@ grammar @peer {
   # `select |x| { ... }` closure form, but in declaration position
   # because the dispatch is exhaustive over a closed sum.
   #
-  # The `/` in `dir / filename(identity)` below is the existing zoom
+  # The `/` in `dir / filename(identity)` below is the existing shift
   # operator over (ref, focus) declared in @meta ("isomorphic to
   # namespace /" per Alex 2026-05-25): namespace path concatenation,
   # where `dir` is a `~dir` ref and `filename(identity)` resolves to
   # text. The captured body delivers the path verbatim; the substrate
-  # discharges the / through @meta's zoom declaration.
+  # discharges the / through @meta's shift declaration.
   select filename(p: peer_file) -> text {
     identity   => "identity.mirror",
     gestalt    => "gestalt.mirror",

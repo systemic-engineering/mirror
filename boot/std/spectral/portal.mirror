@@ -45,7 +45,7 @@ in @epistemologic/property/frame_relativity
 #   c. Bidirectional eigenvalue stream — normalized observations in
 #      [0.0, 1.0] of the shared spectral state; bandwidth-minimal;
 #      content-addressable; replayable.
-#   d. Autopoietic close — halts when Reflection picks refract(self)
+#   d. Autopoietic close — halts when Reflection picks settle(self)
 #      OR the host shard's @epistemologic/silicon/compute_bound.
 #      max_reductions exhausts (per @epistemologic/property/halts
 #      from #74).
@@ -85,27 +85,27 @@ grammar @spectral/portal {
   #               two carrier types into one without breaking any
   #               consumer (none of the portals.md instantiations
   #               have landed yet).
-  #   subspace -> the content-addressed identity. zoom(oid,
+  #   subspace -> the content-addressed identity. shift(oid,
   #               fragmentation): the OID of the fragmentation
   #               subspace this portal points at. The classical bit
   #               per portals.md's "teleportation" framing —
   #               receiver does socket.recv() |> @fragmentation.
   #               observe and the state was never moved, only the
   #               address.
-  #   frame    -> this end's observer frame. zoom(oid, shard): the
+  #   frame    -> this end's observer frame. shift(oid, shard): the
   #               OID of @mirror/shard.self() at the time the portal
   #               opened. Comparing observations across portals
   #               walks the shard parent chain per @time.convert.
-  #   actor    -> the connection's gen_prism. zoom(oid, gen_prism):
+  #   actor    -> the connection's gen_prism. shift(oid, gen_prism):
   #               each tick of this gen_prism is one bidirectional
   #               update across the wire. The open portal IS this
   #               gen_prism; autopoietic close fires when
-  #               Reflection picks refract(self).
+  #               Reflection picks settle(self).
   type portal = {
     socket:   @io/socket.connection,
-    subspace: zoom(oid, fragmentation),
-    frame:    zoom(oid, shard),
-    actor:    zoom(oid, gen_prism),
+    subspace: shift(oid, fragmentation),
+    frame:    shift(oid, shard),
+    actor:    shift(oid, gen_prism),
   }
 
   # ── new: construct a portal from the four computed pieces ──────
@@ -133,11 +133,11 @@ grammar @spectral/portal {
   #               subspace negotiation; both ends acknowledge f.to
   #               and store it as the portal's typed identity.
   #   frame    <- @mirror/shard.self() at open time, crystallized
-  #               to zoom(oid, shard). Each end carries its own.
+  #               to shift(oid, shard). Each end carries its own.
   #   actor    <- @mirror/runtime/gen_prism.spawn with autopoietic
   #               name (the existing peer.spawn pattern:
   #               crystallize(initial_state) produces the
-  #               zoom(oid, gen_prism) self-reference; Fate
+  #               shift(oid, gen_prism) self-reference; Fate
   #               resolves the fixed point at construction time per
   #               #69's Banach contraction argument).
   #
@@ -145,9 +145,9 @@ grammar @spectral/portal {
   # the imperfect surfaces ride on the caller's compositions (the
   # connect/spawn/frame primitives that produce the field values).
   new(socket:   @io/socket.connection,
-      subspace: zoom(oid, fragmentation),
-      frame:    zoom(oid, shard),
-      actor:    zoom(oid, gen_prism)) -> portal {
+      subspace: shift(oid, fragmentation),
+      frame:    shift(oid, shard),
+      actor:    shift(oid, gen_prism)) -> portal {
     portal {
       socket:   socket,
       subspace: subspace,
@@ -246,9 +246,9 @@ grammar @spectral/portal {
   # composition here IS the actor advance; the wire serialization
   # is the stream grammar's concern, not tick's.
   #
-  # The `p.actor` field carries zoom(oid, gen_prism) — the actor's
+  # The `p.actor` field carries shift(oid, gen_prism) — the actor's
   # content-addressed self-reference. gen_prism.tick takes
-  # (state: oid, message): the substrate coerces zoom(oid, T) ->
+  # (state: oid, message): the substrate coerces shift(oid, T) ->
   # oid implicitly per the autopoietic-self-reference
   # construction. Same coercion @mirror/runtime/gen_prism.send
   # uses internally when it walks gp.head before calling tick.
@@ -261,7 +261,7 @@ grammar @spectral/portal {
   # Close the portal. Two paths, both decidable per
   # @epistemologic/property/halts:
   #
-  #   (a) settlement — Reflection picks refract(self); the actor's
+  #   (a) settlement — Reflection picks settle(self); the actor's
   #       Lawvere fixed point is reached; the gen_prism crystallizes
   #       a final state and the wire closes cleanly.
   #   (b) budget exhaustion — the host shard's compute_bound.
@@ -277,7 +277,7 @@ grammar @spectral/portal {
   # autopoietic settlement / budget-exhaustion disjunction from
   # @epistemologic/property/halts (#74) determines WHEN this is
   # called; the close action itself is the wire-level termination,
-  # not the structural halt condition. Reflection's refract(self)
+  # not the structural halt condition. Reflection's settle(self)
   # tick OR the host shard's compute_bound exhaustion is the
   # caller; both paths converge on this single action.
   #
@@ -306,12 +306,12 @@ grammar @spectral/portal {
   #   content_addressed : identity IS the content hash. All four
   #                       portal fields are content-addressed
   #                       (socket -> ref; subspace/frame/actor ->
-  #                       zoom(oid, _)); the portal's OID is
+  #                       shift(oid, _)); the portal's OID is
   #                       determined by the quadruple. Foundational.
   #   autopoietic       : the connection's gen_prism is
   #                       self-referential by construction —
   #                       gen_prism's `name` field is itself
-  #                       zoom(oid, gen_prism), the Lawvere fixed
+  #                       shift(oid, gen_prism), the Lawvere fixed
   #                       point exhibits at construction time per
   #                       Soto-Andrade & Varela 1984. The portal
   #                       inherits the autopoietic claim through

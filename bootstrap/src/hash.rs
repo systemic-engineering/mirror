@@ -4,7 +4,7 @@
 //! declared in `boot/std/hash/coincidence.mirror`:
 //!
 //!   DIM = 5             — one dimension per Prism operation:
-//!                         [0]=focus, [1]=project, [2]=split, [3]=zoom, [4]=refract
+//!                         [0]=focus, [1]=project, [2]=split, [3]=shift, [4]=settle
 //!   NUM_PROJECTIONS = 5 — one projection per gutter-lens duality:
 //!                         [0]=entropy, [1]=spectral, [2]=cheeger,
 //!                         [3]=ricci,  [4]=mixing

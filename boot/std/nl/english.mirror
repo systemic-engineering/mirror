@@ -6,8 +6,8 @@ in @prism
 --
 --   split   -> decompose: text into structure
 --   focus   -> observe: what a token is
---   zoom    -> transform: morphology, tense, inflection
---   refract -> verify: grammar rules, agreement, coherence
+--   shift    -> transform: morphology, tense, inflection
+--   settle -> verify: grammar rules, agreement, coherence
 --   project -> filter: stop words, relevance, summary
 
 grammar @nl/english {
@@ -44,21 +44,21 @@ grammar @nl/english {
   focus role(token, sentence) -> role { \ }
   focus lemma(word) -> word { \ }
 
-  -- ── zoom: transform ───────────────────────────────────────────────
+  -- ── shift: transform ───────────────────────────────────────────────
 
-  zoom conjugate(word, tense) -> word { \ }
-  zoom pluralize(word) -> word { \ }
-  zoom singularize(word) -> word { \ }
-  zoom nominalize(word) -> word { \ }
+  shift conjugate(word, tense) -> word { \ }
+  shift pluralize(word) -> word { \ }
+  shift singularize(word) -> word { \ }
+  shift nominalize(word) -> word { \ }
 
   type tense = past | present | future
              | past_perfect | present_perfect | future_perfect
 
-  -- ── refract: verify ───────────────────────────────────────────────
+  -- ── settle: verify ───────────────────────────────────────────────
 
-  refract check(sentence) -> imperfect { \ }
-  refract agrees(word, word) -> imperfect { \ }
-  refract coherent(paragraph) -> imperfect { \ }
+  settle check(sentence) -> imperfect { \ }
+  settle agrees(word, word) -> imperfect { \ }
+  settle coherent(paragraph) -> imperfect { \ }
 
   -- ── project: filter ───────────────────────────────────────────────
 

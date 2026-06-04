@@ -13,13 +13,13 @@ in @mirror/glass/ast/shape
 # new token in the bootstrap, but by aliasing an existing Prism op
 # at the substrate altitude.
 #
-# `type fixed = refract`
+# `type fixed = settle`
 #
-# Reads: the `fixed` shape variant IS the `refract` Prism op,
+# Reads: the `fixed` shape variant IS the `settle` Prism op,
 # applied at the binding altitude. Same operation; substrate-
 # altitude name. The bootstrap does not learn a new keyword;
 # the substrate accumulates one. Every property the substrate
-# already knows about `refract` (settled construction, monad
+# already knows about `settle` (settled construction, monad
 # laws, content-addressing) transfers to `fixed` by alias.
 #
 # Per Alex 2026-05-26: *"`fixed`. Like `const`. But math. And a
@@ -28,7 +28,7 @@ in @mirror/glass/ast/shape
 #
 # Properties of `fixed` (inherited via the alias):
 #
-#   - Cannot contain holes (`\`) — refract requires settled construction
+#   - Cannot contain holes (`\`) — settle requires settled construction
 #   - Cannot contain `@fate` inference — settled at compile time
 #   - Must be a fully settled crystal — the monad laws guarantee it
 #   - Content-addressed on declaration — the OID is the binding
@@ -42,18 +42,18 @@ in @mirror/glass/ast/shape
 #   - `fixed x = expr` at module-top: static; fully settled;
 #     content-addressed; the OID IS the binding.
 #
-# Migration source for legacy `refract <name> = <combinator>`
-# bindings: @kintsugi/fracture/refract-to-fixed.
+# Migration source for legacy `settle <name> = <combinator>`
+# bindings: @kintsugi/fracture/settle-to-fixed.
 #
 # Insight: docs/insights/2026-05-26-fixed-and-the-spectral-feedback-fracture.md
 
 grammar @mirror/glass/ast/shape/fixed {
   # The substrate's declaration that the `fixed` keyword aliases
-  # the `refract` Prism op. No body needed — the alias IS the
+  # the `settle` Prism op. No body needed — the alias IS the
   # declaration. Every downstream substrate that mentions `fixed`
-  # resolves through this line to the refract Prism op at the
+  # resolves through this line to the settle Prism op at the
   # binding altitude.
-  type fixed = refract
+  type fixed = settle
 }
 
 out fixed

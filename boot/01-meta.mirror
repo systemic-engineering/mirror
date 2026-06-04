@@ -10,12 +10,12 @@ subset <(ref, ref)
 superset >(ref, ref)
 iso =(ref, ref)
 not-iso !=(ref, ref)
-zoom |>(ref, prism)
-zoom <|(prism, ref)
-zoom /(ref, focus)
-zoom ->(ref, ref)
-zoom <-(ref, ref)
-refract ..(ref)
+shift |>(ref, prism)
+shift <|(prism, ref)
+shift /(ref, focus)
+shift ->(ref, ref)
+shift <-(ref, ref)
+settle ..(ref)
 
 type pure = iso
 type real != pure
@@ -153,8 +153,8 @@ grammar @meta {
   superset >
   iso =
   not-iso !=
-  zoom /
-  refract ..
+  shift /
+  settle ..
 }
 
 out type

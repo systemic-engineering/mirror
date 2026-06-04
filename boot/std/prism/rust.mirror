@@ -25,22 +25,22 @@ grammar @prism/rust {
     # interpreter::split
   }
 
-  # zoom: transform each child.
-  # binds to interpreter::zoom(ast, transform) -> MirrorAST
-  zoom(ast, transform) -> ast in @code/rust {
-    # interpreter::zoom
+  # shift: transform each child.
+  # binds to interpreter::shift(ast, transform) -> MirrorAST
+  shift(ast, transform) -> ast in @code/rust {
+    # interpreter::shift
   }
 
-  # refract: content-address the AST. settle. done. crystal.
-  # binds to interpreter::refract(ast) -> Oid
-  refract(ast) -> oid in @code/rust {
-    # interpreter::refract
+  # settle: content-address the AST. settle. done. crystal.
+  # binds to interpreter::settle(ast) -> Oid
+  settle(ast) -> oid in @code/rust {
+    # interpreter::settle
   }
 }
 
 out focus
 out project
 out split
-out zoom
-out refract
+out shift
+out settle
 out @prism/rust

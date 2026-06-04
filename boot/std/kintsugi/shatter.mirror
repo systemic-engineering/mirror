@@ -12,7 +12,7 @@ grammar @kintsugi/shatter {
 
   # settle bottom-up: tournament per piece, then compose
   settle_up([ast]) -> imperfect {
-    @fate/tournament.tournament(elite(1).beam(8), pieces) |> zoom(compose) |> refract
+    @fate/tournament.tournament(elite(1).beam(8), pieces) |> shift(compose) |> settle
   }
 
   # the full pipeline: shatter → settle → reassemble

@@ -141,9 +141,9 @@ pub fn parse_grammar(source: &str) -> Grammar {
         let kind = match w1.as_str() {
             "focus" => AstKind::Focus,
             "split" => AstKind::Split,
-            "zoom" => AstKind::Zoom,
+            "shift" => AstKind::Shift,
             "project" => AstKind::Project,
-            "refract" => AstKind::Refract,
+            "settle" => AstKind::Settle,
             _ => continue,
         };
         g.add(&w2, kind);

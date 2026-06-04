@@ -9,16 +9,16 @@ prism action {
   focus  type -> grammar
   project grammar -> block
   split  block(grammar) -> imperfect
-  zoom   imperfect -> transport
-  refract transport -> crystal
+  shift   imperfect -> transport
+  settle transport -> crystal
 }
 
 action action(receiver: type, in: grammar, body: block(grammar)) {
   focus  receiver
   project in
   split  body(in)
-  zoom   body -> imperfect
-  refract imperfect
+  shift   body -> imperfect
+  settle imperfect
 }
 
 out action

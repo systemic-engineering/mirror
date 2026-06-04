@@ -47,8 +47,8 @@ grammar @tui {
   binding(leader, key("f")) = focus
   binding(leader, key("p")) = project
   binding(leader, key("s")) = split
-  binding(leader, key("z")) = zoom
-  binding(leader, key("r")) = refract
+  binding(leader, key("z")) = shift
+  binding(leader, key("r")) = settle
 
   -- bindings: agents (leader + a + key)
   binding(leader, key("a"), key("a")) = abyss
