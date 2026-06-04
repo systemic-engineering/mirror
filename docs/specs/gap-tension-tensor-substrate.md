@@ -13,6 +13,27 @@ propositional altitude, and Carnielli-Coniglio-Rodrigues 2026 introduces a
 two-dimensional hierarchy that prefigures mirror's altitude × confidence
 structure. New §11 absorbs the fold; new §12 catalogs the LFI deep dive.*
 
+> **2026-06-04 reframe (Reed + Alex, canonical).** The `<= gap` chain
+> in this spec is canonical (NOT `<= prism` — `<= prism` would be
+> redundant since `prism @X { … }` already declares the trait/type).
+> Property declarations in this spec (the proposed `holds(gap)`,
+> `resolves(gap)` family) MUST honour the path-namespace property
+> per [[prism-floor-and-the-grammar-rename]] / [[properties-on-glass]]
+> (NEW): a file at `shards/foo/bar.mirror` declares in `@foo/bar`;
+> property files at `shards/epistemologic/property/<name>.mirror`
+> declare in `@epistemologic/property/<name>`.
+>
+> **`#` → @nl term** (raw unstructured natural language; no language
+> enforced). **`\` → fracture** per §11. The gap-tension-tensor fold
+> stays canonical for the substrate semantics.
+>
+> Substrate location for this work: `shards/epistemologic/property/*.mirror`
+> (the property altitude); `gap` and friends live at
+> `shards/epistemologic/<future>` as the math altitude underneath.
+> Legacy `boot/std/epistemologic/property/*` references in this spec
+> remain as historical pointers; the substrate-pull moves them to
+> `shards/`.
+
 **Status: Yellow.** The shape emerged in conversation between Alex and Reed on
 2026-05-26 (Alex: *“I think `gap` lives in @epistemologic/property and is used
 by @fate to build tensors.”*). The types named here are not declared in the
