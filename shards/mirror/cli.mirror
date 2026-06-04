@@ -1,0 +1,113 @@
+in @prism
+in @glass
+in @nl
+
+# @mirror/cli — the CLI surface prism.
+#
+# The grammar that mirror.spec's `target binary { cli { ... } }`
+# block consumes (per docs/specs/mirror-spec-schema.md §6). Lifts
+# from boot/std/cli.mirror with three tightenings:
+#
+#   1. `cli { ... }` is embedded inside a `target` block; commands
+#      cannot escape the binary they belong to (spec §6).
+#   2. `#` lines inside any `cli` / `command` / `arg` / `flag`
+#      body ARE @nl terms — the help text, the Fate-tournament
+#      input, and the downstream docs all read the same source.
+#      Per shards/nl.mirror, `# <text>` produces an `nl_literal`;
+#      the cli consumer lifts each `nl_literal` it encounters in
+#      a body into the enclosing element's help slot.
+#   3. `command X { ... }` IS the action declaration at the cli
+#      altitude — no separate handler reference (spec §10.1).
+#      The substrate-pull collapses dispatch into structure.
+#
+# Spec context: [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[architecture-lift-as-load-bearing]].
+# Related shards: glass.mirror (verdict / imperfect / transparency),
+#                 nl.mirror (`#` -> @nl), prism.mirror (the algebra).
+# Path-namespace property: this file at `shards/mirror/cli.mirror`
+# declares `@mirror/cli` and only that.
+
+prism @mirror/cli {
+  focus cli
+  project cli
+  split cli
+  shift cli
+  settle cli
+}
+
+# === keywords ===
+#
+# `command`, `arg`, `flag` are the three declaration heads inside
+# a `cli { ... }` body. Each is a typed lambda whose obligation
+# block (\) is discharged downstream by mosaic when it walks the
+# binary target's cli block (per spec §6).
+
+# command(name) — a sub-prism of the cli scoped to one verb.
+# The body declares args, flags, and `#` help. Per the dispatch
+# collapse: `command X { ... }` IS the action `X` at this cli's
+# altitude; mosaic binds X to the runtime handler of the same name
+# in the enclosing target's grammar (e.g. @mirror.compile).
+command(name) -> prism { \ }
+
+# arg(name, type) — a positional argument of the enclosing command.
+# Carries a type from the cli vocabulary (see below) and an
+# optional default value via `= <value>`.
+arg(name, t: type) -> prism { \ }
+
+# flag(name, type) — a named flag of the enclosing command. Same
+# shape as `arg` but matched by name (`--<name>`) rather than
+# position. A flag's type may be `bool` (presence-only) or any
+# other vocabulary type (which requires a value).
+flag(name, t: type) -> prism { \ }
+
+# === argument type vocabulary ===
+#
+# What survives from boot/std/cli.mirror's flag-arg shapes, lifted
+# from grammar-internal use into the cli's exported vocabulary so
+# `arg path: ~d` / `flag strict: bool = true` parse the same way
+# everywhere a `cli { ... }` block appears.
+
+# Primitives. `str` and `bool` are inherited from the substrate's
+# scalar floor; declared here as cli-level references so the cli
+# parser knows they're admissible argument types.
+type str  = ref(scalar/string)
+type bool = ref(scalar/bool)
+type int  = ref(scalar/int)
+
+# Sigil types. `~d` is a directory ref; `~f` is a file ref. Per
+# sigil-grammar.md these resolve at compile time against the
+# project root; the cli inherits them as legal arg/flag types.
+type dir_ref  = ~d
+type file_ref = ~f
+
+# Content-addressed substrate handle. Used by `command shatter`
+# (spec §6) to refer to an oid in @mirror/store.
+type content_address = ref(@mirror/store/oid)
+
+# Container types. `list(t)` is the only container that survives
+# the lift; sets and maps defer to v0.2 (no current cli use).
+type list(t) = [t]
+
+# === default-value syntax ===
+#
+# `arg X: T = <value>` and `flag X: T = <value>` declare a default.
+# The `=` shape is shared with the substrate's general assignment
+# (boot/std/cli.mirror precedent); the cli parser interprets the
+# rhs as a value of the declared type T. If T is a sigil type
+# (~d, ~f), the rhs MUST be a sigil literal of the same form
+# (e.g. `~f'./mirror.spec'`).
+default(name, t: type, value: t) -> prism { \ }
+
+out @mirror/cli
+out command
+out arg
+out flag
+out str
+out bool
+out int
+out dir_ref
+out file_ref
+out content_address
+out list
+out default
