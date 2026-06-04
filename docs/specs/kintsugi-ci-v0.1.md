@@ -1,17 +1,45 @@
-# kintsugi-ci-v0.1 — kintsugi wired up in GitHub Actions, with mirror as the Actions provider
+# kintsugi-ci-v0.1 — kintsugi as the build system for the repo, GitHub Actions as the wire altitude
 
-*2026-06-02. Reed + Alex + Mara. Status: load-bearing recognition; spec.*
+*2026-06-02. Reed + Alex + Mara. Updated 2026-06-04 (Reed + Alex).
+Status: load-bearing recognition; spec.*
+
+> **2026-06-04 reframe (canonical, Reed + Alex).** v0.1 is **kintsugi
+> becoming the build system for the repo**, delegating to cargo where
+> necessary. The language owns the build process. cargo is one `@io`
+> delegation that shrinks as mirror grows over phases. The build target
+> is `mirror.spec` — the multi-dimensional manifold; kintsugi operates
+> on it. `mosaic` is the build-system prism: it composes shards, settles
+> to `au`. The action.yml runs `mirror kintsugi ./mirror.spec`
+> (mosaic-settlement-on-spec), **not** `mirror kintsugi --ci <corpus>`
+> (the old "format-loop in CI" framing below). The substrate-native
+> verdict (mirror-text per §1.4 / §1.5) is the `.shatter` projection of
+> the mosaic settlement — and `.shatter` is one optional disk
+> projection; the fragmentation store is canonical.
+>
+> The T11.4–T11.8 tick chain (action.yml + workflows + release + cut)
+> stays; the **semantics** shift from "format-loop over a corpus" to
+> "mosaic-settles-on-the-spec, kintsugi-as-build-system." Sections 1.1
+> and 1.4 below describe the older surface and remain valid as wire-
+> altitude scaffolding; read them through this reframe. Section 11
+> (post-v0.1) is where the build-system framing fully closes.
 
 **v0.1 of the spectral stack is the moment a public-repo author on GitHub can
 add a `systemic-engineering/mirror/actions/kintsugi@v0.1` step to their
-workflow, run the kintsugi loop against their corpus, and gate merges on the
-verdict.** Recursive self-host: mirror's own `.github/workflows/` uses the
-same published actions to gate its own kintsugi. That recursion is the proof
-point.
+workflow, run mirror kintsugi against their `mirror.spec` (or their corpus,
+during the transition), and gate merges on the verdict.** Recursive
+self-host: mirror's own `.github/workflows/` uses the same published
+actions to gate its own kintsugi. That recursion is the proof point.
 
 The arc that ships v0.1: `fragmentation-mcp` (already deployed) →
 `mirror-mcp` (the CLI's `kintsugi` subcommand re-exposed) →
 `kintsugi-ci` (this spec). Three altitudes; one engine; one composition law.
+
+The build-system reframe sits on top of [[prism-floor-and-the-grammar-rename]]
+(the nine-keyword floor) + [[mirror-store]] (the fragmentation store as
+canonical) + [[shard-design]] (mosaic composes shards). Together: kintsugi
+runs on `mirror.spec`; mosaic settles; cargo is invoked through an `@io`
+delegation that retreats as mirror takes over its own phases (per
+[[bootstrap-retirement-plan]]).
 
 ---
 
@@ -33,6 +61,13 @@ when the au column lands).
 
 ### 1.1 The user-facing surface
 
+> **Canonical (post-2026-06-04 reframe).** The default `target:` is
+> `mirror.spec` — the build manifold. Kintsugi runs the mosaic settlement
+> on the spec; cargo is invoked through `@io` only where necessary (and
+> shrinks as mirror takes over its own phases). The corpus-walking
+> form below is the transitional / legacy surface that v0.1 keeps
+> working while mosaic-on-spec stabilises.
+
 A user with a public GitHub repo writes this in `.github/workflows/kintsugi.yml`:
 
 ```yaml
@@ -50,7 +85,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: systemic-engineering/mirror/actions/kintsugi@v0.1
         with:
-          target: src/             # path the loop walks
+          target: mirror.spec      # the build manifold (canonical post-reframe)
+                                   # legacy: src/ — corpus walk; still supported
           threshold: 0.8           # accept verdicts at this confidence
           shatter: 4               # iteration depth
           fail-on: failure         # gate severity: failure | partial | none
@@ -59,11 +95,16 @@ jobs:
 The step:
 
 1. Materializes the pinned mirror toolchain (a single binary plus the
-   shipped boot grammars). Source: `systemic-engineering/mirror` at tag
-   `v0.1.x`.
-2. Walks `target`. For each `.mirror` file, runs the kintsugi loop per
-   [[kintsugi-minimum-runnable]] (propose / measure / elect / verify /
-   fixpoint) and per [[kintsugi-tournament]] for multi-candidate cases.
+   shipped substrate). Source: `systemic-engineering/mirror` at tag
+   `v0.1.x`. The shipped substrate is the `shards/` floor (per
+   [[prism-floor-and-the-grammar-rename]]); legacy `boot/` + `bootstrap/`
+   remain as the shrinking Rust floor (per [[bootstrap-retirement-plan]]).
+2. Settles `target`. **Canonical:** `target` is `mirror.spec`; `mosaic`
+   settles the spec; the verdict is the mosaic's settlement state.
+   **Legacy:** if `target` is a directory, walks it; for each `.mirror`
+   file, runs the kintsugi loop per [[kintsugi-minimum-runnable]]
+   (propose / measure / elect / verify / fixpoint) and per
+   [[kintsugi-tournament]] for multi-candidate cases.
 3. Composes the per-file `Transparency<PropertyVerdict>` verdicts (see
    [[../../../prism/imperfect/src/transparency]]) into a single workflow
    verdict: `pass | partial(min_confidence) | fail`.
@@ -138,6 +179,16 @@ verdict shape. The wider grammar coverage is a follow-on; the wire is
 the deliverable.
 
 ### 1.4 The substrate-pull correction (T11.2.5)
+
+> **2026-06-04 framing.** Read this section under the reframe: the
+> "substrate-native verdict" emitted here IS a `.shatter` projection
+> (a typed mirror-text record) of the mosaic-settlement state. The
+> fragmentation store holds the canonical settlement; the on-disk
+> mirror-text form is one projection. Per [[mirror-store]] and
+> [[shatter-spec]]: `.shatter` is an OPTIONAL disk projection of
+> `au + splinter + mosaic`; the store is canonical; `mirror shatter`
+> is plumbing (direct content-store access, analogous to
+> `git cat-file`).
 
 T11.2 + T11.3 originally shipped JSON as the default `--ci` output
 format. That was wrong. `@io` crossings are decoherence events; the
