@@ -4,7 +4,7 @@ prism @(id) {
   focus prism
   project prism
   split prism
-  zoom prism
+  lift prism
   refract prism
 }
 
@@ -12,7 +12,7 @@ prism @prism {
   focus focus
   project project
   split split
-  zoom zoom
+  lift lift
   refract refract
 }
 
@@ -30,11 +30,19 @@ project out(prism)
 # fall out of the existing kernel forms (focus is type(id); project is
 # field selection; split is the | disjunction in `type x = a | b`).
 #
-# zoom(T): annotation-only parametric. Same bytes, different declared
-# shape. Functor-shaped: zoom satisfies identity (zoom id = id) and
-# composition (zoom (f . g) = zoom f . zoom g). The runtime cost is
+# lift(T): annotation-only parametric. Same bytes, different declared
+# shape. Functor-shaped: lift satisfies identity (lift id = id) and
+# composition (lift (f . g) = lift f . lift g). The runtime cost is
 # zero by construction — the type checker distinguishes T(U1) from
 # T(U2) via content address; the bytes don't change.
+#
+# The name is the algebra's. lift IS the functor operation
+# (lift f : T(A) -> T(B) when f : A -> B). Earlier drafts called
+# this `zoom` (a visual-scale metaphor); the substrate-pull rename
+# closes the loop with `zoom lift` patterns in boot/std/{option,
+# result}.mirror, where the action was already named `lift` over
+# the trait method `zoom`. The action's name and the trait method's
+# name converge: they were the same operation.
 #
 # refract(T): verified-construction parametric. Building a refract(T)
 # value IS the proof that the construction settled. Monad-shaped:
@@ -46,12 +54,12 @@ project out(prism)
 # operations. No new primitives — the algebra is closed at five.
 # The @epistemologic/property/laws/{functor,monad} grammars
 # verify the laws structurally.
-zoom zoom(type) -> type { \ }
+lift lift(type) -> type { \ }
 refract refract(type) -> type { \ }
 
 out in
 out id
 out @
 out @prism
-out zoom
+out lift
 out refract

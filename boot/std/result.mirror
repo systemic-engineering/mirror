@@ -11,7 +11,7 @@ type result(a, e) = ok(a) | error(e)
 -- result -> imperfect: lift into the kernel type
 -- ok(a) => imperfect.success(a)
 -- error(e) => imperfect.failure(e, ())
-zoom lift(result(a, e)) -> imperfect
+lift lift(result(a, e)) -> imperfect
 
 -- imperfect -> result: collapse loss into the error
 -- success(a) => ok(a)

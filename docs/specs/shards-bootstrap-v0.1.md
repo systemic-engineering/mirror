@@ -100,7 +100,7 @@ prism @metalogue {
   #   focus    : the loss bit-count (Shannon weight)
   #   project  : extract the measurement source (which @ref)
   #   split    : decompose a combined loss into its constituents (the inverse of combine)
-  #   zoom     : annotation — the same loss at a different declared shape
+  #   lift     : annotation — the same loss at a different declared shape
   #   refract  : verified accumulation — produces zero only when no loss occurred
   prism @loss {
     zero            -> @loss            { \ }
@@ -120,7 +120,7 @@ prism @metalogue {
   #   focus    : the underlying text
   #   project  : split the namespace path (@a/b/c → [@a, @b, @c])
   #   split    : the disjunction over the ref namespace tree
-  #   zoom     : lift / lower between namespace altitudes
+  #   lift     : raise / lower between namespace altitudes (the functor)
   #   refract  : verified-construction — produces a ref only when
   #              the leading-@ invariant holds
   prism @ref = newtype(text)
@@ -197,7 +197,7 @@ prism @metalogue {
   #   focus    : the carried opacity map (or empty if clear)
   #   project  : the [@ref] of witnessed locations
   #   split    : decompose by location — one transparency per key
-  #   zoom     : view at a coarser/finer @ref granularity
+  #   lift     : view at a coarser/finer @ref granularity
   #   refract  : merge a sequence of transparencies (associative fold)
   prism @transparency =
     | clear
@@ -224,7 +224,7 @@ prism @metalogue {
   #   focus    : the carried value (or the error for failure)
   #   project  : the carried loss (success projects to l.zero)
   #   split    : the | disjunction over the three variants
-  #   zoom     : annotation — re-shape t, e, or l without recompute
+  #   lift     : annotation — re-shape t, e, or l without recompute
   #   refract  : verified accumulation — success-only chains preserve;
   #              partial threads the loss; failure absorbs
   prism @imperfect(t, e, l <= @loss) =
@@ -256,7 +256,7 @@ out @metalogue
 - **`prism @X = newtype(T)`** is the single-field newtype shorthand, lifting `boot/std/option.mirror`'s `type option(a) = some(a) | none` form to the prism altitude. `prism @ref = newtype(text)` declares a refinement with no body block; `prism @opacity_map = abstract newtype(map(...)) { ... }` declares one with a substrate-private constructor and a body block of actions.
 - **Variant prism declarations** use the `|` disjunction from `boot/01-meta.mirror` (`split |(ref, ref)`). The body block (`{ merge_with ... }`) declares the actions that come with the variant prism.
 - **Catastrophic-empty-map invariant** lifts from `pub(crate)` (Rust visibility) to `abstract newtype(...)` + the `out` list (substrate export discipline). The grammar exports the prism name but not the constructor.
-- **Five operations come for free.** Every prism declared in `@metalogue` automatically carries `focus`, `project`, `split`, `zoom`, `refract` (the `prism @prism { ... }` declaration in `boot/00-prism.mirror` is what makes this true). The comments in the sketch make their semantics explicit at each prism where they're load-bearing.
+- **Five operations come for free.** Every prism declared in `@metalogue` automatically carries `focus`, `project`, `split`, `lift`, `refract` (the `prism @prism { ... }` declaration in `boot/00-prism.mirror` is what makes this true). The comments in the sketch make their semantics explicit at each prism where they're load-bearing. `lift` is the functor operation (`lift f : T(A) -> T(B)` when `f : A -> B`); earlier drafts called this `zoom`, but the substrate already used the action name `lift` (`zoom lift(option(a)) -> imperfect` in `boot/std/option.mirror`), and the trait method and the action's name converge.
 
 ### 1.4 What the metalogue does NOT declare
 
@@ -302,7 +302,7 @@ These have NO metalogue dependency beyond `@loss` (which they don't measure agai
 
 These wait on T_shards.1:
 
-- `shards/option.mirror`, `shards/result.mirror` — both currently declare themselves "imperfect without loss / error" via `zoom lift` + `fold collapse`. They need `@imperfect` declared first.
+- `shards/option.mirror`, `shards/result.mirror` — both currently declare themselves "imperfect without loss / error" via `lift` + `fold collapse`. They need `@imperfect` declared first. (The legacy form `zoom lift(option(a)) -> imperfect` collapses post-rename to `lift(option(a)) -> imperfect` — trait method and action name converge.)
 - `shards/epistemologic/property/*.mirror` — every property returns a `verdict` (≡ `@property_verdict` from metalogue). The verdict union and `@transparency(@ref)` composition are the load-bearing primitives.
 - `shards/kintsugi.mirror` — Verdict refactor (T11.2.7) requires `@imperfect`, `@transparency`, `@property_verdict`, and `@ref` declared at substrate altitude. Mara's `discrimination` halfway-house is replaced by the proper instance: `@imperfect(@verdict_value, @failure_reason, @transparency(@ref))`.
 - `shards/mirror/tokenize.mirror`, `shards/mirror/parse.mirror` — return `@imperfect(@ast, @parse_error, @transparency(@ref))`. The tokenizer's substrate declaration ports here (T_shards.8); the Rust impl in `bootstrap/src/tokenize.rs` becomes implementation-of-declaration.
@@ -438,7 +438,7 @@ These are not blockers — they are decisions that need to land in the T_shards.
 2. **Cyclic dependencies between metalogue prisms.** Reviewed: `@property_verdict` depends on `@confidence` + `@diagnostic`; `@opacity_map` depends on `@ref` + `@property_verdict`; `@transparency` depends on `@opacity_map`; `@imperfect` depends on `@loss` only. **No cycles.** Declaration order in §1.1 is the topological sort.
 3. **Does the bootstrap's grammar loader need to learn about `shards/` before T_shards.1 lands?** No. T_shards.1 lands a `.mirror` file under `shards/`; the bootstrap doesn't load it. The metalogue is declarative-only until T_shards.8 moves the loader. Between T_shards.1 and T_shards.8, `shards/*` is read by Reed + sub-agents + downstream specs; the bootstrap continues using `boot/`.
 4. **Where does Phase 1 Task 2 (`!=` tokenization) land?** Folded into T_shards.4 (the AST migration). The fix is a one-line addition to `shards/mirror/ast/token.mirror`; the bootstrap reads it at startup once T_shards.8's loader pivots.
-5. **How does the five-operations-come-for-free property interact with newtype prisms?** A `prism @ref = newtype(text)` automatically carries focus/project/split/zoom/refract — what do they mean for a single-field newtype over text? The sketch's comments on `@loss`, `@transparency`, `@imperfect` are explicit; the newtype prisms inherit text's operations under the newtype wrapper. T_shards.1 confirms.
+5. **How does the five-operations-come-for-free property interact with newtype prisms?** A `prism @ref = newtype(text)` automatically carries focus/project/split/lift/refract — what do they mean for a single-field newtype over text? The sketch's comments on `@loss`, `@transparency`, `@imperfect` are explicit; the newtype prisms inherit text's operations under the newtype wrapper. T_shards.1 confirms.
 
 ---
 

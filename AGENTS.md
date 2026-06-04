@@ -164,9 +164,13 @@ Content address. SHA-256 of tokenized eigenvalue record.
 
 ### The Five Operations
 
-focus, project, split, zoom, refract.
+focus, project, split, lift, refract.
 Every command runs one or more of these. They are the trait methods.
-They map to the Prism optic.
+They map to the Prism optic. `lift` is the functor operation
+(lift f : T(A) -> T(B) when f : A -> B); same bytes, different declared
+shape. Earlier drafts named this `zoom` (visual-scale metaphor); the
+substrate-pull rename closes the loop with the existing `zoom lift`
+pattern in `boot/std/{option,result}.mirror`.
 
 ### The `\` Hole
 

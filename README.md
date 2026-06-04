@@ -80,8 +80,9 @@ with the glass:
 
 **split** — hold multiple positions simultaneously. See from here and there.
 
-**zoom** — cross between registers. From code to abstraction. From the thing
-to the pattern of the thing.
+**lift** — cross between registers. From code to abstraction. From the thing
+to the pattern of the thing. The functor operation: same bytes, different
+declared shape.
 
 **refract** — the geometry reflecting back. You made something and the
 measurement shows you what you actually made. Not what you intended. What you

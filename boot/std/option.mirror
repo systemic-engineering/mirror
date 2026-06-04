@@ -11,7 +11,7 @@ type option(a) = some(a) | none
 -- option -> imperfect: lift into the kernel type
 -- some(a) => imperfect.success(a)
 -- none => imperfect.failure((), ())
-zoom lift(option(a)) -> imperfect
+lift lift(option(a)) -> imperfect
 
 -- imperfect -> option: collapse loss and error into none
 -- success(a) => some(a)
