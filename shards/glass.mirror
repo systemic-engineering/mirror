@@ -1,0 +1,101 @@
+in @prism
+in @meta
+
+# @glass — the floor of the substrate's self-conversation.
+#
+# Declares the types of the glass wall (the substrate-altitude loss
+# carrier and verdict surface) and the `glass` keyword for declaring
+# sub-prisms inside a parent prism.
+#
+# Spec: docs/specs/transparency.md
+# Substrate decisions: [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]].
+#
+# Per prism-as-trait-as-everything: `prism @glass { ... }` declares
+# @glass IS a prism. No `<= prism` redundancy. The five-op block
+# below is the canonical declaration form (cf. boot/00-prism.mirror).
+
+prism @glass {
+  focus glass
+  project glass
+  split glass
+  shift glass
+  settle glass
+}
+
+# `glass` keyword — sub-prism declaration form inside a parent prism.
+#
+# Surface: `glass @<name> { <body> }` declares a sub-prism scoped to
+# the enclosing prism. Abstract here so the parser knows what the
+# `glass` token means structurally; the obligation block (\) is
+# discharged downstream when concrete sub-prisms land.
+abstract glass(name) -> prism { \ }
+
+# === types of the glass wall ===
+
+# location — where in the substrate an opacity was observed.
+# `file: ref` is the canonical substrate file reference (per
+# boot/01a-error.mirror's location precedent).
+type location = {
+  file: ref,
+  span: (u32, u32),
+}
+
+# opacity — the minimal located fact. One smudge on the glass.
+# property is @nl (human-readable description of what was checked);
+# weight is bits-of-missing-information at this site (Shannon-like).
+type opacity = {
+  location: location,
+  property: @nl,
+  weight: f64,
+}
+
+# opacity_map — the accumulated opacity sites for a transparency.
+type opacity_map = [opacity]
+
+# imperfect(a, e, l) — the substrate's three-state outcome functor.
+# Re-declared here at the glass altitude to make the loss-carrier
+# slot `l` substrate-visible. boot/01a-error.mirror's @imperfect
+# parameterizes on (value, loss, error); this is the floor form.
+type imperfect(a, e, l) =
+  | success(a)
+  | partial(a, l)
+  | failure(e, l)
+
+# transparency(p) — located opacity over property p. The substrate's
+# loss carrier. Replaces the dead MirrorLoss scalar.
+type transparency(p) =
+  | success
+  | partial(opacity_map)
+  | failure(opacity_map)
+
+# verdict — the glass-wall verdict surface. Per the spec:
+# pass | partial(confidence) | failure(reason). NB: distinct from
+# @epistemologic/property's `verdict` (pass | fail(diagnostic) |
+# partial(f64, [diagnostic])). See open questions below.
+type confidence = f64
+type reason = @nl
+
+type verdict =
+  | pass
+  | partial(confidence)
+  | failure(reason)
+
+# property_verdict — a verdict located at a glass-wall site.
+type property_verdict = {
+  verdict: verdict,
+  where: location,
+}
+
+out @glass
+out glass
+out location
+out opacity
+out opacity_map
+out imperfect
+out transparency
+out verdict
+out confidence
+out reason
+out property_verdict
