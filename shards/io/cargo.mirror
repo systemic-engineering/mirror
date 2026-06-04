@@ -1,0 +1,168 @@
+in @prism
+in @glass
+in @meta
+in @nl
+in @property
+
+# @io/cargo — the cargo invocation contract.
+#
+# Cargo IS the canonical @io tool for the @code/rust altitude. When
+# mirror.spec declares `target binary { altitude @code/rust, emit
+# cargo }`, mosaic's `shift @code/rust` resolves through
+# @code/rust/cargo (the substrate identity, D2) and lands on THIS
+# shard's actions for the actual subprocess invocation.
+#
+# Substrate-pull tightenings (per [[architecture-shards-as-substrate-source]],
+# [[architecture-glass-wall-substrate-types]]):
+#
+#   1. Cargo's exit codes are NOT verdict surface. They lift into
+#      the substrate's `imperfect` three-state functor via the
+#      `cargo_exit_to_transparency` property declared below. 0 is
+#      success (transparency = success); 101 is a compile failure
+#      whose opacity_map is located on the failing source files
+#      (parsed from cargo's stderr); 1 is a generic failure with a
+#      single opacity at the invocation site.
+#
+#   2. Cargo.lock IS captured (lockfile_capture -> ref) as an @io
+#      artifact, content-addressed by the substrate. It is NOT
+#      substrate truth: per [[architecture-shards-as-substrate-source]]
+#      and shards/mirror/store.mirror, the substrate lockfile IS the
+#      Splinter OID-graph. Cargo.lock is captured for forensic
+#      reproducibility at the @io boundary, not consulted as truth.
+#
+#   3. Env propagation is an EXPLICIT allow-list, not ambient
+#      passthrough. The `env` type is a closed map; mosaic's
+#      `env_of(resolved)` (mosaic.mirror line 126) constructs it
+#      from the resolved manifold, and the per-target user choice
+#      lives in mirror.spec. The admissible substrate-level keys
+#      are documented as `env_allowlist` below; mirror.spec MAY
+#      narrow but not widen this set.
+#
+# Spec context: docs/specs/mosaic.md §4 (the @code/rust delegation
+# contract), docs/specs/mirror-spec-schema.md §10.5 (emit
+# disambiguation), docs/specs/transparency.md (the loss carrier
+# cargo's exit codes lift into).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-mirror-store-vs-spectral-db]].
+# Related shards: code/rust.mirror (the altitude that delegates
+# here), mirror/mosaic.mirror (the consumer that calls
+# @io.cargo.build), glass.mirror (transparency / imperfect /
+# opacity_map / location).
+# Path-namespace property: this file at `shards/io/cargo.mirror`
+# declares `@io/cargo` and only that.
+
+prism @io/cargo {
+  focus cargo
+  project cargo
+  split cargo
+  shift cargo
+  settle cargo
+}
+
+# === types ===
+
+# manifest — path to a Cargo.toml. `~f` is the substrate's file-ref
+# carrier (per shards/mirror/spec.mirror's path conventions).
+type manifest = ~f
+
+# profile — cargo's build profile. `custom(text)` covers user-named
+# profiles declared in Cargo.toml's [profile.*] tables.
+type profile =
+  | dev
+  | release
+  | custom(text)
+
+# exit_code — the raw subprocess exit code. Substrate scalar; the
+# lift to transparency happens in `cargo_exit_to_transparency`.
+type exit_code = u8
+
+# env — explicit env allow-list. The map's keys are restricted to
+# `env_allowlist` (declared below as a property); mirror.spec MAY
+# narrow but not widen this set. Ambient env passthrough is
+# substrate-forbidden.
+type env = map(text, text)
+
+# === env allow-list ===
+#
+# The admissible substrate-level env keys for cargo invocations.
+# Per the substrate-pull: ambient env is forbidden; every key cargo
+# sees is named here OR in mirror.spec's narrower per-target list.
+#
+# Admitted keys (mosaic's `env_of(resolved)` may emit any of these):
+#   RUSTFLAGS         — compiler flag passthrough
+#   CARGO_TARGET_DIR  — out-of-tree target/ relocation
+#   CARGO_HOME        — registry/cache root (CI/Nix)
+#   CARGO_NET_OFFLINE — air-gapped builds (CI/Nix)
+#   RUST_BACKTRACE    — diagnostic output
+#   RUSTC_WRAPPER     — sccache / cachix etc.
+#   RUSTUP_TOOLCHAIN  — toolchain override
+#   CC, CXX, AR       — C/C++ linker passthrough (build.rs reach)
+#
+# The list IS substrate-level — declared here, not per-target —
+# because the allow-list is the substrate's promise about what
+# cargo MAY see. Per-target choice is a NARROWING of this set in
+# mirror.spec, not a widening.
+env_allowlist(key: text) -> verdict { \ }
+
+# === exit-code → transparency lift ===
+#
+# The substrate-pull: cargo's exit codes are NOT verdict surface;
+# they lift into `transparency<p>` via this property. The lift is
+# declared (not prose-only) so mosaic, kintsugi, and reflection
+# read the same contract.
+#
+# Mapping:
+#   0   -> success                  (clean build)
+#   101 -> failure(opacity_map)     (compile error; opacities are
+#                                    located on the failing source
+#                                    files parsed from cargo's
+#                                    stderr — file:line:col)
+#   1   -> failure(opacity_map)     (generic failure; one opacity
+#                                    at the invocation site, weight
+#                                    = bits-of-missing-information
+#                                    for the unrecoverable case)
+#   *   -> partial(opacity_map)     (any other non-zero; opacity at
+#                                    the invocation site with the
+#                                    raw code as @nl reason)
+cargo_exit_to_transparency(code: exit_code, stderr: ~f) -> transparency { \ }
+
+# === actions — what mosaic's shift @code/rust invokes ===
+
+# build — compile the target. `features` is a @code/rust feature
+# list (the cargo --features set). Returns imperfect carrying the
+# transparency (per cargo_exit_to_transparency).
+build(manifest: manifest, profile: profile, env: env, features: [text]) -> imperfect { \ }
+
+# test — run `cargo test`. Same imperfect contract; opacity_map on
+# failure locates the failing test(s).
+test(manifest: manifest, env: env) -> imperfect { \ }
+
+# check — `cargo check`. Cheaper than build; same imperfect
+# contract; surface-level type/borrow opacity.
+check(manifest: manifest) -> imperfect { \ }
+
+# lockfile_capture — read Cargo.lock and content-address it via
+# @mirror/store. The return is the substrate `ref`; the bytes are
+# captured at the @io boundary. NOT substrate truth — see header.
+lockfile_capture(manifest: manifest) -> ref { \ }
+
+# metadata — `cargo metadata --format-version 1`. Returns a
+# manifold (the typed graph of packages / targets / features cargo
+# reports). Consumed by mosaic's `focus` when it walks a workspace
+# whose mirror.spec defers package discovery to cargo.
+metadata(manifest: manifest) -> manifold { \ }
+
+out @io/cargo
+out manifest
+out profile
+out exit_code
+out env
+out env_allowlist
+out cargo_exit_to_transparency
+out build
+out test
+out check
+out lockfile_capture
+out metadata
