@@ -1,11 +1,32 @@
 # mirror-store — three-layer parser, fragmentation as substrate, FP1 at Layer 2
 
-*2026-05-22. Mara. Spec.*
+*2026-05-22. Mara. Updated 2026-06-04 (Reed + Alex). Spec.*
 
 Status: **Red** (the three-layer architecture is named; the store API
 is specified; the FP1 reframe is stated; the fragmentation audit
 records a verdict; the boot sequence and Shift dispatch are pinned. No
 code lands in this tick.)
+
+> **2026-06-04 reframe (Reed + Alex, canonical).** The fragmentation
+> store IS the canonical content-addressed substrate. **No deps;
+> shards are self-contained crystals.** Splinter IS the structural
+> lockfile. Composition by OID, not name resolution.
+>
+> **`.shatter` is one OPTIONAL projection format** of `au + splinter +
+> mosaic` — see [[../shatter-spec]]. Other projection formats are
+> possible (binary, IR, language-specific embeddings); the store does
+> not require any particular on-disk format. Whatever a tool projects
+> from the store, the store's content addressing is the canonical
+> identity.
+>
+> `mirror shatter` is **plumbing** — direct content-store access
+> (analogous to `git cat-file`). The porcelain (mosaic settlement,
+> kintsugi-on-spec) is in [[kintsugi-ci-v0.1]].
+>
+> The substrate-pull arc: `shards/` is source of truth (per
+> [[prism-floor-and-the-grammar-rename]]); the store backs `Shift`
+> dispatch via OID composition; legacy `boot/` + `bootstrap/` use the
+> store as their content backend.
 
 Depends on:
 - `mirror/docs/specs/parser-as-prism-grammar.md` — the `Combinator`
