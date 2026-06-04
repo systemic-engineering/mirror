@@ -1,0 +1,147 @@
+in @prism
+in @glass
+in @meta
+in @mirror/store
+in @mirror/au
+
+# @mirror/shatter — the optional disk projection of au + splinter + mosaic.
+#
+# Recognition (docs/specs/shatter-spec.md, 2026-06-04 reframe): the
+# fragmentation store IS canonical. `.shatter` is ONE projection
+# format — a settled .mirror file that knows what it cost. Five
+# sections, all native mirror syntax, all content-addressed, all
+# feedable back into the compiler. The projection round-trips: parse
+# a .shatter, re-emit, get the same OID. That fixed point IS what
+# makes .shatter a crystal and not a dump.
+#
+# Recognition (docs/specs/au-and-conductivity.md, C5): au's identity
+# IS the content-hash of (altitude, content, transparency). The
+# .shatter OID is derived from those same three coordinates lifted
+# through the five-section structure; the projection preserves au's
+# identity contract because the sections ARE the three coordinates
+# unrolled (fragment_tree carries content, kernel/fate parametrize
+# altitude, transparency IS transparency, properties witness the
+# verification at that altitude). Two au values with equal identity
+# project to byte-equal .shatter files.
+#
+# Idempotence contract: shatter(a) and shatter(shatter(a) -> au) settle
+# to the same oid. Per the spec's fixed-point clause:
+#     mirror compile source.mirror -> output.shatter
+#     mirror compile output.shatter -> output.shatter
+# The recompilation is a no-op at the content-address layer because
+# the inputs to the hash (altitude, content, transparency) are
+# preserved across project/ingest.
+#
+# Note: the store is canonical. .shatter is ONE projection. Other
+# projections (binary archives, content-only dumps, language-specific
+# embeddings) live elsewhere; the store does not require any
+# particular on-disk format. Per shards/mirror/store.mirror's framing.
+#
+# Reconciliation with au.mirror (C5): au.mirror declared the surface
+#     shatter(a: au) -> ref { \ }
+# at au's altitude — au knows how to project itself. This shard
+# realizes that surface as `project(a: au) -> shatter` (the canonical
+# direction) plus `ingest(s: shatter) -> au` (the parse-back direction
+# that closes the fixed-point loop). au's stub does not need
+# updating; this shard IS its body at the disk-projection altitude.
+#
+# Reconciliation with mosaic.mirror (C2): mosaic declared
+#     shatter(au, transparency) -> ref { \ }
+# at the build altitude — the build-time trigger that emits .shatter
+# alongside the source when `mirror kintsugi --emit shatter` runs
+# (mosaic.md §10.6, explicit-emit policy). mosaic's shatter is the
+# build-altitude porcelain; this shard's `project` is the substrate
+# the porcelain calls into. au.mirror's `shatter` is canonical; the
+# two appearances at higher altitudes both delegate here.
+#
+# Spec context: docs/specs/shatter-spec.md (the five sections,
+# idempotent fixed-point, content-addressing, autopoietic loop),
+# docs/specs/mosaic.md §7 (the build-time emit trigger),
+# docs/specs/au-and-conductivity.md (the identity contract that
+# guarantees idempotence).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-au-conductivity]] (au IS the
+#                      Fate output type; .shatter projects au).
+# Related shards: au.mirror (the surface declaration this realizes),
+#                 store.mirror (oid + splinter — the content-address
+#                 floor), mosaic.mirror (the build-altitude trigger),
+#                 glass.mirror (transparency / property verdict
+#                 carriers used in sections 2 and 3).
+# Path-namespace property: this file at `shards/mirror/shatter.mirror`
+# declares `@mirror/shatter` and only that.
+
+prism @mirror/shatter {
+  focus shatter
+  project shatter
+  split shatter
+  shift shatter
+  settle shatter
+}
+
+# === the five-section structure on disk ===
+#
+# Per docs/specs/shatter-spec.md (post-MirrorLoss -> transparency
+# migration). Each field IS a projection of substrate state already
+# held in the fragmentation store; the on-disk form makes it
+# portable. Order is canonical: fragment_tree first because it's
+# the content; transparency second because it's the trace;
+# properties third because they witness the trace; kernel fourth
+# because it parametrizes dispatch; fate fifth because it carries
+# the model that produced the rest.
+#
+# Section 2 IS `transparency(au)` — the typed verdict carrier from
+# prism/imperfect/src/transparency.rs (per glass.mirror's
+# transparency<p> floor). MirrorLoss is DEAD; the Transparency<Ref>
+# algebra (Fail-dominates / Partial-min-confidence / Pass-neutral)
+# composes phase verdicts across the build.
+type shatter = {
+  fragment_tree: splinter,          # the AST closure (section 1)
+  transparency: transparency(au),   # located opacity (section 2, was MirrorLoss)
+  properties: [property_verdict],   # what verified (section 3)
+  kernel: kernel_spec,              # decomposition params (section 4)
+  fate: fate_weights,               # the model that compiled it (section 5)
+}
+
+# === helper types: opaque carriers from neighboring altitudes ===
+#
+# These are forward references; the concrete definitions live where
+# the substrate already declares them. `kernel_spec` lives in
+# @epistemologic/silicon (the spectral decomposition altitude);
+# `fate_weights` lives in @fate (the 450-parameter selector that
+# carries the five models). This shard treats them as opaque refs
+# so the projection compiles without pulling those altitudes in.
+type kernel_spec = ref
+type fate_weights = ref
+
+# === mirror shatter plumbing — direct content-store access ===
+#
+# Analogous to `git cat-file` / `git hash-object`. `project` writes
+# the canonical .shatter form from an au; `ingest` parses .shatter
+# back into an au by re-hashing through the store. The pair
+# realizes the spec's fixed-point clause: project . ingest = id at
+# the oid level, ingest . project = id at the au level (modulo
+# transparency-tracked opacities).
+
+# project(a) -> shatter
+#   au -> .shatter projection (canonical). au.mirror's `shatter(a)
+#   -> ref` stub resolves through this action — the substrate
+#   reads au's three identity coordinates (altitude, content,
+#   transparency) and unrolls them into the five sections. The
+#   output's oid equals au's identity oid; same au, same .shatter,
+#   byte-equal.
+project(a: au) -> shatter { \ }
+
+# ingest(s) -> au
+#   .shatter -> store (parse back). Re-enters the substrate by
+#   re-hashing the five sections under the store's content
+#   algebra (CoincidenceHash<5,5> per shards/prism.mirror). The
+#   returned au has the same identity oid the .shatter was
+#   projected from, closing the autopoietic loop (spec §"The
+#   Autopoietic Loop").
+ingest(s: shatter) -> au { \ }
+
+out @mirror/shatter
+out shatter
+out project
+out ingest
