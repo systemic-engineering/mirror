@@ -35,13 +35,9 @@ grammar @error {
   }
 }
 
-grammar @imperfect {
-  type imperfect(value, loss = loss, error = error) = {
-    value: value,
-    loss: loss,
-    errors: [error],
-  }
-}
+# @imperfect declaration retired — substrate-pull-correct version lives in
+# shards/glass.mirror as the three-constructor union `success(a) | partial(a, l) | failure(e, l)`.
+# Per task #126 (Transparency-as-Lens) + glass.mirror floor.
 
 out loss
 out measurement
@@ -49,4 +45,3 @@ out error
 out location
 out severity
 out diagnostic
-out imperfect

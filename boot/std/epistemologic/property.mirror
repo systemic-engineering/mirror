@@ -3,10 +3,12 @@ in @epistemologic
 in @error
 in @nl
 
+in @glass
+
 grammar @epistemologic/property {
-  # verdict: the return type of all property checks
-  # not pass/fail. a position on the manifold.
-  type verdict = pass | fail(diagnostic) | partial(f64, [diagnostic])
+  # verdict is declared in @glass (the substrate floor):
+  # `verdict = pass | partial(confidence) | failure(reason)`.
+  # @epistemologic/property consumes the glass form; no redeclaration.
 
   # a property check: takes an AST node, returns verdict.
   # every concrete check is a named lambda.
@@ -19,6 +21,5 @@ grammar @epistemologic/property {
   check(ast, property) -> verdict { \ }
 }
 
-out verdict
 out reflect
 out check

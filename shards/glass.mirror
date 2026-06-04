@@ -30,7 +30,7 @@ prism @glass {
 # the enclosing prism. Abstract here so the parser knows what the
 # `glass` token means structurally; the obligation block (\) is
 # discharged downstream when concrete sub-prisms land.
-abstract glass(name) -> prism { \ }
+glass(name) -> prism { \ }
 
 # === types of the glass wall ===
 
