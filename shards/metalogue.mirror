@@ -1,0 +1,74 @@
+in @prism
+in @glass
+in @nl
+
+# @metalogue — the language's self-conversation.
+#
+# Bateson 1972: a conversation whose structure reflects its topic.
+# In the substrate the recognition is sharper: the act of self-talk
+# IS what makes the glass wall visible. @glass declares the
+# vocabulary of imperfect / transparency / verdict; @metalogue is
+# the conversation that uses that vocabulary on itself. The
+# metalogue IS the glass wall.
+#
+# Per docs/specs/gap-tension-tensor-substrate.md (the gap-fold §11):
+# turns compose as the conversation; the residual opacity composes
+# as the conversation's transparency. A held gap MUST surface and
+# MUST NOT be silently absorbed (§11.4) — the metalogue is the
+# surfacing site, and the obligation `\` is how a turn admits its
+# fracture rather than absorb it.
+#
+# Spec context: [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]].
+# Related shards: glass.mirror (the floor), nl.mirror (utterance
+# bodies). No `<= prism` redundancy — the five-op block IS the
+# declaration form (cf. shards/glass.mirror, shards/nl.mirror,
+# boot/00-prism.mirror).
+
+prism @metalogue {
+  focus metalogue
+  project metalogue
+  split metalogue
+  shift metalogue
+  settle metalogue
+}
+
+# === turn ===
+
+# turn — a single move in the metalogue. Carries the speaker (a
+# substrate ref, per the @glass `file: ref` precedent), the
+# utterance body (an @nl term, per shards/nl.mirror), an optional
+# reply chain, and the substrate tick at which the turn was uttered.
+#
+# `tick` is the canonical substrate clock (boot/std/time.mirror —
+# `type tick = monotonic`); turns compose only with turns at the
+# same monotone, which is what makes the conversation an ordered
+# sequence rather than a bag.
+type turn = {
+  speaker: ref,
+  body: nl,
+  in_reply_to: option(turn),
+  tick: tick,
+}
+
+# === metalogue_session ===
+
+# metalogue_session — an ordered sequence of turns plus the
+# conversation's current opacity: what's been clarified, what's
+# still opaque. `transparency(turn)` is the @glass loss carrier
+# parameterized on `turn` — every unresolved opacity is sited on
+# a turn, so the residual opacity of the conversation IS the
+# transparency of its turn-set.
+#
+# This is the load-bearing recognition: the metalogue's residual
+# is a @glass transparency. The self-conversation surfaces its
+# own incompleteness through the same vocabulary it uses to
+# surface anyone else's. Bateson 1972 made literal.
+type metalogue_session = {
+  turns: [turn],
+  opacity: transparency(turn),
+}
+
+out @metalogue
+out turn
+out metalogue_session
