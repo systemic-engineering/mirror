@@ -1,6 +1,8 @@
 # The prism floor + the grammar→prism rename — the nine-keyword floor and the ticks to close it
 
-*2026-05-29. Mara. Spec — audit + design, not implementation. No Rust changes; read-only audit of the bootstrap, one markdown spec.*
+*2026-05-29. Mara. Updated 2026-06-04 (Reed + Alex). Spec — audit + design,
+not implementation. No Rust changes; read-only audit of the bootstrap, one
+markdown spec.*
 
 Status: **Yellow** (the nine-keyword floor was locked with Alex 2026-05-29;
 the gap between it and the bootstrap's *actual* recognition is audited below
@@ -9,6 +11,48 @@ radius is measured; the kintsugi-fracture engine that would *ideally* run the
 rename is confirmed a no-op scaffold, so the honest path is a runnable
 mechanical migration realizing the fracture principle, not a literal fracture
 pass.)
+
+> **2026-06-04 reframe (Reed + Alex, canonical).** The five operations are
+> renamed: **focus, project, split, shift, settle** (was: focus, project,
+> split, zoom, refract). `zoom → shift`; `refract → settle`. Per
+> [[prism-core-as-spectral-triple]] / [[spectral-triple-binary]]: this is
+> the operational form of Connes' (A, H, D) spectral triple.
+>
+> - **A** = the five operations (the algebra acting on H).
+> - **H** = the Void — graph quantum information manifold; λ₀ = 0 ground
+>   state; eight dualities per Splinter/Narcissus.
+> - **D** = the kintsugi flow (Dirac operator); eⁿ⁺¹ ≤ eⁿ monotone
+>   descent; c-theorem on graph Laplacians.
+>
+> Per-operation linear-algebraic meaning (canonical):
+> - **focus** = λ₀ eigenvalue computation.
+> - **shift** = basis transformation (functor; was zoom — the substrate-
+>   pull rename, per [[architecture-lift-as-load-bearing]]).
+> - **settle** = monad-close / measurement collapse (was refract).
+> - **project** = orthogonal projection.
+> - **split** = orthogonal decomposition.
+>
+> This is the why for the rename. The substrate-pull names what was
+> already true at the algebra altitude (`boot/std/{option,result}.mirror`
+> had been calling the action `lift` / `shift`; the foundational altitude
+> was wrongly calling it `zoom`); the Connes triple names what was
+> already true at the math altitude.
+>
+> **Layout shift (canonical, per the v0.1 substrate-pull arc):**
+>
+> - `shards/` is the source of truth (`shards/glass.mirror`,
+>   `shards/metalogue.mirror`, `shards/nl.mirror`, `shards/epistemologic/*`,
+>   `shards/mirror/*`).
+> - **legacy `boot/`**, **legacy `bootstrap/`** are the Rust-floor
+>   substrates with shrinkage contracts (per [[bootstrap-retirement-plan]]).
+>   As mirror takes over its own phases, the legacy floors retreat. The
+>   ticks below remain valid for the legacy floor; the ultimate end-state
+>   is `shards/` carrying the whole substrate.
+> - **@prism home open question (Reed + Alex to decide):** does the
+>   five-op algebra live at `shards/prism.mirror` (root) or
+>   `shards/mirror/prism.mirror` (@mirror namespace)? The path-namespace
+>   property requires path↔namespace agreement either way. See the
+>   verdict surfaced at the end of this spec's update note.
 
 Depends on:
 - `bootstrap/src/grammar.rs` (commit `c367512`) — `parse_grammar` (the
