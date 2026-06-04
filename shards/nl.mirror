@@ -1,0 +1,49 @@
+in @prism
+
+# @nl — raw unstructured natural language.
+#
+# The floor declaration: @nl IS a prism (per
+# [[architecture-prism-as-trait-as-everything]]). The substrate
+# carries natural-language terms as opaque text at this altitude;
+# downstream classifiers (English, German, markdown structure,
+# doctest extraction) live one layer up and resolve via the Fate
+# tournament — not here.
+#
+# Spec context: [[architecture-shards-as-substrate-source]].
+# Related shards: glass.mirror (the floor pattern this file follows).
+#
+# Per prism-as-trait-as-everything: no `<= prism` redundancy.
+# The five-op block below is the canonical declaration form
+# (cf. boot/00-prism.mirror, shards/glass.mirror).
+
+prism @nl {
+  focus nl
+  project nl
+  split nl
+  shift nl
+  settle nl
+}
+
+# `#` is the sigil that produces an @nl term.
+#
+# Same shape as `\` producing fracture (an obligation hole) and
+# `~mq"..."` producing a typed mq literal: a syntactic mark
+# yielding a typed substrate value. Per boot/std/code/mq.mirror's
+# `type mq_literal(text) = @sigil("mq")` precedent, the sigil-typed
+# literal carries the raw text payload; classification (which
+# natural language, which structure) is downstream.
+#
+# Surface: `#some prose here` produces an nl_literal carrying
+# `"some prose here"`. The substrate makes no claim about the
+# prose's language; @nl/english, @nl/markdown, @nl/german (etc.)
+# are downstream lifts that classify and structure.
+type nl_literal(text) = @sigil("#")
+
+# render lifts an nl_literal into the @nl prism's term space.
+# The body is the literal's payload as opaque text; downstream
+# grammars (@nl/markdown, @nl/english, ...) parse it further.
+template render(s: nl_literal) -> nl { s.block }
+
+out @nl
+out nl_literal
+out render
