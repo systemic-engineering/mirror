@@ -1,6 +1,17 @@
 # `gap` / `tension` / `tensor` — substrate primitives for the proposed loop closure
 
 *2026-05-26. Mara. Proposal — not implementation.*
+*2026-06-04. Reed. Folded `contradiction-and-fracture.md` (commit `f12f58e`)
+into this spec. `contradiction` is a *particular shape of gap* — binary-opposed,
+propositional, level-crossing per Bateson — not a sibling primitive. The
+substrate-vocabulary verdict (Alex 2026-06-04): `gap` is geometric and covers
+one-sided / continuous / pre-positional cases that `contradiction` (binary,
+propositional) cannot. `contradiction` becomes a derived form, `<= gap`, with
+extra structure (left, right, level). The LFI parallel flagged in the prior
+spec deepened on follow-up: Carnielli's `○A` IS `holds(gap)` at the
+propositional altitude, and Carnielli-Coniglio-Rodrigues 2026 introduces a
+two-dimensional hierarchy that prefigures mirror's altitude × confidence
+structure. New §11 absorbs the fold; new §12 catalogs the LFI deep dive.*
 
 **Status: Yellow.** The shape emerged in conversation between Alex and Reed on
 2026-05-26 (Alex: *“I think `gap` lives in @epistemologic/property and is used
@@ -1283,7 +1294,494 @@ suggest the ratio is favorable for bounded symbolic tasks.*
 
 ---
 
-## 11. References
+## 11. Contradiction as a particular shape of gap (Bateson + Belnap + LFI fold)
+
+*Altitude: **declared shape proposal**. Absorbs `contradiction-and-fracture.md`
+(commit `f12f58e`, retired 2026-06-04). Renames its primitives to live
+underneath `gap` rather than beside it.*
+
+The `gap` primitive (§3.1) names *unresolved distance between claim and
+verifier* — a geometric quantity. It covers:
+
+- **One-sided gaps.** `absent` (§4.4) — the claim COULD be made but ISN'T.
+  `declared` (§4.3) — the claim exists with no verifier. Neither has a
+  binary opposition; `contradiction` cannot name these.
+- **Continuous-magnitude gaps.** `heuristic(p: probability)` (§4.2) — the
+  gap carries a $[0,1]$ confidence per LTN's Real Logic grounding. Not a
+  pair of opposed propositions; a real-valued degree of resolution.
+- **Pre-positional gaps.** When `gaps_of(ast)` surfaces a hole the
+  substrate doesn't yet know the shape of, `gap` carries it as `verifier =
+  absent`. There is no "other side" to oppose; the gap is the absence of
+  shape itself.
+
+A *contradiction*, in the substrate-vocabulary sense, is a **particular
+shape of gap**: binary-opposed, propositional, level-crossing (per Bateson
+1956). Two obligations the substrate is asked to hold simultaneously; they
+live at different logical levels per Bateson; one mode of resolution is to
+ascend a level and find the morphism that makes the lower-level opposition
+non-contradictory.
+
+The shape: `contradiction <= gap`. Every contradiction IS a gap (the
+distance is the unresolved opposition); not every gap is a contradiction
+(the one-sided / continuous / pre-positional cases above).
+
+### 11.1 The derived shape
+
+```mirror
+in @prism
+in @epistemologic
+in @epistemologic/property
+
+grammar @epistemologic/property {
+  # ... gap, gap_state, claim, verifier from §3.1 ...
+
+  # A contradiction is a binary-opposed gap. Two obligations at different
+  # logical levels per Bateson 1956. The level field is Bateson's logical-
+  # level marker — the altitude at which the two claims live. Resolution
+  # requires a morphism that lifts the contradiction to `level + 1` (the
+  # Bateson Learning II → Learning III mechanic, ported to compiler-time).
+  #
+  # contradiction is structurally `gap` with extra structure:
+  # - the gap.claim names the held position; both sides are tagged claims.
+  # - the gap.state is heuristic(p) or declared (rarely verified — a
+  #   verified contradiction is a closed fracture).
+  # - the level field disambiguates same-altitude opposition (a type
+  #   conflict) from cross-altitude opposition (a Bateson double bind).
+  type contradiction <= gap & {
+    left:   claim,
+    right:  claim,
+    level:  u32,                       # Bateson's logical level
+  }
+
+  # A fracture is the syntactically-marked subset: a gap whose surface form
+  # carries the `\` obligation marker (`body_is_obligation` in
+  # bootstrap/src/tokenize.rs returns true). Every `\` IS a Fracture AST
+  # node IS a gap instance with verifier = absent. Not every gap has a `\`.
+  #
+  # fracture <= gap (strict subset). When the fracture's left/right shape
+  # is a binary opposition, fracture <= contradiction <= gap (it's both).
+  type fracture <= gap & {
+    site:   span,                      # the `\` location
+  }
+}
+
+out contradiction
+out fracture
+```
+
+This preserves the existing `gap_state` algebra: a `fracture` carries
+`state = declared` (the body is `\`; no verifier present) until the
+kintsugi loop discharges it.
+
+### 11.2 `holds gap` and `resolves gap` as properties
+
+Following the shape in `boot/std/properties.mirror`:
+
+```mirror
+# `holds gap` — the substrate maintains the gap without prematurely
+# collapsing to a default. This is Bateson's "stay in the bind without
+# meta-communicating away" capacity; per Priest 1979, it is the
+# paraconsistent refusal of `ex falso` at this site.
+#
+# At the variety altitude, `holds gap` ≡ `variety_hold = 1.0` per
+# kintsugi-variety §6: the posterior support is preserved across the
+# crossing the gap represents.
+property holds(gap) <= verdict
+
+# `resolves gap` — a kintsugi morphism has been applied; the gap is
+# discharged at the appropriate altitude. The morphism IS the witness
+# the verdict returns inside `Pass`.
+property resolves(gap) <= verdict
+  where applied(kintsugi.collapse)
+```
+
+Both properties land on the existing `verdict` algebra:
+
+- `Pass` — `resolves` succeeded; gap closed.
+- `Partial(confidence, [diagnostic])` — `holds` succeeded but `resolves`
+  is in progress; the morphism is partially constructed.
+- `Fail(diagnostic)` — neither holds nor resolves; the gap collapsed into
+  incoherence (the substrate lost variety).
+
+Notably, `holds(contradiction)` is the *specialization* of `holds(gap)` to
+the binary-opposed shape. The substrate ships one property; the
+contradiction-specific reading is a refinement, not a new property.
+
+### 11.3 The unification headline
+
+`Imperfect.Partial(t, l)` from `boot/01a-error.mirror`:
+
+```mirror
+type imperfect(value, loss = loss, error = error) = {
+  value: value,
+  loss: loss,
+  errors: [error],
+}
+```
+
+IS `holds(gap { value: t, loss: l })` at the @meta altitude. The loss
+field IS the *unresolved variety between expected and produced* — the
+geometric distance the gap names. The substrate proceeded with `value`,
+but the obligation to close `loss` is still open. The held gap is the
+record.
+
+This is the headline identity from the retired `contradiction-and-fracture`
+spec, rewritten under gap vocabulary. It no longer reads as a
+contradiction-specific claim; it reads as the substrate's named way of
+holding any unresolved distance.
+
+### 11.4 `\` is the syntactic mark of a `fracture`-shaped gap
+
+Unchanged from the retired spec, restated under gap vocabulary.
+`bootstrap/src/tokenize.rs` lines 5–18:
+
+```rust
+fn body_is_obligation(bytes: &[u8]) -> bool {
+    // ...
+    end - start == 1 && bytes[start] == b'\\'
+}
+```
+
+The `\` is *explicitly distinguished* from `Dark` (unrecognized bytes).
+`Dark` is variety the substrate failed to absorb. `\` is variety the
+substrate is *deliberately holding open* — a `fracture <= gap` instance
+with `verifier = absent` and `state = declared`. The proposed
+`AstKind::Fracture` (sibling of `Dark`) names what the existing byte-level
+recognition already enacts; per the strict-and-total spec, `Dark`
+triggers `--strict` refusal while `\` does not.
+
+Note on the Bateson Game (Wilson et al. 2025): the "frame suppression"
+mechanic — silent absorption of an unspoken bind — is structurally
+identical to what `--strict` mode refuses. The substrate's discipline is
+the game-theoretic mirror of refusing frame-suppression: a held gap
+MUST surface; it MUST NOT be silently absorbed. **`gap` is named for the
+same reason `--strict` exists.**
+
+### 11.5 Cross-altitude unification (Belnap-Dunn at every altitude)
+
+The four-valued logic of held / resolved / failed / unobserved shows up
+at every altitude. The retired spec's table, restated:
+
+| Altitude | T (verified) | F (failed) | Both (held gap) | Neither (unobserved) |
+|---|---|---|---|---|
+| Source bytes | recognized token | `Dark` | `\` (fracture) | whitespace/comment |
+| AST | structural node | parse error | `Fracture` node | not yet parsed |
+| Verdict | `Pass` | `Fail(diag)` | `Partial(c, [diag])` | not yet observed |
+| Transparency | clear | opaque-failed | opaque-located | not yet measured |
+| Variety | `variety_hold = 1.0` | `variety_hold = 0.0` | `0 < variety_hold < 1` | not yet measured |
+| Imperfect | full value | error | `Partial(v, l)` | not yet attempted |
+| `gap_state` (§4) | `verified` | (`Fail` upstream) | `heuristic(p)` / `declared` | `absent` |
+
+One logic, seven imprints. Per Jakl 2025 (arXiv:2503.20679), this makes
+mirror's `gap` lattice a fifth published CS imprint of Belnap-Dunn FOUR
+(Jakl identifies four: linear logic models, Blame Calculus, LVars,
+four-valued type systems).
+
+### 11.6 The kintsugi loop's job, restated under gap
+
+From `gap-tension-tensor-substrate.md` §6 and the retired spec's §6:
+the kintsugi loop **resolves gaps by holding them in superposition long
+enough to find the morphism that closes them without false collapse.**
+Unpacked:
+
+1. **Hold.** Encounter a gap; record it as a first-class substrate value.
+   No premature collapse; `ex falso` refused (Priest 1979). The
+   substrate is paraconsistent.
+2. **Maintain variety.** `|R(@mirror)| ≥ |D|` even while the gap is open
+   (kintsugi-variety §2 via Ashby). The gap's variety is itself
+   information about the resolution space.
+3. **Build the tensor.** Per §3.2, opposed gaps surface as `tension`s; the
+   collection is the `tensor`. The sheaf Laplacian's restriction maps
+   $\mathcal{F}_{v \trianglelefteq e}$ ARE the cross-altitude lift —
+   Bateson's Learning II → Learning III, expressed as sheaf cohomology.
+4. **Search for a morphism at level+1.** `@fate.minimize` walks the
+   tensor's gradient; substrate-pull lifts the obligation from `@code/<lang>`
+   to `@mirror` and from `@mirror` to its grammar at +1.
+5. **Apply the morphism. Refract.** The resolved form is content-addressed;
+   the verdict updates to `Pass`; the gap closes. Watzlawick's second-order
+   change, compiler-side.
+
+### 11.7 Bateson's force-application IS `tension`. Confirmation.
+
+A double bind (Bateson 1956) is the structural condition where two
+messages at different logical levels mutually negate each other inside a
+relationship from which exit and meta-communication are blocked. The
+"binding" is *force across logical levels*. This is exactly the §3.2
+definition of `tension`: two gaps in opposition, with a `vector` field
+naming the direction the tension pulls when minimized.
+
+Confirmation: `tension` already carries the Bateson force-application
+definition. The level-crossing requirement (Bateson 1972's Learning II)
+is encoded in `contradiction.level` (§11.1) when the opposed gaps are
+themselves contradictions; in the general case, the level information
+lives implicitly in the AST positions the two gaps decorate.
+
+No additional substrate vocabulary needed. **`tension` IS Bateson's
+force-application across a gap.**
+
+### 11.8 The sheaf-Laplacian restriction maps ARE the cross-altitude lift
+
+From §3.2 (citing Bodnar et al. 2022): the sheaf Laplacian is
+$L_{\mathcal{F}}$ with diagonal blocks
+$L_{\mathcal{F}\,vv} = \sum_{v \trianglelefteq e} \mathcal{F}_{v \trianglelefteq e}^\top \mathcal{F}_{v \trianglelefteq e}$
+and off-diagonals $L_{\mathcal{F}\,vu} = - \mathcal{F}_{v \trianglelefteq e}^\top \mathcal{F}_{u \trianglelefteq e}$.
+The restriction maps $\mathcal{F}_{v \trianglelefteq e} : \mathcal{F}(v) \to \mathcal{F}(e)$
+transport a vertex's stalk to the edge's stalk.
+
+*Recognition (2026-06-04).* The restriction maps ARE the cross-altitude
+lift Bateson named. A level-N gap (vertex stalk $\mathcal{F}(v)$) is
+transported via $\mathcal{F}_{v \trianglelefteq e}$ to the edge stalk
+$\mathcal{F}(e)$ where it can be compared against the other endpoint's
+transported value. When the two transports agree, the cycle holonomy
+vanishes; when they disagree, the holonomy IS the residual contradiction
+at the higher altitude.
+
+This is exactly Bateson's Learning III: the level-N opposition can only
+be seen as a single object at level N+1. The sheaf Laplacian operationalizes
+this: the edge stalk IS level N+1; the restriction maps ARE the lift; the
+holonomy IS the residual gap *visible at level N+1 but invisible at level
+N*. Per §10.B ("holonomy = error delta = convergence delta"), the residual
+IS the convergence metric.
+
+**Confirmation: `tensor` carries the cross-altitude lifting cleanly.** The
+Bateson Learning II → III mechanic is the sheaf-cohomological lift, with
+restriction maps as the morphism and holonomy as the residual measurement.
+Nothing in the existing tensor algebra needs to change.
+
+### 11.9 What this fold reorganizes (and what stays put)
+
+- **`gap` is the substrate primitive.** Unchanged (§3.1).
+- **`tension` is opposition between two gaps.** Unchanged (§3.2); now
+  confirmed to absorb Bateson's force-application.
+- **`tensor` is the collection of tensions over the corpus.** Unchanged
+  (§3.2); now confirmed to carry the cross-altitude lift via the sheaf
+  Laplacian.
+- **`contradiction <= gap`** is the *derived form* for binary-opposed,
+  propositional, level-crossing gaps. NEW.
+- **`fracture <= gap`** is the *derived form* for syntactically-marked
+  gaps. The `\` token IS the projection of a fracture into surface
+  syntax. NEW.
+- **`holds gap` / `resolves gap`** are the properties. NEW. They
+  generalize the retired `holds contradiction` / `resolves contradiction`.
+- **`Imperfect.Partial(t, l) ≡ holds(gap { value: t, loss: l })`** is the
+  headline identity, rewritten under gap. NEW.
+- **`AstKind::Fracture`** promotion stays a proposed tick; the
+  recognition already lives in `body_is_obligation`. NEW (as roadmap).
+- The §10 convergence machinery (Tarski, Hajek, Bodnar, etc.) is
+  unchanged.
+- The §8 design calls (tension_vector structure, t-norm selection,
+  non-converging tensors) are unchanged.
+
+### 11.10 Honest accounting: what gap CANNOT carry that contradiction had
+
+One thing the retired spec named that gap absorbs only partially: the
+**explicit logical-level marker**. Contradiction's `level: u32` field
+tags Bateson's logical altitude; gap's `claim.node` carries an AST node
+which implicitly has an altitude in the AST tree, but not as a first-class
+scalar. For one-sided gaps and continuous-magnitude gaps this is moot —
+there is no level-crossing to name. For binary-opposed gaps it matters,
+and `contradiction` (§11.1) reintroduces it.
+
+This is not a loss; it's a structural acknowledgment that the level marker
+belongs to the *contradiction shape*, not to gap-as-such. A gap between
+claim and verifier doesn't have "two levels"; a contradiction does. The
+refactor surfaces this correctly.
+
+Nothing else from the retired spec is lost. Every claim that named
+"contradiction" maps to a claim about gap, optionally specialized via the
+`<= gap` chain.
+
+---
+
+## 12. The LFI deep dive — Carnielli-Marcos and the consistency operator
+
+*Altitude: **prior art for §11**. The contradiction spec flagged LFI as a
+close formal parallel but didn't dive. This section closes that gap. The
+sharpest finding: the **two-dimensional LCC hierarchy** (Carnielli, Coniglio,
+Rodrigues 2026, arXiv:2604.18766) prefigures mirror's altitude × confidence
+structure with the same shape — n (consistency iteration) and k (negation
+strength) are mirror's `level` and `confidence` axes.*
+
+### 12.1 The seminal source — mbC and the consistency operator `○`
+
+Carnielli & Marcos (2002) — *A Taxonomy of C-systems*, in *Paraconsistency:
+The Logical Way to the Inconsistent* (Marcel Dekker) — and the chapter
+*A Basic Logic of Formal Inconsistency: mbC* in Carnielli & Coniglio's
+*Paraconsistent Logic: Consistency, Contradiction and Negation* (Springer
+2016, doi:10.1007/978-3-319-33205-5) lay down the seminal axiomatic
+shape.
+
+**mbC = positive classical propositional logic + two axioms:**
+
+- **EM (excluded middle):** $A \lor \neg A$.
+- **GEXP (gentle explosion):** $\circ A \to (A \to (\neg A \to B))$.
+  "If $A$ is consistent, then explosion applies to it."
+
+The consistency operator $\circ A$ is *primitive in the object language*.
+It reads "$A$ is consistent" — a sentence-level marker that the substrate
+is willing to apply classical reasoning to $A$. When $\circ A$ holds,
+$A \land \neg A$ triggers explosion (everything follows). When $\circ A$
+fails, $A \land \neg A$ is held *without trivialization*.
+
+**This is exactly `holds(gap)` at the propositional altitude.** A gap
+over an opposed claim pair is "held" iff $\circ A$ fails — the substrate
+refuses to apply ex falso. The gap is "resolved" iff $\circ A$ holds and
+the substrate has discharged the contradiction by adopting a consistent
+witness.
+
+### 12.2 LFI vs general paraconsistent — the technical difference
+
+*Paraconsistent logic* (def, Priest, da Costa, Béziau): a logic is
+paraconsistent iff $A, \neg A \not\vdash B$ for some $A, B$. Just
+"refuse ex falso." No object-language vocabulary required.
+
+*LFI* (Carnielli & Marcos 2002): a paraconsistent logic that **internalizes
+consistency as a formula-level operator** $\circ$. The metatheoretic
+property (consistent / inconsistent) becomes an object-language predicate.
+The technical payoff: a single LFI can express both classical reasoning
+(under $\circ A$) and paraconsistent reasoning (under $\neg \circ A$) at
+the same time, sentence-by-sentence.
+
+**Why this matters for mirror.** The `holds(gap)` / `resolves(gap)`
+properties from §11.2 are mirror's $\circ$ at the object-language altitude.
+A general paraconsistent substrate would just refuse `ex falso` and stop.
+The LFI shape gives mirror a *first-class object-language vocabulary for
+when the substrate IS willing to apply classical reasoning* — and that's
+the substrate-pull design: held gaps are paraconsistent (no explosion);
+resolved gaps are classical (explosion applies; the witness is canonical).
+
+### 12.3 The Carnielli-Coniglio-Rodrigues body of work
+
+The extension chain past mbC:
+
+- **mbC** — base LFI; consistency primitive; gentle explosion only.
+- **mbCciw, mbCci** — propagate consistency in increasingly classical ways.
+- **RmbC** (Carnielli, Coniglio, Rodrigues 2020, arXiv:2003.09522, *Logic
+  Journal of the IGPL* 28(5):624–656) — adds *replacement* (substitution
+  of logically equivalent formulas). Algebraic and modal semantics; the
+  weakest LFI that admits replacement.
+- **LET-J, LET-F** (Carnielli, Rodrigues 2017, *Synthese*) — Logics of
+  Evidence and Truth; extend Nelson's N4 (resp. FDE) with a *classicality
+  operator* $\circ$. **The classicality operator is `holds(gap)`'s exact
+  twin** — it marks formulas for which evidence is conclusive enough to
+  warrant classical reasoning.
+- **LCC** (Carnielli, Coniglio, Rodrigues 2026, arXiv:2604.18766, *A
+  Taxonomy for Controlling (In)consistency*) — two-dimensional hierarchy
+  $L^k_n$: $n$ controls iteration of the consistency operator, $k$ controls
+  negation strength. **Prefigures mirror's altitude (n) × confidence (k)
+  structure.** Fixed-point theorem: $L^m_n = L^{n+1}_n$ for all
+  $m \geq n+1$.
+- **Carnielli et al. 2024, arXiv:2412.10588, *Analytic proofs for logics
+  of evidence and truth*** — sound, complete, decidable tableau system
+  for LETF; demonstrates `○` does NOT automatically propagate over
+  connectives. **Implication for mirror:** `holds(gap)` does not
+  automatically lift through composition; each tension's holding-status
+  is independent of its parts.
+
+### 12.4 LFI in proof assistants — the implementation question
+
+The search for `○A` in Coq / Agda / Lean / Rocq returned mostly null.
+Proof assistants are *consistent by construction* (no anti-classical
+axioms; types interpret as sets; ex falso is admissible) and the LFI
+literature has not been ported. The closest existing work:
+
+- **Fuenmayor (KWARC workshop 2021)** — paraconsistent and paracomplete
+  logics in Isabelle/HOL via shallow embedding. Not LFI specifically.
+- **Dore 2025** — Linear types inside dependent type theory (Cubical
+  Agda). Not LFI, but shows the embedding technique that would extend
+  to LFI: deep-embed the object language and reason about its judgements
+  in the host type theory.
+
+This is a *gap in the literature* (in mirror's sense — a `verifier =
+absent` claim that *could* be made). The substrate's combination of
+(typed AST + paraconsistent loop + LFI-shaped consistency markers) would
+be the first published implementation of LFI as a programming-language
+substrate that I have found.
+
+### 12.5 The mbC family as a base for mirror's gap calculus
+
+Which LFI is the right base? The candidates:
+
+- **mbC.** Minimal; consistency primitive; non-propagating $\circ$. Maps
+  most cleanly onto `holds(gap)` because gap-holding is *site-specific*
+  (the substrate holds *this* gap, not its compositional descendants).
+- **mbCciw / mbCci.** Add consistency propagation. Useful if mirror wants
+  to claim that holding a gap automatically holds all its sub-gaps.
+  Probably too strong; site-specific holding is the right shape.
+- **RmbC.** Adds replacement (substitution-under-equivalence). Useful for
+  the kintsugi morphism's canonical-at-fixpoint property (§6 of the
+  retired spec). The closest fit when the resolution-morphism altitude
+  is engaged.
+- **LET-F (FDE-based).** Adds the four-valued Belnap base (§11.5 table)
+  AND the classicality operator. **The strongest candidate for mirror's
+  gap calculus.** LET-F's Belnap base IS already mirror's verdict
+  algebra (Pass / Fail / Partial / unobserved); LET-F's $\circ$ IS
+  `holds(gap)`. Mirror's calculus IS, structurally, LET-F at the
+  substrate altitude.
+
+**Recommendation:** LET-F as the formal reference for the gap calculus's
+base; RmbC's replacement principle as the formal reference for the
+kintsugi morphism's canonical-form property; LCC's two-dimensional
+hierarchy as the formal reference for how mirror's altitude × confidence
+structure stratifies. The base reference is LET-F.
+
+### 12.6 The sharpest finding (would have changed the original spec)
+
+**LCC's fixed-point theorem $L^m_n = L^{n+1}_n$ for all $m \geq n+1$
+(Carnielli, Coniglio, Rodrigues 2026, arXiv:2604.18766).**
+
+The hierarchy of nested consistency operators ($\circ A$, $\circ \circ A$,
+$\circ \circ \circ A$, …) collapses past depth $n+1$ at any given
+negation-strength level $n$. In mirror terms: **iterating `holds(holds(gap))`
+beyond a bounded depth gives no additional substrate information.** The
+substrate's altitude × confidence lattice has a *fixed depth* per
+confidence tier, beyond which further meta-marking is redundant.
+
+This would have changed the retired spec's §3 declaration of
+`property holds(contradiction)` — it implies a *bounded* meta-hierarchy,
+not an unbounded one. The substrate-pull tick that lands `holds(gap)` and
+`resolves(gap)` (T-T-imperfect.5 in the retired roadmap) should pin the
+meta-depth explicitly: $\text{holds}(\text{holds}(g)) = \text{holds}(g)$
+at a single confidence tier; new structure only emerges when confidence
+lifts. **The mirror analog of LCC's $n+1$ fixed point is one of the
+substrate's load-bearing identities, not previously named.**
+
+### 12.7 LFI sources — compact catalog
+
+1. **Carnielli, W. & Marcos, J. (2002).** *A Taxonomy of C-systems.* In
+   *Paraconsistency: The Logical Way to the Inconsistent*, Marcel Dekker.
+   Introduces `○` as object-language consistency primitive; defines LFI;
+   establishes mbC.
+2. **Carnielli, W. & Coniglio, M. E. (2016).** *Paraconsistent Logic:
+   Consistency, Contradiction and Negation.* Springer (Logic, Epistemology,
+   and the Unity of Science series, vol. 40). doi:10.1007/978-3-319-33205-5.
+   The canonical textbook. Chapter 2: mbC. Chapter 3+: extensions. The
+   reference for the gap-calculus base.
+3. **Carnielli, W. & Rodrigues, A. (2017).** *An epistemic approach to
+   paraconsistency: a logic of evidence and truth.* *Synthese*. Defines
+   BLE (Basic Logic of Evidence) and extends to LETJ. The classicality
+   operator IS `holds(gap)` at the evidence-altitude.
+4. **Carnielli, W., Coniglio, M. E., & Rodrigues, A. (2020).** *Logics
+   of Formal Inconsistency Enriched with Replacement.* *Logic Journal
+   of the IGPL* 28(5):624–656; arXiv:2003.09522. Defines RmbC; algebraic
+   and modal semantics; the formal reference for canonical-form
+   replacement under the kintsugi morphism.
+5. **Carnielli, W., Coniglio, M. E., & Rodrigues, A. (2024).** *Analytic
+   proofs for logics of evidence and truth.* arXiv:2412.10588. Tableau
+   system for LETF; demonstrates that `○` does NOT automatically
+   propagate over connectives — site-specific holding is the right shape.
+6. **Carnielli, W., Coniglio, M. E., & Rodrigues, A. (2026).** *A Taxonomy
+   for Controlling (In)consistency.* arXiv:2604.18766. Introduces LCC
+   hierarchy $L^k_n$; fixed-point theorem; two-dimensional consistency ×
+   negation lattice. **The sharpest single finding for mirror; bounds
+   the meta-depth of `holds(holds(…))` iteration.**
+
+*Six sources beyond the prior twelve. Quality over quantity; each one is
+load-bearing for a specific substrate decision per §12.5–§12.6.*
+
+---
+
+## 13. References
 
 The load-bearing primary sources cited above, by arXiv ID and DOI where
 available. Identified in `docs/insights/2026-05-26-mirror-tensors-vs-industry-tensors-research.md`
@@ -1430,7 +1928,7 @@ for the complete catalog.*
 
 ---
 
-## 12. Provenance
+## 14. Provenance
 
 - Alex 2026-05-26 (conversation with Reed): *“I think `gap` lives in
   @epistemologic/property and is used by @fate to build tensors.”*
@@ -1464,6 +1962,23 @@ for the complete catalog.*
   (§10.F.1–3). "The graph is the model" noted as anticipated by earlier
   research agents; this tick gives it a citation chain through Bodnar
   2022 + Barbero 2022 + LTN + Topping.
+- **Contradiction fold tick (Reed, 2026-06-04):** absorbed the retired
+  `contradiction-and-fracture.md` (commit `f12f58e`, branch
+  `reed/contradiction-and-fracture-spec`) into this spec as §11.
+  `contradiction` becomes `<= gap` with extra structure (left, right,
+  level); `fracture` becomes `<= gap` with `site: span`; `holds gap` /
+  `resolves gap` are the properties (generalizing the retired
+  `holds contradiction` / `resolves contradiction`).
+  `Imperfect.Partial(t, l) ≡ holds(gap { value: t, loss: l })` is the
+  headline identity. The Bateson force-application IS `tension` (§11.7);
+  the cross-altitude lift IS the sheaf-Laplacian restriction-map
+  (§11.8). Added §12 deep dive on Carnielli-Marcos LFI: mbC and the
+  consistency operator `○A`, the Carnielli-Coniglio-Rodrigues body of
+  work (RmbC 2020, LET-F 2017/2024, LCC 2026), the recommendation of
+  LET-F as the formal reference for mirror's gap calculus base, and the
+  sharpest single finding — LCC's fixed-point theorem bounds the
+  meta-depth of `holds(holds(…))` iteration. Branch renamed to
+  `reed/gap-substrate-fold`.
 - Tournament-Lyapunov reframe (Mara, 2026-05-26 evening): Alex's
   structural correction — the unit of monotone decrease is the
   **tournament round** (one execution of `@fate.minimize` with bounded
