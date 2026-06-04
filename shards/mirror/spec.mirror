@@ -1,0 +1,137 @@
+in @prism
+in @meta
+in @nl
+in @glass
+in @mirror/cli
+
+# @mirror/spec — the project manifold grammar.
+#
+# `mirror.spec` IS the multi-dimensional manifold kintsugi operates on
+# (per docs/specs/mirror-spec-schema.md §1). Not a config file. Not a
+# manifest. A typed prism declaration that names the project's sources,
+# targets, altitudes, and settlement criteria. The substrate already
+# has the vocabulary for shards, altitudes, and au; @mirror/spec lifts
+# those into one top-level `project NAME { ... }` declaration per
+# project.
+#
+# Consumer: @mirror/mosaic.focus reads a `mirror.spec` under this
+# grammar to produce the build manifold (mosaic.mirror line 76:
+# `focus(spec: ref) -> manifold { \ }`). This shard is what makes
+# that focus parse.
+#
+# Spec context: docs/specs/mirror-spec-schema.md §§3-7
+# (source/legacy/target/cli/settle_on).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]].
+# Related shards: cli.mirror (the `target { cli { ... } }` consumer),
+#                 mosaic.mirror (the focus consumer),
+#                 glass.mirror (transparency / au / property carriers).
+# Path-namespace property: this file at `shards/mirror/spec.mirror`
+# declares `@mirror/spec` and only that.
+
+prism @mirror/spec {
+  focus spec
+  project spec
+  split spec
+  shift spec
+  settle spec
+}
+
+# === the top-level keyword: `project NAME { ... }` ===
+#
+# One per project. Declares a prism over a `mirror.spec` file; the
+# file's body is the four directives (source / legacy / target /
+# settle_on). The compiler reads `mirror.spec` by evaluating it
+# under @mirror/spec; no stand-alone parser. The file name matches
+# the keyword (spec §2).
+project(name) -> prism { \ }
+
+# === the four directives inside a `project` block ===
+#
+# Per spec §§3-7. Each is a typed lambda (substrate's action form,
+# per [[architecture-prism-as-trait-as-everything]]); the obligation
+# block (\) is discharged by mosaic.focus when it walks the manifold.
+
+# source ~d'...'
+#
+# One per project under `strict` (spec §3). Declares the canonical
+# directory of substrate truth — the .mirror shards mosaic compiles.
+# The compiler verifies the directory exists at compile time.
+# Multiple `source` directives are a compile error under strict.
+source(path: dir_ref) -> source_decl { \ }
+
+# legacy ~d'...', ~d'...' { shrinkage_contract: ..., retirement_target: ... }
+#
+# Substrate floors with shrinkage contracts (spec §4). Lines under
+# legacy MUST monotonically decrease as substrate-pull moves content
+# into source/. `paths` is the list of legacy directories; each is a
+# separate floor. `shrinkage_contract` is a @property predicate that
+# must hold across builds. Mosaic tolerates these floors' existence
+# but forbids growth; new shards cannot reference them.
+legacy(paths: [dir_ref], shrinkage_contract: property) -> legacy_decl { \ }
+
+# target NAME { ... }
+#
+# What gets built. Each target settles to au at one altitude
+# (spec §5). Multiple targets are typical; mosaic walks the list,
+# shifts each to its altitude, settles each independently, composes
+# the transparency over all of them into the project's transparency.
+# The body declares: name, altitude, emit, optional cli, optional
+# needs. See sub-keywords below.
+target(name) -> prism { \ }
+
+# settle_on { <predicate>+ }
+#
+# Declares when mosaic considers the project settled (spec §7). Each
+# predicate is an @property reference. Mosaic checks them after
+# settlement; if all hold AND `total_transparency.weight == 0`, the
+# build is settled (eⁿ⁺¹ < eⁿ at the spec altitude). Failed
+# predicates become opacities for the next kintsugi iteration.
+settle_on(predicates: [property]) -> settle_decl { \ }
+
+# === sub-keywords inside a `target` block ===
+#
+# A target's interior consists of four field declarations. Per spec §5
+# these are: name (str), altitude (ref(@meta/altitude)), emit
+# (ref(@io) or grammar reference), and the optional cli (block)
+# plus needs (option([ref])). Declared as typed lambdas so the
+# obligation block (\) is discharged by mosaic when it resolves
+# the target manifold.
+
+# name "<artifact-name>" — the artifact name at the altitude.
+name(value: str) -> name_decl { \ }
+
+# altitude @<altitude-ref> — where the target settles.
+altitude(value: ref) -> altitude_decl { \ }
+
+# emit <ref|grammar> — which @io tool or grammar projection emits
+# the artifact. Per spec §10.5: `emit cargo` resolves to a @io tool
+# invocation through the altitude grammar; `emit yaml` resolves to
+# a @code/yaml grammar projection. Disambiguation is by type at
+# the call site (open question — see spec §10.5).
+emit(target: ref) -> emit_decl { \ }
+
+# cli { ... } — the CLI surface, only meaningful when emit is a
+# binary. The block uses @mirror/cli (imported above); inside-target
+# embedding per spec §6 and cli.mirror's tightening: commands cannot
+# escape the binary they belong to.
+cli(body: cli) -> cli_decl { \ }
+
+# needs [<target-ref>+] — DAG ordering between targets (spec §5).
+# Optional. Mosaic resolves the DAG; settlement proceeds in
+# topological order. When omitted, the target has no prerequisite
+# settlements.
+needs(targets: [ref]) -> needs_decl { \ }
+
+out @mirror/spec
+out project
+out source
+out legacy
+out target
+out settle_on
+out name
+out altitude
+out emit
+out cli
+out needs
