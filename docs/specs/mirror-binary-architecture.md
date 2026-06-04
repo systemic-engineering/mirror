@@ -19,8 +19,8 @@ on content-addressed trees.
 ```
 focus   = array indexing          O(1)
 split   = enumeration             O(n)
-zoom    = linear transformation   matmul (BLAS dgemv)
-refract = eigendecomposition      LAPACK dsyev/dstev
+shift   = linear transformation   matmul (BLAS dgemv)
+settle  = eigendecomposition      LAPACK dsyev/dstev
 project = matrix projection       matmul (BLAS dgemv)
 ```
 

@@ -30,12 +30,12 @@ The Prism mapping:
 |---|---|---|
 | collect | focus | look at the `in` graph |
 | resolve | split | enumerate the DAG bottom-up |
-| evaluate | refract | settle each grammar to a crystal |
-| emit | zoom | cross levels: AST → LLVM IR |
+| evaluate | settle | settle each grammar to a crystal |
+| emit | shift | cross levels: AST → LLVM IR |
 | concat | project | filter and combine IR |
-| assemble | zoom | cross levels: IR → object code |
-| link | refract | settle the artifact |
-| store | refract | persist the gold |
+| assemble | shift | cross levels: IR → object code |
+| link | settle | settle the artifact |
+| store | settle | persist the gold |
 
 Five operations cover the eight stages. No new verbs.
 
@@ -50,7 +50,7 @@ crystal lives depends on the store backend.
 |---|---|---|
 | **git** (default) | `refs/crystals/<oid>` | `git hash-object -w` + `git update-ref` |
 | **nix** | `/nix/store/<oid>-mirror` | `nix store add` |
-| **spectral-db** | the graph IS the store | `refract(crystal)` |
+| **spectral-db** | the graph IS the store | `settle(crystal)` |
 
 The binary IS a git blob (default) or a nix store path. The OID IS the version.
 There is no separate "release tag" — the OID is the release.

@@ -801,7 +801,7 @@ h_i18n(locale) = |new_strings|
 ```mirror
 property i18n_complete(po, locale) <= verdict {
   traversal entries
-  refract |entry| {
+  settle |entry| {
     entry.translations
       |> filter(|t| t.locale == locale)
       |> first

@@ -463,7 +463,7 @@ pub trait NumericalBackend {
 
 // Operations on NumericalPrism return owned results
 impl<B: Eigenvalues> NumericalPrism<B, ops::Eigenvalues> {
-    pub fn refract(&self, matrix: &SquareMatrix) -> Result<Vec<f64>, B::Error> {
+    pub fn settle(&self, matrix: &SquareMatrix) -> Result<Vec<f64>, B::Error> {
         // internally: allocate Buffer<'_> → dispatch → wait → copy out → drop
         // externally: owned Vec<f64>; no lifetime exposed
     }

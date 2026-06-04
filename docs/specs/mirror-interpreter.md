@@ -33,8 +33,8 @@ The five operations on MirrorAST. Already the trait. Already the types.
 focus(ast)   → look closer. Descend into a node.
 project(ast) → extract. Select children matching a predicate.
 split(ast)   → enumerate. List all children.
-zoom(ast)    → transform. Apply a lambda to a subtree.
-refract(ast) → settle. Compute loss, check properties.
+shift(ast)   → transform. Apply a lambda to a subtree.
+settle(ast)  → settle. Compute loss, check properties.
 ```
 
 The executor walks the AST. Each node IS an operation.
@@ -147,7 +147,7 @@ read grammar from boot/std/mirror/<command>.mirror
 tokenize into AST
 walk AST:
   for each node:
-    if operation: execute (focus/split/zoom/refract/project)
+    if operation: execute (focus/split/shift/settle/project)
     if lambda with body: evaluate body
     if lambda with \: call @fate.resolve(hole, context)
     if @io reference: call io_exec(command, args, stdin)

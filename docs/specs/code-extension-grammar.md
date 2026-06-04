@@ -26,7 +26,7 @@ grammar @code/rust("rs") {
   focus impl
   focus mod
   project use
-  refract trait
+  settle trait
 }
 
 grammar @code/llvm/ir("ll") {
@@ -35,9 +35,9 @@ grammar @code/llvm/ir("ll") {
   focus module
   project declare
   project global
-  zoom call
+  shift call
   split br
-  refract ret
+  settle ret
 }
 
 grammar @code/python("py") {

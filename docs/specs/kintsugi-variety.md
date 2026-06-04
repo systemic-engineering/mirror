@@ -72,7 +72,7 @@ Items = operations in the computation graph. Weight = @io crossing cost. Value =
 This framing connects to the I/O-optimal computation problem studied by Saha & Ye (ICML 2024). They prove a tight I/O lower bound for transformer attention specifically (`IO(Attention) = Θ(N²d/√M)`) and — more importantly for our purposes — establish a *reduction technique* from communication complexity to I/O complexity that is applicable to any computation graph. With LAPACKPrism named as the canonical Prism impl (see [[../../../prism/docs/specs/pq]] §6.5.3), **the Saha–Ye bound applies to LAPACKPrism's memory traffic literally, not metaphorically**: the shard matrix lives partly in HamiltonScheduler-governed fast memory and partly in `.frgmnt/` disk spillover; the pebble model is the cost model for pq chains. The implications for mirror sharpen:
 
 - The Knapsack lower bound on @io crossings is **known to be tight for attention** and **applied to pq chains via the Saha–Ye reduction technique against LAPACKPrism's row/column-select / projection / rank-1-update operations** (per the operation table in [[../../../prism/docs/specs/pq]] §6.5.2). Whether mirror's compiled op graphs hit the bound is now a substrate-altitude measurement, not a philosophical open question.
-- The red-blue pebble game machinery (Sobczyk 2024, partial-computation extension) gives the formal cost model for the pq operation table: `focus` loads a row/column (red→blue if cold), `project` keeps red pebbles (in-cache LAPACK ops), `refract` commits red→blue (the rank-1 update materialises to durable storage). Partial computations are exactly the `Beam.imperfect = Partial` verdicts.
+- The red-blue pebble game machinery (Sobczyk 2024, partial-computation extension) gives the formal cost model for the pq operation table: `focus` loads a row/column (red→blue if cold), `project` keeps red pebbles (in-cache LAPACK ops), `settle` commits red→blue (the rank-1 update materialises to durable storage). Partial computations are exactly the `Beam.imperfect = Partial` verdicts.
 - The SP-DAG memory-peak minimization (Herrmann et al. 2025) gives a polynomial-time algorithm when the op graph is series-parallel. Pq chains under the [[../../../prism/docs/specs/pq]] §9 sub-Turing closure are SP by construction (no fixed point at the wire altitude); the polynomial result applies.
 
 See [[../../../systemic.engineering/practice/insights/math/numerics/io-complexity-computation-graphs]].
@@ -207,7 +207,7 @@ In-corpus dependencies:
 
 - [[../../../systemic.engineering/practice/insights/coincidence/void-dual-geometry]] — the eight dualities, the void axis where variety bottoms out.
 - Memory: `architecture-kintsugi-variety-io` — the synthesis note for this spec.
-- Memory: `architecture-kintsugi-bias-lift` — the prior framing this supersedes (lift @code → @mirror is now a *consequence*, not a primitive bias).
+- Memory: `architecture-kintsugi-bias-shift` — the prior framing this supersedes (shift @code → @mirror is now a *consequence*, not a primitive bias).
 
 ---
 

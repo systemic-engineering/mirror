@@ -464,7 +464,7 @@ Ordered by leverage. Lead with the spec the next phase writes.
   the carrier-specific body to implementers.
 - Higher fixed-point structures (homotopy fixed points; ∞-categorical
   generalisations per Yanofsky's framework in HoTT). Mirror runs on
-  ordinary categories for v0; the lift is its own future tick.
+  ordinary categories for v0; the shift is its own future tick.
 - The connection to Gödel's incompleteness theorem. The lawvere
   grammar can be used to derive it (per Yanofsky 2003 §6); whether
   mirror's compiler should *carry* the derivation is a separate

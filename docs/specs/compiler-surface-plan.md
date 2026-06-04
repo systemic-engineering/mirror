@@ -29,7 +29,7 @@ One command. One type (`Imperfect`). One holonomy number.
 
 **Goal:** Add `!=`, `>=`, `<`, `>` to `OpticOp`. Wire into parser. Tests.
 
-Currently `OpticOp` has six variants: `Iso`, `Fold`, `Split`, `Focus`, `Zoom`, `Refract`. The operator table needs four more tokens recognized by `from_token`, but only two new enum variants — `NotIso` and `Unfold`. `<` and `>` are `Subset` and `Superset`.
+Currently `OpticOp` has six variants: `Iso`, `Fold`, `Split`, `Focus`, `Shift`, `Settle`. The operator table needs four more tokens recognized by `from_token`, but only two new enum variants — `NotIso` and `Unfold`. `<` and `>` are `Subset` and `Superset`.
 
 ### 1.1 Red: `OpticOp::NotIso` variant and `!=` token
 

@@ -193,20 +193,20 @@ witness will carry `DarkFallback` somewhere — distinct OID.
 - **Note:** Until's stop combinator is walked structurally for OID
   preservation; the byte consumption check uses a peek at runtime.
 
-### `Lift { grammar, body }`
+### `Shift { grammar, body }`
 
 - **In:** grammar reference (string), body combinator, offset.
 - **Out (success):** walk `body` at `offset` to extract the body's
   span. Resolve `grammar` via a registry (Checkpoint C scope —
-  currently the registry is empty and Lift falls back to walking
+  currently the registry is empty and Shift falls back to walking
   `body` structurally). When the registry is populated, the
   target grammar's Combinator tree walks over the extracted body
-  bytes. `witness = Lift { grammar, body: walked body }`,
+  bytes. `witness = Shift { grammar, body: walked body }`,
   `offset' = body's offset`, `success = body's success`.
 - **Out (failure):** body fails OR (when registry populated) target
   grammar fails on body bytes. `witness = DarkFallback`,
   `offset' = offset`, `success = false`.
-- **Checkpoint A/B scope:** Lift walks structurally with no grammar
+- **Checkpoint A/B scope:** Shift walks structurally with no grammar
   resolution. Checkpoint C wires the registry and the recursive
   apply.
 
@@ -244,7 +244,7 @@ witness will carry `DarkFallback` somewhere — distinct OID.
 ## Iterative Drop (Checkpoint D)
 
 `Combinator` chains can nest arbitrarily through `Box<Combinator>`-
-carrying variants: `Repeat`, `Capture`, `Until`, `Lift`, `BraceBlock`,
+carrying variants: `Repeat`, `Capture`, `Until`, `Shift`, `BraceBlock`,
 `ParenBlock`. A pathological 10,000-deep chain on the recursive
 `Drop` implementation would overflow the thread stack.
 

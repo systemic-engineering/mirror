@@ -26,8 +26,8 @@ canonical AstKind variants map exactly onto the Bundle's structure:
 | `Focus` | Fiber-level operation |
 | `Project` | Connection-level operation |
 | `Split` | Gauge-level operation |
-| `Zoom` | Transport-level operation |
-| `Refract` | Closure-level operation |
+| `Shift` | Transport-level operation |
+| `Settle` | Closure-level operation |
 | `In` | Bundle's typed input terminal (Fiber's `State` type) |
 | `Out` | Bundle's typed output terminal (Closure's `Fixed` type) |
 
@@ -57,8 +57,8 @@ The structural identity, in source form:
   focus ...                    Fiber-level operation
   project ...                  Connection-level operation
   split ...                    Gauge-level operation
-  zoom ...                     Transport-level operation
-  refract ...                  Closure-level operation
+  shift ...                    Transport-level operation
+  settle ...                   Closure-level operation
   out @x                       Output terminal
                                (Closure::Fixed carrying Beam<Out = @x>)
 ```
@@ -90,8 +90,8 @@ where
     Ff: FnMut(&AstNode, Vec<Out>) -> Out,   // Focus-level reducer
     Fp: FnMut(&AstNode, Vec<Out>) -> Out,   // Project-level reducer
     Fs: FnMut(&AstNode, Vec<Out>) -> Out,   // Split-level reducer
-    Fz: FnMut(&AstNode, Vec<Out>) -> Out,   // Zoom-level reducer
-    Fr: FnMut(&AstNode, Vec<Out>) -> Out,   // Refract-level reducer
+    Fz: FnMut(&AstNode, Vec<Out>) -> Out,   // Shift-level reducer
+    Fr: FnMut(&AstNode, Vec<Out>) -> Out,   // Settle-level reducer
 {
     pub on_focus:   Ff,
     pub on_project: Fp,
@@ -119,7 +119,7 @@ Focus renders as `keyword name { ...children... }` while an In renders as
 `in @name`. Render is naturally a level-specific Fold5 with distinct F's.
 
 **The Prism trait is a collapsed view of Fold5.** prism-core's `Prism`
-exposes three methods (focus, project, refract) over a four-Beam type
+exposes three methods (focus, project, settle) over a four-Beam type
 chain. Fold5 exposes all five bundle levels with explicit per-level
 reducers and the two terminals as type parameters. Same machinery, finer
 resolution. The cleanest reading of mirror's AST is via Fold5; Prism is the

@@ -226,13 +226,13 @@ pub trait Connection: Fiber {
 expressive enough to carry any algebra element. But the Tambara
 module composition law is *not* enforced at this trait level — it
 lives in the separate `Prism` / `Operation` machinery in `lib.rs`
-(the `Focus`, `Project`, `Refract` operation structs and their
+(the `Focus`, `Project`, `Settle` operation structs and their
 `Operation` impls).
 
 The adjustment: either declare `@epistemologic/math/category`
 (future spec) and route `Connection::Optic` through its Tambara
 module trait, or accept that the algebra law is fulfilled at a
-higher level (`Prism::focus | project | refract`) and document the
+higher level (`Prism::focus | project | settle`) and document the
 split. Both are reasonable; neither is a `GAP`.
 
 ### Claim 2 — `Gauge::gauge() -> Group` realizes the structure-group action on H
@@ -388,7 +388,7 @@ Connes' (A, H, D) requires `A` to be an *involutive* algebra — there
 is an antilinear involution `*: A → A` with `(ab)* = b*a*`. The
 trait chain in `bundle.rs` does not name this involution. For
 optics this corresponds to optic reversal (the dual of a lens, the
-inverse of a refract); for mirror's case the structural inverse is
+inverse of a settle); for mirror's case the structural inverse is
 implicit in the round-trip-render property (`render(parse(s)) == s`).
 
 The grammar's `algebra` carrier should eventually carry an `involute`

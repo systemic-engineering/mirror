@@ -208,7 +208,7 @@ The implementation is the tournament. The tournament IS the implementation.
 
 ## Connection to the Wire
 
-The wire: `refract on abstract nodes resolves through refs/fate/<oid>`.
+The wire: `settle on abstract nodes resolves through refs/fate/<oid>`.
 
 In `--shatter`, the wire runs at every level of recursion:
 

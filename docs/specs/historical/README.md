@@ -9,7 +9,7 @@ the current shape — not because they describe the current shape.
 When reading these:
 
 - The Rust crate they reference is gone. The bootstrap is now `bootstrap/`.
-- `@mirror/check`, `@mirror/build`, `@mirror/refract`, `@shatter` (as a verb),
+- `@mirror/check`, `@mirror/build`, `@mirror/settle` (was: `@mirror/refract`), `@shatter` (as a verb),
   `@benchmark`, and `@run` were dissolved into `@craft`, `@kintsugi`, and
   `@beam`. See `../surface-simplification.md`.
 - Concepts like "compiled CLI," the `.shatter` frontmatter format, and the

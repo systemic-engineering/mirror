@@ -160,7 +160,7 @@ Automatic. No SMT. No annotation. Just measurement.
 ```mirror
 in @prism
 in @epistemologic
-in @mirror/refract
+in @mirror/settle
 
 grammar @mirror/project {
   # project properties back into source
@@ -195,7 +195,7 @@ in @kintsugi
 
 grammar @kintsugi {
   collapse(ast, ast) -> imperfect {
-    focus(a, b) |\> split |\> \ |\> refract
+    focus(a, b) |\> split |\> \ |\> settle
   }
 }
 
@@ -215,7 +215,7 @@ in @kintsugi
 
 grammar @kintsugi {
   collapse(ast, ast) -> imperfect {
-    focus(a, b) |> split |> zoom(merge) |> refract
+    focus(a, b) |> split |> shift(merge) |> settle
   }
 }
 

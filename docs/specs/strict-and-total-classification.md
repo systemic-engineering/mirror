@@ -65,7 +65,7 @@ classifies every byte or refuses.
 ## What runs today
 
 The bootstrap's `tokenize` reads a source file and produces an AST
-tree of `Focus | Project | Split | Zoom | Refract | In | Out` nodes.
+tree of `Focus | Project | Split | Shift | Settle | In | Out` nodes.
 When the tokenizer hits content it can't classify inside an action
 body, it stores the body bytes opaquely. `content_oid` hashes the body
 string verbatim — if the parser collapsed the body to whitespace-only
@@ -159,8 +159,8 @@ pub enum AstKind {
     Focus,
     Project,
     Split,
-    Zoom,
-    Refract,
+    Shift,
+    Settle,
     In,
     Out,
     Dark,    // NEW: span of unrecognized bytes

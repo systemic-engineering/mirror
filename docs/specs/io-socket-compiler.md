@@ -65,7 +65,7 @@ grammar @io/tokenize {
     // for each token in stream:
     //   match against grammar.keywords()
     //   emit the corresponding MirrorAST variant
-    //   Focus | Split | Zoom | Refract | Project | Module | Abstract
+    //   Focus | Split | Shift | Settle | Project | Module | Abstract
     // bounded: one pass, no recursion, memory proportional to input
   }
 }
@@ -95,7 +95,7 @@ type target = boot | cargo | binary
 
 # compile = tokenize through grammar lens, in spec order
 craft(target) -> crystal {
-  focus(target) |> split |> zoom |> refract |> project
+  focus(target) |> split |> shift |> settle |> project
 }
 
 # the two sides. kintsugi collapses them.
@@ -280,12 +280,12 @@ Everything downstream recompiles. Everything else: cached crystal.
 craft(target) -> crystal {
   focus(target)     # resolve imports → load .shatter cache
     |> split        # partition into independent compilation units
-    |> zoom         # tokenize only what changed
-    |> refract      # settle eigenvalues (Fortran)
+    |> shift        # tokenize only what changed
+    |> settle       # settle eigenvalues (Fortran)
     |> project      # emit crystal
 }
 ```
 
 Five operations ARE the execution strategy.
-Focus loads cache. Split parallelizes. Zoom does the work.
-Refract settles. Project emits. All grammar.
+Focus loads cache. Split parallelizes. Shift does the work.
+Settle commits. Project emits. All grammar.

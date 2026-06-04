@@ -21,12 +21,12 @@ Four operations. Read. Parse. Execute. Write. The rest is grammar.
 ## Subcommands ARE Queries
 
 ```bash
-mirror boot/ "focus |> split |> zoom |> refract |> project"  # craft
+mirror boot/ "focus |> split |> shift |> settle |> project"  # craft
 mirror file.mirror "kintsugi"                                  # kintsugi
 mirror file.mirror "run"                                       # run
 mirror boot/ "kintsugi --shatter 0"                           # shatter
 mirror /tmp/mirror.ll "@code/llvm/ir |> kintsugi"             # LLVM optimizer
-mirror . "refract |> liquid"                                   # spectral.engineer
+mirror . "settle |> liquid"                                    # spectral.engineer
 mirror stdin "@data/json.parse |> dispatch |> @data/json.emit" # MCP/LSP
 ```
 
@@ -66,7 +66,7 @@ Same stdin/stdout. Different dispatch. One grammar apart.
 ```
 λ> boot/ |> kintsugi --shatter 0
 λ> /tmp/mirror.ll |> @code/llvm/ir |> kintsugi |> @code/kernel/arm64
-λ> . |> refract |> liquid
+λ> . |> settle |> liquid
 λ> stdin |> @mcp.dispatch
 ```
 

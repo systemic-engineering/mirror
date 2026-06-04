@@ -128,7 +128,7 @@ not circular -- it resolves through the content-addressing fixed point.
 
 > A naked singularity is timelike. It doesn't force a direction. You can
 > approach and retreat without crossing a horizon. For NakedSingularity,
-> collapse() and refract() are both available at any time.
+> collapse() and settle() are both available at any time.
 
 The dual OID structure maps to the autopoietic boundary:
 

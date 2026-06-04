@@ -38,12 +38,12 @@ the result, not a blocker.
 And partially resolved:
 ```
 collapse(ast, ast) -> imperfect {
-  focus(a) |\> split |\> \ |\> refract
+  focus(a) |\> split |\> \ |\> settle
 }
 ```
 
 This executes focus, executes split, hits `\`, wraps the
-result in imperfect, then executes refract on the imperfect.
+result in imperfect, then executes settle on the imperfect.
 The pipeline runs. The hole is carried. The loss measures
 how much of the pipeline was uncertain.
 
@@ -130,7 +130,7 @@ mirror kintsugi boot/std/kintsugi.mirror
 
 @kintsugi {
   collapse(ast, ast) -> imperfect {
-    focus(a, b) |\> split |\> \ |\> refract
+    focus(a, b) |\> split |\> \ |\> settle
     (partially resolved, loss: 0.25)
   }
 }

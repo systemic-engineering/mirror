@@ -484,7 +484,7 @@ The code shows:
    canonical.** Per `boot/std/hash/coincidence.mirror`:
    > ```
    > # CoincidenceHash<5,5>. The hash IS the Void geometry:
-   > #   5 dimensions — one per operation (focus, project, split, zoom, refract)
+   > #   5 dimensions — one per operation (focus, project, split, shift, settle)
    > #   5 projections — one per duality lens (entropy, spectral, cheeger, ricci, mixing)
    > #   λ₀ = 0       — the dark fallback. Void. The generative zero.
    > ```

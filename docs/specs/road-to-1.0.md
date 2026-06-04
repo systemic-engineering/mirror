@@ -292,7 +292,7 @@ crystals are equal.
 | `@code/llvm`, `@code/llvm/ir`, `@code/llvm/emit` | `boot/std/code/llvm/*.mirror` | LLVM IR emission. |
 | `@code/kernel`, `@code/kernel/arm64`, `@code/kernel/x86_64` | `boot/std/code/kernel*.mirror` | Syscalls per arch. |
 | `@code/rust`, `@code/gleam` | `boot/std/code/rust.mirror`, `boot/04b-code-gleam.mirror` | Other emit targets. |
-| `@kintsugi`, `@kintsugi/shatter`, `@kintsugi/translate`, `@kintsugi/migrate`, `@kintsugi/lift` | `boot/std/kintsugi*.mirror` | Settling. |
+| `@kintsugi`, `@kintsugi/shatter`, `@kintsugi/translate`, `@kintsugi/migrate`, `@kintsugi/shift` | `boot/std/kintsugi*.mirror` | Settling. |
 | `@craft` | `boot/std/craft.mirror` | The convergence loop. |
 | `@cogito` | `boot/std/cogito.mirror` | Reflection. |
 | `@fate`, `@fate/connectome`, `@fate/tournament` | `boot/std/fate*.mirror` | Tournament selection. |

@@ -62,7 +62,7 @@ components of a spectral triple as follows:
 
 | Spectral-triple component | `prism/core` realization | Today's mirror semantics |
 |---|---|---|
-| **A (algebra)** | the trait chain's composition law: `Fiber → Connection → Gauge` collapses into the optic algebra under Tambara composition (per `@epistemologic/math/category`) | the five operations `focus / project / split / zoom / refract` and their composition rules |
+| **A (algebra)** | the trait chain's composition law: `Fiber → Connection → Gauge` collapses into the optic algebra under Tambara composition (per `@epistemologic/math/category`) | the five operations `focus / project / split / shift / settle` and their composition rules |
 | **H (Hilbert space)** | the `State` associated type of `Fiber`; fibers are 5-dim vector spaces; the gauge group `O(5)` acts on them (per `eigenboard-representation.md` Q6) | au values are state vectors in H; beam.topology IS the 5-dim eigenvalue summary of a state; eigenboard sections are tensor products |
 | **D (Dirac operator)** | the connection-induced operator: `Transport::transport` realizes its action on a state, returning `Imperfect<State, _, Holonomy>` because the operator is partially defined (parallel transport may carry the state off the manifold; the holonomy IS the deviation) | conductivity as `⟨au│D│au⟩`; Magnot 2025's contextuality index κ IS the cycle-averaged spectrum of `D`; the kintsugi loop's `e^(n+1) < e^(n)` IS monotonic decrease of `D`'s Rayleigh quotient |
 

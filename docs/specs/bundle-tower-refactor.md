@@ -3,7 +3,7 @@
 # Bundle Tower Refactor: mirror → prism-core
 
 The principal bundle tower from differential geometry IS the type hierarchy in
-mirror. Each layer wraps a Prism. Each layer adds one concept. `refract` peels
+mirror. Each layer wraps a Prism. Each layer adds one concept. `settle` peels
 one layer.
 
 ```

@@ -117,7 +117,7 @@ Two renames thread through the cascade:
 - **`ActionPath` → `Ref`.** Matches mirror's nav-ref vocabulary (the `.`, `..`,
   `...`, `~`, `@`, `^`, `HEAD` set, per CLAUDE.md's "Navigation References"
   table). `action` is dead since we have prism / glass / 5-operations
-  (focus / project / split / zoom / refract), not "actions". The substrate's
+  (focus / project / split / shift / settle), not "actions". The substrate's
   surface `action enumerate { ... }` keyword is *not* part of this rename —
   that's substrate vocabulary, not Rust vocabulary.
 
@@ -228,7 +228,7 @@ Not baked into the cascade. Named here so a future reader has the direction.
 
 - **Why rename:** `ScalarLoss` is negative-frame ("the amount of loss"); the
   rest of mirror's optical vocabulary is positive-frame (light, focus, project,
-  refract). `Transparency` is the dual of Dark spans, optical-family-native, and
+  settle). `Transparency` is the dual of Dark spans, optical-family-native, and
   composes naturally under lens algebra.
 - **Why as a Lens:** loss is observed *through* a particular projection of the
   state; the Lens abstraction names that projection structurally. A Lens that

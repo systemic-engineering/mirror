@@ -108,8 +108,8 @@ All five optic commands succeed on mirror.spec:
 - `focus mirror.spec` -- shows parsed structure
 - `project mirror.spec` -- filters imports and types
 - `split mirror.spec` -- shows variant decomposition
-- `zoom mirror.spec` -- shows transformation structure
-- `refract mirror.spec` -- settles to crystal OID: 4fe16855cf603598b959c961b3eec02f2865e069
+- `shift mirror.spec` -- shows transformation structure
+- `settle mirror.spec` -- settles to crystal OID: 4fe16855cf603598b959c961b3eec02f2865e069
 
 ### mirror crystal works
 
@@ -141,7 +141,7 @@ The Rust code emission pipeline works end-to-end for .mirror source.
 The grammar-parameterized evaluator successfully:
 - Extracts keyword->operation rules from `@code/rust` grammar
 - Tokenizes Rust source
-- Builds MirrorAST nodes (fn->Zoom, struct->Split, enum->Split, impl->Focus, use->Project, trait->Refract)
+- Builds MirrorAST nodes (fn->Shift, struct->Split, enum->Split, impl->Focus, use->Project, trait->Settle)
 - Handles pub modifiers, attributes, generics, nested blocks
 - Matches code_rust.rs output structure for multi-item source
 
@@ -192,7 +192,7 @@ expected '{' at position 31, got Some("=")
 ```
 
 **What was expected:** `craft` should read `mirror.spec`, resolve the pipeline
-`focus(target) |> split |> zoom |> refract |> project`, and execute it.
+`focus(target) |> split |> shift |> settle |> project`, and execute it.
 
 **What's missing:** `spec.rs` has its own ad-hoc parser (~200 lines) that is separate
 from `mirror_runtime::parse_form()`. The spec parser expects SpecBlock syntax

@@ -702,7 +702,7 @@ The wiring needed for tournament merges:
    - **Explorer** (zoom, explore): proposes `keep_both` with
      candidate path renames (the exploration produces the suffix
      choices).
-   - **Fate** (refract, select): proposes `union` if the structural
+   - **Fate** (settle, select): proposes `union` if the structural
      diff is `NearIdentical`.
 
    Each model's `\` body becomes a concrete proposal returning a
@@ -1067,7 +1067,7 @@ the operation that respects the gauge and chooses among candidates.
 
 The tournament is one *kind* of `match(split)`. Other kinds include
 the inner Fate tournament (per `boot/std/fate/tournament.mirror`)
-and future au-candidate selection within `match(refract)`.
+and future au-candidate selection within `match(settle)`.
 
 Reflection composes these automorphisms by Tambara module composition
 (per `@epistemologic/math/category`). The eigenboard's section

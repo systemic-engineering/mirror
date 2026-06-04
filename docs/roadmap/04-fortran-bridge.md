@@ -45,7 +45,7 @@ Graph → Laplacian → matrix_hash → cache lookup
 
 EigenSystem implements Fragmentable — same matrix, same eigensystem, same OID.
 Laplacian implements Singularity (Iso): `collapse()` computes the eigensystem,
-`refract()` reconstructs via V × diag(lambda) × V^T. The optics map:
+`settle()` reconstructs via V × diag(lambda) × V^T. The optics map:
 
 ```
 Singularity (Iso):   Laplacian ←→ EigenSystem    (lossless)

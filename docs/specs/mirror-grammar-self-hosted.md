@@ -5,12 +5,12 @@
 Status: **Yellow** (the recognition crystallized in conversation with Alex
 during the #91 strict-mode fix; substrate primitives partially in place;
 depends on `@hash/coincidence`, `@spectral/portal`, `@kintsugi/fracture`,
-and the meta-grammar lift; no grammar changes shipped yet)
+and the meta-grammar shift; no grammar changes shipped yet)
 
 Depends on:
 - `boot/std/mirror/grammar.mirror` (commit `—`) — the existing meta-glass.
   Carries the keyword table the bootstrap reads on every parse, plus the
-  `refract <name> = <combinator>` declarations that the bootstrap currently
+  `settle <name> = <combinator>` declarations that the bootstrap currently
   IGNORES (lines containing `(` `>` `{` `}` are filtered out per
   `grammar.rs::parse_grammar`).
 - `bootstrap/src/tokenize.rs` — the Rust tokenizer the meta-glass is
@@ -69,10 +69,10 @@ Three placements were considered:
 
 **Recommendation: option 3 — unified `@mirror/grammar`.** The meta-glass
 at `boot/std/mirror/grammar.mirror` already declares the lexical
-primitives (`refract whitespace`, `refract identifier`, `refract name`),
-the top-level forms (`refract grammar_form`, `refract prism_form`,
-`refract abstract_form`, `refract io_form`), and the choice combinator
-over all forms (`refract form = choice(...)`). The Rust tokenizer is the
+primitives (`settle whitespace`, `settle identifier`, `settle name`),
+the top-level forms (`settle grammar_form`, `settle prism_form`,
+`settle abstract_form`, `settle io_form`), and the choice combinator
+over all forms (`settle form = choice(...)`). The Rust tokenizer is the
 thing that doesn't yet read these declarations; the meta-glass is
 already the spec. The spec landing isn't a NEW substrate — it's the
 activation of the existing one.
@@ -100,13 +100,13 @@ The existing `@mirror/grammar` declares lexical primitives and form
 shapes using combinators that don't yet have substrate-side semantics:
 
 ```mirror
-refract whitespace        = repeat(charset(whitespace), 0, none)
-refract identifier        = repeat(charset(word_char), 1, none)
-refract reference         = seq(literal("@"), name)
-refract comment           = seq(literal("#"), @nl(until_newline))
-refract grammar_form      = seq(literal("grammar"), whitespace, reference,
+settle whitespace        = repeat(charset(whitespace), 0, none)
+settle identifier        = repeat(charset(word_char), 1, none)
+settle reference         = seq(literal("@"), name)
+settle comment           = seq(literal("#"), @nl(until_newline))
+settle grammar_form      = seq(literal("grammar"), whitespace, reference,
                                 paren_block, whitespace, brace_block)
-refract form              = choice(comment, grammar_form, prism_form,
+settle form              = choice(comment, grammar_form, prism_form,
                                    abstract_form, io_form, match_form,
                                    select_form, in_form, out_form,
                                    refract_form, op_decl, dark_fallback)
@@ -162,7 +162,7 @@ declares the shape; Stage 3 below makes the bootstrap evaluate it.
 
 ## 3. Tokenization rules expressed as mirror
 
-The rules currently hardcoded in `scan_items` lift to combinator
+The rules currently hardcoded in `scan_items` shift to combinator
 declarations. The action-decl rule is the canonical example:
 
 ```mirror
@@ -185,17 +185,17 @@ in @mirror/grammar/combinator
 
 grammar @mirror/grammar/action_decl {
 
-  refract decorator = choice(literal("property"), literal("fn"),
-                             literal("template"), literal("select"))
+  settle decorator = choice(literal("property"), literal("fn"),
+                            literal("template"), literal("select"))
 
-  refract type_ref  = seq(name, optional(paren_block(repeat(type_ref, 0, none))))
+  settle type_ref  = seq(name, optional(paren_block(repeat(type_ref, 0, none))))
 
-  refract args      = repeat(seq(name, optional(literal(":"), whitespace, type_ref)),
-                             0, none)
+  settle args      = repeat(seq(name, optional(literal(":"), whitespace, type_ref)),
+                            0, none)
 
-  refract body      = brace_block(repeat(any, 0, none))  # opaque-to-substrate
+  settle body      = brace_block(repeat(any, 0, none))  # opaque-to-substrate
 
-  refract form      = seq(optional(decorator), whitespace,
+  settle form      = seq(optional(decorator), whitespace,
                           name,
                           optional(paren_block(args)),
                           whitespace, literal("->"), whitespace,
@@ -234,7 +234,7 @@ Similar lifts for the other forms:
 ```
 
 The full corpus of forms maps 1:1 from `scan_items` branches to
-grammar-side `refract <name> = <combinator>` declarations. The lift
+grammar-side `settle <name> = <combinator>` declarations. The shift
 is mechanical IF the substrate can evaluate the combinators (Stage
 3 below).
 
@@ -271,7 +271,7 @@ requires reading the grammar at startup and dispatching to it.
 The Rust side becomes a deterministic combinator interpreter:
 
 ```rust
-// bootstrap/src/grammar_interp.rs (post-lift)
+// bootstrap/src/grammar_interp.rs (post-shift)
 
 enum Matcher {
     Literal(Vec<u8>),
@@ -461,7 +461,7 @@ The five-dimensions × five-projections shape of
 - `mixing` projection — random-walk mixing time
 
 The tokenization measurement substrate IS a projection-by-projection
-lift of `@hash/coincidence` over the AST graph. No new substrate —
+shift of `@hash/coincidence` over the AST graph. No new substrate —
 just application.
 
 ---
@@ -474,7 +474,7 @@ Staged transition from current Rust tokenizer to self-hosted.
 
 Declarations only; no evaluator yet. The `.mirror` files land but
 the bootstrap doesn't read them — it continues to use
-`bootstrap/src/tokenize.rs`. The lift is documentation at this stage.
+`bootstrap/src/tokenize.rs`. The shift is documentation at this stage.
 
 **Deliverables**:
 - `boot/std/mirror/grammar/combinator.mirror` (the matcher type + actions)
@@ -499,7 +499,7 @@ on the entire boot tree).
   of the form choice.
 - 100% behavioral parity with `bootstrap/src/tokenize.rs` on the
   boot corpus (147 files; 67 of them carry post-#91 darks that should
-  remain unchanged byte-for-byte after the lift).
+  remain unchanged byte-for-byte after the shift).
 
 **Validation gate**: corpus-wide OID equality — every file in `boot/`
 produces the same OID through both tokenizers.
@@ -512,8 +512,8 @@ code is small (< 500 lines target) and never grows again.
 
 **Deliverables**:
 - `bootstrap/src/grammar_interp.rs` — the combinator interpreter
-  (`[bugfix:restore]` doesn't apply here — this IS a feature lift,
-  but the lift is the bootstrap-retirement plan's Cluster D deliverable;
+  (`[bugfix:restore]` doesn't apply here — this IS a feature shift,
+  but the shift is the bootstrap-retirement plan's Cluster D deliverable;
   authorization comes from the cluster, not the FROZEN carveout).
 - `bootstrap/src/tokenize.rs` deleted; replaced by
   `bootstrap/src/grammar_load.rs` (load the meta-grammar) +
@@ -577,17 +577,17 @@ with hidden tokenization drift. Categorized:
 | 4 | `name = value` plain assignments | ~4 | `@kintsugi/fracture/decl-assignment` |
 | 5 | `\| variant` pipe-alternation lines | ~5 | `@kintsugi/fracture/sum-type-alternation` |
 | 6 | `-> T<U>` foreign-language parametric | ~2 | `@kintsugi/fracture/generic-brackets` (exists) |
-| 7 | `refract name = combinator(...)` | 2 | `@kintsugi/fracture/refract-combinator` |
+| 7 | `settle name = combinator(...)` | 2 | `@kintsugi/fracture/settle-combinator` |
 | 8 | misc (foreign body, string interp, ...) | ~5 | (case-by-case) |
 
 Categories 1–3 are the brief's predicted three fracture rules — they
-dominate. Each lifts to a grammar-side `refract <name> = ...`
+dominate. Each shifts to a grammar-side `settle <name> = ...`
 declaration in `@mirror/grammar/*` AND a fracture rule in
 `@kintsugi/fracture/<name>` that canonicalizes the source.
 
 Categories 4–7 are smaller surfaces but structurally the same shape:
 a declaration form the meta-glass doesn't yet admit. Each is one
-`refract <name> = ...` line per form + one fracture rule per
+`settle <name> = ...` line per form + one fracture rule per
 canonicalization.
 
 Category 8 contains substrate gaps that surface design calls (see
@@ -616,7 +616,7 @@ opaque (a `\` Fate-hole). Three options:
   is just function application.
 
 Leaning algebraic (#2) for OID-stability and inspectability. Closures
-shipped as Fate-holes (#3) are the obvious lift later.
+shipped as Fate-holes (#3) are the obvious shift later.
 
 ### 9.2 — Bodyless declarations: admit or canonicalize?
 
@@ -642,7 +642,7 @@ Design call defers to Alex.
 
 `boot/std/hash/coincidence.mirror` line 62: `"coincidence:projection:
 {i}:{projections}"`. The interpolation IS part of mirror semantics
-or a foreign-grammar lift?
+or a foreign-grammar shift?
 
 Leaning post-parse: the string carries verbatim bytes; a downstream
 lens (`@nl/string`, `@text/interpolate`) extracts the `{var}` slots
@@ -686,7 +686,7 @@ repeat algebra is deterministic).
 The Rust tokenizer is ~893 lines of dense pattern-matching. The
 combinator interpreter would be ~500 lines of dispatch. The
 performance ratio is unmeasured. Cluster D's plan acknowledges
-the lift may cost 2-5× tokenization time — acceptable for the
+the shift may cost 2-5× tokenization time — acceptable for the
 self-hosting payoff, but worth measuring.
 
 Leaning: ship the interpreter; measure; optimize if the cost is
@@ -697,7 +697,7 @@ over-budget for `mirror compile` SLA.
 The `last_alternative(form, dark_fallback)` invariant is a property
 over a grammar declaration, not over source. The substrate doesn't
 currently support meta-properties (properties OF the grammar, not
-OF the source the grammar tokenizes). The lift requires extending
+OF the source the grammar tokenizes). The shift requires extending
 the property substrate — a small reach, deferred.
 
 ---
@@ -743,7 +743,7 @@ spectral substrate. Per-file holonomy is one Laplacian eigenvalue
 query; conductivity is one Ricci-projection query; Fiedler is the
 second-smallest eigenvalue of the AST's Laplacian. The substrate
 ALREADY computes these for crystals (per
-`docs/specs/eigenboard-representation.md`); the lift exposes them at
+`docs/specs/eigenboard-representation.md`); the shift exposes them at
 the tokenizer altitude.
 
 ### `@epistemologic/property/total_classification`
@@ -777,7 +777,7 @@ addressed-subspace architecture, this is one composition away.
 ## Forward look
 
 The spec lands as a yellow-status proposal. Implementation lives in
-Cluster D's bootstrap-retirement plan; the lift unblocks the
+Cluster D's bootstrap-retirement plan; the shift unblocks the
 butterfly's wing.
 
 The #91 fix made `--strict` honest; this spec makes it CONTINUOUS.

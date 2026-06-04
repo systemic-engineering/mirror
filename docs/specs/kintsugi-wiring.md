@@ -20,7 +20,7 @@ formatter's stages is in §"The eight wires retold" of that spec.
 Depends on:
 - `docs/specs/mirror-compile-bootstrap.md` (Spec A) — the staircase,
   io lambdas, the kintsugi formatter framing
-- `docs/specs/match-select.md` (Spec B) — `match(refract)` produces au;
+- `docs/specs/match-select.md` (Spec B) — `match(settle)` produces au;
   `match(split)` feeds the tournament
 - `docs/specs/au-and-conductivity.md` — au as Fate's output type; the
   5×5 conductivity tensor; conductivity as the verification metric
@@ -627,9 +627,9 @@ one-sentence structural summary of each proposal:
 ```
 
 Today `@nl/english` declares the five-operation surface
-(split / focus / zoom / refract / project) over English text with all
+(split / focus / shift / settle / project) over English text with all
 bodies `\`. `summarize` does not yet exist; it composes
-`split.sentences |> focus.role |> zoom.nominalize |> project.summarize`
+`split.sentences |> focus.role |> shift.nominalize |> project.summarize`
 to produce one sentence describing what the proposal does
 structurally, not lexically.
 

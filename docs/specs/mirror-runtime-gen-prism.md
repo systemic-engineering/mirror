@@ -260,7 +260,7 @@ autonomous tick scheduler. The persistence pattern is shared. The activity
 model differs.
 
 If a gen_prism only needs to react to messages, `@mirror/runtime/gen_prism`
-is enough. If it needs to think between messages, lift to `@spectral/spawn`.
+is enough. If it needs to think between messages, shift to `@spectral/spawn`.
 
 ---
 

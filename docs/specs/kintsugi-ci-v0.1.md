@@ -274,7 +274,7 @@ the substrate, JSON only at the `@io` boundary.
 | The tournament merge mechanism | [[kintsugi-tournament]] §1 | Spec; detect → enumerate → score → eliminate → apply; first concrete consumer is the file-system collision case. |
 | The minimum-runnable engine | [[kintsugi-minimum-runnable]] §1–§6 | Spec + ticks A–F. Tick A (dispatcher), Tick B (substrate add), Tick C (rename through engine) are the foundation this CI rides. |
 | The `kintsugi` CLI subcommand | `bootstrap/src/main.rs::cmd_kintsugi` | Lives in mirror's bootstrap binary per [[mirror-binary-architecture]]. Today: reads, tokenizes, renders canonical. The §9 ticks of minimum-runnable wire it to the engine. |
-| The pq wire altitude | [[../../../prism/docs/specs/pq]] §0, §2 | Spec; `focus / project / refract` over the `Prism` trait. The `imperfect` channel carries the variety verdict ([[kintsugi-variety]] §13). T11.1 landed this. |
+| The pq wire altitude | [[../../../prism/docs/specs/pq]] §0, §2 | Spec; `focus / project / settle` over the `Prism` trait. The `imperfect` channel carries the variety verdict ([[kintsugi-variety]] §13). T11.1 landed this. |
 | The fragmentation-mcp server | `/Users/alexwolf/dev/projects/fragmentation/docs/specs/fragmentation-mcp.md` (referenced by [[../../../prism/docs/specs/pq]]) | Deployed; the substrate that holds content-addressed state. Provides the `H`-world the kintsugi engine operates over. |
 | The `Transparency` / `PropertyVerdict` verdict carrier | `/Users/alexwolf/dev/projects/prism/imperfect/src/transparency.rs` | Landed. The Fail-dominates / Partial-min-confidence / Pass-neutral merge is tested. |
 | The existing CI workflow | `/Users/alexwolf/dev/projects/mirror/.github/workflows/ci.yml` | 668 B; calls `systemic-engineering/ci/actions/nix-setup@main` then `nix develop -c just check`. The shape v0.1 evolves. |
@@ -1105,7 +1105,7 @@ In-corpus dependencies:
 
 - Memory: `architecture-kintsugi-variety-io` — the @io minimization
   objective.
-- Memory: `architecture-kintsugi-bias-lift` — substrate-pull as
+- Memory: `architecture-kintsugi-bias-shift` — substrate-pull as
   gradient. v0.1's recursion is substrate-pull at the wire altitude.
 - Memory: `architecture-three-tier-stack` — fragmentation-mcp /
   mirror / @spectral/db. v0.1 lives on the mirror tier; rides on

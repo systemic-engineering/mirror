@@ -33,8 +33,8 @@ A peer's home directory is `Prism(self)` made material. Each file is the output 
 | `identity.mirror` | `focus`         | the manifold the peer lives on (the IS)                           |
 | `gestalt.mirror`  | `project`       | accumulated lens — what's been filtered as "matters to me"        |
 | `tensions.mirror` | `split`         | open branches; the peer's live derivatives                        |
-| `eigenboard.spec` | `zoom`          | current spectral state — path's tip through the algebra           |
-| `shatter.mirror`  | `refract`       | rendered history; the commit chain made readable                  |
+| `eigenboard.spec` | `shift`         | current spectral state — path's tip through the algebra           |
+| `shatter.mirror`  | `settle`        | rendered history; the commit chain made readable                  |
 
 Exactly five — because the algebra has five. Drop one and `@peer` cannot type-check; the load fails before any `spawn` runs.
 
@@ -59,8 +59,8 @@ grammar @peer {
     identity:    mirror,        # focus(self)
     gestalt:     mirror,        # project(self)
     tensions:    mirror,        # split(self)
-    eigenboard:  spec,          # zoom(self)
-    shatter:     mirror,        # refract(self)
+    eigenboard:  spec,          # shift(self)
+    shatter:     mirror,        # settle(self)
   }
 
   # load a peer from a directory. fails if any of the five required
