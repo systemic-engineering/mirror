@@ -683,6 +683,24 @@ fn cmd_kintsugi(
     ci: bool,
     format: CiFormat,
 ) -> i32 {
+    // D4 (substrate-pull:realize): `.spec` extension routes to the
+    // project-manifold walker. `mirror kintsugi <path>.spec` reads the
+    // spec, walks its `target` blocks, and dispatches @io tools (today
+    // only @io/cargo) for each target's `emit`. The verdict envelope
+    // shape matches T11.2.5/T11.2.6 (mirror-text default, JSON behind
+    // `--format=json`).
+    //
+    // Backwards-compat: `<file>.mirror` and `<directory>` paths fall
+    // through to the existing walkers unchanged. Per the directive,
+    // the `.spec` extension is the trigger; --ci is not required (the
+    // spec walker always emits a verdict).
+    if std::path::Path::new(file)
+        .extension()
+        .and_then(|e| e.to_str())
+        == Some("spec")
+    {
+        return cmd_kintsugi_spec(file, format);
+    }
     // CI mode: route through the verdict serialiser. Failure paths
     // (file unreadable, grammar load error) emit a verdict with
     // `verdict: "failure"` and still exit 0 — the workflow YAML, not
@@ -713,6 +731,430 @@ fn cmd_kintsugi(
         }
     }
     cmd_kintsugi_single(file, shatter, transform, out_dir)
+}
+
+/// One target inside a parsed `mirror.spec`. Carries only the four
+/// fields the D4 dispatcher consumes today (`name`, `altitude`,
+/// `emit`, `manifest`); richer fields declared in
+/// `shards/mirror/spec.mirror` (cli, needs) parse-and-ignore at this
+/// altitude — `mosaic.focus` walks them in the substrate proper.
+struct SpecTarget {
+    /// The block-header identifier: `target binary { ... }` → `"binary"`.
+    block_name: String,
+    /// The `name "..."` field — the artifact name at the altitude.
+    artifact_name: String,
+    /// The `altitude @...` ref. Empty when omitted.
+    altitude: String,
+    /// The `emit <ref>` field. Today only `cargo` triggers a dispatch.
+    emit: String,
+    /// Optional `manifest ~f'...'` path — Cargo.toml location for the
+    /// target. When omitted, defaults to `<spec-dir>/Cargo.toml`.
+    manifest: Option<String>,
+}
+
+/// Lightweight `target NAME { ... }` extractor over the raw spec
+/// source. Per [[feedback-no-new-rust]] we do NOT add Rust keyword
+/// recognition for `target`/`altitude`/`emit` — those keywords are
+/// substrate-declared in `shards/mirror/spec.mirror`. The bootstrap
+/// grammar harvester does not yet register them (no
+/// `<op> <keyword>` line for these in the legacy 2-word surface), so
+/// the tokenized AST surfaces `target` blocks as Dark spans.
+///
+/// Rather than wire new keyword recognition in Rust (which the
+/// substrate explicitly forbids), this walker text-scans the source
+/// for `target IDENT { ... }` blocks and pulls the four field values
+/// the dispatcher needs. The work is dispatch-glue: when the
+/// substrate's `@mirror/spec` grammar self-hosts, this scanner is
+/// replaced by an AST walk; the verdict envelope shape and cargo
+/// dispatch contract stay identical.
+fn parse_spec_targets(source: &str) -> Vec<SpecTarget> {
+    let bytes = source.as_bytes();
+    let len = bytes.len();
+    let mut out: Vec<SpecTarget> = Vec::new();
+    let mut pos = 0usize;
+    while pos < len {
+        // Skip whitespace.
+        while pos < len && matches!(bytes[pos], b' ' | b'\t' | b'\n' | b'\r') {
+            pos += 1;
+        }
+        if pos >= len {
+            break;
+        }
+        // Skip `#` line comments.
+        if bytes[pos] == b'#' {
+            while pos < len && bytes[pos] != b'\n' {
+                pos += 1;
+            }
+            continue;
+        }
+        // Match the `target` keyword as a whole word at the current
+        // position. `pos` must be at the start of an identifier — i.e.
+        // the prior byte (if any) is not an identifier byte. Otherwise
+        // skip one byte to keep scanning.
+        let at_word_start = pos == 0
+            || !matches!(
+                bytes[pos - 1],
+                b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_'
+            );
+        let kw = b"target";
+        if at_word_start
+            && pos + kw.len() <= len
+            && &bytes[pos..pos + kw.len()] == kw
+            && (pos + kw.len() == len
+                || !matches!(
+                    bytes[pos + kw.len()],
+                    b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_'
+                ))
+        {
+            // Move past `target` and read the block identifier.
+            pos += kw.len();
+            while pos < len && matches!(bytes[pos], b' ' | b'\t') {
+                pos += 1;
+            }
+            let name_start = pos;
+            while pos < len
+                && matches!(
+                    bytes[pos],
+                    b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_'
+                )
+            {
+                pos += 1;
+            }
+            let block_name = String::from_utf8_lossy(&bytes[name_start..pos]).into_owned();
+            // Skip whitespace to the opening brace.
+            while pos < len && matches!(bytes[pos], b' ' | b'\t' | b'\n' | b'\r') {
+                pos += 1;
+            }
+            if pos >= len || bytes[pos] != b'{' {
+                continue;
+            }
+            // Brace-balanced body.
+            pos += 1;
+            let body_start = pos;
+            let mut depth = 1i32;
+            while pos < len && depth > 0 {
+                match bytes[pos] {
+                    b'{' => depth += 1,
+                    b'}' => depth -= 1,
+                    b'#' => {
+                        while pos < len && bytes[pos] != b'\n' {
+                            pos += 1;
+                        }
+                        continue;
+                    }
+                    _ => {}
+                }
+                if depth > 0 {
+                    pos += 1;
+                }
+            }
+            let body_end = pos;
+            if pos < len {
+                pos += 1; // consume closing `}`
+            }
+            let body = &source[body_start..body_end];
+            let target = parse_target_body(&block_name, body);
+            out.push(target);
+            continue;
+        }
+        // Not a `target` keyword: advance one byte.
+        pos += 1;
+    }
+    out
+}
+
+/// Extract `name`, `altitude`, `emit`, `manifest` field values from a
+/// `target { ... }` body. Each field is a `<keyword> <value>` line;
+/// the value runs to end-of-line. Quoted strings are unwrapped; `~f'...'`
+/// path-refs strip the carrier sigil and quotes. Unknown lines are
+/// ignored (the substrate carries the richer grammar; this is dispatch
+/// glue only).
+fn parse_target_body(block_name: &str, body: &str) -> SpecTarget {
+    let mut artifact_name = String::new();
+    let mut altitude = String::new();
+    let mut emit = String::new();
+    let mut manifest: Option<String> = None;
+    for raw_line in body.lines() {
+        let line = raw_line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let mut it = line.splitn(2, char::is_whitespace);
+        let key = it.next().unwrap_or("").trim();
+        let value = it.next().unwrap_or("").trim();
+        match key {
+            "name" => artifact_name = unwrap_string_literal(value),
+            "altitude" => altitude = value.to_string(),
+            "emit" => emit = value.to_string(),
+            "manifest" => manifest = Some(unwrap_path_ref(value)),
+            _ => {}
+        }
+    }
+    SpecTarget {
+        block_name: block_name.to_string(),
+        artifact_name,
+        altitude,
+        emit,
+        manifest,
+    }
+}
+
+/// Strip a leading/trailing `"` pair if present. Otherwise return the
+/// input verbatim.
+fn unwrap_string_literal(s: &str) -> String {
+    let bytes = s.as_bytes();
+    if bytes.len() >= 2 && bytes[0] == b'"' && bytes[bytes.len() - 1] == b'"' {
+        String::from_utf8_lossy(&bytes[1..bytes.len() - 1]).into_owned()
+    } else {
+        s.to_string()
+    }
+}
+
+/// Unwrap a `~f'<path>'` / `~d'<path>'` path-ref carrier. Per
+/// `shards/mirror/spec.mirror` paths use the `~f` / `~d` sigils; the
+/// inner literal between the single quotes is the actual path.
+fn unwrap_path_ref(s: &str) -> String {
+    let bytes = s.as_bytes();
+    // ~f'...' or ~d'...': sigil + carrier-letter + open quote + ... + close quote.
+    if bytes.len() >= 4
+        && bytes[0] == b'~'
+        && matches!(bytes[1], b'f' | b'd')
+        && bytes[2] == b'\''
+        && bytes[bytes.len() - 1] == b'\''
+    {
+        return String::from_utf8_lossy(&bytes[3..bytes.len() - 1]).into_owned();
+    }
+    unwrap_string_literal(s)
+}
+
+/// D4 entrypoint: walk a `mirror.spec`, dispatch cargo for each
+/// `emit cargo` target, and emit a verdict envelope.
+///
+/// Per [[feedback-no-new-rust]] this is dispatch glue only. The spec
+/// grammar is substrate-declared (`shards/mirror/spec.mirror`); the
+/// cargo @io contract is substrate-declared
+/// (`shards/io/cargo.mirror`). This function reads the spec, finds
+/// `target` blocks, invokes cargo, and emits via the existing
+/// `CiVerdict`/`CorpusVerdict` envelope (T11.2.5/T11.2.6).
+///
+/// Exit-code lift (coarsened from D3's `cargo_exit_to_transparency`):
+///   0   → success            (no opacity)
+///   *   → failure(stderr[..200])
+///
+/// The rich opacity-map parsing (file:line:col extraction from cargo
+/// stderr) is deferred: D3 declared the contract; @mirror/mosaic will
+/// wire it in the substrate proper. Same for `lockfile_capture` and
+/// the env_allowlist verification — substrate-declared, dispatcher-
+/// deferred to keep this tick minimal.
+fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
+    let source = match fs::read_to_string(spec_path) {
+        Ok(s) => s,
+        Err(_) => {
+            return emit_spec_verdict(
+                "failure",
+                spec_path,
+                0.0,
+                1,
+                0,
+                0,
+                &[],
+                format,
+            );
+        }
+    };
+    let targets = parse_spec_targets(&source);
+    // Spec-relative root for manifest paths. `manifest ~f'Cargo.toml'`
+    // in mirror.spec resolves against the spec file's directory.
+    let spec_dir: PathBuf = std::path::Path::new(spec_path)
+        .parent()
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."));
+
+    let mut per_target: Vec<PerFileVerdict> = Vec::with_capacity(targets.len());
+    let mut any_failure = false;
+    let mut any_partial = false;
+    let mut total_objective: f64 = 0.0;
+    let mut total_dark: u64 = 0;
+    let mut dispatched: u64 = 0;
+    for t in &targets {
+        if t.emit != "cargo" {
+            // Non-cargo emit (yaml, github_release, ...): the @io tool
+            // is not yet wired. Mark as failure so the spec walker is
+            // honest about what it did NOT dispatch.
+            let label = format!("target {} (emit {})", t.block_name, t.emit);
+            per_target.push(PerFileVerdict {
+                path: label,
+                verdict: "failure",
+                objective: 1.0,
+                iterations: 1,
+                dark_count: 1,
+            });
+            any_failure = true;
+            total_objective += 1.0;
+            total_dark += 1;
+            continue;
+        }
+        // Resolve the manifest path. Default: <spec-dir>/Cargo.toml.
+        let manifest_rel = t
+            .manifest
+            .clone()
+            .unwrap_or_else(|| "Cargo.toml".to_string());
+        let manifest = if std::path::Path::new(&manifest_rel).is_absolute() {
+            PathBuf::from(&manifest_rel)
+        } else {
+            spec_dir.join(&manifest_rel)
+        };
+        // Per the directive's "Minimum viable" §4: `cargo check` for
+        // `binary.compiles`-style settle_on predicates. `cargo test` is
+        // wired the same way but gated on the substrate's `tests_pass`
+        // predicate, which the dispatcher can't read today (the
+        // substrate's @epistemologic/property dispatch lands at a later
+        // tick). Default to `cargo check`: it's the cheapest exit-code
+        // signal that lifts to transparency under D3's contract, and it
+        // dominates the runtime budget for `mirror kintsugi mirror.spec`
+        // on mirror's own root.
+        let out = Command::new("cargo")
+            .arg("check")
+            .arg("--manifest-path")
+            .arg(&manifest)
+            .output();
+        let (verdict, objective, dark, label_path) = match out {
+            Ok(o) if o.status.success() => (
+                "success",
+                0.0_f64,
+                0_u64,
+                manifest.to_string_lossy().into_owned(),
+            ),
+            Ok(o) => {
+                // D3's exit-code lift is partial here: non-zero →
+                // failure. Stderr is captured but not yet parsed into
+                // opacity_map (deferred to @mirror/mosaic). The full
+                // exit code is recorded in the label so the operator
+                // can see WHICH non-zero arm fired.
+                let code = o.status.code().unwrap_or(-1);
+                eprintln!(
+                    "[kintsugi spec] target `{}` cargo check exit {}; stderr (first 200 chars):",
+                    t.block_name, code,
+                );
+                let stderr = String::from_utf8_lossy(&o.stderr);
+                eprintln!("  {}", &stderr.chars().take(200).collect::<String>());
+                let label = format!(
+                    "{} (exit {})",
+                    manifest.to_string_lossy(),
+                    code
+                );
+                ("failure", 1.0_f64, 1_u64, label)
+            }
+            Err(e) => {
+                eprintln!(
+                    "[kintsugi spec] target `{}` cargo spawn error: {}",
+                    t.block_name, e
+                );
+                ("failure", 1.0_f64, 1_u64, manifest.to_string_lossy().into_owned())
+            }
+        };
+        let _ = t.artifact_name; // dispatcher does not need it today
+        let _ = t.altitude; // ditto; @code/rust is implicit in the cargo dispatch
+        per_target.push(PerFileVerdict {
+            path: label_path,
+            verdict,
+            objective,
+            iterations: 1,
+            dark_count: dark,
+        });
+        match verdict {
+            "success" => {}
+            "partial" => {
+                any_partial = true;
+                total_objective += objective;
+                total_dark += dark;
+            }
+            _ => {
+                any_failure = true;
+                total_objective += objective;
+                total_dark += dark;
+            }
+        }
+        dispatched += 1;
+    }
+    let aggregate: &'static str = if any_failure {
+        "failure"
+    } else if any_partial || total_dark > 0 {
+        "partial"
+    } else {
+        // Empty spec (no targets at all) → success per the v0.1 vacuous-
+        // truth rule (matches the corpus walker's empty-corpus shape).
+        "success"
+    };
+    let files_processed = per_target.len() as u64;
+    let _ = dispatched;
+    emit_spec_verdict(
+        aggregate,
+        spec_path,
+        total_objective,
+        1,
+        total_dark,
+        files_processed,
+        &per_target,
+        format,
+    )
+}
+
+/// Emit the D4 spec verdict envelope. Reuses the T11.2.5/T11.2.6
+/// emitters via thin wrappers: single-target specs use the per-file
+/// shape; multi-target specs use the corpus envelope so per-target
+/// verdicts are visible to the operator.
+fn emit_spec_verdict(
+    aggregate: &'static str,
+    spec_path: &str,
+    objective: f64,
+    iterations: u64,
+    dark_count: u64,
+    files_processed: u64,
+    per_target: &[PerFileVerdict],
+    format: CiFormat,
+) -> i32 {
+    match format {
+        CiFormat::MirrorText => emit_corpus_verdict_mirror_text(
+            aggregate,
+            spec_path,
+            objective,
+            iterations,
+            dark_count,
+            files_processed,
+            per_target,
+        ),
+        CiFormat::Json => {
+            let envelope = CorpusVerdict {
+                verdict: aggregate,
+                target: spec_path,
+                objective,
+                iterations,
+                dark_count,
+                files_processed,
+                per_file: per_target
+                    .iter()
+                    .map(|e| PerFileVerdict {
+                        path: e.path.clone(),
+                        verdict: e.verdict,
+                        objective: e.objective,
+                        iterations: e.iterations,
+                        dark_count: e.dark_count,
+                    })
+                    .collect(),
+            };
+            match serde_json::to_string(&envelope) {
+                Ok(json) => {
+                    let mut out = io::stdout();
+                    if writeln!(out, "{}", json).is_err() {
+                        return 1;
+                    }
+                    0
+                }
+                Err(_) => 1,
+            }
+        }
+    }
 }
 
 /// Output format for `mirror kintsugi --ci`.
