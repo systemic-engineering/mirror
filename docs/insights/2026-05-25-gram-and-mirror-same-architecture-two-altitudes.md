@@ -19,7 +19,7 @@ The GRAM paper (Baek, Jo, Kim, Ren, Bengio, Ahn — arXiv:2605.19376v2, May 2026
 | Stochastic latent transition `z_t ~ p_θ(z_t \| z_{t−1}, e_x)` | `gen_prism.tick(state, message) -> (state', emissions)` |
 | Hierarchical state z = (h, l); high-level stochastic, low-level deterministic K-times | Bundle Tower (geometric, deterministic) + Scheduler Tower (temporal, stochastic via Fate) |
 | Stochastic guidance `ε_t ~ N(μ_θ(u_t), σ_θ²(u_t))` | `\` typed hole resolved by Fate's tournament |
-| Marginalization over latent trajectories `∫ p_θ(y \| τ, x) p_θ(τ \| x) dτ` | `refract(T)` integrates the verified construction |
+| Marginalization over latent trajectories `∫ p_θ(y \| τ, x) p_θ(τ \| x) dτ` | `settle(T)` integrates the verified construction |
 | Width: N parallel trajectories sampled from prior | N peer agents (Mara/Glint/Seam/Taut/Heath) ensembling on one query |
 | Depth: N_sup supervision steps with adaptive computation time | gen_prism ancestor chain with sub-Turing bounded recursion |
 | Latent Process Reward Model (value head over trajectory tip) | The eigenboard's `holonomy` field (Fiedler value) — spectral value of the current trajectory |
@@ -93,7 +93,7 @@ Mirror's gen_prism has the same two granularities implicitly: `tick` is the supe
 GRAM's authors had to *invent* probabilistic multi-trajectory reasoning as a research contribution because the neural-network substrate doesn't give it for free. They added stochastic transitions, variational inference, parallel trajectory sampling, and the LPRM value head as architectural additions to deterministic RRMs.
 
 Mirror gets all of it for free because **the substrate IS the algebra**:
-- The Prism algebra's five operations already include `zoom` (perspective shift, multi-view) and `refract` (settle into one of many possible verified forms).
+- The Prism algebra's five operations already include `shift` (perspective shift, multi-view) and `settle` (settle into one of many possible verified forms).
 - Content-addressing already gives marginalization (same content → same OID → same trajectory; the distribution is over content-distinct paths).
 - The @glue layer already gives width-scaling (peers are the parallel trajectories).
 - The kintsugi tournament already gives LPRM-equivalent selection (Fiedler value as the trajectory tip's spectral quality).
@@ -153,7 +153,7 @@ None of these block the current chain (#65 / #71 / #48 / #68). They're cross-cut
 - `docs/insights/2026-05-25-pipe-hole-and-au-binary.md` — `|\>` operator; per-shard binaries are stochastic guidance from hardware.
 - `docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md` — shard as observer-relative λ₀; memoization IS the fragmentation DAG.
 - `docs/insights/2026-05-25-spectral-namespace-architecture.md` — the @spectral namespace; mosaic composes shards on BEAM.
-- `docs/insights/2026-05-25-parametric-types-and-fp-heritage.md` — zoom(T)/refract(T) as Prism-at-type-layer; the algebra that GRAM lacks.
+- `docs/insights/2026-05-25-parametric-types-and-fp-heritage.md` — shift(T)/settle(T) as Prism-at-type-layer; the algebra that GRAM lacks.
 
 ---
 

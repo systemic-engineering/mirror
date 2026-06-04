@@ -109,7 +109,7 @@ higher dimension:
   decomposition of white light into the colors a human eye can perceive.
 - **Five sides** (mirror) renders the *operational spectrum* — the
   decomposition of any value through the five Prism operations of mirror's
-  algebra: focus, project, split, zoom, refract.
+  algebra: focus, project, split, shift, settle.
 
 Both covers are mathematically correct. Both work at any resolution. Both
 are instantly readable across audiences — a child can see "light becomes

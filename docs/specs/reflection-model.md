@@ -7,8 +7,8 @@
 ```
 Model        Operation    What it does
 ─────────────────────────────────────────────
-Surface      Zoom         translate (language → query)
-Mirror       Refract      navigate (query → graph path)
+Surface      Shift        translate (language → query)
+Mirror       Settle       navigate (query → graph path)
 Shatter      Split        render (graph path → text)
 Reflection   Focus        observe (pipeline → adjustments)
 ```
@@ -160,7 +160,7 @@ The pipeline gives the WHAT. Reflection gives the WHY.
 
 ## When Reflection Stays Silent
 
-Reflection's refract weights determine when to say nothing.
+Reflection's settle weights determine when to say nothing.
 Sometimes the answer is enough. Sometimes the beat should be silence.
 
 ```
@@ -200,8 +200,8 @@ model: reflection
 focus   [weights...] bias [...]   ← what patterns to notice
 project [weights...] bias [...]   ← which observations to surface
 split   [weights...] bias [...]   ← how many observations per tick
-zoom    [weights...] bias [...]   ← how deep to go in the reflection
-refract [weights...] bias [...]   ← when to stay silent
+shift   [weights...] bias [...]   ← how deep to go in the reflection
+settle  [weights...] bias [...]   ← when to stay silent
 ```
 
 ## Persistent vs Transient Models
@@ -299,8 +299,8 @@ Reflection.
 
 ```
 Persistent models (the four voices):
-  Surface      Explorer     Zoom      language → query
-  Mirror       Fate         Refract   query → graph path
+  Surface      Explorer     Shift     language → query
+  Mirror       Fate         Settle    query → graph path
   Shatter      Cartographer Split     graph → text
   Reflection   Abyss        Focus     pipeline → wisdom
 

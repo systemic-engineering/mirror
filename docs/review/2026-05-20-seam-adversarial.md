@@ -537,7 +537,7 @@ A lot.
   marker rules.
 
 - **`--strict` properly walks every AST node** via `collect_dark`, which
-  is recursive and reaches into Focus/Refract children. The deeply
+  is recursive and reaches into Focus/Settle children. The deeply
   nested case (T1.2's hidden_dark_inside) is captured as part of the
   outer dark span, not skipped — the granularity is coarser than the
   source structure, but no dark is silently lost.

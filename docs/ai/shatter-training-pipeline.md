@@ -56,7 +56,7 @@ Mirror grammar IS a BNF grammar. The vocabulary is fixed:
 
 ```
 Keywords:  type, grammar, action, property, in, out, focus, project,
-           split, zoom, refract, template, abstract, recover, rescue,
+           split, shift, settle, template, abstract, recover, rescue,
            io, fold, requires, invariant, ensures
 Structural: { } ( ) | = < . @ , :
 Literals:  identifiers, grammar refs (@X), strings

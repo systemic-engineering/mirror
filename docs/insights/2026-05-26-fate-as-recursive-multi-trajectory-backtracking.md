@@ -105,7 +105,7 @@ grammar @fate/crystal/<oid> {
   infer(x: input) -> output {
     beam ex = encode(x)
     ex |> recurse(transition, depth=T)
-       |> beam(refract) trajectories { ... }   # convergent pick
+       |> beam(settle) trajectories { ... }   # convergent pick
   }
 }
 ```

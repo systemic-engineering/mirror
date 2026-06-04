@@ -34,8 +34,8 @@ The ouroboros. Content-addressed. Each link is a hash.
 focus   → @license(text)     read the license first
 project → types              what survives the license
 split   → visibility         public | protected | private
-zoom    → actions            the collapse, gated by license
-refract → crystal            the artifact, carrying the license
+shift   → actions            the collapse, gated by license
+settle  → crystal            the artifact, carrying the license
 ```
 
 The license IS the first optic. Everything after it is seen THROUGH
@@ -57,8 +57,8 @@ before you can act. The license is not a constraint bolted on.
 The license IS the observation.
 
 You focus on the license. Then you project. Then you split. Then
-you zoom. Then you refract. The license is in every step because
-the focus is in every refraction.
+you shift. Then you settle. The license is in every step because
+the focus is in every settlement.
 
 ---
 

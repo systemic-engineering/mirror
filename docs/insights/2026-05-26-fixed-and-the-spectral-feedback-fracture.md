@@ -11,8 +11,8 @@
 - `@spectral` substrate WOULD measure holonomy on every binding across corpus usage (proposed; the `holonomy`, `drift_ranges`, `conductivity`, `fiedler`, `rank_fractures` actions in `docs/specs/mirror-grammar-self-hosted.md` §6 are declared with `\` bodies)
 - A binding whose holonomy approaches zero WOULD be *stable* — it always means the same thing; it has settled
 - The substrate WOULD KNOW when a dynamic binding has crystallized
-- `@kintsugi/fracture/dynamic-beam-to-fixed` WOULD lift the binding to `fixed` form (the fracture rule is declared in this insight as a target; no grammar exists yet)
-- The lifted binding becomes a fully content-addressed crystal
+- `@kintsugi/fracture/dynamic-beam-to-fixed` WOULD shift the binding to `fixed` form (the fracture rule is declared in this insight as a target; no grammar exists yet)
+- The shifted binding becomes a fully content-addressed crystal
 - The closed-source `@spectral/db` WOULD orchestrate distributed LLVM compilation of stable crystals
 - The whole pipeline closes
 
@@ -63,8 +63,8 @@ Reads honestly: glass (substrate primitive) → ast (the data structure) → tok
 - **`[T]` is canonical** — Erlang got it right. The 10-file drift in the strict audit is the bootstrap missing canonical syntax, not corpus drift. Bootstrap needs to LEARN `[T]` via the self-hosted tokenizer.
 - **`| variant` is canonical** — FP sum-type form (Haskell, OCaml, Elm). Bootstrap learns it.
 - **`op` is not a real keyword** — only `io` annotation on actions exists. Mara's notation; corrected.
-- **`refract` at module-top is drift** — should be `fixed`. Two files (`mirror/grammar.mirror`, `mirror/nl.mirror`); fracture rule lifts.
-- **Foreign code** lives in `io ... in @code/<lang> { ... }` — the annotation pair IS the consent + lift mechanism. Fracture targets foreign code WITHOUT those markers (the @epistemologic/property/glass_wall violation).
+- **`refract` at module-top is drift** — should be `fixed`. Two files (`mirror/grammar.mirror`, `mirror/nl.mirror`); fracture rule shifts.
+- **Foreign code** lives in `io ... in @code/<lang> { ... }` — the annotation pair IS the consent + shift mechanism. Fracture targets foreign code WITHOUT those markers (the @epistemologic/property/glass_wall violation).
 - **Bodyless declarations** get `{ \ }` written back by kintsugi (the default body IS `{ \ }`).
 
 ## The two new @fate use-cases (first concrete in this session)
@@ -80,12 +80,12 @@ confidence: spectral threshold based; < 1.0
 scene: presents proposal + holonomy receipt + spectral measurement; curator confirms
 ```
 
-**Why scene-dispatched (confidence < 1.0):** the lift might change semantics. The beam's expr might have implicit dependencies on context that `fixed` forbids. The substrate measures *that the binding always evaluates to the same value across observed contexts* (zero holonomy); the curator confirms *that the binding SHOULD always evaluate to the same value* (semantic intent).
+**Why scene-dispatched (confidence < 1.0):** the shift might change semantics. The beam's expr might have implicit dependencies on context that `fixed` forbids. The substrate measures *that the binding always evaluates to the same value across observed contexts* (zero holonomy); the curator confirms *that the binding SHOULD always evaluate to the same value* (semantic intent).
 
 **Composition path:**
 - `@spectral` measures (#94 Stage 4)
 - Holonomy threshold triggers fracture candidate
-- `@fate` proposes the lift (multi-trajectory inference; alternative formulations)
+- `@fate` proposes the shift (multi-trajectory inference; alternative formulations)
 - `@scene` opens with curator (#92, #93)
 - Curator approves
 - `@kintsugi/fracture` applies the rewrite
@@ -110,7 +110,7 @@ fn process(input: text) -> process_outcome { ... }
 
 ```
 detect: 3+ unnamed inline variants in type position
-fill:   propose name via @fate multi-trajectory inference; lift to named type declaration
+fill:   propose name via @fate multi-trajectory inference; shift to named type declaration
 confidence: < 1.0 (name choice involves judgment)
 scene: presents candidate names + their @fate confidence scores; curator picks
 ```
@@ -141,7 +141,7 @@ All 9 resolved. The implementation work follows.
 - **Cat 4 module-top assignments** (~4 files): canonical via `fixed` keyword; fracture migrates `name = value` → `fixed name = value`
 - **Cat 5 `| variant`** (~5 files): canonical; bootstrap learns + the inline-variant-naming fracture (above) handles unnamed cases
 - **Cat 6 `T<U>` leftovers** (~2 files): generic-brackets fracture gap; recover via re-running migration
-- **Cat 7 `refract` at module-top** (2 files): fracture migrates to `fixed`; confidence = 1.0
+- **Cat 7 `refract` at module-top** (2 files): fracture migrates to `fixed`; confidence = 1.0 (note: substrate operation is now `settle`; the legacy `refract` keyword is what this fracture targets)
 - **Cat 8 misc** (~5 files): case-by-case; deferred until each surfaces concrete demand
 
 ## Kintsugi as mycelial AI — the substrate's voice (proposed)
@@ -173,7 +173,7 @@ The forest analogy describes the role kintsugi WOULD play once the runtime appli
 - **The mycelium persists** — kintsugi is the layer that would run CONTINUOUSLY beneath the visible substrate, once it exists
 - **Conductivity is the language the mycelium would speak**
 
-Kintsugi today is a set of named rules (`@kintsugi/fracture/generic-brackets`, `@kintsugi/fracture/refract-to-fixed`) with `\` bodies. Their application happens when a human or agent invokes the rewrite explicitly. The mycelial framing names the role; the substrate names the rules; the runtime that would close the loop has not been built.
+Kintsugi today is a set of named rules (`@kintsugi/fracture/generic-brackets`, `@kintsugi/fracture/settle-to-fixed`) with `\` bodies. Their application happens when a human or agent invokes the rewrite explicitly. The mycelial framing names the role; the substrate names the rules; the runtime that would close the loop has not been built.
 
 ### Branding-as-substrate (aspirational)
 
@@ -195,7 +195,7 @@ The proposed loop, with operational status per stage:
   triggered by zero-holonomy threshold
   ↓
 @fate multi-trajectory inference (#88, #89)       [proposed; \ bodies]
-  proposes the lift formulation
+  proposes the shift formulation
   ↓
 @scene with @peer/curator (#92, #93)              [proposed; @scene not in substrate]
   presents proposal; curator consents
@@ -239,7 +239,7 @@ The value of writing the composition this clearly is that each stage now has a c
 
 - **#94 (updated)** — `@mirror/glass/ast/token` substrate (corrected placement from @mirror/grammar)
 - **#95 (new)** — `@kintsugi/fracture/decl-without-body` (confidence = 1.0; 15 files)
-- **#96 (new)** — `@kintsugi/fracture/refract-to-fixed` (confidence = 1.0; 2 files)
+- **#96 (new)** — `@kintsugi/fracture/settle-to-fixed` (confidence = 1.0; 2 files; legacy `refract` keyword → `fixed`)
 - **#97 (new)** — `@kintsugi/fracture/requires-without-body` (confidence = 1.0; 8 files)
 - **#98 (new)** — `@kintsugi/fracture/dynamic-beam-to-fixed` (confidence < 1.0; spectral-feedback; scene-dispatched)
 - **#99 (new)** — `@kintsugi/fracture/inline-variant-naming` (confidence < 1.0; @fate-proposes; scene-dispatched)

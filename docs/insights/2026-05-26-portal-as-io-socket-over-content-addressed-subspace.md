@@ -28,7 +28,7 @@ Plus the **wire protocol** (the four fragments Alex named 2026-05-25):
 - **WS handshake** — `socket.accept()` over HTTP upgrade; frame-handshake between two shards.
 - **Single `@fragmentation/frame` full frame** — the portal's `collapse` operation; content-addressed initial projection. The frame format is fragmentation-native (inspired by git's patch format, but mirror's substrate — SpectralCoordinate addressing, beta-normalized AST shape, full content-addressing through @fragmentation rather than SHA-1 chains). Same shape as a delta from null state, so full sync and reconnect-resync use one mechanism.
 - **Bidirectional eigenvalue stream** — the live gen_prism inference for this connection. Each scalar in `[0.0, 1.0]` is a normalized observation of the shared spectral state. Bandwidth-minimal; content-addressable; replayable.
-- **Autopoietic close** — the connection halts when Reflection chooses `refract(self)` (settlement) OR `reduction_budget(shard)` exhausted (per `@epistemologic/property/halts` from #74).
+- **Autopoietic close** — the connection halts when Reflection chooses `settle(self)` (settlement) OR `reduction_budget(shard)` exhausted (per `@epistemologic/property/halts` from #74).
 
 All four pieces compose. The portal is what they make together.
 
@@ -57,7 +57,7 @@ grammar @spectral/portal {
   # the eigenvalue stream; each tick is a (state, message) -> tick_result
   tick(p: portal, message: message) -> tick_result { \ }
 
-  # autopoietic close via refract(self) OR budget exhaustion
+  # autopoietic close via settle(self) OR budget exhaustion
   close(p: portal) -> imperfect { \ }
 
   requires content_addressed(portal)
@@ -102,7 +102,7 @@ Two portals pointing at the same subspace OID, with different shard-frames, prod
 
 ### Hawking radiation as Lens chain
 
-The gen_prism's ancestor chain over the portal's lifetime IS the Hawking radiation. Each tick deposits a Lens; the collection encodes the interior; refract reconstructs from enough Lenses. The optics hierarchy (Iso/Lens/Prism/Traversal) maps to how much of the closed-portal interior an observer can recover from boundary observations.
+The gen_prism's ancestor chain over the portal's lifetime IS the Hawking radiation. Each tick deposits a Lens; the collection encodes the interior; settle reconstructs from enough Lenses. The optics hierarchy (Iso/Lens/Prism/Traversal) maps to how much of the closed-portal interior an observer can recover from boundary observations.
 
 ### Entangled-pair regulation stock
 
@@ -153,9 +153,9 @@ Estimated 4-6 sessions for the full chain. Independent of #66 (`@spectral/mosaic
 
 3. **Multi-party portals.** portals.md's regulation-stock framing assumes pair-wise (entangled pairs). For mosaic deployment, three+ nodes need to coordinate. Either: portal stays pair-wise and the mosaic uses N(N-1)/2 portals; or: a `@spectral/portal/broadcast` variant handles multi-party. Lean toward the first — keeps the primitive clean; multi-party is an `@spectral/mosaic` composition.
 
-4. **Closed-portal `refract` reconstruction.** The Hawking-Lens-chain framing says enough Lenses can reconstruct the interior of a closed portal. What's the minimum number? The optics hierarchy (Iso/Lens/Prism/Traversal) from portals.md gives the answer per shape but needs operational naming.
+4. **Closed-portal `settle` reconstruction.** The Hawking-Lens-chain framing says enough Lenses can reconstruct the interior of a closed portal. What's the minimum number? The optics hierarchy (Iso/Lens/Prism/Traversal) from portals.md gives the answer per shape but needs operational naming.
 
-5. **Portal-as-identity** (the self-socket row in the table). When a peer's home folder IS the portal endpoint, the autopoietic loop closes at the identity layer. This is `gen_prism.name: zoom(oid, gen_prism)` extended to the portal: `portal.subspace == @fragmentation.oid(observer_self)`. Worth specifying explicitly.
+5. **Portal-as-identity** (the self-socket row in the table). When a peer's home folder IS the portal endpoint, the autopoietic loop closes at the identity layer. This is `gen_prism.name: shift(oid, gen_prism)` extended to the portal: `portal.subspace == @fragmentation.oid(observer_self)`. Worth specifying explicitly.
 
 ---
 
@@ -169,7 +169,7 @@ Estimated 4-6 sessions for the full chain. Independent of #66 (`@spectral/mosaic
 - `docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md` — shard-frame as portal endpoint.
 - `docs/insights/2026-05-25-spectral-namespace-architecture.md` — the @spectral namespace; updated by this insight to include `@spectral/portal`.
 - `docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md` — frame-relativity; cross-portal time comparison.
-- `docs/insights/2026-05-25-parametric-types-and-fp-heritage.md` — zoom(T)/refract(T) used throughout portal's type definition.
+- `docs/insights/2026-05-25-parametric-types-and-fp-heritage.md` — shift(T)/settle(T) used throughout portal's type definition.
 - `docs/insights/2026-05-25-gram-and-mirror-same-architecture-two-altitudes.md` — the eigenvalue stream as GRAM-style multi-trajectory inference at the wire.
 
 ### Corpus prior art (Reed/Alex/Mara, 2026-03-24)

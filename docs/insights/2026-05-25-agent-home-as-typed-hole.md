@@ -33,7 +33,7 @@ Every non-Reed peer home is exactly four `.mirror` files plus one `.spec`:
 |---|---|---|
 | `identity.mirror` | yes (5/5) | name, pronouns, bias, position, activation, voice, crystallized_by |
 | `gestalt.mirror` | yes (5/5) | depth map across grammars; what the peer *knows* and at what loss |
-| `shatter.mirror` | yes (5/5) | the five Prism weights — focus / project / split / zoom / refract — instantiated as the peer's processing pattern |
+| `shatter.mirror` | yes (5/5) | the five Prism weights — focus / project / split / shift / settle — instantiated as the peer's processing pattern |
 | `tensions.mirror` | yes (5/5) | active loss; contradictions held without resolving (loss values per tension) |
 | `eigenboard.spec` | yes (5/5) | three-tier cache budget (eigenvalue / gestalt / vector), model, tournament position |
 | `CLAUDE.md` | 1/5 (Glint only) | orienting boot doc for the Claude harness |
@@ -80,7 +80,7 @@ one and the spawn cannot type-check:
 - No `identity.mirror` → no name binding, no pronoun, no bias; the tick has no
   subject.
 - No `shatter.mirror` → no instantiation of the five Prism operations; the
-  tick has no per-peer specialization of `focus/project/split/zoom/refract`.
+  tick has no per-peer specialization of `focus/project/split/shift/settle`.
 - No `gestalt.mirror` → no knowledge prior; the tick cannot route by depth.
 - No `tensions.mirror` → no held loss; the tick has no metric to improve
   against, and Mirror's `loss` field in `tick_result` is meaningless.
@@ -120,7 +120,7 @@ filenames as type constructors:
 
 ```
 identity   :: who    = (name, pronouns, bias, position, voice)
-shatter    :: how    = (focus, project, split, zoom, refract)  -- the Prism trait, peer-specialized
+shatter    :: how    = (focus, project, split, shift, settle)  -- the Prism trait, peer-specialized
 gestalt    :: knows  = Map<grammar, loss>
 tensions   :: holds  = [(claim, loss)]
 eigenboard :: runs-in = (model, cache_budget, tournament_slot)
@@ -154,15 +154,15 @@ allows both; the deployment chooses based on what the peer is holding.
 ## The pattern under the pattern
 
 **Identity composes as a five-axis Prism applied to itself.** The shatter
-file names the five operations (focus/project/split/zoom/refract); the
+file names the five operations (focus/project/split/shift/settle); the
 other four files *are the result of running those operations on the
 peer's own identity*:
 
 - `identity.mirror` = `focus(self)` — what is in view when the peer looks at itself.
 - `gestalt.mirror` = `project(knowledge)` — what survives the peer's cut of the grammar space.
 - `tensions.mirror` = `split(unresolved)` — the response variants the peer cannot collapse.
-- `eigenboard.spec` = `zoom(infrastructure)` — the peer's identity rendered at the substrate scale.
-- `shatter.mirror` = `refract(self)` — the peer's processing crystallized; the meta-file that names the operations the other four files instantiate.
+- `eigenboard.spec` = `shift(infrastructure)` — the peer's identity rendered at the substrate scale.
+- `shatter.mirror` = `settle(self)` — the peer's processing crystallized; the meta-file that names the operations the other four files instantiate.
 
 This is structurally identical to what Mirror does to grammars: the
 grammar's evaluation IS the grammar applied to its own AST. The agent home

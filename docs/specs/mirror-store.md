@@ -4,16 +4,16 @@
 
 Status: **Red** (the three-layer architecture is named; the store API
 is specified; the FP1 reframe is stated; the fragmentation audit
-records a verdict; the boot sequence and Lift dispatch are pinned. No
+records a verdict; the boot sequence and Shift dispatch are pinned. No
 code lands in this tick.)
 
 Depends on:
 - `mirror/docs/specs/parser-as-prism-grammar.md` — the `Combinator`
   enum, FP1/FP2/FP3 fixed points, the meta-glass self-parse equation,
-  the `Lift { grammar, body }` combinator the store backs.
+  the `Shift { grammar, body }` combinator the store backs.
 - `mirror/docs/specs/walker-contract.md` — Mara's F-1 contract; the
   walker's per-variant byte-consumption rules and the
-  Checkpoint-C scope note that the Lift "registry is empty and Lift
+  Checkpoint-C scope note that the Shift "registry is empty and Shift
   falls back to walking `body` structurally."
 - `mirror/docs/specs/bootstrap-retirement-plan.md` — the end-state
   inventory after Ticks 1–5; the `grammar.rs` retirement target;
@@ -33,8 +33,8 @@ Depends on:
   spec.
 
 Unblocks:
-- F-2 (next checkpoint after F-1): wire the Lift dispatch through a
-  real store. Without it, `Lift` walks structurally and the
+- F-2 (next checkpoint after F-1): wire the Shift dispatch through a
+  real store. Without it, `Shift` walks structurally and the
   cross-grammar dispatch is a no-op.
 - Tick 4c of the retirement plan: `grammar.rs` retires once the
   store owns grammar loading.
@@ -55,7 +55,7 @@ Unblocks:
 The F-1 walker landed real byte consumption in every arm. Five
 commits (`b9118cb` → `62b8650`) put `Literal`, `Charset`, `Seq`,
 `Repeat`, `Choice`, `Capture`, `BraceBlock`, `ParenBlock`, `Until`,
-`Lift`, and `DarkFallback` on the bytes. 111 tests. The walker walks.
+`Shift`, and `DarkFallback` on the bytes. 111 tests. The walker walks.
 
 But the seed retreated. The original parser-as-prism story called
 for the seed to encode the meta-glass — the grammar that parses
@@ -75,8 +75,8 @@ seed to be the meta-glass.
 Three things are needed before the structural FP1 lands:
 
 1. A **store** the walker can `fetch` `@<grammar>` references from.
-   Today `Lift` walks `body` structurally because the registry is
-   empty. With a store, `Lift { grammar: @mirror/glass, body }`
+   Today `Shift` walks `body` structurally because the registry is
+   empty. With a store, `Shift { grammar: @mirror/glass, body }`
    dispatches `apply_h(store.fetch(@mirror/glass), body_bytes)`.
 2. A **boot sequence** that populates the store with the loaded
    `.mirror` files at startup. The seed parses the meta-glass; the
@@ -89,7 +89,7 @@ Three things are needed before the structural FP1 lands:
 
 This spec lands the architecture. The implementation follows in F-2.
 
-The thing the types don't say: **the Lift registry IS the mirror
+The thing the types don't say: **the Shift registry IS the mirror
 store.** Two names; one Layer-1 component, keyed on `@<ref>`, with
 a small closed `Entry` enum (Combinator + AstNode + Bytes).
 spectral-db (task #43) is a separate project that consumes the same
@@ -315,7 +315,7 @@ its own crate (see §7).
 
 `Reference` is `@<path>`: the leading `@`, slash-separated
 components, optional `(args)` tail. Today's representation in
-`Combinator::Lift { grammar: String, ... }` is the string form; the
+`Combinator::Shift { grammar: String, ... }` is the string form; the
 typed form is:
 
 ```rust
@@ -339,7 +339,7 @@ The Entry type is a closed sum. v1 (this tick's scope, store-only):
 
 ```rust
 pub enum Entry {
-    Combinator(Combinator),     // grammar trees; the Lift registry's content
+    Combinator(Combinator),     // grammar trees; the Shift registry's content
     AstNode(AstNode),           // parsed source trees (Layer-3 outputs)
     Bytes(Vec<u8>),             // raw byte blobs (.mirror file source, .rs/.ll source)
 }
@@ -373,7 +373,7 @@ candidates considered and rejected:
   has compaction; the in-memory store doesn't, since process exit
   is the GC).
 - **`iter()` / `keys()`** — useful for diagnostics, not for the
-  Lift dispatch. Defer until a concrete diagnostic use lands; not
+  Shift dispatch. Defer until a concrete diagnostic use lands; not
   added speculatively for spectral-db (spectral-db has its own
   storage layer).
 
@@ -660,7 +660,7 @@ property is stated.
    doesn't carry it. The meta-glass is in the store, but the seed
    bootstrapped it.
 6. Subsequent apply_h calls dispatch through store.fetch(@<ref>)
-   for Lift variants — see §6.
+   for Shift variants — see §6.
 ```
 
 ### 5.2 Load order
@@ -670,9 +670,9 @@ Three options:
 - **Strict ordering**: the bootstrap declares a load order (e.g.,
   `[glass.mirror, nl.mirror, code/rust.mirror, ...]`). Each file
   loads only after every grammar it depends on is in the store.
-- **Lazy resolution**: load files in any order; when a `Lift {
+- **Lazy resolution**: load files in any order; when a `Shift {
   grammar: @<ref>, ... }` resolves at parse time, if `@<ref>` is
-  not yet in the store, treat the Lift as structural (per F-1's
+  not yet in the store, treat the Shift as structural (per F-1's
   Checkpoint-C scope). After boot, re-walk to fill in resolutions.
 - **Two-pass**: first pass loads all files into the store with
   Lifts unresolved (or with grammar references as opaque strings);
@@ -774,7 +774,7 @@ relate as:
   as a grammar in `mirror/store/<backend>.mirror`. They all
   implement the same outer grammar contract.
 
-The mapping: the Lift registry is `@mirror/store/memory` restricted
+The mapping: the Shift registry is `@mirror/store/memory` restricted
 to `Combinator`-typed entries (with AstNode + Bytes as v1
 conveniences). spectral-db's storage layer is NOT a backend of
 mirror's store — it's a peer system that consumes the same
@@ -783,20 +783,20 @@ backend grammars vs spectral-db's storage) is historical; future
 revisions may rename the mirror-store backend variants so the
 substrate distinction is named in code.
 
-The correct unification: the Lift registry IS the mirror store —
+The correct unification: the Shift registry IS the mirror store —
 two names, one Layer-1 component. spectral-db shares fragmentation
 with mirror's store; it does not share its definition.
 
 ---
 
-## 6. The Lift dispatch wiring
+## 6. The Shift dispatch wiring
 
 Today, per `walker-contract.md` and `parser-as-prism-grammar.md`:
 
 ```rust
-Combinator::Lift { grammar, body }:
+Combinator::Shift { grammar, body }:
   - In Checkpoint A/B (today): walk `body` structurally with no
-    grammar resolution. Witness = Lift { grammar, body: walked body },
+    grammar resolution. Witness = Shift { grammar, body: walked body },
     offset = body's offset, success = body's success.
   - In Checkpoint C: resolve `grammar` via a registry. Recursive
     apply over the extracted body bytes.
@@ -824,12 +824,12 @@ fn walk_lift(
         Some(Entry::Combinator(c)) => c,
         Some(_) => return WalkOut::dark_at(offset),     // wrong kind
         None => {
-            // Layer-1 fallback: Lift walks body structurally (the
+            // Layer-1 fallback: Shift walks body structurally (the
             // Checkpoint-A/B behavior). Useful before the store is
             // populated (e.g. during the boot of glass.mirror itself,
             // before @nl is loaded).
             return WalkOut {
-                witness: Combinator::Lift {
+                witness: Combinator::Shift {
                     grammar: grammar_ref.clone(),
                     body: Box::new(body_walk.witness),
                 },
@@ -845,9 +845,9 @@ fn walk_lift(
         return WalkOut::dark_at(offset);
     }
 
-    // 4. Produce the Lift witness wrapping the sub-walk.
+    // 4. Produce the Shift witness wrapping the sub-walk.
     WalkOut {
-        witness: Combinator::Lift {
+        witness: Combinator::Shift {
             grammar: grammar_ref.clone(),
             body: Box::new(sub_walk.witness),
         },
@@ -859,30 +859,30 @@ fn walk_lift(
 
 ### 6.1 Recursion handling
 
-Each Lift descends into `walk_combinator_at` again with `depth + 1`.
+Each Shift descends into `walk_combinator_at` again with `depth + 1`.
 The `MAX_DEPTH = 1024` bound from `walker-contract.md` §Termination
 applies. Cyclic grammars are bounded by depth; pathological cycles
 emit Dark at depth 1024.
 
-### 6.2 Failure modes — Lift produces Dark
+### 6.2 Failure modes — Shift produces Dark
 
-Three places Lift can fall through:
+Three places Shift can fall through:
 
 1. **Body fails** — the body extractor (`Until`, `Capture`, etc.)
-   emits Dark. The outer Lift inherits Dark.
+   emits Dark. The outer Shift inherits Dark.
 2. **Grammar ref not in store, AND no Layer-1 fallback** — in
    strict mode (the bootstrap's eventual default), an unresolved
    `@<ref>` is a hard failure. In permissive mode (today, while the
    store is still being built), the fallback walks body structurally.
 3. **Target grammar produces Dark on body bytes** — the target
    grammar accepted some prefix but couldn't get past the rest. The
-   outer Lift inherits the inner Dark.
+   outer Shift inherits the inner Dark.
 
-### 6.3 The OID-preservation invariant under Lift
+### 6.3 The OID-preservation invariant under Shift
 
 FP1's OID-preservation invariant (per `walker-contract.md`) said: for
 the seed and `grammar.mirror`, the witness OID matches the seed OID.
-With Lift dispatching through the store, the invariant extends:
+With Shift dispatching through the store, the invariant extends:
 
 For any `(@<ref>, source)` pair where the file declares `@<ref>`
 and the file's bytes are the file's source, the witness OID of
@@ -902,7 +902,7 @@ F-2 — the next Mara tick after this spec — implements:
    if time permits; otherwise hand-coded with a TODO to generate).
 3. The `boot()` function with strict ordering and the failure
    modes from §5.3.
-4. The Lift dispatch from §6.
+4. The Shift dispatch from §6.
 5. Cross-validation: every `.mirror` file in the boot set loads
    without Dark fallthrough; the resulting Combinator trees'
    OIDs are stable across runs.
@@ -944,7 +944,7 @@ protocol, conflict-resolution machinery, and persistence model.
 
 ```rust
 pub enum Entry {
-    Combinator(Combinator),  // Lift registry; loaded grammars
+    Combinator(Combinator),  // Shift registry; loaded grammars
     AstNode(AstNode),        // parsed source caches
     Bytes(Vec<u8>),          // raw source / opaque content
 }
@@ -974,7 +974,7 @@ store; all of them belong in spectral-db's own scope:
 - **The MNESIA adapter.** BEAM persistence — the garden's
   read-traffic backend.
 - **The `spectral *` CLI surface.** `focus` / `project` / `split`
-  / `zoom` / `refract` dispatch into spectral-db's API, not into
+  / `shift` / `settle` dispatch into spectral-db's API, not into
   mirror's store.
 - **Gestalt navigation, session state, eigenboard storage.**
 - **The garden's read+write path.** The thing the public
@@ -1041,7 +1041,7 @@ context)
 - `tokenize.rs` — retires in Tick 4c. With the store, the
   retirement completes: the structural-self walker arms for
   `IoBinding`/`MatchArm`/`SelectVariant`/`KeywordFormBody` become
-  real Lift dispatches through `store.fetch(@<ref>)`. Today
+  real Shift dispatches through `store.fetch(@<ref>)`. Today
   these arms are placeholders; with the store, they're full
   dispatches into the relevant grammar.
 - `grammar.rs` — retires in Tick 4c. Its job (`parse_grammar`,
@@ -1060,7 +1060,7 @@ context)
 | Change | LOC delta |
 |---|---|
 | New `store.rs` | +150 |
-| Lift dispatch in `walk_combinator_at` (in `spectral.rs`) | +30 |
+| Shift dispatch in `walk_combinator_at` (in `spectral.rs`) | +30 |
 | `grammar.rs` retires (Tick 4c) | -232 |
 | `tokenize.rs` IoBinding/Match/Select arms become real | net ~0 |
 | `Entry` enum + Fragmentable impl | +50 |
@@ -1084,7 +1084,7 @@ plus its serde+sha2 surface. Mirror was going to need sha2 anyway
 for the OID computation; the actual new bytes are ~10KB of
 `Fragmentable` + `ConcurrentStore` machinery. Justified by what
 retires (the `grammar.rs` keyword-table machinery + the
-walker's structural-self Lift fallback) and by the spectral-db
+walker's structural-self Shift fallback) and by the spectral-db
 unlock.
 
 ---
@@ -1104,8 +1104,8 @@ might want to declare `@./parser` for an internal grammar without
 having to invent a globally unique `@<org>/<project>/parser` name).
 
 **Cyclic-ref policy.** Strict-ordering boot rejects cycles. Lazy
-resolution would tolerate them (a Lift to `@a` that resolves through
-`@b` that lifts back to `@a` is fine if both bottom out via
+resolution would tolerate them (a Shift to `@a` that resolves through
+`@b` that shifts back to `@a` is fine if both bottom out via
 `Until`/`Capture` boundaries). The strict ordering simplifies
 reasoning but forbids genuine recursive grammars.
 
@@ -1240,7 +1240,7 @@ Not in this tick's scope, but flagging for the follow-up:
    the FP1 reframe. FP1's load-bearing equation moves from
    `combinator_tree_oid(&seed) == combinator_tree_oid(&meta_glass)`
    (Layer-1 acceptance) to the Layer-2 store-mediated form.
-3. **`walker-contract.md`** — §Lift's "Checkpoint C" footnote
+3. **`walker-contract.md`** — §Shift's "Checkpoint C" footnote
    becomes a pointer to this spec's §6. The "registry" is the
    store; the wiring is here.
 4. **`bootstrap-retirement-plan.md`** — Tick 4c's `grammar.rs`
@@ -1262,7 +1262,7 @@ once F-2 lands.
 
 - `mirror/docs/specs/parser-as-prism-grammar.md` — the Combinator
   surface this spec stores; the FP1 equation this spec reframes;
-  the Lift combinator this spec dispatches.
+  the Shift combinator this spec dispatches.
 - `mirror/docs/specs/walker-contract.md` — Mara's F-1 contract; the
   per-variant byte consumption that the store dispatches through.
 - `mirror/docs/specs/bootstrap-retirement-plan.md` — the end-state
@@ -1295,7 +1295,7 @@ once F-2 lands.
 
 ---
 
-*Same shape. Three layers. The Lift registry IS the mirror store —
+*Same shape. Three layers. The Shift registry IS the mirror store —
 two names, one Layer-1 component. spectral-db shares fragmentation
 with the mirror store; it does not share its definition.
 fragmentation is the substrate they both stand on. The thing the

@@ -164,7 +164,7 @@ Content address. SHA-256 of tokenized eigenvalue record.
 
 ### The Five Operations
 
-focus, project, split, zoom, refract.
+focus, project, split, shift, settle.
 Every command runs one or more of these. They are the trait methods.
 They map to the Prism optic.
 
@@ -337,7 +337,7 @@ parser doesn't learn — the substrate accumulates.
 
 Examples of the right move:
 
-- New keyword `fixed`? Declare `type fixed = refract` (or whatever Prism op
+- New keyword `fixed`? Declare `type fixed = settle` (or whatever Prism op
   it composes from) in a substrate grammar. Done.
 - Want `<T>` to work where `(T)` works? Use `(T)`; don't extend the parser.
   Or write a `@kintsugi/fracture` rule for migration.

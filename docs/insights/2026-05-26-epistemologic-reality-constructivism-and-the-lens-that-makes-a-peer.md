@@ -599,7 +599,7 @@ political altitude.** Different altitudes, same structure.
    first use.
 2. **Is `@epistemologic/reality/lens` distinct from `@peer.shatter`?**
    `shatter` already names the five Prism weights — focus/project/split/
-   zoom/refract — instantiated as the peer's processing pattern
+   shift/settle — instantiated as the peer's processing pattern
    (`docs/insights/2026-05-25-agent-home-as-typed-hole.md`). Lens might
    be the *generalization* of shatter (any composed filter, not just
    the five operations) or shatter might be a *canonical instance* of

@@ -10,9 +10,9 @@ Main HEAD: `e84dcbb`
 
 ### Where It Worked
 
-`spectral focus` successfully parses `.mirror` grammar files and extracts structural nodes. For each file it returns a flat list of typed declarations: `grammar:`, `type:`, `action-def:`, `in:` (dependency), `out:` (export), `focus:`, `project:`, `split:`, `zoom:`, `refract:`, `fold:`, `template:`, and `default:`.
+`spectral focus` successfully parses `.mirror` grammar files and extracts structural nodes. For each file it returns a flat list of typed declarations: `grammar:`, `type:`, `action-def:`, `in:` (dependency), `out:` (export), `focus:`, `project:`, `split:`, `shift:`, `settle:`, `fold:`, `template:`, and `default:`.
 
-The richest output came from `boot/01-meta.mirror` (84 nodes), which correctly surfaced the full AST type hierarchy: expression, declaration, pattern, type_ref subtrees, plus all five prism operations mapped to sigils (`focus:type`, `project:ref`, `split:|`, `fold:<`, `zoom:|>`, `refract:..`). This is genuinely useful for understanding the meta-grammar's structure at a glance.
+The richest output came from `boot/01-meta.mirror` (84 nodes), which correctly surfaced the full AST type hierarchy: expression, declaration, pattern, type_ref subtrees, plus all five prism operations mapped to sigils (`focus:type`, `project:ref`, `split:|`, `fold:<`, `shift:|>`, `settle:..`). This is genuinely useful for understanding the meta-grammar's structure at a glance.
 
 The prism grammar files (`prism/*.mirror`) produced clean dependency graphs. Examples:
 - `@prism` defines the five operations and six type families

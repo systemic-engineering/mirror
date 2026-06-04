@@ -2,7 +2,7 @@
 
 *2026-05-28. Mara. Spec — architecture, not implementation.*
 
-*Tightened 2026-06-02. Reed + Alex + you. The 16→5 lift gets a typed
+*Tightened 2026-06-02. Reed + Alex + you. The 16→5 shift gets a typed
 home: flang IS the LAPACKPrism's numerical backend; mirror's 5×5
 composition IS the Prism's monoid composition law. Status: load-bearing
 recognition.*
@@ -37,7 +37,7 @@ to two different runtimes:
   per-element floating-point work over the connection fiber — is compiled
   Fortran, emitted as LLVM IR by flang, consumed through `@code/llvm/ir`.
 - **mirror composes the 5×5 fiber/eigenvalue scaling.** The five-operation
-  Prism base (focus, project, split, zoom, refract) is where the substrate
+  Prism base (focus, project, split, shift, settle) is where the substrate
   *composes* — restriction maps, the eigenvalue scaling between operations,
   the holonomy bookkeeping. That composition is mirror grammar, not Fortran.
 
@@ -50,14 +50,14 @@ required by the algebra: the 16×16 dense work lives below the monoid
 element (inside the Prism impl), the 5×5 composition lives at the
 monoid altitude (between Prism impls).
 
-The lift between them — `16 → 5` — is not an arbitrary projection. It is the
-**monadic lift = SSB / the spectral action**: the 16-dimensional fiber's
+The shift between them — `16 → 5` — is not an arbitrary projection. It is the
+**monadic shift = SSB / the spectral action**: the 16-dimensional fiber's
 degenerate spectrum splits, and the splitting selects which degrees of
 freedom become observable as the five-operation base while the rest stay in
 the bulk. (Per the source, the precise Standard-Model identification — 12
 gauge + 4 Higgs = 16 — is speculative; what is established is the structural
 shape: a degenerate fiber spectrum that splits, with the split *being* the
-lift.)
+shift.)
 
 ## The split as a spectral triple
 
@@ -77,16 +77,16 @@ it is the settled state, content-addressed as a git blob.
 **Where `LAPACKPrism` sits in this picture.** `LAPACKPrism` is the Prism
 impl that exposes `D` (the Fortran-resident Dirac operator) to `A` (the
 mirror-side composition algebra) through the `prism_core::Prism` trait.
-Its `focus` / `project` / `refract` methods dispatch to LAPACK kernels;
+Its `focus` / `project` / `settle` methods dispatch to LAPACK kernels;
 its `Beam` carries the eigenvector/eigenvalue settled state `H`. Per
 [[../../../prism/docs/specs/pq]] §6.5.3, this is the canonical Prism impl
-that backs pq's wire surface. The 16→5 lift below is what makes it
+that backs pq's wire surface. The 16→5 shift below is what makes it
 composable at the 5-operation altitude despite the 16-dim machinery
 inside.
 
-## The lift, typed
+## The shift, typed
 
-The lift is `16 → 5`. Honoring no-bare-types, neither end is a bare `[f64]`:
+The shift is `16 → 5`. Honoring no-bare-types, neither end is a bare `[f64]`:
 
 ```mirror
 -- the 16-dimensional connection fiber (flang's domain)
@@ -101,12 +101,12 @@ type base_state = record {
   scaling:    eigenvalue_scaling,   -- the 5×5 inter-operation scaling
 }
 
--- the lift IS spontaneous symmetry breaking / the spectral action
-action lift(fiber_state) -> base_state = \    -- body parked; resolved via Fate
+-- the shift IS spontaneous symmetry breaking / the spectral action
+action shift(fiber_state) -> base_state = \    -- body parked; resolved via Fate
   -- the 16-dim spectrum splits; the split selects the observable five-op base.
 ```
 
-The hole `\` is honest: the lift's body is the spectral action, resolved
+The hole `\` is honest: the shift's body is the spectral action, resolved
 through Fate's tournament, not hand-written here. The *types* commit to the
 shape; the body settles later.
 
@@ -122,7 +122,7 @@ shape; the body settles later.
   That is what the substrate exists to *describe of itself*; it is never
   Fortran. Pushing it into flang would be capability-in-the-floor — the
   inverse of the FROZEN discipline.
-- **The lift is the seam.** `16 → 5` is the one morphism that touches both:
+- **The shift is the seam.** `16 → 5` is the one morphism that touches both:
   flang produces the settled 16-spectrum; mirror reads the split as its
   five-op base. The seam is where `au` is born — the four coordinates
   (`eigenvector`, `eigenvalue`, `fiedler`, `eigengap`) read off at the SCF
@@ -139,9 +139,9 @@ draws: `A` is grammar; `D`'s *invocation* is floor.
 
 ## Open
 
-- The `16 → 5` lift body (`lift(fiber_state)`) is parked (`\`). Resolving it
+- The `16 → 5` shift body (`shift(fiber_state)`) is parked (`\`). Resolving it
   is downstream of Fate tournament settlement over the fiber.
 - Whether `connection_fiber` is `16×16` dense or factored is a
   `numerical-substrate-via-fortran` §10 concern, not settled here.
 - The Standard-Model identification (12 gauge + 4 Higgs) stays a hedge; this
-  spec asserts only the structural shape (degenerate spectrum → split → lift).
+  spec asserts only the structural shape (degenerate spectrum → split → shift).

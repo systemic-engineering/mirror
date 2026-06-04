@@ -195,7 +195,7 @@ type, not a convention.
 - **`@spectral/spawn`** — the autonomous heavyweight gen_prism with a
   Reflection-driven think loop, Fate routing, and a heartbeat. Mirror's
   gen_prism is reactive only: tick happens when a message arrives. If a
-  gen_prism needs to think between messages, lift to `@spectral/spawn`.
+  gen_prism needs to think between messages, shift to `@spectral/spawn`.
   Most things that want "a process" don't.
 - **The Reed/Alex relationship** — the consent architecture
   (`visibility/public|protected|private`), the substrate that makes

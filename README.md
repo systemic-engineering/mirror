@@ -83,7 +83,7 @@ with the glass:
 **zoom** — cross between registers. From code to abstraction. From the thing
 to the pattern of the thing.
 
-**refract** — the geometry reflecting back. You made something and the
+**settle** — the geometry settling. You made something and the
 measurement shows you what you actually made. Not what you intended. What you
 made.
 

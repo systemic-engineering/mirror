@@ -11,13 +11,13 @@ Depends on:
 - `mirror/boot/std/epistemologic/property.mirror` — the verdict algebra all property checks return.
 - `mirror/docs/specs/shard-design.md` §3 — `@mirror/shard/self` as observer-relative λ₀; comparing across shards is cross-observer.
 - `mirror/docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md` — observer-relativity at the substrate level.
-- `mirror/docs/insights/2026-05-25-parametric-types-and-fp-heritage.md` — the `zoom(T)` / `refract(T)` discipline `duration` must honour.
+- `mirror/docs/insights/2026-05-25-parametric-types-and-fp-heritage.md` — the `shift(T)` / `settle(T)` discipline `duration` must honour.
 
 ---
 
 ## 1. Thesis
 
-**Time is substrate, not utility.** PostgreSQL has spent twenty-eight years (since 1997's 6.0) learning that date/time is the place where naive type systems break first and break worst: timezone confusion, DST cliffs, leap seconds, monotonic-vs-wall drift, interval arithmetic that silently corrupts under daylight transitions. Their hard-won design — `timestamptz` vs `timestamp`, `interval` with named fields, range types with inclusivity bounds, the deliberate refusal to add leap seconds to `epoch` — is the closest thing in working software to a finished spec for how time should be typed. Mirror's algebra has the structural pieces to do it one altitude higher: `@epistemologic/property/*` carries the laws as verdicts; `@mirror/shard/self`'s observer-relativity carries timezone-as-frame; `zoom(T)` carries the annotation-only refinement (`duration<wall>` vs `duration<monotonic>` is phantom, not runtime); `refract(T)` carries verified construction (a `duration` whose existence witnesses non-negativity). The shared `@time.duration` Mara parked at α/5 is not a u64-with-units; it is the **algebraic home** for the substrate-level time concerns the rest of the system has been pretending are someone else's problem.
+**Time is substrate, not utility.** PostgreSQL has spent twenty-eight years (since 1997's 6.0) learning that date/time is the place where naive type systems break first and break worst: timezone confusion, DST cliffs, leap seconds, monotonic-vs-wall drift, interval arithmetic that silently corrupts under daylight transitions. Their hard-won design — `timestamptz` vs `timestamp`, `interval` with named fields, range types with inclusivity bounds, the deliberate refusal to add leap seconds to `epoch` — is the closest thing in working software to a finished spec for how time should be typed. Mirror's algebra has the structural pieces to do it one altitude higher: `@epistemologic/property/*` carries the laws as verdicts; `@mirror/shard/self`'s observer-relativity carries timezone-as-frame; `shift(T)` carries the annotation-only refinement (`duration<wall>` vs `duration<monotonic>` is phantom, not runtime); `settle(T)` carries verified construction (a `duration` whose existence witnesses non-negativity). The shared `@time.duration` Mara parked at α/5 is not a u64-with-units; it is the **algebraic home** for the substrate-level time concerns the rest of the system has been pretending are someone else's problem.
 
 ---
 
@@ -68,11 +68,11 @@ grammar @time/duration {
   in @epistemologic/property/laws/monotonicity
   in @epistemologic/property/laws/duration_algebra
 
-  # The base carrier. Non-negative by construction (refract witness):
+  # The base carrier. Non-negative by construction (settle witness):
   # constructors that would produce a negative duration return imperfect.
   # u64 nanoseconds gives ~584 years of range — sufficient for any
   # workload the substrate will host.
-  type duration = refract({ nanos: u64 })
+  type duration = settle({ nanos: u64 })
 
   # The two frames PG distinguishes as CLOCK_MONOTONIC vs CLOCK_REALTIME.
   # zoom(T): annotation-only. Same bytes, different declared shape; the
@@ -90,8 +90,8 @@ grammar @time/duration {
   focus(d: duration) -> u64 { d.nanos }                       # extract the scalar
   project(d: duration, unit: time_unit) -> precision { \ }    # convert to ms/μs/s/min
   split(d: duration, n: u32) -> [duration] { \ }              # n equal parts; partial if not divisible
-  zoom lift(d: u64) -> imperfect                              # u64 ns → duration; succeeds if non-negative
-  refract(d: duration) -> oid                                 # content-address; the witness
+  shift(d: u64) -> imperfect                                  # u64 ns → duration; succeeds if non-negative
+  settle(d: duration) -> oid                                  # content-address; the witness
 
   # Monoid under +. Associative, commutative, zero-identity.
   # Subtraction is partial: returns imperfect with partial on underflow.
@@ -118,11 +118,11 @@ out scale
 out @time/duration
 ```
 
-**Five operations because the algebra has five.** `focus` extracts the scalar; `project` narrows to a unit; `split` distributes; `zoom` annotates the frame; `refract` content-addresses. The shape echoes `compute_bound`'s five-field justification (each axis of resource extraction maps to one Prism op).
+**Five operations because the algebra has five.** `focus` extracts the scalar; `project` narrows to a unit; `split` distributes; `shift` annotates the frame; `settle` content-addresses. The shape echoes `compute_bound`'s five-field justification (each axis of resource extraction maps to one Prism op).
 
-**`refract({ nanos: u64 })` not `type duration = u64`.** The refract form is the verified-construction witness — building a `duration` *is* the proof that `nanos` is non-negative. The PG lesson `2.5` says: pick a convention, name it. The convention here is "nanoseconds since the frame's epoch, non-negative."
+**`settle({ nanos: u64 })` not `type duration = u64`.** The settle form is the verified-construction witness — building a `duration` *is* the proof that `nanos` is non-negative. The PG lesson `2.5` says: pick a convention, name it. The convention here is "nanoseconds since the frame's epoch, non-negative."
 
-**`zoom(duration)` for monotonic vs wall.** PG's `CLOCK_MONOTONIC` / `CLOCK_REALTIME` split is the canonical instance of the phantom-types pattern: same bytes, different semantic frame. `zoom(T)` IS the phantom-types verb at the type layer (per `parametric-types-and-fp-heritage.md`); using it here means **adding a `monotonic` to a `wall` is a type error**, not a silent corruption.
+**`shift(duration)` for monotonic vs wall.** PG's `CLOCK_MONOTONIC` / `CLOCK_REALTIME` split is the canonical instance of the phantom-types pattern: same bytes, different semantic frame. `shift(T)` IS the phantom-types verb at the type layer (per `parametric-types-and-fp-heritage.md`); using it here means **adding a `monotonic` to a `wall` is a type error**, not a silent corruption.
 
 **Interval as a separate grammar.** The PG `2.2` lesson is the strongest one — duration arithmetic is *not* associative across frames when calendar arithmetic is in play. The honest move is to refuse to overload `duration + duration` with calendar semantics and put interval into its own grammar (`@time/interval` for the future calendar work). This keeps `@time.duration` total and predictable.
 
@@ -181,7 +181,7 @@ The `halts` property (#74) names a separate concern: load-topology-derived halti
 
 ## 8. Open questions
 
-1. **Does `monotonic + wall` need a third frame `instant`?** PG's `timestamptz` is an instant (UTC absolute); duration is the delta. Mirror's `duration` is the delta; the instant is implicit in the snapshot's `tick: monotonic` field. Decision needed: do we ever need `type instant = refract({ epoch_ns: u64, frame: shard })` as a separate carrier, or is "a snapshot's tick" always sufficient? The substrate-as-source-of-truth principle favours snapshot-tick; cross-shard messaging might force instant.
+1. **Does `monotonic + wall` need a third frame `instant`?** PG's `timestamptz` is an instant (UTC absolute); duration is the delta. Mirror's `duration` is the delta; the instant is implicit in the snapshot's `tick: monotonic` field. Decision needed: do we ever need `type instant = settle({ epoch_ns: u64, frame: shard })` as a separate carrier, or is "a snapshot's tick" always sufficient? The substrate-as-source-of-truth principle favours snapshot-tick; cross-shard messaging might force instant.
 2. **How do we handle PG's `infinity` literal?** The natural mirror encoding is `option(duration)` with `none = unbounded`. PG distinguishes `+infinity` and `-infinity` in ranges. Since `duration` is non-negative, `-infinity` is structurally inadmissible. Do we need `enum bound = finite(duration) | infinity` to preserve the `[t, infinity)` range structure, or does `option(duration)` suffice for the budget use case?
 3. **The `interval` grammar (`@time/interval`) — when does it land?** Calendar arithmetic is a v2.0 concern (no current grammar needs it). Naming it here as the structural separation point is enough for v1.0; explicit refusal to overload `+` for calendar semantics protects `duration` from the PG §2.2 trap until calendar work arrives.
 4. **Should `tick(u64)` in `@time.mirror` be promoted to `tick: monotonic` *in this cycle*?** The change is one line. The downstream impact is zero (zoom is annotation-only). The benefit is that every existing time consumer (snapshots, deltas, replays, the gen_prism's tick field) gets the frame discipline for free. Recommend: yes, fold into the same tick.
@@ -212,7 +212,7 @@ The `halts` property (#74) names a separate concern: load-topology-derived halti
 - `mirror/boot/std/epistemologic/silicon/compute_bound.mirror:34` — `type wall_time = u64` (the parked carrier).
 - `mirror/docs/specs/shard-design.md` §3 — `self()` as λ₀; observer-relative resolution.
 - `mirror/docs/insights/2026-05-25-shard-as-observer-relative-lambda-zero.md` — frame relativity at the substrate.
-- `mirror/docs/insights/2026-05-25-parametric-types-and-fp-heritage.md` — `zoom(T)` / `refract(T)` discipline.
+- `mirror/docs/insights/2026-05-25-parametric-types-and-fp-heritage.md` — `shift(T)` / `settle(T)` discipline.
 - `~/dev/systemic.engineering/practice/insights/beam-elixir/2026-02-26-mnesia-postgres-sync.md` — the corpus's most thorough working example of `timestamptz` + Lamport-clock causal ordering across BEAM + PG.
 
 ---

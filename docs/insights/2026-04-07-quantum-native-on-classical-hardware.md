@@ -23,8 +23,8 @@ each `|` is a held branch in a model's working state.
 | wave function        | `Beam<T>` (from the `prism` crate)                  |
 | eigenvalue           | `Eigenvalues` (the `MirrorData` of a fragment)      |
 | projection           | `GrammarProjection` / `Prism::project`              |
-| measurement          | `Prism::refract` — the operation that crystallizes  |
-| collapse             | `Crystal` — the post-refract value                  |
+| measurement          | `Prism::settle` — the operation that crystallizes   |
+| collapse             | `Crystal` — the post-settle value                   |
 | superposition        | `\|` — the variant separator and the split operator |
 | operator             | the `Prism` trait itself                            |
 
@@ -49,7 +49,7 @@ executes it is the BEAM:
   flows backward through the chain; values flow forward.
 - The five fate models run *inside* the actors. Each actor is one
   inference step over the spectral features of its incoming form.
-- `refract` is the actor message that collapses the held branches. The
+- `settle` is the actor message that collapses the held branches. The
   actor merges its inbound beams into one outgoing crystal.
 
 This is what `spectral`'s `gen_prism` backend will emit. See
@@ -69,7 +69,7 @@ mechanism. Their joint state across the chain is the wave function.
 
 Without `fate`, the chain would have to be either fully resolved or
 fully exploded. With `fate`, the chain stays in superposition until
-`refract` is called. The crystal is the measurement.
+`settle` is called. The crystal is the measurement.
 
 ## Cross-references
 
@@ -81,7 +81,7 @@ fully exploded. With `fate`, the chain stays in superposition until
 - `coincidence/src/declaration.rs` — `MirrorFragment`, the
   content-addressed crystal type.
 - `mirror/src/mirror_runtime.rs` — `Shatter`'s `Prism` impl. `focus`,
-  `project`, `refract` are filled. `split` and `zoom` are conservative
+  `project`, `settle` are filled. `split` and `shift` are conservative
   no-ops with TBD comments. The TBD on `split` is resolved by the
   companion insight `2026-04-07-the-chain-is-the-shatter.md`: `|` is
   `split`.

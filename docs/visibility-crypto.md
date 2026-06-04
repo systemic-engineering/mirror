@@ -172,21 +172,21 @@ property no_private_leak(grammar) {
     fold all_actions
     traversal visibility_crossings
     lens authorized
-    refract verdict
+    settle verdict
 }
 
 property signed_chain(grammar) {
     fold all_shards
     traversal signatures
     lens complete_chain
-    refract verdict
+    settle verdict
 }
 
 property consent_at_boundary(grammar) {
     fold all_declassifications
     traversal consent_state
     lens granted
-    refract verdict
+    settle verdict
 }
 ```
 

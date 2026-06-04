@@ -157,7 +157,7 @@ Form { kind, name, params, variants, children }
 MirrorData { kind, name, params, variants }
     ↓ project (Shatter::project)
 MirrorFragment (content-addressed, OID)
-    ↓ refract (Shatter::refract)
+    ↓ settle (Shatter::settle)
 .shatter (the crystal)
 ```
 

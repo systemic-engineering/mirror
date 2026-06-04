@@ -144,7 +144,7 @@ Conflict resolution produces MirrorLoss. The loss records which
 files conflicted, which hunks, how they were resolved. The history
 is in the shard.
 
-### Step 5: Crystal (refract)
+### Step 5: Crystal (settle)
 
 After all tiers merged:
 

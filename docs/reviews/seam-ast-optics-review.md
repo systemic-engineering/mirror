@@ -10,9 +10,9 @@
 
 ## Executive Summary
 
-The branch adds five optic variants (Focus, Project, Split, Zoom, Refract) to the mirror AST, teaches the parser to promote `name(arg) { body }` into optic AST nodes when the name matches, adds serde serialization behind a `shatter` feature flag, and defines a binary `.shatter` blob format (SHTR magic + version byte + bincode payload). The decomposition is clean. The TDD discipline is correct. The parser disambiguation strategy -- optic name + single arg + body = optic variant, everything else stays Call -- is reasonable and well-tested.
+The branch adds five optic variants (Focus, Project, Split, Shift, Settle) to the mirror AST, teaches the parser to promote `name(arg) { body }` into optic AST nodes when the name matches, adds serde serialization behind a `shatter` feature flag, and defines a binary `.shatter` blob format (SHTR magic + version byte + bincode payload). The decomposition is clean. The TDD discipline is correct. The parser disambiguation strategy -- optic name + single arg + body = optic variant, everything else stays Call -- is reasonable and well-tested.
 
-The primary concerns are: (1) the content-address scheme hashes Display output, which creates a fragile coupling between the hash and the formatter; (2) the `.shatter` blob format has no defense against oversized allocations from malicious payloads; (3) the optic variants enforce a mandatory argument, which means `refract { settle }` (no explicit argument) cannot be represented as an optic; and (4) there is no connection yet between the optic AST and the Dirac operator in `dirac.rs`, despite the doc comment in `ast.rs` line 97 claiming "composition of optics IS the Dirac operator."
+The primary concerns are: (1) the content-address scheme hashes Display output, which creates a fragile coupling between the hash and the formatter; (2) the `.shatter` blob format has no defense against oversized allocations from malicious payloads; (3) the optic variants enforce a mandatory argument, which means `settle { settle }` (no explicit argument) cannot be represented as an optic; and (4) there is no connection yet between the optic AST and the Dirac operator in `dirac.rs`, despite the doc comment in `ast.rs` line 97 claiming "composition of optics IS the Dirac operator."
 
 Nothing is blocking. The architecture is sound for the current scope. The findings below are ordered by severity.
 
@@ -52,7 +52,7 @@ Meanwhile, `parse.rs` line 59-62 defines its own `domain_oid!(pub AstOid)` for `
 
 **Suggestion:** Either use `ast::AstOid` as the associated type in `ContentAddressed for Ast`, or remove it. Rename `parse::AstOid` to `AstNodeOid` to avoid name collision.
 
-### W4. Optics require an argument -- no bare `refract { body }` form
+### W4. Optics require an argument -- no bare `settle { body }` form
 
 All five optic variants require a first argument (target/query/root/perspective/mutation). The parser (ast_prism.rs:286-295) handles `focus { body }` (optic name + bare body, no argument) as a `Call`, not an optic:
 
@@ -69,9 +69,9 @@ if matches!(tokens.get(*cursor), Some(Token::LBrace)) {
 }
 ```
 
-This means `refract { settle }` is a Call, not a Refract optic. If the grammar intends that optics can be argumentless (e.g., "refract into the settled state, body is the proof"), the AST needs an `Option<Box<Ast>>` for the first field, and the parser needs a branch for optic-name + bare body.
+This means `settle { settle }` is a Call, not a Settle optic. If the grammar intends that optics can be argumentless (e.g., "settle into the settled state, body is the proof"), the AST needs an `Option<Box<Ast>>` for the first field, and the parser needs a branch for optic-name + bare body.
 
-If the grammar intentionally requires an explicit argument, this is correct behavior. But it should be documented with a test: `refract_bare_body_is_call_not_optic`.
+If the grammar intentionally requires an explicit argument, this is correct behavior. But it should be documented with a test: `settle_bare_body_is_call_not_optic`.
 
 ### W5. `focus(x, { y })` vs `focus(x) { y }` -- implicit disambiguation
 
@@ -111,7 +111,7 @@ The test `parse_optic_round_trip` verifies `parse(display(parse(source))) == par
 
 ### N4. The five optics are the right decomposition
 
-Focus (read-only observation), Project (dimensionality reduction), Split (connectivity exploration), Zoom (perspective shift), Refract (the one write) map cleanly to the Prism trait operations. The field names (target/query/root/perspective/mutation) are distinct and meaningful. There is no missing operation in the five-operation model.
+Focus (read-only observation), Project (dimensionality reduction), Split (connectivity exploration), Shift (perspective shift), Settle (the one write) map cleanly to the Prism trait operations. The field names (target/query/root/perspective/mutation) are distinct and meaningful. There is no missing operation in the five-operation model.
 
 ### N5. Feature flag isolation is correct
 
@@ -123,7 +123,7 @@ The doc comment at ast.rs:97 says "composition of optics IS the Dirac operator."
 
 ### N7. The Body-as-second-field pattern is uniform
 
-All five optic variants share the same shape: `{ first_field: Box<Ast>, body: Body }`. This uniformity enables `emit_optic` to handle all five with a single function. If a variant eventually needs a different shape (e.g., Split with two roots, or Refract with a proof type), the uniform pattern will need to break. But for now, uniformity is the right call.
+All five optic variants share the same shape: `{ first_field: Box<Ast>, body: Body }`. This uniformity enables `emit_optic` to handle all five with a single function. If a variant eventually needs a different shape (e.g., Split with two roots, or Settle with a proof type), the uniform pattern will need to break. But for now, uniformity is the right call.
 
 ---
 
@@ -131,7 +131,7 @@ All five optic variants share the same shape: `{ first_field: Box<Ast>, body: Bo
 
 ### G1. Optic variants are AST-level, not sugar
 
-Making Focus/Project/Split/Zoom/Refract first-class enum variants rather than special-casing them during compilation means the AST honestly represents the user's intent. A Focus is structurally different from a Call named "focus" -- it carries different fields (target vs args), different semantics, and a different display form. This is the right level to make the distinction.
+Making Focus/Project/Split/Shift/Settle first-class enum variants rather than special-casing them during compilation means the AST honestly represents the user's intent. A Focus is structurally different from a Call named "focus" -- it carries different fields (target vs args), different semantics, and a different display form. This is the right level to make the distinction.
 
 ### G2. Box<Ast> for the argument, not Vec<Ast>
 
@@ -180,7 +180,7 @@ These tests would strengthen the review findings:
 
 | Test | What it catches |
 |---|---|
-| `refract_bare_body_is_call_not_optic` | W4: Documents that `refract { settle }` is intentionally a Call |
+| `settle_bare_body_is_call_not_optic` | W4: Documents that `settle { settle }` is intentionally a Call |
 | `focus_with_body_in_args_stays_call` | W5: `focus(x, { y })` stays Call, not optic |
 | `display_format_pinned` | W1: Pin `format!("{}", known_ast)` to an exact string to catch formatting drift |
 | `optic_with_body_target_round_trips` | Edge case: `Focus { target: Body([...]), body: [...] }` constructed programmatically -- does Display/parse round-trip? |
@@ -195,7 +195,7 @@ The AST optics refactor is architecturally sound. The five variants are the righ
 
 The main risks are operational: content-addressing via Display form (W1) creates a fragile coupling that will bite on the first formatting change; the lack of deserialization size limits (W2) is a latent DoS vector; the mandatory-argument constraint (W4) may not match the grammar's intended expressiveness. None of these are blocking for the current scope, but W1 should be addressed before `.shatter` blobs are stored durably.
 
-The Dirac connection (N6) is the big open question. The AST now has optic variants; `dirac.rs` has spectral triples. The bridge between them -- how does a composition of Focus/Project/Split/Zoom/Refract on an AST produce a Dirac operator on a graph? -- is the next architectural decision. The current code does not constrain that decision, which is correct at this stage.
+The Dirac connection (N6) is the big open question. The AST now has optic variants; `dirac.rs` has spectral triples. The bridge between them -- how does a composition of Focus/Project/Split/Shift/Settle on an AST produce a Dirac operator on a graph? -- is the next architectural decision. The current code does not constrain that decision, which is correct at this stage.
 
 ---
 

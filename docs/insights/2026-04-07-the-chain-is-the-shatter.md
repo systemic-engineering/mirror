@@ -40,7 +40,7 @@ algebra.
 The same character `|` serves three roles, and under the new framing they
 are *the same role*: variant declarations are literally superposition
 declarations. A variant set is a held branch set. `split` walks the
-branches without collapsing them. Crystallization happens in `refract`,
+branches without collapsing them. Crystallization happens in `settle`,
 not in `split`.
 
 This resolves a comment in `mirror_runtime.rs`. `Shatter::split` is

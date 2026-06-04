@@ -50,12 +50,12 @@ Trace the five Prism operations against the fracture's structure:
 - **focus**: observe the AST element under inspection
 - **project**: filter to elements where the rule applies
 - **split**: explore where the rule fires across the AST
-- **zoom**: shift between source-text and AST altitudes
-- **refract**: emit the canonical form
+- **shift**: shift between source-text and AST altitudes
+- **settle**: emit the canonical form
 
-`refract` IS the fracture's flow. A fracture is a **Prism that has already chosen its convergent form** — the refraction target is canonical-by-definition.
+`settle` IS the fracture's flow. A fracture is a **Prism that has already chosen its convergent form** — the settle target is canonical-by-definition.
 
-This means @kintsugi/fracture isn't a new substrate primitive; it's a **named usage pattern of the existing Prism trait**. Every fracture is a Prism on ASTs whose refract operation normalizes. The five operations were already enough.
+This means @kintsugi/fracture isn't a new substrate primitive; it's a **named usage pattern of the existing Prism trait**. Every fracture is a Prism on ASTs whose settle operation normalizes. The five operations were already enough.
 
 ## Why detection-and-fill are unified in mirror
 
@@ -95,7 +95,7 @@ What mirror rejects:
 What mirror's FP heritage adds beyond Credo:
 
 - The collapse of detect+fill into one function with two algebraic laws (closure operators)
-- The Prism algebra connection (a fracture is a settled Prism; refract IS the flow)
+- The Prism algebra connection (a fracture is a settled Prism; settle IS the flow)
 
 ## The first instance: @kintsugi/fracture/generic-brackets
 
