@@ -1,0 +1,48 @@
+in @glass
+
+# Property: a shard file's path determines its namespace.
+#
+# For a file at `shards/<segments>.mirror`, the basename (without
+# `.mirror`) joined with any nested directories under `shards/` is
+# the namespace the file MUST declare via a concrete top-level
+# `prism @<ns> { ... }` or `grammar @<ns> { ... }`.
+#
+# Path -> namespace rule:
+#   shards/X.mirror               -> @X
+#   shards/X/Y.mirror             -> @X/Y
+#   shards/X/Y/Z.mirror           -> @X/Y/Z
+# Basename drops the `.mirror` suffix; nested dirs are preserved.
+#
+# Concrete vs parametric: the predicate inspects concrete @<name>
+# declarations only. Parametric @(<binder>) heads (e.g.
+# shards/prism.mirror's `prism @(id) { ... }`) are the recursion's
+# syntactic device, not a namespace claim; they're skipped.
+#
+# Verdict surface is @glass.verdict:
+#   pass                 -- declared @X matches path-implied namespace
+#   failure(reason)      -- declared @X disagrees with path
+#   partial(confidence)  -- multiple top-level concrete @X declarations,
+#                           some match and some don't
+#
+# Generalizes @epistemologic/property/filename_matches_glass from
+# the single canonical-keyword file to every shard file. Self-correcting
+# substrate: rename a file, get a compile error.
+
+grammar @epistemologic/property/path_matches_namespace {
+  # The namespace implied by a file's path under `shards/`.
+  # `shards/foo/bar.mirror` -> `@foo/bar`.
+  path_namespace(file: ref) -> ref { \ }
+
+  # The concrete top-level @<name> declarations in `file`.
+  # Parametric @(<binder>) heads are excluded.
+  declared_namespaces(file: ref) -> [ref] { \ }
+
+  # The combined property: every concrete declared @X equals
+  # path_namespace(file).
+  path_matches_namespace(file: ref) -> verdict { \ }
+}
+
+out path_namespace
+out declared_namespaces
+out path_matches_namespace
+out @epistemologic/property/path_matches_namespace
