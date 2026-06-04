@@ -12,7 +12,7 @@ The Rust parser hardcodes 23 keywords in `DeclKind::parse()` plus the
 
 ```
 form, type, prism, in, out, property, fold, requires, invariant, ensures,
-focus, project, split, zoom, refract, traversal, lens, action, recover,
+focus, project, split, shift, settle, traversal, lens, action, recover,
 rescue, grammar, default, binding
 + abstract (modifier)
 ```
@@ -70,7 +70,7 @@ The 12.0 holonomy comes from three distinct issues:
    appears as an unrecognized word at top level. This is a tokenizer issue,
    not a keyword issue.
 
-3. **`->` return type on non-action decls (2.0):** `zoom lift(option(a)) -> imperfect`
+3. **`->` return type on non-action decls (2.0):** `shift(option(a)) -> imperfect`
    in option.mirror and result.mirror. The `->` return type annotation is only
    consumed by `action` declarations. For `zoom`/`fold` declarations, the `->` is
    left as a dangling top-level token.
@@ -100,18 +100,18 @@ Learned:   everything else from boot
 ```
 
 **Would break:** Every boot file that uses `prism`, `focus`, `project`, `split`,
-`zoom`, `refract`, `fold`, `requires`, `invariant`, `ensures`, `traversal`,
+`shift`, `settle`, `fold`, `requires`, `invariant`, `ensures`, `traversal`,
 `lens`, `recover`, `rescue`, `default`, `binding` at top level or inside blocks.
 
 - `00-prism.mirror`: uses `focus`, `prism`, `project` -- all become unrecognized
-- `01-meta.mirror`: uses `focus`, `fold`, `project`, `split`, `zoom`, `refract` -- all lost
-- `05-property.mirror`: uses `property`, `fold`, `traversal`, `lens`, `refract` inside
+- `01-meta.mirror`: uses `focus`, `fold`, `project`, `split`, `shift`, `settle` -- all lost
+- `05-property.mirror`: uses `property`, `fold`, `traversal`, `lens`, `settle` inside
 - Every std grammar with `recover`/`rescue` blocks: action body content lost
 
 **Estimated holonomy:** 60+ (unmeasured, would require parser modification to test).
 
 **Verdict:** Not viable without a self-teaching parser. The optic keywords (`focus`,
-`project`, `split`, `zoom`, `refract`) are structural -- they define how the prism
+`project`, `split`, `shift`, `settle`) are structural -- they define how the prism
 pipeline works. If the parser doesn't know them, it can't build the AST.
 
 ---
@@ -164,7 +164,7 @@ Tier 2 (boot):  keywords declared by boot files, learned during boot
 To parse `00-prism.mirror`, the parser needs:
 
 ```
-focus, prism, project, out, in, split, zoom, refract
+focus, prism, project, out, in, split, shift, settle
 ```
 
 But `00-prism.mirror` doesn't use `type`, `grammar`, `action`, `recover`,
@@ -174,7 +174,7 @@ The minimum set to bootstrap through ALL kernel files:
 
 ```rust
 // Structural (required by 00-prism)
-In, Out, Focus, Project, Split, Zoom, Refract, Prism,
+In, Out, Focus, Project, Split, Shift, Settle, Prism,
 
 // Type system (required by 01-meta)
 Type, Grammar, Fold,
@@ -299,8 +299,8 @@ pub enum DeclKind {
     Focus,        // () grouping
     Project,      // |> projection
     Split,        // | branching
-    Zoom,         // -> transformation
-    Refract,      // .. settlement
+    Shift,        // -> transformation
+    Settle,       // .. settlement
     Fold,         // <= observation
     Unfold,       // => expansion            NEW
     Subset,       // < containment           NEW

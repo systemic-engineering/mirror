@@ -29,7 +29,7 @@ Breaking that down:
 ### 1.1 Total
 
 Every mirror program terminates. There is no general recursion. The AST has
-seven variants (Focus, Project, Split, Zoom, Refract, In, Out), and evaluation
+seven variants (Focus, Project, Split, Shift, Settle, In, Out), and evaluation
 walks this AST exactly once -- O(n) in AST size. There are no fixpoint
 combinators, no unbounded loops, no self-application. The `|>` pipeline
 composes a finite sequence of operations. Each operation processes its input
@@ -73,15 +73,15 @@ to specific optics in the profunctor optics hierarchy:
 | Focus       | Getter      | Read a part, cannot write     |
 | Project     | Prism       | Pattern match on a sum type   |
 | Split       | Traversal   | Enumerate all parts           |
-| Zoom        | Lens         | Read and write a part         |
-| Refract     | Iso (settlement) | Verify and crystallize   |
+| Shift       | Lens         | Read and write a part         |
+| Settle      | Iso (settlement) | Verify and crystallize   |
 | In          | Restriction  | Inject from a subspace        |
 | Out         | Projection   | Project onto a quotient       |
 
 The composition table of these operations is not arbitrary -- it is determined
 by the Tambara module structure of the corresponding profunctor optics
 (Clarke et al. 2020, *Compositionality*). `focus |> split` composes as a
-Getter-then-Traversal (which is a Fold). `zoom |> refract` composes as a
+Getter-then-Traversal (which is a Fold). `shift |> settle` composes as a
 Lens-then-Iso (which is a Lens).
 
 No existing language has optics as **primitive types** in this way. Haskell
@@ -444,7 +444,7 @@ defunctionalized data types. In category theory papers, as morphisms in a
 monoidal category.
 
 Mirror is the first system where the optic IS the type. The seven AST
-variants (Focus/Project/Split/Zoom/Refract/In/Out) are not encodings of
+variants (Focus/Project/Split/Shift/Settle/In/Out) are not encodings of
 optics -- they ARE the optics. The composition table is not derived from a
 constraint solver -- it IS the type system's core judgment.
 

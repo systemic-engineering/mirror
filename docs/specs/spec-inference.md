@@ -1,4 +1,4 @@
-# mirror refract -- infer the .spec
+# mirror settle -- infer the .spec
 
 *2026-05-19. Reed. Spec.*
 
@@ -11,7 +11,7 @@ Depends on: `property-projection.md`, `epistemologic-import-resolver.md`,
 
 ## What It Does
 
-`mirror refract <path>` reads a project, measures its topology,
+`mirror settle <path>` reads a project, measures its topology,
 and writes a `mirror.spec` with inferred properties below `---`.
 
 The measurement IS the product. The spec IS the measurement.
@@ -103,18 +103,18 @@ No install. No CLI. The measurement IS the product.
 
 The WASM target runs the same pipeline:
 1. Clone (shallow) the repo
-2. `mirror refract .`
+2. `mirror settle .`
 3. Render the spec + eigenvalue visualization
 4. The visualization IS the five lenses from `gutter-lenses.md`
 
 ## Connection to the Pipeline
 
-`refract` IS the measurement. The measurement writes the spec.
+`settle` IS the measurement. The measurement writes the spec.
 The spec declares the properties. The properties inform kintsugi.
 kintsugi fills holes. The spec updates. The loop.
 
 ```
-refract -> spec -> properties -> kintsugi -> refract -> spec -> ...
+settle -> spec -> properties -> kintsugi -> settle -> spec -> ...
 ```
 
 Each iteration: `e^(n+1) < e^(n)`. The loss decreases. The properties
@@ -127,7 +127,7 @@ mechanism behind property inference. The qualifier set Q IS the set of
 `@epistemologic/*` grammars. The Dirac operator IS the constraint solver.
 The eigenvalues determine which qualifiers (properties) hold.
 
-`mirror refract` runs the Spectral Liquid inference pipeline:
+`mirror settle` runs the Spectral Liquid inference pipeline:
 1. HM-like shape detection (language, structure)
 2. Constraint generation (property thresholds as constraints)
 3. Spectral solving (eigenvalues of the property Laplacian)
@@ -146,7 +146,7 @@ gutter colors. Git diffs show when the topology changed.
 ## What Makes This Different
 
 Every linter in existence: "here's what's wrong with your code."
-`mirror refract`: "here's the topology of your code, and here are
+`mirror settle`: "here's the topology of your code, and here are
 the mathematical frameworks that describe it."
 
 Not warnings. Measurements. Not rules. Properties. Not opinions.

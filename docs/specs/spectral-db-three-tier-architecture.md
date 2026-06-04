@@ -89,11 +89,11 @@ The `@time.duration` substrate (per #76) carries the evaporation curve timing.
 
 Projected eigenvalues + pheromone fields + queryable trail metadata:
 
-- The spectral lift's output vectors live here (the eigenvalues mirror's `@fate.minimize` operates on)
+- The spectral shift's output vectors live here (the eigenvalues mirror's `@fate.minimize` operates on)
 - Pheromone trail strengths (continuous values) live here
 - Foraging history (which trails were traversed when by which `@fate` agents) lives here
 - Crystal-OID → vector-projection lookup table
-- Cross-references between crystals (the graph structure that the spectral lift operates on)
+- Cross-references between crystals (the graph structure that the spectral shift operates on)
 
 `pgvector` provides standard vector similarity search; mirror inherits.
 
@@ -391,7 +391,7 @@ scene @mirror/init {
     consent_of_curator,
   ]
   close(verdict) -> crystal {
-    # the .spec lands here; refract is the settle operation
+    # the .spec lands here; settle is the settle operation
     # the workspace config (with --store choice) is part of the closing crystal
   }
 }
@@ -402,7 +402,7 @@ Properties this gives:
 - **Content-addressed by construction.** Same inputs produce same `.spec` (same OID). Different inputs produce different `.spec` (different OIDs). Audit trail starts at init.
 - **Provenance-tied.** Every later operation on the workspace can trace back to the init crystal.
 - **Curator-consented.** The developer running the command is the scene's curator; consent of curator is structurally required for the init to close.
-- **`refract` semantics.** The .spec is the convergent settle (per the body-altitude Prism operation); `fixed = refract` (the keyword landed at `229b25e`) means the .spec is structurally a `fixed` declaration of the project.
+- **`settle` semantics.** The .spec is the convergent settle (per the body-altitude Prism operation); `fixed = settle` (the keyword landed at `229b25e`) means the .spec is structurally a `fixed` declaration of the project.
 
 ## Substrate dependencies
 

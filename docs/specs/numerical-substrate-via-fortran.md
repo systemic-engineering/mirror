@@ -298,7 +298,7 @@ Two corpus findings sharpen what the kernel *is* and what it should
 **The architecture is the NumericalPrism** (cite
 `~/.reed/practice/insights/coincidence/heterogeneous-numerical-prism.md`,
 Mara 2026-05-24; prior art: Jakobs 2012, PGI/JCNS). The Fortran floor
-is dispatched by *one* Prism — `Beam` flows in, `refract` returns the
+is dispatched by *one* Prism — `Beam` flows in, `settle` returns the
 result, the backend is opaque to the caller. Capability is advertised
 per-operation via a trait-per-operation discipline
 (`Eigenvalues` / `Eigensystem` / `SingularValues` / `Svd` / `Cholesky`),
@@ -353,7 +353,7 @@ The corpus reads that number physically: the pre-SSB bosonic content
 is **12 gauge + 4 Higgs = 16** degrees of freedom, and spontaneous
 symmetry breaking *is* eigenvalue splitting on that 16-dimensional
 space — the initially degenerate mass matrix splits into the observed
-spectrum. The `16 → 5` lift (16-dim fiber down to the five-operation
+spectrum. The `16 → 5` shift (16-dim fiber down to the five-operation
 base) is read as SSB / the spectral action: the eigenvalue splitting
 selects which degrees of freedom become observable. (The paper flags
 the precise Standard-Model mapping as speculative; what is established
@@ -385,7 +385,7 @@ in @code
 --   interface  -> split   (one of many, generic interfaces)
 --   use        -> project (extract a view, import)
 --   contains   -> project (extract a view, internal procedures)
---   bind       -> refract (scatter, ISO_C_BINDING crossing)
+--   bind       -> settle (scatter, ISO_C_BINDING crossing)
 --
 -- Kintsugi reductions operate on the MirrorAST representation.
 -- The body of each construct is preserved verbatim (opaque to
@@ -403,7 +403,7 @@ grammar @code/fortran("f90", "f95", "f03", "f08", "f18") {
   split interface
   project use
   project contains
-  refract bind
+  settle bind
 
   -- Body-lens contract. @code/fortran is a body lens: it parses
   -- bytes into a typed Fortran AST that selectors can narrow.
@@ -895,7 +895,7 @@ Settlement Strategy (per `~/.reed/practice/insights/cross-domain/spectral-tick-t
    user-supplied adjacency matrix; constructs `L`; routes through
    the rest of the pipeline.
 
-For heavy numerical lift the package wraps:
+For heavy numerical shift the package wraps:
 
 - **LAPACK** (reference Fortran, ~2 million lines, NetLib) — the
   dense-matrix eigendecomposition floor. Mature; numerically stable;

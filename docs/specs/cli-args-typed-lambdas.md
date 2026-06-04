@@ -23,11 +23,11 @@ know (it's in Tier 2 -- runtime-learned, not hardcoded). And the arity rules
 are implicit. When someone writes:
 
 ```
-mirror kintsugi --lift src/mcp.rs --target std --git/commit "message"
+mirror kintsugi --shift src/mcp.rs --target std --git/commit "message"
 ```
 
 Three different things are happening:
-- `--lift` is nullary (a toggle, a prism: focus or don't)
+- `--shift` is nullary (a toggle, a prism: focus or don't)
 - `--target std` is unary (a lens: transform by this value)
 - `--git/commit "message"` is unary with a grammar path
 
@@ -194,11 +194,11 @@ compositions (e.g., passing an image agent's output to a text-only agent).
 - Unary: `a -> transform` (a function -- takes one argument, applies the optic)
 - Variadic: `[a] -> transform` (a fold -- takes many arguments)
 
-The flag pipeline `--lift --target std --format json` is:
+The flag pipeline `--shift --target std --format json` is:
 ```
-lift() . target("std") . format("json")
+shift() . target("std") . format("json")
 ```
-Which is lambda application: `(format "json") . (target "std") . (lift)`.
+Which is lambda application: `(format "json") . (target "std") . (shift)`.
 
 ---
 
@@ -222,7 +222,7 @@ grammar @cli/args {
   # --- Flag arity types ---
 
   # nullary: no argument. Presence = apply the optic. Absence = identity.
-  # --strict, --verbose, --lift
+  # --strict, --verbose, --shift
   # Type: () -> optic
   type nullary(lens) {
     parse: text -> bool,
@@ -352,8 +352,8 @@ grammar @cli {
   flag verbose = lens(loss => text)
     # "show loss details"
 
-  # nullary: --lift is a prism.
-  flag lift = prism(imperfect => imperfect)
+  # nullary: --shift is a prism.
+  flag shift = prism(imperfect => imperfect)
     # "hoist nested declarations to top level"
 
   # optional: --color defaults to auto.
@@ -372,8 +372,8 @@ grammar @cli {
   action focus(path: text) -> imperfect
   action project(path: text) -> imperfect
   action split(path: text) -> imperfect
-  action zoom(path: text) -> imperfect
-  action refract(path: text) -> imperfect
+  action shift(path: text) -> imperfect
+  action settle(path: text) -> imperfect
 }
 ```
 
@@ -435,15 +435,15 @@ For flags within the current grammar, the prefix is implicit:
 ### Valid composition
 
 ```
-mirror kintsugi --lift --target std --format json src/mcp.rs
+mirror kintsugi --shift --target std --format json src/mcp.rs
 
 Pipeline:
-  lift()           : prism(imperfect => imperfect)
+  shift()          : prism(imperfect => imperfect)
   target("std")    : lens(grammar => grammar)
   format("json")   : lens(imperfect => text)
 
-Composition: lift . target . format
-  lift   output: imperfect
+Composition: shift . target . format
+  shift  output: imperfect
   target input:  grammar     -- grammar < imperfect? No.
 
 Wait. This reveals a design constraint: for flags to compose as a
@@ -495,7 +495,7 @@ Error: unknown flag '--bogus'
   available flags for 'kintsugi':
     --strict    only emit on full success
     --format    output format (json | human)
-    --lift      hoist nested declarations
+    --shift     hoist nested declarations
     --verbose   show loss details
 ```
 
@@ -558,7 +558,7 @@ Usage: mirror kintsugi [flags] <path>
 Flags:
   --strict           only emit on full success
   --format <format>  output format (json | human) [default: human]
-  --lift             hoist nested declarations to top level
+  --shift            hoist nested declarations to top level
   --indent <n>       indentation width [default: 2]
   --verbose          show loss details
   --color <mode>     color output (always | never | auto) [default: auto]
@@ -587,8 +587,8 @@ Commands:
   focus     observe the spectral state
   project   filter by what matters
   split     explore what's connected
-  zoom      transform at scale
-  refract   settle. done. crystal.
+  shift     transform at scale
+  settle    settle. done. crystal.
 
   kintsugi  the repair pass
   compile   compile grammars

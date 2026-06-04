@@ -210,7 +210,7 @@ Types") identifies key adoption challenges:
 
 | Liquid Concept | Mirror Equivalent | Mapping Quality |
 |---------------|-------------------|-----------------|
-| Base type B | AST variant (Focus/Project/Split/Zoom/Refract/In/Out) | Direct |
+| Base type B | AST variant (Focus/Project/Split/Shift/Settle/In/Out) | Direct |
 | Refinement predicate r | Property verdict | Structural (see 2.2) |
 | Qualifier set Q | Property library (@epistemologic/property/*) | Direct |
 | Predicate abstraction | Settlement iteration | Structural |
@@ -275,7 +275,7 @@ the filled hole satisfy?
 
 ```mirror
 collapse(ast, ast) -> imperfect {
-  focus(a, b) |> split |> \ |> refract
+  focus(a, b) |> split |> \ |> settle
 }
 ```
 
@@ -299,7 +299,7 @@ automatically determine:
    `loss(output) < loss(input)`, then Liquid-style inference can
    propagate this through the pipeline. `focus` preserves loss
    (observation). `split` may increase loss (enumeration creates
-   parts). `zoom(merge)` should decrease loss (merging). `refract`
+   parts). `shift(merge)` should decrease loss (merging). `settle`
    measures loss (settlement). The pipeline's loss profile can be
    inferred from the individual operation profiles.
 
@@ -319,8 +319,8 @@ propagates refinements through the chain:
 ```
 focus : (a : ast, b : ast) -> {r : ast | loss(r) = 0}
 split : (r : ast) -> {parts : [ast] | len(parts) > 0}
-zoom(merge) : (parts : [ast]) -> {m : ast | nodes(m) <= sum(nodes(parts))}
-refract : (m : ast) -> {c : imperfect | loss(c) = measured(m)}
+shift(merge) : (parts : [ast]) -> {m : ast | nodes(m) <= sum(nodes(parts))}
+settle : (m : ast) -> {c : imperfect | loss(c) = measured(m)}
 ```
 
 The Liquid constraint for the full pipeline:
@@ -382,7 +382,7 @@ and propagated.
 
 ```mirror
 collapse(ast, ast) -> imperfect {
-  focus(a, b) |\> split |\> \ |\> refract
+  focus(a, b) |\> split |\> \ |\> settle
 }
 ```
 
@@ -394,7 +394,7 @@ without the programmer writing ANY of these properties?
 
 **Type compatibility.** The pipeline constrains the `\` hole's type:
 input is `[ast]` (output of `split`), output must be compatible with
-`refract`'s input (which is `ast`). So the hole must have type
+`settle`'s input (which is `ast`). So the hole must have type
 `[ast] -> ast`. Any Fate-selected operation that doesn't match this
 type is rejected. This is standard Liquid inference.
 
@@ -408,8 +408,8 @@ nodes = less information = lower complexity). The qualifier holds.
 **Composition properties.** Properties that are compositional (if A
 holds for f and B holds for g, then C holds for f |> g) can be
 inferred across the whole pipeline. Example: if `focus` preserves
-structure and `split` preserves structure and `zoom(merge)` preserves
-structure and `refract` measures structure, then the pipeline preserves
+structure and `split` preserves structure and `shift(merge)` preserves
+structure and `settle` measures structure, then the pipeline preserves
 structure. This is exactly what abstract refinement types do: parameterize
 the property and propagate it through composition.
 

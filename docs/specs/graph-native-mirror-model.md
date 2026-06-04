@@ -32,7 +32,7 @@ ModelWeights {
 
 The forward pass: `features [16] -> linear -> softmax -> argmax -> Model`. Sub-microsecond. The binary IS the model.
 
-**Key property:** Fate implements the Prism trait. The five operations (focus, project, split, zoom, refract) are not metaphors -- they are the trait methods. Fate IS a Prism.
+**Key property:** Fate implements the Prism trait. The five operations (focus, project, split, shift, settle) are not metaphors -- they are the trait methods. Fate IS a Prism.
 
 ### derive.rs: Eigenvalues ARE the Weights
 
@@ -195,8 +195,8 @@ Navigating the graph to write .mirror is:
 1. **Focus:** Read the current SpectralEmbedding (where are we in the graph?)
 2. **Project:** Filter to reachable AST variants (which expansions are valid?)
 3. **Split:** Follow edges to explore connected nodes (what connects to what?)
-4. **Zoom:** Evaluate counterfactual expansions without committing (what would happen if...?)
-5. **Refract:** Commit the expansion that reduces loss (the write)
+4. **Shift:** Evaluate counterfactual expansions without committing (what would happen if...?)
+5. **Settle:** Commit the expansion that reduces loss (the write)
 
 The five operations ARE the inference algorithm. Not metaphorically. The Prism trait is the model's forward pass.
 
@@ -337,7 +337,7 @@ The precise statement: **on a finite, sub-Turing grammar space with elitist sele
 
 Yes, through spectral link prediction. Given a partial AST (a subgraph of the grammar graph), the eigenvalue decomposition of the Laplacian provides node embeddings. The dot product of two node embeddings predicts edge probability. The next AST node is the one with highest edge probability to the current frontier.
 
-Concretely: compute SpectralEmbedding for the current partial AST. For each candidate AST variant (Focus, Split, Zoom, Refract, Project, In, Out), compute the embedding distance to the current frontier. The candidate with the smallest Connes distance is the best next node.
+Concretely: compute SpectralEmbedding for the current partial AST. For each candidate AST variant (Focus, Split, Shift, Settle, Project, In, Out), compute the embedding distance to the current frontier. The candidate with the smallest Connes distance is the best next node.
 
 This requires no learned parameters beyond the graph structure itself. The eigenvalues encode which connections are structurally important. The eigenvectors encode which nodes are similar. Link prediction falls out of the spectral structure.
 
@@ -356,17 +356,17 @@ The five operations already ARE the model's inference steps:
 1. **Focus:** Extract features from the current graph state
 2. **Project:** Filter to relevant subspace (softmax over 5 models)
 3. **Split:** Explore connected nodes (cartograph viable models)
-4. **Zoom:** Evaluate counterfactuals (explore transformations)
-5. **Refract:** Commit the best option (crystallize)
+4. **Shift:** Evaluate counterfactuals (explore transformations)
+5. **Settle:** Commit the best option (crystallize)
 
-An "optic model" is a model whose forward pass IS the composition of these five operations. Fate already is this: `apply(&fate, input)` runs `focus -> project -> refract`. The Pipeline trait adds the ManifoldState processing: `focus -> project -> refract` with Casimir conservation.
+An "optic model" is a model whose forward pass IS the composition of these five operations. Fate already is this: `apply(&fate, input)` runs `focus -> project -> settle`. The Pipeline trait adds the ManifoldState processing: `focus -> project -> settle` with Casimir conservation.
 
 Training an optic model means training the weights of each operation separately:
 - Focus weights: which dimensions to observe (derived from KernelSpec)
 - Project weights: how to map observations to decisions (the 5x16 weight matrix)
-- Refract weights: how to construct the output state (steering vectors from Introject)
+- Settle weights: how to construct the output state (steering vectors from Introject)
 
-Each operation's weights are derived from a different aspect of the spectral structure. Focus comes from the active/dark dimension split. Project comes from the eigenvalue biases. Refract comes from the eigenvector projections. The model is trained by decomposition, not by end-to-end gradient flow.
+Each operation's weights are derived from a different aspect of the spectral structure. Focus comes from the active/dark dimension split. Project comes from the eigenvalue biases. Settle comes from the eigenvector projections. The model is trained by decomposition, not by end-to-end gradient flow.
 
 ### What is the theoretical minimum for navigating a known graph?
 

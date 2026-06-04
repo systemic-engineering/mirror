@@ -197,8 +197,8 @@ From a survey of [[../../boot/std/epistemologic/property]] as of
 | `filename_matches_glass(file)` | [[../../boot/std/epistemologic/property/filename_matches_glass]] | The canonical keyword a file declares matches the filename stem. |
 | `causality(type)` | [[../../boot/std/epistemologic/property/laws/causality]] | Happens-before partial order, Lamport's clock condition lifted to the type layer. |
 | `duration_algebra(type)` | [[../../boot/std/epistemologic/property/laws/duration_algebra]] | Commutative monoid under `+`, zero identity, partial subtraction, total non-neg scaling. |
-| `functor_laws(type)` | [[../../boot/std/epistemologic/property/laws/functor]] | `identity_law ∧ composition_law` for `zoom(T)`. |
-| `monad_laws(type)` | [[../../boot/std/epistemologic/property/laws/monad]] | `left_identity ∧ right_identity ∧ associativity` for `refract(T)`. |
+| `functor_laws(type)` | [[../../boot/std/epistemologic/property/laws/functor]] | `identity_law ∧ composition_law` for `shift(T)`. |
+| `monad_laws(type)` | [[../../boot/std/epistemologic/property/laws/monad]] | `left_identity ∧ right_identity ∧ associativity` for `settle(T)`. |
 | `monoidal(type)` | [[../../boot/std/epistemologic/property/laws/monoidal]] | `identity ∧ associativity` — Mac Lane 1971 ch. VII §1. |
 | `monotonicity(type)` | [[../../boot/std/epistemologic/property/laws/monotonicity]] | `ordered ∧ non_decreasing ∧ total_within_frame`. |
 | `no_hang(ast)`, `linear_compile(ast)`, `deterministic_oid(ast)`, `cache_speedup(file)`, … | [[../../boot/std/epistemologic/property/benchmark]] | Performance properties as verdicts. The benchmark family. |
@@ -894,7 +894,7 @@ this spec names how each step binds at the glass altitude.
 ### 6.1 Step 1: Hindley-Milner shape inference per glass
 
 Per [[liquid-types-for-mirror]] §1.2 Step 1: HM inference
-determines the shape types — Focus/Project/Split/Zoom/Refract
+determines the shape types — Focus/Project/Split/Shift/Settle
 plus the target-language AST variants. For a glass to `@code/rust`,
 HM inference produces the Rust AST shape (typed `syn::Item`-shaped
 variants); for `to @code/elixir`, it produces the Elixir AST shape

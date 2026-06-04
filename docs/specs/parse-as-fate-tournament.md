@@ -236,7 +236,7 @@ lambda, not a separate variant."*
 ### 1.6 Parameterised — one abstract pattern, three shape variants
 
 The symmetry across `lambda`, `property`, `fixed` (and the legacy
-`refract <name> = <combinator>` line, which collapses to the same spine)
+`refract <name> = <combinator>` line, which collapses to the same spine — note: substrate verb is now `settle`; `refract` is the legacy keyword)
 is structural. They share spine
 (`<form> <name>(<args>) -> <type> { <body> }`) and differ only in the
 leading form. The form keyword is an **input** to the abstract — supplied
@@ -249,7 +249,7 @@ glass binding = abstract(form: op) {
 
 glass lambda   = binding(zoom)
 glass property = binding(focus)
-glass fixed    = binding(refract)
+glass fixed    = binding(settle)
 ```
 
 One abstract pattern; three shape variants from a single header input;
@@ -260,7 +260,7 @@ the spine.
 
 The legacy `refract <name> = <combinator>` line collapses to
 `refract <name>(...) -> ret { body }` — the same spine — and rides
-`binding(refract)`.
+`binding(settle)` (substrate-name for the operation).
 
 This is the same compounding lambda.mirror notes: *"both share name + args +
 body structure; `lambda` adds `return` and `io`. The compounding from

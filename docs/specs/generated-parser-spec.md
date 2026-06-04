@@ -91,7 +91,7 @@ Length 3: out (1 candidate)
 Length 4: form, type, fold, zoom, lens (5 candidates)
 Length 5: prism, split, focus (3 candidates)
 Length 6: action, rescue (2 candidates)
-Length 7: project, grammar, default, binding, recover, ensures, refract (7 candidates)
+Length 7: project, grammar, default, binding, recover, ensures, settle  (7 candidates)
 Length 8: property, requires, traversal, invariant (4 candidates)
 ```
 
@@ -119,7 +119,7 @@ To parse `00-prism.mirror` and `01-meta.mirror`, the absolute minimum is:
 (Same as current. The tokenizer is already minimal.)
 
 **Keywords needed to parse 00-prism.mirror:**
-- `focus`, `prism`, `project`, `split`, `zoom`, `refract`, `out`
+- `focus`, `prism`, `project`, `split`, `shift`, `settle`, `out`
 
 **Additional keywords for 01-meta.mirror:**
 - `in`, `type`, `fold`, `grammar`, `recover`, `rescue`
@@ -261,7 +261,7 @@ the rest of the boot sequence uses.
 
 ```
 Keywords (13):
-  focus, prism, project, split, zoom, refract, out,     -- from 00-prism
+  focus, prism, project, split, shift, settle, out,     -- from 00-prism
   in, type, fold, grammar, recover, rescue              -- from 01-meta
 
 Operators (12):
@@ -285,7 +285,7 @@ After parsing 01-meta.mirror, the parser knows:
 ```
 file     := decl*
 decl     := keyword name params? body?
-keyword  := 'focus' | 'prism' | 'project' | 'split' | 'zoom' | 'refract'
+keyword  := 'focus' | 'prism' | 'project' | 'split' | 'shift' | 'settle'
            | 'out' | 'in' | 'type' | 'fold' | 'grammar' | 'recover' | 'rescue'
 name     := WORD | '@' WORD | operator
 params   := '(' param (',' param)* ')'
@@ -677,7 +677,7 @@ zoom           10      2.5%        1 (00-prism)
 project         8      2.0%        1 (00-prism)
 focus           7      1.8%        1 (00-prism)
 split           6      1.5%        1 (00-prism)
-refract         6      1.5%        1 (00-prism)
+settle          6      1.5%        1 (00-prism)
 recover         6      1.5%        1 (01-meta)
 rescue          6      1.5%        1 (01-meta)
 requires        5      1.2%        2 (std/mirror)

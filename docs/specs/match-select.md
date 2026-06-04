@@ -146,7 +146,7 @@ there's a way to bind the `$variables` such that all predicates hold.
 
 | CSS | Mirror pattern | Means |
 |---|---|---|
-| `tag` | `focus`, `project`, `split`, `zoom`, `refract`, `fn`, `grammar`, ... | type constraint on the head |
+| `tag` | `focus`, `project`, `split`, `shift`, `settle`, `fn`, `grammar`, ... | type constraint on the head |
 | `*` | `_` or `*` | wildcard match — any type |
 | `[attr=v]` | `[field="literal"]` or `[field=$bound]` | field-equals predicate |
 | `[attr]` | `[field]` | has-field (the field exists, value irrelevant) |
@@ -310,7 +310,7 @@ opens the other four operations as alternative arm semantics, and
 ```mirror
 match(focus)    expr { p1 => a1, p2 => a2, ... }   # one arm wins (default)
 match(split)    expr { p1 => a1, p2 => a2, ... }   # every matching arm executes
-match(refract)  expr { p1 => a1, p2 => a2, ... }   # result is content-addressed (au)
+match(settle)   expr { p1 => a1, p2 => a2, ... }   # result is content-addressed (au)
 match(project)  expr { p1 => a1, p2 => a2, ... }   # arms are filtered first
 match(zoom)     expr { p1 => a1, p2 => a2, ... }   # arms cross levels of resolution
 ```
@@ -337,14 +337,14 @@ parallel readings of the same subject, not alternatives. Use cases:
   return is `[au]` — the candidate list the conductivity contest then
   reduces.
 
-**`match(refract)`** — the result is content-addressed. The matched-arm
+**`match(settle)`** — the result is content-addressed. The matched-arm
 plus its body's output becomes a crystal; the crystal's OID is the
 return value. **This is how `match` produces `au`.** Use cases:
 
 - Memoization. The next call with the same subject reads from the
   crystal cache; no body executes again.
 - Kintsugi acceptance. The `\` resolution that conducts becomes the
-  refracted output of a `match(refract)` over the hole's context.
+  settled output of a `match(settle)` over the hole's context.
 - Stable identity for dispatch results. Two semantically identical
   dispatches produce the same OID even if the source files differ in
   whitespace or comment ordering.
@@ -391,7 +391,7 @@ Different modifiers return different shapes:
 |---|---|
 | `match(focus)` (default) | the winning arm's body, type `T` |
 | `match(split)` | list of all matching arms' bodies, `[T]` |
-| `match(refract)` | content-addressed, `au` |
+| `match(settle)` | content-addressed, `au` |
 | `match(project)` | as `focus`, but over the filtered subset |
 | `match(zoom)` | as `focus`, but the bodies may differ in type — returns `union(T1, T2, ...)` |
 | `match(@fate/tournament)` | the winning candidate, `au` |
@@ -399,7 +399,7 @@ Different modifiers return different shapes:
 
 The typechecker uses the modifier to compute the match's return type.
 A `match(split)` whose arms all return `oid` returns `[oid]`. A
-`match(refract)` whose body's content-address is well-defined returns
+`match(settle)` whose body's content-address is well-defined returns
 `au`. Type incoherence (e.g. `match(split)` with arms of incompatible
 types) is a compile error.
 
@@ -410,7 +410,7 @@ Exhaustiveness still holds for all modifiers:
 - `focus` requires every reachable shape covered or `_` (same as today).
 - `split` requires every reachable shape covered by *at least one* arm.
   A shape with zero matching arms is an error.
-- `refract` requires `focus`-style exhaustiveness (one winning arm per
+- `settle` requires `focus`-style exhaustiveness (one winning arm per
   subject so the OID is well-defined).
 - `project` requires exhaustiveness over the projected subset (the
   arms filtered out by the lens don't count toward coverage).
@@ -424,7 +424,7 @@ No wildcard fallthrough; every match site is total.
 
 Sum-type variants are mutually exclusive. A `select` arm matches at
 most one shape of the subject; `focus` and `split` collapse for it.
-`refract` is reachable via a separate `select` → `crystallize`
+`settle` is reachable via a separate `select` → `crystallize`
 pipeline (`select |v| { ... } |> @mirror/spectral.crystallize`); a
 dedicated modifier would just be sugar over that.
 
@@ -514,7 +514,7 @@ grammar @mirror/match {
 
   type match_expr {
     subject: ast,
-    modifier: mq_query,     # focus | project | split | zoom | refract | <any mq query>
+    modifier: mq_query,     # focus | project | split | shift | settle | <any mq query>
                             # default: focus
     arms: [arm],
     exhaustive: bool,       # proved by the model checker

@@ -36,14 +36,14 @@ zoom <|(prism, ref)
 ```mirror
 grammar @craft {
   craft(target) -> crystal {
-    focus(target) |> split |> zoom |> refract |> project
+    focus(target) |> split |> shift |> settle |> project
   }
 }
 ```
 
 `|>` is used in grammar action bodies to compose the five operations sequentially. This is the ONLY place `|>` has concrete semantics today -- as textual pipeline composition in action bodies.
 
-**In the AST (`mirror_ast.rs`):** `|>` has NO dedicated AST variant. The 7 variants are Focus, Project, Split, Zoom, Refract, In, Out. When the tokenizer encounters `|>` in a grammar body, it is treated as part of the body text -- the body is stored as `Vec<MirrorAST>` or left unstructured. The tokenizer does not parse `|>` into any specific structure.
+**In the AST (`mirror_ast.rs`):** `|>` has NO dedicated AST variant. The 7 variants are Focus, Project, Split, Shift, Settle, In, Out. When the tokenizer encounters `|>` in a grammar body, it is treated as part of the body text -- the body is stored as `Vec<MirrorAST>` or left unstructured. The tokenizer does not parse `|>` into any specific structure.
 
 **In the tokenizer (`tokenize.rs`):** The tokenizer recognizes keywords via grammar mappings (e.g., `fn` -> Zoom). It does NOT recognize `|>` as a token. The scanner looks for alphanumeric identifier-like tokens. Operators like `|>` fall through as non-keyword punctuation and are skipped.
 
@@ -148,8 +148,8 @@ Reflection IS the training loop. Every query trains the system through Reflectio
 **Persistent (the pipeline):**
 | Model | Operation | What |
 |-------|-----------|------|
-| Surface | Zoom | language -> query |
-| Mirror | Refract | query -> graph path |
+| Surface | Shift | language -> query |
+| Mirror | Settle | query -> graph path |
 | Shatter | Split | graph -> text |
 | Reflection | Focus | pipeline -> adjustments |
 
@@ -172,7 +172,7 @@ The programmer knows the path. No inference needed. Composition is deterministic
 
 ```mirror
 craft(target) -> crystal {
-  focus(target) |> split |> zoom |> refract |> project
+  focus(target) |> split |> shift |> settle |> project
 }
 ```
 
@@ -579,7 +579,7 @@ crystal <| refine_or_skip <| compress_or_pass <| normalize_or_raw
 
 ### 7.1 Current State
 
-The 7 AST variants (Focus, Project, Split, Zoom, Refract, In, Out) do NOT need to change. The Rust substrate is FROZEN.
+The 7 AST variants (Focus, Project, Split, Shift, Settle, In, Out) do NOT need to change. The Rust substrate is FROZEN.
 
 `|>`, `|\>`, and `<|` live in **grammar action bodies** (`ZoomNode.body: Option<Vec<MirrorAST>>`). The body is currently a flat list of AST nodes. The operators would be recognized by the body parser (a grammar, not Rust) and stored as structured composition within the body.
 

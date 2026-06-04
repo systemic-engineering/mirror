@@ -61,7 +61,7 @@ Unblocks:
 
 The locked target is a **nine-keyword Rust language floor**:
 
-> **focus, project, split, zoom, refract** (the five operations),
+> **focus, project, split, shift, settle** (the five operations),
 > **prism** (declares a prism — a namespace / optical space; replaces
 > `grammar`), **glass** (extends/builds a prism with material), **in, out**
 > (import/export). Plus ONE transitional keyword, **lambda**, kept in the
@@ -72,7 +72,7 @@ The audit's surprise: **the bootstrap's Rust floor is already much smaller
 than "nine keywords."** Rust does not hardcode nine keyword strings. It
 hardcodes:
 
-1. the **five-operation match** (`focus/split/zoom/project/refract` as the
+1. the **five-operation match** (`focus/split/shift/project/settle` as the
    *first* word of an `<op> <keyword>` declaration line — `grammar.rs:140`),
 2. a single literal **`grammar ` block-opener** (`grammar.rs:80`),
 3. a single literal **`"@mirror/grammar"` ref-equality** gate (`is_mirror()`,
@@ -129,8 +129,8 @@ glass     the material a prism is made of. extends/builds a prism.
 focus     \
 project    \
 split       >  the five operations — what a prism DOES to a beam.
-zoom       /
-refract   /
+shift      /
+settle    /
 in        import — compose another prism into this one.
 out       export — expose this prism's surfaces to others.
 ```
@@ -143,7 +143,7 @@ The justification is not decorative; it is the closure argument:
   (`type`, `fixed`, `property`, `shape`, `lambda`, `abstract`, …) is *a kind
   of glass* — substrate-defined material, declared with the nine, never
   hardcoded in Rust.
-- **The five operations are what prisms do.** focus/project/split/zoom/refract
+- **The five operations are what prisms do.** focus/project/split/shift/settle
   are the Prism trait's methods. They are the irreducible verbs; nothing the
   substrate adds is a sixth operation (the precedent is
   `surface-simplification.md`'s five-verb collapse — `init`, `build`, `check`,
@@ -209,8 +209,8 @@ keywords work via substrate harvest, which is not Rust recognition).
 | `focus` | **yes** — five-op match `grammar.rs:140`; render `spectral.rs` reverse-lookup | permanent floor | keep |
 | `project` | **yes** — five-op match `grammar.rs:140` | permanent floor | keep |
 | `split` | **yes** — five-op match `grammar.rs:140` | permanent floor | keep |
-| `zoom` | **yes** — five-op match `grammar.rs:140` | permanent floor | keep |
-| `refract` | **yes** — five-op match `grammar.rs:140` | permanent floor | keep |
+| `shift` | **yes** — five-op match `grammar.rs:140` | permanent floor | keep |
+| `settle` | **yes** — five-op match `grammar.rs:140` | permanent floor | keep |
 | `in` | **yes** — refines harvested `Project`→`In` `tokenize.rs:671` (Rust also knows `in` as `is_skip_word`) | permanent floor | keep |
 | `out` | **yes** — refines harvested `Project`→`Out` `tokenize.rs:673` | permanent floor | keep |
 | `prism` | **no** — substrate-only (`focus prism` in `token.mirror:32` / `grammar.mirror:14`, `00-prism.mirror:4`). NO `prism @x {` block-opener in Rust. | permanent floor | **rename target** — `grammar`'s recognition path moves to `prism` (see §4); the word must become a real Rust block-opener |
@@ -230,8 +230,8 @@ keywords work via substrate harvest, which is not Rust recognition).
 
 **Classification summary:**
 
-- **Floor-correct (the nine):** `focus`, `project`, `split`, `zoom`,
-  `refract`, `in`, `out`, plus `prism` and `glass` *as targets* (`prism`
+- **Floor-correct (the nine):** `focus`, `project`, `split`, `shift`,
+  `settle`, `in`, `out`, plus `prism` and `glass` *as targets* (`prism`
   becomes a real Rust block-opener via the rename; `glass` is already
   substrate-declared and needs only to parse as a top-level form).
 - **Transitional:** `lambda` — substrate-declared today, kept in the

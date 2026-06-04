@@ -56,8 +56,8 @@ grammar @mirror/shard {
     silicon:   silicon,        # arch + extensions (focus on the substrate)
     memory:    memory,         # model + budget (project on the address space)
     flakes:    [flake_ref],    # the installed flake set (split — what's reachable)
-    compute:   compute_bound,  # the budget — cores, threads, deadline (zoom)
-    parent:    option(oid),    # the enclosing shard, if nested (refract — the closure)
+    compute:   compute_bound,  # the budget — cores, threads, deadline (shift)
+    parent:    option(oid),    # the enclosing shard, if nested (settle — the closure)
   }
 
   # ── self: the fixed point ─────────────────────────────────────────
@@ -341,7 +341,7 @@ Audit complete. Every site `.spec` appears today, and what the migration touches
 - `boot/std/mirror/grammar.mirror:3` — `grammar @mirror/grammar("mirror", "spec", "meta", "glass")`. Add `"shard"`.
 
 **Boot grammar files (3 sites).**
-- `boot/std/mirror/spec.mirror` — the placeholder. Becomes `boot/std/mirror/shard.mirror` *or* stays as the bare "AST sourced from a `.spec` file" alias and `@mirror/shard` becomes a sibling. Recommendation: keep `@mirror/spec` as the bare alias (it's used by the @meta lift); promote `@mirror/shard` as the typed surface.
+- `boot/std/mirror/spec.mirror` — the placeholder. Becomes `boot/std/mirror/shard.mirror` *or* stays as the bare "AST sourced from a `.spec` file" alias and `@mirror/shard` becomes a sibling. Recommendation: keep `@mirror/spec` as the bare alias (it's used by the @meta shift); promote `@mirror/shard` as the typed surface.
 - `boot/std/peer.mirror:40` — `eigenboard: spec` becomes `eigenboard: shard`. Cite peer.mirror:54 (`eigenboard => "eigenboard.spec"`) — rename the filename to `"eigenboard.shard"`.
 - `boot/std/mirror/store/nix.mirror:9` — comment "mirror.spec IS flake.nix" — update to "mirror.shard IS flake.nix."
 
@@ -372,7 +372,7 @@ Rename each to `eigenboard.shard`. The content stays the same in the rename tick
 - **`moves-as-ticks`** (per-move shard query). Every tick of a gen_prism asks `@mirror/shard.self()` and gets the current shard. The shard is the contextual ground the tick computes against. When the shard changes (a new flake installed, a hardware change, a budget restriction), the next tick sees a new shard — and Fate's tournament re-resolves at the next `|\>`.
 - **`mirror-supersedes-daemon`** (gen_prism as substrate). gen_prism is the runtime that hosts the shard. The ref `refs/gen_prism/<name>` IS the gen_prism's identity; the shard at that ref is its visible substrate. Boot a new gen_prism = create a new shard = compile a new flake = address it in fragmentation.
 - **`mirror-store.md` three-backend sketch.** `@mirror/store` has three swappable backends: git, nix, spectral-db. The shard targets the nix backend specifically — that's where flakes live. spectral-db consumes the same fragmentation substrate without going through nix.
-- **`spec-inference.md`** (`mirror refract`). When the inferred-properties pipeline lands, the project's `.spec` declares what to build; the `.shard` declares where it runs. `mirror refract` writes the spec; `mirror eigenboard` (or equivalent) writes the shard. Two operations, two outputs, no overlap.
+- **`spec-inference.md`** (`mirror settle`). When the inferred-properties pipeline lands, the project's `.spec` declares what to build; the `.shard` declares where it runs. `mirror settle` writes the spec; `mirror eigenboard` (or equivalent) writes the shard. Two operations, two outputs, no overlap.
 
 ---
 
