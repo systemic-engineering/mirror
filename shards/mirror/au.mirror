@@ -1,0 +1,119 @@
+in @prism
+in @glass
+in @meta
+in @mirror/store
+
+# @mirror/au — the verified-construction output type.
+#
+# Recognition (docs/specs/au-and-conductivity.md): au IS gold at the
+# artifact altitude. Same operation (settle) applied at different
+# altitudes produces different au:
+#   au(@code/rust)   is a binary
+#   au(@release)     is a signed archive
+#   au(@ci/github)   is an action YAML
+# The altitude parametrizes the emit; au is the type of the settled
+# result. Per the spec's thesis: au IS the output type of @fate
+# inference. The five Fate models do not return strings, ASTs,
+# decisions, or text; they return values of type au. Verification is
+# a predicate over au (conductivity), not a type-level transform
+# producing a different kind.
+#
+# Reconciliation with mosaic.mirror (C2): mosaic's algebraic claim
+#   type au(altitude) = settle(altitude)
+# is what au IS at the build altitude — the settle operation's
+# return type, parametric over altitude. This shard provides the
+# concrete record form (content + altitude + transparency) that
+# realizes the algebra against the @mirror/store. They compose:
+# mosaic.au IS this au; the algebraic equation in mosaic.mirror is
+# the substrate-pull statement; the record form below is the
+# substrate-pull realization.
+#
+# Spec context: docs/specs/au-and-conductivity.md (the type Fate
+# produces; gold is the metal that conducts; au is the type that
+# carries), docs/specs/mosaic.md (settle emitter -> au), the
+# transparency floor in shards/glass.mirror.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-au-conductivity]] (au is the
+#                      Fate output type; gold conducts; verification
+#                      IS conductivity in context).
+# Related shards: glass.mirror (transparency / imperfect carrier),
+#                 store.mirror (oid — au's content-address carrier),
+#                 mosaic.mirror (the build altitude that emits au).
+# Path-namespace property: this file at `shards/mirror/au.mirror`
+# declares `@mirror/au` and only that.
+
+prism @mirror/au {
+  focus au
+  project au
+  split au
+  shift au
+  settle au
+}
+
+# === au at an altitude — the concrete record form ===
+#
+# au is parametric over altitude. au(@code/rust), au(@release), and
+# au(@ci/github) are distinct types (the altitude is part of the
+# type, not a runtime tag). The record below is what each au(A)
+# resolves to:
+#
+#   content       — the settled artifact, content-addressed in the
+#                   @mirror/store. The bytes live behind the oid;
+#                   au carries the reference, not the payload.
+#   altitude      — which altitude this au settled at. `ref` is the
+#                   substrate's altitude-reference carrier; the
+#                   altitude is what the type-parameter `A` binds.
+#   transparency  — residual opacities, if any. Per glass.mirror's
+#                   transparency<p>, success means the settle was
+#                   clean; partial/failure carries the opacity map
+#                   kintsugi reads to pick the next focus.
+#
+# Identity contract: au's identity IS the content-hash of
+# (altitude, content, transparency). Per the substrate's content-
+# addressing (shards/store.mirror, shards/prism.mirror's spectral-
+# triple framing under CoincidenceHash<5,5>), an au value settles
+# to a single oid under hashing of its three fields. Two au values
+# with the same (altitude, content, transparency) are the same
+# au — byte-equal at the oid. This is the substrate-level statement
+# of relational entanglement: change the altitude or the residual
+# transparency and you get a different au, even if `content` is the
+# same bytes.
+type au(altitude) = {
+  content: oid,
+  altitude: ref,
+  transparency: transparency(altitude),
+}
+
+# === surface ===
+#
+# identity(a) -> oid
+#   au's content-address. The substrate computes the oid by hashing
+#   (altitude, content, transparency); two au values with equal
+#   identity ARE the same au. The contract above made operational.
+identity(a: au) -> oid { \ }
+
+# verify(a) -> verdict
+#   The conductivity check at au's home altitude. Per au-and-
+#   conductivity.md: verification IS conductivity in context;
+#   `verify` reduces au's transparency over the altitude's property
+#   set to a single verdict. `pass` means the residual opacity
+#   weighs zero (the settle was clean); `partial(c)` means the
+#   settle is conducting at confidence c; `failure(r)` means the
+#   au does not carry signal at this altitude.
+verify(a: au) -> verdict { \ }
+
+# shatter(a) -> ref
+#   Project au onto the .shatter disk form (per mosaic.md §7 and
+#   the forward reference to shards/mirror/shatter.mirror). The
+#   substrate writes a five-section file holding the AST, the
+#   transparency, the properties, the kernel, and the fate of the
+#   settled artifact. .shatter IS the disk projection of au +
+#   splinter + mosaic; this action is the projection itself.
+shatter(a: au) -> ref { \ }
+
+out @mirror/au
+out au
+out identity
+out verify
+out shatter
