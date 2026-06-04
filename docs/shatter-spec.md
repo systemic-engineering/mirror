@@ -1,4 +1,19 @@
-# .shatter — The Crystal Format
+# .shatter — Optional disk projection of `au + splinter + mosaic`
+
+> **2026-06-04 reframe (Reed + Alex, canonical).** The fragmentation
+> **store is canonical**. `.shatter` is an **optional disk projection**
+> of `au + splinter + mosaic` — one projection format among many
+> possible. `mirror shatter` is **plumbing** (direct content-store
+> access, analogous to `git cat-file`). The five-section structure
+> below (fragment_tree, transparency [was Transparency], properties,
+> kernel, fate) survives the reframe; the framing shifts: the same
+> content lives in the fragmentation store as the source of truth,
+> and `.shatter` materialises it on disk when an on-disk projection
+> is wanted.
+>
+> See [[specs/mirror-store]] for the canonical store; the
+> fragmentation store IS the substrate. See [[specs/properties-on-glass]]
+> for the `transparency` (formerly `Transparency`) verdict carrier.
 
 A `.shatter` file is a `.mirror` file that has been through the compiler
 and came out the other side. It is native mirror syntax. The compiler
@@ -17,16 +32,20 @@ Idempotent. Same input → same OID. The crystal IS the source. The
 source IS the crystal. The compilation loop has a fixed point and the
 `.shatter` file is it.
 
-Round-trip exact because the OID is derived from `MirrorData::encode()`
-and recursive child OIDs. Parse → emit → parse yields identical
-content hashes.
+Round-trip exact because the OID is derived from the fragmentation
+store's content addressing (`au + splinter + mosaic` composed) and
+recursive child OIDs. Parse → emit → parse yields identical content
+hashes. The fragmentation store holds the canonical settlement; the
+on-disk `.shatter` is its projection.
 
 ---
 
 ## What It Contains
 
 A `.shatter` file has five sections. All native mirror syntax. All
-content-addressed. All feedable back into the compiler.
+content-addressed. All feedable back into the compiler. (Each section
+is a projection of substrate state already held in the fragmentation
+store; the on-disk form makes it portable.)
 
 ### 1. Fragment Tree
 
@@ -56,26 +75,35 @@ Each node: kind + name + params + variants + children + OID.
 The tree is the same structure whether you're reading `.mirror`
 source or `.shatter` output.
 
-### 2. MirrorLoss
+### 2. Transparency
+
+> Formerly `Transparency` (per task #126). Replaced by `transparency<p>` —
+> the typed verdict carrier from `prism/imperfect/src/transparency.rs`.
+> The `Transparency<Ref>` algebra (Fail-dominates / Partial-min-confidence /
+> Pass-neutral) is the load-bearing composition law. See
+> [[specs/properties-on-glass]].
 
 The compilation trace. How the artifact was produced. What it cost.
+Each phase carries a `transparency<p>` verdict — pass, fail(diagnostic),
+or partial(confidence, [diagnostic]).
 
 ```mirror
-loss {
+transparency {
     phases: [
-        { phase: parse,   input: oid(a3f...), output: oid(b7c...), structural_loss: 0.0 },
-        { phase: resolve, input: oid(b7c...), output: oid(d2a...), structural_loss: 0.0 },
-        { phase: emit,    input: oid(d2a...), output: oid(e9f...), structural_loss: 0.12 },
+        { phase: parse,   input: oid(a3f...), output: oid(b7c...), verdict: pass },
+        { phase: resolve, input: oid(b7c...), output: oid(d2a...), verdict: pass },
+        { phase: emit,    input: oid(d2a...), output: oid(e9f...), verdict: partial(0.88, [("hashmap", oid(...))]) },
     ]
-    resolution: 0.97
-    unresolved: [("hashmap", oid(...))]
+    composed:    partial(0.88)
+    unresolved:  [("hashmap", oid(...))]
     convergence: settled
-    crystal: oid(e9f...)
+    crystal:     oid(e9f...)
 }
 ```
 
-The loss IS the flight recorder. Every phase, every intermediate OID,
-every cost. Survives the compilation. Readable by the next compilation.
+The transparency IS the flight recorder. Every phase, every intermediate
+OID, every verdict. Survives the compilation. Readable by the next
+compilation.
 
 ### 3. Property Verdicts
 
@@ -139,7 +167,25 @@ the model that compiled it.
 
 ---
 
-## The Three Commands
+## The Commands
+
+### mirror shatter (plumbing)
+
+```
+mirror shatter <oid>          # cat content from the fragmentation store
+mirror shatter --write <file> # write file's settled form to the store
+```
+
+`mirror shatter` is **plumbing** — direct content-store access
+(analogous to `git cat-file` / `git hash-object`). It reads from or
+writes to the fragmentation store, which is the canonical substrate.
+The on-disk `.shatter` file is one projection format; `mirror shatter`
+is how you read it without the porcelain.
+
+The canonical workflow uses `mirror kintsugi ./mirror.spec` (mosaic
+settlement on the spec manifold; see [[specs/kintsugi-ci-v0.1]]) and
+reads results through the store; `mirror shatter` is the escape hatch
+when you need raw content access.
 
 ### mirror compile
 
@@ -161,7 +207,7 @@ MirrorFragment (content-addressed, OID)
 .shatter (the crystal)
 ```
 
-Each phase returns `Imperfect`. The MirrorLoss accumulates. Properties
+Each phase returns `Imperfect`. The Transparency accumulates. Properties
 verify. The `.shatter` file carries everything.
 
 ### mirror ai
@@ -170,7 +216,7 @@ verify. The `.shatter` file carries everything.
 mirror ai output.shatter
 ```
 
-Feed a `.shatter` file through Fate. Fate reads the MirrorLoss, the
+Feed a `.shatter` file through Fate. Fate reads the Transparency, the
 eigenvalues, the property verdicts.
 
 **If settled:** returns unchanged. Same OID. Zero holonomy. Nothing
@@ -185,7 +231,7 @@ appropriate optic:
 - Cartographer maps what changed
 - Explorer checks the boundaries
 
-The shatter re-settles. New OID. New crystal. New MirrorLoss recording
+The shatter re-settles. New OID. New crystal. New Transparency recording
 the re-settlement. Still a valid `.mirror` file.
 
 **If broken:** a property that was `pass` is now `fail`. A dependency
@@ -214,14 +260,14 @@ mirror ai --train output.shatter
 
 Same as `mirror ai`, but the Fate weights update.
 
-The compilation IS the training data. The MirrorLoss IS the gradient.
+The compilation IS the training data. The Transparency IS the gradient.
 The property verdicts ARE the reward signal. The shatter file teaches
 the model that compiled it how to compile better.
 
 ```
 before: fate.generation = 47, fate.weights = [...]
  ↓ compile
- ↓ observe MirrorLoss
+ ↓ observe Transparency
  ↓ property verdicts as reward
  ↓ update weights via loss gradient
 after:  fate.generation = 48, fate.weights = [...]
@@ -261,7 +307,7 @@ The crystal speaks for itself.
 The `.shatter` OID is a hash of:
 
 ```
-hash(fragment_tree + mirror_loss + property_verdicts + kernel_spec + fate_weights)
+hash(fragment_tree + transparency + property_verdicts + kernel_spec + fate_weights)
 ```
 
 If ANYTHING changes — the source, the properties, the compilation
