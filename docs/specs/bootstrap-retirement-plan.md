@@ -1,9 +1,69 @@
 # Bootstrap retirement plan — the Rust floor sealed
 
-*2026-05-21. Reed.*
+*2026-05-21. Reed. Updated 2026-06-04 (Reed + Alex).*
 
 Status: **Red** (plan only; no Rust changes, no grammar changes; this
 spec sequences the substrate-pull at the implementation level)
+
+> **2026-06-04 reframe (Reed + Alex, canonical) — the shards/ floor and
+> the legacy substrate.**
+>
+> The substrate-pull arc has a destination clearer than this plan's
+> v1 framing: **`shards/` is source of truth.** All new substrate
+> lands in `shards/` (per [[prism-floor-and-the-grammar-rename]] and
+> [[shard-design]]):
+>
+> ```
+> shards/
+>   glass.mirror           # @glass — types of glass wall + glass keyword
+>   metalogue.mirror       # @metalogue — language's self-conversation
+>                          # The metalogue IS the glass wall
+>   nl.mirror              # @nl — root prism; # is the @nl primitive
+>   epistemologic/         # @epistemologic/* — properties + math + silicon
+>     property/path_matches_namespace.mirror   # NEW (path-namespace property)
+>   mirror/                # @mirror/* — the compiler's surface
+>     prism.mirror cli.mirror shatter.mirror store.mirror
+>     mosaic.mirror spec.mirror au.mirror
+> mirror.spec              # mirror's dogfood; uses @mirror/cli to declare CLI
+> ```
+>
+> **legacy `boot/`** + **legacy `bootstrap/`** are this plan's targets.
+> They retain shrinkage contracts: each tick below shrinks the Rust
+> floor a little more, and the legacy floors retreat as `shards/` takes
+> over the corresponding phase. The "shrink → retire" verdicts in this
+> plan are still correct; the **destination** is shards/, not a leaner
+> bootstrap. The leaner bootstrap is a way-station.
+>
+> **Key types/concepts that frame the destination:**
+>
+> - **mosaic** is the build-system prism; composes shards; settles to au.
+> - **mirror.spec** is the multi-dimensional manifold; kintsugi operates
+>   on it (per [[kintsugi-ci-v0.1]] post-reframe).
+> - **au** is the verified-construction output, parametric over altitude
+>   (`au(@code/rust)`, `au(@release)`, etc.).
+> - **`.shatter`** is an OPTIONAL disk projection of `au + splinter +
+>   mosaic` (per [[../shatter-spec]]); the fragmentation store is
+>   canonical (per [[mirror-store]]).
+> - **No deps; shards are self-contained crystals.** Splinter IS the
+>   structural lockfile. Composition by OID, not name resolution.
+> - **MirrorLoss is dead** (per task #126); replaced by `transparency<p>`.
+> - **`<= prism` is redundant** in `prism @X { … }`; drop it everywhere.
+> - **`#` → @nl term**; **`\` → fracture** per
+>   [[gap-tension-tensor-substrate]] §11.
+> - **Five operations:** focus, project, split, **shift** (was zoom),
+>   **settle** (was refract) — operational form of Connes' (A, H, D)
+>   spectral triple per [[prism-core-as-spectral-triple]] /
+>   [[spectral-triple-binary]].
+>
+> **Self-descriptive all the way down:** `mirror.spec` uses
+> `@mirror/cli` to declare what mirror's CLI looks like. The CLI
+> surface that builds mirror IS the CLI surface mirror exposes. The
+> substrate compiles itself by declaring itself.
+>
+> The Ticks 1–6 below remain the legacy-floor shrinkage plan;
+> shards/ is where the substrate that replaces them lands. Treat
+> "retire" verdicts as "moves to shards/" where the moved code is
+> substrate-declared rather than Rust-implemented.
 
 Depends on:
 - `docs/specs/prism-core-as-spectral-triple.md` — the v1 architecture
