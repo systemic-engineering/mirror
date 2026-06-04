@@ -50,8 +50,8 @@ Unblocks:
   glass' --out=mirror/`. The transform is structural — only tokens
   the meta-glass parses as the keyword `grammar` (and the file
   basename derived from it) get rewritten.
-- Host grammars defer to other grammars via the cross-grammar lift
-  `@<grammar>(<body>)`. Comments in every host lift to `@nl` (the
+- Host grammars defer to other grammars via the cross-grammar shift
+  `@<grammar>(<body>)`. Comments in every host shift to `@nl` (the
   natural-language grammar); fenced code blocks with language tags
   dispatch back to the tagged host. The bare-`@nl` form (this tick)
   recognises inline backticks, fenced blocks, and `mirror>` doctest
@@ -182,7 +182,7 @@ of `tokenize.rs` does.
 - **`choice([C; N])`** — first non-Partial wins; ties broken by
   smallest `ScalarLoss` (`terni::Metric::distance_to`); zero-progress
   fall-through hands off to `dark_fallback`. The Rust grammar's
-  `is_skip_word` table becomes one `choice` arm of empty-refract
+  `is_skip_word` table becomes one `choice` arm of empty-settle
   `literal`s.
 - **`repeat(C, min..=max)`** — Kleene with bounds. Termination
   follows from `Transport::Holonomy: Metric`: per-iteration loss is
@@ -218,7 +218,7 @@ seq([
   literal(b"="),
   capture_until(newline_or_eol_continuation),  # the rhs body, verbatim
 ])
-.lift(AstKind::IoBinding)
+.shift(AstKind::IoBinding)
 ```
 
 The `capture_until` here is the existing `capture_io_body_end`
@@ -238,7 +238,7 @@ seq([
   literal(b"match"),
   capture_subject_until(brace_or_newline),     # subject expression
   brace_block(repeat(arm_combinator, 0..)),    # the arm list
-]).lift(AstKind::MatchExpr)
+]).shift(AstKind::MatchExpr)
 ```
 
 The arm_combinator is `seq([pattern, literal(b"=>"), body, optional(literal(b","))])`,
@@ -275,7 +275,7 @@ keyword_form_body(keyword: &'static [u8], kind: AstKind) =
     optional(sigil_prefix),                    # @, %, !, #
     charset(is_ir_ident_char),                 # the name
     capture_verbatim_body_until_eol_or_brace_block,
-  ]).lift(kind)
+  ]).shift(kind)
 ```
 
 The composition is named once as `keyword_form_body` so the llvm-ir
@@ -334,7 +334,7 @@ files. The meta-glass declares that, including its own form.
 
 The Rust seed is the just-enough-meta-glass to parse `glass.mirror`:
 the structural primitives (`Seq`, `Choice`, `Repeat`, `Capture`,
-`Literal`, `Charset`, `BraceBlock`, `ParenBlock`, `Until`, `Lift`)
+`Literal`, `Charset`, `BraceBlock`, `ParenBlock`, `Until`, `Shift`)
 wired into a Combinator literal sized to the bootstrap need. The
 operation-specific knowledge (keyword names, kind tags, body forms,
 comment syntax) moves out of Rust and into `glass.mirror`. The seed
@@ -354,9 +354,9 @@ fn prism_seed() -> Combinator {
         Choice(vec![
             literal_kind(b"focus",   AstKind::Focus),
             literal_kind(b"project", AstKind::Project),
-            literal_kind(b"split",   AstKind::Split),
-            literal_kind(b"zoom",    AstKind::Zoom),
-            literal_kind(b"refract", AstKind::Refract),
+            literal_kind(b"split",  AstKind::Split),
+            literal_kind(b"shift",  AstKind::Shift),
+            literal_kind(b"settle", AstKind::Settle),
         ]),
         // … prism-body form, abstract io form, in/out decls …
     ])
@@ -479,7 +479,7 @@ The seed builds this tree by reading the `<op> <keyword>` lines and
 emitting one `capture(seq([literal(keyword), …]), op_kind)` branch
 per line. The `Focus`-kind branches are special: they may carry a
 brace-block body and recurse. The seed knows this because `Focus` and
-`Refract` are the two operation kinds that traditionally have nested
+`Settle` are the two operation kinds that traditionally have nested
 children (per `ast-as-bundle.md`'s trait-chain mapping: Fiber and
 Closure both carry inner structure).
 
@@ -659,24 +659,24 @@ grammar's parser. This is the bridge that lets host grammars
 (`@mirror/glass`, `@code/rust`, `@code/llvm/ir`) defer to other
 grammars for embedded content. Three concrete uses:
 
-- **Comments lift to `@nl`.** `# operator = @nl(until_newline)` in
-  `mirror/glass.mirror`. Every `#`-prefixed line lifts the
+- **Comments shift to `@nl`.** `# operator = @nl(until_newline)` in
+  `mirror/glass.mirror`. Every `#`-prefixed line shifts the
   rest-of-line into the natural-language grammar. Multi-line
-  comments are just chains of single-line lifts.
-- **Inline backticks lift back to the host.** `` `code` `` inside
-  `@nl` lifts into whichever host grammar invoked it (`@mirror/glass`
+  comments are just chains of single-line shifts.
+- **Inline backticks shift back to the host.** `` `code` `` inside
+  `@nl` shifts into whichever host grammar invoked it (`@mirror/glass`
   when called from a `.mirror` file's comment, `@code/rust` when
   called from a `.rs` file's comment).
 - **Fenced code blocks dispatch by language tag.** ` ```rust ` lifts
-  to `@code/rust`; ` ```mirror ` lifts to `@mirror/glass`; no tag
-  lifts to `@<host>` (the calling grammar).
-- **Doctest prompts** (indented `mirror> `) lift the prompt body to
+  to `@code/rust`; ` ```mirror ` shifts to `@mirror/glass`; no tag
+  shifts to `@<host>` (the calling grammar).
+- **Doctest prompts** (indented `mirror> `) shift the prompt body to
   `@mirror/glass`; following non-prompt lines are expected output.
 
 The Combinator variant:
 
 ```rust
-Combinator::Lift {
+Combinator::Shift {
     grammar: Reference,        // the @<path> reference
     body: Box<Combinator>,     // body-extractor (Until, Capture, etc.)
 }
@@ -684,28 +684,28 @@ Combinator::Lift {
 
 The walker resolves `grammar` to its loaded Combinator tree at parse
 time, extracts the body bytes via `body`, and applies the target
-grammar to those bytes. Recursion bottoms out because every lift has
+grammar to those bytes. Recursion bottoms out because every shift has
 a bounded `until` terminator.
 
 ---
 
-## `@nl` — the bare cross-grammar lift target
+## `@nl` — the bare cross-grammar shift target
 
 `@nl` is the natural-language grammar. The **bare-`@nl`** form that
 lands in 4b.3 recognises three structural elements inside
 otherwise-opaque prose:
 
-1. **Inline backticks** lift back to the host grammar:
+1. **Inline backticks** shift back to the host grammar:
    `code_inline = literal("\`") > @<host>(until "\`") > literal("\`")`.
 2. **Fenced code blocks** with a language tag dispatch by tag:
-   ` ```rust ` lifts to `@code/rust`, ` ```mirror ` to `@mirror/glass`,
-   no tag lifts to `@<host>`.
-3. **Doctest prompts** (indented `mirror> `) lift the prompt body to
+   ` ```rust ` shifts to `@code/rust`, ` ```mirror ` to `@mirror/glass`,
+   no tag shifts to `@<host>`.
+3. **Doctest prompts** (indented `mirror> `) shift the prompt body to
    `@<host>`; following non-prompt lines are expected output.
 
 `mirror/nl.mirror` is ~500 bytes, declares these three forms, and uses
 the same Combinator primitives the meta-glass already needs (`Choice`,
-`Repeat`, `Literal`, `Charset`, `Lift`, `Until`).
+`Repeat`, `Literal`, `Charset`, `Shift`, `Until`).
 
 **Deferred to a follow-up tick (4b.3.5 or later).**
 
@@ -749,12 +749,12 @@ stable; Dark count 58/23; full-corpus round-trip at depth 1.
   1. Grow `boot/std/mirror/grammar.mirror` into the full meta-glass
      form. The file declares every syntactic form mirror knows about
      (block structures, operation declarations, references, the `#`
-     comment lift to `@nl`, the `<ast>`/backtick lifts, the doctest
-     prompt) using `refract` declarations.
+     comment shift to `@nl`, the `<ast>`/backtick shifts, the doctest
+     prompt) using `settle` declarations.
   2. Implement the Combinator variants the meta-glass references:
      `Repeat`, `Charset` (with the `CharsetKind` enum filled in),
      `ParenBlock`, `Until` (or extend `Capture` with a stop
-     condition), and `Lift` (the cross-grammar lift
+     condition), and `Shift` (the cross-grammar shift
      `@<grammar>(<body>)`).
   3. Shrink `prism_seed()` to ~30 LOC encoding just-enough-meta-glass
      to parse `glass.mirror`. The seed is purely structural; no
@@ -806,7 +806,7 @@ After 4b lands all grammars on the combinator surface:
 2. **Retire `load_grammar` and `grammar_for_file`** — collapse to
    `read_file` + `apply_h(seed, bytes)` plus a one-line extension
    switch.
-3. **Retire `is_skip_word`** — becomes a `choice` of empty-refract
+3. **Retire `is_skip_word`** — becomes a `choice` of empty-settle
    literals in `code/rust.mirror`'s combinator tree.
 4. **Retire `keyword_for_kind`** — default-lookup becomes a tree-walk
    over `capture` branches; O(branches) is fine for renderer usage.
@@ -933,9 +933,9 @@ scaffold in `cmd_kintsugi`".
   `apply_h(seed, glass.mirror.bytes) == meta_glass`. `00-prism.mirror`
   is a consumer of the meta-glass (algebra declaration), not a
   seed-target.
-- **Cross-grammar lift `@<grammar>(<body>)` is a Combinator primitive.**
+- **Cross-grammar shift `@<grammar>(<body>)` is a Combinator primitive.**
   Required for `# = @nl(until_newline)` and every other host-defers-
-  to-grammar form. Added in 4b.3 as `Combinator::Lift`.
+  to-grammar form. Added in 4b.3 as `Combinator::Shift`.
 - **The boot/ → mirror/ migration and the `grammar → glass` rename
   are one kintsugi pass.** `mirror kintsugi boot/
   --transform='grammar => glass' --out=mirror/`. Lands in 4b.3 with

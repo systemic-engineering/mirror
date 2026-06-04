@@ -3,10 +3,10 @@
 *2026-05-19. Reed.*
 
 The CLI surface has been accreting verbs. `build` and `craft` do nearly the same
-thing. `check` is `craft` without code emission. `refract` and `kintsugi` both
+thing. `check` is `craft` without code emission. `settle` and `kintsugi` both
 settle a file. `trace` and `benchmark` are the same observation under two names.
 
-The Prism trait has five operations: **focus, project, split, zoom, refract**.
+The Prism trait has five operations: **focus, project, split, shift, settle**.
 Every public verb in the binary must map to exactly one of these. The CLI must
 have exactly five top-level commands. The internal grammars must justify their
 existence by carrying load that the five cannot carry alone.
@@ -31,7 +31,7 @@ and writes the migration as ticks.
 | `@mirror/interpreter` | walk AST, resolve `\` via Fate, sub-Turing | 30 | keep (internal) |
 | `@mirror/liquid` | infer @epistemologic properties, project below `---` | 32 | keep (internal) |
 | `@mirror/lsp` | LSP transport — same JSON-RPC pattern as MCP | 39 | keep (internal) |
-| `@mirror/refract` | measure / suite / lens / query / infer_spec / match_properties | 49 | **dissolves into kintsugi + beam** |
+| `@mirror/refract` (legacy) | measure / suite / lens / query / infer_spec / match_properties | 49 | **dissolves into kintsugi + beam**; new substrate name is `@mirror/settle` |
 | `@mirror/resolve` | walk AST, check git for crystals, load or diagnose | 11 | keep (internal) |
 | `@mirror/runtime` | full pipeline: resolve → check → interpret | 22 | keep (internal) |
 | `@mirror/serve` | MCP server over stdio | 14 | keep (internal) |
@@ -44,7 +44,7 @@ and writes the migration as ticks.
 | Grammar | Role today | Status |
 |---|---|---|
 | `@craft` | the convergence loop: compile + reflect + tournament + ... → λ₀ | keep — IS `split` |
-| `@kintsugi` | collapse(ast, ast) → imperfect — settle the spectrum | keep — IS `refract` |
+| `@kintsugi` | collapse(ast, ast) → imperfect — settle the spectrum | keep — IS `settle` |
 | `@run` | run a mirror project: compile + verify + report | **dissolves** (overlaps `@mirror/runtime` + `@mirror/execute`) |
 | `@fate` | five models, holonomy reduction loop | keep — IS `zoom` |
 | `@beam` | luminosity + path + wavelength — the observation surface (currently OTP types) | **expand role** to absorb trace + benchmark |
@@ -60,7 +60,7 @@ and writes the migration as ticks.
 The current `@cli` grammar declares **31 distinct actions** across nine
 categories (five-optics, compiler, CI/CA, session, deployment, navigation, LSP,
 garden, AI, benchmark). The five Prism operations appear as actions
-(focus/project/split/zoom/refract) alongside concrete verbs (compile, kintsugi,
+(focus/project/split/shift/settle) alongside concrete verbs (compile, kintsugi,
 crystal, ci, ca, init, tick, tock, shatter, plan, apply, drift, rollback, diff,
 log, blame, lsp, repl, add, remove, list, ai, train, bench, profile, help).
 
@@ -73,20 +73,20 @@ The verbs **are** the operations under different names.
 |---|---|---|
 | `compile` | focus | tokenize one file → one beam |
 | `run` | project | execute with holes |
-| `bench` | refract (observation) | the beam over time |
-| `profile` | refract (observation) | multi-action beam |
-| `kintsugi` | refract | settle a file |
-| `crystal` | refract | emit canonical |
+| `bench` | settle (observation) | the beam over time |
+| `profile` | settle (observation) | multi-action beam |
+| `kintsugi` | settle | settle a file |
+| `crystal` | settle | emit canonical |
 | `ci` | split (with --reflect) | many files converging |
 | `ca` | split (with --reflect) | many files converging |
 | `tick` / `tock` | project | a single execution step |
-| `shatter` | refract --shatter N | recursive settle |
-| `plan` / `apply` / `drift` / `rollback` | zoom | cross levels of resolution |
+| `shatter` | settle --shatter N | recursive settle |
+| `plan` / `apply` / `drift` / `rollback` | shift | cross levels of resolution |
 | `diff` / `log` / `blame` | focus | look closer at one thing |
 | `add` / `remove` / `list` | project | filter the garden |
 | `lsp` / `repl` | serve | transport, not operation |
-| `ai` / `train` | zoom | resolution change |
-| `init` | refract | settle initial state |
+| `ai` / `train` | shift | resolution change |
+| `init` | settle | settle initial state |
 
 Every concrete verb collapses into one of the five operations. The CLI does not
 need 31 actions. It needs five.
@@ -102,8 +102,8 @@ Five CLI commands, each one Prism operation:
 | `mirror compile <file>` | **focus** | tokenize one file → emit a beam | look closer at one grammar |
 | `mirror run <file>` | **project** | execute with holes | the beam shows what's missing |
 | `mirror craft <target>` | **split** | enumerate the suite, converge to λ₀ | many beams becoming one |
-| `mirror fate <oid> <res>` | **zoom** | cross levels: `\` → concrete | alter the eigenboard the beam refracts through |
-| `mirror kintsugi <file>` | **refract** | settle, write canonical | the gold in the cracks |
+| `mirror fate <oid> <res>` | **shift** | cross levels: `\` → concrete | alter the eigenboard the beam settles through |
+| `mirror kintsugi <file>` | **settle** | settle, write canonical | the gold in the cracks |
 
 ### Flags compose
 
@@ -171,9 +171,9 @@ Metaphor justification: split's job is to enumerate many possibilities and
 converge. When you suppress the emission, what's left is the verdict — pass,
 fail, partial. That verdict IS the check.
 
-### `refract` (the @mirror/refract grammar) → split between `kintsugi` and `@beam`
+### `settle` (the @mirror/refract grammar, was: refract) → split between `kintsugi` and `@beam`
 
-`@mirror/refract` currently does two things:
+`@mirror/refract` (legacy name) currently does two things:
 1. **Measure**: produce verdicts from topology, infer specs (this is observation)
 2. **Settle**: project inferred properties into source (this is settling)
 
@@ -181,12 +181,12 @@ These are two different operations under one name. They split:
 
 - The **measure / suite / lens / query** actions are observation. They become
   `@beam` operations — read the beam over a file, a suite, through a lens.
-- The **infer_spec / match_properties / refract** actions are settling. They
+- The **infer_spec / match_properties / settle** actions are settling. They
   become `@kintsugi --liquid` — settle the grammar by writing inferred
   properties below `---`.
 
-Metaphor justification: refract-as-verb is what kintsugi already does — settle
-the spectrum. The current `@mirror/refract` grammar conflates measurement (the
+Metaphor justification: settle-as-verb is what kintsugi already does — settle
+the spectrum. The legacy `@mirror/refract` grammar conflates measurement (the
 beam) with settling (the gold). One operation each. No fused verbs.
 
 ### `trace` → `@beam`
@@ -253,7 +253,7 @@ Already done per CLAUDE.md note. The dissolved grammars folded into
 ## The @beam Grammar
 
 `@beam` becomes **the observation surface for the entire compiler**. It absorbs
-`trace`, `benchmark`, and the measurement half of the old `@mirror/refract`.
+`trace`, `benchmark`, and the measurement half of the legacy `@mirror/refract`.
 
 ### What the beam carries
 
@@ -441,8 +441,8 @@ grammar @cli {
   action compile(path: text)       -> imperfect  # focus
   action run(path: text)           -> imperfect  # project
   action craft(target: text)       -> imperfect  # split
-  action fate(oid: text, res: text)-> imperfect  # zoom
-  action kintsugi(path: text)      -> imperfect  # refract
+  action fate(oid: text, res: text)-> imperfect  # shift
+  action kintsugi(path: text)      -> imperfect  # settle
 
   # --- Transport (one verb, two dispatches) ---
   action serve()                   -> imperfect  # MCP or LSP via flag
@@ -488,15 +488,15 @@ liquid   = properties      the wine settled below ---
 | **gold** | the canonical form | the settled crystal — written to git, content-addressed | `@mirror/spectral` |
 | **liquid** | the properties | what the compiler infers from the topology — projected below `---` | `@mirror/liquid` |
 
-### Operations refract the metaphor
+### Operations settle the metaphor
 
 | Operation | Verb | Acts on glass | Produces |
 |---|---|---|---|
 | **focus** | `compile` | tokenize one piece of glass | one beam |
 | **project** | `run` | shine the beam through glass with holes | beam with holes visible |
 | **split** | `craft` | many beams converge through one eigenboard | one beam, settled |
-| **zoom** | `fate` | alter the eigenboard — replace a `\` with concrete | future beams refract differently |
-| **refract** | `kintsugi` | settle the beam into the gold | source rewritten, crystal stored |
+| **shift** | `fate` | alter the eigenboard — replace a `\` with concrete | future beams settle differently |
+| **settle** | `kintsugi` | settle the beam into the gold | source rewritten, crystal stored |
 
 ### The full pipeline
 
@@ -506,7 +506,7 @@ beam → project → beam with holes
 beam with holes → split → many beams in tournament
 many beams → zoom (Fate resolves) → fewer holes
 fewer holes → split repeats → converges
-converged beam → refract → gold (canonical) + liquid (properties below ---)
+converged beam → settle → gold (canonical) + liquid (properties below ---)
 gold → @mirror/spectral.crystallize → git blob → OID
 ```
 
@@ -570,10 +570,10 @@ making them concrete:
   `@mirror/craft.craft --reflect`
 - Update `@cli`: remove `check`, `ci`, `ca` actions
 
-### Tick 5: ♻️ split `@mirror/refract`
+### Tick 5: ♻️ split `@mirror/refract` (legacy name; substrate is `@mirror/settle`)
 
 - Move `measure`, `suite`, `lens`, `query` actions → `@beam`
-- Move `infer_spec`, `match_properties`, `refract` → `@kintsugi --liquid`
+- Move `infer_spec`, `match_properties`, `settle` → `@kintsugi --liquid`
 - Delete `boot/std/mirror/refract.mirror`
 - Update every import: `@mirror/refract.measure` → `@beam.observe`,
   `@mirror/refract.refract` → `@kintsugi --liquid`
@@ -648,18 +648,18 @@ MCP and the CLI are the same surface — JSON-RPC is just one rendering of it.
 | CLI top-level verbs | 31 | 5 (+ `serve`, `help`) | -24 |
 | `@mirror/*` grammars | 14 | 11 | -3 |
 | Top-level `boot/std/*` verb grammars | 7 (`craft`, `kintsugi`, `run`, `fate`, `benchmark`, `cogito`, `shatter`) | 5 (`craft`, `kintsugi`, `fate`, `cogito`, `beam`) | -2 |
-| Grammars dissolved | 0 | 6 (`build`, `check`, `refract`, `trace`, `benchmark`, `shatter`, `run`) | +6 dissolved |
+| Grammars dissolved | 0 | 6 (`build`, `check`, `settle`, `trace`, `benchmark`, `shatter`, `run`) | +6 dissolved |
 | Grammars created | 0 | 1 (`@mirror/compile`) | +1 |
 
 The compiler shrinks by twenty-four verbs and dissolves six grammars. The beam
-absorbs three of them (trace, benchmark, half of refract). `kintsugi --liquid`
-absorbs the other half of refract. `craft` with flags absorbs build and check.
+absorbs three of them (trace, benchmark, half of settle). `kintsugi --liquid`
+absorbs the other half of settle. `craft` with flags absorbs build and check.
 `@mirror/spectral` absorbs shatter. `@mirror/runtime` absorbs run.
 
 Five commands. Five operations. One beam. The metaphor holds because the
 operations are the metaphor — `focus` IS looking closer, `project` IS shining
-the beam through, `split` IS the eigenboard convergence, `zoom` IS crossing
-levels, `refract` IS settling.
+the beam through, `split` IS the eigenboard convergence, `shift` IS crossing
+levels, `settle` IS settling.
 
 The verbs are not metaphors layered on top. They are the trait methods named
 in English.

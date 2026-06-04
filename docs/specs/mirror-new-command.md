@@ -13,9 +13,9 @@ Depends on:
   documented framing: *"mirror init is what creates the project's .spec file
   through a first kintsugi application that refracts into the .spec"* (Alex
   2026-05-26), the `@mirror/init` scene grammar, and the `--store` flag.
-- `docs/specs/spec-inference.md` — `mirror refract <path>` infers a `.spec`
+- `docs/specs/spec-inference.md` — `mirror settle <path>` infers a `.spec`
   from a project's measured topology (above `---` declared, below `---`
-  measured). `new` and `refract` are the two halves of one settle.
+  measured). `new` and `settle` are the two halves of one settlement.
 - `docs/specs/cosmos-mirror-scaffold.md` (HEAD, `7357130`) — the first real
   user project; what `mirror new cosmos-mirror` must be able to produce.
 - `mirror.spec` (repo root) — mirror describing itself; the canonical shape a
@@ -27,7 +27,7 @@ Depends on:
   the `[substrate-pull:realize]` / `@io` floor boundary that decides where the
   filesystem writes sit.
 - `docs/specs/surface-simplification.md` — the five-verb collapse; `init` was
-  one of the 31 verbs that dissolved into `refract`. This spec re-derives `new`
+  one of the 31 verbs that dissolved into `settle`. This spec re-derives `new`
   as a composition, not a sixth operation.
 - `docs/specs/merkle-package-manager.md` — Store IS a MerkleTree; a project's
   dependency set is a tree of `in @…` imports, resolved by traversal, not SAT.
@@ -54,11 +54,11 @@ operations); only the filesystem writes and `git init` are `@io`.
 
 This is the move that makes `new` *mirror* and not `cargo new` reskinned. Every
 other tool drops static text. mirror settles a measurement. The `.spec` is the
-same kind of object whether `new` writes it from a seed or `refract` infers it
+same kind of object whether `new` writes it from a seed or `settle` infers it
 from an existing tree — one settle operation, two entry points (§3).
 
 The vocabulary stays closed: `new` is **not** a sixth operation. It is a
-named composition of `focus . split . zoom . refract` (§4), exactly as `craft`
+named composition of `focus . split . shift . settle` (§4), exactly as `craft`
 is in `mirror.spec`.
 
 ---
@@ -89,7 +89,7 @@ Synthesis of borrowable ideas, ranked by fit to mirror:
 
 1. **cargo's new-vs-init split** — adopt directly (§3). It is the cleanest
    resolution of "create a dir" vs "adapt the cwd," and it maps onto a real
-   distinction in mirror (`new` seeds a fresh crystal; `init`/`refract` settles
+   distinction in mirror (`new` seeds a fresh crystal; `init`/`settle` settles
    over what exists).
 2. **mix's structure-expresses-the-runtime** (`--sup`, `--umbrella`) — mirror's
    analog is *which grammars the seed imports* (a pure project vs one with a
@@ -104,7 +104,7 @@ Synthesis of borrowable ideas, ranked by fit to mirror:
    a `.spec` + `.spectral/`, nothing more. Batteries are opt-in flags, not the
    default (§2).
 5. **cabal/nimble interactivity** — *reject as default*, keep as opt-in. mirror's
-   seed-and-refract is deterministic and content-addressed; an interactive
+   seed-and-settle is deterministic and content-addressed; an interactive
    prompt that injects free-form intent breaks "same inputs → same OID." A
    `--interactive` flag may elicit the seed *intent string*, but the refraction
    over that seed stays deterministic (§3).
@@ -182,10 +182,10 @@ out @cli/*                 -- the project's CLI surface (if any)
 ```
 
 Above `---` (if present) is what the engineer declared at `new` time. Below
-`---` is what `refract` measures later (`spec-inference.md` §"The Spec Format").
+`---` is what `settle` measures later (`spec-inference.md` §"The Spec Format").
 At `new` time the below-`---` block is *empty* — there is no topology to measure
-yet. The first `mirror refract .` after the project has grammars fills it. This
-is the loop: `new` seeds the spec; `refract` sharpens it; `kintsugi` resolves
+yet. The first `mirror settle .` after the project has grammars fills it. This
+is the loop: `new` seeds the spec; `settle` sharpens it; `kintsugi` resolves
 the holes it names. `e^(n+1) < e^n`.
 
 ### Navigation + refs from day one (§6 expanded here for the skeleton)
@@ -208,7 +208,7 @@ resolve. The project is a navigable graph at t=0, not an inert directory.
 
 ---
 
-## 3. `new` vs `init` (and `refract`) — resolved
+## 3. `new` vs `init` (and `settle`) — resolved
 
 There are three commands in the neighborhood, and the prior docs reference all
 three. They resolve cleanly along the **cargo new/init axis crossed with
@@ -218,10 +218,10 @@ mirror's settle direction**:
 |---|---|---|---|---|
 | `mirror new <name>` | **create** | dir `<name>` does not exist (or is empty) | a fresh seed → `.spec` | `cargo new` |
 | `mirror init [.]` | **adapt** | cwd is a non-mirror project (has source) | the existing tree → `.spec` | `cargo init` |
-| `mirror refract <path>` | **measure** | a `.spec` exists; re-infer below-`---` | the measured topology → updated `.spec` | (no cargo analog) |
+| `mirror settle <path>` | **measure** | a `.spec` exists; re-infer below-`---` | the measured topology → updated `.spec` | (no cargo analog) |
 
-The resolution in one sentence: **`new` and `init` are the same refraction with
-different seeds; `refract` is that refraction's *re-run* over a now-populated
+The resolution in one sentence: **`new` and `init` are the same settlement with
+different seeds; `settle` is that settlement's *re-run* over a now-populated
 tree.**
 
 - `new <name>` seeds from *nothing but a name + intent + store choice*. It
@@ -232,25 +232,25 @@ tree.**
   already produces a populated below-`---` block. `init` is `new` whose seed is
   "the project that's already here." This is exactly cargo's rule that `init`
   with no special handling behaves like `new` over the cwd [6].
-- `refract` is `init`'s measurement step run again, later, after grammars have
+- `settle` is `init`'s measurement step run again, later, after grammars have
   been added. It never creates a `.spec`; it updates one.
 
-The shared mechanism is the kintsugi refraction (§4). `new` ⊂ `init` ⊂ `refract`
+The shared mechanism is the kintsugi settlement (§4). `new` ⊂ `init` ⊂ `settle`
 as *seed richness* grows: name-only → existing-source → measured-topology. One
 operation, three entry points, monotone in how much the seed already knows.
 
 This **reconciles** the two prior framings without overriding either:
 
 - `spectral-db-three-tier-architecture.md` documents *`mirror init`* as the
-  kintsugi-refract-into-`.spec`. That framing is correct and is preserved — it
+  kintsugi-settle-into-`.spec`. That framing is correct and is preserved — it
   is the *in-place* entry point. This spec adds `new` as the *create-a-dir*
   entry point sharing the identical mechanism, exactly the cargo split.
 - The prior `@new` grammar (`87c2686`) had `new` writing a *static*
   `@new_template` spec. This spec **supersedes that one design choice**: the
   template is not written verbatim, it is the *seed* the refraction settles. See
-  §4 and the findings (§7). The grammar's *composition* (`focus . split . zoom .
-  refract`) survives almost intact; only the "static template" body changes to
-  "refract the seed."
+  §4 and the findings (§7). The grammar's *composition* (`focus . split . shift .
+  settle`) survives almost intact; only the "static template" body changes to
+  "settle the seed."
 
 ### Flags (stance: flag-driven by default, deterministic; `--interactive` opt-in)
 
@@ -328,9 +328,9 @@ out seed
 
 ### The first refraction
 
-The refraction is one application of `@kintsugi` whose `flow` (the convergent
-Prism operation, `fixed = refract`) lands the `.spec`. The seed enters with a
-`\` hole where the dependency tree and properties belong; the refraction settles
+The settlement is one application of `@kintsugi` whose `flow` (the convergent
+Prism operation, `fixed = settle`) lands the `.spec`. The seed enters with a
+`\` hole where the dependency tree and properties belong; the settlement settles
 that hole into the concrete spec. The grammar — the descendant of the old
 `@new`, now five-op-correct and `@io`-correct:
 
@@ -345,22 +345,22 @@ in @mirror/store          -- the floor: store init per --store
 
 # A new project is the crystal of its init scene (spectral-db-three-tier
 # §"mirror init IS a kintsugi application"). The composition is the four
-# operations; refract is the settle that produces the .spec.
+# operations; settle is the settle that produces the .spec.
 action new(s: seed, root: path) -> imperfect {
   focus  scaffold(s, root)                 -- name the target; choose template grammar
   split  |                                 -- the floor writes (each becomes @io in codegen)
     io mkdir(root)
     io write(root, dotspectral)            -- .spectral/ tree, empty-but-valid
     io write(root, gitignore)              -- the build-floor ignore
-  zoom   git_init(root)                    -- cross to VCS register: git init + store init
-  refract spec_of(s)                       -- SETTLE: the seed -> the fixed-point .spec
+  shift  git_init(root)                    -- cross to VCS register: git init + store init
+  settle spec_of(s)                        -- SETTLE: the seed -> the fixed-point .spec
 }
 
 # the settle. NOT a static template write — a kintsugi pass over the seed.
 # the body is the hole the first refraction fills; the result is the .spec
 # crystal, content-addressed by `s`.
-refract spec_of(s: seed) -> crystal {
-  @kintsugi.refract(@new/template.for(s.template, s.name, s.store), \)
+settle spec_of(s: seed) -> crystal {
+  @kintsugi.settle(@new/template.for(s.template, s.name, s.store), \)
 }
 
 out @new
@@ -375,10 +375,10 @@ What the first refraction *produces* and **why it beats a static template**:
    `cargo new` produces a `Cargo.toml` whose content is *incidental*; a `mirror
    new` produces a `.spec` whose content *is its identity hash*.
 2. **It runs the compiler's own settlement on the project before any code
-   exists.** The refraction is the same `@kintsugi.refract` the project will use
+   exists.** The settlement is the same `@kintsugi.settle` the project will use
    on its grammars. So the project's *first* operation and *every subsequent*
    operation are the same operation — the project is self-similar from t=0. The
-   genesis crystal is a real `refract` verdict, not a file copy. If the seed is
+   genesis crystal is a real `settle` verdict, not a file copy. If the seed is
    ill-formed (a name that isn't a valid namespace, a store that isn't a
    `store_kind`), the refraction returns `Imperfect` and the project is **not**
    created — the scene does not close (the `@mirror/init` scene's `invariants:
@@ -399,20 +399,20 @@ What the first refraction *produces* and **why it beats a static template**:
    because *there is no topology to measure yet*. The static `@new_template`
    (`87c2686`) hard-coded `requires { types_lowercase … }` + `invariant {
    deterministic pure no_cycles }` — asserting properties the empty project
-   hadn't earned. The refraction instead leaves below-`---` empty and lets the
-   first `mirror refract .` (`spec-inference.md`) *measure* which properties the
+   hadn't earned. The settlement instead leaves below-`---` empty and lets the
+   first `mirror settle .` (`spec-inference.md`) *measure* which properties the
    project's actual topology satisfies. Earned, not asserted.
 
 The loop, stated once:
 
 ```
-new  → seed → refract → .spec (below-`---` empty)
+new  → seed → settle → .spec (below-`---` empty)
         ↓ user adds grammars
-refract . → measures topology → fills below-`---`
+settle . → measures topology → fills below-`---`
         ↓ holes named
 kintsugi  → resolves holes → updates .spec
         ↓
-refract . → e^(n+1) < e^n
+settle . → e^(n+1) < e^n
 ```
 
 `new` is the n=0 of the loop the project lives in forever. That is the
@@ -433,7 +433,7 @@ touch the floor, and both are already-blessed `@io` boundaries:
    disk. Per AGENTS.md "The Glass Wall," these are legitimately `@io`: writing a
    byte to a path is an opaque effect on the world, not a capability a grammar
    can describe of itself.
-2. **`git init` + store init** (`zoom git_init`, `refract store_init` via
+2. **`git init` + store init** (`shift git_init`, `settle store_init` via
    `@mirror/store`) — initializing the VCS and the chosen `--store` backend.
    `@mirror/store` already owns this `io` boundary (`spectral-db-three-tier`:
    *"@fragmentation is pure. @mirror/store owns io"*).
@@ -441,7 +441,7 @@ touch the floor, and both are already-blessed `@io` boundaries:
 Everything *between* those floor calls is grammar:
 
 - choosing the template (`@new/template.for`) — pure `project` of `mirror.spec`;
-- settling the seed into the `.spec` (`@kintsugi.refract`) — the five-op settle;
+- settling the seed into the `.spec` (`@kintsugi.settle`) — the five-op settle;
 - computing the genesis crystal OID — `@fragmentation` content addressing, pure.
 
 So the boundary sits exactly where AGENTS.md puts it: the scaffold *logic* is
@@ -512,7 +512,7 @@ Step by step, mapping to the §4 composition:
    project would not get one.
 3. **`zoom git_init`** — `git init cosmos-mirror`; `@mirror/store` initializes the
    git store backend (`--store git`).
-4. **`refract spec_of(seed)`** — settles `cosmos-mirror.spec`. Because the
+4. **`settle spec_of(seed)`** — settles `cosmos-mirror.spec`. Because the
    template is `numerical`, the projection of `mirror.spec` yields exactly the
    import set `cosmos-mirror-scaffold.md` §4 calls for:
    ```mirror
@@ -537,7 +537,7 @@ Step by step, mapping to the §4 composition:
    Below `---` is **empty** — there is no `@cosmos` grammar yet to measure. The
    project is now the skeleton; the scaffold spec's `@cosmos/{rgg,observe,flow,
    partition,types}` grammars are what the *user* (the migration) adds next, at
-   which point `mirror refract .` measures them and fills below-`---`.
+   which point `mirror settle .` measures them and fills below-`---`.
 
 What `new` produces is therefore *precisely* the empty frame
 `cosmos-mirror-scaffold.md` §4 + §5-step-1 need: the `.spec` with the right
@@ -546,7 +546,7 @@ grammar, the `.spectral/` session dir, the `flake.nix` pinning flang/LAPACK, and
 git initialized. The migration's "step 0" is `mirror new cosmos-mirror --from
 numerical --native fortran`; its "step 1" (port the d_s `focus`) is dropping
 `boot/std/cosmos/types.mirror` + `observe.mirror` into the skeleton and running
-`mirror refract .`.
+`mirror settle .`.
 
 The genesis crystal of `cosmos-mirror.spec` is reproducible: anyone who runs the
 same `new` invocation gets the same `.spec` OID. The project's content-addressed
@@ -564,18 +564,18 @@ the project's own genesis.
   (`d5d08ce`, 729 lines, "LAPACK-backed VCS store initialization"). This spec
   treats `87c2686`'s `@new` as the structural ancestor and updates it for three
   things that postdate it: the five-op surface collapse, the `@io`/`@mirror/store`
-  placement correction, and the kintsugi-refract-into-`.spec` framing.
+  placement correction, and the kintsugi-settle-into-`.spec` framing.
 - **One deliberate supersession.** The old `@new_template` (`87c2686`) wrote a
   *static* `.spec` with hard-coded `properties { requires { … } invariant { … }
-  }`. This spec changes that single choice: the `.spec` is *refracted from a
-  seed*, and below-`---` properties are left empty for `refract` to *measure*,
-  not asserted at birth. The composition (`focus . split . zoom . refract`) and
+  }`. This spec changes that single choice: the `.spec` is *settled from a
+  seed*, and below-`---` properties are left empty for `settle` to *measure*,
+  not asserted at birth. The composition (`focus . split . shift . settle`) and
   the `--store` flag survive; only "static template" → "settle the seed" changes.
   This is surfaced, not silent, per the stop-and-report condition.
 - **No contradiction between `init` and `new`.** The `spectral-db-three-tier`
-  doc commits `init` to the kintsugi-refract mechanism; this spec adds `new` as
+  doc commits `init` to the kintsugi-settle mechanism; this spec adds `new` as
   the create-a-dir sibling sharing that exact mechanism (the cargo split). They
-  reinforce rather than conflict — `new ⊂ init ⊂ refract` by seed richness (§3).
+  reinforce rather than conflict — `new ⊂ init ⊂ settle` by seed richness (§3).
 - **mirror's batteries are imports, not files.** The most surprising design
   consequence: the *right* default is closer to `go mod init` (one manifest +
   near-nothing) than to `mix new` (full tree), because in mirror you gain
