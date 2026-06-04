@@ -950,16 +950,7 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
     let source = match fs::read_to_string(spec_path) {
         Ok(s) => s,
         Err(_) => {
-            return emit_spec_verdict(
-                "failure",
-                spec_path,
-                0.0,
-                1,
-                0,
-                0,
-                &[],
-                format,
-            );
+            return emit_spec_verdict("failure", spec_path, 0.0, 1, 0, 0, &[], format);
         }
     };
     let targets = parse_spec_targets(&source);
@@ -1038,11 +1029,7 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
                 );
                 let stderr = String::from_utf8_lossy(&o.stderr);
                 eprintln!("  {}", &stderr.chars().take(200).collect::<String>());
-                let label = format!(
-                    "{} (exit {})",
-                    manifest.to_string_lossy(),
-                    code
-                );
+                let label = format!("{} (exit {})", manifest.to_string_lossy(), code);
                 ("failure", 1.0_f64, 1_u64, label)
             }
             Err(e) => {
@@ -1050,7 +1037,12 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
                     "[kintsugi spec] target `{}` cargo spawn error: {}",
                     t.block_name, e
                 );
-                ("failure", 1.0_f64, 1_u64, manifest.to_string_lossy().into_owned())
+                (
+                    "failure",
+                    1.0_f64,
+                    1_u64,
+                    manifest.to_string_lossy().into_owned(),
+                )
             }
         };
         let _ = t.artifact_name; // dispatcher does not need it today
