@@ -119,10 +119,11 @@ mirror bootstrap  [phase]         — the autopoietic loop
                                     `mirror bootstrap status` reports the
                                     holonomy and the spectral gap.
 
-mirror converse   [@peer]         — second-order CLI
-                                    drops to λsh (the lambda-calculus shell).
-                                    The observer is now visibly in the system.
-                                    `\` toggles between λ> and @peer>.
+mirror join       [@peer]         — second-order CLI; entry verb for λsh
+                                    `mirror join` (no peer) drops into λsh as self;
+                                    `mirror join @reed` enters with that peer.
+                                    λsh and `mirror join` are the same transport
+                                    under two names. `\` toggles λ> ↔ @peer>.
 
 mirror watch      [target...]     — algedonic surface
                                     keep `focus + loss` open in the foreground;
@@ -147,26 +148,31 @@ The user can always drop one layer and operate at the algebra level.
 not collapse it.
 
 ```
-mirror open     <hole>           — declare a `\` explicitly; assigns it an
-                                   eigenvalue and starts the convergence
-                                   tracker.
+mirror crack focus                 — list every open `\` (crack) with
+                                     eigenvalue, trajectory, best candidate
+                                     so far, and estimated weeks-to-settlement.
 
-mirror holes    [target...]      — list every open `\` with eigenvalue,
-                                   trajectory, best candidate so far, and
-                                   estimated weeks-to-settlement.
+mirror crack settle --open <name>  — declare a new `\` (open a crack);
+                                     assigns it an eigenvalue and starts the
+                                     convergence tracker.
 
-mirror force    <hole>           — `\!` — accept loss, force-fill, track
-                                   the regression in the proof. Honest about
-                                   incoherence rather than hidden behind it.
+mirror crack settle --force <name> — `\!` — accept loss, force-fill, track
+                                     the regression in the proof. Honest
+                                     about incoherence rather than hidden.
 
-mirror seal     <hole>           — promote a settled `\` to explicit; the
-                                   tournament has crossed L₀ and the type is
-                                   known. Commits with `♻️ kintsugi: ... settled`.
+mirror crack settle <name>         — seal-with-gold: promote a settled `\`
+                                     to explicit. The tournament crossed L₀
+                                     and the type is known. Commits with
+                                     `♻️ kintsugi: ... settled`.
 ```
 
-These four commands give the user the full lifecycle of the third state:
-declare → measure → (force if you must) → seal when settled. The codebase
-visibly learns. `e^(n+1) < e^(n)` on the frontier itself.
+These four operations on the `crack` glass give the user the full
+lifecycle of the third state: focus (list) → settle --open (declare) →
+settle --force (force-fill if needed) → settle (seal-with-gold).
+Substrate-pull rename (`hole` → `crack`, 2026-06-05) makes the kintsugi
+geometry literal: the glass-name carries the gap-tension-tensor
+vocabulary, and settling IS the gold pour. The codebase visibly learns.
+`e^(n+1) < e^(n)` on the frontier itself.
 
 [settlement]: ./settlement.md
 
@@ -205,7 +211,8 @@ project/
     ├── log               — the algedonic log: every tick, every signal
     ├── proof/            — proof blocks for every settle
     ├── eigenboard.mirror — the identity formalized as inference config (VSM S5)
-    └── holes/            — open `\` with their convergence trajectories
+    └── cracks/           — open `\` with their convergence trajectories
+                            (substrate vocab; was `holes/` pre-rename)
 ```
 
 **Cybernetic reading of each:**
@@ -218,7 +225,7 @@ project/
 | `*.shatter`           | The settled state of one altitude becoming substrate for the next. | The output the user takes to the next tool — but it remembers where it came from (content-addressed). |
 | `.mirror/proof/`      | Algedonic record. Every write produced a measurable proof or it didn't happen. | The user can `git log` the system's nervous responses to its own actions. |
 | `.mirror/eigenboard.mirror` | The agent's positions + spectrum. The thing that routes Fate. | The identity the user is co-evolving with. `git blame eigenboard.mirror` shows when each weight changed and why. |
-| `.mirror/holes/`      | The system's published uncertainty. The frontier. | The user sees what the substrate doesn't know — and can choose to teach it, force it, or wait. |
+| `.mirror/cracks/`     | The system's published uncertainty. The frontier. | The user sees what the substrate doesn't know — and can choose to teach it, force it, or wait. |
 
 **No hidden state.** Cybernetic principle: a viable system makes its own
 regulation legible to itself. There is no `.cache/` of opaque blobs. Every
@@ -265,8 +272,8 @@ even shown.
 
 ```mirror
 proof {
-  before { fiedler = ...  loss = ...  holes = ... }
-  after  { fiedler = ...  loss = ...  holes = ... }
+  before { fiedler = ...  loss = ...  cracks = ... }
+  after  { fiedler = ...  loss = ...  cracks = ... }
   loss_delta        = ...
   settled           = true|false
   e_n_plus_1_lt_e_n = true|false
@@ -309,7 +316,7 @@ larger is being measured. They ignore it. That's fine.
 ### 5.2 Second-order — the user enters the loop
 
 ```
-$ mirror converse
+$ mirror join
 λ> focus
 λ> project @mirror/cli
 λ> split depends_on
@@ -329,7 +336,7 @@ substrate is the regulator. The conversation has a proof.
 ### 5.3 Third-order — the codebase learns in public
 
 ```
-$ mirror holes
+$ mirror crack focus
 12 open \   (settling: 8   stuck: 3   diverging: 1)
 
   process(data) -> \         eigenvalue=0.03   converging (~2 weeks)
@@ -357,11 +364,11 @@ Current substrate-state (per the 2026-06-04 substrate-pull arc, on main):
 | `mirror compile`     | (keep)              | The classical name carries the first-order meaning correctly. |
 | `mirror kintsugi`    | (keep)              | The porcelain for the coherence-settling loop. Load-bearing. |
 | `mirror shatter`     | (keep)              | The materialize step. The settled-as-substrate-of-next altitude. |
-| (none)               | `mirror converse`   | Names second-order use explicitly. Drops to λsh. |
-| (none)               | `mirror watch`      | The algedonic surface as a first-class verb. Beer's bypass. |
+| (none)               | `mirror join`       | Entry verb for λsh (second-order CLI). λsh and `mirror join` are the same transport under two names. |
+| (none)               | `mirror watch`      | The algedonic surface as a first-class verb. Beer's bypass. (cli-as-prism resolved this as `--watch` flag on `focus`, not a sub-glass.) |
 | (none)               | `mirror reflect`    | VSM System 5 view. The identity reads itself. |
 | (none)               | `mirror bootstrap`  | Autopoiesis as a named operation. The self-hosting loop. |
-| (none)               | `mirror holes` `open` `force` `seal` | The lifecycle of the third state, made operational. |
+| (none)               | `mirror crack`      | One glass with the five operations for the third-state lifecycle (focus + settle with `--open`/`--force` flags). Per `cli-as-prism.md` §2.1. |
 | `mirror shift`       | (keep — landed) | Substrate-pull `zoom`→`lift`→`shift` closed 2026-06-04. Shift names basis-transformation per [[connes-spectral-triple]]; lateral, zero-cost-by-construction. |
 | `mirror settle`      | (keep — landed) | Substrate-pull `refract`→`settle` closed 2026-06-04. Settle names monad-close / measurement collapse. The ONE write. |
 
@@ -374,9 +381,11 @@ plumbing is unchanged.
 
 - **No new shards in this round.** The spec proposes; doesn't implement.
 - **No subcommand explosion.** Plumbing is exactly 5 verbs. Porcelain is
-  exactly 7 named loops (`compile`, `kintsugi`, `shatter`, `bootstrap`,
-  `converse`, `watch`, `reflect`) + 4 third-state verbs.
-- **No GUI.** The TUI (`mirror converse` → λsh) is a terminal client, not
+  condensed under prism-recursion (per `cli-as-prism.md`): 6 sub-glasses
+  (`compile`, `kintsugi`, `shatter`, `bootstrap`, `join`, `reflect`) +
+  the `crack` glass for the third-state lifecycle + `watch` as a flag
+  (`--watch`) on `focus` rather than a verb (cli-as-prism §4.1).
+- **No GUI.** The TUI (`mirror join` → λsh) is a terminal client, not
   a separate product.
 - **No bypass of the proof block.** Every `settle` produces one. A `settle`
   without a proof block is not a `settle`. (Hooks-level enforcement, not
@@ -406,7 +415,8 @@ Inline above, but the load-bearing ones are:
 - **[cybersyn.md][cybersyn]** — "the modeler is inside the system being
   modeled." First-order cybernetics treats the observer as external;
   second-order holds that the regulator is always a component of the
-  system it regulates. Why `mirror converse` exists.
+  system it regulates. Why `mirror join` exists (and why λsh is its
+  interactive running mode, not a separate transport).
 
 [cybersyn]: ../../../../reed/dev/systemic.engineering/practice/insights/cybernetics/cybersyn.md
 
@@ -420,34 +430,40 @@ specific phrasings are load-bearing but the references are textbook.
 
 For Reed + Alex to call before this becomes implementation work:
 
-1. **`mirror` vs `spectral` boundary.** The current binary is `spectral`,
-   with `spectral mirror <cmd>` delegating. Does the cybernetic CLI live
-   under `mirror` as a standalone binary, or as `spectral mirror`?
-   The spec assumes `mirror` as a first-class binary. If kept under
-   `spectral`, prefix every verb above with `spectral mirror`.
+1. ~~**`mirror` vs `spectral` boundary.**~~ **Closed (2026-06-05):** Alex's
+   v0.1 framing inlines spectral into mirror; `mirror` is the canonical
+   binary. The `spectral` binary may persist as a thin redirect through
+   the transition.
 
-2. **`mirror converse` vs `λsh`.** Are these the same thing? The spec says
-   `converse` drops to `λsh` (the lambda-calculus shell). Alternative:
-   `λsh` is the binary, `mirror converse` is an alias. Pick one.
+2. ~~**`mirror converse` vs `λsh`.**~~ **Closed (2026-06-05):** the
+   convergence resolved this. `mirror join` (renamed from `converse`) IS
+   the entry verb; λsh IS the running mode of that transport. Same
+   daemon socket, same algebra, same eigenboard. The standalone `λsh`
+   binary is a thin alias for `mirror join`. See `the-convergence.md`
+   §1.2, `cli-as-prism.md` §2.1, and `lambda-shell.md` §"Entry from the
+   mirror CLI".
 
 3. **`mirror watch`'s default surface.** TUI-style chrome (color-bar + tick
    number + counts) or pure stdout that something else can render? The
    spec leaves this open; lean toward stdout-mirror-text and let the
-   terminal renderer handle it.
+   terminal renderer handle it. (Note: cli-as-prism resolved `watch` as a
+   flag, not a verb; this question now applies to `mirror focus --watch`.)
 
-4. **Third-state verbs as flags vs subcommands.** `mirror open`/`force`/
-   `seal`/`holes` could be `mirror hole <op>`. The spec proposes top-level
-   verbs because the third state is load-bearing — but this is a UX call.
+4. ~~**Third-state verbs as flags vs subcommands.**~~ **Closed
+   (2026-06-05):** per `cli-as-prism.md` §2.1, the four verbs condensed
+   into one `crack` glass with five operations + two flags
+   (`--open`/`--force`). The substrate-pull rename `hole` → `crack` made
+   the verb-with-flag form literal: settling on a crack IS the gold pour.
 
 5. **Reflection automation.** Does `mirror reflect` write to
    `eigenboard.mirror` autonomously when it sees a correction, or only
    when invoked? VSM says System 5 only intervenes on algedonic signal,
    so probably the latter — but spec'd as a question.
 
-6. **The `\!` semantics in CI.** A `mirror force` produces a tracked
-   regression. Does CI fail on `!` count rising? Or only on `loss_after >
-   loss_before`? The spec proposes the loss gate; the `!` count is a
-   measurement, not a gate. Confirm.
+6. **The `\!` semantics in CI.** A `mirror crack settle --force` produces
+   a tracked regression. Does CI fail on `!` count rising? Or only on
+   `loss_after > loss_before`? The spec proposes the loss gate; the `!`
+   count is a measurement, not a gate. Confirm.
 
 7. **`mirror bootstrap`'s phase reporting.** The 7 phases of self-hosting
    are concrete (Glint's roadmap). `mirror bootstrap status` should report
