@@ -4,7 +4,7 @@
 
 Status: **Red** (proposal — names; doesn't implement).
 Branch: `reed/cybernetic-cli` (continues the substrate-floor + cybernetic-cli arc).
-Reads from: `cybernetic-cli.md` (this dir), `lambda-shell.md` and `insights/mcp-lsp-unification.md` (in spectral), `tick-4-five-operations.md`, `spec-files.md`.
+Reads from: `cybernetic-cli.md` and `lambda-shell.md` (this dir; lambda-shell lifted from spectral 2026-06-05), `insights/mcp-lsp-unification.md` (in spectral; consolidation pending), `tick-4-five-operations.md`, `spec-files.md`.
 Does not duplicate them. Names the convergence they imply but none of them states.
 
 ---
@@ -24,7 +24,7 @@ points, and they describe the same machine:
   `dispatch_op_*` functions, `evaluate()` and `emulate()` as tools, an `@lsp`
   grammar where every LSP method IS one of the five operations.
 - **`cybernetic-cli.md`** described a CLI: porcelain (compile, kintsugi,
-  shatter, bootstrap, converse, watch, reflect) over plumbing (focus,
+  shatter, bootstrap, join, watch, reflect) over plumbing (focus,
   project, split, shift, settle), every response a conversation with an
   eigenboard + a compose block + (for `settle`) a proof block, the third
   state (`\`) as a first-class working surface.
@@ -104,6 +104,15 @@ They do not differ in:
 - **Which operation runs for a given intent.**
 - **The eigenboard a settled tick produces.**
 
+**Note on λsh and `mirror join`.** λsh and the `mirror join` verb are
+**the same transport under two names**: λsh names the running mode
+(interactive, persistent), `mirror join` names the entry verb. Same
+daemon socket. Same algebra. Same eigenboard. The standalone `λsh`
+binary is a thin alias for `mirror join`. "Four transports" counts the
+transport once — the verb and the running-mode name are not separate
+things. See `lambda-shell.md` §"Entry from the mirror CLI" and
+`cli-as-prism.md` §2.1 (the `join` glass).
+
 That is what "one runtime, four transports" buys: the porcelain verb, the
 shell pipe, the MCP tool, and the LSP method that share a name share an
 implementation, because they share an operation in the algebra.
@@ -165,12 +174,12 @@ Porcelain verb on the left. The same intent expressed across four surfaces.
 | `mirror watch`            | (continuous) `focus loss=true` + eigenboard prompt                            | `focus({loss: true})` polled by agent        | `codeLens` per declaration (loss/coupling)  |
 | `mirror reflect`          | `shift history \|> focus eigenboard=true`                                     | `focus({eigenboard: true})`                  | `hover` (extended block on declarations)    |
 | `mirror compose` *(new)*  | `shift emulate=delta` — no `settle` follows                                   | `shift({emulate: {grammar, delta, predict}})` | **predictiveDiagnostic** (new) — see §3.2  |
-| `mirror converse @mara`   | `\@mara` (sub-graph spawn; eigenvalue-ordered context)                        | `settle({spawn: {peer, neighborhood, k}})`   | n/a (LSP is single-author)                  |
-| `mirror open <hole>`      | `settle open hole=H`                                                          | `settle({open: {hole}})`                     | `codeAction(kind=quickfix.open-hole)`       |
-| `mirror holes`            | `focus holes=true`                                                            | `focus({holes: true})`                       | `codeLens` (per hole) + workspace diagnostics |
-| `mirror force <hole>`     | `settle force hole=H`                                                         | `settle({force: {hole}})`                    | `codeAction(kind=quickfix.force-hole)`      |
-| `mirror seal <hole>`      | `settle seal hole=H`                                                          | `settle({seal: {hole}})`                     | `codeAction(kind=refactor.seal-hole)`       |
-| `mirror revert <tick>`    | `settle revert tick=T` — see §3.3                                             | `settle({revert: {tick}})`                   | `codeAction(kind=source.revert-tick)`       |
+| `mirror join @mara`       | `\@mara` (sub-graph spawn; eigenvalue-ordered context)                        | `settle({join: {peer, neighborhood, k}})`    | n/a (LSP is single-author)                  |
+| `mirror crack settle --open <name>` | `settle crack open name=N`                                          | `settle({crack: {open: name}})`              | `codeAction(kind=quickfix.crack-open)`      |
+| `mirror crack focus`      | `focus crack=true`                                                            | `focus({crack: true})`                       | `codeLens` (per crack) + workspace diagnostics |
+| `mirror crack settle --force <name>` | `settle crack force name=N`                                        | `settle({crack: {force: name}})`             | `codeAction(kind=quickfix.crack-force)`     |
+| `mirror crack settle <name>` | `settle crack seal name=N`                                                 | `settle({crack: {seal: name}})`              | `codeAction(kind=refactor.crack-seal)`      |
+| `mirror time settle tick=N` | `settle time tick=N` — see §3.3                                             | `settle({time: {restore, tick}})`            | `codeAction(kind=source.time-restore)`      |
 
 Each row is **one algebraic expression** in four notations. The runtime
 sees one operation; the transports merely rendered it differently.
@@ -205,11 +214,11 @@ context window, not a flat token buffer. The agent operates on the graph,
 not on files. `settle` from the agent produces a commit (files are the
 projection).
 
-MCP exposes the same primitive as `settle({spawn: ...})` because it lives
+MCP exposes the same primitive as `settle({join: ...})` because it lives
 in the algebra: the spawn IS a `settle` on the graph (it creates a new
 sub-graph node tied to a peer identity, with edges to the neighborhood).
 LSP cannot expose it; LSP is single-author. The CLI exposes it through
-`mirror converse @peer`. This is the protocol Glint's agent-to-agent gap
+`mirror join @peer`. This is the protocol Glint's agent-to-agent gap
 was reaching for; it falls out of the convergence at zero new substrate
 cost (the sub-graph is already the graph; the peer is already a node).
 
@@ -271,39 +280,41 @@ The cybernetic CLI already named it `mirror compose`. The convergence:
 `mirror compose` (cybernetic CLI) and `shift(emulate)` (MCP-LSP) by making
 them the same operation under one porcelain name.
 
-### 3.3 Charlie's revert gap → `settle(revert)`
+### 3.3 Charlie's revert gap → `settle(time)` over existing substrate
 
 **Gap.** Charlie ran `mirror kintsugi` and wants to roll back to tick N-1
 with an honest record that they tried.
 
-**Resolution.** Not yet in any of the three specs. Propose:
-
-```
-settle({revert: {to_tick: N}})
-```
-
-`settle` because reverting IS a write: it creates a new tick whose state
-matches tick N's manifold, with a proof block that records both the
-forward proof (what tick N+1 did) and the reverse proof (what tick N+2
-restored). The graph never loses history; revert adds a node, it does not
-delete one. This is also why it's `settle`, not `shift`: it changes
-substrate position. The eigenboard reflects the reverted manifold; the
-log records both events. CI sees a `loss_delta = +Δ` and a reason tag
-(`reason: revert(N+1 → N)`), so the `loss_after > loss_before` algedonic
-signal fires honestly. The user accepted the regression in exchange for
-the prior state; the system says so.
+**Resolution.** The substrate already declares the action.
+`boot/std/time.mirror` exposes `action restore(snapshot, ref) -> imperfect`
+alongside `replay`, `fork`, `browse`, `step`, and `compare` over the
+timeline. `cli-as-prism.md`'s `time` glass (§2.1) condenses these 9
+substrate actions into a 5-op view; `time settle tick=N` composes
+`time.restore` across the ref-set that constitutes tick N's manifold,
+producing a new tick whose state matches tick N. The graph never loses
+history; `time.restore` adds a node, it does not delete one. This is
+`settle`, not `shift`, because it changes substrate position. The eigenboard
+reflects the reverted manifold; the log records both events. CI sees a
+`loss_delta = +Δ` and a reason tag (`reason: time.restore(N+1 → N)`), so
+the `loss_after > loss_before` algedonic signal fires honestly. The user
+accepted the regression in exchange for the prior state; the system says so.
 
 **(Transport, verb):**
 
-- **λsh:** `settle revert tick=N`.
-- **MCP:** `settle({revert: {to_tick: N}})`.
-- **LSP:** `codeAction(kind=source.revert-tick, data={tick: N})`.
-- **CLI:** `mirror revert <tick>`.
+- **λsh:** `settle time tick=N`.
+- **MCP:** `settle({time: {restore, tick: N}})` (the arg-shape names the
+  substrate action and the tick selector).
+- **LSP:** `codeAction(kind=source.time-restore, data={tick: N})`.
+- **CLI:** `mirror time settle tick=N`.
 
-**Status:** **open** — substrate work. The verb is named; the proof-block
-shape needs spec'ing (specifically: how `revert` composes with `\!` and
-whether a revert past a `seal` reopens the hole). Forward reference to
-`docs/specs/revert.md` (proposed; not written).
+**Status:** **mostly closed** — the substrate carries it
+(`boot/std/time.mirror`). What's missing is the proof-block shape for
+`time.restore`'s composition (specifically: how `restore` composes with
+`\!` cracks, and whether restoring past a sealed crack reopens it). The
+CLI glass surface is named in `cli-as-prism.md`; the substrate completion
+is **Track G** (`@epistemologic/reality/time`, deferred per LRM). The
+`revert` verb itself dissolved into one operation on the `time` manifold
+per `cli-as-prism.md` §5.3.
 
 ### 3.4 Glint's agent-to-agent gap → sub-graph spawn
 
@@ -319,10 +330,11 @@ projection around the task's focal nodes), pins it as the spawn's
 context, and routes the spawn's operations through the same algebra.
 
 **(Transport, verb):** **(λsh, `\@<peer>`)** with **(MCP,
-`settle({spawn: {peer, neighborhood, k}})`)** as the wire form for
+`settle({join: {peer, neighborhood, k}})`)** as the wire form for
 agents handing off to other agents. The CLI exposes it as
-`mirror converse @<peer>`. LSP has no equivalent and shouldn't (LSP is
-the editor's view of one human's session).
+`mirror join @<peer>` (per `cli-as-prism.md` §2.1's `join` glass — same
+verb, same algebra, four projections). LSP has no equivalent and
+shouldn't (LSP is the editor's view of one human's session).
 
 **Two pieces needed beyond what's spec'd:**
 
@@ -377,8 +389,8 @@ existing tooling. Both fall out of the convergence at zero substrate cost.
 |---|----------------|---------------------------|----------------------------|--------------------|-------------------------|---------------|
 | 1 | Aki            | discovery / aliasing       | `focus(patterns)`          | (none — `@>` UX)   | λsh primary; all four projections | closed |
 | 2 | Bo             | preview / impact           | `shift(emulate)`           | `mirror compose`   | all four                | closed (naming unified) |
-| 3 | Charlie        | revert / honest regression | `settle(revert)`           | `mirror revert`    | λsh, MCP, LSP, CLI      | **open** — proof shape + `\!` interaction |
-| 4 | Glint          | agent-to-agent             | `settle(spawn)`            | `mirror converse @peer` | λsh primary; MCP wire | mostly closed — neighborhood fn + return protocol open |
+| 3 | Charlie        | revert / honest regression | `settle(time.restore)`     | `mirror time settle tick=N` | λsh, MCP, LSP, CLI | **mostly closed** — substrate carries it; proof shape + `\!` interaction open |
+| 4 | Glint          | agent-to-agent             | `settle(join)`             | `mirror join @peer`        | λsh primary; MCP wire | mostly closed — neighborhood fn + return protocol open |
 | 5 | Dana           | self-reflection            | `shift(history, scope=self)` | `mirror reflect --self` | λsh, MCP, CLI       | closed (flag + projection only) |
 
 Two of the open items become **substrate work**; see §5.
@@ -390,39 +402,91 @@ Two of the open items become **substrate work**; see §5.
 Two items live in the union of the three specs without any of them owning
 the name. Surfacing both honestly:
 
-### 4.1 The transport-router
+### 4.1 The transport prism
 
 If four transports share one runtime, then **deciding which transport is
 talking** is itself an algebraic operation on the daemon side. None of the
-three specs names this. It's not the McpActor, not the LspActor — it's
-the **dispatch shim that knows mq is mq regardless of how it arrived**.
+three specs names this. The substrate-pull-correct shape is **not a
+sibling Rust actor** but a **prism**: each transport IS a prism
+`@mirror/transport/<name>` over the same algebra, and "routing" is
+path-walking against `shards/mirror/transport/` — exactly the
+dispatcher-as-path-walk shape `cli-as-prism.md` §5.5 surfaced at the CLI
+altitude.
 
-Proposal: name this the **`TransportActor`** (sibling of McpActor and
-LspActor) — owns the translation table between transport-native
-expressions and mq, and is the single place where a new transport gets
-added (e.g., a future WebSocket transport for editor browsers). Its
-contract: in, transport-native message; out, mq + peer identity + budget;
-ack, mirror-text rewrapped per transport.
+Proposal: declare a substrate-floor prism per transport:
 
-Without this, "one runtime, four transports" remains a slogan; with it,
-the convergence has a load-bearing actor.
+```
+shards/mirror/transport/
+├── transport.mirror   # prism @mirror/transport — the algebra shared across heads
+├── shell.mirror       # glass @mirror/transport/shell    (λsh + `mirror join`)
+├── cli.mirror         # glass @mirror/transport/cli      (mirror CLI)
+├── mcp.mirror         # glass @mirror/transport/mcp      (JSON-RPC stdio)
+└── lsp.mirror         # glass @mirror/transport/lsp      (tower-lsp adapter)
+```
 
-### 4.2 The peer identity primitive
+Each glass has the five operations on its transport-specific manifold:
+`focus` reads transport-state (connection, session); `project` filters
+messages; `split` walks dependent transports; `shift` re-shapes a message
+between transport-native and mq; `settle` runs the operation the message
+encodes. The router is the path-walker; there is no dispatch table. The
+"actors" `McpActor`, `LspActor`, `ShellActor`, `CliActor` from §1.1 are
+the Rust-side **realizations** of these substrate prisms — each one
+implements a glass; the substrate names the shape.
 
-`@reed`, `@glint`, `@>`, `@mara`, the human at the keyboard — all five
-specs treat "peer" as obvious, but **the algebra doesn't yet have a typed
-notion of peer**. The substrate vocabulary has `Imperfect` and
-`Transparency`; it doesn't have `Peer`. λsh assumes it; sub-graph spawn
-needs it; `shift(history, scope=self)` needs it; the structural-coupling
-trace in `.spec` records peer-driven overrides but doesn't name the peer
-as a type.
+Without the substrate prism, "one runtime, four transports" remains a
+slogan and the Rust actors carry meaning the substrate should carry.
+With it, transports become substrate-first (additive: a future WebSocket
+transport is one new `shards/mirror/transport/ws.mirror`; no router edit
+required). The `TransportActor` name from the prior draft of this spec
+was substrate-pull drift — `prism @mirror/transport/<name>` is the
+load-bearing shape.
 
-Proposal: a **`peer` substrate type** in `shards/glass.mirror` (or
-adjacent), with at minimum `{ id, kind ∈ {human, agent, shell}, home_spec,
-arousal_threshold }`. Once peer is a substrate type, sub-graph spawn,
-self-reflection, and the unnamed peer's threshold-keeping all type-check
-through the same primitive. Without it, three of the five gap-closures
-above are typed against an implicit object.
+### 4.2 The peer identity primitive (already in the substrate)
+
+**Correction (Seam pass, 2026-06-05):** the substrate already has `peer`
+as a typed primitive. `boot/std/peer.mirror` declares:
+
+```mirror
+type peer = {
+  identity:   mirror,        # focus(self):    immutable manifold
+  gestalt:    mirror,        # project(self):  the accumulated lens
+  tensions:   mirror,        # split(self):    open branches the peer carries
+  eigenboard: shard,         # shift(self):    current spectral state
+  shatter:    mirror,        # settle(self):   rendered history; ancestor chain
+}
+```
+
+— the five-axis fixed point where each field is the output of one Prism
+operation applied to the peer's own bias_tree. This IS the typed `peer`
+λsh, sub-graph spawn, and `shift(history, scope=self)` all reference.
+
+What the convergence reveals is missing is **not** a new peer type but
+a **session-binding glass over the existing one**: how a `peer` is
+bound into a current session (which transport they're talking through,
+where their `config.spec` lives, when the algedonic surface escalates).
+Propose a thin glass alongside the type:
+
+```mirror
+glass @peer/binding {
+  kind              = human | agent | shell    # who is at the keyboard
+  home_spec         = ref(spec)                # which .spec is theirs
+  arousal_threshold = f64                      # @> escalation point
+  transport         = ref(@mirror/transport)   # current head (§4.1)
+}
+```
+
+The binding is **per-session, per-transport**; the peer is **always the
+five-axis fixed point**. Sub-graph spawn types against the peer; the
+unnamed peer's threshold-keeping types against the binding. Without
+the binding, three of the five gap-closures above carry session state
+as implicit object.
+
+The original proposal here (a brand-new peer type with `{ id, kind,
+home_spec, arousal_threshold }` declared in `shards/glass.mirror`) was
+substrate-pull drift — it would have invented a peer type while the
+substrate already had one of a different (and load-bearing) shape. The
+fix names the existing type, names what's actually missing (the
+binding), and stops asserting against the substrate without checking.
 
 ---
 
@@ -430,38 +494,58 @@ above are typed against an implicit object.
 
 Two ticks, both small, both load-bearing:
 
-### 5.1 Tick: `peer` as substrate type
+### 5.1 Tick: `@peer/binding` glass over the existing `@peer` type
 
-- Declare in `shards/glass.mirror` (or `shards/mirror/peer.mirror`).
-- Wire `@<name>` syntax in mq to typed `Peer` references.
+- The peer type already exists at `boot/std/peer.mirror` (5-axis fixed
+  point); migrate it to `shards/std/peer.mirror` as part of the broader
+  shards/ migration arc.
+- Declare a new `@peer/binding` glass in `shards/peer/binding.mirror`
+  with `{ kind, home_spec, arousal_threshold, transport }` — the
+  session-binding fields the convergence needs but the peer-identity
+  type does not (and should not) carry.
+- Wire `@<name>` syntax in mq to typed `peer` references; bindings
+  attach per-session via the daemon.
 - Migrate `lambda-shell.md`, `cybernetic-cli.md`, and
-  `mcp-lsp-unification.md` references to the typed form (no surface
-  change; substrate stops being implicit).
+  `insights/mcp-lsp-unification.md` references to the typed form (no
+  surface change; substrate stops being implicit).
 
 This is the prerequisite for §3.4 (sub-graph spawn return protocol)
 and §3.5 (`scope=self`).
 
-### 5.2 Tick: `settle(revert)` substrate spec
+### 5.2 Tick: `time` glass-on-substrate composition
 
-- New spec: `docs/specs/revert.md`.
-- Defines: the proof-block shape for revert, the interaction with
-  `\!` (force-fill), the interaction with `seal` (does revert past a
-  seal reopen the hole?), the algedonic signal for "intentional
-  regression" (`loss_delta > 0` with `reason: revert` is **not** a CI
-  failure; `loss_delta > 0` without that reason **is**).
+- The `time` glass surface lives at `shards/mirror/cli/time.mirror`
+  (per `cli-as-prism.md` §2.1) and presents the 5-op view over
+  `boot/std/time.mirror`'s 9 substrate actions. The composition map:
+  `focus` ← `enter`; `shift` ← `browse` + `step`; `split` ← `fork`;
+  `settle` ← `restore` (composed across the ref-set of the target
+  tick); `project` ← timeline filter (`timeline.snapshots` filtered
+  by predicate).
+- Proof-block shape for `time.settle` (composed restores): the
+  algedonic signal for "intentional regression" (`loss_delta > 0` with
+  `reason: time.restore` is **not** a CI failure; `loss_delta > 0`
+  without that reason **is**).
+- Crack interaction: does `time.settle` past a sealed crack reopen it?
+  Default: yes — restored state IS the state, including the open `\`.
+  Spec out in **Track G** (`@epistemologic/reality/time`, deferred per
+  LRM).
 
-This is §3.3 made concrete.
+This is §3.3 made concrete. The revert verb dissolved into one
+operation on the time manifold (per `cli-as-prism.md` §5.3); this
+tick is the substrate-side completion of the same dissolution.
 
 Neither tick adds new operations to the algebra. Both make implicit
 substrate explicit. That's the right shape for substrate-pull: the
-convergence reveals what the substrate already needed.
+convergence reveals what the substrate already needed (binding glass,
+composition map).
 
 ---
 
 ## 6. What this spec does NOT propose
 
 - **No new transports.** The four are the four. (A future WebSocket head
-  is mechanical once §4.1's `TransportActor` exists.)
+  is mechanical once the `prism @mirror/transport/<name>` shape from
+  §4.1 is in place — one new shard, no router edit.)
 - **No new operations.** The algebra is still `focus`, `project`, `split`,
   `shift`, `settle`. Everything above is composition.
 - **No new shards in this round.** §4.2 and §5.1 propose `peer` as a
@@ -487,9 +571,11 @@ operations against the same spectral state.**
 
 ## 8. Citations
 
-- **`docs/specs/lambda-shell.md`** — the shell, the unnamed peer, the
-  sub-graph spawn, the daemon socket. The transport that named the
-  *cadence* (REPL turns) and the *peer toggle*.
+- **`./lambda-shell.md`** — the shell, the unnamed peer, the sub-graph
+  spawn, the daemon socket. The transport that named the *cadence*
+  (REPL turns) and the *peer toggle*. Lifted to mirror canonical home
+  2026-06-05; substrate-pull corrections applied (`zoom`→`shift`,
+  `refract`→`settle`).
 - **`docs/insights/mcp-lsp-unification.md`** — the MCP↔LSP unification
   through five operations, `evaluate`/`emulate`, the `@lsp` grammar. The
   transport-pair that named the *adapter layer*.
