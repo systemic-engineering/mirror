@@ -128,7 +128,7 @@ Each is placed into the recursion below. The placement type is one of:
 | `force` | **op of `crack` glass** | `mirror crack settle --force <name>` | `\!` is accept-loss-and-fill; honest about regression. Same `settle` op, different flag. The flag distinguishes "accept the loss, force the fill" from "wait for natural convergence". |
 | `seal` | **op of `crack` glass** | `mirror crack settle <name>` | The bare `settle` IS seal-with-gold — promote a converged `\` to explicit. The kintsugi geometry is literal: settling on a crack pours gold along the fracture. The cleanest collapse in the bunch. |
 | `revert` | **dissolved into `time` sub-glass** | `mirror time settle tick=N` | **Dissolution: `revert` is one operation on the time manifold.** Reverting is `time.settle` — write a new tick whose manifold matches tick N. The `time` glass exposes the full Elm-style time-travel surface: `focus` = look at state at tick N; `shift` = see from tick N (Elm scrub; no move); `split` = branch from that point; `settle` = the revert; `project` = filter history by predicate. **Forward-references `@epistemologic/reality/time` (Track G, open).** |
-| `time` | **sub-glass** | `mirror time { focus, project, split, shift, settle }` | Elm-style time travel as a five-op glass over the tick manifold. `focus tick=N` = look at state at tick N (read past). `shift tick=N` = see FROM tick N without moving HEAD (the Elm scrub). `split tick=N` = branch a parallel timeline from that point. `settle tick=N` = write a new tick whose manifold matches tick N (this IS revert). `project predicate` = filter history by predicate. The substrate already has `type tick = monotonic` in `boot/std/time.mirror`; full `@epistemologic/reality/time` is **Track G, deferred**. **Sings** — time-as-substrate makes the five-op recursion natural; the manifold has graph structure (ticks → ticks), the five ops fit without forcing. |
+| `time` | **sub-glass** | `mirror time { focus, project, split, shift, settle }` | Elm-style time travel as a five-op glass over the tick manifold. `focus tick=N` = look at state at tick N (read past). `shift tick=N` = see FROM tick N without moving HEAD (the Elm scrub). `split tick=N` = branch a parallel timeline from that point. `settle tick=N` = write a new tick whose manifold matches tick N (this IS revert). `project predicate` = filter history by predicate. **Substrate composition map (Seam, 2026-06-05):** the 5-op surface condenses `boot/std/time.mirror`'s 9 actions: `focus`←`enter`; `shift`←`browse`+`step`; `split`←`fork`; `settle`←`restore` (composed across the ref-set of tick N); `project`←`timeline.snapshots` filtered by predicate. The substrate already carries the algebra; full `@epistemologic/reality/time` (proof-block shape + crack-interaction semantics) is **Track G, deferred per LRM**. **Sings** — time-as-substrate makes the five-op recursion natural; the manifold has graph structure (ticks → ticks), the five ops fit without forcing. |
 
 ### 2.2 The condensed top-level surface
 
@@ -162,6 +162,12 @@ operations once knows every command at every depth.
 ## 3. The on-disk file structure
 
 The path-namespace property (B5) makes the directory layout literal:
+
+**Note (Seam pass, 2026-06-05):** the `shards/mirror/cli/` subdirectory
+below is a **forward promise** as of `f0af9e4`. `shards/mirror/cli.mirror`
+exists (C1); the eight sub-glass shards listed below do not yet. §8
+acknowledges this explicitly ("no new shards in this round"); this section
+describes the **target** layout that the next round mints.
 
 ```
 shards/mirror/
@@ -428,9 +434,12 @@ one isolated five-op surface (revert-as-glass) became one operation
 structurally present in the time manifold but not exposed. The constraint
 revealed there was more time-algebra available than the cybernetic CLI
 had named. **Forward-reference: `@epistemologic/reality/time` (Track G,
-open)** — the substrate already has `type tick = monotonic` in
-`boot/std/time.mirror`; the full substrate is deferred. The CLI glass
-can land now; the substrate fills in behind it.
+open)** — the substrate already has the 9 actions in
+`boot/std/time.mirror` (`enter`, `restore`, `browse`, `compare`, `replay`,
+`fork`, `step`, `present`, `convert`) plus `type tick = monotonic`; the
+5-op CLI glass condenses these (composition map in §2.1). The CLI glass
+can land now; Track G fills in only the proof-block shape and the
+crack-interaction semantics.
 
 ### 5.4 `join` with peer-as-path-argument
 
@@ -522,13 +531,40 @@ arc to the dispatch table.
 When a user types `mirror <x>` without specifying an op, what runs?
 
 **Default: `focus`.** Reads are free; reads default. `mirror kintsugi` is
-short for `mirror kintsugi focus`.
+short for `mirror kintsugi focus`. Every glass declares its own default in
+its shard.
 
-**Exception: action-named glasses default to `settle`.** A glass whose
-NAME is a verb-of-action (`compile`, `shatter`) defaults to `settle` so
-the bare form does the canonical thing. `mirror compile T` runs the build.
-(Note: `time` is a noun, not a verb; `mirror time` defaults to `focus`.
-The revert action is reached explicitly via `mirror time settle tick=N`.)
+**Exception (narrow, per-glass): canonical safe-write defaults.** A glass
+declares `default settle` ONLY when its bare-form act is a canonical,
+side-effect-bounded write the user expects from typing just the glass
+name. In v0.1, this is **`compile` and `shatter` alone**: `mirror compile T`
+runs the build; `mirror shatter T` materializes the `.shatter` projection.
+Both are "produce an output artifact" acts that don't escalate beyond
+the artifact.
+
+**Why not `bootstrap`, `reflect`, `join` (also verb-named)?** Each has a
+`settle` semantic too pointed for an implicit default (Seam pass,
+2026-06-05):
+
+- `bootstrap settle` = advance a phase. Real side effect on substrate
+  state; the user wants to see status (`focus`) before advancing.
+- `reflect settle` = land a correction to `eigenboard.mirror`.
+  Algedonic-triggered only (per §2.1); cannot be the bare default.
+- `join settle` = enter (commits an utterance to the transcript).
+  Without an utterance, the bare form must read first (`focus` = observe
+  peer's eigenboard).
+
+The corrected rule: **`default focus` unless the glass explicitly
+declares otherwise.** v0.1 declarations: `compile`, `shatter` →
+`default settle`. Everything else (`kintsugi`, `bootstrap`, `join`,
+`reflect`, `time`, `crack`) → `default focus`.
+
+The earlier "action-named glasses default to settle" framing was a
+mechanical rule that didn't survive contact with the per-glass semantics;
+Seam's adversarial pass surfaced the strain. Each glass declares its own
+default; the convention is a hint, not a law. (Note: `time` is a noun,
+so the strain didn't surface for that glass; the rule's failure was on
+the verb-named-but-write-pointed glasses.)
 
 **Rule declared in the glass shard itself** via an explicit `default`
 field (per `shards/mirror/cli.mirror` C1's `default(name, t, value)`
@@ -536,7 +572,7 @@ pattern):
 
 ```mirror
 glass @mirror/cli/compile {
-  default settle              # action verb — bare form writes
+  default settle              # canonical safe-write — bare form builds
   focus    target
   project  predicate
   split    candidate
@@ -545,7 +581,13 @@ glass @mirror/cli/compile {
 }
 
 glass @mirror/cli/kintsugi {
-  default focus               # named-loop noun — bare form reads
+  default focus               # bare form reads the next tournament move
+  ...
+}
+
+glass @mirror/cli/reflect {
+  default focus               # bare form reads eigenboard; settle is
+                              # algedonic-triggered, not implicit
   ...
 }
 ```
