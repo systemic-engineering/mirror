@@ -5,7 +5,7 @@ in @glass
 # For a file at `shards/<segments>.mirror`, the basename (without
 # `.mirror`) joined with any nested directories under `shards/` is
 # the namespace the file MUST declare via a concrete top-level
-# `prism @<ns> { ... }` or `grammar @<ns> { ... }`.
+# `prism @<ns> { ... }` declaration.
 #
 # Path -> namespace rule:
 #   shards/X.mirror               -> @X
@@ -27,21 +27,47 @@ in @glass
 # Generalizes @epistemologic/property/filename_matches_glass from
 # the single canonical-keyword file to every shard file. Self-correcting
 # substrate: rename a file, get a compile error.
+#
+# 2026-06-06 substrate-pull-realize (Reed): migrated `grammar` keyword
+# to `prism` (the canonical substrate vocabulary per
+# [[architecture-prism-as-trait-as-everything]]). Actions moved to top
+# level (per au.mirror precedent — the prism block declares only the
+# five-op role bindings; action signatures live outside). The
+# `declared_namespaces` return type `[ref]` was rewritten to the
+# opaque `ref_list` carrier; the parser does not yet have a rule for
+# `[type]` in action return position (substrate gap; see
+# shards/mirror/mosaic.mirror's `shards` carrier for the same pattern).
 
-grammar @epistemologic/property/path_matches_namespace {
-  # The namespace implied by a file's path under `shards/`.
-  # `shards/foo/bar.mirror` -> `@foo/bar`.
-  path_namespace(file: ref) -> ref { \ }
-
-  # The concrete top-level @<name> declarations in `file`.
-  # Parametric @(<binder>) heads are excluded.
-  declared_namespaces(file: ref) -> [ref] { \ }
-
-  # The combined property: every concrete declared @X equals
-  # path_namespace(file).
-  path_matches_namespace(file: ref) -> verdict { \ }
+prism @epistemologic/property/path_matches_namespace {
+  focus path_matches_namespace
+  project path_matches_namespace
+  split path_matches_namespace
+  shift path_matches_namespace
+  settle path_matches_namespace
 }
 
+# === ref_list — opaque carrier for the [ref] return ===
+#
+# The parser does not yet have a rule for `[ref]` in action return
+# position; the universal carrier wraps it until that rule lands.
+# Same pattern as `shards` in shards/mirror/mosaic.mirror.
+type ref_list = ref
+
+# === actions ===
+
+# The namespace implied by a file's path under `shards/`.
+# `shards/foo/bar.mirror` -> `@foo/bar`.
+path_namespace(file: ref) -> ref { \ }
+
+# The concrete top-level @<name> declarations in `file`.
+# Parametric @(<binder>) heads are excluded.
+declared_namespaces(file: ref) -> ref_list { \ }
+
+# The combined property: every concrete declared @X equals
+# path_namespace(file).
+path_matches_namespace(file: ref) -> verdict { \ }
+
+out ref_list
 out path_namespace
 out declared_namespaces
 out path_matches_namespace
