@@ -8,12 +8,24 @@ in @meta
 # the substrate truth lives in the fragmentation store,
 # content-addressed via OIDs. No external dependency resolution;
 # no version conflict detection; no fetching. Same OID = same
-# shard, always. Composition is by OID, not by name resolution.
+# stored composition, always. Composition is by OID, not by name
+# resolution.
 #
-# Splinter IS the structural lockfile. The OID-graph of children
-# under a root shard IS the dependency closure; the closure is the
-# lockfile because the OIDs are the names. Nothing further pins
-# what the OIDs already pin.
+# splinter_graph IS the structural lockfile. The OID-graph of
+# children under a root splinter IS the dependency closure; the
+# closure is the lockfile because the OIDs are the names. Nothing
+# further pins what the OIDs already pin.
+#
+# Vocabulary alignment (2026-06-06 substrate-pull-realize):
+# Per shards/glass.mirror's three-layer recognition, the universal
+# atomic content-addressed unit at every altitude is `splinter`
+# (declared at @glass; the BOTTOM layer). The (root, children)
+# dependency-closure form was historically called `splinter` at
+# this altitude — it has been renamed to `splinter_graph` to
+# distinguish the atomic carrier (universal; one OID per atom)
+# from the OID-graph projection (root + transitive closure of
+# OIDs in the dependency tree). The substrate's stored composition
+# unit (SpectralUuid-addressed) is `shard`, also declared at @glass.
 #
 # The store IS canonical. `.shatter` files on disk are ONE
 # OPTIONAL projection format of the store's content (per
@@ -76,19 +88,35 @@ glass @mirror/store/oid {
 # shards/glass.mirror's `file: ref` location form).
 type oid = ref
 
-# === splinter — the OID-graph; the structural lockfile ===
+# === splinter_graph — the OID-graph; the structural lockfile ===
 #
-# Splinter is the graph of (oid -> [oid]) — a shard's content
-# address plus the content addresses of its children. Composition
-# is by OID: a shard references its dependencies by their oids
-# directly, not by name. The closure of children under a root IS
-# the dependency closure; that closure IS the lockfile. There is
-# no external file to pin versions; the OID-graph already pins
-# them by construction.
+# splinter_graph is the graph of (oid -> [oid]) — a root splinter's
+# content address plus the content addresses of its children.
+# Composition is by OID: a splinter references its dependencies by
+# their oids directly, not by name. The closure of children under
+# a root IS the dependency closure; that closure IS the lockfile.
+# There is no external file to pin versions; the OID-graph already
+# pins them by construction.
 #
-# Per docs/specs/mirror-store.md §1.2: "Splinter IS the structural
-# lockfile. Composition by OID, not name resolution."
-type splinter = {
+# Distinct from `splinter` declared at @glass (the universal
+# content-addressed atom). The atom carries one (content, altitude,
+# transparency) triple; the graph carries a root + the transitive
+# closure of its children's OIDs. The atom is the unit; the graph
+# is the dependency-closure projection of a composition of atoms
+# at the @store altitude.
+#
+# A `shard` (per @glass) is the SpectralUuid-addressed settlement of
+# a composition; its splinter set is the input to the composition;
+# the splinter_graph below is the OID-graph view of that closure as
+# seen from @store's wire surface. The three altitudes:
+#
+#   @glass: splinter (atom), shard (settlement)
+#   @store: splinter_graph (OID-graph projection of the closure),
+#           shard_ref (typed handle to a stored shard)
+#
+# Per docs/specs/mirror-store.md §1.2: "splinter_graph IS the
+# structural lockfile. Composition by OID, not name resolution."
+type splinter_graph = {
   root: oid,
   children: [oid],
 }
@@ -103,9 +131,25 @@ type bytes = ref(scalar/bytes)
 
 # === shard_ref — the typed handle to a stored shard ===
 #
-# A shard reference resolves to its content at the bound oid.
-# Distinct from `oid` itself: a shard_ref carries the expectation
-# that the oid resolves to a shard (vs. an arbitrary blob).
+# A shard reference resolves to its stored shard at the bound
+# identifier. Distinct from `oid` itself: a shard_ref carries the
+# expectation that the identifier resolves to a `shard` (per @glass:
+# a SpectralUuid-addressed settled composition of splinters), not
+# an arbitrary blob.
+#
+# The identifier carrier is `oid` today; the substrate-pull-realize
+# lift to `SpectralUuid` is deferred until SpectralUuid is declared
+# at the substrate altitude (per docs/specs/mosaic-as-type-system.md
+# §9.7 — the lift resolves at the shard layer: `shard.id IS
+# SpectralUuid by construction`; shard_ref's binding tightens
+# accordingly when the substrate type lands). Until then, the
+# property chain enforces SpectralUuid validity at commit time.
+#
+# Realised in Rust as `fragmentation/src/shard_ref.rs`'s
+# `ShardRef { id: SpectralUuid, context: ShardContext,
+# budget_bytes: BudgetBytes }`. The substrate names what shard_ref
+# IS; the Rust crate names how the typed handle is implemented.
+#
 # Fetch failures emit `imperfect` (the @glass loss carrier).
 type shard_ref = oid
 
@@ -139,17 +183,17 @@ exists(o: oid) -> verdict { \ }
 
 # diff(a, b) — the content-addressed delta between two oids.
 # `imperfect` because the diff carries opacity: when a and b
-# share no common ancestor in their splinter closures, the diff
-# is a full replacement (partial(opacity_map) reporting the
+# share no common ancestor in their splinter_graph closures, the
+# diff is a full replacement (partial(opacity_map) reporting the
 # size and shape of the replacement). When they're identical,
 # success(empty). When one isn't in the store, failure(reason).
 diff(a: oid, b: oid) -> imperfect { \ }
 
-# walk(oid) — enumerate the splinter closure rooted at oid.
+# walk(oid) — enumerate the splinter_graph closure rooted at oid.
 # Returns the OID-graph as a flat list of (parent, child)
 # edges; the caller reconstructs the tree. The closure IS the
 # lockfile; walk IS the resolution.
-walk(root: oid) -> splinter { \ }
+walk(root: oid) -> splinter_graph { \ }
 
 # verify(oid, bytes) — re-hash the bytes; verdict on whether
 # the result equals the claimed oid. The substrate's integrity
@@ -160,7 +204,7 @@ verify(o: oid, content: bytes) -> verdict { \ }
 out @mirror/store
 out @mirror/store/oid
 out oid
-out splinter
+out splinter_graph
 out bytes
 out shard_ref
 out read

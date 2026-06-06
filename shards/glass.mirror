@@ -4,14 +4,64 @@ in @meta
 # @glass — the floor of the substrate's self-conversation.
 #
 # Declares the types of the glass wall (the substrate-altitude loss
-# carrier and verdict surface), the universal content-addressed unit
-# (`fragment`), and the `glass` keyword for declaring sub-prisms
-# inside a parent prism.
+# carrier and verdict surface), the universal content-addressed atom
+# (`splinter`), the SpectralUuid-addressed settled composition
+# (`shard`), and the `glass` keyword for declaring sub-prisms inside
+# a parent prism.
+#
+# === The three-layer recognition (2026-06-06, Alex + Reed → Mara) ===
+#
+# Alex's naming: "The `splinter` is the content addressed fragment.
+# And the `shard` is a settlement of content addressed splinters into
+# SpectralUuid addressed stored fragment. The bottom and the top
+# meeting in the middle. This is the load-bearing bridge for
+# everything that follows."
+#
+# Three layers emerge:
+#
+#   splinter (BOTTOM)     — the oid-addressed content atom at every
+#                            altitude. The universal carrier of content.
+#                            { content: oid, altitude: ref,
+#                              transparency: transparency(altitude) }.
+#                            What Fate emits a proposed composition of.
+#
+#   shard (MIDDLE)        — the SpectralUuid-addressed settlement of
+#                            composed splinters into a stored fragment.
+#                            What `settle` produces; what `@mirror/store`
+#                            keeps; what `peer.eigenboard` types as
+#                            (per boot/std/peer.mirror).
+#                            { id: SpectralUuid, splinters: [splinter],
+#                              transparency: transparency(altitude) }.
+#
+#   SpectralUuid (TOP)    — the graph-navigatable spectral identifier.
+#                            128 bits, golden-ratio split: 48 ACTIVE
+#                            (quantized SpectralCoordinate<5>; leading;
+#                            navigable) + 80 DARK (BLAKE3-truncated
+#                            content hash; trailing; identity). Realized
+#                            in prism/core/src/spectral_uuid.rs;
+#                            declared at the substrate altitude when
+#                            the shard altitude lands (see deferred
+#                            note below the shard declaration).
+#
+# Bottom (splinter, atomic content) and top (SpectralUuid, spectral
+# identity) MEET IN THE MIDDLE at shard (the settled, stored, navigable
+# unit). au is the proposed shard (Fate-emitted splinters,
+# uncommitted); settle is the act that composes splinters through the
+# property chain into a shard (SpectralUuid-addressed, stored).
+#
+# The transition:
+#
+#   au (Fate-emitted splinters, uncommitted)
+#      ↓ settle (property-chain run; verify; commit)
+#   Imperfect<shard> (SpectralUuid-identified, stored)
 #
 # Spec: docs/specs/transparency.md, docs/specs/mosaic-as-type-system.md
+#       (the bottom-top-middle recognition section).
 # Substrate decisions: [[architecture-glass-wall-substrate-types]],
 #                      [[architecture-shards-as-substrate-source]],
-#                      [[architecture-prism-as-trait-as-everything]].
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-shard-as-crdt]] (SpectralUuid as
+#                      monoid homomorphism w.r.t. shard merge).
 #
 # Per prism-as-trait-as-everything: `prism @glass { ... }` declares
 # @glass IS a prism. No `<= prism` redundancy. The five-op block
@@ -89,80 +139,156 @@ type property_verdict = {
   where: location,
 }
 
-# === fragment — the universal content-addressed unit ===
+# === splinter — the universal content-addressed atom (BOTTOM) ===
 #
-# A fragment is the substrate's universal carrier: anything content-
-# addressable IS a fragment. AST nodes are fragments. Shards are
-# fragments. Targets are fragments. Specs are fragments. au is a
-# fragment (a settled one). The universe @mirror/mosaic acts on is
-# the manifold of fragments at every altitude.
+# A splinter is the substrate's universal content-addressed carrier
+# at every altitude. AST nodes are splinters. Targets are splinters.
+# Specs are splinters. au is a composition of splinters (proposed;
+# pre-commitment). The universe @mirror/mosaic acts on is the
+# manifold of splinters at every altitude.
 #
-# Three structural shapes the fragment takes — already named in
-# @fragmentation (boot/std/fragmentation.mirror) and realized in
-# the Rust substrate as `Fractal::{Shard, Branch, Lens}` (per
-# fragmentation/src/fragment.rs):
+# Three structural shapes the splinter takes — realized in the Rust
+# substrate as `Fractal::{Shard, Branch, Lens}` (per
+# fragmentation/src/fragment.rs; the Rust `Shard` variant name is
+# the legacy form for "leaf splinter" and predates Alex's recognition
+# that `shard` is the MIDDLE layer — see the deferred Rust-rename
+# note below `splinter_shape`):
 #
-#   shard   — terminal fragment. Leaf. No children. Carries content.
-#   fractal — composite fragment. Branch. Carries content + children.
+#   atom    — terminal splinter. Leaf. No children. Carries content.
+#   fractal — composite splinter. Branch. Carries content + children.
 #             The recursive shape. The substrate is self-similar.
-#   lens    — referring fragment. Carries content + external targets
+#   lens    — referring splinter. Carries content + external targets
 #             (by oid). Edges, not containment. Cross-altitude link.
 #
-# The three shapes are exhaustive. A fragment is one of them. There
+# The three shapes are exhaustive. A splinter is one of them. There
 # is no fourth shape; per [[architecture-prism-as-trait-as-everything]]
-# the algebra is closed, and the structural-shape algebra of fragments
-# closes at three (terminal / composite / referring).
+# the algebra is closed, and the structural-shape algebra of
+# splinters closes at three (terminal / composite / referring).
 #
-# Identity contract: a fragment's identity IS its content-address.
-# Two fragments with byte-equal (content, children-oids-or-targets)
-# have the same oid and ARE the same fragment. Per
+# Identity contract: a splinter's identity IS its content-address.
+# Two splinters with byte-equal (content, children-oids-or-targets)
+# have the same oid and ARE the same splinter. Per
 # [[architecture-fragmentation-is-the-rust-substrate]] and
 # shards/mirror/store.mirror.
 #
-# Altitude: a fragment lives at an altitude — a substrate ref naming
+# Altitude: a splinter lives at an altitude — a substrate ref naming
 # where in the prism manifold it sits. `@code/rust`, `@mirror/spec`,
-# `@meta/ast`, `@release`, `@ci/github` are all altitudes a fragment
+# `@meta/ast`, `@release`, `@ci/github` are all altitudes a splinter
 # can be observed at. Cross-altitude composition is shift on
-# fragments (per [[architecture-lift-as-load-bearing]]: shift is the
+# splinters (per [[architecture-lift-as-load-bearing]]: shift is the
 # basis-transformation verb; same content, different declared shape).
 #
-# Transparency: a fragment carries residual opacity from the
+# Transparency: a splinter carries residual opacity from the
 # operations that produced it. transparency<p> is parametric on a
-# property; a clean fragment has success; a partial one carries an
+# property; a clean splinter has success; a partial one carries an
 # opacity_map naming where the settle was incomplete.
 #
-# Compare au (shards/mirror/au.mirror): au and fragment are byte-
-# identical record shapes at different lifecycle positions, not at
-# different type altitudes (per docs/specs/mosaic-as-type-system.md
-# §2.3, upserted 2026-06-06). au is what Fate emits (uncommitted;
-# the property chain has not yet been run). fragment is what
-# @mirror/store keeps (committed; settle has run au through the
-# property chain and the verdict landed). settle is the Kleisli
-# arrow `au → Imperfect<fragment>` in the Imperfect monad declared
-# above (lines 62-66).
+# Compare au (shards/mirror/au.mirror): au is Fate-emitted splinters
+# (a proposed composition; uncommitted; the property chain has not
+# yet been run). settle composes au's splinters through the property
+# chain into a shard (SpectralUuid-addressed; stored). au's record
+# shape is byte-identical to splinter at the carrier level; the
+# distinction is lifecycle position. shard is the settlement target;
+# splinter is the atomic unit composed.
 #
-# Type-level discipline lives at SpectralUuid validity in the
-# target OID graph (enforced by the property chain at commit time);
-# the substrate-pull-realize lift of `content: oid` to
-# `content: SpectralUuid` is deferred until SpectralUuid lands at
-# the shard altitude. See docs/specs/mosaic-as-type-system.md §9.7.
+# Per docs/specs/mosaic-as-type-system.md §2.3 (upserted 2026-06-06):
+# au is what Fate emits; shard is what @mirror/store keeps; settle is
+# the Kleisli arrow `au → Imperfect<shard>` in the Imperfect monad
+# declared above (lines 62-66). The substrate-pull-realize lift of
+# `content: oid` to `content: SpectralUuid` resolves at the shard
+# layer (shard.id IS SpectralUuid by construction; see the shard
+# declaration below). Splinter's `content: oid` stays as it is — the
+# atomic content addressing.
 #
 # Cite: docs/specs/mosaic-as-type-system.md §2 makes this load-bearing.
-type fragment(altitude) = {
+type splinter(altitude) = {
   content: oid,
   altitude: ref,
   transparency: transparency(altitude),
 }
 
-# The three structural shapes a fragment takes. Re-declared at the
+# The three structural shapes a splinter takes. Re-declared at the
 # glass altitude so the type system can name them as the disjunctive
-# decomposition of `fragment`. The bodies are abstract — the Rust
+# decomposition of `splinter`. The bodies are abstract — the Rust
 # substrate (fragmentation/src/fragment.rs) realizes them as
 # `Fractal::Shard`, `Fractal::Branch`, `Fractal::Lens`.
-type fragment_shape =
-  | shard               # terminal; no children
+#
+# Note on the Rust `Fractal::Shard` variant name: the variant predates
+# Alex's 2026-06-06 recognition that `shard` is the MIDDLE layer
+# (SpectralUuid-addressed settled composition), not the terminal-leaf
+# shape. The substrate-side variant is named `atom` to avoid the
+# collision; the Rust rename `Fractal::Shard → Fractal::Atom` is a
+# deferred substrate-pull-realize tick (see
+# docs/specs/mosaic-as-type-system.md, ambiguities section).
+type splinter_shape =
+  | atom                # terminal; no children
   | fractal([oid])      # composite; child oids
   | lens([oid])         # referring; target oids
+
+# === shard — the SpectralUuid-addressed settled composition (MIDDLE) ===
+#
+# A shard is what `settle` produces: a SpectralUuid-identified
+# composition of splinters that has been verified through the
+# property chain and committed to @mirror/store. The bottom (splinter)
+# and the top (SpectralUuid) meet in the middle at shard.
+#
+# Identity contract: a shard's identity IS its SpectralUuid. The
+# SpectralUuid is computed from the composed splinter set's monoid-
+# homomorphism reduction (per [[architecture-shard-as-crdt]] §3 and
+# prism/core/src/spectral_uuid.rs's `from_parts`):
+#
+#   SpectralUuid(merge(s_1, s_2, ...)) =
+#     combine(SpectralUuid(s_1), SpectralUuid(s_2), ...)
+#
+# The active 48 bits carry the quantized SpectralCoordinate<5>
+# (navigable; the local Laplacian neighbourhood structure across the
+# composed splinters). The dark 80 bits carry the BLAKE3-truncated
+# content hash of the composition (identity; what the splinter set
+# hashes to). Both halves compose homomorphically under shard merge.
+#
+# Settlement contract: a shard EXISTS only as the post-settlement
+# form. Pre-settlement, the would-be shard is an au (proposed
+# splinters; transparency may be non-zero; not yet committed). The
+# property chain (`@epistemologic/property/reflect` per
+# boot/std/epistemologic/property.mirror) runs through every property
+# at the declared altitude; the verdict lifts into Imperfect:
+#
+#   pass     — shard committed; transparency = success.
+#   partial  — shard committed with located transparency; the
+#              opacity_map names what could not be settled; kintsugi
+#              re-reads to pick the next focus.
+#   failure  — au stays in Fate's buffer; no shard committed.
+#
+# Where shard already lives in the substrate:
+#
+#   - boot/std/peer.mirror declares `eigenboard: shard` (the typed
+#     handle to the peer's current spectral state). The peer.eigenboard
+#     IS a SpectralUuid-addressed shard whose splinters carry the
+#     peer's current tensions / gestalt / identity.
+#   - fragmentation/src/shard_ref.rs realizes shard's typed handle
+#     as `ShardRef { id: SpectralUuid, context: ShardContext,
+#     budget_bytes: BudgetBytes }`. The substrate names what the
+#     algebra IS; the Rust crate names how the shape is implemented.
+#   - shards/mirror/store.mirror declares `type shard_ref = oid` —
+#     this becomes structurally a SpectralUuid (the lift §9.7 of
+#     mosaic-as-type-system.md anticipates resolves naturally here:
+#     `shard.id IS SpectralUuid by construction`).
+#
+# The substrate-pull-realize lift to `id: SpectralUuid` is captured
+# below as a deferred tick: SpectralUuid is currently a Rust-only
+# type (prism/core/src/spectral_uuid.rs). When SpectralUuid lands at
+# the substrate altitude (likely in `shards/mirror/spectral_uuid.mirror`
+# or under `@mirror/store`), this field's type tightens from `oid` to
+# `SpectralUuid`. Until then, the substrate names what shard IS; the
+# property chain enforces SpectralUuid validity at commit time.
+#
+# Cite: docs/specs/mosaic-as-type-system.md (the bottom-top-middle
+# recognition section, upserted 2026-06-06).
+type shard(altitude) = {
+  id: oid,                          # → SpectralUuid when declared at substrate (deferred lift)
+  splinters: [splinter(altitude)],
+  transparency: transparency(altitude),
+}
 
 out @glass
 out glass
@@ -175,5 +301,6 @@ out verdict
 out confidence
 out reason
 out property_verdict
-out fragment
-out fragment_shape
+out splinter
+out splinter_shape
+out shard
