@@ -1,0 +1,125 @@
+in @prism
+in @meta
+in @glass
+in @nl
+
+# @mirror/lens — mirror's observation/projection family.
+#
+# The recognition (2026-06-06, Reed + Alex → Mara): the substrate already
+# has four transports onto one runtime (λsh / CLI / MCP / LSP, per
+# docs/specs/the-convergence.md §1.2) and two measurement-shape grammars
+# (@lens/transit and @mirror/refract). All six are LENSES at mirror's
+# altitude — different shapes through which the substrate is observed,
+# rendered back to the consumer, or measured against a hardware floor.
+# Family naming closes the recognition.
+#
+# === Discipline ===
+#
+# A lens IS:
+#
+#   - an observation surface: same five-operation algebra, different
+#     input/output language. The runtime evaluates the same algebra;
+#     each lens renders it for a different audience (terminal, agent,
+#     editor, interactive shell, runtime cost, grammar-graph spectrum).
+#   - a projection: the lens does not OWN state. State lives in the
+#     daemon; the lens reads through to the same graph through the
+#     same algebra. Two lenses pointed at the same node MUST see the
+#     same eigenvalue (per the-convergence.md §1.4); divergence is a
+#     bug by construction.
+#   - composable: lens reports compose under the existing
+#     `Transparency<P>` monoid (per fragmentation/docs/specs/lens-transit.md
+#     §3). No parallel combine; the algebra is borrowed verbatim.
+#
+# === Species under this family ===
+#
+# Transport lenses (the four-transport convergence per
+# docs/specs/the-convergence.md §1):
+#
+#   @mirror/lens/cli      terminal lens. Porcelain commands over argv +
+#                          flags; eigenboard-tagged exit codes. The
+#                          human-in-CI lens. Migrated from
+#                          shards/mirror/cli.mirror 2026-06-06 (Mara).
+#   @mirror/lens/shell    interactive lens. The λsh transport per
+#                          docs/specs/lambda-shell.md. mq expressions
+#                          with eigenboard-tagged prompt; the
+#                          human-at-terminal lens.
+#   @mirror/lens/mcp      agent lens. stdio JSON-RPC tool dispatch.
+#                          Tool args parse to mq; output is mirror-text
+#                          in content[]. The agent-Claude lens.
+#   @mirror/lens/lsp      editor lens. tower-lsp adapter; LSP methods
+#                          on ranges map to mq expressions scoped to
+#                          document nodes. The editor lens.
+#
+# Measurement-shape lenses:
+#
+#   @mirror/lens/transit  runtime-cost lens. Lifts Taut's
+#                          fragmentation/docs/specs/lens-transit.md to
+#                          mirror's altitude. Six properties (WallClock,
+#                          FpPrecision, CachePressure, Allocation,
+#                          BranchMisses, BudgetConsumption) bounded
+#                          per platform by hardware floors. Carries
+#                          verdicts as `Transparency<P>` over substrate
+#                          paths. The cost-of-passage lens.
+#   @mirror/lens/refract  grammar-graph spectrum lens. Reads the five
+#                          Void dualities (entropy / spectral / cheeger /
+#                          ricci / mixing) over the grammar graph and
+#                          surfaces them as verdicts. Per
+#                          docs/specs/trace-kintsugi-pipeline.md;
+#                          "refract IS bench wearing its real name."
+#                          The shape-of-the-grammar lens.
+#
+# === Why one family ===
+#
+# Transports and measurements are not separate kinds. Both project the
+# same algebra through a typed surface; both compose under the same
+# Transparency<P> monoid; both observe state without owning it. The
+# convergence spec already named the four transports "adapters onto the
+# same five operations"; lens-transit declared its shape as a sibling
+# Transparency consumer; refract was already calling itself "bench at
+# the grammar-graph altitude." The family unifies the recognition.
+#
+# The substrate-pull cost of NOT naming this: every new measurement or
+# transport lands at an ad-hoc altitude (`@cli`, `@lsp`, `@bench`,
+# `@trace`) and the cross-cutting discipline (Transparency-as-carrier,
+# eigenboard-tagged-output, daemon-as-regulator) has to be re-justified
+# per surface. With the family, the discipline IS the family.
+#
+# Note on `refract` as namespace: the operation-altitude rename closed
+# 2026-06-04 (refract → settle) was at the algebra altitude; lens
+# absorbs the optical metaphor at the family altitude. `refract` stays
+# as a NAMESPACE name for the grammar-graph spectrum lens (where the
+# Void dualities disperse the grammar's structure into measurements);
+# the operation `settle` is unchanged.
+#
+# Spec context: docs/specs/the-convergence.md (four-transport recognition),
+#               docs/specs/lambda-shell.md (λsh / shell transport),
+#               docs/specs/cli-as-prism.md (cli surface; the-convergence
+#               sibling),
+#               docs/specs/trace-kintsugi-pipeline.md (refract as bench
+#               at grammar-graph altitude),
+#               fragmentation/docs/specs/lens-transit.md (transit's
+#               Transparency<P> consumer shape),
+#               docs/insights/2026-06-06-benchmarking-glass-sweep.md
+#               (the recognition that lens-transit IS the benchmarking
+#               glass).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]].
+# Related shards: lens/cli.mirror (the terminal lens, the first
+#                 migrated species),
+#                 lens/shell.mirror, lens/mcp.mirror, lens/lsp.mirror
+#                 (transport lens family headers),
+#                 lens/transit.mirror, lens/refract.mirror (measurement
+#                 lens family headers).
+# Path-namespace property: this file at `shards/mirror/lens.mirror`
+# declares `@mirror/lens` and only that.
+
+prism @mirror/lens {
+  focus lens
+  project lens
+  split lens
+  shift lens
+  settle lens
+}
+
+out @mirror/lens
