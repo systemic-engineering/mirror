@@ -1,0 +1,149 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @epistemologic
+
+# @epistemologic/math/music — music theory as decidable mathematics.
+#
+# The recognition (2026-06-06, Reed + Alex → Mara, via
+# docs/specs/mirror-spectral.md commit a8055f0): the substrate's agent
+# coordination layer (@mirror/spectral) was reaching for established
+# music-theoretic vocabulary — voice-leading, harmonic progression,
+# cadence, dissonance, audition — because 2500 years of refinement on
+# how multiple voices coordinate in real time already exists, and the
+# objects are PRE-AI prior art whose decidability bounds match mirror's
+# sub-Turing constraint exactly. Music IS the right intellectual ground
+# for spectral coordination; this family declares the discipline.
+#
+# Load-bearing spec: docs/specs/mirror-spectral.md §5 (the proposed
+# `@epistemologic/math/music/*` family, commit a8055f0).
+#
+# === Discipline ===
+#
+# A `@epistemologic/math/music` carrier IS:
+#
+#   - decidable: every object under this family resolves in finite
+#     steps on finite carriers. Harmonic ratios are rationals; the
+#     pitch-class group Z_12 is finite; voice-leading constraints are
+#     bounded; counterpoint species are graded by integer index;
+#     cadence types are a finite enumeration; dissonance is a curve
+#     evaluable in O(1) per (ratio, partial-count) pair. The whole
+#     family fits mirror's sub-Turing floor (per
+#     docs/specs/mirror-compile-bootstrap.md) by construction.
+#   - pre-AI prior art: Pythagoras to Helmholtz to Cohn. The vocabulary
+#     is older than the substrate it now names. Substrate-pull pulls
+#     toward what already has a name; this family is the realisation
+#     of that pull at the math altitude.
+#   - the audible register of the spectral triple: the parent altitude
+#     (`@epistemologic/math`, implicit in boot/std/epistemologic/math/*
+#     — `bundle.mirror`, `lawvere.mirror`, `spectral-triple.mirror`)
+#     carries the (A, H, D) substrate, the bundle tower, and Lawvere's
+#     fixed-point closure. Music is a fourth axis at this altitude: the
+#     same spectral structure made AUDIBLE. Eigenvalue frequency IS the
+#     harmonic the substrate is finding; voice-leading IS the morphism
+#     vocabulary on the connection; cadence IS the closure event.
+#
+# === Species under this family (to land when consumers pull) ===
+#
+#   @epistemologic/math/music/harmonic     frequency ratios (3:2 fifth,
+#                                          4:3 fourth, 5:4 third) as
+#                                          fundamental constants; the
+#                                          Pythagorean comma as a
+#                                          holonomy measurement. The
+#                                          number-theoretic substrate of
+#                                          pitch.
+#   @epistemologic/math/music/interval     Z_12 as a type; the circle of
+#                                          fifths as the generator
+#                                          ⟨7⟩ ∈ Z_12; the neo-Riemannian
+#                                          transformations P, L, R as
+#                                          group actions. The algebra of
+#                                          pitch-class relationships.
+#   @epistemologic/math/music/voice        voice-leading constraints as
+#                                          types; stepwise motion as
+#                                          default; leap as exception;
+#                                          parallel fifths/octaves
+#                                          forbidden. The local-morphism
+#                                          discipline.
+#   @epistemologic/math/music/counterpoint species counterpoint (1st
+#                                          through 5th) as a graded
+#                                          composition discipline; the
+#                                          Fux ladder as a progression.
+#                                          The multi-voice composition
+#                                          rules.
+#   @epistemologic/math/music/cadence      closure-of-progression types;
+#                                          authentic (V→I), plagal (IV→I),
+#                                          deceptive (V→vi), half (?→V).
+#                                          The convergence criterion
+#                                          vocabulary.
+#   @epistemologic/math/music/dissonance   the holonomy-as-dissonance
+#                                          map; Helmholtz dissonance
+#                                          curve over frequency-ratio
+#                                          space. The loss function at
+#                                          the audible altitude.
+#
+# Forward-references only — sub-shards land as consumers pull them.
+# `@mirror/spectral`'s sub-shards are the expected near-term consumers:
+# `conductor` reads `cadence` (closure detection); `voice` references
+# `interval` + `counterpoint` (algebra + composition); `audition` reads
+# `harmonic` (frequency-ratio scoring). Naming the family root now lets
+# those references resolve to named substrate instead of forward-promises
+# against unnamed altitude.
+#
+# === Consumer relationship to @mirror/spectral ===
+#
+# `@epistemologic/math/music` is the SUBSTRATE; `@mirror/spectral` is
+# the CONSUMER. Music grounds spectral, not the other way around — the
+# mathematics existed long before the agent coordination layer it now
+# names. The dependency points UP the altitude stack: spectral pulls
+# from music; music does NOT depend on spectral. This family root MUST
+# stay decoupled from `@mirror/*` so that mirror's coordination layer
+# can be re-implemented atop the same substrate without circular
+# pulls.
+#
+# === Parent altitude note ===
+#
+# `@epistemologic/math` is currently implicit — the boot std altitude
+# carries `bundle.mirror`, `lawvere.mirror`, `spectral-triple.mirror`
+# at that namespace without a declared family root. This family lands
+# under the implicit parent; migrating `@epistemologic/math` itself
+# from boot/std/ to a declared shards/ family root is a separate
+# substrate-pull pass (to follow when a consumer pulls — per Last
+# Responsible Moment).
+#
+# Per [[architecture-prism-as-trait-as-everything]]: `prism
+# @epistemologic/math/music { ... }` declares the family IS a prism.
+# The five-operation block below is the canonical declaration form (cf.
+# shards/mirror/spectral.mirror, shards/mirror/lens.mirror,
+# shards/epistemologic/reality.mirror). Each sub-shard specialises
+# from there.
+#
+# Spec context: docs/specs/mirror-spectral.md §5 (the family proposal;
+#               commit a8055f0; the load-bearing spec).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]],
+#                      [[architecture-connes-spectral-triple]] (the
+#                      audible register of (A, H, D)).
+# Related shards: mirror/spectral.mirror (the consumer; agent
+#                 coordination layer reaches for this family),
+#                 boot/std/epistemologic/math/bundle.mirror (sibling
+#                 at the parent altitude; the principal G-bundle),
+#                 boot/std/epistemologic/math/lawvere.mirror (sibling;
+#                 autopoietic fixed-point closure),
+#                 boot/std/epistemologic/math/spectral-triple.mirror
+#                 (sibling; Connes' (A, H, D)).
+# Path-namespace property: this file at
+# `shards/epistemologic/math/music.mirror` declares
+# `@epistemologic/math/music` as the family root; species live at
+# `shards/epistemologic/math/music/<name>.mirror`.
+
+prism @epistemologic/math/music {
+  focus music
+  project music
+  split music
+  shift music
+  settle music
+}
+
+out @epistemologic/math/music
