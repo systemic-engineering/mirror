@@ -29,19 +29,20 @@ in @uuid/spectral
 # unit (spectral_uuid-addressed) is `shard`, also declared at @glass.
 #
 # Alex's recognition (2026-06-06, post the spectral_uuid landing,
-# realized 2026-06-06 second tick by Mara): `splinter_graph` IS
-# `mosaic(@store)` — the (root, children) shape carries the same
-# compositional meaning the universal mosaic algebra carries at
-# every altitude. The parametric universal carrier
-# `type mosaic(altitude) = ref` is declared at @mirror/mosaic
-# (shards/mirror/mosaic.mirror); the @store-altitude specialization
-# is `splinter_graph`'s concrete record form (substantive structure:
-# root + children-closure). The two declarations agree on meaning;
-# the concrete record shape stays where it is because the closure
-# structure is load-bearing at this altitude, and a future tick
-# may declare `type splinter_graph = mosaic(@store)` as a type
-# alias once the substrate's altitude-parametric type aliasing
-# matures (deferred substrate touch).
+# realized 2026-06-06 third tick): `splinter_graph` IS `mosaic(@store)`
+# — the (root, children) shape carries the same compositional
+# meaning the universal mosaic algebra carries at every altitude.
+# The parametric universal carrier `type mosaic(altitude) = ref`
+# is declared at @mirror/mosaic (shards/mirror/mosaic.mirror); the
+# @store-altitude specialization IS the concrete record below. The
+# two declarations agree on meaning; the concrete record shape is
+# load-bearing at this altitude because action bodies (walk, diff)
+# need typed access to root + children-closure. When the substrate
+# grows altitude-specialized type declarations
+# (`type X(altitude) at @specific = { ... }`), splinter_graph
+# absorbs into mosaic(@store) directly; the gap is named
+# [[architecture-prism-as-trait-as-everything]] and the (root,
+# children) record stays the substrate-pull-honest shape until then.
 #
 # The store IS canonical. `.shatter` files on disk are ONE
 # OPTIONAL projection format of the store's content (per
