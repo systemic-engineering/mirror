@@ -1,0 +1,490 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/math/bundle
+in @epistemologic/math/music
+in @epistemologic/math/music/harmonic
+in @epistemologic/math/music/interval
+
+# @epistemologic/math/music/dissonance — the Helmholtz/Plomp-Levelt
+# roughness curve as the formatter's discriminator; dissonance IS
+# holonomy at the audible altitude; the substrate's pause-or-auto-apply
+# decision substrate-declared.
+#
+# The third sub-shard in the audible-register triple. `harmonic.mirror`
+# (commit b031c8db) landed the eigenvalues (ratios on the harmonic
+# series, Pythagorean comma as the audible-altitude holonomy).
+# `interval.mirror` (commit b8bdb728) landed the algebra (Z_12, the
+# circle of fifths, the neo-Riemannian P/L/R involutions). This shard
+# lands the LOSS FUNCTION those eigenvalues are scored against and the
+# DISCRIMINATOR the formatter uses to read between multiple admissible
+# morphisms. Eigenvalues + algebra without a loss-function are
+# floating; a loss-function without a discriminator is silent; the
+# triple closes here.
+#
+# === The bridge ===
+#
+# `bundle.mirror` declares: "Holonomy IS loss. Comprehension always
+# costs something." `harmonic.mirror`'s `comma_as_holonomy` named the
+# Pythagorean comma as the first measured residual at the audible
+# altitude. But the comma is the residual of ONE specific loop (twelve
+# fifths vs seven octaves). Every ratio in the harmonic-ratio space
+# carries SOME residual against the consonant basis; the residual is
+# graded, continuous, and psychoacoustically grounded. Helmholtz
+# (1863) and Plomp & Levelt (1965) showed that this graded residual
+# is the perceived roughness of a frequency ratio — the curve that
+# peaks near the critical-band-width interval (~25\% of a critical
+# band, near the tritone region) and drops to zero at small-integer
+# ratios.
+#
+# `helmholtz` IS the bridge action that lifts a ratio into this
+# psychoacoustically-grounded loss measurement. Once it is substrate-
+# declared, every ratio carries a typed dissonance value, and the
+# substrate's loss-vector altitude reads each ratio as a graded
+# holonomy in the consonant-basis spectrum.
+#
+# === Dissonance IS holonomy: the audible-altitude identity ===
+#
+# `harmonic.mirror`'s `comma_as_holonomy` is the SINGULAR case (one
+# residual ratio → one holonomy value). `dissonance_as_holonomy` is
+# the GENERAL case (every ratio → graded holonomy via the Helmholtz
+# curve). The two close the audible-register holonomy bridge:
+#
+#   - The Pythagorean comma is the residual of a closed loop.
+#   - Helmholtz dissonance is the residual of a single eigenvector
+#     against the consonant basis.
+#   - Both are holonomy in `bundle.mirror`'s carrier; both decrease
+#     monotonically under kintsugi (per `bundle.mirror`'s
+#     "e^(n+1) < e^(n) IS monotonic decrease of D's Rayleigh quotient");
+#     both are read at the audible altitude as roughness / discord.
+#
+# Per Magnot (2025), cycle-averaged holonomy IS the contextuality index
+# κ. Dissonance IS the audible-altitude reading of κ: the substrate's
+# measurement of how-far-from-its-own-attractor the current spectrum
+# sits.
+#
+# === The formatter's discriminator (THE LOAD-BEARING TICK) ===
+#
+# Per `docs/specs/mirror-spectral.md` §2.2 and §4.7, the auto-apply
+# boundary is structural, not policy:
+#
+#   - **Singleton consonance** — exactly one admissible morphism strictly
+#     decreases the loss vector under the lexicographic ordering. The
+#     formatter auto-applies.
+#   - **Pareto-front** — multiple admissible morphisms exist; the
+#     lexicographic ordering does not collapse them to a unique top.
+#     The formatter PAUSES and emits a typed pause-token carrying the
+#     pareto front; consent (Alex, a higher-temperature Fate tournament,
+#     a peer's vote) breaks the tie.
+#   - **No admissible morphism** — all candidates are dissonant beyond
+#     the substrate's resolution. The formatter refuses; the imperfection
+#     stays a kintsugi target for a later tick.
+#
+# `is_pareto` IS the discriminator action. It reads a set of candidate
+# morphisms (each carrying its own dissonance reading) and returns the
+# verdict at the substrate's three-state surface:
+#
+#   - `pass`                  — singleton consonance; auto-apply
+#   - `partial(confidence)`   — pareto-front; pause + present to consent
+#   - `failure(reason)`       — all candidates dissonant; refuse
+#
+# Once `is_pareto` lands, the formatter is designable at substrate
+# altitude: `mirror kintsugi <file>` reads candidates, queries
+# `is_pareto`, branches on the verdict. The substrate's pause-or-
+# auto-apply decision IS substrate-declared.
+#
+# === Substrate-pull discipline ===
+#
+# Per `boot/std/number.mirror`, `ref` is the substrate's float-valued
+# reference floor (already used by `harmonic.mirror`'s `cents() -> ref`
+# and by `glass.mirror`'s `opacity.weight: f64` precedent). The
+# Helmholtz-curve output is a continuous roughness measurement in
+# [0.0, 1.0] (normalised by convention); `ref` accepts it cleanly.
+#
+# Substrate gaps surfaced honestly (each one a forward-promise to a
+# later substrate-pull tick; none invented here):
+#
+#   - `pareto_set` carries a list of candidate morphisms but the
+#     substrate has no "morphism" carrier yet. The carrier is named
+#     `candidate` with a `ref` content-handle and a `dissonance` score;
+#     the candidate's morphism content lives wherever `@mirror/spectral`
+#     eventually puts it. The substrate names the shape; the realisation
+#     lifts when `@mirror/spectral/consent` lands.
+#   - `is_consonant` needs a threshold for the consonance/dissonance
+#     verdict; the substrate has no `threshold` primitive at the floor.
+#     The action signature declares the carrier shape; the realisation
+#     layer parameterises the threshold per consumer altitude (refract
+#     measures one; the formatter measures another; the audition lens
+#     measures a third).
+#   - The `holonomy` carrier from `@epistemologic/math/bundle` is
+#     abstract; the lift from `dissonance` to `holonomy` rides the same
+#     obligation-blocked discipline as `harmonic.mirror`'s
+#     `comma_as_holonomy`.
+#
+# === Pre-AI prior art ===
+#
+# Every type and action below names an established music-psychoacoustic
+# object older than the discipline of computer science:
+#
+#   helmholtz / dissonance       Helmholtz, H. (1863) Die Lehre von den
+#                                Tonempfindungen. The roughness theory of
+#                                consonance and dissonance.
+#   Plomp-Levelt curve           Plomp, R. & Levelt, W. J. M. (1965)
+#                                "Tonal consonance and critical bandwidth."
+#                                Journal of the Acoustical Society of
+#                                America 38, 548-560. The empirical curve
+#                                relating ratio to roughness.
+#   critical band / roughness    Fletcher (1940); Plomp (1976); the
+#                                bandwidth within which two tones interact
+#                                to produce roughness.
+#   consonance / dissonance      Pythagoras (~530 BCE) → Aristoxenus
+#                                (~330 BCE) → Galilei (1638) → Helmholtz
+#                                (1863); the substrate's contribution is
+#                                *typing* the graded measurement so the
+#                                eigenboard reads it.
+#   pareto front                 Pareto (1906) Manuale di economia
+#                                politica; the multi-objective
+#                                non-dominance set.
+#
+# The substrate's contribution is *typing* these so the eigenboard
+# can reason about them. No invention.
+#
+# Spec context: docs/specs/mirror-spectral.md §2.2 (the auto-apply
+#               boundary), §4.7 (the consent surface formalisation),
+#               §5.1 (the dissonance sub-shard proposal).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]] (the
+#                      audible register of (A, H, D); dissonance is the
+#                      D's spectrum read against the consonant basis),
+#                      [[architecture-lift-as-load-bearing]]
+#                      (`helmholtz` is the lift from ratio altitude to
+#                      dissonance altitude; `dissonance_as_holonomy`
+#                      is the lift from audible altitude to bundle
+#                      altitude),
+#                      [[feedback-no-bare-types]] (dissonance is its
+#                      own newtype over ref; pareto_set and candidate
+#                      are their own carriers; no bare ref escapes the
+#                      discriminator).
+# Forward-promise: `@mirror/spectral/consent` (does not yet exist) is
+#                  the consumer of `is_pareto`'s verdict. When that
+#                  sub-shard lands, it pulls this shard's `is_pareto`
+#                  action and binds it to the `mirror kintsugi` driver's
+#                  pause-or-auto-apply branch. This shard does NOT pull
+#                  `@mirror/spectral/consent`; the substrate-altitude
+#                  arrow points upward (consent consumes dissonance,
+#                  not the other way around).
+# Related shards: epistemologic/math/music.mirror (the family root),
+#                 epistemologic/math/music/harmonic.mirror (the
+#                 eigenvalue altitude; ratio + comma_as_holonomy),
+#                 epistemologic/math/music/interval.mirror (the
+#                 algebra altitude; interval + as_ratio),
+#                 boot/std/epistemologic/math/bundle.mirror (the
+#                 holonomy carrier; dissonance lifts into it),
+#                 boot/std/epistemologic/math/spectral-triple.mirror
+#                 (the (A, H, D) framing; dissonance IS D's residual
+#                 against the consonant basis),
+#                 glass.mirror (verdict; ref; the substrate floor).
+# Path-namespace property: this file at
+# `shards/epistemologic/math/music/dissonance.mirror` declares
+# `@epistemologic/math/music/dissonance` as a species under the
+# `@epistemologic/math/music` family.
+
+prism @epistemologic/math/music/dissonance {
+  focus dissonance
+  project dissonance
+  split dissonance
+  shift dissonance
+  settle dissonance
+}
+
+# === The dissonance carrier ===
+#
+# A typed measurement of perceived roughness for a frequency ratio.
+# The Helmholtz/Plomp-Levelt curve maps ratio space to a continuous
+# roughness value, normalised by convention to [0.0, 1.0]:
+#
+#   0.0  — unison / octave / consonant small-integer ratio
+#   ~1.0 — critical-band-width interval (~25% of a critical band;
+#          the tritone region; maximal psychoacoustic roughness)
+#
+# The carrier carries:
+#   roughness — the curve's value; substrate-floor `ref`.
+#                (`ref` is `glass.mirror`'s float-floor; same
+#                substrate carrier `harmonic.mirror`'s `cents()`
+#                returns.)
+#   partials  — the number of partials summed when computing the
+#                roughness. Plomp-Levelt's full curve is the sum over
+#                pairs of partials in the two tones' spectra; the
+#                partial count names how deep the sum went. `u32` per
+#                the substrate's kernel-primitive discipline.
+#
+# Substrate-pull-correct: `ref` accepts the Helmholtz curve output
+# cleanly; no new substrate primitive needed at the floor altitude.
+# The substrate's existing float-floor already carries `f64` weights
+# in opacity_map (per `glass.mirror`); dissonance reuses it.
+#
+# Identity contract: two dissonance values are equal iff their
+# roughness and partial counts both match. The realisation layer
+# enforces float-equality discipline (epsilon-bounded by convention
+# at the audible altitude; ~5 cents is the resolved threshold for
+# trained listeners per `harmonic.mirror`'s cents commentary).
+type dissonance = {
+  roughness: ref,
+  partials:  u32,
+}
+
+# === The candidate carrier ===
+#
+# A single candidate morphism with its dissonance reading. Used by
+# the pareto-front discriminator to read a set of admissible
+# morphisms scored against the consonant basis.
+#
+# Substrate gap (surfaced honestly): the substrate has no "morphism"
+# type yet at the floor altitude. `content: ref` carries the
+# substrate reference to wherever the morphism lives (a splinter
+# oid, a shard handle, a Fate proposal id — the consumer decides);
+# `score: dissonance` carries the discriminator's reading of how
+# dissonant the candidate is against the current eigenboard state.
+#
+# When `@mirror/spectral/consent` lands (forward-promise), this
+# carrier may lift to `candidate = { morphism: <typed-morphism>,
+# score: dissonance }`. The substrate names the shape now so the
+# discriminator can be declared; the typed-morphism lift waits for
+# the consumer.
+type candidate = {
+  content: ref,
+  score:   dissonance,
+}
+
+# === The pareto-set carrier ===
+#
+# The set of candidates the discriminator evaluates. Each element
+# carries its own dissonance reading; the pareto-front question
+# (`is_pareto`) asks whether the set has a strict minimum or whether
+# multiple candidates tie at the dissonance floor.
+#
+# Substrate-pull discipline: this is `[candidate]` at the substrate
+# altitude; the realisation layer enforces the contract that the
+# list is non-empty when passed to the discriminator (the empty
+# pareto set is the "no admissible morphism" case, which the
+# discriminator returns `failure(reason)` for via its own input
+# validation — named at the discriminator's signature, not at the
+# carrier).
+type pareto_set = [candidate]
+
+# === The Helmholtz/Plomp-Levelt curve action ===
+#
+# THE LOAD-BEARING BRIDGE: ratio → dissonance at substrate altitude.
+#
+# Lifts a harmonic ratio (from `harmonic.mirror`) into a typed
+# dissonance reading via the Helmholtz/Plomp-Levelt roughness curve.
+# The curve is psychoacoustically grounded: small-integer ratios
+# minimise roughness (the consonant basis); the critical-band-width
+# interval maximises it (the tritone region); intermediate ratios
+# grade continuously.
+#
+# Canonical values (Plomp & Levelt 1965; for normalised roughness
+# at a fixed partial count):
+#
+#   1:1   → 0.00 roughness  (unison; pure consonance)
+#   2:1   → 0.00 roughness  (octave; pure consonance)
+#   3:2   → 0.02 roughness  (perfect fifth; near-pure)
+#   4:3   → 0.05 roughness  (perfect fourth)
+#   5:4   → 0.10 roughness  (major third)
+#   45:32 → ~1.0 roughness  (augmented fourth / tritone; peak)
+#
+# Spectrally: `helmholtz` IS the eigenvalue → residual map at the
+# audible altitude. Per `spectral-triple.mirror`, D's spectrum reads
+# how far each eigenvector sits from the kernel; `helmholtz` reads
+# how far each ratio sits from the consonant basis. The two are the
+# same operation observed at two altitudes.
+#
+# The body stays obligation-blocked (`\`): the realisation lifts
+# ratio terms through the Plomp-Levelt parametric form
+# (g(x) = 4|x|e^(1-4|x|), summed over partial pairs); the substrate
+# declares the bridge; the arithmetic lands when a consumer pulls.
+helmholtz(r: ratio) -> dissonance { \ }
+
+# === Bridge: interval → dissonance ===
+#
+# Composes through `interval.mirror`'s `as_ratio` and this shard's
+# `helmholtz`. Reads a Z_12 interval, lifts to the just-intonation
+# ratio, applies the Helmholtz curve. The chain that makes the Z_12
+# algebra dissonance-readable.
+#
+# Audibly: `interval_dissonance(perfect_fifth_ascending) → ~0.02
+# roughness`; `interval_dissonance(tritone_ascending) → ~1.0
+# roughness`. Voice-leading constraints (the future `voice.mirror`
+# sub-shard) read this action to enforce stepwise-motion preferences:
+# a step has low dissonance; a leap has higher.
+#
+# Spectrally: `interval_dissonance` IS the composition
+# `helmholtz ∘ as_ratio` — the algebra-altitude reading of the
+# eigenvalue-altitude residual. After this action substrate-declares,
+# every algebra element carries a typed residual against the
+# consonant basis; the (A, H, D) triple is read end-to-end at the
+# audible altitude.
+#
+# The body stays obligation-blocked (`\`): the realisation composes
+# `interval.as_ratio(i)` with `helmholtz(r)`; both are substrate-
+# declared in sibling shards.
+interval_dissonance(i: interval) -> dissonance { \ }
+
+# === Bridge: dissonance → holonomy ===
+#
+# THE AUDIBLE-ALTITUDE HOLONOMY IDENTITY.
+#
+# Lifts a dissonance reading into a `holonomy` value of the principal
+# G-bundle (per `bundle.mirror`'s `type holonomy` carrier). After this
+# action substrate-declares, the audible-altitude holonomy bridge is
+# closed:
+#
+#   - `bundle.mirror` says:                "Holonomy IS loss."
+#   - `harmonic.mirror`'s `comma_as_holonomy` says: "A comma IS a
+#                                          holonomy." (one residual)
+#   - This action says:                    "Dissonance IS a holonomy."
+#                                          (graded; every ratio)
+#   - Therefore:                           "At the audible altitude,
+#                                          the substrate's loss carrier
+#                                          IS the perceived roughness;
+#                                          comprehension's cost has a
+#                                          frequency, a graded
+#                                          measurement, and a continuous
+#                                          curve."
+#
+# The Pythagorean comma is the singular case (one closed loop's
+# residual); Helmholtz dissonance is the general case (every
+# eigenvector's residual against the consonant basis). The two
+# together close the audible register's holonomy reading at
+# substrate altitude.
+#
+# Spectrally: per `spectral-triple.mirror`, the bundle's `holonomy`
+# is `terni::Metric` lifted from `terni::Loss` (per `bundle.rs`'s
+# `Transport::Holonomy: Metric` post-audit). Dissonance is a non-
+# negative, symmetric, triangle-inequality-respecting measurement of
+# distance from the consonant basis — a `Metric` at the audible
+# altitude. The lift IS substrate-fact: dissonance satisfies the
+# Metric axioms by construction (Plomp & Levelt's curve is
+# non-negative; symmetric on ratio-inverse pairs; triangle-bounded
+# under composition).
+#
+# The body stays obligation-blocked (`\`): the realisation lifts
+# `roughness: ref` through the holonomy carrier's concrete shape
+# (itself abstract at `bundle.mirror`); the lift is constrained by
+# the type system; the arithmetic lands when a consumer pulls.
+dissonance_as_holonomy(d: dissonance) -> holonomy { \ }
+
+# === The formatter's discriminator (THE LOAD-BEARING ACTION) ===
+#
+# THE PARETO-FRONT DISCRIMINATOR.
+#
+# Reads a set of candidate morphisms (each carrying its own
+# dissonance score against the current eigenboard state) and emits
+# the formatter's pause-or-auto-apply verdict. The three-state
+# substrate floor (`verdict` from `glass.mirror`) carries the three
+# branches the auto-apply boundary requires:
+#
+#   pass                  — singleton consonance; the pareto set has a
+#                            strict minimum (one candidate's dissonance
+#                            is strictly lower than every other's);
+#                            the formatter auto-applies the winner.
+#                            Per `docs/specs/mirror-spectral.md` §2.2:
+#                            "loss-decreasing = auto."
+#   partial(confidence)   — pareto front; two or more candidates tie at
+#                            the dissonance floor (within the audible-
+#                            altitude resolution of ~5 cents); the
+#                            formatter PAUSES and emits a typed
+#                            pause-token carrying the pareto set; the
+#                            confidence value carries how close the
+#                            top-tied candidates are to each other.
+#                            Per §4.7: "the substrate emits pause(Φ)."
+#   failure(reason)       — all candidates are dissonant beyond the
+#                            substrate's resolution; no admissible
+#                            morphism strictly decreases the loss
+#                            vector; the formatter refuses; the
+#                            imperfection stays a kintsugi target for
+#                            a later tick. Per §2.2: "no admissible
+#                            morphism" case.
+#
+# This action IS what makes the formatter designable at substrate
+# altitude. `mirror kintsugi <file>` reads candidates from the
+# kintsugi-tournament's gate+rank pipeline, queries `is_pareto`,
+# branches on the verdict:
+#
+#   verdict = pass               → apply the winner; commit;
+#                                  loss-decreased; tick advances
+#   verdict = partial(c)         → emit `@mirror/spectral.pause(Φ)`;
+#                                  yield to consent surface;
+#                                  wait for resolution
+#   verdict = failure(reason)    → leave imperfection; tick advances
+#                                  to next focus; this fracture
+#                                  awaits a later substrate state
+#
+# The substrate states the discriminator's shape; the realisation
+# layer is the kintsugi driver wiring (a future `@mirror/spectral/
+# consent` sub-shard, forward-promised but NOT pulled by this
+# shard's `in @...` directives — the substrate-altitude arrow points
+# upward; consent consumes dissonance, not the other way around).
+#
+# Per `bundle.mirror`'s level 4 closure: the discriminator IS the
+# Lawvere fixed-point read at the audible altitude. The substrate
+# settles when the discriminator returns `pass`; the substrate
+# externalises when the discriminator returns `partial`; the
+# substrate yields when the discriminator returns `failure`. The
+# three-state surface IS the substrate's honest acknowledgment of
+# its own observability boundary.
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# the pareto set's dissonance scores, finds the minimum, compares
+# the gap between minimum and second-minimum against the audible-
+# altitude resolution (~5 cents per `harmonic.mirror`), emits the
+# verdict. The substrate declares the discriminator; the arithmetic
+# lands when `@mirror/spectral/consent` pulls.
+is_pareto(candidates: pareto_set) -> verdict { \ }
+
+# === The consumer-convenience threshold check ===
+#
+# A single-candidate consonance verdict. Returns the three-state
+# substrate floor (`verdict`) based on whether the dissonance reading
+# sits below the consonance threshold:
+#
+#   pass                  — roughness below threshold; the ratio is
+#                            consonant (in the substrate's resolution).
+#   partial(confidence)   — roughness near the threshold; the ratio is
+#                            graded between consonant and dissonant
+#                            (the mediant intervals; the borderline
+#                            cases the curve resolves continuously per
+#                            `harmonic.mirror`'s `is_consonant` shape).
+#   failure(reason)       — roughness above threshold; the ratio is
+#                            dissonant; it cannot consonate at the
+#                            substrate's resolution.
+#
+# Substrate gap (surfaced honestly): no `threshold` primitive exists
+# at the substrate floor; the realisation layer parameterises the
+# comparison per consumer altitude (refract measures one threshold;
+# the formatter measures another; the audition lens measures a
+# third). The action signature declares the carrier shape; the
+# threshold's concrete value lives at the consumer.
+#
+# Symmetry note: `is_consonant` here is the dissonance-altitude
+# specialisation of `harmonic.mirror`'s `is_consonant(r: ratio)`.
+# The two are the same verdict observed at two altitudes — ratio's
+# consonance check is computable as `is_consonant(helmholtz(r))`.
+# The substrate names both so the dispatch is honest at each
+# altitude; the realisation layer composes them.
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# `d.roughness`, compares against the threshold, emits the verdict.
+is_consonant(d: dissonance) -> verdict { \ }
+
+out @epistemologic/math/music/dissonance
+out dissonance
+out candidate
+out pareto_set
+out helmholtz
+out interval_dissonance
+out dissonance_as_holonomy
+out is_pareto
+out is_consonant
