@@ -11,9 +11,23 @@
 > and `.shatter` materialises it on disk when an on-disk projection
 > is wanted.
 >
+> **2026-06-06 second sharpening (Alex's three-layer recognition).**
+> The header phrasing "au + splinter + mosaic" is now substrate-
+> honest. Splinter is the universal content-addressed atom at every
+> altitude (per `shards/glass.mirror`). Shard is the SpectralUuid-
+> addressed settled composition of splinters (per `shards/glass.mirror`,
+> realised as `ShardRef` in `fragmentation/src/shard_ref.rs`). au is
+> the proposed shard — Fate-emitted splinters before the property
+> chain runs. The `.shatter` file projects the composition: a
+> `splinter_graph` (the OID-graph projection at @store altitude;
+> renamed 2026-06-06 from the ambiguous `splinter` to distinguish it
+> from the universal atom) carries the section-1 fragment_tree.
+>
 > See [[specs/mirror-store]] for the canonical store; the
 > fragmentation store IS the substrate. See [[specs/properties-on-glass]]
 > for the `transparency` (formerly `Transparency`) verdict carrier.
+> See [[specs/mosaic-as-type-system]] §1B for the three-layer
+> recognition.
 
 A `.shatter` file is a `.mirror` file that has been through the compiler
 and came out the other side. It is native mirror syntax. The compiler
@@ -33,10 +47,11 @@ source IS the crystal. The compilation loop has a fixed point and the
 `.shatter` file is it.
 
 Round-trip exact because the OID is derived from the fragmentation
-store's content addressing (`au + splinter + mosaic` composed) and
-recursive child OIDs. Parse → emit → parse yields identical content
-hashes. The fragmentation store holds the canonical settlement; the
-on-disk `.shatter` is its projection.
+store's content addressing (`au + splinter + mosaic` composed; the
+result is a SpectralUuid-addressed shard, per the 2026-06-06 three-
+layer recognition) and recursive child OIDs. Parse → emit → parse
+yields identical content hashes. The fragmentation store holds the
+canonical settlement; the on-disk `.shatter` is its projection.
 
 ---
 
@@ -290,10 +305,12 @@ compilable. Carrying its loss. Carrying its proofs. Carrying the
 model that made it.
 
 The name: to shatter is to break something into pieces. The
-fragmentation crate provides the pieces — `MirrorFragment`,
-content-addressed, Merkle tree. The `.shatter` file IS the
-shattered mirror, each piece carrying its own OID, the whole
-carrying the loss of the shattering.
+fragmentation crate provides the pieces — splinters (the universal
+content-addressed atoms, per shards/glass.mirror), content-addressed,
+Merkle tree, composed into shards (the SpectralUuid-addressed
+settled compositions). The `.shatter` file IS the shattered mirror,
+each splinter carrying its own OID, the shard carrying the loss of
+the shattering.
 
 But also: shatter as in "shatter expectations." The `.shatter`
 file is the artifact that proves the compiler works. The proofs

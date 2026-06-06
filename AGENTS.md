@@ -6,8 +6,9 @@ Instructions for AI agents working on the mirror compiler.
 
 Mirror is a language where substrate IS type system IS build system IS proof
 system IS conversation, expressed as **one algebra (mosaic) over one
-content-addressed unit (fragment) at any number of altitudes**, with monotone
-descent `eⁿ⁺¹ ≤ eⁿ` as the universal termination condition and Connes' spectral
+content-addressed atom (splinter) composed into one SpectralUuid-addressed
+settled fragment (shard) at any number of altitudes**, with monotone descent
+`eⁿ⁺¹ ≤ eⁿ` as the universal termination condition and Connes' spectral
 triple `(A, H, D)` as the operational form.
 
 **Problem space.** Mainstream PL splits substrate, runtime, build system,
@@ -19,11 +20,13 @@ breaks) are library-level, not substrate. Total functional programming is
 research-exiled; numerics is foreign; AI integration is per-tool bespoke;
 conversation with the substrate is one-way.
 
-**Solution space.** One substrate, five operations, fragment as universal
-unit. Substrate-pull discipline (types in grammars, not Rust). Content-
-addressed at every altitude (`Fragment = { content: oid, altitude: ref,
-transparency: transparency(altitude) }`). CRDT-shaped substrate from the
-floor. Sub-Turing by construction (every grammar action terminates).
+**Solution space.** One substrate, five operations, splinter as universal
+atom, shard as SpectralUuid-addressed settlement. Substrate-pull discipline
+(types in grammars, not Rust). Content-addressed at every altitude
+(`splinter(altitude) = { content: oid, altitude: ref,
+transparency: transparency(altitude) }`; shard = SpectralUuid-addressed
+composition). CRDT-shaped substrate from the floor. Sub-Turing by
+construction (every grammar action terminates).
 Numerics as substrate vocabulary (Fiedler = algedonic signal; 16×16/5×5
 flang/mirror split; LAPACK at `@code/fortran`). Four transports onto one
 runtime (λsh / CLI / MCP / LSP). Conversation IS substrate (every response
@@ -206,10 +209,40 @@ GPG signing is configured. Commits are signed automatically.
 
 ## Key Concepts
 
-**Fragment.** Content-addressed substrate unit at every altitude.
+**Splinter (was: Fragment).** The universal content-addressed atom at
+every altitude — per Alex's 2026-06-06 three-layer recognition (see
+`docs/specs/mosaic-as-type-system.md` §1B).
 `{ content: oid, altitude: ref, transparency: transparency(altitude) }`.
-The Rust `MirrorFragment` IS Fragment at the Rust altitude. Shard, target,
-spec, AST node, binary are all fragments at different altitudes.
+Target, spec, AST node, binary are all splinters at different altitudes.
+The Rust `MirrorFragment` IS Splinter at the Rust altitude (the type's
+name is the legacy form pending the substrate-pull-realize rename;
+`Fractal::Shard` similarly pre-dates the recognition that shard is the
+MIDDLE layer — the variant IS the terminal-leaf splinter / atom).
+
+**Shard.** The SpectralUuid-addressed settlement of composed splinters
+into a stored fragment. The MIDDLE layer of the three-layer recognition;
+what `settle` produces; what `@mirror/store` keeps; what
+`peer.eigenboard` types as. `{ id: SpectralUuid, splinters: [splinter],
+transparency }`. Realised in Rust as
+`fragmentation/src/shard_ref.rs::ShardRef`.
+
+**SpectralUuid.** The graph-navigatable spectral identifier; the TOP
+layer. 128 bits, golden-ratio split: 48 ACTIVE (quantized
+SpectralCoordinate<5>; navigable) + 80 DARK (BLAKE3-truncated content
+hash; identity). Per `prism/core/src/spectral_uuid.rs` and
+`[[architecture-shard-as-crdt]]`. Monoid homomorphism w.r.t. shard
+merge.
+
+**Splinter_graph (was: Splinter at @store).** The OID-graph projection
+at @mirror/store altitude: root + transitive closure of children's
+OIDs. The structural lockfile. Distinct from the universal splinter
+atom (per @glass); the atom is one (content, altitude, transparency)
+triple; the graph is a projection of a composition's closure.
+
+**Fragment.** Pre-2026-06-06 vocabulary for what is now `splinter` (the
+universal atom) or `shard` (the settled composition), depending on
+lifecycle position. The Rust `MirrorFragment` name persists; the
+substrate-altitude declaration is `splinter` / `shard`.
 
 **Oid.** Content address. SHA-256 of tokenized eigenvalue record (BLAKE3
 default for new content). Deterministic. Idempotent. Stored as git blob.
