@@ -1,0 +1,76 @@
+in @prism
+in @meta
+in @nl
+in @glass
+
+# @code — the universal grammar-at-an-altitude discipline.
+#
+# The recognition (2026-06-06, Reed + Alex → Mara): mirror is one
+# instance of @code (mirror as code at the mirror altitude). Rust is
+# another (already declared at shards/code/rust.mirror, the D2 commit).
+# LLVM, Fortran, Gleam are others (current or future). @code is the
+# parent prism that names the shared discipline: "this is a grammar
+# producing artifacts at altitude X."
+#
+# Same substrate-pull pattern as splinter_graph → mosaic(@store) and
+# fragment → splinter: the word already lived in the substrate; we just
+# hadn't named the inheritance. Each `@code/X` instance specializes the
+# five operations at its altitude; `@code` itself declares only the
+# universal five-op shape — the discipline, not the implementation.
+#
+# === why pure five-op (not parse / resolve / emit) ===
+#
+# The substrate-pull discipline (per
+# [[architecture-prism-as-trait-as-everything]]) declares parent prisms
+# in their five-operation form and lets instances specialize via their
+# own grammar. Pre-committing @code to a `parse(source) -> ast` /
+# `resolve(ast) -> resolved` / `emit(resolved, altitude) -> au` shape
+# would prematurely fix the parser-emitter pipeline as universal. But
+# the existing instances (@code/rust declaring a cargo emit sub-prism;
+# @code/llvm splitting into /ir and /emit) already specialize past that
+# shape. The universal carrier is the five operations; the
+# parse/resolve/emit shape is one common consequence at altitudes that
+# have a textual surface — not a substrate-floor obligation.
+#
+# === sub-prism precedent ===
+#
+# @code/rust (shards/code/rust.mirror, D2) IS the precedent: it declares
+# the five-op block at the altitude, then adds altitude-specific shape
+# (the @code/rust/cargo sub-prism for emit-target identity, the
+# build-property surface for settle_on). @code/mirror, @code/gleam,
+# @code/llvm, @code/fortran each declare the same five-op block at their
+# altitude and specialize from there.
+#
+# === inheritance shape: explicit `in @code` ===
+#
+# Each `@code/X` instance declares `in @code` at the top of its file
+# (cf. boot/04a-code-rust.mirror, boot/04b-code-gleam.mirror; the
+# convention preserved in the migration). The substrate uses `in @X`
+# as the canonical import-and-inherit form (cf. `in @prism`,
+# `in @glass`, `in @nl`). Implicit-by-namespace-nesting would
+# under-declare the relationship — `@code/X` IS-A `@code` is a
+# substrate fact, not a path-namespace coincidence; declaring it
+# matches how every other root prism is consumed.
+#
+# Spec context: docs/specs/spectral-triple-binary.md §3
+# (translate-template altitudes); roadmap/wip/butterfly-self-hosting.md
+# (the @code/llvm → @code/fortran → @code/mirror path).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]].
+# Related shards: code/rust.mirror (D2; the precedent instance),
+#                 code/mirror.mirror (mirror's own @code instance),
+#                 code/gleam.mirror (post-migration from boot/04b).
+# Path-namespace property: this file at `shards/code.mirror` declares
+# `@code` as the universal root; instances live at
+# `shards/code/<name>.mirror`.
+
+prism @code {
+  focus code
+  project code
+  split code
+  shift code
+  settle code
+}
+
+out @code
