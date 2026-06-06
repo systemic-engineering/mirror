@@ -1,6 +1,7 @@
 in @prism
 in @glass
 in @meta
+in @mirror/store/spectral_uuid
 
 # @mirror/store — the fragmentation store interface.
 #
@@ -25,7 +26,17 @@ in @meta
 # distinguish the atomic carrier (universal; one OID per atom)
 # from the OID-graph projection (root + transitive closure of
 # OIDs in the dependency tree). The substrate's stored composition
-# unit (SpectralUuid-addressed) is `shard`, also declared at @glass.
+# unit (spectral_uuid-addressed) is `shard`, also declared at @glass.
+#
+# Alex's recognition (2026-06-06, post the spectral_uuid landing):
+# `splinter_graph` IS mosaic at the @store altitude — the (root,
+# children) shape carries the same compositional meaning the
+# universal mosaic algebra carries at every altitude. The local
+# name (`splinter_graph`) is the @store-altitude specialization;
+# the universal mosaic vocabulary lives at the mosaic prism shard
+# (shards/mirror/mosaic.mirror). Naming convention captured here;
+# the universal rename is a separate substrate touch, surfaced for
+# Alex's call.
 #
 # The store IS canonical. `.shatter` files on disk are ONE
 # OPTIONAL projection format of the store's content (per
@@ -134,16 +145,15 @@ type bytes = ref(scalar/bytes)
 # A shard reference resolves to its stored shard at the bound
 # identifier. Distinct from `oid` itself: a shard_ref carries the
 # expectation that the identifier resolves to a `shard` (per @glass:
-# a SpectralUuid-addressed settled composition of splinters), not
+# a spectral_uuid-addressed settled composition of splinters), not
 # an arbitrary blob.
 #
-# The identifier carrier is `oid` today; the substrate-pull-realize
-# lift to `SpectralUuid` is deferred until SpectralUuid is declared
-# at the substrate altitude (per docs/specs/mosaic-as-type-system.md
-# §9.7 — the lift resolves at the shard layer: `shard.id IS
-# SpectralUuid by construction`; shard_ref's binding tightens
-# accordingly when the substrate type lands). Until then, the
-# property chain enforces SpectralUuid validity at commit time.
+# Substrate-pull-realize (2026-06-06): the identifier carrier is
+# `spectral_uuid`. The lift completes the three-layer recognition —
+# shard.id IS spectral_uuid by construction (per shards/glass.mirror's
+# shard declaration); shard_ref names a spectral_uuid that resolves
+# to a shard. The deferred lift in mosaic-as-type-system.md §9.7
+# closes here.
 #
 # Realised in Rust as `fragmentation/src/shard_ref.rs`'s
 # `ShardRef { id: SpectralUuid, context: ShardContext,
@@ -151,7 +161,7 @@ type bytes = ref(scalar/bytes)
 # IS; the Rust crate names how the typed handle is implemented.
 #
 # Fetch failures emit `imperfect` (the @glass loss carrier).
-type shard_ref = oid
+type shard_ref = spectral_uuid
 
 # === the store's surface — six operations ===
 #

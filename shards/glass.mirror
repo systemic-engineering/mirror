@@ -1,5 +1,6 @@
 in @prism
 in @meta
+in @mirror/store/spectral_uuid
 
 # @glass — the floor of the substrate's self-conversation.
 #
@@ -25,42 +26,44 @@ in @meta
 #                              transparency: transparency(altitude) }.
 #                            What Fate emits a proposed composition of.
 #
-#   shard (MIDDLE)        — the SpectralUuid-addressed settlement of
+#   shard (MIDDLE)        — the spectral_uuid-addressed settlement of
 #                            composed splinters into a stored fragment.
 #                            What `settle` produces; what `@mirror/store`
 #                            keeps; what `peer.eigenboard` types as
 #                            (per boot/std/peer.mirror).
-#                            { id: SpectralUuid, splinters: [splinter],
+#                            { id: spectral_uuid, splinters: [splinter],
 #                              transparency: transparency(altitude) }.
 #
-#   SpectralUuid (TOP)    — the graph-navigatable spectral identifier.
+#   spectral_uuid (TOP)   — the graph-navigatable spectral identifier.
 #                            128 bits, golden-ratio split: 48 ACTIVE
 #                            (quantized SpectralCoordinate<5>; leading;
 #                            navigable) + 80 DARK (BLAKE3-truncated
 #                            content hash; trailing; identity). Realized
-#                            in prism/core/src/spectral_uuid.rs;
-#                            declared at the substrate altitude when
-#                            the shard altitude lands (see deferred
-#                            note below the shard declaration).
+#                            in prism/core/src/spectral_uuid.rs; declared
+#                            at the substrate altitude in
+#                            shards/mirror/spectral_uuid.mirror as
+#                            @mirror/store/spectral_uuid (2026-06-06
+#                            substrate-pull realize; the three-layer
+#                            recognition closes).
 #
-# Bottom (splinter, atomic content) and top (SpectralUuid, spectral
+# Bottom (splinter, atomic content) and top (spectral_uuid, spectral
 # identity) MEET IN THE MIDDLE at shard (the settled, stored, navigable
 # unit). au is the proposed shard (Fate-emitted splinters,
 # uncommitted); settle is the act that composes splinters through the
-# property chain into a shard (SpectralUuid-addressed, stored).
+# property chain into a shard (spectral_uuid-addressed, stored).
 #
 # The transition:
 #
 #   au (Fate-emitted splinters, uncommitted)
 #      ↓ settle (property-chain run; verify; commit)
-#   Imperfect<shard> (SpectralUuid-identified, stored)
+#   Imperfect<shard> (spectral_uuid-identified, stored)
 #
 # Spec: docs/specs/transparency.md, docs/specs/mosaic-as-type-system.md
 #       (the bottom-top-middle recognition section).
 # Substrate decisions: [[architecture-glass-wall-substrate-types]],
 #                      [[architecture-shards-as-substrate-source]],
 #                      [[architecture-prism-as-trait-as-everything]],
-#                      [[architecture-shard-as-crdt]] (SpectralUuid as
+#                      [[architecture-shard-as-crdt]] (spectral_uuid as
 #                      monoid homomorphism w.r.t. shard merge).
 #
 # Per prism-as-trait-as-everything: `prism @glass { ... }` declares
@@ -225,20 +228,21 @@ type splinter_shape =
   | fractal([oid])      # composite; child oids
   | lens([oid])         # referring; target oids
 
-# === shard — the SpectralUuid-addressed settled composition (MIDDLE) ===
+# === shard — the spectral_uuid-addressed settled composition (MIDDLE) ===
 #
-# A shard is what `settle` produces: a SpectralUuid-identified
+# A shard is what `settle` produces: a spectral_uuid-identified
 # composition of splinters that has been verified through the
 # property chain and committed to @mirror/store. The bottom (splinter)
-# and the top (SpectralUuid) meet in the middle at shard.
+# and the top (spectral_uuid) meet in the middle at shard.
 #
-# Identity contract: a shard's identity IS its SpectralUuid. The
-# SpectralUuid is computed from the composed splinter set's monoid-
-# homomorphism reduction (per [[architecture-shard-as-crdt]] §3 and
+# Identity contract: a shard's identity IS its spectral_uuid. The
+# spectral_uuid is computed from the composed splinter set's monoid-
+# homomorphism reduction (per [[architecture-shard-as-crdt]] §3,
+# shards/mirror/spectral_uuid.mirror's `combine` declaration, and
 # prism/core/src/spectral_uuid.rs's `from_parts`):
 #
-#   SpectralUuid(merge(s_1, s_2, ...)) =
-#     combine(SpectralUuid(s_1), SpectralUuid(s_2), ...)
+#   spectral_uuid(merge(s_1, s_2, ...)) =
+#     combine(spectral_uuid(s_1), spectral_uuid(s_2), ...)
 #
 # The active 48 bits carry the quantized SpectralCoordinate<5>
 # (navigable; the local Laplacian neighbourhood structure across the
@@ -263,29 +267,29 @@ type splinter_shape =
 #
 #   - boot/std/peer.mirror declares `eigenboard: shard` (the typed
 #     handle to the peer's current spectral state). The peer.eigenboard
-#     IS a SpectralUuid-addressed shard whose splinters carry the
+#     IS a spectral_uuid-addressed shard whose splinters carry the
 #     peer's current tensions / gestalt / identity.
 #   - fragmentation/src/shard_ref.rs realizes shard's typed handle
 #     as `ShardRef { id: SpectralUuid, context: ShardContext,
 #     budget_bytes: BudgetBytes }`. The substrate names what the
 #     algebra IS; the Rust crate names how the shape is implemented.
-#   - shards/mirror/store.mirror declares `type shard_ref = oid` —
-#     this becomes structurally a SpectralUuid (the lift §9.7 of
-#     mosaic-as-type-system.md anticipates resolves naturally here:
-#     `shard.id IS SpectralUuid by construction`).
+#   - shards/mirror/store.mirror declares `type shard_ref =
+#     spectral_uuid` — the lift completed 2026-06-06 once
+#     spectral_uuid landed at the substrate altitude.
 #
-# The substrate-pull-realize lift to `id: SpectralUuid` is captured
-# below as a deferred tick: SpectralUuid is currently a Rust-only
-# type (prism/core/src/spectral_uuid.rs). When SpectralUuid lands at
-# the substrate altitude (likely in `shards/mirror/spectral_uuid.mirror`
-# or under `@mirror/store`), this field's type tightens from `oid` to
-# `SpectralUuid`. Until then, the substrate names what shard IS; the
-# property chain enforces SpectralUuid validity at commit time.
+# Substrate-pull-realize lift (2026-06-06): the `id: spectral_uuid`
+# field below closes the three-layer recognition at the type altitude.
+# spectral_uuid is declared as a sub-prism at @mirror/store/spectral_uuid
+# (shards/mirror/spectral_uuid.mirror) parallel to @mirror/store/oid;
+# both are content-addressed identity carriers at the store altitude.
+# The atom (splinter) stays oid-addressed; the settled composition
+# (shard) is spectral_uuid-addressed; the substrate is honest about
+# the difference.
 #
 # Cite: docs/specs/mosaic-as-type-system.md (the bottom-top-middle
-# recognition section, upserted 2026-06-06).
+# recognition section, upserted 2026-06-06; §9.7 resolved).
 type shard(altitude) = {
-  id: oid,                          # → SpectralUuid when declared at substrate (deferred lift)
+  id: spectral_uuid,
   splinters: [splinter(altitude)],
   transparency: transparency(altitude),
 }

@@ -1,0 +1,228 @@
+in @prism
+in @glass
+in @meta
+in @epistemologic/property/content_addressed
+in @epistemologic/property/laws/monoidal
+
+# @mirror/store/spectral_uuid — the graph-navigatable spectral identifier.
+#
+# The TOP layer of Alex's 2026-06-06 three-layer recognition (see
+# shards/glass.mirror's header and docs/specs/mosaic-as-type-system.md
+# §1B). Bottom (`splinter`, oid-addressed atom) and top (`spectral_uuid`,
+# the spectral identity) meet in the middle at `shard` — the
+# spectral_uuid-addressed settled composition. This shard declares the
+# top layer at the substrate altitude so the middle layer's `id` slot in
+# shards/glass.mirror can tighten from `oid` to `spectral_uuid` and the
+# mosaic-as-type-system §4 Hilbert-space construction stops being a
+# Rust-only fact.
+#
+# === The 128-bit layout, golden-ratio split ===
+#
+# Per prism/core/src/spectral_uuid.rs and
+# [[architecture-shard-as-crdt]] §3:
+#
+#   128 bits, golden-ratio split (≈1/φ²):
+#     48 bits ACTIVE  — quantized SpectralCoordinate<5>; leading;
+#                       graph-navigable. Carries the local Laplacian
+#                       neighbourhood structure within a shard's
+#                       splinter OID graph.
+#     80 bits DARK    — BLAKE3-truncated content hash; trailing;
+#                       identity. The settled splinter set's
+#                       content-address prefix.
+#
+# Big-endian on the active portion: byte-wise sort over the leading
+# bits IS lexicographic sort over the navigable coordinate. Range
+# scans on the 48-bit space compose with byte-wise sort. The standard
+# UUID hyphenated form (8-4-4-4-12) layers over the byte layout
+# directly; hyphens land at positions 4, 6, 8, 10.
+#
+# === Monoid homomorphism w.r.t. shard merge ===
+#
+# Per docs/specs/reality-shard-as-crdt.md §3:
+#
+#   spectral_uuid(merge(a, b)) = combine(spectral_uuid(a), spectral_uuid(b))
+#
+# Both halves compose homomorphically:
+#   - dark 80 bits compose via the Merkle tree's content-address rule;
+#   - active 48 bits compose via SpectralCoordinate's eigenvalue
+#     addition law (to first order; weighted by content size).
+#
+# `empty` is the semilattice's bottom — λ₀ = 0 in spectral space,
+# BLAKE3-of-empty in content space. The four monoid axioms (identity,
+# associativity, commutativity, idempotency) hold by structural
+# consequence of content-addressing + sorted-children, per
+# reality-shard-as-crdt.md §1. The `requires monoidal(spectral_uuid)`
+# declaration at the bottom is the substrate's compile-time witness.
+#
+# === Substrate placement ===
+#
+# Per the 2026-06-06 §9.9 OQ5 resolution in mosaic-as-type-system.md:
+# `spectral_uuid` lives at @mirror/store as a sub-prism parallel to
+# `@mirror/store/oid` (per shards/mirror/store.mirror:78-94). Both are
+# content-addressed identity carriers at the store altitude; `oid`
+# names the universal atomic content-address; `spectral_uuid` names
+# the settled composition's graph-navigable address. The shard
+# altitude (@glass) imports both.
+#
+# === Carrier shape ===
+#
+# Per [[feedback-no-bare-types]]: always newtype. `spectral_uuid` is a
+# typed reference whose content IS its identity; following the
+# @mirror/store/oid precedent (`type oid = ref`), the carrier is `ref`
+# — the substrate's content-reference primitive. The 48/80 split is a
+# property of the carrier, not a record field: the split is byte-stable
+# at the realization layer (prism/core/src/spectral_uuid.rs) and is
+# enforced structurally by the `combine` action's homomorphism and the
+# active/dark accessor actions declared below. Lifting the split into
+# a `{ active: u48, dark: u80 }` record at the substrate would require
+# substrate scalar types (`@scalar/u48`, `@scalar/u80`) that do not yet
+# exist; the ref-with-property-accessors form is the substrate-pull-
+# correct shape today.
+#
+# === The deferred arithmetic ===
+#
+# Per reality-shard-as-crdt.md §11 OQ1, the quantized 48-bit
+# arithmetic for `combine`'s active portion is still being pinned —
+# it lands when SpectralCoordinate<5>'s eigenvalue composition rules
+# quantize cleanly. The `combine` action below is declared with a `\`
+# obligation block; the signature is well-defined (the monoid laws
+# constrain it), the body is deferred to the same tick that pins the
+# arithmetic. This is the standard substrate-pull discipline: declare
+# what the substrate IS; defer the body to the consumer that needs it.
+#
+# Spec: docs/specs/reality-shard-as-crdt.md §§2, 3, 11.
+# Substrate decisions: [[architecture-shard-as-crdt]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]].
+# Related shards: glass.mirror (shard.id tightens to spectral_uuid),
+#                 mirror/store.mirror (the parent prism + oid sibling),
+#                 mirror/mosaic.mirror (the algebra A whose D acts on
+#                                       the spectral_uuid-indexed H).
+# Reference: [[reference-void-document]] (λ₀ = 0 IS empty.active).
+# Realisation: prism/core/src/spectral_uuid.rs (the carrier; this shard
+#              names what the carrier IS at the substrate altitude).
+
+# spectral_uuid is a sub-prism scoped to @mirror/store. The five-op
+# block makes the sub-prism's identity explicit per the
+# @mirror/store/oid precedent (shards/mirror/store.mirror:78-84).
+glass @mirror/store/spectral_uuid {
+  focus spectral_uuid
+  project spectral_uuid
+  split spectral_uuid
+  shift spectral_uuid
+  settle spectral_uuid
+}
+
+# === spectral_uuid — the carrier ===
+#
+# A typed reference. Content IS identity. Construction is by
+# `from_parts(active, content_hash)` at the realization layer or by
+# `combine` over an existing pair; equality is byte-equality of the
+# resulting 16-byte reference. The 48/80 split is a structural
+# property of the carrier enforced by the realization (per
+# prism/core/src/spectral_uuid.rs's big-endian active-leading layout).
+type spectral_uuid = ref
+
+# === empty — the bottom of the semilattice ===
+#
+# Per docs/specs/reality-shard-as-crdt.md §2: the canonical empty-
+# shard address. λ₀ = 0 on the active 48 bits (the void axis per
+# [[reference-void-document]]); BLAKE3 of empty input on the dark 80
+# bits (the well-known constant `af1349b9f5f9a1a6a040`). Stable
+# across all BLAKE3 implementations; byte-stable in the carrier.
+#
+# `fixed` per boot/std/mirror/glass/ast/shape/fixed.mirror: a fully
+# settled crystal, content-addressed on declaration, no holes, no
+# inference. The OID of this binding IS `empty`'s identity at the
+# substrate altitude. The realization layer (prism/core/src/
+# spectral_uuid.rs::EMPTY) is the byte-stable carrier; this
+# declaration names the substrate-altitude fixed point.
+fixed empty = spectral_uuid
+
+# === active — the navigable 48 bits ===
+#
+# Project the navigable coordinate out of a spectral_uuid. The
+# quantized SpectralCoordinate<5> — the local Laplacian neighbourhood
+# encoding within a shard's splinter OID graph. Range scans on the
+# active portion compose with byte-wise sort (the big-endian layout
+# is what makes this work). Body deferred to the realization layer.
+active(u: spectral_uuid) -> ref { \ }
+
+# === dark — the identity 80 bits ===
+#
+# Project the content-hash prefix out of a spectral_uuid. The
+# BLAKE3-truncated content hash — the splinter set's identity
+# component. Two spectral_uuids with identical dark portions are
+# composed from byte-equal splinter sets. Body deferred to the
+# realization layer.
+dark(u: spectral_uuid) -> ref { \ }
+
+# === combine — the monoid homomorphism ===
+#
+# Per docs/specs/reality-shard-as-crdt.md §3:
+#
+#   spectral_uuid(merge(a, b)) = combine(spectral_uuid(a),
+#                                        spectral_uuid(b))
+#
+# The active 48 bits compose via SpectralCoordinate's eigenvalue
+# addition law (to first order; the spectral position of a union of
+# content is the sum of the constituent positions weighted by content
+# size). The dark 80 bits compose via the Merkle tree's existing
+# content-address rule.
+#
+# Monoid laws (encoded by `requires monoidal(spectral_uuid)` below):
+#
+#   identity:        combine(empty, a) == a == combine(a, empty)
+#   associativity:   combine(combine(a, b), c)
+#                       == combine(a, combine(b, c))
+#   commutativity:   combine(a, b) == combine(b, a)   (per §1: from
+#                                                    sorted children)
+#   idempotency:     combine(a, a) == a               (per §1: from
+#                                                    content-address)
+#
+# The signature is well-defined; the body is deferred per the spec's
+# §11 OQ1 — the quantized 48-bit arithmetic lands when
+# SpectralCoordinate<5>'s eigenvalue composition rules quantize
+# cleanly. Until then, the realization layer's `from_parts` re-derives
+# the identifier from fresh inputs and `empty` carries the
+# bottom-element semantics.
+combine(a: spectral_uuid, b: spectral_uuid) -> spectral_uuid { \ }
+
+# === properties: the math made load-bearing ===
+#
+# content_addressed(spectral_uuid) : identity IS the content hash.
+#                                    Foundational; the substrate's
+#                                    monoid structure rests on it.
+#                                    Two spectral_uuids with byte-
+#                                    equal carriers ARE the same
+#                                    spectral_uuid.
+#
+# monoidal(spectral_uuid)          : combine + empty form a monoid.
+#                                    Identity, associativity per
+#                                    @epistemologic/property/laws/
+#                                    monoidal. Commutativity +
+#                                    idempotency follow from the
+#                                    semilattice structure
+#                                    (reality-shard-as-crdt.md §1)
+#                                    — captured in the docstring;
+#                                    the substrate-altitude property
+#                                    declaration uses the existing
+#                                    `monoidal` carrier (the parked
+#                                    `identity_for` / `commutative` /
+#                                    `idempotent` extensions per
+#                                    reality-shard-as-crdt.md §10
+#                                    tick 3 are not yet declared,
+#                                    and per the discipline land
+#                                    when their first consumer
+#                                    surfaces).
+requires content_addressed(spectral_uuid)
+requires monoidal(spectral_uuid)
+
+out @mirror/store/spectral_uuid
+out spectral_uuid
+out empty
+out active
+out dark
+out combine
