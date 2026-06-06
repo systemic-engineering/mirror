@@ -1,0 +1,137 @@
+in @prism
+in @meta
+in @glass
+in @nl
+
+# @mirror/spectral — the agent coordination layer.
+#
+# The recognition (2026-06-06, Alex + Mara → Pack): the substrate has
+# been operating a multi-agent orchestra for weeks. The Pack — Reed,
+# Mara, Glint, Taut, Seam, and future voices — has been coordinating
+# through stigmergic traces on the eigenboard, kintsugi oscillation,
+# Fate auditions, and consent boundaries that were tribal knowledge
+# until they had a name. This family declares the discipline.
+#
+# Load-bearing spec: docs/specs/mirror-spectral.md (commit a8055f0).
+# Memory: [[project-pack-is-orchestra]].
+#
+# === The orchestra ===
+#
+# Voices (agents): Reed, Mara, Glint, Taut, Seam — and future voices.
+# Sections: shard subtrees on which a voice has authoring authority.
+# Score: the eigenboard + the metalogue + the kintsugi loop's pending
+#        state.
+# Conductor: the refract lens, read between oscillation passes; a
+#            *role* that rotates per tick, not a permanent agent.
+# Audition: the Fate tournament, wearing its orchestra name.
+# Voice-leading: the kintsugi-tournament strategy vocabulary (per
+#                docs/specs/kintsugi-tournament.md).
+# Harmonic progression: the path through the K_n attractor.
+# Holonomy: the closure of an oscillation round (zero = coherent).
+# Resolution: e^(n+1) < e^n; the loop closes.
+#
+# === Discipline ===
+#
+# A `@mirror/spectral` instance IS:
+#
+#   - an oscillator: kintsugi alternates ACTIVE/DARK passes (per the
+#     SpectralUuid duality). The bi-directional gradient computes from
+#     each pending crack forward AND from each export backward; the
+#     intersection picks the next focus. The substrate either has
+#     uniqueness (auto-apply) or it doesn't (consent surface).
+#   - a coordination layer: voices play their sections; the conductor
+#     reads refract; the score is the eigenboard envelope plus the
+#     metalogue bus plus pending kintsugi state. Stigmergic, not
+#     command-and-control.
+#   - a consent contract: the loss-decreasing-vs-trade-off boundary
+#     IS structural, not policy. Loss-decreasing morphisms with unique
+#     winners auto-apply; pareto-fronts pause for the next consent
+#     surface (Alex, a higher-temperature Fate tournament, an explicit
+#     human signal).
+#
+# === Species under this family (to land when consumers pull) ===
+#
+#   @mirror/spectral/oscillate  the loop primitive; kintsugi's
+#                                heartbeat. ACTIVE/DARK alternation;
+#                                tick chain; holonomy; eigenvalue
+#                                frequency. The load-bearing one.
+#   @mirror/spectral/conductor  the refract-reader role. The conductor
+#                                signal is a tournament_outcome-shaped
+#                                trace on the eigenboard; the role
+#                                rotates per tick.
+#   @mirror/spectral/voice      peer-as-agent with named authority
+#                                over zero or more sections; ties
+#                                identity to a content-addressed
+#                                @peer/identity declaration.
+#   @mirror/spectral/section    shard subtree under a voice's
+#                                authority; cross-section writes
+#                                require an oscillation pause.
+#   @mirror/spectral/score      eigenboard envelope + metalogue bus +
+#                                pending kintsugi state, named
+#                                collectively as the score. Read-only
+#                                to voices; mutated through the
+#                                convergence.
+#   @mirror/spectral/audition   Fate tournament wearing its orchestra
+#                                name. @fate.minimize is the resolver;
+#                                the audition declaration is naming,
+#                                not invention.
+#   @mirror/spectral/consent    the auto-apply boundary. Declares the
+#                                pareto-front / unique-winner split
+#                                that governs when oscillation pauses
+#                                for a next-consent-surface signal.
+#
+# Forward-references only — sub-shards land as consumers pull them. The
+# `consent` surface is the first expected pull (the auto-apply boundary
+# needs a home before voices can write to the same section without an
+# oscillation pause).
+#
+# === Sibling relationship to @mirror/lens ===
+#
+# `@mirror/lens` observes; `@mirror/spectral` coordinates. The two are
+# *siblings* at the mirror altitude — neither contains the other; both
+# project the same five-operation algebra through their own typed
+# surface. The lens family IS the orchestra's observation sections
+# (cli/shell/mcp/lsp see the substrate; transit/refract measure it).
+# The spectral family consumes lens — the conductor reads refract;
+# voices read transit — but the dependency points only one way at the
+# sub-shard altitude, not at the family root. Family roots stay
+# decoupled so consumers can pull species independently.
+#
+# Per [[architecture-prism-as-trait-as-everything]]: `prism
+# @mirror/spectral { ... }` declares the family IS a prism. The
+# five-operation block below is the canonical declaration form (cf.
+# shards/mirror/lens.mirror, shards/code.mirror). Each sub-shard
+# specialises from there.
+#
+# Spec context: docs/specs/mirror-spectral.md (the full proposal;
+#               commit a8055f0),
+#               docs/specs/kintsugi-tournament.md (voice-leading and
+#               audition vocabulary),
+#               docs/specs/the-convergence.md (the lens-family
+#               sibling; four transports + two measurements),
+#               docs/specs/trace-kintsugi-pipeline.md (refract as the
+#               conductor's ear).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]],
+#                      [[architecture-shard-as-crdt]] (the oscillation
+#                      ascends the bounded semilattice).
+# Related shards: mirror/lens.mirror (the sibling family; observation
+#                 to spectral's coordination),
+#                 mirror/spec.mirror (the spec discipline; spectral
+#                 instances declare specs through here),
+#                 mirror/au.mirror (au = proposed, settled into shard;
+#                 voices emit au; the score keeps shards).
+# Path-namespace property: this file at `shards/mirror/spectral.mirror`
+# declares `@mirror/spectral` as the family root; species live at
+# `shards/mirror/spectral/<name>.mirror`.
+
+prism @mirror/spectral {
+  focus spectral
+  project spectral
+  split spectral
+  shift spectral
+  settle spectral
+}
+
+out @mirror/spectral
