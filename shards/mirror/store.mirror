@@ -28,15 +28,20 @@ in @uuid/spectral
 # OIDs in the dependency tree). The substrate's stored composition
 # unit (spectral_uuid-addressed) is `shard`, also declared at @glass.
 #
-# Alex's recognition (2026-06-06, post the spectral_uuid landing):
-# `splinter_graph` IS mosaic at the @store altitude — the (root,
-# children) shape carries the same compositional meaning the
-# universal mosaic algebra carries at every altitude. The local
-# name (`splinter_graph`) is the @store-altitude specialization;
-# the universal mosaic vocabulary lives at the mosaic prism shard
-# (shards/mirror/mosaic.mirror). Naming convention captured here;
-# the universal rename is a separate substrate touch, surfaced for
-# Alex's call.
+# Alex's recognition (2026-06-06, post the spectral_uuid landing,
+# realized 2026-06-06 second tick by Mara): `splinter_graph` IS
+# `mosaic(@store)` — the (root, children) shape carries the same
+# compositional meaning the universal mosaic algebra carries at
+# every altitude. The parametric universal carrier
+# `type mosaic(altitude) = ref` is declared at @mirror/mosaic
+# (shards/mirror/mosaic.mirror); the @store-altitude specialization
+# is `splinter_graph`'s concrete record form (substantive structure:
+# root + children-closure). The two declarations agree on meaning;
+# the concrete record shape stays where it is because the closure
+# structure is load-bearing at this altitude, and a future tick
+# may declare `type splinter_graph = mosaic(@store)` as a type
+# alias once the substrate's altitude-parametric type aliasing
+# matures (deferred substrate touch).
 #
 # The store IS canonical. `.shatter` files on disk are ONE
 # OPTIONAL projection format of the store's content (per

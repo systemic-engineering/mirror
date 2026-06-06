@@ -55,6 +55,42 @@ prism @mirror/mosaic {
   settle  emitter     # emitter            -> au(altitude)
 }
 
+# === mosaic(altitude) — the parametric universal composition form ===
+#
+# Recognition (2026-06-06 second tick, Mara): mosaic IS the
+# composition form at every altitude. The five operations make
+# pieces; mosaic IS what those pieces compose into. The shape of
+# the composition is altitude-specific:
+#
+#   mosaic(@store)        is the splinter-graph (OID-closure;
+#                          structural lockfile per
+#                          shards/mirror/store.mirror; the (root,
+#                          children) record form).
+#   mosaic(@spec)         is the project manifold the focus operation
+#                          produces (source + legacy + target +
+#                          settle_on as a typed graph).
+#   mosaic(@emitter)      is the shifted-to-an-altitude
+#                          intermediate that settle consumes.
+#   mosaic(@code/rust)    is the resolved Rust workspace + build
+#                          invocation the cargo @io call composes
+#                          across.
+#   mosaic(@ci/github)    is the GitHub Actions YAML manifold.
+#
+# Each altitude declares its own `mosaic(A)` shape in its own grammar
+# (substrate-pull: the consumer at that altitude shapes the form;
+# the universal carrier here is the opaque-by-default reference).
+# The previous tick's `splinter_graph` in shards/mirror/store.mirror
+# IS `mosaic(@store)`; the universal vocabulary lives here, the
+# store-altitude specialization stays where it is and acknowledges
+# the recognition in its docstring.
+#
+# Per [[architecture-prism-as-trait-as-everything]]: parametric
+# carriers (the (altitude) binder) are the substrate's standard
+# form for altitude-specialized types (cf. `type au(altitude)`
+# below; `type splinter(altitude)` at @glass; `type shard(altitude)`
+# at @glass). The machinery already exists.
+type mosaic(altitude) = ref
+
 # === au at an altitude — the parametric verdict ===
 #
 # `au` is the substrate's settled-gold form (per glass.mirror's
@@ -158,6 +194,7 @@ settle_on(resolved) -> transparency(target) { \ }
 shatter(au, transparency) -> ref { \ }
 
 out @mirror/mosaic
+out mosaic
 out au
 out focus
 out project
