@@ -1,0 +1,77 @@
+in @code
+in @prism
+in @glass
+in @meta
+in @nl
+
+# @code/mirror — mirror's instance of @code at the mirror altitude.
+#
+# The recognition (2026-06-06, Reed + Alex → Mara): mirror IS code at
+# the mirror altitude. Same as @code/rust IS code at the Rust altitude,
+# @code/llvm IS code at the LLVM altitude. The substrate already had
+# @code as the universal grammar-at-an-altitude discipline; this shard
+# names mirror's own membership in that family.
+#
+# Why this matters for self-hosting (per the butterfly roadmap, Phase 2
+# in `roadmap/wip/butterfly-self-hosting.md` §The compile staircase):
+# when @code/mirror is the bootstrap's parser, the bootstrap stops
+# being load-bearing for parsing. Mirror parses mirror through its own
+# substrate-declared @code instance. The previous framing
+# `@mirror/syntax` was wrong-shaped because syntax is not a sibling of
+# mosaic / cli / spec / store at @mirror — syntax is what code IS at
+# the mirror altitude, which means the substrate already had the word.
+#
+# === naming: why @code/mirror, not @mirror/code ===
+#
+# Two arguments converge on @code/mirror:
+#
+#   1. Path-namespace property (load-bearing per
+#      [[architecture-shards-as-substrate-source]]): this file lives at
+#      `shards/code/mirror.mirror` and that path declares the namespace
+#      `@code/mirror`. Same shape as `shards/code/rust.mirror` declares
+#      `@code/rust`. The path IS the declaration.
+#
+#   2. Sibling discipline: @code/mirror sits alongside @code/rust,
+#      @code/gleam, @code/llvm, @code/fortran as instances of the same
+#      universal discipline. Reading the family flat-namespaced makes
+#      the substrate-pull recognition legible ("mirror is one of the
+#      altitudes @code knows about"). @mirror/code would isolate mirror
+#      as its own sub-family and lose that legibility.
+#
+# Alex flagged (2026-06-06) that `@X/Y/Z` namespaces may be isomorphic
+# to `@Z/Y/X` because composition is order-invariant; the
+# path-namespace property pulls the canonical form to the path-shape,
+# which lands at @code/mirror here.
+#
+# === five operations at the mirror altitude ===
+#
+# Per the prism-as-trait-as-everything discipline, declaring @code/mirror
+# IS declaring the five operations on the mirror-source manifold. The
+# operation signatures inherit from @code (universal); the altitude
+# specialization names what each verb does at THIS altitude. Bodies
+# are abstract (the obligation block \) — the bootstrap discharges them
+# today; @mirror/compile discharges them in the self-hosted phase.
+#
+# Spec context: docs/specs/spectral-triple-binary.md §3 (the translate
+# template); roadmap/wip/butterfly-self-hosting.md §Phase 2 (parser
+# self-hosting); roadmap/pending/phase-2-parser-self.md.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]].
+# Related shards: code.mirror (the universal parent),
+#                 code/rust.mirror (D2; the sibling precedent),
+#                 code/gleam.mirror (post-migration from boot/04b),
+#                 mirror/store.mirror (where @code/mirror artifacts
+#                 settle as content-addressed splinters).
+# Path-namespace property: this file at `shards/code/mirror.mirror`
+# declares `@code/mirror` and only that.
+
+prism @code/mirror {
+  focus mirror
+  project mirror
+  split mirror
+  shift mirror
+  settle mirror
+}
+
+out @code/mirror
