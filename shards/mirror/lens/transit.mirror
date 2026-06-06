@@ -1,0 +1,179 @@
+in @prism
+in @glass
+in @nl
+in @mirror/lens
+
+# @mirror/lens/transit — the runtime-cost lens.
+#
+# Lifts Taut's fragmentation/docs/specs/lens-transit.md to mirror's
+# altitude. Transit measures what's lost in passage — the spectrum of
+# a body's execution dispersed by property. The body is the prism;
+# transit is the spectrum; the loss is what dispersion shows.
+#
+# Per docs/insights/2026-06-06-benchmarking-glass-sweep.md (Taut's
+# recognition tick): @lens/transit IS the benchmarking glass the
+# substrate was reaching for. The lens family migration absorbs the
+# spec under @mirror/lens/transit at mirror's altitude.
+#
+# === Six property axes (per lens-transit.md §2) ===
+#
+#   WallClock          time elapsed from dispatch entry to body return.
+#                       Floor: nanosecond on most platforms.
+#   FpPrecision        cumulative FP precision loss. Floor: machine
+#                       epsilon (IEEE 754).
+#   CachePressure      cache-line touches. Floor: cache-line
+#                       granularity (typically 64 B / 128 B on M-series).
+#   Allocation         bytes allocated on the critical path. Floor:
+#                       page size (4 KB / 16 KB).
+#   BranchMisses       branch-misprediction count. Floor: pipeline
+#                       depth (platform-dependent).
+#   BudgetConsumption  budget consumed against the declared
+#                       TickInterval (hard-realtime; per
+#                       hamilton-scheduler.md).
+#
+# Each axis is a property; each verdict is `verdict` (the glass-floor
+# pass | partial(confidence) | failure(reason)); the joint report is
+# `transparency<P>` over the property family. Multi-axis spectrum, not
+# single-scalar wall-clock. Per @glass.transparency: located opacities,
+# not bare numbers.
+#
+# === Composition is borrowed verbatim ===
+#
+# When a body invokes sub-bodies, transit composes parent and children
+# via the existing transparency monoid (@glass). NO new combine; NO new
+# merge; NO new identity. Fail dominates; Partials accumulate
+# diagnostics; Pass is neutral. Per lens-transit.md §3.
+#
+# === Hardware floor — the speed-of-light analogue ===
+#
+# The substrate cannot measure below the local hardware's precision.
+# Every transit report carries the floors that applied at measurement
+# time. Cross-hardware verdicts compose under a documented translation
+# rule (deferred per lens-transit.md §8.3). The honesty composes with
+# the @epistemologic/reality discipline (Mara's reality-family migration
+# this tick: reality is observer-relative and hardware-floor-bounded;
+# transit is reality MEASURED at the body altitude).
+#
+# === Family placement ===
+#
+# Fifth species under @mirror/lens. Measurement-shape lens (transports
+# are cli / shell / mcp / lsp; measurements are transit + refract).
+# The transparency<P> consumer the family root names operationally; the
+# verdict envelope that lens-transit.md §1.1 declared.
+#
+# === Body status ===
+#
+# FAMILY-HEADER ONLY this tick. The six property axes are declared as a
+# closed-sum type so the substrate has handles instead of stringly
+# tags; the measurement primitives (`measure`, `report`, the per-axis
+# detection bodies) carry obligation blocks; bodies land when Taut's
+# implementation tick wires the Rust measurement code (per lens-transit.md
+# §9: "the Rust does not land with this commit. The next tick lands
+# the property enum, the measurement implementations per property, the
+# platform-floor detection, the integration with the dispatcher.").
+#
+# This shard is the substrate-altitude declaration of what lens-transit.md
+# specified at the fragmentation altitude. The Rust impl lives in
+# fragmentation/; the substrate-side type discipline lives here.
+#
+# Spec context: fragmentation/docs/specs/lens-transit.md (the Red spec),
+#               docs/insights/2026-06-06-benchmarking-glass-sweep.md
+#               (the lens-family recognition),
+#               fragmentation/docs/specs/hamilton-scheduler.md (the
+#               sibling realtime contract this lens observes).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]] (no scalar loss; verdict
+#                      shape always).
+# Related shards: lens.mirror (family root),
+#                 lens/refract.mirror (sibling measurement lens at the
+#                 grammar-graph altitude),
+#                 glass.mirror (verdict + transparency + imperfect),
+#                 epistemologic/reality.mirror (the observer-relative
+#                 hardware-floor discipline transit measures against).
+# Path-namespace property: this file at `shards/mirror/lens/transit.mirror`
+# declares `@mirror/lens/transit` and only that.
+
+prism @mirror/lens/transit {
+  focus transit
+  project transit
+  split transit
+  shift transit
+  settle transit
+}
+
+# === property family — the six axes ===
+#
+# Closed sum. Each variant is a stable substrate path the verdict is
+# located at; downstream consumers (Reflection reading transit overage
+# as a question payload per error-as-question.md §5.3) match on the
+# variant. No stringly tags.
+type property = wall_clock | fp_precision | cache_pressure | allocation | branch_misses | budget_consumption
+
+# === floor declaration carrier ===
+#
+# Per lens-transit.md §7: each property has a per-platform floor; the
+# substrate cannot measure below it. Reports MUST carry the floors
+# that applied. Newtype shape (no bare numbers) per
+# [[feedback-no-bare-types]].
+type nanosecond_floor   = u64
+type machine_epsilon    = f64
+type cache_line_size    = u32
+type page_size          = u32
+type pipeline_depth     = u32
+type tick_interval      = u64
+
+type floor = {
+  wall_clock:     nanosecond_floor,
+  fp_precision:   machine_epsilon,
+  cache_pressure: cache_line_size,
+  allocation:     page_size,
+  branch_misses:  pipeline_depth,
+  budget:         tick_interval,
+}
+
+# === transit report — transparency<P> + floor declaration ===
+#
+# Per lens-transit.md §1.1: the report newtype carries per-property
+# verdicts located at substrate paths PLUS the hardware-floor
+# declaration active at measurement time. transparency(property) IS
+# the glass-floor loss carrier parametric on the property axis; per
+# @glass.transparency the cases are success | partial(opacity_map) |
+# failure(opacity_map).
+type report = {
+  verdicts: transparency(property),
+  floors:   floor,
+}
+
+# === measurement surface — abstract; bodies on consumer pull ===
+
+# measure — observe a body's execution against the property family;
+# returns a transit report. The body is the prism whose spectrum the
+# report names. Bodies (the per-property measurement primitives) land
+# in Taut's implementation tick per lens-transit.md §9.
+measure(body: ref, p: [property]) -> report { \ }
+
+# overage — the substrate's question-payload hook (per
+# error-as-question.md §5.3). When a transit verdict carries Fail or
+# Partial on a budget-bounded property, the overage becomes a question
+# at the body altitude that Reflection answers.
+overage(r: report, target: ref) -> imperfect { \ }
+
+# compose — parent body's report from children's reports + parent's
+# own observations. Per lens-transit.md §3: the existing transparency
+# monoid IS the combine law; no new merge.
+compose(parent: report, children: [report]) -> report { \ }
+
+out @mirror/lens/transit
+out property
+out floor
+out nanosecond_floor
+out machine_epsilon
+out cache_line_size
+out page_size
+out pipeline_depth
+out tick_interval
+out report
+out measure
+out overage
+out compose

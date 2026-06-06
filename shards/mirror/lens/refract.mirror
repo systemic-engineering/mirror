@@ -1,0 +1,127 @@
+in @prism
+in @glass
+in @nl
+in @mirror/lens
+
+# @mirror/lens/refract — the grammar-graph spectrum lens.
+#
+# The measurement glass at the grammar-graph altitude. Reads the five
+# Void dualities (entropy / spectral / cheeger / ricci / mixing) over
+# the grammar graph and surfaces them as verdicts; the gutter rendering
+# layer's input.
+#
+# Per docs/specs/trace-kintsugi-pipeline.md: "@mirror/refract IS bench
+# wearing its real name." The substrate has been measuring itself
+# spectrally at the grammar-graph altitude for over a month; the lens
+# family naming closes the recognition. Per
+# docs/insights/2026-06-06-benchmarking-glass-sweep.md §2.2: refract
+# observes the SHAPE of the grammar; transit observes the COST of
+# executing it. Two layers of the same observation tower.
+#
+# === Why refract stays a namespace name ===
+#
+# The 2026-06-04 operation-altitude rename (refract → settle) was at
+# the algebra altitude: every Prism has a `settle` operation, not a
+# `refract` operation. The optical-dispersion metaphor lifted to the
+# family altitude where it stays load-bearing: a measurement lens IS
+# refraction — the grammar graph enters, the five dualities disperse
+# the structure into bands, the verdicts come out. The namespace
+# `@mirror/lens/refract` carries the family-altitude metaphor without
+# competing for the operation name.
+#
+# === Five Void dualities (per trace-kintsugi-pipeline.md §1.1) ===
+#
+#   entropy   Von Neumann entropy of the normalized graph Laplacian.
+#             Order ↔ disorder. Low = rigid/crystallized. High = chaotic.
+#   spectral  Fiedler value (λ_2 of graph Laplacian). Connectivity ↔
+#             fragility. High = robust mesh. Low = fragile.
+#   cheeger   Cheeger constant (minimum edge boundary ratio). Flow ↔
+#             bottleneck. High = smooth data flow. Low = SPOF.
+#   ricci     Forman-Ricci curvature per edge. Geometric pressure on
+#             individual edges.
+#   mixing    random-walk mixing time. How fast information equilibrates
+#             across the graph.
+#
+# Each duality is a property; each verdict is the glass-floor
+# verdict; the joint report is transparency<duality>. Same monoid as
+# @mirror/lens/transit; same eigenboard-tagged envelope.
+#
+# === Family placement ===
+#
+# Sixth species under @mirror/lens. Measurement-shape lens at the
+# grammar-graph altitude (sibling to lens/transit at the body altitude).
+# Per the benchmarking-glass-sweep §2.2: "refract observes the SHAPE of
+# the grammar; transit observes the COST of executing it."
+#
+# === Body status ===
+#
+# FAMILY-HEADER ONLY this tick. The five-duality property type is
+# declared as a closed sum; the measurement surface (the bench infrastructure
+# already living in mirror, per trace-kintsugi-pipeline.md) lands via
+# obligation blocks; bodies (Fiedler-vector computation, von Neumann
+# entropy, Forman-Ricci, mixing time) live in the bootstrap's spectral
+# layer (bootstrap/src/spectral.rs) and lift into mirror as the
+# substrate-pull discipline matures.
+#
+# Spec context: docs/specs/trace-kintsugi-pipeline.md (the bench-as-
+#               refract recognition),
+#               docs/insights/2026-06-06-benchmarking-glass-sweep.md
+#               §2.2 (refract as measurement-at-grammar-graph altitude),
+#               docs/specs/the-convergence.md (the four-transport
+#               family this measurement lens sits beside).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-operations-as-linear-algebra]]
+#                      (the dualities ARE linear-algebraic properties
+#                      of the graph Laplacian).
+# Related shards: lens.mirror (family root),
+#                 lens/transit.mirror (sibling measurement lens at the
+#                 body altitude),
+#                 glass.mirror (verdict + transparency).
+# Path-namespace property: this file at `shards/mirror/lens/refract.mirror`
+# declares `@mirror/lens/refract` and only that.
+
+prism @mirror/lens/refract {
+  focus refract
+  project refract
+  split refract
+  shift refract
+  settle refract
+}
+
+# === duality family — the five Void dualities ===
+#
+# Closed sum. Each variant names one spectral measurement of the
+# grammar graph; downstream consumers (the gutter rendering layer)
+# match on the variant to pick a color.
+type duality = entropy | spectral | cheeger | ricci | mixing
+
+# === refract report — transparency<duality> ===
+#
+# Per trace-kintsugi-pipeline.md: refract's output is the five-duality
+# spectrum of the grammar graph at one snapshot. transparency(duality)
+# is the glass-floor loss carrier parametric on the duality axis;
+# verdicts compose under the same monoid lens/transit uses (one algebra,
+# many consumers).
+type report = {
+  verdicts: transparency(duality),
+}
+
+# === measurement surface — abstract; bodies on consumer pull ===
+
+# measure — read a grammar graph and produce a refract report. The
+# bodies (Fiedler-vector, von-Neumann-entropy, Forman-Ricci, Cheeger,
+# random-walk mixing) live in bootstrap/src/spectral.rs today; lift
+# into substrate as substrate-pull matures.
+measure(graph: ref, d: [duality]) -> report { \ }
+
+# stabilize — the kintsugi-pipeline halting condition. Loss stabilizes
+# when eⁿ⁺¹ ≥ eⁿ (per trace-kintsugi-pipeline.md §0). The substrate
+# reads this as the crystal-formation signal.
+stabilize(prev: report, next: report) -> verdict { \ }
+
+out @mirror/lens/refract
+out duality
+out report
+out measure
+out stabilize
