@@ -61,11 +61,12 @@ shards/             FLOOR (canonical; loaded first)
   metalogue.mirror     language's self-conversation
   epistemologic/       substrate-level properties
   mirror/              @mirror/* shards (cli, mosaic, spec, store, au, shatter)
-  code/                @code/* altitude grammars (rust; llvm + fortran pending)
+  code.mirror          @code universal grammar-at-altitude discipline (the parent)
+  code/                @code/* altitude grammars (mirror, rust, gleam; llvm + fortran pending)
   io/                  @io/* contracts (cargo; flang pending)
 
 boot/               LEGACY (shrinks per release; monotonic line-count contract)
-  00..07-*.mirror      18 kernel grammars (option/result migrating to shards/std/)
+  00..07-*.mirror      15 kernel grammars (04-code trio migrated to shards/code* 2026-06-06)
   std/                 ~79 library grammars
 
 bootstrap/          THE SEED (FROZEN against capability growth)

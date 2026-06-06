@@ -26,15 +26,31 @@ other:
   contract is the declared codegen boundary; `au(altitude)` is the
   declared output type of settle. **Locking the substrate shape is the
   point of cutting v0.1.0.** That's correct, and we ship it now.
-- **The Phase 2 → Phase 7 progression.** Phase 2 sketches @mirror/syntax
-  as a parser; Phase 4 introduces @code/mirror as a render template;
-  Phase 6 introduces NumericalPrism backends; Phase 7 declares
-  self-hosting. **Each phase will commit to a codegen path implicitly
-  if we let it.** Phase 4 already names "fragmentation generated from
+- **The Phase 2 → Phase 7 progression.** Phase 2 sketches @code/mirror
+  as the parser (collapsed from the previous @mirror/syntax framing —
+  see the recognition note below); Phase 4 keeps @code/mirror as the
+  render template (same substrate, both directions); Phase 6 introduces
+  NumericalPrism backends; Phase 7 declares self-hosting. **Each phase
+  will commit to a codegen path implicitly if we let it.** Phase 4
+  already names "fragmentation generated from
   `@fragmentation + @code/rust`" — that's a codegen commitment by a
   side door. Phase 6 already names LapackBackend / MetalBackend /
   OpenCLBackend — that's a numerical-substrate commitment by a side
   door.
+
+> **Substrate-pull recognition (2026-06-06, Reed + Alex → Mara).** The
+> previous Phase 2 target name `@mirror/syntax` was wrong-shaped: syntax
+> is not a sibling of mosaic / cli / spec / store at @mirror — syntax IS
+> what code IS at the mirror altitude. The substrate already had `@code`
+> (now declared at `shards/code.mirror`) as the universal grammar-at-
+> an-altitude discipline; mirror is one instance, declared at
+> `shards/code/mirror.mirror` as `@code/mirror`. Phase 2's deliverable
+> is `@code/mirror` as the bootstrap's parser (replacing
+> `bootstrap/src/tokenize.rs` + `bootstrap/src/grammar.rs` dispatch).
+> Same pattern as splinter_graph → mosaic(@store) and fragment →
+> splinter: the substrate already had the word. The table at §The
+> compile staircase below uses `@code/mirror`/`@code/keyword` in place
+> of `@mirror/syntax`/`@mirror/keyword`.
 
 **The last responsible moment to commit the butterfly architecture is
 the window between v0.1.0 cut and the start of Phase 4 implementation
@@ -336,7 +352,7 @@ test that says the rung was climbed.
 |------|-------|-------------------|--------------|----------|
 | **0** | Phase 0 (here) | — | — | `bootstrap/src/` works; 1,362 tests green; 76% coverage. Substrate floor: 13 shards. |
 | **1** | Phase 1 | `!=` tokenization missing; singularity types missing | `boot/std/mirror/glass/ast/token.mirror` consumed by bootstrap (LANDED 2026-05-26) | `mirror compile boot/` produces zero holonomy |
-| **2** | Phase 2 | `bootstrap/src/tokenize.rs`, `bootstrap/src/grammar.rs` (dispatch logic) | `@mirror/syntax`, `@mirror/keyword` (self-teaching) | `@mirror/syntax` parses `@mirror/syntax` |
+| **2** | Phase 2 | `bootstrap/src/tokenize.rs`, `bootstrap/src/grammar.rs` (dispatch logic) | `@code/mirror`, `@code/keyword` (self-teaching; collapsed from `@mirror/syntax` per the 2026-06-06 recognition above) | `@code/mirror` parses `@code/mirror` |
 | **3** | Phase 3 | `bootstrap/src/resolve` (already gone post-collapse; this rung is the *grammar* version) | `@mirror/resolve` grammar; type-registry as `.mirror` type | `@mirror/resolve` resolves `@mirror/resolve` |
 | **4** | Phase 4 | `fragmentation/src/` (hand-written Rust) | `@fragmentation + @code/rust` translate template; `@code/mirror` render template; `@shatter/format` | `@code/mirror` renders itself round-trip; generated fragmentation passes all fragmentation tests |
 | **5** | Phase 5 | `\` hole as flag-only; pipeline composition as syntax-only | `\` dispatch via `@fate.infer`; `|\>` (pipe-with-hole); kintsugi as Reflection; Scheduler Tower demand contract; runtime dispatch via `@mirror/serve` | Reflection observes a full tick; loss decreases monotonically across ticks (eⁿ⁺¹ ≤ eⁿ); kintsugi tournament converges |
@@ -629,7 +645,7 @@ Five. Each is genuinely unresolved; each has a forcing function.
         |        |        |        +--- fragmentation-as-generated via @code/rust
         |        |        |             (Path B: @code/rust is the first emitter)
         |        |        +--- @mirror/resolve grammar
-        |        +--- @mirror/syntax grammar
+        |        +--- @code/mirror grammar (was: @mirror/syntax; per the 2026-06-06 recognition)
         +--- @mirror/glass/ast/token consumed (LANDED)
         ↓
   Phase 5 — Reflection + Scheduler Tower + \ dispatch via @fate
