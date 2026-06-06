@@ -74,4 +74,99 @@ prism @code/mirror {
   settle mirror
 }
 
+# === type-declaration grammar — newline-tolerant variant separator ===
+#
+# Substrate-pull-realize tick (2026-06-06, Reed + Alex → Mara). The
+# bootstrap (`bootstrap/src/tokenize.rs`, the Split branch for the
+# `type` keyword) currently slurps the body of a type declaration up to
+# the first newline / semicolon / brace and discards it; the leading
+# `|` of a continuation line then surfaces as a Dark region under
+# `--strict`. The substrate, however, has been WRITTEN in the multi-
+# line shape from the start: glass.mirror's `type imperfect`, `type
+# transparency`, `type verdict`, `type splinter_shape` (lines 213-216,
+# 220-223, 233-237, plus the lift-tick additions) all use the
+# `|`-leading multi-line form because that's what readability pulls
+# toward in the wild. The bootstrap parser is BEHIND the substrate;
+# `mirror compile --strict shards/glass.mirror` surfaces 24 dark
+# regions today, every one of them a continuation `|` line.
+#
+# The fix is not to extend mirror's syntax. It's to declare mirror's
+# variant-separator rule HERE, at the substrate altitude that Phase 2
+# wires as the bootstrap's parser (per roadmap/pending/phase-2-parser-
+# self.md task 1: "Write @code/mirror grammar describing tokenization
+# rules using the five operations"). The substrate already carries the
+# rule's primitive: `charset(whitespace)` (cf. boot/std/mirror/grammar.
+# mirror line 21, boot/std/mirror/glass/ast/token.mirror line 72,
+# boot/std/mirror/nl.mirror line 14) is the universal whitespace class
+# — by substrate convention it admits space, tab, carriage return,
+# AND newline. The multi-line tolerance falls out of using that
+# primitive as the separator's surround; no new combinator needed.
+#
+# Said another way: the substrate already had the rule. We just
+# hadn't NAMED the inheritance. Same shape as the @code recognition
+# itself (mirror IS code at the mirror altitude), as splinter_graph →
+# mosaic(@store), as fragment → splinter. The substrate-pull pattern.
+#
+# Phase 2 will discharge the obligation: when the bootstrap's parser is
+# replaced by @code/mirror, the multi-line form parses identically to
+# the single-line form, and `mirror compile --strict` over glass.mirror
+# / transit.mirror / refract.mirror returns zero darks for the variant
+# separators. Until then this declaration is forward-looking; the
+# bootstrap stays single-line-only and substrate-pull-honest call sites
+# (transit.mirror, refract.mirror) keep the flattened shape to honor
+# the bootstrap constraint while the substrate carries the truth.
+#
+# Path-namespace note: this grammar block declares `@code/mirror/grammar`
+# under the path-namespace property
+# ([[architecture-shards-as-substrate-source]]). The block belongs to
+# @code/mirror as code IS grammar at the mirror altitude (per the
+# Phase-2 recognition); the sub-prism naming preserves the Phase-2
+# language ("@code/mirror grammar") at the substrate altitude.
+
+grammar @code/mirror/grammar("mirror", "spec", "meta", "glass", "shard", "shatter") {
+  in @meta
+
+  # ===== lexical primitives =====
+  # Whitespace by substrate convention admits space, tab, carriage
+  # return, AND newline. The newline tolerance below is structural —
+  # the multi-line tolerance of the variant separator follows from
+  # using `whitespace` as its surround, not from a separator-specific
+  # rule.
+  fixed whitespace        = repeat(charset(whitespace), 0, none)
+  fixed identifier        = repeat(charset(word_char), 1, none)
+  fixed name              = repeat(charset(name_char), 1, none)
+
+  # ===== type declaration with closed-sum variants =====
+  # `type <name> = <variant> (| <variant>)*`
+  #
+  # The separator is `whitespace "|" whitespace`. Because `whitespace`
+  # admits newlines (cf. lexical primitives above), the production
+  # accepts BOTH shapes identically:
+  #
+  #   type property = wall_clock | fp_precision | cache_pressure
+  #
+  #   type property = wall_clock
+  #                 | fp_precision
+  #                 | cache_pressure
+  #
+  # and the leading-`|` shape glass.mirror already uses:
+  #
+  #   type imperfect(a, e, l) =
+  #     | success(a)
+  #     | partial(a, l)
+  #     | failure(e, l)
+  #
+  # The variant body is whatever the host grammar admits as a type
+  # term (a bare identifier; a parametric application `T(U)`; a
+  # tuple). The `until_separator` reader stops at the next `|` or
+  # the end of the declaration; downstream resolution interprets
+  # the captured bytes as a type term in the same way action
+  # declarations interpret their body.
+  fixed variant_separator = seq(whitespace, literal("|"), whitespace)
+  fixed variant           = until_separator
+  fixed variant_list      = seq(variant, repeat(seq(variant_separator, variant), 0, none))
+  fixed type_form         = seq(literal("type"), whitespace, identifier, whitespace, literal("="), whitespace, variant_list)
+}
+
 out @code/mirror
+out @code/mirror/grammar
