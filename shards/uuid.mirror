@@ -1,0 +1,117 @@
+in @prism
+in @meta
+in @epistemologic/property/content_addressed
+
+# @uuid — the universal 128-bit identifier discipline.
+#
+# Root prism in the substrate, declared in the floor alongside
+# @prism, @nl, @metalogue, @glass. Names the universal identifier
+# carrier: a 128-bit value whose canonical string form is the
+# hyphenated 8-4-4-4-12 (36-character) representation.
+#
+# === Why @uuid is a root prism ===
+#
+# Per [[architecture-prism-as-trait-as-everything]] every kind that
+# stands on its own algebra is a prism. UUIDs ARE such a kind: a
+# 128-bit address space with a single string discipline (hyphenated
+# form), parse / format / equality as the universal surface, and
+# multiple specializations that each carry their own structural
+# meaning under the same address space. The root prism declares the
+# discipline; sub-prisms declare the variants.
+#
+# Variants the substrate currently knows or will pull through:
+#   @uuid/spectral   the navigable spectral identifier; 48 ACTIVE +
+#                    80 DARK; monoid w.r.t. shard merge
+#                    (shards/uuid/spectral.mirror, 2026-06-06
+#                    Mara's tick — the first sub-prism to land).
+#   @uuid/v4         random; opaque; for when an identifier needs
+#                    to be drawn without spectral structure. Lands
+#                    when a consumer pulls.
+#   @uuid/v7         timestamp-leading; sortable by issuance time.
+#                    Lands when a consumer pulls.
+#   @uuid/nil        the all-zeros constant; not a variant so much
+#                    as the bottom of the address space. Lands when
+#                    a consumer pulls.
+#
+# === What the root declares vs. what variants declare ===
+#
+# Root @uuid declares the universal contract — the 128-bit address
+# space, the canonical string form, parse / format / equality. No
+# monoid; that's variant-specific (only @uuid/spectral forms one).
+# No structural fields; the carrier IS opaque at the root. The
+# variants below declare structure when their semantics require it
+# (e.g. @uuid/spectral splits into active + dark; v4 has no structure
+# at all).
+#
+# === The carrier ===
+#
+# `type uuid = ref` per the no-bare-types discipline. A typed
+# reference whose content IS its byte content. Two uuids are equal
+# iff their byte content is byte-equal. The structural meaning of
+# the 128 bits is variant-defined.
+#
+# Spec context: docs/specs/mosaic-as-type-system.md §4.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]].
+# Related shards: uuid/spectral.mirror (the first sub-prism),
+#                 glass.mirror (shard.id IS @uuid/spectral),
+#                 mirror/store.mirror (oid + shard_ref consumers).
+# Path-namespace property: this file at `shards/uuid.mirror`
+# declares `@uuid` and only that.
+
+prism @uuid {
+  focus uuid
+  project uuid
+  split uuid
+  shift uuid
+  settle uuid
+}
+
+# The universal 128-bit identifier carrier.
+#
+# A typed reference whose content IS its identity. Construction is
+# variant-specific (v4: random; v7: timestamp + random; spectral:
+# from_parts(active, dark)); equality at the root is byte-equality
+# of the resulting reference.
+type uuid = ref
+
+# === Surface: parse / format / equality ===
+#
+# parse(text) -> imperfect
+#   Parse the hyphenated string form into a uuid value. imperfect
+#   carries the parsed uuid on success, opacity on failure (wrong
+#   length, non-hex digit, hyphens at wrong positions). The 36-char
+#   canonical form is what every variant emits and accepts; variants
+#   MAY add their own parsers but the root contract is the
+#   hyphenated form.
+parse(text: ref) -> imperfect { \ }
+
+# format(u) -> ref
+#   Format the uuid as the 36-character hyphenated string. Stable
+#   across variants: a v4 and a spectral uuid with byte-equal carriers
+#   format identically. The lowercase form per RFC 4122 / RFC 9562.
+format(u: uuid) -> ref { \ }
+
+# equals(a, b) -> verdict
+#   Byte-equality on the 128-bit carrier. Same uuid (variant-
+#   independent) iff byte-equal. Variants MAY add stronger
+#   equivalences (e.g. spectral's monoid idempotency means
+#   combine(a, a) = a, which IS byte-equality of the carriers); the
+#   root equality is the byte test.
+equals(a: uuid, b: uuid) -> verdict { \ }
+
+# === Properties ===
+#
+# content_addressed(uuid)
+#   The 128-bit carrier IS its identity. Two uuids are the same uuid
+#   iff their byte content is byte-equal. Foundational; every variant
+#   inherits this property. The variants' structural meaning (active /
+#   dark for spectral; random for v4) lives on top.
+requires content_addressed(uuid)
+
+out @uuid
+out uuid
+out parse
+out format
+out equals
