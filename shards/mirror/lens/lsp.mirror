@@ -1,0 +1,65 @@
+in @prism
+in @glass
+in @nl
+in @mirror/lens
+
+# @mirror/lens/lsp — the editor lens (LSP transport).
+#
+# The editor transport per docs/specs/the-convergence.md §1.2. tower-lsp
+# adapter; LSP methods on document ranges map to mq expressions scoped
+# to document nodes. The audience is an editor (VS Code, Helix,
+# Neovim); the surface is LSP-shaped JSON; the algebra is unchanged.
+#
+# Per docs/specs/the-convergence.md §2.1: every porcelain verb maps to
+# an LSP method shape — `mirror compile` is `publishDiagnostics +
+# documentSymbol`, `mirror kintsugi` is `codeAction(kind=source.kintsugi)`,
+# `mirror reflect` is `hover` over a declaration, etc. The lsp lens IS
+# the editor-protocol notation of the same algebra.
+#
+# === Family placement ===
+#
+# Fourth species under @mirror/lens. Transport-side lens; editor
+# audience; eigenboard-tagged diagnostics ride on the verdict envelope;
+# the daemon stays the regulator (two editors pointed at the same
+# project MUST see the same eigenvalue, per the-convergence.md §1.4).
+#
+# === Body status ===
+#
+# FAMILY-HEADER ONLY this tick. The action surface declares the LSP
+# method shape (translate-from / translate-to between LSP positions
+# and substrate refs); bodies (the actual tower-lsp dispatcher, the
+# method table, the codeLens / hover / codeAction handlers) land when
+# the consumer (the lsp transport binary served by `spectral serve`
+# or `mirror serve`) pulls.
+#
+# Spec context: docs/specs/the-convergence.md §2.1,
+#               docs/insights/mcp-lsp-unification.md.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]].
+# Related shards: lens.mirror (the family root),
+#                 lens/cli.mirror, lens/shell.mirror, lens/mcp.mirror.
+# Path-namespace property: this file at `shards/mirror/lens/lsp.mirror`
+# declares `@mirror/lens/lsp` and only that.
+
+prism @mirror/lens/lsp {
+  focus lsp
+  project lsp
+  split lsp
+  shift lsp
+  settle lsp
+}
+
+# === actions — abstract surface; bodies land on consumer pull ===
+
+# method — declare a LSP method name + its expected arg shape. Per
+# the-convergence §2.1: every method maps to one operation in the
+# algebra; the method name is the LSP standard name.
+method(name, args: ref) -> lsp { \ }
+
+# range_to_ref — translate an LSP range on a document into a substrate
+# ref. The verifier rejects ranges that don't resolve to a node.
+range_to_ref(doc: ref, range: ref) -> ref { \ }
+
+out @mirror/lens/lsp
+out method
+out range_to_ref

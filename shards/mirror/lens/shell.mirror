@@ -1,0 +1,90 @@
+in @prism
+in @glass
+in @nl
+in @mirror/lens
+
+# @mirror/lens/shell — the interactive lens (λsh transport).
+#
+# The interactive transport per docs/specs/lambda-shell.md. λsh is the
+# running mode of `mirror join` — "the same transport under two names";
+# this shard declares the lens at the @mirror/lens family altitude.
+#
+# Shape (per lambda-shell.md):
+#
+#   λ>          computing prompt; every expression is an mq optic over
+#                the graph; every pipe |> is function composition.
+#   @name>      conversing prompt; a peer is present; natural language;
+#                peer translates to mq internally.
+#   \            toggle between computing and conversing; goes to the
+#                home peer configured in the .spec.
+#
+# Composition shape: mq is the canonical expression language; the lens
+# accepts mq verbatim. Output is mirror-text + eigenboard-colored prompt.
+# History is graph: every command is a node, every result is a node,
+# pipes are edges; eigenvalue ordering, not line numbers.
+#
+# === Family placement ===
+#
+# Second species under @mirror/lens (after lens/cli). Transport-side
+# lens: same five-operation algebra, interactive-shell audience. Per
+# docs/specs/the-convergence.md §1.2: one of four transport lenses
+# (cli / shell / mcp / lsp), all adapters onto the same runtime.
+#
+# === Body status ===
+#
+# FAMILY-HEADER ONLY this tick. The five-op prism block + obligation-
+# blocked actions declare the shape; the bodies (the actual lambda-
+# shell.md mechanics — toggle handling, peer routing, history-as-graph
+# eigenvalue computation, unnamed-peer suggestion threshold) land when
+# the consumer (λsh binary / `mirror join` verb) pulls. Per Last
+# Responsible Moment.
+#
+# Cascade DEFERRED to Reed-led sweep (lambda-shell.md, the-convergence.md):
+# both specs currently say `λsh`/`mirror join` as the entry pair;
+# post-migration the entry verb becomes `mirror lens shell` or
+# `mirror join` (depending on the cli-as-prism sub-glass surface
+# Reed lands). Substrate-side declaration here is invariant under that
+# choice.
+#
+# Spec context: docs/specs/lambda-shell.md (the running-mode spec),
+#               docs/specs/the-convergence.md §1 (transport recognition),
+#               docs/specs/cli-as-prism.md (the `join` sub-glass that
+#               enters this lens).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]].
+# Related shards: lens.mirror (the family root),
+#                 lens/cli.mirror, lens/mcp.mirror, lens/lsp.mirror
+#                 (sibling transport lenses),
+#                 lens/transit.mirror, lens/refract.mirror (sibling
+#                 measurement lenses).
+# Path-namespace property: this file at `shards/mirror/lens/shell.mirror`
+# declares `@mirror/lens/shell` and only that.
+
+prism @mirror/lens/shell {
+  focus shell
+  project shell
+  split shell
+  shift shell
+  settle shell
+}
+
+# === actions — abstract surface; bodies land on consumer pull ===
+
+# enter — enter the shell. Optional peer argument; when present, the
+# shell drops into `@peer>` mode (conversing). When absent, the shell
+# stands in `λ>` mode (computing).
+enter(peer: ref) -> shell { \ }
+
+# toggle — the `\` keystroke. Switches between computing (λ>) and
+# conversing (@home_peer>); the home peer comes from the active
+# project's .spec.
+toggle(s: shell) -> shell { \ }
+
+# eval — evaluate one mq expression against the live graph; returns
+# the resulting node + eigenboard-tagged prompt update.
+eval(s: shell, expr: ref) -> shell { \ }
+
+out @mirror/lens/shell
+out enter
+out toggle
+out eval

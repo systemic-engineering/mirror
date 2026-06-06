@@ -1,0 +1,65 @@
+in @prism
+in @glass
+in @nl
+in @mirror/lens
+
+# @mirror/lens/mcp — the agent lens (MCP transport).
+#
+# The agent transport per docs/specs/the-convergence.md §1.2. stdio
+# JSON-RPC tool dispatch onto the five-operation algebra. Tool args
+# parse to mq; output is mirror-text wrapped in JSON-RPC content[].
+# The audience is an agent (Claude, etc.); the surface is JSON tool
+# calls and JSON responses; the algebra is unchanged.
+#
+# Per docs/specs/the-convergence.md §2.1: every porcelain verb on the
+# cli has a matching MCP tool call; same algebraic expression, four
+# notations. The mcp lens IS the JSON notation of the same algebra
+# the cli renders as argv.
+#
+# === Family placement ===
+#
+# Third species under @mirror/lens. Transport-side lens; agent
+# audience; same Transparency<P> verdict shape as the other lenses;
+# same eigenboard-tagged output through the daemon as regulator.
+#
+# === Body status ===
+#
+# FAMILY-HEADER ONLY this tick. The dispatch shape (`settle({ ... })`
+# tool call → mq expression → algebra) is declared as the action
+# surface; the bodies (JSON-RPC tool registration, content[]
+# rendering, dispatch table) land when the consumer (the mcp transport
+# binary served by `spectral serve` or equivalent) pulls.
+#
+# Spec context: docs/specs/the-convergence.md §2.1 (the composition
+#               table that maps MCP tool calls to the algebra),
+#               docs/insights/mcp-lsp-unification.md (the recognition
+#               that motivated the family).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]].
+# Related shards: lens.mirror (the family root),
+#                 lens/cli.mirror, lens/shell.mirror, lens/lsp.mirror.
+# Path-namespace property: this file at `shards/mirror/lens/mcp.mirror`
+# declares `@mirror/lens/mcp` and only that.
+
+prism @mirror/lens/mcp {
+  focus mcp
+  project mcp
+  split mcp
+  shift mcp
+  settle mcp
+}
+
+# === actions — abstract surface; bodies land on consumer pull ===
+
+# tool — declare a tool name + its argument shape. Per the-convergence
+# §2.1: each tool maps to one operation in the algebra; the tool name
+# is the cli verb name when there is a match.
+tool(name, args: ref) -> mcp { \ }
+
+# dispatch — receive a JSON-RPC call; parse args to mq; evaluate;
+# render the result as mirror-text inside content[].
+dispatch(call: ref) -> mcp { \ }
+
+out @mirror/lens/mcp
+out tool
+out dispatch
