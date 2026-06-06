@@ -226,12 +226,19 @@ what `settle` produces; what `@mirror/store` keeps; what
 transparency }`. Realised in Rust as
 `fragmentation/src/shard_ref.rs::ShardRef`.
 
-**SpectralUuid.** The graph-navigatable spectral identifier; the TOP
-layer. 128 bits, golden-ratio split: 48 ACTIVE (quantized
-SpectralCoordinate<5>; navigable) + 80 DARK (BLAKE3-truncated content
-hash; identity). Per `prism/core/src/spectral_uuid.rs` and
-`[[architecture-shard-as-crdt]]`. Monoid homomorphism w.r.t. shard
-merge.
+**SpectralUuid / spectral_uuid.** The graph-navigatable spectral
+identifier; the TOP layer. 128 bits, golden-ratio split: 48 ACTIVE
+(quantized SpectralCoordinate<5>; navigable) + 80 DARK
+(BLAKE3-truncated content hash; identity). Per
+`prism/core/src/spectral_uuid.rs` (Rust carrier) and
+`shards/mirror/spectral_uuid.mirror` (substrate-altitude declaration
+as `@mirror/store/spectral_uuid`, parallel to `@mirror/store/oid`;
+landed 2026-06-06 Mara's tick) and `[[architecture-shard-as-crdt]]`.
+Monoid homomorphism w.r.t. shard merge — declared substrate-side as
+`requires monoidal(spectral_uuid)`; combine body deferred per
+reality-shard-as-crdt.md §11 OQ1 (quantized 48-bit arithmetic).
+`shard.id: spectral_uuid` and `shard_ref = spectral_uuid` lifted in
+the same tick.
 
 **Splinter_graph (was: Splinter at @store).** The OID-graph projection
 at @mirror/store altitude: root + transitive closure of children's

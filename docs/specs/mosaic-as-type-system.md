@@ -687,15 +687,17 @@ Hermitian one; the spectral decomposition of `L_G` gives the local
 λ₀ = 0 ground state (the connected-component indicator) and the
 higher Laplacian eigenvalues.
 
-**Global H (operational, via SpectralUuid).** Across shards (each a
+**Global H (operational, via spectral_uuid).** Across shards (each a
 distinct OID graph), the manifold of shards is not a single Hilbert
 space in the standard sense (the per-graph spaces have different
 dimensions; the direct sum is too large; the limit is undefined).
-The **substrate's operational construction** uses SpectralUuid as
+The **substrate's operational construction** uses spectral_uuid as
 the cross-shard bridge:
 
-- `SpectralUuid` (per `prism/core/src/spectral_uuid.rs` and
-  `[[architecture-shard-as-crdt]]`) is a 128-bit identifier with a
+- `spectral_uuid` (declared at the substrate altitude in
+  `shards/mirror/spectral_uuid.mirror` as `@mirror/store/spectral_uuid`,
+  2026-06-06 Mara's tick; realized in `prism/core/src/spectral_uuid.rs`;
+  per `[[architecture-shard-as-crdt]]`) is a 128-bit identifier with a
   golden-ratio split: **48 bits ACTIVE** (quantized
   `SpectralCoordinate<5>` — navigable; carries local Laplacian
   neighbourhood structure) + **80 bits DARK** (BLAKE3-truncated
@@ -706,9 +708,11 @@ the cross-shard bridge:
   collision-resistant + fast + **graph-navigable** + Fortran-
   implementable; graph-navigability IS the property that the local
   Laplacian neighbourhood is encoded in the active bits.
-- `SpectralUuid` is a **monoid homomorphism** w.r.t. shard merge
-  (per `docs/specs/reality-shard-as-crdt.md` §3):
-  `SpectralUuid(merge(a, b)) = combine(SpectralUuid(a), SpectralUuid(b))`.
+- `spectral_uuid` is a **monoid homomorphism** w.r.t. shard merge
+  (per `docs/specs/reality-shard-as-crdt.md` §3, declared as
+  `requires monoidal(spectral_uuid)` in
+  `shards/mirror/spectral_uuid.mirror`):
+  `spectral_uuid(merge(a, b)) = combine(spectral_uuid(a), spectral_uuid(b))`.
   This makes the algebra of addresses compose cleanly with the
   algebra of fragments.
 
@@ -727,7 +731,7 @@ without a global Hilbert-space construction.
 | Component | Mosaic-as-type-system reading | Where it lives in the substrate |
 |---|---|---|
 | **A (algebra)** | `@mirror/mosaic` — the five operations as generators of the type-formation algebra acting on the shard manifold (composing splinters into settled shards) | `shards/mirror/mosaic.mirror`, `shards/prism.mirror`; Rust: `prism/core/src/bundle.rs`'s trait chain |
-| **H (Hilbert space)** | **Local:** `H_G = ℂ^{\|V(G)\|}` per shard's splinter OID graph G, with splinters as basis vectors and the shard itself labelled by its SpectralUuid; inner product canonical; ρ_G = L_G / tr(L_G) the density matrix per Braunstein/Ghosh/Severini 2006. **Global:** the family `{H_G}_G` indexed by shards (each shard IS one OID graph), bridged by SpectralUuid's monoid homomorphism on shard addresses. The Hilbert space of shards is spanned by SpectralUuids; splinters are the basis units. | `shards/glass.mirror`'s `splinter(altitude)` (basis units) and `shard(altitude)` (the spanned vectors); `prism/core/src/spectral_uuid.rs`; `docs/specs/reality-shard-as-crdt.md`; `[[reference-void-document]]` |
+| **H (Hilbert space)** | **Local:** `H_G = ℂ^{\|V(G)\|}` per shard's splinter OID graph G, with splinters as basis vectors and the shard itself labelled by its spectral_uuid; inner product canonical; ρ_G = L_G / tr(L_G) the density matrix per Braunstein/Ghosh/Severini 2006. **Global:** the family `{H_G}_G` indexed by shards (each shard IS one OID graph), bridged by spectral_uuid's monoid homomorphism on shard addresses. The Hilbert space of shards is spanned by spectral_uuids; splinters are the basis units. | `shards/glass.mirror`'s `splinter(altitude)` (basis units) and `shard(altitude)` (the spanned vectors, with `id: spectral_uuid` per the 2026-06-06 lift); `shards/mirror/spectral_uuid.mirror` declaring `@mirror/store/spectral_uuid`; `prism/core/src/spectral_uuid.rs`; `docs/specs/reality-shard-as-crdt.md`; `[[reference-void-document]]` |
 | **D (Dirac operator)** | The kintsugi flow — operationally **the splinter-composition-into-shard transition operator.** Each settle iteration shifts SpectralUuid; D's action on a shard IS that shift. D maps a shard's current SpectralUuid to the SpectralUuid the recomposed splinter set would carry under decreased residual transparency; D's spectrum IS the residual opacity profile across the kintsugi loop's iterations | `docs/specs/kintsugi-wiring.md`; `docs/specs/au-and-conductivity.md`; `prism/core/src/spectral_uuid.rs`'s `combine` (per §11 open question 1, the quantized arithmetic is still being pinned); `terni::Imperfect<State, _, Holonomy>` per `prism/imperfect/` |
 
 ### 4.3 What the SpectralUuid bridge collapses
@@ -1478,29 +1482,31 @@ longer makes sense at the splinter (atom) layer:
   *into something declared,* not into something the substrate does
   not yet name.
 
-**The trigger.** When `shards/mirror/spectral_uuid.mirror` lands (or
-wherever SpectralUuid is declared at the substrate altitude), the
-following substrate edits land simultaneously:
+**The trigger (closed 2026-06-06).** `shards/mirror/spectral_uuid.mirror`
+landed Mara's substrate-pull-realize tick. The following substrate
+edits landed in the same tick:
 
 ```mirror
 # shards/glass.mirror
 type shard(altitude) = {
-  id: SpectralUuid,                 # was: oid
+  id: spectral_uuid,                # was: oid
   splinters: [splinter(altitude)],
   transparency: transparency(altitude),
 }
 
 # shards/mirror/store.mirror
-type shard_ref = SpectralUuid       # was: oid
+type shard_ref = spectral_uuid      # was: oid
 ```
 
+`spectral_uuid` is declared as a sub-prism at
+`@mirror/store/spectral_uuid` parallel to `@mirror/store/oid` (the
+two content-addressed identity carriers at the store altitude).
 au's `content: oid` stays as it is — au is pre-commitment; the
-SpectralUuid is what settle produces by composing the splinters
-through the property chain. Until SpectralUuid lands, the
-property chain enforces SpectralUuid validity at commit time; the
-substrate names what shard IS; the type-system tightening is a
-mechanical follow-up. **Lean:** the lift is no longer ambiguous —
-it's mechanical; capture and defer the trigger.
+spectral_uuid is what settle produces by composing the splinters
+through the property chain. The property chain at commit time
+continues to enforce spectral_uuid validity by construction.
+**Closed:** the lift was mechanical; tick landed; the three-layer
+recognition closes at the type altitude.
 
 ### 9.8 Where does property chain composition live, formally?
 
@@ -1594,12 +1600,21 @@ Captured here for triage; none gate v0.1.0.
    and output types separately instead of overloading one.
 
 5. **What's the right home for SpectralUuid at the substrate
-   altitude?** §9.7's trigger names `shards/mirror/spectral_uuid.mirror`
-   or under `@mirror/store` as candidates. **Lean:** new file
-   `shards/mirror/spectral_uuid.mirror` declaring `@mirror/store/spectral_uuid`
-   sub-prism, following the `@mirror/store/oid` precedent. This
-   surfaces SpectralUuid as a typed reference parallel to oid, at
-   the same store altitude. The shard altitude (@glass) imports it.
+   altitude? — Resolved 2026-06-06.** Mara's tick landed
+   `shards/mirror/spectral_uuid.mirror` declaring
+   `@mirror/store/spectral_uuid` as a sub-prism parallel to
+   `@mirror/store/oid` (the @mirror/store/oid precedent at
+   `shards/mirror/store.mirror:78-94`). spectral_uuid surfaces as a
+   typed reference (carrier: `ref`, following the no-bare-types
+   discipline and the oid precedent) with three projection actions
+   (`active`, `dark`, `combine`), the `fixed empty` bottom, and two
+   property declarations (`content_addressed`, `monoidal`). The
+   shard altitude (@glass) imports it; shard.id and shard_ref
+   tighten in the same tick. The quantized 48-bit `combine`
+   arithmetic stays deferred per `reality-shard-as-crdt.md §11
+   OQ1` (the spec's open question). **Status:** §9.7 closed; the
+   three-layer recognition is now load-bearing at the type altitude
+   as well as at the algebra altitude.
 
 ---
 

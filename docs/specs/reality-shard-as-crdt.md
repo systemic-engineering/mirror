@@ -263,10 +263,27 @@ This spec deliberately does NOT:
 1. **SpectralUuid implementation** (queued behind T3 of fragmentation-mcp).
    Defines the 16-byte type in `prism_core`; replaces `ShardId(uuid::Uuid)`
    with `ShardId(SpectralUuid)`. Implements the homomorphism `combine` and
-   the `EMPTY` constant.
+   the `EMPTY` constant. **Status 2026-06-06:** the Rust carrier landed
+   at `prism/core/src/spectral_uuid.rs`; the substrate-altitude
+   declaration landed at `shards/mirror/spectral_uuid.mirror` as
+   `@mirror/store/spectral_uuid` (Mara's tick, parallel to
+   `@mirror/store/oid`). The `EMPTY` constant is byte-stable; the
+   `combine` body remains deferred per §11 OQ1.
 
 2. **`@mirror/reality/shard.mirror` grammar.** Declares `type shard`,
    `fixed empty = ...`, the four `algebraic_law` glass properties.
+   **Status 2026-06-06:** absorbed into the broader three-layer
+   recognition. `type shard` lives at `shards/glass.mirror` (the
+   spectral_uuid-addressed settled composition; id lifted from oid to
+   spectral_uuid 2026-06-06). `fixed empty` lives at
+   `shards/mirror/spectral_uuid.mirror` (the substrate-altitude
+   bottom of the semilattice). The four algebraic_law glass properties
+   reduce to `requires content_addressed(spectral_uuid)` and
+   `requires monoidal(spectral_uuid)` declared in the same shard;
+   commutativity + idempotency are captured in the docstring as
+   structural consequences of content-addressing + sorted children
+   (per §1) and surface as separate substrate properties when their
+   first consumer needs explicit witness.
 
 3. **`@epistemologic/property/*` chain extensions** for the new
    primitives: `identity_for`, `commutative`, `idempotent`,
