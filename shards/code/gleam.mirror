@@ -1,0 +1,59 @@
+in @code
+in @prism
+in @glass
+in @meta
+in @nl
+
+# @code/gleam — the Gleam altitude grammar.
+#
+# Gleam's instance of @code. Same family as @code/rust (D2;
+# shards/code/rust.mirror) and @code/mirror (shards/code/mirror.mirror);
+# each declares the five operations on its own source manifold under
+# the universal @code discipline (shards/code.mirror).
+#
+# Migrated from boot/04b-code-gleam.mirror (the legacy boot kernel
+# form) with the same substrate-pull tightenings as @code/rust:
+#
+#   - no LSP-action stubs in the altitude declaration. The previous
+#     boot kernel form declared `action complete(position) in @code/gleam
+#     { }` etc.; per the substrate-pull pattern crystallized at
+#     @code/rust, the altitude grammar declares the five-op block and
+#     altitude-specific shape, NOT the LSP-action surface. LSP actions
+#     belong to a separate seam (boot/04-code's `abstract action`
+#     declarations name the universal LSP surface; consumers wire them
+#     against altitudes at the transport layer, not in the altitude
+#     grammar itself).
+#
+#   - no Gleam type fragments at this floor. The previous form declared
+#     `type int`, `type float`, `type bit_array`, etc. directly in the
+#     altitude grammar. Per the @code/rust precedent, primitive type
+#     declarations belong to the altitude's source-language model
+#     downstream (a future @code/gleam/types sub-prism, or the
+#     compiler's symbol-table layer), not to the altitude root. The
+#     altitude root declares the five-op prism shape; specializations
+#     compose under it.
+#
+# Spec context: docs/specs/spectral-triple-binary.md §3 (the translate
+# template family); roadmap/wip/butterfly-self-hosting.md (gleam is
+# named in Mara/Reed's substrate plans as a future @code family member
+# but is not yet a Phase-D target — this shard exists as the
+# substrate-pull-realize migration of the boot kernel declaration, not
+# as a Phase-D commitment).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]].
+# Related shards: code.mirror (the universal parent),
+#                 code/rust.mirror (D2; the precedent instance),
+#                 code/mirror.mirror (sibling instance).
+# Path-namespace property: this file at `shards/code/gleam.mirror`
+# declares `@code/gleam` and only that.
+
+prism @code/gleam {
+  focus gleam
+  project gleam
+  split gleam
+  shift gleam
+  settle gleam
+}
+
+out @code/gleam
