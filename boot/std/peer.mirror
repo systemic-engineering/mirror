@@ -40,11 +40,23 @@ grammar @peer {
   # the five-axis fixed point. exactly five — because the algebra has
   # five. drop one and @peer cannot type-check; the load fails before
   # any spawn runs.
+  #
+  # eigenboard is typed `shard` — per shards/glass.mirror's three-layer
+  # recognition (2026-06-06), a shard is the SpectralUuid-addressed
+  # settled composition of splinters. The peer's eigenboard IS that
+  # SpectralUuid-addressed shard at the peer altitude: its splinters
+  # carry the peer's current tensions / gestalt / identity; its
+  # SpectralUuid is the peer's current spectral state encoding (active
+  # bits = navigable Laplacian neighbourhood across the composed
+  # splinters; dark bits = content hash of the composition). Sub-graph
+  # spawn (Glint's gap, the-convergence.md §3.4) is the operation that
+  # carves a sub-shard from the parent's shard, identified by a fresh
+  # SpectralUuid composed from parent + neighbourhood selection.
   type peer = {
     identity:   mirror,        # focus(self): immutable manifold; mutating = fork
     gestalt:    mirror,        # project(self): the accumulated lens
     tensions:   mirror,        # split(self): open branches the peer carries
-    eigenboard: shard,         # shift(self): @cogito.eigenboard surfaced as a shard file
+    eigenboard: shard,         # shift(self): SpectralUuid-addressed shard at peer altitude
     shatter:    mirror,        # settle(self): rendered history; ancestor chain
   }
 

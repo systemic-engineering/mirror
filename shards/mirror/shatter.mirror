@@ -6,13 +6,23 @@ in @mirror/au
 
 # @mirror/shatter — the optional disk projection of au + splinter + mosaic.
 #
-# Recognition (docs/specs/shatter-spec.md, 2026-06-04 reframe): the
+# Recognition (docs/shatter-spec.md, 2026-06-04 reframe; sharpened
+# 2026-06-06 by Alex's three-layer recognition at @glass): the
 # fragmentation store IS canonical. `.shatter` is ONE projection
 # format — a settled .mirror file that knows what it cost. Five
 # sections, all native mirror syntax, all content-addressed, all
 # feedable back into the compiler. The projection round-trips: parse
 # a .shatter, re-emit, get the same OID. That fixed point IS what
 # makes .shatter a crystal and not a dump.
+#
+# Header "au + splinter + mosaic" is substrate-honest under the
+# three-layer recognition: au is the proposed composition of
+# splinters (the Fate-emitted form); splinter is the atomic
+# content-addressed unit (per @glass); mosaic is the algebra that
+# composes splinters into au and settles au into shard. The
+# .shatter file projects the composition's fragment_tree (the
+# splinter set organized as the @store splinter_graph closure),
+# the transparency, the properties, the kernel, and the fate.
 #
 # Recognition (docs/specs/au-and-conductivity.md, C5): au's identity
 # IS the content-hash of (altitude, content, transparency). The
@@ -64,10 +74,10 @@ in @mirror/au
 #                      [[architecture-au-conductivity]] (au IS the
 #                      Fate output type; .shatter projects au).
 # Related shards: au.mirror (the surface declaration this realizes),
-#                 store.mirror (oid + splinter — the content-address
-#                 floor), mosaic.mirror (the build-altitude trigger),
-#                 glass.mirror (transparency / property verdict
-#                 carriers used in sections 2 and 3).
+#                 store.mirror (oid + splinter_graph — the content-
+#                 address floor), mosaic.mirror (the build-altitude
+#                 trigger), glass.mirror (splinter / shard /
+#                 transparency / property verdict carriers).
 # Path-namespace property: this file at `shards/mirror/shatter.mirror`
 # declares `@mirror/shatter` and only that.
 
@@ -95,8 +105,16 @@ prism @mirror/shatter {
 # transparency<p> floor). MirrorLoss is DEAD; the Transparency<Ref>
 # algebra (Fail-dominates / Partial-min-confidence / Pass-neutral)
 # composes phase verdicts across the build.
+#
+# `fragment_tree: splinter_graph` — the OID-graph projection of the
+# splinter set (per @mirror/store's splinter_graph: root + children
+# in dependency-closure order). Each splinter referenced by oid is
+# content-addressed at its own altitude; the splinter_graph carries
+# the wiring. Under the 2026-06-06 vocabulary alignment, this field
+# is the graph-projection carrier (not the atomic-unit carrier; the
+# atom is `splinter` at @glass).
 type shatter = {
-  fragment_tree: splinter,          # the AST closure (section 1)
+  fragment_tree: splinter_graph,    # the AST closure as OID-graph (section 1)
   transparency: transparency(au),   # located opacity (section 2, was MirrorLoss)
   properties: [property_verdict],   # what verified (section 3)
   kernel: kernel_spec,              # decomposition params (section 4)
