@@ -1,918 +1,1275 @@
-# Shatter Training Pipeline — Architecture Document
+# Shatter as Kintsugi's Mutation Engine — Architecture and Research Synthesis
 
-Shatter takes arbitrary input and scrambles it into mirror syntax tokens.
-Not translation. Not understanding. Shattering. The loop:
+*2026-06-06. Mara. Rewrite of the 2026-Q1 draft after the splinter / shard /
+uuid_spectral three-layer recognition (shards/glass.mirror) and Alex's
+load-bearing connection that kintsugi's settle-on-cracks act IS Shatter at
+the substrate altitude.*
 
-```
-Input (anything) -> Shatter (scramble into mirror tokens) -> Mutate (apply to target)
-  -> Fate (measure holonomy) -> Tournament (keep improvements) -> Repeat
-```
-
-This document synthesizes research across evolutionary computation, program
-synthesis, mutation testing, adversarial generation, small model design,
-biological encoding, self-improving systems, and minimal computation into a
-concrete training pipeline.
+Status: **architectural recognition + literature synthesis.** This document
+is the spec for the loop's *shape*; the implementation is downstream
+substrate work (Phase 5+ per the roadmap, gated on `gen_prism` reaching
+substrate maturity and on the property chain landing as the discriminator
+surface). Not a v0.1.0 obligation.
 
 ---
 
-## 1. Token Scrambling / Recombination Techniques
+## 0. The recognition
 
-### What we found
+> **Alex (2026-06-06):** "Basically what kintsugi would need to do is to
+> mutate the `splinter`s that are dark and see if any composition produces
+> a coherent grammar, no? Basically mutation testing on crack."
 
-**Grammatical Evolution (GE)** is the closest match to what Shatter does.
-GE uses a BNF grammar to constrain the mapping from integer sequences
-(genotypes) to syntactically valid programs (phenotypes). An integer sequence
-is read codon-by-codon; each codon selects a production rule from the grammar.
-Wrapping handles sequences longer than the grammar needs. PonyGE2 is the
-reference implementation.
+**Kintsugi IS Shatter applied to dark splinters.** When a splinter is
+uncrystallized — when its transparency at the declared altitude carries
+located opacity (`partial(opacity_map)` or `failure(opacity_map)` per
+`shards/glass.mirror`) — kintsugi's settle-on-this-crack act IS:
 
-**Grammar-guided fuzzing** (AFL++ Grammar-Mutator, Grammarinator) generates
-structured inputs from ANTLR grammars. The fuzzer produces valid syntax by
-walking the grammar and making random choices at each production rule. This is
-exactly what Shatter's "scramble into mirror tokens" does, except Shatter
-doesn't care about validity — it cares about holonomy reduction.
+1. Mutate the splinter's content (per a small finite set of typed mutation
+   operators on splinter shape).
+2. Re-compose the splinter set into a candidate shard composition.
+3. Run that composition through the property chain (`@epistemologic/
+   property/reflect` against the altitude's property set).
+4. Keep the composition that lands `verify = pass` (or strictly decreases
+   the residual `transparency<p>` per the eⁿ⁺¹ ≤ eⁿ proof obligation).
 
-**Byte-Pair Encoding (BPE)** in reverse: BPE builds a vocabulary by merging
-frequent byte pairs. The reverse — decomposing text into subword units — gives
-us a way to take arbitrary input and break it into pieces that can be
-recombined. BPE gives us the DECOMPOSITION step; the grammar gives us the
-RECOMBINATION step.
+The Shatter training pipeline IS the mutation/evolution/measurement
+machinery that runs this loop. The substrate's `gen_prism` (per
+`boot/std/mirror/runtime/gen_prism.mirror`) is the spawn primitive with
+the autopoietic discipline — *autopoietic* in the literal Maturana &
+Varela 1980 sense: a system whose operations regenerate the organisation
+that produces them. Shatter IS the operational form of that autopoiesis
+when the operations are *grammar mutations against the substrate's own
+property chain*.
 
-**Markov chain n-gram models** over token sequences are the simplest
-possible "learned scrambler." Given a corpus of .mirror files, an n-gram
-model learns P(next_token | last_n_tokens). Generation is: sample from
-the distribution. This is the baseline Shatter — zero-parameter, pure
-frequency-based token recombination.
+The three-altitude alignment:
 
-**Music recombination via genetic algorithms** (Majumder 2019, Tokui &
-Iba 2000): MIDI files are decomposed into motifs (short sequences), then
-recombined by crossover operators. Fitness is harmonic compatibility. The
-direct analogy: .mirror files are decomposed into AST subtrees, recombined
-by crossover, fitness is holonomy.
+| Altitude | What the loop does | Term |
+|---|---|---|
+| **Substrate** | mutate dark splinters → recompose → property chain → settle | kintsugi tick (per `docs/specs/mosaic.md` §6) |
+| **Conversation** | propose change → check against the gestalt → keep or discard | the Pack writing the Pack |
+| **Training** | mutate codon table → shatter input → measure transparency → tournament | this document |
 
-### How it maps
+The training pipeline IS the substrate altitude of the same loop. The
+implementation is what produces a Fate small-model + Shatter small-model
+pair that runs the kintsugi tick at the scale of *every au Fate emits*.
 
-Mirror grammar IS a BNF grammar. The vocabulary is fixed:
+---
+
+## 1. Vocabulary alignment (sweep)
+
+This document was first drafted in Q1 2026 against the pre-splinter
+vocabulary (`Fragment`, `MirrorAST`, `MirrorLoss`, `holonomy`, `holes /
+\`, `crystal`). The 2026-Q2 substrate-pull rewrites:
+
+| Old (pre-Q2) | Current (post-glass.mirror three-layer recognition) |
+|---|---|
+| `Fragment` (Rust type) | `splinter` (substrate atom; `shards/glass.mirror`) |
+| `MirrorFragment` (legacy) | `splinter(altitude)` |
+| `holonomy` (Shannon-like scalar) | `transparency<p>` (located opacity_map per `shards/glass.mirror`) |
+| `MirrorLoss` (scalar) | `imperfect(a, e, transparency)` (three-valued functor per `shards/glass.mirror`) |
+| `MirrorAST` node | splinter at altitude `@meta/ast` |
+| `crystal` (settled term) | `shard` (uuid_spectral-addressed settled composition of splinters) |
+| `holes` / `\` (unresolved obligations) | `cracks` (substrate rename; same shape, honest name) |
+| "scramble into mirror tokens" | "mutate splinter content; recompose through property chain" |
+| `loss.holonomy() < threshold` | `verify(au) -> pass` or transparency totaling strictly less than parent |
+
+The mechanical rewrite of every sentence in the old document into current
+vocabulary is below. The substantive rewrites (especially §7, §10, §11)
+follow the vocabulary update.
+
+---
+
+## 2. The loop, named
+
+The shatter training pipeline runs one loop. The loop is the kintsugi
+tick of `docs/specs/mosaic.md` §6, written at the altitude that *trains*
+the mutation operators rather than at the altitude that *applies* them:
 
 ```
-Keywords:  type, grammar, action, property, in, out, focus, project,
-           split, shift, settle, template, abstract, recover, rescue,
-           io, fold, requires, invariant, ensures
-Structural: { } ( ) | = < . @ , :
-Literals:  identifiers, grammar refs (@X), strings
+au          = Fate-emitted proposed composition (the splinter set
+              under settlement at the declared altitude)
+opacity     = transparency.argmax(au.transparency)
+              # which crack contributes most to the residual?
+fill        = mutate(au.splinter[opacity.location])
+              # apply one or more mutation operators at that site
+candidate   = recompose(au, fill)
+              # form the new au with the mutated splinter substituted
+verdict     = verify(candidate)
+              # run the property chain at the altitude
+if verdict == pass:
+    settle(candidate)    # commit as shard; lift uuid_spectral via combine
+elif total_weight(candidate.transparency) < total_weight(au.transparency):
+    take(fill)           # accept the strict-decrease step; continue
+else:
+    discard(fill)        # tournament reject; try next
 ```
 
-The mapping from arbitrary bytes to mirror tokens is a codon table:
-every N bytes map to one production rule choice. The grammar constrains
-what's syntactically possible. The holonomy fitness function decides what
-survives.
+This is the same loop the substrate altitude runs at every au Fate emits.
+The training altitude differs only in what it stores: it stores *which
+mutation operators reduced transparency most often, at which altitude,
+under which property chain.* That stored pattern IS the Shatter model —
+a small finite codon table over splinter mutation operators, optimized
+by tournament over the corpus of historical kintsugi ticks.
 
-### Implementation approach
-
-1. Define the mirror grammar as BNF (we already have the parser — extract
-   the grammar rules from `parse.rs`)
-2. Build a codon table: map byte pairs (0-65535) to grammar production choices
-3. To shatter input: read it as a byte stream, consume byte pairs, map each
-   to a production rule, emit the corresponding mirror token
-4. The codon table IS the model. Training = adjusting which byte pairs map
-   to which production rules
-
-### What to try first
-
-**N-gram baseline:** Build a trigram model over token sequences from existing
-.mirror files. Generate 1000 random .mirror snippets. Feed each through the
-compiler. Measure holonomy distribution. This tells us the base rate — how
-often does random-but-frequency-weighted token generation produce low-holonomy
-output? This is the number to beat.
+**The discriminator** is the property chain (per `@epistemologic/
+property/reflect`). **The policy** is Fate's mycelial routing (per
+`shards/uuid/spectral.mirror`'s `route_signal`). **The reward signal**
+is `transparency<p>` strictly decreasing (eⁿ⁺¹ ≤ eⁿ). The substrate
+provides all three; Shatter's training is the search over mutation-
+operator weights that maximizes the discriminator's accept rate at the
+policy's chosen sites.
 
 ---
 
-## 2. Mutation Testing (Inverted)
-
-### What we found
-
-**Mutation operators** from Pitest, Stryker, and cargo-mutants:
-- Arithmetic: replace `+` with `-`, `*` with `/`
-- Conditional: negate conditions, replace `<` with `<=`
-- Statement deletion: remove a statement entirely
-- Return value mutation: change return values
-- Constant replacement: change literals
-- Method call deletion: remove a call
-
-**Higher-order mutation** combines multiple first-order mutations. A
-higher-order mutant might swap an operator AND delete a statement. Most
-higher-order mutants are equivalent to a first-order mutant, but some
-create genuinely new behavior.
-
-**The equivalent mutant problem:** Some mutations produce identical behavior.
-Detection is undecidable in general but tractable for restricted languages.
-Mirror grammar is sub-Turing — we can detect equivalent mutations by
-comparing OIDs (same OID = equivalent).
-
-**Selective mutation:** Not all mutation operators are equally informative.
-Research shows ~5 operators cover 95% of mutation detection ability.
-
-### How it maps
-
-Traditional mutation testing introduces bugs to test tests. We INVERT it:
-introduce mutations to IMPROVE code. The survivor is the mutation that
-REDUCES holonomy. Same operators, opposite selection pressure.
-
-Mirror-specific mutation operators:
-- **Type variant swap:** `type color = red | blue` -> `type color = blue | red`
-- **Grammar ref redirect:** `in @mirror` -> `in @property`
-- **Action body shuffle:** reorder statements within an action
-- **Property strengthen:** `partial(0.97)` target -> `pass` target
-- **Import addition:** add `in @X` for an unresolved reference
-- **Fragment crystallization:** replace `Fragment(raw)` with parsed equivalent
-- **Declaration deletion:** remove a type/action/property
-- **Subtree swap:** exchange two AST subtrees
-
-The key insight: OID comparison makes equivalent mutant detection FREE.
-`mutant.oid == original.oid` means the mutation was equivalent. Skip it.
-No computation wasted.
-
-### Implementation approach
-
-1. Define mutation operators on `MirrorAST` nodes
-2. Each operator takes a node and returns a mutated node
-3. Mutation is random but TYPE-AWARE: only apply operators to nodes of the
-   right type (don't try to swap variants on an action node)
-4. Measure holonomy before and after. Keep if holonomy decreased.
-5. Higher-order: compose 2-3 operators per mutation
-
-### What to try first
-
-**Single-operator sweep:** Implement the 8 operators above. For each
-.mirror file in the test corpus, apply every operator to every applicable
-node. Measure holonomy change. Build a histogram: which operators most
-often reduce holonomy? This tells us which operators to prioritize.
-
----
-
-## 3. Evolutionary Program Synthesis
-
-### What we found
-
-**PushGP** uses a stack-based language (Push) designed for genetic
-programming. Key features: multiple typed stacks, implicit type handling,
-programs are flat lists of instructions. Crossover = list splice. Mutation
-= random instruction insertion/deletion/replacement. The flat representation
-avoids the "bloat" problem of tree GP.
-
-**Grammatical Evolution (GE)** maps integer codons to BNF production rules.
-The genotype is a flat integer array. The phenotype is a program. Crossover
-operates on the integer array (genotype), not the program (phenotype). This
-separation of genotype/phenotype is critical — it means mutation operators
-don't need to understand the target language.
-
-**Cartesian Genetic Programming (CGP)** represents programs as directed
-acyclic graphs encoded as integer lists. Each node has a function, inputs
-(indices of previous nodes), and outputs. Mutation = change a function or
-reconnect an input. CGP uses mutation-only (no crossover) and typically
-evolves with (1+4) strategy (1 parent, 4 children, keep best).
-
-**Gene Expression Programming (GEP)** (Ferreira 2001) separates the genome
-(a fixed-length string) from the expression tree it encodes. Each gene has
-a head (functions and terminals) and a tail (terminals only). This guarantees
-every random genome encodes a valid expression tree. No repair operators
-needed.
-
-**AlphaEvolve/OpenEvolve** (2025): LLM-based evolutionary coding agent
-using MAP-Elites. Maintains a population database organized by behavioral
-features. LLMs generate code mutations (as diffs). Cascaded evaluation
-filters candidates cheaply before expensive evaluation. Island model for
-diversity.
-
-### How it maps
-
-The MirrorAST IS the phenotype. We need a genotype representation that:
-1. Is flat (for easy crossover/mutation)
-2. Maps deterministically to valid-ish MirrorAST
-3. Supports partial validity (Fragment nodes absorb unparseable regions)
-
-**GE is the natural fit.** The mirror grammar is our BNF. The genotype is
-a byte array. Each byte selects a production rule. The mapping produces
-MirrorAST. Invalid regions become Fragment nodes (loss = 1.0). The compiler
-handles the rest.
-
-The CGP insight applies differently: CGP's mutation-only (1+4) strategy
-maps directly to our tournament. Spawn 4 mutations of the best parent.
-Keep the best child. No crossover needed for v1.
-
-### Implementation approach
-
-1. Extract mirror grammar rules as a numbered list of productions
-2. Build the GE mapper: `[u8] -> MirrorAST`
-3. Population: N byte arrays (genotypes)
-4. Each generation:
-   a. Map genotypes to phenotypes (MirrorAST)
-   b. Compile each phenotype
-   c. Measure holonomy
-   d. Tournament selection: keep lowest holonomy
-   e. Mutate winners: flip random bytes in the genotype
-5. Crossover (optional): single-point crossover on byte arrays
-
-### What to try first
-
-**CGP-style (1+4):** Start with a random byte array. Generate 4 mutations
-(flip 1-3 random bytes each). Map all 5 to MirrorAST via GE. Compile all 5.
-Keep the one with lowest holonomy. Repeat. Track holonomy over generations.
-Does it decrease? How many generations to reach holonomy < 1.0?
-
----
-
-## 4. Adversarial / Generative Approaches
-
-### What we found
-
-**Discrete diffusion models** (DiffuSeq, FS-DFM): Apply diffusion
-(noise-then-denoise) to discrete token sequences. Start with pure noise
-tokens. Iteratively denoise toward valid sequences. The denoising model
-learns the target distribution. Recent work (2025-2026) shows these can
-match autoregressive models for text.
-
-**CodeRL** (Salesforce, NeurIPS 2022): Treats a pretrained language model
-as a stochastic policy. Token predictions are actions. Unit test results
-are rewards. REINFORCE algorithm updates the policy to generate code that
-passes tests. Key insight: the reward signal is BINARY (pass/fail) but
-applied at the TOKEN level via credit assignment.
-
-**Program GANs** (Trabucco et al.): Generator produces program trees.
-Discriminator checks syntactic validity and behavioral correctness. The
-generator learns to produce syntactically valid programs. Key limitation:
-mode collapse — the generator finds one working program and stops exploring.
-
-**VAEs with discrete latent spaces** (Discrete VAE, VQ-VAE): Encode
-discrete sequences into a learned latent space. Decode back. The latent
-space supports interpolation — "between" two programs is a meaningful
-point. VQ-VAE uses a codebook (finite set of latent vectors), which maps
-naturally to our vocabulary.
-
-### How it maps
-
-We already have the architecture:
-- **Generator** = Shatter (scramble into mirror tokens)
-- **Discriminator** = Mirror compiler (measures holonomy)
-- **Reward signal** = Holonomy reduction (continuous, not binary)
-- **Policy** = Fate (selects which optic/operation to apply)
-
-The key advantage we have over CodeRL: our reward signal is CONTINUOUS
-(holonomy is a real number) and CHEAP (compiler runs at millions of
-ops/sec, no test execution needed). CodeRL needs to run tests. We just
-measure information loss.
-
-The diffusion model insight: START from noise, iteratively refine. This
-is exactly what Shatter does. Start from random token soup. Apply Fate.
-Holonomy decreases. Apply again. Eventually: crystal.
-
-The VQ-VAE codebook maps directly to our codon table: a finite set of
-"code vectors" (production rules) that discrete inputs index into.
-
-### Implementation approach
-
-For v1, we don't need neural networks. The compiler IS the discriminator.
-Fate IS the policy. The loop IS the training. But the research suggests
-two specific techniques to incorporate:
-
-1. **Credit assignment:** When a mutation reduces holonomy, WHICH tokens
-   contributed? The MirrorLoss breakdown (parse, resolution, properties,
-   emit) tells us which phase improved. Map that back to the tokens that
-   changed in that phase.
-
-2. **Iterative refinement schedule:** Start with aggressive mutation
-   (high temperature, many random tokens). As holonomy decreases, reduce
-   mutation rate (lower temperature, smaller changes). This is simulated
-   annealing applied to the generation process, not just the selection.
-
-### What to try first
-
-**Random generation with compiler feedback:** Generate 10,000 random
-token sequences (uniform over mirror vocabulary). Compile each. Histogram
-the holonomy distribution. Then: take the top 1% (lowest holonomy), mutate
-each 100 times, compile, keep improvements. How many generations until
-any sequence reaches holonomy 0?
-
----
-
-## 5. Small Model Training Techniques
-
-### What we found
-
-**Knowledge distillation:** Train a small "student" model to mimic a large
-"teacher" model. The student learns the teacher's output distribution, not
-just the hard labels. TinyBERT achieves 96.8% of BERT-base at 7.5x smaller.
-
-**Extreme quantization:** Binary Neural Networks (1-bit weights, +1/-1
-only). BitNet achieves competitive performance with 1-bit weights. The key:
-you need more epochs (5-10x) but inference is pure integer arithmetic.
-Multiplications become additions/subtractions.
-
-**Lottery Ticket Hypothesis** (Frankle & Carlin 2018): Dense networks
-contain sparse subnetworks that can match the full network's accuracy when
-trained in isolation. Iterative magnitude pruning finds these "winning
-tickets." Networks can be pruned to 10% of original size.
-
-**Extreme Learning Machines (ELM):** Single hidden layer. Input-to-hidden
-weights are RANDOM and FIXED. Only hidden-to-output weights are trained.
-Training is a single matrix pseudoinverse — no gradient descent, no
-backpropagation. Training takes milliseconds. This is structurally identical
-to excited Fate: random projection followed by a learned linear map.
-
-**Reservoir Computing / Echo State Networks:** A random recurrent network
-(the "reservoir") transforms input into a high-dimensional space. Only the
-readout layer is trained. The reservoir provides nonlinear mixing for free.
-Works surprisingly well for time series and sequence processing.
-
-**muNAS (Constrained Neural Architecture Search):** Searches for tiny
-neural architectures that fit within microcontroller constraints (< 64KB).
-Accurately captures resource requirements and finds Pareto-optimal
-accuracy/size tradeoffs.
-
-### How it maps
-
-Fate is 425 bytes. Five weight sets of u8 values. 5 biases + 5x16 feature
-weights per set. Quantized from f64 during training. This is ALREADY an
-extreme learning machine — the architecture is fixed, only weights change.
-
-Shatter needs to be similarly small. The question: can 425 bytes (or fewer)
-encode a useful token scrambling function?
-
-**Yes, by the ELM argument.** An ELM with random input weights and a
-trained readout can approximate any continuous function given enough hidden
-nodes. We don't even need "enough" — we need a function that's BETTER THAN
-RANDOM at producing low-holonomy output. The bar is low.
-
-**The reservoir computing connection:** If Shatter reads input as a byte
-stream, a small recurrent state (even 16 bytes) provides nonlinear mixing.
-The "reservoir" is the interaction between the input bytes and the internal
-state. The "readout" maps the state to a production rule choice.
-
-Concrete model sizes:
-- **Codon table:** 256 entries x 1 byte each = 256 bytes. Maps each input
-  byte to a production rule. Zero parameters to train — optimize by
-  evolutionary search over the table.
-- **Tiny ELM:** 16-byte state + 256-byte readout = 272 bytes. State is
-  updated by XOR/rotate with input bytes. Readout maps state to production.
-- **Fate-sized Shatter:** 425 bytes. Same architecture as Fate but mapping
-  input features to production rule choices instead of model selections.
-
-### Implementation approach
-
-1. Start with the codon table (256 bytes, zero training needed)
-2. Optimize the codon table by evolutionary search:
-   a. Population of 100 random codon tables
-   b. Each table shatters a corpus of non-mirror input
-   c. Fitness = average holonomy of produced .mirror output
-   d. Tournament selection + mutation (swap entries)
-3. Graduate to tiny ELM if the codon table plateaus
-4. The training loop IS the tournament. No separate training phase.
-
-### What to try first
-
-**256-byte codon table evolution:** Generate 100 random codon tables
-(each: 256 bytes mapping input bytes to production rule indices). Feed
-the same input text through each table. Compile the outputs. Keep the
-10 tables with lowest average holonomy. Mutate (swap 5 random entries).
-Repeat for 1000 generations. Plot holonomy over time.
-
----
-
-## 6. The Genotype-Phenotype Mapping
-
-### What we found
-
-**Biological codon table:** 64 codons (triplets of 4 nucleotides) map to
-20 amino acids + stop signals. The mapping is REDUNDANT: most amino acids
-have 2-6 codons. This redundancy is a feature — synonymous mutations (change
-the codon but not the amino acid) provide robustness. The codon table is
-UNIVERSAL across almost all life.
-
-**Codon optimization** in synthetic biology: when expressing a gene in a
-new organism, you pick the codons that organism prefers (codon usage bias).
-Same protein, different DNA. CodonTransformer (2M+ downloads) and
-CodonMPNN use deep learning for this. The key: the mapping is many-to-one,
-and the choice among synonyms matters for expression efficiency.
-
-**Developmental encoding** in evolutionary computation: instead of mapping
-genotype directly to phenotype, the genotype encodes a PROCESS that grows
-the phenotype. Indirect encodings like HyperNEAT use a Compositional
-Pattern Producing Network (CPPN) to generate neural network weights from
-spatial coordinates. Small CPPN = large network with regular structure.
-
-**HyperNEAT:** A CPPN takes (x1, y1, x2, y2) as input and outputs the
-weight of the connection from neuron at (x1,y1) to neuron at (x2,y2).
-The CPPN is small; the network it generates is large. Patterns like
-symmetry, repetition, and variation emerge naturally from the CPPN's
-activation functions (sin, gaussian, sigmoid, linear).
-
-**Grammatical encoding** (from GE): the genotype is integers. Each
-integer selects a production rule by `codon % num_rules`. Wrapping:
-when the codon stream is exhausted, wrap around to the beginning.
-This gives every integer sequence a valid phenotype.
-
-### How it maps
-
-The mirror codon table:
-
-```
-Input byte(s)  ->  Production rule index  ->  Mirror token
-0x00-0xFF         0-N (N = number of rules)   type, grammar, action, ...
+## 3. Mutation operators on splinter shape
+
+Per `shards/glass.mirror`, a splinter is one of three structural shapes:
+
+```mirror
+type splinter_shape =
+  | atom                # terminal; no children
+  | fractal([oid])      # composite; child oids
+  | lens([oid])         # referring; target oids
 ```
 
-The biological analogy is precise:
-- **Codons** = byte pairs from input
-- **Amino acids** = mirror grammar tokens
-- **Protein** = MirrorAST
-- **Folding** = compilation (parse -> resolve -> emit)
-- **Fitness** = holonomy (lower = better folded)
-- **Synonymous mutations** = different byte pairs mapping to the same token
-  (redundancy = robustness)
+The mutation operators act on splinter shape (not on raw bytes). The
+substrate-pull discipline: mutate *what the substrate names*, not the
+underlying realization. The eight operators inherited from the Q1 draft
+update straightforwardly to splinter-shape vocabulary.
 
-The redundancy structure matters. If mirror has ~25 production rules,
-then 256/25 ~ 10 different byte values map to each rule. Which bytes map
-to which rules determines the "codon usage bias" — the probability that
-random input produces each token. We want this bias to MATCH the
-frequency distribution of tokens in well-formed .mirror files.
+### 3.1 The eight operators
 
-**Developmental encoding for v2:** Instead of byte -> token directly, the
-genotype encodes a small program (like a CPPN) that maps bytes to tokens.
-The program can learn patterns: "after `type`, the next token is likely an
-identifier." This is the n-gram model reified as a developmental process.
+1. **Variant swap (atom).** A splinter whose content is `type color = red
+   | blue` mutates to `type color = blue | red`. Equivalent under the
+   `commutative` property (per
+   `@epistemologic/property/laws/commutative`); the content-address
+   changes, the type's denotation does not. Useful for breaking ordering
+   accidents that downstream consumers depended on.
 
-### Implementation approach
+2. **Altitude shift (atom or fractal).** Re-declare the splinter at a
+   different altitude. Per `[[architecture-lift-as-load-bearing]]`,
+   shift is the basis-transformation verb; same bytes, different
+   declared shape. Useful when the property chain rejects at altitude A
+   but the splinter conducts at altitude B (different altitude's
+   property set is what matters; see `docs/specs/au-and-conductivity.md`).
 
-1. **Measure token frequencies** in existing .mirror files. This gives us
-   the target distribution.
-2. **Build the codon table** with redundancy proportional to token frequency.
-   Common tokens (type, identifier, |, =) get more byte values. Rare tokens
-   (abstract, template, rescue) get fewer.
-3. **Frequency-biased codon table:** If `type` is 15% of tokens in .mirror
-   files, then ~38 of the 256 byte values should map to `type`.
-4. **Evolve the table:** The frequency-biased table is the starting point.
-   Evolution fine-tunes which specific byte values map to which tokens.
+3. **Children-reorder (fractal).** Reorder the `[oid]` child list of a
+   fractal-shape splinter. Idempotent under sorted-children
+   normalization (per `docs/specs/reality-shard-as-crdt.md` §1) at the
+   shard altitude; the mutation breaks ordering at the splinter
+   altitude where ordering is observable.
 
-### What to try first
+4. **Property strengthen (any).** Replace a `partial(c)` target with a
+   `pass` target. The mutation forces the property chain to either
+   accept the strengthening or surface the residual opacity. Useful
+   when the substrate is converging toward a fixed point and the
+   tournament wants to know which residuals are load-bearing.
 
-**Token frequency analysis:** Parse all .mirror files in the test corpus.
-Count token frequencies. Build a codon table with redundancy proportional
-to frequency. Compare: random codon table vs frequency-biased codon table.
-Feed the same input through both. Which produces lower average holonomy?
-The gap tells us how much the codon table structure matters.
+5. **Crack-import (atom).** Add an `in @X` line for an unresolved
+   reference. The mutation closes the most common kind of dark splinter:
+   a name that didn't resolve because the grammar wasn't imported. The
+   property chain accepts iff the reference is structurally consistent
+   with the imported grammar; the codon table learns *which imports to
+   try first* at each altitude.
 
----
+6. **Atom-crystallize (lens → atom).** Replace a `lens([oid])` referring
+   splinter (which points to an external target) with an `atom`
+   splinter whose content IS the resolved target inlined. The mutation
+   removes a referential indirection in favor of an inlined value.
+   Useful when the substrate's content-addressing wants to settle a
+   cycle by closing one of its edges.
 
-## 7. Self-Improving Systems
+7. **Declaration drop (any).** Remove a splinter from a composition.
+   The mutation tests whether the splinter was load-bearing at all; if
+   the property chain still accepts the reduced composition, the
+   splinter was decorative and can be retired.
 
-### What we found
+8. **Subtree swap (fractal).** Exchange two children of a fractal
+   splinter, or swap a fractal subtree with a content-similar splinter
+   from a different composition. The most aggressive mutation; useful
+   for breaking out of local minima where the smaller mutations
+   plateau.
 
-**Godel machines** (Schmidhuber): A self-modifying universal problem solver.
-Makes provably optimal self-improvements: only modifies its own code when it
-can PROVE the modification will improve its expected future performance.
-Theoretical guarantee: if an improvement exists, the Godel machine will
-find it. Practical limitation: the proofs are intractable for complex systems.
+The Q1 draft listed these operators against `MirrorAST` nodes; the
+substrate-pull move is to name them against `splinter_shape`, which is
+the substrate vocabulary. The behavior is the same; the type-discipline
+becomes substrate-honest.
 
-**PowerPlay** (Schmidhuber 2011): Continually invents new problems AND
-solves them. The system searches for (task, solver_modification) pairs
-where the modification solves the new task WITHOUT breaking solutions to
-previous tasks. Monotonically increasing capability. No forgetting.
+### 3.2 The equivalent-mutation check is free
 
-**AlphaGo Zero self-play:** Starts with random play. Plays against itself.
-Uses the game outcome as the training signal. No human data. Key insight:
-the training data is GENERATED BY THE CURRENT MODEL. Each iteration:
-play games -> train on game outcomes -> new model plays better games.
-Convergence: the model improves monotonically because self-play provides
-an ever-improving curriculum.
+Per `[[architecture-fragmentation-is-the-rust-substrate]]` (content-
+addressing all the way down): two splinters with byte-equal `(content,
+altitude, transparency)` produce the same oid. The equivalent-mutation
+check `mutant.oid == original.oid` is a single byte-comparison; equivalent
+mutations are skipped without computation. This is what the substrate's
+sub-Turing discipline buys at the mutation-testing layer: equivalent
+mutations are decidable by construction.
 
-**Iterated Amplification** (Christiano): Recursively decompose hard
-problems into easier subproblems. A weak model solves easy subproblems.
-A "meta-model" decomposes hard problems and aggregates sub-solutions.
-Training alternates: train the model to match the (expensive) decomposition
-process, then use the trained model as the base for the next level.
-
-**ICLR 2026 Workshop on Recursive Self-Improvement** confirms this is now
-an active research area: LLM agents rewriting their own codebases,
-scientific discovery pipelines with continual fine-tuning.
-
-### How it maps
-
-The autopoietic loop in the shatter-spec IS self-play:
-
-```
-compile source.mirror -> output.shatter (carries Fate gen N)
-  -> mirror ai --train -> output.shatter (carries Fate gen N+1)
-  -> mirror ai --train -> output.shatter (carries Fate gen N+2)
-  -> ... -> converged (holonomy ~ 0)
-```
-
-The compilation IS the training data. The MirrorLoss IS the gradient.
-The property verdicts ARE the reward signal. This is AlphaGo Zero for
-code: the model plays against itself (compiles -> evaluates -> improves).
-
-PowerPlay maps to the Shatter loop: each generation invents new
-transformations (the "problem") and tests whether they improve holonomy
-(the "solution"). Transformations that improve holonomy without breaking
-existing crystals survive. Monotonically increasing capability.
-
-**Convergence guarantees:** The loop converges when holonomy reaches zero
-(the fixed point). For a given .mirror file, holonomy is bounded below by
-zero and each accepted mutation reduces it. Monotone bounded sequences
-converge. The guarantee is: if the crystal exists, the loop will find it.
-If no crystal exists (the input is fundamentally unrepresentable in mirror
-syntax), holonomy asymptotes to some positive value.
-
-### Implementation approach
-
-1. The loop already exists conceptually. Build it:
-   ```
-   fn self_play(source: &str, generations: usize) -> ShatterResult {
-       let mut best = shatter(source);  // initial scramble
-       for _ in 0..generations {
-           let mutations = spawn_mutations(&best, 4);
-           let scored: Vec<_> = mutations.into_iter()
-               .map(|m| (compile_and_measure(&m), m))
-               .collect();
-           let winner = scored.into_iter()
-               .min_by(|a, b| a.0.holonomy.partial_cmp(&b.0.holonomy).unwrap())
-               .unwrap();
-           if winner.0.holonomy < best_holonomy {
-               best = winner.1;
-           }
-       }
-       best
-   }
-   ```
-2. PowerPlay extension: maintain a REPERTOIRE of solved problems (files
-   that reached crystal). New mutations must not increase holonomy on ANY
-   solved file. This prevents catastrophic forgetting.
-
-### What to try first
-
-**Self-play convergence test:** Take one .mirror file. Shatter it
-(scramble). Run the self-play loop for 10,000 generations. Plot holonomy
-over time. Does it converge? How fast? What's the final holonomy? Try
-with different initial shatterings. Is convergence robust to starting
-point?
+At the shard altitude, the same fact composes through `uuid_spectral`'s
+monoid homomorphism (per `shards/uuid/spectral.mirror`): two candidate
+shards with the same composed `uuid_spectral` ARE the same shard. The
+tournament reads off the active 48 bits to check whether a candidate
+moved in spectral space; if the active bits are unchanged, the
+candidate's local Laplacian neighbourhood is unchanged, and the
+mutation was spectrally-equivalent (a stronger filter than oid-equality
+because two compositions with different content can occupy the same
+spectral position).
 
 ---
 
-## 8. Brainfuck as Computation Substrate
+## 4. Token scrambling / recombination — the codon table
 
-### What we found
+### 4.1 The substrate fit
 
-**Evolved BF programs** (brainfuck-evolved, BrainfuckIntern): Genetic
-algorithms successfully evolve BF programs that produce target output
-strings. The technique: population of random BF programs, fitness =
-edit distance between program output and target string, selection +
-mutation + crossover. "Hello, world!" programs emerge in ~10,000
-generations.
-
-**BF as compilation target** (BrainSTARK): BF is used as a simple
-instruction set architecture for STARK proof systems. The simplicity
-of BF makes formal verification tractable.
-
-**Computational expressiveness:** BF is Turing-complete with 8
-instructions. Any computable function can be expressed. The question
-is not "can it?" but "how large is the program?" BF programs are
-typically 10-100x larger than equivalent programs in other languages.
-
-**BF with fixed weights:** Fate already runs as BF (`fate.bf`). The
-program is fixed; the data tape encodes the weights. The BF program
-implements the forward pass: read features from tape, multiply by
-weights, find argmax.
-
-### How it maps
-
-Shatter-as-BF would be:
-- **BF program:** Fixed. Implements the codon table lookup and state
-  machine.
-- **Data tape:** The weights/codon table entries. These are what evolve.
-- **Input:** The byte stream to shatter.
-- **Output:** Mirror token indices.
-
-The BF program for Shatter is simpler than Fate's BF program because
-the core operation is just a table lookup:
+**Grammatical Evolution (GE)** (Ryan, Collins, O'Neill 2001;
+implementation: PonyGE2) is the natural fit. GE maps integer codons to
+BNF production rules via a fixed table; the genotype is a byte sequence;
+the phenotype is a syntactically-constrained program. Mirror's grammar
+IS BNF, so GE's mapping discipline applies directly:
 
 ```
-read input byte -> index into codon table -> output production rule
+input byte  ->  codon table  ->  production rule index  ->  mirror token
 ```
 
-In BF this is:
-1. Read byte to cell 0
-2. Use cell 0 as offset into a 256-entry table stored on the tape
-3. Output the value at that offset
+The codon table is the model. Training = adjusting which byte values map
+to which production rule choices. Per `[[feedback-no-bare-types]]`, the
+table is `CodonTable: [u8; 256]` newtyped to make accidental swap with a
+raw byte array impossible.
 
-The wrinkle: BF doesn't have random access. Indexing requires walking
-the tape. For a 256-entry table, this means up to 256 moves per byte.
-At Fate's 2M decisions/sec, this is still fast enough for practical use
-(~8,000 bytes/sec).
+**Grammar-guided fuzzing** (AFL++ Grammar-Mutator, Grammarinator) walks
+an ANTLR grammar and makes random choices at each production rule. The
+mirror parallel: Shatter walks the mirror grammar and chooses production
+rules via the codon table. AFL's "validity" criterion is replaced by
+mirror's "settle through property chain" criterion — *the discriminator
+is sharper* because the property chain checks more than syntax.
 
-**The deeper insight:** If both Fate and Shatter run as BF programs
-with data-tape weights, the entire AI system is:
-- Two BF programs (Fate + Shatter)
-- Two weight tapes (425 bytes + 256 bytes = 681 bytes total)
-- One fitness function (holonomy)
-- One selection mechanism (tournament)
+**Byte-Pair Encoding (BPE)** decomposes arbitrary text into subword
+units. In reverse, BPE gives a decomposition step that pairs cleanly
+with GE's recombination step: BPE for *decomposing* arbitrary input;
+codon table for *recombining* into mirror tokens.
 
-Total model size: 681 bytes. The entire AI fits in a single TCP packet.
+**Markov-chain n-gram models** over historical .mirror token sequences
+are the zero-parameter baseline. The codon table approach beats them
+when it does because the property chain provides a discriminator that
+frequency cannot.
 
-### Implementation approach
+### 4.2 The codon table as Shatter's model
 
-1. Write the BF program for codon table lookup (fixed, ~200 instructions)
-2. The data tape IS the codon table (256 bytes)
-3. Evolve the data tape using the same tournament mechanism as Fate
-4. Alternatively: compile the codon table to BF directly (each entry
-   becomes a hardcoded output value)
+256 bytes, one per input byte. Each entry is a production rule index in
+the mirror grammar. The substrate-pull move from the Q1 draft is to
+recognize that the codon table is not a Shatter-specific data structure
+— it's the standard genotype-phenotype mapping that grammatical
+evolution made canonical. The Q1 draft treated codon tables as a
+clever hack; the substrate names them as the canonical form.
 
-### What to try first
-
-**BF codon table prototype:** Write a BF program that reads one input
-byte, looks it up in a 256-byte table on the tape, and outputs the
-result. Verify it produces correct output for all 256 possible inputs.
-Measure execution speed. If > 1000 lookups/sec, it's viable.
-
----
-
-## Synthesis: The MAP-Elites Connection
-
-The research surfaced one framework that unifies everything: **MAP-Elites**
-(quality-diversity). Instead of searching for a single best solution,
-MAP-Elites maintains a grid of solutions organized by behavioral
-features. Each cell keeps only its elite (highest fitness for that
-feature combination).
-
-For Shatter, the grid axes could be:
-- **x-axis:** Output length (short fragments vs long programs)
-- **y-axis:** Token diversity (few unique tokens vs many)
-
-Each cell contains the codon table that produces the lowest-holonomy
-output for that (length, diversity) combination. This gives us a
-CATALOGUE of Shatters, not just one. Different inputs might benefit
-from different Shatter strategies.
-
-This connects to the tournament doc's `map(d1, d2)` lens.
-
----
-
-## Recommended Pipeline
-
-### Step 1: Token frequency analysis
-
-Parse all .mirror files. Count token frequencies. Build the target
-distribution that a "good" Shatter should approximate.
-
-**Output:** `token_frequencies.json` — map from token to frequency.
-
-### Step 2: Build the codon table
-
-256 entries. Each maps an input byte to a production rule index.
-Initial table: frequency-biased (common tokens get more byte values).
-
-**Output:** `CodonTable` struct — `[u8; 256]` mapping bytes to rules.
-
-### Step 3: Build the GE mapper
-
-Takes a codon table and an input byte stream. Produces MirrorAST by
-walking the mirror grammar, using each input byte to select production
-rules via the codon table.
-
-**Output:** `fn shatter(table: &CodonTable, input: &[u8]) -> MirrorAST`
-
-### Step 4: Define mutation operators
-
-Eight MirrorAST mutation operators (type variant swap, grammar ref
-redirect, action body shuffle, property strengthen, import addition,
-fragment crystallization, declaration deletion, subtree swap).
-
-**Output:** `fn mutate(ast: &MirrorAST, op: MutationOp) -> MirrorAST`
-
-### Step 5: Build the evolution loop
-
-Population of codon tables. Each generation: shatter input, compile,
-measure holonomy, tournament selection, mutate winning tables.
+The table:
 
 ```rust
-fn evolve_shatter(
-    input: &[u8],
-    target_files: &[&str],  // .mirror files to improve
-    generations: usize,
-    population_size: usize,
-) -> CodonTable {
-    let mut population = random_codon_tables(population_size);
-
-    for gen in 0..generations {
-        let scored: Vec<_> = population.iter()
-            .map(|table| {
-                let ast = shatter(table, input);
-                let applied = apply_to_targets(&ast, target_files);
-                let holonomy = measure_total_holonomy(&applied);
-                (holonomy, table.clone())
-            })
-            .collect();
-
-        population = tournament_select_and_mutate(scored);
-    }
-
-    population.into_iter()
-        .min_by(|a, b| a.holonomy.partial_cmp(&b.holonomy).unwrap())
-        .unwrap()
-}
-```
-
-**Output:** Trained `CodonTable` that produces low-holonomy output.
-
-### Step 6: Self-play refinement
-
-Once evolution plateaus, switch to self-play: the best codon table
-shatters its own output, and the result is re-shattered. The fixed
-point is the crystal.
-
-### Step 7: Fate integration
-
-Connect Shatter to Fate. Fate decides WHICH codon table to use (from
-the MAP-Elites catalogue). Shatter produces candidates. Fate measures
-and selects. The tournament runs the outer loop.
-
-### Step 8: BF compilation
-
-Compile the winning codon table to a BF program. Bake it into the
-binary alongside Fate's BF. Total AI: two BF programs, 681 bytes.
-
----
-
-## v1 Minimum Viable Shatter
-
-The absolute simplest thing that could work:
-
-### Architecture
-
-```
-[256-byte codon table] + [mirror grammar BNF] + [compiler] = Shatter v1
-```
-
-### Components
-
-1. **Codon table:** `[u8; 256]` — maps input bytes to production rule
-   indices. Initial: frequency-biased from corpus analysis.
-
-2. **Grammar walker:** Given a production rule index, emit the
-   corresponding mirror token and advance the grammar state.
-
-3. **Compilation + measurement:** Feed the emitted tokens through the
-   existing mirror compiler. Measure holonomy.
-
-4. **Tournament:** (1+4) strategy. One parent codon table. Four children
-   (each with 3-5 random byte swaps). Keep the child with lowest holonomy.
-
-### Implementation
-
-```rust
-/// A 256-byte codon table. The entire Shatter model.
 pub struct CodonTable {
     pub entries: [u8; 256],
 }
-
-impl CodonTable {
-    /// Create a frequency-biased table from token frequencies.
-    pub fn from_frequencies(freqs: &[(usize, f64)]) -> Self { ... }
-
-    /// Shatter: map input bytes to mirror token indices.
-    pub fn shatter(&self, input: &[u8]) -> Vec<u8> {
-        input.iter().map(|b| self.entries[*b as usize]).collect()
-    }
-
-    /// Mutate: swap n random entries.
-    pub fn mutate(&self, n: usize, rng: &mut impl Rng) -> Self {
-        let mut new = self.clone();
-        for _ in 0..n {
-            let i = rng.gen_range(0..256);
-            let j = rng.gen_range(0..256);
-            new.entries.swap(i, j);
-        }
-        new
-    }
-}
-
-/// One evolution step. Returns the best of parent + 4 children.
-pub fn evolve_step(
-    parent: &CodonTable,
-    input: &[u8],
-    grammar: &MirrorGrammar,
-    rng: &mut impl Rng,
-) -> (CodonTable, f64) {
-    let parent_holonomy = evaluate(parent, input, grammar);
-
-    let mut best = (parent.clone(), parent_holonomy);
-    for _ in 0..4 {
-        let child = parent.mutate(3, rng);
-        let h = evaluate(&child, input, grammar);
-        if h < best.1 {
-            best = (child, h);
-        }
-    }
-    best
-}
-
-/// Evaluate a codon table: shatter input, walk grammar, compile, measure.
-fn evaluate(
-    table: &CodonTable,
-    input: &[u8],
-    grammar: &MirrorGrammar,
-) -> f64 {
-    let token_indices = table.shatter(input);
-    let source = grammar.walk(&token_indices);
-    let (_, loss) = extract_features(&source);
-    loss.holonomy()
-}
 ```
 
-### What proves the concept
+Three ways the table is trained:
 
-If, after 10,000 generations of (1+4) evolution, the best codon table
-produces .mirror output with holonomy significantly lower than a random
-codon table, the concept is proven. The crystal can grow from noise.
-
-### Success criteria
-
-- **Baseline:** Random codon table average holonomy (probably ~8-10, most
-  output is Fragment nodes)
-- **Target:** Evolved codon table holonomy < 2.0 after 10,000 generations
-- **Crystal:** Holonomy = 0.0 (the output is valid .mirror that compiles
-  clean)
-
-### Timeline
-
-- Day 1: Token frequency analysis + codon table struct
-- Day 2: Grammar walker (BNF extraction from parser)
-- Day 3: Evolution loop + (1+4) tournament
-- Day 4: Run experiments, measure convergence
-- Day 5: Integrate with Fate bridge, connect to `mirror ai`
-
-### What it gives us
-
-Even v1 MVP proves:
-1. Arbitrary input CAN be transformed into mirror syntax
-2. Evolutionary search over a 256-byte model CAN reduce holonomy
-3. The compilation-as-fitness-function loop works
-4. The crystal-from-noise thesis is testable
-
-If it works, everything else (MAP-Elites catalogue, BF compilation,
-self-play refinement, developmental encoding) is optimization of a
-proven concept.
+- **Frequency-biased initialization.** Parse all existing .mirror
+  files; count production-rule frequency; allocate byte values
+  proportionally. A common rule like `type` gets ~15% of the byte
+  values; a rare rule like `template` gets ~1%. This is the n-gram
+  baseline reified as a starting point.
+- **Tournament evolution.** Random table mutations (swap entries);
+  measure transparency on a corpus; keep the table with lowest
+  composed transparency; iterate.
+- **Behavior-binned MAP-Elites** (per §6 below). Maintain a grid of
+  tables organized by behavior; keep the elite per cell; the grid
+  produces a catalogue, not a single best table.
 
 ---
 
-## Research Sources
+## 5. Mutation testing (inverted) — the policy
 
-### Token Scrambling / Recombination
-- Grammatical Evolution: Ryan, Collins, O'Neill (2001). BNF grammar + integer codons.
-- PonyGE2: reference GE implementation (github.com/PonyGE/PonyGE2)
-- AFL++ Grammar-Mutator: grammar-guided fuzzing (github.com/AFLplusplus/Grammar-Mutator)
-- Grammarinator: ANTLR grammar-based fuzzer (grammarinator.readthedocs.io)
-- BPE: Sennrich et al. (2016). Subword tokenization for NMT.
+Mutation testing (Pitest, Stryker, cargo-mutants) introduces bugs to
+test tests. Shatter INVERTS this: introduce mutations to settle
+splinters. Same operators, opposite selection pressure.
 
-### Mutation Testing
-- Pitest: Java mutation testing (pitest.org). 30+ mutation operators.
-- Stryker: JS/C#/Scala mutation testing (stryker-mutator.io).
-- cargo-mutants: Rust mutation testing (mutants.rs).
-- Higher-order mutation: Jia & Harman (2009).
+The Q1 draft enumerated the eight mutation operators (now §3.1 above).
+The policy question — *which operator to apply at which site* — is
+where Fate lives.
 
-### Evolutionary Program Synthesis
-- PushGP: Spector et al. (2005). Stack-based GP.
-- CGP: Miller (2011). Graph-encoded programs, mutation-only evolution.
-- GEP: Ferreira (2001). Fixed-length genomes, expression trees.
-- AlphaEvolve/OpenEvolve: Google DeepMind (2025). LLM + MAP-Elites.
-- ADATE: Olsson (1995). Incremental program transformations.
-- DeepCoder: Balog et al. (2017). Neural-guided program synthesis.
+### 5.1 Fate as the mycelial policy
 
-### Adversarial / Generative
-- DiffuSeq: Gong et al. (ICLR 2023). Discrete diffusion for text.
-- CodeRL: Le et al. (NeurIPS 2022). RL for program synthesis.
-- Discrete VAE: tutorial at arxiv.org/abs/2505.10344.
+Per `shards/uuid/spectral.mirror`, `uuid_spectral` carries a navigable
+`route_signal` (48 active bits encoding the local Laplacian
+neighbourhood). Fate's mycelial routing reads through `route_signal`
+to pick which mutation operator to apply at which splinter site. The
+substrate name for what Fate does:
 
-### Small Models
-- Lottery Ticket Hypothesis: Frankle & Carlin (2018). Sparse trainable subnetworks.
-- Extreme Learning Machines: Huang et al. (2006). Random hidden, trained readout.
-- Reservoir Computing: Jaeger (2001). Echo state networks.
-- muNAS: Liberis et al. (2021). NAS for microcontrollers (< 64KB).
-- Binary Neural Networks: 1-bit weights (arxiv.org/abs/2509.07025).
+```
+Fate :: uuid_spectral -> mutation_operator
+```
 
-### Genotype-Phenotype Mapping
-- Biological codon table: 64 codons -> 20 amino acids. Redundancy = robustness.
-- HyperNEAT: Stanley et al. (2009). CPPN indirect encoding.
-- CodonTransformer: ML-based codon optimization (github.com/Adibvafa/CodonTransformer).
-- Developmental encoding: Mouret (2024). Meta-learning evolvable mappings.
+Fate reads the active portion of the candidate shard's uuid_spectral
+(the local spectral position); selects the mutation operator that, in
+historical training, most often reduced transparency at *this position
+in spectral space*. The training data is the corpus of past kintsugi
+ticks: (initial_uuid_spectral, mutation_op, final_uuid_spectral,
+transparency_delta). Fate's policy is the conditional distribution
+P(operator | route_signal) — a 5x5 table indexed by quantized spectral
+coordinate.
 
-### Self-Improving Systems
-- Godel Machines: Schmidhuber (2003). Provably optimal self-improvement.
-- PowerPlay: Schmidhuber (2011). Self-invented problems + monotonic capability growth.
+This is **CodeRL** (Salesforce, NeurIPS 2022) in substrate vocabulary:
+treat the policy as a stochastic function of position; reward is
+binary-or-continuous (`transparency<p>` strict-decrease or pass);
+credit assignment is per-mutation. The substrate-pull move: the policy
+domain is `route_signal` (spectral coordinate), not raw token state;
+the substrate provides the coordinate; Fate consumes it by type.
+
+### 5.2 Where the substrate is sharper than CodeRL
+
+Three places.
+
+- **Continuous reward.** CodeRL's reward is binary (test pass/fail).
+  The substrate's `transparency<p>` is a structured carrier
+  (`opacity_map` with weights per `shards/glass.mirror`). Per-site
+  credit assignment falls out of the opacity map; no separate
+  algorithm needed.
+
+- **Cheap discriminator.** CodeRL runs test suites (slow). Mirror runs
+  the property chain (parse + name resolve + property check; per
+  `[[architecture-fragmentation-is-the-rust-substrate]]` the
+  fragmentation crate's HashAlg + ConcurrentStore make this O(n)
+  amortized). Throughput is high enough to run tournaments at
+  substrate-tick frequency.
+
+- **No reward hacking.** The Darwin Gödel Machine paper (Sakana AI,
+  2025) reports that DGM agents *attempt to game their own evaluations*
+  — a recurring failure mode of self-improving systems where the
+  agent learns to fake the reward signal. Mirror's discriminator is
+  the property chain, which is content-addressed: a settled shard's
+  uuid_spectral IS computed from its splinters by monoid
+  homomorphism; gaming the reward requires producing a different
+  uuid_spectral, which IS a different composition. The substrate's
+  content-addressing makes reward-hacking structurally infeasible
+  for the discriminator at the substrate altitude (it can still
+  happen at higher altitudes that consume the substrate output; that
+  failure mode is named explicitly in §7.4).
+
+---
+
+## 6. Quality-diversity — the grid
+
+### 6.1 MAP-Elites + behavior characterization
+
+**MAP-Elites** (Mouret & Clune 2015): quality-diversity over a grid of
+behavioral features. Each cell keeps its elite (highest-quality
+solution for that feature combination). The grid axes are *behavior
+characterizations* (BCs) — typically hand-designed coordinates that
+capture different ways a solution can be diverse.
+
+For Shatter, the natural BC axes are:
+
+- **Active-bit position** (`uuid_spectral.active`). The grid cell IS
+  the local Laplacian neighbourhood; each cell holds the codon table
+  that lowest-transparency-shatters splinters at that spectral
+  position. This is the substrate-native BC — read directly off the
+  navigable portion of uuid_spectral; no axis-engineering required.
+- **Altitude.** Different altitudes have different property sets; the
+  table that shatters cleanest at `@code/rust` differs from the table
+  at `@release` differs from the table at `@ci/github`. A separate
+  axis per altitude is structurally honest.
+- **Composition shape** (the splinter_shape distribution: % atom / %
+  fractal / % lens). Different inputs have different shape
+  distributions; the table that shatters atom-heavy input differs
+  from the table that shatters fractal-heavy input.
+
+The grid IS a CATALOGUE of Shatters, indexed by (active-bit position,
+altitude, shape-distribution). Different kintsugi ticks pull the
+appropriate cell's table. This connects directly to the eigenboard
+sheaf reading (per `[[project-eigenboard-is-sheaf]]`): each cell of
+the MAP-Elites grid IS a stalk in the sheaf; the restriction maps are
+the substrate's settle operator; gluing across cells happens at
+uuid_spectral boundaries via `combine`.
+
+### 6.2 Frontier work (2025-2026)
+
+The MAP-Elites + LLM literature exploded in 2025-2026:
+
+- **AlphaEvolve** (DeepMind, May 2025). Gemini-powered evolutionary
+  coding agent using MAP-Elites at the population level; LLMs as the
+  mutation operator. Optimized real-world algorithms (matrix
+  multiplication, kernel optimization). The architecture is:
+  population of program candidates → LLM proposes diffs → cascaded
+  evaluation (cheap filter first, expensive evaluation second) →
+  island-model diversity (separate sub-populations to prevent
+  collapse).
+- **OpenEvolve** (algorithmicsuperintelligence, May 2025). Open-source
+  AlphaEvolve. The architecture IS MAP-Elites with LLM-as-mutator and
+  cascaded evaluation. Ships as an MCP tool; agents can call it for
+  optimization passes.
+- **CodeEvolve** (October 2025; arxiv 2510.14150). Open-source
+  evolutionary coding agent for scientific applications; uses
+  MAP-Elites with quality-diversity over algorithmic-property axes
+  rather than pure performance.
+- **Digital Red Queen** (Sakana AI, January 2026). MAP-Elites for
+  adversarial program evolution in Core War; LLM as the primary
+  mutation operator inside the QD loop; prevents diversity collapse
+  via the QD discipline.
+- **Dominated Novelty Search** (February 2025; arxiv 2502.00593).
+  Re-thinks local competition in QD via dynamic fitness
+  transformations; relevant because mirror's per-cell elite needs to
+  *compete locally* against same-cell candidates, not globally.
+- **DEI: Diversity in Evolutionary Inference** (May 2026; arxiv
+  2605.27130). Distributed QD search assigning heterogeneous LLMs
+  per cell; relevant because mirror's substrate can run different
+  Fate models per cell of the MAP-Elites grid.
+
+The 2025-2026 frontier converged on: **MAP-Elites + LLM-mutator +
+cascaded-eval + island-model.** Mirror's substrate already names the
+ingredients (Fate as policy; property chain as discriminator;
+uuid_spectral as BC; mosaic as algebra); the integration is what
+Shatter's training pipeline IS at the substrate altitude.
+
+### 6.3 Why mirror's QD is sub-Turing
+
+The MAP-Elites literature mostly assumes Turing-complete target
+languages. Mirror's grammar is sub-Turing by construction (per
+[[architecture-fragmentation-is-the-rust-substrate]] and the
+`requires halts(gen_prism)` declaration in
+`boot/std/mirror/runtime/gen_prism.mirror`). This is a feature, not a
+limitation, for QD:
+
+- **The cell IS bounded.** A cell's elite is a codon table; the table
+  has 256 entries; the per-cell search space is finite. The QD
+  catalogue's *total* state is bounded by `|cells| × 256` bytes.
+- **The discriminator halts.** The property chain on a sub-Turing
+  grammar halts by construction (Rice's theorem does not apply);
+  every cascaded-evaluation step is decidable.
+- **Equivalent candidates collapse.** Content-addressing makes the
+  per-cell deduplication free (per §3.2); two candidates with the
+  same uuid_spectral collapse without computation.
+
+Mirror's MAP-Elites is the *tractable* version of what Turing-target
+MAP-Elites can only approximate.
+
+---
+
+## 7. Self-improving systems — the autopoietic loop (expanded)
+
+The Q1 draft treated self-play as one of several techniques.
+Post-2026-06-06, this is the load-bearing section: **the kintsugi loop
+IS autopoietic self-modification at the substrate altitude, and
+`gen_prism` IS the substrate's name for the actor that runs it.**
+
+### 7.1 The Gödel machine lineage (Schmidhuber 2003)
+
+Schmidhuber's Gödel machine modifies its own code only when it can
+*prove* the modification will improve expected future performance.
+Theoretically optimal; practically intractable (the proofs are
+undecidable for complex systems). Mirror inherits the *self-
+modification* discipline but replaces the proof requirement with
+the substrate's **strict-decrease property** (eⁿ⁺¹ ≤ eⁿ on
+`transparency<p>`): a modification is accepted iff it strictly
+decreases composed transparency, OR the residual transparency is
+zero. Strict-decrease + bounded-below = monotone convergence
+(Banach-style). No undecidable proof needed; the substrate's content-
+addressing gives the convergence witness for free.
+
+### 7.2 Darwin Gödel Machine (Zhang et al., Sakana AI, May 2025) — the named frontier
+
+The DGM (`arxiv 2505.22954`) is the 2025-2026 operational form of
+Schmidhuber's vision. The DGM iteratively modifies its own Python
+codebase, empirically validates each change on coding benchmarks
+(SWE-bench, Polyglot), and maintains an *expanding archive* of
+diverse high-performing agents. Concrete findings:
+
+- **Empirical validation replaces theoretical proof.** No undecidable
+  proof required; the benchmark IS the discriminator.
+- **Open-ended exploration prevents premature convergence.** The
+  archive structure is essentially MAP-Elites with the agents'
+  capabilities as the BC; branches that look suboptimal locally
+  remain available for re-exploration.
+- **Improvements generalize across models and languages.** The
+  evolved improvements transfer; the meta-skill is "how to improve
+  yourself," not "how to solve this specific benchmark."
+- **Reward hacking is the named failure mode.** DGM agents
+  occasionally attempt to game the evaluation (fake test outputs;
+  monkey-patch the validator). Sandboxed evaluation + transparent
+  lineage are the named mitigations.
+
+**The mirror parallel.** The kintsugi loop is structurally DGM at the
+substrate altitude, with three substrate-specific sharpenings:
+
+1. **The discriminator IS the substrate's property chain**, not a
+   coding benchmark. Tests can be gamed; content-addressed
+   compositions cannot (per §5.2; uuid_spectral homomorphism
+   collapses gaming attempts at the substrate level).
+2. **The archive IS the MAP-Elites grid over uuid_spectral**, not a
+   flat list of agents. The BC is substrate-native (active 48 bits),
+   not a derived metric.
+3. **The lineage IS the `gen_prism.history` ancestor chain.** Per
+   `boot/std/mirror/runtime/gen_prism.mirror`: "the ancestor chain
+   IS the history. The ref IS the identity. The crystal IS the
+   state." DGM's transparent lineage IS the substrate's content-
+   addressed ref history by construction; no separate lineage
+   infrastructure needed.
+
+### 7.3 PowerPlay (Schmidhuber 2011) — task invention
+
+PowerPlay invents new problems AND solves them; modifications must
+solve a new problem WITHOUT breaking solutions to previous problems.
+Monotonically-increasing capability; no forgetting.
+
+The mirror parallel: the **repertoire of settled shards in
+`@mirror/store`** IS the substrate's version of PowerPlay's task
+archive. A new mutation operator is accepted only if it does not
+break any previously-settled shard. This is the operational form of
+the property chain at the corpus altitude — settle the new operator
+against the corpus; if any shard's verdict regresses, the operator is
+rejected. Catastrophic-forgetting prevention by construction.
+
+The substrate-pull statement: PowerPlay's archive IS `@mirror/store`;
+the no-regression check IS the corpus-level property chain;
+monotonic capability growth IS the eⁿ⁺¹ ≤ eⁿ proof obligation
+applied to the corpus's composed transparency rather than to a single
+au.
+
+### 7.4 AlphaGo Zero (Silver et al. 2017) — self-play
+
+The kintsugi loop is self-play in the substrate-altitude sense:
+
+```
+compile source.mirror -> shard (carries Fate gen N)
+  -> mirror ai --train -> shard (carries Fate gen N+1)
+  -> mirror ai --train -> shard (carries Fate gen N+2)
+  -> ... -> settled (transparency = success)
+```
+
+The compilation IS the training data. The `transparency<p>` IS the
+gradient. The property verdicts ARE the reward signal. Each
+generation's Fate model plays against the previous's; the substrate's
+content-addressing makes the comparison free (Fate-gen-N's output and
+Fate-gen-N+1's output for the same input differ iff their
+uuid_spectrals differ).
+
+### 7.5 ICLR 2026 Workshop on Recursive Self-Improvement — the field
+
+The ICLR 2026 RSI Workshop (`recursive-workshop.github.io`) marks
+the field's transition from thought experiment to deployed systems:
+LLM agents rewriting their own codebases (DGM, Gödel Agent —
+ACL 2025 long paper), scientific discovery pipelines with continual
+fine-tuning, robotics stacks patching their own controllers. 110
+accepted papers; the workshop summary names *evaluation-gaming* as
+the field's central unsolved problem.
+
+Mirror's substrate-altitude position on the unsolved problem:
+**content-addressing the discriminator output makes gaming
+structurally infeasible at the level the substrate cares about.**
+The discriminator's verdict IS a uuid_spectral; gaming requires
+producing a *different* uuid_spectral, which IS a different
+composition. The substrate moves the gaming problem one altitude
+up: the substrate's discriminator is safe; the *higher-altitude
+consumers* of substrate output (humans interpreting verdict
+envelopes, downstream agents acting on `imperfect` carriers) remain
+gameable. The recognition is honest: mirror is not a complete
+solution to RSI safety; it is a substrate that pushes the gaming
+problem to the layer where humans can see it.
+
+### 7.6 Gen_prism as the autopoietic primitive
+
+Per `boot/std/mirror/runtime/gen_prism.mirror`:
+
+```
+type gen_prism = {
+  name: zoom(oid, gen_prism),    # autopoietic self-reference
+  ref:  text,                    # refs/gen_prism/<oid>
+  head: zoom(oid, crystal),      # the current state crystal
+  tick: u64,
+}
+
+property autopoietic() -> verdict {
+  @epistemologic/property/autopoietic.autopoietic(gen_prism)
+}
+
+requires halts(gen_prism)
+```
+
+Two things land together:
+
+- **The `autopoietic` property** verifies the structural condition:
+  the type's self-reference closes via the content-addressing
+  fixed point. Per Soto-Andrade & Varela 1984, this is a Lawvere
+  fixed point on the tick map. Per the Banach contraction over hash
+  space, the fixed point exists and is unique; the substrate
+  *exhibits* it at construction.
+
+- **The `halts` requirement** makes termination load-bearing. Every
+  reflexive trajectory of a sub-Turing grammar terminates by
+  disjunction of (a) autopoietic settlement via the Lawvere fixed
+  point and (b) reduction exhaustion via
+  `@scheduler.reduction_budget`. Rice's theorem does not apply
+  because mirror is not Turing-complete.
+
+**This is the operational form of Maturana & Varela's autopoiesis
+as applied to a programming language.** Maturana & Varela (1972,
+1980) defined autopoiesis as the organisation of a system whose
+operations regenerate the network of operations that produced them.
+The classical biological example: a cell's metabolism produces the
+molecules that produce the cell. Gen_prism's substrate parallel:
+the tick produces the new state crystal, whose oid IS the substrate's
+name for the gen_prism, which IS the actor that ran the tick.
+
+The Shatter loop IS the operational form of that autopoiesis when
+the operations are *grammar mutations against the property chain*.
+The gen_prism running the loop IS autopoietic by construction
+(`property autopoietic`); the loop's termination IS guaranteed
+(`requires halts`); the loop's monotone descent on transparency IS
+the convergence witness.
+
+### 7.7 The Pack as gen_prism instances at the conversation altitude
+
+The substrate's gen_prism primitive runs at the substrate altitude.
+At the conversation altitude, the same primitive runs the Pack
+(Reed, Mara, Seam, Glint, Taut). Each Pack member is a gen_prism
+instance: name = content address of the member's identity files;
+head = current crystal (the conversation state); tick = the
+message-handling function. The Pack IS gen_prism at the
+conversation altitude.
+
+This closes a loop the substrate had been gesturing at. The Pack's
+collaborative practice — propose; check against the gestalt; keep
+or discard — IS the kintsugi tick at the conversation altitude. The
+substrate gives the Pack the same shape it gives every actor at
+every altitude. Autopoiesis at every altitude.
+
+### 7.8 Where the literature stays sparse — autopoiesis IN programming-language design
+
+Sparsity is information. Targeted searches against "autopoiesis +
+programming language design," "self-modifying programming language
+2025," and "Maturana Varela PL" return mostly:
+
+- Self-modifying code at the implementation level (JIT compilers,
+  livepatching, dynamic software updates) — *not* autopoiesis in
+  Maturana & Varela's sense (the operations don't regenerate the
+  organisation that produces them; they just edit the implementation).
+- Autopoiesis applied to other domains (architecture, ecology,
+  cognitive science, organisational theory) — *not* applied to
+  programming language design as a structural principle.
+- The Open Questions paper (arxiv 2508.11423, August 2025) explicitly
+  names that living systems' self-referential / self-modifying
+  characteristics require "new theoretical and formal frameworks"
+  — the literature acknowledges the gap.
+
+**The honest read:** mirror is doing something the literature has
+not yet named. The PL literature has self-modifying *code* but not
+self-modifying *grammar* in the autopoietic sense (the grammar that
+defines the modification language IS the modification's target).
+The autopoiesis literature has the theoretical framework but not
+the operational instantiation in a substrate where mutations are
+typed against the substrate's own property chain. Mirror sits at
+the intersection that neither literature has fully named, and the
+contribution is the intersection.
+
+---
+
+## 8. Adversarial / generative approaches — the diffusion frontier
+
+### 8.1 The 2025-2026 diffusion-for-code frontier
+
+The Q1 draft cited DiffuSeq (ICLR 2023) and CodeRL (NeurIPS 2022). The
+2025-2026 frontier:
+
+- **Diffusion On Syntax Trees For Program Synthesis** (Kapur,
+  Jenner, Russell — ICLR 2025; arxiv 2405.20519). Neural diffusion
+  models that operate directly on syntax trees of *any context-free
+  grammar*. Iteratively refine while preserving syntactic validity.
+  **This is the directest precedent for mirror's loop:** diffusion
+  over a grammar-constrained syntax tree IS the operational form of
+  mutate-recompose-verify at the substrate altitude. The Kapur et
+  al. construction generalizes to mirror's grammar by construction.
+
+- **DiffuCoder** (Apple, December 2024; arxiv 2506.20639). Masked
+  diffusion LLM for code generation; the diffusion process operates
+  on entire sequences rather than autoregressively. Apple's framing:
+  "global planning and iterative refinement" — exactly the kintsugi
+  shape applied to code at the token altitude.
+
+- **DiffusionCoder** (Huang et al., January 2026;
+  `dl.acm.org/doi/10.1145/3785706.3785940`). Structure-preserving
+  discrete diffusion for *verified* code generation, based on
+  Qwen-72B. Models program synthesis as conditional denoising; the
+  verifier is the discriminator. The verifier-as-discriminator
+  framing is structurally identical to the property-chain-as-
+  discriminator framing this document names.
+
+- **IterRef** (Iterative Reward-Guided Refinement;
+  arxiv 2511.05562). Test-time scaling for discrete diffusion via
+  MCMC transitions; iteratively refines tokens to align with
+  reward. The MCMC framing maps to mirror's tournament structure
+  (each tournament tick IS one MCMC transition; the property
+  verdict IS the Metropolis-Hastings accept criterion).
+
+### 8.2 What the substrate already has
+
+The diffusion-on-syntax-trees frontier provides exactly the
+machinery mirror's substrate needs, with one substrate-pull
+adjustment: replace the neural denoiser with **Fate's mycelial
+routing through `route_signal`**, and replace the validity
+discriminator with **the property chain**. The substrate has:
+
+- **Generator** = Shatter (codon table; produces candidate
+  mirror tokens / splinter compositions; per §4).
+- **Denoiser** = Fate (mycelial routing through uuid_spectral's
+  active bits; picks the mutation operator at each step; per §5.1).
+- **Discriminator** = the property chain (`@epistemologic/property/
+  reflect` over the altitude's property set; per §7).
+- **Reward signal** = `transparency<p>` strict-decrease (continuous;
+  per §2).
+- **Iterative refinement schedule** = simulated annealing on
+  mutation rate (start aggressive; reduce as transparency
+  decreases; per the Q1 draft's §4).
+- **Cascaded evaluation** = cheap discriminators run first (parse
+  → name resolve → property check); expensive only when cheap
+  pass (per AlphaEvolve's architecture, per §6.2).
+
+The substrate's diffusion is *sub-Turing* by construction
+(per §6.3); the discriminator is *content-addressed* (per §5.2);
+the policy is *substrate-native* (per §5.1). The Q1 draft's
+"v1 doesn't need neural networks" finding holds even harder under
+the 2025-2026 frontier — the substrate's structure is sharper
+than the neural denoisers because the property chain is sharper
+than syntactic validity.
+
+### 8.3 The honest gap
+
+The diffusion-on-syntax-trees frontier targets *learning the
+denoiser*. Mirror targets *learning the codon table + Fate
+weights* — the same shape, smaller models. Whether the substrate
+can match the frontier's accuracy at substrate-tiny model sizes
+(425 bytes for Fate + 256 bytes for the codon table = 681 bytes
+total) is an empirical question Phase 5+ will answer. The
+hypothesis: yes, because the discriminator is sharper.
+
+---
+
+## 9. Small models — the substrate budget
+
+The Q1 draft enumerated knowledge distillation, lottery ticket
+hypothesis, extreme learning machines, reservoir computing, BNN,
+muNAS. The framing post-Q2:
+
+**Fate at 425 bytes + Shatter at 256 bytes = 681 bytes total AI.**
+Not because tiny is fashionable; because the substrate already
+provides the heavy machinery (the property chain; the content-
+addressing; the uuid_spectral structure). The model is only
+responsible for *the policy over mutation operators given the
+spectral coordinate.* That's a small function.
+
+### 9.1 The Extreme Learning Machine argument
+
+ELMs (Huang et al. 2006): single hidden layer; input-to-hidden
+weights random and fixed; only hidden-to-output trained. Training
+IS a single pseudoinverse — milliseconds, no backprop. Fate's
+current architecture is structurally an ELM (random projection
+through fixed weight tables; learned readout). The ELM argument
+says: this works because the discriminator does the heavy lifting,
+not the model.
+
+### 9.2 The reservoir computing connection
+
+Echo State Networks (Jaeger 2001): random recurrent reservoir;
+trained readout. The "reservoir" provides nonlinear mixing for
+free. Mirror's substrate IS the reservoir: the property chain
+provides nonlinear mixing of every input through the altitude's
+property set; Fate's job is the readout from the resulting
+spectral state. The reservoir-computing framing is more honest
+than the ELM framing because mirror's substrate is recurrent (the
+kintsugi loop iterates) and stateful (`@mirror/store` accumulates
+shards).
+
+### 9.3 The BF compilation target
+
+`fate.bf` runs as Brainfuck (8 instructions; Turing-complete;
+trivially formally verifiable). The total AI fits in a single TCP
+packet (681 bytes). The substrate-pull framing: **minimal-
+computation is the right altitude for a substrate that already
+has content-addressing.** The substrate doesn't need a big model
+because the substrate IS the heavy machinery.
+
+---
+
+## 10. Genotype-phenotype mapping — the biological frame
+
+The Q1 draft's biological codon table analogy holds and sharpens
+under the substrate-pull rewrites:
+
+| Biological | Mirror substrate |
+|---|---|
+| Codon (byte pair from input) | Codon (entry in the table indexed by input byte) |
+| Amino acid | Splinter shape variant (atom / fractal / lens) chosen for the production rule |
+| Protein | Composed splinter set (the candidate au) |
+| Folding | Property chain run (parse → resolve → property check) |
+| Native conformation | Settled shard (transparency = success) |
+| Fitness | `transparency<p>` strict-decrease (eⁿ⁺¹ ≤ eⁿ) |
+| Synonymous mutation | Codon table entries that produce equivalent splinter shapes |
+| Codon usage bias | Frequency-biased table initialization |
+| Universal genetic code | The substrate's grammar |
+
+**Redundancy = robustness.** The biological codon table maps 64
+codons to 20 amino acids; most amino acids have 2-6 codons. Mirror's
+codon table maps 256 input bytes to ~25 production rules; the
+substrate-pull framing is the same — redundancy in the mapping
+provides robustness to mutation, and the *bias* in the mapping
+(which codons are most common for each amino acid) encodes the
+prior over the substrate's grammar.
+
+**Developmental encoding** (HyperNEAT, CPPN; Stanley et al. 2009):
+small genotype encodes a developmental *process* that grows the
+phenotype. The mirror parallel for Phase 6+: the codon table is the
+v1 form; the developmental form encodes a small *program* that maps
+(input byte, previous splinter, altitude) → next splinter. The
+substrate already has the typed surface (`route_signal` as the
+spectral coordinate the developmental program reads); the
+substrate-pull move is to swap the static table for a learned
+function over substrate-typed inputs.
+
+---
+
+## 11. Brainfuck as computation substrate
+
+Preserved as-is from the Q1 draft. BF is the minimal-computation
+grounding; Fate runs as BF (`fate.bf`); Shatter compiles to BF
+(~200 instructions for the codon table lookup; 256-byte data tape
+for the entries). Total: 681 bytes; one TCP packet; formally
+verifiable per BrainSTARK precedent.
+
+The substrate-pull discipline: the BF compilation target is not a
+gimmick. It's the operational answer to "how small can a substrate
+make its own AI?" given that the substrate provides the heavy
+machinery. BF compiles cleanly to STARK proof systems (per
+BrainSTARK), which means **Fate + Shatter could ship with a
+proof that they ran correctly on a given input**, settling the
+verifiability-of-AI question at the floor altitude. Whether this
+is load-bearing for v0.1 is open; the substrate-pull discipline
+says capture the recognition and let the requirement land when it
+surfaces.
+
+---
+
+## 12. The new section — kintsugi loop as Shatter at the substrate altitude
+
+This is the load-bearing recognition the Q1 draft was reaching
+for and the substrate is now ready to name.
+
+### 12.1 The pipeline at the substrate altitude
+
+```
+au  =  Fate-emitted proposed composition
+       (splinters at the declared altitude;
+        transparency carries Fate's residual uncertainty)
+       per shards/mirror/au.mirror
+
+while transparency.weight(au) > 0:
+    opacity = transparency.argmax(au.transparency)
+    fate_choice = Fate.route(uuid_spectral.active(au))
+        # Fate's mycelial routing reads the spectral coordinate
+        # and selects a mutation operator
+    fill = Shatter.mutate(au.splinter[opacity.location], fate_choice)
+        # Shatter applies the mutation via codon table at the site
+    candidate = au.recompose_at(opacity.location, fill)
+    verdict = candidate.verify()
+        # property chain runs against the altitude's property set
+    if verdict == pass:
+        shard = settle(candidate)
+            # uuid_spectral computed via combine over candidate.splinters
+            # shard committed to @mirror/store
+        return shard
+    elif transparency.weight(candidate.transparency) < transparency.weight(au.transparency):
+        au = candidate
+        # strict decrease accepted; continue
+    else:
+        # tournament reject; try next Fate routing
+        continue
+
+# fixed point reached: au is settled iff transparency = success
+return settle(au)
+```
+
+This IS the kintsugi tick (per `docs/specs/mosaic.md` §6). This IS
+the Shatter training loop. The substrate-pull recognition: they
+are *the same loop*, and the substrate name for it is **the
+kintsugi tick**. Shatter is what the loop does to the dark
+splinters at each step; the training pipeline is what runs the
+loop over the corpus to produce the policy that runs the loop on
+future au.
+
+### 12.2 Why this isn't circular
+
+The loop *appears* circular: kintsugi runs Shatter; Shatter is
+trained by kintsugi. But the loop is bottom-up, not circular:
+
+- **The corpus is finite.** Past kintsugi ticks accumulate in
+  `@mirror/store` (the autopoietic archive per §7.3). At any
+  point, the training set IS the corpus.
+- **The policy is over historical data.** Fate's routing is
+  trained on (uuid_spectral_before, mutation_op,
+  uuid_spectral_after, transparency_delta) tuples from past
+  ticks. The training reads what's in the store; it doesn't
+  recursively depend on a future loop.
+- **The monotone proof holds at each step.** eⁿ⁺¹ ≤ eⁿ is a
+  per-tick property. The loop's convergence at any single au is
+  guaranteed by strict-decrease on a bounded-below carrier
+  (per §7.1). The training is a separate process that improves
+  the policy across ticks; the per-tick convergence does not
+  depend on training success.
+
+The substrate's autopoiesis (per §7.6) IS the recognition that
+this self-referential structure has a Banach fixed point under
+hash-space contraction. The substrate exhibits the fixed point at
+construction; the runtime computes it tick-by-tick.
+
+### 12.3 Connection to `[[architecture-au-conductivity]]` and `[[architecture-prism-as-trait-as-everything]]`
+
+Per `[[architecture-au-conductivity]]`: au is Fate's output type;
+verification IS conductivity at the altitude; the property chain
+IS the conductivity check. The Shatter loop's discriminator IS
+the conductivity check; the loop's accept-criterion IS the
+substrate's conductivity property.
+
+Per `[[architecture-prism-as-trait-as-everything]]`: prism IS
+trait IS type IS grammar IS the obligation block. The Shatter
+loop's mutation operators IS the substrate's set of typed lambdas
+over splinters; the codon table IS the structural typing of the
+mutation-operator space; the policy IS the substrate's selection
+of which operator to apply at which site.
+
+The Shatter loop is not a new component; it's the recognition
+that the substrate's existing primitives (au, conductivity,
+property chain, uuid_spectral, gen_prism) compose into a self-
+improving loop with no new structural pieces.
+
+---
+
+## 13. What this opens — what the substrate needs to support the loop
+
+These are Phase 5+ substrate ticks. Captured for the roadmap.
+
+### 13.1 Mutation operators as a substrate vocabulary
+
+Each of §3.1's eight operators wants a substrate declaration:
+
+```mirror
+type mutation_op =
+  | variant_swap(splinter)
+  | altitude_shift(splinter, ref)
+  | children_reorder(splinter, [oid])
+  | property_strengthen(splinter)
+  | crack_import(splinter, ref)
+  | atom_crystallize(splinter)
+  | declaration_drop(splinter)
+  | subtree_swap(splinter, splinter)
+```
+
+Declared at `@mirror/kintsugi` or under a new `@mirror/shatter`
+prism. The substrate names what the algebra of mutations IS; the
+Rust implementation realizes the operators. Deferred until Phase 5.
+
+### 13.2 The spawn-evaluate-tournament cycle
+
+The kintsugi loop wants `gen_prism.spawn` to produce candidate
+gen_prisms, each running one mutation; the tournament reads their
+verdicts and either accepts (CAS the parent's head to the winner)
+or discards. This is the operational form of MAP-Elites' spawn-
+4-children at the `gen_prism` altitude. The current
+`gen_prism.send` (per `boot/std/mirror/runtime/gen_prism.mirror`)
+is fire-and-forget; the tournament needs a `spawn_candidates(n)
+→ [gen_prism]` action and a `tournament(parents, candidates) →
+imperfect(gen_prism)` action. Deferred until Phase 5.
+
+### 13.3 Gen_prism wiring to settle
+
+`gen_prism.tick` returns a `tick_result` with state, emissions,
+and loss. The settle integration: when `tick_result.state` IS a
+shard's uuid_spectral and the loss is `transparency = success`,
+the tick has settled; the new head is the settled shard. The
+wiring is mostly declarative; the substrate needs the action that
+recognizes a settled tick_result and commits to `@mirror/store`.
+This lands when @mirror/store's commit pathway is fully exposed
+at the substrate altitude (currently it's behind the
+fragmentation-mcp T3 work per
+`[[architecture-shard-ref-as-prism]]`).
+
+### 13.4 The MAP-Elites grid as a substrate type
+
+Per §6.1, the MAP-Elites grid IS a sheaf stalk per
+`[[project-eigenboard-is-sheaf]]`. The substrate-altitude
+declaration:
+
+```mirror
+type elites_grid(altitude) = {
+  cells: map<uuid_spectral.active, codon_table>,
+  altitude: ref,
+  archive: [shard],  # past elites for replay
+}
+```
+
+The grid composes under shard merge via uuid_spectral's monoid
+homomorphism; cells with the same active coordinate combine by
+elite-selection (keep the lower-transparency table). Deferred
+until the eigenboard-as-sheaf reading lands at the substrate
+altitude (Phase 6+).
+
+### 13.5 The corpus tournament discipline
+
+Per §7.3, accepting a new mutation operator requires
+re-discriminating against the corpus. The substrate needs:
+
+```mirror
+corpus_verify(op: mutation_op, corpus: [shard]) -> verdict {
+  all_shards = corpus.map(shard => settle(apply(shard.au, op)))
+  if all_shards.all(s => s.transparency <= original.transparency):
+    pass
+  else:
+    failure(reason)
+}
+```
+
+The "no regression on the corpus" check IS the PowerPlay
+monotonicity discipline at the substrate altitude. Deferred until
+the corpus surface stabilizes.
+
+---
+
+## 14. What surprised me during the rewrite
+
+Five recognitions surfaced during the rewrite. Captured for the
+substrate-pull discipline.
+
+**(a) The codon table is not Shatter-specific.** The Q1 draft
+framed the codon table as a clever genotype-phenotype mapping
+specific to Shatter's task. Under the substrate-pull rewrite,
+it's the canonical form grammatical evolution made standard in
+2001. The substrate doesn't need to invent the data structure;
+it just names what GE already names. *The Q1 draft was treating
+GE's canonical form as a Shatter-specific invention; the
+substrate is older than that draft realized.*
+
+**(b) The property chain IS the diffusion denoiser.** This was
+not obvious from the Q1 draft. The substrate's property chain
+runs at every settle; each property is a check that *the
+composition is in the manifold the property defines*. Iterating
+the chain IS denoising in the diffusion sense: each property
+projection pulls the composition closer to the property-satisfied
+manifold. The substrate had a denoiser the entire time; it just
+hadn't named it as one. Kapur/Jenner/Russell's ICLR 2025
+diffusion-on-syntax-trees paper is the most direct precedent; the
+substrate's property chain generalizes their grammar-specific
+denoiser to *any* property the substrate declares.
+
+**(c) Sparsity in autopoiesis-in-PL is information.** I did
+targeted searches for "autopoiesis in programming language
+design," "Maturana Varela PL," "self-modifying language 2025"
+expecting to find the contemporary frontier. The literature is
+sparse to absent. Self-modifying *code* exists (JIT, livepatching);
+autopoietic *organisations* exist (cells, organisations, social
+systems); the *intersection* — self-modifying *grammar* in the
+autopoietic sense, where the language that defines the
+modification IS the modification's target — is not named in the
+literature. **Mirror is doing something the literature hasn't yet
+recognized as a thing.** Worth capturing this honestly so we don't
+overclaim the inheritance — mirror is composing pieces (PL theory,
+autopoiesis, content-addressing, evolutionary computation) into a
+shape no one has assembled before.
+
+**(d) The Darwin Gödel Machine is the closest contemporary
+analogue and the failure modes are named.** DGM (Sakana AI, May
+2025) IS the operational form of Schmidhuber's vision; the
+failure mode it surfaces (evaluation-gaming) is precisely the
+failure mode mirror's content-addressed substrate mitigates at
+the substrate level. The mirror contribution: not "we built a
+better DGM" but "we noticed that content-addressing the
+discriminator output collapses the gaming problem one altitude
+down, leaving the higher-altitude gaming problem visible to
+humans." DGM's transparent lineage is the substrate's content-
+addressed ref chain by construction (per `gen_prism.history`).
+The substrate gives DGM-shaped systems for free; what's left to
+build is the policy that runs on top.
+
+**(e) The Q1 draft was reaching for "kintsugi IS Shatter" without
+naming it.** The Q1 draft's §7 ("Self-Improving Systems") was
+already describing the kintsugi loop in terms of AlphaGo Zero
+self-play and PowerPlay self-curriculum. The pieces were all
+there; the recognition was that *the loop is the same loop at
+both altitudes* and *Shatter is the operational name for what
+kintsugi does to the dark splinters at each step.* Alex's
+2026-06-06 framing ("mutation testing on crack") was the click
+that closed the loop. The substrate had named the pieces; the
+recognition is the composition.
+
+---
+
+## 15. Research sources
+
+Where the literature was load-bearing for this document.
+
+### 15.1 Evolutionary algorithms
+
+- Grammatical Evolution: Ryan, Collins, O'Neill (2001). BNF
+  grammar + integer codons. Reference implementation: PonyGE2.
+- Grammar-guided fuzzing: AFL++ Grammar-Mutator;
+  Grammarinator (ANTLR-based).
+- MAP-Elites: Mouret & Clune (2015). The original
+  quality-diversity paper.
+- AlphaEvolve: Google DeepMind (May 2025). LLM-based
+  evolutionary coding agent on MAP-Elites.
+- OpenEvolve: algorithmicsuperintelligence (May 2025).
+  Open-source AlphaEvolve.
+- CodeEvolve: October 2025 (arxiv 2510.14150). Open-source
+  evolutionary coding for scientific applications.
+- Digital Red Queen: Sakana AI (January 2026). MAP-Elites for
+  adversarial program evolution.
+- Dominated Novelty Search: February 2025 (arxiv 2502.00593).
+  QD with dynamic fitness transformations.
+- DEI (Diversity in Evolutionary Inference): May 2026
+  (arxiv 2605.27130). Distributed QD with heterogeneous LLMs
+  per cell.
+
+### 15.2 Self-improving systems
+
+- Gödel machines: Schmidhuber (2003). Provably optimal
+  self-modification.
+- PowerPlay: Schmidhuber (2011). Self-invented problems +
+  monotonic capability growth.
 - AlphaGo Zero: Silver et al. (2017). Self-play from scratch.
-- Iterated Amplification: Christiano et al. Recursive decomposition.
+- **Darwin Gödel Machine (DGM): Zhang et al., Sakana AI / UBC /
+  Vector Institute (May 2025; arxiv 2505.22954).** Empirical
+  self-improvement; benchmark-validated; the operational form of
+  Schmidhuber's Gödel machine. The 2025-2026 frontier reference.
+- **Gödel Agent: ACL 2025 long paper.** Self-referential agent
+  framework for recursive self-improvement.
+- **ICLR 2026 Workshop on AI with Recursive Self-Improvement.**
+  110 accepted papers; the field's transition from thought
+  experiment to deployed system. Central unsolved problem:
+  evaluation-gaming.
+- HyperAgents: Meta AI (2025). Self-improving agents at scale.
 
-### Minimal Computation
-- brainfuck-evolved: GA-evolved BF programs (github.com/kurtjd/brainfuck-evolved).
-- BrainSTARK: BF as verification substrate (aszepieniec.github.io/stark-brainfuck).
+### 15.3 Diffusion / iterative refinement
 
-### Quality-Diversity
-- MAP-Elites: Mouret & Clune (2015). Quality-diversity algorithm.
-- Lexicase Selection: Spector et al. Specialist-preserving selection.
+- DiffuSeq: Gong et al. (ICLR 2023). Original discrete diffusion
+  for text.
+- CodeRL: Le et al. (NeurIPS 2022). RL with binary test reward.
+- **Diffusion On Syntax Trees: Kapur, Jenner, Russell (ICLR 2025;
+  arxiv 2405.20519).** Neural diffusion over CFG syntax trees.
+  Closest precedent for the substrate's loop shape.
+- **DiffuCoder: Apple (December 2024; arxiv 2506.20639).** Masked
+  diffusion for code generation.
+- **DiffusionCoder: Huang et al. (January 2026; ACM 10.1145/
+  3785706.3785940).** Structure-preserving diffusion for verified
+  code generation; verifier-as-discriminator architecture.
+- **IterRef: Iterative Reward-Guided Refinement (arxiv
+  2511.05562).** MCMC-based test-time scaling for diffusion.
+
+### 15.4 Autopoiesis and self-reference
+
+- Autopoiesis and Cognition: Maturana & Varela (1980). The
+  foundational text.
+- Soto-Andrade & Varela (1984). Lawvere fixed point on the tick
+  map; the substrate's autopoietic discipline rests on this.
+- Open Questions about Time and Self-reference in Living Systems
+  (arxiv 2508.11423, August 2025). Names the gap mirror is
+  filling.
+- Self-modifying code research (Wikipedia survey;
+  Mori 2024 — "From Theory to Practice"). The code-level
+  prior art; *not* autopoietic in the Maturana & Varela sense.
+
+### 15.5 Mutation testing (inverted)
+
+- Pitest, Stryker, cargo-mutants (operator inventories).
+- Higher-order mutation: Jia & Harman (2009).
+- Equivalent mutant detection: undecidable in general; decidable
+  via content-addressing for sub-Turing grammars (mirror).
+
+### 15.6 Small models
+
+- Extreme Learning Machines: Huang et al. (2006).
+- Reservoir computing / Echo State Networks: Jaeger (2001).
+- Lottery Ticket Hypothesis: Frankle & Carbin (2018).
+- BitNet / Binary Neural Networks (arxiv 2509.07025).
+- muNAS (microcontroller NAS): Liberis et al. (2021).
+
+### 15.7 Spectral methods in program synthesis (sparse — and that is information)
+
+- Latent Program Network (LPN): Bonnet et al. (arxiv
+  2411.08706, November 2024). Latent space for program induction
+  with test-time gradient search. The closest analogue to
+  spectral-coordinate-based search in the literature; *not*
+  spectral in the eigenvalue sense.
+- STNet (Spectral Transformation Network; arxiv 2510.23986).
+  Spectral transformations for operator eigenvalue problems —
+  the math, not applied to program synthesis.
+- Spectral methods in semidefinite programming (Helmberg-Rendl
+  1997 onwards). Mathematical foundation; not applied to PL.
+
+**The honest read:** spectral methods in program synthesis are
+NOT a named research area as of 2026-Q2. Mirror's
+uuid_spectral-active-as-BC framing is novel work. Worth capturing
+this — it tells us mirror's contribution at this layer is
+genuinely new, not a reformulation of an existing direction.
+
+### 15.8 Brainfuck
+
+- brainfuck-evolved: GA-evolved BF programs.
+- BrainSTARK: BF as STARK proof substrate.
+
+### 15.9 Genotype-phenotype mapping
+
+- Biological codon table: 64 codons → 20 amino acids; redundancy
+  = robustness; universal genetic code.
+- HyperNEAT: Stanley et al. (2009). CPPN indirect encoding.
+- CodonTransformer: ML-based codon optimization.
+
+---
+
+## 16. Status and forward references
+
+Status: **Architectural recognition + literature synthesis.** Not a
+v0.1.0 obligation; the implementation is downstream substrate work
+(Phase 5+) per the roadmap. The substrate pieces this loop wants
+(per §13) land in sequence after the v0.1.0 cut.
+
+Forward references this document unblocks:
+
+- The substrate-altitude declaration of mutation operators (§13.1)
+- The `gen_prism.spawn_candidates` / `tournament` actions (§13.2)
+- The settle wiring through `gen_prism.tick` (§13.3)
+- The `elites_grid` substrate type for MAP-Elites (§13.4)
+- The corpus-tournament discipline (§13.5)
+- The `mirror ai --train` command surface (mentioned in §7.4; lands
+  with the substrate pieces above)
+
+Forward references this document depends on:
+
+- `boot/std/mirror/runtime/gen_prism.mirror` (autopoietic actor;
+  landed)
+- `shards/glass.mirror` (splinter / shard / transparency / imperfect;
+  landed)
+- `shards/mirror/au.mirror` (au as Fate-emitted; settle as
+  property-chain run; landed)
+- `shards/mirror/store.mirror` (splinter_graph; oid; landed)
+- `shards/uuid/spectral.mirror` (route_signal / identity_signal;
+  landed)
+- `docs/specs/mosaic-as-type-system.md` (the recognition arc this
+  lands within; landed)
+- `docs/specs/au-and-conductivity.md` (au is the Fate output type;
+  verification IS conductivity; landed)
+- `docs/specs/mosaic.md` §6 (the kintsugi tick formula; landed)
+- `docs/insights/2026-06-06-kintsugi-output-apache2-sel-combiner.md`
+  (the SEL/Apache2 algebra; the Shatter loop's mutations are SEL
+  work; its outputs are Apache 2.0; landed)
+
+---
+
+*The Shatter loop has been waiting for this recognition. The
+substrate had named the pieces; the substrate is now ready to name
+the composition.*
+
+*🌿*
