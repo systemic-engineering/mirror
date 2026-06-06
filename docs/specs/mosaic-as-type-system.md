@@ -694,14 +694,21 @@ dimensions; the direct sum is too large; the limit is undefined).
 The **substrate's operational construction** uses spectral_uuid as
 the cross-shard bridge:
 
-- `spectral_uuid` (declared at the substrate altitude in
-  `shards/mirror/spectral_uuid.mirror` as `@mirror/store/spectral_uuid`,
-  2026-06-06 Mara's tick; realized in `prism/core/src/spectral_uuid.rs`;
-  per `[[architecture-shard-as-crdt]]`) is a 128-bit identifier with a
+- `uuid_spectral` (declared at the substrate altitude in
+  `shards/uuid/spectral.mirror` as `@uuid/spectral` — a sub-prism
+  under `@uuid` (the universal 128-bit identifier root, declared
+  in `shards/uuid.mirror`); 2026-06-06 Mara's second tick replaced
+  the prior tick's `@mirror/store/spectral_uuid` opaque-ref
+  declaration after Alex's pushback that Fate's mycelial routing
+  needs to read the navigable portion; realized in
+  `prism/core/src/spectral_uuid.rs`; per
+  `[[architecture-shard-as-crdt]]`) is a 128-bit identifier with a
   golden-ratio split: **48 bits ACTIVE** (quantized
   `SpectralCoordinate<5>` — navigable; carries local Laplacian
-  neighbourhood structure) + **80 bits DARK** (BLAKE3-truncated
-  content hash — identity).
+  neighbourhood structure; exposed via the `route_signal` substrate
+  type so Fate routes through it by type) + **80 bits DARK**
+  (BLAKE3-truncated content hash — identity; exposed via the
+  `identity_signal` substrate type for content-verification).
 - The active portion is **graph-navigable**: it encodes the local
   spectral coordinate of the fragment within its home graph G.
   Per the design discipline of task #124, SpectralUuid was constructed
@@ -731,7 +738,7 @@ without a global Hilbert-space construction.
 | Component | Mosaic-as-type-system reading | Where it lives in the substrate |
 |---|---|---|
 | **A (algebra)** | `@mirror/mosaic` — the five operations as generators of the type-formation algebra acting on the shard manifold (composing splinters into settled shards) | `shards/mirror/mosaic.mirror`, `shards/prism.mirror`; Rust: `prism/core/src/bundle.rs`'s trait chain |
-| **H (Hilbert space)** | **Local:** `H_G = ℂ^{\|V(G)\|}` per shard's splinter OID graph G, with splinters as basis vectors and the shard itself labelled by its spectral_uuid; inner product canonical; ρ_G = L_G / tr(L_G) the density matrix per Braunstein/Ghosh/Severini 2006. **Global:** the family `{H_G}_G` indexed by shards (each shard IS one OID graph), bridged by spectral_uuid's monoid homomorphism on shard addresses. The Hilbert space of shards is spanned by spectral_uuids; splinters are the basis units. | `shards/glass.mirror`'s `splinter(altitude)` (basis units) and `shard(altitude)` (the spanned vectors, with `id: spectral_uuid` per the 2026-06-06 lift); `shards/mirror/spectral_uuid.mirror` declaring `@mirror/store/spectral_uuid`; `prism/core/src/spectral_uuid.rs`; `docs/specs/reality-shard-as-crdt.md`; `[[reference-void-document]]` |
+| **H (Hilbert space)** | **Local:** `H_G = ℂ^{\|V(G)\|}` per shard's splinter OID graph G, with splinters as basis vectors and the shard itself labelled by its uuid_spectral; inner product canonical; ρ_G = L_G / tr(L_G) the density matrix per Braunstein/Ghosh/Severini 2006. **Global:** the family `{H_G}_G` indexed by shards (each shard IS one OID graph), bridged by uuid_spectral's monoid homomorphism on shard addresses. The Hilbert space of shards is spanned by uuid_spectrals; splinters are the basis units. | `shards/glass.mirror`'s `splinter(altitude)` (basis units) and `shard(altitude)` (the spanned vectors, with `id: uuid_spectral` per the 2026-06-06 second tick); `shards/uuid/spectral.mirror` declaring `@uuid/spectral` (sub-prism under `@uuid` per `shards/uuid.mirror`); `prism/core/src/spectral_uuid.rs`; `docs/specs/reality-shard-as-crdt.md`; `[[reference-void-document]]` |
 | **D (Dirac operator)** | The kintsugi flow — operationally **the splinter-composition-into-shard transition operator.** Each settle iteration shifts SpectralUuid; D's action on a shard IS that shift. D maps a shard's current SpectralUuid to the SpectralUuid the recomposed splinter set would carry under decreased residual transparency; D's spectrum IS the residual opacity profile across the kintsugi loop's iterations | `docs/specs/kintsugi-wiring.md`; `docs/specs/au-and-conductivity.md`; `prism/core/src/spectral_uuid.rs`'s `combine` (per §11 open question 1, the quantized arithmetic is still being pinned); `terni::Imperfect<State, _, Holonomy>` per `prism/imperfect/` |
 
 ### 4.3 What the SpectralUuid bridge collapses
@@ -1498,9 +1505,14 @@ type shard(altitude) = {
 type shard_ref = spectral_uuid      # was: oid
 ```
 
-`spectral_uuid` is declared as a sub-prism at
-`@mirror/store/spectral_uuid` parallel to `@mirror/store/oid` (the
-two content-addressed identity carriers at the store altitude).
+`uuid_spectral` is declared as a sub-prism at `@uuid/spectral` under
+the `@uuid` root prism (the universal 128-bit identifier discipline
+in `shards/uuid.mirror`). `oid` stays at `@mirror/store/oid` as the
+content-addressed identity carrier at the store altitude; `uuid_spectral`
+lives in the hierarchical UUID namespace (universal identifier
+discipline at the root; spectral variant under it). The two carriers
+do distinct work — oid is the universal content-hash; uuid_spectral
+is the navigable spectral identifier.
 au's `content: oid` stays as it is — au is pre-commitment; the
 spectral_uuid is what settle produces by composing the splinters
 through the property chain. The property chain at commit time
@@ -1601,10 +1613,12 @@ Captured here for triage; none gate v0.1.0.
 
 5. **What's the right home for SpectralUuid at the substrate
    altitude? — Resolved 2026-06-06.** Mara's tick landed
-   `shards/mirror/spectral_uuid.mirror` declaring
-   `@mirror/store/spectral_uuid` as a sub-prism parallel to
-   `@mirror/store/oid` (the @mirror/store/oid precedent at
-   `shards/mirror/store.mirror:78-94`). spectral_uuid surfaces as a
+   `shards/uuid/spectral.mirror` declaring `@uuid/spectral` as a
+   sub-prism under `@uuid` (the universal 128-bit identifier root
+   declared in `shards/uuid.mirror`; 2026-06-06 second tick
+   replaced the prior tick's `@mirror/store/spectral_uuid` after
+   Alex's pushback that the opaque-ref choice hid the navigable
+   portion Fate's mycelial routing needs). uuid_spectral surfaces as a
    typed reference (carrier: `ref`, following the no-bare-types
    discipline and the oid precedent) with three projection actions
    (`active`, `dark`, `combine`), the `fixed empty` bottom, and two

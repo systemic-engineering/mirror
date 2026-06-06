@@ -219,26 +219,39 @@ name is the legacy form pending the substrate-pull-realize rename;
 `Fractal::Shard` similarly pre-dates the recognition that shard is the
 MIDDLE layer — the variant IS the terminal-leaf splinter / atom).
 
-**Shard.** The SpectralUuid-addressed settlement of composed splinters
+**Shard.** The uuid_spectral-addressed settlement of composed splinters
 into a stored fragment. The MIDDLE layer of the three-layer recognition;
 what `settle` produces; what `@mirror/store` keeps; what
-`peer.eigenboard` types as. `{ id: SpectralUuid, splinters: [splinter],
+`peer.eigenboard` types as. `{ id: uuid_spectral, splinters: [splinter],
 transparency }`. Realised in Rust as
 `fragmentation/src/shard_ref.rs::ShardRef`.
 
-**SpectralUuid / spectral_uuid.** The graph-navigatable spectral
-identifier; the TOP layer. 128 bits, golden-ratio split: 48 ACTIVE
-(quantized SpectralCoordinate<5>; navigable) + 80 DARK
-(BLAKE3-truncated content hash; identity). Per
-`prism/core/src/spectral_uuid.rs` (Rust carrier) and
-`shards/mirror/spectral_uuid.mirror` (substrate-altitude declaration
-as `@mirror/store/spectral_uuid`, parallel to `@mirror/store/oid`;
-landed 2026-06-06 Mara's tick) and `[[architecture-shard-as-crdt]]`.
-Monoid homomorphism w.r.t. shard merge — declared substrate-side as
-`requires monoidal(spectral_uuid)`; combine body deferred per
-reality-shard-as-crdt.md §11 OQ1 (quantized 48-bit arithmetic).
-`shard.id: spectral_uuid` and `shard_ref = spectral_uuid` lifted in
-the same tick.
+**UUID family (`@uuid`).** The universal 128-bit identifier discipline,
+declared as a root prism at `shards/uuid.mirror` alongside `@prism`,
+`@nl`, `@metalogue`, `@glass`. Names the hyphenated 8-4-4-4-12
+canonical string form, parse / format / equality, content-addressed.
+Variants live under it as sub-prisms: `@uuid/spectral` lands first
+(2026-06-06 second tick); `@uuid/v4`, `@uuid/v7`, `@uuid/nil` join
+when consumers pull. Monoid structure is NOT at the root — only some
+variants form monoids; spectral does, v4 / v7 do not.
+
+**Uuid_spectral (was: SpectralUuid / spectral_uuid).** The
+graph-navigatable spectral identifier; the TOP layer. 128 bits,
+golden-ratio split: 48 ACTIVE (quantized SpectralCoordinate<5>;
+navigable; Fate routes through here) + 80 DARK (BLAKE3-truncated
+content hash; identity). Per `prism/core/src/spectral_uuid.rs` (Rust
+carrier; unchanged) and `shards/uuid/spectral.mirror` (substrate-
+altitude declaration as `@uuid/spectral`, a sub-prism under `@uuid`;
+landed 2026-06-06 second tick Mara). The substrate carries two
+semantic types — `route_signal` (Fate-navigable) and `identity_signal`
+(content-identity) — composed into the record. The previous tick's
+`@mirror/store/spectral_uuid` opaque-ref declaration was replaced
+when Alex pushed back: opaque ref hid the navigable portion Fate's
+mycelial routing needs. Monoid homomorphism w.r.t. shard merge —
+declared substrate-side as `requires monoidal(uuid_spectral)`;
+combine body deferred per reality-shard-as-crdt.md §11 OQ1 (quantized
+48-bit arithmetic). `shard.id: uuid_spectral` and
+`shard_ref = uuid_spectral` lifted in the same tick.
 
 **Splinter_graph (was: Splinter at @store).** The OID-graph projection
 at @mirror/store altitude: root + transitive closure of children's
@@ -257,6 +270,10 @@ default for new content). Deterministic. Idempotent. Stored as git blob.
 **Mosaic.** `@mirror/mosaic`: the universal algebra. Five operations on
 manifolds of fragments at every altitude. Build/type/proof/conversation
 are altitudes of the same mosaic. Per `[[architecture-prism-as-trait-as-everything]]`.
+Also the universal composition form: `type mosaic(altitude) = ref`
+declares the parametric carrier at `shards/mirror/mosaic.mirror`;
+altitude-specific shapes (e.g. `splinter_graph` IS `mosaic(@store)`)
+specialize at their home altitude (2026-06-06 second tick, Mara).
 
 **au.** The settled output type, parametric over altitude. `au(@code/rust)`
 is a binary; `au(@release)` is a signed archive; `au(@code/fortran)` is a
