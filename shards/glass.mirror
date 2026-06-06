@@ -4,10 +4,11 @@ in @meta
 # @glass — the floor of the substrate's self-conversation.
 #
 # Declares the types of the glass wall (the substrate-altitude loss
-# carrier and verdict surface) and the `glass` keyword for declaring
-# sub-prisms inside a parent prism.
+# carrier and verdict surface), the universal content-addressed unit
+# (`fragment`), and the `glass` keyword for declaring sub-prisms
+# inside a parent prism.
 #
-# Spec: docs/specs/transparency.md
+# Spec: docs/specs/transparency.md, docs/specs/mosaic-as-type-system.md
 # Substrate decisions: [[architecture-glass-wall-substrate-types]],
 #                      [[architecture-shards-as-substrate-source]],
 #                      [[architecture-prism-as-trait-as-everything]].
@@ -88,6 +89,73 @@ type property_verdict = {
   where: location,
 }
 
+# === fragment — the universal content-addressed unit ===
+#
+# A fragment is the substrate's universal carrier: anything content-
+# addressable IS a fragment. AST nodes are fragments. Shards are
+# fragments. Targets are fragments. Specs are fragments. au is a
+# fragment (a settled one). The universe @mirror/mosaic acts on is
+# the manifold of fragments at every altitude.
+#
+# Three structural shapes the fragment takes — already named in
+# @fragmentation (boot/std/fragmentation.mirror) and realized in
+# the Rust substrate as `Fractal::{Shard, Branch, Lens}` (per
+# fragmentation/src/fragment.rs):
+#
+#   shard   — terminal fragment. Leaf. No children. Carries content.
+#   fractal — composite fragment. Branch. Carries content + children.
+#             The recursive shape. The substrate is self-similar.
+#   lens    — referring fragment. Carries content + external targets
+#             (by oid). Edges, not containment. Cross-altitude link.
+#
+# The three shapes are exhaustive. A fragment is one of them. There
+# is no fourth shape; per [[architecture-prism-as-trait-as-everything]]
+# the algebra is closed, and the structural-shape algebra of fragments
+# closes at three (terminal / composite / referring).
+#
+# Identity contract: a fragment's identity IS its content-address.
+# Two fragments with byte-equal (content, children-oids-or-targets)
+# have the same oid and ARE the same fragment. Per
+# [[architecture-fragmentation-is-the-rust-substrate]] and
+# shards/mirror/store.mirror.
+#
+# Altitude: a fragment lives at an altitude — a substrate ref naming
+# where in the prism manifold it sits. `@code/rust`, `@mirror/spec`,
+# `@meta/ast`, `@release`, `@ci/github` are all altitudes a fragment
+# can be observed at. Cross-altitude composition is shift on
+# fragments (per [[architecture-lift-as-load-bearing]]: shift is the
+# basis-transformation verb; same content, different declared shape).
+#
+# Transparency: a fragment carries residual opacity from the
+# operations that produced it. transparency<p> is parametric on a
+# property; a clean fragment has success; a partial one carries an
+# opacity_map naming where the settle was incomplete.
+#
+# Compare au (shards/mirror/au.mirror): au IS a settled fragment.
+# `type au(altitude) = { content: oid, altitude: ref, transparency:
+# transparency(altitude) }` is the same record shape as fragment;
+# the difference is that au's verify must pass at the named
+# altitude (the conductivity contract per
+# docs/specs/au-and-conductivity.md). au is the gold-typed
+# specialization; fragment is the general carrier.
+#
+# Cite: docs/specs/mosaic-as-type-system.md §2 makes this load-bearing.
+type fragment(altitude) = {
+  content: oid,
+  altitude: ref,
+  transparency: transparency(altitude),
+}
+
+# The three structural shapes a fragment takes. Re-declared at the
+# glass altitude so the type system can name them as the disjunctive
+# decomposition of `fragment`. The bodies are abstract — the Rust
+# substrate (fragmentation/src/fragment.rs) realizes them as
+# `Fractal::Shard`, `Fractal::Branch`, `Fractal::Lens`.
+type fragment_shape =
+  | shard               # terminal; no children
+  | fractal([oid])      # composite; child oids
+  | lens([oid])         # referring; target oids
+
 out @glass
 out glass
 out location
@@ -99,3 +167,5 @@ out verdict
 out confidence
 out reason
 out property_verdict
+out fragment
+out fragment_shape
