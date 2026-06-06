@@ -1,0 +1,39 @@
+in @prism
+in @meta
+in @epistemologic
+in @epistemologic/reality
+in @epistemologic/reality/silicon
+
+# @epistemologic/reality/silicon/arch — ISA + microarch family root.
+#
+# Names the architecture-carrier species under @epistemologic/reality/silicon.
+# Each carrier under this root specializes the ISA / extensions / vendor /
+# microarch / pointer-width record at one ISA family.
+#
+# Species under this family:
+#
+#   @epistemologic/reality/silicon/arch/arm64    ARM64 carrier. ISA gen +
+#                                                NEON / SVE / SVE2 / AMX /
+#                                                BF16 / FP16 / crypto.
+#   @epistemologic/reality/silicon/arch/x86_64   x86_64 carrier. SSE2 /
+#                                                AVX / AVX2 / AVX-512 /
+#                                                VNNI / BMI / AES-NI.
+#
+# Substrate-pull placement (2026-06-06, Mara's reality family migration):
+# the arch directory existed as a bare directory before this tick; the
+# family root is added here for symmetry with the species-of-reality
+# pattern (each directory under reality/ that holds carriers gets a
+# matching .mirror declaration; cf. shards/epistemologic/reality/silicon.mirror).
+# Path-namespace property: this file at
+# `shards/epistemologic/reality/silicon/arch.mirror` declares
+# `@epistemologic/reality/silicon/arch` and only that.
+
+prism @epistemologic/reality/silicon/arch {
+  focus arch
+  project arch
+  split arch
+  shift arch
+  settle arch
+}
+
+out @epistemologic/reality/silicon/arch

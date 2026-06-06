@@ -2,10 +2,13 @@ in @prism
 in @meta
 in @io
 in @epistemologic
+in @epistemologic/reality
+in @epistemologic/reality/silicon
+in @epistemologic/reality/silicon/arch
 in @epistemologic/property
 in @epistemologic/property/content_addressed
 
-# @epistemologic/silicon/arch/arm64
+# @epistemologic/reality/silicon/arch/arm64
 #
 # The ARM64 architecture as a typed carrier. Names what an observer
 # CAN SEE when they look at the substrate's instruction set. Same
@@ -30,15 +33,14 @@ in @epistemologic/property/content_addressed
 # not the implementation, matching the tick-1 phase in the design
 # doc's §10 implementation order.
 #
-# Substrate-pull placement (2026-06-06, Mara's silicon migration):
-# moved from boot/std/epistemologic/silicon/arch/ to shards/. grammar
-# block becomes prism block per
-# [[architecture-prism-as-trait-as-everything]].
+# Substrate-pull placement (2026-06-06, Mara's reality family migration):
+# moved from shards/epistemologic/silicon/arch/ to shards/epistemologic/reality/silicon/arch/
+# under the @epistemologic/reality family root.
 # Path-namespace property: this file at
-# `shards/epistemologic/silicon/arch/arm64.mirror` declares
-# `@epistemologic/silicon/arch/arm64` and only that.
+# `shards/epistemologic/reality/silicon/arch/arm64.mirror` declares
+# `@epistemologic/reality/silicon/arch/arm64` and only that.
 
-prism @epistemologic/silicon/arch/arm64 {
+prism @epistemologic/reality/silicon/arch/arm64 {
   focus arm64
   project arm64
   split arm64
@@ -124,7 +126,7 @@ detect() -> arm64 { \ }
 # content_addressed); same silicon, same OID, same verdict.
 property literal(s: arm64) -> verdict { \ }
 
-out @epistemologic/silicon/arch/arm64
+out @epistemologic/reality/silicon/arch/arm64
 out arm64
 out isa_version
 out extension

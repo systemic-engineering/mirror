@@ -2,10 +2,12 @@ in @prism
 in @meta
 in @option
 in @epistemologic
+in @epistemologic/reality
+in @epistemologic/reality/silicon
 in @epistemologic/property
 in @epistemologic/property/content_addressed
 
-# @epistemologic/silicon/flake_ref
+# @epistemologic/reality/silicon/flake_ref
 #
 # A typed reference to a nix flake. Three fields: the source URL
 # (github:/git:/path:/file:), the locked revision (oid), and an
@@ -27,15 +29,14 @@ in @epistemologic/property/content_addressed
 # carriers are the substrate-level handles the hardware controls.
 # The asymmetry is structural and intentional.
 #
-# Substrate-pull placement (2026-06-06, Mara's silicon migration):
-# moved from boot/std/epistemologic/silicon/ to shards/. grammar
-# block becomes prism block per
-# [[architecture-prism-as-trait-as-everything]].
+# Substrate-pull placement (2026-06-06, Mara's reality family migration):
+# moved from shards/epistemologic/silicon/ to shards/epistemologic/reality/silicon/
+# under the @epistemologic/reality family root.
 # Path-namespace property: this file at
-# `shards/epistemologic/silicon/flake_ref.mirror` declares
-# `@epistemologic/silicon/flake_ref` and only that.
+# `shards/epistemologic/reality/silicon/flake_ref.mirror` declares
+# `@epistemologic/reality/silicon/flake_ref` and only that.
 
-prism @epistemologic/silicon/flake_ref {
+prism @epistemologic/reality/silicon/flake_ref {
   focus flake_ref
   project flake_ref
   split flake_ref
@@ -81,7 +82,7 @@ requires content_addressed(flake_ref)
 # implementation lands later in the chain.
 property literal(f: flake_ref) -> verdict { \ }
 
-out @epistemologic/silicon/flake_ref
+out @epistemologic/reality/silicon/flake_ref
 out flake_ref
 out url
 out subflake

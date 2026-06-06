@@ -4,10 +4,12 @@ in @io
 in @option
 in @time
 in @epistemologic
+in @epistemologic/reality
+in @epistemologic/reality/silicon
 in @epistemologic/property
 in @epistemologic/property/content_addressed
 
-# @epistemologic/silicon/compute_bound
+# @epistemologic/reality/silicon/compute_bound
 #
 # A compute budget representation. Names the upper limits a peer is
 # allowed to consume when it runs inside a shard: CPU cores, host
@@ -32,15 +34,14 @@ in @epistemologic/property/content_addressed
 # substrate a structural halting argument; unbounded (none) gives
 # the conventional Turing-complete posture.
 #
-# Substrate-pull placement (2026-06-06, Mara's silicon migration):
-# moved from boot/std/epistemologic/silicon/ to shards/. grammar
-# block becomes prism block per
-# [[architecture-prism-as-trait-as-everything]].
+# Substrate-pull placement (2026-06-06, Mara's reality family migration):
+# moved from shards/epistemologic/silicon/ to shards/epistemologic/reality/silicon/
+# under the @epistemologic/reality family root.
 # Path-namespace property: this file at
-# `shards/epistemologic/silicon/compute_bound.mirror` declares
-# `@epistemologic/silicon/compute_bound` and only that.
+# `shards/epistemologic/reality/silicon/compute_bound.mirror` declares
+# `@epistemologic/reality/silicon/compute_bound` and only that.
 
-prism @epistemologic/silicon/compute_bound {
+prism @epistemologic/reality/silicon/compute_bound {
   focus compute_bound
   project compute_bound
   split compute_bound
@@ -113,7 +114,7 @@ detect_max() -> compute_bound { \ }
 # across a kernel session (hotplug aside) so the OID equality holds.
 property literal(b: compute_bound) -> verdict { \ }
 
-out @epistemologic/silicon/compute_bound
+out @epistemologic/reality/silicon/compute_bound
 out compute_bound
 out detect_max
 out literal

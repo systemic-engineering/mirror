@@ -1,0 +1,58 @@
+in @prism
+in @meta
+in @epistemologic
+in @epistemologic/reality
+
+# @epistemologic/reality/silicon — the running CPU + memory family root.
+#
+# Silicon is the species of reality the substrate has been carrying
+# longest. It names what the observer sees when they look at the
+# running machine's hardware: ISA, microarchitecture, memory model,
+# compute budgets, dependency-flake references. Each carrier under this
+# root specializes the literal property (re-detect, content-address,
+# compare) at its own slice of the silicon surface.
+#
+# === Species under this family ===
+#
+#   @epistemologic/reality/silicon/arch          ISA + microarch carriers.
+#                                                arch/arm64 + arch/x86_64.
+#   @epistemologic/reality/silicon/memory        memory model, total bytes,
+#                                                page size, cache hierarchy.
+#   @epistemologic/reality/silicon/compute_bound budget carrier the shard's
+#                                                admits-action allocates.
+#   @epistemologic/reality/silicon/flake_ref     typed reference to a nix
+#                                                flake (URL + locked rev).
+#
+# Per docs/specs/shard-design.md §2/§4: every silicon carrier is one of
+# the four type carriers the @mirror/shard.shard record composes from.
+# Fate's |\> tournament reads the carrier set as input to pick the
+# locally-optimal Au binary for the running system.
+#
+# Substrate-pull placement (2026-06-06, Mara's reality family migration):
+# moved from shards/epistemologic/silicon/ to shards/epistemologic/reality/silicon/
+# per the @epistemologic/reality family declaration; silicon is one
+# species of reality. The species root names the carrier set; each
+# carrier file under the root specializes.
+#
+# Spec context: docs/specs/shard-design.md (the four type carriers),
+#               docs/insights/2026-05-25-pipe-hole-and-au-binary.md
+#               (the Fate-tournament input set).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]].
+# Related shards: epistemologic/reality.mirror (the family root above),
+#                 epistemologic/reality/silicon/arch/{arm64,x86_64}.mirror,
+#                 epistemologic/reality/silicon/memory.mirror,
+#                 epistemologic/reality/silicon/compute_bound.mirror,
+#                 epistemologic/reality/silicon/flake_ref.mirror.
+# Path-namespace property: this file at `shards/epistemologic/reality/silicon.mirror`
+# declares `@epistemologic/reality/silicon` and only that.
+
+prism @epistemologic/reality/silicon {
+  focus silicon
+  project silicon
+  split silicon
+  shift silicon
+  settle silicon
+}
+
+out @epistemologic/reality/silicon

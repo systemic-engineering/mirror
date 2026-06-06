@@ -1,0 +1,99 @@
+in @prism
+in @meta
+in @epistemologic
+
+# @epistemologic/reality — the substrate's discipline for what physically exists.
+#
+# The recognition (2026-06-06, Reed + Alex → Mara): silicon, time, and the
+# species that follow (space, matter, biology, social) are all members of
+# a single family — the substrate's vocabulary for what is OBSERVER-RELATIVE
+# and BOUNDED BY THE HARDWARE FLOOR. The family root names the discipline;
+# the species declare their carriers under it.
+#
+# === Discipline ===
+#
+# Reality is what the observer can SEE under measurement, bounded by the
+# local hardware's precision. The same speed-of-light analogue that
+# @lens/transit makes operational at the measurement altitude:
+#
+#   - measurable: each carrier carries a detect() primitive that reads
+#                 the running system; the result is content-addressed.
+#   - bounded:    every measurement is bounded by a hardware floor named
+#                 explicitly in the carrier's discipline; the substrate
+#                 is honest about what it cannot observe.
+#   - observable-or-explicitly-not: where the floor cannot reach (e.g.
+#                 PMC access denied on locked-down platforms), the
+#                 substrate states the absence STRUCTURALLY rather than
+#                 pretending the value is missing.
+#
+# The discipline lifts from @epistemologic.literal (the name-IS-the-thing
+# verifier): a reality carrier's identity IS its measurement; re-detection
+# under the same conditions must content-address to the same OID. The
+# literal property is the universal verdict surface for every reality
+# species.
+#
+# === Species under this family ===
+#
+# Currently loaded:
+#
+#   @epistemologic/reality/silicon         the running CPU + memory.
+#                                          arch (arm64/x86_64), memory model,
+#                                          compute_bound, flake_ref. Migrated
+#                                          from shards/epistemologic/silicon/
+#                                          2026-06-06 (Mara).
+#   @epistemologic/reality/time            the substrate's time discipline.
+#                                          duration, monotonic, wall, instant,
+#                                          tick. Lifted from boot/std/time.mirror
+#                                          2026-06-06 (Mara).
+#
+# Future species — land when a consumer pulls (per Last Responsible Moment):
+#
+#   @epistemologic/reality/space           the substrate's spatial vocabulary.
+#                                          Network topology, geographic locale,
+#                                          shard placement.
+#   @epistemologic/reality/matter          mass / energy / persistent storage.
+#                                          Substrate-pull surface for the
+#                                          disk / battery / thermal envelope.
+#   @epistemologic/reality/biology         the human carrier. Heartbeat,
+#                                          presence, embodiment signals when a
+#                                          consumer pulls.
+#   @epistemologic/reality/social          the multi-party carrier. Peers,
+#                                          consent boundaries, conversation.
+#
+# === Why a family root ===
+#
+# Per [[architecture-prism-as-trait-as-everything]] every kind that stands
+# on its own discipline is a prism. Reality IS such a kind: a substrate-
+# wide vocabulary for what physically exists, with a shared verification
+# discipline (literal-by-re-measurement), a shared honesty contract
+# (hardware-floor declaration), and multiple species that each carry their
+# own structural meaning under the same discipline.
+#
+# The previous shape (silicon and time as siblings at the epistemologic
+# root, time inside boot/std/) under-declared the inheritance. Reality
+# names the shared parent; species inherit through `in @epistemologic/reality`
+# at the top of their files (cf. the @uuid root and @uuid/spectral sub-
+# prism precedent, 2026-06-06 first tick).
+#
+# Spec context: docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md
+#               (time discipline), docs/specs/shard-design.md (silicon
+#               carriers), fragmentation/docs/specs/lens-transit.md
+#               (the hardware-floor analogue at the measurement altitude).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]].
+# Related shards: epistemologic/reality/silicon.mirror (the first species
+#                 root), epistemologic/reality/time.mirror (the second
+#                 species root).
+# Path-namespace property: this file at `shards/epistemologic/reality.mirror`
+# declares `@epistemologic/reality` and only that.
+
+prism @epistemologic/reality {
+  focus reality
+  project reality
+  split reality
+  shift reality
+  settle reality
+}
+
+out @epistemologic/reality

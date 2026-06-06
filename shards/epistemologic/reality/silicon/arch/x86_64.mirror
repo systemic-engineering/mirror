@@ -2,13 +2,16 @@ in @prism
 in @meta
 in @io
 in @epistemologic
+in @epistemologic/reality
+in @epistemologic/reality/silicon
+in @epistemologic/reality/silicon/arch
 in @epistemologic/property
 in @epistemologic/property/content_addressed
 
-# @epistemologic/silicon/arch/x86_64
+# @epistemologic/reality/silicon/arch/x86_64
 #
 # The x86_64 architecture as a typed carrier. Companion to
-# @epistemologic/silicon/arch/arm64 — same shape, x86_64-specific
+# @epistemologic/reality/silicon/arch/arm64 — same shape, x86_64-specific
 # variants. Observer-relative: names what the observer sees when
 # they look at an x86_64 silicon substrate.
 #
@@ -30,15 +33,14 @@ in @epistemologic/property/content_addressed
 # is a Fate-resolved hole filled at boot via tournament against
 # @code/kernel/x86_64.
 #
-# Substrate-pull placement (2026-06-06, Mara's silicon migration):
-# moved from boot/std/epistemologic/silicon/arch/ to shards/. grammar
-# block becomes prism block per
-# [[architecture-prism-as-trait-as-everything]].
+# Substrate-pull placement (2026-06-06, Mara's reality family migration):
+# moved from shards/epistemologic/silicon/arch/ to shards/epistemologic/reality/silicon/arch/
+# under the @epistemologic/reality family root.
 # Path-namespace property: this file at
-# `shards/epistemologic/silicon/arch/x86_64.mirror` declares
-# `@epistemologic/silicon/arch/x86_64` and only that.
+# `shards/epistemologic/reality/silicon/arch/x86_64.mirror` declares
+# `@epistemologic/reality/silicon/arch/x86_64` and only that.
 
-prism @epistemologic/silicon/arch/x86_64 {
+prism @epistemologic/reality/silicon/arch/x86_64 {
   focus x86_64
   project x86_64
   split x86_64
@@ -106,7 +108,7 @@ detect() -> x86_64 { \ }
 # content-address, compare. Same silicon, same OID, pass.
 property literal(s: x86_64) -> verdict { \ }
 
-out @epistemologic/silicon/arch/x86_64
+out @epistemologic/reality/silicon/arch/x86_64
 out x86_64
 out extension
 out vendor

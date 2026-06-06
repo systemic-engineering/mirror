@@ -1,0 +1,213 @@
+in @prism
+in @meta
+in @actor
+in @option
+in @epistemologic
+in @epistemologic/reality
+
+# @epistemologic/reality/time — the substrate's own time discipline.
+#
+# Four carriers, three frames, one convention. Time is the second
+# species of @epistemologic/reality (silicon being the first): a
+# substrate-wide vocabulary for measurable, observer-relative,
+# hardware-floor-bounded values.
+#
+#   duration   non-negative scalar of nanoseconds (PG §2.5: pick
+#              one, name it). The base carrier. Built via settle
+#              so construction IS the proof of non-negativity.
+#   monotonic  shift(duration): CLOCK_MONOTONIC-equivalent frame.
+#              Substrate-internal. gen_prism tick deltas; compute
+#              budgets; kintsugi flow time.
+#   wall       shift(duration): CLOCK_REALTIME-equivalent frame.
+#              Observer-relative. The shard provides the frame.
+#   instant    shift(duration): wall-clock point-in-time for
+#              human-facing scheduling/logs (PG's timestamptz
+#              analogue measured from the frame's epoch).
+#
+# Precision: nanoseconds. ~584 years of range from a u64. Matches
+# BEAM's erlang:monotonic_time(:nanosecond) native unit and the
+# CLOCK_MONOTONIC/CLOCK_REALTIME kernel resolution. PG uses
+# microseconds; PG's lesson is "pick one and name it" not "use μs
+# specifically." The existing @time.tick is spectral time (event
+# count), not wall units; no clash. The existing wall_time = u64
+# ms and @beam.duration u64 carriers converge here under one
+# precision; downstream call sites that knew "ms" or "unspecified"
+# get nanosecond discipline structurally.
+#
+# Leap-second policy: duration is leap-second-free seconds (matches
+# Unix epoch, BEAM, PG extract(epoch)). The @calendar/utc grammar
+# (future) carries the leap-second-aware path at its adapter
+# boundary. Per insight doc §2.5 / §8.6.
+#
+# Substrate-pull placement (2026-06-06, Mara's reality family migration):
+# moved from boot/std/time.mirror to shards/epistemologic/reality/time.mirror
+# under the @epistemologic/reality family root. Time is a species of
+# reality the substrate has been carrying since the early boot — the
+# migration recognizes that, lifts it under its proper family parent,
+# and adopts the current shard discipline (prism block instead of the
+# implicit boot ordering).
+#
+# Per docs/insights/2026-05-25-time-as-substrate-and-postgres-heritage.md.
+# Spec context: shards/mirror/shard.mirror (the consumer that types
+# `tick: tick`), fragmentation/docs/specs/lens-transit.md (the
+# hardware-floor analogue at the measurement altitude).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]].
+# Path-namespace property: this file at
+# `shards/epistemologic/reality/time.mirror` declares
+# `@epistemologic/reality/time` and only that.
+
+prism @epistemologic/reality/time {
+  focus time
+  project time
+  split time
+  shift time
+  settle time
+}
+
+# the base duration carrier. non-negative by construction (settle
+# witness): constructors that would produce a negative duration
+# return imperfect. u64 nanoseconds.
+type duration = settle({ nanos: u64 })
+
+# the two frames PG distinguishes as CLOCK_MONOTONIC vs
+# CLOCK_REALTIME. shift(T): annotation-only. Same bytes, different
+# declared shape; the type checker refuses to add a wall to a
+# monotonic without going through an explicit convert(_) at a shard
+# boundary. Per docs/insights/2026-05-25-parametric-types-and-fp-heritage.md
+# §"shift(T) = annotation form".
+type monotonic = shift(duration)
+type wall = shift(duration)
+
+# wall-clock point-in-time. Same bytes as duration; the declared
+# shape names "nanoseconds since the frame's epoch, observer-
+# relative." Used for human-facing scheduling, log timestamps, the
+# carrier any cross-shard compare resolves through. Per insight doc
+# §8.1 (open question 1, resolved): instant is needed as a separate
+# frame because cross-shard messaging surfaces points-in-time that
+# a single shard's snapshot tick cannot name.
+type instant = shift(duration)
+
+# a point-in-time capture of spectral state. every tick produces an
+# oid. every oid is in the store.
+#
+# Promoted to `monotonic`: spectral ticks are the substrate's own
+# monotonic time — every snapshot is one tick further from the
+# root. The frame discipline is inherited; every existing consumer
+# of `tick` (snapshots, deltas, replays, the gen_prism's tick
+# field) gets the type-level guarantee that ticks compose only
+# with ticks. Per insight doc §8.4 (open question 4, resolved).
+type tick = monotonic
+type snapshot = {
+  oid: ref,
+  tick: tick,
+  loss: loss,
+}
+
+# ordered sequence of snapshots — the full history
+type timeline = {
+  head: snapshot,
+  snapshots: [snapshot],
+}
+
+# position in the timeline — where the observer stands
+type cursor = {
+  current: snapshot,
+  timeline: timeline,
+}
+
+# structural diff between two snapshots. not textual. the delta is
+# a set of oid mutations.
+type mutation = insert(ref) | remove(ref) | replace(ref, ref)
+type delta = {
+  from: snapshot,
+  to: snapshot,
+  mutations: [mutation],
+  holonomy: loss,
+}
+
+# re-execution of the pipeline from a past state
+type replay = {
+  origin: snapshot,
+  result: snapshot,
+  delta: delta,
+}
+
+# a branch from a past state — new timeline, shared ancestry
+type fork = {
+  origin: snapshot,
+  branch: timeline,
+}
+
+# === time actions ===
+#
+# Visit a past state (read-only observation). The present is not
+# lost. The cursor moves. The state does not.
+enter(s: snapshot) -> imperfect { \ }
+
+# Bring a specific ref from the past to the present. The ref is
+# content-addressed. If it exists, it restores. If the ref conflicts
+# with present state, the result is partial.
+restore(s: snapshot, r: ref) -> imperfect { \ }
+
+# Navigate the timeline — scroll through snapshots. Returns the
+# cursor at the requested position.
+browse(t: timeline) -> cursor { \ }
+
+# Structural diff between two points in time. Returns the set of
+# oid mutations, not a textual diff.
+compare(a: snapshot, b: snapshot) -> delta { \ }
+
+# Re-run the pipeline from this state. Deterministic: same oids in,
+# same oids out. The new holonomy measures drift from original
+# execution.
+replay(s: snapshot) -> replay { \ }
+
+# Create a branch from a past state. The fork shares ancestry. The
+# branch diverges. Like git branch, but for spectral state, not files.
+fork(s: snapshot) -> fork { \ }
+
+# Move the cursor forward or backward by n ticks.
+step(c: cursor, n: i64) -> cursor { \ }
+
+# Return to the present — release the time travel view.
+present(c: cursor) -> snapshot { \ }
+
+# Convert an instant from one shard's frame into another's.
+# Cross-frame `compare` is explicit per Alex's 2026-05-25 substrate
+# decision: no hidden coercions; the relativistic conversion cost
+# stays visible. Holes resolved by Fate at runtime via the shard's
+# `parent: option(oid)` chain walk (per docs/insights/2026-05-25-
+# shard-as-observer-relative-lambda-zero.md). The result is imperfect
+# because the chain may not connect (two shards with no common
+# ancestor cannot share an instant frame).
+#
+# Within a single frame, instants and durations compose freely
+# (add(monotonic, monotonic) is total). Across frames, the type
+# system requires this convert call before any comparison; the
+# verifier rejects compare(a, b) where the frames differ without
+# a convert in scope. PG's lesson §2.1 (timestamptz over timestamp)
+# at the substrate altitude.
+convert(target_frame: oid, src: instant) -> imperfect { \ }
+
+out @epistemologic/reality/time
+out duration
+out monotonic
+out wall
+out instant
+out tick
+out snapshot
+out timeline
+out cursor
+out mutation
+out delta
+out replay
+out fork
+out enter
+out restore
+out browse
+out compare
+out replay
+out step
+out present
+out convert

@@ -3,10 +3,12 @@ in @meta
 in @io
 in @option
 in @epistemologic
+in @epistemologic/reality
+in @epistemologic/reality/silicon
 in @epistemologic/property
 in @epistemologic/property/content_addressed
 
-# @epistemologic/silicon/memory
+# @epistemologic/reality/silicon/memory
 #
 # The memory model as a typed carrier. Names what an observer sees
 # when they look at the substrate's address space: which memory
@@ -25,19 +27,14 @@ in @epistemologic/property/content_addressed
 # Same tick-1 discipline as the arch carriers: ship the carrier
 # now; detect() body is a Fate-resolved hole filled at boot.
 #
-# Substrate-pull placement (2026-06-06, Mara's silicon migration):
-# moved from boot/std/epistemologic/silicon/ to shards/ per
-# [[architecture-shards-as-substrate-source]]. The silicon altitude
-# IS the natural home for substrate vocabulary the @uuid/spectral
-# layer reads through (route_signal / identity_signal as semantic
-# types; byte-width enforcement stays at the Rust realization layer).
-# Per [[architecture-prism-as-trait-as-everything]]: grammar block
-# becomes prism block; five-op declaration is canonical.
+# Substrate-pull placement (2026-06-06, Mara's reality family migration):
+# moved from shards/epistemologic/silicon/ to shards/epistemologic/reality/silicon/
+# under the @epistemologic/reality family root.
 # Path-namespace property: this file at
-# `shards/epistemologic/silicon/memory.mirror` declares
-# `@epistemologic/silicon/memory` and only that.
+# `shards/epistemologic/reality/silicon/memory.mirror` declares
+# `@epistemologic/reality/silicon/memory` and only that.
 
-prism @epistemologic/silicon/memory {
+prism @epistemologic/reality/silicon/memory {
   focus memory
   project memory
   split memory
@@ -94,7 +91,7 @@ detect() -> memory { \ }
 # account for) so the OID equality holds.
 property literal(m: memory) -> verdict { \ }
 
-out @epistemologic/silicon/memory
+out @epistemologic/reality/silicon/memory
 out memory
 out memory_model
 out cache_level
