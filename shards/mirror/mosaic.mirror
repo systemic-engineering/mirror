@@ -27,8 +27,9 @@ in @mirror/spec
 # path-namespace property (epistemologic B5: shards/mirror/mosaic.mirror
 # declares @mirror/mosaic and only that), this shard declares the
 # prism at the @mirror/mosaic namespace directly — same shape as
-# shards/mirror/cli.mirror (C1), substrate-pull-correct given there's
-# no @mirror parent prism to nest under yet.
+# shards/mirror/lens/cli.mirror (C1, post 2026-06-06 lens migration),
+# substrate-pull-correct given there's no @mirror parent prism to nest
+# under yet.
 #
 # Forward (Phase D): when `shards/mirror.mirror` lands, the parent
 # prism MAY add `glass @mirror/mosaic { ... }` as a re-export view of
@@ -43,7 +44,8 @@ in @mirror/spec
 #                      [[architecture-prism-as-trait-as-everything]],
 #                      [[architecture-lift-as-load-bearing]].
 # Related shards: glass.mirror (verdict / imperfect / transparency / au),
-#                 cli.mirror (the @mirror/* shard precedent).
+#                 lens/cli.mirror (the @mirror/* shard precedent;
+#                 post 2026-06-06 lens family migration).
 # Path-namespace property: this file at `shards/mirror/mosaic.mirror`
 # declares `@mirror/mosaic` and only that.
 

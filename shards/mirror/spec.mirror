@@ -2,7 +2,7 @@ in @prism
 in @meta
 in @nl
 in @glass
-in @mirror/cli
+in @mirror/lens/cli
 
 # @mirror/spec — the project manifold grammar.
 #
@@ -24,7 +24,8 @@ in @mirror/cli
 # Substrate decisions: [[architecture-shards-as-substrate-source]],
 #                      [[architecture-prism-as-trait-as-everything]],
 #                      [[architecture-lift-as-load-bearing]].
-# Related shards: cli.mirror (the `target { cli { ... } }` consumer),
+# Related shards: lens/cli.mirror (the `target { cli { ... } }` consumer;
+#                 the @mirror/lens family species post-migration),
 #                 mosaic.mirror (the focus consumer),
 #                 glass.mirror (transparency / au / property carriers).
 # Path-namespace property: this file at `shards/mirror/spec.mirror`
@@ -113,9 +114,11 @@ altitude(value: ref) -> altitude_decl { \ }
 emit(target: ref) -> emit_decl { \ }
 
 # cli { ... } — the CLI surface, only meaningful when emit is a
-# binary. The block uses @mirror/cli (imported above); inside-target
-# embedding per spec §6 and cli.mirror's tightening: commands cannot
-# escape the binary they belong to.
+# binary. The block uses @mirror/lens/cli (imported above); inside-target
+# embedding per spec §6 and lens/cli.mirror's tightening: commands cannot
+# escape the binary they belong to. Per the 2026-06-06 lens family
+# migration: @mirror/cli is now @mirror/lens/cli; same shape, family
+# placement clarified.
 cli(body: cli) -> cli_decl { \ }
 
 # needs [<target-ref>+] — DAG ordering between targets (spec §5).

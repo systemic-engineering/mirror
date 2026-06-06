@@ -1,12 +1,13 @@
 in @prism
 in @glass
 in @nl
+in @mirror/lens
 
-# @mirror/cli — the CLI surface prism.
+# @mirror/lens/cli — the terminal lens.
 #
-# The grammar that mirror.spec's `target binary { cli { ... } }`
-# block consumes (per docs/specs/mirror-spec-schema.md §6). Lifts
-# from boot/std/cli.mirror with three tightenings:
+# The CLI surface prism. The grammar that mirror.spec's `target binary
+# { cli { ... } }` block consumes (per docs/specs/mirror-spec-schema.md
+# §6). Lifts from boot/std/cli.mirror with three tightenings:
 #
 #   1. `cli { ... }` is embedded inside a `target` block; commands
 #      cannot escape the binary they belong to (spec §6).
@@ -20,15 +21,46 @@ in @nl
 #      altitude — no separate handler reference (spec §10.1).
 #      The substrate-pull collapses dispatch into structure.
 #
+# === Family placement ===
+#
+# This is the first species of @mirror/lens (the family root at
+# shards/mirror/lens.mirror). The CLI IS a lens: terminal-shaped
+# surface onto the five-operation algebra; verdicts compose under the
+# same Transparency<P> monoid that lens/transit and lens/refract use
+# at the measurement altitude. Per docs/specs/the-convergence.md §1:
+# the cli is one of four transport lenses (cli / shell / mcp / lsp),
+# each rendering the same algebra for a different audience.
+#
+# Substrate-pull placement (2026-06-06, Mara's lens family migration):
+# moved from shards/mirror/cli.mirror to shards/mirror/lens/cli.mirror
+# under the @mirror/lens family root. Namespace updated from
+# @mirror/cli to @mirror/lens/cli. The path-namespace property forces
+# this: the file at `shards/mirror/lens/cli.mirror` MUST declare
+# `@mirror/lens/cli` and only that.
+#
+# Cascade note: the cli-as-prism spec (docs/specs/cli-as-prism.md) and
+# the-convergence spec (docs/specs/the-convergence.md) currently say
+# `@mirror/cli`, `mirror join`, `λsh`, etc. The lens migration triggers
+# a rename cascade in those specs (→ `@mirror/lens/cli`,
+# `@mirror/lens/shell`, etc.). Deferred to a Reed-led sweep tick; not
+# rewriting markdown manually here. The substrate-side update (this
+# shard + shards/mirror/spec.mirror's `in @mirror/lens/cli`) is
+# load-bearing and lands now.
+#
 # Spec context: [[architecture-shards-as-substrate-source]],
 #               [[architecture-prism-as-trait-as-everything]],
-#               [[architecture-lift-as-load-bearing]].
-# Related shards: glass.mirror (verdict / imperfect / transparency),
-#                 nl.mirror (`#` -> @nl), prism.mirror (the algebra).
-# Path-namespace property: this file at `shards/mirror/cli.mirror`
-# declares `@mirror/cli` and only that.
+#               [[architecture-lift-as-load-bearing]],
+#               docs/specs/cli-as-prism.md (the recursive five-op
+#               surface this shard's keywords carry).
+# Related shards: lens.mirror (the family root above),
+#                 glass.mirror (verdict / imperfect / transparency),
+#                 nl.mirror (`#` -> @nl),
+#                 prism.mirror (the algebra),
+#                 spec.mirror (the consumer that imports this).
+# Path-namespace property: this file at `shards/mirror/lens/cli.mirror`
+# declares `@mirror/lens/cli` and only that.
 
-prism @mirror/cli {
+prism @mirror/lens/cli {
   focus cli
   project cli
   split cli
@@ -99,7 +131,7 @@ type list(t) = [t]
 # (e.g. `~f'./mirror.spec'`).
 default(name, t: type, value: t) -> prism { \ }
 
-out @mirror/cli
+out @mirror/lens/cli
 out command
 out arg
 out flag
