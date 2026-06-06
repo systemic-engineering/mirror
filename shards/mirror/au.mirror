@@ -3,7 +3,8 @@ in @glass
 in @meta
 in @mirror/store
 
-# @mirror/au — the verified-construction output type.
+# @mirror/au — the Fate-emitted form; the lifecycle position before
+# settle through the property chain.
 #
 # Recognition (docs/specs/au-and-conductivity.md): au IS gold at the
 # artifact altitude. Same operation (settle) applied at different
@@ -17,6 +18,35 @@ in @mirror/store
 # decisions, or text; they return values of type au. Verification is
 # a predicate over au (conductivity), not a type-level transform
 # producing a different kind.
+#
+# Relationship to `fragment` (per docs/specs/mosaic-as-type-system.md
+# §2.3, upserted 2026-06-06):
+#
+# au and fragment have byte-identical record shapes. The distinction
+# is **lifecycle position, not type altitude**:
+#
+#   au       — what Fate emits. Content-addressed, declared altitude,
+#              transparency carries whatever inference left unverified.
+#              Uncommitted in the sense that the property chain has
+#              not yet been run.
+#   fragment — what @mirror/store keeps. Committed in the sense that
+#              settle has run au through the property chain and the
+#              verdict landed.
+#   settle   — the act of running au through the compiler and the
+#              property chain. Settling IS verification. As a Kleisli
+#              arrow in the Imperfect monad (shards/glass.mirror's
+#              imperfect(a, e, l)):
+#                settle: au → Imperfect<fragment>
+#              with Pass → fragment committed; Partial → fragment
+#              committed with located transparency; Failure → au
+#              stays in Fate's buffer for the next kintsugi tick.
+#
+# Type-level discipline distinguishing them lives at SpectralUuid
+# validity in the target OID graph, enforced by the property chain at
+# commit time. The substrate-pull-realize move — lift `content: oid`
+# to `content: SpectralUuid` on `fragment` once SpectralUuid is
+# declared at the shard altitude — is captured as deferred work in
+# docs/specs/mosaic-as-type-system.md §9.7.
 #
 # Reconciliation with mosaic.mirror (C2): mosaic's algebraic claim
 #   type au(altitude) = settle(altitude)

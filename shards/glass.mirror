@@ -131,13 +131,21 @@ type property_verdict = {
 # property; a clean fragment has success; a partial one carries an
 # opacity_map naming where the settle was incomplete.
 #
-# Compare au (shards/mirror/au.mirror): au IS a settled fragment.
-# `type au(altitude) = { content: oid, altitude: ref, transparency:
-# transparency(altitude) }` is the same record shape as fragment;
-# the difference is that au's verify must pass at the named
-# altitude (the conductivity contract per
-# docs/specs/au-and-conductivity.md). au is the gold-typed
-# specialization; fragment is the general carrier.
+# Compare au (shards/mirror/au.mirror): au and fragment are byte-
+# identical record shapes at different lifecycle positions, not at
+# different type altitudes (per docs/specs/mosaic-as-type-system.md
+# §2.3, upserted 2026-06-06). au is what Fate emits (uncommitted;
+# the property chain has not yet been run). fragment is what
+# @mirror/store keeps (committed; settle has run au through the
+# property chain and the verdict landed). settle is the Kleisli
+# arrow `au → Imperfect<fragment>` in the Imperfect monad declared
+# above (lines 62-66).
+#
+# Type-level discipline lives at SpectralUuid validity in the
+# target OID graph (enforced by the property chain at commit time);
+# the substrate-pull-realize lift of `content: oid` to
+# `content: SpectralUuid` is deferred until SpectralUuid lands at
+# the shard altitude. See docs/specs/mosaic-as-type-system.md §9.7.
 #
 # Cite: docs/specs/mosaic-as-type-system.md §2 makes this load-bearing.
 type fragment(altitude) = {
