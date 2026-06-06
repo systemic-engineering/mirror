@@ -1,7 +1,7 @@
 in @prism
 in @mirror/store
 in @io
-in @time
+in @epistemologic/reality/time
 in @fragmentation/frame
 
 # Nix store as crystal backend.

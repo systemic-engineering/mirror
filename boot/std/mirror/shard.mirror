@@ -1,10 +1,10 @@
 in @prism
 
-in @epistemologic/silicon/arch/arm64
-in @epistemologic/silicon/arch/x86_64
-in @epistemologic/silicon/memory
-in @epistemologic/silicon/flake_ref
-in @epistemologic/silicon/compute_bound
+in @epistemologic/reality/silicon/arch/arm64
+in @epistemologic/reality/silicon/arch/x86_64
+in @epistemologic/reality/silicon/memory
+in @epistemologic/reality/silicon/flake_ref
+in @epistemologic/reality/silicon/compute_bound
 in @epistemologic/property
 in @epistemologic/property/content_addressed
 in @epistemologic/property/autopoietic

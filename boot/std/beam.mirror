@@ -1,7 +1,7 @@
 in @prism
 in @meta
 in @actor
-in @time
+in @epistemologic/reality/time
 in @fragmentation
 
 -- luminosity: the carrier type of the beam
@@ -116,7 +116,7 @@ type beam_error = noproc | timeout | badrpc | noconnection | missing_action | em
 
 grammar @beam {
   in @actor
-  in @time
+  in @epistemologic/reality/time
 
   -- emit a beam from an AST + execution result
   -- this is what every operation produces as a byproduct.

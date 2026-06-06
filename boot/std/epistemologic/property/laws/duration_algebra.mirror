@@ -18,7 +18,7 @@ in @prism
 # days have no fixed length in seconds. The duration_algebra property
 # is intentionally narrower than PG's interval: it covers only the
 # fixed-precision (nanosecond) base carrier, where associativity
-# IS total. Calendar arithmetic lives in @time/interval (future,
+# IS total. Calendar arithmetic lives in @epistemologic/reality/time/interval (future,
 # not in scope here) with its own properties that explicitly do
 # not require associativity.
 #

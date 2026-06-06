@@ -1,7 +1,7 @@
 in @prism
 
 in @mirror/shard
-in @epistemologic/silicon/compute_bound
+in @epistemologic/reality/silicon/compute_bound
 
 # @scheduler: the Scheduler Tower's substrate primitives.
 #

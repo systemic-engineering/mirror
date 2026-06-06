@@ -1,8 +1,8 @@
 in @prism
 
 in @cogito
-in @time
-in @epistemologic/silicon/compute_bound
+in @epistemologic/reality/time
+in @epistemologic/reality/silicon/compute_bound
 in @epistemologic/property/autopoietic
 
 # @epistemologic/property/halts

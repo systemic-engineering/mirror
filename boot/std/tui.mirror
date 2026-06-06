@@ -5,7 +5,7 @@ in @code
 in @ci
 in @ca
 in @lsp
-in @time
+in @epistemologic/reality/time
 
 type key(string)
 type chord = key | [key]
