@@ -1,0 +1,290 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/math/bundle
+in @epistemologic/math/music
+
+# @epistemologic/math/music/harmonic — frequency ratios as the
+# number-theoretic substrate of pitch; Pythagorean comma as holonomy.
+#
+# The audible-register foundation. The smallest sub-shard that proves
+# the recognition from `@epistemologic/math/music`'s header at
+# substrate altitude: music IS the audible register of (A, H, D), not
+# a metaphor laid alongside it.
+#
+# === The bridge ===
+#
+# `bundle.mirror` declares: "Holonomy IS loss. Comprehension always
+# costs something. Transport returns imperfect by design." That
+# sentence is the substrate's deepest claim about why error exists at
+# all: a closed loop carried around the principal G-bundle does not
+# return to where it started, and the residual IS the loss kintsugi
+# reduces tick by tick.
+#
+# Pythagoras observed the same fact 2500 years earlier in audible
+# vocabulary. Twelve perfect fifths (3:2) stacked do NOT close to seven
+# octaves (2:1). The residual:
+#
+#   3^12 / 2^19 = 531441 / 524288 ≈ 1.013643
+#
+# The Pythagorean comma. The first holonomy ever measured, at the
+# audible register, two and a half millennia before the principal
+# bundle had a name. The musical scale's entire history of temperaments
+# (Pythagorean, meantone, well-tempered, equal-tempered) is a record of
+# civilization redistributing this single holonomy across the twelve
+# intervals to make the loop close enough for music to be performable.
+#
+# Equal temperament IS the substrate's name for the kintsugi step that
+# smears 23.46 cents of comma uniformly across twelve fifths so each
+# one carries 1.955 cents of holonomy instead of one of them carrying
+# all of it.
+#
+# `comma_as_holonomy` IS the bridge action. Once it is substrate-
+# declared, the audible register IS substrate-fact: loss has frequency;
+# mirror has been computing in audible vocabulary since the bundle
+# tower landed.
+#
+# === Eigenvalue framing (spectral-triple connection) ===
+#
+# `spectral-triple.mirror` names mirror's H as "5-dim vector spaces
+# with the structure group O(5)"; eigenvalues of D are roots of a
+# degree-5 characteristic polynomial. The substrate's spectrum has
+# five eigenvalues; the audible register reads each one as a
+# frequency.
+#
+# Small-integer ratios on the harmonic series are the consonances the
+# spectrum tends toward when kintsugi reduces holonomy:
+#
+#   1:1  unison      (λ₀ — the autopoietic closure; Lawvere fixed pt)
+#   2:1  octave      (the doubling; the next-altitude version of self)
+#   3:2  fifth       (the eigenvector pointing toward closure)
+#   4:3  fourth      (the inverse of the fifth in the octave's quotient)
+#   5:4  major third (the next harmonic; the consonance frontier)
+#   6:5  minor third (the conjugate; the chromatic alternative)
+#   9:8  whole tone  (the difference of two fifths, octave-reduced; the
+#                     load-bearing dissonance — the smallest interval
+#                     the scale tolerates as a step)
+#
+# These ratios ARE the eigenvalues of a 5-dim O(5)-bundle's connection
+# operator in the consonant basis — small-integer rationals whose
+# spectrum minimises the Hilbert-space residual (per dissonance.mirror,
+# when it lands).
+#
+# === Floor types: substrate-pull discipline ===
+#
+# Per `boot/std/number.mirror`, `u32` is a kernel primitive. Per
+# `shards/glass.mirror`, `ref` is the floor for substrate references.
+# For ratios the substrate-pull-correct choice is `u32` for the
+# numerator and denominator (small-integer rationals; the discipline
+# IS that ratios stay in u32 — when they grow beyond u32 they are no
+# longer harmonic).
+#
+# `cents` is a logarithmic interval measurement: 1200 cents per
+# octave; one cent ≈ 1/100 of a semitone in 12-TET. The standard
+# psychoacoustic resolution: trained listeners hear about 5 cents.
+# Returns `ref` — the float-valued reading lifts through the same
+# substrate floor that carries `f64` weights in opacity_map (per
+# `glass.mirror`).
+#
+# === Pre-AI prior art ===
+#
+# Every type and action below names an established music-theoretic
+# object older than the discipline of computer science:
+#
+#   ratio          Pythagoras (~530 BCE), Aristoxenus (~330 BCE).
+#   pythagorean_comma  Pythagoras (the ratio) → named ~17th-century
+#                  music theory; measured by Mersenne (1636).
+#   cents          Ellis (1885), `Inaudible Octaves'.
+#   consonance     Pythagoras → Helmholtz (1863).
+#
+# The substrate's contribution is *typing* these so the eigenboard
+# can reason about them. No invention.
+#
+# Spec context: docs/specs/mirror-spectral.md §5.1 (the sub-shard
+#               proposal; the audible-register recognition).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]] (the
+#                      audible register of (A, H, D)),
+#                      [[architecture-lift-as-load-bearing]],
+#                      [[feedback-no-bare-types]] (numerator and
+#                      denominator are u32, the ratio is its own
+#                      newtype, the comma is its own newtype).
+# Related shards: epistemologic/math/music.mirror (the family root;
+#                 the parent altitude),
+#                 boot/std/epistemologic/math/bundle.mirror (the
+#                 holonomy carrier this shard bridges into the
+#                 audible register),
+#                 boot/std/epistemologic/math/spectral-triple.mirror
+#                 (the 5-dim O(5) eigenvalue framing this shard sees
+#                 as harmonic-ratio spectrum),
+#                 glass.mirror (verdict; ref; the substrate floor),
+#                 boot/std/number.mirror (u32 kernel primitive).
+# Path-namespace property: this file at
+# `shards/epistemologic/math/music/harmonic.mirror` declares
+# `@epistemologic/math/music/harmonic` as a species under the
+# `@epistemologic/math/music` family.
+
+prism @epistemologic/math/music/harmonic {
+  focus harmonic
+  project harmonic
+  split harmonic
+  shift harmonic
+  settle harmonic
+}
+
+# === The harmonic-ratio carrier ===
+#
+# A frequency ratio between two pitches. Numerator and denominator are
+# `u32` per the substrate-pull discipline: harmonic ratios are
+# small-integer rationals. When a ratio's terms grow beyond u32 it
+# has left the harmonic regime — by construction. The discipline IS
+# the type.
+#
+# Normal form: the ratio is in lowest terms (gcd(numerator,
+# denominator) = 1). The substrate altitude declares the carrier;
+# normalisation is the obligation of the realisation layer.
+#
+# Identity contract: two ratios are equal iff their normal forms are
+# byte-equal. The realisation layer enforces this; the substrate
+# names it.
+type ratio = {
+  numerator:   u32,
+  denominator: u32,
+}
+
+# === The Pythagorean comma — holonomy at the audible altitude ===
+#
+# The residual when twelve perfect fifths (3:2)^12 are compared to
+# seven octaves (2:1)^7:
+#
+#   3^12 / 2^19 = 531441 / 524288 ≈ 1.013643
+#
+# This residual IS holonomy in the audible register. It is the
+# substrate's first measured loss — the loop does not close; the
+# residual IS the cost of comprehension carried around twelve fifths.
+#
+# The record carries:
+#   excess  — the ratio that fails to be 1:1; the closure residual.
+#   cycles  — how many fifth-stacks were traversed (canonically 12).
+#
+# `cycles` is parametric because the same holonomy structure shows
+# up at other cycle counts (the syntonic comma at a different cycle;
+# the schisma at a different combination). Naming `cycles` keeps the
+# carrier reusable for the comma family without inventing new types.
+type pythagorean_comma = {
+  excess: ratio,
+  cycles: u32,
+}
+
+# === Bridge action: comma IS holonomy ===
+#
+# THE LOAD-BEARING ACTION of this shard.
+#
+# Lifts a Pythagorean comma into a `holonomy` value of the principal
+# G-bundle (per `bundle.mirror`'s `type holonomy` carrier). After this
+# action is substrate-declared, the audible register IS substrate-fact:
+#
+#   - `bundle.mirror` says: "Holonomy IS loss."
+#   - This action says:    "A comma IS a holonomy."
+#   - Therefore:           "A comma IS loss"
+#                          (and: "loss has frequency";
+#                           and:  "the substrate has been computing in
+#                           audible vocabulary since the bundle tower
+#                           landed").
+#
+# The signature is the bridge. The body stays obligation-blocked (`\`):
+# the realisation lifts cents through the holonomy carrier's concrete
+# shape, which is itself an abstract type at the bundle altitude (per
+# `bundle.mirror` line `type holonomy`). The lift is constrained by
+# the type system; the arithmetic lands when a consumer pulls.
+comma_as_holonomy(c: pythagorean_comma) -> holonomy { \ }
+
+# === Basic operations on ratios ===
+#
+# Each operation has a precise meaning at the audible altitude AND
+# at the spectral-triple altitude. The substrate declares the
+# signatures; the obligation-blocked bodies land when consumers pull.
+
+# compose — interval composition; ratio multiplication.
+#
+# Audibly: stacking two intervals produces the interval whose ratio
+# is the product of their ratios. A fifth (3:2) above a fifth (3:2)
+# is a ninth ((3:2)*(3:2) = 9:4 = octave + whole tone).
+#
+# Spectrally: `compose` IS the algebra operation on the consonant
+# basis of H (the 5-dim O(5)-bundle's connection eigenbasis). Per
+# `spectral-triple.mirror`'s `compose_a` for the algebra A; the
+# harmonic-altitude specialisation of the same morphism.
+#
+# Normal form: the result is normalised (lowest terms) per the
+# `ratio` carrier's identity contract.
+compose(a: ratio, b: ratio) -> ratio { \ }
+
+# inverse — interval inversion; numerator/denominator swap.
+#
+# Audibly: the descending interval of equal magnitude. The inverse
+# of a perfect fifth (3:2) is the perfect fourth descended (2:3),
+# which octave-equivalences to (4:3) — the perfect fourth ascended.
+#
+# Spectrally: `inverse` IS the involution on the algebra A — the
+# adjoint of `compose`. Required for A to be involutive (per
+# `spectral-triple.mirror`'s reference to "an involutive algebra A
+# acting on a Hilbert space H").
+inverse(r: ratio) -> ratio { \ }
+
+# cents — logarithmic interval measurement.
+#
+# The standard psychoacoustic measurement scale. One octave =
+# 1200 cents; one semitone in 12-TET = 100 cents; trained listeners
+# resolve ~5 cents.
+#
+# Definition: cents(r) = 1200 * log₂(numerator / denominator).
+#
+# Useful examples (canonical values for cross-checking the lift):
+#   1:1     0      cents  (unison; λ₀)
+#   2:1   1200      cents  (octave; the doubling)
+#   3:2    701.955  cents  (perfect fifth; the eigenvector)
+#   4:3    498.045  cents  (perfect fourth; inverse of the fifth)
+#   5:4    386.314  cents  (major third)
+#   9:8    203.910  cents  (whole tone; comma carrier in the scale)
+#   pythagorean_comma  23.460 cents (the closure residual of
+#                                    twelve 3:2 fifths vs seven 2:1
+#                                    octaves)
+#
+# Returns `ref` — the substrate's float-valued reference floor, per
+# `glass.mirror`'s `weight: f64` precedent in opacity. The log₂ body
+# is realisation-layer; the obligation block holds the substrate
+# altitude until a consumer pulls.
+cents(r: ratio) -> ref { \ }
+
+# is_consonant — small-integer-ratio consonance verdict.
+#
+# Returns `pass` when the ratio's numerator AND denominator are small
+# enough that the ratio resolves on the harmonic series within the
+# substrate's spectral budget. Returns `partial(confidence)` for the
+# graded consonances (mediant intervals; the borderline cases the
+# dissonance curve resolves continuously). Returns
+# `failure(reason)` when the ratio cannot consonate at the substrate's
+# resolution (the irrational temperament-quotient ratios; the
+# ratio whose terms exceed u32).
+#
+# The threshold is realisation-layer; the substrate declares the
+# verdict-returning shape. `verdict` comes from `@glass` per the
+# substrate floor (`shards/glass.mirror`).
+#
+# Spectrally: a consonance is an eigenvector of D with eigenvalue
+# small in the holonomy norm — a direction in H that closes its loop.
+# `is_consonant` reads the spectral-triple verdict at the audible
+# register.
+is_consonant(r: ratio) -> verdict { \ }
+
+out @epistemologic/math/music/harmonic
+out ratio
+out pythagorean_comma
+out comma_as_holonomy
+out compose
+out inverse
+out cents
+out is_consonant
