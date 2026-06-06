@@ -100,6 +100,37 @@ type mosaic(altitude) = ref
 # functor from @glass carries the partial-settlement case.
 type au(altitude) = settle(altitude)
 
+# === intermediate stages — mosaic at each pipeline altitude ===
+#
+# Each named intermediate IS mosaic at its stage's altitude (per
+# the parametric universal `type mosaic(altitude) = ref` above):
+#
+#   manifold     mosaic at the focused-spec altitude
+#                (source + legacy + target + settle_on graph)
+#   resolved     mosaic at the projected-manifold altitude
+#                (filtered + file-set-resolved + DAG-ordered)
+#   emitter      mosaic at the shifted-to-altitude altitude
+#                (composed for a specific target altitude's emit)
+#   rust_emitter mosaic at @code/rust specifically
+#                (cargo workspace + invocation)
+#   target       a target as declared in mirror.spec
+#                (per shards/mirror/spec.mirror's target declaration)
+#   shards       the [shard] return of split; see line 127.
+#                Universal carrier until the parser grows a rule
+#                for list-of-type return signatures.
+#
+# Each is an opaque carrier (ref) at this declaration site; the
+# concrete shape lives in the consuming altitude (substrate-pull:
+# the consumer at that altitude shapes the form). The substrate's
+# altitude-specialized type declaration machinery is a future tick
+# (see store.mirror's splinter_graph for the same pattern).
+type manifold = ref
+type resolved = ref
+type emitter = ref
+type rust_emitter = ref
+type target = ref
+type shards = ref
+
 # === the five operations on the build manifold (mosaic.md §3) ===
 
 # focus  spec -> manifold
@@ -118,13 +149,17 @@ focus(spec: ref) -> manifold { \ }
 # target dependency. Structural; no I/O beyond glob resolution.
 project(manifold, targets: [target]) -> resolved { \ }
 
-# split  shards -> [shard]
+# split  resolved -> shards
 #
-# The variety-preservation move. Parse each .mirror shard into a
-# MirrorAST; content-address it; emit the list. Each shard carries
-# its own transparency<p> from its own compile. No cross-shard
-# dependencies at this stage — the parallelizable phase.
-split(resolved) -> [shard] { \ }
+# The variety-preservation move. Parse each .mirror splinter into a
+# splinter-tree; content-address it; emit the composition. Each
+# splinter carries its own transparency<p> from its own compile.
+# No cross-splinter dependencies at this stage — the parallelizable
+# phase. The return type `shards` is the opaque carrier for the
+# splinter-composition list (see type declarations above); the
+# parser does not yet have a rule for `[shard]` in action return
+# position, so the universal carrier wraps it.
+split(r: resolved) -> shards { \ }
 
 # shift  altitudes -> emitter
 #
@@ -155,12 +190,17 @@ settle(emitter) -> imperfect(au, error, transparency) { \ }
 # Phase-bounded (mosaic.md §8): the @io.cargo footprint shrinks
 # release over release; v1.0 has no cargo @io call (mosaic IS the
 # build). Sketch only — full cargo invocation is Phase D work.
-shift @code/rust(resolved) -> rust_emitter {
-  workspace: project_workspace(resolved),
+#
+# The substrate's altitude-specialized action declaration form
+# (`shift @code/rust(args) -> result { ... }`) is not yet parser-
+# supported; the specialization is captured as a separate-named
+# action below until the parser grows that rule.
+shift_to_rust(r: resolved) -> rust_emitter {
+  workspace: project_workspace(r),
   invocation: @io.cargo.build {
     manifest: workspace.cargo_toml,
-    env:      env_of(resolved),
-    profile:  resolved.profile,
+    env:      env_of(r),
+    profile:  r.profile,
   },
   \
 }
