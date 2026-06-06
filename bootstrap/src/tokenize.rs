@@ -634,12 +634,26 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
                 while pos < len && matches!(bytes[pos], b' ' | b'\t') {
                     pos += 1;
                 }
+                // Record the original surface keyword so consumers that
+                // distinguish between several keywords sharing one kind
+                // (e.g. `target` vs `cli` both Focus, `name` vs `emit`
+                // vs `altitude` all Project under @mirror/spec) can
+                // dispatch without a reverse grammar lookup. The
+                // `keyword` field is excluded from `compute_content_oid`
+                // (per its docstring), so populating it here doesn't
+                // perturb OIDs.
                 if word == "in" && name.starts_with('@') {
-                    parent.add_child(AstNode::new(AstKind::In, &name));
+                    let mut node = AstNode::new(AstKind::In, &name);
+                    node.set_keyword(&word);
+                    parent.add_child(node);
                 } else if word == "out" {
-                    parent.add_child(AstNode::new(AstKind::Out, &name));
+                    let mut node = AstNode::new(AstKind::Out, &name);
+                    node.set_keyword(&word);
+                    parent.add_child(node);
                 } else {
-                    parent.add_child(AstNode::new(AstKind::Project, &name));
+                    let mut node = AstNode::new(AstKind::Project, &name);
+                    node.set_keyword(&word);
+                    parent.add_child(node);
                 }
                 continue;
             }
@@ -660,7 +674,9 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
                     } else {
                         pos = len;
                     }
-                    parent.add_child(AstNode::new(kind, &name));
+                    let mut node = AstNode::new(kind, &name);
+                    node.set_keyword(&word);
+                    parent.add_child(node);
                     continue;
                 }
             }
@@ -673,7 +689,9 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
                 if pos < len && bytes[pos] == b';' {
                     pos += 1;
                 }
-                parent.add_child(AstNode::new(kind, &name));
+                let mut node = AstNode::new(kind, &name);
+                node.set_keyword(&word);
+                parent.add_child(node);
                 continue;
             }
 
@@ -692,6 +710,7 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
             let body_end = if pos > 0 { pos - 1 } else { pos };
 
             let mut node = AstNode::new(kind, &name);
+            node.set_keyword(&word);
             if kind == AstKind::Focus || kind == AstKind::Settle {
                 scan_items(
                     &bytes[body_start..body_end],

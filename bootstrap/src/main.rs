@@ -733,209 +733,102 @@ fn cmd_kintsugi(
     cmd_kintsugi_single(file, shatter, transform, out_dir)
 }
 
-/// One target inside a parsed `mirror.spec`. Carries only the four
-/// fields the D4 dispatcher consumes today (`name`, `altitude`,
-/// `emit`, `manifest`); richer fields declared in
-/// `shards/mirror/spec.mirror` (cli, needs) parse-and-ignore at this
-/// altitude — `mosaic.focus` walks them in the substrate proper.
+/// One target the dispatcher will act on, harvested from the AST.
+///
+/// Carries the `target NAME { ... }` block name (the AST node's `name`
+/// field) and the keyword the `emit` directive named (also an AST node
+/// name). String-literal and `~path'...'` carriers (`name "value"`,
+/// `manifest ~f'...'`) are a known substrate gap — the bootstrap
+/// tokenizer drops them silently — so the dispatcher uses the
+/// `<spec-dir>/Cargo.toml` default. See the field-level comment on
+/// `spec_targets_from_ast` for what the substrate captures cleanly
+/// today.
 struct SpecTarget {
     /// The block-header identifier: `target binary { ... }` → `"binary"`.
     block_name: String,
-    /// The `name "..."` field — the artifact name at the altitude.
-    artifact_name: String,
-    /// The `altitude @...` ref. Empty when omitted.
-    altitude: String,
     /// The `emit <ref>` field. Today only `cargo` triggers a dispatch.
     emit: String,
-    /// Optional `manifest ~f'...'` path — Cargo.toml location for the
-    /// target. When omitted, defaults to `<spec-dir>/Cargo.toml`.
-    manifest: Option<String>,
 }
 
-/// Lightweight `target NAME { ... }` extractor over the raw spec
-/// source. Per [[feedback-no-new-rust]] we do NOT add Rust keyword
-/// recognition for `target`/`altitude`/`emit` — those keywords are
-/// substrate-declared in `shards/mirror/spec.mirror`. The bootstrap
-/// grammar harvester does not yet register them (no
-/// `<op> <keyword>` line for these in the legacy 2-word surface), so
-/// the tokenized AST surfaces `target` blocks as Dark spans.
+/// Walk the tokenized spec AST and harvest the targets the dispatcher
+/// will act on.
 ///
-/// Rather than wire new keyword recognition in Rust (which the
-/// substrate explicitly forbids), this walker text-scans the source
-/// for `target IDENT { ... }` blocks and pulls the four field values
-/// the dispatcher needs. The work is dispatch-glue: when the
-/// substrate's `@mirror/spec` grammar self-hosts, this scanner is
-/// replaced by an AST walk; the verdict envelope shape and cargo
-/// dispatch contract stay identical.
-fn parse_spec_targets(source: &str) -> Vec<SpecTarget> {
-    let bytes = source.as_bytes();
-    let len = bytes.len();
+/// AST shape under `@mirror/spec` (keyword bindings declared in
+/// `shards/mirror/spec/keywords.mirror`):
+///
+///   Focus root
+///     In @mirror/spec, In @property, In @io
+///     Focus project NAME
+///       Project source       (~d'...' carrier dropped — substrate gap)
+///       Focus target NAME
+///         Project name       ("value" string literal dropped — substrate gap)
+///         Project altitude   (@code/rust — captured cleanly in name)
+///         Project emit       (cargo — captured cleanly in name)
+///         Project manifest   (~f'...' carrier dropped — substrate gap)
+///       Settle settle_on
+///         ...
+///
+/// What the substrate captures cleanly today:
+///   - `target NAME { ... }`: block name in the Focus node's `name`
+///   - `altitude @ref`: ref in the Project node's `name`
+///   - `emit IDENT`: identifier in the Project node's `name`
+///
+/// What's a substrate gap:
+///   - `name "value"`: string literals are consumed silently by the
+///     tokenizer; no AST representation.
+///   - `manifest ~f'...'` / `source ~d'...'` / `legacy ~d'...', ...`:
+///     `~path'...'` sigil-quoted carriers parse to empty/dark; the
+///     bootstrap tokenizer doesn't surface the inner literal.
+///   The action declarations in `shards/mirror/spec.mirror` (e.g.
+///   `name(value: str) -> name_decl { \ }`) declare what these
+///   directives ARE typed as; the bootstrap's keyword harvester does
+///   not yet evaluate the action signatures to produce typed AST
+///   children. Surfacing this as a gap rather than papering it over
+///   in Rust per [[feedback-no-new-rust]] and the directive's
+///   "Surface anything that surprises you" clause.
+///
+/// The dispatcher walks the top-level Focus blocks named `project`,
+/// collects their `target` Focus children, and for each target looks
+/// for an `emit` Project node whose `name` carries the emit ref.
+fn spec_targets_from_ast(ast: &AstNode) -> Vec<SpecTarget> {
     let mut out: Vec<SpecTarget> = Vec::new();
-    let mut pos = 0usize;
-    while pos < len {
-        // Skip whitespace.
-        while pos < len && matches!(bytes[pos], b' ' | b'\t' | b'\n' | b'\r') {
-            pos += 1;
-        }
-        if pos >= len {
-            break;
-        }
-        // Skip `#` line comments.
-        if bytes[pos] == b'#' {
-            while pos < len && bytes[pos] != b'\n' {
-                pos += 1;
-            }
-            continue;
-        }
-        // Match the `target` keyword as a whole word at the current
-        // position. `pos` must be at the start of an identifier — i.e.
-        // the prior byte (if any) is not an identifier byte. Otherwise
-        // skip one byte to keep scanning.
-        let at_word_start = pos == 0
-            || !matches!(
-                bytes[pos - 1],
-                b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_'
-            );
-        let kw = b"target";
-        if at_word_start
-            && pos + kw.len() <= len
-            && &bytes[pos..pos + kw.len()] == kw
-            && (pos + kw.len() == len
-                || !matches!(
-                    bytes[pos + kw.len()],
-                    b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_'
-                ))
-        {
-            // Move past `target` and read the block identifier.
-            pos += kw.len();
-            while pos < len && matches!(bytes[pos], b' ' | b'\t') {
-                pos += 1;
-            }
-            let name_start = pos;
-            while pos < len
-                && matches!(
-                    bytes[pos],
-                    b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_'
-                )
-            {
-                pos += 1;
-            }
-            let block_name = String::from_utf8_lossy(&bytes[name_start..pos]).into_owned();
-            // Skip whitespace to the opening brace.
-            while pos < len && matches!(bytes[pos], b' ' | b'\t' | b'\n' | b'\r') {
-                pos += 1;
-            }
-            if pos >= len || bytes[pos] != b'{' {
-                continue;
-            }
-            // Brace-balanced body.
-            pos += 1;
-            let body_start = pos;
-            let mut depth = 1i32;
-            while pos < len && depth > 0 {
-                match bytes[pos] {
-                    b'{' => depth += 1,
-                    b'}' => depth -= 1,
-                    b'#' => {
-                        while pos < len && bytes[pos] != b'\n' {
-                            pos += 1;
+    for child in &ast.children {
+        if child.kind == AstKind::Focus && child.keyword == "project" {
+            for target in &child.children {
+                if target.kind == AstKind::Focus && target.keyword == "target" {
+                    let mut emit = String::new();
+                    for field in &target.children {
+                        if field.kind == AstKind::Project && field.keyword == "emit" {
+                            emit = field.name.clone();
                         }
-                        continue;
                     }
-                    _ => {}
-                }
-                if depth > 0 {
-                    pos += 1;
+                    out.push(SpecTarget {
+                        block_name: target.name.clone(),
+                        emit,
+                    });
                 }
             }
-            let body_end = pos;
-            if pos < len {
-                pos += 1; // consume closing `}`
-            }
-            let body = &source[body_start..body_end];
-            let target = parse_target_body(&block_name, body);
-            out.push(target);
-            continue;
         }
-        // Not a `target` keyword: advance one byte.
-        pos += 1;
     }
     out
-}
-
-/// Extract `name`, `altitude`, `emit`, `manifest` field values from a
-/// `target { ... }` body. Each field is a `<keyword> <value>` line;
-/// the value runs to end-of-line. Quoted strings are unwrapped; `~f'...'`
-/// path-refs strip the carrier sigil and quotes. Unknown lines are
-/// ignored (the substrate carries the richer grammar; this is dispatch
-/// glue only).
-fn parse_target_body(block_name: &str, body: &str) -> SpecTarget {
-    let mut artifact_name = String::new();
-    let mut altitude = String::new();
-    let mut emit = String::new();
-    let mut manifest: Option<String> = None;
-    for raw_line in body.lines() {
-        let line = raw_line.trim();
-        if line.is_empty() || line.starts_with('#') {
-            continue;
-        }
-        let mut it = line.splitn(2, char::is_whitespace);
-        let key = it.next().unwrap_or("").trim();
-        let value = it.next().unwrap_or("").trim();
-        match key {
-            "name" => artifact_name = unwrap_string_literal(value),
-            "altitude" => altitude = value.to_string(),
-            "emit" => emit = value.to_string(),
-            "manifest" => manifest = Some(unwrap_path_ref(value)),
-            _ => {}
-        }
-    }
-    SpecTarget {
-        block_name: block_name.to_string(),
-        artifact_name,
-        altitude,
-        emit,
-        manifest,
-    }
-}
-
-/// Strip a leading/trailing `"` pair if present. Otherwise return the
-/// input verbatim.
-fn unwrap_string_literal(s: &str) -> String {
-    let bytes = s.as_bytes();
-    if bytes.len() >= 2 && bytes[0] == b'"' && bytes[bytes.len() - 1] == b'"' {
-        String::from_utf8_lossy(&bytes[1..bytes.len() - 1]).into_owned()
-    } else {
-        s.to_string()
-    }
-}
-
-/// Unwrap a `~f'<path>'` / `~d'<path>'` path-ref carrier. Per
-/// `shards/mirror/spec.mirror` paths use the `~f` / `~d` sigils; the
-/// inner literal between the single quotes is the actual path.
-fn unwrap_path_ref(s: &str) -> String {
-    let bytes = s.as_bytes();
-    // ~f'...' or ~d'...': sigil + carrier-letter + open quote + ... + close quote.
-    if bytes.len() >= 4
-        && bytes[0] == b'~'
-        && matches!(bytes[1], b'f' | b'd')
-        && bytes[2] == b'\''
-        && bytes[bytes.len() - 1] == b'\''
-    {
-        return String::from_utf8_lossy(&bytes[3..bytes.len() - 1]).into_owned();
-    }
-    unwrap_string_literal(s)
 }
 
 /// D4 entrypoint: walk a `mirror.spec`, dispatch cargo for each
 /// `emit cargo` target, and emit a verdict envelope.
 ///
+/// First concrete rung of the compile staircase per
+/// [[project-mirror-compile-staircase]]: the `.spec` extension routes
+/// to `@mirror/spec` (shards/mirror/spec.mirror) via
+/// `grammar_for_file`; the existing tokenize+parse infrastructure
+/// produces an AST; this function walks the AST to find the targets.
+/// The hand-rolled `parse_spec_targets` byte scanner retires.
+///
 /// Per [[feedback-no-new-rust]] this is dispatch glue only. The spec
 /// grammar is substrate-declared (`shards/mirror/spec.mirror`); the
-/// cargo @io contract is substrate-declared
-/// (`shards/io/cargo.mirror`). This function reads the spec, finds
-/// `target` blocks, invokes cargo, and emits via the existing
-/// `CiVerdict`/`CorpusVerdict` envelope (T11.2.5/T11.2.6).
+/// cargo @io contract is substrate-declared (`shards/io/cargo.mirror`).
+/// This function reads the spec, walks the AST, invokes cargo, and
+/// emits via the existing `CiVerdict`/`CorpusVerdict` envelope
+/// (T11.2.5/T11.2.6).
 ///
 /// Exit-code lift (coarsened from D3's `cargo_exit_to_transparency`):
 ///   0   → success            (no opacity)
@@ -947,15 +840,30 @@ fn unwrap_path_ref(s: &str) -> String {
 /// the env_allowlist verification — substrate-declared, dispatcher-
 /// deferred to keep this tick minimal.
 fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
-    let source = match fs::read_to_string(spec_path) {
+    let source = match fs::read(spec_path) {
         Ok(s) => s,
         Err(_) => {
             return emit_spec_verdict("failure", spec_path, 0.0, 1, 0, 0, &[], format);
         }
     };
-    let targets = parse_spec_targets(&source);
-    // Spec-relative root for manifest paths. `manifest ~f'Cargo.toml'`
-    // in mirror.spec resolves against the spec file's directory.
+    // Substrate-pull dispatch: the file extension picks the grammar,
+    // the grammar loader merges in keyword companions, the tokenizer
+    // produces an AST. `parse_spec_targets`'s text scanner retires.
+    let grammar_path = grammar_for_file(spec_path);
+    let grammar = match load_grammar(grammar_path) {
+        Ok(g) => g,
+        Err(_) => {
+            return emit_spec_verdict("failure", spec_path, 0.0, 1, 0, 0, &[], format);
+        }
+    };
+    let ast = tokenize(&source, &grammar);
+    let targets = spec_targets_from_ast(&ast);
+
+    // Spec-relative root for the default `Cargo.toml` location. The
+    // substrate-declared `manifest ~f'...'` override isn't captured
+    // by the bootstrap tokenizer today (substrate gap; see
+    // `spec_targets_from_ast` docstring); every target uses the
+    // spec-dir default.
     let spec_dir: PathBuf = std::path::Path::new(spec_path)
         .parent()
         .map(|p| p.to_path_buf())
@@ -966,7 +874,6 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
     let mut any_partial = false;
     let mut total_objective: f64 = 0.0;
     let mut total_dark: u64 = 0;
-    let mut dispatched: u64 = 0;
     for t in &targets {
         if t.emit != "cargo" {
             // Non-cargo emit (yaml, github_release, ...): the @io tool
@@ -985,16 +892,7 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
             total_dark += 1;
             continue;
         }
-        // Resolve the manifest path. Default: <spec-dir>/Cargo.toml.
-        let manifest_rel = t
-            .manifest
-            .clone()
-            .unwrap_or_else(|| "Cargo.toml".to_string());
-        let manifest = if std::path::Path::new(&manifest_rel).is_absolute() {
-            PathBuf::from(&manifest_rel)
-        } else {
-            spec_dir.join(&manifest_rel)
-        };
+        let manifest = spec_dir.join("Cargo.toml");
         // Per the directive's "Minimum viable" §4: `cargo check` for
         // `binary.compiles`-style settle_on predicates. `cargo test` is
         // wired the same way but gated on the substrate's `tests_pass`
@@ -1045,8 +943,6 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
                 )
             }
         };
-        let _ = t.artifact_name; // dispatcher does not need it today
-        let _ = t.altitude; // ditto; @code/rust is implicit in the cargo dispatch
         per_target.push(PerFileVerdict {
             path: label_path,
             verdict,
@@ -1067,7 +963,6 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
                 total_dark += dark;
             }
         }
-        dispatched += 1;
     }
     let aggregate: &'static str = if any_failure {
         "failure"
@@ -1079,7 +974,6 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
         "success"
     };
     let files_processed = per_target.len() as u64;
-    let _ = dispatched;
     emit_spec_verdict(
         aggregate,
         spec_path,

@@ -196,6 +196,7 @@ fn companion_keyword_sources(path: &str) -> &'static [&'static str] {
             "boot/std/mirror/glass/ast/token.mirror",
         ],
         "boot/std/mirror/grammar.mirror" => &["boot/std/mirror/glass/ast/token.mirror"],
+        "shards/mirror/spec.mirror" => &["shards/mirror/spec/keywords.mirror"],
         _ => &[],
     }
 }
@@ -268,7 +269,19 @@ pub fn grammar_for_file(path: &str) -> &'static str {
                 "boot/std/code/rust.mirror"
             }
         }
-        "mirror" | "spec" | "shard" | "shatter" => {
+        "spec" => {
+            // `.spec` files declare project manifolds; their grammar is
+            // `@mirror/spec` (shards/mirror/spec.mirror), declared in the
+            // substrate per [[architecture-shards-as-substrate-source]].
+            // Companion keyword bindings live at
+            // `shards/mirror/spec/keywords.mirror` (registered in
+            // `companion_keyword_sources`); together they let the existing
+            // tokenize+parse infrastructure produce an AST the
+            // kintsugi-spec walker walks directly, retiring the
+            // hand-rolled `parse_spec_targets` byte scanner.
+            "shards/mirror/spec.mirror"
+        }
+        "mirror" | "shard" | "shatter" => {
             if Path::new("shards/mirror/grammar.mirror").exists() {
                 "shards/mirror/grammar.mirror"
             } else {
@@ -350,15 +363,26 @@ mod tests {
     #[test]
     fn shard_extension_routes_to_mirror_grammar() {
         // .shard is the observer-relative deployment description; it parses
-        // through the same meta-glass as .spec / .mirror / .shatter.
-        // Coexists with .spec (per Alex 2026-05-25 substrate decision).
+        // through the meta-glass at boot/std/mirror/grammar.mirror (per the
+        // 2026-05-25 substrate decision).
         assert_eq!(
             grammar_for_file("eigenboard.shard"),
             "boot/std/mirror/grammar.mirror"
         );
+    }
+
+    #[test]
+    fn spec_extension_routes_to_spec_grammar() {
+        // `.spec` declares a project manifold; it parses through
+        // @mirror/spec (shards/mirror/spec.mirror). The companion
+        // keyword bindings at `shards/mirror/spec/keywords.mirror`
+        // are merged in by `load_grammar` so the tokenizer's keyword
+        // table carries `project`, `target`, `settle_on`, etc.
+        // (substrate-pull realize: the dispatch surface IS substrate-
+        // declared, not hardcoded in Rust).
         assert_eq!(
-            grammar_for_file("eigenboard.spec"),
-            "boot/std/mirror/grammar.mirror"
+            grammar_for_file("mirror.spec"),
+            "shards/mirror/spec.mirror"
         );
     }
 }

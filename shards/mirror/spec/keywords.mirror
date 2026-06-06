@@ -1,0 +1,69 @@
+in @prism
+
+# @mirror/spec keyword bindings.
+#
+# Companion to shards/mirror/spec.mirror (which declares the @mirror/spec
+# prism + the typed lambdas for each directive). The bootstrap's keyword
+# harvester reads `<op> <keyword>` 2-word lines inside a `grammar { ... }`
+# block to build the tokenizer's keyword table; this file is the
+# substrate-altitude declaration of those bindings.
+#
+# Same precedent as shards/mirror/glass/ast/token.mirror (companion to
+# the legacy @mirror/grammar), tracked by
+# `companion_keyword_sources` in bootstrap/src/grammar.rs.
+#
+# Without these bindings, the tokenizer would surface every spec-level
+# block — `project NAME { ... }`, `target NAME { ... }`, `settle_on { ... }` —
+# as a Dark region (an unknown construct with a `{ ... }` body), and the
+# AST walker would have nothing structural to walk. The bindings let the
+# existing tokenize+parse infrastructure produce a typed AST that the
+# `mirror kintsugi <spec>` dispatcher walks directly.
+#
+# Kinds chosen so the tokenizer's existing per-kind path produces the
+# right shape:
+#
+#   focus    — opens a recursively-scanned brace block. Top-level
+#              `project NAME { ... }` and per-target `target NAME { ... }`
+#              + `cli { ... }` use this so their inner directives parse as
+#              child AST nodes.
+#   settle   — also opens a recursively-scanned brace block. `settle_on`
+#              uses this so each predicate inside lifts as a child node.
+#   project  — single-line directive that consumes one identifier/ref as
+#              its `name` field, no brace block. Used for `source ~d'...'`,
+#              `altitude @ref`, `emit ident`, etc. Identifier-shaped
+#              values land in the AST node's name field cleanly;
+#              string-literal and `~path'...'` carriers are a known
+#              substrate gap (the action declarations in spec.mirror
+#              declare `value: str` / `paths: [dir_ref]` but the bootstrap
+#              tokenizer doesn't yet capture them as typed values — see
+#              [[architecture-shards-as-substrate-source]]).
+#
+# These bindings are the dispatch surface the bootstrap reads today;
+# spec.mirror's typed lambdas (e.g. `project(name) -> prism { \ }`) are
+# the substrate's settled declaration of what each keyword IS. Both
+# surfaces coexist during the kintsugi-formatter transition; when the
+# substrate's action-declaration evaluator lands, the typed lambdas
+# carry the meaning and these bindings retire.
+
+grammar @mirror/spec("spec") {
+  # === boundary terminals (matches @mirror/grammar's `in` / `out`
+  # bindings; spec files use `in @ref` at the top to declare
+  # grammar/property imports). ===
+  project in
+  project out
+
+  # === top-level blocks (recursively scanned bodies) ===
+  focus project
+  focus target
+  focus cli
+  settle settle_on
+
+  # === single-line directives ===
+  project source
+  project legacy
+  project name
+  project altitude
+  project emit
+  project manifest
+  project needs
+}
