@@ -8,23 +8,39 @@ back to honest naming where they strain. The Connes alignment shifts
 from "structural" to "operational, with named axiomatic gaps and
 SpectralUuid as the bridge." The lifecycle reading of `au` and the
 Kleisli framing of `settle` over the Imperfect monad land.*
+*2026-06-06 second upsert. Alex's three-layer recognition lands:
+splinter (BOTTOM, oid-addressed content atom) / shard (MIDDLE,
+SpectralUuid-addressed settled composition) / SpectralUuid (TOP,
+graph-navigatable spectral identifier). The bottom and the top meet
+in the middle at shard. au is the proposed shard (Fate-emitted
+splinters, uncommitted); settle composes splinters into a shard
+through the property chain. The settle Kleisli arrow sharpens from
+`au → Imperfect<fragment>` to `au → Imperfect<shard>`. §9.7's
+deferred lift resolves naturally at the shard layer (shard.id IS
+SpectralUuid by construction; splinter.content stays as oid).*
 
-Status: **Red** (the recognition is named; the substrate already carries
-most of the vocabulary; the collapse it implies on the Rust side is
-post-v0.1.0 work; the SpectralUuid-at-the-shard-altitude declaration is
-a deferred substrate tick — see §9.7)
+Status: **Red** (the three-layer recognition is named and substrate-
+realized at @glass and @store; the collapse it implies on the Rust
+side is post-v0.1.0 work; the SpectralUuid-at-the-substrate-altitude
+declaration is a deferred substrate tick that resolves at the shard
+layer — see §9.7)
 
 Reads from / depends on:
-- `shards/glass.mirror` (post-this-spec: declares `fragment`,
-  `fragment_shape`, the universal content-addressed unit)
+- `shards/glass.mirror` (post-this-spec: declares `splinter`
+  (BOTTOM, the universal content-addressed atom), `splinter_shape`,
+  and `shard` (MIDDLE, the SpectralUuid-addressed settled
+  composition); the three-layer recognition lands here)
 - `shards/mirror/mosaic.mirror` (the build-altitude prism whose
   algebra this spec re-reads as the type system's root)
-- `shards/mirror/au.mirror` (au is what Fate emits; settle through the
-  property chain turns au into committed fragment — lifecycle
-  position, not type-altitude specialization; see §2.3)
-- `shards/mirror/spec.mirror` (the `project NAME { ... }` form
-  — under this spec, just one fragment-composition shape mosaic recognizes)
-- `shards/mirror/store.mirror` (oid; splinter as OID-graph; the
+- `shards/mirror/au.mirror` (au is what Fate emits as a proposed
+  composition of splinters; settle through the property chain
+  composes the splinters into a shard — lifecycle position, not
+  type-altitude specialization; see §2.3)
+- `shards/mirror/spec.mirror` (the `project NAME { ... }` form —
+  under this spec, just one splinter-composition shape mosaic
+  recognizes)
+- `shards/mirror/store.mirror` (oid; splinter_graph as the OID-graph
+  closure / structural lockfile; shard_ref as the typed handle; the
   content-addressed storage gate)
 - `shards/prism.mirror` (the five operations + the Connes spectral
   triple framing)
@@ -51,11 +67,14 @@ Reads from / depends on:
 
 Forward references (this spec unblocks):
 - The Rust-side collapse of `cmd_kintsugi_spec` / `cmd_kintsugi_ci_single`
-  / `cmd_kintsugi_ci_corpus` into one fragment-shaped dispatch
+  / `cmd_kintsugi_ci_corpus` into one splinter/shard-shaped dispatch
 - Retirement of the text-walker `parse_spec_targets`; retirement of
   `SpecTarget` as a distinct shape
-- The "butterfly's runtime is fragment-shaped" claim in
+- The "butterfly's runtime is splinter/shard-shaped" claim in
   `butterfly-self-hosting.md` §6
+- The Rust rename `Fractal::Shard → Fractal::Atom` (the variant name
+  pre-dates Alex's 2026-06-06 recognition that shard is the MIDDLE
+  layer; the variant IS the terminal-leaf splinter / atom)
 
 ---
 
@@ -66,7 +85,8 @@ Forward references (this spec unblocks):
 > `@mirror/mosaic` is the 'we're standing on the shoulders of giants'
 > part of the language."
 
-The recognition is one sentence with five entailments.
+The recognition is one sentence with five entailments, and a sixth
+that sharpened on 2026-06-06 (Alex's three-layer recognition).
 
 **The sentence.** `@mirror/mosaic` is not a build system that happens
 to share vocabulary with the rest of the language. Mosaic IS the
@@ -74,19 +94,22 @@ universal algebra `A` of the substrate's spectral triple, at the
 type-system altitude. The five operations (focus, project, split, shift,
 settle) GENERATE the algebra; arbitrary compositions are arrows in the
 algebra they generate (cf. §3.2 — *generators*, not *closure under
-five*). The manifold they act on is the manifold of fragments at every
-altitude.
+five*). The manifold they act on is the manifold of **splinters** at
+every altitude, composed by mosaic and settled into **shards** that
+the store keeps.
 
 **Five entailments.**
 
-1. **Fragment becomes the universal substrate unit at every altitude.**
-   Not just AST nodes in Rust. Shard is a fragment. Target is a
-   fragment. Spec is a fragment. AST node is a fragment. `au` is a
-   fragment. Anything content-addressable IS a fragment. The three
-   structural shapes — terminal / composite / referring — already named
-   in `@fragmentation` (boot/std/fragmentation.mirror) and realized in
-   the Rust substrate as `Fractal::{Shard, Branch, Lens}` (per
-   `fragmentation/src/fragment.rs`) — are exhaustive.
+1. **Splinter is the universal substrate atom at every altitude.**
+   Not just AST nodes in Rust. Target is a splinter. Spec is a
+   splinter. AST node is a splinter. au is a Fate-emitted composition
+   of splinters. Anything content-addressable IS a splinter. The
+   three structural shapes — atom (terminal) / fractal (composite) /
+   lens (referring) — declared at `shards/glass.mirror` and realized
+   in the Rust substrate as `Fractal::{Shard, Branch, Lens}` (per
+   `fragmentation/src/fragment.rs`; the Rust `Shard` variant
+   pre-dates Alex's recognition that shard is the MIDDLE layer and
+   awaits its rename to `Atom`) — are exhaustive.
 
 2. **`@mirror/spec` collapses into `@mirror/mosaic` as a fragment kind.**
    Spec is not a peer of mosaic — it's one composition shape that mosaic
@@ -132,8 +155,86 @@ altitude.
    spectral state encoding. This is what makes the Connes triple's
    distance functional `d(p,q) = sup{|f(p) - f(q)| : f ∈ A, ‖[D,f]‖
    ≤ 1}` *operational* rather than abstract: the SpectralUuid
-   difference between two fragments IS the substrate-native distance
+   difference between two shards IS the substrate-native distance
    between them in H. See §4 below for the bridge.
+
+6. **Splinter / shard / SpectralUuid form a three-layer recognition.**
+   The bottom (splinter, content atom) and the top (SpectralUuid,
+   spectral identity) meet in the middle at shard (settled, stored,
+   navigable). See §1B below.
+
+## 1B. The Three-Layer Recognition — Bottom and Top Meet in the Middle
+
+> **Alex (2026-06-06):** "The `splinter` is the content addressed
+> fragment. And the `shard` is a settlement of content addressed
+> splinters into SpectralUuid addressed stored fragment. The bottom
+> and the top meeting in the middle. This is the load-bearing bridge
+> for everything that follows."
+
+Three substrate layers, each declared at its proper altitude:
+
+| Layer | Name | What it IS | Where it lives |
+|---|---|---|---|
+| **BOTTOM** | `splinter` | The oid-addressed content atom at every altitude. Universal carrier of content; one (content, altitude, transparency) triple per atom. | `shards/glass.mirror` |
+| **MIDDLE** | `shard` | The SpectralUuid-addressed settlement of composed splinters into a stored fragment. What `settle` produces; what `@mirror/store` keeps; what `peer.eigenboard` types as. | `shards/glass.mirror`, `fragmentation/src/shard_ref.rs`, `boot/std/peer.mirror` |
+| **TOP** | `SpectralUuid` | The graph-navigatable spectral identifier. 128 bits, golden-ratio split (48 ACTIVE / 80 DARK). | `prism/core/src/spectral_uuid.rs`; substrate-altitude declaration deferred (resolves at the shard layer per §9.7) |
+
+The settlement transition (sharpened from §2.3's earlier Kleisli arrow):
+
+```
+au (Fate-emitted splinters, uncommitted)
+   ↓ settle (property-chain run; verify; commit)
+Imperfect<shard> (SpectralUuid-identified, stored)
+```
+
+**Why this is the load-bearing bridge.** Six recognitions follow:
+
+1. **The fragmentation crate name reads correctly now.**
+   "Fragmentation" = the act of producing splinters (the atoms). The
+   Rust crate ships both the splinter primitives (the atoms) and the
+   shard storage (the settlements). The crate name was always
+   honest; the substrate just hadn't named the pieces.
+
+2. **`shatter-spec.md`'s header "au + splinter + mosaic" stops being
+   aspirational** and becomes the substrate's self-description: au
+   is the proposal; splinter is the atomic unit; mosaic is the
+   algebra. Three things, named correctly the whole time.
+
+3. **The Connes triple sharpens further** (see §4 and §5.7).
+   `A = mosaic` (the algebra of operations on the storage).
+   `H = the Hilbert space of shards`, spanned by SpectralUuids;
+   splinters are the basis units; the spectral structure is the
+   SpectralUuid layout. `D = kintsugi` operationally = the splinter-
+   composition-into-shard transition operator. Each settle iteration
+   shifts SpectralUuid; D's action on a shard IS that shift.
+
+4. **§9.7's deferred lift resolves itself.** The substrate-level
+   `SpectralUuid` declaration naturally lands at the shard altitude
+   — shards ARE SpectralUuid-identified by definition; splinters
+   reference shards by SpectralUuid; au's settlement target is a
+   SpectralUuid-bound shard. The lift is no longer "fragment.content:
+   oid → SpectralUuid"; it's "shard.id IS SpectralUuid by
+   construction" and "splinter.content: oid stays as it is." See
+   §9.7 below.
+
+5. **The peer-altitude recognition strengthens.** `peer.mirror`'s
+   `eigenboard: shard` was already substrate-pull-honest — peers
+   carry a typed handle to a shard (their current spectral state).
+   The new clarity: `peer.eigenboard` IS a SpectralUuid-addressed
+   shard whose splinters carry the peer's current tensions / gestalt
+   / identity. Sub-graph spawn (Glint's gap, per
+   `the-convergence.md` §3.4) becomes: spawn carves a sub-shard from
+   the parent's shard, identified by a fresh SpectralUuid composed
+   from parent + neighbourhood selection.
+
+6. **At @store, "splinter" forks naturally into atom (universal) and
+   splinter_graph (OID-graph projection).** The old @store
+   declaration `type splinter = { root: oid, children: [oid] }` was
+   reaching for two distinct concepts under one name. The atomic
+   carrier (one OID per atom) is the @glass splinter; the
+   dependency-closure projection (root + transitive children) is the
+   @store splinter_graph. The 2026-06-06 store.mirror update
+   distinguishes them explicitly.
 
 This is mirror's **shoulders-of-giants moment.** Total functional
 programming languages (Turner, Idris, Agda, Dhall) named termination
@@ -155,30 +256,36 @@ type system. This spec names that.
 
 ---
 
-## 2. Fragment as Universal Substrate Unit
+## 2. Splinter as Universal Substrate Atom; Shard as Settled Composition
 
-### 2.1 What a fragment IS
+### 2.1 What a splinter IS
 
 Per `shards/glass.mirror` (this spec's companion landing):
 
 ```mirror
-type fragment(altitude) = {
+type splinter(altitude) = {
   content:      oid,
   altitude:     ref,
   transparency: transparency(altitude),
 }
 
-type fragment_shape =
-  | shard               # terminal; no children
+type splinter_shape =
+  | atom                # terminal; no children
   | fractal([oid])      # composite; child oids
   | lens([oid])         # referring; target oids
+
+type shard(altitude) = {
+  id:           oid,                          # → SpectralUuid (deferred lift; §9.7)
+  splinters:    [splinter(altitude)],
+  transparency: transparency(altitude),
+}
 ```
 
-Three facts close the type:
+Three facts close the splinter type:
 
-- **Content-addressed.** A fragment's identity IS its content hash.
-  Two fragments with byte-equal `(content, children-oids-or-targets)`
-  have the same oid and ARE the same fragment. This is the substrate
+- **Content-addressed.** A splinter's identity IS its content hash.
+  Two splinters with byte-equal `(content, children-oids-or-targets)`
+  have the same oid and ARE the same splinter. This is the substrate
   property `content_addressed` declared in
   `boot/std/epistemologic/property/content_addressed.mirror`; the
   Rust substrate realizes it via `fragmentation/src/fragment.rs`'s
@@ -186,26 +293,42 @@ Three facts close the type:
 
 - **Lives at an altitude.** The substrate has a vocabulary of
   altitudes: `@code/rust`, `@code/llvm/ir`, `@meta/ast`, `@mirror/spec`,
-  `@release`, `@ci/github`, etc. A fragment is observed at exactly one
-  altitude; cross-altitude composition is `shift` (per
+  `@release`, `@ci/github`, etc. A splinter is observed at exactly
+  one altitude; cross-altitude composition is `shift` (per
   `[[architecture-lift-as-load-bearing]]`: shift = basis transformation;
   same bytes, different declared shape). Per the parametric-types
   insight (2026-05-25), `shift(T)` is the annotation-only parametric
-  form — a fragment at altitude A and the same fragment at altitude B
-  share content but differ as types.
+  form — a splinter at altitude A and the same splinter at altitude
+  B share content but differ as types.
 
 - **Carries transparency.** Per `docs/specs/transparency.md`, every
-  fragment carries the located opacity map of the operations that
-  produced it. A clean fragment has `transparency: success`; a partial
+  splinter carries the located opacity map of the operations that
+  produced it. A clean splinter has `transparency: success`; a partial
   one carries `partial(opacity_map)` where `opacity_map: [opacity]` is
   the substrate's loss carrier. Kintsugi reads transparency to pick
-  the next focus; settled means transparency = success.
+  the next focus; the splinter is in a shard whose own transparency
+  composes its splinters' transparencies under the Transparency<Ref>
+  algebra.
 
-The three structural shapes (`fragment_shape`) are exhaustive. The
+The three structural shapes (`splinter_shape`) are exhaustive. The
 algebra closes at three for the same reason the five operations close
 at five — they are the dimensional skeleton of the spectral triple's
-algebra A acting on H. A fragment IS one of terminal, composite, or
-referring. There is no fourth shape.
+algebra A acting on H. A splinter IS one of atom (terminal),
+fractal (composite), or lens (referring). There is no fourth shape.
+
+**What a shard IS.** A shard is the SpectralUuid-addressed settled
+composition of splinters: `{ id, splinters, transparency }`. Identity
+is the SpectralUuid computed from the composed splinter set's
+monoid-homomorphism reduction (per `[[architecture-shard-as-crdt]]`
+§3). The active 48 bits carry the quantized SpectralCoordinate<5>
+across the composed splinters; the dark 80 bits carry the BLAKE3-
+truncated content hash of the composition. A shard exists only as
+the post-settlement form (pre-settlement, it's an au — see §2.3).
+Where shard already lives in the substrate: `boot/std/peer.mirror`
+declares `eigenboard: shard`; `fragmentation/src/shard_ref.rs`
+realizes the typed handle as `ShardRef { id: SpectralUuid, context,
+budget_bytes }`; `shards/mirror/store.mirror`'s `shard_ref = oid`
+binding tightens to SpectralUuid when the substrate type lands.
 
 ### 2.2 Why content-addressed-AST-node generalizes to all altitudes
 
@@ -243,7 +366,7 @@ The substrate has been pointing at this since the void document
 landed (2026-04-26). What was missing was the type-system reading:
 the manifold of fragments IS what mosaic's five operations act on.
 
-### 2.3 `au` and `fragment` — lifecycle positions, not type altitudes
+### 2.3 `au` and `shard` — lifecycle positions, not type altitudes
 
 Compare `shards/mirror/au.mirror`:
 
@@ -255,69 +378,80 @@ type au(altitude) = {
 }
 ```
 
-Byte-equal to the `fragment(altitude)` declaration in glass.mirror.
+Same carrier shape as the splinter atom (the BOTTOM layer of §1B);
+au itself is a proposed composition of splinters whose carrier hash
+is the (altitude, content, transparency) triple. Settle composes au's
+splinters through the property chain and produces a `shard` (the
+MIDDLE layer; SpectralUuid-addressed; stored).
+
 Seam's adversarial review (2026-06-06) flagged this correctly: the
 spec's prior wording — "au is the gold-typed *specialization*" —
-implied a refinement mechanism the substrate does not have. Two
-types with byte-identical record bodies and no refinement predicate
-binding them at the type layer are not in a specialization relation
-as the spec named it.
+implied a refinement mechanism the substrate does not have. The
+2026-06-06 first upsert resolved this as lifecycle position; the
+2026-06-06 second upsert (Alex's three-layer recognition) sharpens
+the receiver from `fragment` to `shard` and resolves §9.7's deferred
+lift naturally at the shard layer.
 
 **The corrected reading** — sharpened with Alex 2026-06-06:
 
 - `au` is **what Fate emits.** `infer(hole) -> imperfect(au, ...)`
   per `docs/specs/au-and-conductivity.md` §2. au is the substrate-
-  visible form of an inference output: Fate proposed it; it is
-  content-addressed; it carries a declared altitude; its transparency
-  weighs whatever the inference left unverified. au is **uncommitted**
-  in the sense that Fate has emitted it but the substrate has not yet
-  run it through the property chain.
+  visible form of an inference output: Fate proposed a composition
+  of splinters; it is content-addressed at the carrier level; it
+  carries a declared altitude; its transparency weighs whatever the
+  inference left unverified. au is **uncommitted** in the sense that
+  Fate has emitted it but the substrate has not yet run it through
+  the property chain.
 
-- `fragment` is **what `@mirror/store` keeps.** A committed fragment
-  is something the property chain has accepted into the store at
-  the declared altitude. `fragment` is **committed.**
+- `shard` is **what `@mirror/store` keeps.** A committed shard is a
+  SpectralUuid-addressed settled composition that the property chain
+  has accepted into the store at the declared altitude. `shard` is
+  **committed.** Identity is the SpectralUuid computed from the
+  composed splinter set (per `[[architecture-shard-as-crdt]]` §3).
 
-- `settle` is **the act of running au through the compiler and the
-  property chain.** Settling IS verification. The property chain
-  (per `@epistemologic/property/reflect` and the per-altitude
-  property sets the substrate declares) is the operational form of
-  `verify`. The verdict comes out three-valued, lifting into
-  `Imperfect`: `pass` → fragment committed to `@mirror/store`;
-  `partial(c)` → fragment committed with located transparency (au's
-  unverified residual makes it into the store as a partial-fragment
-  whose opacity_map names what could not be settled); `failure(r)`
-  → au stays in Fate's buffer; the kintsugi loop reads transparency
-  to pick the next focus and either re-emits or surfaces under
+- `settle` is **the act of running au's splinters through the
+  compiler and the property chain.** Settling IS verification. The
+  property chain (per `@epistemologic/property/reflect` and the
+  per-altitude property sets the substrate declares) is the
+  operational form of `verify`. The verdict comes out three-valued,
+  lifting into `Imperfect`: `pass` → shard committed to
+  `@mirror/store` (SpectralUuid assigned; transparency = success);
+  `partial(c)` → shard committed with located transparency (au's
+  unverified residual makes it into the store as the shard's
+  opacity_map naming what could not be settled); `failure(r)` → au
+  stays in Fate's buffer; the kintsugi loop reads transparency to
+  pick the next focus and either re-emits or surfaces under
   `total_classification`.
 
-- The shapes are byte-identical because **they are the same data at
-  different lifecycle positions.** au is what came out of Fate;
-  fragment is what went into the store. The kintsugi loop IS
-  iterating settle until eⁿ⁺¹ ≤ eⁿ holds at the lifecycle level
-  (fewer uncommitted au, more committed fragments, monotone descent
-  on residual transparency).
+- The shapes are not byte-identical (correction from the first
+  2026-06-06 upsert): au is a carrier triple, shard is a carrier
+  triple **plus a splinter set** plus the SpectralUuid identity.
+  What WAS byte-identical was au and the prior `fragment` type. Under
+  the three-layer recognition, au's record shape matches the splinter
+  carrier, but the receiver of settle is shard — which has the
+  additional `splinters: [splinter(altitude)]` field and the
+  SpectralUuid-typed identity. The transition still IS lifecycle:
+  same content, more structure (the composition is named) and more
+  identity (the SpectralUuid IS the algebraic position).
 
-Where a type-level discipline distinguishing them DOES exist —
-sharpened with Alex 2026-06-06:
+Where the type-level discipline lives — sharpened with Alex
+2026-06-06:
 
-- A fragment in `@mirror/store` has a `content: oid` that is a
-  **well-formed `SpectralUuid` in the target OID graph.** SpectralUuid
-  validity is what the property chain enforces at commit time: the
-  active portion's quantized SpectralCoordinate<5> must compose
-  cleanly under the store's monoid; the dark portion must hash to
-  the bytes the fragment names. An au value has the same record
-  shape but its `content` may carry a SpectralUuid whose validity in
-  the target graph has not yet been checked.
+- A shard in `@mirror/store` has an `id: SpectralUuid` (today
+  carried as `oid`; the substrate-altitude SpectralUuid declaration
+  is a deferred tick — see §9.7). SpectralUuid validity is what the
+  property chain enforces at commit time: the active portion's
+  quantized SpectralCoordinate<5> must compose cleanly under the
+  store's monoid; the dark portion must hash to the splinter set
+  the shard names.
 
-- The type-level distinction Seam's F3 said was absent IS present —
-  just at the **SpectralUuid-validity** level (a property of the
-  content field within a target graph), not at the **record-body**
-  level. Today this discipline lives in the property chain that
-  `settle` runs; it is not yet visible as a type-system refinement
-  on `fragment.content`. §9.7 surfaces this as a deferred substrate
-  tick: lift `content: oid` to `content: SpectralUuid` once
-  SpectralUuid is declared at the shard altitude. Until that lands,
-  the discipline is property-chain-enforced, not type-enforced.
+- The type-level distinction is now present at the **shard.id**
+  level (and at the splinter set's monoid-homomorphism composition)
+  rather than at the splinter carrier level. au's `content: oid`
+  stays as it is — au is pre-commitment; the SpectralUuid is what
+  settle produces. The lift §9.7 anticipated is no longer "lift
+  `content: oid` on fragment"; it's "declare SpectralUuid at the
+  substrate so `shard.id: oid` tightens to `shard.id: SpectralUuid`."
 
 **Settle as a Kleisli arrow in the Imperfect monad.** The substrate's
 three-state functor `imperfect(a, e, l)` already declared in
@@ -326,10 +460,10 @@ It is not a new monad to construct; the substrate's Pass-Partial-Fail
 propagation already gives:
 
 ```
-settle: au → Imperfect<fragment>
+settle: au → Imperfect<shard>
 ```
 
-as the Kleisli arrow `au →_K fragment` in `Kleisli(Imperfect)`. The
+as the Kleisli arrow `au →_K shard` in `Kleisli(Imperfect)`. The
 monad laws (per `boot/std/epistemologic/property/laws/monad.mirror`)
 hold over composition: left identity (`crystallize ∘ settle = settle`),
 right identity (`settle ∘ crystallize = settle`), and associativity
@@ -342,7 +476,7 @@ over which the Kleisli composition takes place.
 The kintsugi loop is the iteration:
 
 ```
-settle_n+1 ∘_K settle_n: au →_K fragment
+settle_n+1 ∘_K settle_n: au →_K shard
 ```
 
 until the residual transparency reaches success (eⁿ⁺¹ ≤ eⁿ). Kleisli
@@ -350,33 +484,39 @@ composition is associative under content-addressing; the loop is
 well-defined for the same reason the algebra is.
 
 **What this collapses:** the closure of the spec/mosaic loop is
-lifecycle-shaped, not type-altitude-shaped. `@mirror/mosaic` settles
-au into committed fragments. The property chain is what settle
-*runs*. The store is where successful settles *land*. au and
-fragment are the same shape at different lifecycle positions; the
-refinement that distinguishes them is *SpectralUuid validity in the
-target graph,* enforced by the property chain at commit time.
+lifecycle-shaped, with explicit composition into shards.
+`@mirror/mosaic` settles au into committed shards. The property
+chain is what settle *runs*. The store is where successful settles
+*land*, identified by SpectralUuid. The refinement that distinguishes
+au from shard is the composition (splinter set named explicitly) +
+SpectralUuid (computed by monoid homomorphism on the composed
+splinters); both are produced by settle's property-chain run.
 
-### 2.4 `shard`, `fractal`, `lens` — the three shapes named
+### 2.4 `atom`, `fractal`, `lens` — the three splinter shapes named
 
-The substrate has been carrying the three shapes under different
+The substrate had been carrying the three shapes under different
 names at different altitudes. The recognition aligns them.
 
 | Altitude | Terminal | Composite | Referring |
 |---|---|---|---|
-| `@fragmentation` (boot/std/fragmentation.mirror) | `shard` | `fractal` | (subsumed) |
-| Rust substrate (`Fractal<E,H>` in fragmentation/src/fragment.rs) | `Shard` | `Branch` | `Lens` |
+| `@glass` (shards/glass.mirror, 2026-06-06) | `atom` | `fractal` | `lens` |
+| `@fragmentation` (boot/std/fragmentation.mirror, legacy) | `shard` (= leaf splinter; predates 2026-06-06 recognition) | `fractal` | (subsumed) |
+| Rust substrate (`Fractal<E,H>` in fragmentation/src/fragment.rs) | `Shard` (rename to `Atom` deferred) | `Branch` | `Lens` |
 | `@meta/ast` | leaf AST node | AST node with children | reference to external AST |
 | `@mirror/spec` | a `name "..."` directive | a `target { ... }` block | a `legacy ~d'...'` floor with shrinkage contract |
 | `@mirror/mosaic` | a primitive emitter | a multi-target manifold | a cross-target dependency edge |
-| `@mirror/store` (per shards/mirror/store.mirror) | content-only oid | `splinter` (root + children) | a `read` that resolves an external oid |
+| `@mirror/store` (per shards/mirror/store.mirror) | content-only oid (atom) | `splinter_graph` (root + children — the dependency-closure projection) | a `read` that resolves an external oid |
 
-The vocabulary already existed; the substrate-pull move (this spec)
-is to name `fragment` as the umbrella under which all six rows
-collapse to three columns. The Rust enum `Fractal::{Shard, Branch,
-Lens}` is the canonical realization; the substrate declaration
-`fragment_shape = shard | fractal([oid]) | lens([oid])` is the
-floor-level type the Rust enum implements.
+The vocabulary already existed; the substrate-pull move is to name
+`splinter` as the universal atom and `shard` as the SpectralUuid-
+addressed settled composition. The Rust enum `Fractal::{Shard, Branch,
+Lens}` is the canonical realization of the splinter shapes; the
+substrate declaration `splinter_shape = atom | fractal([oid]) |
+lens([oid])` is the floor-level type the Rust enum implements. The
+Rust `Fractal::Shard` variant pre-dates Alex's 2026-06-06 recognition
+that `shard` is the MIDDLE layer, not the terminal-leaf shape; the
+rename `Fractal::Shard → Fractal::Atom` is captured below in the
+ambiguities section as a deferred substrate-pull-realize Rust tick.
 
 **Substrate-pull discipline.** The brief originally framed this as a
 rename `MirrorFragment → Fragment`. The honest reading is: there is
@@ -523,28 +663,36 @@ with `fragment(altitude)` did not declare an inner product,
 completeness, or scalar/vector structure — the void document's
 grounding (Braunstein/Ghosh/Severini 2006) gives a finite-dimensional
 Hilbert space *per OID graph*, not a global manifold of fragments-as-
-vectors. The honest construction has two layers:
+vectors. The honest construction has two layers, sharpened by Alex's
+2026-06-06 three-layer recognition:
+
+**H is the Hilbert space of shards, spanned by SpectralUuids;
+splinters are the basis units; the spectral structure is the
+SpectralUuid layout.** Per-graph H_G ranges over the splinter OID-
+graph within a shard; the cross-graph bridge IS SpectralUuid.
 
 ### 4.1 Local H and global H — best of both worlds
 
 **Local H (rigorous, finite-dimensional).** For each connected OID
-graph G with vertex set V(G) and edge set E(G), the Laplacian
-`L_G = D_G - A_G` (degree matrix minus adjacency) is a positive
-semidefinite operator on `ℂ^{|V(G)|}`. Per Braunstein/Ghosh/Severini
-2006, the normalized Laplacian `ρ_G = L_G / tr(L_G)` is a density
-matrix; the associated Hilbert space `H_G = ℂ^{|V(G)|}` carries the
-fragment basis. Within a single OID graph, every fragment is a basis
-vector labeled by its `SpectralUuid`; the inner product is the
-standard Euclidean / Hermitian one; the spectral decomposition of
-`L_G` gives the local λ₀ = 0 ground state (the connected-component
-indicator) and the higher Laplacian eigenvalues.
+graph G with vertex set V(G) and edge set E(G) — i.e., for each
+shard's splinter OID-graph — the Laplacian `L_G = D_G - A_G` (degree
+matrix minus adjacency) is a positive semidefinite operator on
+`ℂ^{|V(G)|}`. Per Braunstein/Ghosh/Severini 2006, the normalized
+Laplacian `ρ_G = L_G / tr(L_G)` is a density matrix; the associated
+Hilbert space `H_G = ℂ^{|V(G)|}` carries the splinter basis within
+that shard. Within a single shard's OID graph, every splinter is a
+basis vector labeled by its oid (and the shard itself by its
+SpectralUuid); the inner product is the standard Euclidean /
+Hermitian one; the spectral decomposition of `L_G` gives the local
+λ₀ = 0 ground state (the connected-component indicator) and the
+higher Laplacian eigenvalues.
 
-**Global H (operational, via SpectralUuid).** Across OID graphs, the
-manifold of fragments is not a single Hilbert space in the standard
-sense (the per-graph spaces have different dimensions; the direct
-sum is too large; the limit is undefined). The **substrate's
-operational construction** uses SpectralUuid as the cross-graph
-bridge:
+**Global H (operational, via SpectralUuid).** Across shards (each a
+distinct OID graph), the manifold of shards is not a single Hilbert
+space in the standard sense (the per-graph spaces have different
+dimensions; the direct sum is too large; the limit is undefined).
+The **substrate's operational construction** uses SpectralUuid as
+the cross-shard bridge:
 
 - `SpectralUuid` (per `prism/core/src/spectral_uuid.rs` and
   `[[architecture-shard-as-crdt]]`) is a 128-bit identifier with a
@@ -566,21 +714,21 @@ bridge:
 
 **The bridge.** The Connes distance functional
 `d(p, q) = sup{ |f(p) - f(q)| : f ∈ A, ‖[D, f]‖ ≤ 1 }` becomes
-**operational** because the SpectralUuid difference encodes the
-spectral state. Computing d(p, q) does not require evaluating the
-sup over all bounded-commutator a ∈ A; the local Laplacian
-neighbourhood structure on the active 48 bits IS the local spectral
-data d(·,·) integrates. Per the design discipline, this gives
-**substrate-native distance** without a global Hilbert-space
-construction.
+**operational** because the SpectralUuid difference between two
+shards encodes the spectral state. Computing d(p, q) does not
+require evaluating the sup over all bounded-commutator a ∈ A; the
+local Laplacian neighbourhood structure on the active 48 bits IS
+the local spectral data d(·,·) integrates. Per the design
+discipline, this gives **substrate-native distance** between shards
+without a global Hilbert-space construction.
 
 ### 4.2 The Connes triple identification, sharpened
 
 | Component | Mosaic-as-type-system reading | Where it lives in the substrate |
 |---|---|---|
-| **A (algebra)** | `@mirror/mosaic` — the five operations as generators of the type-formation algebra acting on the fragment manifold | `shards/mirror/mosaic.mirror`, `shards/prism.mirror`; Rust: `prism/core/src/bundle.rs`'s trait chain |
-| **H (Hilbert space)** | **Local:** `H_G = ℂ^{\|V(G)\|}` per connected OID graph G, with fragments as basis vectors labeled by SpectralUuid; inner product canonical; ρ_G = L_G / tr(L_G) the density matrix per Braunstein/Ghosh/Severini 2006. **Global:** the family `{H_G}_G` indexed by OID graphs, bridged by SpectralUuid's monoid homomorphism on addresses | `shards/glass.mirror`'s `fragment(altitude)`; `prism/core/src/spectral_uuid.rs`; `docs/specs/reality-shard-as-crdt.md`; `[[reference-void-document]]` |
-| **D (Dirac operator)** | The kintsugi flow — gradient descent on `transparency.weight` toward the fixed point; **operational form: the SpectralUuid-update operator during a kintsugi settle step.** D's action on a fragment maps its current SpectralUuid to the SpectralUuid that would carry the same content under decreased residual transparency; D's spectrum IS the residual opacity profile | `docs/specs/kintsugi-wiring.md`; `docs/specs/au-and-conductivity.md`; `prism/core/src/spectral_uuid.rs`'s `combine` (per §11 open question 1, the quantized arithmetic is still being pinned); `terni::Imperfect<State, _, Holonomy>` per `prism/imperfect/` |
+| **A (algebra)** | `@mirror/mosaic` — the five operations as generators of the type-formation algebra acting on the shard manifold (composing splinters into settled shards) | `shards/mirror/mosaic.mirror`, `shards/prism.mirror`; Rust: `prism/core/src/bundle.rs`'s trait chain |
+| **H (Hilbert space)** | **Local:** `H_G = ℂ^{\|V(G)\|}` per shard's splinter OID graph G, with splinters as basis vectors and the shard itself labelled by its SpectralUuid; inner product canonical; ρ_G = L_G / tr(L_G) the density matrix per Braunstein/Ghosh/Severini 2006. **Global:** the family `{H_G}_G` indexed by shards (each shard IS one OID graph), bridged by SpectralUuid's monoid homomorphism on shard addresses. The Hilbert space of shards is spanned by SpectralUuids; splinters are the basis units. | `shards/glass.mirror`'s `splinter(altitude)` (basis units) and `shard(altitude)` (the spanned vectors); `prism/core/src/spectral_uuid.rs`; `docs/specs/reality-shard-as-crdt.md`; `[[reference-void-document]]` |
+| **D (Dirac operator)** | The kintsugi flow — operationally **the splinter-composition-into-shard transition operator.** Each settle iteration shifts SpectralUuid; D's action on a shard IS that shift. D maps a shard's current SpectralUuid to the SpectralUuid the recomposed splinter set would carry under decreased residual transparency; D's spectrum IS the residual opacity profile across the kintsugi loop's iterations | `docs/specs/kintsugi-wiring.md`; `docs/specs/au-and-conductivity.md`; `prism/core/src/spectral_uuid.rs`'s `combine` (per §11 open question 1, the quantized arithmetic is still being pinned); `terni::Imperfect<State, _, Holonomy>` per `prism/imperfect/` |
 
 ### 4.3 What the SpectralUuid bridge collapses
 
@@ -590,18 +738,22 @@ operational form of the spectral state:
 1. **Content-addressing IS spectral state encoding.** One mechanism
    (the SpectralUuid layout), two roles (identity via dark bits,
    spectrum via active bits). Not two systems plumbed together.
+   The shard.id IS both at once.
 
 2. **Connes distance becomes computable.** The SpectralUuid
-   difference IS the substrate-native distance metric. The standard
-   sup-over-bounded-commutators construction reduces to a 48-bit
-   arithmetic difference in the active portion, modulo the quantized
-   composition rules of SpectralCoordinate<5>.
+   difference between two shards IS the substrate-native distance
+   metric. The standard sup-over-bounded-commutators construction
+   reduces to a 48-bit arithmetic difference in the active portion,
+   modulo the quantized composition rules of SpectralCoordinate<5>.
 
-3. **D becomes operational.** D is the SpectralUuid-update operator
-   during kintsugi settle: each tick, the active bits update under
-   the local Laplacian neighbourhood; the dark bits update under
-   content hash. The operator is implementable; it does not require
-   a separate axiomatic construction.
+3. **D becomes operational as splinter-composition.** D is the
+   splinter-composition-into-shard transition operator during
+   kintsugi settle: each tick recomposes the splinter set; the
+   active bits of the resulting shard's SpectralUuid update under
+   the local Laplacian neighbourhood across the new composition;
+   the dark bits update under the content hash of the new splinter
+   set. The operator is implementable; it does not require a
+   separate axiomatic construction.
 
 4. **Eigenboard becomes literal.** The algedonic surface (per the
    eigenboard cellular-sheaf reading) reads SpectralUuids directly,
@@ -609,10 +761,11 @@ operational form of the spectral state:
    bits; per-shard identity reads off the dark bits.
 
 5. **Refactoring has a substrate-native cost metric.** The SpectralUuid
-   distance between an old fragment and a candidate replacement IS
-   the refactor cost. This is the operational form of "how big a
-   change is this?" expressed in substrate vocabulary, not in
-   line-count or diff-size metrics.
+   distance between an old shard and a candidate replacement IS the
+   refactor cost. This is the operational form of "how big a change
+   is this?" expressed in substrate vocabulary, not in line-count or
+   diff-size metrics. Splinter-level changes propagate up to the
+   shard's SpectralUuid through the monoid homomorphism.
 
 6. **Cross-altitude distance becomes meaningful.** SpectralUuid
    carries spectral structure across altitudes — `@code/rust`,
@@ -804,15 +957,18 @@ there a proof?" but "how close is the proof to closing?"
 ### 5.7 Connes noncommutative geometry (Connes 1985-1996) — operational with named axiomatic gaps
 
 The spectral triple (A, H, D). Mirror's substrate IS the operational
-form per §4 above: A = mosaic, H = the {H_G} family bridged by
-SpectralUuid (with per-graph H_G grounded in Braunstein/Ghosh/Severini
-2006), D = the SpectralUuid-update operator during kintsugi settle.
-The literature: Connes' 1994 "Noncommutative Geometry" textbook;
-Connes 1996 "Gravity coupled with matter and the foundation of
-non-commutative geometry" (the reconstruction theorem); Connes &
-Chamseddine 1997 "The Spectral Action Principle"; van Suijlekom 2014
-"Noncommutative Geometry and Particle Physics" (Standard Model from
-finite spectral triples).
+form per §4 above: A = mosaic (the five-operation algebra acting on
+shards by composing/decomposing their splinter sets); H = the
+Hilbert space of shards (the {H_G} family bridged by SpectralUuid,
+with per-graph H_G grounded in Braunstein/Ghosh/Severini 2006 and
+spanned by SpectralUuids; splinters are the basis units); D = the
+splinter-composition-into-shard transition operator during kintsugi
+settle. The literature: Connes' 1994 "Noncommutative Geometry"
+textbook; Connes 1996 "Gravity coupled with matter and the
+foundation of non-commutative geometry" (the reconstruction
+theorem); Connes & Chamseddine 1997 "The Spectral Action Principle";
+van Suijlekom 2014 "Noncommutative Geometry and Particle Physics"
+(Standard Model from finite spectral triples).
 
 **Where mirror best inherits.** The (A, H, D) framework as a unified
 operational shape for a type system, **bridged operationally by
@@ -1133,34 +1289,38 @@ are observable at every typing judgement.
 
 Two ticks. Substrate-pull. Earn their keep.
 
-### Tick 1 — Land the fragment floor (this spec + glass.mirror addition)
+### Tick 1 — Land the splinter/shard floor (this spec + glass.mirror addition)
 
 **Status: this spec is the tick.** The glass.mirror addition (the
-`fragment(altitude)` type + `fragment_shape` disjunction) ships
-alongside this spec as one commit on `main`. The Rust side does not
-change yet — `Fractal<E, H>` continues to be the realization; the
-substrate declaration names the algebra; nothing breaks. Cut criterion:
-glass.mirror parses; the spec lands; the `[[architecture-glass-wall-substrate-types]]`
-entry gains a forward reference to this spec.
+`splinter(altitude)` atom + `splinter_shape` disjunction + the
+`shard(altitude)` settlement type) ships alongside this spec on
+`main`. The Rust side does not change yet — `Fractal<E, H>` continues
+to be the realization; the substrate declaration names the algebra;
+nothing breaks. Cut criterion: glass.mirror parses; the spec lands;
+the `[[architecture-glass-wall-substrate-types]]` entry gains a
+forward reference to this spec.
 
 This tick is **substrate-pull-realize**: a naming move that closes a
-loop. It does not gate v0.1.0; the fragment-floor is post-v0.1.0
-architectural recognition (per the brief). It does open the next tick.
+loop. It does not gate v0.1.0; the splinter/shard floor is
+post-v0.1.0 architectural recognition (per the brief). It does open
+the next tick.
 
-### Tick 2 — Collapse the kintsugi dispatch around fragment
+### Tick 2 — Collapse the kintsugi dispatch around splinter / shard
 
 The Rust-side work named in §6. One `cmd_kintsugi` dispatch on
-fragment; `cmd_kintsugi_spec` / `cmd_kintsugi_ci_single` /
+splinter (input form) and shard (output form);
+`cmd_kintsugi_spec` / `cmd_kintsugi_ci_single` /
 `cmd_kintsugi_ci_corpus` collapse into one. `parse_spec_targets`
-retires; `SpecTarget` retires. The kintsugi pass reads the fragment's
-altitude and dispatches the altitude-specific kintsugi step.
+retires; `SpecTarget` retires. The kintsugi pass reads the splinter's
+altitude and dispatches the altitude-specific kintsugi step that
+settles into a shard.
 
 This tick is **substrate-pull-realize at the Rust layer.** It is not
 required for v0.1.0; it is the consequence of Tick 1 that the
 butterfly will need to fly clean. Sequence: land after v0.1.0 cut;
 land before Phase 4 emit-self work begins (because Phase 4 will write
 the kintsugi pass as a `.mirror` grammar, and the grammar's surface
-should be fragment-shaped from the start).
+should be splinter/shard-shaped from the start).
 
 Per `[[feedback-no-time-estimates]]`: one tick after the other. No
 "~N weeks." The sequence is what matters; the timing is whatever it
@@ -1172,27 +1332,38 @@ is.
 
 The genuinely unresolved ones. Reed will call them with Alex.
 
-### 9.1 Does `fragment(altitude)` need a sub-prism declaration?
+### 9.1 Does `splinter(altitude)` or `shard(altitude)` need a sub-prism declaration?
 
 `shards/mirror/store.mirror` declares `@mirror/store/oid` as a sub-prism
-(per the `glass @mirror/store/oid { ... }` block). Does `fragment(altitude)`
-similarly want to be a sub-prism `@glass/fragment` so its five-operation
-surface is callable directly? Or is the type declaration at the
-glass-altitude sufficient, with the five operations inherited from
-`@glass` itself? **Lean:** the type declaration is sufficient; fragment
-is a *type* at the glass altitude, not a *prism* peer of glass. A
-sub-prism declaration would be redundant.
+(per the `glass @mirror/store/oid { ... }` block). Do `splinter(altitude)`
+or `shard(altitude)` similarly want to be sub-prisms `@glass/splinter`
+/ `@glass/shard` so their five-operation surfaces are callable directly?
+Or are the type declarations at the glass-altitude sufficient, with
+the five operations inherited from `@glass` itself? **Lean:** the type
+declarations are sufficient; splinter and shard are *types* at the
+glass altitude, not *prism* peers of glass. Sub-prism declarations
+would be redundant.
 
-### 9.2 What is the relationship between `fragment` and `splinter`?
+### 9.2 What is the relationship between `splinter` (atom) and `splinter_graph` (OID-graph)? — Resolved
 
-`shards/mirror/store.mirror` declares `splinter` as the OID-graph
-(`type splinter = { root: oid, children: [oid] }`). A fractal-shape
-fragment carries the same shape (`fractal([oid])`). Are they the same
-type at different altitudes, or are they structurally distinct? **Lean:**
-splinter is fragment specialized to the store altitude — the OID-graph
-view of a fragment's closure. The two declarations are not redundant
-because splinter is a *flat* representation (the dependency closure
-flattened to a list of edges) where fragment is *recursive*.
+Resolved 2026-06-06 (second upsert). `shards/mirror/store.mirror`
+previously declared `splinter` as the OID-graph
+(`type splinter = { root: oid, children: [oid] }`). Under Alex's
+three-layer recognition, this naming was reaching for two distinct
+concepts: the atomic content-addressed unit (`splinter` at @glass)
+and the dependency-closure projection (`splinter_graph` at @store).
+The 2026-06-06 substrate edits split them explicitly:
+
+- **`splinter`** at `@glass` — the universal atom: one
+  (content, altitude, transparency) triple per atom.
+- **`splinter_graph`** at `@mirror/store` — the OID-graph projection:
+  root + transitive closure of children's OIDs; the structural
+  lockfile.
+
+A fractal-shape splinter carries `fractal([oid])`; a splinter_graph
+is the flattened (root, children) view of a composition's closure
+at @store's wire surface. They are not the same type: the atom is
+the unit; the graph is a projection of a composition of atoms.
 
 ### 9.3 Does this spec retire `docs/specs/type-theory-position.md`?
 
@@ -1267,53 +1438,69 @@ The SpectralUuid layer makes the question concrete: the kintsugi
 fixed-point check becomes "does the iterated settle converge to
 SpectralUuid::EMPTY's active portion = 0?" — testable.
 
-### 9.7 Should `fragment.content: oid` lift to `content: SpectralUuid`?
+### 9.7 Should `fragment.content: oid` lift to `content: SpectralUuid`? — Resolved at the shard layer
 
-Upserted 2026-06-06. The lifecycle reading (§2.3) names SpectralUuid
-validity as the type-level discipline distinguishing committed
-fragments from uncommitted au. Today, `shards/glass.mirror:143-147`
-declares `type fragment(altitude) = { content: oid, ... }` — the
-content field is an `oid`, not a `SpectralUuid`. The SpectralUuid
-type lives in Rust today (`prism/core/src/spectral_uuid.rs`); it has
-not been declared at the shard altitude.
+Upserted 2026-06-06 (first); resolved 2026-06-06 (second upsert)
+under Alex's three-layer recognition. The question framed in the
+first upsert asked whether to lift `fragment.content` from `oid` to
+`SpectralUuid`. Under the three-layer recognition that lift no
+longer makes sense at the splinter (atom) layer:
 
-The principled lift is:
+- **Splinter.content stays as oid.** A splinter is the universal
+  content-addressed atom; its identity IS its content hash; that's
+  an oid by construction. SpectralUuid as an atom identifier would
+  be a category error — the active 48 bits encode local Laplacian
+  neighbourhood structure, which is a property of a shard's OID
+  graph, not of an isolated atom.
 
-```mirror
-type fragment(altitude) = {
-  content: SpectralUuid,
-  altitude: ref,
-  transparency: transparency(altitude),
-}
-```
+- **Shard.id IS SpectralUuid by construction.** A shard is the
+  SpectralUuid-addressed settled composition of splinters; the
+  SpectralUuid IS its identity. The lift moves from "lift splinter's
+  oid to SpectralUuid" to "declare SpectralUuid at the substrate so
+  shard.id's slot tightens from oid to SpectralUuid." The shard
+  declaration in `shards/glass.mirror` (2026-06-06) types
+  `id: oid` as a placeholder against the deferred substrate-altitude
+  SpectralUuid declaration.
 
-where `SpectralUuid` is constrained to be a well-formed SpectralUuid
-in the target graph. au's content is whatever SpectralUuid Fate
-produced (it may or may not be valid in the target graph); fragment
-becomes the form whose SpectralUuid validity has been settle-verified
-by the property chain.
+**Why this lift is still deferred:**
 
-**Why this is a deferred substrate tick, not in this upsert:**
-
-- SpectralUuid is currently only a Rust type. Lifting `fragment.content`
-  requires first declaring SpectralUuid at the shard altitude (likely
-  in a new `shards/mirror/spectral_uuid.mirror` or under `@mirror/store`).
+- SpectralUuid is currently only a Rust type. Tightening `shard.id`
+  to SpectralUuid requires first declaring SpectralUuid at the shard
+  altitude (likely in a new `shards/mirror/spectral_uuid.mirror` or
+  under `@mirror/store`).
 - Per `docs/specs/reality-shard-as-crdt.md` §10, the SpectralUuid
   declaration is already queued behind T3 of fragmentation-mcp, with
-  the quantized 48-bit `combine` arithmetic still being pinned
-  (the spec's §11 open question 1).
-- Doing this lift before SpectralUuid lands at the substrate would
+  the quantized 48-bit `combine` arithmetic still being pinned (the
+  spec's §11 open question 1).
+- Doing the lift before SpectralUuid lands at the substrate would
   invent a primitive the rest of the substrate cannot construct.
   Per `[[feedback-no-bare-types]]`: always newtype — but newtype
   *into something declared,* not into something the substrate does
   not yet name.
 
 **The trigger.** When `shards/mirror/spectral_uuid.mirror` lands (or
-wherever SpectralUuid is declared at the shard altitude), this lift
-becomes the substrate-pull-realize move that completes §2.3's
-lifecycle reading. Until then, the discipline is property-chain-
-enforced, not type-enforced. **Lean:** capture and defer; do not
-invent the type before its declaration.
+wherever SpectralUuid is declared at the substrate altitude), the
+following substrate edits land simultaneously:
+
+```mirror
+# shards/glass.mirror
+type shard(altitude) = {
+  id: SpectralUuid,                 # was: oid
+  splinters: [splinter(altitude)],
+  transparency: transparency(altitude),
+}
+
+# shards/mirror/store.mirror
+type shard_ref = SpectralUuid       # was: oid
+```
+
+au's `content: oid` stays as it is — au is pre-commitment; the
+SpectralUuid is what settle produces by composing the splinters
+through the property chain. Until SpectralUuid lands, the
+property chain enforces SpectralUuid validity at commit time; the
+substrate names what shard IS; the type-system tightening is a
+mechanical follow-up. **Lean:** the lift is no longer ambiguous —
+it's mechanical; capture and defer the trigger.
 
 ### 9.8 Where does property chain composition live, formally?
 
@@ -1359,6 +1546,60 @@ settle-as-property-chain claims being type-checkable. Capture as a
 deferred substrate tick — not in this upsert. Trigger: when settle's
 first altitude-specific property chain is implemented in a `.mirror`
 shard.
+
+### 9.9 Open questions from the 2026-06-06 second upsert (splinter/shard recognition)
+
+Ambiguities surfaced during the three-layer recognition rename.
+Captured here for triage; none gate v0.1.0.
+
+1. **How does shard's SpectralUuid compose from splinter SpectralUuids?**
+   The monoid homomorphism per `combine` in
+   `prism/core/src/spectral_uuid.rs` is structurally implied (per
+   §3 of `reality-shard-as-crdt.md`). The quantized 48-bit
+   arithmetic for the active portion is still being pinned — this
+   is `reality-shard-as-crdt.md` §11 open question 1. **Lean:**
+   defer until SpectralCoordinate<5>'s eigenvalue composition rules
+   quantize cleanly; the substrate naming is now precise enough
+   that the arithmetic step is purely mathematical.
+
+2. **Should `ShardRef` in `fragmentation/src/shard_ref.rs` rename?**
+   No — `ShardRef` is already substrate-pull-honest. Its `id:
+   SpectralUuid` and `context: ShardContext` shape match the new
+   substrate-altitude `shard` declaration. The rename target is
+   the splinter-shape variant: `Fractal::Shard → Fractal::Atom`
+   (the leaf variant pre-dates the three-layer recognition that
+   shard is the MIDDLE layer). **Lean:** defer the variant rename;
+   add a `[substrate-pull:realize]` annotation on the next Rust
+   touch of fragmentation/src/fragment.rs naming the deferred work.
+
+3. **How does `splinter_graph` (the lockfile shape) compose into a
+   shard's SpectralUuid?** The splinter_graph at @store is the
+   OID-graph projection of a composition's closure; the shard's
+   SpectralUuid is computed from the composed splinter set's
+   monoid-homomorphism reduction. The relationship: the
+   splinter_graph IS the @store wire surface for what gets fed into
+   the monoid composition; the SpectralUuid is the result. They are
+   not redundant; one is the on-the-wire form, the other is the
+   computed identity. **Lean:** name this explicitly when the
+   monoid composition lands in Rust.
+
+4. **What does this mean for `cmd_kintsugi_*` Rust collapse?** §6
+   names the collapse around fragment-shape; under the three-layer
+   recognition, the collapse is around splinter (input) and shard
+   (output). The dispatch reads the splinter's altitude; settle
+   composes the splinter set into a shard; kintsugi iterates. The
+   shape is now richer named: input/output types are distinct, not
+   the same type at different lifecycle positions. **Lean:** the
+   collapse aligns even better — the Rust code can name the input
+   and output types separately instead of overloading one.
+
+5. **What's the right home for SpectralUuid at the substrate
+   altitude?** §9.7's trigger names `shards/mirror/spectral_uuid.mirror`
+   or under `@mirror/store` as candidates. **Lean:** new file
+   `shards/mirror/spectral_uuid.mirror` declaring `@mirror/store/spectral_uuid`
+   sub-prism, following the `@mirror/store/oid` precedent. This
+   surfaces SpectralUuid as a typed reference parallel to oid, at
+   the same store altitude. The shard altitude (@glass) imports it.
 
 ---
 
@@ -1562,13 +1803,14 @@ shard.
 
 ---
 
-*Mosaic is the algebra. Fragments are what it acts on.*
-*Five operations generate the algebra. Three shapes close the fragment.*
-*au is what Fate emits. Fragment is what the store keeps.*
-*Settle is the property chain run — the Kleisli arrow in Imperfect.*
-*SpectralUuid carries the spectral state. Active bits navigate;*
+*Mosaic is the algebra. Splinters are the atoms it acts on.*
+*Five operations generate the algebra. Three shapes close the splinter.*
+*au is Fate-emitted splinters. Shard is what the store keeps.*
+*Settle composes splinters into shards — the Kleisli arrow in Imperfect.*
+*SpectralUuid identifies the shard. Active bits navigate;*
 *dark bits identify. Connes distance becomes computable.*
 *Kintsugi descends the residual. eⁿ⁺¹ ≤ eⁿ at every altitude.*
+*Bottom (splinter) and top (SpectralUuid) meet in the middle (shard).*
 *The substrate has been pointing here since the void document.*
 *This spec names where the pointing arrives — and where it still has to go.*
 
