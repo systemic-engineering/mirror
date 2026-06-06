@@ -1,7 +1,7 @@
 in @prism
 in @glass
 in @meta
-in @mirror/store/spectral_uuid
+in @uuid/spectral
 
 # @mirror/store — the fragmentation store interface.
 #
@@ -145,15 +145,17 @@ type bytes = ref(scalar/bytes)
 # A shard reference resolves to its stored shard at the bound
 # identifier. Distinct from `oid` itself: a shard_ref carries the
 # expectation that the identifier resolves to a `shard` (per @glass:
-# a spectral_uuid-addressed settled composition of splinters), not
+# a uuid_spectral-addressed settled composition of splinters), not
 # an arbitrary blob.
 #
-# Substrate-pull-realize (2026-06-06): the identifier carrier is
-# `spectral_uuid`. The lift completes the three-layer recognition —
-# shard.id IS spectral_uuid by construction (per shards/glass.mirror's
-# shard declaration); shard_ref names a spectral_uuid that resolves
-# to a shard. The deferred lift in mosaic-as-type-system.md §9.7
-# closes here.
+# Substrate-pull-realize (2026-06-06 second tick, Mara): the
+# identifier carrier is `uuid_spectral` (declared at
+# shards/uuid/spectral.mirror as @uuid/spectral — a sub-prism under
+# @uuid, the universal 128-bit identifier root). The lift completes
+# the three-layer recognition — shard.id IS uuid_spectral by
+# construction (per shards/glass.mirror's shard declaration);
+# shard_ref names a uuid_spectral that resolves to a shard. The
+# deferred lift in mosaic-as-type-system.md §9.7 closes here.
 #
 # Realised in Rust as `fragmentation/src/shard_ref.rs`'s
 # `ShardRef { id: SpectralUuid, context: ShardContext,
@@ -161,7 +163,7 @@ type bytes = ref(scalar/bytes)
 # IS; the Rust crate names how the typed handle is implemented.
 #
 # Fetch failures emit `imperfect` (the @glass loss carrier).
-type shard_ref = spectral_uuid
+type shard_ref = uuid_spectral
 
 # === the store's surface — six operations ===
 #
