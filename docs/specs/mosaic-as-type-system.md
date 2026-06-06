@@ -1,26 +1,36 @@
 # `@mirror/mosaic` as the Root of the Type System
 
 *2026-06-06. Mara. Spec (architectural recognition).*
+*2026-06-06 upsert. Reed + Alex (sharpening) → Mara (capture). Seam's
+adversarial review surfaced seven findings; two of them sharpened the
+recognition rather than weakening it. The categorical analogies pull
+back to honest naming where they strain. The Connes alignment shifts
+from "structural" to "operational, with named axiomatic gaps and
+SpectralUuid as the bridge." The lifecycle reading of `au` and the
+Kleisli framing of `settle` over the Imperfect monad land.*
 
 Status: **Red** (the recognition is named; the substrate already carries
 most of the vocabulary; the collapse it implies on the Rust side is
-post-v0.1.0 work)
+post-v0.1.0 work; the SpectralUuid-at-the-shard-altitude declaration is
+a deferred substrate tick — see §9.7)
 
 Reads from / depends on:
 - `shards/glass.mirror` (post-this-spec: declares `fragment`,
   `fragment_shape`, the universal content-addressed unit)
 - `shards/mirror/mosaic.mirror` (the build-altitude prism whose
   algebra this spec re-reads as the type system's root)
-- `shards/mirror/au.mirror` (au IS a settled fragment; the gold-typed
-  specialization)
+- `shards/mirror/au.mirror` (au is what Fate emits; settle through the
+  property chain turns au into committed fragment — lifecycle
+  position, not type-altitude specialization; see §2.3)
 - `shards/mirror/spec.mirror` (the `project NAME { ... }` form
   — under this spec, just one fragment-composition shape mosaic recognizes)
 - `shards/mirror/store.mirror` (oid; splinter as OID-graph; the
   content-addressed storage gate)
 - `shards/prism.mirror` (the five operations + the Connes spectral
   triple framing)
-- `docs/specs/au-and-conductivity.md` (au = settled fragment;
-  conductivity = verify at altitude)
+- `docs/specs/au-and-conductivity.md` (au is what Fate emits;
+  conductivity = verify at altitude; settle through the property
+  chain is what turns au into committed fragment)
 - `docs/specs/transparency.md` (`transparency<p>` as the loss carrier
   every fragment carries)
 - `docs/specs/mosaic.md` (the build-altitude reading; this spec
@@ -56,16 +66,18 @@ Forward references (this spec unblocks):
 > `@mirror/mosaic` is the 'we're standing on the shoulders of giants'
 > part of the language."
 
-The recognition is one sentence with four entailments.
+The recognition is one sentence with five entailments.
 
 **The sentence.** `@mirror/mosaic` is not a build system that happens
 to share vocabulary with the rest of the language. Mosaic IS the
 universal algebra `A` of the substrate's spectral triple, at the
 type-system altitude. The five operations (focus, project, split, shift,
-settle) ARE the type-formation rules. The manifold they act on is the
-manifold of fragments at every altitude.
+settle) GENERATE the algebra; arbitrary compositions are arrows in the
+algebra they generate (cf. §3.2 — *generators*, not *closure under
+five*). The manifold they act on is the manifold of fragments at every
+altitude.
 
-**Four entailments.**
+**Five entailments.**
 
 1. **Fragment becomes the universal substrate unit at every altitude.**
    Not just AST nodes in Rust. Shard is a fragment. Target is a
@@ -107,6 +119,21 @@ manifold of fragments at every altitude.
    up: the loss of a typing judgement is the residual opacity of the
    fragment whose typing is in question; kintsugi descends that
    residual to a fixed point; the fixed point IS the typed program.
+
+5. **`SpectralUuid` IS the operational form of the spectral state at
+   the address layer.** Per `[[architecture-shard-as-crdt]]` and
+   `prism/core/src/spectral_uuid.rs`, `SpectralUuid` is the 128-bit
+   carrier that splits 48 bits ACTIVE (the quantized
+   `SpectralCoordinate<5>` — navigable; the local Laplacian
+   neighbourhood structure) + 80 bits DARK (the BLAKE3-truncated
+   content hash — identity). The ACTIVE portion carries local
+   spectral characteristics; the DARK portion carries content
+   identity. **One mechanism, two roles** — content-addressing IS
+   spectral state encoding. This is what makes the Connes triple's
+   distance functional `d(p,q) = sup{|f(p) - f(q)| : f ∈ A, ‖[D,f]‖
+   ≤ 1}` *operational* rather than abstract: the SpectralUuid
+   difference between two fragments IS the substrate-native distance
+   between them in H. See §4 below for the bridge.
 
 This is mirror's **shoulders-of-giants moment.** Total functional
 programming languages (Turner, Idris, Agda, Dhall) named termination
@@ -216,7 +243,7 @@ The substrate has been pointing at this since the void document
 landed (2026-04-26). What was missing was the type-system reading:
 the manifold of fragments IS what mosaic's five operations act on.
 
-### 2.3 `au` is a settled fragment
+### 2.3 `au` and `fragment` — lifecycle positions, not type altitudes
 
 Compare `shards/mirror/au.mirror`:
 
@@ -229,17 +256,106 @@ type au(altitude) = {
 ```
 
 Byte-equal to the `fragment(altitude)` declaration in glass.mirror.
-The difference is **discipline, not shape.** `au` is the substrate's
-gold-typed specialization: an au value's `verify` MUST pass at the
-named altitude (per `docs/specs/au-and-conductivity.md` —
-conductivity is the predicate that closes the type). A fragment is
-the general carrier; au is the carrier with a conductivity contract
-attached.
+Seam's adversarial review (2026-06-06) flagged this correctly: the
+spec's prior wording — "au is the gold-typed *specialization*" —
+implied a refinement mechanism the substrate does not have. Two
+types with byte-identical record bodies and no refinement predicate
+binding them at the type layer are not in a specialization relation
+as the spec named it.
 
-This is the closure of the spec/mosaic loop. `@mirror/mosaic`
-settles a fragment manifold into au at an altitude. `au` is a
-settled fragment. The two are not different shapes — they are the
-same shape with a verdict obligation.
+**The corrected reading** — sharpened with Alex 2026-06-06:
+
+- `au` is **what Fate emits.** `infer(hole) -> imperfect(au, ...)`
+  per `docs/specs/au-and-conductivity.md` §2. au is the substrate-
+  visible form of an inference output: Fate proposed it; it is
+  content-addressed; it carries a declared altitude; its transparency
+  weighs whatever the inference left unverified. au is **uncommitted**
+  in the sense that Fate has emitted it but the substrate has not yet
+  run it through the property chain.
+
+- `fragment` is **what `@mirror/store` keeps.** A committed fragment
+  is something the property chain has accepted into the store at
+  the declared altitude. `fragment` is **committed.**
+
+- `settle` is **the act of running au through the compiler and the
+  property chain.** Settling IS verification. The property chain
+  (per `@epistemologic/property/reflect` and the per-altitude
+  property sets the substrate declares) is the operational form of
+  `verify`. The verdict comes out three-valued, lifting into
+  `Imperfect`: `pass` → fragment committed to `@mirror/store`;
+  `partial(c)` → fragment committed with located transparency (au's
+  unverified residual makes it into the store as a partial-fragment
+  whose opacity_map names what could not be settled); `failure(r)`
+  → au stays in Fate's buffer; the kintsugi loop reads transparency
+  to pick the next focus and either re-emits or surfaces under
+  `total_classification`.
+
+- The shapes are byte-identical because **they are the same data at
+  different lifecycle positions.** au is what came out of Fate;
+  fragment is what went into the store. The kintsugi loop IS
+  iterating settle until eⁿ⁺¹ ≤ eⁿ holds at the lifecycle level
+  (fewer uncommitted au, more committed fragments, monotone descent
+  on residual transparency).
+
+Where a type-level discipline distinguishing them DOES exist —
+sharpened with Alex 2026-06-06:
+
+- A fragment in `@mirror/store` has a `content: oid` that is a
+  **well-formed `SpectralUuid` in the target OID graph.** SpectralUuid
+  validity is what the property chain enforces at commit time: the
+  active portion's quantized SpectralCoordinate<5> must compose
+  cleanly under the store's monoid; the dark portion must hash to
+  the bytes the fragment names. An au value has the same record
+  shape but its `content` may carry a SpectralUuid whose validity in
+  the target graph has not yet been checked.
+
+- The type-level distinction Seam's F3 said was absent IS present —
+  just at the **SpectralUuid-validity** level (a property of the
+  content field within a target graph), not at the **record-body**
+  level. Today this discipline lives in the property chain that
+  `settle` runs; it is not yet visible as a type-system refinement
+  on `fragment.content`. §9.7 surfaces this as a deferred substrate
+  tick: lift `content: oid` to `content: SpectralUuid` once
+  SpectralUuid is declared at the shard altitude. Until that lands,
+  the discipline is property-chain-enforced, not type-enforced.
+
+**Settle as a Kleisli arrow in the Imperfect monad.** The substrate's
+three-state functor `imperfect(a, e, l)` already declared in
+`shards/glass.mirror:62-66` IS the monad settle composes through.
+It is not a new monad to construct; the substrate's Pass-Partial-Fail
+propagation already gives:
+
+```
+settle: au → Imperfect<fragment>
+```
+
+as the Kleisli arrow `au →_K fragment` in `Kleisli(Imperfect)`. The
+monad laws (per `boot/std/epistemologic/property/laws/monad.mirror`)
+hold over composition: left identity (`crystallize ∘ settle = settle`),
+right identity (`settle ∘ crystallize = settle`), and associativity
+(content-addressing gives this *free at composition time* per the
+monad-laws shard). This is the precise sense in which Seam's F1
+("settle's signature is not endofunctorial") is correct in the
+literal reading and resolves once Imperfect is named as the monad
+over which the Kleisli composition takes place.
+
+The kintsugi loop is the iteration:
+
+```
+settle_n+1 ∘_K settle_n: au →_K fragment
+```
+
+until the residual transparency reaches success (eⁿ⁺¹ ≤ eⁿ). Kleisli
+composition is associative under content-addressing; the loop is
+well-defined for the same reason the algebra is.
+
+**What this collapses:** the closure of the spec/mosaic loop is
+lifecycle-shaped, not type-altitude-shaped. `@mirror/mosaic` settles
+au into committed fragments. The property chain is what settle
+*runs*. The store is where successful settles *land*. au and
+fragment are the same shape at different lifecycle positions; the
+refinement that distinguishes them is *SpectralUuid validity in the
+target graph,* enforced by the property chain at commit time.
 
 ### 2.4 `shard`, `fractal`, `lens` — the three shapes named
 
@@ -298,70 +414,94 @@ prism @mirror/mosaic {
 ```
 
 At the type-system altitude, these are the type-formation rules. Read
-each as a typing judgement.
+each as a typing judgement. The substrate's primary characterisation
+of each operation is **spectral / linear-algebraic** (per
+`[[architecture-operations-as-linear-algebra]]` and
+`shards/prism.mirror:30-48`); the categorical shapes hold *where they
+hold* and are pulled back to honest naming *where they strain*. This
+section is upserted following Seam's review (2026-06-06).
 
-| Mosaic verb | Type-formation reading | Category-theoretic shape | Caveat |
+| Mosaic verb | Type-formation reading | Substrate-primary characterisation | Categorical alignment (held / strained) |
 |---|---|---|---|
-| `focus` | "I observe THIS fragment at this altitude" | Limit (the singleton fragment is the terminal cone over a one-object diagram) | Mirror's `focus` is also λ₀ eigenvalue identification per `shards/prism.mirror`; the type-system reading is the special case where the ground-state eigenvector is the named fragment |
-| `project` | "I restrict the manifold to fragments satisfying this property" | Equalizer / monic / orthogonal projection | The structural restriction is sound; the cardinality of the restricted manifold may differ from a category-theoretic equalizer because mosaic's manifold is a graph, not an arbitrary category |
-| `split` | "I decompose this fragment into independent sub-fragments" | Coproduct / orthogonal decomposition | This matches a coproduct strictly when the sub-fragments are content-disjoint (no shared OIDs); when they share, split returns a partition with the shared fragments named separately |
-| `shift` | "I re-read this fragment under a different altitude (basis)" | Functor (a change-of-basis functor on the fiber over the altitude) | Per `[[architecture-operations-as-linear-algebra]]`: shift is a functor (satisfies identity and composition) and acts as the change-of-coordinates operator on H. The runtime cost is zero by construction (annotation-only) |
-| `settle` | "I close this construction by binding the proof of its conductivity" | Adjunction / monad-close / measurement collapse | Per `shards/prism.mirror`: settle satisfies left identity, right identity, associativity (a monad in the value-layer sense); content-addressing gives associativity for free at composition time. At the type layer, `settle(T)` is the verified-construction form per the parametric-types insight |
+| `focus` | "I observe THIS fragment at this altitude" | **λ₀ eigenvalue identification** — the ground state of A acting on H; the spectrum's bottom; what the prism resolves to (per `shards/prism.mirror:31-32`). Spectral, not categorical. | *Strained.* The "limit of a one-object diagram" reading is technically true but informationally empty (the limit of a singleton diagram is trivially that object) and was the wrong direction — substrate's focus is spectral. Use spectral framing primarily. |
+| `project` | "I restrict the manifold to fragments satisfying this property" | **Orthogonal projection** — idempotent restriction onto a subspace; what the prism selects (per `shards/prism.mirror:33-34`). | *Held with caveat.* Equalizer / monic alignment is structurally sound for content-disjoint restriction; cardinality may differ from a category-theoretic equalizer because mosaic's manifold is a graph, not an arbitrary category. |
+| `split` | "I decompose this fragment into independent sub-fragments" | **Orthogonal decomposition** — the spectrum's partition; what the prism separates into eigenspaces (per `shards/prism.mirror:35-36`). | *Two cases.* **Coproduct** when sub-fragments are content-disjoint (no shared OIDs). **Pushout** when sub-fragments share OIDs — content-addressing automatically gives the right pushout structure (the gluing morphism is induced by shared oids). Both are universal constructions in the category of fragments; which applies is data-dependent, not a strain. |
+| `shift` | "I re-read this fragment under a different altitude (basis)" | **Basis transformation** — the change-of-coordinates operator on H; same bytes, different declared shape (per `shards/prism.mirror:37-42`). | *Held.* shift IS a functor on the altitude category. The identity law (`shift id = id`) and composition law (`shift (f ∘ g) = shift f ∘ shift g`) are declared in `shards/prism.mirror:84-87` and witnessed by `@epistemologic/property/laws/functor`. The altitude category is discrete; the functor cost is zero by construction (annotation-only). Defend. |
+| `settle` | "I close this construction by binding the proof of its conductivity" | **Monad-close / measurement collapse** — the spectrum read out; the verified-construction the prism produces; what the kintsugi flow descends to (per `shards/prism.mirror:43-45`). | *Held — Kleisli in Imperfect.* Settle's literal signature `emitter → imperfect(au, ...)` is not endofunctorial (Seam F1, correct in the literal reading). It IS endofunctorial as a Kleisli arrow `au →_K fragment` in `Kleisli(Imperfect)` over the substrate's existing 3-state monad (`shards/glass.mirror:62-66`). The monad laws (left identity, right identity, associativity) hold per `boot/std/epistemologic/property/laws/monad.mirror`; content-addressing gives associativity *free at composition time*. See §2.3. |
 
-**Where the analogy strains.** Category theory's limits/colimits are
-defined over diagrams in arbitrary categories; mosaic's manifold is
-specifically a graph of OID-addressed fragments under the prism algebra
-A. The substrate-pull-honest framing: mosaic IS a category (objects =
-fragments, morphisms = applications of focus/project/split/shift/settle),
-and the five operations realize specific universal constructions in
-that category. Calling `focus` a "limit" is precise; calling `project`
-an "equalizer" is precise; calling `split` a "coproduct" is precise on
-content-disjoint splits and approximate otherwise; calling `shift` a
-"functor" is precise (it satisfies the functor laws by construction
-because content-addressing makes composition associative); calling
-`settle` a "monad-close" is precise per the parametric-types insight
-and per `shards/prism.mirror`'s settle-as-measurement framing.
+**Where the spectral characterisation is primary and the categorical
+is secondary.** Per `[[architecture-operations-as-linear-algebra]]`
+the substrate IS genuinely spectral: focus = λ₀ eigenvalue; project =
+orthogonal projection; split = orthogonal decomposition; shift =
+basis transformation; settle = monad-close / measurement collapse.
+Mosaic IS *also* a category (objects = fragments, morphisms =
+applications of focus/project/split/shift/settle, composition via the
+Tambara law per §3.2), and three of the five operations realize
+specific universal constructions in that category (split = coproduct
+or pushout; shift = functor on the altitude category; settle = monad
+over Imperfect in the Kleisli sense). Two of them (focus, project)
+are primarily spectral characterisations whose categorical mirror is
+vacuous or weak.
 
 The five operations are **the** type-formation rules at the substrate
 altitude. The lambda cube and the calculus of constructions distinguish
 term-formation, type-formation, kind-formation, and sort-formation;
 mirror has one rule set for all four altitudes because the algebra is
-closed at five and prism IS trait IS type IS grammar (per
-`[[architecture-prism-as-trait-as-everything]]`).
+generated by five (per §3.2) and prism IS trait IS type IS grammar
+(per `[[architecture-prism-as-trait-as-everything]]`).
 
-### 3.2 The composition table
+### 3.2 The composition table — the five are *generators*
 
 Compositions of the five operations are determined by the Tambara
 module composition law (per `docs/specs/type-theory-position.md` §1.3
-and §2.7) acting on the fiber structure A → H. The composition is
-**closed**: any composition of the five operations is itself one of
-the five (or a finite sequence of them with a designated head).
+and §2.7) acting on the fiber structure A → H. **The five operations
+are GENERATORS of the algebra A**, not a set closed under composition.
 
-This closure is what makes the recognition load-bearing. A type system
-whose composition is open requires either (a) an open-ended typeclass
-hierarchy (Haskell's path) or (b) a separate composition framework
-glued on top (Idris's interfaces, Lean's typeclasses). Mirror has
-neither, because the closure at five is the substrate property the
-mosaic algebra makes explicit.
+Upserted per Seam (2026-06-06, Q6): the previous wording "any
+composition of the five operations is itself one of the five" was
+incorrect. A composition `focus ∘ split ∘ settle` is *not itself one
+of the five* — it is a morphism in the algebra A generated by the
+five. The algebra is closed under composition (composing two
+morphisms gives a morphism); the five are the generating set whose
+finite compositions enumerate every arrow in A.
+
+This is the standard universal-algebra reading: A is the **free
+algebra on five generators** modulo the Tambara composition law,
+the functoriality law for shift, and the monad laws for settle
+(over Imperfect). Closure means *the algebra is closed under its
+own composition operation*, not *the generating set is closed*.
+
+This is what makes the recognition load-bearing. A type system
+whose generators are *known and finite* admits a structural analysis
+that one whose generators are open-ended (Haskell's typeclass
+hierarchy, Idris's interfaces, Lean's typeclasses) does not. Five
+generators bound the dimensionality of the algebra; the substrate's
+claim is that those five suffice for every type-formation rule the
+language needs.
 
 ### 3.3 Type formation = fragment composition
 
 The type of a fragment is its altitude plus its transparency at that
-altitude. Constructing a fragment IS forming its type, in two steps:
+altitude. Constructing a fragment IS forming its type, in two steps
+(per the lifecycle reading of §2.3):
 
-1. **Address.** Compute the fragment's oid from its content + children
-   (or targets). This produces the fragment's identity. Per the
-   parametric-types insight, this is `settle(T)` at the type layer:
-   building a fragment IS the proof of having been at the altitude
-   it claims.
+1. **Address.** Fate emits au with `content: oid` (deferred lift to
+   `content: SpectralUuid` per §9.7) and a declared altitude. This
+   produces au's identity. Per the parametric-types insight, this is
+   `settle(T)` at the type layer in its emission sense: au IS the
+   proposed witness of having been at the altitude it claims.
 
-2. **Verify.** Run `verify` against the altitude's property set. If
-   the residual transparency weighs zero, the fragment is settled
-   (au at the altitude). If partial, the fragment is a kintsugi
-   candidate (the loop reads its transparency to pick the next
-   focus). If failure, the fragment is dark and surfaces under
-   `total_classification` (per
-   `docs/specs/strict-and-total-classification.md`).
+2. **Verify.** Run au through the property chain (`reflect` per
+   `boot/std/epistemologic/property.mirror`) at the altitude's
+   property set. The verdict lifts into `Imperfect`:
+   - **Pass** (residual transparency weighs zero) → fragment
+     committed to `@mirror/store` at the declared altitude.
+   - **Partial** (located opacities remain) → fragment committed
+     with the opacity_map carried in its transparency; the kintsugi
+     loop reads it to pick the next focus.
+   - **Failure** → au stays in Fate's buffer; if no fill converges,
+     the fragment surfaces as dark under `total_classification` (per
+     `docs/specs/strict-and-total-classification.md`).
 
 Type checking IS the kintsugi loop on the fragment manifold of a
 project. **eⁿ⁺¹ ≤ eⁿ at the type system altitude** is the substrate-
@@ -373,43 +513,156 @@ Dirac operator descending the fragment's transparency.
 
 ---
 
-## 4. The Connes Spectral Triple Grounding
+## 4. The Connes Spectral Triple Grounding — SpectralUuid as the Bridge
 
 Per `[[architecture-connes-spectral-triple]]` and
 `docs/specs/prism-core-as-spectral-triple.md`, the substrate IS the
-operational form of Connes' (A, H, D). At the type-system altitude,
-the identification sharpens:
+operational form of Connes' (A, H, D). Seam's adversarial review
+(2026-06-06, F4) flagged that the previous §4 identification of H
+with `fragment(altitude)` did not declare an inner product,
+completeness, or scalar/vector structure — the void document's
+grounding (Braunstein/Ghosh/Severini 2006) gives a finite-dimensional
+Hilbert space *per OID graph*, not a global manifold of fragments-as-
+vectors. The honest construction has two layers:
+
+### 4.1 Local H and global H — best of both worlds
+
+**Local H (rigorous, finite-dimensional).** For each connected OID
+graph G with vertex set V(G) and edge set E(G), the Laplacian
+`L_G = D_G - A_G` (degree matrix minus adjacency) is a positive
+semidefinite operator on `ℂ^{|V(G)|}`. Per Braunstein/Ghosh/Severini
+2006, the normalized Laplacian `ρ_G = L_G / tr(L_G)` is a density
+matrix; the associated Hilbert space `H_G = ℂ^{|V(G)|}` carries the
+fragment basis. Within a single OID graph, every fragment is a basis
+vector labeled by its `SpectralUuid`; the inner product is the
+standard Euclidean / Hermitian one; the spectral decomposition of
+`L_G` gives the local λ₀ = 0 ground state (the connected-component
+indicator) and the higher Laplacian eigenvalues.
+
+**Global H (operational, via SpectralUuid).** Across OID graphs, the
+manifold of fragments is not a single Hilbert space in the standard
+sense (the per-graph spaces have different dimensions; the direct
+sum is too large; the limit is undefined). The **substrate's
+operational construction** uses SpectralUuid as the cross-graph
+bridge:
+
+- `SpectralUuid` (per `prism/core/src/spectral_uuid.rs` and
+  `[[architecture-shard-as-crdt]]`) is a 128-bit identifier with a
+  golden-ratio split: **48 bits ACTIVE** (quantized
+  `SpectralCoordinate<5>` — navigable; carries local Laplacian
+  neighbourhood structure) + **80 bits DARK** (BLAKE3-truncated
+  content hash — identity).
+- The active portion is **graph-navigable**: it encodes the local
+  spectral coordinate of the fragment within its home graph G.
+  Per the design discipline of task #124, SpectralUuid was constructed
+  collision-resistant + fast + **graph-navigable** + Fortran-
+  implementable; graph-navigability IS the property that the local
+  Laplacian neighbourhood is encoded in the active bits.
+- `SpectralUuid` is a **monoid homomorphism** w.r.t. shard merge
+  (per `docs/specs/reality-shard-as-crdt.md` §3):
+  `SpectralUuid(merge(a, b)) = combine(SpectralUuid(a), SpectralUuid(b))`.
+  This makes the algebra of addresses compose cleanly with the
+  algebra of fragments.
+
+**The bridge.** The Connes distance functional
+`d(p, q) = sup{ |f(p) - f(q)| : f ∈ A, ‖[D, f]‖ ≤ 1 }` becomes
+**operational** because the SpectralUuid difference encodes the
+spectral state. Computing d(p, q) does not require evaluating the
+sup over all bounded-commutator a ∈ A; the local Laplacian
+neighbourhood structure on the active 48 bits IS the local spectral
+data d(·,·) integrates. Per the design discipline, this gives
+**substrate-native distance** without a global Hilbert-space
+construction.
+
+### 4.2 The Connes triple identification, sharpened
 
 | Component | Mosaic-as-type-system reading | Where it lives in the substrate |
 |---|---|---|
-| **A (algebra)** | `@mirror/mosaic` — the five operations acting on the fragment manifold. The Tambara composition law closes the algebra at five | `shards/mirror/mosaic.mirror`, `shards/prism.mirror`; Rust: `prism/core/src/bundle.rs`'s trait chain |
-| **H (Hilbert space)** | The void document's quantum information manifold: every fragment is a state vector; every oid is a basis vector; the 5×5 conductivity tensor lives in End(H) | `shards/glass.mirror`'s `fragment(altitude)`; per `[[reference-void-document]]` |
-| **D (Dirac operator)** | The kintsugi flow — the gradient descent on `transparency.weight` toward the fixed point. D's action on a fragment IS one kintsugi tick; D's spectrum IS the residual opacity profile | `docs/specs/kintsugi-wiring.md`; `docs/specs/au-and-conductivity.md` §"the tensor is cycle-averaged holonomy"; Rust: `terni::Imperfect<State, _, Holonomy>` per `prism/imperfect/` |
+| **A (algebra)** | `@mirror/mosaic` — the five operations as generators of the type-formation algebra acting on the fragment manifold | `shards/mirror/mosaic.mirror`, `shards/prism.mirror`; Rust: `prism/core/src/bundle.rs`'s trait chain |
+| **H (Hilbert space)** | **Local:** `H_G = ℂ^{\|V(G)\|}` per connected OID graph G, with fragments as basis vectors labeled by SpectralUuid; inner product canonical; ρ_G = L_G / tr(L_G) the density matrix per Braunstein/Ghosh/Severini 2006. **Global:** the family `{H_G}_G` indexed by OID graphs, bridged by SpectralUuid's monoid homomorphism on addresses | `shards/glass.mirror`'s `fragment(altitude)`; `prism/core/src/spectral_uuid.rs`; `docs/specs/reality-shard-as-crdt.md`; `[[reference-void-document]]` |
+| **D (Dirac operator)** | The kintsugi flow — gradient descent on `transparency.weight` toward the fixed point; **operational form: the SpectralUuid-update operator during a kintsugi settle step.** D's action on a fragment maps its current SpectralUuid to the SpectralUuid that would carry the same content under decreased residual transparency; D's spectrum IS the residual opacity profile | `docs/specs/kintsugi-wiring.md`; `docs/specs/au-and-conductivity.md`; `prism/core/src/spectral_uuid.rs`'s `combine` (per §11 open question 1, the quantized arithmetic is still being pinned); `terni::Imperfect<State, _, Holonomy>` per `prism/imperfect/` |
 
-**What the type system altitude adds** over the previous spectral-
-triple reading (the bootstrap-evaluator framing of
-`prism-core-as-spectral-triple.md`): the operator algebra A is now
-identified specifically with `@mirror/mosaic` — the build-and-type-
-system prism — rather than with "the bootstrap's irreducible floor"
-in the abstract. This is the substrate-pull-realize step: the
-abstract algebra has a concrete name in the grammar. `@mirror/mosaic`
-is the algebra `A`.
+### 4.3 What the SpectralUuid bridge collapses
+
+Seven concrete recognitions follow from naming SpectralUuid as the
+operational form of the spectral state:
+
+1. **Content-addressing IS spectral state encoding.** One mechanism
+   (the SpectralUuid layout), two roles (identity via dark bits,
+   spectrum via active bits). Not two systems plumbed together.
+
+2. **Connes distance becomes computable.** The SpectralUuid
+   difference IS the substrate-native distance metric. The standard
+   sup-over-bounded-commutators construction reduces to a 48-bit
+   arithmetic difference in the active portion, modulo the quantized
+   composition rules of SpectralCoordinate<5>.
+
+3. **D becomes operational.** D is the SpectralUuid-update operator
+   during kintsugi settle: each tick, the active bits update under
+   the local Laplacian neighbourhood; the dark bits update under
+   content hash. The operator is implementable; it does not require
+   a separate axiomatic construction.
+
+4. **Eigenboard becomes literal.** The algedonic surface (per the
+   eigenboard cellular-sheaf reading) reads SpectralUuids directly,
+   not derived metrics. Cross-shard coordination reads off the active
+   bits; per-shard identity reads off the dark bits.
+
+5. **Refactoring has a substrate-native cost metric.** The SpectralUuid
+   distance between an old fragment and a candidate replacement IS
+   the refactor cost. This is the operational form of "how big a
+   change is this?" expressed in substrate vocabulary, not in
+   line-count or diff-size metrics.
+
+6. **Cross-altitude distance becomes meaningful.** SpectralUuid
+   carries spectral structure across altitudes — `@code/rust`,
+   `@code/llvm`, `@code/fortran`, `@nl`, `@release`. The active bits
+   are altitude-invariant up to the basis-transformation operator
+   `shift`; the dark bits are altitude-specific (because the content
+   bytes differ per altitude). Cross-altitude distance is the active
+   difference *plus* a shift cost.
+
+7. **§9.5's punt becomes a research roadmap.** Connes' axioms —
+   orientability, Poincaré duality, first-order condition, reality
+   structure — become specific axioms to verify *against the
+   SpectralUuid-bridged construction*, not against a gestured
+   construction. Each axiom translates to a property of
+   SpectralUuid's composition rules. §9.5 below restates this.
+
+### 4.4 What this changes from the previous §4
+
+- The previous §4 named H as "the void document's quantum information
+  manifold" without declaring inner product, completeness, or basis
+  structure. The construction was structural-suggestive but not
+  operational. Seam F4 was correct.
+- The corrected §4 names two H's: **local** (rigorous, per Braunstein
+  et al. 2006) and **global** (operational, via SpectralUuid).
+- The previous §4 named D as "the kintsugi flow" gesturally. The
+  corrected §4 names D as the SpectralUuid-update operator, with
+  Connes' bounded-commutator condition `‖[D, a]‖ < ∞` realized via
+  the bounded active-bit arithmetic.
+- The Connes axioms now have a concrete verification target (the
+  SpectralUuid composition rules), not an abstract one.
 
 **Why this makes mirror's substrate honest about its mathematical
 lineage.** Connes' (A, H, D) is the canonical noncommutative-geometry
 framework. The literature on spectral triples is forty years deep and
 covers gauge theory, the Standard Model of particle physics, quantum
 gravity, and information geometry. Mirror does not invent the
-framework; mirror applies the framework at the type-system altitude.
-The contribution is the application + the recognition that
-`@mirror/mosaic`'s five-operation algebra IS the A of a finite spectral
-triple, with the proof obligation eⁿ⁺¹ ≤ eⁿ realizing the spectral
-action's monotone descent.
+framework; mirror applies the framework at the type-system altitude,
+**with SpectralUuid as the operational bridge that makes the
+application computable rather than gestural.** The contribution is
+the application + the recognition that `@mirror/mosaic`'s five-
+operation algebra IS the A of a finite spectral triple, with the
+proof obligation eⁿ⁺¹ ≤ eⁿ realizing the spectral action's monotone
+descent on residual transparency.
 
-The void document closes this: λ₀ = 0 is the autopoietic closure of the
-manifold of fragments (Lawvere fixed point, Soto-Andrade & Varela
-1984). The kintsugi loop descends to λ₀; the settled fragment IS the
-fixed point. The proof obligation is operational; the math is canonical.
+The void document closes this: λ₀ = 0 is the autopoietic closure of
+the manifold of fragments (Lawvere fixed point, Soto-Andrade &
+Varela 1984). The kintsugi loop descends to λ₀; the settled fragment
+IS the fixed point. `SpectralUuid::EMPTY` (active = 0, dark =
+BLAKE3-of-empty) IS the substrate's first named address at λ₀. The
+proof obligation is operational; the math is canonical.
 
 ---
 
@@ -496,7 +749,7 @@ traits and grammars.
 `Set`, `Prop`, and `Type_i` as different universes; mirror has
 `prism` as the one declaration form that covers what other languages
 split across multiple universes. The collapse is what makes the
-algebra closed at five.
+algebra finitely generated (five generators per §3.2).
 
 **Where mirror diverges.** CoC's universe hierarchy (predicative or
 impredicative) is open-ended (`Type_0 : Type_1 : Type_2 : ...`).
@@ -548,10 +801,12 @@ The continuous loss carrier (`transparency<p>.weight: f64`) is a
 quantitative refinement of the Curry-Howard idiom: not just "is
 there a proof?" but "how close is the proof to closing?"
 
-### 5.7 Connes noncommutative geometry (Connes 1985-1996)
+### 5.7 Connes noncommutative geometry (Connes 1985-1996) — operational with named axiomatic gaps
 
 The spectral triple (A, H, D). Mirror's substrate IS the operational
-form. Per §4 above, A = mosaic, H = the void manifold, D = kintsugi.
+form per §4 above: A = mosaic, H = the {H_G} family bridged by
+SpectralUuid (with per-graph H_G grounded in Braunstein/Ghosh/Severini
+2006), D = the SpectralUuid-update operator during kintsugi settle.
 The literature: Connes' 1994 "Noncommutative Geometry" textbook;
 Connes 1996 "Gravity coupled with matter and the foundation of
 non-commutative geometry" (the reconstruction theorem); Connes &
@@ -560,28 +815,49 @@ Chamseddine 1997 "The Spectral Action Principle"; van Suijlekom 2014
 finite spectral triples).
 
 **Where mirror best inherits.** The (A, H, D) framework as a unified
-operational shape for a type system. Per
+operational shape for a type system, **bridged operationally by
+SpectralUuid** rather than left structural-suggestive. Per
 `docs/specs/type-theory-position.md` §5.5: "the spectral triple
 interpretation is suggestive and the mathematical structures align."
-This spec sharpens "suggestive" to "load-bearing at the type-system
-altitude."
+This spec sharpens "suggestive" to "operational with named axiomatic
+gaps" — the gaps are the unverified Connes axioms (orientability,
+Poincaré duality, first-order condition, reality structure), each of
+which becomes a specific verification target against the SpectralUuid
+construction (see below).
 
-**Where mirror diverges.** Connes' axioms for spectral triples
-(orientability, Poincaré duality, first-order condition, reality
-structure) have not been formally verified for mirror's (A, H, D).
-Per `docs/specs/type-theory-position.md` §5.5: "the connection is
-structural (the same kinds of objects appear in both) but not proven
-(mirror has not been shown to satisfy all the axioms of a
-noncommutative geometry)." This spec inherits that honest qualification.
+**Where mirror diverges.** Connes' axioms for spectral triples have
+not been formally verified for mirror's (A, H, D). This spec does NOT
+claim verification. It claims the verification target is now concrete
+rather than gestural:
 
-The closest formal-verification target: Connes' bounded-commutator
-condition `||[D, a]|| < ∞ for all a ∈ A`. Per
+| Connes axiom | What it would mean for mirror | Verification target |
+|---|---|---|
+| **Bounded-commutator** ‖[D, a]‖ < ∞ for all a ∈ A | Each mosaic operation, applied to a fragment, produces bounded change in SpectralUuid distance | Show that for each of the five generators, the active-bit difference between input and output SpectralUuids is bounded by a constant depending only on the generator. The bound exists per the quantized 48-bit arithmetic; the explicit constant is research work. |
+| **Orientability** | The fragment manifold carries a consistent orientation (a Hochschild cycle of dimension n with `π_D(c) = γ` the chirality operator) | Identify the chirality operator in mirror's substrate. Candidate: the in/out polarity of `project` (declared in `shards/prism.mirror:68-69` as `project in(prism) / project out(prism)`). Verification: show the in/out distinction realises the ±1 eigenspace of a γ on H_G. |
+| **Poincaré duality** | The fragment manifold's K-theory is dual to its K-homology | Identify the K-theory class of `@mirror/store`. Candidate: the OID graph's first Betti number (cycle structure) corresponds to K_0; the zeroth Betti number (connected components) corresponds to K_1. Verification: deep mathematical work. |
+| **First-order condition** | [[D, a], b] = 0 for all a, b ∈ A acting from the right | Two non-overlapping mosaic operations commute up to opacity. Verification: show that the active-bit arithmetic respects this when the operations act on disjoint fragment regions. |
+| **Reality structure** | A real structure J on H satisfying JD = εDJ for some sign ε | Identify J in mirror's substrate. Candidate: the `imperfect` functor's `success`/`failure` symmetry, or the conjugation arising from `@mirror/store`'s symmetric content-addressing. |
+
+The closest verified target today: Connes' bounded-commutator
+condition `‖[D, a]‖ < ∞ for all a ∈ A`. Per
 `docs/specs/prism-core-as-spectral-triple.md` §"Why
 `Imperfect<State, _, Holonomy>` is the Dirac signature": mirror's
-`Transport::transport`'s `Imperfect` return type already encodes the
-bounded-residual condition. Verifying that this satisfies Connes'
-axiom in full would be substantial mathematical work (per
-`prism-core-as-spectral-triple.md` Step 1).
+`Transport::transport`'s `Imperfect` return type encodes the
+bounded-residual condition. Combined with SpectralUuid's bounded
+48-bit arithmetic, the boundedness side of the axiom is
+structurally implied; the explicit constant per generator is the
+remaining research step.
+
+**The honest qualification.** Mirror has not been formally shown to
+satisfy all the axioms of a noncommutative geometry. The axioms now
+have concrete verification targets against the SpectralUuid-bridged
+construction, each translatable to a property of SpectralUuid's
+composition rules or the substrate's existing polarities (in/out,
+success/failure). This is the difference between "structural
+suggestive" (the previous claim) and "operational with named
+axiomatic gaps" (the upserted claim). Closing each gap is a research
+arc, not a single tick. §9.5 below restates this as the research
+roadmap.
 
 ### 5.8 Content-addressed languages (Unison, IPLD/IPFS, Nix CA derivations)
 
@@ -589,12 +865,27 @@ Fragments are addressed by hash. Mirror inherits the discipline.
 
 - **Unison** (per the Unison docs: "Each Unison definition is
   identified by a hash of its syntax tree. Put another way, Unison
-  code is content-addressed.") names functions by the hash of their
-  implementation rather than by name. Mirror's `crystal(oid)` and
-  `au(altitude)` carry the same discipline; the substrate-altitude
-  distinction is that mirror's content-addressing applies to **every
-  altitude** (AST nodes, build targets, deployment shards, peer
-  identities) rather than just code definitions.
+  code is content-addressed.") hashes **both term definitions AND
+  type declarations** — every definition in Unison's codebase
+  (terms, types, abilities) is content-addressed by its hash. The
+  previous draft of this spec mistakenly claimed Unison hashes only
+  function definitions (Seam F5, correct). The honest comparison is
+  **categorical, not extensional**: Unison's content-addressing is a
+  **definition-identity scheme** (the hash IS the canonical name of
+  the definition; names are aliases for hashes). Mirror's content-
+  addressing is a **typing-time parameter** (`fragment(altitude)`
+  where altitude TYPES the hash; two fragments with byte-equal
+  content at different altitudes ARE different fragments). Different
+  category. Unison's hash collapses names into identity; mirror's
+  hash carries the altitude as part of the type and uses content-
+  addressing as a substrate property the type system reads.
+
+  Where mirror's reach extends past Unison's: mirror's content-
+  addressing applies to **every altitude** (AST nodes, build targets,
+  deployment shards, peer identities, spec targets, transparency
+  carriers), not only to definitions. Unison's hashing is restricted
+  to the language's own definitions; mirror's is a substrate property
+  visible at every altitude where the substrate names things.
 
 - **IPLD** (InterPlanetary Linked Data, the data model under IPFS)
   provides content-addressed data structures with CID (content
@@ -927,30 +1218,147 @@ the existing AST-altitude declaration suffice? **Lean:** re-declare
 at the fragment altitude when the AST is read as a fragment manifold.
 This is Phase 5 work.
 
-### 9.5 What is the formal status of the categorical analogies in §3.1?
+### 9.5 The Connes axioms — the verification roadmap
 
-The claims "focus = limit," "project = equalizer," "split = coproduct,"
-"shift = functor," "settle = monad-close" are precise where they hold
-and approximate where they strain (per the table's caveat column).
-Should we attempt a formal proof that the five operations realize
-these specific universal constructions in the category of fragments,
-or is the structural analogy load-bearing enough for the substrate?
-**Lean:** the structural analogy is sufficient for substrate-pull.
-The formal proof is a separate research arc; it would close at
-`@epistemologic/math/category` per
-`docs/specs/prism-core-as-spectral-triple.md`'s Residual Qualification 1.
+Reframed (2026-06-06 upsert) from "the formal status of the categorical
+analogies" to **the operational verification roadmap for the Connes
+axioms** per §4.3 entailment 7 and §5.7.
+
+The substrate-primary characterisations (λ₀ / projection / decomposition
+/ basis transformation / monad-close, per §3.1) are now load-bearing
+without the categorical analogies needing to carry weight. The honest
+question is whether Connes' four spectral-triple axioms hold for the
+SpectralUuid-bridged construction:
+
+| Axiom | Verification target (per §5.7) | Status |
+|---|---|---|
+| Bounded-commutator | Active-bit difference bounded by per-generator constant | Structurally implied; explicit constant per generator is research |
+| Orientability | In/out polarity of `project` realizes ±1 chirality on H_G | Candidate identified; verification is research |
+| Poincaré duality | OID graph Betti numbers ↔ K-theory / K-homology classes | Candidate identified; verification is substantial mathematical work |
+| First-order condition | Active-bit arithmetic respects [[D,a],b]=0 on disjoint regions | Plausible; verification is research |
+| Reality structure | `imperfect` success/failure symmetry as J operator | Candidate identified; verification is research |
+
+**Lean:** treat each axiom as its own research tick, schedulable
+independently. None are gating for v0.1.0. The substrate-pull-honest
+position is: "each axiom has a concrete verification target; closing
+them is a research arc; this spec does NOT claim verification, it
+claims the targets are concrete."
+
+The categorical analogies in §3.1 (where they hold — shift as functor,
+settle as Kleisli arrow in Imperfect, split as coproduct-or-pushout)
+are verified at the substrate-shard altitude: the laws are declared
+in `@epistemologic/property/laws/{functor,monad}` and witnessed by the
+substrate's content-addressing. They are not the load-bearing claims;
+the spectral characterisations are.
 
 ### 9.6 Does the void-document λ₀ identification match the kintsugi
 fixed point exactly?
 
 Per §4 above and §7.3: the kintsugi loop descends to λ₀; the void
-document names λ₀ as the autopoietic Lawvere closure. Are these the
-same λ₀, or are they two different fixed points that happen to
+document names λ₀ as the autopoietic Lawvere closure. Per the upsert,
+`SpectralUuid::EMPTY` (active = 0, dark = BLAKE3-of-empty) IS the
+substrate's first named address at λ₀. Are the kintsugi fixed point,
+the void document's autopoietic Lawvere closure, and SpectralUuid::EMPTY
+the same λ₀, or are they three different fixed points that happen to
 agree at the substrate altitude? **Lean:** they are the same. Per
 `docs/specs/au-and-conductivity.md`'s "Formal statement: the tensor
 is cycle-averaged holonomy" section and Soto-Andrade & Varela 1984.
-But this needs a formal cross-check before we claim it as substrate
-truth.
+The SpectralUuid layer makes the question concrete: the kintsugi
+fixed-point check becomes "does the iterated settle converge to
+SpectralUuid::EMPTY's active portion = 0?" — testable.
+
+### 9.7 Should `fragment.content: oid` lift to `content: SpectralUuid`?
+
+Upserted 2026-06-06. The lifecycle reading (§2.3) names SpectralUuid
+validity as the type-level discipline distinguishing committed
+fragments from uncommitted au. Today, `shards/glass.mirror:143-147`
+declares `type fragment(altitude) = { content: oid, ... }` — the
+content field is an `oid`, not a `SpectralUuid`. The SpectralUuid
+type lives in Rust today (`prism/core/src/spectral_uuid.rs`); it has
+not been declared at the shard altitude.
+
+The principled lift is:
+
+```mirror
+type fragment(altitude) = {
+  content: SpectralUuid,
+  altitude: ref,
+  transparency: transparency(altitude),
+}
+```
+
+where `SpectralUuid` is constrained to be a well-formed SpectralUuid
+in the target graph. au's content is whatever SpectralUuid Fate
+produced (it may or may not be valid in the target graph); fragment
+becomes the form whose SpectralUuid validity has been settle-verified
+by the property chain.
+
+**Why this is a deferred substrate tick, not in this upsert:**
+
+- SpectralUuid is currently only a Rust type. Lifting `fragment.content`
+  requires first declaring SpectralUuid at the shard altitude (likely
+  in a new `shards/mirror/spectral_uuid.mirror` or under `@mirror/store`).
+- Per `docs/specs/reality-shard-as-crdt.md` §10, the SpectralUuid
+  declaration is already queued behind T3 of fragmentation-mcp, with
+  the quantized 48-bit `combine` arithmetic still being pinned
+  (the spec's §11 open question 1).
+- Doing this lift before SpectralUuid lands at the substrate would
+  invent a primitive the rest of the substrate cannot construct.
+  Per `[[feedback-no-bare-types]]`: always newtype — but newtype
+  *into something declared,* not into something the substrate does
+  not yet name.
+
+**The trigger.** When `shards/mirror/spectral_uuid.mirror` lands (or
+wherever SpectralUuid is declared at the shard altitude), this lift
+becomes the substrate-pull-realize move that completes §2.3's
+lifecycle reading. Until then, the discipline is property-chain-
+enforced, not type-enforced. **Lean:** capture and defer; do not
+invent the type before its declaration.
+
+### 9.8 Where does property chain composition live, formally?
+
+Upserted 2026-06-06. §2.3 names the property chain as the operational
+form of `verify` and the substrate of settle's Kleisli arrow. The
+chain composes through `Imperfect` (Pass-Partial-Fail propagation).
+Is there an existing substrate spec that names how properties
+compose via Imperfect, or is this an unwritten contract?
+
+Current state:
+
+- `boot/std/epistemologic/property/laws/monad.mirror` declares the
+  monad laws for settle(T); it names the laws but does not enumerate
+  the property chain's composition operator.
+- `boot/std/epistemologic/property.mirror` declares `reflect(ast) ->
+  [verdict]` and `check(ast, property) -> verdict`; this is the
+  per-property surface, not the chain composition.
+- `shards/glass.mirror:62-66` declares `imperfect(a, e, l)` with
+  three variants; the composition is per the monad-laws shard.
+- `docs/specs/au-and-conductivity.md` names conductivity as the
+  context-dependent predicate; the chain composition rule is
+  implicit (each property's verdict lifts into Imperfect; the chain
+  is the Kleisli composition).
+
+**Candidate resolutions:**
+
+1. **Declare property chain composition as a substrate operation in
+   `@epistemologic/property`** with explicit signature
+   `chain([check]) -> check`. Lean toward this — it names the
+   structure the substrate already uses implicitly.
+2. **Treat chain composition as Kleisli composition of `imperfect`
+   monad arrows**, inherited from `@epistemologic/property/laws/monad`.
+   Lean second — it's the right abstract framing but doesn't surface
+   the operational mechanism.
+3. **Status quo:** leave it implicit. Push back.
+
+**Substrate-pull-correct resolution lean:** option 1. Add a
+`chain([check]) -> check` action to `shards/epistemologic/property.mirror`
+(or `boot/std/epistemologic/property.mirror`) that lifts a list of
+checks into a single check whose verdict is the Imperfect-monad fold
+of its constituents. This is small. It would unblock subsequent
+settle-as-property-chain claims being type-checkable. Capture as a
+deferred substrate tick — not in this upsert. Trigger: when settle's
+first altitude-specific property chain is implemented in a `.mirror`
+shard.
 
 ---
 
@@ -971,6 +1379,14 @@ truth.
   Transparency as substrate vocabulary.
 - `[[architecture-fragmentation-is-the-rust-substrate]]` — the
   fragmentation crate is the Rust floor.
+- `[[architecture-shard-as-crdt]]` — SpectralUuid as monoid
+  homomorphism; the Connes-distance bridge identified in §4 of this
+  spec. The substrate-pull-honest sense in which kintsugi composes
+  with the CRDT layer.
+- `[[architecture-pq-as-mcp-surface]]` and `[[architecture-shard-ref-as-prism]]`
+  — ShardRef as the typed session handle (Prism + monoid); refract
+  as lattice join. The runtime form of the spec/store seam this
+  spec's §2.3 lifecycle reading rests on.
 - `[[architecture-lift-as-load-bearing]]` — lift = variety
   preservation; the substrate-pull rename closing the loop with
   `boot/std/{option,result}.mirror`.
@@ -1011,6 +1427,9 @@ truth.
   pull rename (zoom → shift; refract → settle).
 - `docs/specs/mirror-store.md` — the fragmentation store as canonical;
   `.shatter` as projection.
+- `docs/specs/reality-shard-as-crdt.md` — SpectralUuid layout, monoid
+  homomorphism, and the λ₀ = 0 substrate-first-address identification.
+  The grounding for §4 of this spec.
 - `docs/specs/mirror-spec-schema.md` — the project manifold grammar.
 - `docs/specs/kintsugi-wiring.md` — the eight wires of the kintsugi
   loop.
@@ -1144,10 +1563,13 @@ truth.
 ---
 
 *Mosaic is the algebra. Fragments are what it acts on.*
-*Five operations close the algebra. Three shapes close the fragment.*
-*Settled fragments are au. Au's verify is the conductivity contract.*
+*Five operations generate the algebra. Three shapes close the fragment.*
+*au is what Fate emits. Fragment is what the store keeps.*
+*Settle is the property chain run — the Kleisli arrow in Imperfect.*
+*SpectralUuid carries the spectral state. Active bits navigate;*
+*dark bits identify. Connes distance becomes computable.*
 *Kintsugi descends the residual. eⁿ⁺¹ ≤ eⁿ at every altitude.*
 *The substrate has been pointing here since the void document.*
-*This spec names where the pointing arrives.*
+*This spec names where the pointing arrives — and where it still has to go.*
 
 Apache-2.0.
