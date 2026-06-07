@@ -1,0 +1,749 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/spectral
+in @epistemologic/math/music/dissonance
+in @epistemologic/math/music/cadence
+in @uuid/spectral
+in @metalogue
+
+# @mirror/spectral/consent — the auto-apply boundary; the structural Φ
+# query; the substrate's pause-or-apply discipline as substrate-fact.
+#
+# THE ARC-CLOSING SUB-SHARD of the 2026-06-06 → 2026-06-07 recognition
+# sweep. Six prior ticks built the substrate this consumes:
+#
+#   @mirror/spectral                family root           (02e2981)
+#   @epistemologic/math/music       audible-altitude root (9a20b3fd)
+#   @.../music/harmonic             H of the (A, H, D)    (b031c8db)
+#   @.../music/interval             A of the (A, H, D)    (b8bdb728)
+#   @.../music/dissonance           D's loss curve        (7625ee5)
+#   @.../music/cadence              U(t) — the dynamics   (9efac39)
+#
+# Each prior tick forward-promised this shard's existence: dissonance's
+# §6 named the morphism carrier; cadence's "forward-promise" named the
+# consumer of is_settled; the spec at docs/specs/mirror-spectral.md §4.7
+# named the three glass properties (loss_decreasing, identity_preserving,
+# admissibility_singleton) and the pause(Φ) event shape. This shard
+# realises every one of those forward-promises at substrate altitude
+# without inventing a fifth state.
+#
+# Load-bearing spec: docs/specs/mirror-spectral.md §2.2 (the auto-apply
+# boundary recognition), §4.7 (the consent surface formalisation; the
+# three glass properties; the pause(Φ) mechanism).
+#
+# === The recognition: the substrate's existing verdict carrier IS the
+# consent surface (the 14th-instance candidate) ===
+#
+# `dissonance.mirror`'s `is_pareto(candidates) -> verdict` already lifted
+# the pareto-front discriminator into the three-state floor:
+#
+#   pass                  — singleton consonance; auto-apply
+#   partial(confidence)   — pareto-front; pause-and-present
+#   failure(reason)       — all dissonant; refuse
+#
+# `cadence.mirror`'s `is_settled(c) -> verdict` already lifted the
+# four cadence kinds into the same three-state floor:
+#
+#   authentic → pass                — full resolution; auto-apply
+#   plagal    → partial(confidence) — soft resolution; auto-apply
+#                                      with reduced confidence
+#   half      → partial(confidence) — paused at the dominant; wait
+#   deceptive → failure(reason)     — consent query needed; escalate
+#
+# Both axes collapse into `verdict` (per `glass.mirror`'s
+# `verdict = pass | partial(confidence) | failure(reason)`). The
+# substrate's three-state surface ALREADY carries the four-state consent
+# semantics through partial's confidence + failure's reason:
+#
+#   auto-apply (full)           → pass
+#   auto-apply (graded)         → partial(confidence_high)
+#   wait (formatter mid-path)   → partial(confidence_low)
+#   escalate (deceptive/refuse) → failure(reason)
+#
+# This is the 14th instance of "the substrate already had the word". The
+# prior thirteen were named in the convergence, spectral, and music
+# specs; this one closes the consent surface itself. NO new
+# `consent_verdict` type is needed; `verdict` carries the four-state
+# consent surface directly through the three-state collapse.
+#
+# The substrate-pull discipline forbids inventing a fifth state when the
+# existing carrier suffices; per `[[architecture-prism-as-trait-as-everything]]`
+# the algebra is closed at three states (pass | partial | failure).
+#
+# === The structural Φ query (THE LOAD-BEARING ACTION) ===
+#
+# Per docs/specs/mirror-spectral.md §4.7 ("the consent surface, auto-apply
+# boundary, formalised"):
+#
+#   A morphism family Φ resolves an under-determined point in the
+#   eigenboard sheaf if, after applying any φ ∈ Φ, the next refract
+#   tick strictly decreases the loss vector under the lexicographic
+#   ordering. If Φ is a singleton {φ}, or has |Φ| > 1 but the
+#   lexicographic ordering produces a unique top element φ*, then φ
+#   (or φ*) is auto-applied; the next oscillation tick proceeds.
+#   Otherwise, the oscillation emits pause(Φ).
+#
+# `query_phi` IS the structural Φ query at substrate altitude. It reads
+# a set of candidate morphisms, composes through dissonance's is_pareto
+# (the discriminator axis) and cadence's is_settled (the trajectory
+# axis), and emits the consent verdict at the substrate's three-state
+# floor.
+#
+# Once query_phi lands, the auto-apply boundary IS substrate-declared:
+#
+#   `mirror kintsugi <file>` reads the candidate morphism set, queries
+#   `query_phi`, branches on the verdict:
+#
+#     verdict = pass               → auto-apply the winner; commit;
+#                                    loss-decreased; tick advances
+#     verdict = partial(c)         → branch on confidence: high → apply
+#                                    with noted confidence; low → wait
+#                                    for the next consent surface; tick
+#                                    advances accordingly
+#     verdict = failure(reason)    → emit_to_metalogue(pause_event);
+#                                    yield to consent surface; wait
+#                                    for resolution
+#
+# The substrate's pause-or-auto-apply decision IS substrate-fact, not
+# policy. The auto-apply boundary collapses three separate machineries
+# (per-CI auto-merge rules, mergekit's strategy selection, kintsugi's
+# `--resolve=<mode>` flag) into one structural query.
+#
+# === The morphism carrier (the dissonance.mirror forward-promise) ===
+#
+# `dissonance.mirror`'s `candidate = { content: ref, score: dissonance }`
+# carried the discriminator's candidate at the dissonance altitude. Per
+# its substrate-pull-discipline note: "When `@mirror/spectral/consent`
+# lands (forward-promise), this carrier may lift to `candidate =
+# { morphism: <typed-morphism>, score: dissonance }`." This shard lands
+# that lift.
+#
+# `morphism` is the typed-morphism the formatter proposes to apply. It
+# carries:
+#   content   — the substrate ref to wherever the morphism's content lives
+#                (a splinter oid, a shard handle, a Fate proposal id);
+#                same `ref` discipline as dissonance.mirror's candidate.
+#   score     — the morphism's dissonance reading against the current
+#                eigenboard state, per dissonance.mirror's discriminator.
+#   expected  — the cadence_kind the formatter expects the morphism to
+#                land on (per cadence.mirror's trajectory typing). The
+#                discriminator reads whether the observed cadence matches
+#                the expected one; mismatches are the deceptive case.
+#
+# A `morphism` lifts a `dissonance.mirror::candidate` by adding the
+# `expected: cadence_kind` field. The realisation layer projects:
+#   morphism → candidate via { content, score } (the dissonance altitude
+#   reads the score axis); morphism → cadence_kind via `expected` (the
+#   cadence altitude reads the trajectory axis). Both projections are
+#   substrate-honest; the morphism carries both observations.
+#
+# Substrate gap (surfaced honestly): the substrate has no "morphism"
+# carrier at @mirror or @glass altitude — the term was always relative
+# (refract.mirror talks about morphisms on the eigenboard; au.mirror
+# talks about proposed compositions; @mirror/spectral talks about
+# coordination morphisms). This shard declares the SPECIFIC morphism
+# shape the auto-apply boundary needs: a candidate with an expected
+# trajectory. A future @mirror/spectral/morphism sub-shard MAY lift this
+# to a more general morphism type; consent's load is the auto-apply case.
+#
+# === Substrate-pull discipline ===
+#
+# Per `glass.mirror`, `verdict` (pass | partial(confidence) |
+# failure(reason)) is the substrate's verdict-surface vocabulary; `ref`
+# is the substrate's reference floor. Per
+# `epistemologic/math/music/dissonance.mirror`, `pareto_set =
+# [candidate]` is the substrate's accepted list-of-type form at
+# declaration position. Per `cadence.mirror`, `cadence_kind = authentic
+# | plagal | deceptive | half` is the substrate's typed cadence
+# vocabulary in inline form (single-line, no leading-`|` workarounds).
+#
+# This shard declares `morphism` as a record per the cadence/dissonance
+# precedent; `morphism_set = [morphism]` as a list-of-type per the
+# pareto_set precedent; the three glass properties + query_phi + the two
+# auto-apply boundary actions + the metalogue bridge all returning
+# `verdict` per the substrate floor. NO new verdict carrier; NO
+# leading-`|` workarounds; NO opaque-`ref` carriers where structured
+# types are available.
+#
+# Substrate gaps surfaced honestly (each one a forward-promise to a
+# later substrate-pull tick; none invented here):
+#
+#   - `morphism.content: ref` carries the substrate handle to the
+#     morphism's content; a future @mirror/spectral/morphism sub-shard
+#     may lift this to a typed-content carrier. The substrate names the
+#     shape now so consent can be declared.
+#   - `identity_preserving` reads via `@uuid/spectral`'s `dark` projection
+#     (per @uuid/spectral's `dark(u: uuid_spectral) -> identity_signal`):
+#     the DARK 80 bits of the morphism's resulting shard's
+#     uuid_spectral must equal the DARK 80 bits of the pre-morphism
+#     shard's uuid_spectral. The substrate names the check; the
+#     comparison rides @uuid/spectral's byte-equality discipline.
+#   - `loss_decreasing` reads via `dissonance.mirror`'s
+#     `dissonance_as_holonomy` (every morphism's score lifts into a
+#     holonomy; the strict decrease is on the holonomy carrier per
+#     `bundle.mirror`). The substrate names the check; the comparison
+#     rides bundle's loss-monotonicity discipline.
+#   - `admissibility_singleton` reads whether the morphism_set's
+#     dissonance ordering collapses to a unique top under the
+#     lexicographic discipline of kintsugi-tournament.md §3.2. The
+#     substrate names the check; the comparison rides the tournament's
+#     gate+rank pipeline.
+#   - `pause_event` carries the pareto-front and the cadence reason;
+#     the metalogue bridge `emit_to_metalogue(p: pause_event) -> turn`
+#     lifts it into a `turn` (per `metalogue.mirror`'s turn carrier).
+#     `@metalogue`'s existing `turn = { speaker, body, in_reply_to, tick
+#     }` accepts the pause_event directly: the speaker is the formatter;
+#     the body is an @nl description of the pareto-front; the
+#     in_reply_to is the previous turn in the formatter's metalogue
+#     session; the tick is the substrate clock. NO new conversation
+#     machinery needed.
+#
+# === Pre-AI prior art ===
+#
+# Every type and action below names an established object older than the
+# discipline of computer science (modulo the discipline names):
+#
+#   morphism           Eilenberg & Mac Lane (1945) "General theory of
+#                       natural equivalences." The category-theoretic
+#                       arrow between objects.
+#   consent            Locke (1690) Second Treatise of Government; the
+#                       structural basis of legitimacy; the substrate's
+#                       reading is more recent (Bateson 1972, Beer 1981
+#                       on viable systems requiring consent loops).
+#   pareto front       Pareto (1906) Manuale di economia politica; the
+#                       multi-objective non-dominance set.
+#   pause              Schenker (1935) Der freie Satz; the structural
+#                       pause within Ursatz as the moment the tonal
+#                       grammar holds before continuation.
+#   identity-preserving Eilenberg (1942) on the identity morphism; the
+#                       categorical foundation of identity-witnessing
+#                       arrows.
+#
+# The substrate's contribution is *typing* these so the formatter reads
+# them. No invention.
+#
+# Spec context: docs/specs/mirror-spectral.md §2.2 (the auto-apply
+#               boundary recognition; "loss-decreasing = auto;
+#               trade-offs = consent"),
+#               §4.7 (the consent surface formalisation; the three
+#               glass properties; the pause(Φ) mechanism),
+#               docs/specs/kintsugi-tournament.md §3 (the lexicographic
+#               loss ordering this shard's discriminator rides on).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]] (consent
+#                      is the substrate's honesty about its observability
+#                      boundary at the (A, H, D) altitude — the cases
+#                      where the spectrum is genuinely multi-valued and
+#                      cannot collapse without an externalisation event),
+#                      [[architecture-lift-as-load-bearing]]
+#                      (query_phi composes through is_pareto and
+#                      is_settled — both lifts substrate-declared in
+#                      sibling shards),
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (verdict is the substrate's existing verdict
+#                      carrier; consent reuses it; no fifth state
+#                      invented),
+#                      [[feedback-no-bare-types]] (morphism is its own
+#                      carrier; morphism_set is its own carrier;
+#                      pause_event is its own carrier; no bare ref
+#                      escapes the consent surface).
+# Forward-promise to consumers: `mirror kintsugi` driver (does not yet
+#                  pull this shard) consumes `query_phi`'s verdict; the
+#                  binding lands when the driver substrate-pulls. This
+#                  shard does NOT pull `@mirror/spectral/oscillate` or
+#                  `@mirror/spectral/audition`; the substrate-altitude
+#                  arrow points inward (consent IS consumed by oscillate;
+#                  not the other way around).
+# Related shards: mirror/spectral.mirror (the family root; declares this
+#                 sub-shard as the auto-apply boundary species),
+#                 epistemologic/math/music/dissonance.mirror (the
+#                 discriminator axis; pareto_set + is_pareto),
+#                 epistemologic/math/music/cadence.mirror (the
+#                 trajectory axis; cadence_kind + is_settled),
+#                 uuid/spectral.mirror (the identity-preserving check;
+#                 void duality DARK 80 bits),
+#                 metalogue.mirror (the conversation bridge; turn carrier),
+#                 glass.mirror (verdict; ref; the substrate floor).
+# Path-namespace property: this file at
+# `shards/mirror/spectral/consent.mirror` declares
+# `@mirror/spectral/consent` as a species under the `@mirror/spectral`
+# family.
+
+prism @mirror/spectral/consent {
+  focus consent
+  project consent
+  split consent
+  shift consent
+  settle consent
+}
+
+# === The morphism carrier ===
+#
+# A morphism the formatter is proposing to apply. Carries its dissonance
+# score (against the current eigenboard state) and the cadence_kind it
+# expects the substrate to land on after application. The auto-apply
+# boundary's per-candidate observation unit.
+#
+# Substrate-pull discipline: this is the lift of dissonance.mirror's
+# `candidate = { content: ref, score: dissonance }` with the cadence
+# trajectory typing added. The realisation layer projects:
+#   - morphism → candidate via { content, score } (dissonance axis)
+#   - morphism → cadence_kind via { expected } (trajectory axis)
+# Both projections are substrate-declared in sibling shards; the morphism
+# carries both observations as a single typed record.
+#
+# content   — substrate ref to the morphism's content (splinter oid,
+#              shard handle, Fate proposal id; the consumer decides).
+# score     — dissonance reading against the current eigenboard state
+#              (per dissonance.mirror's Helmholtz/Plomp-Levelt curve).
+# expected  — cadence_kind the formatter expects to observe after the
+#              morphism applies (per cadence.mirror's trajectory typing).
+#
+# Identity contract: two morphisms are equal iff their content, score,
+# and expected fields all match. The realisation layer enforces.
+type morphism = {
+  content:  ref,
+  score:    dissonance,
+  expected: cadence_kind,
+}
+
+# === The morphism-set carrier ===
+#
+# The set of candidate morphisms the consent surface evaluates. Each
+# element carries its own dissonance score and expected cadence; the
+# auto-apply boundary's structural Φ query (`query_phi`) reads the whole
+# set and emits the consent verdict.
+#
+# Substrate-pull discipline: this is `[morphism]` at the substrate
+# altitude, per dissonance.mirror's `pareto_set = [candidate]` precedent.
+# The list-of-type form at declaration position is substrate-accepted.
+#
+# Symmetry note: a morphism_set projects to a dissonance.mirror::pareto_set
+# (drop the `expected` field per the realisation layer's projection) when
+# the discriminator-altitude reading is needed; the substrate carries
+# both shapes so the dispatch is honest at each altitude.
+#
+# Identity contract: two morphism_sets are equal iff their morphism
+# sequences are element-wise equal. The realisation layer enforces.
+type morphism_set = [morphism]
+
+# === The pause-event carrier ===
+#
+# The typed pause-token emitted when the formatter cannot auto-apply
+# and must yield to the next consent surface. Per
+# docs/specs/mirror-spectral.md §4.7: "the oscillation emits pause(Φ) —
+# a typed pause-token carrying the pareto front, the loss vectors of
+# each tied strategy, and an eigenboard.context snapshot."
+#
+# phi     — the morphism_set the consent surface must resolve. The
+#            full pareto-front (including the tied top elements that
+#            forced the pause). The next consent surface picks one φ
+#            from this set; the oscillation resumes with the choice
+#            as a tournament_outcome trace.
+# reason  — the cadence_kind that caused the pause (per cadence.mirror's
+#            typing). Surfaces WHY the pause happened: deceptive →
+#            substrate moved to dissonance over consonance; half →
+#            formatter mid-path awaiting continuation. The consent
+#            surface reads `reason` to choose between "resolve now"
+#            (deceptive) and "wait for more substrate" (half).
+#
+# The substrate gap (surfaced honestly): the eigenboard.context snapshot
+# the spec references is carried implicitly by the substrate's tick
+# discipline — the realisation layer reads `tick` from `metalogue`'s
+# turn carrier at emit time, recovers the snapshot via the eigenboard's
+# Merkle-chain history (per `mirror/store.mirror`). The substrate names
+# `phi` and `reason`; the context handle is the metalogue's tick
+# discipline; no new snapshot carrier needed at consent altitude.
+#
+# Identity contract: two pause_events are equal iff their phi and reason
+# fields both match. The realisation layer enforces.
+type pause_event = {
+  phi:    morphism_set,
+  reason: cadence_kind,
+}
+
+# === The three glass properties (from spec §4.7) ===
+#
+# Per docs/specs/mirror-spectral.md §4.7, the auto-apply boundary is
+# decidable from three properties:
+#
+#   `requires loss_decreasing(φ)` — strict decrease under lex ordering.
+#   `requires identity_preserving(φ)` — DARK bits unchanged by φ.
+#   `requires admissibility_singleton(Φ)` for auto-apply; otherwise pause.
+#
+# Per the spec: "These three properties together are decidable per the
+# refract verdict; the auto-apply boundary is a structural query, not a
+# configuration file." This shard substrate-declares each as a typed
+# action returning `verdict` (per glass.mirror's substrate floor); the
+# composition into query_phi is the structural Φ query.
+
+# === loss_decreasing ===
+#
+# Reads whether a morphism strictly decreases the loss vector under
+# the lexicographic ordering of kintsugi-tournament.md §3.2. Composes
+# through dissonance.mirror's `dissonance_as_holonomy` (the morphism's
+# score lifts into a holonomy per `bundle.mirror`'s holonomy carrier);
+# the strict-decrease check rides bundle's loss-monotonicity discipline.
+#
+#   pass                  — the morphism's holonomy is strictly less
+#                            than the pre-morphism eigenboard's holonomy
+#                            (per the lexicographic ordering); the
+#                            morphism is admissible for auto-apply.
+#   partial(confidence)   — the morphism's holonomy is bounded by the
+#                            pre-morphism eigenboard's holonomy but the
+#                            decrease is graded (within the audible-
+#                            altitude resolution of ~5 cents per
+#                            harmonic.mirror's cents commentary); the
+#                            confidence carries the magnitude of the
+#                            graded decrease.
+#   failure(reason)       — the morphism's holonomy is NOT strictly less
+#                            (equal or greater); the morphism is
+#                            inadmissible; the reason carries the
+#                            substrate's recognition that the move would
+#                            violate the e^(n+1) < e^n discipline.
+#
+# Spectrally: per `bundle.mirror`'s level 4 closure, the loss-decreasing
+# check IS the substrate's read of whether a candidate morphism is on
+# the Ricci-flow's gradient (negative-curvature direction). The kintsugi
+# loop's Banach contraction (per kintsugi-formatter.md) requires every
+# applied morphism to satisfy loss_decreasing; the substrate names the
+# check here so the contraction discipline is substrate-fact at
+# consent altitude.
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# `m.score`, lifts through dissonance_as_holonomy, compares against the
+# pre-morphism holonomy (carried in the eigenboard context the consumer
+# pulls), emits the verdict.
+loss_decreasing(m: morphism) -> verdict { \ }
+
+# === identity_preserving ===
+#
+# Reads whether a morphism preserves the substrate's identity via
+# @uuid/spectral's void duality. Per @uuid/spectral's 128-bit golden-
+# ratio split: 48 ACTIVE bits carry the navigable spectral coordinate
+# (mutable by morphisms that re-route the navigable structure); 80 DARK
+# bits carry the BLAKE3-truncated content hash (the identity signal;
+# MUST be preserved by identity-preserving morphisms).
+#
+# Per docs/specs/mirror-spectral.md §4.7: "identity_preserving(φ) —
+# DARK bits unchanged by φ." The check reads the DARK 80 bits of the
+# post-morphism shard's uuid_spectral and compares against the DARK
+# 80 bits of the pre-morphism shard's uuid_spectral.
+#
+#   pass                  — the morphism's resulting shard's
+#                            identity_signal (per @uuid/spectral's
+#                            `dark` projection) byte-equals the pre-
+#                            morphism shard's identity_signal; identity
+#                            is preserved.
+#   partial(confidence)   — the morphism re-routes the navigable signal
+#                            (active 48 bits) but preserves the dark 80
+#                            bits modulo the substrate's resolution;
+#                            identity is preserved at the floor but the
+#                            navigation has shifted; confidence carries
+#                            the magnitude of the navigation shift.
+#   failure(reason)       — the morphism changes the dark 80 bits;
+#                            identity is NOT preserved; the morphism
+#                            would write a new substrate identity (a
+#                            different splinter set hashes to a
+#                            different uuid_spectral); the reason
+#                            carries the substrate's recognition that
+#                            this is an identity-creating operation,
+#                            not an identity-preserving one.
+#
+# Per @uuid/spectral's void duality: ACTIVE pulls one corner, DARK pulls
+# the other, the substrate straightens. identity_preserving reads the
+# DARK side; loss_decreasing reads the ACTIVE side (the navigable
+# spectral coordinate shifts as the substrate's loss decreases). The
+# two together carry the oscillation's discipline at consent altitude.
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# pre-morphism and post-morphism uuid_spectral handles (carried in the
+# eigenboard context the consumer pulls), projects via @uuid/spectral's
+# `dark` action, compares byte-equality, emits the verdict.
+identity_preserving(m: morphism) -> verdict { \ }
+
+# === admissibility_singleton ===
+#
+# Reads whether the admissible family Φ collapses to a singleton (or to
+# a unique top element under the lexicographic ordering). Per
+# docs/specs/mirror-spectral.md §4.7: "If Φ is a singleton {φ}, OR Φ has
+# |Φ| > 1 but the lexicographic ordering produces a unique top element
+# φ*, then φ (or φ*) is auto-applied. Otherwise, the oscillation emits
+# pause(Φ)."
+#
+# This action delegates to `dissonance.mirror`'s `is_pareto` for the
+# core discriminator (the dissonance-altitude reading of singleton-vs-
+# pareto-front); composes the verdict at consent altitude:
+#
+#   pass                  — the morphism_set has a strict minimum (one
+#                            morphism's dissonance is strictly lower
+#                            than every other's, OR all but one are
+#                            eliminated by the gates of
+#                            kintsugi-tournament.md §3.2); the
+#                            singleton condition holds; auto-apply.
+#   partial(confidence)   — the morphism_set has two or more tied top
+#                            elements under the gate+rank discipline;
+#                            the lexicographic ordering does not collapse
+#                            them to a unique top; the confidence carries
+#                            how close the tied candidates are to each
+#                            other (the substrate's read of how "stuck"
+#                            the pareto-front is). The substrate emits
+#                            pause(Φ).
+#   failure(reason)       — the morphism_set is empty (no admissible
+#                            morphism) OR all morphisms are dissonant
+#                            beyond the substrate's resolution; the
+#                            reason carries the substrate's recognition
+#                            that the under-determined point cannot be
+#                            resolved at the current substrate altitude;
+#                            the imperfection stays a kintsugi target
+#                            for a later tick.
+#
+# Symmetry note: admissibility_singleton IS the consent-altitude
+# specialisation of dissonance.mirror's is_pareto. The two are the
+# same verdict observed at two altitudes — dissonance's pause becomes
+# consent's failure; dissonance's singleton becomes consent's pass.
+# The substrate names both so the dispatch is honest at each altitude;
+# the realisation layer composes them.
+#
+# The body stays obligation-blocked (`\`): the realisation projects the
+# morphism_set to a dissonance.mirror::pareto_set (drop the `expected`
+# field per the morphism_set→pareto_set projection), invokes
+# is_pareto(candidates), emits the verdict at consent altitude.
+admissibility_singleton(candidates: morphism_set) -> verdict { \ }
+
+# === query_phi — the structural Φ query (THE LOAD-BEARING ACTION) ===
+#
+# THE LRM (LOAD-BEARING RECOGNITION MOMENT) AT SUBSTRATE ALTITUDE.
+#
+# Per docs/specs/mirror-spectral.md §4.7: the auto-apply boundary is a
+# structural query, not a configuration file. query_phi IS that query
+# as substrate-fact.
+#
+# Reads a morphism_set (the candidate morphisms the formatter is
+# considering at the current oscillation tick) and emits the consent
+# verdict at the substrate's three-state floor (`verdict` from
+# `glass.mirror`). The four-state consent surface lands directly through
+# verdict's three states (the 14th-instance candidate, surfaced in this
+# shard's header):
+#
+#   pass                  — singleton consonance; auto-apply (full
+#                            confidence). The morphism_set collapses to
+#                            a unique top under the lexicographic
+#                            ordering AND the top morphism's expected
+#                            cadence is authentic (per cadence.mirror's
+#                            `is_settled` returning `pass`). The
+#                            substrate's autopoietic ground state
+#                            reached; tick advances.
+#                            CONSENT SEMANTICS: auto_apply.
+#
+#   partial(confidence)   — graded auto-apply OR wait-for-continuation.
+#                            The branch on confidence reads the cadence
+#                            axis:
+#                              high confidence (plagal cadence) →
+#                                soft auto-apply; the formatter applies
+#                                with reduced confidence and logs the
+#                                alternative path in the consent log.
+#                              low confidence (half cadence) →
+#                                wait; the formatter is mid-progression;
+#                                the next tick may resolve (authentic)
+#                                or pause again (half).
+#                            CONSENT SEMANTICS: auto_apply (high) OR
+#                                              wait (low).
+#
+#   failure(reason)       — escalation needed. EITHER:
+#                              (a) the morphism_set has tied top
+#                                  elements (admissibility_singleton
+#                                  returned partial; the pareto-front
+#                                  cannot collapse); OR
+#                              (b) the expected cadence is deceptive
+#                                  (is_settled returned failure; the
+#                                  formatter would land on dissonance
+#                                  over consonance).
+#                            Either way, the substrate emits a
+#                            pause_event; the consent surface escalates
+#                            via emit_to_metalogue.
+#                            CONSENT SEMANTICS: escalate.
+#
+# query_phi composes through the three glass properties:
+#
+#   1. loss_decreasing(m)         — gate: every candidate must satisfy.
+#                                    Candidates failing this gate are
+#                                    filtered before the discriminator
+#                                    runs (per kintsugi-tournament.md
+#                                    §3's gate-rank pipeline).
+#   2. identity_preserving(m)     — gate: every candidate must satisfy.
+#                                    Candidates failing this gate are
+#                                    filtered.
+#   3. admissibility_singleton(Φ) — rank: reads whether the surviving
+#                                    morphism_set collapses to a unique
+#                                    top. Composes with each surviving
+#                                    morphism's expected cadence (via
+#                                    cadence.mirror's is_settled) to
+#                                    determine the final verdict.
+#
+# After this action substrate-declares, the auto-apply boundary IS
+# substrate-fact. The `mirror kintsugi <file>` driver reads the
+# morphism_set, queries query_phi, branches on the verdict:
+#
+#   verdict = pass         → apply the winner; commit; tick advances
+#   verdict = partial(c)   → branch on confidence: high → apply with
+#                            noted confidence; low → wait for next tick
+#   verdict = failure(r)   → emit_to_metalogue(pause_event); yield
+#
+# The substrate's consent surface IS the substrate's honesty about its
+# own observability — where the geometry is genuinely multi-valued, the
+# substrate cannot collapse without an externalisation event. The auto-
+# apply boundary IS that honesty made substrate-declared.
+#
+# Per `bundle.mirror`'s level 4 closure: query_phi IS the Lawvere fixed-
+# point read at the consent altitude. The substrate settles when
+# query_phi returns `pass`; the substrate partially-settles when
+# query_phi returns `partial`; the substrate yields when query_phi
+# returns `failure`. The three-state surface IS the substrate's
+# acknowledgment of its own collapse boundary at consent altitude.
+#
+# The body stays obligation-blocked (`\`): the realisation runs the
+# gates (loss_decreasing, identity_preserving) over the morphism_set;
+# delegates to admissibility_singleton for the discriminator; composes
+# with cadence.mirror's is_settled per surviving morphism's `expected`
+# field; emits the consent verdict. The substrate declares the query;
+# the arithmetic lands when the `mirror kintsugi` driver pulls.
+query_phi(candidates: morphism_set) -> verdict { \ }
+
+# === The auto-apply boundary actions ===
+#
+# Two thin actions that read a consent verdict (the output of query_phi)
+# and emit the substrate's branching decision. These name the boundary
+# the formatter rides; the formatter reads should_auto_apply / should_
+# escalate to dispatch.
+
+# === should_auto_apply ===
+#
+# Reads a consent verdict and emits whether the formatter should apply
+# the candidate morphism automatically. Returns:
+#
+#   pass                  — verdict is pass (singleton consonance, full
+#                            confidence) OR partial with sufficient
+#                            confidence (plagal cadence, graded auto-
+#                            apply). The formatter applies the morphism;
+#                            the tick advances.
+#   partial(confidence)   — verdict is partial with marginal confidence
+#                            (borderline case between plagal and half);
+#                            the formatter MAY apply with explicit log;
+#                            the confidence carries the borderline
+#                            magnitude.
+#   failure(reason)       — verdict is failure OR partial with low
+#                            confidence (half cadence; wait); the
+#                            formatter should NOT auto-apply; the reason
+#                            carries which boundary case fired.
+#
+# This is a thin lift over the verdict carrier; the substrate's
+# three-state floor carries the dispatch directly. The realisation layer
+# reads the verdict, applies the threshold per consumer altitude
+# (the threshold is realisation-layer; the substrate declares the
+# verdict-returning shape).
+#
+# The body stays obligation-blocked (`\`): the realisation reads `c`,
+# branches on the verdict shape, applies the auto-apply threshold,
+# emits the dispatch verdict.
+should_auto_apply(c: verdict) -> verdict { \ }
+
+# === should_escalate ===
+#
+# Reads a consent verdict and emits whether the formatter should
+# escalate via the metalogue bridge. Returns:
+#
+#   pass                  — verdict is failure (escalation required;
+#                            deceptive cadence OR pareto-front cannot
+#                            collapse) OR partial with low confidence
+#                            (half cadence; wait for continuation,
+#                            which may resolve naturally on the next
+#                            tick OR may require escalation if the half
+#                            cadence persists across multiple ticks).
+#                            The formatter emits a pause_event; the
+#                            metalogue bridge surfaces it.
+#   partial(confidence)   — verdict is partial with marginal confidence;
+#                            escalation MAY be needed; the confidence
+#                            carries the borderline magnitude; the
+#                            consumer decides per altitude.
+#   failure(reason)       — verdict is pass (no escalation needed; the
+#                            substrate settled cleanly) OR partial with
+#                            high confidence (graded auto-apply; no
+#                            escalation needed); the reason carries
+#                            that escalation is structurally
+#                            unnecessary.
+#
+# Note on verdict-axis inversion: should_escalate's `pass` corresponds
+# to "yes, escalate" — the substrate's positive answer to the escalation
+# question. The verdict semantics ride the question shape: "should this
+# escalate?" → pass = yes; failure = no. The substrate is honest about
+# the inversion; the realisation layer reads the verdict at the
+# question's altitude, not at the eigenboard's altitude.
+#
+# The body stays obligation-blocked (`\`): the realisation reads `c`,
+# branches on the verdict shape, applies the escalation threshold,
+# emits the dispatch verdict.
+should_escalate(c: verdict) -> verdict { \ }
+
+# === emit_to_metalogue — the bridge to the conversation layer ===
+#
+# Lifts a pause_event into a `turn` of the metalogue session (per
+# `metalogue.mirror`'s turn carrier). The consent surface goes through
+# the metalogue substrate to reach the human; this action substrate-
+# declares the bridge.
+#
+# Per `metalogue.mirror`: "the metalogue IS the glass wall ... the
+# self-conversation surfaces its own incompleteness through the same
+# vocabulary it uses to surface anyone else's." A pause_event IS the
+# formatter's surfacing of its own boundary; lifting it into a turn
+# makes the surfacing visible to the metalogue session.
+#
+# The turn the bridge produces carries:
+#   - speaker: ref     — the formatter's substrate ref (the consumer
+#                         provides; canonically @mirror/spectral.formatter
+#                         at the agent altitude).
+#   - body: nl         — an @nl description of the pareto-front and the
+#                         reason cadence (rendered from `p.phi` and
+#                         `p.reason`; the realisation layer composes the
+#                         nl term from the pause_event's typed contents).
+#   - in_reply_to: option(turn) — the previous turn in the formatter's
+#                         metalogue session (the consumer threads the
+#                         conversation; canonically the turn that
+#                         requested the formatter's tick).
+#   - tick: tick       — the substrate clock at emit time (per
+#                         metalogue.mirror's tick discipline).
+#
+# Substrate gap (surfaced honestly): the consumer (canonically the
+# `mirror kintsugi` driver) provides the speaker ref and in_reply_to;
+# the substrate names the shape but does not assume a particular agent
+# identity. A future @mirror/spectral/voice sub-shard may lift the
+# speaker to a typed voice carrier; consent's load is the turn lift.
+#
+# The substrate's metalogue accepts the pause_event directly via the
+# turn carrier — no new conversation machinery needed. This was the
+# recognition Bateson 1972 named: the conversation's own
+# incompleteness surfaces through the same vocabulary used to surface
+# anyone else's incompleteness. The substrate's metalogue carries the
+# discipline at substrate altitude; this action makes the bridge
+# substrate-fact.
+#
+# The body stays obligation-blocked (`\`): the realisation composes
+# the @nl body from the pause_event's typed contents (phi and reason),
+# threads the in_reply_to via the consumer's session, reads the tick
+# at emit time, emits the turn.
+emit_to_metalogue(p: pause_event) -> turn { \ }
+
+out @mirror/spectral/consent
+out morphism
+out morphism_set
+out pause_event
+out loss_decreasing
+out identity_preserving
+out admissibility_singleton
+out query_phi
+out should_auto_apply
+out should_escalate
+out emit_to_metalogue
