@@ -20,7 +20,15 @@ blake3 = { version = "1", default-features = false }
 # spectral-triple structure. `terni` provides `Imperfect` (the verdict
 # carrier for D's partially-defined action) and `Metric` (the residual
 # bound). Per docs/specs/prism-core-as-spectral-triple.md.
-prism-core = { path = "../../prism/core", features = ["bundle"] }
+#
+# The `lapack` feature wires prism-core's Fortran FFI (the dsyev /
+# dgesvd wrappers over LAPACK; gfortran + Accelerate framework on
+# darwin) so the bootstrap can discharge sheaf_laplacian.mirror's
+# `lambda_zero` obligation via real eigendecomposition. Per T8
+# (the LRM for the flang/mirror numerical split per
+# docs/specs/numerical-substrate-via-fortran.md §1.4) and the
+# substrate declaration in shards/epistemologic/math/sheaf_laplacian.mirror.
+prism-core = { path = "../../prism/core", features = ["bundle", "lapack"] }
 terni = { path = "../../prism/imperfect", default-features = false }
 # Used by `cmd_kintsugi_single`'s `--ci` JSON serialiser. Per T11.2 of
 # `docs/specs/kintsugi-ci-v0.1.md`. The `--ci` flag emits a verdict

@@ -153,6 +153,7 @@ dependencies = [
 name = "prism-core"
 version = "0.1.0"
 dependencies = [
+ "cc",
  "hex",
  "prism-derive",
  "sha2",

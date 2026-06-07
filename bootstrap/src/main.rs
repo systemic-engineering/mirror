@@ -20,6 +20,7 @@ mod music;
 mod oscillate;
 mod pipeline;
 mod property;
+mod sheaf_laplacian;
 mod spectral;
 mod tensor;
 mod tokenize;
