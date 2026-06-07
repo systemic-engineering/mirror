@@ -1,0 +1,316 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @loss
+
+# @mirror/loss — the substrate's loss family root at the mirror altitude.
+#
+# The recognition (2026-06-07, Alex → Mara): the substrate already
+# has loss declared at three altitudes — `type loss = pure - real`
+# (boot/01-meta.mirror; the algebraic floor), `grammar @loss` with
+# `type measurement = shannon | fiedler | cheeger | entropy | mixing`
+# (boot/01a-error.mirror; the measurement enumeration), and
+# `transparency(p)` as the substrate's loss carrier (glass.mirror;
+# the located-opacity carrier with success / partial / failure
+# constructors). The family root lifts these from grammar-altitude
+# declarations to the mirror altitude where sub-glasses parameterize
+# the `L: Loss` slot on `imperfect<a, e, l>` as typed species under
+# one named family. The same lift that gave us `@cli → @mirror/lens/cli`
+# (the 2026-06-06 lens family migration); the same lift that gave us
+# `@mirror/spec` (the project manifold grammar).
+#
+# Load-bearing recognition: **glass and lens are two names for one
+# primitive at three altitudes.** Glass at the substrate-declaration
+# altitude carries typed surfaces with properties and restriction
+# maps (`shards/glass.mirror`'s `glass(name) -> prism { \ }`
+# keyword; `splinter`, `shard`, `transparency`, `verdict` as the
+# floor declarations). Lens at the optics-implementation altitude
+# carries the observation/projection family with the same five-
+# operation algebra rendered through a typed surface
+# (`shards/mirror/lens.mirror`'s `prism @mirror/lens { ... }` family
+# root; cli / shell / mcp / lsp / transit / refract as species).
+# Restriction map at the sheaf-theoretic altitude carries section
+# gluing (the conductivity tensor's edge maps per
+# `epistemologic/math/sheaf_laplacian.mirror`; the cellular sheaf's
+# Čech complex per the eigensheaf spec). These are the same
+# primitive at three altitudes — a typed-surface-with-restriction-
+# maps that carries data from one altitude into another while
+# preserving the algebra. The substrate's `glass <name>` declaration
+# IS a `lens <name>` declaration IS a restriction-map declaration.
+#
+# The 23rd-instance substrate-pull recognition: every "missing
+# concept" turns out to be a name the substrate was already
+# implicitly using. Per [[feedback-substrate-already-had-the-word]]:
+# 22 prior instances logged; this is the 23rd. The substrate has
+# been using `glass` (declaration altitude), `lens` (observation
+# altitude), `restriction map` (sheaf altitude), `splinter.lens`
+# (the referring-splinter shape per glass.mirror's splinter_shape
+# enum) consistently; the collapse is recognition-level, not
+# keyword-level. The names stay where they are. The recognition
+# names that they're the same primitive.
+#
+# Why this matters for the loss family: each sub-glass under
+# `@mirror/loss/` IS a lens INTO the loss algebra. The lens projects
+# the substrate's running state into a measurement (a scalar; a
+# located opacity map; a higher-arity Massey class); the
+# measurement composes back through the imperfect functor's `L`
+# slot; the substrate's transparency monoid (Fail-dominates /
+# Partial-min-confidence / Pass-neutral per
+# `glass.mirror`'s transparency declaration) composes the sub-
+# glasses' losses into the parent's verdict. Each `glass
+# @mirror/loss/<name>` IS a lens into the substrate's loss space
+# at that name's altitude.
+#
+# === Discipline ===
+#
+# A `@mirror/loss` instance IS:
+#
+#   - a typed-surface-with-restriction-map: same five-operation
+#     algebra, different L (loss carrier) chosen at the sub-glass
+#     altitude. The runtime evaluates the same algebra; each
+#     sub-glass parameterizes the imperfect functor's loss slot
+#     for a specific measurement shape (located opacity map for
+#     transparency; scalar bits for shannon; Dirichlet energy for
+#     dirichlet; H² Massey class for massey).
+#   - a projection INTO the loss algebra, not a parallel one:
+#     sub-glasses do not OWN loss state. The loss state lives on
+#     the substrate's running imperfect carriers; each sub-glass
+#     reads through to the same carrier through the same monoid.
+#     Two sub-glasses observing the same imperfect MUST see the
+#     same total transparency under the projection; divergence is
+#     a bug by construction (the lens discipline per
+#     `shards/mirror/lens.mirror`).
+#   - composable under the Transparency monoid: sub-glass losses
+#     compose under the existing `Transparency<P>` monoid declared
+#     at the glass floor (per `glass.mirror`'s transparency type).
+#     No parallel combine; the algebra is borrowed verbatim from
+#     the substrate floor.
+#
+# === Species under this family ===
+#
+# All four sub-glasses correspond to measurement variants the
+# substrate already enumerates in `boot/01a-error.mirror`'s
+# `type measurement = shannon | fiedler | cheeger | entropy | mixing`,
+# plus the higher-arity Massey class derived from the prophecy
+# insight (2026-06-07).
+#
+# Carrier sub-glasses:
+#
+#   @mirror/loss/transparency  the canonical carrier per `glass.mirror`.
+#                              `transparency<p>` over a property `p`;
+#                              success / partial(opacity_map) /
+#                              failure(opacity_map). Fail-dominates /
+#                              Partial-min-confidence / Pass-neutral
+#                              algebra. The substrate's primary loss
+#                              vocabulary; what every other sub-glass
+#                              lifts into when composing into the
+#                              parent imperfect's L slot. Landed this
+#                              tick (substrate-pull-lift from
+#                              glass.mirror's floor declaration).
+#
+# Scalar sub-glass (forward-promise):
+#
+#   @mirror/loss/shannon       the scalar information-theoretic loss
+#                              per `boot/01a-error.mirror`'s
+#                              measurement = shannon enumeration. Bits
+#                              of missing information; composes additively;
+#                              the Imperfect monad's L = f64 instance.
+#                              `glass.mirror`'s opacity.weight field is
+#                              already shannon-shaped ("bits-of-missing-
+#                              information at this site (Shannon-like)");
+#                              this sub-glass lifts that floor field
+#                              into a typed measurement at the mirror
+#                              altitude. Forward-promised; lands when
+#                              a consumer pulls a scalar L parameter.
+#
+# Energy sub-glass (forward-promise):
+#
+#   @mirror/loss/dirichlet     the sheaf Dirichlet energy `½⟨x, Δ₀x⟩`
+#                              per T8 / T9's sheaf Laplacian. Per
+#                              `epistemologic/math/sheaf_laplacian.mirror`'s
+#                              `λ₀(Δ_F)` computation; per Bodnar 2022's
+#                              Neural Sheaf Diffusion gradient flow
+#                              to `ker(Δ_0) = H⁰(F)`. The kintsugi
+#                              loop's gradient flow descends this
+#                              functional; eⁿ⁺¹ < eⁿ is
+#                              Polyak-Łojasiewicz on this energy.
+#                              Forward-promised; lands when the
+#                              sheaf-diffusion Houdini fixpoint pulls.
+#
+# Higher-arity sub-glass (forward-promise):
+#
+#   @mirror/loss/massey        the noncommutative-curvature carrier
+#                              per Markl 2024 (arXiv:2404.19607). The
+#                              `conundrum` IS non-vanishing Massey
+#                              product `⟨α,β,γ⟩ ∈ H²`; per Markl's
+#                              Remark 10 the Massey cocycle is
+#                              `c(D) = -dD + D·D`, noncommutative
+#                              curvature of the connection D. A
+#                              substrate is formal iff it has no
+#                              conundra (DGMS 1975). Per the prophecy
+#                              insight (2026-06-07): pairs with
+#                              `@mirror/homotopy/massey` as the
+#                              constructive-derivation sub-shard.
+#                              Forward-promised; lands when the
+#                              homotopy/A_infinity pull comes through.
+#
+# === Why one family ===
+#
+# All four sub-glasses parameterize the same `L` slot on
+# `imperfect<a, e, l>` declared at the glass floor. Without the
+# family, every consumer (kintsugi loop; sheaf-diffusion fixpoint;
+# conundrum detector) lands its loss carrier at an ad-hoc altitude
+# (`@bits`, `@energy`, `@curvature`, `@h2`) and the cross-cutting
+# discipline (Transparency-monoid composition; imperfect's L-slot;
+# the lens projection into the substrate's running state) has to
+# be re-justified per measurement. With the family, the discipline
+# IS the family. The 22 prior substrate-pull recognitions
+# established the rhythm; this one runs the same play at the
+# measurement altitude.
+#
+# === Sibling relationship to @mirror/lens ===
+#
+# `@mirror/lens` observes the substrate's running state through
+# typed transport surfaces (cli / shell / mcp / lsp) and measurement-
+# shape surfaces (transit / refract). `@mirror/loss` observes the
+# substrate's running loss algebra through typed measurement
+# carriers (transparency / shannon / dirichlet / massey). Per the
+# glass-IS-lens recognition above: these are sibling families at
+# the mirror altitude, not parent-child. Both project the same
+# five-operation algebra through their own typed surfaces; both
+# compose under the same Transparency<P> monoid; both observe state
+# without owning it. `@mirror/spectral` (the agent coordination
+# layer) consumes both — the conductor reads refract (a lens species);
+# the audition reads pending morphisms ranked by their losses (the
+# loss family's species). The dependency points downstream from the
+# family roots; the roots stay decoupled.
+#
+# === Pre-AI prior art ===
+#
+# Every type and action below names an established object older
+# than the discipline of computer science (modulo discipline names):
+#
+#   loss            Wiener (1948), Cybernetics; the residual
+#                    between predicted and observed in a feedback
+#                    loop. The substrate's reading is
+#                    boot/01-meta.mirror's `loss = pure - real`
+#                    — the algebraic floor lifted by Wiener.
+#   measurement     Bridgman (1927), The Logic of Modern Physics;
+#                    operationalism. The measurement IS the
+#                    operation that produces the number. The
+#                    substrate's reading is
+#                    boot/01a-error.mirror's measurement variants
+#                    — each variant IS one operation that produces
+#                    one shape of loss number.
+#   transparency    Hayek (1945), The Use of Knowledge in Society;
+#                    the located, partial, contextual knowledge that
+#                    cannot be centralized. The substrate's reading
+#                    is glass.mirror's `transparency<p>` carrier with
+#                    opacity_map naming WHERE the partiality lives.
+#   lens            Bartlett (1932), Remembering; the schema as
+#                    selective surface that constructs what's seen.
+#                    The substrate's reading is
+#                    shards/mirror/lens.mirror's family-altitude
+#                    declaration. Per the collapse above: also the
+#                    same primitive as the splinter.lens shape
+#                    (cross-altitude link) and the sheaf restriction
+#                    map (section gluing).
+#
+# Per [[architecture-prism-as-trait-as-everything]]: `prism
+# @mirror/loss { ... }` declares the family IS a prism. The
+# five-operation block below is the canonical declaration form
+# (cf. shards/mirror/lens.mirror, shards/mirror/spectral.mirror,
+# shards/mirror/spec.mirror). Each sub-glass specialises from there.
+#
+# Spec context: docs/specs/transparency.md (the floor transparency
+#               declaration this family lifts),
+#               docs/specs/eigensheaf.md (the Dirichlet-energy
+#               descent that @mirror/loss/dirichlet parameterizes),
+#               docs/specs/mosaic-as-type-system.md (the imperfect-
+#               as-monad floor with L slot),
+#               docs/insights/2026-06-07-prophecy-derived-fractures-
+#               from-topology.md (Markl 2024 Massey-as-A_∞ ground
+#               for @mirror/loss/massey; the four-sub-shard cascade
+#               this family root sits sibling to).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]]
+#                      (the same lift that gave @cli → @mirror/lens/cli;
+#                      grammar-altitude @loss → mirror-altitude
+#                      @mirror/loss),
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (transparency and imperfect are substrate
+#                      vocabulary; this family lifts them into typed
+#                      species),
+#                      [[architecture-shard-as-crdt]] (the loss
+#                      carriers ascend the bounded semilattice;
+#                      kintsugi's eⁿ⁺¹ < eⁿ IS the monotone descent
+#                      of the chosen L's distance to ker(Δ₀)),
+#                      [[architecture-connes-spectral-triple]] (the
+#                      L slot's choice IS the D component of (A, H,
+#                      D); the family parameterizes which Dirac the
+#                      substrate runs).
+# Substrate recognitions: [[feedback-substrate-already-had-the-word]]
+#                      (the 23rd-instance: @loss grammar already
+#                      named the five measurement variants;
+#                      transparency floor already named the carrier;
+#                      this family lifts what was already there),
+#                      [[feedback-substrate-pull]] (the family root
+#                      pulls loss from grammar floor to mirror
+#                      altitude; no invention, only lift),
+#                      [[feedback-loss-from-epistemologic-properties]]
+#                      (at every Fate-tournament altitude, the loss
+#                      is a composite of @epistemologic/properties;
+#                      sub-glasses are the composition surface).
+# Forward-promise to consumers:
+#   - @mirror/loss/shannon  lands when a consumer pulls a scalar L
+#                            parameter (the bits-of-missing-information
+#                            measurement; trivially additive monoid).
+#   - @mirror/loss/dirichlet lands when the sheaf-diffusion Houdini
+#                             fixpoint pulls (per the eigensheaf spec;
+#                             per Bodnar 2022's NSD).
+#   - @mirror/loss/massey   lands when @mirror/homotopy/massey pulls
+#                            (per the prophecy insight's cascade order;
+#                            the constructive H² derivation per Markl
+#                            Lemma 14).
+#   - The @mirror/store/crystal pull (next-in-cascade per the
+#                            prophecy insight) reads `transparency`
+#                            as the verdict payload carrier; this
+#                            family root + transparency sub-glass
+#                            unblock that pull.
+# Related shards: glass.mirror (transparency and imperfect floor;
+#                 the L slot this family parameterizes),
+#                 boot/01a-error.mirror (the @loss grammar this
+#                 family lifts; the measurement enumeration this
+#                 family realises sub-glass by sub-glass),
+#                 boot/01-meta.mirror (the algebraic floor
+#                 `loss = pure - real`),
+#                 mirror/lens.mirror (the sibling family; observation
+#                 to loss's measurement; glass-IS-lens recognition
+#                 makes the sibling structural),
+#                 mirror/spectral.mirror (the consumer family; the
+#                 audition reads pending morphisms ranked by their
+#                 sub-glass losses),
+#                 mirror/spectral/score.mirror (the eigenboard context
+#                 carrier; its pending field's morphisms carry sub-
+#                 glass losses for the SDRF ranking),
+#                 epistemologic/math/sheaf_laplacian.mirror (the
+#                 λ₀(Δ_F) computation @mirror/loss/dirichlet will
+#                 parameterize when it lands),
+#                 epistemologic/math/curvature.mirror (the Balanced
+#                 Forman ranking; consumer of dirichlet sub-glass
+#                 outputs).
+# Path-namespace property: this file at `shards/mirror/loss.mirror`
+# declares `@mirror/loss` as the family root; sub-glasses live at
+# `shards/mirror/loss/<name>.mirror`.
+
+prism @mirror/loss {
+  focus loss
+  project loss
+  split loss
+  shift loss
+  settle loss
+}
+
+out @mirror/loss

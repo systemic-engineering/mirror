@@ -1,0 +1,152 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/loss
+
+# @mirror/loss/transparency — the canonical loss carrier sub-glass.
+#
+# THE FIRST SPECIES under @mirror/loss. Lifts the substrate's floor
+# declaration `transparency(p)` from `shards/glass.mirror` into the
+# loss family at the mirror altitude. NO new type — the carrier IS
+# the floor declaration; this shard names the family placement.
+#
+# Per `glass.mirror`'s floor declaration (lines 90-95):
+#
+#   # transparency(p) — located opacity over property p. The substrate's
+#   # loss carrier. Replaces the dead MirrorLoss scalar.
+#   type transparency(p) =
+#     | success
+#     | partial(opacity_map)
+#     | failure(opacity_map)
+#
+# The substrate's primary loss vocabulary. What every other
+# `@mirror/loss/*` sub-glass lifts into when composing into the
+# parent imperfect's L slot. The Fail-dominates / Partial-min-
+# confidence / Pass-neutral algebra (per `properties-on-glass.md`'s
+# transparency-monoid spec).
+#
+# === The lens-into-loss reading ===
+#
+# Per the family-root recognition (glass IS lens at three altitudes):
+# this sub-glass IS a lens INTO the substrate's loss space at the
+# transparency-carrier altitude. The lens projects the substrate's
+# running imperfect's `L` slot when `L = transparency<p>` into the
+# located-opacity-map shape; the projection preserves the
+# Transparency<P> monoid; the substrate's running transparency state
+# composes through this lens without dual-state divergence.
+#
+# Two sub-glasses observing the same imperfect MUST agree on the
+# transparency total. `@mirror/loss/transparency` IS the canonical
+# observer; other sub-glasses (shannon when it lands; dirichlet
+# when it lands) MUST lift their scalar / energy / Massey-class
+# outputs into a transparency-equivalent before composing into
+# the parent imperfect. The transparency sub-glass IS the
+# composition centre of the family (per the floor declaration's
+# "the substrate's loss carrier" framing).
+#
+# === Substrate-pull discipline ===
+#
+# No new type; no new action; no new property. The carrier IS the
+# floor declaration. This shard:
+#
+#   1. Lifts the family placement (the transparency carrier IS now
+#      a named species under `@mirror/loss`).
+#   2. Names the lens-into-loss reading at the family altitude (the
+#      glass-IS-lens recognition realised at the first species).
+#   3. Re-exports the floor carrier (`out transparency`) so consumers
+#      pulling `in @mirror/loss/transparency` get the named type.
+#
+# Per [[feedback-substrate-already-had-the-word]] (23rd instance):
+# the substrate already had `transparency`; this shard does not
+# re-declare; it names. Per
+# [[architecture-glass-wall-substrate-types]]: `transparency` is
+# substrate vocabulary already; the shard at the loss-family altitude
+# IS a re-export-with-family-placement, not a re-declaration.
+#
+# === Why this lands first ===
+#
+# The brief proposed four sub-glasses; only transparency lands this
+# tick. The reasons:
+#
+#   - transparency is the substrate's primary loss carrier; every
+#     other measurement composes through it. Landing it first
+#     anchors the family.
+#   - transparency already exists at the floor; the lift is
+#     substrate-pull-only (no new declaration; pure family
+#     placement).
+#   - shannon / dirichlet / massey each require a consumer pull
+#     before their L-slot semantics resolve cleanly:
+#       * shannon needs a consumer for the scalar-additive monoid
+#         (waiting for `glass.mirror`'s opacity.weight to be lifted).
+#       * dirichlet needs the sheaf-diffusion Houdini fixpoint to
+#         land (waiting for `@mirror/homotopy/A_infinity` pull).
+#       * massey needs `@mirror/homotopy/massey` to pull (per the
+#         prophecy insight's cascade order).
+#   - Per [[feedback-craft-not-deliver]]: substrate-pull discipline
+#     forbids declaring forward-promised types where the consumer
+#     hasn't pulled yet. The family root + transparency anchor IS
+#     the next tick; the rest interleave with consumer pulls.
+#
+# Spec context: docs/specs/transparency.md (the floor declaration;
+#               the L-slot monoid laws),
+#               docs/specs/mosaic-as-type-system.md §2 (the imperfect-
+#               as-monad floor; transparency IS the L slot's primary
+#               instance),
+#               docs/specs/properties-on-glass.md (the transparency-
+#               on-glass discipline; properties carry transparencies
+#               per the cross-language verification surface).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (transparency IS substrate vocabulary; this
+#                      shard names the family placement, not the
+#                      type),
+#                      [[architecture-lift-as-load-bearing]] (the
+#                      lift IS family placement; the carrier stays
+#                      at the floor; the placement happens at the
+#                      mirror altitude).
+# Substrate recognitions: [[feedback-substrate-already-had-the-word]]
+#                      (the 23rd-instance recognition realised at the
+#                      first species; transparency was already the
+#                      carrier),
+#                      [[feedback-substrate-pull]] (no invention; the
+#                      shard is family-placement-only),
+#                      [[feedback-no-bare-types]] (transparency<p> is
+#                      parametric on the property; the L slot stays
+#                      typed).
+# Related shards: glass.mirror (the floor declaration of
+#                 transparency<p>; this shard re-exports without
+#                 re-declaring),
+#                 mirror/loss.mirror (the family root; this shard
+#                 IS the first species under it).
+# Path-namespace property: this file at
+# `shards/mirror/loss/transparency.mirror` declares
+# `@mirror/loss/transparency` as a species under the `@mirror/loss`
+# family.
+
+prism @mirror/loss/transparency {
+  focus transparency
+  project transparency
+  split transparency
+  shift transparency
+  settle transparency
+}
+
+# Re-export the floor carrier under the family placement. The
+# carrier IS `transparency<p>` declared at `shards/glass.mirror`
+# lines 92-95; pulled into scope through `in @glass` above.
+#
+# Consumers pulling `in @mirror/loss/transparency` get the carrier
+# named at the family altitude:
+#
+#   in @mirror/loss/transparency  --  the family-altitude pull
+#   in @glass                      --  the floor-altitude pull
+#
+# Both yield the same type. The family-altitude pull additionally
+# enrols the consumer in the loss-family composition discipline
+# (other @mirror/loss sub-glasses MUST lift into this carrier before
+# composing into the parent imperfect's L slot).
+out transparency
+
+out @mirror/loss/transparency
