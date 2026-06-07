@@ -676,8 +676,7 @@ impl MorphismSet {
 /// [`admissibility_singleton`], and [`query_phi`] to anchor the
 /// substrate-located opacities they emit on the consent surface.
 fn consent_origin() -> Ref {
-    Ref::new("@mirror/spectral/consent")
-        .expect("consent shard path must be a valid substrate ref")
+    Ref::new("@mirror/spectral/consent").expect("consent shard path must be a valid substrate ref")
 }
 
 /// `loss_decreasing(m: morphism) -> verdict` — the loss-decrease gate.

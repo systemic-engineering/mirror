@@ -79,6 +79,18 @@ in @nl
 #                                pareto-front / unique-winner split
 #                                that governs when oscillation pauses
 #                                for a next-consent-surface signal.
+#   @mirror/spectral/morphism   the typed pre/post-morphism pair. Lifts
+#                                consent's per-candidate `morphism`
+#                                carrier by adding the `pre_anchor: ref`
+#                                field so identity_preserving's DARK-
+#                                bits comparison is self-contained at
+#                                the per-candidate altitude; the
+#                                substrate's per-candidate slice of the
+#                                eigenboard.context. Lifted from the
+#                                realisation-layer seam consent.mirror
+#                                §morphism forward-promised; landed
+#                                additively to honour consent's frozen-
+#                                adjacent stability.
 #
 # Forward-references only — sub-shards land as consumers pull them. The
 # `consent` surface is the first expected pull (the auto-apply boundary

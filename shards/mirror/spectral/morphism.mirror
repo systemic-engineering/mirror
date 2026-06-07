@@ -1,0 +1,381 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/spectral
+in @mirror/spectral/consent
+
+# @mirror/spectral/morphism — the typed pre/post-morphism pair sub-shard;
+# the per-candidate eigenboard.context slice that lifts the substrate's
+# `pre_anchor` data from realisation-layer seam to substrate-altitude
+# declaration.
+#
+# THE T14.1 SUB-SHARD landing the forward-promise consent.mirror named
+# eight ticks ago. Lines 138-146 of `consent.mirror` (the substrate gap
+# surfaced honestly):
+#
+#   "Substrate gap (surfaced honestly): the substrate has no `morphism`
+#    carrier at @mirror or @glass altitude — the term was always relative
+#    (refract.mirror talks about morphisms on the eigenboard; au.mirror
+#    talks about proposed compositions; @mirror/spectral talks about
+#    coordination morphisms). This shard declares the SPECIFIC morphism
+#    shape the auto-apply boundary needs: a candidate with an expected
+#    trajectory. A future @mirror/spectral/morphism sub-shard MAY lift
+#    this to a more general morphism type; consent's load is the
+#    auto-apply case."
+#
+# This shard lands that lift — additively, without modifying
+# consent.mirror's (FROZEN-adjacent) `type morphism`. consent's narrower
+# carrier stays the consent-altitude per-candidate observation unit;
+# this shard declares the morphism-altitude per-candidate context
+# carrier that pairs each candidate morphism with its pre-anchor ref.
+#
+# Load-bearing spec: docs/specs/mirror-spectral.md §4.7 (the consent
+# surface formalisation; identity_preserving reads DARK bits of the
+# PRE-morphism vs POST-morphism shard; the comparison requires the
+# pre-anchor as a typed substrate datum, not an opaque ref hiding in
+# the loop driver's state).
+#
+# === The recognition: the substrate had already named the pair at the
+# orchestra altitude (the 25th-instance candidate) ===
+#
+# Three prior ticks built every primitive this shard composes:
+#
+#   @mirror/spectral/consent        the morphism carrier;        (c3802eba)
+#                                    the consent-altitude
+#                                    per-candidate observation
+#                                    (type morphism = { content,
+#                                    score, expected })
+#   @mirror/spectral/oscillate      the oscillation carrier;     (-)
+#                                    type oscillation = { state,
+#                                    iteration, anchor: ref } —
+#                                    the loop holds the anchor
+#                                    STABLE across passes; the
+#                                    pre_anchor data was always in
+#                                    the loop driver's per-tick state
+#   @mirror/spectral/score          the orchestra-altitude pair;  (-)
+#                                    type score = { anchor: ref,
+#                                    session: metalogue_session,
+#                                    pending: morphism_set } —
+#                                    the WHOLE-orchestra eigenboard
+#                                    context: an anchor paired with
+#                                    a set of pending morphisms
+#
+# The substrate had been quietly carrying (anchor, morphism_set) pairs
+# at THREE altitudes:
+#
+#   - oscillate altitude:  oscillation.anchor + the loop's implicit
+#                          per-tick pending morphisms (still implicit)
+#   - score altitude:      score.anchor + score.pending (typed; the
+#                          orchestra's shared-score reading)
+#   - consent altitude:    NO anchor; query_phi(candidates) reads
+#                          morphism_set in isolation — THIS IS THE GAP
+#
+# What was missing: the PER-CANDIDATE slice of the orchestra-altitude
+# pair. score's `{ anchor, pending }` is the WHOLE orchestra's
+# context; query_phi needs each candidate paired with its pre-anchor
+# so identity_preserving(m) can compare DARK bits across the morphism.
+# This shard declares that per-candidate slice.
+#
+# Per [[feedback-substrate-already-had-the-word]] (now the 25th
+# recognition): each "missing concept" turns out to be a name the
+# substrate was already implicitly using. The pre_anchor data was at
+# the oscillation altitude (in the loop's state) AND at the score
+# altitude (as the anchor field). The per-candidate altitude was the
+# only gap.
+#
+# === The morphism-altitude per-candidate context ===
+#
+# `morphism_context` carries:
+#
+#   pre_anchor   — the substrate ref BEFORE the morphism is applied.
+#                   The anchor shard handle whose uuid_spectral's DARK
+#                   80 bits identity_preserving reads to compare against
+#                   the morphism's resulting shard. Per @uuid/spectral's
+#                   void duality: ACTIVE 48 bits may shift (the
+#                   navigable spectral coordinate re-routes as the
+#                   morphism applies); DARK 80 bits MUST be preserved
+#                   (the identity_preserving gate). pre_anchor is what
+#                   identity_preserving compares against.
+#   candidate    — the morphism (per `@mirror/spectral/consent`'s
+#                   `type morphism = { content, score, expected }`).
+#                   The candidate morphism's content ref carries the
+#                   POST-morphism shard handle; the comparison is
+#                   pre_anchor.uuid.dark ?= candidate.content.uuid.dark.
+#
+# A `morphism_context` lifts a `consent::morphism` by adding the
+# `pre_anchor: ref` field. The realisation layer projects:
+#
+#   morphism_context → morphism  via `candidate` field (drop pre_anchor;
+#                                 narrow to consent altitude)
+#   morphism_context → ref pair  via `{ pre_anchor, candidate.content }`
+#                                 (the DARK-bits comparison's two
+#                                 operands)
+#
+# Both projections are substrate-honest; the morphism_context carries
+# both observations as a single typed record.
+#
+# === The morphism-context-set carrier ===
+#
+# `morphism_context_set = [morphism_context]` is the family-altitude
+# lift of consent.mirror's `morphism_set = [morphism]`. Per
+# dissonance.mirror's `pareto_set = [candidate]` precedent: list-of-type
+# form at declaration position is substrate-accepted.
+#
+# Symmetry note: a morphism_context_set projects to a
+# consent::morphism_set (drop the pre_anchor field per the
+# morphism_context → morphism projection above) when the consent-
+# altitude reading is needed; the substrate carries both shapes so the
+# dispatch is honest at each altitude.
+#
+# === Substrate-pull discipline ===
+#
+# Per `@mirror/spectral/consent`, `morphism` is the consent-altitude
+# per-candidate carrier; this shard re-uses it (pulled into scope via
+# `in @mirror/spectral/consent` above). Per `glass.mirror`, `ref` is
+# the substrate's reference floor. Per the `_context` suffix precedent
+# (eigenboard.context referenced in consent.mirror, oscillate.mirror,
+# and score.mirror as the substrate's vocabulary for the
+# pre-pulse environment a morphism is evaluated in), `morphism_context`
+# names the per-candidate slice of that context.
+#
+# This shard declares `morphism_context` as a record per the
+# pause_event / score precedent; `morphism_context_set =
+# [morphism_context]` as a list-of-type per the pareto_set /
+# morphism_set precedent; the `paired` constructor action returning
+# `morphism_context`. NO new verdict carrier; NO leading-`|`
+# workarounds; NO opaque-`ref` carriers where structured types are
+# available (per [[feedback-no-bare-types]]).
+#
+# === The relationship to score.mirror ===
+#
+# `score.mirror`'s `type score = { anchor: ref, session,
+# pending: morphism_set }` declares the WHOLE-orchestra eigenboard
+# context. This shard's `morphism_context = { pre_anchor: ref,
+# candidate: morphism }` declares the PER-CANDIDATE slice. The two
+# compose:
+#
+#   to_contexts(s: score) -> morphism_context_set =
+#     [ paired(s.anchor, m) | m in s.pending ]
+#
+# (The substrate names the obligation; the projection itself stays
+# obligation-blocked. T15 may substrate-declare to_contexts as a
+# typed action; this tick names only the per-candidate carrier.)
+#
+# === Substrate gaps surfaced honestly ===
+#
+#   - The pre_anchor reads a single substrate ref; the substrate has no
+#     "anchor history" carrier at this altitude. A morphism applied to
+#     an anchor that has itself been morphed N steps ago compares
+#     against the IMMEDIATE pre-anchor, not the original. This is
+#     substrate-fact, not a gap: identity_preserving rides the per-pulse
+#     DARK-bits check; longer-horizon identity questions belong to the
+#     @uuid/spectral altitude (the navigable spectral coordinate's
+#     history), not to morphism_context.
+#
+#   - The `candidate.content` ref carries the POST-morphism shard handle
+#     OPTIMISTICALLY — the realisation layer reads `candidate.content`
+#     as "what the morphism would produce if applied"; the
+#     identity_preserving gate decides whether the application happens.
+#     The substrate names the shape; the optimism / discharge sequence
+#     is the realisation layer's concern.
+#
+# === Forward-promise to T15 (the consumer-pull tick) ===
+#
+# After this shard lands, T15 has a typed substrate datum to lift
+# query_phi's signature to. Two paths are open:
+#
+#   A. query_phi gains a context parameter:
+#        query_phi(candidates: morphism_context_set) -> verdict
+#      — the consent surface reads each candidate's pre_anchor;
+#      identity_preserving's body compares DARK bits against the typed
+#      pre_anchor rather than reaching through an opaque sibling ref.
+#
+#   B. query_phi's signature stays unchanged; identity_preserving's
+#      body gains an internal `morphism_context` synthesis from the
+#      score the consumer passes adjacent. The consent surface reads
+#      score → morphism_context_set via the to_contexts composition;
+#      query_phi composes per-candidate from there.
+#
+# Path A is the substrate-pull-honest lift (the parameter becomes
+# substrate-fact rather than realisation-layer plumbing); path B
+# preserves consent.mirror's signature stability. T15 picks per the
+# substrate-pull discipline; this shard names only the carrier.
+#
+# === Pre-AI prior art ===
+#
+# Every type below names an established object older than the
+# discipline of computer science:
+#
+#   morphism context   Eilenberg & Mac Lane (1945) "General theory of
+#                       natural equivalences"; the (source, arrow)
+#                       observation unit — a morphism with its
+#                       domain explicitly named. The category-theoretic
+#                       arrow IS the pair (object, arrow-from-object);
+#                       this shard names that pair at substrate altitude.
+#   pre/post duality   the categorical duality of (id_A → f) vs
+#                       (f → id_B) — the identity-on-source vs
+#                       identity-on-target reading of a morphism's
+#                       endpoints. The substrate's pre_anchor is the
+#                       id_A reading; the candidate.content ref is the
+#                       implicit id_B reading.
+#   pair               Wiener (1914) / Kuratowski (1921); the ordered
+#                       pair as the foundational data structure. The
+#                       morphism_context IS an ordered pair (anchor,
+#                       morphism); the constructor `paired` names it.
+#
+# The substrate's contribution is *typing* the pair so the formatter
+# reads it. No invention.
+#
+# Spec context: docs/specs/mirror-spectral.md §4.7 (the consent surface
+#               formalisation; identity_preserving requires the
+#               pre-morphism DARK bits as a comparison operand),
+#               docs/specs/kintsugi-tournament.md §3 (the gate+rank
+#               pipeline; identity_preserving is one of the three gates).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]] (the lift
+#                      from realisation-layer plumbing to substrate-
+#                      altitude declaration is the substrate-pull
+#                      gradient — the substrate-pull always wants the
+#                      typed carrier),
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (pre_anchor is substrate vocabulary; declared
+#                      in the shard; the realisation layer reads the
+#                      typed carrier rather than threading an opaque
+#                      ref through query_phi's sibling parameter),
+#                      [[feedback-no-bare-types]] (morphism_context is
+#                      its own carrier; the pre_anchor + candidate pair
+#                      does NOT escape as a bare tuple-of-refs).
+# Substrate recognitions: [[feedback-substrate-already-had-the-word]]
+#                      (the 25th-instance recognition; the substrate
+#                      had been carrying anchor-morphism pairs at the
+#                      oscillation altitude AND at the score altitude
+#                      for ticks before query_phi's realisation surfaced
+#                      the per-candidate gap),
+#                      [[feedback-substrate-pull]] (no invention; the
+#                      shape is the additive lift of consent's
+#                      morphism by score's anchor pattern).
+# Forward-promise to consumers: T15 (`query_phi` signature lift, OR
+#                  `identity_preserving` body composition) consumes
+#                  this carrier; the binding lands when T15
+#                  substrate-pulls. This shard does NOT pull
+#                  `@mirror/spectral/score` or `@mirror/spectral/
+#                  oscillate`; the substrate-altitude arrow points
+#                  inward (morphism_context IS consumed by consent's
+#                  query_phi / by identity_preserving; not the other
+#                  way around).
+# Related shards: mirror/spectral.mirror (the family root; declares
+#                 this sub-shard as the per-candidate context species),
+#                 mirror/spectral/consent.mirror (the consent altitude;
+#                 `morphism` is re-used here as the candidate field;
+#                 `query_phi` is the load-bearing consumer T15 lifts),
+#                 mirror/spectral/score.mirror (the orchestra altitude;
+#                 `score.anchor` IS the same data as `morphism_context.
+#                 pre_anchor` at a different altitude; the per-candidate
+#                 lift of the orchestra-altitude pair),
+#                 mirror/spectral/oscillate.mirror (the loop driver;
+#                 `oscillation.anchor` IS the same data again at the
+#                 loop altitude; the substrate has been carrying the
+#                 anchor at three altitudes and this shard lands the
+#                 per-candidate fourth),
+#                 uuid/spectral.mirror (the DARK-bits comparison that
+#                 identity_preserving rides; `dark(pre_anchor.uuid)`
+#                 vs `dark(candidate.content.uuid)`).
+# Path-namespace property: this file at
+# `shards/mirror/spectral/morphism.mirror` declares
+# `@mirror/spectral/morphism` as a species under the `@mirror/spectral`
+# family.
+
+prism @mirror/spectral/morphism {
+  focus morphism
+  project morphism
+  split morphism
+  shift morphism
+  settle morphism
+}
+
+# === The morphism-context carrier ===
+#
+# The per-candidate slice of the eigenboard.context. Pairs each
+# candidate morphism with its pre-anchor — the substrate ref BEFORE
+# the morphism is applied. The carrier identity_preserving(m) reads
+# to compare DARK 80 bits across the morphism boundary.
+#
+# pre_anchor  — substrate ref to the pre-morphism shard handle (the
+#                anchor the kintsugi loop is currently positioned on).
+#                Read by identity_preserving as the LHS of the
+#                @uuid/spectral.dark byte-equality check.
+# candidate   — the morphism the formatter is proposing to apply
+#                (per `@mirror/spectral/consent`'s `morphism` carrier).
+#                Its `content` ref carries the POST-morphism shard
+#                handle (optimistic; the apply happens only if the
+#                gates pass); its `score` and `expected` fields carry
+#                the dissonance + cadence readings for the discriminator.
+#
+# Identity contract: two morphism_contexts are equal iff their
+# pre_anchor and candidate fields both match. The realisation layer
+# enforces.
+type morphism_context = {
+  pre_anchor: ref,
+  candidate:  morphism,
+}
+
+# === The morphism-context-set carrier ===
+#
+# The set of candidate morphism_contexts the consent surface evaluates
+# at a given oscillation tick. The family-altitude lift of
+# consent.mirror's `morphism_set` — each candidate now carries its
+# pre-anchor so identity_preserving's DARK-bits comparison is
+# self-contained.
+#
+# Per dissonance.mirror's `pareto_set = [candidate]` precedent:
+# list-of-type form at declaration position is substrate-accepted.
+#
+# Symmetry note: a morphism_context_set projects to a consent's
+# `morphism_set` (drop the pre_anchor field per the morphism_context →
+# morphism projection) when the consent-altitude reading is needed;
+# the substrate carries both shapes so the dispatch is honest at each
+# altitude. The realisation layer projects.
+#
+# Identity contract: two morphism_context_sets are equal iff their
+# morphism_context sequences are element-wise equal. The realisation
+# layer enforces.
+type morphism_context_set = [morphism_context]
+
+# === paired — the constructor ===
+#
+# Constructs a typed morphism_context from a pre-anchor ref and a
+# candidate morphism. The substrate's canonical pair-construction
+# action; consumers compose pre/post pairs through this carrier rather
+# than through ad-hoc tuple-of-refs threading.
+#
+# Composes through:
+#
+#   1. Direct field assignment: `{ pre_anchor: pre, candidate: m }`.
+#      No computation; the constructor IS the record construction.
+#
+# Consumers:
+#
+#   - T15's `query_phi` signature lift reads `paired` to construct
+#     morphism_context_set from (anchor, morphism_set) pairs. The
+#     consent surface composes:
+#       morphism_context_set = [ paired(score.anchor, m)
+#                              | m in score.pending ]
+#     — the orchestra-altitude `(anchor, pending)` becomes the
+#     per-candidate `morphism_context_set` via this constructor.
+#
+#   - The kintsugi loop's `pulse` reads `paired` when composing the
+#     candidate-set query_phi reads: each pulse's pre_anchor is
+#     `oscillation.anchor`; each candidate is one element of the
+#     active_pass-emitted morphism_set; the constructor pairs them.
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# `pre` and `m`, emits the two-field record. The substrate names the
+# constructor; the arithmetic IS the record construction.
+paired(pre: ref, m: morphism) -> morphism_context { \ }
+
+out @mirror/spectral/morphism
+out morphism_context
+out morphism_context_set
+out paired
