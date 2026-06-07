@@ -207,10 +207,7 @@ fn empty_file_is_graceful() {
 /// shape and exit code. Preservation test.
 #[test]
 fn ci_corpus_mode_still_works() {
-    let out = run_kintsugi(&[
-        "--ci",
-        "bootstrap/tests/fixtures/kintsugi-pass",
-    ]);
+    let out = run_kintsugi(&["--ci", "bootstrap/tests/fixtures/kintsugi-pass"]);
     assert_eq!(
         out.status.code(),
         Some(0),

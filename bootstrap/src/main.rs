@@ -1680,6 +1680,56 @@ fn cmd_kintsugi_single(
         }
     }
 
+    // T19 (substrate-pull:realize) — settle the AST through the T13
+    // `oscillate_with_ast` driver before rendering. The substrate's
+    // kintsugi loop runs ACTIVE/DARK alternation until is_complete
+    // returns a terminal verdict (Settled or Escalated) per the
+    // Banach contraction. The witness's final oscillation tells us
+    // which terminal state was reached + at what tick count; we
+    // surface that on stderr as a `[settle]` trace so the operator
+    // (and the T19 integration tests) can see the loop ran
+    // end-to-end at the CLI boundary.
+    //
+    // Path-as-ref policy: the initial anchor is
+    // `@kintsugi/<basename>` — substrate-honest "this is the
+    // kintsugi origin for this file". The basename is sanitized
+    // (whitespace dropped) so `Ref::new` accepts it; full filesystem
+    // paths can contain spaces and would be rejected by Ref's
+    // validator. The AST is the load-bearing carrier through the
+    // driver; the initial Ref is just the anchor identity per
+    // `oscillate.mirror` §oscillate's `anchor: initial` shape.
+    //
+    // TODO(T20): if stdout is a pipe to another mirror process,
+    // open the @spectral/portal handshake via SCM_RIGHTS instead of
+    // writing text bytes — the portal-as-eigenvalue-stream lift the
+    // T20 LRM closes. For now, unconditionally take the text
+    // branch; the portal-vs-text discriminator is the T20
+    // distinguisher.
+    let basename = std::path::Path::new(file)
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("file");
+    let safe_basename: String = basename
+        .chars()
+        .filter(|c| !c.is_whitespace() && !c.is_control())
+        .collect();
+    let safe_basename = if safe_basename.is_empty() {
+        "file".to_string()
+    } else {
+        safe_basename
+    };
+    let initial_ref_path = format!("@kintsugi/{}", safe_basename);
+    if let Ok(initial_ref) = Ref::new(initial_ref_path) {
+        let witness = oscillate::oscillate_witness_with_ast(initial_ref, &ast);
+        let state = witness.final_oscillation.state();
+        let iter = witness.final_oscillation.iteration().count();
+        let cap = witness.cap_reached;
+        eprintln!(
+            "[settle] state={:?} iterations={} cap_reached={}",
+            state, iter, cap,
+        );
+    }
+
     let mut out = Vec::new();
     render_ast(&ast, 0, &mut out);
     if let Some(dir) = out_dir {

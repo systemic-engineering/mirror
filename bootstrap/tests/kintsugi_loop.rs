@@ -33,9 +33,20 @@ fn run_kintsugi(args: &[&str]) -> std::process::Output {
 }
 
 #[test]
-/// `--shatter 0` is the identity flag value: stdout matches the no-flag form
-/// (canonical render), stderr is empty, exit 0. This is the historical
-/// behavior pinned.
+/// `--shatter 0` is the identity flag value for the `kintsugi_tick`
+/// scaffold: stdout matches the no-flag form (canonical render),
+/// exit 0, and crucially — no `tick ` lines on stderr (the
+/// scaffold's per-iteration diagnostic).
+///
+/// Per T19 (substrate-pull:realize), the single-file path threads
+/// the AST through `oscillate_with_ast` and emits a `[settle]`
+/// stderr trace naming the terminal oscillation state + iteration.
+/// That trace is structurally distinct from the scaffold's
+/// `tick ` lines (different prefix, different surface). The
+/// historical pin "--shatter 0 must emit no tick lines" survives
+/// in its narrow reading; the broader "stderr is empty" pin lifted
+/// when T19 wired the substrate-honest settle path through the
+/// boundary.
 fn shatter_zero_matches_default() {
     let path = "boot/std/mirror/reload.mirror";
     let default = run_kintsugi(&[path]);
@@ -46,10 +57,11 @@ fn shatter_zero_matches_default() {
         default.stdout, zero.stdout,
         "--shatter 0 stdout must match default"
     );
+    let stderr = String::from_utf8_lossy(&zero.stderr);
+    let tick_lines: Vec<&str> = stderr.lines().filter(|l| l.starts_with("tick ")).collect();
     assert!(
-        zero.stderr.is_empty(),
-        "--shatter 0 must emit no tick lines, got: {}",
-        String::from_utf8_lossy(&zero.stderr)
+        tick_lines.is_empty(),
+        "--shatter 0 must emit no `tick ` scaffold lines, got: {tick_lines:?}"
     );
 }
 
