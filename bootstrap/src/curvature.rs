@@ -142,10 +142,143 @@ impl Curvature {
 ///
 /// Pure; no I/O; allocates a small adjacency for the local
 /// neighbourhood walk.
-pub fn balanced_forman(_op: &Operator, _edge: &Restriction) -> Curvature {
-    // RED phase: stub body. The GREEN commit lands the Topping 2022
-    // §4 Definition 1 equation (3) implementation.
-    unimplemented!("T9 RED: balanced_forman body lands in the GREEN commit")
+pub fn balanced_forman(op: &Operator, edge: &Restriction) -> Curvature {
+    let n = Operator::dimension(op) as usize;
+    let i = Restriction::source(edge) as usize;
+    let j = Restriction::target(edge) as usize;
+
+    // Build undirected adjacency as a vector of unique neighbour sets.
+    // Skip self-loops and out-of-range references. n bounds the walk;
+    // the property layer's corpora are small.
+    let mut adj: Vec<Vec<usize>> = vec![Vec::new(); n];
+    for r in Operator::entries(op) {
+        let s = Restriction::source(r) as usize;
+        let t = Restriction::target(r) as usize;
+        if s >= n || t >= n || s == t {
+            continue;
+        }
+        if !adj[s].contains(&t) {
+            adj[s].push(t);
+        }
+        if !adj[t].contains(&s) {
+            adj[t].push(s);
+        }
+    }
+
+    if i >= n || j >= n || i == j {
+        return Curvature::new(0.0, edge.clone());
+    }
+
+    let d_i = adj[i].len();
+    let d_j = adj[j].len();
+
+    // Topping 2022 Definition 1 degenerate case: min{d_i, d_j} = 1
+    // (or zero, when the edge isn't represented in the operator).
+    let min_d = d_i.min(d_j);
+    if min_d <= 1 {
+        return Curvature::new(0.0, edge.clone());
+    }
+    let max_d = d_i.max(d_j);
+
+    // Triangle count: |#_Δ(i, j)| = |N(i) ∩ N(j)|.
+    let triangles: usize = adj[i].iter().filter(|&&k| adj[j].contains(&k)).count();
+
+    // 4-cycle-forming neighbours without diagonals, per Topping 2022
+    // §4 Definition 1:
+    //
+    //   #_□^i counts k ∈ N(i), k ≠ j, with k ∉ N(j) (no triangle
+    //   through i-j-k) AND ∃ l ∈ N(j), l ≠ i, l ∉ N(i) (no triangle
+    //   through j-i-l), with (k, l) an edge — i.e., the 4-cycle
+    //   i → k → l → j → i closes without any chord.
+    //
+    //   #_□^j counts symmetrically.
+    //
+    //   γ_max(i, j) is the maximal multiplicity of a single k (or l)
+    //   participating in 4-cycles through (i, j) — we take the max
+    //   over per-vertex counts on both sides.
+    let mut sharp_i_count = 0usize;
+    let mut sharp_j_count = 0usize;
+    let mut gamma_max = 0usize;
+
+    for &k in &adj[i] {
+        if k == j {
+            continue;
+        }
+        if adj[j].contains(&k) {
+            // k forms a triangle through (i, j) — chord; skip.
+            continue;
+        }
+        let mut count = 0usize;
+        for &l in &adj[j] {
+            if l == i || l == k {
+                continue;
+            }
+            if adj[i].contains(&l) {
+                // l would form a triangle with i; skip.
+                continue;
+            }
+            if adj[k].contains(&l) {
+                count += 1;
+            }
+        }
+        if count > 0 {
+            sharp_i_count += 1;
+            if count > gamma_max {
+                gamma_max = count;
+            }
+        }
+    }
+    for &l in &adj[j] {
+        if l == i {
+            continue;
+        }
+        if adj[i].contains(&l) {
+            continue;
+        }
+        let mut count = 0usize;
+        for &k in &adj[i] {
+            if k == j || k == l {
+                continue;
+            }
+            if adj[j].contains(&k) {
+                continue;
+            }
+            if adj[l].contains(&k) {
+                count += 1;
+            }
+        }
+        if count > 0 {
+            sharp_j_count += 1;
+            if count > gamma_max {
+                gamma_max = count;
+            }
+        }
+    }
+
+    let d_i_f = d_i as f64;
+    let d_j_f = d_j as f64;
+    let max_d_f = max_d as f64;
+    let min_d_f = min_d as f64;
+    let triangles_f = triangles as f64;
+
+    let base = 2.0 / d_i_f + 2.0 / d_j_f - 2.0;
+    let triangle_term = if triangles == 0 {
+        0.0
+    } else {
+        2.0 * triangles_f / max_d_f + 2.0 * triangles_f / min_d_f
+    };
+    // γ_max term: zero if both 4-cycle counts are zero (Topping 2022
+    // §4 Definition 1) or if γ_max collapsed to zero (no 4-cycles).
+    let four_cycle_term = if sharp_i_count == 0 && sharp_j_count == 0 {
+        0.0
+    } else if gamma_max == 0 {
+        0.0
+    } else {
+        let s = sharp_i_count as f64 + sharp_j_count as f64;
+        (1.0 / gamma_max as f64) * s / max_d_f
+    };
+
+    Curvature::new(base + triangle_term + four_cycle_term, edge.clone())
 }
 
 #[cfg(test)]
