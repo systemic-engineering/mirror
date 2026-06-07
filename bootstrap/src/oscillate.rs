@@ -264,7 +264,6 @@ mod tests {
 
     use super::*;
     use crate::gap::{confidence_of, Gap};
-    use prism_core::Transparency;
     use terni::Imperfect;
 
     /// `settled` is the autopoietic ground state — `Success(())`.

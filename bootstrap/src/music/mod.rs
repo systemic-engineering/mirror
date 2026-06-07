@@ -328,7 +328,10 @@ pub struct Dissonance {
 impl Dissonance {
     /// Construct from a roughness reading and a partial count.
     pub fn new(roughness: f64, partials: u32) -> Self {
-        Dissonance { roughness, partials }
+        Dissonance {
+            roughness,
+            partials,
+        }
     }
 
     /// Read this dissonance's roughness value.
@@ -664,7 +667,6 @@ mod tests {
 
     use super::*;
     use crate::gap::{confidence_of, verdict_to_cadence_kind, Gap};
-    use prism_core::Transparency;
     use terni::Imperfect;
 
     // -----------------------------------------------------------------
