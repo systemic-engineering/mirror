@@ -154,11 +154,25 @@ fn dark_gap(dark: &AstNode) -> Gap {
 ///
 /// [`AstKind::Dark`]: crate::ast::AstKind::Dark
 pub fn gaps_of(ast: &AstNode) -> Vec<Gap> {
-    let _ = ast;
-    // RED: body lands in the GREEN tick. The substrate-altitude
-    // declaration `action gaps_of(ast: ast) -> [gap]` has no body yet
-    // at this commit; the tests below describe what GREEN looks like.
-    unimplemented!("T5 RED: gaps_of body lands in the GREEN tick")
+    let mut gaps: Vec<Gap> = Vec::new();
+
+    // Property 1: @epistemologic/property/total_classification.
+    // Each AstKind::Dark node is one floor-altitude (level-0) failure.
+    // Walk discipline matches `bootstrap/src/main.rs::collect_dark`'s
+    // pre-order traversal so downstream consumers (T6's MUS-graph; the
+    // kintsugi loop) see gaps in source order.
+    let mut darks: Vec<&AstNode> = Vec::new();
+    collect_dark(ast, &mut darks);
+    for d in &darks {
+        gaps.push(dark_gap(d));
+    }
+
+    // Future properties land here as additional iteration steps. When
+    // a substrate-declared property registry lands (see module doc),
+    // this body becomes a loop over the registry rather than a sequence
+    // of per-property extractors.
+
+    gaps
 }
 
 #[cfg(test)]
@@ -251,14 +265,12 @@ mod tests {
         assert_eq!(gaps.len(), 2, "two dark regions yield two gaps");
         // Order matches the walk.
         assert!(
-            gaps[0].tension_summary().contains("0")
-                && gaps[0].tension_summary().contains("5"),
+            gaps[0].tension_summary().contains("0") && gaps[0].tension_summary().contains("5"),
             "first gap names first span; got {:?}",
             gaps[0].tension_summary()
         );
         assert!(
-            gaps[1].tension_summary().contains("6")
-                && gaps[1].tension_summary().contains("12"),
+            gaps[1].tension_summary().contains("6") && gaps[1].tension_summary().contains("12"),
             "second gap names second span; got {:?}",
             gaps[1].tension_summary()
         );
