@@ -270,14 +270,215 @@ impl Tensor {
 /// [`docs/specs/gap-tension-tensor-substrate.md`]: ../../../../docs/specs/gap-tension-tensor-substrate.md
 /// [`docs/specs/property-and-inference-collapse.md`]: ../../../../docs/specs/property-and-inference-collapse.md
 pub fn tensor_of(gaps: Vec<Gap>) -> Tensor {
-    // T6 RED — sentinel body. The GREEN commit lands the MUS-graph +
-    // sheaf-lift + Jacobi-fiedler construction. This sentinel exists so
-    // the test corpus compiles and the RED phase is observable.
+    // Phase 1: build the tension (edge) set. Two gaps are adjacent when
+    // their substrate origins compare equal — the minimal Klein-MUS
+    // reading of “two claims about the same substrate location can be
+    // in opposition.” Each edge carries the audible-altitude floor
+    // TensionVector (uniform magnitude 1.0).
+    let mut tensions: Vec<Tension> = Vec::new();
+    for i in 0..gaps.len() {
+        for j in (i + 1)..gaps.len() {
+            if gaps[i].origin() == gaps[j].origin() {
+                tensions.push(Tension::new(
+                    gaps[i].clone(),
+                    gaps[j].clone(),
+                    TensionVector::new(1.0),
+                ));
+            }
+        }
+    }
+
+    // Phase 2: λ₀ of the normalised sheaf Laplacian. With identity
+    // restriction maps (the minimal first version) the sheaf Laplacian
+    // reduces to the standard normalised graph Laplacian per
+    // Bodnar et al. 2022 §2. Trivial / singleton / disconnected cases
+    // emit 0.0.
+    let fiedler = fiedler_of(&gaps, &tensions);
+
     Tensor {
         vertices: gaps,
-        tensions: Vec::new(),
-        fiedler: f64::NAN,
+        tensions,
+        fiedler,
     }
+}
+
+// ---------------------------------------------------------------------------
+// fiedler_of — the algebraic-connectivity reading on the gap basis.
+// ---------------------------------------------------------------------------
+
+/// Compute λ₀(Δ_0) on the gap-tension graph.
+///
+/// `Δ_0 = D^{-1/2} L D^{-1/2}` is the normalised graph Laplacian on the
+/// vertex set (the gaps) with edge set (the tensions). On disconnected
+/// graphs the multiplicity of eigenvalue `0` equals the number of
+/// components; “smallest non-trivial” is interpreted as the smallest
+/// eigenvalue that is structurally non-zero — i.e. the algebraic
+/// connectivity in the Fiedler 1973 sense. By convention this is `0.0`
+/// when the graph is disconnected (matching Bodnar et al. 2022 §2:
+/// algebraic connectivity vanishes on disconnected sheaves).
+///
+/// Trivial / singleton: `0.0`.
+fn fiedler_of(gaps: &[Gap], tensions: &[Tension]) -> f64 {
+    let n = gaps.len();
+    if n < 2 {
+        return 0.0;
+    }
+
+    // Build adjacency by index. Map each gap to its index in the basis.
+    // Two gaps with the same origin are joined; the tensions list
+    // already encodes that, but we re-index against the gap basis
+    // because tensions carry cloned gaps (not indices).
+    let mut adjacency: Vec<Vec<bool>> = vec![vec![false; n]; n];
+    for t in tensions {
+        // Find the indices of t.a and t.b in the basis. Linear scan;
+        // n is bounded by the gap count which is bounded by the AST
+        // dark-region count — small for the corpora the property layer
+        // emits today.
+        let mut ia: Option<usize> = None;
+        let mut ib: Option<usize> = None;
+        for (k, g) in gaps.iter().enumerate() {
+            if ia.is_none() && g == Tension::a(t) {
+                ia = Some(k);
+                continue;
+            }
+            if ib.is_none() && g == Tension::b(t) {
+                ib = Some(k);
+            }
+        }
+        if let (Some(a), Some(b)) = (ia, ib) {
+            adjacency[a][b] = true;
+            adjacency[b][a] = true;
+        }
+    }
+
+    // Degrees.
+    let degrees: Vec<usize> = (0..n)
+        .map(|i| (0..n).filter(|&j| adjacency[i][j]).count())
+        .collect();
+
+    // Disconnected → λ₀ = 0 by Fiedler 1973 / Bodnar 2022 §2. Check
+    // connectivity via BFS from vertex 0.
+    if !is_connected(&adjacency, n) {
+        return 0.0;
+    }
+
+    // Build the normalised Laplacian Δ_0 = I − D^{-1/2} A D^{-1/2}.
+    // For connected graphs all degrees are ≥ 1.
+    let mut delta = vec![vec![0.0_f64; n]; n];
+    for i in 0..n {
+        for j in 0..n {
+            if i == j {
+                delta[i][j] = 1.0;
+            } else if adjacency[i][j] {
+                let di = degrees[i] as f64;
+                let dj = degrees[j] as f64;
+                delta[i][j] = -1.0 / (di * dj).sqrt();
+            }
+        }
+    }
+
+    // Eigendecompose via Jacobi rotation. Δ_0 is symmetric PSD;
+    // eigenvalues are real and non-negative.
+    let eigenvalues = jacobi_eigenvalues(delta);
+
+    // Smallest non-trivial eigenvalue: the smallest value strictly
+    // greater than a numerical-zero threshold. For a connected graph
+    // the kernel of Δ_0 is one-dimensional (Fiedler 1973); the
+    // smallest non-zero eigenvalue is the algebraic connectivity.
+    let mut sorted = eigenvalues.clone();
+    sorted.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    for &e in &sorted {
+        if e > 1e-9 {
+            return e;
+        }
+    }
+    0.0
+}
+
+/// BFS check: is the graph on `n` vertices with adjacency `adj`
+/// connected? Returns `true` for `n ≤ 1` by convention.
+fn is_connected(adj: &[Vec<bool>], n: usize) -> bool {
+    if n <= 1 {
+        return true;
+    }
+    let mut visited = vec![false; n];
+    let mut queue: Vec<usize> = Vec::with_capacity(n);
+    queue.push(0);
+    visited[0] = true;
+    let mut head = 0;
+    while head < queue.len() {
+        let v = queue[head];
+        head += 1;
+        for u in 0..n {
+            if adj[v][u] && !visited[u] {
+                visited[u] = true;
+                queue.push(u);
+            }
+        }
+    }
+    visited.iter().all(|&b| b)
+}
+
+/// Jacobi eigendecomposition for symmetric dense matrices. Returns the
+/// eigenvalues only (eigenvectors discarded — today’s caller only reads
+/// λ₀). Standard cyclic Jacobi with off-diagonal sweep convergence.
+/// O(n³) per sweep; converges in O(log(1/ε)) sweeps. Sufficient for the
+/// gap-count-bounded matrices the property layer emits.
+///
+/// Reference: Golub & Van Loan, *Matrix Computations* 4e §8.4.
+fn jacobi_eigenvalues(mut m: Vec<Vec<f64>>) -> Vec<f64> {
+    let n = m.len();
+    if n == 0 {
+        return Vec::new();
+    }
+    let max_sweeps = 100;
+    let tol = 1e-12;
+    for _ in 0..max_sweeps {
+        // Find the largest off-diagonal element (Jacobi classical).
+        let mut p = 0;
+        let mut q = 1;
+        let mut max_off = 0.0_f64;
+        for i in 0..n {
+            for j in (i + 1)..n {
+                if m[i][j].abs() > max_off {
+                    max_off = m[i][j].abs();
+                    p = i;
+                    q = j;
+                }
+            }
+        }
+        if max_off < tol {
+            break;
+        }
+        // Compute the rotation angle.
+        let app = m[p][p];
+        let aqq = m[q][q];
+        let apq = m[p][q];
+        let theta = (aqq - app) / (2.0 * apq);
+        let t = if theta >= 0.0 {
+            1.0 / (theta + (1.0 + theta * theta).sqrt())
+        } else {
+            1.0 / (theta - (1.0 + theta * theta).sqrt())
+        };
+        let c = 1.0 / (1.0 + t * t).sqrt();
+        let s = t * c;
+        // Apply the rotation to rows/columns p, q.
+        m[p][p] = app - t * apq;
+        m[q][q] = aqq + t * apq;
+        m[p][q] = 0.0;
+        m[q][p] = 0.0;
+        for i in 0..n {
+            if i != p && i != q {
+                let aip = m[i][p];
+                let aiq = m[i][q];
+                m[i][p] = c * aip - s * aiq;
+                m[p][i] = m[i][p];
+                m[i][q] = s * aip + c * aiq;
+                m[q][i] = m[i][q];
+            }
+        }
+    }
+    (0..n).map(|i| m[i][i]).collect()
 }
 
 #[cfg(test)]
@@ -326,12 +527,13 @@ mod tests {
     }
 
     /// Two gaps from the same origin → two vertices, one edge.
-    /// Connected K₂ has algebraic connectivity λ₀(Δ_0) = 1.0 (the
-    /// normalised Laplacian of K₂ is `[[1, -1], [-1, 1]]` with
-    /// eigenvalues {0, 2}; normalised by D^{-1/2} → {0, 1}; the smallest
-    /// non-trivial eigenvalue is 1.0).
+    /// Connected K₂ has normalised algebraic connectivity λ₀(Δ_0) = 2.0:
+    /// adjacency A = [[0,1],[1,0]], degrees [1,1], so D^{-1/2} = I; the
+    /// normalised Laplacian Δ_0 = I − A = [[1,-1],[-1,1]] with eigenvalues
+    /// {0, 2}. The smallest non-trivial eigenvalue is 2.0 — in general,
+    /// the complete graph K_n has λ₀(Δ_0) = n/(n−1).
     #[test]
-    fn two_gaps_same_origin_yield_one_tension_fiedler_one() {
+    fn two_gaps_same_origin_yield_one_tension_fiedler_two() {
         let g1 = Gap::new(0, total_origin(), "dark region [0, 5)");
         let g2 = Gap::new(0, total_origin(), "dark region [10, 15)");
         let t = tensor_of(vec![g1.clone(), g2.clone()]);
@@ -346,10 +548,10 @@ mod tests {
             (TensionVector::magnitude(Tension::vector(tension)) - 1.0).abs() < 1e-12,
             "vector magnitude must be 1.0 at the audible-altitude floor",
         );
-        // K₂ normalised Laplacian: λ₀ = 1.0.
+        // K₂ normalised Laplacian: λ₀ = 2/(2−1) = 2.0.
         assert!(
-            (Tensor::fiedler(&t) - 1.0).abs() < 1e-9,
-            "K₂ algebraic connectivity must be 1.0; got {}",
+            (Tensor::fiedler(&t) - 2.0).abs() < 1e-9,
+            "K₂ normalised algebraic connectivity must be 2.0; got {}",
             Tensor::fiedler(&t),
         );
     }
