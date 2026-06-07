@@ -1,0 +1,187 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/data
+
+# @mirror/data/json — JSON as a data-grammar lens.
+#
+# THE CANONICAL SPECIES under @mirror/data. Lifts the substrate's
+# floor declaration `grammar @data/json` from
+# `boot/std/data/json.mirror` (2026-05-20) into the data family at
+# the mirror altitude. Two changes from the boot version:
+#
+#   1. `grammar @data/json` → `prism @mirror/data/json`. Per the
+#      @code/rust precedent (boot `grammar @code/rust` → shards
+#      `prism @code/rust`): the family root altitude uses `prism`;
+#      `grammar` was the pre-substrate-pull keyword for grammars
+#      that hadn't yet been recognized as prisms-with-a-typed-
+#      carrier. JSON IS a prism: its five-op specialization is
+#      parse/emit over the json carrier.
+#   2. Family placement: `@data/json` (floor) → `@mirror/data/json`
+#      (mirror altitude under the @mirror/data family root). The
+#      carrier and the parse/emit signatures are identical; the
+#      change is naming, not shape.
+#
+# Per the floor declaration (boot/std/data/json.mirror):
+#
+#   grammar @data/json {
+#     type json = null | bool(bool) | number(f64) | string(text)
+#                 | array([json]) | object([(text, json)])
+#     parse(text) -> json { \ }
+#     emit(json) -> text { \ }
+#   }
+#
+# The carrier exactly mirrors JSON (RFC 8259) section 3-5: six
+# value kinds — null, true/false, number, string, array, object.
+# Number is f64 (the JSON spec is precision-tolerant; f64 is the
+# substrate's standard floating type). String is `text` (UTF-8 per
+# the substrate's text type). Array is a homogeneous list of json
+# values (the substrate's `[a]` list constructor). Object is an
+# association list of (key, value) pairs — the substrate uses the
+# pair-list form rather than a separate map type for object
+# preservation order (a deliberate JSON choice per RFC 8259 §4:
+# implementations MAY preserve member order).
+#
+# === The lens reading ===
+#
+# Per the family-root recognition (data-grammar IS a lens onto
+# structured content): this species IS a typed surface that
+# projects byte sequences through the json carrier and back.
+# parse(text) -> json is the focus projection (bytes → typed
+# structure); emit(json) -> text is the settle projection (typed
+# structure → bytes). The substrate's running data state composes
+# through this lens without dual-state divergence; round-tripping
+# emit ∘ parse on canonical JSON IS structurally idempotent
+# (the standard data-format-lens law, modulo number-formatting
+# choices and object-key-ordering ambiguity that JSON leaves
+# implementation-defined).
+#
+# === Substrate-pull discipline ===
+#
+# The carrier type and the parse/emit signatures are lifted
+# verbatim. No new type; no new action; no signature change. This
+# shard:
+#
+#   1. Names the family placement (`@mirror/data/json` is now a
+#      species under `@mirror/data`).
+#   2. Switches `grammar` → `prism` per the @code/rust precedent.
+#   3. Names the lens-onto-bytes reading at the family altitude.
+#   4. Re-exports the json type and parse/emit actions so consumers
+#      pulling `in @mirror/data/json` get the named surface.
+#
+# Per [[feedback-substrate-already-had-the-word]] (24th-instance
+# candidate; the substrate already had `@data/json` declared in
+# boot/std/data/json.mirror since 2026-05-20). Per
+# [[architecture-lift-as-load-bearing]]: the same lift gave
+# @cli → @mirror/lens/cli and @loss → @mirror/loss; this is the
+# data-altitude instance of the same operation.
+#
+# === Transitional retention of boot/std/data/json.mirror ===
+#
+# The boot shard is RETAINED, not retired. Reasons:
+#
+#   - `boot/std/mcp.mirror` (line 5) imports `in @data/json` and
+#     references `@data/json.parse` / `@data/json.emit` in its
+#     `serve` action. Retiring the boot shard would break the
+#     bootstrap; the consumer-pull migration is a separate tick.
+#   - The same pattern held for `@cli` (boot/std/cli.mirror kept
+#     during the lens migration; species lives at
+#     shards/mirror/lens/cli.mirror) and `@loss` (boot/01a-error
+#     kept during the loss family lift). Boot files retire
+#     one consumer-pull at a time, not at the family-root lift.
+#
+# When `boot/std/mcp.mirror` migrates to `in @mirror/data/json`
+# (a separate tick, likely concurrent with the mcp shard's own
+# lift to `@mirror/lens/mcp` if the substrate-pull tightening
+# applies), the boot json shard retires.
+#
+# === Family-root sibling: format-as-lens ===
+#
+# This species sits alongside three forward-promised siblings
+# (yaml, toml, text) under @mirror/data. Per the family-root
+# recognition: all four name typed lenses onto byte streams; the
+# difference is the carrier shape and the format spec. json IS
+# the canonical one because:
+#
+#   - The carrier is minimal (six variants).
+#   - The format spec is the most stable (RFC 8259, frozen 2017).
+#   - It is the substrate's existing first declaration.
+#   - Most data-emitting consumers (mcp dispatch, future portal
+#     wire serialization per the 2026-06-07 portal-as-eigenvalue-
+#     stream insight) pull JSON first.
+#
+# === Pre-AI prior art ===
+#
+#   json carrier   Crockford (2001), introducing JSON as JavaScript
+#                  object-literal interchange. Standardized: ECMA-404
+#                  (2013), RFC 7159 (2014), RFC 8259 (2017). The
+#                  carrier below is the RFC 8259 §3-5 value grammar.
+#   parse/emit     Wadler (1985), "How to replace failure by a list
+#                  of successes" — the parser-as-monad form parse
+#                  realises (when its body lands). The dual emit
+#                  (carrier → text) is the inverse, sometimes called
+#                  the pretty-printer (Wadler 2003, "A prettier
+#                  printer") — connecting this species directly to
+#                  the T17 Wadler/Bernardy cascade tick.
+#
+# Spec context: docs/research/2026-06-07-pretty-printer-LRM.md
+#               (the cascade this species's emit will integrate
+#               with at T17 — the Wadler/Bernardy doc combinators
+#               become the emit body for structured species),
+#               RFC 8259 (the format spec the carrier realises).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]]
+#                      (the data-altitude lift).
+# Substrate recognitions: [[feedback-substrate-already-had-the-word]],
+#                      [[feedback-substrate-pull]],
+#                      [[feedback-craft-not-deliver]]
+#                      (parse/emit bodies are forward-promised;
+#                      the boot shard's `\` bodies carry over).
+# Related shards: data.mirror (the family root above),
+#                 boot/std/data/json.mirror (the floor declaration
+#                 this species lifts; retained as transitional
+#                 placeholder during consumer migration),
+#                 boot/std/mcp.mirror (the consumer still importing
+#                 `in @data/json`; migration deferred).
+# Path-namespace property: this file at `shards/mirror/data/json.mirror`
+# declares `@mirror/data/json` and only that.
+
+prism @mirror/data/json {
+  focus json
+  project json
+  split json
+  shift json
+  settle json
+}
+
+# === The json carrier ===
+#
+# Per RFC 8259 §3-5: six value kinds. Lifted verbatim from
+# boot/std/data/json.mirror.
+type json = null | bool(bool) | number(f64) | string(text) | array([json]) | object([(text, json)])
+
+# === parse — bytes → json ===
+#
+# Focus projection at the data altitude: byte sequence in JSON
+# wire format yields a typed json carrier. The body is `\` per
+# the substrate-pull discipline — lands when the consumer pulls
+# (the bootstrap parser today, the @mirror/compile-bootstrapped
+# parser when @code/mirror.render lands at T17).
+parse(text) -> json { \ }
+
+# === emit — json → bytes ===
+#
+# Settle projection at the data altitude: typed json carrier
+# yields a byte sequence in JSON wire format. The body is `\` per
+# the same discipline; the Wadler/Bernardy combinator cascade at
+# T17 lands this body in the substrate (the pretty-printer LRM's
+# central recognition: `emit` for structured data IS the same
+# operation as `render` for source code).
+emit(json) -> text { \ }
+
+out @mirror/data/json
+out json
+out parse
+out emit

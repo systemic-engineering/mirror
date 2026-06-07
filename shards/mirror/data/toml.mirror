@@ -1,0 +1,104 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/data
+
+# @mirror/data/toml — TOML as a data-grammar lens.
+#
+# Parallel species under @mirror/data. Forward-promised stub per
+# [[feedback-craft-not-deliver]]: declares the family placement,
+# the carrier shape, and the parse/emit signatures; bodies land
+# when the consumer pulls (the most likely puller is the
+# pretty-printer LRM cascade T19 over Cargo.toml / pyproject.toml
+# / spec.toml inputs).
+#
+# === The carrier ===
+#
+# TOML 1.0.0 (Preston-Werner 2021). The carrier is structurally
+# similar to json plus four additional scalar kinds for TOML's
+# typed date/time support (per TOML 1.0 §Local Date-Time):
+#
+#   - offset_datetime  RFC 3339 datetime with timezone offset.
+#   - local_datetime   RFC 3339 datetime with no offset.
+#   - local_date       Date (no time, no offset).
+#   - local_time       Time of day (no date, no offset).
+#
+# Carrier representations are `text` for now (the wire form is
+# canonical; richer typed-time carriers can land when a consumer
+# pulls explicit chrono operations — `@mirror/data/toml/datetime`
+# sub-species). TOML's integer / float split (`i64` and `f64`
+# separately, per the spec) collapses to `number(f64)` for the
+# core carrier matching JSON's discipline; an `int` sub-variant
+# lands when a consumer pulls integer-precision preservation.
+#
+# Tables and arrays-of-tables (TOML's defining surface feature)
+# parse to `object` and `array(object)` at the carrier level; the
+# wire-syntax distinction (`[table]` vs `[[array.of.table]]`) is
+# emit-time choice, not carrier-level structure. Inline tables
+# (`{key = value}`) parse to the same `object` carrier.
+#
+# === Lens reading ===
+#
+# parse(text) -> toml is the focus projection (TOML wire bytes →
+# typed structure); emit(toml) -> text is the settle projection.
+# The settle projection is where TOML's flavor — table headers,
+# dotted-key sugar, multiline-string heredoc — emerges from a
+# structurally-flat carrier; the Wadler/Bernardy combinators at
+# T17 are well-suited to the table-layout layer (TOML's emit
+# choice space is richer than JSON's).
+#
+# === Pre-AI prior art ===
+#
+#   toml           Preston-Werner (2013); TOML 1.0 (2021). The
+#                  carrier below is TOML 1.0 §Value Types, with
+#                  the f64/integer collapse documented above.
+#   typed config   Originating in INI files (1985, Microsoft
+#                  Windows 3.x); TOML extends INI with explicit
+#                  type discipline.
+#   datetime as    RFC 3339 (2002, Newman/Klyne); TOML's date/time
+#   value          types are the RFC 3339 surface.
+#
+# Spec context: TOML 1.0 spec (the carrier this species realises),
+#               docs/research/2026-06-07-pretty-printer-LRM.md
+#               (the cascade T19 expected to pull toml emit for
+#               settled Cargo.toml output).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]].
+# Substrate recognitions: [[feedback-substrate-pull]],
+#                      [[feedback-craft-not-deliver]]
+#                      (bodies forward-promised).
+# Related shards: data.mirror (the family root above),
+#                 data/json.mirror (the canonical sibling species),
+#                 data/yaml.mirror (sibling — structured-data peer),
+#                 data/text.mirror (sibling — the trivial lens).
+# Path-namespace property: this file at `shards/mirror/data/toml.mirror`
+# declares `@mirror/data/toml` and only that.
+
+prism @mirror/data/toml {
+  focus toml
+  project toml
+  split toml
+  shift toml
+  settle toml
+}
+
+# === The toml carrier ===
+#
+# TOML 1.0 value types. Core six kinds match json's carrier shape;
+# four additional datetime kinds carry RFC 3339 surface forms as
+# text. Tables emit through the `object` carrier; emit-time
+# chooses inline vs table-header syntax.
+type toml = null | bool(bool) | number(f64) | string(text) | array([toml]) | object([(text, toml)]) | offset_datetime(text) | local_datetime(text) | local_date(text) | local_time(text)
+
+# === parse — bytes → toml ===
+parse(text) -> toml { \ }
+
+# === emit — toml → bytes ===
+emit(toml) -> text { \ }
+
+out @mirror/data/toml
+out toml
+out parse
+out emit

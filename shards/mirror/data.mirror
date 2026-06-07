@@ -1,0 +1,249 @@
+in @prism
+in @meta
+in @glass
+in @nl
+
+# @mirror/data — mirror's data-grammar family root.
+#
+# The recognition (2026-06-07, Alex → Mara): the substrate already
+# has `grammar @data/json` declared at the boot altitude
+# (boot/std/data/json.mirror, 2026-05-20). What it lacked was the
+# family root: the named parent under which yaml, toml, text, and
+# the future cbor/msgpack sit as parallel species. This shard lifts
+# the JSON declaration from grammar-altitude `@data/json` to mirror-
+# altitude `@mirror/data/json` under a family root, matching the
+# rhythm of `@code → @mirror/code` (no — `@code` stayed where it
+# was; the analogous lift was `@cli → @mirror/lens/cli`) and the
+# loss family lift (`@loss → @mirror/loss`). Same primitive at two
+# altitudes; the family root names the discipline; species
+# parameterize the format.
+#
+# Load-bearing recognition: **data-grammar IS a lens.** Per the
+# glass-IS-lens 23rd-instance recognition (per
+# `shards/mirror/loss.mirror`'s family-root recognition; per
+# `shards/mirror/lens.mirror`'s six-species transport/measurement
+# closure), a data-format grammar IS a typed surface that projects
+# bytes through a carrier type and back, preserving the algebra.
+# JSON-text is a lens onto a `json` carrier; YAML-text is a lens onto
+# a `yaml` carrier; TOML-text onto `toml`; raw text onto `text`. The
+# data-grammar species do for content what the lens species do for
+# observation: same typed-surface-with-restriction-map shape, one
+# altitude lower (the carrier IS the section; parse/emit are the
+# restriction maps over the bytes/carrier boundary).
+#
+# Same `@code/X` precedent extended: `@code/X` (language-grammar
+# lens onto source code) and `@mirror/data/X` (data-grammar lens onto
+# structured content) are the two halves of grammar-as-lens at the
+# mirror altitude. The first half landed at `shards/code.mirror`
+# (2026-06-06, the @code family root recognition); this shard lands
+# the second half. The four-format opening (json / yaml / toml /
+# text) mirrors the four-language opening of @code
+# (rust / mirror / gleam / llvm) — sibling families at the same
+# altitude, both projecting the same five-op algebra through their
+# own typed surfaces.
+#
+# === Discipline ===
+#
+# A `@mirror/data` species IS:
+#
+#   - a typed-surface-with-restriction-map: same five-operation
+#     algebra, different carrier (the format's structural type)
+#     chosen at the species altitude. Each species declares its
+#     carrier type plus parse(text)/emit(carrier)->text — the two
+#     restriction maps that move between the format's surface
+#     (text) and its substrate (the carrier).
+#   - a lens onto bytes: parse(text)->carrier IS the focus
+#     projection at the data altitude; emit(carrier)->text IS the
+#     settle projection. The five-op block at the family root
+#     declares the algebra; each species realises it for one
+#     format. Composition is by carrier (you can settle a json
+#     into bytes, parse those bytes back, and the resulting json
+#     is structurally equal — the standard idempotence law for
+#     data-format lenses).
+#   - format-as-lens, not parser-as-library: per
+#     [[architecture-prism-as-trait-as-everything]], the species
+#     declares the SHAPE of the lens (carrier + parse + emit); the
+#     bodies are `\` (substrate-pull-discharge). Consumers (mcp
+#     serve; mirror kintsugi; future @data/cbor) pull the species
+#     and get the typed surface; the bodies land when the consumer
+#     pulls (per [[feedback-craft-not-deliver]]).
+#
+# === Species under this family ===
+#
+# Canonical species (lifted from boot, lands this tick):
+#
+#   @mirror/data/json    JSON. The canonical structured-data
+#                        species. Carrier: `null | bool | number
+#                        | string | array | object`. Per
+#                        boot/std/data/json.mirror's original
+#                        declaration; lifted to the family altitude
+#                        with `grammar` → `prism` keyword change
+#                        per the @code/rust precedent (boot keeps
+#                        `grammar @code/rust`; shards/ lifts to
+#                        `prism @code/rust`).
+#
+# Parallel species (stubs land this tick; bodies forward-promised):
+#
+#   @mirror/data/yaml    YAML 1.2 core schema. Carrier: structurally
+#                        analogous to json plus tags. Forward-promised;
+#                        bodies land when a consumer pulls
+#                        (per docs/specs/pretty-printer-LRM cascade T19).
+#   @mirror/data/toml    TOML 1.0. Carrier: similar to json plus
+#                        offset_datetime / local_datetime / local_date /
+#                        local_time. Forward-promised.
+#   @mirror/data/text    Raw text. Carrier: the substrate's native
+#                        `text` type. The trivial lens (parse = identity;
+#                        emit = identity). Lands as a species so the
+#                        family closes over the "unstructured" case at
+#                        the same surface as the structured ones —
+#                        consumers can dispatch over the family without
+#                        a special-case escape hatch.
+#
+# Future species (no shard yet; named here so the recognition is
+# logged):
+#
+#   @mirror/data/cbor      CBOR (RFC 8949). Binary structured data.
+#   @mirror/data/msgpack   MessagePack. Binary structured data.
+#   @mirror/data/csv       CSV (RFC 4180). Tabular text.
+#   @mirror/data/xml       XML 1.0. Hierarchical text.
+#
+# === Why one family ===
+#
+# All species parameterize the same parse/emit shape over a carrier.
+# Without the family, every consumer (`mcp serve` invoking json;
+# `mirror kintsugi` invoking the pretty-printer cascade; a future
+# `@data/cbor` for portal-stream serialization per the
+# 2026-06-07 portal-as-eigenvalue-stream insight) lands its format
+# at an ad-hoc altitude (`@json`, `@yaml`, etc.) and the cross-cutting
+# discipline (carrier-as-section, parse-as-focus, emit-as-settle,
+# idempotence-on-roundtrip) has to be re-justified per format. With
+# the family, the discipline IS the family.
+#
+# === The pretty-printer cascade ===
+#
+# This shard is T16 in the 5-tick cascade closing the pretty-printer
+# LRM (per the 2026-06-07 research):
+#
+#   T16 — @mirror/data root + json lift + yaml/toml/text stubs (this).
+#   T17 — @code/mirror.render with Wadler/Bernardy combinators.
+#   T18 — eigenvalue projection action on portal stream.
+#   T19 — `mirror kintsugi <file>` settled-formatting output path.
+#   T20 — portal handoff via SCM_RIGHTS at CLI pipe boundary.
+#
+# T17 onward consume this family root: `@code/mirror.render` is the
+# AST-to-text projection at the mirror grammar altitude (a sibling
+# operation to `@mirror/data/json.emit` — code-as-data, rendered
+# through the Wadler/Bernardy doc combinators). T19's settled-
+# formatting output reads the species roster declared here to know
+# what file extensions to dispatch over (.json → @mirror/data/json;
+# .yaml → @mirror/data/yaml; .toml → @mirror/data/toml; bare → text).
+# T20's portal handoff serializes Beam<T> chunks through one of
+# this family's species (likely json initially; cbor when binary
+# transport pulls).
+#
+# === Sibling relationships ===
+#
+# `@code/X` (shards/code.mirror) is the LANGUAGE-grammar family at
+# the mirror altitude. `@mirror/data/X` (this shard) is the DATA-
+# grammar family at the mirror altitude. Both name typed lenses
+# onto structured byte streams; both declare the five-op block at
+# their root; both species-parameterize the carrier type. The
+# difference is altitude of the surface: `@code/X` is source-code-
+# shaped (parsing is per language grammar; emit is back to source);
+# `@mirror/data/X` is data-content-shaped (parsing is per format
+# spec; emit is back to wire bytes). The two families partition
+# what mirror can read and write at the byte level.
+#
+# `@mirror/lens` (shards/mirror/lens.mirror) is the OBSERVATION-
+# surface family. `@mirror/loss` (shards/mirror/loss.mirror) is
+# the MEASUREMENT-carrier family. This shard's siblings are the
+# CONTENT-format family. Four mirror-altitude families now: lens
+# observes the substrate's running state; loss measures the
+# substrate's running residual; data carries the substrate's
+# running content through bytes; spec declares the manifold the
+# substrate runs over.
+#
+# === Pre-AI prior art ===
+#
+# Each format below names an established serialization grammar:
+#
+#   json   Crockford (2001); RFC 8259 (2017). The minimal
+#          structural-data interchange grammar. JavaScript's
+#          object-literal subset, generalized.
+#   yaml   Ben-Kiki/Evans/döt Net (2001); YAML 1.2 (2009).
+#          Human-readable serialization with indentation
+#          structure; superset of JSON.
+#   toml   Preston-Werner (2013); TOML 1.0 (2021). Minimal,
+#          INI-derived configuration grammar; explicit type
+#          discipline.
+#   text   Native byte sequences in the substrate's text type;
+#          the trivial format (no carrier transformation).
+#
+# Per [[architecture-prism-as-trait-as-everything]]: `prism
+# @mirror/data { ... }` declares the family IS a prism. The five-
+# operation block below is the canonical declaration form (cf.
+# shards/mirror/lens.mirror, shards/mirror/loss.mirror,
+# shards/mirror/spectral.mirror, shards/mirror/spec.mirror). Each
+# species specialises from there.
+#
+# Spec context: docs/research/2026-06-07-pretty-printer-LRM.md
+#               (the 5-tick cascade this family enables),
+#               docs/specs/portal-as-eigenvalue-stream.md
+#               (the T20 portal handoff that pulls @mirror/data
+#               for chunk serialization).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]]
+#                      (the same lift that gave @cli → @mirror/lens/cli
+#                      and @loss → @mirror/loss; grammar-altitude
+#                      @data → mirror-altitude @mirror/data).
+# Substrate recognitions: [[feedback-substrate-already-had-the-word]]
+#                      (the @data grammar already named json; this
+#                      family lifts what was already there into the
+#                      mirror altitude with named siblings),
+#                      [[feedback-substrate-pull]] (the family root
+#                      pulls data from grammar floor to mirror
+#                      altitude; no invention, only lift),
+#                      [[feedback-craft-not-deliver]] (yaml/toml/text
+#                      bodies are forward-promised; lands when the
+#                      pretty-printer cascade T19 pulls).
+# Forward-promise to consumers:
+#   - @mirror/data/yaml  bodies land when a YAML-emitting consumer
+#                        pulls (likely the kintsugi pretty-printer
+#                        cascade T19 over .yaml inputs).
+#   - @mirror/data/toml  bodies land when a TOML-emitting consumer
+#                        pulls (likely Cargo.toml / pyproject.toml
+#                        kintsugi over T19).
+#   - @mirror/data/text  bodies land when the dispatch-over-extension
+#                        case in T19 pulls the trivial lens.
+#   - boot/std/data/json.mirror IS retained as a transitional
+#                        placeholder; boot/std/mcp.mirror still
+#                        imports `in @data/json`. Migration of
+#                        boot consumers to `in @mirror/data/json`
+#                        is a separate consumer-pull tick. The
+#                        same pattern as @cli (kept in boot) and
+#                        @loss (kept in boot) during their lifts.
+# Related shards: code.mirror (the sibling language-grammar family),
+#                 mirror/lens.mirror (the sibling observation family),
+#                 mirror/loss.mirror (the sibling measurement family),
+#                 mirror/spec.mirror (the consumer that will pull
+#                 @mirror/data/toml for spec.toml emission, future),
+#                 boot/std/data/json.mirror (the floor declaration
+#                 this family lifts; retained as transitional
+#                 placeholder during consumer migration),
+#                 boot/std/mcp.mirror (the consumer still importing
+#                 `in @data/json`; migration deferred to a separate
+#                 tick).
+# Path-namespace property: this file at `shards/mirror/data.mirror`
+# declares `@mirror/data` as the family root; species live at
+# `shards/mirror/data/<name>.mirror`.
+
+prism @mirror/data {
+  focus data
+  project data
+  split data
+  shift data
+  settle data
+}
+
+out @mirror/data

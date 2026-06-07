@@ -1,0 +1,100 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/data
+
+# @mirror/data/yaml — YAML as a data-grammar lens.
+#
+# Parallel species under @mirror/data. Forward-promised stub per
+# [[feedback-craft-not-deliver]]: declares the family placement,
+# the carrier shape, and the parse/emit signatures; bodies land
+# when the consumer pulls (the pretty-printer LRM cascade T19 over
+# .yaml inputs is the expected first puller).
+#
+# === The carrier ===
+#
+# YAML 1.2 core schema (the JSON-compatible subset; per the YAML
+# 1.2 spec §10.2). The carrier mirrors json's shape with one
+# substantive difference: YAML adds the `~` null literal alongside
+# the bare `null` keyword (both produce the same carrier value;
+# the difference is wire serialization at emit time). Numeric and
+# string handling matches JSON's f64/text per the core schema.
+#
+# The structural shape is intentionally near-identical to json:
+# YAML 1.2's core schema IS a JSON superset (YAML 1.2.2 §1.3:
+# "every JSON document is a valid YAML 1.2 document"). The lens
+# IS the surface; the carrier IS the substrate. The difference
+# is the parse/emit surface (indentation-significant block syntax,
+# flow syntax, tags); the carrier is the same kind of structured
+# data tree.
+#
+# Aliases, anchors, and custom tags (the YAML 1.1 feature surface
+# that puts YAML outside JSON compatibility) are NOT in the core
+# schema carrier. If a consumer pulls them, a separate sub-species
+# (`@mirror/data/yaml/full` or similar) can land — but per
+# substrate-pull discipline, the core schema lands first because
+# it's the lens shape that round-trips with json without loss.
+#
+# === Lens reading ===
+#
+# parse(text) -> yaml is the focus projection (YAML wire bytes →
+# typed structure); emit(yaml) -> text is the settle projection
+# (typed structure → YAML wire bytes). T19's pretty-printer
+# cascade settles the emit projection through the Wadler/Bernardy
+# combinators landing at T17.
+#
+# === Pre-AI prior art ===
+#
+#   yaml          Ben-Kiki / Evans / döt Net (2001); YAML 1.2
+#                 (2009; revised 2009/2021). YAML 1.2 core schema
+#                 is the JSON-compatible carrier — the same six
+#                 value kinds with YAML's wire surface.
+#   indentation-  Lamport (1986), "On interprocess communication";
+#   structured    indentation as significant syntax derives from
+#   syntax        Python (van Rossum 1991) and ultimately ABC
+#                 (Geurts/Meertens 1981).
+#
+# Spec context: YAML 1.2.2 spec (the carrier this species realises),
+#               docs/research/2026-06-07-pretty-printer-LRM.md
+#               (the cascade T19 expected to pull yaml emit first).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]].
+# Substrate recognitions: [[feedback-substrate-pull]],
+#                      [[feedback-craft-not-deliver]]
+#                      (bodies forward-promised).
+# Related shards: data.mirror (the family root above),
+#                 data/json.mirror (the canonical sibling species),
+#                 data/toml.mirror (sibling — TOML's carrier shares
+#                 the structured-data root),
+#                 data/text.mirror (sibling — the trivial lens).
+# Path-namespace property: this file at `shards/mirror/data/yaml.mirror`
+# declares `@mirror/data/yaml` and only that.
+
+prism @mirror/data/yaml {
+  focus yaml
+  project yaml
+  split yaml
+  shift yaml
+  settle yaml
+}
+
+# === The yaml carrier ===
+#
+# YAML 1.2 core schema (JSON-superset subset). Same six value
+# kinds as json. Tags / anchors / aliases are out of scope for
+# the core species; a `/full` sub-species can land if a consumer
+# pulls them.
+type yaml = null | bool(bool) | number(f64) | string(text) | array([yaml]) | object([(text, yaml)])
+
+# === parse — bytes → yaml ===
+parse(text) -> yaml { \ }
+
+# === emit — yaml → bytes ===
+emit(yaml) -> text { \ }
+
+out @mirror/data/yaml
+out yaml
+out parse
+out emit

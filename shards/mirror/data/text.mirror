@@ -1,0 +1,107 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/data
+
+# @mirror/data/text — raw text as a data-grammar lens.
+#
+# THE TRIVIAL SPECIES under @mirror/data. The lens-onto-bytes shape
+# where the carrier IS the wire format: parse and emit are identity
+# over the substrate's native `text` type.
+#
+# === Why this lands as a species ===
+#
+# The family-root discipline (per `shards/mirror/data.mirror`) is
+# that every byte-sourced data input is a `@mirror/data/X` lens.
+# Without a `text` species, consumers dispatching over file
+# extensions in T19's pretty-printer cascade would have to special-
+# case the bare-text fallback (`.md`, `.txt`, unknown extension) as
+# an escape from the family — and the cross-cutting discipline
+# (carrier-as-section, parse-as-focus, emit-as-settle, idempotence-
+# on-roundtrip) would have to be re-justified for every unstructured
+# format. Landing `text` as a species closes the family over the
+# trivial case: T19 can dispatch `.txt` to `@mirror/data/text`
+# without leaving the family.
+#
+# Per the convergence: the trivial lens IS still a lens. The
+# identity functor is a functor; the empty product is a product;
+# the trivial carrier is a carrier. The family is closed over the
+# minimum case because the discipline requires it.
+#
+# === The carrier ===
+#
+# `text` — the substrate's native UTF-8 byte sequence type (per
+# shards/glass.mirror's text vocabulary; per boot/std's pervasive
+# `text` use). No carrier transformation; no structural shape;
+# just bytes-as-text.
+#
+# === Lens reading ===
+#
+# parse(text) -> text is the identity projection at the data
+# altitude (bytes → bytes, typed as text on both sides);
+# emit(text) -> text is the identity projection in the other
+# direction. The composition emit ∘ parse IS literally the
+# identity on text — the strongest form of the round-trip
+# idempotence law that structured species satisfy only modulo
+# format ambiguity.
+#
+# This is structurally equivalent to JSON's parse/emit when the
+# json carrier is `string(text)` — the unwrapping is trivial but
+# typed. The species exists to surface that triviality as a named
+# lens, so consumers can dispatch over `@mirror/data` species
+# uniformly.
+#
+# === Pre-AI prior art ===
+#
+#   identity      The identity morphism on a category's object,
+#   morphism      universal across all of category theory
+#                 (Eilenberg/Mac Lane 1945). Every lens family
+#                 contains an identity lens; this is it for
+#                 @mirror/data.
+#   text-as-      Plain ASCII / UTF-8 byte streams as the universal
+#   substrate     interchange substrate; predates structured
+#                 formats. The substrate's text type IS this
+#                 historical baseline.
+#
+# Spec context: docs/research/2026-06-07-pretty-printer-LRM.md
+#               (the cascade T19 dispatch-over-extension that
+#               pulls @mirror/data/text for the fallback case).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]].
+# Substrate recognitions: [[feedback-substrate-pull]],
+#                      [[feedback-craft-not-deliver]]
+#                      (bodies forward-promised; the identity body
+#                      is mechanically obvious but lands when a
+#                      consumer pulls).
+# Related shards: data.mirror (the family root above),
+#                 data/json.mirror (the canonical structured sibling),
+#                 data/yaml.mirror (sibling — structured data),
+#                 data/toml.mirror (sibling — structured data).
+# Path-namespace property: this file at `shards/mirror/data/text.mirror`
+# declares `@mirror/data/text` and only that.
+
+prism @mirror/data/text {
+  focus text
+  project text
+  split text
+  shift text
+  settle text
+}
+
+# === parse — bytes → text ===
+#
+# Identity projection. Body forward-promised per consumer-pull
+# discipline; lands as the trivial `fn(t) t` when T19's dispatch
+# pulls.
+parse(text) -> text { \ }
+
+# === emit — text → bytes ===
+#
+# Identity projection in the other direction. Body forward-promised.
+emit(text) -> text { \ }
+
+out @mirror/data/text
+out parse
+out emit
