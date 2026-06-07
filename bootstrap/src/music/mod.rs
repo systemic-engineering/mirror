@@ -12,39 +12,77 @@
 //! - [`CadenceKind`] — the Rust mirror of
 //!   `type cadence_kind = authentic | plagal | deceptive | half`
 //!   from `shards/epistemologic/math/music/cadence.mirror`.
-//! - [`Verdict`] — the Rust mirror of `glass.mirror`'s
-//!   `verdict = pass | partial(confidence) | failure(reason)`. This is
-//!   the three-state substrate-floor verdict surface, distinct from the
-//!   algebra-level `Verdict<S>` in `spectral.rs` (which is
-//!   `terni::Imperfect<S, _, Transparency<Ref>>`). The two are at
-//!   different altitudes: this one is the consent-surface verdict the
-//!   formatter reads; that one is the operator-action verdict an
-//!   algebra element returns.
-//! - [`Reason`] — substrate-aligned reason carrier for the failure
-//!   case. `glass.mirror` types `reason` as `@nl` (natural language);
-//!   the realised carrier is a small variant set the formatter knows
-//!   how to escalate. `Reason::DeceptiveCadence` is the first variant;
-//!   future bodies extend.
+//! - [`Verdict`] — the Rust realisation of `glass.mirror`'s
+//!   `verdict = pass | partial(confidence) | failure(reason)`,
+//!   superseded per
+//!   [`docs/specs/property-and-inference-collapse.md`] §9.1 to:
+//!
+//!   ```text
+//!   pub type Verdict = Imperfect<(), Gap, Transparency<Ref>>;
+//!   ```
+//!
+//!   The Hodge framing (per
+//!   [`docs/insights/2026-06-07-hodge-duality-three-readings-of-H.md`]):
+//!
+//!   - `Success(())`                       — harmonic representative;
+//!                                            cohomology class is the zero
+//!                                            class; pure ground state.
+//!   - `Partial((), Transparency<Ref>)`    — harmonic representative
+//!                                            reached with gauge content
+//!                                            (exact/co-exact) logged in
+//!                                            the transparency.
+//!   - `Failure(Gap, Transparency<Ref>)`   — nontrivial cohomology class;
+//!                                            gap names the cocycle the
+//!                                            substrate cannot trivialise.
+//!
+//!   The old three-variant boundary-Rust enum was the *degenerate
+//!   scalar projection* of this triple per spec §9.3. The supersession
+//!   replaces the enum with the type alias; `Reason::DeceptiveCadence`
+//!   is replaced by a [`Gap`] whose tension summary names the V → vi
+//!   unresolved tension.
+//!
 //! - [`is_settled`] — the executable form of
 //!   `is_settled(c: cadence) -> verdict`. Reads a `CadenceKind` and
-//!   emits the formatter's settle verdict per the substrate-declared
-//!   four-state mapping.
+//!   emits the substrate's verdict per the projection table below.
 //!
-//! ## The four-state mapping (per `cadence.mirror`)
+//! ## The four-state cadence mapping survives as projection
 //!
-//! | cadence_kind | verdict                  | meaning                                          |
-//! |--------------|--------------------------|--------------------------------------------------|
-//! | authentic    | `Pass`                   | auto-apply; full resolution; holonomy → 0        |
-//! | plagal       | `Partial(0.85)`          | auto-apply, reduced confidence; IV → I path      |
-//! | half         | `Partial(0.25)`          | wait; paused on V; low confidence; mid-progression |
-//! | deceptive    | `Failure(DeceptiveCadence)` | escalate to consent; V → vi; dissonance chosen   |
+//! Per spec §4.4: the substrate carries the full verdict; each
+//! consumer projects what it needs. The audible-altitude projection
+//! `verdict_to_cadence_kind` lives in [`crate::gap`] and inverts the
+//! emission below:
 //!
-//! Confidence values: golden-ratio-anchored. `plagal = 0.85` and
-//! `half = 0.25` sit on opposite sides of 1/φ ≈ 0.618 — plagal is
-//! "closer-to-pass-than-not" (auto-apply at reduced confidence) and
-//! half is "closer-to-failure-than-not" (wait, but not yet escalate).
-//! These are the substrate's first surfaced confidence-tier values;
-//! when `glass.mirror` later declares confidence-tier constants, lift.
+//! | cadence_kind | verdict                                          | confidence_of | meaning                                        |
+//! |--------------|--------------------------------------------------|---------------|------------------------------------------------|
+//! | authentic    | `Success(())`                                    | `1.0`         | harmonic; auto-apply; holonomy → 0             |
+//! | plagal       | `Partial((), Transparency::clear())`             | `1.0`         | harmonic with gauge content; IV → I path       |
+//! | half         | `Partial((), Transparency::opaque(…, 0.25))`     | `0.25`        | paused on V; low confidence; mid-progression   |
+//! | deceptive    | `Failure(Gap{level:1,…}, Transparency::opaque)`  | `0.0`         | escalate to consent; V → vi; dissonance chosen |
+//!
+//! Plagal is encoded with `Transparency::clear()` rather than an
+//! opaque map at 0.85 because at the audible floor the substrate has
+//! no *located* cracks to report at plagal — the gauge content is a
+//! path-shape signal, not a substrate location. The `confidence_of`
+//! projection lands at `1.0` for `Clear`; the substrate's distinction
+//! between authentic and plagal is carried in the `Imperfect` variant
+//! (Success vs Partial), not in the confidence scalar. The four-state
+//! mapping is preserved structurally.
+//!
+//! Half is encoded with a `Transparency::opaque(…, Partial { 0.25 })`
+//! carrying a `paused on V` diagnostic. The 0.25 sits below 1/φ
+//! ≈ 0.618 so `verdict_to_cadence_kind` routes Partial-with-low-
+//! confidence to `CadenceKind::Half`.
+//!
+//! Deceptive is encoded with a `Gap { level: 1, … }` per
+//! [`docs/specs/gap-tension-tensor-substrate.md`] §3.2: V → vi is a
+//! level-1 contradiction (simple unresolved tension; no nested
+//! learning loop). The `Transparency<Ref>` carries the opacity
+//! observed en route to the failure.
+//!
+//! [`docs/specs/property-and-inference-collapse.md`]: ../../../../../docs/specs/property-and-inference-collapse.md
+//! [`docs/insights/2026-06-07-hodge-duality-three-readings-of-H.md`]: ../../../../../docs/insights/2026-06-07-hodge-duality-three-readings-of-H.md
+//! [`docs/specs/gap-tension-tensor-substrate.md`]: ../../../../../docs/specs/gap-tension-tensor-substrate.md
+//! [`Gap`]: crate::gap::Gap
 //!
 //! ## The implementation cascade template
 //!
@@ -67,6 +105,11 @@
 //! surface is technically unused. The tests below DO use the surface;
 //! they prove the contract regardless of the consumer's arrival.
 #![allow(dead_code)]
+
+use prism_core::{Diagnostic, PropertyVerdict, Ref, Transparency};
+use terni::Imperfect;
+
+use crate::gap::Gap;
 
 /// The four classical cadence types as a closed sum.
 ///
@@ -99,71 +142,60 @@ pub enum CadenceKind {
     Half,
 }
 
-/// The reason carrier for a `Verdict::Failure`.
+/// The substrate's verdict shape at the verdict altitude.
 ///
-/// `glass.mirror` types `reason = @nl` (natural language); the realised
-/// carrier is a small variant set the formatter knows how to escalate.
-/// Each variant names *why* the substrate yielded to consent; new
-/// variants land as future bodies (e.g., `is_consonant`, `is_pareto`)
-/// surface new failure modes.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Reason {
-    /// V → vi (or analogous); the formatter chose dissonance over
-    /// consonance. Per `cadence.mirror`: "the deviation must be named
-    /// to the consent surface." Per `docs/specs/mirror-spectral.md`
-    /// §4.7: "the substrate emits pause(Φ)."
-    DeceptiveCadence,
-}
-
-/// The substrate-floor verdict surface.
+/// Per [`docs/specs/property-and-inference-collapse.md`] §9.1 the
+/// Rust realisation of `glass.mirror`'s
+/// `verdict = pass | partial(confidence) | failure(reason)` IS the
+/// Hodge-framed triple:
 ///
-/// Mirrors `glass.mirror`'s
-/// `verdict = pass | partial(confidence) | failure(reason)`. This is
-/// the formatter's settle signal — the substrate's honest three-state
-/// acknowledgement of its own settle boundary.
+/// ```text
+/// Imperfect<(), Gap, Transparency<Ref>>
+/// ```
+///
+/// - `Success(())` — harmonic representative (cohomology class is the
+///   zero class; no gauge content).
+/// - `Partial((), Transparency<Ref>)` — harmonic representative
+///   reached with gauge content logged in the transparency.
+/// - `Failure(Gap, Transparency<Ref>)` — nontrivial cohomology; the
+///   gap names the cocycle the substrate cannot trivialise.
+///
+/// At the audible altitude `Aggregate` collapses to `()` per spec
+/// §9.1: the cadence-altitude consumer cares about the verdict's
+/// *shape*, not an aggregated section. The `Aggregate` carrier (a
+/// non-unit type) lands at the verdict altitude when T6 (`tensor_of`)
+/// substrate-pulls.
 ///
 /// Distinct from `spectral::Verdict<S>` (the algebra-level
 /// `terni::Imperfect<S, _, Transparency<Ref>>` carrier an operator
-/// returns when acting on a state). The two are at different altitudes:
-/// this is the consent-surface verdict the formatter reads; that is
-/// the operator-action verdict the algebra returns. They compose, but
-/// they do not coincide.
+/// returns when acting on a state). The two are at different altitudes
+/// but share the same triple shape; they compose through the
+/// projection functors in [`crate::gap`].
 ///
-/// `confidence` is the substrate's `f64` carrier per
-/// `glass.mirror`: `type confidence = f64`. The realisation discipline
-/// is that confidence lies in `[0.0, 1.0]`; values outside that range
-/// are realisation bugs.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub enum Verdict {
-    /// Auto-apply; the spectrum has closed on its autopoietic ground
-    /// state. The formatter commits; the tick advances. Per
-    /// `docs/specs/mirror-spectral.md` §2.2: "loss-decreasing = auto."
-    Pass,
-    /// Auto-apply with reduced confidence (or wait, with low
-    /// confidence). The `f64` is the confidence in `[0.0, 1.0]`.
-    /// `cadence.mirror` distinguishes the auto-apply (plagal, high
-    /// confidence) and wait (half, low confidence) variants by the
-    /// magnitude of the confidence; the verdict surface itself is the
-    /// same `Partial`.
-    Partial(f64),
-    /// Escalate to the consent surface. The substrate yields; the
-    /// consent query MUST resolve before the next tick.
-    Failure(Reason),
-}
+/// [`docs/specs/property-and-inference-collapse.md`]: ../../../../../docs/specs/property-and-inference-collapse.md
+pub type Verdict = Imperfect<(), Gap, Transparency<Ref>>;
 
 /// `is_settled(c: cadence) -> verdict` — the formatter's settle signal
 /// at the audible altitude.
 ///
-/// Reads a [`CadenceKind`] and emits the substrate's three-state
-/// verdict per the four-state mapping declared in
-/// `shards/epistemologic/math/music/cadence.mirror`:
+/// Reads a [`CadenceKind`] and emits the substrate's Hodge-framed
+/// verdict per the projection table in the module docs:
 ///
-/// - `Authentic` → `Verdict::Pass`
-/// - `Plagal`    → `Verdict::Partial(0.85)`
-/// - `Half`      → `Verdict::Partial(0.25)`
-/// - `Deceptive` → `Verdict::Failure(Reason::DeceptiveCadence)`
+/// - `Authentic` → `Success(())` — harmonic representative IS the
+///   input; cohomology class is zero; pure ground state.
+/// - `Plagal`    → `Partial((), Transparency::clear())` — harmonic
+///   reached with gauge content (no located cracks at the audible
+///   floor); `confidence_of` projects to 1.0.
+/// - `Half`      → `Partial((), Transparency::opaque(…, 0.25))` — a
+///   substrate-located opacity at `@epistemologic/math/music/cadence`
+///   names the paused-on-V state; `confidence_of` projects to 0.25.
+/// - `Deceptive` → `Failure(Gap{level:1,…}, Transparency::opaque(…))`
+///   — the gap names the V → vi unresolved tension (level-1
+///   contradiction per `gap-tension-tensor-substrate.md` §3.2);
+///   transparency carries the opacity observed en route to the
+///   failure.
 ///
-/// Pure; no I/O; no allocation beyond the verdict.
+/// Pure; no I/O; no allocation beyond the verdict carrier.
 ///
 /// Per `cadence.mirror`'s substrate declaration: the action takes a
 /// full `cadence` record (kind + path + resolved_to); this body reads
@@ -181,21 +213,75 @@ pub fn is_settled(kind: CadenceKind) -> Verdict {
     // (none is currently substrate-declared) will fail to compile
     // here, surfacing the gap immediately.
     match kind {
-        // V → I: the canonical tonal closure; holonomy → 0; the
-        // autopoietic ground state. Per cadence.mirror's mapping.
-        CadenceKind::Authentic => Verdict::Pass,
-        // IV → I: consonant alternative path; auto-apply with reduced
-        // confidence. 0.85 > 1/φ ≈ 0.618 — closer-to-pass-than-not.
-        CadenceKind::Plagal => Verdict::Partial(0.85),
+        // V → I: the canonical tonal closure; harmonic representative
+        // IS the input; cohomology class is zero. Per cadence.mirror's
+        // mapping and the Hodge insight (`a07d5b2`): pure ground state.
+        CadenceKind::Authentic => Imperfect::Success(()),
+        // IV → I: consonant alternative path. Harmonic representative
+        // reached, gauge content carried as path-shape signal (no
+        // *located* cracks at the audible floor). Transparency::clear
+        // — the path-shape distinction is the Partial-vs-Success
+        // variant, not a located opacity. confidence_of -> 1.0.
+        CadenceKind::Plagal => Imperfect::Partial((), Transparency::clear()),
         // Paused on V: progression open; awaiting the next consent
-        // surface. 0.25 < 1/φ — closer-to-failure-than-not; still
-        // partial because the formatter has not yet chosen.
-        CadenceKind::Half => Verdict::Partial(0.25),
-        // V → vi: dissonance over consonance; escalate to consent.
-        // Per cadence.mirror: "the deviation must be named to the
-        // consent surface." The substrate yields.
-        CadenceKind::Deceptive => Verdict::Failure(Reason::DeceptiveCadence),
+        // surface. A substrate-located opacity at the cadence origin
+        // carries the audible-altitude reading of "paused on V" at
+        // confidence 0.25 (below 1/φ ≈ 0.618 — closer-to-failure-
+        // than-not; still partial because the formatter has not yet
+        // chosen).
+        CadenceKind::Half => Imperfect::Partial((), half_transparency()),
+        // V → vi: dissonance over consonance; the cocycle the
+        // substrate cannot trivialise at this tick. Per
+        // gap-tension-tensor-substrate.md §3.2: level-1 contradiction
+        // (simple unresolved tension; no nested learning loop). The
+        // transparency carries the opacity observed en route to the
+        // failure. Escalate to Reflection.
+        CadenceKind::Deceptive => {
+            Imperfect::Failure(deceptive_gap(), deceptive_transparency())
+        }
     }
+}
+
+/// The audible-altitude origin Ref for the cadence shard.
+///
+/// The validating constructor on [`Ref`] cannot fail for this constant
+/// path; the `expect` is unreachable in practice (the path is non-empty,
+/// `@`-prefixed, no whitespace, no control characters). The panic is
+/// the substrate's contract violation — it would only fire if the
+/// audible-altitude shard path stops being a valid substrate ref,
+/// which is a substrate-altitude invariant T4 should re-check.
+fn cadence_origin() -> Ref {
+    Ref::new("@epistemologic/math/music/cadence")
+        .expect("audible-altitude cadence shard path must be a valid substrate ref")
+}
+
+/// The `Half` cadence's transparency: a substrate-located opacity at
+/// the cadence origin with `confidence = 0.25`.
+fn half_transparency() -> Transparency<Ref> {
+    Transparency::opaque(
+        cadence_origin(),
+        PropertyVerdict::Partial {
+            confidence: 0.25,
+            diagnostics: vec![Diagnostic::new("paused on V")],
+        },
+    )
+}
+
+/// The `Deceptive` cadence's gap: a level-1 contradiction naming the
+/// V → vi unresolved tension. Per
+/// [`docs/specs/gap-tension-tensor-substrate.md`] §3.2.
+fn deceptive_gap() -> Gap {
+    Gap::new(1, cadence_origin(), "V -> vi")
+}
+
+/// The `Deceptive` cadence's transparency: the opacity observed en
+/// route to the failure. A `Fail` verdict at the cadence origin
+/// surfaces the V → vi deviation to consent.
+fn deceptive_transparency() -> Transparency<Ref> {
+    Transparency::opaque(
+        cadence_origin(),
+        PropertyVerdict::Fail(Diagnostic::new("deceptive cadence: V -> vi")),
+    )
 }
 
 #[cfg(test)]
@@ -299,10 +385,7 @@ mod tests {
                     "half transparency must not be catastrophic"
                 );
                 let c = confidence_of(t);
-                assert!(
-                    c < 0.618,
-                    "half confidence must lie below 1/phi (got {c})",
-                );
+                assert!(c < 0.618, "half confidence must lie below 1/phi (got {c})",);
             }
             other => panic!("half must yield Partial; got {other:?}"),
         }
@@ -336,10 +419,7 @@ mod tests {
                 // confidence_of projects Failure-side opacity to 0.0
                 // per spec §3.1.
                 let c = confidence_of(t);
-                assert!(
-                    c < 0.25,
-                    "deceptive confidence must be near zero (got {c})",
-                );
+                assert!(c < 0.25, "deceptive confidence must be near zero (got {c})",);
             }
             other => panic!("deceptive must yield Failure; got {other:?}"),
         }
