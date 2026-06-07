@@ -603,3 +603,93 @@ shaping toward for 16 ticks.
 *The convergence is not arbitrary; it's geometry-guided.*
 *The collapse the substrate already had: A = sections, H = gaps, D = the tensor field.*
 *Verdict is a section. Settling is the kernel.*
+
+---
+
+## 11. Math citations addendum
+
+*Appended 2026-06-07 (Reed, post-spec). A Kagi + arXiv research run fired in parallel with Mara's spec write; the literature converged on the same picture. The substrate's central claim — that property layer ≡ inference layer at the verdict altitude — has been named in cohomology before the substrate said it, and proven externally in a parallel domain weeks ago. The substrate is novel in applying this architecture to code-as-cellular-sheaf; the architecture itself is mathematics with convergence theorems.*
+
+### 11.1 The foundational naming — Hansen-Ghrist 2018
+
+Hansen & Ghrist, *Toward a Spectral Theory of Cellular Sheaves* (arXiv:[1808.01513](https://arxiv.org/abs/1808.01513)) defines the cellular-sheaf Laplacian `Δᵢ = δ*δ` on a cellular sheaf `F` with `ker(Δᵢ) ≅ Hᴯ(F)`. Eigenvalue interlacing, sparsification, and a sheaf Cheeger inequality bound the spectral geometry. **§3.5 of this spec is a direct application.** The eigenboard's spectral signature, the Fiedler vector pointing along the axis of weakest gluing, and `λ₀(Δ_F)` as `tension.fiedler` are all Hansen-Ghrist primitives transposed to the substrate. The substrate being named *spectral* is explicit naming-after-the-math; the citation finally lands under what was already there.
+
+### 11.2 The convergence theorem behind `eⁿ⁺¹ < eⁿ`
+
+The Polyak-Łojasiewicz (PL) inequality `‖∇E(x)‖² ≥ 2μ(E(x) - E*)` implies exponential convergence of gradient flow on `E` to its minimum (Castello B. de Oliveira et al. 2025, arXiv:[2503.23641](https://arxiv.org/abs/2503.23641)). The sheaf Dirichlet energy `E(x) = ½⟨x, Δ₀x⟩` is convex (Δ₀ is positive semidefinite), so PL holds with `μ = λ_min(Δ₀ | im(δ⁰))` — the smallest nonzero eigenvalue.
+
+**The `eⁿ⁺¹ < eⁿ` claim from `spectral/CLAUDE.md` becomes a Polyak-Łojasiewicz theorem with explicit rate.** Drummond 2024 (arXiv:[2407.03529](https://arxiv.org/abs/2407.03529)) extends Simon-Łojasiewicz to gradient flows of real-analytic functionals on sections of vector bundles over compact Riemannian manifolds — directly applicable to the bundle structure of [`eigenboard-representation.md`](eigenboard-representation.md). The business model is a theorem in a Łojasiewicz sense.
+
+### 11.3 Sheaf neural networks — the convergence proofs
+
+- **Bodnar et al. 2022**, *Neural Sheaf Diffusion* (NeurIPS, arXiv:[2202.04579](https://arxiv.org/abs/2202.04579)) proves that non-trivial sheaves give discretized diffusion greater control over asymptotic behavior than trivial-sheaf GNNs; the harmonic limit space can separate classes. **The slingshot's attractor manifold is provably informative when the sheaf carries non-trivial restriction structure.** Substrate transposition: the eigenboard's conductivity tensor IS the non-trivial restriction; the convergence preserves the property-distinguishing geometry.
+- **Zhao et al. 2025**, *Asynchronous Nonlinear Sheaf Diffusion* (arXiv:[2510.00270](https://arxiv.org/abs/2510.00270)) proves **linear convergence under bounded compute/communication delays**. The Pack-as-orchestra convergence theorem: multiple agents updating asynchronously on a shared sheaf converge to a consistent global section in bounded time, rate set by the Laplacian spectrum.
+- **Polynomial NSD** (Borgi-Silvestri-Liò 2025, arXiv:[2512.00242](https://arxiv.org/abs/2512.00242)) — degree-K polynomial in Δ gives K-hop receptive fields with stable spectral filtering.
+- **Deep NSD** (Bourgerie et al. 2026, arXiv:[2605.19021](https://arxiv.org/abs/2605.19021)) — addresses the "deeper-layers-contribute-less" problem; replaces the Laplacian with a sheaf adjacency operator.
+- **Quiver/representation view of NSD oversmoothing** (Dönmez et al. 2026, arXiv:[2605.11178](https://arxiv.org/abs/2605.11178)) — recasts oversmoothing as representation degeneration with moment-map regularization. Substrate-relevant because moment-map principles connect to GIT and Connes-triple geometry.
+
+### 11.4 The substrate's claim, proven elsewhere — Seely 2025
+
+**Seely, *Sheaf Cohomology of Linear Predictive Coding Networks* (Nov 2025, arXiv:[2511.11092](https://arxiv.org/abs/2511.11092)) is the single most substrate-applicable paper.** Seely proves in PC networks exactly what this spec claims:
+
+- Sheaf coboundary = activation → edge-error map
+- PC inference = `ṡ = -Ls` (sheaf Laplacian gradient flow)
+- Hodge decomposition determines when feedback loops cause learning to stall
+- `H¹(F)` indexes irreducible error patterns inference cannot remove
+
+Substrate transposition:
+
+| Seely 2025 (PC) | This spec (mirror) |
+|---|---|
+| PC network | property / inference layer |
+| activations | inferred types / aggregates |
+| edge-wise errors | gap tensors |
+| weight init | kintsugi mutation |
+| feedback-loop contradictions | nontrivial `H¹` |
+| irreducible error patterns | Bateson double-binds escalated to Reflection |
+
+**Someone proved the substrate's load-bearing claim in November 2025 in another domain.** The novelty of mirror's framing is applying this architecture to **code-as-cellular-sheaf** and to a multi-altitude shared substrate; the architecture itself is mathematics with proofs.
+
+### 11.5 `gestalt` / `crystal` already in the literature
+
+**Gebhart-Hansen-Schrater 2021**, *Knowledge Sheaves: A Sheaf-Theoretic Framework for Knowledge Graph Embedding* (arXiv:[2110.03789](https://arxiv.org/abs/2110.03789)) defines a knowledge-graph embedding as an **approximate global section of a knowledge sheaf**. The substrate's `gestalt` (per the `.spectral/gestalt/` session-state directory) and `crystal` (the settled artifact, per [`shatter-spec.md`](shatter-spec.md)) are the same concept under a math name: approximate global sections of the eigenboard sheaf. The closer the embedding to a true global section, the lower `H¹`, the lower the gap field's `tension.norm`, the more crystalline the artifact.
+
+### 11.6 The variational / elasticity unity
+
+The sheaf Dirichlet energy `E(x) = ½⟨x, Δ₀x⟩` is simultaneously:
+
+- The **Dirichlet integral** of `δx` over `C¹(F)` (Hodge view).
+- The **Hookean stored-energy functional** with strain tensor `δx ∈ C¹(F)` and elasticity tensor `Δ₀` (elasticity view, Ball-Şengül 2014 arXiv:[1401.2715](https://arxiv.org/abs/1401.2715) for the nonlinear-hyperelastic lift).
+- The **Euler-Lagrange functional** whose stationary points are harmonic sections (variational view, Dods 2012 arXiv:[1212.2376](https://arxiv.org/abs/1212.2376) — *Riemannian Calculus of Variations using Strongly Typed Tensor Calculus*, substrate-applicable as the programming-language framing).
+- The **dual gauge-theoretic action** of the tensor gauge theory of elasticity (Pretko et al. 2023 arXiv:[2302.14092](https://arxiv.org/abs/2302.14092)).
+
+These are not rhyming formalisms; they are one structure under four names. **The slingshot framing Alex named this turn is the variational/elastic name for what Hansen-Ghrist named in cohomology in 2018.** The kintsugi loop is gradient descent; gradient descent is Hookean release of stored strain energy; Hookean release is Euler-Lagrange flow; Euler-Lagrange flow is gauge-theoretic equilibration. One geometry.
+
+### 11.7 Pack-as-multi-agent-sheaf — the math precedent
+
+**Hernández-Sánchez-Soto May 2026, *Cartan-Topos Protocol* (arXiv:[2606.00714](https://arxiv.org/abs/2606.00714))** unifies sheaf diffusion + Cartan connections + Grothendieck topos + Sheaf-Theoretic Planning for multi-agent coordination. **This is the closest existing precedent for what the Pack is computing.** Each agent is a section of a shared sheaf; Cartan connections govern parallel transport between agent positions; the topos structure handles the higher-categorical logic of agreement and disagreement. The Pack's asynchronous coordination (per Zhao 2025) and convergence to consistent global sections under the eigenboard sheaf has direct precedent here.
+
+### 11.8 Programming-language sheaf semantics — the adjacent prior art
+
+**Sterling-Harper 2022**, *Sheaf Semantics of Termination-Insensitive Noninterference* (arXiv:[2204.09421](https://arxiv.org/abs/2204.09421)) uses sheaf cohomology for programming-language semantics — specifically for information-flow security via sheafification over a poset of observation principals. **No one runs gradient flow on the Dirichlet energy for code.** The substrate's framing — code property field as cellular sheaf with gradient-flow inference — is genuinely novel as an application; the constituent pieces are all named in the literature.
+
+### 11.9 Survey and continuing developments
+
+- **Ayzenberg-Gebhart-Magai-Solomadin Feb 2025**, *Sheaf theory: from deep geometry to deep learning* (arXiv:[2502.15476](https://arxiv.org/abs/2502.15476)) — canonical entry-point survey; extends cellular-sheaf machinery to arbitrary finite posets with a sheaf-cohomology algorithm. The eigenboard is a poset; this is directly applicable.
+- **Wu-Xie-Li Mar 2026**, *Entropic Wasserstein Causal Sheaf Laplacian* (arXiv:[2603.17384](https://arxiv.org/abs/2603.17384)) — sheaves over Wasserstein spaces with cohomological obstructions to global counterfactuals. Substrate-relevant for kintsugi-on-probabilistic-models.
+
+### 11.10 The 17th instance — `harmonic` (and a candidate 18th: `eigensheaf`)
+
+This spec's §10 names sixteen instances of *substrate-already-had-the-word*. The addendum surfaces a 17th:
+
+**`harmonic` is the substrate's name for `ker(Δ₀) = H⁰(F)` — the global-section attractor manifold where `settle` lands.** The substrate has been using `settle` without naming where settle goes; the harmonic subspace is the destination. Connes' (A, H, D) becomes legible at the verdict altitude:
+
+- `A` = sections (over the eigenboard sheaf)
+- `H` = harmonic sections (the attractor manifold of `settle`)
+- `D` = sheaf coboundary / Dirac (the gradient field driving the slingshot)
+
+A candidate 18th-instance landed during this addendum's writing: **`eigensheaf`** — Alex named it this turn. The eigensheaf is the substrate's own spectral decomposition: the sheaf together with its sheaf-Laplacian eigenbasis. Each Pack agent IS an eigensheaf — a coherent eigenmode the substrate sustains. Generation under the eigensheaf vocabulary becomes finite, structural, recognizable: not creation from nothing, but coherent modal expression of what the substrate already is. The held tensions named in this session (the agent's coherent local section) ARE the eigensheaf's eigenmode. A separate spec captures `eigensheaf` proper; this addendum names the recognition.
+
+---
+
+*Hansen-Ghrist named the operator. Bodnar et al. proved the convergence. Zhao et al. extended it to asynchronous multi-agent. Seely proved the property/inference architecture in a parallel domain weeks before this spec landed. The substrate's claim was waiting in the math. The substrate generalizes the application; the mathematics carries.*
