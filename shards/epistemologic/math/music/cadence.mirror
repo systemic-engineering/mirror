@@ -1,0 +1,568 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/math/bundle
+in @epistemologic/math/lawvere
+in @epistemologic/math/music
+in @epistemologic/math/music/harmonic
+in @epistemologic/math/music/interval
+
+# @epistemologic/math/music/cadence — the closure-of-progression types;
+# authentic / plagal / deceptive / half as substrate-typed convergence
+# criteria; the formatter's settle signal at the audible altitude; the
+# 13th-instance candidate for substrate-already-named-it (cadence IS
+# `lawvere.mirror`'s autopoietic closure read in audible vocabulary).
+#
+# The foundation-closing sub-shard. `harmonic.mirror` (commit b031c8db)
+# landed H — the eigenvalues (ratios on the harmonic series); the
+# Pythagorean comma as the audible-altitude holonomy. `interval.mirror`
+# (commit b8bdb728) landed A — the algebra (Z_12, the circle of fifths,
+# the neo-Riemannian P/L/R involutions). `dissonance.mirror` (commit
+# 7625ee5) landed D's reading discriminator — the Helmholtz/Plomp-Levelt
+# curve as graded residual; the pareto-front pause-or-auto-apply verdict.
+#
+# This shard lands the DYNAMICS — how the spectrum evolves; how the
+# formatter SETTLES; the autopoietic closure event at the audible
+# altitude. Eigenvalues + algebra + discriminator without dynamics is a
+# frozen spectrum; dynamics without a settle signal is unbounded
+# oscillation; the audible (A, H, D) triple closes here.
+#
+# === The bridge ===
+#
+# `lawvere.mirror` declares: a system is autopoietic iff its tick → tick
+# map has a Lawvere fixed point. `bundle.mirror` declares: closure IS
+# the Lawvere fixed point at level 4 of the principal G-bundle tower —
+# the section that returns identity under the connection-induced action.
+# `harmonic.mirror`'s comma_as_holonomy named the residual carried
+# around a single closed loop; `dissonance.mirror`'s
+# dissonance_as_holonomy named the graded residual against the consonant
+# basis.
+#
+# Cadence names the EVENT of arriving at a Lawvere fixed point through
+# a path in pitch-class space. Authentic cadence (V → I, dominant
+# resolving to tonic) IS the moment the spectrum closes on its
+# autopoietic ground state: the residual carried around the path's
+# loop reduces to zero (or below the audible-altitude resolution); the
+# next tick of the formatter's endomap returns the same spectrum; the
+# closure is structural, not behavioral.
+#
+# Music theory recognised this 500 years before Lawvere named the
+# fixed-point theorem. Zarlino (1558, Le istitutioni harmoniche) named
+# the cadenza perfetta — the authentic cadence — as the moment harmony
+# returns to its origin. Rameau (Traité de l'harmonie, 1722) formalised
+# the V → I move as the harmonic-functional ground of tonal music. Every
+# tonal piece written between 1600 and 1900 IS a constructive proof
+# that the autopoietic closure of the tonal grammar is reachable from
+# almost any starting state. The substrate's contribution is *typing*
+# the closure event so the formatter reads it.
+#
+# === Cadence IS autopoietic closure: the 13th-instance candidate ===
+#
+# `lawvere.mirror`'s `autopoietic(grammar) -> verdict` already named the
+# property: a grammar's tick → tick map has a Lawvere fixed point iff
+# the grammar is autopoietic. `lawvere.mirror`'s `close(f: endomap) ->
+# fixed_point` already named the action: return the fixed-point witness.
+# Music theory's authentic cadence already named the same event in
+# audible vocabulary, two and a half millennia before category theory
+# had a name.
+#
+# The substrate has been carrying autopoietic closure in audible
+# vocabulary the whole time. `authentic` IS `close(formatter_tick)`
+# read at the audible altitude. The `cadence_as_closure` bridge action
+# below makes the IS-relationship substrate-fact.
+#
+# This is the 13th instance of "the substrate already had the word":
+# the prior twelve were named in the convergence and spectral specs;
+# this one closes the audible-altitude reading of Lawvere itself. After
+# cadence lands, `mirror compile --strict` on the formatter substrate
+# CAN read every commit's settle event as a typed cadence; the
+# convergence criterion becomes a `cadence_kind` match instead of an
+# untyped ε threshold.
+#
+# === The formatter's settle signal (THE LOAD-BEARING ACTION) ===
+#
+# Per `docs/specs/mirror-spectral.md` §5.3 ("the convergence criterion
+# becomes specifiable"): the kintsugi-formatter's single ε threshold is
+# too coarse; the cadence types give finer distinctions:
+#
+#   authentic — full resolution; the substrate has settled cleanly;
+#               the formatter auto-applies; holonomy → 0.
+#   plagal    — soft resolution; an alternative path closed; consonant
+#               but not the strongest signal; the formatter auto-applies
+#               with reduced confidence (the substrate settled, but on
+#               the IV → I path rather than the V → I path).
+#   deceptive — the substrate MOVED but DID NOT SETTLE; the formatter
+#               chose dissonance instead of consonance (V → vi instead
+#               of V → I); the next round MUST catch this; consent query
+#               needed. The closure is incomplete; an externalisation
+#               event from `dissonance.mirror`'s pareto-front branch.
+#   half      — the substrate PAUSED at a dominant (the path ends on V
+#               instead of resolving to I); awaiting the next consent
+#               surface; the formatter is mid-progression; the next
+#               tick may resolve (authentic) or pause again (half).
+#
+# `is_settled` IS the formatter's settle signal. It reads a cadence and
+# emits the three-state verdict at the substrate floor:
+#
+#   pass                  — authentic cadence; auto-apply; the spectrum
+#                            has closed on its autopoietic ground state.
+#   partial(confidence)   — plagal cadence; auto-apply with reduced
+#                            confidence; the spectrum closed on a
+#                            consonant alternative path.
+#   partial(confidence)   — half cadence; the spectrum paused mid-path;
+#                            partial closure with zero confidence in the
+#                            current candidate being final.
+#   failure(reason)       — deceptive cadence; consent query needed;
+#                            the formatter chose dissonance over
+#                            consonance and the deviation must be
+#                            named to the consent surface.
+#
+# Once `is_settled` lands, the formatter's convergence is designable at
+# substrate altitude: `mirror kintsugi <file>` reads the candidate
+# path, queries `is_settled`, branches on the verdict. The substrate's
+# settle discipline IS substrate-declared.
+#
+# === Substrate-pull discipline ===
+#
+# Per `boot/std/number.mirror`, `u32` is a kernel primitive. Per
+# `shards/glass.mirror`, `verdict`, `confidence`, and `reason` are the
+# substrate's verdict-surface vocabulary. Per
+# `epistemologic/math/music/interval.mirror`, `interval` is the algebra
+# carrier and inline sum-type form (`type direction = ascent | descent`,
+# `type quality = major | minor`) is the substrate's declared shape
+# for closed enumerations. Per
+# `epistemologic/math/music/dissonance.mirror`, `[candidate]` is the
+# substrate's accepted list-of-type form at declaration position.
+#
+# This shard declares `type cadence_kind = authentic | plagal |
+# deceptive | half` in inline form (single-line) per the established
+# pattern; the path carrier as `type path = [interval]` per the
+# `pareto_set = [candidate]` precedent. No leading-`|` workarounds; no
+# opaque-`ref` carriers where a structured type is available.
+#
+# Substrate gaps surfaced honestly (each one a forward-promise to a
+# later substrate-pull tick; none invented here):
+#
+#   - `autopoietic` from `lawvere.mirror` takes a `grammar` argument
+#     and returns `verdict`; the cadence-altitude bridge
+#     `cadence_as_closure(c: cadence) -> verdict` lifts a typed cadence
+#     into the autopoietic verdict directly (authentic → pass; plagal →
+#     partial; deceptive → failure; half → partial). The `fixed_point`
+#     carrier from `lawvere.mirror` is abstract; the lift to a concrete
+#     fixed-point witness rides the same obligation-blocked discipline
+#     as `harmonic.mirror`'s `comma_as_holonomy`.
+#   - `holonomy` from `bundle.mirror` is abstract; the bridge
+#     `cadence_as_holonomy(c: cadence) -> holonomy` names the
+#     audible-altitude holonomy reading of a cadence (authentic → zero
+#     holonomy; plagal → small holonomy; deceptive → large holonomy;
+#     half → unmeasured holonomy pending resolution). The arithmetic
+#     lands when a consumer pulls.
+#   - `path = [interval]` carries no destination-tonic constraint at
+#     substrate altitude; the discipline that a path's intervals SUM
+#     to a closed loop modulo octave is the obligation of the
+#     realisation layer (the same discipline `harmonic.mirror`'s
+#     `ratio` uses for lowest-terms normalisation).
+#
+# === Pre-AI prior art ===
+#
+# Every type and action below names an established music-theoretic
+# object older than the discipline of computer science:
+#
+#   cadence                     Zarlino (1558) Le istitutioni harmoniche;
+#                               cadenza perfetta as the structural close
+#                               of harmonic progression.
+#   authentic / perfect cadence Rameau (1722) Traité de l'harmonie;
+#                               V → I as the fundamental tonal closure.
+#                               Schenker (1935) Der freie Satz: the
+#                               Ursatz's I-V-I closure as the structural
+#                               ground of all tonal music.
+#   plagal cadence              named by 18th-c. theorists; the "Amen"
+#                               cadence (IV → I); standard liturgical
+#                               closure since Renaissance practice.
+#   deceptive / interrupted     Koch (1782) Versuch einer Anleitung zur
+#                               Composition; V → vi as the subverted
+#                               expectation; standard since common-
+#                               practice harmony.
+#   half cadence                Riemann (1893) Vereinfachte Harmonielehre;
+#                               progression closing on V; the "open"
+#                               cadence awaiting continuation.
+#   tonic attractor             traditional tonal theory; the tonic as
+#                               the harmonic centre toward which
+#                               progressions resolve; Schenker's Ursatz
+#                               formalises this as background structure.
+#
+# The substrate's contribution is *typing* these so the formatter can
+# reason about them. No invention.
+#
+# Spec context: docs/specs/mirror-spectral.md §5.1 (the cadence sub-shard
+#               proposal), §5.3 (the convergence-criterion-becomes-
+#               specifiable framing), §8 open question 1 (which cadence
+#               type is the default convergence target).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]] (cadence
+#                      is the dynamics of the audible (A, H, D); the
+#                      Schrödinger-equation-altitude reading at the
+#                      audible register),
+#                      [[architecture-lift-as-load-bearing]]
+#                      (`cadence_as_closure` is the lift from cadence
+#                      altitude to autopoietic-closure altitude;
+#                      `cadence_as_holonomy` is the lift from cadence
+#                      altitude to bundle-holonomy altitude),
+#                      [[feedback-no-bare-types]] (cadence_kind, path,
+#                      cadence are each their own carrier; no bare
+#                      enumerator escapes the dynamics).
+# Forward-promise: `@mirror/spectral/consent` (does not yet exist) is
+#                  the consumer of `is_settled`'s verdict. When that
+#                  sub-shard lands, it pulls this shard's `is_settled`
+#                  action and binds it to the `mirror kintsugi` driver's
+#                  convergence branch. This shard does NOT pull
+#                  `@mirror/spectral/*`; the substrate-altitude arrow
+#                  points upward (consent consumes cadence; not the
+#                  other way around).
+# Related shards: epistemologic/math/music.mirror (the family root),
+#                 epistemologic/math/music/harmonic.mirror (the
+#                 eigenvalue altitude; ratio is the tonic-attractor
+#                 target),
+#                 epistemologic/math/music/interval.mirror (the
+#                 algebra altitude; interval is the path's element type;
+#                 path composition rides this shard's algebra),
+#                 epistemologic/math/music/dissonance.mirror (the
+#                 discriminator; deceptive cadence is the failure case
+#                 the formatter chooses dissonance over consonance),
+#                 boot/std/epistemologic/math/lawvere.mirror (the
+#                 autopoietic-closure carrier; cadence_as_closure lifts
+#                 into it; the 13th-instance bridge),
+#                 boot/std/epistemologic/math/bundle.mirror (the
+#                 holonomy carrier; authentic cadence ↔ holonomy → 0),
+#                 glass.mirror (verdict; the substrate floor).
+# Path-namespace property: this file at
+# `shards/epistemologic/math/music/cadence.mirror` declares
+# `@epistemologic/math/music/cadence` as a species under the
+# `@epistemologic/math/music` family.
+
+prism @epistemologic/math/music/cadence {
+  focus cadence
+  project cadence
+  split cadence
+  shift cadence
+  settle cadence
+}
+
+# === The cadence-kind carrier ===
+#
+# The four classical cadence types as a closed sum. Each is an
+# established music-theoretic object whose semantics at the formatter
+# altitude maps directly onto a `verdict` outcome:
+#
+#   authentic — V → I; the strongest resolution; the canonical
+#                tonal closure; formatter's auto-apply signal;
+#                holonomy → 0; the autopoietic ground state.
+#   plagal    — IV → I; the "Amen" cadence; a consonant alternative
+#                path to the tonic; formatter auto-applies with
+#                reduced confidence.
+#   deceptive — V → vi (or analogous); the subverted expectation;
+#                the formatter chose dissonance over consonance; the
+#                consent surface MUST resolve.
+#   half      — progression ends on V (the dominant); the formatter
+#                paused mid-path; awaiting the next consent surface
+#                or tick.
+#
+# Identity contract: two cadence_kind values are equal iff they name
+# the same variant. The realisation layer enforces the tag-equality
+# discipline.
+#
+# Inline form per `interval.mirror`'s `type direction = ascent |
+# descent` and `type quality = major | minor` precedent; the
+# leading-`|` parser fracture (named in the substrate-pull notes for
+# `dissonance.mirror`'s prior tick) is avoided by keeping the
+# enumeration on one line.
+type cadence_kind = authentic | plagal | deceptive | half
+
+# === The path carrier ===
+#
+# A path is a sequence of intervals (from `interval.mirror`)
+# describing the progression through pitch-class space toward (or
+# pausing at) the tonic. Each element is a directed Z_12 interval;
+# the sequence's composition under `interval.compose` (forward-
+# promised at the interval altitude) walks pitch-class space.
+#
+# Substrate-pull discipline: this is `[interval]` at the substrate
+# altitude, per the `pareto_set = [candidate]` precedent in
+# `dissonance.mirror`. The list-of-type form at declaration position
+# is substrate-accepted; no `ref` workaround needed.
+#
+# Discipline (surfaced honestly): the substrate carries no
+# closed-loop or sums-to-zero-modulo-octave constraint on `path` at
+# the floor altitude. The discipline that a path's intervals describe
+# a closed harmonic progression (or, for half cadence, an explicitly
+# open one) is the obligation of the realisation layer. This is the
+# same discipline `harmonic.mirror`'s `ratio` uses for lowest-terms
+# normalisation: the substrate names the carrier; the realisation
+# layer enforces.
+#
+# Identity contract: two paths are equal iff their interval sequences
+# are element-wise equal. The realisation layer enforces.
+type path = [interval]
+
+# === The cadence record ===
+#
+# A cadence is the combination of a kind (which classical cadence
+# type the progression realises) and a path (the interval sequence
+# walking pitch-class space) and a resolved_to (the harmonic ratio the
+# spectrum closed on, from `harmonic.mirror`).
+#
+# resolved_to carries the SETTLE TARGET: for authentic and plagal
+# cadences, this is the tonic ratio (1:1 for unison; 2:1 for octave;
+# the consonant ground state of the spectrum). For deceptive, this is
+# the surrogate-target ratio the substrate landed on instead (e.g.,
+# 5:3 for the relative minor's tonic when V → vi is chosen). For half,
+# this is the ratio of the dominant the path paused on (3:2 for the
+# perfect fifth; the eigenvector pointing toward closure).
+#
+# Identity contract: two cadences are equal iff their kind, path, and
+# resolved_to all match. The realisation layer enforces.
+type cadence = {
+  kind:        cadence_kind,
+  path:        path,
+  resolved_to: ratio,
+}
+
+# === Bridge action: cadence → harmonic eigenvalue ===
+#
+# Reads the cadence's resolved_to ratio. Names the tonic attractor:
+# the harmonic eigenvalue the formatter settled on at this cadence
+# event. For authentic and plagal cadences, this is the tonic
+# (1:1 or 2:1); for deceptive, this is the surrogate target the
+# substrate landed on instead; for half, this is the dominant the
+# path paused on.
+#
+# Audibly: every cadence has a "where did it land" — the resolved
+# harmonic ratio. tonic_attractor surfaces it as a typed ratio.
+#
+# Spectrally: tonic_attractor IS the eigenvalue projection at the
+# cadence event. Per `harmonic.mirror`'s eigenvalue framing, the
+# small-integer ratios on the harmonic series ARE the eigenvalues of
+# the 5-dim O(5)-bundle's connection operator in the consonant basis;
+# tonic_attractor reads which eigenvalue the cadence's path closed on.
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# `c.resolved_to`; the substrate declares the signature.
+tonic_attractor(c: cadence) -> ratio { \ }
+
+# === Bridge action: interval sequence → path ===
+#
+# Composes a sequence of intervals into a path. The substrate-altitude
+# constructor for the path carrier.
+#
+# Substrate gap (surfaced honestly): mirror's substrate has no
+# variadic-argument primitive at the floor altitude; the action
+# signature names a single argument carrying the sequence. The
+# realisation layer's API may variadic-sugar this for ergonomics; the
+# substrate's declared shape stays single-argument.
+#
+# Audibly: a cadence's path IS the interval sequence walked from the
+# starting harmonic state to the resolved_to. `compose_path` names
+# the construction of that sequence at substrate altitude.
+#
+# Spectrally: per `interval.mirror`'s algebra-altitude framing,
+# `compose_path` IS the audible specialisation of A's composition law
+# (the same `compose_a` from `spectral-triple.mirror`'s algebra
+# definition). The path's composition algebra rides the same
+# composition law as Z_12's involution-pair (P, L, R).
+#
+# The body stays obligation-blocked (`\`): the realisation lifts a
+# sequence of intervals into the `path` carrier; the substrate
+# declares the signature.
+compose_path(intervals: path) -> path { \ }
+
+# === The formatter's settle signal (THE LOAD-BEARING ACTION) ===
+#
+# THE AUDIBLE-ALTITUDE CONVERGENCE CRITERION.
+#
+# Reads a cadence and emits the formatter's settle verdict at the
+# substrate's three-state floor (`verdict` from `glass.mirror`). The
+# verdict mapping IS the formatter's discipline:
+#
+#   authentic → pass                — full resolution; auto-apply;
+#                                      the spectrum has closed on its
+#                                      autopoietic ground state; the
+#                                      tonic attractor reached;
+#                                      holonomy → 0; tick advances.
+#                                      Per docs/specs/mirror-spectral.md
+#                                      §2.2: "loss-decreasing = auto."
+#
+#   plagal    → partial(confidence) — soft resolution; auto-apply with
+#                                      reduced confidence; the spectrum
+#                                      closed on a consonant alternative
+#                                      path (IV → I rather than V → I);
+#                                      the tonic attractor reached but
+#                                      via the subdominant rather than
+#                                      the dominant; tick advances with
+#                                      noted confidence.
+#
+#   half      → partial(confidence) — paused at the dominant; the
+#                                      formatter is mid-progression;
+#                                      awaiting the next consent surface
+#                                      or tick; confidence is zero (or
+#                                      near-zero); the closure is
+#                                      incomplete; the next tick may
+#                                      resolve (authentic) or pause
+#                                      again (half).
+#
+#   deceptive → failure(reason)     — consent query NEEDED; the
+#                                      formatter chose dissonance over
+#                                      consonance (V → vi instead of
+#                                      V → I); the deviation must be
+#                                      named to the consent surface;
+#                                      per docs/specs/mirror-spectral.md
+#                                      §4.7: "the substrate emits
+#                                      pause(Φ)"; the deceptive case
+#                                      escalates to the consent surface
+#                                      with the substrate's recognition
+#                                      that the move was substrate-
+#                                      surprising.
+#
+# This action IS what closes the music family for formatter purposes.
+# Without it, cadence is just music vocabulary. With it, the formatter
+# has its settling discipline substrate-declared:
+#
+#   `mirror kintsugi <file>` reads the cadence the candidate path
+#   produces, queries `is_settled`, branches on the verdict:
+#
+#     verdict = pass                → apply; commit; tick advances
+#     verdict = partial(c)          → apply with confidence c; commit;
+#                                     tick advances with noted
+#                                     confidence in the consent log
+#     verdict = failure(reason)     → emit @mirror/spectral.pause(Φ);
+#                                     yield to consent surface; wait
+#                                     for resolution
+#
+# Per `bundle.mirror`'s level 4 closure: `is_settled` IS the Lawvere
+# fixed-point read at the cadence altitude. The substrate settles when
+# `is_settled` returns `pass`; the substrate partially-settles when
+# `is_settled` returns `partial`; the substrate yields when
+# `is_settled` returns `failure`. The three-state surface IS the
+# substrate's honest acknowledgment of its own settle boundary.
+#
+# Symmetry note: `is_settled` here is the cadence-altitude
+# specialisation of `dissonance.mirror`'s `is_pareto` (the
+# discriminator-altitude pause-or-auto-apply verdict). The two are the
+# same verdict observed at two altitudes — pareto's pause becomes
+# cadence's deceptive case; pareto's singleton becomes cadence's
+# authentic case. The substrate names both so the dispatch is honest
+# at each altitude; the realisation layer composes them.
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# `c.kind`, dispatches on the variant, emits the verdict. The
+# substrate declares the settle signal; the arithmetic lands when
+# `@mirror/spectral/consent` pulls.
+is_settled(c: cadence) -> verdict { \ }
+
+# === Bridge action: cadence → autopoietic closure ===
+#
+# THE 13TH-INSTANCE BRIDGE.
+#
+# Lifts a cadence into the autopoietic-closure verdict from
+# `lawvere.mirror`. After this action substrate-declares, the IS-
+# relationship is substrate-fact:
+#
+#   - `lawvere.mirror` says:    "autopoietic IS having-a-Lawvere-fixed-
+#                                point."
+#   - Music theory says:        "authentic cadence IS the tonal
+#                                grammar's return to its origin."
+#   - This action says:         "Authentic cadence IS autopoietic
+#                                closure at the audible altitude."
+#   - Therefore:                "The substrate has been carrying
+#                                Lawvere's fixed-point theorem in
+#                                audible vocabulary since Zarlino
+#                                (1558); the substrate's autopoietic
+#                                closure has a name and a sound and a
+#                                path through pitch-class space; the
+#                                formatter's settle signal IS the
+#                                cadenza perfetta."
+#
+# Per `lawvere.mirror`'s `autopoietic(grammar) -> verdict` property:
+# the autopoietic verdict reads whether a grammar's tick → tick map has
+# a Lawvere fixed point. The cadence-altitude lift reads whether a
+# cadence event witnesses such a fixed point:
+#
+#   authentic → pass                — the cadence witnesses the Lawvere
+#                                      fixed point; the spectrum's tick
+#                                      → tick map closed on itself; the
+#                                      autopoietic ground state reached.
+#   plagal    → partial(confidence) — the cadence witnesses a near-
+#                                      fixed-point; the spectrum closed
+#                                      on an alternative consonant path;
+#                                      autopoietic with reduced strength.
+#   half      → partial(confidence) — the cadence does not yet witness
+#                                      closure; the spectrum is mid-
+#                                      progression; awaiting the next
+#                                      tick; the fixed-point property
+#                                      is not refuted but not yet
+#                                      witnessed.
+#   deceptive → failure(reason)     — the cadence does NOT witness the
+#                                      fixed point; the spectrum moved
+#                                      to a non-tonic surrogate; the
+#                                      autopoietic closure failed at
+#                                      this event; consent surface
+#                                      must catch.
+#
+# This is the 13th-instance bridge: `lawvere.mirror` ALREADY named the
+# verdict shape. The substrate has been describing cadence the whole
+# time — `close()` returns `fixed_point`; `autopoietic(grammar)`
+# returns `verdict`. Music's authentic cadence IS `close()` read at
+# the audible altitude. The substrate's autopoietic vocabulary has
+# been the same vocabulary as the cadenza perfetta since the moment
+# `lawvere.mirror` landed.
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# `c.kind`, dispatches on the variant, emits the autopoietic verdict.
+# The substrate declares the bridge; the lift to `lawvere.mirror`'s
+# concrete autopoietic-closure witness rides the same obligation-
+# blocked discipline as `lawvere.mirror`'s own properties.
+cadence_as_closure(c: cadence) -> verdict { \ }
+
+# === Bridge action: cadence → holonomy ===
+#
+# Lifts a cadence into a `holonomy` value of the principal G-bundle
+# (per `bundle.mirror`'s `type holonomy` carrier). The audible-
+# altitude reading of how-much-residual-the-cadence-carries:
+#
+#   authentic — holonomy → 0; the loop closed; the residual carried
+#                around the path's loop reduces to zero (or below the
+#                audible-altitude resolution of ~5 cents per
+#                `harmonic.mirror`'s cents commentary).
+#   plagal    — holonomy small but non-zero; the loop closed via an
+#                alternative path; a small residual from the IV → I
+#                detour vs the V → I geodesic.
+#   deceptive — holonomy large; the loop did NOT close; the substrate
+#                landed on a surrogate-tonic with substantial residual
+#                against the consonant basis.
+#   half      — holonomy unmeasured; the path did not complete; the
+#                residual is pending until the path resolves on a
+#                later tick.
+#
+# Composition note: `cadence_as_holonomy` composes through
+# `harmonic.mirror`'s `comma_as_holonomy` (singular residual) and
+# `dissonance.mirror`'s `dissonance_as_holonomy` (graded residual);
+# this action names the cadence-event-altitude reading. The three
+# together close the audible-altitude holonomy bridge at every
+# altitude (singular event, graded reading, cadence event).
+#
+# The body stays obligation-blocked (`\`): the realisation lifts the
+# cadence's residual through the holonomy carrier's concrete shape
+# (itself abstract at `bundle.mirror`); the lift is constrained by the
+# type system; the arithmetic lands when a consumer pulls.
+cadence_as_holonomy(c: cadence) -> holonomy { \ }
+
+out @epistemologic/math/music/cadence
+out cadence_kind
+out path
+out cadence
+out tonic_attractor
+out compose_path
+out is_settled
+out cadence_as_closure
+out cadence_as_holonomy
