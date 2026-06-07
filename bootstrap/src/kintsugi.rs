@@ -253,11 +253,78 @@ impl Fracture {
 /// [`TensionVector::magnitude`]: crate::tensor::TensionVector::magnitude
 /// [`tensor_of`]: crate::tensor::tensor_of
 pub fn minimize(t: &Tensor) -> Vec<Fracture> {
-    // RED phase: stub body. The GREEN commit lands the SDRF curvature
-    // ranking that consumes balanced_forman per tension and ranks by
-    // most-negative curvature first per Topping 2022 Algorithm 1.
-    let _ = (t, balanced_forman, Curvature::value, Operator::new, Restriction::new, TensionVector::magnitude, Tension::a, Tension::b, Tension::vector, Tensor::vertices, Tensor::tensions);
-    unimplemented!("T9 RED: SDRF curvature-ranked minimize lands in the GREEN commit")
+    let vertices = Tensor::vertices(t);
+    let tensions = Tensor::tensions(t);
+    let n = vertices.len();
+
+    // Phase 1: reconstruct each tension's edge against the vertex
+    // basis. An unindexed tension (gaps not in basis) records as None
+    // and ranks at the tail under SDRF (defensive boundary read; under
+    // normal `tensor_of` construction every tension indexes cleanly).
+    let tension_edges: Vec<Option<Restriction>> = tensions
+        .iter()
+        .map(|tension| {
+            let mut ia: Option<u32> = None;
+            let mut ib: Option<u32> = None;
+            for (k, g) in vertices.iter().enumerate() {
+                if ia.is_none() && g == Tension::a(tension) {
+                    ia = Some(k as u32);
+                    continue;
+                }
+                if ib.is_none() && g == Tension::b(tension) {
+                    ib = Some(k as u32);
+                }
+            }
+            match (ia, ib) {
+                (Some(a), Some(b)) => {
+                    let weight = TensionVector::magnitude(Tension::vector(tension));
+                    Some(Restriction::new(a, b, weight))
+                }
+                _ => None,
+            }
+        })
+        .collect();
+
+    // Phase 2: assemble the operator over the FULL vertex basis (not
+    // just the edges' bounding box) so isolated vertices contribute to
+    // degree counts correctly.
+    let restrictions: Vec<Restriction> = tension_edges
+        .iter()
+        .filter_map(|e| e.clone())
+        .collect();
+    let op = Operator::new(n as u32, restrictions);
+
+    // Phase 3: compute Balanced Forman curvature per tension. Unindexed
+    // tensions park at +∞ so they rank last under SDRF's most-negative-
+    // first ordering.
+    let ric_per_tension: Vec<f64> = tension_edges
+        .iter()
+        .map(|edge| match edge {
+            Some(r) => Curvature::value(&balanced_forman(&op, r)),
+            None => f64::INFINITY,
+        })
+        .collect();
+
+    // Phase 4: rank tensions by most-negative curvature first (SDRF
+    // Algorithm 1's outer selection). Stable sort preserves source
+    // order under tied curvature.
+    let mut indices: Vec<usize> = (0..tensions.len()).collect();
+    indices.sort_by(|&x, &y| {
+        ric_per_tension[x]
+            .partial_cmp(&ric_per_tension[y])
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
+
+    // Phase 5: emit each ranked tension's gap pair as fractures with
+    // SDRF-derived descent.
+    let mut fractures: Vec<Fracture> = Vec::with_capacity(tensions.len() * 2);
+    for idx in indices {
+        let tension = &tensions[idx];
+        let descent = descent_from_curvature(ric_per_tension[idx]);
+        fractures.push(Fracture::new(Tension::a(tension).clone(), descent));
+        fractures.push(Fracture::new(Tension::b(tension).clone(), descent));
+    }
+    fractures
 }
 
 /// Map a Balanced Forman curvature value to a `[0, 1]` descent reading
@@ -274,10 +341,11 @@ pub fn minimize(t: &Tensor) -> Vec<Fracture> {
 /// keeps the unsaturated upper tail away from `1.0` for realisable
 /// edges, leaving headroom that distinguishes deeper-bottleneck cases
 /// the substrate might encounter in the future.
-fn descent_from_curvature(_ric: f64) -> f64 {
-    // RED phase: stub. The GREEN commit lands the
-    // ((-Ric + 2.0) / 4.0).clamp(0, 1) mapping.
-    unimplemented!("T9 RED: descent_from_curvature lands in the GREEN commit")
+fn descent_from_curvature(ric: f64) -> f64 {
+    if !ric.is_finite() {
+        return 0.0;
+    }
+    ((-ric + 2.0) / 4.0).clamp(0.0, 1.0)
 }
 
 #[cfg(test)]
@@ -560,13 +628,21 @@ mod tests {
         };
         let tensions = vec![
             // K₃ on {0,1,2}: all edges Ric=2
-            mk(0, 1), mk(0, 2), mk(1, 2),
+            mk(0, 1),
+            mk(0, 2),
+            mk(1, 2),
             // Barbell K₃{3,4,5} + K₃{7,8,9} + bridge (5,7):
-            mk(3, 4), mk(3, 5), mk(4, 5),
-            mk(7, 8), mk(7, 9), mk(8, 9),
-            mk(5, 7),  // bridge — Ric=-2/3
+            mk(3, 4),
+            mk(3, 5),
+            mk(4, 5),
+            mk(7, 8),
+            mk(7, 9),
+            mk(8, 9),
+            mk(5, 7), // bridge — Ric=-2/3
             // P₄ {10,11,12,13}: middle edge (11,12) has Ric=0
-            mk(10, 11), mk(11, 12), mk(12, 13),
+            mk(10, 11),
+            mk(11, 12),
+            mk(12, 13),
         ];
         let tensor = Tensor::new(gs.clone(), tensions, 0.0);
         let fractures = minimize(&tensor);
@@ -579,11 +655,7 @@ mod tests {
         );
         // The last fracture pair is a K₃ edge (descent=0).
         let last = Fracture::descent(&fractures[fractures.len() - 1]);
-        assert!(
-            last < 1e-9,
-            "lowest descent (K₃) must be 0; got {}",
-            last,
-        );
+        assert!(last < 1e-9, "lowest descent (K₃) must be 0; got {}", last,);
         // Descent sequence is monotonically non-increasing.
         for w in fractures.windows(2) {
             assert!(
