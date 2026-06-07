@@ -90,7 +90,7 @@ use prism_core::{Diagnostic, PropertyVerdict, Ref, Transparency};
 use terni::Imperfect;
 
 use crate::gap::Gap;
-use crate::music::Verdict;
+use crate::music::{CadenceKind, Dissonance, Verdict};
 
 /// The substrate's oscillation-state carrier at the kintsugi-loop
 /// altitude.
@@ -242,6 +242,306 @@ pub fn is_complete(state: OscillationState) -> Verdict {
     }
 }
 
+// =====================================================================
+// T10.5: the `pulse` body — one ACTIVE→DARK alternation.
+//
+// Per `shards/mirror/spectral/oscillate.mirror` (substrate-FROZEN at
+// commit 02e2981/9efac39/c3802eba sweep): `pulse(o: oscillation) ->
+// oscillation` is the atomic step of the kintsugi loop. T10.5 lands
+// the boundary-Rust body that composes:
+//
+//   1. active_pass(o)         — propose a loss-decreasing morphism
+//                                (T11 stub: returns a fixture morphism).
+//   2. query_phi(morphism)    — gate + rank via the three glass
+//                                properties (later-tick stub: returns
+//                                a verdict consonant with the fixture).
+//   3. dark_pass(o, m)        — anchor identity; advance ref if preserved
+//                                (T12 stub: leaves anchor unchanged,
+//                                returns a verdict-shaped trace).
+//   4. read_consent(v, k)     — bridge the verdict + cadence_kind into
+//                                the next oscillation_state.
+//   5. emit next Oscillation with iteration += 1 and state updated.
+//
+// **The stubs are intentional.** Per the brief: pulse demonstrates the
+// composition; T11 fills `active_pass` with real candidate generation
+// via gaps_of → tensor_of → minimize; T12 fills `dark_pass` with the
+// @uuid/spectral.dark byte-equality check; later ticks land
+// `query_phi`'s full structural query. T10.5 proves the *chain shape*
+// at the boundary — the wiring that those bodies will land into.
+//
+// Banach contraction discipline (spec §2.1): γ_oscillate ≤ γ_up · γ_down.
+// The contraction map (pulse) lands GREEN first; the iteration (the
+// `oscillate` driver) lands later. Per the task brief: "pulse's γ_pulse
+// witnesses first."
+// =====================================================================
+
+/// The substrate's tick carrier at the oscillation altitude.
+///
+/// Per `shards/epistemologic/reality/time.mirror`'s `type tick =
+/// monotonic`: a strictly-monotonic counter. The oscillation's
+/// iteration field rides this — each `pulse` call advances `Tick` by
+/// exactly one monotonic unit. Newtype per `[[feedback-no-bare-types]]`;
+/// a bare `u32` would let two different counters of the same width
+/// flow through the substrate boundary without typing.
+///
+/// Identity contract: two ticks are equal iff their counts match.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Tick(u32);
+
+impl Tick {
+    /// The zero tick: the loop's starting position.
+    pub const fn zero() -> Self {
+        Tick(0)
+    }
+
+    /// Construct from a raw count.
+    pub const fn new(count: u32) -> Self {
+        Tick(count)
+    }
+
+    /// Read this tick's raw count.
+    pub const fn count(self) -> u32 {
+        self.0
+    }
+
+    /// Advance by one monotonic unit. Saturating at `u32::MAX` per
+    /// the substrate's monotonic discipline: the realisation layer
+    /// guarantees no decrement; saturation IS the substrate boundary
+    /// for the u32 representation. A future-tick lift to `u64` or a
+    /// big-int carrier moves the boundary; the discipline holds.
+    pub const fn advance(self) -> Self {
+        Tick(self.0.saturating_add(1))
+    }
+}
+
+/// The substrate's oscillation record at the kintsugi-loop altitude.
+///
+/// Mirrors `type oscillation = { state, iteration: tick, anchor: ref }`
+/// from `shards/mirror/spectral/oscillate.mirror`. The loop's full
+/// live position:
+///
+/// - [`state`]     — the loop's live position; one of the five
+///   [`OscillationState`] variants. Read by [`pulse`] to dispatch the
+///   next half-cycle; read by [`is_complete`] to emit the termination
+///   verdict.
+/// - [`iteration`] — the loop's tick count from initial. Each `pulse`
+///   advances by one monotonic unit; the ordering on `Tick` IS the
+///   loop's ordering.
+/// - [`anchor`]    — the substrate ref the loop is currently anchored
+///   on. The eigenboard's current shard handle; updated by `dark_pass`
+///   after a morphism applies; read by `active_pass` to compose the
+///   candidate morphism_set.
+///
+/// Identity contract: two oscillations are equal iff their state,
+/// iteration, and anchor all match.
+///
+/// [`state`]: Oscillation::state
+/// [`iteration`]: Oscillation::iteration
+/// [`anchor`]: Oscillation::anchor
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Oscillation {
+    state: OscillationState,
+    iteration: Tick,
+    anchor: Ref,
+}
+
+impl Oscillation {
+    /// Construct from the three carriers.
+    pub fn new(state: OscillationState, iteration: Tick, anchor: Ref) -> Self {
+        Oscillation {
+            state,
+            iteration,
+            anchor,
+        }
+    }
+
+    /// Construct the initial oscillation: `active` state, tick zero,
+    /// anchored at `initial`. Per `oscillate.mirror` §oscillate (the
+    /// driver's step 1): `initial → oscillation { state: active,
+    /// iteration: tick_zero, anchor: initial }`.
+    pub fn initial(initial: Ref) -> Self {
+        Oscillation {
+            state: OscillationState::Active,
+            iteration: Tick::zero(),
+            anchor: initial,
+        }
+    }
+
+    /// Read this oscillation's live position.
+    pub fn state(&self) -> OscillationState {
+        self.state
+    }
+
+    /// Read this oscillation's iteration count.
+    pub fn iteration(&self) -> Tick {
+        self.iteration
+    }
+
+    /// Borrow this oscillation's anchor ref.
+    pub fn anchor(&self) -> &Ref {
+        &self.anchor
+    }
+}
+
+/// The substrate's morphism carrier at the consent altitude (Rust
+/// boundary shape, stub).
+///
+/// Mirrors `type morphism = { content: ref, score: dissonance,
+/// expected: cadence_kind }` from
+/// `shards/mirror/spectral/consent.mirror`. T10.5 lands the minimal
+/// three-field shape required to type the `active_pass` / `dark_pass`
+/// signatures. Per the brief: "Stub it minimally; full shape lands
+/// when active_pass becomes real" — when T11 substrate-pulls real
+/// candidate generation through `gaps_of → tensor_of → minimize`,
+/// this carrier may grow richer fields (a typed-content lift; a
+/// per-candidate confidence trace; a holonomy reading).
+///
+/// Identity contract: two morphisms are equal iff their content,
+/// score, and expected fields all match.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Morphism {
+    content: Ref,
+    score: Dissonance,
+    expected: CadenceKind,
+}
+
+impl Morphism {
+    /// Construct from the three carriers.
+    pub fn new(content: Ref, score: Dissonance, expected: CadenceKind) -> Self {
+        Morphism {
+            content,
+            score,
+            expected,
+        }
+    }
+
+    /// Borrow this morphism's content reference.
+    pub fn content(&self) -> &Ref {
+        &self.content
+    }
+
+    /// Read this morphism's dissonance score.
+    pub fn score(&self) -> Dissonance {
+        self.score
+    }
+
+    /// Read this morphism's expected cadence_kind.
+    pub fn expected(&self) -> CadenceKind {
+        self.expected
+    }
+}
+
+/// `active_pass(o: oscillation) -> morphism` — the proposal action
+/// (T11 stub).
+///
+/// **STUB.** Per `oscillate.mirror` §active_pass: the realisation reads
+/// the anchor ref's candidate morphism_set (the eigenboard's pending
+/// imperfections), invokes `dissonance.is_pareto` for the rank,
+/// projects the highest-ranked candidate into a morphism. T10.5 returns
+/// a fixture morphism anchored at the input's anchor ref so the chain
+/// shape is provable end-to-end; the body proper lands at T11 with
+/// real candidate generation.
+///
+/// The fixture: a morphism whose content references the input
+/// oscillation's anchor, scored at zero roughness (consonant), expected
+/// to resolve authentically. This lets `pulse` thread the chain
+/// without coupling to substrate machinery that hasn't pulled yet.
+pub fn active_pass(_o: &Oscillation) -> Morphism {
+    unimplemented!("T10.5 active_pass stub body — lands in [substrate-pull:realize]")
+}
+
+/// `query_phi(m: morphism) -> verdict` — the structural Φ query
+/// (later-tick stub).
+///
+/// **STUB.** Per `consent.mirror` §query_phi: the realisation runs the
+/// gates (`loss_decreasing`, `identity_preserving`) over the
+/// morphism_set; delegates to `admissibility_singleton` for the
+/// discriminator; composes with `cadence.is_settled` per the surviving
+/// morphism's `expected` field; emits the consent verdict. T10.5
+/// dispatches through the substrate's existing audible-altitude
+/// `is_settled` against the stub morphism's `expected` cadence —
+/// enough to type the chain; the structural query lands when the
+/// `morphism_set` shape and the three glass properties pull into Rust.
+pub fn query_phi(_m: &Morphism) -> Verdict {
+    unimplemented!("T10.5 query_phi stub body — lands in [substrate-pull:realize]")
+}
+
+/// `dark_pass(o: oscillation, m: morphism) -> oscillation` — the
+/// identity-anchor action (T12 stub).
+///
+/// **STUB.** Per `oscillate.mirror` §dark_pass: the realisation invokes
+/// `consent.identity_preserving(m)`, branches on the verdict, emits
+/// the next oscillation with the anchor advanced if preserved (or
+/// unchanged on escalation). T10.5 returns an oscillation that
+/// projects the consent verdict onto the next state via
+/// [`read_consent`], leaving the anchor unchanged (the @uuid/spectral
+/// dark-bits byte-equality check is the T12 substrate-pull; until then
+/// the stub treats every morphism as identity-preserving and reads its
+/// next state from the verdict + the morphism's expected cadence).
+pub fn dark_pass(_o: &Oscillation, _m: &Morphism) -> Oscillation {
+    unimplemented!("T10.5 dark_pass stub body — lands in [substrate-pull:realize]")
+}
+
+/// `read_consent(v: verdict, k: cadence_kind) -> oscillation_state` —
+/// the four-to-five bridge.
+///
+/// Reads a consent verdict + a cadence_kind and emits the next
+/// oscillation_state per `oscillate.mirror` §read_consent's declared
+/// mapping table (lines 583–622):
+///
+/// | verdict   | cadence_kind   | next state    | rationale                              |
+/// |-----------|----------------|---------------|----------------------------------------|
+/// | Success   | Authentic      | Settled       | autopoietic ground; holonomy → 0       |
+/// | Success   | (other)        | Active        | consonant alt path; continue           |
+/// | Partial   | Plagal         | Active        | graded auto-apply; loop advances       |
+/// | Partial   | Authentic      | Active        | high-confidence partial; continue      |
+/// | Partial   | Half           | Waiting       | paused on V; awaits next consent tick  |
+/// | Partial   | Deceptive      | Waiting       | low-confidence partial; awaits tick    |
+/// | Failure   | (any)          | Escalated     | external resolution required           |
+///
+/// Threshold call: the substrate's `partial+plagal → active`,
+/// `partial+half → waiting` mapping rides cadence_kind's variant
+/// directly. The verdict-shape carries the structural distinction;
+/// the cadence_kind carries the trajectory distinction; together
+/// they collapse the four-state verdict × four-state cadence cross-
+/// product onto the five-state oscillation_state surface
+/// exhaustively. No fallback arm; the compiler enforces the contract.
+pub fn read_consent(_v: &Verdict, _k: CadenceKind) -> OscillationState {
+    unimplemented!("T10.5 read_consent stub body — lands in [substrate-pull:realize]")
+}
+
+/// `pulse(o: oscillation) -> oscillation` — one ACTIVE→DARK alternation.
+///
+/// The atomic step of the kintsugi loop. Composes
+/// `active_pass → query_phi → dark_pass → read_consent` into ONE
+/// half-cycle of the oscillation:
+///
+/// 1. `active_pass(o)`      — propose a loss-decreasing morphism (stub).
+/// 2. `query_phi(m)`        — gate + rank → consent verdict (stub).
+/// 3. `dark_pass(o, m)`     — anchor identity; emit next oscillation
+///    (stub; reads `read_consent` for the next state).
+///
+/// Emits the next [`Oscillation`] with `iteration += 1`, `state`
+/// updated per `read_consent`, and `anchor` carried through (the stub
+/// `dark_pass` leaves the anchor unchanged; T12's body advances on
+/// identity-preserving morphisms).
+///
+/// Idempotency on settled / escalated: when the input oscillation is
+/// already at a closure state, the chain still runs (active_pass over
+/// a settled anchor produces a fixture morphism whose query_phi yields
+/// the closure verdict; dark_pass's read_consent re-reads the closure).
+/// The iteration advances by one regardless — the substrate's
+/// monotonic-tick discipline holds whether or not the loop has settled.
+/// The driver (`oscillate`, T13+) reads `is_complete` AFTER each pulse
+/// to decide termination; pulse itself is the pure contraction step.
+///
+/// Per spec §2.1: pulse IS the loop's contraction step. Each pulse is
+/// one application of the contraction map; the iteration count IS the
+/// contraction step index.
+pub fn pulse(_o: &Oscillation) -> Oscillation {
+    unimplemented!("T10.5 pulse body — lands in [substrate-pull:realize]")
+}
+
 #[cfg(test)]
 mod tests {
     //! The executable spec for [`is_complete`] — T4's `oscillate`
@@ -388,5 +688,405 @@ mod tests {
         let v: crate::music::Verdict = is_complete(OscillationState::Settled);
         // The type assertion is the test; the value just witnesses.
         assert!(matches!(v, Imperfect::Success(())));
+    }
+
+    // ================================================================
+    // T10.5: the `pulse` body — one ACTIVE→DARK alternation.
+    //
+    // The chain-shape proof. These tests RED first; the body lands
+    // GREEN under [substrate-pull:realize]. The stubs (active_pass,
+    // dark_pass, query_phi, read_consent) are all here at the boundary
+    // so the chain wires end-to-end with a fixture morphism.
+    //
+    // Reading the brief's pulse contract:
+    //
+    //   - pulse(Oscillation { state: Active, iteration: 0, anchor: r })
+    //     yields Oscillation { state ∈ {settled, dark, escalated,
+    //     waiting, active}, iteration: 1, anchor: r }
+    //   - iteration advances by exactly one per pulse
+    //   - the stub chain leaves the anchor unchanged (T12's dark_pass
+    //     body will lift this when @uuid/spectral.dark substrate-pulls)
+    //   - read_consent's table dispatches verdict×cadence_kind onto
+    //     the five-state oscillation surface
+    //   - the fixture morphism (active_pass stub) carries an authentic
+    //     cadence expectation; query_phi runs it through is_settled;
+    //     the result reads as Settled in read_consent
+    // ================================================================
+
+    use crate::music::{is_settled, Dissonance};
+    use prism_core::Transparency;
+
+    /// Fixture anchor ref for the pulse chain tests.
+    fn fixture_anchor() -> Ref {
+        Ref::new("@mirror/spectral/oscillate/fixture").expect("valid substrate ref")
+    }
+
+    // ----------------------------------------------------------------
+    // Tick — the substrate's monotonic counter.
+    // ----------------------------------------------------------------
+
+    /// `Tick::zero` is the loop's starting position; count 0.
+    #[test]
+    fn tick_zero_is_count_zero() {
+        assert_eq!(Tick::zero().count(), 0);
+    }
+
+    /// `Tick::advance` increments by exactly one monotonic unit.
+    #[test]
+    fn tick_advance_is_plus_one() {
+        let t0 = Tick::zero();
+        let t1 = t0.advance();
+        assert_eq!(t1.count(), 1);
+        assert_eq!(t1.advance().count(), 2);
+    }
+
+    /// `Tick::advance` saturates at u32::MAX per the monotonic
+    /// discipline (no decrement; no overflow panic).
+    #[test]
+    fn tick_advance_saturates_at_u32_max() {
+        let t = Tick::new(u32::MAX);
+        assert_eq!(t.advance().count(), u32::MAX);
+    }
+
+    /// `Tick` ordering reflects the monotonic counter.
+    #[test]
+    fn tick_ordering_is_monotonic() {
+        assert!(Tick::zero() < Tick::new(1));
+        assert!(Tick::new(5) < Tick::new(10));
+    }
+
+    // ----------------------------------------------------------------
+    // Oscillation — the loop's full live position.
+    // ----------------------------------------------------------------
+
+    /// `Oscillation::initial` puts the loop at Active / tick-zero /
+    /// anchored on the initial ref per `oscillate.mirror` §oscillate
+    /// step 1.
+    #[test]
+    fn oscillation_initial_is_active_zero_anchor() {
+        let r = fixture_anchor();
+        let o = Oscillation::initial(r.clone());
+        assert_eq!(o.state(), OscillationState::Active);
+        assert_eq!(o.iteration(), Tick::zero());
+        assert_eq!(o.anchor(), &r);
+    }
+
+    /// `Oscillation` carries state/iteration/anchor through new().
+    #[test]
+    fn oscillation_new_carries_three_fields() {
+        let r = fixture_anchor();
+        let o = Oscillation::new(OscillationState::Dark, Tick::new(7), r.clone());
+        assert_eq!(o.state(), OscillationState::Dark);
+        assert_eq!(o.iteration(), Tick::new(7));
+        assert_eq!(o.anchor(), &r);
+    }
+
+    // ----------------------------------------------------------------
+    // Morphism — the consent-altitude carrier.
+    // ----------------------------------------------------------------
+
+    /// `Morphism::new` carries content/score/expected fields.
+    #[test]
+    fn morphism_new_carries_three_fields() {
+        let m = Morphism::new(
+            fixture_anchor(),
+            Dissonance::new(0.42, 3),
+            CadenceKind::Authentic,
+        );
+        assert_eq!(m.content(), &fixture_anchor());
+        assert!((m.score().roughness() - 0.42).abs() < 1e-9);
+        assert_eq!(m.score().partials(), 3);
+        assert_eq!(m.expected(), CadenceKind::Authentic);
+    }
+
+    // ----------------------------------------------------------------
+    // active_pass stub — fixture morphism anchored at the input.
+    // ----------------------------------------------------------------
+
+    /// The stub `active_pass` returns a morphism whose content
+    /// references the input oscillation's anchor. The fixture is
+    /// scored consonantly (roughness 0) and expects authentic cadence
+    /// — enough to thread the chain without coupling to T11.
+    #[test]
+    fn active_pass_stub_returns_fixture_morphism_at_anchor() {
+        let r = fixture_anchor();
+        let o = Oscillation::initial(r.clone());
+        let m = active_pass(&o);
+        assert_eq!(m.content(), &r, "fixture morphism anchors at input ref");
+        assert_eq!(m.score().roughness(), 0.0, "fixture is consonant");
+        assert_eq!(m.expected(), CadenceKind::Authentic);
+    }
+
+    // ----------------------------------------------------------------
+    // query_phi stub — dispatches through is_settled on m.expected().
+    // ----------------------------------------------------------------
+
+    /// `query_phi` over an authentic-expected morphism reads as
+    /// `Success(())` (the canonical closure) per is_settled's mapping.
+    #[test]
+    fn query_phi_stub_on_authentic_morphism_is_success() {
+        let m = Morphism::new(
+            fixture_anchor(),
+            Dissonance::new(0.0, 1),
+            CadenceKind::Authentic,
+        );
+        let v = query_phi(&m);
+        assert!(matches!(v, Imperfect::Success(())));
+    }
+
+    /// `query_phi` over a deceptive-expected morphism reads as
+    /// `Failure` per is_settled's mapping (V → vi).
+    #[test]
+    fn query_phi_stub_on_deceptive_morphism_is_failure() {
+        let m = Morphism::new(
+            fixture_anchor(),
+            Dissonance::new(0.9, 1),
+            CadenceKind::Deceptive,
+        );
+        let v = query_phi(&m);
+        assert!(matches!(v, Imperfect::Failure(_, _)));
+    }
+
+    // ----------------------------------------------------------------
+    // read_consent — the four-to-five bridge.
+    // ----------------------------------------------------------------
+
+    /// `Success(()) + Authentic` → `Settled`. The canonical closure.
+    #[test]
+    fn read_consent_success_authentic_is_settled() {
+        let v: Verdict = Imperfect::Success(());
+        assert_eq!(
+            read_consent(&v, CadenceKind::Authentic),
+            OscillationState::Settled,
+        );
+    }
+
+    /// `Success(()) + non-authentic` → `Active`. Harmonic alt path; loop
+    /// keeps moving. Per oscillate.mirror's read_consent table: the
+    /// `pass + plagal` row maps to active.
+    #[test]
+    fn read_consent_success_plagal_is_active() {
+        let v: Verdict = Imperfect::Success(());
+        assert_eq!(
+            read_consent(&v, CadenceKind::Plagal),
+            OscillationState::Active,
+        );
+    }
+
+    /// `Partial + Plagal` → `Active`. Graded auto-apply at high
+    /// confidence; loop advances.
+    #[test]
+    fn read_consent_partial_plagal_is_active() {
+        let v: Verdict = Imperfect::Partial((), Transparency::clear());
+        assert_eq!(
+            read_consent(&v, CadenceKind::Plagal),
+            OscillationState::Active,
+        );
+    }
+
+    /// `Partial + Half` → `Waiting`. Half-cadence; substrate paused at
+    /// the dominant; awaits next consent surface tick.
+    #[test]
+    fn read_consent_partial_half_is_waiting() {
+        let v: Verdict = Imperfect::Partial((), Transparency::clear());
+        assert_eq!(
+            read_consent(&v, CadenceKind::Half),
+            OscillationState::Waiting,
+        );
+    }
+
+    /// `Partial + Authentic` → `Active`. High-confidence partial reading
+    /// of the canonical resolution; loop continues.
+    #[test]
+    fn read_consent_partial_authentic_is_active() {
+        let v: Verdict = Imperfect::Partial((), Transparency::clear());
+        assert_eq!(
+            read_consent(&v, CadenceKind::Authentic),
+            OscillationState::Active,
+        );
+    }
+
+    /// `Failure + any cadence_kind` → `Escalated`. Pause_event MUST be
+    /// emitted; external resolution required.
+    #[test]
+    fn read_consent_failure_is_escalated_for_any_cadence() {
+        let v: Verdict = Imperfect::Failure(
+            Gap::new(1, oscillate_origin(), "deceptive"),
+            Transparency::clear(),
+        );
+        for k in [
+            CadenceKind::Authentic,
+            CadenceKind::Plagal,
+            CadenceKind::Half,
+            CadenceKind::Deceptive,
+        ] {
+            assert_eq!(
+                read_consent(&v, k),
+                OscillationState::Escalated,
+                "failure on {k:?} must escalate",
+            );
+        }
+    }
+
+    // ----------------------------------------------------------------
+    // dark_pass — emits next oscillation with iteration += 1, anchor
+    // unchanged (stub), state per read_consent.
+    // ----------------------------------------------------------------
+
+    /// `dark_pass` increments iteration by one.
+    #[test]
+    fn dark_pass_stub_advances_iteration() {
+        let r = fixture_anchor();
+        let o = Oscillation::new(OscillationState::Active, Tick::new(3), r.clone());
+        let m = active_pass(&o);
+        let next = dark_pass(&o, &m);
+        assert_eq!(next.iteration(), Tick::new(4));
+    }
+
+    /// `dark_pass` (stub) leaves the anchor unchanged. T12 lifts this
+    /// when @uuid/spectral.dark substrate-pulls; until then, the
+    /// identity-preservation contract is the stub's default.
+    #[test]
+    fn dark_pass_stub_preserves_anchor() {
+        let r = fixture_anchor();
+        let o = Oscillation::new(OscillationState::Active, Tick::zero(), r.clone());
+        let m = active_pass(&o);
+        let next = dark_pass(&o, &m);
+        assert_eq!(next.anchor(), &r);
+    }
+
+    /// `dark_pass` over the authentic-expected fixture morphism emits
+    /// `Settled` (the consent read of Success(()) + Authentic).
+    #[test]
+    fn dark_pass_stub_on_authentic_fixture_is_settled() {
+        let r = fixture_anchor();
+        let o = Oscillation::initial(r);
+        let m = active_pass(&o);
+        let next = dark_pass(&o, &m);
+        assert_eq!(next.state(), OscillationState::Settled);
+    }
+
+    // ----------------------------------------------------------------
+    // pulse — the composer chain.
+    //
+    // The atomic step. T10.5's load-bearing proof: pulse threads
+    // active_pass → query_phi → dark_pass → read_consent end-to-end.
+    // ----------------------------------------------------------------
+
+    /// `pulse` over the initial oscillation advances iteration by one.
+    #[test]
+    fn pulse_advances_iteration_by_one() {
+        let o = Oscillation::initial(fixture_anchor());
+        let next = pulse(&o);
+        assert_eq!(next.iteration(), Tick::new(1));
+    }
+
+    /// `pulse` over an oscillation at tick 7 advances to tick 8.
+    #[test]
+    fn pulse_iteration_advances_from_arbitrary_tick() {
+        let o = Oscillation::new(
+            OscillationState::Active,
+            Tick::new(7),
+            fixture_anchor(),
+        );
+        let next = pulse(&o);
+        assert_eq!(next.iteration(), Tick::new(8));
+    }
+
+    /// `pulse` preserves the anchor (stub `dark_pass` does not
+    /// mutate; T12 lifts this when @uuid/spectral.dark pulls).
+    #[test]
+    fn pulse_preserves_anchor() {
+        let r = fixture_anchor();
+        let o = Oscillation::initial(r.clone());
+        let next = pulse(&o);
+        assert_eq!(next.anchor(), &r);
+    }
+
+    /// `pulse` over the initial oscillation lands at `Settled` via the
+    /// stub chain (fixture morphism's authentic cadence → Success(())
+    /// → read_consent picks Settled). This proves the composer chain
+    /// end-to-end: active_pass → query_phi → dark_pass → read_consent.
+    #[test]
+    fn pulse_composer_chain_yields_settled_on_authentic_fixture() {
+        let o = Oscillation::initial(fixture_anchor());
+        let next = pulse(&o);
+        assert_eq!(
+            next.state(),
+            OscillationState::Settled,
+            "the composer chain must thread end-to-end and read Settled",
+        );
+    }
+
+    /// `pulse` emits a state in the five-element oscillation_state
+    /// surface — any oscillation in, an oscillation in the closed set
+    /// of five states out. The substrate's exhaustive surface holds.
+    #[test]
+    fn pulse_output_state_is_in_five_state_surface() {
+        let o = Oscillation::initial(fixture_anchor());
+        let next = pulse(&o);
+        match next.state() {
+            OscillationState::Active
+            | OscillationState::Dark
+            | OscillationState::Settled
+            | OscillationState::Escalated
+            | OscillationState::Waiting => {}
+        }
+    }
+
+    /// `pulse` is idempotent on the anchor (the stub chain does not
+    /// mutate the ref; running pulse repeatedly only advances iteration
+    /// and updates state per the verdict).
+    #[test]
+    fn pulse_is_idempotent_on_anchor_across_iterations() {
+        let r = fixture_anchor();
+        let o0 = Oscillation::initial(r.clone());
+        let o1 = pulse(&o0);
+        let o2 = pulse(&o1);
+        let o3 = pulse(&o2);
+        assert_eq!(o1.anchor(), &r);
+        assert_eq!(o2.anchor(), &r);
+        assert_eq!(o3.anchor(), &r);
+        assert_eq!(o1.iteration(), Tick::new(1));
+        assert_eq!(o2.iteration(), Tick::new(2));
+        assert_eq!(o3.iteration(), Tick::new(3));
+    }
+
+    /// Type-level: `pulse` returns `Oscillation`. The substrate's
+    /// carrier shape holds at the Rust boundary.
+    #[test]
+    fn pulse_returns_oscillation_shape() {
+        let o = Oscillation::initial(fixture_anchor());
+        let next: Oscillation = pulse(&o);
+        assert_eq!(next.iteration().count(), 1);
+    }
+
+    /// The full chain proof: pulse composes the four stubs in order.
+    /// active_pass returns a morphism; query_phi turns it into a
+    /// verdict via is_settled; dark_pass reads the verdict + cadence
+    /// through read_consent; the next oscillation carries the result.
+    /// This test asserts the composition is observable end-to-end by
+    /// reconstructing it from the four boundary stubs.
+    #[test]
+    fn pulse_chain_matches_explicit_stub_composition() {
+        let o = Oscillation::initial(fixture_anchor());
+        // Run the chain explicitly:
+        let m = active_pass(&o);
+        let v = query_phi(&m);
+        let k = crate::gap::verdict_to_cadence_kind(&v);
+        let expected_state = read_consent(&v, k);
+        let expected_iter = o.iteration().advance();
+        // Run pulse:
+        let next = pulse(&o);
+        // The two must match (the chain shape).
+        assert_eq!(next.state(), expected_state);
+        assert_eq!(next.iteration(), expected_iter);
+        assert_eq!(next.anchor(), o.anchor());
+        // And the chain witness: an authentic-expected fixture yields
+        // is_settled(Authentic) = Success(()); read_consent reads that
+        // with the Authentic cadence_kind to Settled.
+        let witness = is_settled(CadenceKind::Authentic);
+        assert!(matches!(witness, Imperfect::Success(())));
+        assert_eq!(expected_state, OscillationState::Settled);
     }
 }
