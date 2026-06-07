@@ -15,6 +15,7 @@ mod gap;
 mod git;
 mod grammar;
 mod hash;
+mod kintsugi;
 mod music;
 mod oscillate;
 mod pipeline;

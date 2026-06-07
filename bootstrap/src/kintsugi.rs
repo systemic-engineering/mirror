@@ -1,0 +1,316 @@
+//! `@kintsugi` — boundary Rust for the kintsugi-loop production engine.
+//!
+//! This module realizes substrate-declared actions from
+//! [`docs/specs/gap-tension-tensor-substrate.md`] §3.2 and §11.1 as
+//! Rust bodies. T7 in the implementation cascade after T6's
+//! [`tensor_of`].
+//!
+//! ## What lives here
+//!
+//! - [`Fracture`] — the Rust mirror of the substrate's
+//!   `fracture <= gap & { site: span }` from
+//!   [`docs/specs/gap-tension-tensor-substrate.md`] §11.1. A
+//!   substrate-marked gap the kintsugi loop is attempting to close.
+//!   Inherits [`Gap`]'s carriers and adds the descent magnitude.
+//! - [`minimize`] — the executable form of
+//!   `minimize(tensor) -> [fracture]`. The **gradient-descent step on
+//!   the Dirichlet energy** per
+//!   [`docs/specs/gap-tension-tensor-substrate.md`] §6. Ranks tensions
+//!   by descent magnitude (steepest first); emits the gap pair of each
+//!   ranked tension as fractures.
+//!
+//! T7 RED-phase scaffold: type signatures land here; bodies are
+//! `unimplemented!()` so the test corpus below runs RED. GREEN lands
+//! in the next commit per the implementation-cascade template T3-T6
+//! established.
+//!
+//! [`docs/specs/gap-tension-tensor-substrate.md`]: ../../../../docs/specs/gap-tension-tensor-substrate.md
+//! [`Gap`]: crate::gap::Gap
+#![allow(dead_code)]
+
+use crate::gap::Gap;
+use crate::tensor::Tensor;
+
+// ---------------------------------------------------------------------------
+// Fracture — RED-phase scaffold.
+// ---------------------------------------------------------------------------
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Fracture {
+    gap: Gap,
+    descent: f64,
+}
+
+impl Fracture {
+    pub fn new(_gap: Gap, _descent: f64) -> Self {
+        unimplemented!("T7 GREEN: realize Fracture::new")
+    }
+
+    pub fn gap(_f: &Fracture) -> &Gap {
+        unimplemented!("T7 GREEN: realize Fracture::gap")
+    }
+
+    pub fn descent(_f: &Fracture) -> f64 {
+        unimplemented!("T7 GREEN: realize Fracture::descent")
+    }
+}
+
+// ---------------------------------------------------------------------------
+// minimize — RED-phase scaffold.
+// ---------------------------------------------------------------------------
+
+pub fn minimize(_t: &Tensor) -> Vec<Fracture> {
+    unimplemented!("T7 GREEN: realize minimize")
+}
+
+#[cfg(test)]
+mod tests {
+    //! The executable spec for [`minimize`] and [`Fracture`] — T7's
+    //! `minimize` body. The kintsugi loop's gradient-descent step.
+    //!
+    //! Per `docs/specs/gap-tension-tensor-substrate.md` §6 and §3.2:
+    //! `minimize` takes a tensor, ranks tensions by descent magnitude,
+    //! and emits the substrate's mutation candidates as
+    //! `fracture <= gap` values. These tests RED first; the body lands
+    //! GREEN in the next commit.
+
+    use super::*;
+    use crate::gap::Gap;
+    use crate::tensor::{Tensor, Tension, TensionVector, tensor_of};
+    use prism_core::Ref;
+
+    fn total_origin() -> Ref {
+        Ref::new("@epistemologic/property/total_classification").expect("valid ref")
+    }
+
+    fn other_origin() -> Ref {
+        Ref::new("@epistemologic/property/strict_classification").expect("valid ref")
+    }
+
+    // -----------------------------------------------------------------------
+    // Fracture's substrate-pull shape — the inheritance chain `fracture <= gap`.
+    // -----------------------------------------------------------------------
+
+    /// Fracture carries an inherited [`Gap`] (the `<= gap` chain) and
+    /// a descent magnitude. The accessor reaches the inherited gap so
+    /// downstream consumers can read its level / origin / summary.
+    #[test]
+    fn fracture_carries_inherited_gap_and_descent() {
+        let g = Gap::new(0, total_origin(), "dark region [0, 5)");
+        let f = Fracture::new(g.clone(), 0.75);
+        assert_eq!(Fracture::gap(&f), &g);
+        assert!((Fracture::descent(&f) - 0.75).abs() < 1e-12);
+    }
+
+    /// The descent magnitude is clamped to `[0, 1]` — the audible-
+    /// altitude floor reading per [`TensionVector`]'s clamp discipline.
+    #[test]
+    fn fracture_descent_clamps_to_unit_interval() {
+        let g = Gap::new(0, total_origin(), "test");
+        let f = Fracture::new(g.clone(), 1.5);
+        assert_eq!(Fracture::descent(&f), 1.0);
+        let f = Fracture::new(g.clone(), -0.5);
+        assert_eq!(Fracture::descent(&f), 0.0);
+        let f = Fracture::new(g, 0.42);
+        assert!((Fracture::descent(&f) - 0.42).abs() < 1e-12);
+    }
+
+    // -----------------------------------------------------------------------
+    // minimize on the substrate's boundary cases.
+    // -----------------------------------------------------------------------
+
+    /// Empty tensor → empty fracture vector. The substrate's gradient
+    /// on the trivial sheaf is the additive identity; nothing to
+    /// mutate at this altitude.
+    #[test]
+    fn empty_tensor_yields_no_fractures() {
+        let t = tensor_of(Vec::new());
+        let fractures = minimize(&t);
+        assert!(
+            fractures.is_empty(),
+            "empty tensor yields no fractures; got {} fracture(s)",
+            fractures.len(),
+        );
+    }
+
+    /// Singleton-vertex tensor → empty fracture vector. No tensions
+    /// means no descent direction at this altitude.
+    #[test]
+    fn singleton_vertex_tensor_yields_no_fractures() {
+        let g = Gap::new(0, total_origin(), "dark region [0, 5)");
+        let t = tensor_of(vec![g]);
+        let fractures = minimize(&t);
+        assert!(
+            fractures.is_empty(),
+            "singleton-vertex tensor yields no fractures; got {} fracture(s)",
+            fractures.len(),
+        );
+    }
+
+    /// Disconnected tensor (two same-origin gaps + one isolated other-
+    /// origin gap; K₂ ⊔ K₁) → two fractures from the single tension
+    /// (one per endpoint); the isolated vertex contributes nothing.
+    #[test]
+    fn disconnected_tensor_yields_fractures_from_connected_components_only() {
+        let g1 = Gap::new(0, total_origin(), "dark [0, 5)");
+        let g2 = Gap::new(0, total_origin(), "dark [10, 15)");
+        let g3 = Gap::new(0, other_origin(), "strict failure");
+        let t = tensor_of(vec![g1.clone(), g2.clone(), g3]);
+        let fractures = minimize(&t);
+        assert_eq!(
+            fractures.len(),
+            2,
+            "K₂ ⊔ K₁ yields one tension (two endpoint fractures); got {}",
+            fractures.len(),
+        );
+        // Both fractures must come from the K₂ component.
+        let gaps: Vec<&Gap> = fractures.iter().map(Fracture::gap).collect();
+        assert!(gaps.contains(&&g1) && gaps.contains(&&g2));
+    }
+
+    // -----------------------------------------------------------------------
+    // The K₂ case — one tension, two endpoint fractures.
+    // -----------------------------------------------------------------------
+
+    /// K₂ tensor (two same-origin gaps; one tension) → two fractures
+    /// (one per endpoint). Both endpoints are substrate-marked descent
+    /// candidates per §3.2's directed-pull shape.
+    #[test]
+    fn k2_tensor_yields_one_fracture_per_endpoint() {
+        let g1 = Gap::new(0, total_origin(), "dark [0, 5)");
+        let g2 = Gap::new(0, total_origin(), "dark [10, 15)");
+        let t = tensor_of(vec![g1.clone(), g2.clone()]);
+        let fractures = minimize(&t);
+        assert_eq!(
+            fractures.len(),
+            2,
+            "K₂ tension yields one fracture per endpoint",
+        );
+        // Both endpoints are marked as descent candidates; both
+        // fractures carry the tension's audible-altitude magnitude.
+        assert_eq!(Fracture::gap(&fractures[0]), &g1);
+        assert_eq!(Fracture::gap(&fractures[1]), &g2);
+        // Audible-altitude floor: uniform magnitude 1.0 per
+        // tensor_of's construction.
+        assert!((Fracture::descent(&fractures[0]) - 1.0).abs() < 1e-12);
+        assert!((Fracture::descent(&fractures[1]) - 1.0).abs() < 1e-12);
+    }
+
+    /// K₃ tensor (three same-origin gaps; three tensions) → six
+    /// fractures (two endpoint candidates per tension).
+    #[test]
+    fn k3_tensor_yields_six_fractures() {
+        let g1 = Gap::new(0, total_origin(), "dark [0, 5)");
+        let g2 = Gap::new(0, total_origin(), "dark [10, 15)");
+        let g3 = Gap::new(0, total_origin(), "dark [20, 25)");
+        let t = tensor_of(vec![g1, g2, g3]);
+        let fractures = minimize(&t);
+        assert_eq!(
+            fractures.len(),
+            6,
+            "K₃ has three tensions; each yields two endpoint fractures; total 6",
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Ranking — steepest descent first.
+    // -----------------------------------------------------------------------
+
+    /// Tensions are ranked by descent magnitude (largest first). When
+    /// magnitudes differ, the higher-magnitude tension's fractures
+    /// surface before the lower-magnitude tension's.
+    #[test]
+    fn fractures_are_ranked_by_descent_magnitude_largest_first() {
+        let g_a = Gap::new(0, total_origin(), "high-magnitude a");
+        let g_b = Gap::new(0, total_origin(), "high-magnitude b");
+        let g_c = Gap::new(0, total_origin(), "low-magnitude a");
+        let g_d = Gap::new(0, total_origin(), "low-magnitude b");
+
+        let high = Tension::new(g_a.clone(), g_b.clone(), TensionVector::new(0.9));
+        let low = Tension::new(g_c.clone(), g_d.clone(), TensionVector::new(0.2));
+        // Construct a tensor by hand so we control the ordering and
+        // magnitudes — `tensor_of` yields uniform magnitudes; this test
+        // exercises the rank-by-magnitude branch directly.
+        let t = Tensor::new(
+            vec![g_a.clone(), g_b.clone(), g_c.clone(), g_d.clone()],
+            // Deliberately list `low` before `high` to prove the sort
+            // moves `high` ahead of `low`.
+            vec![low.clone(), high.clone()],
+            0.0,
+        );
+        let fractures = minimize(&t);
+        assert_eq!(fractures.len(), 4);
+        // High-magnitude tension's endpoints come first.
+        assert_eq!(Fracture::gap(&fractures[0]), &g_a);
+        assert_eq!(Fracture::gap(&fractures[1]), &g_b);
+        assert!((Fracture::descent(&fractures[0]) - 0.9).abs() < 1e-12);
+        assert!((Fracture::descent(&fractures[1]) - 0.9).abs() < 1e-12);
+        // Low-magnitude tension's endpoints come after.
+        assert_eq!(Fracture::gap(&fractures[2]), &g_c);
+        assert_eq!(Fracture::gap(&fractures[3]), &g_d);
+        assert!((Fracture::descent(&fractures[2]) - 0.2).abs() < 1e-12);
+        assert!((Fracture::descent(&fractures[3]) - 0.2).abs() < 1e-12);
+    }
+
+    /// Tied magnitudes preserve source order (stable sort). The
+    /// substrate's discipline: deterministic fracture sequences even
+    /// under ties.
+    #[test]
+    fn tied_magnitudes_preserve_source_order() {
+        let g1 = Gap::new(0, total_origin(), "first");
+        let g2 = Gap::new(0, total_origin(), "second");
+        let g3 = Gap::new(0, total_origin(), "third");
+        let g4 = Gap::new(0, total_origin(), "fourth");
+        let t1 = Tension::new(g1.clone(), g2.clone(), TensionVector::new(0.5));
+        let t2 = Tension::new(g3.clone(), g4.clone(), TensionVector::new(0.5));
+        let tensor = Tensor::new(
+            vec![g1.clone(), g2.clone(), g3.clone(), g4.clone()],
+            vec![t1, t2],
+            0.0,
+        );
+        let fractures = minimize(&tensor);
+        assert_eq!(fractures.len(), 4);
+        // First tension's endpoints come first under stable sort.
+        assert_eq!(Fracture::gap(&fractures[0]), &g1);
+        assert_eq!(Fracture::gap(&fractures[1]), &g2);
+        assert_eq!(Fracture::gap(&fractures[2]), &g3);
+        assert_eq!(Fracture::gap(&fractures[3]), &g4);
+    }
+
+    // -----------------------------------------------------------------------
+    // The substrate's source-tension carrier — fractures address the cocycle.
+    // -----------------------------------------------------------------------
+
+    /// Each fracture's inherited [`Gap`] addresses the substrate
+    /// location where the descent step would land. The gap's `origin`
+    /// IS the substrate "site" per §11.1's `site: span` reading at
+    /// this altitude.
+    #[test]
+    fn fracture_inherits_gap_origin_for_addressability() {
+        let g1 = Gap::new(0, total_origin(), "dark [0, 5)");
+        let g2 = Gap::new(0, total_origin(), "dark [10, 15)");
+        let t = tensor_of(vec![g1.clone(), g2.clone()]);
+        let fractures = minimize(&t);
+        for f in &fractures {
+            assert_eq!(
+                Fracture::gap(f).origin(),
+                &total_origin(),
+                "fracture must carry the substrate origin of its inherited gap",
+            );
+            assert_eq!(
+                Gap::level(Fracture::gap(f)),
+                0,
+                "K₂ same-origin tensions are level-0 (floor-altitude) gaps",
+            );
+        }
+    }
+
+    /// Type-level: the substrate signature `minimize(tensor) -> [fracture]`
+    /// IS realized as `minimize(&Tensor) -> Vec<Fracture>` at the
+    /// boundary. The value witnesses the type.
+    #[test]
+    fn minimize_returns_vec_of_fracture() {
+        let t = tensor_of(Vec::new());
+        let _fractures: Vec<Fracture> = minimize(&t);
+    }
+}
