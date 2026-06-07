@@ -531,10 +531,7 @@ mod tests {
         // HIGH pair ahead of the LOW pair despite source order.
         let t = tensor_of_with_restrictions(
             vec![g0.clone(), g1.clone(), g2.clone(), g3.clone()],
-            vec![
-                Restriction::new(0, 1, 0.2),
-                Restriction::new(2, 3, 0.9),
-            ],
+            vec![Restriction::new(0, 1, 0.2), Restriction::new(2, 3, 0.9)],
         );
         let fractures = minimize(&t);
         assert_eq!(fractures.len(), 4);

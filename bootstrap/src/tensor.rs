@@ -52,22 +52,32 @@
 //!
 //! ## Eigenvalue computation
 //!
-//! Minimal pure-Rust Jacobi rotation on the small dense normalised
-//! Laplacian `Δ_0 = D^{-1/2} L D^{-1/2}`. For `n` gaps the matrix is
-//! `n × n`; symmetric; bounded size. The smallest non-trivial eigenvalue
-//! IS `fiedler`. Boundary cases:
+//! `fiedler_of` routes through [`crate::sheaf_laplacian::lambda_zero`] —
+//! the LAPACK `dsyev` path via `prism_core::ffi::eigenvalues` (T8). The
+//! adjacency matrix on the gap basis becomes a `Vec<Restriction>`; the
+//! sheaf-Laplacian assembly produces an `Operator`; `lambda_zero`
+//! returns the spectral gap. T6's K₂ = 2.0 / K₃ = 1.5 / disconnected =
+//! 0.0 baseline numbers are preserved — LAPACK reproduces Jacobi's
+//! values on identity-weight sheaves and additionally handles the
+//! non-uniform case the Jacobi stub could not reach.
+//!
+//! Boundary cases:
 //!
 //! - `n = 0` (empty gap vector): trivial sheaf; `fiedler = 0.0`. The
 //!   substrate’s λ₀ on a zero-dimensional space is the additive identity.
 //! - `n = 1` (singleton vertex set): no edges; `Δ_0 = [0]`; `fiedler = 0.0`.
-//! - `n ≥ 2`: Jacobi eigendecomposition on `Δ_0`; return the smallest
-//!   eigenvalue strictly greater than a numerical-zero threshold, OR `0.0`
-//!   if the graph has disconnected components (multiplicity of λ₀ > 1
-//!   indicates disconnection per Bodnar et al. 2022 §2).
+//! - `n ≥ 2`: build a `Restriction` per tension (weight = magnitude);
+//!   compose with `sheaf_laplacian`; read `lambda_zero`. Disconnected
+//!   sheaves return `0.0` (multiplicity of λ₀ > 1) per Bodnar 2022 §2.
 //!
-//! T8 lands the proper sheaf-Laplacian numerical primitive in the
-//! flang/mirror split; today’s Jacobi suffices for the gap-count-bounded
-//! matrices the property layer produces.
+//! ## T8.5 bridge
+//!
+//! [`tensor_of_with_restrictions`] is the sibling constructor for
+//! consumers that have real conductivity-tensor weights (per
+//! `eigenboard-representation.md`). `tensor_of` stays simple (uniform
+//! 1.0 from same-origin pairing); the weighted path becomes the
+//! cleanest call site for downstream composers (pulse / oscillate-
+//! driver / active_pass / dark_pass / query_phi).
 //!
 //! ## Why this lives here (not in `property.rs`, not in `gap.rs`)
 //!
@@ -83,9 +93,11 @@
 //! [`docs/specs/property-and-inference-collapse.md`]: ../../../../docs/specs/property-and-inference-collapse.md
 //! [`Ref`]: prism_core::Ref
 //! [`gaps_of`]: crate::property::gaps_of
+//! [`crate::sheaf_laplacian::lambda_zero`]: crate::sheaf_laplacian::lambda_zero
 #![allow(dead_code)]
 
 use crate::gap::Gap;
+use crate::sheaf_laplacian::{lambda_zero, sheaf_laplacian, Eigenvalue, Restriction};
 
 // ---------------------------------------------------------------------------
 // TensionVector — the audible-altitude floor for the §8.1 design call.
@@ -303,19 +315,114 @@ pub fn tensor_of(gaps: Vec<Gap>) -> Tensor {
 }
 
 // ---------------------------------------------------------------------------
+// tensor_of_with_restrictions — the bridge constructor (T8.5).
+// ---------------------------------------------------------------------------
+
+/// `tensor_of_with_restrictions(gaps, restrictions) -> tensor` — the
+/// **bridge constructor** that accepts explicit per-edge restriction
+/// weights from the consumer.
+///
+/// Where [`tensor_of`] hard-codes uniform `TensionVector::magnitude =
+/// 1.0` from a same-origin pairing rule, this sibling lets the
+/// consumer supply real conductivity data: each [`Restriction`] names
+/// a `(source_index, target_index, weight)` triple keyed against the
+/// gap basis (the `gaps` argument). The weight flows into the
+/// resulting [`Tension`]'s [`TensionVector::magnitude`]; downstream
+/// `minimize` rankings (T7) become meaningful because the magnitudes
+/// now carry real signal.
+///
+/// ## Why a sibling (not extending `tensor_of`)
+///
+/// The bridge tick discipline (per Reed's lean): add the parameter;
+/// default to T6's uniform behavior; let consumers explicitly supply
+/// real weights. `tensor_of` stays as the same-origin floor-altitude
+/// constructor; `tensor_of_with_restrictions` is the consumer-driven
+/// path that lets composers (pulse / oscillate-driver / active_pass /
+/// dark_pass / query_phi) wire real conductivity data without the
+/// origin-pairing rule getting in the way.
+///
+/// ## Substrate-pull discipline
+///
+/// The [`Restriction`] carrier IS the substrate-declared
+/// `restriction` type from
+/// [`shards/epistemologic/math/sheaf_laplacian.mirror`] (T8). The
+/// substrate names it; the boundary reuses it directly — no parallel
+/// type. Indices are `u32` per the substrate's `source: u32, target:
+/// u32` declaration; this constructor accepts `Restriction` values
+/// directly.
+///
+/// ## Algorithm
+///
+/// 1. For each [`Restriction`] in the input vector, build a
+///    [`Tension`] connecting the gap at `Restriction::source` to the
+///    gap at `Restriction::target` with `TensionVector::magnitude =
+///    Restriction::weight`. Out-of-range indices (≥ `gaps.len()`) are
+///    silently dropped (defensive boundary read).
+/// 2. Read `fiedler` via [`fiedler_of`] on the constructed tensions
+///    — routes through [`lambda_zero`] under the hood. Disconnected /
+///    trivial / singleton cases emit `0.0`.
+///
+/// Pure; no I/O; allocates per the returned [`Tensor`].
+///
+/// [`Restriction`]: crate::sheaf_laplacian::Restriction
+/// [`shards/epistemologic/math/sheaf_laplacian.mirror`]: ../../../../shards/epistemologic/math/sheaf_laplacian.mirror
+pub fn tensor_of_with_restrictions(gaps: Vec<Gap>, restrictions: Vec<Restriction>) -> Tensor {
+    // Phase 1: build tensions from the consumer-supplied restrictions.
+    // Out-of-range indices are silently dropped.
+    let n = gaps.len();
+    let mut tensions: Vec<Tension> = Vec::with_capacity(restrictions.len());
+    for r in &restrictions {
+        let s = Restriction::source(r) as usize;
+        let t = Restriction::target(r) as usize;
+        if s >= n || t >= n {
+            continue;
+        }
+        let weight = Restriction::weight(r);
+        tensions.push(Tension::new(
+            gaps[s].clone(),
+            gaps[t].clone(),
+            TensionVector::new(weight),
+        ));
+    }
+
+    // Phase 2: λ₀ of the normalised sheaf Laplacian via the LAPACK
+    // path. fiedler_of routes through sheaf_laplacian::lambda_zero —
+    // the same primitive whether the construction is uniform-weight
+    // (tensor_of) or weighted (this constructor).
+    let fiedler = fiedler_of(&gaps, &tensions);
+
+    Tensor {
+        vertices: gaps,
+        tensions,
+        fiedler,
+    }
+}
+
+// ---------------------------------------------------------------------------
 // fiedler_of — the algebraic-connectivity reading on the gap basis.
 // ---------------------------------------------------------------------------
 
-/// Compute λ₀(Δ_0) on the gap-tension graph.
+/// Compute λ₀(Δ_F) on the gap-tension graph by routing through
+/// [`lambda_zero`].
 ///
-/// `Δ_0 = D^{-1/2} L D^{-1/2}` is the normalised graph Laplacian on the
-/// vertex set (the gaps) with edge set (the tensions). On disconnected
-/// graphs the multiplicity of eigenvalue `0` equals the number of
-/// components; “smallest non-trivial” is interpreted as the smallest
-/// eigenvalue that is structurally non-zero — i.e. the algebraic
-/// connectivity in the Fiedler 1973 sense. By convention this is `0.0`
-/// when the graph is disconnected (matching Bodnar et al. 2022 §2:
-/// algebraic connectivity vanishes on disconnected sheaves).
+/// **T8.5 bridge:** this function previously called a pure-Rust Jacobi
+/// eigenvalue routine (T6); it now constructs a [`Restriction`] per
+/// tension (with `source` / `target` as gap-basis indices and
+/// `weight` = `TensionVector::magnitude`) and reads the spectral gap
+/// from [`lambda_zero`] — the LAPACK `dsyev` path via
+/// `prism_core::ffi::eigenvalues` (T8). LAPACK reproduces Jacobi's
+/// values on identity-weight sheaves (K₂ = 2.0, K₃ = 1.5, disconnected
+/// = 0.0) and additionally handles the non-uniform case the Jacobi
+/// stub could not reach.
+///
+/// `Δ_F = I − D^{-1/2} W D^{-1/2}` is the normalised graph Laplacian
+/// on the vertex set (the gaps) with edge weights from the tension
+/// vectors. On disconnected graphs the multiplicity of eigenvalue
+/// `0` equals the number of components; the substrate's convention
+/// (per [`lambda_zero`]) emits `value = 0.0` with multiplicity > 1
+/// in that case. `fiedler_of` projects that to a scalar `0.0` so the
+/// trivial / singleton / disconnected paths all surface as zero
+/// algebraic connectivity per Fiedler 1973 / Bodnar 2022 §2.
 ///
 /// Trivial / singleton: `0.0`.
 fn fiedler_of(gaps: &[Gap], tensions: &[Tension]) -> f64 {
@@ -324,161 +431,55 @@ fn fiedler_of(gaps: &[Gap], tensions: &[Tension]) -> f64 {
         return 0.0;
     }
 
-    // Build adjacency by index. Map each gap to its index in the basis.
-    // Two gaps with the same origin are joined; the tensions list
-    // already encodes that, but we re-index against the gap basis
-    // because tensions carry cloned gaps (not indices).
-    let mut adjacency: Vec<Vec<bool>> = vec![vec![false; n]; n];
+    // Build Restrictions by re-indexing tensions against the gap basis.
+    // Tensions carry cloned gaps (not indices); linear scan recovers
+    // the indices. n is bounded by the gap count (small for the
+    // corpora the property layer emits today).
+    let mut restrictions: Vec<Restriction> = Vec::with_capacity(tensions.len());
     for t in tensions {
-        // Find the indices of t.a and t.b in the basis. Linear scan;
-        // n is bounded by the gap count which is bounded by the AST
-        // dark-region count — small for the corpora the property layer
-        // emits today.
-        let mut ia: Option<usize> = None;
-        let mut ib: Option<usize> = None;
+        let mut ia: Option<u32> = None;
+        let mut ib: Option<u32> = None;
         for (k, g) in gaps.iter().enumerate() {
             if ia.is_none() && g == Tension::a(t) {
-                ia = Some(k);
+                ia = Some(k as u32);
                 continue;
             }
             if ib.is_none() && g == Tension::b(t) {
-                ib = Some(k);
+                ib = Some(k as u32);
             }
         }
         if let (Some(a), Some(b)) = (ia, ib) {
-            adjacency[a][b] = true;
-            adjacency[b][a] = true;
+            let weight = TensionVector::magnitude(Tension::vector(t));
+            restrictions.push(Restriction::new(a, b, weight));
         }
     }
 
-    // Degrees.
-    let degrees: Vec<usize> = (0..n)
-        .map(|i| (0..n).filter(|&j| adjacency[i][j]).count())
-        .collect();
+    // The substrate-altitude carrier names the (dimension, entries)
+    // pair: `sheaf_laplacian` assembles. But the gap basis fixes the
+    // dimension at `n` (not `max(source, target) + 1`), so we
+    // construct the Operator directly to preserve isolated vertices
+    // beyond the highest index referenced by a restriction. (Without
+    // this, an isolated trailing gap would shrink the dimension and
+    // hide a component.)
+    let assembled = sheaf_laplacian(restrictions);
+    let op = if (crate::sheaf_laplacian::Operator::dimension(&assembled) as usize) < n {
+        // Wrap with the gap-basis dimension so isolated trailing
+        // vertices contribute their own zero-eigenvalue components.
+        crate::sheaf_laplacian::Operator::new(
+            n as u32,
+            crate::sheaf_laplacian::Operator::entries(&assembled).to_vec(),
+        )
+    } else {
+        assembled
+    };
 
-    // Disconnected → λ₀ = 0 by Fiedler 1973 / Bodnar 2022 §2. Check
-    // connectivity via BFS from vertex 0.
-    if !is_connected(&adjacency, n) {
+    let eigenvalue = lambda_zero(&op);
+    // Disconnected (multiplicity > 1) → algebraic connectivity vanishes
+    // per Fiedler 1973 / Bodnar 2022 §2.
+    if Eigenvalue::multiplicity(&eigenvalue) > 1 {
         return 0.0;
     }
-
-    // Build the normalised Laplacian Δ_0 = I − D^{-1/2} A D^{-1/2}.
-    // For connected graphs all degrees are ≥ 1.
-    let mut delta = vec![vec![0.0_f64; n]; n];
-    for i in 0..n {
-        for j in 0..n {
-            if i == j {
-                delta[i][j] = 1.0;
-            } else if adjacency[i][j] {
-                let di = degrees[i] as f64;
-                let dj = degrees[j] as f64;
-                delta[i][j] = -1.0 / (di * dj).sqrt();
-            }
-        }
-    }
-
-    // Eigendecompose via Jacobi rotation. Δ_0 is symmetric PSD;
-    // eigenvalues are real and non-negative.
-    let eigenvalues = jacobi_eigenvalues(delta);
-
-    // Smallest non-trivial eigenvalue: the smallest value strictly
-    // greater than a numerical-zero threshold. For a connected graph
-    // the kernel of Δ_0 is one-dimensional (Fiedler 1973); the
-    // smallest non-zero eigenvalue is the algebraic connectivity.
-    let mut sorted = eigenvalues.clone();
-    sorted.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-    for &e in &sorted {
-        if e > 1e-9 {
-            return e;
-        }
-    }
-    0.0
-}
-
-/// BFS check: is the graph on `n` vertices with adjacency `adj`
-/// connected? Returns `true` for `n ≤ 1` by convention.
-fn is_connected(adj: &[Vec<bool>], n: usize) -> bool {
-    if n <= 1 {
-        return true;
-    }
-    let mut visited = vec![false; n];
-    let mut queue: Vec<usize> = Vec::with_capacity(n);
-    queue.push(0);
-    visited[0] = true;
-    let mut head = 0;
-    while head < queue.len() {
-        let v = queue[head];
-        head += 1;
-        for u in 0..n {
-            if adj[v][u] && !visited[u] {
-                visited[u] = true;
-                queue.push(u);
-            }
-        }
-    }
-    visited.iter().all(|&b| b)
-}
-
-/// Jacobi eigendecomposition for symmetric dense matrices. Returns the
-/// eigenvalues only (eigenvectors discarded — today’s caller only reads
-/// λ₀). Standard cyclic Jacobi with off-diagonal sweep convergence.
-/// O(n³) per sweep; converges in O(log(1/ε)) sweeps. Sufficient for the
-/// gap-count-bounded matrices the property layer emits.
-///
-/// Reference: Golub & Van Loan, *Matrix Computations* 4e §8.4.
-fn jacobi_eigenvalues(mut m: Vec<Vec<f64>>) -> Vec<f64> {
-    let n = m.len();
-    if n == 0 {
-        return Vec::new();
-    }
-    let max_sweeps = 100;
-    let tol = 1e-12;
-    for _ in 0..max_sweeps {
-        // Find the largest off-diagonal element (Jacobi classical).
-        let mut p = 0;
-        let mut q = 1;
-        let mut max_off = 0.0_f64;
-        for i in 0..n {
-            for j in (i + 1)..n {
-                if m[i][j].abs() > max_off {
-                    max_off = m[i][j].abs();
-                    p = i;
-                    q = j;
-                }
-            }
-        }
-        if max_off < tol {
-            break;
-        }
-        // Compute the rotation angle.
-        let app = m[p][p];
-        let aqq = m[q][q];
-        let apq = m[p][q];
-        let theta = (aqq - app) / (2.0 * apq);
-        let t = if theta >= 0.0 {
-            1.0 / (theta + (1.0 + theta * theta).sqrt())
-        } else {
-            1.0 / (theta - (1.0 + theta * theta).sqrt())
-        };
-        let c = 1.0 / (1.0 + t * t).sqrt();
-        let s = t * c;
-        // Apply the rotation to rows/columns p, q.
-        m[p][p] = app - t * apq;
-        m[q][q] = aqq + t * apq;
-        m[p][q] = 0.0;
-        m[q][p] = 0.0;
-        for i in 0..n {
-            if i != p && i != q {
-                let aip = m[i][p];
-                let aiq = m[i][q];
-                m[i][p] = c * aip - s * aiq;
-                m[p][i] = m[i][p];
-                m[i][q] = s * aip + c * aiq;
-                m[q][i] = m[i][q];
-            }
-        }
-    }
-    (0..n).map(|i| m[i][i]).collect()
+    Eigenvalue::value(&eigenvalue)
 }
 
 #[cfg(test)]
@@ -696,10 +697,7 @@ mod tests {
     fn tensor_of_with_restrictions_propagates_weight_into_tension_vector() {
         let g1 = Gap::new(0, total_origin(), "dark [0, 5)");
         let g2 = Gap::new(0, total_origin(), "dark [10, 15)");
-        let t = tensor_of_with_restrictions(
-            vec![g1, g2],
-            vec![Restriction::new(0, 1, 0.42)],
-        );
+        let t = tensor_of_with_restrictions(vec![g1, g2], vec![Restriction::new(0, 1, 0.42)]);
         assert_eq!(Tensor::tensions(&t).len(), 1);
         let tension = &Tensor::tensions(&t)[0];
         assert!(
@@ -723,17 +721,10 @@ mod tests {
         let g2 = Gap::new(0, total_origin(), "dark [20, 25)");
         let t = tensor_of_with_restrictions(
             vec![g0, g1, g2],
-            vec![
-                Restriction::new(0, 1, 1.0),
-                Restriction::new(1, 2, 4.0),
-            ],
+            vec![Restriction::new(0, 1, 1.0), Restriction::new(1, 2, 4.0)],
         );
         let f = Tensor::fiedler(&t);
-        assert!(
-            f > 1e-9,
-            "P₃ connected → fiedler > 0; got {}",
-            f,
-        );
+        assert!(f > 1e-9, "P₃ connected → fiedler > 0; got {}", f,);
         assert!(
             f < 1.5,
             "P₃ less connected than K₃ → fiedler < 1.5; got {}",
@@ -767,10 +758,7 @@ mod tests {
         // gap; it must be dropped without panicking.
         let t = tensor_of_with_restrictions(
             vec![g0, g1],
-            vec![
-                Restriction::new(0, 1, 1.0),
-                Restriction::new(0, 5, 0.5),
-            ],
+            vec![Restriction::new(0, 1, 1.0), Restriction::new(0, 5, 0.5)],
         );
         // Only the in-range restriction becomes a tension.
         assert_eq!(Tensor::tensions(&t).len(), 1);
