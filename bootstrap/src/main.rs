@@ -21,6 +21,7 @@ mod music;
 mod oscillate;
 mod pipeline;
 mod property;
+mod score;
 mod sheaf_laplacian;
 mod spectral;
 mod tensor;

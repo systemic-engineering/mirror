@@ -89,6 +89,7 @@
 use prism_core::{Diagnostic, PropertyVerdict, Ref, Transparency};
 use terni::Imperfect;
 
+use crate::ast::AstNode;
 use crate::gap::Gap;
 use crate::music::{CadenceKind, Dissonance, Verdict};
 
@@ -431,27 +432,64 @@ impl Morphism {
     }
 }
 
-/// `active_pass(o: oscillation) -> morphism` — the proposal action
-/// (T11 stub).
+/// `active_pass(o: oscillation) -> morphism` — the proposal action.
 ///
-/// **STUB.** Per `oscillate.mirror` §active_pass: the realisation reads
-/// the anchor ref's candidate morphism_set (the eigenboard's pending
+/// **Graceful-default surface.** When the realisation layer has no
+/// running AST context (the `pulse` driver path before the kintsugi
+/// `<file>` driver pulls), this surface returns a settle-Authentic
+/// morphism anchored at the input's anchor ref — the substrate-
+/// honest "nothing to do; settle" reading per the score-shard gap on
+/// the session-from-ref projection. The real chain lives at
+/// [`active_pass_with_ast`]; downstream consumers with an AST in hand
+/// (the kintsugi formatter; the future `mirror kintsugi <file>`
+/// driver) call the AST-bearing form to get real fracture derivation.
+///
+/// Per `oscillate.mirror` §active_pass: the realisation reads the
+/// anchor ref's candidate morphism_set (the eigenboard's pending
 /// imperfections), invokes `dissonance.is_pareto` for the rank,
-/// projects the highest-ranked candidate into a morphism. T10.5 returns
-/// a fixture morphism anchored at the input's anchor ref so the chain
-/// shape is provable end-to-end; the body proper lands at T11 with
-/// real candidate generation.
-///
-/// The fixture: a morphism whose content references the input
-/// oscillation's anchor, scored at zero roughness (consonant), expected
-/// to resolve authentically. This lets `pulse` thread the chain
-/// without coupling to substrate machinery that hasn't pulled yet.
+/// projects the highest-ranked candidate into a morphism. The
+/// realisation honours the score-shard's gap: when no session is
+/// readable from the running glue-bus state, the settle-Authentic
+/// fixture surfaces (the substrate's "nothing pending" reading).
 pub fn active_pass(o: &Oscillation) -> Morphism {
+    // No AST in scope → no gaps → empty pending → graceful settle
+    // (per the brief's "Empty pending set" design call).
+    settle_morphism(o.anchor())
+}
+
+/// The settle-Authentic graceful-default morphism: anchored at the
+/// input ref, scored consonantly, expected to resolve authentically.
+/// Surfaces when the realisation has no fracture data to thread (empty
+/// pending; no gaps in any candidate).
+fn settle_morphism(anchor: &Ref) -> Morphism {
     Morphism::new(
-        o.anchor().clone(),
+        anchor.clone(),
         Dissonance::new(0.0, 1),
         CadenceKind::Authentic,
     )
+}
+
+/// `active_pass_with_ast(o: oscillation, ast: ast) -> morphism` — the
+/// real proposal action (T11 substrate-pull realisation).
+///
+/// **🔴 [substrate-pull:realize] T11 — GREEN body lands in the next
+/// commit.** RED stub returns the same settle-Authentic morphism as
+/// [`active_pass`] so the new T11 tests asserting fracture-derived
+/// dispositions fail.
+///
+/// The GREEN composition (per `score.mirror` lines 387–395):
+///
+/// 1. `score_of(o, ast)` — project oscillation + AST into a Score.
+/// 2. `pending(&score)` — read the candidate morphism set.
+/// 3. `gaps_for_pending(ast)` — derive the gap basis the tensor reads.
+/// 4. `tensor_of(gaps)` — build the gap-tensor field (T6/T8.5).
+/// 5. `minimize(&tensor)` — SDRF-ranked fractures (T7/T9).
+/// 6. Project the head fracture into a [`Morphism`].
+pub fn active_pass_with_ast(o: &Oscillation, ast: &AstNode) -> Morphism {
+    // 🔴 RED stub — the GREEN body composes the score → pending →
+    // gaps → tensor → minimize → head-fracture chain.
+    let _ = ast;
+    settle_morphism(o.anchor())
 }
 
 /// `query_phi(m: morphism) -> verdict` — the structural Φ query
@@ -1119,5 +1157,170 @@ mod tests {
         let witness = is_settled(CadenceKind::Authentic);
         assert!(matches!(witness, Imperfect::Success(())));
         assert_eq!(expected_state, OscillationState::Settled);
+    }
+
+    // ================================================================
+    // T11: active_pass_with_ast — the real chain.
+    //
+    // Per the brief: the chain composes
+    //
+    //   score_of → pending → gaps_for_pending → tensor_of →
+    //   sheaf_laplacian → balanced_forman → minimize → head fracture
+    //
+    // into a Morphism whose content addresses the top-ranked fracture's
+    // substrate origin, scored by the fracture's descent, expected per
+    // the descent magnitude.
+    //
+    // RED tests cover: empty pending (graceful settle), single gap
+    // (Morphism anchored at gap origin with descent-derived score),
+    // multi-gap (top SDRF fracture surfaces), end-to-end chain.
+    // ================================================================
+
+    use crate::ast::{AstKind, DarkSpan};
+
+    fn ast_with_no_gaps() -> AstNode {
+        AstNode::new(AstKind::Focus, "witness")
+    }
+
+    fn ast_with_one_dark() -> AstNode {
+        AstNode::dark("unknown bytes", DarkSpan { start: 0, end: 5 })
+    }
+
+    fn ast_with_three_darks() -> AstNode {
+        let mut root = AstNode::new(AstKind::Project, "outer");
+        root.add_child(AstNode::dark("a", DarkSpan { start: 0, end: 5 }));
+        root.add_child(AstNode::dark("b", DarkSpan { start: 6, end: 12 }));
+        root.add_child(AstNode::dark("c", DarkSpan { start: 13, end: 20 }));
+        root
+    }
+
+    /// Empty pending (no gaps in AST) → graceful settle-Authentic
+    /// morphism anchored at the input. The substrate's "nothing to
+    /// do; settle" reading per the score-shard gap design call.
+    #[test]
+    fn active_pass_with_ast_on_empty_pending_returns_settle_morphism() {
+        let r = fixture_anchor();
+        let o = Oscillation::initial(r.clone());
+        let ast = ast_with_no_gaps();
+        let m = active_pass_with_ast(&o, &ast);
+        assert_eq!(m.content(), &r, "empty pending settles at the input anchor");
+        assert!(
+            m.score().roughness() < 1e-9,
+            "empty pending settles consonantly (roughness 0); got {}",
+            m.score().roughness(),
+        );
+        assert_eq!(
+            m.expected(),
+            CadenceKind::Authentic,
+            "empty pending expects authentic resolution (nothing to revise)",
+        );
+    }
+
+    /// Single candidate with one gap → Morphism anchored at the gap's
+    /// substrate origin, carrying fracture-derived score (SDRF
+    /// descent on K₁ vertex is the singleton-baseline 0.0; expected
+    /// reads as Deceptive because no descent gradient is available to
+    /// auto-apply on).
+    ///
+    /// Per the brief: when there's only one candidate with a single
+    /// gap, the MUS-graph is K₁; minimize emits no fractures (the
+    /// substrate's gradient on a trivial sheaf is the additive
+    /// identity). The graceful path returns a settle-Authentic
+    /// morphism anchored at the gap origin (the substrate is settled
+    /// for THIS gap; no contradiction edge to descend along).
+    #[test]
+    fn active_pass_with_ast_on_one_gap_returns_gap_anchored_morphism() {
+        let o = Oscillation::initial(fixture_anchor());
+        let ast = ast_with_one_dark();
+        let m = active_pass_with_ast(&o, &ast);
+        assert_eq!(
+            m.content().as_str(),
+            "@epistemologic/property/total_classification",
+            "single-gap morphism anchors at the gap's substrate origin",
+        );
+    }
+
+    /// Multiple candidates with multiple gaps → Morphism anchored at
+    /// the TOP-ranked fracture's substrate origin. Three same-origin
+    /// dark regions form K₃; SDRF curvature is uniform across edges
+    /// (Ric = 2; descent = 0); source order preserved; top fracture
+    /// addresses the first gap's substrate origin.
+    #[test]
+    fn active_pass_with_ast_on_multi_gaps_returns_top_fracture_morphism() {
+        let o = Oscillation::initial(fixture_anchor());
+        let ast = ast_with_three_darks();
+        let m = active_pass_with_ast(&o, &ast);
+        assert_eq!(
+            m.content().as_str(),
+            "@epistemologic/property/total_classification",
+            "multi-gap morphism anchors at the top fracture's substrate origin",
+        );
+        // The chain ran end-to-end: a real Morphism shape (not
+        // settle-fixture) carrying the SDRF reading.
+    }
+
+    /// The integration chain composes end-to-end: score_of → pending
+    /// → gaps_for_pending → tensor_of → minimize → head → Morphism.
+    /// The Morphism's shape matches the consent-altitude carrier; the
+    /// chain is observable through the score and pending surfaces.
+    #[test]
+    fn active_pass_with_ast_integration_chain_composes() {
+        use crate::score::{gaps_for_pending, pending, score_of};
+        use crate::tensor::{tensor_of, Tensor};
+        use crate::kintsugi::minimize;
+
+        let o = Oscillation::initial(fixture_anchor());
+        let ast = ast_with_three_darks();
+
+        // Step 1–2: score_of → pending.
+        let score = score_of(&o, &ast);
+        let pending_set = pending(&score);
+        assert_eq!(
+            pending_set.len(),
+            3,
+            "three gaps → three pending morphisms",
+        );
+
+        // Step 3–4: gaps_for_pending → tensor_of.
+        let gaps = gaps_for_pending(&ast);
+        assert_eq!(gaps.len(), 3, "three pending morphisms expand to three gaps");
+        let tensor = tensor_of(gaps);
+        assert_eq!(Tensor::vertices(&tensor).len(), 3);
+
+        // Step 5: minimize.
+        let fractures = minimize(&tensor);
+        assert_eq!(
+            fractures.len(),
+            6,
+            "K₃ tensor has 3 tensions; minimize emits 2 endpoints each",
+        );
+
+        // Step 6: active_pass_with_ast IS the projection of the head
+        // fracture into a Morphism (chain-equivalence assertion).
+        let m = active_pass_with_ast(&o, &ast);
+        // The substrate origin of every gap from the same dark
+        // sequence is the total_classification origin; the head
+        // fracture's gap's origin IS what the morphism carries.
+        assert_eq!(
+            m.content().as_str(),
+            "@epistemologic/property/total_classification",
+        );
+    }
+
+    /// T10.5's pulse chain still works: active_pass (no-AST surface)
+    /// returns the graceful settle morphism, and pulse advances the
+    /// oscillation through the same authentic-cadence path. The T10.5
+    /// shape contract is preserved.
+    #[test]
+    fn t10_5_pulse_chain_still_works_after_t11() {
+        let o = Oscillation::initial(fixture_anchor());
+        let next = pulse(&o);
+        assert_eq!(next.iteration(), Tick::new(1));
+        assert_eq!(next.anchor(), o.anchor());
+        assert_eq!(
+            next.state(),
+            OscillationState::Settled,
+            "the pulse chain still threads end-to-end and reads Settled",
+        );
     }
 }
