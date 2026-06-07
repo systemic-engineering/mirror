@@ -91,6 +91,23 @@ in @nl
 #                                §morphism forward-promised; landed
 #                                additively to honour consent's frozen-
 #                                adjacent stability.
+#   @mirror/spectral/portal     typed transport over a content-addressed
+#                                subspace; portal-as-eigenvalue-stream-
+#                                as-gen_prism per the 26th-instance
+#                                `shift(oid, T)` recognition (Reed
+#                                2026-06-08; docs/insights/2026-06-08-
+#                                portal-eigenvalue-stream-gen-prism.md).
+#                                Four fields (socket, subspace, frame,
+#                                actor — three carrying `shift(oid, T)`);
+#                                project_eigenvalue as the focus
+#                                projection at the transport altitude.
+#                                Sub-species handshake/codec/stream at
+#                                `shards/mirror/spectral/portal/`. Lifted
+#                                from the boot floor `boot/std/spectral/
+#                                portal*` (retained as transitional
+#                                placeholder during consumer-pull
+#                                migration). Third tick of the 5-tick
+#                                cascade closing the pretty-printer LRM.
 #
 # Forward-references only — sub-shards land as consumers pull them. The
 # `consent` surface is the first expected pull (the auto-apply boundary

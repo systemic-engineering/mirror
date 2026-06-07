@@ -1,0 +1,418 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/spectral
+
+# @mirror/spectral/portal — typed transport over a content-addressed
+# subspace; portal-as-eigenvalue-stream-as-gen_prism at the mirror
+# altitude; the substrate's third sub-shard of the 5-tick cascade
+# closing the pretty-printer LRM.
+#
+# THE T18 SUB-SHARD landing the third tick of the cascade. Lifts the
+# boot-altitude `@spectral/portal` declaration (with its three sibling
+# wire grammars handshake/codec/stream) to the mirror altitude under
+# the `@mirror/spectral` family root. Same primitive, two altitudes;
+# the family root names the discipline; species parameterise the
+# transport.
+#
+# Load-bearing recognition (per
+# docs/insights/2026-06-08-portal-eigenvalue-stream-gen-prism.md;
+# Reed 2026-06-08; commit 6d57ab4): **the open portal IS a gen_prism;
+# each tick is one bidirectional update over the eigenvalue stream;
+# the substrate holds superposition across the process boundary.**
+# The portal type's four fields are the substrate's typed declaration
+# of that recognition: a `socket` (raw transport) bound to a
+# `subspace: shift(oid, fragmentation)` (the content-addressed
+# identity), a `frame: shift(oid, shard)` (this end's observer
+# frame), and an `actor: shift(oid, gen_prism)` (the running
+# autopoietic actor). Three of four fields are `shift(oid, T)` — the
+# 26th-instance substrate-pull recognition: `shift(oid, T)` is the
+# substrate's typed-capability-plus-content-address primitive.
+#
+# === The 26th-instance recognition ===
+#
+# Per [[feedback-substrate-already-had-the-word]] (the 26th instance):
+# `shift(oid, T)` is the single primitive that does what Cap'n Proto
+# needs both (capability typing + bytes) and WSTP needs (symbolic
+# expression serialisation) and `SCM_RIGHTS` needs (OS-layer fd
+# passing). Three of the four portal fields carry it; the substrate
+# has been declaring the typed-capability primitive since
+# `boot/std/spectral/portal.mirror` (2026-06-04). This shard lifts
+# the recognition to the mirror altitude so consumer pulls (CLI
+# pipe handoff, MCP session-typed dispatch, mosaic inter-node
+# coordination) read the named primitive rather than re-deriving
+# the composition from the boot floor.
+#
+# === The eigenvalue-projection action ===
+#
+# `project_eigenvalue(stream: beam<oid>) -> beam<eigenvalue>` IS the
+# focus projection at the portal altitude. Per
+# `boot/std/spectral/portal/stream.mirror`'s already-declared wire
+# format — *"8 bytes IEEE-754 big-endian double per value. Not
+# tokens. Not bytes. Eigenvalues."* — each `shift(oid, observation)`
+# the upstream gen_prism emits projects to its scalar summary (the
+# eigenvalue carried over the wire). This action names that
+# projection at the family altitude. Same operation
+# `read_value(c) -> imperfect(f64)` realises at the wire altitude;
+# this shard lifts it to a stream-of-typed-refs over a
+# stream-of-eigenvalues so consumers compose it through the standard
+# `beam<T>` carrier rather than the per-byte wire protocol.
+#
+# === Load-bearing spec ===
+#
+# - docs/insights/2026-06-08-portal-eigenvalue-stream-gen-prism.md
+#   (the 26th-instance recognition; the LRM-closing arc; the
+#   portal-IS-gen_prism collapse)
+# - docs/insights/2026-05-26-portal-as-io-socket-over-content-
+#   addressed-subspace.md (Reed + Alex + Mara, the canonical paint
+#   for the four-stage wire protocol)
+# - docs/specs/mirror-spectral.md §3.2, §4.7 (the orchestra
+#   altitude's transport surface; portals carry the substrate's
+#   coordination between shards across processes)
+# - ~/dev/systemic.engineering/practice/insights/fragmentation/
+#   portals.md (2026-03-24; the corpus prior art; six portal
+#   instances re-typed by `boot/std/spectral/portal.mirror` as
+#   instantiations of this single primitive)
+#
+# === Species under this family ===
+#
+# Lifted from boot/std/spectral/portal/ (one tick concurrent with this
+# family-altitude lift; each species declares only the names + types
+# at the mirror altitude; the wire-level bodies stay in the boot
+# shards for the moment per the transitional-placeholder discipline):
+#
+#   @mirror/spectral/portal/handshake  the WS upgrade dance (5
+#                                       actions); first wire stage.
+#   @mirror/spectral/portal/codec      the @fragmentation/frame <->
+#                                       bytes codec (4 actions); the
+#                                       middle wire stage; 96-byte
+#                                       three-OID frame.
+#   @mirror/spectral/portal/stream     the bidirectional eigenvalue
+#                                       stream (3 actions); the wire's
+#                                       runtime; 8-byte IEEE-754
+#                                       per value.
+#
+# All three species are forward-promised at the mirror altitude;
+# their boot floor remains the authoritative substrate for the wire
+# protocol until consumer-pull migrations land (per
+# [[architecture-shards-as-substrate-source]] + the T16 transitional
+# placeholder pattern).
+#
+# === Why one family ===
+#
+# Without the family, every consumer (CLI pipe handoff per T20; MCP
+# session-typed dispatch per `docs/insights/2026-06-07-mcp-as-
+# session-typed-prism.md`; mosaic inter-node coordination per
+# `boot/std/spectral/mosaic.mirror`) re-derives the portal
+# composition from the four-stage wire protocol's atomic primitives.
+# With the family, the discipline IS the family: the portal carrier
+# names the typed-capability primitive (`shift(oid, T)` in three
+# fields); the project_eigenvalue action names the focus projection
+# at the transport altitude; the wire species discharge the
+# byte-level realisation. Consumers compose at the family altitude
+# rather than the boot altitude.
+#
+# === The pretty-printer cascade ===
+#
+# This shard is T18 in the 5-tick cascade closing the pretty-printer
+# LRM (per docs/insights/2026-06-08-portal-eigenvalue-stream-gen-
+# prism.md):
+#
+#   T16 ✓ — @mirror/data root + json lift + yaml/toml/text stubs
+#   T17 ✓ — @code/mirror.render with Wadler/Bernardy combinators
+#   T18 ← — portal eigenvalue projection at substrate altitude (this)
+#   T19 — `mirror kintsugi <file>` settled-formatting output path
+#   T20 — portal handoff via SCM_RIGHTS at CLI pipe boundary
+#
+# T19 reads `project_eigenvalue` as the substrate-typed contract the
+# terminal-collapse path realises (the `mirror kintsugi <file>` write
+# emits through the Wadler/Bernardy render at T17; the portal pipe
+# path emits through this projection). T20 lands the OS-layer
+# realisation (`SCM_RIGHTS` for the socket field; the substrate's
+# `shift(oid, T)` triple flows over the wire without re-serialisation).
+#
+# === Sibling relationship to sibling sub-shards ===
+#
+# `@mirror/spectral/oscillate` runs the kintsugi loop; `@mirror/
+# spectral/consent` is the Φ query; `@mirror/spectral/score` is the
+# orchestra's shared state; `@mirror/spectral/morphism` is the
+# per-candidate carrier. This shard is the TRANSPORT surface — what
+# carries oscillation's per-tick eigenvalue stream, consent's
+# pending morphism_set, score's anchor refs, and morphism's
+# pre/post-anchor pairs across process boundaries when the
+# orchestra spans more than one local shard.
+#
+# The dependency points inward: this shard does NOT pull
+# `oscillate` / `consent` / `score` / `morphism`; THEY may pull
+# `portal` when their composition crosses a process boundary. The
+# transport surface is the substrate's most foundational sibling
+# under @mirror/spectral; it pulls only @mirror/spectral (the family
+# root) and surfaces the @spectral/portal/{handshake,codec,stream}
+# boot grammars by sub-shard mirror altitude lifts.
+#
+# === Substrate-pull discipline ===
+#
+# Per [[feedback-substrate-already-had-the-word]] (26th instance):
+# the substrate had `shift(oid, T)` declared in three portal fields
+# since 2026-06-04; this shard names the recognition at the mirror
+# altitude. Per [[feedback-substrate-pull]]: the boot floor's
+# composition is authoritative; this shard lifts the named primitives
+# to the family altitude without inventing types. Per
+# [[feedback-craft-not-deliver]]: the project_eigenvalue body is
+# `\` — lands when the T19/T20 consumer pulls. Per
+# [[architecture-lift-as-load-bearing]]: the same lift that gave
+# @cli → @mirror/lens/cli, @loss → @mirror/loss, @data → @mirror/data;
+# grammar-altitude @spectral/portal → mirror-altitude @mirror/
+# spectral/portal.
+#
+# === Transitional retention of boot/std/spectral/portal* ===
+#
+# All four boot shards (portal.mirror + portal/{handshake, codec,
+# stream}.mirror) are RETAINED, not retired. Reasons:
+#
+#   - No external consumer of `@spectral/portal` yet: the boot file
+#     imports its own sub-grammars (`in @spectral/portal/handshake`
+#     etc); no other shard imports them. The lift is purely
+#     additive — no boot consumer breaks.
+#   - The wire-protocol bodies (handshake's UTF-8 substrate gap;
+#     codec's oid<->bytes substrate gap; stream's bounded-iteration
+#     substrate gap) live at the boot altitude per the substrate-
+#     pull discipline. The mirror-altitude family names the typed
+#     surface; the boot altitude carries the byte-level
+#     realisation. Consumer-pull migrations from `in @spectral/
+#     portal` to `in @mirror/spectral/portal` land tick-by-tick as
+#     the wire-protocol substrate gaps close.
+#   - The same pattern held for @cli (kept in boot during lens
+#     migration), @loss (kept in boot during loss family lift), and
+#     @data/json (kept in boot during data family lift). Boot files
+#     retire one consumer-pull at a time, not at the family-root
+#     lift.
+#
+# When the wire-protocol substrate gaps close (UTF-8 codec lands for
+# handshake; oid <-> bytes lands for codec; bounded-iteration lands
+# for stream — all per Scheduler Tower spec), the boot floor's
+# bodies fill and the mirror-altitude species can take over the
+# authoritative carrier role.
+#
+# === Pre-AI prior art ===
+#
+# Each face of the portal recognition has prior art; no system
+# composes them all the way the substrate does:
+#
+#   portal-as-actor     Hewitt 1973 actor model; Hewitt-Bishop-
+#                       Steiger "A Universal Modular Actor
+#                       Formalism for Artificial Intelligence"
+#                       (IJCAI). Erlang's gen_server (Armstrong
+#                       1986+); BEAM's typed-mailbox actor;
+#                       gen_prism specialises the autopoietic
+#                       case per Soto-Andrade & Varela 1984.
+#   eigenvalue stream   GRAM-style multi-trajectory inference;
+#                       Wolfram WSTP (Wolfram Symbolic Transfer
+#                       Protocol; ~1991) for typed inter-process
+#                       symbolic pipes; closest existing
+#                       substrate-typed IPC.
+#   shift(oid, T)       Cap'n Proto RPC (Varda 2013+) for typed
+#                       capabilities over bytes; IPFS (Benet 2014)
+#                       for content addressing; substrate collapses
+#                       the two seams into a single operator.
+#   session types       Honda 1993; Wadler 2012 "Propositions as
+#                       Sessions" (ICFP); the formal grounding for
+#                       holding superposition through the pipe.
+#   wire format         WebSocket (RFC 6455, 2011) for the socket
+#                       handshake; Erlang Distribution Protocol
+#                       (BEAM, 1990s) for the typed-message wire;
+#                       9P/Plan 9 (Pike 1985) for namespaced
+#                       file-as-service.
+#
+# Spec context: docs/insights/2026-06-08-portal-eigenvalue-stream-
+#               gen-prism.md (the 26th-instance recognition),
+#               docs/insights/2026-05-26-portal-as-io-socket-over-
+#               content-addressed-subspace.md (the canonical paint),
+#               docs/insights/2026-06-07-mcp-as-session-typed-prism.md
+#               (the session-typed sibling at the MCP altitude),
+#               docs/specs/mirror-spectral.md (the orchestra
+#               altitude this transport serves).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]]
+#                      (the same lift; transport-altitude instance).
+# Substrate recognitions: [[feedback-substrate-already-had-the-word]]
+#                      (26th instance: `shift(oid, T)` as typed-
+#                      capability primitive),
+#                      [[feedback-substrate-pull]] (lift from boot
+#                      floor; no invention),
+#                      [[feedback-craft-not-deliver]]
+#                      (project_eigenvalue body is `\`; lands when
+#                      T19/T20 consumer pulls).
+# Forward-promise to consumers:
+#   - T19 `mirror kintsugi <file>` reads `project_eigenvalue` as
+#     the typed contract for the terminal-collapse path's eigenvalue
+#     emission (vs the Wadler/Bernardy render emission).
+#   - T20 `SCM_RIGHTS` pipe handoff lands the OS-layer realisation;
+#     the substrate's `shift(oid, T)` triple flows over the wire
+#     without re-serialisation; the receiving end reads
+#     `project_eigenvalue` as the typed contract for the inbound
+#     stream.
+#   - Mosaic inter-node coordination (per
+#     `boot/std/spectral/mosaic.mirror`) reads this transport when
+#     the orchestra spans more than one local shard.
+#   - MCP session-typed dispatch (per docs/insights/2026-06-07-mcp-
+#     as-session-typed-prism.md) reads this transport when the
+#     session crosses a process boundary.
+# Related shards: mirror/spectral.mirror (the family root; this
+#                 shard is a species under it),
+#                 mirror/spectral/oscillate.mirror (the loop primitive
+#                 whose per-tick eigenvalue stream this transport
+#                 carries when the loop spans processes),
+#                 mirror/spectral/score.mirror (the orchestra's
+#                 shared score; refs across this transport carry
+#                 score updates between processes),
+#                 mirror/spectral/consent.mirror (the Φ query; the
+#                 morphism_set this transport carries per consent
+#                 surface evaluation),
+#                 mirror/spectral/morphism.mirror (the per-candidate
+#                 carrier; pre/post-anchor pairs flow over this
+#                 transport for cross-process identity_preserving),
+#                 mirror/data.mirror (the sibling content-format
+#                 family; the terminal collapse picks a @mirror/data
+#                 species when crossing a non-mirror boundary),
+#                 boot/std/spectral/portal.mirror (the floor
+#                 declaration this species lifts; retained as
+#                 transitional placeholder during consumer-pull
+#                 migration),
+#                 boot/std/spectral/portal/{handshake, codec,
+#                 stream}.mirror (the wire-protocol sub-grammars
+#                 the boot floor authoritatively declares; the
+#                 mirror-altitude species under this shard surface
+#                 their typed contracts but defer the byte-level
+#                 bodies until the wire-protocol substrate gaps
+#                 close).
+# Path-namespace property: this file at
+# `shards/mirror/spectral/portal.mirror` declares
+# `@mirror/spectral/portal` as a species under the `@mirror/spectral`
+# family; sub-species live at
+# `shards/mirror/spectral/portal/<name>.mirror`.
+
+prism @mirror/spectral/portal {
+  focus portal
+  project portal
+  split portal
+  shift portal
+  settle portal
+}
+
+# === The portal carrier ===
+#
+# Four fields. The substrate's typed declaration of the
+# portal-as-eigenvalue-stream-as-gen_prism recognition:
+#
+# socket   — the raw transport underneath (the @io/socket.connection
+#             duplex byte stream). Re-types `@io.socket` to the
+#             connection-oriented handle from the substrate's #81
+#             tick. NOT carried as `shift(oid, T)` because the
+#             socket is the substrate that carries the shifts, not
+#             a shift itself; the boundary is the transport layer.
+# subspace — `shift(oid, fragmentation)` — the content-addressed
+#             identity of the fragmentation subspace this portal
+#             points at. The 26th-instance primitive's first field:
+#             the classical bit per portals.md's "teleportation"
+#             framing; the receiver dereferences the OID through
+#             `@fragmentation.observe` and the state was never
+#             moved — only the address.
+# frame    — `shift(oid, shard)` — this end's observer frame. The
+#             OID of `@mirror/shard.self()` at portal-open time.
+#             Comparing observations across portals walks the
+#             shard parent chain per `@time.convert` (the substrate's
+#             relativistic-frame-conversion primitive).
+# actor    — `shift(oid, gen_prism)` — the connection's autopoietic
+#             actor. **The open portal IS this gen_prism**; each
+#             tick is one bidirectional update over the eigenvalue
+#             stream. Autopoietic close fires when Reflection picks
+#             `settle(self)` OR the host shard's
+#             `compute_bound.max_reductions` exhausts.
+#
+# Identity contract: two portals are equal iff all four fields
+# match. Three of the four are `shift(oid, T)`; the OID-quadruple
+# determines the portal's identity at the substrate altitude.
+# `content_addressed(portal)` (per `boot/std/spectral/portal.mirror`'s
+# `requires` block) is structurally satisfied.
+type portal = {
+  socket:   ref,
+  subspace: shift(oid, fragmentation),
+  frame:    shift(oid, shard),
+  actor:    shift(oid, gen_prism),
+}
+
+# === project_eigenvalue — the focus projection at the portal altitude ===
+#
+# Reads a beam of typed-capability refs (each carrying a
+# `shift(oid, observation)`) and emits a beam of eigenvalue scalars
+# — the wire-altitude representation of the upstream gen_prism's
+# per-tick observations.
+#
+# Note on type parameters: both stream-in and stream-out are typed
+# `beam` (bare). The substrate's `type beam(t)` declaration in
+# `boot/std/beam.mirror` is parametric, but the action-signature
+# grammar at this altitude does not yet accept `beam<T>` / `beam(t)`
+# at use-sites (parser gap; consumer-pull when the parametric-
+# use-site rule lands). The bare `beam` is the substrate's existing
+# convention everywhere `beam` is used in an action signature today
+# (cf. @beam.observe, @beam.compare). The semantic content of the
+# projection — refs in, eigenvalues out — is named in this doc and
+# discharged when the consumer pulls.
+#
+# IS the focus operation in the five-op block at the portal
+# altitude. Per `boot/std/spectral/portal/stream.mirror`'s already-
+# declared wire format (*"8 bytes IEEE-754 big-endian double per
+# value. Not tokens. Not bytes. Eigenvalues."*), each
+# `shift(oid, observation)` the upstream gen_prism emits projects
+# to its scalar summary; the projection IS the focus at the wire
+# altitude.
+#
+# Connection to the 26th-instance recognition: per the insight doc
+# (`docs/insights/2026-06-08-portal-eigenvalue-stream-gen-prism.md`
+# §"The 26th instance — `shift(oid, T)`"), three of the four portal
+# fields carry typed-capability refs. The fourth — the eigenvalue
+# stream — is what this action projects from. Each f64 eigenvalue
+# IS a `shift(oid, observation)` projected to its scalar summary;
+# the substrate's typed-capability primitive flows through the
+# wire as the eigenvalue stream's per-tick payload.
+#
+# Composes through:
+#
+#   1. For each `shift(oid, observation)` in the input beam: read
+#      the observation's eigenvalue summary (the @epistemologic/
+#      math/spectrum scalar the substrate already crystallises per
+#      tick); emit as f64 on the output beam.
+#   2. The bounded-iteration discipline IS structural — per
+#      `@epistemologic/property/halts`'s disjunction (autopoietic
+#      settlement OR budget exhaustion), the projection terminates
+#      by construction.
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# each input ref through the @fragmentation.observe surface, the
+# observation's eigenvalue summary through the @epistemologic/math/
+# spectrum projection, and emits the f64 on the output beam. The
+# substrate names the surface; the bytes are the wire's concern
+# (per `boot/std/spectral/portal/stream.mirror`'s
+# `read_value` / `write_value` realisation).
+#
+# Consumers (forward-promised):
+#
+#   - T19 `mirror kintsugi <file>` reads this as the typed contract
+#     for the terminal-collapse path's eigenvalue emission (the
+#     alternative to the Wadler/Bernardy render emission at T17).
+#   - T20 `SCM_RIGHTS` pipe handoff: the inbound side reads this
+#     as the typed contract for the eigenvalue stream arriving
+#     over the wire; the substrate state never serialises to bytes
+#     between mirror processes.
+#   - MCP session-typed dispatch (per docs/insights/2026-06-07-mcp-
+#     as-session-typed-prism.md): the per-session eigenvalue stream
+#     surfaces through this projection when the session crosses a
+#     process boundary.
+project_eigenvalue(stream: beam) -> beam { \ }
+
+out @mirror/spectral/portal
+out portal
+out project_eigenvalue

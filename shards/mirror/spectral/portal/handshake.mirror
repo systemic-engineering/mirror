@@ -1,0 +1,86 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/spectral/portal
+
+# @mirror/spectral/portal/handshake — the WS upgrade dance at the
+# mirror altitude. Five actions; first wire stage of the four-stage
+# portal protocol.
+#
+# THE T18 SUB-SPECIES under @mirror/spectral/portal. Lifts the boot-
+# altitude `@spectral/portal/handshake` declaration to the mirror
+# altitude. Five action signatures preserved verbatim from the boot
+# floor; bodies stay at the boot altitude per the transitional-
+# placeholder discipline until the UTF-8 substrate gap closes.
+#
+# Per `boot/std/spectral/portal/handshake.mirror`: this grammar
+# implements the HTTP upgrade dance that promotes a raw TCP
+# connection into a bidirectional WebSocket carrier (RFC 6455 §1.3
+# Sec-WebSocket-Key derivation; 16-byte client nonce; SHA-1 +
+# base64-encoded Sec-WebSocket-Accept). The five actions cover
+# both ends: parse_upgrade + send_accept (server side);
+# send_upgrade + read_response (client side); compute_accept
+# (shared derivation). The boot floor names every byte; this
+# species names the typed surface at the mirror altitude.
+#
+# Substrate gap (per the boot floor's header note): the five
+# actions all reach a text <-> bytes boundary that @io/encode does
+# not yet expose (UTF-8 codec is a distinct substrate concern from
+# base64/hex). Bodies remain `\` at both altitudes until the UTF-8
+# substrate lands. The contract IS the landing; the next tick fills
+# the bodies with pure composition once the gap closes.
+#
+# Per [[architecture-shards-as-substrate-source]] + the T16
+# transitional placeholder pattern: the boot floor stays
+# authoritative for the wire bodies; this species declares the
+# mirror-altitude typed surface so consumers compose at the family
+# altitude rather than at the boot altitude.
+#
+# Spec context: RFC 6455 (WebSocket Protocol);
+#               boot/std/spectral/portal/handshake.mirror (the boot
+#               floor; verbatim action signatures).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-lift-as-load-bearing]].
+# Related shards: mirror/spectral/portal.mirror (the parent species),
+#                 boot/std/spectral/portal/handshake.mirror (the
+#                 floor declaration; retained as transitional
+#                 placeholder),
+#                 mirror/spectral/portal/codec.mirror (the sibling;
+#                 second wire stage),
+#                 mirror/spectral/portal/stream.mirror (the sibling;
+#                 fourth wire stage; the eigenvalue stream itself).
+# Path-namespace property: this file at
+# `shards/mirror/spectral/portal/handshake.mirror` declares
+# `@mirror/spectral/portal/handshake` as a sub-species under
+# `@mirror/spectral/portal`.
+
+prism @mirror/spectral/portal/handshake {
+  focus handshake
+  project handshake
+  split handshake
+  shift handshake
+  settle handshake
+}
+
+# === parse_upgrade — server-side, parse a client's Upgrade request ===
+parse_upgrade(c: ref) -> imperfect { \ }
+
+# === compute_accept — derive Sec-WebSocket-Accept from the key ===
+compute_accept(key: text) -> text { \ }
+
+# === send_accept — write the server's HTTP 101 response ===
+send_accept(c: ref, accept: text) -> imperfect { \ }
+
+# === send_upgrade — client-side, send an HTTP Upgrade request ===
+send_upgrade(c: ref, host: text, path: text) -> imperfect(text) { \ }
+
+# === read_response — client-side, verify the server's 101 response ===
+read_response(c: ref, key: text) -> imperfect { \ }
+
+out @mirror/spectral/portal/handshake
+out parse_upgrade
+out compute_accept
+out send_accept
+out send_upgrade
+out read_response

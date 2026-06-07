@@ -1,0 +1,128 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/spectral/portal
+
+# @mirror/spectral/portal/stream — the bidirectional eigenvalue stream
+# at the mirror altitude. Three actions; fourth wire stage of the
+# four-stage portal protocol.
+#
+# THE T18 SUB-SPECIES under @mirror/spectral/portal. Lifts the boot-
+# altitude `@spectral/portal/stream` declaration to the mirror altitude.
+# Three action signatures preserved verbatim from the boot floor;
+# bodies stay at the boot altitude per the transitional-placeholder
+# discipline until the bounded-iteration substrate gap closes.
+#
+# === The eigenvalue-stream wire format ===
+#
+# Per `boot/std/spectral/portal/stream.mirror`: each value on the wire
+# is 8 bytes IEEE-754 big-endian double. **Not tokens. Not bytes.
+# Eigenvalues.** Each tick of the actor gen_prism reads one value,
+# applies its tick map, writes one value back. The stream IS the
+# gen_prism's ancestor chain made visible over the wire.
+#
+# This species's `read_value` / `write_value` actions ARE the wire-
+# altitude realisations of the parent species's `project_eigenvalue`
+# focus operation: `read_value` reads one f64 in (one scalar eigenvalue
+# off the wire); `write_value` writes one f64 out. The parent's
+# beam-level projection composes these per-tick wire operations into
+# the substrate-typed beam<f64> the consumer pulls.
+#
+# Per the 26th-instance recognition (docs/insights/2026-06-08-portal-
+# eigenvalue-stream-gen-prism.md §"The portal-as-gen_prism collapse"):
+# each `shift(oid, observation)` the upstream gen_prism emits projects
+# through `read_value` / `write_value` to its scalar summary. The
+# substrate's typed-capability primitive (`shift(oid, T)`) flows over
+# the wire as eigenvalues without re-serialising the typed-capability
+# itself — the OID-bytes-typed shift stays implicit; the scalar
+# summary is what crosses the boundary.
+#
+# === The substrate gap ===
+#
+# `stream(c, gp, budget)` needs a structural loop / recursion primitive
+# that the substrate at this altitude does not expose. Per the boot
+# floor's natural composition (lines 50-58 of the boot version):
+#
+#   while budget > 0 and not autopoietic_settled(gp):
+#     read_value(c)
+#       |> message_of_value
+#       |> @mirror/runtime/gen_prism.tick(gp.head, _)
+#       |> advance_gp
+#       |> emit_observation
+#       |> write_value(c, _)
+#
+# The bounded-iteration primitive lands with the Scheduler Tower
+# (docs/specs/scheduler-tower.md) and the @epistemologic/property/halts
+# disjunction. Until then, `stream`'s body stays `\` at both altitudes;
+# the substrate contract is intact (in, out, budget, gen_prism advance);
+# only the loop body is parked. Halts is structurally satisfied by the
+# disjunction (autopoietic settlement OR budget exhaustion).
+#
+# Per [[architecture-shards-as-substrate-source]] + the T16
+# transitional placeholder pattern: the boot floor stays authoritative
+# for the wire bodies; this species declares the mirror-altitude typed
+# surface so consumers compose at the family altitude rather than at
+# the boot altitude.
+#
+# Spec context: docs/insights/2026-06-08-portal-eigenvalue-stream-
+#               gen-prism.md (the 26th-instance recognition; the
+#               substrate state never serialises to bytes between
+#               processes; the stream IS the wire format),
+#               docs/specs/scheduler-tower.md (the bounded-iteration
+#               primitive that closes stream's body),
+#               boot/std/spectral/portal/stream.mirror (the boot
+#               floor; verbatim action signatures).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-lift-as-load-bearing]].
+# Substrate recognitions: [[feedback-substrate-already-had-the-word]]
+#                      (26th instance; read_value IS the per-tick
+#                      eigenvalue projection at the wire altitude).
+# Related shards: mirror/spectral/portal.mirror (the parent species;
+#                 declares project_eigenvalue as the beam-level
+#                 projection these per-tick read/write actions
+#                 compose into),
+#                 boot/std/spectral/portal/stream.mirror (the floor
+#                 declaration; retained as transitional placeholder),
+#                 mirror/spectral/portal/handshake.mirror (the
+#                 sibling; first wire stage),
+#                 mirror/spectral/portal/codec.mirror (the sibling;
+#                 second wire stage).
+# Path-namespace property: this file at
+# `shards/mirror/spectral/portal/stream.mirror` declares
+# `@mirror/spectral/portal/stream` as a sub-species under
+# `@mirror/spectral/portal`.
+
+prism @mirror/spectral/portal/stream {
+  focus stream
+  project stream
+  split stream
+  shift stream
+  settle stream
+}
+
+# === read_value — read one f64 observation from the wire ===
+#
+# Reads 8 bytes from the connection, interprets as IEEE-754
+# big-endian double. The per-tick realisation of the parent species's
+# project_eigenvalue focus operation.
+read_value(c: ref) -> imperfect { \ }
+
+# === write_value — write one f64 observation to the wire ===
+#
+# Serialises an IEEE-754 double as 8 big-endian bytes; writes to the
+# connection. Symmetric to read_value at the per-tick altitude.
+write_value(c: ref, v: f64) -> imperfect { \ }
+
+# === stream — drive the actor's tick loop over the open portal ===
+#
+# Runs the bidirectional stream until either the actor's tick map
+# reaches a Lawvere fixed point (autopoietic settlement) or the
+# budget exhausts. Body stays `\` pending the bounded-iteration
+# primitive (per the Scheduler Tower spec).
+stream(c: ref, gp: ref, budget: u64) -> imperfect { \ }
+
+out @mirror/spectral/portal/stream
+out read_value
+out write_value
+out stream

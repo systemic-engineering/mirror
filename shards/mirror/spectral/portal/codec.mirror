@@ -1,0 +1,80 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/spectral/portal
+
+# @mirror/spectral/portal/codec — the @fragmentation/frame <-> bytes
+# codec at the mirror altitude. Four actions; second wire stage of
+# the four-stage portal protocol.
+#
+# THE T18 SUB-SPECIES under @mirror/spectral/portal. Lifts the boot-
+# altitude `@spectral/portal/codec` declaration to the mirror altitude.
+# Four action signatures preserved verbatim from the boot floor;
+# bodies stay at the boot altitude per the transitional-placeholder
+# discipline until the oid<->bytes substrate gap closes.
+#
+# Per `boot/std/spectral/portal/codec.mirror`: this grammar serialises
+# `@fragmentation/frame` into the length-prefixed byte sequence the
+# portal's middle wire stage carries, and back. The wire shape is a
+# 96-byte three-OID frame `[from_oid: 32][to_oid: 32][delta_oid: 32]`;
+# the delta payload is identified by its OID and fetched from the
+# shared content-addressed store. Bandwidth-minimal; replayable; the
+# same shape git-pack uses for ref advertisements.
+#
+# Substrate gap (per the boot floor's header note): serialize /
+# deserialize / read_frame need an `oid <-> bytes` primitive — the
+# OID is 32 bytes of SHA-256 digest, but the substrate does not yet
+# expose `oid.to_bytes` / `oid.from_bytes` at any altitude. write_frame
+# composes cleanly the moment serialize lands; read_frame composes
+# cleanly the moment deserialize lands. Two of four actions are pure
+# plumbing once the OID-bytes primitive ships.
+#
+# Per [[architecture-shards-as-substrate-source]] + the T16
+# transitional placeholder pattern: the boot floor stays authoritative
+# for the wire bodies; this species declares the mirror-altitude
+# typed surface so consumers compose at the family altitude rather
+# than at the boot altitude.
+#
+# Spec context: boot/std/fragmentation/frame.mirror (the frame carrier),
+#               boot/std/spectral/portal/codec.mirror (the boot floor;
+#               verbatim action signatures).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-lift-as-load-bearing]].
+# Related shards: mirror/spectral/portal.mirror (the parent species),
+#                 boot/std/spectral/portal/codec.mirror (the floor
+#                 declaration; retained as transitional placeholder),
+#                 mirror/spectral/portal/handshake.mirror (the
+#                 sibling; first wire stage),
+#                 mirror/spectral/portal/stream.mirror (the sibling;
+#                 fourth wire stage).
+# Path-namespace property: this file at
+# `shards/mirror/spectral/portal/codec.mirror` declares
+# `@mirror/spectral/portal/codec` as a sub-species under
+# `@mirror/spectral/portal`.
+
+prism @mirror/spectral/portal/codec {
+  focus codec
+  project codec
+  split codec
+  shift codec
+  settle codec
+}
+
+# === serialize — frame → bytes ===
+serialize(f: ref) -> ref { \ }
+
+# === deserialize — bytes → frame ===
+deserialize(b: ref) -> imperfect { \ }
+
+# === write_frame — send a frame over a connection ===
+write_frame(c: ref, f: ref) -> imperfect { \ }
+
+# === read_frame — receive a frame from a connection ===
+read_frame(c: ref) -> imperfect { \ }
+
+out @mirror/spectral/portal/codec
+out serialize
+out deserialize
+out write_frame
+out read_frame
