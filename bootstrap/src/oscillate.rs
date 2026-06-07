@@ -86,6 +86,162 @@
 //! contract regardless of the consumer's arrival.
 #![allow(dead_code)]
 
+use prism_core::{Diagnostic, PropertyVerdict, Ref, Transparency};
+use terni::Imperfect;
+
+use crate::gap::Gap;
+use crate::music::Verdict;
+
+/// The substrate's oscillation-state carrier at the kintsugi-loop
+/// altitude.
+///
+/// Mirrors `type oscillation_state = active | dark | settled | escalated | waiting`
+/// from `shards/mirror/spectral/oscillate.mirror`. The loop's live
+/// position; one of five mutually-exclusive states exhausting the
+/// substrate's possible loop positions (per the substrate header's
+/// five-state argument: two live phases [active, dark] plus three
+/// closure positions [settled, escalated, waiting]).
+///
+/// Identity contract: two `OscillationState` values are equal iff they
+/// name the same variant. `PartialEq` derives this; the substrate-
+/// theoretic reality is that each variant names a distinct loop
+/// position even though two of them (active, dark) project to the same
+/// verdict shape per [`is_complete`].
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum OscillationState {
+    /// ACTIVE pass live; proposing a loss-decreasing morphism. The
+    /// navigable spectral coordinate (uuid_spectral's 48 ACTIVE bits)
+    /// is the pulling axis.
+    Active,
+    /// DARK pass live; anchoring identity. The content-address signal
+    /// (uuid_spectral's 80 DARK bits) is the constraint axis.
+    Dark,
+    /// `cadence.is_settled` returned `pass` (authentic cadence); the
+    /// autopoietic ground state reached; holonomy → 0; the loop
+    /// terminates with final ref.
+    Settled,
+    /// `consent.query_phi` returned `failure(reason)` (deceptive
+    /// cadence OR Pareto-tied admissibility); the consent surface MUST
+    /// resolve via external signal; oscillation halts with `pause_event`
+    /// emitted to metalogue.
+    Escalated,
+    /// `consent.query_phi` returned `partial(low_confidence)`
+    /// (half-cadence; substrate mid-progression); the next pulse may
+    /// resolve OR pause again; resumes WITHOUT external resolution.
+    /// Distinct from `Escalated`.
+    Waiting,
+}
+
+/// The kintsugi-loop origin Ref for the oscillate shard.
+fn oscillate_origin() -> Ref {
+    Ref::new("@mirror/spectral/oscillate")
+        .expect("kintsugi-loop oscillate shard path must be a valid substrate ref")
+}
+
+/// The mid-cycle transparency: a substrate-located opacity at the
+/// oscillate origin with `confidence = 0.5`. Same shape for both
+/// `Active` and `Dark` because the substrate's `is_complete` mapping
+/// names both as `partial(confidence)` and reads them as "driver
+/// continues with next pulse" — the difference is which void-duality
+/// axis is pulling, not the loop's completeness.
+fn mid_cycle_transparency(phase: &'static str) -> Transparency<Ref> {
+    Transparency::opaque(
+        oscillate_origin(),
+        PropertyVerdict::Partial {
+            confidence: 0.5,
+            diagnostics: vec![Diagnostic::new(phase)],
+        },
+    )
+}
+
+/// The waiting transparency: a substrate-located opacity at the
+/// oscillate origin with `confidence = 0.25`. Mirrors the audible-
+/// altitude Half-cadence encoding in `music/mod.rs::half_transparency`
+/// exactly — substrate's `read_consent.partial+half` maps to
+/// `Waiting`, so the confidence reading IS the half-cadence reading at
+/// the loop altitude.
+fn waiting_transparency() -> Transparency<Ref> {
+    Transparency::opaque(
+        oscillate_origin(),
+        PropertyVerdict::Partial {
+            confidence: 0.25,
+            diagnostics: vec![Diagnostic::new("awaiting next consent surface tick")],
+        },
+    )
+}
+
+/// The escalated state's gap: a level-1 contradiction naming the
+/// surfacing of an external-resolution requirement. Per
+/// [`docs/specs/gap-tension-tensor-substrate.md`] §3.2: escalation
+/// surfacing is a level-1 contradiction (simple unresolved tension;
+/// the nested learning loop happens when Reflection reads the
+/// escalation and responds, lifting to higher Bateson levels).
+fn escalated_gap() -> Gap {
+    Gap::new(1, oscillate_origin(), "escalation surfaced")
+}
+
+/// The escalated state's transparency: the opacity observed when the
+/// consent surface returned `failure(reason)`; surfaces the failure to
+/// metalogue.
+fn escalated_transparency() -> Transparency<Ref> {
+    Transparency::opaque(
+        oscillate_origin(),
+        PropertyVerdict::Fail(Diagnostic::new(
+            "kintsugi loop halted pending external resolution",
+        )),
+    )
+}
+
+/// `is_complete(s: oscillation_state) -> verdict` — the kintsugi-loop
+/// termination check at the loop altitude.
+///
+/// Reads an [`OscillationState`] and emits the substrate's three-state
+/// verdict per `oscillate.mirror` §is_complete (the substrate's own
+/// declared mapping table, lines 631–649):
+///
+/// - `Settled`   → `Success(())` — autopoietic ground state; holonomy → 0
+/// - `Active`    → `Partial((), opaque@0.5)` — mid-cycle ACTIVE phase
+/// - `Dark`      → `Partial((), opaque@0.5)` — mid-cycle DARK phase
+/// - `Waiting`   → `Partial((), opaque@0.25)` — half-cadence
+/// - `Escalated` → `Failure(Gap{level:1,…}, opaque)` — external resolution required
+///
+/// Pure; no I/O; allocates per the verdict carrier.
+///
+/// Per `oscillate.mirror`'s substrate declaration: the action's verdict
+/// IS the loop driver's termination discipline. The substrate has
+/// reached its autopoietic fixed point when `is_complete` returns
+/// `pass`; the substrate is approaching but not yet at the fixed point
+/// when `is_complete` returns `partial`; the substrate has failed to
+/// reach the fixed point at this tick when `is_complete` returns
+/// `failure`. The three-state surface IS the substrate's honest
+/// acknowledgment of its own loop boundary.
+pub fn is_complete(state: OscillationState) -> Verdict {
+    // The five-state mapping IS the body. Pattern-exhaustive over
+    // OscillationState; no fallback arm; the compiler enforces the
+    // five-state contract. Adding a sixth variant to OscillationState
+    // (none is currently substrate-declared) will fail to compile here.
+    match state {
+        // Autopoietic ground state per cadence.is_settled(authentic);
+        // holonomy → 0; loop terminates.
+        OscillationState::Settled => Imperfect::Success(()),
+        // Mid-cycle, ACTIVE phase live. Per oscillate.mirror
+        // §is_complete: "driver continues with next pulse."
+        OscillationState::Active => Imperfect::Partial((), mid_cycle_transparency("active pass")),
+        // Mid-cycle, DARK phase live. Same shape as Active per the
+        // substrate's own framing.
+        OscillationState::Dark => Imperfect::Partial((), mid_cycle_transparency("dark pass")),
+        // Half-cadence; substrate paused at the dominant; awaits next
+        // consent surface tick; resumes WITHOUT external resolution.
+        OscillationState::Waiting => Imperfect::Partial((), waiting_transparency()),
+        // Substrate halted pending external resolution; pause_event
+        // emitted to metalogue per `consent.emit_to_metalogue`. Level-1
+        // contradiction per gap-tension-tensor-substrate.md §3.2.
+        OscillationState::Escalated => {
+            Imperfect::Failure(escalated_gap(), escalated_transparency())
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     //! The executable spec for [`is_complete`] — T4's `oscillate`
@@ -209,20 +365,13 @@ mod tests {
         let v = is_complete(OscillationState::Escalated);
         match &v {
             Imperfect::Failure(gap, t) => {
-                assert_eq!(
-                    Gap::level(gap),
-                    1,
-                    "escalation is a level-1 contradiction"
-                );
+                assert_eq!(Gap::level(gap), 1, "escalation is a level-1 contradiction");
                 assert!(
                     !t.is_catastrophic(),
                     "escalated transparency must not be catastrophic"
                 );
                 let c = confidence_of(t);
-                assert!(
-                    c < 0.25,
-                    "escalated confidence must be near zero (got {c})",
-                );
+                assert!(c < 0.25, "escalated confidence must be near zero (got {c})",);
             }
             other => panic!("escalated must yield Failure; got {other:?}"),
         }

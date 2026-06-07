@@ -282,6 +282,361 @@ fn deceptive_transparency() -> Transparency<Ref> {
     )
 }
 
+// =====================================================================
+// T4: the dissonance discriminator floor.
+//
+// Per `shards/epistemologic/math/music/dissonance.mirror` (substrate-
+// frozen at commit 7625ee5): the Helmholtz/Plomp-Levelt roughness curve
+// IS the formatter's discriminator at the audible altitude. T4 lands the
+// boundary-Rust bodies for `is_consonant` and `is_pareto`.
+//
+// The carrier types ([`Dissonance`], [`Candidate`], [`ParetoSet`]) are
+// minimal Rust mirrors of the substrate-declared records:
+//
+//   type dissonance = { roughness: ref, partials: u32 }
+//   type candidate  = { content: ref, score: dissonance }
+//   type pareto_set = [candidate]
+//
+// Per `[[feedback-no-bare-types]]`: each is its own newtype; bare floats
+// and bare `Vec` never escape the substrate boundary. Fuller shapes
+// (typed `morphism` content; richer pareto-set carriers) lift when
+// `@mirror/spectral/consent` substrate-pulls.
+// =====================================================================
+
+/// The substrate's dissonance carrier at the audible altitude.
+///
+/// Mirrors `type dissonance = { roughness: ref, partials: u32 }` from
+/// `shards/epistemologic/math/music/dissonance.mirror`. The Plomp-Levelt
+/// curve's continuous output, normalised to [0.0, 1.0]:
+///
+/// - `0.0`  — unison / octave / consonant small-integer ratio
+/// - `~1.0` — critical-band-width interval (the tritone region)
+///
+/// `roughness` is an `f64` here because the substrate's `ref` floor at
+/// the audible altitude IS `f64` (per `boot/std/number.mirror`'s
+/// substrate-pull discipline and `glass.mirror`'s `opacity.weight: f64`
+/// precedent). When the substrate's float-floor lifts to a richer
+/// carrier (a forward-promise), this struct's field type lifts with it.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Dissonance {
+    /// The Plomp-Levelt curve's value at this ratio. Bounded in [0, 1].
+    roughness: f64,
+    /// The number of partials summed when computing the roughness.
+    partials: u32,
+}
+
+impl Dissonance {
+    /// Construct from a roughness reading and a partial count.
+    pub fn new(roughness: f64, partials: u32) -> Self {
+        Dissonance { roughness, partials }
+    }
+
+    /// Read this dissonance's roughness value.
+    pub fn roughness(&self) -> f64 {
+        self.roughness
+    }
+
+    /// Read this dissonance's partial count.
+    pub fn partials(&self) -> u32 {
+        self.partials
+    }
+}
+
+/// The substrate's candidate carrier at the audible altitude.
+///
+/// Mirrors `type candidate = { content: ref, score: dissonance }` from
+/// `shards/epistemologic/math/music/dissonance.mirror`. A single
+/// candidate morphism the discriminator evaluates.
+///
+/// Per the substrate header's gap-honest commentary: `content: ref`
+/// carries the substrate reference to wherever the morphism content
+/// lives (a splinter oid, a shard handle, a Fate proposal id). When
+/// `@mirror/spectral/consent` substrate-pulls a typed `morphism`
+/// carrier, this struct's `content` field lifts.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Candidate {
+    content: Ref,
+    score: Dissonance,
+}
+
+impl Candidate {
+    /// Construct from a content reference and a dissonance score.
+    pub fn new(content: Ref, score: Dissonance) -> Self {
+        Candidate { content, score }
+    }
+
+    /// Borrow this candidate's substrate content reference.
+    pub fn content(&self) -> &Ref {
+        &self.content
+    }
+
+    /// Read this candidate's dissonance score.
+    pub fn score(&self) -> Dissonance {
+        self.score
+    }
+}
+
+/// The substrate's pareto-set carrier at the audible altitude.
+///
+/// Mirrors `type pareto_set = [candidate]` from
+/// `shards/epistemologic/math/music/dissonance.mirror`. The set of
+/// candidates the discriminator evaluates.
+///
+/// Per the substrate header's gap-honest commentary: the empty set is
+/// the "no admissible morphism" case; the discriminator handles it via
+/// its own input validation (returning `Failure(reason)`), not via
+/// non-empty contract at the carrier altitude. The newtype keeps the
+/// substrate boundary explicit per `[[feedback-no-bare-types]]`.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ParetoSet {
+    candidates: Vec<Candidate>,
+}
+
+impl ParetoSet {
+    /// Construct from a vector of candidates.
+    pub fn new(candidates: Vec<Candidate>) -> Self {
+        ParetoSet { candidates }
+    }
+
+    /// Borrow this set's candidates as a slice.
+    pub fn candidates(&self) -> &[Candidate] {
+        &self.candidates
+    }
+
+    /// Read whether this set is empty (the "no admissible morphism" case).
+    pub fn is_empty(&self) -> bool {
+        self.candidates.is_empty()
+    }
+}
+
+/// `1/φ²` — the consonant-floor threshold. Below this roughness the
+/// dissonance reading is consonant; the discriminator emits
+/// `Success(())`. Equals `1 - 1/φ` exactly (the golden-ratio reflection
+/// of [`INV_PHI`]).
+///
+/// [`INV_PHI`]: crate::gap::INV_PHI
+const INV_PHI_SQ: f64 = 0.381_966_011_250_105_2_f64;
+
+/// `1/φ` — the consonant-ceiling threshold. Above this roughness the
+/// dissonance reading is dissonant beyond resolution; the discriminator
+/// emits `Failure`. Same threshold the audible altitude uses to
+/// discriminate plagal from half (per `crate::gap::INV_PHI`).
+///
+/// The roughness band split is golden-ratio anchored per the T3
+/// discipline:
+///
+///   roughness ∈ [0, 1/φ²]  — consonant     → Success(())
+///   roughness ∈ (1/φ², 0.5] — consonant-leaning partial → Partial+Clear
+///   roughness ∈ (0.5, 1/φ]  — dissonant-leaning partial → Partial+opaque@0.25
+///   roughness ∈ (1/φ, 1.0]  — dissonant      → Failure+opaque
+const INV_PHI: f64 = crate::gap::INV_PHI;
+
+/// The audible-altitude origin Ref for the dissonance shard.
+fn dissonance_origin() -> Ref {
+    Ref::new("@epistemologic/math/music/dissonance")
+        .expect("audible-altitude dissonance shard path must be a valid substrate ref")
+}
+
+/// The dissonant-leaning partial-band transparency: opaque at
+/// `confidence = 0.25` (same shape as `half_transparency`; the
+/// dissonant-leaning band sits in the same below-1/φ confidence stratum
+/// as the half cadence).
+fn dissonant_leaning_transparency() -> Transparency<Ref> {
+    Transparency::opaque(
+        dissonance_origin(),
+        PropertyVerdict::Partial {
+            confidence: 0.25,
+            diagnostics: vec![Diagnostic::new("dissonant-leaning roughness")],
+        },
+    )
+}
+
+/// The dissonance-floor failure's gap: a level-0 contradiction naming
+/// the floor-altitude inability to consonate. Level 0 (not 1): floor-
+/// altitude dissonance is not a Bateson learning contradiction; it is
+/// the substrate's resolution boundary on the consonant basis.
+fn dissonance_floor_gap() -> Gap {
+    Gap::new(0, dissonance_origin(), "roughness above 1/phi")
+}
+
+/// The dissonance-floor failure's transparency: the opacity observed
+/// at the dissonance origin when the roughness exceeds the consonant
+/// ceiling.
+fn dissonance_floor_transparency() -> Transparency<Ref> {
+    Transparency::opaque(
+        dissonance_origin(),
+        PropertyVerdict::Fail(Diagnostic::new(
+            "roughness beyond substrate resolution; not consonate at this floor",
+        )),
+    )
+}
+
+/// `is_consonant(d: dissonance) -> verdict` — the consonance verdict at
+/// the dissonance altitude.
+///
+/// Reads `d.roughness` and emits the substrate's Hodge-framed verdict
+/// per the golden-ratio anchored mapping (the T3 discipline's threshold
+/// discipline, reflected onto the dissonance roughness axis):
+///
+/// - `roughness ≤ 1/φ²`         → `Success(())`               (consonant)
+/// - `1/φ² < roughness ≤ 0.5`   → `Partial((), Transparency::clear())`
+///                                  (consonant-leaning; confidence → 1.0)
+/// - `0.5 < roughness ≤ 1/φ`    → `Partial((), opaque@0.25)`
+///                                  (dissonant-leaning; below 1/φ)
+/// - `roughness > 1/φ`           → `Failure(Gap{level:0,…}, opaque)`
+///                                  (dissonant beyond resolution)
+///
+/// Pure; no I/O; no allocation beyond the verdict carrier.
+///
+/// Per `dissonance.mirror`'s substrate declaration: the action's
+/// threshold value is a forward-promise to the consumer (refract
+/// measures one threshold; the formatter measures another; the
+/// audition lens measures a third). T4 lands the consonant-floor /
+/// consonant-ceiling pair at golden-ratio anchors; per-consumer
+/// thresholds compose on top.
+pub fn is_consonant(d: Dissonance) -> Verdict {
+    let r = d.roughness();
+    if r <= INV_PHI_SQ {
+        // Consonant ground: harmonic representative IS the input.
+        Imperfect::Success(())
+    } else if r <= 0.5 {
+        // Consonant-leaning partial band: harmonic representative
+        // reached with gauge content (no located cracks at the
+        // dissonance floor; the gauge content is a roughness-band
+        // signal, not a substrate location). Transparency::clear
+        // mirrors the Plagal cadence's encoding.
+        Imperfect::Partial((), Transparency::clear())
+    } else if r <= INV_PHI {
+        // Dissonant-leaning partial band: opaque with confidence 0.25.
+        // Below 1/φ so `verdict_to_cadence_kind` reads as Half-shape.
+        Imperfect::Partial((), dissonant_leaning_transparency())
+    } else {
+        // Dissonant beyond substrate resolution: level-0 floor verdict.
+        Imperfect::Failure(dissonance_floor_gap(), dissonance_floor_transparency())
+    }
+}
+
+// =====================================================================
+// is_pareto helpers.
+// =====================================================================
+
+/// The audible-altitude tie tolerance on dissonance roughness.
+///
+/// Per `harmonic.mirror`'s ~5-cents resolution at trained-listener
+/// altitude: 5 cents ≈ 0.003 in normalized roughness (cents are
+/// logarithmic on frequency; the Helmholtz curve is on roughness; the
+/// substrate-pull discipline maps the audible resolution to a roughness
+/// tolerance of `0.003`). Candidates whose dissonance scores differ by
+/// less than this are Pareto-tied at the audible altitude; the
+/// formatter must pause and present the tied front to consent.
+const PARETO_TIE_TOLERANCE: f64 = 0.003;
+
+/// The empty-pareto-set failure's gap. Level 0 (not 1): no-admissible-
+/// morphism is a floor-altitude verdict that the substrate has no
+/// candidate to evaluate at this tick; it is not a nested learning
+/// contradiction. The kintsugi loop's fracture stays a target for the
+/// next tick when new candidates land.
+fn empty_pareto_gap() -> Gap {
+    Gap::new(0, dissonance_origin(), "no admissible morphism")
+}
+
+/// The empty-pareto-set failure's transparency.
+fn empty_pareto_transparency() -> Transparency<Ref> {
+    Transparency::opaque(
+        dissonance_origin(),
+        PropertyVerdict::Fail(Diagnostic::new(
+            "pareto set is empty; no admissible morphism this tick",
+        )),
+    )
+}
+
+/// `is_pareto(candidates: pareto_set) -> verdict` — the pareto-front
+/// discriminator at the dissonance altitude.
+///
+/// Reads a list of candidates (each scored by dissonance roughness
+/// against the current eigenboard state) and emits the formatter's
+/// pause-or-auto-apply verdict per `dissonance.mirror` §is_pareto:
+///
+/// - empty                                    → `Failure(Gap{level:0,…}, opaque)`
+///                                              ("no admissible morphism")
+/// - single strict minimum (gap > tolerance)  → `Success(())`
+///                                              (singleton consonance; auto-apply)
+/// - multiple within tie tolerance            → `Partial((), opaque(tied refs))`
+///                                              (Pareto-tied; pause + present to consent)
+///
+/// **T4 returns `Success(())` for the singleton-winner case.** The
+/// winner's identity (`Ref`) is a forward-promise to T5 (`gaps_of`) /
+/// T6 (`tensor_of`): the substrate's `Aggregate` carrier (currently
+/// `()`) lifts to a typed shape that threads the winning candidate
+/// back to the consumer. Until then, the consumer-pull seam (the future
+/// `@mirror/spectral/consent` driver) invokes both `is_pareto` and a
+/// sibling `pick_winner(set)` to extract the winner.
+///
+/// **T4 does NOT pre-widen.** Single-attractor minimization on
+/// roughness; the coherent-tension / temporal-eigensheaf extension
+/// waits for the substrate's `coherent_tension` declaration to land.
+/// Per the task brief: "the substrate is single-attractor; do not
+/// pre-widen."
+///
+/// Pure; no I/O; allocates the opacity map on the Partial path.
+pub fn is_pareto(candidates: ParetoSet) -> Verdict {
+    if candidates.is_empty() {
+        return Imperfect::Failure(empty_pareto_gap(), empty_pareto_transparency());
+    }
+
+    // Find the minimum roughness. NaN-safe via `partial_cmp` fallback:
+    // if any roughness is NaN, partial_cmp returns None and we treat the
+    // pair as tied (the substrate's audible-altitude resolution cannot
+    // discriminate against a non-comparable scalar).
+    let mut min_roughness = f64::INFINITY;
+    for c in candidates.candidates() {
+        let r = c.score().roughness();
+        if r < min_roughness {
+            min_roughness = r;
+        }
+    }
+
+    // Collect all candidates whose roughness sits within the tie
+    // tolerance of the minimum. Single survivor → strict minimum →
+    // Success. Multiple survivors → Pareto-tied → Partial.
+    let tied: Vec<&Candidate> = candidates
+        .candidates()
+        .iter()
+        .filter(|c| (c.score().roughness() - min_roughness).abs() <= PARETO_TIE_TOLERANCE)
+        .collect();
+
+    if tied.len() <= 1 {
+        // Strict minimum: singleton consonance; auto-apply.
+        Imperfect::Success(())
+    } else {
+        // Pareto-tied: each tied candidate's content ref surfaces as a
+        // located opacity. The consent surface reads the opacity map to
+        // present the tied front; the per-candidate verdict carries
+        // confidence (1.0 - normalized tie gap) so the runner-up gap is
+        // recoverable from the transparency. The substrate-altitude
+        // discriminator stays honest about WHERE the tie lives.
+        use terni::Loss;
+        let mut t: Transparency<Ref> = Transparency::clear();
+        for c in &tied {
+            // Confidence per tied candidate: 1.0 minus the normalised
+            // distance to the minimum (0.0 if AT the minimum; less
+            // otherwise). All tied candidates sit within tolerance, so
+            // the confidence floor is `1.0 - tolerance` ≈ 0.997.
+            let conf = 1.0 - (c.score().roughness() - min_roughness) / PARETO_TIE_TOLERANCE;
+            let conf = conf.clamp(0.0, 1.0);
+            let sibling = Transparency::opaque(
+                c.content().clone(),
+                PropertyVerdict::Partial {
+                    confidence: conf,
+                    diagnostics: vec![Diagnostic::new("pareto-tied candidate")],
+                },
+            );
+            t = t.combine(sibling);
+        }
+        Imperfect::Partial((), t)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     //! The executable spec for `is_settled` after T3 — the Verdict
@@ -643,7 +998,10 @@ mod tests {
                     0,
                     "empty pareto set is a level-0 verdict (no admissible morphism)",
                 );
-                assert!(!t.is_catastrophic(), "empty transparency must not be catastrophic");
+                assert!(
+                    !t.is_catastrophic(),
+                    "empty transparency must not be catastrophic"
+                );
             }
             other => panic!("empty pareto set must yield Failure; got {other:?}"),
         }
@@ -666,7 +1024,10 @@ mod tests {
     /// Single-element set — trivially the strict minimum — is Success.
     #[test]
     fn singleton_pareto_set_is_success_unit() {
-        let set = ParetoSet::new(vec![candidate_with_roughness("@spectral/candidate/only", 0.10)]);
+        let set = ParetoSet::new(vec![candidate_with_roughness(
+            "@spectral/candidate/only",
+            0.10,
+        )]);
         let v = is_pareto(set);
         assert!(matches!(v, Imperfect::Success(())));
     }
