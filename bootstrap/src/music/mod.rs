@@ -236,9 +236,7 @@ pub fn is_settled(kind: CadenceKind) -> Verdict {
         // (simple unresolved tension; no nested learning loop). The
         // transparency carries the opacity observed en route to the
         // failure. Escalate to Reflection.
-        CadenceKind::Deceptive => {
-            Imperfect::Failure(deceptive_gap(), deceptive_transparency())
-        }
+        CadenceKind::Deceptive => Imperfect::Failure(deceptive_gap(), deceptive_transparency()),
     }
 }
 

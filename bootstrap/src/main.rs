@@ -11,8 +11,8 @@
 mod ast;
 mod crystallize;
 mod exec;
-mod git;
 mod gap;
+mod git;
 mod grammar;
 mod hash;
 mod music;

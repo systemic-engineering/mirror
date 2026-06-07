@@ -294,7 +294,10 @@ mod tests {
 
     #[test]
     fn confidence_of_opaque_with_fail_returns_zero() {
-        let t = Transparency::opaque(audible_origin(), PropertyVerdict::Fail(Diagnostic::new("V -> vi")));
+        let t = Transparency::opaque(
+            audible_origin(),
+            PropertyVerdict::Fail(Diagnostic::new("V -> vi")),
+        );
         assert_eq!(confidence_of(&t), 0.0);
     }
 
