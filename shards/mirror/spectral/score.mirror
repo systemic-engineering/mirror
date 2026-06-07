@@ -1,0 +1,438 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/spectral
+in @mirror/spectral/oscillate
+in @mirror/spectral/consent
+in @metalogue
+
+# @mirror/spectral/score — the orchestra's shared score; the
+# eigenboard envelope + metalogue bus + pending kintsugi state, named
+# collectively as the score the voices play through.
+#
+# THE T11 PREREQUISITE the `oscillate.mirror` forward-promise named.
+# Lines 219-226 of `oscillate.mirror` (the substrate gap surfaced
+# honestly):
+#
+#   "`active_pass` reads the oscillation's eigenboard context (the
+#    candidate morphism_set; the current shard ref) but the substrate's
+#    eigenboard context carrier lives at `@mirror/spectral/score`
+#    (forward-promised; does not yet exist). For now, the active_pass
+#    signature reads `oscillation` (carrying the loop's position) and
+#    emits a `morphism`; the eigenboard context is implicit in the
+#    oscillation's `ref` field. A future score sub-shard MAY lift this
+#    to a typed eigenboard.context carrier."
+#
+# This shard lands that forward-promise. After it lands, `active_pass`
+# (T11) reads a typed score rather than reaching through an opaque
+# anchor `ref`; the eigenboard context becomes substrate-fact at the
+# composer altitude.
+#
+# Load-bearing spec: docs/specs/mirror-spectral.md §4.5 (the score
+# sub-shard sketch — "names the eigenboard envelope + metalogue bus +
+# pending kintsugi state collectively as the score; read-only to
+# voices; mutations are settled through the convergence's daemon");
+# §3.2 (the Pack IS the orchestra; the metalogue IS the score);
+# §4.2 (the family root's sub-shard list — the line
+# `score: the eigenboard + the metalogue + the kintsugi loop's
+# pending state`).
+#
+# === The recognition: the family root already named this ===
+#
+# `shards/mirror/spectral.mirror` (the family root) already names
+# `@mirror/spectral/score` in its sub-shard list (lines 67-71):
+#
+#   @mirror/spectral/score  eigenboard envelope + metalogue bus +
+#                            pending kintsugi state, named
+#                            collectively as the score. Read-only
+#                            to voices; mutated through the
+#                            convergence.
+#
+# This shard is the substrate-pull realisation of that already-named
+# species. Three components, each already a substrate-declared
+# carrier in a sibling shard:
+#
+#   1. `anchor: ref` — the eigenboard envelope's current shard handle.
+#      The substrate ref into `@mirror/store`'s content-addressed
+#      Merkle-chain history (per `mirror/store.mirror`); the position
+#      the oscillation is anchored on; what `dark_pass` advances when
+#      a morphism applies under identity preservation.
+#
+#   2. `session: metalogue_session` — the metalogue bus (already
+#      declared in `metalogue.mirror` as `type metalogue_session =
+#      { turns: [turn], opacity: transparency(turn) }`). Carries the
+#      orchestra's conversation: who's spoken, what's still opaque,
+#      where the consent surface is reading next. The score IS the
+#      metalogue at the orchestra altitude (per spec §3.2 — "the Pack
+#      already IS the orchestra; the metalogue IS the score").
+#
+#   3. `pending: morphism_set` — the kintsugi loop's pending state
+#      (already declared in `consent.mirror` as
+#      `type morphism_set = [morphism]`). Carries the morphisms the
+#      formatter has proposed but not yet applied (the consent surface
+#      is mid-evaluation; or `query_phi` returned partial; or
+#      `dark_pass` is waiting on an identity check). Read by
+#      `active_pass` to compose the candidate ranking.
+#
+# This is the family-root-honest reading: the score is the
+# *shared-score-as-orchestra-state*, NOT a per-pulse computation
+# artifact. Three substrate-declared carriers, composed into one
+# typed record at the orchestra altitude.
+#
+# === Substrate-pull recognition: the brief proposed a different shape ===
+#
+# The 22nd-instance candidate (per [[feedback-substrate-already-had-the-word]]):
+# the task brief proposed
+#
+#   type score = {
+#     anchor:     ref
+#     candidates: morphism_set
+#     operator:   operator       (from sheaf_laplacian.mirror)
+#     curvatures: [curvature]    (from curvature.mirror)
+#   }
+#
+# — which would couple the score type to the @epistemologic/math
+# numerical primitives. The substrate-pull check surfaced the
+# correction:
+#
+#   - `candidates` ≡ `pending: morphism_set` — same carrier; renamed
+#     to honour the family-root's "pending kintsugi state" framing.
+#   - `operator` and `curvatures` are NOT score fields; they are the
+#     *internal working state of `active_pass`*. The composer altitude
+#     computes them on read from `pending`; the score carries the
+#     pre-numerical state the voices share, not the derived numerics
+#     the formatter recomputes per pulse.
+#
+# The corrected chain for T11's `active_pass(o: oscillation) -> morphism`:
+#
+#   1. `score_of(o)` reads the oscillation → typed score (this shard).
+#   2. `pending(score)` reads the score → morphism_set (this shard).
+#   3. The morphism_set's content refs → gaps via `gaps_of` (T5,
+#      Rust today; substrate carrier in `@epistemologic/property`).
+#   4. The gaps → tensor via `tensor_of` (T6).
+#   5. The tensor → operator via `sheaf_laplacian` (T8).
+#   6. The operator's edges → curvatures via `balanced_forman` (T9).
+#   7. The curvatures → ranked fractures via `minimize` (T7+T9).
+#   8. The top-ranked fracture → morphism (the active_pass return).
+#
+# `operator` and `curvatures` appear at step 5-6 as *intermediate
+# results* of the active_pass body, not as score fields. The score
+# stays minimal; the numerics live where they live (under
+# @epistemologic/math); the composer composes.
+#
+# This honours [[feedback-substrate-pull]]: when the substrate already
+# names a carrier (morphism_set in consent.mirror; metalogue_session
+# in metalogue.mirror; ref in glass.mirror), don't reinvent; use the
+# existing primitives. The 22nd instance of substrate-already-had-
+# the-word: `score` is what the family-root said it is, not a richer
+# numerical envelope.
+#
+# === Substrate-pull discipline ===
+#
+# Per `glass.mirror`, `ref` is the substrate's reference floor;
+# the score's `anchor` rides it directly. Per `metalogue.mirror`,
+# `metalogue_session` IS the typed conversation carrier; the score's
+# `session` field rides it directly. Per `consent.mirror`,
+# `morphism_set = [morphism]` is the typed candidate-list at the
+# consent altitude; the score's `pending` rides it directly. Per
+# `oscillate.mirror`, `oscillation` carries the loop's live position
+# (state + iteration + anchor); the score is derived from an
+# oscillation by projecting its anchor + composing with the session
+# and pending sets.
+#
+# This shard declares `score` as a record per the consent.morphism /
+# oscillate.oscillation precedent (three named fields, each a typed
+# carrier from a sibling shard); `score_of` as the projection action
+# from oscillation; `pending` as the read action voices use to see
+# the morphism_set the consent surface is evaluating. NO new verdict
+# carrier; NO opaque-`ref` carriers where structured types are
+# available (per [[feedback-no-bare-types]]).
+#
+# === Substrate gaps surfaced honestly ===
+#
+# Each gap below is a forward-promise to a later substrate-pull tick;
+# none invented here:
+#
+#   - `score_of(o)` reads an oscillation and emits a score, but the
+#     substrate has no "read the active metalogue session from a
+#     shard ref" action declared at the orchestra altitude — the
+#     realisation layer reads the session from the running glue-bus
+#     state (per CLAUDE.md's "glue bus" discipline) and projects
+#     into a metalogue_session carrier. A future
+#     `@mirror/spectral/voice` sub-shard MAY declare the
+#     session-from-ref projection; for this tick the substrate names
+#     the score's shape; the projection arithmetic stays at the
+#     realisation layer.
+#
+#   - `score_of` similarly reads the oscillation's pending morphism
+#     set — but the substrate has no "read the kintsugi loop's
+#     in-flight morphisms from an anchor ref" action declared at
+#     the consumer altitude. The realisation layer reads the
+#     `oscillation`'s implicit pending set (carried in the loop's
+#     per-tick state) and projects into a morphism_set carrier. A
+#     future `@mirror/spectral/audition` sub-shard MAY declare the
+#     pending-from-anchor projection (the audition is the natural
+#     consumer that materialises pending morphisms into the tournament
+#     for resolution). For this tick the substrate names the carrier;
+#     the projection arithmetic stays at the realisation layer.
+#
+#   - `pending(s)` is a pure projection (record field read); no
+#     obligation block needed at the substrate altitude beyond the
+#     standard `\` discipline. The substrate names the surface; the
+#     realisation layer returns `s.pending`.
+#
+#   - The score is READ-ONLY to voices (per the family-root spec —
+#     "mutated through the convergence"). This shard does NOT declare
+#     a `mutate(s: score, ...)` action; mutations land through the
+#     kintsugi loop (`dark_pass` advances the anchor; the metalogue
+#     bus accumulates turns; the consent surface drains pending).
+#     The substrate's read-only contract is structural: only
+#     `score_of` constructs scores; the constructor is the only
+#     mutation path.
+#
+# === Pre-AI prior art ===
+#
+# Every type and action below names an established object older than
+# the discipline of computer science (modulo the discipline names):
+#
+#   score           Guido d'Arezzo (c.1025), Micrologus; the staff-
+#                    notation graph that ensemble voices read in
+#                    common. The substrate's reading is the orchestra-
+#                    altitude shared state per spec §3.2.
+#   anchor          Eilenberg (1942); the categorical fixed-point
+#                    object that morphisms hinge on. The substrate's
+#                    reading is the eigenboard's current section IS
+#                    the morphism-application anchor.
+#   session         Marshall McLuhan (1964) Understanding Media;
+#                    the bounded conversational unit. The substrate's
+#                    reading is metalogue_session per
+#                    metalogue.mirror's Bateson 1972 grounding.
+#   pending         Carnielli (2002) on the LFI hierarchy; the
+#                    formula that holds in the meta-theory but
+#                    not yet in the object theory. The substrate's
+#                    reading is morphism_set in the consent-pause
+#                    state per consent.mirror's pause_event.
+#
+# The substrate's contribution is *typing* these so the formatter and
+# voices read them through one named carrier. No invention.
+#
+# Spec context: docs/specs/mirror-spectral.md §3.2 (the Pack IS the
+#               orchestra; the metalogue IS the score),
+#               §4.2 (the family root's sub-shard list — score named
+#               as "eigenboard envelope + metalogue bus + pending
+#               kintsugi state"),
+#               §4.5 (the score sub-shard sketch — read-only to
+#               voices; mutated through the convergence),
+#               §4.6 (the @mirror/store integration — eigenboard's
+#               Merkle-chain history IS the score's recording
+#               medium),
+#               docs/insights/2026-06-07-prophecy-derived-fractures-
+#               from-topology.md (the Crystal sharpens section: the
+#               score is pre-crystal; crystal is post-settle; the
+#               prophecy is the calendar attached).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-shard-as-crdt]] (the score IS
+#                      the lattice element each pulse joins onto;
+#                      reads compose monotonically with the bus +
+#                      pending; mutations land through the kintsugi
+#                      loop's ascent),
+#                      [[architecture-connes-spectral-triple]] (the
+#                      score IS the (A, H, D) triple's H component
+#                      observed at the orchestra altitude — the
+#                      Hilbert-space-of-states the voices share; the
+#                      kintsugi loop's U(t) reads and advances it),
+#                      [[architecture-lift-as-load-bearing]]
+#                      (score_of lifts oscillation → score;
+#                      pending projects score → morphism_set; both
+#                      lifts substrate-declared in this shard with
+#                      sibling-shard primitives),
+#                      [[feedback-no-bare-types]] (score is its own
+#                      typed carrier; pending returns morphism_set
+#                      not bare list; no opaque ref escapes the
+#                      score surface),
+#                      [[feedback-substrate-pull]] (the score's three
+#                      fields are all sibling-shard primitives; the
+#                      substrate-pull discipline refused the brief's
+#                      richer numerical shape in favour of the
+#                      family-root's existing definition),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the 22nd-instance recognition: the family
+#                      root already named score's role; this shard
+#                      realises that already-named species).
+# Forward-promise to consumers: `active_pass` (T11) reads
+#                  `score_of(oscillation) -> pending -> morphism_set`
+#                  as the eigenboard context. The future
+#                  `@mirror/spectral/audition` consumer reads the
+#                  same pending set as the tournament's input.
+#                  Both consumer-pulls are downstream; this shard
+#                  declares the carrier and the two read surfaces.
+#                  This shard does NOT pull `@mirror/spectral/voice`
+#                  or `@mirror/spectral/audition`; the substrate-
+#                  altitude arrow points inward (score IS consumed
+#                  by active_pass and by audition; not the other
+#                  way around).
+# Related shards: mirror/spectral.mirror (the family root; declares
+#                 this sub-shard as the orchestra's shared-state
+#                 species),
+#                 mirror/spectral/oscillate.mirror (the loop primitive
+#                 whose forward-promise this shard lands; score_of
+#                 lifts oscillation → score; T11 active_pass consumes
+#                 the lift),
+#                 mirror/spectral/consent.mirror (the consent surface;
+#                 morphism_set carrier; the pending field rides the
+#                 declared type directly),
+#                 metalogue.mirror (the metalogue bus; metalogue_session
+#                 carrier; the session field rides the declared type
+#                 directly),
+#                 mirror/store.mirror (the eigenboard's Merkle-chain
+#                 history; the anchor ref reads into the store's
+#                 content-addressed substrate),
+#                 epistemologic/math/sheaf_laplacian.mirror (the
+#                 numerical sibling that active_pass composes on read
+#                 of pending — NOT a score field, but the realisation
+#                 layer's working set),
+#                 epistemologic/math/curvature.mirror (same — the
+#                 SDRF ranking is computed from pending in
+#                 active_pass's body, not stored on the score).
+# Path-namespace property: this file at
+# `shards/mirror/spectral/score.mirror` declares
+# `@mirror/spectral/score` as a species under the `@mirror/spectral`
+# family.
+
+prism @mirror/spectral/score {
+  focus score
+  project score
+  split score
+  shift score
+  settle score
+}
+
+# === The score carrier ===
+#
+# The orchestra's shared score. Three components, each a typed
+# carrier from a sibling shard:
+#
+# anchor   — the eigenboard envelope's current shard handle (a ref
+#             into `@mirror/store`'s content-addressed Merkle chain).
+#             The position the oscillation is anchored on; what
+#             `dark_pass` advances when a morphism applies under
+#             identity preservation; what voices read to see "where
+#             the substrate is now."
+# session  — the metalogue bus (per `metalogue.mirror`'s
+#             `metalogue_session` carrier). The orchestra's
+#             conversation: who's spoken, what's still opaque, the
+#             ordered turns that frame the consent surface's reads.
+#             The score IS the metalogue at the orchestra altitude
+#             (per spec §3.2).
+# pending  — the kintsugi loop's pending morphism set (per
+#             `consent.mirror`'s `morphism_set` carrier). The
+#             morphisms the formatter has proposed but the consent
+#             surface has not yet resolved (mid-evaluation; or
+#             `query_phi` returned partial; or `dark_pass` is waiting
+#             on an identity check). Read by `active_pass` (T11) as
+#             the candidate set the SDRF ranking ranks; read by
+#             `audition` (forward-promised) as the tournament input.
+#
+# Identity contract: two scores are equal iff their anchor, session,
+# and pending fields all match. The realisation layer enforces.
+#
+# Read-only contract: voices read the score; the score is not mutated
+# directly. Mutations land through the kintsugi loop — `dark_pass`
+# advances the anchor when identity preserves; the metalogue bus
+# accumulates turns through `@metalogue`'s emit discipline; the
+# consent surface drains pending through `query_phi`'s verdict.
+# This shard declares only the read surface; mutations are the
+# downstream consumers' responsibility.
+type score = {
+  anchor:  ref,
+  session: metalogue_session,
+  pending: morphism_set,
+}
+
+# === score_of — the projection from oscillation ===
+#
+# Reads an oscillation (the kintsugi loop's live position) and emits
+# the score the formatter and voices read to see the orchestra's
+# shared state. The substrate-altitude lift from
+# `@mirror/spectral/oscillate.oscillation` to
+# `@mirror/spectral/score.score`.
+#
+# Composes through:
+#
+#   1. `oscillation.anchor` → `score.anchor` — direct projection.
+#      The oscillation's anchor IS the score's anchor; no
+#      computation; the read is a record-field forward.
+#   2. The realisation layer reads the running metalogue bus state
+#      for the substrate-active session (per CLAUDE.md's glue-bus
+#      discipline) and projects into a `metalogue_session` carrier.
+#      The substrate names the obligation; the realisation layer
+#      discharges via the glue-bus surface (forward-promise to
+#      `@mirror/spectral/voice` which MAY substrate-declare the
+#      session-from-ref projection).
+#   3. The realisation layer reads the oscillation's implicit pending
+#      morphism set (carried in the loop's per-tick state) and
+#      projects into a `morphism_set` carrier. The substrate names
+#      the obligation; the realisation layer discharges via the
+#      kintsugi loop's pending-state surface (forward-promise to
+#      `@mirror/spectral/audition` which MAY substrate-declare the
+#      pending-from-anchor projection).
+#
+# Per `oscillate.mirror`'s forward-promise (lines 222-226): this
+# lift IS what makes `active_pass`'s eigenboard-context-carrier
+# substrate-fact rather than implicit-through-the-anchor-ref. After
+# this action lands, T11's `active_pass(o: oscillation) -> morphism`
+# composes as:
+#
+#   active_pass(o) =
+#     let s        = score_of(o)         -- this action
+#     let m_set    = pending(s)          -- this shard's read action
+#     let tension_set = tensor_of(gaps_of(m_set.content_refs))
+#     let op       = sheaf_laplacian(tension_set.restrictions)
+#     let cs       = [ balanced_forman(op, e) | e in op.entries ]
+#     let ranked   = minimize(tension_set)   -- SDRF on cs
+#     project ranked.head into morphism { content, score, expected }
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# the oscillation's anchor (direct projection), the active metalogue
+# session (via the glue bus), and the loop's pending morphisms (via
+# the kintsugi loop's per-tick state), emits the three-field score
+# record.
+score_of(o: oscillation) -> score { \ }
+
+# === pending — the read action voices use ===
+#
+# Reads a score and emits the pending morphism set (per
+# `consent.mirror`'s `morphism_set` carrier). The substrate's
+# orchestra-altitude read surface for "what morphisms is the
+# formatter mid-evaluation on?"
+#
+# Composes through:
+#
+#   1. Direct field projection: `score.pending` → `morphism_set`.
+#      No computation; the read IS the record-field forward.
+#
+# Consumers:
+#
+#   - `active_pass` (T11) reads `pending(score_of(o))` to compose
+#     the candidate set the SDRF ranking ranks. The eigenboard
+#     context is now substrate-declared: read pending; compose with
+#     gaps_of / tensor_of / sheaf_laplacian / balanced_forman /
+#     minimize; project the top fracture into the proposed morphism.
+#   - `@mirror/spectral/audition` (forward-promised) reads pending
+#     as the tournament's input set; the audition resolves which
+#     pending morphism wins the next consent surface.
+#   - `@mirror/spectral/voice` (forward-promised) reads pending as
+#     the section's open obligations; voices proposing morphisms
+#     add to pending; voices resolving morphisms drain pending.
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# `s.pending` and emits. The substrate names the surface; the
+# arithmetic IS the field read.
+pending(s: score) -> morphism_set { \ }
+
+out @mirror/spectral/score
+out score
+out score_of
+out pending
