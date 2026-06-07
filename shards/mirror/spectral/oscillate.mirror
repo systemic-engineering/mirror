@@ -1,0 +1,762 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/spectral
+in @mirror/spectral/consent
+in @uuid/spectral
+in @epistemologic/math/music/cadence
+in @epistemologic/math/music/dissonance
+in @epistemologic/reality/time
+in @metalogue
+
+# @mirror/spectral/oscillate — the kintsugi loop substrate-declared; the
+# rough-wavy-pull on the rug; the ACTIVE/DARK alternation per the
+# SpectralUuid void duality; the driver that pulls the substrate's
+# shard graph toward the K_n Splinter attractor by alternating
+# loss-decreasing proposals (ACTIVE) with identity anchoring (DARK),
+# composing the consent verdict between passes, terminating when
+# cadence settles authentic.
+#
+# THE ARC-CLOSING SUB-SHARD of the 2026-06-06 → 2026-06-07 recognition
+# sweep. Seven prior ticks built every primitive this shard composes:
+#
+#   @mirror/spectral                family root           (02e2981)
+#   @epistemologic/math/music       audible-altitude root (9a20b3fd)
+#   @.../music/harmonic             H of the (A, H, D)    (b031c8db)
+#   @.../music/interval             A of the (A, H, D)    (b8bdb728)
+#   @.../music/dissonance           D's loss curve;        (7625ee5)
+#                                    is_pareto discriminator
+#   @.../music/cadence              U(t) — the dynamics;   (9efac39)
+#                                    is_settled signal
+#   @mirror/spectral/consent        the Φ query;           (c3802eba)
+#                                    morphism + verdict
+#
+# Consent gave the formatter its Φ query: `query_phi(candidates) ->
+# verdict`. What was missing: the LOOP that CALLS query_phi. This shard
+# declares that loop at substrate altitude. After it lands,
+# `mirror kintsugi <file>` is fully designable at substrate altitude;
+# implementation becomes consumer-pull, composing from declared
+# primitives.
+#
+# Load-bearing spec: docs/specs/mirror-spectral.md §4.3 (the loop
+# primitive sketch), §2.1 (kintsugi as oscillation), §2.4 (SpectralUuid's
+# void duality as the oscillation mechanism), §2.5 (eigenvalue frequency
+# detection), §4.7 (the consent surface this loop reads each pass).
+#
+# === Alex's recognition (2026-06-07) — the rough-wavy pull ===
+#
+#   "Kintsugi doesn't just need to recurse from bottom to top or top to
+#    bottom — it needs to OSCILLATE, like a tree shaker only that it's
+#    a graph-merger. The SpectralUuid void duality becomes load-bearing.
+#    Imagine a rug, a rough wavy pull — that's what kintsugi does."
+#
+# The substrate has been carrying this loop in tribal knowledge for
+# weeks (per memory: every kintsugi session has alternated proposal/
+# anchor without naming the alternation; per the spec §4.3, the loop
+# primitive was already sketched but not declared). This shard names it.
+#
+# === ACTIVE/DARK void duality, made load-bearing ===
+#
+# Per `@uuid/spectral`'s 128-bit golden-ratio split:
+#   48 bits ACTIVE  — the navigable spectral coordinate (mutable by
+#                     morphisms that re-route navigation).
+#   80 bits DARK    — the BLAKE3-truncated content hash (the identity
+#                     signal; MUST be preserved by identity-preserving
+#                     morphisms; @uuid/spectral.dark projects it).
+#
+# The oscillation alternates between two passes that read the two
+# portions:
+#
+#   ACTIVE pass — propose a loss-decreasing morphism. Reads
+#                  `dissonance.is_pareto` against the morphism_set;
+#                  ranks candidates; emits the best; the navigable
+#                  spectral coordinate shifts as the substrate's loss
+#                  decreases. ACTIVE writes; DARK is the constraint.
+#
+#   DARK pass   — anchor identity. Re-validates via @uuid/spectral's
+#                  `dark` projection; the DARK 80 bits of the post-pulse
+#                  shard MUST byte-equal the DARK 80 bits of the pre-
+#                  pulse shard; if violated, the morphism creates a new
+#                  identity rather than preserving one — the pulse must
+#                  yield. DARK reads; ACTIVE is the proposal.
+#
+# Between passes: `consent.query_phi` reads the morphism_set the ACTIVE
+# pass proposed and emits the consent verdict; the verdict dispatches
+# to apply / wait / escalate via `read_consent`. The two passes plus the
+# verdict-read are ONE PULSE — one half-cycle of the oscillation.
+#
+# The substrate straightens under the rough wavy pull: ACTIVE pulls one
+# corner of the rug; DARK pulls the antipodal corner; the substrate's
+# Ricci flow proceeds along the negative-curvature gradient without
+# collapsing to Narcissus (the brittle star) because the DARK bits
+# constrain identity through navigation.
+#
+# === The 16th-instance candidate question (gen_prism) ===
+#
+# Per the task brief: does `@mirror/runtime/gen_prism` already carry
+# oscillation discipline? Read carefully:
+#
+#   gen_prism declares `tick(state: oid, message: message) -> tick_result`
+#   — a SINGLE-PASS pure tick: read state, apply message, emit new state.
+#   The tick is the substrate's atomic state-advance step at the actor
+#   altitude. It does NOT alternate ACTIVE/DARK; it does not read
+#   `consent.query_phi`; it does not terminate on `cadence.is_settled`.
+#
+# gen_prism's `tick` is the autopoietic-actor's pure-tick primitive
+# (Soto-Andrade & Varela 1984 Lawvere-fixed-point witness through
+# Banach contraction on hash space). It is one half of the substrate
+# story: the atomic state-advance. The OTHER half is the loop driver
+# that reads consent between ticks — the rough-wavy-pull oscillation.
+#
+# Verdict on the 16th-instance question: gen_prism's `tick` is the
+# ATOMIC primitive; this shard's `pulse` is the COMPOSED primitive
+# (one ACTIVE pass + one DARK pass + one consent read). The oscillation
+# discipline is the FIRST declaration of the loop-shape primitive at
+# substrate altitude — gen_prism declares the actor-tick floor; this
+# shard declares the oscillation-tick floor; both are load-bearing; the
+# realisation layer composes (oscillation can drive actors via gen_prism
+# messages, but the loop's discipline IS oscillate, not gen_prism).
+#
+# Not the 16th instance; the FIRST instance of substrate-altitude
+# oscillation primitive. The recognition: gen_prism's autopoietic
+# Lawvere-fixed-point is the SINGULAR case (one actor's self-closing
+# tick); oscillate's loop is the GENERAL case (the substrate's
+# self-closing kintsugi flow across many shards). The two close the
+# autopoietic story at substrate altitude — actor-floor + flow-floor.
+#
+# === The five-state oscillation_state surface ===
+#
+# The loop's position is one of five mutually-exclusive states. Each
+# maps to the substrate's existing four-state consent-verdict surface
+# (the 14th-instance candidate from `consent.mirror` §header) PLUS the
+# substrate-honest acknowledgment that the loop has TWO live phases
+# (ACTIVE pulling, DARK anchoring). The five-state surface IS the
+# minimal exhaustive carrier for the loop's position:
+#
+#   active     — ACTIVE pass live; proposing loss-decreasing morphism;
+#                 reading dissonance against the morphism_set.
+#   dark       — DARK pass live; anchoring identity; reading uuid_spectral
+#                 dark bits for byte-equality preservation.
+#   settled    — `cadence.is_settled(authentic)`; the spectrum closed on
+#                 its autopoietic ground state; holonomy → 0; the
+#                 oscillation terminates; final state emitted.
+#   escalated  — `consent.query_phi` returned `failure(reason)`; pause_event
+#                 emitted via `consent.emit_to_metalogue`; the consent
+#                 surface MUST resolve; oscillation halts pending external
+#                 signal. The deceptive-cadence subcase AND the
+#                 admissibility_singleton-failed subcase both flow through
+#                 escalated; the Pareto-tie pause is a sub-shape of
+#                 escalated (the pause_event carries the morphism_set so
+#                 the consent surface can pick φ*).
+#   waiting    — `consent.query_phi` returned `partial(low_confidence)`;
+#                 the formatter is mid-progression at half-cadence; the
+#                 next pulse may resolve (authentic) or wait again (half).
+#                 Distinct from escalated: waiting will resume on the
+#                 next consent surface tick WITHOUT external resolution;
+#                 escalated REQUIRES external resolution.
+#
+# The five states are exhaustive of the loop's possible positions:
+#
+#   - if mid-cycle: one of {active, dark} is live;
+#   - if settled: cadence is authentic (pass with full confidence);
+#   - if paused with internal continuation: waiting (half-cadence;
+#     partial with low confidence);
+#   - if paused with external continuation required: escalated
+#     (deceptive-cadence OR pareto-tied admissibility; failure verdict).
+#
+# Per the consent.mirror header: "plagal is auto-apply with partial
+# confidence — both flow through the same five." Plagal cadence is a
+# sub-case of `active`: the ACTIVE pass applies with reduced confidence;
+# the loop advances through `active` again on the next pulse rather than
+# entering a distinct sixth state. The substrate's three-state verdict
+# floor (pass | partial | failure) collapses ONTO the five-state
+# oscillation surface through the `read_consent` bridge; no sixth state.
+#
+# === Substrate-pull discipline ===
+#
+# Per `consent.mirror`, `morphism`, `morphism_set`, `verdict`, and
+# `query_phi` are the substrate's auto-apply boundary vocabulary; this
+# shard reads them directly. Per `cadence.mirror`, `cadence_kind` is the
+# substrate's typed cadence vocabulary; this shard reads it for the
+# four-state-to-five-state bridge. Per `dissonance.mirror`, `is_pareto`
+# is the substrate's discriminator at the audible altitude; this shard
+# reads it through `consent.query_phi`'s gate+rank composition. Per
+# `@uuid/spectral`, `dark(u)` projects the identity signal; this shard
+# reads it for the DARK pass's identity-preservation check. Per
+# `@epistemologic/reality/time`, `tick` IS the substrate's monotonic
+# iteration count (per time.mirror's `type tick = monotonic`); this
+# shard reads it for the oscillation's iteration field.
+#
+# This shard declares `oscillation_state` as inline sum per the
+# `cadence_kind = authentic | plagal | deceptive | half` precedent
+# (single-line; no leading-`|` workarounds); `oscillation` as a record
+# carrying the loop's live position + iteration count; `pulse` as the
+# atomic-step action (named `pulse` rather than `tick` to avoid name
+# collision with the imported `tick` type from `@time` AND with
+# `gen_prism.tick` — `pulse` is the substrate's existing music-altitude
+# vocabulary for one beat / one ACTIVE→DARK alternation; consonant with
+# cadence.mirror's pulse-of-resolution framing); `active_pass` and
+# `dark_pass` as the load-bearing two-pass actions; `oscillate` as the
+# driver returning the final ref; `read_consent` as the four-to-five
+# bridge; `is_complete` as the termination check. NO new verdict carrier;
+# NO leading-`|` workarounds; NO opaque-`ref` carriers where structured
+# types are available (per `[[feedback-no-bare-types]]`).
+#
+# === Substrate gaps surfaced honestly ===
+#
+# Each gap below is a forward-promise to a later substrate-pull tick;
+# none invented here:
+#
+#   - `pulse` reads a single `oscillation` and emits the next-state
+#     `oscillation`. The substrate has no "one pulse advances tick by
+#     one" invariant declared at the floor altitude; the discipline that
+#     a pulse advances the iteration count by exactly one is the
+#     obligation of the realisation layer (per the same discipline
+#     `gen_prism.tick` uses for ref-CAS advancement). The substrate names
+#     the carrier; the realisation enforces.
+#
+#   - `active_pass` reads the oscillation's eigenboard context (the
+#     candidate morphism_set; the current shard ref) but the substrate's
+#     eigenboard context carrier lives at `@mirror/spectral/score`
+#     (forward-promised; does not yet exist). For now, the active_pass
+#     signature reads `oscillation` (carrying the loop's position) and
+#     emits a `morphism`; the eigenboard context is implicit in the
+#     oscillation's `ref` field. A future score sub-shard MAY lift this
+#     to a typed eigenboard.context carrier.
+#
+#   - `dark_pass` reads a morphism + the oscillation's current shard
+#     ref; it validates @uuid/spectral.dark byte-equality and emits the
+#     next oscillation. The substrate names the check; the byte-equality
+#     arithmetic rides @uuid/spectral's `dark` projection per the
+#     realisation layer.
+#
+#   - `oscillate` is the driver returning the final ref. The substrate
+#     has no "iterate until verdict pass" primitive at the floor
+#     altitude; the discipline that the driver terminates on either
+#     `is_settled` returning pass OR `is_complete` returning a non-
+#     `partial` verdict is the obligation of the realisation layer. The
+#     substrate names the driver; the realisation enforces termination.
+#     This is structurally a fixed-point computation (per `lawvere.mirror`
+#     and `bundle.mirror`'s level 4 closure); the realisation layer's
+#     iteration scheme rides the Banach contraction discipline (per
+#     `docs/specs/kintsugi-formatter.md`).
+#
+#   - The iteration field uses `tick` (per `@time.tick = monotonic`).
+#     The substrate's time discipline carries the loop's iteration count
+#     cleanly: each pulse advances `tick` by one monotonic unit; the
+#     ordering on `tick` IS the loop's ordering; cross-shard merge of
+#     oscillations uses `time.compare` for cross-frame comparison (per
+#     `time.mirror` §convert). No new iteration carrier needed at
+#     substrate altitude.
+#
+# === Pre-AI prior art ===
+#
+# Every type and action below names an established object older than the
+# discipline of computer science (modulo the discipline names):
+#
+#   oscillation         Galileo (1638) Discorsi e dimostrazioni; the
+#                       pendulum's periodic motion; the substrate's
+#                       reading is more recent (Poincaré 1899 on
+#                       limit cycles; Lorenz 1963 on strange attractors).
+#   pulse               Galen (~170 CE) On the Use of the Pulse; the
+#                       cardiac rhythm; the substrate's reading is the
+#                       musical pulse (Curwen 1858; the temporal unit
+#                       of cadence).
+#   active / dark       Connes & Marcolli (2008) Noncommutative Geometry,
+#                       Quantum Fields and Motives; the spectral action
+#                       principle alternates between commutative (ACTIVE,
+#                       observable, navigable) and noncommutative (DARK,
+#                       structural, identity) regimes; substrate names
+#                       these as void-duality positions per @uuid/spectral.
+#   settled             from Old English settan; the substrate's reading
+#                       is the autopoietic settlement (Maturana & Varela
+#                       1972; the closure of the self-producing system).
+#   escalated           from Latin scalare; the substrate's reading is
+#                       Beer (1972) Brain of the Firm; the viable
+#                       system's recursion-of-recursion when local
+#                       consent fails.
+#   waiting             Brouwer (1907) On the Foundations of Mathematics;
+#                       the intuitionist's pause at undecidability;
+#                       substrate's reading is the half-cadence wait
+#                       per `cadence.mirror`.
+#   tree shaker         Webpack (2014); Rollup (2015); the bundler's
+#                       graph-walk-from-both-ends discipline; substrate's
+#                       reading is the kintsugi-as-graph-merger framing
+#                       per Alex's recognition.
+#
+# The substrate's contribution is *typing* these so the kintsugi driver
+# reads them. No invention.
+#
+# Spec context: docs/specs/mirror-spectral.md §4.3 (the loop primitive
+#               sketched; this shard declares it),
+#               §2.1 (kintsugi as oscillation, not unidirectional
+#               recursion; the Banach contraction proof),
+#               §2.4 (SpectralUuid's void duality as the oscillation
+#               mechanism; ACTIVE/DARK alternation as the substrate's
+#               own structural pull),
+#               §2.5 (eigenvalue frequency detection; the dominant
+#               frequency of the oscillation IS the harmonic the graph
+#               is finding),
+#               §4.7 (the consent surface this loop reads each pulse;
+#               query_phi composed from is_pareto + is_settled).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-shard-as-crdt]] (the oscillation
+#                      IS the lattice ascent on the bounded semilattice;
+#                      each pulse is a join operation; settled IS the
+#                      lattice top reached),
+#                      [[architecture-connes-spectral-triple]] (the
+#                      oscillation IS U(t) of the dynamical triple
+#                      (A, H, D); ACTIVE alternates A; DARK anchors
+#                      against H's identity; the loop closes when D's
+#                      spectrum stabilises per cadence.is_settled),
+#                      [[architecture-lift-as-load-bearing]]
+#                      (pulse composes through active_pass and
+#                      dark_pass; oscillate composes through pulse and
+#                      read_consent; both lifts substrate-declared in
+#                      sibling shards),
+#                      [[architecture-fragmentation-is-the-rust-substrate]]
+#                      (the loop's atomic operations ride the
+#                      content-addressed shard substrate at the
+#                      realisation layer; oscillate at the substrate
+#                      altitude declares the discipline),
+#                      [[architecture-hamilton-scheduler]] (the loop's
+#                      hard-realtime budget rides HamiltonScheduler at
+#                      the realisation layer; substrate names the loop;
+#                      the scheduler enforces the budget),
+#                      [[feedback-no-bare-types]] (oscillation_state is
+#                      its own carrier; oscillation is its own carrier;
+#                      no bare ref escapes the loop driver),
+#                      [[feedback-substrate-pull]] (the loop discipline
+#                      lives in grammar; the Rust realisation is the
+#                      implementation of the substrate-declared shape).
+# Forward-promise to consumers: `mirror kintsugi <file>` driver (does
+#                  not yet exist) consumes `oscillate`'s return ref; the
+#                  binding lands when the driver substrate-pulls. This
+#                  shard does NOT pull `@mirror/spectral/score` or
+#                  `@mirror/spectral/audition`; the substrate-altitude
+#                  arrow points inward (oscillate IS consumed by the
+#                  kintsugi driver; not the other way around). After
+#                  this shard lands, the substrate has every primitive
+#                  for the kintsugi driver to compose; the driver itself
+#                  is consumer-pull realisation.
+# Related shards: mirror/spectral.mirror (the family root; declares this
+#                 sub-shard as the loop primitive species),
+#                 mirror/spectral/consent.mirror (the auto-apply boundary;
+#                 morphism + morphism_set + verdict + query_phi +
+#                 pause_event + emit_to_metalogue — the consent surface
+#                 this loop reads each pulse),
+#                 epistemologic/math/music/cadence.mirror (the settle
+#                 signal; cadence_kind + is_settled — the termination
+#                 check at the audible altitude),
+#                 epistemologic/math/music/dissonance.mirror (the
+#                 ACTIVE pass's ranking discriminator; is_pareto reads
+#                 the candidate morphism_set's dissonance ordering),
+#                 uuid/spectral.mirror (the DARK pass's identity check;
+#                 dark projection's byte-equality preservation),
+#                 epistemologic/reality/time.mirror (the iteration
+#                 carrier; tick = monotonic; the loop's ordering),
+#                 metalogue.mirror (the escalation bridge through
+#                 consent.emit_to_metalogue),
+#                 boot/std/mirror/runtime/gen_prism.mirror (the actor-
+#                 floor primitive; gen_prism.tick is the autopoietic-
+#                 actor's pure tick; oscillate.pulse is the kintsugi
+#                 loop's composed tick — both substrate-declared; the
+#                 realisation layer composes).
+# Path-namespace property: this file at
+# `shards/mirror/spectral/oscillate.mirror` declares
+# `@mirror/spectral/oscillate` as a species under the `@mirror/spectral`
+# family.
+
+prism @mirror/spectral/oscillate {
+  focus oscillate
+  project oscillate
+  split oscillate
+  shift oscillate
+  settle oscillate
+}
+
+# === The oscillation-state carrier ===
+#
+# The loop's live position. Five mutually-exclusive states exhausting
+# the substrate's possible loop positions:
+#
+#   active    — ACTIVE pass live; proposing a loss-decreasing morphism;
+#                the navigable spectral coordinate (uuid_spectral's 48
+#                ACTIVE bits) is the pulling axis.
+#   dark      — DARK pass live; anchoring identity; the content-address
+#                signal (uuid_spectral's 80 DARK bits) is the constraint
+#                axis; checks byte-equality via @uuid/spectral.dark.
+#   settled   — cadence.is_settled returned `pass` (authentic cadence);
+#                the autopoietic ground state reached; holonomy → 0; the
+#                loop terminates with final ref.
+#   escalated — consent.query_phi returned `failure(reason)` (deceptive
+#                cadence OR Pareto-tied admissibility); the consent
+#                surface MUST resolve via external signal; oscillation
+#                halts with pause_event emitted to metalogue.
+#   waiting   — consent.query_phi returned `partial(low_confidence)`
+#                (half-cadence; substrate mid-progression); the next
+#                pulse may resolve OR pause again; resumes WITHOUT
+#                external resolution; distinct from escalated.
+#
+# Inline form per `cadence.mirror`'s `type cadence_kind = authentic |
+# plagal | deceptive | half` precedent (single-line; the leading-`|`
+# parser fracture is avoided by keeping the enumeration on one line).
+#
+# Identity contract: two oscillation_state values are equal iff they
+# name the same variant. The realisation layer enforces tag-equality.
+type oscillation_state = active | dark | settled | escalated | waiting
+
+# === The oscillation record ===
+#
+# The loop's full live position: the state surface, the iteration count,
+# and the substrate ref the loop is currently anchored on.
+#
+# state     — the loop's live position (one of the five). Read by
+#              `pulse` to dispatch the next half-cycle; read by
+#              `is_complete` to emit the termination verdict.
+# iteration — the loop's tick count from initial. Per `@time.tick =
+#              monotonic`, this IS substrate monotonic time at the loop
+#              altitude; each pulse advances by one monotonic unit; the
+#              ordering on `tick` IS the loop's ordering; the realisation
+#              layer enforces the +1 invariant per pulse.
+# anchor    — the substrate ref the loop is currently anchored on. The
+#              eigenboard's current shard handle; updated by `dark_pass`
+#              after a morphism applies (the new content-addressed shard
+#              becomes the next anchor); read by `active_pass` to compose
+#              the candidate morphism_set.
+#
+# Identity contract: two oscillations are equal iff their state,
+# iteration, and anchor all match. The realisation layer enforces.
+type oscillation = {
+  state:     oscillation_state,
+  iteration: tick,
+  anchor:    ref,
+}
+
+# === active_pass — the proposal action ===
+#
+# THE ACTIVE PASS — one half of the rough-wavy pull.
+#
+# Reads the loop's current position (carrying the anchor ref) and emits
+# a candidate morphism the formatter proposes to apply. Composes through:
+#
+#   1. dissonance.is_pareto — reads the candidate morphism_set's
+#                              dissonance ordering against the current
+#                              eigenboard state; ranks candidates by
+#                              loss-decrease magnitude per the
+#                              Helmholtz/Plomp-Levelt curve.
+#   2. consent's morphism carrier — emits a single morphism (the highest-
+#                                    ranked candidate) carrying its
+#                                    content, dissonance score, and
+#                                    expected cadence kind.
+#
+# Per `@uuid/spectral`'s void duality: the ACTIVE 48 bits carry the
+# navigable spectral coordinate; this pass reads them as the proposal's
+# pulling axis. The substrate's loss decreases as the navigable signal
+# shifts toward the consonant basis; the active_pass emits the morphism
+# that will accomplish that shift.
+#
+# Spectrally: per `bundle.mirror`'s level 4 closure, active_pass IS the
+# substrate's read of the Ricci flow's negative-curvature direction at
+# the current eigenboard position. The proposed morphism IS the next
+# step along that gradient; per `dissonance.mirror`'s
+# `dissonance_as_holonomy`, the morphism's score IS the magnitude of
+# the proposed holonomy decrease.
+#
+# Audibly: per cadence.mirror, active_pass IS the resolution-seeking
+# motion of the audible spectrum — V → I in the dominant→tonic case;
+# IV → I in the subdominant→tonic case. The morphism's `expected`
+# cadence_kind carries which resolution shape the formatter anticipates.
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# anchor ref's candidate morphism_set (the eigenboard's pending
+# imperfections), invokes dissonance.is_pareto for the rank, projects
+# the highest-ranked candidate into a morphism (carrying content +
+# score + expected cadence), emits.
+active_pass(o: oscillation) -> morphism { \ }
+
+# === dark_pass — the identity-anchor action ===
+#
+# THE DARK PASS — the other half of the rough-wavy pull.
+#
+# Reads a proposed morphism + the loop's current position; re-validates
+# the morphism's identity preservation via @uuid/spectral's dark
+# projection; emits the next oscillation with the new anchor (if
+# preserved) or the same anchor (if violated; oscillation transitions
+# to escalated via read_consent).
+#
+# Composes through:
+#
+#   1. @uuid/spectral.dark — projects the 80 DARK bits of the morphism's
+#                             resulting shard's uuid_spectral; compares
+#                             byte-equality against the pre-pulse anchor's
+#                             dark bits.
+#   2. consent.identity_preserving — composes the verdict at consent
+#                                     altitude: pass if dark bits match;
+#                                     partial if only ACTIVE bits shifted;
+#                                     failure if dark bits differ.
+#
+# Per `@uuid/spectral`'s void duality: the DARK 80 bits carry the
+# identity signal; this pass reads them as the constraint axis. The
+# substrate's identity is preserved through navigation when dark bits
+# byte-equal; if violated, the morphism would write a new substrate
+# identity (a different splinter set hashes to a different
+# uuid_spectral), and the rug's pull would tear the substrate rather
+# than straighten it. The DARK pass IS the substrate's check that the
+# rug stays one rug.
+#
+# Spectrally: per `bundle.mirror`'s level 5 closure (autopoietic), the
+# DARK pass reads whether the morphism preserves the autopoietic
+# closure's content-addressed identity. The substrate's autopoietic
+# discipline (per `[[architecture-shard-as-crdt]]` §3 and
+# `gen_prism.spawn_autopoietic`) requires content-addressing be
+# preserved through morphism application; dark_pass IS that check at
+# the loop altitude.
+#
+# Audibly: per cadence.mirror, dark_pass IS the listener's recognition
+# that the resolution arrived at the EXPECTED tonic, not a surrogate.
+# Authentic cadence (V → I) preserves the tonic's identity; deceptive
+# cadence (V → vi) re-routes to a surrogate; dark_pass returns failure
+# in the deceptive case.
+#
+# The body stays obligation-blocked (`\`): the realisation invokes
+# consent.identity_preserving(m), branches on the verdict, emits the
+# next oscillation with (a) state advanced to next phase if pass; (b)
+# anchor unchanged + state to escalated if failure; (c) anchor updated
+# + state continuing if partial.
+dark_pass(o: oscillation, m: morphism) -> oscillation { \ }
+
+# === pulse — the atomic step of the loop ===
+#
+# ONE FULL ACTIVE → DARK ALTERNATION; one half-cycle of the oscillation.
+# The substrate's tick-shaped primitive at the kintsugi loop altitude.
+#
+# Composes the two passes through consent.query_phi:
+#
+#   1. active_pass(o)         — propose a loss-decreasing morphism.
+#   2. consent.query_phi      — gate + rank via the three glass
+#                                properties (loss_decreasing,
+#                                identity_preserving, admissibility_
+#                                singleton); emit the consent verdict.
+#   3. dark_pass(o, m)        — anchor identity; advance ref if preserved.
+#   4. read_consent(v, k)     — bridge the verdict + cadence_kind into
+#                                the next oscillation_state.
+#   5. emit the next oscillation with state updated, iteration advanced.
+#
+# Naming note: the substrate's `tick` symbol is taken by
+# `@time.tick = monotonic` (imported above as the iteration field type)
+# AND by `gen_prism.tick` (the actor-tick action). The substrate-pull
+# discipline names this action `pulse` per the music-altitude vocabulary:
+# a pulse IS one cardiac/musical beat (Galen ~170 CE; Curwen 1858); at
+# the audible altitude, the pulse IS the temporal unit of cadence (per
+# `cadence.mirror`'s pulse-of-resolution framing); at the substrate
+# altitude, pulse IS the loop's atomic step. The brief's `tick`
+# placeholder maps to `pulse` here; the substrate vocabulary is
+# substrate-honest about the name collision and resolves through music.
+#
+# Spectrally: pulse IS the loop's contraction step. Per
+# `docs/specs/kintsugi-formatter.md`, the kintsugi loop is a Banach
+# contraction map with factor γ < 1; per spec §2.1, the oscillation's
+# combined factor γ_oscillate ≤ γ_up · γ_down (alternation combines
+# two complementary biases into one stronger contraction). Each pulse
+# IS one application of the contraction map; the iteration count IS
+# the contraction step index.
+#
+# Audibly: pulse IS one beat of the score. The oscillation's eigenvalue
+# frequency (per spec §2.5) IS the dominant frequency of the pulses;
+# the substrate's harmonic IS the rate at which pulses advance the
+# spectrum toward the K_n attractor.
+#
+# The body stays obligation-blocked (`\`): the realisation runs the
+# five composition steps above; emits the next oscillation. The
+# substrate declares the atomic step; the arithmetic lands when
+# `oscillate` (the driver) pulls.
+pulse(o: oscillation) -> oscillation { \ }
+
+# === read_consent — the four-to-five bridge ===
+#
+# Bridges the consent verdict (the four-state surface per consent.mirror
+# §header: pass | partial(high_confidence) | partial(low_confidence) |
+# failure) PLUS the cadence_kind (the audible-altitude trajectory typing
+# per cadence.mirror) into the five-state oscillation_state surface.
+#
+# The bridge is structural: the verdict tells the loop WHAT happened;
+# the cadence_kind tells the loop HOW it happened; together they
+# determine the loop's next position:
+#
+#   verdict=pass    + kind=authentic → settled
+#                     The autopoietic ground state reached; holonomy → 0;
+#                     loop terminates with final ref.
+#   verdict=pass    + kind=plagal    → active
+#                     Soft auto-apply (consonant alternative path); the
+#                     ACTIVE pass continues with reduced confidence;
+#                     loop advances to next pulse.
+#   verdict=partial + kind=plagal    → active
+#                     Graded auto-apply at high confidence; same as
+#                     above; loop advances.
+#   verdict=partial + kind=half      → waiting
+#                     Half-cadence; substrate paused at the dominant;
+#                     awaits next consent surface tick; resumes WITHOUT
+#                     external resolution.
+#   verdict=failure + kind=deceptive → escalated
+#                     Substrate chose dissonance over consonance;
+#                     pause_event emitted to metalogue; consent surface
+#                     MUST resolve externally.
+#   verdict=failure + kind=any       → escalated
+#                     Admissibility_singleton failed (Pareto-tied or no
+#                     admissible morphism); pause_event emitted; consent
+#                     surface MUST resolve.
+#
+# After ACTIVE pass: the loop transitions to `dark` (anchor identity).
+# After DARK pass: the loop transitions per read_consent's mapping above.
+#
+# Symmetry note: read_consent is the consent-altitude → oscillation-
+# altitude lift; it composes consent.query_phi's verdict with
+# cadence.is_settled's cadence_kind into the five-state loop position.
+# The substrate's three-state verdict floor PLUS the four-state cadence
+# floor PLUS the loop's two live phases (active, dark) yields the
+# five-state oscillation_state surface — exhaustive of the loop's
+# possible positions; no sixth state.
+#
+# The body stays obligation-blocked (`\`): the realisation reads `v`
+# and `k`, dispatches per the table above, emits the oscillation_state.
+read_consent(v: verdict, k: cadence_kind) -> oscillation_state { \ }
+
+# === is_complete — the termination check ===
+#
+# Reads an oscillation_state and emits the verdict at the substrate's
+# three-state floor (`verdict` from `glass.mirror`). The verdict mapping
+# IS the loop driver's termination discipline:
+#
+#   settled   → pass
+#                Loop completed cleanly; holonomy → 0; final ref emitted;
+#                driver returns.
+#   waiting   → partial(confidence)
+#                Loop paused mid-progression at half-cadence; will
+#                resume on next consent surface tick; driver yields
+#                with the current ref AND the partial verdict.
+#   active    → partial(confidence)
+#                Loop mid-cycle in ACTIVE phase; driver continues with
+#                next pulse.
+#   dark      → partial(confidence)
+#                Loop mid-cycle in DARK phase; driver continues with
+#                next pulse.
+#   escalated → failure(reason)
+#                Loop halted pending external resolution; pause_event
+#                already emitted to metalogue; driver returns with the
+#                current ref AND the failure verdict.
+#
+# Per `bundle.mirror`'s level 4 closure: is_complete IS the Lawvere
+# fixed-point read at the loop altitude. The substrate has reached its
+# autopoietic fixed point when is_complete returns `pass`; the substrate
+# is approaching but not yet at the fixed point when is_complete returns
+# `partial`; the substrate has failed to reach the fixed point at this
+# tick when is_complete returns `failure`. The three-state surface IS
+# the substrate's honest acknowledgment of its own loop boundary.
+#
+# Symmetry note: is_complete here is the oscillation-altitude
+# specialisation of cadence.mirror's `is_settled` AND
+# consent.mirror's `query_phi` collapsed onto the loop's position. The
+# three are the same verdict observed at three altitudes — cadence's
+# settle becomes oscillation's complete; consent's auto-apply becomes
+# oscillation's mid-cycle; the substrate's pause becomes oscillation's
+# waiting; the substrate's escalation becomes oscillation's failure.
+#
+# The body stays obligation-blocked (`\`): the realisation reads `s`,
+# dispatches on the variant, emits the verdict.
+is_complete(s: oscillation_state) -> verdict { \ }
+
+# === oscillate — the driver (THE LOAD-BEARING ACTION) ===
+#
+# THE KINTSUGI LOOP SUBSTRATE-DECLARED.
+#
+# After this action lands, `mirror kintsugi <file>` is fully designable
+# at substrate altitude. The driver composes from every primitive
+# declared in the prior seven ticks; implementation becomes consumer-pull.
+#
+# Reads an initial substrate ref (the eigenboard's starting position;
+# the shard the kintsugi driver is anchored on) and emits the final
+# substrate ref (the eigenboard's resting position after the
+# oscillation terminates). The driver iterates `pulse` until
+# `is_complete` returns a non-partial verdict:
+#
+#   1. initial → oscillation { state: active, iteration: tick_zero,
+#                              anchor: initial }
+#   2. loop:
+#        next = pulse(o)
+#        verdict = is_complete(next.state)
+#        on verdict = pass     → return next.anchor (settled)
+#        on verdict = partial  → o = next; continue
+#        on verdict = failure  → return next.anchor (escalated; pause
+#                                emitted)
+#   3. emit final ref
+#
+# Per `[[architecture-fragmentation-is-the-rust-substrate]]`: the
+# realisation layer's iteration loop rides the content-addressed shard
+# substrate; each pulse advances the anchor via `gen_prism.send` (the
+# CAS-safe ref advance); the substrate's hash-space contraction
+# guarantees the iteration converges (per Banach + the Lawvere fixed-
+# point witness).
+#
+# Per spec §2.1: the oscillation's combined contraction factor
+# γ_oscillate ≤ γ_up · γ_down combines two complementary biases into one
+# stronger contraction. The driver's termination at `settled` IS the
+# substrate's witness that the contraction reached its fixed point;
+# termination at `escalated` IS the substrate's honest acknowledgment
+# that the consent surface cannot collapse the under-determined point
+# at this altitude — the imperfection remains a kintsugi target for a
+# later tick (per `dissonance.mirror`'s pareto-front failure case).
+#
+# Per spec §2.4: the ACTIVE/DARK alternation IS the substrate's straight-
+# the-rug discipline. The driver's iteration through pulse IS the
+# substrate-pull on the rug; the substrate either straightens (settled)
+# OR exposes a wrinkle the consent surface must resolve (escalated)
+# OR pauses mid-pull awaiting more substrate to land (waiting → next
+# tick).
+#
+# Per spec §2.5: the substrate's eigenvalue frequency IS the rate at
+# which pulses advance the spectrum toward the K_n Splinter attractor.
+# The driver's iteration count (carried in oscillation.iteration) IS
+# the frequency at which the substrate is resonating; the realisation
+# layer's refract reads the frequency to render the score audibly
+# (per spec §5.3).
+#
+# Spectrally: oscillate IS the substrate's read of the Ricci flow on
+# the eigenboard sheaf. Per
+# `~/dev/systemic.engineering/practice/insights/spectral-db/dirac-operator-on-graphs.md`:
+# the spectral action `Tr(f(D/Λ))` is the loss surface kintsugi smooths;
+# the oscillation IS the smoothing dynamics; the iteration count IS the
+# flow time. The substrate's deepest layer is already Connes' (A, H, D);
+# oscillate is U(t) of that triple at the eigenboard altitude.
+#
+# Audibly: oscillate IS the orchestra's performance from downbeat to
+# resolution. Per spec §4.4, the conductor signal rotates per pulse;
+# voices read the eigenboard between pulses; the audition resolves
+# admissible morphisms within pulses; the score IS what oscillate is
+# playing through. The driver's return ref IS the final crystallized
+# settlement of the performance.
+#
+# The body stays obligation-blocked (`\`): the realisation runs the
+# iteration loop above; reads `is_complete` after each pulse; branches
+# on the verdict; emits the final anchor ref when the loop terminates.
+# The substrate declares the driver; the arithmetic lands when the
+# `mirror kintsugi` driver substrate-pulls.
+#
+# This action IS the closing of the substrate-pull staircase for the
+# autopoietic formatter. With it declared, every primitive the
+# `mirror kintsugi <file>` driver needs at substrate altitude is in
+# place; the implementation becomes a thin composition of declared
+# primitives.
+oscillate(initial: ref) -> ref { \ }
+
+out @mirror/spectral/oscillate
+out oscillation_state
+out oscillation
+out active_pass
+out dark_pass
+out pulse
+out read_consent
+out is_complete
+out oscillate
