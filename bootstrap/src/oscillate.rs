@@ -776,6 +776,193 @@ pub fn pulse(o: &Oscillation) -> Oscillation {
     dark_pass(o, &morphism)
 }
 
+// =====================================================================
+// T13: `oscillate` driver — the Banach contraction iteration.
+//
+// Per `shards/mirror/spectral/oscillate.mirror` (substrate-FROZEN at
+// commit 02e2981/9efac39/c3802eba sweep), substrate signature is
+// literally `oscillate(initial: ref) -> ref`. The driver iterates
+// `pulse` until `is_complete` returns a non-`Partial` verdict.
+//
+// Per `oscillate.mirror` §oscillate (the driver's three steps, lines
+// 685–694):
+//
+//   1. initial → Oscillation { state: Active, iteration: tick_zero,
+//                              anchor: initial }
+//   2. loop:
+//        next = pulse(o)
+//        verdict = is_complete(next.state)
+//        on verdict = pass     → return next.anchor (settled)
+//        on verdict = partial  → o = next; continue
+//        on verdict = failure  → return next.anchor (escalated; pause
+//                                emitted)
+//   3. emit final ref
+//
+// Per spec §2.1 (kintsugi as oscillation): the loop is a Banach
+// contraction map with γ_oscillate ≤ γ_up · γ_down; convergence is
+// guaranteed in bounded iterations. Per Polyak-Łojasiewicz on the
+// sheaf Dirichlet energy: rate ≤ λ_min(Δ₀). At the realisation
+// boundary we add a safety bound (`MAX_OSCILLATE_ITERATIONS`) to
+// avoid pathological non-converging fixtures from spinning the loop
+// indefinitely; the substrate guarantee says the cap is never reached
+// in well-formed substrate flow.
+//
+// AST threading. The substrate signature is `oscillate(initial: ref)
+// -> ref` — no AST. The no-AST surface ([`oscillate`]) calls
+// [`pulse`], which uses [`active_pass`] (the graceful-default settle
+// surface; the substrate-honest "nothing to do; settle" reading per
+// the score-shard gap on session-from-ref projection). When the
+// caller has an AST in hand (the kintsugi formatter; the future
+// `mirror kintsugi <file>` driver), it calls
+// [`oscillate_with_ast`], the sibling boundary surface that threads
+// the AST through [`pulse_with_ast`] using [`active_pass_with_ast`].
+// Per the brief's substrate-pull discipline: AST is derived from the
+// ref at each iteration; for now, the AST is taken as a sibling
+// parameter (the `Ref → AstNode` resolver is a future-tick boundary
+// concern).
+// =====================================================================
+
+/// The realisation layer's safety cap on the oscillate driver's
+/// iteration count.
+///
+/// Per `oscillate.mirror` §dark_pass: "the discipline that the
+/// driver terminates on either `is_settled` returning pass OR
+/// `is_complete` returning a non-`partial` verdict is the
+/// obligation of the realisation layer." Banach contraction
+/// guarantees convergence in bounded iterations (γ_oscillate <
+/// 1 per spec §2.1), and Polyak-Łojasiewicz on the sheaf
+/// Dirichlet energy bounds the rate by λ_min(Δ₀). The cap
+/// guards against ill-formed fixtures whose pulse chain emits
+/// a perpetually-partial verdict (a substrate-incoherent input;
+/// not reachable from substrate-honest flow but possible from
+/// hand-constructed test fixtures). 256 was chosen as comfortably
+/// above any plausible kintsugi-loop length at v0.1 scales while
+/// staying small enough that exceeding it is observably
+/// pathological.
+pub const MAX_OSCILLATE_ITERATIONS: u32 = 256;
+
+/// The witness emitted by the internal driver: the final Ref + the
+/// final Oscillation carrier (state, iteration, anchor). Per the
+/// substrate's §oscillate the public surface returns just the Ref;
+/// the witness carries the loop's observable progress for tests and
+/// for downstream consumers that want to inspect the termination
+/// mode (settled vs escalated vs cap-reached).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct OscillateWitness {
+    /// The final terminating oscillation (state + iteration + anchor).
+    pub final_oscillation: Oscillation,
+    /// Whether the loop hit [`MAX_OSCILLATE_ITERATIONS`] before
+    /// reaching a non-Partial verdict (substrate-incoherent input;
+    /// not reachable from well-formed substrate flow per Banach
+    /// contraction).
+    pub cap_reached: bool,
+}
+
+/// The internal Banach contraction driver. Threads any per-iteration
+/// pulse function through the substrate's three-step loop. Returns
+/// the witness for tests; the public surfaces ([`oscillate`],
+/// [`oscillate_with_ast`]) project to just the final Ref per the
+/// substrate's signature.
+///
+/// 🔴 RED-phase stub: returns the initial Oscillation unchanged so
+/// tests compile but observable witness assertions fail. GREEN phase
+/// (next commit): real iteration loop reading is_complete after each
+/// pulse.
+fn drive<F>(initial: Ref, pulse_fn: F) -> OscillateWitness
+where
+    F: FnMut(&Oscillation) -> Oscillation,
+{
+    let _ = pulse_fn;
+    OscillateWitness {
+        final_oscillation: Oscillation::initial(initial),
+        cap_reached: false,
+    }
+}
+
+/// `oscillate(initial: ref) -> ref` — the Banach contraction
+/// iteration; the load-bearing driver of the kintsugi loop.
+///
+/// Substrate-pull literal from `shards/mirror/spectral/oscillate.mirror`
+/// §oscillate. Reads an initial substrate Ref (the eigenboard's
+/// starting position) and emits the final substrate Ref (the
+/// eigenboard's resting position after the oscillation terminates).
+///
+/// Per the substrate's three-step loop:
+///
+///   1. initial → Oscillation { state: Active, iteration: tick_zero,
+///                              anchor: initial }
+///   2. loop: pulse(o); if is_complete returns non-Partial, terminate.
+///   3. emit final ref (the anchor of the terminating oscillation).
+///
+/// Termination is guaranteed via Banach contraction (γ_oscillate < 1)
+/// + the realisation-layer safety cap [`MAX_OSCILLATE_ITERATIONS`].
+/// The substrate signature implies no AST is threaded through this
+/// surface; the no-AST path uses the graceful-default [`active_pass`]
+/// (which returns a settle-Authentic morphism). For AST-bearing
+/// callers, see [`oscillate_with_ast`].
+///
+/// Per spec §2.4 (the SpectralUuid void duality as the oscillation
+/// mechanism): each pulse alternates ACTIVE (proposal) with DARK
+/// (anchor); the substrate either straightens (settled) or surfaces a
+/// fracture (escalated). Per spec §2.5 (eigenvalue frequency
+/// detection): the iteration count IS the rate at which the substrate
+/// is resonating toward its harmonic representative.
+pub fn oscillate(initial: Ref) -> Ref {
+    let witness = drive(initial, pulse);
+    witness.final_oscillation.anchor().clone()
+}
+
+/// The witness-bearing form of [`oscillate`]. Returns the full
+/// [`OscillateWitness`] (final state + iteration + cap-reached flag).
+/// Used by tests and by downstream consumers that need to inspect the
+/// termination mode.
+pub fn oscillate_witness(initial: Ref) -> OscillateWitness {
+    drive(initial, pulse)
+}
+
+/// `oscillate_with_ast(initial: Ref, ast: &AstNode) -> Ref` — the
+/// AST-bearing sibling boundary surface.
+///
+/// The substrate's `oscillate(initial: ref) -> ref` signature derives
+/// the AST from the ref's content at the storage altitude. The Rust
+/// realisation lacks a `Ref → AstNode` resolver at the boundary (the
+/// resolver is a future-tick concern), so this sibling surface
+/// accepts the AST as a parameter, threading it through
+/// [`pulse_with_ast`] which uses the real T11
+/// [`active_pass_with_ast`] chain (score_of → pending →
+/// gaps_for_pending → tensor_of → minimize → head fracture).
+///
+/// This is the surface the future `mirror kintsugi <file>` driver
+/// consumes; the file's AST is parsed once at the boundary and
+/// re-read per iteration (the substrate-pull-honest discipline per
+/// T11's "gaps are derived primitives, not stored mappings").
+pub fn oscillate_with_ast(initial: Ref, ast: &AstNode) -> Ref {
+    let witness = drive(initial, |o| pulse_with_ast(o, ast));
+    witness.final_oscillation.anchor().clone()
+}
+
+/// The witness-bearing form of [`oscillate_with_ast`].
+pub fn oscillate_witness_with_ast(initial: Ref, ast: &AstNode) -> OscillateWitness {
+    drive(initial, |o| pulse_with_ast(o, ast))
+}
+
+/// `pulse_with_ast(o: &Oscillation, ast: &AstNode) -> Oscillation` —
+/// the AST-bearing sibling boundary surface for `pulse`.
+///
+/// Threads the AST through the real T11 [`active_pass_with_ast`]
+/// chain; otherwise structurally identical to [`pulse`] (active_pass
+/// → query_phi (via dark_pass) → read_consent → next oscillation).
+///
+/// Per the substrate's §pulse: one full ACTIVE→DARK alternation; one
+/// half-cycle of the oscillation; one application of the Banach
+/// contraction map.
+pub fn pulse_with_ast(o: &Oscillation, ast: &AstNode) -> Oscillation {
+    // Step 1: propose a loss-decreasing morphism via the T11 real chain.
+    let morphism = active_pass_with_ast(o, ast);
+    // Steps 2-4: anchor identity through dark_pass (T12 real body).
+    dark_pass(o, &morphism)
+}
+
 #[cfg(test)]
 mod tests {
     //! The executable spec for [`is_complete`] — T4's `oscillate`
@@ -1738,5 +1925,329 @@ mod tests {
             expected,
             "dark_bits MUST be SpectralUuid::dark() over BLAKE3(ref.as_str())",
         );
+    }
+
+    // ================================================================
+    // T13: `oscillate` driver — the Banach contraction iteration.
+    //
+    // Per `shards/mirror/spectral/oscillate.mirror` §oscillate (the
+    // load-bearing action; lines 671–752): `oscillate(initial: ref)
+    // -> ref` iterates `pulse` until `is_complete` returns a
+    // non-`Partial` verdict. The driver IS the substrate's read of
+    // the Ricci flow on the eigenboard sheaf at the kintsugi-loop
+    // altitude.
+    //
+    // RED test corpus per the brief:
+    //   - Already-settled / no-iteration shape → the initial Ref
+    //     surfaces (graceful-default path).
+    //   - Settled-after-one-pulse fixture → oscillate returns after
+    //     1 iteration with the settled anchor.
+    //   - Escalated path → oscillate returns mid-loop with the
+    //     escalated anchor (no further pulses).
+    //   - Max-iteration bound → the safety cap is respected.
+    //   - Real fixture integration test → oscillate_with_ast runs
+    //     end-to-end, terminates, returns a Ref.
+    //   - Banach property assertion — each pulse strictly decreases
+    //     the spectral distance OR transitions to a terminal state.
+    // ================================================================
+
+    /// `oscillate` over the no-AST graceful-default path terminates
+    /// in exactly one pulse. Per the T11 "empty pending" graceful
+    /// default: `active_pass` returns a settle-Authentic morphism
+    /// anchored at the input; `dark_pass` reads identity-preserved
+    /// + Authentic → Settled; `is_complete(Settled)` reads as
+    /// `Success(())` → the loop terminates with the input anchor.
+    #[test]
+    fn oscillate_no_ast_terminates_at_input_anchor() {
+        let r = fixture_anchor();
+        let out = oscillate(r.clone());
+        assert_eq!(
+            out, r,
+            "the graceful-default path terminates at the input anchor (settle-Authentic chain)",
+        );
+    }
+
+    /// `oscillate` is total: every call returns a Ref. The type-level
+    /// witness of termination.
+    #[test]
+    fn oscillate_returns_a_ref() {
+        let r = fixture_anchor();
+        let _: Ref = oscillate(r);
+    }
+
+    /// `oscillate` on a distinct input still terminates at that input
+    /// (the graceful-default settle-Authentic chain preserves anchor).
+    #[test]
+    fn oscillate_preserves_anchor_on_settle_chain() {
+        let r = Ref::new("@mirror/spectral/oscillate/some-other-fixture").expect("valid");
+        let out = oscillate(r.clone());
+        assert_eq!(out, r, "settle chain preserves the input anchor");
+    }
+
+    /// **Witness shape:** `oscillate_witness` exposes the terminating
+    /// oscillation. Per the substrate's §oscillate step 2: the loop
+    /// terminates when is_complete reads non-Partial. The witness's
+    /// final_oscillation.state MUST be one of {Settled, Escalated}
+    /// for the loop to have actually terminated. RED-distinguishing:
+    /// the stub leaves state=Active (initial) so this fails.
+    #[test]
+    fn oscillate_witness_state_is_terminal() {
+        let r = fixture_anchor();
+        let w = oscillate_witness(r);
+        assert!(
+            matches!(
+                w.final_oscillation.state(),
+                OscillationState::Settled | OscillationState::Escalated,
+            ),
+            "the driver must terminate in a non-Partial state; got {:?}",
+            w.final_oscillation.state(),
+        );
+        assert!(!w.cap_reached, "well-formed flow never hits the safety cap");
+    }
+
+    /// **Witness iteration:** the graceful-default settle path runs
+    /// in exactly one pulse; the terminating oscillation's iteration
+    /// is Tick(1). RED-distinguishing: the stub leaves iteration=0
+    /// so this fails. GREEN: the driver runs pulse once and reads
+    /// is_complete(Settled) → Success.
+    #[test]
+    fn oscillate_witness_no_ast_iteration_is_one() {
+        let r = fixture_anchor();
+        let w = oscillate_witness(r);
+        assert_eq!(
+            w.final_oscillation.iteration(),
+            Tick::new(1),
+            "the graceful-default chain settles in exactly one pulse",
+        );
+    }
+
+    /// **Witness settled state:** the no-AST path terminates in
+    /// Settled (the autopoietic ground state). RED-distinguishing:
+    /// the stub leaves Active so this fails.
+    #[test]
+    fn oscillate_witness_no_ast_settles() {
+        let r = fixture_anchor();
+        let w = oscillate_witness(r);
+        assert_eq!(
+            w.final_oscillation.state(),
+            OscillationState::Settled,
+            "the graceful-default chain reaches Settled",
+        );
+    }
+
+    /// `oscillate_with_ast` over an empty-pending AST terminates at
+    /// the input anchor (graceful settle path; same shape as the
+    /// no-AST version).
+    #[test]
+    fn oscillate_with_ast_empty_pending_terminates_at_input() {
+        let r = fixture_anchor();
+        let ast = ast_with_no_gaps();
+        let out = oscillate_with_ast(r.clone(), &ast);
+        assert_eq!(out, r);
+    }
+
+    /// `oscillate_with_ast` over an AST with gaps still terminates.
+    /// The T11 active_pass_with_ast chain emits a fracture-derived
+    /// morphism; dark_pass reads its identity branch; the loop
+    /// terminates (settled OR escalated) within the safety bound.
+    #[test]
+    fn oscillate_with_ast_multi_gap_terminates() {
+        let r = fixture_anchor();
+        let ast = ast_with_three_darks();
+        let w = oscillate_witness_with_ast(r, &ast);
+        assert!(
+            matches!(
+                w.final_oscillation.state(),
+                OscillationState::Settled | OscillationState::Escalated,
+            ),
+            "multi-gap chain must terminate; got {:?}",
+            w.final_oscillation.state(),
+        );
+        assert!(!w.cap_reached);
+    }
+
+    /// `oscillate_with_ast` over a single-dark fixture: the T11 chain
+    /// emits a morphism anchored at the gap's substrate origin
+    /// (`@epistemologic/property/total_classification`) which differs
+    /// from the fixture anchor; dark_pass reads DARK-divergent →
+    /// Escalated; the original anchor is preserved (per dark_pass
+    /// §identity_fractured). RED-distinguishing: the stub stays
+    /// Active and reports cap_reached=false because it doesn't loop.
+    #[test]
+    fn oscillate_with_ast_returns_terminating_anchor() {
+        let r = fixture_anchor();
+        let ast = ast_with_one_dark();
+        let w = oscillate_witness_with_ast(r.clone(), &ast);
+        assert_eq!(
+            w.final_oscillation.state(),
+            OscillationState::Escalated,
+            "single-dark chain escalates via identity-fracture",
+        );
+        assert_eq!(
+            w.final_oscillation.anchor(),
+            &r,
+            "identity-fractured dark_pass preserves the original anchor",
+        );
+        assert_eq!(w.final_oscillation.iteration(), Tick::new(1));
+    }
+
+    /// `pulse_with_ast` advances iteration by one and threads the
+    /// AST through active_pass_with_ast. Sanity check on the sibling
+    /// helper before the driver consumes it.
+    #[test]
+    fn pulse_with_ast_advances_iteration() {
+        let r = fixture_anchor();
+        let o = Oscillation::initial(r);
+        let ast = ast_with_no_gaps();
+        let next = pulse_with_ast(&o, &ast);
+        assert_eq!(next.iteration(), Tick::new(1));
+    }
+
+    /// `pulse_with_ast` on empty-pending AST yields the same shape
+    /// as `pulse` (graceful-default settle chain). The AST surface
+    /// is a strict extension; no behavioural drift on the empty path.
+    #[test]
+    fn pulse_with_ast_empty_pending_matches_pulse() {
+        let r = fixture_anchor();
+        let o = Oscillation::initial(r);
+        let ast = ast_with_no_gaps();
+        let p = pulse(&o);
+        let p_ast = pulse_with_ast(&o, &ast);
+        assert_eq!(p.state(), p_ast.state());
+        assert_eq!(p.iteration(), p_ast.iteration());
+        assert_eq!(p.anchor(), p_ast.anchor());
+    }
+
+    /// **Settled-after-one-pulse fixture.** The graceful-default chain
+    /// settles in one pulse; the driver's first iteration calls
+    /// pulse → Settled → is_complete returns Success → returns the
+    /// terminating anchor.
+    #[test]
+    fn oscillate_settled_after_one_pulse() {
+        let r = fixture_anchor();
+        // Single-pulse check: pulse from initial reads Settled.
+        let o = Oscillation::initial(r.clone());
+        let p = pulse(&o);
+        assert_eq!(p.state(), OscillationState::Settled);
+        // The driver runs that one pulse and terminates.
+        let w = oscillate_witness(r);
+        assert_eq!(w.final_oscillation.state(), OscillationState::Settled);
+        assert_eq!(w.final_oscillation.iteration(), Tick::new(1));
+    }
+
+    /// **Escalated path.** When `pulse` reads Escalated (identity
+    /// fracture), the driver terminates immediately with the
+    /// post-pulse anchor (the substrate's anchor-unchanged-on-
+    /// fracture discipline per dark_pass §identity_fractured).
+    ///
+    /// We exercise this through `oscillate_with_ast` with a single
+    /// dark AST: the T11 chain emits a morphism anchored at the gap's
+    /// substrate origin (different from the fixture anchor); dark_pass
+    /// reads DARK-divergent → Escalated; oscillate terminates.
+    #[test]
+    fn oscillate_escalated_path_terminates_at_preserved_anchor() {
+        let r = fixture_anchor();
+        let ast = ast_with_one_dark();
+        // Step through one pulse manually to witness the escalation.
+        let o = Oscillation::initial(r.clone());
+        let p = pulse_with_ast(&o, &ast);
+        assert_eq!(
+            p.state(),
+            OscillationState::Escalated,
+            "single-dark fixture pulse-with-ast yields Escalated",
+        );
+        // The driver terminates after that single pulse.
+        let w = oscillate_witness_with_ast(r.clone(), &ast);
+        assert_eq!(w.final_oscillation.state(), OscillationState::Escalated);
+        assert_eq!(w.final_oscillation.anchor(), &r);
+        assert_eq!(w.final_oscillation.iteration(), Tick::new(1));
+    }
+
+    /// **Max-iteration bound.** The safety cap is observable: the
+    /// constant is exposed and positive; the substrate-honest
+    /// guarantee says no well-formed substrate flow reaches it.
+    #[test]
+    fn max_oscillate_iterations_is_positive() {
+        assert!(MAX_OSCILLATE_ITERATIONS > 0);
+        // Realistic ceiling: comfortably above one-shot termination
+        // but small enough that hitting it is observably pathological.
+        assert!(MAX_OSCILLATE_ITERATIONS >= 32);
+    }
+
+    /// **Safety cap reachable.** When the per-pulse function emits a
+    /// perpetually-Partial state (a synthetic non-converging
+    /// fixture), the driver terminates at the cap with cap_reached=
+    /// true. The substrate-incoherent path is observable; the loop
+    /// does not spin indefinitely.
+    #[test]
+    fn drive_with_perpetually_partial_pulse_hits_safety_cap() {
+        let r = fixture_anchor();
+        // Synthetic pulse: always returns an Active state at
+        // iteration+1. The is_complete reads Partial → driver
+        // continues until the cap.
+        let w = drive(r.clone(), |o| {
+            Oscillation::new(OscillationState::Active, o.iteration().advance(), o.anchor().clone())
+        });
+        assert!(
+            w.cap_reached,
+            "perpetually-partial chain must hit the safety cap",
+        );
+        assert_eq!(
+            w.final_oscillation.iteration().count(),
+            MAX_OSCILLATE_ITERATIONS,
+            "the driver ran exactly MAX_OSCILLATE_ITERATIONS pulses before capping",
+        );
+    }
+
+    /// **Banach contraction witness.** Each pulse either advances the
+    /// loop to a terminal state OR strictly advances the iteration
+    /// counter (the discrete witness of the contraction map's
+    /// progress; the spectral distance contracts in the substrate's
+    /// hash space). After at most `MAX_OSCILLATE_ITERATIONS` pulses,
+    /// the loop MUST terminate.
+    #[test]
+    fn oscillate_terminates_within_safety_bound() {
+        let r = fixture_anchor();
+        let w = oscillate_witness(r);
+        assert!(w.final_oscillation.iteration().count() <= MAX_OSCILLATE_ITERATIONS);
+        let r2 = fixture_anchor();
+        let ast = ast_with_three_darks();
+        let w2 = oscillate_witness_with_ast(r2, &ast);
+        assert!(w2.final_oscillation.iteration().count() <= MAX_OSCILLATE_ITERATIONS);
+    }
+
+    /// `oscillate` on a chain of distinct anchors stays consistent
+    /// across invocations (the driver is a pure function of its
+    /// input on the no-AST path).
+    #[test]
+    fn oscillate_is_pure_on_no_ast_path() {
+        let r = fixture_anchor();
+        let out1 = oscillate(r.clone());
+        let out2 = oscillate(r.clone());
+        assert_eq!(out1, out2, "oscillate is pure on the no-AST path");
+    }
+
+    /// Integration: `oscillate_with_ast` composes the full T11→T12→T13
+    /// chain end-to-end. Reading the score → the pending set → the
+    /// gaps → the tensor → the head fracture → a morphism; the
+    /// morphism's dark bits gate identity-preservation; the read_consent
+    /// bridge picks the next oscillation state; is_complete reads
+    /// termination. The kintsugi loop runs end-to-end at the Rust
+    /// altitude after T13.
+    #[test]
+    fn oscillate_with_ast_full_chain_runs_end_to_end() {
+        let r = fixture_anchor();
+        let ast = ast_with_three_darks();
+        let w = oscillate_witness_with_ast(r.clone(), &ast);
+        assert!(
+            matches!(
+                w.final_oscillation.state(),
+                OscillationState::Settled | OscillationState::Escalated,
+            ),
+            "the full chain reaches a terminal state; got {:?}",
+            w.final_oscillation.state(),
+        );
+        assert_eq!(w.final_oscillation.anchor(), &r);
+        assert!(w.final_oscillation.iteration().count() >= 1);
     }
 }
