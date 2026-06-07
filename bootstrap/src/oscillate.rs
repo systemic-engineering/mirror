@@ -597,18 +597,51 @@ pub fn query_phi(m: &Morphism) -> Verdict {
     crate::music::is_settled(m.expected())
 }
 
-/// `dark_pass(o: oscillation, m: morphism) -> oscillation` — the
-/// identity-anchor action (T12 stub).
+/// `dark_bits(r: &Ref) -> [u8; 10]` — substrate-pull realisation of
+/// `@uuid/spectral.dark` at the loop boundary.
 ///
-/// **STUB.** Per `oscillate.mirror` §dark_pass: the realisation invokes
-/// `consent.identity_preserving(m)`, branches on the verdict, emits
-/// the next oscillation with the anchor advanced if preserved (or
-/// unchanged on escalation). T10.5 returns an oscillation that
-/// projects the consent verdict onto the next state via
-/// [`read_consent`], leaving the anchor unchanged (the @uuid/spectral
-/// dark-bits byte-equality check is the T12 substrate-pull; until then
-/// the stub treats every morphism as identity-preserving and reads its
-/// next state from the verdict + the morphism's expected cadence).
+/// **🔴 [substrate-pull:realize] T12 stub.** Projects a `Ref` into the
+/// 80 DARK bits of its substrate identity per `shards/uuid/spectral.mirror`'s
+/// 48 ACTIVE / 80 DARK golden-ratio split. The realisation:
+///
+/// 1. BLAKE3-hash the ref's substrate path bytes (the substrate's
+///    canonical content for an `@`-prefixed nav-ref);
+/// 2. Compose into a [`SpectralUuid`] via [`SpectralUuid::from_parts`]
+///    with active = 0 (the boundary altitude has no quantized
+///    `SpectralCoordinate<5>` per `@uuid/spectral` §11 OQ1);
+/// 3. Project the 80 DARK bits via [`SpectralUuid::dark`].
+///
+/// The check IS the substrate's identity-preservation discipline at
+/// the loop altitude; two refs whose DARK bits byte-equal name the
+/// same substrate identity (modulo BLAKE3 collisions on 80 bits ~ 2^-80).
+///
+/// [`SpectralUuid`]: prism_core::SpectralUuid
+/// [`SpectralUuid::from_parts`]: prism_core::SpectralUuid::from_parts
+/// [`SpectralUuid::dark`]: prism_core::SpectralUuid::dark
+pub fn dark_bits(_r: &Ref) -> [u8; 10] {
+    // 🔴 RED stub — always returns the EMPTY shard's DARK bits.
+    // Tests will FAIL because:
+    //   - dark_bits_divergent_refs_are_not_byte_equal expects distinct
+    //     bytes for distinct refs (gets EMPTY for both);
+    //   - dark_bits_on_substrate_ref_is_nonzero expects ≠ EMPTY;
+    //   - dark_bits_matches_spectral_uuid_dark_projection expects the
+    //     real BLAKE3-derived bits.
+    // The GREEN body composes BLAKE3 + SpectralUuid::from_parts +
+    // SpectralUuid::dark.
+    prism_core::SpectralUuid::EMPTY.dark()
+}
+
+/// `dark_pass(o: oscillation, m: morphism) -> oscillation` — the
+/// identity-anchor action.
+///
+/// **🔴 [substrate-pull:realize] T12 RED — still the T10.5 stub.**
+/// Per `oscillate.mirror` §dark_pass: the realisation invokes the
+/// 80-DARK-bit byte-equality check via `@uuid/spectral.dark`; branches
+/// on the result; emits the next oscillation with the anchor advanced
+/// (identity preserved) or unchanged (identity fractured → Escalated).
+/// The T12 GREEN body composes [`dark_bits`] for the byte-equality
+/// check; the RED stub below still uses T10.5's verdict-only path,
+/// so the new T12 tests for the identity-fractured branch will FAIL.
 pub fn dark_pass(o: &Oscillation, m: &Morphism) -> Oscillation {
     let verdict = query_phi(m);
     let kind = crate::gap::verdict_to_cadence_kind(&verdict);
@@ -1410,6 +1443,261 @@ mod tests {
             next.state(),
             OscillationState::Settled,
             "the pulse chain still threads end-to-end and reads Settled",
+        );
+    }
+
+    // ================================================================
+    // T12: `dark_pass` real body — `@uuid/spectral.dark` substrate-pull.
+    //
+    // Per `shards/uuid/spectral.mirror` (substrate-FROZEN at the
+    // 2026-06-06 hierarchical-UUID sweep): `uuid_spectral` is the
+    // 128-bit ACTIVE/DARK record; `dark(u: uuid_spectral) ->
+    // identity_signal` projects the 80 DARK bits — the BLAKE3-truncated
+    // content-hash prefix. The Rust realisation lives in
+    // `prism_core::SpectralUuid::dark() -> [u8; 10]`.
+    //
+    // Per `shards/mirror/spectral/consent.mirror` §identity_preserving:
+    // "the morphism's resulting shard's identity_signal byte-equals the
+    // pre-morphism shard's identity_signal; identity is preserved." The
+    // check is byte-equality at the 80-DARK-bit boundary.
+    //
+    // Per `shards/mirror/spectral/oscillate.mirror` §dark_pass: "emits
+    // the next oscillation with the new anchor (if preserved) or the
+    // same anchor (if violated; oscillation transitions to escalated)."
+    //
+    // T12 lands the real check; the dark_bits derivation reads the
+    // Ref's substrate path as the BLAKE3 content, anchors active=0
+    // (the substrate has no quantized SpectralCoordinate<5> at the
+    // boundary altitude per @uuid/spectral §11 OQ1), projects via
+    // `SpectralUuid::dark()`. The check is byte-equality on [u8; 10].
+    //
+    //   identity-preserved   → m.content's DARK bits byte-equal o.anchor's
+    //                          DARK bits → chain to query_phi → read_consent
+    //                          → emit next oscillation with anchor advanced
+    //                          to m.content (per substrate's §dark_pass).
+    //   identity-fractured   → DARK bits diverge → emit oscillation with
+    //                          state=Escalated, iteration advanced, anchor
+    //                          unchanged (per substrate's §dark_pass and
+    //                          consent.mirror's identity_preserving:failure).
+    //
+    // Edge cases per the brief:
+    //   - empty content: Ref::new rejects empty refs at construction;
+    //     unreachable at the dark_pass boundary (no test needed; the
+    //     type-system already enforces).
+    //   - identical anchor + morphism content: dark_bits trivially
+    //     byte-equal; identity preserved (the substrate's "no-op
+    //     morphism" reading).
+    //   - divergent content: dark_bits differ (BLAKE3 collision
+    //     probability is ~2^-80 ≈ 10^-24 — vanishingly small at the
+    //     loop altitude; the substrate's "identity-fracturing morphism"
+    //     reading).
+    // ================================================================
+
+    /// `dark_bits` over identical refs is byte-equal. The 80-DARK-bit
+    /// projection is a pure function of the ref's substrate path; same
+    /// path → same hash → same DARK bits.
+    #[test]
+    fn dark_bits_identical_refs_are_byte_equal() {
+        let r = fixture_anchor();
+        assert_eq!(dark_bits(&r), dark_bits(&r));
+    }
+
+    /// `dark_bits` over divergent refs diverge byte-wise. BLAKE3's
+    /// collision probability on 80 bits is ~2^-80 ≈ 10^-24; substrate
+    /// distinct paths produce distinct DARK bits in every observable
+    /// realisation.
+    #[test]
+    fn dark_bits_divergent_refs_are_not_byte_equal() {
+        let r1 = Ref::new("@mirror/spectral/oscillate/fixture-a").expect("valid");
+        let r2 = Ref::new("@mirror/spectral/oscillate/fixture-b").expect("valid");
+        assert_ne!(
+            dark_bits(&r1),
+            dark_bits(&r2),
+            "distinct substrate refs must produce distinct DARK bits",
+        );
+    }
+
+    /// `dark_bits` returns exactly 10 bytes (80 DARK bits per the
+    /// substrate's 48/80 golden-ratio split in `shards/uuid/spectral.mirror`).
+    #[test]
+    fn dark_bits_is_eighty_bits() {
+        let r = fixture_anchor();
+        let bits = dark_bits(&r);
+        // Type-level + value-level: [u8; 10] is 80 bits.
+        let _: [u8; 10] = bits;
+        assert_eq!(bits.len(), 10);
+    }
+
+    /// `dark_bits` on the substrate's well-known empty Ref-shape
+    /// reads as the BLAKE3-of-the-path prefix — non-zero, since
+    /// the ref carries a substrate path.
+    #[test]
+    fn dark_bits_on_substrate_ref_is_nonzero() {
+        let r = fixture_anchor();
+        let bits = dark_bits(&r);
+        // The empty-shard sentinel is `SpectralUuid::EMPTY.dark()` —
+        // the BLAKE3-of-empty-input prefix `af1349b9f5f9a1a6a040`.
+        // Our path-derived bits MUST differ from EMPTY (non-empty
+        // content cannot collide with the BLAKE3-of-empty prefix).
+        assert_ne!(
+            bits,
+            prism_core::SpectralUuid::EMPTY.dark(),
+            "non-empty substrate path must not hash to the empty-shard sentinel",
+        );
+    }
+
+    /// `dark_pass` over an identity-preserving morphism (content
+    /// byte-equal to anchor) advances iteration and emits the
+    /// authentic-fixture's read_consent state.
+    #[test]
+    fn dark_pass_identity_preserved_advances_iteration() {
+        let r = fixture_anchor();
+        let o = Oscillation::new(OscillationState::Active, Tick::new(3), r.clone());
+        // The morphism's content IS the anchor → DARK bits byte-equal
+        // → identity preserved.
+        let m = Morphism::new(r.clone(), Dissonance::new(0.0, 1), CadenceKind::Authentic);
+        let next = dark_pass(&o, &m);
+        assert_eq!(next.iteration(), Tick::new(4));
+    }
+
+    /// `dark_pass` over an identity-preserving morphism whose content
+    /// IS the anchor's ref emits `Settled` (the read_consent of
+    /// Success(()) + Authentic per the fixture morphism's expected
+    /// cadence). Anchor is preserved because the new anchor IS
+    /// m.content which equals the original anchor.
+    #[test]
+    fn dark_pass_identity_preserved_on_authentic_fixture_is_settled() {
+        let r = fixture_anchor();
+        let o = Oscillation::initial(r.clone());
+        let m = Morphism::new(r.clone(), Dissonance::new(0.0, 1), CadenceKind::Authentic);
+        let next = dark_pass(&o, &m);
+        assert_eq!(next.state(), OscillationState::Settled);
+        // Identity preserved means anchor advances to m.content; here
+        // m.content IS the original anchor so the anchor is observed
+        // unchanged. The substrate-altitude advance happened (per
+        // oscillate.mirror §dark_pass); the substrate's "no-op
+        // morphism" case bottoms out at anchor = m.content = o.anchor.
+        assert_eq!(next.anchor(), &r);
+    }
+
+    /// `dark_pass` over an identity-FRACTURING morphism (content
+    /// substrate-distinct from anchor) emits `Escalated` and leaves
+    /// the anchor UNCHANGED. Per `oscillate.mirror` §dark_pass and
+    /// `consent.mirror` §identity_preserving: a DARK-divergent
+    /// morphism would write a new substrate identity; the substrate
+    /// must surface the fracture to the consent surface for external
+    /// resolution.
+    #[test]
+    fn dark_pass_identity_fractured_emits_escalated() {
+        let anchor = Ref::new("@mirror/spectral/oscillate/anchor-a").expect("valid");
+        let fractured_content = Ref::new("@mirror/spectral/oscillate/content-b").expect("valid");
+        let o = Oscillation::new(OscillationState::Active, Tick::new(5), anchor.clone());
+        let m = Morphism::new(
+            fractured_content,
+            Dissonance::new(0.0, 1),
+            CadenceKind::Authentic,
+        );
+        let next = dark_pass(&o, &m);
+        assert_eq!(
+            next.state(),
+            OscillationState::Escalated,
+            "DARK-divergent morphism must escalate (identity fractured)",
+        );
+        assert_eq!(
+            next.anchor(),
+            &anchor,
+            "identity-fractured dark_pass leaves the anchor unchanged",
+        );
+        assert_eq!(
+            next.iteration(),
+            Tick::new(6),
+            "iteration advances by one regardless of identity-preservation verdict",
+        );
+    }
+
+    /// `dark_pass` on identity-preserved + non-fixture content: the
+    /// new anchor IS the morphism's content (the substrate's
+    /// "morphism applies" reading per §dark_pass; the anchor advances
+    /// to the new substrate position). This case is structurally
+    /// rare at the boundary (a morphism whose content has the same
+    /// DARK bits as the anchor but is a different Ref would need a
+    /// BLAKE3 collision on 80 bits — ~2^-80) so the test directly
+    /// constructs a morphism whose content IS the anchor to exercise
+    /// the "anchor advances" code path without contriving a collision.
+    #[test]
+    fn dark_pass_identity_preserved_anchor_advances_to_content() {
+        let anchor = Ref::new("@mirror/spectral/oscillate/start").expect("valid");
+        let next_content = anchor.clone();
+        let o = Oscillation::new(OscillationState::Active, Tick::new(7), anchor.clone());
+        let m = Morphism::new(
+            next_content.clone(),
+            Dissonance::new(0.0, 1),
+            CadenceKind::Authentic,
+        );
+        let next = dark_pass(&o, &m);
+        assert_eq!(
+            next.anchor(),
+            &next_content,
+            "identity-preserved dark_pass advances anchor to m.content",
+        );
+    }
+
+    /// `dark_pass` identity-fractured branch escalates regardless of
+    /// the morphism's expected cadence: the DARK byte-equality check
+    /// short-circuits before the consent/verdict composition. A
+    /// morphism whose expected cadence is Authentic STILL escalates
+    /// when its content's DARK bits differ from the anchor's.
+    #[test]
+    fn dark_pass_identity_fractured_short_circuits_consent() {
+        let anchor = Ref::new("@mirror/spectral/oscillate/anchor-x").expect("valid");
+        let divergent = Ref::new("@mirror/spectral/oscillate/divergent-y").expect("valid");
+        let o = Oscillation::initial(anchor.clone());
+        // Authentic-expected morphism that would otherwise read as
+        // Settled (per T10.5's chain on byte-equal content).
+        let m = Morphism::new(divergent, Dissonance::new(0.0, 1), CadenceKind::Authentic);
+        let next = dark_pass(&o, &m);
+        assert_eq!(
+            next.state(),
+            OscillationState::Escalated,
+            "identity fracture short-circuits the consent chain even on \
+             authentic-expected morphisms",
+        );
+    }
+
+    /// Pulse integration: when active_pass yields a morphism whose
+    /// content IS the input anchor (the T11 graceful-default surface
+    /// for the no-AST path), pulse runs through identity-preserved
+    /// dark_pass and reads Settled. The chain composes the real
+    /// dark_pass body with the rest of T10.5's logic.
+    #[test]
+    fn pulse_with_real_dark_pass_on_settle_morphism_reads_settled() {
+        let o = Oscillation::initial(fixture_anchor());
+        let next = pulse(&o);
+        assert_eq!(next.state(), OscillationState::Settled);
+        assert_eq!(next.iteration(), Tick::new(1));
+        // Settle-morphism's content IS the anchor, so the advanced
+        // anchor equals the original; same byte-shape, identity-
+        // preserved branch taken.
+        assert_eq!(next.anchor(), o.anchor());
+    }
+
+    /// Substrate-pull witness: `dark_bits` rides the substrate's
+    /// existing `SpectralUuid::dark()` projection — the [u8; 10] read
+    /// per `shards/uuid/spectral.mirror` §dark and the
+    /// `prism_core::SpectralUuid` realisation. The check IS the
+    /// substrate's byte-equality discipline at the loop boundary.
+    #[test]
+    fn dark_bits_matches_spectral_uuid_dark_projection() {
+        let r = fixture_anchor();
+        // The substrate's dark-bits derivation: BLAKE3 of the ref's
+        // path bytes, then SpectralUuid::from_parts(0, &hash).dark().
+        let hash = blake3::hash(r.as_str().as_bytes());
+        let suuid = prism_core::SpectralUuid::from_parts(0, hash.as_bytes());
+        let expected = suuid.dark();
+        assert_eq!(
+            dark_bits(&r),
+            expected,
+            "dark_bits MUST be SpectralUuid::dark() over BLAKE3(ref.as_str())",
         );
     }
 }
