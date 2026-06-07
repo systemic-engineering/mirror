@@ -175,7 +175,27 @@ pub enum Verdict {
 /// crosses into Rust (via the future `@mirror/spectral/consent`
 /// pull), the wrapper will project to `kind` and dispatch here.
 pub fn is_settled(kind: CadenceKind) -> Verdict {
-    todo!("is_settled body lands in the 🟢 [substrate-pull:realize] commit")
+    // The four-state mapping IS the body. Pattern-exhaustive over
+    // CadenceKind; no fallback arm; the compiler enforces the
+    // four-state contract. Adding a fifth variant to CadenceKind
+    // (none is currently substrate-declared) will fail to compile
+    // here, surfacing the gap immediately.
+    match kind {
+        // V → I: the canonical tonal closure; holonomy → 0; the
+        // autopoietic ground state. Per cadence.mirror's mapping.
+        CadenceKind::Authentic => Verdict::Pass,
+        // IV → I: consonant alternative path; auto-apply with reduced
+        // confidence. 0.85 > 1/φ ≈ 0.618 — closer-to-pass-than-not.
+        CadenceKind::Plagal => Verdict::Partial(0.85),
+        // Paused on V: progression open; awaiting the next consent
+        // surface. 0.25 < 1/φ — closer-to-failure-than-not; still
+        // partial because the formatter has not yet chosen.
+        CadenceKind::Half => Verdict::Partial(0.25),
+        // V → vi: dissonance over consonance; escalate to consent.
+        // Per cadence.mirror: "the deviation must be named to the
+        // consent surface." The substrate yields.
+        CadenceKind::Deceptive => Verdict::Failure(Reason::DeceptiveCadence),
+    }
 }
 
 #[cfg(test)]
@@ -204,10 +224,7 @@ mod tests {
     /// reduced confidence. Confidence committed at 0.85 (above 1/φ).
     #[test]
     fn plagal_cadence_partial_high_confidence() {
-        assert_eq!(
-            is_settled(CadenceKind::Plagal),
-            Verdict::Partial(0.85),
-        );
+        assert_eq!(is_settled(CadenceKind::Plagal), Verdict::Partial(0.85),);
     }
 
     /// Half cadence — progression paused on V. Per `cadence.mirror`:
@@ -216,10 +233,7 @@ mod tests {
     /// (below 1/φ).
     #[test]
     fn half_cadence_partial_low_confidence() {
-        assert_eq!(
-            is_settled(CadenceKind::Half),
-            Verdict::Partial(0.25),
-        );
+        assert_eq!(is_settled(CadenceKind::Half), Verdict::Partial(0.25),);
     }
 
     /// Deceptive cadence — V → vi — the formatter chose dissonance
