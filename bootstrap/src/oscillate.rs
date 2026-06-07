@@ -446,8 +446,12 @@ impl Morphism {
 /// oscillation's anchor, scored at zero roughness (consonant), expected
 /// to resolve authentically. This lets `pulse` thread the chain
 /// without coupling to substrate machinery that hasn't pulled yet.
-pub fn active_pass(_o: &Oscillation) -> Morphism {
-    unimplemented!("T10.5 active_pass stub body — lands in [substrate-pull:realize]")
+pub fn active_pass(o: &Oscillation) -> Morphism {
+    Morphism::new(
+        o.anchor().clone(),
+        Dissonance::new(0.0, 1),
+        CadenceKind::Authentic,
+    )
 }
 
 /// `query_phi(m: morphism) -> verdict` — the structural Φ query
@@ -462,8 +466,8 @@ pub fn active_pass(_o: &Oscillation) -> Morphism {
 /// `is_settled` against the stub morphism's `expected` cadence —
 /// enough to type the chain; the structural query lands when the
 /// `morphism_set` shape and the three glass properties pull into Rust.
-pub fn query_phi(_m: &Morphism) -> Verdict {
-    unimplemented!("T10.5 query_phi stub body — lands in [substrate-pull:realize]")
+pub fn query_phi(m: &Morphism) -> Verdict {
+    crate::music::is_settled(m.expected())
 }
 
 /// `dark_pass(o: oscillation, m: morphism) -> oscillation` — the
@@ -478,8 +482,11 @@ pub fn query_phi(_m: &Morphism) -> Verdict {
 /// dark-bits byte-equality check is the T12 substrate-pull; until then
 /// the stub treats every morphism as identity-preserving and reads its
 /// next state from the verdict + the morphism's expected cadence).
-pub fn dark_pass(_o: &Oscillation, _m: &Morphism) -> Oscillation {
-    unimplemented!("T10.5 dark_pass stub body — lands in [substrate-pull:realize]")
+pub fn dark_pass(o: &Oscillation, m: &Morphism) -> Oscillation {
+    let verdict = query_phi(m);
+    let kind = crate::gap::verdict_to_cadence_kind(&verdict);
+    let next_state = read_consent(&verdict, kind);
+    Oscillation::new(next_state, o.iteration().advance(), o.anchor().clone())
 }
 
 /// `read_consent(v: verdict, k: cadence_kind) -> oscillation_state` —
@@ -506,8 +513,31 @@ pub fn dark_pass(_o: &Oscillation, _m: &Morphism) -> Oscillation {
 /// they collapse the four-state verdict × four-state cadence cross-
 /// product onto the five-state oscillation_state surface
 /// exhaustively. No fallback arm; the compiler enforces the contract.
-pub fn read_consent(_v: &Verdict, _k: CadenceKind) -> OscillationState {
-    unimplemented!("T10.5 read_consent stub body — lands in [substrate-pull:realize]")
+pub fn read_consent(v: &Verdict, k: CadenceKind) -> OscillationState {
+    match (v, k) {
+        // Authentic + Success: the canonical closure.
+        (Imperfect::Success(()), CadenceKind::Authentic) => OscillationState::Settled,
+        // Success on any non-authentic kind: harmonic alt path; the
+        // loop keeps moving (the consonant motion is real, the
+        // substrate just hasn't reached the canonical tonic yet).
+        (Imperfect::Success(()), _) => OscillationState::Active,
+        // Partial + Half: paused on V; awaits next consent surface
+        // tick; resumes WITHOUT external resolution.
+        (Imperfect::Partial((), _), CadenceKind::Half) => OscillationState::Waiting,
+        // Partial + Deceptive: substrate chose dissonance over
+        // consonance, but only partially; wait for next tick rather
+        // than escalating (escalation requires a hard Failure verdict).
+        (Imperfect::Partial((), _), CadenceKind::Deceptive) => OscillationState::Waiting,
+        // Partial + Plagal: graded auto-apply at high confidence; loop
+        // advances through `active` per oscillate.mirror's table.
+        (Imperfect::Partial((), _), CadenceKind::Plagal) => OscillationState::Active,
+        // Partial + Authentic: high-confidence partial reading of the
+        // canonical resolution; continue.
+        (Imperfect::Partial((), _), CadenceKind::Authentic) => OscillationState::Active,
+        // Failure: pause_event MUST be emitted to metalogue; consent
+        // surface MUST resolve externally. Cadence_kind discarded.
+        (Imperfect::Failure(_, _), _) => OscillationState::Escalated,
+    }
 }
 
 /// `pulse(o: oscillation) -> oscillation` — one ACTIVE→DARK alternation.
@@ -538,8 +568,13 @@ pub fn read_consent(_v: &Verdict, _k: CadenceKind) -> OscillationState {
 /// Per spec §2.1: pulse IS the loop's contraction step. Each pulse is
 /// one application of the contraction map; the iteration count IS the
 /// contraction step index.
-pub fn pulse(_o: &Oscillation) -> Oscillation {
-    unimplemented!("T10.5 pulse body — lands in [substrate-pull:realize]")
+pub fn pulse(o: &Oscillation) -> Oscillation {
+    // Step 1: propose a loss-decreasing morphism (T11 stub).
+    let morphism = active_pass(o);
+    // Steps 2-4: anchor identity, composing query_phi + read_consent
+    // through dark_pass (T12 stub). dark_pass emits the next
+    // oscillation with state, iteration, and anchor updated.
+    dark_pass(o, &morphism)
 }
 
 #[cfg(test)]
@@ -984,11 +1019,7 @@ mod tests {
     /// `pulse` over an oscillation at tick 7 advances to tick 8.
     #[test]
     fn pulse_iteration_advances_from_arbitrary_tick() {
-        let o = Oscillation::new(
-            OscillationState::Active,
-            Tick::new(7),
-            fixture_anchor(),
-        );
+        let o = Oscillation::new(OscillationState::Active, Tick::new(7), fixture_anchor());
         let next = pulse(&o);
         assert_eq!(next.iteration(), Tick::new(8));
     }
