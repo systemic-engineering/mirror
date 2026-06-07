@@ -168,5 +168,184 @@ grammar @code/mirror/grammar("mirror", "spec", "meta", "glass", "shard", "shatte
   fixed type_form         = seq(literal("type"), whitespace, identifier, whitespace, literal("="), whitespace, variant_list)
 }
 
+# === render — AST → text via Wadler/Bernardy doc combinators ===
+#
+# Substrate-pull-realize tick (2026-06-08, T17 of the pretty-printer
+# LRM cascade; Mara). The recognition (per docs/research/2026-06-07-
+# pretty-printer-LRM.md and the T16 family-root sibling
+# `shards/mirror/data.mirror`): `render` is the language-altitude
+# analogue of `emit` at the data altitude. Same shape — carrier →
+# text with layout choices — different surface:
+#
+#   @mirror/data/json.emit  : data-altitude render (carrier → text)
+#   @code/mirror.render     : language-altitude render (AST → text)
+#
+# Both are projections from a typed structure to a wire surface; both
+# face the same algebraic question of how to lay out a tree of
+# choices onto a finite-width line. Wadler's "A prettier printer"
+# (Wadler 2003, JFP 13(5)) names the canonical solution: a small
+# combinator algebra over a `doc` carrier where layout decisions
+# defer to a `group` operator that chooses flat-or-broken at render
+# time. Bernardy 2017 ("A pretty but not greedy printer", ICFP)
+# extends this with an optimality criterion: among all layouts that
+# fit, choose the one minimising line-cost over a dynamic-programming
+# search of the combinator tree.
+#
+# The substrate already names the data-altitude half (T16's
+# `@mirror/data/json.emit`, `.yaml.emit`, `.toml.emit`, `.text.emit`).
+# This sub-prism names the language-altitude half. The shared
+# primitive — Wadler/Bernardy's combinator algebra — is the surface;
+# the two altitudes specialise the carrier (json/yaml/toml/text on
+# the data side; mirror AST on the language side; future @code/rust /
+# @code/gleam / @code/llvm renders on the language side as siblings).
+#
+# === Naming: render, not emit ===
+#
+# Two arguments converge on `render` (not `emit`):
+#
+#   1. The pre-substrate precedent. `boot/std/code/mq.mirror` already
+#      declares `template render(s: mq_literal) -> query` as the
+#      sigil-render direction (text → query). The language family
+#      uses `render` for the typed projection between an AST/literal
+#      carrier and its wire surface; data uses `emit`. The substrate
+#      already had the word at the language altitude.
+#   2. The Phase 4 contract. `roadmap/pending/phase-4-emitter-self.md`
+#      task 4 names it explicitly: "Write the `@code/mirror` render
+#      template (the pretty-printer). Round-trip: parse → emit →
+#      parse = identity." The contract names render; this declaration
+#      lands its substrate form.
+#
+# Convergence: `render` is the language-altitude projection (AST →
+# text); `emit` is the data-altitude projection (carrier → bytes).
+# They share Wadler/Bernardy as the algebra and the round-trip law
+# as the contract; they differ in carrier kind. Future
+# `@code/rust.render`, `@code/gleam.render`, `@code/llvm.render` join
+# this as siblings — each altitude's render specialises the doc
+# carrier to its own AST shape, all sharing the combinator surface
+# declared below.
+#
+# === The doc carrier ===
+#
+# Per Wadler 2003 §4 ("The data structure"), the doc carrier is the
+# free algebra over the combinator surface: text embedding, line
+# breaks, nesting, horizontal/vertical/grouped composition. The
+# variants below mirror Wadler's `DOC` algebraic type. Bernardy 2017
+# adds no new constructors — its contribution is the optimality
+# criterion over the same algebra. The carrier is the minimal one
+# the algebra requires.
+prism @code/mirror/render {
+  focus render
+  project render
+  split render
+  shift render
+  settle render
+}
+
+# The doc algebra. Per Wadler 2003 §4: the free algebra over the
+# combinator surface; what `render` produces internally before the
+# layout choice settles to a text. Each variant corresponds to one
+# combinator below.
+type doc = nil | text_doc(text) | line_doc | nest_doc(u32, doc) | beside_doc(doc, doc) | above_doc(doc, doc) | group_doc(doc) | flatten_doc(doc)
+
+# === render — the language-altitude projection ===
+#
+# AST → text, settled through the combinator surface below. The body
+# is `\` per consumer-pull discipline; the concrete realisation is
+# T19's `mirror kintsugi <file>` settled-formatting output path
+# (per docs/research/2026-06-07-pretty-printer-LRM.md cascade). The
+# Wadler/Bernardy combinators name the algebra; this action names
+# the entry point.
+render(ast) -> text { \ }
+
+# === The Wadler/Bernardy combinator surface ===
+#
+# Per Wadler 2003 §A ("Pretty printing combinators") and Bernardy
+# 2017 §3 ("The algebra"). The seven canonical operators plus
+# `flatten` (the forced-flat layout reducer Wadler 2003 §4 uses to
+# define `group`). Bodies are `\` per consumer-pull discipline; the
+# T19 implementation tick lands them.
+#
+# Algebraic laws (Wadler 2003 §A, Bernardy 2017 §3.2; declared here
+# as contracts; the model checker will discharge when bodies land):
+#
+#   - beside is associative; nil is its identity.
+#   - above is associative; nil is its identity.
+#   - nest distributes over beside: nest(n, beside(x, y)) =
+#     beside(nest(n, x), nest(n, y)).
+#   - group commutes with flatten: group(flatten(d)) = flatten(d).
+#   - flatten is idempotent: flatten(flatten(d)) = flatten(d).
+#
+# text(s) — embed a string as a doc; the leaf of the combinator tree.
+text(s: text) -> doc { \ }
+
+# line() — a layout break point; renders as a newline when the
+# enclosing group lays out broken, or as a space when laid out flat.
+# The decision is deferred to the enclosing `group`.
+line() -> doc { \ }
+
+# nest(n, d) — indent `d` by `n` columns relative to the enclosing
+# layout's left margin. Per Wadler 2003 §A: applies only at line
+# breaks within `d` (does not pad already-emitted text).
+nest(n: u32, d: doc) -> doc { \ }
+
+# beside(left, right) — horizontal composition. Equivalent to
+# Wadler's `<>` operator; the substrate uses the named form per
+# AGENTS.md sigil-naming discipline (named, not single-char). The
+# infix surface `left <> right` can land as a sugar in T19's
+# implementation if a consumer pulls it.
+beside(left: doc, right: doc) -> doc { \ }
+
+# beside_space(left, right) — horizontal composition with a single
+# space between. Equivalent to Wadler's `<+>` operator. Substrate-
+# named form per the same discipline.
+beside_space(left: doc, right: doc) -> doc { \ }
+
+# above(top, bottom) — vertical composition. Equivalent to Wadler's
+# `</>` operator: line-above-line, with the implicit line break
+# between. Substrate-named form.
+above(top: doc, bottom: doc) -> doc { \ }
+
+# group(d) — the layout decision point. Per Wadler 2003 §4: chooses
+# between the flat layout (all `line()` rendered as spaces) and the
+# broken layout (all `line()` rendered as newlines) based on whether
+# the flat layout fits the remaining width. The single combinator
+# that makes the algebra non-trivial; Bernardy 2017's optimality
+# criterion is dynamic programming over `group` choices.
+group(d: doc) -> doc { \ }
+
+# flatten(d) — force the flat layout (every `line()` becomes a
+# space, every `group` chooses flat). Per Wadler 2003 §4, defined
+# such that `group(d) = union(flatten(d), d)` where union picks the
+# shorter-line layout. Useful as a primitive when a consumer needs
+# the forced-flat projection (e.g. for embedded inline rendering).
+flatten(d: doc) -> doc { \ }
+
+# === Round-trip identity — the cascade's central contract ===
+#
+# Per roadmap/pending/phase-4-emitter-self.md task 4 ("Round-trip:
+# parse → emit → parse = identity") and docs/research/2026-06-07-
+# pretty-printer-LRM.md (the LRM's load-bearing law): for every
+# valid mirror AST, `parse(render(ast)) = ast` structurally. The
+# round-trip is the discriminator between a settled formatter and
+# a lossy one; it IS what makes `mirror kintsugi <file>` safe to
+# run as a settle (no information loss; the AST is the invariant).
+#
+# Declared here as a substrate property; the model checker
+# discharges when T19's render body lands. The contract names the
+# law; the implementation must satisfy it; the verdict is a
+# typed property check at the @code/mirror altitude.
+requires round_trip(render)
+
 out @code/mirror
 out @code/mirror/grammar
+out @code/mirror/render
+out doc
+out render
+out text
+out line
+out nest
+out beside
+out beside_space
+out above
+out group
+out flatten
