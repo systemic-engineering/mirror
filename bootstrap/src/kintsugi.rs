@@ -19,48 +19,235 @@
 //!   by descent magnitude (steepest first); emits the gap pair of each
 //!   ranked tension as fractures.
 //!
-//! T7 RED-phase scaffold: type signatures land here; bodies are
-//! `unimplemented!()` so the test corpus below runs RED. GREEN lands
-//! in the next commit per the implementation-cascade template T3-T6
-//! established.
+//! ## Why this lives here (not in `fracture.rs`, not in `tensor.rs`)
+//!
+//! The substrate-path-honest placement question for T7 surfaced two
+//! candidates: `kintsugi.rs` (the broader composer altitude — future
+//! `pulse`, `oscillate`-driver, `active_pass`, `dark_pass`, `query_phi`
+//! land here too) vs `fracture.rs` (the narrower type-only altitude).
+//! [`crate::tensor`] mirrors `@fate` (where `minimize` is declared per
+//! [`docs/specs/gap-tension-tensor-substrate.md`] §2); [`crate::gap`]
+//! mirrors `@epistemologic/property/gap`. `minimize` produces the
+//! substrate's `[fracture]` — the kintsugi loop's mutation candidates
+//! per [`docs/specs/gap-tension-tensor-substrate.md`] §6 — so the
+//! composer-altitude home (`@kintsugi`) is the natural common
+//! ancestor for the production-engine surface. Co-locating `Fracture`
+//! here keeps the substrate-declared inheritance chain
+//! `fracture <= gap` next to the action that emits it. When the future
+//! `pulse` / `active_pass` / `dark_pass` driver lands, it composes
+//! `minimize`'s output with `gaps_of` / `tensor_of` in this module.
+//!
+//! ## Why scalar-magnitude ranking (not SDRF curvature)
+//!
+//! T7 lands the **minimal first version**: rank tensions by
+//! [`TensionVector::magnitude`] (steepest descent first); emit each
+//! ranked tension's gap pair as a fracture. SDRF curvature ranking
+//! (Topping et al. 2022, arXiv:2111.14522, Algorithm 1) requires the
+//! Balanced Forman curvature on the tension graph, which in turn
+//! requires the proper sheaf-Laplacian numerical primitive landing at
+//! T8 (flang/mirror split). Today's tensor carries identity
+//! restriction maps and uniform unit magnitudes; SDRF on this
+//! structure would degenerate to vertex-degree counting — strictly
+//! less informative than the magnitude reading the
+//! [`TensionVector`] already carries. SDRF lifts when the conductivity
+//! tensor declares its read at the boundary.
+//!
+//! ## What this is for
+//!
+//! Per [`docs/specs/gap-tension-tensor-substrate.md`] §6, the kintsugi
+//! loop's job is:
+//!
+//! 1. `gaps_of(ast)` → `[gap]`  (T5)
+//! 2. `tensor_of([gap])` → `tensor`  (T6)
+//! 3. `minimize(tensor)` → `[fracture]`  (T7 — here)
+//! 4. apply the fractures; settle  (future tick — composer level)
+//!
+//! T7 closes the floor: the gradient-descent step exists in Rust. The
+//! production engine for the kintsugi loop can now be driven from the
+//! boundary; the composers (pulse / oscillate-driver / active_pass /
+//! dark_pass / query_phi) wrap this body in their substrate-pulled
+//! shapes.
 //!
 //! [`docs/specs/gap-tension-tensor-substrate.md`]: ../../../../docs/specs/gap-tension-tensor-substrate.md
 //! [`Gap`]: crate::gap::Gap
+//! [`TensionVector`]: crate::tensor::TensionVector
+//! [`TensionVector::magnitude`]: crate::tensor::TensionVector::magnitude
 #![allow(dead_code)]
 
 use crate::gap::Gap;
-use crate::tensor::Tensor;
+use crate::tensor::{Tension, TensionVector, Tensor};
 
 // ---------------------------------------------------------------------------
-// Fracture — RED-phase scaffold.
+// Fracture — the Rust mirror of `fracture <= gap & { site: span }`.
 // ---------------------------------------------------------------------------
 
+/// The substrate's fracture type at the kintsugi altitude.
+///
+/// Per [`docs/specs/gap-tension-tensor-substrate.md`] §11.1:
+///
+/// ```mirror
+/// type fracture <= gap & {
+///   site:   span,                      # the `\` location
+/// }
+/// ```
+///
+/// A `fracture` is a **specific gap the substrate is attempting to
+/// close** — the descent target along the Dirichlet-energy gradient
+/// per [`docs/specs/gap-tension-tensor-substrate.md`] §6. The
+/// `<= gap` inheritance is realised in Rust by carrying a [`Gap`]
+/// value directly (composition-as-inheritance per
+/// `prism-as-trait-as-everything`); the additional structure named in
+/// §11.1 — the descent magnitude (audible-altitude floor) and the
+/// substrate "site" (read at this altitude as the source [`Gap`]'s
+/// origin) — lives as named fields on the wrapper.
+///
+/// ## Audible-altitude shape (T7 minimum)
+///
+/// - [`gap`](Fracture::gap) — the inherited [`Gap`] (substrate-pull:
+///   the `<= gap` chain is direct composition; the gap's `origin` IS
+///   the substrate site per §11.1's `site: span` reading at this
+///   altitude).
+/// - [`descent`](Fracture::descent) — the magnitude of the
+///   gradient-descent step the substrate would take to close this
+///   fracture. Scalar in `[0, 1]`; inherited from the emitting
+///   [`Tension`]'s [`TensionVector::magnitude`]. The full directed
+///   tangent-space element lands when §8.1 closes.
+///
+/// ## Inheritance pattern
+///
+/// `Fracture` does NOT re-declare [`Gap`]'s carriers (`level`,
+/// `origin`, `tension_summary`) — they are reached through
+/// [`gap`](Fracture::gap). The substrate's `<= gap` chain becomes Rust
+/// composition; mirror's read of `<=` is "implements" (per
+/// `prism-as-trait-as-everything`) which at the type-mirror altitude
+/// becomes "carries". Downstream consumers that need the level / origin
+/// of the underlying gap reach through the accessor.
+///
+/// [`docs/specs/gap-tension-tensor-substrate.md`]: ../../../../docs/specs/gap-tension-tensor-substrate.md
+/// [`Gap`]: crate::gap::Gap
+/// [`Tension`]: crate::tensor::Tension
+/// [`TensionVector::magnitude`]: crate::tensor::TensionVector::magnitude
 #[derive(Clone, Debug, PartialEq)]
 pub struct Fracture {
+    /// The inherited [`Gap`] — substrate-pull realisation of
+    /// `fracture <= gap`. Carries the Bateson level, the substrate
+    /// origin, and the audible-altitude tension summary.
     gap: Gap,
+    /// The magnitude of the gradient-descent step the substrate would
+    /// take to close this fracture. Inherited from the emitting
+    /// [`Tension`]'s [`TensionVector::magnitude`] per
+    /// [`docs/specs/gap-tension-tensor-substrate.md`] §6's
+    /// rank-by-magnitude step. In `[0, 1]`.
+    ///
+    /// [`Tension`]: crate::tensor::Tension
+    /// [`TensionVector::magnitude`]: crate::tensor::TensionVector::magnitude
     descent: f64,
 }
 
 impl Fracture {
-    pub fn new(_gap: Gap, _descent: f64) -> Self {
-        unimplemented!("T7 GREEN: realize Fracture::new")
+    /// Construct a fracture from its inherited [`Gap`] and descent
+    /// magnitude. Most callers want [`minimize`] — this constructor is
+    /// for tests and downstream consumers that build fractures from
+    /// non-tensor sources. `descent` is clamped to `[0, 1]`.
+    pub fn new(gap: Gap, descent: f64) -> Self {
+        Fracture {
+            gap,
+            descent: descent.clamp(0.0, 1.0),
+        }
     }
 
-    pub fn gap(_f: &Fracture) -> &Gap {
-        unimplemented!("T7 GREEN: realize Fracture::gap")
+    /// Borrow the inherited [`Gap`] — the substrate-pull realisation
+    /// of the `<= gap` inheritance chain.
+    pub fn gap(f: &Fracture) -> &Gap {
+        &f.gap
     }
 
-    pub fn descent(_f: &Fracture) -> f64 {
-        unimplemented!("T7 GREEN: realize Fracture::descent")
+    /// Read this fracture's descent magnitude — how hard the gradient
+    /// pulls toward closing this gap.
+    pub fn descent(f: &Fracture) -> f64 {
+        f.descent
     }
 }
 
 // ---------------------------------------------------------------------------
-// minimize — RED-phase scaffold.
+// minimize — the gradient-descent step on the Dirichlet energy.
 // ---------------------------------------------------------------------------
 
-pub fn minimize(_t: &Tensor) -> Vec<Fracture> {
-    unimplemented!("T7 GREEN: realize minimize")
+/// `minimize(t: tensor) -> [fracture]` — the gradient-descent step.
+///
+/// Per [`docs/specs/gap-tension-tensor-substrate.md`] §6 and §3.2: the
+/// kintsugi loop's mutation-candidate emission. Takes a [`Tensor`]
+/// (the gap-tension field built by [`tensor_of`]); reads each
+/// [`Tension`]'s descent magnitude; ranks tensions steepest-first;
+/// emits each ranked tension's gap pair as a [`Fracture`].
+///
+/// ## Algorithm (audible-altitude floor)
+///
+/// 1. For each [`Tension`] in the tensor, read the
+///    [`TensionVector::magnitude`] as the scalar descent magnitude.
+///    (The full directed tangent-space element lands when §8.1 closes.)
+/// 2. Rank tensions by descent magnitude, **largest first** (steepest
+///    descent per §6 step 1). Stable sort preserves source-order
+///    discipline under ties.
+/// 3. For each ranked tension, emit one [`Fracture`] per gap endpoint
+///    (both `a` and `b` are substrate-marked descent candidates per
+///    §3.2's directed-pull shape). The emission order is
+///    `(t1.a, t1.b, t2.a, t2.b, …)` — tensions by rank, gaps in
+///    `(a, b)` order within each tension.
+/// 4. Return the [`Vec<Fracture>`].
+///
+/// ## Why both endpoints (not just one)
+///
+/// Per [`docs/specs/gap-tension-tensor-substrate.md`] §3.2's `vector`
+/// field shape: "the vector names the direction the tension pulls when
+/// minimized: which gap closes, at what cost to the other." Both gaps
+/// are descent candidates; the kintsugi loop's selection between them
+/// happens at the application altitude (confidence-aware dispatch per
+/// `kintsugi-fracture-confidence-and-scene-dispatch.md`). The
+/// substrate's `minimize` surfaces both; downstream picks.
+///
+/// ## Boundary cases
+///
+/// - **Empty tensor** (no tensions): returns empty [`Vec<Fracture>`].
+///   The substrate's gradient on a trivial sheaf is the additive
+///   identity; nothing to mutate.
+/// - **Singleton vertex** (no tensions): returns empty
+///   [`Vec<Fracture>`]. Same reason — no tensions means no descent
+///   direction at this altitude.
+/// - **Disconnected components**: tensions from each component
+///   contribute fractures independently. The ranking is global by
+///   magnitude (per-component ranking lifts when sheaf restriction
+///   maps land in T8).
+///
+/// Pure; no I/O; allocates per the returned [`Vec`].
+///
+/// [`docs/specs/gap-tension-tensor-substrate.md`]: ../../../../docs/specs/gap-tension-tensor-substrate.md
+/// [`Tension`]: crate::tensor::Tension
+/// [`TensionVector::magnitude`]: crate::tensor::TensionVector::magnitude
+/// [`tensor_of`]: crate::tensor::tensor_of
+pub fn minimize(t: &Tensor) -> Vec<Fracture> {
+    // Phase 1: rank tensions by descent magnitude (steepest first).
+    // Stable sort preserves the substrate's source-order discipline
+    // among ties — matches `gaps_of`'s pre-order emission so
+    // downstream consumers see deterministic fracture sequences.
+    let mut ranked: Vec<&Tension> = Tensor::tensions(t).iter().collect();
+    ranked.sort_by(|x, y| {
+        let mx = TensionVector::magnitude(Tension::vector(x));
+        let my = TensionVector::magnitude(Tension::vector(y));
+        // Reverse: largest magnitude first (steepest descent per §6).
+        my.partial_cmp(&mx).unwrap_or(std::cmp::Ordering::Equal)
+    });
+
+    // Phase 2: emit each ranked tension's gap pair as fractures.
+    // Both endpoints surface per §3.2's directed-pull shape;
+    // confidence-aware dispatch at the application altitude picks.
+    let mut fractures: Vec<Fracture> = Vec::with_capacity(ranked.len() * 2);
+    for tension in ranked {
+        let magnitude = TensionVector::magnitude(Tension::vector(tension));
+        fractures.push(Fracture::new(Tension::a(tension).clone(), magnitude));
+        fractures.push(Fracture::new(Tension::b(tension).clone(), magnitude));
+    }
+    fractures
 }
 
 #[cfg(test)]
@@ -76,7 +263,7 @@ mod tests {
 
     use super::*;
     use crate::gap::Gap;
-    use crate::tensor::{Tensor, Tension, TensionVector, tensor_of};
+    use crate::tensor::{tensor_of, Tension, TensionVector, Tensor};
     use prism_core::Ref;
 
     fn total_origin() -> Ref {
