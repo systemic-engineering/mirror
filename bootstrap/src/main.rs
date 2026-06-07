@@ -10,6 +10,7 @@
 
 mod ast;
 mod crystallize;
+mod curvature;
 mod exec;
 mod gap;
 mod git;
