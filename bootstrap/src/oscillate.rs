@@ -600,53 +600,92 @@ pub fn query_phi(m: &Morphism) -> Verdict {
 /// `dark_bits(r: &Ref) -> [u8; 10]` — substrate-pull realisation of
 /// `@uuid/spectral.dark` at the loop boundary.
 ///
-/// **🔴 [substrate-pull:realize] T12 stub.** Projects a `Ref` into the
-/// 80 DARK bits of its substrate identity per `shards/uuid/spectral.mirror`'s
-/// 48 ACTIVE / 80 DARK golden-ratio split. The realisation:
+/// **🟢 [substrate-pull:realize] T12 GREEN body.** Projects a `Ref`
+/// into the 80 DARK bits of its substrate identity per
+/// `shards/uuid/spectral.mirror`'s 48 ACTIVE / 80 DARK golden-ratio
+/// split. The realisation composes the three substrate primitives:
 ///
 /// 1. BLAKE3-hash the ref's substrate path bytes (the substrate's
-///    canonical content for an `@`-prefixed nav-ref);
+///    canonical content for an `@`-prefixed nav-ref; consonant with
+///    the BLAKE3 discipline at `bootstrap/Cargo.toml` and the
+///    `MerkleHash` default in `prism_core`).
 /// 2. Compose into a [`SpectralUuid`] via [`SpectralUuid::from_parts`]
-///    with active = 0 (the boundary altitude has no quantized
-///    `SpectralCoordinate<5>` per `@uuid/spectral` §11 OQ1);
+///    with `active = 0` (the boundary altitude has no quantized
+///    `SpectralCoordinate<5>` per `@uuid/spectral` §11 OQ1 — the
+///    quantized 48-bit arithmetic is forward-promised; the DARK
+///    projection is independent of the ACTIVE arithmetic and lands
+///    cleanly at active=0).
 /// 3. Project the 80 DARK bits via [`SpectralUuid::dark`].
 ///
 /// The check IS the substrate's identity-preservation discipline at
 /// the loop altitude; two refs whose DARK bits byte-equal name the
-/// same substrate identity (modulo BLAKE3 collisions on 80 bits ~ 2^-80).
+/// same substrate identity (modulo BLAKE3 collisions on 80 bits ~ 2^-80
+/// — vanishingly small at any realisation altitude).
+///
+/// Identity contract: pure function of the ref's substrate path; same
+/// ref → same DARK bits. The realisation rides `SpectralUuid`'s
+/// `from_parts` + `dark` discipline; no new substrate primitive.
 ///
 /// [`SpectralUuid`]: prism_core::SpectralUuid
 /// [`SpectralUuid::from_parts`]: prism_core::SpectralUuid::from_parts
 /// [`SpectralUuid::dark`]: prism_core::SpectralUuid::dark
-pub fn dark_bits(_r: &Ref) -> [u8; 10] {
-    // 🔴 RED stub — always returns the EMPTY shard's DARK bits.
-    // Tests will FAIL because:
-    //   - dark_bits_divergent_refs_are_not_byte_equal expects distinct
-    //     bytes for distinct refs (gets EMPTY for both);
-    //   - dark_bits_on_substrate_ref_is_nonzero expects ≠ EMPTY;
-    //   - dark_bits_matches_spectral_uuid_dark_projection expects the
-    //     real BLAKE3-derived bits.
-    // The GREEN body composes BLAKE3 + SpectralUuid::from_parts +
-    // SpectralUuid::dark.
-    prism_core::SpectralUuid::EMPTY.dark()
+pub fn dark_bits(r: &Ref) -> [u8; 10] {
+    let hash = blake3::hash(r.as_str().as_bytes());
+    prism_core::SpectralUuid::from_parts(0, hash.as_bytes()).dark()
 }
 
 /// `dark_pass(o: oscillation, m: morphism) -> oscillation` — the
 /// identity-anchor action.
 ///
-/// **🔴 [substrate-pull:realize] T12 RED — still the T10.5 stub.**
-/// Per `oscillate.mirror` §dark_pass: the realisation invokes the
-/// 80-DARK-bit byte-equality check via `@uuid/spectral.dark`; branches
-/// on the result; emits the next oscillation with the anchor advanced
-/// (identity preserved) or unchanged (identity fractured → Escalated).
-/// The T12 GREEN body composes [`dark_bits`] for the byte-equality
-/// check; the RED stub below still uses T10.5's verdict-only path,
-/// so the new T12 tests for the identity-fractured branch will FAIL.
+/// **🟢 [substrate-pull:realize] T12 GREEN body.** Per
+/// `oscillate.mirror` §dark_pass and `consent.mirror`
+/// §identity_preserving: the realisation reads the 80 DARK bits of
+/// the morphism's content and the oscillation's anchor via
+/// [`dark_bits`], performs byte-equality, branches on the result:
+///
+/// - **Identity preserved** (DARK bits byte-equal) — the morphism does
+///   not write a new substrate identity; chain through `query_phi →
+///   read_consent` (per T10.5's wiring); emit the next oscillation
+///   with the anchor advanced to `m.content` (per substrate's
+///   §dark_pass: "next oscillation with the new anchor if preserved").
+///   When `m.content == o.anchor` (the substrate's "no-op morphism"
+///   case; the T11 graceful-default surface), the advance is observed
+///   as anchor-unchanged.
+///
+/// - **Identity fractured** (DARK bits diverge) — the morphism would
+///   write a new substrate identity (a different splinter set hashes
+///   to a different uuid_spectral); the rug's pull would tear the
+///   substrate. Emit the next oscillation with `state = Escalated`,
+///   iteration advanced, anchor UNCHANGED (per substrate's §dark_pass:
+///   "same anchor if violated; oscillation transitions to escalated").
+///   The pause_event is forward-promised to `consent.emit_to_metalogue`
+///   when the metalogue bridge lands.
+///
+/// Per the substrate's void duality: ACTIVE pulls (T11's
+/// loss-decreasing pass) one corner of the rug; DARK pulls (T12's
+/// identity-preservation check) the antipodal corner. Together they
+/// realise the rough-wavy pull discipline at the Rust altitude; the
+/// substrate either straightens (Settled) or surfaces a wrinkle the
+/// consent surface must resolve (Escalated) or pauses mid-pull
+/// awaiting more substrate (Waiting).
 pub fn dark_pass(o: &Oscillation, m: &Morphism) -> Oscillation {
-    let verdict = query_phi(m);
-    let kind = crate::gap::verdict_to_cadence_kind(&verdict);
-    let next_state = read_consent(&verdict, kind);
-    Oscillation::new(next_state, o.iteration().advance(), o.anchor().clone())
+    let anchor_dark = dark_bits(o.anchor());
+    let proposed_dark = dark_bits(m.content());
+    if anchor_dark == proposed_dark {
+        // Identity preserved: chain T10.5's verdict-shape composition;
+        // anchor advances to m.content (per substrate's §dark_pass).
+        let verdict = query_phi(m);
+        let kind = crate::gap::verdict_to_cadence_kind(&verdict);
+        let next_state = read_consent(&verdict, kind);
+        Oscillation::new(next_state, o.iteration().advance(), m.content().clone())
+    } else {
+        // Identity fractured: emit Escalated; anchor unchanged.
+        Oscillation::new(
+            OscillationState::Escalated,
+            o.iteration().advance(),
+            o.anchor().clone(),
+        )
+    }
 }
 
 /// `read_consent(v: verdict, k: cadence_kind) -> oscillation_state` —
