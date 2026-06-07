@@ -3008,4 +3008,167 @@ mod tests {
             "identity-preserved + authentic fixture still settles after T14 migration",
         );
     }
+
+    // ================================================================
+    // T15 [substrate-pull:realize] — query_phi consumes
+    // morphism_context_set.
+    //
+    // Per `shards/mirror/spectral/morphism.mirror`:
+    //   type morphism_context = { pre_anchor: ref, candidate: morphism }
+    //   type morphism_context_set = [morphism_context]
+    //   paired(pre: ref, m: morphism) -> morphism_context
+    //
+    // T15 lifts query_phi's Rust signature from
+    //   query_phi(candidates: &MorphismSet, anchor: &Ref) -> Verdict
+    // to
+    //   query_phi(contexts: &MorphismContextSet) -> Verdict
+    // and removes identity_preserving's sibling anchor parameter; each
+    // context carries its own pre_anchor. The realisation-layer
+    // plumbing disappears; the substrate carrier owns the data.
+    // ================================================================
+
+    /// `paired(pre, m)` constructs a `MorphismContext` carrying the
+    /// pre-anchor ref and the candidate morphism as named substrate
+    /// data — no opaque tuple-of-refs at the boundary.
+    #[test]
+    fn paired_constructs_morphism_context() {
+        let anchor = fixture_anchor();
+        let m = Morphism::new(
+            anchor.clone(),
+            Dissonance::new(0.0, 1),
+            CadenceKind::Authentic,
+        );
+        let ctx = paired(anchor.clone(), m.clone());
+        assert_eq!(ctx.pre_anchor(), &anchor);
+        assert_eq!(ctx.candidate(), &m);
+    }
+
+    /// `MorphismContextSet::singleton` lifts a single context into the
+    /// family-altitude carrier — the per-pulse common case.
+    #[test]
+    fn morphism_context_set_singleton_has_cardinality_one() {
+        let anchor = fixture_anchor();
+        let m = Morphism::new(
+            anchor.clone(),
+            Dissonance::new(0.0, 1),
+            CadenceKind::Authentic,
+        );
+        let set = MorphismContextSet::singleton(paired(anchor, m));
+        assert_eq!(set.len(), 1);
+        assert!(!set.is_empty());
+    }
+
+    /// `query_phi` on the empty context set escalates — the
+    /// substrate's floor case: no admissible morphism for the consent
+    /// surface.
+    #[test]
+    fn query_phi_lifted_empty_context_set_is_failure() {
+        let set = MorphismContextSet::new(vec![]);
+        let v = query_phi(&set);
+        assert!(
+            matches!(v, Imperfect::Failure(_, _)),
+            "empty morphism_context_set must escalate; got {v:?}",
+        );
+    }
+
+    /// `query_phi` on a single context with a consonant +
+    /// identity-preserved + authentic morphism reads as `Success(())`
+    /// — the canonical auto-apply path now reads `pre_anchor` from the
+    /// context, not from a sibling parameter.
+    #[test]
+    fn query_phi_lifted_singleton_consonant_identity_preserved_is_success() {
+        let anchor = fixture_anchor();
+        let m = Morphism::new(
+            anchor.clone(),
+            Dissonance::new(0.0, 1),
+            CadenceKind::Authentic,
+        );
+        let set = MorphismContextSet::singleton(paired(anchor, m));
+        let v = query_phi(&set);
+        assert!(
+            matches!(v, Imperfect::Success(())),
+            "all gates + authentic cadence pass on the lifted signature; got {v:?}",
+        );
+    }
+
+    /// `query_phi` on a single context with a DARK-divergent morphism
+    /// reads as `Failure` — identity_preserving fires reading
+    /// `m.pre_anchor` directly from the context.
+    #[test]
+    fn query_phi_lifted_singleton_dark_divergent_is_failure() {
+        let anchor = Ref::new("@mirror/spectral/oscillate/anchor-pre").expect("valid");
+        let divergent = Ref::new("@mirror/spectral/oscillate/anchor-post").expect("valid");
+        let m = Morphism::new(divergent, Dissonance::new(0.0, 1), CadenceKind::Authentic);
+        let set = MorphismContextSet::singleton(paired(anchor, m));
+        let v = query_phi(&set);
+        assert!(
+            matches!(v, Imperfect::Failure(_, _)),
+            "DARK-divergent context must fire identity_preserving; got {v:?}",
+        );
+    }
+
+    /// **Plagal+partial reachability through the lifted signature.**
+    /// Ported from `query_phi_plagal_partial_path_reachable_through_read_consent`
+    /// — the load-bearing T14 test: a consonant + identity-preserved +
+    /// singleton + Plagal-expected morphism still emits Partial; the
+    /// partial verdict still maps through `verdict_to_cadence_kind` to
+    /// Plagal; the lifted `read_consent` still routes to Active.
+    #[test]
+    fn query_phi_lifted_plagal_partial_path_reachable_through_read_consent() {
+        let anchor = fixture_anchor();
+        let m = Morphism::new(anchor.clone(), Dissonance::new(0.0, 1), CadenceKind::Plagal);
+        let set = MorphismContextSet::singleton(paired(anchor, m));
+        let v = query_phi(&set);
+        assert!(
+            matches!(v, Imperfect::Partial((), _)),
+            "plagal + gates-pass must be Partial on the lifted signature; got {v:?}",
+        );
+        let k = crate::gap::verdict_to_cadence_kind(&v);
+        assert_eq!(
+            k,
+            CadenceKind::Plagal,
+            "partial verdict must project to Plagal cadence_kind",
+        );
+        let next = read_consent(&v, k);
+        assert_eq!(
+            next,
+            OscillationState::Active,
+            "the substrate's partial+plagal -> active path stays reachable",
+        );
+    }
+
+    /// `identity_preserving` reads `pre_anchor` from the context — no
+    /// sibling parameter. The realisation-layer plumbing dissolves.
+    #[test]
+    fn identity_preserving_lifted_reads_pre_anchor_from_context() {
+        let anchor = fixture_anchor();
+        let m = Morphism::new(
+            anchor.clone(),
+            Dissonance::new(0.0, 1),
+            CadenceKind::Authentic,
+        );
+        let ctx = paired(anchor, m);
+        let v = identity_preserving(&ctx);
+        assert!(
+            matches!(v, Imperfect::Success(())),
+            "identity_preserving on equal pre/post must Success; got {v:?}",
+        );
+    }
+
+    /// `dark_pass` integration: synthesises a `MorphismContext` from
+    /// the oscillation's anchor + the candidate morphism and threads
+    /// the singleton context set through query_phi. The T14 invariant
+    /// stays: authentic + identity-preserved -> Settled.
+    #[test]
+    fn dark_pass_through_lifted_morphism_context_query_phi_settles_on_authentic_fixture() {
+        let r = fixture_anchor();
+        let o = Oscillation::initial(r.clone());
+        let m = Morphism::new(r.clone(), Dissonance::new(0.0, 1), CadenceKind::Authentic);
+        let next = dark_pass(&o, &m);
+        assert_eq!(
+            next.state(),
+            OscillationState::Settled,
+            "dark_pass must thread the lifted MorphismContext signature through query_phi",
+        );
+    }
 }
