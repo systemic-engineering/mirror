@@ -1,0 +1,291 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/math/bundle
+
+# @epistemologic/math/sheaf_laplacian — the discrete realisation of the
+# (A, H, D) triple's Dirac square at the eigenboard altitude.
+#
+# === The recognition ===
+#
+# `spectral-triple.mirror` declares `type dirac_op` (D, the self-adjoint
+# operator with compact resolvent) and `action eigen_d(op: dirac_op) ->
+# spectrum`. It also names "the matrix form is @hash/coincidence's 5×5
+# conductivity tensor." `bundle.mirror` declares `type optic` (the
+# connection — what's IS-equivalent to a sheaf's restriction map in a
+# chosen gauge) and the cycle-averaged-holonomy reading of κ.
+#
+# This shard names the discrete realisation that those declarations
+# already imply:
+#
+#   - A `restriction` is a connection 1-form's value on one edge — the
+#     parallel-transport operator the substrate calls an `optic` in
+#     `bundle.mirror`. At the eigenboard altitude (cellular sheaf over
+#     a finite graph) the restriction IS the matrix block.
+#   - An `operator` is the assembled sheaf Laplacian Δ_F = δ*δ, the
+#     discrete realisation of D² per `spectral-triple.mirror`'s
+#     `dirac_op`. For an O(d)-bundle over a graph the sheaf Laplacian
+#     IS the connection Laplacian (Barbero et al. 2022,
+#     arXiv:2206.08702).
+#   - An `eigenvalue` is one root of D's characteristic polynomial —
+#     element of the `spectrum` `spectral-triple` already names. λ₀
+#     (the smallest non-trivial) is the Fiedler value / algebraic
+#     connectivity / spectral gap; the substrate's quantitative
+#     verdict on connectivity per Bodnar et al. 2022 §2.
+#
+# The 18th-instance pattern: each "missing concept" the substrate
+# surfaces turns out to be a name the substrate was already implicitly
+# using. `operator` is the matrix shape of `dirac_op`; `restriction` is
+# the in-a-gauge form of `optic`; `eigenvalue` is one element of
+# `spectrum`. This shard names the discrete realisation; the abstract
+# triple lives one altitude up.
+#
+# === Why this lives at math/, not at fate/ ===
+#
+# `@fate` is the tournament / inference altitude. The sheaf Laplacian
+# is mathematical mechanism — it lives where the bundle, the
+# spectral triple, and the principal-G structure already live.
+# `@fate.minimize` (per `gap-tension-tensor-substrate.md` §3.2) CONSUMES
+# `lambda_zero` to read the algebraic connectivity of a tension graph;
+# the consumer altitude differs from the math altitude. This shard is
+# the math; `@fate.minimize` is its first consumer.
+#
+# === Bridge actions ===
+#
+# Two load-bearing actions:
+#
+#   sheaf_laplacian([restriction]) -> operator
+#     The δ*δ assembly per Bodnar et al. 2022 §2's exact construction:
+#     diagonal blocks L_{F vv} = Σ_{v ⊴ e} F_{v ⊴ e}^⊤ F_{v ⊴ e};
+#     off-diagonal blocks L_{F vu} = − F_{v ⊴ e}^⊤ F_{u ⊴ e}.
+#     The discrete realisation of `spectral-triple.mirror`'s `compose_a`
+#     specialised to the connection-squared composition.
+#
+#   lambda_zero(op: operator) -> eigenvalue
+#     The smallest non-trivial eigenvalue. The discrete realisation of
+#     `spectral-triple.mirror`'s `eigen_d` reduced to its load-bearing
+#     scalar (the spectral gap). When the bundle is connected this is
+#     the Fiedler value / algebraic connectivity; when disconnected
+#     λ₀ = 0 with multiplicity equal to the component count.
+#
+# === Floor types: substrate-pull discipline ===
+#
+# Per `boot/std/number.mirror` and the audible-altitude floor in
+# `shards/epistemologic/math/music/harmonic.mirror`, `ref` is the
+# substrate's float-valued reference floor. An eigenvalue carries a
+# `ref` because the spectral computation is realisation-layer; the
+# substrate names the obligation, the FFI body discharges it.
+#
+# Per `bundle.mirror`'s `type optic` (the connection): the restriction
+# IS a matrix block. The substrate names the connection 1-form's
+# concrete realisation as `optic`; this shard names its in-a-gauge
+# matrix form as `restriction`. Adjacency at the eigenboard altitude
+# is integer-indexed; the index type is `u32` (matches `harmonic`'s
+# `numerator: u32` precedent for small-integer cardinals).
+#
+# === Cellular-sheaf cardinal ===
+#
+# A `restriction` carries:
+#   source — the source vertex index in the base graph.
+#   target — the target vertex index in the base graph.
+#   weight — the magnitude of the parallel-transport operator on the
+#            edge (source, target). The audible-altitude floor reading
+#            of the connection 1-form's strength on that edge; the full
+#            matrix-block element lifts when the conductivity tensor's
+#            in-a-gauge realisation pulls.
+#
+# This is Option-A-degraded-to-scalar in the same shape T6's
+# `tension_vector` carries (per `gap-tension-tensor-substrate.md` §8.1).
+# The minimum that makes the discrete sheaf-Laplacian construction
+# non-trivial when restriction weights vary across edges; sufficient
+# for `@fate.minimize`'s ranking to become meaningful.
+#
+# === Pre-AI prior art ===
+#
+# Every type and action below names an established object older than
+# the discipline of computer science:
+#
+#   restriction       Leray (~1950), Godement (1958).
+#   operator          Hilbert (1906), von Neumann (1932).
+#   eigenvalue        Cauchy (1829), Jacobi (1846).
+#   sheaf_laplacian   Hansen & Ghrist 2019, arXiv:1808.01513
+#                     (extends graph-Laplacian to cellular sheaves;
+#                     itself a direct descendant of Hodge 1941).
+#   lambda_zero       Fiedler 1973 (`Algebraic Connectivity of Graphs`);
+#                     algebraic connectivity / spectral gap.
+#
+# The substrate's contribution is *typing* these so the eigenboard's
+# numerical realisation has a substrate-altitude home. No invention.
+#
+# Spec context: docs/specs/gap-tension-tensor-substrate.md §3.2
+#               (`tensor.fiedler`); docs/specs/eigenboard-representation.md
+#               §"Mapping to existing references" (the 5×5 conductivity
+#               tensor IS the connection matrix);
+#               docs/specs/numerical-substrate-via-fortran.md §8.2 (the
+#               LAPACK `dsyev` wrapper that discharges `lambda_zero`'s
+#               obligation block).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]],
+#                      [[architecture-flang-mirror-numerical-split]],
+#                      [[feedback-no-bare-types]] (restriction, operator,
+#                      and eigenvalue are each their own newtype),
+#                      [[feedback-substrate-already-had-the-word]] (the
+#                      18th-instance recognition: dirac_op, spectrum, and
+#                      optic already named this).
+# Related shards: boot/std/epistemologic/math/spectral-triple.mirror
+#                 (the abstract (A, H, D) triple this shard's discrete
+#                 realisation lives one altitude beneath),
+#                 boot/std/epistemologic/math/bundle.mirror (the
+#                 principal-G tower whose connection-squared IS this
+#                 shard's operator),
+#                 shards/epistemologic/math/music/harmonic.mirror
+#                 (the audible-register sibling under @epistemologic/math),
+#                 glass.mirror (verdict; ref; the substrate floor),
+#                 boot/std/number.mirror (u32 kernel primitive).
+# Path-namespace property: this file at
+# `shards/epistemologic/math/sheaf_laplacian.mirror` declares
+# `@epistemologic/math/sheaf_laplacian` per the
+# `@epistemologic/property/path_matches_namespace` rule.
+
+prism @epistemologic/math/sheaf_laplacian {
+  focus sheaf_laplacian
+  project sheaf_laplacian
+  split sheaf_laplacian
+  shift sheaf_laplacian
+  settle sheaf_laplacian
+}
+
+# === The restriction carrier ===
+#
+# One edge of a cellular sheaf in a chosen gauge. The matrix block
+# of the connection 1-form on that edge.
+#
+# `source` and `target` are u32 indices into the base graph's vertex
+# set. `weight` carries the magnitude of the parallel-transport
+# operator on that edge — the audible-altitude floor for the full
+# in-a-gauge matrix block per `bundle.mirror`'s `type optic`.
+#
+# Identity contract: two restrictions are equal iff their (source,
+# target, weight) triples are byte-equal. The realisation layer
+# enforces this; the substrate names it.
+#
+# Audible register: a restriction is one voice-leading step between
+# two adjacent fibers. The weight is the magnitude of the step; the
+# direction (source → target) is the leading.
+type restriction = {
+  source: u32,
+  target: u32,
+  weight: ref,
+}
+
+# === The operator carrier ===
+#
+# The assembled sheaf Laplacian Δ_F = δ*δ. The discrete realisation
+# of `spectral-triple.mirror`'s `type dirac_op` per Barbero et al.
+# 2022 (arXiv:2206.08702): for an O(d)-bundle over a graph the sheaf
+# Laplacian IS the connection Laplacian.
+#
+# `dimension` is the number of vertices in the base graph (= the
+# operator's row/column count for the d=1 case; for higher fiber
+# dimension d the operator is n*d × n*d). The substrate-altitude
+# carrier names dimension; the in-a-gauge matrix block lives at the
+# realisation layer.
+#
+# `entries` carries the operator's content-addressed representation:
+# the source restrictions plus the assembly recipe. The realisation
+# layer materialises the dense matrix from this representation when
+# `lambda_zero` (or any future eigenmode reader) pulls.
+#
+# Identity contract: two operators are equal iff their (dimension,
+# entries) carriers are byte-equal. The substrate names the obligation.
+type operator = {
+  dimension: u32,
+  entries:   [restriction],
+}
+
+# === The eigenvalue carrier ===
+#
+# One root of the operator's characteristic polynomial. Element of
+# `spectral-triple.mirror`'s `type spectrum` reduced to its scalar.
+#
+# `value` carries the eigenvalue as a `ref` (the substrate's
+# float-valued floor; matches `harmonic.cents`'s precedent for the
+# realisation-layer numerical body).
+#
+# `multiplicity` carries how many independent eigenvectors share this
+# value — load-bearing for the connectivity reading: for the sheaf
+# Laplacian on a graph with k connected components, λ₀ = 0 with
+# multiplicity k (Fiedler 1973; Bodnar et al. 2022 §2).
+#
+# Identity contract: byte-equality on (value, multiplicity).
+type eigenvalue = {
+  value:        ref,
+  multiplicity: u32,
+}
+
+# === sheaf_laplacian — the δ*δ assembly ===
+#
+# Builds the sheaf Laplacian Δ_F from a vector of restrictions per
+# Bodnar et al. 2022 §2's exact construction:
+#
+#   L_{F vv} = Σ_{v ⊴ e} F_{v ⊴ e}^⊤ F_{v ⊴ e}    (diagonal blocks)
+#   L_{F vu} = − F_{v ⊴ e}^⊤ F_{u ⊴ e}            (off-diagonal blocks)
+#
+# The discrete realisation of `spectral-triple.mirror`'s `compose_a`
+# specialised to the connection-squared composition.
+#
+# At the d=1 case (scalar fibers) the construction reduces to the
+# weighted graph Laplacian L = D - W where D is the diagonal degree
+# matrix and W carries the edge weights. The normalised form Δ_F =
+# D^{-1/2} L D^{-1/2} is what `tensor.fiedler` reads at the
+# audible-altitude floor (per `gap-tension-tensor-substrate.md` §3.2).
+#
+# Pure; no I/O; the assembly is deterministic per IEEE-754 floating-
+# point semantics on the platform.
+#
+# Spectrally: this IS the action that takes one element of A (the
+# algebra of connections, restricted to per-edge blocks) and returns
+# one element of D² (the operator's matrix form). The substrate
+# names the obligation; the realisation layer (the LAPACK FFI in
+# the bootstrap's `prism_core::ffi` per
+# `docs/specs/numerical-substrate-via-fortran.md`) discharges it.
+sheaf_laplacian(restrictions: [restriction]) -> operator { \ }
+
+# === lambda_zero — the smallest non-trivial eigenvalue ===
+#
+# Returns the operator's algebraic connectivity / Fiedler value /
+# spectral gap (three names; one geometric fact per
+# `docs/specs/eigenboard-representation.md`'s "Mapping" section).
+#
+# The discrete realisation of `spectral-triple.mirror`'s `eigen_d`
+# reduced to its load-bearing scalar:
+#
+#   - On a connected graph (single component): λ₀ is the smallest
+#     strictly positive eigenvalue; the kernel of Δ_F is one-
+#     dimensional per Fiedler 1973.
+#   - On a disconnected graph (k components): λ₀ = 0 with
+#     multiplicity k per Bodnar et al. 2022 §2; the eigenvalue
+#     carrier's `multiplicity` field records this.
+#   - On the trivial graph (n=0 or n=1): λ₀ = 0 with multiplicity
+#     n (the additive identity on the zero-dimensional or singleton
+#     section space).
+#
+# Audibly: λ₀ IS the lowest fundamental frequency the substrate
+# tends toward when kintsugi reduces holonomy. The unison (λ₀ = 0)
+# IS Lawvere's autopoietic closure — the loop closes on itself; the
+# substrate has settled.
+#
+# `@fate.minimize` (per `gap-tension-tensor-substrate.md` §3.2) reads
+# `lambda_zero` on the tension graph to rank tensions by curvature;
+# the SDRF curvature ranking (Topping et al. 2022, arXiv:2111.14522)
+# becomes meaningful when restrictions carry non-uniform weights.
+lambda_zero(op: operator) -> eigenvalue { \ }
+
+out @epistemologic/math/sheaf_laplacian
+out restriction
+out operator
+out eigenvalue
+out sheaf_laplacian
+out lambda_zero
