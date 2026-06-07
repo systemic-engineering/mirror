@@ -18,6 +18,7 @@ mod hash;
 mod music;
 mod oscillate;
 mod pipeline;
+mod property;
 mod spectral;
 mod tokenize;
 
