@@ -37,20 +37,41 @@
 //! `pulse` / `active_pass` / `dark_pass` driver lands, it composes
 //! `minimize`'s output with `gaps_of` / `tensor_of` in this module.
 //!
-//! ## Why scalar-magnitude ranking (not SDRF curvature)
+//! ## SDRF curvature ranking (Topping 2022)
 //!
-//! T7 lands the **minimal first version**: rank tensions by
-//! [`TensionVector::magnitude`] (steepest descent first); emit each
-//! ranked tension's gap pair as a fracture. SDRF curvature ranking
-//! (Topping et al. 2022, arXiv:2111.14522, Algorithm 1) requires the
-//! Balanced Forman curvature on the tension graph, which in turn
-//! requires the proper sheaf-Laplacian numerical primitive landing at
-//! T8 (flang/mirror split). Today's tensor carries identity
-//! restriction maps and uniform unit magnitudes; SDRF on this
-//! structure would degenerate to vertex-degree counting — strictly
-//! less informative than the magnitude reading the
-//! [`TensionVector`] already carries. SDRF lifts when the conductivity
-//! tensor declares its read at the boundary.
+//! T9 supersedes T7's scalar-magnitude ranking with **Balanced Forman
+//! curvature** ranking per Topping et al. 2022 (arXiv:2111.14522)
+//! Algorithm 1. The MUS-graph underlying [`Tensor`]'s tension set is
+//! treated as the substrate's `operator` (per
+//! [`shards/epistemologic/math/sheaf_laplacian.mirror`]'s declaration);
+//! [`crate::curvature::balanced_forman`] reads the per-edge Balanced
+//! Forman curvature `Ric(i, j)` (per
+//! [`shards/epistemologic/math/curvature.mirror`]'s declaration);
+//! `minimize` ranks tensions by **most-negative curvature first** —
+//! the bottleneck-y edges SDRF Algorithm 1's outer selection step
+//! identifies as the rewrite targets.
+//!
+//! ### `Fracture.descent` semantics
+//!
+//! `Fracture.descent` carries the SDRF-derived "how hard the substrate
+//! pulls toward closing this fracture" reading:
+//!
+//! ```text
+//! descent = ((−Ric + 2.0) / 4.0).clamp(0, 1)
+//! ```
+//!
+//! Mapping (Topping 2022 §4 Proposition 4 bounds `Ric > −2` on every
+//! edge):
+//!
+//! - `Ric = −2` (deep bottleneck)        → `descent = 1.0` (max pull)
+//! - `Ric = 0`  (neutral)                 → `descent = 0.5`
+//! - `Ric = +2` (well-connected K_n edge) → `descent = 0.0` (no pull)
+//!
+//! Monotone in `−Ric`: ranking by `descent` (largest first) is
+//! identical to ranking by `Ric` (smallest first / most negative
+//! first). The descent field surfaces the SDRF signal in a unit-
+//! interval shape; the raw curvature is readable on the operator via
+//! [`crate::curvature::balanced_forman`].
 //!
 //! ## What this is for
 //!
@@ -74,7 +95,9 @@
 //! [`TensionVector::magnitude`]: crate::tensor::TensionVector::magnitude
 #![allow(dead_code)]
 
+use crate::curvature::{balanced_forman, Curvature};
 use crate::gap::Gap;
+use crate::sheaf_laplacian::{Operator, Restriction};
 use crate::tensor::{Tension, TensionVector, Tensor};
 
 // ---------------------------------------------------------------------------
@@ -109,8 +132,9 @@ use crate::tensor::{Tension, TensionVector, Tensor};
 ///   altitude).
 /// - [`descent`](Fracture::descent) — the magnitude of the
 ///   gradient-descent step the substrate would take to close this
-///   fracture. Scalar in `[0, 1]`; inherited from the emitting
-///   [`Tension`]'s [`TensionVector::magnitude`]. The full directed
+///   fracture. Scalar in `[0, 1]`; SDRF-derived from the emitting
+///   tension edge's Balanced Forman curvature per
+///   `descent = ((−Ric + 2.0) / 4.0).clamp(0, 1)`. The full directed
 ///   tangent-space element lands when §8.1 closes.
 ///
 /// ## Inheritance pattern
@@ -134,13 +158,10 @@ pub struct Fracture {
     /// origin, and the audible-altitude tension summary.
     gap: Gap,
     /// The magnitude of the gradient-descent step the substrate would
-    /// take to close this fracture. Inherited from the emitting
-    /// [`Tension`]'s [`TensionVector::magnitude`] per
-    /// [`docs/specs/gap-tension-tensor-substrate.md`] §6's
-    /// rank-by-magnitude step. In `[0, 1]`.
-    ///
-    /// [`Tension`]: crate::tensor::Tension
-    /// [`TensionVector::magnitude`]: crate::tensor::TensionVector::magnitude
+    /// take to close this fracture. SDRF-derived from the emitting
+    /// tension edge's Balanced Forman curvature per Topping et al.
+    /// 2022 (arXiv:2111.14522) §4 Algorithm 1:
+    /// `descent = ((−Ric + 2.0) / 4.0).clamp(0, 1)`. In `[0, 1]`.
     descent: f64,
 }
 
@@ -181,20 +202,26 @@ impl Fracture {
 /// [`Tension`]'s descent magnitude; ranks tensions steepest-first;
 /// emits each ranked tension's gap pair as a [`Fracture`].
 ///
-/// ## Algorithm (audible-altitude floor)
+/// ## Algorithm (SDRF curvature ranking per Topping 2022 Algorithm 1)
 ///
-/// 1. For each [`Tension`] in the tensor, read the
-///    [`TensionVector::magnitude`] as the scalar descent magnitude.
-///    (The full directed tangent-space element lands when §8.1 closes.)
-/// 2. Rank tensions by descent magnitude, **largest first** (steepest
-///    descent per §6 step 1). Stable sort preserves source-order
-///    discipline under ties.
-/// 3. For each ranked tension, emit one [`Fracture`] per gap endpoint
+/// 1. Reconstruct the MUS-graph as an [`Operator`] from the tensor's
+///    vertex basis and tensions (re-indexing each [`Tension`]'s
+///    cloned `a` / `b` gaps against the vertex order yields a
+///    [`Restriction`] per tension).
+/// 2. For each tension, read the per-edge Balanced Forman curvature
+///    `Ric(i, j)` via [`balanced_forman`] on the constructed operator
+///    — Topping et al. 2022 §4 Definition 1 equation (3).
+/// 3. Rank tensions by **most-negative curvature first** (SDRF
+///    Algorithm 1's outer selection: the edge with minimal
+///    `Ric(i, j)` is the rewrite target). Stable sort preserves
+///    source-order discipline under ties.
+/// 4. For each ranked tension, emit one [`Fracture`] per gap endpoint
 ///    (both `a` and `b` are substrate-marked descent candidates per
-///    §3.2's directed-pull shape). The emission order is
-///    `(t1.a, t1.b, t2.a, t2.b, …)` — tensions by rank, gaps in
-///    `(a, b)` order within each tension.
-/// 4. Return the [`Vec<Fracture>`].
+///    §3.2's directed-pull shape). `Fracture.descent` carries the
+///    SDRF-derived `((−Ric + 2.0) / 4.0).clamp(0, 1)` reading so the
+///    descent field surfaces the curvature signal in a unit-interval
+///    shape. Emission order is `(t1.a, t1.b, t2.a, t2.b, …)`.
+/// 5. Return the [`Vec<Fracture>`].
 ///
 /// ## Why both endpoints (not just one)
 ///
@@ -226,40 +253,51 @@ impl Fracture {
 /// [`TensionVector::magnitude`]: crate::tensor::TensionVector::magnitude
 /// [`tensor_of`]: crate::tensor::tensor_of
 pub fn minimize(t: &Tensor) -> Vec<Fracture> {
-    // Phase 1: rank tensions by descent magnitude (steepest first).
-    // Stable sort preserves the substrate's source-order discipline
-    // among ties — matches `gaps_of`'s pre-order emission so
-    // downstream consumers see deterministic fracture sequences.
-    let mut ranked: Vec<&Tension> = Tensor::tensions(t).iter().collect();
-    ranked.sort_by(|x, y| {
-        let mx = TensionVector::magnitude(Tension::vector(x));
-        let my = TensionVector::magnitude(Tension::vector(y));
-        // Reverse: largest magnitude first (steepest descent per §6).
-        my.partial_cmp(&mx).unwrap_or(std::cmp::Ordering::Equal)
-    });
+    // RED phase: stub body. The GREEN commit lands the SDRF curvature
+    // ranking that consumes balanced_forman per tension and ranks by
+    // most-negative curvature first per Topping 2022 Algorithm 1.
+    let _ = (t, balanced_forman, Curvature::value, Operator::new, Restriction::new, TensionVector::magnitude, Tension::a, Tension::b, Tension::vector, Tensor::vertices, Tensor::tensions);
+    unimplemented!("T9 RED: SDRF curvature-ranked minimize lands in the GREEN commit")
+}
 
-    // Phase 2: emit each ranked tension's gap pair as fractures.
-    // Both endpoints surface per §3.2's directed-pull shape;
-    // confidence-aware dispatch at the application altitude picks.
-    let mut fractures: Vec<Fracture> = Vec::with_capacity(ranked.len() * 2);
-    for tension in ranked {
-        let magnitude = TensionVector::magnitude(Tension::vector(tension));
-        fractures.push(Fracture::new(Tension::a(tension).clone(), magnitude));
-        fractures.push(Fracture::new(Tension::b(tension).clone(), magnitude));
-    }
-    fractures
+/// Map a Balanced Forman curvature value to a `[0, 1]` descent reading
+/// per the SDRF semantics in [`minimize`]: monotone in `−Ric`, so
+/// largest descent corresponds to most negative curvature.
+///
+/// ```text
+/// descent = ((−Ric + 2.0) / 4.0).clamp(0, 1)
+/// ```
+///
+/// `Ric = −2` (Topping 2022 §4 Proposition 4 lower bound) → `1.0`;
+/// `Ric = 0` (neutral) → `0.5`; `Ric = +2` (K_n edge) → `0.0`.
+/// Curvature at or above `+2` saturates to `0.0`; the bound `Ric > −2`
+/// keeps the unsaturated upper tail away from `1.0` for realisable
+/// edges, leaving headroom that distinguishes deeper-bottleneck cases
+/// the substrate might encounter in the future.
+fn descent_from_curvature(_ric: f64) -> f64 {
+    // RED phase: stub. The GREEN commit lands the
+    // ((-Ric + 2.0) / 4.0).clamp(0, 1) mapping.
+    unimplemented!("T9 RED: descent_from_curvature lands in the GREEN commit")
 }
 
 #[cfg(test)]
 mod tests {
-    //! The executable spec for [`minimize`] and [`Fracture`] — T7's
-    //! `minimize` body. The kintsugi loop's gradient-descent step.
+    //! The executable spec for [`minimize`] and [`Fracture`].
     //!
     //! Per `docs/specs/gap-tension-tensor-substrate.md` §6 and §3.2:
-    //! `minimize` takes a tensor, ranks tensions by descent magnitude,
-    //! and emits the substrate's mutation candidates as
-    //! `fracture <= gap` values. These tests RED first; the body lands
-    //! GREEN in the next commit.
+    //! `minimize` takes a tensor and emits the substrate's mutation
+    //! candidates as `fracture <= gap` values. T9 supersedes T7's scalar-
+    //! magnitude ranking with SDRF Balanced Forman curvature ranking
+    //! (Topping et al. 2022, arXiv:2111.14522 §4 Algorithm 1): most-
+    //! negative curvature first. `Fracture.descent` carries the SDRF-
+    //! derived `((−Ric + 2.0) / 4.0).clamp(0, 1)` reading.
+    //!
+    //! Canonical descent values for common-fixture edges:
+    //!
+    //! - K₂ (one tension, d=1 each)        → Ric = 0,    descent = 0.5
+    //! - K₃ (three tensions, d=2 + triangle) → Ric = 2,   descent = 0.0
+    //! - K₄ (six tensions, d=3 + triangles)  → Ric = 2,   descent = 0.0
+    //! - Barbell bridge (d=3, no triangle)   → Ric = -2/3, descent ≈ 0.667
 
     use super::*;
     use crate::gap::Gap;
@@ -361,7 +399,9 @@ mod tests {
 
     /// K₂ tensor (two same-origin gaps; one tension) → two fractures
     /// (one per endpoint). Both endpoints are substrate-marked descent
-    /// candidates per §3.2's directed-pull shape.
+    /// candidates per §3.2's directed-pull shape. SDRF: K₂ edge has
+    /// min degree 1 → Ric = 0 (Topping 2022 Definition 1 degenerate)
+    /// → descent = ((-0 + 2.0) / 4.0) = 0.5.
     #[test]
     fn k2_tensor_yields_one_fracture_per_endpoint() {
         let g1 = Gap::new(0, total_origin(), "dark [0, 5)");
@@ -374,17 +414,24 @@ mod tests {
             "K₂ tension yields one fracture per endpoint",
         );
         // Both endpoints are marked as descent candidates; both
-        // fractures carry the tension's audible-altitude magnitude.
+        // fractures carry the SDRF-derived descent.
         assert_eq!(Fracture::gap(&fractures[0]), &g1);
         assert_eq!(Fracture::gap(&fractures[1]), &g2);
-        // Audible-altitude floor: uniform magnitude 1.0 per
-        // tensor_of's construction.
-        assert!((Fracture::descent(&fractures[0]) - 1.0).abs() < 1e-12);
-        assert!((Fracture::descent(&fractures[1]) - 1.0).abs() < 1e-12);
+        // SDRF: K₂ edge degenerate (min degree 1) → Ric = 0 →
+        // descent = 0.5 (neutral curvature reading).
+        assert!(
+            (Fracture::descent(&fractures[0]) - 0.5).abs() < 1e-9,
+            "K₂ fracture descent must be 0.5 (Ric=0 → neutral); got {}",
+            Fracture::descent(&fractures[0]),
+        );
+        assert!((Fracture::descent(&fractures[1]) - 0.5).abs() < 1e-9);
     }
 
     /// K₃ tensor (three same-origin gaps; three tensions) → six
-    /// fractures (two endpoint candidates per tension).
+    /// fractures (two endpoint candidates per tension). SDRF: K₃ edge
+    /// has d=2, one triangle → Ric = 2 → descent = 0 (well-connected,
+    /// no SDRF pull). All three tensions tied at Ric=2; source order
+    /// preserved.
     #[test]
     fn k3_tensor_yields_six_fractures() {
         let g1 = Gap::new(0, total_origin(), "dark [0, 5)");
@@ -397,59 +444,32 @@ mod tests {
             6,
             "K₃ has three tensions; each yields two endpoint fractures; total 6",
         );
+        // K₃ well-connected → descent = 0 (no pull on any edge).
+        for f in &fractures {
+            assert!(
+                Fracture::descent(f) < 1e-9,
+                "K₃ fracture descent must be 0 (Ric=2, well-connected); got {}",
+                Fracture::descent(f),
+            );
+        }
     }
 
     // -----------------------------------------------------------------------
-    // Ranking — steepest descent first.
+    // SDRF curvature ranking — most-negative curvature first.
     // -----------------------------------------------------------------------
 
-    /// Tensions are ranked by descent magnitude (largest first). When
-    /// magnitudes differ, the higher-magnitude tension's fractures
-    /// surface before the lower-magnitude tension's.
-    #[test]
-    fn fractures_are_ranked_by_descent_magnitude_largest_first() {
-        let g_a = Gap::new(0, total_origin(), "high-magnitude a");
-        let g_b = Gap::new(0, total_origin(), "high-magnitude b");
-        let g_c = Gap::new(0, total_origin(), "low-magnitude a");
-        let g_d = Gap::new(0, total_origin(), "low-magnitude b");
-
-        let high = Tension::new(g_a.clone(), g_b.clone(), TensionVector::new(0.9));
-        let low = Tension::new(g_c.clone(), g_d.clone(), TensionVector::new(0.2));
-        // Construct a tensor by hand so we control the ordering and
-        // magnitudes — `tensor_of` yields uniform magnitudes; this test
-        // exercises the rank-by-magnitude branch directly.
-        let t = Tensor::new(
-            vec![g_a.clone(), g_b.clone(), g_c.clone(), g_d.clone()],
-            // Deliberately list `low` before `high` to prove the sort
-            // moves `high` ahead of `low`.
-            vec![low.clone(), high.clone()],
-            0.0,
-        );
-        let fractures = minimize(&t);
-        assert_eq!(fractures.len(), 4);
-        // High-magnitude tension's endpoints come first.
-        assert_eq!(Fracture::gap(&fractures[0]), &g_a);
-        assert_eq!(Fracture::gap(&fractures[1]), &g_b);
-        assert!((Fracture::descent(&fractures[0]) - 0.9).abs() < 1e-12);
-        assert!((Fracture::descent(&fractures[1]) - 0.9).abs() < 1e-12);
-        // Low-magnitude tension's endpoints come after.
-        assert_eq!(Fracture::gap(&fractures[2]), &g_c);
-        assert_eq!(Fracture::gap(&fractures[3]), &g_d);
-        assert!((Fracture::descent(&fractures[2]) - 0.2).abs() < 1e-12);
-        assert!((Fracture::descent(&fractures[3]) - 0.2).abs() < 1e-12);
-    }
-
-    /// Tied magnitudes preserve source order (stable sort). The
+    /// Tensions with tied curvature (e.g., two disjoint K₂ edges, both
+    /// with Ric=0) preserve source order under the stable sort. The
     /// substrate's discipline: deterministic fracture sequences even
     /// under ties.
     #[test]
-    fn tied_magnitudes_preserve_source_order() {
+    fn tied_curvature_preserves_source_order() {
         let g1 = Gap::new(0, total_origin(), "first");
         let g2 = Gap::new(0, total_origin(), "second");
         let g3 = Gap::new(0, total_origin(), "third");
         let g4 = Gap::new(0, total_origin(), "fourth");
-        let t1 = Tension::new(g1.clone(), g2.clone(), TensionVector::new(0.5));
-        let t2 = Tension::new(g3.clone(), g4.clone(), TensionVector::new(0.5));
+        let t1 = Tension::new(g1.clone(), g2.clone(), TensionVector::new(1.0));
+        let t2 = Tension::new(g3.clone(), g4.clone(), TensionVector::new(1.0));
         let tensor = Tensor::new(
             vec![g1.clone(), g2.clone(), g3.clone(), g4.clone()],
             vec![t1, t2],
@@ -457,11 +477,136 @@ mod tests {
         );
         let fractures = minimize(&tensor);
         assert_eq!(fractures.len(), 4);
-        // First tension's endpoints come first under stable sort.
+        // Both edges have min degree 1 → Ric=0 → tied; source order
+        // preserves: t1's endpoints (g1, g2) before t2's (g3, g4).
         assert_eq!(Fracture::gap(&fractures[0]), &g1);
         assert_eq!(Fracture::gap(&fractures[1]), &g2);
         assert_eq!(Fracture::gap(&fractures[2]), &g3);
         assert_eq!(Fracture::gap(&fractures[3]), &g4);
+    }
+
+    /// SDRF ranking moves the most-negatively-curved edge ahead of
+    /// well-connected edges. Construction: a barbell — two K₃ triangles
+    /// {0,1,2} and {3,4,5} joined by a single bridge tension (2,3).
+    /// The bridge edge has Ric = -2/3 (bottleneck); the K₃ edges have
+    /// Ric = 2 (well-connected). SDRF: bridge fractures surface FIRST.
+    #[test]
+    fn sdrf_ranks_bridge_edge_first_in_barbell() {
+        // Six same-origin gaps form the barbell vertex basis.
+        let gs: Vec<Gap> = (0..6)
+            .map(|i| Gap::new(0, total_origin(), format!("v{}", i)))
+            .collect();
+        let mk = |a: usize, b: usize| {
+            Tension::new(gs[a].clone(), gs[b].clone(), TensionVector::new(1.0))
+        };
+        // K₃ {0,1,2} + K₃ {3,4,5} + bridge (2,3).
+        let tensions = vec![
+            mk(0, 1),
+            mk(0, 2),
+            mk(1, 2),
+            mk(3, 4),
+            mk(3, 5),
+            mk(4, 5),
+            mk(2, 3), // bridge — listed LAST in source order
+        ];
+        let tensor = Tensor::new(gs.clone(), tensions, 0.0);
+        let fractures = minimize(&tensor);
+        // 7 tensions → 14 fractures.
+        assert_eq!(fractures.len(), 14);
+        // Bridge tension (gs[2], gs[3]) must surface FIRST despite
+        // being listed last in source order — SDRF ranks most-negative
+        // curvature first.
+        assert_eq!(Fracture::gap(&fractures[0]), &gs[2]);
+        assert_eq!(Fracture::gap(&fractures[1]), &gs[3]);
+        // Bridge edge has Ric = -2/3 → descent = ((2/3 + 2)/4) = 2/3.
+        assert!(
+            (Fracture::descent(&fractures[0]) - 2.0 / 3.0).abs() < 1e-9,
+            "bridge fracture descent must be 2/3 (Ric=-2/3); got {}",
+            Fracture::descent(&fractures[0]),
+        );
+        // Remaining fractures are K₃ edges: those NOT adjacent to the
+        // bridge endpoint (e.g., (0,1) and (3,4)) have Ric=2 →
+        // descent=0. K₃ edges adjacent to the bridge endpoint (e.g.,
+        // (0,2), (1,2), (3,5), (4,5)) have Ric = 4/3 → descent ≈ 1/6
+        // because the bridge inflates the degree of vertex 2 (or 3)
+        // to 3, changing the formula. Both descents are STRICTLY LESS
+        // than the bridge's 2/3 — SDRF ordering invariant holds.
+        for f in &fractures[2..] {
+            assert!(
+                Fracture::descent(f) < 2.0 / 3.0 - 1e-9,
+                "K₃ leg fractures must rank below bridge; got descent {}",
+                Fracture::descent(f),
+            );
+        }
+    }
+
+    /// SDRF descent reading is monotone in -Ric: a P₄ middle edge
+    /// (Ric=0, descent=0.5) ranks between a barbell bridge (Ric=-2/3,
+    /// descent=2/3) and a K₃ edge (Ric=2, descent=0).
+    #[test]
+    fn sdrf_descent_is_monotone_in_negative_curvature() {
+        // Mixed graph: barbell bridge (Ric=-2/3) + isolated P₄ middle
+        // edge (Ric=0) + K₃ well-connected edge (Ric=2).
+        // Build the three sub-graphs disjointly on a shared basis.
+        // K₃ {0,1,2} + barbell bridge {3,4,5,6} (two K₂ triangles via
+        // {3,4,5} would clash; simpler: explicit barbell {3,4,5}∈K₃ +
+        // {7,8,9}∈K₃ + bridge (5,7); + isolated P₄ {10,11,12,13}).
+        // We focus the test on the descent ORDERING property.
+        let gs: Vec<Gap> = (0..14)
+            .map(|i| Gap::new(0, total_origin(), format!("v{}", i)))
+            .collect();
+        let mk = |a: usize, b: usize| {
+            Tension::new(gs[a].clone(), gs[b].clone(), TensionVector::new(1.0))
+        };
+        let tensions = vec![
+            // K₃ on {0,1,2}: all edges Ric=2
+            mk(0, 1), mk(0, 2), mk(1, 2),
+            // Barbell K₃{3,4,5} + K₃{7,8,9} + bridge (5,7):
+            mk(3, 4), mk(3, 5), mk(4, 5),
+            mk(7, 8), mk(7, 9), mk(8, 9),
+            mk(5, 7),  // bridge — Ric=-2/3
+            // P₄ {10,11,12,13}: middle edge (11,12) has Ric=0
+            mk(10, 11), mk(11, 12), mk(12, 13),
+        ];
+        let tensor = Tensor::new(gs.clone(), tensions, 0.0);
+        let fractures = minimize(&tensor);
+
+        // The first fracture pair is the barbell bridge (descent=2/3).
+        assert!(
+            Fracture::descent(&fractures[0]) > 0.6,
+            "highest descent (bridge) must exceed 0.6; got {}",
+            Fracture::descent(&fractures[0]),
+        );
+        // The last fracture pair is a K₃ edge (descent=0).
+        let last = Fracture::descent(&fractures[fractures.len() - 1]);
+        assert!(
+            last < 1e-9,
+            "lowest descent (K₃) must be 0; got {}",
+            last,
+        );
+        // Descent sequence is monotonically non-increasing.
+        for w in fractures.windows(2) {
+            assert!(
+                Fracture::descent(&w[0]) + 1e-12 >= Fracture::descent(&w[1]),
+                "descent must be non-increasing; got {} then {}",
+                Fracture::descent(&w[0]),
+                Fracture::descent(&w[1]),
+            );
+        }
+    }
+
+    /// descent_from_curvature mapping: Ric = -2 → 1.0; Ric = 0 → 0.5;
+    /// Ric = +2 → 0.0; Ric outside the (-2, +2) interval clamps.
+    #[test]
+    fn descent_from_curvature_maps_canonical_values() {
+        assert!((descent_from_curvature(-2.0) - 1.0).abs() < 1e-12);
+        assert!((descent_from_curvature(0.0) - 0.5).abs() < 1e-12);
+        assert!((descent_from_curvature(2.0) - 0.0).abs() < 1e-12);
+        // Clamp on extremes.
+        assert_eq!(descent_from_curvature(-10.0), 1.0);
+        assert_eq!(descent_from_curvature(10.0), 0.0);
+        // Infinity (defensive: unindexed tension): descent = 0.
+        assert_eq!(descent_from_curvature(f64::INFINITY), 0.0);
     }
 
     // -----------------------------------------------------------------------
@@ -502,78 +647,87 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // T8.5 bridge: minimize on a weighted tensor ranks differently than on
-    // a uniform tensor. This is the substantive correctness check that
-    // the bridge enables — when consumers supply real weights via
-    // `tensor_of_with_restrictions`, `minimize` produces ranked output
-    // that reflects the weight signal (not flat 1.0 ranking).
+    // T8.5 bridge composes with SDRF: weighted-tensor minimize still
+    // produces the SDRF curvature ranking because curvature is
+    // topological (per Topping 2022 Definition 1 the formula reads
+    // degrees and triangle / 4-cycle counts — not edge weights).
     //
-    // The actual SDRF curvature ranking inside `minimize` stays scalar-
-    // magnitude per T7's contract; SDRF (Topping 2022) is the next tick.
+    // The bridge composition: weights flow through tensor_of_with_
+    // restrictions into the tension graph's CONNECTIVITY; SDRF reads
+    // the connectivity's curvature; minimize ranks by it. The bridge
+    // remains load-bearing for future work that adds weighted forms
+    // (Ollivier-Ricci with edge-weighted Wasserstein, etc.).
     // -----------------------------------------------------------------------
 
     use crate::sheaf_laplacian::Restriction;
     use crate::tensor::tensor_of_with_restrictions;
 
-    /// `minimize` on a weighted tensor ranks fractures by the consumer-
-    /// supplied weight. The high-weight tension's gap pair surfaces
-    /// first; the low-weight tension's gap pair surfaces after. This is
-    /// the difference between T7's flat-ranking output (uniform 1.0)
-    /// and the meaningful-ranking output the bridge unlocks.
+    /// `minimize` on a weighted-bridge tensor (K₂ ⊔ K₂) ranks the two
+    /// edges identically because both edges are degenerate (min degree
+    /// 1 → Ric = 0). The post-T9 contract: ranking is by curvature, NOT
+    /// by consumer weight — weights flow into connectivity, curvature
+    /// reads the connectivity. Descent on tied curvature is uniform
+    /// (0.5).
     #[test]
-    fn minimize_on_weighted_tensor_ranks_by_consumer_weight() {
+    fn minimize_on_weighted_disjoint_edges_ties_on_curvature() {
         let g0 = Gap::new(0, total_origin(), "low pair a");
         let g1 = Gap::new(0, total_origin(), "low pair b");
         let g2 = Gap::new(0, total_origin(), "high pair a");
         let g3 = Gap::new(0, total_origin(), "high pair b");
-        // Build the basis with the LOW-weight pair listed first; the
-        // HIGH-weight pair listed second. Magnitude-rank must move the
-        // HIGH pair ahead of the LOW pair despite source order.
         let t = tensor_of_with_restrictions(
             vec![g0.clone(), g1.clone(), g2.clone(), g3.clone()],
             vec![Restriction::new(0, 1, 0.2), Restriction::new(2, 3, 0.9)],
         );
         let fractures = minimize(&t);
         assert_eq!(fractures.len(), 4);
-        // High-magnitude pair's endpoints come first.
-        assert_eq!(Fracture::gap(&fractures[0]), &g2);
-        assert_eq!(Fracture::gap(&fractures[1]), &g3);
-        assert!((Fracture::descent(&fractures[0]) - 0.9).abs() < 1e-12);
-        assert!((Fracture::descent(&fractures[1]) - 0.9).abs() < 1e-12);
-        // Low-magnitude pair's endpoints come after.
-        assert_eq!(Fracture::gap(&fractures[2]), &g0);
-        assert_eq!(Fracture::gap(&fractures[3]), &g1);
-        assert!((Fracture::descent(&fractures[2]) - 0.2).abs() < 1e-12);
-        assert!((Fracture::descent(&fractures[3]) - 0.2).abs() < 1e-12);
+        // Both edges are K₂ (min degree 1 → Ric = 0); tied; source
+        // order preserves the (g0, g1) pair before the (g2, g3) pair.
+        assert_eq!(Fracture::gap(&fractures[0]), &g0);
+        assert_eq!(Fracture::gap(&fractures[1]), &g1);
+        assert_eq!(Fracture::gap(&fractures[2]), &g2);
+        assert_eq!(Fracture::gap(&fractures[3]), &g3);
+        // All descents = 0.5 (SDRF neutral on K₂ edges).
+        for f in &fractures {
+            assert!(
+                (Fracture::descent(f) - 0.5).abs() < 1e-9,
+                "K₂ ⊔ K₂ fracture descent must be 0.5; got {}",
+                Fracture::descent(f),
+            );
+        }
     }
 
-    /// Uniform-weight `minimize` (via `tensor_of`) and weighted-weight
-    /// `minimize` (via `tensor_of_with_restrictions`) produce different
-    /// descent magnitudes on the same gap basis. The uniform path emits
-    /// 1.0 across the board; the weighted path emits per-restriction
-    /// magnitudes. The difference is the bridge.
+    /// Weighted-tensor minimize reproduces SDRF ranking on a barbell:
+    /// the bridge edge (regardless of its weight) is identified as the
+    /// bottleneck and surfaces first. Topological curvature reading is
+    /// weight-independent per Topping 2022 §4 Definition 1.
     #[test]
-    fn minimize_uniform_vs_weighted_yields_different_descent_magnitudes() {
-        let g0 = Gap::new(0, total_origin(), "a");
-        let g1 = Gap::new(0, total_origin(), "b");
-        let uniform = minimize(&crate::tensor::tensor_of(vec![g0.clone(), g1.clone()]));
-        let weighted = minimize(&tensor_of_with_restrictions(
-            vec![g0.clone(), g1.clone()],
-            vec![Restriction::new(0, 1, 0.3)],
-        ));
-        assert_eq!(uniform.len(), 2);
-        assert_eq!(weighted.len(), 2);
-        // Uniform: all descents at the T6 floor (1.0).
-        assert!((Fracture::descent(&uniform[0]) - 1.0).abs() < 1e-12);
-        // Weighted: descents carry the consumer-supplied weight (0.3).
-        assert!((Fracture::descent(&weighted[0]) - 0.3).abs() < 1e-12);
-        // The two rankings differ on the descent magnitude field — the
-        // substantive correctness check that the bridge is wired.
+    fn minimize_weighted_barbell_still_ranks_bridge_first() {
+        let gs: Vec<Gap> = (0..6)
+            .map(|i| Gap::new(0, total_origin(), format!("v{}", i)))
+            .collect();
+        // Barbell: K₃ {0,1,2} + K₃ {3,4,5} + bridge (2,3). Bridge
+        // gets a SMALL consumer weight (0.1); K₃ edges get LARGE
+        // weights (0.9). SDRF must still rank the bridge first.
+        let restrictions = vec![
+            Restriction::new(0, 1, 0.9),
+            Restriction::new(0, 2, 0.9),
+            Restriction::new(1, 2, 0.9),
+            Restriction::new(3, 4, 0.9),
+            Restriction::new(3, 5, 0.9),
+            Restriction::new(4, 5, 0.9),
+            Restriction::new(2, 3, 0.1), // bridge — small weight
+        ];
+        let t = tensor_of_with_restrictions(gs.clone(), restrictions);
+        let fractures = minimize(&t);
+        assert_eq!(fractures.len(), 14);
+        // Bridge endpoints come first despite the small consumer
+        // weight — curvature is topological.
+        assert_eq!(Fracture::gap(&fractures[0]), &gs[2]);
+        assert_eq!(Fracture::gap(&fractures[1]), &gs[3]);
         assert!(
-            (Fracture::descent(&uniform[0]) - Fracture::descent(&weighted[0])).abs() > 1e-9,
-            "weighted minimize must produce non-uniform descents; got uniform={}, weighted={}",
-            Fracture::descent(&uniform[0]),
-            Fracture::descent(&weighted[0]),
+            (Fracture::descent(&fractures[0]) - 2.0 / 3.0).abs() < 1e-9,
+            "bridge descent (Ric=-2/3 → 0.667) must dominate; got {}",
+            Fracture::descent(&fractures[0]),
         );
     }
 }
