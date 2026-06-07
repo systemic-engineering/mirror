@@ -1,0 +1,202 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/math/bundle
+in @epistemologic/math/sheaf_laplacian
+
+# @epistemologic/math/curvature — the discrete-curvature reading on
+# the sheaf-Laplacian operator at the edge altitude.
+#
+# === The recognition ===
+#
+# `sheaf_laplacian.mirror` already names the operator (Δ_F = δ*δ) and
+# `lambda_zero` (the spectral gap). Topping et al. 2022 (arXiv:2111.14522)
+# names a SECOND quantity computable from the same combinatorial data:
+# the Balanced Forman curvature Ric(i,j) on each edge of the underlying
+# graph. The spectral gap reads connectivity AT THE WHOLE; the
+# Balanced Forman curvature reads bottleneck-ness PER EDGE.
+#
+# Both are discrete descendants of Riemannian curvature:
+#
+#   - Ollivier-Ricci (2009; J. Func. Anal. 256) — coarse Ricci via
+#     1-Wasserstein on neighbour measures. Combinatorial; correct;
+#     intractable for general graphs.
+#   - Forman-Ricci (Forman 2003; Discrete Comput. Geom. 29) — combinatorial
+#     Ricci via face contributions. Cheap; loses some content.
+#   - Balanced Forman (Topping et al. 2022, §4 Definition 1) —
+#     re-balanced Forman to match Ollivier within a constant factor.
+#     Tractable AND faithful. The current frontier for graph-rewiring.
+#
+# This shard names the discrete realisation of "curvature on the sheaf
+# Laplacian's underlying graph at one edge" — what Topping et al. 2022's
+# SDRF algorithm (Algorithm 1) ranks edges by. The substrate already
+# spoke of curvature in `gap-tension-tensor-substrate.md` §6
+# ("rank tensions by curvature"); this shard gives that obligation a
+# substrate-altitude carrier.
+#
+# === Why this lives at math/, not at fate/ ===
+#
+# `@fate.minimize` (per `gap-tension-tensor-substrate.md` §3.2) CONSUMES
+# curvature to rank tensions for fracture emission. The math layer
+# names the obligation; the consumer altitude differs. Same split as
+# `sheaf_laplacian` vs `minimize` — math underneath, consumer at @fate.
+#
+# === Bridge action ===
+#
+#   balanced_forman(op: operator, edge: restriction) -> curvature
+#     The Balanced Forman curvature Ric(i,j) on edge (i,j) of the
+#     graph underlying the operator. Per Topping et al. 2022 §4
+#     Definition 1, equation (3): when min{d_i, d_j} > 1,
+#
+#       Ric(i,j) = 2/d_i + 2/d_j − 2
+#                + 2·|#_Δ(i,j)|/max{d_i, d_j}
+#                + 2·|#_Δ(i,j)|/min{d_i, d_j}
+#                + (γ_max)^{-1} · (|#_□^i| + |#_□^j|) / max{d_i, d_j}
+#
+#     where:
+#       d_i, d_j           = degrees of i, j in the underlying graph;
+#       |#_Δ(i,j)|         = number of triangles through edge (i,j);
+#       |#_□^i|, |#_□^j|   = number of 4-cycles based at i, j (without
+#                            diagonals);
+#       γ_max(i,j)         = max number of 4-cycles based at i ~ j
+#                            traversing a common node;
+#       and the γ_max term is zero when |#_□^i| = |#_□^j| = 0.
+#
+#     The degenerate case min{d_i, d_j} = 1 yields Ric(i,j) := 0 per
+#     Topping et al. 2022 Definition 1.
+#
+#     Negative curvature → edge behaves as a bridge between
+#     neighbourhoods (bottleneck). Positive curvature →
+#     neighbourhoods stay connected after edge removal. Bound:
+#     Ric(i,j) > −2 (Topping et al. 2022 §4 Proposition 4).
+#
+#     The discrete realisation of `bundle.mirror`'s `holonomy` reading
+#     localised to one edge: cycle-averaged holonomy IS Magnot's κ
+#     (arXiv:2509.10536, 2025), and Balanced Forman is the per-edge
+#     decomposition the same combinatorial substrate supports.
+#
+# === Floor types: substrate-pull discipline ===
+#
+# Per `sheaf_laplacian.mirror`'s precedent (eigenvalue carrier wraps a
+# `ref` plus a multiplicity cardinal), the `curvature` carrier wraps a
+# `ref` for the scalar value plus an `edge` field that records WHICH
+# edge the value applies to. This shape lets a consumer collect the
+# per-edge curvature map without losing the edge identity — load-bearing
+# for `@fate.minimize`'s "rank tensions by curvature" step.
+#
+# === The substrate-pull recognitions this surfaces ===
+#
+# 1. The 19th-instance pattern (per [[feedback-substrate-already-had-the-word]]):
+#    `bundle.mirror`'s `holonomy` already names cycle-averaged curvature
+#    at the bundle altitude; `spectral-triple.mirror`'s `eigen_d` already
+#    names the operator-spectrum reading. This shard's `curvature` is
+#    the per-edge localisation of `holonomy` — the substrate was
+#    speaking of curvature; it now has the type name at the eigenboard
+#    altitude.
+#
+# 2. The SDRF reading IS the per-edge form of "rank by curvature": the
+#    same algorithmic shape `gap-tension-tensor-substrate.md` §6 named
+#    in the spec already, now declared at the math altitude one floor
+#    beneath `@fate.minimize`.
+#
+# === Pre-AI prior art ===
+#
+# Each type and action below names an established object older than
+# the discipline of computer science (or younger but pre-LLM):
+#
+#   curvature           Riemann 1854 (Über die Hypothesen, welche der
+#                       Geometrie zu Grunde liegen); Ricci 1903.
+#   balanced_forman     Topping et al. 2022, arXiv:2111.14522
+#                       (re-balancing of Forman 2003, Discrete Comput.
+#                       Geom. 29:323-374; itself a descendant of Forman's
+#                       1949-onward combinatorial topology work).
+#   triangle_count      Wiener 1947 (path-counting in graphs);
+#                       Erdős-Rényi 1959 (extremal triangle theory).
+#   four_cycle_count    Bondy-Simonovits 1974 (Z₂ₖ-free graphs);
+#                       Caccetta-Häggkvist 1978.
+#
+# The substrate's contribution is *typing* the per-edge curvature
+# read so the eigenboard's numerical realisation has a substrate-altitude
+# home alongside the spectral-gap reading. No invention.
+#
+# Spec context: docs/specs/gap-tension-tensor-substrate.md §3.2
+#               ("rank tensions by curvature"); §6 (the SDRF Algorithm 1
+#               transfer); arXiv:2111.14522 §4 Definition 1 (the exact
+#               formula); arXiv:2111.14522 §4 Algorithm 1 (the ranking
+#               step Reed's lean wires `@fate.minimize` to consume).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]],
+#                      [[architecture-flang-mirror-numerical-split]],
+#                      [[feedback-no-bare-types]] (curvature is its own
+#                      newtype; the scalar lives in a typed carrier
+#                      alongside the edge it reads),
+#                      [[feedback-substrate-already-had-the-word]] (the
+#                      19th-instance recognition: bundle.holonomy and
+#                      spectral-triple.spectrum already implied this).
+# Related shards: shards/epistemologic/math/sheaf_laplacian.mirror
+#                 (the operator family this shard's curvature reads),
+#                 boot/std/epistemologic/math/spectral-triple.mirror
+#                 (the abstract (A, H, D) triple whose discrete
+#                 realisation is what this shard reads curvature on),
+#                 boot/std/epistemologic/math/bundle.mirror (the
+#                 principal-G tower whose holonomy IS the cycle-averaged
+#                 form of this shard's per-edge curvature).
+# Path-namespace property: this file at
+# `shards/epistemologic/math/curvature.mirror` declares
+# `@epistemologic/math/curvature` per the
+# `@epistemologic/property/path_matches_namespace` rule.
+
+prism @epistemologic/math/curvature {
+  focus curvature
+  project curvature
+  split curvature
+  shift curvature
+  settle curvature
+}
+
+# === The curvature carrier ===
+#
+# The Balanced Forman curvature read on one edge of the operator's
+# underlying graph. Carries both the scalar value (a `ref` per the
+# substrate's float-valued floor) and the edge it reads — so a
+# consumer collecting the per-edge curvature map can rank without
+# losing edge identity.
+#
+# `value` carries the curvature scalar as a `ref` (matches
+# `sheaf_laplacian.eigenvalue.value`'s precedent).
+# `edge` carries the source restriction the value applies to (the
+# substrate's `restriction` type from `sheaf_laplacian.mirror`).
+#
+# Identity contract: byte-equality on (value, edge). The realisation
+# layer enforces this; the substrate names it.
+#
+# Audible register: a curvature is the per-step bottleneck reading on
+# one voice-leading step. Negative curvature is a leap (long-distance
+# pull between sparse neighbourhoods); positive curvature is a step
+# (the neighbourhoods stay connected if you remove the leap).
+type curvature = {
+  value: ref,
+  edge:  restriction,
+}
+
+# === balanced_forman — the per-edge Balanced Forman curvature ===
+#
+# Computes Ric(i,j) per Topping et al. 2022 §4 Definition 1, equation
+# (3) on the edge `edge` of the graph underlying `op`. The substrate
+# names the obligation; the FFI body (boundary Rust) discharges the
+# combinatorial count.
+#
+# `@fate.minimize` (per `gap-tension-tensor-substrate.md` §3.2 and §6)
+# ranks tensions by curvature for fracture emission: SDRF Algorithm 1's
+# step 1 selects the edge with MINIMAL Ric(i,j) as the rewrite target.
+# This action is the per-edge primitive that ranking step consumes.
+#
+# Pure; no I/O; deterministic per IEEE-754 floating-point semantics on
+# the platform.
+balanced_forman(op: operator, edge: restriction) -> curvature { \ }
+
+out @epistemologic/math/curvature
+out curvature
+out balanced_forman
