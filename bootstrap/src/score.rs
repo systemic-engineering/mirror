@@ -234,15 +234,17 @@ impl Score {
 ///
 /// Pure; no I/O; allocates per the returned [`Score`].
 pub fn score_of(o: &Oscillation, ast: &AstNode) -> Score {
-    // 🔴 [substrate-pull:realize] T11 — GREEN body lands in the next
-    // commit. The RED stub returns a score with empty pending so
-    // tests asserting per-gap morphism derivation fail.
-    let _ = ast;
-    Score::new(
-        o.anchor().clone(),
-        MetalogueSession::at(Tick::zero()),
-        Vec::new(),
-    )
+    // 🟢 [substrate-pull:realize] T11 GREEN body. Composes the three
+    // substrate carriers per score.mirror lines 354–402:
+    //   1. anchor    — direct field forward from the oscillation
+    //   2. session   — minimal MetalogueSession anchored at the
+    //                  oscillation's iteration tick
+    //   3. pending   — lifted from gaps_of(ast) via per-gap
+    //                  candidate Morphism projection
+    let anchor = o.anchor().clone();
+    let session = MetalogueSession::at(o.iteration());
+    let pending = pending_from_ast(ast);
+    Score::new(anchor, session, pending)
 }
 
 /// Project a [`Gap`] to a candidate [`Morphism`].
@@ -262,25 +264,31 @@ pub fn score_of(o: &Oscillation, ast: &AstNode) -> Score {
 ///   the canonical tonic; the SDRF ranking in `active_pass` revises
 ///   this expectation per the fracture's descent magnitude).
 fn morphism_from_gap(g: &Gap) -> Morphism {
-    // 🔴 [substrate-pull:realize] T11 — GREEN body lands in the next
-    // commit. The RED stub returns a stand-in morphism so tests
-    // asserting level-derived dissonance fail.
-    let _ = g;
+    // 🟢 [substrate-pull:realize] T11 GREEN body. Roughness grows with
+    // Bateson level via the substrate-pull-honest reading:
+    //   level 0 → 0.5 (neutral mid-roughness; floor-altitude failure)
+    //   level 1 → ~0.667
+    //   level 2 → ~0.75
+    //   asymptotic to 1.0 as level → ∞
+    // The partial count rides the level directly so consumers can
+    // distinguish floor-altitude gaps from nested learning loops.
+    let level = Gap::level(g);
+    let roughness = (level as f64 + 1.0) / (level as f64 + 2.0);
+    let partials = level.saturating_add(1);
     Morphism::new(
-        Ref::new("@stub").expect("valid"),
-        Dissonance::new(0.0, 0),
-        CadenceKind::Deceptive,
+        g.origin().clone(),
+        Dissonance::new(roughness, partials),
+        CadenceKind::Authentic,
     )
 }
 
 /// Derive the pending morphism set from an AST by lifting every gap
 /// to a candidate morphism.
-#[allow(dead_code)]
 fn pending_from_ast(ast: &AstNode) -> Vec<Morphism> {
-    // 🔴 [substrate-pull:realize] T11 — unused until score_of's GREEN
-    // body composes through it.
-    let _ = ast;
-    Vec::new()
+    // 🟢 [substrate-pull:realize] T11 GREEN body. The realisation lifts
+    // every gap to a candidate Morphism; the substrate's pending IS
+    // the orchestra's mid-evaluation candidate set.
+    gaps_of(ast).iter().map(morphism_from_gap).collect()
 }
 
 // ---------------------------------------------------------------------------
@@ -317,10 +325,10 @@ pub fn pending(s: &Score) -> &[Morphism] {
 /// typed `content: gap_ref` carrier for Morphism's content field; T11
 /// keeps the realisation minimal.)
 pub fn gaps_for_pending(ast: &AstNode) -> Vec<Gap> {
-    // 🔴 [substrate-pull:realize] T11 — GREEN body returns the AST's
-    // gaps via gaps_of. RED stub returns empty.
-    let _ = ast;
-    Vec::new()
+    // 🟢 [substrate-pull:realize] T11 GREEN body. Direct
+    // pass-through to gaps_of(ast); the realisation closes the loop
+    // by re-reading the AST.
+    gaps_of(ast)
 }
 
 #[cfg(test)]

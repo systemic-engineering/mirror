@@ -472,24 +472,113 @@ fn settle_morphism(anchor: &Ref) -> Morphism {
 /// `active_pass_with_ast(o: oscillation, ast: ast) -> morphism` — the
 /// real proposal action (T11 substrate-pull realisation).
 ///
-/// **🔴 [substrate-pull:realize] T11 — GREEN body lands in the next
-/// commit.** RED stub returns the same settle-Authentic morphism as
-/// [`active_pass`] so the new T11 tests asserting fracture-derived
-/// dispositions fail.
-///
-/// The GREEN composition (per `score.mirror` lines 387–395):
+/// **🟢 [substrate-pull:realize] T11 GREEN body.** Composes the
+/// substrate-altitude chain per `score.mirror` lines 387–395:
 ///
 /// 1. `score_of(o, ast)` — project oscillation + AST into a Score.
 /// 2. `pending(&score)` — read the candidate morphism set.
 /// 3. `gaps_for_pending(ast)` — derive the gap basis the tensor reads.
 /// 4. `tensor_of(gaps)` — build the gap-tensor field (T6/T8.5).
 /// 5. `minimize(&tensor)` — SDRF-ranked fractures (T7/T9).
-/// 6. Project the head fracture into a [`Morphism`].
+/// 6. Project the head fracture into a [`Morphism`] whose:
+///    - `content` IS the head fracture's gap origin (the substrate
+///      site where the descent step would land);
+///    - `score` carries the descent-derived dissonance reading
+///      (`roughness = 1.0 − descent`; higher descent → lower
+///      roughness → closer to consonant; `partials = level + 1`);
+///    - `expected` reads the cadence the formatter anticipates per
+///      the descent threshold (see [`expected_cadence_for_descent`]).
+///
+/// ## Edge cases
+///
+/// - **Empty pending** (no gaps in AST) → [`settle_morphism`] anchored
+///   at the oscillation's anchor; the substrate's "nothing to do;
+///   settle" reading.
+/// - **Single gap** → trivial MUS-graph (K₁); `minimize` emits no
+///   fractures; falls back to a settle-Authentic morphism anchored at
+///   the gap's substrate origin (the substrate is settled for THIS
+///   gap; no contradiction edge to descend along; the substrate's
+///   floor-altitude reading).
+/// - **Multiple gaps** → SDRF-ranked fractures; head projects into
+///   the proposed Morphism.
 pub fn active_pass_with_ast(o: &Oscillation, ast: &AstNode) -> Morphism {
-    // 🔴 RED stub — the GREEN body composes the score → pending →
-    // gaps → tensor → minimize → head-fracture chain.
-    let _ = ast;
-    settle_morphism(o.anchor())
+    // Step 1–2: score_of → pending. The substrate-altitude projection.
+    let score = crate::score::score_of(o, ast);
+    let pending_set = crate::score::pending(&score);
+
+    // Edge: empty pending → graceful settle (the substrate-honest
+    // "nothing to do" reading per the score-shard gap design call).
+    if pending_set.is_empty() {
+        return settle_morphism(o.anchor());
+    }
+
+    // Step 3–4: gaps_for_pending → tensor_of. The realisation reads
+    // the gap basis from the AST again (substrate-pull discipline: no
+    // Gap ↔ Morphism cross-reference; the realisation closes the
+    // loop by reading the substrate).
+    let gaps = crate::score::gaps_for_pending(ast);
+    let tensor = crate::tensor::tensor_of(gaps);
+
+    // Step 5: minimize — SDRF-ranked fractures by Balanced Forman
+    // curvature (most-negative first; the substrate's bottleneck
+    // edges surface first per Topping 2022 Algorithm 1).
+    let fractures = crate::kintsugi::minimize(&tensor);
+
+    // Edge: trivial sheaf (singleton vertex; no tensions; no
+    // fractures) → settle-Authentic morphism anchored at the
+    // FIRST pending morphism's content (the gap's substrate origin).
+    // The substrate's floor-altitude reading: no descent gradient
+    // available; the candidate IS the proposal.
+    if fractures.is_empty() {
+        return settle_morphism(pending_set[0].content());
+    }
+
+    // Step 6: project the head fracture into a Morphism. The head
+    // IS the SDRF top-ranked fracture (steepest descent direction).
+    let head = &fractures[0];
+    let head_gap = crate::kintsugi::Fracture::gap(head);
+    let descent = crate::kintsugi::Fracture::descent(head);
+    // Descent → roughness inversion: high descent (strong gradient)
+    // → low roughness (consonant; auto-apply); low descent (no
+    // gradient) → high roughness (dissonant; pause). Partials carry
+    // the gap's Bateson level + 1 so consumers see the substrate's
+    // depth reading on the proposed morphism.
+    let roughness = (1.0 - descent).clamp(0.0, 1.0);
+    let partials = Gap::level(head_gap).saturating_add(1);
+    let expected = expected_cadence_for_descent(descent);
+    Morphism::new(
+        head_gap.origin().clone(),
+        Dissonance::new(roughness, partials),
+        expected,
+    )
+}
+
+/// Map a fracture's descent magnitude to the substrate's expected
+/// resolution cadence per `consent.mirror`'s four-state cadence_kind.
+///
+/// Per the brief's design call (and consonant with the
+/// `verdict_to_cadence_kind` 1/φ threshold per `gap.rs`):
+///
+/// - `descent ≥ 0.667` (strong gradient; bridge-edge SDRF reading) →
+///   [`CadenceKind::Authentic`] — the formatter expects clean
+///   resolution; auto-apply.
+/// - `descent ≥ 0.5` (moderate gradient; neutral K₂ reading) →
+///   [`CadenceKind::Plagal`] — graded auto-apply at high confidence.
+/// - `descent ≥ 0.25` (mild gradient; paused-on-V reading) →
+///   [`CadenceKind::Half`] — wait for the next consent surface tick.
+/// - else (no gradient; well-connected K_n reading; `descent < 0.25`)
+///   → [`CadenceKind::Deceptive`] — the substrate cannot resolve at
+///   this altitude; escalate to the consent surface.
+fn expected_cadence_for_descent(descent: f64) -> CadenceKind {
+    if descent >= 0.667 {
+        CadenceKind::Authentic
+    } else if descent >= 0.5 {
+        CadenceKind::Plagal
+    } else if descent >= 0.25 {
+        CadenceKind::Half
+    } else {
+        CadenceKind::Deceptive
+    }
 }
 
 /// `query_phi(m: morphism) -> verdict` — the structural Φ query
@@ -1265,9 +1354,9 @@ mod tests {
     /// chain is observable through the score and pending surfaces.
     #[test]
     fn active_pass_with_ast_integration_chain_composes() {
+        use crate::kintsugi::minimize;
         use crate::score::{gaps_for_pending, pending, score_of};
         use crate::tensor::{tensor_of, Tensor};
-        use crate::kintsugi::minimize;
 
         let o = Oscillation::initial(fixture_anchor());
         let ast = ast_with_three_darks();
@@ -1275,15 +1364,15 @@ mod tests {
         // Step 1–2: score_of → pending.
         let score = score_of(&o, &ast);
         let pending_set = pending(&score);
-        assert_eq!(
-            pending_set.len(),
-            3,
-            "three gaps → three pending morphisms",
-        );
+        assert_eq!(pending_set.len(), 3, "three gaps → three pending morphisms",);
 
         // Step 3–4: gaps_for_pending → tensor_of.
         let gaps = gaps_for_pending(&ast);
-        assert_eq!(gaps.len(), 3, "three pending morphisms expand to three gaps");
+        assert_eq!(
+            gaps.len(),
+            3,
+            "three pending morphisms expand to three gaps"
+        );
         let tensor = tensor_of(gaps);
         assert_eq!(Tensor::vertices(&tensor).len(), 3);
 
