@@ -16,6 +16,7 @@ mod git;
 mod grammar;
 mod hash;
 mod music;
+mod oscillate;
 mod pipeline;
 mod spectral;
 mod tokenize;

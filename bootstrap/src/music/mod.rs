@@ -454,4 +454,261 @@ mod tests {
         assert!(!v.is_ok());
         assert!(!v.is_partial());
     }
+
+    // -----------------------------------------------------------------
+    // T4: is_consonant — the discriminator-floor body for dissonance.
+    // -----------------------------------------------------------------
+    //
+    // Per `shards/epistemologic/math/music/dissonance.mirror`'s
+    // `is_consonant(d: dissonance) -> verdict` declaration. The body
+    // reads `d.roughness` (a ref ~ f64 in [0.0, 1.0]) and emits the
+    // three-state floor on a golden-ratio anchored threshold band:
+    //
+    //   roughness ≤ 1/φ² ≈ 0.382  → Success(())            (consonant)
+    //   1/φ² < r ≤ 0.5           → Partial((), Clear)        (consonant-leaning)
+    //   0.5  < r ≤ 1/φ ≈ 0.618  → Partial((), opaque@0.25)  (dissonant-leaning)
+    //   roughness > 1/φ           → Failure(Gap{level:0}, opaque)  (dissonant beyond resolution)
+    //
+    // Canonical anchors from dissonance.mirror's curve:
+    //   1:1 → 0.00 (unison, success); 3:2 → 0.02 (P5, success);
+    //   5:4 → 0.10 (M3, success); tritone → ~1.0 (failure).
+    //
+    // Level 0 (not 1) for the consonant-floor failure: dissonance is
+    // not a Bateson learning contradiction — it is a floor-altitude
+    // verdict that the substrate cannot consonate at this resolution.
+    // Level 1 is reserved for V → vi cadence-level cocycles per
+    // gap-tension-tensor-substrate.md §3.2.
+
+    use crate::music::{is_consonant, Dissonance};
+
+    fn unison() -> Dissonance {
+        // 1:1 — zero roughness; the consonant ground.
+        Dissonance::new(0.0, 6)
+    }
+
+    fn perfect_fifth() -> Dissonance {
+        // 3:2 — ~0.02 roughness per Plomp-Levelt; near-pure consonance.
+        Dissonance::new(0.02, 6)
+    }
+
+    fn major_third() -> Dissonance {
+        // 5:4 — ~0.10 roughness; consonant.
+        Dissonance::new(0.10, 6)
+    }
+
+    fn borderline_consonant() -> Dissonance {
+        // Just inside the consonant-leaning partial band.
+        Dissonance::new(0.45, 6)
+    }
+
+    fn borderline_dissonant() -> Dissonance {
+        // Just inside the dissonant-leaning partial band (above 0.5, below 1/φ).
+        Dissonance::new(0.55, 6)
+    }
+
+    fn tritone() -> Dissonance {
+        // 45:32 — ~1.0 roughness; the curve's peak.
+        Dissonance::new(1.0, 6)
+    }
+
+    /// Unison — zero roughness — IS the consonant ground.
+    /// Per `dissonance.mirror`: `1:1 → 0.00 roughness (pure consonance)`.
+    #[test]
+    fn unison_is_success_unit() {
+        let v = is_consonant(unison());
+        assert!(matches!(v, Imperfect::Success(())));
+    }
+
+    /// Perfect fifth — 0.02 roughness — is consonant.
+    /// Per `dissonance.mirror`: `3:2 → 0.02 roughness (near-pure)`.
+    #[test]
+    fn perfect_fifth_is_success_unit() {
+        let v = is_consonant(perfect_fifth());
+        assert!(matches!(v, Imperfect::Success(())));
+    }
+
+    /// Major third — 0.10 roughness — is consonant (below 1/φ² ≈ 0.382).
+    /// Per `dissonance.mirror`: `5:4 → 0.10 roughness`.
+    #[test]
+    fn major_third_is_success_unit() {
+        let v = is_consonant(major_third());
+        assert!(matches!(v, Imperfect::Success(())));
+    }
+
+    /// Borderline-consonant — in the consonant-leaning partial band.
+    /// `Partial((), Transparency::clear())`; confidence projects to 1.0.
+    #[test]
+    fn borderline_consonant_is_partial_with_high_confidence() {
+        let v = is_consonant(borderline_consonant());
+        match &v {
+            Imperfect::Partial((), t) => {
+                let c = confidence_of(t);
+                assert!(
+                    c > 0.618,
+                    "borderline-consonant confidence must lie above 1/φ (got {c})",
+                );
+            }
+            other => panic!("borderline-consonant must yield Partial; got {other:?}"),
+        }
+    }
+
+    /// Borderline-dissonant — in the dissonant-leaning partial band.
+    /// `Partial((), opaque@0.25)`; confidence below 1/φ.
+    #[test]
+    fn borderline_dissonant_is_partial_with_low_confidence() {
+        let v = is_consonant(borderline_dissonant());
+        match &v {
+            Imperfect::Partial((), t) => {
+                assert!(
+                    !t.is_catastrophic(),
+                    "borderline-dissonant transparency must not be catastrophic",
+                );
+                let c = confidence_of(t);
+                assert!(
+                    c < 0.618,
+                    "borderline-dissonant confidence must lie below 1/φ (got {c})",
+                );
+            }
+            other => panic!("borderline-dissonant must yield Partial; got {other:?}"),
+        }
+    }
+
+    /// Tritone — ~1.0 roughness — is dissonant beyond resolution.
+    /// `Failure(Gap{level:0,…}, opaque)`. Level 0: floor-altitude dissonance
+    /// is not a Bateson learning contradiction; the substrate simply cannot
+    /// consonate at this resolution.
+    #[test]
+    fn tritone_is_failure_with_level_zero_gap() {
+        let v = is_consonant(tritone());
+        match &v {
+            Imperfect::Failure(gap, t) => {
+                assert_eq!(
+                    Gap::level(gap),
+                    0,
+                    "floor-altitude dissonance is a level-0 verdict",
+                );
+                assert!(
+                    !t.is_catastrophic(),
+                    "tritone transparency must not be catastrophic",
+                );
+            }
+            other => panic!("tritone must yield Failure; got {other:?}"),
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // T4: is_pareto — the pareto-front discriminator (single-attractor).
+    // -----------------------------------------------------------------
+    //
+    // Per `shards/epistemologic/math/music/dissonance.mirror`'s
+    // `is_pareto(candidates: pareto_set) -> verdict` declaration. The
+    // body reads a list of candidates (each carrying a `content: ref`
+    // and a `score: dissonance`) and emits:
+    //
+    //   empty                        → Failure(Gap{level:0,…}, opaque)
+    //   single strict minimum        → Success(())
+    //   multiple within tie-tolerance → Partial((), opaque(…))
+    //
+    // Tie tolerance: ~5 cents per harmonic.mirror's audible-altitude
+    // resolution. In normalized roughness that maps to ~0.003 (cents
+    // are logarithmic on frequency; the Helmholtz curve is on roughness;
+    // the substrate-pull discipline uses 0.003 as the floor tolerance).
+    //
+    // T4 returns Success(()) for the singleton-winner case; the winner's
+    // identity (Ref) is a forward-promise to T5/T6 (the gaps_of /
+    // tensor_of substrate-pull will lift Aggregate to a typed carrier).
+    //
+    // Per the brief: do NOT pre-widen. Single-attractor minimization;
+    // the coherent_tension extension waits for substrate-pull.
+
+    use crate::music::{is_pareto, Candidate, ParetoSet};
+
+    fn candidate_with_roughness(path: &str, roughness: f64) -> Candidate {
+        Candidate::new(
+            prism_core::Ref::new(path).expect("valid ref"),
+            Dissonance::new(roughness, 6),
+        )
+    }
+
+    /// Empty pareto set — no admissible morphism — is Failure.
+    /// Per `dissonance.mirror`: "the empty pareto set is the 'no
+    /// admissible morphism' case."
+    #[test]
+    fn empty_pareto_set_is_failure() {
+        let v = is_pareto(ParetoSet::new(vec![]));
+        match &v {
+            Imperfect::Failure(gap, t) => {
+                assert_eq!(
+                    Gap::level(gap),
+                    0,
+                    "empty pareto set is a level-0 verdict (no admissible morphism)",
+                );
+                assert!(!t.is_catastrophic(), "empty transparency must not be catastrophic");
+            }
+            other => panic!("empty pareto set must yield Failure; got {other:?}"),
+        }
+    }
+
+    /// Single strict minimum — the formatter auto-applies the winner.
+    /// Per `dissonance.mirror` §is_pareto: "singleton consonance; the
+    /// pareto set has a strict minimum."
+    #[test]
+    fn single_strict_minimum_is_success_unit() {
+        let set = ParetoSet::new(vec![
+            candidate_with_roughness("@spectral/candidate/a", 0.10),
+            candidate_with_roughness("@spectral/candidate/b", 0.45),
+            candidate_with_roughness("@spectral/candidate/c", 0.80),
+        ]);
+        let v = is_pareto(set);
+        assert!(matches!(v, Imperfect::Success(())));
+    }
+
+    /// Single-element set — trivially the strict minimum — is Success.
+    #[test]
+    fn singleton_pareto_set_is_success_unit() {
+        let set = ParetoSet::new(vec![candidate_with_roughness("@spectral/candidate/only", 0.10)]);
+        let v = is_pareto(set);
+        assert!(matches!(v, Imperfect::Success(())));
+    }
+
+    /// Two candidates within the tie tolerance — Pareto-tied — is
+    /// Partial. Per `dissonance.mirror` §is_pareto: "two or more
+    /// candidates tie at the dissonance floor (within the audible-
+    /// altitude resolution of ~5 cents)."
+    #[test]
+    fn pareto_tie_within_tolerance_is_partial() {
+        let set = ParetoSet::new(vec![
+            candidate_with_roughness("@spectral/candidate/a", 0.100),
+            candidate_with_roughness("@spectral/candidate/b", 0.101),
+        ]);
+        let v = is_pareto(set);
+        match &v {
+            Imperfect::Partial((), t) => {
+                assert!(
+                    !t.is_catastrophic(),
+                    "pareto-tie transparency must not be catastrophic",
+                );
+                // The tied candidates' refs surface in the opacity map.
+                let opacities = t.opacities().expect("opaque transparency");
+                assert!(
+                    opacities.len() >= 2,
+                    "tied candidates' refs must surface as opacity locations",
+                );
+            }
+            other => panic!("pareto-tie must yield Partial; got {other:?}"),
+        }
+    }
+
+    /// Three candidates with two tied at the minimum and one dominated
+    /// — still Partial (the formatter pauses on the tied pair).
+    #[test]
+    fn pareto_two_tied_one_dominated_is_partial() {
+        let set = ParetoSet::new(vec![
+            candidate_with_roughness("@spectral/candidate/a", 0.100),
+            candidate_with_roughness("@spectral/candidate/b", 0.102),
+            candidate_with_roughness("@spectral/candidate/c", 0.500),
+        ]);
+        let v = is_pareto(set);
+        assert!(matches!(v, Imperfect::Partial((), _)));
+    }
 }
