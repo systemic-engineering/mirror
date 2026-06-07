@@ -864,18 +864,81 @@ pub struct OscillateWitness {
 /// [`oscillate_with_ast`]) project to just the final Ref per the
 /// substrate's signature.
 ///
-/// 🔴 RED-phase stub: returns the initial Oscillation unchanged so
-/// tests compile but observable witness assertions fail. GREEN phase
-/// (next commit): real iteration loop reading is_complete after each
-/// pulse.
-fn drive<F>(initial: Ref, pulse_fn: F) -> OscillateWitness
+/// Per `oscillate.mirror` §oscillate (lines 685–694) the loop is:
+///
+/// ```text
+///   1. initial → Oscillation { state: Active, iteration: 0, anchor: initial }
+///   2. loop:
+///        next = pulse(o)
+///        verdict = is_complete(next.state)
+///        on verdict = pass     → return next.anchor (settled)
+///        on verdict = partial  → o = next; continue
+///        on verdict = failure  → return next.anchor (escalated)
+///   3. emit final ref
+/// ```
+///
+/// **Termination ordering:** the substrate's step 2 reads is_complete
+/// on `next.state` (post-pulse), not on `o.state` (pre-pulse). The
+/// initial Oscillation carries state=Active (Partial) by construction
+/// (per Oscillation::initial); the loop body MUST run at least one
+/// pulse before checking termination, otherwise the initial Active
+/// state would short-circuit before any work happens. This is why
+/// the loop dispatches on `is_complete(next.state())` after `pulse_fn`
+/// runs, not before.
+///
+/// **Banach contraction:** spec §2.1 guarantees γ_oscillate < 1; the
+/// loop converges in bounded iterations. [`MAX_OSCILLATE_ITERATIONS`]
+/// is the realisation-layer safety cap; well-formed substrate flow
+/// never reaches it (per the substrate's hash-space contraction
+/// witness + Polyak-Łojasiewicz rate bound λ_min(Δ₀)).
+fn drive<F>(initial: Ref, mut pulse_fn: F) -> OscillateWitness
 where
     F: FnMut(&Oscillation) -> Oscillation,
 {
-    let _ = pulse_fn;
+    // Step 1: initial → Oscillation { state: Active, iteration: 0,
+    //                                   anchor: initial } per
+    // `oscillate.mirror` §oscillate step 1.
+    let mut o = Oscillation::initial(initial);
+    // Step 2: loop. The substrate reads is_complete AFTER each pulse
+    // (per §oscillate step 2: "next = pulse(o); verdict =
+    // is_complete(next.state)"). The safety cap iteration count
+    // matches MAX_OSCILLATE_ITERATIONS exactly so that hitting the
+    // cap leaves the final oscillation at iteration =
+    // MAX_OSCILLATE_ITERATIONS (the test asserts this invariant).
+    for _ in 0..MAX_OSCILLATE_ITERATIONS {
+        // Run one pulse first, then check termination on the new state.
+        o = pulse_fn(&o);
+        match is_complete(o.state()) {
+            // Settled → Success(()): autopoietic ground state reached;
+            // holonomy → 0; driver returns final anchor.
+            terni::Imperfect::Success(()) => {
+                return OscillateWitness {
+                    final_oscillation: o,
+                    cap_reached: false,
+                };
+            }
+            // Escalated → Failure: pause_event already emitted to
+            // metalogue (per dark_pass's identity-fracture branch);
+            // driver returns final anchor with the failure verdict.
+            terni::Imperfect::Failure(_, _) => {
+                return OscillateWitness {
+                    final_oscillation: o,
+                    cap_reached: false,
+                };
+            }
+            // Partial → mid-cycle (Active, Dark, or Waiting); the
+            // driver continues with the next pulse.
+            terni::Imperfect::Partial((), _) => {
+                continue;
+            }
+        }
+    }
+    // Safety cap reached: the substrate-incoherent input did not
+    // converge within MAX_OSCILLATE_ITERATIONS pulses. Surface the
+    // final oscillation; cap_reached flags the pathology.
     OscillateWitness {
-        final_oscillation: Oscillation::initial(initial),
-        cap_reached: false,
+        final_oscillation: o,
+        cap_reached: true,
     }
 }
 
@@ -2186,7 +2249,11 @@ mod tests {
         // iteration+1. The is_complete reads Partial → driver
         // continues until the cap.
         let w = drive(r.clone(), |o| {
-            Oscillation::new(OscillationState::Active, o.iteration().advance(), o.anchor().clone())
+            Oscillation::new(
+                OscillationState::Active,
+                o.iteration().advance(),
+                o.anchor().clone(),
+            )
         });
         assert!(
             w.cap_reached,
