@@ -243,8 +243,13 @@ impl Eigenvalue {
 /// [`dense_laplacian`] when `lambda_zero` pulls.
 ///
 /// Pure; no I/O; deterministic.
-pub fn sheaf_laplacian(_restrictions: Vec<Restriction>) -> Operator {
-    unimplemented!("T8 GREEN: sheaf_laplacian's δ*δ assembly body lands next commit")
+pub fn sheaf_laplacian(restrictions: Vec<Restriction>) -> Operator {
+    let dimension: u32 = restrictions
+        .iter()
+        .map(|r| Restriction::source(r).max(Restriction::target(r)) + 1)
+        .max()
+        .unwrap_or(0);
+    Operator::new(dimension, restrictions)
 }
 
 // ---------------------------------------------------------------------------
@@ -284,8 +289,41 @@ pub fn sheaf_laplacian(_restrictions: Vec<Restriction>) -> Operator {
 /// property layer emits.
 ///
 /// Pure relative to LAPACK (LAPACK is deterministic per platform).
-pub fn lambda_zero(_op: &Operator) -> Eigenvalue {
-    unimplemented!("T8 GREEN: lambda_zero's LAPACK dsyev body lands next commit")
+pub fn lambda_zero(op: &Operator) -> Eigenvalue {
+    let n = Operator::dimension(op) as usize;
+    if n == 0 {
+        return Eigenvalue::new(0.0, 0);
+    }
+    if n == 1 {
+        return Eigenvalue::new(0.0, 1);
+    }
+    let matrix = dense_laplacian(op);
+    let evals = match prism_core::ffi::eigenvalues(n, &matrix) {
+        Ok(v) => v,
+        Err(_) => return Eigenvalue::new(0.0, n as u32),
+    };
+
+    // Count multiplicity at the zero-eigenvalue boundary (numerical-zero
+    // threshold). The kernel dimension equals the number of connected
+    // components per Bodnar et al. 2022 §2.
+    let threshold = 1e-9_f64;
+    let zero_count = evals.iter().filter(|&&e| e.abs() < threshold).count() as u32;
+
+    // The smallest strictly-positive eigenvalue is the algebraic
+    // connectivity / Fiedler value / spectral gap.
+    let gap = evals
+        .iter()
+        .find(|&&e| e > threshold)
+        .copied()
+        .unwrap_or(0.0);
+
+    // Disconnected (k > 1 components) → return λ₀ = 0 with multiplicity k.
+    // Connected (k = 1) → return the spectral gap with multiplicity 1.
+    if zero_count > 1 {
+        Eigenvalue::new(0.0, zero_count)
+    } else {
+        Eigenvalue::new(gap, 1)
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -348,14 +386,21 @@ pub fn dense_laplacian(op: &Operator) -> Vec<f64> {
     }
 
     // Build the normalised Laplacian Δ_F = I − D^{-1/2} W D^{-1/2}.
-    // For isolated vertices (degree 0), D^{-1/2} = 0 by convention; the
-    // row/column collapses to the identity diagonal.
+    // For isolated vertices (degree 0) the row/column is the zero row —
+    // eigenvalue 0 contributes to the kernel per Bodnar et al. 2022 §2's
+    // "kernel dim = component count" reading, where each isolated
+    // vertex IS a component.
     let mut delta = vec![0.0_f64; n * n];
     for i in 0..n {
+        if degrees[i] <= 0.0 {
+            // Isolated vertex: zero row/column. Contributes one
+            // dimension to ker(Δ_F).
+            continue;
+        }
         for j in 0..n {
             if i == j {
                 delta[i * n + j] = 1.0;
-            } else if degrees[i] > 0.0 && degrees[j] > 0.0 {
+            } else if degrees[j] > 0.0 {
                 delta[i * n + j] = -w[i * n + j] / (degrees[i] * degrees[j]).sqrt();
             }
         }
