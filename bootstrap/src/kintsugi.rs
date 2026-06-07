@@ -500,4 +500,83 @@ mod tests {
         let t = tensor_of(Vec::new());
         let _fractures: Vec<Fracture> = minimize(&t);
     }
+
+    // -----------------------------------------------------------------------
+    // T8.5 bridge: minimize on a weighted tensor ranks differently than on
+    // a uniform tensor. This is the substantive correctness check that
+    // the bridge enables — when consumers supply real weights via
+    // `tensor_of_with_restrictions`, `minimize` produces ranked output
+    // that reflects the weight signal (not flat 1.0 ranking).
+    //
+    // The actual SDRF curvature ranking inside `minimize` stays scalar-
+    // magnitude per T7's contract; SDRF (Topping 2022) is the next tick.
+    // -----------------------------------------------------------------------
+
+    use crate::sheaf_laplacian::Restriction;
+    use crate::tensor::tensor_of_with_restrictions;
+
+    /// `minimize` on a weighted tensor ranks fractures by the consumer-
+    /// supplied weight. The high-weight tension's gap pair surfaces
+    /// first; the low-weight tension's gap pair surfaces after. This is
+    /// the difference between T7's flat-ranking output (uniform 1.0)
+    /// and the meaningful-ranking output the bridge unlocks.
+    #[test]
+    fn minimize_on_weighted_tensor_ranks_by_consumer_weight() {
+        let g0 = Gap::new(0, total_origin(), "low pair a");
+        let g1 = Gap::new(0, total_origin(), "low pair b");
+        let g2 = Gap::new(0, total_origin(), "high pair a");
+        let g3 = Gap::new(0, total_origin(), "high pair b");
+        // Build the basis with the LOW-weight pair listed first; the
+        // HIGH-weight pair listed second. Magnitude-rank must move the
+        // HIGH pair ahead of the LOW pair despite source order.
+        let t = tensor_of_with_restrictions(
+            vec![g0.clone(), g1.clone(), g2.clone(), g3.clone()],
+            vec![
+                Restriction::new(0, 1, 0.2),
+                Restriction::new(2, 3, 0.9),
+            ],
+        );
+        let fractures = minimize(&t);
+        assert_eq!(fractures.len(), 4);
+        // High-magnitude pair's endpoints come first.
+        assert_eq!(Fracture::gap(&fractures[0]), &g2);
+        assert_eq!(Fracture::gap(&fractures[1]), &g3);
+        assert!((Fracture::descent(&fractures[0]) - 0.9).abs() < 1e-12);
+        assert!((Fracture::descent(&fractures[1]) - 0.9).abs() < 1e-12);
+        // Low-magnitude pair's endpoints come after.
+        assert_eq!(Fracture::gap(&fractures[2]), &g0);
+        assert_eq!(Fracture::gap(&fractures[3]), &g1);
+        assert!((Fracture::descent(&fractures[2]) - 0.2).abs() < 1e-12);
+        assert!((Fracture::descent(&fractures[3]) - 0.2).abs() < 1e-12);
+    }
+
+    /// Uniform-weight `minimize` (via `tensor_of`) and weighted-weight
+    /// `minimize` (via `tensor_of_with_restrictions`) produce different
+    /// descent magnitudes on the same gap basis. The uniform path emits
+    /// 1.0 across the board; the weighted path emits per-restriction
+    /// magnitudes. The difference is the bridge.
+    #[test]
+    fn minimize_uniform_vs_weighted_yields_different_descent_magnitudes() {
+        let g0 = Gap::new(0, total_origin(), "a");
+        let g1 = Gap::new(0, total_origin(), "b");
+        let uniform = minimize(&crate::tensor::tensor_of(vec![g0.clone(), g1.clone()]));
+        let weighted = minimize(&tensor_of_with_restrictions(
+            vec![g0.clone(), g1.clone()],
+            vec![Restriction::new(0, 1, 0.3)],
+        ));
+        assert_eq!(uniform.len(), 2);
+        assert_eq!(weighted.len(), 2);
+        // Uniform: all descents at the T6 floor (1.0).
+        assert!((Fracture::descent(&uniform[0]) - 1.0).abs() < 1e-12);
+        // Weighted: descents carry the consumer-supplied weight (0.3).
+        assert!((Fracture::descent(&weighted[0]) - 0.3).abs() < 1e-12);
+        // The two rankings differ on the descent magnitude field — the
+        // substantive correctness check that the bridge is wired.
+        assert!(
+            (Fracture::descent(&uniform[0]) - Fracture::descent(&weighted[0])).abs() > 1e-9,
+            "weighted minimize must produce non-uniform descents; got uniform={}, weighted={}",
+            Fracture::descent(&uniform[0]),
+            Fracture::descent(&weighted[0]),
+        );
+    }
 }

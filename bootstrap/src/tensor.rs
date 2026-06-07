@@ -633,4 +633,146 @@ mod tests {
         let v = TensionVector::new(0.42);
         assert_eq!(TensionVector::magnitude(&v), 0.42);
     }
+
+    // -----------------------------------------------------------------------
+    // T8.5 bridge: tensor_of_with_restrictions + LAPACK-routed fiedler_of.
+    //
+    // The bridge tick lifts T6's identity-restriction-map limitation: a
+    // sibling constructor accepts per-edge `Restriction`s (the substrate-
+    // declared `restriction` carrier from `sheaf_laplacian.mirror`) and
+    // the resulting Fiedler value is computed by the same numerical
+    // primitive `lambda_zero` uses — LAPACK `dsyev` via
+    // `prism_core::ffi::eigenvalues`. The T6 tests above continue to pass
+    // through the new LAPACK path (substantive correctness check).
+    //
+    // The brief: cleanest scope is a sibling constructor, not extending
+    // `tensor_of`. `tensor_of` stays simple (uniform 1.0 from same-origin
+    // pairing); `tensor_of_with_restrictions` enables non-uniform weights
+    // for downstream consumers that have real conductivity data.
+    // -----------------------------------------------------------------------
+
+    use crate::sheaf_laplacian::Restriction;
+
+    /// `tensor_of_with_restrictions(gaps, [])` on a single-gap basis
+    /// yields the same trivial tensor as `tensor_of(gaps)`: one vertex,
+    /// no tensions, fiedler = 0.
+    #[test]
+    fn tensor_of_with_restrictions_empty_yields_trivial_tensor() {
+        let g = Gap::new(0, total_origin(), "dark region [0, 5)");
+        let t = tensor_of_with_restrictions(vec![g.clone()], Vec::new());
+        assert_eq!(Tensor::vertices(&t).len(), 1);
+        assert!(Tensor::tensions(&t).is_empty());
+        assert_eq!(Tensor::fiedler(&t), 0.0);
+    }
+
+    /// `tensor_of_with_restrictions` with one unit-weight restriction on
+    /// a 2-gap basis reproduces K₂'s fiedler = 2.0 — the substantive
+    /// correctness check that the LAPACK path matches the Jacobi path on
+    /// the identity-weights baseline.
+    #[test]
+    fn tensor_of_with_restrictions_k2_unit_weight_matches_jacobi_baseline() {
+        let g1 = Gap::new(0, total_origin(), "dark [0, 5)");
+        let g2 = Gap::new(0, total_origin(), "dark [10, 15)");
+        let t = tensor_of_with_restrictions(
+            vec![g1.clone(), g2.clone()],
+            vec![Restriction::new(0, 1, 1.0)],
+        );
+        assert_eq!(Tensor::vertices(&t).len(), 2);
+        assert_eq!(Tensor::tensions(&t).len(), 1);
+        // K₂ normalised algebraic connectivity = 2/(2−1) = 2.0; LAPACK
+        // path must reproduce the Jacobi-path value.
+        assert!(
+            (Tensor::fiedler(&t) - 2.0).abs() < 1e-9,
+            "K₂ unit-weight via LAPACK must yield 2.0; got {}",
+            Tensor::fiedler(&t),
+        );
+    }
+
+    /// `tensor_of_with_restrictions` carries the consumer-supplied
+    /// weight into the constructed Tension's `TensionVector::magnitude`.
+    /// This is what makes T7's `minimize` rankings meaningful when the
+    /// consumer has real weights.
+    #[test]
+    fn tensor_of_with_restrictions_propagates_weight_into_tension_vector() {
+        let g1 = Gap::new(0, total_origin(), "dark [0, 5)");
+        let g2 = Gap::new(0, total_origin(), "dark [10, 15)");
+        let t = tensor_of_with_restrictions(
+            vec![g1, g2],
+            vec![Restriction::new(0, 1, 0.42)],
+        );
+        assert_eq!(Tensor::tensions(&t).len(), 1);
+        let tension = &Tensor::tensions(&t)[0];
+        assert!(
+            (TensionVector::magnitude(Tension::vector(tension)) - 0.42).abs() < 1e-12,
+            "consumer-supplied weight 0.42 must flow into TensionVector::magnitude; got {}",
+            TensionVector::magnitude(Tension::vector(tension)),
+        );
+    }
+
+    /// `tensor_of_with_restrictions` on a 3-vertex path graph P₃ with
+    /// NON-uniform weights produces a Fiedler value strictly less than
+    /// the K₃ value (1.5) — the substantive correctness check that
+    /// non-uniform restriction weights surface meaningful curvature
+    /// signal. P₃ (path) is structurally less connected than K₃
+    /// (complete); the spectral gap shrinks. With weights w(0,1)=1.0,
+    /// w(1,2)=4.0 the gap is non-zero and strictly less than 1.5.
+    #[test]
+    fn tensor_of_with_restrictions_p3_nonuniform_yields_meaningful_fiedler() {
+        let g0 = Gap::new(0, total_origin(), "dark [0, 5)");
+        let g1 = Gap::new(0, total_origin(), "dark [10, 15)");
+        let g2 = Gap::new(0, total_origin(), "dark [20, 25)");
+        let t = tensor_of_with_restrictions(
+            vec![g0, g1, g2],
+            vec![
+                Restriction::new(0, 1, 1.0),
+                Restriction::new(1, 2, 4.0),
+            ],
+        );
+        let f = Tensor::fiedler(&t);
+        assert!(
+            f > 1e-9,
+            "P₃ connected → fiedler > 0; got {}",
+            f,
+        );
+        assert!(
+            f < 1.5,
+            "P₃ less connected than K₃ → fiedler < 1.5; got {}",
+            f,
+        );
+    }
+
+    /// `tensor_of_with_restrictions` on disconnected vertices yields
+    /// fiedler = 0.0. (Two isolated gaps with no restriction between
+    /// them; the graph has two components; algebraic connectivity
+    /// vanishes per Bodnar 2022 §2.)
+    #[test]
+    fn tensor_of_with_restrictions_disconnected_yields_zero_fiedler() {
+        let g0 = Gap::new(0, total_origin(), "dark [0, 5)");
+        let g1 = Gap::new(0, total_origin(), "dark [10, 15)");
+        let t = tensor_of_with_restrictions(vec![g0, g1], Vec::new());
+        assert_eq!(Tensor::vertices(&t).len(), 2);
+        assert!(Tensor::tensions(&t).is_empty());
+        assert_eq!(Tensor::fiedler(&t), 0.0);
+    }
+
+    /// Out-of-range restriction indices are silently ignored: the gap
+    /// basis has `n` vertices, indices ≥ n have no corresponding gap.
+    /// (Consumers are expected to keep indices in range; this is the
+    /// defensive boundary read.)
+    #[test]
+    fn tensor_of_with_restrictions_ignores_out_of_range_indices() {
+        let g0 = Gap::new(0, total_origin(), "dark [0, 5)");
+        let g1 = Gap::new(0, total_origin(), "dark [10, 15)");
+        // Restriction references index 5 which has no corresponding
+        // gap; it must be dropped without panicking.
+        let t = tensor_of_with_restrictions(
+            vec![g0, g1],
+            vec![
+                Restriction::new(0, 1, 1.0),
+                Restriction::new(0, 5, 0.5),
+            ],
+        );
+        // Only the in-range restriction becomes a tension.
+        assert_eq!(Tensor::tensions(&t).len(), 1);
+    }
 }
