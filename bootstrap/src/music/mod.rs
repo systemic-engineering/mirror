@@ -200,50 +200,180 @@ pub fn is_settled(kind: CadenceKind) -> Verdict {
 
 #[cfg(test)]
 mod tests {
-    //! The executable spec for `is_settled`.
+    //! The executable spec for `is_settled` after T3 — the Verdict
+    //! supersession to `Imperfect<(), Gap, Transparency<Ref>>`.
     //!
-    //! Each test asserts one row of the four-state mapping declared in
-    //! `shards/epistemologic/math/music/cadence.mirror`. RED before the
-    //! body lands (panics via `todo!()`); GREEN after.
+    //! Per `docs/specs/property-and-inference-collapse.md` §9.1: the
+    //! audible-altitude `Verdict` supersedes to the Hodge-framed
+    //! verdict triple (per `docs/insights/2026-06-07-hodge-duality-three-readings-of-H.md`):
     //!
-    //! Per AGENTS.md "TDD": red first as a separate commit; green
-    //! follows immediately. These four tests ARE the executable
-    //! substrate-altitude contract — drift on either side breaks them.
+    //!   - `Success(())`                       — harmonic representative;
+    //!                                            cohomology class is zero;
+    //!                                            no gauge content.
+    //!   - `Partial((), Transparency<Ref>)`    — harmonic representative
+    //!                                            with gauge content logged.
+    //!   - `Failure(Gap, Transparency<Ref>)`   — nontrivial cohomology;
+    //!                                            gap names the cocycle.
+    //!
+    //! The four-state cadence mapping survives as a projection per
+    //! §4.4 — `confidence_of` and `cadence_kind_of` are the projection
+    //! functors. The substrate carries the full verdict; each consumer
+    //! projects what it needs.
+    //!
+    //! Per AGENTS.md "TDD": these tests RED first; the body lands
+    //! GREEN in the next commit. Drift on either side breaks them.
 
     use super::*;
+    use crate::gap::{confidence_of, verdict_to_cadence_kind, Gap};
+    use prism_core::Transparency;
+    use terni::Imperfect;
+
+    // -----------------------------------------------------------------
+    // Type-level: the supersession compiles to the Hodge-framed shape.
+    // -----------------------------------------------------------------
+
+    /// `Verdict` IS `Imperfect<(), Gap, Transparency<Ref>>`. This test
+    /// asserts shape at the type level: assigning an `Imperfect` value
+    /// of that triple to a `Verdict` binding must typecheck. RED while
+    /// `Verdict` is still a 3-variant enum; GREEN once the type alias
+    /// lands.
+    #[test]
+    fn verdict_is_imperfect_unit_gap_transparency_ref() {
+        let v: Verdict = Imperfect::Success(());
+        // Force the structural read so the compiler exhausts the alias.
+        assert!(matches!(v, Imperfect::Success(())));
+    }
+
+    // -----------------------------------------------------------------
+    // The four-state cadence mapping survives as projection.
+    // -----------------------------------------------------------------
 
     /// Authentic cadence — V → I — IS the autopoietic ground state.
-    /// Per `cadence.mirror`: `authentic → pass`. Holonomy → 0.
+    /// Per `cadence.mirror`: `authentic → pass`. The Hodge reading:
+    /// the harmonic representative IS the input; cohomology class is
+    /// the zero class; no gauge content carried.
     #[test]
-    fn authentic_cadence_passes() {
-        assert_eq!(is_settled(CadenceKind::Authentic), Verdict::Pass);
+    fn authentic_cadence_is_success_unit() {
+        let v = is_settled(CadenceKind::Authentic);
+        assert!(matches!(v, Imperfect::Success(())));
+        assert_eq!(verdict_to_cadence_kind(&v), CadenceKind::Authentic);
     }
 
-    /// Plagal cadence — IV → I — IS the "Amen" cadence; consonant but
-    /// not the strongest signal. Per `cadence.mirror`: auto-apply with
-    /// reduced confidence. Confidence committed at 0.85 (above 1/φ).
+    /// Plagal cadence — IV → I — the "Amen" cadence. The Hodge
+    /// reading: harmonic representative reached, but the path carried
+    /// (exact) gauge content; the substrate logs the transparency as
+    /// `Clear` at this floor (no located opacity to report at the
+    /// audible altitude — the gauge content is a path-shape signal,
+    /// not a located crack). `confidence_of` projects to ~0.85.
     #[test]
-    fn plagal_cadence_partial_high_confidence() {
-        assert_eq!(is_settled(CadenceKind::Plagal), Verdict::Partial(0.85),);
+    fn plagal_cadence_is_partial_with_high_confidence() {
+        let v = is_settled(CadenceKind::Plagal);
+        match &v {
+            Imperfect::Partial((), t) => {
+                assert!(
+                    !t.is_catastrophic(),
+                    "plagal transparency must not be catastrophic"
+                );
+                let c = confidence_of(t);
+                assert!(
+                    c > 0.618,
+                    "plagal confidence must lie above 1/phi (got {c})",
+                );
+            }
+            other => panic!("plagal must yield Partial; got {other:?}"),
+        }
+        assert_eq!(verdict_to_cadence_kind(&v), CadenceKind::Plagal);
     }
 
-    /// Half cadence — progression paused on V. Per `cadence.mirror`:
-    /// awaiting the next consent surface; low confidence in the
-    /// current candidate being final. Confidence committed at 0.25
-    /// (below 1/φ).
+    /// Half cadence — progression paused on V. The Hodge reading:
+    /// harmonic representative not yet reached; the substrate is
+    /// mid-projection; the transparency carries an opacity signalling
+    /// the pause. `confidence_of` projects to ~0.25 (below 1/φ).
     #[test]
-    fn half_cadence_partial_low_confidence() {
-        assert_eq!(is_settled(CadenceKind::Half), Verdict::Partial(0.25),);
+    fn half_cadence_is_partial_with_low_confidence() {
+        let v = is_settled(CadenceKind::Half);
+        match &v {
+            Imperfect::Partial((), t) => {
+                assert!(
+                    !t.is_catastrophic(),
+                    "half transparency must not be catastrophic"
+                );
+                let c = confidence_of(t);
+                assert!(
+                    c < 0.618,
+                    "half confidence must lie below 1/phi (got {c})",
+                );
+            }
+            other => panic!("half must yield Partial; got {other:?}"),
+        }
+        assert_eq!(verdict_to_cadence_kind(&v), CadenceKind::Half);
     }
 
     /// Deceptive cadence — V → vi — the formatter chose dissonance
-    /// over consonance. Per `cadence.mirror`: consent query NEEDED;
-    /// the substrate yields. Failure variant: `DeceptiveCadence`.
+    /// over consonance. The Hodge reading: nontrivial cohomology;
+    /// gradient flow cannot reach `ker(D)`; the gap names the cocycle
+    /// (V → vi unresolved tension); escalate to Reflection.
+    ///
+    /// Per `gap-tension-tensor-substrate.md` §3.2: the gap carries
+    /// Bateson level (level 1 = simple contradiction; the V → vi case).
+    /// The transparency carries opacity sites observed en route to the
+    /// failure.
     #[test]
-    fn deceptive_cadence_fails_to_consent() {
-        assert_eq!(
-            is_settled(CadenceKind::Deceptive),
-            Verdict::Failure(Reason::DeceptiveCadence),
-        );
+    fn deceptive_cadence_is_failure_with_gap_and_transparency() {
+        let v = is_settled(CadenceKind::Deceptive);
+        match &v {
+            Imperfect::Failure(gap, t) => {
+                // Level-1 contradiction per gap-tension-tensor §3.2.
+                assert_eq!(
+                    Gap::level(gap),
+                    1,
+                    "deceptive cadence is a level-1 contradiction",
+                );
+                assert!(
+                    !t.is_catastrophic(),
+                    "deceptive transparency must not be catastrophic"
+                );
+                // confidence_of projects Failure-side opacity to 0.0
+                // per spec §3.1.
+                let c = confidence_of(t);
+                assert!(
+                    c < 0.25,
+                    "deceptive confidence must be near zero (got {c})",
+                );
+            }
+            other => panic!("deceptive must yield Failure; got {other:?}"),
+        }
+        assert_eq!(verdict_to_cadence_kind(&v), CadenceKind::Deceptive);
+    }
+
+    // -----------------------------------------------------------------
+    // is_ok / is_err / is_partial shape — Imperfect's queries survive.
+    // -----------------------------------------------------------------
+
+    /// `Success(())` is_ok and not is_partial.
+    #[test]
+    fn success_unit_is_ok_not_partial() {
+        let v = is_settled(CadenceKind::Authentic);
+        assert!(v.is_ok());
+        assert!(!v.is_partial());
+        assert!(!v.is_err());
+    }
+
+    /// `Partial((), _)` is_ok AND is_partial.
+    #[test]
+    fn partial_unit_is_ok_and_partial() {
+        let v = is_settled(CadenceKind::Plagal);
+        assert!(v.is_ok());
+        assert!(v.is_partial());
+        assert!(!v.is_err());
+    }
+
+    /// `Failure(_, _)` is_err.
+    #[test]
+    fn failure_gap_is_err() {
+        let v = is_settled(CadenceKind::Deceptive);
+        assert!(v.is_err());
+        assert!(!v.is_ok());
+        assert!(!v.is_partial());
     }
 }
