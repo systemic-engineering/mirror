@@ -581,19 +581,131 @@ fn expected_cadence_for_descent(descent: f64) -> CadenceKind {
     }
 }
 
-/// `query_phi(m: morphism) -> verdict` — the structural Φ query
-/// (later-tick stub).
+// =====================================================================
+// T14: `query_phi` lifted — the structural Φ query realised.
+//
+// 2026-06-07. Per `shards/mirror/spectral/consent.mirror` §query_phi:
+// `query_phi(candidates: morphism_set) -> verdict` IS the structural
+// Φ query at substrate altitude. The lifted body composes through the
+// three glass properties declared in the same shard:
+//
+//   1. loss_decreasing(m)         — gate (per morphism)
+//   2. identity_preserving(m)     — gate (per morphism, with anchor)
+//   3. admissibility_singleton(Φ) — rank (set-level)
+//   ... and the cadence-meet via is_settled(m.expected) per substrate
+//   §query_phi ("composes with cadence.is_settled per surviving
+//   morphism's expected field").
+//
+// This block declares the carriers + RED stubs; the GREEN bodies land
+// in the next commit.
+// =====================================================================
+
+/// The substrate's morphism_set carrier at the consent altitude.
 ///
-/// **STUB.** Per `consent.mirror` §query_phi: the realisation runs the
-/// gates (`loss_decreasing`, `identity_preserving`) over the
-/// morphism_set; delegates to `admissibility_singleton` for the
-/// discriminator; composes with `cadence.is_settled` per the surviving
-/// morphism's `expected` field; emits the consent verdict. T10.5
-/// dispatches through the substrate's existing audible-altitude
-/// `is_settled` against the stub morphism's `expected` cadence —
-/// enough to type the chain; the structural query lands when the
-/// `morphism_set` shape and the three glass properties pull into Rust.
-pub fn query_phi(m: &Morphism) -> Verdict {
+/// Mirrors `type morphism_set = [morphism]` from
+/// `shards/mirror/spectral/consent.mirror`. The set of candidate
+/// morphisms the consent surface evaluates; the auto-apply boundary's
+/// structural Φ query (`query_phi`) reads the whole set and emits the
+/// consent verdict.
+///
+/// Identity contract: two morphism_sets are equal iff their morphism
+/// sequences are element-wise equal. Newtype per
+/// `[[feedback-no-bare-types]]`.
+#[derive(Clone, Debug, PartialEq)]
+pub struct MorphismSet {
+    morphisms: Vec<Morphism>,
+}
+
+impl MorphismSet {
+    /// Construct from a vector of morphisms.
+    pub fn new(morphisms: Vec<Morphism>) -> Self {
+        MorphismSet { morphisms }
+    }
+
+    /// Construct a singleton morphism_set from one morphism. Mirrors
+    /// the substrate's per-pulse morphism_set: `active_pass` emits a
+    /// single proposal; `query_phi`'s gate+rank runs over a singleton.
+    pub fn singleton(m: Morphism) -> Self {
+        MorphismSet {
+            morphisms: vec![m],
+        }
+    }
+
+    /// Borrow this set's morphisms as a slice.
+    pub fn morphisms(&self) -> &[Morphism] {
+        &self.morphisms
+    }
+
+    /// Read whether this set is empty (the "no admissible morphism"
+    /// case per `admissibility_singleton`'s `failure` shape).
+    pub fn is_empty(&self) -> bool {
+        self.morphisms.is_empty()
+    }
+
+    /// Read this set's cardinality.
+    pub fn len(&self) -> usize {
+        self.morphisms.len()
+    }
+
+    /// Project to the dissonance-altitude `pareto_set` shape (drop the
+    /// `expected: cadence_kind` field per the substrate header's
+    /// symmetry note).
+    pub fn to_pareto_set(&self) -> crate::music::ParetoSet {
+        let candidates = self
+            .morphisms
+            .iter()
+            .map(|m| crate::music::Candidate::new(m.content().clone(), m.score()))
+            .collect();
+        crate::music::ParetoSet::new(candidates)
+    }
+}
+
+/// `loss_decreasing(m: morphism) -> verdict` — the loss-decrease gate.
+///
+/// **🔴 [substrate-pull:realize] T14 RED stub.** Body lands in the
+/// GREEN commit; this signature exists so the new query_phi callers
+/// type-check.
+pub fn loss_decreasing(_m: &Morphism) -> Verdict {
+    unimplemented!("T14 RED: loss_decreasing body lands GREEN")
+}
+
+/// `identity_preserving(m: morphism, anchor: ref) -> verdict` — the
+/// DARK-bits-equal gate.
+///
+/// **🔴 [substrate-pull:realize] T14 RED stub.** Body lands in the
+/// GREEN commit. Anchor is threaded as a sibling parameter because the
+/// substrate-altitude `morphism` carries `content: ref` but not the
+/// pre-morphism shard's identity_signal.
+pub fn identity_preserving(_m: &Morphism, _anchor: &Ref) -> Verdict {
+    unimplemented!("T14 RED: identity_preserving body lands GREEN")
+}
+
+/// `admissibility_singleton(candidates: morphism_set) -> verdict` —
+/// the Pareto-front singleton check.
+///
+/// **🔴 [substrate-pull:realize] T14 RED stub.** Body lands in the
+/// GREEN commit; will delegate to `crate::music::is_pareto` via the
+/// morphism_set → pareto_set projection.
+pub fn admissibility_singleton(_candidates: &MorphismSet) -> Verdict {
+    unimplemented!("T14 RED: admissibility_singleton body lands GREEN")
+}
+
+/// `query_phi(candidates: morphism_set, anchor: ref) -> verdict` —
+/// the structural Φ query (THE LOAD-BEARING ACTION).
+///
+/// **🔴 [substrate-pull:realize] T14 RED stub.** Lifted from the T10.5
+/// single-morphism delegator (still present below as
+/// [`query_phi_legacy`] until the GREEN body lands and the call sites
+/// migrate). Body lands in the GREEN commit.
+pub fn query_phi(_candidates: &MorphismSet, _anchor: &Ref) -> Verdict {
+    unimplemented!("T14 RED: query_phi structural body lands GREEN")
+}
+
+/// **Legacy delegator** for the T10.5 single-morphism call site.
+/// Removed in the GREEN commit; kept here so [`dark_pass`] and the
+/// pre-T14 tests still compile during the RED phase.
+#[allow(dead_code)]
+fn query_phi_legacy(m: &Morphism) -> Verdict {
     crate::music::is_settled(m.expected())
 }
 
@@ -674,7 +786,9 @@ pub fn dark_pass(o: &Oscillation, m: &Morphism) -> Oscillation {
     if anchor_dark == proposed_dark {
         // Identity preserved: chain T10.5's verdict-shape composition;
         // anchor advances to m.content (per substrate's §dark_pass).
-        let verdict = query_phi(m);
+        // RED-phase: still using legacy single-morphism delegator;
+        // the GREEN commit migrates to the lifted query_phi.
+        let verdict = query_phi_legacy(m);
         let kind = crate::gap::verdict_to_cadence_kind(&verdict);
         let next_state = read_consent(&verdict, kind);
         Oscillation::new(next_state, o.iteration().advance(), m.content().clone())
@@ -1307,6 +1421,8 @@ mod tests {
 
     /// `query_phi` over an authentic-expected morphism reads as
     /// `Success(())` (the canonical closure) per is_settled's mapping.
+    /// Legacy single-morphism shape — stays GREEN during T14 RED via
+    /// the [`query_phi_legacy`] delegator.
     #[test]
     fn query_phi_stub_on_authentic_morphism_is_success() {
         let m = Morphism::new(
@@ -1314,12 +1430,14 @@ mod tests {
             Dissonance::new(0.0, 1),
             CadenceKind::Authentic,
         );
-        let v = query_phi(&m);
+        let v = query_phi_legacy(&m);
         assert!(matches!(v, Imperfect::Success(())));
     }
 
     /// `query_phi` over a deceptive-expected morphism reads as
-    /// `Failure` per is_settled's mapping (V → vi).
+    /// `Failure` per is_settled's mapping (V → vi). Legacy single-
+    /// morphism shape — stays GREEN during T14 RED via the legacy
+    /// delegator.
     #[test]
     fn query_phi_stub_on_deceptive_morphism_is_failure() {
         let m = Morphism::new(
@@ -1327,7 +1445,7 @@ mod tests {
             Dissonance::new(0.9, 1),
             CadenceKind::Deceptive,
         );
-        let v = query_phi(&m);
+        let v = query_phi_legacy(&m);
         assert!(matches!(v, Imperfect::Failure(_, _)));
     }
 
@@ -1552,7 +1670,7 @@ mod tests {
         let o = Oscillation::initial(fixture_anchor());
         // Run the chain explicitly:
         let m = active_pass(&o);
-        let v = query_phi(&m);
+        let v = query_phi_legacy(&m);
         let k = crate::gap::verdict_to_cadence_kind(&v);
         let expected_state = read_consent(&v, k);
         let expected_iter = o.iteration().advance();
@@ -2316,5 +2434,352 @@ mod tests {
         );
         assert_eq!(w.final_oscillation.anchor(), &r);
         assert!(w.final_oscillation.iteration().count() >= 1);
+    }
+
+    // ================================================================
+    // T14: `query_phi` lifted — the structural Φ query.
+    //
+    // Per `shards/mirror/spectral/consent.mirror` §query_phi: the
+    // structural Φ query composes the three glass properties
+    // (loss_decreasing, identity_preserving, admissibility_singleton)
+    // through the substrate's Loss-monoid meet (Fail-dominates /
+    // Partial-min / Pass-neutral), THEN composes with cadence.is_settled
+    // per surviving morphism's expected field.
+    //
+    // The three glass properties live as siblings; query_phi is the
+    // structural composition. The RED stubs panic; the GREEN bodies
+    // land in the next commit.
+    // ================================================================
+
+    // -- MorphismSet shape tests --
+
+    #[test]
+    fn morphism_set_singleton_has_cardinality_one() {
+        let m = Morphism::new(
+            fixture_anchor(),
+            Dissonance::new(0.0, 1),
+            CadenceKind::Authentic,
+        );
+        let set = MorphismSet::singleton(m);
+        assert_eq!(set.len(), 1);
+        assert!(!set.is_empty());
+    }
+
+    #[test]
+    fn morphism_set_empty_reads_empty() {
+        let set = MorphismSet::new(vec![]);
+        assert!(set.is_empty());
+        assert_eq!(set.len(), 0);
+    }
+
+    #[test]
+    fn morphism_set_projects_to_pareto_set_dropping_expected_field() {
+        let m1 = Morphism::new(
+            fixture_anchor(),
+            Dissonance::new(0.1, 2),
+            CadenceKind::Authentic,
+        );
+        let m2 = Morphism::new(
+            fixture_anchor(),
+            Dissonance::new(0.5, 2),
+            CadenceKind::Half,
+        );
+        let set = MorphismSet::new(vec![m1, m2]);
+        let pareto = set.to_pareto_set();
+        assert_eq!(pareto.candidates().len(), 2);
+        // Roughness reading survives the projection (the substrate's
+        // discriminator-altitude reading).
+        assert!((pareto.candidates()[0].score().roughness() - 0.1).abs() < 1e-9);
+        assert!((pareto.candidates()[1].score().roughness() - 0.5).abs() < 1e-9);
+    }
+
+    // -- loss_decreasing tests --
+
+    /// `loss_decreasing` on a consonant morphism (roughness 0) reads
+    /// as `Success(())` — full descent; auto-apply.
+    #[test]
+    fn loss_decreasing_on_consonant_morphism_is_success() {
+        let m = Morphism::new(
+            fixture_anchor(),
+            Dissonance::new(0.0, 1),
+            CadenceKind::Authentic,
+        );
+        let v = loss_decreasing(&m);
+        assert!(matches!(v, Imperfect::Success(())));
+    }
+
+    /// `loss_decreasing` on a dissonant morphism (roughness > 1/φ)
+    /// reads as `Failure` — holonomy NOT strictly decreasing; the
+    /// e^(n+1) < e^n discipline violated.
+    #[test]
+    fn loss_decreasing_on_dissonant_morphism_is_failure() {
+        let m = Morphism::new(
+            fixture_anchor(),
+            Dissonance::new(0.9, 1),
+            CadenceKind::Authentic,
+        );
+        let v = loss_decreasing(&m);
+        assert!(
+            matches!(v, Imperfect::Failure(_, _)),
+            "roughness > 1/φ must fail loss_decreasing; got {v:?}",
+        );
+    }
+
+    /// `loss_decreasing` in the graded band reads as `Partial` —
+    /// substrate's graded-descent reading.
+    #[test]
+    fn loss_decreasing_on_graded_morphism_is_partial() {
+        let m = Morphism::new(
+            fixture_anchor(),
+            Dissonance::new(0.5, 1),
+            CadenceKind::Plagal,
+        );
+        let v = loss_decreasing(&m);
+        assert!(
+            matches!(v, Imperfect::Partial((), _)),
+            "roughness 0.5 (between 1/φ² and 1/φ) must be Partial; got {v:?}",
+        );
+    }
+
+    // -- identity_preserving tests --
+
+    /// `identity_preserving` when morphism content equals anchor reads
+    /// as `Success(())` — DARK bits byte-equal; identity preserved.
+    #[test]
+    fn identity_preserving_on_anchor_equal_content_is_success() {
+        let anchor = fixture_anchor();
+        let m = Morphism::new(
+            anchor.clone(),
+            Dissonance::new(0.0, 1),
+            CadenceKind::Authentic,
+        );
+        let v = identity_preserving(&m, &anchor);
+        assert!(matches!(v, Imperfect::Success(())));
+    }
+
+    /// `identity_preserving` when morphism content's DARK bits diverge
+    /// from anchor's reads as `Failure` — the morphism would write a
+    /// new substrate identity.
+    #[test]
+    fn identity_preserving_on_divergent_content_is_failure() {
+        let anchor = Ref::new("@mirror/spectral/oscillate/anchor-a").expect("valid");
+        let divergent = Ref::new("@mirror/spectral/oscillate/divergent-b").expect("valid");
+        let m = Morphism::new(divergent, Dissonance::new(0.0, 1), CadenceKind::Authentic);
+        let v = identity_preserving(&m, &anchor);
+        assert!(
+            matches!(v, Imperfect::Failure(_, _)),
+            "DARK-divergent content must fail identity_preserving; got {v:?}",
+        );
+    }
+
+    // -- admissibility_singleton tests --
+
+    /// `admissibility_singleton` on the empty set reads as `Failure`
+    /// — the "no admissible morphism" case per is_pareto's empty
+    /// discipline.
+    #[test]
+    fn admissibility_singleton_on_empty_set_is_failure() {
+        let set = MorphismSet::new(vec![]);
+        let v = admissibility_singleton(&set);
+        assert!(
+            matches!(v, Imperfect::Failure(_, _)),
+            "empty morphism_set must fail admissibility; got {v:?}",
+        );
+    }
+
+    /// `admissibility_singleton` on a true singleton reads as
+    /// `Success(())` — the trivial singleton case; auto-apply.
+    #[test]
+    fn admissibility_singleton_on_singleton_is_success() {
+        let m = Morphism::new(
+            fixture_anchor(),
+            Dissonance::new(0.0, 1),
+            CadenceKind::Authentic,
+        );
+        let set = MorphismSet::singleton(m);
+        let v = admissibility_singleton(&set);
+        assert!(
+            matches!(v, Imperfect::Success(())),
+            "singleton must pass admissibility; got {v:?}",
+        );
+    }
+
+    /// `admissibility_singleton` on multiple tied-by-tolerance
+    /// candidates reads as `Partial` — the pareto-tied case; pause
+    /// and present.
+    #[test]
+    fn admissibility_singleton_on_tied_pareto_front_is_partial() {
+        // Two candidates with roughness scores within the pareto tie
+        // tolerance (0.003 per music/mod.rs::PARETO_TIE_TOLERANCE).
+        let m1 = Morphism::new(
+            fixture_anchor(),
+            Dissonance::new(0.10, 2),
+            CadenceKind::Authentic,
+        );
+        let m2 = Morphism::new(
+            fixture_anchor(),
+            Dissonance::new(0.1005, 2),
+            CadenceKind::Authentic,
+        );
+        let set = MorphismSet::new(vec![m1, m2]);
+        let v = admissibility_singleton(&set);
+        assert!(
+            matches!(v, Imperfect::Partial((), _)),
+            "pareto-tied candidates must be Partial; got {v:?}",
+        );
+    }
+
+    // -- query_phi (the structural Φ query) tests --
+
+    /// **All three properties pass + Authentic cadence → Success(()).**
+    /// The canonical auto-apply path: loss-decreasing, identity-
+    /// preserving, singleton, authentic resolution.
+    #[test]
+    fn query_phi_all_pass_authentic_singleton_is_success() {
+        let anchor = fixture_anchor();
+        let m = Morphism::new(
+            anchor.clone(),
+            Dissonance::new(0.0, 1),
+            CadenceKind::Authentic,
+        );
+        let set = MorphismSet::singleton(m);
+        let v = query_phi(&set, &anchor);
+        assert!(
+            matches!(v, Imperfect::Success(())),
+            "all three properties + authentic cadence pass; got {v:?}",
+        );
+    }
+
+    /// **loss_decreasing fails → query_phi fails.** Fail dominates
+    /// via the Loss-monoid meet; the dissonance gate short-circuits
+    /// the consent surface to escalation.
+    #[test]
+    fn query_phi_loss_decreasing_failure_is_failure() {
+        let anchor = fixture_anchor();
+        let m = Morphism::new(
+            anchor.clone(),
+            Dissonance::new(0.9, 1),
+            CadenceKind::Authentic,
+        );
+        let set = MorphismSet::singleton(m);
+        let v = query_phi(&set, &anchor);
+        assert!(
+            matches!(v, Imperfect::Failure(_, _)),
+            "dissonant roughness must dominate to Failure; got {v:?}",
+        );
+    }
+
+    /// **identity_preserving fails → query_phi fails.** DARK-divergent
+    /// content fractures identity; Fail dominates.
+    #[test]
+    fn query_phi_identity_preserving_failure_is_failure() {
+        let anchor = Ref::new("@mirror/spectral/oscillate/anchor-x").expect("valid");
+        let divergent = Ref::new("@mirror/spectral/oscillate/divergent-y").expect("valid");
+        let m = Morphism::new(divergent, Dissonance::new(0.0, 1), CadenceKind::Authentic);
+        let set = MorphismSet::singleton(m);
+        let v = query_phi(&set, &anchor);
+        assert!(
+            matches!(v, Imperfect::Failure(_, _)),
+            "DARK-divergent identity must dominate to Failure; got {v:?}",
+        );
+    }
+
+    /// **admissibility ties → query_phi is Partial.** Pareto-tied
+    /// candidates with all other gates passing land at the consent
+    /// surface's wait-or-present case.
+    #[test]
+    fn query_phi_pareto_tied_admissibility_is_partial() {
+        let anchor = fixture_anchor();
+        let m1 = Morphism::new(
+            anchor.clone(),
+            Dissonance::new(0.10, 2),
+            CadenceKind::Authentic,
+        );
+        let m2 = Morphism::new(
+            anchor.clone(),
+            Dissonance::new(0.1005, 2),
+            CadenceKind::Authentic,
+        );
+        let set = MorphismSet::new(vec![m1, m2]);
+        let v = query_phi(&set, &anchor);
+        assert!(
+            matches!(v, Imperfect::Partial((), _)),
+            "pareto-tied candidates with passing gates are Partial; got {v:?}",
+        );
+    }
+
+    /// **Empty morphism_set → query_phi is Failure.** The substrate's
+    /// floor case: no admissible morphism for the consent surface.
+    #[test]
+    fn query_phi_empty_morphism_set_is_failure() {
+        let anchor = fixture_anchor();
+        let set = MorphismSet::new(vec![]);
+        let v = query_phi(&set, &anchor);
+        assert!(
+            matches!(v, Imperfect::Failure(_, _)),
+            "empty morphism_set must escalate; got {v:?}",
+        );
+    }
+
+    /// **Plagal cadence + all gates pass → query_phi is Partial.**
+    /// The substrate header's "Plagal is auto-apply with partial
+    /// confidence" path. The cadence-meet via is_settled(Plagal) lands
+    /// Partial; the loss/identity/admissibility gates all pass; the
+    /// meet is Partial.
+    ///
+    /// This is the LOAD-BEARING path the brief calls out as previously
+    /// unreachable. With T14 lifted, the consent surface can read
+    /// Partial-Plagal and route through `read_consent.partial+plagal
+    /// → active`.
+    #[test]
+    fn query_phi_plagal_partial_path_reachable_through_read_consent() {
+        let anchor = fixture_anchor();
+        // Consonant + identity-preserving + singleton + Plagal cadence.
+        let m = Morphism::new(
+            anchor.clone(),
+            Dissonance::new(0.0, 1),
+            CadenceKind::Plagal,
+        );
+        let set = MorphismSet::singleton(m);
+        let v = query_phi(&set, &anchor);
+        // The cadence-meet of is_settled(Plagal) (Partial+Clear) with
+        // three passing gates is Partial.
+        assert!(
+            matches!(v, Imperfect::Partial((), _)),
+            "plagal+gates-pass must be Partial; got {v:?}",
+        );
+        // And the partial confidence reads as Plagal via
+        // verdict_to_cadence_kind (above 1/φ).
+        let k = crate::gap::verdict_to_cadence_kind(&v);
+        assert_eq!(
+            k,
+            CadenceKind::Plagal,
+            "partial verdict must project to Plagal cadence_kind",
+        );
+        // Per oscillate.mirror's read_consent table: partial+plagal
+        // → active. The path the brief named is now reachable end-to-
+        // end via query_phi → verdict_to_cadence_kind → read_consent.
+        let next = read_consent(&v, k);
+        assert_eq!(
+            next,
+            OscillationState::Active,
+            "the substrate's partial+plagal → active path is reachable",
+        );
+    }
+
+    /// dark_pass integration: an identity-preserved + authentic
+    /// morphism still reads Settled after T14 migrates the query_phi
+    /// call from legacy to lifted. The T10.5 chain shape is preserved.
+    #[test]
+    fn dark_pass_through_lifted_query_phi_on_authentic_fixture_is_settled() {
+        let r = fixture_anchor();
+        let o = Oscillation::initial(r.clone());
+        let m = Morphism::new(r.clone(), Dissonance::new(0.0, 1), CadenceKind::Authentic);
+        let next = dark_pass(&o, &m);
+        assert_eq!(
+            next.state(),
+            OscillationState::Settled,
+            "identity-preserved + authentic fixture still settles after T14 migration",
+        );
     }
 }
