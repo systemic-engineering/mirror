@@ -20,6 +20,7 @@ mod oscillate;
 mod pipeline;
 mod property;
 mod spectral;
+mod tensor;
 mod tokenize;
 
 use std::fs;
