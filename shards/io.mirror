@@ -1,0 +1,332 @@
+in @prism
+in @meta
+in @nl
+in @glass
+
+# @io — the boundary family root.
+#
+# The recognition (2026-06-08, Alex → Mara, T21): the substrate has
+# been running with `grammar @io` declared at the floor
+# (`boot/02a-io.mirror`, 2026-06-01: socket / stream / read / write /
+# open / close + the three git plumbing actions) and with seven
+# sibling sub-grammars under it (`boot/std/io/{bytes,crypto,encode,
+# network,random,socket,uri}.mirror`, 2026-06-01) and with the first
+# mirror-altitude lift species already in place
+# (`shards/io/cargo.mirror`, 2026-06-05, declaring `prism @io/cargo`
+# at the cargo boundary). What was missing was the family root at the
+# mirror altitude: the named parent under which cargo, the seven boot
+# floor grammars, and the future LLVM / FS / SOCKET / FLANG / LAPACK
+# species sit as parallel siblings.
+#
+# This shard lifts `@io` from the boot grammar floor to the mirror
+# altitude — same primitive at two altitudes; the family root names
+# the discipline; species parameterize the boundary. The lift matches
+# the rhythm of every prior family-root recognition: `@code` (the
+# universal language-grammar discipline, 2026-06-06), `@mirror/lens`
+# (the observation/projection family, 2026-06-06), `@mirror/loss`
+# (the measurement-carrier family, 2026-06-07), `@mirror/data` (the
+# content-format family, 2026-06-07), `@mirror/spectral` (the agent-
+# coordination family, 2026-06-06). T21 lands the SIXTH such family
+# root: the boundary-with-the-non-mirror-world.
+#
+# === Load-bearing recognition: @io IS the only legitimate non-mirror surface ===
+#
+# Per `AGENTS.md` § "The Glass Wall" (the substrate-pull text the
+# substrate has been operating under for weeks):
+#
+#   "@io is the substrate's only legitimate non-mirror surface. Any
+#    grammar that isn't mirror — Rust, Python, raw bytes, foreign
+#    blobs, vendor SDKs — must be under @io. Everything else is
+#    mirror grammar by definition."
+#
+# That paragraph IS the family root's discipline, prose form. T21
+# declares the same statement in substrate vocabulary so consumers
+# (T22's realisation discriminator; future `kintsugi <file.rs>`
+# passes; future portal serialization layers) read the typed form,
+# not the prose.
+#
+# The 30th-instance substrate-pull recognition (per
+# `[[feedback-substrate-already-had-the-word]]`): the substrate has
+# been calling its own boundary `@io` since 2026-06-01; the boot
+# floor declares it; six shards already import `in @io`; AGENTS.md
+# names the discipline; `kintsugi-self-hosting.md` classifies every
+# Rust file against the implicit "@io vs grammar" partition. The
+# 29 prior instances logged through the rug pull doc; this is the
+# 30th — the boundary itself, named at the mirror altitude.
+#
+# === Discipline ===
+#
+# A `@io` species IS:
+#
+#   - a boundary: same five-operation algebra, the carrier is the
+#     non-mirror-world surface the species names (a kernel syscall,
+#     a vendor SDK, a foreign language's build tool, a wire format).
+#     The runtime evaluates the same algebra; each species
+#     parameterizes the boundary for one specific non-mirror surface.
+#   - an irreducibly opaque surface from the substrate's vantage: the
+#     species declares the SHAPE of the call (the typed contract the
+#     mirror side sees); the BODY of the call (the actual syscall,
+#     subprocess, library invocation) is opaque to the substrate by
+#     construction. This is what makes `@io` the LEGITIMATE non-
+#     mirror surface: it names what the substrate cannot fold,
+#     instead of pretending the fold exists.
+#   - the carrier of `imperfect` returns: boundary calls return
+#     `imperfect<a, e, l>` (per `glass.mirror`'s floor declaration)
+#     because the boundary is where success / partial / failure
+#     becomes load-bearing. The substrate's transparency monoid
+#     composes the opacities the boundary surfaces into the parent
+#     mirror computation's verdict (per `@mirror/loss/transparency`,
+#     2026-06-07).
+#   - permanently @io for the irreducible sub-species: per the
+#     glass-wall + cross-wall-kintsugi recognition
+#     (`docs/insights/2026-05-26-glass-wall-and-cross-wall-
+#     kintsugi.md`), some sub-species (blocking socket reads,
+#     accept-queue scheduling, kernel-managed file descriptors) are
+#     STRUCTURALLY non-foldable into mirror — they stay in `@io`
+#     forever. Others (byte-level primitives, encoding/decoding,
+#     hashing) are CANDIDATES for cross-wall kintsugi when the
+#     substrate's analyzability matures. The realisation
+#     discriminator (T21's second half; `@mirror/realisation`) names
+#     which is which.
+#
+# === Species under this family ===
+#
+# Floor species (already declared in `boot/std/io/*.mirror`,
+# 2026-06-01; lift-tick deferred until consumer pulls):
+#
+#   @io/bytes      byte-level primitives (to_f64 / from_f64 / concat /
+#                   slice / length). Big-endian IEEE-754 across the
+#                   wire; the substrate's universal byte algebra.
+#   @io/socket     connection-oriented duplex streams over @io/bytes.
+#                   Two opaque handles (connection, listener);
+#                   read_bytes / write_bytes / close. Blocking
+#                   semantics are the irreducible non-mirror surface
+#                   (per the glass-wall recognition).
+#   @io/network    the Berkeley-primitive layer that PRODUCES
+#                   connections / listeners (connect, bind, accept).
+#   @io/crypto     hash + signature + AEAD over bytes. Vendor surface
+#                   (sha2, age, ssh-key).
+#   @io/encode     base64 / hex / multi-byte text encoding over bytes.
+#   @io/random     entropy → bytes. Kernel CSPRNG surface.
+#   @io/uri        URI parse / format / canonicalization. RFC 3986
+#                   pure logic; sits under @io because URI is the
+#                   address space the network species speak.
+#
+# Mirror-altitude lifted species (already landed at this altitude):
+#
+#   @io/cargo      cargo invocation contract (build / test / check /
+#                   lockfile_capture / metadata + exit-code →
+#                   transparency lift). The first species the
+#                   mirror-altitude lift named (shards/io/cargo.mirror,
+#                   2026-06-05). Per its docstring: "the @io tool the
+#                   altitude grammar @code/rust delegates to."
+#
+# Future species (named here so the recognition is logged; bodies
+# land when a consumer pulls):
+#
+#   @io/llvm       LLVM-IR / LLVM toolchain surface. Lands when the
+#                   `@code/llvm` altitude pulls its emit target (per
+#                   `roadmap/wip/butterfly-self-hosting.md` § the
+#                   compile staircase; v0.9 → v1.0 gate).
+#   @io/flang      Flang Fortran frontend / LAPACK kernel surface.
+#                   T8.5 closed the wiring at the bootstrap altitude;
+#                   the substrate-altitude lift lands when
+#                   NumericalPrism backends consume it (Phase 6
+#                   Track A).
+#   @io/fs         POSIX filesystem surface (open / read / write /
+#                   stat / readdir). Lands when `@mirror/store`'s
+#                   git-backed implementation lifts its disk surface.
+#   @io/git        git plumbing surface (the three actions already
+#                   declared at the floor — git_update_ref / git_log /
+#                   git_delete_ref — plus hash-object / cat-file /
+#                   update-index as consumers pull them).
+#   @io/process    subprocess execution surface. Lifts the floor's
+#                   `exec` from `boot/std/io.mirror`.
+#
+# === Why one family ===
+#
+# All species parameterize the same boundary-with-the-non-mirror-world
+# shape. Without the family, every consumer (kintsugi-on-Rust pilot
+# T22; numerical backend audit; portal serialization) lands its
+# boundary at an ad-hoc altitude (`@cargo`, `@llvm`, `@flang`) and
+# the cross-cutting discipline (`imperfect` return shape; opacity-
+# located transparency; the cross-wall-kintsugi candidacy partition)
+# has to be re-justified per species. With the family, the discipline
+# IS the family.
+#
+# The substrate-pull cost of NOT naming this: the
+# `kintsugi-self-hosting.md` discriminator's "@io boundary?" column
+# (lines 20-36 of that spec) has been operating PROSE-ONLY; the
+# realisation discriminator declared in `shards/mirror/realisation.
+# mirror` (T21's second half) needs a TYPED parent to point its
+# `altitude: ref` field at when it classifies a Rust file as `@io`.
+# Without `@io` declared at the mirror altitude, the discriminator's
+# output has no typed home. T21 lands both halves in the same tick
+# because each half is the other half's substrate prerequisite.
+#
+# === Sibling relationship to @code ===
+#
+# `@code` (shards/code.mirror) is the LANGUAGE-grammar family at the
+# mirror altitude — the universal "this is a grammar producing
+# artifacts at altitude X" discipline. `@io` (this shard) is the
+# BOUNDARY family at the mirror altitude — the universal "this is a
+# typed contract with the non-mirror-world at surface X" discipline.
+# Both name typed surfaces; both declare the five-op block at their
+# root; both species-parameterize their carrier (altitude type for
+# @code; boundary kind for @io); both compose under the same
+# `transparency<p>` monoid.
+#
+# The difference is altitude OF THE SURFACE: `@code/X` is INSIDE the
+# mirror substrate (Rust-as-grammar, mirror-as-grammar, LLVM-as-
+# grammar — all instances of @code reading their own source); `@io/X`
+# is the WALL the substrate cannot fold past (cargo's subprocess
+# semantics, LLVM-IR's linker invariants, LAPACK's column-major
+# allocation contract — all instances of @io naming what the
+# substrate hands off to). The two families partition what mirror can
+# express at the byte level: `@code` declares what mirror reads and
+# writes AS-MIRROR; `@io` declares what mirror reads and writes
+# AS-NON-MIRROR-WORLD.
+#
+# Sibling family roster at the mirror altitude (six, post-T21):
+#
+#   @code              language-grammar discipline      (2026-06-06)
+#   @mirror/lens       observation/projection family    (2026-06-06)
+#   @mirror/spectral   agent-coordination family        (2026-06-06)
+#   @mirror/loss       measurement-carrier family       (2026-06-07)
+#   @mirror/data       content-format family            (2026-06-07)
+#   @io                boundary-with-non-mirror family  (2026-06-08, this)
+#
+# Five inside-the-substrate families plus the boundary family. The
+# boundary family closes the partition. Everything mirror touches is
+# either a five-operation algebra over substrate content (the inside
+# five families) or a typed contract with the non-mirror-world (this
+# one).
+#
+# === Pre-AI prior art ===
+#
+# Each species below names an established system-level surface older
+# than the discipline of computer science (modulo discipline names):
+#
+#   socket / stream             Berkeley sockets (4.2BSD, 1983).
+#                                Stevens, UNIX Network Programming.
+#                                The duplex byte-stream abstraction
+#                                over the IP stack.
+#   read / write / open / close UNIX file descriptors (Thompson +
+#                                Ritchie, 1969). The "everything is a
+#                                file" discipline.
+#   exec / process              UNIX fork+exec (Thompson, 1969). The
+#                                process-creation discipline.
+#   cargo                       Hoare et al. (2013); cargo 1.0
+#                                (2015). Rust's package manager;
+#                                the typed build-system boundary
+#                                Rust speaks.
+#   llvm                        Lattner (2003); LLVM 1.0 (2003).
+#                                The intermediate-representation
+#                                + toolchain discipline; mirror's
+#                                non-Rust binary-emission target.
+#   git plumbing                Torvalds (2005); git 1.0 (2005).
+#                                The content-addressed object-database
+#                                primitives mirror's store layer
+#                                stands on.
+#
+# Per `[[architecture-prism-as-trait-as-everything]]`: `prism @io
+# { ... }` declares the family IS a prism. The five-operation block
+# below is the canonical declaration form (cf. `shards/code.mirror`,
+# `shards/mirror/lens.mirror`, `shards/mirror/loss.mirror`,
+# `shards/mirror/data.mirror`, `shards/mirror/spectral.mirror`).
+# Each species specialises from there.
+#
+# Spec context: docs/specs/kintsugi-self-hosting.md §1 (the
+#               @io-boundary classification of every bootstrap Rust
+#               file; the prose form of the discriminator T22 will
+#               execute),
+#               docs/insights/2026-05-26-glass-wall-and-cross-wall-
+#               kintsugi.md (the structural partition: permanent-@io
+#               species vs cross-wall-kintsugi candidates),
+#               roadmap/wip/butterfly-self-hosting.md §5 (C1-C4
+#               butterfly cut criteria; the bootstrap Rust shrinks to
+#               pure-@io as the exit condition),
+#               roadmap/2026-06-08-rug-pull.md §6 + §11 (T21 + T22
+#               named as the kintsugi-on-Rust prerequisite + pilot),
+#               docs/specs/mirror-spec-schema.md §10.5 (emit
+#               disambiguation; `ref(@io)` vs `ref(@code/*)`).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]]
+#                      (the same lift that gave us `@cli →
+#                      @mirror/lens/cli`, `@loss → @mirror/loss`,
+#                      `@data → @mirror/data`; grammar-altitude
+#                      `@io` → mirror-altitude `@io` family root —
+#                      the path stays flat because the boundary IS
+#                      a top-level concern, not a sub-family of
+#                      mirror itself),
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (the wall this family declares the typed shape
+#                      of),
+#                      [[architecture-fragmentation-is-the-rust-
+#                      substrate]] (the strict dependency direction;
+#                      the Rust impls of @io species live in the
+#                      bootstrap; they realize what this shard
+#                      declares).
+# Substrate recognitions: [[feedback-substrate-already-had-the-word]]
+#                      (the 30th instance: AGENTS.md has been calling
+#                      this `@io` for weeks; the boot floor declared
+#                      it 2026-06-01; six shards import it; the
+#                      family root just names what was already
+#                      operationally true),
+#                      [[feedback-substrate-pull]] (the family root
+#                      pulls @io from boot floor to mirror altitude;
+#                      no invention, only lift),
+#                      [[feedback-craft-not-deliver]] (the seven boot-
+#                      floor species and the future @io/llvm,
+#                      @io/flang, @io/fs, @io/git, @io/process are
+#                      forward-promised; lift-ticks land when
+#                      consumers pull).
+# Forward-promise to consumers:
+#   - @io/bytes, @io/socket, @io/network, @io/crypto, @io/encode,
+#     @io/random, @io/uri: mirror-altitude lift-ticks land when a
+#     consumer pulls each species at the mirror altitude. The boot-
+#     floor declarations stay as transitional placeholders during the
+#     consumer-migration window (same pattern as @cli stayed in boot
+#     during the @mirror/lens/cli migration, and as @data/json stays
+#     in boot during the @mirror/data/json migration).
+#   - @io/llvm, @io/flang: lift when the LLVM / flang backends
+#     consume them (`@code/llvm`'s emit target; LapackBackend's
+#     numerical kernel surface).
+#   - @io/fs, @io/git, @io/process: lift when the runtime layer's
+#     disk / git / subprocess surfaces consume them.
+# Related shards: code.mirror (the sibling language-grammar family;
+#                  the inside-the-substrate counterpart),
+#                  mirror/data.mirror (the sibling data-format family
+#                  whose carriers cross @io to land on the wire),
+#                  mirror/lens.mirror (the sibling observation family;
+#                  several lens species — cli, shell, mcp, lsp —
+#                  consume @io for their transport surface),
+#                  mirror/loss.mirror (the sibling measurement family
+#                  whose `transparency` carrier IS the return shape
+#                  of every @io action),
+#                  io/cargo.mirror (the first mirror-altitude lifted
+#                  species; the precedent for path-namespace at this
+#                  family),
+#                  mirror/realisation.mirror (T21's second half; the
+#                  discriminator that classifies each Rust file as
+#                  `@io` or substrate-realisable, using this family
+#                  root as the typed home for its `altitude: ref`
+#                  output when the verdict is "@io").
+# Path-namespace property: this file at `shards/io.mirror` declares
+# `@io` as the universal boundary family root; species live at
+# `shards/io/<name>.mirror`. The path stays at depth-1 (not
+# `shards/mirror/io.mirror`) because the boundary IS a top-level
+# concern partitioning the substrate's expressible surface; placing
+# it under `@mirror` would understate that — the boundary is what
+# `@mirror` HANDS OFF TO, not a sub-discipline of `@mirror`.
+
+prism @io {
+  focus io
+  project io
+  split io
+  shift io
+  settle io
+}
+
+out @io

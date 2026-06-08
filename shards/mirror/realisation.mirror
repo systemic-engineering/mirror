@@ -1,0 +1,460 @@
+in @prism
+in @meta
+in @nl
+in @glass
+in @io
+in @code
+
+# @mirror/realisation — the per-Rust-file discriminator.
+#
+# The recognition (2026-06-08, Alex → Mara, T21): the substrate has
+# been operating an implicit @io-vs-substrate-realisable discriminator
+# since `docs/specs/kintsugi-self-hosting.md` was written (2026-06-04
+# horizon). That spec's per-file "Status:" line ("stays in Rust" /
+# "can be grammar NOW" / "needs @io boundary") IS a discriminator
+# verdict — every Rust file in `bootstrap/src/` gets one. The
+# discriminator has been running in MARA'S HEAD for weeks; the 26-29
+# substrate-pull recognitions logged in the rug pull doc
+# (§5, 2026-06-08) are the training set the discriminator learned
+# from. T21's second half declares the discriminator in substrate
+# vocabulary so T22 (`mirror kintsugi <file.rs>`) can run it
+# automatically against the bootstrap, without Mara doing it by hand.
+#
+# === Discipline ===
+#
+# A `@mirror/realisation` instance IS:
+#
+#   - a classifier on Rust source: given a parsed Rust AST (via
+#     @code/rust), the discriminator emits a typed verdict naming
+#     which side of the glass wall the file lives on (`@io` boundary
+#     vs `@mirror/*` substrate-realisable) and — when the verdict is
+#     substrate-realisable — WHICH mirror altitude already declares
+#     what the file does (the `target` field).
+#   - a lens INTO the substrate-pull recognition surface: each
+#     classification reads `kintsugi-self-hosting.md`'s typed re-
+#     declaration (the @code/rust altitude grammar, the @mirror/loss
+#     family, the @mirror/data family, etc.) and asks: does the
+#     substrate already declare this Rust file's content at one of
+#     those altitudes? If YES → substrate-realisable; the file is a
+#     CANDIDATE for kintsugi-on-Rust migration to `.mirror` source.
+#     If NO and the file calls a non-mirror surface (syscall,
+#     subprocess, vendor SDK, libgit2) → @io; the file STAYS at the
+#     bootstrap altitude. The discriminator's verdict IS the lens
+#     reading.
+#   - composable under the transparency monoid: per the lens family
+#     discipline (`shards/mirror/lens.mirror`), realisation verdicts
+#     compose under `transparency<p>` per
+#     `shards/mirror/loss/transparency.mirror`. A file that is 80%
+#     substrate-realisable (most actions have mirror-altitude
+#     declarations; one function calls an opaque libgit2 routine)
+#     emits `partial(opacity_map)` with the libgit2-calling lines
+#     located as opacities — pareto-front material for the audition
+#     altitude (`@mirror/spectral/audition`), not auto-apply.
+#
+# === The 30th-instance substrate-pull recognition ===
+#
+# Per `[[feedback-substrate-already-had-the-word]]`, with the rug
+# pull doc's tally (29 instances logged through 2026-06-08):
+#
+# The "@io vs substrate-realisable" partition has been operating
+# under three names already:
+#
+#   1. `docs/specs/kintsugi-self-hosting.md` §1 — "@io boundary?"
+#      column on every Cargo dependency; "Status:" line on every
+#      Rust file (1180 lines of prose discrimination).
+#   2. `AGENTS.md` § "The Glass Wall" — "@io is the substrate's only
+#      legitimate non-mirror surface" (the binary partition stated
+#      as discipline).
+#   3. `boot/std/epistemologic/property/glass_wall.mirror` — the
+#      `glass_wall(g)` property that REFUSES to compile a grammar
+#      claiming to be substrate-realisable while reaching into a
+#      non-@io surface.
+#
+# Three prior names; one primitive. The 30th instance: this shard
+# names the discriminator that the three names had been implicitly
+# evaluating. The recognition rate is accelerating (5 instances in
+# the second 36-hour window per the rug pull doc §1); T21 is the
+# tick whose substrate-pull check turned up a THREE-NAMED ancestor
+# at the recognition altitude.
+#
+# === The carrier shape: realisable_file ===
+#
+# The discriminator's output is a typed record per Rust file. Four
+# fields, derived from the three-state classification in
+# `kintsugi-self-hosting.md` plus the location field needed for
+# `@io/cargo`-style boundary localization:
+#
+#   path        @code/rust file the discriminator was run against.
+#   verdict     three-state classification carrier (Pass / Partial /
+#               Failure per the substrate's `transparency` floor):
+#                  Pass(@io)             → boundary file; STAYS in Rust
+#                  Pass(@mirror/<X>)     → substrate-realisable;
+#                                          CANDIDATE for kintsugi-on-
+#                                          Rust migration; target
+#                                          altitude is named
+#                  Partial(opacity_map)  → mixed; some functions are
+#                                          substrate-realisable, others
+#                                          are @io; per-function refine-
+#                                          ment is a later tick
+#   target      the mirror altitude that subsumes this file when the
+#               verdict is substrate-realisable (e.g. `@mirror/loss`
+#               for `loss.rs`, `@code/mirror` for the parser-related
+#               files, `@mirror/spectral/oscillate` for
+#               `oscillate.rs`). `none` when the verdict is `@io`.
+#   altitude    structural shorthand: `@io` for boundary; `@mirror`
+#               for substrate-realisable; absent for partial pending
+#               per-function refinement.
+#
+# This shape is intentionally per-file. Per-function refinement (some
+# functions in a `.rs` file are `@io`, others are `@mirror/<X>`) is a
+# later tick — T22 consumes the per-file primitive; per-function
+# Partial cases land an opacity_map that names the @io-reaching
+# functions as located opacities, and a later refinement tick teaches
+# the discriminator to walk the function-level AST.
+#
+# === Three actions: classify / is_substrate_realisable / target_altitude ===
+#
+# The discriminator surface is intentionally narrow. Three actions:
+#
+#   classify(f) -> realisable_file
+#     The structural primitive. Takes a parsed Rust AST; emits the
+#     full realisable_file record. Body discharges by lifting the
+#     `kintsugi-self-hosting.md` prose classification into a typed
+#     AST-pattern match against `@code/rust`'s declared altitudes.
+#     What T22 calls per file.
+#
+#   is_substrate_realisable(f) -> verdict
+#     The binary projection of classify. Returns Pass when the file
+#     is substrate-realisable at SOME altitude; Failure when the
+#     file is @io; Partial when the file mixes both. The verdict
+#     surface other consumers (mosaic's settle_on; the audition
+#     altitude; CI gates) read without needing the full
+#     realisable_file record.
+#
+#   target_altitude(f) -> ref
+#     The targeting projection. Returns the @mirror altitude that
+#     subsumes the file when classify's verdict is substrate-
+#     realisable. Returns `@io` when the verdict is @io. Body
+#     reads the family roster (@mirror/lens, @mirror/loss,
+#     @mirror/data, @mirror/spectral, @code/mirror, @io) and picks
+#     the one whose grammar already declares what the file does.
+#     T22 consumes this directly: given the target altitude, T22
+#     produces the first fracture proposal by diffing the file's
+#     AST against the target altitude's grammar — the fracture IS
+#     the substrate-pull gradient at the file altitude.
+#
+# === The training set: 29 substrate-pull recognitions ===
+#
+# Per the rug pull doc §5, the discriminator's training set is the
+# 29 instances of `[[feedback-substrate-already-had-the-word]]`
+# logged through 2026-06-08. Each instance is a labeled (Rust-code-
+# shape, substrate-altitude) pair the substrate has already
+# evaluated to "substrate-realisable; target altitude = X":
+#
+#   #16 lift (foundational, not zoom)               -> @prism (the five operations)
+#   #18 eigensheaf (spectral decomposition)         -> @epistemologic/math/sheaf_laplacian
+#   #19 five operations are Hodge primitives        -> @prism
+#   #20 eigenspace (composition foundation)         -> @mirror/spectral/composition (future)
+#   #21 prophecy (derive fractures from topology)   -> @mirror/fracture/predicate (future)
+#   #22 score family root                            -> @mirror/spectral/score
+#   #23 glass IS lens (four names, one primitive)    -> @mirror/lens + @mirror/loss
+#   #24 oscillate_witness (next-oscillation)         -> @mirror/spectral/oscillate
+#   #25 morphism_context (per-candidate slice)       -> @mirror/spectral/morphism
+#   #26 shift(oid, T) typed-capability primitive     -> @mirror/spectral/portal
+#   #27 template render (one operation, many uses)   -> @code/mirror
+#   #28 "path was already half-built" (json lift)    -> @mirror/data
+#   #29 "presence IS the signal" (SCM_RIGHTS)        -> @mirror/spectral/portal
+#
+# Each row is one classify() training example. The discriminator's
+# body (when it lands, T22 or later) reads the @code/rust AST and
+# walks the family roster: does this file's structural shape match
+# `@mirror/lens`'s family? `@mirror/loss`'s? `@code/mirror`'s? The
+# 29 prior recognitions teach the discriminator what "shape-match"
+# means at each altitude.
+#
+# === Why this family lives at @mirror/realisation ===
+#
+# Pattern-matching against existing `@mirror/*` family roots:
+#
+#   @mirror/lens       observes the substrate's running STATE
+#   @mirror/loss       measures the substrate's running RESIDUAL
+#   @mirror/data       carries the substrate's running CONTENT
+#   @mirror/spec       declares the substrate's running MANIFOLD
+#   @mirror/spectral   coordinates the substrate's running AGENCY
+#   @mirror/store      stores the substrate's running ARTIFACTS
+#
+# The realisation family observes the substrate's running BOUNDARY-
+# WITH-RUST — what's already substrate-realisable, what's not yet.
+# It sits at the mirror altitude because realisation is a mirror-
+# altitude concern (asking "is this file mirror-shaped?" is a mirror
+# question; asking it of a Rust file is a mirror-about-Rust
+# question). The naming `realisation` over alternatives:
+#
+#   - vs `@mirror/realization` (US spelling): the substrate uses
+#     British spelling for substrate vocabulary (`realisation`,
+#     `colour`, `behaviour`) per the rug pull doc's prose
+#     consistency. Same word; one canonical form.
+#   - vs `@mirror/classify`: classifying is what the discriminator
+#     DOES; realisation is what the file IS (substrate-realisable
+#     or not). Naming the substrate-side noun, not the verb.
+#   - vs `@mirror/code/realisation`: the discriminator operates on
+#     Rust files specifically (the input type is @code/rust.ast),
+#     but the OUTPUT is a mirror-altitude verdict about
+#     substrate-realisability. The output altitude pulls the family
+#     placement to @mirror, not @code. Same precedent as
+#     @mirror/spec (operating on .spec files; landing at @mirror).
+#   - vs nesting under @kintsugi or @code/rust: the discriminator
+#     is consumed BY kintsugi (T22 calls realisation to produce
+#     fractures); operates ON @code/rust; but neither of those is
+#     its substrate home. The home is where the discriminator
+#     reports — and the report is at mirror altitude (the substrate
+#     side of the partition, not the boundary side, not the
+#     boundary-crossing-operation side).
+#
+# === The carrier vs the verdict ===
+#
+# The realisable_file record is the FULL output (path + verdict +
+# target + altitude). The verdict is the BINARY projection
+# (substrate-realisable / @io / mixed). Both surfaces are useful:
+#
+#   - T22 (the kintsugi-on-Rust pilot) consumes the FULL record:
+#     given target_altitude, it diffs the file against the altitude's
+#     grammar and emits a fracture proposal.
+#   - Mosaic's settle_on consumes the VERDICT: a project can declare
+#     `settle_on { substrate_realisation_complete }` and mosaic
+#     checks whether every Rust file in the bootstrap classifies as
+#     `@io`, with no substrate-realisable holdouts. The verdict IS
+#     the convergence signal at the bootstrap altitude.
+#   - The audition altitude (`@mirror/spectral/audition`) consumes
+#     the OPACITY MAP from Partial verdicts: every per-file mixed
+#     classification surfaces as a candidate tournament input;
+#     auditions resolve which functions migrate first.
+#
+# Three readers, three projections, one carrier.
+#
+# === Pre-AI prior art ===
+#
+# The discriminator's mathematical lineage:
+#
+#   realisability             Kleene (1945); Realizability in
+#                              intuitionistic mathematics. A
+#                              proposition is realisable iff there
+#                              EXISTS a constructive witness. The
+#                              discriminator asks: does the substrate
+#                              already CONSTRUCTIVELY DECLARE what
+#                              this Rust file does? If yes → realisable;
+#                              the witness IS the substrate
+#                              declaration at the target altitude.
+#   classifier                Aristotle (Categories, ~350 BCE);
+#                              Linnaeus (Systema Naturae, 1735). The
+#                              taxonomic discipline. The substrate's
+#                              version: typed taxonomy of the
+#                              bootstrap's surface.
+#   boundary-condition        Hilbert (1900); Boundary value problems
+#                              in mathematical physics. The
+#                              substrate's @io family IS a boundary
+#                              condition on the realisation
+#                              discriminator's domain.
+#
+# Per `[[architecture-prism-as-trait-as-everything]]`: `prism
+# @mirror/realisation { ... }` declares the family IS a prism. The
+# five-operation block below is the canonical declaration form (cf.
+# `shards/mirror/lens.mirror`, `shards/mirror/loss.mirror`,
+# `shards/mirror/data.mirror`). Each consumer specialises from there.
+#
+# Spec context: docs/specs/kintsugi-self-hosting.md (the prose form
+#               of the discriminator; the 1180-line training set for
+#               classify()),
+#               roadmap/2026-06-08-rug-pull.md §6 (T21 + T22 named
+#               as the kintsugi-on-Rust prerequisite + pilot; the
+#               29-instance training-set tally) + §11 (the forward-
+#               look: bootstrap Rust shrinks to pure-@io when the
+#               discriminator has classified every file),
+#               docs/insights/2026-05-26-glass-wall-and-cross-wall-
+#               kintsugi.md (the structural partition the
+#               discriminator's verdict carries — permanent-@io vs
+#               cross-wall-kintsugi candidate),
+#               roadmap/wip/butterfly-self-hosting.md §5 (C1-C4 cut
+#               criteria; the discriminator's verdict surface IS
+#               what C3 and C4 check against).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]]
+#                      (the discriminator IS a lift FROM the prose
+#                      classification IN kintsugi-self-hosting.md TO
+#                      a typed substrate surface),
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (the partition the discriminator's verdict
+#                      walks).
+# Substrate recognitions: [[feedback-substrate-already-had-the-word]]
+#                      (the 30th instance: three prior names —
+#                      kintsugi-self-hosting.md's "Status:" line,
+#                      AGENTS.md's "The Glass Wall", and
+#                      `glass_wall(g)` property — have been operating
+#                      this discriminator implicitly; T21 names the
+#                      primitive at the carrier altitude),
+#                      [[feedback-substrate-pull]] (the family pulls
+#                      a prose discipline into a typed substrate
+#                      surface; the prose was already running, the
+#                      typed surface lets T22 execute it
+#                      mechanically).
+# Forward-promise to consumers:
+#   - T22 (`mirror kintsugi <file.rs>` first pass): consumes classify()
+#     against `bootstrap/src/gap.rs` as the smallest Rust file the
+#     substrate already declares (`@mirror/spectral/oscillate` /
+#     `@epistemologic/math/curvature` cover the gap data structures).
+#     The first fracture proposal IS the diff between the Rust file's
+#     AST and the target altitude's grammar.
+#   - Per-function refinement: a later tick teaches classify() to
+#     walk the function-level AST and emit per-function verdicts
+#     into the opacity_map. The Partial case becomes refinable.
+#   - The audition altitude pulls is_substrate_realisable verdicts
+#     into the tournament's input set; the audition resolves which
+#     substrate-realisable files migrate first.
+#   - Mosaic's settle_on pulls the verdict aggregated over the
+#     bootstrap; the kintsugi-on-Rust exit condition is "every Rust
+#     file in `bootstrap/src/` classifies as @io" (the butterfly
+#     C3 / C4 cut criteria in substrate vocabulary).
+# Related shards: io.mirror (T21's first half; the @io family root
+#                  this shard's verdicts target when the file is a
+#                  boundary file; landed in the same tick because each
+#                  half is the other half's substrate prerequisite),
+#                  code.mirror + code/rust.mirror (the @code/rust
+#                  altitude whose `ast` type is classify's input),
+#                  code/mirror.mirror (one of the family roster
+#                  altitudes the discriminator targets when a Rust
+#                  file's content is mirror-source-shaped — the
+#                  parser-related files),
+#                  mirror/loss.mirror (the family root one of the
+#                  Rust files lifts to per the prose classification),
+#                  mirror/lens.mirror (the family root the LSP / CLI
+#                  / shell / MCP transport files lift to),
+#                  mirror/data.mirror (the family root the data-
+#                  format files lift to),
+#                  mirror/spectral.mirror (the family root the
+#                  oscillate / morphism / kintsugi-coordination
+#                  files lift to),
+#                  mirror/loss/transparency.mirror (the carrier the
+#                  discriminator's Partial verdicts ride; the opacity
+#                  map names per-function @io-reaching call sites).
+# Path-namespace property: this file at
+# `shards/mirror/realisation.mirror` declares
+# `@mirror/realisation` as the family root; sub-shards (e.g.
+# `@mirror/realisation/function` for per-function refinement) live
+# at `shards/mirror/realisation/<name>.mirror` when consumers pull
+# them.
+
+prism @mirror/realisation {
+  focus realisation
+  project realisation
+  split realisation
+  shift realisation
+  settle realisation
+}
+
+# === altitude — the boundary partition ===
+#
+# Two-state carrier naming which side of the glass wall a file lives
+# on. The substrate's binary partition stated as a typed alternative
+# so consumers (mosaic.settle_on; the audition altitude) pattern-
+# match without needing the full realisable_file record.
+#
+#   boundary       the file IS @io; it stays in Rust permanently
+#   substrate      the file IS substrate-realisable at some @mirror/*
+#                  altitude; it is a candidate for kintsugi-on-Rust
+#                  migration to a .mirror declaration
+type altitude =
+  | boundary
+  | substrate
+
+# === realisable_file — the discriminator's full output carrier ===
+#
+# Four fields per `kintsugi-self-hosting.md`'s prose classification
+# shape:
+#
+#   path      @code/rust file the discriminator ran against.
+#             Substrate-pull: `ref` is the substrate's universal
+#             content-reference carrier (per glass.mirror's `file:
+#             ref` precedent, mirror/store.mirror's `oid = ref`,
+#             code/rust.mirror's altitude-reference pattern).
+#   altitude  the binary partition (`boundary` vs `substrate`).
+#             When `boundary`, the file STAYS in Rust at the @io
+#             altitude. When `substrate`, the file is a CANDIDATE
+#             for kintsugi-on-Rust migration to a .mirror
+#             declaration.
+#   target    when altitude = substrate, the @mirror altitude that
+#             subsumes the file (e.g. `@mirror/loss` for loss.rs,
+#             `@code/mirror` for the parser files,
+#             `@mirror/spectral/oscillate` for oscillate.rs). When
+#             altitude = boundary, target IS the @io species
+#             (e.g. `@io/cargo`, `@io/llvm`, `@io/fs`). `ref`
+#             carrier because the target is always a substrate-
+#             declared altitude reference.
+#   verdict   the located-opacity carrier per
+#             `@mirror/loss/transparency`. `Success` when the
+#             classification is unambiguous; `Partial(opacity_map)`
+#             when the file mixes substrate-realisable functions
+#             with @io-reaching ones (the per-function refinement
+#             surface); `Failure(opacity_map)` when the file resists
+#             classification entirely (rare; should land as a
+#             substrate-pull-realize on @mirror/realisation itself
+#             — the discriminator's miss IS a substrate gap).
+type realisable_file = {
+  path: ref,
+  altitude: altitude,
+  target: ref,
+  verdict: transparency,
+}
+
+# === classify — the structural primitive ===
+#
+# Given a parsed @code/rust AST, emit the full realisable_file
+# record. The body (`\`) discharges by walking the AST against the
+# family roster (@io, @code/mirror, @mirror/lens, @mirror/loss,
+# @mirror/data, @mirror/spectral, @epistemologic/math/*) and
+# pattern-matching the file's structural shape against each
+# altitude's declared grammar. The 29 substrate-pull recognitions
+# from the rug pull doc §5 are the training set the body lifts
+# into a typed walk.
+#
+# What T22 calls per file. Per-function refinement is a later
+# tick consuming this primitive — the function-level AST walk
+# decomposes the file's classification into per-function verdicts
+# that compose under the transparency monoid back into the file's
+# verdict.
+classify(f: ref) -> realisable_file { \ }
+
+# === is_substrate_realisable — the binary projection ===
+#
+# The verdict-only surface other consumers (mosaic.settle_on; the
+# audition altitude; CI gates) read without needing the full
+# realisable_file record. Reads classify(f).verdict and returns:
+#
+#   Success when altitude = substrate (the file is migratable)
+#   Failure when altitude = boundary  (the file stays in Rust)
+#   Partial(opacity_map) when mixed   (per-function refinement
+#                                      pending)
+#
+# Body discharges by projecting classify(f).verdict; the
+# implementation is `\` because the projection IS the body —
+# consumer-pull-discharge per `[[feedback-craft-not-deliver]]`.
+is_substrate_realisable(f: ref) -> verdict { \ }
+
+# === target_altitude — the targeting projection ===
+#
+# The @mirror altitude that subsumes the file when the verdict is
+# substrate-realisable; the @io species the file targets when the
+# verdict is boundary. T22 consumes this directly: given the target
+# altitude, T22 produces the first fracture proposal by diffing the
+# file's AST against the target altitude's declared grammar — the
+# fracture IS the substrate-pull gradient at the file altitude.
+#
+# Body discharges by reading classify(f).target.
+target_altitude(f: ref) -> ref { \ }
+
+out @mirror/realisation
+out altitude
+out realisable_file
+out classify
+out is_substrate_realisable
+out target_altitude
