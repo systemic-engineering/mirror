@@ -22,6 +22,7 @@ mod oscillate;
 mod pipeline;
 mod portal;
 mod property;
+mod realisation;
 mod score;
 mod sheaf_laplacian;
 mod spectral;
@@ -711,6 +712,23 @@ fn cmd_kintsugi(
     {
         return cmd_kintsugi_spec(file, format);
     }
+    // T22 (substrate-pull:realize) — kintsugi-on-Rust pilot. `.rs`
+    // routes through the realisation discriminator
+    // (`bootstrap/src/realisation.rs`, T22's MVP body): emit the
+    // `[realisation]` classification trace on stderr and a
+    // `// kintsugi-on-Rust` fracture-proposal comment on stdout.
+    // The substrate decl (`shards/mirror/realisation.mirror`, T21)
+    // names the surface; T22 lands the realisation. The fracture
+    // proposal is intentionally minimal this tick (comment text);
+    // T23+ matures the body to structured fractures against the
+    // target altitude's grammar.
+    if std::path::Path::new(file)
+        .extension()
+        .and_then(|e| e.to_str())
+        == Some("rs")
+    {
+        return cmd_kintsugi_rust(file);
+    }
     // CI mode: route through the verdict serialiser. Failure paths
     // (file unreadable, grammar load error) emit a verdict with
     // `verdict: "failure"` and still exit 0 — the workflow YAML, not
@@ -741,6 +759,54 @@ fn cmd_kintsugi(
         }
     }
     cmd_kintsugi_single(file, shatter, transform, out_dir)
+}
+
+/// T22 — `mirror kintsugi <file>.rs` invokes the realisation
+/// discriminator and emits a classification + a fracture proposal.
+///
+/// This is the kintsugi-on-Rust pilot. The flow:
+///
+///   1. Invoke `realisation::classify(file)` — runs the MVP match
+///      table on the file's basename and emits a `RealisableFile`
+///      record (path / altitude / target / verdict).
+///   2. Emit a `[realisation]` trace on stderr — same shape as T19's
+///      `[settle]` trace, so operators can see the discriminator's
+///      verdict at the CLI boundary.
+///   3. Emit a `// kintsugi-on-Rust ...` + `// fracture proposal ...`
+///      comment pair on stdout — the v0 fracture proposal. T23+
+///      replaces this with a structured diff against the target
+///      altitude's declared grammar.
+///   4. Exit 0 unconditionally — the discriminator's miss IS a
+///      substrate gap (logged as `Partial`), not a failure.
+fn cmd_kintsugi_rust(file: &str) -> i32 {
+    let classification = realisation::classify(file);
+    let verdict_label = match &classification.verdict {
+        terni::Transparency::Clear => "Clear",
+        terni::Transparency::Opaque(_) => "Partial",
+    };
+    eprintln!(
+        "[realisation] path={} altitude={} target={} verdict={}",
+        classification.path.as_str(),
+        classification.altitude,
+        classification.target.as_str(),
+        verdict_label,
+    );
+    let basename = std::path::Path::new(file)
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or(file);
+    println!(
+        "// kintsugi-on-Rust pilot: {} at {} maps to substrate altitude {}",
+        basename,
+        classification.altitude,
+        classification.target.as_str(),
+    );
+    println!(
+        "// fracture proposal: replace this file's substrate-realisable functions \
+         with calls into {}",
+        classification.target.as_str(),
+    );
+    0
 }
 
 /// One target the dispatcher will act on, harvested from the AST.
