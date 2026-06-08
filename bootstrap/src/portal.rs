@@ -64,17 +64,19 @@
 //!
 //! Per `[[architecture-fragmentation-is-the-rust-substrate]]`: the
 //! OS layer IS the Rust substrate at this altitude. Per
-//! `[[feedback-substrate-already-had-the-word]]` (28th instance —
-//! the brief surfaced this): the substrate's WS-style handshake at
-//! `shards/mirror/spectral/portal/handshake.mirror` is the *network*
-//! variant (RFC 6455 HTTP upgrade); the AF_UNIX local case takes the
-//! same shape compressed to the 24-byte magic+version exchange,
-//! because the HTTP upgrade overhead is meaningless when both ends
-//! are on the same kernel. Same handshake, two altitudes — the WS
-//! shape for cross-network portals, the SCM_RIGHTS shape for local
-//! pipes. The substrate's `@mirror/spectral/portal` family root
-//! names the discipline; this module realises the local-pipe
-//! species.
+//! `[[feedback-substrate-already-had-the-word]]` (29th instance —
+//! the LRM-closing recognition): SCM_RIGHTS itself IS the substrate's
+//! typed-capability primitive at the OS altitude. The substrate's
+//! WS-style handshake at `shards/mirror/spectral/portal/handshake.
+//! mirror` is the *network* variant (RFC 6455 HTTP upgrade) where
+//! both ends need an explicit protocol negotiation because the wire
+//! is byte-only; the AF_UNIX local case has SCM_RIGHTS, which is the
+//! kernel's own typed-capability discriminator — no negotiation
+//! needed because the cmsg list IS the type tag. Same family, two
+//! altitudes — the WS shape for cross-network portals, the
+//! SCM_RIGHTS shape for local pipes. The substrate's
+//! `@mirror/spectral/portal` family root names the discipline;
+//! this module realises the local-pipe species.
 //!
 //! ## Graceful degradation
 //!
@@ -249,10 +251,7 @@ pub fn try_outbound_handshake(
         );
     }
     if (stat.st_mode & libc::S_IFMT) != libc::S_IFSOCK {
-        return Imperfect::Failure(
-            NoPortal::NotSocket,
-            opacity(NoPortal::NotSocket),
-        );
+        return Imperfect::Failure(NoPortal::NotSocket, opacity(NoPortal::NotSocket));
     }
 
     // Stage 2: confirm the socket can carry SCM_RIGHTS at all. AF_UNIX
@@ -329,17 +328,15 @@ pub fn try_outbound_handshake(
     msg.msg_iov = &mut iov;
     msg.msg_iovlen = 1;
     msg.msg_control = cmsg_buf.as_mut_ptr() as *mut libc::c_void;
-    msg.msg_controllen = unsafe { libc::CMSG_SPACE(std::mem::size_of::<libc::c_int>() as u32) } as _;
+    msg.msg_controllen =
+        unsafe { libc::CMSG_SPACE(std::mem::size_of::<libc::c_int>() as u32) } as _;
 
     // Fill the cmsg header + payload.
     unsafe {
         let cmsg = libc::CMSG_FIRSTHDR(&msg);
         if cmsg.is_null() {
             libc::close(read_fd);
-            return Imperfect::Failure(
-                NoPortal::StageFailed(0),
-                opacity(NoPortal::StageFailed(0)),
-            );
+            return Imperfect::Failure(NoPortal::StageFailed(0), opacity(NoPortal::StageFailed(0)));
         }
         (*cmsg).cmsg_level = libc::SOL_SOCKET;
         (*cmsg).cmsg_type = libc::SCM_RIGHTS;
@@ -361,10 +358,7 @@ pub fn try_outbound_handshake(
         // observable via `libc::__error()` for future debug surfaces;
         // this tick collapses all failure modes to PeerDeclined.
         let _err = unsafe { *libc::__error() };
-        return Imperfect::Failure(
-            NoPortal::PeerDeclined,
-            opacity(NoPortal::PeerDeclined),
-        );
+        return Imperfect::Failure(NoPortal::PeerDeclined, opacity(NoPortal::PeerDeclined));
     }
 
     // The io::stdout we received was borrowed via raw fd from
@@ -401,10 +395,7 @@ pub fn try_inbound_handshake(
         );
     }
     if (stat.st_mode & libc::S_IFMT) != libc::S_IFSOCK {
-        return Imperfect::Failure(
-            NoPortal::NotSocket,
-            opacity(NoPortal::NotSocket),
-        );
+        return Imperfect::Failure(NoPortal::NotSocket, opacity(NoPortal::NotSocket));
     }
 
     // Stage 2: single recvmsg gets both the 96-byte frame (iov) and
@@ -434,10 +425,7 @@ pub fn try_inbound_handshake(
     }
     if (n as usize) < FRAME_LEN {
         // Short read — not a portal handoff.
-        return Imperfect::Failure(
-            NoPortal::PeerDeclined,
-            opacity(NoPortal::PeerDeclined),
-        );
+        return Imperfect::Failure(NoPortal::PeerDeclined, opacity(NoPortal::PeerDeclined));
     }
     let frame = PortalFrame::from_bytes(&frame_buf);
 
@@ -457,10 +445,7 @@ pub fn try_inbound_handshake(
     }
     match found_fd {
         Some(fd) => Imperfect::Success((frame, fd)),
-        None => Imperfect::Failure(
-            NoPortal::PeerDeclined,
-            opacity(NoPortal::PeerDeclined),
-        ),
+        None => Imperfect::Failure(NoPortal::PeerDeclined, opacity(NoPortal::PeerDeclined)),
     }
 }
 
@@ -498,10 +483,7 @@ pub fn try_outbound_handshake(
     _settled_bytes: &[u8],
     _to_oid: [u8; 32],
 ) -> Imperfect<PortalHandoff, NoPortal, Transparency<NoPortal>> {
-    Imperfect::Failure(
-        NoPortal::Unsupported,
-        opacity(NoPortal::Unsupported),
-    )
+    Imperfect::Failure(NoPortal::Unsupported, opacity(NoPortal::Unsupported))
 }
 
 #[cfg(test)]
