@@ -31,6 +31,14 @@ pub enum AstKind {
     /// layer. The shape is land-on-the-OID — the bootstrap doesn't carry
     /// a structured base/parameter split because the verbatim form is
     /// what hashes; downstream lenses extract the components from `name`.
+    ///
+    /// `#[allow(dead_code)]`: the variant is pattern-matched throughout
+    /// `spectral.rs` (rendering / coincidence-hash walks) but the
+    /// tokenizer doesn't yet construct it — parametric-type recognition
+    /// is a future tokenize tick. The variant stays in the enum so the
+    /// downstream exhaustive matches don't have to grow a stub-and-then-
+    /// shrink path when the tokenizer lands.
+    #[allow(dead_code)]
     ParametricType,
     /// A span of unrecognized bytes — `total_classification` failure.
     ///

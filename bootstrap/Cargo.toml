@@ -64,3 +64,16 @@ lto = true
 codegen-units = 1
 strip = true
 panic = "abort"
+
+# Per Taut's profiling survey (#286 Win 1): the default dev / test
+# profiles inherit small codegen-units counts which serialise the
+# monolithic-binary codegen of `bootstrap` and dominate incremental
+# rebuild wall-time. Bumping to 256 splits the codegen across cores
+# and turns a ~30s relink into ~7–10s on the M3 Max profile
+# machine. No behavioural impact (dev / test are not the artefacts
+# we ship); strictly a tooling tick.
+[profile.dev]
+codegen-units = 256
+
+[profile.test]
+codegen-units = 256
