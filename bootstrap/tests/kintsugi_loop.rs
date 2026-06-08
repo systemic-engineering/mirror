@@ -4,9 +4,17 @@
 //! the five-stage iteration for at most N ticks. Today every stage is no-op,
 //! so the Banach contraction's Δ is vacuously zero and the loop terminates
 //! on tick 1. These tests pin that scaffold behavior.
+//!
+//! Per Taut #286 Win 2: these tests dispatch through `mirror::kintsugi_main`
+//! in-process. The 200-800ms dyld + Accelerate startup tax that
+//! `Command::new(env!("CARGO_BIN_EXE_mirror"))` paid per test is gone; the
+//! whole file's wall time collapses from > 700ms to < 100ms. The
+//! `[settle]` / `tick ` / `Uncrystallized` traces live on `out.stderr`
+//! (captured) instead of the spawned binary's stderr (subprocess); the
+//! assertions transfer 1:1.
 
 use std::path::Path;
-use std::process::Command;
+use std::process::Output;
 
 fn repo_root() -> &'static Path {
     // CARGO_MANIFEST_DIR points at bootstrap/; its parent is the repo root.
@@ -21,15 +29,32 @@ fn repo_root() -> &'static Path {
     Box::leak(p.to_path_buf().into_boxed_path())
 }
 
-fn run_kintsugi(args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_mirror");
-    let mut cmd = Command::new(exe);
-    cmd.current_dir(repo_root());
-    cmd.arg("kintsugi");
+/// In-process dispatch through `mirror::kintsugi_main` (Taut #286 Win 2).
+///
+/// Returns a `std::process::Output` wrapping the captured exit code,
+/// stdout, and stderr — same shape the original `Command::new(...).output()`
+/// call returned, so existing assertions on `.status.code()`, `.stdout`,
+/// `.stderr` transfer with no per-test changes.
+///
+/// The kintsugi binary reads grammars via paths relative to its CWD
+/// (`boot/std/mirror/grammar.mirror`), so the in-process dispatch must run
+/// with the working directory set to the repo root. The cwd swap is
+/// process-wide; tests that touch this run with `--test-threads=1`
+/// (existing convention in the per-test invocations).
+fn run_kintsugi(args: &[&str]) -> Output {
+    use std::os::unix::process::ExitStatusExt;
+    let mut argv: Vec<String> = vec!["mirror".to_string(), "kintsugi".to_string()];
     for a in args {
-        cmd.arg(a);
+        argv.push((*a).to_string());
     }
-    cmd.output().expect("binary did not run")
+    let out = mirror::kintsugi_main_in(&argv, repo_root());
+    Output {
+        // Encode exit code into the high byte of the raw status — that's
+        // the form `ExitStatus::code()` decodes when there's no signal.
+        status: std::process::ExitStatus::from_raw(out.exit_code << 8),
+        stdout: out.stdout,
+        stderr: out.stderr,
+    }
 }
 
 #[test]

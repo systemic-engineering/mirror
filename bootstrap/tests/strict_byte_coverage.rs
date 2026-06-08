@@ -17,7 +17,7 @@
 //! the AST and never trigger an error.
 
 use std::path::Path;
-use std::process::Command;
+use std::process::Output;
 
 fn repo_root() -> &'static Path {
     let manifest_dir = env!("CARGO_MANIFEST_DIR");
@@ -27,15 +27,22 @@ fn repo_root() -> &'static Path {
     Box::leak(p.to_path_buf().into_boxed_path())
 }
 
-fn run_compile(args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_mirror");
-    let mut cmd = Command::new(exe);
-    cmd.current_dir(repo_root());
-    cmd.arg("compile");
+/// In-process compile dispatch through `mirror::kintsugi_main`
+/// (Taut #286 Win 2). The library entry point name says "kintsugi"
+/// but the surface is the general subcommand dispatch, including
+/// `compile`.
+fn run_compile(args: &[&str]) -> Output {
+    use std::os::unix::process::ExitStatusExt;
+    let mut argv: Vec<String> = vec!["mirror".to_string(), "compile".to_string()];
     for a in args {
-        cmd.arg(a);
+        argv.push((*a).to_string());
     }
-    cmd.output().expect("binary did not run")
+    let out = mirror::kintsugi_main_in(&argv, repo_root());
+    Output {
+        status: std::process::ExitStatus::from_raw(out.exit_code << 8),
+        stdout: out.stdout,
+        stderr: out.stderr,
+    }
 }
 
 /// The fixture that surfaced #91 in the field: an action declaration whose

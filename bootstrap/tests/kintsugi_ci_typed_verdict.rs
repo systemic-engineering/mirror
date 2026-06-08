@@ -24,7 +24,7 @@
 
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
-use std::process::Command;
+use std::process::Output;
 
 fn repo_root() -> &'static Path {
     let manifest_dir = env!("CARGO_MANIFEST_DIR");
@@ -39,15 +39,19 @@ fn read_kintsugi_grammar() -> String {
     std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("cannot read {}: {e}", path.display()))
 }
 
-fn run_ci(args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_mirror");
-    let mut cmd = Command::new(exe);
-    cmd.current_dir(repo_root());
-    cmd.arg("kintsugi");
+/// In-process dispatch through `mirror::kintsugi_main_in` (Taut #286 Win 2).
+fn run_ci(args: &[&str]) -> Output {
+    use std::os::unix::process::ExitStatusExt;
+    let mut argv: Vec<String> = vec!["mirror".to_string(), "kintsugi".to_string()];
     for a in args {
-        cmd.arg(a);
+        argv.push((*a).to_string());
     }
-    cmd.output().expect("binary did not run")
+    let out = mirror::kintsugi_main_in(&argv, repo_root());
+    Output {
+        status: std::process::ExitStatus::from_raw(out.exit_code << 8),
+        stdout: out.stdout,
+        stderr: out.stderr,
+    }
 }
 
 fn parse_record(s: &str) -> HashMap<String, String> {
@@ -328,17 +332,24 @@ fn kintsugi_mirror_still_compiles_strict_after_verdict_declaration() {
     // T11.2.6 must not regress kintsugi.mirror's substrate health. The
     // file compiled with zero dark regions under --strict before; the
     // typed verdict declarations must not introduce dark regressions.
-    let exe = env!("CARGO_BIN_EXE_mirror");
-    let out = Command::new(exe)
-        .current_dir(repo_root())
-        .args([
-            "compile",
-            "--strict",
-            "--no-cache",
-            "boot/std/kintsugi.mirror",
-        ])
-        .output()
-        .expect("binary did not run");
+    // In-process compile dispatch (Taut #286 Win 2).
+    use std::os::unix::process::ExitStatusExt;
+    let argv: Vec<String> = [
+        "mirror",
+        "compile",
+        "--strict",
+        "--no-cache",
+        "boot/std/kintsugi.mirror",
+    ]
+    .iter()
+    .map(|s| s.to_string())
+    .collect();
+    let exit = mirror::kintsugi_main_in(&argv, repo_root());
+    let out = std::process::Output {
+        status: std::process::ExitStatus::from_raw(exit.exit_code << 8),
+        stdout: exit.stdout,
+        stderr: exit.stderr,
+    };
     let code = out.status.code();
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert_eq!(

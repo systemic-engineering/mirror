@@ -47,9 +47,158 @@ pub mod tensor;
 pub mod tokenize;
 
 use std::fs;
-use std::io::{self, Read, Write};
+use std::io::{self, Read};
 use std::path::PathBuf;
 use std::process::Command;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// `mout!` / `merr!` — print macros that bypass libtest's thread-local
+// `OUTPUT_CAPTURE` (per Taut #286 Win 2).
+//
+// The standard `println!` / `eprintln!` macros route through `_print` →
+// `print_to` → `Stdout::write_all`, which checks the thread-local
+// `OUTPUT_CAPTURE` set by libtest's harness BEFORE writing to fd 1 / 2.
+// libtest's `thread::Builder::spawn` clones the parent's `OUTPUT_CAPTURE`
+// onto every child thread, so even running `dispatch` on a fresh worker
+// thread doesn't escape the capture — the worker inherits the parent's
+// thread-local sink, and our fd-level pipe redirect never sees the bytes.
+//
+// `mout!` and `merr!` skirt the thread-local by writing directly to fd 1
+// and fd 2 via `libc::write` (on unix; `Stdout::lock` on non-unix). The
+// `kintsugi_main` library entry point redirects those fds to its own
+// pipes for in-process capture; the binary path keeps fd 1 and 2 as the
+// real process stdout/stderr.
+//
+// Wire shape: identical to `println!{...}` / `eprintln!{...}` (no
+// behavioural change). The macros take format args, append a trailing
+// newline, and write the resulting UTF-8 bytes in a single syscall (the
+// short writes the existing prints emit always fit in a single
+// `libc::write`).
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Per-thread capture cells. When `kintsugi_main` is invoked from a test, it
+// installs `Some(Vec)` into both thread-locals; `_raw_stdout` / `_raw_stderr`
+// detect the install and route into the buffer instead of fd 1 / 2. This is
+// the parallel-safe alternative to a process-wide dup2: each test thread
+// gets its own capture buffer, and libtest's own status writes to fd 1 (test
+// progress lines) keep flowing through the real terminal undisturbed.
+//
+// On a fresh thread the cells are `None` — production binary behaviour is
+// unchanged (the macros fall through to `libc::write` on the real fd).
+std::thread_local! {
+    static CAPTURE_STDOUT: std::cell::RefCell<Option<Vec<u8>>> = const { std::cell::RefCell::new(None) };
+    static CAPTURE_STDERR: std::cell::RefCell<Option<Vec<u8>>> = const { std::cell::RefCell::new(None) };
+}
+
+/// Write a UTF-8 byte slice to stdout. If the thread-local capture cell is
+/// installed, append to it; otherwise write to fd 1 directly via `libc::write`
+/// (bypassing `std::io::Stdout` and its `OUTPUT_CAPTURE` sink). Used by
+/// `mout!`.
+#[doc(hidden)]
+pub fn _raw_stdout(bytes: &[u8]) {
+    let captured = CAPTURE_STDOUT.with(|cell| {
+        if let Some(buf) = cell.borrow_mut().as_mut() {
+            buf.extend_from_slice(bytes);
+            true
+        } else {
+            false
+        }
+    });
+    if captured {
+        return;
+    }
+    #[cfg(unix)]
+    {
+        // Loop in case of short writes (rare for the short strings we
+        // emit, but correct under signals).
+        let mut written = 0;
+        while written < bytes.len() {
+            let n = unsafe {
+                libc::write(
+                    1,
+                    bytes.as_ptr().add(written) as *const libc::c_void,
+                    bytes.len() - written,
+                )
+            };
+            if n <= 0 {
+                break;
+            }
+            written += n as usize;
+        }
+    }
+    #[cfg(not(unix))]
+    {
+        use std::io::Write;
+        let _ = std::io::stdout().lock().write_all(bytes);
+    }
+}
+
+/// Write a UTF-8 byte slice to stderr. If the thread-local capture cell is
+/// installed, append to it; otherwise write to fd 2 directly via `libc::write`
+/// (bypassing `std::io::Stderr` and its `OUTPUT_CAPTURE` sink). Used by
+/// `merr!`.
+#[doc(hidden)]
+pub fn _raw_stderr(bytes: &[u8]) {
+    let captured = CAPTURE_STDERR.with(|cell| {
+        if let Some(buf) = cell.borrow_mut().as_mut() {
+            buf.extend_from_slice(bytes);
+            true
+        } else {
+            false
+        }
+    });
+    if captured {
+        return;
+    }
+    #[cfg(unix)]
+    {
+        let mut written = 0;
+        while written < bytes.len() {
+            let n = unsafe {
+                libc::write(
+                    2,
+                    bytes.as_ptr().add(written) as *const libc::c_void,
+                    bytes.len() - written,
+                )
+            };
+            if n <= 0 {
+                break;
+            }
+            written += n as usize;
+        }
+    }
+    #[cfg(not(unix))]
+    {
+        use std::io::Write;
+        let _ = std::io::stderr().lock().write_all(bytes);
+    }
+}
+
+/// `mout!` — like `println!` but bypasses libtest's `OUTPUT_CAPTURE`
+/// so the `kintsugi_main` in-process capture sees the bytes via its
+/// pipe redirect on fd 1.
+#[macro_export]
+macro_rules! mout {
+    () => {{ $crate::_raw_stdout(b"\n"); }};
+    ($($arg:tt)*) => {{
+        let mut s = format!($($arg)*);
+        s.push('\n');
+        $crate::_raw_stdout(s.as_bytes());
+    }};
+}
+
+/// `merr!` — like `eprintln!` but bypasses libtest's `OUTPUT_CAPTURE`
+/// so the `kintsugi_main` in-process capture sees the bytes via its
+/// pipe redirect on fd 2.
+#[macro_export]
+macro_rules! merr {
+    () => {{ $crate::_raw_stderr(b"\n"); }};
+    ($($arg:tt)*) => {{
+        let mut s = format!($($arg)*);
+        s.push('\n');
+        $crate::_raw_stderr(s.as_bytes());
+    }};
+}
 
 use prism_core::{Optic, Ref};
 use serde::Serialize;
@@ -145,9 +294,9 @@ fn print_dark_diag(file: &str, source: &[u8], dark: &AstNode) {
     let gutter_w = line_str.len();
     let pad = " ".repeat(gutter_w);
 
-    eprintln!("  --> line {}, col {}", line, col);
-    eprintln!("   {} |", pad);
-    eprintln!("   {} | {}", line_str, src_line);
+    merr!("  --> line {}, col {}", line, col);
+    merr!("   {} |", pad);
+    merr!("   {} | {}", line_str, src_line);
     // Caret line: spaces up to (col-1), then ^^^.
     let leading = (col as usize).saturating_sub(1);
     let mut caret_line = String::with_capacity(leading + caret_width);
@@ -157,9 +306,9 @@ fn print_dark_diag(file: &str, source: &[u8], dark: &AstNode) {
     for _ in 0..caret_width {
         caret_line.push('^');
     }
-    eprintln!("   {} | {}", pad, caret_line);
-    eprintln!("   {} |", pad);
-    eprintln!(
+    merr!("   {} | {}", pad, caret_line);
+    merr!("   {} |", pad);
+    merr!(
         "   {} = hint: the parser has no rule for this construct",
         pad
     );
@@ -177,7 +326,7 @@ fn enforce_strict(file: &str, source: &[u8], ast: &AstNode) -> usize {
         return 0;
     }
     let n = darks.len();
-    eprintln!(
+    merr!(
         "error[total_classification]: {} dark region{} in {}",
         n,
         if n == 1 { "" } else { "s" },
@@ -190,13 +339,13 @@ fn enforce_strict(file: &str, source: &[u8], ast: &AstNode) -> usize {
 }
 
 fn usage() {
-    eprintln!("usage:");
-    eprintln!("  mirror <command> [args...]            (legacy subcommand surface)");
-    eprintln!("  mirror '<mq-query>' < input           (mq pipeline over stdin)");
-    eprintln!("  mirror <input> '<mq-query>'           (mq pipeline over input file)");
-    eprintln!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi [--ci [--format mirror|json]] [--shatter N] <file|dir>");
-    eprintln!("examples:");
-    eprintln!("  cat mirror.ll | mirror '@code/llvm/ir |> @mirror/kintsugi |> @mirror/butterfly'");
+    merr!("usage:");
+    merr!("  mirror <command> [args...]            (legacy subcommand surface)");
+    merr!("  mirror '<mq-query>' < input           (mq pipeline over stdin)");
+    merr!("  mirror <input> '<mq-query>'           (mq pipeline over input file)");
+    merr!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi [--ci [--format mirror|json]] [--shatter N] <file|dir>");
+    merr!("examples:");
+    merr!("  cat mirror.ll | mirror '@code/llvm/ir |> @mirror/kintsugi |> @mirror/butterfly'");
 }
 
 fn read_stdin_all() -> io::Result<Vec<u8>> {
@@ -209,7 +358,7 @@ fn cmd_compile(file: &str, no_cache: bool, strict: bool) -> i32 {
     let source = match fs::read(file) {
         Ok(s) => s,
         Err(e) => {
-            eprintln!("cannot read file {}: {}", file, e);
+            merr!("cannot read file {}: {}", file, e);
             return 1;
         }
     };
@@ -217,7 +366,7 @@ fn cmd_compile(file: &str, no_cache: bool, strict: bool) -> i32 {
     let grammar = match load_grammar(grammar_path) {
         Ok(g) => g,
         Err(e) => {
-            eprintln!("cannot read grammar {}: {}", grammar_path, e);
+            merr!("cannot read grammar {}: {}", grammar_path, e);
             return 1;
         }
     };
@@ -226,8 +375,8 @@ fn cmd_compile(file: &str, no_cache: bool, strict: bool) -> i32 {
     if !no_cache && !strict {
         let source_oid = canonical_hash(&source);
         if let Some(cached) = git_crystal_exists(&source_oid) {
-            eprintln!("(cached)");
-            println!("{}", cached);
+            merr!("(cached)");
+            mout!("{}", cached);
             return 0;
         }
     }
@@ -244,7 +393,7 @@ fn cmd_compile(file: &str, no_cache: bool, strict: bool) -> i32 {
             return 2;
         }
     }
-    println!("{}", oid);
+    mout!("{}", oid);
     0
 }
 
@@ -305,7 +454,7 @@ fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind, strict: bool) 
         "boot" | "std" => collect_files("boot", ".mirror", &mut files),
         "cargo" => collect_files("src", ".rs", &mut files),
         _ => {
-            eprintln!("unknown target: {}", target);
+            merr!("unknown target: {}", target);
             return 1;
         }
     }
@@ -322,14 +471,14 @@ fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind, strict: bool) 
         let grammar = match load_grammar(grammar_path) {
             Ok(g) => g,
             Err(_) => {
-                eprintln!("  skip {} (grammar error)", file);
+                merr!("  skip {} (grammar error)", file);
                 continue;
             }
         };
         let source = match fs::read(file) {
             Ok(s) => s,
             Err(_) => {
-                eprintln!("  skip {} (read error)", file);
+                merr!("  skip {} (read error)", file);
                 continue;
             }
         };
@@ -360,31 +509,32 @@ fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind, strict: bool) 
             }
         }
         if cached {
-            eprintln!("  {} -> {} (cached)", file, oid);
+            merr!("  {} -> {} (cached)", file, oid);
         } else {
-            eprintln!("  {} -> {}", file, oid);
+            merr!("  {} -> {}", file, oid);
         }
         hasher_buf.extend_from_slice(oid.as_bytes());
     }
 
     let crystal = canonical_hash(&hasher_buf);
     if hits > 0 {
-        eprintln!("cache: {}/{} hits", hits, total);
+        merr!("cache: {}/{} hits", hits, total);
     }
     if strict && total_dark > 0 {
-        eprintln!(
+        merr!(
             "error[total_classification]: {} dark region(s) across {} file(s)",
-            total_dark, files_with_dark
+            total_dark,
+            files_with_dark
         );
         return 2;
     }
-    println!("{}", crystal);
+    mout!("{}", crystal);
 
     if kind == TargetKind::Binary && (target == "boot" || target == "std") {
         return build_self_binary();
     }
     if kind == TargetKind::Rust || kind == TargetKind::Gleam {
-        eprintln!("--target rust/gleam: not yet implemented (declared for surface stability)");
+        merr!("--target rust/gleam: not yet implemented (declared for surface stability)");
         return 2;
     }
     0
@@ -404,8 +554,8 @@ fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind, strict: bool) 
 /// IR into a binary, and `./mirror-self craft boot` must match
 /// `mirror craft boot` for v1.0.0.
 fn build_self_binary() -> i32 {
-    eprintln!("== craft --target binary ==");
-    eprintln!("1/3 cargo rustc --emit=llvm-ir");
+    merr!("== craft --target binary ==");
+    merr!("1/3 cargo rustc --emit=llvm-ir");
 
     let status = Command::new("cargo")
         .args([
@@ -420,31 +570,31 @@ fn build_self_binary() -> i32 {
     match status {
         Ok(s) if s.success() => {}
         Ok(s) => {
-            eprintln!("cargo rustc failed: exit {}", s);
+            merr!("cargo rustc failed: exit {}", s);
             return 1;
         }
         Err(e) => {
-            eprintln!("cargo rustc spawn error: {}", e);
+            merr!("cargo rustc spawn error: {}", e);
             return 1;
         }
     }
 
-    eprintln!("2/3 locate bootstrap/mirror.ll");
+    merr!("2/3 locate bootstrap/mirror.ll");
     let target_dir =
         std::env::var("CARGO_TARGET_DIR").unwrap_or_else(|_| "bootstrap/target".to_string());
     let deps_dir = PathBuf::from(&target_dir).join("release").join("deps");
     let ll_path = match find_bootstrap_ll(&deps_dir) {
         Some(p) => p,
         None => {
-            eprintln!("could not find mirror-*.ll under {}", deps_dir.display());
+            merr!("could not find mirror-*.ll under {}", deps_dir.display());
             return 1;
         }
     };
-    eprintln!("    found: {}", ll_path.display());
+    merr!("    found: {}", ll_path.display());
 
     let dest = PathBuf::from("bootstrap/mirror.ll");
     if let Err(e) = fs::copy(&ll_path, &dest) {
-        eprintln!(
+        merr!(
             "copy {} -> {} failed: {}",
             ll_path.display(),
             dest.display(),
@@ -452,9 +602,9 @@ fn build_self_binary() -> i32 {
         );
         return 1;
     }
-    eprintln!("    copied to {}", dest.display());
+    merr!("    copied to {}", dest.display());
 
-    eprintln!("3/3 clang -O2 -o ./mirror-self -x ir bootstrap/mirror.ll -lm");
+    merr!("3/3 clang -O2 -o ./mirror-self -x ir bootstrap/mirror.ll -lm");
     let status = Command::new("clang")
         .args([
             "-O2",
@@ -469,16 +619,16 @@ fn build_self_binary() -> i32 {
     match status {
         Ok(s) if s.success() => {}
         Ok(s) => {
-            eprintln!("clang failed: exit {}", s);
+            merr!("clang failed: exit {}", s);
             return 1;
         }
         Err(e) => {
-            eprintln!("clang spawn error: {}", e);
+            merr!("clang spawn error: {}", e);
             return 1;
         }
     }
 
-    eprintln!("== ./mirror-self ==");
+    merr!("== ./mirror-self ==");
     0
 }
 
@@ -533,7 +683,7 @@ fn dump_ast(node: &crate::ast::AstNode, depth: usize) {
     } else {
         format!(" tag={}", node.grammar_tag)
     };
-    eprintln!(
+    merr!(
         "{}{} name={:?}{}{}{} oid={}",
         indent,
         kind_str,
@@ -553,7 +703,7 @@ fn cmd_dump(file: &str) -> i32 {
     let source = match fs::read(file) {
         Ok(s) => s,
         Err(e) => {
-            eprintln!("cannot read {}: {}", file, e);
+            merr!("cannot read {}: {}", file, e);
             return 1;
         }
     };
@@ -611,23 +761,23 @@ fn kintsugi_tick(
     let dispatch = crystallizations.crystallize(&tick_ref, seed_input);
     match &dispatch {
         Imperfect::Success(_) => {
-            eprintln!("  dispatch {}: Success", tick_ref.as_str());
+            merr!("  dispatch {}: Success", tick_ref.as_str());
         }
         Imperfect::Partial(_, _) => {
-            eprintln!(
+            merr!(
                 "  dispatch {}: Partial (with Transparency)",
                 tick_ref.as_str()
             );
         }
         Imperfect::Failure(CrystallizeError::Uncrystallized(got), _) => {
-            eprintln!(
+            merr!(
                 "  dispatch {}: Uncrystallized (floor has no body at {})",
                 tick_ref.as_str(),
                 got.as_str()
             );
         }
         Imperfect::Failure(err, _) => {
-            eprintln!("  dispatch {}: Failure ({:?})", tick_ref.as_str(), err);
+            merr!("  dispatch {}: Failure ({:?})", tick_ref.as_str(), err);
         }
     }
     let candidates: Vec<()> = Vec::new();
@@ -664,9 +814,13 @@ fn kintsugi_tick(
     } else {
         ""
     };
-    eprintln!(
+    merr!(
         "tick {}  dark_count: {}  loss: {:.1}  \u{0394}: {:.1}{}",
-        tick, dark_count, loss, delta, suffix
+        tick,
+        dark_count,
+        loss,
+        delta,
+        suffix
     );
 
     fixed_point
@@ -767,7 +921,7 @@ fn cmd_kintsugi(
         let md = match fs::metadata(file) {
             Ok(m) => m,
             Err(e) => {
-                eprintln!("cannot stat {}: {}", file, e);
+                merr!("cannot stat {}: {}", file, e);
                 return 1;
             }
         };
@@ -801,7 +955,7 @@ fn cmd_kintsugi_rust(file: &str) -> i32 {
         terni::Transparency::Clear => "Clear",
         terni::Transparency::Opaque(_) => "Partial",
     };
-    eprintln!(
+    merr!(
         "[realisation] path={} altitude={} target={} verdict={}",
         classification.path.as_str(),
         classification.altitude,
@@ -812,13 +966,13 @@ fn cmd_kintsugi_rust(file: &str) -> i32 {
         .file_name()
         .and_then(|n| n.to_str())
         .unwrap_or(file);
-    println!(
+    mout!(
         "// kintsugi-on-Rust pilot: {} at {} maps to substrate altitude {}",
         basename,
         classification.altitude,
         classification.target.as_str(),
     );
-    println!(
+    mout!(
         "// fracture proposal: replace this file's substrate-realisable functions \
          with calls into {}",
         classification.target.as_str(),
@@ -1014,19 +1168,21 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
                 // exit code is recorded in the label so the operator
                 // can see WHICH non-zero arm fired.
                 let code = o.status.code().unwrap_or(-1);
-                eprintln!(
+                merr!(
                     "[kintsugi spec] target `{}` cargo check exit {}; stderr (first 200 chars):",
-                    t.block_name, code,
+                    t.block_name,
+                    code,
                 );
                 let stderr = String::from_utf8_lossy(&o.stderr);
-                eprintln!("  {}", &stderr.chars().take(200).collect::<String>());
+                merr!("  {}", &stderr.chars().take(200).collect::<String>());
                 let label = format!("{} (exit {})", manifest.to_string_lossy(), code);
                 ("failure", 1.0_f64, 1_u64, label)
             }
             Err(e) => {
-                eprintln!(
+                merr!(
                     "[kintsugi spec] target `{}` cargo spawn error: {}",
-                    t.block_name, e
+                    t.block_name,
+                    e
                 );
                 (
                     "failure",
@@ -1123,11 +1279,9 @@ fn emit_spec_verdict(
                     .collect(),
             };
             match serde_json::to_string(&envelope) {
-                Ok(json) => {
-                    let mut out = io::stdout();
-                    if writeln!(out, "{}", json).is_err() {
-                        return 1;
-                    }
+                Ok(mut json) => {
+                    json.push('\n');
+                    _raw_stdout(json.as_bytes());
                     0
                 }
                 Err(_) => 1,
@@ -1439,11 +1593,9 @@ fn cmd_kintsugi_ci_corpus(
                 per_file,
             };
             match serde_json::to_string(&envelope) {
-                Ok(json) => {
-                    let mut out = io::stdout();
-                    if writeln!(out, "{}", json).is_err() {
-                        return 1;
-                    }
+                Ok(mut json) => {
+                    json.push('\n');
+                    _raw_stdout(json.as_bytes());
                     0
                 }
                 Err(_) => 1,
@@ -1471,11 +1623,9 @@ fn emit_ci_verdict_json(
         dark_count,
     };
     match serde_json::to_string(&v) {
-        Ok(json) => {
-            let mut out = io::stdout();
-            if writeln!(out, "{}", json).is_err() {
-                return 1;
-            }
+        Ok(mut json) => {
+            json.push('\n');
+            _raw_stdout(json.as_bytes());
             0
         }
         Err(_) => 1,
@@ -1537,10 +1687,7 @@ fn emit_ci_verdict_mirror_text(
         "dark_count",
         dark_count,
     );
-    let mut out = io::stdout();
-    if out.write_all(buf.as_bytes()).is_err() {
-        return 1;
-    }
+    _raw_stdout(buf.as_bytes());
     0
 }
 
@@ -1615,10 +1762,7 @@ fn emit_corpus_verdict_mirror_text(
             w = pw
         ));
     }
-    let mut out = io::stdout();
-    if out.write_all(buf.as_bytes()).is_err() {
-        return 1;
-    }
+    _raw_stdout(buf.as_bytes());
     0
 }
 
@@ -1633,7 +1777,7 @@ fn cmd_kintsugi_migrate(src_root: &str, out_root: &str, transform: Option<&str>)
             match parse_rewrite(q) {
                 Some(r) => r,
                 None => {
-                    eprintln!("kintsugi --transform: not a rewrite query (expected `<sym> => <repl>`): {}", q);
+                    merr!("kintsugi --transform: not a rewrite query (expected `<sym> => <repl>`): {}", q);
                     return 1;
                 }
             }
@@ -1648,7 +1792,7 @@ fn cmd_kintsugi_migrate(src_root: &str, out_root: &str, transform: Option<&str>)
         let source = match fs::read(path) {
             Ok(s) => s,
             Err(e) => {
-                eprintln!("  skip {} (read error: {})", path, e);
+                merr!("  skip {} (read error: {})", path, e);
                 errs += 1;
                 continue;
             }
@@ -1695,19 +1839,19 @@ fn cmd_kintsugi_migrate(src_root: &str, out_root: &str, transform: Option<&str>)
         let dest = format!("{}/{}", out_root.trim_end_matches('/'), rel_out);
         if let Some(parent) = std::path::Path::new(&dest).parent() {
             if let Err(e) = fs::create_dir_all(parent) {
-                eprintln!("  cannot mkdir {}: {}", parent.display(), e);
+                merr!("  cannot mkdir {}: {}", parent.display(), e);
                 errs += 1;
                 continue;
             }
         }
         if let Err(e) = fs::write(&dest, &rewritten) {
-            eprintln!("  cannot write {}: {}", dest, e);
+            merr!("  cannot write {}: {}", dest, e);
             errs += 1;
             continue;
         }
-        eprintln!("  {} -> {}", path, dest);
+        merr!("  {} -> {}", path, dest);
     }
-    eprintln!("migration: {} file(s), {} error(s)", files.len(), errs);
+    merr!("migration: {} file(s), {} error(s)", files.len(), errs);
     if errs > 0 {
         1
     } else {
@@ -1724,7 +1868,7 @@ fn cmd_kintsugi_single(
     let source = match fs::read(file) {
         Ok(s) => s,
         Err(e) => {
-            eprintln!("cannot read file {}: {}", file, e);
+            merr!("cannot read file {}: {}", file, e);
             return 1;
         }
     };
@@ -1733,7 +1877,7 @@ fn cmd_kintsugi_single(
         match parse_rewrite(q) {
             Some(rules) => apply_rewrites(&rules, &source),
             None => {
-                eprintln!("kintsugi --transform: not a rewrite query: {}", q);
+                merr!("kintsugi --transform: not a rewrite query: {}", q);
                 return 1;
             }
         }
@@ -1814,9 +1958,11 @@ fn cmd_kintsugi_single(
         let state = witness.final_oscillation.state();
         let iter = witness.final_oscillation.iteration().count();
         let cap = witness.cap_reached;
-        eprintln!(
+        merr!(
             "[settle] state={:?} iterations={} cap_reached={}",
-            state, iter, cap,
+            state,
+            iter,
+            cap,
         );
         // Capture the settled anchor's OID for the T20 portal frame's
         // `to_oid` slot. The substrate's `compute_content_oid` returns
@@ -1853,10 +1999,10 @@ fn cmd_kintsugi_single(
             let _ = fs::create_dir_all(parent);
         }
         if let Err(e) = fs::write(&dest, &out) {
-            eprintln!("cannot write {}: {}", dest, e);
+            merr!("cannot write {}: {}", dest, e);
             return 1;
         }
-        eprintln!("wrote {}", dest);
+        merr!("wrote {}", dest);
         return 0;
     }
 
@@ -1876,7 +2022,7 @@ fn cmd_kintsugi_single(
         let stdout_fd = io::stdout().as_raw_fd();
         match portal::try_outbound_handshake(stdout_fd, &out, settled_oid) {
             terni::Imperfect::Success(_) => {
-                eprintln!(
+                merr!(
                     "[portal] shard oid={} bytes={}",
                     hex_oid(&settled_oid),
                     out.len()
@@ -1897,7 +2043,7 @@ fn cmd_kintsugi_single(
 
     // T19 text branch (the default; survives when portal is not
     // negotiated).
-    let _ = io::stdout().write_all(&out);
+    _raw_stdout(&out);
     0
 }
 
@@ -1932,13 +2078,13 @@ pub fn dispatch(args: &[String]) -> i32 {
     if args.len() == 2 && is_mq_query(&args[1]) {
         let segs = split_pipeline(&args[1]);
         if segs.is_empty() {
-            eprintln!("empty query");
+            merr!("empty query");
             return 1;
         }
         let source = match read_stdin_all() {
             Ok(s) => s,
             Err(e) => {
-                eprintln!("stdin read error: {}", e);
+                merr!("stdin read error: {}", e);
                 return 1;
             }
         };
@@ -1949,13 +2095,13 @@ pub fn dispatch(args: &[String]) -> i32 {
     if args.len() == 3 && is_mq_query(&args[2]) {
         let segs = split_pipeline(&args[2]);
         if segs.is_empty() {
-            eprintln!("empty query");
+            merr!("empty query");
             return 1;
         }
         let source = match fs::read(&args[1]) {
             Ok(s) => s,
             Err(e) => {
-                eprintln!("cannot read {}: {}", args[1], e);
+                merr!("cannot read {}: {}", args[1], e);
                 return 1;
             }
         };
@@ -1985,13 +2131,13 @@ pub fn dispatch(args: &[String]) -> i32 {
             strict = true;
         } else if a == "--target" {
             if i + 1 >= args.len() {
-                eprintln!("--target requires a value (crystal|binary|rust|gleam)");
+                merr!("--target requires a value (crystal|binary|rust|gleam)");
                 return 1;
             }
             match parse_target(&args[i + 1]) {
                 Some(k) => target_kind = k,
                 None => {
-                    eprintln!("unknown --target value: {}", args[i + 1]);
+                    merr!("unknown --target value: {}", args[i + 1]);
                     return 1;
                 }
             }
@@ -2000,19 +2146,19 @@ pub fn dispatch(args: &[String]) -> i32 {
             match parse_target(rest) {
                 Some(k) => target_kind = k,
                 None => {
-                    eprintln!("unknown --target value: {}", rest);
+                    merr!("unknown --target value: {}", rest);
                     return 1;
                 }
             }
         } else if a == "--shatter" {
             if i + 1 >= args.len() {
-                eprintln!("--shatter requires a non-negative integer");
+                merr!("--shatter requires a non-negative integer");
                 return 1;
             }
             match args[i + 1].parse::<u64>() {
                 Ok(n) => shatter = n,
                 Err(_) => {
-                    eprintln!(
+                    merr!(
                         "--shatter requires a non-negative integer, got: {}",
                         args[i + 1]
                     );
@@ -2024,13 +2170,13 @@ pub fn dispatch(args: &[String]) -> i32 {
             match rest.parse::<u64>() {
                 Ok(n) => shatter = n,
                 Err(_) => {
-                    eprintln!("--shatter requires a non-negative integer, got: {}", rest);
+                    merr!("--shatter requires a non-negative integer, got: {}", rest);
                     return 1;
                 }
             }
         } else if a == "--transform" {
             if i + 1 >= args.len() {
-                eprintln!("--transform requires an mq-query value");
+                merr!("--transform requires an mq-query value");
                 return 1;
             }
             transform = Some(args[i + 1].clone());
@@ -2039,7 +2185,7 @@ pub fn dispatch(args: &[String]) -> i32 {
             transform = Some(rest.to_string());
         } else if a == "--out" {
             if i + 1 >= args.len() {
-                eprintln!("--out requires a path value");
+                merr!("--out requires a path value");
                 return 1;
             }
             out_dir = Some(args[i + 1].clone());
@@ -2050,13 +2196,13 @@ pub fn dispatch(args: &[String]) -> i32 {
             ci = true;
         } else if a == "--format" {
             if i + 1 >= args.len() {
-                eprintln!("--format requires a value (mirror|json)");
+                merr!("--format requires a value (mirror|json)");
                 return 1;
             }
             match parse_ci_format(&args[i + 1]) {
                 Some(f) => ci_format = f,
                 None => {
-                    eprintln!(
+                    merr!(
                         "unknown --format value: {} (expected: mirror|json)",
                         args[i + 1]
                     );
@@ -2068,7 +2214,7 @@ pub fn dispatch(args: &[String]) -> i32 {
             match parse_ci_format(rest) {
                 Some(f) => ci_format = f,
                 None => {
-                    eprintln!("unknown --format value: {} (expected: mirror|json)", rest);
+                    merr!("unknown --format value: {} (expected: mirror|json)", rest);
                     return 1;
                 }
             }
@@ -2107,14 +2253,14 @@ pub fn dispatch(args: &[String]) -> i32 {
         "compile" => match positional {
             Some(p) => cmd_compile(p, no_cache, strict),
             None => {
-                eprintln!("usage: mirror compile [--strict] <file>");
+                merr!("usage: mirror compile [--strict] <file>");
                 1
             }
         },
         "craft" => match positional {
             Some(p) => cmd_craft_with(p, no_cache, target_kind, strict),
             None => {
-                eprintln!("usage: mirror craft [--strict] [--target <crystal|binary>] <target>");
+                merr!("usage: mirror craft [--strict] [--target <crystal|binary>] <target>");
                 1
             }
         },
@@ -2128,12 +2274,12 @@ pub fn dispatch(args: &[String]) -> i32 {
                 ci_format,
             ),
             None => {
-                eprintln!("usage: mirror kintsugi [--ci [--format mirror|json]] [--shatter N] [--transform <mq>] [--out <path>] <file|dir>");
+                merr!("usage: mirror kintsugi [--ci [--format mirror|json]] [--shatter N] [--transform <mq>] [--out <path>] <file|dir>");
                 1
             }
         },
         other => {
-            eprintln!("unknown: {}", other);
+            merr!("unknown: {}", other);
             1
         }
     };
@@ -2144,8 +2290,8 @@ pub fn dispatch(args: &[String]) -> i32 {
 // Library entry point: in-process subcommand dispatch with fd-level capture.
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Captured output from `kintsugi_main` — the carrier integration tests
-/// assert on without spawning a subprocess.
+/// Captured output from `kintsugi_main` / `kintsugi_main_in` — the
+/// carrier integration tests assert on without spawning a subprocess.
 ///
 /// Per Taut's profiling survey (#286 Win 2): the 9-of-11 integration tests
 /// that used to `Command::new(env!("CARGO_BIN_EXE_mirror"))` each paid
@@ -2165,6 +2311,18 @@ pub struct ExitOutput {
     /// Bytes written to stderr during `dispatch(args)`. Same fd-level
     /// capture as stdout.
     pub stderr: Vec<u8>,
+}
+
+/// Process-wide serialization for `kintsugi_main_in`'s cwd swap. The cwd
+/// is a process-wide resource (`std::env::set_current_dir`), so two
+/// concurrent test threads calling `kintsugi_main_in` would race on it.
+/// The fd 1 / 2 capture is parallel-safe (per-thread thread-local cells
+/// in `CAPTURE_STDOUT` / `CAPTURE_STDERR`), so `kintsugi_main` itself
+/// does NOT need to take this lock; only the cwd-setting variant does.
+fn kintsugi_main_lock() -> &'static std::sync::Mutex<()> {
+    use std::sync::{Mutex, OnceLock};
+    static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+    LOCK.get_or_init(|| Mutex::new(()))
 }
 
 /// In-process subcommand dispatch with fd-level stdout / stderr capture.
@@ -2188,111 +2346,72 @@ pub struct ExitOutput {
 ///
 /// ## Capture mechanism
 ///
-/// On unix, the function `dup`s the current process-wide fd 1 and 2,
-/// installs `pipe`-backed replacements via `dup2`, runs `dispatch(args)`,
-/// then restores the originals. Two worker threads drain the read ends
-/// into `Vec<u8>` buffers so `dispatch` can write more than the pipe's
-/// PIPE_BUF (typically 64KiB on macOS) without blocking.
+/// The function installs `Some(Vec::new())` in two thread-local cells
+/// (`CAPTURE_STDOUT` / `CAPTURE_STDERR`), runs `dispatch(args)`, and
+/// extracts the buffers. The `mout!` / `merr!` macros and the
+/// `_raw_stdout` / `_raw_stderr` helpers detect the install and append
+/// to the buffers instead of writing to fd 1 / 2. This is parallel-
+/// safe: each test thread has its own cells; libtest's own fd 1 writes
+/// (test progress lines) are unaffected.
 ///
-/// **The capture is process-wide while it runs.** Integration tests must
-/// run with `--test-threads=1` (the harness convention in this crate's
-/// `cargo test --test <name>` invocations).
-///
-/// On non-unix targets, the function panics — bootstrap's integration
-/// tests are unix-only by environment.
-#[cfg(unix)]
+/// For tests that need the binary to run with a specific working
+/// directory (the mirror binary loads grammars via paths relative to
+/// its cwd), use [`kintsugi_main_in`] which performs the cwd swap
+/// under a package-internal mutex.
 pub fn kintsugi_main(args: &[String]) -> ExitOutput {
-    use std::os::unix::io::FromRawFd;
+    kintsugi_main_inner(args)
+}
 
-    // Save originals so we can restore.
-    let saved_stdout = unsafe { libc::dup(1) };
-    let saved_stderr = unsafe { libc::dup(2) };
-    if saved_stdout < 0 || saved_stderr < 0 {
-        panic!("kintsugi_main: dup of stdout/stderr failed");
+/// Like [`kintsugi_main`] but runs the dispatch with the process working
+/// directory temporarily set to `cwd`. The cwd change is process-wide,
+/// so this function holds a package-internal mutex around the
+/// set_current_dir / dispatch / restore sequence; concurrent tests under
+/// `cargo test` (default parallelism) take the mutex one at a time.
+/// The original cwd is restored before this function returns.
+///
+/// Integration tests use this when they need the binary to resolve
+/// grammar paths relative to the repo root rather than the test process
+/// cwd. Otherwise prefer [`kintsugi_main`].
+pub fn kintsugi_main_in(args: &[String], cwd: &std::path::Path) -> ExitOutput {
+    let _guard = kintsugi_main_lock().lock().unwrap_or_else(|p| p.into_inner());
+
+    let saved_cwd = std::env::current_dir().ok();
+    let _ = std::env::set_current_dir(cwd);
+
+    let out = kintsugi_main_inner(args);
+
+    if let Some(prev) = saved_cwd {
+        let _ = std::env::set_current_dir(prev);
     }
+    out
+}
 
-    // Build pipes for the capture targets.
-    let mut out_pipe: [libc::c_int; 2] = [-1, -1];
-    let mut err_pipe: [libc::c_int; 2] = [-1, -1];
-    if unsafe { libc::pipe(out_pipe.as_mut_ptr()) } != 0
-        || unsafe { libc::pipe(err_pipe.as_mut_ptr()) } != 0
-    {
-        unsafe {
-            libc::close(saved_stdout);
-            libc::close(saved_stderr);
-        }
-        panic!("kintsugi_main: pipe() failed");
-    }
+/// Run `dispatch(args)` with the thread-local capture cells installed,
+/// so `mout!` / `merr!` calls land in the per-call `Vec<u8>` buffers
+/// instead of fd 1 / 2. Shared body of `kintsugi_main` and
+/// `kintsugi_main_in`.
+fn kintsugi_main_inner(args: &[String]) -> ExitOutput {
+    // Install fresh capture buffers on this thread. Any prior install
+    // (recursive call) is saved + restored so nested invocations don't
+    // lose each other's output — dispatch is not currently re-entrant
+    // but the swap-save-swap discipline is the right shape regardless.
+    let prior_stdout =
+        CAPTURE_STDOUT.with(|cell| cell.replace(Some(Vec::new())));
+    let prior_stderr =
+        CAPTURE_STDERR.with(|cell| cell.replace(Some(Vec::new())));
 
-    // Redirect 1 → out_pipe[1], 2 → err_pipe[1]. Close the write-end
-    // duplicates after dup2 takes ownership.
-    if unsafe { libc::dup2(out_pipe[1], 1) } < 0 || unsafe { libc::dup2(err_pipe[1], 2) } < 0 {
-        unsafe {
-            libc::close(out_pipe[0]);
-            libc::close(out_pipe[1]);
-            libc::close(err_pipe[0]);
-            libc::close(err_pipe[1]);
-            libc::close(saved_stdout);
-            libc::close(saved_stderr);
-        }
-        panic!("kintsugi_main: dup2 failed");
-    }
-    unsafe {
-        libc::close(out_pipe[1]);
-        libc::close(err_pipe[1]);
-    }
+    // Catch panics so we always restore the prior cells before
+    // returning to the caller.
+    let dispatch_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| dispatch(args)));
 
-    // Wrap the read ends in File so the drain threads use std::io::Read.
-    let out_reader = unsafe { std::fs::File::from_raw_fd(out_pipe[0]) };
-    let err_reader = unsafe { std::fs::File::from_raw_fd(err_pipe[0]) };
+    // Take this call's captured bytes; restore the prior cells.
+    let stdout_bytes = CAPTURE_STDOUT
+        .with(|cell| cell.replace(prior_stdout))
+        .unwrap_or_default();
+    let stderr_bytes = CAPTURE_STDERR
+        .with(|cell| cell.replace(prior_stderr))
+        .unwrap_or_default();
 
-    // Drain the pipes on background threads. The pipes will EOF when the
-    // write ends (fds 1 and 2) close, which happens when we dup2 the
-    // saved fds back over them at the end of this function.
-    let out_handle = std::thread::spawn(move || {
-        let mut buf = Vec::new();
-        let mut r = out_reader;
-        let _ = std::io::Read::read_to_end(&mut r, &mut buf);
-        buf
-    });
-    let err_handle = std::thread::spawn(move || {
-        let mut buf = Vec::new();
-        let mut r = err_reader;
-        let _ = std::io::Read::read_to_end(&mut r, &mut buf);
-        buf
-    });
-
-    // Run the dispatch. Catch any panic so we always restore fds before
-    // returning to the caller — a panic during dispatch otherwise leaves
-    // the process with broken stdout/stderr.
-    let dispatch_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-        // Make sure anything we've buffered to libc stdio flushes BEFORE
-        // we restore; otherwise the drain threads would block waiting for
-        // EOF that never comes through the saved fds.
-        let _ = std::io::Write::flush(&mut std::io::stdout());
-        let _ = std::io::Write::flush(&mut std::io::stderr());
-        dispatch(args)
-    }));
-
-    // Flush any remaining bytes to the captured pipes before restoring.
-    let _ = std::io::Write::flush(&mut std::io::stdout());
-    let _ = std::io::Write::flush(&mut std::io::stderr());
-
-    // Restore the originals. dup2 closes the existing fd 1 / 2 (the
-    // pipe write-ends) so the drain threads see EOF and exit.
-    let _ = unsafe { libc::dup2(saved_stdout, 1) };
-    let _ = unsafe { libc::dup2(saved_stderr, 2) };
-    unsafe {
-        libc::close(saved_stdout);
-        libc::close(saved_stderr);
-    }
-
-    // Wait for the drain threads to finish (they EOF once fd 1 / 2 are
-    // closed by the dup2 above).
-    let stdout_bytes = out_handle.join().unwrap_or_default();
-    let stderr_bytes = err_handle.join().unwrap_or_default();
-
-    // Propagate dispatch panics now that fds are restored.
     let exit_code = match dispatch_result {
         Ok(code) => code,
         Err(payload) => std::panic::resume_unwind(payload),
@@ -2303,12 +2422,4 @@ pub fn kintsugi_main(args: &[String]) -> ExitOutput {
         stdout: stdout_bytes,
         stderr: stderr_bytes,
     }
-}
-
-/// Non-unix stub: integration tests targeting `kintsugi_main` only run
-/// on unix (the libc-backed capture is unix-specific). Compile-only
-/// stub keeps the API surface portable.
-#[cfg(not(unix))]
-pub fn kintsugi_main(_args: &[String]) -> ExitOutput {
-    panic!("kintsugi_main: fd-level capture is unix-only in this crate")
 }

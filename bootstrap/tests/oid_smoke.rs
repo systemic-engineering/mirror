@@ -14,23 +14,19 @@
 //! under <5,5>. `@epistemologic/property/coincidence_matches` is the
 //! grammar-side mirror of these pins.
 
-use std::process::Command;
-
+/// In-process compile dispatch through `mirror::kintsugi_main`
+/// (Taut #286 Win 2). The binary loads grammars via paths relative to its
+/// CWD (e.g. "boot/std/mirror/grammar.mirror"); set cwd to repo root.
 fn run_compile(file: &str) -> String {
-    let exe = env!("CARGO_BIN_EXE_mirror");
-    // The binary loads grammars via paths relative to its CWD (e.g.
-    // "boot/std/mirror/grammar.mirror"). Run it from the repo root so
-    // those paths resolve. CARGO_MANIFEST_DIR is bootstrap/; its parent
-    // is the repo root.
     let manifest_dir = env!("CARGO_MANIFEST_DIR");
     let repo_root = std::path::Path::new(manifest_dir)
         .parent()
         .expect("bootstrap manifest must have a parent");
-    let out = Command::new(exe)
-        .current_dir(repo_root)
-        .args(["compile", "--no-cache", file])
-        .output()
-        .expect("binary did not run");
+    let argv: Vec<String> = ["mirror", "compile", "--no-cache", file]
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+    let out = mirror::kintsugi_main_in(&argv, repo_root);
     let mut s = String::from_utf8_lossy(&out.stdout).into_owned();
     while s.ends_with('\n') {
         s.pop();

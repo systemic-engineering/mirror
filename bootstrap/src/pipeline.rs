@@ -5,7 +5,6 @@ use crate::exec::io_exec;
 use crate::grammar::{grammar_path_for_ref, load_grammar};
 use crate::spectral::{compute_content_oid, render_ast};
 use crate::tokenize::tokenize;
-use std::io::Write;
 
 /// A rewrite rule parsed from `<symbol> => <replacement>` mq syntax.
 ///
@@ -405,16 +404,16 @@ pub fn execute_pipeline(segs: &[Segment], source: &[u8]) -> i32 {
                 match io_exec("clang", &args, &current_text) {
                     Ok((rc, out)) => {
                         if !out.is_empty() {
-                            let _ = std::io::stderr().write_all(&out);
+                            crate::_raw_stderr(&out);
                         }
                         if rc != 0 {
-                            eprintln!("butterfly: clang failed with exit {}", rc);
+                            crate::merr!("butterfly: clang failed with exit {}", rc);
                             return rc;
                         }
-                        eprintln!("butterfly: wrote ./mirror-butterfly");
+                        crate::merr!("butterfly: wrote ./mirror-butterfly");
                     }
                     Err(e) => {
-                        eprintln!("butterfly: exec error: {}", e);
+                        crate::merr!("butterfly: exec error: {}", e);
                         return 1;
                     }
                 }
@@ -423,7 +422,7 @@ pub fn execute_pipeline(segs: &[Segment], source: &[u8]) -> i32 {
             let new_ast = match tokenize_with_ref(r#ref, &current_text) {
                 Some(a) => a,
                 None => {
-                    eprintln!("pipeline: cannot dispatch {}", r#ref);
+                    crate::merr!("pipeline: cannot dispatch {}", r#ref);
                     return 1;
                 }
             };
@@ -442,12 +441,12 @@ pub fn execute_pipeline(segs: &[Segment], source: &[u8]) -> i32 {
     if nseg >= 2
         && (last == "@mirror/kintsugi" || last == "@kintsugi" || last == "@mirror/butterfly.emit")
     {
-        let _ = std::io::stdout().write_all(&current_text);
+        crate::_raw_stdout(&current_text);
     } else if nseg >= 2 && (last == "@mirror/butterfly" || last == "@mirror/butterfly.butterfly") {
         // no stdout
     } else {
         let oid = compute_content_oid(&ast);
-        println!("{}", oid);
+        crate::mout!("{}", oid);
     }
     0
 }

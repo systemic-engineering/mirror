@@ -34,7 +34,7 @@
 //! comment in the body; T19 unconditionally takes the text branch.
 
 use std::path::Path;
-use std::process::Command;
+use std::process::Output;
 
 fn repo_root() -> &'static Path {
     // CARGO_MANIFEST_DIR points at bootstrap/; its parent is the repo
@@ -48,15 +48,19 @@ fn repo_root() -> &'static Path {
     Box::leak(p.to_path_buf().into_boxed_path())
 }
 
-fn run_kintsugi(args: &[&str]) -> std::process::Output {
-    let exe = env!("CARGO_BIN_EXE_mirror");
-    let mut cmd = Command::new(exe);
-    cmd.current_dir(repo_root());
-    cmd.arg("kintsugi");
+/// In-process dispatch through `mirror::kintsugi_main_in` (Taut #286 Win 2).
+fn run_kintsugi(args: &[&str]) -> Output {
+    use std::os::unix::process::ExitStatusExt;
+    let mut argv: Vec<String> = vec!["mirror".to_string(), "kintsugi".to_string()];
     for a in args {
-        cmd.arg(a);
+        argv.push((*a).to_string());
     }
-    cmd.output().expect("binary did not run")
+    let out = mirror::kintsugi_main_in(&argv, repo_root());
+    Output {
+        status: std::process::ExitStatus::from_raw(out.exit_code << 8),
+        stdout: out.stdout,
+        stderr: out.stderr,
+    }
 }
 
 /// A stable, already-settled fixture: `kintsugi-pass/a.mirror` is a
