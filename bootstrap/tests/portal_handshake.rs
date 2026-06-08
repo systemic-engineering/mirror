@@ -131,22 +131,26 @@ fn text_branch_preserved_for_non_socket_stdout() {
     );
 }
 
-// ── T20.2 — Non-portal socket fallback ───────────────────────────────
+// ── T20.2 — Non-portal socket: peer reads bytes, not cmsg ────────────
 
-/// When stdout IS a socket but the peer does not announce the
-/// portal handshake (the peer closes immediately, or sends garbage),
-/// the kintsugi path falls through to text without panic and exits
-/// 0. Graceful degradation per the `Imperfect::Failure` arm.
+/// When stdout IS a socket but the peer reads with plain `read()`
+/// instead of `recvmsg`, it sees the 96-byte frame as raw bytes and
+/// drops the SCM_RIGHTS fd on the floor (the kernel auto-closes it
+/// when the cmsg is unclaimed). This is fine — the substrate's
+/// "presence IS the signal" semantics: peers that don't recvmsg
+/// don't get the portal handoff; they get bytes on the wire that
+/// they can interpret however they like. The mirror side considers
+/// the sendmsg successful (sent > 0) and reports a `[portal]`
+/// trace, because from its perspective the shard was offered. The
+/// receiver's interpretation is the receiver's concern.
+///
+/// The graceful path proves: kintsugi exits 0, no panic, peer can
+/// drain the wire.
 #[test]
-fn non_portal_socket_falls_through_to_text() {
+fn non_recvmsg_peer_drains_wire_no_panic() {
     let exe = env!("CARGO_BIN_EXE_mirror");
     let (parent, child) = socketpair_stream();
 
-    // Parent end will be dropped immediately after the spawn — the
-    // child's stdout writes will get EPIPE / ECONNRESET on the
-    // handshake send. The portal detection must catch this and fall
-    // through to text. We need to KEEP a reader to consume what the
-    // text branch writes, otherwise the child blocks on SIGPIPE.
     let child_fd = child.into_raw_fd();
     let mut spawned = Command::new(exe)
         .current_dir(repo_root())
@@ -156,8 +160,10 @@ fn non_portal_socket_falls_through_to_text() {
         .spawn()
         .expect("spawn must succeed");
 
-    // Read the parent end fully — both portal bytes (if any) and the
-    // text fallback (if portal failed). We just discard.
+    // Drain the parent end with plain read() — no recvmsg means the
+    // SCM_RIGHTS fd is dropped by the kernel. We get only the 96
+    // bytes of the iov payload. The mirror side still considers the
+    // sendmsg successful and exits 0.
     let mut parent_file = unsafe { std::fs::File::from_raw_fd(parent.into_raw_fd()) };
     let mut sink = Vec::new();
     let _ = parent_file.read_to_end(&mut sink);
@@ -166,38 +172,40 @@ fn non_portal_socket_falls_through_to_text() {
     assert_eq!(
         exit.code(),
         Some(0),
-        "non-portal socket must still exit 0 (text fallback)"
+        "non-recvmsg peer must still exit 0; sink={} bytes",
+        sink.len()
     );
-
-    // We dropped the read end via read_to_end on EOF; the binary
-    // either wrote text bytes (graceful fallback) or wrote nothing
-    // (the peer closed too fast). Either is acceptable; the key is
-    // no panic and exit 0.
+    // The 96-byte frame should be on the wire (sendmsg's iov payload
+    // is delivered to plain read()).
+    assert!(
+        sink.len() >= 96,
+        "must have at least the 96-byte portal frame on the wire; got {} bytes",
+        sink.len()
+    );
 }
 
-// ── T20.3 — Portal handshake success: send a frame + SCM_RIGHTS ─────
+// ── T20.3 — Portal shard handoff: one recvmsg gets frame + fd ───────
 
-/// The full T20 happy path. The test plays the portal-aware peer:
-/// it sends the announce header on the parent side of a socketpair,
-/// the child mirror process detects the handshake, replies, then
-/// emits the 96-byte frame + an `SCM_RIGHTS` ancillary message
-/// carrying a read-only fd to the settled content.
+/// The full T20 happy path: **the presence of the portal IS the
+/// signal** (per Alex 2026-06-08). One `sendmsg` from mirror carries
+/// both the 96-byte three-OID frame (as iov payload) AND a
+/// SCM_RIGHTS ancillary message holding a read-only fd to the
+/// fragmentation shard's content. The peer's `recvmsg` delivers
+/// both atomically — same way `Box<T>` IS the signal of heap
+/// ownership transfer in Rust. No magic exchange, no poll, no
+/// negotiation. The TYPE of message (its cmsg list) carries the
+/// meaning.
 ///
-/// Wire shape this tick (the minimum viable portal closure):
+/// Wire shape this tick:
 ///
-///   * Peer → mirror: 24 bytes magic+version "MIRROR/PORTAL/V1\0\0\0\0\0\0\0\0"
-///                     (16 bytes magic + 8 bytes reserved)
-///   * mirror → peer: 24 bytes same magic+version (the ack)
-///   * mirror → peer: 96 bytes `[from_oid:32][to_oid:32][delta_oid:32]`
-///                     three-OID frame; `to_oid` is the settled ref's OID;
-///                     `from_oid` = `delta_oid` = zeros this tick (no prior
-///                     anchor, no per-tick delta yet — the gen_prism
-///                     stream layer covers that in a follow-up tick).
-///   * mirror → peer: `sendmsg(SCM_RIGHTS)` with a zero-byte payload
-///                     and one fd (the read end of an in-memory pipe
-///                     containing the settled bytes).
+///   * mirror → peer (single sendmsg):
+///       iov   : 96 bytes `[from_oid:32][to_oid:32][delta_oid:32]`
+///       cmsg  : SCM_RIGHTS with one fd — the read end of an
+///                 in-memory pipe carrying the fragmentation shard
+///                 (a Crystal in superposition; the receiver settles
+///                 it at its pipeline stage).
 #[test]
-fn portal_handshake_success_sends_frame_and_fd() {
+fn portal_shard_handoff_delivers_frame_and_fd_atomically() {
     let exe = env!("CARGO_BIN_EXE_mirror");
     let (parent, child) = socketpair_stream();
 
@@ -210,70 +218,15 @@ fn portal_handshake_success_sends_frame_and_fd() {
         .spawn()
         .expect("spawn must succeed");
 
-    // Parent: send the announce, read the ack, read the frame, read
-    // the SCM_RIGHTS message.
     let parent_raw = parent.into_raw_fd();
 
-    // Send 24-byte announce: 16-byte magic + 8-byte reserved zero.
-    const MAGIC: &[u8; 16] = b"MIRROR/PORTAL/V1";
-    let mut announce = [0u8; 24];
-    announce[..16].copy_from_slice(MAGIC);
-    let n = unsafe {
-        libc::write(
-            parent_raw,
-            announce.as_ptr() as *const libc::c_void,
-            announce.len(),
-        )
-    };
-    assert_eq!(n, 24, "announce write must succeed");
-
-    // Read 24-byte ack.
-    let mut ack = [0u8; 24];
-    let mut off = 0;
-    while off < 24 {
-        let r = unsafe {
-            libc::read(
-                parent_raw,
-                ack[off..].as_mut_ptr() as *mut libc::c_void,
-                24 - off,
-            )
-        };
-        assert!(r > 0, "ack read must make progress; got {r}");
-        off += r as usize;
-    }
-    assert_eq!(&ack[..16], &MAGIC[..], "ack magic must match");
-
-    // Read 96-byte frame.
+    // Single recvmsg: iov buffer takes the 96-byte frame; cmsg buffer
+    // takes the SCM_RIGHTS fd.
     let mut frame = [0u8; 96];
-    let mut off = 0;
-    while off < 96 {
-        let r = unsafe {
-            libc::read(
-                parent_raw,
-                frame[off..].as_mut_ptr() as *mut libc::c_void,
-                96 - off,
-            )
-        };
-        assert!(r > 0, "frame read must make progress; got {r}");
-        off += r as usize;
-    }
-    // `to_oid` (bytes 32..64) is the settled ref's OID and must be
-    // non-zero (a real OID, not the zero OID).
-    let to_oid = &frame[32..64];
-    assert!(
-        to_oid.iter().any(|b| *b != 0),
-        "to_oid must be non-zero; got {to_oid:?}"
-    );
-
-    // Receive the SCM_RIGHTS ancillary message.
-    let mut data_buf = [0u8; 8];
     let mut iov = libc::iovec {
-        iov_base: data_buf.as_mut_ptr() as *mut libc::c_void,
-        iov_len: data_buf.len(),
+        iov_base: frame.as_mut_ptr() as *mut libc::c_void,
+        iov_len: frame.len(),
     };
-    // Use CMSG_SPACE-equivalent buffer: room for one fd.
-    // For a single i32 (4 bytes) fd payload, CMSG_SPACE on darwin/linux
-    // is typically 16 or 24 bytes. 64 is safely above.
     let mut cmsg_buf = [0u8; 64];
     let mut msg: libc::msghdr = unsafe { std::mem::zeroed() };
     msg.msg_iov = &mut iov;
@@ -282,9 +235,24 @@ fn portal_handshake_success_sends_frame_and_fd() {
     msg.msg_controllen = cmsg_buf.len() as _;
 
     let n = unsafe { libc::recvmsg(parent_raw, &mut msg, 0) };
-    assert!(n >= 0, "recvmsg must succeed; got {n}");
+    assert!(n > 0, "recvmsg must succeed and deliver bytes; got {n}");
+    assert_eq!(
+        n, 96,
+        "recvmsg must deliver the full 96-byte frame atomically; got {n}"
+    );
 
-    // Walk the cmsg list looking for SCM_RIGHTS.
+    // The frame's `to_oid` (bytes 32..64) names the fragmentation
+    // shard's content-addressed identity — must be non-zero.
+    let to_oid = &frame[32..64];
+    assert!(
+        to_oid.iter().any(|b| *b != 0),
+        "to_oid must be non-zero (the shard's content-addressed identity); got {to_oid:?}"
+    );
+
+    // Walk the cmsg list for the SCM_RIGHTS fd — **the presence IS
+    // the signal**. A peer that finds a SCM_RIGHTS cmsg knows this
+    // is a portal handoff, the same way reading `Box<T>` declares
+    // heap ownership transfer.
     let mut found_fd: Option<RawFd> = None;
     let mut cmsg = unsafe { libc::CMSG_FIRSTHDR(&msg) };
     while !cmsg.is_null() {

@@ -20,6 +20,7 @@ mod kintsugi;
 mod music;
 mod oscillate;
 mod pipeline;
+mod portal;
 mod property;
 mod score;
 mod sheaf_laplacian;
@@ -1699,12 +1700,17 @@ fn cmd_kintsugi_single(
     // driver; the initial Ref is just the anchor identity per
     // `oscillate.mirror` §oscillate's `anchor: initial` shape.
     //
-    // TODO(T20): if stdout is a pipe to another mirror process,
-    // open the @spectral/portal handshake via SCM_RIGHTS instead of
-    // writing text bytes — the portal-as-eigenvalue-stream lift the
-    // T20 LRM closes. For now, unconditionally take the text
-    // branch; the portal-vs-text discriminator is the T20
-    // distinguisher.
+    // T20 (substrate-pull:realize) — the portal-vs-text discriminator
+    // at the CLI pipe boundary. The substrate's `@mirror/spectral/portal`
+    // species (shards/mirror/spectral/portal.mirror) declares the
+    // four-field carrier with three fields shaped as `shift(oid, T)`
+    // (the 26th-instance typed-capability primitive). The OS-layer
+    // realisation lives in `portal.rs`: `fstat(stdout)` for the
+    // socket-detection branch, then 24-byte magic+version exchange,
+    // then a 96-byte three-OID frame, then `sendmsg(SCM_RIGHTS)`
+    // handing the in-memory settled-content fd across without
+    // re-serialisation. Graceful: any Imperfect::Failure arm falls
+    // through to the T19 text branch below.
     let basename = std::path::Path::new(file)
         .file_name()
         .and_then(|n| n.to_str())
@@ -1719,6 +1725,7 @@ fn cmd_kintsugi_single(
         safe_basename
     };
     let initial_ref_path = format!("@kintsugi/{}", safe_basename);
+    let mut settled_oid: [u8; 32] = [0u8; 32];
     if let Ok(initial_ref) = Ref::new(initial_ref_path) {
         let witness = oscillate::oscillate_witness_with_ast(initial_ref, &ast);
         let state = witness.final_oscillation.state();
@@ -1728,11 +1735,29 @@ fn cmd_kintsugi_single(
             "[settle] state={:?} iterations={} cap_reached={}",
             state, iter, cap,
         );
+        // Capture the settled anchor's OID for the T20 portal frame's
+        // `to_oid` slot. The substrate's `compute_content_oid` returns
+        // a hex digest of the AST; we read the first 32 bytes of the
+        // digest as the raw OID. `from_oid` / `delta_oid` stay zero
+        // this tick — the gen_prism stream layer fills them in a
+        // follow-up tick (per the Scheduler Tower bounded-iteration
+        // primitive).
+        let oid_hex = compute_content_oid(&ast);
+        for (i, slot) in settled_oid.iter_mut().enumerate() {
+            let start = i * 2;
+            if start + 2 <= oid_hex.len() {
+                if let Ok(byte) = u8::from_str_radix(&oid_hex[start..start + 2], 16) {
+                    *slot = byte;
+                }
+            }
+        }
     }
 
     let mut out = Vec::new();
     render_ast(&ast, 0, &mut out);
+
     if let Some(dir) = out_dir {
+        // --out-dir path: settled bytes go to disk; no portal probe.
         let dest = format!(
             "{}/{}",
             dir.trim_end_matches('/'),
@@ -1749,10 +1774,59 @@ fn cmd_kintsugi_single(
             return 1;
         }
         eprintln!("wrote {}", dest);
-    } else {
-        let _ = io::stdout().write_all(&out);
+        return 0;
     }
+
+    // T20 portal discriminator — only on unix, only when stdout is a
+    // socket. The presence of the SCM_RIGHTS ancillary message IS the
+    // portal signal (per Alex 2026-06-08: "It's a Crystal in
+    // superposition. It's a fragmentation shard." — same way `Box<T>`
+    // IS the signal of heap ownership transfer). One sendmsg carries
+    // the 96-byte three-OID frame and the fragmentation-shard fd
+    // atomically; the downstream pipeline stage settles the shard at
+    // its altitude. Any failure arm silently falls through to the
+    // T19 text branch below. The `[portal]` stderr trace is the
+    // success symmetric to T19's `[settle]` trace.
+    #[cfg(unix)]
+    {
+        use std::os::unix::io::AsRawFd;
+        let stdout_fd = io::stdout().as_raw_fd();
+        match portal::try_outbound_handshake(stdout_fd, &out, settled_oid) {
+            terni::Imperfect::Success(_) => {
+                eprintln!(
+                    "[portal] shard oid={} bytes={}",
+                    hex_oid(&settled_oid),
+                    out.len()
+                );
+                return 0;
+            }
+            terni::Imperfect::Partial(_, _) => {
+                // No partial path defined this tick; if one ever
+                // surfaces, fall through to text to stay safe.
+            }
+            terni::Imperfect::Failure(_, _) => {
+                // Silent text fallback — the default CLI behaviour.
+                // Debug-mode stderr surfacing lives behind a future
+                // `--debug-portal` flag.
+            }
+        }
+    }
+
+    // T19 text branch (the default; survives when portal is not
+    // negotiated).
+    let _ = io::stdout().write_all(&out);
     0
+}
+
+/// Render a 32-byte OID as a 64-char lowercase hex string. Used by
+/// the `[portal] handoff` stderr trace so the OID round-trip with
+/// the peer is human-inspectable.
+fn hex_oid(oid: &[u8; 32]) -> String {
+    let mut s = String::with_capacity(64);
+    for b in oid {
+        s.push_str(&format!("{:02x}", b));
+    }
+    s
 }
 
 fn main() {

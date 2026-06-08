@@ -37,6 +37,26 @@ terni = { path = "../../prism/imperfect", default-features = false }
 # (GitHub Actions composite step) parses.
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+# libc — the OS-layer substrate carrier for the T20 portal lift
+# (`docs/insights/2026-06-08-portal-eigenvalue-stream-gen-prism.md`
+# §"T20 — SCM_RIGHTS handoff at the CLI pipe boundary"). The
+# substrate's `shift(oid, T)` typed-capability primitive (the
+# 26th-instance recognition) lands at the OS layer as `SCM_RIGHTS`
+# fd-passing over AF_UNIX; the substrate state never re-serialises
+# across the process boundary. `libc` exposes `fstat` (the
+# socket-detection discriminator), `sendmsg` / `recvmsg` (the
+# ancillary-message dance), and the `CMSG_*` macros (the cmsg
+# walker). Pulled directly rather than via the `nix` crate because
+# `libc` is the minimum substrate addition for the LRM closure;
+# `nix` would be a heavier consumer-pull for the same surface.
+#
+# Per substrate decisions: `[[architecture-fragmentation-is-the-
+# rust-substrate]]` (the OS layer IS the Rust substrate at this
+# altitude); `[[feedback-substrate-already-had-the-word]]` (libc
+# was already in the transitive closure via `cpufeatures`; the
+# direct declaration just names it).
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
 
 [profile.release]
 opt-level = "z"
