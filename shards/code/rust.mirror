@@ -30,7 +30,10 @@ in @io
 # (the consumer), mirror/spec.mirror (the schema).
 # Path-namespace property: this file at `shards/code/rust.mirror`
 # declares `@code/rust` (and the path-nested sub-prism
-# `@code/rust/cargo`).
+# `@code/rust/cargo`). The macro-reception sub-prism
+# `@code/rust/macro` lives alongside at `shards/code/rust/macro.mirror`
+# (T23 — the language-side compile-time AST consumption surface;
+# spec docs/specs/code-macro-surface.md).
 
 prism @code/rust {
   focus rust

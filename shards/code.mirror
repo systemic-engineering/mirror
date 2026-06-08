@@ -64,6 +64,23 @@ in @glass
 # Path-namespace property: this file at `shards/code.mirror` declares
 # `@code` as the universal root; instances live at
 # `shards/code/<name>.mirror`.
+#
+# === macro sub-prism discipline (the reception half of @code/X) ===
+#
+# Per docs/specs/code-macro-surface.md (T23, 2026-06-08): each
+# `@code/X` species MAY declare a sub-prism `@code/X/macro` realising
+# the language's metaprogramming-reception surface — the language-
+# side compile-time AST consumption layer that catches
+# `@code/X.render`'s emission. Required when the species' language
+# admits direct AST manipulation (Rust, Elixir, Lisp/Scheme, Julia,
+# Crystal, Nim, Clojure); optional otherwise. The presence of the
+# macro sub-prism IS the substrate-realisability witness for
+# `@code/X` as a Phase-4b generation target. The spec's four laws
+# (type-soundness, round-trip identity, OID functionality,
+# substrate-pull preservation) are declared per-species at the
+# `@code/X/macro` altitude; the family root names only the
+# discipline. Canonical landing: `@code/rust/macro` at
+# `shards/code/rust/macro.mirror`.
 
 prism @code {
   focus code
