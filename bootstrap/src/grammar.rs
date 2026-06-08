@@ -380,9 +380,6 @@ mod tests {
         // table carries `project`, `target`, `settle_on`, etc.
         // (substrate-pull realize: the dispatch surface IS substrate-
         // declared, not hardcoded in Rust).
-        assert_eq!(
-            grammar_for_file("mirror.spec"),
-            "shards/mirror/spec.mirror"
-        );
+        assert_eq!(grammar_for_file("mirror.spec"), "shards/mirror/spec.mirror");
     }
 }

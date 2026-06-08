@@ -288,10 +288,7 @@ pub fn minimize(t: &Tensor) -> Vec<Fracture> {
     // Phase 2: assemble the operator over the FULL vertex basis (not
     // just the edges' bounding box) so isolated vertices contribute to
     // degree counts correctly.
-    let restrictions: Vec<Restriction> = tension_edges
-        .iter()
-        .filter_map(|e| e.clone())
-        .collect();
+    let restrictions: Vec<Restriction> = tension_edges.iter().filter_map(|e| e.clone()).collect();
     let op = Operator::new(n as u32, restrictions);
 
     // Phase 3: compute Balanced Forman curvature per tension. Unindexed

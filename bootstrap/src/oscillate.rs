@@ -1190,8 +1190,7 @@ pub fn dark_pass(o: &Oscillation, m: &Morphism) -> Oscillation {
         // identity_preserving reads pre_anchor from the context
         // directly, no sibling-ref threading at the consumer seam.
         // anchor advances to m.content (per substrate's §dark_pass).
-        let set =
-            MorphismContextSet::singleton(paired(o.anchor().clone(), m.clone()));
+        let set = MorphismContextSet::singleton(paired(o.anchor().clone(), m.clone()));
         let verdict = query_phi(&set);
         let kind = crate::gap::verdict_to_cadence_kind(&verdict);
         let next_state = read_consent(&verdict, kind);
@@ -3111,10 +3110,7 @@ mod tests {
             Dissonance::new(0.1005, 2),
             CadenceKind::Authentic,
         );
-        let set = MorphismContextSet::new(vec![
-            paired(anchor.clone(), m1),
-            paired(anchor, m2),
-        ]);
+        let set = MorphismContextSet::new(vec![paired(anchor.clone(), m1), paired(anchor, m2)]);
         let v = query_phi(&set);
         assert!(
             matches!(v, Imperfect::Partial((), _)),
