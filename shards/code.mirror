@@ -65,22 +65,35 @@ in @glass
 # `@code` as the universal root; instances live at
 # `shards/code/<name>.mirror`.
 #
-# === macro sub-prism discipline (the reception half of @code/X) ===
+# === metalogue ground + macro-species discipline (the reception half of @code/X) ===
 #
-# Per docs/specs/code-macro-surface.md (T23, 2026-06-08): each
-# `@code/X` species MAY declare a sub-prism `@code/X/macro` realising
-# the language's metaprogramming-reception surface — the language-
-# side compile-time AST consumption layer that catches
-# `@code/X.render`'s emission. Required when the species' language
-# admits direct AST manipulation (Rust, Elixir, Lisp/Scheme, Julia,
-# Crystal, Nim, Clojure); optional otherwise. The presence of the
-# macro sub-prism IS the substrate-realisability witness for
-# `@code/X` as a Phase-4b generation target. The spec's four laws
-# (type-soundness, round-trip identity, OID functionality,
-# substrate-pull preservation) are declared per-species at the
-# `@code/X/macro` altitude; the family root names only the
-# discipline. Canonical landing: `@code/rust/macro` at
-# `shards/code/rust/macro.mirror`.
+# Per docs/specs/code-metalogue-surface.md (T23, 2026-06-08;
+# reframed 2026-06-09): the universal metaprogramming-reception
+# contract lives at `@code/metalogue` (sibling of @metalogue at the
+# AST altitude, per shards/code/metalogue.mirror). The 34th-instance
+# recognition (substrate-already-had-the-word): macros are the AST
+# speaking to itself — Bateson 1972 made literal at compile time.
+# The four-shim contract (`shim_type` / `shim_prism` / `shim_action`
+# / `shim_grammar`), the four laws (round-trip, OID functionality,
+# type-soundness, substrate-pull preservation), and the
+# declaration/turn/metalogue_session carrier types live ONCE at the
+# ground.
+#
+# Each `@code/X` species MAY declare a per-altitude binding
+# `@code/X/macro` inheriting from `@code/metalogue` via
+# `in @code/metalogue`. The species shard's job is the per-language
+# AST-type binding (`code/rust.ast` for Rust, `code/elixir.ast` for
+# Elixir, etc.) plus the four shim function signatures with the
+# bound return type. The community word "macro" stays at the
+# species altitude (Rust/Elixir/Lisp users recognize it); the
+# substrate gains `@code/metalogue` as the universal noun. Required
+# when the species' language admits direct AST manipulation (Rust,
+# Elixir, Lisp/Scheme, Julia, Crystal, Nim, Clojure); optional
+# otherwise. The presence of the species' macro binding IS the
+# substrate-realisability witness for `@code/X` as a Phase-4b
+# generation target. Canonical ground: `@code/metalogue` at
+# `shards/code/metalogue.mirror`. Canonical species landing:
+# `@code/rust/macro` at `shards/code/rust/macro.mirror`.
 
 prism @code {
   focus code

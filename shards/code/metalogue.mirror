@@ -1,0 +1,254 @@
+in @prism
+
+in @metalogue
+
+in @code
+
+in @glass
+
+in @nl
+
+# @code/metalogue — the AST speaking to itself.
+#
+# The 34th-instance recognition (2026-06-09, Reed + Alex → Mara):
+# `@code/macro` was the language-community word for what the
+# substrate already names. `@metalogue` (shards/metalogue.mirror,
+# B3) declared the natural-language self-conversation per Bateson
+# 1972: *a conversation whose structure reflects its topic*. The
+# code generation surface is the same shape lifted to the AST
+# altitude — the language speaking ABOUT itself BY USING itself,
+# at compile time, through its own metaprogramming surface.
+#
+# `@code/metalogue` is the altitude-parametric specialization of
+# `@metalogue`: where `@metalogue` carries `nl` turn bodies,
+# `@code/metalogue` carries `declaration` turn bodies. Both ground
+# the metalogue discipline — different altitudes, same shape. The
+# substrate had the word; this shard names the inheritance.
+#
+# The per-species realisations (`@code/rust/macro`,
+# `@code/elixir/macro`, `@code/lisp/macro`, etc.) keep their
+# community-vocabulary name ("macro") at the species altitude
+# because that's the word language users recognize. The substrate
+# gains `@code/metalogue` as the universal ground; species inherit
+# via `<= @code/metalogue` per
+# `[[architecture-prism-as-trait-as-everything]]`. The realisations
+# bind the universal contract to per-language AST types
+# (`code/rust.ast`, `code/elixir.ast`, ...) — the typed surface is
+# species-local; the contract is ground.
+#
+# === why metalogue, not macro ===
+#
+# Three readings converge on the lift:
+#
+# 1. **Substrate-already-had-the-word.** Per
+#    `[[feedback-substrate-already-had-the-word]]` (the 33-instance
+#    recognition track), each "new" concept turns out to be a name
+#    the substrate was implicitly using. `@metalogue` was declared
+#    2026-06-05 (B3, task #189) for the NL altitude. The macro
+#    surface IS that same Bateson-1972 self-conversation at the
+#    AST altitude. Naming it `@code/metalogue` makes the lineage
+#    structural rather than coincidental.
+#
+# 2. **Bateson 1972 made literal at compile-time.** A metalogue's
+#    structure reflects its topic. A macro's emission IS the
+#    structure of its substrate input. The shim is a typed turn
+#    in the conversation: the substrate utters a `declaration`;
+#    the language's macro layer hears it and emits the realisation;
+#    the language compiler closes the loop. Per the spec's §5 ("the
+#    gap is the spec — formalized"), every `\` body is the
+#    substrate's question; every realisation is the language's
+#    answer; together they are the metalogue.
+#
+# 3. **`@metalogue` declared `transparency(turn)` as the residual
+#    opacity carrier.** The macro shim's four laws (round-trip,
+#    OID-functionality, type-soundness, substrate-pull preservation)
+#    are obligations on the conversation's transparency — they
+#    name what MUST close so the conversation doesn't silently
+#    absorb the gap. Per
+#    `[[architecture-glass-wall-substrate-types]]`, the opacity
+#    surfaces here as `transparency(turn)` over
+#    `metalogue_session.turns`.
+#
+# === inheritance shape: explicit `in @metalogue` and `in @code` ===
+#
+# `@code/metalogue` IS-A `@metalogue` (lifted to the AST altitude)
+# AND IS-A part-of `@code` (the per-altitude grammar discipline).
+# Both inheritances are declared with `in @X` per the substrate's
+# canonical import-and-inherit form (cf. `shards/code.mirror`'s
+# discipline of `in @prism` + `in @meta` + `in @nl` + `in @glass`).
+# The path-namespace property (`shards/code/metalogue.mirror`
+# declares `@code/metalogue`) makes the family relationship
+# structural; the explicit `in @metalogue` makes the discipline
+# inheritance structural too.
+#
+# Spec context: docs/specs/code-metalogue-surface.md (the renamed,
+# reframed spec — the contract is now declared HERE at the ground,
+# not at the species). Substrate decisions:
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]],
+# [[architecture-lift-as-load-bearing]],
+# [[feedback-substrate-already-had-the-word]].
+# Related shards: metalogue.mirror (the NL-altitude sibling, B3),
+#                 code.mirror (the family root),
+#                 code/rust/macro.mirror (the canonical Rust
+#                 realisation; declares `<= @code/metalogue`),
+#                 code/mirror.mirror (the sibling render surface at
+#                 T17 — `render` is one half of the codegen pipeline;
+#                 `metalogue` reception is the other).
+
+prism @code/metalogue {
+  focus metalogue
+  project metalogue
+  split metalogue
+  shift metalogue
+  settle metalogue
+}
+
+# === The four substrate-declaration kinds ===
+#
+# Per docs/specs/code-metalogue-surface.md §4.1, every substrate
+# declaration that crosses the glass wall to a language realisation
+# is one of four kinds. The shim's dispatch is on this kind; the
+# kind is universal substrate vocabulary, not language-specific.
+#
+# - type     — substrate `type T { ... }` or `type T = v1 | v2`
+# - prism    — substrate `prism @X { five-op block }`
+# - action   — substrate `name args -> ret { \ }` typed lambda
+# - grammar  — substrate `grammar @X(extensions) { ... }`
+#
+# The kind is the discriminator the shim's match cases over (cf.
+# spec §10.1 dispatch table).
+type declaration_kind = type_kind | prism_kind | action_kind | grammar_kind
+
+# `declaration` — the input carrier the shim receives. A ref to the
+# substrate declaration node (per `shards/mirror/store.mirror`'s
+# `oid = ref` declaration), plus its discriminator. The shim is a
+# function of the ref alone; the kind is materialized for the
+# dispatch's convenience (the ref already encodes the kind, but
+# carrying it explicitly makes the per-case typing legible).
+type declaration = {
+  oid: ref,
+  kind: declaration_kind,
+}
+
+# === turn ===
+
+# turn — a single move in the @code/metalogue conversation. Same
+# shape as @metalogue.turn (shards/metalogue.mirror), lifted to the
+# AST altitude: the speaker is a substrate ref; the body is a
+# `declaration` (the AST utterance) rather than an `nl` term; the
+# reply chain composes turns; the tick is the monotonic substrate
+# clock per `boot/std/time.mirror`.
+#
+# The substrate utterance is the macro's input; the species'
+# response is the emitted language AST; the conversation IS the
+# closure of the four laws across the turn pair.
+type turn = {
+  speaker: ref,
+  body: declaration,
+  in_reply_to: option(turn),
+  tick: tick,
+}
+
+# === metalogue_session ===
+
+# metalogue_session — an ordered sequence of `@code/metalogue` turns
+# plus the conversation's current opacity. Mirrors
+# `@metalogue.metalogue_session` shape; the opacity carrier is the
+# same @glass `transparency(turn)` parameterized on the lifted
+# `turn` type. Every unresolved residual is sited on a turn — the
+# residual opacity of the conversation IS the transparency of its
+# turn-set.
+type metalogue_session = {
+  turns: [turn],
+  opacity: transparency(turn),
+}
+
+# === The four shim signatures (universal contract) ===
+#
+# Per docs/specs/code-metalogue-surface.md §4.1, each
+# `@code/X/macro` species realises four shims — one per declaration
+# kind. The signatures are declared HERE at the ground because the
+# contract is universal. Species bind the abstract return type to
+# their language AST: `@code/rust/macro` binds `species_ast =
+# code/rust.ast`, `@code/elixir/macro` would bind
+# `species_ast = code/elixir.ast`, etc.
+#
+# `species_ast` is a type parameter at the ground — each species
+# specializes it at its altitude. The substrate's grammar uses the
+# parametric `(T)` shape to encode this (cf. `option(T)`, `result(T,
+# E)` in boot/std/).
+#
+# The bodies are `\` at the ground per
+# `[[feedback-craft-not-deliver]]`: the discipline is declared, the
+# realisation per-species. Bodies discharge when a consumer pulls.
+
+shim_type(d: declaration) -> species_ast { \ }
+shim_prism(d: declaration) -> species_ast { \ }
+shim_action(d: declaration) -> species_ast { \ }
+shim_grammar(d: declaration) -> species_ast { \ }
+
+# === The four laws (per docs/specs/code-metalogue-surface.md §5) ===
+#
+# Each law applies to every `shim_X` above. Declared here ONCE at
+# the ground; each species inherits the obligation via
+# `<= @code/metalogue`. This is the load-bearing lift from
+# per-species duplication: the laws are universal across every
+# language altitude that admits direct AST manipulation.
+#
+# 1. Type-soundness: for every declaration D, the emitted
+#    `species_ast` signature matches D's typed contract under the
+#    species' `type_mapping(D.args, D.ret)`. The substrate's typed
+#    contract IS the language's typed contract — the gap is typed.
+#
+# 2. Round-trip identity: for every D,
+#    `parse_species(render_species(shim_X(D))) = shim_X(D)`
+#    structurally. The macro emission is a fixed point of the
+#    language-altitude parse cycle — the gap closes
+#    deterministically. Same shape as the `round_trip(render)` law
+#    declared on `@code/mirror.render` at `shards/code/mirror.mirror`
+#    (T17, sibling altitude).
+#
+# 3. OID functionality: for substrate declarations D1, D2 with
+#    `oid(D1) = oid(D2)`,
+#    `oid(render_species(shim_X(D1))) = oid(render_species(shim_X(D2)))`.
+#    The shim is a function of the substrate OID; same substrate
+#    OID, same emitted OID — the gap is content-addressed.
+#
+# 4. Substrate-pull preservation: if D is substrate-realisable per
+#    `@mirror/realisation.classify(D) = substrate(target)`, then
+#    `shim_X(D)` references only language constructs that themselves
+#    appear in some `@code/species` substrate-realisable shard. The
+#    emission cannot reach into `@io` to fill a substrate-realisable
+#    gap. The discriminator's verdict IS the discriminator of the
+#    shim — the gap respects the glass wall.
+
+requires round_trip(shim_type)
+requires oid_function(shim_type)
+requires type_soundness(shim_type)
+requires substrate_pull_preserving(shim_type)
+
+requires round_trip(shim_prism)
+requires oid_function(shim_prism)
+requires type_soundness(shim_prism)
+requires substrate_pull_preserving(shim_prism)
+
+requires round_trip(shim_action)
+requires oid_function(shim_action)
+requires type_soundness(shim_action)
+requires substrate_pull_preserving(shim_action)
+
+requires round_trip(shim_grammar)
+requires oid_function(shim_grammar)
+requires type_soundness(shim_grammar)
+requires substrate_pull_preserving(shim_grammar)
+
+out @code/metalogue
+out declaration_kind
+out declaration
+out turn
+out metalogue_session
+out shim_type
+out shim_prism
+out shim_action
+out shim_grammar

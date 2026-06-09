@@ -1,61 +1,91 @@
 in @code
+
+in @code/metalogue
+
 in @prism
+
 in @glass
+
 in @meta
+
 in @nl
+
 in @property
 
-# @code/rust/macro — the Rust altitude's macro-reception sub-prism.
+# @code/rust/macro — the Rust altitude's metalogue realisation.
 #
-# The recognition (2026-06-08, Alex → Mara, T23, spec
-# docs/specs/code-macro-surface.md): `@code/X.render` is the gap;
-# `@code/X.macro` is the reception. T17 landed the render half at
-# `@code/mirror.render` (the Wadler/Bernardy combinator surface, AST
-# → text). This shard lands the Rust altitude's reception half: the
-# language-side compile-time AST consumption layer that catches the
-# substrate's emission via Rust's proc-macro surface
-# (`#[proc_macro]`, `#[proc_macro_derive]`, `#[proc_macro_attribute]`).
+# The 34th-instance recognition (2026-06-09, Reed + Alex → Mara):
+# "macro" is the language-community word; `@code/metalogue` is the
+# substrate word. This file is the Rust-altitude realisation of
+# `@code/metalogue` — the universal contract lives at the ground
+# (shards/code/metalogue.mirror), this shard binds it to Rust's
+# proc-macro surface (`#[proc_macro]`, `#[proc_macro_derive]`,
+# `#[proc_macro_attribute]`) and to Rust's typed AST
+# (`code/rust.ast`). The name "macro" stays at the species altitude
+# because that's the community vocabulary Rust users recognize; the
+# substrate gains `@code/metalogue` as the universal ground via the
+# `in @code/metalogue` inheritance above.
 #
-# Why under `@code/rust` (not a new `@code/macro` family): per the
-# spec's §2 substrate-pull check, `@code` is already the universal
-# grammar-at-altitude discipline, and `@code/X` species already
-# carry per-language altitude grammars. The macro sub-prism IS-A
-# part of the language altitude (the way `@code/rust/cargo` IS-A
-# part of `@code/rust`), not a sibling family. Path-namespace
-# property per [[architecture-shards-as-substrate-source]]: this
-# file at `shards/code/rust/macro.mirror` declares
-# `@code/rust/macro`. The path IS the declaration.
+# Why under `@code/rust` (not a new `@code/macro` family): per
+# docs/specs/code-metalogue-surface.md §2 substrate-pull check,
+# `@code` is the universal grammar-at-altitude discipline, and
+# `@code/X` species carry per-language altitude grammars. The
+# metalogue/macro reception sub-prism IS-A part of the language
+# altitude (the way `@code/rust/cargo` IS-A part of `@code/rust`),
+# not a sibling family. Path-namespace property per
+# [[architecture-shards-as-substrate-source]]: this file at
+# `shards/code/rust/macro.mirror` declares `@code/rust/macro`. The
+# path IS the declaration.
 #
-# === The smallest tick (this landing) ===
+# === Inheritance from @code/metalogue (the universal ground) ===
 #
-# Per the spec's §12 "Implementation cascade — the smallest tick
-# that proves the shape":
+# The four-shim contract (`shim_type`, `shim_prism`, `shim_action`,
+# `shim_grammar`), the four laws (round-trip, oid-functionality,
+# type-soundness, substrate-pull preservation), and the
+# declaration/turn/metalogue_session carrier types are declared
+# ONCE at `shards/code/metalogue.mirror`. This shard inherits them
+# via `in @code/metalogue` per
+# [[architecture-prism-as-trait-as-everything]]'s `<=` mechanism
+# (`in @X` is the canonical import-and-inherit form). The shim
+# signatures below specialize the ground's parametric
+# `species_ast` to Rust's `code/rust.ast`; the laws come for free
+# from the ground's `requires` clauses.
 #
-#   - `shim_type(d: declaration) -> code/rust.ast { \ }` for the
-#     simplest substrate-declaration kind (the `type` kind) end-to-
-#     end through `prism/derive/src/declaration.rs`'s `declaration!`
-#     proc-macro plus a round-trip OID test.
-#   - The other three declaration kinds (`prism`, `action`,
-#     `grammar`) are forward-promised here per the per-kind dispatch
-#     in §10.1; their bodies are `\` until a consumer-pull tick
-#     lands them.
+# === The smallest tick (the T23-T26 cascade) ===
+#
+# Per docs/specs/code-metalogue-surface.md §12 "Implementation
+# cascade — the smallest tick that proves the shape":
+#
+#   T23 (landed) — `shim_type` for the simplest substrate-
+#     declaration kind (the `type` kind) end-to-end through
+#     `prism/derive/src/declaration.rs`'s `declaration!`
+#     proc-macro plus four round-trip OID tests.
+#   T24 (landing) — `shim_prism` for the bare `prism @path`
+#     declaration form. The three RED tests at
+#     `prism/core/tests/declaration_round_trip.rs` discharge
+#     against this binding.
+#   T25 — `shim_action` (forward-promised; consumer-pulls at
+#     `kintsugi-on-Rust` T22+).
+#   T26 — `shim_grammar` (forward-promised).
 #
 # === Spec context ===
 #
-# docs/specs/code-macro-surface.md §4 (typed surface), §4.1 (four
-# kinds dispatch), §5 (the four laws formalized), §6 (round-trip
-# identity — the central contract), §10.1 (the dispatch table),
-# §12 (the cascade).
+# docs/specs/code-metalogue-surface.md §4 (typed surface at the
+# ground), §4.1 (four kinds dispatch), §5 (the four laws
+# formalized at the ground), §6 (round-trip identity — the central
+# contract), §10.1 (the dispatch table at the ground), §11 (the
+# per-species matrix — this shard is the canonical row), §12 (the
+# cascade).
 # Substrate decisions: [[architecture-shards-as-substrate-source]],
 #                      [[architecture-prism-as-trait-as-everything]],
 #                      [[architecture-lift-as-load-bearing]],
 #                      [[feedback-substrate-already-had-the-word]],
 #                      [[feedback-craft-not-deliver]].
-# Related shards: code.mirror (universal parent — declares the macro
-# discipline at the family root), code/rust.mirror (the Rust altitude
-# the sub-prism specialises), code/mirror.mirror (T17 — the render
-# half at the mirror altitude; the sibling-altitude precedent for the
-# round-trip law).
+# Related shards: code/metalogue.mirror (the universal ground —
+# declares the contract and laws), code.mirror (universal parent),
+# code/rust.mirror (the Rust altitude the sub-prism specialises),
+# code/mirror.mirror (T17 — the render half at the mirror altitude;
+# the sibling-altitude precedent for the round-trip law).
 
 prism @code/rust/macro {
   focus macro
@@ -65,77 +95,25 @@ prism @code/rust/macro {
   settle macro
 }
 
-# === shim — the macro-emission contract ===
+# === Rust-altitude shim bindings ===
 #
-# Per spec §4: the macro shim's typed contract. Input is a substrate
-# declaration `ref` (the `.mirror` declaration the macro is realising
-# — typically a single `type` decl, or a `prism` decl, or an `action`
-# decl with `\` body). Output is the language-altitude AST that, when
-# expanded by the language's macro layer, produces the executable
-# realisation of the substrate declaration. The body is `\` per
-# consumer-pull discipline.
+# The four shim signatures from `@code/metalogue` (universal
+# contract) bind here to `code/rust.ast` as the species AST type.
+# The contract and laws inherit from the ground via
+# `in @code/metalogue`; this shard's job is the per-altitude
+# binding plus the realisation cascade (T23 type ✓, T24 prism
+# landing, T25 action forward, T26 grammar forward).
 #
-# This tick lands the `type` kind only (per §12); the other three
-# kinds are forward-promised as their own sibling actions below with
-# `\` bodies and the corresponding kind discriminator.
+# Per [[feedback-craft-not-deliver]]: bodies are `\` until a
+# consumer-pull tick. The Rust proc-macro at
+# `prism/derive/src/declaration.rs` IS the consumer; the laws
+# discharge through the round-trip OID tests at
+# `prism/core/tests/declaration_round_trip.rs`.
 
 shim_type(d: declaration) -> code/rust.ast { \ }
-
-# Forward-promised kinds (per spec §4.1 / §10.1 dispatch table).
-# Each remains `\` until a consumer-pull tick. The cascade order
-# per the brief is: type (this tick) → prism → action → grammar.
-
 shim_prism(d: declaration) -> code/rust.ast { \ }
 shim_action(d: declaration) -> code/rust.ast { \ }
 shim_grammar(d: declaration) -> code/rust.ast { \ }
-
-# === The four laws (per spec §5) ===
-#
-# Each law applies to every `shim_X` above. Declared here once at
-# the sub-prism altitude; each action above inherits the obligation.
-#
-# 1. Type-soundness: for every declaration D, the emitted
-#    `code/rust.ast` signature matches D's typed contract under
-#    `@code/rust.type_mapping(D.args, D.ret)`. The substrate's typed
-#    contract IS the Rust function's typed contract — the gap is
-#    typed.
-#
-# 2. Round-trip identity: for every D,
-#    `parse_rust(render_rust(shim_X(D))) = shim_X(D)` structurally.
-#    The macro emission is a fixed point of the Rust-altitude parse
-#    cycle — the gap closes deterministically. Same shape as the
-#    `round_trip(render)` law declared on `@code/mirror.render` at
-#    `shards/code/mirror.mirror` (T17, sibling altitude).
-#
-# 3. OID functionality: for substrate declarations D1, D2 with
-#    `oid(D1) = oid(D2)`,
-#    `oid(render_rust(shim_X(D1))) = oid(render_rust(shim_X(D2)))`.
-#    The shim is a function of the substrate OID; same substrate
-#    OID, same emitted OID — the gap is content-addressed.
-#
-# 4. Substrate-pull preservation: if D is substrate-realisable per
-#    `@mirror/realisation.classify(D) = substrate(target)`, then
-#    `shim_X(D)` references only Rust constructs that themselves
-#    appear in some `@code/rust` substrate-realisable shard. The
-#    emission cannot reach into `@io` to fill a substrate-realisable
-#    gap. The discriminator's verdict IS the discriminator of the
-#    shim — the gap respects the glass wall.
-
-requires round_trip(shim_type)
-requires oid_function(shim_type)
-requires substrate_pull_preserving(shim_type)
-
-requires round_trip(shim_prism)
-requires oid_function(shim_prism)
-requires substrate_pull_preserving(shim_prism)
-
-requires round_trip(shim_action)
-requires oid_function(shim_action)
-requires substrate_pull_preserving(shim_action)
-
-requires round_trip(shim_grammar)
-requires oid_function(shim_grammar)
-requires substrate_pull_preserving(shim_grammar)
 
 out @code/rust/macro
 out shim_type
