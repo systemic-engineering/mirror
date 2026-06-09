@@ -1,0 +1,285 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @epistemologic/cybernetic/variety — the substrate's first cybernetic
+# property. Ashby 1956 §11/7, lifted to the multi-dimensional reading
+# (recognition #36, mirror `1ad45b4`).
+#
+# === The Ashby claim, verbatim ===
+#
+# Ashby, W. R. (1956). *An Introduction to Cybernetics*. Chapman & Hall.
+# §11/7 (the Law of Requisite Variety):
+#
+#   Variety is the count of distinguishable states. A regulator R with
+#   variety V(R) can fully regulate a disturbed system D with variety
+#   V(D) only if V(R) ≥ V(D). *Only variety can destroy variety.*
+#
+# The complementary substrate-pull recognition (Reed, 2026-06-09; mirror
+# `1ad45b4`): variety is a *vector*, not a scalar. Two languages can be
+# ordered on one component and reversed on another. The folk reading
+# "Turing-complete = strictly more expressive than sub-Turing" projects
+# multi-dimensional variety onto axis 1 (computational) and LOSES the
+# other components. Mirror's deliberate trade is sub-Turing on axis 1 to
+# buy variety on axes 2–5 (type, effect, proof, epistemologic) that
+# Turing-complete languages have no remaining variety budget for.
+#
+# This property declares the substrate's instantiation of that claim:
+# the per-shard variety budget, vector-typed, verifiable at the species
+# boundary.
+#
+# === The 4-way bilateral mapping ===
+#
+# Per the cybernetic foundation §4.1, the property/operation seam
+# (`@epistemologic/cybernetic/variety` here / `@mirror/cybernetics/variety`
+# pending) maps to four cybernetic traditions simultaneously. For
+# *variety* specifically: this property IS von Foerster's second-order
+# observation (the shard's claim ABOUT ITS OWN variety budget); IS
+# Maturana's organisation (the variety vector is the pattern that makes
+# the substrate THAT substrate); IS Beer's S4 intelligence (the substrate-
+# wide reasoning about what budget each shard holds across time); IS
+# Pask's P-individual identity (each shard's variety vector is its
+# substrate-altitude conversational vocabulary). Four distinctions
+# converging at one architectural seam is what makes the substrate's
+# cybernetic instantiation novel; the literature names each distinction
+# in isolation, the substrate runs all four at once.
+#
+# === The verifiable shape (per cybernetic foundation §3.5 row 1) ===
+#
+# - Declares the shard's variety vector with per-axis budget.
+# - Verifiable at species boundary via `@mirror/realisation.classify`.
+# - The per-axis loss profile is recoverable from the opacity-weighted
+#   projection at the boundary (`shards/glass.mirror`'s `opacity_map`
+#   carries the residuals; per-axis labelling is the interpretive
+#   overlay that lands at `@epistemologic/cybernetic/axis` if a consumer
+#   pulls).
+# - What stays prose-only at this tick: the axis labels as a typed
+#   carrier. Declared abstractly here so shards can name their vectors;
+#   the labels' enforcement at compile-time lands when verification
+#   pulls.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] the operational sibling at
+# `@mirror/cybernetics/variety` is FORWARD-PROMISED, not landed. The
+# property at this altitude declares the obligation; the operation (the
+# substrate-altitude variety computation, if any consumer needs one)
+# lands at species realisation when a consumer pulls. Distinct from
+# `@epistemologic/cybernetic/design` (Glanville), which per the
+# foundation §4.3 has NO operational sibling at all by construction;
+# `variety` has a sibling that just hasn't been pulled yet.
+#
+# === Pre-AI prior art ===
+#
+#   variety / requisite variety  Ashby 1956 §11/7. The original. The
+#                                complementary book is Ashby (1952),
+#                                *Design for a Brain*, which develops
+#                                the homeostat — the four-unit
+#                                electromechanical proof of requisite
+#                                variety via ultrastable random
+#                                reorganisation.
+#   variety as vector            The substrate's multi-dimensional
+#                                lift (recognition #36, 2026-06-09).
+#                                Pre-AI lineage at the literature
+#                                level: Conant 1976 (IEEE T-SMC 6(4))
+#                                decomposes a multi-component system's
+#                                information rate into orthogonal
+#                                components — the same orthogonal-axes
+#                                discipline this property carries at
+#                                the language-design altitude.
+#   axis decomposition           Shannon 1948 (Bell Syst Tech J 27);
+#                                Conant 1976 (the multi-component
+#                                extension cited above). The substrate's
+#                                contribution is *naming the language-
+#                                level axes* (computational, type,
+#                                effect, proof, epistemologic) as the
+#                                load-bearing decomposition.
+#
+# The substrate's contribution is *typing* the variety vector so every
+# shard's per-axis budget is substrate-fact rather than prose, and the
+# species-boundary projection's loss profile is mechanically tracked
+# via the existing `transparency<p>` and `opacity_map` machinery.
+#
+# Spec context: docs/insights/2026-06-09-ashby-multi-dimensional-variety-
+#               sub-turing-epistemologic.md (the recognition);
+#               systemic.engineering `f9e0402`
+#               (practice/insights/cybernetics/
+#                2026-06-09-cybernetic-foundation-for-mirror-substrate.md),
+#               §2.1 (Variety as vector — Ashby 1956 §11/7), §3.5 row 1
+#               (the verifiable shape), §5.3 item 1 (substrate-pull
+#               urgency rationale for landing this first).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-kintsugi-variety-io]] (prior
+#                       Ashby citation; this property is the multi-axis
+#                       lift of the same discipline),
+#                      [[feedback-no-bare-types]] (axis_budget is a
+#                       typed carrier, not a bare scalar),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (variety as the carrier of structure already
+#                       implicit in `variety_hold` on @fate; this
+#                       property names the discipline at the substrate
+#                       altitude).
+# Related shards: epistemologic/cybernetic.mirror (the family root),
+#                 glass.mirror (the @glass altitude this property's
+#                 verdicts surface against; `transparency<p>` and
+#                 `opacity_map` are the recovery machinery for the
+#                 per-axis loss profile),
+#                 mirror/realisation.mirror (the species-boundary
+#                 discriminator the verification routes through).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/variety.mirror` declares
+# `@epistemologic/cybernetic/variety` per
+# `@epistemologic/property/path_matches_namespace`.
+
+prism @epistemologic/cybernetic/variety {
+  focus variety
+  project variety
+  split variety
+  shift variety
+  settle variety
+}
+
+# === The five canonical axes ===
+#
+# Per recognition #36, variety decomposes along at minimum five axes for
+# programming-language substrates. Each axis is independent; the language-
+# level variety budget is the vector across all five.
+#
+# Species shards MAY extend with additional axes when their carrier
+# discipline names a sixth dimension (e.g. an audio-altitude shard might
+# add `acoustic`, a network-altitude shard might add `topological`). The
+# extension mechanism is per-species declaration of additional `axis`
+# variants at the species altitude; the substrate's five are the floor.
+#
+# - computational  what functions can be expressed. Turing-completeness
+#                  is maximal here. Mirror surrenders this axis to buy
+#                  the others.
+# - type           what invariants the type system can express. The
+#                  C → Rust → Haskell → Idris monotone-increasing climb.
+# - effect         what side-effects the type system can track. Koka
+#                  effects, algebraic effects, monad transformers.
+# - proof          what propositions the system can decide or verify.
+#                  Coq, Agda, Lean — dependent types as the variety
+#                  carrier.
+# - epistemologic  what KINDS of knowledge the system can represent.
+#                  Gaps, verdicts, transparencies, obligations,
+#                  conversational structure, settlement, kintsugi loops.
+#                  Mirror's purchase axis.
+type axis =
+  | computational
+  | type_axis
+  | effect
+  | proof
+  | epistemologic
+
+# === The per-axis budget carrier ===
+#
+# A typed carrier per [[feedback-no-bare-types]]: the budget is its own
+# newtype with the axis it applies to recorded alongside the value. A
+# consumer collecting the per-axis budget map can rank without losing
+# axis identity.
+#
+# `value` carries the budget scalar as a `ref` (matches
+# `sheaf_laplacian.eigenvalue.value` and `curvature.value` precedents).
+# The interpretation of `value` is per-axis: bits-of-distinguishable-
+# states for the computational axis; type-invariant rank for the type
+# axis; effect-row cardinality for the effect axis; proposition-class
+# rank for the proof axis; substrate-primitive count for the
+# epistemologic axis. Each species' realisation closes the
+# interpretation; the substrate names the carrier.
+#
+# Identity contract: byte-equality on (axis, value). The realisation
+# layer enforces this; the substrate names it.
+type axis_budget = {
+  axis:  axis,
+  value: ref,
+}
+
+# === The variety vector ===
+#
+# A shard's variety vector IS its per-axis budget across the five
+# canonical axes (plus any species extensions). The carrier is a list of
+# `axis_budget` records — matching the @glass `opacity_map = [opacity]`
+# precedent for accumulated per-site data.
+#
+# Identity contract: the vector's identity IS the multiset of its
+# components. Two vectors with byte-equal multisets ARE the same vector
+# under the substrate's content-addressing.
+type variety_vector = [axis_budget]
+
+# === The per-axis loss profile at the species boundary ===
+#
+# When a shard crosses a species boundary (per `@mirror/realisation.classify`),
+# the projection at the boundary may lose variety on some axis. The loss
+# profile is recoverable from the opacity-weighted projection —
+# `shards/glass.mirror`'s `opacity_map` carries the residuals; the
+# per-axis loss is the slice of that map labelled by axis.
+#
+# `axis_loss(s, species, axis)` reads the residual variety lost on
+# `axis` when shard `s` is projected to `species`. The verdict is
+# `transparency<axis_budget>` — the substrate's loss carrier parameterized
+# on the axis being read. `success` means the projection preserves the
+# declared budget on this axis; `partial(opacity_map)` names where the
+# preservation was lossy; `failure(opacity_map)` names where the
+# preservation broke entirely.
+#
+# Body discharges per-species at the realisation boundary. Same shape as
+# the four metalogue shims at `shards/code/metalogue.mirror`: the
+# substrate declares the obligation; species bodies discharge when a
+# consumer pulls.
+axis_loss(s: shard, species: ref, axis: axis) -> transparency(axis) { \ }
+
+# === The shard's declared variety vector ===
+#
+# `declared_variety(s)` reads the variety vector a shard declares for
+# itself — the substrate's second-order observation made first-class.
+# A shard that doesn't name its vector is treated as carrying the
+# substrate floor (the five canonical axes at unit budget); a shard
+# that names its vector explicitly is making the Ashby trade declared.
+#
+# Body discharges at the realisation boundary; the per-shard vector is
+# substrate-fact once any consumer has read it through this action.
+#
+# Named `declared_variety` rather than `variety_vector` to avoid the
+# type/action name collision and to make the second-order semantics
+# legible: the action READS what the shard CLAIMS; the type IS what
+# the shard HAS.
+declared_variety(s: shard) -> variety_vector { \ }
+
+# === variety_preserving — the bilateral preservation predicate ===
+#
+# `variety_preserving(species)` is the predicate consumer shards name in
+# a `requires` clause to declare their bilateral agreement — per
+# recognition #37 (the Pask-agreement reading of `requires`) — that the
+# projection at the species boundary admits a known loss profile on each
+# declared axis. The agreement is bilateral because both sides commit:
+# the shard commits to declaring its vector via `declared_variety`; the
+# species commits to bounding the per-axis loss within the declared
+# budget under `axis_loss`. The verdict at the boundary IS the audit of
+# the bilateral commitment.
+#
+# Declared here as a typed predicate so downstream shards can write
+# `requires variety_preserving(@code/rust)` or `requires
+# variety_preserving(@code/mirror)` — same shape as the metalogue
+# `requires substrate_pull_preserving(shim_X)` pattern at
+# `shards/code/metalogue.mirror`. The body is `\` at this altitude; the
+# discharge IS the conjunction of per-axis `axis_loss` verdicts falling
+# inside the declared budget at the species boundary.
+#
+# No `requires variety_preserving(…)` clauses are added at THIS shard:
+# the property declares the predicate; consumers add the clauses when
+# they pull. Per [[feedback-craft-not-deliver]] the operational sibling
+# at `@mirror/cybernetics/variety` lands the same way.
+variety_preserving(species: ref) -> verdict { \ }
+
+out @epistemologic/cybernetic/variety
+out axis
+out axis_budget
+out variety_vector
+out axis_loss
+out declared_variety
+out variety_preserving

@@ -1,0 +1,168 @@
+in @prism
+in @meta
+in @epistemologic
+
+# @epistemologic/cybernetic — the substrate's discipline for declarative
+# cybernetic properties.
+#
+# The recognition (2026-06-09, Reed + Alex; cybernetic foundation landed
+# at systemic.engineering `f9e0402`, 1,659 lines): cybernetics-the-
+# tradition belongs at the substrate altitude as a family of *declarative
+# properties* that shards can name, distinct from cybernetics-the-CS-
+# shadow (the feedback-loop synonym). The eleven canonical primitives —
+# Ashby's requisite variety, Conant-Ashby's good regulator, Beer's
+# viable-system five-function audit, the Beer / Reyes algedonic channel,
+# Bateson's three learning levels, Maturana-Varela's autopoiesis, von
+# Foerster's second-order observer, Spencer-Brown's distinction, Pask's
+# conversation, Glanville's design-IS-cybernetics, von Foerster /
+# Kauffman's eigenform — all live here, sited as `@epistemologic/
+# cybernetic/X`.
+#
+# === Discipline ===
+#
+# A cybernetic property declares a substrate-altitude obligation a shard
+# names ABOUT ITSELF or about a contract it holds with another shard. The
+# obligation is *verifiable at the species boundary* (the
+# `@mirror/realisation.classify` discriminator surface) when mechanical;
+# *transitively verifiable* when the discipline reduces to lower-altitude
+# checks; *cross-tick verifiable* when the cascade audit is the discharge.
+#
+# The family is the cybernetic complement to the `@mirror/cybernetics/X`
+# operational family. Alex's bilateral framing: declarative property here,
+# operational primitive at `@mirror/cybernetics/X`. The seam maps to four
+# cybernetic distinctions simultaneously (von Foerster first/second-order;
+# Maturana structure/organisation; Beer S3/S4; Pask M-individual/P-
+# individual) — the convergence of four traditions at one architectural
+# seam is what makes the substrate's instantiation novel.
+#
+# === Species under this family ===
+#
+# Currently landed:
+#
+#   @epistemologic/cybernetic/variety       Ashby 1956 §11/7. The shard's
+#                                           declared variety vector with
+#                                           per-axis budget. The first
+#                                           cybernetic property; the
+#                                           shape teaches the structure
+#                                           for the next ten.
+#
+# Pending — land when a consumer pulls (substrate-pull-urgency order per
+# the cybernetic foundation §5.3):
+#
+#   @epistemologic/cybernetic/good_regulator   Conant-Ashby 1970. The
+#                                              shard structure is a
+#                                              homomorphic image of the
+#                                              system it regulates. The
+#                                              round-trip law on the
+#                                              metalogue shims IS this
+#                                              property's verifiable
+#                                              shape.
+#   @epistemologic/cybernetic/viable           Beer 1972, 1979, 1985. The
+#                                              shard carries all five
+#                                              VSM functions at its
+#                                              altitude.
+#   @epistemologic/cybernetic/algedonic        Beer 1972; Reyes et al.
+#                                              2024. Bilateral with
+#                                              @mirror/cybernetics/
+#                                              algedonic. Failure
+#                                              verdicts carry structured
+#                                              bypass payload.
+#   @epistemologic/cybernetic/distinction      Spencer-Brown 1969. The
+#                                              substrate's deepest stack
+#                                              layer; grounds `gap`,
+#                                              `transparency`, `\`.
+#   @epistemologic/cybernetic/conversation     Pask 1975, 1976. `requires`
+#                                              clauses ARE bilateral
+#                                              agreements between P-
+#                                              individuals.
+#   @epistemologic/cybernetic/bateson_learning Bateson 1972. Three sub-
+#                                              properties: learning_I /
+#                                              learning_II / learning_III.
+#   @epistemologic/cybernetic/autopoiesis      Maturana-Varela 1980. The
+#                                              substrate's bidirectional
+#                                              production fixed point.
+#   @epistemologic/cybernetic/second_order     von Foerster 1981. The
+#                                              shard's model includes
+#                                              itself.
+#   @epistemologic/cybernetic/eigenform        von Foerster 1981;
+#                                              Kauffman 2003. The
+#                                              identity carrier is the
+#                                              fixed point of recursive
+#                                              structure (uuid_spectral
+#                                              is the load-bearing
+#                                              instance).
+#   @epistemologic/cybernetic/design           Glanville 1982, 2007. The
+#                                              shard's design history
+#                                              is part of its content.
+#                                              Per the foundation §4.3:
+#                                              NO `@mirror/cybernetics/
+#                                              design` operational
+#                                              sibling; design IS
+#                                              constitutively second-
+#                                              order and lives in the
+#                                              cascade itself.
+#
+# === Why a family root ===
+#
+# Per [[architecture-prism-as-trait-as-everything]] every kind that stands
+# on its own discipline is a prism. `cybernetic` IS such a kind: a
+# substrate-wide vocabulary for declarative cybernetic obligations, with
+# a shared verification discipline (species-boundary check at
+# `@mirror/realisation.classify`), a shared bilateral framing (property
+# here / operation at `@mirror/cybernetics/X`), and eleven species that
+# each carry their own contract under the same discipline.
+#
+# The previous shape (cybernetic primitives implicit in the substrate-pull
+# cascade, named only in prose) under-declared the inheritance. The
+# family root makes the discipline explicit; species inherit through
+# `in @epistemologic/cybernetic` at the top of their files (cf. the
+# @epistemologic/reality precedent, 2026-06-06).
+#
+# === Substrate-pull recognitions grounded here ===
+#
+# Recognition #36 (Reed, mirror `1ad45b4`): Ashby's law in multi-
+# dimensional variety space. Grounds `variety`.
+# Recognition #37 (Reed, promoted 2026-06-09): every `requires` clause is
+# a Pask agreement. Grounds the future `conversation` property.
+# Recognition #38 (Reed, promoted 2026-06-09): `uuid_spectral` IS an
+# eigenform. Grounds the future `eigenform` property.
+# Recognition #39 (Reed, promoted 2026-06-09): the substrate-pull
+# discipline IS Glanville's cybernetic design. Grounds the future
+# `design` property.
+# Recognition #40 (Reed, promoted 2026-06-09): the bilateral property/
+# operation seam IS Maturana's structure/organisation. Grounds the
+# discipline of the family itself.
+# Recognition #41 (Reed, promoted 2026-06-09): the cybernetic-property
+# family lift IS a Learning III event at the substrate altitude. Grounds
+# the family ROOT (this file).
+#
+# Spec context: systemic.engineering `f9e0402`
+#               (practice/insights/cybernetics/
+#                2026-06-09-cybernetic-foundation-for-mirror-substrate.md),
+#               docs/insights/2026-06-09-ashby-multi-dimensional-variety-
+#               sub-turing-epistemologic.md (recognition #36).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-kintsugi-variety-io]] (prior
+#                       Ashby citation in the @io context — the
+#                       multi-axis lift extends this).
+# Related shards: epistemologic/cybernetic/variety.mirror (the first
+#                 species; landed alongside this root),
+#                 boot/02-epistemologic.mirror (the @epistemologic
+#                 grammar this family inherits from),
+#                 epistemologic/reality.mirror (the precedent family-root
+#                 shape; same pattern).
+# Path-namespace property: this file at `shards/epistemologic/cybernetic.mirror`
+# declares `@epistemologic/cybernetic` per
+# `@epistemologic/property/path_matches_namespace`.
+
+prism @epistemologic/cybernetic {
+  focus cybernetic
+  project cybernetic
+  split cybernetic
+  shift cybernetic
+  settle cybernetic
+}
+
+out @epistemologic/cybernetic
