@@ -4,6 +4,8 @@
 
 *2026-06-09 reframe (Reed + Alex, the 34th-instance recognition): the universal contract lifts from per-species `@code/X/macro` to `@code/metalogue` — the AST altitude's lift of `@metalogue` (shards/metalogue.mirror, B3). The species-altitude `@code/X/macro` declarations (Rust, Elixir, Lisp, ...) become inheritors via `<= @code/metalogue`; the four shims, four laws, and declaration/turn/metalogue_session carrier types live ONCE at the ground. The species roster keeps the community vocabulary "macro" at the per-language altitude; the substrate gains `@code/metalogue` as the universal noun. The spec's title and section anchors are reframed accordingly; the per-species matrix in §11 retains its rows.*
 
+*2026-06-09 35th-instance recognition (Alex → Mara via Reed): hole-projection IS `project`. During T25 GREEN Mara surfaced that the substrate's `\` could not survive Rust source code at the proc-macro call site; the workaround used `{ }` at the call site and emitted `todo!()` in the macro body. Mara flagged the candidate naming "the lexical glass-wall" for review. Alex's read: **"Yes, it needs an explicit mapping. No language has the exact semantics of the hole. It will always be a `project`ion."** The substrate-pull-correct recognition: `\` IS `hole` (per shards/nl.mirror, boot/std/mirror/interpreter.mirror, the substrate already had the word); `project` IS the operation (one of the five-op operations on `@code/metalogue`); the per-species explicit mapping IS `project_hole`'s body at each `@code/X/macro` altitude. The contract is declared at the ground (§4.3 below); each species realises its lossy projection (§11.4 matrix column).*
+
 > **Status: Yellow (2026-06-08) → Reframed Green (2026-06-09).** The
 > recognition Alex named on 2026-06-08 — "what if mirror hooks into
 > Rust's macro surface for code generation? `@code/macro` for any
@@ -635,7 +637,126 @@ impls becomes the proc-macro's responsibility to close — at
 compile time, deterministically, per the substrate's typed
 declaration.
 
-### 4.3 The bidirectional `mout!` — `mout!` / `min!` / `mio!`
+### 4.3 `project_hole` — the universal hole-projection contract (the 35th-instance recognition)
+
+**No language has the exact semantics of the hole. It will always be a projection.**
+
+That sentence is load-bearing. The substrate's `\` is the typed
+hole — the obligation block per
+`[[architecture-prism-as-trait-as-everything]]`, the unbound
+morphism the species realisation must close. Every host language's
+metaprogramming layer realises the hole differently, and **none of
+the realisations is exact-semantic**:
+
+- Rust's `todo!()` panics at runtime with the `!` (never) type;
+  close to a typed-gap, but committed to a runtime trap.
+- Rust's `_` is a pattern wildcard / type placeholder; not an
+  action body.
+- Rust's `{ }` is an empty unit-returning block; lexer-realisable
+  but loses the obligation typing.
+- Elixir's `nil` returns from a `def` body; runtime hole.
+- Elixir's `Process.unimplemented/0` (when convention chosen) is
+  closer to `todo!()` but BEAM-altitude-specific.
+- Lisp's `'TODO` symbol / `(error "todo")` — runtime trap, no
+  static gap surface.
+- Julia's `error("not implemented")` — same shape as Lisp's; the
+  `Expr` AST has no typed-gap node.
+
+The substrate cannot pretend any of these IS the hole. Each
+species **lossy-projects** the hole into its own metaprogramming
+vocabulary. The lossy delta IS admitted at the @glass altitude as
+transparency on the metalogue turn that carries the projection
+(per §5 law 4: substrate-pull preservation surfaces the lossy
+fragment rather than absorbing it).
+
+**The substrate vocabulary already had the words.** Three substrate
+ancestors triangulate the 35th instance:
+
+1. `shards/nl.mirror` (line 29): *"Same shape as `\` producing
+   fracture (an obligation hole)."* `hole` is the noun.
+2. `boot/std/mirror/interpreter.mirror` (lines 16-17):
+   `resolve_hole(hole, context) -> ast { \ }`. `hole` is the
+   substrate-altitude type carrier.
+3. `boot/std/fate/tournament.mirror` (lines 33-41):
+   `candidates(hole) -> [resolution]`. The five-ganglion candidate
+   surface consumes `hole`.
+
+The substrate ALREADY used `hole`; this tick names how `hole`
+crosses the species boundary. The operation IS `project` (one of
+the five-op operations on `@code/metalogue` per the prism block at
+the ground). The hole-projection IS `project`'s contract at the
+@code/metalogue altitude made explicit; it is NOT a new substrate
+operation.
+
+#### 4.3.1 The universal signature (at the ground)
+
+Declared at `shards/code/metalogue.mirror` (the 35th-instance
+substrate touch):
+
+```
+project_hole(h: hole) -> species_ast { \ }
+
+requires round_trip(project_hole)
+requires oid_function(project_hole)
+requires type_soundness(project_hole)
+requires substrate_pull_preserving(project_hole)
+```
+
+The body stays `\` at the ground (per
+`[[feedback-craft-not-deliver]]`); each species binds the return
+type and supplies the lossy projection body when a consumer pulls.
+
+`shim_action`'s dispatch routes through `project_hole` whenever its
+input declaration carries a `\` body — this is how the four-shim
+contract reduces the hole case to the project_hole binding. Same
+substrate `hole`, different species realisation; the four laws
+apply identically (round-trip up to the species' lossy semantics;
+the partial verdict is admitted per @glass `transparency(turn)`).
+
+#### 4.3.2 The Rust binding (the canonical species this tick)
+
+Declared at `shards/code/rust/macro.mirror` (the 35th-instance
+species-side touch). Rust's lossy projection lives at two
+altitudes simultaneously, because Rust's lexer and Rust's AST
+realise the hole at different surface levels:
+
+| Altitude | Substrate carrier | Rust projection | Why |
+|---|---|---|---|
+| Source text (proc-macro call site) | `\` | `{ }` | Rust's lexer does not realise the bare `\` token; the empty block is the smallest Rust-lexer-realisable surface the proc-macro can receive a TokenStream over. |
+| Rust AST (proc-macro emission body) | `\` | `todo!()` | Rust's `todo!` macro has type `!` (the never type) which unifies with any expected return — the least-lossy typed-gap projection Rust admits. `unimplemented!()` and `panic!()` have the same shape but lose the "deferred" semantic. |
+
+Per the T25 GREEN observation: this two-altitude split is **not** a
+workaround; it is the explicit mapping Alex's read names. The Rust
+lexer's surface admits `{ }`; the Rust AST's typed-gap node is
+closest to `todo!()`. Both projections are lossy. Both are honest.
+The substrate names the lossiness rather than absorbing it.
+
+#### 4.3.3 Why this is `project`, not a new operation
+
+Three readings converge on `project` being the right operation:
+
+1. **The five-op block at `@code/metalogue` already declares
+   `project metalogue`.** Per the prism block at
+   `shards/code/metalogue.mirror` line 102. The hole-projection IS
+   what `project` does at this altitude; making it explicit names
+   the existing operation's contract, not a new one.
+
+2. **The species realisation chain matches `project`'s
+   five-operation typing.** `project` is the "filter by what
+   matters" operation in the five-op vocabulary; the hole-projection
+   filters the substrate `hole` carrier through the species'
+   accepting vocabulary, surfacing only what the species realises
+   and admitting the residual as transparency. Same shape.
+
+3. **Per `[[feedback-substrate-already-had-the-word]]`** (the
+   34-instance recognition track): Mara's candidate naming "the
+   lexical glass-wall" was a new noun; the substrate already had
+   `hole` as the noun AND `project` as the operation. The 35th
+   instance is the recognition that **the candidate naming was the
+   training-pull**; the substrate vocabulary was already in place,
+   we just needed to use it.
+
+### 4.4 The bidirectional `mout!` — `mout!` / `min!` / `mio!`
 
 Per `bootstrap/src/lib.rs:178-200`, the current `mout!` / `merr!`
 macros are Rust→bytes-on-fd-1/2 channels that bypass libtest's
@@ -1210,6 +1331,43 @@ own macro sub-prism realizing the same universal contract. The
 substrate becomes a multi-target generator from a single
 substrate-declaration source. Polyglot from one altitude.
 
+### 11.5 The per-species hole-projection matrix (35th-instance, 2026-06-09)
+
+Per §4.3 (the 35th-instance recognition: hole-projection IS
+`project`): each species realises the substrate's `\` (hole)
+through its own metaprogramming-vocabulary lossy projection. The
+mapping MUST be explicit per species; no language has exact-match
+semantics. The Rust binding is canonical this tick; the others are
+forward-promised to land when their consumer pulls.
+
+| Species | Source-text projection (call site) | AST projection (emission body) | Notes |
+|---|---|---|---|
+| `@code/rust/macro` | `{ }` | `todo!()` | LANDED 2026-06-09. T25 GREEN observation; explicit mapping per `shards/code/rust/macro.mirror`. Rust lexer cannot realise `\`; `{ }` is the smallest lexer-admitted call-site form; `todo!()` has type `!` (never), the closest typed-gap Rust admits. |
+| `@code/elixir/macro` | `nil` or `_` | `raise "todo"` or `Process.unimplemented/0` | Forward-promised. Elixir's tokenizer admits `nil` as a valid expression at any return position; the emission body's exact choice depends on Reed-BEAM-body consumer pull. The atom `:todo` is a stronger candidate (BEAM-altitude convention); resolves at species-pull time. |
+| `@code/lisp/macro` | `'TODO` or `()` | `(error "todo")` | Forward-promised. The homoiconic case — substrate AST and Lisp AST are isomorphic up to renaming, so the call-site projection is structurally close. The runtime trap `(error ...)` is the canonical hygienic-macro hole. |
+| `@code/julia/macro` | `nothing` | `error("not implemented")` or `:(error("todo"))` | Forward-promised. Julia's `Expr` admits `nothing` as a literal AST node; the `error()` call is the standard typed-gap convention. The macro-expansion form `:(error(...))` is closer to Rust's `todo!()` shape — typed at expand time. |
+| `@code/crystal/macro` | `nil` | `raise "todo"` | Forward-promised. Crystal's `macro` block accepts `nil` at the call site; `raise` is the runtime trap. |
+| `@code/nim/macro` | `discard` | `raise newException(Defect, "todo")` | Forward-promised. Nim's `discard` is the closest call-site no-op; `Defect` is the unrecoverable-exception kind closest to substrate-hole runtime semantics. |
+| `@code/typescript/macro` | `void 0` or `null` | `throw new Error("todo")` | Forward-promised. TypeScript decorators have no typed-gap; the call-site lossiness is HIGH (the gap surfaces only at runtime). |
+| `@code/python` | (n/a — no macro sub-prism per §3.3) | — | — |
+| `@code/go` | (n/a — no macro sub-prism per §3.3) | — | — |
+
+**Every entry is a lossy projection.** None of the host-language
+realisations IS the substrate hole. Each row's "Notes" column
+names the specific delta the species admits. The four laws
+(round-trip, OID-functionality, type-soundness, substrate-pull
+preservation) apply across every row identically; the round-trip
+law holds up to each species' lossy projection (a `partial` verdict
+per @glass `transparency(turn)` is the honest closure when the
+projection is not exact).
+
+This matrix IS what Alex's read names: *"It will always be a
+projection."* The substrate cannot pretend any species' realisation
+is exact; it CAN make each species' projection explicit and
+declare the four laws over the projection rather than over a
+phantom-exact mapping. The 35th-instance recognition closes by
+making the lossiness substrate-visible.
+
 ---
 
 ## 12. Implementation cascade — the smallest tick that proves the shape
@@ -1303,6 +1461,49 @@ pull discipline IS the test's success criterion.
 ## 13. Substrate-pull recognitions surfaced during the spec-write
 
 Per the recognition track, naming any new candidates that emerged:
+
+### 13.0 35th-instance recognition: hole-projection IS `project` (2026-06-09)
+
+Logged here as the recognition this spec's 35th-instance edit closed.
+
+The recognition: during T25 GREEN, Mara surfaced that the
+substrate's `\` could not survive Rust source code at the
+proc-macro call site, and named the workaround "the lexical
+glass-wall." Alex's read corrected the candidate naming:
+
+> *"Yes, it needs an explicit mapping. No language has the exact
+> semantics of the hole. It will always be a `project`ion."*
+
+The substrate-pull-correct framing:
+
+- **`\` IS `hole`** — the substrate already had the noun. Three
+  ancestors confirm: `shards/nl.mirror` line 29
+  (*"Same shape as `\` producing fracture (an obligation hole)"*);
+  `boot/std/mirror/interpreter.mirror` lines 16-17
+  (`resolve_hole(hole, context) -> ast`);
+  `boot/std/fate/tournament.mirror` lines 33-41
+  (`candidates(hole) -> [resolution]`). The substrate's vocabulary
+  for `\` is `hole`, used 20+ times across boot/std/ and shards/.
+- **`project` IS the operation** — already one of the five-op
+  operations on `@code/metalogue` (line 102 of the prism block).
+  The hole-projection isn't a new substrate operation; it's
+  `project`'s contract at this altitude made explicit.
+- **No species has exact-match semantics** — Rust's `todo!()` is
+  close but is a runtime trap; `_` is a wildcard; `{ }` is an empty
+  block. Every species lossy-projects. The mapping MUST be
+  explicit per species. The §11.5 matrix is the explicit table.
+- **The candidate naming "lexical glass-wall" was training-pull**
+  — looking for a new noun for a thing the substrate already named.
+  Per `[[feedback-substrate-already-had-the-word]]`, the 35th
+  instance of recurring substrate-pull recognition. Mara's instinct
+  to invent was the tell; the substrate vocabulary was already in
+  place.
+
+Naming this here logs the 35th instance and closes the loop with
+the 33rd-instance recognition below: the 33rd named `\` as the
+codegen contract; the 35th names how the contract crosses the
+species boundary (via `project_hole`, which IS `project`'s contract
+at the @code/metalogue altitude).
 
 ### 13.1 33rd-instance candidate: `\` IS the codegen specification
 
@@ -1442,6 +1643,15 @@ mechanically.
   substrate-pull; "one operation, many uses").
 - `boot/std/code/rust.mirror` — the boot floor's Rust altitude
   (where the rust_ast type tags live).
+- `boot/std/mirror/interpreter.mirror` — `resolve_hole(hole,
+  context) -> ast`. Substrate-altitude precedent for `hole` as
+  typed carrier (35th-instance recognition ancestor).
+- `boot/std/fate/tournament.mirror` — `candidates(hole) ->
+  [resolution]`. Five-ganglion candidate surface consumes the
+  same `hole` type (35th-instance recognition ancestor).
+- `shards/nl.mirror` line 29 — *"Same shape as `\` producing
+  fracture (an obligation hole)"*. The naming-precedent that
+  closed the 35th-instance candidate as substrate-already-had-it.
 
 ### 15.2 Specs and roadmap
 
@@ -1493,7 +1703,9 @@ mechanically.
   mechanism.
 - `[[feedback-substrate-already-had-the-word]]` — 31st-instance
   recognition track; this spec is the 31st; the 33rd-instance
-  candidate (the `\` AS codegen spec) named in §13.1.
+  candidate (the `\` AS codegen spec) named in §13.1; the 35th
+  instance (hole-projection IS `project`, not "the lexical
+  glass-wall") named in §13.0.
 - `[[feedback-craft-not-deliver]]` — the consumer-pull discipline;
   forward-promise the species; canonical for Rust this tick.
 - `[[feedback-no-bare-types]]` — newtype discipline; the typed
@@ -1533,3 +1745,7 @@ the substrate side.
 ---
 
 *Done. The gap was the spec. The substrate had the word for it.*
+
+*2026-06-09 35th-instance closure. The hole is `hole`. The
+operation is `project`. Every species' projection is lossy. The
+matrix is the explicit table. The substrate had every word.*

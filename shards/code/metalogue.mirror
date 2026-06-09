@@ -188,6 +188,70 @@ shim_prism(d: declaration) -> species_ast { \ }
 shim_action(d: declaration) -> species_ast { \ }
 shim_grammar(d: declaration) -> species_ast { \ }
 
+# === project_hole — the universal hole-projection contract ===
+#
+# The 35th-instance recognition (2026-06-09, Alex → Mara via Reed):
+# during T25 GREEN the substrate's `\` (the typed hole / obligation
+# / unbound morphism per [[architecture-prism-as-trait-as-everything]])
+# could not survive Rust source code at the proc-macro call site —
+# Rust's lexer does not realise the bare `\` token. The interim
+# workaround used `{ }` at the call site and emitted `todo!()` in
+# the macro body. Mara surfaced the candidate naming "the lexical
+# glass-wall" and flagged for review.
+#
+# Alex's read (verbatim): *"Yes, it needs an explicit mapping. No
+# language has the exact semantics of the hole. It will always be
+# a `project`ion."*
+#
+# The substrate-pull-correct recognition:
+#
+#   1. `\` IS the substrate primitive — the typed hole. The substrate
+#      vocabulary is `hole`, not "lexical glass-wall" (per
+#      shards/nl.mirror line 29: *"Same shape as `\` producing
+#      fracture (an obligation hole)"*; per boot/std/mirror/interpreter.mirror's
+#      `resolve_hole(hole, context) -> ast`; per boot/std/fate/tournament.mirror's
+#      `candidates(hole)`; per boot/std/scheduler.mirror's "Fate-resolved
+#      hole"). The substrate already had the word.
+#
+#   2. `project` IS the operation (one of the five-op operations on
+#      `@code/metalogue` above, line 102). The hole-projection isn't
+#      a new substrate operation; it's `project`'s contract at the
+#      @code/metalogue altitude made explicit. `project` is what
+#      carries the substrate AST (including its holes) across the
+#      species boundary; each species realisation provides its
+#      hole-projection as part of `project`'s body.
+#
+#   3. No species has exact-match semantics — Rust's `todo!()` is
+#      close but isn't a typed-gap; `_` is a wildcard; `{ }` is an
+#      empty block. Elixir, Lisp, Julia each project differently.
+#      Every species lossy-projects. The mapping MUST be explicit
+#      per species, declared at the species' `@code/X/macro`.
+#
+# `project_hole` is the universal contract at the ground:
+#
+#   - Input: the substrate `hole` carrier (the `\` body's typed
+#     surface; the obligation-block carrier the dispatch reads when
+#     `shim_action` encounters an action with `\` body).
+#   - Output: the species AST fragment that realises the hole at
+#     the species altitude. Parametric on `species_ast` per the
+#     same mechanism as the four shims above.
+#
+# Each `shim_action` invocation MUST route through `project_hole`
+# when its input declaration carries a `\` body. The four laws
+# (round-trip, OID-functionality, type-soundness, substrate-pull
+# preservation) apply identically — see the `requires` clauses
+# added below.
+#
+# The substrate-vocabulary `hole` type is the @glass-altitude
+# obligation surface; declared as an abstract type here because the
+# floor (shards/glass.mirror) names `splinter` / `shard` / opacity
+# but does not yet declare `hole` as a typed carrier. T26 may lift
+# `type hole = { body: ref, signature: ref, location: location }`
+# to @glass when a consumer pulls; this tick the type stays abstract
+# and the action signature carries `hole` as the input ref kind.
+
+project_hole(h: hole) -> species_ast { \ }
+
 # === The four laws (per docs/specs/code-metalogue-surface.md §5) ===
 #
 # Each law applies to every `shim_X` above. Declared here ONCE at
@@ -243,6 +307,22 @@ requires oid_function(shim_grammar)
 requires type_soundness(shim_grammar)
 requires substrate_pull_preserving(shim_grammar)
 
+# The four laws apply to `project_hole` as well — same shape,
+# because the hole-projection IS the contract `shim_action` reduces
+# to when its input action carries `\`. Round-trip: parsing the
+# species' projected form yields back the hole carrier (up to the
+# species' own lossy semantics; the partial verdict is admitted
+# per @glass transparency). OID-functionality: same hole OID, same
+# projected OID. Type-soundness: the species AST fragment matches
+# the hole's declared signature under the species' type_mapping.
+# Substrate-pull preservation: the projection does not silently
+# absorb the gap — the species' lossy projection IS surfaced as
+# transparency at the metalogue turn.
+requires round_trip(project_hole)
+requires oid_function(project_hole)
+requires type_soundness(project_hole)
+requires substrate_pull_preserving(project_hole)
+
 out @code/metalogue
 out declaration_kind
 out declaration
@@ -252,3 +332,4 @@ out shim_type
 out shim_prism
 out shim_action
 out shim_grammar
+out project_hole

@@ -115,8 +115,57 @@ shim_prism(d: declaration) -> code/rust.ast { \ }
 shim_action(d: declaration) -> code/rust.ast { \ }
 shim_grammar(d: declaration) -> code/rust.ast { \ }
 
+# === project_hole binding — Rust's explicit lossy projection ===
+#
+# The 35th-instance recognition (2026-06-09, Alex → Mara via Reed):
+# during T25 GREEN the substrate's `\` could not survive Rust source
+# at the proc-macro call site. Two altitudes need explicit naming
+# because Rust's surface and Rust's AST realise the hole differently:
+#
+#   - Source-text altitude (call site):   substrate `\`  ↔ Rust `{ }`
+#       the empty block is the Rust-lexer-realisable surface form at
+#       proc-macro call sites. The proc-macro receives a TokenStream
+#       containing the `{ }` braces; this IS the surface-level
+#       projection of the hole the Rust lexer admits.
+#
+#   - AST altitude (emission body):       substrate `\`  ↔ `todo!()`
+#       the Rust stdlib's `todo!` macro expands to an
+#       `unimplemented!`-shaped runtime panic. The proc-macro emits
+#       `todo!()` as the body for any action whose substrate `\` body
+#       was not resolved (consumer-pull deferred per
+#       [[feedback-craft-not-deliver]]). `todo!()` is close to a
+#       typed-gap (it has type `!`, the never type, which unifies
+#       with any expected return type — closer to substrate-hole
+#       semantics than `unimplemented!()` or `panic!()`); it is the
+#       least-lossy projection Rust admits.
+#
+# Per Alex's read: *"No language has the exact semantics of the
+# hole. It will always be a projection."* Rust's `todo!()` is the
+# closest typed-gap available; `_` is a wildcard not an action body;
+# `{ }` is an empty unit-returning block. None match the substrate
+# hole exactly. The lossy delta is admitted at the @glass altitude
+# as transparency on the metalogue turn that carries this projection.
+#
+# Per [[feedback-substrate-already-had-the-word]]: the substrate
+# already had `hole`; this shard names Rust's lossy projection of
+# `hole` rather than inventing a new substrate noun. The naming
+# "lexical glass-wall" (Mara's initial candidate during T25) is
+# rejected per the substrate-pull-correct framing: the carrier IS
+# `hole`, the operation IS `project`, the per-species explicit
+# mapping IS `project_hole`'s body at this altitude.
+#
+# Per the metalogue ground (shards/code/metalogue.mirror lines 245+),
+# `project_hole` is the universal contract; this shard's job is the
+# Rust-altitude binding. The body stays `\` until the consumer-pull
+# tick that needs the typed projection (T25+ for `shim_action`'s
+# round-trip law to discharge through `todo!()` rather than ad-hoc
+# emission).
+
+project_hole(h: hole) -> code/rust.ast { \ }
+
 out @code/rust/macro
 out shim_type
 out shim_prism
 out shim_action
 out shim_grammar
+out project_hole
