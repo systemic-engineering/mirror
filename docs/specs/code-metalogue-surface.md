@@ -1,26 +1,83 @@
-# The code generation surface — `@code/X.render` is the gap; `@code/X.macro` is the reception
+# The code generation surface — `@code/X.render` is the gap; `@code/metalogue` is the reception
 
 *2026-06-08. Mara. Spec — substrate-pull, eleventh tick after the eight closed cascade ticks, the property/inference collapse, and the eigensheaf recognition.*
 
-> **Status: Yellow.** The recognition Alex named this turn — "what if
-> mirror hooks into Rust's macro surface for code generation? `@code/macro`
-> for any language that allows direct manipulation of the AST. The gap
-> is the spec." — does not declare a new family. It names the **two-way
-> reading of `@code/X`** that the substrate has been preparing for: the
-> render direction (substrate AST → language source) and the macro
-> direction (language compile-time AST → consumption of substrate
-> emission). The first half already exists at `@code/mirror.render`
-> (T17, the Wadler/Bernardy combinator surface). The second half — the
-> language-side reception that closes the loop into a real proc-macro /
-> defmacro / Lisp-macro shim — is what this spec names. **Both halves
-> live UNDER each `@code/X` species, not in a new `@code/macro` parent.**
-> The thirty-first instance of *substrate-already-had-the-word*; this
-> one names the deepest one yet because it names *how the language's
-> own metaprogramming surface receives the substrate's emission*.
+*2026-06-09 reframe (Reed + Alex, the 34th-instance recognition): the universal contract lifts from per-species `@code/X/macro` to `@code/metalogue` — the AST altitude's lift of `@metalogue` (shards/metalogue.mirror, B3). The species-altitude `@code/X/macro` declarations (Rust, Elixir, Lisp, ...) become inheritors via `<= @code/metalogue`; the four shims, four laws, and declaration/turn/metalogue_session carrier types live ONCE at the ground. The species roster keeps the community vocabulary "macro" at the per-language altitude; the substrate gains `@code/metalogue` as the universal noun. The spec's title and section anchors are reframed accordingly; the per-species matrix in §11 retains its rows.*
+
+> **Status: Yellow (2026-06-08) → Reframed Green (2026-06-09).** The
+> recognition Alex named on 2026-06-08 — "what if mirror hooks into
+> Rust's macro surface for code generation? `@code/macro` for any
+> language that allows direct manipulation of the AST. The gap is the
+> spec." — named the **two-way reading of `@code/X`**: the render
+> direction (substrate AST → language source) and the macro direction
+> (language compile-time AST → consumption of substrate emission). The
+> first half already exists at `@code/mirror.render` (T17, the
+> Wadler/Bernardy combinator surface). The second half is what this
+> spec names. The 2026-06-09 reframe lifts the universal contract to
+> `@code/metalogue` — a sibling of `@metalogue` (NL altitude) at the
+> AST altitude. Both halves live UNDER each `@code/X` species at the
+> binding altitude, AND ABOVE the species at the universal `@code/metalogue`
+> ground. The thirty-fourth instance of *substrate-already-had-the-word*;
+> this one names the deepest one yet because *macros are the AST
+> speaking to itself — Bateson 1972 made literal at compile time*.
 
 ---
 
 ## 1. The recognition
+
+### 1.0 The 34th-instance reframe (2026-06-09)
+
+The original spec (2026-06-08) named `@code/X.macro` as a per-species
+sub-prism with the four-shim contract and four laws declared
+per-species. The 34th-instance recognition (Reed + Alex → Mara,
+2026-06-09) named the substrate word: `@metalogue` was already
+declared at `shards/metalogue.mirror` (B3, task #189) — Bateson
+1972's *conversation whose structure reflects its topic* — at the
+natural-language altitude. The macro surface IS the same shape lifted
+to the AST altitude: *the language speaking ABOUT itself BY USING
+itself, at compile time, through its own metaprogramming surface*.
+
+The substrate gains a new shard:
+`shards/code/metalogue.mirror` declares `@code/metalogue` — the
+AST-altitude metalogue. It inherits from `@metalogue` (NL altitude,
+lifted to AST: `turn.body: declaration` instead of `turn.body: nl`)
+and from `@code` (the per-altitude grammar family). The four-shim
+contract (`shim_type`, `shim_prism`, `shim_action`, `shim_grammar`),
+the four laws (round-trip, OID functionality, type-soundness,
+substrate-pull preservation), and the carrier types (`declaration`,
+`declaration_kind`, `turn`, `metalogue_session`) live HERE at the
+ground — universal across every language altitude.
+
+The per-species shards keep their community vocabulary:
+`@code/rust/macro`, `@code/elixir/macro`, `@code/lisp/macro`, ...
+The community word "macro" is what language users recognize; the
+species-altitude file is the per-language binding (`code/rust.ast`
+for Rust, `code/elixir.ast` for Elixir, etc.) plus the
+`<= @code/metalogue` inheritance declaration. The Rust shard
+(`shards/code/rust/macro.mirror`) is the canonical realisation; the
+four shim function signatures stay there as the per-altitude binding;
+the contract+laws come from the ground for free.
+
+This reframe is non-breaking on the cascade: T23 (type) already
+landed; T24 (prism), T25 (action), T26 (grammar) continue per
+the original cascade plan, now with the universal contract at the
+ground rather than duplicated per-species. The four-law `requires`
+clauses that previously lived in each per-species macro shard
+collapse to one declaration at `shards/code/metalogue.mirror`.
+
+For cross-references throughout this spec, treat the substrate's
+`@code/X/macro` species as the per-language realisations and
+`@code/metalogue` as the universal ground. The spec's body below
+was written from the per-species perspective; the reframe applies
+at the substrate altitude (where the laws actually live) without
+requiring a wholesale rewrite of the body. Where this spec says
+"declared per-species", read "realised per-species, declared at
+`@code/metalogue`". Where it says "the macro surface", read "the
+@code/metalogue surface (species: macro)".
+
+---
+
+### 1.1 The original recognition (2026-06-08)
 
 Alex named the recognition verbatim, 2026-06-08, immediately after Taut
 #286 Win 2 landed (commit `142e734` — `kintsugi_main` extracted from
@@ -267,7 +324,33 @@ for a name.
 
 ## 3. Placement — the substrate decision
 
-### 3.1 Where `@code/X.macro` lives
+### 3.1 Where `@code/metalogue` lives (the ground) and where `@code/X/macro` lives (the species)
+
+**The ground lives at `shards/code/metalogue.mirror`.** This is the
+universal contract, declared once: the four shim signatures, the
+four laws as `requires` clauses, the declaration/turn/metalogue_session
+carrier types. The ground is parametric on `species_ast` — each
+species binds it to its language's AST type. Same shape as
+`shards/metalogue.mirror` carries `turn.body: nl` at the NL altitude;
+`@code/metalogue` carries `turn.body: declaration` at the AST altitude.
+
+The per-species roots (`@code/X/macro`) live as before, but now as
+substrate-inheritors of `@code/metalogue` via `in @code/metalogue`
+(the canonical `<=`-mechanism per
+`[[architecture-prism-as-trait-as-everything]]`). The species shard's
+job is the per-altitude binding:
+
+1. Bind `species_ast` to the language's AST type (`code/rust.ast`,
+   `code/elixir.ast`, etc.).
+2. Declare the four shim function signatures with the bound return
+   type. The bodies are `\` per consumer-pull discipline.
+3. (No `requires` clauses — those inherit from `@code/metalogue`.)
+
+The Rust species shard (`shards/code/rust/macro.mirror`) is the
+canonical realisation; this shape applies identically to every
+other species.
+
+### 3.1bis Where `@code/X.macro` lived (original 2026-06-08 placement, pre-reframe)
 
 **Inside each `@code/X` species, as a sub-prism.** Same shape as
 `@code/rust/cargo` lives inside `@code/rust`. Three readings
@@ -384,9 +467,17 @@ the WITNESS that the language admits the deeper coupling.
 
 ---
 
-## 4. The macro sub-prism's typed surface
+## 4. The metalogue ground's typed surface
 
-Each `@code/X/macro` sub-prism declares the same shape:
+The universal contract lives at `@code/metalogue` (the 34th-instance
+reframe). The shape below was originally written as "each
+`@code/X/macro` sub-prism declares"; in the reframed reading, the
+shape is declared ONCE at `@code/metalogue` (parametric on
+`species_ast`); each species inherits and binds `species_ast` to its
+language's AST type. The text below stays per-species in form to
+preserve the original derivation; substitute `@code/metalogue` for
+the declaration site and read `species_ast` for any language-AST
+return type:
 
 ```
 prism @code/X/macro {
@@ -611,7 +702,15 @@ declares the channel roster and `@code/rust/macro.mout` / `.min` /
 
 ---
 
-## 5. "The gap is the spec" — formalized
+## 5. "The gap is the spec" — formalized (the four laws live at the ground)
+
+Per the 34th-instance reframe: the four laws below are declared
+ONCE at `@code/metalogue` (the universal ground), as `requires`
+clauses on `shim_type` / `shim_prism` / `shim_action` /
+`shim_grammar`. Per-species shards inherit the obligations via
+`in @code/metalogue`. The original text below is written
+per-species; the lifted version names the same laws at the
+ground.
 
 This is the central thesis. Stating it precisely:
 
@@ -700,11 +799,15 @@ the substrate declaration into the language altitude's eigenmode.
 
 ---
 
-## 6. Round-trip identity — the central contract
+## 6. Round-trip identity — the central contract (declared at the ground)
 
-Per `@code/mirror.render`'s `requires round_trip(render)` at
+Per the 34th-instance reframe, `round_trip(shim_X)` is declared
+ONCE at `@code/metalogue` for each of the four shims (one per
+declaration kind). Per-species shards inherit; the law applies
+structurally identically at every language altitude. Per
+`@code/mirror.render`'s `requires round_trip(render)` at
 `shards/code/mirror.mirror:256`, the same property law applies to
-each `@code/X.macro.shim`:
+each `@code/X.macro.shim` via inheritance from `@code/metalogue`:
 
 ```
 requires round_trip(shim)
@@ -995,7 +1098,14 @@ recognition. The 29 substrate-pull recognitions logged in the rug
 pull doc were Mara doing this by hand; the macro shim's landing
 makes the dispatch automatic.
 
-### 10.1 The dispatch table
+### 10.1 The dispatch table (at the ground)
+
+The dispatch is declared at `@code/metalogue` — universal across
+all species. Each species' per-altitude binding (`@code/X/macro`)
+imports this dispatch via `in @code/metalogue`; the only
+per-species variation is `species_ast`-binding and the per-kind
+emission rule (the language's specific AST shape for `struct` /
+`enum` / `fn` / `mod`).
 
 ```
 shim(D, @code/rust) match D.kind:
@@ -1025,12 +1135,16 @@ Deterministic. Round-trip-witnessed.
 
 ---
 
-## 11. Forward-promise — cross-language code generation
+## 11. Forward-promise — cross-language code generation (per-species matrix retained)
 
-Once `@code/rust/macro` proves the shape (Phase 4b's
-fragmentation-as-generated pilot), the universal pattern extends
-to every other species whose language admits direct AST
-manipulation:
+The species roster below is the per-altitude binding side; the
+universal contract lives at `@code/metalogue`. Each species row
+declares its language's AST type binding (`code/X.ast`) and its
+language's macro-surface community word, but inherits the four
+shims and four laws from the ground. Once `@code/rust/macro`
+proves the shape (Phase 4b's fragmentation-as-generated pilot),
+the universal pattern extends to every other species whose
+language admits direct AST manipulation:
 
 ### 11.1 `@code/elixir/macro`
 
