@@ -86,10 +86,38 @@ format:
 # Old (pre-#43) chain — preserved as comments for the migration log:
 #   cargo check --manifest-path {{MANIFEST_PATH}} --all-targets
 #   cargo test  --manifest-path {{MANIFEST_PATH}}
-pre-commit: build
+#
+# Diff-closure gate (recognition #53, second instance — promoted 2026-06-10):
+# the `mirror kintsugi mirror.spec` chain dispatches cargo-altitude checks
+# whose dependency closure is the Rust crate (bootstrap/). When the staged
+# diff intersects ZERO of {*.rs, Cargo.toml, Cargo.lock}, the closure is
+# empty and the chain over-runs (false-positive friction Reed surfaced
+# across this session — `--no-verify` workaround on pure-.mirror /
+# pure-markdown commits). This block IS the @io byte-level realisation of
+# the typed proposal in:
+#   shards/epistemologic/property/gate_matches_diff_closure.mirror
+#   shards/kintsugi/fracture/gate.mirror
+# The substrate names the rewrite; this recipe applies it.
+pre-commit:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # Diff-closure intersection: the @io closure of `mirror kintsugi mirror.spec`
+    # at this tick is the Rust crate. Compute the staged-diff intersection;
+    # short-circuit when empty.
+    rust_closure=$(git diff --cached --name-only --diff-filter=AM \
+        | grep -E '(\.rs$|^Cargo\.toml$|^Cargo\.lock$|/Cargo\.toml$|/Cargo\.lock$)' \
+        || true)
+    if [ -z "$rust_closure" ]; then
+        echo "✓ pre-commit: diff-closure empty (no .rs, Cargo.toml, Cargo.lock staged)"
+        echo "  skipping mirror kintsugi mirror.spec — gate matches diff closure"
+        echo "  (recognition #53 second instance: @kintsugi/fracture/gate applied at @io)"
+        exit 0
+    fi
+    # Rust closure non-empty: run the substrate-native settlement chain unchanged.
+    just build
     {{MIRROR_BIN_RELEASE}} kintsugi mirror.spec | tee /tmp/mirror-spec-verdict.mirror
-    @{{MIRROR_BIN_RELEASE}} kintsugi --format=json mirror.spec > /tmp/mirror-spec-verdict.json
-    @jq -e '.verdict != "failure"' /tmp/mirror-spec-verdict.json > /dev/null || ( \
+    {{MIRROR_BIN_RELEASE}} kintsugi --format=json mirror.spec > /tmp/mirror-spec-verdict.json
+    jq -e '.verdict != "failure"' /tmp/mirror-spec-verdict.json > /dev/null || ( \
         echo "✖ mirror kintsugi mirror.spec: verdict failure — see /tmp/mirror-spec-verdict.mirror" >&2; \
         exit 1 )
 
