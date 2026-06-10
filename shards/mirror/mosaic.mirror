@@ -157,6 +157,15 @@ settle(emitter) -> imperfect(au, error, transparency) { \ }
 # Phase-bounded (mosaic.md §8): the @io.cargo footprint shrinks
 # release over release; v1.0 has no cargo @io call (mosaic IS the
 # build). Sketch only — full cargo invocation is Phase D work.
+#
+# Per-target action dispatch (insight #43, 2026-06-09): when a target's
+# `check <action>` directive (declared in shards/mirror/spec.mirror,
+# v1+) names a specific @io/cargo action — fmt_check, clippy, test,
+# audit, check, build — shift routes to that action instead of the
+# altitude's default `build`. The pre-commit chain is five such
+# settlements composed under transparency<p>; the bootstrap dispatcher
+# walks them in declaration order today, eigensheaf-Laplacian
+# parallelism analysis lands at recognition #44+.
 shift @code/rust(resolved) -> rust_emitter {
   workspace: project_workspace(resolved),
   invocation: @io.cargo.build {

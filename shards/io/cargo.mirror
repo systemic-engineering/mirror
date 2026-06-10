@@ -143,6 +143,28 @@ test(manifest: manifest, env: env) -> imperfect { \ }
 # contract; surface-level type/borrow opacity.
 check(manifest: manifest) -> imperfect { \ }
 
+# fmt_check — `cargo fmt --check`. Read-only formatter verification;
+# exit 0 when every source is rustfmt-clean. Same imperfect contract;
+# opacity_map on non-zero locates the unformatted source(s) (stderr
+# parse: the `Diff in <file>` records cargo fmt emits). Substrate-pull
+# recognition #43 (2026-06-09): pre-commit chain altitude 1.
+fmt_check(manifest: manifest) -> imperfect { \ }
+
+# clippy — `cargo clippy`. Lint verification at the @code/rust
+# altitude. Same imperfect contract; opacity_map on non-zero is the
+# clippy diagnostics (file:line:col-located warnings/errors). Substrate-
+# pull recognition #43 (2026-06-09): pre-commit chain altitude 3.
+clippy(manifest: manifest) -> imperfect { \ }
+
+# audit — `cargo audit`. Lockfile-vs-advisory-database verification.
+# Same imperfect contract; opacity_map on non-zero names the
+# advisory IDs (RUSTSEC-NNNN-NNNN) the lockfile matches. Lifted at
+# @release altitude (the lockfile is the @release artifact), but the
+# pre-commit chain runs it as an early gate so a dependency-introducing
+# commit fails fast. Substrate-pull recognition #43: pre-commit chain
+# altitude 5.
+audit(manifest: manifest) -> imperfect { \ }
+
 # lockfile_capture — read Cargo.lock and content-address it via
 # @mirror/store. The return is the substrate `ref`; the bytes are
 # captured at the @io boundary. NOT substrate truth — see header.
@@ -164,5 +186,8 @@ out cargo_exit_to_transparency
 out build
 out test
 out check
+out fmt_check
+out clippy
+out audit
 out lockfile_capture
 out metadata

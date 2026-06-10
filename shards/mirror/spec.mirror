@@ -127,6 +127,24 @@ cli(body: cli) -> cli_decl { \ }
 # settlements.
 needs(targets: [ref]) -> needs_decl { \ }
 
+# check <action-ref> — names the @io action the target dispatches
+# (the cargo subcommand at @code/rust altitude). Optional; when
+# omitted, the target dispatches the altitude's default (cargo check
+# for @code/rust today).
+#
+# The substrate-pull recognition (insight #43, 2026-06-09): the
+# pre-commit chain (fmt / check / clippy / test / audit) IS five
+# settlements on the build manifold, one per altitude action. Per
+# shards/io/cargo.mirror these lift to `imperfect` through the same
+# `cargo_exit_to_transparency` contract; the check directive is how
+# mirror.spec names which one to run per target.
+#
+# Resolution: the `action` ref is looked up in the altitude's @io
+# contract (today: shards/io/cargo.mirror). Substrate-pull-correct
+# values for @code/rust: check, test, build, fmt_check, clippy, audit
+# (per shards/io/cargo.mirror's declared actions).
+check(action: ref) -> check_decl { \ }
+
 out @mirror/spec
 out project
 out source
@@ -138,3 +156,4 @@ out altitude
 out emit
 out cli
 out needs
+out check

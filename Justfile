@@ -57,21 +57,41 @@ default:
 format:
     cargo fmt --manifest-path {{MANIFEST_PATH}} --all
 
-# Pre-commit gate — type-check + full test suite. Non-zero exit signals
-# failure to the commit-msg hook so 🔴 vs 🟢 phase validation works.
+# Pre-commit gate — substrate-native settlement of the pre-commit
+# chain via `mirror kintsugi mirror.spec`.
 #
-# Deliberately omitted today (will tighten incrementally):
-#   - `cargo fmt --check`: the codebase is not yet fully rustfmt'd. Use
-#     `just format` to format; we'll gate-enforce once formatting is a
-#     separate commit.
-#   - `cargo clippy -- -D warnings`: the codebase carries lints today
-#     (32+ as of 2026-06-01). Use `just lint` to see them; gate when zero.
-#   - `mirror craft --strict boot`: dogfood gate. Currently the boot tree
-#     has Dark regions (in-progress migration). Use `just compile-strict`
-#     to surface them; gate when boot/ is total.
-pre-commit:
-    cargo check --manifest-path {{MANIFEST_PATH}} --all-targets
-    cargo test --manifest-path {{MANIFEST_PATH}}
+# Per insight #43 (2026-06-09 substrate-pull, recognition that mirror IS
+# already a content-addressed declarative build system; the 5-minute
+# pre-commit chain was the substrate-not-consumed problem). The
+# pre-commit altitudes (fmt / check / lint / test / audit) are
+# declared as `target` blocks in mirror.spec; mirror.spec walks the
+# manifold; per-target @io/cargo actions dispatch through
+# shards/io/cargo.mirror's contract.
+#
+# First tick (this commit): every check altitude falls back to spawning
+# cargo at the @io boundary. The substrate is consumed for the DISPATCH;
+# subsequent ticks replace per-altitude execution with substrate-native
+# settlement (content-addressed-skip; eigensheaf parallelism;
+# transparency<p> aggregation) as recognitions #44+ land. The
+# performance improvement is gradual and altitude-by-altitude; the
+# architecture is in place from tick one.
+#
+# Verdict gating: the binary exits 0 when the envelope emits cleanly
+# (per T11.2.5; the workflow decides what counts as pass). The
+# substrate-pull-correct gate IS jq-at-the-@io-boundary, matching the
+# kintsugi-ci-v0.1 §5.3 `kintsugi-ci-local` recipe shape. mirror-text
+# is captured for the operator; JSON is the format jq reads to drive
+# the exit.
+#
+# Old (pre-#43) chain — preserved as comments for the migration log:
+#   cargo check --manifest-path {{MANIFEST_PATH}} --all-targets
+#   cargo test  --manifest-path {{MANIFEST_PATH}}
+pre-commit: build
+    {{MIRROR_BIN_RELEASE}} kintsugi mirror.spec | tee /tmp/mirror-spec-verdict.mirror
+    @{{MIRROR_BIN_RELEASE}} kintsugi --format=json mirror.spec > /tmp/mirror-spec-verdict.json
+    @jq -e '.verdict != "failure"' /tmp/mirror-spec-verdict.json > /dev/null || ( \
+        echo "✖ mirror kintsugi mirror.spec: verdict failure — see /tmp/mirror-spec-verdict.mirror" >&2; \
+        exit 1 )
 
 # Pre-push gate. Re-runs the suite (coverage tooling not wired yet — when it
 # is, this recipe migrates to cargo-llvm-cov + a threshold check).

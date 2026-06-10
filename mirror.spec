@@ -27,6 +27,7 @@ project mirror.spec {
     name     "mirror"
     altitude @code/rust
     emit     cargo
+    check    check
 
     cli {
       # Mirror is the substrate compiler. It reads grammars, settles
@@ -53,6 +54,56 @@ project mirror.spec {
     }
   }
 
+  # === pre-commit chain (insight #43 substrate-pull, 2026-06-09) ===
+  #
+  # The five pre-commit check altitudes lifted from `just pre-commit`'s
+  # shell-out chain into substrate `target` blocks. Each target is one
+  # @io/cargo action; mosaic settles the chain by walking the targets
+  # and dispatching the named cargo subcommand per
+  # shards/io/cargo.mirror's contract.
+  #
+  # First tick (this commit): each target falls back to spawning cargo
+  # at the @io boundary; the substrate is consumed for the DISPATCH
+  # only. Subsequent ticks replace per-altitude execution with
+  # substrate-native settlement (content-addressed-skip; eigensheaf
+  # parallelism; transparency<p> aggregation) as recognitions #44+
+  # land.
+  #
+  # Ordering note: substrate-pull says altitudes settle in dependency
+  # order. cargo check → cargo test → cargo clippy (clippy includes a
+  # check pass); cargo fmt --check is independent (formatter altitude);
+  # cargo audit reads the lockfile (@release-adjacent). The bootstrap
+  # dispatcher walks targets in declaration order today; the eigensheaf-
+  # Laplacian parallelism analysis lands at recognition #44+.
+
+  target fmt {
+    name     "mirror"
+    altitude @code/rust
+    emit     cargo
+    check    fmt_check
+  }
+
+  target lint {
+    name     "mirror"
+    altitude @code/rust
+    emit     cargo
+    check    clippy
+  }
+
+  target tests {
+    name     "mirror"
+    altitude @code/rust
+    emit     cargo
+    check    test
+  }
+
+  target audit {
+    name     "mirror"
+    altitude @release
+    emit     cargo
+    check    audit
+  }
+
   target action {
     name     "build"
     altitude @ci/github
@@ -69,6 +120,10 @@ project mirror.spec {
   settle_on {
     binary.compiles
     binary.tests_pass
+    fmt.formats
+    lint.lints
+    tests.tests_pass
+    audit.advisories_clean
     action.validates
     release.signs
     total_transparency.weight == 0

@@ -66,4 +66,13 @@ grammar @mirror/spec("spec") {
   project emit
   project manifest
   project needs
+
+  # `check IDENT` — names which @io/cargo (or future altitude) action
+  # the target dispatches. Optional; when present, the dispatcher uses
+  # the named action (cargo's subcommand) instead of the default
+  # (`cargo check`). Per shards/io/cargo.mirror's declared actions:
+  # `check` / `test` / `build` exist today; `fmt_check` / `clippy` /
+  # `audit` extend the surface to cover the pre-commit chain
+  # (recognition #43, the build-system substrate-pull).
+  project check
 }
