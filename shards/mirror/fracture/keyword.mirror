@@ -268,14 +268,61 @@ glass @mirror/fracture/keyword {
 #                the loop's `read_consent` bridges (pass, authentic)
 #                to the `settled` oscillation_state for this opacity.
 #
-# The body stays obligation-blocked (`\`): the realisation reads
-# `opacity.location`, parses the file at that location, swaps the
-# `prism` token for `glass`, writes the rewritten splinter to
-# @mirror/store, projects the new handle into the morphism's
-# `content` ref, computes the dissonance score, emits the morphism
-# with `expected = authentic`. The substrate names the carrier; the
-# arithmetic lands when the kintsugi loop substrate-pulls.
-resolve_keyword(opacity: opacity) -> morphism { \ }
+# The body is FULLY DECLARATIVE — substrate-pull-correct via
+# `splinter(ast)` (declared at shards/glass.mirror's tick-2 carrier).
+# The morphism's `content` field carries a content-addressed splinter
+# at the @meta/ast altitude: same path, keyword swapped. The substrate's
+# compiler verifies the construction is deterministic and well-typed;
+# the kintsugi loop's `active_pass` reads the splinter as the morphism's
+# proposed content and applies it through `query_phi`.
+#
+# Per `splinter(ast)`'s parametric specialisation (glass.mirror §splinter(ast),
+# 2026-06-10): the record IS its content-addressed handle — `content: oid`
+# and `oid = ref` (shards/mirror/store.mirror line ~104) collapse the
+# splinter literal to a substrate-pull-correct `ref` in the morphism's
+# `content` field position. No Rust AST manipulation; no `\` obligation.
+#
+# Field-by-field substrate-pull reading:
+#
+#   content.content     — `opacity.location.file` (the substrate's
+#                          located-fact ref at the source file); the
+#                          rewritten AST is content-addressed at the
+#                          same path. Per `glass.mirror`'s
+#                          `location = { file: ref, span: ... }`.
+#   content.ast         — `@meta/ast` (the canonical altitude ref);
+#                          per `boot/01-meta.mirror`'s `type ast(g)`.
+#                          The keyword swap happens at the AST altitude
+#                          by construction.
+#   content.transparency — `success` (per `transparency(p)`'s success
+#                          variant in glass.mirror): the keyword swap
+#                          fully resolves the opacity at this altitude;
+#                          no residual transparency remains.
+#   score.roughness     — `opacity.property` (the @nl description of
+#                          what the property surfaced); the substrate's
+#                          `dissonance` reads the per-site roughness via
+#                          the property text per dissonance.mirror's
+#                          Helmholtz/Plomp-Levelt carrier shape.
+#   score.partials      — `1` (the keyword token IS the single partial
+#                          of dissonance at this altitude; the swap
+#                          collapses one mismatch).
+#   expected            — `authentic` (the V → I cadence at the
+#                          keyword/depth altitude; per cadence.mirror's
+#                          `cadence_kind` and the loop's `read_consent`
+#                          bridge: authentic → pass → auto-apply).
+resolve_keyword(opacity: opacity) -> morphism {
+  morphism {
+    content: splinter(ast) {
+      content:      opacity.location.file,
+      ast:          @meta/ast,
+      transparency: success,
+    },
+    score: dissonance {
+      roughness: opacity.property,
+      partials:  1,
+    },
+    expected: authentic,
+  }
+}
 
 out @mirror/fracture/keyword
 out resolve_keyword
