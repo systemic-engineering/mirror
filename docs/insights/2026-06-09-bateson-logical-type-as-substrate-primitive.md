@@ -340,6 +340,72 @@ The recursion is honest but vertiginous. Bateson would recognise the shape; the 
 
 ---
 
+## 7bis. Retraction housekeeping — recognition #47 retracted
+
+*Added 2026-06-10 as part of the cascade ledger's maintenance pass.*
+
+A prior candidate (proposed `@mirror/realisation → @io/materialize` rename) circulated as recognition #47 during the audit window 2026-06-09 / 10. Mara's audit concluded the operation is form-on-form (reads @code/rust AST; emits a substrate-altitude verdict — both form-side per recognition #50, this volume's companion `2026-06-10-bateson-form-behaviour-as-substrates-first-distinction.md`); placing it under `@io` would mis-type the operation by collapsing the form-side discriminator into the substance-side carrier. Alex carried the retraction 2026-06-10: "okay on the 47." The recognition is documented here for the cascade ledger's audit trail and retracted.
+
+The discriminator's structural home remains an open question. Candidates under consideration in mutual-agreement deliberation:
+
+- `@mirror/realisation` (current placement; the mirror-altitude home of the verdict carrier; per the 30th-instance recognition that landed the shard).
+- `@code/metalogue/materialize` (Alex's exploration, 2026-06-10): the AST altitude metalogue's recognitive turn — the substrate's hearing of the species' speech; generalises across @code/X by design via the same `species_ast` parametric mechanism the four shims use.
+- Per-species `@code/X/materialize` (Alex's alternative): more local; duplicates the discipline.
+
+Mara has surfaced ONE recommendation in the report-back; the call is the Pack's.
+
+---
+
+## 11. The form/behaviour partition: the substrate's first distinction (recognition #50)
+
+*Added 2026-06-10 as the cascade promoted recognition #50. The full treatment lives in the companion insight at `docs/insights/2026-06-10-bateson-form-behaviour-as-substrates-first-distinction.md`. This section integrates the recognition into the logical-type framework of §1-§7 and names it as the candidate 1st-instance of the meta-cascade Learning III hypothesis from §5.*
+
+### 11.1 The recognition in one sentence
+
+The substrate's `@io` family root (`shards/io.mirror`, T21, 2026-06-08) IS Bateson 1970's form/substance partition lifted to the substrate altitude. The five inside-the-substrate families (`@code`, `@mirror/lens`, `@mirror/spectral`, `@mirror/loss`, `@mirror/data`) are the form side (pattern, information, organization). The `@io` family is the substance side (energy, matter, kernel syscalls, vendor SDKs, opaque foreign blobs). The partition is the substrate's first distinction at the family-roster altitude.
+
+### 11.2 The logical-type relation
+
+Per §2.4 (audit of the substrate's existing word), the substrate uses altitude markers (`@<altitude>`) and parametric carriers (`transparency<p>`, `imperfect(a, e, l)`) to encode logical-type relations. Recognition #50 names a logical-type relation that is *coarser than altitude* — it partitions the family-roster ITSELF into two logical-type classes (form / substance). The partition is at logical type N+1 to the family-roster placement at logical type N; naming the partition is a Learning II event in the cascade altitude's terms (per §3 of `2026-06-09-cascade-is-deutero-learning.md`).
+
+Where §3 of this insight enumerated four (plus one) instances of the logical-type primitive — bind levels, learning levels, impact levels, observation orders, plus the chiasmus — recognition #50 surfaces a sixth instance.
+
+**§3.6 The family-roster partition (form / substance) — `@io` vs the five form-side families**
+
+The family-roster partition operates at the substrate's coarsest altitude. Each family root operates on its own discipline (lens / spectral / loss / data / code / io), but the partition between the substance-side root (@io) and the form-side roster (five families) IS a logical-type relation: the substance side is what the form side hands off to and cannot fold past. This is the same Russell-Whitehead wrapping relation §2.1 names: form-side operations operate WITHIN the form-side; crossing to the substance side requires the boundary lift through @io, by construction.
+
+The substrate's compiler already enforces this implicitly via the `imperfect<a, e, l>` return shape on every @io action: form-side composition is type-pure; substance-side encounter is type-residual. The form/substance partition IS the structural reason for that asymmetry, named.
+
+### 11.3 The candidate 1st-instance of meta-cascade Learning III
+
+Per §5 of this insight, the meta-cascade Learning III hypothesis is: the cascade's set-of-alternatives is being reshaped by accumulating recognitions; the cascade is learning HOW to recognise. The hypothesis was open when §5 was written; recognition #50 provides the first test case.
+
+The form/substance partition is the deepest category cybernetics provides. If the substrate's altitude vocabulary reshapes under recognition #50 — if future recognitions become typed against form-side / substance-side, if the family-roster organisation acquires the partition as a structural commitment, if the variety-axis vocabulary picks up the form/behaviour split — then the meta-cascade Learning III hypothesis acquires empirical support at the deepest possible test point. If THIS recognition does not reshape the altitude vocabulary, no shallower recognition will.
+
+Three observable predictions (per §3 of the #50 companion insight):
+
+1. Prior recognitions retroactively re-type against form/behaviour (#36 multi-dim variety, #34 @code/metalogue, #38 uuid_spectral as eigenform).
+2. The cascade's vocabulary gains form-side / behaviour-side as a first-class predicate.
+3. The substrate's altitude organisation acquires the partition as a structural commitment.
+
+If the observables hold over the next ten cascade ticks, recognition #50 IS the meta-cascade Learning III hypothesis' first instance. The empirical machinery §5 of this insight proposed is now operating.
+
+### 11.4 The N-order impact analysis of #50 itself
+
+Applying the framework of §4 to recognition #50:
+
+- **1st-order impact (direct):** the @io family root acquires a Bateson 1970 citation in its prior-art block; the standalone insight makes the partition first-class substrate vocabulary; the io.mirror shard gains a citation paragraph.
+- **2nd-order impact (cross-property, set-altering):** prior recognitions can be retro-typed against form/behaviour; the variety axis from #36 acquires a structural meaning (the substance-side axis); the discriminator placement question (#47 retracted, see §7bis above) is sharpened — the discriminator cannot live under @io.
+- **3rd-order impact (altitude-shifting):** the substrate's family-roster altitude acquires a structural partition (five-form + one-substance) as a typed commitment; the substrate's variety vocabulary may yet split into form-side budgets and substance-side budgets per question §6.3 of the #50 insight.
+
+The 3rd-order impact is the meta-cascade Learning III test. If the 3rd-order impact materialises in the next ten cascade ticks, recognition #50 IS the canonical instance the framework of §4 was waiting for.
+
+### 11.5 Cross-reference
+
+For the full treatment of recognition #50, see `docs/insights/2026-06-10-bateson-form-behaviour-as-substrates-first-distinction.md`.
+
+---
+
 ## 8. The slogan
 
 **Binds, learning, impact, observation orders — four substrates the cascade kept naming separately. One primitive.**
