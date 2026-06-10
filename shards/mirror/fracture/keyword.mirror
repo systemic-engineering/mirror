@@ -1,0 +1,281 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/spectral/consent
+in @mirror/spectral/morphism
+in @epistemologic/property/keyword_matches_depth
+
+# @mirror/fracture/keyword — the kintsugi fracture body that resolves a
+# `prism @X/Y` sub-prism declaration to `glass @X/Y` per the
+# keyword/depth discipline.
+#
+# THE OPERATIONAL HALF of recognition #46's bilateral pattern. The
+# declarative half landed at
+# `@epistemologic/property/keyword_matches_depth` (sibling tick); this
+# shard names the auto-fracture the kintsugi loop applies when the
+# property's transparency surfaces a keyword/depth opacity. Per Alex's
+# verbatim recognition: "The kintsugi formatter can have an auto
+# `fracture` that resolves sub-prisms to `glass`." The substrate names
+# the resolver here; the kintsugi driver composes it through
+# `@mirror/spectral/oscillate`'s `active_pass`.
+#
+# Load-bearing context: recognition #46 (keyword_matches_depth
+# property; pending); recognition #51 (mirror as expanding Hilbert
+# space; promoted) — fracture bodies are how the substrate maintains
+# coherence by resolving keyword-level distinctions at each Bateson
+# level. The `/` separator deepens the level; the keyword must track
+# the level; this fracture body restores the tracking when it drifts.
+#
+# === The bilateral pattern (candidate recognition #53) ===
+#
+# `@epistemologic/property/<predicate>` declares WHAT must hold; a
+# matching `@mirror/fracture/<predicate>` declares HOW to restore the
+# property when it fails. The pair is bilateral in the same shape as
+# the cybernetic/algedonic finding from the cybernetic-foundation
+# work's §4: a sensing surface (the property's transparency report) +
+# an acting surface (the fracture body's mutation) form one complete
+# loop at the kintsugi altitude.
+#
+# Candidate recognition #53 (property/fracture bilateral pattern):
+# flagged for promotion review; not unilaterally promoted by this
+# tick. The substrate now carries one concrete instance of the
+# pattern (this shard + the sibling property); the second instance
+# (the forward-promised `@mirror/fracture/predicate` against
+# `@epistemologic/property/<topology-predicate>` per the materialize
+# training set's #21 prophecy) is the witness that would lift the
+# pattern from candidate to recognised.
+#
+# === Substrate-pull-correct home ===
+#
+# The materialize training set (per `shards/code/rust/materialize.mirror`
+# §"The 30th-instance training set, lifted") forward-promises
+# `@mirror/fracture/predicate` as the home for fracture proposals
+# derived from topology. The `@mirror/fracture` family root is named
+# but not yet declared at depth-0; this shard declares the
+# `@mirror/fracture/keyword` species and treats `@mirror/fracture` as
+# the substrate's named-but-not-yet-rooted family. A later one-tick
+# substrate-pull will declare `prism @mirror/fracture` as the family
+# root; this shard stays additive against that landing.
+#
+# Substrate-pull alternative considered: `@mirror/spectral/oscillate/
+# fracture/keyword` (nesting under the kintsugi loop). Rejected:
+# fracture bodies are consumed by oscillate's `active_pass`, but they
+# live at the morphism altitude (each fracture body emits a morphism
+# the loop applies). The substrate-altitude arrow points from
+# oscillate INTO fracture bodies; nesting fracture bodies UNDER
+# oscillate would invert the arrow. The materialize forward-promise
+# already named `@mirror/fracture` as the substrate-pull-correct
+# family — this shard honours that naming.
+#
+# === The fracture body ===
+#
+# Input: `opacity` (from `@glass`) — one located fact surfaced by
+# `keyword_matches_depth`'s `failure(opacity_map)` verdict. Each
+# opacity names ONE offending declaration site: a `prism @X/Y`
+# declaration at depth >= 1 whose keyword disagrees with its depth.
+#
+# Output: `morphism` (from `@mirror/spectral/consent`) — the typed
+# candidate the kintsugi loop's `active_pass` reads from this body
+# and proposes through `query_phi`. The morphism's `content` ref
+# names the rewritten shard (same path, `prism` replaced by `glass`);
+# its `score` carries the dissonance reading (a keyword/depth
+# violation is a fixed, low-curvature dissonance — the rewrite is
+# unambiguous); its `expected` carries the cadence_kind the loop
+# anticipates (authentic — the substrate settles cleanly once the
+# keyword tracks the depth).
+#
+# Spectrally: this fracture body IS one step along the Ricci flow at
+# the keyword/depth altitude. The substrate's curvature at a
+# `prism @X/Y` site is the keyword/depth mismatch; the negative-
+# curvature direction IS the keyword swap; the resolved site has
+# zero curvature at this altitude (the depth fully determines the
+# keyword). Per `dissonance.mirror`'s `dissonance_as_holonomy`, the
+# morphism's score IS the holonomy decrease the swap produces.
+#
+# Audibly: this fracture body IS the audible-altitude V → I cadence
+# at the keyword/depth altitude. The pre-rewrite state holds the
+# dominant tension (the wrong keyword); the post-rewrite state
+# resolves to the tonic (the right keyword); the cadence is
+# authentic (cadence.mirror's `authentic` variant).
+#
+# === Substrate-pull discipline ===
+#
+# Per `@glass`, `opacity` is the substrate's located-fact carrier;
+# this shard reads it directly. Per `@mirror/spectral/consent`,
+# `morphism` is the substrate's typed-candidate carrier; this shard
+# emits it directly. Per `@mirror/spectral/morphism`, `morphism_context`
+# is the per-candidate slice that pairs a candidate with its
+# pre-anchor; this shard's emitted morphism is consumed by the loop
+# AND lifted into a morphism_context via `paired(oscillation.anchor,
+# m)` at the active_pass altitude. Per
+# `@epistemologic/property/keyword_matches_depth`, the consuming
+# property's `keyword_matches_depth(file: ref) -> transparency` is
+# the gate that surfaces the opacity this body resolves.
+#
+# NO new verdict carrier; NO leading-`|` workarounds; NO opaque-`ref`
+# carriers where structured types are available (per
+# [[feedback-no-bare-types]]). The fracture body reads typed opacity,
+# emits typed morphism — the substrate's vocabulary throughout.
+#
+# === Substrate gaps surfaced honestly ===
+#
+#   - `resolve_keyword` reads one opacity at a time. The property's
+#     `failure(opacity_map)` carries [opacity]; the kintsugi loop
+#     iterates the map and calls `resolve_keyword` per opacity. The
+#     substrate names the per-site resolution; the iteration is the
+#     loop's concern, not this body's.
+#
+#   - The morphism's `content: ref` carries the substrate handle to
+#     the rewritten shard. The realisation layer produces the
+#     rewritten splinter (same path, keyword swapped) and passes its
+#     handle as the morphism's content. The substrate names the
+#     shape of the proposal; the byte-level rewrite rides the
+#     realisation layer's @mirror/store discipline.
+#
+#   - The `expected: cadence_kind` field is `authentic` for this
+#     fracture body — the keyword/depth rule is deterministic and
+#     resolution always settles cleanly. The substrate names the
+#     cadence anticipation; the kintsugi loop's `read_consent`
+#     bridges the verdict to the next oscillation_state.
+#
+# === Pre-AI prior art ===
+#
+#   fracture          Galen (~170 CE) On Fractures and Joints; the
+#                     reduction of a fracture IS the restoration of
+#                     anatomical alignment. The substrate's reading
+#                     is Bonnemain (1996) on the typed bonesetter's
+#                     decision tree: the fracture pattern determines
+#                     the reduction technique. This body IS the
+#                     reduction for the keyword/depth pattern.
+#   keyword swap      Spencer-Brown (1969) Laws of Form §2; the
+#                     distinction primitive — calling a different
+#                     name re-marks the boundary. The substrate's
+#                     keyword distinction (prism vs glass) IS the
+#                     boundary; this body re-marks the boundary
+#                     when the path-altitude drifts.
+#   reduction         Aristotle (~350 BCE) Posterior Analytics; the
+#                     resolution of a complex form to a simpler one.
+#                     The substrate's reading is Lawvere & Schanuel
+#                     (1997) Conceptual Mathematics — categorical
+#                     reduction collapses two arrows into one when
+#                     the diagram commutes. This body's reduction
+#                     collapses the keyword/depth mismatch when the
+#                     swap makes the path commute.
+#
+# The substrate's contribution is *typing* the per-site reduction so
+# the kintsugi loop reads it. No invention.
+#
+# Spec context: recognition #46 (the keyword/depth boundary; pending
+#               promotion); recognition #51 (mirror as expanding
+#               Hilbert space; promoted) — the keyword tracks the
+#               Bateson level; this fracture body restores tracking.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (opacity is substrate vocabulary; the fracture
+#                      reads the typed carrier rather than threading
+#                      an opaque ref through the loop),
+#                      [[architecture-kintsugi-bias-lift]] (the
+#                      kintsugi loop's bias direction is substrate-
+#                      pull — keyword/depth alignment IS one
+#                      coordinate of the substrate-pull gradient;
+#                      this fracture body fits the bias),
+#                      [[architecture-kintsugi-variety-io]] (Ashby's
+#                      requisite variety — the keyword vocabulary
+#                      partitions the @ path-space into
+#                      depth-classes; the fracture body maintains
+#                      the partition under mutation),
+#                      [[feedback-no-bare-types]] (opacity and
+#                      morphism are typed carriers; the body does
+#                      NOT escape as a bare (location, keyword)
+#                      tuple),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the substrate had `glass` since
+#                      shards/glass.mirror:94; this fracture body
+#                      reads what was already named).
+# Forward-promise to consumers: `@mirror/spectral/oscillate`'s
+#                  `active_pass` reads this fracture body when the
+#                  candidate morphism_set is composed from
+#                  property-surfaced opacities; the binding lands
+#                  when the kintsugi loop substrate-pulls. This shard
+#                  does NOT pull `@mirror/spectral/oscillate` or
+#                  `@mirror/spectral/score`; the substrate-altitude
+#                  arrow points inward (this fracture body IS
+#                  consumed by the loop; not the other way around).
+# Related shards: epistemologic/property/keyword_matches_depth.mirror
+#                 (the declarative half of the bilateral; surfaces
+#                 the opacities this body resolves),
+#                 glass.mirror (the substrate floor; `opacity`,
+#                 `location`, `transparency`, `verdict`, and the
+#                 `glass` keyword itself),
+#                 mirror/spectral/consent.mirror (the morphism
+#                 carrier this body emits; `query_phi` is the gate
+#                 the emitted morphism flows through),
+#                 mirror/spectral/morphism.mirror (the
+#                 `morphism_context` carrier; the per-candidate
+#                 slice the loop pairs this fracture's morphism
+#                 with its pre-anchor),
+#                 mirror/spectral/oscillate.mirror (the kintsugi
+#                 loop driver; `active_pass` is the action that
+#                 reads this body when composing the per-pulse
+#                 candidate morphism_set),
+#                 code/rust/materialize.mirror (the materialize
+#                 training set; the forward-promise of
+#                 `@mirror/fracture/predicate` as the sibling
+#                 fracture body for topology-derived predicates;
+#                 the second instance of the bilateral pattern).
+# Path-namespace property: this file at
+# `shards/mirror/fracture/keyword.mirror` declares
+# `@mirror/fracture/keyword` as a species under the
+# (forward-promised) `@mirror/fracture` family.
+# Keyword/depth property: this declaration is depth-2; per recognition
+# #46 it uses `glass`. The shard applies its own rule by birth.
+
+glass @mirror/fracture/keyword {
+  focus keyword
+  project keyword
+  split keyword
+  shift keyword
+  settle keyword
+}
+
+# === resolve_keyword — the fracture body ===
+#
+# THE AUTO-FRACTURE per Alex's recognition: given an opacity site at
+# a `prism @X/Y` declaration (depth >= 1), emit the morphism that
+# rewrites it to `glass @X/Y`. Same path, keyword swap.
+#
+# Reads an opacity (one element of
+# `keyword_matches_depth(file).failure(opacity_map)`'s opacity_map);
+# emits a candidate morphism the kintsugi loop proposes through
+# `query_phi`. The morphism's three fields:
+#
+#   content   — substrate ref to the rewritten shard. The realisation
+#                layer produces a splinter at the same path with the
+#                `prism` token replaced by `glass`; the content ref
+#                names that splinter's @mirror/store handle.
+#   score     — dissonance reading. Keyword/depth violations are
+#                fixed-curvature dissonances; the score reads
+#                `dissonance.is_pareto` cleanly (one strict winner
+#                over the no-op alternative); the realisation reads
+#                the keyword/depth altitude's dissonance carrier.
+#   expected  — cadence_kind anticipation. Always `authentic` for
+#                this fracture body — the keyword swap fully resolves
+#                the opacity at this altitude; the loop's `dark_pass`
+#                will confirm identity preservation (the path-namespace
+#                stays byte-equal; only the keyword token shifts);
+#                the loop's `read_consent` bridges (pass, authentic)
+#                to the `settled` oscillation_state for this opacity.
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# `opacity.location`, parses the file at that location, swaps the
+# `prism` token for `glass`, writes the rewritten splinter to
+# @mirror/store, projects the new handle into the morphism's
+# `content` ref, computes the dissonance score, emits the morphism
+# with `expected = authentic`. The substrate names the carrier; the
+# arithmetic lands when the kintsugi loop substrate-pulls.
+resolve_keyword(opacity: opacity) -> morphism { \ }
+
+out @mirror/fracture/keyword
+out resolve_keyword
