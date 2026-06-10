@@ -137,11 +137,11 @@ The form/substance partition is the substrate's **first** distinction (the parti
 
 This may yet warrant a `@epistemologic/cybernetic/form_substance_partition` property if a consumer pulls one. The substrate-pull discipline says: do not invent the property; surface the structural category and wait for the consumer.
 
-### 4.3 It does not retroactively change `@mirror/realisation`
+### 4.3 It does retroactively re-home `@mirror/realisation`
 
 Recognition #47 (proposed `@mirror/realisation → @io/materialize` rename) was audited in Mara's prior run and **retracted**. The discriminator's operation is form-on-form (reads @code/rust AST, emits a substrate verdict — both form); placing it under `@io` would mis-type the operation by collapsing the form-side discriminator into the substance-side carrier. The recognition #50 audit confirms the #47 retraction: `@io` is the substance/behaviour side; the discriminator is on the form side at every altitude it operates. The two recognitions co-document the boundary.
 
-The discriminator's structural home remains an open question (the audit surfaced `@code/metalogue/materialize` as a candidate; the placement is in mutual-agreement deliberation between Alex and Mara). Recognition #50 sharpens the audit by establishing that the discriminator CANNOT live under `@io` — anywhere else is on the table.
+The discriminator's placement landed 2026-06-10: **`@code/metalogue/materialize`** (`shards/code/metalogue/materialize.mirror`), with the Rust-altitude binding at **`@code/rust/materialize`** (`shards/code/rust/materialize.mirror`). Alex's response to Mara's recommendation was verbatim "Make it so." The metalogue-turn-pair recognition (2026-06-10) names the structural argument: `@code/metalogue` holds both directions of one conversation (shim direction at `@code/metalogue` + `@code/X/macro`; recognitive direction at `@code/metalogue/materialize` + `@code/X/materialize`); the discriminator IS the recognitive turn at the same ground. The prior home (`shards/mirror/realisation.mirror`) is a one-tick deprecation pointer pending the cleanup tick. Carrier renames: `altitude → partition` (path-space overload), `realisable_file → materialised_file`, `is_substrate_realisable → is_materialisable`.
 
 ### 4.4 It does not resolve the #38↔#50 collapse question
 
@@ -219,7 +219,7 @@ The meta-question. This insight is a `.md` file at the form-side of the substrat
 - `docs/insights/2026-06-09-mirror-as-content-addressed-build-system.md` (#43) — mirror IS a content-addressed build system; the @io decoherence boundary (recognition #44 candidate) IS the form/substance boundary at the build-pipeline altitude.
 - `shards/io.mirror` — the family root whose Bateson ancestor recognition #50 names. The shard's prose ("AS-MIRROR vs AS-NON-MIRROR-WORLD") IS Bateson 1970 in substrate vocabulary.
 - `shards/glass.mirror` — the typed verdict surface; `imperfect<a, e, l>` carries the residual that propagates across the form/substance boundary.
-- `shards/mirror/realisation.mirror` — the discriminator; per #50 the operation is form-on-form (NOT under @io per the #47 retraction). The placement question remains open; #50 sharpens the audit.
+- `shards/code/metalogue/materialize.mirror` — the discriminator (re-homed 2026-06-10 from `shards/mirror/realisation.mirror`); per #50 the operation is form-on-form (NOT under @io per the #47 retraction); the metalogue-turn-pair recognition (2026-06-10) named the substrate-pull-correct home at `@code/metalogue`'s recognitive turn, paired with the shim direction at `@code/metalogue` + `@code/X/macro`. The prior `shards/mirror/realisation.mirror` is a one-tick deprecation pointer pending the cleanup tick.
 - `shards/epistemologic/cybernetic.mirror` — the cybernetic-property family root; recognition #50 grounds the @io family root structurally but does not yet propose a `@epistemologic/cybernetic/form_substance_partition` property (substrate-pull discipline: wait for the consumer).
 - Memory `architecture-connes-spectral-triple` — the spectral triple (A, H, D); the form/substance partition coarsens the triple at the family-roster altitude.
 - Memory `architecture-kintsugi-variety-io` — Ashby's law on the @io axis; per #50 this IS the substance-side variety constraint.

@@ -105,7 +105,7 @@ substrate has variety on:
 
 - #26 `shift(oid, T)` — the typed-capability primitive (capability axis)
 - #29 presence IS the signal at SCM_RIGHTS — kernel typed-capability since 4.2BSD 1983
-- #30 `@io`/`@mirror/realisation` discriminator — the substrate/boundary axis
+- #30 `@io`/`@code/metalogue/materialize` discriminator (T21 originally at `@mirror/realisation`, re-homed 2026-06-10 per recognition #50 + the metalogue-turn-pair recognition) — the substrate/boundary axis
 - #31 classify-is-content-blind — the dispatch axis
 - #32 `mout!`/`merr!` at `@mirror/io` — the bidirectional channel axis
 - #33 `\` IS the codegen specification — the hole-as-spec axis

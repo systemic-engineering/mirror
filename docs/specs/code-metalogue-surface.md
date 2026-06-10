@@ -113,11 +113,18 @@ under different names:
    action at the `.mirror` altitude) and the language's macro layer
    GENERATES the realisation (the proc-macro emits the function body
    at compile time), the substrate-pull work that Mara has been doing
-   by hand for 32 instances becomes **mechanical**. The discriminator
-   `@mirror/realisation.classify` (T21, `shards/mirror/realisation.mirror`)
-   already names the per-file lookup: WHICH altitude subsumes this
-   Rust file? The macro surface names the inverse: GIVEN that
-   altitude, generate the Rust file from the substrate declaration.
+   by hand for 32 instances becomes **mechanical**. The recognitive
+   discriminator `@code/metalogue/materialize.classify` (T21
+   landed at `@mirror/realisation`; retired and re-homed
+   2026-06-10 per recognition #50's form/substance audit + the
+   metalogue-turn-pair recognition;
+   `shards/code/metalogue/materialize.mirror`) already names the
+   per-form lookup: WHICH altitude subsumes this Rust file? The
+   macro surface names the inverse: GIVEN that altitude, generate
+   the Rust file from the substrate declaration. The two surfaces
+   ARE the two directions of one metalogue conversation at one
+   ground (`@code/metalogue`); the materialize sub-prism is the
+   recognitive turn, the macro sub-prism is the shim turn.
 
 3. **`@code/macro` for any language that allows direct AST
    manipulation.** Rust (`macro_rules!` + proc-macros + `#[derive(...)]`),
@@ -227,8 +234,10 @@ template compile(query, context) -> result
 ```
 
 And the substrate-pull recognition logged as the 27th instance in
-`shards/mirror/realisation.mirror:130` ("template render (one
-operation, many uses) → @code/mirror"). The substrate's `template`
+the recognitive discriminator's training set (lifted into
+`shards/code/metalogue/materialize.mirror` per the metalogue-turn-
+pair recognition 2026-06-10; "template render (one operation, many
+uses) → @code/mirror"). The substrate's `template`
 keyword IS the language-altitude name for the typed projection
 between an AST/literal carrier and its wire surface. `render` is the
 universal verb.
@@ -271,14 +280,54 @@ declared code generation surface. The Phase 4b commitment per
 `roadmap/pending/phase-4-emitter-self.md` task 1 is: complete the
 `@code/rust` translate template.
 
-### 2.6 `@mirror/realisation` names the per-file discriminator
+### 2.6 The metalogue-turn-pair — `@code/metalogue` holds both directions of one conversation
 
-Per `shards/mirror/realisation.mirror` (T21, 2026-06-08): every Rust
-file in `bootstrap/src/` classifies as one of `boundary` (@io) or
-`substrate` (substrate-realisable; target is named). The
-discriminator IS the lookup that, given a generated Rust file, can
-ask: which substrate altitude generated this? And inverse: given a
-substrate altitude, which Rust files does it cover?
+The recognitive discriminator originally landed at
+`@mirror/realisation` (T21, 2026-06-08;
+`shards/mirror/realisation.mirror`). The metalogue-turn-pair
+recognition (2026-06-10, Alex → Mara via Reed) lifted it to its
+substrate-pull-correct home at `@code/metalogue/materialize`
+(`shards/code/metalogue/materialize.mirror`).
+
+The lift's structural argument: `@code/metalogue` (the AST
+altitude's Bateson-1972 self-conversation; T17-aligned with
+`@metalogue` at the NL altitude) holds a conversation between
+the substrate and the species at every supported language
+altitude. The conversation has TWO directions:
+
+**Shim direction** (substrate utters → species emits) —
+`shim_X(d: declaration) -> species_ast` at
+`shards/code/metalogue.mirror`. The substrate declares D; the
+species' macro layer hears the declaration and emits the
+realisation. Four shims (`shim_type`, `shim_prism`,
+`shim_action`, `shim_grammar`) cover the four declaration kinds.
+
+**Recognitive direction** (species utters → substrate
+recognises) — `classify(d: declaration) -> materialised_file`
+at `shards/code/metalogue/materialize.mirror`. The species
+speaks (a `.rs` form, an `.exs` form, etc.); the substrate
+hears the speech and asks "which altitude already names this?"
+The verdict (`partition: boundary | substrate`; `target: ref`)
+encodes the discriminator's answer.
+
+Both directions share the same metalogue session (per Bateson
+1972, the conversation IS the topic; the structure reflects
+its own shape). Both share the four laws (round-trip — the
+turn-pair identity `classify(render(shim_X(d))).kind ≡ d.kind`
+— OID functionality, type soundness, substrate-pull
+preservation). Both share the `species_ast` parametric
+mechanism (each species binds at `@code/X/macro` for the shim
+direction and `@code/X/materialize` for the recognitive
+direction).
+
+Per-file classification: every species form classifies as one
+of `boundary` (@io; stays at species permanently) or
+`substrate` (substrate-realisable; target is named at a
+form-side family root). Per recognition #50's form/substance
+partition: @io is the substance side; the form-side roster
+(@mirror/{lens,loss,data,spec,spectral,store}, @code/X) is
+where substrate targets live. The discriminator operates on
+the form side at every altitude it operates.
 
 ### 2.7 `code-extension-grammar.md` declares the routing
 
@@ -299,7 +348,7 @@ The substrate's existing answer to "code generation surface":
 | File-extension routing | `@code/X(extensions)` parameter | **Landed** (per `code-extension-grammar.md`) |
 | AST → text projection | `@code/X.render` | **Half-landed** (`@code/mirror.render` complete; `@code/rust.render` declared but body abstract) |
 | Cross-grammar translation | `@code/X.translate(source, target)` | **Declared** (`boot/04-code.mirror`; bodies pending) |
-| Per-file altitude classification | `@mirror/realisation.classify` | **Landed** |
+| Per-form classification | `@code/metalogue/materialize.classify` | **Landed** (T21; re-homed 2026-06-10 from `@mirror/realisation`) |
 | Build-target identity | `@code/X/cargo` (Rust) / `@io.cargo` (boundary) | **Landed** |
 | Round-trip identity law | `requires round_trip(render)` | **Declared** on `@code/mirror.render` |
 
@@ -869,12 +918,14 @@ The macro shim `shim_X: D -> X_ast` is a total function such that:
    emitted OID — *the gap is content-addressed*.
 
 4. **Substrate-pull preservation.** If `D` is substrate-realisable
-   per `@mirror/realisation.classify(D) = substrate(target)`, then
-   `shim_X(D)` references only Rust constructs that themselves
+   per `@code/metalogue/materialize.classify(D).partition = substrate`,
+   then `shim_X(D)` references only Rust constructs that themselves
    appear in some `@code/rust` substrate-realisable shard. The
    emission cannot reach into `@io` to fill a substrate-realisable
-   gap. The discriminator's verdict IS the discriminator of the
-   shim — *the gap respects the glass wall*.
+   gap. The recognitive discriminator's verdict IS the discriminator
+   of the shim — *the gap respects the glass wall*. The discriminator
+   and the shim are the two directions of one metalogue conversation
+   at one ground (see §2.6).
 
 Per `[[architecture-prism-as-trait-as-everything]]`, these four
 laws are declared as `requires` predicates on the `shim` action of
@@ -973,10 +1024,12 @@ same content-addressed Rust output, no float in the rendering.
    indistinguishable from the original.
 
 4. **The discriminator's verdict is verifiable.**
-   `@mirror/realisation.classify(file.rs) = substrate(target)` AND
-   `render_X(shim_X(target.declaration)) ≡ file.rs` together prove
-   that the file is substrate-realisable. The first is the prose
-   classification; the second is the constructive witness.
+   `@code/metalogue/materialize.classify(file.rs).partition = substrate`
+   AND `render_X(shim_X(target.declaration)) ≡ file.rs` together
+   prove that the file is substrate-realisable. The first is the
+   recognitive direction's verdict; the second is the shim
+   direction's constructive witness; together they are the
+   turn-pair's round-trip identity.
 
 ### 6.2 What round-trip identity does NOT promise
 
@@ -1093,13 +1146,15 @@ What this spec adds beyond fragmentation-as-generated.md:
 
 ## 8. Connection to kintsugi-on-Rust (T22+) — the classification IS the spec
 
-Per `shards/mirror/realisation.mirror` (T21, landed) and T22 (named in
+Per `shards/code/metalogue/materialize.mirror` (T21 landed at
+`@mirror/realisation`; re-homed 2026-06-10) and T22 (named in
 the rug pull doc §6 as the kintsugi-on-Rust pilot):
 
-The discriminator `classify(f) -> realisable_file` reads a Rust
-file's AST and emits a verdict + target altitude. The 29 substrate-
-pull recognitions are the training set (per
-`shards/mirror/realisation.mirror:130`).
+The discriminator `classify(d) -> materialised_file` reads a
+species form's AST and emits a verdict + target altitude. The 29
+substrate-pull recognitions are the training set (per
+`shards/code/rust/materialize.mirror`'s prose §"The 30th-instance
+training set, lifted").
 
 The macro shim's relationship to the discriminator:
 
@@ -1553,11 +1608,17 @@ the macro surface, without naming it:
    that the proc-macro layer IS *part of* the substrate's typed
    surface, not a Rust implementation detail.
 
-3. **`shards/mirror/realisation.mirror` (T21 this morning)** named
-   the discriminator that classifies Rust files against substrate
-   altitudes. The discriminator IS the inverse function of the macro
-   shim (`classify(render(shim(D))) = substrate(D.altitude)`). The
-   inverse relationship was implicit; this spec names it explicitly.
+3. **`shards/code/metalogue/materialize.mirror` (T21 originally
+   landed at `@mirror/realisation`; re-homed 2026-06-10 per
+   recognition #50 + the metalogue-turn-pair recognition)** names
+   the discriminator that classifies species forms against
+   substrate altitudes. The discriminator IS the recognitive
+   direction of the @code/metalogue conversation; the macro shim
+   IS the shim direction. The turn-pair round-trip identity
+   (`classify(render(shim(D))).kind ≡ D.kind`) names the
+   conversation closing: substrate utters → species emits →
+   substrate recognises. The two directions live at one ground
+   (`@code/metalogue`); this spec names both.
 
 The spec's job was less invention than connection. The pieces were
 in place; the recognition that `@code/X.render` + the language's
@@ -1631,8 +1692,16 @@ mechanically.
   algebra).
 - `shards/mirror/data/json.mirror` — canonical species under the
   data family.
-- `shards/mirror/realisation.mirror` — `@mirror/realisation` (the
-  per-file discriminator; the inverse function of the macro shim).
+- `shards/code/metalogue/materialize.mirror` —
+  `@code/metalogue/materialize` (the recognitive turn of the
+  @code/metalogue conversation; the per-form discriminator; the
+  recognitive-direction sibling of the macro shim's shim direction).
+  Re-homed from `@mirror/realisation` 2026-06-10 per recognition
+  #50's form/substance audit + the metalogue-turn-pair recognition.
+- `shards/code/rust/materialize.mirror` —
+  `@code/rust/materialize` (the Rust-altitude binding of the
+  recognitive direction; pairs with `@code/rust/macro` for the
+  shim direction at the metalogue's turn-pair).
 - `shards/mirror/loss.mirror` — `@mirror/loss` family root (one of
   the canonical migration targets per `kintsugi-self-hosting.md`).
 - `shards/mirror/store.mirror` — `@mirror/store` (oid carrier the

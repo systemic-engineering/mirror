@@ -62,7 +62,7 @@ Learning II: the substrate had been doing metalogue-at-altitude (`@metalogue` an
 
 ### 2.3 Recognition #35 — hole-as-projection at `@code/metalogue`
 
-Before the recognition, `\` was the typed hole; `@mirror/realisation.classify` was the discriminator; `transparency<p>` carried the verdict surface. The recognition pronounced what hole-projection IS at the species boundary: the per-species variety budget, lossy by construction, with the projection's loss profile recoverable from the opacity-weighted projection. No species has exact-match semantics; the mapping IS lossy.
+Before the recognition, `\` was the typed hole; `@code/metalogue/materialize.classify` (T21, originally at `@mirror/realisation` until the metalogue-turn-pair re-homing 2026-06-10) was the discriminator; `transparency<p>` carried the verdict surface. The recognition pronounced what hole-projection IS at the species boundary: the per-species variety budget, lossy by construction, with the projection's loss profile recoverable from the opacity-weighted projection. No species has exact-match semantics; the mapping IS lossy.
 
 No new substrate machinery. The cascade widened: the *projection* axis (per-species lossy mapping at the glass wall) became a named category. Recognition #36 then drew from this widened set immediately — it could not have been articulated without #35 having widened the set first.
 

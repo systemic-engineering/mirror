@@ -212,11 +212,11 @@ Where mirror is structurally sharper:
 | **Lattice** (versioned state, monotonic accumulation) | git, Nix, CRDTs | `shard` as bounded semilattice; SpectralUuid as monoid homomorphism | Operational; memory `architecture-shard-as-crdt` |
 | **Sheaf** (local-to-global consistency) | Emerging in formal methods (Hansen-Ghrist 2019); mirror's eigensheaf | `@mirror/spectral/eigensheaf` | Declared; consumer not yet wired |
 | **Sheaf Laplacian** (parallelism via eigendecomposition) | Hansen-Ghrist arXiv:1808.01513 | T8 numerical primitive (NumericalPrism backend) | Landed |
-| **Adjunction** (declaration ↔ realisation) | Category theory; not yet operationalised in any build canon | `@mirror/realisation` discriminator | Declared at `shards/mirror/realisation.mirror`; T21 |
+| **Adjunction** (declaration ↔ realisation) | Category theory; not yet operationalised in any build canon | `@code/metalogue/materialize` discriminator (the recognitive direction of the @code/metalogue turn-pair; pairs with `@code/X/macro` for the shim direction) | Declared at `shards/code/metalogue/materialize.mirror`; T21 originally at `@mirror/realisation`, re-homed 2026-06-10 per recognition #50's form/substance audit + the metalogue-turn-pair recognition |
 | **Trace / replay (provenance)** | Bazel BEP, Nix logs, OpenTelemetry | `transparency<p>` + `.shatter` projection | Operational |
 | **Content-address** (universal cache key) | Bazel CAS, Nix store, BuildKit | `oid` at @mirror/store; `splinter.content: oid` | Operational |
 
-Two cells are **declared but not consumed**: `@mirror/spectral/eigensheaf` and `@mirror/realisation`. Both are the substrate-pull-correct positions for parallelism analysis and declaration-vs-realisation discrimination; both wait for a consumer at the build-pipeline altitude.
+Two cells are **declared but not consumed**: `@mirror/spectral/eigensheaf` and `@code/metalogue/materialize`. Both are the substrate-pull-correct positions for parallelism analysis and declaration-vs-realisation discrimination; both wait for a consumer at the build-pipeline altitude.
 
 That consumer is what does not yet exist. The substrate is complete; the *hook* surface that calls these primitives is what needs to land.
 
@@ -387,7 +387,7 @@ This is the "smallest first tick" in the substrate-pull-discipline sense: nothin
 - `shards/mirror/mosaic.mirror` — the build-altitude algebra; the five operations on the build manifold; the cargo @io contract.
 - `shards/mirror/au.mirror` — the proposed-shard form; identity + verify + shatter at au's altitude.
 - `shards/mirror/shatter.mirror` — the disk projection; build provenance as content-addressed projection.
-- `shards/mirror/realisation.mirror` — the @io-vs-substrate discriminator; the adjunction between declaration and realisation.
+- `shards/code/metalogue/materialize.mirror` — the recognitive turn of the @code/metalogue conversation; the boundary-vs-substrate discriminator; the adjunction between declaration and realisation. Re-homed from `@mirror/realisation` 2026-06-10 per recognition #50's form/substance audit + the metalogue-turn-pair recognition.
 - `shards/mirror/spectral.mirror` — the agent-coordination family; the kintsugi oscillation lives here.
 - `shards/mirror/spectral/oscillate.mirror` — the ACTIVE/DARK alternation; the build pipeline's scheduler is this loop.
 - `shards/mirror/spectral/consent.mirror` — `query_phi` and the auto-apply boundary; the policy the build pipeline reads per pulse.

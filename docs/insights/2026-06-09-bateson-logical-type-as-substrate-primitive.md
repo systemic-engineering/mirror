@@ -89,7 +89,7 @@ The property declares:
 
 - The shard's position in a typed hierarchy (a `bateson_level` field, typed as something like `u32` or as a sum over the substrate's declared altitudes).
 - A reference to the wrapped operation: what operation the shard's level operates *on*. This is the type-theoretic ancestor; without it, the wrapping is unverifiable.
-- The discriminator predicate distinguishing this level from its neighbours. Substrate vocabulary the shard pulls from `@mirror/realisation.classify` or an analogous altitude-classifier.
+- The discriminator predicate distinguishing this level from its neighbours. Substrate vocabulary the shard pulls from `@code/metalogue/materialize.classify` (T21 originally at `@mirror/realisation`; re-homed 2026-06-10 per recognition #50 + the metalogue-turn-pair recognition) or an analogous altitude-classifier.
 
 The substrate's compiler verifies:
 
@@ -166,7 +166,7 @@ For each of the eleven cybernetic properties in §5.3 substrate-pull-urgency ord
 
 **1st-order impact (direct, within-level).** The property declares the shard's variety vector with per-axis budget. A shard `requires variety_preserving(species)` declares: the projection at the species boundary admits a known loss profile on a named axis, the loss falls inside the declared budget, the verdict surface admits the loss explicitly. The substrate's compiler verifies the budget via the existing `transparency<p>` machinery and the opacity-weighted projection at the species boundary.
 
-Verifiability: high. Mechanically checkable via `@mirror/realisation.classify` and the `opacity_map`.
+Verifiability: high. Mechanically checkable via `@code/metalogue/materialize.classify` and the `opacity_map`.
 
 Landing cost: declaration only; no other property required to land first.
 
@@ -354,6 +354,8 @@ The discriminator's structural home remains an open question. Candidates under c
 
 Mara has surfaced ONE recommendation in the report-back; the call is the Pack's.
 
+**Placement landed 2026-06-10:** Alex's response to Mara's recommendation was verbatim "Make it so." The discriminator's substrate-pull-correct home is `@code/metalogue/materialize` (`shards/code/metalogue/materialize.mirror`), with the Rust-altitude binding at `@code/rust/materialize` (`shards/code/rust/materialize.mirror`). Carrier renames at the new home: `altitude → partition` (to avoid the path-space overload), `realisable_file → materialised_file`, `is_substrate_realisable → is_materialisable`. The prior home (`shards/mirror/realisation.mirror`) is a one-tick deprecation pointer pending the cleanup tick. The metalogue-turn-pair recognition (2026-06-10) closes the placement question: `@code/metalogue` holds both directions of one conversation (shim direction at `@code/metalogue` + `@code/X/macro`; recognitive direction at `@code/metalogue/materialize` + `@code/X/materialize`); the discriminator IS the recognitive turn, at the same ground.
+
 ---
 
 ## 11. The form/behaviour partition: the substrate's first distinction (recognition #50)
@@ -395,7 +397,7 @@ If the observables hold over the next ten cascade ticks, recognition #50 IS the 
 Applying the framework of §4 to recognition #50:
 
 - **1st-order impact (direct):** the @io family root acquires a Bateson 1970 citation in its prior-art block; the standalone insight makes the partition first-class substrate vocabulary; the io.mirror shard gains a citation paragraph.
-- **2nd-order impact (cross-property, set-altering):** prior recognitions can be retro-typed against form/behaviour; the variety axis from #36 acquires a structural meaning (the substance-side axis); the discriminator placement question (#47 retracted, see §7bis above) is sharpened — the discriminator cannot live under @io.
+- **2nd-order impact (cross-property, set-altering):** prior recognitions can be retro-typed against form/behaviour; the variety axis from #36 acquires a structural meaning (the substance-side axis); the discriminator placement question (#47 retracted, see §7bis above) closed 2026-06-10 at `@code/metalogue/materialize` per the metalogue-turn-pair recognition (re-homed from `@mirror/realisation`; both directions of the @code/metalogue conversation now live at one ground).
 - **3rd-order impact (altitude-shifting):** the substrate's family-roster altitude acquires a structural partition (five-form + one-substance) as a typed commitment; the substrate's variety vocabulary may yet split into form-side budgets and substance-side budgets per question §6.3 of the #50 insight.
 
 The 3rd-order impact is the meta-cascade Learning III test. If the 3rd-order impact materialises in the next ten cascade ticks, recognition #50 IS the canonical instance the framework of §4 was waiting for.
