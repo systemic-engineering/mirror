@@ -213,8 +213,9 @@ in @epistemologic/math/music/interval
 #                      [[feedback-no-bare-types]] (cadence_kind, path,
 #                      cadence are each their own carrier; no bare
 #                      enumerator escapes the dynamics).
-# Forward-promise: `@mirror/spectral/consent` (does not yet exist) is
-#                  the consumer of `is_settled`'s verdict. When that
+# Forward-promise: `@kintsugi/consent` (formerly
+#                  `@mirror/spectral/consent`; migrated 2026-06-10)
+#                  is the consumer of `is_settled`'s verdict. When that
 #                  sub-shard lands, it pulls this shard's `is_settled`
 #                  action and binds it to the `mirror kintsugi` driver's
 #                  convergence branch. This shard does NOT pull
@@ -457,7 +458,7 @@ compose_path(intervals: path) -> path { \ }
 # The body stays obligation-blocked (`\`): the realisation reads
 # `c.kind`, dispatches on the variant, emits the verdict. The
 # substrate declares the settle signal; the arithmetic lands when
-# `@mirror/spectral/consent` pulls.
+# `@kintsugi/consent` pulls.
 is_settled(c: cadence) -> verdict { \ }
 
 # === Bridge action: cadence → autopoietic closure ===

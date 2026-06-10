@@ -388,7 +388,7 @@ discretization of the gradient-descent control:
 - `deceptive` = the gradient pointed at one eigenmode and the section
   landed in a different one; escalate to consent.
 
-The consent boundary is the substrate-fact `@mirror/spectral/consent`:
+The consent boundary is the substrate-fact `@kintsugi/consent`:
 when the Hodge projection's residue is large (the gradient step would
 leave the section outside the predicted eigenspace), the loop pauses
 and asks. Geometry chooses the boundary; the substrate names it.
@@ -636,7 +636,7 @@ recognition trail (canonical citations, in order):
 - **The math-of-music cascade** (Reed + Mara, 2026-06-06 → 2026-06-07,
   closed today) — `@mirror/spectral`, `@epistemologic/math/music`,
   `harmonic`, `interval`, `dissonance`, `cadence`,
-  `@mirror/spectral/consent`, `@mirror/spectral/oscillate`,
+  `@kintsugi/consent`, `@kintsugi/oscillate`,
   `is_settled` realised. The canonical instance of
   generation-as-modal-expression at the audible altitude. Music IS a
   homomorphism onto the loss geometry; cadence IS Lawvere autopoietic

@@ -3,8 +3,8 @@ in @meta
 in @glass
 in @nl
 in @mirror/spectral
-in @mirror/spectral/oscillate
-in @mirror/spectral/consent
+in @kintsugi/oscillate
+in @kintsugi/consent
 in @metalogue
 
 # @mirror/spectral/score — the orchestra's shared score; the
@@ -356,7 +356,7 @@ type score = {
 # Reads an oscillation (the kintsugi loop's live position) and emits
 # the score the formatter and voices read to see the orchestra's
 # shared state. The substrate-altitude lift from
-# `@mirror/spectral/oscillate.oscillation` to
+# `@kintsugi/oscillate.oscillation` to
 # `@mirror/spectral/score.score`.
 #
 # Composes through:

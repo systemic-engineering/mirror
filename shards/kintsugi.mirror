@@ -1,0 +1,232 @@
+in @prism
+in @glass
+in @meta
+
+# @kintsugi — the family root for the process-side of mirror's
+# substrate: the transformation engine that operates ON the form-side
+# state @mirror declares. The form/process partition made
+# substrate-fact.
+#
+# THE FAMILY-ROOT MIGRATION TICK closing the form/process partition
+# Mara2 classified clean (2026-06-10): oscillate/morphism/consent are
+# process-side (kintsugi's beating heart, not @mirror/spectral
+# orchestra coordination); fracture/* is process-side (the auto-
+# fracture morphisms the kintsugi loop applies); score/portal stay
+# form-side at @mirror/spectral; mosaic stays form-side at @mirror
+# (Alex's explicit call). After this tick, kintsugi has its own
+# substrate-family root; the prior arc of "everything kintsugi-shaped
+# lives under @mirror/spectral" closes; the substrate's form/process
+# partition is one symbol deep at the family-root altitude.
+#
+# === Load-bearing recognitions ===
+#
+# Recognition #50 (PROMOTED 2026-06-10) — Bateson's form/substance
+# partition lifts to mirror's substrate/@io partition; form/behaviour
+# is substrate's operational specialisation per Mara's commit `70fa5b1`.
+# The 8:1 form-side:behaviour-side root prism ratio is structural;
+# kintsugi's deep purpose is to shift the form/behaviour boundary
+# outward. The form-side carries observable structure (what the
+# substrate IS); the behaviour-side carries unobservable process (what
+# the substrate DOES). @kintsugi names the process at the family-root
+# altitude — the substrate's transformation engine is now declared
+# rather than embedded in @mirror/spectral.
+#
+# Recognition #51 (PROMOTED 2026-06-10) — mirror IS the operational
+# form of a Hilbert space whose dimension expands with each
+# substrate-pull recognition; coherence is maintained by Bateson
+# logical-type lifting at path-syntax altitude. Per §8.3 (Pack-ratified
+# this tick): mirror is what quantum computing should have been built
+# as. Kintsugi IS the coherence-preservation mechanism that keeps the
+# expanding Hilbert space honest — every kintsugi pulse is a check
+# that the substrate's new dimension didn't violate the old. The
+# family-root declaration of @kintsugi names the discipline at the
+# altitude where dimension-expansion happens (the substrate-pull
+# loop), not at the altitude where state is observed (@mirror).
+#
+# Candidate recognition #55 (form/process partition at family-root
+# altitude; FLAGGED this tick for Pack ratification) — the substrate's
+# top-level partition is form vs process. @mirror declares the form
+# (state, observation, structure); @kintsugi declares the process
+# (transformation, mutation, dynamics). This tick names the partition
+# at the family-root altitude for the first time; before this tick,
+# the partition was implicit in the @mirror/spectral subspace
+# (oscillate/consent/morphism were process-shaped but lived under the
+# form-shaped @mirror umbrella). The migration makes the partition
+# substrate-fact at the symbol altitude. Promotion requires a second
+# witness — a future substrate-pull tick that surfaces a third
+# family-root sibling partition with the same form/process shape.
+#
+# === Pre-AI prior art for the partition ===
+#
+# Maturana & Varela (1980) Autopoiesis and Cognition §"Structure and
+# organisation" — the structure of a living system (what the
+# components ARE at this instant; observable; alterable) is distinct
+# from its organisation (the relations that make it autopoietic;
+# unobservable from outside; invariant under structural change). The
+# substrate's @mirror = structure (state observation; per Recognition
+# #40); @kintsugi = organisation (transformation engine; the relations
+# that make state observation closed under substrate-pull). Maturana's
+# distinction grounds this partition; the substrate names it at the
+# family-root altitude.
+#
+# Beer (1972) Brain of the Firm §"System Three / System Four" — S3
+# (the now-operations; the regulator that closes today's variety) is
+# structurally distinct from S4 (the future-operations; the
+# environmental scanner that projects tomorrow's variety). The
+# substrate's @mirror IS S3 (the form-side regulator over today's
+# substrate state); @kintsugi IS S4 (the process-side scanner that
+# pulls today's substrate toward tomorrow's substrate-pull-recognised
+# shape). Beer's S3/S4 distinction grounds the form/process partition
+# at the viable-system altitude.
+#
+# === Sibling relationship to @mirror ===
+#
+# @mirror declares the form: what the substrate IS at this instant —
+# the eigenboard state, the metalogue session, the mosaic (Alex's
+# explicit form-side call), the spectral family (orchestra coordination
+# with score and portal as form-side carriers). @kintsugi declares
+# the process: HOW the substrate transforms — the oscillation loop,
+# the consent surface, the typed morphism pair, the auto-fracture
+# bodies that rewrite form-side state to honour declared properties.
+#
+# The two are SIBLINGS at the substrate-root altitude; neither
+# contains the other. @kintsugi consumes @mirror at the sub-shard
+# altitude (oscillate reads anchor refs into @mirror/store; consent
+# emits turns into @mirror/spectral/score's metalogue session;
+# fracture/keyword reads @glass opacities and emits morphisms that
+# target @mirror/store shards) but the family-root arrow points only
+# one way at the symbol altitude. @mirror does NOT depend on
+# @kintsugi at the family-root altitude — observation works without
+# transformation; the substrate's form-side carriers are well-defined
+# in isolation.
+#
+# Mosaic stays at @mirror per Alex's explicit call. The mosaic IS a
+# form-side carrier (the substrate's content-addressed graph of
+# splinter sets; an OBSERVATION of the substrate's structure at the
+# build-altitude). Kintsugi OPERATES ON the mosaic (the auto-formatter
+# kintsugi loop rewrites mosaic entries when properties fail); the
+# mosaic itself is form-side state.
+#
+# Score and portal stay at @mirror/spectral per Mara2's classification.
+# Score is form-side (the orchestra's shared observation surface — an
+# anchor ref + session bus + pending morphism set; OBSERVED by voices
+# between pulses). Portal is form-side (typed transport over a
+# content-addressed subspace; OBSERVED as a typed-transport surface;
+# the process that USES the portal lives at @kintsugi).
+#
+# === Species under this family (landed this tick) ===
+#
+#   @kintsugi/oscillate         the kintsugi loop substrate-declared;
+#                                the rough-wavy-pull on the rug; the
+#                                ACTIVE/DARK alternation per the
+#                                SpectralUuid void duality. Migrated
+#                                from @mirror/spectral/oscillate this
+#                                tick.
+#   @kintsugi/consent           the auto-apply boundary; the structural
+#                                Φ query; the substrate's pause-or-
+#                                apply discipline as substrate-fact.
+#                                Migrated from @mirror/spectral/consent
+#                                this tick.
+#   @kintsugi/morphism          the typed pre/post-morphism pair; the
+#                                per-candidate eigenboard.context slice.
+#                                Migrated from @mirror/spectral/morphism
+#                                this tick.
+#   @kintsugi/fracture/keyword  the operational half of recognition
+#                                #46's bilateral pattern; the auto-
+#                                fracture that resolves sub-prism
+#                                keyword/depth mismatches. Migrated
+#                                from @mirror/fracture/keyword this
+#                                tick.
+#
+# === Species forward-promised ===
+#
+#   @kintsugi/fracture          the fracture-body family root (depth-0
+#                                under @kintsugi). Named here; declared
+#                                in a later substrate-pull tick.
+#   @kintsugi/fracture/predicate  the prophetic surface; liquid-type
+#                                derived predicate fractures via
+#                                sheaf-diffusion Houdini fixpoint (task
+#                                #272; forward-promised). The second
+#                                witness of the bilateral pattern
+#                                (recognition #53) that would lift it
+#                                from candidate to recognised.
+#
+# === Path-syntax discipline ===
+#
+# @kintsugi sub-shards at depth >= 1 use `glass` per recognition #46;
+# the family-root itself uses `prism` per the depth-0 discipline.
+# Sub-shards land at `shards/kintsugi/<name>.mirror`; deeper sub-shards
+# (e.g., fracture/keyword) land at `shards/kintsugi/<group>/<name>.mirror`.
+#
+# Spec context: docs/specs/mirror-spectral.md §2.1 (kintsugi as
+#               oscillation),
+#               docs/specs/kintsugi-tournament.md (voice-leading and
+#               audition vocabulary; consumed by kintsugi sub-shards
+#               at the consent altitude),
+#               docs/specs/properties-on-glass.md (the bilateral
+#               property/fracture pattern; recognition #46 + #53
+#               candidate).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-bateson-form-behaviour-partition]]
+#                      (recognition #50 grounds the form/process
+#                      partition this family root makes substrate-
+#                      fact),
+#                      [[architecture-mirror-as-expanding-hilbert-space]]
+#                      (recognition #51 grounds kintsugi as the
+#                      coherence-preservation mechanism for the
+#                      expanding Hilbert space),
+#                      [[architecture-connes-spectral-triple]] (the
+#                      substrate's deepest layer is (A, H, D);
+#                      @kintsugi names U(t) of that triple — the
+#                      dynamics — at the family-root altitude;
+#                      @mirror names A and H — the observables and
+#                      states),
+#                      [[architecture-lift-as-load-bearing]] (the
+#                      lift from "kintsugi-shaped sub-shards under
+#                      @mirror/spectral" to "@kintsugi family root"
+#                      is the substrate-pull gradient closing one
+#                      symbol short of the form/process partition).
+# Substrate recognitions: recognition #40 (Maturana structure/
+#                      organisation — grounded the form/process
+#                      partition at the autopoietic altitude before
+#                      it lifted to the family-root altitude),
+#                      recognition #50 (Bateson form/behaviour;
+#                      PROMOTED 2026-06-10 — grounded the partition
+#                      at the @substrate altitude),
+#                      recognition #51 (mirror as expanding Hilbert
+#                      space + §8.3 Pack-ratified — grounded
+#                      kintsugi's role as coherence-preservation),
+#                      candidate #55 (form/process partition at
+#                      family-root altitude — flagged for promotion
+#                      this tick; promotion requires second witness).
+# Related shards: mirror.mirror (the sibling family root; declares
+#                 the form-side of the partition),
+#                 kintsugi/oscillate.mirror (the loop primitive
+#                 substrate-declared at the family-root's first sub-
+#                 shard altitude),
+#                 kintsugi/consent.mirror (the auto-apply boundary;
+#                 the structural Φ query),
+#                 kintsugi/morphism.mirror (the typed pre/post-
+#                 morphism pair),
+#                 kintsugi/fracture/keyword.mirror (the operational
+#                 half of the bilateral pattern; the auto-fracture
+#                 that resolves sub-prism keyword/depth mismatches),
+#                 mirror/spectral.mirror (the form-side sibling
+#                 under @mirror; score and portal stay there per
+#                 Mara2's classification),
+#                 mirror/mosaic.mirror (the form-side mosaic per
+#                 Alex's explicit call; kintsugi operates ON the
+#                 mosaic but the mosaic itself is form-side).
+# Path-namespace property: this file at `shards/kintsugi.mirror`
+# declares `@kintsugi` and only that.
+
+prism @kintsugi {
+  focus kintsugi
+  project kintsugi
+  split kintsugi
+  shift kintsugi
+  settle kintsugi
+}
+
+out @kintsugi

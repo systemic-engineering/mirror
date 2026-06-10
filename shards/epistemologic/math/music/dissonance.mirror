@@ -110,7 +110,7 @@ in @epistemologic/math/music/interval
 #     `candidate` with a `ref` content-handle and a `dissonance` score;
 #     the candidate's morphism content lives wherever `@mirror/spectral`
 #     eventually puts it. The substrate names the shape; the realisation
-#     lifts when `@mirror/spectral/consent` lands.
+#     lifts when `@kintsugi/consent` lands.
 #   - `is_consonant` needs a threshold for the consonance/dissonance
 #     verdict; the substrate has no `threshold` primitive at the floor.
 #     The action signature declares the carrier shape; the realisation
@@ -167,12 +167,13 @@ in @epistemologic/math/music/interval
 #                      own newtype over ref; pareto_set and candidate
 #                      are their own carriers; no bare ref escapes the
 #                      discriminator).
-# Forward-promise: `@mirror/spectral/consent` (does not yet exist) is
-#                  the consumer of `is_pareto`'s verdict. When that
+# Forward-promise: `@kintsugi/consent` (formerly
+#                  `@mirror/spectral/consent`; migrated 2026-06-10)
+#                  is the consumer of `is_pareto`'s verdict. When that
 #                  sub-shard lands, it pulls this shard's `is_pareto`
 #                  action and binds it to the `mirror kintsugi` driver's
 #                  pause-or-auto-apply branch. This shard does NOT pull
-#                  `@mirror/spectral/consent`; the substrate-altitude
+#                  `@kintsugi/consent`; the substrate-altitude
 #                  arrow points upward (consent consumes dissonance,
 #                  not the other way around).
 # Related shards: epistemologic/math/music.mirror (the family root),
@@ -248,7 +249,7 @@ type dissonance = {
 # `score: dissonance` carries the discriminator's reading of how
 # dissonant the candidate is against the current eigenboard state.
 #
-# When `@mirror/spectral/consent` lands (forward-promise), this
+# When `@kintsugi/consent` lands (forward-promise), this
 # carrier may lift to `candidate = { morphism: <typed-morphism>,
 # score: dissonance }`. The substrate names the shape now so the
 # discriminator can be declared; the typed-morphism lift waits for
@@ -441,7 +442,7 @@ dissonance_as_holonomy(d: dissonance) -> holonomy { \ }
 # the gap between minimum and second-minimum against the audible-
 # altitude resolution (~5 cents per `harmonic.mirror`), emits the
 # verdict. The substrate declares the discriminator; the arithmetic
-# lands when `@mirror/spectral/consent` pulls.
+# lands when `@kintsugi/consent` pulls.
 is_pareto(candidates: pareto_set) -> verdict { \ }
 
 # === The consumer-convenience threshold check ===

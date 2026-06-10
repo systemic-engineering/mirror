@@ -134,9 +134,9 @@ in @mirror/spectral
 #
 # === Sibling relationship to sibling sub-shards ===
 #
-# `@mirror/spectral/oscillate` runs the kintsugi loop; `@mirror/
-# spectral/consent` is the Φ query; `@mirror/spectral/score` is the
-# orchestra's shared state; `@mirror/spectral/morphism` is the
+# `@kintsugi/oscillate` runs the kintsugi loop; `@kintsugi/consent`
+# is the Φ query; `@mirror/spectral/score` is the
+# orchestra's shared state; `@kintsugi/morphism` is the
 # per-candidate carrier. This shard is the TRANSPORT surface — what
 # carries oscillation's per-tick eigenvalue stream, consent's
 # pending morphism_set, score's anchor refs, and morphism's

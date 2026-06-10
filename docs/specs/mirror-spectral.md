@@ -688,7 +688,7 @@ prism @mirror/spectral {
 out @mirror/spectral
 ```
 
-### 4.3 The loop primitive: `@mirror/spectral/oscillate`
+### 4.3 The loop primitive: `@kintsugi/oscillate` (formerly `@mirror/spectral/oscillate`; migrated 2026-06-10)
 
 This is the load-bearing one. The oscillation IS the agent coordination
 layer's heartbeat; without it, the family is descriptive metadata.

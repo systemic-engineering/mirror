@@ -40,7 +40,7 @@ The eigenspace **grows during the run**. The settled form IS the expansion proce
 
 Vijay Iyer, *Embodied Mind, Situated Cognition, and Expressive Microtiming in African-American Music* (Music Perception 19:3, 2002, [PDF](https://cnmat.berkeley.edu/sites/default/files/attachments/2002_Embodied-mind-situated-cognition-and-expressive-micro-timing-in-african-american-music.pdf)) is the load-bearing source: improvisation is embodied prediction in situated time — the eigenspace is *generated as the musician encounters the next moment*, not selected from a precomputed catalogue. Coltrane's *Ascension*; Cecil Taylor's energy music (Micchelli, [MTO 28.3](https://mtosmt.org/issues/mto.22.28.3/mto.22.28.3.micchelli.pdf), formalizes Taylor's improvisations as Cecil Taylor Cells — "processual evanescence" — *settling without terminating*); Ornette Coleman's harmolodics codifies it: settle on *opinion-coexistence*, not consensus.
 
-This is what classical music theory — always operating against a fixed harmonic-field score — could not surface. The substrate's `@mirror/spectral/oscillate` driver implicitly carries the exploratory verdict already (the loop is non-terminating until convergence); naming it as a distinct settled form makes it explicit.
+This is what classical music theory — always operating against a fixed harmonic-field score — could not surface. The substrate's `@kintsugi/oscillate` driver implicitly carries the exploratory verdict already (the loop is non-terminating until convergence); naming it as a distinct settled form makes it explicit.
 
 ---
 
@@ -100,7 +100,7 @@ Widenings to existing shards:
 
 - `cadence.cadence_kind` — the four-state classical dispatch widens to admit `sustained` / `exploring` projections from the wider verdict surface. The substrate's `verdict_to_cadence_kind` projection (now in `bootstrap/src/gap.rs`) gets new projection rules.
 - `dissonance.is_pareto` — widens from scalar minimization to Pareto frontier search across the three settled-form verdicts.
-- `@mirror/spectral/oscillate` — gains explicit temporal-phase semantics via the temporal eigensheaf.
+- `@kintsugi/oscillate` — gains explicit temporal-phase semantics via the temporal eigensheaf.
 
 Parking lot (named, deferred): `holonomy`, `avalanche`, `precision`, `reflexivity`.
 

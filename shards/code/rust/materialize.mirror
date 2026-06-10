@@ -69,11 +69,11 @@ in @nl
 #   #18 eigensheaf (spectral decomposition)         -> @epistemologic/math/sheaf_laplacian
 #   #19 five operations are Hodge primitives        -> @prism
 #   #20 eigenspace (composition foundation)         -> @mirror/spectral/composition
-#   #21 prophecy (derive fractures from topology)   -> @mirror/fracture/predicate
+#   #21 prophecy (derive fractures from topology)   -> @kintsugi/fracture/predicate
 #   #22 score family root                            -> @mirror/spectral/score
 #   #23 glass IS lens (four names, one primitive)    -> @mirror/lens + @mirror/loss
-#   #24 oscillate_witness (next-oscillation)         -> @mirror/spectral/oscillate
-#   #25 morphism_context (per-candidate slice)       -> @mirror/spectral/morphism
+#   #24 oscillate_witness (next-oscillation)         -> @kintsugi/oscillate
+#   #25 morphism_context (per-candidate slice)       -> @kintsugi/morphism
 #   #26 shift(oid, T) typed-capability primitive     -> @mirror/spectral/portal
 #   #27 template render (one operation, many uses)   -> @code/mirror
 #   #28 "path was already half-built" (json lift)    -> @mirror/data

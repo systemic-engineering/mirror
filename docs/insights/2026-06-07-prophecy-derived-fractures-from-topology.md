@@ -127,7 +127,7 @@ The **four missing substrate primitives**, in declaration order:
 1. **`@mirror/homotopy/A_infinity.mirror`** — the minimal A∞-model on the eigensheaf's cochain complex (per Markl's Strong Minimal Model Theorem). The canonical minimal model, unique up to isotopy.
 2. **`@mirror/homotopy/massey.mirror`** — Markl's defining-system algorithm; Taylor coefficient computation; **constructive conundrum derivation**.
 3. **`@mirror/cybernetics/algedonic.mirror`** — explicit declaration of the S1→S5 bypass as a Prism; threshold as substrate property (not a Rust constant).
-4. **`@mirror/fracture/predicate.mirror`** — liquid-type predicate `fractures(e: Edge, n: Tick)` inferred via sheaf-diffusion Houdini fixpoint. **The substrate's prophetic surface.**
+4. **`@kintsugi/fracture/predicate.mirror`** — liquid-type predicate `fractures(e: Edge, n: Tick)` inferred via sheaf-diffusion Houdini fixpoint. **The substrate's prophetic surface.**
 
 Everything else exists.
 
@@ -192,7 +192,7 @@ Substrate-declaration cascade order (your call on sequencing):
 2. **`@mirror/store/crystal`** — typed `Crystal` with section + derived_predicates + fracture_calendar (verdict's Success payload)
 3. **`@mirror/homotopy/A_infinity`** — the canonical minimal model on cochain complex
 4. **`@mirror/homotopy/massey`** — constructive conundrum derivation
-5. **`@mirror/fracture/predicate`** — the prophetic surface; liquid-type derived predicates
+5. **`@kintsugi/fracture/predicate`** — the prophetic surface; liquid-type derived predicates
 6. **`@mirror/cybernetics/algedonic`** — the S1→S5 bypass; Bateson III at the cybernetic altitude
 7. **`@epistemologic/math/conundrum`** — the formal H² declaration (if not folded into `@mirror/homotopy/massey`)
 

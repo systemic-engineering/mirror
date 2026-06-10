@@ -205,7 +205,7 @@ type partition =
 #   target     when partition = substrate, the substrate altitude
 #              that subsumes the form (e.g. `@mirror/loss` for
 #              `loss.rs`, `@code/mirror` for parser forms,
-#              `@mirror/spectral/oscillate` for `oscillate.rs`).
+#              `@kintsugi/oscillate` for `oscillate.rs`).
 #              When partition = boundary, target IS the @io species
 #              (e.g. `@io/cargo`, `@io/llvm`, `@io/fs`).
 #   verdict    the located-opacity carrier per

@@ -2,11 +2,11 @@ in @prism
 in @meta
 in @glass
 in @nl
-in @mirror/spectral/consent
-in @mirror/spectral/morphism
+in @kintsugi/consent
+in @kintsugi/morphism
 in @epistemologic/property/keyword_matches_depth
 
-# @mirror/fracture/keyword — the kintsugi fracture body that resolves a
+# @kintsugi/fracture/keyword — the kintsugi fracture body that resolves a
 # `prism @X/Y` sub-prism declaration to `glass @X/Y` per the
 # keyword/depth discipline.
 #
@@ -18,7 +18,7 @@ in @epistemologic/property/keyword_matches_depth
 # verbatim recognition: "The kintsugi formatter can have an auto
 # `fracture` that resolves sub-prisms to `glass`." The substrate names
 # the resolver here; the kintsugi driver composes it through
-# `@mirror/spectral/oscillate`'s `active_pass`.
+# `@kintsugi/oscillate`'s `active_pass`.
 #
 # Load-bearing context: recognition #46 (keyword_matches_depth
 # property; pending); recognition #51 (mirror as expanding Hilbert
@@ -30,7 +30,7 @@ in @epistemologic/property/keyword_matches_depth
 # === The bilateral pattern (candidate recognition #53) ===
 #
 # `@epistemologic/property/<predicate>` declares WHAT must hold; a
-# matching `@mirror/fracture/<predicate>` declares HOW to restore the
+# matching `@kintsugi/fracture/<predicate>` declares HOW to restore the
 # property when it fails. The pair is bilateral in the same shape as
 # the cybernetic/algedonic finding from the cybernetic-foundation
 # work's §4: a sensing surface (the property's transparency report) +
@@ -41,7 +41,7 @@ in @epistemologic/property/keyword_matches_depth
 # flagged for promotion review; not unilaterally promoted by this
 # tick. The substrate now carries one concrete instance of the
 # pattern (this shard + the sibling property); the second instance
-# (the forward-promised `@mirror/fracture/predicate` against
+# (the forward-promised `@kintsugi/fracture/predicate` against
 # `@epistemologic/property/<topology-predicate>` per the materialize
 # training set's #21 prophecy) is the witness that would lift the
 # pattern from candidate to recognised.
@@ -50,22 +50,22 @@ in @epistemologic/property/keyword_matches_depth
 #
 # The materialize training set (per `shards/code/rust/materialize.mirror`
 # §"The 30th-instance training set, lifted") forward-promises
-# `@mirror/fracture/predicate` as the home for fracture proposals
-# derived from topology. The `@mirror/fracture` family root is named
+# `@kintsugi/fracture/predicate` as the home for fracture proposals
+# derived from topology. The `@kintsugi/fracture` family root is named
 # but not yet declared at depth-0; this shard declares the
-# `@mirror/fracture/keyword` species and treats `@mirror/fracture` as
+# `@kintsugi/fracture/keyword` species and treats `@kintsugi/fracture` as
 # the substrate's named-but-not-yet-rooted family. A later one-tick
-# substrate-pull will declare `prism @mirror/fracture` as the family
+# substrate-pull will declare `prism @kintsugi/fracture` as the family
 # root; this shard stays additive against that landing.
 #
-# Substrate-pull alternative considered: `@mirror/spectral/oscillate/
+# Substrate-pull alternative considered: `@kintsugi/oscillate/
 # fracture/keyword` (nesting under the kintsugi loop). Rejected:
 # fracture bodies are consumed by oscillate's `active_pass`, but they
 # live at the morphism altitude (each fracture body emits a morphism
 # the loop applies). The substrate-altitude arrow points from
 # oscillate INTO fracture bodies; nesting fracture bodies UNDER
 # oscillate would invert the arrow. The materialize forward-promise
-# already named `@mirror/fracture` as the substrate-pull-correct
+# already named `@kintsugi/fracture` as the substrate-pull-correct
 # family — this shard honours that naming.
 #
 # === The fracture body ===
@@ -75,7 +75,7 @@ in @epistemologic/property/keyword_matches_depth
 # opacity names ONE offending declaration site: a `prism @X/Y`
 # declaration at depth >= 1 whose keyword disagrees with its depth.
 #
-# Output: `morphism` (from `@mirror/spectral/consent`) — the typed
+# Output: `morphism` (from `@kintsugi/consent`) — the typed
 # candidate the kintsugi loop's `active_pass` reads from this body
 # and proposes through `query_phi`. The morphism's `content` ref
 # names the rewritten shard (same path, `prism` replaced by `glass`);
@@ -102,9 +102,9 @@ in @epistemologic/property/keyword_matches_depth
 # === Substrate-pull discipline ===
 #
 # Per `@glass`, `opacity` is the substrate's located-fact carrier;
-# this shard reads it directly. Per `@mirror/spectral/consent`,
+# this shard reads it directly. Per `@kintsugi/consent`,
 # `morphism` is the substrate's typed-candidate carrier; this shard
-# emits it directly. Per `@mirror/spectral/morphism`, `morphism_context`
+# emits it directly. Per `@kintsugi/morphism`, `morphism_context`
 # is the per-candidate slice that pairs a candidate with its
 # pre-anchor; this shard's emitted morphism is consumed by the loop
 # AND lifted into a morphism_context via `paired(oscillation.anchor,
@@ -194,12 +194,12 @@ in @epistemologic/property/keyword_matches_depth
 #                      (the substrate had `glass` since
 #                      shards/glass.mirror:94; this fracture body
 #                      reads what was already named).
-# Forward-promise to consumers: `@mirror/spectral/oscillate`'s
+# Forward-promise to consumers: `@kintsugi/oscillate`'s
 #                  `active_pass` reads this fracture body when the
 #                  candidate morphism_set is composed from
 #                  property-surfaced opacities; the binding lands
 #                  when the kintsugi loop substrate-pulls. This shard
-#                  does NOT pull `@mirror/spectral/oscillate` or
+#                  does NOT pull `@kintsugi/oscillate` or
 #                  `@mirror/spectral/score`; the substrate-altitude
 #                  arrow points inward (this fracture body IS
 #                  consumed by the loop; not the other way around).
@@ -222,17 +222,21 @@ in @epistemologic/property/keyword_matches_depth
 #                 candidate morphism_set),
 #                 code/rust/materialize.mirror (the materialize
 #                 training set; the forward-promise of
-#                 `@mirror/fracture/predicate` as the sibling
+#                 `@kintsugi/fracture/predicate` as the sibling
 #                 fracture body for topology-derived predicates;
 #                 the second instance of the bilateral pattern).
 # Path-namespace property: this file at
-# `shards/mirror/fracture/keyword.mirror` declares
-# `@mirror/fracture/keyword` as a species under the
-# (forward-promised) `@mirror/fracture` family.
-# Keyword/depth property: this declaration is depth-2; per recognition
-# #46 it uses `glass`. The shard applies its own rule by birth.
+# `shards/kintsugi/fracture/keyword.mirror` declares
+# `@kintsugi/fracture/keyword` as a species under the
+# (forward-promised) `@kintsugi/fracture` family. Migrated from
+# `@mirror/fracture/keyword` 2026-06-10 per the form/process partition
+# (recognition #55 candidate; fracture bodies are process-side — each
+# fracture body emits a morphism the kintsugi loop applies).
+# Keyword/depth property: this declaration is depth-2 from the
+# @kintsugi family root; per recognition #46 it uses `glass`. The
+# shard applies its own rule by birth.
 
-glass @mirror/fracture/keyword {
+glass @kintsugi/fracture/keyword {
   focus keyword
   project keyword
   split keyword
@@ -324,5 +328,5 @@ resolve_keyword(opacity: opacity) -> morphism {
   }
 }
 
-out @mirror/fracture/keyword
+out @kintsugi/fracture/keyword
 out resolve_keyword

@@ -74,8 +74,8 @@ The pieces were already in place:
   orthogonal decomposition.
 - **The audible-altitude cascade (2026-06-06 → 2026-06-07)** —
   `@mirror/spectral`, `@epistemologic/math/music`, `harmonic`,
-  `interval`, `dissonance`, `cadence`, `@mirror/spectral/consent`,
-  `@mirror/spectral/oscillate`. Eight ticks of substrate declaration
+  `interval`, `dissonance`, `cadence`, `@kintsugi/consent`,
+  `@kintsugi/oscillate`. Eight ticks of substrate declaration
   that painted music as a homomorphism onto the loss geometry. The
   closure landed today with `is_settled` realised in `music/mod.rs`.
 - **The MCP-as-session-typed-prism insight** (`docs/insights/2026-06-07-mcp-as-session-typed-prism.md`,

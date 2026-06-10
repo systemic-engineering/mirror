@@ -2,13 +2,13 @@ in @prism
 in @meta
 in @glass
 in @nl
-in @mirror/spectral
+in @kintsugi
 in @epistemologic/math/music/dissonance
 in @epistemologic/math/music/cadence
 in @uuid/spectral
 in @metalogue
 
-# @mirror/spectral/consent — the auto-apply boundary; the structural Φ
+# @kintsugi/consent — the auto-apply boundary; the structural Φ
 # query; the substrate's pause-or-apply discipline as substrate-fact.
 #
 # THE ARC-CLOSING SUB-SHARD of the 2026-06-06 → 2026-06-07 recognition
@@ -115,7 +115,7 @@ in @metalogue
 #
 # `dissonance.mirror`'s `candidate = { content: ref, score: dissonance }`
 # carried the discriminator's candidate at the dissonance altitude. Per
-# its substrate-pull-discipline note: "When `@mirror/spectral/consent`
+# its substrate-pull-discipline note: "When `@kintsugi/consent`
 # lands (forward-promise), this carrier may lift to `candidate =
 # { morphism: <typed-morphism>, score: dissonance }`." This shard lands
 # that lift.
@@ -145,7 +145,7 @@ in @metalogue
 # talks about proposed compositions; @mirror/spectral talks about
 # coordination morphisms). This shard declares the SPECIFIC morphism
 # shape the auto-apply boundary needs: a candidate with an expected
-# trajectory. A future @mirror/spectral/morphism sub-shard MAY lift this
+# trajectory. A future @kintsugi/morphism sub-shard MAY lift this
 # to a more general morphism type; consent's load is the auto-apply case.
 #
 # === Substrate-pull discipline ===
@@ -171,7 +171,7 @@ in @metalogue
 # later substrate-pull tick; none invented here):
 #
 #   - `morphism.content: ref` carries the substrate handle to the
-#     morphism's content; a future @mirror/spectral/morphism sub-shard
+#     morphism's content; a future @kintsugi/morphism sub-shard
 #     may lift this to a typed-content carrier. The substrate names the
 #     shape now so consent can be declared.
 #   - `identity_preserving` reads via `@uuid/spectral`'s `dark` projection
@@ -253,7 +253,7 @@ in @metalogue
 # Forward-promise to consumers: `mirror kintsugi` driver (does not yet
 #                  pull this shard) consumes `query_phi`'s verdict; the
 #                  binding lands when the driver substrate-pulls. This
-#                  shard does NOT pull `@mirror/spectral/oscillate` or
+#                  shard does NOT pull `@kintsugi/oscillate` or
 #                  `@mirror/spectral/audition`; the substrate-altitude
 #                  arrow points inward (consent IS consumed by oscillate;
 #                  not the other way around).
@@ -268,11 +268,14 @@ in @metalogue
 #                 metalogue.mirror (the conversation bridge; turn carrier),
 #                 glass.mirror (verdict; ref; the substrate floor).
 # Path-namespace property: this file at
-# `shards/mirror/spectral/consent.mirror` declares
-# `@mirror/spectral/consent` as a species under the `@mirror/spectral`
-# family.
+# `shards/kintsugi/consent.mirror` declares
+# `@kintsugi/consent` as a species under the `@kintsugi`
+# family. Migrated from `@mirror/spectral/consent` 2026-06-10
+# per the form/process partition (recognition #55 candidate;
+# consent is process-side — the auto-apply boundary IS a
+# transformation discipline).
 
-prism @mirror/spectral/consent {
+glass @kintsugi/consent {
   focus consent
   project consent
   split consent
@@ -736,7 +739,7 @@ should_escalate(c: verdict) -> verdict { \ }
 # at emit time, emits the turn.
 emit_to_metalogue(p: pause_event) -> turn { \ }
 
-out @mirror/spectral/consent
+out @kintsugi/consent
 out morphism
 out morphism_set
 out pause_event

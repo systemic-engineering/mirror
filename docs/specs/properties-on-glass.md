@@ -66,10 +66,10 @@ verdict — this spec narrows its scope from per-body to per-glass).*
 >   violations (kintsugi-operational); the kintsugi loop is the bridge
 >   reading transparency opacities and applying fracture-body morphisms.
 >   First instance: `@epistemologic/property/keyword_matches_depth` +
->   `@mirror/fracture/keyword` (both landed 2026-06-10 at mirror
+>   `@kintsugi/fracture/keyword` (both landed 2026-06-10 at mirror
 >   `5e68df9` and `d908798`). Pattern promotes to recognition status
 >   once a second instance exists. Forward-promised second instance:
->   `@mirror/fracture/predicate` (task #272). This bilateral pattern
+>   `@kintsugi/fracture/predicate` (task #272). This bilateral pattern
 >   IS the substrate's auto-formatting floor — the property + fracture
 >   pair handles keyword-form violations (prism/glass/pact) without
 >   manual sweeps; the kintsugi loop resolves the cascade through
@@ -77,7 +77,7 @@ verdict — this spec narrows its scope from per-body to per-glass).*
 > - **Fracture body type surface** (load-bearing, settled 2026-06-10).
 >   Input: `opacity` from @glass (`{ location, property: @nl,
 >   weight: f64 }`) — single located fact, not accumulated
->   transparency. Output: `morphism` from `@mirror/spectral/consent`
+>   transparency. Output: `morphism` from `@kintsugi/consent`
 >   (`{ content: ref, score: dissonance, expected: cadence_kind }`).
 >   The fracture body PROPOSES a mutation as a morphism; the kintsugi
 >   loop's `active_pass` ranks + composes morphisms via Banach

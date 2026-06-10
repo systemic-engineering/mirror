@@ -2,10 +2,10 @@ in @prism
 in @meta
 in @glass
 in @nl
-in @mirror/spectral
-in @mirror/spectral/consent
+in @kintsugi
+in @kintsugi/consent
 
-# @mirror/spectral/morphism — the typed pre/post-morphism pair sub-shard;
+# @kintsugi/morphism — the typed pre/post-morphism pair sub-shard;
 # the per-candidate eigenboard.context slice that lifts the substrate's
 # `pre_anchor` data from realisation-layer seam to substrate-altitude
 # declaration.
@@ -20,7 +20,7 @@ in @mirror/spectral/consent
 #    talks about proposed compositions; @mirror/spectral talks about
 #    coordination morphisms). This shard declares the SPECIFIC morphism
 #    shape the auto-apply boundary needs: a candidate with an expected
-#    trajectory. A future @mirror/spectral/morphism sub-shard MAY lift
+#    trajectory. A future @kintsugi/morphism sub-shard MAY lift
 #    this to a more general morphism type; consent's load is the
 #    auto-apply case."
 #
@@ -41,12 +41,12 @@ in @mirror/spectral/consent
 #
 # Three prior ticks built every primitive this shard composes:
 #
-#   @mirror/spectral/consent        the morphism carrier;        (c3802eba)
+#   @kintsugi/consent               the morphism carrier;        (c3802eba)
 #                                    the consent-altitude
 #                                    per-candidate observation
 #                                    (type morphism = { content,
 #                                    score, expected })
-#   @mirror/spectral/oscillate      the oscillation carrier;     (-)
+#   @kintsugi/oscillate             the oscillation carrier;     (-)
 #                                    type oscillation = { state,
 #                                    iteration, anchor: ref } —
 #                                    the loop holds the anchor
@@ -97,7 +97,7 @@ in @mirror/spectral/consent
 #                   morphism applies); DARK 80 bits MUST be preserved
 #                   (the identity_preserving gate). pre_anchor is what
 #                   identity_preserving compares against.
-#   candidate    — the morphism (per `@mirror/spectral/consent`'s
+#   candidate    — the morphism (per `@kintsugi/consent`'s
 #                   `type morphism = { content, score, expected }`).
 #                   The candidate morphism's content ref carries the
 #                   POST-morphism shard handle; the comparison is
@@ -130,9 +130,9 @@ in @mirror/spectral/consent
 #
 # === Substrate-pull discipline ===
 #
-# Per `@mirror/spectral/consent`, `morphism` is the consent-altitude
+# Per `@kintsugi/consent`, `morphism` is the consent-altitude
 # per-candidate carrier; this shard re-uses it (pulled into scope via
-# `in @mirror/spectral/consent` above). Per `glass.mirror`, `ref` is
+# `in @kintsugi/consent` above). Per `glass.mirror`, `ref` is
 # the substrate's reference floor. Per the `_context` suffix precedent
 # (eigenboard.context referenced in consent.mirror, oscillate.mirror,
 # and score.mirror as the substrate's vocabulary for the
@@ -260,8 +260,8 @@ in @mirror/spectral/consent
 #                  `identity_preserving` body composition) consumes
 #                  this carrier; the binding lands when T15
 #                  substrate-pulls. This shard does NOT pull
-#                  `@mirror/spectral/score` or `@mirror/spectral/
-#                  oscillate`; the substrate-altitude arrow points
+#                  `@mirror/spectral/score` or `@kintsugi/oscillate`;
+#                  the substrate-altitude arrow points
 #                  inward (morphism_context IS consumed by consent's
 #                  query_phi / by identity_preserving; not the other
 #                  way around).
@@ -283,11 +283,14 @@ in @mirror/spectral/consent
 #                 identity_preserving rides; `dark(pre_anchor.uuid)`
 #                 vs `dark(candidate.content.uuid)`).
 # Path-namespace property: this file at
-# `shards/mirror/spectral/morphism.mirror` declares
-# `@mirror/spectral/morphism` as a species under the `@mirror/spectral`
-# family.
+# `shards/kintsugi/morphism.mirror` declares
+# `@kintsugi/morphism` as a species under the `@kintsugi`
+# family. Migrated from `@mirror/spectral/morphism` 2026-06-10
+# per the form/process partition (recognition #55 candidate;
+# the typed pre/post-morphism pair is process-side — it
+# describes the per-candidate transformation slice).
 
-prism @mirror/spectral/morphism {
+glass @kintsugi/morphism {
   focus morphism
   project morphism
   split morphism
@@ -307,7 +310,7 @@ prism @mirror/spectral/morphism {
 #                Read by identity_preserving as the LHS of the
 #                @uuid/spectral.dark byte-equality check.
 # candidate   — the morphism the formatter is proposing to apply
-#                (per `@mirror/spectral/consent`'s `morphism` carrier).
+#                (per `@kintsugi/consent`'s `morphism` carrier).
 #                Its `content` ref carries the POST-morphism shard
 #                handle (optimistic; the apply happens only if the
 #                gates pass); its `score` and `expected` fields carry
@@ -375,7 +378,7 @@ type morphism_context_set = [morphism_context]
 # constructor; the arithmetic IS the record construction.
 paired(pre: ref, m: morphism) -> morphism_context { \ }
 
-out @mirror/spectral/morphism
+out @kintsugi/morphism
 out morphism_context
 out morphism_context_set
 out paired

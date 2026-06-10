@@ -49,12 +49,11 @@ in @nl
 #     surface (Alex, a higher-temperature Fate tournament, an explicit
 #     human signal).
 #
-# === Species under this family (to land when consumers pull) ===
+# === Species under this family ===
 #
-#   @mirror/spectral/oscillate  the loop primitive; kintsugi's
-#                                heartbeat. ACTIVE/DARK alternation;
-#                                tick chain; holonomy; eigenvalue
-#                                frequency. The load-bearing one.
+# Form-side species (THIS family — @mirror/spectral declares the
+# orchestra's OBSERVATION surface; voices and sections read these):
+#
 #   @mirror/spectral/conductor  the refract-reader role. The conductor
 #                                signal is a tournament_outcome-shaped
 #                                trace on the eigenboard; the role
@@ -75,22 +74,6 @@ in @nl
 #                                name. @fate.minimize is the resolver;
 #                                the audition declaration is naming,
 #                                not invention.
-#   @mirror/spectral/consent    the auto-apply boundary. Declares the
-#                                pareto-front / unique-winner split
-#                                that governs when oscillation pauses
-#                                for a next-consent-surface signal.
-#   @mirror/spectral/morphism   the typed pre/post-morphism pair. Lifts
-#                                consent's per-candidate `morphism`
-#                                carrier by adding the `pre_anchor: ref`
-#                                field so identity_preserving's DARK-
-#                                bits comparison is self-contained at
-#                                the per-candidate altitude; the
-#                                substrate's per-candidate slice of the
-#                                eigenboard.context. Lifted from the
-#                                realisation-layer seam consent.mirror
-#                                §morphism forward-promised; landed
-#                                additively to honour consent's frozen-
-#                                adjacent stability.
 #   @mirror/spectral/portal     typed transport over a content-addressed
 #                                subspace; portal-as-eigenvalue-stream-
 #                                as-gen_prism per the 26th-instance
@@ -109,10 +92,40 @@ in @nl
 #                                migration). Third tick of the 5-tick
 #                                cascade closing the pretty-printer LRM.
 #
-# Forward-references only — sub-shards land as consumers pull them. The
-# `consent` surface is the first expected pull (the auto-apply boundary
-# needs a home before voices can write to the same section without an
-# oscillation pause).
+# Process-side species (MIGRATED 2026-06-10 to @kintsugi per the
+# form/process partition; recognition #55 candidate). These species
+# were originally declared under @mirror/spectral; the family-root
+# migration moved them to @kintsugi where they belong (transformation
+# engine vs orchestra observation surface). Form-side species above
+# still reference them at the import altitude (score consumes
+# @kintsugi/oscillate and @kintsugi/consent; portal still consumes
+# @mirror/spectral at the family root). Cross-family references:
+#
+#   @kintsugi/oscillate         the loop primitive; kintsugi's
+#                                heartbeat. ACTIVE/DARK alternation;
+#                                tick chain; holonomy; eigenvalue
+#                                frequency. The load-bearing one.
+#                                Migrated from @mirror/spectral/
+#                                oscillate.
+#   @kintsugi/consent           the auto-apply boundary. Declares the
+#                                pareto-front / unique-winner split
+#                                that governs when oscillation pauses
+#                                for a next-consent-surface signal.
+#                                Migrated from @mirror/spectral/
+#                                consent.
+#   @kintsugi/morphism          the typed pre/post-morphism pair. Lifts
+#                                consent's per-candidate `morphism`
+#                                carrier by adding the `pre_anchor: ref`
+#                                field so identity_preserving's DARK-
+#                                bits comparison is self-contained at
+#                                the per-candidate altitude; the
+#                                substrate's per-candidate slice of the
+#                                eigenboard.context. Migrated from
+#                                @mirror/spectral/morphism.
+#
+# Forward-references only — form-side sub-shards land as consumers
+# pull them. Process-side migration to @kintsugi is closed this tick;
+# see `shards/kintsugi.mirror` for the migrated family root.
 #
 # === Sibling relationship to @mirror/lens ===
 #

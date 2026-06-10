@@ -2,15 +2,15 @@ in @prism
 in @meta
 in @glass
 in @nl
-in @mirror/spectral
-in @mirror/spectral/consent
+in @kintsugi
+in @kintsugi/consent
 in @uuid/spectral
 in @epistemologic/math/music/cadence
 in @epistemologic/math/music/dissonance
 in @epistemologic/reality/time
 in @metalogue
 
-# @mirror/spectral/oscillate — the kintsugi loop substrate-declared; the
+# @kintsugi/oscillate — the kintsugi loop substrate-declared; the
 # rough-wavy-pull on the rug; the ACTIVE/DARK alternation per the
 # SpectralUuid void duality; the driver that pulls the substrate's
 # shard graph toward the K_n Splinter attractor by alternating
@@ -29,7 +29,7 @@ in @metalogue
 #                                    is_pareto discriminator
 #   @.../music/cadence              U(t) — the dynamics;   (9efac39)
 #                                    is_settled signal
-#   @mirror/spectral/consent        the Φ query;           (c3802eba)
+#   @kintsugi/consent               the Φ query;           (c3802eba)
 #                                    morphism + verdict
 #
 # Consent gave the formatter its Φ query: `query_phi(candidates) ->
@@ -335,7 +335,8 @@ in @metalogue
 #                  not yet exist) consumes `oscillate`'s return ref; the
 #                  binding lands when the driver substrate-pulls. This
 #                  shard does NOT pull `@mirror/spectral/score` or
-#                  `@mirror/spectral/audition`; the substrate-altitude
+#                  `@mirror/spectral/audition` (both form-side; stay
+#                  at @mirror/spectral); the substrate-altitude
 #                  arrow points inward (oscillate IS consumed by the
 #                  kintsugi driver; not the other way around). After
 #                  this shard lands, the substrate has every primitive
@@ -365,11 +366,13 @@ in @metalogue
 #                 loop's composed tick — both substrate-declared; the
 #                 realisation layer composes).
 # Path-namespace property: this file at
-# `shards/mirror/spectral/oscillate.mirror` declares
-# `@mirror/spectral/oscillate` as a species under the `@mirror/spectral`
-# family.
+# `shards/kintsugi/oscillate.mirror` declares
+# `@kintsugi/oscillate` as a species under the `@kintsugi`
+# family. Migrated from `@mirror/spectral/oscillate` 2026-06-10
+# per the form/process partition (recognition #55 candidate;
+# oscillate is process-side).
 
-prism @mirror/spectral/oscillate {
+glass @kintsugi/oscillate {
   focus oscillate
   project oscillate
   split oscillate
@@ -751,7 +754,7 @@ is_complete(s: oscillation_state) -> verdict { \ }
 # primitives.
 oscillate(initial: ref) -> ref { \ }
 
-out @mirror/spectral/oscillate
+out @kintsugi/oscillate
 out oscillation_state
 out oscillation
 out active_pass
