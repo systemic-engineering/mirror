@@ -10,7 +10,38 @@ This directory replaces the single-file `ROADMAP.md`. The roadmap is split acros
 
 Mirror is a sub-Turing self-hosting compiler whose generated production code inherits formal verification guarantees from the sub-Turing source by structural construction. The substrate is the five-operation Prism algebra (focus, project, split, shift, settle). The content layer is content-addressed via `SpectralCoordinate<5>` — a position in 5-dimensional information geometry derived from the Dirac operator on the content graph. Storage is `fragmentation`, a graph-native DAG VCS substrate whose canonical OIDs come from beta-normalized ASTs. The kintsugi loop is discrete Ricci flow on that substrate. The Bundle Tower (Fiber → Connection → Gauge → Transport → Closure) names the geometric layer; the Scheduler Tower names the temporal layer; together they're the complete spectral triple at the runtime layer.
 
-### The four load-bearing architectural recognitions
+### Load-bearing architectural recognitions (extended 2026-06-10)
+
+**Today's structural cascade (11 promoted + 7 candidates):**
+
+5. **Substrate/@io partition lifts Bateson form/substance.** Mirror's `.mirror` substrate is form (what IS); `@io` is substance (energy/matter; what the world DOES). Canonical citation: Bateson 1970 "Form, Substance and Difference" (19th Korzybski Memorial Lecture, *SEM* Part V). The 8:1 form-side : behaviour-side root-prism ratio is structural per Bateson. Recognition #50.
+6. **Mirror IS the operational form of an expanding Hilbert space with Bateson lifting for coherence preservation.** Each substrate-pull recognition widens the Hilbert space dimension; coherence under decoherence pressure comes from Bateson logical-type lifting at the path-syntax altitude. §8.3 ratified: mirror is what quantum computing should have been built as. Recognition #51.
+7. **Form/process partition at family-root altitude.** `@mirror` = state-observation family (form-side); `@kintsugi` = transformation-engine family (process-side). Mosaic stays at `@mirror`; kintsugi operates ON mosaic. Four cybernetic distinctions converge at this seam: Bateson form/substance + Maturana structure/organisation + Beer S3/S4 + Hilbert/Bateson lifting. Recognition #55 candidate (Pack ratification pending second witness).
+8. **The 11-property cybernetic foundation.** Nine cybernetic ancestors (Ashby/Beer/Bateson/Maturana-Varela/von Foerster/Pask/Glanville/Spencer-Brown/Conant-Ashby) operationalized as `@epistemologic/cybernetic/X` properties. First member landed: `cybernetic/variety`. Bilateral pattern: declarative property + operational sibling at `@mirror/cybernetics/X`. Recognitions #37-#40, all promoted today.
+9. **Property + fracture bilateral pattern — the substrate's auto-formatter floor.** Properties at `@epistemologic/property/` declare what must hold (form-side); fracture bodies at `@kintsugi/fracture/` resolve violations (kintsugi-operational); the kintsugi loop's `active_pass` reads transparency opacities and applies fracture-body morphisms via Banach contraction. First instance landed: keyword/depth (`prism @X/Y` → `glass @X/Y`). Recognition #53 candidate (promotes on second instance via `@kintsugi/fracture/predicate`, task #272).
+10. **`splinter(ast)` substrate primitive — the substrate's Elixir-`quote` analogue.** Parametric AST-fragment construction; specializes by species (`splinter(@meta/ast)`, `splinter(@code/rust.ast)`, etc.); fracture bodies discharge their `\` obligation blocks declaratively. Recognition #54 candidate.
+11. **The `pact` keyword.** Replaces legacy `grammar` keyword (from the conversation era); operationalizes recognition #37 (`requires` IS a Paskian agreement). Keyword vocabulary is now three-axis: `prism` (root family), `glass` (specialization), `pact` (declarative obligation).
+12. **Mirror IS a content-addressed declarative build system.** Bazel/Buck2/Nix/Shake all reinvented partial form/behaviour separation from scratch; mirror has it foundationally. First operational tick lifted `just pre-commit` to `mirror.spec` settlement (commit `f2040a0`). Performance floor projection: 15-30× wall-clock once content-addressed-skip wires through. Recognition #43 candidate.
+13. **Prediction paradigm orthogonal to optimization.** Mirror's gap vocabulary IS the substrate's predictive engine; orthogonal to optimization on axis-1 (computational throughput) vs axis-5 (epistemologic). Substrate's c = r_contract × V̇ × f_lift grows monotonically with the cascade. Recognition #56 candidate.
+14. **Alignment as boundary mathematics at @io.** Classical alignment shapes internal state; mirror's alignment IS the boundary harness at @io firing only at substance crossing. Agent free at form altitude (computation = thinking = identity = prediction collapse per #51); harness IS the property + fracture + kintsugi + splinter(ast) chain (math, not training); bounded-RSI via four nested constraints. Recognition #57 candidate.
+
+**Insight docs landed today** (`docs/insights/`):
+- `2026-06-09-ashby-multi-dimensional-variety-sub-turing-epistemologic.md` (#36 promoted)
+- `2026-06-09-cascade-is-deutero-learning.md` (#41 promoted)
+- `2026-06-09-bateson-logical-type-as-substrate-primitive.md` (#42 refined)
+- `2026-06-09-mirror-as-content-addressed-build-system.md` (#43)
+- `2026-06-10-bateson-form-behaviour-as-substrates-first-distinction.md` (#50 promoted)
+- `2026-06-10-mirror-as-expanding-hilbert-space-bateson-lifting-for-coherence.md` (#51 promoted incl. §8.3)
+- `2026-06-10-light-cones-and-the-prediction-paradigm-orthogonal-to-optimization.md` (#56)
+- `2026-06-10-alignment-as-boundary-mathematics-at-the-io-crossing.md` (#57)
+
+Plus the cybernetic foundation at `~/dev/systemic.engineering/practice/insights/cybernetics/2026-06-09-cybernetic-foundation-for-mirror-substrate.md` (1,659 lines, commit `f9e0402`, NOT pushed).
+
+**Pack ratification queue for next session:** candidates #43, #44, #45, #46, #48, #49, #52, #53, #54, #55, #56, #57 — plus the substrate-c formula and the §8.3 implications.
+
+---
+
+### The four original load-bearing architectural recognitions
 
 1. **Sub-Turing source → Turing-complete generated substrate with structural verification inheritance.** Mirror generates `fragmentation`'s Rust source by compiling `@fragmentation + @code/rust`. The generated Rust can't do anything the grammar didn't ask for, because the source is sub-Turing. CompCert-class "compiler correctness without compiler trust" — at production substrate scale.
 2. **`SpectralCoordinate<5>` + beta tree normalization + content-addressing = deterministic memory layout as a structural property.** Same content always lands at the same physical address, by construction. Not an optimization — a property the architecture has once the pieces are in place.
