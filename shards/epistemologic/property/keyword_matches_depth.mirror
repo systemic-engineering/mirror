@@ -1,0 +1,78 @@
+in @glass
+
+# Property: a shard file's declared keyword must match its declared
+# depth.
+#
+# Recognition #38 (Spencer-Brown distinction; promoted) names the
+# keyword/depth boundary as a primitive distinction at the substrate
+# altitude: root families use `prism`, sub-family specializations
+# use `glass`. Recognition #50 (Bateson form/substance; promoted)
+# names this as form-side discipline — the keyword is the form, the
+# body is the substance. Recognition #51 (mirror as expanding
+# Hilbert space; promoted) names path syntax as the Bateson level:
+# each `/` deepens the level, and the keyword must track the level.
+#
+# The substrate already had the `glass` keyword
+# ([[feedback-substrate-already-had-the-word]]; shards/glass.mirror:94).
+# This property generalizes the discipline the substrate was already
+# practicing implicitly.
+#
+# Depth -> keyword rule:
+#   @X            (depth 0, root)  -> prism
+#   @X/Y          (depth 1, sub)   -> glass
+#   @X/Y/Z        (depth 2, sub)   -> glass
+# Depth is the count of `/` separators in the declared namespace.
+# Root declarations are families; sub declarations are specializations
+# (sub-prisms in the sense of `boot/std/glass.mirror`).
+#
+# Concrete vs parametric: the predicate inspects concrete @<name>
+# declarations only. Parametric @(<binder>) heads are the recursion's
+# syntactic device, not a level claim; they're skipped (parallel to
+# @epistemologic/property/path_matches_namespace).
+#
+# Verdict surface is transparency<p>:
+#   success              -- every keyword matches its declared depth
+#   failure(opacity_map) -- some keyword disagrees (prism at depth>=1,
+#                          or glass at depth 0)
+#   partial(opacity_map) -- multiple top-level concrete @X declarations,
+#                          some match and some don't
+#
+# Located transparency (not @glass.verdict): the kintsugi loop
+# consumes the opacity_map to direct mutation. Each opacity in the
+# map names one offending declaration site; the fracture body
+# (sibling-spawn tick) realises the rule by lifting violations
+# through kintsugi. The property names the rule; the fracture
+# realises it; the kintsugi loop is the bridge.
+#
+# Bilateral with @epistemologic/property/path_matches_namespace:
+# path_matches_namespace constrains WHICH @<name> the file declares;
+# keyword_matches_depth constrains WHICH KEYWORD that @<name> uses.
+# Together they pin the declaration site uniquely from the path.
+
+grammar @epistemologic/property/keyword_matches_depth {
+  # Depth implied by the declared namespace.
+  # @X -> 0, @X/Y -> 1, @X/Y/Z -> 2.
+  declared_depth(file: ref) -> u32 { \ }
+
+  # The keyword each concrete top-level @<name> declaration uses
+  # in `file`. One per declared namespace; entries are one of
+  # `prism | glass | grammar`.
+  declared_keywords(file: ref) -> [text] { \ }
+
+  # The combined property: every concrete declaration's keyword
+  # matches its depth.
+  #   depth = 0  =>  keyword = prism   (root family)
+  #   depth >= 1 =>  keyword = glass   (sub-prism specialization)
+  # Verdict surface is transparency<p>:
+  #   success              -- every keyword matches its declared depth
+  #   failure(opacity_map) -- some keyword disagrees (prism at depth>=1,
+  #                          or glass at depth 0)
+  #   partial(opacity_map) -- multiple top-level concrete @X declarations,
+  #                          some match and some don't
+  keyword_matches_depth(file: ref) -> transparency { \ }
+}
+
+out declared_depth
+out declared_keywords
+out keyword_matches_depth
+out @epistemologic/property/keyword_matches_depth
