@@ -225,6 +225,45 @@ type splinter(altitude) = {
   transparency: transparency(altitude),
 }
 
+# splinter(ast) — the parametric AST-fragment construction primitive.
+#
+# Specializes splinter(altitude) to the @meta/ast altitude. Each
+# splinter(ast) is a content-addressed AST fragment: typed,
+# deterministic, oid-identified — what fracture bodies produce
+# declaratively as the morphism's `content` ref.
+#
+# The substrate-pull recognition (candidate #54, 2026-06-10, Alex):
+# Elixir's `quote` macro constructs AST fragments at compile time
+# as first-class data the compiler can navigate, transform, and
+# splice. The substrate's equivalent is splinter(ast). Fracture
+# bodies discharge their obligation block (\) by emitting a
+# splinter(ast) whose content is the rewritten AST node; no Rust
+# AST manipulation; no runtime registry; the substrate's compiler
+# verifies the construction is deterministic and well-typed.
+#
+# Parallel to splinter(altitude) declared immediately above — same
+# carrier shape, specialized to AST content. The `ast: ref` field
+# names the @meta/ast altitude (cf. boot/01-meta.mirror's
+# `type ast(g)`); `transparency(ast)` carries the residual opacity
+# the rewrite emits at the AST altitude. The kintsugi loop's
+# `active_pass` consumes the splinter(ast) as the morphism's
+# content (per shards/mirror/fracture/keyword.mirror's
+# `resolve_keyword`: the morphism's `content: ref` names the
+# rewritten splinter at @mirror/store; the splinter at the
+# @meta/ast altitude IS a splinter(ast)).
+#
+# Per [[architecture-substrate-already-had-the-word]]: the
+# substrate had `type ast(g)` (parametric on grammar) and
+# `splinter(altitude)` (parametric on altitude); the recognition
+# is that the natural composition — a splinter living at the AST
+# altitude — is the operational form of `quote`. The construction
+# primitive was already implicit; this declaration names it.
+type splinter(ast) = {
+  content: oid,
+  ast: ref,
+  transparency: transparency(ast),
+}
+
 # The three structural shapes a splinter takes. Re-declared at the
 # glass altitude so the type system can name them as the disjunctive
 # decomposition of `splinter`. The bodies are abstract — the Rust
