@@ -48,15 +48,21 @@ in @glass
 # path_matches_namespace constrains WHICH @<name> the file declares;
 # keyword_matches_depth constrains WHICH KEYWORD that @<name> uses.
 # Together they pin the declaration site uniquely from the path.
+#
+# Cybernetic ancestor: recognition #37 (`requires` IS a Paskian
+# agreement, promoted 2026-06-10) names `pact` as the property-
+# declaration form. pact replaces the conversation-era `grammar`
+# keyword as the surface for declaring properties; the rule names
+# `pact` directly below.
 
-grammar @epistemologic/property/keyword_matches_depth {
+pact @epistemologic/property/keyword_matches_depth {
   # Depth implied by the declared namespace.
   # @X -> 0, @X/Y -> 1, @X/Y/Z -> 2.
   declared_depth(file: ref) -> u32 { \ }
 
   # The keyword each concrete top-level @<name> declaration uses
   # in `file`. One per declared namespace; entries are one of
-  # `prism | glass | grammar`.
+  # `prism | glass | pact`.
   declared_keywords(file: ref) -> [text] { \ }
 
   # The combined property: every concrete declaration's keyword

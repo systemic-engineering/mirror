@@ -93,6 +93,14 @@ prism @glass {
 # discharged downstream when concrete sub-prisms land.
 glass(name) -> prism { \ }
 
+# `pact` keyword — property-declaration form (recognition #37, promoted
+# 2026-06-10: `requires` IS a Paskian agreement). pact is the cybernetic
+# ancestor and substrate-pull replacement for the conversation-era
+# `grammar` keyword: a pact declares a property as a mutual agreement
+# between substrate sites, discharged by the obligation block (\)
+# downstream where the property's actions are realized.
+pact(name) -> property { \ }
+
 # === types of the glass wall ===
 
 # location — where in the substrate an opacity was observed.
