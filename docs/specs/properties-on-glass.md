@@ -29,6 +29,64 @@ verdict — this spec narrows its scope from per-body to per-glass).*
 >   The property's home: `shards/epistemologic/property/path_matches_namespace.mirror`
 >   (NEW; declared, not landed in this spec).
 
+> **2026-06-10 reframe (Alex + Reed, canonical).** Today's cascade landed
+> structural recognitions that propagate into this spec:
+>
+> - **The keyword vocabulary is three-axis** (recognition #46, candidate).
+>   `prism` at depth-0 opens a possibility space (root family). `glass`
+>   at depth-≥1 increases internal complexity within a parent prism
+>   (specialization on the family-axis). `pact` at the property altitude
+>   declares typed obligations (Paskian agreement between substrate-
+>   altitude and species-altitude P-individuals — on a different axis
+>   from family/specialization). The legacy `grammar` keyword (from when
+>   the language was called `conversation`) renames to `pact`,
+>   operationalizing recognition #37 (`requires` IS a Paskian
+>   agreement). The keyword vocabulary becomes structurally three-fold
+>   along independent axes: family-root (prism), specialization (glass),
+>   declarative-obligation (pact).
+> - **The substrate/@io partition lifts Bateson form/substance** (#50,
+>   promoted 2026-06-10). Form is what IS (substrate declarations,
+>   `.mirror`); behaviour at @io is the operational specialization of
+>   substance (energy/matter; what the world DOES). Properties are
+>   form-side discipline. Canonical citation: Bateson 1970 "Form,
+>   Substance and Difference" (19th Korzybski Memorial Lecture; SEM
+>   Part V "Form and Pathology in Relationship"). Canonical site:
+>   `docs/insights/2026-06-10-bateson-form-behaviour-as-substrates-first-distinction.md`.
+> - **Mirror is the operational form of an expanding Hilbert space
+>   with Bateson lifting for coherence preservation** (#51, promoted
+>   2026-06-10 including §8.3 stronger conjecture). The substrate's
+>   coherence under decoherence pressure comes from naming
+>   contradictions and operating at Bateson Level N+1; the path
+>   syntax encodes the level (recognition #42 refinement). Each
+>   substrate-pull recognition widens the Hilbert space dimension.
+>   Canonical site:
+>   `docs/insights/2026-06-10-mirror-as-expanding-hilbert-space-bateson-lifting-for-coherence.md`.
+> - **Property/fracture bilateral pattern (#53, candidate).** The
+>   property declares the rule (form-side); the fracture body resolves
+>   violations (kintsugi-operational); the kintsugi loop is the bridge
+>   reading transparency opacities and applying fracture-body morphisms.
+>   First instance: `@epistemologic/property/keyword_matches_depth` +
+>   `@mirror/fracture/keyword` (both landed 2026-06-10 at mirror
+>   `5e68df9` and `d908798`). Pattern promotes to recognition status
+>   once a second instance exists. Forward-promised second instance:
+>   `@mirror/fracture/predicate` (task #272). This bilateral pattern
+>   IS the substrate's auto-formatting floor — the property + fracture
+>   pair handles keyword-form violations (prism/glass/pact) without
+>   manual sweeps; the kintsugi loop resolves the cascade through
+>   gradient.
+> - **Fracture body type surface** (load-bearing, settled 2026-06-10).
+>   Input: `opacity` from @glass (`{ location, property: @nl,
+>   weight: f64 }`) — single located fact, not accumulated
+>   transparency. Output: `morphism` from `@mirror/spectral/consent`
+>   (`{ content: ref, score: dissonance, expected: cadence_kind }`).
+>   The fracture body PROPOSES a mutation as a morphism; the kintsugi
+>   loop's `active_pass` ranks + composes morphisms via Banach
+>   contraction. Dispatch is (iii) declarative: each fracture body
+>   declares which properties it handles. No hidden state. Substrate
+>   primitive `splinter(ast)` (recognition #54, candidate) is the
+>   parametric AST-fragment construction mechanism the fracture body's
+>   `\` discharges through — substrate-pull-correct quote vocabulary.
+
 Status: **Red** — the architectural shape is pinned; the
 back-projection mechanism is named; the per-glass qualifier set is
 structural; the liquid-type inference operationalization names
