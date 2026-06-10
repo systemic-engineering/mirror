@@ -1,0 +1,349 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi/consent
+in @kintsugi/morphism
+in @epistemologic/property/gate_matches_diff_closure
+
+# @kintsugi/fracture/gate — the kintsugi fracture body that resolves a
+# pre-commit gate's check set to its diff-closure intersection. When
+# the gate runs a check whose dependency closure does NOT intersect
+# the commit diff (over-running) or skips a check whose closure DOES
+# intersect (under-running), this body emits the morphism that swaps
+# the gate's run set to the substrate-derived diff-closure intersection.
+#
+# THE OPERATIONAL HALF of bilateral pattern #53's SECOND INSTANCE.
+# The declarative half landed at
+# `@epistemologic/property/gate_matches_diff_closure` (sibling tick);
+# this shard names the auto-fracture the kintsugi loop applies when
+# the property's transparency surfaces a gate/closure opacity.
+#
+# The friction this lifts to substrate: across this session, the
+# pre-commit hook ran `cargo test` even on commits whose diff touched
+# zero `.rs` files (pure-markdown, pure-.mirror commits). Reed used
+# `--no-verify` as workaround. The substrate-correct behaviour: skip
+# checks whose dependency closure does not intersect the diff. This
+# fracture body QUOTES the corrected gate at AST altitude via
+# splinter(ast); the byte-level hook rewrite is a separate operational
+# tick under Taut's territory (@io/cargo, @mirror/spec, Justfile).
+# The substrate names the proposal; @io applies it.
+#
+# Load-bearing context: recognition #43 (mirror IS a content-addressed
+# build system; candidate — surfaced 2026-06-10); recognition #51
+# (mirror as expanding Hilbert space; promoted) — fracture bodies are
+# how the substrate maintains coherence by resolving altitude-level
+# distinctions at each Bateson level. The gate altitude is the
+# pre-commit altitude; the diff-closure intersection is the check-set
+# the substrate's content-addressed cache already names; this body
+# restores tracking when the gate drifts.
+#
+# === The bilateral pattern (candidate recognition #53, second instance) ===
+#
+# `@epistemologic/property/<predicate>` declares WHAT must hold; a
+# matching `@kintsugi/fracture/<predicate>` declares HOW to restore
+# the property when it fails. First instance: keyword/depth
+# (@epistemologic/property/keyword_matches_depth +
+# @kintsugi/fracture/keyword). Second instance: gate/diff-closure
+# (this shard + the sibling property).
+#
+# Two instances under one shape lift candidate #53 from candidate to
+# recognised. The pattern's signature: declarative property emits
+# `transparency` with located `opacity_map`; fracture body reads one
+# opacity, emits one `morphism` whose `content` is a `splinter(ast)`
+# at the corrected altitude; kintsugi loop's `active_pass` composes
+# the per-pulse candidate set from the failure verdict.
+#
+# === Substrate-pull-correct home ===
+#
+# Per the form/process partition (recognition #55 candidate; landed
+# 2026-06-10 at mirror `20eaf15`): @kintsugi is the process-side
+# family root. Fracture bodies emit morphisms the kintsugi loop
+# applies — process-side by structure. Home: @kintsugi/fracture/gate
+# under the (forward-promised) @kintsugi/fracture family root.
+#
+# Substrate-pull alternative considered: @kintsugi/fracture/precommit
+# (naming the host gate rather than the predicate it restores).
+# Rejected: the bilateral pattern's signature is
+# @kintsugi/fracture/<predicate> matching
+# @epistemologic/property/<predicate>; the predicate is `gate_matches_
+# diff_closure`; the shard species is `gate` (the noun in the
+# predicate's subject position). Parallel to first-instance naming:
+# property `keyword_matches_depth` -> fracture `keyword` (subject).
+#
+# === The fracture body ===
+#
+# Input: `opacity` (from `@glass`) — one located fact surfaced by
+# `gate_matches_diff_closure`'s `failure(opacity_map)` verdict. Each
+# opacity names ONE offending (check, commit) pairing: a check that
+# is in the gate's run set but not in the diff closure (over-running)
+# or in the closure but not in the run set (under-running). The
+# `property` field carries the @nl description of which case applies.
+#
+# Output: `morphism` (from `@kintsugi/consent`) — the typed candidate
+# the kintsugi loop's `active_pass` reads from this body and proposes
+# through `query_phi`. The morphism's `content` ref names the rewritten
+# gate (same path, run set replaced by diff-closure intersection); its
+# `score` carries the dissonance reading (a gate/closure mismatch is a
+# fixed, low-curvature dissonance — the rewrite is unambiguous once
+# the closure is computed); its `expected` carries the cadence_kind
+# the loop anticipates (authentic — the substrate settles cleanly once
+# the gate tracks the closure).
+#
+# Spectrally: this fracture body IS one step along the Ricci flow at
+# the gate altitude. The substrate's curvature at an over-running gate
+# is the (run_set \ closure) excess; the negative-curvature direction
+# IS the swap to (run_set ∩ closure); the resolved gate has zero
+# curvature at this altitude (the closure fully determines the run set).
+# Per `dissonance.mirror`'s `dissonance_as_holonomy`, the morphism's
+# score IS the holonomy decrease the swap produces.
+#
+# Audibly: this fracture body IS the audible-altitude V → I cadence
+# at the gate altitude. The pre-rewrite state holds the dominant
+# tension (the wrong run set — false-positive friction); the
+# post-rewrite state resolves to the tonic (the right run set); the
+# cadence is authentic.
+#
+# === Substrate-pull discipline ===
+#
+# Per `@glass`, `opacity` is the substrate's located-fact carrier;
+# this shard reads it directly. Per `@kintsugi/consent`, `morphism`
+# is the substrate's typed-candidate carrier; this shard emits it
+# directly. Per `@kintsugi/morphism`, `morphism_context` is the
+# per-candidate slice that pairs a candidate with its pre-anchor;
+# this shard's emitted morphism is consumed by the loop AND lifted
+# into a morphism_context via `paired(oscillation.anchor, m)` at the
+# active_pass altitude. Per `@epistemologic/property/gate_matches_
+# diff_closure`, the consuming property's
+# `gate_matches_diff_closure(gate, commit) -> transparency` is the
+# gate that surfaces the opacity this body resolves.
+#
+# NO new verdict carrier; NO leading-`|` workarounds; NO opaque-`ref`
+# carriers where structured types are available (per
+# [[feedback-no-bare-types]]). The fracture body reads typed opacity,
+# emits typed morphism — the substrate's vocabulary throughout.
+#
+# === Substrate gaps surfaced honestly ===
+#
+#   - `resolve_gate` reads one opacity at a time. The property's
+#     `failure(opacity_map)` carries [opacity]; the kintsugi loop
+#     iterates the map and calls `resolve_gate` per opacity.
+#
+#   - The morphism's `content: ref` carries the substrate handle to
+#     the rewritten gate. The realisation layer produces the
+#     rewritten splinter (same path, run set narrowed/widened to the
+#     diff-closure intersection) and passes its handle as the
+#     morphism's content. The substrate names the shape of the
+#     proposal; the byte-level rewrite of the hook script / Justfile
+#     recipe is @io's concern (Taut's territory) — NOT touched here.
+#
+#   - The `expected: cadence_kind` field is `authentic` for this
+#     fracture body — the gate/closure rule is deterministic
+#     (closure computation is content-addressed; run-set equality
+#     is set-equality) and resolution always settles cleanly.
+#
+# === Pre-AI prior art ===
+#
+#   incremental rebuild  Karlton/Feldman (1976) make(1); the recompile-
+#                        only-what-changed discipline. The substrate's
+#                        reading is Erdweg/van der Storm/Völter (2014)
+#                        on language-workbench correctness for
+#                        incremental compilation.
+#   dependency closure   Knuth (1968) TAOCP §2.2.3 on transitive
+#                        reachability. The substrate's reading is
+#                        the content-addressed cache (Nix; Eelco
+#                        Dolstra 2006 thesis) — the closure IS the
+#                        cache key.
+#   gate restoration     Hoare (1969) Axiomatic basis; the predicate
+#                        gate of a program command. The substrate's
+#                        reading is Lawvere & Schanuel (1997) on the
+#                        categorical pullback that restores
+#                        commuting diagrams. This body's restoration
+#                        IS the pullback that makes (gate, closure,
+#                        diff) commute.
+#
+# The substrate's contribution is *typing* the per-site reduction so
+# the kintsugi loop reads it. No invention.
+#
+# Spec context: recognition #43 (mirror IS a content-addressed build
+#               system; candidate — surfaced 2026-06-10); recognition
+#               #51 (mirror as expanding Hilbert space; promoted) —
+#               the gate tracks the Bateson level at which the diff
+#               lives; this fracture body restores tracking.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (opacity is substrate vocabulary; the fracture
+#                      reads the typed carrier rather than threading
+#                      an opaque ref through the loop),
+#                      [[architecture-kintsugi-bias-lift]] (the
+#                      kintsugi loop's bias direction is substrate-
+#                      pull — gate/closure alignment IS one
+#                      coordinate of the substrate-pull gradient;
+#                      this fracture body fits the bias),
+#                      [[architecture-kintsugi-variety-io]] (Ashby's
+#                      requisite variety — the closure-computation
+#                      partitions the @io check-space into
+#                      diff-relevance-classes; the fracture body
+#                      maintains the partition under mutation),
+#                      [[architecture-mirror-as-content-addressed-build-system]]
+#                      (mirror has every Bazel/Buck2/Nix primitive at
+#                      substrate altitude; this fracture body names
+#                      the partial-rebuild verdict's restoration at
+#                      the pre-commit gate altitude),
+#                      [[architecture-property-fracture-bilateral]]
+#                      (the bilateral pattern this is the second
+#                      instance of; promotion gate),
+#                      [[architecture-splinter-ast-quote-primitive]]
+#                      (the substrate's parametric AST-fragment
+#                      construction; this body discharges via
+#                      splinter(ast) declaratively, no Rust),
+#                      [[feedback-no-bare-types]] (opacity and
+#                      morphism are typed carriers; the body does
+#                      NOT escape as a bare (check, commit) tuple).
+# Forward-promise to consumers: `@kintsugi/oscillate`'s `active_pass`
+#                  reads this fracture body when the candidate
+#                  morphism_set is composed from property-surfaced
+#                  opacities; the binding lands when the kintsugi
+#                  loop substrate-pulls. This shard does NOT pull
+#                  `@kintsugi/oscillate` or `@mirror/spectral/score`;
+#                  the substrate-altitude arrow points inward (this
+#                  fracture body IS consumed by the loop; not the
+#                  other way around).
+# Related shards: epistemologic/property/gate_matches_diff_closure.mirror
+#                 (the declarative half of the bilateral; surfaces
+#                 the opacities this body resolves),
+#                 epistemologic/property/keyword_matches_depth.mirror
+#                 + kintsugi/fracture/keyword.mirror (the FIRST
+#                 INSTANCE of bilateral pattern #53; this shard +
+#                 its sibling property are the SECOND INSTANCE that
+#                 promotes the pattern),
+#                 glass.mirror (the substrate floor; `opacity`,
+#                 `location`, `transparency`, `verdict`, and
+#                 `splinter(ast)` itself),
+#                 kintsugi/consent.mirror (the morphism carrier
+#                 this body emits; `query_phi` is the gate the
+#                 emitted morphism flows through),
+#                 kintsugi/morphism.mirror (the `morphism_context`
+#                 carrier; the per-candidate slice the loop pairs
+#                 this fracture's morphism with its pre-anchor),
+#                 kintsugi/oscillate.mirror (the kintsugi loop
+#                 driver; `active_pass` is the action that reads
+#                 this body when composing the per-pulse candidate
+#                 morphism_set).
+# Out-of-scope (handed to @io / Taut's territory): @io/cargo.mirror,
+#                 @mirror/mosaic.mirror, @mirror/spec.mirror, mirror.spec,
+#                 Justfile, .husky/, .git/hooks/. The substrate names
+#                 the typed proposal; @io applies the byte-level
+#                 hook-script rewrite in a separate operational tick.
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/gate.mirror` declares
+# `@kintsugi/fracture/gate` as a species under the (forward-promised)
+# @kintsugi/fracture family.
+# Keyword/depth property: this declaration is depth-2 from the
+# @kintsugi family root; per recognition #46 it uses `glass`. The
+# shard applies the first-instance bilateral's rule by birth.
+
+glass @kintsugi/fracture/gate {
+  focus gate
+  project gate
+  split gate
+  shift gate
+  settle gate
+}
+
+# === resolve_gate — the fracture body ===
+#
+# THE AUTO-FRACTURE: given an opacity site at a (gate, commit) pairing
+# whose run set diverges from the diff closure, emit the morphism that
+# rewrites the gate's run set to the diff-closure intersection. Same
+# gate path, run set swapped.
+#
+# Reads an opacity (one element of
+# `gate_matches_diff_closure(gate, commit).failure(opacity_map)`'s
+# opacity_map); emits a candidate morphism the kintsugi loop proposes
+# through `query_phi`. The morphism's three fields:
+#
+#   content   — substrate ref to the rewritten gate. The realisation
+#                layer produces a splinter at the same gate path with
+#                its `run_set` swapped for the diff-closure
+#                intersection; the content ref names that splinter's
+#                @mirror/store handle.
+#   score     — dissonance reading. Gate/closure violations are
+#                fixed-curvature dissonances; the score reads
+#                `dissonance.is_pareto` cleanly (one strict winner
+#                over the no-op alternative — the over-run or
+#                under-run is strictly more dissonant than the
+#                aligned run set).
+#   expected  — cadence_kind anticipation. Always `authentic` for
+#                this fracture body — the run-set swap fully resolves
+#                the opacity at this altitude; the loop's `dark_pass`
+#                will confirm identity preservation (the gate's
+#                identity stays byte-equal at its path; only the
+#                run_set field shifts); the loop's `read_consent`
+#                bridges (pass, authentic) to the `settled`
+#                oscillation_state for this opacity.
+#
+# The body is FULLY DECLARATIVE — substrate-pull-correct via
+# `splinter(ast)` (declared at shards/glass.mirror's tick-2 carrier).
+# The morphism's `content` field carries a content-addressed splinter
+# at the @meta/ast altitude: same gate path, run set rewritten to the
+# closure intersection. The substrate's compiler verifies the
+# construction is deterministic and well-typed; the kintsugi loop's
+# `active_pass` reads the splinter as the morphism's proposed content
+# and applies it through `query_phi`.
+#
+# Per `splinter(ast)`'s parametric specialisation (glass.mirror
+# §splinter(ast), 2026-06-10): the record IS its content-addressed
+# handle — `content: oid` and `oid = ref` (shards/mirror/store.mirror
+# line ~104) collapse the splinter literal to a substrate-pull-correct
+# `ref` in the morphism's `content` field position. No Rust AST
+# manipulation; no `\` obligation; no hook-script edit — the
+# byte-level rewrite is @io's tick.
+#
+# Field-by-field substrate-pull reading:
+#
+#   content.content     — `opacity.location.file` (the substrate's
+#                          located-fact ref at the source gate); the
+#                          rewritten AST is content-addressed at the
+#                          same path.
+#   content.ast         — `@meta/ast` (the canonical altitude ref);
+#                          per `boot/01-meta.mirror`'s `type ast(g)`.
+#                          The run-set swap happens at the AST
+#                          altitude by construction.
+#   content.transparency — `success` (per `transparency(p)`'s success
+#                          variant in glass.mirror): the run-set swap
+#                          fully resolves the opacity at this altitude;
+#                          no residual transparency remains.
+#   score.roughness     — `opacity.property` (the @nl description of
+#                          whether the violation was over-running or
+#                          under-running, plus which check name); the
+#                          substrate's `dissonance` reads the per-site
+#                          roughness via the property text per
+#                          dissonance.mirror's Helmholtz/Plomp-Levelt
+#                          carrier shape.
+#   score.partials      — `1` (the gate's run set IS the single partial
+#                          of dissonance at this altitude; the swap
+#                          collapses one mismatch).
+#   expected            — `authentic` (the V → I cadence at the gate
+#                          altitude; per cadence.mirror's `cadence_kind`
+#                          and the loop's `read_consent` bridge:
+#                          authentic → pass → auto-apply once @io
+#                          binds).
+resolve_gate(opacity: opacity) -> morphism {
+  morphism {
+    content: splinter(ast) {
+      content:      opacity.location.file,
+      ast:          @meta/ast,
+      transparency: success,
+    },
+    score: dissonance {
+      roughness: opacity.property,
+      partials:  1,
+    },
+    expected: authentic,
+  }
+}
+
+out @kintsugi/fracture/gate
+out resolve_gate
