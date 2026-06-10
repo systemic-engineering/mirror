@@ -49,7 +49,7 @@ in @epistemologic/cybernetic
 # === The verifiable shape (per cybernetic foundation §3.5 row 1) ===
 #
 # - Declares the shard's variety vector with per-axis budget.
-# - Verifiable at species boundary via `@mirror/realisation.classify`.
+# - Verifiable at species boundary via `@code/metalogue/materialize.classify`.
 # - The per-axis loss profile is recoverable from the opacity-weighted
 #   projection at the boundary (`shards/glass.mirror`'s `opacity_map`
 #   carries the residuals; per-axis labelling is the interpretive
@@ -128,8 +128,10 @@ in @epistemologic/cybernetic
 #                 verdicts surface against; `transparency<p>` and
 #                 `opacity_map` are the recovery machinery for the
 #                 per-axis loss profile),
-#                 mirror/realisation.mirror (the species-boundary
-#                 discriminator the verification routes through).
+#                 code/metalogue/materialize.mirror (the species-
+#                 boundary recognitive discriminator the verification
+#                 routes through; retired from @mirror/realisation
+#                 2026-06-10).
 # Path-namespace property: this file at
 # `shards/epistemologic/cybernetic/variety.mirror` declares
 # `@epistemologic/cybernetic/variety` per
@@ -213,9 +215,10 @@ type variety_vector = [axis_budget]
 
 # === The per-axis loss profile at the species boundary ===
 #
-# When a shard crosses a species boundary (per `@mirror/realisation.classify`),
-# the projection at the boundary may lose variety on some axis. The loss
-# profile is recoverable from the opacity-weighted projection —
+# When a shard crosses a species boundary (per
+# `@code/metalogue/materialize.classify`), the projection at the boundary
+# may lose variety on some axis. The loss profile is recoverable from
+# the opacity-weighted projection —
 # `shards/glass.mirror`'s `opacity_map` carries the residuals; the
 # per-axis loss is the slice of that map labelled by axis.
 #

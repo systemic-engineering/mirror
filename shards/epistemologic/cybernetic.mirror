@@ -23,9 +23,10 @@ in @epistemologic
 # A cybernetic property declares a substrate-altitude obligation a shard
 # names ABOUT ITSELF or about a contract it holds with another shard. The
 # obligation is *verifiable at the species boundary* (the
-# `@mirror/realisation.classify` discriminator surface) when mechanical;
-# *transitively verifiable* when the discipline reduces to lower-altitude
-# checks; *cross-tick verifiable* when the cascade audit is the discharge.
+# `@code/metalogue/materialize.classify` discriminator surface) when
+# mechanical; *transitively verifiable* when the discipline reduces to
+# lower-altitude checks; *cross-tick verifiable* when the cascade audit
+# is the discharge.
 #
 # The family is the cybernetic complement to the `@mirror/cybernetics/X`
 # operational family. Alex's bilateral framing: declarative property here,
@@ -108,9 +109,9 @@ in @epistemologic
 # on its own discipline is a prism. `cybernetic` IS such a kind: a
 # substrate-wide vocabulary for declarative cybernetic obligations, with
 # a shared verification discipline (species-boundary check at
-# `@mirror/realisation.classify`), a shared bilateral framing (property
-# here / operation at `@mirror/cybernetics/X`), and eleven species that
-# each carry their own contract under the same discipline.
+# `@code/metalogue/materialize.classify`), a shared bilateral framing
+# (property here / operation at `@mirror/cybernetics/X`), and eleven
+# species that each carry their own contract under the same discipline.
 #
 # The previous shape (cybernetic primitives implicit in the substrate-pull
 # cascade, named only in prose) under-declared the inheritance. The

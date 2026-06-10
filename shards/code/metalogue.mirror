@@ -280,12 +280,14 @@ project_hole(h: hole) -> species_ast { \ }
 #    OID, same emitted OID — the gap is content-addressed.
 #
 # 4. Substrate-pull preservation: if D is substrate-realisable per
-#    `@mirror/realisation.classify(D) = substrate(target)`, then
-#    `shim_X(D)` references only language constructs that themselves
-#    appear in some `@code/species` substrate-realisable shard. The
-#    emission cannot reach into `@io` to fill a substrate-realisable
-#    gap. The discriminator's verdict IS the discriminator of the
-#    shim — the gap respects the glass wall.
+#    `@code/metalogue/materialize.classify(D).partition = substrate`,
+#    then `shim_X(D)` references only language constructs that
+#    themselves appear in some `@code/species` substrate-realisable
+#    shard. The emission cannot reach into `@io` to fill a
+#    substrate-realisable gap. The recognitive discriminator's verdict
+#    IS the discriminator of the shim — the gap respects the glass
+#    wall. The discriminator's home is the sibling sub-prism
+#    `@code/metalogue/materialize` (the metalogue's recognitive turn).
 
 requires round_trip(shim_type)
 requires oid_function(shim_type)

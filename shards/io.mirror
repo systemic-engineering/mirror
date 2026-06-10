@@ -85,9 +85,11 @@ in @glass
 #     STRUCTURALLY non-foldable into mirror — they stay in `@io`
 #     forever. Others (byte-level primitives, encoding/decoding,
 #     hashing) are CANDIDATES for cross-wall kintsugi when the
-#     substrate's analyzability matures. The realisation
-#     discriminator (T21's second half; `@mirror/realisation`) names
-#     which is which.
+#     substrate's analyzability matures. The recognitive
+#     discriminator (T21's second half, retired from
+#     `@mirror/realisation` 2026-06-10 to its substrate-pull-
+#     correct home at `@code/metalogue/materialize`) names which
+#     is which.
 #
 # === Species under this family ===
 #
@@ -157,10 +159,11 @@ in @glass
 # The substrate-pull cost of NOT naming this: the
 # `kintsugi-self-hosting.md` discriminator's "@io boundary?" column
 # (lines 20-36 of that spec) has been operating PROSE-ONLY; the
-# realisation discriminator declared in `shards/mirror/realisation.
-# mirror` (T21's second half) needs a TYPED parent to point its
-# `altitude: ref` field at when it classifies a Rust file as `@io`.
-# Without `@io` declared at the mirror altitude, the discriminator's
+# recognitive discriminator declared in `shards/code/metalogue/
+# materialize.mirror` (retired from `@mirror/realisation`
+# 2026-06-10) needs a TYPED parent to point its `target: ref` field
+# at when it classifies a Rust file as boundary-side @io. Without
+# `@io` declared at the mirror altitude, the discriminator's
 # output has no typed home. T21 lands both halves in the same tick
 # because each half is the other half's substrate prerequisite.
 #
@@ -337,11 +340,16 @@ in @glass
 #                  io/cargo.mirror (the first mirror-altitude lifted
 #                  species; the precedent for path-namespace at this
 #                  family),
-#                  mirror/realisation.mirror (T21's second half; the
-#                  discriminator that classifies each Rust file as
-#                  `@io` or substrate-realisable, using this family
-#                  root as the typed home for its `altitude: ref`
-#                  output when the verdict is "@io").
+#                  code/metalogue/materialize.mirror (the recognitive
+#                  discriminator's substrate-pull-correct home,
+#                  2026-06-10; classifies each species form as
+#                  boundary (@io) or substrate-realisable, using
+#                  this family root as the typed home for its
+#                  `target: ref` output when the verdict's
+#                  `partition` is boundary; retired from the prior
+#                  @mirror/realisation home per recognition #50's
+#                  form/substance audit + the metalogue turn-pair
+#                  recognition).
 # Path-namespace property: this file at `shards/io.mirror` declares
 # `@io` as the universal boundary family root; species live at
 # `shards/io/<name>.mirror`. The path stays at depth-1 (not
