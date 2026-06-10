@@ -1,0 +1,527 @@
+in @code
+in @prism
+in @glass
+in @meta
+in @nl
+in @property
+
+# @code/erlang.ast — the Erlang Abstract Format (EAF) substrate grammar.
+#
+# The first concrete `@code/<lang>.ast` shard. Opens the BEAM target
+# road: future ticks wire `@code/erlang/macro` → `@code/erlang.ast`
+# emission → `compile:forms/1` → `.beam` (the BEAM analogue of the
+# existing Rust ouroboros pipeline at
+# [[architecture-fragmentation-is-the-rust-substrate]] and
+# `shards/spectral.mirror`'s step-by-step lift).
+#
+# === naming: `<lang>.ast`, not `<lang>/ast` ===
+#
+# The dotted form parallels the substrate's existing parametric AST
+# vocabulary (`splinter(ast)` at `shards/glass.mirror`; `type ast(g)`
+# at `boot/01-meta.mirror`). `<lang>.ast` reads as "the AST
+# specialization of the `<lang>` grammar" — a type-altitude
+# specialization, not a sub-path under a `<lang>` parent. The form
+# is consistent with @code/metalogue's shim-return references
+# (`shim_type(d: declaration) -> code/rust.ast` at
+# `shards/code/metalogue.mirror` line 175 et al; `shim_*` in
+# `shards/code/rust/macro.mirror` line 113-116). Path-namespace
+# property per [[architecture-shards-as-substrate-source]]: this
+# file at `shards/code/erlang.ast.mirror` declares `@code/erlang.ast`.
+# The dotted segment IS part of the name; the file name preserves it.
+#
+# === the substrate-pull recognition ===
+#
+# Per [[feedback-substrate-already-had-the-word]] (52-instance
+# track): `code/rust.ast` has been type-referenced from
+# `@code/metalogue` and `@code/rust/macro` since 2026-06-09 without
+# the type itself being declared in its own shard. The shim
+# signatures consumed it as an abstract carrier and the four laws
+# discharged via the per-species `requires` clauses. This tick
+# lands the first explicit `@code/<lang>.ast` shard for Erlang
+# because the BEAM-target road is opening now — `@code/rust.ast`
+# will follow with the kintsugi-on-Rust cascade (T22+) when the
+# Rust-side consumer pulls.
+#
+# === what this shard declares ===
+#
+# The EAF tuple-grammar lifted to substrate sum types. Per
+# `erts/absform.html` (the canonical EAF spec), every Erlang
+# abstract form is a tagged tuple `{Tag, ANNO, ...}` where ANNO is
+# the annotation carrier (modern OTP: `erl_anno:anno()`; classic:
+# a line integer). The substrate declarations below carry:
+#
+#   - `anno` — the annotation type. Modern superset: line + column
+#     + extension attributes. The classic line-integer form is the
+#     projection (the floor admits both; the substrate retains the
+#     richer form so the carrier doesn't lose information at the
+#     glass wall).
+#   - `form` — the abstract_form() sum (top-level module forms).
+#   - `expr` — the abstract_expr() sum (expressions).
+#   - `pat` — the abstract_pat() sum (patterns; structurally
+#     overlapping with `expr` per EAF but discriminated at the
+#     parser altitude per `erl_parse(3)`'s pattern judgment).
+#   - `clause` — the abstract_clause() record (the canonical
+#     `{clause, ANNO, Patterns, Guards, Body}` shape).
+#   - `type_form` — the abstract_type() sum (typespecs).
+#   - `bin_element` — bitstring segment (used inside `bin`).
+#   - `assoc` — map association (used inside `map`).
+#   - `qualifier` — comprehension qualifier (used inside `lc` / `bc`
+#     / `mc`).
+#   - `guard` — a single conjunction of guard tests; the EAF guard
+#     surface is `[[guard]]` (OR-of-ANDs).
+#
+# Coverage matches the EAF spec's full tag set per the erlang.org
+# `erts/absform.html` reference. No "minimal floor" projection:
+# EAF is a closed grammar specified by the BEAM team, and downstream
+# codegen needs the full carrier so `compile:forms/1` can consume
+# what the substrate emits. The substrate retains the closure; the
+# species' emit step IS the projection back to the BEAM AST.
+#
+# === what this shard does NOT declare ===
+#
+# - The per-species shim bindings (`shim_erlang_function`,
+#   `shim_erlang_module`, etc.). Per the @code/metalogue contract
+#   (`shards/code/metalogue.mirror` §"the four shim signatures"),
+#   shim bindings live at `@code/<lang>/macro`, NOT at
+#   `@code/<lang>.ast`. The downstream `shards/code/erlang/macro.mirror`
+#   tick will bind `shim_type` / `shim_prism` / `shim_action` /
+#   `shim_grammar` to `code/erlang.ast` as the species AST type,
+#   parallel to `shards/code/rust/macro.mirror` lines 113-116.
+#
+# - The `@code/erlang` altitude root. The brief's path layout
+#   places `@code/erlang.ast` as a depth-1 sibling of `@code/rust`,
+#   `@code/gleam`, `@code/mirror` — language is denoted by the bare
+#   `<lang>` segment, `.ast` is the AST-specialization marker. A
+#   future `shards/code/erlang.mirror` will declare the altitude
+#   five-op prism block (parallel to `shards/code/rust.mirror`);
+#   this tick lands the AST grammar alone because the BEAM road's
+#   smallest tick is the carrier the macro shim will return.
+#
+# - The mirror.spec extension naming `target binary { altitude
+#   @code/erlang, emit beam }`. That's Taut's territory
+#   (`shards/mirror/{mosaic,spec,spec/keywords}.mirror`,
+#   `mirror.spec`).
+#
+# - Distribution / port / NIF properties. Brief context names
+#   them as downstream ticks (BEAM-native `:net_kernel`, ports
+#   by default, `@epistemologic/property/nif_safe` + fracture
+#   body for NIFs). The grammar floor doesn't carry the runtime
+#   surface.
+#
+# === Spec context ===
+#
+# - erlang.org/doc/apps/erts/absform.html (the canonical EAF
+#   spec; erts 16.0 / OTP 28).
+# - docs/specs/code-metalogue-surface.md §4.1 (the four
+#   substrate-declaration kinds the shim dispatches over;
+#   `code/erlang.ast` is the species-AST carrier each `shim_X`
+#   returns).
+# - docs/specs/mirror-spec-schema.md §2 (target.emit), §10.5
+#   (emit disambiguation) — the future `emit beam` keyword
+#   will resolve through `@code/erlang`'s altitude when that
+#   shard lands.
+#
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]],
+#                      [[feedback-substrate-already-had-the-word]],
+#                      [[feedback-craft-not-deliver]],
+#                      [[architecture-splinter-ast-quote-primitive]]
+#                      (the parametric AST-fragment construction
+#                      primitive; `splinter(@code/erlang.ast)` is
+#                      the natural composition at the BEAM altitude).
+#
+# Related shards: code.mirror (universal parent),
+#                 code/rust.mirror (the sibling Rust altitude root;
+#                  precedent for `@code/<lang>` family member),
+#                 code/gleam.mirror (sibling altitude root; same
+#                  family pattern),
+#                 code/metalogue.mirror (the universal AST-altitude
+#                  metalogue ground; declares `shim_*(d) ->
+#                  species_ast` parametric in the species AST type),
+#                 code/rust/macro.mirror (the Rust-altitude
+#                  realisation; binds shims to `code/rust.ast`;
+#                  the parallel future for Erlang lives at
+#                  `shards/code/erlang/macro.mirror`),
+#                 glass.mirror (declares `splinter(ast)`; the
+#                  AST-specialization mechanism),
+#                 spectral.mirror (the runtime family; future
+#                  BEAM runtime targets land here).
+#
+# Per [[architecture-prism-as-trait-as-everything]]: `prism
+# @code/erlang.ast { ... }` declares the family-root-at-depth-1
+# parallel to `@code/rust`'s `prism` block. Depth-≥2 sub-prisms
+# (e.g. `@code/erlang.ast/<subtree>`) would use `glass` per
+# recognition #46; the depth-0/1 boundary uses `prism`.
+
+prism @code/erlang.ast {
+  focus erlang_ast
+  project erlang_ast
+  split erlang_ast
+  shift erlang_ast
+  settle erlang_ast
+}
+
+# === annotation type (ANNO) ===
+#
+# EAF's `ANNO` is `erl_anno:anno()` in modern OTP. Carries line +
+# column + an extensible attribute list (file ref, generated flag,
+# record-line context, etc.). The classic line-integer form is the
+# floor projection.
+#
+# The substrate retains the richer form because the carrier is
+# what `compile:forms/1` will consume on the wire — collapsing to a
+# bare line integer at the substrate altitude would force every
+# downstream emit step to reconstruct what the parser already had.
+# Per [[feedback-no-bare-types]]: `anno` is a newtype around the
+# substrate fields, not a bare integer.
+#
+# `anno_attr` is the extension key/value cell. EAF's wire form
+# carries: `{file, ref}`, `{generated, bool}`, `{record, ref}`,
+# plus implementation-extensible variants. The substrate models
+# the closed core variants explicitly and admits unknown extensions
+# via `attr_other(ref, ref)` so the carrier is total under
+# round-trip.
+type anno = {
+  line: u32,
+  column: option(u32),
+  attrs: [anno_attr],
+}
+
+type anno_attr =
+  | attr_file(ref)
+  | attr_generated(bool)
+  | attr_record(ref)
+  | attr_text(ref)
+  | attr_other(ref, ref)
+
+# === abstract_form() — top-level module forms ===
+#
+# Per `erts/absform.html` §"Module declarations and forms": every
+# top-level Erlang form is one of: module attribute, export, import,
+# file, function definition, spec / callback attribute, record
+# declaration, type / opaque declaration, end-of-file marker, plus
+# wild attributes.
+#
+# The substrate enumeration matches the EAF tag set 1-to-1; each
+# variant carries its `anno` plus the per-tag payload from the EAF
+# spec. The wild-attribute variant (`form_attribute_wild`) catches
+# user-defined attributes per EAF's catch-all `{attribute, ANNO,
+# A, T}`.
+type form =
+  | form_module(anno, ref)
+  | form_export(anno, [func_ref])
+  | form_import(anno, ref, [func_ref])
+  | form_file(anno, ref, u32)
+  | form_function(anno, ref, u32, [clause])
+  | form_spec(anno, func_ref, [func_type])
+  | form_remote_spec(anno, ref, func_ref, [func_type])
+  | form_callback(anno, func_ref, [func_type])
+  | form_record(anno, ref, [record_field_decl])
+  | form_type(anno, ref, type_form, [type_var])
+  | form_opaque(anno, ref, type_form, [type_var])
+  | form_attribute_wild(anno, ref, ref)
+  | form_eof(anno)
+
+# `func_ref` — the `{Name, Arity}` cell used in exports / imports
+# / specs. `mod_func_ref` is the remote form `{Module, Name,
+# Arity}`. Declared as records (not bare tuples) so the type system
+# names what each field IS per [[feedback-no-bare-types]].
+type func_ref = {
+  name: ref,
+  arity: u32,
+}
+
+type mod_func_ref = {
+  module: ref,
+  name: ref,
+  arity: u32,
+}
+
+# === abstract_expr() — expressions ===
+#
+# Per `erts/absform.html` §"Expressions": every Erlang expression
+# is one of the variants below. The literal expressions (`atom`,
+# `char`, `float`, `integer`, `string`, `nil`, `var`) recur in the
+# pattern grammar (declared separately below); structurally they
+# share the same `(anno, payload)` shape but the discrimination
+# context (expression vs pattern) is part of the form's well-
+# typedness per `erl_parse(3)`'s pattern judgment.
+#
+# Recursive references: expressions can contain other expressions
+# (`call`, `cons`, `match`, `case`, `tuple`, `block`, `bin`, `lc`,
+# `bc`, `mc`, `map`, `if`, `receive`, `try`, `fun`, etc.) and can
+# contain clauses (`case`, `if`, `receive`, `try`, `fun`,
+# `named_fun`). The mutual recursion expr ↔ clause ↔ pattern is
+# the EAF's structural shape; substrate carries it directly.
+type expr =
+  | expr_atom(anno, ref)
+  | expr_char(anno, u32)
+  | expr_float(anno, f64)
+  | expr_integer(anno, i64)
+  | expr_string(anno, ref)
+  | expr_nil(anno)
+  | expr_var(anno, ref)
+  | expr_bin(anno, [bin_element])
+  | expr_bc(anno, expr, [qualifier])
+  | expr_block(anno, [expr])
+  | expr_case(anno, expr, [clause])
+  | expr_catch(anno, expr)
+  | expr_cons(anno, expr, expr)
+  | expr_fun_ref(anno, func_ref)
+  | expr_fun_remote_ref(anno, mod_func_ref)
+  | expr_fun_clauses(anno, [clause])
+  | expr_named_fun(anno, ref, [clause])
+  | expr_call(anno, expr, [expr])
+  | expr_remote_call(anno, expr, expr, [expr])
+  | expr_if(anno, [clause])
+  | expr_lc(anno, expr, [qualifier])
+  | expr_mc(anno, assoc, [qualifier])
+  | expr_map(anno, [assoc])
+  | expr_map_update(anno, expr, [assoc])
+  | expr_match(anno, pat, expr)
+  | expr_maybe_match(anno, pat, expr)
+  | expr_maybe(anno, [expr])
+  | expr_maybe_else(anno, [expr], [clause])
+  | expr_op_unary(anno, ref, expr)
+  | expr_op_binary(anno, ref, expr, expr)
+  | expr_receive(anno, [clause])
+  | expr_receive_after(anno, [clause], expr, [expr])
+  | expr_record(anno, ref, [record_field_set])
+  | expr_record_update(anno, expr, ref, [record_field_set])
+  | expr_record_field(anno, expr, ref, ref)
+  | expr_record_index(anno, ref, ref)
+  | expr_tuple(anno, [expr])
+  | expr_try(anno, [expr], [clause], [clause], [expr])
+
+# === abstract_pat() — patterns ===
+#
+# Per `erts/absform.html` §"Patterns": the pattern grammar is a
+# proper subset of the expression grammar (no calls, no `case`,
+# no `if`, no comprehensions, no `try`, etc.). Discriminated
+# separately because the parser's pattern judgment is what
+# enforces the subset — substrate carries the subset as its own
+# sum type so type-soundness at the shim altitude is structural,
+# not a runtime check.
+#
+# The `pat_var` variant covers `'_'` (the wildcard pattern) per
+# EAF's "var with name `'_'`" convention; no separate wildcard
+# constructor.
+type pat =
+  | pat_atom(anno, ref)
+  | pat_char(anno, u32)
+  | pat_float(anno, f64)
+  | pat_integer(anno, i64)
+  | pat_string(anno, ref)
+  | pat_nil(anno)
+  | pat_var(anno, ref)
+  | pat_bin(anno, [bin_element])
+  | pat_match(anno, pat, pat)
+  | pat_cons(anno, pat, pat)
+  | pat_map(anno, [assoc])
+  | pat_op_unary(anno, ref, pat)
+  | pat_op_binary(anno, ref, pat, pat)
+  | pat_record_index(anno, ref, ref)
+  | pat_record(anno, ref, [record_field_set])
+  | pat_tuple(anno, [pat])
+
+# === abstract_clause() — clauses ===
+#
+# Per `erts/absform.html` §"Clauses": every Erlang clause is
+# `{clause, ANNO, Patterns, Guards, Body}`. Guards nest as
+# OR-of-ANDs: `[[guard_test]]` — the outer list is disjunction,
+# each inner `guard` is a conjunction of `guard_test`s. The
+# substrate names the structure with typed records, not nested
+# bare lists.
+#
+# `guard_test` is structurally a subset of `expr` (only certain
+# BIFs and operations are guard-safe per `erl_lint`). At the
+# substrate floor we carry `expr` and admit the subset as the
+# guard-safety property declared at the @property altitude (a
+# future tick: `@epistemologic/property/guard_safe(expr)`).
+type clause = {
+  anno: anno,
+  patterns: [pat],
+  guards: [guard],
+  body: [expr],
+}
+
+type guard = {
+  tests: [expr],
+}
+
+# === supporting carriers ===
+
+# `bin_element` — bitstring segment used inside `expr_bin` and
+# `pat_bin`. Per EAF: `{bin_element, ANNO, Value, Size,
+# TypeSpecList}` where Size is `default` or an expression; TSL is
+# a list of type specifiers (or `default`).
+type bin_element = {
+  anno: anno,
+  value: expr,
+  size: bin_size,
+  type_specs: bin_type_specs,
+}
+
+type bin_size =
+  | size_default
+  | size_expr(expr)
+
+type bin_type_specs =
+  | tsl_default
+  | tsl_specs([bin_type_spec])
+
+type bin_type_spec =
+  | bts_atom(ref)
+  | bts_pair(ref, u32)
+
+# `assoc` — map association used inside `expr_map`, `expr_map_update`,
+# `pat_map`, `expr_mc`. Per EAF: `{map_field_assoc, ANNO, K, V}`
+# for `K => V` and `{map_field_exact, ANNO, K, V}` for `K := V`.
+type assoc =
+  | assoc_field(anno, expr, expr)
+  | assoc_exact(anno, expr, expr)
+
+# `qualifier` — comprehension qualifier used inside `expr_lc`,
+# `expr_bc`, `expr_mc`. Per EAF: `{generate, ANNO, P, E}` (list
+# gen), `{b_generate, ANNO, P, E}` (bitstring gen),
+# `{m_generate, ANNO, A, E}` (map gen), or a filter expression.
+# The filter form is a bare expression at the EAF tuple altitude
+# (no wrapping tag) but the substrate names it explicitly so the
+# sum is total.
+type qualifier =
+  | gen_list(anno, pat, expr)
+  | gen_bin(anno, pat, expr)
+  | gen_map(anno, assoc, expr)
+  | gen_filter(expr)
+
+# `record_field_decl` — field declaration inside `form_record`. Per
+# EAF: `{record_field, ANNO, {atom, ANNO, Name}}` or `{record_field,
+# ANNO, {atom, ANNO, Name}, DefaultExpr}` or
+# `{typed_record_field, RecordField, Type}`.
+type record_field_decl = {
+  anno: anno,
+  name: ref,
+  default: option(expr),
+  field_type: option(type_form),
+}
+
+# `record_field_set` — field set in record-creation and
+# record-update expressions. Per EAF: `{record_field, ANNO,
+# {atom, ANNO, Name}, V}` with `V` an expression in expression
+# context or a pattern in pattern context. The substrate carries
+# `expr` here; the discrimination follows from the enclosing form
+# (`expr_record` vs `pat_record`).
+type record_field_set = {
+  anno: anno,
+  name: ref,
+  value: expr,
+}
+
+# === abstract_type() — typespecs ===
+#
+# Per `erts/absform.html` §"Types": EAF carries typespec forms as
+# `{type, ANNO, Tag, Args}`, `{remote_type, ANNO, [Mod, Name,
+# Args]}`, `{user_type, ANNO, Name, Args}`, `{ann_type, ANNO,
+# [Var, Type]}`, `{var, ANNO, Name}`, plus the literal forms
+# (`atom`, `integer`, `char`).
+#
+# The substrate enumerates the closed type-tag set (binary, nil,
+# 'fun', range, map, tuple, union, record, product, bounded_fun,
+# constraint, map_field_assoc, map_field_exact, field_type) as
+# explicit variants. The predefined / built-in tag form
+# `{type, ANNO, N, [TypeArgs]}` where `N` is a built-in name
+# (integer, atom, list, ...) is carried as `type_predefined(anno,
+# ref, [type_form])` so the carrier is total.
+#
+# `func_type` is the bounded function type used in `form_spec` /
+# `form_callback`; declared separately because spec / callback
+# carry a list of function types (the form's overload set).
+type type_form =
+  | type_ann(anno, ref, type_form)
+  | type_atom(anno, ref)
+  | type_char(anno, u32)
+  | type_integer(anno, i64)
+  | type_binary(anno, type_form, type_form)
+  | type_nil(anno)
+  | type_fun_any(anno)
+  | type_fun_return(anno, type_form)
+  | type_range(anno, type_form, type_form)
+  | type_map_any(anno)
+  | type_map(anno, [type_form])
+  | type_tuple_any(anno)
+  | type_tuple(anno, [type_form])
+  | type_union(anno, [type_form])
+  | type_record(anno, ref, [type_form])
+  | type_product(anno, [type_form])
+  | type_predefined(anno, ref, [type_form])
+  | type_map_field_assoc(anno, type_form, type_form)
+  | type_map_field_exact(anno, type_form, type_form)
+  | type_field(anno, ref, type_form)
+  | type_remote(anno, ref, ref, [type_form])
+  | type_user(anno, ref, [type_form])
+  | type_var(anno, ref)
+  | type_op_unary(anno, ref, type_form)
+  | type_op_binary(anno, ref, type_form, type_form)
+
+type func_type = {
+  anno: anno,
+  params: [type_form],
+  return_type: type_form,
+  constraints: [type_constraint],
+}
+
+type type_constraint = {
+  anno: anno,
+  var: ref,
+  bound: type_form,
+}
+
+type type_var = {
+  anno: anno,
+  name: ref,
+}
+
+# === splinter(@code/erlang.ast) — the addressable AST fragment ===
+#
+# Per [[architecture-splinter-ast-quote-primitive]] (#54): the
+# substrate's parametric quote primitive specializes by species.
+# `splinter(@code/erlang.ast)` is the content-addressed,
+# oid-identified EAF fragment future fracture bodies emit when
+# discharging a `\` obligation at the Erlang altitude. The
+# declaration here names the specialization; the carrier shape
+# inherits from `splinter(ast)` (shards/glass.mirror line 261).
+#
+# Body abstract per [[feedback-craft-not-deliver]]: a consumer
+# pull from `@code/erlang/macro` (the downstream tick) will
+# discharge this when its `shim_*` realisations need to emit
+# typed AST fragments declaratively rather than reconstruct
+# tuples at the call site.
+
+type erlang_ast_splinter = splinter(@code/erlang.ast)
+
+# === out ===
+
+out @code/erlang.ast
+out anno
+out anno_attr
+out form
+out func_ref
+out mod_func_ref
+out expr
+out pat
+out clause
+out guard
+out bin_element
+out bin_size
+out bin_type_specs
+out bin_type_spec
+out assoc
+out qualifier
+out record_field_decl
+out record_field_set
+out type_form
+out func_type
+out type_constraint
+out type_var
+out erlang_ast_splinter
