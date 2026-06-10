@@ -1,0 +1,114 @@
+in @glass
+
+# Property: a pre-commit gate's check set must equal (or be bounded by)
+# the checks whose dependency closure intersects the commit diff.
+#
+# Recognition #43 (mirror IS a content-addressed build system; candidate
+# — surfaced 2026-06-10) names mirror's substrate-altitude possession
+# of every Bazel/Buck2/Nix/Shake primitive: dependency closure,
+# content-addressed cache, partial-rebuild verdict. Recognition #51
+# (mirror as expanding Hilbert space; promoted) places the pre-commit
+# gate at the path-syntax altitude where each check is one coordinate
+# of the cascade. Recognition #50 (Bateson form/substance; promoted)
+# places the gate's CHECK-SET DECISION on the form side — substrate
+# discipline; the BYTE-LEVEL TEST EXECUTION is substance-side @io work
+# under Taut's territory (@io/cargo, @mirror/spec).
+#
+# The substrate already had the words: `mosaic` (the substrate's build
+# shard), `closure` (the dependency-resolution carrier), `diff` (the
+# substrate's mutation carrier). This property generalises the discipline
+# the substrate was already practising implicitly for `partial(opacity_map)`
+# rebuild verdicts — but at the pre-commit gate altitude rather than the
+# materialise altitude.
+#
+# Concrete vs parametric: the predicate inspects concrete pre-commit
+# gate declarations only — a gate is a named set of checks (cargo test,
+# mirror parse, formatter, etc.) declared at the gate altitude. The
+# gate itself is parametric over commit; the property checks each
+# concrete (gate, commit) pairing.
+#
+# Verdict surface is transparency<p>:
+#   success              — every check in the gate's run set has a
+#                          dependency closure that intersects the
+#                          commit diff (no over-running) AND every
+#                          check whose closure intersects the diff is
+#                          in the gate's run set (no under-running).
+#   failure(opacity_map) — the gate runs at least one check whose
+#                          closure does NOT intersect the diff
+#                          (over-running; the friction Reed surfaced
+#                          across this session — cargo test on a pure-
+#                          .mirror commit), or skips at least one
+#                          check whose closure DOES intersect the
+#                          diff (under-running; a Rust-touching commit
+#                          that skipped cargo test would be the dual).
+#   partial(opacity_map) — multiple gate-commit pairings, some match
+#                          and some don't (per-pulse mixed verdict).
+#
+# Located transparency (not @glass.verdict): the kintsugi loop consumes
+# the opacity_map to direct mutation. Each opacity names ONE offending
+# (check, commit) pairing; the fracture body
+# (@kintsugi/fracture/gate; sibling-spawn tick) lifts violations through
+# kintsugi. The property names the rule; the fracture realises it; the
+# kintsugi loop is the bridge.
+#
+# Bilateral with @epistemologic/property/keyword_matches_depth (the
+# first instance of the bilateral pattern, candidate recognition #53):
+# keyword_matches_depth constrains WHICH KEYWORD a declaration uses;
+# gate_matches_diff_closure constrains WHICH CHECKS a gate runs. Same
+# bilateral shape: declarative property at @epistemologic/property/<X>
+# + operational fracture body at @kintsugi/fracture/<X>, bridged by
+# the kintsugi loop's active_pass reading typed transparency.
+#
+# This is the SECOND INSTANCE of bilateral pattern #53. Two instances
+# under one shape = the pattern promotes from candidate to recognition.
+#
+# Cybernetic ancestor: recognition #37 (`requires` IS a Paskian
+# agreement, promoted 2026-06-10) names `pact` as the property-
+# declaration form. pact replaces the conversation-era `grammar`
+# keyword as the surface for declaring properties; the rule names
+# `pact` directly below.
+#
+# Build-systems ancestor: every modern build system (Bazel, Buck2,
+# Nix, Shake, Pants, Turbo) names this property implicitly as the
+# CORRECTNESS PROPERTY of incremental rebuilds — only run what the
+# diff invalidates. The substrate names it explicitly so the
+# kintsugi loop can READ the violation and PROPOSE the fix declaratively.
+# Per [[architecture-mirror-as-content-addressed-build-system]]: the
+# substrate had every primitive; this property names the discipline.
+
+pact @epistemologic/property/gate_matches_diff_closure {
+  # The set of checks the gate declares it WILL run (its declared
+  # run set). One entry per check name; entries are gate-altitude
+  # refs to the check declaration.
+  gate_run_set(gate: ref) -> [ref] { \ }
+
+  # The set of checks whose dependency closure intersects the
+  # commit diff. Each check declares its dependency closure
+  # (cargo test depends on *.rs + Cargo.toml; mirror parse depends
+  # on *.mirror; formatter depends on the file's altitude). The
+  # diff is the substrate's mutation carrier per @kintsugi/morphism.
+  # This output is the substrate-derived ground truth the gate's
+  # run set is measured against.
+  diff_closure_intersect(gate: ref, commit: ref) -> [ref] { \ }
+
+  # The combined property: every check in `gate_run_set` is in
+  # `diff_closure_intersect` (no over-running) AND every check in
+  # `diff_closure_intersect` is in `gate_run_set` (no under-running).
+  # Verdict surface is transparency<p>:
+  #   success              — the two sets are equal.
+  #   failure(opacity_map) — at least one check is in exactly one
+  #                          of the two sets; each opacity names
+  #                          ONE such (check, commit) pairing and
+  #                          flags whether it's over-running
+  #                          (in gate_run_set, not in closure) or
+  #                          under-running (in closure, not in
+  #                          gate_run_set) via opacity.property.
+  #   partial(opacity_map) — multiple (gate, commit) pairings, some
+  #                          match and some don't.
+  gate_matches_diff_closure(gate: ref, commit: ref) -> transparency { \ }
+}
+
+out gate_run_set
+out diff_closure_intersect
+out gate_matches_diff_closure
+out @epistemologic/property/gate_matches_diff_closure
