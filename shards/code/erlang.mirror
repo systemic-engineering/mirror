@@ -5,42 +5,44 @@ in @meta
 in @nl
 in @property
 
-# @code/erlang.ast — the Erlang Abstract Format (EAF) substrate grammar.
+# @code/erlang — the Erlang altitude grammar.
 #
-# The first concrete `@code/<lang>.ast` shard. Opens the BEAM target
-# road: future ticks wire `@code/erlang/macro` → `@code/erlang.ast`
+# Carries the EAF (Erlang Abstract Format) as substrate sum types
+# declared inline within this glass. The polymorphic `type ast`
+# carrier near the end of this file is what `@code/erlang.ast`
+# references resolve to — type access into the language's glass
+# namespace, not a sub-prism. Opens the BEAM target road: future
+# ticks wire `@code/erlang/macro` → `splinter(@code/erlang.ast)`
 # emission → `compile:forms/1` → `.beam` (the BEAM analogue of the
 # existing Rust ouroboros pipeline at
 # [[architecture-fragmentation-is-the-rust-substrate]] and
 # `shards/spectral.mirror`'s step-by-step lift).
 #
-# === naming: `<lang>.ast`, not `<lang>/ast` ===
+# === naming: `<lang>.ast` is TYPE access into `@code/<lang>` ===
 #
-# The dotted form parallels the substrate's existing parametric AST
-# vocabulary (`splinter(ast)` at `shards/glass.mirror`; `type ast(g)`
-# at `boot/01-meta.mirror`). `<lang>.ast` reads as "the AST
-# specialization of the `<lang>` grammar" — a type-altitude
-# specialization, not a sub-path under a `<lang>` parent. The form
-# is consistent with @code/metalogue's shim-return references
-# (`shim_type(d: declaration) -> code/rust.ast` at
-# `shards/code/metalogue.mirror` line 175 et al; `shim_*` in
-# `shards/code/rust/macro.mirror` line 113-116). Path-namespace
-# property per [[architecture-shards-as-substrate-source]]: this
-# file at `shards/code/erlang.ast.mirror` declares `@code/erlang.ast`.
-# The dotted segment IS part of the name; the file name preserves it.
+# The dotted form `@code/erlang.ast` reads as "the `ast` type within
+# `@code/erlang` glass" — type field access, not namespace nesting.
+# Same form used by `@code/metalogue`'s parametric `species_ast` slot:
+# `@code/rust/macro` binds `species_ast = code/rust.ast`,
+# `@code/erlang/macro` will bind `species_ast = code/erlang.ast`.
+# The `type ast` declaration below is the unified polymorphic carrier
+# the dotted reference resolves to. Path-namespace property per
+# [[architecture-shards-as-substrate-source]]: this file at
+# `shards/code/erlang.mirror` declares `@code/erlang`; types declared
+# at substrate altitude inside the glass become addressable via the
+# dotted form.
 #
 # === the substrate-pull recognition ===
 #
 # Per [[feedback-substrate-already-had-the-word]] (52-instance
 # track): `code/rust.ast` has been type-referenced from
-# `@code/metalogue` and `@code/rust/macro` since 2026-06-09 without
-# the type itself being declared in its own shard. The shim
-# signatures consumed it as an abstract carrier and the four laws
-# discharged via the per-species `requires` clauses. This tick
-# lands the first explicit `@code/<lang>.ast` shard for Erlang
-# because the BEAM-target road is opening now — `@code/rust.ast`
-# will follow with the kintsugi-on-Rust cascade (T22+) when the
-# Rust-side consumer pulls.
+# `@code/metalogue` (as documentation) and `@code/rust/macro` (as
+# return type binding) since 2026-06-09 — the type access pattern
+# was the convention before any file declared it. This tick lands
+# the FIRST `type ast` declaration on disk via Erlang because the
+# BEAM road is opening now; `@code/rust` needs the same `type ast`
+# inline (substrate-pull-realize candidate; the type access
+# `code/rust.ast` resolves to nothing until that lands).
 #
 # === what this shard declares ===
 #
@@ -148,18 +150,21 @@ in @property
 #                 spectral.mirror (the runtime family; future
 #                  BEAM runtime targets land here).
 #
-# Per [[architecture-prism-as-trait-as-everything]]: `prism
-# @code/erlang.ast { ... }` declares the family-root-at-depth-1
-# parallel to `@code/rust`'s `prism` block. Depth-≥2 sub-prisms
-# (e.g. `@code/erlang.ast/<subtree>`) would use `glass` per
-# recognition #46; the depth-0/1 boundary uses `prism`.
+# Per [[architecture-prism-as-trait-as-everything]] and recognition
+# #46 (keyword/depth bilateral; first instance of #53, promoted):
+# top-level family roots (@code, @prism, @glass, @kintsugi, etc.)
+# use `prism`; all sub-namespaces (depth-1+) use `glass`. `@code/erlang`
+# at depth-1 uses `glass`. (Note: `@code/rust` at `shards/code/rust.mirror`
+# currently uses `prism` and is a pre-existing #46 violation; the
+# kintsugi auto-fracture will resolve it via `@kintsugi/fracture/keyword`.
+# Separate substrate-pull-realize tick.)
 
-prism @code/erlang.ast {
-  focus erlang_ast
-  project erlang_ast
-  split erlang_ast
-  shift erlang_ast
-  settle erlang_ast
+glass @code/erlang {
+  focus erlang
+  project erlang
+  split erlang
+  shift erlang
+  settle erlang
 }
 
 # === annotation type (ANNO) ===
@@ -482,6 +487,28 @@ type type_var = {
   name: ref,
 }
 
+# === ast — the unified EAF polymorphic carrier ===
+#
+# What `@code/erlang.ast` references resolve to. The five mutually
+# recursive EAF categories (form, expr, pat, clause, type_form) are
+# distinct types at the substrate altitude but converge at the
+# consumer boundary as a single addressable carrier — the type the
+# shim signatures return (`shim_type(d) -> @code/erlang.ast`), the
+# type `splinter(@code/erlang.ast)` produces, the type the BEAM
+# codegen pipeline consumes before projecting to EAF tuples for
+# `compile:forms/1`.
+#
+# Per [[architecture-prism-as-trait-as-everything]]: the type field
+# access form `<glass>.<type>` is the substrate's canonical way to
+# expose a polymorphic carrier without minting a sub-glass (which
+# would force its own five-op algebra it doesn't have).
+type ast =
+  | ast_form(form)
+  | ast_expr(expr)
+  | ast_pat(pat)
+  | ast_clause(clause)
+  | ast_type(type_form)
+
 # === splinter(@code/erlang.ast) — the addressable AST fragment ===
 #
 # Per [[architecture-splinter-ast-quote-primitive]] (#54): the
@@ -502,7 +529,8 @@ type erlang_ast_splinter = splinter(@code/erlang.ast)
 
 # === out ===
 
-out @code/erlang.ast
+out @code/erlang
+out ast
 out anno
 out anno_attr
 out form
