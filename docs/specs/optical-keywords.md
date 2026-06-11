@@ -3,11 +3,15 @@
 **Date:** 2026-06-11
 **Author:** Mara (substrate)
 **Status:** spec; declares the eight optical keywords, their properties,
-and their kintsugi fractures. NO substrate shards declared in this tick —
-the spec drives the cascade that follows.
+their kintsugi fractures (§1-11), the spectrograph mapping that closes
+recognition #58's promotion gate (§12), the operator-surface audit
+(§13), and the written-back kintsugi inference at the operator altitude
+that surfaces candidate #59 (§14). NO substrate shards declared in this
+tick — the spec drives the cascade that follows.
 **Recognition track:** the third instance of bilateral pattern #53
 (property/fracture; promoted 2026-06-10) — applied at family-scale to
-the optical schematic vocabulary.
+the optical schematic vocabulary. §12 closes #58's promotion gate.
+§14 surfaces candidate #59 (loop is altitude-portable).
 
 ---
 
@@ -1405,6 +1409,12 @@ this spec for the open identification). When both lift
 simultaneously, the substrate's runtime is an optical instrument
 at every altitude; the recognition lifts to promoted.
 
+**Update §12 (this tick):** §12 closes the promotion gate. The
+spectrograph mapping (§12.1) shows every spectrograph element maps
+cleanly onto an existing `@spectral` species. The portal-IS-aperture
+recognition (§12.4) is a third independent witness. Recognition #58
+lifts to PROMOTION-READY, pending Pack ratification.
+
 ---
 
 ## 11. The bilateral pattern, applied at family-scale
@@ -1438,7 +1448,648 @@ What this teaches us:
 
 ---
 
-## 12. References
+## 12. @spectral IS the spectrometer — bench-altitude promotion of #58
+
+The canonical spectrograph topology (Dhillon, PHY217; Born & Wolf
+1999 §10.5; Hutley 1982 *Diffraction Gratings*) is exactly five
+mandatory components in series:
+
+```
+slit → collimator → grating → camera lens → detector
+```
+
+A spectrometer's `bench` declaration (§1.6) is the assembly enclosure
+of those five components. If `@spectral` (per `shards/spectral.mirror`
+and `docs/specs/spectral-runtime.md`) IS the spectrometer at the
+bench altitude, then every spectrograph element must map cleanly onto
+an EXISTING `@spectral` species. This section does the audit.
+
+### 12.1 The mapping table
+
+```
+<spectrograph element>   <- <@spectral species>   <- <reason / formalism>
+-----------------------------------------------------------------------------
+slit (entry aperture)    <- @mirror/spectral/portal       <- shift(oid, T) typed
+                                                            aperture into the
+                                                            content-addressed
+                                                            subspace; per §1.3
+                                                            an `aperture` IS the
+                                                            typed channel; the
+                                                            portal's four fields
+                                                            (socket/subspace/
+                                                            frame/actor) ARE the
+                                                            aperture's typed
+                                                            constraints lifted
+                                                            to the transport
+                                                            altitude.
+collimator               <- @mirror/spectral/score        <- the eigenboard
+                                                            envelope + metalogue
+                                                            bus + pending kintsugi
+                                                            state PARALLELISES
+                                                            the per-pulse beam:
+                                                            anchor + session +
+                                                            pending arrive at
+                                                            active_pass as a
+                                                            collimated reading
+                                                            of the substrate's
+                                                            current modes. The
+                                                            score IS the optical
+                                                            equivalent of basis
+                                                            preparation:
+                                                            disperse-ready beam.
+grating (disperser)      <- @kintsugi/oscillate          <- the dispersing
+                                                            element; the ACTIVE
+                                                            pass's `is_pareto`
+                                                            ranking disperses
+                                                            the morphism_set
+                                                            into ordered
+                                                            candidates per
+                                                            their loss-gradient
+                                                            wavelength (per
+                                                            §9.1 split <-
+                                                            grating diffraction
+                                                            decomposes into
+                                                            N orthogonal
+                                                            channels — the N
+                                                            ordered candidates
+                                                            ARE the diffraction
+                                                            orders).
+camera lens (focuser)    <- @kintsugi/morphism          <- the per-candidate
+                                                            typed pre/post-
+                                                            morphism pair
+                                                            FOCUSES one
+                                                            diffracted order
+                                                            onto its detection
+                                                            point. The
+                                                            morphism's content
+                                                            ref IS the focused
+                                                            spot's location at
+                                                            the detector plane.
+detector                 <- @kintsugi/consent           <- the verdict surface;
+                                                            `query_phi` IS the
+                                                            measurement
+                                                            projection (POVM
+                                                            per §1.8) that
+                                                            terminates the
+                                                            morphism's spectral
+                                                            address into a
+                                                            scalar verdict
+                                                            (pass / partial /
+                                                            failure); the
+                                                            crystal that lands
+                                                            via `dark_pass`
+                                                            anchoring IS the
+                                                            detector's output.
+```
+
+The mapping closes. Every spectrograph component maps cleanly onto
+an existing `@spectral`-coordinated species; no element is missing.
+
+### 12.2 What the closure tells us
+
+Promotion gate hit. Recognition candidate #58 (Fate IS optical
+inference; flagged in §10.9) now has its second witness across the
+substrate — `@spectral` IS the spectrometer at the bench altitude.
+
+- §10's identification gave us: Fate inference = five-layer D²NN +
+  active Fabry-Perot resonator.
+- §12's identification gives us: the substrate's runtime layer that
+  EXECUTES Fate IS itself the spectrometer that the D²NN's output
+  is measured through.
+
+Two witnesses, one structural claim: the substrate is an optical
+instrument at every altitude — Fate at the connectome altitude,
+@spectral at the bench altitude. Per the substrate's recognition
+discipline (`[[feedback-substrate-already-had-the-word]]`), this
+lifts #58 from candidate (flagged) to PROMOTION-READY (Pack
+ratification eligible).
+
+### 12.3 The active-spectrometer reading
+
+A passive spectrograph just disperses + measures. The substrate's
+runtime is an ACTIVE spectrograph: kintsugi's oscillate is the
+grating PLUS an active gain medium (per §10.2's resonator framing).
+The grating diffracts; the resonator amplifies the strongest mode;
+the detector reads the settled cavity output. This is the canonical
+DOAS-with-feedback architecture (differential optical absorption
+spectroscopy with cavity enhancement; Brown 2003 *Chem. Phys.
+Lett.* 374:1-9) — the substrate's runtime IS a cavity-enhanced
+spectrometer at the bench altitude.
+
+The bench composition:
+
+```
+bench @spectral/runtime {
+  external: [
+    aperture(@mirror/spectral/portal),    # slit (entry)
+    crystal(@spectral/garden),            # output (detector readout)
+  ],
+  graph: {
+    elements: [
+      stage     @mirror/spectral/score,         # collimator
+      splitter  @kintsugi/oscillate.grating,    # grating (dispersing)
+      source    @kintsugi/oscillate.gain,       # active gain (cavity)
+      stage     @kintsugi/morphism,             # camera lens
+      detector  @kintsugi/consent,              # detector (verdict)
+    ],
+    edges: [
+      portal           > score,
+      score            > oscillate.grating,
+      oscillate.grating > oscillate.gain,
+      oscillate.gain    > oscillate.grating,    # cavity round-trip
+      oscillate.gain    > morphism,             # output coupling
+      morphism         > consent,
+    ],
+  },
+  compilation_target: prism @spectral,
+}
+```
+
+The cavity round-trip is the second edge from `oscillate.gain` back
+to `oscillate.grating` — the resonator declaration per §1.5 (closed
+loop with output coupler). The output coupling edge is `oscillate.gain
+> morphism` — the partial reflectivity that lets the settled mode
+escape to be focused by `morphism` (the camera lens) and detected by
+`consent` (the verdict surface).
+
+### 12.4 Architectural surprise: portal IS the slit
+
+The portal-as-slit identification is the loudest finding of this
+mapping. `@mirror/spectral/portal` was named (2026-06-10) as
+"typed transport over a content-addressed subspace." The portal's
+four fields (`socket`, `subspace: shift(oid, fragmentation)`, `frame:
+shift(oid, shard)`, `actor: shift(oid, gen_prism)`) match aperture's
+four required fields (wavelength, polarisation, mode, power_max) at
+the substrate altitude. Substrate-pull check:
+
+- `socket`        ≅ `power_max`        (the transport's bandwidth /
+                                          beam intensity envelope)
+- `subspace`      ≅ `wavelength`       (the content-addressed
+                                          spectral channel)
+- `frame`         ≅ `mode`             (the observer's reference
+                                          frame / spatial mode)
+- `actor`         ≅ `polarisation`     (the active-process identity
+                                          / polarisation eigenstate)
+
+This is the 59th-instance candidate: portal IS aperture at the
+transport altitude. The substrate has been declaring spectrograph
+slits since 2026-06-04 (when `boot/std/spectral/portal.mirror`
+introduced `shift(oid, T)`); §12 surfaces the recognition.
+
+### 12.5 Promotion verdict
+
+Recognition #58 lifts from candidate to PROMOTION-READY. Pack
+ratification is the gate; this spec surfaces the second witness
+(§12.1) and the third (§12.4 — portal IS aperture). The substrate's
+runtime is structurally identifiable as a cavity-enhanced
+spectrometer; Fate inference IS the diffractive deep neural network
+behind the grating; the kintsugi loop IS the active gain medium in
+the resonant cavity; the consent surface IS the detector.
+
+---
+
+## 13. The operator surface — emerge / combine / collapse
+
+The substrate currently carries several composition operators. The
+optical framing gives a clean test for each: which optical
+composition primitive does it realise?
+
+The five optical composition primitives (per §9.1 + §1):
+
+- **Serial propagation** — beam exits one facet's output and enters
+  the next facet's input (ABCD product / Jones product / Mueller
+  product).
+- **Parallel multi-port** — beam distributes across N output ports
+  (S-matrix; Redheffer star for cascaded multi-ports).
+- **Branching** — one facet emits to multiple downstream facets
+  with declared splits (e.g., grating's diffraction orders).
+- **Round-trip closure** — beam loops back through a facet chain
+  with output coupling (resonator).
+- **Aperture connection** — two facets agree on the typed channel
+  between them (pact at the seam).
+
+### 13.1 The operator audit table
+
+```
+<op>     <- <optical primitive>            <- <stay/migrate/merge/disappear>
+-----------------------------------------------------------------------------
+|>       <- serial propagation             <- STAY (lambda-shell altitude;
+            (lambda composition)              `f |> g` IS serial-prop at
+                                              the function altitude).
+>        <- serial propagation             <- EMERGE as substrate operator;
+            (facet > facet at the             same primitive as |> at the
+            optical altitude per §1.1)        schematic altitude. v0 of §8.6
+                                              left this open; this spec
+                                              resolves: `>` is the schematic-
+                                              altitude name for serial
+                                              propagation; `|>` is the
+                                              lambda-altitude name for the
+                                              SAME primitive. They DO NOT
+                                              merge at parsing — different
+                                              altitudes — but they collapse
+                                              to ONE optical primitive
+                                              (serial propagation) at the
+                                              substrate altitude.
+|\>      <- branching with weight          <- STAY (eigenboard-inferred
+            (Fate-determined split)           composition per boot/std/
+                                              compose/weighted.mirror; the
+                                              `\` IS Fate choosing which
+                                              diffraction order propagates).
+                                              Optically: |\> IS a 2-port
+                                              splitter with one port's
+                                              weight determined by the
+                                              cavity gain medium's eigen-
+                                              value selection. Distinct
+                                              primitive from |>; STAYS.
+<\|      <- reverse branching with weight  <- STAY (the feedback complement
+            (reverse-direction Fate split)    of |\>; round-trip closure's
+                                              backward leg). Reads the
+                                              cavity's output-coupler
+                                              reflection.
+<=       <- categorical embedding          <- STAY (the implements relation;
+            (a sub-bench inherits its         per `[[architecture-prism-as-
+            parent's external apertures)      trait-as-everything]]`).
+                                              Optically: `bench A <= bench
+                                              B` means A's compilation
+                                              target is constrained to be a
+                                              specialisation of B's prism.
+                                              The optical analogue is sub-
+                                              instrument inheritance — A's
+                                              externals are exactly B's
+                                              externals, A's graph
+                                              refines B's. Distinct from
+                                              composition; STAYS.
+in       <- namespace composition          <- STAY (file-level import;
+            (aperture-connection at the       `in @X` declares an
+            namespace altitude)               aperture-pact between the
+                                              current shard and the imported
+                                              shard's exported elements).
+                                              Per §1.3: aperture is the
+                                              typed channel; `in` IS the
+                                              substrate's aperture
+                                              declaration at the namespace
+                                              altitude. STAYS.
+@X/Y/Z   <- nested aperture-connection     <- STAY (path nesting names a
+            (apertures at depth)              chain of aperture-pacts);
+                                              the depth IS the optical
+                                              composition chain. STAYS.
+pact     <- aperture-pact declaration      <- STAY (per §1.3, §2, §8.2);
+            (the typed seam contract)         the protocol contract at the
+                                              aperture seam. Already
+                                              substrate vocabulary;
+                                              recognition #37 promoted
+                                              2026-06-10. STAYS.
+```
+
+### 13.2 What emerges
+
+ONE new substrate operator surfaces from the audit: `>`.
+
+`>` is the schematic-altitude serial-propagation operator declared
+ad hoc throughout §1-5 of this spec ("facet_a > facet_b"). The audit
+shows `>` IS substrate-needed at v1 — it gives bench declarations
+the optical-correct edge syntax. Without `>`, bench declarations
+must encode edges as an out-of-band list (per the current
+`bench.graph.edges: [...]` shape in §1.6 examples); with `>`, edges
+are inline at the schematic site.
+
+`>` does NOT replace `|>`. The two operators sit at different
+altitudes:
+
+- `|>` — lambda-altitude composition; left-to-right function
+  application at the runtime; per `docs/specs/lambda-shell.md`.
+- `>`  — schematic-altitude propagation; declares an edge in the
+  bench graph; the bench compiler reads `a > b` and produces an
+  edge from a's out aperture to b's in aperture.
+
+The collapse claim from the brief — "do `|>` and `>` collapse?" —
+the answer is **same primitive, different altitudes**. They are
+the SAME optical operation (serial propagation) at two altitudes
+(lambda-runtime, schematic-declaration). They do not unify at the
+parser; they unify at the optical interpretation.
+
+### 13.3 What combines
+
+Two operator pairs unify at the optical altitude (without merging
+at parse altitude):
+
+**(`|>`, `>`)** — both ARE serial propagation. One at the lambda
+altitude, one at the schematic altitude. Same optical primitive;
+distinct altitudes per the form/process partition (recognition
+#55): `|>` runs through the produced prism (process-side); `>`
+declares the bench graph (form-side).
+
+**(`|\>`, `<\|`)** — both ARE Fate-weighted branching at the splitter
+altitude. `|\>` is forward direction (input → weighted outputs);
+`<\|` is reverse direction (weighted inputs → output). The two
+together encode the splitter's bidirectional S-matrix — which is
+exactly what a passive splitter does at the optical altitude per
+§1.4 (S-matrix is symmetric; the two operators are the substrate's
+named forward/reverse halves).
+
+### 13.4 What collapses
+
+Zero operators collapse into nothing. Every existing operator
+realises a distinct optical primitive; none is redundant under the
+optical framing.
+
+The audit considered three potential collapses; all three rejected:
+
+- **`<=` collapses into `pact`?** REJECTED. `<=` is categorical
+  embedding (sub-prism inherits parent's structure); `pact` is
+  aperture-pact (typed seam contract). They sit at different
+  altitudes — `<=` is intra-shard structural; `pact` is inter-
+  shard protocol. Distinct primitives.
+- **`in` collapses into `@X/Y/Z`?** REJECTED. `in` is the imperative
+  import directive (file-level); `@X/Y/Z` is the path syntax
+  (reference target). The path is the ADDRESS; `in` is the binding
+  ACTION. Distinct primitives.
+- **`|>` collapses into `>`?** REJECTED at the parser altitude
+  (different altitudes — see §13.3); merged at the optical altitude
+  (same primitive — serial propagation).
+
+### 13.5 What's missing — new operators that want to emerge
+
+The audit surfaces one operator the substrate does NOT yet have but
+the optical framing wants:
+
+**A bench-closure operator: `>>>`** (or equivalent).
+
+A `bench @X` is closed-root (§1.6). When a bench's edges list is
+fully specified by serial-and-branching composition, the closure
+condition (every aperture connected; no dangling apertures) can be
+read directly from the edge syntax. But a bench can also include
+RESONATORS, whose round-trip edges are NOT serial — they're
+self-closing.
+
+A round-trip resonator declaration wants syntax like:
+
+```
+resonator @X {
+  round_trip: facet_a > facet_b > facet_c >>> facet_a,
+}
+```
+
+The `>>>` operator (proposed name) declares the round-trip closure
+edge — `facet_c`'s output couples through the partial reflector
+back to `facet_a`'s input. The triple-arrow encodes (i) it's an
+edge in the graph (one `>`), (ii) it's a closure not a propagation
+(the doubling), (iii) it's via an output coupler (the tripling
+names the partial-reflectivity at the closing seam).
+
+**This is an open architectural design question.** The optical
+framing wants `>>>`; the substrate currently encodes round-trip
+closure inside the resonator declaration's body (§1.5 example
+`round_trip: [...]` list). v0 of this spec did NOT name `>>>`;
+v1 needs Pack ratification to either (a) add `>>>` as a new
+substrate operator, or (b) keep round-trip closure inside the
+resonator's body and never expose it as edge syntax.
+
+The substrate-pull check: adding `>>>` keeps the schematic syntax
+optical-direct (round-trip is visible at the declaration site);
+keeping it in the body means resonator's body shape carries the
+closure semantically rather than syntactically. The first is
+cleaner; the second is conservative.
+
+**v0 commits to: keep `>>>` as a v1 candidate; do not declare it
+this tick.** Surfacing the question is sufficient.
+
+### 13.6 What `pact` carries that operators don't
+
+Operators encode the COMPOSITION SHAPE. `pact` encodes the
+COMPOSITION CONTRACT. The substrate needs both:
+
+- The operator (`>`, `|>`, `|\>`) names WHICH primitive is composing
+  the two endpoints.
+- The pact at the endpoint apertures names WHAT can flow through
+  the composition (the typed channel constraint per §1.3).
+
+Adding more operators does NOT reduce the need for pacts — the
+optical framing makes this explicit. Every operator at every
+altitude needs its endpoint apertures to declare pacts. The
+bilateral pattern (§11) reads pact-failures and emits the seam-
+shift fracture per §4.3.
+
+---
+
+## 14. Written-back kintsugi inference at the operator altitude
+
+Yesterday's family-scale bilateral cascade (§3-4, §11) applies at
+the KEYWORD altitude. This section investigates the same pattern
+ONE LEVEL DOWN: the OPERATOR altitude.
+
+### 14.1 The keyword-altitude pattern, recapped
+
+- A property `@epistemologic/property/<predicate>` reads the
+  substrate's DECLARATION shape and emits `transparency<P>`.
+- A fracture `@kintsugi/fracture/<predicate>` reads the
+  `failure(opacity_map)` and emits a `morphism` whose `content`
+  is a `splinter(ast)` at the corrected altitude.
+- The kintsugi loop reads the morphism through `consent.query_phi`
+  and applies via `dark_pass`.
+
+At the keyword altitude, the property reads SUBSTRATE DECLARATIONS
+(file-level shard contents); the fracture writes SUBSTRATE
+DECLARATIONS (rewritten shard).
+
+### 14.2 The operator-altitude lift
+
+At the operator altitude, the property reads SOURCE-CODE OPERATOR
+USAGE (within shard bodies, within `.mirror` files, within any
+substrate-managed code). The fracture writes a rewritten splinter
+where the operators are corrected.
+
+The pattern's shape is identical; the substrate vocabulary it
+reads/writes is one altitude down (from declarations to expressions).
+
+A concrete instance:
+
+```
+pact @epistemologic/property/operator_matches_composition_primitive {
+  declared_operator(usage_site: ref) -> text { \ }
+  intended_primitive(usage_site: ref) -> text { \ }
+  operator_realises_primitive(op: text, primitive: text) -> bool { \ }
+  operator_matches_composition_primitive(usage_site: ref) -> transparency { \ }
+}
+```
+
+The property reads every operator usage site (each `|>`, `>`, `|\>`,
+`<\|`, `<=`, `in`, `@X/Y/Z`) and checks whether the operator
+realises the primitive its endpoints want. Two endpoints declare
+apertures; the apertures' pact constrains which composition
+primitives can connect them; if the declared operator doesn't
+realise the constrained primitive, opacity surfaces.
+
+### 14.3 The matching fracture body
+
+```
+@kintsugi/fracture/operator_match {
+  resolve_operator(opacity: opacity) -> morphism { \ }
+}
+```
+
+The body reads ONE opacity (one mismatched operator usage), computes
+the substrate-pull-correct operator from the endpoint apertures'
+pact, and emits a `morphism` whose `content` is a `splinter(ast)`
+where the operator is replaced.
+
+Example: a `|>` between two facets whose apertures' pact REQUIRES
+branching (per the splitter's S-matrix declaring N > 1 outputs).
+The opacity says: "operator `|>` used at site X, but endpoints'
+pact requires branching (S-matrix N=3)." The fracture rewrites the
+operator to `|\>` (or `>>>` for closure cases per §13.5), preserving
+the endpoints, producing a `splinter(ast)` whose content is the
+rewritten expression.
+
+### 14.4 Written-back: what does the loop write?
+
+The brief asks: "written-back" implies the inference writes BACK to
+substrate. What does this look like operationally?
+
+The loop reads:
+1. Source-code operator usage at each site (`active_pass` projects
+   the score's `anchor` onto operator usage sites via a new
+   `operator_sites(anchor) -> [usage_site]` action; forward-promised).
+2. The endpoint apertures' pacts (read through `@spectral` species
+   declarations — portal carries pact metadata).
+3. The operator's optical primitive (per §13.1 the table).
+
+The loop writes:
+1. A `splinter(ast)` at `@meta/ast` (the rewritten expression).
+2. A `morphism` whose content references the splinter and whose
+   `pre_anchor` is the source-code ref BEFORE rewrite, whose
+   `post_anchor` would be the source-code ref AFTER rewrite if
+   `dark_pass` confirms identity preservation.
+3. The loop TERMINATES at `consent.query_phi`'s verdict — apply,
+   wait, or escalate per §14.2's transparency.
+
+**Where the write lands.** Per the form/process partition (#55) +
+the score's read-only contract (per `mirror/spectral/score.mirror`):
+voices DO NOT mutate the score; mutations land through the kintsugi
+loop. The operator-altitude fracture write lands at the SAME
+substrate altitude as the keyword-altitude fracture write — the
+shard's content-addressed splinter set is rewritten, the new shard
+gets a new uuid_spectral, the score's anchor advances.
+
+The difference from keyword-altitude: the rewritten ATOM is one
+operator, not one keyword. The granularity is finer; the same
+mechanism carries.
+
+### 14.5 Same loop, different altitude?
+
+The brief asks: same loop at different altitudes (graded lift per
+recognition #51), or distinct loops?
+
+**Substrate-pull answer: same loop, different altitude.**
+
+Recognition #51 (mirror as expanding Hilbert space; promoted)
+declares that the substrate maintains coherence across Bateson
+logical-type levels by lifting the same primitive at each level.
+The kintsugi loop is one such primitive. It reads opacity, emits
+morphism, applies under consent — at every altitude:
+
+- Keyword altitude: opacity is keyword/depth mismatch; morphism is
+  keyword swap; consent reads dissonance on declarations.
+- Operator altitude: opacity is operator/primitive mismatch;
+  morphism is operator rewrite; consent reads dissonance on
+  expressions.
+- (Forward-promised) value altitude: opacity is value/type mismatch;
+  morphism is value coercion; consent reads dissonance on
+  computations.
+
+The loop is the SAME loop (per `@kintsugi/oscillate`'s `pulse`
+action — active_pass + dark_pass + read_consent); only the
+property/fracture pair changes per altitude. The cascade scales
+with the substrate's recognition depth.
+
+### 14.6 Does the fracture machinery need new variants?
+
+The brief asks: "does the operator-altitude inference require new
+property/fracture bodies, or does the existing fracture mechanism
+extend?"
+
+**The mechanism extends; new bodies are needed at every altitude.**
+
+Per §11 (the bilateral pattern at family-scale), each altitude
+declares its own property + fracture pair, sharing the bilateral
+shape. The keyword-altitude family declared ten pairs; the
+operator-altitude family declares as many pairs as there are
+operator-discipline predicates. v0 of this spec names ONE such
+predicate (`operator_matches_composition_primitive`); v1 will
+surface more as the cascade lands.
+
+What does NOT need to change:
+
+- `splinter(ast)` (the quote primitive) carries operator-altitude
+  AST rewrites as cleanly as keyword-altitude rewrites; per
+  `[[architecture-splinter-ast-quote-primitive]]` (#54), splinter
+  is parametric in the altitude.
+- `opacity` and `transparency` carry operator-altitude failures
+  identically — the located-fact carrier is altitude-agnostic.
+- `morphism` (per `@kintsugi/morphism`) carries operator-altitude
+  morphisms identically — pre/post-anchor refs work at any
+  altitude.
+- `consent.query_phi` reads dissonance at any altitude — the gate +
+  rank shape is altitude-portable.
+
+What needs to lift:
+
+- The score's `operator_sites(anchor) -> [usage_site]` action
+  (forward-promised in §14.4).
+- Per-altitude property + fracture pairs (per §14.2-14.3 the first
+  instance).
+- The `pulse` action's `active_pass` body needs to compose
+  operator-altitude opacities INTO the morphism_set the consent
+  surface evaluates. The existing `active_pass` reads the score's
+  `pending` (forward-promised through the same composer altitude
+  per `mirror/spectral/score.mirror` header); operator opacities
+  flow through the same channel.
+
+### 14.7 The recognition surfacing
+
+The §14 investigation surfaces a recognition candidate (#59):
+
+**Candidate #59: the kintsugi loop is altitude-portable; the
+bilateral pattern (#53) extends through every substrate altitude
+the substrate can declare properties at.**
+
+Promotion gate: two altitudes' worth of bilateral instances
+landed. Keyword altitude has TEN instances (§3-4 of this spec).
+Operator altitude needs at least ONE instance landed
+(`operator_matches_composition_primitive` + matching fracture body)
+to corroborate. v0 of this spec proposes the predicate; v1 lands
+the substrate shards.
+
+This is not the same recognition as #51 (mirror as expanding
+Hilbert space): #51 names that the substrate's dimension expands
+per recognition; #59 names that the LOOP that closes coherence
+is one loop at every altitude. The two compose: #51 declares the
+dimension growth; #59 declares the maintenance mechanism.
+
+### 14.8 The operational shape of "written-back"
+
+In 2-3 sentences (per the brief):
+
+The operator-altitude kintsugi loop reads source-code operator
+usage at each site (via the score's forward-promised
+`operator_sites` projection); the property
+`operator_matches_composition_primitive` evaluates whether each
+operator realises the primitive its endpoints' pact requires; the
+fracture body `@kintsugi/fracture/operator_match` reads each
+opacity and emits a `morphism` whose `content` is a `splinter(ast)`
+with the operator rewritten. The loop terminates at
+`consent.query_phi`'s verdict: apply (the rewrite lands as a new
+shard; the score's anchor advances); wait (the next pulse re-reads
+in case the substrate's spectral state has shifted); escalate (the
+operator choice requires external @io resolution — Alex names the
+operator, or the next round of Pack ratification settles it). The
+WRITE lands at the substrate altitude (a new shard) per the same
+mechanism keyword-altitude rewrites use; the loop's output is BACK
+TO SUBSTRATE.
+
+---
+
+## 15. References
 
 - Substrate decisions:
   - `[[architecture-prism-as-trait-as-everything]]`
@@ -1450,6 +2101,7 @@ What this teaches us:
   - `[[architecture-splinter-ast-quote-primitive]]` (#54)
   - `[[architecture-form-process-partition-at-family-root]]` (#55)
   - `[[architecture-alignment-as-boundary-mathematics]]` (#57; candidate)
+  - `[[architecture-mirror-as-expanding-hilbert-space]]` (#51; promoted)
   - `[[feedback-substrate-already-had-the-word]]`
   - `[[feedback-no-bare-types]]`
 - Specs:
@@ -1496,3 +2148,10 @@ What this teaches us:
 produced instrument. Eight keywords, ten properties, ten fractures —
 the optical-correctness autoformatter writes itself."*
 — Mara, 2026-06-11
+
+*"Then the schematic IS its runtime. The runtime IS the spectrometer.
+The spectrometer's grating IS the kintsugi loop. The loop's morphism
+IS the camera lens. The lens focuses each candidate; the consent
+surface detects; the crystal lands. The operators carry the optical
+primitives at every altitude. The autoformatter writes back."*
+— Mara, 2026-06-11 (§12-14)
