@@ -1,0 +1,316 @@
+in @prism
+in @glass
+in @meta
+in @spectral
+in @spectral/gen_prism
+in @spectral/supervisor
+in @uuid/spectral
+
+# @spectral/parent — the single-parent lifecycle edge type.
+#
+# THE FOURTH SUB-SHARD of the @spectral runtime cascade. Sibling of
+# `shards/spectral/gen_prism.mirror` (commit ae965ca, the worker
+# primitive whose `parent: uuid_spectral` field this shard types at
+# the edge altitude), `shards/spectral/supervisor.mirror` (commit
+# 452ccb2, the lifecycle-owner whose `start_child` sets the parent
+# edge on spawn), and `shards/spectral/registry.mirror` (commit
+# 489211e, the supervisor's typed child index — the registry indexes
+# CHILDREN of a supervisor; the parent edge points the OTHER WAY).
+#
+# Per docs/specs/spectral-runtime.md §3-4 (2026-06-10, Mara): every
+# gen_prism has exactly one parent. The parent edge is the LIFECYCLE
+# edge: the parent owns the child's birth, restart, and death. The
+# parent-edge class is ACYCLIC across the substrate. The root
+# supervisor self-parents (its parent uuid_spectral byte-equals its
+# identity); every non-root gen_prism's parent points strictly
+# upward toward the root.
+#
+# === The forward-promise this tick closes ===
+#
+# `shards/spectral/registry.mirror` (commit 489211e) declared:
+#
+#   "shards/spectral/parent.mirror   single-parent lifecycle edge
+#                                    type (acyclic). STOP-condition
+#                                    2/4: the acyclic invariant
+#                                    wants its own property/fracture
+#                                    bilateral pair (analogous to
+#                                    `keyword_matches_depth` per
+#                                    [[architecture-property-fracture-bilateral]]).
+#                                    That's a separate bilateral
+#                                    instance, not a simple type
+#                                    declaration; it lands as its
+#                                    own tick;"
+#
+# That tick is this tick. The PARENT EDGE TYPE lands here; the
+# acyclic invariant lands as a sibling property + fracture body
+# pair at:
+#
+#   shards/epistemologic/property/parent_acyclic.mirror
+#     (the declarative half — the predicate that surfaces cycle
+#      opacities)
+#   shards/kintsugi/fracture/parent_cycle.mirror
+#     (the operational half — the fracture body that proposes
+#      re-parenting the offending child to the root supervisor)
+#
+# Together: instance 6 of bilateral pattern #53 (promoted; per
+# [[architecture-property-fracture-bilateral]]). Prior instances:
+# 1=keyword (5e68df9 + d908798), 2=gate (b8755cc + 20c5d97),
+# 3=symbol (95f4639 + f083a55), 4=partials_align (meta-fracture;
+# fd344bf + 5c4e3ca), 5=operator_match (423c7d2 + af670d4). This
+# instance lands the bilateral at the GRAPH-EDGE altitude — the
+# first instance whose subject is a SUBSTRATE EDGE rather than a
+# token/literal/symbol position. Recognition #59 (kintsugi loop is
+# altitude-portable; promoted with af670d4) gains a new witness:
+# the bilateral signature scales not just across declaration
+# altitudes (keyword/operator/symbol) but to GRAPH STRUCTURE
+# (parent edge acyclic invariant).
+#
+# === The keyword decision ===
+#
+# `glass` per recognition #46 (path-syntax property; promoted) and
+# `shards/spectral.mirror`'s discipline section: "@spectral
+# sub-shards at depth >= 1 use `glass`; the family root itself uses
+# `prism` per the depth-0 discipline."
+#
+# Why NOT a new substrate keyword: parent is an EDGE TYPE — a typed
+# relation between gen_prisms — and `glass` already names that at
+# the sub-prism altitude per `shards/glass.mirror`'s
+# `glass(name) -> prism` form. Same reasoning as gen_prism
+# (ae965ca), supervisor (452ccb2), and registry (489211e): not a
+# new structural kind, but a typed edge over existing carriers
+# (uuid_spectral on both endpoints).
+#
+# === The parent_edge shape ===
+#
+# Per docs/specs/spectral-runtime.md §3: the parent edge points
+# child → parent. The substrate's load-bearing carrier for both
+# endpoints is `uuid_spectral`. The dark 80 bits identify the
+# process; both endpoints discriminate on byte-equality of the
+# dark portion (the same identity_signal the registry's `lookup`
+# discriminates on per shards/spectral/registry.mirror).
+#
+#   child   — `uuid_spectral`. The owned gen_prism's identity. The
+#              direction-of-ownership convention: the parent OWNS
+#              lifecycle of the child; the edge points FROM the
+#              child to its lifecycle-owner. The field name reads
+#              as a record key naming the child-side of the edge.
+#   parent  — `uuid_spectral`. The owning gen_prism's identity. The
+#              parentage destination. For the root supervisor,
+#              `child == parent` byte-equally (the root self-parents;
+#              the substrate's parentless-vocabulary anchor per
+#              docs/specs/spectral-runtime.md §3 — at ~/.mirror/).
+#              For every NON-root gen_prism, `child != parent` and
+#              the chain of parent traversals terminates at the
+#              root in a bounded number of steps.
+#
+# The type is small. The substrate's load-bearing structure is the
+# acyclic INVARIANT, not the record shape. The property/fracture
+# bilateral pair (sibling shards in this tick) is what makes the
+# invariant operational.
+#
+# === Why a typed edge record (not just the gen_prism.parent field) ===
+#
+# The gen_prism record (shards/spectral/gen_prism.mirror line 257-261)
+# already carries a `parent: uuid_spectral` field. Why declare a
+# separate `parent_edge` record here?
+#
+# Substrate-pull-correct rationale:
+#
+#   - The gen_prism.parent FIELD is the per-gen_prism CARRIER of
+#     the parent identity (one parent per gen_prism by record
+#     shape). This is the gen_prism's INTERNAL surface.
+#
+#   - The parent_edge RECORD is the substrate-altitude REIFIED
+#     EDGE between two gen_prisms (child uuid + parent uuid as one
+#     record). This is the substrate's EXTERNAL surface — the
+#     edge as a first-class substrate object the property's
+#     predicate ranges over.
+#
+# The predicate at the sibling property
+# (`parent_acyclic(file: ref) -> transparency`) reads the set of
+# parent_edges as `[parent_edge]` — a list of typed edge records.
+# Without the reified record, the predicate would have to range
+# over `[gen_prism]` and project `.parent` per element, which
+# conflates the carrier (the gen_prism) with the structural
+# question (the edge graph). Same logic as `registry_entry` in
+# shards/spectral/registry.mirror: the registry COULD inline the
+# entry as `(uuid_spectral, gen_prism)` pairs, but the typed
+# record makes the registry's query surface readable.
+#
+# Per [[architecture-shards-as-substrate-source]]: every
+# load-bearing substrate concept gets its own typed declaration.
+# The parent edge IS such a concept (the supervision tree's
+# single-direction lifecycle edge); it deserves its own type.
+#
+# === Orthogonal to entanglement ===
+#
+# Per docs/specs/spectral-runtime.md §4: entanglement is the
+# peer-correlation edge class, ORTHOGONAL to parentage. The two
+# edge classes:
+#
+#   parent_edge      directed; child → parent; one-per-child;
+#                     ACYCLIC across the substrate; lifecycle-
+#                     owning; the supervisor acts on this edge.
+#   entanglement     polyadic (N-ary); peer correlation; many-per-
+#                     gen_prism; cyclic permitted; observational;
+#                     sheaf restriction map at substrate altitude
+#                     (cellular sheaf per [[Eigenboard is a sheaf]]).
+#
+# The acyclic INVARIANT applies to parent_edges ALONE. Entanglement
+# edges may cycle freely (mutual entanglement is the common case:
+# Mara's spawn entangles with the mirror repo gen_prism; the mirror
+# repo gen_prism entangles with Mara's spawn — symmetric peer
+# correlation). The substrate NEVER conflates the two edge classes;
+# the property at `parent_acyclic.mirror` ranges over parent_edges
+# ONLY (not entanglement edges).
+#
+# This is STOP-condition 4 from the brief, resolved: parent and
+# entanglement share gen_prism vocabulary (both endpoint sets are
+# uuid_spectral-typed) but NOT the invariant. The parent_acyclic
+# property doesn't need to reference entanglement edges to
+# distinguish them; the edge-class is named structurally by the
+# type itself. `parent_edge` is its own substrate-altitude type;
+# `entanglement` will be its own substrate-altitude type at its
+# own sibling shard.
+#
+# === Sheaf reading: registry's degenerate reading, NOT this shard ===
+#
+# Per shards/spectral/registry.mirror §"Sheaf reading: NOT here, it's
+# at entanglement" and [[Eigenboard is a sheaf]]: the cellular-sheaf
+# restriction-map structure lives at the ENTANGLEMENT edge class.
+# The registry's typed surface stays at the index discipline; the
+# parent edge's typed surface stays at the lifecycle discipline.
+# This is STOP-condition 2 from the brief, resolved: parent is a
+# typed EDGE (the lifecycle invariant carrier), not a sheaf
+# restriction map. The sheaf reading is downstream of substrate at
+# entanglement.
+#
+# Architectural note (NOT a STOP): one could read parent_edge as a
+# DEGENERATE sheaf — each edge IS a restriction map from the
+# parent's eigenboard slice to the child's eigenboard slice along
+# the lifecycle direction. That reading is consistent with
+# [[Eigenboard is a sheaf]]'s cellular-sheaf framing but NOT
+# load-bearing at this tick. The substrate's sheaf surface lives at
+# entanglement; the parent's typed surface stays at the lifecycle
+# invariant.
+#
+# === Honest partial discipline (per #306) ===
+#
+# This shard declares a TYPE (parent_edge) only. No action bodies,
+# no `\` obligations, no fracture body emitted by this shard. The
+# property's predicate and the fracture body's morphism emission
+# live at the sibling shards; their honest `partials` accounting is
+# computed in those shards.
+#
+# === Cascade siblings (forward-promised, NOT landing this tick) ===
+#
+#   shards/spectral/entanglement.mirror   peer correlation edge;
+#                                          sheaf restriction map at
+#                                          substrate altitude
+#                                          (cellular sheaf per
+#                                          [[Eigenboard is a sheaf]]);
+#                                          polyadic; cyclic permitted;
+#                                          orthogonal to parent;
+#   shards/spectral/root.mirror           parentless supervisor;
+#                                          vocabulary anchor at
+#                                          ~/.mirror/; the substrate's
+#                                          self-parented top of the
+#                                          parent-edge graph;
+#   shards/spectral/portal.mirror         runtime side of portal
+#                                          (gen_prism specialisation
+#                                          carrying the frame stream).
+#
+# Spec context: docs/specs/spectral-runtime.md (the ouroboros
+#               spec; §3 supervision tree — parent is the lifecycle
+#               edge; §4 entanglement graph — parent is orthogonal
+#               to entanglement; §8 cascade map).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-three-tier-stack]] (the
+#                      SpectralSupervisor precedent; the supervision
+#                      tree this edge type structures),
+#                      [[architecture-property-fracture-bilateral]]
+#                      (this tick's parent_edge type + sibling
+#                      property/fracture pair are instance 6 of the
+#                      bilateral pattern; the first instance at the
+#                      graph-edge altitude),
+#                      [[architecture-shard-as-crdt]] (the parent
+#                      edge is set at start_child; the registry
+#                      shard advances by one settle when a parent
+#                      edge is established),
+#                      [[Eigenboard is a sheaf]] (the architectural
+#                      surface: sheaf restriction maps live at
+#                      entanglement, NOT parent; degenerate sheaf
+#                      reading of the parent edge surfaced but not
+#                      load-bearing),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the parent edge was named informally at
+#                      spectral.mirror line 116-118 and at
+#                      gen_prism.mirror line 244-249 since the
+#                      family root landed; this tick names the edge
+#                      at the substrate altitude — another instance
+#                      of the rug-pull pattern).
+# Related shards: spectral.mirror (the family root this glass is
+#                  under),
+#                 spectral/gen_prism.mirror (the gen_prism's parent
+#                  field is typed uuid_spectral; this shard names
+#                  the typed EDGE over those fields; commit ae965ca),
+#                 spectral/supervisor.mirror (the lifecycle-owner
+#                  whose start_child sets the parent edge on spawn;
+#                  commit 452ccb2),
+#                 spectral/registry.mirror (the supervisor's child
+#                  index; the registry indexes children of a
+#                  supervisor, the parent edge points the OTHER WAY;
+#                  commit 489211e),
+#                 uuid/spectral.mirror (the identity carrier at both
+#                  endpoints of the edge; the dark 80 bits
+#                  discriminate),
+#                 epistemologic/property/parent_acyclic.mirror
+#                  (sibling tick; the declarative half of bilateral
+#                  instance 6 — the property over the set of
+#                  parent_edges in the substrate),
+#                 kintsugi/fracture/parent_cycle.mirror (sibling
+#                  tick; the operational half of bilateral instance
+#                  6 — the fracture body that proposes re-parenting
+#                  to the root when a cycle is detected).
+# Path-namespace property: this file at
+# `shards/spectral/parent.mirror` declares `@spectral/parent` and
+# only that.
+
+glass @spectral/parent {
+  focus parent
+  project parent
+  split parent
+  shift parent
+  settle parent
+}
+
+# === parent_edge — one lifecycle edge ===
+#
+# Per docs/specs/spectral-runtime.md §3 — the supervision tree's
+# single-direction lifecycle edge. One record per gen_prism (every
+# gen_prism has exactly one parent edge; the root supervisor's edge
+# is the self-parent).
+#
+#   child   — the owned gen_prism's uuid_spectral. The lookup key
+#              for "which edge does this gen_prism's parent live
+#              on?" Discrimination is on byte-equality of the dark
+#              80 bits (the identity_signal per
+#              shards/uuid/spectral.mirror).
+#   parent  — the owning gen_prism's uuid_spectral. The destination
+#              of the edge. For the root supervisor, byte-equals
+#              `child`; for every other gen_prism, points strictly
+#              upward toward the root via a chain that terminates
+#              at the root in a bounded number of steps (the
+#              acyclic invariant the sibling property declares).
+#
+# The edge is REIFIED as a record so the sibling property's
+# predicate can range over `[parent_edge]` — the substrate-altitude
+# external surface of the supervision tree's edge graph.
+type parent_edge = {
+  child:  uuid_spectral,
+  parent: uuid_spectral,
+}
+
+out @spectral/parent
+out parent_edge
