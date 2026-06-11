@@ -1,0 +1,284 @@
+in @glass
+
+# Property: every dissonance value emitted by a fracture body must
+# declare a `partials` count equal to the number of distinct AST nodes
+# its companion `content: splinter(ast)` actually rewrites.
+#
+# FOURTH INSTANCE of bilateral pattern #53 (property/fracture; promoted
+# 2026-06-10). First instance: keyword/depth
+# (@epistemologic/property/keyword_matches_depth +
+# @kintsugi/fracture/keyword; 2026-06-10, 5e68df9 + d908798). Second
+# instance: gate/diff-closure
+# (@epistemologic/property/gate_matches_diff_closure +
+# @kintsugi/fracture/gate; 2026-06-10, b8755cc + 20c5d97). Third
+# instance: symbol/canonical-form
+# (@epistemologic/property/symbol_canonical_form +
+# @kintsugi/fracture/symbol_lift; 2026-06-11). This shard + its sibling
+# fracture body (@kintsugi/fracture/partials_align) are the FOURTH
+# instance, landing at the META-FRACTURE altitude: the bilateral
+# pattern applied to its own internal field.
+#
+# === Seam's 2026-06-11 finding (the load-bearing reading) ===
+#
+# `partials: 1` looks like template adherence across the bilateral
+# cascade. Both `@kintsugi/fracture/keyword` and
+# `@kintsugi/fracture/symbol_lift` set `score.partials: 1`. For
+# `keyword` (one token swap, one AST node rewritten) the declaration
+# is honest. For `symbol_lift` the table mostly contains pure renames
+# (one node) but `weighted -> amplitudes` elaborates the AST node into
+# a wider record where intensity fields {p_i} lift to complex-amplitude
+# pairs {|a_i|, phi_i} — MULTIPLE AST nodes touched per opacity. The
+# template-copied `partials: 1` is dishonest for that entry. The
+# `partials` field of `dissonance` measures the partial count summed
+# in the Helmholtz/Plomp-Levelt roughness curve
+# (epistemologic/math/music/dissonance.mirror lines ~219-237); for
+# fracture-body-emitted morphisms it MUST equal the breadth of AST
+# nodes the morphism's `content: splinter(ast)` discharges. Otherwise
+# the substrate lies about dissonance breadth at every altitude — and
+# the lie propagates to every future bilateral instance that copies
+# the template.
+#
+# === The discipline catching its own internal field ===
+#
+# This property is the bilateral pattern self-applying one altitude
+# deeper. Every prior instance (#53 first-second-third) declared a
+# property about substrate sources OUTSIDE the bilateral chain.
+# This instance declares a property about the BILATERAL CHAIN ITSELF
+# — specifically about the morphisms fracture bodies emit. The
+# substrate's auto-formatter floor self-applies; the discriminator
+# discriminates against its own template adherence.
+#
+# Per recognition #58 (substrate-already-had-the-word — 53rd instance,
+# alignment as boundary mathematics at @io; promoted 2026-06-10): the
+# alignment harness fires at the substance boundary. Fracture-body-
+# emitted morphisms ARE substance crossings — the substrate emits them
+# into the kintsugi loop's `active_pass`; they cross from form-side
+# (the fracture body's declarative AST) to process-side (the morphism
+# the loop applies). This property IS the boundary harness for
+# `partials` honesty at that crossing.
+#
+# === Parametric over fracture-body sites ===
+#
+# The predicate is parametric over the set of fracture-body sites in
+# the substrate. Each opacity surfaces ONE (location, declared_partials,
+# computed_breadth) triple — one offending fracture body at one
+# `partials` literal site, paired with the honest breadth its
+# splinter(ast) discharges. The fracture body resolves any opacity by
+# substituting the literal; no per-site variant.
+#
+# Structurally parallel to symbol_canonical_form (the third instance):
+# the predicate is parametric over a computable function (canonical_form
+# table lookup there; AST-breadth computation here). The bilateral
+# pattern absorbs parametric-over-table AND parametric-over-computation
+# variants under the same `@epistemologic/property/<X>` +
+# `@kintsugi/fracture/<X>` signature.
+#
+# === The AST-breadth computation ===
+#
+# `ast_breadth(content: splinter(ast)) -> u32` reads the content-
+# addressed AST fragment and counts the number of distinct nodes the
+# splinter rewrites against its source. The substrate already has the
+# vocabulary:
+#
+#   - `splinter(ast)` is declared at glass.mirror lines 261-265 with
+#     `content: oid`, `ast: ref`, `transparency: transparency(ast)`.
+#     The `content: oid` is the content-addressed handle to the
+#     rewritten AST fragment.
+#   - The substrate's @meta/ast altitude (boot/01-meta.mirror's
+#     `type ast(g)`) names the AST node algebra; the breadth is a
+#     traversal cardinality at that altitude.
+#   - Per [[architecture-splinter-ast-quote-primitive]] (recognition
+#     #54; landed 2026-06-10 at mirror a3789c2): splinter(ast) is the
+#     substrate's parametric quote primitive; `ast_breadth` is the
+#     dual traversal — quote constructs an AST fragment; ast_breadth
+#     measures the cardinality of the construction.
+#
+# The action stays obligation-blocked (`\`): the realisation reads the
+# @meta/ast altitude's node count for the splinter; the substrate
+# declares the carrier shape; the arithmetic lands when the kintsugi
+# loop pulls.
+#
+# === Verdict surface ===
+#
+# Verdict surface is transparency<p>:
+#   success              -- every fracture-body-emitted morphism's
+#                          `score.partials` literal equals the
+#                          ast_breadth of its companion `content:
+#                          splinter(ast)`.
+#   failure(opacity_map) -- some fracture body declares `partials: N`
+#                          where `ast_breadth(content)` returns M with
+#                          N != M. Each opacity names ONE (location,
+#                          declared_partials, computed_breadth) triple.
+#   partial(opacity_map) -- multiple fracture-body sites surveyed, some
+#                          honest and some not.
+#
+# Located transparency (not @glass.verdict): the kintsugi loop
+# consumes the opacity_map to direct mutation. Each opacity names ONE
+# offending `partials` literal site; the fracture body
+# (@kintsugi/fracture/partials_align) realises the rule by lifting
+# violations through kintsugi. The property names the rule; the
+# fracture realises it; the kintsugi loop is the bridge.
+#
+# === The recursive structure (Seam's finding catching itself) ===
+#
+# This property checks fracture-body-emitted morphisms. The kintsugi
+# loop's fracture bodies ARE the things being checked. The sibling
+# fracture body (@kintsugi/fracture/partials_align) itself emits a
+# morphism with a `score.partials` field — which this property will
+# inspect. The recursion does not create circularity at runtime:
+#
+#   - This property reads CURRENT fracture-body source (the .mirror
+#     shards declaring `score.partials: N` literals); it does NOT read
+#     the kintsugi loop's runtime state.
+#   - The fracture body @kintsugi/fracture/partials_align rewrites the
+#     OFFENDING `partials` literal at the source level; the loop
+#     applies the morphism through `query_phi` like any other.
+#   - The fracture body's OWN emitted morphism is one AST-node rewrite
+#     (the offending integer literal swap); its honest `score.partials`
+#     is `1`. The discipline self-applies: at landing time, the
+#     fracture body is declared with `partials: 1` and that declaration
+#     passes this property by construction.
+#
+# Per [[architecture-bateson-form-behaviour-partition]] (recognition
+# #50, promoted): this is form-side discipline catching form-side
+# template adherence. The form/behaviour partition does not collapse;
+# this property and its fracture body sit at form altitude (declared
+# rules; declared rewrites); the runtime kintsugi loop applies them at
+# process altitude.
+#
+# === Cybernetic ancestor ===
+#
+# Recognition #37 (`requires` IS a Paskian agreement; promoted
+# 2026-06-10) names `pact` as the property-declaration form. pact
+# replaces the conversation-era `grammar` keyword as the surface for
+# declaring properties; the rule names `pact` directly below.
+#
+# Engineering ancestor: every linter that catches its own rules
+# (eslint's `no-restricted-syntax` self-applied to lint plugins;
+# rustfmt formatting its own source; black's bootstrap) names this
+# discipline implicitly. The substrate's contribution is *typing* the
+# self-application so the kintsugi loop reads it directly — the
+# meta-fracture is a fracture body like any other, not a special case.
+#
+# === Pre-AI prior art ===
+#
+#   partial count       Helmholtz (1863) Die Lehre von den
+#                       Tonempfindungen; the Plomp & Levelt (1965)
+#                       Tonal consonance and critical bandwidth — the
+#                       `partials` field of a roughness measurement
+#                       counts the partials summed when computing the
+#                       curve.
+#   AST breadth         McCarthy (1960) Recursive functions of
+#                       symbolic expressions; the cardinality of
+#                       distinct nodes in an S-expression — the
+#                       substrate's AST altitude is the M-expression /
+#                       S-expression duality at @meta/ast.
+#   meta-circularity    Reynolds (1972) Definitional interpreters; the
+#                       discipline of a system describing its own
+#                       evaluation. The substrate's reading is Smith
+#                       (1984) Reflection and semantics in Lisp — the
+#                       reflective tower opens a meta-altitude where
+#                       the system inspects itself. This property is
+#                       the meta-altitude reading of the bilateral
+#                       pattern.
+#
+# The substrate's contribution is *typing* the self-applied check so
+# the kintsugi loop reads it. No invention.
+#
+# Spec context: candidate #53 fourth instance (the bilateral pattern
+#               applied to its own internal field; meta-fracture
+#               altitude). Recognition #51 (mirror as expanding
+#               Hilbert space; promoted) — fracture bodies are how the
+#               substrate maintains coherence at each Bateson level;
+#               this property maintains coherence at the META-FRACTURE
+#               level where the bilateral pattern itself is checked.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (opacity / transparency are substrate vocabulary;
+#                      the predicate emits typed carriers throughout),
+#                      [[architecture-property-fracture-bilateral]]
+#                      (the bilateral pattern this is the fourth
+#                      instance of; meta-application altitude),
+#                      [[architecture-splinter-ast-quote-primitive]]
+#                      (the substrate's parametric AST-fragment
+#                      construction; `ast_breadth` is the dual
+#                      cardinality traversal of `splinter(ast)`),
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                      (recognition #58; this property IS the boundary
+#                      harness for `partials` honesty at the
+#                      fracture-body-to-morphism crossing),
+#                      [[feedback-no-bare-types]] (opacity is the
+#                      typed carrier; no bare (location, N, M) tuple
+#                      escapes).
+# Forward-promise to consumers: `@kintsugi/oscillate`'s `active_pass`
+#                  reads this property's transparency when composing the
+#                  per-pulse candidate morphism_set; the binding lands
+#                  when the kintsugi loop substrate-pulls. This shard
+#                  does NOT pull `@kintsugi/oscillate` or
+#                  `@kintsugi/fracture/partials_align`; the substrate-
+#                  altitude arrow points upward (the loop and the
+#                  fracture body consume this property; not the other
+#                  way around).
+# Related shards: kintsugi/fracture/partials_align.mirror (the
+#                 sibling fracture body; the operational half of this
+#                 bilateral instance),
+#                 epistemologic/property/keyword_matches_depth.mirror
+#                 + kintsugi/fracture/keyword.mirror (FIRST INSTANCE),
+#                 epistemologic/property/gate_matches_diff_closure.mirror
+#                 + kintsugi/fracture/gate.mirror (SECOND INSTANCE),
+#                 epistemologic/property/symbol_canonical_form.mirror
+#                 + kintsugi/fracture/symbol_lift.mirror (THIRD
+#                 INSTANCE — Seam's finding originates here at the
+#                 `weighted -> amplitudes` entry's `partials: 1`),
+#                 epistemologic/math/music/dissonance.mirror (where
+#                 `dissonance.partials: u32` is declared as the
+#                 Plomp-Levelt partial count; this property pins its
+#                 fracture-body-emitted value to AST breadth),
+#                 glass.mirror (the substrate floor; `opacity`,
+#                 `location`, `transparency`, `splinter(ast)`).
+# Path-namespace property: this file at
+# `shards/epistemologic/property/dissonance_partials_match_ast_breadth.mirror`
+# declares `@epistemologic/property/dissonance_partials_match_ast_breadth`
+# as a species under the @epistemologic/property family.
+# Keyword/depth property: this declaration is depth-2 from the
+# @epistemologic family root; per recognition #46 it uses `pact` (the
+# property-declaration form; recognition #37 promoted 2026-06-10).
+
+pact @epistemologic/property/dissonance_partials_match_ast_breadth {
+  # The breadth — the count of distinct AST nodes the splinter(ast)
+  # actually rewrites against its source. For a pure-rename splinter
+  # (one token swap), breadth = 1. For an elaboration that touches
+  # multiple AST node fields (e.g. `weighted { p_0, p_1 }` lifting to
+  # `amplitudes { a_0, phi_0, a_1, phi_1 }`), breadth = N where N is
+  # the count of distinct node changes.
+  ast_breadth(content: splinter(ast)) -> u32 { \ }
+
+  # The declared `score.partials` literals observed in fracture-body
+  # source. Each entry names ONE `partials: N` literal site inside a
+  # fracture-body-emitted morphism; paired with the splinter(ast) in
+  # the same morphism whose breadth would supersede the declaration
+  # if mismatched.
+  fracture_partials_sites(file: ref) -> [opacity] { \ }
+
+  # The combined property: every fracture-body-emitted morphism in
+  # `file` has `score.partials` equal to `ast_breadth(content)` of
+  # its companion `content: splinter(ast)`.
+  # Verdict surface is transparency<p>:
+  #   success              -- every fracture-body-emitted morphism's
+  #                          `score.partials` literal equals the
+  #                          ast_breadth of its companion `content:
+  #                          splinter(ast)`.
+  #   failure(opacity_map) -- some fracture body declares `partials: N`
+  #                          where `ast_breadth(content)` returns M
+  #                          with N != M; each opacity names ONE
+  #                          (location, declared_partials,
+  #                          computed_breadth) triple.
+  #   partial(opacity_map) -- multiple fracture-body sites, mixed
+  #                          verdict.
+  dissonance_partials_match_ast_breadth(file: ref) -> transparency { \ }
+}
+
+out ast_breadth
+out fracture_partials_sites
+out dissonance_partials_match_ast_breadth
+out @epistemologic/property/dissonance_partials_match_ast_breadth
