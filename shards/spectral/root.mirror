@@ -1,0 +1,391 @@
+in @prism
+in @glass
+in @meta
+in @spectral
+in @spectral/gen_prism
+in @spectral/supervisor
+in @spectral/parent
+in @uuid/spectral
+
+# @spectral/root — the parentless supervisor specialisation.
+#
+# THE FIFTH SUB-SHARD of the @spectral runtime cascade. Sibling of
+# `shards/spectral/gen_prism.mirror` (commit ae965ca, the worker
+# primitive), `shards/spectral/supervisor.mirror` (commit 452ccb2,
+# the lifecycle-owner specialisation), `shards/spectral/registry.mirror`
+# (commit 489211e, the typed child index), and
+# `shards/spectral/parent.mirror` (commit 9d905a2, the single-parent
+# lifecycle edge type whose `parent_acyclic` invariant — sibling
+# bilateral at 0921dca + 20fcde5 — terminates the parent chain HERE).
+#
+# Per docs/specs/spectral-runtime.md §3 (2026-06-10, Mara): the root
+# supervisor has NO parent. It is the vocabulary anchor for the
+# substrate's home, resting at `~/.mirror/` (on a developer machine;
+# could be `/var/spectral/` or similar on a server). The substrate's
+# operational top of the supervision tree.
+#
+# Analogue to BEAM's `application` behaviour: the parentless
+# supervisor at the root of an OTP application tree. Every other
+# gen_prism in the substrate descends from root through a finite
+# chain of parent edges (per `@epistemologic/property/parent_acyclic`,
+# commit 0921dca).
+#
+# === The forward-promise this tick closes ===
+#
+# `shards/spectral/parent.mirror` (commit 9d905a2) declared:
+#
+#   "shards/spectral/root.mirror   parentless supervisor;
+#                                  vocabulary anchor at ~/.mirror/;
+#                                  the substrate's self-parented top
+#                                  of the parent-edge graph;"
+#
+# `shards/spectral.mirror` (the family root, 2026-06-10 ouroboros
+# tick) named root as a cascade sibling with the line "the parentless
+# supervisor type; the family's top vocabulary anchor; resting place
+# ~/.mirror/ (operational vocabulary, NOT a directory the substrate
+# reads)."
+#
+# That tick is this tick. The root supervisor TYPE lands here; its
+# self-parenting invariant terminates the existing acyclic chain at
+# `@epistemologic/property/parent_acyclic` (NOT a new bilateral —
+# see "Self-parenting invariant" section below).
+#
+# === The keyword decision ===
+#
+# `glass` per recognition #46 (path-syntax property; promoted) and
+# `shards/spectral.mirror`'s discipline section: "@spectral
+# sub-shards at depth >= 1 use `glass`; the family root itself uses
+# `prism` per the depth-0 discipline."
+#
+# Why NOT a new substrate keyword: root is a SUPERVISOR
+# specialisation (the parentless one), and `glass` already names
+# specialisation-of-existing-prism per `shards/glass.mirror`'s
+# `glass(name) -> prism` form. Same reasoning as the prior @spectral
+# sub-shards: gen_prism (ae965ca) specialises prism; supervisor
+# (452ccb2) specialises gen_prism; root (this tick) specialises
+# supervisor. Three levels of glass specialisation collapsing back
+# to one prism algebra at every altitude — per
+# [[architecture-prism-as-trait-as-everything]].
+#
+# === Specialisation-by-embedding ===
+#
+# Per the supervisor shard's precedent: mirror has no `T + {fields}`
+# syntax for type extension. The root IS-A supervisor relationship is
+# structural-by-embedding — the root record carries the supervisor
+# record in a `base` field. The five-op tool surface comes through
+# the `glass @spectral/root` declaration; the supervisor's typed
+# surfaces (child_specs, restart_strategy, the embedded gen_prism's
+# identity/state/parent) reach through `base`. Then root adds ONE
+# field: the `anchor` ref naming the host-level substrate home.
+#
+# === Self-parenting invariant ===
+#
+# Per docs/specs/spectral-runtime.md §3: the root supervisor self-
+# parents. Concretely, the embedded gen_prism's `parent` field
+# (`root.base.base.parent: uuid_spectral`) byte-equals its own
+# `identity` field (`root.base.base.identity: uuid_spectral`).
+#
+# Reading the invariant at the parent_edge altitude (per
+# shards/spectral/parent.mirror): the root's parent_edge has
+# `edge.child == edge.parent` byte-equally. The parentage chain
+# walked from any non-root gen_prism terminates at this self-loop in
+# a bounded number of steps.
+#
+# NOT a new bilateral pair (STOP-condition 1 from the brief
+# resolved): the existing `@epistemologic/property/parent_acyclic`
+# (commit 0921dca) ALREADY names the chain-termination invariant.
+# The property reads:
+#
+#   "every parent_edge in the substrate participates in a chain that
+#    terminates at the root supervisor without revisiting
+#    edge.child"
+#
+# The root's self-parent edge IS the termination point — the BASE
+# CASE of the acyclic chain. Adding a separate `root_self_parents`
+# property would carry redundant information: `parent_acyclic`
+# already accepts root.base.base.parent == root.base.base.identity
+# as the only configuration the chain can terminate in. The fracture
+# body at `@kintsugi/fracture/parent_cycle` (commit 20fcde5) emits
+# the re-parent-to-root morphism that ASSUMES a root exists to
+# re-parent to; the existence is what this shard declares.
+#
+# Substrate-pull-correct reading: the parent edge graph has ONE
+# self-loop (the root's) and EVERY other edge is strict-upward. The
+# property ranges over edges; the self-loop satisfies the
+# termination predicate trivially. No new property surface needed.
+#
+# (If the substrate later wants to enforce "exactly one self-loop
+# per host" as a singleton constraint, that's the singleton question
+# below — separate forward-promise.)
+#
+# === The anchor field — host-level vocabulary anchor ===
+#
+# Per docs/specs/spectral-runtime.md §3 and Alex's 2026-06-10
+# declaration "the root supervisor rests at @/Users/alexwolf/.mirror —
+# the one that holds the thread":
+#
+#   anchor: ref — the host-path where the root supervisor's
+#                  substrate state lives. On a developer machine:
+#                  `~/.mirror/`. On a server: could be `/var/spectral/`
+#                  or `/srv/spectral/`. The substrate's per-host home.
+#
+# Carrier choice rationale: `ref` is the existing substrate primitive
+# (used throughout the property layer as `file: ref` — see
+# @epistemologic/property/keyword_matches_depth, parent_acyclic,
+# operator_matches_composition_primitive, etc.). It carries a host-
+# resolvable reference at the substrate altitude; the realisation
+# layer maps `ref` to the appropriate host concept (filesystem path,
+# content address, URL — whatever the host substrate uses).
+#
+# Why NOT a new `host_path` carrier (STOP-condition 2 from the brief
+# resolved): the substrate's existing `ref` primitive already carries
+# host-resolvable references; introducing a parallel `host_path`
+# would proliferate vocabulary the substrate already covers. The
+# anchor IS a ref — same as how every property carrier's `file: ref`
+# parameter is a ref. Substrate-already-had-the-word.
+#
+# Operational vocabulary, NOT a directory the substrate reads (per
+# spectral.mirror line 222): the anchor is the substrate-altitude
+# NAME of where root rests; the realisation layer maps the name to
+# host bytes through the appropriate `@io` boundary.
+#
+# === Singleton-per-host: FORWARD-PROMISED (STOP-condition 3 resolved) ===
+#
+# The brief surfaces: "if root's existence creates substrate-altitude
+# singleton constraints (only ONE root per host) that need a property
+# to enforce, STOP and surface — that's potentially another bilateral
+# instance."
+#
+# Per docs/specs/spectral-runtime.md §10 Open Question 2 (verbatim):
+#
+#   "Root supervisor location at `~/.mirror/`. The spec says the
+#    vocabulary anchor IS `~/.mirror/`; that's clean as vocabulary.
+#    But the OPERATIONAL root of a running spectral runtime — where
+#    does it actually rest its state shard? `~/.mirror/store/`? A
+#    per-user data dir under `$XDG_DATA_HOME`? Mara's spawn parents
+#    at `~/.mara/` — is that the SAME root supervisor as mirror
+#    repo's gen_prism's parent, just a child branch? Or is each home
+#    (`~/.reed/`, `~/.mara/`, `~/.mirror/`) its OWN root with NO
+#    root-above? The example in §3 suggests one tree; the vocabulary
+#    in §2 suggests each home is its own tree. Needs Pack
+#    ratification."
+#
+# The singleton question is NOT YET RESOLVED at the spec altitude.
+# Two readings remain live:
+#
+#   (a) ONE root per host (singleton). Every gen_prism in the
+#       substrate descends from a single host-wide root. Each home
+#       (`~/.reed/`, `~/.mara/`) is a child of `~/.mirror/`. The
+#       singleton invariant deserves its own property:
+#       `host_has_exactly_one_root(host: ref) -> transparency`,
+#       with a fracture body that re-parents stray roots into the
+#       canonical root's tree. This would be bilateral pattern
+#       instance 7.
+#
+#   (b) ONE root per home (per-tree). Each home (`~/.reed/`,
+#       `~/.mara/`, `~/.mirror/`) is its OWN root with no
+#       root-above. The substrate has N roots, one per substrate-
+#       owning person/process. No singleton invariant; the substrate
+#       is a forest of trees, not a single tree.
+#
+# This shard does NOT pre-commit to either reading. It declares the
+# root TYPE; the cardinality discipline lands when the Pack
+# ratifies a reading. If reading (a) wins, the bilateral instance 7
+# lands as a sibling tick (property + fracture body); if reading
+# (b) wins, no further substrate work is needed (each home declares
+# its own root, the forest has no host-level singleton).
+#
+# This is the forward-promise: substrate-pull-correct, the cascade
+# pulls the cardinality discipline when the operational reading
+# crystallises. The TYPE lands here; the CARDINALITY waits.
+#
+# === Why the anchor matters now ===
+#
+# The brief's framing: "Per Alex's declaration: `~/.mirror/` on the
+# developer machine; could be `/var/spectral/` or similar on a
+# server."
+#
+# Even with the cardinality question open, the anchor field is
+# load-bearing on EITHER reading:
+#
+#   - Reading (a): the single host-wide root rests at one anchor
+#                  (e.g. `~/.mirror/` for Alex's machine, `/srv/
+#                  spectral/` for a deployment server). The anchor
+#                  names WHICH path is the singleton's home.
+#   - Reading (b): each per-home root rests at its own anchor
+#                  (`~/.mirror/` for the substrate root, `~/.mara/`
+#                  for Mara's root, `~/.reed/` for Reed's root).
+#                  The anchor names WHICH home this particular root
+#                  is.
+#
+# Both readings need the anchor; both readings give it the same
+# type (`ref`). The field is decision-independent; only the
+# CARDINALITY question is decision-dependent.
+#
+# === Honest partial discipline (per #306) ===
+#
+# This shard declares a TYPE (root) and a constructor action
+# (start_root). The constructor body discharges as `\` — no fracture
+# body emits any morphism in this tick. No `partials` declaration
+# needed (per `dissonance_partials_match_ast_breadth` #306). The
+# body discharges downstream when the consumer pulls realisation
+# through `@code/metalogue/materialize` (per the ouroboros pipeline
+# in docs/specs/spectral-runtime.md §5).
+#
+# === The mara-spawn example resolved ===
+#
+# Per docs/specs/spectral-runtime.md §3-4: when Mara spawns to work
+# on mirror's substrate, the spawn's parent is `~/.mara/` gen_prism.
+# Under reading (a): `~/.mara/` itself parents up to `~/.mirror/`
+# root. Under reading (b): `~/.mara/` IS the root for Mara's tree;
+# no parent above. Either way, the spawn's parent chain terminates
+# at SOME root — the type declared here covers both.
+#
+# === Cascade siblings (forward-promised, NOT landing this tick) ===
+#
+#   shards/spectral/entanglement.mirror   peer correlation edge;
+#                                          sheaf restriction map at
+#                                          substrate altitude
+#                                          (cellular sheaf per
+#                                          [[Eigenboard is a sheaf]]);
+#                                          polyadic; cyclic permitted;
+#                                          orthogonal to parent;
+#   shards/spectral/portal.mirror         runtime side of portal
+#                                          (gen_prism specialisation
+#                                          carrying the frame stream);
+#   shards/spectral/db.mirror             graph database engine;
+#                                          existing parentless ghost
+#                                          (#198) that gained
+#                                          @spectral as parent at the
+#                                          family-root tick;
+#   shards/spectral/garden.mirror         vetted-corpus distribution;
+#                                          existing parentless ghost
+#                                          (#118) that gains @spectral
+#                                          as parent when it lands.
+#
+# Conditional sibling (lands ONLY if reading (a) wins):
+#
+#   shards/epistemologic/property/host_has_exactly_one_root.mirror
+#     + shards/kintsugi/fracture/extra_root.mirror
+#     — bilateral instance 7; the singleton-per-host invariant +
+#       re-parent-stray-root-into-canonical morphism. Forward-
+#       promised pending Pack ratification of cardinality reading.
+#
+# Spec context: docs/specs/spectral-runtime.md (the ouroboros
+#               spec; §3 supervision tree — root is the parentless
+#               supervisor at the top; §10 Open Question 2 —
+#               cardinality unresolved).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-three-tier-stack]] (the
+#                      SpectralSupervisor precedent; the supervision
+#                      tree this root anchors),
+#                      [[architecture-hamilton-scheduler]] (the
+#                      per-shard memory manager named for Margaret
+#                      Hamilton; the root supervisor altitude where
+#                      Apollo-1202 priority discipline ultimately
+#                      reports),
+#                      [[architecture-shard-as-crdt]] (the root's
+#                      state surface IS a shard; the supervision tree
+#                      ascends through it),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the root name lived in
+#                      docs/specs/spectral-runtime.md §3 since
+#                      2026-06-10; the operational anchor `~/.mirror/`
+#                      lived in Alex's declaration; this tick names
+#                      the substrate-altitude type — instance N of the
+#                      rug-pull pattern).
+# Related shards: spectral.mirror (the family root this glass is
+#                  under),
+#                 spectral/gen_prism.mirror (the worker primitive
+#                  root's `base.base` inherits from; commit ae965ca),
+#                 spectral/supervisor.mirror (the lifecycle-owner
+#                  specialisation root's `base` inherits from;
+#                  commit 452ccb2),
+#                 spectral/registry.mirror (the typed child index
+#                  root's `base.base.state` carries; commit 489211e),
+#                 spectral/parent.mirror (the typed lifecycle edge
+#                  root's self-parent participates in; commit 9d905a2),
+#                 uuid/spectral.mirror (the identity carrier; root's
+#                  self-parent edge byte-equals identity on the
+#                  embedded gen_prism),
+#                 epistemologic/property/parent_acyclic.mirror (the
+#                  acyclic chain-termination invariant whose BASE
+#                  CASE is root's self-parent edge; commit 0921dca).
+# Path-namespace property: this file at
+# `shards/spectral/root.mirror` declares `@spectral/root` and only
+# that.
+
+glass @spectral/root {
+  focus root
+  project root
+  split root
+  shift root
+  settle root
+}
+
+# === root — the parentless supervisor record ===
+#
+# Per docs/specs/spectral-runtime.md §3: a `root` is a `supervisor`
+# specialisation. The `base` field carries the embedded supervisor
+# (child_specs, restart_strategy, and the embedded gen_prism's
+# identity/state/parent surfaces); the root adds the host-level
+# vocabulary anchor.
+#
+# === Self-parenting invariant (inline) ===
+#
+# The root supervisor satisfies:
+#
+#   root.base.base.parent == root.base.base.identity
+#
+# (byte-equality on the dark 80 bits per uuid_spectral's
+# identity_signal). The parent_edge produced by this equality is the
+# substrate's self-loop — the BASE CASE of
+# @epistemologic/property/parent_acyclic's chain-termination
+# predicate (commit 0921dca). The fracture body
+# @kintsugi/fracture/parent_cycle (commit 20fcde5) emits re-parent-
+# to-root morphisms that PRESUPPOSE this self-loop exists; this
+# shard declares the type whose constructor establishes it.
+#
+# === Fields ===
+#
+#   base    — the embedded `supervisor`. Carries the supervisor's
+#              configuration list, restart_strategy, and the embedded
+#              gen_prism (identity, state, parent). The self-parenting
+#              invariant fires on `base.base.parent ==
+#              base.base.identity` after construction;
+#   anchor  — the host-level vocabulary anchor. `ref` carrier (the
+#              existing substrate-altitude reference primitive);
+#              realisation layer maps to host filesystem path or
+#              equivalent (`~/.mirror/` on a developer machine; could
+#              be `/var/spectral/`, `/srv/spectral/`, or similar on a
+#              server).
+type root = {
+  base:   supervisor,
+  anchor: ref,
+}
+
+# === start_root — root constructor ===
+#
+# Spawn the parentless supervisor for a given host anchor. The
+# constructor establishes the self-parenting invariant: the embedded
+# gen_prism's `identity` is computed (per uuid_spectral's
+# autopoietic fixed point), and its `parent` field is set to that
+# same identity (the self-loop that terminates the acyclic chain).
+#
+# The supervisor's initial child_specs are empty; children are added
+# downstream through the supervisor's `start_child` (per
+# shards/spectral/supervisor.mirror, commit 452ccb2). The restart
+# strategy defaults to `one_for_one` (the most permissive of the
+# three; matches BEAM's application-supervisor default).
+#
+# Body discharges as `\`; concrete construction (identity computation,
+# self-parent edge establishment, default restart_strategy assignment,
+# anchor binding) lives at the realisation layer via
+# @code/metalogue/materialize (per the ouroboros pipeline in
+# docs/specs/spectral-runtime.md §5).
+start_root(anchor: ref) -> root { \ }
+
+out @spectral/root
+out root
+out start_root
