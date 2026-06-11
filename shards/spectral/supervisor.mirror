@@ -248,6 +248,32 @@ in @epistemologic/reality/time
 #                                          vocabulary anchor at
 #                                          ~/.mirror/;
 #   shards/spectral/portal.mirror         runtime side of portal
+#                                          (gen_prism specialisation;
+#                                          frame_stream carrier);
+#   shards/spectral/restart_intensity.mirror
+#                                         storm-protection carrier
+#                                         (max_restarts: u32 + period:
+#                                          duration), gating the
+#                                          kintsugi-morphism-driven
+#                                          restart loop. Without it, a
+#                                          permanent-restart child with
+#                                          deterministic startup failure
+#                                          produces an unbounded loop.
+#                                          Mirrors BEAM precedent
+#                                          (max_restarts/max_seconds
+#                                          circuit-breaker; on storm
+#                                          detection the child is
+#                                          escalated to its parent
+#                                          supervisor's termination).
+#                                          Pairs with bilateral instance:
+#                                          @epistemologic/property/
+#                                          restart_intensity_well_formed
+#                                          + @kintsugi/fracture/
+#                                          restart_storm. Surfaced as
+#                                          gap in Seam adversarial review
+#                                          2026-06-11; landing tracked
+#                                          forward-promise rather than
+#                                          silent omission.
 #                                          (gen_prism specialisation
 #                                          carrying the frame stream).
 #
