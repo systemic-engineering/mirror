@@ -1,0 +1,178 @@
+in @prism
+in @glass
+in @nl
+in @mirror/lens
+in @mirror/store
+
+# @mirror/lens/unix — the filesystem lens (OS-level impedance).
+#
+# The ouroboros pipeline's load-bearing impedance layer. mirror's
+# substrate truth lives in @mirror/store as content-addressed shards
+# (oid-graph closure; per shards/mirror/store.mirror). OS-level
+# downstream consumers — cargo, erlc, flang — read source from disk
+# as Unix files. The lens IS the impedance match: it presents the
+# store's shard contents to those consumers AS a Unix filesystem,
+# without materializing a copy.
+#
+# Per docs/specs/spectral-runtime.md the pipeline is:
+#
+#   mirror substrate
+#     -> @code/macro codegen (shim_prism / shim_action / shim_grammar /
+#        shim_type)
+#     -> @mirror/store shard (content-addressed; oid-graph closure)
+#     -> @mirror/lens/unix (presents shard as Unix filesystem)
+#     -> cargo / erlc / flang reads the "files"
+#     -> binary
+#     -> IS @spectral runtime
+#
+# Three runtime targets ship with mirror (Rust / Erlang / Fortran via
+# @code/rust, @code/erlang, @code/fortran); all three pass through
+# THIS lens. The lens is target-agnostic; the cargo / erlc / flang
+# distinction is a consumer-side concern. This species declares the
+# Unix-shaped impedance surface; the platform sub-species (FUSE on
+# Linux, 9P over loopback, NFS, etc.) bind to the host OS.
+#
+# === Family placement ===
+#
+# Seventh species under @mirror/lens. Transport-side lens; audience
+# is the operating system itself; the surface is a POSIX filesystem
+# (paths, read, write, stat); the algebra is unchanged. Per
+# docs/specs/the-convergence.md the four transport lenses
+# (cli / shell / mcp / lsp) render the algebra for human / agent /
+# editor audiences; the unix lens renders it for the OS — the
+# audience that is itself a compiler toolchain.
+#
+# Same Transparency<P> verdict shape as the other lenses; same
+# eigenboard-tagged output discipline; the daemon stays the
+# regulator (two cargos pointed at the same store MUST resolve the
+# same oid for the same path, per the-convergence.md §1.4
+# convergence-by-construction).
+#
+# === Why a lens, not a port ===
+#
+# The Unix filesystem IS one observation surface onto the same
+# five-operation algebra. `focus` over a path is `read`; `project`
+# is filtered listing (stat / readdir); `split` is sub-tree
+# decomposition (the oid-graph's children become directory entries);
+# `shift` is path rewriting (mount-point translation); `settle` is
+# the consumer's view of the materialized impedance match. The
+# convergence-by-construction property holds: two consumers reading
+# the same mounted path MUST receive the same bytes.
+#
+# === Body status ===
+#
+# FAMILY-HEADER ONLY this tick. The action surface declares the
+# mount / path / read / write / stat shape; bodies (the platform-
+# specific FUSE / 9P / passthrough dispatcher) land when the
+# platform sub-species are declared.
+#
+# Cascade candidates (forward-promised; not declared this tick):
+#
+#   @mirror/lens/unix/fuse   FUSE binding (Linux / macOS via
+#                            macFUSE). Userspace filesystem
+#                            implementation; mount via the kernel's
+#                            FUSE module.
+#   @mirror/lens/unix/9p     Plan9 9P protocol over loopback. The
+#                            cleanest substrate match — 9P's
+#                            content-addressed semantics align
+#                            with the store's oid-graph; kernel
+#                            v9fs mounts the loopback socket.
+#
+# Additional candidates (smaller surface, possible future ticks):
+#   @mirror/lens/unix/nfs     NFSv4 loopback (broadest portability).
+#   @mirror/lens/unix/projfs  Windows Projected File System
+#                             (cross-platform reach; out of family
+#                             root scope this tick).
+#
+# Platform sub-species commit to the impedance dispatcher; THIS
+# family root declares only the impedance shape (the abstract Unix
+# surface).
+#
+# === Substrate-pull placement ===
+#
+# Path-namespace property: this file at
+# `shards/mirror/lens/unix.mirror` declares `@mirror/lens/unix` and
+# only that. Sub-species at `shards/mirror/lens/unix/<platform>.mirror`
+# will declare `@mirror/lens/unix/<platform>` and only that.
+#
+# Spec context: docs/specs/spectral-runtime.md (the ouroboros
+#               pipeline; the runtime-target framing this lens
+#               closes),
+#               docs/specs/the-convergence.md §1.2 (transport lens
+#               family discipline; the audience-as-observation
+#               framing this lens extends to "OS as audience"),
+#               docs/specs/mirror-store.md (the store this lens
+#               impedance-matches against).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-fragmentation-is-the-rust-substrate]].
+# Related shards: lens.mirror (the family root above),
+#                 lens/cli.mirror, lens/shell.mirror, lens/mcp.mirror,
+#                 lens/lsp.mirror (sibling transport lenses),
+#                 lens/transit.mirror, lens/refract.mirror (sibling
+#                 measurement lenses),
+#                 store.mirror (the carrier; oid, bytes, shard_ref,
+#                 splinter_graph).
+
+prism @mirror/lens/unix {
+  focus unix
+  project unix
+  split unix
+  shift unix
+  settle unix
+}
+
+# === actions — abstract impedance surface; bodies land on
+#     platform sub-species pull ===
+
+# mount(shard) — bind a stored shard's oid-graph closure to a
+# filesystem handle. The handle is the impedance carrier: through
+# it, the shard's content is reachable as Unix paths. Idempotent
+# by construction: mounting the same oid twice returns the same
+# handle (the handle's identity is a function of the oid).
+#
+# `imperfect` because the mount can fail with opacity: the oid may
+# not resolve in this store (failure(reason)), the platform
+# sub-species may be absent (partial(opacity) — no FUSE / 9P
+# binding loaded), or the mount-point may already be occupied
+# (failure(reason)). On success, carries the filesystem handle.
+mount(shard: shard_ref) -> imperfect { \ }
+
+# path(handle, components) — construct a Unix path WITHIN a mounted
+# handle's namespace. The components are the substrate-side path
+# segments; the lens translates them through the oid-graph's
+# directory structure. Pure substrate: no syscall; just a typed
+# reference into the mounted namespace.
+path(handle: ref, components: ref) -> ref { \ }
+
+# read(p) — fetch bytes at a Unix path inside a mounted handle.
+# The OS-level analogue of @mirror/store/read; the path resolves
+# through the lens to an oid, the oid resolves through the store
+# to bytes. `imperfect` carries the bytes on success, opacity on
+# failure (path does not resolve, oid drifted past verify, mount
+# unbound).
+read(p: ref) -> imperfect { \ }
+
+# write(p, content) — write bytes at a Unix path. The lens
+# computes the resulting oid, inserts into the store, and rewrites
+# the mounted handle's namespace to point the path at the new oid.
+# Returns the new handle's oid (the shard root after the write).
+# Idempotent by content: writing the same bytes at the same path
+# is a no-op at the store altitude.
+write(p: ref, content: bytes) -> oid { \ }
+
+# stat(p) — verdict on a Unix path within a mounted handle.
+# `verdict` from @glass: pass | partial(confidence) |
+# failure(reason). The OS calls this when it needs to know
+# whether the path exists, what kind it is (file / directory),
+# and what its size is. The lens answers from the oid-graph
+# without materializing bytes.
+stat(p: ref) -> verdict { \ }
+
+out @mirror/lens/unix
+out mount
+out path
+out read
+out write
+out stat
