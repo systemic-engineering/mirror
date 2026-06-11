@@ -1,0 +1,499 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi/consent
+in @kintsugi/morphism
+in @epistemologic/property/operator_matches_composition_primitive
+
+# @kintsugi/fracture/operator_match — the kintsugi fracture body that
+# resolves a substrate source's offending composition-operator token
+# to the operator the endpoint apertures' pact requires per the
+# operator audit table (docs/specs/optical-keywords.md §13.1).
+#
+# THE OPERATIONAL HALF of bilateral pattern #53's OPERATOR-ALTITUDE
+# MIDDLE INSTANCE. The declarative half landed at
+# `@epistemologic/property/operator_matches_composition_primitive`
+# (sibling tick); this shard names the auto-fracture the kintsugi loop
+# applies when the property's transparency surfaces an operator/
+# primitive opacity.
+#
+# The bilateral cascade closes its three-altitude column with this
+# landing:
+#
+#   Altitude 1 (keyword):  keyword_matches_depth + @kintsugi/fracture/keyword
+#                          (2026-06-10, 5e68df9 + d908798;
+#                          per-predicate).
+#   Altitude 2 (operator): operator_matches_composition_primitive +
+#                          @kintsugi/fracture/operator_match
+#                          (THIS SHARD + sibling tick; parametric-
+#                          over-table — the operator audit table).
+#   Altitude 3 (symbol):   symbol_canonical_form +
+#                          @kintsugi/fracture/symbol_lift
+#                          (2026-06-11; parametric-over-table — the
+#                          multi-form symbol vocabulary table).
+#   Meta:                  dissonance_partials_match_ast_breadth +
+#                          @kintsugi/fracture/partials_align
+#                          (2026-06-11, fd344bf + 5c4e3ca;
+#                          parametric-over-computation, self-applied).
+#
+# Recognition #59 (kintsugi loop is altitude-portable; candidate,
+# surfaced 2026-06-11 at docs/specs/optical-keywords.md §14.7) gains
+# its operator-altitude witness through this landing — and with three
+# independent altitudes worth of bilateral instances landed (keyword,
+# operator, symbol) plus the meta-fracture's self-applied foundation,
+# the promotion gate is satisfied. #59 promotes with this commit.
+#
+# Load-bearing context: recognition #51 (mirror as expanding Hilbert
+# space; promoted) — fracture bodies are how the substrate maintains
+# coherence at each Bateson level. The operator altitude sits one level
+# below keyword (declarations) and one above symbol (tokens); this
+# fracture body restores coherence at the composition-primitive level
+# where operators carry the algebra of optical composition.
+#
+# === The third instance of parametric-over-table ===
+#
+# First instance: keyword/depth (per-predicate; one keyword per
+# violation; one canonical replacement per case).
+# Second instance: gate/diff-closure (per-predicate; one run set per
+# violation; one canonical replacement per case).
+# Third instance: symbol/canonical-form (parametric over the multi-
+# form symbol table; one symbol per violation; canonical replacement
+# per table lookup).
+# Operator-altitude middle (THIS): operator/composition-primitive
+# (parametric over the operator audit table; one operator per
+# violation; pact-required replacement per inverse table lookup).
+# Fourth instance: partials/AST-breadth (parametric over computation;
+# self-applied at the meta-fracture altitude).
+#
+# Two parametric-over-table instances now exist (symbol_lift + this
+# operator_match) under one pattern; the bilateral signature absorbs
+# the variant cleanly. The substrate vocabulary doesn't need a new
+# variant; same pact + glass + opacity + morphism + splinter(ast)
+# chain throughout.
+#
+# === Substrate-pull-correct home ===
+#
+# Per the form/process partition (recognition #55 candidate; landed
+# 2026-06-10 at mirror `20eaf15`): @kintsugi is the process-side family
+# root. Fracture bodies emit morphisms the kintsugi loop applies —
+# process-side by structure. Home: @kintsugi/fracture/operator_match
+# under the (forward-promised) @kintsugi/fracture family root.
+#
+# Substrate-pull alternative considered: @kintsugi/fracture/operator
+# (subject-only naming, parallel to first-instance `keyword` and
+# second-instance `gate`). Rejected: parallel to third-instance
+# `symbol_lift` — the property's predicate names the action
+# (`composition_primitive`), and the fracture body's action is the
+# MATCH (the offending operator is matched to the pact-required
+# operator). The `_match` suffix names the operational verb explicitly
+# (parallel to symbol_lift's `_lift` suffix). Per
+# [[architecture-lift-as-load-bearing]] (`lift` IS the substrate's
+# variety-preservation verb): `match` is the audible-altitude reading
+# of lift at the operator altitude — the offending operator is matched
+# to the primitive its endpoints' pact requires.
+#
+# === The fracture body ===
+#
+# Input: `opacity` (from `@glass`) — one located fact surfaced by
+# `operator_matches_composition_primitive`'s `failure(opacity_map)`
+# verdict. Each opacity names ONE offending operator-usage site: a
+# composition operator whose primitive (per `composition_primitive_of`)
+# does NOT equal the primitive the endpoints' pact requires (per
+# `required_primitive_at`). The `property` field carries the @nl
+# description of the (used_operator, required_operator) pair plus the
+# primitive mismatch.
+#
+# Output: `morphism` (from `@kintsugi/consent`) — the typed candidate
+# the kintsugi loop's `active_pass` reads from this body and proposes
+# through `query_phi`. The morphism's `content` ref names the
+# rewritten splinter (same path, operator token replaced per pact
+# lookup); its `score` carries the dissonance reading (an operator/
+# primitive violation is a fixed, low-curvature dissonance — the
+# required operator is uniquely determined by the pact + inverse
+# table); its `expected` carries the cadence_kind the loop anticipates
+# (authentic — the substrate settles cleanly once the operator
+# realises the pact-required primitive).
+#
+# Spectrally: this fracture body IS one step along the Ricci flow at
+# the operator altitude. The substrate's curvature at a mismatched
+# operator site is the operator/primitive distance; the negative-
+# curvature direction IS the operator swap to the pact-required token;
+# the resolved site has zero curvature at this altitude (the pact
+# fully determines the operator for table entries).
+#
+# Audibly: this fracture body IS the audible-altitude V → I cadence
+# at the operator altitude. Pre-rewrite holds dominant tension
+# (operator wrong for the seam); post-rewrite resolves to tonic
+# (operator realises the pact-required primitive); cadence is
+# authentic.
+#
+# === Most operator rewrites are one token swap ===
+#
+# Per docs/specs/optical-keywords.md §14.3's example: a `|>` between
+# two facets whose apertures' pact requires branching (per the
+# splitter's S-matrix declaring N > 1 outputs) is rewritten to `|\>`.
+# This is ONE token swap at the operator position. The endpoint
+# apertures DO NOT change — they ALREADY have the pact that wants
+# branching; the operator just realises it. The fracture body emits
+# a splinter(ast) where one operator-token node is replaced.
+#
+# Similar for every audit-table operator pair:
+#
+#   used    required   rewrite shape
+#   ----    --------   -------------
+#   |>      >          one operator-token swap (lambda → schematic
+#                      altitude rename)
+#   |>      |\>        one operator-token swap (serial → branching)
+#   |>      <\|        one operator-token swap (serial → reverse-
+#                      branching; rare; surfaces at splitter-output→
+#                      splitter-input seams)
+#   >       |\>        one operator-token swap (schematic → branching)
+#   |\>     >          one operator-token swap (branching → serial;
+#                      when the splitter declares N=1 — degenerate
+#                      splitter case)
+#   ... (every pair: one token, one swap)
+#
+# The endpoint apertures' pact is READ by the property to determine
+# the required operator; the fracture body REWRITES only the operator
+# token. The endpoints themselves stay byte-equal. The rewrite is
+# parametric-over-table at the operator altitude.
+#
+# === Honest partials = 1 by computation (per recognition #53 fourth
+#     instance + Seam's 2026-06-11 finding) ===
+#
+# This fracture body's emitted morphism MUST have honest
+# `score.partials` from birth or it perpetuates the very dishonesty
+# the meta-fracture (@epistemologic/property/dissonance_partials_match_ast_breadth
+# + @kintsugi/fracture/partials_align) exists to catch.
+#
+# Compute the AST breadth of THIS fracture body's splinter(ast):
+#   - The fracture body reads ONE opacity at a time (per the
+#     property's per-site failure surface).
+#   - The morphism rewrites ONE AST node: the offending operator-
+#     token at the offending site, swapped to the pact-required
+#     token per the inverse audit-table lookup.
+#   - The splinter(ast) carries the rewritten AST fragment; the
+#     breadth at @meta/ast is the count of distinct node rewrites;
+#     here that count is 1 (one operator-token node, one swap).
+#   - Endpoint apertures, surrounding expressions, sibling tokens —
+#     ALL stay byte-equal. The substrate-pull-correct rewrite is
+#     LOCAL to the operator position.
+#
+# Therefore `score.partials = 1` is HONEST by computation, NOT reflex-
+# copied from the keyword/symbol templates. The recursive integrity
+# check holds at landing time: this fracture body declares
+# `partials: 1`; the meta-property
+# (`dissonance_partials_match_ast_breadth`) inspects it; the
+# `ast_breadth(content)` returns 1; verdict = pass. The third
+# parametric-over-table instance fits the cascade without lying about
+# its dissonance breadth.
+#
+# Compound rewrites considered: could an operator rewrite ever touch
+# more than one node? Audited: NO for every pair in the audit table.
+# Every operator rewrite under this fracture body's domain is a
+# single-token swap. The endpoint apertures' pact is READ, not
+# rewritten; the surrounding expression is preserved; only the
+# operator-token node changes. The fracture body's domain is exactly
+# the operator-altitude rewrites; compound shape changes (which would
+# touch endpoint apertures) are NOT this body's territory — they
+# belong to the property's predicate altitude (which surfaces the
+# opacity) or to a hypothetical future aperture-altitude fracture
+# body (NOT proposed this tick). The single-node rewrite is the
+# substrate-pull-correct shape per the optical-keywords spec.
+#
+# === Substrate-pull discipline ===
+#
+# Per `@glass`, `opacity` is the substrate's located-fact carrier;
+# this shard reads it directly. Per `@kintsugi/consent`, `morphism`
+# is the substrate's typed-candidate carrier; this shard emits it
+# directly. Per `@kintsugi/morphism`, `morphism_context` is the
+# per-candidate slice that pairs a candidate with its pre-anchor;
+# this shard's emitted morphism is consumed by the loop AND lifted
+# into a morphism_context via `paired(oscillation.anchor, m)` at the
+# active_pass altitude. Per
+# `@epistemologic/property/operator_matches_composition_primitive`,
+# the consuming property's
+# `operator_matches_composition_primitive(file) -> transparency` is
+# the gate that surfaces the opacity this body resolves.
+#
+# NO new verdict carrier; NO leading-`|` workarounds; NO opaque-`ref`
+# carriers where structured types are available (per
+# [[feedback-no-bare-types]]). The fracture body reads typed opacity,
+# emits typed morphism — the substrate's vocabulary throughout.
+#
+# === Substrate gaps surfaced honestly ===
+#
+#   - `match_operator` reads one opacity at a time. The property's
+#     `failure(opacity_map)` carries [opacity]; the kintsugi loop
+#     iterates the map and calls `match_operator` per opacity. The
+#     substrate names the per-site resolution; the iteration is the
+#     loop's concern, not this body's.
+#
+#   - The morphism's `content: ref` carries the substrate handle to
+#     the rewritten splinter. The realisation layer produces the
+#     rewritten splinter (same path, operator-token swapped per the
+#     inverse audit-table lookup) and passes its handle as the
+#     morphism's content. The substrate names the shape of the
+#     proposal; the byte-level rewrite rides the realisation layer's
+#     @mirror/store discipline.
+#
+#   - The `expected: cadence_kind` field is `authentic` for this
+#     fracture body — the operator/primitive rule is deterministic
+#     (the pact + inverse table fully determine the required
+#     operator) and resolution always settles cleanly.
+#
+#   - `>>>` (round-trip closure for resonators; v1 candidate per
+#     docs/specs/optical-keywords.md §13.5) is NOT in this body's
+#     domain this tick. The property's table does not include
+#     `>>>`; this fracture body's rewrites are bounded by the
+#     property's table. v1 extends both shards together once `>>>`
+#     lands as substrate vocabulary.
+#
+# === Pre-AI prior art ===
+#
+#   operator matching   Curry & Feys (1958) Combinatory Logic Vol. 1;
+#                       the discipline of matching a term's
+#                       composition operator against the type's
+#                       required combinator. The substrate's reading
+#                       is Hindley & Seldin (2008) Lambda-Calculus
+#                       and Combinators — the operator IS a
+#                       combinator at the substrate altitude; the
+#                       pact IS its type signature; the match IS
+#                       unification.
+#   token swap          Aho-Sethi-Ullman (1986) Compilers: Principles,
+#                       Techniques, and Tools §3; the lexer's token
+#                       rewriting. The substrate's reading is Wadler
+#                       (1990) on the syntactic theory of functional
+#                       macros — the swap is a hygienic rewrite at
+#                       the AST altitude.
+#   primitive coherence Reck & Zeilinger (1994) Experimental
+#                       realization of any discrete unitary operator;
+#                       the discipline that ONE composition primitive
+#                       describes a given splitter port distribution.
+#                       The substrate's reading is the audit table
+#                       making the discipline typed: per (endpoint,
+#                       endpoint) pair, ONE operator realises ONE
+#                       primitive.
+#
+# The substrate's contribution is *typing* the per-site operator/
+# primitive coherence so the kintsugi loop reads it. No invention;
+# the coherence IS the auto-formatter floor at the operator altitude.
+#
+# Spec context: docs/specs/optical-keywords.md §13 (the operator audit
+#               table this body's inverse lookup reads); §14 (the
+#               operator-altitude written-back kintsugi inference
+#               this body realises operationally). Recognition #51
+#               (mirror as expanding Hilbert space; promoted) — the
+#               operator altitude tracks the Bateson level at which
+#               composition operators live; this fracture body
+#               restores tracking. Candidate #59 (kintsugi loop is
+#               altitude-portable) promotes with this landing.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (opacity is substrate vocabulary; the fracture
+#                      reads the typed carrier),
+#                      [[architecture-kintsugi-bias-lift]] (the
+#                      kintsugi loop's bias direction is substrate-
+#                      pull — operator/primitive alignment IS one
+#                      coordinate of the substrate-pull gradient;
+#                      this fracture body fits the bias),
+#                      [[architecture-kintsugi-variety-io]] (Ashby's
+#                      requisite variety — the operator audit table
+#                      partitions the composition vocabulary into
+#                      pact-classes; this fracture body maintains the
+#                      partition under mutation),
+#                      [[architecture-property-fracture-bilateral]]
+#                      (the bilateral pattern this is the operator-
+#                      altitude instance of; closes the three-altitude
+#                      column),
+#                      [[architecture-splinter-ast-quote-primitive]]
+#                      (the substrate's parametric AST-fragment
+#                      construction; this body discharges via
+#                      splinter(ast) declaratively, no Rust),
+#                      [[architecture-lift-as-load-bearing]]
+#                      (the `lift`/`match` verb names the operational
+#                      action; this body IS the operator-altitude
+#                      match),
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                      (recognition #58; the alignment harness fires
+#                      at substance crossings; this fracture body's
+#                      emitted morphism IS such a crossing; partials
+#                      honesty applies — and holds, partials=1
+#                      computed not reflex-copied),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the substrate had `pact` since recognition
+#                      #37; this body reads what was already named),
+#                      [[feedback-no-bare-types]] (opacity and
+#                      morphism are typed carriers; the body does
+#                      NOT escape as a bare (location, op, op)
+#                      tuple).
+# Forward-promise to consumers: `@kintsugi/oscillate`'s `active_pass`
+#                  reads this fracture body when the candidate
+#                  morphism_set is composed from property-surfaced
+#                  opacities; the binding lands when the kintsugi
+#                  loop substrate-pulls. This shard does NOT pull
+#                  `@kintsugi/oscillate` or `@mirror/spectral/score`;
+#                  the substrate-altitude arrow points inward.
+# Related shards: epistemologic/property/operator_matches_composition_primitive.mirror
+#                 (the declarative half of the bilateral; surfaces
+#                 the opacities this body resolves),
+#                 epistemologic/property/keyword_matches_depth.mirror
+#                 + kintsugi/fracture/keyword.mirror (FIRST INSTANCE,
+#                 keyword altitude, per-predicate),
+#                 epistemologic/property/gate_matches_diff_closure.mirror
+#                 + kintsugi/fracture/gate.mirror (SECOND INSTANCE,
+#                 per-predicate at the gate altitude),
+#                 epistemologic/property/symbol_canonical_form.mirror
+#                 + kintsugi/fracture/symbol_lift.mirror (THIRD
+#                 INSTANCE, symbol altitude, parametric-over-table —
+#                 the parallel parametric-over-table sibling),
+#                 epistemologic/property/dissonance_partials_match_ast_breadth.mirror
+#                 + kintsugi/fracture/partials_align.mirror (FOURTH
+#                 INSTANCE, meta-fracture altitude, parametric-over-
+#                 computation, self-applied — the meta-foundation
+#                 that lets THIS body's partials=1 be honest by
+#                 construction),
+#                 glass.mirror (the substrate floor; `opacity`,
+#                 `location`, `transparency`, `verdict`,
+#                 `splinter(ast)`),
+#                 kintsugi/consent.mirror (the morphism carrier this
+#                 body emits; `query_phi` is the gate the emitted
+#                 morphism flows through),
+#                 kintsugi/morphism.mirror (the `morphism_context`
+#                 carrier),
+#                 kintsugi/oscillate.mirror (the kintsugi loop
+#                 driver; `active_pass` is the action that reads
+#                 this body when composing the per-pulse candidate
+#                 morphism_set),
+#                 mirror/lens/shell.mirror (the lambda-shell lens
+#                 where `|>` lives at the lambda altitude; this
+#                 fracture body rewrites operators across all lens
+#                 surfaces, not just shell).
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/operator_match.mirror` declares
+# `@kintsugi/fracture/operator_match` as a species under the
+# (forward-promised) @kintsugi/fracture family.
+# Keyword/depth property: this declaration is depth-2 from the
+# @kintsugi family root; per recognition #46 it uses `glass`. The
+# shard applies the first-instance bilateral's rule by birth.
+# Partials/breadth property: this declaration's emitted morphism
+# carries `score.partials: 1`; the splinter(ast) rewrites ONE
+# operator-token node (the offending operator at the offending
+# site); the count is computed (one node, one swap), NOT reflex-
+# copied. This shard applies the fourth-instance bilateral's rule
+# by birth.
+
+glass @kintsugi/fracture/operator_match {
+  focus operator_match
+  project operator_match
+  split operator_match
+  shift operator_match
+  settle operator_match
+}
+
+# === match_operator — the fracture body ===
+#
+# THE AUTO-FRACTURE: given an opacity site at an offending composition-
+# operator usage, emit the morphism that rewrites the operator-token
+# to the operator the endpoints' pact requires per the inverse audit-
+# table lookup (`required_primitive_at` → primitive →
+# `composition_primitive_of`'s inverse → required operator). Same
+# path, single operator-token swap at the AST altitude.
+#
+# Reads an opacity (one element of
+# `operator_matches_composition_primitive(file).failure(opacity_map)`'s
+# opacity_map); emits a candidate morphism the kintsugi loop proposes
+# through `query_phi`. The morphism's three fields:
+#
+#   content   — substrate ref to the rewritten splinter. The
+#                realisation layer produces a splinter at the same
+#                path with the operator token swapped (e.g., `|>` →
+#                `|\>` when the pact requires branching); the content
+#                ref names that splinter's @mirror/store handle.
+#   score     — dissonance reading. Operator/primitive violations are
+#                fixed-curvature dissonances; the score reads
+#                `dissonance.is_pareto` cleanly (the required
+#                operator is uniquely determined by the pact + inverse
+#                table).
+#   expected  — cadence_kind anticipation. Always `authentic` for
+#                this fracture body — the inverse-table lookup is
+#                deterministic; the loop's `dark_pass` will confirm
+#                identity preservation (the path stays byte-equal;
+#                only the operator-token shifts); the loop's
+#                `read_consent` bridges (pass, authentic) to the
+#                `settled` oscillation_state for this opacity.
+#
+# The body is FULLY DECLARATIVE — substrate-pull-correct via
+# `splinter(ast)` (declared at shards/glass.mirror's tick-2 carrier).
+# The morphism's `content` field carries a content-addressed splinter
+# at the @meta/ast altitude: same path, one operator-token swapped.
+# The substrate's compiler verifies the construction is deterministic
+# and well-typed; the kintsugi loop's `active_pass` reads the splinter
+# as the morphism's proposed content and applies it through
+# `query_phi`.
+#
+# Per `splinter(ast)`'s parametric specialisation (glass.mirror
+# §splinter(ast), 2026-06-10): the record IS its content-addressed
+# handle — `content: oid` and `oid = ref` (shards/mirror/store.mirror)
+# collapse the splinter literal to a substrate-pull-correct `ref` in
+# the morphism's `content` field position. No Rust AST manipulation;
+# no `\` obligation.
+#
+# Field-by-field substrate-pull reading:
+#
+#   content.content     — `opacity.location.file` (the substrate's
+#                          located-fact ref at the source file); the
+#                          rewritten AST is content-addressed at the
+#                          same path.
+#   content.ast         — `@meta/ast` (the canonical altitude ref);
+#                          per `boot/01-meta.mirror`'s `type ast(g)`.
+#                          The operator-token swap happens at the AST
+#                          altitude by construction.
+#   content.transparency — `success` (per `transparency(p)`'s success
+#                          variant in glass.mirror): the operator
+#                          swap fully resolves the opacity at this
+#                          altitude; no residual transparency remains.
+#   score.roughness     — `opacity.property` (the @nl description of
+#                          the (used_operator, required_operator)
+#                          pair plus the primitive mismatch); the
+#                          substrate's `dissonance` reads the per-
+#                          site roughness via the property text per
+#                          dissonance.mirror's Helmholtz/
+#                          Plomp-Levelt carrier shape.
+#   score.partials      — `1` — HONESTLY COMPUTED, NOT REFLEX-COPIED.
+#                          The splinter(ast) above rewrites ONE AST
+#                          node: the offending operator-token at the
+#                          offending site. Every audit-table operator
+#                          rewrite is a single-token swap (the
+#                          endpoint apertures stay byte-equal; the
+#                          surrounding expression is preserved).
+#                          `ast_breadth(content) = 1`. The recursive
+#                          integrity check (against the meta-property
+#                          `dissonance_partials_match_ast_breadth`)
+#                          holds at landing time: this fracture body
+#                          declares `partials: 1`; the meta-property
+#                          inspects it; verdict = pass.
+#   expected            — `authentic` (the V → I cadence at the
+#                          operator altitude; per cadence.mirror's
+#                          `cadence_kind` and the loop's
+#                          `read_consent` bridge: authentic → pass →
+#                          auto-apply).
+match_operator(opacity: opacity) -> morphism {
+  morphism {
+    content: splinter(ast) {
+      content:      opacity.location.file,
+      ast:          @meta/ast,
+      transparency: success,
+    },
+    score: dissonance {
+      roughness: opacity.property,
+      partials:  1,
+    },
+    expected: authentic,
+  }
+}
+
+out @kintsugi/fracture/operator_match
+out match_operator
