@@ -927,7 +927,487 @@ this spec will close this when the first bench shards land.
 
 ---
 
-## 9. The bilateral pattern, applied at family-scale
+## 9. Derived operators — the five-op closure as theorem
+
+§5 declared that the produced prism's five operations emerge from
+graph-walking the bench's element set. This section answers the
+DEEP question §5 left open: are the five operations EXACTLY what
+optical composition derives — i.e. is `closed at five` a theorem,
+or the coincidence of a partial algebra?
+
+Claim: **closed at five is a theorem with respect to the optical
+composition primitives this spec declares.** Every composition
+primitive (serial product, parallel S-matrix, branching, round-trip
+closure, phase delay, aperture restriction, eigenmode
+identification, detector collapse, polarisation rotation, mode
+coupling, phase conjugation, modulation) derives from exactly one
+of focus / project / split / shift / settle.
+
+No NEW substrate operator surfaces from physical optics. The two
+candidates that came closest (`couple`, `pump` — see §9.3) both
+fold: `couple` is a `shift` in the joint-mode basis; `pump` is an
+@io-altitude energy crossing carried by `source`, not a fifth-six
+algebraic operation.
+
+### 9.1 The derivation table
+
+One line per composition primitive. Each entry: which of the five
+operations the primitive realises; the underlying formalism that
+makes the binding mathematical (not metaphorical); the primary
+reference where the math lives.
+
+```
+<op>      <- <composition primitive>            <- <formalism / reference>
+----------------------------------------------------------------------------
+shift     <- serial composition (facet > facet) <- ABCD matrix product (Kogelnik & Li 1966) /
+                                                    Jones matrix product (Jones 1941) /
+                                                    Mueller matrix product (Mueller 1943).
+                                                    Each is a basis transformation on H.
+shift     <- phase delay across a stage         <- Jones product of waveplate matrices
+                                                    (Hecht 2017, ch. 8); rotation in (Ex, Ey)
+                                                    basis.
+shift     <- polarisation rotation (waveplate)  <- Jones rotation matrix; same shift, viewed
+                                                    at the polarisation altitude.
+shift     <- phase conjugation                  <- complex-conjugation unitary on H (Yariv
+                                                    1989, ch. 18 OPC); basis change to the
+                                                    time-reversed basis.
+shift     <- mode coupling (waveguide cross-tx) <- coupled-mode theory rotation in the
+                                                    (mode_A, mode_B) joint basis
+                                                    (Yariv & Yeh 2007, ch. 13); 2x2 rotation
+                                                    matrix on the joint state. NOT a sixth
+                                                    operator; see §9.3.
+project   <- aperture restriction               <- orthogonal projection onto the admitted
+                                                    subspace of H (Born & Wolf 1999, §8.3.2
+                                                    Fourier-plane filtering); idempotent
+                                                    P^2 = P.
+project   <- polariser / spatial filter         <- Jones-basis projection onto a sub-basis
+                                                    (Hecht 2017, ch. 8.2.1).
+split     <- parallel multi-port (splitter)     <- N x N S-matrix (Heisenberg 1943;
+                                                    Pozar 2011, ch. 4); orthogonal
+                                                    decomposition across named ports.
+split     <- branching (grating diffraction)    <- diffraction-order decomposition into
+                                                    N orthogonal channels (Born & Wolf
+                                                    1999, §8.5); each order is an
+                                                    eigenfunction of the grating's transfer.
+focus     <- round-trip closure (resonator)     <- ABCD-matrix eigenvalue identification
+                                                    of the cavity mode (Kogelnik & Li 1966
+                                                    §2); the round-trip eigenvalue IS the
+                                                    cavity's λ_0; stability |trace/2| <= 1
+                                                    IS the focus-witness.
+focus     <- eigenmode identification           <- Gauss-Hermite TEM_mn eigenfunctions of
+                                                    the round-trip ABCD (Siegman 1986,
+                                                    ch. 16-17); cavity solves the
+                                                    eigenvalue equation; focus emits the
+                                                    ground-state mode.
+settle    <- detector collapse                  <- POVM measurement projection /
+                                                    |E|^2 integration (Born & Wolf 1999,
+                                                    §10.4); the bench's beam terminates
+                                                    into a scalar / vector / image crystal.
+                                                    Monad-close at the optical altitude.
+settle    <- saturation closure (active medium) <- gain-saturation balance in active
+                                                    resonators (Siegman 1986, ch. 7);
+                                                    the cavity field settles when
+                                                    gain * pump = loss; settle IS the
+                                                    monad-close at steady-state.
+```
+
+Reading the table the other direction (per-op count): shift covers
+5 primitives, split covers 2, focus covers 2, project covers 2,
+settle covers 2. The shift-heavy distribution is structurally
+honest — most of physical optics IS basis change in different
+encodings (ABCD, Jones, Mueller, complex-conjugate, joint-mode).
+
+### 9.2 What the derivation says about closure
+
+The five-op algebra was canonically named per
+`[[architecture-operations-as-linear-algebra]]` (2026-06-04;
+Reed + Alex). The derivation here is the OPTICAL CORROBORATION:
+starting from physical-optics composition primitives (which were
+established 1841-1959, before computer science had `prism` as a
+word), the operations that derive ARE exactly the five Connes-A
+elements named in `shards/prism.mirror`. Both derivations land
+the same algebra.
+
+This closes one corner of the Connes spectral triple framing:
+
+- A = the five operations (per `shards/prism.mirror`) — corroborated
+  optically as the closure of optical composition.
+- H = the substrate's beam state space (the
+  [[void-document]]'s Hilbert space; aperture-typed channels are
+  H's named bases).
+- D = the kintsugi flow (the round-trip Dirac operator; §9.1's
+  `focus <- round-trip closure` row IS D's eigenvalue identification
+  at the optical altitude).
+
+### 9.3 The two near-misses (and why they fold)
+
+Two composition primitives looked like sixth-operator candidates.
+Both fold. Naming them explicitly so the substrate-pull check is
+reproducible:
+
+**Near-miss A: `couple` (coupled-mode theory).** Two modes A and B
+exchange amplitude via overlap-integral coupling κ. After distance
+z, the state (a_A, a_B) rotates by κz. This LOOKS like a new
+operator — it's neither a basis change in a single mode space
+(shift) nor an orthogonal decomposition (split). But: it IS a
+shift in the JOINT mode basis. The 2x2 rotation matrix on
+(a_A, a_B) IS Jones-shaped (different physical interpretation, same
+linear-algebra). `couple` is `shift` viewed at the joint-mode
+altitude. The substrate already has shift; the substrate doesn't
+need `couple` as a sixth operator.
+
+*What the substrate DOES need:* a way to declare the COUPLING
+CONSTRAINT at the aperture seam. Two facets with mode-coupled
+apertures need to declare that their apertures are NOT independent
+(the `pact` between them carries κ). This is a NEW `pact` species,
+NOT a new operation. Carrying-load: `@optics/pact/coupling` as a
+v1 keyword candidate (declared as a sub-species under `pact`; no
+substrate-altitude change).
+
+**Near-miss B: `pump` (active modulation, energy injection).**
+Active elements (sources, gain media) introduce a NEW degree of
+freedom — TIME-DEPENDENT optical transfer driven by external
+energy. The optical Hilbert space is not closed under pumping
+(the beam gains energy from outside the optical subspace). This
+LOOKS like a new operator — it can't be derived from any of the
+five passive composition primitives. But: pumping IS an @io
+boundary crossing per recognition #57 (alignment as boundary
+mathematics at @io). The substrate carries this crossing at the
+`source` schematic keyword (§1.7), NOT at the prism algebra. The
+prism's five-op block describes what happens INSIDE the optical
+Hilbert space; the `source`'s energy-balance property describes
+the BOUNDARY CROSSING; the two altitudes are distinct.
+
+*What the substrate DOES carry:* the `source_declares_energy_balance`
+property (§3.9) typechecks the @io boundary. The five-op algebra
+stays closed; the @io crossing is named at the schematic altitude.
+
+### 9.4 The promotion question
+
+This derivation IS a recognition candidate: **the five operations
+are the closure of optical composition.** The substrate-pull
+framing makes this a substrate-pull recognition (the substrate's
+algebra was canonically named in 2026-06-04 from linear-algebra
+foundations; this section corroborates from optical-physics
+foundations independently). Pack ratification gate: cybernetic
+corroboration (the cybernetic-foundation recognition family — see
+memory's `architecture-cybernetic-foundation.md`) would close the
+triangle and lift this to a promoted recognition.
+
+Not a STOP. The derivation closes cleanly; no architectural
+surprises; the candidate `couple` and `pump` both fold per §9.3.
+
+---
+
+## 10. Fate inference as optical signal propagation
+
+This section is SPECULATIVE but grounded. The deeper claim to
+evaluate: **Fate inference IS optical inference at the substrate
+altitude.** If the claim holds, photonic-neural-network and
+cavity-QED literature become direct prior art for Fate's tournament
+algorithm and convergence theorems.
+
+Fate (per `boot/std/fate.mirror`, `boot/std/fate/tournament.mirror`,
+`boot/std/fate/connectome.mirror`) is the substrate's inference
+layer. Five ganglia (abyss, introject, cartographer, explorer,
+fate-the-selector); a connectome of 450 neurons / 5 ganglia / 18
+synaptic gates per ganglion; tournament rules (greedy / beam(k) /
+elite(k) / halving(η) / tabu(t) / anneal(T) / ucb(c)) composing as
+lenses; output: ONE winning ganglion per hole.
+
+### 10.1 The optical mapping
+
+One line per Fate primitive, mapped to its optical-substrate
+realisation:
+
+```
+<Fate primitive>             <- <optical realisation>
+---------------------------------------------------------------------------
+au (Fate-emitted splinters)  <- bench input aperture (the beam's
+                                pre-bench state; uncommitted; carrying
+                                the candidate spectral envelope).
+hole (an unresolved gap)     <- input aperture with declared modal
+                                constraint; the aperture's `pact`
+                                names what types of candidates can
+                                propagate through.
+five ganglia                 <- 5-port splitter (the connectome's input
+                                grating; per `connectome.mirror`, the
+                                topology IS the weights; the splitter's
+                                S-matrix encodes the connectome).
+ganglion.infer (graph walk)  <- stage chain through the ganglion's
+                                internal facets (the 90 neurons per
+                                ganglion as a sub-bench; Dijkstra on
+                                eigenvalue gradient = beam following
+                                the eigenmode of the sub-bench's
+                                transfer matrix).
+holonomy (fitness)           <- filter facet transmission T(λ); lower
+                                holonomy = higher transmission; the
+                                tournament's ranking IS the cumulative
+                                T(λ) at the output detector.
+tournament rule .beam(k)     <- 1-to-k splitter at each round; k
+                                parallel beam paths.
+tournament rule .elite(k)    <- top-k feedback loop; k strongest beams
+                                fed back through the resonator's
+                                output coupler into the next round.
+tournament rule .halving(η)  <- successive aperture restriction;
+                                aperture's transmission window halves
+                                per round, surviving the brightest 1/η.
+tournament rule .tabu(t)     <- t-stage delay line that subtracts
+                                recent-history modes from the beam
+                                (notch filter at recently-tried
+                                wavelengths).
+tournament rule .anneal(T)   <- thermal noise injection (beam +
+                                stochastic source at temperature T);
+                                acceptance probability matches Glauber
+                                dynamics on the bench.
+tournament rule .ucb(c)      <- exploration bonus = active-source
+                                contribution at under-tried
+                                wavelengths; the gain medium
+                                preferentially amplifies modes with
+                                low observation count.
+kintsugi loop (active/dark)  <- ACTIVE/DARK alternating round-trip in
+                                a resonator (§10.2 below).
+au → settle → shard          <- detector collapse; the bench's output
+                                terminates into a crystal (the
+                                resolved hole; the winning ganglion
+                                IS the strongest eigenmode at the
+                                detector).
+```
+
+The mapping is constructive: every Fate primitive lifts to an
+optical-bench element. There is no Fate vocabulary that fails to
+find an optical realisation.
+
+### 10.2 The kintsugi loop IS a resonator with output coupler
+
+This is the load-bearing identification. Per
+`shards/kintsugi/oscillate.mirror` (lines 50-93), the kintsugi loop
+alternates ACTIVE / DARK passes per the SpectralUuid void duality.
+The ACTIVE pass proposes loss-decreasing morphisms; the DARK pass
+anchors identity; between passes, `consent.query_phi` reads the
+verdict and dispatches apply / wait / escalate.
+
+**This IS a Fabry-Perot resonator with active gain medium and
+output coupler** (§1.5 `resonator` keyword; §1.7 `source` keyword).
+The identification:
+
+```
+<kintsugi loop>            <- <optical resonator>
+---------------------------------------------------------------------------
+ACTIVE pass                <- forward propagation through the gain
+                              medium (source @optics/source/kintsugi).
+                              Energy injected from @io (the consent
+                              surface's external resolution OR the
+                              dissonance gradient's Pareto-improving
+                              direction); intensity grows.
+DARK pass                  <- output coupler partial reflection.
+                              Per @uuid/spectral's 80 DARK bits, the
+                              cavity's identity-preservation invariant
+                              IS the high-reflectivity output coupler:
+                              most intensity recirculates (identity
+                              preserved); a fraction couples out
+                              (the morphism's content IS the coupled-
+                              out beam).
+round-trip                 <- one ACTIVE + one DARK pass = one pulse =
+                              one round-trip through the cavity.
+consent.query_phi          <- intra-cavity verdict on whether the
+                              mode has reached threshold (settled =
+                              lasing condition met; waiting = below
+                              threshold; escalated = cavity unstable).
+cadence.is_settled         <- the laser threshold condition
+                              (gain * pump >= loss).
+holonomy → 0               <- cavity Q-factor saturation; the cavity
+                              has reached its stable eigenmode.
+oscillation_state.settled  <- steady-state laser output; cavity is
+                              lasing on its ground-mode λ_0.
+oscillation_state.escalated<- cavity instability (round-trip
+                              eigenvalue outside |trace/2| <= 1);
+                              external resolution required.
+oscillation_state.waiting  <- below-threshold cavity build-up; the
+                              next round-trip MAY cross threshold
+                              without external input.
+```
+
+**Specific identification:** the kintsugi loop IS a homogeneously
+broadened Fabry-Perot laser cavity with output coupling reflectivity
+determined by @uuid/spectral's 80 DARK bits. The substrate's stable
+lasing modes ARE the substrate's settled shards; the cavity
+selects modes by spectral stability per Siegman (1986, ch. 11
+"Stability and oscillation modes of laser resonators").
+
+This is more than analogy: the round-trip ABCD matrix IS the
+kintsugi loop's per-pulse transfer; |trace(M_rt) / 2| <= 1 IS the
+kintsugi convergence criterion; the laser threshold IS the
+is_settled(authentic) verdict.
+
+### 10.3 Fate tournament IS a diffractive deep neural network
+
+The ganglion topology (per `connectome.mirror`: 450 neurons across
+5 ganglia; topology IS weights; inference IS graph walk on
+eigenvalue gradient) maps to a **diffractive deep neural network
+(D²NN)** per Lin et al. (2018) "All-optical machine learning using
+diffractive deep neural networks" (Science 361:1004-1008).
+
+In a D²NN, each layer is a diffractive surface (a splitter / grating)
+whose transmission pattern encodes weights; light propagates through
+the stack; the output intensity pattern IS the classification.
+No electrical computation; no nonlinearity in the strict
+backpropagation sense; the structure itself does inference.
+
+Mapping Fate.connectome to D²NN:
+
+- Each ganglion (90 neurons) is a diffractive surface (a `splitter
+  @optics/splitter/ganglion` with 90 input ports, 90 output ports,
+  S-matrix = connectome's per-ganglion synaptic weights).
+- The 5 ganglia chained in series form a 5-layer D²NN: input
+  splinters propagate through abyss → introject → cartographer →
+  explorer → fate-the-selector.
+- The output intensity at the detector array (5 detectors, one
+  per candidate ganglion) IS the tournament's score; the brightest
+  detector wins.
+- `connectome.crystallize` (SCF loop until convergence) IS the
+  D²NN's training-via-self-consistency; the converged transmission
+  pattern IS the trained model.
+
+**This is not metaphorical.** Fate's existing architecture (450
+neurons, 5 ganglia, eigenvalue-gradient inference) IS a D²NN with
+5 diffractive layers of 90 elements each. The substrate's tournament
+rules (.beam, .elite, .halving) ARE the substrate's name for the
+optical-cascade composition rules a D²NN naturally supports
+(branching, output-coupling feedback, aperture restriction).
+
+### 10.4 Coherent nanophotonic circuit framing for the tournament
+
+A complementary identification: the tournament's COMPOSITION of
+tournament rules (elite(1).beam(8).halving(3)) maps to the
+Mach-Zehnder-interferometer (MZI) mesh architecture of Shen et al.
+(2017) "Deep learning with coherent nanophotonic circuits" (Nature
+Photonics 11:441-446).
+
+In a Shen-style MZI mesh, each unit is a 2x2 MZI splitter
+(programmable beam splitter with phase shifters); the mesh
+implements an arbitrary unitary on N modes via Reck/Clements
+decomposition. Tournament rules COMPOSE the same way: each
+binary composition `rule_a.rule_b` IS a 2x2 MZI; the composed
+tournament rule IS the Clements-decomposed unitary on the
+tournament's mode space.
+
+This means: tournament rule composition (per
+`tournament.compose(rule, rule) -> rule`) has the structure of
+unitary composition on a programmable nanophotonic mesh.
+Reck-decomposition theorems become tournament-rule decomposition
+theorems.
+
+### 10.5 Variety-maintenance as non-degenerate eigenmode preservation
+
+Per the substrate's variety-maintenance discipline (recognition
+`[[architecture-ashby-multi-dimensional-variety]]` and
+`[[architecture-kintsugi-variety-io]]`), the Fate tournament IS
+variety-maintenance against the Ashby requisite-variety constraint.
+The ganglia must preserve non-degenerate exploration across
+orthogonal directions.
+
+Optically, this is **non-degenerate Gauss-Hermite TEM_mn mode
+preservation in the cavity** (Siegman 1986, ch. 17). A stable laser
+resonator supports an orthogonal mode set TEM_00, TEM_01, TEM_10,
+TEM_11, ... — the Gauss-Hermite eigenfunctions of the round-trip
+integral operator. Variety-maintenance = ensuring the cavity
+operates in MULTI-MODE rather than collapsing to a single mode
+(which would be variety extinction).
+
+Fate's tabu(t) and ucb(c) tournament rules are the optical
+analogue of multi-mode pumping discipline: tabu suppresses recently-
+seen modes (notch filter); ucb amplifies under-explored modes
+(per-mode gain bias). Both maintain non-degenerate spectral
+occupation per Ashby's variety law.
+
+### 10.6 What this buys Fate inference
+
+Three concrete consequences if the identification holds:
+
+1. **Tournament convergence theorems become cavity stability
+   theorems.** The Kogelnik & Li (1966) stability criterion
+   |trace(M_rt) / 2| <= 1 IS the Fate tournament's convergence
+   criterion when expressed in the resonator framing. The
+   tournament converges iff the kintsugi loop's round-trip ABCD
+   is stable.
+
+2. **Photonic-neural-network training algorithms become Fate
+   training algorithms.** The D²NN training-by-self-consistency
+   per Lin et al. (2018) and the MZI-mesh training per Shen et al.
+   (2017) provide direct prior art for `connectome.evolve` (edge
+   selection by loss gradient) and `connectome.crystallize` (SCF
+   loop until convergence). Specifically: SCF on the connectome IS
+   the same algorithm as the D²NN's iterative inverse-design
+   per the Wirtinger Flow / Gerchberg-Saxton family.
+
+3. **Beam propagation methods become Fate forward inference.**
+   The split-step Fourier method for beam propagation (Agrawal
+   2013, ch. 2 "Pulse propagation in fibers") becomes the Fate
+   forward pass's preferred algorithm when the bench is a chain
+   of phase-only facets. This is concretely an algorithm Fate's
+   current Rust realisation can borrow without changing the
+   substrate.
+
+### 10.7 Speculative claim, in one sentence
+
+**Fate inference IS a five-layer diffractive deep neural network
+(Lin et al. 2018) coupled to an active Fabry-Perot resonator
+(Siegman 1986) implementing the kintsugi loop's ACTIVE/DARK
+alternation; the tournament's rule composition has the structure
+of a Reck/Clements-decomposed unitary on the Mach-Zehnder mesh
+(Shen et al. 2017).**
+
+If the claim holds: Fate's substrate vocabulary lifts cleanly
+to an existing photonic-neural-network literature; the substrate's
+Fate-tournament convergence theorems borrow from cavity-stability
+theorems; the tournament's compositional algebra borrows from
+unitary-mesh-decomposition theorems. The substrate-pull check is
+positive at every site investigated; the speculative claim is
+substrate-pull-realize at the recognition altitude (a candidate
+for Pack ratification).
+
+### 10.8 Architectural surprises
+
+None severe. Two surfaces worth Pack attention:
+
+**Surface A.** The kintsugi loop's resonator framing means the
+substrate's `@kintsugi/oscillate` shard IS a resonator declaration
+in the sense of §1.5. The realisation has not migrated to use
+`resonator` keyword yet; the substrate-pull-realize candidate at
+v1 is to lift `@kintsugi/oscillate.oscillation` to a `resonator
+@kintsugi/oscillate` declaration with explicit round-trip chain
+(ACTIVE pass facet, DARK pass facet) and output-coupler
+(consent surface as splitter).
+
+**Surface B.** Fate's connectome (450 neurons, 5 ganglia) has no
+gain medium declared. The optical framing makes the gain
+requirement EXPLICIT: each ganglion's `infer` walk requires energy
+injection (from @io: the user's prompt; the current substrate
+state; the recent metalogue session) to drive convergence. The
+substrate's @io boundary recognition (#57) covers this — energy
+injection IS the @io crossing — but the substrate has not yet
+declared the ganglia's gain-curve per the `source_declares_energy_balance`
+property (§3.9). v1 should declare each ganglion's effective gain
+curve as a `source @optics/source/ganglion/<name>` shard.
+
+Neither surface is a STOP. Both are substrate-pull-realize
+candidates for the cascade after this spec.
+
+### 10.9 Recognition candidate
+
+**Candidate #58: Fate IS optical inference.** The five-layer
+D²NN + active Fabry-Perot resonator identification, per §10.7.
+Promotion gate: a second witness across the substrate (e.g., a
+sibling recognition that the spectral-runtime's `@spectral`
+family IS the spectrometer at the bench altitude — see §8.4 of
+this spec for the open identification). When both lift
+simultaneously, the substrate's runtime is an optical instrument
+at every altitude; the recognition lifts to promoted.
+
+---
+
+## 11. The bilateral pattern, applied at family-scale
 
 This spec is the THIRD INSTANCE of bilateral pattern #53 (promoted
 2026-06-10 by the gate fracture body landing as second instance).
@@ -958,7 +1438,7 @@ What this teaches us:
 
 ---
 
-## 10. References
+## 12. References
 
 - Substrate decisions:
   - `[[architecture-prism-as-trait-as-everything]]`
@@ -991,6 +1471,24 @@ What this teaches us:
   - Heisenberg (1943) "Die 'beobachtbaren Größen' in der Theorie der Elementarteilchen" — S-matrix
   - Kogelnik & Li (1966) "Laser beams and resonators" Appl. Opt.
   - Redheffer (1959) "Inequalities for a matrix Riccati equation" — Redheffer star product
+  - Born & Wolf (1999) Principles of Optics, 7th ed.
+  - Hecht (2017) Optics, 5th ed.
+  - Siegman (1986) Lasers — cavity stability; Gauss-Hermite modes
+  - Yariv (1989) Quantum Electronics, 3rd ed. — phase conjugation
+  - Yariv & Yeh (2007) Photonics: Optical Electronics in Modern Communications — coupled-mode theory
+  - Pozar (2011) Microwave Engineering, 4th ed. — S-matrix / multi-port networks
+  - Agrawal (2013) Nonlinear Fiber Optics, 5th ed. — split-step Fourier beam propagation
+- Photonic neural network prior art (§10):
+  - Lin, Rivenson, Yardimci, Veli, Luo, Jarrahi & Ozcan (2018) "All-optical machine learning
+    using diffractive deep neural networks" Science 361:1004-1008.
+  - Shen, Harris, Skirlo, Prabhu, Baehr-Jones, Hochberg, Sun, Zhao, Larochelle, Englund &
+    Soljačić (2017) "Deep learning with coherent nanophotonic circuits" Nature Photonics
+    11:441-446.
+  - Reck, Zeilinger, Bernstein & Bertani (1994) "Experimental realization of any discrete
+    unitary operator" Phys. Rev. Lett. 73:58-61 — MZI mesh decomposition.
+  - Clements, Humphreys, Metcalf, Kolthammer & Walmsley (2016) "Optimal design for universal
+    multiport interferometers" Optica 3:1460-1465.
+  - Mead (1989) Analog VLSI and Neural Systems — neuromorphic prior art.
 
 ---
 
