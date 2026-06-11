@@ -1,0 +1,348 @@
+in @glass
+in @spectral/parent
+
+# Property: every parent_edge in the substrate participates in a
+# chain that terminates at the root supervisor without revisiting
+# `edge.child`.
+#
+# SIXTH INSTANCE of bilateral pattern #53 (property/fracture;
+# promoted 2026-06-10). First instance: keyword/depth
+# (@epistemologic/property/keyword_matches_depth +
+# @kintsugi/fracture/keyword; 2026-06-10, 5e68df9 + d908798).
+# Second instance: gate/diff-closure
+# (@epistemologic/property/gate_matches_diff_closure +
+# @kintsugi/fracture/gate; 2026-06-10, b8755cc + 20c5d97). Third
+# instance: symbol/canonical-form
+# (@epistemologic/property/symbol_canonical_form +
+# @kintsugi/fracture/symbol_lift; 2026-06-11, 95f4639 + f083a55).
+# Fourth instance: partials/AST-breadth (meta-fracture; 2026-06-11,
+# fd344bf + 5c4e3ca). Fifth instance: operator/composition-primitive
+# (2026-06-11, 423c7d2 + af670d4). This shard + its sibling fracture
+# body (@kintsugi/fracture/parent_cycle) are the SIXTH INSTANCE,
+# landing at the GRAPH-EDGE altitude: the bilateral pattern applied
+# to a SUBSTRATE EDGE rather than a token / literal / symbol
+# position.
+#
+# === The graph-edge altitude (#59 gains a new witness) ===
+#
+# Recognition #59 (kintsugi loop is altitude-portable; promoted with
+# af670d4) named the bilateral signature scaling across declaration
+# altitudes (keyword / operator / symbol). This instance landings at
+# a NEW altitude: the supervision tree's parent edge — a typed
+# substrate edge between two gen_prisms, not a token at any
+# declaration site. The bilateral signature absorbs the variant
+# cleanly: same `pact + glass + opacity + morphism + splinter(ast)`
+# chain, ranging over an edge graph rather than a textual position.
+# #59's altitude-portability conjecture gains a witness at the
+# graph-structure altitude.
+#
+# Per docs/specs/spectral-runtime.md §3 (2026-06-10, Mara): every
+# gen_prism has exactly one parent. The parent edge is the LIFECYCLE
+# edge: the parent owns the child's birth, restart, and death. The
+# parent-edge class is ACYCLIC across the substrate. The root
+# supervisor self-parents (its parent uuid_spectral byte-equals its
+# identity); every non-root gen_prism's parent points strictly
+# upward toward the root.
+#
+# This property names the acyclic invariant as a substrate-altitude
+# predicate. The sibling fracture body
+# (@kintsugi/fracture/parent_cycle) emits the morphism that
+# proposes re-parenting to the root when the predicate's
+# `failure(opacity_map)` surfaces a cycle.
+#
+# === Parametric over the substrate's parent_edge set ===
+#
+# The predicate is parametric over the set of parent_edges in the
+# substrate at the moment the property is queried. Each opacity
+# surfaces ONE (location, cycle_path) pair where:
+#
+#   - location names the offending parent_edge's source-of-record
+#     (the gen_prism whose parent field forms the cycle; the
+#     substrate's located-fact carrier per @glass);
+#   - cycle_path is the sequence of uuid_spectral that loops back —
+#     the chain of parent traversals from edge.child that revisits
+#     edge.child before reaching the root.
+#
+# Same shape as `keyword_matches_depth` (instance 1) and
+# `dissonance_partials_match_ast_breadth` (instance 4): parametric-
+# over-a-set, one opacity per offending site. Same `pact + glass +
+# opacity + morphism + splinter(ast)` chain throughout.
+#
+# === The traversal — substrate-altitude carrier shape ===
+#
+# Cycle detection requires traversing the parent-edge graph from
+# each `edge.child` along the chain `edge.child → edge.parent →
+# (edge.parent's parent_edge) → ...` and checking termination at
+# the root without revisiting `edge.child`. This IS a fold over
+# the parent_edge set keyed by uuid_spectral.
+#
+# STOP-condition 1 (brief): "if the property requires traversing
+# the parent-edge graph at substrate altitude (a fold/recursion)
+# and the substrate doesn't have a clean substrate-altitude
+# traversal primitive, STOP and surface."
+#
+# Resolution (NOT a STOP): The substrate's discipline at this
+# altitude is to declare the CARRIER SHAPE and leave the body as
+# the `\` obligation block. `keyword_matches_depth` does exactly
+# this: it declares `declared_keywords(file: ref) -> [text]` as a
+# carrier; the realisation layer discharges the traversal (parse
+# the file, project the declarations). The cycle detection
+# carrier here parallels: declare `parent_edges_in(file: ref) ->
+# [parent_edge]` as the carrier of edges to check; declare the
+# combined property `parent_acyclic(file: ref) -> transparency`
+# as the verdict gate; let the realisation layer discharge the
+# fold against the substrate's parent-edge graph.
+#
+# The substrate already names the @epistemologic/properties as
+# the carrier altitude for traversal-based predicates (per
+# [[feedback-loss-from-epistemologic-properties]]). The fold
+# discipline lives at the realisation layer's
+# @code/metalogue/materialize step (per docs/specs/spectral-
+# runtime.md §5's ouroboros pipeline); the substrate names the
+# rule, the realisation discharges the traversal. NOT a STOP —
+# the discipline is exactly to declare the carrier and forward-
+# promise the realisation.
+#
+# === Verdict surface ===
+#
+# Verdict surface is transparency<p>:
+#   success              -- every parent_edge in the substrate
+#                          participates in a chain that terminates
+#                          at the root supervisor without
+#                          revisiting `edge.child`.
+#   failure(opacity_map) -- some parent_edge's chain revisits
+#                          `edge.child` before reaching the root.
+#                          Each opacity names ONE (location,
+#                          cycle_path) pair — one offending
+#                          gen_prism's parent field plus the
+#                          sequence of uuid_spectral that loops
+#                          back.
+#   partial(opacity_map) -- multiple parent_edges surveyed, some
+#                          terminate cleanly and some loop.
+#
+# Located transparency (not @glass.verdict): the kintsugi loop
+# consumes the opacity_map to direct mutation. Each opacity names
+# ONE offending parent_edge site; the fracture body
+# (@kintsugi/fracture/parent_cycle) realises the rule by lifting
+# violations through kintsugi — re-parenting the offending child
+# to the root supervisor (breaking the cycle by promoting the
+# child up the supervision tree). The property names the rule;
+# the fracture realises it; the kintsugi loop is the bridge.
+#
+# === Why re-parent to root (not terminate) ===
+#
+# STOP-condition 3 (brief): "if 're-parent to root' isn't the
+# substrate-pull-correct correction (e.g., the substrate prefers
+# to nullify the cycle by terminating the offending gen_prism),
+# STOP and surface."
+#
+# Resolution (NOT a STOP): The substrate's kintsugi discipline is
+# variety-PRESERVING (per [[architecture-kintsugi-variety-io]];
+# Ashby's requisite variety lifted to @io). A cycle in the
+# parent-edge graph is a structural violation; the
+# substrate-pull-correct correction is the MINIMUM-VARIETY-LOSS
+# move that restores the invariant.
+#
+# Two candidate corrections:
+#
+#   (a) Re-parent to root: the offending child's parent field is
+#       set to the root supervisor's uuid_spectral. The gen_prism
+#       continues to exist; the supervision tree gains a new
+#       direct child of root; the cycle is broken because root's
+#       parent self-references (terminates the chain).
+#       Variety cost: ONE edge changes (the offending child's
+#       parent field).
+#
+#   (b) Terminate the offending gen_prism: the gen_prism exits via
+#       `gen_prism.terminate() -> au` (per
+#       shards/spectral/gen_prism.mirror); the registry shard
+#       advances; the supervision tree LOSES a node and ALL its
+#       descendant edges. Variety cost: ONE node + N descendant
+#       edges + N descendant nodes.
+#
+# Correction (a) preserves the substrate's variety; correction
+# (b) destroys it. The substrate-pull-correct discipline (per
+# [[architecture-kintsugi-variety-io]]: kintsugi preserves
+# variety unless variety LOSS is required to preserve a
+# higher-altitude invariant) is (a) — re-parent to root, preserve
+# the gen_prism, break the cycle by upward promotion.
+#
+# The root supervisor self-parents by construction (per
+# docs/specs/spectral-runtime.md §3); attaching the offending
+# child to root cannot create a new cycle (root's parent is root
+# itself; the chain terminates immediately at the next traversal).
+# The correction is structurally guaranteed to break the cycle.
+#
+# NOT a STOP — the variety-preservation argument is the
+# substrate's existing discipline; this property names that
+# discipline at the parent-edge altitude.
+#
+# === Cybernetic ancestor ===
+#
+# Recognition #37 (`requires` IS a Paskian agreement; promoted
+# 2026-06-10) names `pact` as the property-declaration form. pact
+# replaces the conversation-era `grammar` keyword as the surface
+# for declaring properties; the rule names `pact` directly below.
+#
+# Engineering ancestor: every supervision tree's parentage
+# invariant (BEAM's `:supervisor` discipline, systemd's cgroup
+# hierarchy, Kubernetes' owner references) implicitly assumes
+# acyclic parentage; the contribution here is *typing* the
+# invariant at the substrate altitude so the kintsugi loop reads
+# it directly.
+#
+# === Pre-AI prior art ===
+#
+#   acyclic graph       Cayley (1857) On the theory of the
+#                       analytical forms called trees; the
+#                       discipline of trees as acyclic connected
+#                       graphs. The substrate's reading is Knuth
+#                       (1968) The Art of Computer Programming
+#                       Vol. 1 §2.3 — the rooted tree's parent
+#                       function IS a single-direction edge with
+#                       the acyclic invariant.
+#   supervision tree    Armstrong (1996) Programming Erlang; the
+#                       BEAM supervision tree's let-it-crash
+#                       discipline; the supervisor's invariant
+#                       fires on each child against the parent
+#                       edge. The substrate's reading is the
+#                       BEAM application/0 topology lifted to
+#                       @spectral via shards/spectral/supervisor.mirror.
+#   cycle detection     Tarjan (1972) Depth-first search and
+#                       linear graph algorithms; the strongly-
+#                       connected components decomposition. The
+#                       substrate's reading is the per-edge fold
+#                       at the realisation layer: each
+#                       parent_edge's chain is traversed; a
+#                       revisit signals a cycle.
+#
+# The substrate's contribution is *typing* the parent-edge
+# acyclic invariant so the kintsugi loop reads it. No invention.
+#
+# Spec context: docs/specs/spectral-runtime.md §3 (the
+#               supervision tree's parent-edge invariant; the
+#               root supervisor self-parents; every non-root
+#               gen_prism's chain terminates at the root).
+#               Recognition #59 (kintsugi loop is altitude-
+#               portable; promoted 2026-06-11) — this instance
+#               witnesses portability to the graph-edge altitude.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (opacity / transparency are substrate
+#                      vocabulary; the predicate emits typed
+#                      carriers throughout),
+#                      [[architecture-property-fracture-bilateral]]
+#                      (the bilateral pattern this is the sixth
+#                      instance of; first instance at the graph-
+#                      edge altitude),
+#                      [[architecture-kintsugi-variety-io]]
+#                      (Ashby's requisite variety grounds the
+#                      re-parent-to-root correction over
+#                      termination; variety-preserving is the
+#                      substrate-pull-correct discipline),
+#                      [[architecture-three-tier-stack]] (the
+#                      SpectralSupervisor precedent; the
+#                      supervision tree this invariant structures),
+#                      [[architecture-shard-as-crdt]] (the
+#                      parent edge is set at start_child; the
+#                      registry shard advances by one settle when
+#                      a parent edge is established),
+#                      [[Eigenboard is a sheaf]] (the
+#                      architectural surface: sheaf restriction
+#                      maps live at entanglement, NOT parent; the
+#                      cellular-sheaf reading is downstream of
+#                      substrate at entanglement),
+#                      [[feedback-loss-from-epistemologic-properties]]
+#                      (the substrate's loss carrier IS the
+#                      epistemologic property altitude; this
+#                      property fits the discipline),
+#                      [[feedback-no-bare-types]] (opacity is the
+#                      typed carrier; no bare (location,
+#                      cycle_path) tuple escapes).
+# Forward-promise to consumers: `@kintsugi/oscillate`'s
+#                  `active_pass` reads this property's
+#                  transparency when composing the per-pulse
+#                  candidate morphism_set; the binding lands when
+#                  the kintsugi loop substrate-pulls. This shard
+#                  does NOT pull `@kintsugi/oscillate` or
+#                  `@kintsugi/fracture/parent_cycle`; the
+#                  substrate-altitude arrow points upward (the
+#                  loop and the fracture body consume this
+#                  property; not the other way around).
+# Related shards: spectral/parent.mirror (the typed edge this
+#                 property ranges over; sibling tick),
+#                 kintsugi/fracture/parent_cycle.mirror (the
+#                 sibling fracture body; the operational half of
+#                 this bilateral instance — proposes re-parenting
+#                 the offending child to the root supervisor),
+#                 spectral/gen_prism.mirror (the gen_prism's
+#                 parent field is the per-record carrier this
+#                 property checks; commit ae965ca),
+#                 spectral/supervisor.mirror (the lifecycle-owner
+#                 whose start_child sets the parent edge; commit
+#                 452ccb2),
+#                 spectral/registry.mirror (the supervisor's
+#                 child index; orthogonal to parent — the
+#                 registry indexes children, parent edges point
+#                 the other way; commit 489211e),
+#                 epistemologic/property/keyword_matches_depth.mirror
+#                 + kintsugi/fracture/keyword.mirror (FIRST
+#                 INSTANCE, parametric-over-set per declaration),
+#                 epistemologic/property/dissonance_partials_match_ast_breadth.mirror
+#                 + kintsugi/fracture/partials_align.mirror
+#                 (FOURTH INSTANCE, meta-fracture, parametric-
+#                 over-computation),
+#                 epistemologic/property/operator_matches_composition_primitive.mirror
+#                 + kintsugi/fracture/operator_match.mirror
+#                 (FIFTH INSTANCE, operator altitude, parametric-
+#                 over-table),
+#                 glass.mirror (the substrate floor; `opacity`,
+#                 `location`, `transparency`).
+# Path-namespace property: this file at
+# `shards/epistemologic/property/parent_acyclic.mirror`
+# declares `@epistemologic/property/parent_acyclic` as a species
+# under the @epistemologic/property family.
+# Keyword/depth property: this declaration is depth-2 from the
+# @epistemologic family root; per recognition #46 it uses `pact`
+# (the property-declaration form; recognition #37 promoted
+# 2026-06-10).
+
+pact @epistemologic/property/parent_acyclic {
+  # The carrier — the substrate's set of parent_edges at the
+  # moment the property is queried. The realisation layer
+  # discharges this by projecting `parent_edge` records from
+  # every gen_prism in the substrate's supervision tree (the
+  # gen_prism.parent field + the gen_prism.identity field form
+  # one parent_edge per gen_prism).
+  parent_edges_in(file: ref) -> [parent_edge] { \ }
+
+  # The combined property: every parent_edge in the substrate
+  # participates in a chain that terminates at the root
+  # supervisor without revisiting `edge.child`.
+  #
+  # The fold (the realisation layer discharges): for each
+  # parent_edge in parent_edges_in(file), traverse the chain
+  # edge.child → edge.parent → (the parent_edge whose .child ==
+  # edge.parent) → ... and check that either:
+  #   (a) the chain reaches a self-parenting parent_edge (root
+  #       supervisor: edge.child == edge.parent) — termination
+  #       at root, OR
+  #   (b) the chain revisits the original edge.child before
+  #       reaching root — cycle detected.
+  #
+  # Verdict surface is transparency<p>:
+  #   success              -- every parent_edge's chain reaches
+  #                          root without revisiting edge.child.
+  #   failure(opacity_map) -- some parent_edge's chain revisits
+  #                          edge.child; each opacity names ONE
+  #                          (location, cycle_path) pair where
+  #                          cycle_path is the sequence of
+  #                          uuid_spectral that loops back.
+  #   partial(opacity_map) -- multiple parent_edges surveyed,
+  #                          mixed verdict.
+  parent_acyclic(file: ref) -> transparency { \ }
+}
+
+out parent_edges_in
+out parent_acyclic
+out @epistemologic/property/parent_acyclic
