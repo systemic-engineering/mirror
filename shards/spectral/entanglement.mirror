@@ -1,0 +1,666 @@
+in @prism
+in @glass
+in @meta
+in @spectral
+in @spectral/gen_prism
+in @uuid/spectral
+in @epistemologic/math/sheaf_laplacian
+
+# @spectral/entanglement — the peer-correlation edge type.
+#
+# THE SIXTH SUB-SHARD of the @spectral runtime cascade. Sibling of
+# `shards/spectral/gen_prism.mirror` (commit ae965ca, the worker
+# primitive whose state surface participates in the restriction map
+# this edge carries), `shards/spectral/supervisor.mirror` (commit
+# 452ccb2, the lifecycle-owner — orthogonal to this edge class),
+# `shards/spectral/registry.mirror` (commit 489211e, the supervisor's
+# parentage-side child index whose typed surface stays at the
+# parentage discipline; the sheaf reading was deferred TO HERE),
+# `shards/spectral/parent.mirror` (commit 9d905a2, the ORTHOGONAL
+# sibling — single-parent acyclic lifecycle edge; this shard names
+# the OTHER axis of the two-axis substrate graph), and
+# `shards/spectral/root.mirror` (commit f145e48, the parentless
+# supervisor specialisation whose entanglement participation is
+# itself one of this edge class's members at the root altitude).
+#
+# Per docs/specs/spectral-runtime.md §4 (2026-06-10, Mara):
+# entanglement is the peer-correlation edge class — ORTHOGONAL to
+# parentage. A gen_prism may be entangled with N peers. Entanglement
+# is polyadic (an edge spans any subset of gen_prisms that observe
+# a shared state projection), cyclic (peers may mutually entangle),
+# and observable via mirror-query at substrate altitude.
+#
+# === The load-bearing recognition: entanglement IS a sheaf restriction ===
+#
+# Per docs/specs/spectral-runtime.md §4 and [[Eigenboard is a sheaf]]:
+#
+#   "Entanglement edges ARE sheaf restriction maps at substrate
+#    altitude. The substrate's eigenboard is a cellular sheaf on the
+#    five-operation graph; the conductivity tensor IS the
+#    restriction-map structure. Two gen_prisms are entangled iff
+#    their state surfaces participate in a shared restriction map —
+#    a single observation of one's state induces a measurable
+#    projection on the other's."
+#
+# The substrate ALREADY HAS the restriction primitive at
+# `shards/epistemologic/math/sheaf_laplacian.mirror` (commit predating
+# this tick; the 18th-instance rug-pull recognized that Leray's
+# `restriction`, Hilbert's `operator`, and Cauchy's `eigenvalue` were
+# named at the math altitude). That declaration is at the EIGENBOARD
+# altitude — u32-indexed vertices of the cellular sheaf's base graph,
+# `weight: ref` magnitudes of the connection 1-form's parallel-transport
+# operator. This shard names the SAME structural object at the
+# RUNTIME altitude — uuid_spectral-identified gen_prisms as the
+# vertices, the restriction map between gen_prism state surfaces as
+# the edge data. The math altitude's `restriction` is what the
+# realisation layer assembles when the eigenboard reads through to
+# the conductivity tensor; the runtime altitude's `restriction_map`
+# is what the substrate names as the edge's substrate-altitude carrier.
+#
+# This is the rug-pull pattern (#55 instance count, NOW 56 with this
+# tick): the substrate already had the WORD (restriction) at the math
+# altitude; the runtime altitude lifts the same word as its
+# substrate-pull-correct edge data.
+#
+# === The keyword decision ===
+#
+# `glass` per recognition #46 (path-syntax property; promoted) and
+# `shards/spectral.mirror`'s discipline section: "@spectral
+# sub-shards at depth >= 1 use `glass`; the family root itself uses
+# `prism` per the depth-0 discipline."
+#
+# Why NOT a new substrate keyword: entanglement is an EDGE TYPE —
+# a typed correlation between gen_prisms — and `glass` already names
+# that at the sub-prism altitude per `shards/glass.mirror`'s
+# `glass(name) -> prism` form. Same reasoning as gen_prism (ae965ca),
+# supervisor (452ccb2), registry (489211e), parent (9d905a2), and
+# root (f145e48): not a new structural kind, but a typed edge over
+# existing carriers (uuid_spectral endpoints, sheaf_laplacian's
+# restriction structure).
+#
+# === The polyadic decision (STOP-condition 2, resolved) ===
+#
+# Brief STOP-condition 2: should polyadic edges want a different
+# vocabulary than binary parent_edges (e.g., `hyper_edge` vs `edge`)?
+#
+# Substrate-pull-correct resolution: NO new vocabulary. The substrate's
+# graph-edge altitude carries TWO edge classes, distinguished by
+# TYPE not by VOCABULARY:
+#
+#   parent_edge      — `{ child: uuid_spectral, parent: uuid_spectral }`.
+#                      Binary by record shape. Acyclic. Lifecycle.
+#   entanglement_edge — `{ peers: [uuid_spectral], restriction_map: ... }`.
+#                      Polyadic by record shape (list of peers).
+#                      Cyclic permitted. Correlation.
+#
+# The polyadicity is named STRUCTURALLY by the record shape (a list
+# instead of two named slots), not by a new `hyper_edge` keyword.
+# This is the substrate's discipline: introduce vocabulary only when
+# a new structural KIND exists; a polyadic edge is the same
+# structural kind (graph edge between gen_prisms) as a binary edge,
+# just with arity declared at the record level. Adding a `hyper_edge`
+# would proliferate discriminators when the list-vs-pair distinction
+# already names the arity.
+#
+# Per [[architecture-prism-as-trait-as-everything]]: the algebra is
+# closed; arity is a record-shape fact, not an axiomatic kind.
+#
+# The minimum-peers invariant (>= 2; an edge with one peer is not
+# an edge) is NOT carried in the type at this tick — it surfaces as
+# a substrate-pull-candidate property/fracture bilateral pair
+# (`entanglement_arity_well_formed` at @epistemologic/property +
+# fracture body at @mirror/fracture, analogous to parent_acyclic +
+# parent_cycle landed this same tick at 0921dca + 20fcde5). The
+# property/fracture pair is FORWARD-PROMISED (STOP-condition 4
+# below), not landed here, because this tick is the substrate
+# type declaration; the bilateral pair is a separate substrate-pull
+# instance at the graph-edge altitude.
+#
+# === The cyclic decision (STOP-condition 3, resolved) ===
+#
+# Brief STOP-condition 3: does entanglement's cyclic-permitted
+# semantic create substrate invariant tensions with other shards
+# (e.g., problems with kintsugi loop's settlement)?
+#
+# Substrate-pull-correct resolution: NO tension. The kintsugi loop
+# operates on the FORM-SIDE (state observation; per
+# [[architecture-form-process-partition-at-family-root]] candidate
+# #55). The entanglement edge IS form-side too — it observes
+# correlation; it does not transform. Settlement is over content-
+# addressed shards (per [[architecture-shard-as-crdt]]'s bounded
+# semilattice); a cycle in the entanglement edge graph does NOT
+# create a cycle in shard ascent (shards are content-addressed,
+# byte-equal shards collapse). The cyclic entanglement graph is
+# OBSERVATIONAL — Mara's spawn entangles with mirror repo's
+# gen_prism (Mara reads mirror's substrate); mirror repo's gen_prism
+# entangles with Mara's spawn (mirror reads Mara's commits in the
+# eigenboard). Symmetric mutual entanglement is the COMMON CASE,
+# not the edge case.
+#
+# Per docs/specs/spectral-runtime.md §9 open question 3: "the
+# eigenboard query surface currently models entanglement queries
+# as forward-traversal — will the existing implementation handle
+# cycles, or does this tick imply an eigenboard query lift?" This
+# is the runtime-query-implementation question, NOT a substrate
+# invariant question. The substrate-altitude type declaration is
+# cycle-permissive by construction; whether the eigenboard query
+# surface traverses cycles is a downstream consumer question that
+# pulls at the consumer altitude (the eigenboard's MCP surface or
+# any future query traversal in `@spectral/db`).
+#
+# === Sheaf-math primitives (STOP-condition 1, resolved) ===
+#
+# Brief STOP-condition 1: if cellular sheaf math (restriction maps,
+# stalk projections, sheaf cohomology) requires substrate primitives
+# at `@epistemologic/math/sheaf` that aren't declared yet — STOP.
+#
+# Substrate-pull-correct resolution: the math primitive is ALREADY
+# declared at `shards/epistemologic/math/sheaf_laplacian.mirror`
+# (`type restriction`, `type operator`, `type eigenvalue`, with
+# `sheaf_laplacian` and `lambda_zero` actions). The math layer's
+# `restriction` carries (source: u32, target: u32, weight: ref) at
+# the audible-altitude floor; the runtime layer's `restriction_map`
+# specializes to (source_stalk, target_stalk, correlation) over
+# uuid_spectral-keyed gen_prism state surfaces.
+#
+# The two are NOT competing declarations. The math layer's
+# `restriction` is the in-a-gauge matrix-block carrier at the
+# eigenboard's u32-indexed base graph; the runtime layer's
+# `restriction_map` is the substrate-altitude EDGE DATA between
+# gen_prism state surfaces. When the eigenboard assembles the
+# conductivity tensor, the realisation layer maps gen_prism
+# uuid_spectrals to u32 vertex indices and emits the math layer's
+# `restriction` records as the assembled `operator`'s entries. The
+# substrate-altitude type stays at the gen_prism endpoints; the
+# realisation layer indexes them.
+#
+# This is consistent with parent.mirror's discipline: the
+# parent_edge record at the SUBSTRATE altitude carries uuid_spectral
+# endpoints; the math-altitude graph-theoretic acyclicity check
+# (e.g., topological sort over a u32-indexed adjacency list) lives
+# at the realisation layer. Substrate names what the edge IS
+# substantively; the realisation names how the structural check is
+# computed.
+#
+# What is NOT lifted in this tick (forward-promised): sheaf
+# cohomology actions (H^0, H^1; the substrate has no `cohomology`
+# action yet). When the eigenboard's MCP query surface or
+# `@spectral/db`'s traversal needs cohomology readings (e.g., for
+# global section discovery or obstruction detection), the math
+# layer will gain `cohomology(operator) -> [section]` at a separate
+# sub-shard. NOT load-bearing for the entanglement edge type
+# declaration; the type carries the restriction_map; the cohomology
+# computation reads through it at consumer pull.
+#
+# === The entanglement_edge shape ===
+#
+# Per docs/specs/spectral-runtime.md §4 and
+# [[Eigenboard is a sheaf]]:
+#
+#   peers           — `[uuid_spectral]`. The list of gen_prism
+#                     identities participating in this entanglement.
+#                     Polyadic: at least two peers (the bilateral
+#                     property/fracture pair is forward-promised);
+#                     the common case is 2 (binary symmetric
+#                     entanglement: Mara's spawn ↔ mirror repo's
+#                     gen_prism); larger n names a SHARED state
+#                     projection across n gen_prisms (e.g., three
+#                     repos all entangled through a shared
+#                     @spectral/garden distribution).
+#   restriction_map — `restriction_map`. The cellular sheaf data
+#                     the edge carries: source/target stalks (the
+#                     state-projection slices) and the correlation
+#                     ref (the typed restriction; math defers to
+#                     @epistemologic/math).
+#
+# === The restriction_map shape ===
+#
+# The runtime altitude's cellular-sheaf data. Names the edge's
+# substrate-altitude carrier; the realisation layer maps this
+# into the math layer's `restriction` records when the eigenboard
+# assembles the conductivity tensor.
+#
+#   source_stalk    — `shard_ref`. The state-projection slice at
+#                     one endpoint of the edge (the "source"
+#                     gen_prism's state shard ref). A stalk in
+#                     cellular sheaf terminology: the data attached
+#                     to a vertex.
+#   target_stalk    — `shard_ref`. The state-projection slice at
+#                     another endpoint. Together, source and target
+#                     stalks name the edge's TWO ANCHOR endpoints
+#                     even when peers.length > 2 — polyadic edges
+#                     are CHAINS of pairwise restrictions sharing
+#                     a common projection (the substrate's sheaf-
+#                     theoretic reading: a polyadic edge is the
+#                     equivalence class of pairwise restrictions
+#                     under the shared projection).
+#   correlation     — `ref`. The typed restriction — the cellular
+#                     sheaf's F_{u ⊴ e} matrix block at the runtime
+#                     altitude. The math layer's `weight: ref` in
+#                     `shards/epistemologic/math/sheaf_laplacian.mirror`
+#                     specializes this when the realisation layer
+#                     assembles the conductivity tensor. The
+#                     substrate names the obligation; @epistemologic/math
+#                     discharges the magnitude at the eigenboard
+#                     altitude.
+#
+# === The action surface ===
+#
+# Three load-bearing actions on entanglement edges. The substrate's
+# question discipline (per [[architecture-error-as-question]]): each
+# action returns either the new edge state or an `imperfect` carrier
+# at the substrate-altitude verdict surface.
+#
+#   entangle(peers, map) -> entanglement_edge
+#     Establish a new entanglement edge across the given peers with
+#     the given restriction map. The substrate's discipline: this
+#     does NOT register the edge with any supervisor (entanglement
+#     is orthogonal to parentage); it produces the typed edge
+#     record. The eigenboard query surface picks up the edge when
+#     it observes the participating gen_prism state shards in its
+#     next read. Body discharges by composing the peers and
+#     restriction_map into the edge record.
+#
+#   disentangle(e, peer) -> entanglement_edge
+#     Remove a peer from an entanglement edge. Returns a NEW edge
+#     (peers minus the removed). If the resulting peers.length < 2
+#     the edge is NO LONGER an entanglement (it carries only one
+#     peer; the entanglement_arity_well_formed property surfaces
+#     the opacity). Per the substrate's idempotent-on-miss
+#     discipline (per registry.mirror's `remove`): if the peer is
+#     not in the edge, returns `e` unchanged. Body discharges by
+#     composing the edge minus the peer.
+#
+#   restriction_of(e, peer) -> imperfect
+#     Project the restriction the named peer participates in across
+#     this edge. Returns the substrate's three-state outcome per
+#     @glass:
+#
+#       success(restriction_map) — peer is in the edge; the
+#                                  restriction map is returned.
+#       partial(...)              — the edge's state is mid-settle
+#                                  (the source_stalk or target_stalk
+#                                  shard is not yet readable at
+#                                  @mirror/store); opacity_map names
+#                                  the unsettled portion; kintsugi
+#                                  re-reads to drive partial to
+#                                  success.
+#       failure(reason)           — peer is not in the edge. The
+#                                  standard "not found" with reason
+#                                  carrier per @glass.
+#
+#     Why `imperfect` and not a bare `restriction_map`: the
+#     restriction_of query IS a question the eigenboard asks of the
+#     edge — "what does this peer observe across this edge?" — and
+#     the answer is verdict-laden, not a bare reference. Same
+#     discipline as registry.lookup (per
+#     `shards/spectral/registry.mirror` line 451): the question
+#     carries its verdict at the type level.
+#
+# === Orthogonal to parent (the two-axis substrate graph) ===
+#
+# Per docs/specs/spectral-runtime.md §4 and parent.mirror line
+# 145-174: parent and entanglement are TWO ORTHOGONAL edge classes
+# over the same gen_prism vocabulary:
+#
+#   parent_edge      directed; child → parent; one-per-child;
+#                     ACYCLIC across the substrate; lifecycle-
+#                     owning; the supervisor acts on this edge.
+#   entanglement_edge polyadic; N peers; many-per-gen_prism;
+#                     cyclic permitted; observational; sheaf
+#                     restriction map at substrate altitude
+#                     (cellular sheaf per [[Eigenboard is a sheaf]]).
+#
+# The two-axis substrate graph (this tick LANDS the second axis;
+# parent landed at 9d905a2):
+#
+#   parent axis        ↑ supervision tree (lifecycle)
+#   entanglement axis  ↔ peer correlation graph (observation)
+#
+# These two edge classes are NEVER conflated. A gen_prism's state
+# surface is shaped BY ITS PARENT (lifecycle restart strategy fires
+# under the parent's invariant) and OBSERVED BY ITS ENTANGLED PEERS
+# (the eigenboard's restriction-map reading projects the state
+# across entanglement edges). The runtime's substrate is the
+# orthogonal sum of the two.
+#
+# === Mara-spawn example (the load-bearing case) ===
+#
+# Per docs/specs/spectral-runtime.md §4:
+#
+#   - Mara spawns at `~/.mara/` to work on mirror's substrate.
+#   - PARENT of Mara's spawn = `~/.mara/` gen_prism (lifecycle owner;
+#     ~/.mara restart-strategy applies if Mara crashes).
+#   - ENTANGLEMENT between Mara's spawn and mirror's repo gen_prism =
+#     shared state projection (Mara's spawn reads mirror's substrate
+#     shards; Mara's commits surface in mirror's eigenboard).
+#
+# The entanglement carries:
+#
+#   peers = [mara_spawn.identity, mirror_repo.identity]
+#   restriction_map = {
+#     source_stalk:  mara_spawn.state,     # Mara's current shard
+#     target_stalk:  mirror_repo.state,    # mirror's current shard
+#     correlation:   <ref to the shared substrate projection;
+#                     the math layer's `weight` when assembled>
+#   }
+#
+# A second Mara-spawn (sister Mara also working on mirror) joins the
+# same entanglement edge through `entangle([mara_spawn, mirror_repo,
+# mara_spawn_2], updated_map)` — the polyadicity names the
+# n-gen_prism shared projection naturally.
+#
+# === Sheaf reading: NOT degenerate here — load-bearing ===
+#
+# Per parent.mirror line 175-195 and registry.mirror line 226-241:
+# both shards surfaced a DEGENERATE sheaf reading (each parent_edge
+# could be read as a restriction map; each registry_entry could be
+# read as a restriction map) but did NOT carry the sheaf structure
+# at the substrate altitude. The sheaf reading was FORWARD-PROMISED
+# to this shard.
+#
+# This shard CARRIES the cellular sheaf restriction map as
+# load-bearing substrate type — restriction_map IS the edge data;
+# the eigenboard query surface assembles the conductivity tensor
+# from these edges; @epistemologic/math/sheaf_laplacian's
+# `sheaf_laplacian([restriction]) -> operator` is the realisation
+# layer's discharge when the eigenboard pulls.
+#
+# Per [[Eigenboard is a sheaf]]:
+#
+#   "the substrate's eigenboard is a cellular sheaf on the
+#    five-operation graph; restriction maps = conductivity tensor;
+#    Reflection writes morphisms."
+#
+# The first half lands HERE (restriction maps live at entanglement;
+# the conductivity tensor IS what the eigenboard query assembles
+# from the population of entanglement edges). The second half
+# (Reflection writes morphisms) lives at @kintsugi; the third
+# (auditing the eigenboard's spectral state) lives at the
+# eigenboard's query surface.
+#
+# === Honest partial discipline (per #306) ===
+#
+# The action bodies below all carry `\` obligation blocks — no
+# fracture body emits any morphism in this tick. No `partials`
+# declaration needed (per `dissonance_partials_match_ast_breadth`
+# #306). Bodies discharge downstream when the consumer pulls
+# realisation through `@code/metalogue/materialize` (per the
+# ouroboros pipeline in docs/specs/spectral-runtime.md §5).
+#
+# === Cascade siblings (forward-promised, NOT landing this tick) ===
+#
+#   shards/spectral/portal.mirror         runtime side of portal
+#                                          (gen_prism specialisation
+#                                          carrying the frame stream;
+#                                          form-side at
+#                                          @mirror/spectral/portal).
+#   shards/spectral/db.mirror             graph database engine; the
+#                                          existing parentless ghost
+#                                          (#198) GAINS @spectral
+#                                          parent here; closed-engine
+#                                          query surface on top of
+#                                          the open @mirror/store
+#                                          foundation.
+#   shards/spectral/garden.mirror         vetted-corpus distribution;
+#                                          existing parentless ghost
+#                                          (#118) gains @spectral
+#                                          parent when it lands.
+#
+# Conditional bilateral pair (substrate-pull candidate; STOP-
+# condition 4 surfaced and forward-promised):
+#
+#   shards/epistemologic/property/entanglement_arity_well_formed.mirror
+#     the declarative half — entanglement edges have at least
+#     two peers (peers.length >= 2). Cycle reading: an edge with
+#     one peer is not an edge; the substrate names the opacity.
+#   shards/kintsugi/fracture/entanglement_singleton.mirror
+#     the operational half — the fracture body that proposes
+#     DROPPING a singleton-peers entanglement (the substrate's
+#     idempotent-on-violation discipline: a violated arity edge
+#     collapses to no edge; the peer's state surface retains
+#     no entanglement participation across it).
+#
+# This bilateral pair is forward-promised because (a) the type
+# declaration this tick lands is the FLOOR; (b) the bilateral
+# pattern instance has the standard load-bearing weight of one
+# tick per pair (per [[architecture-property-fracture-bilateral]]
+# precedent: keyword/operator/symbol pairs each landed as their
+# own tick); (c) the arity invariant is not LIFECYCLE-load-bearing
+# (no supervisor acts on it; no runtime broken by a singleton-peers
+# edge — the eigenboard simply reads no correlation across the
+# degenerate edge). Lands as its own tick when the eigenboard's
+# query surface or @spectral/db pulls the arity check as a real
+# consumer.
+#
+# Spec context: docs/specs/spectral-runtime.md (the ouroboros
+#               spec; §4 entanglement graph — the load-bearing
+#               section this shard lifts; §9 open question 3 —
+#               the cycle-in-entanglement question this tick
+#               resolves; §8 cascade map).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[Eigenboard is a sheaf]] (the load-bearing
+#                      architectural surface: entanglement edges
+#                      ARE sheaf restriction maps at substrate
+#                      altitude; this shard lifts the math layer's
+#                      restriction primitive to the runtime altitude
+#                      with uuid_spectral endpoints),
+#                      [[architecture-shard-as-crdt]] (the
+#                      restriction_map's stalks are shard_refs;
+#                      the cyclic entanglement graph does not
+#                      cycle shard ascent because shards are
+#                      content-addressed; byte-equal shards
+#                      collapse),
+#                      [[architecture-connes-spectral-triple]]
+#                      (the conductivity tensor IS A; the
+#                      restriction map IS one block of D when
+#                      assembled; this shard lives within Connes'
+#                      framing at the substrate altitude),
+#                      [[architecture-form-process-partition-at-family-root]]
+#                      (entanglement is form-side observation;
+#                      cyclic-permitted because observation
+#                      doesn't transform — no kintsugi loop
+#                      tension),
+#                      [[architecture-error-as-question]]
+#                      (restriction_of returns `imperfect`; the
+#                      substrate's question discipline at the
+#                      verdict surface),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the rug-pull pattern: `restriction` was
+#                      already named at @epistemologic/math/sheaf_laplacian;
+#                      this tick lifts the same word as the
+#                      runtime-altitude edge data with uuid_spectral
+#                      endpoints — the 56th instance of the
+#                      pattern, the first instance whose
+#                      substrate-altitude lift is over a RUNTIME-
+#                      EDGE-class subject).
+# Related shards: spectral.mirror (the family root this glass is
+#                  under; family-root altitude names entanglement
+#                  at line 119-124),
+#                 spectral/gen_prism.mirror (the worker primitive
+#                  whose state surfaces participate in the
+#                  restriction map; commit ae965ca),
+#                 spectral/supervisor.mirror (the lifecycle-owner;
+#                  ORTHOGONAL to this edge class; supervisor acts
+#                  on parent_edge, NOT on entanglement_edge;
+#                  commit 452ccb2),
+#                 spectral/registry.mirror (the supervisor's
+#                  parentage-side index whose typed surface stays
+#                  at parentage; the sheaf reading was deferred TO
+#                  HERE; commit 489211e),
+#                 spectral/parent.mirror (the ORTHOGONAL sibling;
+#                  binary directed acyclic lifecycle edge; this
+#                  tick's polyadic cyclic observational edge is
+#                  its orthogonal counterpart; commit 9d905a2),
+#                 spectral/root.mirror (the parentless supervisor;
+#                  participates in entanglement at the root
+#                  altitude when @spectral/garden distributes
+#                  across multiple roots; commit f145e48),
+#                 uuid/spectral.mirror (the identity carrier at
+#                  the edge's endpoints; peers are
+#                  [uuid_spectral]; both halves load-bearing —
+#                  active 48 bits for Fate's mycelial routing of
+#                  cross-peer projection requests, dark 80 bits
+#                  for endpoint identity),
+#                 epistemologic/math/sheaf_laplacian.mirror (the
+#                  math-altitude `restriction` primitive this
+#                  shard's `restriction_map` lifts to runtime
+#                  altitude; the eigenboard's realisation layer
+#                  maps gen_prism uuid_spectrals to u32 vertex
+#                  indices and assembles the operator from the
+#                  population of runtime restriction_maps;
+#                  `lambda_zero(operator) -> eigenvalue` reads
+#                  the resulting algebraic connectivity),
+#                 glass.mirror (the imperfect carrier for
+#                  restriction_of's three-state outcome; the
+#                  shard_ref carrier for stalk projections).
+# Realisation reference: eigenboard query surface (MCP); when
+#                  the eigenboard reads through to the conductivity
+#                  tensor, the realisation layer composes
+#                  restriction_maps across the gen_prism population
+#                  into @epistemologic/math/sheaf_laplacian's
+#                  `operator` and reads lambda_zero for algebraic
+#                  connectivity.
+# Path-namespace property: this file at
+# `shards/spectral/entanglement.mirror` declares
+# `@spectral/entanglement` and only that.
+
+glass @spectral/entanglement {
+  focus entanglement
+  project entanglement
+  split entanglement
+  shift entanglement
+  settle entanglement
+}
+
+# === restriction_map — the cellular sheaf edge data ===
+#
+# The runtime altitude's restriction map carried by an entanglement
+# edge. Names the substrate-altitude edge data; the realisation
+# layer (the eigenboard's conductivity-tensor assembly) maps this
+# into the math layer's `restriction` records at
+# `shards/epistemologic/math/sheaf_laplacian.mirror`.
+#
+#   source_stalk    — the source endpoint's state-projection slice.
+#                     A `shard_ref` (uuid_spectral) into @mirror/store
+#                     naming the source gen_prism's current state
+#                     shard. The cellular sheaf's data attached to
+#                     the source vertex.
+#   target_stalk    — the target endpoint's state-projection slice.
+#                     Same carrier type and discipline. Together
+#                     source and target stalks name the edge's TWO
+#                     ANCHOR endpoints even when an edge spans
+#                     more than two peers (polyadic edges are
+#                     equivalence classes of pairwise restrictions
+#                     under a shared projection).
+#   correlation     — the typed restriction. A `ref` to the
+#                     restriction's substrate carrier; the math
+#                     layer's `weight: ref` discharges the magnitude
+#                     when the realisation layer assembles the
+#                     conductivity tensor. The substrate names the
+#                     obligation; @epistemologic/math discharges it.
+type restriction_map = {
+  source_stalk: shard_ref,
+  target_stalk: shard_ref,
+  correlation: ref,
+}
+
+# === entanglement_edge — one peer-correlation edge ===
+#
+# Per docs/specs/spectral-runtime.md §4: the peer-correlation edge
+# class. Orthogonal to parent_edge. Polyadic (peers list of
+# arbitrary length >= 2; the arity property/fracture pair is
+# forward-promised). Cyclic permitted (mutual entanglement is the
+# common case; the substrate's content-addressed shard discipline
+# guarantees no ascent cycles result).
+#
+#   peers           — the gen_prism identities participating in this
+#                     edge. At least two; one peer is not an edge
+#                     (the arity property/fracture pair surfaces the
+#                     opacity when violated). Both halves of each
+#                     uuid_spectral are load-bearing: the active 48
+#                     bits route Fate's mycelial requests across the
+#                     edge; the dark 80 bits identify each endpoint
+#                     for eigenboard lookup.
+#   restriction_map — the cellular sheaf data the edge carries.
+type entanglement_edge = {
+  peers: [uuid_spectral],
+  restriction_map: restriction_map,
+}
+
+# === entangle — establish a new edge across peers ===
+#
+# Compose the peers and restriction map into an entanglement_edge.
+# The substrate's discipline: this does NOT register the edge with
+# any supervisor (entanglement is orthogonal to parentage; no
+# lifecycle owner gains a child by this call); it produces the
+# typed edge record. The eigenboard query surface picks up the
+# edge when it observes the participating gen_prism state shards
+# in its next read.
+#
+# Body discharges by composing the peers and restriction_map into
+# the edge record. Stays a `\` obligation in this tick; concrete
+# resolution lives at the realisation layer (via
+# @code/metalogue/materialize per the ouroboros pipeline).
+entangle(peers: [uuid_spectral], map: restriction_map) -> entanglement_edge { \ }
+
+# === disentangle — remove a peer from an edge ===
+#
+# Remove the named peer from the entanglement edge. Returns a NEW
+# edge (peers minus the removed; the substrate's no-mutation
+# discipline per registry.remove). If the peer is not in the
+# edge, returns `e` unchanged (the substrate's idempotent-on-miss
+# discipline per registry.remove line 168).
+#
+# If the resulting peers.length < 2 the edge is NO LONGER a
+# well-formed entanglement (the arity property/fracture pair
+# surfaces the opacity; the fracture body's substrate-pull-correct
+# proposal is to DROP the degenerate edge). The type does NOT
+# refuse the action — the substrate's three-state discipline is
+# at the verdict surface (the arity property), not at the type
+# carrier.
+#
+# Body discharges by composing the edge minus the peer. Stays a
+# `\` obligation in this tick.
+disentangle(e: entanglement_edge, peer: uuid_spectral) -> entanglement_edge { \ }
+
+# === restriction_of — project the restriction for a peer ===
+#
+# Project the restriction map the named peer participates in across
+# this edge. Returns the substrate's three-state outcome per
+# @glass:
+#
+#   success(restriction_map) — peer is in the edge; the restriction
+#                               map is returned. (For polyadic
+#                               edges, the returned restriction
+#                               map projects the shared correlation
+#                               at the peer's endpoint.)
+#   partial(...)              — the edge's state is mid-settle (the
+#                               source_stalk or target_stalk shard
+#                               is not yet readable at @mirror/store);
+#                               opacity_map names the unsettled
+#                               portion; kintsugi re-reads to drive
+#                               partial to success.
+#   failure(reason)           — peer is not in the edge. The
+#                               standard "not found" with reason
+#                               carrier per @glass.
+#
+# Same discipline as registry.lookup (per
+# `shards/spectral/registry.mirror` line 451): the question carries
+# its verdict at the type level. The eigenboard's MCP query surface
+# reads through this action when it asks "what does this gen_prism
+# observe across this entanglement edge?"
+#
+# Body discharges by reading the edge's peers, discriminating on
+# byte-equality of the named peer's dark 80 bits, lifting the
+# matching restriction_map into success / partial / failure. Stays
+# a `\` obligation in this tick.
+restriction_of(e: entanglement_edge, peer: uuid_spectral) -> imperfect { \ }
+
+out @spectral/entanglement
+out restriction_map
+out entanglement_edge
+out entangle
+out disentangle
+out restriction_of
