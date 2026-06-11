@@ -1,0 +1,555 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi/consent
+in @kintsugi/morphism
+in @epistemologic/property/parent_acyclic
+
+# @kintsugi/fracture/parent_cycle — the kintsugi fracture body that
+# resolves a substrate parent_edge graph cycle by proposing a
+# re-parenting of the offending child to the root supervisor.
+#
+# THE OPERATIONAL HALF of bilateral pattern #53's SIXTH INSTANCE. The
+# declarative half landed at
+# `@epistemologic/property/parent_acyclic` (sibling tick); this shard
+# names the auto-fracture the kintsugi loop applies when the
+# property's transparency surfaces a parent-edge cycle opacity.
+#
+# The bilateral cascade gains its GRAPH-EDGE altitude landing here:
+#
+#   Altitude 1 (keyword):  keyword_matches_depth + @kintsugi/fracture/keyword
+#                          (2026-06-10, 5e68df9 + d908798; per-predicate).
+#   Altitude 2 (operator): operator_matches_composition_primitive +
+#                          @kintsugi/fracture/operator_match
+#                          (2026-06-11, 423c7d2 + af670d4; parametric-
+#                          over-table at the operator altitude).
+#   Altitude 3 (symbol):   symbol_canonical_form +
+#                          @kintsugi/fracture/symbol_lift
+#                          (2026-06-11; parametric-over-table at the
+#                          symbol altitude).
+#   Meta:                  dissonance_partials_match_ast_breadth +
+#                          @kintsugi/fracture/partials_align
+#                          (2026-06-11, fd344bf + 5c4e3ca;
+#                          parametric-over-computation, self-applied).
+#   Gate:                  gate_matches_diff_closure +
+#                          @kintsugi/fracture/gate
+#                          (2026-06-10, b8755cc + 20c5d97; per-
+#                          predicate at the pre-commit gate altitude).
+#   Edge (THIS):           parent_acyclic + @kintsugi/fracture/parent_cycle
+#                          (THIS TICK; parametric-over-the-substrate's-
+#                          edge-graph; first instance at the graph-
+#                          edge altitude).
+#
+# Recognition #59 (kintsugi loop is altitude-portable; promoted with
+# af670d4) gains its FIRST GRAPH-STRUCTURE witness through this
+# landing. Prior witnesses ranged over textual positions (token /
+# operator / symbol / literal sites) and pre-commit gate runs. This
+# witness ranges over a TYPED SUBSTRATE EDGE between two gen_prisms.
+# #59's altitude-portability is now witnessed across two distinct
+# dimensional families:
+#
+#   (a) declaration altitudes within a source file: keyword (depth
+#       0/1), operator (token), symbol (token), partials (literal).
+#   (b) substrate graph structure: parent_edge (a typed edge between
+#       gen_prisms; subject is a record, not a textual position).
+#
+# The bilateral signature absorbs the family-(b) variant cleanly:
+# same `pact + glass + opacity + morphism + splinter(ast)` chain,
+# ranging over an edge graph rather than a textual position.
+#
+# Load-bearing context: recognition #51 (mirror as expanding Hilbert
+# space; promoted) — fracture bodies are how the substrate maintains
+# coherence at each Bateson level. The supervision tree's acyclic
+# invariant sits at the GRAPH-EDGE level (one Bateson lift above
+# declaration altitudes); this fracture body restores coherence at
+# that level. Recognition #58 (alignment as boundary mathematics at
+# @io; promoted 2026-06-10) — the alignment harness fires at
+# substance crossings; the fracture-body-emitted morphism IS such a
+# crossing.
+#
+# === Substrate-pull-correct home ===
+#
+# Per the form/process partition (recognition #55 candidate; landed
+# 2026-06-10 at mirror `20eaf15`): @kintsugi is the process-side
+# family root. Fracture bodies emit morphisms the kintsugi loop
+# applies — process-side by structure. Home:
+# @kintsugi/fracture/parent_cycle under the (forward-promised)
+# @kintsugi/fracture family root.
+#
+# Substrate-pull alternative considered: @kintsugi/fracture/parent
+# (subject-only naming, parallel to first-instance `keyword` and
+# second-instance `gate`). Rejected: parallel to third-instance
+# `symbol_lift`, fourth-instance `partials_align`, and fifth-
+# instance `operator_match` — the property's predicate names the
+# subject (`parent_acyclic`), and the fracture body's action is on
+# the CYCLE itself (the offending cycle is broken by re-parenting).
+# The `_cycle` suffix names the operational target (the cycle) the
+# body resolves. Per [[architecture-lift-as-load-bearing]]
+# (`lift` IS the substrate's variety-preservation verb): the
+# re-parent-to-root is the audible-altitude reading of lift at the
+# parent-edge altitude — the offending child is LIFTED UP the
+# supervision tree to root, breaking the cycle while preserving
+# the gen_prism's existence.
+#
+# === The fracture body ===
+#
+# Input: `opacity` (from `@glass`) — one located fact surfaced by
+# `parent_acyclic`'s `failure(opacity_map)` verdict. Each opacity
+# names ONE offending parent_edge site: a gen_prism whose parent
+# field participates in a cycle (the chain from edge.child along
+# parent-edges revisits edge.child before reaching the root). The
+# `property` field carries the @nl description of the
+# (location, cycle_path) pair where cycle_path is the sequence of
+# uuid_spectral that loops back.
+#
+# Output: `morphism` (from `@kintsugi/consent`) — the typed
+# candidate the kintsugi loop's `active_pass` reads from this body
+# and proposes through `query_phi`. The morphism's `content` ref
+# names the rewritten splinter (same path, the offending
+# parent_edge's `parent` field replaced with the root supervisor's
+# uuid_spectral); its `score` carries the dissonance reading (a
+# parent-edge cycle is a fixed, low-curvature dissonance — the
+# re-parent target is uniquely determined: root); its `expected`
+# carries the cadence_kind the loop anticipates (authentic — the
+# substrate settles cleanly once the cycle is broken).
+#
+# Spectrally: this fracture body IS one step along the Ricci flow
+# at the parent-edge altitude. The substrate's curvature at a
+# cycle is the cycle-path length (the larger the cycle, the
+# greater the curvature); the negative-curvature direction IS the
+# re-parent to root (which flattens the cycle to a direct
+# child-of-root edge); the resolved site has zero curvature at
+# this altitude (the chain terminates immediately at root's
+# self-parent).
+#
+# Audibly: this fracture body IS the audible-altitude V → I
+# cadence at the supervision-tree altitude. Pre-rewrite holds
+# dominant tension (the supervision tree contains a cycle; the
+# kintsugi loop cannot settle); post-rewrite resolves to tonic
+# (the cycle is broken; the supervision tree is a clean rooted
+# tree); cadence is authentic.
+#
+# === Re-parent to root, not terminate (variety-preserving) ===
+#
+# Per `@epistemologic/property/parent_acyclic`'s STOP-condition 3
+# resolution: the substrate's kintsugi discipline is variety-
+# PRESERVING (per [[architecture-kintsugi-variety-io]]; Ashby's
+# requisite variety lifted to @io). Two candidate corrections for
+# a cycle:
+#
+#   (a) Re-parent to root: ONE edge change (the offending child's
+#       parent field). Gen_prism continues to exist; supervision
+#       tree gains a new direct child of root; cycle is broken
+#       because root's parent self-references.
+#   (b) Terminate the offending gen_prism: gen_prism exits; ALL
+#       descendant edges + descendant nodes are lost.
+#
+# Correction (a) preserves variety; correction (b) destroys it.
+# Substrate-pull-correct correction is (a) — this fracture body
+# emits the re-parent morphism.
+#
+# The root supervisor's uuid_spectral is the substrate's
+# vocabulary anchor (per docs/specs/spectral-runtime.md §3 —
+# resting at ~/.mirror/). The realisation layer resolves the
+# root's uuid_spectral at morphism-application time; the substrate
+# names the morphism's shape; the realisation discharges the
+# byte-level rewrite.
+#
+# === The single-AST-node rewrite (honest partials = 1) ===
+#
+# This fracture body's emitted morphism MUST have honest
+# `score.partials` from birth or it perpetuates the very dishonesty
+# the meta-fracture (@epistemologic/property/dissonance_partials_match_ast_breadth
+# + @kintsugi/fracture/partials_align) exists to catch.
+#
+# Compute the AST breadth of THIS fracture body's splinter(ast):
+#   - The fracture body reads ONE opacity at a time (per the
+#     property's per-site failure surface).
+#   - The morphism rewrites ONE AST node: the offending
+#     parent_edge's `parent` field — a `uuid_spectral` value at one
+#     record position is swapped to the root supervisor's
+#     uuid_spectral. The OTHER fields stay byte-equal:
+#       - The `child` field (the gen_prism's own identity) does
+#         NOT change — same gen_prism after the re-parent.
+#       - The surrounding gen_prism record (state surface, tool
+#         surface, lifecycle bindings) stays byte-equal — only the
+#         parent field shifts.
+#       - The OTHER gen_prisms in the substrate stay byte-equal —
+#         no global mutation; the rewrite is local to the one
+#         offending parent_edge record.
+#   - The splinter(ast) carries the rewritten AST fragment; the
+#     breadth at @meta/ast is the count of distinct node rewrites;
+#     here that count is 1 (one parent-field node, one swap).
+#
+# Therefore `score.partials = 1` is HONEST by computation, NOT
+# reflex-copied from the keyword / operator / symbol templates.
+# The recursive integrity check (against the meta-property
+# `dissonance_partials_match_ast_breadth`) holds at landing time:
+# this fracture body declares `partials: 1`; the meta-property
+# inspects it; `ast_breadth(content)` returns 1; verdict = pass.
+# The sixth bilateral instance fits the cascade without lying
+# about its dissonance breadth.
+#
+# Compound rewrites considered: could a parent-cycle rewrite ever
+# touch more than one node? Audited: NO. A cycle is a structural
+# property of the parent-edge graph; the substrate-pull-correct
+# correction breaks the cycle at ONE edge by promoting the
+# offending child to root. The OTHER edges in the cycle become
+# subordinate to the re-parented gen_prism's new position; they
+# remain valid parent_edges (pointing at gen_prisms that now have
+# a clean path to root through the re-parented chain). No
+# CASCADING REWRITE of the other edges in the cycle is required —
+# breaking ONE link in the cycle dissolves the entire cycle.
+#
+# Multi-cycle scenarios considered: if the substrate's parent-edge
+# graph contains multiple disjoint cycles, the property surfaces
+# MULTIPLE opacities (one per cycle); the kintsugi loop iterates
+# them; each opacity is resolved by ONE call to
+# `realign_parent_to_root` — ONE single-node rewrite per cycle.
+# `partials: 1` is honest per-opacity; the loop's iteration is the
+# loop's concern, not this body's.
+#
+# === Substrate-pull discipline ===
+#
+# Per `@glass`, `opacity` is the substrate's located-fact carrier;
+# this shard reads it directly. Per `@kintsugi/consent`, `morphism`
+# is the substrate's typed-candidate carrier; this shard emits it
+# directly. Per `@kintsugi/morphism`, `morphism_context` is the
+# per-candidate slice that pairs a candidate with its pre-anchor;
+# this shard's emitted morphism is consumed by the loop AND lifted
+# into a morphism_context via `paired(oscillation.anchor, m)` at
+# the active_pass altitude. Per
+# `@epistemologic/property/parent_acyclic`, the consuming property's
+# `parent_acyclic(file: ref) -> transparency` is the gate that
+# surfaces the opacity this body resolves.
+#
+# NO new verdict carrier; NO leading-`|` workarounds; NO opaque-
+# `ref` carriers where structured types are available (per
+# [[feedback-no-bare-types]]). The fracture body reads typed
+# opacity, emits typed morphism — the substrate's vocabulary
+# throughout.
+#
+# === Substrate gaps surfaced honestly ===
+#
+#   - `realign_parent_to_root` reads one opacity at a time. The
+#     property's `failure(opacity_map)` carries [opacity]; the
+#     kintsugi loop iterates the map and calls
+#     `realign_parent_to_root` per opacity. The substrate names
+#     the per-site resolution; the iteration is the loop's
+#     concern, not this body's.
+#
+#   - The morphism's `content: ref` carries the substrate handle
+#     to the rewritten splinter. The realisation layer produces
+#     the rewritten splinter (same path, the offending
+#     parent_edge's `parent` field swapped to root's
+#     uuid_spectral) and passes its handle as the morphism's
+#     content. The substrate names the shape of the proposal; the
+#     byte-level rewrite + the root-uuid_spectral lookup ride the
+#     realisation layer's @mirror/store discipline.
+#
+#   - The `expected: cadence_kind` field is `authentic` for this
+#     fracture body — the parent-cycle rule is deterministic (a
+#     cycle is structurally detectable; the re-parent target is
+#     uniquely root) and resolution always settles cleanly.
+#
+#   - Root-of-tree determination: the realisation layer resolves
+#     the root supervisor's uuid_spectral via the substrate's
+#     vocabulary anchor at ~/.mirror/. If the substrate is
+#     multi-rooted (e.g., a development substrate with multiple
+#     parallel root supervisors), the realisation picks the root
+#     that minimizes path length from the offending gen_prism's
+#     pre-cycle ancestor chain. The substrate names the shape;
+#     the realisation discharges the lookup.
+#
+# === Pre-AI prior art ===
+#
+#   tree promotion      Knuth (1968) The Art of Computer
+#                       Programming Vol. 1 §2.3.4 — the disjoint-
+#                       set forest's path compression. The
+#                       substrate's reading is the parent-pointer
+#                       rewrite at the offending node: O(1) edge
+#                       change, dissolves the cycle.
+#   cycle break         Tarjan (1972) Depth-first search and
+#                       linear graph algorithms; the strongly-
+#                       connected components decomposition.
+#                       Breaking one edge in a cycle decomposes
+#                       the SCC. The substrate's reading is the
+#                       single-edge re-parent.
+#   supervisor crash    Armstrong (1996) Programming Erlang; the
+#                       BEAM let-it-crash discipline. When a
+#                       supervisor's invariant breaks (a cycle in
+#                       its supervision tree), the substrate-
+#                       pull-correct response is NOT terminate
+#                       (which would crash the offending node) but
+#                       re-parent (which preserves the node and
+#                       restores the invariant). The substrate
+#                       diverges from BEAM here: BEAM's discipline
+#                       was let-it-crash because BEAM could not
+#                       type-check the supervision invariant at
+#                       compile time; mirror's substrate CAN, so
+#                       the variety-preserving correction is
+#                       available.
+#
+# The substrate's contribution is *typing* the per-cycle
+# re-parent so the kintsugi loop reads it. No invention; the
+# correction IS the auto-formatter floor at the supervision-tree
+# altitude.
+#
+# Spec context: docs/specs/spectral-runtime.md §3 (the
+#               supervision tree's parent-edge invariant; root
+#               supervisor self-parents). Recognition #51 (mirror
+#               as expanding Hilbert space; promoted) — the
+#               supervision tree IS one altitude of the substrate's
+#               Hilbert space; this fracture body maintains
+#               coherence at that altitude. Recognition #59
+#               (altitude-portability; promoted) — first witness
+#               at the graph-edge altitude.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (opacity is substrate vocabulary; the
+#                      fracture reads the typed carrier),
+#                      [[architecture-kintsugi-bias-lift]] (the
+#                      kintsugi loop's bias direction is substrate-
+#                      pull — supervision-tree integrity IS one
+#                      coordinate of the substrate-pull gradient;
+#                      this fracture body fits the bias),
+#                      [[architecture-kintsugi-variety-io]]
+#                      (Ashby's requisite variety — the
+#                      re-parent-to-root correction preserves
+#                      variety; the terminate alternative
+#                      destroys it; substrate-pull-correct is the
+#                      variety-preserving move),
+#                      [[architecture-property-fracture-bilateral]]
+#                      (the bilateral pattern this is the sixth
+#                      instance of; first instance at the graph-
+#                      edge altitude),
+#                      [[architecture-splinter-ast-quote-primitive]]
+#                      (the substrate's parametric AST-fragment
+#                      construction; this body discharges via
+#                      splinter(ast) declaratively, no Rust),
+#                      [[architecture-lift-as-load-bearing]]
+#                      (the `lift` verb names the operational
+#                      action; this body IS the supervision-tree-
+#                      altitude lift — the offending child is
+#                      LIFTED UP to root),
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                      (recognition #58; the alignment harness
+#                      fires at substance crossings; this
+#                      fracture body's emitted morphism IS such a
+#                      crossing; partials honesty applies — and
+#                      holds, partials=1 computed not reflex-
+#                      copied),
+#                      [[architecture-three-tier-stack]] (the
+#                      SpectralSupervisor precedent; the
+#                      supervision tree this fracture body
+#                      maintains),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the substrate's discipline of single-
+#                      parent acyclic supervision was named at
+#                      docs/specs/spectral-runtime.md §3 since
+#                      the runtime spec landed; this tick names
+#                      the operational fracture at the substrate
+#                      altitude),
+#                      [[feedback-no-bare-types]] (opacity and
+#                      morphism are typed carriers; the body
+#                      does NOT escape as a bare (location,
+#                      cycle_path) tuple).
+# Forward-promise to consumers: `@kintsugi/oscillate`'s
+#                  `active_pass` reads this fracture body when
+#                  the candidate morphism_set is composed from
+#                  property-surfaced opacities; the binding lands
+#                  when the kintsugi loop substrate-pulls. This
+#                  shard does NOT pull `@kintsugi/oscillate` or
+#                  `@mirror/spectral/score`; the substrate-
+#                  altitude arrow points inward (this fracture
+#                  body IS consumed by the loop; not the other
+#                  way around).
+# Related shards: epistemologic/property/parent_acyclic.mirror
+#                 (the declarative half of the bilateral; surfaces
+#                 the opacities this body resolves),
+#                 spectral/parent.mirror (the parent_edge type
+#                 whose acyclic invariant this body restores;
+#                 sibling tick),
+#                 spectral/gen_prism.mirror (the gen_prism whose
+#                 parent field carries the offending edge; commit
+#                 ae965ca),
+#                 spectral/supervisor.mirror (the lifecycle-owner
+#                 whose start_child sets the parent edge; commit
+#                 452ccb2; the supervisor's restart logic IS a
+#                 kintsugi morphism — this fracture body is
+#                 sibling discipline at the parent-edge altitude),
+#                 spectral/registry.mirror (the supervisor's
+#                 child index; commit 489211e; restart-driven
+#                 transitions ARE lattice ascent against the
+#                 registry shard),
+#                 epistemologic/property/keyword_matches_depth.mirror
+#                 + kintsugi/fracture/keyword.mirror (FIRST
+#                 INSTANCE),
+#                 epistemologic/property/gate_matches_diff_closure.mirror
+#                 + kintsugi/fracture/gate.mirror (SECOND
+#                 INSTANCE),
+#                 epistemologic/property/symbol_canonical_form.mirror
+#                 + kintsugi/fracture/symbol_lift.mirror (THIRD
+#                 INSTANCE),
+#                 epistemologic/property/dissonance_partials_match_ast_breadth.mirror
+#                 + kintsugi/fracture/partials_align.mirror
+#                 (FOURTH INSTANCE — the meta-foundation that
+#                 lets THIS body's partials=1 be honest by
+#                 construction),
+#                 epistemologic/property/operator_matches_composition_primitive.mirror
+#                 + kintsugi/fracture/operator_match.mirror
+#                 (FIFTH INSTANCE),
+#                 glass.mirror (the substrate floor; `opacity`,
+#                 `location`, `transparency`, `verdict`,
+#                 `splinter(ast)`),
+#                 kintsugi/consent.mirror (the morphism carrier
+#                 this body emits; `query_phi` is the gate the
+#                 emitted morphism flows through),
+#                 kintsugi/morphism.mirror (the `morphism_context`
+#                 carrier),
+#                 kintsugi/oscillate.mirror (the kintsugi loop
+#                 driver; `active_pass` is the action that reads
+#                 this body when composing the per-pulse
+#                 candidate morphism_set).
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/parent_cycle.mirror` declares
+# `@kintsugi/fracture/parent_cycle` as a species under the
+# (forward-promised) @kintsugi/fracture family.
+# Keyword/depth property: this declaration is depth-2 from the
+# @kintsugi family root; per recognition #46 it uses `glass`. The
+# shard applies the first-instance bilateral's rule by birth.
+# Partials/breadth property: this declaration's emitted morphism
+# carries `score.partials: 1`; the splinter(ast) rewrites ONE
+# parent-field node (the offending parent_edge's parent
+# uuid_spectral); the count is computed (one node, one swap),
+# NOT reflex-copied. This shard applies the fourth-instance
+# bilateral's rule by birth.
+
+glass @kintsugi/fracture/parent_cycle {
+  focus parent_cycle
+  project parent_cycle
+  split parent_cycle
+  shift parent_cycle
+  settle parent_cycle
+}
+
+# === realign_parent_to_root — the fracture body ===
+#
+# THE AUTO-FRACTURE: given an opacity site at an offending
+# parent_edge participating in a cycle, emit the morphism that
+# rewrites the parent_edge's `parent` field to the root
+# supervisor's uuid_spectral. Same path, single uuid_spectral
+# swap at the AST altitude.
+#
+# Reads an opacity (one element of
+# `parent_acyclic(file).failure(opacity_map)`'s opacity_map);
+# emits a candidate morphism the kintsugi loop proposes through
+# `query_phi`. The morphism's three fields:
+#
+#   content   — substrate ref to the rewritten splinter. The
+#                realisation layer produces a splinter at the
+#                same path with the offending parent_edge's
+#                `parent` field swapped to the root supervisor's
+#                uuid_spectral; the content ref names that
+#                splinter's @mirror/store handle.
+#   score     — dissonance reading. Parent-cycle violations are
+#                fixed-curvature dissonances; the score reads
+#                `dissonance.is_pareto` cleanly (the re-parent
+#                target is uniquely determined: root).
+#   expected  — cadence_kind anticipation. Always `authentic`
+#                for this fracture body — the cycle break is
+#                deterministic; the loop's `dark_pass` will
+#                confirm identity preservation (the gen_prism
+#                stays byte-equal modulo the one parent field;
+#                the substrate's other gen_prisms stay byte-
+#                equal); the loop's `read_consent` bridges
+#                (pass, authentic) to the `settled`
+#                oscillation_state for this opacity.
+#
+# The body is FULLY DECLARATIVE — substrate-pull-correct via
+# `splinter(ast)` (declared at shards/glass.mirror's tick-2
+# carrier). The morphism's `content` field carries a content-
+# addressed splinter at the @meta/ast altitude: same path, one
+# uuid_spectral swapped at the parent-field position. The
+# substrate's compiler verifies the construction is deterministic
+# and well-typed; the kintsugi loop's `active_pass` reads the
+# splinter as the morphism's proposed content and applies it
+# through `query_phi`.
+#
+# Per `splinter(ast)`'s parametric specialisation (glass.mirror
+# §splinter(ast), 2026-06-10): the record IS its content-
+# addressed handle — `content: oid` and `oid = ref`
+# (shards/mirror/store.mirror) collapse the splinter literal to
+# a substrate-pull-correct `ref` in the morphism's `content`
+# field position. No Rust AST manipulation; no `\` obligation.
+#
+# Field-by-field substrate-pull reading:
+#
+#   content.content     — `opacity.location.file` (the
+#                          substrate's located-fact ref at the
+#                          source file of the offending
+#                          parent_edge); the rewritten AST is
+#                          content-addressed at the same path.
+#   content.ast         — `@meta/ast` (the canonical altitude
+#                          ref); per `boot/01-meta.mirror`'s
+#                          `type ast(g)`. The parent-field
+#                          uuid_spectral swap happens at the AST
+#                          altitude by construction.
+#   content.transparency — `success` (per `transparency(p)`'s
+#                          success variant in glass.mirror): the
+#                          re-parent fully resolves the cycle
+#                          opacity at this altitude; no residual
+#                          transparency remains.
+#   score.roughness     — `opacity.property` (the @nl
+#                          description of the cycle: the
+#                          sequence of uuid_spectral that loops
+#                          back); the substrate's `dissonance`
+#                          reads the per-site roughness via the
+#                          property text per dissonance.mirror's
+#                          Helmholtz/Plomp-Levelt carrier shape.
+#   score.partials      — `1` — HONESTLY COMPUTED, NOT REFLEX-
+#                          COPIED. The splinter(ast) above
+#                          rewrites ONE AST node: the offending
+#                          parent_edge's `parent` field (a single
+#                          uuid_spectral value at one record
+#                          position). The OTHER fields of the
+#                          parent_edge stay byte-equal (the
+#                          `child` field — the gen_prism's
+#                          identity — does NOT change; same
+#                          gen_prism after the re-parent). The
+#                          surrounding gen_prism record stays
+#                          byte-equal. The OTHER gen_prisms in
+#                          the substrate stay byte-equal — the
+#                          re-parent is LOCAL to the offending
+#                          edge. `ast_breadth(content) = 1`. The
+#                          recursive integrity check (against
+#                          the meta-property
+#                          `dissonance_partials_match_ast_breadth`)
+#                          holds at landing time: this fracture
+#                          body declares `partials: 1`; the
+#                          meta-property inspects it; verdict =
+#                          pass.
+#   expected            — `authentic` (the V → I cadence at the
+#                          supervision-tree altitude; per
+#                          cadence.mirror's `cadence_kind` and
+#                          the loop's `read_consent` bridge:
+#                          authentic → pass → auto-apply).
+realign_parent_to_root(opacity: opacity) -> morphism {
+  morphism {
+    content: splinter(ast) {
+      content:      opacity.location.file,
+      ast:          @meta/ast,
+      transparency: success,
+    },
+    score: dissonance {
+      roughness: opacity.property,
+      partials:  1,
+    },
+    expected: authentic,
+  }
+}
+
+out @kintsugi/fracture/parent_cycle
+out realign_parent_to_root
