@@ -19,11 +19,30 @@ in @glass
 #
 # Depth -> keyword rule:
 #   @X            (depth 0, root)  -> prism
-#   @X/Y          (depth 1, sub)   -> glass
-#   @X/Y/Z        (depth 2, sub)   -> glass
+#   @X/Y          (depth 1, sub)   -> glass | pact | <optical>
+#   @X/Y/Z        (depth 2, sub)   -> glass | pact | <optical>
+#   @X/Y/Z/W      (depth 3, sub)   -> glass | pact | <optical>
 # Depth is the count of `/` separators in the declared namespace.
 # Root declarations are families; sub declarations are specializations
 # (sub-prisms in the sense of `boot/std/glass.mirror`).
+#
+# <optical> covers the eight schematic keywords declared in
+# shards/optics.mirror per docs/specs/optical-keywords.md §1:
+# facet | stage | aperture | splitter | resonator | bench |
+# source | detector. Each declares a concrete instrument-altitude
+# element (depth >= 1); they are NOT family roots (depth 0), so
+# they do not admit at depth 0. The optical schematics compose
+# under a bench (which itself sits at the instrument altitude and
+# compiles to a `prism` per spec §1.6 / property
+# `bench_compiles_to_prism` §3.8 — the compilation target is the
+# prism, not the bench declaration site).
+#
+# `pact` (property-declaration form, recognition #37) also admits
+# at depth >= 1 — properties live at `@epistemologic/property/<name>`
+# (depth 2). The keyword discriminator is by ROLE, not by depth
+# alone: `prism` for root families; `glass` for generic sub-prisms;
+# `pact` for property declarations; the optical schematics for
+# instrument-altitude elements per their spec section.
 #
 # Concrete vs parametric: the predicate inspects concrete @<name>
 # declarations only. Parametric @(<binder>) heads are the recursion's
@@ -33,7 +52,7 @@ in @glass
 # Verdict surface is transparency<p>:
 #   success              -- every keyword matches its declared depth
 #   failure(opacity_map) -- some keyword disagrees (prism at depth>=1,
-#                          or glass at depth 0)
+#                          or any non-prism keyword at depth 0)
 #   partial(opacity_map) -- multiple top-level concrete @X declarations,
 #                          some match and some don't
 #
@@ -62,17 +81,33 @@ pact @epistemologic/property/keyword_matches_depth {
 
   # The keyword each concrete top-level @<name> declaration uses
   # in `file`. One per declared namespace; entries are one of
-  # `prism | glass | pact`.
+  # `prism | glass | pact | facet | stage | aperture | splitter |
+  # resonator | bench | source | detector`.
+  #
+  # The optical schematic vocabulary (facet, stage, aperture,
+  # splitter, resonator, bench, source, detector) extends the
+  # domain per docs/specs/optical-keywords.md §1. Each is
+  # declared as a substrate keyword form in shards/optics.mirror;
+  # the depth→keyword rule below treats them as depth>=1
+  # specializations (they declare instruments at the schematic
+  # altitude, not family roots). See the depth→keyword rule
+  # below for the per-keyword depth-validity bands.
   declared_keywords(file: ref) -> [text] { \ }
 
   # The combined property: every concrete declaration's keyword
   # matches its depth.
   #   depth = 0  =>  keyword = prism   (root family)
-  #   depth >= 1 =>  keyword = glass   (sub-prism specialization)
+  #   depth >= 1 =>  keyword ∈ {
+  #     glass,                          # generic sub-prism
+  #     pact,                           # property declaration
+  #     facet, stage, aperture,         # optical schematic elements
+  #     splitter, resonator, bench,     # (docs/specs/optical-keywords.md §1)
+  #     source, detector,
+  #   }
   # Verdict surface is transparency<p>:
   #   success              -- every keyword matches its declared depth
   #   failure(opacity_map) -- some keyword disagrees (prism at depth>=1,
-  #                          or glass at depth 0)
+  #                          or any non-prism keyword at depth 0)
   #   partial(opacity_map) -- multiple top-level concrete @X declarations,
   #                          some match and some don't
   keyword_matches_depth(file: ref) -> transparency { \ }

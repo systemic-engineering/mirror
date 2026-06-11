@@ -89,4 +89,80 @@ prism @optics {
   settle optics
 }
 
+# === The eight schematic keyword declaration forms ===
+#
+# Per docs/specs/optical-keywords.md §1, the optical schematic
+# vocabulary collapses the over-collapsed pre-split `prism` / `glass`
+# pair into eight first-class schematic keywords. Each keyword form
+# is declared abstractly here at the family-root altitude so the
+# parser knows what each token means structurally; the obligation
+# block (`\`) is discharged downstream when concrete instruments
+# land.
+#
+# Surface pattern: `<keyword> @<name> { <body> }` declares a
+# schematic element of the named kind, scoped to the enclosing
+# bench (or directly at the substrate altitude for instrument-
+# defining declarations). Same shape as `glass(name) -> prism { \ }`
+# in shards/glass.mirror — abstract here, concrete downstream.
+#
+# Return types per spec §1.X:
+#   facet      §1.1  one optical action; carries action + formalism +
+#                    apertures. Its own schematic type.
+#   stage      §1.2  SISO chain of facets; substitutes as a facet at
+#                    the next altitude up — but its own schematic type
+#                    at declaration altitude.
+#   aperture   §1.3  typed beam channel at a boundary; a TYPE per the
+#                    spec — "an aperture is a TYPE, not an element".
+#   splitter   §1.4  multi-port S-matrix element; its own schematic
+#                    type with declared port topology.
+#   resonator  §1.5  closed optical loop with output coupler + stability
+#                    witness; its own schematic type.
+#   bench      §1.6  CLOSED ROOT; the only schematic that COMPILES
+#                    TO `prism` (per spec §1.6 closing paragraph and
+#                    `bench_compiles_to_prism` property §3.8). All
+#                    other schematics declare composition graphs;
+#                    bench is the one that lifts to the produced
+#                    five-op prism.
+#   source     §1.7  ACTIVE FACET (energy injection from @io); same
+#                    schematic type as facet but with `active` energy
+#                    bit and the energy-balance property §3.9 gating
+#                    the declaration.
+#   detector   §1.8  TERMINAL FACET; sink whose `out` slot is
+#                    `crystal` (not aperture); its own schematic
+#                    type per the `detector_is_sink` property §3.10.
+#
+# Why bench is the only one returning `prism`:
+# Per spec §5 (the five-op algebra now lives ONLY in the produced
+# prism), schematic declarations DO NOT carry five-op blocks. The
+# bench is the closed-root assembly enclosure; its produced artifact
+# is a `prism` whose five operations emerge from graph-walking the
+# bench's element set. The other seven schematics compose under a
+# bench; they don't compile to prism in isolation.
+#
+# Why source's prior tick (f0b530a) used `source` before its
+# declaration form existed: per substrate-pull discipline (the
+# property-surfaces-the-opacity-then-the-next-tick-closes-it
+# cascade), the prior tick's `source @optics/source/ganglion/<name>`
+# declarations were the FIRST OPERATIONAL USE at depth 3 — the
+# opacity they generated on `keyword_matches_depth` (whose
+# `declared_keywords` enumerates only `prism | glass | pact`) IS
+# the substrate-pull signal that drives this tick.
+
+facet(name) -> facet { \ }
+stage(name) -> stage { \ }
+aperture(name) -> aperture { \ }
+splitter(name) -> splitter { \ }
+resonator(name) -> resonator { \ }
+bench(name) -> prism { \ }
+source(name) -> source { \ }
+detector(name) -> detector { \ }
+
 out @optics
+out facet
+out stage
+out aperture
+out splitter
+out resonator
+out bench
+out source
+out detector
