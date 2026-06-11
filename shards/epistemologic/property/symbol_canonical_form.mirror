@@ -1,0 +1,175 @@
+in @glass
+
+# Property: a substrate source's symbol tokens must be in their
+# canonical (unicode) form per the multi-form symbol vocabulary table.
+#
+# THIRD INSTANCE of bilateral pattern #53 (property/fracture; promoted
+# 2026-06-10). First instance: keyword/depth
+# (@epistemologic/property/keyword_matches_depth +
+# @kintsugi/fracture/keyword; 2026-06-10, 5e68df9 + d908798). Second
+# instance: gate/diff-closure
+# (@epistemologic/property/gate_matches_diff_closure +
+# @kintsugi/fracture/gate; 2026-06-10, b8755cc + 20c5d97). This shard +
+# its sibling fracture body (@kintsugi/fracture/symbol_lift) are the
+# THIRD instance, landing at the SYMBOL altitude (one altitude down
+# from the OPERATOR altitude forward-promised at
+# docs/specs/optical-keywords.md §14, which is one altitude down from
+# the KEYWORD altitude of the first two instances).
+#
+# Recognition #59 (kintsugi loop is altitude-portable; candidate,
+# surfaced 2026-06-11 at docs/specs/optical-keywords.md §14.7) gains
+# its FIRST OPERATOR/SYMBOL-ALTITUDE WITNESS through this landing.
+# Per #59's promotion gate: "two altitudes' worth of bilateral
+# instances landed." Keyword altitude has multiple instances. Symbol
+# altitude landing here is the second altitude — #59 promotes.
+#
+# === The multi-form symbol vocabulary table ===
+#
+# Engineer-typed ASCII forms auto-lift to canonical unicode at the
+# substrate altitude. The table is parametric — additions extend the
+# lookup, not the predicate's variant set:
+#
+#   engineer    canonical    notes
+#   --------    ---------    -----
+#   ->          →            serial propagation (bench-altitude arrow;
+#                            per docs/specs/optical-keywords.md §1)
+#   \           λ            lambda hole (Dhall/Haskell/Agda convention)
+#   loop        ⟲            round-trip closure for resonators
+#                            (Alex prefers `loop` over `(o)` for
+#                            explicitness; canonical for resonator
+#                            closure declarations)
+#   _|_         ⊥            bottom / unfilled hole at substrate altitude
+#   0           void         the void-document's λ₀ ground state; per
+#                            shards/prism.mirror's `H = [[void-document]]`
+#                            framing. NOT λ₀ — `void` is the substrate's
+#                            own word. Context-gated: lift only inside
+#                            inference contexts (bench / resonator /
+#                            source / detector blocks per
+#                            docs/specs/optical-keywords.md §1); a bare
+#                            integer 0 in non-inference code stays
+#                            literal.
+#   weighted    amplitudes   splitter port distribution at the physics-
+#                            correct altitude (Reck/Clements unitary;
+#                            phase + magnitude preserved). Magnitude
+#                            → amplitude conversion: intensity
+#                            fractions {p_i} become complex amplitudes
+#                            {√p_i · e^{iφ_i}} whose squared moduli
+#                            recover the fractions. The fracture body's
+#                            splinter(ast) carries the elaboration at
+#                            @meta/ast altitude; the lift is NOT a pure
+#                            rename. Per §15 of optical-keywords.md.
+#
+# `<=` is NOT in the table — it is already a substrate operator at
+# the type altitude (implements relation per
+# [[architecture-prism-as-trait-as-everything]]) and is distinct from
+# any inheritance-symbol candidate. Future additions extend the table
+# without changing the predicate's shape.
+#
+# === Concrete vs parametric ===
+#
+# The predicate is parametric over the table. Each opacity surfaces
+# ONE (location, engineer_form, canonical_form) triple — one offending
+# token at one site, paired with its canonical replacement. The
+# fracture body resolves any opacity by table lookup; no per-symbol
+# variant.
+#
+# This is structurally distinct from the first two instances'
+# per-predicate shape (`keyword_matches_depth`,
+# `gate_matches_diff_closure`): the property's predicate is
+# parametric over a table, not specialised per case. The bilateral
+# pattern (#53) absorbs the parametric variant — the shape
+# `@epistemologic/property/<X>` + `@kintsugi/fracture/<X>` carries
+# both per-predicate and table-driven cases. The substrate's
+# vocabulary doesn't need a new variant; this is the same pattern,
+# parametric over a vocabulary table.
+#
+# === Verdict surface ===
+#
+# Verdict surface is transparency<p>:
+#   success              -- every symbol token is in its canonical
+#                          form per the table (or NOT in the table
+#                          and therefore unaffected).
+#   failure(opacity_map) -- some symbol token is in the engineer-form
+#                          column when the canonical-form column is
+#                          required by the substrate. Each opacity
+#                          names ONE (location, engineer_form,
+#                          canonical_form) triple.
+#   partial(opacity_map) -- multiple symbol sites surveyed, some in
+#                          canonical form and some not.
+#
+# Located transparency (not @glass.verdict): the kintsugi loop consumes
+# the opacity_map to direct mutation. Each opacity names ONE offending
+# token site; the fracture body (@kintsugi/fracture/symbol_lift)
+# realises the rule by lifting violations through kintsugi. The
+# property names the rule; the fracture realises it; the kintsugi
+# loop is the bridge.
+#
+# === The 0 -> void context gate ===
+#
+# The `0 -> void` lift is context-gated. The property's
+# `is_inference_context(site)` action distinguishes inference sites
+# (bench / resonator / source / detector blocks per
+# docs/specs/optical-keywords.md §1) from non-inference code where
+# integer literal `0` stays literal. A bare `0` outside an inference
+# context does NOT surface an opacity; the table lookup is gated by
+# the inference-context predicate. The substrate is honest about the
+# ambiguity; the resolution is structural (context), not heuristic.
+#
+# Other table entries (->, \, loop, _|_, weighted) are NOT
+# context-gated — they have no ambiguity with literal integer code
+# and lift unconditionally where they appear as symbol tokens.
+#
+# === Cybernetic ancestor ===
+#
+# Recognition #37 (`requires` IS a Paskian agreement; promoted
+# 2026-06-10) names `pact` as the property-declaration form. pact
+# replaces the conversation-era `grammar` keyword as the surface for
+# declaring properties; the rule names `pact` directly below.
+#
+# Engineering ancestor: every code formatter that lifts ASCII to
+# typography (Prettier's quote-style normalisation; Black's string
+# canonicalisation; rustfmt's whitespace canonicalisation) names this
+# discipline implicitly. The substrate's contribution is *typing* the
+# vocabulary table so the kintsugi loop reads the lift directly,
+# rather than the formatter inventing a per-symbol rule each time.
+
+pact @epistemologic/property/symbol_canonical_form {
+  # The (location, engineer_form, canonical_form) triples observed
+  # in `file`. Each entry names ONE symbol token site whose engineer
+  # form has a canonical equivalent per the multi-form table above.
+  # Sites where the symbol is already in canonical form are NOT
+  # included; the surface is the differential.
+  symbol_sites(file: ref) -> [opacity] { \ }
+
+  # Whether a site sits inside an inference context (bench /
+  # resonator / source / detector block per
+  # docs/specs/optical-keywords.md §1). Gates the `0 -> void` lift:
+  # `0` lifts only inside an inference context; outside, integer
+  # literal `0` stays literal.
+  is_inference_context(site: ref) -> bool { \ }
+
+  # The canonical form for a given engineer form per the multi-form
+  # table. Total function over the table's domain; partial outside
+  # (returns the engineer form unchanged for non-table tokens).
+  canonical_form(engineer_form: text) -> text { \ }
+
+  # The combined property: every symbol site in `file` whose
+  # engineer form has a canonical equivalent (per `canonical_form`)
+  # AND, for context-gated entries, sits inside the gating context,
+  # is already in its canonical form.
+  # Verdict surface is transparency<p>:
+  #   success              -- every applicable symbol site is
+  #                          canonical.
+  #   failure(opacity_map) -- some applicable symbol site is in
+  #                          engineer form; each opacity names ONE
+  #                          (location, engineer_form,
+  #                          canonical_form) triple.
+  #   partial(opacity_map) -- multiple sites, mixed verdict.
+  symbol_canonical_form(file: ref) -> transparency { \ }
+}
+
+out symbol_sites
+out is_inference_context
+out canonical_form
+out symbol_canonical_form
+out @epistemologic/property/symbol_canonical_form
