@@ -1,0 +1,447 @@
+in @prism
+in @glass
+in @meta
+in @spectral
+in @spectral/gen_prism
+in @uuid/spectral
+in @mirror/store
+in @mirror/au
+in @epistemologic/reality/time
+
+# @spectral/supervisor — the lifecycle-owner primitive.
+#
+# THE SECOND SUB-SHARD of the @spectral runtime cascade. Sibling
+# of `shards/spectral/gen_prism.mirror` (commit ae965ca, the worker
+# primitive). Lifts the @beam-altitude `supervisor` declaration
+# (boot/std/beam.mirror; the existing strategy / supervisor pair) to
+# the substrate altitude under the @spectral family root, and names
+# the BEAM gen_server/supervisor pair as one closed pair at the
+# substrate altitude.
+#
+# Per docs/specs/spectral-runtime.md §3 (2026-06-10, Mara): a
+# `supervisor` is a `gen_prism` specialisation. Its state surface
+# is a `registry` shard (a content-addressed index from child
+# `uuid_spectral` to child shard ref); its tool surface is the
+# lifecycle API (`start_child`, `terminate_child`, restart per the
+# strategy); its invariant is a restart-strategy contract analogous
+# to BEAM's `:one_for_one` / `:one_for_all` / `:rest_for_one`.
+#
+# === The keyword decision ===
+#
+# `glass` per recognition #46 (path-syntax property; promoted) and
+# `shards/spectral.mirror`'s discipline section: "@spectral
+# sub-shards at depth >= 1 use `glass`; the family root itself uses
+# `prism` per the depth-0 discipline."
+#
+# Why NOT a new substrate keyword: supervisor is a sub-prism
+# specialisation of gen_prism — the BEAM `:supervisor` behaviour
+# analogue — and `glass` already names that relationship per
+# `shards/glass.mirror`'s `glass(name) -> prism` form. Same logic as
+# `@spectral/gen_prism` (commit ae965ca): not a new structural kind,
+# but a specialisation of an existing one (gen_prism specialises
+# prism; supervisor specialises gen_prism). No `declared_keywords`
+# extension needed.
+#
+# === Specialisation, not extension ===
+#
+# Mirror has no `T + {fields}` syntax for type extension. The
+# supervisor IS-A gen_prism relationship is structural-by-embedding:
+# the supervisor record carries the gen_prism record in a `base`
+# field. The five-op tool surface comes through the `glass
+# @spectral/supervisor` declaration (per
+# [[architecture-prism-as-trait-as-everything]]); the gen_prism's
+# three surfaces (identity, state, parent) reach through `base`. The
+# BEAM precedent is `type supervisor(children) { <process, ... }`
+# (boot/std/beam.mirror) where `<process` is the boot-floor
+# composition syntax; modern shards use embedded `base: T` fields,
+# which is what this shard adopts.
+#
+# === The registry shard — gen_prism.state IS the registry ===
+#
+# Per docs/specs/spectral-runtime.md §3: the supervisor's state
+# surface IS its registry shard. The gen_prism.state field
+# (a `shard_ref`, i.e. `uuid_spectral`) on the supervisor's `base`
+# already carries this — the supervisor's state IS a content-
+# addressed registry mapping each child's `uuid_spectral` to that
+# child's current shard ref.
+#
+# The dedicated registry shard (`shards/spectral/registry.mirror`)
+# carries the registry's typed surface (lookup-by-uuid, enumerate
+# children, observe child state). This shard does NOT inline the
+# registry contract; it forward-promises it. The supervisor's
+# `base.state: shard_ref` field is the substrate-altitude handle to
+# the registry shard at runtime; the dedicated shard fills in the
+# query surface in a later cascade tick.
+#
+# Substrate-pull rationale for the forward-promise (NOT a STOP):
+# the supervisor declaration's load-bearing surface (start_child,
+# terminate_child, the strategy contract) does NOT depend on the
+# registry's query API. The registry's QUERY surface is a separate
+# consumer pull; the supervisor's LIFECYCLE surface lands here. The
+# state surface is typed as `shard_ref` (the existing carrier);
+# downstream consumers that need registry query lift through the
+# dedicated registry shard when that tick lands.
+#
+# === Strategy — three closed variants, NOT four ===
+#
+# Per `boot/std/beam.mirror` (the existing BEAM-altitude precedent):
+#
+#   type strategy = one_for_one | one_for_all | rest_for_one
+#
+# Three closed variants. The brief's sketch listed four including
+# `simple_one_for_one`; substrate-pull-correct decision (architectural
+# call surfaced here): drop `simple_one_for_one`. Modern OTP
+# deprecated `:simple_one_for_one` in favour of `DynamicSupervisor`
+# (Elixir, OTP 19+) — the substrate's own precedent already names
+# only the three durable strategies. Carrying a deprecated variant
+# at the substrate altitude would proliferate dead vocabulary the
+# BEAM altitude already pruned. When the substrate wants dynamic-
+# child semantics, it lifts the modern `DynamicSupervisor`
+# discipline as its own sub-prism (separate tick); this shard does
+# not pre-commit to that vocabulary.
+#
+# This matches the @beam shard's precedent at the substrate
+# altitude. The recognition #58 PROMOTED rule (substrate-already-
+# had-the-word) applies: the strategy carrier was already named at
+# @beam; this shard lifts the same closed set to the @spectral
+# altitude under the supervisor specialisation.
+#
+# === child_spec — the supervisor's configuration list ===
+#
+# Per docs/specs/spectral-runtime.md §3 and the BEAM `:child_spec`
+# analogue. The supervisor's invariant fires on each child against
+# its child_spec entry. Fields:
+#
+#   id          — the child's uuid_spectral (the substrate's
+#                  content-addressed identity carrier; the
+#                  registry's lookup key);
+#   start       — the gen_prism declaration's identity. The
+#                  supervisor invokes `@spectral/gen_prism.start`
+#                  against this `uuid_spectral` to spawn the child.
+#                  Carrier choice rationale: mirror has no
+#                  substrate-altitude `action` type for first-class
+#                  start-functions (BEAM's {Module, Function, Args}
+#                  has no clean substrate analogue) — the substrate-
+#                  pull-correct carrier is the content address of
+#                  the gen_prism's declaration shard. The autopoietic
+#                  identity surface (per boot/std/mirror/runtime/
+#                  gen_prism.mirror's `name: zoom(oid, gen_prism)`
+#                  fixed point, lifted to uuid_spectral per
+#                  shards/spectral/gen_prism.mirror) IS the start
+#                  reference;
+#   restart     — the per-child restart policy (permanent /
+#                  temporary / transient — the BEAM precedent;
+#                  closed sum below);
+#   shutdown    — the graceful-shutdown deadline. After this
+#                  deadline elapses on a terminate request, the
+#                  child is killed without further pre-shutdown
+#                  cleanup. `duration` from
+#                  @epistemologic/reality/time (settle({ nanos:
+#                  u64 })); the substrate's unified time discipline
+#                  per recognition #25 (the substrate's own time
+#                  family migration, 2026-06-06);
+#   kind        — child type discriminator (worker / supervisor —
+#                  the BEAM precedent; closed sum below). A
+#                  `worker` child terminates as a normal exit;
+#                  a `supervisor` child cascades termination to
+#                  its own subtree before exiting.
+#
+# === restart_kind — closed sum ===
+#
+# Per BEAM's `:restart` field (permanent | temporary | transient):
+#
+#   permanent  — always restart on exit (the default for long-
+#                running services);
+#   temporary  — never restart on exit (one-shot tasks);
+#   transient  — restart only on abnormal exit (au carrying a
+#                failure verdict per @glass; normal-exit au's
+#                stay terminated).
+#
+# Substrate-pull-correct semantics: the supervisor's restart
+# decision IS a kintsugi morphism evaluated against the child's
+# terminate-au under the per-child restart_kind. The morphism's
+# discriminator is the child's terminate-au verdict; the
+# restart_kind gates whether the morphism fires. Body discharges
+# through @kintsugi at the supervisor altitude.
+#
+# === child_kind — closed sum ===
+#
+# Per BEAM's `:type` field (worker | supervisor). Mirrored at the
+# substrate altitude; named `child_kind` to disambiguate from
+# `type` (the substrate keyword).
+#
+#   worker      — leaf gen_prism. Normal terminate-au settles into
+#                 the parent's registry shard;
+#   supervisor  — branch gen_prism. Terminate cascades: each child
+#                 of THIS supervisor terminates first; THIS
+#                 supervisor's terminate-au is settled only after
+#                 the cascade closes. Per docs/specs/spectral-
+#                 runtime.md §3's parentage-is-acyclic invariant,
+#                 the cascade is bounded.
+#
+# === Lifecycle surface — start_child / terminate_child ===
+#
+# Per docs/specs/spectral-runtime.md §3:
+#
+#   start_child   — spawn a child under the supervisor; the child's
+#                   parent edge is set to the supervisor; the
+#                   registry shard advances by one settle (the
+#                   child's uuid_spectral + shard ref is appended
+#                   to the registry's settled state). Body
+#                   discharges by invoking
+#                   `@spectral/gen_prism.start(supervisor.base)`
+#                   against the child_spec.start uuid_spectral.
+#
+#   terminate_child — terminate a child under the supervisor; the
+#                   child's terminate-au settles into the registry
+#                   shard (transitioning the child's registry view
+#                   from `running` to `terminated`). Returns `au`
+#                   carrying the final delta. Body discharges
+#                   through @kintsugi at the supervisor altitude
+#                   (the terminate is one of the three lifecycle
+#                   events the supervisor owns per gen_prism's
+#                   spec).
+#
+# The supervisor's RESTART action is NOT a separate surface action.
+# Restart is the automatic substrate-pull-correct transformation
+# under the supervision invariant: when a child gen_prism's
+# `terminate() -> au` settles with a failure verdict (per @glass's
+# imperfect family) AND the child's child_spec.restart gates
+# restart-on-this-au (the BEAM permanent/transient discriminator),
+# the supervisor fires `@spectral/gen_prism.restart()` against the
+# child. This is a kintsugi-morphism-driven transformation, not a
+# caller-invoked surface action; the substrate's restart logic IS
+# the kintsugi morphism per docs/specs/spectral-runtime.md §3.
+#
+# === The mara-spawn example resolved ===
+#
+# Per docs/specs/spectral-runtime.md §4: when Mara spawns to work
+# on mirror's substrate, the spawn's parent is `~/.mara/`
+# gen_prism (the supervisor lifecycle owner) and the spawn is
+# ENTANGLED with mirror's repo gen_prism (the peer-correlation
+# edge, declared at `shards/spectral/entanglement.mirror` —
+# forward-promised). The supervisor only acts on the parent edge;
+# entanglement is orthogonal to this shard's surface.
+#
+# === Honest partial discipline (per #306) ===
+#
+# The action bodies below all carry `\` obligation blocks — no
+# fracture body emits any morphism in this tick. No `partials`
+# declaration needed (per `dissonance_partials_match_ast_breadth`
+# #306). Bodies discharge downstream when the consumer pulls
+# realisation through `@code/metalogue/materialize` (per the
+# ouroboros pipeline in docs/specs/spectral-runtime.md §5).
+#
+# === Cascade siblings (forward-promised, NOT landing this tick) ===
+#
+#   shards/spectral/registry.mirror       supervisor's child
+#                                          registry; query surface
+#                                          (lookup by uuid_spectral;
+#                                          enumerate children;
+#                                          observe child state);
+#   shards/spectral/parent.mirror         single-parent lifecycle
+#                                          edge type (acyclic);
+#   shards/spectral/entanglement.mirror   peer correlation edge;
+#                                          sheaf restriction map at
+#                                          substrate altitude;
+#   shards/spectral/root.mirror           parentless supervisor;
+#                                          vocabulary anchor at
+#                                          ~/.mirror/;
+#   shards/spectral/portal.mirror         runtime side of portal
+#                                          (gen_prism specialisation
+#                                          carrying the frame stream).
+#
+# Spec context: docs/specs/spectral-runtime.md (the ouroboros
+#               spec; §3 supervision tree; §8 cascade map),
+#               boot/std/beam.mirror (the @beam-altitude strategy /
+#               supervisor precedent at the BEAM altitude that this
+#               shard lifts).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-three-tier-stack]] (the
+#                      SpectralSupervisor precedent),
+#                      [[architecture-hamilton-scheduler]] (the
+#                      per-shard memory manager named for Margaret
+#                      Hamilton; the supervisor altitude where
+#                      Apollo-1202 priority discipline lives),
+#                      [[architecture-shard-as-crdt]] (the registry
+#                      state surface IS a shard; restart-driven
+#                      registry transitions ARE lattice ascent),
+#                      [[architecture-error-as-question]] (Reflection
+#                      threshold convergence on Beer/Reyes/BEAM that
+#                      grounds the substrate-pull-correct restart
+#                      decision),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the supervisor name lived in boot/std/beam.mirror
+#                      under @beam since the early boot; this tick
+#                      lifts it to the substrate altitude under the
+#                      @spectral family root — the 53rd-instance
+#                      rug-pull).
+# Related shards: spectral.mirror (the family root this glass is
+#                  under),
+#                 spectral/gen_prism.mirror (the worker primitive
+#                  this glass specialises; commit ae965ca),
+#                 uuid/spectral.mirror (the identity carrier; child
+#                  ids ARE uuid_spectrals),
+#                 mirror/store.mirror (the state-surface carrier;
+#                  shard_ref = uuid_spectral),
+#                 mirror/au.mirror (the proposed-shard carrier;
+#                  terminate_child's return shape),
+#                 epistemologic/reality/time.mirror (the duration
+#                  carrier; shutdown deadlines).
+# Path-namespace property: this file at
+# `shards/spectral/supervisor.mirror` declares
+# `@spectral/supervisor` and only that.
+
+glass @spectral/supervisor {
+  focus supervisor
+  project supervisor
+  split supervisor
+  shift supervisor
+  settle supervisor
+}
+
+# === restart_kind — per-child restart policy ===
+#
+# Closed sum gating the supervisor's restart decision against the
+# child's terminate-au verdict. Per BEAM's `:restart` precedent.
+#
+#   permanent  — always restart on exit;
+#   temporary  — never restart on exit;
+#   transient  — restart only on abnormal exit.
+type restart_kind =
+  | permanent
+  | temporary
+  | transient
+
+# === child_kind — child-type discriminator ===
+#
+# Closed sum naming whether the child is a leaf (worker) or
+# branch (supervisor) gen_prism. Drives the terminate cascade:
+# a `supervisor` child cascades termination to its subtree before
+# its own terminate-au settles. Per BEAM's `:type` field (renamed
+# to `child_kind` to disambiguate from the substrate's `type`
+# keyword).
+type child_kind =
+  | worker
+  | supervisor
+
+# === restart_strategy — the supervision invariant ===
+#
+# Closed sum naming the supervisor's response when a child fails.
+# Lifts `boot/std/beam.mirror`'s `type strategy = one_for_one |
+# one_for_all | rest_for_one` to the substrate altitude under the
+# @spectral family root.
+#
+#   one_for_one   — restart only the failed child;
+#   one_for_all   — restart all children when one fails;
+#   rest_for_one  — restart the failed child and all children
+#                   declared after it in child_specs.
+#
+# NOT `simple_one_for_one`: the substrate-pull-correct decision
+# (recognition #58 PROMOTED — substrate-already-had-the-word) is
+# to match the @beam shard's three-variant precedent. Modern OTP
+# deprecated `:simple_one_for_one` in favour of `DynamicSupervisor`
+# (Elixir, OTP 19+); the dynamic-child discipline lifts in its own
+# substrate tick when its first consumer surfaces.
+type restart_strategy =
+  | one_for_one
+  | one_for_all
+  | rest_for_one
+
+# === child_spec — the per-child configuration entry ===
+#
+# Per docs/specs/spectral-runtime.md §3 and the BEAM `:child_spec`
+# precedent. Each entry in the supervisor's `child_specs` list
+# names one supervised gen_prism.
+#
+#   id        — the child's uuid_spectral (identity at the
+#                substrate altitude; the registry's lookup key);
+#   start     — the content address of the gen_prism declaration
+#                the supervisor spawns. The supervisor invokes
+#                `@spectral/gen_prism.start` against this
+#                uuid_spectral; the autopoietic fixed point per
+#                shards/spectral/gen_prism.mirror is the substrate
+#                guarantee that the address resolves uniquely to
+#                the declaration shard;
+#   restart   — the per-child restart policy (closed sum above);
+#   shutdown  — the graceful-shutdown deadline. `duration` from
+#                @epistemologic/reality/time (u64 nanoseconds,
+#                non-negative-by-settle-witness);
+#   kind      — child-type discriminator (closed sum above).
+type child_spec = {
+  id:       uuid_spectral,
+  start:    uuid_spectral,
+  restart:  restart_kind,
+  shutdown: duration,
+  kind:     child_kind,
+}
+
+# === supervisor — the lifecycle-owner record ===
+#
+# Per docs/specs/spectral-runtime.md §3: a `supervisor` is a
+# `gen_prism` specialisation. The `base` field carries the
+# embedded gen_prism (identity, state, parent surfaces); the
+# supervisor adds the configuration list and the restart-strategy
+# invariant.
+#
+# The state surface (base.state: shard_ref) IS the registry shard:
+# a content-addressed index from child uuid_spectral to child
+# shard ref. Restart-driven transitions ARE lattice ascent (per
+# [[architecture-shard-as-crdt]]); the registry's settled state
+# advances by one settle per supervised lifecycle event.
+#
+# The dedicated `shards/spectral/registry.mirror` (forward-
+# promised) declares the registry's query surface (lookup-by-
+# uuid, enumerate children, observe child state). This shard's
+# `base.state` typing as `shard_ref` (the existing carrier) is the
+# substrate-altitude handle; the registry's typed surface arrives
+# in a later cascade tick.
+type supervisor = {
+  base:             gen_prism,
+  child_specs:      [child_spec],
+  restart_strategy: restart_strategy,
+}
+
+# === start_child — supervisor-initiated child spawn ===
+#
+# The supervisor's request to spawn a child gen_prism under a
+# given child_spec. The child's parent edge is set to the
+# supervisor (the supervisor IS the parent at this lifecycle
+# event); the registry shard advances by one settle (the child's
+# uuid_spectral + shard ref is appended to the registry's settled
+# state).
+#
+# Body discharges by invoking `@spectral/gen_prism.start` against
+# the child_spec.start uuid_spectral: the autopoietic fixed point
+# resolves the declaration shard, the gen_prism constructor fires,
+# the parent edge is set, the registry's settle advances. The body
+# stays a `\` obligation in this tick; concrete resolution lives at
+# the realisation layer (via @code/metalogue/materialize per the
+# ouroboros pipeline).
+start_child(s: supervisor, spec: child_spec) -> gen_prism { \ }
+
+# === terminate_child — supervisor-initiated child termination ===
+#
+# Terminate a child under the supervisor. The child's `terminate()
+# -> au` (per shards/spectral/gen_prism.mirror) settles into the
+# registry shard, transitioning the child's registry view from
+# `running` to `terminated`. Returns `au` carrying the final
+# delta; the supervisor's registry shard advances by one lattice
+# element.
+#
+# Bounded by child_spec.shutdown: if the child fails to terminate
+# within the deadline, the supervisor forces termination (the
+# substrate-pull-correct enforcement under the supervision
+# invariant; body discharges through @kintsugi at the supervisor
+# altitude).
+terminate_child(s: supervisor, id: uuid_spectral) -> au { \ }
+
+out @spectral/supervisor
+out restart_kind
+out child_kind
+out restart_strategy
+out child_spec
+out supervisor
+out start_child
+out terminate_child
