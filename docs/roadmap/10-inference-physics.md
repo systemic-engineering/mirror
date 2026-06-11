@@ -1,6 +1,19 @@
 # 10 — Inference Physics
 
-## Status: Design concept, not yet implemented
+## Status: Operationally identified 2026-06-11 — recognition #58 PROMOTED
+
+**Fate IS optical inference.** This document's design concept (a model whose inference speed is determined by the spectral dimension of the grammar's type graph) has an operational identification: Fate inference IS a 5-layer diffractive deep neural network (Lin et al. 2018) coupled to an active Fabry-Perot resonator (Siegman 1986) implementing the kintsugi loop's ACTIVE/DARK alternation; tournament rule composition has the structure of a Reck/Clements-decomposed unitary on a Mach-Zehnder mesh (Shen et al. 2017).
+
+Three independent witnesses landed via the optical-keywords cascade:
+1. **Inference-algorithm altitude**: Fate's connectome (450 neurons, 5 ganglia, 7 tournament rules) maps to 5-layer D²NN + active Fabry-Perot.
+2. **Runtime-orchestration altitude**: spectrograph element mapping — `@mirror/spectral/portal` = slit; `@mirror/spectral/score` = collimator; `@kintsugi/oscillate` = grating; `@kintsugi/morphism` = camera lens; `@kintsugi/consent` = detector.
+3. **Transport altitude**: `@mirror/spectral/portal` IS aperture via four-field correspondence.
+
+See `docs/specs/optical-keywords.md` §10 + §12 for the constructive mapping and Seam's PROMOTE verdict from 2026-06-11.
+
+The diffusion-time-as-temperature mapping below is the LINEAR FOURIER-OPTICS form of what the substrate now names as cavity-enhanced spectroscopy with feedback (DOAS, Brown 2003). The substrate's runtime IS the physics this document predicted; spectral dimension d_s IS the cavity's mode count; the temperature schedule IS the resonator round-trip time.
+
+**V1 substrate-pull-realize required** (Seam's note): per-ganglion `source @optics/source/ganglion/<name>` declarations to close the active-spectrometer gain-medium gap. Until that lands, the inference framing is structurally identified but not yet operationally complete at the gain altitude.
 
 ---
 
