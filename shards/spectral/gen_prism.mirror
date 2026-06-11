@@ -1,0 +1,314 @@
+in @prism
+in @glass
+in @meta
+in @spectral
+in @uuid/spectral
+in @mirror/store
+in @mirror/au
+
+# @spectral/gen_prism — the worker primitive.
+#
+# THE FIRST SUB-SHARD of the @spectral runtime cascade. Lifts the
+# 2026-05-11 informal naming in `boot/std/spectral/portal.mirror`
+# (where `gen_prism` was first used as a substrate keyword) and the
+# 2026-06-01 boot-altitude declaration at
+# `boot/std/mirror/runtime/gen_prism.mirror` (where `type gen_prism`
+# carried the autopoietic self-reference shape) to the substrate
+# altitude under the @spectral family root.
+#
+# Per docs/specs/spectral-runtime.md §2 (2026-06-10, Mara): gen_prism
+# is the substrate's `gen_server` analogue (BEAM/OTP). A gen_prism
+# carries three surfaces — identity, state, tool surface — and a
+# lifecycle contract owned by its parent supervisor. The five-op
+# block IS the tool surface (the wire protocol); external callers
+# (other gen_prisms, the supervisor, MCP-mounted readers) speak to
+# a gen_prism through its five-op surface. There is no out-of-band
+# API.
+#
+# === The keyword decision ===
+#
+# `glass` per recognition #46 (path-syntax property; promoted) and
+# `shards/spectral.mirror`'s discipline section: "@spectral
+# sub-shards at depth >= 1 use `glass`; the family root itself uses
+# `prism` per the depth-0 discipline."
+#
+# Why NOT a new substrate keyword (like the eight optical schematic
+# keywords declared in `shards/optics.mirror` at tick 6443e6e):
+# the optical keywords declared NEW STRUCTURAL KINDS (facet, stage,
+# aperture, splitter, resonator, bench, source, detector) — each
+# names a passive composition primitive of physical optics. The
+# gen_prism is NOT a new structural kind; it IS a sub-prism
+# specialisation (the BEAM gen_server analogue), which is exactly
+# what `glass` declares (per `shards/glass.mirror`'s `glass(name)
+# -> prism` form). Adding a `gen_prism` keyword would proliferate
+# discriminators that the substrate's existing `glass` keyword
+# already covers.
+#
+# The relationship to the optical keywords (per recognition #58
+# PROMOTED): a `gen_prism` spawned inside a `bench` IS one of the
+# optical elements (source / facet / detector / etc.) at runtime —
+# its five-op tool surface IS the element's apertures; its
+# start/restart/terminate lifecycle IS the resonator round-trip.
+# The optical keyword names what the element IS structurally (at
+# declaration time); `gen_prism` names what it IS operationally
+# (at runtime). NOT competing keywords; SAME substrate-altitude
+# object viewed from different sides.
+#
+# === Identity — uuid_spectral ===
+#
+# Per docs/specs/spectral-runtime.md §2 and
+# `shards/uuid/spectral.mirror`:
+#
+#   - the ACTIVE 48 bits (quantized SpectralCoordinate<5>) place the
+#     gen_prism in the substrate's spectral manifold for routing
+#     (Fate's mycelial routing reads through this);
+#   - the DARK 80 bits identify the process for entanglement, parent
+#     edges, and registry lookup (BLAKE3-truncated content hash).
+#
+# The autopoietic claim from
+# `boot/std/mirror/runtime/gen_prism.mirror`'s `name:
+# zoom(oid, gen_prism)` fixed-point construction lifts here through
+# `uuid_spectral`'s content-addressed identity surface: the
+# gen_prism's identity IS the content address of its own declaration
+# under itself, expressed at the spectral altitude via
+# `uuid_spectral`'s dark portion. The Banach contraction on hash
+# space (Soto-Andrade & Varela 1984) guarantees the fixed point.
+#
+# === State surface — shard_ref ===
+#
+# Per docs/specs/spectral-runtime.md §2 and
+# `shards/mirror/store.mirror`: the gen_prism's observable state IS
+# the shard's content. State changes IS a settle into a new shard
+# (uuid_spectral-addressed; the lattice ascent per
+# [[architecture-shard-as-crdt]]). The runtime NEVER carries opaque
+# in-memory state outside the shard; every observable transition is
+# store-visible.
+#
+# `shard_ref` (declared at `@mirror/store`) is the typed handle:
+# `type shard_ref = uuid_spectral`. The gen_prism's `state` field
+# carries a `shard_ref`; resolution to the underlying shard happens
+# through `@mirror/store.read`.
+#
+# === Tool surface — the five-op block ===
+#
+# Per docs/specs/spectral-runtime.md §2 (the runtime-altitude
+# reading of the five operations):
+#
+#   focus    λ₀ projection: what is this gen_prism's ground-state
+#            shard? (the canonical observable state)
+#   project  which subspace of the state surface is observable to
+#            the caller? (caller-relative projection of the shard)
+#   split    orthogonal decomposition of current state across child
+#            gen_prisms (the supervisor's `split` IS its registry
+#            walk)
+#   shift    basis transformation: same content, different altitude
+#            (e.g. an @io boundary view of a @code/rust state shard)
+#   settle   measurement collapse: drive any pending `au` into a new
+#            shard through the property chain; the state surface
+#            advances by one lattice element
+#
+# The five operations at runtime altitude collapse to the same
+# algebra `prism` carries at every altitude (per
+# [[architecture-prism-as-trait-as-everything]]); the runtime
+# reading is the operational interpretation per
+# [[architecture-operations-as-linear-algebra]].
+#
+# === Lifecycle — start / terminate / restart ===
+#
+# Per docs/specs/spectral-runtime.md §3: every gen_prism has
+# exactly one parent. The parent edge is the lifecycle edge: the
+# parent owns the child's birth, restart, and death. The
+# parent-edge class is acyclic across the substrate. The root
+# supervisor (parentless) is the vocabulary anchor at ~/.mirror/.
+#
+# `start(parent: gen_prism) -> gen_prism` — the parent's request
+# to spawn a child; the child's parent edge is set at this call.
+# `terminate() -> au` — the gen_prism's exit; produces an `au`
+# (proposed-but-not-yet-settled state per `@mirror/au`) carrying
+# the final state delta; the supervisor settles it into the
+# parent's registry shard.
+# `restart() -> gen_prism` — supervisor-initiated re-spawn; the
+# new gen_prism shares identity (same uuid_spectral) but advances
+# the tick counter on its lifecycle ledger.
+#
+# Per docs/specs/spectral-runtime.md §3: the supervisor's
+# restart-strategy contract is a kintsugi morphism. When a child
+# fails, the restart decision is the substrate-pull-correct
+# transformation under the supervision invariant. The bodies
+# discharge through @kintsugi at the supervisor altitude
+# (forward-promised; `shards/spectral/supervisor.mirror`).
+#
+# === Recursion: gen_prism is closed under composition ===
+#
+# Per docs/specs/spectral-runtime.md §2: a gen_prism is recursive.
+# Its state surface MAY itself be a supervisor's registry shard,
+# and the gen_prism IS a supervisor. The vocabulary is the same at
+# every depth; the algebra is closed. `supervisor` (forward-promised
+# at `shards/spectral/supervisor.mirror`) is a gen_prism
+# specialisation; same surface, restart-strategy invariant on the
+# registry shard.
+#
+# === Cascade siblings (forward-promised, NOT landing this tick) ===
+#
+#   shards/spectral/supervisor.mirror     gen_prism specialisation;
+#                                          child_spec, restart strategy,
+#                                          registry contract
+#   shards/spectral/parent.mirror         single-parent lifecycle edge
+#                                          type (acyclic)
+#   shards/spectral/entanglement.mirror   peer correlation edge; sheaf
+#                                          restriction map at substrate
+#                                          altitude
+#   shards/spectral/registry.mirror       supervisor's child registry;
+#                                          query surface
+#   shards/spectral/root.mirror           parentless supervisor;
+#                                          vocabulary anchor at
+#                                          ~/.mirror/
+#   shards/spectral/portal.mirror         runtime side of portal
+#                                          (gen_prism specialisation
+#                                          carrying the frame stream)
+#
+# This tick lands the FLOOR (gen_prism); siblings land as the
+# cascade pulls each one (per the substrate-pull discipline:
+# property surfaces opacity, the next consumer pulls the closure).
+#
+# === Honest partial discipline (per #306) ===
+#
+# The action bodies below all carry `\` obligation blocks — no
+# fracture body emits any morphism in this tick. No `partials`
+# declaration needed (per `dissonance_partials_match_ast_breadth`
+# #306). Bodies discharge downstream when the consumer pulls
+# realisation through `@code/metalogue/materialize` (per the
+# ouroboros pipeline in docs/specs/spectral-runtime.md §5).
+#
+# Spec context: docs/specs/spectral-runtime.md (the ouroboros
+#               spec; §2 gen_prism shape; §3 supervision tree;
+#               §8 cascade map).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-three-tier-stack]] (the
+#                      SpectralSupervisor precedent),
+#                      [[architecture-hamilton-scheduler]] (the
+#                      per-shard memory manager; gen_prism is the
+#                      shard-supervised worker),
+#                      [[architecture-shard-as-crdt]] (the state
+#                      surface IS a shard; state changes ARE
+#                      lattice ascent),
+#                      [[architecture-operations-as-linear-algebra]]
+#                      (the runtime reading of the five ops),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the gen_prism name lived in
+#                      boot/std/spectral/portal.mirror since
+#                      2026-05-11; this tick names the parent at the
+#                      substrate altitude).
+# Related shards: spectral.mirror (the family root this glass is
+#                  under),
+#                 uuid/spectral.mirror (the identity carrier;
+#                  uuid_spectral active+dark structure),
+#                 mirror/store.mirror (the state-surface carrier;
+#                  shard_ref = uuid_spectral),
+#                 mirror/au.mirror (the proposed-shard carrier;
+#                  terminate's return shape),
+#                 mirror/spectral/portal.mirror (the form-side
+#                  declaration of portal-as-gen_prism per the
+#                  26th-instance recognition),
+#                 optics.mirror (the schematic-altitude vocabulary
+#                  a gen_prism instantiates when spawned inside a
+#                  bench per recognition #58).
+# Realisation reference: boot/std/mirror/runtime/gen_prism.mirror
+#                  (the boot-floor declaration; this shard lifts
+#                  the substrate-altitude reading; the boot floor
+#                  is retained as a transitional placeholder during
+#                  consumer-pull migration through
+#                  @code/metalogue/materialize).
+# Path-namespace property: this file at
+# `shards/spectral/gen_prism.mirror` declares
+# `@spectral/gen_prism` and only that.
+
+glass @spectral/gen_prism {
+  focus gen_prism
+  project gen_prism
+  split gen_prism
+  shift gen_prism
+  settle gen_prism
+}
+
+# === gen_prism — the worker record ===
+#
+# Three surfaces:
+#   identity — `uuid_spectral`; both halves load-bearing (active 48
+#              bits for routing; dark 80 bits for parentage,
+#              entanglement, registry lookup);
+#   state    — `shard_ref`; the gen_prism's observable state
+#              resolves through @mirror/store.read; state changes
+#              ARE settles into a new shard (the lattice ascent);
+#   parent   — `uuid_spectral`; the lifecycle owner. Every gen_prism
+#              has exactly one parent; the parent edge is acyclic
+#              at this edge class (per
+#              docs/specs/spectral-runtime.md §3). The root
+#              supervisor's parent field IS its own identity (the
+#              parentless top of the supervision tree).
+#
+# The tool surface (the five-op block above) is NOT a record field;
+# it IS the wire protocol the type exposes by virtue of being a
+# `glass @spectral/gen_prism` declaration. Per
+# [[architecture-prism-as-trait-as-everything]]: a glass declaration
+# IS the trait the carrier implements; the five operations are
+# accessible on any value of this type.
+type gen_prism = {
+  identity: uuid_spectral,
+  state:    shard_ref,
+  parent:   uuid_spectral,
+}
+
+# === start — supervisor-initiated spawn ===
+#
+# The parent's request to spawn a child gen_prism. The child's
+# parent edge is set at this call (per
+# docs/specs/spectral-runtime.md §3). The returned `gen_prism`
+# carries a fresh identity derived from the autopoietic fixed
+# point on the parent's registry shard plus the initial state
+# shard.
+#
+# Per the BEAM analogue: this is `Supervisor.start_child/2`. The
+# supervisor's restart-strategy invariant gates which children
+# may be started; the body discharges downstream at
+# `shards/spectral/supervisor.mirror`.
+start(parent: gen_prism) -> gen_prism { \ }
+
+# === terminate — exit, return final delta as au ===
+#
+# The gen_prism's exit. Produces an `au` (proposed-but-not-yet-
+# settled state per `@mirror/au`) carrying the final state delta.
+# The supervisor settles the `au` into the parent's registry shard
+# (lattice ascent); the registry's view of the child transitions
+# from `running` to `terminated` content-addressed at the new
+# registry shard.
+#
+# Per docs/specs/spectral-runtime.md §3: terminate is one of the
+# three lifecycle events the parent owns (start / restart /
+# terminate). The `au` return is the substrate's invariant: every
+# observable transition produces a settle-able proposed shard;
+# nothing is lost into opaque in-memory state.
+terminate() -> au { \ }
+
+# === restart — supervisor-initiated re-spawn ===
+#
+# The supervisor's restart decision (the kintsugi morphism per
+# docs/specs/spectral-runtime.md §3) re-spawns the gen_prism. The
+# new gen_prism shares identity (same `uuid_spectral`) — the
+# autopoietic fixed point on hash space is invariant under
+# restart — but advances the tick counter on its lifecycle ledger
+# (recorded in the parent's registry shard).
+#
+# Per the BEAM analogue: this is the supervisor's automatic
+# restart-on-failure path. The body discharges through @kintsugi
+# at the supervisor altitude (the restart decision IS a kintsugi
+# morphism evaluated at the supervisor's eigenboard context
+# slice).
+restart() -> gen_prism { \ }
+
+out @spectral/gen_prism
+out gen_prism
+out start
+out terminate
+out restart
