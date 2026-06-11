@@ -1,0 +1,499 @@
+in @prism
+in @glass
+in @meta
+in @spectral
+in @spectral/gen_prism
+in @uuid/spectral
+in @mirror/store
+in @mirror/au
+in @mirror/spectral/portal
+
+# @spectral/portal — the runtime side of portal.
+#
+# THE SEVENTH SUB-SHARD of the @spectral runtime cascade. Sibling of
+# `shards/spectral/gen_prism.mirror` (commit ae965ca, the worker
+# primitive this glass specialises), `shards/spectral/supervisor.mirror`
+# (commit 452ccb2, the first gen_prism specialisation; same
+# `base: gen_prism` embedding discipline), `shards/spectral/registry.mirror`
+# (commit 489211e, the supervisor's typed child index),
+# `shards/spectral/parent.mirror` (commit 9d905a2, the lifecycle edge
+# class one of the gen_prism's three surfaces realises),
+# `shards/spectral/root.mirror` (commit f145e48, the parentless
+# supervisor specialisation; second `base: gen_prism` specialisation
+# precedent through `base: supervisor`), and
+# `shards/spectral/entanglement.mirror` (commit eeffde8, the
+# orthogonal peer-correlation edge class whose form/runtime kinship
+# precedent THIS shard demonstrates a SECOND instance of within the
+# same cascade).
+#
+# Per docs/specs/spectral-runtime.md §8 cascade map and §1 (the
+# three-altitude split): `@spectral/portal` is the LIVE PROCESS
+# realising what `@mirror/spectral/portal` (T18; the form-side shape
+# at commit 6d57ab4) DECLARES. The form side is bytes-in-the-store
+# at every tick (the shape declaration; the four-carrier `(socket,
+# subspace, frame, actor)` record; the `project_eigenvalue` typed
+# contract); the runtime side is the process-in-the-world that
+# carries that shape through its open->frame->close lifecycle. Same
+# Bateson logical-type partition as @mirror/@kintsugi at one altitude
+# lifted (the orchestra altitude).
+#
+# === The form/process kinship — SECOND INSTANCE within this cascade ===
+#
+# Per recognition #55 ([[architecture-form-process-partition-at-family-root]],
+# candidate): the form/process partition at the family-root altitude
+# names @mirror as form-side observation and @spectral as process-side
+# transformation. This tick lifts the same partition at the
+# ORCHESTRA altitude: `@mirror/spectral/portal` IS the form-side
+# declaration (shape of portal coordination — the four typed
+# carriers, the eigenvalue projection contract); `@spectral/portal`
+# IS the process-side realisation (the live gen_prism carrying the
+# frame stream through process boundaries). Same structural object;
+# two altitudes; explicit kinship.
+#
+# This is the SECOND such instance within the @spectral runtime
+# cascade. The first was at `shards/spectral/entanglement.mirror`
+# (eeffde8 line 33-63): the math-altitude `restriction` primitive at
+# `@epistemologic/math/sheaf_laplacian` lifted to the runtime-altitude
+# `restriction_map` over uuid_spectral endpoints. The SAME structural
+# pattern — declared shape at one altitude, realised process at
+# another altitude, explicit kinship between them — surfaces again
+# at the portal altitude with the form-side `@mirror/spectral/portal`
+# shape and the runtime-side `@spectral/portal` process.
+#
+# CANDIDATE RECOGNITION (worth marking; provisionally #61 pending
+# Pack ratification): when the substrate's form/process partition
+# operates at a single cascade's interior altitudes, the SAME
+# cascade exhibits MULTIPLE form/runtime kinship pairs. The pattern
+# is not unique to the @spectral/@mirror family-root cut; it
+# RECURS within @spectral itself at each sub-shard altitude where
+# a sibling form-side declaration already exists at @mirror/spectral.
+# Two instances in seven sub-shards is sufficient to call the
+# pattern recurrent; the next instance arrives when score/voice/
+# section/audition/conductor (the remaining @mirror/spectral
+# species) gain runtime-side @spectral counterparts. The cascade
+# is the substrate's typed instantiation of the form/process
+# distinction at the orchestra altitude.
+#
+# === The keyword decision ===
+#
+# `glass` per recognition #46 (path-syntax property; promoted) and
+# `shards/spectral.mirror`'s discipline section: "@spectral
+# sub-shards at depth >= 1 use `glass`; the family root itself uses
+# `prism` per the depth-0 discipline."
+#
+# Why NOT a new substrate keyword: portal is a sub-prism
+# specialisation of gen_prism — the autopoietic actor the form-side
+# `actor: shift(oid, gen_prism)` field already named — and `glass`
+# already names that relationship per `shards/glass.mirror`'s
+# `glass(name) -> prism` form. Same logic as `@spectral/gen_prism`
+# (ae965ca), `@spectral/supervisor` (452ccb2), `@spectral/root`
+# (f145e48): not a new structural kind, but a specialisation of
+# gen_prism through structural embedding (`base: gen_prism`).
+#
+# === Specialisation, not extension — the embedding discipline ===
+#
+# Mirror has no `T + {fields}` syntax for type extension. The
+# portal IS-A gen_prism relationship is structural-by-embedding:
+# the portal record carries the gen_prism record in a `base` field.
+# The five-op tool surface comes through the `glass @spectral/portal`
+# declaration (per [[architecture-prism-as-trait-as-everything]]);
+# the gen_prism's three surfaces (identity, state, parent) reach
+# through `base`. The portal adds TWO fields beyond the gen_prism:
+# the `shape` ref naming the form-side declaration this runtime
+# realises, and the `frame_stream` shard_ref carrying the eigenvalue
+# stream's content-addressed identity at the runtime altitude.
+#
+# Same discipline as supervisor (452ccb2: `base: gen_prism` +
+# `child_specs` + `restart_strategy`) and root (f145e48:
+# `base: supervisor` + `anchor`). Portal: `base: gen_prism` +
+# `shape` + `frame_stream`.
+#
+# === The shape ref — the form/runtime kinship at the typed altitude ===
+#
+# The `shape` field is a `ref` to the form-side `@mirror/spectral/
+# portal` declaration this runtime realises. The substrate's
+# content-addressed `ref` carrier names the declaration shard
+# whose OID the form-side `@mirror/spectral/portal` resolves to.
+# Two portals running the same declared shape share their `shape`
+# byte-equal; two portals running different shapes (e.g., one
+# carrying a different eigenvalue projection contract) have
+# distinct `shape` refs.
+#
+# The kinship is structural: the runtime side's `shape: ref`
+# resolves through @mirror/store.read to the form-side declaration's
+# shard; the resolution returns the four-carrier `(socket, subspace,
+# frame, actor)` shape and the `project_eigenvalue(stream: beam) ->
+# beam` typed contract. At runtime, the live process's gen_prism
+# base IS the form-side `actor: shift(oid, gen_prism)` field
+# resolved to a concrete process; the live process's frame_stream
+# carries the form-side's eigenvalue projection at the wire altitude.
+#
+# Why `ref` (bare) and not `shift(oid, @mirror/spectral/portal)`:
+# the substrate's `ref` is the content-addressed carrier at the
+# runtime altitude. The form-side uses `shift(oid, T)` for the
+# typed-capability-plus-content-address primitive that flows over
+# the wire (the 26th-instance recognition); the runtime altitude's
+# `shape` reads the form-side declaration locally without
+# wire-altitude capability typing — same content-address, different
+# carrier discipline. Same pattern as root.anchor: a bare `ref` to
+# the host-level substrate home, not a `shift(oid, host)`.
+#
+# === The frame_stream shard_ref — runtime-altitude eigenvalue stream ===
+#
+# The `frame_stream` field is a `shard_ref` carrying the eigenvalue
+# stream's content-addressed identity at the runtime altitude. Each
+# bidirectional frame the open portal exchanges advances the
+# frame_stream shard_ref by one settle (the lattice ascent per
+# [[architecture-shard-as-crdt]]): the new shard's content carries
+# the appended frame's eigenvalue projection.
+#
+# This is the runtime-side realisation of the form-side's
+# `project_eigenvalue(stream: beam) -> beam` contract. The form
+# side declares the TYPED CONTRACT (refs in, eigenvalues out, bare
+# beam carrier); the runtime side declares the OPERATIONAL CARRIER
+# (a shard_ref into @mirror/store; each frame extends the shard;
+# the eigenvalue stream IS the byte-equal sequence at the shard's
+# settled content). Two portals running the same form-side shape
+# may carry distinct frame_stream refs — distinct realisations of
+# the same projection contract.
+#
+# No NEW substrate primitive needed (STOP-condition 2 resolved):
+# `shard_ref` (`@mirror/store`, `type shard_ref = uuid_spectral`) is
+# the existing carrier. The stream's typed beam shape lives at the
+# form-side wire altitude; the runtime altitude carries only the
+# content-addressed handle. The bounded-iteration discipline (per
+# `@epistemologic/property/halts` from the form side's disjunction)
+# IS structural: the runtime portal closes when autopoietic
+# settlement OR compute_bound exhaustion fires, both decidable.
+#
+# === Lifecycle surface — open_portal / send_frame / close_portal ===
+#
+# Three load-bearing actions on the runtime portal. The substrate's
+# question discipline (per [[architecture-error-as-question]]):
+# `send_frame` and `close_portal` return `au` (the proposed-shard
+# carrier), because both produce observable state transitions the
+# parent supervisor settles into the registry shard. `open_portal`
+# returns a fresh `portal` (the spawn surface, same discipline as
+# `gen_prism.start` returning a fresh gen_prism per ae965ca).
+#
+#   open_portal(shape: ref) -> portal
+#     Spawn a new runtime portal realising the given form-side
+#     declaration. The portal's base gen_prism is constructed through
+#     the autopoietic fixed point per shards/spectral/gen_prism.mirror
+#     (the dark 80 bits of uuid_spectral identify the process; the
+#     active 48 bits place it in the substrate's spectral manifold
+#     for routing); the frame_stream is initialised to an empty
+#     shard_ref (the null lattice element). Body discharges by
+#     resolving the shape ref through @mirror/store.read, composing
+#     the four-carrier form-side record into the base gen_prism's
+#     initial state, and registering the parent edge to the caller's
+#     supervisor. Stays a `\` obligation in this tick.
+#
+#   send_frame(p: portal, frame: ref) -> au
+#     Advance the portal's frame_stream by one bidirectional frame.
+#     The frame ref names a content-addressed frame shard (the
+#     @fragmentation/frame at the form-side wire altitude); the
+#     runtime advances the frame_stream shard_ref by one settle
+#     (the new shard's content appends the frame's eigenvalue
+#     projection). Returns `au` carrying the proposed transition;
+#     the supervisor settles it into the registry shard. Body
+#     discharges by reading the frame ref through @mirror/store.read,
+#     projecting through the form-side's project_eigenvalue contract,
+#     and emitting the au with the new frame_stream shard_ref.
+#     Stays a `\` obligation in this tick.
+#
+#   close_portal(p: portal) -> au
+#     Autopoietic close. Per the form-side's halts disjunction:
+#     EITHER Reflection picks `settle(self)` (the actor's Lawvere
+#     fixed point is reached; the gen_prism crystallizes a final
+#     state) OR the host shard's `compute_bound.max_reductions`
+#     exhausts (the substrate forces termination; partial state
+#     crystallizes). Both paths terminate by construction
+#     (sub-Turing language). Returns `au` carrying the final state
+#     delta; the parent supervisor settles it into the registry
+#     shard (the registry's view of the portal transitions from
+#     `running` to `terminated`). Body discharges through @kintsugi
+#     at the runtime altitude (close decision IS a kintsugi morphism
+#     evaluated at the portal's eigenboard context slice). Stays a
+#     `\` obligation in this tick.
+#
+# === Connection to SCM_RIGHTS handoff (T20, forward-promised) ===
+#
+# T20 (`SCM_RIGHTS` pipe handoff at CLI pipe boundary; task #263)
+# lands the OS-layer realisation: the substrate's `shift(oid, T)`
+# triple from the form side flows over the wire without
+# re-serialisation. This shard's `send_frame` discharges the
+# runtime-altitude side of that handoff: the frame ref's content
+# survives the SCM_RIGHTS transfer because the receiving end
+# resolves the same OID through its local @mirror/store. The
+# runtime portal does NOT need a new substrate primitive for the
+# SCM_RIGHTS handoff (STOP-condition 3 resolved); the existing
+# `ref` and `shard_ref` carriers compose the handoff at the
+# runtime altitude. T20's substrate work lands at the @code/io/cli
+# pipe-boundary integration, not at this shard.
+#
+# === Honest partial discipline (per #306) ===
+#
+# The action bodies below all carry `\` obligation blocks — no
+# fracture body emits any morphism in this tick. No `partials`
+# declaration needed (per `dissonance_partials_match_ast_breadth`
+# #306). Bodies discharge downstream when the consumer pulls
+# realisation through `@code/metalogue/materialize` (per the
+# ouroboros pipeline in docs/specs/spectral-runtime.md §5).
+#
+# === Cascade siblings (forward-promised, NOT landing this tick) ===
+#
+#   shards/spectral/db.mirror             graph database engine; the
+#                                          existing parentless ghost
+#                                          (#198) GAINS @spectral
+#                                          parent here; closed-engine
+#                                          query surface on top of
+#                                          the open @mirror/store
+#                                          foundation.
+#   shards/spectral/garden.mirror         vetted-corpus distribution;
+#                                          existing parentless ghost
+#                                          (#118) gains @spectral
+#                                          parent when it lands.
+#
+# Conditional bilateral pairs (substrate-pull candidates, NOT
+# landing this tick): portal_well_formed (shape ref resolves to a
+# valid @mirror/spectral/portal declaration; the form/runtime
+# kinship enforced at the type level) and frame_stream_monotone
+# (frame_stream shard_ref ascent is lattice-ascending; no rewinds).
+# Forward-promised because (a) the type declaration this tick lands
+# is the FLOOR; (b) the bilateral pattern instance has the standard
+# one-tick-per-pair load-bearing weight; (c) neither invariant is
+# lifecycle-load-bearing at this tick (no supervisor acts on them;
+# no runtime broken by a partial-resolution shape or a non-monotone
+# stream — the verdict surface picks up the opacity downstream).
+#
+# Spec context: docs/specs/spectral-runtime.md (the ouroboros
+#               spec; §1 three-altitude split where the form/process
+#               partition at the orchestra altitude lives; §8
+#               cascade map naming this shard as the runtime side of
+#               portal),
+#               shards/mirror/spectral/portal.mirror (the form-side
+#               shape this runtime realises; the four-carrier
+#               (socket, subspace, frame, actor) declaration; the
+#               project_eigenvalue typed contract; the 26th-instance
+#               recognition of shift(oid, T) as typed-capability
+#               primitive).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-form-process-partition-at-family-root]]
+#                      (recognition #55; the form/process partition
+#                      lifted to the orchestra altitude; this shard
+#                      is the SECOND instance within the @spectral
+#                      cascade after entanglement's restriction_map
+#                      lift; candidate #61 — recurrence of the
+#                      form/runtime kinship at sub-shard altitudes
+#                      within one cascade — provisionally numbered),
+#                      [[architecture-shard-as-crdt]] (the
+#                      frame_stream's lattice ascent; each frame
+#                      advances the shard_ref by one settle; the
+#                      content-addressed shard discipline guarantees
+#                      bounded ascent),
+#                      [[architecture-error-as-question]] (the
+#                      au-returning send_frame / close_portal
+#                      surface the supervisor settles; the verdict
+#                      surface picks up opacities downstream),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the rug-pull pattern: `shift(oid,
+#                      gen_prism)` was already named at the form
+#                      side's `actor` field on 2026-05-11; this tick
+#                      lifts the same named primitive as the runtime
+#                      altitude's `base: gen_prism` embedding — the
+#                      57th instance of the pattern, the second
+#                      instance whose substrate-altitude lift is
+#                      over a RUNTIME-PROCESS subject within the
+#                      same cascade after gen_prism's ae965ca).
+# Related shards: spectral.mirror (the family root this glass is
+#                  under; cascade map names this shard at line 233-236),
+#                 spectral/gen_prism.mirror (the worker primitive
+#                  this glass specialises through `base: gen_prism`
+#                  embedding; commit ae965ca),
+#                 spectral/supervisor.mirror (the first gen_prism
+#                  specialisation; same embedding discipline this
+#                  shard adopts; commit 452ccb2),
+#                 spectral/registry.mirror (the supervisor's typed
+#                  child index; the parent supervisor's registry
+#                  shard settles this portal's lifecycle events;
+#                  commit 489211e),
+#                 spectral/parent.mirror (the lifecycle edge class
+#                  the embedded gen_prism's parent field realises;
+#                  commit 9d905a2),
+#                 spectral/root.mirror (the parentless supervisor;
+#                  the substrate's home portal opens beneath the
+#                  root at ~/.mirror/; commit f145e48),
+#                 spectral/entanglement.mirror (the orthogonal
+#                  edge class; portals MAY be entangled with peer
+#                  portals when the orchestra spans more than one
+#                  local shard; the FIRST instance of the
+#                  form/runtime kinship within this cascade — its
+#                  restriction_map lifts the math-altitude
+#                  restriction primitive; commit eeffde8),
+#                 uuid/spectral.mirror (the identity carrier; the
+#                  portal's base.identity is a uuid_spectral; both
+#                  halves load-bearing — active 48 bits for routing,
+#                  dark 80 bits for parentage and entanglement),
+#                 mirror/store.mirror (the state-surface carrier;
+#                  base.state and frame_stream are both shard_ref),
+#                 mirror/au.mirror (the proposed-shard carrier;
+#                  send_frame's and close_portal's return shape),
+#                 mirror/spectral/portal.mirror (the form-side
+#                  declaration this runtime realises; the kinship
+#                  pair this shard names at the runtime altitude;
+#                  commit 6d57ab4 T18).
+# Realisation reference: boot/std/spectral/portal.mirror (the
+#                  boot-floor declaration with full wire-protocol
+#                  bodies — handshake, codec, stream; the runtime
+#                  altitude defers to the form-side typed contract
+#                  for the wire's altitude bodies; consumer-pull
+#                  migrations from `in @spectral/portal` at the boot
+#                  altitude to `in @mirror/spectral/portal` or
+#                  `in @spectral/portal` at the substrate altitude
+#                  land tick-by-tick as wire-protocol substrate gaps
+#                  close).
+# Path-namespace property: this file at
+# `shards/spectral/portal.mirror` declares
+# `@spectral/portal` and only that.
+
+glass @spectral/portal {
+  focus portal
+  project portal
+  split portal
+  shift portal
+  settle portal
+}
+
+# === portal — the runtime-side portal record ===
+#
+# Per docs/specs/spectral-runtime.md §1 and §8 cascade map: a
+# runtime `portal` is a `gen_prism` specialisation. The `base` field
+# carries the embedded gen_prism (identity, state, parent surfaces);
+# the portal adds two fields naming what the runtime realises (the
+# form-side shape declaration) and how the eigenvalue stream is
+# carried at runtime (the content-addressed frame stream).
+#
+# Three surfaces composed:
+#
+#   base         — the embedded gen_prism. base.identity carries
+#                   the portal's uuid_spectral (active 48 bits for
+#                   Fate's mycelial routing; dark 80 bits for
+#                   parentage, entanglement, and registry lookup).
+#                   base.state is a shard_ref into @mirror/store
+#                   carrying the portal's observable state at the
+#                   gen_prism altitude. base.parent is the
+#                   supervisor that owns this portal's lifecycle
+#                   (start / restart / terminate fire under the
+#                   parent's restart-strategy invariant).
+#   shape        — a ref to the form-side @mirror/spectral/portal
+#                   declaration this runtime realises. The kinship
+#                   between the form-side declared shape and the
+#                   runtime-side process. Resolves through
+#                   @mirror/store.read to the four-carrier (socket,
+#                   subspace, frame, actor) form-side record and
+#                   the project_eigenvalue typed contract. Two
+#                   portals running the same shape share shape
+#                   byte-equal; distinct shapes signal distinct
+#                   wire contracts.
+#   frame_stream — a shard_ref into @mirror/store carrying the
+#                   eigenvalue stream's content-addressed identity
+#                   at the runtime altitude. Each bidirectional
+#                   frame advances frame_stream by one settle (the
+#                   lattice ascent per [[architecture-shard-as-crdt]]);
+#                   the stream's per-frame eigenvalue projection is
+#                   the form-side's project_eigenvalue contract
+#                   discharged at runtime. Initialised to an empty
+#                   shard_ref by open_portal; advances monotonically
+#                   per send_frame; crystallized by close_portal.
+type portal = {
+  base:         gen_prism,
+  shape:        ref,
+  frame_stream: shard_ref,
+}
+
+# === open_portal — spawn a runtime portal realising a shape ===
+#
+# Spawn a new runtime portal realising the given form-side
+# @mirror/spectral/portal declaration. The constructor:
+#
+#   1. Resolves the shape ref through @mirror/store.read to the
+#      form-side declaration (the four-carrier record + the
+#      project_eigenvalue typed contract).
+#   2. Constructs the base gen_prism through the autopoietic fixed
+#      point (per shards/spectral/gen_prism.mirror): the dark 80
+#      bits of uuid_spectral identify this portal as a process; the
+#      active 48 bits place it in the substrate's spectral manifold
+#      for Fate's mycelial routing; the state surface is initialised
+#      to the form-side declaration's initial state composition.
+#   3. Sets the base.parent edge to the caller's supervisor (the
+#      portal's lifecycle owner).
+#   4. Initialises the frame_stream to an empty shard_ref (the null
+#      lattice element; the next send_frame advances by one settle).
+#
+# Body discharges through @code/metalogue/materialize per the
+# ouroboros pipeline. Stays a `\` obligation in this tick;
+# realisation lives at the form-side declaration's resolution and
+# the gen_prism constructor's autopoietic fixed-point evaluation.
+open_portal(shape: ref) -> portal { \ }
+
+# === send_frame — advance the frame_stream by one bidirectional frame ===
+#
+# Advance the portal's frame_stream by one bidirectional frame. The
+# frame ref names a content-addressed frame shard (the
+# @fragmentation/frame at the form-side wire altitude); the runtime
+# advances frame_stream by one settle (the new shard's content
+# appends the frame's eigenvalue projection per the form-side's
+# project_eigenvalue contract).
+#
+# Returns `au` (proposed-but-not-yet-settled state per @mirror/au)
+# carrying the proposed transition. The parent supervisor settles
+# the au into the registry shard (lattice ascent per
+# [[architecture-shard-as-crdt]]); the registry's view of the
+# portal's frame_stream advances by one settle. The substrate's
+# question discipline (per [[architecture-error-as-question]]):
+# observable state transitions ride the au verdict surface; opacity
+# in the frame's eigenvalue projection picks up at the supervisor's
+# settle, not at this action.
+#
+# Body discharges by reading the frame ref through
+# @mirror/store.read, projecting through the form-side's
+# project_eigenvalue contract, and emitting the au with the new
+# frame_stream shard_ref. Stays a `\` obligation in this tick.
+send_frame(p: portal, frame: ref) -> au { \ }
+
+# === close_portal — autopoietic termination ===
+#
+# Close the portal. Per the form-side's halts disjunction (per
+# @epistemologic/property/halts at the form altitude): BOTH paths
+# terminate by construction (the language is sub-Turing).
+#
+#   (a) settlement — Reflection picks `settle(self)`; the base
+#       gen_prism's autopoietic actor reaches its Lawvere fixed
+#       point; the portal crystallizes a final state shard; the
+#       wire closes cleanly.
+#   (b) budget exhaustion — the host shard's
+#       `compute_bound.max_reductions` exhausts; the substrate
+#       forces termination; the partial state crystallizes; the
+#       wire closes with a structured-reason payload at the
+#       frame_stream's final shard.
+#
+# Returns `au` carrying the final state delta. The parent supervisor
+# settles the au into the registry shard; the registry's view of
+# the portal transitions from `running` to `terminated`. The base
+# gen_prism's lifecycle ledger advances by one tick (recorded in
+# the parent's registry shard).
+#
+# Body discharges through @kintsugi at the runtime altitude (the
+# close decision IS a kintsugi morphism evaluated at the portal's
+# eigenboard context slice; the morphism reads the halts
+# disjunction and emits the substrate-pull-correct close path).
+# Stays a `\` obligation in this tick.
+close_portal(p: portal) -> au { \ }
+
+out @spectral/portal
+out portal
+out open_portal
+out send_frame
+out close_portal
