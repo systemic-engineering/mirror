@@ -1,0 +1,477 @@
+in @prism
+in @glass
+in @meta
+in @spectral
+in @spectral/gen_prism
+in @spectral/supervisor
+in @uuid/spectral
+in @mirror/store
+
+# @spectral/registry — the supervisor's typed child index.
+#
+# THE THIRD SUB-SHARD of the @spectral runtime cascade. Sibling of
+# `shards/spectral/gen_prism.mirror` (commit ae965ca, the worker
+# primitive) and `shards/spectral/supervisor.mirror` (commit 452ccb2,
+# the lifecycle-owner specialisation whose `base.state: shard_ref`
+# field is the substrate-altitude HANDLE to the registry shard).
+# This tick lifts the registry's typed QUERY SURFACE to the substrate
+# altitude.
+#
+# Per docs/specs/spectral-runtime.md §3 (2026-06-10, Mara): the
+# supervisor's state surface IS the registry shard — a content-
+# addressed index from child `uuid_spectral` to child `shard_ref`.
+# The supervisor's invariant fires on each child against this index;
+# restart-driven transitions ARE lattice ascent against the
+# registry's settled state (per
+# [[architecture-shard-as-crdt]]).
+#
+# === The forward-promise this tick closes ===
+#
+# `shards/spectral/supervisor.mirror` (commit 452ccb2) declared:
+#
+#   "The dedicated registry shard (`shards/spectral/registry.mirror`)
+#    carries the registry's typed surface (lookup-by-uuid, enumerate
+#    children, observe child state). This shard does NOT inline the
+#    registry contract; it forward-promises it. The supervisor's
+#    `base.state: shard_ref` field is the substrate-altitude handle
+#    to the registry shard at runtime; the dedicated shard fills in
+#    the query surface in a later cascade tick."
+#
+# That tick is this tick. The supervisor's lifecycle surface
+# (start_child / terminate_child) does NOT depend on the registry's
+# query surface; the substrate-pull cascade pulled lifecycle first,
+# query surface second. The supervisor's `base.state: shard_ref`
+# stays as it is — this shard is the typed surface OVER that handle.
+#
+# === The keyword decision ===
+#
+# `glass` per recognition #46 (path-syntax property; promoted) and
+# `shards/spectral.mirror`'s discipline section: "@spectral
+# sub-shards at depth >= 1 use `glass`; the family root itself uses
+# `prism` per the depth-0 discipline."
+#
+# Why NOT a new substrate keyword: registry is a sub-prism
+# specialisation of the supervisor's state surface — the BEAM
+# `Registry` analogue — and `glass` already names that relationship
+# per `shards/glass.mirror`'s `glass(name) -> prism` form. Same
+# reasoning as gen_prism (ae965ca) and supervisor (452ccb2): not a
+# new structural kind, but a typed surface OVER an existing carrier
+# (the supervisor's `base.state: shard_ref`).
+#
+# === The registry shape — base + entries ===
+#
+# The supervisor's `base.state` IS the registry shard at runtime;
+# the dedicated registry declaration lifts that runtime fact to a
+# typed substrate record. The record carries the `shard_ref` handle
+# (the substrate-altitude pointer to the supervisor's state shard
+# at @mirror/store) and the entry list (the typed index that
+# resolves through the handle).
+#
+#   base    — `shard_ref`. The supervisor's state surface. The same
+#              carrier the supervisor's `base.state` field carries
+#              (per shards/spectral/supervisor.mirror's `type
+#              supervisor = { base: gen_prism, ... }` with
+#              `base.state: shard_ref` resolving through gen_prism's
+#              embedded state surface). Substrate-pull rationale: NO
+#              second handle. The registry IS the state surface; the
+#              substrate's load-bearing identity for the registry IS
+#              the supervisor's state shard_ref. Two carriers for the
+#              same thing would proliferate identity.
+#
+#   entries — `[registry_entry]`. The typed index. One entry per
+#              currently-registered child. Mutated under the
+#              supervisor's restart-strategy invariant; observable
+#              through the registry's five-op block.
+#
+# === The entry shape ===
+#
+#   id     — the child's `uuid_spectral`. Both halves load-bearing
+#              per shards/spectral/gen_prism.mirror's identity
+#              surface: the ACTIVE 48 bits place the gen_prism in
+#              the substrate's spectral manifold (Fate's mycelial
+#              routing reads through); the DARK 80 bits carry
+#              identity (the lookup key). `lookup` discriminates on
+#              byte-equality of the dark portion.
+#
+#   child  — the child `gen_prism` handle. NOT a `uuid_spectral`
+#              alone: the registry's load-bearing entry is the full
+#              child record (identity + state + parent), because the
+#              registry's observable surface IS lookup-and-observe.
+#              A consumer that calls `lookup(r, id)` and recovers a
+#              `gen_prism` can then call the gen_prism's five-op
+#              surface against the recovered handle — that's the
+#              query-then-observe pattern the registry exists to
+#              serve. A consumer that wants ONLY the uuid_spectral
+#              recovers `child.identity` from the returned gen_prism.
+#
+# === The :via field — surfaced but NOT landed ===
+#
+# BEAM's registered-name pattern (`:via` tuple lookup against a
+# `Registry` process; modern Elixir's `{:via, Registry, ...}`) is
+# an optimisation layer OVER the uuid_spectral-keyed registry — a
+# secondary lookup mechanism for callers that hold a human-named
+# handle rather than a substrate-content-addressed identity. The
+# brief sketch listed a `via: ref` field on `registry_entry`.
+#
+# Substrate-pull-correct decision (STOP-condition 3 surfaced and
+# resolved here): the substrate does NOT have a `registered_name`
+# type distinct from `uuid_spectral`. The substrate's identity
+# discipline is content-addressed all the way down (per
+# [[feedback-no-bare-types]], [[feedback-no-stringly-types]]); a
+# secondary `ref`-typed name field on every entry would either be
+# (a) bare `ref` (stringly), or (b) a typed `registered_name`
+# carrier that does not yet exist. Both routes are wrong: (a)
+# violates substrate type discipline; (b) introduces a carrier
+# without a substrate-altitude declaration of what it IS.
+#
+# This tick DROPS the `via` field. If the substrate later needs
+# named-handle lookup (e.g., for a CLI's `mirror sup show NAME`
+# command, or a debugger that wants to attach by name), that lift
+# happens at a separate sub-prism — `@spectral/registry/via` or
+# `@spectral/name` — where the typed registered-name carrier gains
+# its own declaration alongside a `lookup_by_name` surface. The
+# present registry contract is the CORE substrate surface (per
+# docs/specs/spectral-runtime.md §4: insert / remove / lookup /
+# list against uuid_spectral); BEAM's `:via` is the optimisation,
+# not the contract.
+#
+# Per docs/specs/spectral-runtime.md §3 (the substrate's restart
+# invariant): the supervisor's restart logic ONLY needs the
+# uuid_spectral-keyed index — the dark 80 bits identify the
+# process for parentage, restart, and lookup. The named-handle
+# concern is downstream of substrate.
+#
+# === The query surface — insert / remove / lookup / list ===
+#
+# Per docs/specs/spectral-runtime.md §4 (registry has insert /
+# remove / query / list contracts) lifted to the substrate-pull-
+# correct vocabulary:
+#
+#   insert(r, e) -> registry
+#     Append a `registry_entry` to the registry. Returns a NEW
+#     registry — registry is a value record; the supervisor's state
+#     surface advances by one settle (the registry's settled state
+#     advances by one lattice element per
+#     [[architecture-shard-as-crdt]]). Body discharges by composing
+#     the entry into the registry's settled state shard at
+#     @mirror/store.
+#
+#     Why NOT mutate in place: the substrate has no in-place
+#     mutation discipline; the registry IS a content-addressed
+#     shard at every observable transition (per gen_prism's
+#     substrate-pull contract: every observable transition is
+#     store-visible).
+#
+#   remove(r, id) -> registry
+#     Drop the entry with `entry.id == id`. Returns a NEW registry.
+#     If no entry matches, returns `r` unchanged (the substrate's
+#     idempotent-on-miss discipline; remove-of-absent is a no-op).
+#     Body discharges by composing the registry's settled state
+#     shard at @mirror/store minus the dropped entry.
+#
+#     Substrate-pull rationale for the unchanged-on-miss return
+#     (not `imperfect`): the registry's CORRECTNESS does not depend
+#     on the entry having existed pre-call — the postcondition is
+#     "entry with id is not in r". A miss satisfies the
+#     postcondition without ceremony. Compare with `lookup` below,
+#     where the absence IS the substrate-altitude question.
+#
+#   lookup(r, id) -> imperfect
+#     Discriminate on byte-equality of the dark 80 bits per
+#     uuid_spectral's identity_signal (shards/uuid/spectral.mirror).
+#     The substrate's three-state outcome carrier per @glass:
+#
+#       success(gen_prism) — entry exists; gen_prism handle returned.
+#       partial(...)        — entry partially observable (e.g., the
+#                              registry shard is mid-settle; the
+#                              entry's gen_prism record references
+#                              a not-yet-fetched state shard at
+#                              @mirror/store). opacity_map names
+#                              the unsettled portion; kintsugi
+#                              re-reads to drive the partial to
+#                              success.
+#       failure(reason)     — entry not in registry. The substrate's
+#                              standard "not found" with reason
+#                              carrier per @glass.
+#
+#     Why `imperfect` and not a bare `gen_prism`: the registry's
+#     lookup is the QUESTION the supervisor's invariant asks of its
+#     state. A bare `gen_prism` return forces the caller to invent
+#     an absent-handle (null-equivalent), which violates the
+#     substrate's three-state discipline. `imperfect` carries the
+#     question's verdict at the type level.
+#
+#   list(r) -> [registry_entry]
+#     Enumerate the registry's entries. Returns the entire entry
+#     list (the supervisor's view of "who am I supervising right
+#     now"). Body discharges by reading the registry's settled
+#     state shard at @mirror/store and projecting the entry list.
+#
+#     Why NOT a streaming/paginated surface: the substrate's
+#     query discipline is set-at-once. The supervisor's child set
+#     is bounded by the parent gen_prism's child_specs list (per
+#     shards/spectral/supervisor.mirror); a supervisor with
+#     unboundedly-many children is itself a substrate anomaly the
+#     Hamilton-scheduler discipline catches at a higher altitude
+#     (per [[architecture-hamilton-scheduler]] — Apollo-1202
+#     priority discharge). The list surface returns the entire
+#     set; downstream consumers paginate at their boundary.
+#
+# The list ordering is the registry shard's settled order (per
+# [[architecture-shard-as-crdt]]: children sorted by content; the
+# CRDT discipline guarantees deterministic ordering across
+# observation points).
+#
+# === Sheaf reading: NOT here, it's at entanglement ===
+#
+# Per docs/specs/spectral-runtime.md §4 and
+# [[Eigenboard is a sheaf]]: the cellular-sheaf restriction map
+# structure lives at the ENTANGLEMENT edge class, not the
+# registry. Entanglement is the peer-correlation edge (orthogonal
+# to parentage; polyadic; cyclic permitted); the registry is the
+# typed CHILD INDEX (parentage-side; one parent per child; acyclic).
+#
+# Architectural note (NOT a STOP, but a surface): the registry
+# COULD be read as a degenerate sheaf — each entry IS a
+# restriction map from the supervisor's state to the child's state
+# along the parentage edge. That reading is consistent with
+# [[Eigenboard is a sheaf]]'s cellular-sheaf framing but NOT
+# load-bearing at this tick. The substrate's sheaf surface lives
+# at `shards/spectral/entanglement.mirror` (forward-promised). The
+# registry's typed surface stays at the index discipline.
+#
+# === Honest partial discipline (per #306) ===
+#
+# The action bodies below all carry `\` obligation blocks — no
+# fracture body emits any morphism in this tick. No `partials`
+# declaration needed (per `dissonance_partials_match_ast_breadth`
+# #306). Bodies discharge downstream when the consumer pulls
+# realisation through `@code/metalogue/materialize` (per the
+# ouroboros pipeline in docs/specs/spectral-runtime.md §5).
+#
+# === Cascade siblings (forward-promised, NOT landing this tick) ===
+#
+#   shards/spectral/parent.mirror         single-parent lifecycle
+#                                          edge type (acyclic).
+#                                          STOP-condition 2/4: the
+#                                          acyclic invariant wants
+#                                          its own property/fracture
+#                                          bilateral pair
+#                                          (analogous to
+#                                          `keyword_matches_depth`
+#                                          per
+#                                          [[architecture-property-fracture-bilateral]]).
+#                                          That's a separate
+#                                          bilateral instance, not a
+#                                          simple type declaration;
+#                                          it lands as its own tick;
+#   shards/spectral/entanglement.mirror   peer correlation edge;
+#                                          sheaf restriction map at
+#                                          substrate altitude
+#                                          (cellular sheaf per
+#                                          [[Eigenboard is a sheaf]]);
+#   shards/spectral/root.mirror           parentless supervisor;
+#                                          vocabulary anchor at
+#                                          ~/.mirror/;
+#   shards/spectral/portal.mirror         runtime side of portal
+#                                          (gen_prism specialisation
+#                                          carrying the frame stream).
+#
+# Spec context: docs/specs/spectral-runtime.md (the ouroboros
+#               spec; §3 supervision tree — supervisor's state IS
+#               registry; §4 entanglement graph — sheaf reading
+#               lives at entanglement, NOT registry; §8 cascade
+#               map).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-three-tier-stack]] (the
+#                      SpectralSupervisor precedent; the registry
+#                      is the supervisor's typed query surface),
+#                      [[architecture-shard-as-crdt]] (the registry
+#                      state surface IS a shard; insert / remove
+#                      ARE lattice ascent),
+#                      [[architecture-operations-as-linear-algebra]]
+#                      (the runtime reading of the five ops the
+#                      glass declaration carries),
+#                      [[Eigenboard is a sheaf]] (the architectural
+#                      surface: registry is the parentage-edge
+#                      index; sheaf restriction maps live at
+#                      entanglement; degenerate sheaf reading of
+#                      the registry surfaced but not load-bearing),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the registry name lived in the
+#                      SpectralSupervisor memory and the
+#                      docs/specs/spectral-runtime.md §3/§4 spec
+#                      since the supervisor's lift; this tick names
+#                      the parent at the substrate altitude — the
+#                      54th-instance rug-pull),
+#                      [[feedback-no-bare-types]] (the `via` field's
+#                      typed-name discipline rationale; bare `ref`
+#                      stringly violates substrate type-floor).
+# Related shards: spectral.mirror (the family root this glass is
+#                  under),
+#                 spectral/gen_prism.mirror (the worker primitive
+#                  the registry indexes; commit ae965ca; the entry
+#                  child field carries this type),
+#                 spectral/supervisor.mirror (the lifecycle-owner
+#                  whose base.state IS the registry shard; commit
+#                  452ccb2; this shard fills in supervisor's
+#                  forward-promise),
+#                 uuid/spectral.mirror (the identity carrier; the
+#                  registry's lookup key IS uuid_spectral; the
+#                  dark 80 bits discriminate),
+#                 mirror/store.mirror (the registry's state surface
+#                  carrier; shard_ref = uuid_spectral; the
+#                  supervisor's base.state resolves through
+#                  @mirror/store.read),
+#                 glass.mirror (the imperfect carrier for lookup's
+#                  three-state outcome).
+# Path-namespace property: this file at
+# `shards/spectral/registry.mirror` declares
+# `@spectral/registry` and only that.
+
+glass @spectral/registry {
+  focus registry
+  project registry
+  split registry
+  shift registry
+  settle registry
+}
+
+# === registry_entry — one supervised child ===
+#
+# Per docs/specs/spectral-runtime.md §3 — the supervisor's invariant
+# fires on each child against its entry. One entry per currently-
+# registered child.
+#
+#   id      — the child's uuid_spectral. The lookup key. Both halves
+#              load-bearing per shards/spectral/gen_prism.mirror's
+#              identity discipline. Discrimination is on byte-equality
+#              of the dark 80 bits (the identity_signal per
+#              shards/uuid/spectral.mirror).
+#   child   — the full gen_prism handle. The registry's load-bearing
+#              observable surface IS the recovered gen_prism record
+#              (identity + state + parent surfaces) — callers project
+#              child.state to read state, child.parent to read the
+#              lifecycle edge, child.identity to recover the
+#              uuid_spectral they queried with.
+#
+# NOT carried: a `via` field (the BEAM registered-name pattern). The
+# substrate has no typed `registered_name` carrier distinct from
+# uuid_spectral; adding one as bare `ref` would violate the substrate's
+# type-floor discipline. The named-handle concern lifts as a separate
+# sub-prism (`@spectral/registry/via` or `@spectral/name`) when its
+# first consumer surfaces.
+type registry_entry = {
+  id:    uuid_spectral,
+  child: gen_prism,
+}
+
+# === registry — the supervisor's typed child index ===
+#
+# Per docs/specs/spectral-runtime.md §3: the supervisor's state
+# surface IS this registry. The `base` field carries the supervisor's
+# state-shard handle (the same `shard_ref` the supervisor's
+# `base.state` field already names per
+# shards/spectral/supervisor.mirror); the `entries` field carries the
+# typed index that resolves through the handle.
+#
+#   base    — shard_ref. The supervisor's state surface. SAME
+#              carrier as supervisor.base.state; NO second identity.
+#   entries — [registry_entry]. The typed index. Mutated under the
+#              supervisor's restart-strategy invariant; insert /
+#              remove ARE lattice ascent against the registry shard
+#              at @mirror/store.
+#
+# The registry IS the substrate-altitude form of "who is this
+# supervisor supervising right now" — the typed view OVER the
+# settled state shard the supervisor carries as its observable
+# state.
+type registry = {
+  base:    shard_ref,
+  entries: [registry_entry],
+}
+
+# === insert — append an entry; advance the registry's state ===
+#
+# Append a `registry_entry` to the registry. Returns a NEW registry
+# whose settled state shard at @mirror/store advances by one lattice
+# element (per [[architecture-shard-as-crdt]]). The supervisor's
+# `base.state` advances accordingly; the supervisor's observable
+# state-shard transitions from the prior registry to the new one.
+#
+# Per the substrate's no-mutation discipline: every observable
+# transition produces a settled shard; the registry is content-
+# addressed at every step (the `base: shard_ref` after insert is a
+# different uuid_spectral from the pre-insert `base`).
+#
+# Body discharges by composing the entry into the registry's
+# settled state shard at @mirror/store and re-settling. The body
+# stays a `\` obligation in this tick; concrete resolution lives at
+# the realisation layer (via @code/metalogue/materialize per the
+# ouroboros pipeline).
+insert(r: registry, e: registry_entry) -> registry { \ }
+
+# === remove — drop the entry with a matching id ===
+#
+# Drop the entry whose `id` byte-equals the argument. Returns a NEW
+# registry. If no entry matches, returns `r` unchanged (the
+# substrate's idempotent-on-miss discipline; remove-of-absent is a
+# no-op satisfying the postcondition "entry with id is not in r").
+#
+# Body discharges by composing the registry's settled state shard
+# at @mirror/store minus the dropped entry and re-settling. The
+# body stays a `\` obligation in this tick.
+remove(r: registry, id: uuid_spectral) -> registry { \ }
+
+# === lookup — discriminate on the registry's three-state outcome ===
+#
+# Discriminate on byte-equality of the dark 80 bits per
+# uuid_spectral's identity_signal. The substrate's three-state
+# outcome carrier per @glass:
+#
+#   success(gen_prism) — entry exists; gen_prism handle returned.
+#   partial(...)        — entry partially observable (registry shard
+#                          mid-settle; opacity_map names the
+#                          unsettled portion; kintsugi re-reads).
+#   failure(reason)     — entry not in registry. Standard "not
+#                          found" with reason carrier per @glass.
+#
+# The substrate's QUESTION discipline: lookup is the supervisor's
+# invariant asking "does this child exist in my registry?" and the
+# answer is verdict-laden, not a bare reference. `imperfect`
+# carries the verdict at the type level (per
+# [[architecture-error-as-question]]: errors are questions
+# Reflection answers).
+#
+# Body discharges by reading the registry's settled state shard at
+# @mirror/store, discriminating on the dark 80 bits, lifting the
+# matching entry's `child` into success / partial / failure. Stays
+# a `\` obligation in this tick.
+lookup(r: registry, id: uuid_spectral) -> imperfect { \ }
+
+# === list — enumerate the registry's entries ===
+#
+# Returns the entire entry list — the supervisor's view of "who am I
+# supervising right now." The list ordering is the registry shard's
+# settled order (per [[architecture-shard-as-crdt]]: children sorted
+# by content; the CRDT discipline guarantees deterministic ordering
+# across observation points).
+#
+# Set-at-once, not paginated: the substrate's query discipline is
+# bounded set; the supervisor's child set is bounded by the parent
+# gen_prism's child_specs list. Downstream consumers paginate at
+# their boundary.
+#
+# Body discharges by reading the registry's settled state shard at
+# @mirror/store and projecting the entry list. Stays a `\`
+# obligation in this tick.
+list(r: registry) -> [registry_entry] { \ }
+
+out @spectral/registry
+out registry_entry
+out registry
+out insert
+out remove
+out lookup
+out list
