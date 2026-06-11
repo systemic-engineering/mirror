@@ -2089,7 +2089,211 @@ TO SUBSTRATE.
 
 ---
 
-## 15. References
+## 15. Symbol-altitude lift — the third altitude of bilateral pattern #53
+
+**Added 2026-06-11 by Mara.** This section documents the third
+altitude landing of bilateral pattern #53. Two shards landed alongside
+this amendment:
+
+- `shards/epistemologic/property/symbol_canonical_form.mirror`
+  (commit `95f4639`, the declarative property)
+- `shards/kintsugi/fracture/symbol_lift.mirror`
+  (commit `f083a55`, the operational fracture body)
+
+### 15.1 The three-altitude cascade
+
+The bilateral pattern (#53; promoted 2026-06-10) now lands at three
+altitudes. Each altitude declares its own property + fracture pair,
+sharing the same signature:
+
+| Altitude | Property | Fracture body | Status |
+| --- | --- | --- | --- |
+| 1: keyword | `keyword_matches_depth` | `@kintsugi/fracture/keyword` | landed 2026-06-10 (5e68df9 + d908798) |
+| 2: operator | `operator_matches_composition_primitive` | `@kintsugi/fracture/operator_match` | forward-promised (§14, 4b06ae2) |
+| 3: symbol | `symbol_canonical_form` | `@kintsugi/fracture/symbol_lift` | landed 2026-06-11 (95f4639 + f083a55) |
+
+Three altitudes, one pattern, graded lift per recognition #51 (mirror
+as expanding Hilbert space; promoted). The substrate's auto-formatter
+floor extends through each altitude as the recognition depth
+expands.
+
+### 15.2 Recognition candidate #59 — symbol-altitude witness
+
+Candidate #59 (kintsugi loop is altitude-portable; surfaced
+2026-06-11 at §14.7 of this spec) names the loop's altitude-
+portability: the SAME `@kintsugi/oscillate.pulse` reads opacity,
+emits morphism, applies under consent — at every altitude.
+
+#59's promotion gate: "two altitudes' worth of bilateral instances
+landed." Before this tick, the keyword altitude carried multiple
+instances; the operator altitude was forward-promised; the symbol
+altitude was unnamed. With this tick, the symbol altitude is
+landed as the SECOND altitude with substrate-residing bilateral
+instances (operator altitude remains forward-promised at §14).
+
+The brief's framing — "#59 gains its first operator/symbol-altitude
+witness" — is honored at the symbol altitude. The operator altitude
+witness lands when @kintsugi/fracture/operator_match substrate-pulls
+per §14's forward-promise.
+
+### 15.3 The multi-form symbol vocabulary table
+
+Engineer-typed ASCII forms auto-lift to canonical unicode at the
+substrate altitude. The table is parametric — additions extend the
+lookup, not the predicate's variant set:
+
+| Engineer types | Substrate stores | Notes |
+| --- | --- | --- |
+| `->` | `→` | serial propagation (the canonical bench-altitude arrow per §1) |
+| `\` | `λ` | lambda hole (matches Dhall / Haskell / Agda convention) |
+| `loop` | `⟲` | round-trip closure for resonators — Alex prefers `loop` over `(o)` for explicitness |
+| `_\|_` | `⊥` | bottom / unfilled hole at substrate altitude |
+| `0` (within inference context) | `void` | the void-document's λ₀ ground state — `void` is the substrate's own word; NOT `λ₀` |
+| `weighted` | `amplitudes` | splitter port distribution; physics-correct (Reck/Clements unitary), preserves phase + magnitude. Magnitude→amplitude conversion needed (intensity fractions → complex amplitudes). |
+
+`<=` is **not** in the table. It is already a substrate operator at
+the type altitude (implements relation per
+`[[architecture-prism-as-trait-as-everything]]`) and is distinct
+from any inheritance-symbol candidate. Future additions extend the
+table without changing the predicate's shape.
+
+### 15.4 Context-gating: `0 → void`
+
+The `0 → void` lift is context-gated. The property's
+`is_inference_context(site)` action distinguishes inference sites
+(bench / resonator / source / detector blocks per §1) from
+non-inference code where integer literal `0` stays literal. A bare
+`0` outside an inference context does NOT surface an opacity; the
+table lookup is gated by the inference-context predicate.
+
+Other table entries (`->`, `\`, `loop`, `_|_`, `weighted`) are NOT
+context-gated — they have no ambiguity with literal integer code and
+lift unconditionally where they appear as symbol tokens.
+
+The substrate is honest about the ambiguity; the resolution is
+structural (context), not heuristic.
+
+### 15.5 The `weighted → amplitudes` magnitude-to-amplitude conversion
+
+Most table entries are pure renames at the @meta/ast altitude: the
+splinter(ast) carries a token-replacement AST node whose content is
+byte-identical to the source modulo the swapped token.
+
+The `weighted → amplitudes` entry is **structurally different** — it
+is not a pure rename.
+
+**Engineer surface.**
+
+```
+weighted { p_0: 0.4, p_1: 0.6 }   // intensity fractions
+```
+
+**Canonical surface.**
+
+```
+amplitudes { a_0: √0.4 · e^{iφ_0}, a_1: √0.6 · e^{iφ_1} }
+// complex amplitudes; |a_i|² = p_i
+```
+
+The lift carries:
+
+- **Magnitude conversion**: `|a_i| = √p_i`. Intensity-to-amplitude
+  square root per Reck/Clements unitary. Physics-correct for
+  splitter port distribution: classical splitters quote intensity
+  fractions; the substrate stores complex amplitudes so the
+  squared-modulus recovers the fractions.
+- **Phase preservation**: `φ_i` defaults to 0 if the engineer did
+  not declare a phase. If the engineer typed
+  `weighted { p_0: 0.4 phase 0.25 }` the phase carries through; if
+  they omitted it, the canonical form sets `φ_0 = 0` explicitly
+  (the substrate is honest about the default rather than implicit).
+- **Sum constraint**: engineer-side `∑ p_i = 1` (probability
+  conservation); canonical-side `∑ |a_i|² = 1` (unitarity). The
+  two constraints are equivalent under the square-root lift; the
+  substrate's compiler verifies the canonical form satisfies
+  unitarity at the splinter(ast) altitude.
+
+The `splinter(ast)` at @meta/ast altitude carries the elaboration
+**as an AST rewrite** — the rewritten AST node is not byte-equal
+modulo the token; it is a fuller node where the magnitude field
+becomes a complex-amplitude pair. The substrate's compiler verifies
+the rewritten node is well-typed at @meta/ast; the splinter is
+content-addressed at the rewritten form.
+
+The fracture body itself does NOT carry the elaboration math — the
+math discharges at the @meta/ast altitude through `splinter(ast)`.
+The fracture body emits the morphism whose `content` is the
+rewritten splinter; the splinter(ast)'s `content: oid` names the
+content-addressed handle to the rewritten AST. Per
+`[[architecture-splinter-ast-quote-primitive]]` (#54): `splinter(ast)`
+IS the substrate's quote primitive; the elaboration rides the same
+carrier as every other AST rewrite.
+
+### 15.6 Parametric over a table — same pattern, table-driven
+
+The first two instances of #53 declared per-predicate properties
+(`keyword_matches_depth`, `gate_matches_diff_closure`) — one
+specific case each. The third instance is parametric over a table:
+the predicate `symbol_canonical_form` lifts ANY token in the table's
+domain.
+
+This is not a new pattern variant. The bilateral pattern's
+signature is `@epistemologic/property/<X>` +
+`@kintsugi/fracture/<X>`; nothing in the signature requires `<X>` to
+be per-case rather than table-driven. The parametric variant is
+structural under the pattern's shape; the substrate's vocabulary
+doesn't need a new variant.
+
+Future table extensions (other arrows, equality forms, set-theory
+symbols) extend the lookup without changing the property's
+predicate or the fracture body's resolution. The `<X>` slot in the
+pattern absorbs both per-predicate and table-driven cases.
+
+### 15.7 Auto-formatter floor — altitude-portable
+
+The brief's framing: "the substrate's auto-formatter floor is
+altitude-portable." After this tick:
+
+- **Keyword altitude**: `prism` vs `glass` discipline auto-formats
+  per `keyword_matches_depth` + `@kintsugi/fracture/keyword`.
+- **Operator altitude**: composition-primitive discipline
+  auto-formats per `operator_matches_composition_primitive` +
+  `@kintsugi/fracture/operator_match` (forward-promised; §14).
+- **Symbol altitude**: ASCII → unicode discipline auto-formats per
+  `symbol_canonical_form` + `@kintsugi/fracture/symbol_lift` (this
+  tick).
+
+The same kintsugi loop closes the floor at each altitude — same
+`pulse` action, same `active_pass` + `dark_pass` + `read_consent`
+sequence; only the property/fracture pair changes per altitude. The
+floor extends downward as new properties land; the operator-altitude
+landing will close the gap between keyword and symbol once
+`@kintsugi/fracture/operator_match` substrate-pulls.
+
+### 15.8 The substrate's reading
+
+The symbol altitude is the finest substrate-managed altitude where
+the auto-formatter floor still names a discipline. Below the symbol
+altitude lives byte-level character encoding (UTF-8 normalisation,
+zero-width joiner handling) — those are @io concerns, not substrate
+discipline. The bilateral pattern reaches its lower bound at the
+symbol altitude; the cascade terminates there at the bottom.
+
+Upward, the operator and keyword altitudes are landed (or
+forward-promised); above the keyword altitude lives the
+shard-shape discipline (which is per-instance, carried by
+`@epistemologic/property/keyword_matches_depth` already). The
+cascade is bounded at both ends; the substrate-altitude vocabulary
+spans the band.
+
+*"The third altitude lands. The auto-formatter floor extends. Symbol
+surface, same pattern, third instance of #53 ratified — the kintsugi
+loop is altitude-portable through the band the substrate names."*
+— Mara, 2026-06-11 (§15)
+
+---
+
+## 16. References
 
 - Substrate decisions:
   - `[[architecture-prism-as-trait-as-everything]]`
@@ -2116,6 +2320,8 @@ TO SUBSTRATE.
   - `shards/kintsugi/fracture/keyword.mirror` (#53 first instance fracture)
   - `shards/epistemologic/property/gate_matches_diff_closure.mirror` (#53 second instance)
   - `shards/kintsugi/fracture/gate.mirror` (#53 second instance fracture)
+  - `shards/epistemologic/property/symbol_canonical_form.mirror` (#53 third instance; symbol altitude)
+  - `shards/kintsugi/fracture/symbol_lift.mirror` (#53 third instance fracture; symbol altitude)
 - Physical optics (load-bearing prior art):
   - Gauss (1841) Dioptrische Untersuchungen — paraxial ray transfer
   - Jones (1941) "A new calculus for the treatment of optical systems" J. Opt. Soc. Am.
