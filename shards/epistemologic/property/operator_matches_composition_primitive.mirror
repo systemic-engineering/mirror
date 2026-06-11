@@ -1,0 +1,343 @@
+in @glass
+
+# Property: every composition-operator usage site in substrate source
+# code must realise the optical composition primitive that the endpoint
+# apertures' pact requires.
+#
+# THE OPERATOR-ALTITUDE MIDDLE INSTANCE of bilateral pattern #53
+# (property/fracture; promoted 2026-06-10). The bilateral cascade
+# closes its three-altitude column with this landing:
+#
+#   Altitude 1 (keyword): @epistemologic/property/keyword_matches_depth
+#                         + @kintsugi/fracture/keyword
+#                         (2026-06-10, 5e68df9 + d908798;
+#                         per-predicate variant).
+#   Altitude 2 (operator): @epistemologic/property/operator_matches_composition_primitive
+#                          + @kintsugi/fracture/operator_match
+#                          (THIS SHARD + sibling tick; parametric-over-table
+#                          variant — the operator audit table from
+#                          docs/specs/optical-keywords.md §13.1 is the
+#                          parametric vocabulary).
+#   Altitude 3 (symbol):  @epistemologic/property/symbol_canonical_form
+#                         + @kintsugi/fracture/symbol_lift
+#                         (2026-06-11; parametric-over-table variant —
+#                         the multi-form symbol vocabulary table is the
+#                         parametric vocabulary).
+#   Meta:                 @epistemologic/property/dissonance_partials_match_ast_breadth
+#                         + @kintsugi/fracture/partials_align
+#                         (2026-06-11, fd344bf + 5c4e3ca;
+#                         parametric-over-computation variant — the
+#                         bilateral pattern self-applied to its own
+#                         internal field).
+#
+# Recognition #59 (kintsugi loop is altitude-portable; candidate, surfaced
+# 2026-06-11 at docs/specs/optical-keywords.md §14.7) gains its OPERATOR-
+# ALTITUDE WITNESS through this landing. Per §14.7's promotion gate: "two
+# altitudes' worth of bilateral instances landed." With keyword
+# (altitude 1) + operator (altitude 2) + symbol (altitude 3) + meta-
+# fracture (parametric-over-computation, self-applied), the gate is
+# satisfied with three independent altitude witnesses plus the meta-
+# foundation that lets them all be honest by construction. #59 promotes
+# with this landing.
+#
+# === The operator vocabulary the property covers ===
+#
+# Per docs/specs/optical-keywords.md §13.1 the substrate's composition
+# operators each realise one of the five optical composition primitives
+# (per §9.1 + §1). The audit table:
+#
+#   operator    primitive                              altitude
+#   --------    -----------------------------------    -----------------
+#   |>          serial propagation                     lambda runtime
+#                                                      (function altitude)
+#   >           serial propagation                     bench schematic
+#                                                      (declaration altitude)
+#   |\>         Fate-weighted branching (forward)      branch flow
+#                                                      (splitter forward)
+#   <\|         Fate-weighted branching (reverse)      branch merge
+#                                                      (splitter reverse)
+#   <=          categorical embedding                  type altitude
+#                                                      (implements relation)
+#   in          aperture-connection                    namespace altitude
+#                                                      (file-level import)
+#   @X/Y/Z      nested aperture-connection             namespace altitude
+#                                                      (path nesting)
+#   pact        aperture-pact declaration              seam altitude
+#                                                      (typed contract)
+#
+# `->` (engineer) -> `→` (canonical) sits on the SYMBOL altitude lifted
+# by symbol_canonical_form per the multi-form table; it is NOT a
+# composition operator in its own right at this altitude. The symbol
+# layer's lift fires first; this property reads the post-lift form.
+#
+# `>>>` (round-trip closure for resonators) is a v1 candidate per
+# §13.5 of docs/specs/optical-keywords.md and is NOT yet substrate
+# vocabulary. This property's table does NOT include `>>>` this tick;
+# v1 extends the table once the operator lands as substrate vocabulary.
+#
+# === The composition-primitive lookup ===
+#
+# The substrate already has the vocabulary for endpoint-pact-derived
+# primitives:
+#
+#   - `pact` (recognition #37, promoted 2026-06-10) names the typed
+#     channel contract at an aperture seam. The endpoints' pact
+#     constrains which composition primitives can connect them.
+#   - The eight schematic keywords (per docs/specs/optical-keywords.md
+#     §1: facet / stage / aperture / splitter / resonator / bench /
+#     source / detector) each declare their port shapes through
+#     aperture declarations. A `splitter`'s output apertures carry N>1
+#     ports per its S-matrix declaration; a `facet`'s output aperture
+#     carries one port per its ABCD matrix declaration; etc.
+#   - The endpoint apertures' pact thus determines which composition
+#     primitive the operator MUST realise: facet→facet wants serial
+#     propagation; splitter-output→facet wants Fate-weighted branching;
+#     facet→splitter-input (reverse) wants Fate-weighted recombination.
+#
+# === Parametric-over-table ===
+#
+# The predicate is parametric over the operator audit table above. Each
+# opacity surfaces ONE (location, used_operator, required_operator)
+# triple — one offending operator usage at one site, paired with the
+# operator that the endpoints' pact requires. The fracture body
+# (@kintsugi/fracture/operator_match) resolves any opacity by table
+# lookup over the primitive→operator inverse; no per-operator variant.
+#
+# Structurally parallel to symbol_canonical_form (the symbol-altitude
+# instance): the predicate is parametric over a computable function
+# (operator-primitive lookup here; canonical-form lookup there). The
+# bilateral pattern (#53) absorbs the parametric-over-table variant at
+# yet another altitude — the substrate's vocabulary doesn't need a new
+# variant; this is the same pattern, parametric over a different
+# vocabulary table.
+#
+# Distinguishing from the meta-fracture's parametric-over-computation
+# (#53 fourth instance): the meta-fracture's `ast_breadth` is a
+# substrate-altitude COMPUTATION over splinter(ast). This property's
+# `composition_primitive_of` is a vocabulary-altitude LOOKUP over the
+# audit table. The cleaner fit is parametric-over-table: the table IS
+# the vocabulary; lookups are deterministic; additions to the table
+# extend the lookup without changing the predicate's variant set.
+#
+# === Concrete vs parametric ===
+#
+# The predicate inspects every concrete operator-usage site. Sites
+# inside parametric @(<binder>) heads are skipped (parallel to
+# keyword_matches_depth's concrete-vs-parametric gate); their operators
+# are the recursion's syntactic device, not concrete usage. The
+# property names the rule on concrete usage only.
+#
+# === Verdict surface ===
+#
+# Verdict surface is transparency<p>:
+#   success              -- every operator-usage site in `file` uses
+#                          the operator that the endpoint apertures'
+#                          pact requires.
+#   failure(opacity_map) -- some operator-usage site uses an operator
+#                          that does NOT realise the primitive the
+#                          endpoints' pact requires. Each opacity names
+#                          ONE (location, used_operator,
+#                          required_operator) triple.
+#   partial(opacity_map) -- multiple operator-usage sites surveyed,
+#                          some honest and some not.
+#
+# Located transparency (not @glass.verdict): the kintsugi loop consumes
+# the opacity_map to direct mutation. Each opacity names ONE offending
+# operator-usage site; the fracture body (@kintsugi/fracture/
+# operator_match) realises the rule by lifting violations through
+# kintsugi. The property names the rule; the fracture realises it; the
+# kintsugi loop is the bridge.
+#
+# === Substrate-pull discipline ===
+#
+# Per `@glass`, `opacity` is the substrate's located-fact carrier; the
+# predicate emits typed carriers throughout. NO new verdict carrier;
+# NO leading-`|` workarounds; NO opaque-`ref` carriers where structured
+# types are available (per [[feedback-no-bare-types]]).
+#
+# `operator_sites(file: ref) -> [opacity]` reads every concrete
+# operator-usage site in `file`. The action is forward-promised through
+# the score's `operator_sites(anchor) -> [usage_site]` per
+# docs/specs/optical-keywords.md §14.4; this property's surface stays
+# at the file altitude (the score's anchor altitude lifts the same
+# action when the kintsugi loop pulls).
+#
+# `composition_primitive_of(op: text) -> text` reads the operator audit
+# table; total function over the table's domain. For `|>` returns
+# `serial_propagation` (lambda altitude); for `>` returns
+# `serial_propagation` (schematic altitude); for `|\>` returns
+# `weighted_branching_forward`; etc. The primitive names sit at the
+# substrate altitude (§13.1's column 2); the predicate reads them.
+#
+# `required_primitive_at(site: ref) -> text` reads the endpoints'
+# aperture pacts at the usage site and returns the primitive the pact
+# requires. The action stays obligation-blocked (\); the realisation
+# reads the @meta/ast altitude's aperture declarations adjacent to the
+# operator site; the substrate declares the carrier shape; the lookup
+# lands when the kintsugi loop pulls.
+#
+# === Cybernetic ancestor ===
+#
+# Recognition #37 (`requires` IS a Paskian agreement; promoted
+# 2026-06-10) names `pact` as the property-declaration form. pact is
+# also the substrate vocabulary for the typed channel contract at an
+# aperture seam — the contract that determines which composition
+# primitive an operator must realise. Same word, two roles: the form
+# of THIS property's declaration AND the contract THIS property reads.
+# The substrate already had the word; this property names the
+# discipline that lifts it.
+#
+# Engineering ancestor: every compiler-altitude operator-type checker
+# (Haskell's typeclass resolution; Rust's trait coherence; OCaml's
+# implicit-argument elaboration) names this discipline implicitly. The
+# substrate's contribution is *typing* the operator-to-primitive
+# mapping table so the kintsugi loop reads the lift directly, rather
+# than the type-checker inventing a per-operator inference rule each
+# time.
+#
+# === Pre-AI prior art ===
+#
+#   composition-primitive  Hermann von Helmholtz (1867) Handbuch der
+#                          physiologischen Optik §17; the optical
+#                          composition primitives (ABCD product /
+#                          S-matrix / Jones product / Mueller product
+#                          / Redheffer star) named the primitives this
+#                          predicate reads. The substrate's reading is
+#                          Born & Wolf (1959) Principles of Optics §1
+#                          — the algebra of ray transfer matrices IS
+#                          the algebra of serial propagation; the
+#                          substrate operator `>` IS that algebra at
+#                          the schematic altitude.
+#   typeclass coherence    Wadler & Blott (1989) How to make ad-hoc
+#                          polymorphism less ad hoc; the discipline of
+#                          one canonical operator per type signature.
+#                          The substrate's reading is per-aperture-pact
+#                          coherence: one canonical operator per
+#                          (endpoint, endpoint) primitive requirement.
+#   bench schematic        Maxwell (1862) On the description of
+#                          oval curves; the bench-schematic graph
+#                          syntax. Modern reading: Smith & Smith
+#                          (2007) Optical Engineer's Desk Reference —
+#                          the bench graph IS the substrate's
+#                          composition object; the operator IS the
+#                          graph edge's label.
+#
+# The substrate's contribution is *typing* the per-site operator/
+# primitive coherence so the kintsugi loop reads it. No invention; the
+# coherence IS the auto-formatter floor at the operator altitude.
+#
+# Spec context: docs/specs/optical-keywords.md §13 (the operator audit
+#               table the predicate reads); §14 (the operator-altitude
+#               written-back kintsugi inference this property's
+#               declaration realises). Recognition #51 (mirror as
+#               expanding Hilbert space; promoted) — the operator
+#               altitude sits one Bateson level below keyword and one
+#               above symbol; this property restores coherence at that
+#               level. Candidate #59 (kintsugi loop is altitude-
+#               portable) promotes with this landing.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (opacity / transparency are substrate vocabulary;
+#                      the predicate emits typed carriers throughout),
+#                      [[architecture-property-fracture-bilateral]]
+#                      (the bilateral pattern this is the operator-
+#                      altitude instance of; closes the three-altitude
+#                      column with this landing),
+#                      [[architecture-splinter-ast-quote-primitive]]
+#                      (the substrate's parametric AST-fragment
+#                      construction; the fracture body discharges via
+#                      splinter(ast) at the operator-token altitude),
+#                      [[architecture-lift-as-load-bearing]]
+#                      (the `lift` verb names the operational action
+#                      at every altitude; here the operator-altitude
+#                      lift is the kintsugi loop's swap from
+#                      offending operator to pact-required operator),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the substrate had `pact` for the seam contract
+#                      since recognition #37; this property reads what
+#                      was already named),
+#                      [[feedback-no-bare-types]] (opacity is the
+#                      typed carrier; no bare (location, op, op) tuple
+#                      escapes).
+# Forward-promise to consumers: `@kintsugi/oscillate`'s `active_pass`
+#                  reads this property's transparency when composing the
+#                  per-pulse candidate morphism_set; the binding lands
+#                  when the kintsugi loop substrate-pulls. The score's
+#                  `operator_sites(anchor)` action (forward-promised at
+#                  docs/specs/optical-keywords.md §14.4) is the score-
+#                  altitude projection of this property's
+#                  `operator_sites(file)`. This shard does NOT pull
+#                  `@kintsugi/oscillate` or `@mirror/spectral/score`;
+#                  the substrate-altitude arrow points upward (the loop
+#                  consumes this property; not the other way around).
+# Related shards: kintsugi/fracture/operator_match.mirror (the sibling
+#                 fracture body; the operational half of this bilateral
+#                 instance),
+#                 epistemologic/property/keyword_matches_depth.mirror
+#                 + kintsugi/fracture/keyword.mirror (FIRST INSTANCE,
+#                 keyword altitude, per-predicate),
+#                 epistemologic/property/gate_matches_diff_closure.mirror
+#                 + kintsugi/fracture/gate.mirror (SECOND INSTANCE,
+#                 per-predicate at the gate altitude),
+#                 epistemologic/property/symbol_canonical_form.mirror
+#                 + kintsugi/fracture/symbol_lift.mirror (THIRD
+#                 INSTANCE, symbol altitude, parametric-over-table),
+#                 epistemologic/property/dissonance_partials_match_ast_breadth.mirror
+#                 + kintsugi/fracture/partials_align.mirror (FOURTH
+#                 INSTANCE, meta-fracture altitude, parametric-over-
+#                 computation, self-applied),
+#                 glass.mirror (the substrate floor; `opacity`,
+#                 `location`, `transparency`, `splinter(ast)`),
+#                 mirror/lens/shell.mirror (the lambda-shell lens
+#                 where `|>` lives at the lambda altitude; the
+#                 property reads operator-usage sites across all
+#                 lenses, not just shell).
+# Path-namespace property: this file at
+# `shards/epistemologic/property/operator_matches_composition_primitive.mirror`
+# declares `@epistemologic/property/operator_matches_composition_primitive`
+# as a species under the @epistemologic/property family.
+# Keyword/depth property: this declaration is depth-2 from the
+# @epistemologic family root; per recognition #46 it uses `pact` (the
+# property-declaration form; recognition #37 promoted 2026-06-10).
+
+pact @epistemologic/property/operator_matches_composition_primitive {
+  # The operator-usage sites observed in `file`. Each entry names ONE
+  # composition-operator usage site whose operator + endpoint apertures
+  # are read by the property. Sites in parametric @(<binder>) heads
+  # are skipped; only concrete usage is surveyed. The surface is the
+  # full set of sites; the predicate evaluates each against the pact.
+  operator_sites(file: ref) -> [opacity] { \ }
+
+  # The composition primitive an operator realises per the audit table
+  # (docs/specs/optical-keywords.md §13.1 column 2). Total function
+  # over the table's domain; returns the primitive name as text for
+  # comparison against `required_primitive_at`. For tokens outside
+  # the table the function is partial (returns the token unchanged;
+  # the comparison fails closed at the predicate altitude).
+  composition_primitive_of(op: text) -> text { \ }
+
+  # The composition primitive the endpoint apertures' pact requires
+  # at a given operator-usage site. Reads the endpoints' aperture
+  # declarations at the site, follows the seam pact, returns the
+  # primitive name. The substrate's `pact` (recognition #37) IS the
+  # typed contract this action reads.
+  required_primitive_at(site: ref) -> text { \ }
+
+  # The combined property: every operator-usage site in `file` uses
+  # the operator whose `composition_primitive_of` equals
+  # `required_primitive_at`.
+  # Verdict surface is transparency<p>:
+  #   success              -- every usage site's operator matches the
+  #                          endpoints' pact-required primitive.
+  #   failure(opacity_map) -- some usage site's operator does not
+  #                          match; each opacity names ONE (location,
+  #                          used_operator, required_operator) triple.
+  #   partial(opacity_map) -- multiple sites, mixed verdict.
+  operator_matches_composition_primitive(file: ref) -> transparency { \ }
+}
+
+out operator_sites
+out composition_primitive_of
+out required_primitive_at
+out operator_matches_composition_primitive
+out @epistemologic/property/operator_matches_composition_primitive
