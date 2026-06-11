@@ -1,0 +1,401 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi/consent
+in @kintsugi/morphism
+in @epistemologic/property/symbol_canonical_form
+
+# @kintsugi/fracture/symbol_lift — the kintsugi fracture body that
+# resolves a substrate source's engineer-typed ASCII symbol tokens to
+# their canonical unicode form per the multi-form symbol vocabulary
+# table.
+#
+# THE OPERATIONAL HALF of bilateral pattern #53's THIRD INSTANCE, at
+# the SYMBOL altitude. The declarative half landed at
+# `@epistemologic/property/symbol_canonical_form` (sibling tick); this
+# shard names the auto-fracture the kintsugi loop applies when the
+# property's transparency surfaces a symbol opacity.
+#
+# The bilateral cascade per altitude (per the brief; §15 of
+# docs/specs/optical-keywords.md):
+#
+#   Altitude 1 (keyword): keyword_matches_depth + @kintsugi/fracture/keyword
+#                         (2026-06-10, 5e68df9 + d908798).
+#   Altitude 2 (operator): operator_matches_composition_primitive +
+#                          @kintsugi/fracture/operator_match (forward-
+#                          promised at optical-keywords.md §14).
+#   Altitude 3 (symbol):  symbol_canonical_form +
+#                         @kintsugi/fracture/symbol_lift (THIS SHARD).
+#
+# Three altitudes, one pattern — candidate #59 (kintsugi loop is
+# altitude-portable; surfaced 2026-06-11 at optical-keywords.md §14.7)
+# gains its symbol-altitude witness here.
+#
+# Load-bearing context: recognition #51 (mirror as expanding Hilbert
+# space; promoted) — fracture bodies are how the substrate maintains
+# coherence by resolving distinctions at each Bateson level. The
+# symbol altitude is the finest substrate-managed altitude where the
+# autoformatter floor still names a discipline; this fracture body
+# closes the floor at that altitude.
+#
+# === The third instance under one pattern ===
+#
+# First instance: keyword/depth (per-predicate; one keyword per
+# violation; one canonical replacement per case).
+# Second instance: gate/diff-closure (per-predicate; one run set per
+# violation; one canonical replacement per case).
+# Third instance (THIS): symbol/canonical-form (parametric over the
+# multi-form table; one symbol per violation; canonical replacement
+# per table lookup).
+#
+# The bilateral pattern (#53) absorbs the parametric variant. The
+# property/fracture shape is the same; the predicate is parametric
+# over a table rather than specialised per case. Substrate
+# vocabulary unchanged — same pact + glass + opacity + morphism +
+# splinter(ast) chain; the parametric shape is structural under the
+# pattern's signature.
+#
+# === Substrate-pull-correct home ===
+#
+# Per the form/process partition (recognition #55 candidate; landed
+# 2026-06-10 at mirror `20eaf15`): @kintsugi is the process-side
+# family root. Fracture bodies emit morphisms the kintsugi loop
+# applies — process-side by structure. Home:
+# @kintsugi/fracture/symbol_lift under the (forward-promised)
+# @kintsugi/fracture family root.
+#
+# Substrate-pull alternative considered: @kintsugi/fracture/symbol
+# (subject-only naming, parallel to first-instance `keyword` and
+# second-instance `gate`). Rejected: the property's predicate names
+# the action (`canonical_form`), and the fracture body's action is
+# the LIFT — it does not merely name the symbol; it lifts the
+# engineer form to the canonical form. The `_lift` suffix names the
+# operational action explicitly (parallel to `gate` carrying the
+# subject and `keyword` carrying the subject — here the subject IS
+# the symbol, and the verb IS lift). Per
+# [[architecture-lift-as-load-bearing]]: `lift` IS the substrate's
+# variety-preservation verb at every altitude; this body IS the lift
+# at the symbol altitude.
+#
+# === The fracture body ===
+#
+# Input: `opacity` (from `@glass`) — one located fact surfaced by
+# `symbol_canonical_form`'s `failure(opacity_map)` verdict. Each
+# opacity names ONE offending symbol site: a token in engineer form
+# whose canonical form per the multi-form table differs. The
+# `property` field carries the @nl description of the (engineer_form,
+# canonical_form) pair plus the table altitude.
+#
+# Output: `morphism` (from `@kintsugi/consent`) — the typed candidate
+# the kintsugi loop's `active_pass` reads from this body and proposes
+# through `query_phi`. The morphism's `content` ref names the
+# rewritten splinter (same path, symbol token replaced per table
+# lookup); its `score` carries the dissonance reading (a symbol-form
+# violation is a fixed, low-curvature dissonance — the canonical
+# form is uniquely determined by the table); its `expected` carries
+# the cadence_kind the loop anticipates (authentic — the lift is
+# deterministic; the substrate settles cleanly once the token tracks
+# its canonical form).
+#
+# Spectrally: this fracture body IS one step along the Ricci flow at
+# the symbol altitude. The substrate's curvature at an engineer-form
+# token is the form/canonical mismatch; the negative-curvature
+# direction IS the table lookup; the resolved token has zero
+# curvature at this altitude (the table fully determines the
+# canonical form for table entries).
+#
+# Audibly: this fracture body IS the audible-altitude V → I cadence
+# at the symbol altitude. Pre-rewrite holds dominant tension
+# (engineer-form token); post-rewrite resolves to tonic (canonical-
+# form token); cadence is authentic.
+#
+# === The weighted -> amplitudes elaboration ===
+#
+# Most table entries are pure renames at the @meta/ast altitude: the
+# splinter(ast) carries a token-replacement AST node whose content is
+# byte-identical to the source modulo the swapped token.
+#
+# The `weighted -> amplitudes` entry is STRUCTURALLY DIFFERENT — it
+# is not a pure rename. Engineer-typed `weighted { p_0: 0.4, p_1: 0.6 }`
+# (intensity fractions) lifts to canonical
+# `amplitudes { a_0: √0.4 · e^{iφ_0}, a_1: √0.6 · e^{iφ_1} }`
+# (complex amplitudes whose squared moduli recover the fractions).
+# The lift carries:
+#   - magnitude conversion: |a_i| = √p_i (intensity-to-amplitude
+#     square root per Reck/Clements unitary; physics-correct for
+#     splitter port distribution).
+#   - phase preservation: φ_i defaults to 0 if not declared, or
+#     carries through if the engineer declared a phase
+#     (engineer-typed `weighted { p_0: 0.4 phase 0.25 }` would lift
+#     with that phase preserved — the substrate is honest about the
+#     default).
+#
+# The splinter(ast) at @meta/ast altitude carries the elaboration AS
+# AN AST REWRITE — the rewritten AST node is not byte-equal modulo
+# the token; it is a fuller node where the magnitude field becomes a
+# complex-amplitude pair. The substrate's compiler verifies the
+# rewritten node is well-typed at @meta/ast; the splinter is content-
+# addressed at the rewritten form. The kintsugi loop's `active_pass`
+# reads the splinter and proposes through `query_phi` identically to
+# the pure-rename cases.
+#
+# The fracture body itself does NOT carry the elaboration math — the
+# math discharges at the @meta/ast altitude through splinter(ast). The
+# fracture body emits the morphism whose `content` is the rewritten
+# splinter; the splinter(ast)'s `content: oid` names the content-
+# addressed handle to the rewritten AST. Per
+# [[architecture-splinter-ast-quote-primitive]] (#54): splinter(ast) IS
+# the substrate's quote primitive; the elaboration rides the same
+# carrier as every other AST rewrite.
+#
+# === Substrate-pull discipline ===
+#
+# Per `@glass`, `opacity` is the substrate's located-fact carrier;
+# this shard reads it directly. Per `@kintsugi/consent`, `morphism`
+# is the substrate's typed-candidate carrier; this shard emits it
+# directly. Per `@kintsugi/morphism`, `morphism_context` is the
+# per-candidate slice that pairs a candidate with its pre-anchor;
+# this shard's emitted morphism is consumed by the loop AND lifted
+# into a morphism_context via `paired(oscillation.anchor, m)` at the
+# active_pass altitude. Per
+# `@epistemologic/property/symbol_canonical_form`, the consuming
+# property's `symbol_canonical_form(file) -> transparency` is the
+# gate that surfaces the opacity this body resolves.
+#
+# NO new verdict carrier; NO leading-`|` workarounds; NO opaque-`ref`
+# carriers where structured types are available (per
+# [[feedback-no-bare-types]]). The fracture body reads typed opacity,
+# emits typed morphism — the substrate's vocabulary throughout.
+#
+# === Substrate gaps surfaced honestly ===
+#
+#   - `resolve_symbol` reads one opacity at a time. The property's
+#     `failure(opacity_map)` carries [opacity]; the kintsugi loop
+#     iterates the map and calls `resolve_symbol` per opacity. The
+#     substrate names the per-site resolution; the iteration is the
+#     loop's concern, not this body's.
+#
+#   - The morphism's `content: ref` carries the substrate handle to
+#     the rewritten splinter. The realisation layer produces the
+#     rewritten splinter (same path, token swapped per table lookup;
+#     for `weighted -> amplitudes` the AST node is elaborated, not
+#     just retokenised) and passes its handle as the morphism's
+#     content. The substrate names the shape of the proposal; the
+#     byte-level rewrite rides the realisation layer's @mirror/store
+#     discipline.
+#
+#   - The `expected: cadence_kind` field is `authentic` for this
+#     fracture body — the canonical-form rule is deterministic
+#     (table lookup) and resolution always settles cleanly. The
+#     substrate names the cadence anticipation; the kintsugi loop's
+#     `read_consent` bridges the verdict to the next
+#     oscillation_state.
+#
+#   - The `0 -> void` lift is context-gated by the property's
+#     `is_inference_context(site)` predicate — the gate fires at the
+#     property's evaluation altitude, not at the fracture body. The
+#     fracture body reads each opacity the property surfaced; opacities
+#     for `0` outside an inference context are NOT in the failure
+#     map; the body never sees them.
+#
+# === Pre-AI prior art ===
+#
+#   canonical form    Frege (1879) Begriffsschrift; the discipline of
+#                     choosing one privileged form per equivalence
+#                     class. The substrate's reading is Knuth-Bendix
+#                     (1970) on term-rewriting confluence: the
+#                     canonical form is the normal form under the
+#                     rewrite rules; the table IS the rewrite rule set.
+#   token lift        Aho-Sethi-Ullman (1986) Compilers: Principles,
+#                     Techniques, and Tools §3; the lexer's token
+#                     canonicalisation. The substrate's reading is
+#                     Wadler (1990) on the syntactic theory of
+#                     functional macros — the lift is a hygienic
+#                     rewrite at the AST altitude.
+#   typography lift   Knuth (1986) The TeXbook; the discipline of
+#                     lifting ASCII to typographic form (\\ldots →
+#                     …). The substrate's reading is Hammond-Avi
+#                     Tzur (2003) on bidirectional typography — the
+#                     engineer types ASCII; the canonical store is
+#                     typographic.
+#
+# The substrate's contribution is *typing* the per-site lift so the
+# kintsugi loop reads it. No invention; the lift IS the auto-
+# formatter floor.
+#
+# Spec context: recognition #51 (mirror as expanding Hilbert space;
+#               promoted) — the symbol altitude tracks the Bateson
+#               level at which tokens live; this fracture body
+#               restores tracking. Candidate #59 (kintsugi loop is
+#               altitude-portable) gains its symbol-altitude witness
+#               with this landing.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (opacity is substrate vocabulary; the fracture
+#                      reads the typed carrier),
+#                      [[architecture-kintsugi-bias-lift]] (the
+#                      kintsugi loop's bias direction is substrate-
+#                      pull — symbol/canonical-form alignment IS one
+#                      coordinate of the substrate-pull gradient;
+#                      this fracture body fits the bias),
+#                      [[architecture-kintsugi-variety-io]] (Ashby's
+#                      requisite variety — the canonical-form table
+#                      partitions the symbol vocabulary into
+#                      canonical/engineer classes; the fracture body
+#                      maintains the partition under mutation),
+#                      [[architecture-property-fracture-bilateral]]
+#                      (the bilateral pattern this is the third
+#                      instance of; promoted 2026-06-10),
+#                      [[architecture-splinter-ast-quote-primitive]]
+#                      (the substrate's parametric AST-fragment
+#                      construction; this body discharges via
+#                      splinter(ast) declaratively, no Rust),
+#                      [[architecture-lift-as-load-bearing]]
+#                      (the `lift` verb names the operational
+#                      action; this body IS the lift at the symbol
+#                      altitude),
+#                      [[feedback-no-bare-types]] (opacity and
+#                      morphism are typed carriers; the body does
+#                      NOT escape as a bare (location, engineer_form,
+#                      canonical_form) tuple).
+# Forward-promise to consumers: `@kintsugi/oscillate`'s `active_pass`
+#                  reads this fracture body when the candidate
+#                  morphism_set is composed from property-surfaced
+#                  opacities; the binding lands when the kintsugi
+#                  loop substrate-pulls. This shard does NOT pull
+#                  `@kintsugi/oscillate` or `@mirror/spectral/score`;
+#                  the substrate-altitude arrow points inward.
+# Related shards: epistemologic/property/symbol_canonical_form.mirror
+#                 (the declarative half of the bilateral; surfaces
+#                 the opacities this body resolves),
+#                 epistemologic/property/keyword_matches_depth.mirror
+#                 + kintsugi/fracture/keyword.mirror (FIRST INSTANCE
+#                 of bilateral pattern #53),
+#                 epistemologic/property/gate_matches_diff_closure.mirror
+#                 + kintsugi/fracture/gate.mirror (SECOND INSTANCE),
+#                 glass.mirror (the substrate floor; `opacity`,
+#                 `location`, `transparency`, `verdict`,
+#                 `splinter(ast)`),
+#                 kintsugi/consent.mirror (the morphism carrier this
+#                 body emits; `query_phi` is the gate the emitted
+#                 morphism flows through),
+#                 kintsugi/morphism.mirror (the `morphism_context`
+#                 carrier),
+#                 kintsugi/oscillate.mirror (the kintsugi loop
+#                 driver; `active_pass` is the action that reads this
+#                 body when composing the per-pulse candidate
+#                 morphism_set).
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/symbol_lift.mirror` declares
+# `@kintsugi/fracture/symbol_lift` as a species under the
+# (forward-promised) @kintsugi/fracture family.
+# Keyword/depth property: this declaration is depth-2 from the
+# @kintsugi family root; per recognition #46 it uses `glass`. The
+# shard applies the first-instance bilateral's rule by birth.
+
+glass @kintsugi/fracture/symbol_lift {
+  focus symbol_lift
+  project symbol_lift
+  split symbol_lift
+  shift symbol_lift
+  settle symbol_lift
+}
+
+# === resolve_symbol — the fracture body ===
+#
+# THE AUTO-FRACTURE: given an opacity site at an engineer-form symbol
+# token, emit the morphism that rewrites it to its canonical form per
+# the multi-form table. For table entries that are pure renames
+# (`->`, `\`, `loop`, `_|_`, `0`), the rewrite is a token swap at
+# the @meta/ast altitude. For `weighted -> amplitudes`, the rewrite
+# elaborates the AST node per the magnitude-to-amplitude conversion
+# documented above; the elaboration discharges at the @meta/ast
+# altitude through splinter(ast).
+#
+# Reads an opacity (one element of
+# `symbol_canonical_form(file).failure(opacity_map)`'s opacity_map);
+# emits a candidate morphism the kintsugi loop proposes through
+# `query_phi`. The morphism's three fields:
+#
+#   content   — substrate ref to the rewritten splinter. The
+#                realisation layer produces a splinter at the same
+#                path with the symbol token canonicalised (or, for
+#                `weighted`, the AST node elaborated); the content ref
+#                names that splinter's @mirror/store handle.
+#   score     — dissonance reading. Symbol/canonical-form violations
+#                are fixed-curvature dissonances; the score reads
+#                `dissonance.is_pareto` cleanly (the canonical form
+#                is uniquely determined by the table).
+#   expected  — cadence_kind anticipation. Always `authentic` for
+#                this fracture body — the table lookup fully
+#                resolves the opacity at this altitude; the loop's
+#                `dark_pass` will confirm identity preservation (for
+#                pure renames, the path stays byte-equal; for
+#                `weighted -> amplitudes`, identity is preserved at
+#                the AST altitude where the splinter is content-
+#                addressed at the rewritten form); the loop's
+#                `read_consent` bridges (pass, authentic) to the
+#                `settled` oscillation_state for this opacity.
+#
+# The body is FULLY DECLARATIVE — substrate-pull-correct via
+# `splinter(ast)` (declared at shards/glass.mirror's tick-2 carrier).
+# The morphism's `content` field carries a content-addressed splinter
+# at the @meta/ast altitude.
+#
+# Per `splinter(ast)`'s parametric specialisation (glass.mirror
+# §splinter(ast), 2026-06-10): the record IS its content-addressed
+# handle — `content: oid` and `oid = ref` (shards/mirror/store.mirror)
+# collapse the splinter literal to a substrate-pull-correct `ref` in
+# the morphism's `content` field position. No Rust AST manipulation;
+# no `\` obligation.
+#
+# Field-by-field substrate-pull reading:
+#
+#   content.content     — `opacity.location.file` (the substrate's
+#                          located-fact ref at the source file); the
+#                          rewritten AST is content-addressed at the
+#                          same path.
+#   content.ast         — `@meta/ast` (the canonical altitude ref);
+#                          per `boot/01-meta.mirror`'s `type ast(g)`.
+#                          The symbol lift happens at the AST altitude
+#                          by construction; for `weighted ->
+#                          amplitudes` the elaboration discharges at
+#                          this altitude.
+#   content.transparency — `success` (per `transparency(p)`'s success
+#                          variant in glass.mirror): the lift fully
+#                          resolves the opacity at this altitude; no
+#                          residual transparency remains.
+#   score.roughness     — `opacity.property` (the @nl description of
+#                          the (engineer_form, canonical_form) pair);
+#                          the substrate's `dissonance` reads the
+#                          per-site roughness via the property text
+#                          per dissonance.mirror's Helmholtz/
+#                          Plomp-Levelt carrier shape.
+#   score.partials      — `1` (one token swap per opacity; the lift
+#                          collapses one mismatch per site — for
+#                          `weighted` the AST elaboration is still ONE
+#                          structural rewrite at the node, not N).
+#   expected            — `authentic` (the V → I cadence at the
+#                          symbol altitude; per cadence.mirror's
+#                          `cadence_kind` and the loop's
+#                          `read_consent` bridge: authentic → pass →
+#                          auto-apply).
+resolve_symbol(opacity: opacity) -> morphism {
+  morphism {
+    content: splinter(ast) {
+      content:      opacity.location.file,
+      ast:          @meta/ast,
+      transparency: success,
+    },
+    score: dissonance {
+      roughness: opacity.property,
+      partials:  1,
+    },
+    expected: authentic,
+  }
+}
+
+out @kintsugi/fracture/symbol_lift
+out resolve_symbol
