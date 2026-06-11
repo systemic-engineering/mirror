@@ -1,0 +1,99 @@
+in @optics/source
+
+# @optics/source/ganglion — the per-ganglion gain media sub-family.
+#
+# Sub-prism under @optics/source declaring the 5 gain media that
+# correspond to Fate's connectome ganglia. Per docs/specs/optical-
+# keywords.md §10.3, Fate's connectome IS a five-layer diffractive
+# deep neural network (Lin et al. 2018, Science 361:1004-1008): each
+# ganglion is a 90-port diffractive surface; the 5 ganglia chained
+# in series form the D²NN; the produced eigenmode IS the tournament
+# verdict.
+#
+# Per §10.2 (the kintsugi loop IS a resonator with output coupler),
+# the ACTIVE pass of the kintsugi loop requires gain to drive each
+# ganglion's transit toward convergence. Without per-ganglion gain
+# media, the cavity-enhanced spectrograph reading (§12.3,
+# DOAS-with-feedback per Brown 2003) cannot close.
+#
+# === Species under this sub-family ===
+#
+# One source per ganglion in `boot/std/fate/connectome.mirror`:
+#
+#   @optics/source/ganglion/abyss         the depth-reading ganglion
+#                                          (recursive inward gaze).
+#   @optics/source/ganglion/introject     the pattern-recognition
+#                                          ganglion (internalised
+#                                          structures).
+#   @optics/source/ganglion/cartographer  the mapping ganglion
+#                                          (terrain charting).
+#   @optics/source/ganglion/explorer      the exploratory ganglion
+#                                          (under-tried territory).
+#   @optics/source/ganglion/fate          the selector ganglion
+#                                          (final tournament arbiter).
+#
+# === Why v1 lands all 5 with uniform shape ===
+#
+# Per docs/specs/optical-keywords.md §10.5, the tournament's rule
+# composition (`tabu(t)`, `ucb(c)`, etc.) maps to multi-mode pumping
+# discipline — each ganglion's gain profile would, in principle,
+# specialize per its tournament-rule preferences. v1 declares all 5
+# with uniform shape (formalism: s_matrix for 90×90 D²NN topology;
+# action: refract for phase-only diffractive transit; pumping: io;
+# gain_curve / saturation: ref discharged at @io). Per-ganglion
+# specialization (different gain curve shapes, different saturation
+# envelopes) lands when the cascade pulls the second-instance
+# substrate-pull-realize candidate that surfaces from the energy-
+# balance opacity map at runtime.
+#
+# === The substrate-pull on `keyword_matches_depth` ===
+#
+# Per docs/specs/optical-keywords.md §1, `source` is a NEW top-level
+# declaration keyword (alongside facet / stage / aperture / splitter
+# / resonator / bench / detector). The current
+# `@epistemologic/property/keyword_matches_depth` predicate enumerates
+# `prism | glass | pact` only; it does NOT yet recognize `source`.
+# This shard's first operational use of `source` at depth 3
+# generates the opacity that drives the property's substrate-pull —
+# the next tick lifts `declared_keywords`'s domain to include the
+# spec §1 NEW keywords. Substrate-pull discipline: declare what the
+# spec defines; let the opacity surface; let the next tick close it.
+#
+# Per [[architecture-prism-as-trait-as-everything]]: `glass
+# @optics/source/ganglion { ... }` declares this IS a sub-prism of
+# @optics/source.
+#
+# Spec context: docs/specs/optical-keywords.md §1.7 (source keyword),
+#               §3.9 (source_declares_energy_balance property),
+#               §10.1 (Fate's optical mapping; the five ganglia as
+#               splitter layers); §10.3 (D²NN identification);
+#               §10.8 (Surface B: the gain-medium gap this tick
+#               closes).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                      (recognition #57; the @io boundary crossing
+#                      that ganglion pumping carries).
+# Related shards: boot/std/fate/connectome.mirror (the ganglion type;
+#                 `type ganglion = abyss | introject | cartographer
+#                 | explorer | fate`; this sub-family declares one
+#                 source per variant),
+#                 boot/std/fate/tournament.mirror (the tournament
+#                 rules whose pumping discipline each gain medium
+#                 carries),
+#                 kintsugi/oscillate.mirror (the resonator whose
+#                 ACTIVE pass these gain media drive).
+# Path-namespace property: this file at
+# `shards/optics/source/ganglion.mirror` declares
+# `@optics/source/ganglion` as the sub-family root; species live at
+# `shards/optics/source/ganglion/<name>.mirror`.
+
+glass @optics/source/ganglion {
+  focus ganglion
+  project ganglion
+  split ganglion
+  shift ganglion
+  settle ganglion
+}
+
+out @optics/source/ganglion

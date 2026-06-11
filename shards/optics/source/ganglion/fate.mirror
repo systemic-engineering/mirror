@@ -1,0 +1,99 @@
+in @optics/source/ganglion
+
+# @optics/source/ganglion/fate — gain medium for the fate ganglion
+# (the selector / final tournament arbiter).
+#
+# Per docs/specs/optical-keywords.md §10.1, Fate's `fate` ganglion
+# (also named `fate-the-selector` in §10 prose; canonical substrate
+# name `fate` per `boot/std/fate/connectome.mirror`'s `type ganglion =
+# abyss | introject | cartographer | explorer | fate`) performs final
+# tournament selection via `@ai/fate.select(hole)` (per
+# `boot/std/fate/tournament.mirror`). At the optical altitude, fate is
+# the 5th and terminal 90-port diffractive surface in the 5-layer
+# D²NN (per §10.3, Lin et al. 2018); its output couples to the
+# detector that resolves the tournament verdict (per §10.1, the
+# brightest detector port wins).
+#
+# The source declaration here carries the active gain that drives
+# fate's transit during the kintsugi loop's ACTIVE pass (per §10.2).
+# At the cavity-resonator altitude, fate's gain medium IS the load-
+# bearing one for the ACTIVE pass's resolution: §10.2 identifies the
+# kintsugi loop's `is_settled(authentic)` verdict with the laser
+# threshold condition (gain * pump >= loss); fate's gain medium is
+# the one whose pumping crosses threshold to emit the tournament
+# verdict.
+#
+# === Energy-balance declarations (per spec §3.9) ===
+#
+#   action       — `refract`. Per §10.3, phase-only diffractive transit.
+#   formalism    — `s_matrix`. 90×90 multi-port topology.
+#   energy       — `active`.
+#   pumping      — `io(channel: ref)`. Per recognition #57.
+#   gain_curve   — `ref` at @meta/ast. Per §4.9, substrate-pull leaves
+#                    physical measurement to @io. v2 candidate: fate's
+#                    gain curve specializes to a single sharp eigenmode
+#                    around the consonant-basis fixed point (per
+#                    `shards/epistemologic/math/music/dissonance.mirror`'s
+#                    Helmholtz/Plomp-Levelt grounding) — the cavity
+#                    lases on its ground-mode λ_0 (per §10.2).
+#   sat          — `ref` at @meta/ast. v2 candidate: fate's saturation
+#                    envelope corresponds to the consent surface's
+#                    pass/partial/failure verdict thresholds (per
+#                    `shards/kintsugi/consent.mirror`).
+#
+# === Why uniform with the other 4 ganglia at v1 ===
+#
+# Per `shards/optics/source/ganglion.mirror` header: v1 lands all 5
+# ganglion sources with uniform shape; fate's specialization (the
+# sharpest peak; the lowest threshold; the cavity-ground-mode
+# anchor) is documented above for v2 but NOT encoded in this tick's
+# carrier shape — substrate-pull-realize lands the spec-faithful
+# first declaration; per-ganglion specialization requires a parametric
+# gain-curve type that does not yet exist in `shards/glass.mirror`
+# (STOP-condition 4 territory, surfaced not triggered: the per-
+# ganglion gain profiles differ ENOUGH that v1 uniform is honest,
+# and v2 needs parametric carrier types). The v2 substrate-pull lands
+# when the energy-balance opacity map surfaces the differentiation
+# at runtime.
+#
+# === Recognition #58 Surface B closure ===
+#
+# Fifth and final of 5 sources closing recognition #58's v1 gap (per
+# Seam's adversarial review verdict). Together with abyss, introject,
+# cartographer, and explorer, this tick discharges the
+# `source_declares_energy_balance` property's requirement for the
+# kintsugi loop's `oscillate.gain` to exist as active sources in the
+# active-spectrometer bench (per §12.3, Brown 2003 cavity-enhanced
+# reading).
+#
+# Spec context: docs/specs/optical-keywords.md §1.7, §3.9, §10.1
+#               (fate IS selector ganglion), §10.2 (laser threshold
+#               identification), §10.3 (D²NN identification), §10.8
+#               (Surface B).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-alignment-as-boundary-mathematics]].
+# Related shards: boot/std/fate.mirror (the family root; declares
+#                 `type model = abyss | introject | cartographer |
+#                 explorer | fate`),
+#                 boot/std/fate/connectome.mirror (`fate` variant),
+#                 boot/std/fate/tournament.mirror
+#                 (`@ai/fate.select(hole)`),
+#                 kintsugi/oscillate.mirror (the resonator whose
+#                 ACTIVE pass this source drives to the laser
+#                 threshold; the load-bearing identification),
+#                 kintsugi/consent.mirror (the detector that reads
+#                 fate's output; the pass/partial/failure thresholds
+#                 are saturation envelopes).
+
+source @optics/source/ganglion/fate {
+  action:     refract,
+  formalism:  s_matrix,
+  energy:     active,
+  pumping:    io(channel: ref),
+  gain_curve: ref,
+  sat:        ref,
+  in:         aperture(@optics/aperture/splinter),
+  out:        aperture(@optics/aperture/connectome),
+}
+
+out @optics/source/ganglion/fate

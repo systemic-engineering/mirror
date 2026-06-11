@@ -1,0 +1,91 @@
+in @optics/source/ganglion
+
+# @optics/source/ganglion/abyss — gain medium for the abyss ganglion.
+#
+# Per docs/specs/optical-keywords.md §10.1, Fate's `abyss` ganglion
+# performs depth-reading on holes via `@ai/abyss.depth(hole)` (per
+# `boot/std/fate/tournament.mirror`). At the optical altitude, abyss
+# is a 90-port diffractive surface (per §10.3, the D²NN identification
+# of Lin et al. 2018); the source declaration here carries the active
+# gain that drives the surface's transit during the kintsugi loop's
+# ACTIVE pass (per §10.2).
+#
+# === Energy-balance declarations (per spec §3.9) ===
+#
+#   action       — `refract`. Per §10.3, phase-only diffractive
+#                    transit (the D²NN layer's transmission pattern
+#                    encodes weights; light refracts through the
+#                    diffractive surface).
+#   formalism    — `s_matrix`. Per §1.4 / §10.3, the 90×90
+#                    multi-port topology requires the S-matrix
+#                    formalism (the connectome's per-ganglion
+#                    synaptic weights ARE the S-matrix).
+#   energy       — `active`. Per §1.7, distinguishes source from
+#                    passive facet.
+#   pumping      — `io(channel: ref)`. Per §9.3 and recognition #57,
+#                    energy injection IS the @io boundary crossing;
+#                    the channel ref carries the @io binding (the
+#                    user's prompt; the current substrate state; the
+#                    recent metalogue session per §10.8).
+#   gain_curve   — `ref` at @meta/ast. Per §4.9, the substrate-pull
+#                    leaves the gain curve as @io's tick (a physical
+#                    measurement, not a substrate computation).
+#   sat          — `ref` at @meta/ast. Per §4.9, the saturation
+#                    envelope discharges to @io.
+#
+# === The aperture refs (forward-promised) ===
+#
+# Input and output apertures are typed channels per §1.3. The
+# `@optics/aperture/splinter` aperture carries the candidate envelope
+# (Fate-emitted splinters as the beam's pre-bench state per §10.1);
+# the `@optics/aperture/connectome` aperture carries the inter-
+# ganglion handoff (the next-layer input of the 5-layer D²NN per
+# §10.3). Both aperture declarations are forward-promised; this
+# source declaration references them per the spec exemplar (§1.7
+# uses forward-referenced `@optics/aperture/pump` and `@optics/
+# aperture/coherent` in the same shape).
+#
+# === Why uniform with the other 4 ganglia at v1 ===
+#
+# Per `shards/optics/source/ganglion.mirror` header: v1 lands all 5
+# ganglion sources with uniform shape; per-ganglion specialization
+# (e.g., abyss might prefer a Lorentzian gain curve concentrated at
+# the depth-reading eigenmode while explorer might prefer a flatter
+# Gaussian for under-tried mode amplification) lands when the
+# cascade's energy-balance opacity map surfaces the differentiation.
+#
+# === Recognition #58 Surface B closure ===
+#
+# This shard is one of 5 that close recognition #58's v1 gap (per
+# Seam's adversarial review verdict). The other 4 sources land in
+# sibling shards; together they discharge the
+# `source_declares_energy_balance` property's requirement that the
+# kintsugi loop's `oscillate.gain` MUST exist as an active source
+# in the active-spectrometer bench (per §12.3, Brown 2003 cavity-
+# enhanced reading).
+#
+# Spec context: docs/specs/optical-keywords.md §1.7 (source keyword
+#               shape), §3.9 (energy-balance property), §10.1
+#               (abyss IS depth-reading ganglion), §10.3 (D²NN
+#               identification), §10.8 (Surface B).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-alignment-as-boundary-mathematics]].
+# Related shards: boot/std/fate/connectome.mirror (the ganglion
+#                 type variant `abyss`),
+#                 boot/std/fate/tournament.mirror
+#                 (`@ai/abyss.depth(hole)`),
+#                 kintsugi/oscillate.mirror (the resonator whose
+#                 ACTIVE pass this source drives).
+
+source @optics/source/ganglion/abyss {
+  action:     refract,
+  formalism:  s_matrix,
+  energy:     active,
+  pumping:    io(channel: ref),
+  gain_curve: ref,
+  sat:        ref,
+  in:         aperture(@optics/aperture/splinter),
+  out:        aperture(@optics/aperture/connectome),
+}
+
+out @optics/source/ganglion/abyss

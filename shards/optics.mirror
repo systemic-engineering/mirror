@@ -1,0 +1,92 @@
+in @prism
+
+# @optics — the optical-schematic family root.
+#
+# This family declares the optical-altitude vocabulary that lifts the
+# substrate's five-operation algebra onto physical-optics composition
+# primitives. Per docs/specs/optical-keywords.md §0, every passive
+# composition primitive of physical optics derives from exactly one of
+# focus / project / split / shift / settle; the optical altitude names
+# the schematic shape (facet / stage / aperture / splitter / resonator
+# / bench / source / detector) while the runtime prism carries the
+# algebra.
+#
+# Recognition #58 (Fate IS optical inference; PROMOTED 2026-06-11 via
+# Seam adversarial review) names the substrate's runtime as a
+# cavity-enhanced spectrometer at the bench altitude: Fate's
+# connectome IS a five-layer diffractive deep neural network (Lin et
+# al. 2018, Science 361:1004-1008); the kintsugi loop IS an active
+# Fabry-Perot resonator (Siegman 1986); the consent surface IS the
+# detector. This family declares the optical vocabulary so the
+# active-spectrometer reading (Brown 2003, Chem. Phys. Lett.
+# 374:1-9 — DOAS-with-feedback / cavity-enhanced spectroscopy) is
+# structurally complete.
+#
+# === Species under this family ===
+#
+# Form-side species (declared per the cascade):
+#
+#   @optics/source           active facets (gain media / emitters).
+#                              Per spec §1.7. v1 lands the per-ganglion
+#                              gain media (Surface B closure for #58):
+#                              `@optics/source/ganglion/<name>` for
+#                              each of the 5 ganglia in Fate's
+#                              connectome.
+#
+# Forward-references only — additional sub-families (`@optics/facet`,
+# `@optics/aperture`, `@optics/splitter`, `@optics/resonator`,
+# `@optics/bench`, `@optics/detector`, `@optics/stage`) land as the
+# cascade pulls them.
+#
+# === Closing Surface B ===
+#
+# Per spec §10.8 Surface B: Fate's connectome (450 neurons, 5 ganglia)
+# has no gain medium declared, but the kintsugi loop's `oscillate.gain`
+# requires an active source to drive convergence. The optical framing
+# makes the gain requirement EXPLICIT: each ganglion's `infer` walk is
+# energy injection from @io (per recognition #57, alignment as
+# boundary mathematics at @io). This tick declares each ganglion's
+# effective gain curve as a `source @optics/source/ganglion/<name>`
+# shard per the `source_declares_energy_balance` property (spec §3.9).
+#
+# Per [[architecture-prism-as-trait-as-everything]]: `prism @optics
+# { ... }` declares the family IS a prism. The five-operation block
+# below is the canonical declaration form (cf. shards/mirror/spectral.
+# mirror, shards/kintsugi.mirror). Each sub-shard specialises from
+# there.
+#
+# Spec context: docs/specs/optical-keywords.md (the full proposal;
+#               §1.7 source keyword; §3.9 energy-balance property;
+#               §10 Fate IS optical inference; §12 active-spectrometer
+#               reading).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                      (recognition #57; the @io boundary that energy
+#                      injection crosses),
+#                      [[architecture-bateson-form-behaviour-partition]]
+#                      (the form/process partition; @optics declares
+#                      form-side schematic shape; @kintsugi declares
+#                      the process-side dynamics that ride this
+#                      schematic).
+# Related shards: kintsugi/oscillate.mirror (the resonator the gain
+#                 media feed; §10.2 the kintsugi loop IS a Fabry-Perot
+#                 resonator with output coupler),
+#                 mirror/spectral.mirror (the form-side sibling family;
+#                 the orchestra observes; @optics declares the
+#                 schematic the orchestra plays through),
+#                 fate.mirror (the inference layer that this family's
+#                 gain media drive).
+# Path-namespace property: this file at `shards/optics.mirror`
+# declares `@optics` as the family root; species live at
+# `shards/optics/<name>.mirror`.
+
+prism @optics {
+  focus optics
+  project optics
+  split optics
+  shift optics
+  settle optics
+}
+
+out @optics

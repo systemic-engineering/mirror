@@ -1,0 +1,54 @@
+in @optics
+
+# @optics/source — the active-facet sub-family.
+#
+# Sub-prism under @optics declaring the species that carry energy
+# into the beam (gain media, emitters). Per docs/specs/optical-
+# keywords.md §1.7, a `source` declares an ACTIVE FACET: all facet
+# declarations apply, plus the `active` energy bit and the
+# `source_declares_energy_balance` property (§3.9) which gates the
+# declaration by requiring pumping mechanism + gain curve +
+# saturation behaviour.
+#
+# === Species under this sub-family ===
+#
+#   @optics/source/ganglion  the 5 per-ganglion gain media of
+#                              Fate's connectome. Recognition #58
+#                              Surface B closure: each ganglion's
+#                              `infer` walk is energy injection from
+#                              @io; this sub-family declares each
+#                              ganglion's effective gain curve as a
+#                              source declaration.
+#
+# Per [[architecture-prism-as-trait-as-everything]]: `glass @optics/
+# source { ... }` declares this IS a sub-prism of @optics. Per
+# [[feedback-no-bare-types]] / `keyword_matches_depth`, depth-1
+# specializations use `glass` (not `prism`); the keyword tracks the
+# Bateson level (recognition #51).
+#
+# Spec context: docs/specs/optical-keywords.md §1.7 (source keyword),
+#               §3.9 (source_declares_energy_balance property),
+#               §4.9 (@kintsugi/fracture/source_energy — missing
+#               fields surface as @io ticks per substrate-pull
+#               discipline).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                      (recognition #57; energy injection IS the @io
+#                      boundary crossing per §9.3).
+# Related shards: optics.mirror (parent family root),
+#                 optics/source/ganglion.mirror (the per-ganglion
+#                 sub-family this tick lands).
+# Path-namespace property: this file at `shards/optics/source.mirror`
+# declares `@optics/source` as the sub-family root; species live at
+# `shards/optics/source/<name>.mirror`.
+
+glass @optics/source {
+  focus source
+  project source
+  split source
+  shift source
+  settle source
+}
+
+out @optics/source
