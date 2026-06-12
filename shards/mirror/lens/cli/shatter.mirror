@@ -1,0 +1,154 @@
+in @prism
+
+in @optics
+in @glass
+in @nl
+in @mirror/lens
+in @mirror/lens/cli
+
+# @mirror/lens/cli/shatter — materialize AST -> text as a stage.
+#
+# Third of eight verb sub-stages forward-promised in
+# docs/specs/cli-as-prism.md §3 (table at §3 + §3.1 shape sketch).
+# Realizes the `command shatter` declaration in mirror.spec at the
+# stage altitude — the substrate level where the AST-projection
+# pipeline (focus -> project -> shift -> settle) writes the canonical
+# `.shatter` artifact.
+#
+# === Why shatter is a stage, not a top-level shift ===
+#
+# Per cli-as-prism §2.1: shatter could have been `mirror shift --emit
+# shatter` at the top level, but shatter has its own lifecycle — the
+# `.shatter` file is a first-class artifact per cybernetic-cli §3.
+# Sub-stage earns it: the full algebra (focus what would shatter,
+# project to a single target altitude, split enumerate variants,
+# shift re-emit at a different altitude, settle write the file) is
+# present on the shatter sub-manifold.
+#
+# Per §1.8: the TERMINAL `.shatter` WRITE is `detector`-shaped at the
+# sink — the final settle terminates the chain at a content-addressed
+# write boundary, the detector that measures the projection and
+# records the verdict. The CLI sub-stage that drives the projection
+# is the `stage` upstream of that detector. The stage produces the
+# beam; the detector collapses it to the canonical text form.
+#
+# === Family placement ===
+#
+# Parent bench: @mirror/lens/cli (shards/mirror/lens/cli.mirror).
+# Family root:  @mirror/lens    (shards/mirror/lens.mirror).
+# Sibling stages:
+#   @mirror/lens/cli/compile    — landed at 737330f (the build pipeline)
+#   @mirror/lens/cli/kintsugi   — landed previously this tick
+#   @mirror/lens/cli/bootstrap  — autopoietic phase machine (next)
+#   @mirror/lens/cli/join       — peer-entry (Glanville's verb)
+#   @mirror/lens/cli/reflect    — VSM System 5 view
+#   @mirror/lens/cli/time       — Elm-style time travel
+#   @mirror/lens/cli/crack      — third-state lifecycle
+#
+# Path-namespace property: this file at
+# `shards/mirror/lens/cli/shatter.mirror` declares
+# `@mirror/lens/cli/shatter` and only that.
+#
+# Spec context: docs/specs/cli-as-prism.md §3, §3.1 (shape sketch),
+#               §2.1 (shatter sub-stage decision; detector framing),
+#               §7 (default-op rule: shatter declares `default settle`
+#               — the only other stage besides compile to do so;
+#               both are "produce an output artifact" acts),
+#               docs/specs/optical-keywords.md §1.2 (stage),
+#               §1.8 (detector — the terminal sink shape),
+#               mirror.spec (`command shatter { arg oid:
+#               content_address; arg out: ~f }`).
+# Substrate decisions: [[architecture-splinter-ast-quote-primitive]]
+#                      (splinter(ast) is the substrate's parametric
+#                      quote mechanism; .shatter is the serialized
+#                      form of that quote at the @mirror/store sink),
+#                      [[architecture-prism-as-trait-as-everything]]
+#                      (stage IS a sub-prism specialization),
+#                      [[architecture-shards-as-substrate-source]]
+#                      (file path matches namespace),
+#                      [[architecture-lift-as-load-bearing]] (shift =
+#                      re-emit at a different altitude; same content,
+#                      different basis).
+# Related shards: lens/cli.mirror (parent bench),
+#                 lens/cli/compile.mirror (sibling — the other
+#                 `default settle` stage; symmetric artifact-write
+#                 shape),
+#                 lens/cli/kintsugi.mirror (sibling — kintsugi's
+#                 emit_shatter flag composes with this stage's
+#                 settle at the @mirror/store seam),
+#                 glass.mirror (imperfect / transparency carriers),
+#                 mirror/store.mirror (the @mirror/store/oid type the
+#                 oid arg references; the content-addressed sink the
+#                 detector writes into).
+
+stage @mirror/lens/cli/shatter {
+  # Per cli-as-prism §7: shatter declares `default settle` — the
+  # canonical safe-write default. Bare `mirror shatter <oid>`
+  # materializes the .shatter projection; the stage name plus a
+  # content-address is enough because the act is a side-effect-
+  # bounded artifact write (one file, one proof, no escalation).
+  # The other stage with `default settle` is compile (the build);
+  # all other sibling stages (kintsugi, bootstrap, join, reflect,
+  # time, crack) inherit `default focus`.
+  default settle
+
+  # The five operations the produced prism exposes on the shatter
+  # sub-manifold (a settled subgraph being projected to .shatter
+  # text). Each operand below names the natural shape of the
+  # manifold's element at that op's slot, per the spec §3.1 sketch
+  # convention and §2.1's per-verb decisions:
+  #   focus    target     — show what would shatter (no write)
+  #   project  predicate  — filter to one target altitude
+  #                          (project = orthogonal projection;
+  #                          [[architecture-operations-as-linear-algebra]])
+  #   split    variant    — enumerate materialization variants
+  #                          (alt formats / pretty-printer choices)
+  #   shift    altitude   — re-emit at a different declared altitude
+  #                          (same content, different basis;
+  #                          [[architecture-lift-as-load-bearing]])
+  #   settle   target     — the ONE write; write the `.shatter` file
+  #                          at the @mirror/store sink (detector-
+  #                          shaped per §1.8); emits proof block
+  focus    target
+  project  predicate
+  split    variant
+  shift    altitude
+  settle   target
+}
+
+# === Shatter-specific actions ===
+#
+# Realizes mirror.spec's `command shatter { arg oid: content_address;
+# arg out: ~f }` at the stage altitude. The action signature carries
+# the same shape — a content-addressed handle to the settled shard
+# plus the file destination — at the substrate altitude so the
+# dispatcher can walk from cli surface to settled call without leaving
+# the substrate. The Rust runtime walks these declarations; it does
+# not name commands. Substrate-pull discipline per
+# [[architecture-fragmentation-is-the-rust-substrate]].
+#
+# Honest `partials` from birth (per recognition #306): the return type
+# is the substrate's `imperfect` functor (declared in
+# shards/glass.mirror as `imperfect(a, e, l) = success(a) |
+# partial(a, l) | failure(e, l)`). A shatter projection that closes
+# every fragment cleanly returns success; a projection that lifts loss
+# (e.g. an opacity-tagged Dark region that cannot be rendered
+# unambiguously) returns partial-with-loss carrying the
+# transparency-tagged residual opacity, so the artifact's reader sees
+# the unresolved fracture rather than a silently-incomplete file. Per
+# [[feedback-manual-closure-is-training-pull]]: Dark regions are
+# kintsugi's mutation targets, NOT manual-patch targets at the shatter
+# sink; the partial-with-loss shape preserves them for the kintsugi
+# loop upstream.
+
+# shatter(oid, out) — project the settled shard at content-address
+# `oid` to the canonical `.shatter` text form, write it to `out`.
+# Returns the imperfect carrying the written file's ref on success,
+# the partial-with-loss on tolerable opacity (the renderer's
+# best-effort projection with the residual opacity map attached),
+# the failure with reason on hard error (oid not in store, write
+# permission denied, etc.).
+shatter(oid: ref, out: ref) -> imperfect { \ }
+
+out @mirror/lens/cli/shatter
+out shatter
