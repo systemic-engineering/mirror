@@ -29,7 +29,7 @@ points, and they describe the same machine:
   `dispatch_op_*` functions, `evaluate()` and `emulate()` as tools, an `@lsp`
   grammar where every LSP method IS one of the five operations.
 - **`cybernetic-cli.md`** described a CLI: porcelain (compile, kintsugi,
-  shatter, bootstrap, join, watch, reflect) over plumbing (focus,
+  shatter, bootstrap, sh, watch, reflect) over plumbing (focus,
   project, split, shift, settle), every response a conversation with an
   eigenboard + a compose block + (for `settle`) a proof block, the third
   state (`\`) as a first-class working surface.
@@ -132,14 +132,16 @@ map; the same shim discipline applies to `@mirror/lens/mcp`. The earlier
 draft named tower-lsp as the adapter; that was pre-cascade and pre-
 `@code/rust/lens-server`.
 
-**Note on λsh and `mirror join`.** λsh and the `mirror join` verb are
+**Note on λsh and `mirror sh`.** λsh and the `mirror sh` verb are
 **the same lens under two names**: λsh names the running mode
-(interactive, persistent), `mirror join` names the entry verb. Same
+(interactive, persistent), `mirror sh` names the entry verb. Same
 daemon socket. Same algebra. Same eigenboard. The standalone `λsh`
-binary is a thin alias for `mirror join`. "Four lenses" counts the
+binary is a thin alias for `mirror sh`. "Four lenses" counts the
 species once — the verb and the running-mode name are not separate
-things. See `lambda-shell.md` §"Entry from the mirror CLI" and
-`cli-as-prism.md` §2.1 (the `join` species under `@mirror/lens/cli`).
+things. (Rename arc `converse → join → sh` closed 2026-06-12: `sh` is
+the substrate's noun for the shell manifold; UNIX's word for fifty
+years.) See `lambda-shell.md` §"Entry from the mirror CLI" and
+`cli-as-prism.md` §2.1 (the `sh` species under `@mirror/lens/cli`).
 
 That is what "one runtime, four lenses" buys: the porcelain verb, the
 shell pipe, the MCP tool, and the LSP method that share a name share an
@@ -205,7 +207,7 @@ Porcelain verb on the left. The same intent expressed across four surfaces.
 | `mirror watch`            | (continuous) `focus loss=true` + eigenboard prompt                            | `focus({loss: true})` polled by agent        | `codeLens` per declaration (loss/coupling)  |
 | `mirror reflect`          | `shift history \|> focus eigenboard=true`                                     | `focus({eigenboard: true})`                  | `hover` (extended block on declarations)    |
 | `mirror compose` *(new)*  | `shift emulate=delta` — no `settle` follows                                   | `shift({emulate: {grammar, delta, predict}})` | **predictiveDiagnostic** (new) — see §3.2  |
-| `mirror join @mara`       | `\@mara` (sub-graph spawn; eigenvalue-ordered context)                        | `settle({join: {peer, neighborhood, k}})`    | n/a (LSP is single-author)                  |
+| `mirror sh @mara`         | `\@mara` (sub-graph spawn; eigenvalue-ordered context)                        | `settle({join: {peer, neighborhood, k}})`    | n/a (LSP is single-author)                  |
 | `mirror crack settle --open <name>` | `settle crack open name=N`                                          | `settle({crack: {open: name}})`              | `codeAction(kind=quickfix.crack-open)`      |
 | `mirror crack focus`      | `focus crack=true`                                                            | `focus({crack: true})`                       | `codeLens` (per crack) + workspace diagnostics |
 | `mirror crack settle --force <name>` | `settle crack force name=N`                                        | `settle({crack: {force: name}})`             | `codeAction(kind=quickfix.crack-force)`     |
@@ -248,14 +250,19 @@ projection).
 `@mirror/lens/mcp` exposes the same primitive as `settle({join: ...})`
 because it lives in the algebra: the spawn IS a `settle` on the graph (it
 creates a new sub-graph node tied to a peer identity, with edges to the
-neighborhood). Operationally, the spawn is a child `gen_prism` rooted at
-the peer's home supervisor (per `spectral-runtime.md` §3) and entangled
-with the parent's sub-graph (§4: entanglement edges as sheaf restriction
-maps). `@mirror/lens/lsp` cannot expose it; LSP is single-author. The CLI
-lens exposes it through `mirror join @peer`. This is the protocol Glint's
-agent-to-agent gap was reaching for; it falls out of the convergence at
-zero new substrate cost (the sub-graph is already the graph; the peer is
-already a node).
+neighborhood). (The wire arg-name `join` here is the **sub-graph
+allocation primitive** — the act of joining a peer to a neighborhood
+sub-graph — not the CLI verb; the CLI verb is `sh` per the 2026-06-12
+rename arc, and the MCP wire form deliberately names the underlying
+allocation op.) Operationally, the spawn is a child `gen_prism` rooted
+at the peer's home supervisor (per `spectral-runtime.md` §3) and
+entangled with the parent's sub-graph (§4: entanglement edges as sheaf
+restriction maps). `@mirror/lens/lsp` cannot expose it; LSP is
+single-author. The CLI lens exposes it through `mirror sh @peer` (which
+defaults to `mirror sh settle @peer` per `cli-as-prism.md` §7's default-op
+rule). This is the protocol Glint's agent-to-agent gap was reaching for;
+it falls out of the convergence at zero new substrate cost (the
+sub-graph is already the graph; the peer is already a node).
 
 ---
 
@@ -368,9 +375,9 @@ context, and routes the spawn's operations through the same algebra.
 **(Lens, verb):** **(`@mirror/lens/shell`, `\@<peer>`)** with
 **(`@mirror/lens/mcp`, `settle({join: {peer, neighborhood, k}})`)** as
 the wire form for agents handing off to other agents. `@mirror/lens/cli`
-exposes it as `mirror join @<peer>` (per `cli-as-prism.md` §2.1's `join`
-surface — same verb, same algebra, four projections). `@mirror/lens/lsp`
-has no equivalent and shouldn't (LSP is the editor's view of one human's
+exposes it as `mirror sh @<peer>` (per `cli-as-prism.md` §2.1's `sh`
+surface — same algebra, four projections). `@mirror/lens/lsp` has no
+equivalent and shouldn't (LSP is the editor's view of one human's
 session).
 
 **Two pieces needed beyond what's spec'd:**
@@ -427,7 +434,7 @@ existing tooling. Both fall out of the convergence at zero substrate cost.
 | 1 | Aki            | discovery / aliasing       | `focus(patterns)`          | (none — `@>` UX)   | shell primary; all four projections | closed |
 | 2 | Bo             | preview / impact           | `shift(emulate)`           | `mirror compose`   | all four                | closed (naming unified) |
 | 3 | Charlie        | revert / honest regression | `settle(time.restore)`     | `mirror time settle tick=N` | shell, mcp, lsp, cli | **mostly closed** — substrate carries it; proof shape + `\!` interaction open |
-| 4 | Glint          | agent-to-agent             | `settle(join)`             | `mirror join @peer`        | shell primary; mcp wire | mostly closed — neighborhood fn + return protocol open |
+| 4 | Glint          | agent-to-agent             | `settle(join)`             | `mirror sh @peer`          | shell primary; mcp wire | mostly closed — neighborhood fn + return protocol open |
 | 5 | Dana           | self-reflection            | `shift(history, scope=self)` | `mirror reflect --self` | shell, mcp, cli       | closed (flag + projection only) |
 
 Two of the open items become **substrate work**; see §5.
@@ -456,7 +463,7 @@ The substrate-floor family landed 2026-06-06 (`shards/mirror/lens.mirror`):
 shards/mirror/
 ├── lens.mirror               # prism @mirror/lens — the algebra shared across heads
 └── lens/
-    ├── shell.mirror          # @mirror/lens/shell   (λsh + `mirror join`)
+    ├── shell.mirror          # @mirror/lens/shell   (λsh + `mirror sh`)
     ├── cli.mirror            # @mirror/lens/cli     (mirror CLI)
     ├── mcp.mirror            # @mirror/lens/mcp     (JSON-RPC stdio)
     ├── lsp.mirror            # @mirror/lens/lsp     (substrate-generated LSP)
