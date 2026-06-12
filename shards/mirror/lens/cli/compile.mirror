@@ -1,0 +1,141 @@
+in @prism
+
+in @optics
+in @glass
+in @nl
+in @mirror/lens
+in @mirror/lens/cli
+
+# @mirror/lens/cli/compile — the compile stage.
+#
+# First of eight verb sub-stages forward-promised in
+# docs/specs/cli-as-prism.md §3 (table at §3 + §3.1 shape sketch).
+# Realizes the `command compile` declaration in mirror.spec at the
+# stage altitude — the substrate level where the named loop
+# (focus -> project -> shift -> settle) is declared, walked, and
+# discharged.
+#
+# === Why compile is a stage, not an op ===
+#
+# Per cli-as-prism §2.1: compile is A NAMED LOOP, not a single op.
+# Top-level `mirror settle` is the algebraic operation (one write,
+# one proof, no loop). `compile` is the canonical pipeline given a
+# name because users say "build" more often than they say "settle
+# store after shift @code/rust". The stage's `settle` IS the build;
+# the stage's `focus` previews what would change.
+#
+# Per optical-keywords.md §1.2: a `stage` is a single-input,
+# single-output chain of facets that substitutes as a facet at the
+# next altitude up. The compile stage substitutes as a facet of the
+# parent bench (@mirror/lens/cli); its produced prism exposes the
+# same five operations on the compile sub-manifold (the grammar
+# directory under settlement).
+#
+# === Family placement ===
+#
+# Parent bench: @mirror/lens/cli (shards/mirror/lens/cli.mirror).
+# Family root:  @mirror/lens    (shards/mirror/lens.mirror).
+# Sibling stages (forward-promised, not yet minted):
+#   @mirror/lens/cli/kintsugi   — the coherence-settling loop
+#   @mirror/lens/cli/shatter    — materialize AST -> text
+#   @mirror/lens/cli/bootstrap  — autopoietic phase machine
+#   @mirror/lens/cli/join       — peer-entry (Glanville's verb)
+#   @mirror/lens/cli/reflect    — VSM System 5 view
+#   @mirror/lens/cli/time       — Elm-style time travel
+#   @mirror/lens/cli/crack      — third-state lifecycle
+#
+# Path-namespace property: this file at
+# `shards/mirror/lens/cli/compile.mirror` declares
+# `@mirror/lens/cli/compile` and only that.
+#
+# Spec context: docs/specs/cli-as-prism.md §3, §3.1 (shape sketch),
+#               §4.5 (compile vs top-level settle), §7 (default-op
+#               rule: compile declares `default settle`),
+#               docs/specs/optical-keywords.md §1.2 (stage),
+#               mirror.spec (`command compile { arg path: ~d;
+#               flag strict: bool = true }`).
+# Substrate decisions: [[architecture-prism-as-trait-as-everything]]
+#                      (stage IS a sub-prism specialization),
+#                      [[architecture-shards-as-substrate-source]]
+#                      (file path matches namespace),
+#                      [[architecture-lift-as-load-bearing]]
+#                      (shift = basis transformation; same content,
+#                      different altitude).
+# Related shards: lens/cli.mirror (parent bench, the produced-prism
+#                 form the user types),
+#                 mirror/mosaic.mirror (the build altitude this stage
+#                 ultimately dispatches into — `settle(emitter)` is
+#                 what `compile.settle` walks to),
+#                 io/cargo.mirror (the @io boundary where the
+#                 produced binary lands when altitude=@code/rust),
+#                 glass.mirror (imperfect / transparency carriers).
+
+stage @mirror/lens/cli/compile {
+  # Per cli-as-prism §7: compile declares `default settle` — the
+  # canonical safe-write default. Bare `mirror compile T` runs the
+  # build (settles the grammar at T); the stage name alone is
+  # enough because the act is a side-effect-bounded artifact write.
+  # The other six stages (kintsugi, bootstrap, join, reflect, time,
+  # crack) inherit `default focus`; `shatter` is the only sibling
+  # that also declares `default settle`.
+  default settle
+
+  # The five operations the produced prism exposes on the compile
+  # sub-manifold (a grammar directory under settlement). Each operand
+  # below names the natural shape of the manifold's element at that
+  # op's slot, per the spec §3.1 sketch convention:
+  #   focus    target     — peek what would compile (no write)
+  #   project  predicate  — filter the grammar set by a predicate
+  #   split    candidate  — enumerate build candidates / import graph
+  #   shift    altitude   — view the same grammar at a different
+  #                          declared altitude (e.g. @code/rust ->
+  #                          @meta/ast); shift is basis transform,
+  #                          per [[architecture-lift-as-load-bearing]]
+  #   settle   target     — the ONE write; runs the build, emits the
+  #                          artifact, produces a proof block
+  focus    target
+  project  predicate
+  split    candidate
+  shift    altitude
+  settle   target
+}
+
+# === Compile-specific actions ===
+#
+# Realizes mirror.spec's `command compile { arg path: ~d;
+# flag strict: bool = true }` at the stage altitude. The action
+# signature carries the same shape — a grammar-directory ref plus
+# the strict-mode flag — at the substrate altitude so the dispatcher
+# can walk from cli surface to settled call without leaving the
+# substrate. The Rust runtime walks these declarations; it does not
+# name commands. Substrate-pull discipline per
+# [[architecture-fragmentation-is-the-rust-substrate]].
+#
+# Honest `partials` from birth (per recognition #306): the return
+# type is the substrate's `imperfect` functor (declared in
+# shards/glass.mirror as `imperfect(a, e, l) = success(a) |
+# partial(a, l) | failure(e, l)`). A partial compile carries the
+# transparency-tagged loss so downstream consumers (mosaic,
+# kintsugi, eigenboard) can read the residual opacity without
+# pretending the build succeeded cleanly.
+
+# compile(path) — settle the grammar at `path` in default strict
+# mode (strict=true). Returns the imperfect carrying the produced
+# artifact ref on success, the partial-with-loss on tolerable
+# strict-mode misses, the failure with reason on hard error.
+compile(path: ref) -> imperfect { \ }
+
+# compile_strict(path, strict) — same as compile but with explicit
+# strict-mode override. `strict=true` matches mirror.spec's default
+# (hard-fail on Dark / unrecognized AST nodes); `strict=false`
+# tolerates Dark regions and lifts them as partials carrying the
+# transparency-tagged opacity map. Per
+# [[feedback-manual-closure-is-training-pull]]: Dark regions are
+# kintsugi's mutation targets, NOT manual closure tasks; the
+# non-strict mode preserves them as partials for the kintsugi loop
+# to consume rather than patching them with opaque carriers.
+compile_strict(path: ref, strict: bool) -> imperfect { \ }
+
+out @mirror/lens/cli/compile
+out compile
+out compile_strict
