@@ -1,0 +1,164 @@
+in @prism
+
+in @optics
+in @glass
+in @nl
+in @mirror/lens
+in @mirror/lens/cli
+
+# @mirror/lens/cli/reflect — the VSM System 5 view as a stage.
+#
+# Sixth of eight verb sub-stages forward-promised in
+# docs/specs/cli-as-prism.md §3 (table at §3 + §3.1 shape sketch).
+# Realizes the eigenboard/spectrum observation surface at the stage
+# altitude — the substrate level where the named view
+# (focus → project → shift → settle) walks the meta-state manifold.
+#
+# === Why reflect is a stage, not a top-level focus ===
+#
+# Per cli-as-prism §4.4: reflect's mild redundancy with top-level
+# `focus` is APPARENT, not actual. Top-level `focus` observes the
+# substrate state (what is). `reflect focus` observes the identity
+# that observes the substrate state (who is observing). VSM System 5
+# vs System 4. The distinction is structurally real but easy to miss
+# at depth-0; at depth-1 the sub-manifolds are distinct. Reflect's
+# manifold IS the meta-state (eigenboard + spectrum + positions);
+# `focus` observes; the other four ops walk it.
+#
+# Per cybernetic-cli §9.5: reflect.settle is algedonic-triggered ONLY
+# — the System 5 write happens only when a structural correction has
+# been read off the eigenboard; the user does not casually settle the
+# eigenboard the way they casually settle the store. The default-op
+# rule (§7) gives `default focus`; the explicit settle path is
+# narrow and intentional.
+#
+# === Family placement ===
+#
+# Parent bench: @mirror/lens/cli (shards/mirror/lens/cli.mirror).
+# Family root:  @mirror/lens    (shards/mirror/lens.mirror).
+# Sibling stages:
+#   @mirror/lens/cli/compile    — landed at 737330f
+#   @mirror/lens/cli/kintsugi   — landed at ce2ef9b
+#   @mirror/lens/cli/shatter    — landed at 9bc68f8
+#   @mirror/lens/cli/bootstrap  — landed at ea9c9a7
+#   @mirror/lens/cli/sh         — landed previously this tick
+#   @mirror/lens/cli/time       — Elm-style time travel (next this tick)
+#   @mirror/lens/cli/crack      — kintsugi geometry (next this tick)
+#
+# Path-namespace property: this file at
+# `shards/mirror/lens/cli/reflect.mirror` declares
+# `@mirror/lens/cli/reflect` and only that.
+#
+# === Note: no mirror.spec command yet ===
+#
+# Unlike compile / kintsugi / shatter, reflect does NOT yet have a
+# `command reflect { ... }` declaration in mirror.spec — the
+# eigenboard observation surface is consumed by the runtime's VSM
+# System 5 path directly rather than the mosaic build dispatch. This
+# stage shard is the CLI surface forward-promised by cli-as-prism.md
+# §3; the mirror.spec-side declaration is a subsequent Taut tick
+# (forward-promise: when `mirror.spec` gains a `command reflect
+# { ... }` block, its arg shape carries the altitude / scope flags
+# this stage's actions already declare).
+#
+# Spec context: docs/specs/cli-as-prism.md §3, §3.1 (shape sketch),
+#               §2.1 (reflect row: per-tick/per-project/per-corpus
+#               altitudes; algedonic-triggered settle),
+#               §4.4 (the apparent-redundancy resolution — VSM
+#               System 5 vs System 4 altitudes are distinct),
+#               §7 (default-op rule: reflect declares `default
+#               focus` — the canonical read-default; settle is
+#               algedonic-only),
+#               docs/specs/optical-keywords.md §1.2 (stage),
+#               cybernetic-cli.md §9.5 (algedonic-only write
+#               discipline).
+# Substrate decisions: [[architecture-prism-as-trait-as-everything]]
+#                      (stage IS a sub-prism specialization),
+#                      [[architecture-shards-as-substrate-source]]
+#                      (file path matches namespace),
+#                      [[architecture-lift-as-load-bearing]] (shift =
+#                      basis transformation; here, viewing the same
+#                      meta-state at a different altitude:
+#                      per-tick / per-project / per-corpus).
+# Related shards: lens/cli.mirror (parent bench),
+#                 lens/cli/sh.mirror (sibling — the other meta-state
+#                 stage; sh's manifold is the SESSION, reflect's is
+#                 the SUBSTRATE-WIDE eigenboard),
+#                 glass.mirror (imperfect / transparency / verdict
+#                 carriers — the eigenboard's reading shape).
+
+stage @mirror/lens/cli/reflect {
+  # Per cli-as-prism §7: reflect declares `default focus` — the
+  # canonical read-default. Bare `mirror reflect` prints the
+  # eigenboard + spectrum at the default altitude (no write). The
+  # explicit `settle` path is algedonic-only per cybernetic-cli
+  # §9.5: a correction is written to `eigenboard.mirror` ONLY when a
+  # structural fault has been read off the spectrum; casual settles
+  # are refused. The user pays only for the explicit, narrow,
+  # intentional write.
+  default focus
+
+  # The five operations the produced prism exposes on the reflect
+  # sub-manifold (the meta-state: eigenboard + spectrum + positions).
+  # Each operand below names the natural shape of the manifold's
+  # element at that op's slot, per the spec §3.1 sketch convention
+  # and §2.1's per-verb decisions:
+  #   focus    position    — print eigenboard + spectrum (the
+  #                          canonical System 5 view); position is
+  #                          the eigenboard's slot vocabulary
+  #   project  predicate   — filter to one position (or positions
+  #                          matching a predicate, e.g. "all
+  #                          positions with eigenvalue below
+  #                          threshold")
+  #   split    candidate   — explore correction trajectories
+  #                          (enumerate candidate eigenboard moves)
+  #   shift    altitude    — view the same meta-state at a different
+  #                          altitude (per-tick / per-project /
+  #                          per-corpus; same content, different
+  #                          basis; [[architecture-lift-as-load-bearing]])
+  #   settle   position    — the ONE write; land a correction to
+  #                          eigenboard.mirror (algedonic-triggered
+  #                          only per cybernetic-cli §9.5)
+  focus    position
+  project  predicate
+  split    candidate
+  shift    altitude
+  settle   position
+}
+
+# === Reflect-specific actions ===
+#
+# No mirror.spec `command reflect { ... }` declaration yet (see the
+# "no mirror.spec command yet" note above). The CLI surface action
+# signature lands here as the substrate forward-promise; the Rust
+# runtime walks this declaration when the eigenboard observation
+# surface lifts into the mosaic dispatch. Substrate-pull discipline
+# per [[architecture-fragmentation-is-the-rust-substrate]].
+#
+# Honest `partials` from birth (per recognition #306): the return
+# type is the substrate's `imperfect` functor (declared in
+# shards/glass.mirror as `imperfect(a, e, l) = success(a) |
+# partial(a, l) | failure(e, l)`). A clean eigenboard read returns
+# success carrying the spectrum ref; a read that lifts loss (e.g.
+# stale eigenvalues at the current altitude, transparency-tagged
+# regions where the spectrum could not converge cleanly) returns
+# partial-with-loss carrying the transparency-tagged residual
+# opacity, so the System 4 view sees the unresolved meta-state
+# rather than a silently-incomplete reading.
+
+# reflect() — print the eigenboard + spectrum at the default
+# altitude (per-project). Returns the imperfect carrying the
+# spectrum ref on success, partial-with-loss on tolerable
+# observation shortfall (e.g. one position's eigenvalue could not
+# converge cleanly), failure on hard read error.
+reflect() -> imperfect { \ }
+
+# reflect_altitude(altitude) — print the eigenboard + spectrum at an
+# explicit altitude (per-tick / per-project / per-corpus per
+# cli-as-prism §2.1). Same return shape as reflect; the altitude arg
+# selects the basis the meta-state is viewed in.
+reflect_altitude(altitude: ref) -> imperfect { \ }
+
+out @mirror/lens/cli/reflect
+out reflect
+out reflect_altitude
