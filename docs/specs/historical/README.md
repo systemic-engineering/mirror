@@ -23,7 +23,9 @@ The canonical specs are in the parent directory. Start with `road-to-1.0.md`.
   OID log from the `reed/kintsugi-grammars` tick. Historical evidence of a
   single tick on a since-collapsed branch; not a spec. Only outside-this-dir
   citation was `road-to-1.0.md`'s historical-triage table, which already
-  classified it as historical.
+  classified it as historical. (Move completed across two commits: a535595
+  added the new path + this README entry; the follow-up dropped the
+  duplicate at the old `docs/specs/` path.)
 
 ### Audit notes (no move; surfaced for the record)
 
