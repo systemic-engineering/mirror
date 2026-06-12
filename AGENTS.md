@@ -119,7 +119,7 @@ shards/ is canonical; boot/ shrinks; bootstrap stays minimal forever.
 ~/.local/bin/mirror <input> '<mq>'            # mq pipeline over a file
 ```
 
-direnv keeps the shell warm. `mirror join` (entry to λsh), `mirror run`,
+direnv keeps the shell warm. `mirror sh` (entry to λsh), `mirror run`,
 `mirror fate` are post-v0.1.
 
 ## The Five Operations
@@ -144,8 +144,8 @@ nest (per `docs/specs/cli-as-prism.md`).
 λsh / CLI / MCP / LSP are adapters onto the same five-operation algebra over
 the same fragment graph (per `docs/specs/the-convergence.md`). The daemon
 is the regulator. The eigenboard is the algedonic surface. mq is the
-canonical expression. **λsh and `mirror join` are the same transport under
-two names:** λsh is the running mode, `mirror join` is the entry verb.
+canonical expression. **λsh and `mirror sh` are the same transport under
+two names:** λsh is the running mode, `mirror sh` is the entry verb.
 
 ## The Kintsugi Workflow
 
