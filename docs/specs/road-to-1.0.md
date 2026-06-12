@@ -119,14 +119,23 @@ toward the five-operation surface.
 
 ### Spec inventory
 
+*Triage refreshed 2026-06-13 per pass-2 audit. The 2026-05-19 baseline below is preserved for historical context; the refresh promotes specs that are still actively cited by current shards and adds new canonical docs minted since.* 
+
 `docs/specs/` contains 41 spec files. Triage:
 
 | Status | Count | Examples |
 |---|---|---|
-| **Current** (matches 2026-05-19 architecture) | 9 | `surface-simplification.md`, `craft-binary-target.md`, `mirror-binary-surface.md`, `mirror-binary-architecture.md`, `minimum-binary-surface.md`, `kintsugi-self-hosting.md`, `kintsugi-shatter.md`, `io-safety-properties.md`, `code-extension-grammar.md` |
-| **Historical** (describes a prior architecture) | 22 | `2026-04-02-ci-ca-ai-design.md`, `2026-04-02-package-system-design.md`, `2026-04-14-mirror-runtime-spec.md`, `2026-04-14-lsp-shatter-plan.md`, `2026-04-15-inline-impl-runtime-plan.md`, `autopoietic-grammar-spec.md`, `bundle-tower-refactor.md`, `cli-args-typed-lambdas.md`, `compiler-error-language.md`, `compiler-surface-plan.md`, `error-surface-spec.md`, `i18n-feature-spec.md`, `kintsugi-tick-1-results.md`, `liquid-types-for-mirror.md`, `merkle-package-manager.md`, `mirror-interpreter.md`, `property-error-surface.md`, `property-projection.md`, `reflection-model.md`, `spec-inference.md`, `spectral-triple-binary.md`, `type-theory-position.md` |
-| **Aspirational / stubs** | 5 | `ai-syntax-embedding.md` (large but speculative), `epistemologic-grammar.md` (62 KB — research, not implementation), `graph-native-mirror-model.md`, `hazel-execution-model.md`, `trace-kintsugi-pipeline.md`, `typed-loss-composition.md` |
+| **Current** (matches 2026-06-13 architecture) | 19 | `surface-simplification.md`, `craft-binary-target.md`, `mirror-binary-surface.md`, `mirror-binary-architecture.md`, `minimum-binary-surface.md`, `kintsugi-self-hosting.md`, `kintsugi-shatter.md`, `kintsugi-fracture-confidence-and-scene-dispatch.md`, `kintsugi-minimum-runnable.md`, `kintsugi-wiring.md`, `trace-kintsugi-pipeline.md`, `mirror-interpreter.md`, `io-safety-properties.md`, `code-extension-grammar.md`, `threat-model-v0.md` (2026-06-12), `coincidence-hash-collapse.md` incl. Appendix C (2026-06-12), `roadmap/wip/spectral-db-substrate.md` (2026-06-12), `docs/insights/2026-06-12-trace-altitudes-are-the-wire-dimensions.md` (2026-06-12) |
+| **Historical** (describes a prior architecture; lives under `docs/specs/historical/`) | 23 | `2026-04-02-ci-ca-ai-design.md`, `2026-04-02-package-system-design.md`, `2026-04-14-mirror-runtime-spec.md`, `2026-04-14-lsp-shatter-plan.md`, `2026-04-15-inline-impl-runtime-plan.md`, `autopoietic-grammar-spec.md`, `bundle-tower-refactor.md`, `cli-args-typed-lambdas.md`, `compiler-error-language.md`, `compiler-surface-plan.md`, `error-surface-spec.md`, `i18n-feature-spec.md`, `kintsugi-tick-1-results.md` (moved 2026-06-12 per pass-2 audit), `liquid-types-for-mirror.md`, `merkle-package-manager.md`, `property-error-surface.md`, `property-projection.md`, `reflection-model.md`, `spec-inference.md`, `spectral-triple-binary.md`, `type-theory-position.md` |
+| **Aspirational / stubs** | 5 | `ai-syntax-embedding.md` (large but speculative), `epistemologic-grammar.md` (62 KB — research, not implementation), `graph-native-mirror-model.md`, `hazel-execution-model.md`, `typed-loss-composition.md` |
 | **Process / templates** | 5 | `generated-parser-spec.md`, `epistemologic-import-resolver.md`, `minimum-viable-keywords.md`, `mirror-store.md`, `2026-04-14-boot-reorganization-plan.md`, `2026-04-14-template-property-split.md` |
+
+**Refresh notes (2026-06-13):**
+
+- Pass 2 surfaced that `kintsugi-shatter`, `kintsugi-fracture-confidence-and-scene-dispatch`, `kintsugi-minimum-runnable`, `kintsugi-wiring`, `trace-kintsugi-pipeline`, and `mirror-interpreter` are altitude-distinguished implementation guides still actively cited by current shards — promoted from historical/aspirational to **current**.
+- `kintsugi-tick-1-results.md` physically moved to `docs/specs/historical/` during pass 2 (commits `a535595` + `90df97c`).
+- New canonical docs landed 2026-06-{11,12} added to **current**: `threat-model-v0.md` (A1–A5 attacker classes + 5 protected properties), `coincidence-hash-collapse.md` Appendix C (CoincidenceHash⟨5⟩ as KDF context), `roadmap/wip/spectral-db-substrate.md` (Track D's 8-phase migration), and the `trace-altitudes-are-the-wire-dimensions` insight.
+- Tick 7 below ("Spec triage") remains the canonical mechanism for ongoing refresh; this table is a snapshot.
 
 Most of the historical specs assume a Rust crate at `src/`. That
 substrate is gone (per AGENTS.md: "There are no Rust files. No C
