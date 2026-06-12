@@ -132,7 +132,7 @@ the algebra never deeper than 3.
 The cybernetic-cli surface had:
 
 - **Plumbing (5):** `focus`, `project`, `split`, `shift`, `settle`.
-- **Porcelain (7):** `compile`, `kintsugi`, `shatter`, `bootstrap`, `join`,
+- **Porcelain (7):** `compile`, `kintsugi`, `shatter`, `bootstrap`, `sh`,
   `watch`, `reflect`.
 - **Third state (4):** `open`, `cracks`, `force`, `seal`.
 - **Time (1, dissolved into the `time` stage below):** `revert`.
@@ -157,7 +157,7 @@ Each is placed into the recursion below. The placement type is one of:
 | `kintsugi` | **sub-stage** | `mirror kintsugi { focus, project, split, shift, settle }` | The coherence-settling loop. `focus` = peek at the next tournament move. `project` = filter by what to repair (target, eigenvalue range). `split` = explore candidate fills. `shift` = basis-transform on the loss landscape. `settle` = run one tournament iteration AND write. **Sings.** The five ops are the loop's verbs. (The TOURNAMENT itself is structurally a `resonator` per `optical-keywords.md` §1.5 — closed loop with output coupler — but the CLI sub-stage that drives one iteration is a `stage` rather than a `resonator`: each invocation is a chain through the five ops, not a self-referential round-trip. The resonator lives at the kintsugi-engine altitude; the CLI surface is the stage that fires one round-trip.) |
 | `shatter` | **sub-stage** | `mirror shatter { focus, project, split, shift, settle }` | Materialize AST → text. `focus` = show what would shatter. `project` = filter to one target altitude. `split` = enumerate materialization variants. `shift` = re-emit at a different altitude. `settle` = write the `.shatter` file (the projection of `au`). Could have been `mirror shift --emit shatter` at the top level, but shatter has its own lifecycle (the `.shatter` file is a first-class artifact per cybernetic-cli §3). Sub-stage earns it. (The terminal `.shatter` write is `detector`-shaped per §1.8 — the final settle terminates the chain at a sink; the CLI sub-stage that drives it is the stage upstream of that detector.) |
 | `bootstrap` | **sub-stage** | `mirror bootstrap { focus, project, split, shift, settle }` | The autopoietic phase machine (7 phases). `focus` = report phase status. `project` = filter to one phase. `split` = enumerate sub-phase dependencies. `shift` = shift between phase representations (eigenvalue / line count / proof). `settle` = advance one phase (the ONE write; proof block records the transition). **Strains on `split` slightly** — phases don't naturally branch, they sequence. Named in §4. |
-| `join` | **sub-stage** | `mirror join [@peer] { focus, project, split, shift, settle }` | Second-order CLI. **Rename: `converse` → `join`.** Join is what you DO to a conversation; conversing is what happens INSIDE it. Glanville's verb — Conversation Theory names the entry, not the activity. Peer-id is a **path component**: `mirror join @reed` reads `shards/mirror/lens/cli/join.mirror` with `@reed` as the stage's argument. Inside: `focus` = observe peer's eigenboard without entering. `project` = filter the conversation by topic. `split` = branch into a sub-conversation. `shift` = see from their altitude (peer ↔ self). `settle` = enter (land an utterance; commits to the transcript). The `λsh` drop-in is `mirror join` with no peer — the empty path puts the user IN the stage interactively. **Sings** — names the entry, lets the activity inside stay nameless. (The peer-binding boundary the stage opens is `aperture`-shaped per `optical-keywords.md` §1.3 and the-convergence §4.2 — typed beam channel at peer↔lens-per-session; but the CLI surface declaring the chain of ops is a `stage` whose entry IS that aperture.) |
+| `sh` | **sub-stage** | `mirror sh [op] [@peer] { focus, project, split, shift, settle }` | The shell as a manifold. **Rename arc: `converse` → `join` → `sh`.** `sh` is the substrate's noun for the shell — prompt state, view state, session state, peer context — and UNIX has named it `sh` for fifty years. The `join` waypoint earned its keep by exposing the type-confusion: it was both Glanville's directional entry verb AND a five-op sub-stage, but verbs don't have algebras; nouns can. `sh` is a noun, so the five ops apply cleanly. Op-first, peer-as-arg: `mirror sh @reed` is `mirror sh settle @reed` per the default-op rule (§7: `sh` declares `default settle`); `mirror sh focus @reed` observes peer's eigenboard without entering; `mirror sh shift @reed` views from their altitude; `mirror sh split @reed` branches a sub-conversation. The `λsh` drop-in is bare `mirror sh` with no peer — the default-settle puts the user IN the shell interactively. **Sings** — substrate-pull closes via UNIX's own word. (The peer-binding boundary the stage opens is `aperture`-shaped per `optical-keywords.md` §1.3 and the-convergence §4.2 — typed beam channel at peer↔lens-per-session; but the CLI surface declaring the chain of ops is a `stage` whose entry IS that aperture.) |
 | `watch` | **flag** | `mirror focus --watch` | **Did not condense as a sub-stage.** Watch is a TEMPORAL MODE on observation, not its own algebra. There is no "settle the watch" — the watch settles whatever it is watching. Named in §4 as friction-that-resolved-cleanly: the friction taught us watch isn't a verb, it's an adverb. Same shape as `git log --follow`. |
 | `reflect` | **sub-stage** | `mirror reflect { focus, project, split, shift, settle }` | VSM System 5 view. `focus` = print eigenboard + spectrum. `project` = filter to one position. `split` = explore correction trajectories. `shift` = view the same state at a different altitude (per-tick, per-project, per-corpus). `settle` = land a correction to `eigenboard.mirror` (the ONE write; algedonic-triggered only per cybernetic-cli §9.5). **Mild redundancy with top-level `focus`** — both observe meta-state. Named in §4. |
 | `cracks` | **op of `crack` stage** | `mirror crack focus` | **Rename: `hole` → `crack`.** `\` produces fracture per gap-tension-tensor-substrate.md (the gap fold). `crack` carries the kintsugi geometry — settle on a crack IS the gold pour. `focus` of the crack stage lists every open `\`. The cybernetic-cli's `holes` verb IS the focus of the third-state sub-manifold. |
@@ -182,14 +182,14 @@ mirror compile    [focus|project|split|shift|settle] [args]
 mirror kintsugi   [focus|project|split|shift|settle] [args]
 mirror shatter    [focus|project|split|shift|settle] [args]
 mirror bootstrap  [focus|project|split|shift|settle] [args]
-mirror join       [@peer] [focus|project|split|shift|settle] [args]
+mirror sh         [focus|project|split|shift|settle] [@peer] [args]
 mirror reflect    [focus|project|split|shift|settle] [args]
 mirror time       [focus|project|split|shift|settle] [args]
 mirror crack      [focus|project|split|shift|settle] [args] [--open|--force]
 ```
 
 That is **the entire surface**. Five top-level ops. Seven sub-stages
-(`compile`, `kintsugi`, `shatter`, `bootstrap`, `join`, `reflect`, `time`,
+(`compile`, `kintsugi`, `shatter`, `bootstrap`, `sh`, `reflect`, `time`,
 `crack` — eight names, seven plus `crack`). Every sub-stage has the same
 five ops. **Same algebra everywhere.** A user who learns the five
 operations once knows every command at every depth.
@@ -216,7 +216,7 @@ shards/mirror/lens/
     ├── kintsugi.mirror         # stage @mirror/lens/cli/kintsugi  { f,p,s,sh,se }
     ├── shatter.mirror          # stage @mirror/lens/cli/shatter   { f,p,s,sh,se }
     ├── bootstrap.mirror        # stage @mirror/lens/cli/bootstrap { f,p,s,sh,se }
-    ├── join.mirror             # stage @mirror/lens/cli/join      { f,p,s,sh,se }
+    ├── sh.mirror               # stage @mirror/lens/cli/sh        { f,p,s,sh,se }
     ├── reflect.mirror          # stage @mirror/lens/cli/reflect   { f,p,s,sh,se }
     ├── time.mirror             # stage @mirror/lens/cli/time      { f,p,s,sh,se }
     └── crack.mirror            # stage @mirror/lens/cli/crack     { f,p,s,sh,se }
@@ -231,8 +231,12 @@ same five operations. The CLI is **self-describing by directory listing**.
 
 **The renames track the substrate vocabulary already on disk.** `crack`
 ↔ `\` (fracture, per `gap-tension-tensor-substrate.md`). `time` ↔
-`@epistemologic/reality/time` (Track G). `join` ↔ Glanville's Conversation
-Theory verb. The CLI altitude finally speaks the substrate's own vocabulary.
+`@epistemologic/reality/time` (Track G). `sh` ↔ the shell manifold —
+UNIX's word for fifty years, and the substrate's noun for the
+prompt/view/session/peer state. (Rename arc `converse → join → sh`:
+the `join` waypoint exposed the type-confusion — verbs don't have
+algebras, nouns can; `sh` resolves it.) The CLI altitude finally speaks
+the substrate's own vocabulary.
 
 ### 3.1 What goes inside a sub-stage shard (sketch)
 
@@ -240,7 +244,9 @@ Theory verb. The CLI altitude finally speaks the substrate's own vocabulary.
 
 ```mirror
 in @prism
-in @stage
+in @optics
+in @glass
+in @mirror/lens
 in @mirror/lens/cli
 in @nl
 
@@ -291,16 +297,16 @@ The recursion can go deeper, but **only when the algebra demands it**.
 Sketch of where depth-2 might land:
 
 ```
-shards/mirror/lens/cli/join/
-  reed.mirror              # stage @mirror/lens/cli/join/reed
-  alex.mirror              # stage @mirror/lens/cli/join/alex
+shards/mirror/lens/cli/sh/
+  reed.mirror              # stage @mirror/lens/cli/sh/reed
+  alex.mirror              # stage @mirror/lens/cli/sh/alex
 ```
 
 …would make each peer a sub-stage. **This is NOT proposed for v0.1.**
 Peers are dynamic; baking them into the on-disk structure is wrong. Instead,
-`mirror join @reed` passes `@reed` as an argument to the
-`@mirror/lens/cli/join` stage's `focus` op. Depth-2 directories are
-**reserved** but not minted.
+`mirror sh @reed` passes `@reed` as an argument to the
+`@mirror/lens/cli/sh` stage's default op (`settle` — enter; see §7).
+Depth-2 directories are **reserved** but not minted.
 
 The CLI directory tree is **as deep as the substrate has reason to be**.
 Static structure for substrate facts; dynamic args for runtime values.
@@ -422,8 +428,8 @@ sub-sub-stage's `focus` is just "the parent's focus with one arg pinned,"
 it doesn't deserve its own shard — it's an argument value, not a stage.
 
 This is **substrate-pull at the directory layer**. Static structure for
-substrate facts. Dynamic args for runtime values. Peers in
-`converse`: arguments. Phases in `bootstrap`: arguments (or a flag-enum,
+substrate facts. Dynamic args for runtime values. Peers in `sh`:
+arguments. Phases in `bootstrap`: arguments (or a flag-enum,
 NOT sub-shards `phase-1.mirror`, `phase-2.mirror`).
 
 **Finding: the directory layout is a TYPE. Use it to encode invariants,
@@ -484,22 +490,42 @@ open)** — the substrate already has the 9 actions in
 can land now; Track G fills in only the proof-block shape and the
 crack-interaction semantics.
 
-### 5.4 `join` with peer-as-path-argument
+### 5.4 `sh` as a manifold — the shell IS a stage
 
-**Rename: `converse` → `join`.** `mirror join @reed` reading the peer as
-the stage's argument feels **right** in the way `cd @reed` would feel
-right in a graph filesystem. The constraint guided us toward "peers are
-values flowing through the algebra," not "peers are sub-substrates."
-That's a meaningful piece of architecture clarified by the recursion.
+**Rename arc: `converse` → `join` → `sh`.** Naming this stage was the
+hardest piece of the condensation. The arc settles as follows:
 
-**Why `join` over `converse`:** Join names the **entry**; conversing is
-what happens **inside**. Glanville's Conversation Theory points at the
-verb of entry, not the activity. Peer-conversations stop being separate
-verbs and become operations under join: `mirror join @peer` = settle
-(enter), `mirror join focus @peer` = observe peer's eigenboard without
-entering, `mirror join shift @peer` = see from their altitude. The CLI
-verb names the doorway; the activity inside the room stays nameless
-(which is correct — the activity inside is the user's, not the CLI's).
+(a) **The manifold is the shell environment.** Not a verb. A noun.
+Prompt state, view state, session state, peer context — `sh` names the
+four-dimensional manifold the user lives inside while at the terminal.
+
+(b) **The five ops are operations on that manifold.** `focus` = read
+the shell's state (peer's eigenboard, session log, current prompt).
+`project` = filter what the shell renders (by topic, by peer, by
+epistemologic predicate). `split` = branch a sub-shell (parallel
+prompt-line). `shift` = view the shell from another altitude (peer ↔
+self; or zoom into a single utterance). `settle` = enter the shell
+(commit to interactive mode; bare `mirror sh` does this via the
+default-op rule).
+
+(c) **`λsh` is the bare-form drop-in via `default settle`.** `mirror sh`
+with no op runs `mirror sh settle` per the per-stage default declared
+in §7. Settle on the shell manifold IS entering the shell. The
+standalone `λsh` binary is a thin alias for `mirror sh`.
+
+(d) **Peer-as-op-arg, op-first.** `mirror sh @reed` is `mirror sh settle
+@reed` (drop in with `@reed>` as the active prompt; default-op). `mirror
+sh focus @reed` observes peer's eigenboard without entering. `mirror sh
+shift @reed` views from their altitude. The op names what you do; the
+peer names whom you do it with.
+
+(e) **Substrate-pull: UNIX's word.** `sh` is what every UNIX has called
+the shell for fifty years. The substrate already had the noun; we kept
+trying to invent one. The `converse → join` waypoint earned its keep by
+exposing the type-confusion (`join` was both Glanville's directional
+entry verb AND a five-op sub-stage; verbs don't have algebras, nouns
+can). Once the type-confusion was visible, the substrate handed back
+the word it had carried all along.
 
 ### 5.5 The dispatcher is trivial
 
@@ -518,12 +544,13 @@ every command at every depth. The mnemonic load drops from
 are already the mental model the substrate is built on. **One vocabulary,
 infinite recursion.**
 
-The renames sharpen this further: `crack`, `time`, and `join` are
-substrate-native (`\` fracture, `@epistemologic/reality/time`, Glanville's
-verb). The CLI's seven sub-stage names are no longer arbitrary porcelain
-labels — they're **the substrate's own vocabulary made visible at the
-shell**. Names-to-learn isn't just smaller; it's also the same vocabulary
-the user encounters everywhere else in the system.
+The renames sharpen this further: `crack`, `time`, and `sh` are
+substrate-native (`\` fracture, `@epistemologic/reality/time`, UNIX's
+fifty-year noun for the shell manifold). The CLI's seven sub-stage
+names are no longer arbitrary porcelain labels — they're **the
+substrate's own vocabulary made visible at the shell**. Names-to-learn
+isn't just smaller; it's also the same vocabulary the user encounters
+everywhere else in the system.
 
 ---
 
@@ -542,7 +569,7 @@ the user encounters everywhere else in the system.
 | `watch` (modal)          | `mirror watch`                | `mirror focus --watch`       |
 | `compile` (canonical)    | `mirror compile T`            | `mirror compile settle T` ⁕  |
 | `revert` (time-travel)   | `mirror revert N`             | `mirror time settle tick=N`  |
-| `join` (peer-entry)      | `mirror converse @reed`       | `mirror join @reed`          |
+| `sh` (peer-entry)        | `mirror converse @reed`       | `mirror sh @reed`            |
 | Substrate carries it     | partial (porcelain in Rust)   | **whole CLI in shards/mirror/lens/cli/** |
 
 ⁕ With `mirror compile T` aliasing to `compile settle T` via the stage's
@@ -551,7 +578,7 @@ so it can declare `settle` as its default for the action-form). See §7.
 
 **Net:** 5 fewer names to learn (and the names that remain are
 **substrate-native**: `crack` = `\` fracture, `time` = `@epistemologic/reality/time`,
-`join` = Glanville's verb). ~20 more dispatchable leaves (because every
+`sh` = UNIX's noun for the shell manifold). ~20 more dispatchable leaves (because every
 stage produces a prism that exposes 5 ops). Substrate carries the entire
 CLI in 8 `.mirror` files. The CLI becomes inspectable by `ls
 shards/mirror/lens/cli/`.
@@ -589,7 +616,7 @@ the stage name. In v0.1, this is **`compile` and `shatter` alone**:
 `.shatter` projection. Both are "produce an output artifact" acts that
 don't escalate beyond the artifact.
 
-**Why not `bootstrap`, `reflect`, `join` (also verb-named)?** Each has a
+**Why not `bootstrap`, `reflect` (also verb-named)?** Each has a
 `settle` semantic too pointed for an implicit default (Seam pass,
 2026-06-05):
 
@@ -597,14 +624,21 @@ don't escalate beyond the artifact.
   state; the user wants to see status (`focus`) before advancing.
 - `reflect settle` = land a correction to `eigenboard.mirror`.
   Algedonic-triggered only (per §2.1); cannot be the bare default.
-- `join settle` = enter (commits an utterance to the transcript).
-  Without an utterance, the bare form must read first (`focus` = observe
-  peer's eigenboard).
+
+**Why `sh` IS in the `default settle` set** (added 2026-06-12 with the
+`join → sh` rename): `sh settle` is **enter the shell** — drop into
+λsh as self (or with `@peer` if supplied). Bare `mirror sh` IS the
+canonical entry; the user expects entering, not reading a description
+of the shell. `sh` is a noun-shaped manifold; settling on it IS
+occupying it. (Under the prior `join` framing, `join settle` meant
+"commit an utterance to the transcript," which couldn't be the bare
+default. The rename clarifies: there's no transcript to commit to
+until you're in the shell; entering IS the canonical settle.)
 
 The corrected rule: **`default focus` unless the stage explicitly
-declares otherwise.** v0.1 declarations: `compile`, `shatter` →
-`default settle`. Everything else (`kintsugi`, `bootstrap`, `join`,
-`reflect`, `time`, `crack`) → `default focus`.
+declares otherwise.** v0.1 declarations: `compile`, `shatter`, `sh` →
+`default settle`. Everything else (`kintsugi`, `bootstrap`, `reflect`,
+`time`, `crack`) → `default focus`.
 
 The earlier "action-named stages default to settle" framing was a
 mechanical rule that didn't survive contact with the per-stage semantics;
@@ -648,7 +682,7 @@ Everything else falls out of the file structure.
 
 - **No new shards in this round.** This is exploration; ticks land later
   on `reed/shards-floor` or its successor.
-- **No depth-2 directories.** `shards/mirror/lens/cli/join/` is reserved
+- **No depth-2 directories.** `shards/mirror/lens/cli/sh/` is reserved
   but not minted. Peers are arguments, not substrate.
 - **No `@epistemologic/reality/time` substrate work.** The `time` stage
   forward-references this substrate; the substrate itself is Track G
@@ -694,11 +728,17 @@ Everything else falls out of the file structure.
    focus --watch` should work the same as `mirror focus --watch`. The
    adverb composes with the verb at any altitude.
 
-6. **`join @peer` argument shape.** Does `@peer` come BEFORE or AFTER
-   the op? `mirror join @reed focus` or `mirror join focus @reed`?
-   My read: BEFORE (path-shape). `mirror join @reed` walks toward the
-   peer; the op is what you do once you're there. Join names the entry;
-   the op names what you do at the doorway.
+6. **`sh @peer` argument shape.** [Closed 2026-06-12.] `@peer` comes
+   AFTER the op (op-first; peer-as-arg): `mirror sh focus @reed` /
+   `mirror sh settle @reed` / `mirror sh shift @reed`. Bare `mirror sh
+   @reed` resolves via the default-op rule (§7: `sh` declares `default
+   settle`) to `mirror sh settle @reed` — drop into λsh with `@reed>`
+   as the active prompt. Reason: `sh` is a noun-shaped manifold (the
+   shell environment), not a directional verb, so peer-as-arg is the
+   natural shape — the op names what you do on the manifold, the peer
+   names the binding. The earlier `join @peer` path-shape (peer-as-
+   path-component) was right for `join`'s directional-verb framing;
+   the `join → sh` rename flipped the question. See §5.4.
 
 7. **Default op declaration syntax.** §7's `default settle` field is a
    sketch. Is the actual grammar `default = settle` or `default settle`
@@ -721,13 +761,13 @@ cybernetic CLI was hiding: watch isn't a verb, open and force are events
 on the same write, phase-machines aren't graph-shaped. The constraint
 **earned its keep by what it revealed**, not just by what it condensed.
 
-Where the recursion sang (`crack`, `kintsugi`, `time`, `join`,
+Where the recursion sang (`crack`, `kintsugi`, `time`, `sh`,
 dispatcher-as-path-walk), it **closed a loop** that mosaic opened at the
 build altitude: the file structure IS the type, the type IS the
 substrate, the substrate IS the algebra, the algebra IS the same five
 operations at every altitude. **eⁿ⁺¹ ≤ eⁿ** at the CLI surface too — the
 verb count goes down without the expressive surface going down. The
-renames make the singing literal: `crack`, `time`, and `join` are the
+renames make the singing literal: `crack`, `time`, and `sh` are the
 substrate's own vocabulary, finally spoken at the shell.
 
 The CLI is a bench whose compilation produces a prism. The CLI's
