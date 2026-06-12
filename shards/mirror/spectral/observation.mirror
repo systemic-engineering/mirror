@@ -1,0 +1,190 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @mirror/spectral
+
+# @mirror/spectral/observation — the 16-feature input layer Fate sees.
+#
+# Recognition #58 v1 closure (per
+# [[architecture-fate-is-optical-inference]]): Fate inference IS a
+# 5-layer D²NN + Fabry-Perot resonator + Reck/Clements unitary mesh.
+# The recognition was promoted 2026-06-11; v1 closure was pending the
+# substrate declaration of *what the input dimension carries*. The
+# 5-layer D²NN's input layer is 16-dimensional; until this shard
+# lands, the 16 features are implicit (named in
+# `docs/specs/spectral-db-mirror.md §3.2`, but never declared at
+# substrate altitude).
+#
+# This shard closes that gap. It declares the 16 graph-observation
+# features as one typed carrier under `@mirror/spectral` (form-side
+# family, per recognition #55: form-side species observe; process-side
+# species transform). The observation IS the family's read surface
+# for Fate's inference altitude.
+#
+# === The recognition: the family root already named this ===
+#
+# `shards/mirror/spectral.mirror` (the family root) declares
+# `@mirror/spectral` as the orchestra's OBSERVATION surface. The
+# 16-feature graph_observation IS the substrate-altitude form of that
+# observation — what the Fabry-Perot resonator's gain media (per
+# `shards/optics/source/ganglion/*`) actually read at the input layer.
+#
+# The family-root sub-shard list already implies it (the score reads
+# eigenboard + metalogue + pending; the observation reads the
+# substrate's *current geometry*). Score and observation are sibling
+# form-side species: score is the orchestra's shared-state read
+# surface; observation is the input-layer read surface that drives
+# the audition's 5-layer D²NN.
+#
+# === The 16 features ===
+#
+# Verbatim from `docs/specs/spectral-db-mirror.md §3.2`. Each feature
+# is a unit-interval scalar (`f64 ∈ [0,1]`). The 16 names partition
+# into four conceptual quadrants of four each:
+#
+#   Settlement-state (what the substrate is right now):
+#     convergence_settled    is the spectral loop converged?
+#     pressure_load          how much pending work is queued?
+#     node_occupancy         how full is the graph's node capacity?
+#     edge_density           how richly connected is the graph?
+#
+#   Crystal-state (where the substrate is along its crystallization):
+#     crystal_fraction       fraction of nodes that have crystallized
+#     settlement_depth       depth into the kintsugi-oscillation
+#     interval_ratio         oscillation interval / reference interval
+#     hot_path_density       fraction of paths in hot-path band
+#
+#   Query-state (what the substrate is being asked):
+#     query_intensity        rate of incoming queries
+#     partition_risk         probability of partition under current load
+#     tick_maturity          fraction of expected tick duration consumed
+#     mutation_rate          rate of structural mutations
+#
+#   Spectral-state (what the eigenvalues are doing):
+#     shannon_loss_rate      Shannon entropy loss per tick
+#     spectral_dimension     effective dimension of the spectral manifold
+#     eigenvalue_gap         λ₁ − λ₀ of the graph Laplacian
+#     holonomy               closure defect of the oscillation round
+#
+# These four quadrants ARE the 5×5 conductivity tensor's four
+# eigen-axes after dropping λ₀ (the dark / generative-zero
+# eigenvalue). The 16 = 4 axes × 4 features per axis is the
+# substrate-pull alignment with the @hash/coincidence geometry; not
+# coincidence, identity (per recognition #58's D²NN witness chain).
+#
+# === Type discipline ===
+#
+# Per [[feedback-no-bare-types]]: no bare `f64`. Each feature is
+# `unit_interval` — the substrate's typed `[0,1]` carrier. The
+# refinement (`0 ≤ x ≤ 1`) belongs at @epistemologic/property altitude
+# (`@epistemologic/property/unit_interval`); this shard declares the
+# *type* and forward-references the property predicate as the
+# verification surface.
+#
+# `unit_interval` is declared here as a sub-shard-local newtype on
+# first use; if a sibling shard surfaces the same need (the
+# substrate-already-had-the-word pattern), the lift to a shared
+# carrier is a future cascade tick, not this one's burden. The 22nd-
+# instance flag from `score.mirror`'s landing is the right precedent
+# (sibling shards lift carriers; the family root doesn't pre-declare
+# them).
+#
+# === Forward-promise to consumers ===
+#
+# This shard declares the carrier. The substrate-altitude consumers
+# (the action that *fills* `graph_observation` from a `score`; the
+# action that *feeds* `graph_observation` into the audition's
+# Fabry-Perot input layer) land downstream as the recognition #58
+# cascade reaches its consumers. Per [[feedback-craft-not-deliver]]:
+# this is the carrier landing; the morphism that fills it is the
+# next tick when the consumer pulls.
+#
+# Spec context: docs/specs/spectral-db-mirror.md §3.2 (the 16
+#               features verbatim),
+#               docs/specs/mirror-spectral.md §4.5 (the score sibling),
+#               docs/insights/recognition #58 / fate-is-optical-inference
+#               (the 5-layer D²NN witness; the input-layer dimension).
+# Substrate decisions: [[architecture-fate-is-optical-inference]]
+#                      (#58; the recognition this shard closes the v1
+#                      gap of),
+#                      [[architecture-form-process-partition-at-family-root]]
+#                      (#55; observation IS form-side under @mirror/spectral),
+#                      [[feedback-no-bare-types]] (unit_interval is the
+#                      typed carrier; no f64 escapes),
+#                      [[feedback-substrate-pull]] (the 16-feature
+#                      vocabulary already existed in the spec; this
+#                      shard names it at substrate altitude),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the form-side observation surface was already
+#                      implied by the family root; this shard realises
+#                      what the root named).
+# Related shards: mirror/spectral.mirror (the family root; this shard
+#                 is a sibling form-side species to score),
+#                 mirror/spectral/score.mirror (the orchestra's
+#                 shared-state read surface; observation reads the
+#                 substrate geometry at a different altitude),
+#                 optics/source/ganglion/*.mirror (the 5 gain media
+#                 that consume this observation at the Fabry-Perot
+#                 input layer per recognition #58),
+#                 hash/coincidence.mirror (the 5×5 conductivity tensor
+#                 whose eigen-axes the four observation quadrants
+#                 align with).
+# Path-namespace property: this file at
+# `shards/mirror/spectral/observation.mirror` declares
+# `@mirror/spectral/observation` as a species under the
+# `@mirror/spectral` family.
+
+prism @mirror/spectral/observation {
+  focus observation
+  project observation
+  split observation
+  shift observation
+  settle observation
+}
+
+# === The unit-interval carrier ===
+#
+# Per [[feedback-no-bare-types]]: the typed `[0,1]` scalar. The
+# refinement predicate (`0 ≤ x ≤ 1`) is `@epistemologic/property/
+# unit_interval` (forward-promised; not declared by this shard).
+# Locally a newtype over f64; the property predicate enforces the
+# interval on construction.
+type unit_interval = f64
+
+# === The 16-feature observation carrier ===
+#
+# The orchestra's input-layer observation. Recognition #58's 5-layer
+# D²NN reads this record's 16 scalars as its input-layer activations.
+# Four conceptual quadrants of four features each (per the body
+# documentation above); each scalar is a unit_interval refined by
+# the @epistemologic/property/unit_interval predicate.
+type graph_observation = {
+  # Settlement-state quadrant
+  convergence_settled:  unit_interval,
+  pressure_load:        unit_interval,
+  node_occupancy:       unit_interval,
+  edge_density:         unit_interval,
+
+  # Crystal-state quadrant
+  crystal_fraction:     unit_interval,
+  settlement_depth:     unit_interval,
+  interval_ratio:       unit_interval,
+  hot_path_density:     unit_interval,
+
+  # Query-state quadrant
+  query_intensity:      unit_interval,
+  partition_risk:       unit_interval,
+  tick_maturity:        unit_interval,
+  mutation_rate:        unit_interval,
+
+  # Spectral-state quadrant
+  shannon_loss_rate:    unit_interval,
+  spectral_dimension:   unit_interval,
+  eigenvalue_gap:       unit_interval,
+  holonomy:             unit_interval,
+}
+
+out @mirror/spectral/observation
+out unit_interval
+out graph_observation
