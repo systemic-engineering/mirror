@@ -131,14 +131,20 @@ mirror bootstrap  [phase]         — the autopoietic loop
                                     `mirror bootstrap status` reports the
                                     holonomy and the spectral gap.
 
-mirror join       [@peer]         — second-order CLI; entry verb for λsh
-                                    `mirror join` (no peer) drops into λsh as self;
-                                    `mirror join @reed` enters with that peer.
-                                    λsh and `mirror join` are the same lens
-                                    under two names (the shell-lens running mode
-                                    + the cli-lens entry verb collapse to one
+mirror sh         [op] [@peer]    — second-order CLI; entry verb for λsh
+                                    `mirror sh` (no op, no peer) drops into λsh
+                                    as self via `default settle`;
+                                    `mirror sh @reed` enters with that peer.
+                                    Op-first, peer-as-arg: `mirror sh focus @reed`
+                                    observes peer's eigenboard without entering.
+                                    λsh and `mirror sh` are the same lens under
+                                    two names (the shell-lens running mode +
+                                    the cli-lens entry verb collapse to one
                                     species under @mirror/lens; see
-                                    `the-convergence.md` §1.2).
+                                    `the-convergence.md` §1.2). Rename arc
+                                    `converse → join → sh` closed 2026-06-12
+                                    — `sh` is the substrate's noun for the
+                                    shell manifold (UNIX's word for fifty years).
                                     `\` toggles λ> ↔ @peer>.
 
 mirror watch      [target...]     — algedonic surface
@@ -335,7 +341,7 @@ larger is being measured. They ignore it. That's fine.
 ### 5.2 Second-order — the user enters the loop
 
 ```
-$ mirror join
+$ mirror sh
 λ> focus
 λ> project @mirror/lens/cli
 λ> split depends_on
@@ -383,7 +389,7 @@ Current substrate-state (per the 2026-06-04 substrate-pull arc, on main):
 | `mirror compile`     | (keep)              | The classical name carries the first-order meaning correctly. |
 | `mirror kintsugi`    | (keep)              | The porcelain for the coherence-settling loop. Load-bearing. |
 | `mirror shatter`     | (keep)              | The materialize step. The settled-as-substrate-of-next altitude. |
-| (none)               | `mirror join`       | Entry verb for λsh (second-order CLI). λsh and `mirror join` are the same lens under two names — same species under `@mirror/lens` (the shell lens running mode + the cli lens entry verb collapse to one species per `the-convergence.md` §1.2). |
+| (none)               | `mirror sh`         | Entry verb for λsh (second-order CLI). λsh and `mirror sh` are the same lens under two names — same species under `@mirror/lens` (the shell lens running mode + the cli lens entry verb collapse to one species per `the-convergence.md` §1.2). Rename arc `converse → join → sh` closed 2026-06-12: `sh` is the substrate's noun for the shell manifold. |
 | (none)               | `mirror watch`      | The algedonic surface as a first-class verb. Beer's bypass. (cli-as-prism resolved this as `--watch` flag on `focus`, not a sub-stage.) |
 | (none)               | `mirror reflect`    | VSM System 5 view. The identity reads itself. |
 | (none)               | `mirror bootstrap`  | Autopoiesis as a named operation. The self-hosting loop. |
@@ -401,7 +407,7 @@ plumbing is unchanged.
 - **No new shards in this round.** The spec proposes; doesn't implement.
 - **No subcommand explosion.** Plumbing is exactly 5 verbs. Porcelain is
   condensed under prism-recursion (per `cli-as-prism.md`): 6 sub-stages
-  (`compile`, `kintsugi`, `shatter`, `bootstrap`, `join`, `reflect`) +
+  (`compile`, `kintsugi`, `shatter`, `bootstrap`, `sh`, `reflect`) +
   the `crack` stage for the third-state lifecycle + `watch` as a flag
   (`--watch`) on `focus` rather than a verb (cli-as-prism §4.1).
   (The schematic cascade per `optical-keywords.md` §1.2: each sub-stage
@@ -409,7 +415,7 @@ plumbing is unchanged.
   input aperture and one output aperture; the produced prism's
   five-operation interface emerges from graph-walking the stage's
   element set.)
-- **No GUI.** The TUI (`mirror join` → λsh) is a terminal client, not
+- **No GUI.** The TUI (`mirror sh` → λsh) is a terminal client, not
   a separate product.
 - **No bypass of the proof block.** Every `settle` produces one. A `settle`
   without a proof block is not a `settle`. (Hooks-level enforcement, not
@@ -439,7 +445,7 @@ Inline above, but the load-bearing ones are:
 - **[cybersyn.md][cybersyn]** — "the modeler is inside the system being
   modeled." First-order cybernetics treats the observer as external;
   second-order holds that the regulator is always a component of the
-  system it regulates. Why `mirror join` exists (and why λsh is its
+  system it regulates. Why `mirror sh` exists (and why λsh is its
   interactive running mode, not a separate lens — one species under
   `@mirror/lens` per the 2026-06-06 family migration).
 
@@ -460,16 +466,18 @@ For Reed + Alex to call before this becomes implementation work:
    binary. The `spectral` binary may persist as a thin redirect through
    the transition.
 
-2. ~~**`mirror converse` vs `λsh`.**~~ **Closed (2026-06-05):** the
-   convergence resolved this. `mirror join` (renamed from `converse`) IS
-   the entry verb; λsh IS the running mode of that lens. Same
-   daemon socket, same algebra, same eigenboard. The standalone `λsh`
-   binary is a thin alias for `mirror join`. (The 2026-06-06 family
-   migration narrows further: `mirror join` and λsh are one species
-   under `@mirror/lens` — the shell-lens running mode + the cli-lens
-   entry verb collapse to a single lens by construction.) See
-   `the-convergence.md` §1.2, `cli-as-prism.md` §2.1, and
-   `lambda-shell.md` §"Entry from the mirror CLI".
+2. ~~**`mirror converse` vs `λsh`.**~~ **Closed (2026-06-05; re-closed
+   2026-06-12 under `sh`):** the convergence resolved this. `mirror sh`
+   (rename arc `converse → join → sh`, closed 2026-06-12) IS the entry
+   verb; λsh IS the running mode of that lens. Same daemon socket, same
+   algebra, same eigenboard. The standalone `λsh` binary is a thin
+   alias for `mirror sh`. (The 2026-06-06 family migration narrows
+   further: `mirror sh` and λsh are one species under `@mirror/lens` —
+   the shell-lens running mode + the cli-lens entry verb collapse to a
+   single lens by construction. The 2026-06-12 rename: `sh` is the
+   substrate's noun for the shell manifold; UNIX's word for fifty
+   years.) See `the-convergence.md` §1.2, `cli-as-prism.md` §2.1 and
+   §5.4, and `lambda-shell.md` §"Entry from the mirror CLI".
 
 3. **`mirror watch`'s default surface.** TUI-style chrome (color-bar + tick
    number + counts) or pure stdout that something else can render? The
