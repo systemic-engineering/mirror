@@ -1,24 +1,39 @@
 # CLI as Prism — Condensation Under the Recursive Five-Operation Constraint
 
 *2026-06-05. Reed + Alex. Spec (exploration, not implementation).*
+*Vocabulary cascade 2026-06-12 (Mara): paths under `shards/mirror/cli/`
+migrate to `shards/mirror/lens/cli/` per the 2026-06-06 `@mirror/lens`
+family naming (the-convergence.md §1.2); the top-level `prism @mirror/cli`
+declaration reframes as `bench @mirror/lens/cli` per
+`optical-keywords.md` §1.6 (the assembly's outer enclosure); each verb
+sub-glass declaration reframes as `stage @mirror/lens/cli/<verb>` per §1.2
+(chain of facets, one input aperture and one output aperture); the
+five-operation algebra remains the produced-prism interface that
+emerges from the bench. Structural content preserved; only vocabulary
+cascades.*
 
 Status: **Red** (proposal).
 Branch: `reed/shards-floor`.
 Continues: `cybernetic-cli.md` (the surface this condenses), `mosaic.md` (the
 `glass @mirror/<x>` precedent, C2).
-Depends on: `shards/mirror/cli.mirror` (C1 — the substrate-level prism at
-`@mirror/cli`), the path-namespace property (epistemologic B5), [[architecture-prism-as-trait-as-everything]],
+Depends on: `shards/mirror/lens/cli.mirror` (C1 — the substrate-level
+declaration at `@mirror/lens/cli`), the path-namespace property
+(epistemologic B5), `optical-keywords.md` §1 (the eight schematic
+keywords; bench / stage / aperture cascade applied to this spec),
+[[architecture-prism-as-trait-as-everything]],
 [[architecture-lift-as-load-bearing]].
 
 ---
 
 ## 0. The constraint, stated once
 
-> The mirror CLI is a **prism**, with the five operations as its direct
-> interface. Each subcommand is a **glass** (hence again a prism), with its
-> own five operations. Sub-glasses nest recursively. The file structure on
-> disk IS the CLI structure: `shards/mirror/cli/<x>.mirror` declares the
-> glass that handles `mirror <x>`.
+> The mirror CLI is a **bench** (the assembly's outer enclosure) that
+> compiles to a prism whose direct interface is the five operations.
+> Each subcommand is a **stage** (a chain of facets that substitutes as
+> a facet at the next altitude up), itself producing a prism with its
+> own five operations. Sub-stages nest recursively. The file structure on
+> disk IS the CLI structure: `shards/mirror/lens/cli/<x>.mirror` declares
+> the stage that handles `mirror <x>`.
 
 This is exactly the shape that landed at the **build altitude** in C2
 (`shards/mirror/mosaic.mirror`): the build system was condensed into the
@@ -28,16 +43,28 @@ shape **recursively to the CLI itself**, one altitude up.
 The constraint is **soft**. It earns its keep where it earns its keep.
 Where it strains, we name the strain. The strain is the finding.
 
+**Vocabulary note (`optical-keywords.md` §1 cascade).** The earlier
+draft of this spec used `prism` and `glass` as schematic declaration
+keywords at every depth. Per the 2026-06-11 optical-keywords cascade,
+`prism` is RESERVED for the compilation artifact and `glass` narrows
+to MATERIAL substance; the schematic keywords for assemblies and
+sub-assemblies are `bench` (the closed-root outer enclosure, §1.6) and
+`stage` (a single-input/single-output chain of facets, §1.2). The five
+operations the user types remain unchanged at every depth — that's the
+PRODUCED prism's interface, emerging from graph-walking the bench's
+element set. The schematic keywords change; the algebra does not.
+
 ---
 
 ## 1. The recursion, named
 
-### 1.1 Top level — `@mirror/cli` is a prism
+### 1.1 Top level — `@mirror/lens/cli` is a bench
 
-`shards/mirror/cli.mirror` already declares (C1):
+`shards/mirror/lens/cli.mirror` already declares (C1) the substrate floor
+in its produced-prism form (the algebra the bench compiles to):
 
 ```mirror
-prism @mirror/cli {
+prism @mirror/lens/cli {
   focus    cli
   project  cli
   split    cli
@@ -45,6 +72,13 @@ prism @mirror/cli {
   settle   cli
 }
 ```
+
+The five-operation block above IS the PRODUCED prism's interface (per
+`optical-keywords.md` §1: the five-op algebra emerges from graph-walking
+the bench's element set). The SCHEMATIC declaration for the assembly's
+outer enclosure is a `bench`; this spec uses `bench` framing in the
+prose and quotes the substrate floor's produced-prism form verbatim
+above.
 
 This is the **direct interface**: typing `mirror focus`, `mirror project`,
 `mirror split`, `mirror shift`, `mirror settle` runs the top-level operation
@@ -63,30 +97,33 @@ This is also the plumbing surface from `cybernetic-cli.md` §2.1 — unchanged.
 Plumbing was already in the algebra. The condensation question is what
 happens to the **porcelain**.
 
-### 1.2 Sub-glass level — every named verb is a `glass @mirror/cli/<x>`
+### 1.2 Sub-stage level — every named verb is a `stage @mirror/lens/cli/<x>`
 
-A subcommand is a **glass within `@mirror/cli`** — hence itself a prism with
-its own five operations on its own sub-manifold. The dispatcher walks the
-path; the leaf's operation runs.
+A subcommand is a **stage within `@mirror/lens/cli`** — a chain of
+facets with one input aperture and one output aperture (per
+`optical-keywords.md` §1.2). The stage substitutes as a facet at the
+outer altitude; its produced prism exposes the same five operations on
+its own sub-manifold. The dispatcher walks the path; the leaf's
+operation runs.
 
 ```
-mirror <x>            → focus on glass @mirror/cli/<x>
-mirror <x> <op>       → run operation <op> of glass @mirror/cli/<x>
+mirror <x>            → focus on stage @mirror/lens/cli/<x>
+mirror <x> <op>       → run operation <op> of stage @mirror/lens/cli/<x>
 mirror <x> <op> ...   → arguments to <op>
 ```
 
 Where `<op>` is one of `focus | project | split | shift | settle`. **Always
-the same five.** Every glass at every depth.
+the same five.** Every stage at every depth.
 
 The "bare" form `mirror <x>` (no operation given) defaults to `focus` of that
-glass. Reading is always free; the user pays only for `settle`.
+stage. Reading is always free; the user pays only for `settle`.
 
 ### 1.3 Recursion bottoms out at the leaf operation
 
-`mirror <x> <y> <op>` reads `shards/mirror/cli/<x>/<y>.mirror` (the
-nested glass) and runs its `<op>`. The recursion is **as deep as the
-substrate demands** — most verbs land at depth 1, a few at depth 2, the
-algebra never deeper than 3.
+`mirror <x> <y> <op>` reads `shards/mirror/lens/cli/<x>/<y>.mirror`
+(the nested stage) and runs its `<op>`. The recursion is **as deep as
+the substrate demands** — most verbs land at depth 1, a few at depth 2,
+the algebra never deeper than 3.
 
 ---
 
@@ -98,7 +135,7 @@ The cybernetic-cli surface had:
 - **Porcelain (7):** `compile`, `kintsugi`, `shatter`, `bootstrap`, `join`,
   `watch`, `reflect`.
 - **Third state (4):** `open`, `cracks`, `force`, `seal`.
-- **Time (1, dissolved into the `time` glass below):** `revert`.
+- **Time (1, dissolved into the `time` stage below):** `revert`.
 
 **Total: 17 named CLI verbs.**
 
@@ -106,9 +143,9 @@ Each is placed into the recursion below. The placement type is one of:
 
 - **(top-op)** — the verb collapsed into one of the five top-level ops, perhaps
   with a flag.
-- **(sub-glass)** — the verb became its own `glass @mirror/cli/<x>` with its
-  own five operations.
-- **(sub-sub-glass)** — nested two deep.
+- **(sub-stage)** — the verb became its own `stage @mirror/lens/cli/<x>`
+  with its own five operations.
+- **(sub-sub-stage)** — nested two deep.
 - **(flag)** — the verb collapsed to a flag-argument of one of the five.
 - **(did-not-condense)** — named friction; the verb resists the shape.
 
@@ -116,19 +153,19 @@ Each is placed into the recursion below. The placement type is one of:
 
 | Cybernetic verb | Placement | Form | Notes |
 |---|---|---|---|
-| `compile` | **sub-glass** | `mirror compile { focus, project, split, shift, settle }` | A NAMED LOOP, not a single op. Top-level `settle` is the single write; `compile` is the canonical pipeline (`focus → project → shift → settle`) given a name because users say "build" more often than they say "settle store after shift @code/rust". Sub-glass `compile.settle` IS the build; `compile.focus` previews what would change. |
-| `kintsugi` | **sub-glass** | `mirror kintsugi { focus, project, split, shift, settle }` | The coherence-settling loop. `focus` = peek at the next tournament move. `project` = filter by what to repair (target, eigenvalue range). `split` = explore candidate fills. `shift` = basis-transform on the loss landscape. `settle` = run one tournament iteration AND write. **Sings.** The five ops are the loop's verbs. |
-| `shatter` | **sub-glass** | `mirror shatter { focus, project, split, shift, settle }` | Materialize AST → text. `focus` = show what would shatter. `project` = filter to one target altitude. `split` = enumerate materialization variants. `shift` = re-emit at a different altitude. `settle` = write the `.shatter` file (the projection of `au`). Could have been `mirror shift --emit shatter` at the top level, but shatter has its own lifecycle (the `.shatter` file is a first-class artifact per cybernetic-cli §3). Sub-glass earns it. |
-| `bootstrap` | **sub-glass** | `mirror bootstrap { focus, project, split, shift, settle }` | The autopoietic phase machine (7 phases). `focus` = report phase status. `project` = filter to one phase. `split` = enumerate sub-phase dependencies. `shift` = shift between phase representations (eigenvalue / line count / proof). `settle` = advance one phase (the ONE write; proof block records the transition). **Strains on `split` slightly** — phases don't naturally branch, they sequence. Named in §4. |
-| `join` | **sub-glass** | `mirror join [@peer] { focus, project, split, shift, settle }` | Second-order CLI. **Rename: `converse` → `join`.** Join is what you DO to a conversation; conversing is what happens INSIDE it. Glanville's verb — Conversation Theory names the entry, not the activity. Peer-id is a **path component**: `mirror join @reed` reads `shards/mirror/cli/join.mirror` with `@reed` as the glass's argument. Inside: `focus` = observe peer's eigenboard without entering. `project` = filter the conversation by topic. `split` = branch into a sub-conversation. `shift` = see from their altitude (peer ↔ self). `settle` = enter (land an utterance; commits to the transcript). The `λsh` drop-in is `mirror join` with no peer — the empty path puts the user IN the glass interactively. **Sings** — names the entry, lets the activity inside stay nameless. |
-| `watch` | **flag** | `mirror focus --watch` | **Did not condense as a sub-glass.** Watch is a TEMPORAL MODE on observation, not its own algebra. There is no "settle the watch" — the watch settles whatever it is watching. Named in §4 as friction-that-resolved-cleanly: the friction taught us watch isn't a verb, it's an adverb. Same shape as `git log --follow`. |
-| `reflect` | **sub-glass** | `mirror reflect { focus, project, split, shift, settle }` | VSM System 5 view. `focus` = print eigenboard + spectrum. `project` = filter to one position. `split` = explore correction trajectories. `shift` = view the same state at a different altitude (per-tick, per-project, per-corpus). `settle` = land a correction to `eigenboard.mirror` (the ONE write; algedonic-triggered only per cybernetic-cli §9.5). **Mild redundancy with top-level `focus`** — both observe meta-state. Named in §4. |
-| `cracks` | **op of `crack` glass** | `mirror crack focus` | **Rename: `hole` → `crack`.** `\` produces fracture per gap-tension-tensor-substrate.md (the gap fold). `crack` carries the kintsugi geometry — settle on a crack IS the gold pour. `focus` of the crack glass lists every open `\`. The cybernetic-cli's `holes` verb IS the focus of the third-state sub-manifold. |
-| `open` | **op of `crack` glass** | `mirror crack settle --open <name>` | `open` is the event of declaring a new `\` (a new crack). As an event it lands on `settle` (the ONE write). The `--open` flag distinguishes "declare a new crack" from "seal an existing one with gold". The typed lambda's arg shape carries the distinction. See §4. |
-| `force` | **op of `crack` glass** | `mirror crack settle --force <name>` | `\!` is accept-loss-and-fill; honest about regression. Same `settle` op, different flag. The flag distinguishes "accept the loss, force the fill" from "wait for natural convergence". |
-| `seal` | **op of `crack` glass** | `mirror crack settle <name>` | The bare `settle` IS seal-with-gold — promote a converged `\` to explicit. The kintsugi geometry is literal: settling on a crack pours gold along the fracture. The cleanest collapse in the bunch. |
-| `revert` | **dissolved into `time` sub-glass** | `mirror time settle tick=N` | **Dissolution: `revert` is one operation on the time manifold.** Reverting is `time.settle` — write a new tick whose manifold matches tick N. The `time` glass exposes the full Elm-style time-travel surface: `focus` = look at state at tick N; `shift` = see from tick N (Elm scrub; no move); `split` = branch from that point; `settle` = the revert; `project` = filter history by predicate. **Forward-references `@epistemologic/reality/time` (Track G, open).** |
-| `time` | **sub-glass** | `mirror time { focus, project, split, shift, settle }` | Elm-style time travel as a five-op glass over the tick manifold. `focus tick=N` = look at state at tick N (read past). `shift tick=N` = see FROM tick N without moving HEAD (the Elm scrub). `split tick=N` = branch a parallel timeline from that point. `settle tick=N` = write a new tick whose manifold matches tick N (this IS revert). `project predicate` = filter history by predicate. **Substrate composition map (Seam, 2026-06-05):** the 5-op surface condenses `boot/std/time.mirror`'s 9 actions: `focus`←`enter`; `shift`←`browse`+`step`; `split`←`fork`; `settle`←`restore` (composed across the ref-set of tick N); `project`←`timeline.snapshots` filtered by predicate. The substrate already carries the algebra; full `@epistemologic/reality/time` (proof-block shape + crack-interaction semantics) is **Track G, deferred per LRM**. **Sings** — time-as-substrate makes the five-op recursion natural; the manifold has graph structure (ticks → ticks), the five ops fit without forcing. |
+| `compile` | **sub-stage** | `mirror compile { focus, project, split, shift, settle }` | A NAMED LOOP, not a single op. Top-level `settle` is the single write; `compile` is the canonical pipeline (`focus → project → shift → settle`) given a name because users say "build" more often than they say "settle store after shift @code/rust". Sub-stage `compile.settle` IS the build; `compile.focus` previews what would change. |
+| `kintsugi` | **sub-stage** | `mirror kintsugi { focus, project, split, shift, settle }` | The coherence-settling loop. `focus` = peek at the next tournament move. `project` = filter by what to repair (target, eigenvalue range). `split` = explore candidate fills. `shift` = basis-transform on the loss landscape. `settle` = run one tournament iteration AND write. **Sings.** The five ops are the loop's verbs. (The TOURNAMENT itself is structurally a `resonator` per `optical-keywords.md` §1.5 — closed loop with output coupler — but the CLI sub-stage that drives one iteration is a `stage` rather than a `resonator`: each invocation is a chain through the five ops, not a self-referential round-trip. The resonator lives at the kintsugi-engine altitude; the CLI surface is the stage that fires one round-trip.) |
+| `shatter` | **sub-stage** | `mirror shatter { focus, project, split, shift, settle }` | Materialize AST → text. `focus` = show what would shatter. `project` = filter to one target altitude. `split` = enumerate materialization variants. `shift` = re-emit at a different altitude. `settle` = write the `.shatter` file (the projection of `au`). Could have been `mirror shift --emit shatter` at the top level, but shatter has its own lifecycle (the `.shatter` file is a first-class artifact per cybernetic-cli §3). Sub-stage earns it. (The terminal `.shatter` write is `detector`-shaped per §1.8 — the final settle terminates the chain at a sink; the CLI sub-stage that drives it is the stage upstream of that detector.) |
+| `bootstrap` | **sub-stage** | `mirror bootstrap { focus, project, split, shift, settle }` | The autopoietic phase machine (7 phases). `focus` = report phase status. `project` = filter to one phase. `split` = enumerate sub-phase dependencies. `shift` = shift between phase representations (eigenvalue / line count / proof). `settle` = advance one phase (the ONE write; proof block records the transition). **Strains on `split` slightly** — phases don't naturally branch, they sequence. Named in §4. |
+| `join` | **sub-stage** | `mirror join [@peer] { focus, project, split, shift, settle }` | Second-order CLI. **Rename: `converse` → `join`.** Join is what you DO to a conversation; conversing is what happens INSIDE it. Glanville's verb — Conversation Theory names the entry, not the activity. Peer-id is a **path component**: `mirror join @reed` reads `shards/mirror/lens/cli/join.mirror` with `@reed` as the stage's argument. Inside: `focus` = observe peer's eigenboard without entering. `project` = filter the conversation by topic. `split` = branch into a sub-conversation. `shift` = see from their altitude (peer ↔ self). `settle` = enter (land an utterance; commits to the transcript). The `λsh` drop-in is `mirror join` with no peer — the empty path puts the user IN the stage interactively. **Sings** — names the entry, lets the activity inside stay nameless. (The peer-binding boundary the stage opens is `aperture`-shaped per `optical-keywords.md` §1.3 and the-convergence §4.2 — typed beam channel at peer↔lens-per-session; but the CLI surface declaring the chain of ops is a `stage` whose entry IS that aperture.) |
+| `watch` | **flag** | `mirror focus --watch` | **Did not condense as a sub-stage.** Watch is a TEMPORAL MODE on observation, not its own algebra. There is no "settle the watch" — the watch settles whatever it is watching. Named in §4 as friction-that-resolved-cleanly: the friction taught us watch isn't a verb, it's an adverb. Same shape as `git log --follow`. |
+| `reflect` | **sub-stage** | `mirror reflect { focus, project, split, shift, settle }` | VSM System 5 view. `focus` = print eigenboard + spectrum. `project` = filter to one position. `split` = explore correction trajectories. `shift` = view the same state at a different altitude (per-tick, per-project, per-corpus). `settle` = land a correction to `eigenboard.mirror` (the ONE write; algedonic-triggered only per cybernetic-cli §9.5). **Mild redundancy with top-level `focus`** — both observe meta-state. Named in §4. |
+| `cracks` | **op of `crack` stage** | `mirror crack focus` | **Rename: `hole` → `crack`.** `\` produces fracture per gap-tension-tensor-substrate.md (the gap fold). `crack` carries the kintsugi geometry — settle on a crack IS the gold pour. `focus` of the crack stage lists every open `\`. The cybernetic-cli's `holes` verb IS the focus of the third-state sub-manifold. |
+| `open` | **op of `crack` stage** | `mirror crack settle --open <name>` | `open` is the event of declaring a new `\` (a new crack). As an event it lands on `settle` (the ONE write). The `--open` flag distinguishes "declare a new crack" from "seal an existing one with gold". The typed lambda's arg shape carries the distinction. See §4. |
+| `force` | **op of `crack` stage** | `mirror crack settle --force <name>` | `\!` is accept-loss-and-fill; honest about regression. Same `settle` op, different flag. The flag distinguishes "accept the loss, force the fill" from "wait for natural convergence". |
+| `seal` | **op of `crack` stage** | `mirror crack settle <name>` | The bare `settle` IS seal-with-gold — promote a converged `\` to explicit. The kintsugi geometry is literal: settling on a crack pours gold along the fracture. The cleanest collapse in the bunch. |
+| `revert` | **dissolved into `time` sub-stage** | `mirror time settle tick=N` | **Dissolution: `revert` is one operation on the time manifold.** Reverting is `time.settle` — write a new tick whose manifold matches tick N. The `time` stage exposes the full Elm-style time-travel surface: `focus` = look at state at tick N; `shift` = see from tick N (Elm scrub; no move); `split` = branch from that point; `settle` = the revert; `project` = filter history by predicate. **Forward-references `@epistemologic/reality/time` (Track G, open).** |
+| `time` | **sub-stage** | `mirror time { focus, project, split, shift, settle }` | Elm-style time travel as a five-op stage over the tick manifold. `focus tick=N` = look at state at tick N (read past). `shift tick=N` = see FROM tick N without moving HEAD (the Elm scrub). `split tick=N` = branch a parallel timeline from that point. `settle tick=N` = write a new tick whose manifold matches tick N (this IS revert). `project predicate` = filter history by predicate. **Substrate composition map (Seam, 2026-06-05):** the 5-op surface condenses `boot/std/time.mirror`'s 9 actions: `focus`←`enter`; `shift`←`browse`+`step`; `split`←`fork`; `settle`←`restore` (composed across the ref-set of tick N); `project`←`timeline.snapshots` filtered by predicate. The substrate already carries the algebra; full `@epistemologic/reality/time` (proof-block shape + crack-interaction semantics) is **Track G, deferred per LRM**. **Sings** — time-as-substrate makes the five-op recursion natural; the manifold has graph structure (ticks → ticks), the five ops fit without forcing. |
 
 ### 2.2 The condensed top-level surface
 
@@ -140,7 +177,7 @@ mirror split    [edge]
 mirror shift    [functor]
 mirror settle   [optic]
 
-# Seven sub-glasses, each with the same five operations
+# Seven sub-stages, each with the same five operations
 mirror compile    [focus|project|split|shift|settle] [args]
 mirror kintsugi   [focus|project|split|shift|settle] [args]
 mirror shatter    [focus|project|split|shift|settle] [args]
@@ -151,9 +188,9 @@ mirror time       [focus|project|split|shift|settle] [args]
 mirror crack      [focus|project|split|shift|settle] [args] [--open|--force]
 ```
 
-That is **the entire surface**. Five top-level ops. Seven sub-glasses
+That is **the entire surface**. Five top-level ops. Seven sub-stages
 (`compile`, `kintsugi`, `shatter`, `bootstrap`, `join`, `reflect`, `time`,
-`crack` — eight names, seven plus `crack`). Every sub-glass has the same
+`crack` — eight names, seven plus `crack`). Every sub-stage has the same
 five ops. **Same algebra everywhere.** A user who learns the five
 operations once knows every command at every depth.
 
@@ -163,58 +200,63 @@ operations once knows every command at every depth.
 
 The path-namespace property (B5) makes the directory layout literal:
 
-**Note (Seam pass, 2026-06-05):** the `shards/mirror/cli/` subdirectory
-below is a **forward promise** as of `f0af9e4`. `shards/mirror/cli.mirror`
-exists (C1); the eight sub-glass shards listed below do not yet. §8
-acknowledges this explicitly ("no new shards in this round"); this section
-describes the **target** layout that the next round mints.
+**Note (Seam pass, 2026-06-05; lens cascade 2026-06-12):** the
+`shards/mirror/lens/cli/` subdirectory below is a **forward promise**.
+`shards/mirror/lens/cli.mirror` exists (C1, migrated 2026-06-06 from
+`shards/mirror/cli.mirror` under the `@mirror/lens` family naming); the
+eight sub-stage shards listed below do not yet. §8 acknowledges this
+explicitly ("no new shards in this round"); this section describes the
+**target** layout that the next round mints.
 
 ```
-shards/mirror/
-├── cli.mirror                  # prism @mirror/cli — the top-level five ops
+shards/mirror/lens/
+├── cli.mirror                  # bench @mirror/lens/cli — the top-level five ops
 └── cli/
-    ├── compile.mirror          # glass @mirror/cli/compile  { f,p,s,sh,se }
-    ├── kintsugi.mirror         # glass @mirror/cli/kintsugi { f,p,s,sh,se }
-    ├── shatter.mirror          # glass @mirror/cli/shatter  { f,p,s,sh,se }
-    ├── bootstrap.mirror        # glass @mirror/cli/bootstrap{ f,p,s,sh,se }
-    ├── join.mirror             # glass @mirror/cli/join     { f,p,s,sh,se }
-    ├── reflect.mirror          # glass @mirror/cli/reflect  { f,p,s,sh,se }
-    ├── time.mirror             # glass @mirror/cli/time     { f,p,s,sh,se }
-    └── crack.mirror            # glass @mirror/cli/crack    { f,p,s,sh,se }
+    ├── compile.mirror          # stage @mirror/lens/cli/compile   { f,p,s,sh,se }
+    ├── kintsugi.mirror         # stage @mirror/lens/cli/kintsugi  { f,p,s,sh,se }
+    ├── shatter.mirror          # stage @mirror/lens/cli/shatter   { f,p,s,sh,se }
+    ├── bootstrap.mirror        # stage @mirror/lens/cli/bootstrap { f,p,s,sh,se }
+    ├── join.mirror             # stage @mirror/lens/cli/join      { f,p,s,sh,se }
+    ├── reflect.mirror          # stage @mirror/lens/cli/reflect   { f,p,s,sh,se }
+    ├── time.mirror             # stage @mirror/lens/cli/time      { f,p,s,sh,se }
+    └── crack.mirror            # stage @mirror/lens/cli/crack     { f,p,s,sh,se }
                                 #   (open/force/seal collapse to settle + flag)
 ```
 
 **Eight `.mirror` files** declare the entire CLI surface (one fewer than
 the pre-rename count would suggest: `revert` dissolved into `time` while
-`time` was added, net same). `ls shards/mirror/cli/` IS the help text —
-every file is a glass, every glass has the same five operations. The CLI
-is **self-describing by directory listing**.
+`time` was added, net same). `ls shards/mirror/lens/cli/` IS the help
+text — every file is a stage, every stage produces a prism with the
+same five operations. The CLI is **self-describing by directory listing**.
 
 **The renames track the substrate vocabulary already on disk.** `crack`
 ↔ `\` (fracture, per `gap-tension-tensor-substrate.md`). `time` ↔
 `@epistemologic/reality/time` (Track G). `join` ↔ Glanville's Conversation
 Theory verb. The CLI altitude finally speaks the substrate's own vocabulary.
 
-### 3.1 What goes inside a sub-glass shard (sketch)
+### 3.1 What goes inside a sub-stage shard (sketch)
 
-`shards/mirror/cli/kintsugi.mirror` would declare:
+`shards/mirror/lens/cli/kintsugi.mirror` would declare:
 
 ```mirror
 in @prism
-in @glass
-in @mirror/cli
+in @stage
+in @mirror/lens/cli
 in @nl
 
-# @mirror/cli/kintsugi — the coherence-settling loop as a glass.
+# @mirror/lens/cli/kintsugi — the coherence-settling loop as a stage.
 #
-# Same algebra as @mirror/cli, applied to the kintsugi sub-manifold
-# (the tournament's working set). Each op is the same op the parent
-# named, restricted to this glass's domain.
+# Same algebra as @mirror/lens/cli, applied to the kintsugi
+# sub-manifold (the tournament's working set). Each op is the same op
+# the parent named, restricted to this stage's domain. The stage's
+# produced prism exposes the five operations as the user-visible
+# interface.
 #
-# Path-namespace property: this file at shards/mirror/cli/kintsugi.mirror
-# declares @mirror/cli/kintsugi and only that.
+# Path-namespace property: this file at
+# shards/mirror/lens/cli/kintsugi.mirror declares
+# @mirror/lens/cli/kintsugi and only that.
 
-glass @mirror/cli/kintsugi {
+stage @mirror/lens/cli/kintsugi {
   focus    target          # peek the next tournament move
   project  predicate       # filter by what to repair
   split    candidate       # enumerate candidate fills
@@ -222,14 +264,15 @@ glass @mirror/cli/kintsugi {
   settle   iteration       # run one tournament iteration; write proof
 }
 
-# Help text via @nl literals lifted from `#` lines (per cli.mirror C1)
+# Help text via @nl literals lifted from `#` lines (per
+# shards/mirror/lens/cli.mirror C1)
 focus(target: ref) -> peek    { # show next tournament candidate \ }
 project(target, predicate)     { # filter the working set \ }
 split(target) -> [candidate]   { # enumerate candidate fills \ }
 shift(target, basis) -> view   { # re-view at a different basis \ }
 settle(target) -> au           { # run one iteration; emit proof \ }
 
-out @mirror/cli/kintsugi
+out @mirror/lens/cli/kintsugi
 out focus
 out project
 out split
@@ -237,10 +280,10 @@ out shift
 out settle
 ```
 
-The shape repeats for each sub-glass shard. The boilerplate IS the
-substrate — saying "this glass implements the five operations" five times
-in a row is the **structure-equals-structure** point. The repetition is
-the proof that the recursion held.
+The shape repeats for each sub-stage shard. The boilerplate IS the
+substrate — saying "this stage's produced prism implements the five
+operations" five times in a row is the **structure-equals-structure**
+point. The repetition is the proof that the recursion held.
 
 ### 3.2 Depth-2 (when it's earned)
 
@@ -248,15 +291,15 @@ The recursion can go deeper, but **only when the algebra demands it**.
 Sketch of where depth-2 might land:
 
 ```
-shards/mirror/cli/join/
-  reed.mirror              # glass @mirror/cli/join/reed
-  alex.mirror              # glass @mirror/cli/join/alex
+shards/mirror/lens/cli/join/
+  reed.mirror              # stage @mirror/lens/cli/join/reed
+  alex.mirror              # stage @mirror/lens/cli/join/alex
 ```
 
-…would make each peer a sub-glass. **This is NOT proposed for v0.1.**
+…would make each peer a sub-stage. **This is NOT proposed for v0.1.**
 Peers are dynamic; baking them into the on-disk structure is wrong. Instead,
 `mirror join @reed` passes `@reed` as an argument to the
-`@mirror/cli/join` glass's `focus` op. Depth-2 directories are
+`@mirror/lens/cli/join` stage's `focus` op. Depth-2 directories are
 **reserved** but not minted.
 
 The CLI directory tree is **as deep as the substrate has reason to be**.
@@ -271,13 +314,13 @@ The exploration IS the contribution. Six places the constraint pushed back:
 ### 4.1 `watch` is an adverb, not a verb
 
 `mirror watch` was the cleanest concept in the cybernetic CLI ("Beer's
-algedonic bypass made first-class"). It refused to become a glass. There
+algedonic bypass made first-class"). It refused to become a stage. There
 is no algebra on watching — you don't `project a watch`, you don't `settle
 a watch`. The watch settles whatever it observes.
 
 **Resolution: `--watch` flag on `focus`.** `mirror focus --watch` opens
 the foreground algedonic surface; the prompt-colour escalation lives in
-the renderer, not in a glass. This is the **same shape as `git log
+the renderer, not in a stage. This is the **same shape as `git log
 --follow`** — temporal modifiers on read operations are flags everywhere
 in CLI history.
 
@@ -288,7 +331,7 @@ doing its job.
 ### 4.2 `open` and `force` are events on `settle`, not separate ops
 
 The third-state lifecycle `cracks → open → force → seal` collapsed
-beautifully into the `crack` glass with the same five operations:
+beautifully into the `crack` stage with the same five operations:
 
 - `crack focus`   = `cracks` (list)
 - `crack settle`  = `seal-with-gold`  (the natural settlement)
@@ -298,7 +341,7 @@ beautifully into the `crack` glass with the same five operations:
 But this **flattens three distinct events onto one verb-with-flags**.
 The cybernetic CLI's `open / force / seal` names were better at making
 the lifecycle visible at the shell. The condensation is structurally
-correct (one write op per glass, distinguished by typed-lambda arg shape)
+correct (one write op per stage, distinguished by typed-lambda arg shape)
 but **costs the user a bit of shell legibility**. `mirror seal X` was
 direct; `mirror crack settle X` is one more word.
 
@@ -345,7 +388,7 @@ observes the **substrate state** (what is). `reflect focus` observes the
 System 5 vs System 4. The distinction is structurally real but easy to
 miss at first.
 
-**Resolution: keep `reflect` as a sub-glass.** The redundancy is **only
+**Resolution: keep `reflect` as a sub-stage.** The redundancy is **only
 apparent at depth-0**; at depth-1 the sub-manifolds are distinct. But
 this is the case the documentation will have to carry most carefully —
 the recursion can produce *apparent* duplicates that aren't.
@@ -360,7 +403,7 @@ write, one proof, no loop. `compile` is the **named pipeline** that
 expands to `focus → project → shift → settle` and is the canonical
 build invocation. The cybernetic-cli explicitly distinguished plumbing
 (the algebra) from porcelain (the named loops); the recursion preserves
-this: the sub-glass `compile` IS the named loop, while top-level `settle`
+this: the sub-stage `compile` IS the named loop, while top-level `settle`
 is the algebra.
 
 **The strain:** users will sometimes type `mirror settle` when they mean
@@ -375,8 +418,8 @@ The recursion CAN go arbitrarily deep. The question is when it should.
 
 **Rule (proposed):** depth-N is minted iff the sub-sub-manifold has its
 own algebra distinct from its parent's algebra restricted to it. If the
-sub-sub-glass's `focus` is just "the parent's focus with one arg pinned,"
-it doesn't deserve its own shard — it's an argument value, not a glass.
+sub-sub-stage's `focus` is just "the parent's focus with one arg pinned,"
+it doesn't deserve its own shard — it's an argument value, not a stage.
 
 This is **substrate-pull at the directory layer**. Static structure for
 substrate facts. Dynamic args for runtime values. Peers in
@@ -393,9 +436,9 @@ implementer might otherwise notice. Useful pressure.
 
 For balance, the verbs that condensed elegantly are worth naming too:
 
-### 5.1 `cracks/open/force/seal` → `crack` glass — the sharpest condensation
+### 5.1 `cracks/open/force/seal` → `crack` stage — the sharpest condensation
 
-**4 verbs → 1 sub-glass × 1 small flag-set.** The lifecycle stays visible
+**4 verbs → 1 sub-stage × 1 small flag-set.** The lifecycle stays visible
 (via `--open / --force`), the algebra is preserved exactly, the
 substrate's third-state vocabulary stays first-class. **The rename from
 `hole` to `crack` made this the sharpest example of substrate vocabulary
@@ -404,7 +447,7 @@ singing in the spec.** `\` produces fracture per gap-tension-tensor-substrate.md
 the gold pour. The proof block records the kintsugi act. **The constraint
 earned its keep here once, no matter what else happens.**
 
-### 5.2 `kintsugi` as a five-op glass
+### 5.2 `kintsugi` as a five-op stage
 
 `focus / project / split / shift / settle` map onto the tournament loop
 **without forcing**. `kintsugi.settle` IS one iteration. `kintsugi.focus`
@@ -413,10 +456,10 @@ fills. The tournament was already the same algebra at a smaller scale;
 the recursion just **made the algebra visible at the shell**. The
 substrate told us this was the right shape.
 
-### 5.3 `time` as a five-op glass over the tick manifold
+### 5.3 `time` as a five-op stage over the tick manifold
 
 **Dissolution: `revert` was a single operation on the time manifold; the
-`time` glass is the full Elm-style surface that contains it.** Time has
+`time` stage is the full Elm-style surface that contains it.** Time has
 graph structure (ticks → ticks); the five ops fit cleanly and the
 recursion becomes natural rather than forced.
 
@@ -429,22 +472,22 @@ recursion becomes natural rather than forced.
 
 The eigenboard's proof block on `settle` records the cost of the
 time-write. **The revert strain didn't relocate; it dissolved.** What was
-one isolated five-op surface (revert-as-glass) became one operation
-(`time settle`) inside a glass whose other four ops were already
+one isolated five-op surface (revert-as-stage) became one operation
+(`time settle`) inside a stage whose other four ops were already
 structurally present in the time manifold but not exposed. The constraint
 revealed there was more time-algebra available than the cybernetic CLI
 had named. **Forward-reference: `@epistemologic/reality/time` (Track G,
 open)** — the substrate already has the 9 actions in
 `boot/std/time.mirror` (`enter`, `restore`, `browse`, `compare`, `replay`,
 `fork`, `step`, `present`, `convert`) plus `type tick = monotonic`; the
-5-op CLI glass condenses these (composition map in §2.1). The CLI glass
+5-op CLI stage condenses these (composition map in §2.1). The CLI stage
 can land now; Track G fills in only the proof-block shape and the
 crack-interaction semantics.
 
 ### 5.4 `join` with peer-as-path-argument
 
 **Rename: `converse` → `join`.** `mirror join @reed` reading the peer as
-the glass's argument feels **right** in the way `cd @reed` would feel
+the stage's argument feels **right** in the way `cd @reed` would feel
 right in a graph filesystem. The constraint guided us toward "peers are
 values flowing through the algebra," not "peers are sub-substrates."
 That's a meaningful piece of architecture clarified by the recursion.
@@ -460,23 +503,24 @@ verb names the doorway; the activity inside the room stays nameless
 
 ### 5.5 The dispatcher is trivial
 
-The dispatcher is **literally** `walk shards/mirror/cli/<path>.mirror;
-load glass; call op`. There is no dispatch table. There is no
-sub-router. The file structure IS the dispatch tree. **Substrate-pull at
-the entire CLI layer.** This is what was being asked of mosaic at the
-build altitude, and the same answer works one altitude up.
+The dispatcher is **literally**
+`walk shards/mirror/lens/cli/<path>.mirror; load stage; call op`. There
+is no dispatch table. There is no sub-router. The file structure IS the
+dispatch tree. **Substrate-pull at the entire CLI layer.** This is what
+was being asked of mosaic at the build altitude, and the same answer
+works one altitude up.
 
 ### 5.6 Same-five-ops-everywhere is a learnability win
 
 A user who learns `focus / project / split / shift / settle` once knows
 every command at every depth. The mnemonic load drops from
-**17 verbs** to **5 ops + 7 sub-glass names = 12 names**, and the 5 ops
+**17 verbs** to **5 ops + 7 sub-stage names = 12 names**, and the 5 ops
 are already the mental model the substrate is built on. **One vocabulary,
 infinite recursion.**
 
 The renames sharpen this further: `crack`, `time`, and `join` are
 substrate-native (`\` fracture, `@epistemologic/reality/time`, Glanville's
-verb). The CLI's seven sub-glass names are no longer arbitrary porcelain
+verb). The CLI's seven sub-stage names are no longer arbitrary porcelain
 labels — they're **the substrate's own vocabulary made visible at the
 shell**. Names-to-learn isn't just smaller; it's also the same vocabulary
 the user encounters everywhere else in the system.
@@ -487,9 +531,9 @@ the user encounters everywhere else in the system.
 
 |                          | cybernetic-cli (before)       | cli-as-prism (after)         |
 |--------------------------|-------------------------------|------------------------------|
-| Distinct verb names      | 17 (5+7+4+1)                  | 12 (5 ops + 7 sub-glasses)   |
+| Distinct verb names      | 17 (5+7+4+1)                  | 12 (5 ops + 7 sub-stages)    |
 | Dispatchable leaves      | 17                            | ~37 (5 + 7×5 + flags)        |
-| Names-to-learn           | 17                            | 5 ops + 7 sub-glasses        |
+| Names-to-learn           | 17                            | 5 ops + 7 sub-stages         |
 | Algebra at every depth   | only at plumbing level        | **at every depth**           |
 | File structure ↔ CLI     | implicit (Rust dispatch)      | **literal (path = invocation)** |
 | Dispatcher complexity    | match-on-verb table           | walk-the-path                |
@@ -499,26 +543,29 @@ the user encounters everywhere else in the system.
 | `compile` (canonical)    | `mirror compile T`            | `mirror compile settle T` ⁕  |
 | `revert` (time-travel)   | `mirror revert N`             | `mirror time settle tick=N`  |
 | `join` (peer-entry)      | `mirror converse @reed`       | `mirror join @reed`          |
-| Substrate carries it     | partial (porcelain in Rust)   | **whole CLI in shards/**     |
+| Substrate carries it     | partial (porcelain in Rust)   | **whole CLI in shards/mirror/lens/cli/** |
 
-⁕ With `mirror compile T` aliasing to `compile settle T` via the glass's
+⁕ With `mirror compile T` aliasing to `compile settle T` via the stage's
 default-op rule (bare invocation = focus, BUT `compile` is the named loop
 so it can declare `settle` as its default for the action-form). See §7.
 
 **Net:** 5 fewer names to learn (and the names that remain are
 **substrate-native**: `crack` = `\` fracture, `time` = `@epistemologic/reality/time`,
 `join` = Glanville's verb). ~20 more dispatchable leaves (because every
-glass exposes 5 ops). Substrate carries the entire CLI in 8 `.mirror` files.
-The CLI becomes inspectable by `ls shards/mirror/cli/`.
+stage produces a prism that exposes 5 ops). Substrate carries the entire
+CLI in 8 `.mirror` files. The CLI becomes inspectable by `ls
+shards/mirror/lens/cli/`.
 
 ### 6.1 Is the substrate more or less load-bearing?
 
 **More.** The cybernetic CLI had the algebra at the plumbing layer and
 named loops in Rust. The recursive form puts the **named loops in the
-substrate too** — each sub-glass is a `.mirror` shard with declared types,
-declared operations, and obligation blocks. The Rust runtime walks the
-substrate; it does not name commands. **Substrate-pull at the CLI layer
-is complete** in the recursive form, partial in the cybernetic-cli form.
+substrate too** — each sub-stage is a `.mirror` shard with declared
+types, declared operations, and obligation blocks. The Rust runtime
+(realised as `gen_prism` specialisations per `spectral-runtime.md` §2)
+walks the substrate; it does not name commands. **Substrate-pull at the
+CLI layer is complete** in the recursive form, partial in the
+cybernetic-cli form.
 
 This is consistent with the broader substrate-pull arc on `reed/shards-floor`:
 **logic belongs in grammar, not Rust.** The recursive CLI extends that
@@ -531,16 +578,16 @@ arc to the dispatch table.
 When a user types `mirror <x>` without specifying an op, what runs?
 
 **Default: `focus`.** Reads are free; reads default. `mirror kintsugi` is
-short for `mirror kintsugi focus`. Every glass declares its own default in
-its shard.
+short for `mirror kintsugi focus`. Every stage declares its own default
+in its shard.
 
-**Exception (narrow, per-glass): canonical safe-write defaults.** A glass
-declares `default settle` ONLY when its bare-form act is a canonical,
-side-effect-bounded write the user expects from typing just the glass
-name. In v0.1, this is **`compile` and `shatter` alone**: `mirror compile T`
-runs the build; `mirror shatter T` materializes the `.shatter` projection.
-Both are "produce an output artifact" acts that don't escalate beyond
-the artifact.
+**Exception (narrow, per-stage): canonical safe-write defaults.** A
+stage declares `default settle` ONLY when its bare-form act is a
+canonical, side-effect-bounded write the user expects from typing just
+the stage name. In v0.1, this is **`compile` and `shatter` alone**:
+`mirror compile T` runs the build; `mirror shatter T` materializes the
+`.shatter` projection. Both are "produce an output artifact" acts that
+don't escalate beyond the artifact.
 
 **Why not `bootstrap`, `reflect`, `join` (also verb-named)?** Each has a
 `settle` semantic too pointed for an implicit default (Seam pass,
@@ -554,24 +601,24 @@ the artifact.
   Without an utterance, the bare form must read first (`focus` = observe
   peer's eigenboard).
 
-The corrected rule: **`default focus` unless the glass explicitly
+The corrected rule: **`default focus` unless the stage explicitly
 declares otherwise.** v0.1 declarations: `compile`, `shatter` →
 `default settle`. Everything else (`kintsugi`, `bootstrap`, `join`,
 `reflect`, `time`, `crack`) → `default focus`.
 
-The earlier "action-named glasses default to settle" framing was a
-mechanical rule that didn't survive contact with the per-glass semantics;
-Seam's adversarial pass surfaced the strain. Each glass declares its own
+The earlier "action-named stages default to settle" framing was a
+mechanical rule that didn't survive contact with the per-stage semantics;
+Seam's adversarial pass surfaced the strain. Each stage declares its own
 default; the convention is a hint, not a law. (Note: `time` is a noun,
-so the strain didn't surface for that glass; the rule's failure was on
-the verb-named-but-write-pointed glasses.)
+so the strain didn't surface for that stage; the rule's failure was on
+the verb-named-but-write-pointed stages.)
 
-**Rule declared in the glass shard itself** via an explicit `default`
-field (per `shards/mirror/cli.mirror` C1's `default(name, t, value)`
+**Rule declared in the stage shard itself** via an explicit `default`
+field (per `shards/mirror/lens/cli.mirror` C1's `default(name, t, value)`
 pattern):
 
 ```mirror
-glass @mirror/cli/compile {
+stage @mirror/lens/cli/compile {
   default settle              # canonical safe-write — bare form builds
   focus    target
   project  predicate
@@ -580,12 +627,12 @@ glass @mirror/cli/compile {
   settle   target
 }
 
-glass @mirror/cli/kintsugi {
+stage @mirror/lens/cli/kintsugi {
   default focus               # bare form reads the next tournament move
   ...
 }
 
-glass @mirror/cli/reflect {
+stage @mirror/lens/cli/reflect {
   default focus               # bare form reads eigenboard; settle is
                               # algedonic-triggered, not implicit
   ...
@@ -601,26 +648,27 @@ Everything else falls out of the file structure.
 
 - **No new shards in this round.** This is exploration; ticks land later
   on `reed/shards-floor` or its successor.
-- **No depth-2 directories.** `shards/mirror/cli/join/` is reserved
+- **No depth-2 directories.** `shards/mirror/lens/cli/join/` is reserved
   but not minted. Peers are arguments, not substrate.
-- **No `@epistemologic/reality/time` substrate work.** The `time` glass
+- **No `@epistemologic/reality/time` substrate work.** The `time` stage
   forward-references this substrate; the substrate itself is Track G
   (open). `boot/std/time.mirror` declares `type tick = monotonic`; that
-  is sufficient for the glass to land. Full time substrate is deferred.
-- **No alteration to top-level `@mirror/cli`'s five ops.** C1 stands as-is.
+  is sufficient for the stage to land. Full time substrate is deferred.
+- **No alteration to top-level `@mirror/lens/cli`'s five ops.** C1
+  stands as-is.
 - **No dropping cybernetic vocabulary.** `algedonic`, `viable-system`,
   `requisite-variety`, `pattern-that-connects` stay load-bearing in the
-  per-glass help text (`#` @nl literals in each shard's body). The
+  per-stage help text (`#` @nl literals in each shard's body). The
   recursion **carries the cybernetic frame**; it doesn't replace it.
-- **No removal of `proof` blocks.** Each glass's `settle` produces a
+- **No removal of `proof` blocks.** Each stage's `settle` produces a
   proof. This is unchanged; the recursion just multiplies the points at
-  which proofs are emitted (each glass's settle produces its own).
+  which proofs are emitted (each stage's settle produces its own).
 
 ---
 
 ## 9. Open questions (for Reed + Alex to call before ticks land)
 
-1. **`compile` vs top-level `settle` overlap (§4.5).** Is the action-glass
+1. **`compile` vs top-level `settle` overlap (§4.5).** Is the action-stage
    default-rule (`mirror compile T` ≡ `mirror compile settle T`) good
    enough, or does the near-namesake demand we rename one? My read: keep
    both; the help text disambiguates; users learn the distinction once.
@@ -642,7 +690,7 @@ Everything else falls out of the file structure.
    to eigenboard.mirror is real and warranted).
 
 5. **`watch` flag scope.** Does `--watch` work only on top-level `focus`,
-   or on every glass's `focus`? My read: every glass. `mirror kintsugi
+   or on every stage's `focus`? My read: every stage. `mirror kintsugi
    focus --watch` should work the same as `mirror focus --watch`. The
    adverb composes with the verb at any altitude.
 
@@ -655,7 +703,8 @@ Everything else falls out of the file structure.
 7. **Default op declaration syntax.** §7's `default settle` field is a
    sketch. Is the actual grammar `default = settle` or `default settle`
    or `default(op)`? Defer to the substrate's existing default syntax
-   (per cli.mirror C1's `default(name, t, value)` typed-lambda form).
+   (per `shards/mirror/lens/cli.mirror` C1's `default(name, t, value)`
+   typed-lambda form).
 
 ---
 
@@ -681,10 +730,11 @@ verb count goes down without the expressive surface going down. The
 renames make the singing literal: `crack`, `time`, and `join` are the
 substrate's own vocabulary, finally spoken at the shell.
 
-The CLI is a prism. The CLI's subcommands are glasses within that prism.
-The CLI's sub-subcommands, where the substrate demands them, are glasses
-within those glasses. Same five operations. Recursively. All the way
-down.
+The CLI is a bench whose compilation produces a prism. The CLI's
+subcommands are stages within that bench, each itself producing a prism.
+The CLI's sub-subcommands, where the substrate demands them, are stages
+within those stages. Same five operations at every produced-prism
+altitude. Recursively. All the way down.
 
 ---
 
