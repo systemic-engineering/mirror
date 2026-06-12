@@ -133,6 +133,38 @@ prism @mirror/loss/transparency {
   settle transparency
 }
 
+# === The dim_index carrier ===
+#
+# Per [[feedback-no-bare-types]]: a typed dimension index. Locally a
+# newtype over u32; the refinement predicate (`0 ≤ i < dim_count`)
+# is `@epistemologic/property/dim_index` (forward-promised; not
+# declared by this shard). Same precedent as
+# `mirror/spectral/observation.mirror:152` which forward-promises
+# `unit_interval` to the @epistemologic/property altitude while
+# declaring the local newtype.
+type dim_index = u32
+
+# === Structural retrieval: which dimensions specifically went dark ===
+#
+# Names indices, not just magnitude. The structural-loss discipline
+# (loss says WHAT specifically failed, not just HOW MUCH) absorbed
+# from spectral-db `2026-04-12-manifold-integration-design.md` §3:
+# ApertureLoss exposes which dim indices went dark, not merely the
+# scalar magnitude of darkness. The substrate's `transparency<p>`
+# carrier already carries the located opacity_map for partial /
+# failure cases (per `glass.mirror` lines 92-95, 122-124); this
+# action projects that opacity_map's site list into the dim-index
+# axis when the property `p` is a dimensional predicate (the
+# manifold-altitude reading; consumer: the `@mirror/loss/dirichlet`
+# sheaf-energy carrier when it lands).
+#
+# Verdict-surface composition: success → [] (no dark dims); partial /
+# failure → [dim_index] projected from the opacity_map's site index.
+# The action stays obligation-blocked (`\`); the realisation reads
+# the located opacity_map at the dimensional altitude and projects
+# the index axis.
+dark_dims(loss: transparency) -> [dim_index] { \ }
+
 # Re-export the floor carrier under the family placement. The
 # carrier IS `transparency<p>` declared at `shards/glass.mirror`
 # lines 92-95; pulled into scope through `in @glass` above.
@@ -148,5 +180,7 @@ prism @mirror/loss/transparency {
 # (other @mirror/loss sub-glasses MUST lift into this carrier before
 # composing into the parent imperfect's L slot).
 out transparency
+out dim_index
+out dark_dims
 
 out @mirror/loss/transparency

@@ -123,6 +123,10 @@ in @loss
 #                              into a typed measurement at the mirror
 #                              altitude. Forward-promised; lands when
 #                              a consumer pulls a scalar L parameter.
+#                              Combine law (forward-promise): **additive**
+#                              — Shannon entropy adds across independent
+#                              observations (`H(X,Y) = H(X) + H(Y)` when
+#                              X ⊥ Y); the L = f64 monoid is `(ℝ, +, 0)`.
 #
 # Energy sub-glass (forward-promise):
 #
@@ -137,6 +141,13 @@ in @loss
 #                              Polyak-Łojasiewicz on this energy.
 #                              Forward-promised; lands when the
 #                              sheaf-diffusion Houdini fixpoint pulls.
+#                              Combine law (forward-promise): **monoidal**
+#                              — sheaf Dirichlet energy composes
+#                              monoidally under disjoint-union of sheaf
+#                              sections (energies sum on disjoint
+#                              supports; the L slot's monoid is the
+#                              non-negative reals under addition with
+#                              identity at zero energy = `ker(Δ₀)`).
 #
 # Higher-arity sub-glass (forward-promise):
 #
@@ -154,6 +165,13 @@ in @loss
 #                              constructive-derivation sub-shard.
 #                              Forward-promised; lands when the
 #                              homotopy/A_infinity pull comes through.
+#                              Combine law (forward-promise): **H²
+#                              Massey product** — composition via the
+#                              ternary Massey bracket `⟨α,β,γ⟩` on H²
+#                              (Markl 2024, Remark 10); the L slot is
+#                              the H² cohomology class carrier; the
+#                              combine is the Massey-bracket evaluation,
+#                              NOT scalar/monoidal.
 #
 # === Why one family ===
 #
@@ -263,6 +281,22 @@ in @loss
 #                      (at every Fate-tournament altitude, the loss
 #                      is a composite of @epistemologic/properties;
 #                      sub-glasses are the composition surface).
+# Cross-cutting absorb: spectral-db `2026-04-12-manifold-integration-design.md`
+#                      §3 — aperture/convergence/routing structural-
+#                      loss discipline (loss says WHAT specifically
+#                      failed, not just HOW MUCH). Absorbed via the
+#                      existing @mirror/loss carriers at the method/
+#                      carrier altitude rather than a parallel sub-
+#                      shard family: transparency carries aperture
+#                      (the `dark_dims()` structural retrieval on
+#                      @mirror/loss/transparency names which dim
+#                      indices specifically went dark); shannon
+#                      carries convergence-rate (additive entropy
+#                      decrement); dirichlet/massey carry routing
+#                      (sheaf-energy descent + H² noncommutative-
+#                      curvature respectively). The substrate's loss
+#                      family was already shaped to absorb this
+#                      discipline; the audit confirms the alignment.
 # Forward-promise to consumers:
 #   - @mirror/loss/shannon  lands when a consumer pulls a scalar L
 #                            parameter (the bits-of-missing-information
