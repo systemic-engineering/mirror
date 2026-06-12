@@ -1,0 +1,266 @@
+in @prism
+
+in @optics
+in @glass
+in @nl
+in @mirror/lens
+in @mirror/lens/cli
+
+# @mirror/lens/cli/crack — kintsugi geometry as a stage.
+#
+# Eighth of eight verb sub-stages forward-promised in
+# docs/specs/cli-as-prism.md §3 (table at §3 + §3.1 shape sketch).
+# Closes the §3 forward-promise: with this shard landing, all eight
+# sub-stages of @mirror/lens/cli are minted and the CLI directory IS
+# self-describing by `ls` per §3.
+#
+# === The third-state lifecycle, condensed ===
+#
+# Per cli-as-prism §2.1 + §5.1 (THE sharpest condensation): the
+# cybernetic CLI's third-state lifecycle had FOUR verbs — `cracks`,
+# `open`, `force`, `seal`. The recursive condensation collapsed all
+# four into ONE STAGE (crack) with the standard five operations,
+# where the three settle modes (open / force / seal) are carried by
+# a TYPED ENUM at the settle action's argument shape.
+#
+# Per Alex's call this tick: ONE action with typed enum, NOT three
+# actions. The cybernetic-cli's `mirror seal X` / `mirror crack open X`
+# / `mirror crack force X` are user-surface affordances; the substrate
+# signature is `crack_settle(target, mode: crack_mode)`. The CLI
+# parser maps `--open` / `--force` / bare to the three enum variants.
+#
+# === The rename: hole → crack ===
+#
+# Per cli-as-prism §2.1 + §4.2: `\` produces fracture per
+# `gap-tension-tensor-substrate.md` (the gap fold). With the `hole`
+# framing, settle-with-flag felt arbitrary ("hole settle --open" reads
+# as bookkeeping). With the `crack` framing, the kintsugi geometry
+# makes the verb-with-typed-enum LITERAL: settling on a crack IS the
+# gold pour. `mode_open` declares a new fracture (`\` event);
+# `mode_force` accepts loss and forces the fill (`\!` event);
+# `mode_seal` is the default (promote a converged `\` to explicit;
+# gold pour). The lifecycle isn't being hidden under flags — the
+# enum variants NAME the kintsugi acts.
+#
+# === crack_mode — inline declaration (forward-promise factor-out) ===
+#
+# Per [[feedback-no-bare-types]] + [[feedback-no-stringly-types]]:
+# the three crack settle modes are carried at substrate altitude as a
+# typed sum, NOT as a `str` flag dispatcher. The substrate did not
+# yet carry a `crack_mode` type as of this tick (verified by
+# search across shards/); declaring it inline here per the precedent
+# in observation.mirror's `unit_interval` and transparency.mirror's
+# `dim_index` (substrate-pull tick I/II). Forward-promise to factor
+# this type out to a substrate home (likely
+# `shards/kintsugi/crack_mode.mirror`) when the kintsugi family root
+# grows enough sub-shards to earn it; the kintsugi geometry is the
+# crack_mode's natural family, not the CLI altitude.
+#
+# Variant semantics:
+#   mode_open   declare a new fracture; `\` event; the user is
+#               naming a gap-fold-substrate `\` site that wasn't
+#               yet explicit. Substrate writes a new crack ref.
+#   mode_force  accept loss + force fill; `\!` event per
+#               [[architecture-kintsugi-bias-lift]] / kintsugi
+#               variety-maintenance; honest about regression. The
+#               substrate writes the fill AND the
+#               transparency-tagged residual opacity (the loss is
+#               named, not hidden).
+#   mode_seal   default; promote a converged `\` to explicit; gold
+#               pour. The kintsugi loop converged at this crack;
+#               the settle records the closure and emits the proof.
+#
+# === Family placement ===
+#
+# Parent bench: @mirror/lens/cli (shards/mirror/lens/cli.mirror).
+# Family root:  @mirror/lens    (shards/mirror/lens.mirror).
+# Sibling stages:
+#   @mirror/lens/cli/compile    — landed at 737330f
+#   @mirror/lens/cli/kintsugi   — landed at ce2ef9b
+#   @mirror/lens/cli/shatter    — landed at 9bc68f8
+#   @mirror/lens/cli/bootstrap  — landed at ea9c9a7
+#   @mirror/lens/cli/sh         — landed previously this tick
+#   @mirror/lens/cli/reflect    — landed previously this tick
+#   @mirror/lens/cli/time       — landed previously this tick
+#
+# After this shard lands: all 8 sub-stages of @mirror/lens/cli are
+# minted; the CLI directory IS self-describing by `ls`
+# (cli-as-prism §3 forward-promise CLOSED).
+#
+# Path-namespace property: this file at
+# `shards/mirror/lens/cli/crack.mirror` declares
+# `@mirror/lens/cli/crack` and only that (plus the inline
+# `crack_mode` type, forward-promised to factor out).
+#
+# === Note: no mirror.spec command yet ===
+#
+# Unlike compile / kintsugi / shatter, crack does NOT yet have a
+# `command crack { ... }` declaration in mirror.spec — the
+# kintsugi geometry surface is consumed by the runtime's crack
+# walker directly rather than the mosaic build dispatch. This stage
+# shard is the CLI surface forward-promised by cli-as-prism.md §3;
+# the mirror.spec-side declaration is a subsequent Taut tick
+# (forward-promise: when `mirror.spec` gains a `command crack
+# { ... }` block, its arg shape carries the target ref + crack_mode
+# enum this stage's actions already declare).
+#
+# Spec context: docs/specs/cli-as-prism.md §3, §3.1 (shape sketch),
+#               §2.1 (crack row: open/force/seal collapse to settle +
+#               typed enum),
+#               §4.2 (the verb-with-typed-enum strain + kintsugi
+#               geometry resolution),
+#               §5.1 (THE sharpest condensation — 4 verbs → 1
+#               sub-stage × 1 small enum),
+#               §7 (default-op rule: crack declares `default focus`
+#               — listing cracks is free; the settle path is the
+#               gold pour, a real substrate write),
+#               docs/specs/the-convergence.md §2 (the four-lens
+#               table rows for crack open/force/seal),
+#               docs/specs/optical-keywords.md §1.2 (stage),
+#               gap-tension-tensor-substrate.md (the `\` event and
+#               kintsugi geometry this stage carries).
+# Substrate decisions: [[architecture-kintsugi-bias-lift]] (kintsugi
+#                      bias = lift @code -> @mirror; the gold pour
+#                      IS the bias-aligned write),
+#                      [[architecture-kintsugi-variety-io]] (the
+#                      variety-maintenance contract; force fill
+#                      records the residual variety loss),
+#                      [[architecture-splinter-ast-quote-primitive]]
+#                      (the settle's proof block discharges via
+#                      splinter(ast) per the property/fracture
+#                      bilateral pattern),
+#                      [[architecture-prism-as-trait-as-everything]]
+#                      (stage IS a sub-prism specialization),
+#                      [[architecture-shards-as-substrate-source]]
+#                      (file path matches namespace),
+#                      [[feedback-no-bare-types]] (crack_mode is a
+#                      typed enum, not a str flag),
+#                      [[feedback-no-stringly-types]] (the three
+#                      modes are substrate-altitude variants).
+# Related shards: lens/cli.mirror (parent bench),
+#                 lens/cli/kintsugi.mirror (sibling — kintsugi's
+#                 tournament settles working-set fractures; crack's
+#                 settle pours gold on individual cracks; the two
+#                 stages share the kintsugi-engine altitude below),
+#                 glass.mirror (imperfect / transparency carriers —
+#                 transparency tags the residual opacity from
+#                 mode_force fills).
+
+# === crack_mode — typed sum at substrate altitude ===
+#
+# Inline declaration; forward-promise to factor out to
+# `shards/kintsugi/crack_mode.mirror` when the kintsugi family root
+# grows enough sub-shards to earn it. Per
+# [[feedback-no-bare-types]] / [[feedback-no-stringly-types]]: the
+# three modes are substrate-altitude variants, not str flag values.
+# Per Alex's call this tick: ONE settle action with typed enum, NOT
+# three actions.
+type crack_mode =
+  | mode_open
+  | mode_force
+  | mode_seal
+
+stage @mirror/lens/cli/crack {
+  # Per cli-as-prism §7: crack declares `default focus` — listing
+  # cracks is free. Bare `mirror crack` enumerates every open `\`
+  # (the cybernetic-cli's `cracks` verb collapsed into focus). The
+  # settle path is the gold pour — a real substrate write (the
+  # kintsugi geometry's bias-aligned closure); the user pays only for
+  # the explicit settle. The other read-shaped ops (project / split /
+  # shift) walk the fracture set without writing.
+  default focus
+
+  # The five operations the produced prism exposes on the crack
+  # sub-manifold (the fracture set; the union of open `\` sites the
+  # kintsugi loop is tracking). Each operand below names the natural
+  # shape of the manifold's element at that op's slot, per the spec
+  # §3.1 sketch convention and §2.1's per-verb decisions:
+  #   focus    target     — list every open `\` (the cybernetic-cli's
+  #                          `cracks` verb)
+  #   project  predicate  — filter the fracture set by predicate
+  #                          (e.g. all cracks below a transparency
+  #                          band; orthogonal projection per
+  #                          [[architecture-operations-as-linear-algebra]])
+  #   split    candidate  — enumerate candidate fills for a crack
+  #                          (graph-walk on the gap-tension manifold;
+  #                          composes with kintsugi.split at the
+  #                          tournament altitude)
+  #   shift    basis      — view the same fracture set at a
+  #                          different basis (e.g. eigenvalue-sorted
+  #                          vs source-line-sorted; same content,
+  #                          different declared frame;
+  #                          [[architecture-lift-as-load-bearing]])
+  #   settle   target     — the ONE write; pour gold along the
+  #                          fracture; mode (open / force / seal)
+  #                          carried by the typed crack_mode enum at
+  #                          the action signature; emits proof block
+  #                          recording the kintsugi act
+  focus    target
+  project  predicate
+  split    candidate
+  shift    basis
+  settle   target
+}
+
+# === Crack-specific actions ===
+#
+# No mirror.spec `command crack { ... }` declaration yet (see the
+# "no mirror.spec command yet" note above). The CLI surface action
+# signature lands here as the substrate forward-promise; the Rust
+# runtime walks this declaration when the kintsugi geometry surface
+# lifts into the mosaic dispatch. Substrate-pull discipline per
+# [[architecture-fragmentation-is-the-rust-substrate]].
+#
+# Honest `partials` from birth (per recognition #306): the return
+# type is the substrate's `imperfect` functor (declared in
+# shards/glass.mirror as `imperfect(a, e, l) = success(a) |
+# partial(a, l) | failure(e, l)`).
+#
+# Per mode:
+#   mode_open settle: success carries the declared crack ref;
+#                     partial is rare (declaring a new fracture is
+#                     usually clean); failure on duplicate-crack-at-
+#                     site / write refusal.
+#   mode_force settle: SUCCESS IS RARE BY CONSTRUCTION — the force
+#                     path is explicitly accept-loss; the substrate
+#                     ALMOST ALWAYS returns partial-with-loss
+#                     carrying the transparency-tagged residual
+#                     opacity (the `\!` event names the loss; the
+#                     return shape carries it). Failure only on hard
+#                     write error.
+#   mode_seal settle: success carries the converged crack ref;
+#                     partial-with-loss on tolerable convergence
+#                     shortfall (the kintsugi loop got close but
+#                     not all the way; the residual opacity is
+#                     preserved for the next round); failure on
+#                     hard read error (crack not in set, write
+#                     refused).
+#
+# Per [[feedback-manual-closure-is-training-pull]]: dark regions are
+# kintsugi's mutation targets, not manual patches; the
+# partial-with-loss shape preserves them rather than hiding them
+# under opaque carriers. The mode_force path is the substrate-aligned
+# way to take honest regressions.
+
+# crack() — enumerate every open `\` in the current fracture set
+# (the default-focus behaviour). Returns the imperfect carrying the
+# fracture-set ref on success; partial-with-loss on tolerable read
+# shortfall; failure on hard read error.
+crack() -> imperfect { \ }
+
+# crack_settle(target, mode) — the ONE settle path; the typed
+# crack_mode enum at the second arg position selects the kintsugi
+# act (open / force / seal). Per Alex's call: ONE action with typed
+# enum, NOT three actions. Returns the imperfect carrying the
+# kintsugi-act result on success; partial-with-loss on tolerable
+# variety-shortfall (rare for mode_open, EXPECTED for mode_force,
+# possible for mode_seal); failure on hard write error.
+crack_settle(target: ref, mode: crack_mode) -> imperfect { \ }
+
+out @mirror/lens/cli/crack
+out crack_mode
+out mode_open
+out mode_force
+out mode_seal
+out crack
+out crack_settle
