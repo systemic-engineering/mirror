@@ -1,0 +1,158 @@
+in @prism
+
+in @optics
+in @glass
+in @nl
+in @mirror/lens
+in @mirror/lens/cli
+
+# @mirror/lens/cli/kintsugi — the coherence-settling loop as a stage.
+#
+# Second of eight verb sub-stages forward-promised in
+# docs/specs/cli-as-prism.md §3 (table at §3 + §3.1 shape sketch).
+# Realizes the `command kintsugi` declaration in mirror.spec at the
+# stage altitude — the substrate level where the named loop
+# (focus -> project -> shift -> settle) drives one tournament round-trip.
+#
+# === Why kintsugi is a stage, not a resonator ===
+#
+# Per cli-as-prism §2.1: the TOURNAMENT itself is structurally a
+# `resonator` per optical-keywords.md §1.5 — a closed loop with output
+# coupler — but the CLI sub-stage that drives one iteration is a `stage`
+# rather than a `resonator`. Each invocation is a chain through the five
+# ops, not a self-referential round-trip. The resonator lives at the
+# kintsugi-engine altitude; the CLI surface is the stage that fires one
+# round-trip from outside.
+#
+# Per cli-as-prism §5.2 (where the constraint sang): the five operations
+# map onto the tournament loop WITHOUT FORCING. `kintsugi.settle` IS one
+# iteration. `kintsugi.focus` IS peeking the next move. `kintsugi.split`
+# IS enumerating candidate fills. The tournament was already the same
+# algebra at a smaller scale; the recursion just made the algebra
+# visible at the shell.
+#
+# === Family placement ===
+#
+# Parent bench: @mirror/lens/cli (shards/mirror/lens/cli.mirror).
+# Family root:  @mirror/lens    (shards/mirror/lens.mirror).
+# Sibling stages:
+#   @mirror/lens/cli/compile    — landed at 737330f (the build pipeline)
+#   @mirror/lens/cli/shatter    — materialize AST -> text (next)
+#   @mirror/lens/cli/bootstrap  — autopoietic phase machine (next)
+#   @mirror/lens/cli/join       — peer-entry (Glanville's verb)
+#   @mirror/lens/cli/reflect    — VSM System 5 view
+#   @mirror/lens/cli/time       — Elm-style time travel
+#   @mirror/lens/cli/crack      — third-state lifecycle
+#
+# Path-namespace property: this file at
+# `shards/mirror/lens/cli/kintsugi.mirror` declares
+# `@mirror/lens/cli/kintsugi` and only that.
+#
+# Spec context: docs/specs/cli-as-prism.md §3, §3.1 (shape sketch is
+#               this stage's sketch literally),
+#               §5.2 (where kintsugi sang),
+#               §7 (default-op rule: kintsugi declares `default focus`),
+#               docs/specs/optical-keywords.md §1.2 (stage),
+#               §1.5 (resonator — the tournament engine altitude),
+#               mirror.spec (`command kintsugi { arg spec: ~f =
+#               ~f'./mirror.spec'; flag target: list(str) = [];
+#               flag emit_shatter: bool = false }`).
+# Substrate decisions: [[architecture-kintsugi-variety-io]] (Ashby
+#                      requisite-variety; @fate tournament IS variety-
+#                      maintenance — this stage drives one round),
+#                      [[architecture-kintsugi-bias-lift]] (kintsugi
+#                      bias = lift @code -> @mirror; substrate-pull as
+#                      gradient),
+#                      [[architecture-prism-as-trait-as-everything]]
+#                      (stage IS a sub-prism specialization),
+#                      [[architecture-shards-as-substrate-source]]
+#                      (file path matches namespace),
+#                      [[architecture-lift-as-load-bearing]] (shift =
+#                      basis transformation on the loss landscape).
+# Related shards: lens/cli.mirror (parent bench, the produced-prism
+#                 form the user types),
+#                 lens/cli/compile.mirror (sibling — the prior
+#                 sub-stage; same template, different operand naming),
+#                 glass.mirror (imperfect / transparency / au carriers).
+
+stage @mirror/lens/cli/kintsugi {
+  # Per cli-as-prism §7: kintsugi declares `default focus` — the
+  # standard read-default. Bare `mirror kintsugi` peeks the next
+  # tournament move (no write). Settling a tournament iteration is a
+  # real substrate write per the @fate variety-maintenance contract;
+  # the user pays only for the explicit `settle`. Reading is free.
+  default focus
+
+  # The five operations the produced prism exposes on the kintsugi
+  # sub-manifold (the tournament's working set). Each operand below
+  # names the natural shape of the manifold's element at that op's
+  # slot, per the spec §3.1 sketch convention and §2.1's per-verb
+  # decisions:
+  #   focus    target       — peek the next tournament candidate (no write)
+  #   project  predicate    — filter the working set by what to repair
+  #                          (target, eigenvalue range, transparency band)
+  #   split    candidate    — enumerate candidate fills
+  #   shift    basis        — basis-transform on the loss landscape,
+  #                          per [[architecture-lift-as-load-bearing]]
+  #   settle   iteration    — the ONE write; run one tournament iteration
+  #                          AND emit the proof block recording the
+  #                          variety-maintenance act
+  focus    target
+  project  predicate
+  split    candidate
+  shift    basis
+  settle   iteration
+}
+
+# === Kintsugi-specific actions ===
+#
+# Realizes mirror.spec's `command kintsugi { arg spec: ~f =
+# ~f'./mirror.spec'; flag target: list(str) = []; flag emit_shatter:
+# bool = false }` at the stage altitude. The action signature carries
+# the same shape — a spec-file ref, an optional target whitelist, and
+# the emit-shatter flag — at the substrate altitude so the dispatcher
+# can walk from cli surface to settled call without leaving the
+# substrate. The Rust runtime walks these declarations; it does not
+# name commands. Substrate-pull discipline per
+# [[architecture-fragmentation-is-the-rust-substrate]].
+#
+# Honest `partials` from birth (per recognition #306): the return type
+# is the substrate's `imperfect` functor (declared in
+# shards/glass.mirror as `imperfect(a, e, l) = success(a) |
+# partial(a, l) | failure(e, l)`). A tournament round that converges
+# fully returns success; a round that lifts loss without fully closing
+# the gap returns partial-with-loss carrying the transparency-tagged
+# residual opacity, so the kintsugi loop's next round (or a higher
+# altitude) can read the unresolved fracture. Per
+# [[feedback-manual-closure-is-training-pull]]: manual patching with
+# opaque carriers breaks the discriminator — partial-with-loss is the
+# substrate-aligned shape.
+
+# kintsugi(spec) — run one tournament iteration against the spec at
+# `spec` (defaults to `./mirror.spec` per mirror.spec's command
+# declaration). Returns the imperfect carrying the settled-graph ref
+# on success, the partial carrying the transparency-tagged loss on
+# tolerable variety-shortfall, the failure with reason on hard error.
+kintsugi(spec: ref) -> imperfect { \ }
+
+# kintsugi_targeted(spec, target) — same as kintsugi but with an
+# explicit target whitelist (matches mirror.spec's `flag target:
+# list(str) = []`). When `target` is non-empty, the tournament's
+# working set is restricted to the named targets (the
+# variety-maintenance act runs over a sub-manifold); empty list means
+# run over the spec's full settle_on set.
+kintsugi_targeted(spec: ref, target: list) -> imperfect { \ }
+
+# kintsugi_with_shatter(spec, target, emit_shatter) — full-shape entry
+# matching mirror.spec's three-flag declaration. When `emit_shatter`
+# is true, the iteration also writes a `.shatter` projection of the
+# settled subgraph (per @mirror/lens/cli/shatter contract). This is
+# the cross-stage seam: kintsugi's settle composes with shatter's
+# settle when the flag is set; the two stages share the @mirror/store
+# write boundary.
+kintsugi_with_shatter(spec: ref, target: list, emit_shatter: bool) -> imperfect { \ }
+
+out @mirror/lens/cli/kintsugi
+out kintsugi
+out kintsugi_targeted
+out kintsugi_with_shatter
