@@ -969,3 +969,66 @@ is none:
   `<5, dim=5>`), but is unused outside its own tests. Verifying its
   Metal-program shape under the new canonical is a Tick-CHC-2 detail,
   not a separate concern.
+
+---
+
+## Appendix C — Applications: CoincidenceHash as KDF-context
+
+Added 2026-06-12 (Mara). The collapse-plan map above documents
+CoincidenceHash as an identity-comparison primitive. The
+spectral-db / spectral audit surfaced a second application that
+belongs at the same altitude: **CoincidenceHash is a key-derivation
+context that makes self-authenticating origin possible.**
+
+### C.1 The construction
+
+The session key for portal-altitude encryption derives from two
+inputs composed at KDF time:
+
+```
+session_key = KDF(
+  shared_secret  = ML-KEM key-encapsulation output,
+  context        = coincidence_hash(state)        // <5,5> per §2.2
+)
+```
+
+The `shared_secret` carries post-quantum confidentiality (the
+KEM half). The `context` carries the *geometry of the moment*:
+the CoincidenceHash of the eigenvalue state that produced the very
+eigenvalues the session is about to encrypt.
+
+### C.2 Why it works — self-authenticating origin
+
+A standard KDF-context binds a session key to a domain string
+("application/v1/session"). Substituting `coincidence_hash(state)`
+for that domain string upgrades the binding from
+*operator-declared* to *substrate-declared*:
+
+- The key is no longer addressable except by an agent that observes
+  the same eigenvalue state. The geometry IS the context.
+- A compromised session-key reveals exactly one tick's eigenvalues —
+  no more. Geometry rotates → hash rotates → key rotates. There is
+  no key reuse across geometry-distinct ticks by construction.
+- The encryption key is derived from the same hash function that
+  addresses the content being encrypted. The same primitive that
+  observes the content's identity gates access to it.
+
+This is the property the spectral-db / spectral substrate calls
+*self-authenticating origin*. The CoincidenceHash plays both roles
+because both jobs need the same observation: which tick this is, in
+the canonical 5×5 conductivity-tensor basis.
+
+### C.3 Cross-reference
+
+The §5.3 fall-out — plain SHA-256 Merkle as a separate primitive
+for *composing* addresses — applies here too. The KDF context is
+exactly the CoincidenceHash's content-addressing job; the Merkle
+composition primitive is the wrong shape for it. The two roles
+identified in §6 (content vs composition) cleanly partition both
+storage and encryption: CoincidenceHash hashes content into
+addresses *and* into KDF contexts; SHA-256 Merkle composes
+addresses into parent addresses. The collapse plan's `<5,5>`
+canonical is what the KDF context names; truncated CoincidenceHash
+variants (per the Splinter / VoidPointer precision discussion) are
+not appropriate KDF inputs — the KDF context wants the full 64-char
+hex / 32-byte address, not a navigation-altitude truncation.
