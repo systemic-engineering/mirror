@@ -34,6 +34,7 @@ pub mod git;
 pub mod grammar;
 pub mod hash;
 pub mod kintsugi;
+pub mod lens_unix;
 pub mod music;
 pub mod oscillate;
 pub mod pipeline;
@@ -2373,7 +2374,9 @@ pub fn kintsugi_main(args: &[String]) -> ExitOutput {
 /// grammar paths relative to the repo root rather than the test process
 /// cwd. Otherwise prefer [`kintsugi_main`].
 pub fn kintsugi_main_in(args: &[String], cwd: &std::path::Path) -> ExitOutput {
-    let _guard = kintsugi_main_lock().lock().unwrap_or_else(|p| p.into_inner());
+    let _guard = kintsugi_main_lock()
+        .lock()
+        .unwrap_or_else(|p| p.into_inner());
 
     let saved_cwd = std::env::current_dir().ok();
     let _ = std::env::set_current_dir(cwd);
@@ -2395,10 +2398,8 @@ fn kintsugi_main_inner(args: &[String]) -> ExitOutput {
     // (recursive call) is saved + restored so nested invocations don't
     // lose each other's output — dispatch is not currently re-entrant
     // but the swap-save-swap discipline is the right shape regardless.
-    let prior_stdout =
-        CAPTURE_STDOUT.with(|cell| cell.replace(Some(Vec::new())));
-    let prior_stderr =
-        CAPTURE_STDERR.with(|cell| cell.replace(Some(Vec::new())));
+    let prior_stdout = CAPTURE_STDOUT.with(|cell| cell.replace(Some(Vec::new())));
+    let prior_stderr = CAPTURE_STDERR.with(|cell| cell.replace(Some(Vec::new())));
 
     // Catch panics so we always restore the prior cells before
     // returning to the caller.

@@ -61,10 +61,35 @@ in @mirror/store
 #
 # === Body status ===
 #
-# FAMILY-HEADER ONLY this tick. The action surface declares the
-# mount / path / read / write / stat shape; bodies (the platform-
-# specific FUSE / 9P / passthrough dispatcher) land when the
-# platform sub-species are declared.
+# The action surface declares the mount / path / read / write /
+# stat shape; bodies (the platform-specific FUSE / 9P / passthrough
+# dispatcher) land when the platform sub-species are declared.
+#
+# v0 floor discharge (Mara, 2026-06-12): the abstract bodies
+# discharge through `bootstrap/src/lens_unix.rs`'s `UnixLens`
+# struct — a materialize-to-tempdir impedance lens. The
+# materialization choice is substrate-pull-correct for v0 because
+# the named platform sub-species (FUSE) requires kernel extensions
+# on macOS (macFUSE + SIP weakening + reboot) that create a hard
+# friction wall for substrate floor work. The abstract action
+# surface declared here is implementation-agnostic; future
+# `@mirror/lens/unix/fuse` and `@mirror/lens/unix/9p` sub-species
+# swap the materialization for a kernel-mediated view without
+# changing this declaration.
+#
+# Action body mapping (v0):
+#   mount(shard)              -> UnixLens::mount
+#   path(handle, components)  -> UnixLens::path
+#   read(p)                   -> UnixLens::read
+#   write(p, content)         -> [forward-promised to v1; read-only
+#                                 floor is enough for the ouroboros
+#                                 pipeline's cargo-reads step]
+#   stat(p)                   -> UnixLens::stat
+#
+# Test: `bootstrap/tests/lens_unix_cargo_roundtrip.rs` verifies
+# `cargo metadata --manifest-path <mount>/Cargo.toml` succeeds
+# against a Splinter-materialized crate (the closure of substrate
+# -> store -> lens -> cargo per docs/specs/spectral-runtime.md §5).
 #
 # Cascade candidates (forward-promised; not declared this tick):
 #
