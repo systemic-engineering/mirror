@@ -2,6 +2,7 @@
 
 *2026-05-07. Reed + Alex. The shell is the runtime.*
 *2026-06-05 substrate-pull lift: `zoom`→`shift`; `refract`→`settle`; `~/.spectral/`→`~/.mirror/`. Moved from `spectral/docs/specs/` to mirror canonical home per the inline-spectral-into-mirror v0.1 framing.*
+*2026-06-12 substrate-pull lift: entry verb `converse` → `join` → `sh`. `sh` is the substrate's noun for the shell manifold; UNIX's word for fifty years. §"Entry from the mirror CLI" rewritten.*
 
 ---
 
@@ -184,21 +185,37 @@ relevant.
 
 ---
 
-## Entry from the mirror CLI
+## Entry from the mirror CLI: λsh and `mirror sh`
 
-`mirror join` is the **entry verb**. `mirror join` with no peer drops
-into λsh as self. `mirror join @reed` drops into λsh with `@reed>` as
-the active prompt. λsh is the **interactive transport** of the mirror
-runtime; `mirror join` is the verb that enters it. The standalone
-`λsh` binary is a thin alias for `mirror join` — same daemon socket,
-same algebra, same eigenboard.
+`mirror sh` IS the **shell-open verb**. The standalone `λsh` binary is
+a thin alias for `mirror sh` — same daemon socket, same algebra, same
+eigenboard.
 
-λsh and `mirror join` are not separate things; they are the same
-transport under two names — one names the running mode, the other
-names the verb that enters it.
+Bare `mirror sh` with no peer drops into λsh as self. `mirror sh
+@reed` drops into λsh with `@reed>` as the active prompt. Both resolve
+via `cli-as-prism.md` §7's default-op rule (the `sh` stage declares
+`default settle`; settle on the shell manifold IS entering it). Other
+ops on the shell manifold: `mirror sh focus @reed` observes peer's
+eigenboard without entering; `mirror sh shift @reed` views from their
+altitude; `mirror sh split @reed` branches a sub-conversation. Op-first,
+peer-as-arg.
 
-See `cli-as-prism.md` §2.1 (the `join` glass) and `the-convergence.md`
-§1.2 (transports table).
+λsh is the **interactive transport** (the running mode); `mirror sh`
+is the entry (the verb). They are not separate things — same lens
+under two names. The shell IS a stage in the substrate (`stage
+@mirror/lens/cli/sh`); the five ops apply to the shell manifold
+(prompt state, view state, session state, peer context).
+
+**Substrate-pull recognition (2026-06-12).** Rename arc `converse →
+join → sh`. The `join` waypoint earned its keep by exposing the
+type-confusion (`join` was both Glanville's directional entry verb AND
+a five-op sub-stage; verbs don't have algebras, nouns can). `sh` is
+a noun — the shell manifold — and the five ops apply cleanly. UNIX
+has named this manifold `sh` for fifty years; the substrate already
+had the word.
+
+See `cli-as-prism.md` §2.1 (the `sh` stage) and §5.4 (the manifold
+framing), and `the-convergence.md` §1.2 (transports table).
 
 ---
 
