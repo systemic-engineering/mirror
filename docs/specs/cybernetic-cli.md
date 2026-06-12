@@ -1,11 +1,23 @@
 # Cybernetic CLI — mirror's Surface from the Second-Order Frame
 
 *2026-06-05. Reed + Alex. Spec (proposal, not implementation).*
+*Vocabulary cascade 2026-06-12 (Mara): `shards/mirror/cli.mirror` paths
+migrate to `shards/mirror/lens/cli/` per the 2026-06-06 `@mirror/lens`
+family naming (the-convergence.md §1.2); schematic references to the
+`crack` glass at the CLI altitude reframe as `stage @mirror/lens/cli/crack`
+per `optical-keywords.md` §1.2 + `cli-as-prism.md` §2.1 (chain of facets,
+default for CLI verb-stages); schematic mentions of `sub-glass` reframe
+as `sub-stage`; lingering `transport` framing for the four-surface
+recognition cascades to `lens` per the family naming. The PRODUCED prism's
+five-operation algebra (the runtime artifact) is RESERVED `prism` per
+`optical-keywords.md` §1; the proof-block envelope and the porcelain verb
+prose describe the produced artifact and are preserved as-is. Structural
+content unchanged; only vocabulary cascades.*
 
 Status: **Red** (proposal).
 Branch: `reed/cybernetic-cli`.
 Continues: `reed/shift-settle-rename` (`zoom`→`shift` + `refract`→`settle` rename, now on main), `reed/shards-floor` (shards as substrate source).
-Depends on: `tick-4-five-operations.md`, `mirror-kintsugi.md`, `spec-files.md`, `settlement.md`, `lambda-shell.md`, `spec-as-projection.md`.
+Depends on: `tick-4-five-operations.md`, `mirror-kintsugi.md`, `spec-files.md`, `settlement.md`, `lambda-shell.md`, `spec-as-projection.md`, `optical-keywords.md` (§1 the eight schematic keywords; bench/stage cascade applied to this spec).
 
 ---
 
@@ -122,8 +134,12 @@ mirror bootstrap  [phase]         — the autopoietic loop
 mirror join       [@peer]         — second-order CLI; entry verb for λsh
                                     `mirror join` (no peer) drops into λsh as self;
                                     `mirror join @reed` enters with that peer.
-                                    λsh and `mirror join` are the same transport
-                                    under two names. `\` toggles λ> ↔ @peer>.
+                                    λsh and `mirror join` are the same lens
+                                    under two names (the shell-lens running mode
+                                    + the cli-lens entry verb collapse to one
+                                    species under @mirror/lens; see
+                                    `the-convergence.md` §1.2).
+                                    `\` toggles λ> ↔ @peer>.
 
 mirror watch      [target...]     — algedonic surface
                                     keep `focus + loss` open in the foreground;
@@ -166,11 +182,11 @@ mirror crack settle <name>         — seal-with-gold: promote a settled `\`
                                      `♻️ kintsugi: ... settled`.
 ```
 
-These four operations on the `crack` glass give the user the full
+These four operations on the `crack` stage give the user the full
 lifecycle of the third state: focus (list) → settle --open (declare) →
 settle --force (force-fill if needed) → settle (seal-with-gold).
 Substrate-pull rename (`hole` → `crack`, 2026-06-05) makes the kintsugi
-geometry literal: the glass-name carries the gap-tension-tensor
+geometry literal: the stage-name carries the gap-tension-tensor
 vocabulary, and settling IS the gold pour. The codebase visibly learns.
 `e^(n+1) < e^(n)` on the frontier itself.
 
@@ -189,7 +205,10 @@ project/
 │   ├── glass.mirror      — substrate vocabulary (Imperfect, Transparency)
 │   ├── prism.mirror      — the five operations as the trait of everything
 │   └── mirror/
-│       └── cli.mirror    — the CLI's own grammar (command/arg/flag)
+│       └── lens/
+│           └── cli.mirror — the CLI's own grammar (command/arg/flag);
+│                            the terminal-lens species under @mirror/lens
+│                            (migrated 2026-06-06 from shards/mirror/cli.mirror)
 │
 ├── boot/               ← legacy floor (shrinkage contract: must shrink each tick)
 │   └── std/
@@ -300,9 +319,9 @@ context. ([beer-error-propagation.md][beer]).
 ### 5.1 First-order — classical use
 
 ```
-$ mirror compile shards/mirror/cli.mirror
+$ mirror compile shards/mirror/lens/cli.mirror
 compile tick=412 {
-  target = @mirror/cli
+  target = @mirror/lens/cli
   shatter = sha256:7f3a...
   eigenboard { fiedler = 0.041  loss = 3.84  tick = 412 }
   compose { |> mirror shatter target=@code/rust }
@@ -318,11 +337,11 @@ larger is being measured. They ignore it. That's fine.
 ```
 $ mirror join
 λ> focus
-λ> project @mirror/cli
+λ> project @mirror/lens/cli
 λ> split depends_on
 λ> \@reed
 @reed> the cli grammar feels heavy. can we settle it?
-       [translates to: kintsugi shards/mirror/cli.mirror]
+       [translates to: kintsugi shards/mirror/lens/cli.mirror]
        [runs the tournament...]
        proof { loss_before = 4.2  loss_after = 3.1  settled = true }
 @reed> three actions collapsed, two duplicates merged.
@@ -364,11 +383,11 @@ Current substrate-state (per the 2026-06-04 substrate-pull arc, on main):
 | `mirror compile`     | (keep)              | The classical name carries the first-order meaning correctly. |
 | `mirror kintsugi`    | (keep)              | The porcelain for the coherence-settling loop. Load-bearing. |
 | `mirror shatter`     | (keep)              | The materialize step. The settled-as-substrate-of-next altitude. |
-| (none)               | `mirror join`       | Entry verb for λsh (second-order CLI). λsh and `mirror join` are the same transport under two names. |
-| (none)               | `mirror watch`      | The algedonic surface as a first-class verb. Beer's bypass. (cli-as-prism resolved this as `--watch` flag on `focus`, not a sub-glass.) |
+| (none)               | `mirror join`       | Entry verb for λsh (second-order CLI). λsh and `mirror join` are the same lens under two names — same species under `@mirror/lens` (the shell lens running mode + the cli lens entry verb collapse to one species per `the-convergence.md` §1.2). |
+| (none)               | `mirror watch`      | The algedonic surface as a first-class verb. Beer's bypass. (cli-as-prism resolved this as `--watch` flag on `focus`, not a sub-stage.) |
 | (none)               | `mirror reflect`    | VSM System 5 view. The identity reads itself. |
 | (none)               | `mirror bootstrap`  | Autopoiesis as a named operation. The self-hosting loop. |
-| (none)               | `mirror crack`      | One glass with the five operations for the third-state lifecycle (focus + settle with `--open`/`--force` flags). Per `cli-as-prism.md` §2.1. |
+| (none)               | `mirror crack`      | One `stage @mirror/lens/cli/crack` with the five operations for the third-state lifecycle (focus + settle with `--open`/`--force` flags). Per `cli-as-prism.md` §2.1. |
 | `mirror shift`       | (keep — landed) | Substrate-pull `zoom`→`lift`→`shift` closed 2026-06-04. Shift names basis-transformation per [[connes-spectral-triple]]; lateral, zero-cost-by-construction. |
 | `mirror settle`      | (keep — landed) | Substrate-pull `refract`→`settle` closed 2026-06-04. Settle names monad-close / measurement collapse. The ONE write. |
 
@@ -381,10 +400,15 @@ plumbing is unchanged.
 
 - **No new shards in this round.** The spec proposes; doesn't implement.
 - **No subcommand explosion.** Plumbing is exactly 5 verbs. Porcelain is
-  condensed under prism-recursion (per `cli-as-prism.md`): 6 sub-glasses
+  condensed under prism-recursion (per `cli-as-prism.md`): 6 sub-stages
   (`compile`, `kintsugi`, `shatter`, `bootstrap`, `join`, `reflect`) +
-  the `crack` glass for the third-state lifecycle + `watch` as a flag
+  the `crack` stage for the third-state lifecycle + `watch` as a flag
   (`--watch`) on `focus` rather than a verb (cli-as-prism §4.1).
+  (The schematic cascade per `optical-keywords.md` §1.2: each sub-stage
+  is a `stage @mirror/lens/cli/<verb>` — a chain of facets with one
+  input aperture and one output aperture; the produced prism's
+  five-operation interface emerges from graph-walking the stage's
+  element set.)
 - **No GUI.** The TUI (`mirror join` → λsh) is a terminal client, not
   a separate product.
 - **No bypass of the proof block.** Every `settle` produces one. A `settle`
@@ -416,7 +440,8 @@ Inline above, but the load-bearing ones are:
   modeled." First-order cybernetics treats the observer as external;
   second-order holds that the regulator is always a component of the
   system it regulates. Why `mirror join` exists (and why λsh is its
-  interactive running mode, not a separate transport).
+  interactive running mode, not a separate lens — one species under
+  `@mirror/lens` per the 2026-06-06 family migration).
 
 [cybersyn]: ../../../../reed/dev/systemic.engineering/practice/insights/cybernetics/cybersyn.md
 
@@ -437,11 +462,14 @@ For Reed + Alex to call before this becomes implementation work:
 
 2. ~~**`mirror converse` vs `λsh`.**~~ **Closed (2026-06-05):** the
    convergence resolved this. `mirror join` (renamed from `converse`) IS
-   the entry verb; λsh IS the running mode of that transport. Same
+   the entry verb; λsh IS the running mode of that lens. Same
    daemon socket, same algebra, same eigenboard. The standalone `λsh`
-   binary is a thin alias for `mirror join`. See `the-convergence.md`
-   §1.2, `cli-as-prism.md` §2.1, and `lambda-shell.md` §"Entry from the
-   mirror CLI".
+   binary is a thin alias for `mirror join`. (The 2026-06-06 family
+   migration narrows further: `mirror join` and λsh are one species
+   under `@mirror/lens` — the shell-lens running mode + the cli-lens
+   entry verb collapse to a single lens by construction.) See
+   `the-convergence.md` §1.2, `cli-as-prism.md` §2.1, and
+   `lambda-shell.md` §"Entry from the mirror CLI".
 
 3. **`mirror watch`'s default surface.** TUI-style chrome (color-bar + tick
    number + counts) or pure stdout that something else can render? The
