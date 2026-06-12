@@ -1,0 +1,192 @@
+in @prism
+
+in @optics
+in @glass
+in @nl
+in @mirror/lens
+in @mirror/lens/cli
+
+# @mirror/lens/cli/sh — the shell as a stage.
+#
+# Fifth of eight verb sub-stages forward-promised in
+# docs/specs/cli-as-prism.md §3 (table at §3 + §3.1 shape sketch).
+# The CLI surface for the shell manifold — the noun-shaped
+# four-dimensional state (prompt / view / session / peer) the user
+# lives inside while at the terminal.
+#
+# === The rename arc: converse → join → sh ===
+#
+# Per cli-as-prism §2.1 + §5.4 (where sh sang) + the-convergence
+# §2 (the four-lens table): the verb cascaded converse → join → sh.
+# The `join` waypoint earned its keep by exposing a type-confusion: it
+# was both Glanville's directional entry verb AND a five-op sub-stage,
+# but VERBS DON'T HAVE ALGEBRAS; nouns can. `sh` is the substrate's
+# noun for the shell manifold — UNIX's word for fifty years — and the
+# five ops apply cleanly to it. The cascade closes §9 Q6 of the
+# cli-as-prism spec (op-first, peer-as-arg — NOT path-shape).
+#
+# === Peer-as-arg, op-first ===
+#
+# Per cli-as-prism §2.1 sh row + §9 Q6 closure:
+#   mirror sh                  — default-op rule fires; bare drops into
+#                                λsh (default settle; the shell is the
+#                                manifold's natural rest state).
+#   mirror sh @reed            — default-op + peer arg = `sh settle @reed`
+#                                (enter; commits to transcript).
+#   mirror sh focus @reed      — observe peer's eigenboard from shell
+#                                context (no enter).
+#   mirror sh shift @reed      — view substrate from their altitude.
+#   mirror sh split @reed      — branch a sub-conversation from current.
+#   mirror sh settle @reed     — enter (commits to transcript).
+#
+# Peer-as-arg, NOT path-shape: peers are dynamic; baking them into the
+# on-disk structure is wrong (cli-as-prism §3.2). The directory tree
+# encodes substrate facts; dynamic values pass as args.
+#
+# === Aperture @peer/binding (the-convergence §4.2 / §5.1) ===
+#
+# Per docs/specs/the-convergence.md §4.2 + §5.1: the stage entry IS
+# an `aperture @peer/binding` connection — a typed beam channel
+# carrying `{ kind, home_spec, arousal_threshold, lens }` (the
+# session-binding fields). The substrate-pull is the keyword change
+# (aperture, per optical-keywords.md §1.3); the geometry the spec
+# describes is unchanged. The `@peer/binding` aperture is
+# forward-promised in the-convergence §5.1 (lands in
+# `shards/peer/binding.mirror` as part of the broader shards/
+# migration arc); referenced here in inline-prose form per the
+# precedent in optical-keywords §1.7 (forward-referenced apertures
+# used in shape position).
+#
+# === Family placement ===
+#
+# Parent bench: @mirror/lens/cli (shards/mirror/lens/cli.mirror).
+# Family root:  @mirror/lens    (shards/mirror/lens.mirror).
+# Sibling stages:
+#   @mirror/lens/cli/compile    — landed at 737330f
+#   @mirror/lens/cli/kintsugi   — landed at ce2ef9b
+#   @mirror/lens/cli/shatter    — landed at 9bc68f8
+#   @mirror/lens/cli/bootstrap  — landed at ea9c9a7
+#   @mirror/lens/cli/reflect    — VSM System 5 view (next this tick)
+#   @mirror/lens/cli/time       — Elm-style time travel (next this tick)
+#   @mirror/lens/cli/crack      — kintsugi geometry (next this tick)
+#
+# Path-namespace property: this file at
+# `shards/mirror/lens/cli/sh.mirror` declares `@mirror/lens/cli/sh`
+# and only that.
+#
+# === Note: no mirror.spec command yet ===
+#
+# Unlike compile / kintsugi / shatter, sh does NOT yet have a
+# `command sh { ... }` declaration in mirror.spec — the shell
+# manifold is consumed by the spectral-runtime / λsh entry path
+# rather than the mosaic build dispatch. This stage shard is the CLI
+# surface forward-promised by cli-as-prism.md §3; the mirror.spec-
+# side declaration is a subsequent Taut tick (forward-promise: when
+# `mirror.spec` gains a `command sh { ... }` block, its arg shape
+# carries the peer ref + binding aperture this stage's actions
+# already declare).
+#
+# Spec context: docs/specs/cli-as-prism.md §3, §3.1 (shape sketch),
+#               §2.1 (sh row: peer-as-arg op-first),
+#               §5.4 (where sh sang — the noun condensation),
+#               §7 (default-op rule: sh declares `default settle` —
+#               the natural drop-into-shell act is a write on the
+#               session manifold; bare `mirror sh` enters λsh),
+#               §9 Q6 (op-first / peer-as-arg closure),
+#               docs/specs/the-convergence.md §2 (the four-lens table
+#               row for `mirror sh @mara`),
+#               §4.1–4.2 (lens-as-head + peer-binding aperture),
+#               §5.1 (the @peer/binding tick),
+#               docs/specs/optical-keywords.md §1.2 (stage),
+#               §1.3 (aperture).
+# Substrate decisions: [[architecture-prism-as-trait-as-everything]]
+#                      (stage IS a sub-prism specialization),
+#                      [[architecture-shards-as-substrate-source]]
+#                      (file path matches namespace),
+#                      [[architecture-lift-as-load-bearing]] (shift =
+#                      basis transformation; here, viewing the
+#                      substrate FROM the peer's altitude).
+# Related shards: lens/cli.mirror (parent bench),
+#                 lens/cli/compile.mirror (sibling — the `default
+#                 settle` precedent for a side-effect-bounded act),
+#                 glass.mirror (imperfect / transparency carriers).
+
+stage @mirror/lens/cli/sh {
+  # Per cli-as-prism §7: sh declares `default settle` — the shell
+  # IS the manifold's natural rest state. Bare `mirror sh` drops the
+  # user INTO λsh (the λsh entry per `lambda-shell.md`); bare
+  # `mirror sh @reed` enters peer `@reed`'s neighborhood and commits
+  # to the transcript. The settle is bounded: one session-state
+  # write, one shell entry, one proof block recording the
+  # session-binding act. Reading the peer's eigenboard (`focus`) or
+  # viewing from their altitude (`shift`) remain free.
+  default settle
+
+  # The five operations the produced prism exposes on the sh
+  # sub-manifold (the four-dimensional shell state: prompt / view /
+  # session / peer per cli-as-prism §5.4). Each operand below names
+  # the natural shape of the manifold's element at that op's slot,
+  # per the spec §3.1 sketch convention and §2.1's per-verb decisions:
+  #   focus    peer       — observe peer's eigenboard from shell
+  #                          context (no enter); the cli-as-prism
+  #                          §2.1 sh row: `mirror sh focus @reed`
+  #   project  predicate  — filter the shell's view by a predicate
+  #                          (orthogonal projection per
+  #                          [[architecture-operations-as-linear-algebra]])
+  #   split    peer       — branch a sub-conversation from the
+  #                          current shell state (graph-walk on the
+  #                          session manifold)
+  #   shift    peer       — view the substrate from the peer's
+  #                          altitude (basis transformation; same
+  #                          substrate, different declared frame;
+  #                          [[architecture-lift-as-load-bearing]])
+  #   settle   peer       — the ONE write; enter (commits to
+  #                          transcript); emits proof block recording
+  #                          the session-binding act
+  focus    peer
+  project  predicate
+  split    peer
+  shift    peer
+  settle   peer
+}
+
+# === Sh-specific actions ===
+#
+# No mirror.spec `command sh { ... }` declaration yet (see the
+# "no mirror.spec command yet" note above). The CLI surface action
+# signature lands here as the substrate forward-promise; the Rust
+# runtime walks this declaration when the λsh entry path lifts into
+# the mosaic dispatch. Substrate-pull discipline per
+# [[architecture-fragmentation-is-the-rust-substrate]].
+#
+# Honest `partials` from birth (per recognition #306): the return
+# type is the substrate's `imperfect` functor (declared in
+# shards/glass.mirror as `imperfect(a, e, l) = success(a) |
+# partial(a, l) | failure(e, l)`). A successful entry returns the
+# bound session ref; an entry that lifts loss (peer reachable but
+# binding partial — e.g. arousal_threshold not yet calibrated)
+# returns partial-with-loss carrying the transparency-tagged residual
+# opacity; a hard failure (peer unreachable, binding refused, lens
+# mismatch) returns failure. Per [[feedback-no-bare-types]]: the peer
+# ref is the substrate's typed `peer` (forward-promised at
+# `shards/std/peer.mirror` per the-convergence §5.1's migration arc),
+# not a bare string.
+
+# sh() — drop into λsh with no peer binding (bare entry). The
+# session-binding aperture (`aperture @peer/binding` per
+# the-convergence §4.2) carries `{ kind = shell, home_spec, lens }`
+# at the stage entry; no peer field. Returns the imperfect carrying
+# the bound session ref on success.
+sh() -> imperfect { \ }
+
+# sh_peer(peer) — enter peer's neighborhood. The session-binding
+# aperture carries the full `{ kind, home_spec, arousal_threshold,
+# lens }` shape with the peer's identity. Returns the imperfect
+# carrying the bound session ref on success, partial-with-loss on
+# tolerable binding shortfall (e.g. arousal_threshold defaulted),
+# failure on hard binding refusal.
+sh_peer(peer: ref) -> imperfect { \ }
+
+out @mirror/lens/cli/sh
+out sh
+out sh_peer
