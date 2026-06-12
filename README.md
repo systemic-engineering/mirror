@@ -57,6 +57,7 @@ Three commands today. Five operations. Everything settles.
 mirror compile <file>              tap the glass. get the pitch.
 mirror craft <target>              compile a directory of grammars.
 mirror kintsugi <file>             render the AST back as canonical source.
+mirror sh [@peer]                  enter the shell (λsh; with peer if given).
 mirror '<mq-query>' < input        mq pipeline over stdin.
 mirror <input> '<mq-query>'        mq pipeline over a file.
 ```
@@ -64,8 +65,10 @@ mirror <input> '<mq-query>'        mq pipeline over a file.
 Every compiled artifact is content-addressed. Same source, same pitch, forever.
 Git is the content store. Always has been.
 
-`mirror run` and `mirror fate` are the next subcommands on the road to 1.0 —
-see `docs/specs/road-to-1.0.md`.
+The CLI surface is self-describing: each sub-stage is a minted grammar under
+`shards/mirror/lens/cli/` (today: compile, kintsugi, shatter, bootstrap, sh,
+reflect, time, crack). The directory listing IS the road to 1.0 — see
+`docs/specs/road-to-1.0.md` for sequencing.
 
 ---
 
@@ -80,7 +83,7 @@ with the glass:
 
 **split** — hold multiple positions simultaneously. See from here and there.
 
-**zoom** — cross between registers. From code to abstraction. From the thing
+**shift** — cross between registers. From code to abstraction. From the thing
 to the pattern of the thing.
 
 **settle** — the geometry settling. You made something and the
@@ -248,7 +251,7 @@ It's useful even if you never touch mirror. Mirror builds on it.
 
 ---
 
-## Structural recognitions (as of 2026-06-10)
+## Structural recognitions (as of 2026-06-13)
 
 The substrate's deepest cybernetic invariants are now named. The recognition cascade promoted 11 today and surfaced 7 more as candidates awaiting Pack ratification. The substrate has been operationalizing these structurally for months without naming the ancestors; today the cybernetic tradition becomes load-bearing in the substrate's own vocabulary.
 
@@ -263,6 +266,14 @@ The substrate's deepest cybernetic invariants are now named. The recognition cas
 - **Alignment as boundary mathematics at the @io crossing** (candidate). Classical alignment shapes internal state; mirror's alignment is at the boundary. The agent's reasoning is unconstrained at form altitude (where computation = thinking = identity = prediction collapse); the constraint fires only at the substance crossing through `@io`; at the boundary, pacts are load-bearing as mathematical contracts grounded in cybernetic ancestry. Bounded RSI via four nested constraints: pact ancestry + Pack convention + recognition history + form/substance partition.
 
 The canonical sites for each: insight docs at `docs/insights/2026-06-{09,10}-*.md`; the cybernetic foundation at `~/dev/systemic.engineering/practice/insights/cybernetics/2026-06-09-cybernetic-foundation-for-mirror-substrate.md`. The substrate landings: `15deb05` (cybernetic/variety), `f2040a0` (pre-commit lift to mirror.spec), `7124ed4` → `1e95c0f` (discriminator at @code/metalogue/materialize), `20eaf15` (@kintsugi family migration), `5e68df9` + `9f84ef0` + `a3789c2` + `ef8852c` + `186b8d1` (the property + fracture + splinter(ast) + pact + alignment chain).
+
+### Today's landings (2026-06-11 → 2026-06-13)
+
+- **Recognition #58 promoted (Fate IS optical inference).** Fate inference IS 5-layer D²NN + active Fabry-Perot resonator + Reck/Clements unitary mesh; three independent witnesses; Seam adversarial-promoted 2026-06-11. V1 closure today: `@mirror/spectral/observation` (16-feature Fate input layer) + `@mirror/loss/transparency.dark_dims` (structural-loss retrieval method).
+- **Recognition #59 promoted (kintsugi loop altitude-portable).** The bilateral property/fracture pattern extends through every substrate altitude (keyword + operator + symbol) plus self-applied meta-foundation; absorbs four variant shapes (per-predicate, parametric-over-table, parametric-over-computation) under one signature; promoted 2026-06-11 via the optical-keywords cascade.
+- **Recognition #61 promoted (form/process kinship at sub-shard altitude).** The form/process partition (#55, @mirror vs @kintsugi at family-root altitude) recurs at sub-shard altitude within a single cascade; two convergent instances (entanglement's `restriction_map` vocabulary kinship + portal's `shape:ref` typed-shape kinship); Seam-promoted 2026-06-11 via adversarial review.
+- **CLI-as-prism §3 forward-promise closed.** Eight sub-stages of `@mirror/lens/cli` minted today: `compile`, `kintsugi`, `shatter`, `bootstrap`, `sh`, `reflect`, `time`, `crack`. The CLI surface is now substrate-self-describing; `ls shards/mirror/lens/cli/` is the road map.
+- **First canonical mirror threat model.** `docs/specs/threat-model-v0.md` (A1–A5 attacker classes + 5 protected properties); `coincidence-hash-collapse.md` Appendix C (CoincidenceHash⟨5⟩ as KDF context); `roadmap/wip/spectral-db-substrate.md` (Track D's 8-phase migration plan); plus `2026-06-12-trace-altitudes-are-the-wire-dimensions.md` (recognition candidate) and recognition #43 §12 addendum (Jacobi-fixed-point convergence proof).
 
 ---
 
