@@ -1,0 +1,184 @@
+in @prism
+
+in @optics
+in @glass
+in @nl
+in @mirror/lens
+in @mirror/lens/cli
+in @epistemologic/reality/time
+
+# @mirror/lens/cli/time — Elm-style time travel as a stage.
+#
+# Seventh of eight verb sub-stages forward-promised in
+# docs/specs/cli-as-prism.md §3 (table at §3 + §3.1 shape sketch).
+# Realizes the tick-manifold view (Elm-style time travel) at the
+# stage altitude — the substrate level where the named loop
+# (focus → project → shift → settle) walks history.
+#
+# === Why time is a stage, and revert dissolved into it ===
+#
+# Per cli-as-prism §2.1 + §5.3 (where time sang): `revert` was
+# previously a single five-op surface in the cybernetic CLI; the
+# recursive condensation DISSOLVED it into ONE OPERATION on the time
+# manifold. `time settle tick=N` IS revert — write a new tick whose
+# manifold matches tick N. The other four ops were already
+# structurally present on the time manifold but not exposed by the
+# `revert` framing; the recursion revealed more time-algebra than
+# the cybernetic CLI had named. The substrate's tick type (declared
+# in shards/epistemologic/reality/time.mirror as `type tick =
+# monotonic`) carries the graph shape (ticks → ticks) that makes the
+# five ops fit cleanly.
+#
+# === Substrate composition map (Seam, cli-as-prism §2.1) ===
+#
+# The 5-op surface condenses `boot/std/time.mirror`'s 9 actions:
+#   focus    ← enter
+#   shift    ← browse + step
+#   split    ← fork
+#   settle   ← restore (composed across the ref-set of tick N)
+#   project  ← timeline.snapshots filtered by predicate
+# The substrate already carries the algebra. Full
+# `@epistemologic/reality/time` (proof-block shape + crack-interaction
+# semantics) is Track G, deferred per LRM. This stage's actions are
+# the CLI surface above the existing 9-action substrate; the
+# composition lands when Track G fills in the proof shape.
+#
+# === Family placement ===
+#
+# Parent bench: @mirror/lens/cli (shards/mirror/lens/cli.mirror).
+# Family root:  @mirror/lens    (shards/mirror/lens.mirror).
+# Sibling stages:
+#   @mirror/lens/cli/compile    — landed at 737330f
+#   @mirror/lens/cli/kintsugi   — landed at ce2ef9b
+#   @mirror/lens/cli/shatter    — landed at 9bc68f8
+#   @mirror/lens/cli/bootstrap  — landed at ea9c9a7
+#   @mirror/lens/cli/sh         — landed previously this tick
+#   @mirror/lens/cli/reflect    — landed previously this tick
+#   @mirror/lens/cli/crack      — kintsugi geometry (next this tick)
+#
+# Path-namespace property: this file at
+# `shards/mirror/lens/cli/time.mirror` declares
+# `@mirror/lens/cli/time` and only that.
+#
+# === Note: no mirror.spec command yet ===
+#
+# Unlike compile / kintsugi / shatter, time does NOT yet have a
+# `command time { ... }` declaration in mirror.spec — the
+# time-travel surface is consumed by the runtime's tick-manifold
+# walker directly rather than the mosaic build dispatch. This stage
+# shard is the CLI surface forward-promised by cli-as-prism.md §3;
+# the mirror.spec-side declaration is a subsequent Taut tick
+# (forward-promise: when `mirror.spec` gains a `command time
+# { ... }` block, its arg shape carries the `tick=N` form this
+# stage's actions already declare).
+#
+# Spec context: docs/specs/cli-as-prism.md §3, §3.1 (shape sketch),
+#               §2.1 (time row: per-op decisions + substrate
+#               composition map for the 9 boot/std/time.mirror
+#               actions),
+#               §5.3 (where time sang — revert dissolved),
+#               §7 (default-op rule: time declares `default focus`
+#               — reading history is free; settle is the revert
+#               write),
+#               docs/specs/the-convergence.md §2 (the four-lens
+#               table row for `mirror time settle tick=N`),
+#               docs/specs/optical-keywords.md §1.2 (stage).
+# Substrate decisions: [[architecture-prism-as-trait-as-everything]]
+#                      (stage IS a sub-prism specialization),
+#                      [[architecture-shards-as-substrate-source]]
+#                      (file path matches namespace),
+#                      [[architecture-lift-as-load-bearing]] (shift =
+#                      basis transformation; here, the Elm scrub:
+#                      see FROM tick N without moving HEAD).
+# Related shards: lens/cli.mirror (parent bench),
+#                 epistemologic/reality/time.mirror (the typed
+#                 `tick = monotonic` carrier this stage walks; the
+#                 substrate already carries the type-level guarantee
+#                 that ticks compose only with ticks),
+#                 glass.mirror (imperfect / transparency carriers).
+
+stage @mirror/lens/cli/time {
+  # Per cli-as-prism §7: time declares `default focus` — reading
+  # history is free. Bare `mirror time` looks at state at the
+  # current tick (a no-op focus showing HEAD). The settle path is
+  # the revert write — a real substrate-state side effect (a new
+  # tick whose manifold matches tick N); the user pays only for the
+  # explicit settle. The other read-shaped ops (project / split /
+  # shift) walk history without writing.
+  default focus
+
+  # The five operations the produced prism exposes on the time
+  # sub-manifold (the tick graph; ticks → ticks with monotonic
+  # ordering per epistemologic/reality/time.mirror). Each operand
+  # below names the natural shape of the manifold's element at that
+  # op's slot, per the spec §3.1 sketch convention and §2.1's
+  # per-verb decisions:
+  #   focus    tick        — look at state at tick N (read past;
+  #                          no write); tick is the typed monotonic
+  #                          carrier from epistemologic/reality/time
+  #   project  predicate   — filter history by predicate (composes
+  #                          with timeline.snapshots per the Seam
+  #                          composition map at cli-as-prism §2.1)
+  #   split    tick        — branch a parallel timeline from tick N
+  #                          (composes with the substrate's fork
+  #                          action)
+  #   shift    tick        — see FROM tick N without moving HEAD
+  #                          (the Elm scrub; basis transformation
+  #                          on the tick manifold;
+  #                          [[architecture-lift-as-load-bearing]];
+  #                          composes with browse + step)
+  #   settle   tick        — the ONE write; write a new tick whose
+  #                          manifold matches tick N (this IS revert;
+  #                          composes with the substrate's restore
+  #                          across the ref-set of tick N); emits
+  #                          proof block recording the time-write
+  focus    tick
+  project  predicate
+  split    tick
+  shift    tick
+  settle   tick
+}
+
+# === Time-specific actions ===
+#
+# No mirror.spec `command time { ... }` declaration yet (see the
+# "no mirror.spec command yet" note above). The CLI surface action
+# signature lands here as the substrate forward-promise; the Rust
+# runtime walks this declaration when the time-travel surface lifts
+# into the mosaic dispatch. Substrate-pull discipline per
+# [[architecture-fragmentation-is-the-rust-substrate]].
+#
+# Honest `partials` from birth (per recognition #306): the return
+# type is the substrate's `imperfect` functor (declared in
+# shards/glass.mirror as `imperfect(a, e, l) = success(a) |
+# partial(a, l) | failure(e, l)`). A clean revert returns success
+# carrying the new HEAD tick ref; a revert that lifts loss (e.g. a
+# crack interaction — a fracture declared between tick N and HEAD
+# whose state cannot be cleanly carried backward) returns
+# partial-with-loss carrying the transparency-tagged residual
+# opacity; a hard failure (tick out of bounds, ref-set unresolvable)
+# returns failure. Per [[feedback-no-bare-types]]: the tick arg is
+# the substrate's typed `tick` (declared at
+# `@epistemologic/reality/time/tick` as `type tick = monotonic`), not
+# a bare int. The crack-interaction semantics are Track G; this
+# stage's partial shape forward-promises the carrier.
+
+# time_focus(tick) — look at state at tick N (read past; no write).
+# Returns the imperfect carrying the historical state ref on success;
+# partial-with-loss on tolerable read shortfall (e.g. tick exists but
+# one ref in its set could not be reconstructed); failure on tick out
+# of bounds.
+time_focus(tick: ref) -> imperfect { \ }
+
+# time_revert(tick) — write a new tick whose manifold matches tick N
+# (this IS revert per cli-as-prism §5.3 dissolution). Composes with
+# the substrate's restore action across the ref-set of tick N.
+# Returns the imperfect carrying the new HEAD tick ref on success;
+# partial-with-loss on tolerable revert shortfall (e.g. a crack
+# interaction Track-G semantics will close); failure on hard write
+# error.
+time_revert(tick: ref) -> imperfect { \ }
+
+out @mirror/lens/cli/time
+out time_focus
+out time_revert
