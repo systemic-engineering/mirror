@@ -1,0 +1,166 @@
+in @prism
+
+in @optics
+in @glass
+in @nl
+in @mirror/lens
+in @mirror/lens/cli
+
+# @mirror/lens/cli/bootstrap — the autopoietic phase machine as a stage.
+#
+# Fourth of eight verb sub-stages forward-promised in
+# docs/specs/cli-as-prism.md §3 (table at §3 + §3.1 shape sketch).
+# Drives the 7 phases of self-hosting (per docs/specs/bootstrap.md —
+# the autopoietic ladder) through the standard five-op surface.
+#
+# === The bootstrap.split strain — sequence vs branch ===
+#
+# Per cli-as-prism §4.3: bootstrap STRAINS on split. The 7 phases of
+# self-hosting SEQUENCE; they don't BRANCH. So `mirror bootstrap
+# split` has no obvious meaning. The spec settles on "enumerate
+# sub-phase dependencies" — weak but defensible. The constraint is
+# honest about graph algebra being its native habitat; bootstrap is a
+# phase machine (linear with dependencies), and the fit gets looser.
+#
+# §4.3's finding: when the underlying manifold isn't graph-shaped,
+# `split` strains because `split` IS the graph-walk verb. Worth
+# naming explicitly: this stage exists as a `stage` at the CLI
+# altitude because the dispatcher's five-op surface is what users
+# learn once; the sub-altitude resolution (whether the engine that
+# actually walks phases is more sequence-shaped than stage-shaped)
+# can land later. The CLI surface is the stage; the engine the stage
+# drives is the autopoietic ladder.
+#
+# === Note: no mirror.spec command yet ===
+#
+# Unlike compile, kintsugi, and shatter, bootstrap does NOT yet have
+# a `command bootstrap { ... }` declaration in mirror.spec — the
+# self-hosting phase machine is consumed by the bootstrap/ Rust crate
+# directly (per docs/specs/bootstrap.md's seven-phase ladder), not yet
+# lifted into the mirror.spec cli block. This stage shard is the CLI
+# surface forward-promised by cli-as-prism.md §2.1; the mirror.spec-
+# side declaration is a subsequent tick (forward-promise: when
+# bootstrap is no longer the Rust ladder and IS the substrate stage,
+# mirror.spec gains its command block and this shard's actions wire
+# to it).
+#
+# === Family placement ===
+#
+# Parent bench: @mirror/lens/cli (shards/mirror/lens/cli.mirror).
+# Family root:  @mirror/lens    (shards/mirror/lens.mirror).
+# Sibling stages:
+#   @mirror/lens/cli/compile    — landed at 737330f
+#   @mirror/lens/cli/kintsugi   — landed previously this tick
+#   @mirror/lens/cli/shatter    — landed previously this tick
+#   @mirror/lens/cli/join       — peer-entry (Glanville's verb)
+#   @mirror/lens/cli/reflect    — VSM System 5 view
+#   @mirror/lens/cli/time       — Elm-style time travel
+#   @mirror/lens/cli/crack      — third-state lifecycle
+#
+# Path-namespace property: this file at
+# `shards/mirror/lens/cli/bootstrap.mirror` declares
+# `@mirror/lens/cli/bootstrap` and only that.
+#
+# Spec context: docs/specs/cli-as-prism.md §3, §3.1 (shape sketch),
+#               §2.1 (bootstrap sub-stage decision),
+#               §4.3 (THE strain — split on a phase machine),
+#               §7 (default-op rule: bootstrap declares `default
+#               focus` — bootstrap.settle advances a phase, a real
+#               side effect on substrate state; the user wants to
+#               see status before advancing),
+#               docs/specs/optical-keywords.md §1.2 (stage),
+#               docs/specs/bootstrap.md (the seven-phase autopoietic
+#               ladder this stage's settle advances).
+# Substrate decisions: [[architecture-prism-as-trait-as-everything]]
+#                      (stage IS a sub-prism specialization),
+#                      [[architecture-shards-as-substrate-source]]
+#                      (file path matches namespace),
+#                      [[architecture-lift-as-load-bearing]] (shift =
+#                      basis transformation; here, shift between
+#                      phase representations — eigenvalue, line count,
+#                      proof).
+# Related shards: lens/cli.mirror (parent bench),
+#                 lens/cli/compile.mirror (sibling — the build
+#                 stage; bootstrap drives the substrate IN, compile
+#                 drives the substrate OUT),
+#                 glass.mirror (imperfect / transparency carriers).
+
+stage @mirror/lens/cli/bootstrap {
+  # Per cli-as-prism §7: bootstrap declares `default focus` — reads
+  # are free; advancing a phase is a real substrate-state side effect
+  # the user wants to see status (`focus`) before triggering. Bare
+  # `mirror bootstrap` reports phase status (no write); explicit
+  # `settle` advances. Only compile and shatter declare `default
+  # settle` (artifact-write acts that don't escalate); bootstrap's
+  # settle escalates into the autopoietic ladder, so the default must
+  # read.
+  default focus
+
+  # The five operations the produced prism exposes on the bootstrap
+  # sub-manifold (the autopoietic phase machine's state). Each
+  # operand below names the natural shape of the manifold's element
+  # at that op's slot, per the spec §3.1 sketch convention and
+  # §2.1's per-verb decisions:
+  #   focus    phase        — report phase status (no write)
+  #   project  predicate    — filter to one phase (or phases matching
+  #                          a predicate, e.g. "all phases that
+  #                          consume @kintsugi")
+  #   split    candidate    — enumerate sub-phase dependencies
+  #                          (§4.3: this op STRAINS; the manifold is
+  #                          linear-with-dependencies, not graph-
+  #                          shaped; enumerating sub-phase deps is
+  #                          the spec's chosen reading; the fit is
+  #                          weak but defensible)
+  #   shift    basis        — shift between phase representations:
+  #                          eigenvalue / line count / proof
+  #                          (same content, different basis;
+  #                          [[architecture-lift-as-load-bearing]])
+  #   settle   phase        — the ONE write; advance one phase;
+  #                          emits proof block recording the
+  #                          autopoietic transition (which Rust
+  #                          shrinks; which substrate primitive
+  #                          lifts to replace it)
+  focus    phase
+  project  predicate
+  split    candidate
+  shift    basis
+  settle   phase
+}
+
+# === Bootstrap-specific actions ===
+#
+# No mirror.spec `command bootstrap { ... }` declaration yet (see
+# the "no mirror.spec command yet" note above). The CLI surface
+# action signature lands here as the substrate forward-promise; the
+# Rust runtime walks this declaration when the bootstrap engine lifts
+# into substrate. Substrate-pull discipline per
+# [[architecture-fragmentation-is-the-rust-substrate]].
+#
+# Honest `partials` from birth (per recognition #306): the return
+# type is the substrate's `imperfect` functor (declared in
+# shards/glass.mirror as `imperfect(a, e, l) = success(a) |
+# partial(a, l) | failure(e, l)`). A phase advance that fully
+# discharges its obligations returns success; a phase advance that
+# lifts loss (e.g. a sub-phase dependency that did not converge but
+# the phase advances under accept-loss semantics, like the `\!`
+# fracture mode) returns partial-with-loss carrying the
+# transparency-tagged residual opacity. The autopoietic ladder's
+# proof-block carries the same shape: each phase's settle records
+# what shrank and what remains imperfect.
+
+# bootstrap() — advance one phase of the autopoietic ladder against
+# the current substrate state. Returns the imperfect carrying the
+# advanced-phase ref on success, the partial carrying the
+# transparency-tagged residual loss on tolerable sub-phase shortfall,
+# the failure with reason on hard error.
+bootstrap() -> imperfect { \ }
+
+# bootstrap_phase(phase) — same as bootstrap but with an explicit
+# phase pin. The dispatcher walks to that phase and runs its settle;
+# useful for replay or for partial-bootstrap workflows where the
+# user wants to advance a specific phase rather than the next one.
+bootstrap_phase(phase: ref) -> imperfect { \ }
+
+out @mirror/lens/cli/bootstrap
+out bootstrap
+out bootstrap_phase
