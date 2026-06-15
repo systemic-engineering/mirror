@@ -1279,6 +1279,43 @@ once F-2 lands.
 
 ---
 
+## 10.5 Canonical on-disk location
+
+When the store is materialized to disk (the persistent backend; the
+in-memory backend has no path), it lives at a fixed, user-scoped
+canonical path:
+
+```
+~/.mirror
+```
+
+This is the single agreed-on default across consumers. The shape:
+
+- A **bare fragmentation repo** (per `fragmentation/src/frgmnt_store.rs`).
+  Content-addressed; not a working tree.
+- Per-user, not per-project. Multiple project checkouts share one
+  store. Same OID → same blob → one copy on disk.
+- Stable across nixpkgs / toolchain bumps. Independent of `$PWD`,
+  `$CARGO_HOME`, and `target/`.
+
+No override env var is defined at this altitude (no `MIRROR_HOME`).
+The path is one fact; consumers (CLI, CI, lenses) read `~/.mirror`
+directly. If a future tick demands relocation, the override lands
+then — not preemptively.
+
+This matters for **CI cache stability**. GitHub Actions caches
+`~/.mirror` between runs keyed on shard / boot / spec content hashes
+(per `kintsugi-ci-v0.1.md` and `.github/workflows/kintsugi.yml`). The
+build doesn't re-download or re-materialize crystals that were already
+resolved on a previous run. Recognition #43 — mirror IS a
+content-addressed build system — wires through CI exactly here.
+
+The bootstrap binary doesn't read this path today (the on-disk
+backend isn't wired into the bootstrap dispatcher — see §6). When it
+is, this is the path.
+
+---
+
 ## 11. References
 
 - `mirror/docs/specs/parser-as-prism-grammar.md` — the Combinator
