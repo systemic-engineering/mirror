@@ -6,6 +6,11 @@
 
 *Last refreshed: 2026-06-15. Working tree state at refresh time pinned in §Verification path.*
 
+> _Numeric claims below are refreshed via `just docs-refresh` from current repo state. If you're
+> fetching this repo to verify any number, also run that recipe — if a value has drifted since the
+> last commit, the recipe surfaces the live count. Verification path: re-run `just docs-refresh`;
+> the printed numbers should match what's written here. The recipe IS the verification path._
+
 ---
 
 ## At a glance

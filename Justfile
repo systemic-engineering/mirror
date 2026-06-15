@@ -294,3 +294,84 @@ direnv-check:
     else \
         echo "✓ flake env loaded (IN_NIX_SHELL=$IN_NIX_SHELL)"; \
     fi
+
+# ──────────────────────────────────────────────────────────────────────────
+# Documentation refresh
+# ──────────────────────────────────────────────────────────────────────────
+
+# Refresh the numeric claims in docs/GRANTS.md from current repo state.
+#
+# Print-only (v0): the recipe prints the live counts; the operator manually
+# reconciles docs/GRANTS.md if any value has drifted, then commits and
+# re-runs before sending GRANTS.md to a funder. The verification path is
+# the recipe, not the committed numbers.
+#
+# Why print-only and not sed-in-place: GRANTS.md is prose with verification
+# columns; in-place rewriting risks mangling adjacent narrative. A future
+# tick can lift this to a `mirror.spec` settlement target per recognition
+# #43 (substrate is already a content-addressed build system) — but only
+# when the substrate carries the dispatch cleanly. Until then, the operator
+# is the controller in the loop.
+#
+# Baseline date for "recent commits" is 2026-05-22 — start of the
+# substrate-pull cascade that produced the current architecture (Pack
+# ratification of form/substance partition, expanding Hilbert space,
+# content-addressed build system, et al.). Stable enough to anchor a
+# "past 3 weeks" claim through mid-June without churn.
+docs-refresh:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "refreshing docs/GRANTS.md numerics from current repo state"
+    echo "baseline date: 2026-05-22 (substrate-pull cascade start)"
+    echo
+    echo "  ── auto-computed ─────────────────────────────────────────────"
+    shards_count=$(find shards -name '*.mirror' -type f 2>/dev/null | wc -l | tr -d ' ')
+    boot_count=$(find boot -name '*.mirror' -type f 2>/dev/null | wc -l | tr -d ' ')
+    total_grammars=$(( shards_count + boot_count ))
+    echo "  grammar files (shards/):              $shards_count"
+    echo "  grammar files (boot/ incl. boot/std): $boot_count"
+    echo "  grammar files total:                  $total_grammars"
+    cli_substages=$(find shards/mirror/lens/cli -name '*.mirror' -type f 2>/dev/null | wc -l | tr -d ' ')
+    echo "  CLI sub-stages (shards/mirror/lens/cli/): $cli_substages"
+    specs_current=$(ls docs/specs/*.md 2>/dev/null | wc -l | tr -d ' ')
+    specs_historical=$(ls docs/specs/historical/*.md 2>/dev/null | wc -l | tr -d ' ')
+    echo "  specs in docs/specs/:                 $specs_current current + $specs_historical historical"
+    insights_count=$(ls docs/insights/*.md 2>/dev/null | wc -l | tr -d ' ')
+    echo "  insights in docs/insights/:           $insights_count"
+    src_count=$(ls bootstrap/src/*.rs 2>/dev/null | wc -l | tr -d ' ')
+    tests_count=$(ls bootstrap/tests/*.rs 2>/dev/null | wc -l | tr -d ' ')
+    echo "  bootstrap Rust source files:          $src_count in src/ + $tests_count in tests/"
+    total_commits=$(git log --oneline | wc -l | tr -d ' ')
+    echo "  total commits on HEAD:                $total_commits"
+    commits_3w=$(git log --oneline --since='2026-05-22' | wc -l | tr -d ' ')
+    echo "  commits since 2026-05-22 (past ~3w):  $commits_3w"
+    commits_14d=$(git log --oneline --since='2026-06-01' | wc -l | tr -d ' ')
+    echo "  commits since 2026-06-01 (past ~14d): $commits_14d"
+    echo
+    echo "  per-author breakdown since 2026-06-01:"
+    git log --pretty='%an' --since='2026-06-01' | sort | uniq -c | sort -rn | sed 's/^/    /'
+    echo
+    echo "  SSH-signing verdict breakdown since 2026-05-22:"
+    git log --pretty='%G?' --since='2026-05-22' | sort | uniq -c | sed 's/^/    /'
+    echo
+    if [ -f "{{MIRROR_BIN_RELEASE}}" ]; then
+        bin_size=$(du -h "{{MIRROR_BIN_RELEASE}}" | cut -f1)
+        echo "  bootstrap release binary size:        $bin_size ({{MIRROR_BIN_RELEASE}})"
+    else
+        echo "  bootstrap release binary size:        manual: not built — run 'just build' then re-run"
+    fi
+    echo
+    echo "  ── manual ────────────────────────────────────────────────────"
+    echo "  recognitions promoted (past N days): manual — count from"
+    echo "      docs/insights/ + ~/.reed memory anchors"
+    echo "      grep -l 'PROMOTED' docs/insights/2026-06-*.md | wc -l"
+    echo "  MCP tool count (fragmentation-mcp):  manual — cross-repo"
+    echo "      look in /Users/alexwolf/dev/projects/fragmentation/vcs/mcp/"
+    echo "  candidate recognitions pending:      manual — count from"
+    echo "      ~/.reed/architecture-*.md candidate entries"
+    echo
+    echo "  ──────────────────────────────────────────────────────────────"
+    echo "  update docs/GRANTS.md if any value changed, commit, then"
+    echo "  re-run before sending to funder. verification path is the"
+    echo "  recipe, not the committed numbers."
+    echo "  also bump the '*Last refreshed: YYYY-MM-DD*' line at the top."
