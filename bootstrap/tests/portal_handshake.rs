@@ -82,12 +82,18 @@ const SETTLED_FIXTURE: &str = "bootstrap/tests/fixtures/kintsugi-pass/a.mirror";
 /// child_end)`; the child end is what we hand to the spawned
 /// `mirror` process as stdout, the parent end is what the test
 /// reads / writes from.
+#[cfg(target_os = "macos")]
+#[inline]
+fn errno() -> i32 { unsafe { *libc::__error() } }
+
+#[cfg(not(target_os = "macos"))]
+#[inline]
+fn errno() -> i32 { unsafe { *libc::__errno_location() } }
+
 fn socketpair_stream() -> (OwnedFd, OwnedFd) {
     let mut fds: [libc::c_int; 2] = [-1, -1];
     let rc = unsafe { libc::socketpair(libc::AF_UNIX, libc::SOCK_STREAM, 0, fds.as_mut_ptr()) };
-    assert_eq!(rc, 0, "socketpair must succeed; errno: {}", unsafe {
-        *libc::__error()
-    });
+    assert_eq!(rc, 0, "socketpair must succeed; errno: {}", errno());
     unsafe { (OwnedFd::from_raw_fd(fds[0]), OwnedFd::from_raw_fd(fds[1])) }
 }
 

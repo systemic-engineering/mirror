@@ -18,6 +18,7 @@ jobs:
         env:
           LAPACK_DIR: /usr/lib/x86_64-linux-gnu
           BLAS_DIR: /usr/lib/x86_64-linux-gnu
+          RUSTFLAGS: "-L native=/usr/lib/x86_64-linux-gnu"
         run: nix develop -c just check
 
   notify-on-failure:
