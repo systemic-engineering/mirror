@@ -91,25 +91,29 @@
             pkgs.git pkgs.just pkgs.jq
             pkgs.openssl pkgs.zlib
             pkgs.gfortran
+            # Fortran numerical substrate (LAPACK/BLAS) — provided everywhere
+            # so the prismqueer FFI link target is one ABI world (nix-store).
+            pkgs.lapack pkgs.blas
           ] ++ rust.rustTools
             ++ pkgs.lib.optionals isDarwin [
             pkgs.libiconv
-            # Fortran numerical substrate (flang → flang-rt → LAPACK/BLAS).
-            flang flang-rt pkgs.lapack pkgs.blas llvm.clang
+            # Darwin-only: flang + flang-rt for the numerical substrate compiler.
+            flang flang-rt llvm.clang
             pkgs.cargo pkgs.rustc
           ];
           shellHook = ''
             export LANG=en_US.UTF-8
           '' + rust.rustHook;
         }
-        # Make the Fortran runtime + numerical libs discoverable to the linker
-        # and to build.rs scripts without hand-wiring store paths. So that
-        # `flang foo.f90 -o foo` links the runtime out of the box.
+        # LAPACK/BLAS discoverable to the linker and to build.rs scripts
+        # without hand-wiring store paths. Flang-rt is darwin-only.
+        // {
+          LAPACK_DIR = "${pkgs.lapack}";
+          BLAS_DIR = "${pkgs.blas}";
+        }
         // pkgs.lib.optionalAttrs isDarwin {
           FLANG = "${flang}/bin/flang";
           FLANG_RT_DIR = flangRtLibDir;
-          LAPACK_DIR = "${pkgs.lapack}";
-          BLAS_DIR = "${pkgs.blas}";
           NIX_LDFLAGS = "-L${flangRtLibDir} -L${pkgs.lapack}/lib -L${pkgs.blas}/lib";
         });
       }

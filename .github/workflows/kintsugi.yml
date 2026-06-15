@@ -34,14 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # System BLAS/LAPACK for the prismqueer lapack FFI feature.
-      # Mirror's bootstrap consumes prismqueer::ffi which needs these.
-      # Install both -dev (link) and runtime (.so.3) packages explicitly.
-      - name: Install system BLAS/LAPACK
-        run: sudo apt-get update && sudo apt-get install -y libblas-dev liblapack-dev libblas3 liblapack3 gfortran
-
-      # Nix devShell provides flang that bootstrap/build.rs needs.
-      # Same nix-setup as ci.yml uses.
+      # Nix devShell provides gfortran + lapack + blas (one ABI world).
       - uses: systemic-engineering/ci/actions/nix-setup@main
 
       # @mirror/store IS a bare fragmentation repo at ~/.mirror.
@@ -55,30 +48,15 @@ jobs:
             mirror-store-${{ runner.os }}-
 
       - name: Build mirror
-        env:
-          LAPACK_DIR: /usr/lib/x86_64-linux-gnu
-          BLAS_DIR: /usr/lib/x86_64-linux-gnu
-          CARGO_BUILD_TARGET: x86_64-unknown-linux-gnu
-        run: |
-          GFORT_DIR=$(dirname $(gfortran -print-file-name=libgfortran.so.5))
-          # NB: only rpath the gfortran-specific subdir; rpathing
-          # /usr/lib/x86_64-linux-gnu would override the nix-store libc.so.6
-          # the binary is linked against.
-          export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS="-L native=/usr/lib/x86_64-linux-gnu -L native=$GFORT_DIR -C link-arg=-Wl,-rpath,$GFORT_DIR"
-          nix develop -c cargo build --release --manifest-path bootstrap/Cargo.toml
+        run: nix develop -c cargo build --release --manifest-path bootstrap/Cargo.toml
 
       - name: Run kintsugi self-host
         run: |
-          BLAS_LIB=$(dpkg -L libblas3 2>/dev/null | grep 'libblas.so.3$' | head -1)
-          LAPACK_LIB=$(dpkg -L liblapack3 2>/dev/null | grep 'liblapack.so.3$' | head -1)
-          BLAS_DIR=$(dirname "$BLAS_LIB")
-          LAPACK_DIR=$(dirname "$LAPACK_LIB")
-          BIN=./bootstrap/target/x86_64-unknown-linux-gnu/release/mirror
-          # Run inside the nix shell so the binary finds the nix-store libc
-          # it was linked against; LD_LIBRARY_PATH layers in apt-installed BLAS/LAPACK
-          # subdirs only (NOT /usr/lib/x86_64-linux-gnu which would override libc).
-          nix develop -c bash -c "export LD_LIBRARY_PATH=$BLAS_DIR:$LAPACK_DIR:\$LD_LIBRARY_PATH && $BIN kintsugi --ci --shatter 4 boot/std | tee /tmp/kintsugi-verdict.mirror"
-          nix develop -c bash -c "export LD_LIBRARY_PATH=$BLAS_DIR:$LAPACK_DIR:\$LD_LIBRARY_PATH && $BIN kintsugi --ci --format=json --shatter 4 boot/std > /tmp/kintsugi-verdict.json"
+          BIN=./bootstrap/target/release/mirror
+          nix develop -c $BIN kintsugi --ci --shatter 4 boot/std \
+            | tee /tmp/kintsugi-verdict.mirror
+          nix develop -c $BIN kintsugi --ci --format=json --shatter 4 boot/std \
+            > /tmp/kintsugi-verdict.json
           jq -e '.verdict != "failure"' /tmp/kintsugi-verdict.json
 
       - uses: actions/upload-artifact@v4
