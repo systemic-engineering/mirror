@@ -21,8 +21,7 @@ jobs:
           RUSTFLAGS: "-L native=/usr/lib/x86_64-linux-gnu"
         run: |
           GFORT_DIR=$(dirname $(gfortran -print-file-name=libgfortran.so.5))
-          export LD_LIBRARY_PATH="$GFORT_DIR:/usr/lib/x86_64-linux-gnu"
-          nix develop -c just check
+          nix develop -c bash -c "export LD_LIBRARY_PATH=$GFORT_DIR:/usr/lib/x86_64-linux-gnu:\$LD_LIBRARY_PATH && just check"
 
   notify-on-failure:
     if: failure()
