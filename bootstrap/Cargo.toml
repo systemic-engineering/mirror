@@ -28,7 +28,7 @@ blake3 = { version = "1", default-features = false }
 # (the LRM for the flang/mirror numerical split per
 # docs/specs/numerical-substrate-via-fortran.md §1.4) and the
 # substrate declaration in shards/epistemologic/math/sheaf_laplacian.mirror.
-prismqueer = { version = "0.1", features = ["bundle", "lapack"] }
+prismqueer = { version = "0.1", features = ["bundle"] }
 terni = { version = "0.7", default-features = false }
 # Used by `cmd_kintsugi_single`'s `--ci` JSON serialiser. Per T11.2 of
 # `docs/specs/kintsugi-ci-v0.1.md`. The `--ci` flag emits a verdict

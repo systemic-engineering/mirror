@@ -156,7 +156,6 @@ version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ab5928276e90399f502a35fd9ceda54a1fb36d0949fee26f3ec07f525be8a124"
 dependencies = [
- "cc",
  "hex",
  "prismqueer-projections",
  "sha2",
