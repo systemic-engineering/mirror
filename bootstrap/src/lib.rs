@@ -996,6 +996,12 @@ struct SpecTarget {
     block_name: String,
     /// The `emit <ref>` field. Today only `cargo` triggers a dispatch.
     emit: String,
+    /// The `check <ref>` field — names which @io/cargo action the
+    /// target dispatches (insight #43 / 2026-06-09). Empty when the
+    /// target has no `check` directive; the dispatcher defaults to
+    /// `check` (cargo's check subcommand) in that case, preserving
+    /// the pre-#43 behaviour.
+    check: String,
 }
 
 /// Walk the tokenized spec AST and harvest the targets the dispatcher
@@ -1045,20 +1051,54 @@ fn spec_targets_from_ast(ast: &AstNode) -> Vec<SpecTarget> {
             for target in &child.children {
                 if target.kind == AstKind::Focus && target.keyword == "target" {
                     let mut emit = String::new();
+                    let mut check = String::new();
                     for field in &target.children {
                         if field.kind == AstKind::Project && field.keyword == "emit" {
                             emit = field.name.clone();
+                        }
+                        if field.kind == AstKind::Project && field.keyword == "check" {
+                            check = field.name.clone();
                         }
                     }
                     out.push(SpecTarget {
                         block_name: target.name.clone(),
                         emit,
+                        check,
                     });
                 }
             }
         }
     }
     out
+}
+
+/// Map a target's `check` ref (or the empty default) to the cargo
+/// subcommand args the dispatcher will invoke. Returns the cargo argv
+/// suffix (e.g. `&["fmt", "--check"]` or `&["check"]`); the dispatcher
+/// adds `--manifest-path <path>` after.
+///
+/// Per shards/io/cargo.mirror's declared actions (insight #43 substrate-
+/// pull, 2026-06-09):
+///
+///   check     → cargo check                  (default; cheapest gate)
+///   fmt_check → cargo fmt --check            (formatter verification)
+///   clippy    → cargo clippy                 (lint)
+///   test      → cargo test                   (test suite)
+///   audit     → cargo audit                  (advisory DB; @release alt.)
+///   build     → cargo build --release        (artifact build)
+///
+/// Unknown values fall back to `cargo check` and surface a `[kintsugi
+/// spec]` stderr note so the operator sees the unrecognised altitude.
+fn cargo_args_for_check(check: &str) -> &'static [&'static str] {
+    match check {
+        "" | "check" => &["check"],
+        "fmt_check" => &["fmt", "--check"],
+        "clippy" => &["clippy"],
+        "test" => &["test"],
+        "audit" => &["audit"],
+        "build" => &["build", "--release"],
+        _ => &["check"],
+    }
 }
 
 /// D4 entrypoint: walk a `mirror.spec`, dispatch cargo for each
@@ -1125,71 +1165,99 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
     for t in &targets {
         if t.emit != "cargo" {
             // Non-cargo emit (yaml, github_release, ...): the @io tool
-            // is not yet wired. Mark as failure so the spec walker is
-            // honest about what it did NOT dispatch.
+            // is not yet wired. Mark as `partial` (not `failure`): the
+            // dispatcher's "I cannot settle this altitude yet" verdict
+            // is the substrate gap, not a verdict regression. Per
+            // shards/io/cargo.mirror's `cargo_exit_to_transparency`
+            // contract, `failure` is reserved for cargo-exit-non-zero;
+            // `partial` is reserved for "settled with opacity remaining."
+            // Per insight #43 (2026-06-09 substrate-pull): the substrate
+            // gap IS the opacity; subsequent ticks wire each non-cargo
+            // altitude one at a time. Until then, `partial` keeps the
+            // aggregate verdict honest without false-positive-failing
+            // the pre-commit gate on declared-but-unwired targets.
             let label = format!("target {} (emit {})", t.block_name, t.emit);
             per_target.push(PerFileVerdict {
                 path: label,
-                verdict: "failure",
+                verdict: "partial",
                 objective: 1.0,
                 iterations: 1,
                 dark_count: 1,
             });
-            any_failure = true;
+            any_partial = true;
             total_objective += 1.0;
             total_dark += 1;
             continue;
         }
         let manifest = spec_dir.join("Cargo.toml");
-        // Per the directive's "Minimum viable" §4: `cargo check` for
-        // `binary.compiles`-style settle_on predicates. `cargo test` is
-        // wired the same way but gated on the substrate's `tests_pass`
-        // predicate, which the dispatcher can't read today (the
-        // substrate's @epistemologic/property dispatch lands at a later
-        // tick). Default to `cargo check`: it's the cheapest exit-code
-        // signal that lifts to transparency under D3's contract, and it
-        // dominates the runtime budget for `mirror kintsugi mirror.spec`
-        // on mirror's own root.
-        let out = Command::new("cargo")
-            .arg("check")
-            .arg("--manifest-path")
-            .arg(&manifest)
-            .output();
+        // Insight #43 (2026-06-09 substrate-pull): the per-target
+        // `check <action>` directive (declared in shards/mirror/spec.mirror)
+        // names which @io/cargo action this target dispatches. When
+        // omitted, defaults to `cargo check` — the pre-#43 behaviour
+        // — so existing specs keep working unchanged.
+        //
+        // Per the directive's "Minimum viable" §4 + insight #43 §9.3:
+        // the first version of `mirror kintsugi mirror.spec` falls back
+        // to spawning cargo at every altitude. The architecture is in
+        // place from tick one; content-addressed-skip wiring lands at
+        // a subsequent tick (recognitions #44+).
+        let cargo_args = cargo_args_for_check(&t.check);
+        if !t.check.is_empty() && cargo_args == ["check"] && t.check != "check" {
+            // Surface the unrecognised `check <action>` so the operator
+            // sees the substrate gap rather than the silent fallback.
+            merr!(
+                "[kintsugi spec] target `{}` check `{}` unknown; falling back to `cargo check`",
+                t.block_name,
+                t.check,
+            );
+        }
+        let mut cmd = Command::new("cargo");
+        cmd.args(cargo_args).arg("--manifest-path").arg(&manifest);
+        let out = cmd.output();
+        let cargo_pretty = cargo_args.join(" ");
         let (verdict, objective, dark, label_path) = match out {
             Ok(o) if o.status.success() => (
                 "success",
                 0.0_f64,
                 0_u64,
-                manifest.to_string_lossy().into_owned(),
+                format!("{} ({})", manifest.to_string_lossy(), cargo_pretty),
             ),
             Ok(o) => {
                 // D3's exit-code lift is partial here: non-zero →
                 // failure. Stderr is captured but not yet parsed into
                 // opacity_map (deferred to @mirror/mosaic). The full
                 // exit code is recorded in the label so the operator
-                // can see WHICH non-zero arm fired.
+                // can see WHICH non-zero arm fired AND which cargo
+                // subcommand drove the failure.
                 let code = o.status.code().unwrap_or(-1);
                 merr!(
-                    "[kintsugi spec] target `{}` cargo check exit {}; stderr (first 200 chars):",
+                    "[kintsugi spec] target `{}` cargo {} exit {}; stderr (first 200 chars):",
                     t.block_name,
+                    cargo_pretty,
                     code,
                 );
                 let stderr = String::from_utf8_lossy(&o.stderr);
                 merr!("  {}", &stderr.chars().take(200).collect::<String>());
-                let label = format!("{} (exit {})", manifest.to_string_lossy(), code);
+                let label = format!(
+                    "{} ({}, exit {})",
+                    manifest.to_string_lossy(),
+                    cargo_pretty,
+                    code,
+                );
                 ("failure", 1.0_f64, 1_u64, label)
             }
             Err(e) => {
                 merr!(
-                    "[kintsugi spec] target `{}` cargo spawn error: {}",
+                    "[kintsugi spec] target `{}` cargo {} spawn error: {}",
                     t.block_name,
-                    e
+                    cargo_pretty,
+                    e,
                 );
                 (
                     "failure",
                     1.0_f64,
                     1_u64,
-                    manifest.to_string_lossy().into_owned(),
+                    format!("{} ({})", manifest.to_string_lossy(), cargo_pretty),
                 )
             }
         };

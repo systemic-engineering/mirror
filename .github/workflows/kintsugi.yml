@@ -34,7 +34,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Nix devShell provides flang/LAPACK/BLAS that bootstrap/build.rs needs.
+      # System BLAS/LAPACK for the prismqueer lapack FFI feature.
+      # Mirror's bootstrap consumes prismqueer::ffi which needs these.
+      - name: Install system BLAS/LAPACK
+        run: sudo apt-get update && sudo apt-get install -y libblas-dev liblapack-dev gfortran
+
+      # Nix devShell provides flang that bootstrap/build.rs needs.
       # Same nix-setup as ci.yml uses.
       - uses: systemic-engineering/ci/actions/nix-setup@main
 
@@ -49,6 +54,9 @@ jobs:
             mirror-store-${{ runner.os }}-
 
       - name: Build mirror
+        env:
+          LAPACK_DIR: /usr/lib/x86_64-linux-gnu
+          BLAS_DIR: /usr/lib/x86_64-linux-gnu
         run: nix develop -c cargo build --release --manifest-path bootstrap/Cargo.toml
 
       - name: Run kintsugi self-host
