@@ -106,7 +106,7 @@
 //! they prove the contract regardless of the consumer's arrival.
 #![allow(dead_code)]
 
-use prism_core::{Diagnostic, PropertyVerdict, Ref, Transparency};
+use prismqueer::{Diagnostic, PropertyVerdict, Ref, Transparency};
 use terni::Imperfect;
 
 use crate::gap::Gap;
@@ -982,7 +982,7 @@ mod tests {
 
     fn candidate_with_roughness(path: &str, roughness: f64) -> Candidate {
         Candidate::new(
-            prism_core::Ref::new(path).expect("valid ref"),
+            prismqueer::Ref::new(path).expect("valid ref"),
             Dissonance::new(roughness, 6),
         )
     }

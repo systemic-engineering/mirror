@@ -65,7 +65,7 @@
 //! [`Gap`]: crate::gap::Gap
 #![allow(dead_code)]
 
-use prism_core::Ref;
+use prismqueer::Ref;
 
 use crate::ast::{AstKind, AstNode};
 use crate::gap::Gap;

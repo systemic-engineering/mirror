@@ -86,7 +86,7 @@
 //! contract regardless of the consumer's arrival.
 #![allow(dead_code)]
 
-use prism_core::{Diagnostic, PropertyVerdict, Ref, Transparency};
+use prismqueer::{Diagnostic, PropertyVerdict, Ref, Transparency};
 use terni::Imperfect;
 
 use crate::ast::AstNode;
@@ -1119,7 +1119,7 @@ fn meet_verdicts(a: Verdict, b: Verdict) -> Verdict {
 /// 1. BLAKE3-hash the ref's substrate path bytes (the substrate's
 ///    canonical content for an `@`-prefixed nav-ref; consonant with
 ///    the BLAKE3 discipline at `bootstrap/Cargo.toml` and the
-///    `MerkleHash` default in `prism_core`).
+///    `MerkleHash` default in `prismqueer`).
 /// 2. Compose into a [`SpectralUuid`] via [`SpectralUuid::from_parts`]
 ///    with `active = 0` (the boundary altitude has no quantized
 ///    `SpectralCoordinate<5>` per `@uuid/spectral` §11 OQ1 — the
@@ -1137,12 +1137,12 @@ fn meet_verdicts(a: Verdict, b: Verdict) -> Verdict {
 /// ref → same DARK bits. The realisation rides `SpectralUuid`'s
 /// `from_parts` + `dark` discipline; no new substrate primitive.
 ///
-/// [`SpectralUuid`]: prism_core::SpectralUuid
-/// [`SpectralUuid::from_parts`]: prism_core::SpectralUuid::from_parts
-/// [`SpectralUuid::dark`]: prism_core::SpectralUuid::dark
+/// [`SpectralUuid`]: prismqueer::SpectralUuid
+/// [`SpectralUuid::from_parts`]: prismqueer::SpectralUuid::from_parts
+/// [`SpectralUuid::dark`]: prismqueer::SpectralUuid::dark
 pub fn dark_bits(r: &Ref) -> [u8; 10] {
     let hash = blake3::hash(r.as_str().as_bytes());
-    prism_core::SpectralUuid::from_parts(0, hash.as_bytes()).dark()
+    prismqueer::SpectralUuid::from_parts(0, hash.as_bytes()).dark()
 }
 
 /// `dark_pass(o: oscillation, m: morphism) -> oscillation` — the
@@ -1715,7 +1715,7 @@ mod tests {
     // ================================================================
 
     use crate::music::{is_settled, Dissonance};
-    use prism_core::Transparency;
+    use prismqueer::Transparency;
 
     /// Fixture anchor ref for the pulse chain tests.
     fn fixture_anchor() -> Ref {
@@ -2272,7 +2272,7 @@ mod tests {
     // 128-bit ACTIVE/DARK record; `dark(u: uuid_spectral) ->
     // identity_signal` projects the 80 DARK bits — the BLAKE3-truncated
     // content-hash prefix. The Rust realisation lives in
-    // `prism_core::SpectralUuid::dark() -> [u8; 10]`.
+    // `prismqueer::SpectralUuid::dark() -> [u8; 10]`.
     //
     // Per `shards/mirror/spectral/consent.mirror` §identity_preserving:
     // "the morphism's resulting shard's identity_signal byte-equals the
@@ -2359,7 +2359,7 @@ mod tests {
         // content cannot collide with the BLAKE3-of-empty prefix).
         assert_ne!(
             bits,
-            prism_core::SpectralUuid::EMPTY.dark(),
+            prismqueer::SpectralUuid::EMPTY.dark(),
             "non-empty substrate path must not hash to the empty-shard sentinel",
         );
     }
@@ -2502,7 +2502,7 @@ mod tests {
     /// Substrate-pull witness: `dark_bits` rides the substrate's
     /// existing `SpectralUuid::dark()` projection — the [u8; 10] read
     /// per `shards/uuid/spectral.mirror` §dark and the
-    /// `prism_core::SpectralUuid` realisation. The check IS the
+    /// `prismqueer::SpectralUuid` realisation. The check IS the
     /// substrate's byte-equality discipline at the loop boundary.
     #[test]
     fn dark_bits_matches_spectral_uuid_dark_projection() {
@@ -2510,7 +2510,7 @@ mod tests {
         // The substrate's dark-bits derivation: BLAKE3 of the ref's
         // path bytes, then SpectralUuid::from_parts(0, &hash).dark().
         let hash = blake3::hash(r.as_str().as_bytes());
-        let suuid = prism_core::SpectralUuid::from_parts(0, hash.as_bytes());
+        let suuid = prismqueer::SpectralUuid::from_parts(0, hash.as_bytes());
         let expected = suuid.dark();
         assert_eq!(
             dark_bits(&r),

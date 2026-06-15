@@ -35,11 +35,11 @@
 //! [`docs/specs/gap-tension-tensor-substrate.md`]: ../../../../docs/specs/gap-tension-tensor-substrate.md
 //! [`docs/specs/property-and-inference-collapse.md`]: ../../../../docs/specs/property-and-inference-collapse.md
 //! [`Failure`]: terni::Imperfect::Failure
-//! [`Transparency<P>`]: prism_core::Transparency
-//! [`Transparency::opacities`]: prism_core::Transparency::opacities
+//! [`Transparency<P>`]: prismqueer::Transparency
+//! [`Transparency::opacities`]: prismqueer::Transparency::opacities
 #![allow(dead_code)]
 
-use prism_core::{PropertyVerdict, Ref, Transparency};
+use prismqueer::{PropertyVerdict, Ref, Transparency};
 
 use crate::music::CadenceKind;
 
@@ -253,7 +253,7 @@ mod tests {
     //! [`verdict_to_cadence_kind`].
 
     use super::*;
-    use prism_core::{Diagnostic, PropertyVerdict};
+    use prismqueer::{Diagnostic, PropertyVerdict};
     use terni::Imperfect;
 
     fn audible_origin() -> Ref {

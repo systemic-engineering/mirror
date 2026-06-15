@@ -69,7 +69,7 @@
 //! ## Adaptation note — Body's exact shape
 //!
 //! The spec says `Body: Fn(Beam<Splinter>) -> Imperfect<Beam<Splinter>,
-//! CrystallizeError, Transparency<Ref>>`. In `prism_core` [`Beam`] is a
+//! CrystallizeError, Transparency<Ref>>`. In `prismqueer` [`Beam`] is a
 //! *trait*, not a type constructor; the concrete seed-beam shape used
 //! everywhere (`apply_h`, `seed(...)`) is `Optic<(), S>`. We use:
 //!
@@ -86,7 +86,7 @@
 //! and the loss carrier is [`Transparency<Ref>`] (structured opacities
 //! located at `Ref`s) rather than a single scalar.
 //!
-//! [`Transparency<Ref>`]: prism_core::Transparency
+//! [`Transparency<Ref>`]: prismqueer::Transparency
 //!
 //! ## Adaptation note — the hash backend
 //!
@@ -109,13 +109,13 @@ use std::fmt;
 use std::marker::PhantomData;
 use std::sync::Arc;
 
-use prism_core::{Optic, Transparency};
+use prismqueer::{Optic, Transparency};
 use terni::Imperfect;
 
 // `Ref` is re-exported from prism-core so existing call sites continue to
 // read `crystallize::Ref` while the canonical definition lives one altitude
 // down (substrate-shared with the bundled `Transparency<Ref>` loss carrier).
-pub use prism_core::Ref;
+pub use prismqueer::Ref;
 
 // ---------------------------------------------------------------------------
 // MerkleHash — the trait the cascade pivots through.
@@ -230,8 +230,8 @@ impl FieldName {
 }
 
 // `Ref` (substrate reference, `@`-prefixed nav-ref) is no longer defined
-// locally — it is re-exported from `prism_core` at the top of the module
-// (`pub use prism_core::Ref`). Renamed from `ActionPath` in an earlier
+// locally — it is re-exported from `prismqueer` at the top of the module
+// (`pub use prismqueer::Ref`). Renamed from `ActionPath` in an earlier
 // cascade; hoisted to prism in the Transparency cascade so the
 // `Transparency<Ref>` loss carrier shares the same `Ref` substrate
 // vocabulary across every prism consumer. Existing call sites that read
@@ -393,7 +393,7 @@ fn u64_le(v: u64) -> [u8; 8] {
 /// verdict, ...}))`. Composition of bodies unions the opacity maps via
 /// [`PropertyVerdict::merge_with`] at colliding paths.
 ///
-/// [`PropertyVerdict::merge_with`]: prism_core::PropertyVerdict::merge_with
+/// [`PropertyVerdict::merge_with`]: prismqueer::PropertyVerdict::merge_with
 pub type Body<H> = Arc<
     dyn Fn(Optic<(), Splinter<H>>) -> Imperfect<Splinter<H>, CrystallizeError, Transparency<Ref>>
         + Send
@@ -535,7 +535,7 @@ pub fn kintsugi_tick<H: MerkleHash>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use prism_core::Beam;
+    use prismqueer::Beam;
 
     // --- Ref validation ---
 
@@ -743,7 +743,7 @@ mod tests {
 #[cfg(test)]
 mod cascade_tests {
     use super::*;
-    use prism_core::Beam;
+    use prismqueer::Beam;
     use std::collections::BTreeMap;
 
     // --- MockHash: a trivial, test-only `MerkleHash` impl ---
@@ -904,7 +904,7 @@ mod cascade_tests {
 // Post-cascade, `Body<H>` returns
 // `Imperfect<Splinter<H>, CrystallizeError, Transparency<Ref>>` (was:
 // `... ScalarLoss>`). The local `Ref` definition has been removed in
-// favour of `pub use prism_core::Ref` so the substrate-shared `Ref`
+// favour of `pub use prismqueer::Ref` so the substrate-shared `Ref`
 // vocabulary is the single source of truth across mirror, cosmos-mirror,
 // spectral-db, and any future prism consumer.
 //
@@ -918,7 +918,7 @@ mod cascade_tests {
 #[cfg(test)]
 mod transparency_cascade_tests {
     use super::*;
-    use prism_core::{Beam, Diagnostic, PropertyVerdict, Transparency};
+    use prismqueer::{Beam, Diagnostic, PropertyVerdict, Transparency};
 
     /// Post-cascade alias for [`Body`]. Identical shape; preserved so the
     /// 🔴 commit's test bodies type-check verbatim and the unifying step

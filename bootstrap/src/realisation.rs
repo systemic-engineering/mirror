@@ -66,13 +66,13 @@
 //!                       not the other way around);
 //!                       `[[architecture-fragmentation-is-the-rust-
 //!                       substrate]]` (this module lives in bootstrap,
-//!                       not prism_core — bootstrap-specific concern).
+//!                       not prismqueer — bootstrap-specific concern).
 //! Substrate recognitions: `[[feedback-substrate-already-had-the-word]]`
 //!                       (the 30th-instance recognition T21 logged;
 //!                       each row in the MVP table is one prior
 //!                       recognition made explicit).
 
-use prism_core::{Diagnostic, PropertyVerdict, Ref, Transparency};
+use prismqueer::{Diagnostic, PropertyVerdict, Ref, Transparency};
 
 /// The boundary partition. Same two-state carrier as the substrate's
 /// `type altitude = | boundary | substrate` declaration in
@@ -290,7 +290,11 @@ pub fn classify(path: &str) -> RealisableFile {
         // is a future species the substrate has not yet declared at a
         // shard; T23+ lifts the species when a consumer pulls it. T22
         // names the target so the substrate-pull surface is logged.)
-        (_, "main.rs") => boundary(anchor, "@io/cli", "OS dispatch — argv parsing + process exit"),
+        (_, "main.rs") => boundary(
+            anchor,
+            "@io/cli",
+            "OS dispatch — argv parsing + process exit",
+        ),
 
         // `sheaf_laplacian.rs` — LAPACK FFI (dsyev / dgesvd) over BLAS.
         // The substrate algebra lives at `@epistemologic/math/sheaf_
@@ -349,7 +353,6 @@ pub fn classify(path: &str) -> RealisableFile {
         ),
 
         // ── unknown — Partial verdict, substrate-pull surface ────────
-
         _ => uncertain(anchor, &basename, "no match in T22 MVP table"),
     }
 }
@@ -377,7 +380,9 @@ pub fn classify(path: &str) -> RealisableFile {
 ///   "good". A clean boundary classification IS a clean classification.
 /// - `Opaque(_)` verdict → `Partial((), opacity)` (the discriminator
 ///   surfaces its uncertainty as a located opacity for T23 refinement).
-pub fn is_substrate_realisable(path: &str) -> terni::Imperfect<(), &'static str, Transparency<Ref>> {
+pub fn is_substrate_realisable(
+    path: &str,
+) -> terni::Imperfect<(), &'static str, Transparency<Ref>> {
     let cls = classify(path);
     match cls.verdict {
         Transparency::Clear => terni::Imperfect::Success(()),
@@ -451,9 +456,8 @@ fn anchor_ref(basename: &str) -> Ref {
     // Ref's validator (defensive — shouldn't happen given the sanitiser),
     // fall back to a stable sentinel that round-trips. The classify
     // contract is total — every Rust file gets a classification.
-    Ref::new(s).unwrap_or_else(|_| {
-        Ref::new("@realisation/file").expect("sentinel anchor must construct")
-    })
+    Ref::new(s)
+        .unwrap_or_else(|_| Ref::new("@realisation/file").expect("sentinel anchor must construct"))
 }
 
 /// Construct a substrate-realisable classification. The `target` and
@@ -502,8 +506,8 @@ fn uncertain(path: Ref, basename: &str, rationale: &'static str) -> RealisableFi
     };
     // Target points back at @mirror/realisation itself — the gap IS a
     // substrate-pull-realize on the discriminator's own table.
-    let target = Ref::new("@mirror/realisation")
-        .expect("@mirror/realisation must construct as a valid ref");
+    let target =
+        Ref::new("@mirror/realisation").expect("@mirror/realisation must construct as a valid ref");
     RealisableFile {
         path: path.clone(),
         altitude: Altitude::Substrate,

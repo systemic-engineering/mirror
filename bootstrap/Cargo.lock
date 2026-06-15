@@ -39,9 +39,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.2.63"
+version = "1.2.64"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "556e016178bb5662a08681bbe0f00f8e17631781a4dfc8c45e466e4b185ec27f"
+checksum = "dad887fd958be91b5098c0248def011f4523ab786cd411be668777e55063501f"
 dependencies = [
  "find-msvc-tools",
  "shlex",
@@ -133,9 +133,9 @@ checksum = "68ab91017fe16c622486840e4c83c9a37afeff978bd239b5293d61ece587de66"
 
 [[package]]
 name = "memchr"
-version = "2.8.1"
+version = "2.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b947ae49db0d222b1dbc6b113ce7248a3fc3a6ca21b696717bfc000ba4484d8"
+checksum = "88904434abc2901f197fe8cc55f0445e7ded921dba5911dad2e2b39b48e663c4"
 
 [[package]]
 name = "mirror"
@@ -143,7 +143,7 @@ version = "0.1.0"
 dependencies = [
  "blake3",
  "libc",
- "prism-core",
+ "prismqueer",
  "serde",
  "serde_json",
  "sha2",
@@ -151,19 +151,23 @@ dependencies = [
 ]
 
 [[package]]
-name = "prism-core"
+name = "prismqueer"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ab5928276e90399f502a35fd9ceda54a1fb36d0949fee26f3ec07f525be8a124"
 dependencies = [
  "cc",
  "hex",
- "prism-derive",
+ "prismqueer-projections",
  "sha2",
  "terni",
 ]
 
 [[package]]
-name = "prism-derive"
+name = "prismqueer-projections"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1270584afc1703bb1728255e1fb5c8aae38c16433bd089cea8b5305c28e505f6"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -261,14 +265,18 @@ dependencies = [
 
 [[package]]
 name = "terni"
-version = "0.6.0"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a139643a0f220b953a0dd8e326b7756e06b7ec1e7f4edc29da4732a0955ab46c"
 dependencies = [
  "terni-macros",
 ]
 
 [[package]]
 name = "terni-macros"
-version = "0.6.0"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef8b7cea1acef660ad89a660c259e789a8efe09e40bb15f6e8f8591c1e32aefc"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -277,9 +285,9 @@ dependencies = [
 
 [[package]]
 name = "typenum"
-version = "1.20.0"
+version = "1.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "40ce102ab67701b8526c123c1bab5cbe42d7040ccfd0f64af1a385808d2f43de"
+checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
 
 [[package]]
 name = "unicode-ident"

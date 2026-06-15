@@ -53,7 +53,7 @@
 //! ## Eigenvalue computation
 //!
 //! `fiedler_of` routes through [`crate::sheaf_laplacian::lambda_zero`] —
-//! the LAPACK `dsyev` path via `prism_core::ffi::eigenvalues` (T8). The
+//! the LAPACK `dsyev` path via `prismqueer::ffi::eigenvalues` (T8). The
 //! adjacency matrix on the gap basis becomes a `Vec<Restriction>`; the
 //! sheaf-Laplacian assembly produces an `Operator`; `lambda_zero`
 //! returns the spectral gap. T6's K₂ = 2.0 / K₃ = 1.5 / disconnected =
@@ -91,7 +91,7 @@
 //!
 //! [`docs/specs/gap-tension-tensor-substrate.md`]: ../../../../docs/specs/gap-tension-tensor-substrate.md
 //! [`docs/specs/property-and-inference-collapse.md`]: ../../../../docs/specs/property-and-inference-collapse.md
-//! [`Ref`]: prism_core::Ref
+//! [`Ref`]: prismqueer::Ref
 //! [`gaps_of`]: crate::property::gaps_of
 //! [`crate::sheaf_laplacian::lambda_zero`]: crate::sheaf_laplacian::lambda_zero
 #![allow(dead_code)]
@@ -410,7 +410,7 @@ pub fn tensor_of_with_restrictions(gaps: Vec<Gap>, restrictions: Vec<Restriction
 /// tension (with `source` / `target` as gap-basis indices and
 /// `weight` = `TensionVector::magnitude`) and reads the spectral gap
 /// from [`lambda_zero`] — the LAPACK `dsyev` path via
-/// `prism_core::ffi::eigenvalues` (T8). LAPACK reproduces Jacobi's
+/// `prismqueer::ffi::eigenvalues` (T8). LAPACK reproduces Jacobi's
 /// values on identity-weight sheaves (K₂ = 2.0, K₃ = 1.5, disconnected
 /// = 0.0) and additionally handles the non-uniform case the Jacobi
 /// stub could not reach.
@@ -495,7 +495,7 @@ mod tests {
 
     use super::*;
     use crate::gap::Gap;
-    use prism_core::Ref;
+    use prismqueer::Ref;
 
     fn total_origin() -> Ref {
         Ref::new("@epistemologic/property/total_classification").expect("valid ref")
@@ -643,7 +643,7 @@ mod tests {
     // declared `restriction` carrier from `sheaf_laplacian.mirror`) and
     // the resulting Fiedler value is computed by the same numerical
     // primitive `lambda_zero` uses — LAPACK `dsyev` via
-    // `prism_core::ffi::eigenvalues`. The T6 tests above continue to pass
+    // `prismqueer::ffi::eigenvalues`. The T6 tests above continue to pass
     // through the new LAPACK path (substantive correctness check).
     //
     // The brief: cleanest scope is a sibling constructor, not extending

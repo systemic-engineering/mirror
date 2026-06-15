@@ -36,7 +36,7 @@
 //!   `sheaf_laplacian([restriction]) -> operator`.
 //! - [`lambda_zero`] — the executable form of
 //!   `lambda_zero(op: operator) -> eigenvalue`, calling
-//!   [`prism_core::ffi::eigenvalues`] (LAPACK `dsyev`).
+//!   [`prismqueer::ffi::eigenvalues`] (LAPACK `dsyev`).
 //!
 //! ## Why the LAPACK path (not pure Rust)
 //!
@@ -45,7 +45,7 @@
 //! standard. The substrate-pull discipline (per AGENTS.md "Keywords Are
 //! Substrate Declarations") says numerical mechanism the substrate cannot
 //! express belongs at the boundary; the boundary uses the standard library
-//! rather than reinventing it. `prism_core::ffi::eigenvalues` is the
+//! rather than reinventing it. `prismqueer::ffi::eigenvalues` is the
 //! already-built wrapper (per `docs/specs/numerical-substrate-via-fortran.md`
 //! §1.4); T8 lifts T6's Jacobi-stub `fiedler_of` to call into it via the
 //! sheaf-Laplacian assembly here.
@@ -64,7 +64,7 @@
 //! [`shards/epistemologic/math/sheaf_laplacian.mirror`]: ../../../../shards/epistemologic/math/sheaf_laplacian.mirror
 //! [`spectral-triple.mirror`]: ../../../../boot/std/epistemologic/math/spectral-triple.mirror
 //! [`docs/specs/numerical-substrate-via-fortran.md`]: ../../../../docs/specs/numerical-substrate-via-fortran.md
-//! [`prism_core::ffi::eigenvalues`]: prism_core::ffi::eigenvalues
+//! [`prismqueer::ffi::eigenvalues`]: prismqueer::ffi::eigenvalues
 #![allow(dead_code)]
 
 // ---------------------------------------------------------------------------
@@ -265,7 +265,7 @@ pub fn sheaf_laplacian(restrictions: Vec<Restriction>) -> Operator {
 /// ```
 ///
 /// Computes the smallest non-trivial eigenvalue of the operator's
-/// dense matrix realisation via [`prism_core::ffi::eigenvalues`]
+/// dense matrix realisation via [`prismqueer::ffi::eigenvalues`]
 /// (LAPACK `dsyev`). Multiplicity counts how many eigenvalues equal
 /// the smallest within the numerical-zero threshold (`1e-9`) — for a
 /// graph with k connected components, λ₀ = 0 with multiplicity k.
@@ -276,7 +276,7 @@ pub fn sheaf_laplacian(restrictions: Vec<Restriction>) -> Operator {
 ///    `Δ_F = I − D^{-1/2} W D^{-1/2}` via [`dense_laplacian`]. (When the
 ///    underlying graph is trivial — dimension ≤ 1 — emit `Eigenvalue(0,
 ///    dimension)`.)
-/// 2. Call `prism_core::ffi::eigenvalues(n, &matrix)` to get the
+/// 2. Call `prismqueer::ffi::eigenvalues(n, &matrix)` to get the
 ///    eigenvalues in ascending order.
 /// 3. Count multiplicity at the zero-eigenvalue boundary; the smallest
 ///    eigenvalue STRICTLY greater than the threshold is the spectral
@@ -298,7 +298,7 @@ pub fn lambda_zero(op: &Operator) -> Eigenvalue {
         return Eigenvalue::new(0.0, 1);
     }
     let matrix = dense_laplacian(op);
-    let evals = match prism_core::ffi::eigenvalues(n, &matrix) {
+    let evals = match prismqueer::ffi::eigenvalues(n, &matrix) {
         Ok(v) => v,
         Err(_) => return Eigenvalue::new(0.0, n as u32),
     };

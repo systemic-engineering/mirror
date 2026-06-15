@@ -84,7 +84,7 @@
 //! [`shards/mirror/spectral/score.mirror`]: ../../../../shards/mirror/spectral/score.mirror
 #![allow(dead_code)]
 
-use prism_core::Ref;
+use prismqueer::Ref;
 
 use crate::ast::AstNode;
 use crate::gap::Gap;

@@ -9,16 +9,16 @@
 //! Per `docs/specs/prism-core-as-spectral-triple.md` and the audit-
 //! closure commits `8c184e1` in mirror / `5d98c6e` in prism, the bootstrap
 //! IS the evaluator of a spectral triple `(A, H, D)` over
-//! `prism_core`'s verified spectral-triple substrate. The trait chain in
-//! `prism_core::bundle` (Fiber → Connection → Gauge → Transport →
+//! `prismqueer`'s verified spectral-triple substrate. The trait chain in
+//! `prismqueer::bundle` (Fiber → Connection → Gauge → Transport →
 //! Closure) realizes the structure; this module names what the
 //! bootstrap evaluator does over it.
 //!
 //! - **A** — the involutive algebra of operations on H. Realized by
-//!   `prism_core::Prism`: the Tambara-composable optic. In mirror's
+//!   `prismqueer::Prism`: the Tambara-composable optic. In mirror's
 //!   bootstrap A's generators are the five Prism operations
 //!   (focus / project / split / shift / settle) plus their compositions.
-//!   The identity element is [`prism_core::IdentityPrism`] (the unit of
+//!   The identity element is [`prismqueer::IdentityPrism`] (the unit of
 //!   A as a monoid).
 //! - **H** — the Hilbert space the algebra acts on. The state type S
 //!   carried through a beam pipeline. In the bootstrap H is the space
@@ -48,9 +48,9 @@
 //!   standalone `content.rs` module, per
 //!   `docs/specs/bootstrap-retirement-plan.md` Tick 1).
 //!
-//! [`Transparency<Ref>`]: prism_core::Transparency
-//! [`PropertyVerdict`]: prism_core::PropertyVerdict
-//! [`PropertyVerdict::merge_with`]: prism_core::PropertyVerdict::merge_with
+//! [`Transparency<Ref>`]: prismqueer::Transparency
+//! [`PropertyVerdict`]: prismqueer::PropertyVerdict
+//! [`PropertyVerdict::merge_with`]: prismqueer::PropertyVerdict::merge_with
 //! [`terni::Loss`]: terni::Loss
 //!
 //! ## The three primitive operations
@@ -65,9 +65,9 @@
 //!    (and on `Transparency<Ref>` it is set-union on opacity maps with
 //!    per-key `PropertyVerdict::merge_with`), and [`IdentityPrism`] is
 //!    its unit.
-//! 2. `prism_core::apply_h` — operator action on a state vector.
+//! 2. `prismqueer::apply_h` — operator action on a state vector.
 //!    Heterogeneous: input state type and output state type are
-//!    independent. Wraps a single `prism_core::Prism`'s focus /
+//!    independent. Wraps a single `prismqueer::Prism`'s focus /
 //!    project / settle sweep and returns the resulting `Imperfect`
 //!    in H. Lives in `prism-core` and is re-imported here — the
 //!    bootstrap stands on the substrate's verified shape rather than
@@ -99,13 +99,13 @@
 //! are the example refs at which the example prisms (`Quantize`,
 //! `Positive`, `fracture_validate_body`) open their structural verdicts.
 //!
-//! [`prism_core::IdentityPrism`]: prism_core::IdentityPrism
+//! [`prismqueer::IdentityPrism`]: prismqueer::IdentityPrism
 //! [`terni::Imperfect`]: terni::Imperfect
 //! [`terni::Metric`]: terni::Metric
 
-use prism_core::{apply_h, Beam, Optic, Prism, Ref, Transparency};
+use prismqueer::{apply_h, Beam, Optic, Prism, Ref, Transparency};
 #[cfg(test)]
-use prism_core::{Diagnostic, PropertyVerdict};
+use prismqueer::{Diagnostic, PropertyVerdict};
 use terni::Imperfect;
 
 use crate::ast::{AstKind, AstNode};
@@ -118,7 +118,7 @@ use crate::hash::hash_tagged;
 /// The seed beam type for an algebra element acting on a state of type
 /// `S`. We use `()` as the input position because the state vector is
 /// produced by the seed itself — there is no prior input. The error
-/// position is [`Infallible`] (matching `prism_core::IdentityPrism`'s
+/// position is [`Infallible`] (matching `prismqueer::IdentityPrism`'s
 /// shape): the evaluator's algebra elements model "domain rejection" as
 /// a Partial verdict with structured opacities (the absorbing case is
 /// `Transparency::catastrophic()`), not as a typed Failure. This keeps
@@ -128,11 +128,11 @@ use crate::hash::hash_tagged;
 /// scalar magnitude.
 ///
 /// [`Infallible`]: std::convert::Infallible
-/// [`Transparency<Ref>`]: prism_core::Transparency
+/// [`Transparency<Ref>`]: prismqueer::Transparency
 pub type Seed<S> = Optic<(), S>;
 
 /// The verdict an algebra element returns when acting on a state.
-/// Mirrors `prism_core::Transport::transport`'s signature exactly:
+/// Mirrors `prismqueer::Transport::transport`'s signature exactly:
 /// `terni::Imperfect<S, Infallible, Holonomy>` where the Holonomy is
 /// any [`terni::Loss`]. The `Infallible` error position witnesses that
 /// algebra elements are total on the algebra's *closure* (every
@@ -141,7 +141,7 @@ pub type Seed<S> = Optic<(), S>;
 /// `Transparency::catastrophic()` for the absorbing case).
 ///
 /// [`terni::Loss`]: terni::Loss
-/// [`Transparency<Ref>`]: prism_core::Transparency
+/// [`Transparency<Ref>`]: prismqueer::Transparency
 pub type Verdict<S> = Imperfect<S, std::convert::Infallible, Transparency<Ref>>;
 
 /// Seed a beam with a starting state value. The source position is `()`
@@ -154,7 +154,7 @@ pub fn seed<S>(state: S) -> Seed<S> {
 // 1. apply_h — operator action on H (now re-exported from prism-core)
 // ---------------------------------------------------------------------------
 //
-// `apply_h` lives in `prism_core::apply_h` as a heterogeneous helper
+// `apply_h` lives in `prismqueer::apply_h` as a heterogeneous helper
 // (input state type and output state type are independent). The
 // bootstrap re-uses it directly via the `use` import above; no local
 // definition or wrapper exists. The previous bootstrap-local `apply_h`
@@ -3938,7 +3938,7 @@ mod combinator_tests {
 mod tests {
     use super::*;
     use crate::ast::{AstKind, AstNode};
-    use prism_core::{apply as prism_apply, Beam, Optic};
+    use prismqueer::{apply as prism_apply, Beam, Optic};
     use std::convert::Infallible;
 
     // -----------------------------------------------------------------------
@@ -3956,7 +3956,7 @@ mod tests {
     // -----------------------------------------------------------------------
 
     /// Identity prism over the bootstrap's `Transparency<Ref>` Loss
-    /// monoid. Functionally identical to [`prism_core::IdentityPrism`],
+    /// monoid. Functionally identical to [`prismqueer::IdentityPrism`],
     /// but with the `L` parameter fixed to `Transparency<Ref>` so it
     /// satisfies `compose_a`'s bounds (the substrate's generic
     /// `IdentityPrism` defaults `L = ScalarLoss` and cannot be reused
@@ -4075,7 +4075,7 @@ mod tests {
     ///
     /// Domain rejection is modelled as a Partial-with-opacity rather
     /// than as a typed Failure: the bootstrap evaluator's algebra has
-    /// `Error = Infallible` (matching `prism_core::IdentityPrism`'s
+    /// `Error = Infallible` (matching `prismqueer::IdentityPrism`'s
     /// signature so identity composition typechecks). The structural
     /// verdict witnesses *where* the rejection lives —
     /// `Transparency::catastrophic()` is reserved for absorbing total-
@@ -4144,7 +4144,7 @@ mod tests {
         // `Transparency<Ref>` loss: id ∘ p and p ∘ id behave like p.
         // Witnesses that the local identity prism is the A-monoid
         // identity at the evaluator level — the analogue of
-        // prism_core::IdentityPrism specialised to the bootstrap's Loss
+        // prismqueer::IdentityPrism specialised to the bootstrap's Loss
         // carrier.
         let id: IdentityT<f64> = IdentityT::new();
         let p = Scale { factor: 4.0 };
@@ -4223,7 +4223,7 @@ mod tests {
 
     #[test]
     fn apply_h_consistent_with_prism_apply() {
-        // apply_h is the named wrapper around prism_core::apply.
+        // apply_h is the named wrapper around prismqueer::apply.
         // The equivalence test: both routes produce the same Verdict.
         let p = Scale { factor: 7.0 };
         for s in [-1.0_f64, 0.0, 2.5] {
@@ -4559,7 +4559,7 @@ mod transparency_cascade_tests {
         P: Prism<Input = Optic<(), S>, Refracted = Optic<InP, S, Infallible, Transparency<Ref>>>,
         Q: Prism<Input = Optic<(), S>, Refracted = Optic<InQ, S, Infallible, Transparency<Ref>>>,
     {
-        prism_core::apply_h(p, state).eh(|s| prism_core::apply_h(q, s))
+        prismqueer::apply_h(p, state).eh(|s| prismqueer::apply_h(q, s))
     }
 
     // ------------------------------------------------------------------
@@ -4568,7 +4568,7 @@ mod transparency_cascade_tests {
 
     #[test]
     fn quantize_t_clear_on_integer() {
-        let v: VerdictT<f64> = prism_core::apply_h(&QuantizeT, 3.0);
+        let v: VerdictT<f64> = prismqueer::apply_h(&QuantizeT, 3.0);
         match v {
             Imperfect::Success(out) => assert_eq!(out, 3.0),
             other => panic!("expected Success (zero loss = Clear), got {:?}", other),
@@ -4577,7 +4577,7 @@ mod transparency_cascade_tests {
 
     #[test]
     fn quantize_t_opaque_at_quantize_path_on_non_integer() {
-        let v: VerdictT<f64> = prism_core::apply_h(&QuantizeT, 0.3);
+        let v: VerdictT<f64> = prismqueer::apply_h(&QuantizeT, 0.3);
         match v {
             Imperfect::Partial(out, transparency) => {
                 assert_eq!(out, 0.0, "rounded value carried");
@@ -4613,7 +4613,7 @@ mod transparency_cascade_tests {
 
     #[test]
     fn positive_t_clear_on_non_negative() {
-        let v: VerdictT<f64> = prism_core::apply_h(&PositiveT, 3.0);
+        let v: VerdictT<f64> = prismqueer::apply_h(&PositiveT, 3.0);
         match v {
             Imperfect::Success(out) => assert_eq!(out, 3.0),
             other => panic!("expected Success on non-negative, got {:?}", other),
@@ -4622,7 +4622,7 @@ mod transparency_cascade_tests {
 
     #[test]
     fn positive_t_opaque_at_positive_path_on_negative() {
-        let v: VerdictT<f64> = prism_core::apply_h(&PositiveT, -3.0);
+        let v: VerdictT<f64> = prismqueer::apply_h(&PositiveT, -3.0);
         match v {
             Imperfect::Partial(_out, transparency) => {
                 let p_path = Ref::new("@positive").unwrap();

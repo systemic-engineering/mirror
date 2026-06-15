@@ -367,7 +367,7 @@ mod tests {
     use super::*;
     use crate::gap::Gap;
     use crate::tensor::{tensor_of, Tension, TensionVector, Tensor};
-    use prism_core::Ref;
+    use prismqueer::Ref;
 
     fn total_origin() -> Ref {
         Ref::new("@epistemologic/property/total_classification").expect("valid ref")

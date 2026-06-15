@@ -5,7 +5,7 @@
 //! forms (target datalayout = "...", source_filename = "...") is shared.
 //! Content OIDs are computed by `spectral::compute_content_oid`, which
 //! dispatches the recursive AST walk through
-//! `prism_core::apply_h(&ContentOidPrism, ast)` per
+//! `prismqueer::apply_h(&ContentOidPrism, ast)` per
 //! `docs/specs/bootstrap-retirement-plan.md` Tick 1.
 //!
 //! ## Library shape (Taut #286 Win 2)
@@ -201,7 +201,7 @@ macro_rules! merr {
     }};
 }
 
-use prism_core::{Optic, Ref};
+use prismqueer::{Optic, Ref};
 use serde::Serialize;
 use terni::Imperfect;
 
