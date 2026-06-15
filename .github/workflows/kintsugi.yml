@@ -1,6 +1,17 @@
-# mirror's own kintsugi gate — dogfoods the composite action against
-# the boot/ grammar tree. Pre-v0.1: uses the in-repo `./actions/kintsugi`
-# path. Post-v0.1 (T11.8): switches to `systemic-engineering/mirror/actions/kintsugi@v0.1`.
+# mirror's own kintsugi gate — builds the bootstrap binary from source
+# and runs the kintsugi self-host against boot/std.
+#
+# Cache strategy (recognition #43 — mirror IS a content-addressed build
+# system):
+#   - Swatinem/rust-cache: standard cargo target + registry cache for the
+#     bootstrap workspace.
+#   - actions/cache @ ~/.mirror: the @mirror/store bare fragmentation repo
+#     (per docs/specs/mirror-store.md §10.5). Keyed on the substrate's
+#     shard + boot + spec content hashes — same OID, same blob, cache hit.
+#
+# The composite action at actions/kintsugi/ stays intact for external
+# consumers post-v0.1.0 and is NOT used here; this gate exercises the
+# self-host path directly.
 #
 # Per kintsugi-ci-v0.1 §6.1.
 
@@ -20,15 +31,44 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write   # for the sticky verdict comment
+      pull-requests: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Run kintsugi over boot/
-        uses: ./actions/kintsugi
+      - uses: dtolnay/rust-toolchain@stable
+
+      # Standard Rust target cache.
+      - uses: Swatinem/rust-cache@v2
         with:
-          target: boot/std
-          shatter: '4'
-          threshold: '0.8'
-          fail-on: failure
+          workspaces: bootstrap
+
+      # @mirror/store IS a bare fragmentation repo at ~/.mirror.
+      # Cache across runs — recognition #43 (mirror IS a content-addressed
+      # build system) wires through CI. Substrate-pull complete.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.mirror
+          key: mirror-store-${{ runner.os }}-${{ hashFiles('shards/**/*.mirror', 'boot/**/*.mirror', 'mirror.spec') }}
+          restore-keys: |
+            mirror-store-${{ runner.os }}-
+
+      - name: Build mirror
+        run: cargo build --release --manifest-path bootstrap/Cargo.toml
+
+      - name: Run kintsugi self-host
+        run: |
+          ./bootstrap/target/release/mirror kintsugi --ci --shatter 4 boot/std \
+            | tee /tmp/kintsugi-verdict.mirror
+          ./bootstrap/target/release/mirror kintsugi --ci --format=json --shatter 4 boot/std \
+            > /tmp/kintsugi-verdict.json
+          jq -e '.verdict != "failure"' /tmp/kintsugi-verdict.json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kintsugi-verdict
+          path: |
+            /tmp/kintsugi-verdict.mirror
+            /tmp/kintsugi-verdict.json
+          if-no-files-found: warn
+          retention-days: 14
