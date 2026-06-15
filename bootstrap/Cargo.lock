@@ -152,10 +152,11 @@ dependencies = [
 
 [[package]]
 name = "prismqueer"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ab5928276e90399f502a35fd9ceda54a1fb36d0949fee26f3ec07f525be8a124"
+checksum = "b580b193cb935e86ba3083ba73eaa0880268f6a061977c3fd5965ff44e7cb1c1"
 dependencies = [
+ "cc",
  "hex",
  "prismqueer-projections",
  "sha2",
