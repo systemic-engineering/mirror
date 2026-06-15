@@ -1,5 +1,10 @@
 # mirror
 
+[![CI](https://github.com/systemic-engineering/mirror/actions/workflows/ci.yml/badge.svg)](https://github.com/systemic-engineering/mirror/actions/workflows/ci.yml)
+[![kintsugi](https://github.com/systemic-engineering/mirror/actions/workflows/kintsugi.yml/badge.svg)](https://github.com/systemic-engineering/mirror/actions/workflows/kintsugi.yml)
+[![release](https://img.shields.io/github/v/release/systemic-engineering/mirror?include_prereleases&label=release)](https://github.com/systemic-engineering/mirror/releases)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 > **Mirror is a programming language written BY AI FOR AI and written FOR HUMANS BY HUMANS.**
 
 ![](./void_256.png)
