@@ -34,12 +34,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dtolnay/rust-toolchain@stable
-
-      # Standard Rust target cache.
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: bootstrap
+      # Nix devShell provides flang/LAPACK/BLAS that bootstrap/build.rs needs.
+      # Same nix-setup as ci.yml uses.
+      - uses: systemic-engineering/ci/actions/nix-setup@main
 
       # @mirror/store IS a bare fragmentation repo at ~/.mirror.
       # Cache across runs — recognition #43 (mirror IS a content-addressed
@@ -52,13 +49,13 @@ jobs:
             mirror-store-${{ runner.os }}-
 
       - name: Build mirror
-        run: cargo build --release --manifest-path bootstrap/Cargo.toml
+        run: nix develop -c cargo build --release --manifest-path bootstrap/Cargo.toml
 
       - name: Run kintsugi self-host
         run: |
-          ./bootstrap/target/release/mirror kintsugi --ci --shatter 4 boot/std \
+          nix develop -c ./bootstrap/target/release/mirror kintsugi --ci --shatter 4 boot/std \
             | tee /tmp/kintsugi-verdict.mirror
-          ./bootstrap/target/release/mirror kintsugi --ci --format=json --shatter 4 boot/std \
+          nix develop -c ./bootstrap/target/release/mirror kintsugi --ci --format=json --shatter 4 boot/std \
             > /tmp/kintsugi-verdict.json
           jq -e '.verdict != "failure"' /tmp/kintsugi-verdict.json
 
