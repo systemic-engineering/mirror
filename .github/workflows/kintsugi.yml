@@ -36,8 +36,9 @@ jobs:
 
       # System BLAS/LAPACK for the prismqueer lapack FFI feature.
       # Mirror's bootstrap consumes prismqueer::ffi which needs these.
+      # Install both -dev (link) and runtime (.so.3) packages explicitly.
       - name: Install system BLAS/LAPACK
-        run: sudo apt-get update && sudo apt-get install -y libblas-dev liblapack-dev gfortran
+        run: sudo apt-get update && sudo apt-get install -y libblas-dev liblapack-dev libblas3 liblapack3 gfortran
 
       # Nix devShell provides flang that bootstrap/build.rs needs.
       # Same nix-setup as ci.yml uses.
@@ -65,6 +66,11 @@ jobs:
 
       - name: Run kintsugi self-host
         run: |
+          # Track down where update-alternatives points libblas.so.3 / liblapack.so.3.
+          BLAS_LIB=$(dpkg -L libblas3 2>/dev/null | grep 'libblas.so.3$' | head -1)
+          LAPACK_LIB=$(dpkg -L liblapack3 2>/dev/null | grep 'liblapack.so.3$' | head -1)
+          GFORT_DIR=$(dirname $(gfortran -print-file-name=libgfortran.so.5))
+          export LD_LIBRARY_PATH="$(dirname $BLAS_LIB):$(dirname $LAPACK_LIB):$GFORT_DIR:/usr/lib/x86_64-linux-gnu"
           BIN=./bootstrap/target/x86_64-unknown-linux-gnu/release/mirror
           $BIN kintsugi --ci --shatter 4 boot/std \
             | tee /tmp/kintsugi-verdict.mirror

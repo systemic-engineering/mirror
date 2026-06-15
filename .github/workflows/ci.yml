@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install system BLAS/LAPACK
-        run: sudo apt-get update && sudo apt-get install -y libblas-dev liblapack-dev gfortran
+        run: sudo apt-get update && sudo apt-get install -y libblas-dev liblapack-dev libblas3 liblapack3 gfortran
       - uses: systemic-engineering/ci/actions/nix-setup@main
       - name: Run quality gate
         env:
