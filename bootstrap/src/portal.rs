@@ -97,6 +97,18 @@
 
 use terni::{Diagnostic, Imperfect, PropertyVerdict, Transparency};
 
+#[cfg(target_os = "macos")]
+#[inline]
+fn errno() -> i32 {
+    errno()
+}
+
+#[cfg(not(target_os = "macos"))]
+#[inline]
+fn errno() -> i32 {
+    unsafe { *libc::__errno_location() }
+}
+
 /// One-liner: tag a substrate boundary opacity with a short reason.
 /// The `path` is the [`NoPortal`] variant (which substrate seam went
 /// dark); the `verdict` carries a `Fail` diagnostic naming why.
@@ -244,7 +256,7 @@ pub fn try_outbound_handshake(
     let mut stat: libc::stat = unsafe { std::mem::zeroed() };
     let rc = unsafe { libc::fstat(socket_fd, &mut stat) };
     if rc < 0 {
-        let err = unsafe { *libc::__error() };
+        let err = errno();
         return Imperfect::Failure(
             NoPortal::FstatFailed(err),
             opacity(NoPortal::FstatFailed(err)),
@@ -283,7 +295,7 @@ pub fn try_outbound_handshake(
     let mut pipe_fds: [libc::c_int; 2] = [-1, -1];
     let rc = unsafe { libc::pipe(pipe_fds.as_mut_ptr()) };
     if rc < 0 {
-        let err = unsafe { *libc::__error() };
+        let err = errno();
         return Imperfect::Failure(
             NoPortal::StageFailed(err),
             opacity(NoPortal::StageFailed(err)),
@@ -357,7 +369,7 @@ pub fn try_outbound_handshake(
         // here naturally without needing SO_DOMAIN. The errno is
         // observable via `libc::__error()` for future debug surfaces;
         // this tick collapses all failure modes to PeerDeclined.
-        let _err = unsafe { *libc::__error() };
+        let _err = errno();
         return Imperfect::Failure(NoPortal::PeerDeclined, opacity(NoPortal::PeerDeclined));
     }
 
@@ -388,7 +400,7 @@ pub fn try_inbound_handshake(
     let mut stat: libc::stat = unsafe { std::mem::zeroed() };
     let rc = unsafe { libc::fstat(socket_fd, &mut stat) };
     if rc < 0 {
-        let err = unsafe { *libc::__error() };
+        let err = errno();
         return Imperfect::Failure(
             NoPortal::FstatFailed(err),
             opacity(NoPortal::FstatFailed(err)),
@@ -417,7 +429,7 @@ pub fn try_inbound_handshake(
 
     let n = unsafe { libc::recvmsg(socket_fd, &mut msg, 0) };
     if n < 0 {
-        let err = unsafe { *libc::__error() };
+        let err = errno();
         return Imperfect::Failure(
             NoPortal::ReadFailed(err),
             opacity(NoPortal::ReadFailed(err)),
@@ -461,7 +473,7 @@ fn write_all(fd: std::os::unix::io::RawFd, buf: &[u8]) -> Result<(), i32> {
             )
         };
         if n < 0 {
-            return Err(unsafe { *libc::__error() });
+            return Err(errno());
         }
         if n == 0 {
             return Err(0);
