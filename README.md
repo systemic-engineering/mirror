@@ -11,6 +11,8 @@ The pitch is the eigenvalue. Neither alone. Both together.
 _The author takes no responsibility for any cognitive dissonance this project produces in the reader._  
 _Cheers, Alex 🌈_
 
+> _Here for grant verification? See [docs/GRANTS.md](./docs/GRANTS.md) for copy-paste-ready substrate evidence._
+
 ---
 
 ## Who writes mirror
