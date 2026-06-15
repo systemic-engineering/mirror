@@ -61,10 +61,14 @@ jobs:
         run: nix develop -c cargo build --release --manifest-path bootstrap/Cargo.toml
 
       - name: Run kintsugi self-host
+        env:
+          LD_LIBRARY_PATH: /usr/lib/x86_64-linux-gnu
         run: |
-          nix develop -c ./bootstrap/target/release/mirror kintsugi --ci --shatter 4 boot/std \
+          GFORT_DIR=$(dirname $(gfortran -print-file-name=libgfortran.so.5))
+          export LD_LIBRARY_PATH="$GFORT_DIR:/usr/lib/x86_64-linux-gnu"
+          ./bootstrap/target/release/mirror kintsugi --ci --shatter 4 boot/std \
             | tee /tmp/kintsugi-verdict.mirror
-          nix develop -c ./bootstrap/target/release/mirror kintsugi --ci --format=json --shatter 4 boot/std \
+          ./bootstrap/target/release/mirror kintsugi --ci --format=json --shatter 4 boot/std \
             > /tmp/kintsugi-verdict.json
           jq -e '.verdict != "failure"' /tmp/kintsugi-verdict.json
 
