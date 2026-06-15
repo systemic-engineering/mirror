@@ -1,0 +1,187 @@
+in @prism
+
+in @optics
+in @glass
+in @nl
+in @mirror/lens
+in @mirror/lens/unix
+in @mirror/store
+
+# @mirror/lens/unix/fuse — kernel-mediated projection sub-species.
+#
+# The first concrete platform sub-species of @mirror/lens/unix (the
+# family root at shards/mirror/lens/unix.mirror). Where the v0 floor
+# discharges abstract bodies through `bootstrap/src/lens_unix.rs`'s
+# materialize-to-tempdir `UnixLens` struct, this sub-species declares
+# the kernel-mediated path: a FUSE filesystem reuses the
+# fragmentation crate's existing fuser-backed implementation
+# (vcs/git/src/fuse.rs, ~1012 lines, commit `f1e1135`) without
+# materialization. Same shard content, same Unix surface, no copy.
+#
+# === Design lineage (2026-06-15) ===
+#
+# Four design questions closed by Alex + Reed this morning after sister
+# Mara's FS-overlay survey identified fragmentation/vcs/git/src/fuse.rs
+# as the load-bearing existing implementation:
+#
+#   1. Crate location: fragmentation-fuse workspace member. The FUSE
+#      machinery is a substrate primitive (Apache-2.0 open side per
+#      [[architecture-mirror-store-vs-spectral-db]]); mirror consumes
+#      it via this sub-species. Matches the
+#      `docs/specs/mirror-native-vcs.md` §2.2 workspace plan.
+#   2. Write semantics: read-only floor at v0. Read-only ships first;
+#      the write path is MANDATORY for VM deployment and lands in v1
+#      together with the @mirror/store Lens primitive (see roadmap
+#      doc roadmap/wip/mirror-lens-unix.md).
+#   3. Lifecycle: long-lived per-home FUSE mount. One mount per home
+#      (~/.mirror, ~/.reed, ~/.mara); a supervision tree at each home
+#      spawns on first need; cargo / erlc / flang invocations reuse
+#      the same mount across calls. BEAM philosophy — long-lived
+#      supervised processes, persistent state, not per-cargo-invocation
+#      mount-then-unmount churn.
+#   4. Lens primitive at @mirror/store altitude: deferred to v1; lands
+#      together with write semantics. The two are a pair because write
+#      through cross-shard references needs the Lens primitive at the
+#      Splinter level; either alone is half a feature.
+#
+# === Body status ===
+#
+# Substrate-level declaration only this tick. The Rust extraction
+# (lifting fragmentation/vcs/git/src/fuse.rs into a `fragmentation-fuse`
+# workspace member with a `BackingStore` trait; introducing
+# `SplinterBackingStore` consuming @mirror/store; swapping
+# bootstrap/src/lens_unix.rs's `UnixLens` materialize-path to a
+# kernel-mediated FUSE-backed path) is the NEXT tick. This shard
+# paints the picture so the implementation tick has a target shape
+# already declared at substrate altitude.
+#
+# v0 keeps the materialize sub-species as a fallback (declared as
+# `@mirror/lens/unix/materialize` in a forward-promised sibling shard);
+# this fuse sub-species becomes the default once the workspace extract
+# lands. Read-only at v0 means `mount` and `path` and `backing` carry
+# bodies; the family-root's `write` action declared in
+# shards/mirror/lens/unix.mirror is forward-promised to v1 for this
+# sub-species (the obligation block `\` stays empty at the family
+# root, and the v1 cut lands write semantics + the
+# @mirror/store Lens primitive together; see roadmap doc).
+#
+# === Substrate-pull placement ===
+#
+# Path-namespace property: this file at
+# `shards/mirror/lens/unix/fuse.mirror` declares
+# `@mirror/lens/unix/fuse` and only that. Sibling sub-species at
+# `shards/mirror/lens/unix/<platform>.mirror` will declare the
+# corresponding namespaces.
+#
+# Spec context: roadmap/wip/mirror-lens-unix.md (the v0+v1 cascade
+#               this sub-species opens),
+#               docs/specs/spectral-runtime.md §3, §5 (the ouroboros
+#               pipeline; per-home gen_prism roots; the runtime-target
+#               framing the family root closes),
+#               docs/specs/mirror-native-vcs.md §2.2 (fragmentation
+#               workspace layout this sub-species's Rust home rides on),
+#               docs/specs/threat-model-v0.md §3 A4 (sign-verify at
+#               spawn altitude; per-home FUSE mounts are the
+#               spawn-isolation surface).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-fragmentation-is-the-rust-substrate]]
+#                      (the Rust home is fragmentation; mirror consumes
+#                      the trait surface),
+#                      [[architecture-mirror-store-vs-spectral-db]]
+#                      (the open/closed contract — fragmentation-fuse
+#                      is open; mirror consumes the open trait),
+#                      [[architecture-three-tier-stack]] (per-home
+#                      supervision tree is the lifecycle altitude).
+# Related shards: lens/unix.mirror (the family root; this sub-species's
+#                 parent — abstract impedance surface declared there),
+#                 lens.mirror (the family root above),
+#                 store.mirror (the carrier; oid, bytes, shard_ref,
+#                 splinter_graph — what the BackingStore trait abstracts
+#                 over so the same fuser machinery serves
+#                 SplinterBackingStore and GitBackingStore alike),
+#                 glass.mirror (verdict / imperfect / transparency).
+# Path-namespace property: this file at
+# `shards/mirror/lens/unix/fuse.mirror` declares
+# `@mirror/lens/unix/fuse` and only that.
+
+prism @mirror/lens/unix/fuse {
+  focus mount
+  project path
+  split backing
+  shift altitude
+  settle mount
+}
+
+# === Backing store discriminator ===
+#
+# The substrate primitive the v0 → v1 extraction abstracts over.
+# `vcs/git/src/fuse.rs` currently couples its fuser::Filesystem
+# handler methods to a git repository; the extraction lifts that
+# coupling behind a `BackingStore` trait so the same 26 handler
+# methods, inode table, and transparent traversal serve any
+# content-addressed store. The two concrete bindings at extract
+# time:
+#
+#   splinter_backing — mirror's @mirror/store binding; consumes the
+#                      Splinter / oid / shard_ref vocabulary; the
+#                      canonical binding for v0 and beyond.
+#   git_backing      — the existing fragmentation/vcs/git binding;
+#                      kept as a sibling for adapter reuse and the
+#                      cross-substrate cross-walk this sub-species
+#                      preserves (per
+#                      [[architecture-fragmentation-is-the-rust-substrate]]).
+#
+# Closed sum, no stringly tags per [[feedback-no-bare-types]].
+type backing_store = splinter_backing | git_backing
+
+# === Action surface ===
+#
+# Honest `partials` from birth per recognition #306: each action that
+# can carry residual opacity returns `imperfect` from
+# shards/glass.mirror. The family root at shards/mirror/lens/unix.mirror
+# declares the parent surface (mount / path / read / write / stat); this
+# sub-species's actions are the kernel-mediated specializations that
+# refine the family root's abstract bodies. The names match by design
+# so a downstream consumer can resolve at either altitude.
+
+# mount(home) — bind a per-home FUSE mount at the home's canonical
+# path (~/.mirror, ~/.reed, ~/.mara). Long-lived: one mount per home,
+# spawned by the supervision tree at first need; survives cargo /
+# erlc / flang invocations; drop semantics tied to home shutdown, not
+# handle shutdown.
+#
+# `imperfect` because the mount can fail with opacity: the home's
+# backing store may not be reachable (failure(reason)), the macFUSE /
+# fuser kernel binding may be absent (partial(opacity) — kernel
+# extension not loaded), or the mount-point may already be occupied
+# by a stale mount (failure(reason)). On success, carries the FUSE
+# mount handle.
+mount(home: ref) -> imperfect { \ }
+
+# path(mount, p) — look up a Unix path within a mounted home view.
+# Pure substrate at this sub-species's altitude: the fuser
+# Filesystem's lookup / readdir handlers walk the backing store's
+# oid-graph to resolve the path; this action declares that lookup
+# without escaping the substrate.
+#
+# `imperfect` because the lookup can carry opacity: the path may not
+# resolve in the mounted oid-graph (failure(reason)), the backing
+# store may have drifted past verify (partial(opacity_map)), or the
+# mount may have been unbound while the lookup was in flight
+# (failure(reason)). On success, carries the resolved file handle.
+path(mount: ref, p: ref) -> imperfect { \ }
+
+# backing(mount) — read the backing store discriminator for a mounted
+# home view. Lets downstream consumers (Reflection reading
+# cross-shard reference reports per error-as-question.md §5.3, the
+# v1 Lens primitive composition) decide which carrier they're
+# observing. Total at the substrate altitude — no opacity possible —
+# so the return type is the closed-sum directly.
+backing(mount: ref) -> backing_store { \ }
+
+out @mirror/lens/unix/fuse
+out backing_store
+out mount
+out path
+out backing
