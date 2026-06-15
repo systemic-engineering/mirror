@@ -9,7 +9,7 @@
     # its runtime are version-locked. Bumping this rev means rebuilding both.
     nixpkgs.url     = "github:NixOS/nixpkgs/fef9403a3e4d31b0a23f0bacebbec52c248fbb51";
     flake-utils.url = "github:numtide/flake-utils";
-    flakes.url      = "path:/Users/alexwolf/.flakes";
+    flakes.url      = "github:systemic-engineering/flakes";
     flakes.inputs.nixpkgs.follows = "nixpkgs";
     flakes.inputs.flake-utils.follows = "flake-utils";
   };

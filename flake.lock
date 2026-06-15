@@ -29,14 +29,17 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1778937730,
-        "narHash": "sha256-m/asZWTOs0h18WVaTEG0uoTB1keTSzY8w2LohcQLMs0=",
-        "path": "/Users/alexwolf/.flakes",
-        "type": "path"
+        "lastModified": 1781525089,
+        "narHash": "sha256-fQc75rTSzyiggTVr1gR4GqFEprk5MeOo8VaWTIX+4uQ=",
+        "owner": "systemic-engineering",
+        "repo": "flakes",
+        "rev": "079ef897d1954e865587e2e44862068b71468884",
+        "type": "github"
       },
       "original": {
-        "path": "/Users/alexwolf/.flakes",
-        "type": "path"
+        "owner": "systemic-engineering",
+        "repo": "flakes",
+        "type": "github"
       }
     },
     "nixpkgs": {
