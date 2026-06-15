@@ -57,13 +57,13 @@ jobs:
         env:
           LAPACK_DIR: /usr/lib/x86_64-linux-gnu
           BLAS_DIR: /usr/lib/x86_64-linux-gnu
-          RUSTFLAGS: "-L native=/usr/lib/x86_64-linux-gnu"
-        run: nix develop -c cargo build --release --manifest-path bootstrap/Cargo.toml
+        run: |
+          GFORT_DIR=$(dirname $(gfortran -print-file-name=libgfortran.so.5))
+          export RUSTFLAGS="-L native=/usr/lib/x86_64-linux-gnu -L native=$GFORT_DIR -C link-arg=-Wl,-rpath,/usr/lib/x86_64-linux-gnu -C link-arg=-Wl,-rpath,$GFORT_DIR"
+          nix develop -c cargo build --release --manifest-path bootstrap/Cargo.toml
 
       - name: Run kintsugi self-host
         run: |
-          GFORT_DIR=$(dirname $(gfortran -print-file-name=libgfortran.so.5))
-          export LD_LIBRARY_PATH="$GFORT_DIR:/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH"
           ./bootstrap/target/release/mirror kintsugi --ci --shatter 4 boot/std \
             | tee /tmp/kintsugi-verdict.mirror
           ./bootstrap/target/release/mirror kintsugi --ci --format=json --shatter 4 boot/std \

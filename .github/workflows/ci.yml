@@ -18,10 +18,10 @@ jobs:
         env:
           LAPACK_DIR: /usr/lib/x86_64-linux-gnu
           BLAS_DIR: /usr/lib/x86_64-linux-gnu
-          RUSTFLAGS: "-L native=/usr/lib/x86_64-linux-gnu"
         run: |
           GFORT_DIR=$(dirname $(gfortran -print-file-name=libgfortran.so.5))
-          nix develop -c bash -c "export LD_LIBRARY_PATH=$GFORT_DIR:/usr/lib/x86_64-linux-gnu:\$LD_LIBRARY_PATH && just check"
+          export RUSTFLAGS="-L native=/usr/lib/x86_64-linux-gnu -L native=$GFORT_DIR -C link-arg=-Wl,-rpath,/usr/lib/x86_64-linux-gnu -C link-arg=-Wl,-rpath,$GFORT_DIR"
+          nix develop -c just check
 
   notify-on-failure:
     if: failure()
