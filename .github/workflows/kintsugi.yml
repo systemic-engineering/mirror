@@ -61,21 +61,24 @@ jobs:
           CARGO_BUILD_TARGET: x86_64-unknown-linux-gnu
         run: |
           GFORT_DIR=$(dirname $(gfortran -print-file-name=libgfortran.so.5))
-          export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS="-L native=/usr/lib/x86_64-linux-gnu -L native=$GFORT_DIR -C link-arg=-Wl,-rpath,/usr/lib/x86_64-linux-gnu -C link-arg=-Wl,-rpath,$GFORT_DIR"
+          # NB: only rpath the gfortran-specific subdir; rpathing
+          # /usr/lib/x86_64-linux-gnu would override the nix-store libc.so.6
+          # the binary is linked against.
+          export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS="-L native=/usr/lib/x86_64-linux-gnu -L native=$GFORT_DIR -C link-arg=-Wl,-rpath,$GFORT_DIR"
           nix develop -c cargo build --release --manifest-path bootstrap/Cargo.toml
 
       - name: Run kintsugi self-host
         run: |
-          # Track down where update-alternatives points libblas.so.3 / liblapack.so.3.
           BLAS_LIB=$(dpkg -L libblas3 2>/dev/null | grep 'libblas.so.3$' | head -1)
           LAPACK_LIB=$(dpkg -L liblapack3 2>/dev/null | grep 'liblapack.so.3$' | head -1)
-          GFORT_DIR=$(dirname $(gfortran -print-file-name=libgfortran.so.5))
-          export LD_LIBRARY_PATH="$(dirname $BLAS_LIB):$(dirname $LAPACK_LIB):$GFORT_DIR:/usr/lib/x86_64-linux-gnu"
+          BLAS_DIR=$(dirname "$BLAS_LIB")
+          LAPACK_DIR=$(dirname "$LAPACK_LIB")
           BIN=./bootstrap/target/x86_64-unknown-linux-gnu/release/mirror
-          $BIN kintsugi --ci --shatter 4 boot/std \
-            | tee /tmp/kintsugi-verdict.mirror
-          $BIN kintsugi --ci --format=json --shatter 4 boot/std \
-            > /tmp/kintsugi-verdict.json
+          # Run inside the nix shell so the binary finds the nix-store libc
+          # it was linked against; LD_LIBRARY_PATH layers in apt-installed BLAS/LAPACK
+          # subdirs only (NOT /usr/lib/x86_64-linux-gnu which would override libc).
+          nix develop -c bash -c "export LD_LIBRARY_PATH=$BLAS_DIR:$LAPACK_DIR:\$LD_LIBRARY_PATH && $BIN kintsugi --ci --shatter 4 boot/std | tee /tmp/kintsugi-verdict.mirror"
+          nix develop -c bash -c "export LD_LIBRARY_PATH=$BLAS_DIR:$LAPACK_DIR:\$LD_LIBRARY_PATH && $BIN kintsugi --ci --format=json --shatter 4 boot/std > /tmp/kintsugi-verdict.json"
           jq -e '.verdict != "failure"' /tmp/kintsugi-verdict.json
 
       - uses: actions/upload-artifact@v4
