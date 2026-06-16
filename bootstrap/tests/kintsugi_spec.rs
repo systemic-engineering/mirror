@@ -15,7 +15,7 @@
 //! (file:line:col extraction from cargo stderr) is deferred to the
 //! @mirror/mosaic substrate.
 //!
-//! Per T11.2.5 the default emission is mirror-text; `--format=json`
+//! Per T11.2.5 the default emission is mirror-text; `--out=@data/json`
 //! routes through the @io boundary.
 //!
 //! Per [[feedback-no-new-rust]]: this Rust function is dispatch glue
@@ -148,15 +148,15 @@ fn pass_spec_target_field_echoes_spec_path() {
     assert_eq!(agg.get("target"), Some(&expected));
 }
 
-// ── JSON path (the @io boundary, behind --format=json) ────────────────────────
+// ── JSON path (the @io boundary, behind --out=@data/json) ────────────────────────
 
 #[test]
 fn spec_format_json_emits_valid_json() {
-    let out = run_ki(&["--format=json", PASS_SPEC]);
+    let out = run_ki(&["--out=@data/json", PASS_SPEC]);
     assert_eq!(
         out.status.code(),
         Some(0),
-        "--format=json spec walker exit code must be 0"
+        "--out=@data/json spec walker exit code must be 0"
     );
     let stdout = String::from_utf8_lossy(&out.stdout);
     let v: Value = serde_json::from_str(&stdout).unwrap_or_else(|e| {

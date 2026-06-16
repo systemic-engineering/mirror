@@ -1,5 +1,5 @@
 //! T11.2.5 — `mirror kintsugi --ci <directory>` corpus walker emits
-//! stringified mirror AST by default. JSON only under `--format=json`.
+//! stringified mirror AST by default. JSON only under `--out=@data/json`.
 //!
 //! Aggregation rules (unchanged from T11.3):
 //!
@@ -90,7 +90,7 @@ fn parse_ci_json(out: &std::process::Output) -> Value {
     let stdout = String::from_utf8_lossy(&out.stdout);
     serde_json::from_str(&stdout).unwrap_or_else(|e| {
         panic!(
-            "--ci --format=json output is not valid JSON: {e}\n---stdout---\n{stdout}\n---stderr---\n{}",
+            "--ci --out=@data/json output is not valid JSON: {e}\n---stdout---\n{stdout}\n---stderr---\n{}",
             String::from_utf8_lossy(&out.stderr)
         )
     })
@@ -306,19 +306,19 @@ fn ci_single_file_mode_unchanged() {
     );
 }
 
-// ── JSON path (behind --format=json) — the @io boundary ───────────────────────
+// ── JSON path (behind --out=@data/json) — the @io boundary ───────────────────────
 
 #[test]
 fn ci_format_json_dir_emits_valid_json() {
-    let out = run_ci(&["--ci", "--format=json", PASS_FIXTURE]);
+    let out = run_ci(&["--ci", "--out=@data/json", PASS_FIXTURE]);
     assert_eq!(out.status.code(), Some(0));
     let v = parse_ci_json(&out);
-    assert!(v.is_object(), "--format=json on dir must be a JSON object");
+    assert!(v.is_object(), "--out=@data/json on dir must be a JSON object");
 }
 
 #[test]
 fn ci_format_json_dir_has_aggregate_required_fields() {
-    let out = run_ci(&["--ci", "--format=json", PASS_FIXTURE]);
+    let out = run_ci(&["--ci", "--out=@data/json", PASS_FIXTURE]);
     let v = parse_ci_json(&out);
     for field in [
         "verdict",
@@ -331,21 +331,21 @@ fn ci_format_json_dir_has_aggregate_required_fields() {
     ] {
         assert!(
             v.get(field).is_some(),
-            "--format=json missing `{field}`; got: {v}"
+            "--out=@data/json missing `{field}`; got: {v}"
         );
     }
 }
 
 #[test]
 fn ci_format_json_dir_per_file_is_array() {
-    let out = run_ci(&["--ci", "--format=json", PASS_FIXTURE]);
+    let out = run_ci(&["--ci", "--out=@data/json", PASS_FIXTURE]);
     let v = parse_ci_json(&out);
     assert!(v["per_file"].is_array(), "per_file must be a JSON array");
 }
 
 #[test]
 fn ci_format_json_pass_corpus_aggregate_is_success() {
-    let out = run_ci(&["--ci", "--format=json", PASS_FIXTURE]);
+    let out = run_ci(&["--ci", "--out=@data/json", PASS_FIXTURE]);
     let v = parse_ci_json(&out);
     assert_eq!(v["verdict"].as_str(), Some("success"));
     assert_eq!(v["dark_count"].as_u64(), Some(0));
@@ -355,7 +355,7 @@ fn ci_format_json_pass_corpus_aggregate_is_success() {
 
 #[test]
 fn ci_format_json_partial_corpus_aggregate_is_partial() {
-    let out = run_ci(&["--ci", "--format=json", PARTIAL_FIXTURE]);
+    let out = run_ci(&["--ci", "--out=@data/json", PARTIAL_FIXTURE]);
     let v = parse_ci_json(&out);
     assert_eq!(v["verdict"].as_str(), Some("partial"));
     let dark = v["dark_count"].as_u64().unwrap();
@@ -364,9 +364,9 @@ fn ci_format_json_partial_corpus_aggregate_is_partial() {
 
 #[test]
 fn ci_format_json_single_file_mode_unchanged() {
-    // T11.2's JSON shape preserved under --format=json: no per_file,
+    // T11.2's JSON shape preserved under --out=@data/json: no per_file,
     // no files_processed.
-    let out = run_ci(&["--ci", "--format=json", "boot/std/nl.mirror"]);
+    let out = run_ci(&["--ci", "--out=@data/json", "boot/std/nl.mirror"]);
     let v = parse_ci_json(&out);
     assert_eq!(v["verdict"].as_str(), Some("success"));
     assert!(v.get("per_file").is_none());

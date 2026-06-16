@@ -54,8 +54,8 @@ echo "::group::kintsugi (substrate-native)"
 run_mirror kintsugi --ci --shatter "$SHATTER" "$TARGET" | tee "$MIRROR_VERDICT"
 echo "::endgroup::"
 
-echo "::group::kintsugi (@io crossing: --format=json)"
-run_mirror kintsugi --ci --format=json --shatter "$SHATTER" "$TARGET" > "$JSON_VERDICT"
+echo "::group::kintsugi (@io crossing: --out=@data/json)"
+run_mirror kintsugi --ci --out=@data/json --shatter "$SHATTER" "$TARGET" > "$JSON_VERDICT"
 cat "$JSON_VERDICT"
 echo "::endgroup::"
 

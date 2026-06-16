@@ -344,7 +344,7 @@ fn usage() {
     merr!("  mirror <command> [args...]            (legacy subcommand surface)");
     merr!("  mirror '<mq-query>' < input           (mq pipeline over stdin)");
     merr!("  mirror <input> '<mq-query>'           (mq pipeline over input file)");
-    merr!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi [--ci [--out mirror|json | --format mirror|json]] [--shatter N] <file|dir>");
+    merr!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi [--ci [--out @data/json|@data/mirror|@io/dir('path')]] [--shatter N] <file|dir>");
     merr!("examples:");
     merr!("  cat mirror.ll | mirror '@code/llvm/ir |> @mirror/kintsugi |> @mirror/butterfly'");
 }
@@ -1403,6 +1403,48 @@ fn parse_substrate_ref_to_format(s: &str) -> Option<CiFormat> {
     }
 }
 
+/// Parse the parametric substrate ref `@io/dir('path')` and return the
+/// inner path. Same `splinter(@code)` / `mosaic(altitude)` parametric
+/// syntax mirror already uses at type-constructor sites — lifted here
+/// to the CLI value position. The single-quote shape is the substrate
+/// convention; double-quoted variants are not accepted.
+fn parse_io_dir_arg(s: &str) -> Option<String> {
+    let rest = s.strip_prefix("@io/dir('")?;
+    let arg = rest.strip_suffix("')")?;
+    Some(arg.to_string())
+}
+
+/// Dispatch a `--out` substrate ref value. Updates `ci_format` for
+/// projection refs (`@data/json`, `@data/mirror`) and `out_dir` for the
+/// parametric directory ref (`@io/dir('path')`). Returns Err(()) on any
+/// failure after printing a diagnostic to stderr.
+fn dispatch_out_substrate_ref(
+    value: &str,
+    ci_format: &mut CiFormat,
+    out_dir: &mut Option<String>,
+) -> Result<(), ()> {
+    if !value.starts_with('@') {
+        merr!(
+            "--out requires a substrate ref (e.g. @data/json or @io/dir('path')); got {}",
+            value
+        );
+        return Err(());
+    }
+    if let Some(path) = parse_io_dir_arg(value) {
+        *out_dir = Some(path);
+        return Ok(());
+    }
+    if let Some(f) = parse_substrate_ref_to_format(value) {
+        *ci_format = f;
+        return Ok(());
+    }
+    merr!(
+        "no projection registered for substrate ref: {} (try @data/json, @data/mirror, or @io/dir('path'))",
+        value
+    );
+    Err(())
+}
+
 /// Rust-side mirror of the `type verdict = { ... }` record declared in
 /// `boot/std/kintsugi.mirror` (T11.2.6 substrate-pull closure).
 ///
@@ -2400,81 +2442,30 @@ pub fn dispatch(args: &[String]) -> i32 {
             transform = Some(rest.to_string());
         } else if a == "--out" {
             if i + 1 >= args.len() {
-                merr!("--out requires a value (substrate ref like @data/json, or `mirror`|`json`, or a directory path)");
+                merr!("--out requires a substrate ref (e.g. @data/json or @io/dir('path'))");
                 return 1;
             }
-            // Three-way dispatch:
-            // 1. Substrate ref `@<X>` → substrate-correct projection vocabulary
-            //    (per Alex's 2026-06-16 substrate-pull: `out` keyword's
-            //    value space IS the substrate namespace).
-            // 2. CiFormat bare string (`mirror`|`json`) → legacy alias
-            //    kept for the v0.1 composite-action compat path.
-            // 3. Otherwise → fall through to migration directory path.
-            // Future tick hard-cuts (2) and (3) once the composite action
-            // moves to substrate refs.
+            // Hard cut: `--out` REQUIRES a substrate ref (@<X> or
+            // @<X>(<args>)). Bare strings (json|mirror) and bare paths
+            // are rejected per Alex's 2026-06-16 directive.
             let value = &args[i + 1];
-            if value.starts_with('@') {
-                match parse_substrate_ref_to_format(value) {
-                    Some(f) => ci_format = f,
-                    None => {
-                        merr!(
-                            "no projection registered for substrate ref: {} (try @data/json or @data/mirror)",
-                            value
-                        );
-                        return 1;
-                    }
-                }
-            } else {
-                match parse_ci_format(value) {
-                    Some(f) => ci_format = f,
-                    None => out_dir = Some(value.clone()),
-                }
+            if dispatch_out_substrate_ref(value, &mut ci_format, &mut out_dir).is_err() {
+                return 1;
             }
             i += 1;
         } else if let Some(rest) = a.strip_prefix("--out=") {
-            if rest.starts_with('@') {
-                match parse_substrate_ref_to_format(rest) {
-                    Some(f) => ci_format = f,
-                    None => {
-                        merr!(
-                            "no projection registered for substrate ref: {} (try @data/json or @data/mirror)",
-                            rest
-                        );
-                        return 1;
-                    }
-                }
-            } else {
-                match parse_ci_format(rest) {
-                    Some(f) => ci_format = f,
-                    None => out_dir = Some(rest.to_string()),
-                }
+            if dispatch_out_substrate_ref(rest, &mut ci_format, &mut out_dir).is_err() {
+                return 1;
             }
         } else if a == "--ci" {
             ci = true;
-        } else if a == "--format" {
-            if i + 1 >= args.len() {
-                merr!("--format requires a value (mirror|json)");
-                return 1;
-            }
-            match parse_ci_format(&args[i + 1]) {
-                Some(f) => ci_format = f,
-                None => {
-                    merr!(
-                        "unknown --format value: {} (expected: mirror|json)",
-                        args[i + 1]
-                    );
-                    return 1;
-                }
-            }
-            i += 1;
-        } else if let Some(rest) = a.strip_prefix("--format=") {
-            match parse_ci_format(rest) {
-                Some(f) => ci_format = f,
-                None => {
-                    merr!("unknown --format value: {} (expected: mirror|json)", rest);
-                    return 1;
-                }
-            }
+        } else if a == "--format" || a.starts_with("--format=") {
+            // Hard cut: --format is removed. Per Alex's 2026-06-16
+            // substrate-pull, the substrate-correct vocabulary is
+            // `--out @data/json` (substrate refs through the `out`
+            // keyword's namespace). Emit a migration hint and exit.
+            merr!("--format is removed; use --out @data/json (or @data/mirror) instead");
+            return 1;
         }
         i += 1;
     }
@@ -2491,7 +2482,6 @@ pub fn dispatch(args: &[String]) -> i32 {
                 || a == "--shatter"
                 || a == "--transform"
                 || a == "--out"
-                || a == "--format"
             {
                 j += 2;
                 continue;
@@ -2531,7 +2521,7 @@ pub fn dispatch(args: &[String]) -> i32 {
                 ci_format,
             ),
             None => {
-                merr!("usage: mirror kintsugi [--ci [--out mirror|json | --format mirror|json]] [--shatter N] [--transform <mq>] [--out <path>] <file|dir>");
+                merr!("usage: mirror kintsugi [--ci [--out @data/json|@data/mirror|@io/dir('path')]] [--shatter N] [--transform <mq>] <file|dir>");
                 1
             }
         },

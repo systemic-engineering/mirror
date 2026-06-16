@@ -7,7 +7,7 @@
 //! `<key> <value>` lines, lossless and human-readable.
 //!
 //! JSON appears only at the `@io` boundary — the action's `run.sh`
-//! invokes `--format=json` when it needs to set `$GITHUB_OUTPUT`.
+//! invokes `--out=@data/json` when it needs to set `$GITHUB_OUTPUT`.
 //!
 //! ## Default (mirror-text) shape
 //!
@@ -39,7 +39,7 @@
 //! dark_count   1
 //! ```
 //!
-//! ## JSON shape (behind `--format=json`)
+//! ## JSON shape (behind `--out=@data/json`)
 //!
 //! Same fields. T11.2/T11.3 contract preserved: the JSON envelope keeps
 //! `verdict | target | objective | iterations | dark_count`, plus
@@ -107,7 +107,7 @@ fn parse_ci_json(out: &std::process::Output) -> Value {
     let stdout = String::from_utf8_lossy(&out.stdout);
     serde_json::from_str(&stdout).unwrap_or_else(|e| {
         panic!(
-            "--ci --format=json output is not valid JSON: {e}\n---stdout---\n{stdout}\n---stderr---\n{}",
+            "--ci --out=@data/json output is not valid JSON: {e}\n---stdout---\n{stdout}\n---stderr---\n{}",
             String::from_utf8_lossy(&out.stderr)
         )
     })
@@ -257,43 +257,43 @@ fn without_ci_no_verdict_record_on_stdout() {
     );
 }
 
-// ── JSON path (behind --format=json) — the @io boundary ────────────────────────
+// ── JSON path (behind --out=@data/json) — the @io boundary ────────────────────────
 
 #[test]
 fn ci_format_json_emits_valid_json() {
-    let out = run_ci(&["--ci", "--format=json", FIXTURE]);
+    let out = run_ci(&["--ci", "--out=@data/json", FIXTURE]);
     assert_eq!(
         out.status.code(),
         Some(0),
-        "--ci --format=json exit code must be 0 when JSON emits cleanly"
+        "--ci --out=@data/json exit code must be 0 when JSON emits cleanly"
     );
     let v = parse_ci_json(&out);
-    assert!(v.is_object(), "--format=json output must be a JSON object");
+    assert!(v.is_object(), "--out=@data/json output must be a JSON object");
 }
 
 #[test]
 fn ci_format_json_has_required_fields() {
-    let out = run_ci(&["--ci", "--format=json", FIXTURE]);
+    let out = run_ci(&["--ci", "--out=@data/json", FIXTURE]);
     let v = parse_ci_json(&out);
     for field in ["verdict", "target", "objective", "iterations", "dark_count"] {
         assert!(
             v.get(field).is_some(),
-            "--format=json output missing field `{field}`; got: {v}"
+            "--out=@data/json output missing field `{field}`; got: {v}"
         );
     }
 }
 
 #[test]
 fn ci_format_json_target_echoes_input_path() {
-    let out = run_ci(&["--ci", "--format=json", FIXTURE]);
+    let out = run_ci(&["--ci", "--out=@data/json", FIXTURE]);
     let v = parse_ci_json(&out);
     assert_eq!(v["target"].as_str(), Some(FIXTURE));
 }
 
 #[test]
 fn ci_format_json_is_deterministic_across_runs() {
-    let a = run_ci(&["--ci", "--format=json", FIXTURE]);
-    let b = run_ci(&["--ci", "--format=json", FIXTURE]);
+    let a = run_ci(&["--ci", "--out=@data/json", FIXTURE]);
+    let b = run_ci(&["--ci", "--out=@data/json", FIXTURE]);
     let va = parse_ci_json(&a);
     let vb = parse_ci_json(&b);
     assert_eq!(va["objective"], vb["objective"]);
