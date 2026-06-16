@@ -18,7 +18,7 @@ The release workflow targets three platforms:
 
 ## Two cache layers
 
-### 1. Magic Nix Cache (default, free, no setup)
+### 1. Magic Nix Cache (default on linux, BROKEN on darwin)
 
 Wired by default via
 `systemic-engineering/ci/actions/nix-setup@main` →
@@ -34,10 +34,23 @@ inside GitHub's cache infrastructure.
 each new flake-input revision. GitHub's 10 GB cache eviction is
 LRU — frequently-used paths stay warm, rarely-used ones drop.
 
-For v0.1.1 we ship with Magic Nix Cache only. If the first release
-build of a given flake pin succeeds (even slowly), all subsequent
-release tags reuse the cached `/nix/store/<hash>-flang-rt-21.1.8`
-path within the retention window.
+**KNOWN BROKEN ON DARWIN (2026-06-16).** Empirically observed in
+release run https://github.com/systemic-engineering/mirror/actions/runs/27605989894
+on the v0.1.1 attempt: the magic-nix-cache static binary fails to
+load its dylibs on macOS-14 (the `Referenced from: ...magic-nix-cache`
+fragment in the log is the dyld stub before the link error). The
+step then hangs in `Waiting for magic-nix-cache to start...` until
+GitHub's 6-hour job timeout fires. Job log evidence:
+
+```
+  2026-06-16T08:53:53.3445Z Waiting for magic-nix-cache to start...
+  2026-06-16T08:53:53.3467Z   Referenced from: <...> magic-nix-cache
+  2026-06-16T13:01:06.2956Z ##[error]The operation was canceled.
+```
+
+Until this is fixed upstream (or in the nix-setup composite via
+an `enable-magic-nix-cache` opt-out), **macOS releases require
+Cachix**, which needs Alex's manual setup (next section).
 
 ### 2. Cachix (opt-in, persistent, requires account + secret)
 
@@ -74,12 +87,32 @@ as the enable flag.
 
 ## What v0.1.1 ships with
 
-- Both macOS targets restored to the release matrix.
-- Magic Nix Cache wired (default of `nix-setup@main`).
-- Cachix opt-in path wired but inactive (no secret set).
-- If the v0.1.1 release run times out on macOS: cancel, add the
-  Cachix secret per steps above, re-trigger via `workflow_dispatch`
-  with `tag: v0.1.1`.
+- Linux: builds and ships as before.
+- Both macOS targets present in the release matrix but **gated on
+  `secrets.CACHIX_AUTH_TOKEN`** via a job-level `if:`. Until the
+  secret exists, the macos-14 and macos-13 jobs are skipped (not
+  attempted, not failed — skipped). The release attaches the linux
+  binary only.
+- The wiring is in place so the moment Alex completes the Cachix
+  manual steps above, the next `git tag v0.1.2 && git push origin
+  v0.1.2` (or `workflow_dispatch` against v0.1.1) attaches the
+  macOS binaries automatically with zero further code changes.
+
+## Why macOS is gated, not attempted
+
+Alternative considered: ship macOS in the matrix without the gate,
+let it fail visibly. Rejected because:
+
+1. The failure mode is a 6-hour hang in nix-setup (the MNC dyld
+   hang above), not a clean error. That blocks the release job's
+   `needs: build` and starves the linux release of its publish step
+   for 6 hours.
+2. `fail-fast: false` doesn't help — `needs: build` waits for all
+   matrix entries to settle (succeed or fail), and a hang is
+   neither.
+3. A skipped job is a clear signal in the run summary that the
+   target needs the secret, which is more actionable than a stuck
+   job that looks like it might still finish.
 
 ## Future: FlakeHub cache
 

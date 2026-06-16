@@ -29,6 +29,10 @@ jobs:
   build:
     name: build (${{ matrix.target }})
     runs-on: ${{ matrix.runner }}
+    # Skip cachix-gated matrix entries when the secret is missing.
+    # `secrets.*` resolves to an empty string when unset; the literal
+    # 'true' coerces to a string and lets the comparison short-circuit.
+    if: matrix.needs-cachix != true || secrets.CACHIX_AUTH_TOKEN != ''
     strategy:
       fail-fast: false
       matrix:
@@ -36,21 +40,27 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             runner: ubuntu-latest
             archive: mirror-x86_64-unknown-linux-gnu.tar.gz
-          # macOS targets (v0.1.1+): the flake builds flang-rt from LLVM
-          # source on darwin. Magic Nix Cache (wired by default via
-          # systemic-engineering/ci/actions/nix-setup@main) caches it
-          # between runs of the same workflow; the first build of a given
-          # flake-input rev still pays the full cost (~30-60 min) but
-          # subsequent runs (including this one's retries) reuse the cached
-          # /nix/store path. If a job times out, set CACHIX_AUTH_TOKEN as a
-          # repo secret (see docs/CACHE.md) and the cachix opt-in step
-          # below will populate a persistent binary cache.
+            needs-cachix: false
+          # macOS targets: gated on the CACHIX_AUTH_TOKEN secret because
+          # (a) the flake builds flang-rt from LLVM source on darwin
+          # (~30-60 min cold), and (b) Magic Nix Cache's static binary
+          # has a dyld load failure on macOS-14 runners that hangs the
+          # job in "Waiting for magic-nix-cache to start..." until the
+          # workflow times out at 6 hours. Without a working cache layer,
+          # darwin builds aren't viable on free GHA runners.
+          #
+          # The job-level `if:` below skips these matrix entries when
+          # `secrets.CACHIX_AUTH_TOKEN` is unset (the v0.1.1 default).
+          # Once Alex provisions the secret per docs/CACHE.md, the next
+          # tagged release picks up both darwin targets automatically.
           - target: aarch64-apple-darwin
             runner: macos-14
             archive: mirror-aarch64-apple-darwin.tar.gz
+            needs-cachix: true
           - target: x86_64-apple-darwin
             runner: macos-13
             archive: mirror-x86_64-apple-darwin.tar.gz
+            needs-cachix: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
