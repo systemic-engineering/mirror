@@ -14,10 +14,8 @@
 
 set -euo pipefail
 
-VERSION="${1:?usage: install-mirror.sh <version>}"
-REPO="systemic-engineering/mirror"
-
-# Pre-built mode: caller (the self-host gate) supplies the binary path.
+# Pre-built mode short-circuits before any version check: the self-host
+# gate built the binary from source and the version arg is not used.
 if [[ -n "${MIRROR_BINARY:-}" ]]; then
   if [[ ! -x "$MIRROR_BINARY" ]]; then
     echo "MIRROR_BINARY=$MIRROR_BINARY not found or not executable" >&2
@@ -31,6 +29,9 @@ if [[ -n "${MIRROR_BINARY:-}" ]]; then
   echo "Using pre-built mirror at $MIRROR_BINARY"
   exit 0
 fi
+
+VERSION="${1:?usage: install-mirror.sh <version>}"
+REPO="systemic-engineering/mirror"
 
 # Strip any leading `refs/tags/` (when called with github.action_ref).
 VERSION="${VERSION#refs/tags/}"
