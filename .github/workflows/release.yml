@@ -10,9 +10,20 @@ name: release
 on:
   push:
     tags: ['v0.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to (re-)publish, e.g. v0.1.0. Must already exist.'
+        required: true
+        type: string
 
 permissions:
   contents: write   # release create + tag update
+
+env:
+  # Single source of truth for the tag we're publishing, whether triggered
+  # by tag push (github.ref_name) or by workflow_dispatch (inputs.tag).
+  TAG_NAME: ${{ inputs.tag || github.ref_name }}
 
 jobs:
   build:
@@ -31,6 +42,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG_NAME }}
 
       # Use the same nix devShell as CI/kintsugi so the full toolchain
       # (rustc, gfortran, flang, lapack, blas) resolves through one ABI
@@ -67,6 +80,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG_NAME }}
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -82,20 +97,21 @@ jobs:
       - name: Create / update GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
+          tag_name: ${{ env.TAG_NAME }}
+          name: ${{ env.TAG_NAME }}
           generate_release_notes: true
           files: |
             dist/**/mirror-*.tar.gz
             dist/checksums.txt
 
       - name: Update floating v0.1 tag
-        if: startsWith(github.ref_name, 'v0.1.')
+        if: startsWith(env.TAG_NAME, 'v0.1.')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          # Move v0.1 to point at the cut tag.
-          git tag -f v0.1 ${{ github.sha }}
+          # Move v0.1 to point at the cut tag's commit.
+          TAG_SHA=$(git rev-parse "$TAG_NAME^{commit}")
+          git tag -f v0.1 "$TAG_SHA"
           git push origin v0.1 --force
