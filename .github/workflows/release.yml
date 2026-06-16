@@ -32,7 +32,7 @@ jobs:
     # Skip cachix-gated matrix entries when the secret is missing.
     # `secrets.*` resolves to an empty string when unset; the literal
     # 'true' coerces to a string and lets the comparison short-circuit.
-    if: matrix.needs-cachix != true || secrets.CACHIX_AUTH_TOKEN != ''
+    if: matrix.needs_cachix != true || secrets.CACHIX_AUTH_TOKEN != ''
     strategy:
       fail-fast: false
       matrix:
@@ -40,7 +40,7 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             runner: ubuntu-latest
             archive: mirror-x86_64-unknown-linux-gnu.tar.gz
-            needs-cachix: false
+            needs_cachix: false
           # macOS targets: gated on the CACHIX_AUTH_TOKEN secret because
           # (a) the flake builds flang-rt from LLVM source on darwin
           # (~30-60 min cold), and (b) Magic Nix Cache's static binary
@@ -56,11 +56,11 @@ jobs:
           - target: aarch64-apple-darwin
             runner: macos-14
             archive: mirror-aarch64-apple-darwin.tar.gz
-            needs-cachix: true
+            needs_cachix: true
           - target: x86_64-apple-darwin
             runner: macos-13
             archive: mirror-x86_64-apple-darwin.tar.gz
-            needs-cachix: true
+            needs_cachix: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
