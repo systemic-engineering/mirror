@@ -135,7 +135,7 @@ in @epistemologic/cybernetic
 # Path-namespace property: this file at
 # `shards/epistemologic/cybernetic/variety.mirror` declares
 # `@epistemologic/cybernetic/variety` per
-# `@epistemologic/property/path_matches_namespace`.
+# `@epistemologic/pact/path_matches_namespace`.
 
 prism @epistemologic/cybernetic/variety {
   focus variety

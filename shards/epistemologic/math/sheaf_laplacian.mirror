@@ -147,7 +147,7 @@ in @epistemologic/math/bundle
 # Path-namespace property: this file at
 # `shards/epistemologic/math/sheaf_laplacian.mirror` declares
 # `@epistemologic/math/sheaf_laplacian` per the
-# `@epistemologic/property/path_matches_namespace` rule.
+# `@epistemologic/pact/path_matches_namespace` rule.
 
 prism @epistemologic/math/sheaf_laplacian {
   focus sheaf_laplacian

@@ -156,7 +156,7 @@ in @epistemologic
 #                 shape; same pattern).
 # Path-namespace property: this file at `shards/epistemologic/cybernetic.mirror`
 # declares `@epistemologic/cybernetic` per
-# `@epistemologic/property/path_matches_namespace`.
+# `@epistemologic/pact/path_matches_namespace`.
 
 prism @epistemologic/cybernetic {
   focus cybernetic

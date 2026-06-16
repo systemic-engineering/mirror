@@ -418,7 +418,7 @@ requires substrate_pull_preserving(target_altitude)
 # Path-namespace property: this file at
 # `shards/code/metalogue/materialize.mirror` declares
 # `@code/metalogue/materialize` per
-# `@epistemologic/property/path_matches_namespace`.
+# `@epistemologic/pact/path_matches_namespace`.
 
 out @code/metalogue/materialize
 out partition

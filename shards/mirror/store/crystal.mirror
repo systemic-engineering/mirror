@@ -192,7 +192,7 @@ in @code
 # Per shards/mirror/store.mirror's `@mirror/store/oid` precedent
 # (lines 94-100): sub-prism declarations under a parent prism use
 # `glass`, not `prism`. The path-namespace property
-# (@epistemologic/property/path_matches_namespace) verifies that
+# (@epistemologic/pact/path_matches_namespace) verifies that
 # `shards/mirror/store/crystal.mirror` declares ONLY the namespace
 # `@mirror/store/crystal` at sub-prism form.
 #

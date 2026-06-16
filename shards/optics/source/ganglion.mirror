@@ -51,7 +51,7 @@ in @optics/source
 # Per docs/specs/optical-keywords.md §1, `source` is a NEW top-level
 # declaration keyword (alongside facet / stage / aperture / splitter
 # / resonator / bench / detector). The current
-# `@epistemologic/property/keyword_matches_depth` predicate enumerates
+# `@epistemologic/pact/keyword_matches_depth` predicate enumerates
 # `prism | glass | pact` only; it does NOT yet recognize `source`.
 # This shard's first operational use of `source` at depth 3
 # generates the opacity that drives the property's substrate-pull —

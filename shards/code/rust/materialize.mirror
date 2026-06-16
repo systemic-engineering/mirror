@@ -198,7 +198,7 @@ target_altitude(d: declaration) -> ref { \ }
 # Path-namespace property: this file at
 # `shards/code/rust/materialize.mirror` declares
 # `@code/rust/materialize` per
-# `@epistemologic/property/path_matches_namespace`.
+# `@epistemologic/pact/path_matches_namespace`.
 
 out @code/rust/materialize
 out classify

@@ -27,7 +27,7 @@ in @uuid/spectral
 # Analogue to BEAM's `application` behaviour: the parentless
 # supervisor at the root of an OTP application tree. Every other
 # gen_prism in the substrate descends from root through a finite
-# chain of parent edges (per `@epistemologic/property/parent_acyclic`,
+# chain of parent edges (per `@epistemologic/pact/parent_acyclic`,
 # commit 0921dca).
 #
 # === The forward-promise this tick closes ===
@@ -47,7 +47,7 @@ in @uuid/spectral
 #
 # That tick is this tick. The root supervisor TYPE lands here; its
 # self-parenting invariant terminates the existing acyclic chain at
-# `@epistemologic/property/parent_acyclic` (NOT a new bilateral —
+# `@epistemologic/pact/parent_acyclic` (NOT a new bilateral —
 # see "Self-parenting invariant" section below).
 #
 # === The keyword decision ===
@@ -92,7 +92,7 @@ in @uuid/spectral
 # a bounded number of steps.
 #
 # NOT a new bilateral pair (STOP-condition 1 from the brief
-# resolved): the existing `@epistemologic/property/parent_acyclic`
+# resolved): the existing `@epistemologic/pact/parent_acyclic`
 # (commit 0921dca) ALREADY names the chain-termination invariant.
 # The property reads:
 #
@@ -131,7 +131,7 @@ in @uuid/spectral
 #
 # Carrier choice rationale: `ref` is the existing substrate primitive
 # (used throughout the property layer as `file: ref` — see
-# @epistemologic/property/keyword_matches_depth, parent_acyclic,
+# @epistemologic/pact/keyword_matches_depth, parent_acyclic,
 # operator_matches_composition_primitive, etc.). It carries a host-
 # resolvable reference at the substrate altitude; the realisation
 # layer maps `ref` to the appropriate host concept (filesystem path,
@@ -341,7 +341,7 @@ glass @spectral/root {
 # (byte-equality on the dark 80 bits per uuid_spectral's
 # identity_signal). The parent_edge produced by this equality is the
 # substrate's self-loop — the BASE CASE of
-# @epistemologic/property/parent_acyclic's chain-termination
+# @epistemologic/pact/parent_acyclic's chain-termination
 # predicate (commit 0921dca). The fracture body
 # @kintsugi/fracture/parent_cycle (commit 20fcde5) emits re-parent-
 # to-root morphisms that PRESUPPOSE this self-loop exists; this

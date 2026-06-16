@@ -146,7 +146,7 @@ in @epistemologic/math/sheaf_laplacian
 # Path-namespace property: this file at
 # `shards/epistemologic/math/curvature.mirror` declares
 # `@epistemologic/math/curvature` per the
-# `@epistemologic/property/path_matches_namespace` rule.
+# `@epistemologic/pact/path_matches_namespace` rule.
 
 prism @epistemologic/math/curvature {
   focus curvature
