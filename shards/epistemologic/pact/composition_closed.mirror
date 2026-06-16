@@ -1,0 +1,128 @@
+in @glass
+
+# Property: a corpus is composition-closed iff every `in @X` statement
+# across the corpus resolves to a `glass`/`prism`/`pact` declaration
+# somewhere in the same corpus.
+#
+# Dependency-graph closure: the directed graph of imports has no
+# edges escaping the declared-namespace set. A dangling `in @bogus`
+# is a structural break in the dependency graph; the kintsugi loop
+# sees the break as a dark region and mutates against it.
+#
+# === Operational discharge ===
+#
+# This property names what Mara's cross-shard resolver (mirror commit
+# `128e0d2`, the @io floor) already discharges. The resolver walks
+# `shards/` + `boot/std/` once per invocation, builds a HashSet of every
+# concrete top-level `glass | prism | pact @<X>` declaration, then
+# scans each loaded file for `in @<Y>` statements; any `@<Y>` not in
+# the declared-namespace index counts toward that file's `dark_count`
+# and downgrades its verdict to `failure`. The Rust impl in
+# `bootstrap/src/lib.rs` is the realisation of this property today.
+#
+# === Path discipline ===
+#
+# Lands at `@epistemologic/pact/composition_closed`, not
+# `@epistemologic/property/composition_closed`, per
+# @epistemologic/pact/keyword_matches_path_root
+# (Mara's d498fc0 rename closure). The keyword `pact` lines up with
+# the first path segment after `@epistemologic` — self-witnessing
+# under `keyword_matches_path_root` on the first frame.
+#
+# === Bilateral pattern ===
+#
+# Per [[architecture-property-fracture-bilateral]]:
+# declarative property half at `@epistemologic/pact/composition_closed`
+# (THIS shard); operational discharge half is the Rust resolver at
+# `bootstrap/src/lib.rs` (`collect_declared_namespaces` and
+# `count_unresolved_imports`). The fracture body chain (route the
+# discharge through `splinter(ast)` instead of hardcoded Rust) is
+# forward-promised at the @kintsugi/fracture/composition_closed
+# sibling; NOT this tick.
+#
+# === Recognition shape ===
+#
+# The substrate already had the words
+# ([[feedback-substrate-already-had-the-word]]): `in` and `out` are
+# the typed boundary terminals; `glass`/`prism`/`pact` are the
+# namespace-declaration forms. The missing edge was the semantic
+# closure across those existing terminals — a structural restriction
+# map from `in @X` to `glass|prism|pact @X` somewhere in the corpus.
+# Mara's resolver lifted the dark-region/dependency-graph vocabulary
+# `kintsugi_ci_compute` was already using locally for tokenization-
+# altitude dark spans one altitude up (semantic resolution) without
+# renaming the carrier. Smaller instance of recognition #43 (mirror
+# IS a content-addressed build system): the dependency graph the
+# build system uses for incremental invalidation IS the same graph
+# the resolver navigates.
+#
+# === Form-side discipline ===
+#
+# This property sits at the form-side of the form/process partition
+# ([[architecture-form-process-partition-at-family-root]]; the
+# @mirror = form, @kintsugi = process partition). The rule names
+# WHAT must hold across the import-dependency graph; the realisation
+# lives at @kintsugi/fracture/composition_closed (forward-promised);
+# the operator of the bridge is the kintsugi loop (substrate-pull).
+#
+# === Verdict surface ===
+#
+# Verdict surface is transparency<p>:
+#   success              -- every `in @X` in the corpus resolves to a
+#                          declared @X.
+#   failure(opacity_map) -- some `in @X` doesn't resolve; each opacity
+#                          names ONE offending (file, import) pair so
+#                          the kintsugi loop can mutate per-edge.
+#   partial(opacity_map) -- mixed corpus state; some files clean, some
+#                          carry dark imports. Typically corresponds
+#                          to partial sweeps mid-migration.
+#
+# Located transparency (not @glass.verdict): the kintsugi loop
+# consumes the opacity_map to direct mutation. Each opacity in the
+# failure/partial map names ONE offending edge; the fracture body
+# (forward-promised) emits the morphism that proposes the import
+# fix.
+
+pact @epistemologic/pact/composition_closed {
+  # The declared-namespace index over the corpus. Parallel to
+  # Rust's `collect_declared_namespaces`: walk every loaded `.mirror`
+  # file, extract every concrete top-level
+  # `glass | prism | pact @<X>` declaration, accumulate the set of
+  # declared @<X> refs.
+  #
+  # Returns the list (set-shaped) of every declared @<X> across the
+  # corpus. Parametric `@(<binder>)` heads are excluded — those are
+  # the recursion's syntactic device, not a namespace claim
+  # (parallel to @epistemologic/pact/path_matches_namespace's
+  # discipline).
+  declared_namespaces_in(corpus: ref) -> [ref] { \ }
+
+  # The unresolved-imports tally. Parallel to Rust's
+  # `count_unresolved_imports` lifted to the predicate altitude.
+  # Takes the corpus + the declared-namespace index, scans every
+  # loaded file for `in @<Y>` statements, returns the list of
+  # `@<Y>` refs that don't appear in `declared`.
+  #
+  # Multiplicity: one entry per unresolved (file, import) pair.
+  # Two files each importing `@bogus` yields two entries; one
+  # file importing both `@bogus` and `@dangling` yields two
+  # entries.
+  unresolved_imports(corpus: ref, declared: [ref]) -> [ref] { \ }
+
+  # The combined property: `composition_closed(corpus)` is
+  # success iff `unresolved_imports(corpus, declared_namespaces_in(corpus))`
+  # is empty.
+  #
+  # Verdict surface is transparency<p>:
+  #   success              -- every `in @X` in the corpus resolves.
+  #   failure(opacity_map) -- one or more unresolved imports; each
+  #                          opacity names ONE (file, import) pair.
+  #   partial(opacity_map) -- mixed: some files clean, some carry
+  #                          dark imports.
+  composition_closed(corpus: ref) -> transparency { \ }
+}
+
+out declared_namespaces_in
+out unresolved_imports
+out composition_closed
+out @epistemologic/pact/composition_closed
