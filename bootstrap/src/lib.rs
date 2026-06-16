@@ -1565,6 +1565,109 @@ fn cmd_kintsugi_ci_single(
     }
 }
 
+/// Collect declared namespaces from a directory tree of `.mirror` files.
+///
+/// Cross-shard semantic resolution surface (substrate-pull realize):
+/// scans `.mirror` files under `dir` (recursively) for top-of-line
+/// `glass @<path>` / `prism @<path>` / `grammar @<path>` declarations
+/// and accumulates the declared namespace refs into `out`. Used by the
+/// corpus walker to build a resolution index against which `in @<path>`
+/// statements are checked.
+///
+/// The scan is intentionally text-altitude (not AST-altitude): the
+/// resolver only needs to know which `@<path>` namespaces have been
+/// declared somewhere in the loaded substrate, and a line-level scan
+/// is cheap, deterministic, and grammar-free. Lines whose first
+/// non-whitespace token isn't `glass` / `prism` / `grammar` are
+/// ignored, as are commented-out declarations (`#` prefix).
+///
+/// The reference is captured up to the first whitespace, `{`, `(`, or
+/// `:` — so `grammar @mirror/grammar("mirror", ...) { ... }` and
+/// `glass @foo/bar {` both yield the bare `@<path>` ref.
+fn collect_declared_namespaces(dir: &str, out: &mut std::collections::HashSet<String>) {
+    let mut files: Vec<String> = Vec::new();
+    collect_files(dir, ".mirror", &mut files);
+    for path in &files {
+        let source = match fs::read_to_string(path) {
+            Ok(s) => s,
+            Err(_) => continue,
+        };
+        for raw_line in source.lines() {
+            let line = raw_line.trim_start();
+            if line.starts_with('#') {
+                continue;
+            }
+            // Match `glass `, `prism `, `grammar ` prefixes.
+            let rest = if let Some(r) = line.strip_prefix("glass ") {
+                r
+            } else if let Some(r) = line.strip_prefix("prism ") {
+                r
+            } else if let Some(r) = line.strip_prefix("grammar ") {
+                r
+            } else {
+                continue;
+            };
+            let rest = rest.trim_start();
+            if !rest.starts_with('@') {
+                continue;
+            }
+            // Capture the @-ref up to the first delimiter.
+            let end = rest
+                .find(|c: char| c.is_whitespace() || c == '{' || c == '(' || c == ':' || c == ',')
+                .unwrap_or(rest.len());
+            let r#ref = &rest[..end];
+            if r#ref.len() > 1 {
+                out.insert(r#ref.to_string());
+            }
+        }
+    }
+}
+
+/// Count `in @<path>` statements in a `.mirror` file whose `@<path>`
+/// reference is not present in `declared`.
+///
+/// The substrate-pull recognition: a dangling `in @<path>` IS a dark
+/// region in the corpus's dependency graph. The kintsugi loop's
+/// `dark_count` was previously blind to it — only tokenization-altitude
+/// dark spans were counted. This function extends `dark_count` with
+/// the semantic-altitude unresolved-import count so the resolver
+/// surfaces the gap.
+///
+/// Text-altitude scan (same rationale as `collect_declared_namespaces`):
+/// `in @<path>` is a single line form, and tokenize already parses it
+/// as `AstKind::In`. Doing a text scan here keeps the corpus walker
+/// independent of the in-flight AST shape; the contract is just "every
+/// `in @<path>` resolves to a declared namespace somewhere in the
+/// corpus + shard tree".
+fn count_unresolved_imports(file: &str, declared: &std::collections::HashSet<String>) -> u64 {
+    let source = match fs::read_to_string(file) {
+        Ok(s) => s,
+        Err(_) => return 0,
+    };
+    let mut unresolved: u64 = 0;
+    for raw_line in source.lines() {
+        let line = raw_line.trim_start();
+        if line.starts_with('#') {
+            continue;
+        }
+        let rest = match line.strip_prefix("in ") {
+            Some(r) => r.trim_start(),
+            None => continue,
+        };
+        if !rest.starts_with('@') {
+            continue;
+        }
+        let end = rest
+            .find(|c: char| c.is_whitespace() || c == '{' || c == '(' || c == ':' || c == ',')
+            .unwrap_or(rest.len());
+        let r#ref = &rest[..end];
+        if r#ref.len() > 1 && !declared.contains(r#ref) {
+            unresolved += 1;
+        }
+    }
+    unresolved
+}
+
 /// Emit an aggregate CI verdict for a directory of `.mirror` files
 /// (T11.3, T11.2.5). Walks recursively via `collect_files`, sorts the
 /// list for determinism, computes a per-file verdict for each, and
@@ -1582,6 +1685,23 @@ fn cmd_kintsugi_ci_corpus(
     collect_files(dir, ".mirror", &mut files);
     files.sort();
 
+    // Cross-shard semantic resolution index (substrate-pull realize):
+    // the corpus's `in @<path>` statements resolve against declared
+    // `glass @<path>` / `prism @<path>` / `grammar @<path>` namespaces
+    // in both the corpus directory under test AND the repo's `shards/`
+    // tree (the substrate's authoritative source per
+    // [[architecture-shards-as-substrate-source]]). The `boot/std/`
+    // legacy tree is included as a fallback per the bootstrap-retirement
+    // shrinkage contract; both substrate roots can satisfy an import.
+    let mut declared: std::collections::HashSet<String> = std::collections::HashSet::new();
+    collect_declared_namespaces(dir, &mut declared);
+    if std::path::Path::new("shards").is_dir() {
+        collect_declared_namespaces("shards", &mut declared);
+    }
+    if std::path::Path::new("boot/std").is_dir() {
+        collect_declared_namespaces("boot/std", &mut declared);
+    }
+
     let mut per_file: Vec<PerFileVerdict> = Vec::with_capacity(files.len());
     let mut total_objective: f64 = 0.0;
     let mut total_dark: u64 = 0;
@@ -1591,8 +1711,19 @@ fn cmd_kintsugi_ci_corpus(
     let mut all_success = true;
 
     for path in &files {
-        let (verdict, objective, iterations, dark_count) =
+        let (mut verdict, objective, iterations, mut dark_count) =
             kintsugi_ci_compute(path, shatter, transform);
+        // Cross-shard semantic resolution: count unresolved `in @<path>`
+        // statements as additional dark regions and downgrade the
+        // per-file verdict to `failure` when any unresolved import is
+        // found. A dangling cross-shard import is a structural break,
+        // not a soft `partial` — the dependency graph has no edge to
+        // close.
+        let unresolved = count_unresolved_imports(path, &declared);
+        if unresolved > 0 {
+            dark_count = dark_count.saturating_add(unresolved);
+            verdict = "failure";
+        }
         total_objective += objective;
         total_dark += dark_count;
         if iterations > max_iterations {

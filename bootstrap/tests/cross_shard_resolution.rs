@@ -107,10 +107,7 @@ fn unresolved_import_surfaces_in_dark_count() {
     let stdout = String::from_utf8_lossy(&out.stdout);
     let records = split_records(&stdout);
     let agg = &records[0];
-    let dark_count_str = agg
-        .get("dark_count")
-        .map(String::as_str)
-        .unwrap_or("0");
+    let dark_count_str = agg.get("dark_count").map(String::as_str).unwrap_or("0");
     let dark_count: usize = dark_count_str.trim_matches('"').parse().unwrap_or(0);
     assert!(
         dark_count >= 1,
