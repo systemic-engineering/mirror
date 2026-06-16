@@ -110,9 +110,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          # Move v0.1 to point at the cut tag's commit.
+          # Use update-ref instead of `git tag -f`: the latter respects
+          # tag.gpgsign / tag.forceSignAnnotated in any inherited gitconfig
+          # and will prompt for a tag message in non-interactive CI.
           TAG_SHA=$(git rev-parse "$TAG_NAME^{commit}")
-          git tag -f v0.1 "$TAG_SHA"
-          git push origin v0.1 --force
+          git update-ref refs/tags/v0.1 "$TAG_SHA"
+          git push --force origin refs/tags/v0.1
