@@ -1388,6 +1388,21 @@ fn parse_ci_format(s: &str) -> Option<CiFormat> {
     }
 }
 
+/// Map a substrate ref (`@<namespace>`) to a CiFormat at the @io
+/// boundary. Per Alex's 2026-06-16 substrate-pull insight: `--out` should
+/// accept substrate refs (the `out` keyword's value space IS the
+/// substrate namespace, not a closed enum of bare strings). The receiver
+/// glasses live at `shards/mirror/data/<X>.mirror` (Mara's T16 cascade);
+/// this hardcoded dispatch is the @io floor that a future tick lifts to
+/// a substrate-driven registry via the cross-shard resolver.
+fn parse_substrate_ref_to_format(s: &str) -> Option<CiFormat> {
+    match s {
+        "@data/json" => Some(CiFormat::Json),
+        "@data/mirror" | "@data/mirror-text" => Some(CiFormat::MirrorText),
+        _ => None,
+    }
+}
+
 /// Rust-side mirror of the `type verdict = { ... }` record declared in
 /// `boot/std/kintsugi.mirror` (T11.2.6 substrate-pull closure).
 ///
@@ -2385,26 +2400,54 @@ pub fn dispatch(args: &[String]) -> i32 {
             transform = Some(rest.to_string());
         } else if a == "--out" {
             if i + 1 >= args.len() {
-                merr!("--out requires a value (mirror|json) or a directory path");
+                merr!("--out requires a value (substrate ref like @data/json, or `mirror`|`json`, or a directory path)");
                 return 1;
             }
-            // Substrate-pull: `out` is the substrate-correct projection
-            // keyword (the @io export vocabulary every shard uses). When
-            // the value parses as a CiFormat ("mirror" | "mirror-text" |
-            // "json"), `--out` is the substrate-correct alias for
-            // `--format`. Otherwise, fall through to the legacy
-            // migration `--out <path>` meaning. A future tick collapses
-            // `--format` after the composite action updates.
+            // Three-way dispatch:
+            // 1. Substrate ref `@<X>` → substrate-correct projection vocabulary
+            //    (per Alex's 2026-06-16 substrate-pull: `out` keyword's
+            //    value space IS the substrate namespace).
+            // 2. CiFormat bare string (`mirror`|`json`) → legacy alias
+            //    kept for the v0.1 composite-action compat path.
+            // 3. Otherwise → fall through to migration directory path.
+            // Future tick hard-cuts (2) and (3) once the composite action
+            // moves to substrate refs.
             let value = &args[i + 1];
-            match parse_ci_format(value) {
-                Some(f) => ci_format = f,
-                None => out_dir = Some(value.clone()),
+            if value.starts_with('@') {
+                match parse_substrate_ref_to_format(value) {
+                    Some(f) => ci_format = f,
+                    None => {
+                        merr!(
+                            "no projection registered for substrate ref: {} (try @data/json or @data/mirror)",
+                            value
+                        );
+                        return 1;
+                    }
+                }
+            } else {
+                match parse_ci_format(value) {
+                    Some(f) => ci_format = f,
+                    None => out_dir = Some(value.clone()),
+                }
             }
             i += 1;
         } else if let Some(rest) = a.strip_prefix("--out=") {
-            match parse_ci_format(rest) {
-                Some(f) => ci_format = f,
-                None => out_dir = Some(rest.to_string()),
+            if rest.starts_with('@') {
+                match parse_substrate_ref_to_format(rest) {
+                    Some(f) => ci_format = f,
+                    None => {
+                        merr!(
+                            "no projection registered for substrate ref: {} (try @data/json or @data/mirror)",
+                            rest
+                        );
+                        return 1;
+                    }
+                }
+            } else {
+                match parse_ci_format(rest) {
+                    Some(f) => ci_format = f,
+                    None => out_dir = Some(rest.to_string()),
+                }
             }
         } else if a == "--ci" {
             ci = true;
