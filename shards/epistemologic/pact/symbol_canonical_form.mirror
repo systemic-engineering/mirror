@@ -5,10 +5,10 @@ in @glass
 #
 # THIRD INSTANCE of bilateral pattern #53 (property/fracture; promoted
 # 2026-06-10). First instance: keyword/depth
-# (@epistemologic/property/keyword_matches_depth +
+# (@epistemologic/pact/keyword_matches_depth +
 # @kintsugi/fracture/keyword; 2026-06-10, 5e68df9 + d908798). Second
 # instance: gate/diff-closure
-# (@epistemologic/property/gate_matches_diff_closure +
+# (@epistemologic/pact/gate_matches_diff_closure +
 # @kintsugi/fracture/gate; 2026-06-10, b8755cc + 20c5d97). This shard +
 # its sibling fracture body (@kintsugi/fracture/symbol_lift) are the
 # THIRD instance, landing at the SYMBOL altitude (one altitude down
@@ -133,7 +133,7 @@ in @glass
 # vocabulary table so the kintsugi loop reads the lift directly,
 # rather than the formatter inventing a per-symbol rule each time.
 
-pact @epistemologic/property/symbol_canonical_form {
+pact @epistemologic/pact/symbol_canonical_form {
   # The (location, engineer_form, canonical_form) triples observed
   # in `file`. Each entry names ONE symbol token site whose engineer
   # form has a canonical equivalent per the multi-form table above.
@@ -172,4 +172,4 @@ out symbol_sites
 out is_inference_context
 out canonical_form
 out symbol_canonical_form
-out @epistemologic/property/symbol_canonical_form
+out @epistemologic/pact/symbol_canonical_form

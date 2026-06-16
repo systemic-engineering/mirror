@@ -28,7 +28,7 @@ in @glass
 # the single canonical-keyword file to every shard file. Self-correcting
 # substrate: rename a file, get a compile error.
 
-pact @epistemologic/property/path_matches_namespace {
+pact @epistemologic/pact/path_matches_namespace {
   # The namespace implied by a file's path under `shards/`.
   # `shards/foo/bar.mirror` -> `@foo/bar`.
   path_namespace(file: ref) -> ref { \ }
@@ -45,4 +45,4 @@ pact @epistemologic/property/path_matches_namespace {
 out path_namespace
 out declared_namespaces
 out path_matches_namespace
-out @epistemologic/property/path_matches_namespace
+out @epistemologic/pact/path_matches_namespace

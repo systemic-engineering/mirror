@@ -8,22 +8,22 @@ in @glass
 # (property/fracture; promoted 2026-06-10). The bilateral cascade
 # closes its three-altitude column with this landing:
 #
-#   Altitude 1 (keyword): @epistemologic/property/keyword_matches_depth
+#   Altitude 1 (keyword): @epistemologic/pact/keyword_matches_depth
 #                         + @kintsugi/fracture/keyword
 #                         (2026-06-10, 5e68df9 + d908798;
 #                         per-predicate variant).
-#   Altitude 2 (operator): @epistemologic/property/operator_matches_composition_primitive
+#   Altitude 2 (operator): @epistemologic/pact/operator_matches_composition_primitive
 #                          + @kintsugi/fracture/operator_match
 #                          (THIS SHARD + sibling tick; parametric-over-table
 #                          variant — the operator audit table from
 #                          docs/specs/optical-keywords.md §13.1 is the
 #                          parametric vocabulary).
-#   Altitude 3 (symbol):  @epistemologic/property/symbol_canonical_form
+#   Altitude 3 (symbol):  @epistemologic/pact/symbol_canonical_form
 #                         + @kintsugi/fracture/symbol_lift
 #                         (2026-06-11; parametric-over-table variant —
 #                         the multi-form symbol vocabulary table is the
 #                         parametric vocabulary).
-#   Meta:                 @epistemologic/property/dissonance_partials_match_ast_breadth
+#   Meta:                 @epistemologic/pact/dissonance_partials_match_ast_breadth
 #                         + @kintsugi/fracture/partials_align
 #                         (2026-06-11, fd344bf + 5c4e3ca;
 #                         parametric-over-computation variant — the
@@ -294,13 +294,13 @@ in @glass
 #                 lenses, not just shell).
 # Path-namespace property: this file at
 # `shards/epistemologic/property/operator_matches_composition_primitive.mirror`
-# declares `@epistemologic/property/operator_matches_composition_primitive`
+# declares `@epistemologic/pact/operator_matches_composition_primitive`
 # as a species under the @epistemologic/property family.
 # Keyword/depth property: this declaration is depth-2 from the
 # @epistemologic family root; per recognition #46 it uses `pact` (the
 # property-declaration form; recognition #37 promoted 2026-06-10).
 
-pact @epistemologic/property/operator_matches_composition_primitive {
+pact @epistemologic/pact/operator_matches_composition_primitive {
   # The operator-usage sites observed in `file`. Each entry names ONE
   # composition-operator usage site whose operator + endpoint apertures
   # are read by the property. Sites in parametric @(<binder>) heads
@@ -340,4 +340,4 @@ out operator_sites
 out composition_primitive_of
 out required_primitive_at
 out operator_matches_composition_primitive
-out @epistemologic/property/operator_matches_composition_primitive
+out @epistemologic/pact/operator_matches_composition_primitive

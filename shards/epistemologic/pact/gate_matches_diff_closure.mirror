@@ -51,7 +51,7 @@ in @glass
 # kintsugi. The property names the rule; the fracture realises it; the
 # kintsugi loop is the bridge.
 #
-# Bilateral with @epistemologic/property/keyword_matches_depth (the
+# Bilateral with @epistemologic/pact/keyword_matches_depth (the
 # first instance of the bilateral pattern, candidate recognition #53):
 # keyword_matches_depth constrains WHICH KEYWORD a declaration uses;
 # gate_matches_diff_closure constrains WHICH CHECKS a gate runs. Same
@@ -76,7 +76,7 @@ in @glass
 # Per [[architecture-mirror-as-content-addressed-build-system]]: the
 # substrate had every primitive; this property names the discipline.
 
-pact @epistemologic/property/gate_matches_diff_closure {
+pact @epistemologic/pact/gate_matches_diff_closure {
   # The set of checks the gate declares it WILL run (its declared
   # run set). One entry per check name; entries are gate-altitude
   # refs to the check declaration.
@@ -111,4 +111,4 @@ pact @epistemologic/property/gate_matches_diff_closure {
 out gate_run_set
 out diff_closure_intersect
 out gate_matches_diff_closure
-out @epistemologic/property/gate_matches_diff_closure
+out @epistemologic/pact/gate_matches_diff_closure

@@ -6,13 +6,13 @@ in @glass
 #
 # FOURTH INSTANCE of bilateral pattern #53 (property/fracture; promoted
 # 2026-06-10). First instance: keyword/depth
-# (@epistemologic/property/keyword_matches_depth +
+# (@epistemologic/pact/keyword_matches_depth +
 # @kintsugi/fracture/keyword; 2026-06-10, 5e68df9 + d908798). Second
 # instance: gate/diff-closure
-# (@epistemologic/property/gate_matches_diff_closure +
+# (@epistemologic/pact/gate_matches_diff_closure +
 # @kintsugi/fracture/gate; 2026-06-10, b8755cc + 20c5d97). Third
 # instance: symbol/canonical-form
-# (@epistemologic/property/symbol_canonical_form +
+# (@epistemologic/pact/symbol_canonical_form +
 # @kintsugi/fracture/symbol_lift; 2026-06-11). This shard + its sibling
 # fracture body (@kintsugi/fracture/partials_align) are the FOURTH
 # instance, landing at the META-FRACTURE altitude: the bilateral
@@ -238,13 +238,13 @@ in @glass
 #                 `location`, `transparency`, `splinter(ast)`).
 # Path-namespace property: this file at
 # `shards/epistemologic/property/dissonance_partials_match_ast_breadth.mirror`
-# declares `@epistemologic/property/dissonance_partials_match_ast_breadth`
+# declares `@epistemologic/pact/dissonance_partials_match_ast_breadth`
 # as a species under the @epistemologic/property family.
 # Keyword/depth property: this declaration is depth-2 from the
 # @epistemologic family root; per recognition #46 it uses `pact` (the
 # property-declaration form; recognition #37 promoted 2026-06-10).
 
-pact @epistemologic/property/dissonance_partials_match_ast_breadth {
+pact @epistemologic/pact/dissonance_partials_match_ast_breadth {
   # The breadth — the count of distinct AST nodes the splinter(ast)
   # actually rewrites against its source. For a pure-rename splinter
   # (one token swap), breadth = 1. For an elaboration that touches
@@ -281,4 +281,4 @@ pact @epistemologic/property/dissonance_partials_match_ast_breadth {
 out ast_breadth
 out fracture_partials_sites
 out dissonance_partials_match_ast_breadth
-out @epistemologic/property/dissonance_partials_match_ast_breadth
+out @epistemologic/pact/dissonance_partials_match_ast_breadth

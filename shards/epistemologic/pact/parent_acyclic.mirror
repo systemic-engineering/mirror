@@ -7,13 +7,13 @@ in @spectral/parent
 #
 # SIXTH INSTANCE of bilateral pattern #53 (property/fracture;
 # promoted 2026-06-10). First instance: keyword/depth
-# (@epistemologic/property/keyword_matches_depth +
+# (@epistemologic/pact/keyword_matches_depth +
 # @kintsugi/fracture/keyword; 2026-06-10, 5e68df9 + d908798).
 # Second instance: gate/diff-closure
-# (@epistemologic/property/gate_matches_diff_closure +
+# (@epistemologic/pact/gate_matches_diff_closure +
 # @kintsugi/fracture/gate; 2026-06-10, b8755cc + 20c5d97). Third
 # instance: symbol/canonical-form
-# (@epistemologic/property/symbol_canonical_form +
+# (@epistemologic/pact/symbol_canonical_form +
 # @kintsugi/fracture/symbol_lift; 2026-06-11, 95f4639 + f083a55).
 # Fourth instance: partials/AST-breadth (meta-fracture; 2026-06-11,
 # fd344bf + 5c4e3ca). Fifth instance: operator/composition-primitive
@@ -300,14 +300,14 @@ in @spectral/parent
 #                 `location`, `transparency`).
 # Path-namespace property: this file at
 # `shards/epistemologic/property/parent_acyclic.mirror`
-# declares `@epistemologic/property/parent_acyclic` as a species
+# declares `@epistemologic/pact/parent_acyclic` as a species
 # under the @epistemologic/property family.
 # Keyword/depth property: this declaration is depth-2 from the
 # @epistemologic family root; per recognition #46 it uses `pact`
 # (the property-declaration form; recognition #37 promoted
 # 2026-06-10).
 
-pact @epistemologic/property/parent_acyclic {
+pact @epistemologic/pact/parent_acyclic {
   # The carrier — the substrate's set of parent_edges at the
   # moment the property is queried. The realisation layer
   # discharges this by projecting `parent_edge` records from
@@ -345,4 +345,4 @@ pact @epistemologic/property/parent_acyclic {
 
 out parent_edges_in
 out parent_acyclic
-out @epistemologic/property/parent_acyclic
+out @epistemologic/pact/parent_acyclic

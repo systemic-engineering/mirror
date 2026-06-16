@@ -47,7 +47,7 @@ in @glass
 # Concrete vs parametric: the predicate inspects concrete @<name>
 # declarations only. Parametric @(<binder>) heads are the recursion's
 # syntactic device, not a level claim; they're skipped (parallel to
-# @epistemologic/property/path_matches_namespace).
+# @epistemologic/pact/path_matches_namespace).
 #
 # Verdict surface is transparency<p>:
 #   success              -- every keyword matches its declared depth
@@ -63,7 +63,7 @@ in @glass
 # through kintsugi. The property names the rule; the fracture
 # realises it; the kintsugi loop is the bridge.
 #
-# Bilateral with @epistemologic/property/path_matches_namespace:
+# Bilateral with @epistemologic/pact/path_matches_namespace:
 # path_matches_namespace constrains WHICH @<name> the file declares;
 # keyword_matches_depth constrains WHICH KEYWORD that @<name> uses.
 # Together they pin the declaration site uniquely from the path.
@@ -74,7 +74,7 @@ in @glass
 # keyword as the surface for declaring properties; the rule names
 # `pact` directly below.
 
-pact @epistemologic/property/keyword_matches_depth {
+pact @epistemologic/pact/keyword_matches_depth {
   # Depth implied by the declared namespace.
   # @X -> 0, @X/Y -> 1, @X/Y/Z -> 2.
   declared_depth(file: ref) -> u32 { \ }
@@ -116,4 +116,4 @@ pact @epistemologic/property/keyword_matches_depth {
 out declared_depth
 out declared_keywords
 out keyword_matches_depth
-out @epistemologic/property/keyword_matches_depth
+out @epistemologic/pact/keyword_matches_depth
