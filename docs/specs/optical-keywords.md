@@ -1905,7 +1905,7 @@ reads/writes is one altitude down (from declarations to expressions).
 A concrete instance:
 
 ```
-pact @epistemologic/property/operator_matches_composition_primitive {
+pact @epistemologic/pact/operator_matches_composition_primitive {
   declared_operator(usage_site: ref) -> text { \ }
   intended_primitive(usage_site: ref) -> text { \ }
   operator_realises_primitive(op: text, primitive: text) -> bool { \ }
@@ -2282,7 +2282,7 @@ symbol altitude; the cascade terminates there at the bottom.
 Upward, the operator and keyword altitudes are landed (or
 forward-promised); above the keyword altitude lives the
 shard-shape discipline (which is per-instance, carried by
-`@epistemologic/property/keyword_matches_depth` already). The
+`@epistemologic/pact/keyword_matches_depth` already). The
 cascade is bounded at both ends; the substrate-altitude vocabulary
 spans the band.
 

@@ -64,7 +64,7 @@ The first concrete pact lives at `shards/epistemologic/property/keyword_matches_
 The pact's structural shape:
 
 ```
-pact @epistemologic/property/keyword_matches_depth {
+pact @epistemologic/pact/keyword_matches_depth {
   declared_depth(file: ref) -> u32 { \ }
   declared_keywords(file: ref) -> [text] { \ }
   keyword_matches_depth(file: ref) -> transparency { \ }

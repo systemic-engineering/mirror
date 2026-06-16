@@ -65,7 +65,7 @@ verdict — this spec narrows its scope from per-body to per-glass).*
 >   property declares the rule (form-side); the fracture body resolves
 >   violations (kintsugi-operational); the kintsugi loop is the bridge
 >   reading transparency opacities and applying fracture-body morphisms.
->   First instance: `@epistemologic/property/keyword_matches_depth` +
+>   First instance: `@epistemologic/pact/keyword_matches_depth` +
 >   `@kintsugi/fracture/keyword` (both landed 2026-06-10 at mirror
 >   `5e68df9` and `d908798`). Pattern promotes to recognition status
 >   once a second instance exists. Forward-promised second instance:

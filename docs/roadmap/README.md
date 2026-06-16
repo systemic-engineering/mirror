@@ -104,7 +104,7 @@ The substrate is pointing at one structural move: the smallest end-to-end path f
 
 ### Recognition closure
 
-2. **Operator-altitude middle (closes #59 three-altitude cascade)** — `@epistemologic/property/operator_matches_composition_primitive` + `@kintsugi/fracture/operator_match` with honest `partials` from birth. Promotes recognition #59 (kintsugi loop altitude-portable) with witnesses at keyword + operator + symbol altitudes.
+2. **Operator-altitude middle (closes #59 three-altitude cascade)** — `@epistemologic/pact/operator_matches_composition_primitive` + `@kintsugi/fracture/operator_match` with honest `partials` from birth. Promotes recognition #59 (kintsugi loop altitude-portable) with witnesses at keyword + operator + symbol altitudes.
 
 3. **#58 v1 closure** — land `source @optics/source/ganglion/<name>` declarations for each of the 5 ganglia. Closes Surface B from Seam's #58 PROMOTE verdict (the active-spectrometer reading requires gain medium declarations).
 
