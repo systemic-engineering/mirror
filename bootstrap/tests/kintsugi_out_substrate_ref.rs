@@ -106,29 +106,77 @@ fn out_at_data_json_equals_form_emits_json() {
     });
 }
 
-// ── `--out @data/json` and `--out json` produce IDENTICAL envelopes ──────
+// ── HARD CUT — bare strings and --format no longer accepted ───────────
 //
-// The substrate-correct ref and the legacy bare string should map to the
-// same projection. This is the substrate-pull discipline: the new
-// vocabulary doesn't introduce a new shape; it just names the old shape
-// correctly. Equality on the JSON envelope guards against drift.
+// Per Alex's 2026-06-16 "hard cut" directive: the substrate vocabulary
+// replaces the pre-recognition residue. Bare `--out json` and
+// `--format=json` are NOT compatibility aliases — they're errors. The
+// CLI surface only accepts substrate refs (`@<namespace>` or
+// `@<namespace>(<args>)`).
+//
+// This is a v0.1.1 behavior change. The v0.1 composite action will be
+// updated in the same tick to call `--out @data/json` instead of
+// `--format=json`.
 
 #[test]
-fn substrate_ref_and_legacy_bare_string_produce_identical_envelope() {
-    let ref_out = run_ci(&["--ci", "--out", "@data/json", settled_fixture()]);
-    let bare_out = run_ci(&["--ci", "--out", "json", settled_fixture()]);
+fn bare_string_json_errors_after_hard_cut() {
+    let out = run_ci(&["--ci", "--out", "json", settled_fixture()]);
     assert!(
-        ref_out.status.success() && bare_out.status.success(),
-        "both runs should succeed; ref status={ref_status} bare status={bare_status}",
-        ref_status = ref_out.status,
-        bare_status = bare_out.status
-    );
-    let ref_json: serde_json::Value =
-        serde_json::from_slice(&ref_out.stdout).expect("@data/json should parse");
-    let bare_json: serde_json::Value =
-        serde_json::from_slice(&bare_out.stdout).expect("json should parse");
-    assert_eq!(
-        ref_json, bare_json,
-        "--out @data/json and --out json should produce byte-identical JSON envelopes\nref: {ref_json}\nbare: {bare_json}"
+        !out.status.success(),
+        "bare `--out json` must NOT succeed after hard cut; the substrate-correct form is `--out @data/json`. Got status={status} stdout:\n{stdout}",
+        status = out.status,
+        stdout = String::from_utf8_lossy(&out.stdout)
     );
 }
+
+#[test]
+fn format_flag_errors_after_hard_cut() {
+    let out = run_ci(&["--ci", "--format=json", settled_fixture()]);
+    assert!(
+        !out.status.success(),
+        "`--format=json` must NOT succeed after hard cut; the substrate-correct form is `--out @data/json`. Got status={status} stdout:\n{stdout}",
+        status = out.status,
+        stdout = String::from_utf8_lossy(&out.stdout)
+    );
+}
+
+// ── `--out @io/dir('path')` writes verdict files to a directory ──────────────
+//
+// The parametric substrate ref `@io/dir('path')` replaces the legacy
+// `--out <path>` bare-path semantics. Same `splinter(@code)` /
+// `mosaic(altitude)` parametric syntax mirror already uses at type
+// constructor sites — just at the CLI value position now.
+
+#[test]
+fn out_at_io_dir_writes_to_directory() {
+    let tmp = std::env::temp_dir().join(format!("mirror-out-dir-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&tmp);
+    std::fs::create_dir_all(&tmp).expect("create tmp dir");
+    let tmp_str = tmp.to_string_lossy().to_string();
+    let arg = format!("@io/dir('{}')", tmp_str);
+    let out = run_ci(&["--ci", "--out", &arg, settled_fixture()]);
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        out.status.success(),
+        "mirror kintsugi --ci --out @io/dir('{tmp_str}') {file} should exit 0; got status={status} stderr={stderr}",
+        file = settled_fixture(),
+        status = out.status,
+        stderr = stderr,
+        tmp_str = tmp_str
+    );
+    let entries: Vec<_> = std::fs::read_dir(&tmp)
+        .expect("read tmp dir")
+        .filter_map(|e| e.ok())
+        .collect();
+    assert!(
+        !entries.is_empty(),
+        "@io/dir('{}') should write at least one file to the directory; got empty",
+        tmp_str
+    );
+    let _ = std::fs::remove_dir_all(&tmp);
+}
+
+// (identical-envelopes test removed: hard cut makes `--out json` an error,
+// so the equivalence claim no longer holds. The `--out @data/json` JSON
+// shape is locked by kintsugi_ci.rs's existing JSON envelope tests after
+// they migrate to substrate refs.)
