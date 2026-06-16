@@ -4,7 +4,7 @@ in @glass
 in @nl
 in @kintsugi/consent
 in @kintsugi/morphism
-in @epistemologic/property/parent_acyclic
+in @epistemologic/pact/parent_acyclic
 
 # @kintsugi/fracture/parent_cycle — the kintsugi fracture body that
 # resolves a substrate parent_edge graph cycle by proposing a
@@ -12,7 +12,7 @@ in @epistemologic/property/parent_acyclic
 #
 # THE OPERATIONAL HALF of bilateral pattern #53's SIXTH INSTANCE. The
 # declarative half landed at
-# `@epistemologic/property/parent_acyclic` (sibling tick); this shard
+# `@epistemologic/pact/parent_acyclic` (sibling tick); this shard
 # names the auto-fracture the kintsugi loop applies when the
 # property's transparency surfaces a parent-edge cycle opacity.
 #
@@ -132,7 +132,7 @@ in @epistemologic/property/parent_acyclic
 #
 # === Re-parent to root, not terminate (variety-preserving) ===
 #
-# Per `@epistemologic/property/parent_acyclic`'s STOP-condition 3
+# Per `@epistemologic/pact/parent_acyclic`'s STOP-condition 3
 # resolution: the substrate's kintsugi discipline is variety-
 # PRESERVING (per [[architecture-kintsugi-variety-io]]; Ashby's
 # requisite variety lifted to @io). Two candidate corrections for
@@ -160,7 +160,7 @@ in @epistemologic/property/parent_acyclic
 #
 # This fracture body's emitted morphism MUST have honest
 # `score.partials` from birth or it perpetuates the very dishonesty
-# the meta-fracture (@epistemologic/property/dissonance_partials_match_ast_breadth
+# the meta-fracture (@epistemologic/pact/dissonance_partials_match_ast_breadth
 # + @kintsugi/fracture/partials_align) exists to catch.
 #
 # Compute the AST breadth of THIS fracture body's splinter(ast):
@@ -220,7 +220,7 @@ in @epistemologic/property/parent_acyclic
 # this shard's emitted morphism is consumed by the loop AND lifted
 # into a morphism_context via `paired(oscillation.anchor, m)` at
 # the active_pass altitude. Per
-# `@epistemologic/property/parent_acyclic`, the consuming property's
+# `@epistemologic/pact/parent_acyclic`, the consuming property's
 # `parent_acyclic(file: ref) -> transparency` is the gate that
 # surfaces the opacity this body resolves.
 #

@@ -4,7 +4,7 @@ in @glass
 in @nl
 in @kintsugi/consent
 in @kintsugi/morphism
-in @epistemologic/property/symbol_canonical_form
+in @epistemologic/pact/symbol_canonical_form
 
 # @kintsugi/fracture/symbol_lift — the kintsugi fracture body that
 # resolves a substrate source's engineer-typed ASCII symbol tokens to
@@ -13,7 +13,7 @@ in @epistemologic/property/symbol_canonical_form
 #
 # THE OPERATIONAL HALF of bilateral pattern #53's THIRD INSTANCE, at
 # the SYMBOL altitude. The declarative half landed at
-# `@epistemologic/property/symbol_canonical_form` (sibling tick); this
+# `@epistemologic/pact/symbol_canonical_form` (sibling tick); this
 # shard names the auto-fracture the kintsugi loop applies when the
 # property's transparency surfaces a symbol opacity.
 #
@@ -159,7 +159,7 @@ in @epistemologic/property/symbol_canonical_form
 # this shard's emitted morphism is consumed by the loop AND lifted
 # into a morphism_context via `paired(oscillation.anchor, m)` at the
 # active_pass altitude. Per
-# `@epistemologic/property/symbol_canonical_form`, the consuming
+# `@epistemologic/pact/symbol_canonical_form`, the consuming
 # property's `symbol_canonical_form(file) -> transparency` is the
 # gate that surfaces the opacity this body resolves.
 #

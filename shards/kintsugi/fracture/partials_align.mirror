@@ -4,7 +4,7 @@ in @glass
 in @nl
 in @kintsugi/consent
 in @kintsugi/morphism
-in @epistemologic/property/dissonance_partials_match_ast_breadth
+in @epistemologic/pact/dissonance_partials_match_ast_breadth
 
 # @kintsugi/fracture/partials_align — the kintsugi fracture body that
 # resolves a fracture-body-emitted morphism's `score.partials` literal
@@ -15,7 +15,7 @@ in @epistemologic/property/dissonance_partials_match_ast_breadth
 #
 # THE OPERATIONAL HALF of bilateral pattern #53's FOURTH INSTANCE. The
 # declarative half landed at
-# `@epistemologic/property/dissonance_partials_match_ast_breadth`
+# `@epistemologic/pact/dissonance_partials_match_ast_breadth`
 # (sibling tick); this shard names the auto-fracture the kintsugi loop
 # applies when the property's transparency surfaces a partials/breadth
 # opacity.
@@ -163,7 +163,7 @@ in @epistemologic/property/dissonance_partials_match_ast_breadth
 # this shard's emitted morphism is consumed by the loop AND lifted
 # into a morphism_context via `paired(oscillation.anchor, m)` at the
 # active_pass altitude. Per
-# `@epistemologic/property/dissonance_partials_match_ast_breadth`, the
+# `@epistemologic/pact/dissonance_partials_match_ast_breadth`, the
 # consuming property's
 # `dissonance_partials_match_ast_breadth(file) -> transparency` is the
 # gate that surfaces the opacity this body resolves.

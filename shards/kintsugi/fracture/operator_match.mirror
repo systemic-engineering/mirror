@@ -4,7 +4,7 @@ in @glass
 in @nl
 in @kintsugi/consent
 in @kintsugi/morphism
-in @epistemologic/property/operator_matches_composition_primitive
+in @epistemologic/pact/operator_matches_composition_primitive
 
 # @kintsugi/fracture/operator_match — the kintsugi fracture body that
 # resolves a substrate source's offending composition-operator token
@@ -13,7 +13,7 @@ in @epistemologic/property/operator_matches_composition_primitive
 #
 # THE OPERATIONAL HALF of bilateral pattern #53's OPERATOR-ALTITUDE
 # MIDDLE INSTANCE. The declarative half landed at
-# `@epistemologic/property/operator_matches_composition_primitive`
+# `@epistemologic/pact/operator_matches_composition_primitive`
 # (sibling tick); this shard names the auto-fracture the kintsugi loop
 # applies when the property's transparency surfaces an operator/
 # primitive opacity.
@@ -164,7 +164,7 @@ in @epistemologic/property/operator_matches_composition_primitive
 #
 # This fracture body's emitted morphism MUST have honest
 # `score.partials` from birth or it perpetuates the very dishonesty
-# the meta-fracture (@epistemologic/property/dissonance_partials_match_ast_breadth
+# the meta-fracture (@epistemologic/pact/dissonance_partials_match_ast_breadth
 # + @kintsugi/fracture/partials_align) exists to catch.
 #
 # Compute the AST breadth of THIS fracture body's splinter(ast):
@@ -212,7 +212,7 @@ in @epistemologic/property/operator_matches_composition_primitive
 # this shard's emitted morphism is consumed by the loop AND lifted
 # into a morphism_context via `paired(oscillation.anchor, m)` at the
 # active_pass altitude. Per
-# `@epistemologic/property/operator_matches_composition_primitive`,
+# `@epistemologic/pact/operator_matches_composition_primitive`,
 # the consuming property's
 # `operator_matches_composition_primitive(file) -> transparency` is
 # the gate that surfaces the opacity this body resolves.

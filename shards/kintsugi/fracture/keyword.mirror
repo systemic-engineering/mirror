@@ -4,7 +4,7 @@ in @glass
 in @nl
 in @kintsugi/consent
 in @kintsugi/morphism
-in @epistemologic/property/keyword_matches_depth
+in @epistemologic/pact/keyword_matches_depth
 
 # @kintsugi/fracture/keyword — the kintsugi fracture body that resolves a
 # `prism @X/Y` sub-prism declaration to `glass @X/Y` per the
@@ -12,7 +12,7 @@ in @epistemologic/property/keyword_matches_depth
 #
 # THE OPERATIONAL HALF of recognition #46's bilateral pattern. The
 # declarative half landed at
-# `@epistemologic/property/keyword_matches_depth` (sibling tick); this
+# `@epistemologic/pact/keyword_matches_depth` (sibling tick); this
 # shard names the auto-fracture the kintsugi loop applies when the
 # property's transparency surfaces a keyword/depth opacity. Per Alex's
 # verbatim recognition: "The kintsugi formatter can have an auto
@@ -109,7 +109,7 @@ in @epistemologic/property/keyword_matches_depth
 # pre-anchor; this shard's emitted morphism is consumed by the loop
 # AND lifted into a morphism_context via `paired(oscillation.anchor,
 # m)` at the active_pass altitude. Per
-# `@epistemologic/property/keyword_matches_depth`, the consuming
+# `@epistemologic/pact/keyword_matches_depth`, the consuming
 # property's `keyword_matches_depth(file: ref) -> transparency` is
 # the gate that surfaces the opacity this body resolves.
 #

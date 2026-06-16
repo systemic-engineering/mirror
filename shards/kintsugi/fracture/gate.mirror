@@ -4,7 +4,7 @@ in @glass
 in @nl
 in @kintsugi/consent
 in @kintsugi/morphism
-in @epistemologic/property/gate_matches_diff_closure
+in @epistemologic/pact/gate_matches_diff_closure
 
 # @kintsugi/fracture/gate — the kintsugi fracture body that resolves a
 # pre-commit gate's check set to its diff-closure intersection. When
@@ -15,7 +15,7 @@ in @epistemologic/property/gate_matches_diff_closure
 #
 # THE OPERATIONAL HALF of bilateral pattern #53's SECOND INSTANCE.
 # The declarative half landed at
-# `@epistemologic/property/gate_matches_diff_closure` (sibling tick);
+# `@epistemologic/pact/gate_matches_diff_closure` (sibling tick);
 # this shard names the auto-fracture the kintsugi loop applies when
 # the property's transparency surfaces a gate/closure opacity.
 #
@@ -43,7 +43,7 @@ in @epistemologic/property/gate_matches_diff_closure
 # `@epistemologic/property/<predicate>` declares WHAT must hold; a
 # matching `@kintsugi/fracture/<predicate>` declares HOW to restore
 # the property when it fails. First instance: keyword/depth
-# (@epistemologic/property/keyword_matches_depth +
+# (@epistemologic/pact/keyword_matches_depth +
 # @kintsugi/fracture/keyword). Second instance: gate/diff-closure
 # (this shard + the sibling property).
 #
