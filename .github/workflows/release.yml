@@ -36,10 +36,21 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             runner: ubuntu-latest
             archive: mirror-x86_64-unknown-linux-gnu.tar.gz
-          # macOS targets deferred to v0.1.1: the flake builds flang-rt from
-          # LLVM source on darwin (~30-60 min on a single GHA macos runner),
-          # which is too slow without a binary cache (e.g. cachix). Wire that
-          # in for v0.1.1.
+          # macOS targets (v0.1.1+): the flake builds flang-rt from LLVM
+          # source on darwin. Magic Nix Cache (wired by default via
+          # systemic-engineering/ci/actions/nix-setup@main) caches it
+          # between runs of the same workflow; the first build of a given
+          # flake-input rev still pays the full cost (~30-60 min) but
+          # subsequent runs (including this one's retries) reuse the cached
+          # /nix/store path. If a job times out, set CACHIX_AUTH_TOKEN as a
+          # repo secret (see docs/CACHE.md) and the cachix opt-in step
+          # below will populate a persistent binary cache.
+          - target: aarch64-apple-darwin
+            runner: macos-14
+            archive: mirror-aarch64-apple-darwin.tar.gz
+          - target: x86_64-apple-darwin
+            runner: macos-13
+            archive: mirror-x86_64-apple-darwin.tar.gz
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,7 +62,17 @@ jobs:
       # world. The resulting binaries reference nix-store paths via rpath
       # — v0.1 distribution is nix-friendly; v0.2 will pursue portable
       # static distribution.
+      #
+      # Cachix opt-in: if CACHIX_AUTH_TOKEN is set as a repo secret, the
+      # composite enables push+pull against the `systemic-engineering`
+      # cache so flang-rt builds (the macOS bottleneck) are shared across
+      # runs and forks. Without the secret the step is a no-op and we
+      # fall back to Magic Nix Cache (default).
       - uses: systemic-engineering/ci/actions/nix-setup@main
+        with:
+          enable-cachix: ${{ secrets.CACHIX_AUTH_TOKEN != '' }}
+          cachix-name: systemic-engineering
+          cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Build release binary
         run: nix develop -c cargo build --release --target ${{ matrix.target }} --manifest-path bootstrap/Cargo.toml
