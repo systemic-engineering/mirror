@@ -1,0 +1,372 @@
+in @prism
+in @glass
+in @meta
+in @nl
+in @mirror/store
+in @mirror/au
+in @mirror/mosaic
+in @code
+
+# @mirror/store/crystal — the polyglot, content-addressed, self-executable
+# artifact the kintsugi build settles into; altitude-4 of the build lifecycle.
+#
+# THE 2026-06-16 RECOGNITION (Alex + Reed → Mara). The kintsugi build
+# lifecycle has four altitudes; the substrate already named three; this
+# shard names the fourth:
+#
+#   1. spec     — `mirror.spec`, parsed into `manifold`. Inert declaration.
+#                  Lives at `@mirror/spec` (shards/mirror/spec.mirror).
+#   2. settle   — the kintsugi loop running; `@kintsugi/oscillate` drives
+#                  it; the ACTIVE/DARK alternation per recognition #51.
+#   3. verdict  — the property-chain record; `[property_verdict]` from
+#                  @glass; Narrative-shape wire form per `@mirror/spectral`.
+#   4. crystal  — THE OUTPUT. Polyglot. Content-addressed. Self-executable.
+#                  What this shard declares.
+#
+# stage_play (Gleam library at /Users/reed/dev/projects/stage_play/) is the
+# proximate inspiration. Its `Story → Play → Narrative` triad surfaces the
+# form/process/record partition cleanly (recognition #55: form-side names
+# state observation; process-side names transformation; record-side names
+# the verdict trace). stage_play HAS no altitude-4 — dataflow pipelines
+# don't produce artifacts; they produce reductions. Mirror has altitude-4
+# because mirror's settle PRODUCES something downstream consumers run.
+# That something IS the crystal.
+#
+# === Polyglot by construction ===
+#
+# THE LOAD-BEARING STRUCTURAL CLAIM. The crystal cannot be non-polyglot
+# because the spec doesn't compile to one language. Every kintsugi settle
+# emits at multiple @code/<lang> altitudes simultaneously: a target may
+# settle to @code/rust as a binary AND emit @ci/github YAML alongside AND
+# project @code/typescript bindings for a runtime peer. The `crystal`
+# carrier preserves those altitude boundaries STRUCTURALLY — no
+# language-erasure happens at the artifact altitude.
+#
+# `composition_graph: mosaic(@code)` IS the structural enforcement. mosaic
+# (shards/mirror/mosaic.mirror) declares `type mosaic(altitude) = ref` as
+# the universal parametric composition carrier; the @code-altitude
+# specialization names a DAG whose nodes are `@code/<lang>` grammars and
+# whose edges are compilation dependencies. The substrate rejects a
+# crystal whose composition_graph is malformed (cycles, dangling references,
+# missing @code/* nodes) because the @code-altitude mosaic algebra is
+# closed under well-typed composition.
+#
+# === Deployment is shift, not a separate noun ===
+#
+# The substrate does NOT need a `deployment` type. `shift(crystal) ->
+# @io/runtime` IS the deployment — one of the five operations applied at
+# the crystal altitude. Per shards/mirror/mosaic.mirror line 140: `shift
+# is where @io crossings happen`. The crystal's glass block below carries
+# all five operations; shift is the one that relocates the crystal to a
+# runtime.
+#
+# === The five fields ===
+#
+# Per the recognition; each field grounded in existing substrate vocabulary
+# (the substrate-already-had-the-word pattern, instance ~63):
+#
+#   oid: oid
+#     The content-address of the settled artifact. Per @mirror/store/oid
+#     (the sibling sub-prism at shards/mirror/store.mirror lines 82-105):
+#     `type oid = ref`. The crystal's identity IS its oid; two crystals
+#     with byte-equal field tuples have the same oid and ARE the same
+#     crystal. This is the inherited identity contract from @glass's
+#     splinter / shard floor.
+#
+#   section: [splinter(@code)]
+#     Language-section structure. Each splinter lives at an `@code/<lang>`
+#     altitude (per @glass's `type splinter(altitude)` — the universal
+#     content-addressed atom parametric over altitude). The list preserves
+#     ordering AND altitude boundaries: section[0] may be @code/rust at
+#     OID(A); section[1] may be @code/typescript at OID(B); the same
+#     crystal carries both without language-erasure. Substrate-pull
+#     correct: the substrate already has `splinter(altitude)` (glass.mirror)
+#     and `splinter(ast)` (the parametric quote primitive #54); `[splinter
+#     (@code)]` specializes the carrier to the language-section altitude.
+#
+#   derived_predicates: [property_verdict]
+#     The properties the kintsugi loop verified during settlement. Per
+#     @glass's `type property_verdict = { verdict: verdict, where: location
+#     }` — a verdict located at a glass-wall site. Each derived predicate
+#     is a (property, verdict, location) triple the loop ran during the
+#     settle pass. Substrate-pull-correct: this is BYTE-IDENTICAL to
+#     @mirror/shatter's section-3 `properties: [property_verdict]` field
+#     (shards/mirror/shatter.mirror line ~120). The shatter was the
+#     altitude-1 (au) projection; the crystal is the altitude-4 (artifact)
+#     projection; same carrier, same verdicts, different lifecycle phase.
+#
+#   fracture_calendar: transparency(au)
+#     au<T>'s gold-cracks made structural. The loss carrier from @glass
+#     (transparency(p) = success | partial(opacity_map) | failure(opacity_map)).
+#     Each opacity is a located fact carrying property + weight (per
+#     glass.mirror line 117); the opacity_map IS the calendar — the
+#     timeline of fractures scheduled for future kintsugi passes. The
+#     substrate-pull recognition: au's `transparency` field (au.mirror
+#     line 145) carries the residual loss at the proposal phase; the
+#     crystal's `fracture_calendar` carries the SAME residual at the
+#     artifact phase. The loop chose not to close these cracks; the
+#     calendar names what's still open. Cybersyn's algedonic loop names
+#     the same shape at the substance altitude: pain signals scheduled
+#     for next-cycle attention; here the signals are typed transparency
+#     opacities. Recognition #53 (property/fracture bilateral pattern):
+#     fracture_calendar is the substrate's altitude-4 instance of the
+#     pattern — the property side declared the gates; the fracture side
+#     wrote the morphisms; the crystal carries the cracks the morphisms
+#     didn't close.
+#
+#   composition_graph: mosaic(@code)
+#     The DAG over @code/<lang> grammars. Per @mirror/mosaic's `type
+#     mosaic(altitude) = ref` (the universal parametric composition
+#     carrier, mosaic.mirror lines 60-94): mosaic IS the composition form
+#     at every altitude; the @code-altitude specialization carries the
+#     polyglot DAG. Each node references an `@code/<lang>` grammar; each
+#     edge is a compilation dependency. The substrate enforces well-
+#     formedness through the @code-altitude mosaic algebra (no cycles,
+#     no dangling refs, no missing @code/* nodes). This IS the polyglot-
+#     by-construction structural witness.
+#
+# === The four sub-type choices: substrate-pull reading ===
+#
+# Every non-oid field rides an existing substrate carrier:
+#
+#   section            ← splinter(altitude) at @glass (glass.mirror)
+#                         specialized via `splinter(@code)` — the same
+#                         parametric-quote primitive #54 used.
+#   derived_predicates ← property_verdict at @glass (glass.mirror line ~154)
+#                         — identical shape to shatter's section-3.
+#   fracture_calendar  ← transparency(au) at @glass (glass.mirror line ~137)
+#                         — au's loss carrier lifted to artifact altitude;
+#                         identical shape to shatter's section-2.
+#   composition_graph  ← mosaic(@code) at @mirror/mosaic (mosaic.mirror)
+#                         — the parametric universal carrier specialized
+#                         to the @code namespace altitude.
+#
+# No new types invented at this shard. Four existing carriers, composed.
+# The crystal IS what falls out of altitude-4 when the substrate's prior
+# vocabulary is read at the artifact altitude. Substrate-already-had-the-
+# word; this shard names what was already in scope.
+#
+# === Relationship to neighboring altitudes ===
+#
+# crystal vs au (shards/mirror/au.mirror): au is the SINGLE-ALTITUDE
+# Fate-emitted proposal at the settle altitude; crystal is the MULTI-
+# ALTITUDE settled artifact at the post-settle altitude. au carries one
+# `altitude: ref` field (the target altitude of the proposal); crystal
+# carries a `composition_graph: mosaic(@code)` field (the DAG of all
+# altitudes the artifact composes). au is what Fate emits; crystal is
+# what kintsugi crystallizes from the settled au through the property
+# chain. settle is the Kleisli arrow `au -> Imperfect<shard>`; the
+# shard's stored composition at the multi-altitude artifact phase IS
+# the crystal.
+#
+# crystal vs shard (shards/glass.mirror): shard is the uuid_spectral-
+# addressed settled MIDDLE-layer composition (the bottom-top-middle
+# recognition's middle); crystal is what one or more shards compose
+# into at the polyglot-artifact altitude. A shard carries
+# `splinters: [splinter(altitude)]` at one altitude per shard; a
+# crystal's `section: [splinter(@code)]` carries the artifact's
+# language sections across the @code altitudes. The shard is the
+# storage primitive; the crystal is the deployable artifact.
+#
+# crystal vs shatter (shards/mirror/shatter.mirror): shatter is the
+# .shatter file disk projection — a single-altitude AST projection
+# with five sections. The crystal carries shatter's section-2
+# (transparency) AND section-3 (properties) IDENTICALLY, plus
+# language-section structure (`section`), plus the polyglot DAG
+# (`composition_graph`). shatter and crystal are sibling projections
+# at different lifecycle phases — shatter is altitude-1 (the au
+# proposal made disk-portable); crystal is altitude-4 (the settled
+# multi-altitude artifact). The shatter pair (`project`/`ingest`)
+# round-trips; the crystal's settled form is what `shift(crystal)
+# -> @io/runtime` relocates.
+#
+# crystal vs manifold (shards/mirror/spec.mirror): manifold is the
+# altitude-1 declaration shape (`mirror.spec` parsed); crystal is
+# the altitude-4 output shape. The four altitudes lift one to the
+# next: manifold → settle → verdict → crystal. Each altitude reads
+# the prior; each emits to the next. The crystal is what the
+# substrate hands to the runtime when the loop closes.
+#
+# === Why `glass` and not `prism` at this sub-prism path ===
+#
+# Per shards/mirror/store.mirror's `@mirror/store/oid` precedent
+# (lines 94-100): sub-prism declarations under a parent prism use
+# `glass`, not `prism`. The path-namespace property
+# (@epistemologic/property/path_matches_namespace) verifies that
+# `shards/mirror/store/crystal.mirror` declares ONLY the namespace
+# `@mirror/store/crystal` at sub-prism form.
+#
+# === Substrate-pull discipline ===
+#
+# Per [[feedback-substrate-pull]]: every type below rides a carrier
+# the substrate already declared. Per [[feedback-no-bare-types]]:
+# every field is a typed newtype or parametric carrier; no bare `f64`,
+# `string`, or `[T]` escapes. Per [[architecture-prism-as-trait-as-
+# everything]]: the five-operation glass block IS the canonical
+# declaration form. Per [[feedback-substrate-already-had-the-word]]:
+# the four sub-type choices honour the prior vocabulary; no invention.
+#
+# === Forward-promised actions ===
+#
+# The crystal's life-cycle actions land downstream when consumers
+# pull. Sketched, not declared this tick (per [[feedback-craft-not-
+# deliver]]):
+#
+#   crystallize(s: shard, m: mosaic(@code)) -> imperfect(crystal)
+#     The constructor. Compose a settled shard's splinters with the
+#     project's composition_graph; verify the @code-altitude mosaic
+#     algebra closes; emit imperfect<crystal> with transparency
+#     carrying the residual cracks (the fracture_calendar's source).
+#
+#   verify_composition(c: crystal) -> verdict
+#     The polyglot-by-construction integrity check. Walks the
+#     composition_graph; verifies every `@code/<lang>` node resolves;
+#     verifies no cycles; verifies every edge's compilation
+#     dependency holds. Returns @glass.verdict.
+#
+#   shift @io/runtime(c: crystal) -> runtime_handle
+#     The deployment. `shift` at the crystal altitude relocates the
+#     artifact to @io/runtime. The substrate-pull-correct form: not a
+#     separate `deploy` action; the five-operation algebra ALREADY
+#     carries the relocation verb. Lands when @io/runtime is named.
+#
+# These actions stay forward-promised this tick. The substrate-decl is
+# the carrier; the actions are the next consumers' pull.
+#
+# === Pre-AI prior art ===
+#
+# Each face of the crystal recognition has prior art; no system
+# composes them all:
+#
+#   content-addressed artifact   Nix (Dolstra 2003); Bazel (Google
+#                                 2010); IPFS (Benet 2014). Same
+#                                 content → same hash → same artifact;
+#                                 the substrate's altitude-4 instance
+#                                 of the substrate-already-had-the-
+#                                 word build-system recognition.
+#   polyglot composition         WebAssembly Component Model (W3C
+#                                 2023); GraalVM (Oracle 2018). The
+#                                 substrate's composition_graph IS
+#                                 the @code-altitude mosaic; the
+#                                 polyglot boundary is structural,
+#                                 not coordinated through a runtime
+#                                 host.
+#   self-executable              Java JAR (Sun 1996); Erlang escript
+#                                 (~1998); Docker image (2013). The
+#                                 substrate's `shift(crystal) ->
+#                                 @io/runtime` IS the same verb
+#                                 across the prior art.
+#   crystal noun                 Smalltalk image (Xerox PARC 1980);
+#                                 LISP core (1960+); the metaphor of
+#                                 a settled-running-system snapshot.
+#                                 The substrate's crystal is what
+#                                 that snapshot IS at altitude-4.
+#
+# Spec context: docs/specs/mirror-store.md (the @mirror/store family
+#               that crystal extends);
+#               docs/specs/mosaic.md §7 (the .shatter / crystal
+#               sibling projection altitude);
+#               docs/specs/au-and-conductivity.md (au's transparency
+#               carrier; crystal's fracture_calendar lifts the same).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-form-process-partition-at-family-root]]
+#                      (#55; crystal IS the record-side artifact),
+#                      [[architecture-fragmentation-is-the-rust-substrate]]
+#                      (the @mirror/store altitude crystal extends).
+# Memory: [[architecture-splinter-and-spectral-db-edges]],
+#         [[architecture-mirror-as-content-addressed-build-system]] (#43;
+#         crystal IS the build-system's output altitude),
+#         [[reference-mirror-spectral-spec]] (the kintsugi-as-oscillation
+#         spec; the loop the crystal falls out of).
+# Related shards: store.mirror (the parent prism; @mirror/store/oid is
+#                 the sibling sub-prism; crystal's oid field rides it),
+#                 glass.mirror (splinter / property_verdict / transparency
+#                 carriers — crystal's three non-oid non-graph fields),
+#                 mosaic.mirror (mosaic(altitude) — crystal's composition_graph),
+#                 au.mirror (the proposal phase crystal is the artifact
+#                 phase of), spec.mirror (the manifold crystal is the
+#                 settlement-output of), shatter.mirror (the sibling
+#                 projection at the .shatter altitude).
+# Path-namespace property: this file at `shards/mirror/store/crystal.mirror`
+# declares `@mirror/store/crystal` (and only that).
+
+# === The crystal sub-prism ===
+#
+# Per shards/mirror/store.mirror's @mirror/store/oid precedent: a
+# sub-prism declared under the parent @mirror/store. The five-operation
+# block carries crystal's algebra at the artifact altitude:
+#
+#   focus crystal    observe a crystal's state (oid + sections + verdicts).
+#   project crystal  filter a crystal by what matters (specific
+#                     @code/<lang> section; specific predicate verdict).
+#   split crystal    explore the composition_graph's structure;
+#                     enumerate the DAG's nodes and edges.
+#   shift crystal    the deployment verb. Relocates the crystal to
+#                     @io/runtime. NOT a separate noun; the substrate's
+#                     five-operation algebra ALREADY carries this.
+#   settle crystal   crystallize a settled shard into a crystal (the
+#                     constructor; verifies the composition algebra
+#                     closes; the kintsugi loop's altitude-4 output).
+glass @mirror/store/crystal {
+  focus crystal
+  project crystal
+  split crystal
+  shift crystal
+  settle crystal
+}
+
+# === the crystal record ===
+#
+# Five fields. Four substrate-pull carriers + the oid identity.
+#
+# Identity contract (inherited from @glass's content-addressing floor):
+# a crystal's identity IS its oid, computed from byte-equal
+# (section, derived_predicates, fracture_calendar, composition_graph)
+# under the substrate's content-address algebra (CoincidenceHash<5,5>
+# per shards/prism.mirror's spectral-triple framing). Two crystals
+# with equal field tuples have the same oid and ARE the same
+# crystal. This is the substrate-altitude statement of polyglot-by-
+# construction's reproducibility: same settlement, same crystal,
+# byte-equal — regardless of how many @code/<lang> altitudes the
+# composition spans.
+#
+# After settle:
+#
+#   shard's splinters → composed → composition_graph verified →
+#   property chain run → derived_predicates accumulated →
+#   residual transparency → fracture_calendar → crystal emitted.
+#
+# After shift:
+#
+#   shift crystal -> @io/runtime → the artifact runs.
+type crystal = {
+  # The content-address of the settled artifact. Per @mirror/store/oid.
+  oid: oid,
+
+  # Language-section structure. Each splinter at its own @code/<lang>
+  # altitude; the list preserves altitude boundaries within the
+  # content-addressed atom. Per @glass's splinter(altitude) carrier
+  # specialized to the @code namespace.
+  section: [splinter(@code)],
+
+  # Properties the kintsugi loop verified during settlement. Same
+  # carrier as shatter's section-3 (shards/mirror/shatter.mirror).
+  # Per @glass's property_verdict = { verdict, where: location }.
+  derived_predicates: [property_verdict],
+
+  # au<T>'s gold-cracks made structural — the timeline of opacities
+  # the loop chose not to close, scheduled for future kintsugi
+  # passes. Same carrier as shatter's section-2; the loss field of
+  # au lifted to artifact altitude. Per @glass's transparency(p).
+  fracture_calendar: transparency(au),
+
+  # The DAG over @code/<lang> grammars — the polyglot-by-construction
+  # structural witness. Per @mirror/mosaic's mosaic(altitude)
+  # specialized to the @code namespace. The substrate rejects a
+  # malformed composition_graph at this altitude.
+  composition_graph: mosaic(@code),
+}
+
+out @mirror/store/crystal
+out crystal
