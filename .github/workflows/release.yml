@@ -29,10 +29,6 @@ jobs:
   build:
     name: build (${{ matrix.target }})
     runs-on: ${{ matrix.runner }}
-    # Skip cachix-gated matrix entries when the secret is missing.
-    # `secrets.*` resolves to an empty string when unset; the literal
-    # 'true' coerces to a string and lets the comparison short-circuit.
-    if: matrix.needs_cachix != true || secrets.CACHIX_AUTH_TOKEN != ''
     strategy:
       fail-fast: false
       matrix:
@@ -40,27 +36,17 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             runner: ubuntu-latest
             archive: mirror-x86_64-unknown-linux-gnu.tar.gz
-            needs_cachix: false
-          # macOS targets: gated on the CACHIX_AUTH_TOKEN secret because
-          # (a) the flake builds flang-rt from LLVM source on darwin
-          # (~30-60 min cold), and (b) Magic Nix Cache's static binary
-          # has a dyld load failure on macOS-14 runners that hangs the
-          # job in "Waiting for magic-nix-cache to start..." until the
-          # workflow times out at 6 hours. Without a working cache layer,
-          # darwin builds aren't viable on free GHA runners.
-          #
-          # The job-level `if:` below skips these matrix entries when
-          # `secrets.CACHIX_AUTH_TOKEN` is unset (the v0.1.1 default).
-          # Once Alex provisions the secret per docs/CACHE.md, the next
-          # tagged release picks up both darwin targets automatically.
-          - target: aarch64-apple-darwin
-            runner: macos-14
-            archive: mirror-aarch64-apple-darwin.tar.gz
-            needs_cachix: true
-          - target: x86_64-apple-darwin
-            runner: macos-13
-            archive: mirror-x86_64-apple-darwin.tar.gz
-            needs_cachix: true
+          # macOS targets deferred to v0.1.2 (pending cachix). The flake
+          # builds flang-rt from LLVM source on darwin (~30-60 min cold)
+          # and Magic Nix Cache's static binary fails dyld load on the
+          # macos-14 runners (empirical, run 27605989894), hanging
+          # nix-setup in "Waiting for magic-nix-cache to start..." until
+          # GHA's 6h job timeout fires. Until Alex provisions a Cachix
+          # cache + CACHIX_AUTH_TOKEN secret (see docs/CACHE.md), darwin
+          # builds aren't viable on free GHA runners. Once that lands,
+          # v0.1.2 restores both:
+          #   - target: aarch64-apple-darwin   # runner: macos-14
+          #   - target: x86_64-apple-darwin    # runner: macos-15-intel
     steps:
       - name: Checkout
         uses: actions/checkout@v4

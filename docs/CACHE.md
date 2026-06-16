@@ -80,39 +80,39 @@ automation can create a cache namespace on a third party.
      | cachix push systemic-engineering
    ```
 
-Once `CACHIX_AUTH_TOKEN` is set as a secret, the release workflow
-will automatically enable cachix on the next tagged run. No code
-change needed — release.yml uses `secrets.CACHIX_AUTH_TOKEN != ''`
-as the enable flag.
+Once `CACHIX_AUTH_TOKEN` is set as a secret, the release workflow's
+nix-setup step automatically picks up the cache (it uses
+`secrets.CACHIX_AUTH_TOKEN != ''` as its enable flag — accessible
+at step level even though it is not at job-`if:` level).
 
 ## What v0.1.1 ships with
 
-- Linux: builds and ships as before.
-- Both macOS targets present in the release matrix but **gated on
-  `secrets.CACHIX_AUTH_TOKEN`** via a job-level `if:`. Until the
-  secret exists, the macos-14 and macos-13 jobs are skipped (not
-  attempted, not failed — skipped). The release attaches the linux
-  binary only.
-- The wiring is in place so the moment Alex completes the Cachix
-  manual steps above, the next `git tag v0.1.2 && git push origin
-  v0.1.2` (or `workflow_dispatch` against v0.1.1) attaches the
-  macOS binaries automatically with zero further code changes.
+- Linux: builds and ships as before (the same as v0.1.0, with the
+  cachix step-level wiring in place under the linux job too — no-op
+  on linux since linux doesn't need flang-rt).
+- macOS: deferred to v0.1.2. The matrix lists only the linux target;
+  the commented block at the top of `release.yml`'s matrix shows
+  exactly what to restore for v0.1.2 once the secret is set.
 
-## Why macOS is gated, not attempted
+## Why macOS isn't in the v0.1.1 matrix
 
-Alternative considered: ship macOS in the matrix without the gate,
-let it fail visibly. Rejected because:
+Alternatives considered:
 
-1. The failure mode is a 6-hour hang in nix-setup (the MNC dyld
-   hang above), not a clean error. That blocks the release job's
-   `needs: build` and starves the linux release of its publish step
-   for 6 hours.
-2. `fail-fast: false` doesn't help — `needs: build` waits for all
-   matrix entries to settle (succeed or fail), and a hang is
-   neither.
-3. A skipped job is a clear signal in the run summary that the
-   target needs the secret, which is more actionable than a stuck
-   job that looks like it might still finish.
+1. **Job-level `if:` to skip darwin entries when the secret is
+   missing.** Rejected because GitHub Actions' `matrix` and
+   `secrets` contexts are **not available** in job-level `if:`
+   expressions (only `github`, `inputs`, `needs`, `vars` are). The
+   v0.1.1 attempts at 27619624866 / 27619706640 / 27619862915 /
+   27619885842 all failed at workflow validation for this reason.
+2. **Ship macOS without the gate and let it fail.** Rejected
+   because the failure mode is a 6-hour hang in nix-setup (the
+   MNC dyld hang), not a clean error. `needs: build` waits for all
+   matrix entries to settle; a hang stalls the linux release of
+   the publish step for the full 6 hours.
+3. **Drop macOS from the matrix; document the path to v0.1.2.**
+   Chosen. v0.1.1 ships linux cleanly. Restoring macOS for v0.1.2
+   is a 3-line workflow change (uncomment the matrix entries) plus
+   the Cachix manual setup above.
 
 ## Future: FlakeHub cache
 
