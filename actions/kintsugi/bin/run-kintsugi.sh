@@ -35,12 +35,27 @@ fi
 MIRROR_VERDICT="/tmp/kintsugi-verdict.mirror"
 JSON_VERDICT="/tmp/kintsugi-verdict.json"
 
+# Self-host mode: caller built mirror inside a nix devShell. The nix
+# cc-wrapper disables auto-rpath, so the binary needs gfortran/lapack/blas
+# layered onto LD_LIBRARY_PATH at runtime. Wrap each invocation in
+# `nix develop -c` so the FFI deps resolve from /nix/store.
+run_mirror() {
+  if [[ "${NIX_SHELL:-false}" == "true" ]]; then
+    nix develop -c bash -c "
+      export LD_LIBRARY_PATH=\"\$(dirname \$(gfortran -print-file-name=libgfortran.so.5)):\$LAPACK_DIR/lib:\$BLAS_DIR/lib:\$LD_LIBRARY_PATH\"
+      mirror $*
+    "
+  else
+    mirror "$@"
+  fi
+}
+
 echo "::group::kintsugi (substrate-native)"
-mirror kintsugi --ci --shatter "$SHATTER" "$TARGET" | tee "$MIRROR_VERDICT"
+run_mirror kintsugi --ci --shatter "$SHATTER" "$TARGET" | tee "$MIRROR_VERDICT"
 echo "::endgroup::"
 
 echo "::group::kintsugi (@io crossing: --format=json)"
-mirror kintsugi --ci --format=json --shatter "$SHATTER" "$TARGET" > "$JSON_VERDICT"
+run_mirror kintsugi --ci --format=json --shatter "$SHATTER" "$TARGET" > "$JSON_VERDICT"
 cat "$JSON_VERDICT"
 echo "::endgroup::"
 

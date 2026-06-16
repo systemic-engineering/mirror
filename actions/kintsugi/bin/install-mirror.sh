@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 # Install the pinned mirror binary for this runner's OS+arch.
 #
-# Resolves the release artifact corresponding to $1 (the mirror version),
-# downloads it from the GitHub Release, verifies SHA-256 against the
-# checksum file from the release, and places `mirror` on $PATH for
-# subsequent steps.
+# Two modes:
+#   1. Pre-built (MIRROR_BINARY env var set to an existing path) — used by
+#      mirror's own self-host gate, which builds the binary from source
+#      before invoking the composite. No download, no checksum check.
+#   2. Release download (default) — resolves the release artifact
+#      corresponding to $1 (the mirror version), downloads it from the
+#      GitHub Release, verifies SHA-256 against the checksum file, and
+#      places `mirror` on $PATH for subsequent steps.
 #
 # Per kintsugi-ci-v0.1 §5.2 — ships inside the action.
 
@@ -12,6 +16,21 @@ set -euo pipefail
 
 VERSION="${1:?usage: install-mirror.sh <version>}"
 REPO="systemic-engineering/mirror"
+
+# Pre-built mode: caller (the self-host gate) supplies the binary path.
+if [[ -n "${MIRROR_BINARY:-}" ]]; then
+  if [[ ! -x "$MIRROR_BINARY" ]]; then
+    echo "MIRROR_BINARY=$MIRROR_BINARY not found or not executable" >&2
+    exit 2
+  fi
+  INSTALL_DIR="${RUNNER_TEMP:-/tmp}/mirror-install"
+  mkdir -p "$INSTALL_DIR"
+  cp "$MIRROR_BINARY" "$INSTALL_DIR/mirror"
+  chmod +x "$INSTALL_DIR/mirror"
+  echo "$INSTALL_DIR" >> "$GITHUB_PATH"
+  echo "Using pre-built mirror at $MIRROR_BINARY"
+  exit 0
+fi
 
 # Strip any leading `refs/tags/` (when called with github.action_ref).
 VERSION="${VERSION#refs/tags/}"

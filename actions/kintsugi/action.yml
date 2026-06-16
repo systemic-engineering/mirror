@@ -19,9 +19,17 @@ inputs:
     required: false
     default: 'failure'
   mirror-version:
-    description: 'Override the mirror binary version. Default: this action tag.'
+    description: 'Override the mirror binary version. Default: this action tag. Ignored when mirror-binary is set.'
     required: false
     default: ''
+  mirror-binary:
+    description: 'Path to a pre-built mirror binary. When set, skip the release download — used by mirror''s own self-host gate.'
+    required: false
+    default: ''
+  nix-shell:
+    description: 'Wrap the kintsugi invocation in `nix develop -c` so the binary finds its nix-store FFI deps (gfortran / lapack / blas) at runtime. The self-host gate sets this; downstream consumers running the published binary do not.'
+    required: false
+    default: 'false'
   post-comment:
     description: 'Post a PR comment with the verdict breakdown.'
     required: false
@@ -46,6 +54,8 @@ runs:
   steps:
     - name: Install mirror binary
       shell: bash
+      env:
+        MIRROR_BINARY: ${{ inputs.mirror-binary }}
       run: |
         ${{ github.action_path }}/bin/install-mirror.sh \
           "${{ inputs.mirror-version || github.action_ref }}"
@@ -53,6 +63,8 @@ runs:
     - name: Run kintsugi
       id: kintsugi
       shell: bash
+      env:
+        NIX_SHELL: ${{ inputs.nix-shell }}
       run: |
         ${{ github.action_path }}/bin/run-kintsugi.sh \
           --target "${{ inputs.target }}" \
