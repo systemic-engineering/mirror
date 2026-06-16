@@ -91,7 +91,8 @@ fn keyword_matches_path_root_shard_lives_under_epistemologic_pact() {
 
 #[test]
 fn keyword_matches_path_root_does_NOT_live_under_epistemologic_property() {
-    let old_path = repo_root().join("shards/epistemologic/property/keyword_matches_path_root.mirror");
+    let old_path =
+        repo_root().join("shards/epistemologic/property/keyword_matches_path_root.mirror");
     assert!(
         !old_path.exists(),
         "expected {} to NOT exist (the property's own existence at the OLD path would violate the rule it declares; if Mara accidentally lands it there, the migration starts in violation)",

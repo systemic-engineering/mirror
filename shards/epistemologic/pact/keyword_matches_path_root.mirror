@@ -1,0 +1,165 @@
+in @glass
+
+# Property: for every shard at depth >= 1 under `@epistemologic`, the
+# first path segment AFTER `@epistemologic` must equal the declaration
+# keyword used inside the file.
+#
+# Self-witnessing: this property's own shard MUST live at
+# `@epistemologic/pact/keyword_matches_path_root` and declare with
+# `pact`. It satisfies its own check on the first frame. The RED's
+# `does_NOT_live_under_epistemologic_property` assertion enforces
+# this.
+#
+# === Recognition shape ===
+#
+# Recognition #37 (`requires` IS a Paskian agreement; promoted
+# 2026-06-10) named `pact` as the property-declaration form. `pact`
+# replaced the conversation-era `grammar` keyword as the surface
+# for declaring properties. Every property shard since then
+# declares with `pact` inside the body. The path segment
+# `property` is the residue that didn't move with the keyword.
+# The substrate already had the word
+# ([[feedback-substrate-already-had-the-word]]); this property
+# names the rule that aligns the path to it.
+#
+# === Operational discharge ===
+#
+# Mara's cross-shard resolver (mirror commit `128e0d2`, the @io
+# floor that walks `shards/` + `boot/std/` and builds the
+# declared-namespace index spanning the whole corpus) makes the
+# keyword/path-root check tractable to discharge today: the
+# realisation layer projects the declared namespace and the
+# declaration keyword off the same single source of record (the
+# shard file's first concrete top-level declaration), no further
+# pipeline work required.
+#
+# === Migration intent ===
+#
+# Seven existing property shards landed under `@epistemologic/property/`
+# before this rule was named (recognition #37 promoted `pact` but the
+# path segment didn't move). They migrate to `@epistemologic/pact/`
+# under this property's gaze:
+#
+#   @epistemologic/property/path_matches_namespace
+#     -> @epistemologic/pact/path_matches_namespace
+#   @epistemologic/property/keyword_matches_depth
+#     -> @epistemologic/pact/keyword_matches_depth
+#   @epistemologic/property/parent_acyclic
+#     -> @epistemologic/pact/parent_acyclic
+#   @epistemologic/property/symbol_canonical_form
+#     -> @epistemologic/pact/symbol_canonical_form
+#   @epistemologic/property/gate_matches_diff_closure
+#     -> @epistemologic/pact/gate_matches_diff_closure
+#   @epistemologic/property/dissonance_partials_match_ast_breadth
+#     -> @epistemologic/pact/dissonance_partials_match_ast_breadth
+#   @epistemologic/property/operator_matches_composition_primitive
+#     -> @epistemologic/pact/operator_matches_composition_primitive
+#
+# Each migration is one `git mv` plus an in-file rewrite of
+# `pact @epistemologic/property/<X>` -> `pact @epistemologic/pact/<X>`
+# and `out @epistemologic/property/<X>` -> `out @epistemologic/pact/<X>`.
+# The 6 fracture-shard `in @epistemologic/property/<X>` imports in
+# `shards/kintsugi/fracture/` move in lockstep.
+#
+# === Path-root extraction ===
+#
+# For a declared namespace `@epistemologic/<root>/<rest>`, the
+# `path_root` is the first segment after `@epistemologic` (here,
+# `<root>`). For `@epistemologic/pact/keyword_matches_path_root`,
+# path_root = `pact`. For the dark shards still under
+# `@epistemologic/property/<X>`, path_root = `property`.
+#
+# === Declaration keyword ===
+#
+# `declaration_keyword` projects the keyword used in the file's
+# first concrete top-level declaration of the namespace. For
+# `pact @epistemologic/<root>/<rest> { ... }`, the keyword is
+# `pact`. The substrate's keyword inventory at depth >= 1 (per
+# @epistemologic/pact/keyword_matches_depth post-migration) is
+# `glass | pact | <optical>`; the rule below ranges over `pact`
+# specifically, since `pact` is the only keyword whose path-root
+# segment must match (the optical schematic elements live under
+# `@optics/...`, not `@epistemologic/...`; `glass` lives at the
+# substrate root).
+#
+# === Verdict surface ===
+#
+# Verdict surface is transparency<p>:
+#   success              -- the declaration keyword equals the
+#                          first path segment after `@epistemologic`
+#                          (today: `pact` matches `pact`).
+#   failure(opacity_map) -- the declaration keyword disagrees with
+#                          the path root (today: `pact` declared
+#                          under `@epistemologic/property/<X>` is
+#                          one opacity per offending shard file).
+#   partial(opacity_map) -- multiple concrete top-level @<X>
+#                          declarations, some match and some don't.
+#
+# Located transparency (not @glass.verdict): the kintsugi loop
+# consumes the opacity_map to direct migration. Each opacity in
+# the failure map names ONE offending shard file; the fracture
+# body (forward-promised sibling tick under `@kintsugi/fracture/`)
+# emits the morphism that proposes `git mv` of the offending shard
+# plus the in-file `pact @<old> -> pact @<new>` rewrite, plus the
+# `in @<old> -> in @<new>` sweep across consumers. The property
+# names the rule; the fracture realises it; the kintsugi loop is
+# the bridge.
+#
+# === Form-side discipline ===
+#
+# This property sits at the form-side of the form/process partition
+# ([[architecture-form-process-partition-at-family-root]]; the
+# @mirror = form, @kintsugi = process partition). The rule names
+# WHAT must hold at the keyword/path-root altitude; the
+# realisation lives in @kintsugi/fracture/<sibling>; the operator
+# of the bridge is the kintsugi loop (substrate-pull).
+
+pact @epistemologic/pact/keyword_matches_path_root {
+  # The path root of a file's declared namespace: the first
+  # segment after `@epistemologic`. For
+  # `@epistemologic/pact/keyword_matches_path_root` this is
+  # `pact`. For a shard still declaring under
+  # `@epistemologic/property/<X>` this is `property`.
+  #
+  # Multiple concrete top-level declarations yield one entry per
+  # declaration in declaration order.
+  path_root(file: ref) -> text { \ }
+
+  # The declaration keyword each concrete top-level @<name>
+  # declaration uses in `file`. One entry per declared namespace
+  # in declaration order, parallel to `path_root`. Entries are
+  # one of `prism | glass | pact | facet | stage | aperture |
+  # splitter | resonator | bench | source | detector` per
+  # @epistemologic/pact/keyword_matches_depth's keyword
+  # inventory.
+  declaration_keyword(file: ref) -> text { \ }
+
+  # The combined property: for every concrete top-level
+  # declaration `<keyword> @epistemologic/<root>/<rest> { ... }`
+  # in `file`, `<keyword>` equals `<root>`.
+  #
+  # Today the rule names `pact` specifically — `pact` is the
+  # only declaration keyword whose namespace lives under
+  # `@epistemologic/<keyword>/...`. The other keywords from the
+  # depth>=1 inventory (`glass`, the optical schematics) declare
+  # under other family roots (`@glass`, `@optics/...`); the rule
+  # is vacuously satisfied at those declaration sites.
+  #
+  # Verdict surface is transparency<p>:
+  #   success              -- declaration_keyword equals path_root
+  #                          for every concrete top-level
+  #                          declaration in `file`.
+  #   failure(opacity_map) -- some declaration's keyword
+  #                          disagrees with its path root; each
+  #                          opacity names ONE offending shard
+  #                          file plus the (keyword, path_root)
+  #                          pair that disagrees.
+  #   partial(opacity_map) -- multiple concrete top-level
+  #                          declarations, mixed verdict.
+  keyword_matches_path_root(file: ref) -> transparency { \ }
+}
+
+out path_root
+out declaration_keyword
+out keyword_matches_path_root
+out @epistemologic/pact/keyword_matches_path_root
