@@ -1,0 +1,25 @@
+# RED fixture for cross-shard semantic import resolution.
+#
+# Per Mara's Stage-2 observation (commit 9c358a2): the bootstrap's --ci
+# corpus walker performs tokenization-altitude resolution only and does
+# NOT semantically resolve `in @<namespace>` declarations across shards.
+# A nonexistent import currently produces verdict: success (false negative).
+#
+# The RED gate: when this fixture passes through `mirror kintsugi --ci`,
+# the verdict should be `failure` because the import below points at a
+# namespace that does not exist in any loaded shard's `out` block.
+#
+# GREEN: cross-shard semantic resolution lands; the resolver verifies
+# every `in <path>` resolves to a known `out <path>` somewhere in the
+# shard corpus, and emits a failure verdict otherwise.
+#
+# Per task #268 follow-up tick #1 (Mara's recommendation): cross-shard
+# semantic import resolution at the `mirror compile` altitude.
+
+in @bogus/namespace/does/not/exist
+
+# Trivial declaration so the file isn't otherwise empty.
+# The substrate-pull recognition: an import without a corresponding
+# export is a dark region in the dependency graph. The resolver's job
+# is to surface it as a failure verdict, not let it pass silently.
+out @bogus/namespace/does/not/exist
