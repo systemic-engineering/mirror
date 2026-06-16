@@ -65,8 +65,9 @@ fn out_json_space_form_emits_json() {
         "expected JSON envelope (starts with `{{`, ends with `}}`); got stdout:\n{}",
         stdout
     );
-    let v: serde_json::Value = serde_json::from_str(trimmed)
-        .unwrap_or_else(|e| panic!("--out json should produce valid JSON; parse error: {e}; stdout:\n{stdout}"));
+    let v: serde_json::Value = serde_json::from_str(trimmed).unwrap_or_else(|e| {
+        panic!("--out json should produce valid JSON; parse error: {e}; stdout:\n{stdout}")
+    });
     assert!(
         v.get("verdict").is_some(),
         "JSON envelope should carry `verdict` field; got: {stdout}"
@@ -93,8 +94,9 @@ fn out_json_equals_form_emits_json() {
         "expected JSON envelope (starts with `{{`); got stdout:\n{}",
         stdout
     );
-    let _: serde_json::Value = serde_json::from_str(trimmed)
-        .unwrap_or_else(|e| panic!("--out=json should produce valid JSON; parse error: {e}; stdout:\n{stdout}"));
+    let _: serde_json::Value = serde_json::from_str(trimmed).unwrap_or_else(|e| {
+        panic!("--out=json should produce valid JSON; parse error: {e}; stdout:\n{stdout}")
+    });
 }
 
 // ── `--out mirror` produces mirror-text (substrate-native default) ──────

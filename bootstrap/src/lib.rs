@@ -344,7 +344,7 @@ fn usage() {
     merr!("  mirror <command> [args...]            (legacy subcommand surface)");
     merr!("  mirror '<mq-query>' < input           (mq pipeline over stdin)");
     merr!("  mirror <input> '<mq-query>'           (mq pipeline over input file)");
-    merr!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi [--ci [--format mirror|json]] [--shatter N] <file|dir>");
+    merr!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi [--ci [--out mirror|json | --format mirror|json]] [--shatter N] <file|dir>");
     merr!("examples:");
     merr!("  cat mirror.ll | mirror '@code/llvm/ir |> @mirror/kintsugi |> @mirror/butterfly'");
 }
@@ -2385,13 +2385,27 @@ pub fn dispatch(args: &[String]) -> i32 {
             transform = Some(rest.to_string());
         } else if a == "--out" {
             if i + 1 >= args.len() {
-                merr!("--out requires a path value");
+                merr!("--out requires a value (mirror|json) or a directory path");
                 return 1;
             }
-            out_dir = Some(args[i + 1].clone());
+            // Substrate-pull: `out` is the substrate-correct projection
+            // keyword (the @io export vocabulary every shard uses). When
+            // the value parses as a CiFormat ("mirror" | "mirror-text" |
+            // "json"), `--out` is the substrate-correct alias for
+            // `--format`. Otherwise, fall through to the legacy
+            // migration `--out <path>` meaning. A future tick collapses
+            // `--format` after the composite action updates.
+            let value = &args[i + 1];
+            match parse_ci_format(value) {
+                Some(f) => ci_format = f,
+                None => out_dir = Some(value.clone()),
+            }
             i += 1;
         } else if let Some(rest) = a.strip_prefix("--out=") {
-            out_dir = Some(rest.to_string());
+            match parse_ci_format(rest) {
+                Some(f) => ci_format = f,
+                None => out_dir = Some(rest.to_string()),
+            }
         } else if a == "--ci" {
             ci = true;
         } else if a == "--format" {
@@ -2474,7 +2488,7 @@ pub fn dispatch(args: &[String]) -> i32 {
                 ci_format,
             ),
             None => {
-                merr!("usage: mirror kintsugi [--ci [--format mirror|json]] [--shatter N] [--transform <mq>] [--out <path>] <file|dir>");
+                merr!("usage: mirror kintsugi [--ci [--out mirror|json | --format mirror|json]] [--shatter N] [--transform <mq>] [--out <path>] <file|dir>");
                 1
             }
         },
