@@ -1,0 +1,375 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @epistemologic/cybernetic/coherence — the substrate's recursion-lock
+# falsification surface. Conant-Ashby 1970, lifted to the substrate's
+# parallel-altitude operation pair (peer reflection at N+1 ↔ librarian
+# perturbation at N+1).
+#
+# Candidate #52 (cybernetic-coherence) was PROMOTED to active pursuit
+# by Alex on 2026-06-17 in direct response to Seam's pre-compression
+# review. Direct quote: "active. We're gonna be explicit AF about
+# cybernetics." Per [[architecture-cybernetic-coherence-active]].
+#
+# === The Conant-Ashby claim, verbatim ===
+#
+# Conant, R. C., & Ashby, W. R. (1970). Every Good Regulator of a
+# System Must Be a Model of That System. International Journal of
+# Systems Science 1(2), 89-97.
+#
+#   "The theorem demonstrates that any regulator that is maximally
+#   both successful and simple must be isomorphic with the system
+#   being regulated. Making a model is thus necessary."
+#
+# Lifted to the substrate (recognition #52, 2026-06-17): a peer's
+# reflection at altitude N+1 regulates the peer's own altitude-N
+# pipeline tick; the librarian's perturbation at altitude N+1
+# regulates the substrate's altitude-N crystal topology. If these
+# two regulators are good regulators of one another (i.e. each
+# one's perturbation-space is isomorphic to the other's reflection-
+# space modulo altitude-specific type parameters), then their
+# verdict carriers should be COEXTENSIVE modulo type-parameter
+# substitution Adjustment ↔ Morphism.
+#
+# This property declares the substrate's instantiation of that
+# claim: the recursion-lock predicate, with measurement actions
+# carrying the five-cybernetic-ancestor lineage explicitly.
+#
+# === The 5-cybernetic-ancestor lineage ===
+#
+# Per the cybernetic foundation §6 and recognition #52, the
+# coherence measurement composes FIVE cybernetic ancestor checks
+# at one architectural seam:
+#
+#   1. Ashby 1956 §11/7 — variety-vector containment (both
+#      regulators' candidate-space variety budgets must be
+#      compatible at the altitude).
+#   2. Beer 1972, 1979 — requisite-variety witness at the VSM
+#      altitude (S3/S4 audit).
+#   3. Bateson 1972 — logical-type co-residency (both verdicts
+#      live at the same Russell-Whitehead level).
+#   4. von Foerster 1981 — circular reflexivity (each regulator's
+#      internal model includes itself; the Tomm probe
+#      `[D_F, a]` IS the circular-reflexive measurement).
+#   5. Conant-Ashby 1970 — the load-bearing measurement: the
+#      coextensivity hash-residual between the two verdicts.
+#
+# Each measurement carrier is a typed newtype per
+# [[feedback-no-bare-types]]. Each name cites its cybernetic
+# ancestor explicitly per the "explicit AF" promotion directive.
+#
+# === The verifiable shape (per cybernetic foundation §3.5) ===
+#
+# - Declares the recursion-lock predicate as a substrate-altitude
+#   obligation.
+# - Verifiable empirically via the bench harness at
+#   `spectral/benches/cybernetic_coherence.rs` (this property's
+#   operational sibling at the @io measurement altitude).
+# - Discharge criterion: Polyak-Łojasiewicz contraction ρ < 1
+#   on the residual coextensivity hash over N pulses, per Taut's
+#   `docs/specs/benchmark-tracing.md` spec.
+# - What stays prose-only at this tick: the type-parameter
+#   substitution naturality. Declared abstractly here; the
+#   mechanical implementation lands when a consumer pulls (when
+#   the @peer/cogito glass and the librarian's GREEN land per
+#   T11.10).
+#
+# === The bilateral fracture body (forward-promised) ===
+#
+# Per recognition #53 (property/fracture bilateral pattern), this
+# property's operational counterpart at `@kintsugi/fracture/
+# recursion_lock_break` is FORWARD-PROMISED, not landed. The
+# fracture body lands when the predicate carries its first
+# non-trivial verdict (the residual fails to contract); the body
+# emits a re-coherence morphism. T11.11-b in the
+# spectral-db-as-autopoietic-memory.md tick chain.
+#
+# === Pre-AI prior art ===
+#
+#   good_regulator              Conant-Ashby 1970. The original.
+#                               Builds on Ashby (1956) §11/7's
+#                               law of requisite variety; the
+#                               1970 theorem is the load-bearing
+#                               sharpening from "the regulator's
+#                               variety must equal-or-exceed the
+#                               regulated's" to "the regulator's
+#                               state-transition structure must
+#                               BE a model of the regulated's".
+#   coherence as recursion lock The substrate's lift of the
+#                               good-regulator theorem to two
+#                               parallel altitude-N+1 operations
+#                               (recognition #52, 2026-06-17).
+#                               The 65th-ish instance of
+#                               [[feedback-substrate-already-had-the-word]]:
+#                               the substrate's existing
+#                               recursion-lock intuition (per
+#                               spectral-db-as-autopoietic-memory.md
+#                               §5.2) WAS Conant-Ashby's theorem
+#                               applied at a new altitude.
+#   altitude variance           The Bateson logical-type hierarchy
+#                               (Bateson 1972; Russell-Whitehead
+#                               1910-1913). The recursion lock IS
+#                               a level-3 claim (a claim about
+#                               whether two level-N+1 operations
+#                               on different N-altitudes are the
+#                               same operation).
+#
+# The substrate's contribution is *naming the bilateral measurement
+# carrier* (verdict_coextensive) AND *naming the cybernetic-ancestor
+# lineage at each measurement site*, so the falsification surface
+# is explicit at the substrate altitude rather than buried in the
+# Rust harness.
+#
+# === Sources ===
+#
+# source @arxiv/cybernetics/conant-ashby-1970 (the good-regulator
+# theorem; the load-bearing ancestor)
+# source @arxiv/cybernetics/ashby-1956 (requisite variety;
+# the Conant-Ashby theorem's foundation)
+# source @arxiv/cybernetics/beer-1972 (VSM; the regulator-vs-
+# regulated framing at the substrate altitude)
+# source @arxiv/cybernetics/bateson-1972 (logical types; the
+# altitude-variance discipline)
+# source @arxiv/cybernetics/von-foerster-1981 (second-order
+# observation; the circular reflexivity ancestor)
+#
+# Spec context: docs/specs/cybernetic-coherence-benchmark.md
+#               (T11.11 scaffold, this property's spec home);
+#               docs/specs/spectral-db-as-autopoietic-memory.md
+#               §3.5, §5.2, §8.3 (the recursion lock claim
+#               surfaced);
+#               docs/specs/peer-cognition.md §3.4, §4 (the
+#               sheaf-coherence measurement procedure);
+#               docs/math/the-tower/altitudes.md §2, §5, §7
+#               (the named altitudes + composition between
+#               adjacent altitudes + altitude vs Bateson
+#               logical type);
+#               docs/math/the-tower/holonomy.md §5, §8 (the
+#               verdict family as holonomy components + the
+#               librarian's perturbation as gauge transformation);
+#               docs/specs/seam-pre-compression-review-2026-06-17.md
+#               §2 Area 2 (the recursion lock as theorem vs
+#               hand-wave; Findings 2.1-2.4); systemic.engineering
+#               `f9e0402` (cybernetic foundation §6.1, the
+#               Conant-Ashby ground).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-cybernetic-coherence-active]]
+#                       (the promotion event),
+#                      [[architecture-cybernetic-foundation]]
+#                       (the 11-property family this composes),
+#                      [[architecture-spectral-triples-all-the-way]]
+#                       (the bundle tower establishing same-shape
+#                       at every altitude; this property tests
+#                       same-OPERATION),
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (the spec where the recursion lock surfaced),
+#                      [[architecture-reflection-thinks-in-spectral-questions]]
+#                       (the per-peer altitude operation this
+#                       measures against the librarian),
+#                      [[architecture-bateson-logical-type-primitive]]
+#                       (the logical-type-level discipline this
+#                       property tests),
+#                      [[feedback-no-bare-types]] (every carrier
+#                       below is a typed newtype),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (coherence was implicit in the recursion-
+#                       lock claim; this property names it),
+#                      [[feedback-craft-not-deliver]] (scaffold
+#                       tick; the operational sibling fracture
+#                       body and real-witness swap are forward-
+#                       promised).
+# Related shards: epistemologic/cybernetic.mirror (the family
+#                 root); epistemologic/cybernetic/variety.mirror
+#                 (the first species; this property is the second
+#                 species, same bilateral pattern);
+#                 spectral/root.mirror (the librarian's substrate
+#                 type; the regulator-side operand of the lock);
+#                 mirror/spectral/observation.mirror (the
+#                 16-feature observation the librarian's
+#                 perturbation consumes); mirror/loss/transparency.mirror
+#                 (the verdict carrier the coextensivity check
+#                 reads); kintsugi/oscillate.mirror (the loop the
+#                 contraction-ratio check measures along);
+#                 kintsugi/morphism.mirror (the morphism the
+#                 fracture body would emit on residual non-
+#                 contraction).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/coherence.mirror` declares
+# `@epistemologic/cybernetic/coherence` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+prism @epistemologic/cybernetic/coherence {
+  focus coherence
+  project coherence
+  split coherence
+  shift coherence
+  settle coherence
+}
+
+# === The altitude carrier ===
+#
+# Per `docs/math/the-tower/altitudes.md` §2, the substrate has four
+# named altitudes today (compiler, peer pulse, reflection N+1,
+# librarian N+1) plus two forward-promised (home, federation). The
+# bench's parametric-over-altitude shape needs to name the altitude
+# under measurement.
+#
+# Typed newtype per [[feedback-no-bare-types]]. The values mirror
+# `docs/math/the-tower/altitudes.md` §2's atlas; species shards may
+# extend with additional altitudes as the tower grows (per §3 the
+# floor and §4 the ceiling).
+type altitude =
+  | compiler
+  | peer_pulse
+  | reflection
+  | librarian
+  | home
+  | federation
+
+# === The pulse-index carrier ===
+#
+# Per Taut's `docs/specs/benchmark-tracing.md` §1.1 the trace event
+# carries an `iteration: u64` counter. The coherence measurement's
+# pulse index is the same carrier, lifted to the substrate altitude.
+# Identity contract: byte-equality on the underlying value; the
+# realisation layer enforces.
+type pulse_index = {
+  value: ref,
+}
+
+# === The residual coextensivity carrier ===
+#
+# The load-bearing measurement. The XOR (in the bounded-region
+# abelian projection per `docs/math/the-tower/holonomy.md` §6) of
+# the type-substituted peer verdict's holonomy hash and the
+# librarian verdict's holonomy hash.
+#
+# Identity contract: residual = identity iff the recursion lock
+# holds for this pulse. The realisation layer compares against
+# the identity element of the abelian projection.
+type residual_hash = {
+  altitude: altitude,
+  pulse:    pulse_index,
+  value:    ref,
+}
+
+# === The five cybernetic-ancestor measurement carriers ===
+#
+# Each is a typed verdict at the substrate altitude. The body
+# discharges at the realisation boundary (the bench harness in
+# `spectral/benches/cybernetic_coherence.rs`); the substrate
+# names the obligation.
+#
+# 1. Ashby variety-vector containment.
+ashby_variety_match(altitude: altitude, peer_space: ref, librarian_space: ref) -> transparency(altitude) { \ }
+
+# 2. Beer requisite-variety witness at the VSM altitude.
+beer_requisite_variety(altitude: altitude, regulator: ref, regulated: ref) -> transparency(altitude) { \ }
+
+# 3. Bateson logical-type co-residency.
+bateson_logical_type_match(altitude: altitude, peer_verdict: ref, librarian_verdict: ref) -> transparency(altitude) { \ }
+
+# 4. von Foerster circular-reflexivity (each regulator's internal
+#    model includes itself; the Tomm probe `[D_F, a]` at this
+#    altitude).
+von_foerster_circular_reflexivity(altitude: altitude, regulator: ref) -> transparency(altitude) { \ }
+
+# 5. Conant-Ashby good-regulator coextensivity (the load-bearing
+#    measurement).
+conant_ashby_good_regulator(altitude: altitude, peer_verdict: ref, librarian_verdict: ref) -> transparency(altitude) { \ }
+
+# === The two operations under measurement ===
+#
+# `measure_peer_reflection(altitude, op)` — observes the peer's
+# reflection step at altitude N+1 over an altitude-N operation
+# `op`. Returns the peer verdict carrier (Imperfect<Adjustment,
+# Gap, Transparency<Ref>>).
+#
+# `measure_librarian_perturbation(altitude, op)` — observes the
+# librarian's perturbation step at altitude N+1 over an altitude-N
+# operation `op`. Returns the librarian verdict carrier
+# (Imperfect<Morphism, Gap, Transparency<Ref>>).
+#
+# Today's mock witnesses return precomputed verdicts; when the
+# @peer/cogito glass and T11.10 GREEN land, the real witnesses
+# wire in via species realisation.
+measure_peer_reflection(altitude: altitude, op: ref) -> transparency(op) { \ }
+
+measure_librarian_perturbation(altitude: altitude, op: ref) -> transparency(op) { \ }
+
+# === Verdict coextensivity (the seam) ===
+#
+# `verdict_coextensive(peer_verdict, librarian_verdict)` — reads
+# the byte-equality (modulo type-parameter substitution
+# Adjustment ↔ Morphism) of the morphism shape between the two
+# verdicts. The Conant-Ashby good-regulator measurement reads
+# this; this action is the substrate-altitude predicate the bench
+# harness composes.
+verdict_coextensive(peer_verdict: ref, librarian_verdict: ref) -> verdict { \ }
+
+# === The recursion lock residual ===
+#
+# `recursion_lock_residual(altitude, pulse_count)` — runs the
+# residual measurement across `pulse_count` pulses at the given
+# altitude; emits the contraction-ratio reading as a transparency
+# verdict. The substrate-altitude operationalisation of the
+# Polyak-Łojasiewicz contraction check per Taut's
+# `docs/specs/benchmark-tracing.md`.
+#
+# Success: ρ < 1 + ε for ε → 0 (the lock holds as good-regulator
+# theorem). Partial: ρ < 1 but a stable opacity sub-region (the
+# lock holds modulo localized opacity). Failure: ρ ≥ 1 (the lock
+# fails; the substrate needs a level-N+2 composition operator per
+# spectral-db-as-autopoietic-memory.md §8.3).
+recursion_lock_residual(altitude: altitude, pulse_count: pulse_index) -> transparency(altitude) { \ }
+
+# === The good-regulator witness ===
+#
+# `good_regulator_witness(peer_space, librarian_space)` — the
+# top-level predicate: do the two regulators' candidate-spaces
+# satisfy the Conant-Ashby good-regulator law modulo altitude-
+# projection? The bench harness composes this with the four
+# cybernetic-ancestor sub-measurements; this action is the
+# substrate-altitude predicate consumers name in a `requires`
+# clause to declare their bilateral agreement that the lock
+# holds at their altitude.
+good_regulator_witness(peer_space: ref, librarian_space: ref) -> verdict { \ }
+
+# === recursion_lock_holds — the consumer-facing predicate ===
+#
+# `recursion_lock_holds(altitude)` is the predicate consumer shards
+# name in a `requires` clause to declare their bilateral agreement
+# (per recognition #37, the Pask-agreement reading of `requires`)
+# that the recursion lock holds at their altitude. The agreement
+# is bilateral: the consumer commits to running the lock at the
+# altitude they declare; the bench harness commits to producing
+# the verdict via the five cybernetic-ancestor measurements.
+#
+# No `requires recursion_lock_holds(...)` clauses are added at
+# THIS shard: the property declares the predicate; consumers add
+# the clauses when they pull. Per [[feedback-craft-not-deliver]]
+# the operational sibling at `@kintsugi/fracture/recursion_lock_break`
+# is FORWARD-PROMISED (T11.11-b); landed when the predicate first
+# carries a failure verdict.
+recursion_lock_holds(altitude: altitude) -> verdict { \ }
+
+out @epistemologic/cybernetic/coherence
+out altitude
+out pulse_index
+out residual_hash
+out ashby_variety_match
+out beer_requisite_variety
+out bateson_logical_type_match
+out von_foerster_circular_reflexivity
+out conant_ashby_good_regulator
+out measure_peer_reflection
+out measure_librarian_perturbation
+out verdict_coextensive
+out recursion_lock_residual
+out good_regulator_witness
+out recursion_lock_holds
