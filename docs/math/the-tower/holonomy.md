@@ -103,10 +103,13 @@ Fail. Each corresponds to a region of the holonomy group:
 - **Fail**: holonomy is unbounded (an unbounded `[D, a]` somewhere
   along the path). The substrate's verdict reads `failure(opacity_map)`.
 
-This is why `transparency<p>` carries `p ∈ [0, 1]` rather than
-boolean: `p` is the fraction of the holonomy group's volume that
-stays in the bounded region; `1 − p` is the unbounded portion. The
-verdict surface IS the partitioning of holonomy by region.
+Read structurally: the `p ∈ [0, 1]` that `transparency<p>` already
+carries corresponds to the fraction of the holonomy group's volume
+staying in the bounded region, with `1 − p` the unbounded portion.
+The verdict surface partitions holonomy by region. This is an
+interpretive mapping — the substrate declared `transparency<p>`
+independently; the holonomy reading is structural correspondence,
+not the definition that built it.
 
 ## §6 Abelian projection (scalar loss)
 

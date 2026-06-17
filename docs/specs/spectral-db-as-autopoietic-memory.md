@@ -106,7 +106,7 @@ it does not re-derive the math. Citations used in this spec:
   `λ₀(F_topology)` as the librarian's coherence reading; per-edge
   curvature for perturbation targeting (cited at §5 "the
   optimization shape" + per-edge bottleneck reading).
-- `docs/math/the-tower/holonomy.md` §6 — the librarian's quality
+- `docs/math/the-tower/holonomy.md` §8 — the librarian's quality
   metric IS the residual holonomy after perturbation (cited at
   §5's optimization objective).
 - `docs/math/the-tower/spectral-triples.md` §5 — directed-colimit
@@ -1016,7 +1016,7 @@ morphism when the property fails post-perturbation.
 
 Property asserting: topology perturbations do not break dependency
 chain sheaf-coherence. The substrate's standalone_use heuristic per
-`docs/specs/peer-cognition.md` § (standalone-use sheaf-Laplacian
+`docs/specs/peer-cognition.md` §3.4 (the sheaf-coherence
 measurement) provides the discharge criterion: a crystal moved out
 of a working set must not increase `H¹(eigensheaf)` of the dependency
 chain the working set was settling. Bilateral pair: fracture body at
