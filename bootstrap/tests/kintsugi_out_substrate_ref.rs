@@ -164,11 +164,23 @@ fn out_at_io_dir_writes_to_directory() {
         stderr = stderr,
         tmp_str = tmp_str
     );
-    // Parser-level GREEN today: the parametric ref is ACCEPTED. Whether
-    // the kintsugi pipeline writes verdict bytes into the directory is
-    // a downstream semantic concern (a follow-up tick wires the dir
-    // semantics; today we just need the parser to admit the parametric
-    // shape without rejecting it).
+    // Per Alex's 2026-06-17 directive: @io/dir('path') "writes whatever
+    // is the output of that pipeline into the dir. If it's a single
+    // blob it becomes a single <dir>/out.<ext> file". For --ci on a
+    // single .mirror file, the output is a single verdict blob; it
+    // lands at <path>/out.mirror (default mirror-text format).
+    let blob = tmp.join("out.mirror");
+    assert!(
+        blob.exists(),
+        "@io/dir('{}') with --ci on a single file should write the verdict to <dir>/out.mirror; got nothing",
+        tmp_str
+    );
+    let content = std::fs::read_to_string(&blob).expect("read out.mirror");
+    assert!(
+        content.contains("verdict"),
+        "<dir>/out.mirror should contain the verdict (the `verdict` key); got: {}",
+        content
+    );
     let _ = std::fs::remove_dir_all(&tmp);
 }
 
