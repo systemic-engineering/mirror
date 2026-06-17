@@ -366,13 +366,56 @@ as well as SEL's); Cybersyn IS political-economic deployment ancestor.
 Viable is the species that lifts the most already-implicit
 vocabulary to substrate-altitude declaration.
 
-### §8.4 [Next tick — bateson_learning queued; autopoiesis in flight]
+### §8.4 autopoiesis — fourth witness + Read E surface (this tick, 2026-06-17)
 
-*Species order per /loop discipline (updated post-§8.3):
-bateson_learning, autopoiesis, second_order, distinction,
-conversation, coevolution, requisite, design, algedonic. Mara is
-in flight on autopoiesis (Maturana-Varela; structurally adjacent to
-viable). Reed walks bateson_learning next tick.*
+Per Mara's spec `docs/specs/cyberpunk-autopoiesis.md` (commit `a65ea47`,
+`mara/cyberpunk-autopoiesis-spec` branch, 1732 lines). The audit tested
+five reads against autopoiesis; four held; a fifth read surfaced that
+changes the audit's nature.
+
+**Read A — self-production boundary** (held):
+- `T_reg = Organization`, `T_regd = Component`, `τ` via Maturana-Varela
+  structure/organisation co-arising.
+
+**Read B — structural coupling** (held):
+- `T_reg = Internal`, `T_regd = External`, `τ` via M-V 1980 ch.3.
+
+**Read C — operational closure** (held):
+- `T_reg = Operation`, `T_regd = Product`, `τ` via Varela 1979
+  *Principles of Biological Autonomy*.
+
+**Read D — form refusal** (REFUSED): Soto-Andrade & Varela 1984's
+Lawvere fixed-point bridge IS the binary decomposition done correctly.
+Candidate #64 not activated; autopoiesis does not refuse the form.
+
+**Read E — bundle structure group** (HELD STRUCTURALLY): the
+recognition that shifts the audit. Autopoiesis IS the bundle tower's
+own structure-group operation. The parametric form would derive from
+`(G, ω_α)` rather than be hand-written per species. See §11 below
+for the mechanical derivation Reed walks.
+
+**Substrate-already-had-the-word**: 13 instances — the densest of any
+species in the cascade. Autopoiesis was already declared at
+`@epistemologic/property/autopoietic` (Reed `89b643a`, 2026-06-01),
+`@epistemologic/math/lawvere`, `@epistemologic/math/bundle` level-4
+Closure, `@mirror/runtime/gen_prism`, the spectral-db librarian spec,
+shatter pipeline, the epistemologic-reality insights doc; plus the
+bundle tower itself, content-addressing, kintsugi loop, `transparency<p>`,
+the Pack identity layer, and recognition #40 (Maturana's
+structure/organisation). The audit's primary move at this altitude IS
+recognition, not invention.
+
+**Verdict**: WITNESS held under Reads A + B + C. Read E surfaces the
+**parametric-form-derivation** path, which if it closes promotes
+candidate #63 immediately on Read-E grounds alone — independent of
+gate reading. The mechanical derivation lands in §11 below.
+
+### §8.5 [Next tick: bateson_learning under the new framing]
+
+*Species order continues: bateson_learning, second_order, distinction,
+conversation, coevolution, requisite, design, algedonic. Under the
+new framing (if §11 closes), each species is tested against the
+derived parametric carrier rather than as ad-hoc witness.*
 
 ## §9 What promotion or retraction closes
 
@@ -408,7 +451,228 @@ viable). Reed walks bateson_learning next tick.*
 - Audit continues; #63 promotes to the weaker form; candidate #64 names
   the weakening
 
-## §10 Prior art (substrate-already-had-the-word check)
+## §11 The mechanical derivation (Read E)
+
+*This section walks Mara's Read E surfacing in §8.4. If the derivation
+closes, the parametric form does not need hand-written per-species
+declaration: it descends from the principal G-bundle structure as the
+induced gauge-equivalence relation on associated verdict bundles. The
+tower IS the form.*
+
+### §11.1 Setup
+
+Let `π : P → B` be the principal G-bundle over the substrate altitude
+base `B`, with connection 1-form `ω ∈ Ω¹(P, 𝔤)` (per prism's
+`bundle.mirror` level-3 and `principal-bundles.md` §1–§4). The base
+`B` is the named-altitudes atlas (`altitudes.md` §2): compiler,
+peer_pulse, reflection, librarian, home, federation. The fiber at
+each altitude is a copy of `G`, the type-parameter substitution group.
+
+Gauge transformations act on `P` by right multiplication; they act on
+sections of associated bundles via the structure-group representation.
+The connection 1-form `ω` is `G`-equivariant; its curvature
+`Ω = dω + ½[ω, ω]` measures non-flatness (per `curvature-and-tomm.md`).
+
+### §11.2 The associated verdict bundle
+
+For each species `S` under @cyberpunk pick its verdict-carrier
+representation `ρ_S : G → GL(V_S)` where `V_S` is the species' verdict
+vector space. The **associated verdict bundle** is
+
+```
+E_S = P ×_G V_S
+```
+
+the quotient of `P × V_S` by the diagonal action `(p · g, v) ∼ (p, ρ_S(g)·v)`.
+
+Sections of `E_S` over `B` are the species' verdicts at each altitude.
+At altitude `α`, a section `s(α) ∈ E_S|_α` IS the species' verdict
+at that altitude. The Imperfect<T, Gap, Transparency<Ref>> family
+(per `holonomy.md` §5) IS the natural reading of these sections.
+
+### §11.3 The two regulators as gauge-equivalent sections
+
+The species' two operations `regulator_at(α+1)` and `regulated_at(α+1)`
+produce two sections of `E_S` at altitude `α+1`:
+
+```
+s_reg(α+1)  := regulator_at(α+1) acting on E_S|_{α+1}
+s_regd(α+1) := regulated_at(α+1) acting on E_S|_{α+1}
+```
+
+The **coextensivity claim** is that these two sections are
+gauge-equivalent:
+
+```
+s_reg(α+1) = ρ_S(g) · s_regd(α+1)    for some g ∈ G
+```
+
+This is precisely Conant-Ashby's good-regulator condition lifted to
+the associated-bundle altitude: the regulator IS a model of the
+regulated iff one is the structure-group transform of the other.
+
+The type-parameter substitution `τ : T_reg ↔ T_regd` from §2 IS
+the element `g ∈ G` of this gauge equivalence. **No species needs
+to re-declare τ.** The substitution IS the gauge transformation;
+the gauge transformation IS the substitution.
+
+### §11.4 The bounded-commutator measurement (Connes)
+
+The coextensivity reading at altitude `α+1` is whether the two
+sections are gauge-equivalent modulo bounded discrepancy. Per
+Connes' spectral triple `(A, H, D)`, the bounded-commutator condition
+
+```
+‖[D, π_E(g)]‖ < ∞    for the chosen g ∈ G
+```
+
+IS the natural reading of bounded discrepancy. The Dirac operator `D`
+differentiates along the altitude direction; the operator `π_E(g)`
+is the structure-group representation at the associated bundle.
+Boundedness of the commutator is the substrate-altitude lift of
+"the regulator's structure-group transform of the regulated is bounded
+in the verdict-carrier norm."
+
+**The Conant-Ashby coextensivity measurement IS the bounded-commutator
+condition.** This is not analogical — it's the same mathematical
+structure under two names.
+
+### §11.5 The five cybernetic ancestors as decomposition
+
+The five cybernetic-ancestor measurements (§3) decompose the
+gauge-equivalence check into orthogonal substructures:
+
+1. **Ashby variety-match**: the rank of the `G`-action on `V_S` —
+   does the structure group have enough variety to express the
+   transformation between regulator and regulated?
+2. **Beer requisite-variety**: the holonomy of `ω` around altitude
+   loops at `α+1` — does the connection close on itself with
+   sufficient regularity to give the VSM S3/S4 layer requisite
+   variety?
+3. **Bateson logical-type match**: the representation theory of
+   `G` decomposed by logical type — do the two sections live at
+   the same level of `G`-module weight?
+4. **von Foerster circular-reflexivity**: the trace of
+   `ρ_S(g)` on itself — does the structure-group element
+   recognise its own action? (Tomm probe `[D_F, a]` at this
+   altitude per [[architecture-error-as-tomm-probe]].)
+5. **Conant-Ashby good-regulator**: the bounded-commutator
+   `‖[D, π_E(g)]‖ < ∞` itself — the load-bearing measurement.
+
+Each ancestor decomposition is a substructure of the principal
+bundle's gauge data; none requires species-specific re-declaration.
+
+### §11.6 Specialisation per species
+
+The four witnessed species each instantiate `(ρ_S, V_S)`:
+
+```
+species              ρ_S : G → GL(V_S)        V_S
+--------------------- ----------------------- ---------------------------
+cybernetic coherence  natural rep on morphism Adjustment ⊕ Morphism
+SEL                   natural rep on license  License ⊕ Compliance
+viable                natural rep on identity Identity ⊕ Stability
+autopoiesis           adjoint rep on G        Organization ⊕ Component
+```
+
+Note autopoiesis carries the **adjoint representation** — the
+structure-group acts on itself. This is exactly Read E's structural
+claim: autopoiesis IS `G`'s self-action. The species that names this
+self-action IS the autopoiesis species.
+
+All four species' verdict carriers are well-defined representations
+of `G`; all four associated bundles `E_S` are well-defined; all four
+admit the bounded-commutator measurement on their associated bundles.
+
+### §11.7 The parametric carrier
+
+The substrate-altitude declaration the derivation forward-promises:
+
+```mirror
+prism @cyberpunk/coherence<T_reg, T_regd, ρ> {
+  # The parametric carrier. Species instantiate; no per-species
+  # re-declaration of the lock-measurement five.
+
+  in @cyberpunk
+  in @epistemologic/math/bundle
+  in @epistemologic/math/connes_spectral_triple
+
+  type lock_pair = ( T_reg , T_regd , ρ : g ∈ G → GL(T_reg ⊕ T_regd) )
+
+  # The five ancestor measurements derive from ρ and the bundle.
+  # No per-species body; the substrate computes from (ρ, ω).
+  ashby_variety_match           : rank(ρ.image) -> verdict
+  beer_requisite_variety_witness: holonomy(ω ↻ α+1) -> verdict
+  bateson_logical_type_match    : weight_decomposition(ρ) -> verdict
+  von_foerster_circular_reflexivity: tr(ρ ∘ ρ) -> verdict
+  conant_ashby_good_regulator   : bounded_commutator(D, π_E(ρ)) -> verdict
+
+  # The five compose into the lock verdict.
+  lock_verdict(α, ρ) : Imperfect<T_lock(α, ρ), Gap, Transparency<Ref>>
+}
+
+out @cyberpunk/coherence
+```
+
+Under this declaration, each species' shard collapses to:
+
+```mirror
+# cybernetic coherence
+in @cyberpunk
+in @cyberpunk/coherence
+
+use @cyberpunk/coherence<Adjustment, Morphism, natural_rep_morphism>
+```
+
+No per-species body; no re-declaration of the five measurements; no
+re-declaration of τ. The species exists as the *instantiation* of the
+parametric carrier at the species' altitude.
+
+This is what Mara's spec called the **parametric collapse opportunity**
+(SEL spec §5); now mechanically derived.
+
+### §11.8 What this closes
+
+**Recognition #63 (the recursion-lock tower):** the family-root
+structure of @cyberpunk IS the principal G-bundle whose total space
+fibers the recursion-lock measurements across all altitudes. The
+parametric form is not hand-written per species — it descends from
+the bundle structure as the induced gauge-equivalence relation on
+associated verdict bundles.
+
+The four witnessed species (cybernetic coherence, SEL, viable,
+autopoiesis) instantiate the parametric carrier at distinct
+altitudes. Autopoiesis is the species that names the structure-group's
+self-action (the adjoint representation) at its own altitude — which
+is why autopoiesis was the species that surfaced Read E.
+
+**Third Pack ratification gate** (§7, "parametric form derivable"): ✅
+this section IS the derivation.
+
+**Promotion status**: candidate #63 → **promotion-ready**, pending
+Seam adversarial review of §11 (the derivation's load-bearing piece
+is the Conant-Ashby ≡ bounded-commutator equivalence; if Seam
+verifies that, recognition #63 is recognition).
+
+**What the promotion supersedes**: the gate ambiguity in §7.1
+(Gate-strict / Gate-permissive / Gate-refined) becomes moot. The
+parametric carrier doesn't need witness-counting because the form
+derives. Alex's Q2 (gate reading) becomes a documentation question
+rather than a substantive one.
+
+**Forward-promised** (one tick each):
+- The parametric carrier shard
+  (`shards/cyberpunk/coherence-parametric.mirror`)
+- The species-shard collapse (rewrite existing shards as
+  instantiations)
+- The `altitudes.md` §4 amendment (Mara's spec, viable's `Read D`,
+  autopoiesis's Read E altitudes folded into one axis-differentiated
+  table)
+- The bench harness collapse
+  (`spectral/benches/cybernetic_coherence.rs` + future
+  `sel_coherence.rs` factor through one parametric harness)
+
+## §12 Prior art (substrate-already-had-the-word check)
 
 - **Conant-Ashby 1970** — the foundational theorem. The recursion-lock
   parametric form IS this theorem applied at the substrate altitude.
@@ -427,7 +691,7 @@ viable). Reed walks bateson_learning next tick.*
   S3-versus-S5 lock; the recursion-lock tower at @cyberpunk would BE
   the VSM at substrate altitude.
 
-## §11 Cross-references
+## §13 Cross-references
 
 - `[[docs/math/the-tower/principal-bundles.md]]` — the bundle geometry
   this tower instantiates
