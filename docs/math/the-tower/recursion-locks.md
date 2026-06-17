@@ -899,14 +899,64 @@ that needs curvature parameters); then #64 promotes as "the parametric
 carrier has structural-extension axes orthogonal to representation
 choice”.
 
-### §8.11 [Next tick — requisite in flight]
+### §8.11 requisite — ALIASED by variety (this tick, 2026-06-18)
 
-*Ashby's requisite variety — the original cybernetic theorem (Ashby
-1956 §11/7). May alias coherence (Conant-Ashby 1970 is the partner
-theorem); may surface a different altitude. The variety species
-already landed at `@cyberpunk/variety` (Reed's earlier substrate-pull
-work); this audits whether requisite is a sibling or a sub-rep of
-variety.*
+Walked inline by Reed; no separate spec needed. Mara's spawn aborted
+mid-investigation when the substrate-pull surfaced: requisite IS
+variety at the family-root altitude.
+
+**Verdict**: aliased. The audit slot closes without new species
+declaration.
+
+**Reasoning** (substrate-pull-direct):
+
+- The existing `@cyberpunk/variety` shard
+  (`shards/cyberpunk/variety.mirror`, migrated from
+  `@epistemologic/cybernetic/variety` on 2026-06-17 commit `f629216`)
+  already declares the requisite-variety predicate and its measurement.
+  The `variety_preserving(species)` action in that shard IS the
+  substrate-altitude lift of `V(R) ≥ V(D)`.
+- The five-ancestor decomposition in §11.5 already names
+  `ashby_variety_match` as measurement #1; that measurement IS
+  Ashby's requisite variety theorem at the gauge-data altitude.
+- The Conant-Ashby 1970 partner theorem (Ashby — with Conant —
+  proved that every good regulator must be a model of the system)
+  is what the coherence species declares; requisite IS the partner
+  inequality of that biconditional.
+- Read C (curvature Ω extension) does NOT land naturally:
+  `V(R) ≥ V(D)` is a representation-theoretic inequality
+  (`rank(ρ_R.image) ≥ rank(ρ_D.image)`), not a curvature condition.
+  The connection's curvature `Ω = dω + ½[ω, ω]` measures
+  non-flatness; requisite measures variety-rank. Different
+  structural objects.
+
+**Audit-slot resolution**: closed by substrate-already-had-the-word
+at the species level. Following [[feedback-substrate-already-had-the-
+word]] (~7+ instances pattern; now ~166 cumulative): don't re-declare
+what the substrate already declares. Requisite's audit slot is the
+recognition that variety already names it.
+
+**Naming question** (deferred to Alex): keep the species name
+`variety` (current; Ashby's framing emphasizes the carrier) or rename
+to `requisite` (Ashby's framing emphasizes the theorem)? Per
+substrate-pull discipline, the existing shard's history at
+`@cyberpunk/variety` is load-bearing for citations — keep `variety`
+unless the rename surfaces substantive new content.
+
+**No new candidate recognition** from this tick. The audit confirms
+that the cybernetic-foundation 11-property family's `variety` and
+`requisite` were always the same species in the substrate's framing.
+
+### §8.12 [Next tick — design in flight]
+
+*Glanville's species — the species explicitly named in the cybernetic
+foundation as having NO operational sibling by construction. This is
+the edge case test: what happens when a species genuinely refuses
+operational discharge while still fitting the parametric form? If
+design witnesses the structural form but refuses operational reading,
+that would be a NEW kind of recognition (not form-incompletion like
+coevolution, but form-restriction — the carrier admits species
+with certain measurements degenerate by ancestor design).*
 
 ## §9 What promotion or retraction closes
 
