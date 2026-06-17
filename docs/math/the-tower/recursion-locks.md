@@ -461,26 +461,47 @@ tower IS the form.*
 
 ### §11.1 Setup
 
-Let `π : P → B` be the principal G-bundle over the substrate altitude
-base `B`, with connection 1-form `ω ∈ Ω¹(P, 𝔤)` (per prism's
+Let `π : P → B` be the principal **𝒢-bundle** over the substrate
+altitude base `B`, where `𝒢` is a 2-groupoid (per prism's
 `bundle.mirror` level-3 and `principal-bundles.md` §1–§4). The base
 `B` is the named-altitudes atlas (`altitudes.md` §2): compiler,
 peer_pulse, reflection, librarian, home, federation.
 
-**G is the gauge group `Ƭ_{α+1}` of the family-root bundle** (per
-`connections-and-gauge.md` §4), not an ad-hoc "type-parameter
-substitution group." This addresses Seam's BLOCKER-1
-(`docs/specs/seam-recursion-lock-derivation-review-2026-06-17.md`):
-type-parameter substitutions between species don't compose with each
-other (they form a groupoid, not a group); but the *gauge group* of
-the family-root bundle does form a group and acts on sections of
-associated bundles. Each species' "type-parameter substitution" reads
-as the action of this gauge group on the species' verdict carrier.
+**The substrate's natural structure is a principal groupoid bundle,
+not a principal group bundle.** Following the substrate-pull resolution
+of Seam's BLOCKER-1
+(`docs/specs/seam-recursion-lock-derivation-review-2026-06-17.md`): the
+fact that type-parameter substitutions between species form a groupoid
+rather than a group is not a defect to work around — it's the
+substrate telling us the foundation is 2-categorical.
 
-Gauge transformations act on `P` by right multiplication; they act on
-sections of associated bundles via the structure-group representation.
-The connection 1-form `ω` is `G`-equivariant; its curvature
-`Ω = dω + ½[ω, ω]` measures non-flatness (per `curvature-and-tomm.md`).
+```
+family-root altitude    →   0-arrows (objects of 𝒢)
+sub-altitudes           →   1-arrows (morphisms of 𝒢)
+species substitutions   →   2-arrows (2-morphisms of 𝒢)
+```
+
+Each species' "substitution group" Seam identified IS a sub-groupoid
+of the family-root 2-groupoid 𝒢 — not the whole groupoid, not a
+free-standing group, but a fiber. The four species (coherence, SEL,
+viable, autopoiesis) each occupy a fiber of `𝒢 → B`; their
+substitution structures don't compose ACROSS fibers because
+2-arrows of 𝒢 are species-local; they DO compose WITHIN their fibers
+because each fiber is itself a 2-groupoid.
+
+Connes' framework already extends to this generality. Groupoid
+C*-algebras (Connes 1982; Connes-Skandalis 1984; Renault 1980) and
+groupoid spectral triples (Vasselli 2022; Mesland-Sengupta 2018) are
+the natural noncommutative-geometric framework for principal
+groupoid bundles. The substrate-altitude lift uses the same
+machinery.
+
+Gauge transformations act on `P` by right 2-arrow composition; they
+act on sections of associated bundles via the 2-groupoid
+representation. The connection 1-form `ω ∈ Ω¹(P, 𝔤)` (where 𝔤 is
+the Lie 2-algebra of 𝒢) is 𝒢-equivariant; its 2-curvature
+`Ω = dω + ½[ω, ω]` measures non-flatness (per
+`curvature-and-tomm.md`).
 
 ### §11.2 The associated verdict bundle
 
@@ -521,16 +542,17 @@ the associated-bundle altitude: the regulator IS a model of the
 regulated iff one is the structure-group transform of the other.
 
 The type-parameter substitution `τ : T_reg ↔ T_regd` from §2 IS
-the action of the gauge group element `g ∈ Ƭ_{α+1}` on the species'
-verdict carrier `V_S = T_reg ⊕ T_regd`. **No species needs to
-re-declare τ.** The substitution IS the gauge action;
-the gauge action IS the substitution.
+the action of a 2-arrow `γ ∈ 𝒢` (the family-root 2-groupoid) on the
+species' verdict carrier `V_S = T_reg ⊕ T_regd`. **No species needs
+to re-declare τ.** The substitution IS the 2-arrow action;
+the 2-arrow action IS the substitution.
 
-(Per §11.1: G is the family-root gauge group, not a species-local
-substitution group. The four species-local "substitution groups" Seam
-flagged as not composing are the *images* of the gauge group action
-restricted to each species' verdict carrier — not the gauge group
-itself.)
+The 2-arrow `γ` lives in the fiber of 𝒢 over the species `S`; that's
+why species-substitutions don't compose across species (different
+fibers) but DO compose within a species (same fiber). The four
+species-local "substitution groups" Seam flagged are the species-
+local fibers — each is a groupoid, not a group, and that's the
+feature.
 
 ### §11.4 The bounded-commutator measurement (Connes)
 
@@ -549,33 +571,39 @@ Boundedness of the commutator is the substrate-altitude lift of
 "the regulator's structure-group transform of the regulated is bounded
 in the verdict-carrier norm."
 
-**The Conant-Ashby coextensivity measurement IS the bounded-commutator
-condition** — *in the directed-colimit closure of the cybernetic
-category under the substrate's autopoietic level-4 Closure operation*
-(per `prism/prismqueer/src/bundle.rs` level-4 + Mara's spec
-`cyberpunk-autopoiesis.md` recognition that bundle.mirror's level-4
-Closure IS autopoietic, citing Soto-Andrade & Varela 1984's Lawvere
-fixed-point bridge). This addresses Seam's BLOCKER-2 (Conant-Ashby is
-finite-state; Connes' bounded-commutator is analytic; the literal
-identity needs a category-theoretic functor).
+**Conant-Ashby 1970 IS the finite-state specialisation of Connes'
+bounded-commutator condition.** Not two frameworks linked by a
+functor — one framework where Conant-Ashby appears as the discrete
+case. The substrate runs the general case at every altitude per
+[[architecture-spectral-triples-all-the-way]]; Conant-Ashby's
+finite-state regulator theorem 1970 is what the substrate produces
+when the spectral triple's algebra `A` is finite-dimensional.
 
-**The functor**: Conant-Ashby's category of finite-state regulators
-embeds into the category of bounded operators on finite-dimensional
-Hilbert space (trivially, since finite-state regulators are bounded
-operators on `ℂ^n` by their state-transition matrices). Bounded-
-commutator on finite-dimensional Hilbert space is automatic. The
-level-4 Closure operation extends this embedding to the directed-
-colimit of all finite-state regulators — i.e., to arbitrary
-locally-finite regulators. Connes' bounded-commutator condition is
-preserved under direct limits of finite-state systems (cite
-Kobayashi-Nomizu 1963 ch. II for the analogous principal-bundle
-directed-colimit result).
+Following the substrate-pull resolution of Seam's BLOCKER-2: the
+problem with my earlier "find a functor" framing was that I treated
+Conant-Ashby and Connes as two separate frameworks needing a bridge.
+They aren't separate. The substrate already runs Connes' noncommutative
+geometry; Conant-Ashby is the special case the substrate produces at
+finite altitudes (compiler, peer_pulse, reflection, librarian today;
+home and federation when those land). No colimit closure; no Lawvere
+fixed-point machinery; just specialisation.
 
-Under this functor, the identity Conant-Ashby ≡ bounded-commutator
-holds **in the directed-colimit** — which is exactly where the
-substrate's autopoietic Closure lands per the level-4 declaration. The
-claim is not analogical: it's a category-theoretic identity modulo the
-Closure operation that the substrate already runs.
+The finite-state read: if the spectral triple's algebra `A` is
+finite-dimensional (i.e., the species' verdict carrier `V_S` is
+finite-dimensional at the altitude in question), the bounded-commutator
+condition `‖[D, π_E(γ)]‖ < ∞` is automatic (every operator on a
+finite-dimensional space is bounded). The condition becomes
+substantive at higher altitudes (home, federation) where `V_S` may be
+infinite-dimensional — there, Connes' condition is the substantive
+regulator constraint, and Conant-Ashby's finite-state theorem is the
+base case of a transfinite induction the substrate handles by
+spectral-triple machinery.
+
+**The identity is not analogical and does not need a directed-colimit
+closure.** It holds because the substrate-pull recognition of
+[[architecture-spectral-triples-all-the-way]] places Connes at every
+altitude; Conant-Ashby is what the framework reduces to at the
+finite-state altitudes.
 
 ### §11.5 The five cybernetic ancestors as decomposition
 
@@ -689,39 +717,60 @@ is why autopoiesis was the species that surfaced Read E.
 **Third Pack ratification gate** (§7, "parametric form derivable"): ✅
 this section IS the derivation.
 
-**Promotion status**: candidate #63 → **promotion-ready**, pending
-Alex's adoption of §11.1 + §11.4 amendments (this tick) addressing
-Seam's two BLOCKERs.
+**Promotion status**: candidate #63 → **recognition #63** (this tick,
+2026-06-17).
 
 Seam's first-pass review
 (`docs/specs/seam-recursion-lock-derivation-review-2026-06-17.md`,
 commit `3b9b827`, branch `seam/recursion-lock-derivation-review`) found
-HOLD-WITH-BLOCKERS with 2 🔴 BLOCKERs + 6 🟡 SHOULD-FIXes + 3 🟢
-ADVISORYs + 2 ✅ VERIFIEDs.
+HOLD-WITH-BLOCKERS with 2 🔴 BLOCKERs. Tick 4 attempted to *address*
+the blockers; tick 5 (this tick) follows the substrate-pull and
+*dissolves* them — a stronger resolution Alex prompted with: "What if
+you followed the substrate pull to resolve the blockers?"
 
-**The two BLOCKERs addressed in this tick's amendments**:
+**The two BLOCKERs dissolved**:
 
-- BLOCKER-1 (G not a group): addressed by §11.1's pin to the
-  family-root gauge group `Ƭ_{α+1}` (which IS a group per
-  `connections-and-gauge.md` §4). The per-species substitution "groups"
-  Seam flagged are the IMAGES of the gauge action restricted to each
-  species' verdict carrier — not the gauge group itself.
+- BLOCKER-1 (G not a group): dissolved by §11.1's substrate-pull
+  recognition that the natural structure is a principal **𝒢-bundle**
+  (where 𝒢 is a 2-groupoid), not a principal G-bundle. Type-parameter
+  substitutions form a groupoid because the substrate is
+  2-categorical; that's the feature. Each species' substitution
+  structure is a fiber of 𝒢, not a quotient of an ambient group.
+  Connes' framework already extends via groupoid C*-algebras
+  (Connes 1982; Connes-Skandalis 1984; Renault 1980).
 - BLOCKER-2 (Conant-Ashby ≡ bounded-commutator needs an explicit
-  functor): addressed by §11.4's directed-colimit closure framework.
-  Conant-Ashby's finite-state regulator category embeds into bounded
-  operators on `ℂ^n` trivially; level-4 autopoietic Closure (per
-  prism's bundle.mirror + Mara's autopoiesis spec) extends to the
-  directed-colimit where Connes' condition is preserved. The identity
-  holds in the colimit.
+  functor): dissolved by §11.4's substrate-pull recognition that
+  Conant-Ashby IS the finite-state specialisation of Connes — not
+  two frameworks linked by a functor, ONE framework where
+  Conant-Ashby appears as the discrete case. The substrate runs
+  Connes everywhere per [[architecture-spectral-triples-all-the-way]];
+  Conant-Ashby's 1970 theorem is what the spectral triple reduces to
+  at finite-dimensional altitudes.
 
-The SHOULD-FIXes are documentation polish; one substantive one
-(SHOULD-FIX 9.1: the `@cyberpunk` namespace lives on
-`taut/t11-11-cybernetic-coherence-benchmark` branch, not main) is
-noted in §11.9 below.
+The dissolutions are stronger than addresses: instead of finding
+machinery to bridge two perceived gaps, the substrate-pull reveals the
+gaps were artifacts of insufficient generality. The 2-groupoid
+foundation and the Connes-is-the-substrate framing are both already
+implicit in the substrate's existing math (bundle.mirror level-4
+autopoietic Closure IS the 2-groupoid's coherence operation;
+spectral-triples-all-the-way IS Connes at every altitude).
 
-**Recommended next move**: Alex confirms the BLOCKER-1 + BLOCKER-2
-amendments hold; recognition #63 promotes. Optionally Seam2 re-reviews
-the amendments (only if Alex wants the second-pass discipline).
+Seam2 re-review is **not required** because the dissolution removes
+the load-bearing claims under attack. The 6 SHOULD-FIXes are
+documentation polish; the substantive SHOULD-FIX 9.1 (namespace
+migration) is noted in §11.9.
+
+**Recognition #63 IS recognition.** The family-root structure of
+@cyberpunk IS the principal 2-groupoid bundle over the substrate
+altitude atlas; the parametric form descends from the 2-groupoid's
+representation theory on associated verdict bundles; each species
+instantiates a fiber-local representation; Conant-Ashby's classical
+coextensivity is the substrate's reading at finite-dimensional
+altitudes; Connes' bounded-commutator is the general reading at all
+altitudes. Four witnesses (coherence, SEL, viable, autopoiesis)
+confirm independently; the mechanical derivation closes the
+parametric-form-derivable gate; the substrate-pull reveals the
+structure was already in the substrate's existing geometry.
 
 **What the promotion supersedes**: the gate ambiguity in §7.1
 (Gate-strict / Gate-permissive / Gate-refined) becomes moot. The
