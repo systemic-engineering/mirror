@@ -1,99 +1,150 @@
 in @prism
-in @epistemologic/property
+in @glass
 in @mirror/liquid
 
-# @epistemologic/property/benchmark
+# Property: performance properties as verdicts. Not numbers.
 #
-# performance properties as verdicts. not numbers.
+# The timer IS the instrument. The benchmark IS the game.
+# Each property takes an artifact and returns transparency<p>.
+# success means the architecture holds. failure(opacity_map)
+# means it doesn't — each opacity names ONE offending altitude.
+# partial(opacity_map) means the cascade isn't complete yet.
 #
-# the timer IS the instrument. the benchmark IS the game.
-# each property takes an artifact and returns verdict.
-# pass means the architecture holds. fail means it doesn't.
-# partial means the cascade isn't complete yet.
+# Seven checks. The line through the state space.
+# The cascade finder's domain.
 #
-# seven checks. the line through the state space.
-# the cascade finder's domain.
+# === Migration shape ===
+#
+# Lifted from `boot/std/epistemologic/property/benchmark.mirror`
+# (recognition #37 closure, 2026-06-17) under the gaze of
+# @epistemologic/pact/keyword_matches_path_root: the path segment
+# `property` retired with the `grammar` keyword; `pact` replaces
+# both. Pre-migration this shard declared `grammar @epistemologic/
+# property/benchmark`; post-migration it declares
+# `pact @epistemologic/pact/benchmark` and self-witnesses under
+# keyword_matches_path_root on the first frame.
+#
+# === Bilateral pattern ===
+#
+# Per [[architecture-property-fracture-bilateral]]:
+# declarative property half at `@epistemologic/pact/benchmark`
+# (THIS shard); operational discharge half is the loss-tracking
+# trace produced by `mirror bench` per
+# `docs/specs/benchmark-tracing.md`. The fracture body chain
+# (route each check through `splinter(ast)` with a per-altitude
+# verdict emitter against the trace) is forward-promised at the
+# @kintsugi/fracture/benchmark sibling; NOT this tick.
+#
+# === Form-side discipline ===
+#
+# This property sits at the form-side of the form/process partition
+# ([[architecture-form-process-partition-at-family-root]]; the
+# @mirror = form, @kintsugi = process partition). The rule names
+# WHAT must hold at the build/run altitude; the realisation lives
+# at @kintsugi/fracture/benchmark (forward-promised); the operator
+# of the bridge is the kintsugi loop (substrate-pull).
+#
+# === Verdict surface ===
+#
+# Verdict surface is transparency<p>:
+#   success              -- the property holds for the artifact at
+#                          the named altitude.
+#   failure(opacity_map) -- some altitude breached its bound; each
+#                          opacity names ONE offending (altitude,
+#                          measurement) pair.
+#   partial(opacity_map) -- mixed: some altitudes within bound,
+#                          some not; or measurement chain incomplete
+#                          (cascade not yet finished, per
+#                          `cache_speedup` waiting on
+#                          `incremental_speedup`).
+#
+# Located transparency (not @glass.verdict): the kintsugi loop
+# consumes the opacity_map to direct the next-tick benchmark
+# selection. Each opacity in the failure/partial map names ONE
+# offending altitude; the fracture body (forward-promised) emits
+# the morphism that proposes the rewrite.
 
-grammar @epistemologic/property/benchmark {
+pact @epistemologic/pact/benchmark {
 
   # no_hang: the binary doesn't hang (bounded IO).
   #
-  # checks:
+  # Checks:
   #   - every exec completes within wall-clock bound
   #   - no unbounded stdin reads without EOF
   #   - pclose returns within timeout
   #
-  # if the binary hangs, nothing else matters.
-  # this is the gate. everything downstream depends on it.
-  no_hang(ast) -> verdict { \ }
+  # If the binary hangs, nothing else matters. This is the gate.
+  # Everything downstream depends on it.
+  no_hang(ast: ref) -> transparency { \ }
 
   # linear_compile: compilation completes within O(n) of input size.
   #
-  # checks:
+  # Checks:
   #   - parse is O(n) in token count
   #   - content_oid is O(n) in AST node count
   #   - no quadratic loops in scan_items
   #
-  # the proof says O(1/t) convergence. but the compiler itself
+  # The proof says O(1/t) convergence. But the compiler itself
   # must be linear or the proof is academic.
-  linear_compile(ast) -> verdict { \ }
+  linear_compile(ast: ref) -> transparency { \ }
 
   # binary_size: the binary is smaller than threshold.
   #
-  # checks:
+  # Checks:
   #   - stripped binary < 64KB (L1 cache resident on most x86)
   #   - LLVM IR < 16K lines (human-auditable)
   #   - no dead code (every defined function is reachable from main)
   #
-  # 50KB today. the threshold is the game.
-  # smaller binary = faster cold start = faster cascade.
-  binary_size(binary, threshold) -> verdict { \ }
+  # Today the released binary is ~700KB; the cascade target is
+  # sub-50KB. Smaller binary = faster cold start = faster
+  # cascade.
+  binary_size(binary: ref, threshold: u64) -> transparency { \ }
 
-  # deterministic_oid: same input produces same hash. always.
+  # deterministic_oid: same input produces same hash. Always.
   #
-  # checks:
+  # Checks:
   #   - canonical_hash is pure (no global state mutation between calls)
   #   - sha256 rounds are deterministic (no FP contraction)
   #   - content_oid for identical ASTs produces identical OIDs
   #
-  # -ffp-contract=off is load-bearing. without it, FMA fusion
-  # changes intermediate values and the OIDs diverge.
-  # this property IS the content-addressing guarantee.
-  deterministic_oid(ast) -> verdict { \ }
+  # `-ffp-contract=off` is load-bearing. Without it, FMA fusion
+  # changes intermediate values and the OIDs diverge. This
+  # property IS the content-addressing guarantee.
+  deterministic_oid(ast: ref) -> transparency { \ }
 
   # cache_speedup: cache hit is faster than cold compile.
   #
-  # checks:
+  # Checks:
   #   - git_crystal_exists returns in O(1) (ref lookup, not tree walk)
   #   - cache hit skips parse + tokenize + content_oid
   #   - speedup factor > 2x (the cascade pays for itself)
   #
-  # if the cache doesn't help, the crystal store is decoration.
-  # the speedup IS the proof that persistence works.
-  cache_speedup(file) -> verdict { \ }
+  # If the cache doesn't help, the crystal store is decoration.
+  # The speedup IS the proof that persistence works.
+  cache_speedup(file: ref) -> transparency { \ }
 
   # incremental_speedup: incremental craft is faster than full craft.
   #
-  # checks:
+  # Checks:
   #   - DAG dependency tracking is correct (changed file + dependents only)
   #   - unchanged files hit crystal cache
   #   - incremental time < full time * (changed / total)
   #
-  # the cascade: change one grammar, recompile its subgraph.
-  # not the whole world. the subgraph. that's the line.
-  incremental_speedup(spec) -> verdict { \ }
+  # The cascade: change one grammar, recompile its subgraph. Not
+  # the whole world. The subgraph. That's the line.
+  incremental_speedup(spec: ref) -> transparency { \ }
 
   # l1_resident: the binary fits in L1 cache.
   #
-  # checks:
+  # Checks:
   #   - text section < 32KB (conservative L1i on modern x86)
   #   - hot path (tokenize -> content_oid -> crystal check) fits in 16KB
   #   - no cold function pulled into hot path by inlining
   #
-  # L1 residency is the ultimate speedrun.
-  # if the hot path fits in L1, the timer becomes the memory bus.
-  # that's where the cascade lives.
-  l1_resident(binary) -> verdict { \ }
+  # L1 residency is the ultimate speedrun. If the hot path fits
+  # in L1, the timer becomes the memory bus. That's where the
+  # cascade lives.
+  l1_resident(binary: ref) -> transparency { \ }
 }
 
 out no_hang
@@ -103,3 +154,4 @@ out deterministic_oid
 out cache_speedup
 out incremental_speedup
 out l1_resident
+out @epistemologic/pact/benchmark
