@@ -526,14 +526,93 @@ deeper. Recognition #63's promise of derivative species is realized.
 per Mara §8 Q3), conditional on bateson_learning + parametric carrier
 shards landing first per bateson_learning §10.3 sequencing.
 
-### §8.7 [Next tick — second_order in flight; the recursive recognition]
+### §8.7 second_order — seventh witness; canonical regular rep (this tick, 2026-06-18)
 
-*The species that names what the audit itself is doing as we walk it.
-Von Foerster's second-order observation — cybernetics of cybernetics.
-The audit IS already operating at second-order altitude (auditing the
-structure of recursion locks IS observation of observation); the
-species names what we're doing. Species order: second_order, then
-distinction, conversation, coevolution, requisite, design.*
+Per Mara's spec `docs/specs/cyberpunk-second-order.md` (commit
+`c628920`, `mara/cyberpunk-second-order-spec` branch, 742 lines). The
+species whose audit IS, by construction, an instance of the species.
+
+**Reads tested**:
+- A (observer ↔ observation) HELD
+- B (the audit IS this species) HELD — load-bearing for epistemic
+  novelty, not founding for the witness
+- C (Tomm probe altitude per [[architecture-error-as-tomm-probe]]) HELD
+- D (form refusal — multiply self-referential) REFUSED (2-groupoid
+  foundation already handles multi-self-reference via bundle.mirror
+  level-4 Closure)
+- E (canonical ρ — regular rep OR double-dual) HELD; E.1 is canonical;
+  E.2 derives from E.1
+- F (sub-rep chain extends) HELD
+
+**Verdict**: **thin-specialization witness**.
+
+**Canonical ρ_second_order**: the **regular representation of 𝒢 on
+`L²(𝒢)`** (Mara's Read E.1). Ancestry: von Foerster 1981 *Observing
+Systems* + Peter-Weyl theorem. Peter-Weyl decomposes `L²(𝒢)` into all
+irreducibles each with multiplicity equal to its dimension, so
+`rank(ρ_reg.image) = ∑ dim(V_ρ)²` is maximal — the regular rep is
+variety-saturating in Ashby's sense.
+
+**The Read E.2 double-dual derives from E.1**: under the regular rep,
+`V_S** ≅ V_S` for any other species' verdict carrier IS the species'
+observation observing itself. The substrate-pull recognition: when the
+regular rep acts on the other species' carriers via the natural
+double-dual isomorphism, second_order IS what makes every other
+species' observation observable to the substrate.
+
+**Three canonical-rep species now** — the pattern locks in:
+
+```
+species            ρ_S choice                ancestry
+----------------- ------------------------- ------------------------
+autopoiesis        adjoint rep on G          G's self-action
+bateson_learning   graded rep on ⊕_N V_N    Russell-Whitehead + Kac
+second_order       regular rep on L²(𝒢)    von Foerster + Peter-Weyl
+```
+
+Each is forced by the species' mathematical ancestry. The parametric
+carrier admits these three independent canonical instances; recognition
+#63's robustness is now corroborated at three structurally-different
+species altitudes (G-self-action, type-stratified universe, regular
+functions on the group).
+
+**The recursive recognition handled**: Mara's spec splits the framing
+into five sub-sections to avoid circularity. The witness is
+*overdetermined* by Reads A + C + E + F (each independent of the
+recursive recognition); Read B *amplifies* the witness via the
+recognition that the loop ALREADY has the structure of second-order
+observation. **Recognition is recognition, not creation.** Substrate-
+pull discipline satisfied.
+
+Mara surfaces the substrate-political reading (§11.4 of her spec):
+*recognition #63's promotion event WAS itself second-order at
+substrate altitude*. The loop's existence is data for the species
+the loop is auditing.
+
+**Mara's Q4 — eigenform inheritance** (substantive for downstream):
+the fixed-point witness shape (Spencer-Brown re-entry; observer-of-self
+landing at fixed-point) should inherit from `eigenform` (recognition
+#38; `uuid_spectral` IS an eigenform per von Foerster 1981 *Objects:
+Tokens for (Eigen-)Behaviors*). Under this inheritance, the species'
+shard becomes *even thinner* — the only species-specific content
+(the reflexive-turn fixed-point witness) inherits from existing
+substrate primitive. **Substrate-already-had-the-word ALL THE WAY
+DOWN at second_order altitude.** Forward-promised: the inheritance
+lands when the parametric carrier shard lands.
+
+**Substrate-already-had-the-word**: 14 instances (Mara §10);
+cumulative ~109. Densest single contribution: *every prior species'
+ancestor #4 (`von_foerster_circular_reflexivity`) IS second_order at
+lower altitude*.
+
+### §8.8 [Next tick — distinction in flight; Spencer-Brown's calculus]
+
+*Species order continues: distinction (Spencer-Brown 1969 *Laws of
+Form*; the calculus of indications; canonical rep via Boolean algebra
+on distinction-space), then conversation, coevolution, requisite,
+design. Distinction is structurally adjacent: Spencer-Brown's mark of
+distinction IS the floor of cybernetic observation — the act of
+making a distinction that second_order observes recursively.*
 
 ## §9 What promotion or retraction closes
 
