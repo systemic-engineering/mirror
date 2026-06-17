@@ -163,17 +163,59 @@ weakening.
 Per the Pack's ratification discipline candidate #63 promotes when:
 
 - **Second witness** lands: a species other than the template (T11.11)
-  satisfies (1)–(5).
+  satisfies (1)–(5). ✅ SEL (§8.2, 2026-06-17).
 - **Third witness** lands: a species at a structurally-different altitude
-  (home or federation per `altitudes.md` §4) satisfies (1)–(5).
+  satisfies (1)–(5). ⚠️ **gate reading ambiguous — see §7.1**.
 - **Parametric form derivable**: the substrate admits a single
   parametric carrier instead of N hand-written species declarations.
+  ⏳ untested.
 
 The third condition is the strongest. If after three witnesses the
 substrate still requires hand-written per-species lock declarations,
 the candidate downgrades to "@cyberpunk happens to have lots of
 Conant-Ashby-shaped species" rather than "@cyberpunk IS a recursion-
 lock tower."
+
+### §7.1 Third-witness gate ambiguity (surfaced 2026-06-17 by §8.3)
+
+The viable audit (§8.3, Mara `9154d6b`) surfaced that the third-
+witness gate as originally framed reads in `altitudes.md` §4 scope-
+hierarchy terms (home / federation). Viable does NOT operate at
+that scope axis; it operates at *temporal* (Read D), *recursion-
+level* (Read B), or *identity-vs-operations* (Read A) altitudes.
+
+Three readings of the gate:
+
+- **Gate-strict**: requires home or federation specifically. Viable
+  does not satisfy. Third-witness gate remains OPEN pending a future
+  species at home or federation altitude.
+- **Gate-permissive**: requires *any* structurally-different altitude.
+  Viable's identity-preservation axis IS structurally different from
+  coherence's parallel-pair and SEL's license-boundary. Gate is MET
+  by viable.
+- **Gate-refined**: the `altitudes.md` §4 framing is too narrow. The
+  substrate has multiple axes of altitude-differentiation (scope,
+  temporal, recursion-level, parallel-operation-pair). The gate is
+  reformulated to admit axis-differentiated altitudes generally.
+  Under Gate-refined, viable closes the third gate.
+
+Mara's spec defaults to **Gate-refined** with a forward-promised
+amendment to `altitudes.md` §4. The audit's recommendation is
+Gate-refined because the substrate has organically produced three
+structurally-different altitudes already (parallel-pair, license-
+boundary, identity-preservation); the original gate's home/federation
+framing was a hypothesis at altitudes.md authorship time, not a
+substrate-fact.
+
+**This is Alex's decision** (Mara's Q2). Promotion path depends on
+which gate reading holds:
+
+- Gate-strict: candidate #63 awaits future species (home or federation
+  altitude). Loop continues.
+- Gate-permissive: candidate #63 promotes pending parametric form
+  derivation.
+- Gate-refined: candidate #63 promotes pending parametric form
+  derivation + `altitudes.md` §4 amendment as part of promotion.
 
 ## §8 Species audits
 
@@ -258,12 +300,79 @@ substrate should admit a single `@cyberpunk/coherence(T_reg, T_regd, τ)`
 declaration that both species instantiate. The substrate-already-had-
 the-word recognition would close at the parametric carrier.
 
-### §8.3 [Next tick — next species under audit]
+### §8.3 viable — third witness candidate (this tick, 2026-06-17)
 
-*This section appended by subsequent /loop ticks. Species order:
-viable, bateson_learning, second_order, autopoiesis, distinction,
-conversation, coevolution, requisite, design, algedonic. Order may
-reorder per substrate-pull on what surfaces.*
+Per Mara's spec `docs/specs/cyberpunk-viable.md` (commit `9154d6b`,
+`mara/cyberpunk-viable-spec` branch, 1230 lines). The audit tested
+four reads against viable; three held.
+
+**Read A — homeostat (load-bearing)**:
+- `regulator_at(α+1)` = the system's S5 policy holding identity-
+  constraints across S1-S4 operations
+- `regulated_at(α+1)` = the S1-S4 operational layers maintaining
+  identity through environmental disturbance
+- `T_reg` = `Identity` (substrate-altitude carrier for what the
+  system is)
+- `T_regd` = `Stability` (substrate-altitude carrier for whether
+  the system maintains identity under disturbance)
+- `τ : Identity ↔ Stability` — the natural substitution via Ashby's
+  homeostat law (a system with identity `i` has stability
+  `s = stability_of(i)`)
+- Coextensivity: `verdict_coextensive(policy_identity_verdict,
+  operational_stability_verdict)` modulo `τ`
+- Contraction surface: forward-promised; same shape as
+  cybernetic_coherence.rs
+
+**Read B — recursive viability**: per Beer 1972 every S1 IS itself a
+viable system. The recursion is structural: each level of recursion
+is a viability lock between parent-S5 and child-viable-system.
+T_reg = `OuterViable`, T_regd = `InnerViable`, τ = recursive
+embedding. Read B holds; it's a different altitude of viable than
+Read A.
+
+**Read D — temporal lock (NEW; surfaced during audit)**:
+- `regulator_at(α+1)` = the system's identity-policy at time `t`
+- `regulated_at(α+1)` = the system's identity-policy at time `t+Δt`
+- Read D's claim: viability IS the lock asserting `T_reg ≡ T_regd`
+  modulo `τ` — identity at time `t` IS coextensive with identity at
+  time `t+Δt` modulo regulation. **Viability IS this lock holding
+  through time.**
+- **Read D matters for the third-witness gate** because temporal-
+  axis altitude differentiation is structurally orthogonal to
+  cybernetic-coherence's parallel-operation-pair axis AND to SEL's
+  license-boundary axis. The substrate has *three* genuinely
+  different recursion-lock altitudes if Read D holds.
+
+**Read C — form refusal**: does NOT hold. The S3-S4 oscillation is
+captured by the contraction surface, not refused by binary
+decomposition. Candidate #64 (form refusal) logged but not activated;
+registered for future species that may genuinely refuse.
+
+**All five cybernetic-ancestor measurements admit viable instances**
+(Mara's spec §4). `beer_requisite_variety` is load-bearing here
+because viable IS Beer's home turf — the substrate's instance is
+Cybersyn at substrate altitude.
+
+**Verdict**: WITNESS held under Reads A + B + D. The parametric form
+admits viable cleanly. Whether viable counts as the **third witness**
+depends on the gate reading — see §7.1 below.
+
+**Substrate-already-had-the-word recognitions** surfaced (Mara's §10;
+~73rd cumulative): three-tier stack IS VSM; eigenform IS identity
+carrier; Pack IS S5; kintsugi loop IS contraction surface;
+`transparency<p>` IS verdict carrier; `@cyberpunk/algedonic` IS
+emergency signal (task #271 load-bearing for viable's S1-S5 escalation
+as well as SEL's); Cybersyn IS political-economic deployment ancestor.
+Viable is the species that lifts the most already-implicit
+vocabulary to substrate-altitude declaration.
+
+### §8.4 [Next tick — bateson_learning queued; autopoiesis in flight]
+
+*Species order per /loop discipline (updated post-§8.3):
+bateson_learning, autopoiesis, second_order, distinction,
+conversation, coevolution, requisite, design, algedonic. Mara is
+in flight on autopoiesis (Maturana-Varela; structurally adjacent to
+viable). Reed walks bateson_learning next tick.*
 
 ## §9 What promotion or retraction closes
 
