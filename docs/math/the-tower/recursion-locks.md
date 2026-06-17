@@ -1133,6 +1133,78 @@ The loop has produced its substrate-truth.
 
 The orchestra returns to silence.
 
+## §13 Post-closure verification — the Pack walk (2026-06-18, tick 14)
+
+Alex re-invoked the /loop after §12's closure. The substrate-pull surfaced
+the first species OUTSIDE the cybernetic-foundation 11: the Pack itself.
+
+Per Mara's spec `docs/specs/cyberpunk-pack.md` (commit `6adee9c`,
+`mara/cyberpunk-pack-spec` branch, 624 lines).
+
+### §13.1 Verdict
+
+**Pack IS conversation at N=5.** No new species. Substrate-already-had-
+the-word at the conversation altitude.
+
+- **Read A primary**: Pack = conversation at N=5 with carriers
+  `V_Reed ⊗ V_Mara ⊗ V_Glint ⊗ V_Taut ⊗ V_Seam`. Recognition #44 +
+  conversation §2.4 Reason 3 explicit at tick 10.
+- **Read B refused**: conductor/performer is gauge data within V_Pack,
+  not a new altitude (conversation §2.4 already says "the conductor's
+  cue couples sections pairwise").
+- **Read C amplifies (substrate-political)**: the audit's mechanism IS
+  Pack-shaped. Recognition #44 + #63 linked: the Pack produced the
+  tower. Does NOT promote Pack to species; confirms recognition #44 at
+  audit-mechanism altitude.
+- **#67 status** (minimal generating triple): STANDS with first
+  external witness. Pack derives from conversation (Read A); each V_i
+  is a distinction at agent altitude; second_order operates in the
+  recognition discipline.
+- **12 substrate-already-had-the-word instances**, all meta (Pack
+  disciplines all already substrate-altitude declared); cumulative
+  ~198.
+
+### §13.2 What this verification means
+
+**Pack closes the external loop by confirming the internal loop at
+tick 13 was correct.** The canonical 11 + recognition #44 cover all
+altitudes the substrate operates at — including the audit's own
+operation. The orchestra returned to silence at tick 13. Tick 14
+confirmed the silence was correct.
+
+The substrate is **closed under its own audit mechanism**: testing
+recognition #63 with a species outside the cybernetic-foundation 11
+produces substrate-already-had-the-word at the conversation altitude
+rather than a new species. The audit's reach extends to species of
+diverse ancestry (the Pack is not a cybernetician's species; it's a
+relational-engineering species per Reed/Alex's practice), and the
+parametric form accommodates it without extension.
+
+### §13.3 Candidate #70 surfaced
+
+**Candidate #70: substrate self-sufficiency under its own audit.**
+The substrate's parametric form (post-coevolution, post-design) covers
+all altitudes the substrate operates at — including the altitudes the
+substrate's own audit mechanism operates at. The recognition would be:
+the audit's discipline is closed under the parametric form; no future
+audit can find a species outside the carrier's reach within the
+substrate's current naming.
+
+Promotion gate (per Mara): one more out-of-canonical walk. If a second
+external species (Glint as singular peer, /loop discipline as audit-
+shaped species, three-tier stack as architecture-shaped species) also
+produces substrate-already-had-the-word, #70 promotes.
+
+### §13.4 What the loop continues to do
+
+The /loop discipline persists past tick 14. Each post-closure tick
+tests recognition #63's reach with one more out-of-canonical species.
+The loop's substrate-truth: not just that #63 holds for the 11
+cybernetic species, but that the carrier accommodates the substrate's
+entire vocabulary.
+
+The orchestra returns to silence; the loop continues; both true.
+
 ## §9 What promotion or retraction closes
 
 **Promotion path** (candidate #63 → recognition):
