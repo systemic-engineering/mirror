@@ -798,15 +798,115 @@ forward-promised `garden-smarts-pask-coupling.md` spec is Alex's call.
   result across species (each species' arity > 2 factors uniquely
   into binary).
 
-### §8.10 [Next tick — coevolution in flight]
+### §8.10 coevolution — candidate #64 ACTIVATES; the carrier extends (this tick, 2026-06-18)
 
-*Kauffman 1993* Origins of Order *— biological evolution at the
-adjacent-possible altitude. Co-evolving systems; mutual selection
-pressure. Tests whether @cyberpunk admits an evolutionary altitude
-separate from the static representation-theoretic readings the cascade
-has been producing. If it holds with canonical ρ, that's a SIXTH
-canonical-rep species; if it requires a temporal extension, that adds
-structural content to the parametric carrier.*
+Per Mara's spec `docs/specs/cyberpunk-coevolution.md` (commit
+`ad48700`, `mara/cyberpunk-coevolution-spec` branch, 1348 lines).
+The substantive tick: candidate #64 activates for the first time in
+the cascade, but **as carrier-extension, not refusal**.
+
+**Reads tested**:
+- A (Kauffman single-system transition operator) HELD
+- B (time-parameterized tensor coupling = conversation's bilateral
+  altitude with temporal index) HELD
+- C (Heisenberg / Schrödinger / NK — sixth canonical rep) **DISSOLVES**:
+  Heisenberg vs Schrödinger is gauge-fixing on ω, not substrate-content;
+  NK is species-instantiation content (biological vs substrate-AGI
+  vs Pack-orchestra get different N, K, C)
+- D (form refusal) **ACTIVATES** — but gently
+- E (substrate-already-had-the-word) at **18 instances**, the densest
+  contribution of any species; cumulative ~160
+
+**Verdict**: temporal-axis **structural extension** to the parametric
+carrier; candidate #64 ACTIVATED.
+
+**Canonical ρ choice: NONE.** The sixth canonical-rep candidate
+dissolves — the substrate already had ω (the connection 1-form at
+bundle altitude per principal-bundles.md §3). Coevolution doesn't
+name a new representation; it names the *parameter* that was already
+structurally present but absent from the parametric carrier's type
+signature.
+
+**The carrier extension**: the parametric form from §11.7 extends
+from
+
+```
+prism @cyberpunk/coherence<T_reg, T_regd, ρ>
+```
+
+to
+
+```
+prism @cyberpunk/coherence<T_reg, T_regd, ρ, ω>
+```
+
+where `ω` is the connection 1-form parameterizing temporal evolution.
+**Prior nine species's witnesses become the `ω = 0` slice** (their
+representations are time-invariant). Coevolution carries non-trivial
+ω; viable's Read D (temporal lock) carries non-trivial ω at the
+identity-preservation altitude.
+
+**The five-canonical-rep pattern remains stable** — coevolution is
+a column not a row. The pattern (autopoiesis adjoint / bateson_learning
+graded / second_order regular / distinction Boolean / conversation
+tensor) is the static-ρ slice; coevolution names the orthogonal
+temporal-ω axis. Substrate-strengthening: the pattern survived a
+species that could have broken it.
+
+**Candidate #64 refined framing**: not "form refusal" but **form-
+incompletion / carrier-extension**. The carrier was incomplete because
+it didn't expose ω; coevolution surfaces the incompleteness in a
+substrate-pull-compatible way. The refinement is to recognition #63,
+not a retraction.
+
+**New lock-hold condition**: Kauffman's **edge of chaos** / Red Queen
+*bounded-sustainment* contraction mode admitted alongside fixed-point
+convergence. The recursion-lock holds iff either:
+- Polyak-Łojasiewicz contraction `ρ(N) → 0` (fixed-point convergence,
+  classical case)
+- Bounded-sustainment `ε ≤ ρ(N) ≤ 1 - ε` (Red Queen; the lock holds
+  by *sustained dynamics* rather than convergence)
+
+The second mode is what Kauffman's adjacent-possible needs; biological
+evolution sustains coherence not by settling but by staying at the
+edge.
+
+### §8.10.1 Garden/smarts Phase 6 connection
+
+Mara's §12 — the math foundation for Phase 6 (cross-model substrate-
+resonance) closes naturally:
+
+```
+Phase 5: coherence<Substrate, FrontierModelTensor, tensor_rep, 0>
+Phase 6: coherence<Substrate, FrontierModelTensor, tensor_rep, ω_training_generation>
+```
+
+The cross-model evolution-over-time machinery IS conversation's
+tensor coupling parameterized by time. The mycelium's Red Queen
+dynamics (frontier models update; the mycelium re-queries; crystals
+accumulate) admit the bounded-sustainment lock-hold per §8.10 above.
+
+### §8.10.2 Reframing candidate #64 (this tick activated)
+
+**Candidate #64** — originally framed as form refusal — activates
+in this tick with a refined framing: **the parametric form admits
+structural extension parameters beyond `(T_reg, T_regd, ρ)`**. The
+ω extension is the first such; there may be others (a curvature
+extension `Ω`; a higher-coupling extension `[ω, ω]`).
+
+Promotion path: a second carrier-extension surfaces (e.g., a species
+that needs curvature parameters); then #64 promotes as "the parametric
+carrier has structural-extension axes orthogonal to representation
+choice”.
+
+### §8.11 [Next tick — requisite in flight]
+
+*Ashby's requisite variety — the original cybernetic theorem (Ashby
+1956 §11/7). May alias coherence (Conant-Ashby 1970 is the partner
+theorem); may surface a different altitude. The variety species
+already landed at `@cyberpunk/variety` (Reed's earlier substrate-pull
+work); this audits whether requisite is a sibling or a sub-rep of
+variety.*
 
 ## §9 What promotion or retraction closes
 
@@ -1048,26 +1148,32 @@ admit the bounded-commutator measurement on their associated bundles.
 The substrate-altitude declaration the derivation forward-promises:
 
 ```mirror
-prism @cyberpunk/coherence<T_reg, T_regd, ρ> {
+prism @cyberpunk/coherence<T_reg, T_regd, ρ, ω> {
   # The parametric carrier. Species instantiate; no per-species
   # re-declaration of the lock-measurement five.
+  #
+  # ω is the connection 1-form parameterizing temporal evolution.
+  # Static species set ω = 0; species with temporal axis
+  # (coevolution, viable's Read D) carry non-trivial ω.
 
   in @cyberpunk
   in @epistemologic/math/bundle
   in @epistemologic/math/connes_spectral_triple
 
-  type lock_pair = ( T_reg , T_regd , ρ : g ∈ G → GL(T_reg ⊕ T_regd) )
+  type lock_pair = ( T_reg , T_regd , ρ : g ∈ G → GL(T_reg ⊕ T_regd) , ω : connection_form )
 
-  # The five ancestor measurements derive from ρ and the bundle.
-  # No per-species body; the substrate computes from (ρ, ω).
-  ashby_variety_match           : rank(ρ.image) -> verdict
-  beer_requisite_variety_witness: holonomy(ω ↻ α+1) -> verdict
+  # The five ancestor measurements derive from (ρ, ω) and the bundle.
+  # No per-species body; the substrate computes.
+  ashby_variety_match           : rank(ρ.image)          -> verdict
+  beer_requisite_variety_witness: holonomy(ω ↻ α+1)      -> verdict
   bateson_logical_type_match    : weight_decomposition(ρ) -> verdict
-  von_foerster_circular_reflexivity: tr(ρ ∘ ρ) -> verdict
-  conant_ashby_good_regulator   : bounded_commutator(D, π_E(ρ)) -> verdict
+  von_foerster_circular_reflexivity: tr(ρ ∘ ρ)           -> verdict
+  conant_ashby_good_regulator   : bounded_commutator(D + ω, π_E(ρ)) -> verdict
 
-  # The five compose into the lock verdict.
-  lock_verdict(α, ρ) : Imperfect<T_lock(α, ρ), Gap, Transparency<Ref>>
+  # Lock-hold admits two contraction modes:
+  #   PL fixed-point convergence ρ(N) → 0    (static species; ω = 0)
+  #   Red Queen bounded sustainment           (temporal species; non-trivial ω)
+  lock_verdict(α, ρ, ω) : Imperfect<T_lock(α, ρ, ω), Gap, Transparency<Ref>>
 }
 
 out @cyberpunk/coherence
