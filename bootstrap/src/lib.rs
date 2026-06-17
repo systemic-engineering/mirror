@@ -914,7 +914,7 @@ fn cmd_kintsugi(
                 return cmd_kintsugi_ci_corpus(file, shatter, transform, format);
             }
         }
-        return cmd_kintsugi_ci_single(file, shatter, transform, format);
+        return cmd_kintsugi_ci_single(file, shatter, transform, format, out_dir);
     }
     // Migration mode: --out + a directory input — walk and migrate
     // every .mirror file under the directory.
@@ -1189,7 +1189,35 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
             total_dark += 1;
             continue;
         }
-        let manifest = spec_dir.join("Cargo.toml");
+        // Manifest probe (issue #315): the substrate-declared
+        // `manifest ~f'...'` carrier is a known tokenizer gap (see
+        // `spec_targets_from_ast` docstring), so the dispatcher
+        // probes the canonical locations in declaration order. For
+        // mirror's own dogfood spec (mirror.spec at repo root), the
+        // Rust manifest lives at `bootstrap/Cargo.toml`, not
+        // `./Cargo.toml`. Pre-#315 every target tried `./Cargo.toml`
+        // and failed because the repo has no top-level manifest.
+        //
+        // Order:
+        //   1. <spec-dir>/Cargo.toml   — single-crate convention
+        //   2. <spec-dir>/bootstrap/Cargo.toml  — mirror's convention
+        //
+        // When the tokenizer's `~f'...'` gap closes, the spec's own
+        // `manifest ~f'bootstrap/Cargo.toml'` directive supersedes
+        // this probe. Until then, the probe holds the @io floor.
+        let manifest = {
+            let default = spec_dir.join("Cargo.toml");
+            if default.is_file() {
+                default
+            } else {
+                let bootstrap = spec_dir.join("bootstrap").join("Cargo.toml");
+                if bootstrap.is_file() {
+                    bootstrap
+                } else {
+                    default
+                }
+            }
+        };
         // Insight #43 (2026-06-09 substrate-pull): the per-target
         // `check <action>` directive (declared in shards/mirror/spec.mirror)
         // names which @io/cargo action this target dispatches. When
@@ -1414,6 +1442,28 @@ fn parse_io_dir_arg(s: &str) -> Option<String> {
     Some(arg.to_string())
 }
 
+/// Polymorphic output write per Alex's 2026-06-17 directive:
+/// `--out @io/dir('path')` writes the pipeline output into the dir.
+/// Single-blob case: lands at `<dir>/out.<ext>` (ext follows the format).
+/// When `out_dir` is None, writes to stdout as before. Returns 0 on
+/// success, 1 on filesystem failure.
+fn write_or_stdout(bytes: &[u8], out_dir: Option<&str>, ext: &str) -> i32 {
+    if let Some(dir) = out_dir {
+        if let Err(e) = fs::create_dir_all(dir) {
+            merr!("could not create output dir {}: {}", dir, e);
+            return 1;
+        }
+        let path = format!("{}/out.{}", dir.trim_end_matches('/'), ext);
+        if let Err(e) = fs::write(&path, bytes) {
+            merr!("could not write {}: {}", path, e);
+            return 1;
+        }
+        return 0;
+    }
+    _raw_stdout(bytes);
+    0
+}
+
 /// Dispatch a `--out` substrate ref value. Updates `ci_format` for
 /// projection refs (`@data/json`, `@data/mirror`) and `out_dir` for the
 /// parametric directory ref (`@io/dir('path')`). Returns Err(()) on any
@@ -1611,14 +1661,15 @@ fn cmd_kintsugi_ci_single(
     shatter: u64,
     transform: Option<&str>,
     format: CiFormat,
+    out_dir: Option<&str>,
 ) -> i32 {
     let (verdict, objective, iterations, dark_count) =
         kintsugi_ci_compute(file, shatter, transform);
     match format {
         CiFormat::MirrorText => {
-            emit_ci_verdict_mirror_text(verdict, file, objective, iterations, dark_count)
+            emit_ci_verdict_mirror_text(verdict, file, objective, iterations, dark_count, out_dir)
         }
-        CiFormat::Json => emit_ci_verdict_json(verdict, file, objective, iterations, dark_count),
+        CiFormat::Json => emit_ci_verdict_json(verdict, file, objective, iterations, dark_count, out_dir),
     }
 }
 
@@ -1871,6 +1922,7 @@ fn emit_ci_verdict_json(
     objective: f64,
     iterations: u64,
     dark_count: u64,
+    out_dir: Option<&str>,
 ) -> i32 {
     let v = CiVerdict {
         verdict,
@@ -1882,8 +1934,7 @@ fn emit_ci_verdict_json(
     match serde_json::to_string(&v) {
         Ok(mut json) => {
             json.push('\n');
-            _raw_stdout(json.as_bytes());
-            0
+            write_or_stdout(json.as_bytes(), out_dir, "json")
         }
         Err(_) => 1,
     }
@@ -1928,6 +1979,7 @@ fn emit_ci_verdict_mirror_text(
     objective: f64,
     iterations: u64,
     dark_count: u64,
+    out_dir: Option<&str>,
 ) -> i32 {
     // Single-file record: longest key is `iterations` (10) or
     // `dark_count` (10). Pad to 11 columns (key + at least one space).
@@ -1944,8 +1996,7 @@ fn emit_ci_verdict_mirror_text(
         "dark_count",
         dark_count,
     );
-    _raw_stdout(buf.as_bytes());
-    0
+    write_or_stdout(buf.as_bytes(), out_dir, "mirror")
 }
 
 /// Emit a corpus verdict as a mirror-text envelope: an aggregate
@@ -2478,11 +2529,7 @@ pub fn dispatch(args: &[String]) -> i32 {
         let mut found: Option<&str> = None;
         while j < args.len() {
             let a = &args[j];
-            if a == "--target"
-                || a == "--shatter"
-                || a == "--transform"
-                || a == "--out"
-            {
+            if a == "--target" || a == "--shatter" || a == "--transform" || a == "--out" {
                 j += 2;
                 continue;
             }
