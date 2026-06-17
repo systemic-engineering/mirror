@@ -605,14 +605,103 @@ cumulative ~109. Densest single contribution: *every prior species'
 ancestor #4 (`von_foerster_circular_reflexivity`) IS second_order at
 lower altitude*.
 
-### §8.8 [Next tick — distinction in flight; Spencer-Brown's calculus]
+### §8.8 distinction — eighth witness; the floor of @cyberpunk (this tick, 2026-06-18)
 
-*Species order continues: distinction (Spencer-Brown 1969 *Laws of
-Form*; the calculus of indications; canonical rep via Boolean algebra
-on distinction-space), then conversation, coevolution, requisite,
-design. Distinction is structurally adjacent: Spencer-Brown's mark of
-distinction IS the floor of cybernetic observation — the act of
-making a distinction that second_order observes recursively.*
+Per Mara's spec `docs/specs/cyberpunk-distinction.md` (commit `96906e2`,
+`mara/cyberpunk-distinction-spec` branch, 916 lines). The floor of
+the @cyberpunk family lands.
+
+**Reads tested**:
+- A (mark ↔ distinction-space) HELD; τ = Spencer-Brown cross with
+  condensation + cancellation axioms
+- B (marked ↔ unmarked) HELD as value-level restriction of A
+- C (canonical ρ) HELD at **free Boolean algebra on one generator**
+  acting on `V_distinction = Mark ⊕ DistinctionSpace`. Chose C.2
+  (free) over C.1 (two-element) and C.3 (Heyting) via three convergent
+  arguments: Spencer-Brown ch.1-10 IS the free algebra; C.1 collapses
+  operation-level to value-level; C.3 is what `transparency<p>` reads
+  at higher altitudes (not the floor)
+- D (form refusal — re-entry) REFUSED: 2-groupoid handles self-
+  reference + re-entry IS eigenform (recognition #38). Third
+  consecutive species to dissolve Read D.
+- E (substrate-already-had-the-word) HELD at **maximum density**
+
+**Verdict**: WITNESS. **Fourth canonical-rep species** — pattern
+overdetermined past reasonable doubt.
+
+Four canonical-rep species now:
+
+```
+species            ρ choice                       ancestry
+------------------ ------------------------------- -----------------
+autopoiesis         adjoint rep on G                G's self-action
+bateson_learning    graded rep on ⊕_N V_N          RW + Kac
+second_order        regular rep on L²(𝒢)          von Foerster + Peter-Weyl
+distinction         free Boolean algebra rep        Spencer-Brown ch.1-10
+```
+
+Each ρ forced by mathematical ancestry; no ad-hoc choices.
+
+**Substrate-already-had-the-word density: 19 instances** — densest
+single species in the cascade (exceeds autopoiesis 13, second_order
+14, bateson_learning 9). Cumulative ~128. Maximum density at the floor
+altitude is structurally consistent: every higher altitude's
+distinctions originate here.
+
+**Altitude landing: distinction IS the floor of @cyberpunk.** Beer's
+VSM presupposes it (pre-VSM altitude); Bateson's hierarchy presupposes
+it (type-0 ↔ the act-of-making-a-distinction); second_order observes
+what distinction marks. **The family is bottomed at distinction AND
+topped at second_order — finite altitude range, well-defined bundle
+holonomy.**
+
+**Candidate recognition #66 surfaced**: @cyberpunk is a finite-altitude
+family (bottomed + topped). The principal 2-groupoid bundle has
+finite altitude-range; the bundle holonomy is well-defined; the
+recursion-lock tower has a bottom and a top. Promotion gate: this
+would fold into recognition #63 as a refinement ("the recursion-lock
+tower is finite-altitude") rather than promote independently;
+depends on whether finite-altitude-ness is structurally load-bearing
+or a property of the substrate's current naming.
+
+### §8.8.1 The eigenform precedence question (Mara's recommendation)
+
+Mara's substrate-pull recommendation (continuing second_order's Q4):
+**both second_order and distinction's fixed-point witnesses inherit
+from a single `@epistemologic/cybernetic/eigenform` shard** (per Mara's
+§11.4). Re-entry IS eigenform; the reflexive turn IS eigenform; one
+ancestor, two inheritors.
+
+**Sequencing recommendation**: eigenform shard lands BEFORE both
+species' shards (i.e., eigenform first → second_order shard rewrites
+to inherit → distinction shard inherits from start). Substrate-pull-
+natural: eigenform is older (recognition #38, 2026-06-09), already
+declared in the canon as cybernetic property #9, and the inheritance
+is the substrate's natural ordering. The alternative (eigenform
+inside distinction; second_order inherits from distinction) ties
+second_order's fixed-point machinery to distinction's altitude
+rather than to its proper ancestor.
+
+Forward-promised landing order (when shards land):
+```
+1. @epistemologic/cybernetic/eigenform                     (recognition #38)
+2. @cyberpunk/coherence<T_reg, T_regd, ρ>                 (parametric carrier)
+3. @cyberpunk/distinction                                  (floor)
+4. @cyberpunk/second_order                                 (inherits eigenform)
+5. @cyberpunk/{viable, autopoiesis, bateson_learning, ...} (canonical reps)
+6. @cyberpunk/algedonic                                    (thin specialization)
+```
+
+### §8.9 [Next tick — conversation in flight; Pask's coupled-observer dynamics]
+
+*Pask 1976 conversation theory: P-individuals, P-conversations,
+coupled-observer dynamics. Structurally adjacent to second_order
+(Pask was a second-order cybernetician). Canonical ρ candidate: tensor
+representation of coupled observers — if it holds, that's a FIFTH
+canonical-rep species. Pask's conversation theory is also the
+substrate-political ground for AI-human interaction; load-bearing for
+the @spectral/garden/smarts deployment Alex activated 2026-06-17
+(Phase 5 mycelial layer, Phase 7 wire protocol).*
 
 ## §9 What promotion or retraction closes
 
