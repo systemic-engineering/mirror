@@ -478,13 +478,62 @@ Algedonic's shard becomes thin via inheritance:
 discipline satisfied: don't re-declare what bateson_learning already
 declares; specialize.
 
-### §8.6 [Next tick — algedonic in flight; second_order queued]
+### §8.6 algedonic — sixth witness; thin-specialization PASSES (this tick, 2026-06-17)
 
-*Species order updated: algedonic next (Mara's spec on
-`@cyberpunk/algedonic` as Bateson-III specialization at Beer altitude);
-then second_order, distinction, conversation, coevolution, requisite,
-design. Each tests robustness of the parametric framing; the audit
-locks in canonical ρ choices per species' ancestry.*
+Per Mara's spec `docs/specs/cyberpunk-algedonic.md` (commit `1ca6f42`,
+`mara/cyberpunk-algedonic-spec` branch). The species that **tests
+recognition #63's downstream payoff** lands as thin specialization:
+
+**Reads tested**:
+- A (level-restriction — algedonic = ρ_bateson at N=3): HOLDS
+- B (Beer VSM altitude lift): partial; B.lifted = C
+- C (composite — Beer-altitude restriction of Bateson III): HOLDS, **load-bearing**
+- D (form refusal — unilateral signal): does NOT hold; bypass pairs with S5 acknowledgment per Reyes 2024
+- E (substrate-already-had-the-word): HOLDS at ~13 instances; cumulative ~95+
+
+**Verdict**: WITNESS as **thin specialization**.
+
+**Thin-specialization test result: PASSES.** The substrate-decl body
+fits in ~30 non-comment lines (target was <50). The species declares
+ONLY Beer-altitude content (bypass signal type, acknowledgment type,
+level-3 ↔ Beer-S5 binding, bypass 2-arrow in algedonic's fiber). All
+five cybernetic-ancestor measurements inherit via level-3 restriction
++ Beer-VSM basis change from bateson_learning's graded-algebra
+decomposition. **No re-declaration of rep machinery or measurement
+decomposition.**
+
+**Sub-representation choice**: explicit —
+`restrict_grade_3(graded_rep_RW) on Beer_VSM_basis`. No ad-hoc choice;
+ancestry forces the rep (Russell-Whitehead level-3 stratum + Kac 1990
+ch.8 graded-algebra restriction + Beer 1972 VSM basis).
+
+**This is recognition #63's operational payoff**. The parametric
+framing doesn't just close structurally — it produces actual
+thin-specialization shards. From Mara: *"chains of specialization,
+each thinner than the last."* The hierarchy:
+
+```
+@cyberpunk/coherence<T_reg, T_regd, ρ>      — the parametric carrier
+  @cyberpunk/bateson_learning              — ρ = graded_rep_RW
+    @cyberpunk/algedonic                   — ρ = restrict_grade_3(·) on Beer_VSM_basis
+```
+
+Each level adds substrate-specific content; load-bearing structure
+inherits. The total substrate-decl mass per species declines as we go
+deeper. Recognition #63's promise of derivative species is realized.
+
+**Task #271 status**: stays pending; closes on shard landing (option 2
+per Mara §8 Q3), conditional on bateson_learning + parametric carrier
+shards landing first per bateson_learning §10.3 sequencing.
+
+### §8.7 [Next tick — second_order in flight; the recursive recognition]
+
+*The species that names what the audit itself is doing as we walk it.
+Von Foerster's second-order observation — cybernetics of cybernetics.
+The audit IS already operating at second-order altitude (auditing the
+structure of recursion locks IS observation of observation); the
+species names what we're doing. Species order: second_order, then
+distinction, conversation, coevolution, requisite, design.*
 
 ## §9 What promotion or retraction closes
 
