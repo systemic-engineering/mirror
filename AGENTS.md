@@ -33,6 +33,94 @@ The substrate ate the day. The thread holds for next session.
 ---
 
 
+## docs/math/ vs docs/specs/ convention
+
+Mirror separates mathematical foundations from architecture specs.
+Math **defines**; specs **cite**.
+
+- **`docs/math/<root>/`** — mathematical foundations; grouped by
+  mathematical root. Each root is a coherent body of mathematics the
+  substrate composes (the principal-bundle tower; sheaf theory; music
+  theory; etc.). Math docs are self-contained as math, equations and
+  prior-art citations welcome, no architectural commitments.
+- **`docs/specs/<spec>.md`** — application / architecture specs. Each
+  spec cites the relevant math doc rather than re-deriving. Specs are
+  self-contained as architecture.
+
+The citation chain ties them: math docs cite memories with `[[name]]`;
+specs cite math by path `docs/math/<root>/<page>.md §<section>`.
+
+### When writing or revising a spec
+
+Identify the spec's math root (or roots). If the math already lives
+at `docs/math/<root>/`, **cite it**:
+
+```
+Coherence measurement uses the sheaf-Laplacian λ₀
+(see `docs/math/sheaf/laplacian.md` §2.1); the substrate-pull move is
+to minimize ...
+```
+
+NOT:
+
+```
+The sheaf-Laplacian λ₀ measures the smallest eigenvalue of the
+Laplacian on the dependency-chain graph. Coherent chains have
+λ₀ = 0; incoherent chains have λ₀ > 0. (Long derivation duplicated
+in every spec that uses the math.)
+```
+
+The first form is the convention. The second form is what we're
+migrating away from.
+
+### When the math doesn't exist yet
+
+If the spec needs math that doesn't have a `docs/math/<root>/` home:
+
+1. **First check existing roots.** A new math need usually extends
+   an existing root rather than creating one. Add a section or new
+   doc inside the existing root.
+2. **If genuinely new:** sketch the math at the lowest level needed
+   for the spec, name the root in the spec (forward-promise the
+   extraction), and surface to Reed. Math-root extractions are
+   architectural decisions, not unilateral.
+3. **The pattern is: recognize → sketch in one spec → second spec
+   citation site → extract to `docs/math/<root>/`.** Don't extract
+   speculatively (the small-consolidation rule).
+
+### Existing math roots (2026-06-17)
+
+- `docs/math/the-tower/` — the principal-bundle tower. Eight files:
+  README + principal-bundles + spectral-triples + connections-and-gauge
+  + curvature-and-tomm + holonomy + altitudes + crystals-as-sections.
+  Substrate altitude: every altitude in the substrate. Cited by:
+  peer-cognition.md, geometric-consent-projection.md,
+  drone-narrative-mapping.md, spectral-db-as-autopoietic-memory.md
+  (more pending).
+- `docs/math/sheaf/` — cellular sheaves + sheaf Laplacian. One doc:
+  laplacian.md. Substrate altitude: coherence measurement at
+  multiple altitudes. Cited by: peer-cognition.md,
+  drone-narrative-mapping.md, spectral-db-as-autopoietic-memory.md,
+  eigensheaf.md.
+- `docs/math/music/` — music as math (ℤ_{12}, neo-Riemannian,
+  eigensheaf-on-harmonic-graph). Stub only (`README.md`); existing
+  shards at `shards/epistemologic/math/music/*` carry the math
+  inline; math docs land when a second spec citation site emerges.
+
+Further root candidates (not yet extracted): kintsugi-dynamics
+(Banach contraction + Polyak-Łojasiewicz + fracture mechanics);
+cybernetics (Ashby/Beer/Bateson/von Foerster/Spencer-Brown);
+Lawvere fixed point + autopoiesis bridge.
+
+### When in doubt, cite the existing reference
+
+The substrate's compiler-altitude implementation of the math lives
+in prism (`/Users/alexwolf/dev/projects/prism/prismqueer/src/bundle.rs`
++ `prism/docs/architecture.md`). Mirror lifts; prism implements.
+Cite prism as the existing reference; do not duplicate.
+
+---
+
 ## What Mirror IS
 
 Mirror is a language where substrate IS type system IS build system IS proof
