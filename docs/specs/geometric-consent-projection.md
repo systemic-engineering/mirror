@@ -40,6 +40,25 @@ ticks are enumerated in §8.
   the substrate IS the operational form of `(A, H, D)`; this spec
   reads consent as a value of `A` and the cascade as a commutator
   operation `[D, consent_at_N]`.
+- **Math root (cite, don't duplicate):** the math this spec uses
+  lives at `docs/math/the-tower/` (the principal bundle tower).
+  Per the `docs/math/` vs `docs/specs/` convention (see
+  `docs/math/README.md` + `AGENTS.md`), this spec CITES the math:
+  - `docs/math/the-tower/spectral-triples.md` §1–§3 — the
+    Connes triple `(A, H, D)` (cited at §2.1).
+  - `docs/math/the-tower/connections-and-gauge.md` §3 — the cascade
+    IS a gauge transformation; the asymmetry IS the gauge action
+    asymmetry (cited at §2.2 "the cascade as a natural
+    transformation" — the natural-transformation reading is the
+    sheaf-of-sections shadow of the gauge-transformation reading).
+  - `docs/math/the-tower/curvature-and-tomm.md` §2–§3 — `[D, a]`
+    as curvature probe; the Tomm probe IS the curvature 2-form at
+    the user-frame altitude (cited at §2.3 + §6 "the security
+    invariant").
+  - `docs/math/the-tower/altitudes.md` §2 — the Bateson tower as
+    altitudes of the bundle tower; consent at type N+1 vs N
+    follows the inclusion `G_N ⊴ G_{N+1}` (cited at §2.1's
+    `A_0 … A_{N+1}` ladder).
 - **The Bateson primitive:** [[architecture-bateson-logical-type-primitive]] —
   the logical-type hierarchy (recognition #42); each consent type
   wraps the previous; cannot be operated on within itself.

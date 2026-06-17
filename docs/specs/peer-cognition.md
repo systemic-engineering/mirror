@@ -92,15 +92,44 @@ enumerated in §8.
 - [[project-pack-is-orchestra]] — Pack as multi-instance peer; each
   member is a parametric `@peer(<member>)`.
 
-### Existing substrate math (the measurement machinery this spec consumes)
+### Math citations (the math root this spec cites)
+
+Per the `docs/math/` vs `docs/specs/` convention (see
+`docs/math/README.md` and `AGENTS.md`): this spec CITES math docs;
+it does not re-derive the math. Citations used in this spec:
+
+- `docs/math/the-tower/spectral-triples.md` §3 — the substrate's
+  spectral triple `(A_peer, H_peer, D_peer)` at the peer altitude
+  (cited at §2.1).
+- `docs/math/the-tower/connections-and-gauge.md` §1 — the five-op
+  algebra IS the connection vocabulary; the bundle-theoretic role
+  of each operation (cited at §2.2 alongside
+  `[[architecture-operations-as-linear-algebra]]`).
+- `docs/math/the-tower/curvature-and-tomm.md` §2–§3 — the
+  bounded-commutator condition + `[D, a]` as curvature probe
+  (cited at §2.1 "Connes' axiom check" + the spectral-altitude
+  selection procedure).
+- `docs/math/sheaf/laplacian.md` §2.1, §5.1 — the sheaf-Laplacian
+  `Δ_F = δ*δ`, `λ₀` as global coherence reading, peer-cognition
+  altitude application (cited throughout §3, especially the
+  standalone-use heuristic and collapse measurement).
+- `docs/math/sheaf/laplacian.md` §7 — Balanced Forman per-edge
+  curvature; complementary to `λ₀` (cited at §3.4 for the
+  Fiedler-vector localization).
+- `docs/math/the-tower/crystals-as-sections.md` §2–§4 — monotone
+  vocabulary growth as section accumulation (relevant background
+  for §2's Hilbert-space expansion claims).
+
+### Existing substrate math (the substrate-altitude declarations the math docs ground)
 
 - `shards/epistemologic/math/sheaf_laplacian.mirror` — declares the
   `restriction` carrier, the `operator` (Δ_F = δ*δ), the `eigenvalue`
   carrier, and the `lambda_zero` reader. **Mara's T8; load-bearing for
-  the §3 measurement.**
+  the §3 measurement.** Math: `docs/math/sheaf/laplacian.md` §2.
 - `shards/epistemologic/math/curvature.mirror` — declares `balanced_forman`
   per Topping et al. 2022. Per-edge curvature; complementary to λ₀.
-  Used in §3.4 for the Fiedler-vector localization.
+  Used in §3.4 for the Fiedler-vector localization. Math:
+  `docs/math/sheaf/laplacian.md` §7.
 - `shards/mirror/spectral/score.mirror` — the eigenboard reading
   surface (Mara's T14.1; `score_of`, `pending`).
 - `shards/mirror/spectral/observation.mirror` — the 16-feature input

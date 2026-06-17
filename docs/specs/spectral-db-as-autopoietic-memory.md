@@ -84,6 +84,36 @@ perturbation moves *crystals* between *repos* (= *stores*).
   content-addressed crystal; `A_peer` grows monotonically;
   `H_peer` expands accordingly.
 
+### Math citations (the math root this spec cites)
+
+Per the `docs/math/` vs `docs/specs/` convention (see
+`docs/math/README.md` + `AGENTS.md`): this spec CITES math docs;
+it does not re-derive the math. Citations used in this spec:
+
+- `docs/math/the-tower/altitudes.md` §2 "librarian altitude" —
+  the librarian altitude in the bundle tower; fiber = crystal
+  topology, connection = perturbation choice, holonomy = query
+  latency · sheaf-coherence (cited throughout §3–§5).
+- `docs/math/the-tower/connections-and-gauge.md` §3 — the
+  librarian's perturbation IS gauge transformation on `H_topology`;
+  preserves principal-bundle structure (cited at §4 "the librarian
+  operates at N+1").
+- `docs/math/the-tower/crystals-as-sections.md` §9–§10 — inter-peer
+  section exchange via the mycelium; sheaf-coherence as integrity
+  constraint on perturbation (cited at §3 "the mycelium and the
+  orchestra" + the consolidation_preserves_sheaf_coherence pact).
+- `docs/math/sheaf/laplacian.md` §2, §5.2 — the sheaf-Laplacian
+  `λ₀(F_topology)` as the librarian's coherence reading; per-edge
+  curvature for perturbation targeting (cited at §5 "the
+  optimization shape" + per-edge bottleneck reading).
+- `docs/math/the-tower/holonomy.md` §6 — the librarian's quality
+  metric IS the residual holonomy after perturbation (cited at
+  §5's optimization objective).
+- `docs/math/the-tower/spectral-triples.md` §5 — directed-colimit
+  preservation; crystal accumulation across the topology preserves
+  the spectral triple's axioms (cited at §2's "the static layer
+  this consolidates atop").
+
 ### Substrate machinery this spec composes
 
 - [[architecture-three-tier-stack]] — fragmentation-mcp / mirror /

@@ -142,6 +142,34 @@ spec does NOT modify it. Implementation ticks are enumerated in §7.
   generators feeding the drone's perceptual layer (recognition #58
   closure preserved).
 
+### Math citations (the math root this spec cites)
+
+Per the `docs/math/` vs `docs/specs/` convention (see
+`docs/math/README.md` + `AGENTS.md`): this spec CITES math docs;
+it does not re-derive the math. Citations used in this spec:
+
+- `docs/math/the-tower/spectral-triples.md` §3, §8 — the
+  substrate spectral triple + sub-Turing closure (cited at §1.1's
+  drone-as-peer-instance + §2's *sub-Turing-by-design* mapping).
+- `docs/math/the-tower/connections-and-gauge.md` §1 — the five-op
+  algebra IS the connection vocabulary (cited at §2's operation
+  mapping table; the drone executes the connection's algebra).
+- `docs/math/the-tower/curvature-and-tomm.md` §2–§3, §6 —
+  `[D_F, a]` as curvature probe; gap = unbounded commutator;
+  bind/attending vocabulary asymmetry (cited at §2 superposition
+  rows + §4 `attending` placement + the *suspended between two
+  possible configurations* row).
+- `docs/math/sheaf/laplacian.md` §2.1, §7 — `λ₀(F)` and per-edge
+  curvature; `attending` is `λ₀ = 0 everywhere` (cited at §2's
+  per-edge curvature row and §4's verdict-surface placement of
+  `attending`).
+- `docs/math/the-tower/crystals-as-sections.md` §7 — the drone
+  story IS the canonical witness of section accumulation; the
+  `attend` crystal IS the wire-animal scene's new section
+  (cited at §6).
+- `docs/math/the-tower/altitudes.md` §2 "peer pulse altitude" —
+  the drone IS a peer instance at this altitude (cited at §1.1).
+
 ---
 
 ## §1 — Recognition
