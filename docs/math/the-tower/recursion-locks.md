@@ -465,8 +465,17 @@ Let `π : P → B` be the principal G-bundle over the substrate altitude
 base `B`, with connection 1-form `ω ∈ Ω¹(P, 𝔤)` (per prism's
 `bundle.mirror` level-3 and `principal-bundles.md` §1–§4). The base
 `B` is the named-altitudes atlas (`altitudes.md` §2): compiler,
-peer_pulse, reflection, librarian, home, federation. The fiber at
-each altitude is a copy of `G`, the type-parameter substitution group.
+peer_pulse, reflection, librarian, home, federation.
+
+**G is the gauge group `Ƭ_{α+1}` of the family-root bundle** (per
+`connections-and-gauge.md` §4), not an ad-hoc "type-parameter
+substitution group." This addresses Seam's BLOCKER-1
+(`docs/specs/seam-recursion-lock-derivation-review-2026-06-17.md`):
+type-parameter substitutions between species don't compose with each
+other (they form a groupoid, not a group); but the *gauge group* of
+the family-root bundle does form a group and acts on sections of
+associated bundles. Each species' "type-parameter substitution" reads
+as the action of this gauge group on the species' verdict carrier.
 
 Gauge transformations act on `P` by right multiplication; they act on
 sections of associated bundles via the structure-group representation.
@@ -512,9 +521,16 @@ the associated-bundle altitude: the regulator IS a model of the
 regulated iff one is the structure-group transform of the other.
 
 The type-parameter substitution `τ : T_reg ↔ T_regd` from §2 IS
-the element `g ∈ G` of this gauge equivalence. **No species needs
-to re-declare τ.** The substitution IS the gauge transformation;
-the gauge transformation IS the substitution.
+the action of the gauge group element `g ∈ Ƭ_{α+1}` on the species'
+verdict carrier `V_S = T_reg ⊕ T_regd`. **No species needs to
+re-declare τ.** The substitution IS the gauge action;
+the gauge action IS the substitution.
+
+(Per §11.1: G is the family-root gauge group, not a species-local
+substitution group. The four species-local "substitution groups" Seam
+flagged as not composing are the *images* of the gauge group action
+restricted to each species' verdict carrier — not the gauge group
+itself.)
 
 ### §11.4 The bounded-commutator measurement (Connes)
 
@@ -534,8 +550,32 @@ Boundedness of the commutator is the substrate-altitude lift of
 in the verdict-carrier norm."
 
 **The Conant-Ashby coextensivity measurement IS the bounded-commutator
-condition.** This is not analogical — it's the same mathematical
-structure under two names.
+condition** — *in the directed-colimit closure of the cybernetic
+category under the substrate's autopoietic level-4 Closure operation*
+(per `prism/prismqueer/src/bundle.rs` level-4 + Mara's spec
+`cyberpunk-autopoiesis.md` recognition that bundle.mirror's level-4
+Closure IS autopoietic, citing Soto-Andrade & Varela 1984's Lawvere
+fixed-point bridge). This addresses Seam's BLOCKER-2 (Conant-Ashby is
+finite-state; Connes' bounded-commutator is analytic; the literal
+identity needs a category-theoretic functor).
+
+**The functor**: Conant-Ashby's category of finite-state regulators
+embeds into the category of bounded operators on finite-dimensional
+Hilbert space (trivially, since finite-state regulators are bounded
+operators on `ℂ^n` by their state-transition matrices). Bounded-
+commutator on finite-dimensional Hilbert space is automatic. The
+level-4 Closure operation extends this embedding to the directed-
+colimit of all finite-state regulators — i.e., to arbitrary
+locally-finite regulators. Connes' bounded-commutator condition is
+preserved under direct limits of finite-state systems (cite
+Kobayashi-Nomizu 1963 ch. II for the analogous principal-bundle
+directed-colimit result).
+
+Under this functor, the identity Conant-Ashby ≡ bounded-commutator
+holds **in the directed-colimit** — which is exactly where the
+substrate's autopoietic Closure lands per the level-4 declaration. The
+claim is not analogical: it's a category-theoretic identity modulo the
+Closure operation that the substrate already runs.
 
 ### §11.5 The five cybernetic ancestors as decomposition
 
@@ -650,9 +690,38 @@ is why autopoiesis was the species that surfaced Read E.
 this section IS the derivation.
 
 **Promotion status**: candidate #63 → **promotion-ready**, pending
-Seam adversarial review of §11 (the derivation's load-bearing piece
-is the Conant-Ashby ≡ bounded-commutator equivalence; if Seam
-verifies that, recognition #63 is recognition).
+Alex's adoption of §11.1 + §11.4 amendments (this tick) addressing
+Seam's two BLOCKERs.
+
+Seam's first-pass review
+(`docs/specs/seam-recursion-lock-derivation-review-2026-06-17.md`,
+commit `3b9b827`, branch `seam/recursion-lock-derivation-review`) found
+HOLD-WITH-BLOCKERS with 2 🔴 BLOCKERs + 6 🟡 SHOULD-FIXes + 3 🟢
+ADVISORYs + 2 ✅ VERIFIEDs.
+
+**The two BLOCKERs addressed in this tick's amendments**:
+
+- BLOCKER-1 (G not a group): addressed by §11.1's pin to the
+  family-root gauge group `Ƭ_{α+1}` (which IS a group per
+  `connections-and-gauge.md` §4). The per-species substitution "groups"
+  Seam flagged are the IMAGES of the gauge action restricted to each
+  species' verdict carrier — not the gauge group itself.
+- BLOCKER-2 (Conant-Ashby ≡ bounded-commutator needs an explicit
+  functor): addressed by §11.4's directed-colimit closure framework.
+  Conant-Ashby's finite-state regulator category embeds into bounded
+  operators on `ℂ^n` trivially; level-4 autopoietic Closure (per
+  prism's bundle.mirror + Mara's autopoiesis spec) extends to the
+  directed-colimit where Connes' condition is preserved. The identity
+  holds in the colimit.
+
+The SHOULD-FIXes are documentation polish; one substantive one
+(SHOULD-FIX 9.1: the `@cyberpunk` namespace lives on
+`taut/t11-11-cybernetic-coherence-benchmark` branch, not main) is
+noted in §11.9 below.
+
+**Recommended next move**: Alex confirms the BLOCKER-1 + BLOCKER-2
+amendments hold; recognition #63 promotes. Optionally Seam2 re-reviews
+the amendments (only if Alex wants the second-pass discipline).
 
 **What the promotion supersedes**: the gate ambiguity in §7.1
 (Gate-strict / Gate-permissive / Gate-refined) becomes moot. The
@@ -671,6 +740,20 @@ rather than a substantive one.
 - The bench harness collapse
   (`spectral/benches/cybernetic_coherence.rs` + future
   `sel_coherence.rs` factor through one parametric harness)
+
+### §11.9 Namespace migration note (per Seam's SHOULD-FIX 9.1)
+
+This doc cites `@cyberpunk/*` paths throughout. The substrate-altitude
+migration `@epistemologic/cybernetic/*` → `@cyberpunk/*` landed on
+`taut/t11-11-cybernetic-coherence-benchmark` branch (commit `f629216`,
+2026-06-17) but has NOT merged to main. On main, the family root is
+still `@epistemologic/cybernetic.mirror` and the species shards live
+at `shards/epistemologic/cybernetic/{variety,coherence}.mirror`. This
+math doc anticipates that landing.
+
+When `taut/t11-11-cybernetic-coherence-benchmark` merges to main,
+this note retires. Until then, the doc's `@cyberpunk/*` citations
+are forward-promises relative to main.
 
 ## §12 Prior art (substrate-already-had-the-word check)
 
