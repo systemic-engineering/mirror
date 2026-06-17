@@ -1,0 +1,156 @@
+in @glass
+
+# Property: substrate source lives in `shards/`, not `boot/std/`, not
+# `glass/`. This property names the rule that drives the
+# `boot/std/*` → `shards/*` migration via the kintsugi loop.
+#
+# Per Alex's 2026-06-17 question — "How can we use kintsugi to migrate
+# the old bootstrap into the new shape?" — the answer is mechanical:
+# declare the rule here; every kintsugi pulse on the corpus reads
+# this property and surfaces each offending `boot/std/*.mirror` file
+# as a dark region; the fracture body (forward-promised at
+# `@kintsugi/fracture/substrate_source_in_shards`) carries the
+# opacity_map into migration morphisms (mv + keyword rewrite +
+# namespace rewrite).
+#
+# === Recognition shape ===
+#
+# Per [[architecture-shards-as-substrate-source]]: "Mirror source
+# lives in shards/ (not boot/, not glass/). Substrate source IS
+# substrate data; the recursive proof is literal. Use existing
+# substrate vocabulary; 'glass' was an external metaphor superseded
+# immediately."
+#
+# Mara's `keyword_matches_path_root` rename closure (mirror commit
+# `d498fc0`, 2026-06-16) proved the kintsugi-driven migration pattern
+# for 7 shards under `shards/epistemologic/property/` →
+# `shards/epistemologic/pact/`. This property generalizes the pattern
+# to ALL `boot/std/*` shards: the same kintsugi loop, the same
+# opacity-map carrier, the same `splinter(ast)` morphism discharge.
+# Different scope; same shape.
+#
+# === Self-witnessing ===
+#
+# This shard MUST live at
+# `shards/epistemologic/pact/substrate_source_in_shards.mirror` and
+# declare with `pact`. It satisfies its own rule on the first frame.
+# Landing it under `boot/std/` would violate the rule it declares —
+# the test `does_NOT_live_under_boot_std` in
+# `bootstrap/tests/substrate_source_in_shards_substrate.rs` enforces
+# this.
+#
+# === Operational discharge ===
+#
+# Mara's cross-shard resolver (mirror commit `128e0d2`, the @io
+# floor that walks `shards/` + `boot/std/` and builds the
+# declared-namespace index) is the natural discharge surface. The
+# sibling-tick extension: count each declaration whose source file
+# lives under `boot/std/` as an additional dark axis. The dark count
+# grows; the corpus verdict downgrades from `success` to
+# `failure(opacity_map)`. Each opacity names one offending file
+# plus the migration morphism the fracture body should apply.
+#
+# Auto-apply has two paths:
+#
+#   (a) Substrate-clean: blocked on `@mirror/fracture/predicate`
+#       (task #272, liquid-type predicates inferred via sheaf-
+#       diffusion Houdini fixpoint). When that lands, fracture
+#       bodies discharge declaratively via `splinter(ast)`; the
+#       kintsugi loop reads the opacity_map and runs them.
+#
+#   (b) Practical: a Rust @io fracture body, parallel to how
+#       `collect_declared_namespaces` was the @io floor for
+#       `composition_closed`. Reed designs `mirror kintsugi --apply`
+#       — reads opacity_map, looks up the fracture body, runs the
+#       morphism, commits the migration.
+#
+# Per [[architecture-property-fracture-bilateral]]: declarative
+# property half lands here; operational discharge half is the
+# resolver extension + the eventual fracture body.
+#
+# === Migration inventory (per Taut 2026-06-17) ===
+#
+# Stuck under `boot/std/`:
+#
+#   - 17 shards in `boot/std/epistemologic/property/*` using the
+#     retired `grammar` keyword and the old `property` path segment
+#     (autopoietic, content_addressed, frame_relativity, glass_wall,
+#     halts, io_safety, is_prism_record, total_classification,
+#     coincidence_matches, duplicate_variant, filename_matches_glass,
+#     plus laws/{causality, duration_algebra, functor, monad,
+#     monoidal, monotonicity}).
+#
+#   - ~22 active importers in `boot/std/` + `shards/` that reference
+#     these old paths via `in @epistemologic/property/<X>`.
+#
+#   - 5 Rust string constants in
+#     `bootstrap/src/{property,score,kintsugi,tensor,oscillate}.rs`
+#     hardcoding `@epistemologic/property/total_classification` and
+#     similar.
+#
+#   - The 12 shards under `shards/epistemologic/pact/` were already
+#     migrated by Mara's `d498fc0` closure + Taut's `ac34e55`
+#     (benchmark.mirror lift). They satisfy this property today.
+#
+# === Form-side discipline ===
+#
+# This property sits at the form-side of the form/process partition
+# ([[architecture-form-process-partition-at-family-root]]; the
+# @mirror = form, @kintsugi = process partition). The rule names
+# WHAT must hold across the source-location axis; the realisation
+# lives at `@kintsugi/fracture/substrate_source_in_shards`
+# (forward-promised); the operator of the bridge is the kintsugi
+# loop (substrate-pull).
+#
+# === Verdict surface ===
+#
+# Verdict surface is transparency<p>:
+#   success              -- every declaration in the corpus is
+#                          sourced from `shards/`. No boot/std
+#                          declarations remain.
+#   failure(opacity_map) -- one or more declarations live under
+#                          `boot/std/`; each opacity names ONE
+#                          offending file path plus the suggested
+#                          target path under `shards/`.
+#   partial(opacity_map) -- mixed corpus state — some files
+#                          migrated, some still pending. Typically
+#                          mid-cascade.
+#
+# Located transparency (not @glass.verdict): the kintsugi loop
+# consumes the opacity_map to direct migration. The fracture body
+# (forward-promised) emits the morphism that proposes
+# `git mv boot/std/<X>.mirror shards/<X>.mirror` plus the in-file
+# keyword + namespace rewrite, plus the import sweep across
+# consumers. The property names the rule; the fracture realises it;
+# the kintsugi loop is the bridge.
+
+pact @epistemologic/pact/substrate_source_in_shards {
+  # The set of declared namespaces whose source file lives under
+  # `boot/std/`. Parallel to `collect_declared_namespaces` but
+  # filtered on the source-path axis: for each concrete top-level
+  # `glass | prism | pact @<X>` declaration in the corpus, include
+  # `@<X>` iff its containing file's path is rooted at `boot/std/`.
+  #
+  # Multiplicity: one entry per declaration. Two declarations of
+  # `@<X>` (one in shards/, one in boot/std/) yield exactly one
+  # entry — the boot/std/ one — since that's the offender.
+  #
+  # This is the OFFENDER set. `substrate_source_in_shards(corpus)`
+  # succeeds iff this set is empty.
+  boot_std_declarations(corpus: ref) -> [ref] { \ }
+
+  # The combined property: `substrate_source_in_shards(corpus)` is
+  # success iff `boot_std_declarations(corpus)` is empty.
+  #
+  # Verdict surface is transparency<p>:
+  #   success              -- every declaration sourced from shards/.
+  #   failure(opacity_map) -- some declarations live under boot/std/;
+  #                          each opacity names ONE offending file +
+  #                          the suggested shards/ target path.
+  #   partial(opacity_map) -- mid-cascade mixed state.
+  substrate_source_in_shards(corpus: ref) -> transparency { \ }
+}
+
+out boot_std_declarations
+out substrate_source_in_shards
+out @epistemologic/pact/substrate_source_in_shards
