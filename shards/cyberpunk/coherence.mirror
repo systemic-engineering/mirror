@@ -1,10 +1,9 @@
 in @prism
 in @meta
 in @glass
-in @epistemologic
-in @epistemologic/cybernetic
+in @cyberpunk
 
-# @epistemologic/cybernetic/coherence — the substrate's recursion-lock
+# @cyberpunk/coherence — the substrate's recursion-lock
 # falsification surface. Conant-Ashby 1970, lifted to the substrate's
 # parallel-altitude operation pair (peer reflection at N+1 ↔ librarian
 # perturbation at N+1).
@@ -183,10 +182,10 @@ in @epistemologic/cybernetic
 #                       tick; the operational sibling fracture
 #                       body and real-witness swap are forward-
 #                       promised).
-# Related shards: epistemologic/cybernetic.mirror (the family
-#                 root); epistemologic/cybernetic/variety.mirror
-#                 (the first species; this property is the second
-#                 species, same bilateral pattern);
+# Related shards: cyberpunk.mirror (the family root);
+#                 cyberpunk/variety.mirror (the first species;
+#                 this property is the second species, same
+#                 bilateral pattern);
 #                 spectral/root.mirror (the librarian's substrate
 #                 type; the regulator-side operand of the lock);
 #                 mirror/spectral/observation.mirror (the
@@ -199,11 +198,11 @@ in @epistemologic/cybernetic
 #                 fracture body would emit on residual non-
 #                 contraction).
 # Path-namespace property: this file at
-# `shards/epistemologic/cybernetic/coherence.mirror` declares
-# `@epistemologic/cybernetic/coherence` per
+# `shards/cyberpunk/coherence.mirror` declares
+# `@cyberpunk/coherence` per
 # `@epistemologic/pact/path_matches_namespace`.
 
-prism @epistemologic/cybernetic/coherence {
+prism @cyberpunk/coherence {
   focus coherence
   project coherence
   split coherence
@@ -358,7 +357,7 @@ good_regulator_witness(peer_space: ref, librarian_space: ref) -> verdict { \ }
 # carries a failure verdict.
 recursion_lock_holds(altitude: altitude) -> verdict { \ }
 
-out @epistemologic/cybernetic/coherence
+out @cyberpunk/coherence
 out altitude
 out pulse_index
 out residual_hash

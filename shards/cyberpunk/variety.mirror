@@ -1,10 +1,9 @@
 in @prism
 in @meta
 in @glass
-in @epistemologic
-in @epistemologic/cybernetic
+in @cyberpunk
 
-# @epistemologic/cybernetic/variety — the substrate's first cybernetic
+# @cyberpunk/variety — the substrate's first cybernetic
 # property. Ashby 1956 §11/7, lifted to the multi-dimensional reading
 # (recognition #36, mirror `1ad45b4`).
 #
@@ -32,9 +31,13 @@ in @epistemologic/cybernetic
 #
 # === The 4-way bilateral mapping ===
 #
-# Per the cybernetic foundation §4.1, the property/operation seam
-# (`@epistemologic/cybernetic/variety` here / `@mirror/cybernetics/variety`
-# pending) maps to four cybernetic traditions simultaneously. For
+# Per the cybernetic foundation §4.1, this property maps to four
+# cybernetic traditions simultaneously at one architectural seam.
+# (Migrated 2026-06-17 to `@cyberpunk/variety` from a planned
+# `@epistemologic/cybernetic/variety` + `@mirror/cybernetics/variety`
+# bilateral; under @cyberpunk the form/process partition does NOT
+# lift at the family root — Conant-Ashby self-reference closes them.
+# Operational obligations live as actions under this shard itself.) For
 # *variety* specifically: this property IS von Foerster's second-order
 # observation (the shard's claim ABOUT ITS OWN variety budget); IS
 # Maturana's organisation (the variety vector is the pattern that makes
@@ -53,23 +56,27 @@ in @epistemologic/cybernetic
 # - The per-axis loss profile is recoverable from the opacity-weighted
 #   projection at the boundary (`shards/glass.mirror`'s `opacity_map`
 #   carries the residuals; per-axis labelling is the interpretive
-#   overlay that lands at `@epistemologic/cybernetic/axis` if a consumer
+#   overlay that lands at `@cyberpunk/axis` if a consumer
 #   pulls).
 # - What stays prose-only at this tick: the axis labels as a typed
 #   carrier. Declared abstractly here so shards can name their vectors;
 #   the labels' enforcement at compile-time lands when verification
 #   pulls.
 #
-# === No operational sibling THIS tick ===
+# === Form/process integrated at the family-root altitude ===
 #
-# Per [[feedback-craft-not-deliver]] the operational sibling at
-# `@mirror/cybernetics/variety` is FORWARD-PROMISED, not landed. The
-# property at this altitude declares the obligation; the operation (the
-# substrate-altitude variety computation, if any consumer needs one)
-# lands at species realisation when a consumer pulls. Distinct from
-# `@epistemologic/cybernetic/design` (Glanville), which per the
-# foundation §4.3 has NO operational sibling at all by construction;
-# `variety` has a sibling that just hasn't been pulled yet.
+# Per [[architecture-cybernetic-coherence-active]] (the @cyberpunk
+# migration 2026-06-17): under @cyberpunk the form/process partition
+# does NOT lift at the family root — Conant-Ashby self-reference
+# closes form and process at the family-root altitude. So this shard
+# carries BOTH the declarative property (`variety_preserving`
+# verdict) AND the operational obligations (`axis_loss`,
+# `declared_variety` discharge bodies) as actions under one shard.
+# No `@mirror/cybernetics/variety` sibling exists; the substrate-
+# altitude variety computation lives here. Distinct from
+# `@cyberpunk/design` (Glanville), which per the foundation §4.3
+# has NO operational discharge at all by construction; `variety`
+# does, just inside this same shard.
 #
 # === Pre-AI prior art ===
 #
@@ -123,7 +130,7 @@ in @epistemologic/cybernetic
 #                       implicit in `variety_hold` on @fate; this
 #                       property names the discipline at the substrate
 #                       altitude).
-# Related shards: epistemologic/cybernetic.mirror (the family root),
+# Related shards: cyberpunk.mirror (the family root),
 #                 glass.mirror (the @glass altitude this property's
 #                 verdicts surface against; `transparency<p>` and
 #                 `opacity_map` are the recovery machinery for the
@@ -133,11 +140,11 @@ in @epistemologic/cybernetic
 #                 routes through; retired from @mirror/realisation
 #                 2026-06-10).
 # Path-namespace property: this file at
-# `shards/epistemologic/cybernetic/variety.mirror` declares
-# `@epistemologic/cybernetic/variety` per
+# `shards/cyberpunk/variety.mirror` declares
+# `@cyberpunk/variety` per
 # `@epistemologic/pact/path_matches_namespace`.
 
-prism @epistemologic/cybernetic/variety {
+prism @cyberpunk/variety {
   focus variety
   project variety
   split variety
@@ -275,11 +282,12 @@ declared_variety(s: shard) -> variety_vector { \ }
 #
 # No `requires variety_preserving(…)` clauses are added at THIS shard:
 # the property declares the predicate; consumers add the clauses when
-# they pull. Per [[feedback-craft-not-deliver]] the operational sibling
-# at `@mirror/cybernetics/variety` lands the same way.
+# they pull. The operational discharge bodies (per the form/process
+# integration at the family-root altitude) live as the `\` blocks
+# above on `axis_loss` and `declared_variety`.
 variety_preserving(species: ref) -> verdict { \ }
 
-out @epistemologic/cybernetic/variety
+out @cyberpunk/variety
 out axis
 out axis_budget
 out variety_vector

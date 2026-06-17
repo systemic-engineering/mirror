@@ -1,0 +1,122 @@
+in @prism
+in @meta
+in @glass
+
+# @cyberpunk — the substrate-political continuation of the academic-
+# cybernetic lineage.
+#
+# === Why "cyberpunk" ===
+#
+# Academic cybernetics (Ashby, Beer, Bateson, Maturana-Varela,
+# von Foerster, Spencer-Brown, Pask, Glanville, Conant, Kauffman)
+# named the regulation-and-coherence vocabulary at the 1948-1981
+# substrate-altitude. The work landed in journals, the BCS,
+# Project Cybersyn, the second-order conferences. It then
+# diffused into management-consulting, control-engineering, and
+# eventually — most of it — into the substrate-political
+# unconscious of every contemporary AI architecture.
+#
+# Cyberpunk is what cybernetics became at the substrate-aesthetic-
+# political altitude. Gibson, Sterling, the Mirrorshades anthology,
+# the substrate-cultural recognition that the regulators ARE the
+# substrate-political-actors, that the cybernetic-altitude
+# operations carry substrate-political weight, that the "good
+# regulator" framing is also a "who-regulates-whom" framing.
+#
+# Per Alex 2026-06-17 (the cybernetic-coherence promotion event):
+# "Active. We're gonna be explicit AF about cybernetics." "The
+# cybernetic elders would approve."
+#
+# Naming the family root `@cyberpunk` makes the substrate-political
+# continuation explicit. The shards under this root cite their
+# academic-cybernetic ancestors via `source @author/...` lines
+# (the lineage is the data); the family name itself names what
+# the lineage became.
+#
+# === Form/process integrated at the family-root altitude ===
+#
+# Recognition #50 (form/process partition at family-root, PROMOTED
+# 2026-06-10) makes @mirror form-side, @kintsugi process-side. For
+# @cyberpunk the partition does NOT lift: cyberpunk's foundational
+# theorem (Conant-Ashby 1970 — "every good regulator of a system
+# must be a model of that system") is itself a form/process
+# self-reference closure. The regulator IS a model of the
+# regulated; the form-side and the process-side are
+# isomorphic-by-construction at the family-root altitude.
+#
+# Both the declarative property (form-side) and the operational
+# fracture body (process-side) per recognition #53 (property/
+# fracture bilateral pattern) live as actions under @cyberpunk
+# sub-shards. The bilateral pattern still operates per-predicate;
+# the family root just doesn't split.
+#
+# === Sub-shards landed ===
+#
+#   @cyberpunk/coherence    Conant-Ashby 1970 lifted to the
+#                            substrate's parallel-altitude operation
+#                            pair (peer reflection at N+1 ↔
+#                            librarian perturbation at N+1). The
+#                            recursion-lock falsification surface
+#                            per [[architecture-cybernetic-coherence-active]].
+#   @cyberpunk/variety      Ashby 1956 §11/7 lifted to the multi-
+#                            dimensional variety reading per
+#                            [[architecture-ashby-multi-dimensional-variety]].
+#
+# === Sub-shards forward-promised ===
+#
+#   @cyberpunk/axis            (variety axes overlay if a consumer
+#                              pulls)
+#   @cyberpunk/viable          Beer 1972/1979; VSM S3/S4 audit
+#   @cyberpunk/bateson_learning Bateson 1972; logical-type orders
+#   @cyberpunk/second_order    von Foerster 1981; circular reflexivity
+#   @cyberpunk/design          Glanville; no operational sibling by
+#                              construction (form-only design discipline)
+#   @cyberpunk/algedonic       Beer VSM S1→S5 bypass (task #271)
+#   @cyberpunk/autopoiesis     Maturana-Varela 1972/1980; the
+#                              autopoetic boundary
+#   @cyberpunk/distinction     Spencer-Brown 1969; the mark of distinction
+#   @cyberpunk/conversation    Pask 1976; conversation theory
+#   @cyberpunk/coevolution     Kauffman 1993; the adjacent possible
+#   @cyberpunk/requisite       Conant-Ashby + cross-checks at
+#                              compositions of all of the above
+#
+# === Migration history ===
+#
+# 2026-06-17 — family lifted from `@epistemologic/cybernetic/*` +
+# the forward-promised `@mirror/cybernetics/*` bilateral into one
+# integrated root per Alex's directive. The two shards that had
+# landed (`variety` and `coherence`) migrated; the rest is
+# forward-promised under the new root.
+#
+# Spec context: docs/specs/cybernetic-coherence-benchmark.md
+#               (T11.11; the recursion-lock falsification surface),
+#               ~/dev/systemic.engineering/practice/insights/
+#                 cybernetics/cybernetic-foundation.md
+#               (the 11-property family canon).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-cybernetic-coherence-active]]
+#                      (the promotion event — "explicit AF about
+#                      cybernetics"),
+#                      [[architecture-cybernetic-foundation]]
+#                      (the 11-property family canon),
+#                      [[architecture-ashby-multi-dimensional-variety]]
+#                      (variety as vector, not scalar),
+#                      [[architecture-bateson-form-behaviour-partition]]
+#                      (recognition #50; does NOT lift at this family
+#                      root because Conant-Ashby self-reference
+#                      closes form and process at the family-root
+#                      altitude).
+# Related shards: cyberpunk/coherence.mirror, cyberpunk/variety.mirror.
+# Path-namespace property: this file at `shards/cyberpunk.mirror`
+# declares `@cyberpunk` and only that.
+
+prism @cyberpunk {
+  focus cyberpunk
+  project cyberpunk
+  split cyberpunk
+  shift cyberpunk
+  settle cyberpunk
+}
+
+out @cyberpunk

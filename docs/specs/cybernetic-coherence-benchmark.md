@@ -8,8 +8,8 @@ explicitly as a Conant-Ashby good-regulator instance.*
 Status: **Red.** Bench harness scaffold lands at
 `spectral/benches/cybernetic_coherence.rs`; substrate-altitude
 declaration lands at
-`mirror/shards/epistemologic/cybernetic/coherence.mirror`; this spec
-names the measurement carrier and the gate the harness sits behind.
+`mirror/shards/cyberpunk/coherence.mirror`; this spec names the
+measurement carrier and the gate the harness sits behind.
 Implementation = mock-witness divan harness today; real
 peer + librarian witnesses wire when those implementations land.
 
@@ -57,8 +57,8 @@ Depends on:
   not close it), Finding 2.3 (the cleanest reading: same SHAPE not
   same operation), Finding 2.4 (forward-promised closure path =
   candidate #52). Seam, commit `dc73c43` (unpushed). The gate.
-- `mirror/shards/epistemologic/cybernetic.mirror` (the family
-  root) and `mirror/shards/epistemologic/cybernetic/variety.mirror`
+- `mirror/shards/cyberpunk.mirror` (the family root) and
+  `mirror/shards/cyberpunk/variety.mirror`
   (the first species; the bilateral pattern template this bench
   composes). Reed + Mara, 2026-06-09.
 - `docs/specs/benchmark-tracing.md` (Taut, 2026-06-17, commit
@@ -73,8 +73,8 @@ Substrate decisions cited:
   promotion event. The substrate is now naming cybernetics
   explicitly at every altitude.
 - [[architecture-cybernetic-foundation]] (2026-06-09) — the
-  11-property `@epistemologic/cybernetic/X` family; the bench
-  composes them, doesn't redefine.
+  11-property family (migrated 2026-06-17 to `@cyberpunk/X`); the
+  bench composes them, doesn't redefine.
 - [[architecture-spectral-triples-all-the-way]] (2026-06-17) —
   the substrate is fractally self-similar at every altitude; the
   principal bundle tower formalizes it. Same-shape claim, not
@@ -156,23 +156,23 @@ The five measurement carriers:
 1. **`ashby_variety_match`** (Ashby 1956 §11/7) — the variety vector
    of `peer_reflection_at(N+1)`'s candidate space must contain the
    variety vector of `librarian_perturbation_at(N+1)`'s candidate
-   space modulo altitude-projection. Reads `@epistemologic/cybernetic/variety`.
+   space modulo altitude-projection. Reads `@cyberpunk/variety`.
 2. **`beer_requisite_variety_witness`** (Beer 1972, 1979) — the
    regulator's variety budget must equal-or-exceed the regulated
    system's variety budget at the appropriate VSM altitude (S3/S4
-   per the bilateral cybernetic carrier). Reads the forward-promised
-   `@epistemologic/cybernetic/viable`.
+   per the cybernetic carrier). Reads the forward-promised
+   `@cyberpunk/viable`.
 3. **`bateson_logical_type_match`** (Bateson 1972; Russell-Whitehead)
    — both verdicts must inhabit the same Bateson logical type
    (N+1, observing N). A type-mismatch verdict means the operations
    are NOT parallel-altitude; they're at different levels of the
    logical hierarchy. Reads forward-promised
-   `@epistemologic/cybernetic/bateson_learning` + Bateson tower.
+   `@cyberpunk/bateson_learning` + Bateson tower.
 4. **`von_foerster_circular_reflexivity`** (von Foerster 1981) —
    each regulator's internal model must include itself (the
    second-order observation). The Tomm probe `[D_F, a]` at this
    altitude IS the circular-reflexive measurement. Reads forward-
-   promised `@epistemologic/cybernetic/second_order`.
+   promised `@cyberpunk/second_order`.
 5. **`conant_ashby_good_regulator`** (Conant-Ashby 1970) — the
    load-bearing measurement. The two regulators' verdict carriers
    must be hash-equal modulo type parameter. The residual gap IS
@@ -328,9 +328,9 @@ For each altitude N:
 ## §5 — Substrate-altitude declaration
 
 The bench prism declaration lives at
-`mirror/shards/epistemologic/cybernetic/coherence.mirror`. It declares:
+`mirror/shards/cyberpunk/coherence.mirror`. It declares:
 
-- The prism root `@epistemologic/cybernetic/coherence`.
+- The prism root `@cyberpunk/coherence`.
 - The five measurement actions:
   - `measure_peer_reflection(altitude, op) -> verdict_peer`
   - `measure_librarian_perturbation(altitude, op) -> verdict_lib`
@@ -500,7 +500,7 @@ new measurement carrier required.
 The bilateral fracture body at
 `@kintsugi/fracture/recursion_lock_break` (T11.11-b) is
 forward-promised. Mara writes the GREEN when the property at
-`@epistemologic/cybernetic/coherence/recursion_lock_holds` carries
+`@cyberpunk/coherence/recursion_lock_holds` carries
 its first non-trivial verdict. Reed writes the RED for the property
 when the cascade pulls.
 
@@ -514,7 +514,7 @@ surface, not the falsification result. Three artifacts:
 1. **`spectral/benches/cybernetic_coherence.rs`** — the divan bench
    harness scaffold; mock witnesses today; parametric over the four
    named altitudes; uses cybernetic vocabulary explicitly.
-2. **`mirror/shards/epistemologic/cybernetic/coherence.mirror`** —
+2. **`mirror/shards/cyberpunk/coherence.mirror`** —
    the substrate-altitude declaration of the bench prism; cites
    Conant-Ashby 1970 + Ashby 1956; declares five measurement
    actions; forward-promises the bilateral fracture body.
