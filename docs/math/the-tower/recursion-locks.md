@@ -410,12 +410,81 @@ recognition, not invention.
 candidate #63 immediately on Read-E grounds alone — independent of
 gate reading. The mechanical derivation lands in §11 below.
 
-### §8.5 [Next tick: bateson_learning under the new framing]
+### §8.5 bateson_learning — fifth witness; canonical graded rep (this tick, 2026-06-17)
 
-*Species order continues: bateson_learning, second_order, distinction,
-conversation, coevolution, requisite, design, algedonic. Under the
-new framing (if §11 closes), each species is tested against the
-derived parametric carrier rather than as ad-hoc witness.*
+Per Mara's spec `docs/specs/cyberpunk-bateson-learning.md` (commit
+`42ef630`, `mara/cyberpunk-bateson-learning-spec` branch, 1399 lines).
+This is the first species audited AFTER recognition #63's promotion
+(tick 5). The audit's nature has shifted: from gate-counting to
+robustness-testing.
+
+**Reads tested**:
+- A (per-level): `(LevelN, LevelN+1)` instantiation — holds with multiplicity
+- B (whole-hierarchy): graded rep on `⊕_N V_N` — holds; **the natural form**
+- C (form refusal at Bateson IV ceiling): does NOT hold; Bateson's "rare in humans" is empirical not structural
+- D (substrate-already-had-the-word): 9 instances; densest per-species in cascade after autopoiesis
+- E (canonical ρ via graded rep): holds; Russell-Whitehead stratification forces the choice
+
+**Verdict: WITNESS** held under Reads B + E.
+
+**Canonical ρ_bateson** (Mara §6): the **graded representation** of
+the family-root 2-groupoid 𝒢 on the Russell-Whitehead-stratified
+universe `⊕_N V_N`, acting per-level by its level-N restriction and
+commuting with the type-stratification inclusions. Standard graded
+algebra recipe (Kac 1990 ch. 8). Type-tuple
+`(HierarchyTop, HierarchyBase)`. Substrate-altitude shard collapses
+to `use @cyberpunk/coherence<HierarchyTop, HierarchyBase, graded_rep_RW>`.
+
+**Independent corroboration of §11**: bateson_learning is the **second
+species** (after autopoiesis) whose representation choice is canonical
+via explicit mathematical ancestry:
+
+```
+species         representation choice                ancestry
+--------------- ------------------------------------- ----------------
+autopoiesis     adjoint rep on G                     G's self-action
+bateson_learning  graded rep on ⊕_N V_N              Russell-Whitehead
+                                                     + Kac 1990
+```
+
+Both fits are *the same kind of fit* — species whose explicit
+ancestry names a standard mathematical structure (G-self-action;
+graded type-stratification) get a canonical ρ. The parametric
+framing closes as designed at these species: no choice is made
+ad-hoc; the species' ancestry determines the rep. **This is
+independent evidence the parametric carrier is well-formed.**
+
+**Substrate-already-had-the-word** (Mara's §10; 9 instances; ~82
+cumulative): `@<altitude>` syntax IS RW type level; cascade IS
+Learning II (recognition #41); form/substance partition IS Bateson lift
+(#50); Hilbert space expansion IS Bateson lift (#51 §8.3 ratified);
+`in @prism` IS the canonical wrapping; `@code/metalogue` IS Bateson at
+code altitude; `transparency<p>` IS verdict-at-level-p; the 11-property
+family ordering IS Bateson dependency; task #271 (`@cyberpunk/algedonic`)
+IS Bateson III operational.
+
+**Auxiliary candidate #65 surfaced** (Mara §9 Q1): the substrate
+operates at Bateson Level III — it changes its own premises, not just
+responses. Recognition #41 already named this; bateson_learning's
+audit deepens the evidence. Promotion gate: a second independent
+witness of premise-change at substrate altitude.
+
+**Algedonic forward-promised sequencing**: Mara recommends bateson_
+learning lands FIRST, then `@cyberpunk/algedonic` (task #271) as its
+Beer-altitude specialization. The S1→S5 emergency bypass IS the
+substrate operating at Bateson Level III at the cybernetic altitude.
+Algedonic's shard becomes thin via inheritance:
+`in @cyberpunk/bateson_learning`. Substrate-already-had-the-word
+discipline satisfied: don't re-declare what bateson_learning already
+declares; specialize.
+
+### §8.6 [Next tick — algedonic in flight; second_order queued]
+
+*Species order updated: algedonic next (Mara's spec on
+`@cyberpunk/algedonic` as Bateson-III specialization at Beer altitude);
+then second_order, distinction, conversation, coevolution, requisite,
+design. Each tests robustness of the parametric framing; the audit
+locks in canonical ρ choices per species' ancestry.*
 
 ## §9 What promotion or retraction closes
 
