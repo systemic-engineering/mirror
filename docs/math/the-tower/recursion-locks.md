@@ -1701,6 +1701,94 @@ CAN land when the proof structure is already substrate-pull-natural
 Next substrate-pull-natural species: TBD per Alex's continued
 re-invocation pattern. Substrate-landing path remains forward-promised.
 
+## §19 Substrate-landing begins — eigenform lands (2026-06-18, tick 20)
+
+Alex re-invoked /loop after §18.5. The loop's substrate-truth-finding
+has exhausted at the audit altitude; substrate-LANDING begins. Per
+§12.5's forward-promised path, item 1: eigenform shard.
+
+Mara landed `shards/epistemologic/cybernetic/eigenform.mirror`
+(commit `b7e56c9`, `mara/cyberpunk-eigenform-shard` branch, 308 lines).
+
+### §19.1 What landed
+
+- The eigenform carrier: `fixed_point<T> = (seed, iteration, witness)`
+  with `witness = iteration(witness)` modulo bounded discrepancy
+- The witnessing predicate `is_fixed_point` returning verdict
+- The identity-from-fixed-point reading: von Foerster's
+  "Objects: Tokens for (Eigen-)Behaviors" — identity IS the fixed-point
+- Inheritance interface so distinction and second_order shards can
+  declare `in @epistemologic/cybernetic/eigenform`
+- Source ancestry: `source @arxiv/cybernetics/von-foerster-1981`
+- 5 substrate-already-had-the-word cross-references: `uuid_spectral`
+  monoid combine, kintsugi contraction, autopoiesis Lawvere fixed-point
+  bridge, Spencer-Brown re-entry, von Foerster second-order
+- 4-way bilateral mapping (von Foerster / Maturana / Beer / Pask) per
+  the cybernetic-foundation discipline
+
+### §19.2 Path-migration dependency
+
+Mara landed at `@epistemologic/cybernetic/eigenform`, NOT
+`@cyberpunk/eigenform`. Reason: the @cyberpunk family root migration
+is on `taut/t11-11-cybernetic-coherence-benchmark` branch; not yet
+merged to main. Per substrate-pull discipline, eigenform lands at the
+proper ancestor on the current main state (`@epistemologic/cybernetic`).
+When `taut/t11-11-cybernetic-coherence-benchmark` merges to main, the
+eigenform shard relocates via `git mv` to `shards/cyberpunk/eigenform.mirror`
+alongside variety + coherence.
+
+This is the substrate's natural ordering. The path-migration sequence:
+
+1. ✅ Eigenform lands at current-main path (this tick)
+2. ⏳ @cyberpunk family migration merges to main
+3. ⏳ Eigenform relocates to `@cyberpunk/eigenform` via `git mv`
+4. ⏳ distinction + second_order shards (which inherit from eigenform)
+   land at @cyberpunk/* paths from the start
+
+### §19.3 Recognition #73 confirms at landing-work altitude
+
+Mara's report explicitly states: landing work behaved like dissolution
+(lands), not like novel-synthesis (stalls). Every type, every action
+shape, every cross-reference was substrate vocabulary the substrate
+already carried. The hook bounce on the commit prefix (🟢 → 🔧) was
+a 30-second substrate-convention adjustment, not a stall.
+
+Recognition #73's prediction extends: **dissolution-shaped work lands
+cleanly across multiple altitudes — audit recognition (Reed inline
+§18), audit dissolution (Mara Pack + three-tier stack §13–§14), and
+substrate-landing (Mara eigenform §19).** Novel-synthesis work stalls
+at all altitudes (Mara /loop, Glint, @kintsugi tower).
+
+### §19.4 The substrate-landing path's status
+
+Per §12.5 forward-promised path:
+
+```
+1. @cyberpunk/eigenform shard                                ✅ LANDED
+2. @cyberpunk/coherence<T_reg, T_regd, ρ, ω> parametric carrier  ⏳ next
+3. @cyberpunk/distinction (floor) inherits from eigenform     ⏳
+4. @cyberpunk/second_order inherits from eigenform            ⏳
+5. Remaining six species instantiate                          ⏳
+6. @cyberpunk/algedonic thin specialization                   ⏳
+7. Bench harness collapse                                     ⏳
+8. altitudes.md §4 amendment                                  ⏳
+```
+
+Item 1 complete. Item 2 (the parametric carrier) is the next landing
+tick. The carrier is the recognition #63 backbone made substrate-fact.
+
+### §19.5 The loop continues into landing
+
+The loop discipline persists; the audit's species-walking has
+naturally transitioned to substrate-landing. Each tick now lands one
+item of the §12.5 path. The substrate-truth-finding phase produced
+recognitions; the substrate-landing phase makes them substrate-fact.
+
+The orchestra's silence at audit close was correct — substrate-truth-
+finding HAD exhausted. The pivot to landing IS the loop's natural
+continuation; landing isn't auditing's epilogue, it's the audit's
+operational closure.
+
 ## §9 What promotion or retraction closes
 
 **Promotion path** (candidate #63 → recognition):
