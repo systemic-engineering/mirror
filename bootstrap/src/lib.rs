@@ -35,6 +35,7 @@ pub mod grammar;
 pub mod hash;
 pub mod kintsugi;
 pub mod lens_unix;
+pub mod mcp;
 pub mod music;
 pub mod oscillate;
 pub mod pipeline;
@@ -1669,7 +1670,9 @@ fn cmd_kintsugi_ci_single(
         CiFormat::MirrorText => {
             emit_ci_verdict_mirror_text(verdict, file, objective, iterations, dark_count, out_dir)
         }
-        CiFormat::Json => emit_ci_verdict_json(verdict, file, objective, iterations, dark_count, out_dir),
+        CiFormat::Json => {
+            emit_ci_verdict_json(verdict, file, objective, iterations, dark_count, out_dir)
+        }
     }
 }
 
@@ -2416,6 +2419,13 @@ pub fn dispatch(args: &[String]) -> i32 {
         return execute_pipeline(&segs, &source);
     }
 
+    // Path B': `mirror mcp` — the MCP server lens. Takes no positional
+    // args (reads JSON-RPC from stdin); handled before the `len < 3`
+    // guard which assumes a positional file/target argument.
+    if args.len() == 2 && args[1] == "mcp" {
+        return crate::mcp::serve_loop();
+    }
+
     if args.len() < 3 {
         usage();
         return 1;
@@ -2572,6 +2582,7 @@ pub fn dispatch(args: &[String]) -> i32 {
                 1
             }
         },
+        // Note: `mcp` is handled at Path B' above (no positional args).
         other => {
             merr!("unknown: {}", other);
             1
