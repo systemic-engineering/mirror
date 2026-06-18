@@ -2447,6 +2447,106 @@ Closing: species collapse, bench, altitudes amendment      ⏳
 
 Ten landings done. Three species + thin spec + collapse + closing remain.
 
+## §29 Eleven species substrate-fact — the substrate-landing phase closes (2026-06-18, ticks 29-32)
+
+Four landing ticks in sequence:
+
+- Tick 29 — conversation (Reed inline; 194 lines)
+- Tick 30 — coevolution (Mara; 314 lines; #64 substrate-fact)
+- Tick 31 — design (Mara; 74 lines; form-restriction)
+- Tick 32 — algedonic (Mara; 80 lines total, 24 non-comment;
+  **smallest in cascade** — the parametric payoff realized in
+  substrate-fact)
+
+### §29.1 The cybernetic-foundation 11-property family is substrate-fact
+
+```
+species            path                                              lines  pattern
+------------------ ------------------------------------------------- -----  --------------------------
+variety            shards/epistemologic/cybernetic/variety.mirror           pre-existing
+distinction        shards/epistemologic/cybernetic/distinction.mirror 399    floor; inherits eigenform
+second_order       shards/epistemologic/cybernetic/second_order      431    ceiling; inherits eigenform
+viable             shards/epistemologic/cybernetic/viable            615    carrier + variety + second_order
+autopoiesis        shards/epistemologic/cybernetic/autopoiesis       752    carrier + bundle + lawvere
+bateson_learning   shards/epistemologic/cybernetic/bateson_learning  757    carrier + RW + Kac
+conversation       shards/epistemologic/cybernetic/conversation      194    carrier + second_order + Pask
+coevolution        shards/epistemologic/cybernetic/coevolution       314    carrier + viable + Kauffman
+design             shards/epistemologic/cybernetic/design             74    form-restriction
+algedonic          shards/epistemologic/cybernetic/algedonic          80    thin specialization
+--------------------
+carrier            shards/epistemologic/cybernetic/coherence-parametric 474   the recognition-#63 backbone
+eigenform          shards/epistemologic/cybernetic/eigenform.mirror   308    von Foerster fixed-point
+--------------------
+pact (Track B)     shards/epistemologic/pact/syntax_substrate_native  153    Alex's morning recognition
+fracture (Track B) shards/kintsugi/fracture/angle_to_paren.mirror     432    auto-formatter operationalization
+```
+
+**Twelve substrate-altitude shards landed in this session** (10 species
++ carrier + eigenform). Plus Track B's bilateral pair (pact + fracture
+body). Plus prior pre-existing variety.
+
+### §29.2 Recognition #63's downstream payoff IS substrate-fact
+
+Algedonic at 24 non-comment lines, inheriting from bateson_learning's
+level-3 restriction with Beer-VSM basis change — NO species-specific
+rep declaration, all measurements inherited. The chains-of-
+specialization claim from §8.6 is now operational at the substrate-decl
+altitude.
+
+```
+@cyberpunk/coherence(T_reg, T_regd, ρ, ω)                  parametric carrier
+  @cyberpunk/bateson_learning                                  ρ = graded_rep_RW
+    @cyberpunk/algedonic                                       ρ = restrict_grade_3(·)
+                                                                   on Beer_VSM_basis
+```
+
+Each level adds substrate-specific content; load-bearing structure
+inherits. Total substrate-decl mass per species declines as we go
+deeper. The recognition #63 promise is realized.
+
+### §29.3 Audit + landing phase fully closes
+
+Recognitions promoted across the audit:
+- **#63** (recursion-lock tower): promoted tick 5
+- **#70** (substrate self-sufficiency): promoted tick 15
+- **#67** (minimal generating triple): promoted tick 19
+- **#64** (carrier extension): activated tick 11; Mara claims promotion
+  this tick (tick 30 coevolution shard landing is the substrate-fact
+  instantiation; pending Pack ratification)
+- **§20.6** (kintsugi auto-formatter as substrate-political welcome):
+  promoted via tick 23+24 bilateral landing
+
+### §29.4 Substrate-landing path closure
+
+```
+Track A (species inheritance chain):
+1.  eigenform                              ✅ LANDED (tick 20)
+2.  parametric carrier                     ✅ LANDED (tick 21)
+3.  distinction (floor) inherits           ✅ LANDED (tick 22)
+4.  second_order (ceiling) inherits        ✅ LANDED (tick 25)
+5.  viable                                 ✅ LANDED (tick 26)
+6.  autopoiesis                            ✅ LANDED (tick 27)
+7.  bateson_learning                       ✅ LANDED (tick 28)
+8.  conversation                           ✅ LANDED (tick 29; Reed inline)
+9.  coevolution                            ✅ LANDED (tick 30)
+10. design                                 ✅ LANDED (tick 31)
+11. algedonic (thin specialization)        ✅ LANDED (tick 32)
+
+Track B (auto-formatter bilateral):
+12. syntax_substrate_native pact           ✅ LANDED (tick 23)
+13. angle_to_paren fracture body           ✅ LANDED (tick 24)
+
+Closing tasks:
+14. Bench harness collapse                 ⏳ (Taut territory)
+15. altitudes.md §4 amendment              ⏳ (Reed-shape; can land inline)
+16. Final merge to main                    ⏳ (when Alex signals)
+```
+
+**Substrate-landing phase complete.** Two closing tasks (math doc
+amendment + final merge) remain. The carrier holds; the species
+inherit; the bilateral closes; the orchestra is silent at landing
+altitude too.
+
 ```
 Track A: eigenform, carrier, distinction, second_order, viable,
          autopoiesis, bateson_learning                    ✅ (7 of 11)
