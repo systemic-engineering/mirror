@@ -1,0 +1,153 @@
+in @glass
+
+# Property: prism declarations use substrate-native paren syntax for
+# type parameters, not Rust-syntax-echo angle-bracket syntax.
+#
+# Precedents already operating in the substrate (paren form):
+#   splinter(altitude)          shards/glass.mirror
+#   splinter(ast)               shards/glass.mirror
+#   mosaic(altitude)            docs/specs/mosaic-as-type-system.md
+#   transparency(p)             shards/glass.mirror
+#   fixed_point(mark)           shards/epistemologic/cybernetic/eigenform
+#   reentry_as_eigenform(m)     shards/epistemologic/cybernetic/distinction
+#
+# Rust-syntax-echo (the form the substrate doesn't speak):
+#   prism @<path><T_reg, T_regd, ρ, ω>          # angle brackets
+#   Vec<T>, Result<T,E>, HashMap<K,V>           # generic syntax
+#   Type<T_reg, T_regd>                         # capital-T binders
+#
+# The pact asserts: prism / glass / pact declarations parametric on
+# type binders use `(...)` not `<...>`; binder names follow substrate
+# casing (`t_reg`, not `T_reg`; `rho`, not `ρ`).
+#
+# === Recognition grounding ===
+#
+# Alex 2026-06-18 morning recognition (recursion-locks.md §20.6): the
+# kintsugi auto-formatter discipline operationalizes substrate-political
+# welcome at every syntax altitude where the substrate's form differs
+# from common-language echo. Auto-correction is not convenience — it's
+# the substrate's discipline for relating to incoming programmers'
+# syntax intuition.
+#
+# Recursion-locks.md §20.2 RETRACTED the original "extend the grammar
+# to admit <...>" forward-promise. There's no grammar gap: the
+# substrate already accepts `(...)` for parametric declarations. The
+# pact names what the substrate already practices; the fracture body
+# (forward-promised next tick at @kintsugi/fracture/angle_to_paren)
+# heals the typed-echo without punishing the typist.
+#
+# === Substrate-political reading ===
+#
+# The substrate doesn't punish Rust-finger-memory. It heals the
+# fracture between what was typed and what the substrate's form is.
+# Incoming programmers carry generic-syntax intuition from Rust,
+# TypeScript, C++, Java; the substrate's response is auto-correction
+# at the kintsugi-loop floor, not error+rejection. Welcome at syntax
+# altitude.
+#
+# Bateson-level reading: the surface text differs by one delimiter
+# pair; the *form* the delimiters denote (a parametric carrier) is
+# the same. The kintsugi loop closes the delta as a syntactic dark
+# region, identical in shape to how `composition_closed` closes the
+# import-graph dark region — both are restriction maps lifting
+# almost-form to substrate-form.
+#
+# === Path discipline ===
+#
+# Lands at `@epistemologic/pact/syntax_substrate_native`, not
+# `@epistemologic/property/syntax_substrate_native`, per
+# @epistemologic/pact/keyword_matches_path_root (Mara's d498fc0
+# rename closure). The keyword `pact` lines up with the first path
+# segment after `@epistemologic` — self-witnessing under
+# `keyword_matches_path_root` on the first frame.
+#
+# === Bilateral pattern ===
+#
+# Per [[architecture-property-fracture-bilateral]] (recognition #53):
+# declarative property half at `@epistemologic/pact/syntax_substrate_native`
+# (THIS shard); operational discharge half forward-promised at
+# `@kintsugi/fracture/angle_to_paren`. The fracture body detects
+# `<...>` in prism / glass / pact declarations, settles to `(...)`
+# form, normalises binder casing (`T_reg → t_reg`, `ρ → rho`).
+# Discharge via `splinter(ast)` — the fracture body emits the
+# rewritten AST node as a content-addressed splinter at the
+# @meta/ast altitude (parallel to other fracture bodies per
+# @mirror/fracture/keyword chain).
+#
+# === Form-side discipline ===
+#
+# This pact sits at the form-side of the form/process partition
+# ([[architecture-form-process-partition-at-family-root]];
+# @mirror = form, @kintsugi = process). The rule names WHAT must hold
+# across prism declarations; the realisation lives at
+# @kintsugi/fracture/angle_to_paren (forward-promised); the operator
+# of the bridge is the kintsugi loop (substrate-pull).
+#
+# === Verdict surface ===
+#
+# Verdict surface is transparency(p):
+#   success              -- every parametric declaration uses paren form
+#                           with substrate-cased binder names.
+#   failure(opacity_map) -- some declaration uses `<...>` or carries
+#                           non-substrate-cased binders (e.g. `T_reg`,
+#                           `ρ`); each opacity names ONE offending
+#                           declaration site so the kintsugi loop can
+#                           mutate per-site.
+#   partial(opacity_map) -- mixed corpus state; some declarations clean,
+#                           some carry Rust-syntax-echo. Typical mid-
+#                           kintsugi-loop sweep state.
+#
+# Located transparency (not @glass.verdict): the kintsugi loop
+# consumes the opacity_map to direct per-site mutation. Each opacity
+# names ONE (file, declaration) pair; the fracture body emits the
+# splinter(ast) that proposes the paren-form rewrite.
+
+source @author/alex-wolf-2026-06-18
+
+pact @epistemologic/pact/syntax_substrate_native {
+  # The parametric declarations in `file`. One entry per concrete
+  # top-level `prism @<X>(...) | glass @<X>(...) | pact @<X>(...)`
+  # declaration that carries type parameters. Non-parametric
+  # declarations (no `(...)` or `<...>` after `@<X>`) are excluded.
+  #
+  # Returns the list of (declaration site, binder syntax) pairs;
+  # `binder syntax` is the raw delimiter form actually parsed at
+  # the site (paren, angle, or neither).
+  parametric_declarations(file: ref) -> [ref] { \ }
+
+  # The substrate-native verdict on one declaration's binder
+  # delimiter. `success` iff the declaration uses `(...)` for the
+  # parametric carrier; `failure` iff `<...>`.
+  #
+  # Parallel to keyword_matches_depth's per-declaration verdict:
+  # the rule is form-level, evaluated declaration-by-declaration.
+  delimiter_is_paren(decl: ref) -> transparency { \ }
+
+  # The substrate-native verdict on binder casing. `success` iff
+  # every type binder in `decl` is substrate-cased (lowercase
+  # snake_case ASCII; greek letters spelled out — `rho`, not `ρ`;
+  # `omega`, not `ω`). `failure` iff any binder carries capital-T
+  # convention (`T_reg`) or unicode (`ρ`, `ω`, `τ`).
+  binders_substrate_cased(decl: ref) -> transparency { \ }
+
+  # The combined property: every parametric declaration in `file`
+  # uses substrate-native paren syntax with substrate-cased binders.
+  #
+  # `syntax_substrate_native(file)` is `success` iff
+  #   for every decl in parametric_declarations(file):
+  #     delimiter_is_paren(decl) is success AND
+  #     binders_substrate_cased(decl) is success
+  #
+  # Verdict surface is transparency(p):
+  #   success              -- every parametric declaration is clean.
+  #   failure(opacity_map) -- one or more sites carry Rust-syntax-echo;
+  #                           each opacity names ONE (file, decl) pair.
+  #   partial(opacity_map) -- mixed: some sites clean, some carry echo.
+  syntax_substrate_native(file: ref) -> transparency { \ }
+}
+
+out parametric_declarations
+out delimiter_is_paren
+out binders_substrate_cased
+out syntax_substrate_native
+out @epistemologic/pact/syntax_substrate_native
