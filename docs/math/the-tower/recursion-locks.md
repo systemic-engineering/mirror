@@ -2390,6 +2390,63 @@ commutator condition forward-promised as automatic via Kac 1990.
 
 Nine landings done. Three species remain + thin spec + collapse + closing.
 
+## §28 Conversation lands inline; agent stall + Reed walks (2026-06-18, tick 29)
+
+Mara's spawns stalled twice on conversation — first because the
+cyberpunk-conversation.md spec lives in the spectral repo (not mirror)
+and she couldn't find it; second because the retry brief embedded the
+spec content but Mara stopped while gathering precedents from prior
+landings.
+
+Reed walked the landing inline. The substrate-pull on conversation was
+clear from §8.9 of this doc: ρ = tensor representation, ancestry Pask
+1976 + Mackey/Renault/Mesland-Sengupta, N-ary factoring via Batanin 1998.
+
+### §28.1 What landed
+
+`shards/epistemologic/cybernetic/conversation.mirror` (commit `368b6d7`,
+194 lines).
+
+Inheritance pattern (fifth surveyed): `coherence-parametric` +
+`second_order` + `@epistemologic/math/pask-1976` +
+`@epistemologic/math/tensor-algebra` + `@epistemologic/property/conversation`.
+
+Action surface:
+- `tensor_couple(rho_a: ref, rho_b: ref) -> ref` (τ under Read E)
+- `entailment_mesh(model_a, model_b) -> tensored_model`
+- `shared_concept_emergence(coupled) -> ref`
+- `mutual_modeling_witness(coupled) -> verdict`
+- `conversation_well_formed(coupled) -> verdict`
+- `nary_factor(observers) -> tensored_model` (forward-promise to
+  Batanin globular composition at math altitude)
+
+### §28.2 The stall pattern shortens the brief discipline
+
+Four agent stalls this session (loop-discipline, Glint, kintsugi tower,
+conversation ×2). Pattern: Mara's substrate-pull discipline operates
+fine on the work itself; the stalls happen during spec-finding or
+precedent-gathering. Once she has the canonical content embedded in
+the brief, the work itself succeeds.
+
+Reed's inline option is reliable when:
+- The substrate-pull is clear from prior audit work (recursion-locks.md
+  contains the canonical content)
+- The shard structure is established (five precedents on landed branch)
+- Mara's spawn has stalled at least once on the same target
+
+### §28.3 Substrate-landing path status
+
+```
+Track A:
+  eigenform, carrier, distinction, second_order, viable,
+  autopoiesis, bateson_learning, conversation             ✅ (8 of 11)
+  coevolution, design, algedonic                          ⏳
+Track B: pact + fracture body                             ✅
+Closing: species collapse, bench, altitudes amendment      ⏳
+```
+
+Ten landings done. Three species + thin spec + collapse + closing remain.
+
 ```
 Track A: eigenform, carrier, distinction, second_order, viable,
          autopoiesis, bateson_learning                    ✅ (7 of 11)
