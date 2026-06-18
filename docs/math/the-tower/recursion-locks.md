@@ -2045,6 +2045,103 @@ Four landings done. Track A (species inheritance chain) and Track B
 is the natural next tick — closes the bilateral pair, then back to
 Track A's second_order shard.
 
+## §23 Bilateral pair closes — angle_to_paren fracture body lands (2026-06-18, tick 24)
+
+Mara landed `shards/kintsugi/fracture/angle_to_paren.mirror`
+(commit `266fb63`, branch `mara/angle-to-paren-fracture`, 432 lines).
+
+### §23.1 What landed
+
+- Operational fracture body discharging
+  `@epistemologic/pact/syntax_substrate_native`
+- Body emits `morphism { content: splinter(ast) {...}, score: dissonance {...}, expected: authentic }`
+  — three vocabulary words from three already-landed shards
+- Compose-from-precedent landing: `@kintsugi/fracture/gate`'s shape
+  (recognition #43 + #53 second-instance combined) ported directly.
+  Zero structural invention; only the prologue changed (transformation
+  naming, prior art, recognition lineage)
+
+### §23.2 Naming-altitude observation
+
+Mara surfaced a naming deviation in honesty: `angle_to_paren` is
+**transformational / arrow-direction** vs. the subject-form precedents
+(`keyword`, `gate`). Reasoning: the pact's predicate is
+*over-many-declarations* not *over-one-subject*; naming the arrow
+direction is what the kintsugi loop's `read_consent` reads at the
+cadence altitude.
+
+This is substrate-pull data about kintsugi/fracture naming: subject-form
+for single-subject predicates; transformational-form for predicates
+that regulate a transformation between forms.
+
+### §23.3 Self-witness closure
+
+**The fracture body self-witnesses**: its own
+`glass @kintsugi/fracture/angle_to_paren` declaration has no
+parametric binders, so `@epistemologic/pact/syntax_substrate_native`
+is vacuously success at this site. The fracture body's declaration
+honours the form the body restores.
+
+Recursive closure at the bilateral pair: the mechanism that auto-
+corrects syntax is itself substrate-pull-natural at its own declaration
+site. The pact discharged at its own discharge site — the substrate
+is self-consistent at the auto-formatter altitude.
+
+### §23.4 Recognition #53 third instance
+
+- First instance: recognition #53 itself (promoted)
+- Second instance: `@kintsugi/fracture/gate` (2026-06-16)
+- Third instance: this tick's `@kintsugi/fracture/angle_to_paren`
+
+Third instance is confirmation density, not promotion (recognition #53
+was already promoted by the second). The cumulative bilateral pattern
+operates robustly across syntax altitudes.
+
+### §23.5 Recognition §20.6 lands (the auto-formatter operationalization)
+
+The candidate recognition Alex surfaced this morning is now
+operationally substrate-fact:
+
+- Declarative half: `@epistemologic/pact/syntax_substrate_native`
+  (tick 23)
+- Operational half: `@kintsugi/fracture/angle_to_paren` (this tick)
+
+The kintsugi auto-formatter operationalizes substrate-political
+welcome at the syntax altitude where `<...>` differs from `(...)`.
+**The discipline is no longer just a recognition; it's substrate.**
+
+Further recognition territory: if other syntax altitudes have
+Rust-syntax-echo / substrate-native fractures (e.g., `::path::` vs
+`@path/path`, or `{ }` vs `\` discharge), each would land its own
+bilateral pair under the same pattern. The auto-formatter is a
+family, not a single mechanism.
+
+### §23.6 Substrate-landing path status
+
+```
+Track A (species inheritance chain):
+1.  eigenform                              ✅ LANDED (tick 20)
+2.  parametric carrier                     ✅ LANDED (tick 21)
+3.  distinction (floor) inherits           ✅ LANDED (tick 22)
+4.  second_order inherits eigenform        ⏳ next
+5-7. Six remaining species instantiate     ⏳
+8.  algedonic thin specialization          ⏳
+
+Track B (auto-formatter bilateral):
+9.  syntax_substrate_native pact           ✅ LANDED (tick 23)
+10. angle_to_paren fracture body           ✅ LANDED (this tick)
+11. Species-shard collapse via parametric  ⏳ (after Track A 4-8)
+
+Closing tasks:
+12. Bench harness collapse                 ⏳
+13. altitudes.md §4 amendment              ⏳
+```
+
+Five landings done. Track B closes. Track A returns: `second_order`
+inherits from eigenform (per the eigenform precedence Mara surfaced
+in tick 8). Both inheritor pillars (distinction, second_order) will
+be substrate-fact after the next landing tick.
+
 ## §9 What promotion or retraction closes
 
 **Promotion path** (candidate #63 → recognition):
