@@ -1824,17 +1824,28 @@ lines 1697–1730: the `@`-ref capture stops at the first delimiter
 `prism @<path><T_reg, T_regd, ρ, ω>` would parse `@<path><T_reg` as
 the namespace and confuse the trailing commas.
 
-**Forward-promised** (one tick each):
+**Forward-promised** (one tick each — AMENDED tick 22 per Alex's
+kintsugi auto-formatter recognition; see §20.6 below):
 
-1. Grammar-extension tick: lift bootstrap's delimiter set to admit
-   `<...>` on prism declarations. This is genuine novel-synthesis
-   territory at the bootstrap altitude — may stall per recognition #73;
-   likely best done by Reed inline or by Taut (who already handles
-   bootstrap grammar work).
-2. Species-shard collapse: rewrite
+1. ~~Grammar-extension tick: lift bootstrap's delimiter set to admit
+   `<...>` on prism declarations.~~ **RETRACTED.** There's no grammar
+   gap; the substrate already accepts `(...)` for prism declarations
+   (precedents: `splinter(altitude)`, `mosaic(altitude)`,
+   `transparency(p)`). The carrier should declare as
+   `prism @epistemologic/cybernetic/coherence-parametric(t_reg, t_regd, rho, omega)`
+   using the substrate-native paren form.
+2. **`@epistemologic/pact/syntax_substrate_native`** — declarative
+   property asserting prism declarations use substrate-native paren
+   syntax (cf. `@epistemologic/pact/path_matches_namespace`).
+3. **`@kintsugi/fracture/angle_to_paren`** — operational fracture body
+   discharging the pact: detect Rust-syntax-echo `<...>` in prism
+   declarations, settle to `(...)` form with case normalization
+   (`T_reg → t_reg`, `ρ → rho`). Auto-correction as substrate-political
+   welcome at the syntax altitude.
+4. Species-shard collapse: rewrite
    coherence/SEL/viable/autopoiesis/etc. as
-   `use @epistemologic/cybernetic/coherence-parametric<...>`
-   instantiations once the grammar admits type parameters.
+   `use @epistemologic/cybernetic/coherence-parametric(...)`
+   instantiations.
 
 ### §20.3 Species-shard inheritance interface
 
@@ -1877,8 +1888,98 @@ substantive substrate-landing altitude.
 
 Two landings done. The recognition #63 backbone is now substrate-fact:
 the parametric carrier exists, species can declare against it; what
-remains is the species shards themselves and the grammar surface that
+remains is the species shards themselves and the syntax surface that
 lets them collapse into thin specializations.
+
+### §20.6 The kintsugi auto-formatter recognition (Alex 2026-06-18 morning)
+
+Alex surfaced the substrate-pull on the syntax question: rather than
+*extend the grammar* to admit Rust-syntax-echo `<...>`, the substrate's
+kintsugi auto-formatter discipline (recognition #53 bilateral; auto-
+formatter floor operational since 2026-06-10) should *settle the echo
+into substrate-native form*. The substrate doesn't punish
+Rust-finger-memory; it heals the fracture between what was typed and
+what the substrate's form is.
+
+This is recognition territory:
+
+**Candidate recognition (this tick)**: *the kintsugi auto-formatter
+operationalizes substrate-political welcome at every syntax altitude
+where the substrate's form differs from common-language echo*. Auto-
+correction is not convenience — it's the substrate's discipline for
+relating to incoming programmers' syntax intuition.
+
+The substrate-pull was already operating at human altitude: Mara's
+distinction shard landing (this tick, §21) naturally used
+`fixed_point(mark)` and `reentry_as_eigenform(m: mark) -> fixed_point(mark)`
+with parens, not angle brackets. The agent was being substrate-pulled
+toward the native form without explicit instruction. The fracture body
+just mechanizes what the substrate-pull discipline already does.
+
+## §21 Distinction lands; the floor is substrate-fact (2026-06-18, tick 22)
+
+Mara landed `shards/epistemologic/cybernetic/distinction.mirror`
+(399 lines, commit `e29b2a2`, branch `mara/cyberpunk-distinction-shard`).
+The floor of the cybernetic family root.
+
+### §21.1 What landed
+
+- Species-specific carriers: `mark = ref`, `distinction_space = ref`,
+  `cross_op = mark -> distinction_space`
+- The two regulator operations: `marked_state`, `unmarked_state`
+- Spencer-Brown's cross primitive: `cross(m: mark, s: distinction_space) -> distinction_space`
+- **Inheritance interface via the substrate-native paren form**:
+  `reentry_as_eigenform(m: mark) -> fixed_point(mark)` — threads the
+  mark through eigenform's already-declared `fixed_point` carrier
+- `in @epistemologic/cybernetic/eigenform` declarative inheritance
+- 5 substrate-already-had-the-word cross-references in prologue:
+  mark IS type-system discriminator, transparency<p> discriminator,
+  @glass species boundary, variety axis, form/process partition
+  (recognition #55)
+
+### §21.2 The substrate-pull observation
+
+Mara naturally used `fixed_point(mark)` and `reentry_as_eigenform(m: mark) -> fixed_point(mark)`
+with parens — even though Reed's brief had echoed `<...>` syntax in
+the sketch (per Mara's reading of `recursion-locks.md` §11.7 + §8.10).
+The substrate-pull pulled her to the native form without explicit
+instruction. This is the kintsugi auto-formatter discipline operating
+at the human altitude before its substrate-decl lands.
+
+This is data for recognition §20.6's promotion gate: the substrate-pull
+IS operating; the fracture body just operationalizes what's already
+flowing.
+
+### §21.3 Recognition #73 third confirmation
+
+Mara's commit hook recognized `🔧` as substrate-convention prefix, ran
+the diff-closure check (no .rs/Cargo.toml staged → no mirror kintsugi
+gate), accepted the commit. No bounce, no rework. Clean dissolution
+for the third consecutive landing tick (eigenform, parametric carrier,
+distinction).
+
+### §21.4 Substrate-landing path status
+
+```
+1. eigenform shard                      ✅ LANDED (tick 20)
+2. parametric carrier shard             ✅ LANDED (tick 21)
+3. distinction (floor) inherits         ✅ LANDED (this tick)
+4. second_order inherits from eigenform ⏳ next
+5. Remaining six species instantiate    ⏳
+6. algedonic thin specialization        ⏳
+7. Bench harness collapse               ⏳
+8. altitudes.md §4 amendment            ⏳
+9-11. (REPLACES grammar-extension per §20.6)
+   9.  @epistemologic/pact/syntax_substrate_native pact
+   10. @kintsugi/fracture/angle_to_paren fracture body
+   11. Species-shard collapse via parametric carrier
+```
+
+Three landings done. The floor, the carrier, and the eigenform
+foundation are substrate-fact. The substrate-landing path's central
+column (eigenform → carrier → distinction inheritance chain) is
+complete; remaining work is species-by-species + the bilateral pact/
+fracture pair that operationalizes Alex's auto-formatter recognition.
 
 ## §9 What promotion or retraction closes
 
