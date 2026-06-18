@@ -1,0 +1,186 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @magic/contract
+in @magic/audit
+
+# @magic/mechanism — the matter-hidden encapsulation species. Dual
+# of @magic/surface; closes the gauge ↔ matter symmetry the @magic
+# substrate-decl named at family-root.
+#
+# Tick 13 of the refined /loop discipline. Tick 12's residue:
+# audit's bilateral predicate `audited(c)` declared at @magic/audit
+# but no consumer that exercises the discipline (parallel to
+# contract.invariant_preserved which surface.mirror just consumed).
+#
+# CRQ: who's the consumer of @magic/audit's bilateral predicate?
+# Without one, the audit discipline is paint at audit altitude —
+# same failure mode Seam caught at tick 11.
+#
+# Answer: @magic/mechanism's `unseal` action. The substrate-pull-
+# correct controlled disclosure of matter REQUIRES the contract to
+# have been audited before the mechanism reveals its content. That's
+# the SECOND non-decorative `requires` clause in the @magic family,
+# composing with audit's predicate as surface composed with contract's.
+#
+# === The mechanism as matter ===
+#
+# Per recognition #80, the mechanism IS the matter-hidden trick
+# (encapsulated; observer cannot inspect from the gauge alone). Per
+# recognition #76 (gauge/matter altitude-portable; research-promoted),
+# matter expands at three altitudes (splinter/prism-instance/sheaf).
+# This species declares the substrate's @magic-altitude matter
+# encapsulation primitive.
+#
+# At Clarke's-law altitude: the mechanism IS the sleight, the
+# preparation, the confederate, the mechanical aid. The audience
+# cannot inspect; the trick stays hidden behind the surface.
+#
+# === The species's load-bearing contribution ===
+#
+# This species adds:
+#
+# - `mechanism_invariant` carrier (substrate-typed invariant the
+#   matter side commits to, distinct from surface_invariant which
+#   names gauge-altitude commitments).
+# - `seal(content) -> magic_mechanism`: matter encapsulation — takes
+#   substrate-typed content and produces an encapsulated mechanism
+#   whose interior is opaque to the gauge.
+# - `unseal(m, key) -> ref`: controlled disclosure of mechanism
+#   content. Requires `audited(c)` per the contract that holds this
+#   mechanism — the SECOND non-decorative `requires` clause in
+#   @magic, consuming @magic/audit's bilateral predicate.
+# - `mechanism_intact` action: bilateral verdict that the matter has
+#   not been tampered with since seal. Composes with audit_record's
+#   witness to provide tamper-evidence.
+#
+# === Pre-AI prior art ===
+#
+#   matter field (physics)      Yang-Mills 1954 (matter field acting
+#                               on by gauge symmetry). @magic/mechanism
+#                               IS the matter-side substrate-decl.
+#   capability-based security   Dennis-Van Horn 1966; Levy 1984
+#                               (Capability-Based Computer Systems).
+#                               The seal/unseal sequence with
+#                               capability-key access. @magic/mechanism's
+#                               seal+unseal lifts this discipline to
+#                               substrate altitude.
+#   sealed-trait pattern        Rust's `sealed` trait pattern + the
+#                               OCaml functor's hidden representation.
+#                               The matter-side encapsulation discipline
+#                               at programming altitude.
+#   stage-magic apparatus       The mechanism behind the trick — the
+#                               cards in the sleeve, the loaded die,
+#                               the prepared box. The cultural-practice
+#                               ancestor of matter-side encapsulation.
+#
+# Spec context: docs/math/the-tower/recognition-80-magic-as-form-
+#               process-substrate-decl.md;
+#               docs/specs/cascade-recognition-76-through-80-
+#               canonical-spec.md (Mara's canonical spec landed in
+#               this tick's bundled commit).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; mechanism_intact IS the
+#                       alignment check at the matter altitude;
+#                       complements surface_honest at the gauge
+#                       altitude landed at tick 12),
+#                      [[feedback-no-bare-types]] (mechanism_invariant
+#                       and action signatures typed; seal/unseal
+#                       respect the encapsulation discipline).
+# Related shards: magic.mirror (the family-root; magic_mechanism and
+#                  magic_invariant declared here),
+#                 magic/contract.mirror (the contract that holds
+#                  this mechanism; mechanism_intact composes with
+#                  the contract via the audit altitude),
+#                 magic/audit.mirror (audit's bilateral predicate
+#                  `audited(c)` consumed by unseal; the second
+#                  non-decorative `requires` clause in @magic),
+#                 magic/surface.mirror (the gauge-side dual; together
+#                  these two species complete the @magic family's
+#                  symmetry).
+# Path-namespace property: this file at
+# `shards/magic/mechanism.mirror` declares `@magic/mechanism` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/physics/yang-mills-1954
+source @arxiv/security/dennis-van-horn-1966
+
+prism @magic/mechanism {
+  focus mechanism
+  project mechanism
+  split mechanism
+  shift mechanism
+  settle mechanism
+}
+
+# === mechanism_invariant carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming a specific
+# invariant the mechanism commits to upholding at the matter
+# altitude. Distinct from surface_invariant (gauge-side commitments)
+# and magic_invariant (contract-level commitments) by being scoped
+# to mechanism-altitude properties: what the matter encapsulation
+# preserves regardless of what the surface presents.
+#
+# Identity contract: byte-equality on the underlying ref.
+type mechanism_invariant = ref
+
+# === seal action ===
+#
+# The substrate-vocabulary action that takes substrate-typed content
+# and produces an encapsulated mechanism. The matter encapsulation
+# primitive: after seal, the content is opaque to the gauge; only
+# unseal (with proper audit) can re-expose it.
+#
+# At capability-security altitude: seal IS the operation that converts
+# data into an opaque capability; the only way to recover the data
+# is via unseal with the matching audit.
+#
+# Body discharges at the realisation boundary.
+seal(content: ref) -> magic_mechanism { \ }
+
+# === unseal action ===
+#
+# THE SECOND NON-DECORATIVE `requires` CLAUSE CONSUMER per tick 13.
+# The substrate-vocabulary action that exposes the encapsulated
+# content of a mechanism, but ONLY when the contract that holds the
+# mechanism has been audited.
+#
+# requires audited(c): the substrate-political bilateral commitment
+# that the contract holding this mechanism has been verified. The
+# audit's predicate at @magic/audit finally has its first consumer
+# (parallel to invariant_preserved gaining its consumer at
+# surface.mirror tick 12).
+#
+# At capability-security altitude: unseal IS the controlled
+# disclosure — the audit IS the capability check that permits
+# access. Without audit, the matter stays opaque.
+#
+# At Clarke's-law altitude: unseal IS the magician's reveal at the
+# end of the trick — the mechanism becomes visible, but only after
+# the contract has been honored (the trick completes per its terms).
+#
+# Body discharges at the realisation boundary.
+unseal(m: magic_mechanism, c: magic_contract) -> ref
+requires audited(c)
+{ \ }
+
+# === mechanism_intact action ===
+#
+# The substrate-vocabulary action that verifies the mechanism's
+# matter has not been tampered with since seal. Composes with the
+# audit_record's witness to provide tamper-evidence.
+#
+# Returns the substrate's existing verdict carrier (success / partial
+# / failure trichotomy). Used by downstream consumers that need
+# integrity guarantees beyond the surface-altitude check.
+mechanism_intact(m: magic_mechanism) -> verdict { \ }
+
+out @magic/mechanism
+out mechanism_invariant
+out seal
+out unseal
+out mechanism_intact
