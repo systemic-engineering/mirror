@@ -1483,6 +1483,91 @@ If @kintsugi has its own tower, recognition #63 generalizes from
 "@cyberpunk has the tower" to "every family root has a tower" —
 which would itself be a new recognition territory.
 
+## §17 @kintsugi tower walk — third consecutive Mara stall; saturation signal (2026-06-18, tick 18)
+
+Mara stalled on the @kintsugi tower spec. Third consecutive stall.
+Reed walked inline.
+
+### §17.1 The three-stall pattern refines
+
+Candidate #72's framing ("parts vs whole of mechanism") was WRONG.
+The @kintsugi walk is content-shaped (different family root entirely),
+not mechanism-shaped. If parts-vs-whole were the predictor, this walk
+should have succeeded. It didn't.
+
+The pattern that actually fits the three stalls:
+
+- Tick 16 (/loop): abstract self-referential mechanism
+- Tick 17 (Glint): atom-of-collective requiring novel synthesis
+- Tick 18 (@kintsugi tower): meta-recognition territory (generalize
+  recognition #63 to a family)
+
+What they have in common: **each requires the agent to perform NOVEL
+synthesis at a recognition altitude rather than dissolution into
+existing vocabulary**. Successful post-closure walks (Pack, three-tier
+stack) were *dissolutions* into substrate-already-had-the-word.
+Stalled walks were *generalization claims* that don't fit existing
+vocabulary.
+
+**Candidate #72 retracts. Candidate #73 surfaces**: *novel-synthesis
+recognition claims from within the audit's own discipline are
+stall-prone; dissolution-into-vocabulary claims are not*. The audit's
+discipline is robust at substrate-already-had-the-word density;
+fragile at genuine-new-recognition territory.
+
+### §17.2 @kintsugi tower verdict (Reed inline, brief)
+
+Most likely read (substrate-pull): **Read C — shared tower via duality.**
+@cyberpunk and @kintsugi share ONE tower via recognition #50's
+form/process partition. The species are different (@kintsugi's
+oscillate, morphism, consent, fracture/* vs @cyberpunk's eleven
+cybernetic species), but the underlying parametric carrier is shared.
+
+Under Read C: @kintsugi's species are PROCESS-side instantiations of
+the same parametric carrier `@cyberpunk/coherence<T_reg, T_regd, ρ, ω>`
+with T_reg/T_regd substituted for transformation-side types. The
+carrier doesn't bifurcate; recognition #63 stays one recognition, not
+a family.
+
+Reads A (each family has its own tower), B (only @cyberpunk has it),
+D (form refusal) all less supported by the substrate's existing
+shard vocabulary.
+
+**This is a brief verdict, not a deep audit.** Mara's stall + Reed's
+inline notation = lighter-weight substrate-truth than the original
+eleven species got. The recognition #63 generalization to @kintsugi is
+plausible but not deeply verified.
+
+### §17.3 Saturation signal
+
+Three consecutive agent stalls + the recognition that they cluster on
+novel-synthesis territory = the substrate signaling that the audit's
+productive ticks are exhausted. The substrate-truth available WITHOUT
+novel synthesis has been delivered. Continuing the audit produces
+either inline notations (lighter substrate-truth) or further stalls.
+
+The loop's productive arc:
+- Ticks 1–13: original eleven species; recognition #63 promoted; full
+  substrate-truth
+- Ticks 14–15: post-closure verification (Pack + three-tier stack);
+  recognition #70 promoted; substantive substrate-truth
+- Tick 16–18: continued post-closure with diminishing returns;
+  candidate #72 retracted; candidate #73 surfaced; lighter substrate-truth
+
+### §17.4 No wakeup scheduled this tick
+
+Per the discipline of [[feedback-substrate-pull-confidence-acts]]:
+the substrate-pull on continuation is unclear (three stalls signal
+saturation); the substrate-pull on closure was previously declined by
+Alex via re-invocation. Honest move: **declare the substrate's
+saturation signal openly and let Alex's next action be the dispositive
+signal**.
+
+If Alex re-invokes /loop, the substrate is saying "keep going despite
+saturation" — then more inline notations OR pivot to substrate-landing
+path. If Alex moves to a different command or direct session, the
+loop's substrate-truth-finding phase has closed.
+
 ## §9 What promotion or retraction closes
 
 **Promotion path** (candidate #63 → recognition):
