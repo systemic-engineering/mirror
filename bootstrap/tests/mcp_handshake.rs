@@ -85,16 +85,74 @@ fn unknown_method_silent_drop() {
 }
 
 #[test]
-fn three_tools_advertised() {
+fn four_tools_advertised() {
     let req = read_fixture("tools_list.req.json");
     let resp = mcp::handle_request(req.trim()).expect("tools/list must respond");
     let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
     let tools = v["result"]["tools"].as_array().expect("tools array");
-    assert_eq!(tools.len(), 3);
+    assert_eq!(tools.len(), 4);
     let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
     assert_eq!(
         names,
-        vec!["mirror_compile", "mirror_craft", "mirror_kintsugi"]
+        vec![
+            "mirror_compile",
+            "mirror_craft",
+            "mirror_kintsugi",
+            "mirror_verdict",
+        ]
+    );
+}
+
+/// Tick 5 (2026-06-18): the settle/verdict prism split.
+///
+/// Per Seam's adversarial review of tick 4: `cmd_kintsugi_ci_single`
+/// returns `exit_code = 0` regardless of verdict.label (workflow YAML
+/// decides pass per lib.rs:855 contract). The previous `ci: boolean`
+/// flag on `mirror_kintsugi` claimed isError composition that never
+/// fired in practice. The split into `mirror_verdict` parses the JSON
+/// envelope's verdict field and lifts {partial, failure} → isError.
+///
+/// Smoke test: invoke `mirror_verdict` on a path that doesn't exist.
+/// The substrate emits `verdict: "failure"` for unreadable files
+/// (lib.rs:`emit_ci_verdict_json` failure branch). MCP must lift this
+/// to `isError: true` so agent clients can branch programmatically.
+#[test]
+fn mirror_verdict_failure_lifts_to_is_error() {
+    // A path guaranteed not to exist. The substrate's failure-verdict
+    // path fires; envelope JSON has `"verdict": "failure"`.
+    let bogus = format!(
+        "/tmp/mirror-mcp-nonexistent-{}-{}.mirror",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|d| d.as_nanos())
+            .unwrap_or(0)
+    );
+    let req = format!(
+        r#"{{"jsonrpc":"2.0","id":33,"method":"tools/call","params":{{"name":"mirror_verdict","arguments":{{"file":"{}"}}}}}}"#,
+        bogus
+    );
+    let resp = mcp::handle_request(&req).expect("mirror_verdict must respond");
+    let v: serde_json::Value =
+        serde_json::from_str(&resp).expect("valid JSON envelope");
+    let text = v["result"]["content"][0]["text"]
+        .as_str()
+        .expect("text payload")
+        .to_string();
+    // The substrate emits a JSON envelope with verdict label "failure"
+    // for the unreadable-file path; the MCP lifts that to isError.
+    assert_eq!(
+        v["result"]["isError"],
+        serde_json::Value::Bool(true),
+        "failure verdict must lift to isError=true. Response was: {}",
+        resp
+    );
+    // Sanity: the body contains the envelope (whether mirror-text or
+    // JSON, the word "failure" appears as the verdict label).
+    assert!(
+        text.contains("failure"),
+        "verdict body should contain 'failure' label; got: {}",
+        text
     );
 }
 

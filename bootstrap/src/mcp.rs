@@ -21,17 +21,25 @@
 //! into Rust; subsequent ticks land tool additions cleanly in Rust
 //! +`.mirror` rather than in shell.
 //!
-//! ## Tools advertised this tick
+//! ## Tools advertised
 //!
-//! Three tools, identical to the bash wrapper:
+//! - `mirror_compile`  — `focus`:   tokenize one `.mirror` file.
+//! - `mirror_craft`    — `split`:   converge a target to lambda_0.
+//! - `mirror_kintsugi` — `refract`: settle a `.mirror` file (mutates).
+//! - `mirror_verdict`  — `focus`:   render a structured verdict
+//!                                 envelope (read-only inspection).
 //!
-//! - `mirror_compile` — `focus`: tokenize one `.mirror` file.
-//! - `mirror_craft`   — `split`: converge a target to lambda_0.
-//! - `mirror_kintsugi`— `refract`: settle a `.mirror` file.
-//!
-//! New tools (per `the-convergence.md` §2.1's twelve-row composition
-//! table) land in subsequent ticks by adding a row to `tools_list_value()`
-//! and a match arm in `dispatch_tool_call()`.
+//! `mirror_kintsugi` and `mirror_verdict` are TWO prisms, not one tool
+//! with a flag. The substrate distinction is: `kintsugi` writes
+//! canonical output (effect at @io); `verdict` returns structured
+//! observation (pure focus). Per Seam's adversarial review of tick 4,
+//! collapsing them under a `ci: boolean` flag hid the substrate-pull
+//! partition at the MCP wire altitude. The split closes the verdict
+//! exit-code contract: `mirror_verdict` parses `verdict.label` and
+//! lifts `label ∈ {partial, failure}` to MCP `isError: true`, since
+//! the underlying `--ci` invocation always exits 0 by design (the
+//! workflow YAML, not the binary, decides what verdict counts as pass
+//! per cmd_kintsugi_ci_single's contract at lib.rs:855).
 //!
 //! ## Wire shape
 //!
@@ -99,14 +107,25 @@ fn tools_list_result() -> Value {
             },
             {
                 "name": "mirror_kintsugi",
-                "description": "refract: settle a .mirror file (default writes canonical) or render a verdict (--ci). --ci returns structured PASS/REJECT JSON without modifying the file. --liquid writes inferred properties below ---. --shatter N recursively settles N levels deep.",
+                "description": "refract: settle a .mirror file, write canonical. --liquid writes inferred properties below ---. --shatter N recursively settles N levels deep. Mutates the file. For read-only verdict inspection use mirror_verdict.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "file":    { "type": "string", "description": "Path to .mirror file" },
+                        "liquid":  { "type": "boolean", "description": "If true, pass --liquid (project inferred properties below ---)" },
+                        "shatter": { "type": "integer", "description": "If set, pass --shatter N (recursive settle N levels)" }
+                    },
+                    "required": ["file"]
+                }
+            },
+            {
+                "name": "mirror_verdict",
+                "description": "focus: render a structured PASS/REJECT verdict envelope for a .mirror file or directory (corpus mode). Read-only — does NOT modify the file. Returns the substrate's JSON verdict envelope (fields: verdict, target, objective, iterations, dark_count). isError lifts to true when verdict.label ∈ {partial, failure}; success returns isError absent.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "file":    { "type": "string", "description": "Path to .mirror file or directory (corpus mode)" },
-                        "ci":      { "type": "boolean", "description": "If true, run in verdict mode (--ci --out @data/json). Returns structured PASS/REJECT JSON; does not modify the file. Substrate-pull-natural for agent inspection per [[architecture-error-as-tomm-probe.md]] @io altitude." },
-                        "liquid":  { "type": "boolean", "description": "If true, pass --liquid (project inferred properties below ---). Ignored when ci=true." },
-                        "shatter": { "type": "integer", "description": "If set, pass --shatter N (recursive settle N levels)" }
+                        "shatter": { "type": "integer", "description": "If set, pass --shatter N (recursive verdict N levels)" }
                     },
                     "required": ["file"]
                 }
@@ -115,24 +134,22 @@ fn tools_list_result() -> Value {
     })
 }
 
-/// Lookup helper: pull the mirror binary path the dispatcher should invoke.
+/// Parse a `mirror kintsugi --ci --out @data/json` stdout payload and
+/// extract the `verdict.label` field. Returns `Some(label)` when the
+/// payload parses as JSON with a string `verdict` field; `None` when
+/// the payload is empty, not JSON, or lacks the field.
 ///
-/// Mirrors the bash wrapper's `MIRROR="${MIRROR_BIN:-$HOME/.local/bin/mirror}"`
-/// resolution. The `MIRROR_BIN` env var lets the integration test point
-/// the dispatcher at a non-default binary (or a no-op stub).
-#[allow(dead_code)]
-fn mirror_binary_path() -> String {
-    if let Ok(p) = std::env::var("MIRROR_BIN") {
-        return p;
-    }
-    if let Ok(home) = std::env::var("HOME") {
-        return format!("{}/.local/bin/mirror", home);
-    }
-    // No HOME — unusual but fall back to PATH-relative.
-    "mirror".to_string()
+/// Both single-file (`CiVerdict`) and corpus (`CorpusVerdict`) envelopes
+/// share the top-level `verdict` field per the substrate's typed
+/// records at `boot/std/kintsugi.mirror`.
+fn parse_verdict_label(payload: &str) -> Option<String> {
+    let v: Value = serde_json::from_str(payload).ok()?;
+    v.get("verdict")
+        .and_then(|s| s.as_str())
+        .map(|s| s.to_string())
 }
 
-/// Run the configured mirror binary with `args`, returning the combined
+/// Run mirror's library entry with `args`, returning the combined
 /// stdout+stderr UTF-8 string AND the exit code.
 ///
 /// Tick 3 (loop 2026-06-18): exit_code is now propagated so handle_request
@@ -146,7 +163,31 @@ fn run_mirror(args: &[&str]) -> (String, i32) {
     let mut argv: Vec<String> = vec!["mirror".to_string()];
     argv.extend(args.iter().map(|s| s.to_string()));
 
-    let output = crate::kintsugi_main(&argv);
+    // Tick 5 panic guard (Seam finding #2): a panic in kintsugi_main
+    // would unwind through serve_loop and kill the MCP server. Catch
+    // and convert to an error-shape response so the server survives
+    // and the agent gets a wire-level isError signal. The shape
+    // matches `error: <panic message>` on stderr with exit_code=2 —
+    // distinct from a substrate-clean failure (exit_code=1) so callers
+    // can distinguish substrate-internal vs panic-in-server.
+    let output = match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        crate::kintsugi_main(&argv)
+    })) {
+        Ok(o) => o,
+        Err(payload) => {
+            let msg = if let Some(s) = payload.downcast_ref::<&str>() {
+                (*s).to_string()
+            } else if let Some(s) = payload.downcast_ref::<String>() {
+                s.clone()
+            } else {
+                "<non-string panic payload>".to_string()
+            };
+            return (
+                format!("mcp panic in kintsugi dispatch: {}\n", msg),
+                2,
+            );
+        }
+    };
 
     // Preserve bash wrapper's `2>&1`: stderr concatenated after stdout.
     let out = String::from_utf8_lossy(&output.stdout);
@@ -200,18 +241,11 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
             run_mirror(&refs)
         }
         "mirror_kintsugi" => {
+            // Settle prism: mutates the file. Read-only verdict
+            // inspection lives in `mirror_verdict` below (tick 5 split).
             let file = s("file").unwrap_or_default();
             let mut argv: Vec<String> = vec!["kintsugi".into(), file];
-            // Tick 4 (2026-06-18): expose --ci verdict mode. When ci=true,
-            // request structured JSON output via --out @data/json so agent
-            // clients receive parseable PASS/REJECT verdict envelopes
-            // instead of pretty-printed text. --liquid is incompatible
-            // with --ci (verdict mode is read-only); ignored in that path.
-            if b("ci") {
-                argv.push("--ci".into());
-                argv.push("--out".into());
-                argv.push("@data/json".into());
-            } else if b("liquid") {
+            if b("liquid") {
                 argv.push("--liquid".into());
             }
             if let Some(n) = i("shatter") {
@@ -220,6 +254,35 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
             }
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs)
+        }
+        "mirror_verdict" => {
+            // Verdict prism: read-only observation. Per Seam tick 4
+            // review: the substrate's `cmd_kintsugi_ci_*` always exits
+            // 0 (the workflow YAML decides pass; lib.rs:855 contract);
+            // so isError lift via exit_code alone is insufficient. We
+            // parse verdict.label from the JSON envelope and lift
+            // {partial, failure} → isError directly.
+            let file = s("file").unwrap_or_default();
+            let mut argv: Vec<String> = vec![
+                "kintsugi".into(),
+                file,
+                "--ci".into(),
+                "--out".into(),
+                "@data/json".into(),
+            ];
+            if let Some(n) = i("shatter") {
+                argv.push("--shatter".into());
+                argv.push(n.to_string());
+            }
+            let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
+            let (text, exit_code) = run_mirror(&refs);
+            let is_error = match parse_verdict_label(text.trim()) {
+                Some(label) => label != "success",
+                // No parseable verdict + non-zero exit → substrate-internal
+                // failure (e.g. panic guard). Surface as error.
+                None => exit_code != 0,
+            };
+            return (text, is_error);
         }
         other => return (format!("unknown tool: {}", other), true),
     };
