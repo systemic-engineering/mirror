@@ -2241,6 +2241,70 @@ Closing tasks:
 Six landings done. Both pillars in place. Six species remaining + the
 thin specialization + the collapse + closing tasks.
 
+## §25 Viable lands; first non-eigenform-inheritor (2026-06-18, tick 26)
+
+Mara landed `shards/epistemologic/cybernetic/viable.mirror` (commit
+`3b42458`, branch `mara/cyberpunk-viable-shard`, 615 lines). Track A
+advances to species that instantiate the parametric carrier rather
+than inherit eigenform's fixed-point machinery.
+
+### §25.1 Inheritance pattern (substantive)
+
+Three `in` declarations, NOT including eigenform:
+
+- `in @epistemologic/cybernetic/coherence-parametric` — instantiates
+  the parametric carrier (lock_pair / connection_form / five-
+  measurement surface)
+- `in @epistemologic/cybernetic/variety` — Ashby variety carrier;
+  S3-S4 oscillation IS variety-matching at VSM altitude
+- `in @epistemologic/cybernetic/second_order` — canonical ρ source;
+  regular rep on L²(𝒢) is the ρ viable's lock_pair carries
+
+The substrate-pull discipline routes T_reg's identity-as-fixed-point
+through the parametric carrier (recognition #9 of cybernetic-foundation)
+rather than re-pull eigenform's machinery at the viable altitude.
+**First non-eigenform-inheritor species lands.** The substrate's
+inheritance graph is richer than the docs/specs's eigenform-precedence
+proposal: parametric carrier + variety + second_order give the same
+structural payoff with fewer transitive dependencies for non-fixed-
+point species.
+
+### §25.2 Read D temporal axis surfaced
+
+The τ : Identity_t ↔ Identity_{t+Δt} (Read D's temporal lock from
+tick 2) lands at the action surface:
+
+```mirror
+temporal_substitution(i: identity, dt_window: ref) -> identity
+```
+
+The doc comment names `dt_window` as filling
+`connection_form { is_trivial: false, data: dt_window }` — same
+parametric ω slot coevolution uses for Kauffman NK lattice data,
+different species' interpretation. **The carrier's (T_reg, T_regd, ρ, ω)
+signature is carried via parametric inheritance; viable's per-species
+action is the temporal substitution at the VSM altitude.**
+
+### §25.3 Substrate-landing path status
+
+```
+Track A:
+1-6. eigenform, carrier, distinction, second_order, viable ✅ LANDED
+     pact, fracture body                                  ✅ LANDED (Track B)
+7.  autopoiesis                            ⏳ next
+8.  bateson_learning                       ⏳
+9.  conversation                           ⏳
+10. coevolution                            ⏳
+11. design                                 ⏳
+12. algedonic (thin specialization)        ⏳
+13. species-shard collapse via parametric  ⏳ (after all species)
+14. Bench harness collapse                 ⏳
+15. altitudes.md §4 amendment              ⏳
+```
+
+Seven landings done. Five species remain + the thin spec + collapse +
+closing tasks.
+
 ## §9 What promotion or retraction closes
 
 **Promotion path** (candidate #63 → recognition):
