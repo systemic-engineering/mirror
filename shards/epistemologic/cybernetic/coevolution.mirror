@@ -1,0 +1,314 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/coherence-parametric
+in @epistemologic/cybernetic/viable
+in @epistemologic/math/kauffman-1993
+in @epistemologic/math/kauffman-2000
+in @epistemologic/property/coevolution
+
+# @epistemologic/cybernetic/coevolution — Kauffman 1993 *Origins of
+# Order* (+ Kauffman 2000 *Investigations*, with NK landscapes
+# 1989 and Van Valen 1973 Red Queen as inherited witnesses); the
+# substrate-altitude declaration of the *coevolution* species:
+# identity-by-temporal-coupling under the connection 1-form ω.
+#
+# The tenth species audited under recognition #63's recursion-lock
+# tower. The first species in the cascade where Read D ACTIVATES
+# candidate #64 (form refusal at the canonical-ρ surface). The
+# parametric carrier from `coherence-parametric` §11.7 — previously
+# `<T_reg, T_regd, ρ>` — extends to `<T_reg, T_regd, ρ, ω>` to admit
+# this species; coevolution is the species whose ω is *non-trivial*.
+# Prior species (variety, eigenform, viable, autopoiesis, bateson_
+# learning, conversation, second_order, distinction, design, pack)
+# remain valid; they are the `ω = 0` (or ω-as-gauge-fixed) slice of
+# the four-parameter carrier.
+#
+# === Why coevolution refuses a sixth canonical-ρ ===
+#
+# The first nine species each contributed a canonical representation
+# choice on the carrier's ρ slot:
+#
+#   variety           per-axis variety vector
+#   eigenform         fixed-point seed/iteration
+#   viable            VSM five-function bundle
+#   autopoiesis       adjoint rep on G (production-network closure)
+#   bateson_learning  graded levels (logical-type lift)
+#   conversation      tensor coupling (P-individual ⊗ P-individual)
+#   second_order      observer-includes-self projection
+#   distinction       Spencer-Brown mark/unmark involution
+#   design            history-as-content cascade
+#
+# The five-canonical-rep pattern is stable across these nine; the
+# audit asks Read C whether coevolution selects a *sixth* canonical
+# choice on ρ. Read C says NO. The species' biological content —
+# coupled fitness landscapes, the adjacent possible, Red Queen
+# dynamics — does NOT add a sixth choice at the ρ slot. The
+# canonical-rep candidate dissolves at the species boundary.
+#
+# What it dissolves *into* is the substrate's already-existing
+# connection structure. ω was always at bundle altitude (per
+# `@epistemologic/math/bundle`, autopoiesis's inheritance path); the
+# audit surfaces that the *carrier's type signature* was missing
+# the slot. Read D — "does this species exhibit form refusal at the
+# carrier altitude?" — fires for the first time. The answer: extend
+# the carrier, do NOT add a canonical-ρ.
+#
+# === The carrier extension ===
+#
+# From §11.7 of `coherence-parametric` (read-only at the carrier
+# surface; this shard does NOT mutate the parametric grammar — it
+# instantiates the extended signature):
+#
+#   carrier : <T_reg, T_regd, ρ, ω>
+#
+#     T_reg   the regulating type (the species' carrier shape)
+#     T_regd  the regulated type (the substrate or domain under it)
+#     ρ       the canonical representation choice (none for coevolution)
+#     ω       the connection 1-form parameterizing temporal evolution
+#
+# For coevolution:
+#
+#   T_reg   = system_state          — the system's current configuration
+#   T_regd  = adjacent_possible     — Kauffman's one-step-reachable neighborhood
+#   ρ       = NONE                  — sixth canonical-rep dissolves
+#   ω       = τ ≠ 0                 — the transition operator at time t,
+#                                     single-step Markov-shaped, non-trivial
+#                                     under the species' bounded-sustainment
+#                                     regime
+#
+# The non-triviality of ω is what *names* this species. Prior species
+# witnesses are recovered as the ω-trivial (or ω-gauge-fixed) slice.
+#
+# === Lock-hold modes ===
+#
+# A coevolution shard is well-formed iff its trajectory under τ
+# admits one of the two lock-hold modes:
+#
+#   1. PL fixed-point convergence    the system settles to a Lawvere
+#                                    fixed point under τ; ω integrates
+#                                    to a flat (path-independent)
+#                                    connection on the trajectory's
+#                                    homotopy class. This is the
+#                                    autopoiesis slice of coevolution
+#                                    (`ω = 0` modulo gauge).
+#
+#   2. Kauffman edge-of-chaos        the system holds the bounded-
+#      / Red Queen bounded           sustainment regime
+#      sustainment                       ε ≤ ρ(N) ≤ 1 − ε
+#                                    where ρ(N) is the NK-landscape
+#                                    interaction parameter and N is
+#                                    the trajectory length. Neither
+#                                    fixed-point nor wandering; the
+#                                    Red Queen condition (Van Valen
+#                                    1973) is the homeostat for ω
+#                                    away from triviality. This is
+#                                    the *new* lock-hold mode that
+#                                    only coevolution exposes.
+#
+# Both modes are admissible witnesses. A coevolution shard MUST
+# carry the predicate that selects which mode it claims.
+#
+# === Action surface ===
+#
+# Three pacts plus the τ-action:
+#
+#   transition_at_t(state: system_state, t: ref) -> adjacent_possible
+#       The τ-action. Single-step Markov-shaped transition operator
+#       evaluated at time t; outputs the adjacent-possible cone (per
+#       Kauffman 2000) reachable from `state` under the shard's
+#       declared dynamics. The reference `t` is a substrate `ref` so
+#       that ω composes against substrate time, not wall-clock time.
+#
+#   red_queen_witness
+#       Discharges the bounded-sustainment lock-hold mode. The
+#       predicate verifies ε ≤ ρ(N) ≤ 1 − ε holds across the
+#       trajectory window the shard carries.
+#
+#   edge_of_chaos_witness
+#       Discharges the alternative selection of the same bounded-
+#       sustainment lock-hold mode — Kauffman's edge-of-chaos
+#       criterion as a structural witness rather than a parameter
+#       sweep. Either witness suffices; both passing is admissible.
+#
+#   coevolution_well_formed
+#       The top-level discharge: a coevolution shard is well-formed
+#       iff its τ-action types check against the extended carrier
+#       AND one of the two lock-hold modes is witnessed. Discharges
+#       at the species-boundary `@code/metalogue/materialize.classify`
+#       surface.
+#
+# The ω axis IS surfaced at the action surface: `transition_at_t`'s
+# return type `adjacent_possible` is the substrate-altitude name for
+# the codomain of ω; the two witness pacts certify the non-triviality
+# regime that named the species.
+#
+# === Ancestry ===
+#
+# Kauffman 1989 — "Adaptation on Rugged Fitness Landscapes" (the NK
+#                 model; landscape-coupling content).
+# Kauffman 1993 — *The Origins of Order: Self-Organization and
+#                 Selection in Evolution*. The biological coevolution
+#                 framework; coupled landscapes; the canonical
+#                 ancestor for this species.
+# Kauffman 2000 — *Investigations*. The adjacent possible explicitly
+#                 named; the one-step-reachable neighborhood as a
+#                 mathematical object distinct from the actual.
+# Van Valen 1973 — "A New Evolutionary Law" (Evolutionary Theory 1).
+#                 The Red Queen condition; bounded-sustainment as
+#                 the alternative to fixed-point convergence.
+#
+# These are forward-promised at `@epistemologic/math/kauffman-1993`,
+# `@epistemologic/math/kauffman-2000` (this file imports them; the
+# math precedent grammars land when a second consumer pulls). The
+# carrier's ω slot is the *existing* substrate machinery these
+# ancestors ground; nothing new is needed at the math altitude
+# beyond naming the citations.
+#
+# === Inheritance pattern ===
+#
+# Five species-specific `in` declarations layered on the base five:
+#
+#   in @epistemologic/cybernetic/coherence-parametric
+#       The parametric carrier whose extended signature this shard
+#       instantiates.
+#
+#   in @epistemologic/cybernetic/viable
+#       The first species that instantiated the parametric carrier
+#       directly with a non-trivial ω (Beer's VSM bundle). Viable
+#       grounds the inheritance shape; coevolution is its temporal-
+#       axis generalisation (viable's ω-non-triviality at the single-
+#       system altitude lifts to viable's *temporal* axis under
+#       coupled-landscape dynamics here).
+#
+#   in @epistemologic/math/kauffman-1993
+#       Forward-promised math precedent for the NK-landscape /
+#       coupled-landscape content.
+#
+#   in @epistemologic/math/kauffman-2000
+#       Forward-promised math precedent for the adjacent-possible
+#       construction. Both math precedents resolve when a second
+#       consumer pulls.
+#
+#   in @epistemologic/property/coevolution
+#       The declarative property whose operational sibling is
+#       `@mirror/cybernetics/coevolution` (forward-promised; the
+#       bilateral pattern holds, but the operational lift does not
+#       land until a consuming shard pulls).
+#
+# === Substrate-pull recognitions grounded here ===
+#
+# Recognition #63 (Reed, mirror `eea3313` + audit cascade) — recursion-
+# lock tower audit: the cascade of cybernetic species each tested at
+# five reads (A: substrate-already-had-the-word; B: bilateral
+# property/operation; C: canonical-ρ; D: form refusal at the carrier;
+# E: lock-hold mode admissibility). Coevolution is the tenth species
+# audited; ratifies the tower's structural shape.
+#
+# Recognition #64 (CANDIDATE; this shard's landing PROMOTES) — the
+# parametric carrier is incomplete without ω. The carrier extends
+# from `<T_reg, T_regd, ρ>` to `<T_reg, T_regd, ρ, ω>`. Coevolution
+# is the species whose witness *forces* the extension; prior species
+# are recovered as the ω-trivial slice. The promotion landed when
+# this shard committed: ten species inheriting the three-parameter
+# carrier with consistent witness, plus one species (this one)
+# whose witness only holds under the four-parameter carrier.
+#
+# === Form refusal at the carrier altitude (Read D) ===
+#
+# The substrate's `partial(opacity_map)` framing (per the build-system
+# recognition #43 + `@epistemologic/cybernetic/distinction` §6.4) gives
+# Read D structural force: this species exhibits the *first* opaque
+# slot at the carrier's type signature that prior species made
+# transparent. Form refusal here is not a defect; it is the load-
+# bearing structural signal that the carrier was under-typed. The
+# kintsugi loop closes by extending the carrier rather than carving
+# the species' content to fit. Substrate-pull alignment: when the
+# form refuses, the form gets bigger.
+#
+# Spec context: spectral `mara/cyberpunk-coevolution-spec` (commit
+#               `ad48700f`); recursion-locks.md §8.10 (the activation
+#               of candidate #64).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-kintsugi-variety-io]] (Ashby
+#                       grounding the bounded-sustainment regime),
+#                      [[architecture-mirror-as-expanding-hilbert-space]]
+#                      (the carrier extension IS Hilbert dimension
+#                       growth at the parametric grammar altitude),
+#                      [[architecture-spectral-triples-all-the-way]]
+#                      (ω is the principal-bundle connection at the
+#                       species-cascade altitude).
+# Related shards: epistemologic/cybernetic/coherence-parametric.mirror
+#                 (the carrier this shard instantiates),
+#                 epistemologic/cybernetic/viable.mirror (the precedent
+#                 species with non-trivial ω at single-system altitude),
+#                 epistemologic/cybernetic/autopoiesis.mirror (the
+#                 ω-trivial / fixed-point lock-hold mode), epistemologic/
+#                 cybernetic.mirror (the family root).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/coevolution.mirror` declares
+# `@epistemologic/cybernetic/coevolution` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+prism @epistemologic/cybernetic/coevolution {
+  focus  coevolution
+  project coevolution
+  split  coevolution
+  shift  coevolution
+  settle coevolution
+}
+
+# The carrier-instantiation: coevolution names the four-parameter
+# carrier with its species-specific bindings. ρ is dissolved (no
+# sixth canonical-rep); ω is named and non-trivial.
+
+prism coevolution_carrier <= @epistemologic/cybernetic/coherence-parametric/carrier {
+  T_reg  := system_state
+  T_regd := adjacent_possible
+  rho    := none
+  omega  := transition_at_t
+}
+
+# === The action surface ===
+
+# The τ-action. Single-step Markov-shaped transition operator at
+# time t; the substrate-altitude declaration of the codomain that
+# names this species. `t` is a substrate `ref` so ω composes against
+# substrate time, not wall-clock.
+
+action transition_at_t (state: system_state, t: ref) -> adjacent_possible {
+  \ @epistemologic/property/coevolution/transition_well_typed
+}
+
+# Witness pact: the Red Queen bounded-sustainment criterion holds
+# across the trajectory window. Discharges via the NK-landscape
+# interaction parameter ρ(N) (NB: distinct from the carrier's ρ
+# slot — this ρ is the *NK* interaction parameter, named in the
+# substrate alongside but not on the carrier's type signature).
+
+action red_queen_witness -> coevolution {
+  \ @epistemologic/property/coevolution/red_queen_bounded
+}
+
+# Witness pact: Kauffman's edge-of-chaos criterion holds as a
+# structural witness on the trajectory. Either red_queen_witness
+# OR edge_of_chaos_witness suffices; both passing is admissible
+# (they certify the same bounded-sustainment regime through
+# different structural reads).
+
+action edge_of_chaos_witness -> coevolution {
+  \ @epistemologic/property/coevolution/edge_of_chaos
+}
+
+# Top-level discharge: the species-boundary check. A coevolution
+# shard is well-formed iff the τ-action types check against the
+# extended carrier AND one of the two lock-hold modes is witnessed.
+
+action coevolution_well_formed -> coevolution {
+  \ @epistemologic/property/coevolution/well_formed
+}
+
+out @epistemologic/cybernetic/coevolution
