@@ -1,0 +1,176 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/distinction
+
+# @magic/contract — the binding species. Names the actions that
+# create, honor, and verify the boundary contract between surface
+# and mechanism.
+#
+# First species shard of the @magic family (recognition #80,
+# substrate-decl landed at ticks 7-8 evening 2026-06-18). The family-
+# root declared three carriers (magic_surface, magic_mechanism,
+# magic_contract); this species adds the actions that operate on the
+# contract carrier.
+#
+# Why contract first: reveal and audit both reference the contract.
+# Without contract's bind/honor/verify actions, reveal's controlled-
+# disclosure has no operational target and audit's verification has
+# no surface invariant to check. Contract is the foundational species;
+# surface/mechanism are the dual carriers it binds; reveal/audit are
+# the downstream operations that consume contracts.
+#
+# === The substrate-pull frame ===
+#
+# Per recognition #57 ([[architecture-alignment-as-boundary-
+# mathematics]]), alignment IS the boundary contract enforced at @io.
+# Under recognition #80, that boundary IS @magic/contract; alignment
+# IS honor(contract); misalignment IS contract-violation-with-surface-
+# intact (the con/scam structure per #78's Narcissus pole).
+#
+# This species is therefore the substrate-decl of the alignment
+# verification primitive: bind binds the gauge-visible surface to
+# the matter-hidden mechanism with an explicit promise; honor reads
+# whether the binding is currently respected; the verdict surfaces
+# at the @io boundary harness for the agent's substrate-political
+# accountability.
+#
+# === Spencer-Brown ancestry ===
+#
+# The contract IS Spencer-Brown's mark at @magic altitude. The mark
+# distinguishes surface from mechanism; the binding IS the cross
+# operation lifted to @magic vocabulary; the honor verdict IS the
+# marked-state / unmarked-state distinction at the contract boundary.
+# Inherited from @epistemologic/cybernetic/distinction via the `in`
+# clause; the cross discipline is the contract's load-bearing
+# verification primitive.
+#
+# === Pre-AI prior art ===
+#
+#   Hoare contract              Hoare 1969 ("An Axiomatic Basis for
+#                               Computer Programming"). Pre/post-
+#                               condition contracts. The procedural
+#                               ancestor of @magic/contract's
+#                               binding semantics.
+#   Design by Contract          Meyer 1986 (Eiffel; Design by
+#                               Contract). The OO altitude; the
+#                               substrate's bind/honor pair IS
+#                               structurally equivalent to Eiffel's
+#                               require/ensure clauses.
+#   stage-magic contract        Maskelyne, Houdini (19th-20th c.).
+#                               The cultural-practice ancestor; the
+#                               magician's promise to the audience
+#                               about what the trick will deliver.
+#
+# Spec context: docs/math/the-tower/recognition-80-magic-as-form-
+#               process-substrate-decl.md (Reed's scratch).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; the contract is what
+#                       alignment enforces),
+#                      [[architecture-glass-wall-substrate-types]]
+#                       (transparency<contract> is the verdict
+#                       carrier at the species boundary),
+#                      [[feedback-no-bare-types]] (all carriers
+#                       typed; the verdict is transparency<contract>,
+#                       not bare bool).
+# Related shards: magic.mirror (the family-root; declares the
+#                  carriers this species operates on),
+#                 epistemologic/cybernetic/distinction.mirror (the
+#                  Spencer-Brown ancestor inherited via `in`).
+# Path-namespace property: this file at
+# `shards/magic/contract.mirror` declares `@magic/contract` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/hoare-1969
+source @arxiv/programming/meyer-1986
+
+prism @magic/contract {
+  focus contract
+  project contract
+  split contract
+  shift contract
+  settle contract
+}
+
+# === magic_invariant carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming a specific
+# invariant the contract preserves between surface and mechanism.
+# A contract carries zero or more invariants; each invariant is a
+# substrate-typed assertion the bind action commits to and the honor
+# action verifies.
+#
+# Identity contract: byte-equality on the underlying ref.
+type magic_invariant = ref
+
+# === bind action ===
+#
+# The substrate-vocabulary action that creates a magic_contract by
+# binding a surface to a mechanism under a promise. The promise IS
+# the substrate-typed assertion that the mechanism delivers what the
+# surface advertises.
+#
+# At Spencer-Brown altitude: bind IS the cross operation applied at
+# @magic; the mark distinguishes surface from mechanism; the contract
+# IS the boundary the cross draws.
+#
+# Body discharges at the realisation boundary; per-species bodies
+# enforce the bilateral commitment per recognition #37 (Pask
+# agreement).
+bind(s: magic_surface, m: magic_mechanism, promise: ref) -> magic_contract { \ }
+
+# === honor action ===
+#
+# The substrate-vocabulary action that reads whether a contract is
+# currently honored: surface invariants intact, mechanism delivering
+# the promise, no violations recorded. The verdict surfaces at the
+# @io boundary harness.
+#
+# Verdict carrier: transparency<magic_contract> per
+# [[architecture-glass-wall-substrate-types]]:
+#
+# - success                     all invariants verified; the contract
+#                               is honored at the witness instant.
+# - partial(opacity_map)        some invariants verified; the opacity
+#                               map names which remain dark.
+# - failure(opacity_map)        a violation is recorded; the opacity
+#                               map names which invariant failed and
+#                               carries the witness.
+#
+# Body discharges at the realisation boundary.
+honor(c: magic_contract) -> transparency(magic_contract) { \ }
+
+# === verify action ===
+#
+# Stricter than honor: explicit verification against a named
+# invariant. honor checks all invariants the contract carries;
+# verify checks one specific invariant. Used by audit (@magic/audit
+# species) and by downstream consumers that name specific properties.
+#
+# Returns the substrate's existing verdict carrier (success / partial
+# / failure trichotomy).
+verify(c: magic_contract, inv: magic_invariant) -> verdict { \ }
+
+# === invariant_preserved predicate ===
+#
+# Bilateral verdict predicate consumer shards name in a `requires`
+# clause (per recognition #37) to declare bilateral agreement that
+# their contract preserves a specific invariant. Same shape as
+# `eigenform_witnessing(carrier)` and `distinction_well_formed(m, s)`.
+#
+# The bilateral commitment: the contract commits to declaring the
+# invariant; the consumer commits to discharging the verify at the
+# species boundary.
+invariant_preserved(c: magic_contract, inv: magic_invariant) -> verdict { \ }
+
+out @magic/contract
+out magic_invariant
+out bind
+out honor
+out verify
+out invariant_preserved
