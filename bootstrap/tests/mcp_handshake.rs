@@ -92,15 +92,9 @@ fn four_tools_advertised() {
     let tools = v["result"]["tools"].as_array().expect("tools array");
     assert_eq!(tools.len(), 4);
     let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
-    assert_eq!(
-        names,
-        vec![
-            "mirror_compile",
-            "mirror_craft",
-            "mirror_kintsugi",
-            "mirror_verdict",
-        ]
-    );
+    // Tick 6 (2026-06-18): tool names drop the `mirror_` prefix per
+    // Alex's correction — the MCP server name IS the namespace.
+    assert_eq!(names, vec!["compile", "craft", "kintsugi", "verdict"]);
 }
 
 /// Tick 5 (2026-06-18): the settle/verdict prism split.
@@ -108,18 +102,16 @@ fn four_tools_advertised() {
 /// Per Seam's adversarial review of tick 4: `cmd_kintsugi_ci_single`
 /// returns `exit_code = 0` regardless of verdict.label (workflow YAML
 /// decides pass per lib.rs:855 contract). The previous `ci: boolean`
-/// flag on `mirror_kintsugi` claimed isError composition that never
-/// fired in practice. The split into `mirror_verdict` parses the JSON
-/// envelope's verdict field and lifts {partial, failure} → isError.
+/// flag on `kintsugi` claimed isError composition that never fired in
+/// practice. The split into `verdict` parses the JSON envelope's
+/// verdict field and lifts {partial, failure} → isError.
 ///
-/// Smoke test: invoke `mirror_verdict` on a path that doesn't exist.
-/// The substrate emits `verdict: "failure"` for unreadable files
+/// Smoke test: invoke `verdict` on a path that doesn't exist. The
+/// substrate emits `verdict: "failure"` for unreadable files
 /// (lib.rs:`emit_ci_verdict_json` failure branch). MCP must lift this
 /// to `isError: true` so agent clients can branch programmatically.
 #[test]
-fn mirror_verdict_failure_lifts_to_is_error() {
-    // A path guaranteed not to exist. The substrate's failure-verdict
-    // path fires; envelope JSON has `"verdict": "failure"`.
+fn verdict_failure_lifts_to_is_error() {
     let bogus = format!(
         "/tmp/mirror-mcp-nonexistent-{}-{}.mirror",
         std::process::id(),
@@ -129,30 +121,78 @@ fn mirror_verdict_failure_lifts_to_is_error() {
             .unwrap_or(0)
     );
     let req = format!(
-        r#"{{"jsonrpc":"2.0","id":33,"method":"tools/call","params":{{"name":"mirror_verdict","arguments":{{"file":"{}"}}}}}}"#,
+        r#"{{"jsonrpc":"2.0","id":33,"method":"tools/call","params":{{"name":"verdict","arguments":{{"file":"{}"}}}}}}"#,
         bogus
     );
-    let resp = mcp::handle_request(&req).expect("mirror_verdict must respond");
+    let resp = mcp::handle_request(&req).expect("verdict must respond");
     let v: serde_json::Value =
         serde_json::from_str(&resp).expect("valid JSON envelope");
     let text = v["result"]["content"][0]["text"]
         .as_str()
         .expect("text payload")
         .to_string();
-    // The substrate emits a JSON envelope with verdict label "failure"
-    // for the unreadable-file path; the MCP lifts that to isError.
     assert_eq!(
         v["result"]["isError"],
         serde_json::Value::Bool(true),
         "failure verdict must lift to isError=true. Response was: {}",
         resp
     );
-    // Sanity: the body contains the envelope (whether mirror-text or
-    // JSON, the word "failure" appears as the verdict label).
     assert!(
         text.contains("failure"),
         "verdict body should contain 'failure' label; got: {}",
         text
+    );
+}
+
+/// Tick 6 (2026-06-18): unit-level test for parse_verdict_label.
+///
+/// The tick 5 implementation tried `serde_json::from_str` on the whole
+/// payload and failed silently when trace was appended. Reed observed
+/// this running the live `verdict` tool on the eigenform shard: real
+/// verdict paths emit `{...JSON...}\n  dispatch @kintsugi/tick: ...`
+/// mixing the envelope with kintsugi-loop trace. parse_verdict_label
+/// returned None, fallback hit exit_code=0 (substrate contract), and
+/// `partial` verdicts silently failed to lift isError.
+///
+/// We can't exercise the full integration chain from cargo test (cwd
+/// can't resolve grammars without MIRROR_HOME), so we pin the unit
+/// contract directly: a JSON envelope followed by trace text must
+/// parse correctly. The pattern below mirrors what the live MCP
+/// actually emitted on `verdict` of eigenform.mirror.
+#[test]
+fn parse_verdict_label_handles_json_plus_trace() {
+    // The shape Reed empirically observed on the live MCP:
+    // line 1 = compact JSON envelope; subsequent lines = kintsugi trace.
+    let payload = concat!(
+        "{\"verdict\":\"partial\",\"target\":\"/x/eigenform.mirror\",",
+        "\"objective\":10.0,\"iterations\":1,\"dark_count\":10}\n",
+        "  dispatch @kintsugi/tick: Uncrystallized (floor has no body at @kintsugi/tick)\n",
+        "tick 1  dark_count: 10  loss: 1.0  Δ: 0.0  ← Lawvere fixed-point (vacuously)\n",
+    );
+    let label = mcp::parse_verdict_label(payload);
+    assert_eq!(
+        label.as_deref(),
+        Some("partial"),
+        "parse_verdict_label must scan past JSON envelope to find the verdict field"
+    );
+}
+
+/// Tick 6 also tests the clean (envelope-only) case still works,
+/// so the line-by-line fallback didn't regress the simple path.
+#[test]
+fn parse_verdict_label_handles_clean_envelope() {
+    let payload = r#"{"verdict":"success","target":"x","objective":0.0,"iterations":1,"dark_count":0}"#;
+    assert_eq!(mcp::parse_verdict_label(payload).as_deref(), Some("success"));
+}
+
+/// Tick 6: non-JSON / no verdict field returns None (fallback path).
+#[test]
+fn parse_verdict_label_returns_none_on_garbage() {
+    assert_eq!(mcp::parse_verdict_label("not json at all"), None);
+    assert_eq!(mcp::parse_verdict_label(""), None);
+    assert_eq!(
+        mcp::parse_verdict_label(r#"{"target":"x","objective":0.0}"#),
+        None
     );
 }
 

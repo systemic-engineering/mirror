@@ -23,14 +23,18 @@
 //!
 //! ## Tools advertised
 //!
-//! - `mirror_compile`  — `focus`:   tokenize one `.mirror` file.
-//! - `mirror_craft`    — `split`:   converge a target to lambda_0.
-//! - `mirror_kintsugi` — `refract`: settle a `.mirror` file (mutates).
-//! - `mirror_verdict`  — `focus`:   render a structured verdict
-//!                                 envelope (read-only inspection).
+//! Tool names omit the `mirror_` prefix because the MCP server itself
+//! is `mirror` — the server name IS the namespace per Alex's
+//! 2026-06-18 correction. Agent-side invocation is
+//! `mcp__mirror__compile`, not `mcp__mirror__mirror_compile`.
 //!
-//! `mirror_kintsugi` and `mirror_verdict` are TWO prisms, not one tool
-//! with a flag. The substrate distinction is: `kintsugi` writes
+//! - `compile`  — `focus`:   tokenize one `.mirror` file.
+//! - `craft`    — `split`:   converge a target to lambda_0.
+//! - `kintsugi` — `refract`: settle a `.mirror` file (mutates).
+//! - `verdict`  — `focus`:   render a structured verdict envelope
+//!                          (read-only inspection).
+//!
+//! `kintsugi` and `verdict` are TWO prisms, not one tool with a flag. The substrate distinction is: `kintsugi` writes
 //! canonical output (effect at @io); `verdict` returns structured
 //! observation (pure focus). Per Seam's adversarial review of tick 4,
 //! collapsing them under a `ci: boolean` flag hid the substrate-pull
@@ -82,7 +86,7 @@ fn tools_list_result() -> Value {
     json!({
         "tools": [
             {
-                "name": "mirror_compile",
+                "name": "compile",
                 "description": "focus: tokenize one .mirror file through grammar lens. Returns SHA-256 hash on success.",
                 "inputSchema": {
                     "type": "object",
@@ -93,7 +97,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_craft",
+                "name": "craft",
                 "description": "split: converge a target to lambda_0. --target emits code (binary|rust|gleam). --reflect verifies properties without emission.",
                 "inputSchema": {
                     "type": "object",
@@ -106,8 +110,8 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_kintsugi",
-                "description": "refract: settle a .mirror file, write canonical. --liquid writes inferred properties below ---. --shatter N recursively settles N levels deep. Mutates the file. For read-only verdict inspection use mirror_verdict.",
+                "name": "kintsugi",
+                "description": "refract: settle a .mirror file, write canonical. --liquid writes inferred properties below ---. --shatter N recursively settles N levels deep. Mutates the file. For read-only verdict inspection use `verdict`.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -119,7 +123,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_verdict",
+                "name": "verdict",
                 "description": "focus: render a structured PASS/REJECT verdict envelope for a .mirror file or directory (corpus mode). Read-only — does NOT modify the file. Returns the substrate's JSON verdict envelope (fields: verdict, target, objective, iterations, dark_count). isError lifts to true when verdict.label ∈ {partial, failure}; success returns isError absent.",
                 "inputSchema": {
                     "type": "object",
@@ -142,11 +146,32 @@ fn tools_list_result() -> Value {
 /// Both single-file (`CiVerdict`) and corpus (`CorpusVerdict`) envelopes
 /// share the top-level `verdict` field per the substrate's typed
 /// records at `boot/std/kintsugi.mirror`.
-fn parse_verdict_label(payload: &str) -> Option<String> {
-    let v: Value = serde_json::from_str(payload).ok()?;
-    v.get("verdict")
-        .and_then(|s| s.as_str())
-        .map(|s| s.to_string())
+pub fn parse_verdict_label(payload: &str) -> Option<String> {
+    // Tick 6 (2026-06-18): the substrate's verdict path emits the JSON
+    // envelope as a single line followed by kintsugi-loop trace output
+    // (stderr concatenated via bash 2>&1 semantic in run_mirror). The
+    // tick 5 implementation tried `from_str` on the whole payload and
+    // failed silently when trace was appended. Robust strategy: try
+    // whole first (clean case: failure verdict, no kintsugi loop runs),
+    // then scan line-by-line (mixed case: real verdict + trace).
+    let try_full: Option<String> = serde_json::from_str::<Value>(payload)
+        .ok()
+        .and_then(|v| v.get("verdict").and_then(|s| s.as_str()).map(|s| s.to_string()));
+    if try_full.is_some() {
+        return try_full;
+    }
+    for line in payload.lines() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() || !trimmed.starts_with('{') {
+            continue;
+        }
+        if let Ok(v) = serde_json::from_str::<Value>(trimmed) {
+            if let Some(label) = v.get("verdict").and_then(|s| s.as_str()) {
+                return Some(label.to_string());
+            }
+        }
+    }
+    None
 }
 
 /// Run mirror's library entry with `args`, returning the combined
@@ -223,11 +248,11 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
     let i = |k: &str| -> Option<i64> { args.get(k).and_then(|v| v.as_i64()) };
 
     let (text, exit_code) = match tool {
-        "mirror_compile" => {
+        "compile" => {
             let file = s("file").unwrap_or_default();
             run_mirror(&["compile", &file])
         }
-        "mirror_craft" => {
+        "craft" => {
             let target = s("target").unwrap_or_default();
             let mut argv: Vec<String> = vec!["craft".into(), target];
             if let Some(emit) = s("emit_target") {
@@ -240,9 +265,9 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs)
         }
-        "mirror_kintsugi" => {
+        "kintsugi" => {
             // Settle prism: mutates the file. Read-only verdict
-            // inspection lives in `mirror_verdict` below (tick 5 split).
+            // inspection lives in `verdict` below (tick 5 split).
             let file = s("file").unwrap_or_default();
             let mut argv: Vec<String> = vec!["kintsugi".into(), file];
             if b("liquid") {
@@ -255,7 +280,7 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs)
         }
-        "mirror_verdict" => {
+        "verdict" => {
             // Verdict prism: read-only observation. Per Seam tick 4
             // review: the substrate's `cmd_kintsugi_ci_*` always exits
             // 0 (the workflow YAML decides pass; lib.rs:855 contract);
