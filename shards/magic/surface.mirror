@@ -1,0 +1,169 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @magic/contract
+
+# @magic/surface — the gauge-visible interface species.
+#
+# Tick 12 of the refined /loop discipline. Tick 11's residue: bilateral
+# predicates declared at @magic/contract (invariant_preserved) and
+# @magic/audit (audited) but no consumer that exercises the discipline.
+# This species is the FIRST CONSUMER of the @magic family's bilateral
+# predicates via `requires` clauses (Seam C5+ gap closure).
+#
+# CRQ for tick 12: which species is the first consumer of the @magic
+# family's bilateral predicates? Without a consumer, the predicates
+# are paint — the same failure mode Seam caught in the decorative
+# Spencer-Brown inheritance at tick 11.
+#
+# Answer: @magic/surface. The surface IS what the observer sees; for
+# the surface to be honest, it MUST require the contract bind it to
+# a mechanism that preserves the surface-altitude invariants. That
+# requirement IS the substrate-pull-correct first `requires` clause
+# at @magic altitude.
+#
+# === The surface as gauge ===
+#
+# Per recognition #80, the surface IS the gauge-visible interface
+# (5-op signature observable from outside the encapsulation). Per
+# recognition #79 (NEEDS WORK on op↔axis mapping but still naming
+# the gauge basis), the gauge is the 5-op algebra. The surface IS
+# the substrate's gauge-side carrier at @magic altitude.
+#
+# At Clarke's-law altitude (recognition #80): the surface IS what
+# the audience sees the magician do. The gauge-visible focus /
+# project / split. The matter (sleight, preparation, mechanism) is
+# encapsulated behind it.
+#
+# === The species's load-bearing contribution ===
+#
+# This species adds:
+#
+# - `surface_invariant` carrier (substrate-typed invariant the surface
+#   commits to upholding).
+# - `expose(mechanism) -> magic_surface` action: takes a mechanism and
+#   produces its gauge-visible surface. The substrate-pull-correct
+#   surface emergence: the matter is encapsulated; the gauge surface
+#   is what's exposed.
+# - `surface_honest` predicate: bilateral verdict that the surface
+#   accurately represents what the mechanism delivers. The FIRST
+#   consumer of @magic/contract.invariant_preserved.
+#
+# The discipline tick 11 named is exercised here: `expose` requires
+# `invariant_preserved(c, my_invariant)` via the contract that binds
+# this surface to its mechanism. That's the first non-decorative
+# `requires` clause in the @magic family.
+#
+# === Pre-AI prior art ===
+#
+#   gauge field (physics)       Yang-Mills 1954. The original gauge.
+#                               @magic/surface IS the gauge-field
+#                               carrier at substrate altitude.
+#   public interface            Software engineering's
+#                               encapsulation discipline (Parnas
+#                               1972, "On the Criteria To Be Used
+#                               in Decomposing Systems into Modules").
+#                               @magic/surface IS the substrate-decl
+#                               of "information hiding's revealed
+#                               half."
+#   stage-magic patter          The magician's verbal accompaniment
+#                               to the trick. The gauge-visible
+#                               narration that frames what the
+#                               audience interprets.
+#
+# Spec context: docs/math/the-tower/recognition-80-magic-as-form-
+#               process-substrate-decl.md.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; surface_honest IS the
+#                       alignment check at the gauge altitude),
+#                      [[feedback-no-bare-types]] (surface_invariant
+#                       and the action signatures are typed).
+# Related shards: magic.mirror (the family-root; magic_surface and
+#                  magic_invariant declared here),
+#                 magic/contract.mirror (the contract this species
+#                  requires; surface_honest consumes
+#                  invariant_preserved).
+# Path-namespace property: this file at
+# `shards/magic/surface.mirror` declares `@magic/surface` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/physics/yang-mills-1954
+source @arxiv/programming/parnas-1972
+
+prism @magic/surface {
+  focus surface
+  project surface
+  split surface
+  shift surface
+  settle surface
+}
+
+# === surface_invariant carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming a specific
+# invariant the surface commits to upholding. Distinct from
+# magic_invariant (which lives at family-root and names contract-
+# level invariants) by being scoped to surface-altitude commitments:
+# what the observer can verify from the gauge alone.
+#
+# Identity contract: byte-equality on the underlying ref.
+type surface_invariant = ref
+
+# === expose action ===
+#
+# The substrate-vocabulary action that produces a magic_surface from
+# a mechanism. The substrate-pull-correct surface emergence: the
+# matter is encapsulated; the gauge-visible surface is what's exposed.
+#
+# At Clarke's-law altitude: expose IS the magician's act of presenting
+# the trick — the audience sees what the gauge presents; the
+# mechanism stays hidden behind it.
+#
+# Body discharges at the realisation boundary.
+expose(m: magic_mechanism) -> magic_surface { \ }
+
+# === observe action ===
+#
+# The substrate-vocabulary action that an external observer takes on
+# a surface, producing an observation ref. The observation IS what
+# the observer reads from the gauge alone — the matter is opaque.
+#
+# Per [[architecture-glass-wall-substrate-types]]: the observation
+# IS the substrate's gauge-side reading; the mechanism behind the
+# surface stays encapsulated.
+#
+# Body discharges at the realisation boundary.
+observe(s: magic_surface) -> ref { \ }
+
+# === surface_honest action ===
+#
+# THE FIRST NON-DECORATIVE `requires` CLAUSE CONSUMER per Seam tick
+# 11 closure. The substrate-vocabulary action that verifies a surface
+# is honest: the contract that binds it to its mechanism preserves
+# the surface-altitude invariants.
+#
+# This is the alignment check at the gauge altitude. Per recognition
+# #57: alignment IS the boundary contract enforced at @io; per #80:
+# @magic/contract IS what alignment enforces. surface_honest exercises
+# the discipline by requiring invariant_preserved(c, inv) on the
+# contract that produced this surface.
+#
+# requires invariant_preserved(c, inv): the substrate-political
+# bilateral commitment that the contract honors the named invariant.
+# This `requires` clause IS the discipline tick 11's consolidation
+# enabled — the predicate declared at @magic/contract finally has
+# its first consumer.
+#
+# Body discharges at the realisation boundary.
+surface_honest(s: magic_surface, c: magic_contract, inv: magic_invariant) -> verdict
+requires invariant_preserved(c, inv)
+{ \ }
+
+out @magic/surface
+out surface_invariant
+out expose
+out observe
+out surface_honest
