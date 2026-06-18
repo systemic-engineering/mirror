@@ -47,8 +47,7 @@
 //! grows past the point where the fixture diff catches drift
 //! cheaply.
 
-use std::io::{BufRead, BufReader, Read, Write};
-use std::process::{Command, Stdio};
+use std::io::{BufRead, BufReader, Write};
 
 use serde_json::{json, Value};
 
@@ -120,6 +119,7 @@ fn tools_list_result() -> Value {
 /// Mirrors the bash wrapper's `MIRROR="${MIRROR_BIN:-$HOME/.local/bin/mirror}"`
 /// resolution. The `MIRROR_BIN` env var lets the integration test point
 /// the dispatcher at a non-default binary (or a no-op stub).
+#[allow(dead_code)]
 fn mirror_binary_path() -> String {
     if let Ok(p) = std::env::var("MIRROR_BIN") {
         return p;
@@ -136,35 +136,35 @@ fn mirror_binary_path() -> String {
 /// captures both streams (`2>&1`); we do the same so error messages
 /// from the binary surface into the MCP `content[].text` payload.
 fn run_mirror(args: &[&str]) -> String {
-    let bin = mirror_binary_path();
-    let mut child = match Command::new(&bin)
-        .args(args)
-        .stdin(Stdio::null())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-    {
-        Ok(c) => c,
-        Err(e) => return format!("failed to spawn {}: {}", bin, e),
-    };
-    let mut out = String::new();
-    if let Some(mut so) = child.stdout.take() {
-        let _ = so.read_to_string(&mut out);
-    }
-    let mut err = String::new();
-    if let Some(mut se) = child.stderr.take() {
-        let _ = se.read_to_string(&mut err);
-    }
-    let _ = child.wait();
-    // bash wrapper's `2>&1`: stderr concatenated after stdout.
+    // Tick 2 (loop 2026-06-18): in-process dispatch via library entry
+    // (per Taut's #286 Win 2 + her recommended tick from #386 closure).
+    //
+    // Removes 200-800ms dyld + Accelerate startup tax per MCP tool call.
+    // Closes the self-referential gap: per `shards/mirror/lens/mcp.mirror`'s
+    // `dispatch(call: ref) -> mcp { \ }` action body, MCP dispatch IS the
+    // algebra at the substrate's library altitude, not a subshell.
+    //
+    // The fixture test in `tests/mcp_handshake.rs` verifies behavior
+    // preserved: stdout+stderr combined (bash `2>&1` semantic); MCP wire
+    // shape unchanged; `tools/list` advertises same three tools.
+
+    // kintsugi_main expects full argv with program name at args[0].
+    let mut argv: Vec<String> = vec!["mirror".to_string()];
+    argv.extend(args.iter().map(|s| s.to_string()));
+
+    let output = crate::kintsugi_main(&argv);
+
+    // Preserve bash wrapper's `2>&1`: stderr concatenated after stdout.
+    let out = String::from_utf8_lossy(&output.stdout);
+    let err = String::from_utf8_lossy(&output.stderr);
     if !err.is_empty() {
         if out.is_empty() {
-            err
+            err.into_owned()
         } else {
             format!("{}{}", out, err)
         }
     } else {
-        out
+        out.into_owned()
     }
 }
 
