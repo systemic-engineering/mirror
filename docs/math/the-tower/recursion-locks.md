@@ -1789,6 +1789,97 @@ finding HAD exhausted. The pivot to landing IS the loop's natural
 continuation; landing isn't auditing's epilogue, it's the audit's
 operational closure.
 
+## §20 Parametric carrier lands (2026-06-18, tick 21)
+
+Per Mara's spec landing
+(`shards/epistemologic/cybernetic/coherence-parametric.mirror`,
+474 lines, commit `c7b807c` on `mara/cyberpunk-coherence-parametric-shard`).
+
+The load-bearing substrate-landing: recognition #63's backbone is
+substrate-fact.
+
+### §20.1 What landed
+
+- The path-namespace declaration
+  `prism @epistemologic/cybernetic/coherence-parametric` (bare; the
+  five-operations focus/project/split/shift/settle)
+- Three carrier types per [[feedback-no-bare-types]]:
+  `connection_form` for ω, `lock_pair` for the (T_reg, T_regd, ρ, ω)
+  tuple, `lock_carrier` for the altitude-aware species data
+- Seven actions: the five cybernetic-ancestor measurements
+  (ashby_variety_match, beer_requisite_variety_witness,
+  bateson_logical_type_match, von_foerster_circular_reflexivity,
+  conant_ashby_good_regulator), `lock_verdict` returning
+  `imperfect(lock_carrier)` per holonomy.md §5, and
+  `parametric_lock_witnessing` as the bilateral-agreement predicate
+  (Pask reading of `requires` per recognition #37)
+- All bodies discharge `\` per [[feedback-craft-not-deliver]]
+
+### §20.2 Mirror grammar limit (substrate-pull-honest finding)
+
+Mirror's bootstrap doesn't yet admit type-parametric prism syntax.
+Per Mara's check of `bootstrap/src/lib.rs::collect_declared_namespaces`
+lines 1697–1730: the `@`-ref capture stops at the first delimiter
+(`whitespace, {, (, :, ,`); `<` is NOT in the delimiter set. A literal
+`prism @<path><T_reg, T_regd, ρ, ω>` would parse `@<path><T_reg` as
+the namespace and confuse the trailing commas.
+
+**Forward-promised** (one tick each):
+
+1. Grammar-extension tick: lift bootstrap's delimiter set to admit
+   `<...>` on prism declarations. This is genuine novel-synthesis
+   territory at the bootstrap altitude — may stall per recognition #73;
+   likely best done by Reed inline or by Taut (who already handles
+   bootstrap grammar work).
+2. Species-shard collapse: rewrite
+   coherence/SEL/viable/autopoiesis/etc. as
+   `use @epistemologic/cybernetic/coherence-parametric<...>`
+   instantiations once the grammar admits type parameters.
+
+### §20.3 Species-shard inheritance interface
+
+Cleanly declared via the typed predicate
+`parametric_lock_witnessing(lock: lock_carrier) -> verdict`. Same
+shape as `variety.variety_preserving` + `eigenform.eigenform_witnessing`.
+Species name their `(t_reg, t_regd, ρ, ω)` via `lock_pair` and add
+`requires parametric_lock_witnessing(my_lock)` when the species-collapse
+tick lands.
+
+### §20.4 Recognition #73 confirms at the load-bearing landing altitude
+
+Mara explicitly: every concept landed was substrate-implicit. The carrier
+shape from §11.7, the ω extension from §8.10, the five ancestor measurements
+from §3 + §11.5, the Imperfect verdict family from holonomy.md §5, the
+`\` discipline from variety + eigenform precedents, the `ref` field
+convention from variety.axis_budget.value + eigenform.fixed_point.
+
+The novel act was *naming the carrier at substrate altitude* so the substrate
+doesn't re-derive it per species. Substrate-already-had-the-word at meta-
+altitude. The primitives existed; this lifted them to one shared declaration.
+
+Recognition #73 holds: dissolution-shaped landing work lands even at the
+substantive substrate-landing altitude.
+
+### §20.5 Substrate-landing path status
+
+```
+1. @epistemologic/cybernetic/eigenform shard            ✅ LANDED (tick 20)
+2. @epistemologic/cybernetic/coherence-parametric shard ✅ LANDED (this tick)
+3. distinction (floor) inherits from eigenform          ⏳ next
+4. second_order inherits from eigenform                 ⏳
+5. Remaining six species instantiate                    ⏳
+6. algedonic thin specialization                        ⏳
+7. Bench harness collapse                               ⏳
+8. altitudes.md §4 amendment                            ⏳
+9. (NEW per §20.2) Grammar extension for type params    ⏳
+10. (NEW per §20.2) Species-shard collapse via parametric ⏳
+```
+
+Two landings done. The recognition #63 backbone is now substrate-fact:
+the parametric carrier exists, species can declare against it; what
+remains is the species shards themselves and the grammar surface that
+lets them collapse into thin specializations.
+
 ## §9 What promotion or retraction closes
 
 **Promotion path** (candidate #63 → recognition):
