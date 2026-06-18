@@ -97,3 +97,25 @@ fn three_tools_advertised() {
         vec!["mirror_compile", "mirror_craft", "mirror_kintsugi"]
     );
 }
+
+/// Tick 3 (2026-06-18): the @io error contract.
+///
+/// Per [[architecture-error-as-tomm-probe.md]]: substrate errors at
+/// the @io boundary are structured signals, not opaque text. The MCP
+/// `tools/call` response carries `isError: true` when the underlying
+/// `kintsugi_main` exit_code is non-zero (kintsugi REJECT, compile
+/// error, etc.); agent clients then branch programmatically rather
+/// than scraping stderr text.
+#[test]
+fn tools_call_unknown_tool_sets_is_error() {
+    let req = r#"{"jsonrpc":"2.0","id":7,"method":"tools/call","params":{"name":"nonexistent_tool","arguments":{}}}"#;
+    let resp = mcp::handle_request(req).expect("tools/call must respond");
+    let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
+    assert_eq!(
+        v["result"]["isError"], serde_json::Value::Bool(true),
+        "unknown tool must surface as isError: true (got: {})", resp
+    );
+    // Text payload still present for the agent to read.
+    let text = v["result"]["content"][0]["text"].as_str().expect("text payload");
+    assert!(text.contains("unknown tool"), "text explains the error: {}", text);
+}
