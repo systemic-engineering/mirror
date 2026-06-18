@@ -2305,6 +2305,64 @@ Track A:
 Seven landings done. Five species remain + the thin spec + collapse +
 closing tasks.
 
+## §26 Autopoiesis lands; Read E's ancestor surfaces gauge_act (2026-06-18, tick 27)
+
+Mara landed `shards/epistemologic/cybernetic/autopoiesis.mirror`
+(commit `f8b381d`, branch `mara/cyberpunk-autopoiesis-shard`, 752 lines).
+Recognition #63's substrate ancestor lands at substrate altitude.
+
+### §26.1 Inheritance pattern (substantively different)
+
+Four `in` declarations, none from variety/second_order/eigenform directly:
+
+- `coherence-parametric` (parametric carrier; ρ = adjoint rep,
+  ω = trivial)
+- `@epistemologic/math/bundle` (Read E's tower foundation — the
+  principal-bundle math substrate)
+- `@epistemologic/math/lawvere` (Soto-Andrade & Varela 1984 formal bridge)
+- `@epistemologic/property/autopoietic` (the substrate's existing
+  declarative property — routed through, not redeclared)
+
+The substrate had the autopoietic-property vocabulary scattered in
+seven places (per Mara's tick 8 spec); this shard inherits three of
+them via `in` rather than re-declaring.
+
+### §26.2 Gauge action lands at action surface
+
+```mirror
+gauge_act(g: ref, section: ref) -> ref
+```
+
+The τ-action under Read E is named explicitly as the structure-group
+action `G_α ↷ Section_α`. Canonical ρ = adjoint representation
+documented via cross-ref to coherence-parametric.mirror's species
+table.
+
+### §26.3 Mechanical-derivation closure forward-promised
+
+Per Mara's spec §8.5: if autopoiesis's three Maturana-Varela primitive
+operations (`produce`, `couple`, `close`) collapse into different
+instantiations of `gauge_act`, the carrier-collapse claim at substrate
+altitude lands. Mara notes this is forward-promised to Reed's next
+tick.
+
+**Forward-promise**: Reed walks the produce/couple/close ≡ gauge_act
+derivation when substrate-pull asks. Not blocking species-landing
+progression.
+
+### §26.4 Substrate-landing path status
+
+```
+Track A: eigenform, carrier, distinction, second_order, viable,
+         autopoiesis                                       ✅ (6 of 11)
+         bateson_learning, conversation, coevolution, design,
+         algedonic                                         ⏳
+Track B: pact, fracture body                               ✅
+Closing: species collapse, bench, altitudes amendment       ⏳
+```
+
+Eight landings done. Four species remain + thin spec + collapse + closing.
+
 ## §9 What promotion or retraction closes
 
 **Promotion path** (candidate #63 → recognition):
