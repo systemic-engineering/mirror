@@ -132,22 +132,15 @@ fn mirror_binary_path() -> String {
 }
 
 /// Run the configured mirror binary with `args`, returning the combined
-/// stdout+stderr as a UTF-8 string. The bash wrapper's `result=$(...)`
-/// captures both streams (`2>&1`); we do the same so error messages
-/// from the binary surface into the MCP `content[].text` payload.
-fn run_mirror(args: &[&str]) -> String {
-    // Tick 2 (loop 2026-06-18): in-process dispatch via library entry
-    // (per Taut's #286 Win 2 + her recommended tick from #386 closure).
-    //
-    // Removes 200-800ms dyld + Accelerate startup tax per MCP tool call.
-    // Closes the self-referential gap: per `shards/mirror/lens/mcp.mirror`'s
-    // `dispatch(call: ref) -> mcp { \ }` action body, MCP dispatch IS the
-    // algebra at the substrate's library altitude, not a subshell.
-    //
-    // The fixture test in `tests/mcp_handshake.rs` verifies behavior
-    // preserved: stdout+stderr combined (bash `2>&1` semantic); MCP wire
-    // shape unchanged; `tools/list` advertises same three tools.
-
+/// stdout+stderr UTF-8 string AND the exit code.
+///
+/// Tick 3 (loop 2026-06-18): exit_code is now propagated so handle_request
+/// can lift @io substrate failure into the MCP wire-level `isError` flag.
+/// Per [[architecture-error-as-tomm-probe.md]]: errors at the @io
+/// boundary IS a structured signal, not opaque text. The substrate's
+/// `mirror kintsugi --ci` REJECT verdict exits non-zero; the MCP wire
+/// must surface that as structured failure for the agent caller.
+fn run_mirror(args: &[&str]) -> (String, i32) {
     // kintsugi_main expects full argv with program name at args[0].
     let mut argv: Vec<String> = vec!["mirror".to_string()];
     argv.extend(args.iter().map(|s| s.to_string()));
@@ -157,7 +150,7 @@ fn run_mirror(args: &[&str]) -> String {
     // Preserve bash wrapper's `2>&1`: stderr concatenated after stdout.
     let out = String::from_utf8_lossy(&output.stdout);
     let err = String::from_utf8_lossy(&output.stderr);
-    if !err.is_empty() {
+    let text = if !err.is_empty() {
         if out.is_empty() {
             err.into_owned()
         } else {
@@ -165,10 +158,11 @@ fn run_mirror(args: &[&str]) -> String {
         }
     } else {
         out.into_owned()
-    }
+    };
+    (text, output.exit_code)
 }
 
-/// Dispatch a `tools/call` request to the appropriate mirror subprocess.
+/// Dispatch a `tools/call` request to the appropriate mirror invocation.
 ///
 /// Mirrors the bash wrapper's `case "$tool" in ... esac` block:
 ///
@@ -176,15 +170,17 @@ fn run_mirror(args: &[&str]) -> String {
 /// - `mirror_craft`   → `mirror craft <target> [--target <emit>] [--reflect]`
 /// - `mirror_kintsugi`→ `mirror kintsugi <file> [--liquid] [--shatter N]`
 ///
-/// Returns the captured text payload. Unknown tools return the
-/// `"unknown tool: <name>"` shape the bash wrapper produced.
-fn dispatch_tool_call(tool: &str, args: &Value) -> String {
+/// Returns `(text, is_error)`. `is_error` lifts to MCP's `isError` flag
+/// in the `tools/call` response so clients can programmatically
+/// distinguish substrate failure (kintsugi REJECT, compile error) from
+/// success without scraping stderr text.
+fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
     let s =
         |k: &str| -> Option<String> { args.get(k).and_then(|v| v.as_str()).map(|s| s.to_string()) };
     let b = |k: &str| -> bool { args.get(k).and_then(|v| v.as_bool()).unwrap_or(false) };
     let i = |k: &str| -> Option<i64> { args.get(k).and_then(|v| v.as_i64()) };
 
-    match tool {
+    let (text, exit_code) = match tool {
         "mirror_compile" => {
             let file = s("file").unwrap_or_default();
             run_mirror(&["compile", &file])
@@ -215,8 +211,9 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> String {
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs)
         }
-        other => format!("unknown tool: {}", other),
-    }
+        other => return (format!("unknown tool: {}", other), true),
+    };
+    (text, exit_code != 0)
 }
 
 /// Whether the response for a given method should be serialized in
@@ -262,11 +259,20 @@ pub fn handle_request(line: &str) -> Option<String> {
                 .get("arguments")
                 .cloned()
                 .unwrap_or_else(|| json!({}));
-            let text = dispatch_tool_call(&tool, &args);
+            let (text, is_error) = dispatch_tool_call(&tool, &args);
+            // Per MCP spec: `isError: true` signals tool execution failure
+            // (substrate REJECT / compile error / unknown tool) so agent
+            // clients can branch programmatically rather than scraping text.
+            let mut result_obj = json!({
+                "content": [ { "type": "text", "text": text } ]
+            });
+            if is_error {
+                result_obj["isError"] = Value::Bool(true);
+            }
             let resp = json!({
                 "jsonrpc": "2.0",
                 "id":      id.unwrap_or(Value::Null),
-                "result":  { "content": [ { "type": "text", "text": text } ] },
+                "result":  result_obj,
             });
             Some(serde_json::to_string(&resp).expect("tools_call is serializable"))
         }
