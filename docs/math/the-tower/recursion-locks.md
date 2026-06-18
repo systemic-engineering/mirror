@@ -2363,6 +2363,41 @@ Closing: species collapse, bench, altitudes amendment       ⏳
 
 Eight landings done. Four species remain + thin spec + collapse + closing.
 
+## §27 Bateson_learning lands; three distinct inheritance patterns surveyed (2026-06-18, tick 28)
+
+Mara landed `shards/epistemologic/cybernetic/bateson_learning.mirror`
+(commit `f074a02`, 757 lines).
+
+Inheritance pattern: four `in`s — `coherence-parametric` +
+`@epistemologic/math/russell-whitehead` + `@epistemologic/math/kac-graded`
++ `@epistemologic/property/bateson_learning`. Each landed species now
+has its own characteristic routing:
+
+| species         | inheritance pattern                                                   | routing type                          |
+|-----------------|-----------------------------------------------------------------------|---------------------------------------|
+| viable          | carrier + variety + second_order                                      | foundation-property selection         |
+| autopoiesis     | carrier + bundle + lawvere + autopoietic property                     | bundle/fixed-point routing            |
+| bateson_learning | carrier + russell-whitehead + kac-graded + bateson_learning property | mathematical-ancestry routing         |
+
+The parametric carrier is the ONLY common ancestor. Each species's
+remaining inheritance points are unique to its substrate-political
+shape. **The carrier mediates; the species are otherwise locally
+routed.**
+
+`graded_act(g: ref, h: hierarchy_top) -> hierarchy_top` at action
+surface. T_reg = `HierarchyTop`, T_regd = `HierarchyBase`. Bounded-
+commutator condition forward-promised as automatic via Kac 1990.
+
+Nine landings done. Three species remain + thin spec + collapse + closing.
+
+```
+Track A: eigenform, carrier, distinction, second_order, viable,
+         autopoiesis, bateson_learning                    ✅ (7 of 11)
+         conversation, coevolution, design, algedonic     ⏳
+Track B: pact + fracture body                             ✅
+Closing: species collapse, bench, altitudes amendment       ⏳
+```
+
 ## §9 What promotion or retraction closes
 
 **Promotion path** (candidate #63 → recognition):
