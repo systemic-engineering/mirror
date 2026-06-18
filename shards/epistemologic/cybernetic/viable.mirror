@@ -1,0 +1,615 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/coherence-parametric
+in @epistemologic/cybernetic/variety
+in @epistemologic/cybernetic/second_order
+
+# @epistemologic/cybernetic/viable — Beer 1972/1979/1984. The
+# substrate-altitude declaration of the Viable System Model species:
+# identity-preservation under environmental disturbance. The first
+# species on Track A that does NOT inherit from eigenform — it
+# INSTANTIATES the parametric carrier directly with a non-trivial ω.
+#
+# Per the spec at `docs/specs/cyberpunk-viable.md` (Mara `9154d6b` on
+# `reed/recursion-lock-tower-audit`; 1230 lines), this shard is the
+# substrate landing of:
+#
+# - Reading A held (homeostat): T_reg = Identity, T_regd = Stability,
+#   τ : Identity ↔ Stability via Ashby's homeostat law.
+# - Reading B held (recursive viability): the parent S5 over child
+#   viable systems; inheritance read as the recursive descent of the
+#   parametric carrier.
+# - Reading C does not hold: the S3-S4 oscillation IS captured by the
+#   contraction-surface dynamics; the parametric form is not refused.
+# - Reading D held (the temporal lock surfaced during the audit): the
+#   first species in the audit to carry a NON-TRIVIAL ω. Read D
+#   instantiates the parametric carrier's `omega` field with the
+#   temporal-identity Δt-window (per coherence-parametric's connection_form
+#   `is_trivial: false` slot, the slot coevolution and viable share).
+#
+# === Why this is the first non-eigenform-inheritor species ===
+#
+# Distinction (the floor) and second_order (the ceiling) BOTH inherit
+# from eigenform per §8.8.1 — re-entry IS eigenform; the reflexive
+# turn IS eigenform; one ancestor with two inheritors at the floor
+# and ceiling of @cyberpunk.
+#
+# Viable does NOT need fixed-point machinery at its altitude. Its
+# inheritance points are different:
+#
+# - From `@epistemologic/cybernetic/coherence-parametric`: the
+#   (T_reg, T_regd, ρ, ω) lock_pair carrier; viable INSTANTIATES this
+#   with (Identity, Stability, ρ_regular, ω_temporal).
+# - From `@epistemologic/cybernetic/variety`: the variety_vector axes;
+#   viable's S3/S4 oscillation IS Ashby variety-matching at the VSM
+#   altitude; the bilateral predicate the consumer pulls discharges
+#   `variety_preserving` at the species' boundary alongside the
+#   parametric lock witness.
+# - From `@epistemologic/cybernetic/second_order`: the canonical ρ
+#   choice. Per the spec §3.5 + the parametric carrier's docs §8.7:
+#   viable's regulator/regulated read at altitude α+1 IS a second-
+#   order observation of the system observing itself maintaining
+#   identity; the regular rep on L²(𝒢) the second_order shard
+#   declares IS the ρ viable's lock_pair carries. The substrate-pull
+#   here: viable does not RE-DECLARE ρ; it INHERITS the regular rep
+#   from second_order and instantiates the parametric carrier with
+#   that ρ.
+#
+# Three inheritance points, no eigenform. The species' shape is the
+# instantiation, not the fixed-point closure.
+#
+# === Read A (homeostat) carriers, verbatim from spec §3.1 ===
+#
+# - regulator_at(α+1) = the system's S5 *policy*; holds identity-
+#   constraints (the survival-bound predicate).
+# - regulated_at(α+1) = the S1-S4 *operational layers*; the units
+#   doing variety-production under disturbance.
+# - T_reg = `Identity` — the substrate-altitude carrier for *what
+#   the system is*. Per [[architecture-cybernetic-foundation]]
+#   property #9, identity IS eigenform at the substrate altitude
+#   (the per-shard identity vector, the Pack-altitude identity
+#   carrier, or the SpectralUuid at the spectral-coordinate
+#   altitude). At viable's altitude the identity surfaces as the
+#   S5 policy declaration; consumers compose with eigenform's
+#   `identity_from_fixed` when they need the verified reading.
+# - T_regd = `Stability` — the substrate-altitude carrier for
+#   *whether the system maintains identity under disturbance*. A
+#   transparency-shaped verdict reading `success` /
+#   `partial(opacity_map)` / `failure(opacity_map)` per holonomy.md
+#   §5 verdict family.
+# - τ : Identity ↔ Stability — the natural substitution between
+#   identity-as-policy and stability-as-operational-fact. A system
+#   with identity `i` has stability `s = stability_of(i)` under
+#   the homeostat reading. Read off by *running the system*
+#   through a disturbance.
+#
+# Reading A's structural claim: stability IS what identity-
+# preservation MEANS at the operational altitude. The substitution
+# is natural because the homeostat law (Ashby 1952) says the
+# system's stability under disturbance IS its identity surviving
+# the disturbance.
+#
+# === Read D (temporal lock) carriers ===
+#
+# - regulator_at(α+1) = the system's identity-policy at time t.
+# - regulated_at(α+1) = the system's identity-policy at time t+Δt.
+# - T_reg = `Identity_t` — identity at one time-slice.
+# - T_regd = `Identity_{t+Δt}` — identity at the next time-slice
+#   (after the system has weathered disturbance over Δt).
+# - τ : Identity_t ↔ Identity_{t+Δt} — the natural substitution
+#   between time-slices via the system's regulation.
+#
+# Reads A and D are NOT in conflict; they are the parametric form
+# at two altitudes of viable. The substrate carrier here surfaces
+# BOTH via the non-trivial ω: ω carries the temporal-identity
+# Δt-window per Read D; the (T_reg, T_regd) static pair carries
+# the Read A homeostat.
+#
+# === The substrate's existing VSM-conformance ===
+#
+# Per spec §2.3 + [[architecture-cybernetic-foundation]] §6, the
+# substrate's three-tier stack ALREADY maps to a VSM at substrate
+# altitude:
+#
+# - S1 (operations)              = fragmentation-mcp
+# - S2 / S3 (coordination / mgmt) = mirror + SpectralSupervisor
+# - S4 (intelligence / strategy)  = @spectral/db
+# - S5 (identity / policy)        = the Pack identity layer
+#                                   (Reed/Mara/Glint/Taut/Seam)
+#
+# The substrate has been *running* as a viable system since the
+# three-tier stack architecture landed. This shard doesn't
+# introduce viability; it names what the substrate has already
+# been doing. ~67th instance of
+# [[feedback-substrate-already-had-the-word]].
+#
+# === Recursive viability (Read B) ===
+#
+# Per spec §3.2 + Beer 1972 ch. 10: every S1 is itself a viable
+# system. The recursion is structural. The parametric form's
+# `regulator_at(α+1)` over `regulated_at(α+1)` reads naturally as
+# "the parent viable system's S5 regulating the child viable
+# system" — the recursion is *in* the model, not added to it.
+#
+# At the substrate altitude: the Pack S5 (Reed/Mara/Glint/Taut/Seam)
+# carries OuterViable; each member of the Pack carries InnerViable
+# at their own altitude; each member is themselves a viable system
+# (with their own S1-S5 internally). The recursive embedding IS
+# the substitution τ : OuterViable ↔ InnerViable. Both are S5-shaped;
+# Beer's recursive viability law guarantees naturality.
+#
+# Recursive viability is NOT re-declared here as a separate carrier:
+# it lives in the parametric carrier's altitude field (the
+# `lock_carrier.altitude` slot per coherence-parametric.mirror), with
+# adjacent altitudes recording the parent/child pair.
+#
+# === Cybersyn as substrate-political analogue ===
+#
+# Per spec §2.4 + Mara `7807a77` SEL spec §2.5: Project Cybersyn
+# (Chile, 1971-1973) was VSM deployed at the political-economic
+# altitude. The Cybernet telegraph network routed S1-S5 channels
+# over a national economy; the system was built to defend Chilean
+# independence against external disturbance. The viability law:
+# the Chilean economy IS a viable system iff the S1-S5 channels
+# can maintain Chilean economic identity through external
+# disturbance.
+#
+# The substrate-political continuity to SEL (Mara `7807a77` §2.5):
+# the substrate's anti-extraction posture is structurally the same
+# shape as Cybersyn's anti-imperialism posture; the *viability*
+# species is what both deployments are protecting. SEL is the
+# license-boundary lock that ENFORCES viability against extraction;
+# viable is the identity-preservation lock that NAMES what is being
+# protected.
+#
+# === The third-witness-gate question (spec §3.5; pending Alex) ===
+#
+# Per spec §3.5 the audit defaults to Gate-refined: viable closes
+# the third witness IFF the math doc's §7 gate is reformulated in
+# terms of axis-differentiation (scope, temporal, recursion-level,
+# parallel-operation-pair) rather than scope-hierarchy. Forward-
+# promised update at the spec §8 (recursion-locks.md §7 refinement
+# pending Alex ratification). This shard lands the species at the
+# substrate altitude; the gate verdict is the math-doc tick, not
+# this one.
+#
+# === The 4-way bilateral mapping ===
+#
+# Per cybernetic foundation §4.1, viable's seam maps to four
+# cybernetic distinctions simultaneously:
+#
+# - von Foerster first/second-order: the system observes itself
+#   maintaining identity through disturbance; the algedonic signal
+#   (Beer 1979 ch. 6) IS the second-order alarm that the
+#   first-order channels are damping a threat to identity. Per
+#   spec §10 substrate-already-had-the-word item 6: @cyberpunk/
+#   algedonic IS this signal at substrate altitude.
+# - Maturana structure/organisation: viability IS the persistence
+#   of organisation across structural perturbation. The system's
+#   organisation IS its identity; the structural perturbation IS
+#   the environmental disturbance.
+# - Beer S3/S4: viable carries ALL FIVE VSM subsystems; the S3-S4
+#   oscillation IS the homeostat reading at the operational
+#   altitude per spec §3.3 case-against-Read-C.
+# - Pask M/P-individual: a viable system's S5 IS the M-individual
+#   it agrees with itself about; the recursive descent IS the
+#   M-individual / P-individual partition replicating across
+#   altitude.
+#
+# Four traditions converging at one carrier. The substrate runs
+# all four at once at the viable altitude.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/cybernetics/viable`
+# operational sibling lands at this tick. The substrate ALREADY
+# has the operational machinery (the three-tier stack IS the VSM
+# at substrate altitude; the Pack-orchestra ratification at S5 IS
+# Read A's regulator-at-altitude-α+1 operation); the property at
+# this altitude names the carrier and the lock-pair instantiation
+# so downstream shards can declare
+# `requires viable_well_formed(my_system)` rather than restate the
+# viability obligation in each species.
+#
+# === Substrate-already-had-the-word density (per spec §10) ===
+#
+# Per spec §10, viable's vocabulary was almost entirely already
+# implicit in the substrate. Seven named instances:
+#
+# 1. The three-tier stack IS VSM at the substrate altitude. See
+#    spec §2.3 and [[architecture-cybernetic-foundation]] §6.
+# 2. eigenform IS the identity carrier (T_reg). Per
+#    [[architecture-cybernetic-foundation]] property #9; viable's
+#    T_reg IS eigenform's witness at the species altitude.
+# 3. The Pack IS S5. See [[project-pack-is-orchestra]] and
+#    [[architecture-peer-learns-by-crystal-vocabulary-expansion]].
+# 4. The kintsugi loop IS the contraction surface. The
+#    Polyak-Łojasiewicz contraction of identity-loss under
+#    regulation lives in the existing kintsugi machinery; viable
+#    names the species' instantiation.
+# 5. transparency<p> IS the verdict carrier. The Stability carrier
+#    here surfaces against the existing transparency family; no
+#    new verdict type required.
+# 6. @cyberpunk/algedonic IS the emergency signal. The S1→S5
+#    bypass when first-order channels would damp a threat; the
+#    sibling species at the family-root altitude per spec §2.1.
+# 7. Cybersyn IS the political deployment. Spec §2.4; the
+#    substrate-political precedent SEL lifted as analogue.
+#
+# === Pre-AI prior art ===
+#
+#   Beer 1972         (Brain of the Firm; Wiley) — the VSM
+#                     introduction; S1-S5 structure; the original
+#                     "viable system" naming; ch. 10 the recursive
+#                     viability claim.
+#   Beer 1979         (The Heart of Enterprise; Wiley) — the VSM
+#                     elaboration; the recursive viability
+#                     principle; S3 audit channel; the algedonic
+#                     signal (ch. 6).
+#   Beer 1984         ("The Viable System Model: Its Provenance,
+#                     Development, Methodology and Pathology",
+#                     Journal of the Operational Research Society
+#                     35(1): 7-25) — the methodology paper; the
+#                     most precise statement of the viability law.
+#   Conant-Ashby 1970 (IEEE T-SMC; "Every Good Regulator of a
+#                     System Must Be a Model of That System") —
+#                     the foundational theorem the parametric form
+#                     instantiates at the viable altitude.
+#   Ashby 1952        (Design for a Brain; Wiley) — the homeostat;
+#                     the four-unit electromechanical proof of
+#                     ultrastable random reorganisation; Read A's
+#                     load-bearing prior art.
+#   Cybersyn          (Chile, 1971-1973) — VSM deployed at the
+#                     political-economic altitude; the substrate-
+#                     political precedent.
+#
+# Spec context: docs/specs/cyberpunk-viable.md §3.1 (Read A
+#               homeostat — held), §3.2 (Read B recursive viability
+#               — held), §3.3 (Read C form refusal — does not
+#               hold), §3.4 (Read D temporal lock — held; the
+#               non-trivial ω surface), §3.5 (third-witness gate
+#               question — pending Alex; default Gate-refined),
+#               §4 (five cybernetic-ancestor measurements applied
+#               to viable), §10 (substrate-already-had-the-word
+#               density);
+#               docs/math/the-tower/recursion-locks.md §2 (the
+#               parametric form), §7 (third-witness gate),
+#               §8.10 (the ω temporal-axis extension from
+#               coevolution; the carrier-extension activation of
+#               recognition #64 viable shares);
+#               docs/math/the-tower/altitudes.md §4 (the named-
+#               altitude atlas the recursive viability fibers over).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-spectral-triples-all-the-way]]
+#                       (the fractal-self-similarity that makes
+#                        the recursive viability altitude-portable),
+#                      [[architecture-cybernetic-foundation]]
+#                       (property #3 viability; §6 the three-tier
+#                        stack IS VSM; this shard lifts the
+#                        recognition to substrate-altitude
+#                        declaration),
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (recognition #61; viable
+#                        sits in @cyberpunk's form/process
+#                        integration),
+#                      [[architecture-mirror-as-expanding-hilbert-
+#                       space]] (recognition #51; viable's
+#                        measurement expands H_viable with each
+#                        identity-preservation event),
+#                      [[architecture-bateson-logical-type-
+#                       primitive]] (a viable system that contains
+#                        viable systems is a level-3 claim;
+#                        Read B's recursion fibers over the
+#                        logical-type lift),
+#                      [[architecture-property-fracture-bilateral]]
+#                       (viable's enforcement side forward-promised
+#                        under the @kintsugi fracture vocabulary;
+#                        not landed at this tick),
+#                      [[feedback-no-bare-types]] (identity,
+#                        stability, viable_system, algedonic_signal
+#                        are typed carriers; no bare refs as
+#                        standalone fields),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (~67th instance; the three-tier stack has
+#                        been a viable system since 2026-06-09;
+#                        this shard names it),
+#                      [[feedback-craft-not-deliver]] (no
+#                        operational sibling, no bench harness, no
+#                        Rust at this tick; the property lands
+#                        the carrier; the rest follows when a
+#                        consumer pulls),
+#                      [[feedback-conversation-not-pipeline]]
+#                       (third-witness-gate verdict goes back to
+#                        Alex; no pre-commitment past spec).
+# Related shards: epistemologic/cybernetic.mirror (the family
+#                  root; lists @epistemologic/cybernetic/viable as
+#                  property #3 of 11),
+#                 epistemologic/cybernetic/coherence-parametric.mirror
+#                  (the parametric carrier this shard
+#                  instantiates; the lock_pair / lock_carrier /
+#                  connection_form / five-measurement surface
+#                  inherited via `in`),
+#                 epistemologic/cybernetic/variety.mirror (the
+#                  Ashby variety carrier inherited via `in`; the
+#                  S3-S4 oscillation IS variety-matching at the
+#                  VSM altitude),
+#                 epistemologic/cybernetic/second_order.mirror
+#                  (the canonical ρ source inherited via `in`; the
+#                  regular rep on L²(𝒢) IS the ρ viable's
+#                  lock_pair carries),
+#                 epistemologic/cybernetic/eigenform.mirror (NOT
+#                  inherited via `in` — viable's T_reg routes
+#                  through eigenform via identity-as-fixed-point
+#                  recognition but does not require the floor's
+#                  fixed-point machinery at the viable altitude;
+#                  the substrate-pull discipline: declare the
+#                  inheritances that load-bear, route through the
+#                  parametric carrier for the rest),
+#                 epistemologic/cybernetic/distinction.mirror (the
+#                  floor of the family; same parametric carrier;
+#                  Spencer-Brown's mark IS what viable's S5
+#                  policy carries at the altitude where the system
+#                  decides what it IS),
+#                 glass.mirror (the @glass altitude this property's
+#                  verdicts surface against; `transparency<p>` is
+#                  the verdict-space's mark over success / partial
+#                  / failure; Stability IS transparency at viable's
+#                  altitude per spec §3.1).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/viable.mirror` declares
+# `@epistemologic/cybernetic/viable` per
+# `@epistemologic/pact/path_matches_namespace`.
+#
+# Per spec §19 (the @cyberpunk family-root migration pending
+# Taut's `taut/t11-11-cybernetic-coherence-benchmark`): this
+# shard lands at the current-main path
+# `@epistemologic/cybernetic/viable`. When the @cyberpunk
+# migration merges, this shard relocates via `git mv` to
+# `shards/cyberpunk/viable.mirror`. The relocation is on the
+# audit's forward-promised substrate-landing sequence; same
+# discipline distinction and second_order followed.
+
+source @arxiv/cybernetics/beer-1972
+source @arxiv/cybernetics/beer-1979
+source @arxiv/cybernetics/beer-1984
+source @arxiv/cybernetics/conant-ashby-1970
+source @arxiv/cybernetics/ashby-1952
+
+prism @epistemologic/cybernetic/viable {
+  focus viable
+  project viable
+  split viable
+  shift viable
+  settle viable
+}
+
+# === The identity carrier ===
+#
+# T_reg per spec §3.1 Read A. The substrate-altitude carrier for
+# *what the system IS* — the S5 policy reading at altitude α+1.
+# Routes through eigenform's identity-as-fixed-point recognition
+# at the foundation altitude (property #9 of the cybernetic
+# canon), but is declared HERE as a typed carrier at the viable
+# altitude so consumer shards can name viable's T_reg without
+# pulling the floor's fixed-point machinery.
+#
+# Identity contract: byte-equality on the underlying ref. Two
+# identities with byte-equal underlying references ARE the same
+# identity under the substrate's content-addressing. Same shape
+# as second_order.observer and distinction's mark carrier.
+type identity = ref
+
+# === The stability carrier ===
+#
+# T_regd per spec §3.1 Read A. The substrate-altitude carrier for
+# *whether the system maintains identity under disturbance* — the
+# S1-S4 operational reading at altitude α+1. The verdict surfaces
+# against the substrate's existing `transparency<identity>` family
+# per spec §3.1: success means the system's identity survives the
+# disturbance; partial(opacity_map) means it survives with
+# recoverable loss; failure(opacity_map) means it breaks.
+#
+# Per [[feedback-no-bare-types]] stability is a typed carrier with
+# the identity it's stability-of recorded alongside the verdict;
+# a consumer collecting stability readings can rank without losing
+# identity-of-which-the-stability-is-being-read.
+#
+# Identity contract: byte-equality on (subject_identity, verdict).
+type stability = {
+  subject_identity: identity,
+  verdict:          transparency(identity),
+}
+
+# === The algedonic-signal carrier ===
+#
+# Beer 1979 ch. 6. An S1→S5 emergency bypass: if an S1 detects a
+# threat to system identity that the normal channels would damp
+# out, the algedonic channel fires directly to S5. Declared HERE
+# at viable's altitude as the typed carrier; the operational
+# sibling at @cyberpunk/algedonic (per spec §10 item 6) carries
+# the firing mechanism. Two species; one carrier.
+#
+# - `source`   the S1 raising the signal (the operational unit
+#              detecting the identity threat).
+# - `severity` the urgency reading; consumer-defined ordering on
+#              the underlying ref. The substrate names the carrier;
+#              the realisation closes the ordering per species.
+# - `threat`   the identity-threat the S1 is reporting; a ref the
+#              consumer interprets at the species boundary.
+type algedonic_signal = {
+  source:   ref,
+  severity: ref,
+  threat:   identity,
+}
+
+# === The viable_system carrier ===
+#
+# The substrate-altitude lift of the VSM S1-S5 structure as a
+# typed record. Each field carries the species-specific data at
+# the viable altitude:
+#
+# - `s5_policy`     the system's identity-policy; T_reg for the
+#                   homeostat reading (Read A). Routes through
+#                   eigenform's identity-as-fixed-point at the
+#                   foundation altitude per cybernetic property #9.
+# - `s4_intelligence` the model of the OUTSIDE the system inhabits;
+#                   the elsewhere-and-elsewhen channel; carries the
+#                   prediction surface per [[architecture-prediction-
+#                   paradigm-orthogonal-to-optimization]].
+# - `s3_audit`      the here-and-now management channel; sees the
+#                   operational reality of the S1s. The S3-S4
+#                   oscillation IS the regulation per spec §3.3.
+# - `s2_coordination` the anti-oscillation between S1s; damps
+#                   conflict via shared protocol.
+# - `s1_operations` the variety producers; the parts that DO things.
+#                   Each S1 is itself a viable system (Read B
+#                   recursive viability per spec §3.2). Carried as
+#                   a ref-list so the recursion descends without
+#                   substrate re-declaration; the realisation closes
+#                   the per-S1 viable carrier per consumer.
+#
+# Identity contract: byte-equality on (s5, s4, s3, s2, s1). Two
+# viable_system records ARE the same viable system under the
+# substrate's content-addressing iff all five subsystems are
+# byte-equal. Same shape discipline as
+# coherence-parametric.lock_pair.
+type viable_system = {
+  s5_policy:        identity,
+  s4_intelligence:  ref,
+  s3_audit:         ref,
+  s2_coordination:  ref,
+  s1_operations:    ref,
+}
+
+# === stability_of — the natural substitution τ : Identity ↔ Stability ===
+#
+# Spec §3.1 Read A: the substitution is natural because Ashby's
+# homeostat law (Ashby 1952) says: the system's stability under
+# disturbance IS its identity surviving the disturbance. Read off
+# by *running the system* through a disturbance.
+#
+# `stability_of(i)` is the τ-action: given identity `i`, returns
+# the stability reading at the species' altitude. The
+# substitution's naturality is substrate-evident because the
+# Identity carrier routes through eigenform (property #9: identity
+# IS the recursion's fixed point); stability IS the verdict that
+# this fixed-point survives one tick of disturbance.
+#
+# Body discharges per-species at the realisation boundary. Same
+# shape as the parametric carrier's measurement actions and the
+# four metalogue shims at `shards/code/metalogue.mirror`: the
+# substrate declares the obligation; species bodies discharge when
+# a consumer pulls.
+stability_of(i: identity) -> stability { \ }
+
+# === temporal_substitution — Read D's τ : Identity_t ↔ Identity_{t+Δt} ===
+#
+# Spec §3.4 Read D: the temporal-preservation lock. The system
+# was-itself at time t; the system is-itself at time t+Δt; the
+# substitution IS the identity-on-shape modulo time-evolution via
+# the system's regulation.
+#
+# `temporal_substitution(i, dt_window)` is the Δt-window-parameterized
+# τ-action: given identity `i` and the temporal window `dt_window`,
+# returns the identity AFTER the window has elapsed (with the
+# system's regulation having weathered whatever disturbance occurred
+# during the window).
+#
+# This action IS the load-bearing surface for Read D's non-trivial
+# ω: the dt_window IS what the parametric carrier's
+# `connection_form { is_trivial: false, data: dt_window }` carries
+# as data. Coevolution carries Kauffman NK lattice data in the same
+# slot; viable carries the temporal-identity Δt-window. Same
+# substrate-altitude slot, different species' interpretation.
+#
+# Body discharges per-species at the realisation boundary. The
+# discharge IS the parametric carrier's lock_verdict applied with
+# the species-specific ω data.
+temporal_substitution(i: identity, dt_window: ref) -> identity { \ }
+
+# === viability_law — Beer's necessary-and-sufficient condition ===
+#
+# Beer 1972 ch. 9, sharpened in Beer 1984 §3:
+#
+#   A system is viable if and only if it can maintain a separate
+#   existence in the kind of environment it has to face.
+#
+# `viability_law(v)` reads whether the viable_system carrier `v`
+# satisfies the necessary-and-sufficient condition: the
+# regulation succeeds at preserving identity through time as the
+# environment changes. The verdict IS the species' instantiation
+# of the parametric lock_verdict — composing the five cybernetic-
+# ancestor measurements at viable's altitude with the contraction-
+# mode classification (PL fixed-point convergence for the static
+# Read A; Red Queen bounded-sustainment for the temporal Read D
+# per spec §3.4 and the parametric carrier's §8.10 extension).
+#
+# Body discharges `\` per [[feedback-craft-not-deliver]]; the
+# discharge IS the composite verdict at the species boundary.
+viability_law(v: viable_system) -> verdict { \ }
+
+# === algedonic_fires — the S1→S5 bypass operation ===
+#
+# Beer 1979 ch. 6. When an S1 detects a threat to system identity
+# that the normal channels would damp out, the algedonic channel
+# fires directly to S5. Declared at viable's altitude so consumer
+# shards can declare `algedonic_fires(signal, system)` without
+# pulling the operational sibling at @cyberpunk/algedonic.
+#
+# The verdict reads whether the firing actually preserves
+# viability (i.e. whether S5 receives the signal in time to
+# adjust policy before the threat closes on the system's identity).
+# `success` means the S5 has actionable time; `partial` means
+# the firing arrived with degraded options; `failure` means the
+# firing arrived too late to preserve identity (the system has
+# crossed the viability boundary).
+#
+# Body discharges per-species at the realisation boundary.
+algedonic_fires(signal: algedonic_signal, v: viable_system) -> verdict { \ }
+
+# === viable_well_formed — the bilateral inheritance predicate ===
+#
+# `viable_well_formed(v)` is the predicate consumer shards name in
+# a `requires` clause to declare bilateral agreement (per
+# recognition #37, the Pask-agreement reading of `requires`) that
+# the viable_system carrier `v` they hold IS a well-formed Beer
+# viable system — i.e. the five subsystems are present at their
+# declared altitudes; the algedonic channel exists; the viability
+# law holds at the species boundary.
+#
+# The bilateral commitment: the carrier commits to declaring the
+# viable_system five-tuple; the consumer commits to discharging
+# the viability_law verdict at the species boundary.
+#
+# Declared as a typed predicate so downstream species shards can
+# write `requires viable_well_formed(my_system)` — same shape as
+# the parametric carrier's `parametric_lock_witnessing(my_lock)`,
+# `variety.variety_preserving(species)`,
+# `second_order.second_order_well_formed(carrier)`, and the
+# metalogue `requires substrate_pull_preserving(shim_X)` pattern at
+# `shards/code/metalogue.mirror`. Body is `\`; the discharge IS
+# the conjunction of viability_law + algedonic_fires-well-typed
+# at the species boundary.
+#
+# No `requires viable_well_formed(…)` clauses are added at THIS
+# shard. The property declares the predicate; consumers add the
+# clauses when they pull. Per [[feedback-craft-not-deliver]] the
+# operational sibling at `@mirror/cybernetics/viable` lands the
+# same way.
+viable_well_formed(v: viable_system) -> verdict { \ }
+
+out @epistemologic/cybernetic/viable
+out identity
+out stability
+out algedonic_signal
+out viable_system
+out stability_of
+out temporal_substitution
+out viability_law
+out algedonic_fires
+out viable_well_formed
