@@ -1,0 +1,80 @@
+// @epistemologic/cybernetic/algedonic
+//
+// Beer's algedonic signal. The thin-specialization (recognition #73 payoff
+// of recognition #63's parametric framing) of @epistemologic/cybernetic/
+// bateson_learning at Bateson Level III, in the Beer-VSM basis.
+//
+// Per recursion-locks.md §8.6: the S1→S5 emergency bypass IS the substrate
+// operating at Bateson Level III at cybernetic-VSM altitude. Premise-
+// change collapsing N-many regulated layers in one signal.
+//
+// T_reg   = Premise            (Bateson Level III — the premise that the
+//                               regulated S1-S4 hierarchy is operating under)
+// T_regd  = RegulatedPremise   (the regulated S1-S4 layers — the operational
+//                               hierarchy whose premise-frame can be bypassed)
+// τ       = bypass_signal      (S2-S4-crossing morphism — algedonic τ does
+//                               NOT compose layer-by-layer; it cuts through)
+// ρ       = ρ_bateson(N=3)     (INHERITED — no canonical declaration; the
+//                               restriction at grade 3 of bateson_learning's
+//                               graded-algebra rep, basis-changed to Beer-VSM)
+// ω       = inherited          (temporal axis inherited from bateson_learning;
+//                               algedonic operates in the same time-altitude)
+//
+// Ancestry:
+//   Beer 1972 — *Brain of the Firm*   (algedonic signal in VSM)
+//   Beer 1979 — *The Heart of Enterprise*
+//   Bateson 1972 — *Steps to an Ecology of Mind*  (Learning III)
+//
+// The LOAD-BEARING piece: NO species-specific canonical ρ. All five
+// cybernetic-ancestor measurements inherit via the grade-3 restriction
+// composed with the Beer-VSM basis change applied to bateson_learning's
+// graded-algebra decomposition. This shard is the thin-specialization
+// test of recognition #63's payoff — the body stays small because the
+// parent absorbs the load.
+
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/bateson_learning
+in @math/beer/vsm
+in @epistemologic/property/algedonic
+
+prism algedonic <= cybernetic_species {
+
+  // ── carrier instantiation ─────────────────────────────────────────
+  // Inherits the carrier shape from bateson_learning. We DO NOT
+  // re-declare ρ — the parent's graded-algebra rep, restricted to
+  // grade 3, basis-changed to Beer-VSM, IS our ρ. Same for ω.
+
+  T_reg   := premise
+  T_regd  := regulated_premise
+  tau     := bypass_signal
+  rho     := restrict_grade_3(@epistemologic/cybernetic/bateson_learning::rho)
+  omega   := inherited(@epistemologic/cybernetic/bateson_learning::omega)
+
+  // ── action surface ───────────────────────────────────────────────
+
+  bypass_signal(s5_target: ref, s1_source: ref) -> ref { \
+    // The algedonic signal itself: an S1-pain crosses S2-S4 directly
+    // into S5. τ is NOT layered composition; it is the substrate's
+    // grade-3 morphism — premise-change as a single non-decomposable hop.
+    \splinter(ast)
+  }
+
+  s5_acknowledgment(signal: ref) -> verdict { \
+    // S5's response to the bypass. The verdict is whether the premise
+    // shift is admitted. Carries the Bateson-III-altitude semantics:
+    // S5 may revise the frame the S1-S4 hierarchy operates under.
+    \splinter(ast)
+  }
+
+  algedonic_well_formed(signal: ref) -> verdict { \
+    // Bilateral predicate: the signal is well-formed iff (i) it crosses
+    // S2-S4 atomically (τ is non-decomposable in the layer basis) AND
+    // (ii) its restriction to grade 3 of bateson_learning's graded rep
+    // coincides with the Beer-VSM bypass morphism. Inheritance discharges.
+    \splinter(ast)
+  }
+}
