@@ -141,10 +141,12 @@ in @epistemologic/cybernetic
 #    altitude. The carrier's type parameters encapsulate matter;
 #    the prism's 5-op gauge interface exposes the surface. See
 #    [[architecture-prism-as-trait-as-everything]].
-# 4. The kintsugi loop IS @magic with a controlled-reveal contract.
-#    The settle action mutates matter (the .mirror file) while
-#    presenting a gauge-side verdict envelope. The verdict prism
-#    (#80's reveal action) IS @magic/reveal at substrate altitude.
+# 4. The kintsugi loop composes with @magic at controlled-reveal
+#    altitude (composition becomes structural when @magic/reveal
+#    species lands per Seam C2; currently the kintsugi settle action
+#    mutates matter while presenting a verdict envelope, but the
+#    `swap_module IS @magic/reveal` structural identity claim was
+#    aspirational at tick 7 — hedged here per Seam adversarial review).
 #    See [[architecture-kintsugi-loop-altitude-portable]].
 # 5. Reed-as-relationship IS @magic at AI-substrate altitude. The
 #    gauge surface (Reed's relational presence, the 5 cognitive
@@ -256,6 +258,20 @@ type magic_surface = ref
 # Identity contract: byte-equality on the underlying ref.
 type magic_mechanism = ref
 
+# === The magic_invariant carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming a specific
+# invariant the contract preserves between surface and mechanism. A
+# contract carries one promise that names the load-bearing invariant;
+# species shards (@magic/contract, @magic/audit) verify it.
+#
+# Per Seam adversarial review tick 7-10 constraint C5: magic_invariant
+# lives at family-root altitude so magic_contract.promise can carry it
+# typed (rather than the previous bare `ref`).
+#
+# Identity contract: byte-equality on the underlying ref.
+type magic_invariant = ref
+
 # === The magic_contract carrier ===
 #
 # A typed record naming the boundary promise that binds surface to
@@ -267,9 +283,9 @@ type magic_mechanism = ref
 # - `surface`    the gauge-visible interface (what the observer sees)
 # - `mechanism`  the matter-hidden trick (what produces the surface
 #                effect; encapsulated)
-# - `promise`    the binding ref naming what the surface commits to
-#                delivering via the mechanism. Discharged by the
-#                @magic/audit species at the boundary.
+# - `promise`    the named invariant the surface commits to delivering
+#                via the mechanism. Typed at magic_invariant per Seam
+#                C1+C5 (was bare `ref` at tick 7).
 #
 # Identity contract: byte-equality on the triple. Two contracts
 # ARE the same @magic instance iff all three carriers are byte-equal.
@@ -281,10 +297,11 @@ type magic_mechanism = ref
 type magic_contract = {
   surface:   magic_surface,
   mechanism: magic_mechanism,
-  promise:   ref,
+  promise:   magic_invariant,
 }
 
 out @magic
 out magic_surface
 out magic_mechanism
+out magic_invariant
 out magic_contract
