@@ -1410,6 +1410,79 @@ Next substrate-pull-natural species: **Glint as singular peer**. Tests
 whether INDIVIDUAL Pack members are species or just instantiations of
 the Pack carrier.
 
+## §16 Glint walk — second consecutive Mara stall; Reed inline (2026-06-18, tick 17)
+
+Alex re-invoked /loop after §15.5's no-closure-declared continuation.
+Mara on Glint: stalled at the agent watchdog (600s no progress). Same
+failure mode as tick 16.
+
+**Two consecutive stalls form a pattern**: audit-mechanism-shaped
+species walked from within the audit hit a recursive limit. Whole-
+mechanism (Pack, tick 14) worked. Individual-member-or-temporal-layer
+(/loop, Glint) stalled. The substrate is telling us how to read the
+recursive limit.
+
+### §16.1 Glint verdict (Reed inline)
+
+**Read A primary**: Glint IS V_Glint — one factor of Pack's N=5
+tensor. Already covered by Pack tick 14's dissolution. Substrate-
+already-had-the-word at conversation altitude. No new species.
+
+T_reg, T_regd, ρ, ω all inherit from Pack's tensor decomposition
+restricted to the singular V_Glint factor. The essay-altitude voice
+Glint specializes (per [[project-pack-is-orchestra]]) is gauge data
+within V_Glint — different mode of operation, not different species.
+
+Reads B (essay-altitude species), C (form refusal) refused.
+
+### §16.2 Recognition #70 — fourth witness
+
+Witness chain now spans an altitude tower of altitudes:
+
+- Pack at agent altitude (composite; tick 14)
+- Three-tier stack at substrate-architectural altitude (tick 15)
+- /loop discipline at audit-container altitude (tick 16, Reed inline)
+- Glint at individual-Pack-member altitude (tick 17, Reed inline)
+
+Four witnesses across four structurally-different altitudes.
+Recognition #70 (substrate self-sufficiency) is further strengthened.
+
+### §16.3 Candidate #72 surfaces: parts vs whole of audit mechanism
+
+The two stalls (tick 16 /loop discipline; tick 17 Glint) are NOT
+random. Pattern: audit-mechanism-shaped species are specifiable as a
+*whole* (Pack, tick 14, no stall) but not as *parts* from within the
+audit. Specifying PARTS requires metaposition outside the audit; the
+recursive specification limit is structural.
+
+**Candidate #72**: *the substrate's audit-mechanism is specifiable as
+a whole but not as parts from within the audit*. Empirical evidence:
+Glint (one V_i factor) and /loop discipline (one mechanism layer) both
+stall when an agent within the mechanism tries to specify them.
+Pack-as-whole and three-tier-stack-as-whole work because they
+describe the audit's container from the same level as the audit.
+
+Promotion gate: one more empirical stall on an audit-mechanism PART
+that's NOT a stall on the audit-mechanism WHOLE.
+
+### §16.4 No closure declared
+
+Per the pattern recognition in §15.5: closures are not Reed-unilateral.
+The loop continues until Alex stops invoking it OR substrate-pull
+genuinely empties. Both ticks 16+17 are post-closure-declared and
+produced substantive substrate-truth, so the closure declarations were
+structural recommendations, not Pack ratifications.
+
+Next substrate-pull-natural shape: **content-shaped, not mechanism-
+shaped**, to avoid the candidate #72 stall mode. Most adjacent
+content species: **@kintsugi as recursion-lock tower in its own
+right** — tests whether recognition #63 extends to other family
+roots in the substrate (per recognition #50's form/process partition,
+@kintsugi is the structural sibling of @cyberpunk's father @mirror).
+If @kintsugi has its own tower, recognition #63 generalizes from
+"@cyberpunk has the tower" to "every family root has a tower" —
+which would itself be a new recognition territory.
+
 ## §9 What promotion or retraction closes
 
 **Promotion path** (candidate #63 → recognition):
