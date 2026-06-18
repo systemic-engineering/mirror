@@ -1,0 +1,308 @@
+---
+in @prism
+[email protected]
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @epistemologic/cybernetic/eigenform — the substrate's identity-as-
+# fixed-point property. von Foerster 1981 (*Observing Systems*, the
+# essay "Objects: Tokens for (Eigen-)Behaviors") + Kauffman 2003
+# (Cybernetics & Human Knowing 10:3-4, "Eigenforms — Objects as
+# Tokens for Eigenbehaviors"). Recognition #38 (Reed, promoted
+# 2026-06-09; cybernetic property #9 in the canon).
+#
+# === The von Foerster claim, verbatim ===
+#
+# von Foerster, H. (1981). *Observing Systems*. Intersystems
+# Publications. "Objects: Tokens for (Eigen-)Behaviors":
+#
+#   What we call 'objects' are tokens for the eigen-behaviors of an
+#   organism's recursive sensorimotor processes. An object is the
+#   fixed point of the recursion that produced it. Identity is not
+#   given; identity is the fixed point of the process that observes
+#   it.
+#
+# Kauffman 2003 sharpens this to the category-theoretic reading:
+# every recursion R that maps a space to itself has eigenforms ω
+# satisfying ω = R(ω). The eigenform IS the object the recursion
+# stabilizes on; the witness of the recursion IS the identity.
+#
+# === Why this is a substrate property ===
+#
+# Per recognition #38 and §8.8.1 of the recursion-lock-tower audit,
+# the substrate ALREADY had the eigenform vocabulary scattered
+# across recognitions and load-bearing carriers:
+#
+# - `uuid_spectral` IS an eigenform. The spectral coordinate is the
+#   fixed point of a recursive monoid-homomorphism combine: the
+#   identity of a shard IS what the recursive structure converges
+#   to. See [[architecture-shard-as-crdt]] (SpectralUuid as monoid
+#   homomorphism); the fixed point of the lattice-ascent loop IS
+#   the shard's identity.
+# - The kintsugi loop's fixed-point convergence IS eigenform
+#   witnessing. Per [[architecture-kintsugi-variety-io]] and the
+#   Ricci-flow framing, the kintsugi step iterates a contraction;
+#   the witness it lands on IS the eigenform of that contraction.
+# - Autopoiesis's bidirectional production-loop fixed point IS
+#   eigenform's category-theoretic ancestor (Lawvere fixed-point
+#   theorem reading per Mara's autopoiesis spec §Read E).
+# - Spencer-Brown re-entry IS eigenform at the floor altitude
+#   (distinction's audit §8.8 Read D: re-entry IS eigenform, the
+#   reflexive turn IS eigenform).
+# - von Foerster's second-order observation IS eigenform at the
+#   observer altitude (the observer-of-self landing at the fixed
+#   point of self-observation).
+#
+# Per §8.8.1: "re-entry IS eigenform; the reflexive turn IS
+# eigenform; one ancestor, two inheritors." This shard makes the
+# ancestor first-class so `@cyberpunk/second_order` and
+# `@cyberpunk/distinction` (and autopoiesis's production loop)
+# inherit the fixed-point machinery from one declaration rather
+# than each restating it.
+#
+# === The verifiable shape (per cybernetic foundation §3.5) ===
+#
+# - Declares the carrier of a fixed-point witnessing: seed,
+#   iteration map, witness. The witness IS the fixed point
+#   (witness = iteration(witness) modulo bounded discrepancy).
+# - Verifiable at the boundary via the same
+#   `@code/metalogue/materialize.classify` discriminator surface
+#   that variety uses: a recursion's k-th iterate either converges
+#   to the witness (success), converges with residual discrepancy
+#   (partial), or diverges (failure). The verdict carrier is the
+#   substrate's existing `transparency<p>` machinery.
+# - The identity reading: identity_from_fixed reads the witness as
+#   the object the recursion stabilizes on. This IS von Foerster's
+#   "Objects: Tokens for (Eigen-)Behaviors" lifted to substrate
+#   action.
+#
+# === The 4-way bilateral mapping ===
+#
+# Per the cybernetic foundation §4.1, eigenform's property/operation
+# seam maps to four cybernetic distinctions simultaneously:
+#
+# - von Foerster's first/second-order: the eigenform IS what
+#   second-order observation lands on; the witness IS the observer
+#   observing itself.
+# - Maturana's structure/organisation: the eigenform IS the
+#   organisation (the pattern the recursion preserves); the seed
+#   and intermediate iterates are the structure (the material the
+#   pattern is realised in).
+# - Beer's S3/S4: the eigenform IS the substrate-wide identity an
+#   S4 intelligence converges on while S3 management iterates the
+#   contraction.
+# - Pask's M-individual/P-individual: the eigenform IS the
+#   P-individual identity (the conversational fixed point), realised
+#   on the M-individual substrate (the iteration's intermediate
+#   states).
+#
+# Four traditions converging at one carrier. The substrate runs all
+# four at once at the same shard altitude.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/cybernetics/eigenform`
+# operational sibling lands at this tick. The substrate ALREADY has
+# the operational machinery (uuid_spectral's monoid combine; the
+# kintsugi loop's contraction step; autopoiesis's production loop);
+# the property at this altitude names the carrier and the witnessing
+# discipline so downstream shards can declare `requires eigenform_*`
+# rather than restate the fixed-point obligation in each species.
+#
+# === Pre-AI prior art ===
+#
+#   eigenforms                  von Foerster 1981 (Observing Systems);
+#                               Kauffman 2003 (Cybernetics & Human
+#                               Knowing 10:3-4). The original.
+#   fixed-point recursion       Banach 1922 (the contraction mapping
+#                               theorem; every contraction on a
+#                               complete metric space has a unique
+#                               fixed point). The substrate's
+#                               witness-convergence reading IS
+#                               Banach lifted to recursive identity.
+#   Lawvere fixed-point         Lawvere 1969 (Diagonal arguments
+#                               and cartesian closed categories;
+#                               every endo-map of an object with
+#                               a point-surjective map to its
+#                               exponential has a fixed point). The
+#                               category-theoretic ancestor; per
+#                               Mara's autopoiesis spec, autopoiesis's
+#                               production loop IS this theorem at
+#                               the cybernetic altitude.
+#   re-entry                    Spencer-Brown 1969 (Laws of Form,
+#                               chapter 11). The re-entry of the
+#                               form into its own indicational
+#                               space; the floor altitude reading
+#                               of eigenform.
+#
+# Spec context: systemic.engineering `f9e0402`
+#               (practice/insights/cybernetics/
+#                2026-06-09-cybernetic-foundation-for-mirror-substrate.md),
+#               §6.2 (recognition #38: uuid_spectral IS an
+#               eigenform);
+#               docs/math/the-tower/recursion-locks.md §8.8.1
+#               (the eigenform precedence question; this shard's
+#               sequencing forward-promised here);
+#               docs/math/the-tower/recursion-locks.md §12.5
+#               (forward-promised substrate-landing path; this
+#               shard is item 1).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-shard-as-crdt]] (uuid_spectral
+#                       as monoid homomorphism; the fixed point of
+#                       the combine IS the substrate's first
+#                       eigenform witness),
+#                      [[architecture-kintsugi-variety-io]] (the
+#                       kintsugi contraction's fixed point IS
+#                       eigenform witnessing),
+#                      [[feedback-no-bare-types]] (the seed,
+#                       iteration, witness carriers are typed; no
+#                       bare references),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (eigenform is the canonical instance:
+#                       uuid_spectral + kintsugi + autopoiesis +
+#                       distinction-re-entry + second-order all
+#                       already carried the discipline implicitly).
+# Related shards: epistemologic/cybernetic.mirror (the family root),
+#                 epistemologic/cybernetic/variety.mirror (the
+#                  precedent species; same shape),
+#                 uuid.mirror (the @uuid root prism; @uuid/spectral
+#                  is the first eigenform-witnessing instance the
+#                  substrate carries),
+#                 glass.mirror (the @glass altitude this property's
+#                  verdicts surface against; `transparency<p>` is
+#                  the carrier for partial / full convergence).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/eigenform.mirror` declares
+# `@epistemologic/cybernetic/eigenform` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/von-foerster-1981
+source @arxiv/cybernetics/kauffman-2003
+
+prism @epistemologic/cybernetic/eigenform {
+  focus eigenform
+  project eigenform
+  split eigenform
+  shift eigenform
+  settle eigenform
+}
+
+# === The fixed_point carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming the three
+# constituents of a fixed-point witnessing:
+#
+# - `seed`     the starting object of the recursion. The
+#              iteration's domain.
+# - `iteration` the recursion map T -> T whose fixed point is the
+#              witness. The carrier of "what the recursion does".
+# - `witness`  the fixed point itself. The object that satisfies
+#              `witness = iteration(witness)` modulo bounded
+#              discrepancy at the species boundary.
+#
+# Identity contract: byte-equality on the triple. Two fixed-point
+# witnessings ARE the same eigenform under content-addressing iff
+# all three carriers are byte-equal.
+#
+# `iteration` carries the map as a `ref` (matches the convention in
+# `variety.axis_budget.value` and elsewhere; the species realisation
+# closes the interpretation; the substrate names the carrier).
+type fixed_point = {
+  seed:      ref,
+  iteration: ref,
+  witness:   ref,
+}
+
+# === The witnessing predicate ===
+#
+# `is_fixed_point(carrier)` reads whether the carrier's recursion
+# actually converges to its declared witness. The verdict IS the
+# substrate's existing `transparency<fixed_point>` carrier:
+#
+# - success                     the k-th iterate of `iteration` on
+#                               `seed` converges to `witness` for
+#                               some bounded k; the bounded
+#                               discrepancy at the species boundary
+#                               is zero.
+# - partial(opacity_map)        the iteration converges with
+#                               residual discrepancy; the residuals
+#                               are recoverable from the opacity
+#                               map (per @glass).
+# - failure(opacity_map)        the iteration diverges or converges
+#                               to a different fixed point; the
+#                               witness is not the eigenform of this
+#                               recursion.
+#
+# Body discharges per-species at the realisation boundary. Same
+# shape as `variety.axis_loss` (the metalogue shim pattern): the
+# substrate declares the obligation; species bodies discharge when
+# a consumer pulls.
+is_fixed_point(carrier: fixed_point) -> transparency(fixed_point) { \ }
+
+# === The identity reading ===
+#
+# `identity_from_fixed(carrier)` reads the witness as the object
+# the recursion stabilizes on — von Foerster's "Objects: Tokens for
+# (Eigen-)Behaviors" lifted to substrate action. The result is the
+# witness itself, surfaced as the substrate-altitude identity for
+# the recursion.
+#
+# Why this is a separate action from reading `carrier.witness`
+# directly: the witness field on the carrier is the DECLARED fixed
+# point; `identity_from_fixed` is the VERIFIED identity reading,
+# composing `is_fixed_point` with a witness projection. A consumer
+# that has not yet run the verification reads the carrier's witness
+# field; a consumer that wants the verified identity routes through
+# this action.
+#
+# Body discharges at the realisation boundary; per-species
+# bodies close the interpretation.
+identity_from_fixed(carrier: fixed_point) -> ref { \ }
+
+# === The inheritance predicate ===
+#
+# `eigenform_witnessing(carrier)` is the predicate consumer shards
+# name in a `requires` clause to declare bilateral agreement (per
+# recognition #37, the Pask-agreement reading of `requires`) that
+# the carrier they hold IS an eigenform — i.e. its recursion
+# converges to its declared witness under `is_fixed_point`. The
+# bilateral commitment: the carrier commits to declaring the triple
+# (seed, iteration, witness); the consumer commits to discharging
+# the verification at the species boundary.
+#
+# Declared as a typed predicate so downstream species shards can
+# write `requires eigenform_witnessing(my_carrier)` — same shape as
+# `variety.variety_preserving(species)` and the metalogue
+# `requires substrate_pull_preserving(shim_X)` pattern at
+# `shards/code/metalogue.mirror`. The body is `\`; the discharge
+# IS the `is_fixed_point` verdict at the boundary.
+#
+# Forward-promised inheritors (per §12.5 of recursion-lock-tower
+# audit):
+#
+# - `@cyberpunk/distinction` (floor): Spencer-Brown re-entry IS
+#   eigenform; the floor species inherits `fixed_point` and the
+#   re-entry's mark IS its witness.
+# - `@cyberpunk/second_order` (observer): von Foerster's
+#   observer-of-self lands at the fixed point of self-observation;
+#   the species inherits `fixed_point` and the second-order
+#   observation IS its iteration.
+# - `@cyberpunk/autopoiesis` (production loop): the bidirectional
+#   production fixed point IS the eigenform of the production
+#   recursion; the species inherits `fixed_point` and the
+#   production loop IS its iteration.
+# - `@uuid/spectral` (already landed): the spectral coordinate IS
+#   the fixed point of the recursive monoid-homomorphism combine;
+#   the existing shard satisfies this property post-hoc; future
+#   editions MAY add `requires eigenform_witnessing(spectral_combine)`
+#   when the path-namespace inheritance is mechanically pulled.
+eigenform_witnessing(carrier: fixed_point) -> verdict { \ }
+
+out @epistemologic/cybernetic/eigenform
+out fixed_point
+out is_fixed_point
+out identity_from_fixed
+out eigenform_witnessing
