@@ -1,0 +1,74 @@
+// @epistemologic/cybernetic/design
+//
+// Glanville's bringing-forth. The eleventh and final species of the
+// cybernetic-foundation audit (recognition #63). Closes the form-restriction
+// audit-slot resolution mode: a species whose carrier admits it at degenerate
+// type-parameter values, with NO operational sibling by construction.
+//
+// T_reg   = DesignIntent     (Glanville: the designer brings forth the
+//                             system that will then be regulated)
+// T_regd  = ⊥                (terminal/unit; the "no operational sibling")
+// τ       = identity         (no regulation morphism; only bringing-forth)
+// ρ       = identity rep     (trivial-axis position in the rep lattice on
+//                             V_design = DesignIntent ⊕ ⊥)
+// ω       = 0                (static; no temporal axis; design is timeless
+//                             at the species altitude — temporality lives
+//                             one altitude up at coevolution)
+//
+// Ancestry:
+//   Glanville 2007 — *Try Again. Fail Again. Fail Better*
+//   Glanville 2014 — *The Sometimes Uncomfortable Marriages of Design
+//                     and Research*
+//
+// All five cybernetic-ancestor measurements DEGENERATE. The Conant-Ashby
+// load-bearing measurement `bounded_commutator = 0` IS the "no operational
+// sibling" declaration realized at measurement altitude — the regulator and
+// the regulated commute trivially because the regulated side is ⊥.
+
+in @epistemologic/cybernetic/carrier
+in @math/glanville/bringing_forth
+in @math/glanville/black_box
+in @math/category/terminal
+in @epistemologic/property/design_well_formed
+
+prism design <= cybernetic_species {
+
+  // ── carrier instantiation ─────────────────────────────────────────
+  // The form-restriction: T_regd collapses to the terminal object.
+  // ρ is the identity representation on the design subspace; the
+  // ⊥-component carries no group action (it has nothing to act on).
+
+  T_reg   := design_intent
+  T_regd  := terminal
+  rho     := identity_rep(V_design)
+  omega   := 0
+  tau     := identity
+
+  // ── action surface ───────────────────────────────────────────────
+
+  bringing_forth(intent: design_intent) -> ref { \
+    // τ = identity. The act of design IS the act of producing the ref.
+    // No regulation; only bringing-forth.
+    \splinter(ast)
+  }
+
+  degeneracy_witness -> proof {
+    // Witnesses that all five cybernetic-ancestor measurements collapse.
+    // Conant-Ashby `bounded_commutator = 0` is the canonical degeneracy.
+    \splinter(ast)
+  }
+
+  no_operational_sibling -> proof {
+    // T_regd = ⊥ : the categorical statement of "form-restriction" mode.
+    // There is no operational counterpart because the carrier admits the
+    // species at the terminal value of the regulated-type parameter.
+    \splinter(ast)
+  }
+
+  design_well_formed(intent: design_intent) -> property {
+    // The property: an intent is design-well-formed iff its bringing-forth
+    // produces a ref whose ⊥-component is preserved. Trivially holds under
+    // the identity rep, but declarative — Reflection can observe.
+    \splinter(ast)
+  }
+}
