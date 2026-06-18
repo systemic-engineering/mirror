@@ -1,0 +1,752 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/coherence-parametric
+in @epistemologic/math/bundle
+in @epistemologic/math/lawvere
+in @epistemologic/property/autopoietic
+
+# @epistemologic/cybernetic/autopoiesis — Maturana-Varela 1972, 1980;
+# Varela 1979; Soto-Andrade & Varela 1984. The substrate-altitude
+# declaration of the autopoiesis species: identity-by-self-production.
+# A system is autopoietic iff its tick-to-tick map admits a Lawvere
+# fixed point; the network of productions produces the conditions for
+# its own continued production.
+#
+# Per the spec at `docs/specs/cyberpunk-autopoiesis.md` (Mara
+# `a65ea47` on `reed/recursion-lock-tower-audit`; 1732 lines), this
+# shard is the substrate landing of:
+#
+# - Reading A held (self-production boundary): T_reg = Organization,
+#   T_regd = Component, τ via Maturana-Varela structure/organisation
+#   co-arising + Soto-Andrade & Varela 1984's Lawvere bridge.
+# - Reading B held (structural coupling): T_reg = Internal,
+#   T_regd = External, τ via Maturana's non-instructive coupling.
+# - Reading C held (operational closure): T_reg = Operation,
+#   T_regd = Product, τ via Varela 1979's closure operator.
+# - Reading D does NOT hold: M-V are explicit that operational
+#   closure ≠ form refusal; autopoiesis is operationally closed BUT
+#   form-fitting because Soto-Andrade & Varela 1984 give a *formal*
+#   instance.
+# - Reading E held STRUCTURALLY (the candidate-#63-closing read):
+#   autopoiesis IS the bundle tower's own structure-group operation.
+#   Mechanical derivation pending Reed's next tick per spec §8.5;
+#   structural correspondence load-bearing for #63 promotion either
+#   way per spec §5.
+#
+# === Why this species' inheritance differs from viable ===
+#
+# Viable inherited from `coherence-parametric + variety + second_order`:
+# the parametric carrier plus two foundation properties that close
+# viable's parametric ρ choice (regular rep on L²(𝒢)). Three `in`
+# declarations carrying the structure.
+#
+# Autopoiesis's substrate-pull routes through DIFFERENT ancestors
+# because Read E is load-bearing and the canonical ρ is the *adjoint*
+# representation (G's self-action). Three new inheritance points:
+#
+# - From `@epistemologic/cybernetic/coherence-parametric`: the
+#   (T_reg, T_regd, ρ, ω) lock_pair carrier; autopoiesis
+#   INSTANTIATES this with (Organization, Component, ρ_adjoint,
+#   ω_trivial). Per the parametric carrier's docs §11.7 the
+#   autopoiesis-row of the species/ρ table explicitly names
+#   `rho = "adjoint"` — this shard is what the table was pointing
+#   at all along.
+# - From `@epistemologic/math/bundle`: the principal-G-bundle tower
+#   whose level-4 Closure IS autopoietic per `lawvere.mirror`. Read
+#   E rests on this directly — autopoiesis's altitude IS the tower
+#   itself; the parametric form's natural substitution τ IS the
+#   structure-group action `G_α ↷ Section_α`. The inheritance is
+#   load-bearing because it lifts the bundle's `type group` and
+#   `type fixed` carriers into autopoiesis's scope.
+# - From `@epistemologic/math/lawvere`: Soto-Andrade & Varela 1984
+#   is the formal-bridge cite that makes Read E mechanical-pending.
+#   Autopoiesis IS the Lawvere fixed-point condition applied to the
+#   self-production map; the substrate's `lawvere.mirror` already
+#   declares the bridge (~175 lines). Inheriting it routes through
+#   the existing closure-as-fixed-point machinery rather than
+#   re-declaring it.
+# - From `@epistemologic/property/autopoietic`: the declarative
+#   property landed 2026-06-01 (Reed `89b643a`, 71 lines) with
+#   verifiers `fixed_point_exists`, `fixed_point_unique`,
+#   `tick_is_contraction`, combined `autopoietic(type)`. THIS shard
+#   does NOT re-declare those verifiers — it ROUTES THROUGH the
+#   existing property. The cybernetic species lifts the property
+#   to the recursion-lock altitude; the property declares the
+#   verifiability discipline; the two close on one another via
+#   the Soto-Andrade & Varela 1984 bridge.
+#
+# Four `in` declarations, no variety, no second_order, no eigenform.
+# The species' shape is the parametric instantiation + the bundle-
+# tower routing + the existing-property reuse. The inheritance IS
+# Reed's substrate-pull discipline applied: the substrate already
+# had the word in FOUR places; this shard names what they were
+# pointing at all along.
+#
+# === Read A (self-production boundary) carriers, verbatim from spec §3.1 ===
+#
+# - regulator_at(α+1) = the system's *organization* (the recursive
+#   pattern that defines what gets produced; the type-level invariant
+#   the system holds across structural changes).
+# - regulated_at(α+1) = the *components* being produced (the concrete
+#   instances at one moment; the values inhabiting the type).
+# - T_reg = `Organization` — the substrate-altitude carrier for the
+#   recursive pattern (the grammar declaration, the prism trait,
+#   the @epistemologic/property predicate).
+# - T_regd = `Component` — the substrate-altitude carrier for the
+#   concrete produced entity (the OID-named value, the action body,
+#   the verdict instance).
+# - τ : Organization ↔ Component — the natural substitution via the
+#   structural coupling between organization and components. An
+#   organization `O` produces components `C = produce(O)` whose
+#   recursive interactions reproduce the organization that produced
+#   them. The substitution is natural because Maturana-Varela's
+#   structure/organisation distinction names them as co-arising
+#   (recognition #40, promoted 2026-06-09); the substrate's
+#   content-addressing closes this naturality through the OID layer
+#   (a component's OID names the organization-that-produced-it).
+#
+# Reading A's structural claim: the organization IS what the
+# components REPRODUCE at the operational altitude. The substitution
+# is natural because Maturana 1980 ch. 1 specifies that organization
+# and structure are co-defined — organization is the relations the
+# components instantiate; components are the instances the
+# organization specifies.
+#
+# === Read B (structural coupling) carriers, verbatim from spec §3.2 ===
+#
+# - regulator_at(α+1) = the system's internal structural state
+#   (the components, the eigenboard, the gen_prism state).
+# - regulated_at(α+1) = the environment's perturbation surface
+#   (the medium's structural state to which the system is coupled).
+# - T_reg = `Internal` — the substrate carrier for the system's
+#   per-tick structural reading.
+# - T_regd = `External` — the substrate carrier for the
+#   environmental perturbation.
+# - τ : Internal ↔ External — the natural substitution via
+#   structural-coupling correspondence: an internal state `i`
+#   determines a receptivity `r = receptivity_of(i)` such that
+#   environmental perturbations resonant with `r` produce internal
+#   structural change; the structural change re-determines the
+#   receptivity; the loop closes via Maturana's structure/
+#   organisation co-arising (per cybernetic-foundation §6 +
+#   recognition #40).
+#
+# Reading B's structural claim: the system maintains organization
+# through non-instructive structural coupling. Reads A and B are
+# NOT in conflict — they bind on different naming choices for the
+# same parametric form (A = inside the membrane, B = across the
+# membrane); the substrate's bilateral property/operation pattern
+# (recognition #53) IS structural coupling at the substrate
+# altitude.
+#
+# === Read C (operational closure) carriers, verbatim from spec §3.3 ===
+#
+# - regulator_at(α+1) = the system's set of operations (the network
+#   of state-transformations; the five-op surface; the prism actions).
+# - regulated_at(α+1) = the set of products (the values the operations
+#   range over; the outputs of the state-transformations).
+# - T_reg = `Operation` — the substrate carrier for an operation
+#   (a five-op invocation: focus/project/split/shift/settle; a
+#   prism action; an action body).
+# - T_regd = `Product` — the substrate carrier for the output of
+#   an operation (the beam after focus, the verdict after settle,
+#   the morphism after shift).
+# - τ : Operation ↔ Product — the natural substitution via the
+#   closure operator: the set of operations CLOSES on its products
+#   iff every product is itself the input to some operation in the
+#   set. Varela 1979's operational closure: the network's output
+#   space IS its input space.
+#
+# Reading C's structural claim: the system's operations close on
+# their products. Per Varela 1979, this IS the sharpening
+# Maturana later accepted as the *definition* of autopoiesis at
+# the operational altitude. The substrate's five-op surface is
+# operationally closed by construction (every product of the five
+# operations is itself the input to some operation in the five-op
+# family).
+#
+# === Read E (bundle structure group) carriers, verbatim from spec §3.5 / §6 ===
+#
+# - regulator_at(α+1) = the bundle's connection at altitude α (the
+#   gauge field carrying parallel transport at the species' altitude).
+# - regulated_at(α+1) = the bundle's section at altitude α (the
+#   fiber-valued field the connection acts on).
+# - T_reg = `Connection_α` — the substrate carrier for the connection
+#   1-form at altitude α (the bundle.mirror's `type optic` lifted to
+#   the species' altitude).
+# - T_regd = `Section_α` — the substrate carrier for the section at
+#   altitude α (the bundle.mirror's `type state` lifted to the
+#   species' altitude).
+# - τ : Connection_α ↔ Section_α — the structure-group action
+#   `G_α ↷ Section_α`. The natural substitution IS the gauge
+#   transformation; the recursion-lock measurement IS Connes'
+#   bounded-commutator condition `[ω_α, section] ∈ G_α` (i.e., the
+#   lock holds iff the connection's parallel transport is gauge-
+#   equivalent to identity at altitude α). The contraction surface
+#   (Polyak-Łojasiewicz) IS the holonomy norm decreasing per tick.
+#
+# Reading E's structural claim: autopoiesis IS the substrate-altitude
+# naming of the bundle tower's own structure-group operation. If
+# the next tick (Reed's `/loop` per spec §8.5) closes the mechanical
+# derivation, candidate #63 PROMOTES — the parametric form becomes
+# a *consequence* of the substrate's geometric foundation rather
+# than a hand-written form. The audit verdict per spec §5: HOLDS
+# structurally; mechanical derivation pending.
+#
+# All four held reads share one species; the audit names them as
+# four altitudes of the same parametric form. The substrate's content-
+# addressing closes coherence across reads (the lock_carrier under
+# Read A has the same OID as the lock_carrier under Read C iff the
+# substitutions τ_A and τ_C resolve to the same structure-group
+# action — which they do by construction at the bundle altitude).
+#
+# === The canonical ρ choice: adjoint representation ===
+#
+# Per spec §3.5 + the parametric carrier's docs §11.7: autopoiesis's
+# choice of representation of the family-root 2-groupoid 𝒢 on
+# V_S = T_reg ⊕ T_regd IS the *adjoint representation*. The adjoint
+# rep is the structure group acting on itself — Ad: G ↷ G — which
+# IS the structural form of self-production: the group of
+# transformations is the group it transforms. Soto-Andrade & Varela
+# 1984's Lawvere fixed-point IS the adjoint-rep's fixed-point
+# (the identity element of G is the unique adjoint-fixed point;
+# the substrate exhibits it at construction time via the content-
+# addressed identity OID).
+#
+# This is structurally distinct from viable (regular rep on L²(𝒢))
+# and second_order (regular rep, inherited). The species-table in
+# coherence-parametric.mirror was already pointing at this: the
+# autopoiesis row reads `rho = "adjoint"`. THIS shard is where the
+# substrate exhibits what that row was naming.
+#
+# === The substrate's existing autopoiesis declarations ===
+#
+# Per spec §2.3 the substrate has been *running* autopoiesis since
+# 2026-05-21 (Lawvere grammar) without naming it at the cybernetic-
+# species altitude. ~74th instance of
+# [[feedback-substrate-already-had-the-word]] — and the DENSEST
+# single-species instance in the audit cascade. Seven named
+# declarations:
+#
+#   1. `@epistemologic/property/autopoietic` (Reed `89b643a`, 71 lines)
+#      — the declarative property with Soto-Andrade & Varela bridge;
+#      INHERITED via `in` above; THIS shard does NOT re-declare its
+#      verifiers.
+#   2. `@epistemologic/math/lawvere` (Reed, ~175 lines) — the formal
+#      Lawvere 1969 grammar + Soto-Andrade & Varela 1984 bridge;
+#      INHERITED via `in` above; supplies the fixed-point machinery.
+#   3. `@epistemologic/math/bundle` — the principal-G-bundle tower's
+#      level-4 Closure IS autopoietic per the lawvere doc cross-ref;
+#      INHERITED via `in` above; supplies the bundle / Read E
+#      carriers.
+#   4. `@mirror/runtime/gen_prism` — explicitly autopoietic
+#      ("`type gen_prism = { name: zoom(oid, gen_prism), ... }` has
+#      a unique fixed point: the OID that names a gen_prism whose
+#      name field IS that OID").
+#   5. `docs/specs/spectral-db-as-autopoietic-memory.md` (Mara
+#      `9c93aae`) — the librarian altitude is the substrate's
+#      autopoietic memory layer.
+#   6. `docs/insights/2026-05-26-epistemologic-reality-...` —
+#      constructivism via autopoiesis; the lens-that-makes-a-peer
+#      reading.
+#   7. `docs/ai/shatter-training-pipeline.md` — 36 mentions; the
+#      shatter pipeline is autopoietically self-improving.
+#
+# Three of seven are INHERITED via `in`. The other four are
+# substrate-evidence the species names but does not re-declare.
+#
+# === The three-tier stack IS autopoietic ===
+#
+# Per spec §2.3 + the cybernetic foundation §6: the substrate's
+# three-tier stack (fragmentation-mcp / mirror / @spectral/db) is
+# BOTH viable (per viable.mirror §111-127) AND autopoietic (per this
+# shard's Read A). The coherence between the two readings IS
+# substrate-evident: viability is identity-preservation; autopoiesis
+# is identity-by-self-production. Identity exists IFF the system
+# both maintains it under disturbance (viable) AND produces it
+# from within (autopoietic). Same substrate facts witness both
+# species — candidate #67 territory per spec §9 Q5.
+#
+# === Maturana-Varela → Beer → Cybersyn influence chain ===
+#
+# Per spec §2.4: Beer 1979 ch. 4 cites Maturana-Varela directly;
+# the VSM's recursive viability is informed by autopoiesis at the
+# organisational altitude. Project Cybersyn deployed VSM at the
+# political-economic altitude; the *intent* was a politically
+# autopoietic system — the Chilean economy reproducing the
+# conditions for its own reproduction without external instruction.
+# The 1973 coup was precisely the destruction of operational
+# closure: external instruction overrode internal self-production.
+#
+# The substrate-political continuity to SEL + viable IS now
+# visible: SEL is the *license* layer protecting operational
+# closure of the substrate; viable is the *organisational* claim
+# that the substrate maintains identity; autopoiesis is the
+# *constitutive* condition that makes the former two coherent.
+# Without autopoiesis, there is no system to protect or to verify
+# viable.
+#
+# === The 4-way bilateral mapping ===
+#
+# Per cybernetic foundation §4.1 + spec §4, autopoiesis's seam
+# maps to four cybernetic distinctions simultaneously:
+#
+# - Ashby variety-match: organization variety ⊇ component variety;
+#   organization's specification capacity equals components' actual
+#   variety modulo τ. Per spec §4.1.
+# - Beer requisite-variety: the VSM is autopoietic at the
+#   organizational altitude; recursive viability inherits requisite
+#   variety from autopoietic closure. Per Beer 1979 ch. 4 + spec
+#   §4.2.
+# - Bateson logical-type-match: organization is at logical-type N+1
+#   from its components; the substitution τ must be the level-
+#   projection. Per spec §4.3.
+# - von Foerster circular-reflexivity: autopoiesis's defining
+#   property. The system observes itself producing itself; the
+#   Tomm probe `[D_F, autopoiesis]` IS the second-order alarm
+#   that the self-production is closing on a fixed point. Per
+#   [[architecture-error-as-tomm-probe]] + spec §4.4.
+# - Conant-Ashby good-regulator (load-bearing): the organization
+#   IS the model of the components; the closure condition IS the
+#   bounded-commutator under the adjoint rep. Per spec §4.5.
+#
+# Five traditions converging at one carrier with ρ = adjoint. The
+# substrate runs all five at once at the autopoiesis altitude.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/cybernetics/
+# autopoiesis` operational sibling lands at this tick. The substrate
+# ALREADY has the operational machinery (the content-addressed OID
+# layer IS the construction-time witness of the Lawvere fixed
+# point; gen_prism IS the typed-actor autopoietic instance; the
+# librarian altitude IS the autopoietic memory layer); the property
+# at this altitude names the carrier and the lock-pair instantiation
+# so downstream shards can declare
+# `requires autopoietic_closure_holds(my_system)` rather than
+# restate the autopoiesis obligation in each species.
+#
+# === Pre-AI prior art ===
+#
+#   Maturana & Varela 1972  (*De máquinas y seres vivos.
+#                            Autopoiesis: la organización de lo vivo*;
+#                            Editorial Universitaria) — the original
+#                            autopoiesis paper; the cell-as-
+#                            autopoietic-system founding move.
+#   Maturana & Varela 1980  (*Autopoiesis and Cognition: The
+#                            Realization of the Living*; D. Reidel)
+#                            — the Boston Studies elaboration; the
+#                            structural-coupling refinement;
+#                            organization vs structure ch. 1.
+#   Maturana & Varela 1987  (*The Tree of Knowledge*; Shambhala) —
+#                            the natural-drift refinement; the
+#                            linguistic-coupling reading that grounds
+#                            Pask conversation.
+#   Varela 1979             (*Principles of Biological Autonomy*;
+#                            Elsevier North Holland) — the autonomy-
+#                            via-organisation refinement; the
+#                            operational closure reading (Read C
+#                            ancestor).
+#   Soto-Andrade & Varela   ("Self-reference and fixed points: a
+#         1984               discussion and an extension of Lawvere's
+#                            theorem", *Acta Applicandae Mathematicae*
+#                            2(1): 1-19, DOI 10.1007/BF00046985) —
+#                            THE load-bearing formal result;
+#                            autopoiesis IS Lawvere fixed-point;
+#                            the bridge that makes the substrate's
+#                            construction-time witness substrate-
+#                            evident.
+#   Lawvere 1969            ("Diagonal arguments and Cartesian closed
+#                            categories", *Lecture Notes in
+#                            Mathematics* 92, 134-145) — the fixed-
+#                            point theorem Soto-Andrade & Varela
+#                            apply.
+#   Beer 1979               (*The Heart of Enterprise*, Wiley, ch. 4)
+#                            — Beer's direct cite of M-V; the bridge
+#                            from autopoiesis to VSM.
+#   Cybersyn                (Chile, 1971-1973) — VSM-as-autopoietic-
+#                            political-system; the substrate-political
+#                            precedent SEL and viable already inherit.
+#
+# Spec context: docs/specs/cyberpunk-autopoiesis.md §3.1 (Read A
+#               self-production boundary — held), §3.2 (Read B
+#               structural coupling — held), §3.3 (Read C
+#               operational closure — held), §3.4 (Read D form
+#               refusal — does NOT hold), §3.5 (Read E bundle
+#               structure group — held STRUCTURALLY, mechanical
+#               pending), §4 (five cybernetic-ancestor measurements
+#               applied to autopoiesis), §5 (verdict), §6 (type
+#               parameters named under each read), §10 (substrate-
+#               already-had-the-word density, 13 instances);
+#               docs/math/the-tower/recursion-locks.md §2 (the
+#               parametric form), §3 (the five measurements),
+#               §6 (the test surface);
+#               docs/math/the-tower/altitudes.md §4 (the named-
+#               altitude atlas the parametric form fibers over);
+#               docs/math/the-tower/holonomy.md §4 (the monotone
+#               descent `eⁿ⁺¹ ≤ eⁿ` IS the contraction surface
+#               autopoiesis closes), §5 (the verdict family), §8
+#               (loop-shaped holonomy IS what autopoiesis closes).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-spectral-triples-all-the-way]]
+#                       (Read E rests on this directly; the fractal
+#                        self-similarity recognition; the principal-
+#                        bundle tower foundation),
+#                      [[architecture-cybernetic-foundation]]
+#                       (autopoiesis IS property #7 of the 11-
+#                        property family),
+#                      [[architecture-cybernetic-coherence-active]]
+#                       (the @cyberpunk migration; this spec extends
+#                        one species deeper),
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (the librarian altitude is the substrate's
+#                        autopoietic memory; the operating principle
+#                        of @spectral/db),
+#                      [[architecture-mirror-as-content-addressed-
+#                       build-system]] (content addressing makes
+#                        the autopoietic fixed point CONSTRUCTIBLE,
+#                        not just verifiable; Banach contraction
+#                        over hash space),
+#                      [[architecture-mirror-as-expanding-hilbert-
+#                       space]] (recognition #51; autopoiesis's
+#                        recursion-lock carries the closure condition
+#                        for each `H_substrate` expansion step;
+#                        vocabulary expansion IS autopoietic by
+#                        construction),
+#                      [[architecture-bateson-form-behaviour-
+#                       partition]] (recognition #50; @cyberpunk
+#                        integrates form/process at the family root
+#                        because Conant-Ashby self-references;
+#                        autopoiesis operationalizes the integration
+#                        — organization (form) and structure (process)
+#                        are co-defined),
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (recognition #61; autopoiesis
+#                        IS the cybernetic ancestor that DEFINED
+#                        the form/process partition — Maturana's
+#                        structure/organisation),
+#                      [[architecture-peer-learns-by-crystal-
+#                       vocabulary-expansion]] (each crystal extends
+#                        A_peer; vocabulary expansion IS autopoietic
+#                        by construction; the peer produces the
+#                        conditions for its own continued naming),
+#                      [[architecture-shard-as-crdt]] (the shard's
+#                        content-addressed identity is structurally
+#                        autopoietic — the OID names the data; the
+#                        data closes on the OID),
+#                      [[architecture-error-as-tomm-probe]] (the
+#                        Tomm probe IS the von_foerster_circular_
+#                        reflexivity measurement; autopoiesis
+#                        applies it to its own self-production),
+#                      [[architecture-property-fracture-bilateral]]
+#                       (autopoiesis's enforcement side forward-
+#                        promised under the @kintsugi fracture
+#                        vocabulary; not landed at this tick),
+#                      [[feedback-no-bare-types]] (organization,
+#                        component, autopoietic_system are typed
+#                        carriers; no bare refs as standalone fields),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (~74th instance; the DENSEST single-species
+#                        instance in the cascade — autopoiesis is
+#                        named seven times in seven places before
+#                        this shard lands),
+#                      [[feedback-craft-not-deliver]] (no operational
+#                        sibling, no bench harness, no Rust at this
+#                        tick; the property lands the carrier; the
+#                        rest follows when a consumer pulls),
+#                      [[feedback-conversation-not-pipeline]]
+#                       (Read E mechanical-derivation verdict goes
+#                        back to Alex via Reed's next tick; no
+#                        pre-commitment past spec).
+# Related shards: epistemologic/cybernetic.mirror (the family
+#                  root; lists @epistemologic/cybernetic/autopoiesis
+#                  as property #7 of 11),
+#                 epistemologic/cybernetic/coherence-parametric.mirror
+#                  (the parametric carrier this shard instantiates;
+#                  inherited via `in`; the species-table row
+#                  `rho = "adjoint"` is what this shard exhibits),
+#                 epistemologic/cybernetic/viable.mirror (the
+#                  parallel species; both close on the same three-
+#                  tier stack from different angles; candidate #67
+#                  territory),
+#                 epistemologic/cybernetic/eigenform.mirror (NOT
+#                  inherited via `in` — autopoiesis's T_reg routes
+#                  through eigenform via property #9 identity-as-
+#                  fixed-point recognition, but the floor's machinery
+#                  is supplied by Lawvere + bundle inheritance;
+#                  substrate-pull: declare the inheritances that
+#                  load-bear, route through the lawvere/bundle
+#                  ancestors for the rest),
+#                 epistemologic/cybernetic/distinction.mirror (the
+#                  floor of the family; Spencer-Brown's mark IS
+#                  what autopoiesis's organization carries at the
+#                  altitude where the system distinguishes itself
+#                  from its environment),
+#                 epistemologic/cybernetic/second_order.mirror (the
+#                  ceiling of @cyberpunk; second_order observes
+#                  autopoiesis observing itself; the recursive
+#                  embedding closes via von_foerster_circular_
+#                  reflexivity),
+#                 epistemologic/math/bundle.mirror (inherited via
+#                  `in`; the principal-G-bundle tower whose level-4
+#                  Closure IS autopoietic; Read E's load-bearing
+#                  ancestor),
+#                 epistemologic/math/lawvere.mirror (inherited via
+#                  `in`; Lawvere 1969 + Soto-Andrade & Varela 1984
+#                  formal bridge; supplies the fixed-point machinery),
+#                 epistemologic/property/autopoietic.mirror (inherited
+#                  via `in`; the declarative verifiers landed
+#                  2026-06-01; this shard routes through rather
+#                  than re-declares),
+#                 glass.mirror (the @glass altitude this property's
+#                  verdicts surface against; `transparency<p>` IS
+#                  the verdict-space's mark over success / partial /
+#                  failure; the closure verdict IS transparency at
+#                  autopoiesis's altitude per spec §6).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/autopoiesis.mirror` declares
+# `@epistemologic/cybernetic/autopoiesis` per
+# `@epistemologic/pact/path_matches_namespace`.
+#
+# Per spec §19 / the @cyberpunk family-root migration pending
+# Taut's `taut/t11-11-cybernetic-coherence-benchmark`: this shard
+# lands at the current-main path `@epistemologic/cybernetic/
+# autopoiesis`. When the @cyberpunk migration merges, this shard
+# relocates via `git mv` to `shards/cyberpunk/autopoiesis.mirror`.
+# Same discipline distinction, second_order, viable followed.
+
+source @arxiv/cybernetics/maturana-varela-1972
+source @arxiv/cybernetics/maturana-varela-1980
+source @arxiv/cybernetics/maturana-varela-1987
+source @arxiv/cybernetics/varela-1979
+source @arxiv/cybernetics/soto-andrade-varela-1984
+source @arxiv/math/lawvere-1969
+source @arxiv/cybernetics/beer-1979
+
+prism @epistemologic/cybernetic/autopoiesis {
+  focus autopoiesis
+  project autopoiesis
+  split autopoiesis
+  shift autopoiesis
+  settle autopoiesis
+}
+
+# === The organization carrier ===
+#
+# T_reg per spec §3.1 Read A. The substrate-altitude carrier for
+# *the recursive pattern that defines what gets produced* — the
+# network-of-productions specification at altitude α+1. Routes
+# through eigenform's identity-as-fixed-point at the foundation
+# altitude (property #9 of the cybernetic canon) and the existing
+# @epistemologic/property/autopoietic's `autopoietic(type)`
+# verifier; declared HERE as a typed carrier so consumer shards
+# can name autopoiesis's T_reg without pulling the full property
+# verifier.
+#
+# Identity contract: byte-equality on the underlying ref. Two
+# organizations with byte-equal underlying refs ARE the same
+# organization under content-addressing — by construction, since
+# an organization's OID IS the Lawvere fixed point of its
+# self-production map (per @epistemologic/math/lawvere).
+type organization = ref
+
+# === The component carrier ===
+#
+# T_regd per spec §3.1 Read A. The substrate-altitude carrier for
+# *the concrete produced entity* — a value the organization
+# specifies, an action body the prism trait names, a verdict
+# instance.
+#
+# Per [[feedback-no-bare-types]] component carries the organization
+# it was produced-by alongside the concrete ref; a consumer
+# collecting components can rank without losing organization-of-
+# which-the-component-is-a-realization.
+#
+# Identity contract: byte-equality on (parent_organization, instance).
+type component = {
+  parent_organization: organization,
+  instance:            ref,
+}
+
+# === The autopoietic_system carrier ===
+#
+# The substrate-altitude lift of Maturana-Varela's autopoietic-
+# system five-tuple as a typed record. Each field carries the
+# species-specific data at autopoiesis's altitude:
+#
+# - `organization`     the system's recursive-production specification;
+#                      T_reg for Read A. The Lawvere fixed-point
+#                      witness at construction time (the OID layer
+#                      exhibits it per @epistemologic/property/
+#                      autopoietic).
+# - `components`       the components currently inhabiting the
+#                      system; T_regd for Read A. Carried as a ref
+#                      so the realization closes the per-system
+#                      component family at the species boundary.
+# - `boundary`         the operational closure surface; the membrane
+#                      analogue at the species' altitude. The boundary
+#                      IS the set of components whose interaction
+#                      with the environment IS structural coupling
+#                      (not operational exchange).
+# - `tick_map`         the self-production map; an action ref the
+#                      consumer realizes per species. Soto-Andrade
+#                      & Varela 1984: the system is autopoietic iff
+#                      this map admits a Lawvere fixed point. The
+#                      substrate's content-addressing exhibits the
+#                      fixed point at construction time.
+# - `environment`      the medium structurally coupled to the
+#                      system; T_regd for Read B. The non-instructive
+#                      perturbation surface.
+#
+# Identity contract: byte-equality on (organization, components,
+# boundary, tick_map, environment). Two autopoietic_system records
+# ARE the same system under content-addressing iff all five carriers
+# are byte-equal. Same shape discipline as
+# coherence-parametric.lock_pair and viable.viable_system.
+type autopoietic_system = {
+  organization: organization,
+  components:   ref,
+  boundary:     ref,
+  tick_map:     ref,
+  environment:  ref,
+}
+
+# === produce — the natural substitution τ : Organization ↔ Component ===
+#
+# Spec §3.1 Read A: the substitution is natural because Maturana-
+# Varela's structure/organisation distinction names them as
+# co-arising (recognition #40). Read off by *running the system's
+# tick map*; the substrate's content-addressing closes naturality
+# through the OID layer (a component's OID names the organization-
+# that-produced-it).
+#
+# `produce(o)` is the τ-action: given organization `o`, returns
+# the component the organization produces at one tick. The
+# substitution's naturality is substrate-evident because the
+# Organization carrier IS the Lawvere fixed point of the tick map
+# (per @epistemologic/math/lawvere); components are the values
+# the fixed-point exhibits at construction time.
+#
+# Body discharges per-species at the realisation boundary. Same
+# shape as the parametric carrier's measurement actions and the
+# viable shard's `stability_of` action.
+produce(o: organization) -> component { \ }
+
+# === couple — the natural substitution τ : Internal ↔ External (Read B) ===
+#
+# Spec §3.2 Read B: the structural-coupling substitution. The system's
+# internal state `i` determines a receptivity to environmental
+# perturbations; the perturbations re-determine the internal state;
+# Maturana's non-instructive coupling closes the substitution
+# naturally — the environment does NOT specify the structural
+# change, it only perturbs.
+#
+# `couple(internal, external)` is the τ-action under Read B: given
+# the system's internal state and the environment's perturbation,
+# returns the structurally-coupled next-state. The naturality is
+# substrate-evident through the bilateral property/operation
+# pattern (recognition #53) at the substrate altitude.
+#
+# Body discharges per-species at the realisation boundary.
+couple(internal: ref, external: ref) -> ref { \ }
+
+# === close — the natural substitution τ : Operation ↔ Product (Read C) ===
+#
+# Spec §3.3 Read C: the operational-closure substitution per Varela
+# 1979. The substitution IS the closure operator: the set of
+# operations CLOSES on its products iff every product is itself
+# the input to some operation in the set.
+#
+# `close(op)` is the τ-action under Read C: given an operation `op`,
+# returns the product the operation produces. The closure condition
+# at the species boundary is: for every product `p = close(op)`,
+# there exists an operation `op'` such that `p` is `op'`'s input.
+# The substrate's five-op surface IS operationally closed by
+# construction (every product of the five operations is itself the
+# input to some operation in the five-op family).
+#
+# Body discharges per-species at the realisation boundary.
+close(op: ref) -> ref { \ }
+
+# === gauge_act — the structure-group action τ : Connection_α ↔ Section_α (Read E) ===
+#
+# Spec §3.5 Read E (the candidate-#63-closing structural reading):
+# the τ-action under Read E IS the structure-group action
+# `G_α ↷ Section_α`. The bundle's adjoint representation acts on
+# its own section space; the lock holds iff the connection's
+# parallel transport is gauge-equivalent to identity at altitude α.
+#
+# `gauge_act(g, section)` is the τ-action under Read E: given a
+# structure-group element `g: ref` (inherited from
+# @epistemologic/math/bundle's `type group`) and a section, returns
+# the gauge-transformed section. The substrate's bundle tower
+# already exhibits this action at level 2 (Gauge) per
+# bundle.mirror's `act_on(state)` obligation; THIS species names
+# what that action IS at the cybernetic altitude — autopoiesis.
+#
+# If Reed's next tick (per spec §8.5) closes the mechanical
+# derivation, this action becomes the *operational form* of every
+# species' τ-action — `produce`, `couple`, `close` all collapse
+# into `gauge_act` at the species' altitude with the species'
+# choice of structure group. Candidate #63 promotes.
+#
+# Body discharges per-species at the realisation boundary; the
+# discharge IS bundle.mirror's existing gauge-action obligation
+# specialised at autopoiesis's altitude.
+gauge_act(g: ref, section: ref) -> ref { \ }
+
+# === autopoietic_closure_holds — the bilateral inheritance predicate ===
+#
+# `autopoietic_closure_holds(s)` is the predicate consumer shards
+# name in a `requires` clause to declare bilateral agreement (per
+# recognition #37, the Pask-agreement reading of `requires`) that
+# the autopoietic_system carrier `s` they hold IS a well-formed
+# Maturana-Varela autopoietic system — i.e., the organization is a
+# Lawvere fixed point of the tick map; the components close on
+# the organization via the structural-coupling discipline; the
+# operational closure holds per Varela 1979.
+#
+# The bilateral commitment: the carrier commits to declaring the
+# autopoietic_system five-tuple; the consumer commits to
+# discharging the closure verdict at the species boundary via the
+# composition of:
+#
+# - @epistemologic/property/autopoietic.autopoietic(type) — the
+#   declarative verifier (inherited; not re-declared);
+# - the five cybernetic-ancestor measurements at autopoiesis's
+#   altitude (inherited from coherence-parametric; instantiated
+#   with ρ = adjoint);
+# - the contraction-mode classification (autopoiesis is static;
+#   ω trivial; PL contraction).
+#
+# Declared as a typed predicate so downstream species shards can
+# write `requires autopoietic_closure_holds(my_system)` — same
+# shape as `viable.viable_well_formed(v)`,
+# `parametric_lock_witnessing(my_lock)`,
+# `variety.variety_preserving(species)`,
+# `second_order.second_order_well_formed(carrier)`, and the
+# metalogue `requires substrate_pull_preserving(shim_X)` pattern
+# at `shards/code/metalogue.mirror`. Body is `\`; the discharge
+# IS the conjunction above at the species boundary.
+#
+# No `requires autopoietic_closure_holds(…)` clauses are added at
+# THIS shard. The property declares the predicate; consumers add
+# the clauses when they pull. Per [[feedback-craft-not-deliver]]
+# the operational sibling at `@mirror/cybernetics/autopoiesis`
+# lands the same way.
+autopoietic_closure_holds(s: autopoietic_system) -> verdict { \ }
+
+out @epistemologic/cybernetic/autopoiesis
+out organization
+out component
+out autopoietic_system
+out produce
+out couple
+out close
+out gauge_act
+out autopoietic_closure_holds
