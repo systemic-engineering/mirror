@@ -1,0 +1,181 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @magic/contract
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/distinction
+
+# @magic/distinction — the Spencer-Brown adapter species. Bridges the
+# @magic family with @epistemologic/cybernetic/distinction (Spencer-
+# Brown's mark-of-distinction) honestly via the adapter pattern, NOT
+# the decorative inheritance Seam caught at tick 7-10 (constraint C3).
+#
+# Tick 15 of the refined /loop discipline. Tick 11's consolidation
+# dropped the decorative `in @epistemologic/cybernetic/distinction`
+# from contract.mirror and audit.mirror; this species lands the
+# adapter that re-establishes the structural relationship honestly.
+#
+# CRQ for tick 15: how to re-establish Spencer-Brown structural
+# discipline at @magic altitude WITHOUT the decorative inheritance
+# Seam C3 caught?
+#
+# Answer: an adapter species. The adapter takes magic carriers and
+# MAPS them to distinction carriers; the structural inheritance lives
+# in the explicit map, not in an `in` clause that buys namespace
+# ancestry without carrier flow. The substrate-pull-correct way to
+# compose substrate disciplines across families.
+#
+# === The adapter pattern ===
+#
+# Distinction's cross operation has signature `cross(m: mark, s:
+# distinction_space) -> distinction_space`. @magic/contract's bind
+# has signature `bind(s: magic_surface, m: magic_mechanism, promise:
+# magic_invariant) -> magic_contract`. Different types; different
+# arities; different return shapes.
+#
+# The honest structural relationship: bind is ANALOGOUS to cross
+# UNDER THE FOLLOWING MAPPING:
+#
+# - magic_surface          ↔ mark
+# - magic_mechanism        ↔ distinction_space
+# - magic_invariant        ↔ (the boundary the cross draws)
+# - bind operation         ↔ cross operation
+# - distinction_well_formed ↔ invariant_preserved
+#
+# This species declares those mappings explicitly. A consumer that
+# wants Spencer-Brown's discipline at @magic altitude can route
+# through this adapter; consumers that want @magic without the
+# distinction discipline route around it. No decorative inheritance.
+#
+# === The species's load-bearing contribution ===
+#
+# Adds:
+#
+# - `surface_as_mark(s: magic_surface) -> mark`: lifts a @magic
+#   surface to a Spencer-Brown mark. The substrate-pull-correct
+#   adapter primitive.
+# - `mechanism_as_distinction_space(m: magic_mechanism) ->
+#   distinction_space`: lifts a @magic mechanism to a Spencer-Brown
+#   distinction-space.
+# - `bind_satisfies_distinction(c: magic_contract) -> verdict`: the
+#   bilateral verdict predicate. The FIFTH non-decorative `requires`
+#   clause in @magic AND the FIRST cross-shard adapter `requires`
+#   (consumes distinction's `distinction_well_formed` predicate via
+#   the mapping).
+#
+# === Why the adapter pattern matters for future substrate work ===
+#
+# This species demonstrates the substrate-pull-correct way to compose
+# disciplines across families. Future adapters can follow the same
+# shape:
+#
+# - @magic ↔ @kintsugi (via reveal's settle-shape composition)
+# - @magic ↔ @epistemologic/cybernetic/autopoiesis (via @magic/audit's
+#   self-production semantics)
+# - @magic ↔ @uuid/spectral (via spectral identity at @magic altitude)
+#
+# Each adapter explicitly maps carriers and discharges predicates;
+# none uses decorative `in` inheritance.
+#
+# === Pre-AI prior art ===
+#
+#   adapter pattern (GoF)       Gamma-Helm-Johnson-Vlissides 1994
+#                               (*Design Patterns*). The OO adapter
+#                               pattern. @magic/distinction IS the
+#                               substrate-altitude adapter.
+#   functor adapter             Category theory's adapter: an explicit
+#                               functor between two categories
+#                               preserves the discipline of both
+#                               without forcing inheritance. The
+#                               canonical mathematical ancestor.
+#   Spencer-Brown mark          Laws of Form, ch.1 (Spencer-Brown
+#                               1969). The discipline this adapter
+#                               threads into @magic.
+#
+# Spec context: docs/specs/recognition-81-runtime-magic-canonical-
+#               spec.md §7 (the C3 hedge Mara preserved);
+#               docs/specs/cascade-recognition-76-through-80-
+#               canonical-spec.md §6.5 (the honest hedging from
+#               tick 11 that this species closes).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (adapter pattern + functor: the substrate
+#                       had two ancestors for this discipline before
+#                       this shard landed),
+#                      [[feedback-composition-claims-need-empirical-
+#                       test]] (Reed's own discipline; the adapter
+#                       makes the structural relationship empirical
+#                       via the explicit mapping, not assertional).
+# Related shards: magic.mirror (family-root),
+#                 magic/contract.mirror (consumer of the
+#                  bind_satisfies_distinction predicate),
+#                 epistemologic/cybernetic/distinction.mirror (the
+#                  Spencer-Brown source the adapter threads).
+# Path-namespace property: this file at
+# `shards/magic/distinction.mirror` declares `@magic/distinction`
+# per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/gamma-helm-johnson-vlissides-1994
+source @arxiv/cybernetics/spencer-brown-1969
+
+prism @magic/distinction {
+  focus distinction
+  project distinction
+  split distinction
+  shift distinction
+  settle distinction
+}
+
+# === surface_as_mark adapter ===
+#
+# The substrate-vocabulary adapter action lifting a @magic surface
+# to a Spencer-Brown mark. The lifting IS the substrate-pull-correct
+# way to apply distinction's discipline at @magic altitude.
+#
+# At Spencer-Brown altitude: the magician's gauge-visible interface
+# IS the mark drawn at the @magic-altitude distinction-space; the
+# audience-vs-trick partition IS the marked-state/unmarked-state.
+#
+# Body discharges at the realisation boundary.
+surface_as_mark(s: magic_surface) -> mark { \ }
+
+# === mechanism_as_distinction_space adapter ===
+#
+# The substrate-vocabulary adapter action lifting a @magic mechanism
+# to a Spencer-Brown distinction-space. The mechanism's matter IS
+# the space within which the mark draws its boundary.
+#
+# At Spencer-Brown altitude: the mechanism's hidden content IS the
+# distinction-space; the cross operation partitions it via the mark
+# the surface presents.
+#
+# Body discharges at the realisation boundary.
+mechanism_as_distinction_space(m: magic_mechanism) -> distinction_space { \ }
+
+# === bind_satisfies_distinction predicate ===
+#
+# THE FIFTH NON-DECORATIVE `requires` CLAUSE in @magic AND THE FIRST
+# CROSS-SHARD ADAPTER `requires`. The bilateral verdict predicate
+# discharging Spencer-Brown's discipline at @magic altitude via the
+# explicit adapter mapping.
+#
+# requires distinction_well_formed(mark, distinction_space): the
+# bilateral commitment that the lifted (mark, distinction-space) pair
+# satisfies Spencer-Brown's well-formedness predicate (condensation +
+# cancellation axioms; verdict partition).
+#
+# This is the substrate-pull-correct way to re-establish the
+# Spencer-Brown discipline Reed dropped at tick 11 per Seam C3.
+# The structural relationship lives in the explicit `requires`
+# clause, not in a decorative `in` inheritance.
+bind_satisfies_distinction(c: magic_contract) -> verdict
+requires distinction_well_formed(surface_as_mark(c.surface), mechanism_as_distinction_space(c.mechanism))
+{ \ }
+
+out @magic/distinction
+out surface_as_mark
+out mechanism_as_distinction_space
+out bind_satisfies_distinction
