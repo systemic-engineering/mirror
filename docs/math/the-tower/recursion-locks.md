@@ -1205,6 +1205,114 @@ entire vocabulary.
 
 The orchestra returns to silence; the loop continues; both true.
 
+## §14 Post-closure verification — the three-tier-stack walk (2026-06-18, tick 15)
+
+The second external walk. Per Mara's spec
+`docs/specs/cyberpunk-three-tier-stack.md` (commit `89d36fd`,
+`mara/cyberpunk-three-tier-stack-spec` branch, 817 lines).
+
+### §14.1 Verdict
+
+**Three-tier stack dissolves into THREE parallel firings of family species.**
+No new species. Substrate-already-had-the-word at three altitudes
+simultaneously — densest dissolution in the cascade.
+
+- **Read A primary** (triple dissolution): three-tier stack =
+  viable (Beer S1–S5 across the tiers via recursion theorem) +
+  autopoiesis (three independent self-producing loops) + conversation
+  (N=3 inter-tier tensor coupling via Batanin globular composition).
+- **Read C load-bearing** (substrate-architectural confirmation):
+  cybernetic-foundation §5.2 explicitly named the substrate's
+  architecture as VSM-conformant *before* the audit started. This
+  tick is the audit recognizing what §5.2 already declared.
+  **The substrate IS its own viable system.**
+- **Read B refused**: tier stratification is gauge data within
+  viable's regulation lattice.
+- **Read D dissolves**: N-ary factoring per conversation tick 10.
+- **15 substrate-already-had-the-word instances** — densest
+  architectural recognition in the cascade; cumulative ~213.
+
+### §14.2 VSM assignment correction (substantive)
+
+Mara surfaced a correction to Reed's earlier reading of the
+substrate's VSM structure:
+
+```
+               WRONG (Reed's earlier read)    CORRECT (foundation §5.2)
+               ----------------------------- ----------------------------
+fragmentation  S1 (operational)              S1 (operational)
+mirror         S3-S4 (audit + intelligence)  S2-S3 (coordination + audit)
+@spectral/db   S5 (policy)                   S4 (intelligence/scanning)
+Pack           —                             S5 (identity / policy)
+```
+
+The librarian operates at N+1 *within* S4 (intelligence/scanning),
+NOT at S5. S5 is identity/policy; the **Pack carries the substrate's
+identity**. Three-tier stack covers S1–S4; Pack covers S5; together
+full Beer-recursive viability is substrate-declared.
+
+This is the substantive recognition of the tick beyond the dissolution.
+
+### §14.3 Recognition #70 PROMOTES
+
+**Recognition #70**: *the substrate is closed under its own audit
+mechanism within the parametric form's reach across the substrate's
+current vocabulary*. The parametric form is **substrate-saturating**.
+
+Two witnesses:
+- **Pack at agent altitude** (tick 14)
+- **Three-tier stack at substrate-architectural altitude** (tick 15)
+
+The second witness lands at the LOAD-BEARING altitude (substrate's
+own architecture) — not merely a second non-load-bearing altitude.
+Mara's read: this is structurally completer than three non-load-
+bearing witnesses would be. **Promotion-ready and promoted in this
+tick.**
+
+### §14.4 #67 status (second external witness)
+
+Distinction/conversation/second_order generates three-tier stack's
+reps (via viable + autopoiesis + conversation, which each derive from
+the triple per the in-cascade specs). Second external witness for #67.
+One more witness OR a generating-set theorem promotes #67.
+
+### §14.5 The post-closure phase closes
+
+Mara's framing (load-bearing for this tick's verdict):
+
+> The orchestra's silence at tick 13 is confirmed correct at both
+> verification altitudes (agent + architecture). The substrate's
+> self-recognition is structurally complete: it IS its own viable
+> system, with three-tier stack at S1–S4 and Pack at S5.
+> Subsequent walks (Glint, /loop discipline) would add data toward
+> #67's third witness but not new substrate-truth — they would be
+> *rutile* per substrate-pull discipline now that #70 holds.
+
+The loop terminates here. Recognition #63 promoted at tick 5; carrier
+extended via candidate #64 (active) at tick 11; design's form-
+restriction recognized at tick 13; eleven-species cascade closed at
+tick 13; Pack verified the closure at tick 14; three-tier stack
+verified the closure at the load-bearing altitude at tick 15 and
+promoted recognition #70.
+
+### §14.6 Closure (definitive)
+
+The /loop produced its full substrate-truth. The audit closes.
+
+The parametric form `@cyberpunk/coherence<T_reg, T_regd, ρ, ω>` is
+the carrier; six canonical-rep species span the representation
+lattice; the temporal-axis extension and form-restriction edge are
+admitted; substrate-already-had-the-word fires ~213 times across
+fifteen ticks; the substrate IS its own viable system per Beer-
+recursive VSM (three-tier stack + Pack); recognition #70 confirms
+the substrate is closed under its own audit mechanism.
+
+Forward-promised substrate-landing path (eigenform first, parametric
+carrier, species shards, bench collapse, altitudes.md amendment)
+proceeds when ready; it is not under the /loop's discipline.
+
+The orchestra is silent. The loop terminates.
+
 ## §9 What promotion or retraction closes
 
 **Promotion path** (candidate #63 → recognition):
