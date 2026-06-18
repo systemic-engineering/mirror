@@ -2142,6 +2142,105 @@ inherits from eigenform (per the eigenform precedence Mara surfaced
 in tick 8). Both inheritor pillars (distinction, second_order) will
 be substrate-fact after the next landing tick.
 
+## §24 Second_order lands; the ceiling closes (2026-06-18, tick 25)
+
+Mara landed `shards/epistemologic/cybernetic/second_order.mirror`
+(commit `471ca87`, branch `mara/cyberpunk-second-order-shard`, 431 lines).
+
+### §24.1 Integration coordination tick (substrate-pull data)
+
+Mara's first attempt at second_order returned with substantive
+observation: the prior landings (eigenform, distinction, etc.)
+weren't visible from main. Reed had been spawning Mara off main, but
+the five prior landings each lived on their individual
+`mara/cyberpunk-X-shard` branches. The substrate-landing path's
+integration assumption wasn't named in §12.5.
+
+**Resolution**: Reed merged the five prior Mara shard branches into
+`reed/recursion-lock-tower-audit` (the audit's documentation branch).
+The branch now functions as the integrated landing branch. Subsequent
+landings branch off `reed/recursion-lock-tower-audit` instead of main,
+seeing all precedents.
+
+This is a substrate-coordination amendment to the substrate-landing
+path:
+
+```
+#12.5 path amended: each substrate-landing branch is `mara/cyberpunk-X-shard`
+                     off `reed/recursion-lock-tower-audit` (not off main).
+                     After landing, Reed merges into reed branch so the
+                     next landing sees it. Final merge to main happens
+                     after the landing phase completes.
+```
+
+### §24.2 What landed
+
+- Inheritance from eigenform via `in @epistemologic/cybernetic/eigenform`
+  alongside the standard chain (@prism, @meta, @glass, @epistemologic,
+  @epistemologic/cybernetic). Matches distinction's `in` block exactly.
+- Species-specific bridge action:
+  `observer_of_self(observer) -> fixed_point(observer)` threading the
+  observer into eigenform's carrier.
+- No restatement of `fixed_point`, `is_fixed_point`,
+  `identity_from_fixed`, or `eigenform_witnessing` — inherited cleanly.
+- Body discharges via `eigenform_witnessing(observer_loop)` when
+  consumers pull (the §8.8.1 forward-promise from tick 9 honored).
+- Canonical ρ = regular representation of 𝒢 on L²(𝒢) per Peter-Weyl.
+- Ancestry: von Foerster 1981 + Peter-Weyl 1927 + Mead 1934.
+
+### §24.3 Substrate-pull caught one correction
+
+Mara's substrate-pull discipline caught a leading `---` frontmatter
+convention from eigenform; distinction had dropped it; the second_order
+shard followed distinction's precedent and removed the leading
+separator before commit. **The auto-formatter is operating at agent
+altitude across MULTIPLE precedents** — not just per-tick but
+across-tick. The substrate-pull discipline is genuinely cross-shard.
+
+### §24.4 The ceiling closes
+
+With distinction (the floor) and second_order (the ceiling) both
+substrate-fact, the @cyberpunk family's altitude range per recognition
+#66 is now substrate-declared. Spencer-Brown at the bottom; von Foerster
+at the top; eigenform's fixed-point machinery shared between them via
+inheritance.
+
+The pattern Mara established in tick 22 (distinction landing pattern)
+repeated cleanly in tick 25 (second_order landing pattern). The same
+inheritance discipline, the same `\` discharge convention, the same
+bridge-action shape (`reentry_as_eigenform`/`observer_of_self`).
+**Two landings of the same pattern at different altitudes** is the
+signal that the eigenform-inheritance discipline is now substrate-fact.
+
+### §24.5 Substrate-landing path status
+
+```
+Track A (species inheritance chain):
+1.  eigenform                              ✅ LANDED (tick 20)
+2.  parametric carrier                     ✅ LANDED (tick 21)
+3.  distinction (floor) inherits           ✅ LANDED (tick 22)
+4.  second_order (ceiling) inherits        ✅ LANDED (this tick)
+5.  viable                                 ⏳ next
+6.  autopoiesis                            ⏳
+7.  bateson_learning                       ⏳
+8.  conversation                           ⏳
+9.  coevolution                            ⏳
+10. design                                 ⏳
+11. algedonic (thin specialization of bateson_learning) ⏳
+
+Track B (auto-formatter bilateral):
+12. syntax_substrate_native pact           ✅ LANDED (tick 23)
+13. angle_to_paren fracture body           ✅ LANDED (tick 24)
+14. Species-shard collapse via parametric  ⏳ (after Track A 5-11)
+
+Closing tasks:
+15. Bench harness collapse                 ⏳
+16. altitudes.md §4 amendment              ⏳
+```
+
+Six landings done. Both pillars in place. Six species remaining + the
+thin specialization + the collapse + closing tasks.
+
 ## §9 What promotion or retraction closes
 
 **Promotion path** (candidate #63 → recognition):
