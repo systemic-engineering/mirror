@@ -99,12 +99,13 @@ fn tools_list_result() -> Value {
             },
             {
                 "name": "mirror_kintsugi",
-                "description": "refract: settle a .mirror file, write canonical. --liquid writes inferred properties below ---. --shatter N recursively settles N levels deep.",
+                "description": "refract: settle a .mirror file (default writes canonical) or render a verdict (--ci). --ci returns structured PASS/REJECT JSON without modifying the file. --liquid writes inferred properties below ---. --shatter N recursively settles N levels deep.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "file":    { "type": "string", "description": "Path to .mirror file" },
-                        "liquid":  { "type": "boolean", "description": "If true, pass --liquid (project inferred properties below ---)" },
+                        "file":    { "type": "string", "description": "Path to .mirror file or directory (corpus mode)" },
+                        "ci":      { "type": "boolean", "description": "If true, run in verdict mode (--ci --out @data/json). Returns structured PASS/REJECT JSON; does not modify the file. Substrate-pull-natural for agent inspection per [[architecture-error-as-tomm-probe.md]] @io altitude." },
+                        "liquid":  { "type": "boolean", "description": "If true, pass --liquid (project inferred properties below ---). Ignored when ci=true." },
                         "shatter": { "type": "integer", "description": "If set, pass --shatter N (recursive settle N levels)" }
                     },
                     "required": ["file"]
@@ -201,7 +202,16 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
         "mirror_kintsugi" => {
             let file = s("file").unwrap_or_default();
             let mut argv: Vec<String> = vec!["kintsugi".into(), file];
-            if b("liquid") {
+            // Tick 4 (2026-06-18): expose --ci verdict mode. When ci=true,
+            // request structured JSON output via --out @data/json so agent
+            // clients receive parseable PASS/REJECT verdict envelopes
+            // instead of pretty-printed text. --liquid is incompatible
+            // with --ci (verdict mode is read-only); ignored in that path.
+            if b("ci") {
+                argv.push("--ci".into());
+                argv.push("--out".into());
+                argv.push("@data/json".into());
+            } else if b("liquid") {
                 argv.push("--liquid".into());
             }
             if let Some(n) = i("shatter") {
