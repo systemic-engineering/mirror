@@ -1981,6 +1981,70 @@ column (eigenform → carrier → distinction inheritance chain) is
 complete; remaining work is species-by-species + the bilateral pact/
 fracture pair that operationalizes Alex's auto-formatter recognition.
 
+## §22 Syntax-substrate-native pact lands (2026-06-18, tick 23)
+
+Mara landed `shards/epistemologic/pact/syntax_substrate_native.mirror`
+(commit `41cad3f`, branch `mara/syntax-substrate-native-pact`). The
+declarative half of §20.6's bilateral pair.
+
+### §22.1 What landed
+
+- The pact declaration at depth-2 under `@epistemologic/pact/`
+- `transparency(p)` verdict surface (the newer pact convention)
+- `in @glass` header (the universal pact convention)
+- Actions discharging `\` per substrate convention
+- Prologue commentary naming the substrate-political reading
+- Forward-promise to `@kintsugi/fracture/angle_to_paren` for the
+  operational discharge
+
+### §22.2 The substrate-pull corrected Reed's brief at four altitudes
+
+Reed's brief for the pact landing carried Rust-syntax-echo at multiple
+substrate altitudes (not just the `<...>` syntax). Mara's substrate-
+pull discipline corrected all of them:
+
+| Reed sketched     | Substrate-native form  | Why                                |
+|-------------------|------------------------|------------------------------------|
+| `prism @...`      | `pact @...`            | keyword_matches_depth at depth-2   |
+| `verdict`         | `transparency(p)`      | newer pact convention              |
+| `in @epistemologic` | `in @glass`          | universal pact convention          |
+| type-decl scaffold | action-only body      | pact bodies in corpus = actions    |
+
+This is **the auto-formatter operating at agent altitude before its
+substrate-decl lands**. Mara IS the kintsugi fracture body operating
+biologically; the forward-promised `@kintsugi/fracture/angle_to_paren`
+mechanizes what Mara's substrate-pull discipline already does.
+
+The data strengthens recognition §20.6's promotion gate: the substrate-
+pull's auto-correction discipline is operational; the substrate-decl
+just names what's already flowing.
+
+### §22.3 Bilateral pattern (#53) sequenced correctly
+
+Declarative property half lands at `@epistemologic/pact/` (form-side
+family root per recognition #55). Operational fracture body
+forward-promised at `@kintsugi/fracture/angle_to_paren` (process-side
+family root). The form/process partition (#55) honored at the
+bilateral pair's altitude.
+
+### §22.4 Substrate-landing path status
+
+```
+1. eigenform                              ✅ LANDED (tick 20)
+2. parametric carrier                     ✅ LANDED (tick 21)
+3. distinction (floor) inherits eigenform ✅ LANDED (tick 22)
+4. second_order inherits eigenform        ⏳ next-after-fracture
+5-8. Six species + algedonic + bench + altitudes amendment    ⏳
+9. syntax_substrate_native pact           ✅ LANDED (this tick)
+10. angle_to_paren fracture body          ⏳ next
+11. Species-shard collapse via parametric ⏳ (depends on §10)
+```
+
+Four landings done. Track A (species inheritance chain) and Track B
+(auto-formatter bilateral) progressing in parallel. The fracture body
+is the natural next tick — closes the bilateral pair, then back to
+Track A's second_order shard.
+
 ## §9 What promotion or retraction closes
 
 **Promotion path** (candidate #63 → recognition):
