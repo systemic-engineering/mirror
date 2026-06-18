@@ -3,6 +3,7 @@ in @meta
 in @glass
 in @code
 in @magic
+in @magic/audit
 
 # @code/beam — BEAM semantics absorbed as substrate vocabulary.
 #
@@ -19,12 +20,25 @@ in @magic
 # substrate concepts onto an external code-altitude. @code/beam is
 # how mirror sees BEAM's semantics without inheriting BEAM's runtime.
 #
-# Composes with @magic (recognition #80, scratched same evening) as
-# the runtime-altitude realization: hot code upgrade IS @magic/reveal
-# at runtime altitude; the supervisor IS @magic/audit at supervision
-# altitude; the code_change callback IS @magic/contract preservation
-# across mechanism swap. Recognition candidate #81 (runtime-@magic)
-# names the composition; this shard is its substrate-decl.
+# Composes with @magic (recognition #80) at runtime altitude. Per Seam
+# adversarial review of ticks 7-10 (C2): the structural identification
+# claims were aspirational at first landing and now hedged honestly:
+#
+# - swap_module composes-with @magic/reveal when that species lands
+#   (forward-promised; the carrier shapes do not yet mechanically
+#   match because @magic/reveal has no substrate-decl yet).
+# - supervisor composes-with @magic/audit at supervision altitude;
+#   the mechanical glue requires a `contract: magic_contract` field on
+#   supervisor or `supervise_contract(s, c)` action lift (forward-
+#   promised; not yet landed).
+# - code_change_msg composes-with @magic/contract preservation; the
+#   mechanical witness requires `contract_preserved_across_swap(msg, c)`
+#   property at @magic/contract or a contract field on code_change_msg
+#   (forward-promised).
+#
+# Recognition candidate #81 (runtime-@magic) is the eventual
+# composition; this shard's substrate-decl is honest about WHAT
+# carries the BEAM semantics and WHAT remains mechanical-glue work.
 #
 # === The BEAM claim, paraphrased ===
 #
@@ -239,19 +253,25 @@ type code_change_msg = {
 # - `children`   the list of supervised processes (substrate-vocabulary
 #                for the supervision-tree edges descending from this
 #                node).
-# - `strategy`   the restart strategy (one_for_one / one_for_all /
-#                rest_for_one / simple_one_for_one). Substrate-typed.
+# - `strategy`   the response-on-failure (typed via @magic/audit's
+#                audit_strategy substrate vocabulary per Seam C4: the
+#                BEAM-specific enum one_for_one / one_for_all /
+#                rest_for_one / simple_one_for_one is dropped to keep
+#                the BEAM-as-inspiration-not-runtime-dependency claim
+#                honest; supervisor.strategy reads from the canonical
+#                substrate enum at @magic/audit).
 # - `policy`     the failure-policy ref (matter-side instruction about
 #                what kinds of child failures trigger which response).
 #
-# The supervisor IS @magic/audit at supervision altitude: it verifies
-# the contract is honored by its children; when a child violates
-# the contract (fails), the supervisor applies the restart policy.
+# The supervisor composes-with @magic/audit at supervision altitude
+# (per Seam C2: the structural identity claim requires a
+# `contract: magic_contract` field or `supervise_contract` action lift
+# to be mechanically real; hedged honestly here).
 #
 # Identity contract: byte-equality on the triple.
 type supervisor = {
   children: ref,
-  strategy: ref,
+  strategy: audit_strategy,
   policy:   ref,
 }
 

@@ -2,9 +2,6 @@ in @prism
 in @meta
 in @glass
 in @magic
-in @epistemologic
-in @epistemologic/cybernetic
-in @epistemologic/cybernetic/distinction
 
 # @magic/contract — the binding species. Names the actions that
 # create, honor, and verify the boundary contract between surface
@@ -38,15 +35,21 @@ in @epistemologic/cybernetic/distinction
 # at the @io boundary harness for the agent's substrate-political
 # accountability.
 #
-# === Spencer-Brown ancestry ===
+# === Spencer-Brown analogy (not inheritance) ===
 #
-# The contract IS Spencer-Brown's mark at @magic altitude. The mark
-# distinguishes surface from mechanism; the binding IS the cross
-# operation lifted to @magic vocabulary; the honor verdict IS the
-# marked-state / unmarked-state distinction at the contract boundary.
-# Inherited from @epistemologic/cybernetic/distinction via the `in`
-# clause; the cross discipline is the contract's load-bearing
-# verification primitive.
+# Per Seam adversarial review C3: the previous tick claimed
+# inheritance from @epistemologic/cybernetic/distinction via the `in`
+# clause AND identified bind with the cross operation — but cross
+# takes (mark, distinction_space) and bind takes (magic_surface,
+# magic_mechanism, magic_invariant). Different types. The inheritance
+# was decorative; the identity-claim was analogy, not structural.
+#
+# Hedge: the contract is ANALOGOUS to Spencer-Brown's mark at @magic
+# altitude; the binding is ANALOGOUS to the cross at this altitude.
+# A future @magic/contract ↔ @epistemologic/cybernetic/distinction
+# adapter species can re-establish the structural inheritance via
+# `requires distinction_well_formed(...)` clauses when the adapter
+# lands. Until then, no inheritance via `in` (Seam C3).
 #
 # === Pre-AI prior art ===
 #
@@ -97,32 +100,23 @@ prism @magic/contract {
   settle contract
 }
 
-# === magic_invariant carrier ===
-#
-# A typed reference per [[feedback-no-bare-types]] naming a specific
-# invariant the contract preserves between surface and mechanism.
-# A contract carries zero or more invariants; each invariant is a
-# substrate-typed assertion the bind action commits to and the honor
-# action verifies.
-#
-# Identity contract: byte-equality on the underlying ref.
-type magic_invariant = ref
+# Note: `magic_invariant` moved to family-root (magic.mirror) per Seam
+# C5 so it can type magic_contract.promise. Imported via `in @magic`.
 
 # === bind action ===
 #
 # The substrate-vocabulary action that creates a magic_contract by
-# binding a surface to a mechanism under a promise. The promise IS
-# the substrate-typed assertion that the mechanism delivers what the
-# surface advertises.
+# binding a surface to a mechanism under a typed invariant. The
+# invariant IS the substrate-typed assertion that the mechanism
+# delivers what the surface advertises.
 #
-# At Spencer-Brown altitude: bind IS the cross operation applied at
-# @magic; the mark distinguishes surface from mechanism; the contract
-# IS the boundary the cross draws.
+# Analogous to (not structurally inheriting) Spencer-Brown's cross
+# at @magic altitude per the hedged ancestry note above (Seam C3).
 #
 # Body discharges at the realisation boundary; per-species bodies
 # enforce the bilateral commitment per recognition #37 (Pask
 # agreement).
-bind(s: magic_surface, m: magic_mechanism, promise: ref) -> magic_contract { \ }
+bind(s: magic_surface, m: magic_mechanism, promise: magic_invariant) -> magic_contract { \ }
 
 # === honor action ===
 #
@@ -169,7 +163,6 @@ verify(c: magic_contract, inv: magic_invariant) -> verdict { \ }
 invariant_preserved(c: magic_contract, inv: magic_invariant) -> verdict { \ }
 
 out @magic/contract
-out magic_invariant
 out bind
 out honor
 out verify
