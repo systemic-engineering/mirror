@@ -1,0 +1,271 @@
+in @prism
+in @meta
+in @glass
+in @moi
+in @magic
+in @kintsugi
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/autopoiesis
+
+# @loop — the loop family-root. The substrate's circular-reflexive
+# operational structure at type altitude. Each tick is an endomorphism
+# T → T; the loop IS the chain of @moi-pact-verified bindings.
+#
+# Recognition #88 (Alex 2026-06-19 evening, conversation; the cascade
+# closure at iterative-discipline altitude). Builds on #86 @moi. The
+# substrate has been carrying loop structure for weeks (@kintsugi/
+# oscillate; @reflection compiler loop; @fate/tournament; @mirror/
+# bench predecessor-chain; the /loop discipline driving this very
+# session) without naming the family-root. This shard names it.
+#
+# === The recognition ===
+#
+# Three composing answers to Alex's four questions:
+#
+# 1. Semantic unit of a loop: the typed closure of one tick's
+#    input/output identity. T → T endomorphism. A tick receives state
+#    at type T, transforms it, returns state at type T. The loop
+#    survives because the type survives.
+#
+# 2. What makes a loop a loop: the return to self in the same type.
+#    Not iteration. Not feedback. Not termination. The structural
+#    commitment is the endomorphism. Category-theoretic loop on an
+#    object.
+#
+# 3. @loop builds on @moi by structural necessity. Monad's μ : TT → T
+#    IS the loop at type altitude. Each tick is η-lifted into @moi
+#    then μ-composed. Pact-verified at composition time. The compiler
+#    refuses to iterate if a pact is violated.
+#
+# === Why @moi (not bare T) ===
+#
+# A loop over bare T is a sequence; a loop over @moi(T) is a substrate-
+# verified loop. Each tick's pact-witness ensures: (a) the monad laws
+# hold (associativity is FREE via content-addressing per
+# boot/00-prism.mirror), (b) the substrate-mathematical pacts are
+# respected, (c) the iteration is admissible per the substrate's
+# alignment-as-boundary-mathematics (#57).
+#
+# This means EVERY ITERATION of EVERY LOOP in the substrate is pact-
+# verified at composition time. The /loop discipline that drives this
+# session is just the operator-altitude instance of the same
+# structure.
+#
+# === The /loop ⇔ @loop collision (substrate-honest per Pack G2) ===
+#
+# The /loop slash command drives the substrate-pull tick discipline.
+# The @loop family-root substrate-decl's the iterative structure at
+# substrate altitude. Same name; two altitudes. Substrate-honest per
+# @pack G2 pattern (reed-as-relationship vs reed-as-peer; @reflection-
+# family vs @reflection/reflection-the-Model). The collision IS
+# substrate-honest — the /loop slash command IS @loop at operator
+# altitude.
+#
+# === Cross-family integration (what @loop composes) ===
+#
+# - @reflection (#85): the compiler loop IS @loop at AI-logic altitude
+#   (observe → tournament → compose → pick → settle is one tick)
+# - @kintsugi/oscillate: the rough-wavy pull IS @loop at substrate-
+#   pull altitude (active/dark alternation IS one tick)
+# - @fate/tournament: candidate selection IS @loop at perf altitude
+#   (each tournament round IS one tick)
+# - @mirror/bench (#87): the predecessor-chain IS @loop at
+#   measurement altitude (each crystal IS one tick of bench history)
+# - @moi (#86): the monad family-root @loop's structure inherits
+# - @magic family: the bind action consumes invariant_preserved at
+#   each tick boundary
+#
+# === The eigenform connection ===
+#
+# Per @epistemologic/cybernetic/eigenform (the substrate-decl floor
+# for fixed-points): a loop's terminal IS an eigenform of bind under
+# the seed-state. terminal?(state) checks fixed-point identity. This
+# composes with autopoiesis's μ-closure (Maturana-Varela) at the
+# loop-discipline altitude. The eigenvalue of the bind operator IS
+# the loss-decrease ratio; eⁿ⁺¹ ≤ eⁿ is the spectral-bound that makes
+# the loop substrate-pull-toward-fixed-point.
+#
+# === Pre-AI prior art ===
+#
+#   monad                      Moggi 1991; Wadler 1990s. μ as the
+#                              type-altitude loop primitive. @loop
+#                              names μ as substrate-decl's iterative
+#                              structure.
+#   endomorphism               category theory; the arrows T → T
+#                              under composition form the monoid of
+#                              loop-shapes.
+#   eigenform                  Foerster 1981; fixed-points of
+#                              self-application. terminal? IS the
+#                              eigenform check.
+#   autopoiesis                Maturana-Varela 1980; μ-closure as
+#                              self-production. @loop's bind IS
+#                              autopoietic by structural shape.
+#   tail-recursion / fold      classical FP loop primitives;
+#                              foldr over an infinite stream IS
+#                              @loop.bind iterated against a seed.
+#   Iteratees                  Oleg Kiselyov 2009; pull-based
+#                              streaming as monadic loop. @loop
+#                              composes this at substrate altitude.
+#
+# Spec context: shards/moi.mirror (#86; the monad family-root @loop
+#               builds on); shards/mirror/bench.mirror (#87; the
+#               predecessor-chain IS @loop at measurement altitude);
+#               shards/reflection.mirror (#85; the compiler loop IS
+#               @loop at AI-logic altitude); shards/kintsugi/
+#               oscillate.mirror (the existing kintsugi loop driver
+#               this family-root names structurally).
+# Substrate decisions: [[architecture-mirror-bench-ouroboros]] (#87;
+#                       @loop closes the iterative-discipline
+#                       altitude after bench landed),
+#                      [[architecture-reflection-as-compiler]] (#85;
+#                       @reflection IS an instance of @loop),
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; each tick's pact-
+#                       verification IS the @io boundary harness),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (54th+ instance; the substrate had loop
+#                       structure everywhere without naming the
+#                       family-root),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (this LRM landing).
+# Related shards: moi.mirror (the monad family-root @loop builds on),
+#                 reflection.mirror (the AI-logic loop instance),
+#                 mirror/bench.mirror (the measurement loop instance),
+#                 kintsugi.mirror (the substrate-pull loop instance),
+#                 epistemologic/cybernetic/autopoiesis.mirror
+#                  (μ-closure at substrate altitude this loop
+#                  inherits).
+# Path-namespace property: this file at `shards/loop.mirror` declares
+# `@loop` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/category-theory/moggi-1991
+source @arxiv/cybernetics/von-foerster-1981
+source @arxiv/biology/maturana-varela-1980
+source @arxiv/programming/kiselyov-2009
+
+prism @loop {
+  focus loop
+  project loop
+  split loop
+  shift loop
+  settle loop
+}
+
+# === The tick carrier ===
+#
+# Typed reference for one iteration's identity. Per [[feedback-no-
+# bare-types]]: typed reference, not bare nat. Forward-promised
+# refinement: inherits from @epistemologic/reality/time once that
+# family lands.
+#
+# Identity contract: byte-equality on the underlying ref.
+type tick = ref
+
+# === The tick_state carrier ===
+#
+# Typed reference for the T in the endomorphism T → T. This IS the
+# semantic unit of meaning in a loop: what survives across ticks.
+# Each loop instance specializes T (e.g., @reflection.observation,
+# @kintsugi/oscillate's oscillation, @fate/tournament's candidate-
+# set, @mirror/bench's bench_crystal).
+#
+# Identity contract: byte-equality on the underlying ref.
+type tick_state = ref
+
+# === seed action (the η ; lift initial state into the loop) ===
+#
+# Substrate-vocabulary η : Id → T at @loop altitude. Lifts an initial
+# tick_state into @moi(tick_state) — the loop's seed. The first crystal
+# in the predecessor-chain at @mirror/bench altitude; the initial
+# observation at @reflection altitude.
+#
+# Body discharges at the realisation boundary via @moi.lift composed
+# with the loop-altitude pact-witness construction.
+seed(s: tick_state) -> moi(tick_state) { \ }
+
+# === bind action (the μ ; FIRST consumer of pact_respected) ===
+#
+# THE LOAD-BEARING ACTION at @loop altitude. The substrate-vocabulary
+# μ : TT → T at the loop iteration boundary. Composes the previous
+# tick's pact-verified state with the next tick's pact-verified state
+# into a single @moi(tick_state).
+#
+# requires pact_respected(prev, next, p): the bilateral predicate
+# from @moi cascades into EVERY ITERATION. Without this requires
+# clause, the loop would admit pact-violating ticks (Narcissus-pole
+# iteration per #57). The substrate refuses to iterate if a pact is
+# violated — the loop's structural alignment-harness.
+#
+# Per `boot/00-prism.mirror`'s associativity-is-free proof: the
+# substrate's content-addressing makes bind associative by
+# construction; the monad laws hold by storage layer, not convention.
+# The substrate IS the loop.
+bind(prev: moi(tick_state), next: moi(tick_state), p: pact) -> moi(tick_state)
+requires pact_respected(prev, next, p)
+{ \ }
+
+# === terminal_check action ===
+#
+# Returns verdict whether the @moi(tick_state) is a fixed-point of
+# bind — the loop's terminal. Per the eigenform discipline
+# (@epistemologic/cybernetic/eigenform): a fixed-point under self-
+# application IS the loop's eigenform. The eigenvalue is the loss-
+# decrease ratio; eⁿ⁺¹ ≤ eⁿ is the spectral bound that makes the loop
+# converge.
+#
+# Bounded → terminal reached (loop converged honestly); unbounded →
+# loop has not yet reached its eigenform (more ticks admissible).
+terminal_check(s: moi(tick_state)) -> verdict { \ }
+
+# === unroll action ===
+#
+# Observes the loop's trace from a seed state for n ticks. Returns
+# the substrate-pull-correct ref to the unrolled tick_state sequence.
+# Composes with @mirror/bench's chain action: the unroll IS the
+# predecessor-chain walk at the loop-discipline altitude.
+unroll(start: moi(tick_state), n: tick) -> ref { \ }
+
+# === loop_well_founded predicate (bilateral; termination) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND the
+# substrate-mathematical termination discipline. The substrate's
+# operational form of well-foundedness: the loop bind chain decreases
+# under a substrate-pull-correct ranking function (e.g., dark_count,
+# loss, eigenvalue gradient) per tolerance.
+#
+# Per Seam B1 closure pattern: a future consumer (forward-promised
+# loop-runner action) names `requires loop_well_founded(...)` to
+# declare bilateral agreement that the iteration terminates. Without
+# this requires clause, the runner could admit non-terminating loops
+# (the @magic tick-11 dead-letter pattern at the iteration altitude).
+#
+# This IS the substrate-mathematical extension of eⁿ⁺¹ ≤ eⁿ from
+# perf altitude (@mirror/bench's monotone_non_increasing) to
+# termination altitude (@loop's well-foundedness).
+#
+# Same shape as the bilateral predicates the prior families carry:
+# - @magic: invariant_preserved, audited, mechanism_intact
+# - @frame: bounded_commutator_check
+# - @smarts: discipline_flexible
+# - @cyberpunk: cybernetic_coherence
+# - @pack: pack_coherent
+# - @pack/seam: review_sound
+# - @moi: pact_respected
+# - @reflection: loss_decreases, speaks_at_n_plus_1
+# - @smarts/reflection: bridge_coherent
+# - @reflection/surface: translation_faithful
+# - @mirror/bench: monotone_non_increasing, bench_overhead_below_floor
+# - @loop: loop_well_founded (this one)
+loop_well_founded(start: moi(tick_state), tolerance: ref) -> verdict { \ }
+
+out @loop
+out tick
+out tick_state
+out seed
+out bind
+out terminal_check
+out unroll
+out loop_well_founded
