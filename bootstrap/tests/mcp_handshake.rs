@@ -202,6 +202,54 @@ fn prisms_surfaces_requires_clauses() {
     );
 }
 
+/// Tick 19 (2026-06-19): the action-name introspection contract.
+#[test]
+fn prisms_surfaces_action_names() {
+    let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../shards/magic");
+    if !std::path::Path::new(dir).exists() {
+        eprintln!("skipping: {} not present", dir);
+        return;
+    }
+    let req = format!(
+        r#"{{"jsonrpc":"2.0","id":100,"method":"tools/call","params":{{"name":"prisms","arguments":{{"dir":"{}"}}}}}}"#,
+        dir
+    );
+    let resp = mcp::handle_request(&req).expect("prisms must respond");
+    let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
+    let text = v["result"]["content"][0]["text"]
+        .as_str()
+        .expect("text payload");
+    let envelope: serde_json::Value =
+        serde_json::from_str(text).expect("prisms text is JSON");
+    let prisms = envelope["prisms"].as_array().expect("prisms array");
+    let all_actions: Vec<String> = prisms
+        .iter()
+        .flat_map(|p| {
+            p["actions"]
+                .as_array()
+                .map(|a| {
+                    a.iter()
+                        .filter_map(|v| v.as_str().map(|s| s.to_string()))
+                        .collect::<Vec<_>>()
+                })
+                .unwrap_or_default()
+        })
+        .collect();
+    // Known actions from @magic family ticks 9-15: bind / honor /
+    // verify / audit / respond / check_invariant / expose / observe /
+    // surface_honest / seal / unseal / mechanism_intact / reveal /
+    // surface_as_mark / mechanism_as_distinction_space /
+    // bind_satisfies_distinction. Test for several load-bearing ones.
+    for required in &["bind", "audit", "seal", "reveal", "surface_honest"] {
+        assert!(
+            all_actions.iter().any(|a| a == required),
+            "expected action '{}' in @magic family; got {:?}",
+            required,
+            all_actions
+        );
+    }
+}
+
 /// Tick 5 (2026-06-18): the settle/verdict prism split.
 ///
 /// Per Seam's adversarial review of tick 4: `cmd_kintsugi_ci_single`

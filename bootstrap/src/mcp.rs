@@ -124,7 +124,7 @@ fn tools_list_result() -> Value {
             },
             {
                 "name": "prisms",
-                "description": "focus: enumerate prism declarations across a directory of .mirror files. Returns structured JSON listing of (path, prism_name, ops, requires). Substrate-introspection primitive for substrate-driven tool registration (task #312 / lens-server gen_prism MVP per task #310). Tick 18 expanded the envelope to also surface `requires` clauses (the substrate's bilateral predicate discipline).",
+                "description": "focus: enumerate prism declarations across a directory of .mirror files. Returns structured JSON listing of (path, prism_name, ops, requires, actions). Substrate-introspection primitive for substrate-driven tool registration (task #312 / lens-server gen_prism MVP per task #310). Tick 18 added `requires` clauses (bilateral predicates); tick 19 added `actions` (action names per prism).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -200,17 +200,16 @@ fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
     let content = std::fs::read_to_string(path).ok()?;
     let mut prism_name: Option<String> = None;
     let mut ops: Vec<String> = Vec::new();
-    // Tick 18 (2026-06-19): also extract `requires` clauses across the
-    // whole file (not just inside the prism declaration block).
-    // Bilateral predicates declared as `requires <pred>(args)` are the
-    // substrate's commitment; surfacing them at the introspection
-    // altitude is the verifier-sharpening Loki's discipline names.
     let mut requires_clauses: Vec<String> = Vec::new();
+    // Tick 19 (2026-06-19): also extract action names. Same
+    // verifier-sharpening discipline as tick 18; substrate-driven
+    // dispatch foundation now has the complete picture per prism:
+    // (ops, requires, actions). Future ticks consume this envelope to
+    // generate MCP tool surface from substrate-declared prisms.
+    let mut actions: Vec<String> = Vec::new();
     let mut in_prism_block = false;
     for line in content.lines() {
         let trimmed = line.trim();
-        // Skip comment lines so the requires clause inside a comment
-        // block doesn't leak into the substrate-introspection output.
         if trimmed.starts_with('#') {
             continue;
         }
@@ -221,7 +220,6 @@ fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
             continue;
         }
         if let Some(rest) = trimmed.strip_prefix("requires ") {
-            // Drop trailing `{` or whitespace; keep the predicate call.
             let clause = rest.trim_end_matches(|c: char| c.is_whitespace() || c == '{').trim();
             if !clause.is_empty() {
                 requires_clauses.push(clause.to_string());
@@ -241,6 +239,19 @@ fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
                     }
                 }
             }
+            continue;
+        }
+        // Outside the prism block, look for action signatures.
+        // Substrate convention: actions are snake_case-identifier
+        // followed by `(args)` and return type. The simplest robust
+        // recognizer: a line that opens with snake_case word + `(`.
+        if let Some(open) = trimmed.find('(') {
+            let head = &trimmed[..open];
+            if !head.is_empty()
+                && head.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_')
+            {
+                actions.push(head.to_string());
+            }
         }
     }
     let name = prism_name?;
@@ -249,6 +260,7 @@ fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
         "prism": name,
         "ops": ops,
         "requires": requires_clauses,
+        "actions": actions,
     }))
 }
 
