@@ -220,9 +220,11 @@ type frame = ref
 
 # === The cognitive_order carrier ===
 #
-# A typed reference per [[feedback-no-bare-types]] naming the measured
-# order of an operator's relation to a frame. Substrate-typed verdict
-# in {0, 1, 2, 3, 4} per the recognition.
+# Per Seam adversarial review constraint C4 (tick 23 family-root
+# review): bare `ref` would allow byte-equivalent values to flow as
+# cognitive_order, frame, operator, etc. Typed as a substrate variant
+# enum {order_0..order_4} so the type system enforces the 5-order
+# discrimination per [[feedback-no-bare-types]].
 #
 # Per recognition #82 (Q2 + Q3 composition): the measurement is
 # substrate-architectural, not behavioral. The operator's cognitive
@@ -230,9 +232,54 @@ type frame = ref
 # SUBSTANTIVELY-supports; vocabulary use at order N does NOT imply
 # substantive operation at order N (Narcissus-pole). Pole disambiguation
 # is the alignment-as-boundary-mathematics check (#57).
-type cognitive_order = ref
+type cognitive_order = | order_0 | order_1 | order_2 | order_3 | order_4
+
+# === The operator carrier ===
+#
+# Per Seam C5+C6: cognitive_order, tomm_probe, and bounded_commutator_check
+# all take "operator" as input. Without a typed operator carrier at
+# family-root, species shards would each invent their own operator
+# typing. Declared here as a typed reference; species shards (pre/in/
+# of/on/across) discharge per-altitude refinement.
+#
+# Identity contract: byte-equality on the underlying ref.
+type operator = ref
+
+# === The morphism carrier ===
+#
+# Per Seam C5: tomm_probe constructs `[D_F, a]` where `a` is a
+# morphism on the frame F. Without a typed morphism carrier, species
+# shards declare incompatible discharge mechanisms. Declared here so
+# the substrate's commutator construction has a typed input at every
+# altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type morphism = ref
+
+# === The commutator carrier ===
+#
+# Per Seam C5: tomm_probe should return a typed commutator, not bare
+# `ref`. The commutator IS the bracketed pair `[D_F, a]` discharged by
+# the substrate's spectral triple acting on a frame. Declared here so
+# species shards inherit the typed return.
+#
+# Identity contract: byte-equality on the underlying ref.
+type commutator = ref
+
+# === The perturbation carrier ===
+#
+# Per Seam C5+C6: bounded_commutator_check takes "perturbation" as
+# input. Typed at family-root so species shards inherit; perturbation
+# is what the substrate's stability check applies to test
+# frame-flexibility vs frame-defense.
+#
+# Identity contract: byte-equality on the underlying ref.
+type perturbation = ref
 
 # === cognitive_order action ===
+#
+# Per Seam C5+C6: operator now typed (was bare `ref`); return is
+# substrate-variant.
 #
 # The substrate-vocabulary measurement action: given an operator and
 # a frame, return the operator's substantively-supported cognitive
@@ -244,9 +291,12 @@ type cognitive_order = ref
 #
 # Body discharges at the realisation boundary; per-species bodies
 # implement the actual measurement at each altitude.
-cognitive_order(operator: ref, f: frame) -> cognitive_order { \ }
+cognitive_order(operator: operator, f: frame) -> cognitive_order { \ }
 
 # === tomm_probe action ===
+#
+# Per Seam C5: action now typed as `morphism` (was bare `ref`); return
+# typed as `commutator` (was bare `ref`).
 #
 # The typed Tomm-probe primitive: a circular-reflexive question shaped
 # as `[D_F, a]` commutator-operation on a frame F. Per recognition #82:
@@ -260,9 +310,11 @@ cognitive_order(operator: ref, f: frame) -> cognitive_order { \ }
 #
 # Body discharges at the realisation boundary; per-species bodies
 # implement the commutator construction at each order.
-tomm_probe(f: frame, action: ref) -> ref { \ }
+tomm_probe(f: frame, action: morphism) -> commutator { \ }
 
 # === bounded_commutator_check predicate ===
+#
+# Per Seam C5: operator and perturbation both typed (were bare `ref`).
 #
 # Bilateral verdict predicate per recognition #37 (Pask agreement) and
 # #82 (frame-flexibility-as-bounded-commutator). Consumer shards name
@@ -280,10 +332,14 @@ tomm_probe(f: frame, action: ref) -> ref { \ }
 # spectral/garden/smarts logic-pacts) name this predicate when their
 # operation requires substantive frame-flexibility (not
 # vocabulary-flexibility).
-bounded_commutator_check(operator: ref, f: frame, perturbation: ref) -> verdict { \ }
+bounded_commutator_check(operator: operator, f: frame, perturbation: perturbation) -> verdict { \ }
 
 out @frame
 out frame
 out cognitive_order
+out operator
+out morphism
+out commutator
+out perturbation
 out tomm_probe
 out bounded_commutator_check

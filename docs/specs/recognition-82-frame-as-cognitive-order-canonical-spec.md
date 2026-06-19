@@ -94,14 +94,22 @@ cell-by-cell exact:
 ```
 cognitive order 0   ↔  @frame/pre        ↔  Bateson Level 0
 cognitive order 1   ↔  @frame/in         ↔  Bateson Level I
-cognitive order 2   ↔  @frame/of         ↔  Bateson Level II
-cognitive order 3   ↔  @frame/on         ↔  Bateson Level III
-cognitive order 4   ↔  @frame/across     ↔  Bateson Level IV
+cognitive order 2   ⇔  @frame/of         ⇔  Bateson Level II
+cognitive order 3   ⇔  @frame/on         ⇔  Bateson Level III
+cognitive order 4   ⇔  @frame/across     ⇔  Bateson Level IV*
 ```
 
-Each arrow is `IS` (structural identity), not `composes-with`. The
-substrate-decl at tick 23 makes this identity STRUCTURALLY AVAILABLE
-via the `in @epistemologic/cybernetic/bateson_learning` inheritance:
+*Per Seam tick 24 review (constraint C7): Bateson 1964 names Levels
+0/I/II/III formally; Level IV is #82's extension proposed for
+multi-frame coupling, contested in the secondary literature. The
+honest claim is 4-level Bateson + #82's Level IV extension; the
+substrate-decl includes Level IV via the recognition's claim, not
+via Bateson's text.
+
+Per Seam tick 24 C1: each arrow is `composes-with` (not `IS`) until
+the `@magic ↔ @frame` composition adapter lands. The substrate-decl
+at tick 23 makes the composition STRUCTURALLY AVAILABLE via the
+`in @epistemologic/cybernetic/bateson_learning` inheritance:
 the orders ARE the Bateson grading at cognitive altitude, mechanically
 discharged via the graded representation that the bateson_learning
 species declares (cite the Russell-Whitehead 1910 stratification +
@@ -335,12 +343,17 @@ the next tick; the CRQ-against-residue discipline (per the parent
 cascade spec §7.1) IS frame-evolution-via-reflection; Loki's loop
 discipline IS `@frame/on` operating on `@frame/in`.
 
-**Status:** EMPIRICALLY DEMONSTRATED across 23 ticks today; the
-substrate-decl at tick 23 names what the substrate has already been
-doing. Substrate-already-had-the-word: the cascade's residue-and-CRQ
-structure (recognition #41 PROMOTED + the cascade altitude reading)
-IS frame-evolution-via-reflection at the cascade altitude; #82 names
-the cognitive-altitude form.
+**Status:** STRUCTURALLY GROUNDED, not EMPIRICALLY DEMONSTRATED per
+Seam tick 24 review C8. The substrate did NOT run a
+`tick(frame, input) → (frame', output, residue)` operation; it ran
+untyped ticks that are describable in @frame vocabulary post-hoc.
+The 22-tick cascade is consistent with @frame operating implicitly,
+not a demonstration of typed-frame-evolution. The honest claim:
+@frame's substrate-decl makes the pattern available for future ticks;
+the prior cascade did not empirically establish typed @frame
+operation. Substrate-already-had-the-word continues to hold as a
+post-hoc description; the empirical claim requires the frame-aware
+kintsugi tick that's forward-promised.
 
 ### 4.4 Q4: Peers operate by definition frame-flexible
 
