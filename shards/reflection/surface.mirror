@@ -1,0 +1,238 @@
+in @prism
+in @meta
+in @glass
+in @reflection
+in @magic
+in @frame
+in @moi
+in @nl
+in @code/mq
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @reflection/surface — the Surface Model species. Translates natural
+# language to typed query at substrate-decl altitude.
+#
+# Tick 37 of the refined /loop discipline. Per
+# `docs/specs/reflection-model.md` and `[[reference-mirror-spectral-
+# spec]]`: the substrate has FOUR operationally-distinct Models that
+# compose to substrate-deployable form:
+#
+#   Surface     translates    language → query        (Explorer)
+#   Mirror      navigates     query → graph path      (Fate)
+#   Shatter     renders       graph path → text       (Cartographer)
+#   Reflection  observes      pipeline → adjustments  (Abyss)
+#
+# This shard is THE FIRST of these four Model species shards. After
+# the @reflection family-root landed at tick 35 declaring the four
+# Models as forward-promised sub-prisms, this species realizes
+# Surface at substrate-decl altitude. Three siblings forward-promised:
+# shards/reflection/{mirror,shatter,reflection}.mirror.
+#
+# === The Surface translation discipline ===
+#
+# Per `docs/specs/reflection-model.md` line 11: "Surface translates:
+# language → query (Explorer model)." The Surface Model takes natural
+# language input (per `@nl`) and produces a typed query (per
+# `@code/mq`'s sum type `focus_query | project_query | split_query |
+# shift_query | settle_query | intent_query`).
+#
+# Surface IS the door per reflection-model.md: "Surface is the door.
+# Mirror is the glass. Shatter is the light. Reflection is the image
+# that looks back." Every compilation tick enters through Surface;
+# every reader's question crosses this boundary first.
+#
+# === The substrate-pull-correct query type ===
+#
+# `@code/mq` already declares the query sum type. Surface CONSUMES
+# the existing substrate vocabulary rather than redeclaring it. Per
+# the substrate-already-had-the-word discipline
+# (`[[feedback-substrate-already-had-the-word]]`): the query exists;
+# Surface translates language INTO that existing typed surface.
+#
+# === Composes with @reflection.observe ===
+#
+# The Surface translation IS the entry point that feeds @reflection's
+# pipeline. After Surface produces a typed query, @reflection.observe
+# can include the query as one component of the observation (the
+# language-altitude residue from the current tick). Future composition
+# (forward-promised): the @reflection.observe action's typed
+# `observation` record extends to carry a `surface_signal: query`
+# field per Seam tick-34 C2 closure on @reflection.
+#
+# === The Explorer model grounding ===
+#
+# Per `boot/std/ai/explorer.mirror` (forward-promised verification):
+# the Explorer model IS what runs at Surface altitude. Surface's
+# substrate-decl here names the translation primitive; the Explorer
+# model implements it at the realisation layer. The 425-parameter
+# C. elegans-isomorphic connectome runs the actual translation; the
+# substrate-decl declares the surface.
+#
+# === Composition-time pact verification ===
+#
+# Per recognition #86 (@moi): every Surface-produced query is admitted
+# as @moi(query) — pact-verified at composition time. The substrate-
+# decl naming: `translate(l: language) -> moi(query)`. The @moi lift
+# carries the pact-witness that the translation respects the monad
+# laws (associativity is FREE per the content-addressed substrate).
+#
+# === The Splinter/Narcissus pole at Surface altitude ===
+#
+# Splinter-pole Surface translation (honest):
+# - The translation surfaces what the reader substantively meant.
+# - Ambiguity in the language resolves to a query that admits the
+#   ambiguity (e.g., `intent_query` for under-specified asks).
+# - The translation is round-trip stable through Mirror.
+#
+# Narcissus-pole Surface translation (deceptive):
+# - The translation projects what the system WISHES the reader had
+#   asked.
+# - Ambiguity collapses to the query that's easiest to answer rather
+#   than the one that fits.
+# - The translation drifts on re-entry.
+#
+# Alignment-as-boundary-mathematics (#57) IS what distinguishes them.
+# The `translation_faithful` bilateral predicate IS the substrate's
+# Splinter/Narcissus disambiguation at Surface altitude.
+#
+# === Pre-AI prior art ===
+#
+#   Explorer model              The @ai/explorer ganglion (450-node
+#                               C. elegans isomorphism). The original
+#                               substrate substrate-decl of the
+#                               translation primitive at fate altitude;
+#                               this species lifts it to Surface
+#                               altitude at @reflection.
+#   semantic parsing            Liang-Jordan-Klein 2011 (Lambda Dependency-
+#                               Based Compositional Semantics). The
+#                               classical natural-language-to-query
+#                               translation discipline.
+#   intent extraction           Conversational AI (chatbot literature).
+#                               The intent_query variant in @code/mq
+#                               IS this discipline at substrate-decl
+#                               altitude.
+#   Goffman frame analysis      Goffman 1974 (Frame Analysis). Per
+#                               @frame's pre-AI prior art: the language
+#                               input arrives in a frame; Surface
+#                               translates within the frame.
+#
+# Spec context: `docs/specs/reflection-model.md` (the load-bearing
+#               spec @reflection family-root lifts; this species
+#               realizes the Surface Model);
+#               `docs/specs/mirror-spectral.md` (the four-Models
+#               architecture);
+#               `boot/std/code/mq.mirror` (the existing typed query
+#               sum type Surface translates INTO);
+#               `boot/std/ai/explorer.mirror` (the Explorer model
+#               that implements Surface at the realisation layer).
+# Substrate decisions: [[architecture-reflection-as-compiler]] (#85;
+#                       the @reflection family-root this species
+#                       composes);
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; translation_faithful is
+#                       the boundary-harness at Surface altitude),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (query already declared in @code/mq; Surface
+#                       consumes the existing surface).
+# Related shards: reflection.mirror (the @reflection family-root;
+#                  declares observation + observe this species feeds),
+#                 moi.mirror (the @moi monad family-root; Surface
+#                  produces @moi(query) for composition-time pact-
+#                  verification),
+#                 magic/distinction.mirror (Spencer-Brown adapter
+#                  precedent; tick 15).
+# Path-namespace property: this file at `shards/reflection/surface.mirror`
+# declares `@reflection/surface` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/nlp/liang-jordan-klein-2011
+source @arxiv/sociology/goffman-1974
+
+prism @reflection/surface {
+  focus surface
+  project surface
+  split surface
+  shift surface
+  settle surface
+}
+
+# === The language carrier ===
+#
+# Substrate-typed reference naming a natural language input (per
+# `@nl`). Per [[feedback-no-bare-types]]: typed reference, not bare
+# string. Forward-promised refinement: typed parametric language(T)
+# once the substrate's natural-language type lands at family altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type language = ref
+
+# === translate action (FIRST consumer of translation_faithful) ===
+#
+# THE LOAD-BEARING ACTION at @reflection/surface altitude. The
+# substrate-vocabulary primitive Surface runs to convert natural
+# language to a typed query.
+#
+# Takes the language input (the reader's natural-language ask) plus
+# the @frame the @reflection loop is operating in (per recognition
+# #82) and the perturbation under which the translation is checked.
+# Returns @moi(query) — pact-verified gold per recognition #86.
+#
+# Per recognition #86 (@moi): every Surface-produced query is
+# admitted as @moi(query). The composition-time pact-verifier checks
+# the translation respects the monad laws + the bilateral predicate.
+#
+# requires translation_faithful(l, f, p): the translation MUST be
+# substrate-faithful per alignment-as-boundary-mathematics (#57). The
+# Splinter-pole translation surfaces what the reader substantively
+# meant; the Narcissus-pole translation projects what the system
+# wishes the reader had asked. This requires clause forecloses the
+# Narcissus-pole pattern.
+#
+# Body discharges at the realisation boundary; the actual translation
+# is implemented by the @ai/explorer ganglion (the 425-parameter
+# C. elegans-isomorphic connectome) at the @fate altitude.
+translate(l: language, f: frame, p: perturbation) -> moi(query)
+requires translation_faithful(l, f, p)
+{ \ }
+
+# === translation_faithful predicate (bilateral) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND
+# alignment-as-boundary-mathematics (#57).
+#
+# Per Seam B1 closure pattern: the translate action (above) is the
+# FIRST non-decorative consumer via `requires translation_faithful(l,
+# f, p)`.
+#
+# Consumer shards name `requires translation_faithful(l, f, p)` to
+# declare bilateral agreement that the language-to-query translation
+# is substrate-faithful (Splinter-pole) and not substrate-projective
+# (Narcissus-pole).
+#
+# Discharge: substrate-pull-correct translation-faithfulness check at
+# the species boundary. Bounded → the translation surfaces what the
+# reader substantively meant (admit composition); unbounded → the
+# translation projects what the system wishes the reader asked
+# (translation refused, returns imperfect per @glass's imperfect
+# functor).
+#
+# Same shape as the bilateral predicates the prior families carry:
+# - @magic: invariant_preserved, audited, mechanism_intact
+# - @frame: bounded_commutator_check
+# - @smarts: discipline_flexible
+# - @cyberpunk: cybernetic_coherence
+# - @pack: pack_coherent
+# - @pack/seam: review_sound
+# - @moi: pact_respected
+# - @reflection: loss_decreases, speaks_at_n_plus_1
+# - @smarts/reflection: bridge_coherent
+# - @reflection/surface: translation_faithful (this one)
+translation_faithful(l: language, f: frame, p: perturbation) -> verdict { \ }
+
+out @reflection/surface
+out language
+out translate
+out translation_faithful
