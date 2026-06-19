@@ -123,6 +123,17 @@ fn tools_list_result() -> Value {
                 }
             },
             {
+                "name": "prisms",
+                "description": "focus: enumerate prism declarations across a directory of .mirror files. Returns structured JSON listing of (path, prism_name, ops). Substrate-introspection primitive for substrate-driven tool registration (task #312 / lens-server gen_prism MVP per task #310). Walks directory recursively; reads each .mirror file's `prism @path { focus N project N split N shift N settle N }` declaration via regex match (no full grammar parse needed).",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "dir": { "type": "string", "description": "Path to directory containing .mirror files (recursive walk)" }
+                    },
+                    "required": ["dir"]
+                }
+            },
+            {
                 "name": "verdict",
                 "description": "focus: render a structured PASS/REJECT verdict envelope for a .mirror file or directory (corpus mode). Read-only — does NOT modify the file. Returns the substrate's JSON verdict envelope (fields: verdict, target, objective, iterations, dark_count). isError lifts to true when verdict.label ∈ {partial, failure}; success returns isError absent.",
                 "inputSchema": {
@@ -136,6 +147,91 @@ fn tools_list_result() -> Value {
             }
         ]
     })
+}
+
+/// Walk `dir` recursively for `.mirror` files; for each, extract the
+/// prism declaration line of shape `prism @path { ... }` plus the
+/// five-op signature lines. Return structured JSON.
+///
+/// Tick 17 (substrate-introspection primitive). The smallest viable
+/// substrate-driven tool registration foundation per task #310/#312.
+/// Uses simple text matching — the prism declaration form is regular
+/// enough that full grammar parse isn't required at this altitude.
+fn list_prisms_in_dir(dir: &str) -> String {
+    let mut prisms: Vec<Value> = Vec::new();
+    walk_for_prisms(std::path::Path::new(dir), &mut prisms);
+    let envelope = json!({ "dir": dir, "count": prisms.len(), "prisms": prisms });
+    serde_json::to_string(&envelope).expect("prisms envelope is serializable")
+}
+
+/// Recursively walk `path` for `.mirror` files; extract each file's
+/// prism declaration into `acc`.
+fn walk_for_prisms(path: &std::path::Path, acc: &mut Vec<Value>) {
+    let entries = match std::fs::read_dir(path) {
+        Ok(e) => e,
+        Err(_) => return,
+    };
+    for entry in entries.flatten() {
+        let p = entry.path();
+        if p.is_dir() {
+            walk_for_prisms(&p, acc);
+        } else if p.extension().and_then(|e| e.to_str()) == Some("mirror") {
+            if let Some(prism) = extract_prism_declaration(&p) {
+                acc.push(prism);
+            }
+        }
+    }
+}
+
+/// Extract the prism declaration from one `.mirror` file. Returns
+/// `Some(json)` with shape `{ path, prism, ops }` on success.
+///
+/// Substrate convention: prism declarations look like
+/// ```
+/// prism @path/to/prism {
+///   focus name
+///   project name
+///   split name
+///   shift name
+///   settle name
+/// }
+/// ```
+fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
+    let content = std::fs::read_to_string(path).ok()?;
+    let mut prism_name: Option<String> = None;
+    let mut ops: Vec<String> = Vec::new();
+    let mut in_prism_block = false;
+    for line in content.lines() {
+        let trimmed = line.trim();
+        if let Some(rest) = trimmed.strip_prefix("prism @") {
+            // Take everything up to ` {` or end of line as the prism name.
+            let name = rest.split('{').next().unwrap_or(rest).trim();
+            prism_name = Some(format!("@{}", name));
+            in_prism_block = true;
+            continue;
+        }
+        if in_prism_block {
+            if trimmed.starts_with('}') {
+                in_prism_block = false;
+                continue;
+            }
+            // Extract op signature lines: `focus name`, `project name`, etc.
+            for op in &["focus", "project", "split", "shift", "settle"] {
+                if let Some(rest) = trimmed.strip_prefix(*op) {
+                    let target = rest.trim();
+                    if !target.is_empty() {
+                        ops.push(format!("{} {}", op, target));
+                    }
+                }
+            }
+        }
+    }
+    let name = prism_name?;
+    Some(json!({
+        "path": path.to_string_lossy(),
+        "prism": name,
+        "ops": ops,
+    }))
 }
 
 /// Parse a `mirror kintsugi --ci --out @data/json` stdout payload and
@@ -279,6 +375,25 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
             }
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs)
+        }
+        "prisms" => {
+            // Substrate-introspection primitive (tick 17). Walks the
+            // given directory recursively for .mirror files; reads
+            // each file's prism declaration via simple text matching;
+            // returns structured JSON list. Does NOT use full mirror
+            // grammar parse — the prism declaration form
+            // `prism @path { focus N project N split N shift N settle N }`
+            // is regular enough to extract via regex match without
+            // dragging the grammar load path through MCP dispatch.
+            //
+            // Per task #310 (lens-server gen_prism MVP) and task #312
+            // (MCP substrate-driven tool registration): this is the
+            // foundation for the L of MCP+LSP. Future ticks build on
+            // this output to generate MCP tool surface from substrate-
+            // declared prisms rather than hardcoded Rust dispatch.
+            let dir = s("file").or_else(|| s("dir")).unwrap_or_default();
+            let json = list_prisms_in_dir(&dir);
+            return (json, false);
         }
         "verdict" => {
             // Verdict prism: read-only observation. Per Seam tick 4
