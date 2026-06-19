@@ -85,16 +85,76 @@ fn unknown_method_silent_drop() {
 }
 
 #[test]
-fn four_tools_advertised() {
+fn five_tools_advertised() {
     let req = read_fixture("tools_list.req.json");
     let resp = mcp::handle_request(req.trim()).expect("tools/list must respond");
     let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
     let tools = v["result"]["tools"].as_array().expect("tools array");
-    assert_eq!(tools.len(), 4);
+    assert_eq!(tools.len(), 5);
     let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
-    // Tick 6 (2026-06-18): tool names drop the `mirror_` prefix per
-    // Alex's correction — the MCP server name IS the namespace.
-    assert_eq!(names, vec!["compile", "craft", "kintsugi", "verdict"]);
+    // Tick 17 (2026-06-19): added `prisms` substrate-introspection
+    // primitive for substrate-driven tool registration foundation
+    // (task #310 / #312).
+    assert_eq!(
+        names,
+        vec!["compile", "craft", "kintsugi", "prisms", "verdict"]
+    );
+}
+
+/// Tick 17 (2026-06-19): the substrate-introspection contract.
+///
+/// The `prisms` tool walks a directory recursively for .mirror files
+/// and returns structured JSON listing of (path, prism, ops) for each.
+/// This is the foundation for substrate-driven tool registration: a
+/// future tick uses this output to generate MCP tool surface from
+/// substrate-declared prisms rather than hardcoded Rust dispatch.
+///
+/// Empirical contract: invoke `prisms` on the @magic family directory
+/// and verify the response contains all 6 species + family-root.
+#[test]
+fn prisms_enumerates_magic_family() {
+    let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../shards/magic");
+    if !std::path::Path::new(dir).exists() {
+        eprintln!("skipping: {} not present", dir);
+        return;
+    }
+    let req = format!(
+        r#"{{"jsonrpc":"2.0","id":42,"method":"tools/call","params":{{"name":"prisms","arguments":{{"dir":"{}"}}}}}}"#,
+        dir
+    );
+    let resp = mcp::handle_request(&req).expect("prisms must respond");
+    let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
+    let text = v["result"]["content"][0]["text"]
+        .as_str()
+        .expect("text payload");
+    let envelope: serde_json::Value =
+        serde_json::from_str(text).expect("prisms text is JSON");
+    let count = envelope["count"].as_u64().expect("count is u64");
+    // 6 species shards in shards/magic/ subdirectory (audit, contract,
+    // distinction, mechanism, reveal, surface) all declare prisms.
+    assert!(
+        count >= 6,
+        "expected at least 6 prism declarations, got {} (envelope: {})",
+        count,
+        text
+    );
+    let prisms = envelope["prisms"].as_array().expect("prisms array");
+    let names: Vec<&str> = prisms
+        .iter()
+        .map(|p| p["prism"].as_str().unwrap_or(""))
+        .collect();
+    // The substrate convention: every @magic species declares
+    // @magic/<name>.
+    assert!(
+        names.iter().any(|n| *n == "@magic/contract"),
+        "expected @magic/contract; got {:?}",
+        names
+    );
+    assert!(
+        names.iter().any(|n| *n == "@magic/audit"),
+        "expected @magic/audit; got {:?}",
+        names
+    );
 }
 
 /// Tick 5 (2026-06-18): the settle/verdict prism split.
