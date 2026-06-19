@@ -1,0 +1,172 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/property
+in @mirror
+in @mirror/bench
+in @kintsugi
+
+# @epistemologic/property/dark_count_monotone — the DECLARATIVE HALF
+# of the kintsugi-on-Rust first lift. Substrate-pull-correct property
+# that asserts: across kintsugi ticks, a shard's dark_count is
+# monotonic-non-increasing.
+#
+# Tick 41 / first ouroboros bite. The substrate's first lift of a
+# Rust regression test (`bootstrap/tests/kintsugi_ci.rs::dark_count_
+# monotone_non_increasing`) into the property+fracture bilateral
+# pattern (#53 third instance). Per Taut's substrate-decl response
+# to Alex's circular-reflexive Tomm-probe 2026-06-19 evening.
+#
+# === The recognition (bilateral pattern #53; third instance) ===
+#
+# First instance: keyword/depth (`5e68df9` property + `d908798`
+# fracture) at 2026-06-10.
+# Second instance: forward-promised @mirror/fracture/predicate (#272).
+# Third instance (THIS): dark_count_monotone.
+#
+# The pattern's signature: declarative property at
+# @epistemologic/property/<predicate> + operational fracture body at
+# @kintsugi/fracture/<predicate> via the kintsugi loop bridge. The
+# auto-formatting floor.
+#
+# === The predicate ===
+#
+# Per @mirror/bench's three-conjunct monotone_non_increasing (the
+# substrate-mathematical floor for eⁿ⁺¹ ≤ eⁿ extended to op-runtime):
+# at the dark_count-altitude, the three-conjunct collapses to a
+# single-conjunct because:
+#
+#   - runtime conjunct: not applicable at compile-loss altitude
+#                       (compile-loss IS the runtime here)
+#   - output conjunct: implicit (the shard's content is stable
+#                      across kintsugi-tick if dark_count is the
+#                      observable)
+#   - env conjunct: implicit (kintsugi ticks happen in the same
+#                   substrate environment)
+#
+# So the predicate reduces to:
+#
+#   dark_count_monotone(shard, n, np1) ⇔
+#     dark_count(shard, np1) ≤ dark_count(shard, n)
+#
+# This IS the eⁿ⁺¹ ≤ eⁿ invariant at the substrate-self-hosting
+# trajectory altitude. Per `boot/00-prism.mirror`'s proof: the
+# substrate learns from its errors; the errors get smaller; growth is
+# monotonically non-decreasing.
+#
+# === The kintsugi-on-Rust lift trajectory ===
+#
+# `bootstrap/tests/kintsugi_ci.rs::dark_count_monotone_non_increasing`
+# asserts the SAME invariant in Rust. This property lifts the
+# assertion to substrate-decl altitude. After the bilateral pair lands
+# (this property + fracture body next tick), the Rust test becomes a
+# thin shim that calls `mirror verify
+# @epistemologic/property/dark_count_monotone`. The Rust shim itself
+# deletes when `mirror.spec` covers it. The ouroboros has bitten.
+#
+# === Why this lift is safe (Taut's analysis) ===
+#
+# Today's 38-min pre-push hang did NOT regress dark_count — it
+# regressed compile-time. The lift demonstrates the bilateral pattern
+# without breaking; primes the next lift
+# (cold_compile_within_tolerance) which WOULD have caught today.
+#
+# === Composes with @mirror/bench ===
+#
+# This property's verdict feeds @mirror/bench's regress_check via
+# composition. When kintsugi runs at tick n+1, the bench crystal for
+# the shard's dark_count carries the measurement; the property's
+# verdict gates whether the substrate-pull is admissible. Same shape
+# as the @magic/audit ⇔ contract.invariant_preserved pair at the
+# verifier altitude.
+#
+# === Pre-AI prior art ===
+#
+#   monotone invariants        Floyd-Hoare-Dijkstra; the classical
+#                              loop-invariant discipline. This
+#                              property IS that invariant at the
+#                              substrate-pull-loop altitude.
+#   property-based testing     QuickCheck (Claessen-Hughes 2000);
+#                              shrinking-counterexamples for monotone
+#                              predicates. The bilateral fracture
+#                              body emits the shrunk repair.
+#   ranking functions          termination proofs via well-founded
+#                              orders; dark_count is the ranking
+#                              function for substrate-pull progress.
+#
+# Spec context: shards/mirror/bench.mirror (the @mirror/bench
+#               substrate-decl this property composes); recognition
+#               #87 candidate (the ouroboros bites).
+# Substrate decisions: [[architecture-mirror-bench-ouroboros]] (#87;
+#                       this property is the first ouroboros bite),
+#                      [[architecture-property-fracture-bilateral]]
+#                       (#53 pattern; this is the third instance),
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]] (shard and tick are
+#                       typed carriers).
+# Related shards: mirror/bench.mirror (the bench substrate-decl this
+#                  property composes via monotone_non_increasing),
+#                 kintsugi.mirror (the loop-discipline family this
+#                  property runs at; tick is from
+#                  @epistemologic/reality/time inherited via
+#                  @kintsugi),
+#                 kintsugi/fracture/dark_count_monotone.mirror
+#                  (the OPERATIONAL HALF of this bilateral pair;
+#                  forward-promised in this same tick).
+# Path-namespace property: this file at
+# `shards/epistemologic/property/dark_count_monotone.mirror` declares
+# `@epistemologic/property/dark_count_monotone` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/floyd-hoare-1969
+source @arxiv/programming/claessen-hughes-2000
+
+prism @epistemologic/property/dark_count_monotone {
+  focus dark_count_monotone
+  project dark_count_monotone
+  split dark_count_monotone
+  shift dark_count_monotone
+  settle dark_count_monotone
+}
+
+# === The shard carrier ===
+#
+# Typed reference to the substrate-decl shard being checked. Forward-
+# promised refinement: typed parametric shard once the substrate's
+# shard type lands at @mirror/store altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type shard = ref
+
+# === The tick carrier ===
+#
+# Typed reference to a kintsugi tick. Forward-promised refinement:
+# inherits from @epistemologic/reality/time once that family lands.
+#
+# Identity contract: byte-equality on the underlying ref.
+type tick = ref
+
+# === dark_count_monotone predicate (the declarative half) ===
+#
+# THE LOAD-BEARING PREDICATE. Returns verdict that the shard's
+# dark_count at tick n+1 is bounded above by dark_count at tick n.
+# Per the substrate's eⁿ⁺¹ ≤ eⁿ proof from boot/00-prism.mirror.
+#
+# Body discharges at the realisation boundary; the @kintsugi loop's
+# active_pass reads this predicate when verifying substrate-pull
+# progress. The operational half (the fracture body that emits a
+# repair morphism when this predicate fails) lives at
+# @kintsugi/fracture/dark_count_monotone (forward-promised in this
+# same tick).
+#
+# Bounded → substrate-pull is honest (dark_count is non-increasing).
+# Unbounded → substrate-pull regressed at tick n+1 (the kintsugi loop
+# must re-converge before further ticks are admissible).
+dark_count_monotone(shard: shard, n: tick, np1: tick) -> verdict { \ }
+
+out @epistemologic/property/dark_count_monotone
+out shard
+out tick
+out dark_count_monotone

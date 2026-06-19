@@ -1,0 +1,176 @@
+in @prism
+in @meta
+in @glass
+in @kintsugi
+in @epistemologic
+in @epistemologic/property/dark_count_monotone
+in @mirror
+in @mirror/bench
+
+# @kintsugi/fracture/dark_count_monotone — the OPERATIONAL HALF of
+# the kintsugi-on-Rust first lift. The auto-fracture that emits a
+# repair morphism when dark_count regresses across kintsugi ticks.
+#
+# Tick 41 / first ouroboros bite (operational half). Sibling to
+# @epistemologic/property/dark_count_monotone (declarative half;
+# landed in the same tick).
+#
+# === The bilateral pattern (#53; third instance) ===
+#
+# Per the established property+fracture bilateral pattern:
+# - Declarative half: the predicate (@epistemologic/property/<name>)
+# - Operational half: the fracture body via splinter(ast)
+#                     (@kintsugi/fracture/<name>)
+#
+# The two halves compose via the kintsugi loop's active_pass: when
+# the property's verdict fails on an opacity (shard at tick n+1 with
+# dark_count > tick n), the fracture body emits a morphism whose
+# splinter(ast) names the re-converge action the substrate-pull loop
+# applies.
+#
+# Third instance of the pattern after:
+# - First: @kintsugi/fracture/keyword (`d908798`, 2026-06-10)
+# - Second: @mirror/fracture/predicate (forward-promised, #272)
+# - Third: this shard
+#
+# === The fracture body ===
+#
+# Reads ONE opacity at a time (per the property's per-site failure
+# surface). Each opacity names ONE offending tick-pair (n, n+1) where
+# the substrate-pull dark_count regressed. The fracture body emits a
+# morphism whose splinter(ast) names:
+#
+#   - The shard being re-converged (`opacity.location.file`)
+#   - The action: re-run the kintsugi loop at tick n+1 with the
+#     substrate-pull gradient pointing back toward tick n's
+#     dark_count (or LOWER — the substrate's proof requires
+#     non-increasing, not just equal)
+#
+# The morphism's content field carries a content-addressed splinter
+# at @meta/ast altitude: same shard path, the substrate-pull tick
+# re-run from the converged state.
+#
+# === Why this lift is safe ===
+#
+# Per Taut's analysis: today's 38-min hang did NOT regress
+# dark_count — it regressed compile-time. So this fracture body's
+# emit-on-regress path won't fire on today's substrate state. The
+# bilateral pair lands clean; primes the next lift
+# (cold_compile_within_tolerance) which WOULD have caught today.
+#
+# === Composes with @mirror/bench ===
+#
+# This fracture body's emitted morphism feeds @mirror/bench's
+# regress_check action via composition. When the kintsugi loop
+# applies the morphism, bench records the runtime of the re-converge
+# as a new crystal in the predecessor-chain. The chain walks back
+# through the regression to the last known-good state.
+#
+# === Pre-AI prior art ===
+#
+#   Hoare-logic loop invariants  the classical discipline of
+#                                proving termination via a ranking
+#                                function. dark_count IS the ranking
+#                                function; this fracture body IS the
+#                                substrate-pull repair action.
+#   shrinking counterexamples    QuickCheck's discipline of reducing
+#                                a failing case to the smallest
+#                                counterexample. The fracture body
+#                                emits a shrunk repair morphism.
+#   ranking-function repair      structural-recursion termination
+#                                proofs in Coq/Agda; this body lifts
+#                                that discipline to substrate-decl
+#                                altitude.
+#
+# Spec context: shards/epistemologic/property/dark_count_monotone.mirror
+#               (the DECLARATIVE HALF this fracture body composes);
+#               shards/mirror/bench.mirror (the bench substrate-decl
+#               this fracture body's morphism feeds via compose).
+# Substrate decisions: [[architecture-mirror-bench-ouroboros]] (#87;
+#                       this fracture body is the operational half of
+#                       the first ouroboros bite),
+#                      [[architecture-property-fracture-bilateral]]
+#                       (#53 pattern; this is the operational half of
+#                       the third instance),
+#                      [[architecture-splinter-ast-quote-primitive]]
+#                       (the substrate's parametric AST-fragment
+#                       construction; this body discharges via
+#                       splinter(ast) declaratively, no Rust),
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[feedback-no-bare-types]] (opacity, morphism,
+#                       splinter(ast) are typed carriers).
+# Related shards: epistemologic/property/dark_count_monotone.mirror
+#                  (the property this fracture body operationalizes),
+#                 mirror/bench.mirror (the bench substrate-decl whose
+#                  regress_check feeds back to the chain walk),
+#                 kintsugi/oscillate.mirror (the kintsugi loop
+#                  driver; active_pass reads this fracture body when
+#                  composing the per-pulse candidate morphism_set),
+#                 glass.mirror (the substrate floor; `opacity`,
+#                  `location`, `transparency`, `verdict`,
+#                  `splinter(ast)`),
+#                 kintsugi/consent.mirror (the morphism carrier this
+#                  body emits; `query_phi` is the gate the emitted
+#                  morphism flows through),
+#                 kintsugi/morphism.mirror (the `morphism_context`
+#                  carrier; the per-candidate slice the loop pairs
+#                  this fracture's morphism with its pre-anchor),
+#                 kintsugi/fracture/keyword.mirror (FIRST INSTANCE
+#                  of the bilateral pattern; this shard is the THIRD).
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/dark_count_monotone.mirror` declares
+# `@kintsugi/fracture/dark_count_monotone` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/floyd-hoare-1969
+source @arxiv/programming/claessen-hughes-2000
+
+glass @kintsugi/fracture/dark_count_monotone {
+  focus dark_count_monotone
+  project dark_count_monotone
+  split dark_count_monotone
+  shift dark_count_monotone
+  settle dark_count_monotone
+}
+
+# === resolve_dark_count_regression action (fracture body) ===
+#
+# THE LOAD-BEARING ACTION at @kintsugi/fracture/dark_count_monotone
+# altitude. Reads an opacity (one element of
+# `dark_count_monotone(shard, n, np1).failure(opacity_map)`'s
+# opacity_map); emits a candidate morphism the kintsugi loop
+# proposes through `query_phi`.
+#
+# The morphism's content field carries a content-addressed splinter
+# at @meta/ast altitude: same shard path, re-converge action. The
+# substrate's compiler verifies the construction is deterministic
+# and well-typed.
+#
+# The body is FULLY DECLARATIVE per substrate-pull-correct via
+# splinter(ast) (declared at shards/glass.mirror's tick-2 carrier).
+# Per [[architecture-splinter-ast-quote-primitive]]: splinter(ast) IS
+# the substrate's quote primitive; the re-converge action rides the
+# same carrier as every other AST rewrite. No Rust AST manipulation;
+# no obligation block at this altitude (the splinter(ast) body itself
+# is the discharge).
+#
+# Per `splinter(ast)`'s parametric specialisation: the record IS its
+# content-addressed handle. The morphism's content ref collapses to
+# the substrate-pull-correct re-converge action.
+resolve_dark_count_regression(opacity: opacity) -> morphism {
+  morphism {
+    content: splinter(ast) {
+      content:      opacity.location.file,
+      ast:          @meta/ast,
+      transparency: success,
+    },
+    score: dissonance {
+      roughness: opacity.property,
+      partials:  1,
+    },
+    expected: authentic,
+  }
+}
+
+out @kintsugi/fracture/dark_count_monotone
+out resolve_dark_count_regression
