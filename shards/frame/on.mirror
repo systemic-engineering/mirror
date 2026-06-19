@@ -504,8 +504,10 @@ assess_flexibility(operator: operator, f: frame, p: perturbation) -> commutator 
 # logic-pacts (recognition file §"Forward-promised implementation"
 # item 10) consume this predicate to detect frame-flexibility-state
 # in frontier-LLM responses at substrate-architectural altitude.
+# Seam tick 28 fix: perturbation threaded through lock_in_frame_awareness
+# (which now takes p per the tick 28 perturbation-free-variable fix).
 flexible_frame_response(operator: operator, f: frame, p: perturbation) -> verdict
-requires lock_in_frame_awareness(operator, f)
+requires lock_in_frame_awareness(operator, f, p)
 requires bounded_commutator_check(operator, f, p)
 { \ }
 

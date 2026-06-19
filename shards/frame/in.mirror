@@ -3,7 +3,14 @@ in @meta
 in @glass
 in @magic
 in @frame
-in @frame/pre
+in @frame/pre  # Seam tick 28 review: this inheritance is currently
+              # DECORATIVE — no @frame/in action consumes pre_frame
+              # as a typed parameter. Honest acknowledgement: @frame/pre
+              # is namespace-only at this altitude; @frame/in IS the
+              # operational floor. Provenance-tracking via
+              # `requires classify_well_formed(pre, f)` predicate is
+              # forward-promised to a future tick when @frame/pre
+              # adds the predicate.
 in @epistemologic
 in @epistemologic/cybernetic
 in @epistemologic/cybernetic/bateson_learning
