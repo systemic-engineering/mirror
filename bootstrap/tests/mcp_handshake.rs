@@ -157,6 +157,51 @@ fn prisms_enumerates_magic_family() {
     );
 }
 
+/// Tick 18 (2026-06-19): the `requires` clause introspection contract.
+///
+/// The substrate's bilateral predicate discipline (recognition #37
+/// Pask agreement) lives in `requires <pred>(args)` clauses. Surfacing
+/// these at MCP altitude is the verifier-sharpening Loki's discipline
+/// names: same tool, more substantive output, substrate doesn't get
+/// smarter.
+#[test]
+fn prisms_surfaces_requires_clauses() {
+    let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../shards/magic");
+    if !std::path::Path::new(dir).exists() {
+        eprintln!("skipping: {} not present", dir);
+        return;
+    }
+    let req = format!(
+        r#"{{"jsonrpc":"2.0","id":99,"method":"tools/call","params":{{"name":"prisms","arguments":{{"dir":"{}"}}}}}}"#,
+        dir
+    );
+    let resp = mcp::handle_request(&req).expect("prisms must respond");
+    let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
+    let text = v["result"]["content"][0]["text"]
+        .as_str()
+        .expect("text payload");
+    let envelope: serde_json::Value =
+        serde_json::from_str(text).expect("prisms text is JSON");
+    let prisms = envelope["prisms"].as_array().expect("prisms array");
+    // Sum requires across all @magic species. Ticks 12-15 landed 5
+    // non-decorative `requires` clauses + 1 cross-shard adapter:
+    // - surface_honest requires invariant_preserved (tick 12)
+    // - unseal requires audited (tick 13)
+    // - reveal requires audited (tick 14)
+    // - reveal requires mechanism_intact (tick 14)
+    // - bind_satisfies_distinction requires distinction_well_formed (tick 15)
+    let total_requires: usize = prisms
+        .iter()
+        .map(|p| p["requires"].as_array().map(|a| a.len()).unwrap_or(0))
+        .sum();
+    assert!(
+        total_requires >= 5,
+        "expected at least 5 requires clauses across @magic family; got {} (prisms: {})",
+        total_requires,
+        text
+    );
+}
+
 /// Tick 5 (2026-06-18): the settle/verdict prism split.
 ///
 /// Per Seam's adversarial review of tick 4: `cmd_kintsugi_ci_single`
