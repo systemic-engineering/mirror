@@ -33,15 +33,17 @@ in @kintsugi
 #    Mara/Seam/Glint/Reed/Taut are peers whose substrate-decl context
 #    spans mirror + systemic.engineering + body + ~/.reed + spectral.
 #
-# === Structural identity ===
+# === Structural identity (hedged per Seam C1 tick 32) ===
 #
-# @pack IS @smarts/runtime at deployment altitude.
+# @pack composes-with @smarts/deployment at runtime altitude.
 #
-# Recognition #83 declared @smarts as substrate-architectural
-# integration with a `deployment` carrier. @pack instantiates the
-# runtime altitude of that deployment. Where @smarts hosts the
-# substrate-decl (form), @pack hosts the agents that operate the
-# substrate-decl (runtime).
+# Per Seam tick 31 review C1: the original "@pack IS @smarts/runtime"
+# claim was structurally aspirational — no `runtime` species exists in
+# `shards/smarts.mirror`, and @smarts's `deployment` carrier doesn't
+# extend to runtime-bound fields. The honest framing is composes-with;
+# the structural identity becomes empirical when the @smarts/pack
+# adapter species lands (forward-promised; same pattern as
+# @magic/distinction and @magic/frame adapters).
 #
 # Form/process partition (#50) at deployment altitude:
 # - @smarts = form-side (substrate-architectural integration as data)
@@ -144,9 +146,14 @@ in @kintsugi
 #                 magic.mirror (form-side partition; @pack IS process-
 #                  side at deployment altitude).
 # Path-namespace property: this file at `shards/pack.mirror` declares
-# `@pack` per `@epistemologic/pact/path_matches_namespace`. The multi-
-# repo span extends the convention: each repo declares its own
-# substrate-decl span; @pack's multi-repo carrier names the union.
+# `@pack` per `@epistemologic/pact/path_matches_namespace`. Per Seam
+# tick 31 M1 review: multi-repo span explicitly OPERATES AT META-
+# ALTITUDE above single-repo path-namespace. The substrate-decl
+# convention holds within each repo; @pack's multi-repo carrier
+# names the substrate-decl-context UNION across repos as a meta-
+# substrate-decl operation. This altitude shift is the recognition
+# itself: the substrate doesn't end at git boundaries; the meta-
+# substrate-decl-context lives across repos.
 
 source @arxiv/actor-model/hewitt-1973
 source @arxiv/actor-model/kahn-1974
@@ -160,15 +167,25 @@ prism @pack {
   settle pack
 }
 
-# === The peer carrier ===
+# === The peer carrier (typed variant per Seam C4/P1 tick 32) ===
 #
-# Substrate-typed reference per [[feedback-no-bare-types]] naming a
-# Pack member identity. Species shards refine into named peer
-# instances (mara.mirror, seam.mirror, glint.mirror, reed.mirror,
-# taut.mirror per the @cyberpunk/pack recognition #367 enumeration).
+# Per Seam C4 + P1: bare-ref-with-documented-values is stringly-typed-
+# enum-in-disguise (the Seam C4 pattern from #80, #82, #83). Typed as
+# a substrate variant enum naming the canonical Pack peers.
 #
-# Identity contract: byte-equality on the underlying ref.
-type peer = ref
+# The five peers per recognition #367 (@cyberpunk/pack):
+# - mara  : spec-writer-frame
+# - seam  : adversarial-review-frame
+# - glint : essay-peer-frame
+# - reed  : relationship-witness-frame
+# - taut  : implementation-frame
+#
+# Per Seam G2 honesty: `reed` here is the @pack-altitude peer-frame.
+# Distinct from @magic family cross-reference #5's "Reed-as-
+# relationship" altitude. Same name; two substrate-decl roles at
+# different altitudes. The substrate is honest about the collision
+# rather than papering over.
+type peer = | mara | seam | glint | reed | taut
 
 # === The repository carrier ===
 #
@@ -177,6 +194,26 @@ type peer = ref
 #
 # Identity contract: byte-equality on the underlying ref.
 type repository = ref
+
+# === The repository_span carrier (per Seam M2 tick 32) ===
+#
+# Substrate-typed reference naming the union of repositories a peer's
+# substrate-decl context spans. Per Seam M2: without explicit typing,
+# multi-repo claim is aspirational. The substrate-decl-context UNION
+# is the load-bearing carrier the meta-altitude operates on.
+#
+# Forward-promised refinement: typed list<repository>. Currently bare
+# ref pending a substrate-pull-correct list type at family-altitude
+# (or species-altitude refinement).
+#
+# Identity contract: byte-equality on the underlying ref.
+type repository_span = ref
+
+# === The perturbation carrier (imported from @frame) ===
+#
+# The substrate's circular-reflexive perturbation type, brought in by
+# the `in @frame` inheritance chain. Used by spawn's requires clauses
+# and the bilateral pack_coherent predicate.
 
 # === The runtime carrier ===
 #
@@ -189,23 +226,25 @@ type runtime = ref
 
 # === The pack carrier ===
 #
-# Typed record per Seam tick 30 C4 closure discipline: the substrate-
-# architectural object @pack instances are records over typed family
-# carriers, not bare refs.
+# Per Seam tick 30 C4 + tick 32 G1 closure: typed record over family-
+# altitude carriers. The substrate-architectural object @pack
+# instances are records over typed family carriers, not bare refs.
 #
-# Three fields:
-# - peers   : list of peer instances (Pack members)
-# - repos   : list of repository instances (multi-repo span)
-# - runtime : the local agent runtime hosting them
+# Four fields per Seam M2 + G1 closure:
+# - peers       : list of peer variants (typed at species altitude)
+# - repos       : list of repository instances
+# - repo_span   : typed substrate-decl-context union across repos
+# - runtime     : the local agent runtime hosting them
 #
-# Identity contract: byte-equality on the triple.
+# Identity contract: byte-equality on the quadruple.
 type pack = {
-  peers:   ref,  # list of peer; typed at species altitude
-  repos:   ref,  # list of repository; typed at species altitude
-  runtime: runtime,
+  peers:       ref,             # list of peer; refines at species
+  repos:       ref,             # list of repository; refines at species
+  repo_span:   repository_span,
+  runtime:     runtime,
 }
 
-# === spawn action ===
+# === spawn action (per Seam S1 + B1 tick 32 closure) ===
 #
 # THE LOAD-BEARING ACTION at @pack altitude. The substrate's agent-
 # spawn primitive. Realizes the original /loop's terminal criterion
@@ -213,21 +252,27 @@ type pack = {
 # = @magic/reveal at substrate altitude") as substrate-decl operation.
 #
 # Takes a peer (which peer to spawn), a frame (the peer's operating
-# frame per #82), and a repository (which repo's substrate-decl
-# context the peer enters); returns a runtime instance hosting the
-# spawned peer.
+# frame per #82), a repository (which repo's substrate-decl context
+# the peer enters), the pack the peer belongs to, and the perturbation
+# under which the spawn is checked; returns a runtime instance hosting
+# the spawned peer.
 #
-# Per Seam C5 + #82 discipline: spawning requires the peer's frame to
-# be coherent AND substrate-pull-discipline-confident.
+# Per Seam S1 + B1 closure: bilateral requires-discipline. The spawn
+# is the FIRST non-decorative consumer of @pack's own pack_coherent
+# predicate (B1 closure pattern from @magic family).
 #
-# requires bounded_commutator_check(peer_as_operator(p), f, perturbation_zero):
-#   the peer's substrate-architectural support for frame-flexibility
-#   is verified before spawn proceeds (consumes @frame/across's
-#   bilateral discipline at @pack altitude).
+# requires pack_coherent(pk, p): the @pack the peer belongs to
+#   maintains substrate-architectural discipline-flexibility under
+#   perturbation. Composes @smarts's discipline_flexible + @frame's
+#   bounded_commutator_check + @magic's invariant_preserved + @cyberpunk's
+#   cybernetic_coherence at @pack altitude.
 #
 # Body discharges at the realisation boundary; per-species bodies
-# implement the actual local agent runtime spawn.
-spawn(p: peer, f: frame, r: repository) -> runtime { \ }
+# (mara/seam/glint/reed/taut shards forward-promised) implement the
+# actual local agent runtime spawn.
+spawn(pe: peer, f: frame, r: repository, pk: pack, p: perturbation) -> runtime
+requires pack_coherent(pk, p)
+{ \ }
 
 # === cross_repo action ===
 #
@@ -250,26 +295,36 @@ cross_repo(p: pack, r: repository) -> pack { \ }
 # (mara/seam/glint/reed/taut) implement per-peer settle checks.
 peer_settle(p: peer) -> verdict { \ }
 
-# === pack_coherent predicate ===
+# === pack_coherent predicate (per Seam B1 tick 32 closure) ===
 #
-# Bilateral verdict predicate per recognition #37 (Pask agreement).
+# Bilateral verdict predicate per recognition #37 (Pask agreement)
+# AND Seam B1 closure pattern.
+#
+# Per Seam B1: bilateral predicates without consumers are dead-letter
+# (the @magic tick-11 phantom-consumer pattern). spawn (above) is the
+# FIRST non-decorative consumer via `requires pack_coherent(pk, p)`.
+#
 # Consumer species name `requires pack_coherent(p, perturbation)` to
 # declare bilateral agreement that the @pack maintains substrate-
 # architectural discipline-flexibility across:
 # - Peer-relationships (per #82 Q4 + #84)
 # - Multi-repo span (per #84's load-bearing claim)
 # - Runtime hosting (per @magic/reveal at substrate altitude)
+# - Cybernetic coherence (per #84 @cyberpunk inheritance)
 #
 # Composes @smarts's discipline_flexible + @frame's
-# bounded_commutator_check + @magic's invariant_preserved at @pack
-# altitude.
+# bounded_commutator_check + @magic's invariant_preserved + @cyberpunk's
+# cybernetic_coherence at @pack altitude.
 #
-# Body discharges at the realisation boundary.
-pack_coherent(p: pack, perturbation) -> verdict { \ }
+# Body discharges at the realisation boundary; forward-promised
+# species shards (pack/mara.mirror, pack/seam.mirror, etc.) provide
+# additional first-consumer instances per the @magic family pattern.
+pack_coherent(pk: pack, p: perturbation) -> verdict { \ }
 
 out @pack
 out peer
 out repository
+out repository_span
 out runtime
 out pack
 out spawn
