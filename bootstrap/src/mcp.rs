@@ -149,6 +149,59 @@ fn tools_list_result() -> Value {
     })
 }
 
+/// Emit a substrate-typed audit record for a tool/call dispatch.
+///
+/// Tick 20 (2026-06-19): substrate-pull USE of @magic/audit's
+/// `audit_record` carrier (shards/magic/audit.mirror) at the actual
+/// @io boundary. Realizes alignment-as-boundary-mathematics (#57)
+/// operationally; closes the structural identity that Mara hedged at
+/// tick 11 ("supervisor composes-with @magic/audit at supervision
+/// altitude" — the audit record is the substrate-decl's data shape).
+///
+/// Record shape (matches audit_record carrier):
+/// ```json
+/// {
+///   "contract":  { "tool": <name>, "args": <args> },
+///   "verdict":   "success" | "failure",
+///   "witness":   { "tool": <name>, "args": <args> },
+///   "timestamp": <UTC seconds>
+/// }
+/// ```
+///
+/// Appended to `~/.mirror/mcp-audit.log` one record per line
+/// (JSON-lines). Best-effort: failures to write are silently dropped
+/// so audit failure cannot break the MCP wire.
+fn emit_audit_record(tool: &str, args: &Value, is_error: bool) {
+    let home = match std::env::var("HOME") {
+        Ok(h) => h,
+        Err(_) => return,
+    };
+    let dir = format!("{}/.mirror", home);
+    let _ = std::fs::create_dir_all(&dir);
+    let log_path = format!("{}/mcp-audit.log", dir);
+    let timestamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
+    let record = json!({
+        "contract":  { "tool": tool, "args": args },
+        "verdict":   if is_error { "failure" } else { "success" },
+        "witness":   { "tool": tool, "args": args },
+        "timestamp": timestamp,
+    });
+    if let Ok(line) = serde_json::to_string(&record) {
+        // Best-effort append; audit failure must NOT break MCP wire.
+        if let Ok(mut f) = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&log_path)
+        {
+            use std::io::Write as _;
+            let _ = writeln!(f, "{}", line);
+        }
+    }
+}
+
 /// Walk `dir` recursively for `.mirror` files; for each, extract the
 /// prism declaration line of shape `prism @path { ... }` plus the
 /// five-op signature lines. Return structured JSON.
@@ -503,6 +556,23 @@ pub fn handle_request(line: &str) -> Option<String> {
                 .cloned()
                 .unwrap_or_else(|| json!({}));
             let (text, is_error) = dispatch_tool_call(&tool, &args);
+            // Tick 20 (2026-06-19): substrate-pull USE of @magic/audit
+            // at @io boundary. When MIRROR_MCP_AUDIT=1, emit an audit
+            // record (matching the audit_record carrier from
+            // shards/magic/audit.mirror: contract / verdict / witness /
+            // timestamp) to ~/.mirror/mcp-audit.log. This realizes
+            // alignment-as-boundary-mathematics (#57) operationally
+            // and demonstrates @magic/audit's substrate-decl in use.
+            //
+            // The audit_record's `contract` field holds the tool +
+            // arguments (the substrate-pull-correct "what was bound");
+            // `verdict` carries success/failure; `witness` is the tool
+            // call payload; `timestamp` is the UTC instant.
+            //
+            // Gated by env var so non-audit MCP sessions stay clean.
+            if std::env::var("MIRROR_MCP_AUDIT").is_ok() {
+                emit_audit_record(&tool, &args, is_error);
+            }
             // Per MCP spec: `isError: true` signals tool execution failure
             // (substrate REJECT / compile error / unknown tool) so agent
             // clients can branch programmatically rather than scraping text.
