@@ -1,0 +1,399 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @kintsugi
+in @epistemologic
+in @epistemologic/property
+in @cyberpunk
+
+# @mirror/bench — the substrate's content-addressed perf measurement
+# substrate-decl. The ouroboros bites.
+#
+# Tick 40 / first tick of the @mirror/bench substrate-decl + kintsugi-
+# on-Rust loop. Per Taut's substrate-decl response to the circular-
+# reflexive Tomm-probe Alex deployed 2026-06-19 evening: bench data
+# points and contract verdicts persist as content-addressed crystals
+# (per @mirror/store/crystal task #268); the eⁿ⁺¹ ≤ eⁿ monotonic-
+# loss invariant extends from compile-loss to op-runtime via the
+# three-conjunct bilateral monotone_non_increasing.
+#
+# === The recognition ===
+#
+# Today's e2e regression (38-min pre-push hang; 5 compounding failures)
+# surfaced THE NEXT THING the substrate needs to eat: the benchmark +
+# contract-test infrastructure. Task #285 forward-promised "Track J
+# — kintsugi-on-Rust iterative cascade". This shard names that
+# altitude.
+#
+# Alex's three composing recognitions:
+#  1. Bench AND pacts AND contract assertions persist as content-
+#     addressed crystals in @mirror/store (task #268's crystal
+#     substrate-decl)
+#  2. Mirror-level regression tests fail when the same operation
+#     becomes slower (with an error delta) — extends eⁿ⁺¹ ≤ eⁿ from
+#     compile-loss to op-runtime
+#  3. This IS the moment the ouroboros bites: kintsugi eats the Rust
+#     tests; the Rust regression suite becomes mirror property+
+#     fracture pairs
+#
+# === The three-conjunct bilateral predicate ===
+#
+# Per Taut: monotone_non_increasing is not single-axis runtime. It is
+# three-conjunct:
+#
+#   monotone_non_increasing(op, n, n+1, tolerance) ⇔
+#       runtime(n+1) ≤ runtime(n) × (1 + tolerance)   # perf
+#     ∧ output(n+1)  ≡ output(n)                       # correctness
+#     ∧ env(n+1)     ≡ env(n)                          # environment
+#
+# The output+env conjuncts prevent false-positive regressions ("same
+# op, different machine" or "faster but wrong"). Substrate-mathematical
+# floor for Alex's error-delta framing. Today's 38-min hang on Alex's
+# hardware vs a 90-second compile on CI must be reconcilable as same
+# op different env, not as a regression — env_oid carries that.
+#
+# === The crystal extension ===
+#
+# @mirror/store/crystal (task #268 substrate-decl candidate) names
+# {oid, section, derived_predicates, fracture_calendar} as the root.
+# Bench extends with @bench/extension fields:
+#
+#   bench_crystal = {
+#     op:           ref,         # prism-ref of what was run
+#     args_oid:     ref,         # input fingerprint
+#     runtime_ns:   metric,      # the perf measurement
+#     output_oid:   ref,         # result fingerprint (correctness)
+#     env_oid:      env,         # fingerprint(hardware, toolchain, flags)
+#     predecessor:  ref,         # option<oid>; delta-chain link
+#     tick_index:   tick_index,  # monotone tick counter
+#   }
+#
+# `predecessor` makes the regression suite a DAG-walk over crystals,
+# not a flat comparison — same shape as @spectral/db edge structure.
+#
+# === The ouroboros's first bite ===
+#
+# Per Taut's smallest-first-tick analysis: lift
+# `bootstrap/tests/kintsugi_ci.rs::dark_count_monotone_non_increasing`
+# into a property+fracture pair (#53 third instance):
+#
+#   @epistemologic/property/dark_count_monotone <=
+#     predicate(shard:shard) (n:tick) (np1:tick) -> verdict {
+#       dark_count(shard, np1) ≤ dark_count(shard, n)
+#     }
+#
+#   @mirror/fracture/dark_count_monotone <=
+#     fracture(shard, n, np1) -> morphism {
+#       \ splinter(ast) {
+#         observe @mirror/bench.dark_count shard n
+#         observe @mirror/bench.dark_count shard np1
+#         assert_predicate dark_count_monotone
+#       }
+#     }
+#
+# Why this lift is safe: today's 38-min hang did NOT regress
+# dark_count — it regressed compile-time. The lift demonstrates the
+# pattern without breaking; primes the next lift
+# (cold_compile_within_tolerance) which WOULD have caught today.
+# Forward-promised at @mirror/bench/dark_count_monotone (RED in next
+# session tick).
+#
+# === Meta-altitude: bench measures bench (Heisenberg) ===
+#
+# Per Taut: bench's own runtime must be ≤ 0.1% of what it measures,
+# else bench is the bottleneck and the measurement lies. Bilateral
+# predicate `bench_overhead_below_floor` at the meta-altitude. The
+# recursive piece: bench.crystal records must themselves be benched.
+# The first crystal in the chain is the substrate-decl moment where
+# bench measures its own birth. Substrate-already-had-the-word: this
+# IS @reflection.observe applied to @bench at n+1. The ouroboros
+# biting IS what produces the crystal that records the bite.
+#
+# === Cross-family integration ===
+#
+# - @mirror/store/crystal (#268; forward-promised): bench_crystal
+#   extends with @bench/extension section
+# - @kintsugi/oscillate: bench crystals feed the monotonic-loss
+#   gradient at the perf altitude
+# - @reflection: observes the verdict distribution at n+1; bench
+#   crystals become observations
+# - @fate/tournament: the tournament action delegates here for
+#   perf-altitude candidate selection
+# - @epistemologic/property/* and @mirror/fracture/* (#53 bilateral):
+#   bench gives the contract-test substrate the property+fracture
+#   foundation
+#
+# === Pre-AI prior art ===
+#
+#   Criterion.rs               Bencher 2014; the Rust statistical
+#                              benchmarking discipline. bench's
+#                              record/baseline/compare actions lift
+#                              this to substrate-decl altitude.
+#   Google benchmarking suite  micro-benchmark + variance analysis;
+#                              the env_oid + tolerance discipline
+#                              comes from this lineage.
+#   Lighthouse perf budgets    web-perf budgets-as-pacts; the
+#                              substrate's bilateral predicate at @io
+#                              boundary.
+#   Heisenberg uncertainty     measurement perturbs the measured;
+#                              the bench_overhead_below_floor predicate
+#                              IS Heisenberg discipline at substrate-
+#                              decl altitude.
+#   Connes spectral triple     (A, H, D); bench is the U(t)
+#                              substrate-instrument applied to the
+#                              same triple the substrate already names.
+#
+# Spec context: forward-promised @mirror/store/crystal substrate-decl
+#               (task #268); @mirror/fracture/predicate (task #272);
+#               Track J kintsugi-on-Rust (task #285); recognition #57
+#               (alignment-as-boundary-mathematics at @io).
+# Substrate decisions: [[architecture-reflection-as-compiler]] (#85;
+#                       bench's compose-with @reflection at perf
+#                       altitude),
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; bench IS the @io perf
+#                       boundary harness),
+#                      [[feedback-substrate-pull-confidence-acts]],
+#                      [[feedback-commit-everything]]
+#                       (uncommitted=unfinished; bench crystals MUST
+#                       persist),
+#                      [[architecture-property-fracture-bilateral]]
+#                       (#53; dark_count_monotone is the third
+#                       instance of the pattern).
+# Related shards: kintsugi.mirror (the monotonic-loss family-root
+#                  bench's bilateral predicate composes),
+#                 reflection.mirror (the AI-logic family-root that
+#                  observes bench's verdict distribution),
+#                 magic/audit.mirror (the verifier altitude bench
+#                  extends to perf),
+#                 epistemologic/cybernetic/eigenform.mirror (the
+#                  fixed-point machinery bench inherits via the
+#                  cybernetic family).
+# Path-namespace property: this file at `shards/mirror/bench.mirror`
+# declares `@mirror/bench` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/bencher-criterion-2014
+source @arxiv/physics/heisenberg-1927
+source @arxiv/math/connes-1994
+
+glass @mirror/bench {
+  focus bench
+  project bench
+  split bench
+  shift bench
+  settle bench
+}
+
+# === The metric carrier ===
+#
+# Substrate-typed reference for a measured quantity. Per
+# [[feedback-no-bare-types]]: typed reference, not bare nat. Forward-
+# promised refinement: typed parametric metric(unit) once the
+# substrate's unit-discriminated metric type lands at family altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type metric = ref
+
+# === The unit variant ===
+#
+# Per Seam C4 closure pattern (variants over bare ref-with-documented-
+# values): typed substrate variant naming the discriminator for metric
+# values. Each metric is paired with one of these units.
+type unit = | ns | bytes | count | fraction
+
+# === The env carrier ===
+#
+# Substrate-typed reference for an environment fingerprint. Per
+# Taut's substrate-decl: env_oid is load-bearing for cross-machine
+# bench results composition. The fingerprint includes hardware,
+# toolchain version, compiler flags, and any other state that
+# substantively affects the measurement.
+#
+# Identity contract: byte-equality on the underlying ref.
+type env = ref
+
+# === The tick_index carrier ===
+#
+# Substrate-typed reference for a monotone tick counter, op-scoped.
+# Each bench-record carries its tick_index so the predecessor-chain
+# walk has a discrete order.
+#
+# Identity contract: byte-equality on the underlying ref.
+type tick_index = ref
+
+# === The bench_crystal carrier (extends @mirror/store/crystal #268) ===
+#
+# Per Taut's substrate-decl: typed record extending @mirror/store/
+# crystal with @bench/extension section. The carrier IS the content-
+# addressed measurement.
+#
+# Identity contract: byte-equality on the septuple.
+type bench_crystal = {
+  op:          ref,        # prism-ref of what was run
+  args_oid:    ref,        # input fingerprint
+  runtime_ns:  metric,     # the perf measurement
+  output_oid:  ref,        # result fingerprint (correctness)
+  env_oid:     env,        # fingerprint(hardware, toolchain, flags)
+  predecessor: ref,        # option<oid>; delta-chain link
+  tick_index:  tick_index, # monotone tick counter
+}
+
+# === The impl carrier ===
+#
+# Substrate-typed reference for an implementation candidate in the
+# tournament action. Each candidate's runtime is measured against the
+# others; the winning impl becomes the new baseline.
+#
+# Identity contract: byte-equality on the underlying ref.
+type impl = ref
+
+# === record action ===
+#
+# The substrate-vocabulary primitive for persisting a bench data point
+# as a content-addressed crystal. Per Taut: the action discharges via
+# the @mirror/store crystal-write at the @io boundary.
+#
+# Body discharges at the realisation boundary; the actual write is
+# implemented by @mirror/store's crystallize primitive composed with
+# the bench-specific extension fields.
+record(op: ref, args: ref, runtime: metric, output: ref, e: env) -> bench_crystal { \ }
+
+# === compare action ===
+#
+# Compares two bench crystals against a tolerance fraction; returns
+# verdict. Composes monotone_non_increasing's three-conjunct
+# (runtime + output + env) at the comparison site.
+compare(prev: bench_crystal, next: bench_crystal, tolerance: metric) -> verdict { \ }
+
+# === baseline action ===
+#
+# Returns the substrate's current best crystal for an op. The
+# bench-altitude analogue of @fate's tournament winner.
+baseline(op: ref) -> bench_crystal { \ }
+
+# === regress_check action (FIRST consumer of monotone_non_increasing) ===
+#
+# THE LOAD-BEARING ACTION at @mirror/bench altitude. Checks whether a
+# current measurement regresses against a baseline (returns failure)
+# or stays bounded under the tolerance (returns pass/partial).
+#
+# requires monotone_non_increasing(op, base, current, tolerance):
+# the substrate forecloses regression at the bench altitude. Without
+# this requires clause, regress_check would admit silent regressions
+# (the @magic tick-11 dead-letter pattern at the perf altitude). The
+# bilateral predicate IS the substrate-mathematical floor under the
+# perf-altitude alignment-as-boundary-mathematics check (#57).
+#
+# Body discharges at the realisation boundary.
+regress_check(op: ref, current: bench_crystal, base: bench_crystal, tolerance: metric) -> verdict
+requires monotone_non_increasing(op, base, current, tolerance)
+{ \ }
+
+# === explain action ===
+#
+# Surfaces the substrate's understanding of a bench measurement.
+# Returns a text reference explaining the measurement context, what
+# changed vs predecessor, and why the verdict was issued. The @nl
+# face of the bench crystal.
+explain(c: bench_crystal) -> ref { \ }
+
+# === tournament action ===
+#
+# Runs @fate at perf altitude: given a set of implementation
+# candidates for an op, measures each and returns the set of bench
+# crystals. The winning crystal (lowest runtime_ns under the three-
+# conjunct constraint) becomes the new baseline.
+#
+# Body discharges via @fate/tournament's existing elite/beam/halving
+# selectors at perf altitude.
+tournament(op: ref, args: ref, candidates: ref) -> ref { \ }
+
+# === chain action ===
+#
+# Walks the predecessor-OID DAG from one crystal to another. The
+# delta-chain is the substrate's record of how an op's runtime
+# evolved over substrate-pull ticks. Same shape as @spectral/db
+# edge-walks.
+chain(op: ref, fr: bench_crystal, to: bench_crystal) -> ref { \ }
+
+# === fingerprint action ===
+#
+# Computes the content-addressed OID of an environment. The
+# fingerprint composes hardware + toolchain + flag-set; cross-machine
+# bench results compose without lying via this discipline.
+fingerprint(e: env) -> ref { \ }
+
+# === monotone_non_increasing predicate (bilateral; THREE-CONJUNCT) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND Alex's
+# error-delta framing. Three-conjunct:
+#
+#   monotone_non_increasing(op, n, n+1, tolerance) ⇔
+#       runtime(n+1) ≤ runtime(n) × (1 + tolerance)
+#     ∧ output(n+1)  ≡ output(n)
+#     ∧ env(n+1)     ≡ env(n)
+#
+# Per Seam B1 closure pattern: regress_check action (above) is the
+# FIRST non-decorative consumer via `requires monotone_non_increasing
+# (op, base, current, tolerance)`.
+#
+# Discharge: substrate-pull-correct three-conjunct check at the
+# species boundary. Bounded → the substrate is honest (the perf is
+# preserving or improving with same output and same env). Unbounded
+# → the substrate disclosed a regression (one or more conjuncts
+# violated). The bilateral predicate IS the substrate-mathematical
+# extension of eⁿ⁺¹ ≤ eⁿ from compile-loss to op-runtime.
+#
+# Same shape as the bilateral predicates the prior families carry:
+# - @magic: invariant_preserved, audited, mechanism_intact
+# - @frame: bounded_commutator_check
+# - @smarts: discipline_flexible
+# - @cyberpunk: cybernetic_coherence
+# - @pack: pack_coherent
+# - @pack/seam: review_sound
+# - @moi: pact_respected
+# - @reflection: loss_decreases, speaks_at_n_plus_1
+# - @smarts/reflection: bridge_coherent
+# - @reflection/surface: translation_faithful
+# - @mirror/bench: monotone_non_increasing (this one)
+monotone_non_increasing(op: ref, n: bench_crystal, np1: bench_crystal, tolerance: metric) -> verdict { \ }
+
+# === bench_overhead_below_floor predicate (META-ALTITUDE; Heisenberg) ===
+#
+# Per Taut's meta-altitude reflexive note: bench's own runtime must
+# be ≤ 0.1% of what it measures, else bench is the bottleneck and the
+# measurement lies. Heisenberg discipline at substrate-decl altitude.
+#
+# Bilateral verdict; first-consumed by record itself (via
+# self-reflexive composition at the realisation boundary). When bench
+# records its own birth, this predicate gates whether the record is
+# admissible — the substrate-decl moment where @reflection.observe is
+# applied to @bench at n+1 produces the crystal that records the
+# bite.
+#
+# Bounded → bench overhead within floor (admit record); unbounded →
+# bench is perturbing what it measures (the substrate discloses the
+# perturbation honestly rather than lying).
+bench_overhead_below_floor(c: bench_crystal, tolerance: metric) -> verdict { \ }
+
+out @mirror/bench
+out metric
+out unit
+out env
+out tick_index
+out bench_crystal
+out impl
+out record
+out compare
+out baseline
+out regress_check
+out explain
+out tournament
+out chain
+out fingerprint
+out monotone_non_increasing
+out bench_overhead_below_floor
