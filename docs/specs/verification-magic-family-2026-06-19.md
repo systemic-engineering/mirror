@@ -60,30 +60,46 @@ that the kintsugi loop visited but couldn't settle on — each one is
 "something the substrate knows about but can't currently transform."
 The darkness lives at substrate level, NOT in @magic's species design.
 
-## What the verification empirically confirms
+## What the verification empirically confirms (HONEST READING)
 
-1. **All 6 species compile cleanly** — no parse errors; the substrate's
-   compile lens accepts every shard.
-2. **All 5 non-decorative `requires` clauses parse correctly**:
-   - `surface_honest requires invariant_preserved(c, inv)` (tick 12)
-   - `unseal requires audited(c)` (tick 13)
-   - `reveal requires audited(c)` (tick 14)
-   - `reveal requires mechanism_intact(c.mechanism)` (tick 14)
-   - `bind_satisfies_distinction requires distinction_well_formed(
-     surface_as_mark(c.surface),
-     mechanism_as_distinction_space(c.mechanism))` (tick 15;
-     first cross-shard adapter `requires`)
-3. **Cross-shard composition lands** — distinction.mirror's adapter
-   between @magic carriers and @epistemologic/cybernetic/distinction
-   carriers parses; the explicit mapping (surface_as_mark,
-   mechanism_as_distinction_space) is operational.
+Per Seam tick 12-19 retrospective: this section's previous version
+over-claimed by conflating PARSE with DISCHARGE. The corrected
+readings below:
+
+1. **All 6 species compile cleanly** — the substrate's grammar accepts
+   each shard's syntax. This is parse-level; bodies remain `\` (per
+   substrate-pull-correct obligation deferral).
+2. **All `requires` clauses parse correctly** but **bodies remain
+   deferred**. Parse acceptance does NOT imply the predicates
+   actually discharge. The bilateral discipline IS declared; its
+   operational discharge awaits @kintsugi/tick floor body work
+   (substrate-frame, outside this loop's scope).
+3. **Cross-shard composition's mapping parses** — the adapter
+   functions `surface_as_mark`, `mechanism_as_distinction_space`
+   exist with proper signatures. Whether `distinction_well_formed`
+   actually verifies through the adapter remains operationally
+   undecided (the adapter actions have `\` bodies; the predicate
+   composes over emptiness).
 4. **Verdict JSON output structured cleanly** — tick 6's
-   parse_verdict_label robustness fix (handling JSON envelope +
-   kintsugi trace mixed payload) works on the family corpus.
-5. **MCP wire isError lifts on `partial`/`failure`** — the
-   substrate-pull-correct boundary contract per
-   [[architecture-error-as-tomm-probe]] empirically holds for the
-   real verdict path Reed claimed at tick 5 but Seam C2 hedged.
+   parse_verdict_label robustness fix works on the family corpus.
+   This IS empirically grounded; the JSON is parsed by the test.
+5. **MCP wire isError lifts on `failure`** — empirically observed in
+   the family corpus run (verdict was "failure"; isError lifted).
+   The `partial` verdict path was NOT exercised by this run and
+   remains empirically untested.
+
+**What this verification does NOT prove**: that the bilateral
+predicate discipline actually fires at runtime; that the cross-shard
+adapter discharges its `requires` clause through executable adapter
+bodies; that the substrate's atomic swap (`reveal`) maintains integrity
+on both sides. These require the @kintsugi/tick floor body before
+they become empirical claims.
+
+Tick 21's Seam-driven consolidation tightened `unseal` and `reveal`
+to match the bilateral discipline more honestly: `unseal` now also
+requires `mechanism_bound_to(c, m)` (preventing audit-bypass);
+`reveal` now requires `mechanism_intact(new_m)` as well (bilateral
+integrity).
 
 ## What remains substrate-level (not @magic-specific)
 

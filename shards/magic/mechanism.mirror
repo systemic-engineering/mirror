@@ -144,28 +144,30 @@ seal(content: ref) -> magic_mechanism { \ }
 
 # === unseal action ===
 #
-# THE SECOND NON-DECORATIVE `requires` CLAUSE CONSUMER per tick 13.
-# The substrate-vocabulary action that exposes the encapsulated
-# content of a mechanism, but ONLY when the contract that holds the
-# mechanism has been audited.
+# TWO NON-DECORATIVE `requires` CLAUSES per tick 13 + tick 21 Seam
+# consolidation gap #2 closure.
 #
-# requires audited(c): the substrate-political bilateral commitment
-# that the contract holding this mechanism has been verified. The
-# audit's predicate at @magic/audit finally has its first consumer
-# (parallel to invariant_preserved gaining its consumer at
-# surface.mirror tick 12).
+# requires audited(c): the contract holding this mechanism has been
+# verified (consumes @magic/audit's bilateral predicate).
+# requires mechanism_bound_to(c, m): the contract's mechanism field
+# IS this mechanism. Per Seam tick 12-19 retrospective: without
+# this constraint, an audited contract for an UNRELATED mechanism
+# could unseal anything. The substrate-pull-correct guard against
+# audit-bypass.
 #
-# At capability-security altitude: unseal IS the controlled
-# disclosure — the audit IS the capability check that permits
-# access. Without audit, the matter stays opaque.
+# At capability-security altitude: unseal IS controlled disclosure;
+# the audit IS the capability check; the mechanism_bound_to constraint
+# ensures the capability key matches the lock.
 #
 # At Clarke's-law altitude: unseal IS the magician's reveal at the
-# end of the trick — the mechanism becomes visible, but only after
-# the contract has been honored (the trick completes per its terms).
+# trick's end — the mechanism becomes visible, but only after the
+# contract has been honored (the trick completes per its terms) AND
+# only the mechanism the contract actually bound (not a substitute).
 #
 # Body discharges at the realisation boundary.
 unseal(m: magic_mechanism, c: magic_contract) -> ref
 requires audited(c)
+requires mechanism_bound_to(c, m)
 { \ }
 
 # === mechanism_intact action ===

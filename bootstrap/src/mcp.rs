@@ -295,15 +295,23 @@ fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
             continue;
         }
         // Outside the prism block, look for action signatures.
-        // Substrate convention: actions are snake_case-identifier
-        // followed by `(args)` and return type. The simplest robust
-        // recognizer: a line that opens with snake_case word + `(`.
+        // Substrate convention: actions are
+        //   snake_case_name(params) -> return_type
+        // Tick 21 (Seam retrospective gap #6): tightened from
+        // "snake_case + (" to "snake_case + (...) ->" to avoid false
+        // positives on type constructor calls and inline expressions.
         if let Some(open) = trimmed.find('(') {
             let head = &trimmed[..open];
             if !head.is_empty()
                 && head.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_')
             {
-                actions.push(head.to_string());
+                let after_open = &trimmed[open..];
+                if let Some(close) = after_open.find(')') {
+                    let after_close = after_open[close + 1..].trim_start();
+                    if after_close.starts_with("->") {
+                        actions.push(head.to_string());
+                    }
+                }
             }
         }
     }

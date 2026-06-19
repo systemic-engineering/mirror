@@ -162,8 +162,24 @@ verify(c: magic_contract, inv: magic_invariant) -> verdict { \ }
 # species boundary.
 invariant_preserved(c: magic_contract, inv: magic_invariant) -> verdict { \ }
 
+# === mechanism_bound_to predicate ===
+#
+# Tick 21 (2026-06-19) per Seam retrospective gap #2: bilateral
+# verdict predicate asserting that the contract's mechanism field
+# equals the named magic_mechanism. The substrate-pull-correct guard
+# against audit-bypass: an audited contract for an UNRELATED
+# mechanism cannot unseal that mechanism without this clause.
+#
+# Discharge: byte-equality on c.mechanism and m under the substrate's
+# content-addressing. Body discharges at the realisation boundary.
+#
+# Used by @magic/mechanism's unseal action via
+# `requires mechanism_bound_to(c, m)`.
+mechanism_bound_to(c: magic_contract, m: magic_mechanism) -> verdict { \ }
+
 out @magic/contract
 out bind
 out honor
 out verify
 out invariant_preserved
+out mechanism_bound_to

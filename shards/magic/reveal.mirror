@@ -179,36 +179,36 @@ type reveal_event = {
 
 # === reveal action ===
 #
-# THE SHARPEST `requires` COMPOSITION IN @magic SO FAR. The substrate-
-# vocabulary action that atomically replaces a contract's mechanism
-# while preserving its surface and contract invariants.
+# THREE NON-DECORATIVE `requires` CLAUSES per tick 14 + tick 21 Seam
+# consolidation gap #3 closure. The substrate-vocabulary action that
+# atomically replaces a contract's mechanism while preserving its
+# surface and contract invariants — with BILATERAL discipline on BOTH
+# sides of the swap.
 #
-# requires audited(c): the contract must have been audited before
-# reveal proceeds (consumes @magic/audit's bilateral predicate; third
-# non-decorative `requires` in the @magic family).
-#
-# requires mechanism_intact(c.mechanism): the old mechanism must be
-# tamper-evidence intact before swap (consumes @magic/mechanism's
-# bilateral predicate; fourth non-decorative `requires` in the
-# family).
+# requires audited(c): contract audited before reveal proceeds.
+# requires mechanism_intact(c.mechanism): the OLD mechanism is
+# tamper-evidence intact before swap.
+# requires mechanism_intact(new_m): the NEW mechanism is also
+# tamper-evidence intact before swap. Per Seam tick 12-19
+# retrospective: without this, atomic-swap was one-sided. The
+# substrate-pull-correct atomic swap discipline is bilateral; both
+# old and new must satisfy the invariant.
 #
 # Together: the substrate-pull-correct runtime-safe atomic replacement
-# primitive. Per recognition #81 (substrate-decl landing at this
-# tick): reveal IS the runtime-altitude realization of @magic's
-# controlled disclosure.
+# primitive with bilateral integrity. Per recognition #81: reveal IS
+# the runtime-altitude realization of @magic's controlled disclosure.
 #
-# At Clarke's-law altitude: reveal IS the magician's controlled
-# reveal at the trick's end — the mechanism is replaced (the
-# "new trick" or "next phase"); the surface IS unchanged (the
-# audience sees the same magician on the same stage); the contract
-# IS honored (the promise about the experience persists across the
-# transition).
+# At Clarke's-law altitude: reveal IS the magician's controlled reveal
+# — the mechanism is replaced; the surface IS unchanged; the contract
+# IS honored; BOTH the old trick and the new trick must be intact for
+# the substitution to honor the audience's trust.
 #
 # Body discharges at the realisation boundary; per-species bodies
 # implement the actual atomic swap with appropriate fencing.
 reveal(c: magic_contract, new_m: magic_mechanism) -> magic_contract
 requires audited(c)
 requires mechanism_intact(c.mechanism)
+requires mechanism_intact(new_m)
 { \ }
 
 # === unsealed_during_reveal predicate ===
