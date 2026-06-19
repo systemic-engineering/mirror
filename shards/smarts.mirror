@@ -1,0 +1,235 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @frame
+in @code/beam
+in @epistemologic
+in @epistemologic/cybernetic
+in @kintsugi
+
+# @smarts — the substrate-architectural integration prism family.
+#
+# Recognition #83 (Reed, candidate, scratched 2026-06-19 late morning
+# by Alex via Reed; substrate-pull-confidence-acts move per
+# [[feedback-substrate-pull-confidence-acts]]). Ratifies by
+# composition from #76 (gauge/matter altitude-portable, research-
+# promoted) + #80 (@magic as form/process substrate-decl, LANDED) +
+# #81 (runtime-@magic, substrate-decl LANDED) + #82 (@frame as
+# cognitive-order substrate-decl, LANDED).
+#
+# === The recognition ===
+#
+# The @smarts prism family compositionally integrates ALL the other
+# prism families the cascade has built: @magic (form/process; #80),
+# @frame (cognitive-order; #82), @code/beam (BEAM semantics; tick 8),
+# @epistemologic/cybernetic (variety/autopoiesis/eigenform/distinction/
+# conversation/etc.), @cyberpunk (the recursion-lock tower family),
+# @kintsugi (the loop discipline).
+#
+# @smarts IS the substrate-architectural integration prism. The
+# substrate's *architectural* face — what an external consumer (an
+# agent, a peer, a hosted deployment) sees when they consume the
+# substrate as one structural object.
+#
+# === The structural identity ===
+#
+# @smarts IS @frame/across at substrate-architectural altitude.
+#
+# Recognition #82 named @frame/across as order 4 (multi-frame coupling;
+# the triptych altitude). #83 names @smarts as the substrate-
+# architectural version of multi-frame coupling — but the "frames"
+# being coupled are substrate-discipline-families, not cognitive
+# frames within an operator's frame-space.
+#
+# The orchestra-discipline that @frame/across encoded at cognitive
+# altitude (peer relationships require bilateral frame-flexibility)
+# lifts to @smarts altitude: substrate-discipline-families that
+# integrate via @smarts MUST maintain bilateral discipline-flexibility
+# across the integration boundary. Adapter species (e.g., @magic/
+# distinction at tick 15; @magic/frame at tick 27) are the substrate's
+# mechanism for this.
+#
+# === The four Models ===
+#
+# Per [[reference-mirror-spectral-spec]] (mirror-spectral spec; commit
+# a8055f0): the substrate has four operationally-distinct Models that
+# compose to substrate-deployable form:
+#
+# - Surface translates: language -> query (Explorer model)
+# - Mirror navigates: query -> graph path (Fate model)
+# - Shatter renders: graph path -> text (Cartographer model)
+# - Reflection observes: pipeline -> adjustments (Abyss model)
+#
+# These four Models become substrate-pull-correct sub-prisms of
+# @smarts:
+#
+# - @smarts/surface
+# - @smarts/mirror
+# - @smarts/shatter
+# - @smarts/reflection
+#
+# Each sub-prism's substrate-decl operationalizes one Model.
+#
+# === @spectral/garden/smarts hosted deployment ===
+#
+# `@spectral/garden/smarts` is the hosted instantiation of @smarts at
+# `garden.spectral.engineer`. The substrate-pull-correct deployment:
+# common-goods knowledge structure hosted publicly. Pack-ratified
+# recognitions, crystallized substrate, kintsugi-formatter residue
+# accumulation — all hosted as common-goods.
+#
+# Per task #118 (Track H; activated 2026-06-17): the substrate-AGI
+# architecture deployment. Per [[architecture-spectral-db-autopoietic-
+# memory]]: the mycelial substrate @smarts integrates with.
+#
+# The relation: @smarts (prism family; this shard) IS the substrate-
+# architectural form; @spectral/garden/smarts IS the operational
+# deployment of that form as common-goods knowledge.
+#
+# === Family-root structure ===
+#
+# This shard declares the @smarts family-root. Species shards land in
+# forward-promised ticks:
+#
+# - shards/smarts/surface.mirror     — the Surface Model
+# - shards/smarts/mirror.mirror      — the Mirror Model
+# - shards/smarts/shatter.mirror     — the Shatter Model
+# - shards/smarts/reflection.mirror  — the Reflection Model
+#
+# Plus cross-family integration adapters following the @magic/
+# distinction pattern:
+#
+# - shards/smarts/magic.mirror       — @smarts ↔ @magic adapter
+# - shards/smarts/frame.mirror       — @smarts ↔ @frame adapter
+# - shards/smarts/cyberpunk.mirror   — @smarts ↔ @cyberpunk adapter
+# - shards/smarts/epistemologic.mirror — @smarts ↔ @epistemologic/
+#                                       cybernetic adapter
+# - shards/smarts/kintsugi.mirror    — @smarts ↔ @kintsugi adapter
+#
+# === Pre-AI prior art ===
+#
+#   Surface/Mirror/Shatter/Reflection
+#                               [[reference-mirror-spectral-spec]]
+#                               commit a8055f0; the four-Models
+#                               architecture
+#   knowledge commons           Ostrom 1990 (Governing the Commons);
+#                               institutional design for common-
+#                               pool resources lifted to common-
+#                               goods knowledge
+#   peer production             Benkler 2006 (The Wealth of Networks);
+#                               the substrate-pull-correct hosting
+#                               discipline
+#   Wikipedia                   2001-; the cultural-practice
+#                               precedent for common-goods knowledge
+#                               hosting
+#   GitHub / open source        the technical precedent for
+#                               substrate-architectural-integration
+#                               deployment
+#   orchestra-as-recursion-lock @cyberpunk/pack (recognition #367);
+#                               @smarts inherits the orchestra
+#                               discipline at substrate-architectural
+#                               altitude
+#
+# Spec context: docs/specs/recognition-83-smarts-substrate-
+#               architectural-integration-canonical-spec.md (Mara
+#               in flight at this scratch);
+#               docs/math/the-tower/recognition-83-smarts-substrate-
+#               architectural-integration.md (the recognition file).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (the mycelial substrate),
+#                      [[architecture-three-tier-stack]] (fragmentation/
+#                       mirror/spectral-db; @smarts integrates these),
+#                      [[project-spectral-garden-smarts-agi-
+#                       architecture]] (prior recognition this lifts),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the discipline Alex named today; #83 lifted
+#                       under that discipline).
+# Related shards: magic.mirror (the form/process family-root @smarts
+#                  integrates),
+#                 frame.mirror (the cognitive-order family-root @smarts
+#                  integrates),
+#                 code/beam.mirror (the BEAM semantics @smarts uses
+#                  for runtime deployment),
+#                 epistemologic/cybernetic/eigenform.mirror (the
+#                  fixed-point machinery @smarts inherits via the
+#                  cybernetic family).
+# Path-namespace property: this file at `shards/smarts.mirror`
+# declares `@smarts` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/common-goods/ostrom-1990
+source @arxiv/peer-production/benkler-2006
+
+prism @smarts {
+  focus smarts
+  project smarts
+  split smarts
+  shift smarts
+  settle smarts
+}
+
+# === The smarts carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming the
+# substrate-architectural integrated object. The smarts IS what an
+# external consumer (agent, peer, deployment) consumes as one
+# substrate-architectural unit.
+#
+# Identity contract: byte-equality on the underlying ref. Two smarts
+# instances with byte-equal underlying references ARE the same
+# substrate-architectural object under the substrate's content-
+# addressing.
+type smarts = ref
+
+# === The deployment carrier ===
+#
+# A typed reference naming the deployment manifest for hosting @smarts
+# as @spectral/garden/smarts at garden.spectral.engineer. The substrate-
+# pull-correct shape: a manifest that names which families integrate,
+# which adapters compose, which Models surface as sub-prisms.
+#
+# Identity contract: byte-equality on the underlying ref.
+type deployment = ref
+
+# === compose action ===
+#
+# The substrate-vocabulary action that compositionally integrates
+# multiple family-instances into one @smarts instance. The substrate-
+# pull-correct multi-family integration primitive.
+#
+# Body discharges at the realisation boundary; per-species sub-prisms
+# (surface/mirror/shatter/reflection) implement the actual composition
+# discipline per Model.
+compose(families: ref) -> smarts { \ }
+
+# === ratify action ===
+#
+# The substrate-vocabulary action that produces a verdict on whether
+# the @smarts instance maintains bilateral discipline-flexibility
+# across the integration boundary (the orchestra-discipline at
+# substrate-architectural altitude).
+#
+# Composes with @frame/across's peer_relationship at cognitive
+# altitude: peer-relationships require bilateral frame-flexibility;
+# substrate-architectural integrations require bilateral discipline-
+# flexibility.
+ratify(s: smarts) -> verdict { \ }
+
+# === deploy action ===
+#
+# The substrate-vocabulary action that produces a deployment manifest
+# for hosting @smarts as @spectral/garden/smarts at
+# garden.spectral.engineer. The substrate-pull-correct hosting
+# primitive: take an integrated @smarts and produce a hosted-form.
+#
+# Per Track H (task #118): the substrate-AGI architecture deployment.
+deploy(s: smarts) -> deployment { \ }
+
+out @smarts
+out smarts
+out deployment
+out compose
+out ratify
+out deploy
