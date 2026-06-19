@@ -222,6 +222,8 @@ fn prisms_surfaces_action_names() {
     let envelope: serde_json::Value =
         serde_json::from_str(text).expect("prisms text is JSON");
     let prisms = envelope["prisms"].as_array().expect("prisms array");
+    // Tick 22: actions changed from Vec<String> to
+    // Vec<{name, requires}>. Extract via ["name"].
     let all_actions: Vec<String> = prisms
         .iter()
         .flat_map(|p| {
@@ -229,7 +231,7 @@ fn prisms_surfaces_action_names() {
                 .as_array()
                 .map(|a| {
                     a.iter()
-                        .filter_map(|v| v.as_str().map(|s| s.to_string()))
+                        .filter_map(|v| v["name"].as_str().map(|s| s.to_string()))
                         .collect::<Vec<_>>()
                 })
                 .unwrap_or_default()
@@ -248,6 +250,50 @@ fn prisms_surfaces_action_names() {
             all_actions
         );
     }
+}
+
+/// Tick 22 (2026-06-19) per Seam #5 closure: `requires` clauses are
+/// now attached to their guarding action, not flat at prism level.
+/// Verifies `reveal` action carries its 3 `requires` clauses
+/// (audited + mechanism_intact old + mechanism_intact new per tick 21).
+#[test]
+fn prisms_attaches_requires_to_actions() {
+    let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../shards/magic");
+    if !std::path::Path::new(dir).exists() {
+        eprintln!("skipping: {} not present", dir);
+        return;
+    }
+    let req = format!(
+        r#"{{"jsonrpc":"2.0","id":222,"method":"tools/call","params":{{"name":"prisms","arguments":{{"dir":"{}"}}}}}}"#,
+        dir
+    );
+    let resp = mcp::handle_request(&req).expect("prisms must respond");
+    let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
+    let text = v["result"]["content"][0]["text"]
+        .as_str()
+        .expect("text payload");
+    let envelope: serde_json::Value =
+        serde_json::from_str(text).expect("prisms text is JSON");
+    let prisms = envelope["prisms"].as_array().expect("prisms array");
+    // Find the reveal prism (shards/magic/reveal.mirror declares @magic/reveal).
+    let reveal = prisms
+        .iter()
+        .find(|p| p["prism"].as_str() == Some("@magic/reveal"))
+        .expect("@magic/reveal prism missing");
+    let actions = reveal["actions"].as_array().expect("actions array");
+    let reveal_action = actions
+        .iter()
+        .find(|a| a["name"].as_str() == Some("reveal"))
+        .expect("reveal action missing");
+    let action_requires = reveal_action["requires"]
+        .as_array()
+        .expect("action requires array");
+    assert_eq!(
+        action_requires.len(),
+        3,
+        "reveal action should carry 3 requires clauses (audited + 2 mechanism_intact); got {:?}",
+        action_requires
+    );
 }
 
 /// Tick 20 (2026-06-19): the @magic/audit @io wiring contract.
