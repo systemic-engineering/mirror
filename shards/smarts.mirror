@@ -6,6 +6,10 @@ in @frame
 in @code/beam
 in @epistemologic
 in @epistemologic/cybernetic
+in @cyberpunk  # Seam tick 30 C2 closure: @cyberpunk family-root landed
+               # at tick 30 per Last Responsible Moment (Alex named it
+               # twice; collapse the surface now). @smarts can now
+               # honestly `in @cyberpunk` rather than phantom-reference.
 in @kintsugi
 
 # @smarts — the substrate-architectural integration prism family.
@@ -172,64 +176,105 @@ prism @smarts {
 
 # === The smarts carrier ===
 #
-# A typed reference per [[feedback-no-bare-types]] naming the
-# substrate-architectural integrated object. The smarts IS what an
-# external consumer (agent, peer, deployment) consumes as one
-# substrate-architectural unit.
+# Per Seam tick 30 C4 closure: typed record over the integrated
+# family forms, not bare ref. The substrate-architectural integrated
+# object IS the conjunction of one form per integrated family.
 #
-# Identity contract: byte-equality on the underlying ref. Two smarts
-# instances with byte-equal underlying references ARE the same
-# substrate-architectural object under the substrate's content-
-# addressing.
-type smarts = ref
+# - magic_form: the form/process partition contribution per #80
+# - frame_form: the cognitive-order contribution per #82
+# - cyberpunk_form: the cybernetic recursion-lock contribution
+# - beam_form, cybernetic_extras, kintsugi_form: forward-promised
+#   typed; currently bare ref pending the species-altitude refinement
+#
+# Identity contract: byte-equality on the sextuple.
+type smarts = {
+  magic_form:       magic_contract,
+  frame_form:       frame,
+  cyberpunk_form:   cybernetic_state,
+  beam_form:        ref,
+  cybernetic_extra: ref,
+  kintsugi_form:    ref,
+}
 
 # === The deployment carrier ===
 #
-# A typed reference naming the deployment manifest for hosting @smarts
-# as @spectral/garden/smarts at garden.spectral.engineer. The substrate-
-# pull-correct shape: a manifest that names which families integrate,
-# which adapters compose, which Models surface as sub-prisms.
+# Per Seam tick 30 C7 closure: typed record containing the substrate-
+# architectural form, the host ref, and the manifest. The form-vs-
+# deployment distinction now mechanically typed (was aspirational at
+# tick 29).
 #
-# Identity contract: byte-equality on the underlying ref.
-type deployment = ref
+# Identity contract: byte-equality on the triple.
+type deployment = {
+  form:     smarts,
+  host:     ref,
+  manifest: ref,
+}
+
+# === discipline_flexible predicate ===
+#
+# Per Seam tick 30 C1 closure: the substrate-architectural-altitude
+# version of @frame/across's bounded_commutator_check. Verifies that
+# a @smarts instance maintains discipline-flexibility under
+# perturbation across the integration boundary.
+#
+# The orchestra-discipline at substrate-architectural altitude:
+# substrate-discipline-families that integrate via @smarts MUST
+# maintain bilateral discipline-flexibility across the integration
+# boundary. This predicate IS the substrate-pull-correct check.
+#
+# Body discharges at the realisation boundary; sub-prism species (the
+# four Models + the cross-family adapters) implement per-altitude
+# discipline-flexibility checks.
+discipline_flexible(s: smarts, p: perturbation) -> verdict { \ }
 
 # === compose action ===
 #
 # The substrate-vocabulary action that compositionally integrates
-# multiple family-instances into one @smarts instance. The substrate-
-# pull-correct multi-family integration primitive.
+# the six family forms into one @smarts instance. Per Seam C5: typed
+# inputs over the integrated families' carriers, not bare ref.
 #
-# Body discharges at the realisation boundary; per-species sub-prisms
-# (surface/mirror/shatter/reflection) implement the actual composition
-# discipline per Model.
-compose(families: ref) -> smarts { \ }
+# Substrate-pull-correct: the parameters match the smarts record's
+# fields; the action IS the typed constructor for the integrated
+# object.
+compose(m: magic_contract, f: frame, c: cybernetic_state, b: ref, ce: ref, k: ref) -> smarts { \ }
 
 # === ratify action ===
 #
-# The substrate-vocabulary action that produces a verdict on whether
-# the @smarts instance maintains bilateral discipline-flexibility
-# across the integration boundary (the orchestra-discipline at
-# substrate-architectural altitude).
+# Per Seam tick 30 C1 + C5 closure: perturbation added; bilateral
+# discipline-flexibility precondition added.
 #
-# Composes with @frame/across's peer_relationship at cognitive
-# altitude: peer-relationships require bilateral frame-flexibility;
-# substrate-architectural integrations require bilateral discipline-
-# flexibility.
-ratify(s: smarts) -> verdict { \ }
+# The substrate-vocabulary action that produces a verdict on whether
+# the @smarts instance maintains discipline-flexibility under
+# perturbation. Composes with @frame/across's peer_relationship at
+# cognitive altitude: peer-relationships require bilateral frame-
+# flexibility; substrate-architectural integrations require bilateral
+# discipline-flexibility.
+ratify(s: smarts, p: perturbation) -> verdict
+requires discipline_flexible(s, p)
+{ \ }
 
 # === deploy action ===
 #
+# Per Seam tick 30 C5 closure: precondition gate added.
+#
 # The substrate-vocabulary action that produces a deployment manifest
 # for hosting @smarts as @spectral/garden/smarts at
-# garden.spectral.engineer. The substrate-pull-correct hosting
-# primitive: take an integrated @smarts and produce a hosted-form.
+# garden.spectral.engineer. Now gated by ratification: only ratified
+# @smarts can deploy.
 #
-# Per Track H (task #118): the substrate-AGI architecture deployment.
-deploy(s: smarts) -> deployment { \ }
+# requires ratify(s, p): the @smarts must have passed the substrate-
+# architectural discipline-flexibility check under perturbation p
+# before hosted deployment is admissible. Per Track H (task #118):
+# the substrate-AGI architecture deployment is bilaterally-disciplined
+# at the boundary.
+deploy(s: smarts, p: perturbation) -> deployment
+requires ratify(s, p)
+{ \ }
 
 out @smarts
 out smarts
 out deployment
+out discipline_flexible
 out compose
 out ratify
 out deploy
