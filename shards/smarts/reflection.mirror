@@ -1,0 +1,229 @@
+in @prism
+in @meta
+in @glass
+in @smarts
+in @reflection
+in @frame
+in @moi
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @smarts/reflection — the substrate-architectural ${\leftrightarrow}$
+# observability adapter species.
+#
+# Tick 36 of the refined /loop discipline. Tick 35's residue (Seam C1
+# from the @reflection family-root review): the family-root header
+# claimed "composes-with @smarts at substrate-architectural altitude"
+# without a mechanical realization. This species IS that realization
+# — the typed adapter that bridges @smarts's substrate-architectural
+# integration form (`smarts` record per shards/smarts.mirror) to
+# @reflection's per-tick observability surface (`observation` record
+# per shards/reflection.mirror).
+#
+# CRQ: how does @reflection's observability surface admit a @smarts
+# instance as an observable WITHOUT violating either family's discipline?
+#
+# Answer: the adapter species declares a typed bridge carrier and
+# typed bridge action. @smarts.ratify produces a discipline-flexible
+# smarts instance; @reflection.observe takes a frame + residue. The
+# bridge converts the smarts instance into an observation by mapping
+# the smarts's substrate-architectural integration as the @reflection
+# frame; the residue is the unratified portion of the smarts instance
+# (the substrate-decl candidates the @reflection loop's next tick
+# will process).
+#
+# === The adapter pattern (Seam-verified per @magic family) ===
+#
+# @magic/distinction (tick 15) + @magic/frame (tick 27) established
+# the cross-family adapter pattern for the @magic family:
+# - typed bridge carrier (record over both families' typed forms)
+# - typed bridge action (consumes one family, produces the other's
+#   typed input)
+# - bilateral predicate that ratifies the bridge's coherence under
+#   perturbation
+# - composes-with framing (NOT structural identity)
+#
+# This adapter applies the same pattern at @smarts ↔ @reflection.
+# Sixth instance of the cross-family adapter discipline (after
+# distinction → magic; frame → magic; @smarts/reflection sibling
+# adapters forward-promised at shards/smarts/{magic,frame,cyberpunk,
+# kintsugi}.mirror).
+#
+# === Closes Seam C1 from tick 35 ===
+#
+# Seam's tick-35 C1 finding (paraphrased): "@reflection family-root
+# claimed `composes-with` @smarts but provides no mechanical adapter;
+# the substrate-architectural integration claim is aspirational."
+# This species closes that finding by:
+#
+# 1. Declaring the typed bridge carrier (smarts_reflection_bridge).
+# 2. Declaring the typed bridge action that converts @smarts.smarts
+#    into @reflection.observation.
+# 3. Naming the bilateral predicate `bridge_coherent` first-consumed
+#    by the bridge action via `requires`.
+# 4. Composing-with @smarts.discipline_flexible at the bridge
+#    boundary: bridging is only admissible from a discipline-flexible
+#    smarts.
+#
+# Per Seam B1 closure pattern: the bridge action IS the FIRST non-
+# decorative consumer of `bridge_coherent`; the predicate is not
+# paint.
+#
+# === Substrate-pull-correct home ===
+#
+# Per the species naming convention: cross-family adapters land at
+# `shards/<family-A>/<family-B>.mirror` (the family-A subspecies of
+# family-B). This shard at `shards/smarts/reflection.mirror` declares
+# `@smarts/reflection` per
+# `@epistemologic/pact/path_matches_namespace`.
+#
+# Forward-promised siblings (per smarts.mirror header):
+# - shards/smarts/magic.mirror       — @smarts ↔ @magic adapter
+# - shards/smarts/frame.mirror       — @smarts ↔ @frame adapter
+# - shards/smarts/cyberpunk.mirror   — @smarts ↔ @cyberpunk adapter
+# - shards/smarts/epistemologic.mirror — @smarts ↔ @epistemologic/
+#                                       cybernetic adapter
+# - shards/smarts/kintsugi.mirror    — @smarts ↔ @kintsugi adapter
+#
+# === Pre-AI prior art ===
+#
+#   adapter pattern              Gang of Four design patterns (1994).
+#                                The cross-system bridge pattern at
+#                                programming altitude.
+#   bridge pattern               Gang of Four design patterns (1994).
+#                                Decoupling abstraction from
+#                                implementation; the substrate-
+#                                architectural analogue.
+#   natural transformation       Category theory; Eilenberg-MacLane
+#                                1945. The mathematical structure of
+#                                a structure-preserving map between
+#                                functors; this adapter IS the natural
+#                                transformation between @smarts's and
+#                                @reflection's substrate-architectural
+#                                forms.
+#   functor composition          The @smarts ↔ @reflection adapter IS
+#                                a functor between the two families'
+#                                substrate-decl categories.
+#
+# Spec context: shards/reflection.mirror (the @reflection family-root
+#               whose composes-with claim this adapter realizes);
+#               shards/smarts.mirror (the @smarts family-root whose
+#               header forward-promised this species);
+#               docs/specs/reflection-model.md (the spec @reflection
+#               lifts).
+# Substrate decisions: [[architecture-reflection-as-compiler]] (#85;
+#                       this adapter closes the substrate-architectural
+#                       integration claim);
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; the bridge IS the
+#                       boundary-harness at the cross-family @io),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the discipline today's cascade runs).
+# Related shards: smarts.mirror (the @smarts family-root; declares
+#                  smarts + ratify + discipline_flexible the bridge
+#                  consumes),
+#                 reflection.mirror (the @reflection family-root;
+#                  declares observation + observe the bridge
+#                  produces),
+#                 magic/distinction.mirror (Spencer-Brown adapter
+#                  precedent; tick 15),
+#                 magic/frame.mirror (@magic ↔ @frame adapter
+#                  precedent; tick 27).
+# Path-namespace property: this file at `shards/smarts/reflection.mirror`
+# declares `@smarts/reflection` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/gamma-helm-johnson-vlissides-1994
+source @arxiv/category-theory/eilenberg-maclane-1945
+
+glass @smarts/reflection {
+  focus reflection
+  project reflection
+  split reflection
+  shift reflection
+  settle reflection
+}
+
+# === The smarts_reflection_bridge carrier ===
+#
+# Per Seam tick-30 C4 closure pattern: typed record over both
+# families' carriers, not bare ref. The substrate-architectural
+# bridge IS the record carrying:
+#
+# - smarts_form  : the @smarts instance being bridged (substrate-
+#                  architectural integration form)
+# - frame_form   : the @frame the @reflection loop operates in (per
+#                  recognition #82; per-tick cognitive-order state)
+# - observation  : the @reflection observation produced by the bridge
+# - pact_witness : the @moi composition-time pact-witness ratifying
+#                  the bridge respects both families' disciplines
+#
+# Identity contract: byte-equality on the quadruple.
+type smarts_reflection_bridge = {
+  smarts_form:  smarts,
+  frame_form:   frame,
+  observation:  observation,
+  pact_witness: ref,
+}
+
+# === bridge action (FIRST non-decorative consumer of bridge_coherent) ===
+#
+# THE LOAD-BEARING ACTION at @smarts/reflection altitude. Converts a
+# @smarts instance (substrate-architectural integration form) plus a
+# @frame (the @reflection loop's per-tick state) into a @reflection
+# observation (the substrate-architectural integration's observable
+# trace).
+#
+# Takes s (the @smarts), f (the @frame), p (the perturbation under
+# which the bridge is checked); returns the typed observation that
+# @reflection.observe-style downstream processing consumes.
+#
+# requires bridge_coherent(...): the bridge maintains both families'
+# disciplines under perturbation. Composes
+# @smarts.discipline_flexible + @frame.bounded_commutator_check +
+# @reflection's bilateral structure at the cross-family boundary per
+# alignment-as-boundary-mathematics (#57).
+#
+# Body discharges at the realisation boundary; the actual bridging
+# is implemented by composing @smarts.ratify + @frame's per-tick
+# state extraction + @reflection.observe's observation construction.
+bridge(s: smarts, f: frame, p: perturbation) -> observation
+requires bridge_coherent(s, f, p)
+{ \ }
+
+# === bridge_coherent predicate (bilateral) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND the
+# cross-family adapter discipline.
+#
+# Per Seam B1 closure pattern: bridge action (above) is the FIRST non-
+# decorative consumer via `requires bridge_coherent(s, f, p)`.
+#
+# Consumer shards (forward-promised at @smarts/reflection species + the
+# other sibling adapters) name `requires bridge_coherent(s, f, p)` to
+# declare bilateral agreement that the cross-family bridge maintains
+# both families' disciplines under perturbation.
+#
+# Discharge: substrate-pull-correct cross-family coherence check at
+# the species boundary. Bounded → both families' disciplines are
+# preserved across the bridge (admit composition); unbounded → the
+# bridge violates one or both families' disciplines (bridging refused).
+#
+# Same shape as the bilateral predicates the prior families carry:
+# - @magic: invariant_preserved, audited, mechanism_intact
+# - @frame: bounded_commutator_check
+# - @smarts: discipline_flexible
+# - @cyberpunk: cybernetic_coherence
+# - @pack: pack_coherent
+# - @pack/seam: review_sound
+# - @moi: pact_respected
+# - @reflection: loss_decreases, speaks_at_n_plus_1
+# - @smarts/reflection: bridge_coherent (this one)
+bridge_coherent(s: smarts, f: frame, p: perturbation) -> verdict { \ }
+
+out @smarts/reflection
+out smarts_reflection_bridge
+out bridge
+out bridge_coherent
