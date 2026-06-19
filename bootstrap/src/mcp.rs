@@ -253,13 +253,18 @@ fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
     let content = std::fs::read_to_string(path).ok()?;
     let mut prism_name: Option<String> = None;
     let mut ops: Vec<String> = Vec::new();
-    let mut requires_clauses: Vec<String> = Vec::new();
-    // Tick 19 (2026-06-19): also extract action names. Same
-    // verifier-sharpening discipline as tick 18; substrate-driven
-    // dispatch foundation now has the complete picture per prism:
-    // (ops, requires, actions). Future ticks consume this envelope to
-    // generate MCP tool surface from substrate-declared prisms.
-    let mut actions: Vec<String> = Vec::new();
+    // Tick 22 (2026-06-19) per Seam retrospective gap #5: `requires`
+    // clauses are now attached to the action they guard, not flat at
+    // the prism level. Substrate-driven dispatch consumers can now
+    // tell which clause guards which action.
+    //
+    // actions is a vec of (name, requires_clauses). The parser tracks
+    // the "current action under inspection" as it scans the file:
+    // when it sees an action signature line, that becomes the current
+    // action; any subsequent `requires` lines attach to it; the body
+    // marker `{ \` ends the current action's requires-collection.
+    let mut actions: Vec<(String, Vec<String>)> = Vec::new();
+    let mut current_action: Option<usize> = None;
     let mut in_prism_block = false;
     for line in content.lines() {
         let trimmed = line.trim();
@@ -270,13 +275,26 @@ fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
             let name = rest.split('{').next().unwrap_or(rest).trim();
             prism_name = Some(format!("@{}", name));
             in_prism_block = true;
+            current_action = None;
             continue;
         }
         if let Some(rest) = trimmed.strip_prefix("requires ") {
             let clause = rest.trim_end_matches(|c: char| c.is_whitespace() || c == '{').trim();
             if !clause.is_empty() {
-                requires_clauses.push(clause.to_string());
+                if let Some(idx) = current_action {
+                    // Attach to the action under inspection.
+                    actions[idx].1.push(clause.to_string());
+                }
+                // Requires outside an action context are silently
+                // dropped: substrate convention is that requires
+                // clauses follow an action signature. A future tick
+                // could surface them as parse warnings.
             }
+            continue;
+        }
+        // Body marker `{ \ }` (or just `{`) ends the action context.
+        if trimmed.starts_with('{') {
+            current_action = None;
             continue;
         }
         if in_prism_block {
@@ -295,11 +313,8 @@ fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
             continue;
         }
         // Outside the prism block, look for action signatures.
-        // Substrate convention: actions are
+        // Substrate convention:
         //   snake_case_name(params) -> return_type
-        // Tick 21 (Seam retrospective gap #6): tightened from
-        // "snake_case + (" to "snake_case + (...) ->" to avoid false
-        // positives on type constructor calls and inline expressions.
         if let Some(open) = trimmed.find('(') {
             let head = &trimmed[..open];
             if !head.is_empty()
@@ -309,19 +324,37 @@ fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
                 if let Some(close) = after_open.find(')') {
                     let after_close = after_open[close + 1..].trim_start();
                     if after_close.starts_with("->") {
-                        actions.push(head.to_string());
+                        actions.push((head.to_string(), Vec::new()));
+                        current_action = Some(actions.len() - 1);
                     }
                 }
             }
         }
     }
     let name = prism_name?;
+    // Build the actions JSON array as { name, requires: [...] }.
+    let actions_json: Vec<Value> = actions
+        .into_iter()
+        .map(|(n, r)| json!({ "name": n, "requires": r }))
+        .collect();
+    // Backward-compat: also emit a flat `requires` list at the prism
+    // level so existing consumers don't break. Future tick removes it
+    // once downstream consumers migrate to action-level requires.
+    let flat_requires: Vec<String> = actions_json
+        .iter()
+        .flat_map(|a| {
+            a["requires"]
+                .as_array()
+                .map(|arr| arr.iter().filter_map(|v| v.as_str().map(|s| s.to_string())).collect::<Vec<_>>())
+                .unwrap_or_default()
+        })
+        .collect();
     Some(json!({
         "path": path.to_string_lossy(),
         "prism": name,
         "ops": ops,
-        "requires": requires_clauses,
-        "actions": actions,
+        "requires": flat_requires,
+        "actions": actions_json,
     }))
 }
 
