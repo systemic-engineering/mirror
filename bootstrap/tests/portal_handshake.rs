@@ -84,11 +84,15 @@ const SETTLED_FIXTURE: &str = "bootstrap/tests/fixtures/kintsugi-pass/a.mirror";
 /// reads / writes from.
 #[cfg(target_os = "macos")]
 #[inline]
-fn errno() -> i32 { unsafe { *libc::__error() } }
+fn errno() -> i32 {
+    unsafe { *libc::__error() }
+}
 
 #[cfg(not(target_os = "macos"))]
 #[inline]
-fn errno() -> i32 { unsafe { *libc::__errno_location() } }
+fn errno() -> i32 {
+    unsafe { *libc::__errno_location() }
+}
 
 fn socketpair_stream() -> (OwnedFd, OwnedFd) {
     let mut fds: [libc::c_int; 2] = [-1, -1];

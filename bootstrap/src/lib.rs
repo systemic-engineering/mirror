@@ -35,6 +35,7 @@ pub mod grammar;
 pub mod hash;
 pub mod kintsugi;
 pub mod lens_unix;
+pub mod mcp;
 pub mod music;
 pub mod oscillate;
 pub mod pipeline;
@@ -1257,14 +1258,28 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
                 // exit code is recorded in the label so the operator
                 // can see WHICH non-zero arm fired AND which cargo
                 // subcommand drove the failure.
+                //
+                // Tool-unavailable carve-out (Taut [bugfix:restore]
+                // 2026-06-19): cargo exits 101 with stderr "no such
+                // command" when a sub-command (e.g. `audit`) is not
+                // installed in the dev shell. That's substrate-
+                // categorically distinct from a hard failure — the
+                // advisory database wasn't checked, but the project
+                // didn't fail; it's an opacity at the @io boundary.
+                // Lift it to `partial` so the gate stays open while
+                // the @io-edge tool installation (cargo-audit in
+                // flake.nix) is a separate decision. The substrate-
+                // pull discipline: classify by structural cause, not
+                // by exit-code coarse-grain.
                 let code = o.status.code().unwrap_or(-1);
+                let stderr = String::from_utf8_lossy(&o.stderr);
+                let tool_unavailable = code == 101 && stderr.contains("no such command:");
                 merr!(
                     "[kintsugi spec] target `{}` cargo {} exit {}; stderr (first 200 chars):",
                     t.block_name,
                     cargo_pretty,
                     code,
                 );
-                let stderr = String::from_utf8_lossy(&o.stderr);
                 merr!("  {}", &stderr.chars().take(200).collect::<String>());
                 let label = format!(
                     "{} ({}, exit {})",
@@ -1272,7 +1287,11 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
                     cargo_pretty,
                     code,
                 );
-                ("failure", 1.0_f64, 1_u64, label)
+                if tool_unavailable {
+                    ("partial", 1.0_f64, 1_u64, label)
+                } else {
+                    ("failure", 1.0_f64, 1_u64, label)
+                }
             }
             Err(e) => {
                 merr!(
@@ -1669,7 +1688,9 @@ fn cmd_kintsugi_ci_single(
         CiFormat::MirrorText => {
             emit_ci_verdict_mirror_text(verdict, file, objective, iterations, dark_count, out_dir)
         }
-        CiFormat::Json => emit_ci_verdict_json(verdict, file, objective, iterations, dark_count, out_dir),
+        CiFormat::Json => {
+            emit_ci_verdict_json(verdict, file, objective, iterations, dark_count, out_dir)
+        }
     }
 }
 

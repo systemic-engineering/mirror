@@ -313,7 +313,10 @@ fn ci_format_json_dir_emits_valid_json() {
     let out = run_ci(&["--ci", "--out=@data/json", PASS_FIXTURE]);
     assert_eq!(out.status.code(), Some(0));
     let v = parse_ci_json(&out);
-    assert!(v.is_object(), "--out=@data/json on dir must be a JSON object");
+    assert!(
+        v.is_object(),
+        "--out=@data/json on dir must be a JSON object"
+    );
 }
 
 #[test]

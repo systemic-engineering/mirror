@@ -91,7 +91,13 @@ fn crystal_glass_declares_five_operations() {
     let src = shard_src();
     // The glass declaration carries all five operations on `crystal`,
     // matching the pattern of @mirror/store/oid at shards/mirror/store.mirror.
-    for op in ["focus crystal", "project crystal", "split crystal", "shift crystal", "settle crystal"] {
+    for op in [
+        "focus crystal",
+        "project crystal",
+        "split crystal",
+        "shift crystal",
+        "settle crystal",
+    ] {
         assert!(
             src.contains(op),
             "expected glass @mirror/store/crystal to declare `{op}` \

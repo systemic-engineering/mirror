@@ -116,7 +116,7 @@ pre-commit:
     # Rust closure non-empty: run the substrate-native settlement chain unchanged.
     just build
     {{MIRROR_BIN_RELEASE}} kintsugi mirror.spec | tee /tmp/mirror-spec-verdict.mirror
-    {{MIRROR_BIN_RELEASE}} kintsugi --format=json mirror.spec > /tmp/mirror-spec-verdict.json
+    {{MIRROR_BIN_RELEASE}} kintsugi --out=@data/json mirror.spec > /tmp/mirror-spec-verdict.json
     jq -e '.verdict != "failure"' /tmp/mirror-spec-verdict.json > /dev/null || ( \
         echo "✖ mirror kintsugi mirror.spec: verdict failure — see /tmp/mirror-spec-verdict.mirror" >&2; \
         exit 1 )

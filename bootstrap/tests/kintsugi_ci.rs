@@ -268,7 +268,10 @@ fn ci_format_json_emits_valid_json() {
         "--ci --out=@data/json exit code must be 0 when JSON emits cleanly"
     );
     let v = parse_ci_json(&out);
-    assert!(v.is_object(), "--out=@data/json output must be a JSON object");
+    assert!(
+        v.is_object(),
+        "--out=@data/json output must be a JSON object"
+    );
 }
 
 #[test]
