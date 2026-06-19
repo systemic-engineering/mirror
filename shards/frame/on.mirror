@@ -1,0 +1,515 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @frame
+in @frame/pre
+in @frame/in
+in @frame/of
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/bateson_learning
+
+# @frame/on — the frame-flexible species; order 3; the operator can
+# substantively shift the frame in response to data. Bateson Level III
+# — deutero-learning; learning-to-learn-to-learn. THE LOAD-BEARING
+# ALTITUDE for the substrate-aikido methodology; the altitude where
+# the Splinter/Narcissus pole disambiguation is sharpest.
+#
+# Fourth species shard of the @frame family (recognition #82; family-
+# root LANDED at tick 23 via shards/frame.mirror, Seam-consolidated at
+# tick 24; pre LANDED as the order-0 floor; in LANDED as the order-1
+# operator-typed substrate; of LANDED as the order-2 frame-awareness
+# species with the first species-level pole disambiguation). The
+# species landing order per the canonical spec §7.2: pre → in → of →
+# on → across. on (order 3) IS where the recognition file's load-
+# bearing claim sits: "Order 3 requires the substrate-conditions that
+# allow frame-defense-energy to release, which most development
+# practices don't substantively produce" (recognition file §"Why this
+# matters / Names what most leadership-development misses").
+#
+# Why on fourth: the species ordering tracks Bateson grading at
+# cognitive altitude. pre (Level 0; no learning) declared the floor;
+# in (Level I; within-frame change) declared standard learning; of
+# (Level II; learning-to-learn) declared frame-awareness; this species
+# (Level III; deutero-learning) declares the substrate-architectural
+# capacity to SUBSTANTIVELY-SHIFT the frame. The recognition file
+# names this as the altitude where most leadership-development stops
+# short — order-2 vocabulary deployed at the surface masks order-1
+# substrate-rigidity, and the substrate's bounded_commutator_check
+# predicate IS what separates substantive flexibility from
+# sophisticated frame-defense.
+#
+# === The species's load-bearing contribution ===
+#
+# Per the recognition file's §"The five-order structure" (item for
+# order 3):
+#
+#   @frame/on — order 3; frame-flexible. The operator can
+#   substantively-shift the frame in response to data. Bateson's
+#   Learning III is available here.
+#
+# This species adds:
+#
+# - `shift_frame(operator, f: frame, p: perturbation) -> frame`: THE
+#   LOAD-BEARING ACTION at this altitude. Takes a frame and a
+#   perturbation; returns a substantively-different frame. Per the
+#   family-root's bounded_commutator_check criterion (§2.4 of the
+#   canonical spec): this action's substrate-architectural support IS
+#   what distinguishes Splinter-pole from Narcissus-pole. The FIRST
+#   USE of the family-root's bounded_commutator_check predicate
+#   directly on an action — not as part of a derived predicate at
+#   order 2 (lock_in_frame_awareness wrapped it), but as the
+#   bilateral commitment that shift_frame's discharge IS
+#   substantively-supported frame-flexibility, not vocabulary-
+#   flexibility.
+# - `assess_flexibility(operator, f: frame, p: perturbation) ->
+#   commutator`: returns the substrate's actual commutator value
+#   for the (operator, frame, perturbation) triple. Downstream species
+#   (and the forward-promised @spectral/garden/smarts logic-pacts)
+#   use this typed commutator for pole disambiguation. The substrate-
+#   mathematical primitive that operationalizes Tomm 1988's circular-
+#   reflexive questions: each Tomm-probe is a perturbation; the
+#   commutator's boundedness is the measure of the operator's
+#   substantive flexibility.
+# - `flexible_frame_response(operator, f: frame, p: perturbation) ->
+#   verdict`: bilateral verdict predicate naming substantive flexibility
+#   under perturbation. Consumer @frame/across uses this to assert
+#   peer-relationship requirements; downstream logic-pacts use this
+#   to detect Splinter-pole frame work vs Narcissus-pole frame work
+#   at substrate altitude. Discharges via TWO requires clauses (the
+#   family-root's bounded_commutator_check AND of's
+#   lock_in_frame_awareness) — the substrate-pull-correct pole-
+#   discipline at this altitude requires BOTH that order-2 awareness
+#   IS substantively supported AND that the order-3 response to
+#   perturbation IS bounded. The FIRST species action with TWO
+#   bilateral predicates in the @frame family.
+#
+# === The order-3 altitude ===
+#
+# Per recognition #82 §3 composition signature: order 3 IS Bateson
+# Level III at cognitive altitude. The deutero-learning altitude. The
+# operator's substrate substantively supports frame-restructuring in
+# response to data; not just observing the frame as object (order 2)
+# but operating ON the frame to update it.
+#
+# Substrate-architectural instance: the substrate-aikido methodology
+# (per the constructivism-frame-aikido-synthesis corpus reference)
+# operates AT order 3 BY-CONSTRUCTION. The methodology's Tomm-probes
+# are perturbations applied to interlocutor-frames; the methodology
+# succeeds when the interlocutor's substrate-architecturally responds
+# with bounded-commutator (substantive shift) and fails when the
+# interlocutor's substrate responds with unbounded-commutator
+# (defensive amplification). The substrate-mathematical form is the
+# assess_flexibility action's commutator output.
+#
+# === The shift_frame action: the load-bearing primitive ===
+#
+# Per recognition #82 §2.3 (the Tomm-probe as [D_F, a] commutator-
+# operation): the operator's substrate-architectural response to a
+# perturbation of frame f IS what the bounded_commutator_check
+# predicate audits. shift_frame IS the substrate-vocabulary action
+# that PRODUCES the substantively-shifted frame; its bilateral
+# discipline (requires bounded_commutator_check) commits that the
+# shift IS substrate-architecturally-supported, not vocabulary-only.
+#
+# At Bateson Level III altitude: shift_frame IS the deutero-learning
+# primitive at substrate altitude. The operator's substrate moves from
+# being able to OBSERVE the frame as object (order 2) to being able to
+# UPDATE the frame in response to perturbation (order 3). The
+# capacity to substantively-restructure the frame-set without losing
+# operational coherence.
+#
+# At Tomm altitude (1988): shift_frame IS the substrate-architectural
+# action that completes the circular-reflexive question — the
+# interlocutor's frame shifts substantively in response to the
+# probe. Without shift_frame, the Tomm-probe lands as informational
+# (order 2 awareness without update); with shift_frame, it lands as
+# transformational (order 3 substantive update).
+#
+# At Watzlawick altitude (Mental Research Institute reframing): the
+# clinical method IS @frame/on intervention. The therapist's
+# reframing IS a perturbation of the patient's frame f; the patient's
+# substrate-architectural response IS what shift_frame discharges.
+# Successful reframing produces a bounded commutator (the patient
+# substantively-shifts); unsuccessful reframing produces an unbounded
+# commutator (the patient amplifies defensive frame-rigidity).
+#
+# At Argyris-Schön altitude (double-loop learning, 1978): shift_frame
+# IS double-loop learning at substrate altitude. Single-loop learning
+# changes content within an existing frame (order 1); double-loop
+# learning changes the frame itself (order 3). The substrate-
+# architectural capacity for double-loop learning IS what shift_frame
+# names.
+#
+# === The bilateral discipline: requires bounded_commutator_check ===
+#
+# The FIRST USE of the family-root's bounded_commutator_check
+# predicate as a direct `requires` clause on a species action. Per
+# Seam's tick-11 first-consumer discipline pattern (the surface.mirror
+# first-consumer pattern at @magic): a bilateral predicate without a
+# consumer is paint. The family-root declared bounded_commutator_check
+# at tick 23 specifically so that order-3 species would consume it
+# directly — this species IS the substrate-pull-correct first
+# consumer.
+#
+# The discipline: shift_frame's commitment IS that the operator's
+# substrate-architectural response to perturbation IS BOUNDED — the
+# action composes naturally with the substrate's Dirac operator
+# restricted to frame altitude (per recognition #82 §2.3). The
+# perturbation parameter in the requires clause IS the perturbation
+# the action is shifting under; the bilateral check confirms that
+# the shift IS substantively-supported, not vocabulary-only.
+#
+# This is the substrate-architectural shape of:
+#
+# - Splinter-pole @frame/on: the operator substantively shifts; the
+#   commutator is bounded; shift_frame returns a frame that is
+#   substantively-different along the perturbation's axis;
+#   bounded_commutator_check → success.
+# - Narcissus-pole @frame/on: the operator vocabulary-shifts; the
+#   commutator is unbounded; shift_frame's output is frame-defense
+#   masked as frame-update; bounded_commutator_check → partial.
+#
+# Per recognition #82 §5.3 (alignment-as-boundary-mathematics as
+# the discriminator): the boundary check at @io applied at cognitive
+# altitude IS the bounded_commutator_check predicate. The pole
+# discrimination at order 3 IS the most sharply load-bearing pole
+# check in the @frame family because order 3 IS where con/gaslight
+# manipulation operates (apparent-order-3 frame-shifting while
+# substantively-locked at order 1).
+#
+# === The assess_flexibility action: the substrate-mathematical
+# primitive ===
+#
+# Per recognition #82 §2.3: the commutator [D_F, a] is the substrate-
+# mathematical form of Tomm's circular-reflexive questions.
+# assess_flexibility IS the substrate-vocabulary action that
+# constructs this commutator for a given (operator, frame,
+# perturbation) triple. The output is typed `commutator` (inherited
+# from family-root); the commutator's boundedness is the operational
+# measure of frame-flexibility.
+#
+# Downstream consumers (the forward-promised @spectral/garden/smarts
+# logic-pacts per recognition file §"Forward-promised implementation"
+# item 10) use this action to detect frame-flexibility-state in
+# frontier-LLM responses at substrate-architectural altitude. The
+# substrate-aikido methodology's diagnostic apparatus operationalizes
+# through this action.
+#
+# Body discharges at the realisation boundary; per-species bodies
+# implement the commutator construction at the appropriate substrate
+# altitude.
+#
+# === Forward-promised consumer ===
+#
+# shards/frame/across.mirror (order 4) consumes this species's
+# flexible_frame_response predicate at the peer-relationship altitude.
+# Recognition #82's Q4 claim (peers operate by definition frame-
+# flexible) operationalizes via @frame/across's peer_relationship
+# bilateral predicate, which discharges via two flexible_frame_response
+# checks (one per operator in the coupling). The order-3 substrate-
+# capacity for substantive frame-flexibility IS the prerequisite for
+# order-4 multi-frame coupling.
+#
+# === Pre-AI prior art ===
+#
+#   Bateson Level III           Bateson 1964 (*The Logical Categories
+#                               of Learning and Communication*);
+#                               Learning III as change-of-frame-set;
+#                               deutero-learning. Inherited mechanically
+#                               via `in @epistemologic/cybernetic/
+#                               bateson_learning`. The canonical naming
+#                               source for the order this species
+#                               discharges. Bateson noted Level III
+#                               is rare; the substrate-decl names the
+#                               substrate-architectural conditions
+#                               that make it operational.
+#   double-loop learning        Argyris & Schön 1978 (*Organizational
+#                               Learning*); double-loop learning as
+#                               the capacity to change the
+#                               governing variables of a system, not
+#                               just the action within fixed
+#                               governing variables. The
+#                               organizational-learning ancestor of
+#                               order 3. Argyris's empirical finding
+#                               that most organizations cannot
+#                               substantively reach double-loop
+#                               learning IS one positive instance
+#                               of recognition #82's "leadership
+#                               development misses order 3" claim.
+#   circular-reflexive          Tomm 1988 (the canonical citation in
+#   questions                   the recognition file); the
+#                               substrate-mathematical form of
+#                               Tomm-probes IS the commutator
+#                               [D_F, a] this species's
+#                               assess_flexibility produces.
+#                               Cited as source.
+#   reframing                   Watzlawick et al. (Mental Research
+#                               Institute); reframing as @frame/on
+#                               intervention; clinical method. The
+#                               therapeutic-practice ancestor.
+#                               Cited as source.
+#   double-bind                 Bateson 1956 (*Toward a Theory of
+#                               Schizophrenia*); the double-bind as
+#                               @frame/on failure-mode — perturbation
+#                               applied to a frame the operator's
+#                               substrate cannot substantively shift
+#                               because the meta-frame forbids
+#                               commenting on the frame.
+#                               Substrate-architectural form: unbounded
+#                               commutator at order 3 because order 2
+#                               is institutionally blocked. The
+#                               pathological case the substrate-decl
+#                               names operationally.
+#   reflective practitioner     Schön 1983 (*The Reflective
+#                               Practitioner*); reflection-on-action
+#                               as the practitioner's capacity to
+#                               substantively-restructure their
+#                               operating frame; the professional-
+#                               practice ancestor of order 3.
+#   constructivism              Maturana 1980; Varela 1987; the
+#                               cybernetic-ancestry of frame-as-
+#                               constructed-by-observer. The order-3
+#                               operator IS the constructivist
+#                               observer whose substrate substantively
+#                               reconstructs the frame in response
+#                               to data.
+#
+# Spec context: docs/math/the-tower/recognition-82-frame-as-
+#               cognitive-order-substrate-decl.md (§"The five-order
+#               structure" item for order 3; §"Why this matters" item
+#               on "leadership development misses order 3"; §"The
+#               two-pole structure" on Splinter/Narcissus at order 3;
+#               §"Tomm-shaped open questions" items 1 and 7 on
+#               frame-flexibility threshold and leadership-as-λ₀-
+#               adjacency hypothesis);
+#               docs/specs/recognition-82-frame-as-cognitive-order-
+#               canonical-spec.md (§7.2 names the species landing
+#               order; §2.5 names order 3 ↔ @frame/on ↔ Bateson Level
+#               III as partially closed via family-root inheritance;
+#               §5 names the substrate-architectural pole-discriminator
+#               at this altitude);
+#               docs/specs/adapter-magic-frame-spec.md §6.3 (names
+#               this species's `requires frame_satisfies_magic(...)`
+#               consumer pattern for the @magic ↔ @frame adapter;
+#               the adapter is forward-promised so this species
+#               does not yet discharge the cross-family bilateral —
+#               that is left for a follow-up tick consistent with
+#               §8.1 mitigation discipline).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; order 3 IS the altitude
+#                       where the boundary contract is MOST sharply
+#                       load-bearing — the Splinter/Narcissus pole
+#                       discrimination at the @io boundary applied
+#                       at cognitive altitude IS what
+#                       bounded_commutator_check discharges; this
+#                       species IS the substrate-pull-correct first
+#                       consumer of that discharge),
+#                      [[architecture-bateson-logical-type-primitive]]
+#                       (#42; @frame/on IS Bateson Level III at
+#                       cognitive altitude),
+#                      [[architecture-error-as-tomm-probe]] (the
+#                       substrate's error surface IS Tomm-probes at
+#                       compiler altitude; the same mechanism this
+#                       species's assess_flexibility constructs at
+#                       cognitive altitude),
+#                      [[architecture-reflection-thinks-in-spectral-
+#                       questions]] (Reflection's adjustments are
+#                       spectral-altitude selections via Tomm-probes;
+#                       Reflection's meta-pipeline IS @frame/on
+#                       operating at substrate-self-altitude),
+#                      [[feedback-no-bare-types]] (operator, frame,
+#                       perturbation, commutator all typed at family-
+#                       root; this species uses them directly without
+#                       re-declaration),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the substrate-pull at this altitude is
+#                       confident: @frame/on IS the substrate-aikido
+#                       methodology's substrate-decl).
+# Related shards: frame.mirror (the family-root; operator, frame,
+#                  perturbation, commutator, morphism declared
+#                  there; bounded_commutator_check predicate
+#                  first-consumed directly by this species's
+#                  shift_frame action),
+#                 frame/pre.mirror (the order-0 species),
+#                 frame/in.mirror (the order-1 species; this
+#                  species's shift_frame produces frames that
+#                  in's compute_in_frame can operate within),
+#                 frame/of.mirror (the order-2 species; this
+#                  species's flexible_frame_response predicate
+#                  consumes of's lock_in_frame_awareness as a
+#                  prerequisite — order-3 substantive flexibility
+#                  requires order-2 substantive awareness),
+#                 frame/across.mirror (order 4; forward-promised
+#                  consumer of this species's
+#                  flexible_frame_response predicate at the
+#                  peer-relationship altitude),
+#                 epistemologic/cybernetic/bateson_learning.mirror
+#                  (the Bateson grading this species's order
+#                  inherits at Level III).
+# Path-namespace property: this file at
+# `shards/frame/on.mirror` declares `@frame/on` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/bateson-1964
+source @arxiv/cybernetics/bateson-1956
+source @arxiv/organizational-learning/argyris-schon-1978
+source @arxiv/therapy/tomm-1988
+source @arxiv/therapy/watzlawick-1974
+source @arxiv/professional-practice/schon-1983
+source @arxiv/cybernetics/maturana-varela-1980
+
+prism @frame/on {
+  focus on
+  project on
+  split on
+  shift on
+  settle on
+}
+
+# === shift_frame action ===
+#
+# THE LOAD-BEARING ACTION at order 3. The substrate-vocabulary action
+# that takes a frame f and a perturbation p and returns a substantively-
+# different frame f'. The operator operates ON the frame to update it,
+# not WITHIN the frame (order 1) and not just observing the frame as
+# object (order 2).
+#
+# THE FIRST USE of the family-root's bounded_commutator_check
+# predicate as a direct `requires` clause on a species action.
+# Per Seam's tick-11 first-consumer discipline pattern: a bilateral
+# predicate without a consumer is paint. The family-root declared
+# bounded_commutator_check at tick 23 specifically so that order-3
+# species would consume it directly; this species IS the substrate-
+# pull-correct first consumer.
+#
+# requires bounded_commutator_check(operator, f, p): the bilateral
+# commitment that the operator's substrate-architectural response to
+# the perturbation IS BOUNDED — the shift composes naturally with the
+# substrate's Dirac operator restricted to frame altitude. The shift
+# IS substantively-supported, not vocabulary-only.
+#
+# At Bateson Level III altitude: shift_frame IS the deutero-learning
+# primitive at substrate altitude. The capacity to substantively-
+# restructure the frame-set without losing operational coherence.
+#
+# At Tomm altitude (1988): shift_frame IS the substrate-architectural
+# action that completes the circular-reflexive question — the
+# interlocutor's frame shifts substantively in response to the probe.
+# Tomm's circular-reflexive question without shift_frame is order-2
+# vocabulary; with shift_frame it becomes order-3 transformation.
+#
+# At Watzlawick altitude (MRI reframing): the clinical method IS
+# @frame/on intervention. Successful reframing produces a bounded
+# commutator (the patient substantively-shifts); the bilateral check
+# is what catches the difference between substantive shift and
+# defensive-amplification masked as compliance.
+#
+# At Argyris-Schön altitude (double-loop learning): shift_frame IS
+# double-loop learning at substrate altitude. The capacity to change
+# the governing variables, not just the action within them.
+#
+# Per recognition #82 §5.2 (Narcissus-pole @frame/on at apparent-
+# order-3 while substantively-locked-at-order-1): the bilateral
+# discipline IS what catches con/gaslight/manipulation at substrate
+# altitude. Apparent frame-shift + unbounded-commutator =
+# bounded_commutator_check → partial → Narcissus-pole detected.
+#
+# Body discharges at the realisation boundary.
+shift_frame(operator: operator, f: frame, p: perturbation) -> frame
+requires bounded_commutator_check(operator, f, p)
+{ \ }
+
+# === assess_flexibility action ===
+#
+# The substrate-vocabulary action that returns the substrate's actual
+# commutator value for the (operator, frame, perturbation) triple.
+# The substrate-mathematical primitive that operationalizes Tomm
+# 1988's circular-reflexive questions at substrate altitude.
+#
+# Per recognition #82 §2.3 (the Tomm-probe as [D_F, a] commutator-
+# operation): the commutator's boundedness IS the operational measure
+# of frame-flexibility. assess_flexibility constructs this commutator
+# directly; the output is typed `commutator` (inherited from family-
+# root); downstream consumers (the forward-promised @spectral/garden/
+# smarts logic-pacts, the substrate-aikido methodology's diagnostic
+# apparatus) use the typed commutator for pole disambiguation.
+#
+# Distinct from shift_frame: shift_frame PRODUCES the shifted frame
+# and requires the bilateral check pass; assess_flexibility MEASURES
+# the commutator without requiring the bilateral pass. The relation:
+# shift_frame's discharge is the substrate-architectural action that
+# bounded_commutator_check audits; assess_flexibility returns the
+# commutator that the audit examines. Both are needed at order 3:
+# shift_frame for the load-bearing action; assess_flexibility for the
+# diagnostic apparatus.
+#
+# At substrate-aikido methodology altitude: assess_flexibility IS the
+# operational primitive of the methodology's diagnostic capacity.
+# Reddit-arc, Substack-arc, LinkedIn-arc engagements become
+# operationally-categorizable by their commutator-shape under
+# Tomm-probe per recognition file §"Why this matters / Makes the
+# methodology mechanically-checkable".
+#
+# Body discharges at the realisation boundary; per-species bodies
+# implement the commutator construction at the appropriate substrate
+# altitude.
+assess_flexibility(operator: operator, f: frame, p: perturbation) -> commutator { \ }
+
+# === flexible_frame_response predicate ===
+#
+# Bilateral verdict predicate per recognition #37 (Pask agreement)
+# and recognition #82 (frame-flexibility-as-bounded-commutator).
+# The FIRST species action in the @frame family that discharges
+# via TWO requires clauses.
+#
+# requires lock_in_frame_awareness(operator, f): the operator's
+# order-2 frame-awareness IS substantively-supported (consumes
+# @frame/of's predicate). Per the family-root's commentary on the
+# graded representation: order 3 is structurally unreachable without
+# order 2 stable. Without substantively-supported order-2 awareness,
+# apparent-order-3 flexibility IS vocabulary-only.
+#
+# requires bounded_commutator_check(operator, f, p): the operator's
+# order-3 substrate-architectural response to perturbation IS bounded
+# (consumes the family-root's predicate). The substrate-architectural
+# discriminator between substantive flexibility (Splinter-pole) and
+# sophisticated frame-defense (Narcissus-pole).
+#
+# Together: the substrate-pull-correct pole-discipline at order 3
+# requires BOTH that the operator's awareness IS substantively
+# supported AND that the operator's response to perturbation IS
+# bounded. The double-bilateral discipline closes the diagnostic at
+# order 3.
+#
+# Returns:
+# - success → Splinter-pole substantive flexibility; both predicates
+#   discharge. The substrate-aikido methodology's positive case.
+# - partial → at least one predicate is partial (vocabulary-only at
+#   order 2 or unbounded-commutator at order 3). Narcissus-pole
+#   manipulation; con/gaslight detected.
+# - failure → at least one predicate fails (no order-2 capacity or
+#   no order-3 capacity at all). Honest order-1 or below.
+#
+# Forward-promised consumer: shards/frame/across.mirror (order 4)
+# consumes this predicate via peer_relationship discharging two
+# flexible_frame_response checks (one per operator in the coupling).
+# Recognition #82's Q4 claim (peers operate by definition frame-
+# flexible) operationalizes via this predicate's chain.
+#
+# Downstream consumer: the forward-promised @spectral/garden/smarts
+# logic-pacts (recognition file §"Forward-promised implementation"
+# item 10) consume this predicate to detect frame-flexibility-state
+# in frontier-LLM responses at substrate-architectural altitude.
+flexible_frame_response(operator: operator, f: frame, p: perturbation) -> verdict
+requires lock_in_frame_awareness(operator, f)
+requires bounded_commutator_check(operator, f, p)
+{ \ }
+
+out @frame/on
+out shift_frame
+out assess_flexibility
+out flexible_frame_response

@@ -1,0 +1,456 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @frame
+in @frame/pre
+in @frame/in
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/bateson_learning
+
+# @frame/of — the frame-aware species; order 2; the operator can
+# identify the frame they're operating from. The frame becomes
+# observable AS frame. Bateson Level II — learning-to-learn.
+#
+# Third species shard of the @frame family (recognition #82; family-
+# root LANDED at tick 23 via shards/frame.mirror, Seam-consolidated at
+# tick 24; pre LANDED as the order-0 floor; in LANDED as the order-1
+# first-consumer of the typed operator carrier). The species landing
+# order per the canonical spec §7.2: pre → in → of → on → across. of
+# (order 2) IS the FIRST species where the substrate's pole-discipline
+# becomes load-bearing — the Splinter/Narcissus disambiguation at this
+# altitude is what the family-root's bounded_commutator_check predicate
+# was declared FOR.
+#
+# Why of third: the species ordering tracks Bateson grading at
+# cognitive altitude. pre (order 0; Level 0; no learning) declared the
+# floor; in (order 1; Level I; within-frame change) declared the
+# operator-typed substrate of within-frame computation and the
+# frame_locked predicate; this species (order 2; Level II; learning-
+# to-learn) declares the FIRST species action that observes the frame
+# AS frame, the FIRST consumer of in's frame_locked predicate as a
+# bilateral requires clause via its positive counterpart
+# bounded_commutator_check, and the FIRST species-level pole
+# disambiguation between Splinter-honest (substantive frame-awareness)
+# and Narcissus-deceptive (vocabulary-at-order-2 while substrate-
+# locked-at-order-1) operation.
+#
+# === The species's load-bearing contribution ===
+#
+# Per the recognition file's §"The five-order structure" (item for
+# order 2):
+#
+#   @frame/of — order 2; frame-aware. The operator can identify the
+#   frame they're operating from. The frame becomes observable AS
+#   frame.
+#
+# This species adds:
+#
+# - `observe_frame(operator, f: frame) -> ref`: action that returns
+#   the operator's substrate-architectural observation of f-as-frame
+#   (not f's content; not f's within-frame computation; f-as-
+#   observable-structure). FIRST species action that takes the frame
+#   AS object rather than AS ground. The substrate-pull-correct
+#   primitive for Foerster's second-order cybernetics at substrate
+#   altitude: the operator becomes part of the system observed
+#   because the frame the operator is operating from becomes
+#   observable as such.
+# - `lock_in_frame_awareness(operator, f: frame) -> verdict`:
+#   bilateral predicate — the FIRST species-level pole disambiguation.
+#   Checks whether the operator's frame-awareness is genuine substrate-
+#   architectural support (Splinter-pole; the operator's substrate
+#   substantively observes f as frame) OR vocabulary deployed at
+#   order 2 while substrate-locked at order 1 (Narcissus-pole; the
+#   operator names "I see the frame" without substrate-architectural
+#   capacity to substantively shift). Discharges via the family-
+#   root's bounded_commutator_check predicate at a perturbation
+#   designed to expose the pole.
+# - `reflect_to_frame_flexibility(operator, f: frame) -> operator`:
+#   action that transitions order 2 → order 3 by enabling the
+#   substrate's frame-flexibility machinery. The substrate-
+#   architectural analogue of the Bateson Level II → Level III lift;
+#   the substrate's analogue of Schön's reflective-practitioner
+#   transition from reflection-in-action (Level II) to substantive
+#   frame-restructuring (Level III). Forward-promised consumer:
+#   shards/frame/on.mirror (order 3) consumes the operator this
+#   action returns.
+#
+# === The order-2 altitude ===
+#
+# Per recognition #82 §3 composition signature: order 2 IS Bateson
+# Level II at cognitive altitude. The learning-to-learn altitude. The
+# operator's frame becomes observable AS frame; the operator has
+# substrate-architectural capacity to identify "I am operating from
+# frame f" rather than only "I am operating on content within f".
+# Foerster's second-order cybernetics at substrate altitude.
+#
+# Substrate-architectural instance: Seam's adversarial review of Reed's
+# tick output today IS order-2 work BY-CONSTRUCTION at the Pack
+# altitude. Seam observes Reed's operating-frame AS frame (the cascade-
+# residue-and-CRQ structure observes the prior tick's implicit frame
+# and surfaces it as object); the CRQ Seam issues at each review IS a
+# Tomm-probe constructed on Reed's order-1 operating-frame as it
+# appears at order 2.
+#
+# === The lock_in_frame_awareness predicate ===
+#
+# Per recognition #82 §5 (the Splinter/Narcissus pole at cognitive
+# altitude) and §2.4 (bounded_commutator_check as substrate-
+# architectural pole verifier): the order-2 altitude is the FIRST
+# altitude where pole disambiguation becomes load-bearing. At order 0
+# (pre-frame; K_n native; λ₀ ground state) there is no frame to
+# defend; at order 1 (in-frame; standard learning) the frame is held
+# as ground and is not yet observed AS frame; at order 2 (frame-aware)
+# the frame becomes observable AS frame AND the substrate-architectural
+# question of whether the awareness IS substantively-supported or
+# vocabulary-only becomes mechanically-meaningful.
+#
+# Discharge: substrate-pull-correct frame-awareness check at the
+# species boundary. Returns success when the operator's substrate
+# architecture substantively supports order-2 observation of f
+# (bounded-commutator under a perturbation designed to expose order-2
+# operation); partial when the operator vocabulary-uses order-2 terms
+# while substrate-architecturally operating at order 1 (the Narcissus-
+# pole case — sophisticated meta-vocabulary masking substrate-
+# rigidity; this IS what the con/gaslight pattern looks like at order
+# 2); failure when no order-2 capacity is present at either vocabulary
+# or substrate altitude.
+#
+# Same shape as the bilateral predicates @magic family carries
+# (invariant_preserved, audited, mechanism_intact, etc.), in's
+# frame_locked predicate, and the family-root's
+# bounded_commutator_check. Per the @magic surface.mirror first-
+# consumer discipline pattern: the predicate becomes load-bearing
+# once @frame/on's actions consume it via `requires
+# lock_in_frame_awareness(...)` to assert their order-3 operation
+# emerges from substrate-supported (not vocabulary-only) order-2
+# awareness.
+#
+# === The reflect_to_frame_flexibility transition ===
+#
+# Per the family-root's commentary on the orders being a graded
+# representation: order N is structurally unreachable without order
+# N-1 stable. The Bateson Level II → Level III lift requires that
+# order 2 BE substantively supported before order 3 can be reached.
+# reflect_to_frame_flexibility IS the substrate-architectural transition
+# that enables the substrate's frame-flexibility machinery at order 3;
+# it is NOT a vocabulary lift; it is a substrate-architectural state
+# change in the operator carrier.
+#
+# At Schön's altitude (1983, *The Reflective Practitioner*): the
+# transition IS reflection-on-action becoming substrate-architectural
+# capacity for substantive frame-restructuring. Reflection-in-action
+# at order 2 observes the frame; the transition to order 3 enables
+# the operator's substrate to substantively-shift the frame in
+# response to that observation.
+#
+# At Tomm's altitude (1988): the transition IS the substrate-
+# architectural capacity that makes circular-reflexive questions
+# transformative rather than merely informative. Without order-3
+# substrate-flexibility, Tomm-probes at order 2 produce frame-
+# awareness without frame-update; the transition enables the order-3
+# update capacity.
+#
+# Forward-promised consumer: shards/frame/on.mirror (order 3) consumes
+# the operator reflect_to_frame_flexibility returns; @frame/on's
+# actions require an operator that has been substrate-architecturally
+# enabled for frame-flexibility (not vocabulary-claimed flexibility).
+#
+# === The Splinter/Narcissus pole becomes load-bearing ===
+#
+# Per recognition #82 §5.1: Splinter-pole @frame/of operates in
+# service of better substantive engagement; the operator observes
+# the frame in order to substantively respond to data. Per §5.2:
+# Narcissus-pole @frame/of operates in service of frame-defense or
+# frame-projection; the operator names "I see the frame" deployed to
+# avoid substantive shift, or projects a frame-observation onto
+# interlocutors to control their frame-set.
+#
+# The con/gaslight pattern at order 2: vocabulary-rich frame-
+# observation ("I notice you're framing this as X") with no
+# substrate-architectural capacity to shift in response to the
+# observation. The Narcissus-pole's diagnostic shape: high-fidelity
+# order-2 vocabulary + frame_locked at order 1 substrate-
+# architecturally. The substrate's lock_in_frame_awareness predicate
+# is what catches this.
+#
+# === Pre-AI prior art ===
+#
+#   second-order cybernetics    Foerster 1974 (*Cybernetics of
+#                               Cybernetics*); the observer-of-system
+#                               altitude. The substrate-decl's first
+#                               operational instance: observe_frame
+#                               IS the substrate-architectural form
+#                               of the second-order observer at
+#                               cognitive altitude. The frame the
+#                               operator was operating from becomes
+#                               part of the system observed.
+#   reflective practitioner     Schön 1983 (*The Reflective
+#                               Practitioner*); observation-as-frame-
+#                               awareness; reflection-in-action as
+#                               the practitioner's capacity to
+#                               observe their own operating frame
+#                               while continuing to operate. The
+#                               professional-practice ancestor of
+#                               order 2.
+#   Bateson Level II            Bateson 1964 (*The Logical Categories
+#                               of Learning and Communication*);
+#                               Level II as change-of-frame; learning-
+#                               to-learn. Inherited mechanically via
+#                               `in @epistemologic/cybernetic/
+#                               bateson_learning`. The canonical
+#                               naming source for the order this
+#                               species discharges.
+#   frame analysis              Goffman 1974 (*Frame Analysis*);
+#                               specifically the frame-as-object
+#                               altitude where the social scientist
+#                               or interaction participant observes
+#                               the frame organizing the encounter
+#                               rather than only operating within it.
+#                               The sociological cousin to order 2.
+#   reframing as observation    Watzlawick (Mental Research
+#                               Institute); the clinical-method
+#                               ancestor of observing the frame as
+#                               frame in preparation for the order-3
+#                               intervention. Watzlawick's first
+#                               step IS @frame/of work; the
+#                               intervention IS @frame/on work
+#                               consuming @frame/of's output.
+#   metacognition               Flavell 1979 (cognitive-science
+#                               literature on knowing-about-knowing);
+#                               the developmental-psychology cousin
+#                               of order 2. Metacognition without
+#                               substantive flexibility produces
+#                               sophisticated-frame-defense per the
+#                               recognition file's §"Why this matters"
+#                               on leadership-development missing
+#                               order 3.
+#
+# Spec context: docs/math/the-tower/recognition-82-frame-as-
+#               cognitive-order-substrate-decl.md (§"The five-order
+#               structure" item for order 2; §"The two-pole structure"
+#               on Splinter/Narcissus disambiguation at order 2);
+#               docs/specs/recognition-82-frame-as-cognitive-order-
+#               canonical-spec.md (§7.2 names the species landing
+#               order; §2.5 names order 2 ↔ @frame/of ↔ Bateson Level
+#               II as structurally closed via family-root inheritance;
+#               §5 names the Splinter/Narcissus pole at cognitive
+#               altitude that this species's lock_in_frame_awareness
+#               predicate discharges);
+#               docs/specs/adapter-magic-frame-spec.md §8.1
+#               (mitigation: the adapter applies at order 1+; this
+#               species's actions all take typed operator inputs and
+#               compose cleanly with the forward-promised adapter).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; order 2 IS the FIRST
+#                       altitude where the boundary contract becomes
+#                       load-bearing — pole disambiguation between
+#                       substantive frame-awareness and vocabulary-
+#                       only frame-awareness IS what the boundary at
+#                       @io checks),
+#                      [[architecture-bateson-logical-type-primitive]]
+#                       (#42; @frame/of IS Bateson Level II at
+#                       cognitive altitude),
+#                      [[architecture-error-as-tomm-probe]] (Tomm-
+#                       probes at order 2 produce frame-awareness;
+#                       the substrate's error surface IS the same
+#                       mechanism at compiler altitude),
+#                      [[feedback-no-bare-types]] (operator and
+#                       frame are typed carriers inherited from
+#                       family-root; observe_frame, lock_in_frame_
+#                       awareness, and reflect_to_frame_flexibility
+#                       use them directly without re-declaration).
+# Related shards: frame.mirror (the family-root; operator, frame,
+#                  perturbation, commutator, morphism declared
+#                  there; bounded_commutator_check predicate
+#                  discharged via species `requires` clauses
+#                  starting at this species),
+#                 frame/pre.mirror (the order-0 species; produces
+#                  the frame this species's observe_frame consumes
+#                  via classify),
+#                 frame/in.mirror (the order-1 species; produces
+#                  the operator-with-order-2-awareness this species
+#                  consumes via unlock_frame; this species's
+#                  reflect_to_frame_flexibility is the analogue
+#                  transition for order-2 → order-3),
+#                 frame/on.mirror (order 3; forward-promised
+#                  consumer of this species's
+#                  lock_in_frame_awareness predicate and
+#                  reflect_to_frame_flexibility action),
+#                 epistemologic/cybernetic/bateson_learning.mirror
+#                  (the Bateson grading this species's order
+#                  inherits at Level II).
+# Path-namespace property: this file at
+# `shards/frame/of.mirror` declares `@frame/of` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/von-foerster-1974
+source @arxiv/professional-practice/schon-1983
+source @arxiv/cybernetics/bateson-1964
+source @arxiv/sociology/goffman-1974
+source @arxiv/cognitive-science/flavell-1979
+
+prism @frame/of {
+  focus of
+  project of
+  split of
+  shift of
+  settle of
+}
+
+# === observe_frame action ===
+#
+# The substrate-vocabulary action for order-2 frame-observation. The
+# operator observes f AS frame — not f's content; not the within-
+# frame computation that order 1's compute_in_frame would discharge;
+# but f-as-observable-structure. The substrate-architectural shape
+# of Foerster's second-order observer at cognitive altitude.
+#
+# FIRST species action that takes the frame as OBJECT rather than as
+# GROUND. The order-1 species (in) operates WITHIN the frame holding
+# it as ground; this species (of) operates ON the frame's structure
+# as observable. The carrier discipline doesn't change (frame is the
+# same typed reference at every altitude); what changes is the
+# operator's substrate-architectural relation to it.
+#
+# Per the @frame family's load-bearing claim that the 5-op gauge
+# operates on @frame at every altitude: observe_frame IS the
+# substrate's order-2 observation primitive; at this altitude, the 5
+# ops apply ON frame f (rather than WITHIN it). focus selects what
+# in f-as-structure to attend to; project deploys the structural
+# observation outward; split decomposes f's structure into sub-
+# structures; shift transforms the structural observation; settle
+# commits the observation as a crystal at order 2.
+#
+# Returns a `ref` (not a typed frame, not a typed commutator): the
+# substrate-typed observation IS a reference to the substrate's
+# representation of f-as-observable-structure at the operator's
+# altitude. The Tomm-probe machinery (family-root's tomm_probe
+# action returning commutator) is what consumes this observation to
+# construct the bracketed pair `[D_F, a]` at order 2.
+#
+# At Foerster altitude: observe_frame IS the substrate-architectural
+# form of the second-order observer at cognitive altitude. The
+# observer becomes part of the system observed because the frame the
+# operator was operating from becomes observable AS frame.
+#
+# At Schön altitude (1983): observe_frame IS reflection-in-action at
+# substrate altitude — the practitioner observes their own operating
+# frame while continuing to operate. The substrate-architectural
+# capacity to do so without disrupting order-1 operation.
+#
+# At Bateson Level II altitude: observe_frame IS the change-of-frame
+# primitive. Learning to learn — the operator's frame-set becomes a
+# field of operation rather than only a field of action.
+#
+# Body discharges at the realisation boundary.
+observe_frame(operator: operator, f: frame) -> ref { \ }
+
+# === lock_in_frame_awareness predicate ===
+#
+# Bilateral verdict predicate per recognition #37 (Pask agreement)
+# and recognition #82 (Splinter/Narcissus pole disambiguation at
+# substrate altitude). THE FIRST SPECIES-LEVEL POLE DISAMBIGUATION
+# in the @frame family.
+#
+# The substrate-architectural question this predicate answers:
+# does the operator's frame-awareness REST on substantive substrate-
+# architectural support, OR is it vocabulary deployed at order 2 while
+# the operator's substrate is locked at order 1?
+#
+# Per the family-root's bounded_commutator_check predicate (Seam C5+C6
+# closure at tick 24): the substrate-architectural pole discriminator
+# at cognitive altitude IS bounded-commutator-under-perturbation. The
+# lock_in_frame_awareness predicate IS the order-2 specialization: an
+# operator whose frame-awareness rests on substantive substrate-
+# architectural support produces a bounded commutator under a
+# perturbation designed to expose order-2 operation (a perturbation
+# that requires order-2 capacity to respond coherently). An operator
+# whose frame-awareness is vocabulary-only produces an unbounded
+# commutator (defensive amplification masked by sophisticated meta-
+# vocabulary).
+#
+# Discharge via `requires bounded_commutator_check(operator, f,
+# perturbation)`: the substrate-pull-correct pole-disambiguation
+# check at the order-2 species boundary. This IS the substrate-decl's
+# first non-decorative use of the family-root's
+# bounded_commutator_check predicate; the perturbation parameter is
+# the order-2 perturbation (a substrate-architectural pressure that
+# distinguishes substantive frame-awareness from vocabulary-frame-
+# awareness).
+#
+# Returns:
+# - success → Splinter-pole: substrate-architectural frame-awareness;
+#   the operator's substrate substantively observes f as frame.
+# - partial → Narcissus-pole: vocabulary at order 2 + substrate-
+#   architectural operation at order 1; sophisticated meta-vocabulary
+#   masking substrate-rigidity. The con/gaslight pattern at order 2.
+# - failure → no order-2 capacity at vocabulary or substrate altitude;
+#   the operator is honestly at order 1 or below.
+#
+# Same shape as @magic family's bilateral predicates (invariant_
+# preserved, audited, mechanism_intact, bind_satisfies_distinction)
+# and @frame/in's frame_locked. Per the @magic surface.mirror first-
+# consumer discipline pattern: this predicate becomes load-bearing
+# once @frame/on's actions consume it via `requires
+# lock_in_frame_awareness(...)` to assert their order-3 operation
+# emerges from substrate-supported order-2 awareness.
+#
+# The substrate-aikido methodology's diagnostic question — "is this
+# operator at substantive order 2 or vocabulary-only order 2?" —
+# becomes a substrate-typed verdict via this predicate.
+lock_in_frame_awareness(operator: operator, f: frame) -> verdict
+requires bounded_commutator_check(operator, f, perturbation)
+{ \ }
+
+# === reflect_to_frame_flexibility action ===
+#
+# The substrate-vocabulary action that returns an operator with
+# order-3 frame-flexibility enabled. The substrate-architectural
+# transition order-2 → order-3. NOT a vocabulary lift; a substrate-
+# architectural state change in the operator carrier.
+#
+# At Bateson altitude: reflect_to_frame_flexibility IS the Level II
+# → Level III lift. Learning-to-learn becomes substantive frame-
+# restructuring capacity. The operator's substrate has gained the
+# architectural capacity to substantively-shift the frame in response
+# to the order-2 observation, rather than only observing without
+# capacity to update.
+#
+# At Schön altitude (1983): the transition IS reflection-on-action
+# becoming substrate-architectural capacity for substantive frame-
+# restructuring. The practitioner's substrate moves from reflecting
+# ON the frame (order 2) to operating ON the frame (order 3); the
+# substrate's analogue of the deutero-learning lift.
+#
+# At Tomm altitude (1988): the transition IS the substrate-
+# architectural capacity that makes circular-reflexive questions
+# transformative rather than informative. Without order-3 substrate-
+# flexibility, Tomm-probes at order 2 produce frame-awareness
+# without frame-update; the transition enables the order-3 update
+# capacity.
+#
+# Per recognition #82 §4.4 (Q4: peers operate by definition frame-
+# flexible): a peer's load-bearing property IS the capacity to
+# discharge reflect_to_frame_flexibility substantively (not via
+# vocabulary). A candidate peer satisfies the orchestra-discipline
+# criterion iff this action's discharge at their substrate altitude
+# produces an operator that bounded_commutator_check(peer.shifted,
+# peer.frame, perturbation) → FLEXIBLE over a representative
+# perturbation set.
+#
+# Forward-promised consumer: shards/frame/on.mirror (order 3)
+# consumes the operator reflect_to_frame_flexibility returns;
+# @frame/on's shift_frame action requires an operator that has
+# been substrate-architecturally enabled for frame-flexibility.
+#
+# Body discharges at the realisation boundary.
+reflect_to_frame_flexibility(operator: operator, f: frame) -> operator { \ }
+
+out @frame/of
+out observe_frame
+out lock_in_frame_awareness
+out reflect_to_frame_flexibility
